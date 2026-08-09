@@ -1,11 +1,13 @@
 import Phaser from "phaser";
+import { getDefaultStore } from "jotai";
+import { dungeonGauntletAtom } from "../hud/atoms";
 import { THOUGHT_BUBBLE_KEY } from "../sprites";
 import { DEPTH } from "./depth";
 import {
-  ALTAR_ARC_CONFIG,
-  getAltarArc,
-  type AltarArc,
-} from "../scenes/game/runeAltar";
+  canActivateDungeonAltar,
+  DUNGEON_ALTAR_LABEL,
+} from "../scenes/game/dungeonAltar";
+import { ALTAR_LABEL, isAtRuneAltar } from "../scenes/game/runeAltar";
 import type { GameScene } from "../scenes/game/GameScene";
 
 // Larger than the entity thought bubble so a label + key fits. Native art is
@@ -34,7 +36,7 @@ const BUBBLE_GAP = 24;
 
 export interface AltarPromptHandle {
   container: Phaser.GameObjects.Container;
-  arc: AltarArc;
+  label: string;
 }
 
 /** A rounded "⏎" key chip, centered at local (0,0). */
@@ -60,10 +62,10 @@ function buildEnterKey(scene: GameScene): Phaser.GameObjects.Container {
 /** Build the "<label> [⏎]" row, contain-fit to the bubble interior. */
 function buildContent(
   scene: GameScene,
-  arc: AltarArc,
+  labelText: string,
 ): Phaser.GameObjects.Container {
   const label = scene.add
-    .text(0, 0, ALTAR_ARC_CONFIG[arc].label, {
+    .text(0, 0, labelText, {
       color: "#ffffff",
       fontSize: "26px",
       fontFamily: "monospace",
@@ -86,37 +88,45 @@ function buildContent(
   return row;
 }
 
-function createPrompt(scene: GameScene, arc: AltarArc): AltarPromptHandle {
+function createPrompt(scene: GameScene, label: string): AltarPromptHandle {
   const bg = scene.add
     .image(0, 0, THOUGHT_BUBBLE_KEY)
     .setDisplaySize(BUBBLE_W, BUBBLE_H);
-  const content = buildContent(scene, arc).setPosition(
+  const content = buildContent(scene, label).setPosition(
     CONTENT_OFFSET_X,
     CONTENT_OFFSET_Y,
   );
   const container = scene.add.container(0, 0, [bg, content]);
-  return { container, arc };
+  return { container, label };
+}
+
+function activeAltarLabel(scene: GameScene): string | null {
+  if (isAtRuneAltar(scene)) return ALTAR_LABEL;
+
+  const gauntlet = getDefaultStore().get(dungeonGauntletAtom);
+  return canActivateDungeonAltar(scene, gauntlet)
+    ? DUNGEON_ALTAR_LABEL
+    : null;
 }
 
 /**
  * Client-local interaction prompt: a thought bubble above the local player's
- * head showing the current altar arc's label + an Enter key. Rebuilt only when
- * the arc changes; hidden whenever the player is off the altar.
+ * head showing the currently available altar action + an Enter key.
  */
 export function updateAltarPrompt(scene: GameScene): void {
-  const arc = getAltarArc(scene);
+  const label = activeAltarLabel(scene);
   const ownId = scene.state.ownId;
   const sprite = ownId ? scene.state.sprite.get(ownId) : undefined;
 
-  if (!arc || !sprite) {
+  if (!label || !sprite) {
     if (scene.altarPrompt) scene.altarPrompt.container.setVisible(false);
     return;
   }
 
   let prompt = scene.altarPrompt;
-  if (!prompt || prompt.arc !== arc) {
-    if (prompt) prompt.container.destroy(true);
-    prompt = createPrompt(scene, arc);
+  if (!prompt || prompt.label !== label) {
+    prompt?.container.destroy();
+    prompt = createPrompt(scene, label);
     scene.altarPrompt = prompt;
   }
 

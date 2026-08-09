@@ -277,6 +277,64 @@ reuse the split canopy/root depth treatment and smooth dual-target trunk collisi
 `shared/src/collision/collision.test.ts` pins pool clearance, collision ownership, sparse
 density, and a connected walkable region across every canonical swamp node.
 
+## 14. Sparse plains trees (Pass 2 art follow-up — SHIPPED)
+
+Four 1254×1254 transparent plains trees now live under
+`art/src/files/environment/trees/plains/`: a windswept elm, old pasture oak, twin-trunk
+aspen, and compact field hawthorn. ChatGPT image generation used the forest tree sheet for
+rendering and the plains ground/shrub art for a deliberately dry palette of tan bark, muted
+sage, khaki olive, and straw-gold. PixelLab was not used.
+
+`shared/src/world/plainsTrees.ts` places exactly three deterministic trees in each normal
+plains node and two in each plains dungeon, matching the swamp's sparse upper bounds while
+preserving the central dungeon combat clearing. Trees reuse the split canopy/root depth
+treatment and smooth trunk collision for players and monsters. Collision tests pin density,
+dungeon clearance, dual-target blocking, and a connected walkable region across every
+canonical plains node.
+
+## 15. Mountain ledge polish (Pass 2 art follow-up — SHIPPED)
+
+Mountain nodes keep their existing authored ledge rings and receive no added terrain props.
+The procedural renderer now adds deterministic face highlights, cracks, and loose scree chips
+so the same geometry reads with more depth and less repetition. The blocking band is tightened
+from 96 px to 64 px, bringing collision closer to the visible cliff face while preserving two
+navigation cells of continuous wall. Collision tests pin both the narrower authored geometry
+and a valid route around the inner ledge corner.
+
+## 16. Sparse biome tall props (Pass 2 art follow-up — SHIPPED)
+
+Eighteen 1254×1254 transparent sprites now live under
+`art/src/files/environment/tall-props/`: three cave formations, three desert formations,
+three volcanic formations, three trench formations, three snow-covered tundra dead trees,
+and three wasteland dead trees. They were generated with ChatGPT image generation using the
+forest tree sheet for rendering language and each biome's ground/rock art for palette; PixelLab
+was not used.
+
+`shared/src/world/tallProps.ts` places exactly three formations in normal cave, desert,
+volcanic, and trench nodes and two in their dungeons. Every candidate stays outside a 320 px
+radius around each center-to-gate route, clears authored features by 260 px, preserves dungeon
+combat space, and uses a very small smooth base ellipse despite the tall display art. Tundra and
+wasteland nodes similarly receive three dead trees (two in dungeons) through
+`shared/src/world/deadTrees.ts`. All props reuse split base/upper rendering for correct
+walk-behind depth and block both players and monsters. Collision tests pin counts, palettes,
+compact rock bases, route clearance, collision ownership, and connected navigation for every
+affected canonical node.
+
+## 17. Biome dungeon altars (art follow-up — SHIPPED)
+
+Every canonical dungeon family now has a dedicated 1254×1254 transparent encounter altar
+under `art/src/files/environment/dungeon-altars/`: forest, plains, mountain, cave, swamp,
+jungle, desert, tundra, volcanic, wasteland (`graveyard` internally), and trench. Each sprite
+uses its accepted ground sheet as the palette/material reference while retaining a consistent
+compact footprint and three-quarter top-down camera. ChatGPT image generation produced the
+sprites; PixelLab was not used.
+
+`client/src/sprites.ts` maps every typed `DungeonBiomeGroup` to its altar texture, and the
+dungeon overlay resolves that mapping from the node's canonical biome. Clearing and sanctuary
+passive resets continue using their separate pale-stone reset shrine. The shared canonical
+dungeon-biome list is checked against authored dungeon nodes so a future biome cannot be added
+without extending the altar-art contract.
+
 ## 18. Player damage amplifiers + Desert pairs (Pass 2, Session 4 — SHIPPED)
 
 P3, the last shared primitive, plus its first consumer. Volcano (Session 5) takes a

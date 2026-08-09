@@ -37,7 +37,7 @@ export function DungeonAltarOverlay() {
     if (gauntlet.status === "bossAwakening") return awakeningLabel(gauntlet.bossAwakeningRemainingMs);
     if (gauntlet.status === "boss") return "Boss Awakened";
     if (gauntlet.status === "active") return "Trial in Progress";
-    return near ? "Begin Trial" : "Move Closer to Altar";
+    return near ? "Activate Trial" : "Move Closer to Altar";
   })();
 
   const progressText = (() => {

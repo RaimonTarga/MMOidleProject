@@ -72,7 +72,7 @@ export function resetPlayerClass(
   markSliceDirty(world, player, 'tracksProgression');
   markSliceDirty(world, player, 'usesSkills');
   markSliceDirty(world, player, 'hasHealth');
-  return { ok: true, message: 'Player class/perks reset.' };
+  return { ok: true, message: 'Passive points reset.' };
 }
 
 export function resetPlayerProgress(world: World, player: PlayerEntity): GameActionResult {

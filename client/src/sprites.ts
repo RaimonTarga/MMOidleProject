@@ -1,4 +1,4 @@
-import type { PlayerView } from "@mmo-idle/shared";
+import type { DungeonBiomeGroup, PlayerView } from "@mmo-idle/shared";
 import { PLAINS_GROUND_TEXTURE_KEY } from './render/proceduralGround';
 import {
   MONSTER_FRAMES,
@@ -27,6 +27,120 @@ export const TREES_FILE = "/assets/environment/trees/trees.png";
 /** Trunk/root-only sheet, drawn under the player so they appear to step on roots. */
 export const TREES_HITBOX_KEY = "env_trees_hitbox";
 export const TREES_HITBOX_FILE = "/assets/environment/trees/trees_hitbox.png";
+
+// Large individual jungle tree variants: kapok, strangler fig, palm cluster,
+// and liana-draped emergent. Their array order matches the shared tree variants.
+export const JUNGLE_TREE_KEYS = [
+  "env_jungle_tree_kapok",
+  "env_jungle_tree_strangler_fig",
+  "env_jungle_tree_palm_cluster",
+  "env_jungle_tree_liana_draped",
+] as const;
+
+export const JUNGLE_TREE_FILES = [
+  "/assets/environment/trees/jungle/kapok.png",
+  "/assets/environment/trees/jungle/strangler-fig.png",
+  "/assets/environment/trees/jungle/palm-cluster.png",
+  "/assets/environment/trees/jungle/liana-draped-emergent.png",
+] as const;
+
+// Large individual plains tree variants. Their array order matches the shared
+// windswept elm, pasture oak, twin aspen, and field hawthorn variants.
+export const PLAINS_TREE_KEYS = [
+  "env_plains_tree_windswept_elm",
+  "env_plains_tree_pasture_oak",
+  "env_plains_tree_twin_aspen",
+  "env_plains_tree_field_hawthorn",
+] as const;
+
+export const PLAINS_TREE_FILES = [
+  "/assets/environment/trees/plains/windswept-elm.png",
+  "/assets/environment/trees/plains/pasture-oak.png",
+  "/assets/environment/trees/plains/twin-aspen.png",
+  "/assets/environment/trees/plains/field-hawthorn.png",
+] as const;
+
+// Large individual swamp dead-tree variants. Their array order matches the
+// shared cypress, mangrove, split-oak, and leaning-snag variants.
+export const SWAMP_TREE_KEYS = [
+  "env_swamp_tree_hollow_cypress",
+  "env_swamp_tree_twisted_mangrove",
+  "env_swamp_tree_split_oak",
+  "env_swamp_tree_leaning_snag",
+] as const;
+
+export const SWAMP_TREE_FILES = [
+  "/assets/environment/trees/swamp/hollow-cypress-snag.png",
+  "/assets/environment/trees/swamp/twisted-mangrove.png",
+  "/assets/environment/trees/swamp/split-swamp-oak.png",
+  "/assets/environment/trees/swamp/leaning-drowned-snag.png",
+] as const;
+
+export const TUNDRA_TREE_KEYS = [
+  "env_tundra_tree_forked_birch",
+  "env_tundra_tree_dead_snow_pine",
+  "env_tundra_tree_wind_bent_willow",
+] as const;
+export const TUNDRA_TREE_FILES = [
+  "/assets/environment/tall-props/tundra/forked-birch-snag.png",
+  "/assets/environment/tall-props/tundra/dead-snow-pine.png",
+  "/assets/environment/tall-props/tundra/wind-bent-willow.png",
+] as const;
+
+export const WASTELAND_TREE_KEYS = [
+  "env_wasteland_tree_charred_hollow",
+  "env_wasteland_tree_skeletal_oak",
+  "env_wasteland_tree_twisted_blight",
+] as const;
+export const WASTELAND_TREE_FILES = [
+  "/assets/environment/tall-props/wasteland/charred-hollow-snag.png",
+  "/assets/environment/tall-props/wasteland/skeletal-dead-oak.png",
+  "/assets/environment/tall-props/wasteland/twisted-blight-tree.png",
+] as const;
+
+export const CAVE_ROCK_KEYS = [
+  "env_cave_rock_stalagmite_needles",
+  "env_cave_rock_split_cathedral",
+  "env_cave_rock_crooked_column",
+] as const;
+export const CAVE_ROCK_FILES = [
+  "/assets/environment/tall-props/cave/stalagmite-needles.png",
+  "/assets/environment/tall-props/cave/split-cathedral-spire.png",
+  "/assets/environment/tall-props/cave/crooked-mineral-column.png",
+] as const;
+
+export const DESERT_ROCK_KEYS = [
+  "env_desert_rock_hoodoo",
+  "env_desert_rock_balancing_spire",
+  "env_desert_rock_forked_pinnacle",
+] as const;
+export const DESERT_ROCK_FILES = [
+  "/assets/environment/tall-props/desert/hoodoo-pillar.png",
+  "/assets/environment/tall-props/desert/balancing-slab-spire.png",
+  "/assets/environment/tall-props/desert/forked-sandstone-pinnacle.png",
+] as const;
+
+export const VOLCANIC_ROCK_KEYS = [
+  "env_volcanic_rock_basalt_columns",
+  "env_volcanic_rock_obsidian_blade",
+  "env_volcanic_rock_scoria_chimney",
+] as const;
+export const VOLCANIC_ROCK_FILES = [
+  "/assets/environment/tall-props/volcano/basalt-column-cluster.png",
+  "/assets/environment/tall-props/volcano/obsidian-blade.png",
+  "/assets/environment/tall-props/volcano/scoria-chimney.png",
+] as const;
+
+export const TRENCH_ROCK_KEYS = [
+  "env_trench_rock_eroded_monolith",
+  "env_trench_rock_abyssal_needles",
+  "env_trench_rock_windowed_pinnacle",
+] as const;
+export const TRENCH_ROCK_FILES = [
+  "/assets/environment/tall-props/trench/eroded-monolith.png",
+  "/assets/environment/tall-props/trench/abyssal-needle-cluster.png",
+  "/assets/environment/tall-props/trench/windowed-pinnacle.png",
+] as const;
 
 // ── Auto-combat thought bubble (telegraphs a player's next action) ────────────
 export const THOUGHT_BUBBLE_KEY = "thought_bubble";
@@ -106,6 +220,7 @@ export function getPlayerShadowColor(progressionLevel: number): number {
 
 export const BIOME_TEXTURES: Record<string, string> = {
   clearing: "biome_clearing",
+  sanctuary: "biome_clearing",
   forest: "biome_forest",
   mountain: "biome_mountain",
   plains: PLAINS_GROUND_TEXTURE_KEY,
@@ -1390,12 +1505,78 @@ export interface NodeDecorArt {
   artScale?: number;
 }
 
+export interface DungeonAltarArt {
+  key: string;
+  file: string;
+}
+
+/** One encounter altar per canonical dungeon biome family. */
+export const DUNGEON_ALTAR_ART: Readonly<
+  Record<DungeonBiomeGroup, DungeonAltarArt>
+> = {
+  forest: {
+    key: "dungeon_altar_forest",
+    file: "/assets/environment/dungeon-altars/forest.png",
+  },
+  plains: {
+    key: "dungeon_altar_plains",
+    file: "/assets/environment/dungeon-altars/plains.png",
+  },
+  mountain: {
+    key: "dungeon_altar_mountain",
+    file: "/assets/environment/dungeon-altars/mountain.png",
+  },
+  cave: {
+    key: "dungeon_altar_cave",
+    file: "/assets/environment/dungeon-altars/cave.png",
+  },
+  swamp: {
+    key: "dungeon_altar_swamp",
+    file: "/assets/environment/dungeon-altars/swamp.png",
+  },
+  jungle: {
+    key: "dungeon_altar_jungle",
+    file: "/assets/environment/dungeon-altars/jungle.png",
+  },
+  desert: {
+    key: "dungeon_altar_desert",
+    file: "/assets/environment/dungeon-altars/desert.png",
+  },
+  tundra: {
+    key: "dungeon_altar_tundra",
+    file: "/assets/environment/dungeon-altars/tundra.png",
+  },
+  volcanic: {
+    key: "dungeon_altar_volcanic",
+    file: "/assets/environment/dungeon-altars/volcanic.png",
+  },
+  graveyard: {
+    key: "dungeon_altar_wasteland",
+    file: "/assets/environment/dungeon-altars/graveyard.png",
+  },
+  trench: {
+    key: "dungeon_altar_trench",
+    file: "/assets/environment/dungeon-altars/trench.png",
+  },
+};
+
+export function dungeonAltarArtForBiome(
+  biomeGroup: string,
+): DungeonAltarArt | undefined {
+  return (DUNGEON_ALTAR_ART as Readonly<Record<string, DungeonAltarArt>>)[
+    biomeGroup
+  ];
+}
+
+const RUNE_ALTAR_DECOR: NodeDecorArt[] = [{
+  featureId: "rune_altar",
+  key: "rune_altar",
+  file: "/assets/environment/rune_altar.png",
+}];
+
 export const NODE_DECOR: Record<string, NodeDecorArt[]> = {
-  "node-clearing": [
-    {
-      featureId: "rune_altar",
-      key: "rune_altar",
-      file: "/assets/environment/rune_altar.png",
-    },
-  ],
+  "node-clearing": RUNE_ALTAR_DECOR,
+  "node-t2-sanctuary": RUNE_ALTAR_DECOR,
+  "node-t3-sanctuary": RUNE_ALTAR_DECOR,
+  "node-t4-sanctuary": RUNE_ALTAR_DECOR,
 };

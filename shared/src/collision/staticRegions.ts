@@ -2,20 +2,21 @@ import { pointInNodeFeatureShape } from '../systems/spatial';
 import type { FeatureTarget, NodeFeatureShape } from '../world/nodeFeatures';
 import { RESOLVED_NODE_FEATURES } from '../world/nodeFeatures';
 import { getNodeTrees } from '../world/trees';
+import { getNodeTallProps } from '../world/tallProps';
 import type { NodeDirection } from '../world/nodeBiomes';
 import { gateCollisionRegionsForNode } from './gates';
 import type { CollisionRegion } from './types';
 
 const staticRegionCache = new Map<string, CollisionRegion[]>();
 
-const TREE_BLOCK_TARGETS: FeatureTarget[] = ['player', 'monster'];
+const TALL_PROP_BLOCK_TARGETS: FeatureTarget[] = ['player', 'monster'];
 
-/** Scattered forest trees block both players and monsters at each trunk rect. */
+/** Biome trees and rock formations block at their compact base footprints. */
 function treeRegions(nodeId: string): CollisionRegion[] {
   const regions: CollisionRegion[] = [];
-  for (const tree of getNodeTrees(nodeId)) {
+  for (const tree of [...getNodeTrees(nodeId), ...getNodeTallProps(nodeId)]) {
     tree.shapes.forEach((shape, i) => {
-      for (const target of TREE_BLOCK_TARGETS) {
+      for (const target of TALL_PROP_BLOCK_TARGETS) {
         regions.push({
           id: `${tree.id}:block:${target}:${i}`,
           kind: 'block',

@@ -99,6 +99,14 @@ export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
       patterns: [{ pattern: 'hub-plaza', weight: 1 }],
     },
   ],
+  // Regional sanctuaries deliberately reuse the Clearing's calm paved plaza.
+  sanctuary: [
+    {
+      material: 'paving',
+      weight: 1,
+      patterns: [{ pattern: 'hub-plaza', weight: 1 }],
+    },
+  ],
   // Forest undergrowth pools under the tree clusters (the trees are the
   // authoritative shared layout; the ground follows them, not the other way
   // around). The light-undergrowth sheet stays a bake-off alternate.
@@ -348,9 +356,9 @@ function ringPath(rng: Rng, W: number, H: number): DirtDisc[] {
 }
 
 /**
- * Fixed plaza for the Clearing hub: a paved apron under the rune altar (which
- * NODE_FEATURES pins at (W/2, H/2 - 320)) flowing into the spawn point at node
- * center, plus a loose walked-in trail from the south edge and a few crumbs.
+ * Fixed plaza for the Clearing and sanctuary hubs: a paved apron under the rune
+ * altar (which NODE_FEATURES pins at (W/2, H/2 - 320)) flowing into the spawn
+ * point at node center, plus a loose walked-in trail and a few crumbs.
  */
 function hubPlaza(rng: Rng, W: number, H: number): DirtDisc[] {
   const altarX = W / 2;

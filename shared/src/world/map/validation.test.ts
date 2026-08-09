@@ -1,10 +1,12 @@
 import {
   WORLD_NODE_LIST,
+  DUNGEON_BIOME_GROUPS,
   respawnNodeIdForNodeId,
   shortestWorldPath,
 } from '../nodeBiomes';
 import { DENSITY_MODIFIERS_ENABLED } from '../nodeModifiers';
 import { NODE_MODIFIERS } from '../nodeModifierMap';
+import { NODE_FEATURES, RUNE_ALTAR_FEATURE_ID } from '../nodeFeatures';
 import { validateWorldMap } from './validation';
 
 function assert(condition: boolean, message: string): void {
@@ -23,11 +25,32 @@ assert(
   'canonical world projects no density modifiers',
 );
 
+const canonicalDungeonBiomes = new Set(
+  WORLD_NODE_LIST.filter(node => node.kind === 'dungeon').map(node => node.biomeGroup),
+);
+assert(
+  canonicalDungeonBiomes.size === DUNGEON_BIOME_GROUPS.length &&
+    DUNGEON_BIOME_GROUPS.every(group => canonicalDungeonBiomes.has(group)),
+  'dungeon altar biome list covers every canonical dungeon family',
+);
+
 for (const node of WORLD_NODE_LIST) {
   assert(
     shortestWorldPath('node-clearing', node.id) !== null,
     `${node.id} is unreachable from Clearing`,
   );
+}
+
+for (const nodeId of [
+  'node-clearing',
+  'node-t2-sanctuary',
+  'node-t3-sanctuary',
+  'node-t4-sanctuary',
+]) {
+  const altars = (NODE_FEATURES[nodeId] ?? []).filter(
+    feature => feature.id === RUNE_ALTAR_FEATURE_ID,
+  );
+  assert(altars.length === 1, `${nodeId} has exactly one passive-reset altar`);
 }
 
 assert(

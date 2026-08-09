@@ -12,12 +12,31 @@ export interface MountainLedgeFeature {
 const LEVEL_ONE = 0x81909a;
 const LEVEL_TWO = 0x929fa7;
 const FACE = 0x465966;
+const FACE_LIGHT = 0x667985;
 const FACE_DARK = 0x354650;
 const LIP = 0xb4bec4;
+const CHIP = 0x74848d;
 const SHADOW = 0x1f2b32;
 const FACE_DEPTH = 26;
 const SHADOW_DEPTH = 13;
 const CORNER_REACH = 80;
+
+function hashString(value: string): number {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < value.length; i++) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return hash >>> 0;
+}
+
+function detailFraction(seed: number, index: number): number {
+  let value = seed + Math.imul(index + 1, 0x6d2b79f5);
+  value ^= value >>> 15;
+  value = Math.imul(value, 1 | value);
+  value ^= value + Math.imul(value ^ (value >>> 7), 61 | value);
+  return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+}
 
 function segmentInfo(id: string): { ring: Ring; side: Side } | null {
   const match = id.match(/_(outer|inner)_(north|south|west|east)_/);
@@ -69,6 +88,7 @@ function drawPlateauSurface(
 
 function drawHorizontalFace(
   graphics: Phaser.GameObjects.Graphics,
+  featureId: string,
   shape: Extract<NodeFeatureShape, { kind: 'rect' }>,
   side: 'north' | 'south',
   offsetX: number,
@@ -91,18 +111,44 @@ function drawHorizontalFace(
   graphics.fillRect(x, faceY, width, FACE_DEPTH);
   graphics.fillStyle(FACE, 1);
   graphics.fillRect(x + 3, faceY + 2, width - 6, FACE_DEPTH * 0.58);
+  graphics.fillStyle(FACE_LIGHT, 0.34);
+  graphics.fillRect(x + 4, faceY + 3, width - 8, 4);
   graphics.lineStyle(4, LIP, 0.95);
   graphics.lineBetween(x + trimStart, lipY, x + width - trimEnd, lipY);
 
-  graphics.lineStyle(2, FACE_DARK, 0.8);
-  for (const frac of [0.24, 0.51, 0.78]) {
+  const seed = hashString(featureId);
+  graphics.lineStyle(2, FACE_DARK, 0.82);
+  for (let i = 0; i < 4; i++) {
+    const frac = 0.12 + detailFraction(seed, i) * 0.76;
     const crackX = x + width * frac;
-    graphics.lineBetween(crackX, faceY + 4, crackX - dir * 4, faceY + FACE_DEPTH - 3);
+    const crackDepth = 9 + detailFraction(seed, i + 5) * 12;
+    graphics.beginPath();
+    graphics.moveTo(crackX, faceY + 5);
+    graphics.lineTo(crackX - dir * 4, faceY + crackDepth * 0.55);
+    graphics.lineTo(crackX + dir * 3, faceY + crackDepth);
+    graphics.strokePath();
+  }
+
+  // A few deterministic scree chips break the ruler-straight base silhouette.
+  graphics.fillStyle(CHIP, 0.78);
+  const baseY = dir < 0 ? faceY : faceY + FACE_DEPTH;
+  for (let i = 0; i < Math.max(2, Math.floor(width / 260)); i++) {
+    const chipX = x + 14 + detailFraction(seed, i + 11) * Math.max(1, width - 28);
+    const chipW = 5 + detailFraction(seed, i + 17) * 7;
+    graphics.fillTriangle(
+      chipX - chipW,
+      baseY,
+      chipX + chipW,
+      baseY,
+      chipX,
+      baseY + dir * 7,
+    );
   }
 }
 
 function drawVerticalFace(
   graphics: Phaser.GameObjects.Graphics,
+  featureId: string,
   shape: Extract<NodeFeatureShape, { kind: 'rect' }>,
   side: 'west' | 'east',
   offsetX: number,
@@ -123,8 +169,21 @@ function drawVerticalFace(
   graphics.fillRect(faceX, y, FACE_DEPTH, height);
   graphics.fillStyle(FACE, 1);
   graphics.fillRect(faceX + 2, y + 3, FACE_DEPTH * 0.58, height - 6);
+  graphics.fillStyle(FACE_LIGHT, 0.32);
+  graphics.fillRect(faceX + 3, y + 4, 4, height - 8);
   graphics.lineStyle(4, LIP, 0.95);
   graphics.lineBetween(lipX, y + trimStart, lipX, y + height - trimEnd);
+
+  const seed = hashString(featureId);
+  graphics.lineStyle(2, FACE_DARK, 0.82);
+  for (let i = 0; i < Math.max(2, Math.floor(height / 310)); i++) {
+    const crackY = y + 16 + detailFraction(seed, i) * Math.max(1, height - 32);
+    graphics.beginPath();
+    graphics.moveTo(faceX + 4, crackY);
+    graphics.lineTo(faceX + FACE_DEPTH * 0.55, crackY - dir * 4);
+    graphics.lineTo(faceX + FACE_DEPTH - 3, crackY + dir * 3);
+    graphics.strokePath();
+  }
 }
 
 function cornerSegment(
@@ -278,6 +337,7 @@ export function drawMountainElevation(
           : 0;
       drawHorizontalFace(
         graphics,
+        feature.id,
         feature.shape,
         info.side,
         offsetX,
@@ -308,6 +368,7 @@ export function drawMountainElevation(
           : 0;
       drawVerticalFace(
         graphics,
+        feature.id,
         feature.shape,
         info.side,
         offsetX,

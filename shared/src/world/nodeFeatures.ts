@@ -104,7 +104,7 @@ export interface NodeFeatureSpec {
 
 export type ResolvedNodeFeature = NodeFeatureSpec & { shape: NodeFeatureShape };
 
-/** Shared id for the clearing rune altar feature (client decor + server gating). */
+/** Shared id for the Clearing/sanctuary rune altar (client decor + server gating). */
 export const RUNE_ALTAR_FEATURE_ID = "rune_altar";
 
 export function resolveFeatureShape(spec: NodeFeatureSpec): NodeFeatureShape {
@@ -258,12 +258,11 @@ const MOUNTAIN_INNER_RIGHT = GAME_CONFIG.NODE_WIDTH - MOUNTAIN_INNER_LEFT;
 const MOUNTAIN_INNER_TOP = 650;
 const MOUNTAIN_INNER_BOTTOM = GAME_CONFIG.NODE_HEIGHT - MOUNTAIN_INNER_TOP;
 /**
- * Ledge walls must stay expressible on the client's 64px Wang corner grid
- * (a band thinner than one cell can slip between grid corners and vanish);
- * 96px guarantees at least one corner row lands inside every wall so the
- * painted rock face always tracks this exact blocking rect.
+ * The procedural ledge renderer no longer relies on Wang-grid coverage, so the
+ * collision band can hug the visible cliff face instead of reserving a broad
+ * invisible strip on both sides. Two nav cells remain enough for robust walls.
  */
-const MOUNTAIN_LEDGE_THICKNESS = 96;
+export const MOUNTAIN_LEDGE_THICKNESS = 64;
 /** Hold posts keep the same clearance from the rock face across thickness changes. */
 const MOUNTAIN_LEDGE_HOLD_OFFSET = MOUNTAIN_LEDGE_THICKNESS / 2 + 38;
 const MOUNTAIN_SIDE_ENTRANCE_FRAC = 0.24;
@@ -574,9 +573,8 @@ function volcanicHeat(id: string): NodeFeatureSpec {
 
 /** Per-node static hazards and obstacles. */
 const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
-  // Clearing (T0). Rune altar centerpiece, just north of the player spawn point
-  // (node center). Non-blocking on purpose — its hitbox exists only so future
-  // interaction logic can detect a player standing at the altar.
+  // Clearing/sanctuary rune altar, just north of the player spawn point (node
+  // center). Non-blocking: its shape is the passive-reset interaction area.
   "node-5-5": [
     {
       id: RUNE_ALTAR_FEATURE_ID,
@@ -843,7 +841,9 @@ function canonicalFeaturesForNode(
   if (node.id === "node-clearing") {
     return templateFeatures("node-5-5");
   }
-  if (node.kind === "sanctuary") return [];
+  if (node.kind === "sanctuary") {
+    return templateFeatures("node-5-5");
+  }
   if (node.biomeGroup === "mountain") {
     return mountainLedgeRings(
       `mountain_${node.id}`,

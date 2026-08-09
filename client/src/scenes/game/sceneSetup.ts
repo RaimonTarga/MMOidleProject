@@ -45,9 +45,28 @@ import {
   ATLAS_KEY,
   BIOME_DECOR,
   BIOME_TEXTURES,
+  CAVE_ROCK_FILES,
+  CAVE_ROCK_KEYS,
+  DESERT_ROCK_FILES,
+  DESERT_ROCK_KEYS,
+  DUNGEON_ALTAR_ART,
   GRAVES_KEY,
   GRAVE_FRAME_SIZE,
   FEATURE_SCATTER,
+  JUNGLE_TREE_FILES,
+  JUNGLE_TREE_KEYS,
+  PLAINS_TREE_FILES,
+  PLAINS_TREE_KEYS,
+  SWAMP_TREE_FILES,
+  SWAMP_TREE_KEYS,
+  TRENCH_ROCK_FILES,
+  TRENCH_ROCK_KEYS,
+  TUNDRA_TREE_FILES,
+  TUNDRA_TREE_KEYS,
+  VOLCANIC_ROCK_FILES,
+  VOLCANIC_ROCK_KEYS,
+  WASTELAND_TREE_FILES,
+  WASTELAND_TREE_KEYS,
   NODE_DECOR,
   emoteAnimKey,
   emoteTextureKey,
@@ -223,13 +242,20 @@ function queueBiomeAssets(
   scene: GameScene,
   biomes: ReadonlySet<string> | null,
 ): void {
+  const biomeTextureKeysSeen = new Set<string>();
   for (const [biomeGroup, key] of Object.entries(BIOME_TEXTURES)) {
     if (key === PLAINS_GROUND_TEXTURE_KEY) continue;
     if (biomes && !biomes.has(biomeGroup)) continue;
-    if (scene.textures.exists(key)) continue;
+    if (biomeTextureKeysSeen.has(key) || scene.textures.exists(key)) continue;
+    biomeTextureKeysSeen.add(key);
     scene.load.image(key, `/assets/${key}.png`);
   }
   preloadWangGround(scene, biomes);
+  for (const [biomeGroup, altar] of Object.entries(DUNGEON_ALTAR_ART)) {
+    if (biomes && !biomes.has(biomeGroup)) continue;
+    if (scene.textures.exists(altar.key)) continue;
+    scene.load.image(altar.key, altar.file);
+  }
   const biomeDecorKeysSeen = new Set<string>();
   for (const [biomeGroup, specs] of Object.entries(BIOME_DECOR)) {
     if (!specs) continue;
@@ -239,6 +265,39 @@ function queueBiomeAssets(
       biomeDecorKeysSeen.add(s.key);
       scene.load.image(s.key, s.file);
     }
+  }
+}
+
+function queueTreeAssets(scene: GameScene): void {
+  scene.load.spritesheet(TREES_KEY, TREES_FILE, {
+    frameWidth: TREE_CELL_PX,
+    frameHeight: TREE_CELL_PX,
+  });
+  JUNGLE_TREE_KEYS.forEach((key, i) => {
+    const file = JUNGLE_TREE_FILES[i];
+    if (file) scene.load.image(key, file);
+  });
+  PLAINS_TREE_KEYS.forEach((key, i) => {
+    const file = PLAINS_TREE_FILES[i];
+    if (file) scene.load.image(key, file);
+  });
+  SWAMP_TREE_KEYS.forEach((key, i) => {
+    const file = SWAMP_TREE_FILES[i];
+    if (file) scene.load.image(key, file);
+  });
+  const imageSets: readonly [readonly string[], readonly string[]][] = [
+    [TUNDRA_TREE_KEYS, TUNDRA_TREE_FILES],
+    [WASTELAND_TREE_KEYS, WASTELAND_TREE_FILES],
+    [CAVE_ROCK_KEYS, CAVE_ROCK_FILES],
+    [DESERT_ROCK_KEYS, DESERT_ROCK_FILES],
+    [VOLCANIC_ROCK_KEYS, VOLCANIC_ROCK_FILES],
+    [TRENCH_ROCK_KEYS, TRENCH_ROCK_FILES],
+  ];
+  for (const [keys, files] of imageSets) {
+    keys.forEach((key, i) => {
+      const file = files[i];
+      if (file) scene.load.image(key, file);
+    });
   }
 }
 
@@ -302,10 +361,7 @@ export function preloadGameAssets(scene: GameScene): void {
 
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
-  scene.load.spritesheet(TREES_KEY, TREES_FILE, {
-    frameWidth: TREE_CELL_PX,
-    frameHeight: TREE_CELL_PX,
-  });
+  queueTreeAssets(scene);
   queueBiomeAssets(scene, null);
   // Audio: only entries with a real file are registered (manifest files are
   // undefined until assets land, so the engine synthesizes fallbacks meanwhile).
@@ -329,10 +385,7 @@ export function preloadGameAssets(scene: GameScene): void {
 function startDeferredSpectatorAssets(scene: GameScene): void {
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
-  scene.load.spritesheet(TREES_KEY, TREES_FILE, {
-    frameWidth: TREE_CELL_PX,
-    frameHeight: TREE_CELL_PX,
-  });
+  queueTreeAssets(scene);
   queueBiomeAssets(scene, null);
   scene.load.once("complete", () => {
     initVoidOverlordSheet(scene);

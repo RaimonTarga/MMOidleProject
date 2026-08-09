@@ -56,6 +56,22 @@ export interface NodeBiomeInfo {
 export const TEST_ROOM_NODE_ID = 'node-test-room';
 export const CLEARING_NODE_ID = 'node-clearing';
 
+/** Biome families with canonical gauntlet dungeons and bespoke altar art. */
+export const DUNGEON_BIOME_GROUPS = [
+  'forest',
+  'plains',
+  'mountain',
+  'cave',
+  'swamp',
+  'jungle',
+  'desert',
+  'tundra',
+  'volcanic',
+  'graveyard',
+  'trench',
+] as const;
+export type DungeonBiomeGroup = (typeof DUNGEON_BIOME_GROUPS)[number];
+
 /** Compatibility projection for systems that still consume biome metadata by id. */
 export const NODE_BIOMES: Record<string, NodeBiomeInfo> = Object.fromEntries(
   WORLD_NODE_LIST.map((node) => [

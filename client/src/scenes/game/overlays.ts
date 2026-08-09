@@ -6,9 +6,9 @@ import {
   NODE_FEATURES,
   RESOLVED_NODE_FEATURES,
   resolveFeatureShape,
-  TREE_CELL_PX,
-  TREE_TRUNK_TOP_PX,
+  getNodeTallProps,
   getNodeTrees,
+  type TreeInstance,
   type NodeFeatureShape,
 } from "@mmo-idle/shared";
 import {
@@ -25,8 +25,18 @@ import { sceneDepthY } from "../../render/sceneCoords";
 import {
   BIOME_DECOR,
   BIOME_TEXTURES,
+  CAVE_ROCK_KEYS,
+  DESERT_ROCK_KEYS,
+  dungeonAltarArtForBiome,
   FEATURE_SCATTER,
+  JUNGLE_TREE_KEYS,
   NODE_DECOR,
+  PLAINS_TREE_KEYS,
+  SWAMP_TREE_KEYS,
+  TRENCH_ROCK_KEYS,
+  TUNDRA_TREE_KEYS,
+  VOLCANIC_ROCK_KEYS,
+  WASTELAND_TREE_KEYS,
   TREES_KEY,
 } from "../../sprites";
 import { computeGroundLayout } from "../../render/groundLayout";
@@ -205,12 +215,15 @@ function buildNodeDecorImages(
   }
 
   const gauntlet = getDungeonGauntletDef(nodeId);
-  if (gauntlet && scene.textures.exists("rune_altar")) {
+  const biomeGroup = NODE_BIOMES[nodeId]?.biomeGroup;
+  const altarArt = biomeGroup ? dungeonAltarArtForBiome(biomeGroup) : undefined;
+  const altarTexture = altarArt?.key ?? "rune_altar";
+  if (gauntlet && scene.textures.exists(altarTexture)) {
     const img = scene.add
-      .image(offsetX + gauntlet.altar.x, offsetY + gauntlet.altar.y, "rune_altar")
+      .image(offsetX + gauntlet.altar.x, offsetY + gauntlet.altar.y, altarTexture)
       .setOrigin(0.5, 0.5)
       .setDepth(DEPTH.BG_DECOR + depthBias)
-      .setDisplaySize(220, 220);
+      .setDisplaySize(250, 250);
     img.setData("featureId", "dungeon_altar");
     decor.push(img);
   }
@@ -510,13 +523,41 @@ function buildNodePlaceholderFeatures(
 }
 
 /**
- * Scattered forest trees for a node. In the active node (`ySort`) each tree is
- * drawn in two passes: the full canopy sprite is depth-sorted by the bottom of
- * its trunk (so entities north of the trunk render behind it and those south of
- * it render in front — walk-behind), and the trunk/root sheet is drawn on the
- * ground beneath all entities so players appear to step on the roots. Neighbor
- * previews stay flat below the sprite band (the player is never in a preview).
+ * Tall biome props for a node. In the active node (`ySort`) each prop is split
+ * at its compact base: the upper slice is y-sorted for walk-behind while the
+ * base slice stays under entities. Neighbor previews stay flat below sprites.
  */
+function treeTexture(tree: TreeInstance): { key: string; frame?: number } {
+  if (tree.artSet === "jungle") {
+    return { key: JUNGLE_TREE_KEYS[tree.variant] ?? JUNGLE_TREE_KEYS[0] };
+  }
+  if (tree.artSet === "plains") {
+    return { key: PLAINS_TREE_KEYS[tree.variant] ?? PLAINS_TREE_KEYS[0] };
+  }
+  if (tree.artSet === "swamp") {
+    return { key: SWAMP_TREE_KEYS[tree.variant] ?? SWAMP_TREE_KEYS[0] };
+  }
+  if (tree.artSet === "tundra") {
+    return { key: TUNDRA_TREE_KEYS[tree.variant] ?? TUNDRA_TREE_KEYS[0] };
+  }
+  if (tree.artSet === "wasteland") {
+    return { key: WASTELAND_TREE_KEYS[tree.variant] ?? WASTELAND_TREE_KEYS[0] };
+  }
+  if (tree.artSet === "cave-rock") {
+    return { key: CAVE_ROCK_KEYS[tree.variant] ?? CAVE_ROCK_KEYS[0] };
+  }
+  if (tree.artSet === "desert-rock") {
+    return { key: DESERT_ROCK_KEYS[tree.variant] ?? DESERT_ROCK_KEYS[0] };
+  }
+  if (tree.artSet === "volcanic-rock") {
+    return { key: VOLCANIC_ROCK_KEYS[tree.variant] ?? VOLCANIC_ROCK_KEYS[0] };
+  }
+  if (tree.artSet === "trench-rock") {
+    return { key: TRENCH_ROCK_KEYS[tree.variant] ?? TRENCH_ROCK_KEYS[0] };
+  }
+  return { key: TREES_KEY, frame: tree.variant };
+}
+
 function buildNodeTreeImages(
   scene: GameScene,
   nodeId: string,
@@ -524,10 +565,10 @@ function buildNodeTreeImages(
   offsetY: number,
   opts: { ySort: boolean; depthBias: number },
 ): Phaser.GameObjects.Image[] {
-  if (!scene.textures.exists(TREES_KEY)) return [];
-
   const images: Phaser.GameObjects.Image[] = [];
-  for (const tree of getNodeTrees(nodeId)) {
+  for (const tree of [...getNodeTrees(nodeId), ...getNodeTallProps(nodeId)]) {
+    const texture = treeTexture(tree);
+    if (!scene.textures.exists(texture.key)) continue;
     const x = offsetX + tree.spriteX;
     const y = offsetY + tree.spriteY;
 
@@ -535,7 +576,7 @@ function buildNodeTreeImages(
       // Preview: the whole tree, flat, below the sprite band (no player here).
       images.push(
         scene.add
-          .image(x, y, TREES_KEY, tree.variant)
+          .image(x, y, texture.key, texture.frame)
           .setOrigin(0.5, 0.5)
           .setDisplaySize(tree.displaySize, tree.displaySize)
           .setDepth(DEPTH.BG_DECOR + opts.depthBias),
@@ -547,26 +588,26 @@ function buildNodeTreeImages(
     // passes are slices of the *same* image. Extend each crop slightly past the
     // seam so both layers redraw the same trunk band — hides the hard edge after
     // scaling (selection rings, collision debug, etc. straddle this line).
-    const seam = TREE_TRUNK_TOP_PX[tree.variant] ?? TREE_CELL_PX;
+    const seam = tree.trunkTopPx;
     const rootsCropY = Math.max(0, seam - TREE_SEAM_OVERLAP_PX);
-    const canopyCropH = Math.min(TREE_CELL_PX, seam + TREE_SEAM_OVERLAP_PX);
+    const canopyCropH = Math.min(tree.cellPx, seam + TREE_SEAM_OVERLAP_PX);
 
     // Pass 2: trunk/roots (bottom slice) under the player — they step on it.
     const roots = scene.add
-      .image(x, y, TREES_KEY, tree.variant)
+      .image(x, y, texture.key, texture.frame)
       .setOrigin(0.5, 0.5)
       .setDisplaySize(tree.displaySize, tree.displaySize)
       .setDepth(TREE_ROOT_DEPTH);
-    roots.setCrop(0, rootsCropY, TREE_CELL_PX, TREE_CELL_PX - rootsCropY);
+    roots.setCrop(0, rootsCropY, tree.cellPx, tree.cellPx - rootsCropY);
     images.push(roots);
 
     // Pass 1: canopy + upper trunk (top slice) over the player — walk-behind.
     const canopy = scene.add
-      .image(x, y, TREES_KEY, tree.variant)
+      .image(x, y, texture.key, texture.frame)
       .setOrigin(0.5, 0.5)
       .setDisplaySize(tree.displaySize, tree.displaySize)
       .setDepth(DEPTH.SPRITE + sceneDepthY(tree.baseY));
-    canopy.setCrop(0, 0, TREE_CELL_PX, canopyCropH);
+    canopy.setCrop(0, 0, tree.cellPx, canopyCropH);
     images.push(canopy);
   }
   return images;

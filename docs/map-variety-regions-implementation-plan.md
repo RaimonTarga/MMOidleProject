@@ -25,7 +25,7 @@ Replace the 11×11 concentric ring map with one larger, stitched, organic world:
 - required Swarming and eligible Elite Ground coverage assigned as overlays;
 - one modifier-free dungeon per active biome-tier;
 - Clearing as the T1 respawn anchor, retaining its tutorial combat;
-- one empty sanctuary in each of T2, T3, and T4;
+- one combat-empty sanctuary with a passive-reset altar in each of T2, T3, and T4;
 - a substantially redesigned pan/zoom map and dynamically sized ops map;
 - append-only support for T5–T8 without authoring placeholder late-tier nodes now.
 
@@ -80,13 +80,14 @@ Hard-banned families and density combinations remain those in
 
 - T1 has no dedicated sanctuary.
 - Clearing remains a combat-capable T0 tutorial node and acts as T1's respawn anchor.
-- T2, T3, and T4 each have one true empty sanctuary.
+- T2, T3, and T4 each have one combat-empty sanctuary with the Clearing's passive-reset altar.
 - Dying in a region respawns at that region's configured anchor.
 - Sanctuary behavior is not an unlock/checkpoint system; the region definition directly owns
   its anchor.
 - Sanctuary nodes do not spawn monsters, grant progression, carry modifiers, count toward
   coverage, or act as dungeons.
-- Towns, NPCs, fast travel, vendors, and other sanctuary services remain out of scope.
+- Towns, NPCs, fast travel, vendors, and other sanctuary services remain out of scope; the
+  shared passive-reset altar is the sanctuary's sole service.
 
 ### 1.5 Migration and future tiers
 
@@ -870,7 +871,7 @@ validated at handoff with the full repository checks listed below.
 - [x] Required Swarming and eligible Elite Ground coverage passes validation.
 - [x] Exactly one modifier-free dungeon exists per active biome-tier.
 - [x] Clearing remains the Tiny Wisp tutorial and is T1's respawn anchor.
-- [x] T2–T4 each have one empty sanctuary and regional respawn works.
+- [x] T2–T4 each have one combat-empty sanctuary, a passive-reset altar, and regional respawn.
 - [x] Existing characters migrate to Clearing while non-node progression survives.
 - [x] All coordinate parsing from node ids is removed from runtime map logic.
 - [x] Paths, transitions, neighbor rendering, auto-traverse, and party follow use shared sparse

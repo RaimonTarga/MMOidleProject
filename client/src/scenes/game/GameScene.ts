@@ -50,7 +50,7 @@ export class GameScene extends Phaser.Scene {
   dungeonHazards: Map<string, Phaser.GameObjects.Graphics> = new Map();
   /** Telegraphed combat circles (slam wind-ups), keyed by server zone id. */
   groundZones: Map<string, GroundZoneSprite> = new Map();
-  /** Scattered forest trees in the active node, depth-sorted for walk-behind. */
+  /** Biome trees in the active node, depth-sorted for walk-behind. */
   nodeTrees: Phaser.GameObjects.Image[] = [];
   debugGraphics!: Phaser.GameObjects.Graphics;
   /** Tactical mode: range rings + entity hitbox squares. */
@@ -62,11 +62,9 @@ export class GameScene extends Phaser.Scene {
   flashCameraHoldTargetId: string | null = null;
   /** Current opacity of the void-flood mist post-FX (0–1, eased by fade). */
   mistIntensity = 0;
-  /** Eased strength (0–1) of the rune altar glow while the player stands on it. */
+  /** Eased strength (0–1) of the current altar glow while the player stands on it. */
   altarGlowStrength = 0;
-  /** Eased glow color (0–255 RGB) tracking the altar arc the player stands in. */
-  altarGlowRgb: [number, number, number] = [255, 255, 255];
-  /** Active rune altar interaction prompt (thought bubble above own head). */
+  /** Active altar interaction prompt (thought bubble above own head). */
   altarPrompt: AltarPromptHandle | null = null;
 
   constructor() {

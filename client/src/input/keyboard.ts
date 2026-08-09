@@ -13,13 +13,15 @@ import {
 import {
   deathOverlayAtom,
   debugPanelOpenAtom,
+  dungeonGauntletAtom,
   flashEmoteWheel,
   type EmoteWheelDirection,
 } from '../hud/atoms';
 import { emoteForWheelDirection, NODE_BIOMES } from '@mmo-idle/shared';
 import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
-import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
+import { canActivateDungeonAltar } from '../scenes/game/dungeonAltar';
+import { isAtRuneAltar } from '../scenes/game/runeAltar';
 import { cycleGroundBakeoff } from '../render/wangGround';
 import { paintActiveNode } from '../scenes/game/overlays';
 import { rebuildNeighborLayer } from '../render/neighborScenes';
@@ -166,13 +168,17 @@ export function attachKeyboard(scene: GameScene): () => void {
       return;
     }
 
-    // Enter: trigger the rune altar interaction for the arc the player stands in.
+    // Enter: trigger the interaction advertised by the current altar prompt.
     if (event.code === 'Enter' || event.code === 'NumpadEnter') {
       if (dead) return;
-      const arc = getAltarArc(scene);
-      if (arc && ALTAR_ARC_CONFIG[arc].action === 'resetClass') {
+      if (isAtRuneAltar(scene)) {
         event.preventDefault();
         hudBus.requestResetClass();
+      } else if (
+        canActivateDungeonAltar(scene, store.get(dungeonGauntletAtom))
+      ) {
+        event.preventDefault();
+        hudBus.requestActivateDungeonAltar();
       }
       return;
     }

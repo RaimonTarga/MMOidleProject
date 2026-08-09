@@ -1,7 +1,11 @@
 import { GAME_CONFIG } from "../config/gameConfig";
 import type { HitboxRect } from "../hitbox/types";
+import { generateJungleNodeTrees } from "./jungleTrees";
 import { NODE_BIOMES } from "./nodeBiomes";
 import type { NodeFeatureShape } from "./nodeFeatures";
+import { generatePlainsNodeTrees } from "./plainsTrees";
+import { generateSwampNodeTrees } from "./swampTrees";
+import { generateTundraNodeTrees, generateWastelandNodeTrees } from "./deadTrees";
 
 // ─── Scattered forest trees ───────────────────────────────────────────────────
 //
@@ -26,6 +30,18 @@ export const TREE_CELL_PX = 1024;
 
 /** Base on-screen size (node px) of a tree cell before per-tree size jitter. */
 export const TREE_DISPLAY_BASE = 480;
+
+export type TreeArtSet =
+  | "forest"
+  | "jungle"
+  | "plains"
+  | "swamp"
+  | "tundra"
+  | "wasteland"
+  | "cave-rock"
+  | "desert-rock"
+  | "volcanic-rock"
+  | "trench-rock";
 
 /**
  * Baked trunk hitbox rects per variant, center-relative to the cell, in cell px.
@@ -138,8 +154,13 @@ export const TREE_TRUNK_TOP_PX: readonly number[] = VARIANT_FEET.map((foot) =>
 
 export interface TreeInstance {
   id: string;
+  artSet: TreeArtSet;
   /** Sheet cell index (0–3). */
   variant: number;
+  /** Native square image/sheet-cell size used by client crop calculations. */
+  cellPx: number;
+  /** Source-image row where the walk-behind canopy pass meets the root pass. */
+  trunkTopPx: number;
   /** Sprite (cell) center in node-local world px. */
   spriteX: number;
   spriteY: number;
@@ -205,7 +226,7 @@ function treesForNode(nodeId: string): { target: number; minSeparation: number }
 
 const treeCache = new Map<string, TreeInstance[]>();
 
-function generateNodeTrees(nodeId: string): TreeInstance[] {
+function generateForestNodeTrees(nodeId: string): TreeInstance[] {
   const { target: treesPerNode, minSeparation } = treesForNode(nodeId);
   const rng = mulberry32(hashString(`${nodeId}:trees`));
   const W = GAME_CONFIG.NODE_WIDTH;
@@ -254,7 +275,10 @@ function generateNodeTrees(nodeId: string): TreeInstance[] {
     anchors.push({ x: footX, y: footY });
     trees.push({
       id: `${nodeId}:tree:${trees.length}`,
+      artSet: "forest",
       variant,
+      cellPx: TREE_CELL_PX,
+      trunkTopPx: TREE_TRUNK_TOP_PX[variant] ?? TREE_CELL_PX,
       spriteX,
       spriteY,
       displaySize,
@@ -304,14 +328,26 @@ function treeIntersectsDungeonCenterClearing(
   });
 }
 
-/** Deterministic scattered trees for a node ('' for non-forest nodes). */
+/** Deterministic biome-specific trees for a node. */
 export function getNodeTrees(nodeId: string): TreeInstance[] {
   const cached = treeCache.get(nodeId);
   if (cached) return cached;
 
   const biome = NODE_BIOMES[nodeId];
-  const trees =
-    biome?.biomeGroup === TREE_BIOME_GROUP ? generateNodeTrees(nodeId) : [];
+  let trees: TreeInstance[] = [];
+  if (biome?.biomeGroup === TREE_BIOME_GROUP) {
+    trees = generateForestNodeTrees(nodeId);
+  } else if (biome?.biomeGroup === "plains") {
+    trees = generatePlainsNodeTrees(nodeId);
+  } else if (biome?.biomeGroup === "jungle") {
+    trees = generateJungleNodeTrees(nodeId);
+  } else if (biome?.biomeGroup === "swamp") {
+    trees = generateSwampNodeTrees(nodeId);
+  } else if (biome?.biomeGroup === "tundra") {
+    trees = generateTundraNodeTrees(nodeId);
+  } else if (biome?.biomeGroup === "graveyard") {
+    trees = generateWastelandNodeTrees(nodeId);
+  }
   treeCache.set(nodeId, trees);
   return trees;
 }

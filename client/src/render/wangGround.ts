@@ -87,6 +87,14 @@ export const WANG_GROUND: Partial<Record<string, WangGroundConfig>> = {
     targetCell: 64,
     edgeJitter: 0.8,
   },
+  sanctuary: {
+    sheets: {
+      paving: { key: 'clearing_paving_wang', file: '/assets/environment/clearing/grass-paving-wang.png' },
+      dirt: { key: 'clearing_dirt_wang', file: '/assets/environment/clearing/grass-dirt-wang.png' },
+    },
+    targetCell: 64,
+    edgeJitter: 0.8,
+  },
   forest: {
     sheets: {
       'light-undergrowth': { key: 'forest_light_undergrowth_wang', file: '/assets/environment/forest/floor-light-undergrowth-wang.png' },

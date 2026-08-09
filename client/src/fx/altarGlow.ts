@@ -1,23 +1,38 @@
 import Phaser from "phaser";
 import { RUNE_ALTAR_FEATURE_ID } from "@mmo-idle/shared";
-import { ALTAR_ARC_CONFIG, getAltarArc } from "../scenes/game/runeAltar";
 import type { GameScene } from "../scenes/game/GameScene";
+import { isAtDungeonAltar } from "../scenes/game/dungeonAltar";
+import { ALTAR_GLOW_RGB, isAtRuneAltar } from "../scenes/game/runeAltar";
 
 const GLOW_OUTER_MAX = 4;
 const GLOW_INNER = 0;
 // Full strength fade-in / fade-out time in seconds.
 const FADE_SECONDS = 0.5;
-// How fast the glow color crossfades when moving between arcs.
-const COLOR_FADE_SECONDS = 0.35;
 
 const GLOW_DATA_KEY = "altarGlowFx";
+const DUNGEON_ALTAR_FEATURE_ID = "dungeon_altar";
 
 function findAltarImage(
   scene: GameScene,
 ): Phaser.GameObjects.Image | undefined {
   return scene.nodeDecor.find(
-    (img) => img.getData("featureId") === RUNE_ALTAR_FEATURE_ID,
+    (img) => {
+      const featureId = img.getData("featureId");
+      return (
+        featureId === RUNE_ALTAR_FEATURE_ID ||
+        featureId === DUNGEON_ALTAR_FEATURE_ID
+      );
+    },
   );
+}
+
+function isAtCurrentAltar(
+  scene: GameScene,
+  img: Phaser.GameObjects.Image,
+): boolean {
+  return img.getData("featureId") === DUNGEON_ALTAR_FEATURE_ID
+    ? isAtDungeonAltar(scene)
+    : isAtRuneAltar(scene);
 }
 
 function approach(current: number, target: number, step: number): number {
@@ -35,10 +50,10 @@ function packRgb(rgb: [number, number, number]): number {
 }
 
 /**
- * Client-local post-processing: glow the rune altar while the local player
- * stands on it, tinted to the arc (pillar) they're standing in. Uses Phaser's
- * per-object preFX glow (WebGL only — no-op under Canvas) and eases both
- * strength and color so stepping on/off and crossing arcs stay smooth.
+ * Client-local post-processing: glow the current sanctuary or dungeon altar
+ * while the local player stands inside its interaction area. Uses Phaser's
+ * per-object preFX glow (WebGL only — no-op under Canvas) and eases the strength
+ * so stepping on/off stays smooth.
  */
 export function updateAltarGlow(scene: GameScene, dt: number): void {
   const img = findAltarImage(scene);
@@ -48,33 +63,14 @@ export function updateAltarGlow(scene: GameScene, dt: number): void {
     return;
   }
 
-  const arc = getAltarArc(scene);
-  const wasGlowing = scene.altarGlowStrength > 0.001;
+  const active = isAtCurrentAltar(scene, img);
 
   // Ramp overall strength toward on/off.
   scene.altarGlowStrength = approach(
     scene.altarGlowStrength,
-    arc ? 1 : 0,
+    active ? 1 : 0,
     dt / FADE_SECONDS,
   );
-
-  // Track the arc color. Snap on first contact (avoids a white flash from the
-  // idle color), otherwise crossfade when switching arcs while staying on.
-  if (arc) {
-    const targetRgb = ALTAR_ARC_CONFIG[arc].rgb;
-    if (!wasGlowing) {
-      scene.altarGlowRgb = [...targetRgb];
-    } else {
-      const colorStep = (dt / COLOR_FADE_SECONDS) * 255;
-      for (let i = 0; i < 3; i++) {
-        scene.altarGlowRgb[i] = approach(
-          scene.altarGlowRgb[i],
-          targetRgb[i],
-          colorStep,
-        );
-      }
-    }
-  }
 
   let glow = img.getData(GLOW_DATA_KEY) as Phaser.FX.Glow | undefined;
 
@@ -88,9 +84,9 @@ export function updateAltarGlow(scene: GameScene, dt: number): void {
   }
 
   if (!glow) {
-    glow = img.preFX.addGlow(packRgb(scene.altarGlowRgb), 0, GLOW_INNER);
+    glow = img.preFX.addGlow(packRgb(ALTAR_GLOW_RGB), 0, GLOW_INNER);
     img.setData(GLOW_DATA_KEY, glow);
   }
-  glow.color = packRgb(scene.altarGlowRgb);
+  glow.color = packRgb(ALTAR_GLOW_RGB);
   glow.outerStrength = scene.altarGlowStrength * GLOW_OUTER_MAX;
 }
