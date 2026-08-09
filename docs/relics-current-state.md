@@ -1,7 +1,7 @@
 # Relics — Current State
 
 **Implemented:** 2026-08-04  
-**Living design:** `docs/relics-design.md`  
+**Living design:** `design_docs/relics-design.md`  
 **Historical build plan:** `docs/archive/relics-implementation-plan.md`
 
 ## Shipped contract

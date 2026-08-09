@@ -1,3 +1,9 @@
+> **ARCHIVED (2026-08-09) — HISTORICAL SNAPSHOT (written 2026-06-13, T2-focused).** Superseded by the
+> generated balance packets in `reports/` (`pnpm dps:report`, `pnpm ehp:report`, `pnpm mob:report`)
+> alongside `design_docs/player-power-curve.md` and `design_docs/design-bible.md`. Formulas, class
+> rosters, items and monsters have all moved since (cores rework, relics, T4 content). Do not paste
+> into a balance session as current.
+
 # MMO Idle — Balance Reference Document
 
 This document is a complete authoritative snapshot of all combat formulas, classes,

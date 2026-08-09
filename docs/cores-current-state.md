@@ -3,7 +3,7 @@
 Living truth for the **Core** equipment slot. Design source is
 `design_docs/CORE_DESIGN_PHILOSOPHY.md` (the locked foundation) and
 `design_docs/CORE_CAST_REVIEW_DRAFT.md` (the roster). The rework that produced this
-state is `docs/cores-rework-implementation-plan.md`.
+state is `docs/archive/cores-rework-implementation-plan.md`.
 
 **All numbers are PLACEHOLDERS** inside the design doc's bands — the balance pass is
 the user's, edited directly in the recipe files.

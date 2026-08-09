@@ -504,7 +504,7 @@ export const GUARD_KEYS = [
 // `dealsDamage.attack`, which `core.attack-mult` already multiplies — so a DoT
 // potency core is a second multiplier on the same number and lands as either a trap
 // or a mandatory pick. See "Why there is no DoT core" in
-// docs/cores-rework-implementation-plan.md before proposing one.
+// docs/archive/cores-rework-implementation-plan.md before proposing one.
 export const CORE_KEYS = [
   'core.attack-mult',
   'core.maxhp-mult',

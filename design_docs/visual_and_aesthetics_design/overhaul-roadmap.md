@@ -182,7 +182,7 @@ Last, because item/UI iconography depends on the settled world style.
 
 ## Model Plan Per Session (token economy)
 
-Extends the prompt-delegation table in `docs/pixellab-pipeline-plan.md` to
+Extends the prompt-delegation table in `docs/archive/pixellab-pipeline-plan.md` to
 whole sessions. Rule of thumb: Fable only for one-off taste/architecture
 decisions, Opus for novel code wiring, Sonnet for proven repetitive loops.
 

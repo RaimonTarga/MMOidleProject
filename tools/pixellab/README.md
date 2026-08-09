@@ -1,6 +1,6 @@
 # PixelLab Art Pipeline
 
-Tooling for the full art overhaul (plan: `docs/pixellab-pipeline-plan.md`).
+Tooling for the full art overhaul (plan: `docs/archive/pixellab-pipeline-plan.md`).
 Generates pixel art via the PixelLab API, curates it in a local gallery, and
 compiles the committed `art/src/` source tree into the shipped client assets.
 

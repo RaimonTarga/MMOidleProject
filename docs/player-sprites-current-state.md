@@ -2,9 +2,9 @@
 
 Decision landed 2026-07-12. This is the living truth for how player character
 visuals are produced and rendered. Design rationale/constraints live in
-`docs/visual_and_aesthetics_design/player-visual-identity-bible.md`; the
+`design_docs/visual_and_aesthetics_design/player-visual-identity-bible.md`; the
 superseded bake-time composite idea is preserved in
-`docs/pixellab-pipeline-plan.md` (its "Player composite" section carries a
+`docs/archive/pixellab-pipeline-plan.md` (its "Player composite" section carries a
 superseded note pointing here).
 
 ## The decision

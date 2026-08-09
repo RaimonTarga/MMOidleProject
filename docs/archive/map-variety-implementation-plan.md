@@ -1,8 +1,12 @@
+> **ARCHIVED (2026-08-09) — Stage A implemented 2026-07-24 (`feat/map-variety-stage-a`).**
+> Living design authority: `docs/map-variety-plan.md`. Stage B is archived alongside this doc at
+> `docs/archive/map-variety-regions-implementation-plan.md`. Kept as the executed Stage A record.
+
 # Map Variety — Implementation Plan (Stage A)
 
 **Status: Stage A EXECUTED (2026-07-24) on `feat/map-variety-stage-a` — corrections below
 applied; Stage B is planned separately in
-`docs/map-variety-regions-implementation-plan.md`.** Design authority is the current living
+`docs/archive/map-variety-regions-implementation-plan.md`.** Design authority is the current living
 `docs/map-variety-plan.md` — if this plan and that doc disagree, the
 design doc wins; if either disagrees with code reality, read the code and adapt while
 preserving design intent. This plan was written against a fresh read of the code; all
@@ -384,7 +388,7 @@ beyond legibility is out of scope — the user will restyle.)
 ## Stage B — regions
 
 The former outline is superseded by the dedicated executable plan in
-`docs/map-variety-regions-implementation-plan.md`. Stage B now uses one global sparse stitched
+`docs/archive/map-variety-regions-implementation-plan.md`. Stage B now uses one global sparse stitched
 grid, exhaustive allowed biome × pace coverage plus native duplicates, curated density
 coverage, multiple organic region frontiers, Clearing as T1's respawn anchor, true sanctuaries
 at T2–T4, and dynamic pan/zoom player and ops maps. Do not implement Stage B from this Stage A

@@ -1,3 +1,9 @@
+> **ARCHIVED (2026-08-09) — tooling shipped 2026-07-10.** Live usage docs: `tools/pixellab/README.md`.
+> The art overhaul itself is planned and tracked in
+> `design_docs/visual_and_aesthetics_design/overhaul-roadmap.md`; player sprites in
+> `docs/player-sprites-current-state.md`. Kept for the original pipeline design and the superseded
+> bake-time composite rationale (dropped 2026-07-12).
+
 # PixelLab Asset Pipeline Plan
 
 Full-art-overhaul pipeline: generate every game sprite, icon, UI element,

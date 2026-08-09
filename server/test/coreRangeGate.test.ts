@@ -8,7 +8,7 @@
 // as cores have existed. Nothing covered it. Now something does.
 //
 // The eligibility axis is now melee | ranged | unrestricted (the close/mid/far tags
-// were collapsed, see docs/cores-rework-implementation-plan.md Phase A), but the
+// were collapsed, see docs/archive/cores-rework-implementation-plan.md Phase A), but the
 // underlying trap is unchanged: the gate still reads a full skill id by suffix.
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/coreRangeGate.test.ts

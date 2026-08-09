@@ -1,7 +1,7 @@
 # Design Brief D2 — Relics
 
 > **FULFILLED (2026-08-04):** settled decisions live in
-> `docs/relics-design.md`; the shipped system is recorded in
+> `design_docs/relics-design.md`; the shipped system is recorded in
 > `docs/relics-current-state.md`. The historical build sequence is archived at
 > `docs/archive/relics-implementation-plan.md`.
 
@@ -12,7 +12,7 @@ of this project.
 **Read D3 (tiers 5–6) first if both are being run** — this brief needs to know
 which tiers relics must reach.
 
-> **Send `docs/briefs/d2-relics-seam-audit.md` along with this brief.** It is a
+> **Send `docs/archive/briefs/d2-relics-seam-audit.md` along with this brief.** It is a
 > code-level audit of exactly which mechanic hooks already exist, verified
 > against the source. Its **passive-key inventory** (§"The passive-key inventory")
 > is the single most useful input to the catalogue you are being asked to write:

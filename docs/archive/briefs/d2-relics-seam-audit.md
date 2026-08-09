@@ -1,6 +1,10 @@
+> **ARCHIVED (2026-08-09) — fulfilled.** Relics shipped 2026-08-04; live state in
+> `docs/relics-current-state.md`, design in `design_docs/relics-design.md`. Kept for the
+> seam-by-seam architecture audit, whose `file:line` citations are from 2026-08-02 and have drifted.
+
 # D2 Relics — Seam Audit (2026-08-02)
 
-Companion to `docs/briefs/d2-relics.md`. Read-only audit of whether the six
+Companion to `docs/archive/briefs/d2-relics.md`. Read-only audit of whether the six
 archetype systems expose clean, writable seams for mechanic-level relics.
 Every claim below is cited `file:line` against the current tree
 (branch `feat/ui-info-layer`, commit 3267209).

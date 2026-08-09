@@ -1,9 +1,14 @@
+> **ARCHIVED (2026-08-09) — Stage B implemented 2026-07-24.** Living design authority:
+> `docs/map-variety-plan.md`; the runtime map review aid is `docs/map-variety-regions-atlas.md`
+> (canonical coordinates live in `shared/src/world/map/`). Kept for the delivered design and
+> acceptance criteria.
+
 # Map Variety Stage B — Stitched Regions Implementation Plan
 
 **Status: IMPLEMENTED (2026-07-24).**
 
 This is the executable plan for Stage B of the map-variety overhaul. Stage A is already
-implemented and recorded in `docs/map-variety-implementation-plan.md`. Design authority is
+implemented and recorded in `docs/archive/map-variety-implementation-plan.md`. Design authority is
 `docs/map-variety-plan.md` v4. If this plan and that design disagree, the design wins; if
 either disagrees with current code, preserve the locked design intent and adapt the plan.
 

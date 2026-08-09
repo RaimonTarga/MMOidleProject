@@ -149,7 +149,7 @@ successful result.
 - The review gallery was closed after recording the rejections.
 - `art/manifests/players.json` contains exactly the three rejected calibration
   entries; the other six Conduit T3 player entries do not exist yet.
-- `docs/biome-ecology-pass2-plan.md` is an unrelated untracked user file. Leave
+- `docs/archive/biome-ecology-pass2-plan.md` is an unrelated untracked user file. Leave
   it untouched.
 - Temporary logs may exist under `tmp/conduit-player-calibration/`; they are not
   source assets.

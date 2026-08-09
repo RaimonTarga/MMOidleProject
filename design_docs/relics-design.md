@@ -3,8 +3,8 @@
 **Status:** implemented; live behavior in `docs/relics-current-state.md`.  
 **Decided:** 2026-08-03.  
 **Historical implementation plan:** `docs/archive/relics-implementation-plan.md`.  
-**Design inputs:** `docs/briefs/d2-relics.md` and
-`docs/briefs/d2-relics-seam-audit.md`.
+**Design inputs:** `docs/archive/briefs/d2-relics.md` and
+`docs/archive/briefs/d2-relics-seam-audit.md`.
 
 ## Identity
 

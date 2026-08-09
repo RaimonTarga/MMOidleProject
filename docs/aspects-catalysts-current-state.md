@@ -46,7 +46,7 @@
 > by each item's own combat expression. **Player wallets were wiped** (migration
 > `0002_wipe_catalyst_wallets.sql`) and are hydrate-sanitized to family keys on load
 > (`playerRepo.ts`). All magnitudes/tags are PLACEHOLDER (user tunes). Design authority:
-> `docs/map-variety-plan.md`; plan: `docs/map-variety-implementation-plan.md`.
+> `docs/map-variety-plan.md`; plan: `docs/archive/map-variety-implementation-plan.md`.
 
 ## Catalysts (Step 2) — **nothing exists**
 

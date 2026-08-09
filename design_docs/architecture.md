@@ -415,7 +415,7 @@ Four of these (Abilities, Stances, Rites, Cores) are **loadout layers**: player-
 - **T1 rule (architectural, not a balance choice):** `isPreEncounterDungeon(def) = def.biomeTier === 1` — T1 dungeons are pre-encounter + boss only, no wave/kill-count gating beyond the boss itself. T2+ still use the older `guardianPhase` → wave path. Pre-encounter threats never gate the boss and grant only normal (not bonus) rewards for being left alive — an invariant enforced in code, worth knowing before touching gauntlet.ts.
 - **Extension point:** a new T1 boss exam is authored data — a `preEncounter` group (packs/dens/basins reusing the ecology primitives above) plus an `unclearedThreat` mode plus a `bossScript` built from existing phase actions (`summon`/`shield`/`enrage`/`chargedAttack`). The exam-specific "identity" (mark-and-pounce, rot pools, altar-orbit patrol) is expressed as data over existing primitives, not new engine code.
 - **Composition:** reuses `bossScript` wholesale for the boss half, ecology primitives for the pre-encounter half, and the ordinary combat pipeline for marks/knockback/interaction. Only the gauntlet state machine itself (activation, reset, the T1 pre-encounter rule) is genuinely new.
-- **Note:** per `docs/codebase-cleanup-plan.md` Task 3, `runPlayerAttack` and `gauntlet.ts`'s data-driven refactor are both explicitly deferred — read this section for how gauntlets fit today, but don't take it as a signal the file is due for a rewrite.
+- **Note:** per `docs/archive/codebase-cleanup-plan.md` Task 3, `runPlayerAttack` and `gauntlet.ts`'s data-driven refactor are both explicitly deferred — read this section for how gauntlets fit today, but don't take it as a signal the file is due for a rewrite.
 
 ### Mobility boots
 

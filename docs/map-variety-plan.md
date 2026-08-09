@@ -5,9 +5,10 @@ v2 locked its broad direction; v3 incorporated the second game-design review and
 v4 locks the post-Stage-A world-layout pass: exhaustive allowed biome × pace coverage, native
 duplicates, curated density overlays, a single stitched sparse world, organic multi-edge
 frontiers, void negative space, Clearing as the T1 respawn anchor, and append-only T5–T8
-capacity. See §5 for the decision log. **Stage A implementation plan:
-`docs/map-variety-implementation-plan.md`. Stage B implementation plan:
-`docs/map-variety-regions-implementation-plan.md`. Stage A (node modifiers + catalyst re-key on
+capacity. See §5 for the decision log. **Both implementation plans are archived (shipped): Stage A at
+`docs/archive/map-variety-implementation-plan.md`, Stage B at
+`docs/archive/map-variety-regions-implementation-plan.md`. This doc is the living design
+authority for the map. Stage A (node modifiers + catalyst re-key on
 the existing 11×11 grid) SHIPPED 2026-07-24 (`feat/map-variety-stage-a`); Stage B shipped
 2026-07-24 and was refined into the four-tier spiral during playtesting.** All balance numbers
 remain PLACEHOLDER (user-owned tuning).
@@ -445,8 +446,8 @@ For implementers/reviewers, the locked rules in one place:
 - **Final region names and landmark identities** — Stage B ships editable placeholders; the
   user replaces them during playtesting. Exact node coordinates are a Stage B authoring task.
 - **Sanctuary beyond respawn** — town, fast travel, NPCs: parked.
-- **Implementation plans** — `docs/map-variety-implementation-plan.md` is the executed Stage A
-  record. `docs/map-variety-regions-implementation-plan.md` is the dedicated Stage B plan.
+- **Implementation plans** — `docs/archive/map-variety-implementation-plan.md` is the executed Stage A
+  record. `docs/archive/map-variety-regions-implementation-plan.md` is the dedicated Stage B plan.
   **Stage A and Stage B SHIPPED 2026-07-24.**
 
 ## 7. Implementation-planning decisions (pre-made, 2026-07-24)

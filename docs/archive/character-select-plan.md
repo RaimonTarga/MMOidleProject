@@ -1,7 +1,7 @@
 # Character Select & Discord Login — Implementation Plan
 
 Status: COMPLETE AND ARCHIVED 2026-08-04. Phases 1–5 implemented. The optional
-spectator landing page was extracted to `docs/spectator-landing-plan.md`.
+spectator landing page was extracted to `docs/archive/spectator-landing-plan.md`.
 Lifecycle: implement → fold anything still true into a current-state doc → archive this file.
 
 Implementation note: migration numbering advanced while this plan was being written,

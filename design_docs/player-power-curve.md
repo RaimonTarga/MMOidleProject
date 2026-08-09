@@ -7,8 +7,9 @@ but numerical balance is an ongoing pass — treat §4–§5 figures as targets 
 right-order-of-magnitude until a sim confirms stacking for a given tier.
 When numbers shift, re-run `pnpm mob:report` and `pnpm ehp:report` and update §3.
 
-This is the third pinned doc. Paste it alongside `design-bible.md` and
-`content-roster-t0-t4.md` at the top of a session. Its job: turn monster tuning
+This is the third pinned doc. Paste it alongside `design-bible.md` and the
+generated monster roster packets (`reports/mob-llm-packet-t*.md`, produced by
+`pnpm mob:report`) at the top of a session. Its job: turn monster tuning
 into a **lookup** ("does this threat sit in the right band vs the player?") instead
 of a re-derivation.
 

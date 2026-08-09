@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-08-09) — implemented 2026-08-04; live state in `docs/conduit-current-state.md`.**
+> Design source: `design_docs/summoner-overhaul-design-source.md`. The open follow-ups (placeholder
+> balance, multiplayer entity/network profiling, production feature-gate approval) are tracked in
+> `docs/next-playtest-implementation-plan.md`, not here.
+
 # Summoner Overhaul Implementation Plan
 
 Status: initial implementation complete on 2026-08-04; placeholder balance and

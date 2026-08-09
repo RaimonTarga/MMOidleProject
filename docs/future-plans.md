@@ -11,7 +11,7 @@ Status: current as of 2026-08-08.
 
 ## 1. Composite (paper-doll) character sprites
 
-**PROMOTED (2026-07-10):** absorbed into `docs/pixellab-pipeline-plan.md`
+**PROMOTED (2026-07-10):** absorbed into `docs/archive/pixellab-pipeline-plan.md`
 (full-art-overhaul pipeline; this entry's bake-time design is carried over
 unchanged as the "Player composite" category and `art:bake-players` step).
 
@@ -85,7 +85,7 @@ or every panel gets restyled twice.**
   scaling + bitmap-style pixel font.
 - **Icons:** Pixellab batch-generation of the icon set in one consistent style
   (replaces the current generic look faster than any CSS work). *Icon/UI-asset
-  generation is now covered by `docs/pixellab-pipeline-plan.md`; this entry
+  generation is now covered by `docs/archive/pixellab-pipeline-plan.md`; this entry
   keeps the primitives/theming work.*
 - **Additional tier skins are art-only:** recolored border strip + token values.
   The palette-remap tooling from feature 1 can generate tier variants of UI
@@ -105,7 +105,7 @@ primitive design + art direction are not.
 ## 3. Relics
 
 **IMPLEMENTED (2026-08-04):** the settled philosophy and evolution direction
-remain in `docs/relics-design.md`; shipped behavior and the eight-item base cast
+remain in `design_docs/relics-design.md`; shipped behavior and the eight-item base cast
 live in `docs/relics-current-state.md`. The completed build plan is archived at
 `docs/archive/relics-implementation-plan.md`.
 

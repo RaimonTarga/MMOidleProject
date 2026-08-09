@@ -3,7 +3,7 @@
 # Conduit Flavor Pass — Plan
 
 Naming and art pass for the Summoner/Conduit. The mechanical overhaul shipped
-already (`docs/summoner-overhaul-plan.md`); the design source deliberately
+already (`docs/archive/summoner-overhaul-plan.md`); the design source deliberately
 excluded "final names, visuals, or sprite prompts" (§ line 65), and this is that
 pass.
 

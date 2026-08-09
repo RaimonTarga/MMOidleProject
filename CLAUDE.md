@@ -264,6 +264,8 @@ Player client-to-server highlights:
 
 ## Docs
 
+- `docs/README.md` is the index: every living doc, what it is for, and the
+  archive lifecycle. Update it when you add, move, or archive a doc.
 - Living design/architecture docs live flat in `docs/` and `design_docs/`. The
   `docs/archive/` and `design_docs/archive/` subdirs are HISTORICAL — implemented
   plans and superseded brainstorms. Do not trust `archive/` as current; every
@@ -275,6 +277,9 @@ Player client-to-server highlights:
 - When a plan ships: fold anything still true into the `*-current-state.md`, then
   git-move the plan into `archive/` with a one-line "ARCHIVED — implemented; live
   state in X" header. Don't leave shipped plans flat next to living docs.
+- Design authority (what a system *should* be) lives in `design_docs/`; state and
+  implementation plans live in `docs/`. A shipped system keeps its design doc flat
+  in `design_docs/` and archives its implementation plan.
 - New feature ideas start in `docs/future-plans.md`, not a fresh top-level doc.
 - If code and any doc disagree, the code wins — fix the doc.
 

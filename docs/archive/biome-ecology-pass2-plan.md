@@ -1,3 +1,7 @@
+> **ARCHIVED (2026-08-09) — implemented; live state in `docs/biome-ecology-current-state.md` (§§8–11, 18–20).**
+> All six sessions shipped 2026-08-08/09 on `feat/biome-ecology-pass2`. Kept for the session-by-session
+> rationale and the record of which numbers are placeholders.
+
 # Biome Ecology Pass 2 — Implementation Plan
 
 **Status:** ✅ COMPLETE — all six sessions shipped (1–3 on 2026-08-08, 4–6 on 2026-08-09).

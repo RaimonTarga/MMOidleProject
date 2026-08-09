@@ -1,3 +1,7 @@
+> **ARCHIVED (2026-08-09) — fulfilled.** The Conduit/Summoner overhaul shipped 2026-08-04; live state in
+> `docs/conduit-current-state.md`. The answers this brief produced were folded into
+> `design_docs/summoner-overhaul-design-source.md`.
+
 # Design Brief D4 — The Summoner Rework
 
 **For:** an external design session. Self-contained — assume no prior knowledge

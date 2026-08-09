@@ -3,8 +3,8 @@
 # Relic System Implementation Plan
 
 **Status:** implemented and archived.  
-**Design authority:** `docs/relics-design.md`.  
-**Source audit:** `docs/briefs/d2-relics-seam-audit.md` (verified 2026-08-02).
+**Design authority:** `design_docs/relics-design.md`.  
+**Source audit:** `docs/archive/briefs/d2-relics-seam-audit.md` (verified 2026-08-02).
 
 ## Outcome
 
@@ -407,7 +407,7 @@ When implementation is complete:
 1. create `docs/relics-current-state.md` as the living source-backed truth;
 2. archive this plan under `docs/archive/` with an implemented header;
 3. update `docs/system-rework-status.md` and `docs/next-playtest-roadmap.md`;
-4. mark `docs/briefs/d2-relics.md` fulfilled and point it to the current-state
+4. mark `docs/archive/briefs/d2-relics.md` fulfilled and point it to the current-state
    document;
-5. keep `docs/relics-design.md` as design intent unless later decisions supersede
+5. keep `design_docs/relics-design.md` as design intent unless later decisions supersede
    it.

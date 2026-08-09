@@ -1,7 +1,7 @@
 # Biome Identity / Combat Ecology — Current State (audited 2026-08-08)
 
 **Companion to:** `docs/archive/biome-ecology-plan.md` (the Step 12 program plan) and
-`docs/biome-ecology-pass2-plan.md` (the in-flight Pass 2 program).
+`docs/archive/biome-ecology-pass2-plan.md` (the completed Pass 2 program).
 **Roadmap step:** 12. **Status:** ✅ Step 12 primitives shipped; Pass 2 complete (all six
 sessions, 2026-08-08/09) — see §§9–11 and 18–20.
 
@@ -259,7 +259,7 @@ jungle node and dungeon.
 Everything the remaining Pass 2 biomes need beyond sections 9–12 (terrain, ranged/kite,
 charge, DoT, boss scripts, gauntlet) **already exists** and is authored, not engineered. The
 remaining primitives — player damage amplifiers (P3) and the ambient node ramp (P4) — are
-scoped in `docs/biome-ecology-pass2-plan.md`.
+scoped in `docs/archive/biome-ecology-pass2-plan.md`.
 
 ## 13. Swamp dead trees (Pass 2 art follow-up — SHIPPED)
 

@@ -1,3 +1,7 @@
+> **ARCHIVED (2026-08-09) — implemented 2026-08-03/04; live state in `docs/cores-current-state.md`.**
+> Design source: `design_docs/CORE_DESIGN_PHILOSOPHY.md` + `design_docs/CORE_CAST_REVIEW_DRAFT.md`
+> (T4 draft: `design_docs/CORE_T4_CAST.md`). Kept for rationale — do not treat as current.
+
 # Cores Rework — Implementation Plan
 
 **Design source:** `design_docs/CORE_DESIGN_PHILOSOPHY.md` (locked foundation) and

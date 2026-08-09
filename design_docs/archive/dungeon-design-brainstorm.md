@@ -4,7 +4,7 @@
 
 **Scope:** making dungeons fun and interactive within the axioms (deterministic,
 fully-auto, build-test, no terrain — a dungeon is a node). Supersedes §1 of
-`../design-development-suggestions.md`. Proposals, not canon.
+`design-development-suggestions.md`. Proposals, not canon.
 
 ---
 

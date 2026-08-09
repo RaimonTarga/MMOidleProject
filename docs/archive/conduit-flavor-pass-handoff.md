@@ -3,7 +3,7 @@
 # Conduit Flavor Pass — Handoff
 
 Written 2026-08-06 for a cold start in a new session. Assumes no memory of the
-work. Read this, then `docs/summoner-flavor-pass-plan.md` (the plan and the
+work. Read this, then `docs/archive/summoner-flavor-pass-plan.md` (the plan and the
 record of how decisions were reached) and `docs/conduit-current-state.md` (what
 the code does today).
 

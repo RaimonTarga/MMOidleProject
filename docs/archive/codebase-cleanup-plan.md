@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-08-09) — HISTORICAL.** All 7 tasks completed 2026-07-05/07. The living architecture
+> reference is `design_docs/architecture.md`; the doc lifecycle rules this plan established now live in
+> `CLAUDE.md`. Kept for the audit findings and the deliberately deferred work (Task 3: `runPlayerAttack`
+> and `gauntlet.ts`; Task 2: the move-only dead-code sweep).
+
 # Codebase Cleanup Plan (pre-polish runway)
 
 Source: architecture audit, 2026-07-05. Goal: a verified, trustworthy base before
@@ -425,7 +430,7 @@ added; PR lists every move and every unsure-skip.
   `dungeon-current-state-and-gauntlet-plan.md` (it *is* the living dungeon
   current-state — only the pure `dungeon-gauntlet-implementation-plan.md` was
   archived); every NEVER-archive doc in both dirs.
-- **Unsure → NOT moved (flagged per rules):** `design_docs/design-development-suggestions.md`
+- **Unsure → NOT moved (flagged per rules):** `design_docs/archive/design-development-suggestions.md`
   — reads as a June-2026 forward-looking idea brainstorm (companion to the archived
   design-audit), but its filename lacks `brainstorm` and it could be a live idea
   backlog like `future-plans.md`. Left in place; its refs to now-archived docs were
