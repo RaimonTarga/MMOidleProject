@@ -1,15 +1,12 @@
-import {
-  getDungeonGauntletDef,
-  type DungeonGauntletView,
-} from "@mmo-idle/shared";
+import { getDungeonDef, type DungeonView } from "@mmo-idle/shared";
 import { getOwnBase } from "../../render/interpolation";
 import type { GameScene } from "./GameScene";
 
-export const DUNGEON_ALTAR_LABEL = "Activate Trial";
+export const DUNGEON_ALTAR_LABEL = "Disturb the Altar";
 
 /** Whether the local player is inside the current dungeon altar's activation circle. */
 export function isAtDungeonAltar(scene: GameScene): boolean {
-  const altar = getDungeonGauntletDef(scene.state.ownNodeId)?.altar;
+  const altar = getDungeonDef(scene.state.ownNodeId)?.altar;
   const base = getOwnBase(scene.state);
   if (!altar || !base) return false;
   const dx = base.x - altar.x;
@@ -20,12 +17,12 @@ export function isAtDungeonAltar(scene: GameScene): boolean {
 /** Whether the local player can use the dungeon altar right now. */
 export function canActivateDungeonAltar(
   scene: GameScene,
-  gauntlet: DungeonGauntletView | null,
+  dungeon: DungeonView | null,
 ): boolean {
   return (
-    gauntlet?.nodeId === scene.state.ownNodeId &&
-    gauntlet.status === "idle" &&
-    gauntlet.canActivate &&
+    dungeon?.nodeId === scene.state.ownNodeId &&
+    dungeon.status === "idle" &&
+    dungeon.canActivate &&
     isAtDungeonAltar(scene)
   );
 }

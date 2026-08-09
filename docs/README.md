@@ -47,6 +47,7 @@ top-level doc.
 | Conduit (summoner) | [conduit-current-state.md](conduit-current-state.md) | [summoner-overhaul-design-source.md](../design_docs/summoner-overhaul-design-source.md) |
 | Cores | [cores-current-state.md](cores-current-state.md) | [CORE_DESIGN_PHILOSOPHY.md](../design_docs/CORE_DESIGN_PHILOSOPHY.md), [CORE_CAST_REVIEW_DRAFT.md](../design_docs/CORE_CAST_REVIEW_DRAFT.md) |
 | DoT systems | [dot-systems-current-state.md](dot-systems-current-state.md) | — |
+| Dungeons (guarded altar) | [dungeon-current-state.md](dungeon-current-state.md) | [dungeon-design-brainstorm.md](../design_docs/archive/dungeon-design-brainstorm.md) (historical) |
 | Gear evolution | [gear-evolution-current-state.md](gear-evolution-current-state.md) | — |
 | Global mastery + recipes | [global-mastery-current-state.md](global-mastery-current-state.md) | — |
 | Monster behavior | [monster-behavior-current-state.md](monster-behavior-current-state.md) | [boss-design.md](../design_docs/boss-design.md) |
@@ -67,7 +68,6 @@ handoffs: both systems have complete machinery and thin, placeholder content.
 | Doc | State |
 |---|---|
 | [abilities-evolution-implementation-plan.md](abilities-evolution-implementation-plan.md) | Wave 1 shipped 2026-07-24; Waves 2–3 (T3/T4 rosters) not started. |
-| [dungeon-current-state-and-gauntlet-plan.md](dungeon-current-state-and-gauntlet-plan.md) | Hybrid state + plan. Gauntlets and the T1 pre-encounter rule shipped; per-biome hook tuning and boss-exam authoring remain (rework Step 13). |
 | [ui-redesign-plan.md](ui-redesign-plan.md) | Phased desktop HUD redesign with review gates; Part III (apparatus wave) still ahead. |
 | [map-variety-plan.md](map-variety-plan.md) | Design authority for the world map. Both stages shipped; no separate current-state doc — this plus the code is the record. |
 | [biome-refactor-playtest.md](biome-refactor-playtest.md) | Open playtest notes and unanswered questions from the per-biome T1 dungeon pass. |

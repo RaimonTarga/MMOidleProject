@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { dungeonGauntletAtom, playerNodeIdAtom, playerPosAtom } from "./atoms";
+import { dungeonAtom, playerNodeIdAtom, playerPosAtom } from "./atoms";
 import { hudBus } from "../hudBus";
 import "./hud.css";
 
@@ -20,39 +20,35 @@ function awakeningLabel(ms: number | undefined): string {
 }
 
 export function DungeonAltarOverlay() {
-  const gauntlet = useAtomValue(dungeonGauntletAtom);
+  const dungeon = useAtomValue(dungeonAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const pos = useAtomValue(playerPosAtom);
 
-  if (!gauntlet || nodeId !== gauntlet.nodeId) return null;
+  if (!dungeon || nodeId !== dungeon.nodeId) return null;
 
   const near =
     !!pos &&
-    distanceSq(pos, gauntlet.altar) <=
-      gauntlet.altar.activationRadius * gauntlet.altar.activationRadius;
-  const canBegin = gauntlet.status === "idle" && near && gauntlet.canActivate;
+    distanceSq(pos, dungeon.altar) <=
+      dungeon.altar.activationRadius * dungeon.altar.activationRadius;
+  const canBegin = dungeon.status === "idle" && near && dungeon.canActivate;
 
   const buttonText = (() => {
-    if (gauntlet.status === "cooldown") return cooldownLabel(gauntlet.cooldownRemainingMs);
-    if (gauntlet.status === "bossAwakening") return awakeningLabel(gauntlet.bossAwakeningRemainingMs);
-    if (gauntlet.status === "boss") return "Boss Awakened";
-    if (gauntlet.status === "active") return "Trial in Progress";
-    return near ? "Activate Trial" : "Move Closer to Altar";
+    if (dungeon.status === "cooldown") return cooldownLabel(dungeon.cooldownRemainingMs);
+    if (dungeon.status === "bossAwakening") return awakeningLabel(dungeon.bossAwakeningRemainingMs);
+    if (dungeon.status === "boss") return "Boss Awakened";
+    return near ? "Disturb the Altar" : "Move Closer to Altar";
   })();
 
   const progressText = (() => {
-    if (gauntlet.status === "idle") {
-      if (gauntlet.preEncounterLabel) {
-        return `${gauntlet.guardianAlive}/${gauntlet.guardianTotal} ${gauntlet.preEncounterLabel} threats remain`;
-      }
-      return `${gauntlet.guardianAlive}/${gauntlet.guardianTotal} guardians remain`;
+    if (dungeon.status === "idle") {
+      return `${dungeon.guardLabel}: ${dungeon.guardianAlive}/${dungeon.guardianTotal} guardians remain`;
     }
-    if (gauntlet.status === "active") {
-      const label = gauntlet.phaseLabel ?? "Trial";
-      return `${label}: ${gauntlet.killsInPhase}/${gauntlet.requiredKillsForCurrentPhase} defeated`;
+    if (dungeon.status === "bossAwakening") {
+      return dungeon.guardianAlive > 0
+        ? `${dungeon.guardianAlive} guardians still stand`
+        : "The guard is broken";
     }
-    if (gauntlet.status === "bossAwakening") return "Recover before the boss awakens";
-    if (gauntlet.status === "boss") return "Boss awakened";
+    if (dungeon.status === "boss") return "Boss awakened";
     return "The altar is reforming";
   })();
 

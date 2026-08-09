@@ -34,7 +34,6 @@ const STATUS_META: Record<string, StatusMeta> = {
   'summoner-harried': { label: 'Accused', color: '#e6c35c' },
   'summoner-withering-chorus': { label: 'Chorus', color: '#9d6ad6' },
   // Pre-encounter aura SOURCE (pack caller / den alpha) — "this one buffs its allies".
-  'pre-encounter-aura': { label: 'Rally', color: '#ff9944' },
 };
 
 const BOSS_META: Record<string, StatusMeta> = {

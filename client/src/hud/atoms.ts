@@ -22,7 +22,7 @@ import type {
   TargetStatusView,
   UltimateStatus,
   BossFelledMarker,
-  DungeonGauntletView,
+  DungeonView,
   Vec2,
 } from '@mmo-idle/shared';
 
@@ -299,7 +299,7 @@ export const targetFrameAtom = atom<TargetFrameData | null>(null);
 
 /** Slain bosses awaiting respawn, keyed by node id (world map). */
 export const bossFelledByNodeAtom = atom<Record<string, BossFelledMarker>>({});
-export const dungeonGauntletAtom = atom<DungeonGauntletView | null>(null);
+export const dungeonAtom = atom<DungeonView | null>(null);
 
 /** The local player's party (null when not in a party). */
 export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | null>(null);
@@ -570,8 +570,8 @@ export function setBossFelledMarkers(markers: BossFelledMarker[]): void {
   getDefaultStore().set(bossFelledByNodeAtom, next);
 }
 
-export function setDungeonGauntlet(next: DungeonGauntletView | null): void {
-  getDefaultStore().set(dungeonGauntletAtom, next);
+export function setDungeon(next: DungeonView | null): void {
+  getDefaultStore().set(dungeonAtom, next);
 }
 
 function partyEqual(
@@ -770,7 +770,7 @@ function resetPlayerAtoms(): void {
   setZoneBoss(null);
   setTargetFrame(null);
   setBossFelledMarkers([]);
-  setDungeonGauntlet(null);
+  setDungeon(null);
   store.set(nodeLoadingAtom, { active: false, nodeId: null });
   store.set(tabResyncAtom, { active: false, startedAt: null });
   store.set(deathOverlayAtom, { active: false, payload: null, startedAt: null });

@@ -97,7 +97,7 @@ function MonsterDetail({ entry }: { entry: BestiaryEntry }) {
           <div className="bestiary-detail__hero-name">{entry.name}</div>
           <div className="bestiary-detail__hero-role">
             {ROLE_LABEL[entry.role]}
-            {entry.phaseLabel ? ` · ${entry.phaseLabel}` : ''}
+            {entry.guardLabel ? ` · ${entry.guardLabel}` : ''}
             {entry.modified ? ' · scaled for this dungeon' : ''}
           </div>
           <div className="bestiary-detail__hero-profile">{entry.profile}</div>

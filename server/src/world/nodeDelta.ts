@@ -83,8 +83,8 @@ export function buildNodeDelta(
     };
   }
 
-  const dungeonGauntlet = world.buildDungeonGauntletView(nodeId);
-  if (dungeonGauntlet) snapshot.dungeonGauntlet = dungeonGauntlet;
+  const dungeon = world.buildDungeonView(nodeId);
+  if (dungeon) snapshot.dungeon = dungeon;
 
   const groundZones = buildGroundZoneViews(world, nodeId, Date.now());
   if (groundZones) snapshot.groundZones = groundZones;

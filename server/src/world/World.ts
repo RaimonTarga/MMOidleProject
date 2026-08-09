@@ -98,12 +98,12 @@ import { NodeTelemetry, timeSync } from "../telemetry/nodeTelemetry";
 import { POPULATION_INTERVAL_MS } from "../telemetry/constants";
 import { freezeNode } from "./nodeLifecycle";
 import {
-  buildDungeonGauntletView,
-  ensureDungeonGauntlet,
-  isGauntletDungeonNode,
-  tickDungeonGauntlets,
-  type GauntletState,
-} from "../systems/world/dungeons/gauntlet";
+  buildDungeonView,
+  ensureDungeon,
+  isDungeonNode,
+  tickDungeons,
+  type DungeonState,
+} from "../systems/world/dungeons/dungeon";
 
 export interface PendingDeath {
   playerId: string;
@@ -233,8 +233,8 @@ export class World {
   pendingOverlordFelled: string[] = [];
   /** Dungeon boss respawn cooldowns keyed by node id. */
   bossRespawnAt = new Map<string, number>();
-  /** Runtime-only dungeon gauntlet state keyed by node id. */
-  gauntlets = new Map<string, GauntletState>();
+  /** Runtime-only dungeon guard/boss state keyed by node id. */
+  dungeons = new Map<string, DungeonState>();
   /** Client-facing boss death markers keyed by node id. */
   bossRespawnMarkers = new Map<string, BossRespawnMarker>();
   /**
@@ -397,7 +397,7 @@ export class World {
     updateAutoIntent(this);
     updateExpiredEmotes(this, now);
     updateDeadPlayersInWorld(this, now);
-    tickDungeonGauntlets(this, now);
+    tickDungeons(this, now);
 
     if (IS_DEV) {
       ensureCurrentTestRoomBoss(this);
@@ -415,8 +415,8 @@ export class World {
         this.populationCheckedAt.set(nodeId, now);
 
         const { ms } = timeSync(() => {
-          if (isGauntletDungeonNode(nodeId)) {
-            ensureDungeonGauntlet(this, nodeId);
+          if (isDungeonNode(nodeId)) {
+            ensureDungeon(this, nodeId);
           } else {
             ensurePopulationInWorld(this, nodeId);
             ensureBossInWorld(this, nodeId);
@@ -674,8 +674,8 @@ export class World {
     this.bossFelledBroadcast?.();
   }
 
-  buildDungeonGauntletView(nodeId: string) {
-    return buildDungeonGauntletView(this, nodeId);
+  buildDungeonView(nodeId: string) {
+    return buildDungeonView(this, nodeId);
   }
 
   countPlayersInNode(nodeId: string): number {

@@ -1,3 +1,2 @@
-export * from "./gauntletTypes";
-export * from "./gauntletDatabase";
-
+export * from "./dungeonTypes";
+export * from "./dungeonDatabase";

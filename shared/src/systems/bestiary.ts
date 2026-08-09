@@ -3,8 +3,8 @@ import { BIOME_DATABASE } from '../biomeDatabase';
 import { MONSTER_DATABASE, monsterIsRanged, monsterKites } from '../data/monsters';
 import type { MonsterDefinition } from '../data/monsters/types';
 import type { MonsterBehavior } from '../data/monsters/behavior';
-import { getDungeonGauntletDef } from '../dungeons/gauntletDatabase';
-import type { DungeonMonsterModifiers } from '../dungeons/gauntletTypes';
+import { getDungeonDef } from '../dungeons/dungeonDatabase';
+import type { DungeonDef, DungeonMonsterModifiers } from '../dungeons/dungeonTypes';
 import { GAME_CONFIG } from '../config/gameConfig';
 
 // ─── Zone bestiary ──────────────────────────────────────────────────────────
@@ -15,7 +15,7 @@ import { GAME_CONFIG } from '../config/gameConfig';
 
 export type BestiaryRole = 'trash' | 'guardian' | 'boss';
 
-/** Effective monster stats after any dungeon/gauntlet modifiers are applied. */
+/** Effective monster stats after any dungeon guardian modifiers are applied. */
 export interface BestiaryStats {
   hp: number;
   attack: number;
@@ -46,12 +46,12 @@ export interface BestiaryEntry {
   stats: BestiaryStats;
   /** Unmodified database stats. Present only when modifiers changed the values. */
   baseStats?: BestiaryStats;
-  /** True when this zone scales the monster (regular dungeon / gauntlet phase). */
+  /** True when this zone scales the monster (dungeon guardian buffs). */
   modified: boolean;
   /** Modifiers that were applied — drives DoT scaling text in the detail view. */
   modifiers?: DungeonMonsterModifiers;
-  /** Gauntlet phase label this entry was drawn from, when applicable. */
-  phaseLabel?: string;
+  /** Guard label this entry was drawn from ("Deep Watch"), when applicable. */
+  guardLabel?: string;
   /** Short combat-profile hint (authored or derived). */
   profile: string;
   /** Raw definition, for the detail view and mechanic descriptor. */
@@ -64,7 +64,8 @@ export interface ZoneBestiary {
   biomeName: string;
   biomeTier: number;
   isDungeon: boolean;
-  isGauntlet: boolean;
+  /** True when this node runs the guarded-altar dungeon loop. */
+  hasGuardedAltar: boolean;
   /** Ordered trash → guardians → boss. */
   entries: BestiaryEntry[];
 }
@@ -171,7 +172,7 @@ function makeEntry(
   id: string,
   role: BestiaryRole,
   mods?: DungeonMonsterModifiers,
-  phaseLabel?: string,
+  guardLabel?: string,
 ): BestiaryEntry | null {
   const def = MONSTER_DATABASE.get(id);
   if (!def) return null;
@@ -185,21 +186,24 @@ function makeEntry(
     baseStats: modified ? computeStats(def) : undefined,
     modified,
     modifiers: modified ? mods : undefined,
-    phaseLabel,
+    guardLabel,
     profile: resolveMonsterProfile(def),
     def,
   };
 }
 
-/** Distinct monster ids from a weighted pool, in first-seen order. */
-function distinctIds(pool: { monsterId: string }[]): string[] {
+/** Distinct guardian monster ids across every guard station, leaders first. */
+function guardianMonsterIds(def: DungeonDef): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
-  for (const { monsterId } of pool) {
-    if (!seen.has(monsterId)) {
-      seen.add(monsterId);
-      out.push(monsterId);
-    }
+  const push = (monsterId: string) => {
+    if (seen.has(monsterId)) return;
+    seen.add(monsterId);
+    out.push(monsterId);
+  };
+  for (const group of def.guard.groups) push(group.leaderMonsterId);
+  for (const group of def.guard.groups) {
+    for (const follower of group.followers ?? []) push(follower.monsterId);
   }
   return out;
 }
@@ -220,23 +224,14 @@ export function resolveZoneBestiary(nodeId: string): ZoneBestiary | null {
   const tier = info.biomeTier;
   const entries: BestiaryEntry[] = [];
 
-  const gauntlet = getDungeonGauntletDef(nodeId);
-  if (gauntlet) {
-    const guardianMods = gauntlet.guardianPhase.modifiers;
-    for (const id of distinctIds(gauntlet.guardianPhase.monsterPool)) {
-      const e = makeEntry(id, 'guardian', guardianMods, gauntlet.guardianPhase.label);
+  const dungeon = getDungeonDef(nodeId);
+  if (dungeon) {
+    const guardianMods = dungeon.guard.modifiers;
+    for (const id of guardianMonsterIds(dungeon)) {
+      const e = makeEntry(id, 'guardian', guardianMods, dungeon.guard.label);
       if (e) entries.push(e);
     }
-    const seenTrash = new Set<string>();
-    for (const phase of gauntlet.phases) {
-      for (const id of distinctIds(phase.monsterPool)) {
-        if (seenTrash.has(id)) continue;
-        seenTrash.add(id);
-        const e = makeEntry(id, 'trash', phase.modifiers, phase.label);
-        if (e) entries.push(e);
-      }
-    }
-    const bossEntry = makeEntry(gauntlet.boss.bossId, 'boss');
+    const bossEntry = makeEntry(dungeon.boss.bossId, 'boss');
     if (bossEntry) entries.push(bossEntry);
   } else if (info.isDungeon) {
     const dungeonMods: DungeonMonsterModifiers = {
@@ -267,7 +262,7 @@ export function resolveZoneBestiary(nodeId: string): ZoneBestiary | null {
     biomeName,
     biomeTier: tier,
     isDungeon: info.isDungeon ?? false,
-    isGauntlet: gauntlet !== undefined,
+    hasGuardedAltar: dungeon !== undefined,
     entries,
   };
 }

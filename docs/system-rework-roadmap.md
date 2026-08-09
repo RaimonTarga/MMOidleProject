@@ -618,10 +618,10 @@ for hazards and `bossScript` for boss expression. Track per-biome progress in th
 Builds on existing dungeon work (`docs/dungeon-*.md`).
 
 **Current state (audited 2026-06-23):**
-- The **gauntlet rework is already designed + prototyped** (`docs/dungeon-*.md`): altar-started,
-  guardians killable pre-activation, surviving guardians convert to phase 1, fixed phases, boss spawns
-  after clear, altar cooldown. **This is the brainstorm's guardian "join/empower" rule.** Mountain T1 = pilot.
-  ⚠️ Verify at session how far it propagated beyond the pilot (T4 milestone shipped a gauntlet pilot).
+- **SUPERSEDED 2026-08-09 — the gauntlet was removed.** A dungeon is now altar + per-biome guard
+  posture + boss: guardians killable pre-activation, disturbing the altar aggroes every survivor and
+  wakes the boss, boss death starts the altar cooldown. No waves, no per-dungeon bonus hooks. All 26
+  dungeons generate from `BIOME_GUARD_POSTURE`. Live state: `docs/dungeon-current-state.md`.
 - Boss expression: `bossScript` (phases/regen/enrage/summons), `ultimateEncounter`. First-clear state
   persists via `TracksProgression.bossesCleared`; `requiredBossClear` already gates recipes.
 - Rune tells: **`target-casting` rune condition already exists** (T4, telegraphed cast window).

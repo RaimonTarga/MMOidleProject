@@ -1,4 +1,4 @@
-> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/dungeon-current-state-and-gauntlet-plan.md`. Kept for design rationale — do not treat as current.
+> **ARCHIVED (2026-07-07) — HISTORICAL.** The gauntlet system it plans was implemented and then REMOVED in the 2026-08-09 guarded-altar rework. Live state: `docs/dungeon-current-state.md`. Kept for design rationale — do not treat as current.
 
 # Dungeon Gauntlet Rework — Implementation Plan
 

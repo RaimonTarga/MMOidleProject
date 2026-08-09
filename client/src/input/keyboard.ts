@@ -13,7 +13,7 @@ import {
 import {
   deathOverlayAtom,
   debugPanelOpenAtom,
-  dungeonGauntletAtom,
+  dungeonAtom,
   flashEmoteWheel,
   type EmoteWheelDirection,
 } from '../hud/atoms';
@@ -175,7 +175,7 @@ export function attachKeyboard(scene: GameScene): () => void {
         event.preventDefault();
         hudBus.requestResetClass();
       } else if (
-        canActivateDungeonAltar(scene, store.get(dungeonGauntletAtom))
+        canActivateDungeonAltar(scene, store.get(dungeonAtom))
       ) {
         event.preventDefault();
         hudBus.requestActivateDungeonAltar();

@@ -9,7 +9,7 @@ import {
 } from "./classes/archetypes/summoner";
 import { initMobilityBoots } from "./world/mobility/mobilityBoots";
 import { initRuneTauntSystem } from "./combat/ai/taunt";
-import { initDungeonGauntletCombatHooks } from "./world/dungeons/gauntlet";
+import { initDungeonCombatHooks } from "./world/dungeons/dungeon";
 import { initAbilitySystems } from "./player/abilities/abilityEffects";
 import { initRiteListeners } from "./player/rites/riteOoc";
 import { initCoreCombatEffects } from "./combat/cores";
@@ -60,8 +60,8 @@ export function initCombatSystems(): void {
   initDeadPlayerGuard();
   // Rune control hooks (currently taunt-current-target).
   initRuneTauntSystem();
-  // Dungeon gauntlet participant tracking.
-  initDungeonGauntletCombatHooks();
+  // Dungeon participant tracking.
+  initDungeonCombatHooks();
   // Definition-authored monster death triggers (and pack-alpha cleanup).
   initMonsterDeathEffects();
   // Abilities (Step 7): Technique rider applied on hit (consumes hasArmedAbility).

@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { getDefaultStore } from "jotai";
-import { dungeonGauntletAtom } from "../hud/atoms";
+import { dungeonAtom } from "../hud/atoms";
 import { THOUGHT_BUBBLE_KEY } from "../sprites";
 import { DEPTH } from "./depth";
 import {
@@ -103,8 +103,8 @@ function createPrompt(scene: GameScene, label: string): AltarPromptHandle {
 function activeAltarLabel(scene: GameScene): string | null {
   if (isAtRuneAltar(scene)) return ALTAR_LABEL;
 
-  const gauntlet = getDefaultStore().get(dungeonGauntletAtom);
-  return canActivateDungeonAltar(scene, gauntlet)
+  const dungeon = getDefaultStore().get(dungeonAtom);
+  return canActivateDungeonAltar(scene, dungeon)
     ? DUNGEON_ALTAR_LABEL
     : null;
 }

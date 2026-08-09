@@ -9,7 +9,7 @@ import { openGatedUnlocks } from './gatedUnlocks';
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutocombatConfig, sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
-import { notifyTargetDotTick, syncPlayerAtoms, nodeLoadingAtom, setDungeonGauntlet, setSummonHealth, setTargetFrame, setZoneBoss, setZonePlayers, type SummonHealthView, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
+import { notifyTargetDotTick, syncPlayerAtoms, nodeLoadingAtom, setDungeon, setSummonHealth, setTargetFrame, setZoneBoss, setZonePlayers, type SummonHealthView, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState, DamageNumberHint } from "../render/state";
@@ -27,7 +27,6 @@ import { notifyDeltaAppliedDuringTabResync, shouldRunClientFx } from "../fx/guar
 import { refreshNodeDecorState } from "../scenes/game/overlays";
 import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
 import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
-import { syncDungeonHazards } from "../render/dungeonHazards";
 import { syncGroundZones } from "../render/groundZones";
 
 // Last frame's resolved target — lets us detect when a target dies (its id
@@ -50,7 +49,7 @@ export function applyDelta(
 ): void {
   const liveIds = new Set<string>();
   const pendingRemoves: string[] = [];
-  state.dungeonGuardianIds = guardianIdsFromGauntlet(snapshot);
+  state.dungeonGuardianIds = new Set(snapshot.dungeon?.guardianMonsterIds ?? []);
 
   // Derive per-monster damage-number style hints from this snapshot's events
   // before the delta loop spawns HP-delta numbers (which run before events fire).
@@ -158,8 +157,7 @@ export function applyDelta(
     destroyEntity(state, netId, scene);
   }
   syncVoidOverlordRespawn(state, snapshot.voidOverlordRespawn, scene);
-  setDungeonGauntlet(snapshot.dungeonGauntlet ?? null);
-  syncDungeonHazards(scene, snapshot.dungeonGauntlet);
+  setDungeon(snapshot.dungeon ?? null);
   syncGroundZones(scene, snapshot.groundZones);
   refreshMonsterTints(state);
   if (snapshot.voidOverlordRespawn) {
@@ -288,17 +286,6 @@ export function applyDelta(
   }
 
   notifyDeltaAppliedDuringTabResync();
-}
-
-function guardianIdsFromGauntlet(snapshot: DeltaSnapshot): Set<string> {
-  const gauntlet = snapshot.dungeonGauntlet;
-  const ids = new Set<string>();
-  if (!gauntlet) return ids;
-  for (const id of gauntlet.guardianMonsterIds) ids.add(id);
-  if (gauntlet.status === "active" && gauntlet.phaseIndex === 0) {
-    for (const id of gauntlet.activeMonsterIds) ids.add(id);
-  }
-  return ids;
 }
 
 function upsertEntityView(

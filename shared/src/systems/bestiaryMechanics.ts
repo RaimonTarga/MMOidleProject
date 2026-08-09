@@ -1,6 +1,6 @@
 import type { MonsterDefinition, BossAction } from '../data/monsters/types';
 import { monsterIsRanged, monsterKites } from '../data/monsters/behavior';
-import type { DungeonMonsterModifiers } from '../dungeons/gauntletTypes';
+import type { DungeonMonsterModifiers } from '../dungeons/dungeonTypes';
 import { resolveMonsterDotDebuff } from './monsterDotFlavor';
 
 // ─── Bestiary mechanic descriptors ───────────────────────────────────────────
@@ -68,7 +68,7 @@ function describeBossAction(a: BossAction): string {
 
 /**
  * Build the full ordered list of secondary-mechanic lines for a monster, applying
- * the same dungeon/gauntlet modifiers used for its stats (so DoT scaling matches).
+ * the same dungeon guardian modifiers used for its stats (so DoT scaling matches).
  */
 export function describeMonsterMechanics(
   def: MonsterDefinition,

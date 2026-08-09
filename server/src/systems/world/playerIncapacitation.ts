@@ -16,7 +16,7 @@ import {
 import { respawnPlayer } from "./spawning";
 import { recordWorldLogEvent } from "../../world/worldLog";
 import { actorFromPlayer } from "../../world/worldLogActors";
-import { resetGauntletIfNodeWiped } from "./dungeons/gauntlet";
+import { resetDungeonIfNodeWiped } from "./dungeons/dungeon";
 import {
   registerCombatListener,
   type CombatContext,
@@ -79,7 +79,7 @@ export function killPlayer(
     graveFrame,
     diedAtMs: Date.now(),
   });
-  resetGauntletIfNodeWiped(world, entity.hasPosition.nodeId);
+  resetDungeonIfNodeWiped(world, entity.hasPosition.nodeId);
 
   recordWorldLogEvent(
     world,

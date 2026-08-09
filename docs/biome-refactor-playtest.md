@@ -4,7 +4,8 @@ Running notes + open questions from the per-biome T1 dungeon authoring pass
 (Step 13). One section per biome. Numbers are placeholders unless stated — the
 goal of a playtest is to answer the questions below, not to confirm tuning.
 
-See `docs/dungeon-current-state-and-gauntlet-plan.md` for the shared T1 rule and
+See `docs/archive/dungeon-gauntlet-current-state.md` (HISTORICAL — the gauntlet
+system it describes was replaced; see `docs/dungeon-current-state.md`) for the T1 rule and
 the per-biome behavior specs.
 
 ---

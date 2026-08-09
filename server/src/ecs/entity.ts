@@ -122,25 +122,15 @@ export interface IsCastingAbility {
   targetId: string;
 }
 
-export type DungeonMonsterSource =
-  | "idleDungeonGuardian"
-  | "gauntletPhase"
-  | "preEncounterThreat"
-  | "gauntletBoss";
+export type DungeonMonsterSource = "dungeonGuardian" | "dungeonBoss";
 
-/** Server-only runtime metadata for monsters owned by a dungeon gauntlet. */
+/** Server-only runtime metadata for monsters owned by a dungeon node. */
 export interface TracksDungeon {
   source: DungeonMonsterSource;
   dungeonNodeId: string;
-  gauntletPhaseIndex?: number;
-  gauntletPhaseId?: string;
-  preEncounterGroupId?: string;
-  preEncounterRole?: "leader" | "follower" | "keeper";
-  preEncounterAura?: {
-    kind: "damage" | "attack-speed";
-    range: number;
-    mult: number;
-  };
+  /** Guard group this guardian belongs to, for group-scoped bookkeeping. */
+  guardGroupId?: string;
+  /** Station on the altar's guard ring this guardian returns to. */
   guardPost?: Vec2;
   leashRadius?: number;
   /** Injected opening-strike multiplier (first hit of each aggro session). */

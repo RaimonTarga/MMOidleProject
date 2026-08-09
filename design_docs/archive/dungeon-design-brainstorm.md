@@ -1,4 +1,4 @@
-> **HISTORICAL (archived 2026-07-07).** Early brainstorm; implemented as the gauntlet system — see `docs/dungeon-current-state-and-gauntlet-plan.md`. Not current.
+> **HISTORICAL (archived 2026-07-07).** Early brainstorm; implemented as the gauntlet system, which was later replaced by the guarded-altar dungeon — see `docs/dungeon-current-state.md`. Not current.
 
 # Dungeon Design — Brainstorm
 

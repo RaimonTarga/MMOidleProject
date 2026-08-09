@@ -260,7 +260,7 @@ server/src/
       stances/                 ← stanceSwitch.ts
       rites/                   ← riteOoc.ts
     world/                    ← movement, spawning, transitions, testRoomInteract, mobility/mobilityBoots.ts
-    world/dungeons/gauntlet.ts ← dungeon gauntlet/boss-exam state machine
+    world/dungeons/dungeon.ts ← guarded-altar dungeon state machine
     combatBootstrap.ts        ← initCombatSystems(): the only place combat-pipeline listeners register
   db/                         ← Drizzle + Postgres, component-shaped persistence
   index.ts                    ← Express + Socket.IO + game loop wiring
@@ -300,7 +300,7 @@ mirrorHpForecast(world);
 updateAutoIntent(world);
 updateExpiredEmotes(world, now);
 updateDeadPlayersInWorld(world, now);
-tickDungeonGauntlets(world, now);      // gauntlet/boss-exam state machine
+tickDungeons(world, now);              // guarded-altar dungeon state machine
 ```
 
 Each system iterates a narrow miniplex query (`world.dottedMonsters`, `world.cadencePlayers`, …). Archetypes register themselves through the mechanic registry; new *loadout* layers (abilities/stances/rites) instead added one ordered call each directly in `tick()` — they aren't archetypes, so they don't go through the mechanic registry, but each is still a single self-contained system call reading component presence, not a branch inside an existing one. `World.tick()` grows by one line per genuinely new system; it never grows for a new archetype, ability, stance, rite, core, or buff.
@@ -408,14 +408,14 @@ Four of these (Abilities, Stances, Rites, Cores) are **loadout layers**: player-
 - **Extension point:** tag a monster def `elite: true`; both consumers pick it up with no further wiring.
 - **Composition:** pure reuse — the elite system's only "new" code is the `focus-elites` rune (cloned from an existing targeting rune) and one scoring-weight constant.
 
-### Dungeon gauntlets / boss exams
+### Dungeons: the guarded altar
 
-- **State:** `TracksDungeon`, a server-only, non-networked, non-persisted component (source tag: `idleDungeonGuardian` / `gauntletPhase` / `preEncounterThreat` / `gauntletBoss`, plus phase/role bookkeeping). Gauntlet runtime state (`GauntletState`: phase, kill counts, participant ids) is keyed by node id inside `World` and is never persisted, consistent with monsters being ephemeral.
-- **Owner:** `server/src/systems/world/dungeons/gauntlet.ts` is the state machine (`idle → active → boss → cooldown`, altar activation, node-wipe/freeze reset). Shared defs (`DungeonGauntletDef`, `preEncounter`, `UnclearedThreatEffect` with four modes: `join`/`empower`/`extra-adds`/`hazard`) live in `shared/src/dungeons/gauntletTypes.ts`.
-- **T1 rule (architectural, not a balance choice):** `isPreEncounterDungeon(def) = def.biomeTier === 1` — T1 dungeons are pre-encounter + boss only, no wave/kill-count gating beyond the boss itself. T2+ still use the older `guardianPhase` → wave path. Pre-encounter threats never gate the boss and grant only normal (not bonus) rewards for being left alive — an invariant enforced in code, worth knowing before touching gauntlet.ts.
-- **Extension point:** a new T1 boss exam is authored data — a `preEncounter` group (packs/dens/basins reusing the ecology primitives above) plus an `unclearedThreat` mode plus a `bossScript` built from existing phase actions (`summon`/`shield`/`enrage`/`chargedAttack`). The exam-specific "identity" (mark-and-pounce, rot pools, altar-orbit patrol) is expressed as data over existing primitives, not new engine code.
-- **Composition:** reuses `bossScript` wholesale for the boss half, ecology primitives for the pre-encounter half, and the ordinary combat pipeline for marks/knockback/interaction. Only the gauntlet state machine itself (activation, reset, the T1 pre-encounter rule) is genuinely new.
-- **Note:** per `docs/archive/codebase-cleanup-plan.md` Task 3, `runPlayerAttack` and `gauntlet.ts`'s data-driven refactor are both explicitly deferred — read this section for how gauntlets fit today, but don't take it as a signal the file is due for a rewrite.
+- **State:** `TracksDungeon`, a server-only, non-networked, non-persisted component (source tag: `dungeonGuardian` / `dungeonBoss`, plus guard-group bookkeeping). Runtime state (`DungeonState`: status, living guardian ids, participant ids, timers) is keyed by node id inside `World` and is never persisted, consistent with monsters being ephemeral.
+- **Owner:** `server/src/systems/world/dungeons/dungeon.ts` is the state machine (`idle → bossAwakening → boss → cooldown`, altar activation, node-wipe/freeze reset). Shared defs (`DungeonDef`, `DungeonGuardDef`, `BIOME_GUARD_POSTURE`) live in `shared/src/dungeons/`.
+- **Invariant (architectural, not a balance choice):** guardians never gate the boss. Disturbing the altar aggroes every survivor and starts the boss timer; survivors grant only their normal monster rewards whether killed before or after activation. There is no wave system, no kill-count gate, and no bonus for leaving guardians alive.
+- **Extension point:** a dungeon's guard is generated from one per-biome posture (`pack` / `patrol` / `post-hold`) applied to that biome/tier's own ambient monster pool, so new dungeons and new tiers need no authoring. `DUNGEON_CONTENT_BY_NODE` overrides one node when it must diverge.
+- **Composition:** reuses `bossScript` wholesale for the boss, the shipped ecology primitives for the guard (`inPack`/call-allies, `holdPost`/`holdPatrol`), and the ordinary combat pipeline for everything else. Only the dungeon state machine itself is new.
+- **History:** this replaced the gauntlet system (waves, pre-encounter groups, guardian auras, `unclearedThreat` hooks). See `docs/archive/dungeon-gauntlet-current-state.md` for that design; it is not current.
 
 ### Mobility boots
 

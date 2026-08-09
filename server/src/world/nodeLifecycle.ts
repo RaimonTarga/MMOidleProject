@@ -5,10 +5,10 @@ import { ensurePopulation, ensureBoss } from '../systems/world/spawning';
 import { clearGroundZonesForNode } from '../systems/world/groundZones';
 import { clearCorpsesForNode } from '../systems/world/corpses';
 import {
-  clearDungeonGauntletRuntime,
-  ensureDungeonGauntlet,
-  isGauntletDungeonNode,
-} from '../systems/world/dungeons/gauntlet';
+  clearDungeonRuntime,
+  ensureDungeon,
+  isDungeonNode,
+} from '../systems/world/dungeons/dungeon';
 
 export function freezeNode(world: World, nodeId: string): void {
   if (nodeId === TEST_ROOM_NODE_ID) return;
@@ -17,7 +17,7 @@ export function freezeNode(world: World, nodeId: string): void {
   for (const m of [...world.monsterEntitiesInNode(nodeId)]) {
     removeMonsterEntity(world, m.isMonster.id);
   }
-  clearDungeonGauntletRuntime(world, nodeId);
+  clearDungeonRuntime(world, nodeId);
   clearGroundZonesForNode(world, nodeId);
   clearCorpsesForNode(world, nodeId);
   world.nextMonsterIdByNode.delete(nodeId);
@@ -42,8 +42,8 @@ export function thawNode(world: World, nodeId: string): void {
 
   world.frozenNodes.delete(nodeId);
   world.telemetry.syncFrozen(nodeId, false);
-  if (isGauntletDungeonNode(nodeId)) {
-    ensureDungeonGauntlet(world, nodeId);
+  if (isDungeonNode(nodeId)) {
+    ensureDungeon(world, nodeId);
   } else {
     ensurePopulation(world, nodeId);
     ensureBoss(world, nodeId);

@@ -221,9 +221,9 @@ folder only because Vital Burst was its sole producer, but six live call sites i
 the combat engine and dot prototype ask it. Nothing grants immunity today, so it
 always passes.
 
-Kept deliberately: the `summoner-howl-banner` concept icon, because the gauntlet
-pre-encounter rally aura aliases to it in `conceptIcons.ts`. The `summoner-`
-prefix is now misleading and the asset is worth renaming in a future art pass.
+Kept: the `summoner-howl-banner` concept icon. Its one non-Summoner consumer (the
+gauntlet pre-encounter rally aura) was removed with the dungeon rework, so it is
+now purely a Summoner icon again.
 
 ## 10. File Map
 

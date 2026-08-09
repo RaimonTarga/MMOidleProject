@@ -67,7 +67,7 @@ import {
 import { clampMoveTargetToNode } from "../systems/world/transitions";
 import { thawNode } from "../world/nodeLifecycle";
 import { rightmostEntranceTarget } from "../world/nodePath";
-import { activateDungeonAltar } from "../systems/world/dungeons/gauntlet";
+import { activateDungeonAltar } from "../systems/world/dungeons/dungeon";
 import {
   equipPhaseTester,
   goToTestRoom,

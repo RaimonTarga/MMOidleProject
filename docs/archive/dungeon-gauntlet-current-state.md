@@ -1,3 +1,9 @@
+> **ARCHIVED (2026-08-09) — HISTORICAL.** Describes the gauntlet/pre-encounter
+> dungeon system, which was **removed** in the guarded-altar rework. Live state:
+> `docs/dungeon-current-state.md`. Kept for the design rationale behind altar
+> activation, the guardian pre-clear rule, and the per-biome T1 exam concepts —
+> do not treat any of it as current.
+
 # Dungeon Current State and Gauntlet Migration Plan
 
 This document summarizes the dungeon system that exists today, then maps the

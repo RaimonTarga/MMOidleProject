@@ -7,7 +7,7 @@ import { checkSealTierAdvance, registerKillForQuests } from './questSystem';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
 import { notifyVoidOverlordDeath } from '../../combat/ai/ultimateEncounter';
-import { onDungeonMonsterRewarded } from '../../world/dungeons/gauntlet';
+import { onDungeonMonsterRewarded } from '../../world/dungeons/dungeon';
 
 export interface KillRewards {
   essence: number;
@@ -288,7 +288,7 @@ export function grantMonsterRewards(
   // never be farmed — killing the raiser is the only way to stop the tide.
   if (monster.isRaised) return null;
 
-  const suppressBossRespawn = monster.tracksDungeon?.source === 'gauntletBoss';
+  const suppressBossRespawn = monster.tracksDungeon?.source === 'dungeonBoss';
   const killerInfo = applyKillRewardsToPlayer(world, killer, monster, {
     suppressBossRespawn,
   });

@@ -1,7 +1,7 @@
 import {
   BIOME_DATABASE,
   GAME_CONFIG,
-  getDungeonGauntletDef,
+  getDungeonDef,
   NODE_BIOMES,
   NODE_FEATURES,
   RESOLVED_NODE_FEATURES,
@@ -214,13 +214,13 @@ function buildNodeDecorImages(
     }
   }
 
-  const gauntlet = getDungeonGauntletDef(nodeId);
+  const dungeon = getDungeonDef(nodeId);
   const biomeGroup = NODE_BIOMES[nodeId]?.biomeGroup;
   const altarArt = biomeGroup ? dungeonAltarArtForBiome(biomeGroup) : undefined;
   const altarTexture = altarArt?.key ?? "rune_altar";
-  if (gauntlet && scene.textures.exists(altarTexture)) {
+  if (dungeon && scene.textures.exists(altarTexture)) {
     const img = scene.add
-      .image(offsetX + gauntlet.altar.x, offsetY + gauntlet.altar.y, altarTexture)
+      .image(offsetX + dungeon.altar.x, offsetY + dungeon.altar.y, altarTexture)
       .setOrigin(0.5, 0.5)
       .setDepth(DEPTH.BG_DECOR + depthBias)
       .setDisplaySize(250, 250);

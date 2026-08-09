@@ -137,7 +137,7 @@ const BUFF_IDS = new Set([
   'summoner-endless-swarm',
   'summoner-grand-ritual',
   'summoner-harrier-brood',
-  'summoner-howl-banner', // retained: the gauntlet pre-encounter rally aura aliases to this icon
+  'summoner-howl-banner',
   'summoner-twin-covenant',
   'summoner-volatile-brood',
   'summoner-withering-chorus',
@@ -220,7 +220,6 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'expose-weakness': 'expose-weakness',
   'summoner-harried': 'summoner-harrier-brood',
   'summoner-withering-chorus': 'summoner-withering-chorus',
-  'pre-encounter-aura': 'summoner-howl-banner',
 };
 
 const BOSS_EFFECT_ALIASES: Record<string, string> = {

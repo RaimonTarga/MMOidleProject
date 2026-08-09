@@ -100,8 +100,9 @@ counterpart is section 9's ground zones — circles spawned by combat that live 
   `slam`/`enrage`/`shield`…) — `ai/bossScripts.ts`.
 - `ultimateEncounter` (`UltimateEncounter`: objective-gated stages, waves, environmental DoT) —
   `ai/ultimateEncounter.ts`.
-- Gauntlet dungeon rework (altar / killable guardians / surviving-guardians-empower) designed +
-  Mountain pilot — `docs/dungeon-current-state-and-gauntlet-plan.md`. Step 13 scaffolding owns this.
+- Guarded-altar dungeons (altar / killable guardians / per-biome guard posture) —
+  `docs/dungeon-current-state.md`. The guard postures are built ON these ecology primitives
+  (packs, `holdPost`/`holdPatrol`), not on dungeon-only AI.
 - `target-casting` rune condition exists (telegraphed cast window) for boss tells.
 
 ## 6. Networking surface (for telegraphs)
@@ -158,8 +159,8 @@ combat.
   Runtime-only, never persisted. Zones are keyed by OWNER so every cast-abort path retires its
   own circle; the tick is only a sweeper for owners that vanished mid-cast.
 - **Client** — `client/src/render/groundZones.ts` (`syncGroundZones` on delta,
-  `drawGroundZones` per frame). Lifted from `render/dungeonHazards.ts`, which stays as the
-  gauntlet's own thing.
+  `drawGroundZones` per frame). Originally lifted from `render/dungeonHazards.ts`, which was
+  deleted with the gauntlet's swamp rot pools; ground zones now own this rendering outright.
 - **`'slam-telegraph'` is cast-owner-lived.** Session 2 added an expiry-owned
   `'toxic-pool'` mode; owner cleanup cannot erase a pool after its monster dies.
 
