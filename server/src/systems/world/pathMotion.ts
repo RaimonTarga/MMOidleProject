@@ -203,8 +203,24 @@ export function requestNavMotion(
     && existing.mover === mover
     && (existing.avoidHazards === true) === avoidHazards
   ) {
-    attachMotionToward(world, entity, existing.waypoints[0]);
-    return;
+    // Pop any waypoint we are already standing on before steering at the head.
+    // `advanceMovePath` normally does this, but its only caller is
+    // `processMoverStep`, which runs off the `isMoving` query — so a mover that
+    // lands exactly on `waypoints[0]` gets a zero-magnitude vector here,
+    // `attachMotionToward` detaches `isMoving`, and it drops out of that query
+    // for good. The queue then never advances and the entity holds a valid route
+    // forever without moving: full HP, valid target, planned path, motionless.
+    // (The auto-combat wedge — implementation plan §5.8 cause 2.)
+    advanceMovePath(world, entity);
+    const advanced = entity.hasMovePath;
+    if (advanced) {
+      if (advanced.waypoints.length > 0) {
+        attachMotionToward(world, entity, advanced.waypoints[0]);
+      }
+      // else: advanceMovePath already steered at the final goal.
+      return;
+    }
+    // Path completed and cleared — fall through and plan a fresh one.
   }
 
   const waypoints = planPath(world, entity, goal, mover, pad, avoidHazards);

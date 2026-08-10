@@ -1,5 +1,12 @@
 // Throwaway probe (leading `_` = skipped by the test runner).
 //
+// SUPERSEDED by `_probeWedge2.ts`. THIS PROBE REPORTS FALSE POSITIVES: its only
+// wedge criterion is "motionless for 2 simulated minutes", which a CORPSE also
+// satisfies — it never checks HP and never revives the bot the way the real farm
+// loop does. On a lethal node (mountain T1 kills a ranged bot ~30x/simulated
+// hour) almost every "wedge" it reports is simply a death. Use `_probeWedge2.ts`,
+// which revives on death and reports a wedge only while the bot is alive.
+//
 // Diagnoses the auto-combat wedge documented in
 // `docs/next-playtest-implementation-plan.md` §5.8: a player on auto-combat stops
 // moving at full HP with live, reachable monsters in the node, and never resumes.
