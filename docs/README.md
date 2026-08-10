@@ -1,7 +1,7 @@
 # Documentation Index
 
 Map of every living doc, what it is for, and where history goes.
-Last sorted: 2026-08-09.
+Last sorted: 2026-08-11.
 
 **If code and any doc disagree, the code wins — fix the doc.**
 
@@ -28,8 +28,8 @@ top-level doc.
 |---|---|
 | [system-rework-status.md](system-rework-status.md) | **The scoreboard.** What is designed / in progress / done across all 15 rework steps, with a dated session log. |
 | [system-rework-roadmap.md](system-rework-roadmap.md) | The step ordering and dependency graph behind that scoreboard. |
-| [next-playtest-roadmap.md](next-playtest-roadmap.md) | The *what* for the next multiplayer playtest. |
-| [next-playtest-implementation-plan.md](next-playtest-implementation-plan.md) | The *how* and *in what order* for the same — phases, blockers, design gates. |
+| [polish-and-balance-roadmap.md](polish-and-balance-roadmap.md) | **The current program.** Seven workstreams and their ordering for the polish + balance phase, then T5/T6 as an extrapolation. |
+| [next-playtest-implementation-plan.md](next-playtest-implementation-plan.md) | Phases superseded; still the reference for the tooling audit (§5), defect list (§5.7), and the auto-combat wedge (§5.8). |
 | [future-plans.md](future-plans.md) | Parking lot for decided-in-spirit, not-yet-scheduled features. |
 | [../design_docs/architecture.md](../design_docs/architecture.md) | How the codebase is structured. Read end to end once. |
 | [../design_docs/design-bible.md](../design_docs/design-bible.md) | The combat/design invariants nothing may violate. |

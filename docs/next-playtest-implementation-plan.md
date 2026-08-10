@@ -1,6 +1,11 @@
+> **PARTLY SUPERSEDED (2026-08-11).** Its phases and ordering (§2–3) are replaced
+> by `docs/polish-and-balance-roadmap.md`. **Still live and worth reading:** the
+> tooling audit (§5), the defect list (§5.7), and the auto-combat wedge write-up
+> (§5.8). Do not plan from its phase table.
+
 # Next Playtest — Implementation Plan
 
-**Companion to** `docs/next-playtest-roadmap.md` (the *what*). This doc is the
+**Companion to** `docs/archive/next-playtest-roadmap.md` (the *what*, now archived). This doc is the
 *how* and the *in what order*: which items are blocked on design, which are pure
 code, which run in parallel, and what the offline design sessions must produce.
 
@@ -317,9 +322,10 @@ unreachable unlock.
 `done when:` a written defect list, each item tagged blocker / content / polish.
 `unblocks:` 1.6 (you'll be fixing from this list, not from guesses).
 
-> **Starts with one entry already on it — see §5.8, the auto-combat wedge.** It is
-> a live gameplay defect, it is tagged **blocker**, and it is the reason the 0.4
-> sweep's mountain numbers are meaningless.
+> **The auto-combat wedge that used to head this list is FIXED (2026-08-10; see
+> §5.8).** The 0.4 sweep's mountain numbers are still meaningless, but for a
+> different reason than believed: mountain kills a T1 ranged build ~30 times per
+> simulated hour, so those rows measure **death**, not pathing. Re-collect them.
 
 > **Railway is not a Phase 0 item.** The deployment works today, running the
 > **release** branch, and stays there deliberately. It is not updated until this
@@ -804,6 +810,11 @@ the typechecker. Treat "the tool ran and produced numbers" as weak evidence.
 
 ### 5.8 The first thing the farm loop found: auto-combat can wedge forever
 
+> **STATUS 2026-08-10: both causes are FIXED.** Cause 1 (`approachPoint`) closed
+> earlier; cause 2 (a mover standing on its own waypoint permanently losing
+> `isMoving`) closed below. What remains on mountain is a **balance** problem —
+> ~30 deaths per simulated hour for a T1 ranged build — not a pathing one.
+
 **This is a live gameplay defect, not a bench artifact** — the farm loop runs the
 same `updateAutoTargets` the real server does. Tagged **blocker** for 0.5.
 
@@ -867,30 +878,61 @@ tests covered only the case that worked. Now swept over 36 angles × 3 ranges.
 
 **Effect:** mountain T1 cadence went 17 → 302 kills/hr, cooldown 160 → 323.
 
-#### Cause 2 — steering can produce no motion with a valid target. **OPEN.**
+#### Cause 2 — a mover standing on its own waypoint loses motion forever. **FIXED 2026-08-10.**
 
-Mountain is still not healthy, so cause 1 was not the whole story. Repeat runs of
-mountain T1 cadence after the fix: **302, 188, 34, 57** kills/hr — wildly erratic
-and still far under the ~1000 that plains/forest post.
+**The earlier diagnosis in this section was wrong in two ways, and both matter.**
 
-Probing `energy-root` (ranged, `attackRange` 142) caught the distinct failure:
+*First, the instrument was lying.* `_probeMountain.ts` declares a wedge whenever the
+bot is motionless for 2 simulated minutes — a criterion a **corpse** also satisfies.
+It never checks HP and never revives the bot the way `runFarm` does. Mountain T1
+kills a T1 ranged bot **~30 times per simulated hour**, so most of what it reported
+as wedges were deaths. A corrected probe (`_probeWedge2.ts`, revives on death,
+reports only *live* wedges) is now the one to use; `_probeMountain.ts` carries a
+warning header.
 
+*Second, the surviving live wedge was not in `steerTowardTarget` at all.* Path
+planning succeeds — the captured state shows `planPath` returning 24 points for the
+steering goal and 23 for the acquisition goal. The real state is:
+
+```txt
+GATES: auto=true manualIntent=false rooted=false fleeing=false
+       moving=FALSE movePath=25wp casting=false channeling=false
 ```
-WEDGED at 9 sim-min, pos=(2128,1712), attackRange=142
-  nearestEngageableMonster -> node-t1-mountain-01_monster-101   <-- NOT null
-  ridge-archer  gap=507  goal=(2449,1905) path=1pts endOffGoal=0 endGapToMob=134 endsInRange=Y
-  …8 more with endsInRange=Y…
-```
 
-Target acquisition now **succeeds** — nine monsters pass, the chosen one is 507 px
-away with a clear single-waypoint route and an in-range approach goal — and the
-player still does not move for 2+ simulated minutes. So the failure has moved
-downstream into `steerTowardTarget` / `requestNavMotion`: a valid target is
-selected and no motion results.
+A valid 25-waypoint route and **no `isMoving` component**. The chain:
 
-Not diagnosed. Bench bots carry no runes, so the keep-distance and hazard
-branches are inert and it falls to the melee/no-keep-distance path at
-`autoTarget.ts:496`. That is where to start.
+1. The mover lands exactly on `waypoints[0]`.
+2. `requestNavMotion`'s "existing path is still valid" reuse branch steers at
+   `waypoints[0]` via `attachMotionToward`.
+3. Already *on* it → `magnitude === 0` → `attachMotionToward` **detaches** `isMoving`.
+4. `world.movingPlayers` is `livePlayers.with("isMoving")`, and `processMoverStep`
+   — the only caller of `advanceMovePath` — iterates it. So the queue never advances.
+5. Next tick: same valid path, same reached waypoint, magnitude 0, detach again.
+   **Absorbing.**
+
+It is stochastic because it needs an exact waypoint landing; mountain's ledge
+geometry produces long, corner-heavy routes and hits it far more often. It is not
+mountain-specific in principle — any node can produce it.
+
+**Fix:** the reuse branch now calls `advanceMovePath` to pop reached waypoints
+before steering at the head (`server/src/systems/world/pathMotion.ts`). This also
+repairs the stuck-watchdog path at `movement.ts`, which deliberately detaches
+`isMoving` while preserving `hasMovePath` on the assumption that "the next
+autonomous steering tick" restores motion — an assumption that failed for exactly
+the same reason.
+
+**Verified:** `server/test/navWaypointWedge.test.ts` pins the invariant and fails on
+the pre-fix code with the intended assertion. `_probeWedge2.ts` went from 3 live
+wedges in ~23 runs to **0 in 24 runs** across cadence (melee, reach 12) and energy
+(ranged, reach 142). Typecheck clean, `pnpm test` 71/71.
+
+> **The remaining mountain problem is balance, not pathing.** With the wedge gone, a
+> T1 energy bot still dies **~30x per simulated hour** on `node-t1-mountain-01`
+> while a cadence bot dies ~1x and a plains bot dies **0**. The blast-radius table
+> below was collected with the broken probe and a live wedge in play; treat its
+> kills/hr figures as measuring *death*, not pathing, and re-collect before drawing
+> any balance conclusion from it.
+
 
 **Blast radius.** Mountain kills/hr across every class, vs 900–1500 on
 plains/forest/jungle at the same tier:

@@ -1,3 +1,9 @@
+> **ARCHIVED (2026-08-11) — superseded; live successor is `docs/polish-and-balance-roadmap.md`.**
+>
+> Its premises no longer hold: the program moved from *adding* systems to
+> polishing and balancing them, and T5/T6 became a late extrapolation rather
+> than deeply-designed front-loaded content. Kept for rationale only.
+
 # Next Multiplayer Playtest Roadmap
 
 > Living implementation sketch for the next multiplayer playtest.

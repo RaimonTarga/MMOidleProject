@@ -1,5 +1,5 @@
 > **ARCHIVED (2026-08-09) — HISTORICAL BRAINSTORM (June 2026).** Not a live backlog: ideas that
-> survived are tracked in `docs/future-plans.md` (the parking lot) and `docs/next-playtest-roadmap.md`.
+> survived are tracked in `docs/future-plans.md` (the parking lot) and `docs/polish-and-balance-roadmap.md`.
 > Companion audit: `design_docs/archive/design-audit-2026-06.md`. Kept for rationale.
 
 # Design Development Suggestions — Brainstorm, June 2026
