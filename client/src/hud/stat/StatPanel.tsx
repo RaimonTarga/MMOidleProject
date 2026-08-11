@@ -37,6 +37,23 @@ import {
 
 const CHARACTER_EXPANDED_STORAGE_KEY = 'mmo_idle.desktop.character_expanded';
 
+/**
+ * The commissioned stat glyphs (§15 of the UI redesign plan), which are what let
+ * this panel drop its word labels. Attack speed is deliberately absent — the set
+ * has no glyph for it, so APS rides with DPS in the headline instead of reusing
+ * the move-speed glyph and putting two identical icons in one panel.
+ */
+const STAT_GLYPH = {
+  dps: 'UI_icons/stats/dps.png',
+  attack: 'UI_icons/stats/attack.png',
+  range: 'UI_icons/stats/range.png',
+  empowered: 'UI_icons/stats/empowered.png',
+  plating: 'UI_icons/stats/plating.png',
+  reduction: 'UI_icons/stats/reduction.png',
+  regen: 'UI_icons/stats/regen.png',
+  speed: 'UI_icons/stats/speed.png',
+} as const;
+
 function readCharacterExpandedPreference(): boolean {
   try {
     if (typeof window === 'undefined') return false;
@@ -202,54 +219,86 @@ export function StatPanel() {
             pendingHeal: player.pendingHeal,
             hpTip,
           }}
-          // DPS is the hero figure because it is the one number that already
-          // folds the others together — attack, on-hit and attack speed all
-          // land in it, so it is what "am I hitting hard enough" actually asks.
-          hero={{
+          // DPS is the headline because it is the one stat that already folds the
+          // others together, and APS rides with it rather than taking a cell:
+          // it is DPS's own denominator, so side by side they explain each other.
+          // (It is also the one stat with no commissioned glyph — §15's set has
+          // ten and attack speed is not among them. Pairing it here means the
+          // panel never has to reuse the move-speed glyph and show two identical
+          // icons meaning different things.)
+          headline={{
             id: 'dps',
+            glyph: STAT_GLYPH.dps,
             value: dps,
+            sub: `${aps}/s`,
             label: 'DPS',
+            name: 'Damage per second',
             watch: Math.round(dpsValue),
-            title: 'Damage per second: (attack + on-hit) × attacks per second',
           }}
-          // Everything below is one weight. Ordered offence → defence →
-          // movement → sustain, so related numbers sit next to each other in the
-          // two-column grid rather than being ranked against each other.
-          figures={[
-            { id: 'attack', value: String(player.attack), label: 'Attack', watch: player.attack },
-            { id: 'aps', value: aps, label: 'APS', watch: Number(aps), title: `${cdSec}s between attacks` },
-            { id: 'plating', value: String(player.plating), label: 'Plating', watch: player.plating },
-            // Always present, including at 0%. See the note on StatPlate.
-            {
-              id: 'reduction',
-              value: `${Math.round(player.damageReduction * 100)}%`,
-              label: 'Reduction',
-              watch: Math.round(player.damageReduction * 100),
-            },
-            { id: 'speed', value: String(player.speed), label: 'Speed', watch: player.speed },
-            { id: 'range', value: String(player.attackRange), label: 'Range', watch: player.attackRange },
-            {
-              id: 'regen',
-              value: `${Math.round(player.hpRegen * 10) / 10}/s`,
-              label: 'Regen',
-              watch: player.hpRegen,
-            },
-            ...(player.onHitDamage > 0
-              ? [{
-                id: 'onhit',
-                value: `+${player.onHitDamage}`,
-                label: 'On-hit',
-                watch: player.onHitDamage,
-              }]
-              : []),
-            ...(empMult
-              ? [{
-                id: 'empowered',
-                value: `×${empMult.effective.toFixed(2)}`,
-                label: 'Empowered',
-                watch: empMult.effective,
-              }]
-              : []),
+          // Two rails: what you do to them, then what happens to you. Grouping
+          // is the design — a rail reads as one object, which is the job the
+          // previous flat grid of nine equal cells could not do at any sort order.
+          rails={[
+            [
+              {
+                id: 'attack',
+                glyph: STAT_GLYPH.attack,
+                value: String(player.attack),
+                // On-hit is flat damage added after mitigation, so it belongs to
+                // the attack figure rather than to a cell of its own — which also
+                // spares it a glyph the commissioned set does not contain.
+                rider: player.onHitDamage > 0 ? `+${player.onHitDamage}` : undefined,
+                name: player.onHitDamage > 0 ? 'Attack (plus on-hit damage)' : 'Attack',
+                watch: player.attack,
+              },
+              {
+                id: 'range',
+                glyph: STAT_GLYPH.range,
+                value: String(player.attackRange),
+                name: 'Attack range',
+                watch: player.attackRange,
+              },
+              ...(empMult
+                ? [{
+                  id: 'empowered',
+                  glyph: STAT_GLYPH.empowered,
+                  value: `×${empMult.effective.toFixed(2)}`,
+                  name: 'Empowered attack multiplier',
+                  watch: empMult.effective,
+                }]
+                : []),
+            ],
+            [
+              {
+                id: 'plating',
+                glyph: STAT_GLYPH.plating,
+                value: String(player.plating),
+                name: 'Plating',
+                watch: player.plating,
+              },
+              // Always present, including at 0%. See the note on StatPlate.
+              {
+                id: 'reduction',
+                glyph: STAT_GLYPH.reduction,
+                value: `${Math.round(player.damageReduction * 100)}%`,
+                name: 'Damage reduction',
+                watch: Math.round(player.damageReduction * 100),
+              },
+              {
+                id: 'regen',
+                glyph: STAT_GLYPH.regen,
+                value: `${Math.round(player.hpRegen * 10) / 10}/s`,
+                name: 'Health regeneration',
+                watch: player.hpRegen,
+              },
+              {
+                id: 'speed',
+                glyph: STAT_GLYPH.speed,
+                value: String(player.speed),
+                name: 'Move speed',
+                watch: player.speed,
+              },
+            ],
           ]}
         />
       )}

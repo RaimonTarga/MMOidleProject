@@ -15,51 +15,142 @@
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.55);
 }
 
-/* The hero figure. Alone on its row and about twice the grid's weight, because
-   it is the only stat that summarises the others. */
-.glyph-tile.stat-plate__hero {
-  --tile-value-size: 26px;
-  margin-top: 6px;
-  padding: 6px 8px 5px;
-  background: linear-gradient(180deg, rgba(224, 192, 112, 0.06), transparent 70%);
-  border: 1px solid var(--hud-edge-divider);
-  border-radius: 2px;
-  text-align: center;
+/* ── Headline ─────────────────────────────────────────────────────────────────
+   One figure, its rate, and its name. The rate sits at body weight beside the
+   number rather than under it, because it is the same measurement read a
+   different way — not a second stat. */
+.stat-headline {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: 7px;
+  padding-bottom: 8px;
 }
 
-.stat-plate__hero .glyph-tile__label {
-  margin-top: 2px;
+.stat-headline__glyph {
+  flex: 0 0 auto;
+  align-self: center;
+  opacity: 0.85;
+}
+
+.stat-headline__value {
+  color: var(--hud-primary-strong);
+  font-family: monospace;
+  font-size: 20px;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.stat-headline__sub {
+  color: var(--hud-text-muted);
+  font-family: monospace;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-headline__label {
+  margin-left: auto;
+  color: var(--hud-text-dim);
   font-size: 9px;
   letter-spacing: 1.4px;
+  text-transform: uppercase;
 }
 
-/* Equal-weight grid. Every cell is the same primitive at the same size, and
-   that sameness IS the information — nothing here may grow a variant that
-   promotes one stat over another.
+/* ── Instrument rails ─────────────────────────────────────────────────────────
+   Each rail is one group of readings on one hairline-separated row. The columns
+   are `grid-auto-flow: column` at equal width, so a rail always fills the plate
+   whether it holds three readings or four — no empty cells to explain, and no
+   fixed column count to fall out of step with the build.
 
-   `auto-fit` rather than a fixed column count: the same component renders in a
-   236px desktop rail (two columns) and in a full-width mobile sheet (three or
-   four), and a hard-coded two would waste the sheet. It also means an odd stat
-   count just leaves a gap instead of needing a rule that guesses the column
-   count to patch it. */
-.stat-plate__grid {
+   Readings carry no caption. That is §15's de-texting rule applied where it was
+   always aimed: the glyph names the stat, and `.stat-reading__name` keeps the
+   spelled-out version available to hover and to screen readers without spending
+   the rail height on it. Do not add a label line back here — it is what made
+   this panel 310px tall. */
+.stat-rail {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(94px, 1fr));
+  grid-auto-flow: column;
+  /* `max-content` as the FLOOR, not 0. Equal 1fr columns gave every reading the
+     same share whatever it held, so "2.4/s" was ellipsised down to "2." while
+     "38" sat on slack it could not give back. Each column now takes the width
+     its number actually needs and only the leftover is shared, which is why
+     nothing here truncates. Measured worst case (4-digit attack, 85% reduction,
+     12.5/s regen) is ~202px against the rail's 236px. */
+  grid-auto-columns: minmax(max-content, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 6px 1px;
+  border-top: 1px solid var(--hud-edge-divider);
+}
+
+.stat-reading {
+  /* Contains the visually-hidden name below; without it that 1px absolute
+     element escapes to whatever ancestor happens to be positioned. */
+  position: relative;
+  display: flex;
+  align-items: center;
   gap: 4px;
-  margin-top: 6px;
-}
-
-.stat-plate__grid > .glyph-tile {
-  min-width: 0;
-  padding: 4px 7px 5px;
-  background: var(--hud-material-panel);
-  border: 1px solid var(--hud-edge-divider);
   border-radius: 2px;
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
 }
 
-.stat-plate__grid .glyph-tile__value {
+.stat-reading__glyph {
+  flex: 0 0 auto;
+  opacity: 0.8;
+}
+
+/* No clipping here on purpose: a truncated number is worse than no number, and
+   the column sizing above guarantees the room. */
+.stat-reading__value {
+  color: var(--hud-text);
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* A rider belongs to its reading's number, so it is smaller and dimmer than the
+   value but still part of the same cell. */
+.stat-reading__rider {
+  flex: 0 0 auto;
+  color: var(--hud-text-muted);
+  font-size: 9px;
+}
+
+/* Available to assistive tech and to nothing else — the glyph is the visible
+   label. Not `display: none`, which would take it out of the accessibility tree
+   as well. */
+.stat-reading__name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Same one-shot mark as GlyphTile: a stat only moves when the player moves it,
+   so the only honest motion is noticing that it did. Two names so a second
+   change restarts the mark while the first is still playing. */
+@keyframes stat-reading-flash-a {
+  0% { background: var(--hud-material-control); }
+  100% { background: transparent; }
+}
+
+@keyframes stat-reading-flash-b {
+  0% { background: var(--hud-material-control); }
+  100% { background: transparent; }
+}
+
+.stat-reading--flash-a { animation: stat-reading-flash-a 1.1s ease-out; }
+.stat-reading--flash-b { animation: stat-reading-flash-b 1.1s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-reading--flash-a,
+  .stat-reading--flash-b { animation: none; }
 }
 
 /* ── Crown ────────────────────────────────────────────────────────────────────

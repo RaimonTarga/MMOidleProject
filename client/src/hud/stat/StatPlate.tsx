@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
-import { GlyphTile, type GlyphTileProps } from '../primitives/GlyphTile';
+import { GameIcon, atlasIcon } from '../../ui/GameIcon';
+import { useChangeFlash } from '../primitives/useChangeFlash';
 import { GradientConduit, type ConduitRamp } from '../primitives/GradientConduit';
 import './statPlate.css';
 
@@ -99,60 +100,112 @@ function Crown({ crown }: { crown: PlateCrown }) {
 }
 
 /**
- * The plate's figures are `GlyphTile`s, so this is a projection of that contract
- * rather than a parallel one — the cell recipe cannot drift away from the
- * primitive that draws it.
+ * One reading on an instrument rail: a glyph and its number, nothing else.
+ *
+ * The glyph IS the label. §15's de-texting rule is explicit that captions inside
+ * panels are the defect, and it commissioned this exact stat set for the purpose
+ * — so the word under every value is not a shorter option, it is the thing being
+ * removed. `name` keeps the readout accessible and hoverable without spending
+ * the rail height that spelling it out would cost.
  */
-export interface PlateFigure extends Pick<GlyphTileProps, 'value' | 'label' | 'watch' | 'title'> {
-  /**
-   * Stable identity. Not called `key`: spreading a prop named `key` into a
-   * component is a React footgun, and several of these figures are conditional,
-   * so a positional key would re-key the whole grid when one appears.
-   */
+export interface PlateReading {
   id: string;
+  /** Frame in the UI atlas. */
+  glyph: string;
+  value: string;
+  /** Spelled-out stat name — hover title and screen-reader text. */
+  name: string;
+  /** Small rider on the same cell, e.g. an on-hit bonus beside attack. */
+  rider?: string;
+  /** Raw number behind `value`, so a genuine change marks itself once. */
+  watch?: number;
+}
+
+/**
+ * The figure that answers the glance on its own, with the rate that produced it
+ * carried alongside rather than competing for a cell of its own.
+ */
+export interface PlateHeadline extends PlateReading {
+  label: string;
+  sub?: string;
 }
 
 export interface StatPlateProps {
   crown?: PlateCrown;
+  headline: PlateHeadline;
   /**
-   * The one figure that answers "how is my character doing" without reading
-   * anything else. Drawn alone, at roughly twice the grid's weight.
+   * Instrument rails, drawn in order and separated by a hairline. Grouping is
+   * the point: a rail reads as one object ("my offence"), which is work no flat
+   * grid of equal cells does however it is sorted.
    */
-  hero: PlateFigure;
-  /**
-   * Every other stat, all at EXACTLY the same weight. That equality is the
-   * point, not a default: the panel used to promote DPS and Plating into big
-   * tiles and demote attack, APS, range, regen and speed into a run of small
-   * grey text, which said Plating outranks Damage reduction. It does not.
-   */
-  figures: PlateFigure[];
+  rails: PlateReading[][];
+}
+
+function Reading({ reading }: { reading: PlateReading }) {
+  const { flashKey } = useChangeFlash(reading.watch);
+  const classes = [
+    'stat-reading',
+    flashKey > 0 && `stat-reading--flash-${flashKey % 2 === 1 ? 'a' : 'b'}`,
+  ].filter(Boolean).join(' ');
+
+  return (
+    <span className={classes} title={`${reading.name}: ${reading.value}`}>
+      {/* 16px, not smaller. The stat glyphs are 16x16 pixel art and this panel
+          asks them to BE the label, so they render at 1:1 — any fractional
+          downscale drops source pixels unevenly and turns a legible glyph into a
+          smudge. `DetailLines` gets away with 14 because it prints the stat's
+          name beside it; here there is no name to fall back on. */}
+      <GameIcon
+        as="span"
+        source={atlasIcon(reading.glyph)}
+        size={16}
+        fallback={null}
+        className="stat-reading__glyph"
+        decorative
+      />
+      <span className="stat-reading__value">{reading.value}</span>
+      {reading.rider && <span className="stat-reading__rider">{reading.rider}</span>}
+      <span className="stat-reading__name">{reading.name}</span>
+    </span>
+  );
 }
 
 /**
  * One engraved housing carrying the whole character readout. Static at rest —
  * a stat only moves when the player changes it, so idle motion would be noise.
- * Each figure labels itself, so the plate needs no section headings.
  *
- * NOTE there is deliberately no meter here any more. Damage reduction used to be
- * the plate's one bar, and the bar came with a guard that dropped any meter at
- * zero — so a player with no damage reduction saw the stat vanish from the panel
+ * NOTE there is deliberately no meter here. Damage reduction used to be the
+ * plate's one bar, and the bar came with a guard that dropped any meter at zero
+ * — so a player with no damage reduction saw the stat vanish from the panel
  * entirely rather than read "0%". A core stat has to be legible when it is zero;
  * that is exactly when you most want to know.
  */
-export function StatPlate({ crown, hero, figures }: StatPlateProps) {
-  const { id: heroId, ...heroTile } = hero;
-
+export function StatPlate({ crown, headline, rails }: StatPlateProps) {
   return (
     <section className="stat-plate" aria-label="Character stats">
       {crown && <Crown crown={crown} />}
 
-      <GlyphTile key={heroId} {...heroTile} className="stat-plate__hero" />
-
-      <div className="stat-plate__grid">
-        {figures.map(({ id, ...tile }) => (
-          <GlyphTile key={id} {...tile} size="sm" />
-        ))}
+      <div className="stat-headline" title={`${headline.name}: ${headline.value}`}>
+        <GameIcon
+          as="span"
+          source={atlasIcon(headline.glyph)}
+          size={16}
+          fallback={null}
+          className="stat-headline__glyph"
+          decorative
+        />
+        <span className="stat-headline__value">{headline.value}</span>
+        {headline.sub && <span className="stat-headline__sub">{headline.sub}</span>}
+        <span className="stat-headline__label">{headline.label}</span>
       </div>
+
+      {rails.map((rail, index) => (
+        <div className="stat-rail" key={rail[0]?.id ?? index}>
+          {rail.map((reading) => (
+            <Reading key={reading.id} reading={reading} />
+          ))}
+        </div>
+      ))}
     </section>
   );
 }
