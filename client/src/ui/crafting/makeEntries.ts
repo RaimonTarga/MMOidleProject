@@ -174,7 +174,7 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
 }
 
 /**
- * Sort so the same kind stays together and cheaper tiers come first. Every
+ * Sort so the same kind stays together and the best tier comes first. Every
  * `MakeKind` must be listed — a missing kind resolves to `indexOf` -1 and sorts
  * ahead of weapons, which is how relics used to lead the recipe list.
  */
@@ -265,9 +265,12 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
     }),
   ];
 
+  // Highest tier first within each kind: the thing a player is working toward is
+  // what they came to look at, and low-tier recipes stay crafted long after they
+  // stop being interesting.
   return entries.sort((a, b) =>
     KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind)
-    || a.tier - b.tier
+    || b.tier - a.tier
     || a.name.localeCompare(b.name),
   );
 }

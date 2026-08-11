@@ -73,7 +73,14 @@ export function CraftingPanel({ tab, onTabChange, onClose }: Props) {
         ))}
       </DialogTabs>
 
-      <div id={`craft-panel-${tab}`} className="crafting-dialog__content" role="tabpanel">
+      {/* The modifier is what lets Craft own its own scrolling (the recipe list
+          scrolls, the craft controls stay put) while Upgrade keeps scrolling as
+          one page — it has no persistent control to protect. */}
+      <div
+        id={`craft-panel-${tab}`}
+        className={`crafting-dialog__content crafting-dialog__content--${tab}`}
+        role="tabpanel"
+      >
         {playerId ? (
           tab === 'make' ? <MakeTab /> : <UpgradeTab />
         ) : (

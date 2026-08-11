@@ -756,7 +756,7 @@
 .mastery-biome-row__name {
   flex: 1 1 auto;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .mastery-biome-row__meter {
@@ -807,6 +807,9 @@
   cursor: pointer;
   transition: color 0.10s;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .craft-filter-chip:hover:not(.craft-filter-chip--active) {
@@ -895,8 +898,22 @@
    the lock discharges through the core, then the crafted thing is named and
    sealed. It lives above the Make browser so the recipe may safely disappear
    from the authoritative list without taking its own reveal with it. */
+/* Scroll containment for the Craft tab.
+   BrowserPane already gives the recipe list and the detail pane their own
+   scrollers, but only when it is handed a bounded height. Inside a scrolling
+   content div it never was, so the whole tab scrolled as one page and reading
+   down a long recipe list pushed the craft controls out of the viewport. Bound
+   the tab to the dialog and the list becomes the thing that scrolls. */
+.crafting-dialog__content--make {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .craft-body--make {
   position: relative;
+  flex: 1;
+  min-height: 0;
 }
 
 .craft-forge-reveal {
@@ -1272,6 +1289,108 @@
 
 .craft-forge-reveal__seal i:last-child {
   background: linear-gradient(90deg, var(--craft-reveal-tone), transparent);
+}
+
+/* ── Low-tier craft confirmation ───────────────────────────────────────────
+   The counterpart to the forge ceremony above, and deliberately a different
+   object rather than a shortened one: a metal stamp struck into the corner of
+   the panel. It has weight (the strike overshoots, the plate rings once) but it
+   is done in a beat, and it never scrims the list behind it. See
+   CRAFT_CEREMONY_MIN_TIER in MakeTab.tsx for which crafts get which. */
+.craft-forge-stamp {
+  --craft-reveal-tone: var(--hud-primary);
+  --craft-stamp-duration: 1.2s;
+  position: absolute;
+  z-index: 30;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(320px, calc(100% - 28px));
+  box-sizing: border-box;
+  padding: 8px 12px 8px 10px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--craft-reveal-tone) 10%, transparent), transparent 42%),
+    linear-gradient(180deg, #232019, #12100d);
+  border: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 62%, var(--hud-edge-dark));
+  border-radius: 2px;
+  box-shadow:
+    inset 0 0 0 2px rgba(5, 4, 3, 0.7),
+    0 0 20px color-mix(in srgb, var(--craft-reveal-tone) 16%, transparent),
+    0 6px 18px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  overflow: hidden;
+  animation: craft-forge-stamp-life var(--craft-stamp-duration) cubic-bezier(0.2, 0.9, 0.24, 1) both;
+}
+
+/* One bar of light crossing the plate as it lands — the whole "something was
+   forged" cue, in a single sweep. */
+.craft-forge-stamp__strike {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    color-mix(in srgb, var(--craft-reveal-tone) 46%, transparent) 50%,
+    transparent 68%
+  );
+  animation: craft-forge-stamp-strike var(--craft-stamp-duration) ease-out both;
+}
+
+.craft-forge-stamp__icon {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+
+.craft-forge-stamp__copy {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.craft-forge-stamp__copy strong {
+  color: var(--hud-text);
+  font-size: 11px;
+  overflow-wrap: break-word;
+}
+
+.craft-forge-stamp__copy span {
+  color: var(--hud-text-dim);
+  font-size: 9px;
+}
+
+.craft-forge-stamp__seal {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  padding-left: 10px;
+  border-left: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 34%, var(--hud-edge-dark));
+  color: var(--craft-reveal-tone);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+}
+
+@keyframes craft-forge-stamp-life {
+  0%   { opacity: 0; transform: translateY(10px) scale(0.9); filter: brightness(1.9); }
+  14%  { opacity: 1; transform: translateY(-2px) scale(1.035); filter: brightness(1.5); }
+  26%  { transform: translateY(0) scale(1); filter: brightness(1); }
+  78%  { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-6px) scale(0.99); }
+}
+
+@keyframes craft-forge-stamp-strike {
+  0%   { opacity: 0; transform: translateX(-115%); }
+  12%  { opacity: 1; }
+  46%, 100% { opacity: 0; transform: translateX(115%); }
 }
 
 @keyframes craft-forge-reveal-life {
@@ -1893,8 +2012,20 @@
 }
 
 .make-row__meta {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   color: var(--hud-text-dim);
   font-size: 9px;
+}
+
+/* The kind glyph is a scanning aid, not a second subject: it sits at the meta
+   line's weight so it marks where a group starts without competing with the
+   entry's own icon. Dimmed chips and rows carry it down with them. */
+.make-kind-glyph {
+  flex: 0 0 auto;
+  opacity: 0.78;
+  image-rendering: pixelated;
 }
 
 /* The row is its own flex container now: it carries the affordability state as
@@ -2055,9 +2186,17 @@
   .craft-forge-reveal,
   .craft-forge-reveal *,
   .craft-forge-reveal *::before,
-  .craft-forge-reveal *::after {
+  .craft-forge-reveal *::after,
+  .craft-forge-stamp,
+  .craft-forge-stamp * {
     animation: none !important;
     transition: none !important;
+  }
+
+  /* The plate still has to be visible for its dismissal timer; only the sweep
+     that crosses it is motion for its own sake. */
+  .craft-forge-stamp__strike {
+    display: none;
   }
 
   .craft-upgrade-reveal,

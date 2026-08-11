@@ -38,6 +38,8 @@ import {
 } from './makeEntries';
 import { useNewEntries } from './useNewEntries';
 import { eligibleMakeKeys, useMakeEntries } from './useMakeEntries';
+import { GameIcon } from '../GameIcon';
+import { makeKindIconSource } from '../systemIcons';
 import { ItemIcon } from '../ItemIcon';
 import { BuildIcon } from '../BuildIcon';
 import { abilityIconSource } from '../abilityIcons';
@@ -79,6 +81,26 @@ const KIND_FACETS: { kind: MakeKind; label: string }[] = KIND_ORDER.map((kind) =
 
 function kindLabel(kind: MakeKind): string {
   return MAKE_KIND_LABELS[kind] ?? kind;
+}
+
+/**
+ * The kind's own glyph, next to its name. Carried by both the filter chip and
+ * every row, so a group is recognisable from the chip strip and again when it
+ * scrolls past — which is the whole reason stances/rites/runes read as missing.
+ */
+function KindGlyph({ kind, size }: { kind: MakeKind; size: number }) {
+  const source = makeKindIconSource(kind);
+  if (!source) return null;
+  return (
+    <GameIcon
+      as="span"
+      source={source}
+      size={size}
+      fallback={null}
+      className="make-kind-glyph"
+      decorative
+    />
+  );
 }
 
 function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
@@ -138,8 +160,29 @@ interface CraftResult {
   reason?: string;
 }
 
+/**
+ * Two success beats, chosen by tier — not one animation with frames removed.
+ *
+ * A T1 recipe is crafted dozens of times on the way through a biome, and a
+ * five-second forge ceremony for the twelfth Oak Club is a tax. A T4 relic is
+ * crafted once, and the ceremony is the reward. So the low tiers get their own
+ * shape: a struck stamp in the corner of the panel that lands hard, holds, and
+ * leaves — deliberate, but over in a beat, and it never covers the list you are
+ * still reading.
+ *
+ * `CRAFT_CEREMONY_MIN_TIER` is the only knob. Tier 3 is where recipes stop being
+ * something you make on the way past.
+ */
+const CRAFT_CEREMONY_MIN_TIER = 3;
+
 const CRAFT_REVEAL_MS = 4_950;
+/** Must outlast `craft-forge-stamp-life` in crafting.css. */
+const CRAFT_CONFIRM_MS = 1_250;
 const CRAFT_FAILURE_MS = 2_200;
+
+function wantsCeremony(entry: MakeEntry): boolean {
+  return entry.tier >= CRAFT_CEREMONY_MIN_TIER;
+}
 
 /**
  * Successful recipes leave the Make list as soon as the authoritative player
@@ -207,6 +250,41 @@ function CraftReveal({ result }: { result: CraftResult }) {
 }
 
 /**
+ * The low-tier success beat. Same information as the forge ceremony — what you
+ * made, what kind, what tier — with none of its staging: no scrim, no chamber,
+ * no channel. It strikes in, holds long enough to be read, and goes, while the
+ * recipe list behind it stays visible and usable the whole time.
+ */
+function CraftStamp({ result }: { result: CraftResult }) {
+  const { entry } = result;
+  const style = {
+    '--craft-reveal-tone': tierColor(entry.tier),
+  } as CSSProperties;
+
+  return (
+    <div
+      className="craft-forge-stamp"
+      style={style}
+      role="status"
+      aria-live="polite"
+      aria-label={`${entry.name} crafted`}
+    >
+      <span className="craft-forge-stamp__strike" aria-hidden="true" />
+      <span className="craft-forge-stamp__icon" aria-hidden="true">
+        <EntryIcon entry={entry} size={34} />
+      </span>
+      <span className="craft-forge-stamp__copy">
+        <strong>{entry.name}</strong>
+        <span>
+          {kindLabel(entry.kind)} · T{entry.tier}
+        </span>
+      </span>
+      <span className="craft-forge-stamp__seal" aria-hidden="true">Crafted</span>
+    </div>
+  );
+}
+
+/**
  * The single making surface. Gear recipes and technique recipes come from
  * separate authoritative databases but share one browser, one card shape, and
  * one cost grammar, so "what can I build right now" is a single question.
@@ -265,7 +343,9 @@ export function MakeTab() {
       });
       resultTimerRef.current = setTimeout(
         () => setCraftResult(null),
-        detail.success ? CRAFT_REVEAL_MS : CRAFT_FAILURE_MS,
+        !detail.success
+          ? CRAFT_FAILURE_MS
+          : wantsCeremony(entry) ? CRAFT_REVEAL_MS : CRAFT_CONFIRM_MS,
       );
       lastAttemptRef.current = null;
     };
@@ -312,7 +392,7 @@ export function MakeTab() {
     // only has to impose its own key and let that carry the ties.
     const sorted = matches.slice();
     if (sort === 'name') sorted.sort((a, b) => a.name.localeCompare(b.name));
-    else if (sort === 'tier') sorted.sort((a, b) => a.tier - b.tier);
+    else if (sort === 'tier') sorted.sort((a, b) => b.tier - a.tier);
     else if (sort === 'cost') sorted.sort((a, b) => entryCost(a) - entryCost(b));
     else {
       // Default: what just became available, then what you can afford right now,
@@ -394,6 +474,7 @@ export function MakeTab() {
             data-slot={facet.kind}
             onClick={() => setFilterKind((value) => (value === facet.kind ? null : facet.kind))}
           >
+            <KindGlyph kind={facet.kind} size={12} />
             {facet.label}
           </button>
         ))}
@@ -435,7 +516,11 @@ export function MakeTab() {
 
   return (
     <div className="craft-body craft-body--make">
-      {craftResult?.success && <CraftReveal key={craftResult.id} result={craftResult} />}
+      {craftResult?.success && (
+        wantsCeremony(craftResult.entry)
+          ? <CraftReveal key={craftResult.id} result={craftResult} />
+          : <CraftStamp key={craftResult.id} result={craftResult} />
+      )}
       <WalletSummary essences={essences} catalysts={catalysts} />
       <BrowserPane
         label="Recipes"
@@ -521,6 +606,7 @@ function MakeRow({
       <span className="make-row__main">
         <span className="make-row__name">{entry.name}</span>
         <span className="make-row__meta">
+          <KindGlyph kind={entry.kind} size={10} />
           {kindLabel(entry.kind)} · T{entry.tier}
           {entry.recipeGroup ? ` · ${biomeName(entry.recipeGroup)}` : ''}
         </span>
