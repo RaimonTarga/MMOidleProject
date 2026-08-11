@@ -555,7 +555,7 @@ html[data-spectator="true"] #game-wrapper > div {
 
 .auth-character-card__heading > div:first-child { min-width: 0; }
 .auth-character-card__heading h2 {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   font-size: 22px;
   line-height: 1.12;
 }

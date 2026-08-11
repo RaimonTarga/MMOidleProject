@@ -37,7 +37,7 @@
     min-width: 0;
     color: var(--hud-text);
     font-size: 11px;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   .desktop-hud .party-panel__you,
@@ -110,7 +110,6 @@
     text-transform: uppercase;
   }
 
-  .desktop-hud .party-panel__solo-copy,
   .desktop-hud .party-panel__empty {
     margin: 1px 0 0;
     color: var(--hud-text-muted);

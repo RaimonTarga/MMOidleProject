@@ -333,7 +333,7 @@
     overflow: visible;
     text-overflow: clip;
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   .desktop-hud .stat-label {
@@ -341,7 +341,7 @@
     max-width: 45%;
     flex: 1 1 45%;
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   .desktop-hud .stat-value {
@@ -349,7 +349,7 @@
     max-width: 55%;
     flex: 1 1 55%;
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
 }
@@ -936,16 +936,8 @@
   flex: 1;
 }
 
-.combat-log__count {
-  color: var(--hud-text-dim);
-  font-size: 9px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 0 4px;
-  border-radius: 3px;
-}
-
-/* Verbosity tiers. The log defaults to outcomes; the per-hit exchange stream is
-   opt-in rather than the thing you have to read past. */
+/* Category toggles. Outcomes and Combat are on by default; buff/heal/shield
+   chatter is opt-in rather than the thing you have to read past. */
 .combat-log__filters {
   display: flex;
   gap: 3px;
@@ -1063,23 +1055,21 @@
   flex: 1;
   font-size: 10px;
   white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .combat-log__msg {
   flex: 1;
   font-size: 10px;
   white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .combat-log__detail {
   font-size: 10px;
   color: var(--hud-text-muted);
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .combat-log__buff-detail {
@@ -1089,7 +1079,7 @@
   font-size: 9px;
   line-height: 1.25;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .combat-log__buff-detail-line {
@@ -1099,7 +1089,7 @@
 .combat-log__math {
   font-size: 10px;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .combat-log__mitigated,
@@ -1566,10 +1556,15 @@
   white-space: nowrap;
 }
 
+/* RETAINED aggressive wrap: the dev debug panel prints raw runtime values —
+   node ids, archetype keys, socket ids, generated markers — in a ~90px column.
+   Those are single unbroken tokens with no break opportunity, so `anywhere` is
+   the only rule that keeps them inside the panel. `anywhere` rather than the
+   old `break-all` so a value that *does* fit is still left whole. */
 .debug-val {
   color: #ddaa99;
   text-align: right;
-  word-break: break-all;
+  overflow-wrap: anywhere;
   flex: 1;
 }
 
@@ -1634,7 +1629,7 @@
   line-height: 1.25;
   text-align: center;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .dungeon-altar__button {

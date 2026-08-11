@@ -298,7 +298,7 @@ export function AuthGate() {
             <div className="auth-empty-roster">
               <div aria-hidden="true">◇</div>
               <h2>Your story starts here</h2>
-              <p>Create your first character. Your class is chosen later in the skill tree.</p>
+              <p>Your class is chosen later, in the skill tree.</p>
             </div>
           ) : characters.map((character) => (
             <CharacterCard key={character.id} character={character} busy={busy} />

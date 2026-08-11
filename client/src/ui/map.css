@@ -1363,7 +1363,7 @@
   color: rgba(255, 255, 255, 0.88);
   font: 8px/1.05 monospace;
   text-align: center;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   white-space: normal;
 }
 

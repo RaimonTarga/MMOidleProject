@@ -7,6 +7,7 @@ import type {
 } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
+  essenceLabel,
   catalystLabel, catalystFamilyLabel,
   coreEligibilityLabel, isRestrictedCore,
   relicRatingsFromEffects, resolveRelicPreview,
@@ -113,7 +114,7 @@ function MonsterRow({ m, isBoss, pace, biomeTier, open, onToggle }: {
           </ul>
           <div className="map-monster__reward">
             Drops <span style={{ color: ESSENCE_COLORS[m.rewards.essenceType as EssenceType] }}>
-              {m.rewards.essence} {m.rewards.essenceType}
+              {m.rewards.essence} {essenceLabel(m.rewards.essenceType as EssenceType)}
             </span>
             {m.rewards.biomeXp ? ` · ${m.rewards.biomeXp} biome XP` : ''}
           </div>

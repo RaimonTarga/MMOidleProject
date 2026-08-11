@@ -125,11 +125,7 @@ export function PartyPanel() {
                 {myLeaderId === playerId ? "Disband party" : "Leave party"}
               </button>
             </>
-          ) : (
-            <p className="party-panel__solo-copy">
-              Join a nearby adventurer to travel together.
-            </p>
-          )}
+          ) : null}
         </div>
       )}
 

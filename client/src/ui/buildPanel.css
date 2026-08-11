@@ -660,7 +660,7 @@
   min-width: 0;
   color: var(--hud-text);
   font-size: 11px;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .rule-card--invalid .rule-card__do .rule-card__text {

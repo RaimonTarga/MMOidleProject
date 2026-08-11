@@ -2,10 +2,12 @@ import { createPortal } from 'react-dom';
 import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import {
+  essenceLabel,
   resolveZoneBestiary,
   describeMonsterMechanics,
   type BestiaryEntry,
   type BestiaryStats,
+  type EssenceType,
 } from '@mmo-idle/shared';
 import { playerNodeIdAtom, bestiaryOpenAtom, bestiaryDetailIdAtom } from '../atoms';
 import { MonsterSprite } from './MonsterSprite';
@@ -74,7 +76,7 @@ function StatGrid({ entry }: { entry: BestiaryEntry }) {
         />
       </div>
       <div className="bestiary-detail__rewards">
-        Rewards: <b>{r.essence}</b> {r.essenceType} essence
+        Rewards: <b>{r.essence}</b> {essenceLabel(r.essenceType as EssenceType)} essence
         {r.biomeXp ? <> · <b>{r.biomeXp}</b> biome XP</> : null}
         {` · level ${r.level}`}
       </div>

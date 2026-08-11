@@ -1,4 +1,5 @@
 import type { EssenceType } from '../items';
+import { essenceLabel } from '../items';
 import type { BuffCategory, BuffId } from '../components/combat/buffs';
 import type { DeathCause } from './death';
 import { formatDeathCauseLabel } from './death';
@@ -446,7 +447,9 @@ export function formatWorldLogEntry(
       const detailParts: string[] = [];
       if (event.essenceGained) {
         detailParts.push(
-          `+${formatLogNumber(event.essenceGained)}${event.essenceType ? ` ${event.essenceType}` : ''} essence`,
+          // ESSENCE_LABELS is the single authority for the player-facing aspect
+          // name; the colour key is internal (persistence/protocol/recipes only).
+          `+${formatLogNumber(event.essenceGained)}${event.essenceType ? ` ${essenceLabel(event.essenceType)}` : ''} essence`,
         );
       }
       if (event.biomeXpGained) detailParts.push(`+${formatLogNumber(event.biomeXpGained)} XP`);
