@@ -1,5 +1,4 @@
 import type { HTMLAttributes, ReactNode } from 'react';
-import { EngravedMeter } from '../primitives/EngravedMeter';
 import { GlyphTile, type GlyphTileProps } from '../primitives/GlyphTile';
 import { GradientConduit, type ConduitRamp } from '../primitives/GradientConduit';
 import './statPlate.css';
@@ -99,71 +98,61 @@ function Crown({ crown }: { crown: PlateCrown }) {
   );
 }
 
-/** A bar is only honest where the underlying value has a real 0-100% ceiling. */
-export interface PlateMeter {
-  label: string;
-  /** 0-1. Damage reduction and dodge are fractions; attack and DPS are not. */
-  fraction: number;
-  value: string;
-}
-
 /**
  * The plate's figures are `GlyphTile`s, so this is a projection of that contract
  * rather than a parallel one — the cell recipe cannot drift away from the
  * primitive that draws it.
  */
-export type PlateFigure = Pick<GlyphTileProps, 'value' | 'label' | 'watch'>;
+export interface PlateFigure extends Pick<GlyphTileProps, 'value' | 'label' | 'watch' | 'title'> {
+  /**
+   * Stable identity. Not called `key`: spreading a prop named `key` into a
+   * component is a React footgun, and several of these figures are conditional,
+   * so a positional key would re-key the whole grid when one appears.
+   */
+  id: string;
+}
 
 export interface StatPlateProps {
   crown?: PlateCrown;
+  /**
+   * The one figure that answers "how is my character doing" without reading
+   * anything else. Drawn alone, at roughly twice the grid's weight.
+   */
+  hero: PlateFigure;
+  /**
+   * Every other stat, all at EXACTLY the same weight. That equality is the
+   * point, not a default: the panel used to promote DPS and Plating into big
+   * tiles and demote attack, APS, range, regen and speed into a run of small
+   * grey text, which said Plating outranks Damage reduction. It does not.
+   */
   figures: PlateFigure[];
-  /** Secondary readouts, shown small beneath the figures. */
-  lines?: ReactNode[];
-  meters?: PlateMeter[];
 }
 
 /**
  * One engraved housing carrying the whole character readout. Static at rest —
  * a stat only moves when the player changes it, so idle motion would be noise.
  * Each figure labels itself, so the plate needs no section headings.
+ *
+ * NOTE there is deliberately no meter here any more. Damage reduction used to be
+ * the plate's one bar, and the bar came with a guard that dropped any meter at
+ * zero — so a player with no damage reduction saw the stat vanish from the panel
+ * entirely rather than read "0%". A core stat has to be legible when it is zero;
+ * that is exactly when you most want to know.
  */
-export function StatPlate({ crown, figures, lines, meters }: StatPlateProps) {
-  // A trough that can never fill reads as a broken bar, so a stat the player
-  // has none of is omitted rather than drawn empty. Enforced here so no caller
-  // can render one by forgetting its own guard.
-  const activeMeters = (meters ?? []).filter((meter) => meter.fraction > 0);
+export function StatPlate({ crown, hero, figures }: StatPlateProps) {
+  const { id: heroId, ...heroTile } = hero;
 
   return (
     <section className="stat-plate" aria-label="Character stats">
       {crown && <Crown crown={crown} />}
 
-      <div className="stat-plate__figures">
-        {figures.map((figure) => (
-          <GlyphTile key={figure.label} {...figure} />
+      <GlyphTile key={heroId} {...heroTile} className="stat-plate__hero" />
+
+      <div className="stat-plate__grid">
+        {figures.map(({ id, ...tile }) => (
+          <GlyphTile key={id} {...tile} size="sm" />
         ))}
       </div>
-
-      {lines && lines.length > 0 && (
-        <div className="stat-plate__lines">
-          {lines.map((line, index) => (
-            <span key={index} className="stat-plate__line">{line}</span>
-          ))}
-        </div>
-      )}
-
-      {activeMeters.map((meter) => (
-        <div key={meter.label} className="stat-plate__meter-row">
-          <span className="stat-plate__meter-label">{meter.label}</span>
-          {/* Engraved grammar: these sit still between gear swaps, so they get
-              the flat counter-grammar rather than the conduit's motion. */}
-          <EngravedMeter
-            className="stat-plate__meter"
-            fraction={meter.fraction}
-            label={`${meter.label}: ${meter.value}`}
-          />
-          <span className="stat-plate__meter-value">{meter.value}</span>
-        </div>
-      ))}
     </section>
   );
 }

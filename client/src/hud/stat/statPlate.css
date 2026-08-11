@@ -15,61 +15,52 @@
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.55);
 }
 
-.stat-plate__figures {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 6px;
+/* The hero figure. Alone on its row and about twice the grid's weight, because
+   it is the only stat that summarises the others. */
+.glyph-tile.stat-plate__hero {
+  --tile-value-size: 26px;
+  margin-top: 6px;
+  padding: 6px 8px 5px;
+  background: linear-gradient(180deg, rgba(224, 192, 112, 0.06), transparent 70%);
+  border: 1px solid var(--hud-edge-divider);
+  border-radius: 2px;
+  text-align: center;
 }
 
-/* The cell itself is the shared GlyphTile primitive; the plate only says how the
-   figures share the row. */
-.stat-plate__figures > .glyph-tile {
-  flex: 1 1 46px;
-  min-width: 46px;
-}
-
-.stat-plate__lines {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px 8px;
-  margin-top: 5px;
-  padding-top: 4px;
-  border-top: 1px solid var(--hud-edge-divider);
-  color: var(--hud-text-muted);
-  font-family: monospace;
-  font-size: 10px;
-}
-
-.stat-plate__meter-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
-  font-family: monospace;
-}
-
-.stat-plate__meter-label {
-  flex: 0 0 auto;
-  color: var(--hud-text-dim);
+.stat-plate__hero .glyph-tile__label {
+  margin-top: 2px;
   font-size: 9px;
+  letter-spacing: 1.4px;
 }
 
-/* Meters exist only for values with a genuine 0-100% ceiling. The track, fill
-   and sub-pixel floor now come from the shared EngravedMeter; the plate only
-   says how it shares the row. */
-.stat-plate__meter {
-  flex: 1 1 auto;
+/* Equal-weight grid. Every cell is the same primitive at the same size, and
+   that sameness IS the information — nothing here may grow a variant that
+   promotes one stat over another.
+
+   `auto-fit` rather than a fixed column count: the same component renders in a
+   236px desktop rail (two columns) and in a full-width mobile sheet (three or
+   four), and a hard-coded two would waste the sheet. It also means an odd stat
+   count just leaves a gap instead of needing a rule that guesses the column
+   count to patch it. */
+.stat-plate__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(94px, 1fr));
+  gap: 4px;
+  margin-top: 6px;
 }
 
-.stat-plate__meter-value {
-  flex: 0 0 auto;
-  min-width: 30px;
-  color: var(--hud-text);
-  font-size: 10px;
-  text-align: right;
+.stat-plate__grid > .glyph-tile {
+  min-width: 0;
+  padding: 4px 7px 5px;
+  background: var(--hud-material-panel);
+  border: 1px solid var(--hud-edge-divider);
+  border-radius: 2px;
 }
 
-/* Reduced motion for the meter fill now lives with the EngravedMeter itself. */
+.stat-plate__grid .glyph-tile__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* ── Crown ────────────────────────────────────────────────────────────────────
    Name, connection, and health folded into the top of the plate (§14.1). They

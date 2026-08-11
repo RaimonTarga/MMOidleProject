@@ -146,7 +146,10 @@ export function StatPanel() {
   const healPct     = player && maxHpVal > 0 ? Math.min(100 - hpPct, (player.pendingHeal / maxHpVal) * 100) : 0;
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
-  const dps         = player ? ((player.attack + player.onHitDamage) * (1000 / player.attackCooldown)).toFixed(1) : '—';
+  const dpsValue    = player ? (player.attack + player.onHitDamage) * (1000 / player.attackCooldown) : 0;
+  // One decimal is real information at 12.4 DPS and noise at 1284.3, and this is
+  // now the plate's hero figure — so the precision follows the magnitude.
+  const dps         = player ? (dpsValue >= 100 ? String(Math.round(dpsValue)) : dpsValue.toFixed(1)) : '—';
   const empMult     = player ? resolveEmpoweredMultiplier(player.passives, player.combatArchetype) : null;
   const empMultTip  = empMult ? (
     <>
@@ -199,31 +202,54 @@ export function StatPanel() {
             pendingHeal: player.pendingHeal,
             hpTip,
           }}
-          // Glance figures are the two that decide a fight (§14.2). HP/s and
-          // Speed demote to the expand, where they already had rows.
+          // DPS is the hero figure because it is the one number that already
+          // folds the others together — attack, on-hit and attack speed all
+          // land in it, so it is what "am I hitting hard enough" actually asks.
+          hero={{
+            id: 'dps',
+            value: dps,
+            label: 'DPS',
+            watch: Math.round(dpsValue),
+            title: 'Damage per second: (attack + on-hit) × attacks per second',
+          }}
+          // Everything below is one weight. Ordered offence → defence →
+          // movement → sustain, so related numbers sit next to each other in the
+          // two-column grid rather than being ranked against each other.
           figures={[
-            { value: dps, label: 'DPS', watch: Number(dps) },
-            { value: String(player.plating), label: 'Plating', watch: player.plating },
-          ]}
-          lines={[
-            `${player.attack} attack`,
-            `${aps}/s`,
-            `${player.attackRange} range`,
-            ...(player.onHitDamage > 0 ? [`+${player.onHitDamage} on-hit`] : []),
-            ...(empMult ? [`×${empMult.effective.toFixed(2)} empowered`] : []),
-            `${player.hpRegen}/s regen`,
-            `${player.speed} speed`,
-          ]}
-          // Reduction is the only genuine 0-100% ceiling left here. The static
-          // Dodge meter is gone: it stated a rate while saying nothing about
-          // when the next dodge lands, which is what the Evasion instrument now
-          // shows from the live authoritative charge.
-          meters={[
+            { id: 'attack', value: String(player.attack), label: 'Attack', watch: player.attack },
+            { id: 'aps', value: aps, label: 'APS', watch: Number(aps), title: `${cdSec}s between attacks` },
+            { id: 'plating', value: String(player.plating), label: 'Plating', watch: player.plating },
+            // Always present, including at 0%. See the note on StatPlate.
             {
-              label: 'Reduction',
-              fraction: player.damageReduction,
+              id: 'reduction',
               value: `${Math.round(player.damageReduction * 100)}%`,
+              label: 'Reduction',
+              watch: Math.round(player.damageReduction * 100),
             },
+            { id: 'speed', value: String(player.speed), label: 'Speed', watch: player.speed },
+            { id: 'range', value: String(player.attackRange), label: 'Range', watch: player.attackRange },
+            {
+              id: 'regen',
+              value: `${Math.round(player.hpRegen * 10) / 10}/s`,
+              label: 'Regen',
+              watch: player.hpRegen,
+            },
+            ...(player.onHitDamage > 0
+              ? [{
+                id: 'onhit',
+                value: `+${player.onHitDamage}`,
+                label: 'On-hit',
+                watch: player.onHitDamage,
+              }]
+              : []),
+            ...(empMult
+              ? [{
+                id: 'empowered',
+                value: `×${empMult.effective.toFixed(2)}`,
+                label: 'Empowered',
+                watch: empMult.effective,
+              }]
+              : []),
           ]}
         />
       )}
