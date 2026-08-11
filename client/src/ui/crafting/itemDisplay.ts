@@ -6,6 +6,7 @@
 import type { ItemDefinition, ResolvedRelicProfile } from '@mmo-idle/shared';
 import {
   BURN_FAMILY,
+  isCompanionMechanic, mechanicLabelOrKey,
   upgradeMechanicEffectsTotal, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
 
@@ -71,7 +72,12 @@ export function statEntries(stats: Record<string, number> | undefined, aps?: num
   return out;
 }
 
-// ─── Mechanic-effect metadata (terse labels for diff rows) ─────────────────────
+// ─── Mechanic-effect presentation ─────────────────────────────────────────────
+//
+// LABELS are not here. They live in `shared/src/data/mechanicLabels.ts`, where
+// `mechanicLabels.test.ts` can assert that every authored effect key has one —
+// the guard that stops a raw key ("cast speed pct") from reaching a tooltip.
+// What stays here is presentation: how the NUMBER is written.
 
 interface MechanicMeta {
   label: string;
@@ -82,90 +88,79 @@ const pct  = (v: number) => `${Math.round(v * 100)}%`;
 const sec  = (v: number) => `${round1(v / 1000)}s`;
 const mult = (v: number) => `${round1(v)}×`;
 const num  = (v: number) => String(round1(v));
+const signedPct = (v: number) => `${v >= 0 ? '+' : ''}${Math.round(v * 100)}%`;
+const flag = () => 'on';
 
-// Per-key terse vocabulary, used by describeMechanicDelta for upgrade rows.
-// Companion-key sentences (the full prose) live in formatMechanicEffects below.
-const MECHANIC_META: Record<string, MechanicMeta> = {
-  // weapon
-  'weapon.first-strike-mult':        { label: 'First strike',   fmt: mult },
-  'weapon.empowered-mult-bonus':     { label: 'Empowered bonus', fmt: v => `+${pct(v)}` },
-  'weapon.dead-swing-interval':      { label: 'Dead swing',     fmt: v => `every ${round1(v)}` },
-  'weapon.dead-swing-vuln-pct':      { label: 'Vulnerability',  fmt: pct },
-  'weapon.dead-swing-vuln-ms':       { label: 'Vuln duration',  fmt: sec },
-  'weapon.execute-dmg-mult':         { label: 'Execute',        fmt: mult },
-  'weapon.brittle-shatter-dr-strip-ms': { label: 'Brittle shatter', fmt: sec },
-  // defense
-  'defense.cheat-death':             { label: 'Cheat death',    fmt: () => 'on' },
-  'defense.post-cheat-death-heal-pct': { label: 'Revive heal',  fmt: pct },
-  'defense.post-cheat-death-heal-ms':  { label: 'Revive heal dur', fmt: sec },
-  'defense.cleanse-stacks':          { label: 'Cleanse',        fmt: v => `${num(v)} stack${v === 1 ? '' : 's'}` },
-  'defense.cleanse-interval-ms':     { label: 'Cleanse rate',   fmt: sec },
-  'defense.cleanse-empty-heal-pct':  { label: 'Cleanse heal',   fmt: pct },
-  'defense.debuff-resist':           { label: 'Debuff resist',  fmt: pct },
-  'defense.debuff-resistance':       { label: 'Debuff resist',  fmt: pct },
-  'defense.dot-resistance':          { label: 'DoT resist',     fmt: pct },
-  'defense.shield-pct':              { label: 'Shield',         fmt: pct },
-  'defense.shield-interval-ms':      { label: 'Shield rate',    fmt: sec },
-  'defense.shield-duration-ms':      { label: 'Shield dur',     fmt: sec },
-  'defense.in-combat-regen-pct':     { label: 'Combat regen',   fmt: pct },
-  'defense.regen-burst-pct':         { label: 'Regen burst',    fmt: pct },
-  'defense.regen-burst-interval-ms': { label: 'Burst rate',     fmt: sec },
-  'defense.kill-burst-pct':          { label: 'Kill heal',      fmt: pct },
-  'defense.absorb-pct':              { label: 'Absorb',         fmt: pct },
-  'defense.hit-to-dot-pct':          { label: 'Hit→DoT',        fmt: pct },
-  'defense.max-hit-pct':             { label: 'Max-hit cap',    fmt: pct },
-  'defense.stationary-dr-pct':         { label: 'Stationary DR',  fmt: pct },
-  'defense.stationary-dr-ramptime-ms': { label: 'Stationary ramp', fmt: sec },
-  'defense.sustained-fight-dr-max':    { label: 'Sustained DR',   fmt: pct },
-  'defense.absorb-ramp-max-pct':       { label: 'Absorb (ramp)',  fmt: pct },
-  'defense.shield-break-heal-pct':     { label: 'Shield-break heal', fmt: pct },
-  'defense.shield-break-hp-recovery-pct': { label: 'Shield-break heal', fmt: pct },
-  'defense.overheal-shield-pct':       { label: 'Overheal shield', fmt: pct },
-  'defense.hardening-max-dr-bonus':    { label: 'Max-harden DR',  fmt: pct },
-  'defense.cleanse-per-stack-heal-pct': { label: 'Cleanse heal/stk', fmt: pct },
-  'defense.debt-cheat-death':          { label: 'Debt cheat-death', fmt: () => 'on' },
-  'defense.max-hit-rearms-shield':     { label: 'Cap rearms shield', fmt: () => 'on' },
-  'defense.hit-plating-per-stack':     { label: 'Reactive plating', fmt: v => `+${num(v)}/stk` },
-  'defense.evade-mitigation':          { label: 'Evade mitigation', fmt: pct },
-  // mobility
-  'mobility.kite-speed-pct':         { label: 'Kite speed',     fmt: pct },
-  'mobility.ooc-speed-pct':          { label: 'OOC speed',      fmt: pct },
-  'mobility.passive-speed-pct':      { label: 'Move speed',     fmt: pct },
-  'mobility.ramp-speed-pct':         { label: 'Ramp speed',     fmt: pct },
-  'mobility.kill-speed-pct':         { label: 'Kill speed',     fmt: pct },
-  'mobility.acquire-speed-pct':      { label: 'Lock-on speed',  fmt: pct },
-  'mobility.tenacity-pct':           { label: 'Tenacity',       fmt: pct },
-  'mobility.stealth-pct':            { label: 'Stealth',        fmt: pct },
-  'mobility.aggro-pull-pct':         { label: 'Aggro range',    fmt: pct },
+// Effect keys follow a strict `namespace.feature[-qualifier]` convention and the
+// qualifier carries the unit, so the default formatter is derived from the key
+// rather than listed per key. That is what keeps a newly authored `-pct` key
+// rendering as "15%" instead of "0.15" with no edit here at all.
+function fmtBySuffix(key: string): (v: number) => string {
+  if (key.endsWith('-pct')) return pct;
+  if (key.endsWith('-ms'))  return sec;
+  if (key.endsWith('-mult')) return mult;
+  return num;
+}
+
+// Only the keys the convention gets wrong, each with the reason it is an
+// exception. Anything that can be derived from the suffix must NOT be listed.
+const MECHANIC_FMT: Record<string, (v: number) => string> = {
+  // Fractions whose key does not say so.
+  'defense.dot-resistance':           pct,
+  'defense.debuff-resistance':        pct,
+  'defense.evade-mitigation':         pct,
+  'defense.sustained-fight-dr-max':   pct,
+  'defense.sustained-fight-dr-bonus': pct,
+  'defense.hardening-max-dr-bonus':   pct,
+  'weapon.brittle-dr':                pct,
+  'weapon.empowered-mult-bonus':      v => `+${pct(v)}`,
+  'mobility.ramp-rate':               v => `${pct(v)}/s`,
+  // Core `-mult` keys are fractions ON a stat, not multipliers OF it: 0.15 means
+  // +15%, and `mult` would print a meaningless "0.2×". Negative values are real
+  // (a core that trades one stat for another), so they read signed.
+  'core.attack-mult':                 signedPct,
+  'core.maxhp-mult':                  signedPct,
+  'core.plating-mult':                signedPct,
+  'core.speed-mult':                  signedPct,
+  'core.attack-speed-mult':           signedPct,
+  'core.recovery-mult':               signedPct,
+  'core.elite-damage-mult':           signedPct,
+  'core.onhit-mult':                  signedPct,
+  'core.debuff-duration-mult':        signedPct,
+  'core.debuff-potency-mult':         signedPct,
+  // Relic ratings are signed offsets on a class mechanic, same reasoning.
+  'relic.mechanic-frequency':         signedPct,
+  'relic.mechanic-potency':           signedPct,
+  'relic.mechanic-buff-effect':       signedPct,
+  'relic.mechanic-debuff-effect':     signedPct,
+  // Switches: the value is 1, and "1" is not the information.
+  'defense.cheat-death':              flag,
+  'defense.debt-cheat-death':         flag,
+  'defense.max-hit-rearms-shield':    flag,
+  'shared.applies-through-evade':     flag,
+  // Counted things that read wrong as a bare number.
+  'defense.cleanse-stacks':           v => `${num(v)} stack${v === 1 ? '' : 's'}`,
+  'defense.hit-plating-per-stack':    v => `+${num(v)}/stk`,
+  'weapon.dead-swing-interval':       v => `every ${round1(v)}`,
+  'summoner.minion-attack-cooldown':  sec,
 };
 
 function mechanicMeta(key: string): MechanicMeta {
-  return MECHANIC_META[key] ?? {
-    label: key.replace(/^[a-z]+\./, '').replace(/-/g, ' '),
-    fmt: num,
+  return {
+    label: mechanicLabelOrKey(key),
+    fmt: MECHANIC_FMT[key] ?? fmtBySuffix(key),
   };
 }
-
-// Companion keys (rates/durations) omitted from one-line summaries so the
-// headline of each effect reads cleanly (e.g. "Cleanse 1 stack · Cleanse heal 3%").
-const SUMMARY_SKIP = new Set([
-  'defense.cleanse-interval-ms', 'defense.shield-interval-ms', 'defense.shield-duration-ms',
-  'defense.regen-burst-interval-ms', 'defense.max-hit-mult',
-  'defense.post-cheat-death-heal-ms', 'defense.stationary-dr-ramptime-ms',
-  'weapon.dead-swing-vuln-ms',
-  'defense.sustained-fight-dr-bonus', 'defense.sustained-fight-ramptime-ms',
-  'defense.absorb-ramp-start-pct', 'defense.absorb-ramptime-ms',
-  'defense.hardening-max-dr-ms', 'defense.shield-break-hp-recovery-pct',
-  'weapon.execute-threshold-pct', 'weapon.brittle-shatter-threshold',
-  'defense.hit-plating-max-stacks', 'defense.hit-plating-duration-ms',
-]);
 
 /** Terse one-line summary of an item's mechanic effects (for compact list rows). */
 export function mechanicSummary(fx: Record<string, number> | undefined): string {
   if (!fx) return '';
   const parts: string[] = [];
   for (const [k, v] of Object.entries(fx)) {
-    if (SUMMARY_SKIP.has(k) || v === 0) continue;
+    // Companion keys (a duration, interval or cap) belong inside another
+    // effect's sentence, so the headline of each effect reads cleanly:
+    // "Cleanse 1 stack · Cleanse heal 3%", not five fragments.
+    if (isCompanionMechanic(k) || v === 0) continue;
     const m = mechanicMeta(k);
     parts.push(`${m.label} ${m.fmt(v)}`);
   }
@@ -532,19 +527,86 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('core.mobility-refund-on-kill-pct');
   }
 
+  // ── Ability amplifiers ─────────────────────────────────────────────────────
+  // Technique (offensive) and Guard (defensive) are deliberately separate
+  // namespaces so one stat can never buy both; they read as separate sentences
+  // for the same reason.
+  if (has('technique.power-pct')) {
+    lines.push(`+${pctK('technique.power-pct')} Technique ability damage`);
+    mark('technique.power-pct');
+  }
+  if (has('technique.cooldown-reduction-pct')) {
+    lines.push(`${pctK('technique.cooldown-reduction-pct')} shorter Technique cooldown`);
+    mark('technique.cooldown-reduction-pct');
+  }
+  if (has('technique.cast-speed-pct')) {
+    lines.push(`${pctK('technique.cast-speed-pct')} faster Technique wind-up`);
+    mark('technique.cast-speed-pct');
+  }
+  if (has('guard.cooldown-reduction-pct')) {
+    lines.push(`${pctK('guard.cooldown-reduction-pct')} shorter Guard cooldown`);
+    mark('guard.cooldown-reduction-pct');
+  }
+  if (has('guard.potency-pct')) {
+    lines.push(`+${pctK('guard.potency-pct')} Guard ability effect`);
+    mark('guard.potency-pct');
+  }
+  if (has('guard.duration-pct')) {
+    lines.push(`+${pctK('guard.duration-pct')} Guard ability duration`);
+    mark('guard.duration-pct');
+  }
+  if (has('guard.heal-on-fire-pct')) {
+    lines.push(`A Guard ability firing heals ${pctK('guard.heal-on-fire-pct')} max HP`);
+    mark('guard.heal-on-fire-pct');
+  }
+
+  // ── Weapon families with no prose elsewhere ────────────────────────────────
+  if (has('weapon.empowered-mult-bonus')) {
+    lines.push(`+${pctK('weapon.empowered-mult-bonus')} to your empowered-attack multiplier`);
+    mark('weapon.empowered-mult-bonus');
+  }
+
+  if (has('weapon.flurry-pct')) {
+    const cap = has('weapon.flurry-stacks') ? ` (up to ${num(fx['weapon.flurry-stacks'] ?? 0)} stacks)` : '';
+    lines.push(`Each hit stacks +${pctK('weapon.flurry-pct')} attack speed${cap}`);
+    mark('weapon.flurry-pct', 'weapon.flurry-stacks');
+  }
+
+  // ── Defensive ramps with no prose elsewhere ────────────────────────────────
+  if (has('defense.hardening-per-sec')) {
+    const cap = has('defense.hardening-max') ? `, up to ${num(fx['defense.hardening-max'] ?? 0)}` : '';
+    const reset = has('defense.hardening-reset-pct')
+      ? `; a hit sheds ${pctK('defense.hardening-reset-pct')} of it`
+      : '';
+    lines.push(`Harden while unhit: +${num(fx['defense.hardening-per-sec'] ?? 0)} plating per second${cap}${reset}`);
+    mark('defense.hardening-per-sec', 'defense.hardening-max', 'defense.hardening-reset-pct');
+  }
+
+  if (has('defense.ramp-regen-max-pct')) {
+    const from = has('defense.ramp-regen-start-pct') ? `${pctK('defense.ramp-regen-start-pct')}→` : '';
+    const over = has('defense.ramp-regen-ramptime-ms') ? ` over ${secK('defense.ramp-regen-ramptime-ms')}` : '';
+    lines.push(`HP regen ramps ${from}${pctK('defense.ramp-regen-max-pct')} of max HP while unhit${over}`);
+    mark('defense.ramp-regen-max-pct', 'defense.ramp-regen-start-pct', 'defense.ramp-regen-ramptime-ms');
+  }
+
   // Burn-DoT weapons describe their effect via formatWeaponEffects (BURN_FAMILY,
   // derived from the recipe's weaponDot block) — no mirror mechanic keys to consume.
 
-  // Fallback for any keys not yet handled
+  // Fallback for keys with no prose of their own. Reads as "Label value" using
+  // the shared registry, so an effect with no sentence still gets a real name and
+  // a correctly-united number. A key with no label at all renders as «key» — that
+  // is a bug, and `shared/src/data/mechanicLabels.test.ts` is what prevents it.
   for (const [k, v] of Object.entries(fx)) {
-    if (!seen.has(k)) lines.push(`${k.replace(/^[a-z]+\./, '').replace(/-/g, ' ')}: ${v}`);
+    if (seen.has(k) || v === 0) continue;
+    const m = mechanicMeta(k);
+    lines.push(`${m.label} ${m.fmt(v)}`);
   }
 
   return lines;
 }
 
 const seconds = (ms: number): string => `${round1(ms / 1000)}s`;
-const beforeAfter = (before: string | number, after: string | number): string => `${before} â†’ ${after}`;
+const beforeAfter = (before: string | number, after: string | number): string => `${before} → ${after}`;
 
 /** Human-readable rendering of the shared character-specific Relic preview. */
 export function formatResolvedRelicProfile(profile: ResolvedRelicProfile | null): string[] {
@@ -553,12 +615,12 @@ export function formatResolvedRelicProfile(profile: ResolvedRelicProfile | null)
     case 'cadence':
       return [
         `For Striker: finisher every ${beforeAfter(profile.threshold.before, profile.threshold.after)} hits`,
-        `Finisher damage ${beforeAfter(`${round1(profile.empoweredMultiplier.before)}Ã—`, `${round1(profile.empoweredMultiplier.after)}Ã—`)}`,
+        `Finisher damage ${beforeAfter(`${round1(profile.empoweredMultiplier.before)}×`, `${round1(profile.empoweredMultiplier.after)}×`)}`,
       ];
     case 'cooldown':
       return [
         `For Squire: execution cooldown ${beforeAfter(seconds(profile.cooldownMs.before), seconds(profile.cooldownMs.after))}`,
-        `Execution damage ${beforeAfter(`${round1(profile.empoweredMultiplier.before)}Ã—`, `${round1(profile.empoweredMultiplier.after)}Ã—`)}`,
+        `Execution damage ${beforeAfter(`${round1(profile.empoweredMultiplier.before)}×`, `${round1(profile.empoweredMultiplier.after)}×`)}`,
       ];
     case 'reload':
       return [
@@ -574,7 +636,7 @@ export function formatResolvedRelicProfile(profile: ResolvedRelicProfile | null)
       return [
         `For Energy: gain ${beforeAfter(profile.gainPerHit.before, profile.gainPerHit.after)} per hit`,
         `Capacity ${beforeAfter(profile.maxEnergy.before, profile.maxEnergy.after)}`,
-        `Discharge ${beforeAfter(`${round1(profile.dischargeMultiplier.before)}Ã—`, `${round1(profile.dischargeMultiplier.after)}Ã—`)}`,
+        `Discharge ${beforeAfter(`${round1(profile.dischargeMultiplier.before)}×`, `${round1(profile.dischargeMultiplier.after)}×`)}`,
       ];
     case 'summoner':
       return [

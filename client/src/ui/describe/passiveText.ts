@@ -1,3 +1,5 @@
+import { mechanicLabel } from '@mmo-idle/shared';
+
 import { STAT_HELP } from '../../hud/stat/statHelp';
 
 /**
@@ -346,7 +348,10 @@ export function passiveLines(
 
     lines.push({
       key: stem,
-      label: stemLabel(stem),
+      // The curated vocabulary wins when it has an entry for this feature's
+      // headline key; the rule engine below is the fallback that covers the
+      // ~270 skill-tree keys nobody is going to hand-label.
+      label: mechanicLabel(headline.key) ?? stemLabel(stem),
       value,
       detail,
       help: helpKey ? STAT_HELP[helpKey] : undefined,

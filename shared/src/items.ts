@@ -192,3 +192,11 @@ export interface ItemDefinition {
    */
   coreEligibility?: CoreEligibility;
 }
+
+// ─── Mechanic-effect vocabulary ───────────────────────────────────────────────
+//
+// Re-exported from here rather than added to `shared/src/index.ts` so the label
+// registry reaches the client through the same door as ESSENCE_LABELS, its
+// closest precedent. See `data/mechanicLabels.ts` for why the vocabulary is
+// shared rather than client-local.
+export * from './data/mechanicLabels';
