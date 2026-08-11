@@ -24,6 +24,7 @@ export * from './systems/stats';
 export * from './systems/skills';
 export * from './systems/damage';
 export * from './systems/combatEstimates';
+export * from './systems/dpsEstimate';
 export * from './systems/empoweredMult';
 export * from './systems/energyUpkeep';
 export * from './systems/energyMax';
