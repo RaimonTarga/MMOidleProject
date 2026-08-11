@@ -3,7 +3,9 @@ import {
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
   RITE_DATABASE,
+  RITE_RECIPE_DATABASE,
   STANCE_DATABASE,
+  STANCE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   abilitySlotCount,
   emptyEquipment,
@@ -13,6 +15,8 @@ import {
   listBiomeGroupsAtTier,
   runeBudgetForGlobalMastery,
   runicPointLoadoutCost,
+  isRiteRecipeUnlocked,
+  isStanceRecipeUnlocked,
   ITEM_DATABASE,
   type EquippedAbilities,
   type Vec2,
@@ -28,6 +32,24 @@ import type { BuildSpec, ContentTarget } from './types';
 
 export const BENCH_BOT_PREFIX = 'bench-bot-';
 export const BENCH_BOT_ID = `${BENCH_BOT_PREFIX}0`;
+
+/**
+ * Deliberate baseline choices. Never derive these from database iteration order:
+ * adding a new alphabetically-earlier option must not silently retune the bench.
+ *
+ * Perfection is the least polarising authored stance: modest offence/tempo with
+ * no self-damage, defensive penalty, recovery loop, or conditional target rule.
+ * The Rite set covers kill recovery, between-fight class reset, and OOC cadence
+ * without pairing contradictory options such as Swift Repose/Lingering Battle.
+ */
+const CANONICAL_STANCE_ID = 'perfection-stance';
+const CANONICAL_RITE_PRIORITY = [
+  'blood-offering',
+  'purification',
+  'ability-reprieve',
+  'mechanic-renewal',
+  'swift-repose',
+] as const;
 
 /** Stable id for the Nth party member (member 0 is the solo bot / party leader). */
 export function benchBotId(index: number): string {
@@ -67,7 +89,7 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
  * That is a CANONICAL-BASELINE CHOICE and it is balance-relevant — revisit it
  * when the layered-sweep mode lands and these become swept axes of their own.
  */
-function canonicalLoadout(playerTier: number): {
+export function canonicalLoadout(playerTier: number): {
   knownAbilities: string[];
   equippedAbilities: EquippedAbilities;
   knownStances: string[];
@@ -87,12 +109,27 @@ function canonicalLoadout(playerTier: number): {
   const techniques = forSlot('technique');
   const guards = forSlot('guard');
 
-  const stances = [...STANCE_DATABASE.keys()].sort();
-  const rites = [...RITE_DATABASE.keys()].sort();
-  // Admit deterministic Rites until the shared RP pool is full.
-  const runeBudget = runeBudgetForGlobalMastery(globalMastery(canonicalBiomeLevels(playerTier)));
+  const biomeLevel = canonicalBiomeLevels(playerTier);
+  const progressionGate = { biomeLevel, bossesCleared: [] as string[] };
+  const stances = [...STANCE_RECIPE_DATABASE.values()]
+    .filter((recipe) => recipe.tier <= playerTier && isStanceRecipeUnlocked(recipe, progressionGate))
+    .map((recipe) => recipe.stanceId)
+    .filter((id) => STANCE_DATABASE.has(id))
+    .sort();
+  const activeStance = stances.includes(CANONICAL_STANCE_ID)
+    ? CANONICAL_STANCE_ID
+    : null;
+
+  const rites = [...RITE_RECIPE_DATABASE.values()]
+    .filter((recipe) => recipe.tier <= playerTier && isRiteRecipeUnlocked(recipe, progressionGate))
+    .map((recipe) => recipe.riteId)
+    .filter((id) => RITE_DATABASE.has(id))
+    .sort();
+  const knownRites = new Set(rites);
+  const runeBudget = runeBudgetForGlobalMastery(globalMastery(biomeLevel));
   const equippedRites: string[] = [];
-  for (const riteId of rites) {
+  for (const riteId of CANONICAL_RITE_PRIORITY) {
+    if (!knownRites.has(riteId)) continue;
     if (runicPointLoadoutCost({ rules: [], rites: [...equippedRites, riteId] }) <= runeBudget) equippedRites.push(riteId);
   }
 
@@ -104,9 +141,9 @@ function canonicalLoadout(playerTier: number): {
     },
     knownStances: stances,
     equippedStances: {
-      default: stances[0] ?? null,
+      default: activeStance,
     },
-    activeStance: stances[0] ?? null,
+    activeStance,
     knownRites: rites,
     equippedRites,
   };

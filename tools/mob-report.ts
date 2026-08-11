@@ -2,14 +2,11 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import {
-  BIOME_DATABASE,
   emptyEquipment,
   estimateMonsterHitDamage,
   estimatePlayerHitDamage,
   GAME_CONFIG,
   getMaxUpgrade,
-  ITEM_DATABASE,
-  MONSTER_DATABASE,
   recalculatePlayerStats,
   SKILL_TREE,
   type BiomeDefinition,
@@ -20,6 +17,7 @@ import {
   type SkillNode,
   type SubVariant,
 } from '@mmo-idle/shared';
+import { balanceData } from './balance-data';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Monster balance / threat report — the offence-of-the-world sibling of
@@ -43,6 +41,7 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const DATA = balanceData();
 const ARGS = process.argv.slice(2);
 const OPTIONS = {
   llmPacket: ARGS.includes('--llm-packet'),
@@ -55,7 +54,7 @@ const TUTORIAL_MONSTER_IDS = new Set(['tiny-slime']);
 const TUTORIAL_WEAPON_IDS = new Set(['primordial-club']);
 const SUMMONER_CLASS_ID = 'summoner-root';
 
-// Outlier flagging: ±25% of the biome-tier average (per the report spec).
+// Discovery threshold only: this highlights spread and is not a balance target.
 const OUTLIER_PCT = 0.25;
 // Status thresholds (seconds of survival), mirroring the eHP tool's bands.
 const MOB_TTL_RISK_SEC = 30;
@@ -218,20 +217,20 @@ function isReportMob(monster: MonsterDefinition): boolean {
 
 function mobsForBiomeTier(biome: BiomeDefinition, biomeTier: number): MonsterDefinition[] {
   return (biome.monsterPoolByTier[biomeTier] ?? [])
-    .map((id) => MONSTER_DATABASE.get(id))
+    .map((id) => DATA.monster(id))
     .filter((m): m is MonsterDefinition => Boolean(m && isReportMob(m)));
 }
 
 function bossesForBiomeTier(biome: BiomeDefinition, biomeTier: number): MonsterDefinition[] {
   return (biome.bossPoolByTier?.[biomeTier] ?? [])
-    .map((id) => MONSTER_DATABASE.get(id))
+    .map((id) => DATA.monster(id))
     .filter((m): m is MonsterDefinition => Boolean(m && m.biome !== 'testroom'));
 }
 
 /** Biome tiers (1..N) that have at least one report mob. Clearing (0) is skipped. */
 function reportBiomeTiers(): number[] {
   const tiers = new Set<number>();
-  for (const biome of BIOME_DATABASE.values()) {
+  for (const biome of DATA.biomes()) {
     for (const key of Object.keys(biome.monsterPoolByTier)) {
       const tier = Number(key);
       if (tier >= 1 && mobsForBiomeTier(biome, tier).length > 0) tiers.add(tier);
@@ -243,7 +242,7 @@ function reportBiomeTiers(): number[] {
 interface BiomeGroup { biome: BiomeDefinition; mobs: MonsterDefinition[]; bosses: MonsterDefinition[] }
 
 function biomeGroupsAtTier(biomeTier: number): BiomeGroup[] {
-  return [...BIOME_DATABASE.values()]
+  return DATA.biomes()
     .filter((b) => b.id !== 'testroom')
     .map((biome) => ({ biome, mobs: mobsForBiomeTier(biome, biomeTier), bosses: bossesForBiomeTier(biome, biomeTier) }))
     .filter((g) => g.mobs.length > 0 || g.bosses.length > 0)
@@ -255,7 +254,7 @@ function allMobsAtTier(biomeTier: number): MonsterDefinition[] {
 }
 
 function maxItemTier(): number {
-  return Math.max(...[...ITEM_DATABASE.values()].filter((i) => i.slot === 'armor').map((i) => i.tier));
+  return Math.max(...DATA.items().filter((i) => i.slot === 'armor').map((i) => i.tier));
 }
 
 // ─── Reference player profiles (rebuilt from shared formulas) ─────────────────
@@ -308,7 +307,7 @@ function comparisonCombos(classTier: number): BuildCombo[] {
 }
 
 function itemsForSlotTier(slot: 'weapon' | 'armor' | 'recovery', tier: number): ItemDefinition[] {
-  return [...ITEM_DATABASE.values()]
+  return DATA.items()
     .filter((item) => item.slot === slot && item.tier === tier && !TUTORIAL_WEAPON_IDS.has(item.id))
     .sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -538,6 +537,15 @@ function mean(values: number[]): number {
   return values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
 }
 
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 1
+    ? sorted[middle]
+    : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
 function maxBy<T>(items: T[], score: (item: T) => number): T | undefined {
   if (items.length === 0) return undefined;
   return items.reduce((best, item) => (score(item) > score(best) ? item : best));
@@ -546,6 +554,109 @@ function maxBy<T>(items: T[], score: (item: T) => number): T | undefined {
 // ─── Generic view model (rendered to both HTML and Markdown) ──────────────────
 
 interface DataView { title: string; headers: string[]; rows: Array<Array<string | number>>; note?: string }
+
+interface BiomeComparison {
+  name: string;
+  meanHp: number;
+  maxHp: number;
+  meanIncomingDps: number;
+  maxIncomingDps: number;
+  maxSpikePctHp: number;
+  maxSpikeMob: string;
+  density: number | null;
+  meanEssence: number;
+  meanBiomeXp: number;
+}
+
+function crossBiomeComparisons(biomeTier: number, profiles: PlayerProfile[]): BiomeComparison[] {
+  const entry = profiles.find((p) => p.label.startsWith('Entry')) ?? profiles[0];
+  if (!entry) return [];
+  return biomeGroupsAtTier(biomeTier)
+    .filter((group) => group.mobs.length > 0)
+    .map((group) => {
+      const incoming = group.mobs.map((mob) => threatAgainst(entry, mob, false).incomingDps);
+      const spikeMob = maxBy(group.mobs, (mob) => mitigatedSpike(entry, mob))!;
+      return {
+        name: group.biome.name,
+        meanHp: mean(group.mobs.map((mob) => mob.stats.hp)),
+        maxHp: Math.max(...group.mobs.map((mob) => mob.stats.hp)),
+        meanIncomingDps: mean(incoming),
+        maxIncomingDps: Math.max(...incoming),
+        maxSpikePctHp: mitigatedSpike(entry, spikeMob) / Math.max(1, entry.maxHp),
+        maxSpikeMob: spikeMob.name,
+        density: group.biome.mobDensity ?? null,
+        meanEssence: mean(group.mobs.map((mob) => mob.rewards.essence)),
+        meanBiomeXp: mean(group.mobs.map((mob) => mob.rewards.biomeXp ?? 0)),
+      };
+    })
+    .sort((a, b) => b.meanIncomingDps - a.meanIncomingDps || b.maxIncomingDps - a.maxIncomingDps);
+}
+
+/** One ranked, fixed-tier view where danger and payout can be read together. */
+function crossBiomeComparisonView(biomeTier: number, profiles: PlayerProfile[]): DataView {
+  const entry = profiles.find((p) => p.label.startsWith('Entry')) ?? profiles[0];
+  const comparisons = crossBiomeComparisons(biomeTier, profiles);
+  const tierMedianThreat = median(comparisons.map((row) => row.meanIncomingDps));
+  return {
+    title: 'Cross-Biome Threat & Reward',
+    note: `Every biome at tier ${biomeTier}, ranked by mean incoming DPS against ${entry?.label ?? 'the entry reference player'}. Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target.`,
+    headers: ['Biome', 'Threat index', 'Mean HP', 'Max HP', 'Mean incoming DPS', 'Max incoming DPS', 'Worst spike %HP', 'Density', 'Essence / kill', 'Biome XP / kill'],
+    rows: comparisons.map((row) => [
+      row.name,
+      tierMedianThreat > 0 ? `×${asNumber(row.meanIncomingDps / tierMedianThreat)}` : '-',
+      asNumber(row.meanHp),
+      asNumber(row.maxHp),
+      asNumber(row.meanIncomingDps),
+      asNumber(row.maxIncomingDps),
+      `${pct(row.maxSpikePctHp)} (${row.maxSpikeMob})`,
+      row.density ?? '-',
+      asNumber(row.meanEssence),
+      asNumber(row.meanBiomeXp),
+    ]),
+  };
+}
+
+function biomeDeviationView(biomeTier: number, profiles: PlayerProfile[]): DataView {
+  const comparisons = crossBiomeComparisons(biomeTier, profiles);
+  const rows: Array<{ magnitude: number; cells: Array<string | number> }> = [];
+  const metrics = [
+    { axis: 'Threat', label: 'Mean incoming DPS', value: (row: BiomeComparison) => row.meanIncomingDps, format: asNumber },
+    { axis: 'Threat', label: 'Max incoming DPS', value: (row: BiomeComparison) => row.maxIncomingDps, format: asNumber },
+    { axis: 'Threat', label: 'Worst spike %HP', value: (row: BiomeComparison) => row.maxSpikePctHp, format: pct },
+    { axis: 'Exposure', label: 'Mob density', value: (row: BiomeComparison) => row.density ?? 0, format: asNumber },
+    { axis: 'Reward', label: 'Essence / kill', value: (row: BiomeComparison) => row.meanEssence, format: asNumber },
+    { axis: 'Reward', label: 'Biome XP / kill', value: (row: BiomeComparison) => row.meanBiomeXp, format: asNumber },
+  ] as const;
+
+  for (const metric of metrics) {
+    const siblingMedian = median(comparisons.map(metric.value));
+    if (siblingMedian <= 0) continue;
+    for (const comparison of comparisons) {
+      const value = metric.value(comparison);
+      const deviation = value / siblingMedian - 1;
+      if (Math.abs(deviation) < OUTLIER_PCT) continue;
+      rows.push({
+        magnitude: Math.abs(deviation),
+        cells: [
+          comparison.name,
+          metric.axis,
+          metric.label,
+          metric.format(value),
+          metric.format(siblingMedian),
+          `${deviation >= 0 ? '+' : ''}${pct(deviation)}`,
+        ],
+      });
+    }
+  }
+
+  rows.sort((a, b) => b.magnitude - a.magnitude || String(a.cells[0]).localeCompare(String(b.cells[0])));
+  return {
+    title: 'Cross-Biome Deviation Signals',
+    note: `Discovery-only signals for values at least ${Math.round(OUTLIER_PCT * 100)}% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band.`,
+    headers: ['Biome', 'Axis', 'Metric', 'Value', 'Sibling median', 'Deviation'],
+    rows: rows.map((row) => row.cells),
+  };
+}
 
 // 1. Mob Stat Summary
 function mobStatRow(monster: MonsterDefinition): Array<string | number> {
@@ -626,60 +737,29 @@ function playerMatchupView(biomeTier: number, profiles: PlayerProfile[]): DataVi
   const rows: Array<Array<string | number>> = [];
   for (const group of biomeGroupsAtTier(biomeTier)) {
     if (group.mobs.length === 0) continue;
-    // Sustained pressure from the average mob; spike from the biome's worst spiker.
-    const avgMob = syntheticAverageMob(group.mobs);
+    // Average the resolved per-mob pressure. Building a synthetic mob from mean
+    // attack/cooldown is not equivalent because cadence and mitigation are nonlinear.
     for (const p of profiles) {
-      const t = threatAgainst(p, avgMob, false);
+      const incomingDps = mean(group.mobs.map((mob) => threatAgainst(p, mob, false).incomingDps));
+      const ttlSec = incomingDps > 0 ? p.maxHp / incomingDps : Number.POSITIVE_INFINITY;
       const worstSpikeMob = maxBy(group.mobs, (m) => mitigatedSpike(p, m))!;
       const spikePctHp = mitigatedSpike(p, worstSpikeMob) / Math.max(1, p.maxHp);
-      const status = threatStatus(spikePctHp, t.ttlSec, false);
+      const status = threatStatus(spikePctHp, ttlSec, false);
       rows.push([
         group.biome.name,
         p.label,
-        asNumber(t.incomingDps),
+        asNumber(incomingDps),
         `${pct(spikePctHp)} (${worstSpikeMob.name})`,
-        ttl(t.ttlSec),
+        ttl(ttlSec),
         status,
       ]);
     }
   }
   return {
     title: 'Player Matchup Summary',
-    note: `Each biome's average mob (sustained pressure) vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<${MOB_TTL_RISK_SEC}s, block<${MOB_TTL_BLOCK_SEC}s, ≥50% spike = Risky, one-shot = Blocked).${profiles[0]?.usedFallbackTier ? ` ⚠ No tier-${biomeTier + 1} gear authored; using best-available T${maxItemTier()} as reference.` : ''}`,
+    note: `Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<${MOB_TTL_RISK_SEC}s, block<${MOB_TTL_BLOCK_SEC}s, ≥50% spike = Risky, one-shot = Blocked).${profiles[0]?.usedFallbackTier ? ` ⚠ No tier-${biomeTier + 1} gear authored; using best-available T${maxItemTier()} as reference.` : ''}`,
     headers: ['Biome', 'Player', 'Incoming DPS', 'Worst spike %HP', 'TTL pressure', 'Status'],
     rows,
-  };
-}
-
-/** A throwaway MonsterDefinition holding the mean stats of a mob list, so the
- *  interaction helpers (which take a MonsterDefinition) work unchanged. */
-function syntheticAverageMob(mobs: MonsterDefinition[]): MonsterDefinition {
-  const base = mobs[0];
-  const avgDotPerStack = mean(mobs.map((m) => m.dotEffect?.damagePerStack ?? 0));
-  const hasDot = mobs.some((m) => m.dotEffect);
-  return {
-    ...base,
-    id: 'synthetic-avg',
-    name: 'avg mob',
-    stats: {
-      ...base.stats,
-      hp: mean(mobs.map((m) => m.stats.hp)),
-      attack: mean(mobs.map((m) => m.stats.attack)),
-      plating: mean(mobs.map((m) => m.stats.plating)),
-      damageReduction: mean(mobs.map((m) => m.stats.damageReduction)),
-      speed: mean(mobs.map((m) => m.stats.speed)),
-      attackRange: mean(mobs.map((m) => m.stats.attackRange)),
-      attackCooldown: mean(mobs.map((m) => m.stats.attackCooldown)),
-      pullRange: mean(mobs.map((m) => m.stats.pullRange)),
-    },
-    cadenceFinisher: undefined,
-    empoweredCooldown: undefined,
-    aoeAttack: undefined,
-    rampOnCombat: undefined,
-    bossScript: undefined,
-    dotEffect: hasDot
-      ? { damagePerStack: avgDotPerStack, maxStacks: Math.round(mean(mobs.map((m) => m.dotEffect?.maxStacks ?? 0))), tickIntervalMs: Math.round(mean(mobs.filter((m) => m.dotEffect).map((m) => m.dotEffect!.tickIntervalMs))) }
-      : undefined,
   };
 }
 
@@ -760,8 +840,8 @@ function outlierView(biomeTier: number, profiles: PlayerProfile[]): DataView {
       for (const boss of group.bosses) {
         const ttk = expectedTtkSec(bossReady, boss);
         const t = threatAgainst(bossReady, boss, true);
-        if (Number.isFinite(ttk) && ttk < BOSS_TTK_TRIVIAL_SEC) rows.push(['boss too easy', boss.name, `TTK ${ttl(ttk)} (≥ upper bound)`]);
-        if (t.status === 'Blocked' || (Number.isFinite(t.ttlSec) && t.ttlSec < BOSS_TTL_BLOCK_SEC)) rows.push(['boss too hard', boss.name, `player TTL ${ttl(t.ttlSec)}, spike ${pct(t.spikePctHp)}`]);
+        if (Number.isFinite(ttk) && ttk < BOSS_TTK_TRIVIAL_SEC) rows.push(['short boss TTK', boss.name, `TTK ${ttl(ttk)} (≥ upper bound)`]);
+        if (t.status === 'Blocked' || (Number.isFinite(t.ttlSec) && t.ttlSec < BOSS_TTL_BLOCK_SEC)) rows.push(['high boss lethality', boss.name, `player TTL ${ttl(t.ttlSec)}, spike ${pct(t.spikePctHp)}`]);
       }
     }
   }
@@ -770,7 +850,7 @@ function outlierView(biomeTier: number, profiles: PlayerProfile[]): DataView {
   for (const group of biomeGroupsAtTier(biomeTier)) {
     if (group.mobs.length === 0) continue;
     const biomeAvgDps = mean(group.mobs.map(rawTotalDps));
-    if (biomeAvgDps < avgDps * 0.4) rows.push(['biome low threat', group.biome.name, `avg total DPS ${asNumber(biomeAvgDps)} vs tier avg ${asNumber(avgDps)}`]);
+    if (biomeAvgDps < avgDps * 0.4) rows.push(['low sustained-threat signal', group.biome.name, `avg total DPS ${asNumber(biomeAvgDps)} vs tier avg ${asNumber(avgDps)}`]);
     const types = group.mobs.map(damageType);
     for (const t of ['Direct', 'DoT'] as const) {
       const share = types.filter((x) => x === t).length / types.length;
@@ -779,8 +859,8 @@ function outlierView(biomeTier: number, profiles: PlayerProfile[]): DataView {
   }
 
   return {
-    title: 'Outlier Summary',
-    note: `Mobs >±${Math.round(OUTLIER_PCT * 100)}% of biome-tier average on HP / raw DPS / spike; bosses outside the TTK/TTL sanity bands; biomes with weak or single-typed threat profiles.`,
+    title: 'Mob / Boss Diagnostic Signals',
+    note: `Attention signals only: mobs >±${Math.round(OUTLIER_PCT * 100)}% of biome-tier average on HP / raw DPS / spike, bosses outside the TTK/TTL observation bands, and narrow biome threat profiles. These are not verdicts or balance gates.`,
     headers: ['Flag', 'Subject', 'Detail'],
     rows,
   };
@@ -817,6 +897,8 @@ function renderTierSection(biomeTier: number): string {
     <section>
       <h2>Biome Tier ${biomeTier}</h2>
       <p class="meta">Matched against tier-${playerTier} reference players (a player of tier P fights biome tier P-1).${profiles[0]?.usedFallbackTier ? ` No tier-${biomeTier + 1} gear authored yet — best-available T${maxItemTier()} used.` : ''}</p>
+      ${renderHtmlView(crossBiomeComparisonView(biomeTier, profiles))}
+      ${renderHtmlView(biomeDeviationView(biomeTier, profiles))}
       ${renderHtmlView(playerMatchupView(biomeTier, profiles))}
       ${renderHtmlView(biomeThreatSummaryView(biomeTier))}
       ${renderHtmlView(bossTableView(biomeTier, profiles))}
@@ -905,6 +987,8 @@ ${mdTable(
     profiles.map((p) => [p.label, p.gearLabel, asNumber(p.maxHp), asNumber(p.plating), pct(p.damageReduction), pct(p.dodgeRate), asNumber(p.attack), asNumber(1000 / Math.max(100, p.attackCooldown))]),
   )}
 
+${renderMdView(crossBiomeComparisonView(biomeTier, profiles))}
+${renderMdView(biomeDeviationView(biomeTier, profiles))}
 ${renderMdView(playerMatchupView(biomeTier, profiles))}
 ${renderMdView(biomeThreatSummaryView(biomeTier))}
 ${renderMdView(bossTableView(biomeTier, profiles))}

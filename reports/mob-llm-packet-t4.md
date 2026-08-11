@@ -20,40 +20,85 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 | Boss-ready (tankiest +3) | T4 +3 | 465 | 57.4 | 6.39% | 6.78% | 252 | 0.96 |
 
 
+## Cross-Biome Threat & Reward
+
+_Every biome at tier 4, ranked by mean incoming DPS against Entry (prev-tier +3). Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target._
+
+| Biome | Threat index | Mean HP | Max HP | Mean incoming DPS | Max incoming DPS | Worst spike %HP | Density | Essence / kill | Biome XP / kill |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Wasteland | ×1.67 | 820 | 1800 | 44.2 | 64.3 | 53.6% (Charnel Brute) | 20 | 62.0 | 372 |
+| Jungle | ×1.27 | 1113 | 1600 | 33.6 | 50.7 | 34.6% (Emerald Constrictor) | 20 | 78.3 | 470 |
+| Volcanic | ×1.10 | 1328 | 2200 | 29.3 | 44.9 | 55.0% (Obsidian Tortoise) | 18 | 99.4 | 596 |
+| Deep-Sea Trench | ×1.00 | 3233 | 4200 | 26.5 | 29.2 | 87.9% (Abyssal Serpent) | 5 | 290 | 1740 |
+| Mountain | ×0.93 | 1713 | 2250 | 24.6 | 29.2 | 81.8% (Granite Mammoth) | 12 | 106 | 635 |
+| Desert | ×0.65 | 1450 | 2200 | 17.3 | 33.9 | 62.8% (Dune Tyrant) | 8 | 95.8 | 575 |
+| Tundra | ×0.63 | 1800 | 2900 | 16.7 | 20.3 | 79.1% (Permafrost Behemoth) | 8 | 146 | 873 |
+
+## Cross-Biome Deviation Signals
+
+_Discovery-only signals for values at least 25% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band._
+
+| Biome | Axis | Metric | Value | Sibling median | Deviation |
+| --- | --- | --- | --- | --- | --- |
+| Deep-Sea Trench | Reward | Biome XP / kill | 1740 | 596 | +192% |
+| Deep-Sea Trench | Reward | Essence / kill | 290 | 99.4 | +192% |
+| Wasteland | Threat | Max incoming DPS | 64.3 | 33.9 | +90.0% |
+| Wasteland | Threat | Mean incoming DPS | 44.2 | 26.5 | +67.0% |
+| Jungle | Exposure | Mob density | 20.0 | 12.0 | +66.7% |
+| Wasteland | Exposure | Mob density | 20.0 | 12.0 | +66.7% |
+| Deep-Sea Trench | Exposure | Mob density | 5.00 | 12.0 | -58.3% |
+| Volcanic | Exposure | Mob density | 18.0 | 12.0 | +50.0% |
+| Jungle | Threat | Max incoming DPS | 50.7 | 33.9 | +49.8% |
+| Tundra | Reward | Biome XP / kill | 873 | 596 | +46.4% |
+| Tundra | Reward | Essence / kill | 146 | 99.4 | +46.4% |
+| Jungle | Threat | Worst spike %HP | 34.6% | 62.8% | -44.9% |
+| Deep-Sea Trench | Threat | Worst spike %HP | 87.9% | 62.8% | +40.0% |
+| Tundra | Threat | Max incoming DPS | 20.3 | 33.9 | -40.0% |
+| Wasteland | Reward | Biome XP / kill | 372 | 596 | -37.6% |
+| Wasteland | Reward | Essence / kill | 62.0 | 99.4 | -37.6% |
+| Tundra | Threat | Mean incoming DPS | 16.7 | 26.5 | -37.1% |
+| Desert | Threat | Mean incoming DPS | 17.3 | 26.5 | -34.6% |
+| Desert | Exposure | Mob density | 8.00 | 12.0 | -33.3% |
+| Tundra | Exposure | Mob density | 8.00 | 12.0 | -33.3% |
+| Volcanic | Threat | Max incoming DPS | 44.9 | 33.9 | +32.5% |
+| Mountain | Threat | Worst spike %HP | 81.8% | 62.8% | +30.3% |
+| Jungle | Threat | Mean incoming DPS | 33.6 | 26.5 | +26.7% |
+| Tundra | Threat | Worst spike %HP | 79.1% | 62.8% | +25.9% |
+
 ## Player Matchup Summary
 
-_Each biome's average mob (sustained pressure) vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked). ⚠ No tier-5 gear authored; using best-available T4 as reference._
+_Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked). ⚠ No tier-5 gear authored; using best-available T4 as reference._
 
 | Biome | Player | Incoming DPS | Worst spike %HP | TTL pressure | Status |
 | --- | --- | --- | --- | --- | --- |
-| Deep-Sea Trench | Entry (prev-tier +3) | 26.3 | 87.9% (Abyssal Serpent) | 11.2s | Risky |
-| Deep-Sea Trench | Same-tier +0 | 26.7 | 87.0% (Abyssal Serpent) | 11.2s | Risky |
+| Deep-Sea Trench | Entry (prev-tier +3) | 26.5 | 87.9% (Abyssal Serpent) | 11.1s | Risky |
+| Deep-Sea Trench | Same-tier +0 | 26.6 | 87.0% (Abyssal Serpent) | 11.2s | Risky |
 | Deep-Sea Trench | Same-tier +3 | 20.6 | 59.7% (Abyssal Serpent) | 19.4s | Risky |
-| Deep-Sea Trench | Boss-ready (tankiest +3) | 22.5 | 54.8% (Abyssal Serpent) | 20.7s | Risky |
-| Desert | Entry (prev-tier +3) | 14.8 | 62.8% (Dune Tyrant) | 19.9s | Risky |
-| Desert | Same-tier +0 | 14.9 | 62.2% (Dune Tyrant) | 20.1s | Risky |
-| Desert | Same-tier +3 | 7.04 | 41.2% (Dune Tyrant) | 56.8s | Safe |
-| Desert | Boss-ready (tankiest +3) | 8.33 | 38.0% (Dune Tyrant) | 55.9s | Safe |
-| Jungle | Entry (prev-tier +3) | 28.2 | 34.6% (Emerald Constrictor) | 10.5s | Risky |
-| Jungle | Same-tier +0 | 28.2 | 34.1% (Emerald Constrictor) | 10.6s | Risky |
-| Jungle | Same-tier +3 | 16.1 | 20.5% (Emerald Constrictor) | 24.9s | Risky |
-| Jungle | Boss-ready (tankiest +3) | 17.5 | 19.1% (Emerald Constrictor) | 26.7s | Risky |
-| Mountain | Entry (prev-tier +3) | 24.1 | 81.8% (Granite Mammoth) | 12.2s | Risky |
-| Mountain | Same-tier +0 | 24.2 | 81.0% (Granite Mammoth) | 12.3s | Risky |
-| Mountain | Same-tier +3 | 18.4 | 55.5% (Granite Mammoth) | 21.8s | Risky |
-| Mountain | Boss-ready (tankiest +3) | 20.1 | 50.7% (Granite Mammoth) | 23.1s | Risky |
-| Tundra | Entry (prev-tier +3) | 16.6 | 79.1% (Permafrost Behemoth) | 17.7s | Risky |
-| Tundra | Same-tier +0 | 16.7 | 78.3% (Permafrost Behemoth) | 17.9s | Risky |
-| Tundra | Same-tier +3 | 11.2 | 53.2% (Permafrost Behemoth) | 35.7s | Risky |
-| Tundra | Boss-ready (tankiest +3) | 12.2 | 48.8% (Permafrost Behemoth) | 38.0s | Safe |
-| Volcanic | Entry (prev-tier +3) | 23.0 | 55.0% (Obsidian Tortoise) | 12.8s | Risky |
-| Volcanic | Same-tier +0 | 23.6 | 54.5% (Obsidian Tortoise) | 12.7s | Risky |
-| Volcanic | Same-tier +3 | 14.0 | 35.5% (Obsidian Tortoise) | 28.6s | Risky |
-| Volcanic | Boss-ready (tankiest +3) | 15.6 | 32.7% (Obsidian Tortoise) | 29.9s | Risky |
-| Wasteland | Entry (prev-tier +3) | 47.5 | 53.6% (Charnel Brute) | 6.20s | Blocked |
-| Wasteland | Same-tier +0 | 47.6 | 53.2% (Charnel Brute) | 6.28s | Blocked |
-| Wasteland | Same-tier +3 | 36.4 | 34.7% (Charnel Brute) | 11.0s | Risky |
-| Wasteland | Boss-ready (tankiest +3) | 37.5 | 32.0% (Charnel Brute) | 12.4s | Risky |
+| Deep-Sea Trench | Boss-ready (tankiest +3) | 22.7 | 54.8% (Abyssal Serpent) | 20.5s | Risky |
+| Desert | Entry (prev-tier +3) | 17.3 | 62.8% (Dune Tyrant) | 17.0s | Risky |
+| Desert | Same-tier +0 | 17.5 | 62.2% (Dune Tyrant) | 17.1s | Risky |
+| Desert | Same-tier +3 | 10.5 | 41.2% (Dune Tyrant) | 38.0s | Safe |
+| Desert | Boss-ready (tankiest +3) | 11.7 | 38.0% (Dune Tyrant) | 39.7s | Safe |
+| Jungle | Entry (prev-tier +3) | 33.6 | 34.6% (Emerald Constrictor) | 8.78s | Blocked |
+| Jungle | Same-tier +0 | 33.8 | 34.1% (Emerald Constrictor) | 8.84s | Blocked |
+| Jungle | Same-tier +3 | 21.2 | 20.5% (Emerald Constrictor) | 18.9s | Risky |
+| Jungle | Boss-ready (tankiest +3) | 22.4 | 19.1% (Emerald Constrictor) | 20.8s | Risky |
+| Mountain | Entry (prev-tier +3) | 24.6 | 81.8% (Granite Mammoth) | 12.0s | Risky |
+| Mountain | Same-tier +0 | 24.9 | 81.0% (Granite Mammoth) | 12.0s | Risky |
+| Mountain | Same-tier +3 | 18.9 | 55.5% (Granite Mammoth) | 21.2s | Risky |
+| Mountain | Boss-ready (tankiest +3) | 20.8 | 50.7% (Granite Mammoth) | 22.4s | Risky |
+| Tundra | Entry (prev-tier +3) | 16.7 | 79.1% (Permafrost Behemoth) | 17.7s | Risky |
+| Tundra | Same-tier +0 | 16.9 | 78.3% (Permafrost Behemoth) | 17.7s | Risky |
+| Tundra | Same-tier +3 | 11.1 | 53.2% (Permafrost Behemoth) | 36.0s | Risky |
+| Tundra | Boss-ready (tankiest +3) | 12.5 | 48.8% (Permafrost Behemoth) | 37.4s | Safe |
+| Volcanic | Entry (prev-tier +3) | 29.3 | 55.0% (Obsidian Tortoise) | 10.1s | Risky |
+| Volcanic | Same-tier +0 | 29.4 | 54.5% (Obsidian Tortoise) | 10.2s | Risky |
+| Volcanic | Same-tier +3 | 19.1 | 35.5% (Obsidian Tortoise) | 20.9s | Risky |
+| Volcanic | Boss-ready (tankiest +3) | 20.4 | 32.7% (Obsidian Tortoise) | 22.8s | Risky |
+| Wasteland | Entry (prev-tier +3) | 44.2 | 53.6% (Charnel Brute) | 6.66s | Blocked |
+| Wasteland | Same-tier +0 | 44.4 | 53.2% (Charnel Brute) | 6.73s | Blocked |
+| Wasteland | Same-tier +3 | 36.1 | 34.7% (Charnel Brute) | 11.1s | Risky |
+| Wasteland | Boss-ready (tankiest +3) | 36.7 | 32.0% (Charnel Brute) | 12.7s | Risky |
 
 ## Biome Threat Summary
 
@@ -83,9 +128,9 @@ _Bosses for biome tier 4 vs the boss-ready reference player (T4 +3). TTK is an U
 | Caldera Sovereign | Volcanic | 9000 | 100 @ 0.38 aps | 78.5 | ×2.00 | plate 10.0, DR 5.00% | 39.8s | 8.42s | Risky | - |
 | Charnel-Crown Sovereign | Wasteland | 8500 | 88.0 @ 0.43 aps | 80.3 | ×1.60 | plate 14.0, DR 8.00% | 39.4s | 8.54s | Risky | - |
 
-## Outlier Summary
+## Mob / Boss Diagnostic Signals
 
-_Mobs >±25% of biome-tier average on HP / raw DPS / spike; bosses outside the TTK/TTL sanity bands; biomes with weak or single-typed threat profiles._
+_Attention signals only: mobs >±25% of biome-tier average on HP / raw DPS / spike, bosses outside the TTK/TTL observation bands, and narrow biome threat profiles. These are not verdicts or balance gates._
 
 | Flag | Subject | Detail |
 | --- | --- | --- |

@@ -20,26 +20,64 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 | Boss-ready (tankiest +3) | T2 +3 | 223 | 23.6 | 3.56% | 6.00% | 86.5 | 1.16 |
 
 
+## Cross-Biome Threat & Reward
+
+_Every biome at tier 1, ranked by mean incoming DPS against Entry (prev-tier +3). Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target._
+
+| Biome | Threat index | Mean HP | Max HP | Mean incoming DPS | Max incoming DPS | Worst spike %HP | Density | Essence / kill | Biome XP / kill |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Swamp | ×1.74 | 128 | 145 | 5.76 | 5.78 | 0.55% (Mire Ooze) | 10 | 5.50 | 38.5 |
+| Mountain | ×1.49 | 180 | 200 | 4.93 | 5.30 | 10.4% (Cliff Hopper) | 12 | 6.67 | 45.3 |
+| Caverns | ×1.00 | 325 | 400 | 3.30 | 5.91 | 12.6% (Cave Brute) | 8 | 11.5 | 80.0 |
+| Plains | ×0.23 | 75.0 | 100 | 0.76 | 1.03 | 1.10% (Boar) | 24 | 2.50 | 14.0 |
+| Forest | ×0.22 | 80.0 | 100 | 0.73 | 0.81 | 0.55% (Moss Rat) | 18 | 3.50 | 21.5 |
+
+## Cross-Biome Deviation Signals
+
+_Discovery-only signals for values at least 25% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band._
+
+| Biome | Axis | Metric | Value | Sibling median | Deviation |
+| --- | --- | --- | --- | --- | --- |
+| Caverns | Threat | Worst spike %HP | 12.6% | 1.10% | +1050% |
+| Mountain | Threat | Worst spike %HP | 10.4% | 1.10% | +850% |
+| Caverns | Reward | Essence / kill | 11.5 | 5.50 | +109% |
+| Caverns | Reward | Biome XP / kill | 80.0 | 38.5 | +108% |
+| Plains | Exposure | Mob density | 24.0 | 12.0 | +100% |
+| Forest | Threat | Max incoming DPS | 0.81 | 5.30 | -84.6% |
+| Plains | Threat | Max incoming DPS | 1.03 | 5.30 | -80.6% |
+| Forest | Threat | Mean incoming DPS | 0.73 | 3.30 | -77.8% |
+| Plains | Threat | Mean incoming DPS | 0.76 | 3.30 | -77.1% |
+| Swamp | Threat | Mean incoming DPS | 5.76 | 3.30 | +74.3% |
+| Plains | Reward | Biome XP / kill | 14.0 | 38.5 | -63.6% |
+| Plains | Reward | Essence / kill | 2.50 | 5.50 | -54.5% |
+| Forest | Threat | Worst spike %HP | 0.55% | 1.10% | -50.0% |
+| Forest | Exposure | Mob density | 18.0 | 12.0 | +50.0% |
+| Swamp | Threat | Worst spike %HP | 0.55% | 1.10% | -50.0% |
+| Mountain | Threat | Mean incoming DPS | 4.93 | 3.30 | +49.2% |
+| Forest | Reward | Biome XP / kill | 21.5 | 38.5 | -44.2% |
+| Forest | Reward | Essence / kill | 3.50 | 5.50 | -36.4% |
+| Caverns | Exposure | Mob density | 8.00 | 12.0 | -33.3% |
+
 ## Player Matchup Summary
 
-_Each biome's average mob (sustained pressure) vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
+_Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
 
 | Biome | Player | Incoming DPS | Worst spike %HP | TTL pressure | Status |
 | --- | --- | --- | --- | --- | --- |
-| Caverns | Entry (prev-tier +3) | 4.51 | 12.6% (Cave Brute) | 40.4s | Safe |
-| Caverns | Same-tier +0 | 5.23 | 13.8% (Cave Brute) | 34.7s | Safe |
-| Caverns | Same-tier +3 | 2.22 | 8.47% (Cave Brute) | 95.7s | Safe |
-| Caverns | Boss-ready (tankiest +3) | 1.53 | 7.19% (Cave Brute) | 146s | Safe |
-| Forest | Entry (prev-tier +3) | 0.72 | 0.55% (Moss Rat) | 252s | Safe |
-| Forest | Same-tier +0 | 0.72 | 0.55% (Moss Rat) | 252s | Safe |
-| Forest | Same-tier +3 | 0.71 | 0.47% (Moss Rat) | 298s | Safe |
-| Forest | Boss-ready (tankiest +3) | 0.74 | 0.45% (Moss Rat) | 302s | Safe |
-| Mountain | Entry (prev-tier +3) | 5.02 | 10.4% (Cliff Hopper) | 36.3s | Safe |
+| Caverns | Entry (prev-tier +3) | 3.30 | 12.6% (Cave Brute) | 55.2s | Safe |
+| Caverns | Same-tier +0 | 4.24 | 13.8% (Cave Brute) | 42.9s | Safe |
+| Caverns | Same-tier +3 | 2.62 | 8.47% (Cave Brute) | 81.0s | Safe |
+| Caverns | Boss-ready (tankiest +3) | 2.45 | 7.19% (Cave Brute) | 91.0s | Safe |
+| Forest | Entry (prev-tier +3) | 0.73 | 0.55% (Moss Rat) | 249s | Safe |
+| Forest | Same-tier +0 | 0.73 | 0.55% (Moss Rat) | 249s | Safe |
+| Forest | Same-tier +3 | 0.72 | 0.47% (Moss Rat) | 294s | Safe |
+| Forest | Boss-ready (tankiest +3) | 0.74 | 0.45% (Moss Rat) | 299s | Safe |
+| Mountain | Entry (prev-tier +3) | 4.93 | 10.4% (Cliff Hopper) | 37.0s | Safe |
 | Mountain | Same-tier +0 | 5.55 | 11.6% (Cliff Hopper) | 32.7s | Safe |
-| Mountain | Same-tier +3 | 3.58 | 6.59% (Cliff Hopper) | 59.4s | Safe |
-| Mountain | Boss-ready (tankiest +3) | 3.12 | 5.39% (Cliff Hopper) | 71.3s | Safe |
-| Plains | Entry (prev-tier +3) | 0.50 | 1.10% (Boar) | 364s | Safe |
-| Plains | Same-tier +0 | 1.00 | 2.20% (Boar) | 182s | Safe |
+| Mountain | Same-tier +3 | 3.48 | 6.59% (Cliff Hopper) | 61.0s | Safe |
+| Mountain | Boss-ready (tankiest +3) | 3.03 | 5.39% (Cliff Hopper) | 73.5s | Safe |
+| Plains | Entry (prev-tier +3) | 0.76 | 1.10% (Boar) | 240s | Safe |
+| Plains | Same-tier +0 | 1.27 | 2.20% (Boar) | 143s | Safe |
 | Plains | Same-tier +3 | 0.49 | 0.47% (Field Hare) | 430s | Safe |
 | Plains | Boss-ready (tankiest +3) | 0.51 | 0.45% (Field Hare) | 437s | Safe |
 | Swamp | Entry (prev-tier +3) | 5.76 | 0.55% (Mire Ooze) | 31.7s | Safe |
@@ -71,9 +109,9 @@ _Bosses for biome tier 1 vs the boss-ready reference player (T2 +3). TTK is an U
 | Tusked Razorback | Plains | 1500 | 42.0 @ 0.50 aps | 21.0 | ×1.10 | plate 4.00, DR 2.00% | 15.4s | 24.9s | Safe | - |
 | Grave Toadeater | Swamp | 1150 | 12.0 @ 0.38 aps | 13.6 | ×1.60 | plate 2.00, DR 2.00% | 11.5s | 23.7s | Safe | - |
 
-## Outlier Summary
+## Mob / Boss Diagnostic Signals
 
-_Mobs >±25% of biome-tier average on HP / raw DPS / spike; bosses outside the TTK/TTL sanity bands; biomes with weak or single-typed threat profiles._
+_Attention signals only: mobs >±25% of biome-tier average on HP / raw DPS / spike, bosses outside the TTK/TTL observation bands, and narrow biome threat profiles. These are not verdicts or balance gates._
 
 | Flag | Subject | Detail |
 | --- | --- | --- |

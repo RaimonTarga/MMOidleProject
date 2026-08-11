@@ -48,7 +48,7 @@ const OVERLORD_DEFAULT_MAX_SECONDS = 1500;
 /** Farm runs measure a RATE, so they want a long wall: one simulated hour. */
 const FARM_DEFAULT_MAX_SECONDS = 3600;
 /**
- * Fidelity ceiling for farm income, MEASURED (2026-08-02) with `--scale-sweep`
+ * Fidelity ceiling for simulated throughput, MEASURED (2026-08-02) with `--scale-sweep`
  * over 1 simulated hour, on plains T1 and cave T3. Drift vs scale 1:
  *
  *   scale 2 → −1%    scale 3 → −6%    scale 5 → −5..18%    scale 10 → −29..32%
@@ -59,7 +59,7 @@ const FARM_DEFAULT_MAX_SECONDS = 3600;
  * to run noise at 1 sim hour is ~1-2%, so scale 2 is inside the noise and
  * everything above 2 is a real, one-directional understatement.
  */
-const FARM_MAX_TRUSTED_TIME_SCALE = 2;
+const MAX_TRUSTED_TIME_SCALE = 2;
 
 function parseMode(raw: string): BenchMode {
   if (raw === 'boss' || raw === 'overlord' || raw === 'farm') return raw;
@@ -81,8 +81,8 @@ Options:
   --dry-run              Print run_meta (with expectedMatches) as JSON, then exit
   --all-paths            Enumerate every perk combination (full T3 depth, all tiers)
   --log                  Capture fight log (use with --build for single match)
-  --time-scale <n>       Sim acceleration multiplier (default: 5, max: 10;
-                         farm mode defaults to 2 — its measured fidelity ceiling)
+  --time-scale <n>       Sim acceleration multiplier (default: 2, max: 10;
+                         values above 2 understate simulated throughput)
   --max-seconds <n>      Sim-time timeout per match (default: 600)
   --single               Run one build × one target then exit
   --sample <n>           Overlord only: cap to n randomly-sampled party scenarios
@@ -123,7 +123,7 @@ function parseArgs(argv: string[]): BalanceCliArgs {
   const args: BalanceCliArgs = {
     mode: 'boss',
     tiers: DEFAULT_TIERS,
-    timeScale: 5,
+    timeScale: MAX_TRUSTED_TIME_SCALE,
     maxSimSeconds: 600,
     single: false,
     format: 'csv',
@@ -226,22 +226,22 @@ function parseArgs(argv: string[]): BalanceCliArgs {
   }
   if (args.mode === 'farm') {
     if (!maxSecondsProvided) args.maxSimSeconds = FARM_DEFAULT_MAX_SECONDS;
-    // Income rates decay with the time scale (see FARM_MAX_TRUSTED_TIME_SCALE),
-    // so farm mode defaults to the measured ceiling rather than the fight
-    // bench's 5. A sweep is exempt: probing the unusable scales is its job.
+    // Ordinary farm and fight runs share the measured-safe default. A sweep is
+    // exempt from the ceiling because probing unusable scales is its purpose.
     if (!timeScaleProvided) {
-      args.timeScale = FARM_MAX_TRUSTED_TIME_SCALE;
-    } else if (args.timeScale > FARM_MAX_TRUSTED_TIME_SCALE && !args.scaleSweep) {
-      console.error(
-        `WARNING: --time-scale ${args.timeScale} understates farm income ` +
-          `(measured: ~6% low at 3, ~30% low at 10). Rates above ` +
-          `${FARM_MAX_TRUSTED_TIME_SCALE} are not trustworthy — re-check with ` +
-          `--scale-sweep before authoring anything against these numbers.`,
-      );
+      args.timeScale = MAX_TRUSTED_TIME_SCALE;
     }
   }
 
   return args;
+}
+
+function timeScaleWarning(args: BalanceCliArgs): string | undefined {
+  const explicitSweep = args.mode === 'farm' && Boolean(args.scaleSweep);
+  if (args.timeScale <= MAX_TRUSTED_TIME_SCALE || explicitSweep) return undefined;
+  return `WARNING: --time-scale ${args.timeScale} understates simulated throughput ` +
+    `(measured: ~6% low at 3 and up to ~32% low at 10). Values above ` +
+    `${MAX_TRUSTED_TIME_SCALE} are outside the trusted fidelity ceiling.`;
 }
 
 const CSV_HEADER = [
@@ -507,6 +507,7 @@ function printJsonlMeta(args: BalanceCliArgs, expectedMatches: number): void {
     classRoot: args.classRoot,
     timeScale: args.timeScale,
     maxSimSeconds: args.maxSimSeconds,
+    warning: timeScaleWarning(args),
   };
   console.log(JSON.stringify(meta));
 }
@@ -609,7 +610,11 @@ async function main(): Promise<void> {
     }
 
     if (args.format === 'jsonl') printJsonlMeta(args, expectedFarm);
-    else console.log(FARM_CSV_HEADER);
+    else {
+      const warning = timeScaleWarning(args);
+      if (warning) console.log(`# ${warning}`);
+      console.log(FARM_CSV_HEADER);
+    }
     for (const entry of iterateFarmMatrix(args)) {
       printFarmEntry(entry, args.format);
     }
@@ -636,6 +641,8 @@ async function main(): Promise<void> {
     return;
   }
 
+  const warning = timeScaleWarning(args);
+  if (warning) console.log(`# ${warning}`);
   console.log(CSV_HEADER);
   for (const { result } of iterateBalanceMatrix(args)) {
     printCsvRow(result);

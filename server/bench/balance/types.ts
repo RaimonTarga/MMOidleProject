@@ -16,7 +16,7 @@ export const OVERLORD_PARTY_SIZE = 4;
 
 export type BalanceOutcome = 'clear' | 'bot_died' | 'timeout';
 
-export type GearSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'core';
+export type GearSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'core' | 'relic';
 
 export interface BuildSpec {
   id: string;
@@ -234,6 +234,8 @@ export interface BalanceJsonlMeta {
   classRoot?: string;
   timeScale: number;
   maxSimSeconds: number;
+  /** Present when the requested tick scale is outside the measured fidelity ceiling. */
+  warning?: string;
 }
 
 /** One farm run as a JSONL record, with the build resolved to readable names. */

@@ -20,40 +20,83 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 | Boss-ready (tankiest +3) | T4 +3 | 465 | 57.4 | 6.39% | 6.78% | 252 | 0.96 |
 
 
+## Cross-Biome Threat & Reward
+
+_Every biome at tier 3, ranked by mean incoming DPS against Entry (prev-tier +3). Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target._
+
+| Biome | Threat index | Mean HP | Max HP | Mean incoming DPS | Max incoming DPS | Worst spike %HP | Density | Essence / kill | Biome XP / kill |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Swamp | ×7.39 | 680 | 820 | 32.8 | 42.4 | 0.34% (Plague-Shell Snapper) | 10 | 52.3 | 315 |
+| Caverns | ×3.38 | 1250 | 1600 | 15.0 | 26.6 | 15.3% (Cavern Troll) | 8 | 66.0 | 397 |
+| Mountain | ×2.43 | 730 | 870 | 10.8 | 13.1 | 17.3% (Mountain Colossus) | 12 | 60.7 | 360 |
+| Jungle | ×1.00 | 473 | 580 | 4.43 | 11.0 | 6.45% (Silverback) | 20 | 29.0 | 175 |
+| Desert | ×0.91 | 587 | 900 | 4.04 | 11.3 | 7.47% (Gilded Scarab) | 8 | 40.7 | 245 |
+| Tundra | ×0.84 | 653 | 880 | 3.74 | 7.31 | 8.14% (Glacier Bear) | 8 | 46.3 | 278 |
+| Volcanic | ×0.42 | 515 | 800 | 1.84 | 5.52 | 18.3% (Magma Tortoise) | 18 | 34.0 | 205 |
+
+## Cross-Biome Deviation Signals
+
+_Discovery-only signals for values at least 25% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band._
+
+| Biome | Axis | Metric | Value | Sibling median | Deviation |
+| --- | --- | --- | --- | --- | --- |
+| Swamp | Threat | Mean incoming DPS | 32.8 | 4.43 | +639% |
+| Swamp | Threat | Max incoming DPS | 42.4 | 11.3 | +276% |
+| Caverns | Threat | Mean incoming DPS | 15.0 | 4.43 | +238% |
+| Mountain | Threat | Mean incoming DPS | 10.8 | 4.43 | +143% |
+| Caverns | Threat | Max incoming DPS | 26.6 | 11.3 | +136% |
+| Volcanic | Threat | Worst spike %HP | 18.3% | 8.14% | +125% |
+| Mountain | Threat | Worst spike %HP | 17.3% | 8.14% | +113% |
+| Jungle | Exposure | Mob density | 20.0 | 10.0 | +100% |
+| Swamp | Threat | Worst spike %HP | 0.34% | 8.14% | -95.8% |
+| Caverns | Threat | Worst spike %HP | 15.3% | 8.14% | +87.5% |
+| Volcanic | Exposure | Mob density | 18.0 | 10.0 | +80.0% |
+| Volcanic | Threat | Mean incoming DPS | 1.84 | 4.43 | -58.4% |
+| Volcanic | Threat | Max incoming DPS | 5.52 | 11.3 | -51.1% |
+| Caverns | Reward | Biome XP / kill | 397 | 278 | +42.5% |
+| Caverns | Reward | Essence / kill | 66.0 | 46.3 | +42.4% |
+| Jungle | Reward | Essence / kill | 29.0 | 46.3 | -37.4% |
+| Jungle | Reward | Biome XP / kill | 175 | 278 | -37.1% |
+| Tundra | Threat | Max incoming DPS | 7.31 | 11.3 | -35.2% |
+| Mountain | Reward | Essence / kill | 60.7 | 46.3 | +30.9% |
+| Mountain | Reward | Biome XP / kill | 360 | 278 | +29.3% |
+| Volcanic | Reward | Essence / kill | 34.0 | 46.3 | -26.6% |
+| Volcanic | Reward | Biome XP / kill | 205 | 278 | -26.3% |
+
 ## Player Matchup Summary
 
-_Each biome's average mob (sustained pressure) vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
+_Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
 
 | Biome | Player | Incoming DPS | Worst spike %HP | TTL pressure | Status |
 | --- | --- | --- | --- | --- | --- |
-| Caverns | Entry (prev-tier +3) | 10.8 | 15.3% (Cavern Troll) | 27.4s | Risky |
-| Caverns | Same-tier +0 | 10.8 | 15.1% (Cavern Troll) | 27.7s | Risky |
-| Caverns | Same-tier +3 | 4.08 | 6.50% (Cavern Troll) | 98.0s | Safe |
-| Caverns | Boss-ready (tankiest +3) | 4.82 | 6.23% (Cavern Troll) | 96.6s | Safe |
-| Desert | Entry (prev-tier +3) | 1.75 | 7.47% (Gilded Scarab) | 169s | Safe |
-| Desert | Same-tier +0 | 1.75 | 7.36% (Gilded Scarab) | 171s | Safe |
-| Desert | Same-tier +3 | 0.44 | 0.75% (Gilded Scarab) | 914s | Safe |
-| Desert | Boss-ready (tankiest +3) | 0.44 | 0.86% (Gilded Scarab) | 1048s | Safe |
-| Jungle | Entry (prev-tier +3) | 1.81 | 6.45% (Silverback) | 163s | Safe |
-| Jungle | Same-tier +0 | 1.81 | 6.36% (Silverback) | 165s | Safe |
-| Jungle | Same-tier +3 | 1.81 | 0.25% (Jungle Stalker) | 221s | Safe |
-| Jungle | Boss-ready (tankiest +3) | 1.82 | 0.21% (Jungle Stalker) | 256s | Safe |
-| Mountain | Entry (prev-tier +3) | 11.1 | 17.3% (Mountain Colossus) | 26.5s | Risky |
-| Mountain | Same-tier +0 | 11.2 | 17.4% (Mountain Colossus) | 26.8s | Risky |
-| Mountain | Same-tier +3 | 5.28 | 8.00% (Mountain Colossus) | 75.8s | Safe |
-| Mountain | Boss-ready (tankiest +3) | 6.25 | 7.52% (Mountain Colossus) | 74.5s | Safe |
-| Swamp | Entry (prev-tier +3) | 30.4 | 0.34% (Plague-Shell Snapper) | 9.69s | Blocked |
-| Swamp | Same-tier +0 | 30.4 | 0.33% (Plague-Shell Snapper) | 9.83s | Blocked |
-| Swamp | Same-tier +3 | 30.4 | 0.25% (Plague-Shell Snapper) | 13.2s | Risky |
-| Swamp | Boss-ready (tankiest +3) | 30.4 | 0.21% (Plague-Shell Snapper) | 15.3s | Risky |
+| Caverns | Entry (prev-tier +3) | 15.0 | 15.3% (Cavern Troll) | 19.7s | Risky |
+| Caverns | Same-tier +0 | 15.0 | 15.1% (Cavern Troll) | 19.9s | Risky |
+| Caverns | Same-tier +3 | 10.7 | 6.50% (Cavern Troll) | 37.5s | Safe |
+| Caverns | Boss-ready (tankiest +3) | 11.1 | 6.23% (Cavern Troll) | 42.0s | Safe |
+| Desert | Entry (prev-tier +3) | 4.04 | 7.47% (Gilded Scarab) | 72.9s | Safe |
+| Desert | Same-tier +0 | 4.06 | 7.36% (Gilded Scarab) | 73.7s | Safe |
+| Desert | Same-tier +3 | 0.79 | 0.75% (Gilded Scarab) | 504s | Safe |
+| Desert | Boss-ready (tankiest +3) | 0.98 | 0.86% (Gilded Scarab) | 475s | Safe |
+| Jungle | Entry (prev-tier +3) | 4.43 | 6.45% (Silverback) | 66.5s | Safe |
+| Jungle | Same-tier +0 | 4.44 | 6.36% (Silverback) | 67.4s | Safe |
+| Jungle | Same-tier +3 | 4.07 | 0.25% (Jungle Stalker) | 98.2s | Safe |
+| Jungle | Boss-ready (tankiest +3) | 4.08 | 0.21% (Jungle Stalker) | 114s | Safe |
+| Mountain | Entry (prev-tier +3) | 10.8 | 17.3% (Mountain Colossus) | 27.3s | Risky |
+| Mountain | Same-tier +0 | 10.9 | 17.4% (Mountain Colossus) | 27.4s | Risky |
+| Mountain | Same-tier +3 | 5.09 | 8.00% (Mountain Colossus) | 78.6s | Safe |
+| Mountain | Boss-ready (tankiest +3) | 5.73 | 7.52% (Mountain Colossus) | 81.2s | Safe |
+| Swamp | Entry (prev-tier +3) | 32.8 | 0.34% (Plague-Shell Snapper) | 9.00s | Blocked |
+| Swamp | Same-tier +0 | 32.8 | 0.33% (Plague-Shell Snapper) | 9.13s | Blocked |
+| Swamp | Same-tier +3 | 32.8 | 0.25% (Plague-Shell Snapper) | 12.2s | Risky |
+| Swamp | Boss-ready (tankiest +3) | 32.8 | 0.21% (Plague-Shell Snapper) | 14.2s | Risky |
 | Tundra | Entry (prev-tier +3) | 3.74 | 8.14% (Glacier Bear) | 78.8s | Safe |
-| Tundra | Same-tier +0 | 4.10 | 8.03% (Glacier Bear) | 73.0s | Safe |
-| Tundra | Same-tier +3 | 0.34 | 1.25% (Glacier Bear) | 1173s | Safe |
-| Tundra | Boss-ready (tankiest +3) | 0.35 | 1.29% (Glacier Bear) | 1346s | Safe |
-| Volcanic | Entry (prev-tier +3) | 0.49 | 18.3% (Magma Tortoise) | 597s | Safe |
-| Volcanic | Same-tier +0 | 0.50 | 18.1% (Magma Tortoise) | 603s | Safe |
-| Volcanic | Same-tier +3 | 0.49 | 8.75% (Magma Tortoise) | 808s | Safe |
-| Volcanic | Boss-ready (tankiest +3) | 0.50 | 8.16% (Magma Tortoise) | 927s | Safe |
+| Tundra | Same-tier +0 | 3.75 | 8.03% (Glacier Bear) | 79.6s | Safe |
+| Tundra | Same-tier +3 | 0.75 | 1.25% (Glacier Bear) | 533s | Safe |
+| Tundra | Boss-ready (tankiest +3) | 0.86 | 1.29% (Glacier Bear) | 538s | Safe |
+| Volcanic | Entry (prev-tier +3) | 1.84 | 18.3% (Magma Tortoise) | 160s | Safe |
+| Volcanic | Same-tier +0 | 1.85 | 18.1% (Magma Tortoise) | 162s | Safe |
+| Volcanic | Same-tier +3 | 0.54 | 8.75% (Magma Tortoise) | 735s | Safe |
+| Volcanic | Boss-ready (tankiest +3) | 0.55 | 8.16% (Magma Tortoise) | 843s | Safe |
 
 ## Biome Threat Summary
 
@@ -83,9 +126,9 @@ _Bosses for biome tier 3 vs the boss-ready reference player (T4 +3). TTK is an U
 | Frost-Plated Rime-Mammoth | Tundra | 5400 | 125 @ 0.24 aps | 29.8 | ×1.80 | plate 12.0, DR 12.0%, shield 18.0% | 26.0s | 31.3s | Safe | TTK undercounted (shield/softcap) |
 | Cinder-Shell Magma-Salamander | Volcanic | 4800 | 110 @ 0.33 aps | 36.7 | ×2.00 | plate 8.00, DR 4.00% | 20.9s | 28.7s | Safe | - |
 
-## Outlier Summary
+## Mob / Boss Diagnostic Signals
 
-_Mobs >±25% of biome-tier average on HP / raw DPS / spike; bosses outside the TTK/TTL sanity bands; biomes with weak or single-typed threat profiles._
+_Attention signals only: mobs >±25% of biome-tier average on HP / raw DPS / spike, bosses outside the TTK/TTL observation bands, and narrow biome threat profiles. These are not verdicts or balance gates._
 
 | Flag | Subject | Detail |
 | --- | --- | --- |

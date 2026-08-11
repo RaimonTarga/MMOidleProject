@@ -20,40 +20,88 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 | Boss-ready (tankiest +3) | T3 +3 | 325 | 35.4 | 6.39% | 6.78% | 151 | 1.02 |
 
 
+## Cross-Biome Threat & Reward
+
+_Every biome at tier 2, ranked by mean incoming DPS against Entry (prev-tier +3). Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target._
+
+| Biome | Threat index | Mean HP | Max HP | Mean incoming DPS | Max incoming DPS | Worst spike %HP | Density | Essence / kill | Biome XP / kill |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Swamp | ×2.01 | 307 | 370 | 18.1 | 25.4 | 0.44% (Moss-Shell Snapper) | 10 | 12.0 | 68.3 |
+| Jungle | ×1.63 | 213 | 250 | 14.6 | 24.5 | 5.23% (Jungle Ape) | 20 | 7.33 | 40.0 |
+| Caverns | ×1.12 | 577 | 740 | 10.1 | 18.5 | 15.7% (Cave Troll) | 8 | 18.7 | 110 |
+| Mountain | ×1.00 | 340 | 400 | 9.01 | 10.4 | 17.9% (Granite Titan) | 12 | 13.0 | 74.3 |
+| Plains | ×0.57 | 163 | 200 | 5.17 | 7.90 | 6.10% (Stampede Bull) | 24 | 6.67 | 37.7 |
+| Desert | ×0.49 | 263 | 420 | 4.43 | 9.60 | 8.28% (Sun Scarab) | 8 | 7.67 | 42.7 |
+| Forest | ×0.15 | 205 | 225 | 1.36 | 2.62 | 1.31% (Dire Wolf) | 18 | 9.00 | 51.0 |
+
+## Cross-Biome Deviation Signals
+
+_Discovery-only signals for values at least 25% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band._
+
+| Biome | Axis | Metric | Value | Sibling median | Deviation |
+| --- | --- | --- | --- | --- | --- |
+| Mountain | Threat | Worst spike %HP | 17.9% | 6.10% | +193% |
+| Caverns | Threat | Worst spike %HP | 15.7% | 6.10% | +157% |
+| Swamp | Threat | Max incoming DPS | 25.4 | 10.4 | +146% |
+| Jungle | Threat | Max incoming DPS | 24.5 | 10.4 | +137% |
+| Caverns | Reward | Biome XP / kill | 110 | 51.0 | +116% |
+| Caverns | Reward | Essence / kill | 18.7 | 9.00 | +107% |
+| Swamp | Threat | Mean incoming DPS | 18.1 | 9.01 | +101% |
+| Plains | Exposure | Mob density | 24.0 | 12.0 | +100% |
+| Swamp | Threat | Worst spike %HP | 0.44% | 6.10% | -92.9% |
+| Forest | Threat | Mean incoming DPS | 1.36 | 9.01 | -84.9% |
+| Caverns | Threat | Max incoming DPS | 18.5 | 10.4 | +79.0% |
+| Forest | Threat | Worst spike %HP | 1.31% | 6.10% | -78.6% |
+| Forest | Threat | Max incoming DPS | 2.62 | 10.4 | -74.7% |
+| Jungle | Exposure | Mob density | 20.0 | 12.0 | +66.7% |
+| Jungle | Threat | Mean incoming DPS | 14.6 | 9.01 | +62.7% |
+| Desert | Threat | Mean incoming DPS | 4.43 | 9.01 | -50.8% |
+| Forest | Exposure | Mob density | 18.0 | 12.0 | +50.0% |
+| Mountain | Reward | Biome XP / kill | 74.3 | 51.0 | +45.8% |
+| Mountain | Reward | Essence / kill | 13.0 | 9.00 | +44.4% |
+| Plains | Threat | Mean incoming DPS | 5.17 | 9.01 | -42.6% |
+| Desert | Threat | Worst spike %HP | 8.28% | 6.10% | +35.7% |
+| Swamp | Reward | Biome XP / kill | 68.3 | 51.0 | +34.0% |
+| Caverns | Exposure | Mob density | 8.00 | 12.0 | -33.3% |
+| Desert | Exposure | Mob density | 8.00 | 12.0 | -33.3% |
+| Swamp | Reward | Essence / kill | 12.0 | 9.00 | +33.3% |
+| Plains | Reward | Biome XP / kill | 37.7 | 51.0 | -26.1% |
+| Plains | Reward | Essence / kill | 6.67 | 9.00 | -25.9% |
+
 ## Player Matchup Summary
 
-_Each biome's average mob (sustained pressure) vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
+_Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
 
 | Biome | Player | Incoming DPS | Worst spike %HP | TTL pressure | Status |
 | --- | --- | --- | --- | --- | --- |
-| Caverns | Entry (prev-tier +3) | 6.35 | 15.7% (Cave Troll) | 36.1s | Safe |
-| Caverns | Same-tier +0 | 6.43 | 15.0% (Cave Troll) | 37.3s | Safe |
-| Caverns | Same-tier +3 | 2.68 | 8.48% (Cave Troll) | 110s | Safe |
-| Caverns | Boss-ready (tankiest +3) | 3.38 | 8.60% (Cave Troll) | 96.2s | Safe |
-| Desert | Entry (prev-tier +3) | 3.01 | 8.28% (Sun Scarab) | 76.3s | Safe |
-| Desert | Same-tier +0 | 3.06 | 7.91% (Sun Scarab) | 78.4s | Safe |
-| Desert | Same-tier +3 | 0.44 | 2.71% (Sun Scarab) | 675s | Safe |
-| Desert | Boss-ready (tankiest +3) | 0.44 | 3.07% (Sun Scarab) | 733s | Safe |
-| Forest | Entry (prev-tier +3) | 1.31 | 1.31% (Dire Wolf) | 175s | Safe |
-| Forest | Same-tier +0 | 0.67 | 1.25% (Dire Wolf) | 360s | Safe |
-| Forest | Same-tier +3 | 0.66 | 0.34% (Dire Wolf) | 443s | Safe |
-| Forest | Boss-ready (tankiest +3) | 0.68 | 0.31% (Dire Wolf) | 481s | Safe |
-| Jungle | Entry (prev-tier +3) | 8.61 | 5.23% (Jungle Ape) | 26.6s | Risky |
-| Jungle | Same-tier +0 | 8.62 | 4.58% (Jungle Ape) | 27.9s | Risky |
-| Jungle | Same-tier +3 | 8.62 | 0.34% (Jungle Snake) | 34.2s | Safe |
-| Jungle | Boss-ready (tankiest +3) | 8.63 | 0.61% (Jungle Ape) | 37.7s | Safe |
-| Mountain | Entry (prev-tier +3) | 9.12 | 17.9% (Granite Titan) | 25.1s | Risky |
-| Mountain | Same-tier +0 | 9.00 | 16.6% (Granite Titan) | 26.7s | Risky |
-| Mountain | Same-tier +3 | 5.79 | 9.84% (Granite Titan) | 50.9s | Safe |
-| Mountain | Boss-ready (tankiest +3) | 6.77 | 9.83% (Granite Titan) | 48.0s | Safe |
-| Plains | Entry (prev-tier +3) | 4.35 | 6.10% (Stampede Bull) | 52.8s | Safe |
-| Plains | Same-tier +0 | 4.43 | 5.41% (Stampede Bull) | 54.3s | Safe |
-| Plains | Same-tier +3 | 0.55 | 1.02% (Stampede Bull) | 534s | Safe |
-| Plains | Boss-ready (tankiest +3) | 0.56 | 1.23% (Stampede Bull) | 580s | Safe |
-| Swamp | Entry (prev-tier +3) | 16.4 | 0.44% (Moss-Shell Snapper) | 14.0s | Risky |
-| Swamp | Same-tier +0 | 16.4 | 0.42% (Moss-Shell Snapper) | 14.6s | Risky |
-| Swamp | Same-tier +3 | 16.4 | 0.34% (Moss-Shell Snapper) | 18.0s | Risky |
-| Swamp | Boss-ready (tankiest +3) | 16.4 | 0.31% (Moss-Shell Snapper) | 19.8s | Risky |
+| Caverns | Entry (prev-tier +3) | 10.1 | 15.7% (Cave Troll) | 22.8s | Risky |
+| Caverns | Same-tier +0 | 10.1 | 15.0% (Cave Troll) | 23.9s | Risky |
+| Caverns | Same-tier +3 | 8.54 | 8.48% (Cave Troll) | 34.5s | Safe |
+| Caverns | Boss-ready (tankiest +3) | 8.86 | 8.60% (Cave Troll) | 36.7s | Safe |
+| Desert | Entry (prev-tier +3) | 4.43 | 8.28% (Sun Scarab) | 51.7s | Safe |
+| Desert | Same-tier +0 | 4.35 | 7.91% (Sun Scarab) | 55.2s | Safe |
+| Desert | Same-tier +3 | 1.65 | 2.71% (Sun Scarab) | 179s | Safe |
+| Desert | Boss-ready (tankiest +3) | 2.02 | 3.07% (Sun Scarab) | 161s | Safe |
+| Forest | Entry (prev-tier +3) | 1.36 | 1.31% (Dire Wolf) | 169s | Safe |
+| Forest | Same-tier +0 | 1.39 | 1.25% (Dire Wolf) | 173s | Safe |
+| Forest | Same-tier +3 | 0.79 | 0.34% (Dire Wolf) | 372s | Safe |
+| Forest | Boss-ready (tankiest +3) | 0.81 | 0.31% (Dire Wolf) | 404s | Safe |
+| Jungle | Entry (prev-tier +3) | 14.6 | 5.23% (Jungle Ape) | 15.7s | Risky |
+| Jungle | Same-tier +0 | 14.7 | 4.58% (Jungle Ape) | 16.4s | Risky |
+| Jungle | Same-tier +3 | 14.7 | 0.34% (Jungle Snake) | 20.1s | Risky |
+| Jungle | Boss-ready (tankiest +3) | 14.7 | 0.61% (Jungle Ape) | 22.2s | Risky |
+| Mountain | Entry (prev-tier +3) | 9.01 | 17.9% (Granite Titan) | 25.5s | Risky |
+| Mountain | Same-tier +0 | 8.88 | 16.6% (Granite Titan) | 27.1s | Risky |
+| Mountain | Same-tier +3 | 5.61 | 9.84% (Granite Titan) | 52.5s | Safe |
+| Mountain | Boss-ready (tankiest +3) | 6.61 | 9.83% (Granite Titan) | 49.2s | Safe |
+| Plains | Entry (prev-tier +3) | 5.17 | 6.10% (Stampede Bull) | 44.4s | Safe |
+| Plains | Same-tier +0 | 4.66 | 5.41% (Stampede Bull) | 51.5s | Safe |
+| Plains | Same-tier +3 | 0.98 | 1.02% (Stampede Bull) | 301s | Safe |
+| Plains | Boss-ready (tankiest +3) | 1.19 | 1.23% (Stampede Bull) | 273s | Safe |
+| Swamp | Entry (prev-tier +3) | 18.1 | 0.44% (Moss-Shell Snapper) | 12.7s | Risky |
+| Swamp | Same-tier +0 | 18.1 | 0.42% (Moss-Shell Snapper) | 13.3s | Risky |
+| Swamp | Same-tier +3 | 18.1 | 0.34% (Moss-Shell Snapper) | 16.3s | Risky |
+| Swamp | Boss-ready (tankiest +3) | 18.1 | 0.31% (Moss-Shell Snapper) | 18.0s | Risky |
 
 ## Biome Threat Summary
 
@@ -83,9 +131,9 @@ _Bosses for biome tier 2 vs the boss-ready reference player (T3 +3). TTK is an U
 | Gorging Razortusk | Plains | 3200 | 45.0 @ 0.45 aps | 20.5 | ×1.30 | plate 8.00, DR 5.00% | 22.5s | 80.2s | Safe | - |
 | Mire-Gorged Behemoth | Swamp | 2700 | 18.0 @ 0.36 aps | 22.4 | ×1.60 | plate 6.00, DR 8.00% | 19.4s | 19.9s | Risky | - |
 
-## Outlier Summary
+## Mob / Boss Diagnostic Signals
 
-_Mobs >±25% of biome-tier average on HP / raw DPS / spike; bosses outside the TTK/TTL sanity bands; biomes with weak or single-typed threat profiles._
+_Attention signals only: mobs >±25% of biome-tier average on HP / raw DPS / spike, bosses outside the TTK/TTL observation bands, and narrow biome threat profiles. These are not verdicts or balance gates._
 
 | Flag | Subject | Detail |
 | --- | --- | --- |
