@@ -44,7 +44,7 @@ working seam-by-seam rather than item-by-item is most of the savings. **W8 and W
 carried forward from the previous program** — deferred content and the release endpoint,
 recorded here so a replan does not silently drop them.
 
-### W1 — Text & data correctness *(cheap, structural, do first)*
+### W1 — Text & data correctness — ✅ **DONE 2026-08-11**
 
 The "make it read as finished" sweep. Cheapest work here, highest perceived quality
 per hour, and it removes noise that would otherwise pollute every screenshot and every
@@ -64,7 +64,7 @@ doing properly once rather than patching sightings:
 `done when:` no user-facing string contains a raw key, a stale essence name, or a
 mid-word break; and a test fails if a new unlabelled effect key is authored.
 
-### W2 — Panel architecture & discoverability *(spec settled 2026-08-11)*
+### W2 — Panel architecture & discoverability — 🔨 **PARTLY DONE**
 
 Every item here is one problem: **the player cannot find what matters.** Upgrading gear
 is behind a tab; runes are behind a tab; the active stance is not shown at all.
@@ -125,7 +125,7 @@ Inventory), **Runes**, and **Crafting (Make)** to their own top-level entries.
 **Abilities / Stances / Rites stay grouped** under one Loadout button — they are chosen
 together and rarely mid-session.
 
-### W3 — Crafting panel *(one panel, four changes, one pass)*
+### W3 — Crafting panel — ✅ **DONE 2026-08-11**
 
 - **Sort highest tier first.** `client/src/ui/crafting/makeEntries.ts:268` sorts
   `a.tier - b.tier` (ascending). One-line change.
@@ -157,7 +157,7 @@ re-layout is presentation versus re-authoring, and that needs reading before siz
 
 Four sub-parts. The order inside them matters more than anything else in this document.
 
-**W5a — Fix the instruments before touching any number.** Tuning on a lying tool bakes
+**W5a — Fix the instruments before touching any number. ✅ DONE 2026-08-11.** Tuning on a lying tool bakes
 the lie into the content. All four are known and specific:
 
 - The bench's canonical bot now runs **Berserker Stance** — `canonicalLoadout` picks
@@ -409,9 +409,9 @@ instrument.
 
 | Stage | Content | Why here |
 |---|---|---|
-| **1 — Reads as finished** | W1 text/data sweep, W3 crafting panel | Cheapest, most visible, removes noise from every later observation. Independent of every decision below. |
+| ~~**1 — Reads as finished**~~ ✅ | W1 text/data sweep, W3 crafting panel | **DONE 2026-08-11.** |
 | **2 — Findable** | W2 panel architecture | Needs one deliberate IA decision, then executes fast. |
-| **3 — Honest instruments** | W5a fixes, W5b balance model, W5c reference layer | Must precede any tuning. W5b is cheap to write and tells W5c what to report. |
+| **3 — Honest instruments** | ✅ W5a fixes · ✅ W5c reference layer · ⬜ **W5b balance model** | W5a and W5c landed 2026-08-11. **W5b is the remaining gate on the balance pass** and is the user's own design statement, not an agent task. |
 | **4 — Real measurement** | W5d route bots | Builds on Stage 3's fixed bench. Cheaper than it sounds (§6 minus the LLM). |
 | **5 — The balance pass** | Your numbers pass, against measured income | The thing Stages 3–4 exist to serve. |
 | **6 — Content depth** | W6 mobs + bosses | After the model is set *and* the cross-biome table exists (see W5b) — with authored-per-mob numbers that table is the only view of drift. The flying-mover primitive is scoped separately. |
