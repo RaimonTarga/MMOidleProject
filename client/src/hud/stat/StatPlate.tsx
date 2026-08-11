@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { GameIcon, atlasIcon } from '../../ui/GameIcon';
+import { useHoverTooltip } from '../primitives/HelpTooltip';
 import { useChangeFlash } from '../primitives/useChangeFlash';
 import { GradientConduit, type ConduitRamp } from '../primitives/GradientConduit';
 import './statPlate.css';
@@ -117,6 +118,14 @@ export interface PlateReading {
   name: string;
   /** Small rider on the same cell, e.g. an on-hit bonus beside attack. */
   rider?: string;
+  /** Unit suffix carried inside the value, e.g. the "/s" on regen. */
+  unit?: string;
+  /**
+   * Explanation shown on hover, in the same grammar the detailed rows use. The
+   * glyph gets a reading recognised; this is what gets it understood, and it is
+   * the whole reason dropping the printed caption costs the player nothing.
+   */
+  help?: ReactNode;
   /** Raw number behind `value`, so a genuine change marks itself once. */
   watch?: number;
 }
@@ -143,13 +152,16 @@ export interface StatPlateProps {
 
 function Reading({ reading }: { reading: PlateReading }) {
   const { flashKey } = useChangeFlash(reading.watch);
+  // Falls back to the stat's own name when there is no authored help, so every
+  // glyph can always be identified even where nobody has written copy for it.
+  const tip = useHoverTooltip(reading.help ?? reading.name);
   const classes = [
     'stat-reading',
     flashKey > 0 && `stat-reading--flash-${flashKey % 2 === 1 ? 'a' : 'b'}`,
   ].filter(Boolean).join(' ');
 
   return (
-    <span className={classes} title={`${reading.name}: ${reading.value}`}>
+    <span className={classes} {...tip.handlers}>
       {/* 16px, not smaller. The stat glyphs are 16x16 pixel art and this panel
           asks them to BE the label, so they render at 1:1 — any fractional
           downscale drops source pixels unevenly and turns a legible glyph into a
@@ -163,9 +175,13 @@ function Reading({ reading }: { reading: PlateReading }) {
         className="stat-reading__glyph"
         decorative
       />
-      <span className="stat-reading__value">{reading.value}</span>
+      <span className="stat-reading__value">
+        {reading.value}
+        {reading.unit && <span className="stat-reading__unit">{reading.unit}</span>}
+      </span>
       {reading.rider && <span className="stat-reading__rider">{reading.rider}</span>}
       <span className="stat-reading__name">{reading.name}</span>
+      {tip.node}
     </span>
   );
 }
@@ -181,11 +197,13 @@ function Reading({ reading }: { reading: PlateReading }) {
  * that is exactly when you most want to know.
  */
 export function StatPlate({ crown, headline, rails }: StatPlateProps) {
+  const headlineTip = useHoverTooltip(headline.help ?? headline.name);
+
   return (
     <section className="stat-plate" aria-label="Character stats">
       {crown && <Crown crown={crown} />}
 
-      <div className="stat-headline" title={`${headline.name}: ${headline.value}`}>
+      <div className="stat-headline" {...headlineTip.handlers}>
         <GameIcon
           as="span"
           source={atlasIcon(headline.glyph)}
@@ -197,6 +215,7 @@ export function StatPlate({ crown, headline, rails }: StatPlateProps) {
         <span className="stat-headline__value">{headline.value}</span>
         {headline.sub && <span className="stat-headline__sub">{headline.sub}</span>}
         <span className="stat-headline__label">{headline.label}</span>
+        {headlineTip.node}
       </div>
 
       {rails.map((rail, index) => (

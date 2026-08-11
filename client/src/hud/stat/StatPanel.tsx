@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { resolveEmpoweredMultiplier } from '@mmo-idle/shared';
+import { estimatePlayerDps, resolveEmpoweredMultiplier } from '@mmo-idle/shared';
 import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
@@ -30,7 +30,12 @@ import {
   platingAtom,
   playerIdAtom,
   playerNameAtom,
+  playerTierAtom,
+  selectedRangeAtom,
+  selectedSubVariantAtom,
   shieldsAtom,
+  summonActiveCountAtom,
+  unlockedSkillsAtom,
   speedAtom,
   statusAtom,
 } from '../atoms';
@@ -126,6 +131,11 @@ export function StatPanel() {
   const equipment = useAtomValue(equipmentAtom);
   const dodgeRate = useAtomValue(dodgeRateAtom);
   const evadeMitigation = useAtomValue(evadeMitigationAtom);
+  const playerTier = useAtomValue(playerTierAtom);
+  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const selectedRange = useAtomValue(selectedRangeAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
+  const summonActiveCount = useAtomValue(summonActiveCountAtom);
   const player = playerId
     ? {
       name,
@@ -163,10 +173,51 @@ export function StatPanel() {
   const healPct     = player && maxHpVal > 0 ? Math.min(100 - hpPct, (player.pendingHeal / maxHpVal) * 100) : 0;
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
-  const dpsValue    = player ? (player.attack + player.onHitDamage) * (1000 / player.attackCooldown) : 0;
+  // Archetype-aware, because `(attack + on-hit) x APS` is the damage of a
+  // character who only auto-attacks — which describes none of the six classes,
+  // and actively misreports two of them. See shared/src/systems/dpsEstimate.ts.
+  const dpsEstimate = player
+    ? estimatePlayerDps({
+      attack: player.attack,
+      onHitDamage: player.onHitDamage,
+      attackCooldownMs: player.attackCooldown,
+      archetype: player.combatArchetype,
+      passives: player.passives,
+      selectedSubVariant,
+      playerTier,
+      summoner: player.combatArchetype === 'summoner'
+        ? {
+          activeCount: summonActiveCount,
+          profileInput: { selectedSubVariant, selectedRange, unlockedSkills, passives: player.passives },
+        }
+        : undefined,
+      // `cannotAttack` is deliberately not passed: the estimator derives it from
+      // the same inputs the server does, so the panel cannot disagree with the
+      // simulation about whether this build is allowed to swing.
+    })
+    : null;
+  const dpsValue    = dpsEstimate?.total ?? 0;
   // One decimal is real information at 12.4 DPS and noise at 1284.3, and this is
-  // now the plate's hero figure — so the precision follows the magnitude.
+  // the plate's headline — so the precision follows the magnitude.
   const dps         = player ? (dpsValue >= 100 ? String(Math.round(dpsValue)) : dpsValue.toFixed(1)) : '—';
+  const dpsTip      = dpsEstimate ? (
+    <>
+      <div><strong>Estimated</strong> damage per second, worked out from your class mechanic.</div>
+      <div style={{ marginTop: 6 }}>
+        {dpsEstimate.parts.map((part) => (
+          <div key={part.label}>{part.label}: {part.dps}</div>
+        ))}
+        <div style={{ marginTop: 3 }}>= {dpsEstimate.total} total</div>
+      </div>
+      <div style={{ marginTop: 6, opacity: 0.8 }}>
+        This is a planning number, not a measurement. It cannot see everything a
+        real fight does:
+        <ul style={{ margin: '3px 0 0', paddingLeft: 14 }}>
+          {dpsEstimate.caveats.map((caveat) => <li key={caveat}>{caveat}</li>)}
+        </ul>
+      </div>
+    </>
+  ) : undefined;
   const empMult     = player ? resolveEmpoweredMultiplier(player.passives, player.combatArchetype) : null;
   const empMultTip  = empMult ? (
     <>
@@ -233,6 +284,7 @@ export function StatPanel() {
             sub: `${aps}/s`,
             label: 'DPS',
             name: 'Damage per second',
+            help: dpsTip,
             watch: Math.round(dpsValue),
           }}
           // Two rails: what you do to them, then what happens to you. Grouping
@@ -249,6 +301,14 @@ export function StatPanel() {
                 // spares it a glyph the commissioned set does not contain.
                 rider: player.onHitDamage > 0 ? `+${player.onHitDamage}` : undefined,
                 name: player.onHitDamage > 0 ? 'Attack (plus on-hit damage)' : 'Attack',
+                help: player.onHitDamage > 0 ? (
+                  <>
+                    <div>{STAT_HELP.attack}</div>
+                    <div style={{ marginTop: 6 }}>
+                      <strong>+{player.onHitDamage} on-hit.</strong> {STAT_HELP.onHitDamage}
+                    </div>
+                  </>
+                ) : STAT_HELP.attack,
                 watch: player.attack,
               },
               {
@@ -256,6 +316,7 @@ export function StatPanel() {
                 glyph: STAT_GLYPH.range,
                 value: String(player.attackRange),
                 name: 'Attack range',
+                help: STAT_HELP.attackRange,
                 watch: player.attackRange,
               },
               ...(empMult
@@ -264,6 +325,7 @@ export function StatPanel() {
                   glyph: STAT_GLYPH.empowered,
                   value: `×${empMult.effective.toFixed(2)}`,
                   name: 'Empowered attack multiplier',
+                  help: empMultTip,
                   watch: empMult.effective,
                 }]
                 : []),
@@ -274,6 +336,7 @@ export function StatPanel() {
                 glyph: STAT_GLYPH.plating,
                 value: String(player.plating),
                 name: 'Plating',
+                help: STAT_HELP.plating,
                 watch: player.plating,
               },
               // Always present, including at 0%. See the note on StatPlate.
@@ -282,13 +345,16 @@ export function StatPanel() {
                 glyph: STAT_GLYPH.reduction,
                 value: `${Math.round(player.damageReduction * 100)}%`,
                 name: 'Damage reduction',
+                help: STAT_HELP.damageReduction,
                 watch: Math.round(player.damageReduction * 100),
               },
               {
                 id: 'regen',
                 glyph: STAT_GLYPH.regen,
-                value: `${Math.round(player.hpRegen * 10) / 10}/s`,
+                value: String(Math.round(player.hpRegen * 10) / 10),
+                unit: '/s',
                 name: 'Health regeneration',
+                help: STAT_HELP.hpRegen,
                 watch: player.hpRegen,
               },
               {
@@ -296,6 +362,7 @@ export function StatPanel() {
                 glyph: STAT_GLYPH.speed,
                 value: String(player.speed),
                 name: 'Move speed',
+                help: STAT_HELP.speed,
                 watch: player.speed,
               },
             ],

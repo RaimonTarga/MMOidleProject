@@ -17,7 +17,7 @@ export const STAT_HELP: Record<string, string> = {
   onHitDamage:
     'Flat bonus damage added to every hit AFTER the target’s defenses — it ignores Plating and Damage Reduction entirely, so each hit deals at least this much. Comes from certain weapons and passives (e.g. Shockblade).',
   dps:
-    'Estimate = (Attack + On-Hit Dmg) × Attacks-per-second, before enemy mitigation. A planning number — real output varies with positioning, procs, and enemy defenses.',
+    'Estimated damage per second, worked out from your class mechanic — a Striker’s finisher, a Slinger’s reload downtime, a DoT build’s converted stacks, a Summoner’s minions. A planning number, not a measurement: it is before enemy plating and damage reduction, and it cannot see positioning, procs, abilities, or the spec behaviours that only exist mid-fight. Hover the figure in the character panel for its full working.',
   atkSpeed:
     'How often you attack, shown as attacks-per-second and the cooldown between swings. Attack-speed bonuses add up, then set cooldown = base ÷ (1 + total).',
   plating:

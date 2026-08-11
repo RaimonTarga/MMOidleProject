@@ -69,17 +69,25 @@
    the rail height on it. Do not add a label line back here — it is what made
    this panel 310px tall. */
 .stat-rail {
-  display: grid;
-  grid-auto-flow: column;
-  /* `max-content` as the FLOOR, not 0. Equal 1fr columns gave every reading the
-     same share whatever it held, so "2.4/s" was ellipsised down to "2." while
-     "38" sat on slack it could not give back. Each column now takes the width
-     its number actually needs and only the leftover is shared, which is why
-     nothing here truncates. Measured worst case (4-digit attack, 85% reduction,
-     12.5/s regen) is ~202px against the rail's 236px. */
-  grid-auto-columns: minmax(max-content, 1fr);
+  /* Flex with wrap, not a column grid.
+     The rail has ~195px to work with — 260px sidebar, less the scrollbar, the
+     rail padding, the panel border and padding, and the plate's own padding.
+     Two earlier shapes both failed inside that: equal `1fr` columns ellipsised
+     the widest reading while the narrowest sat on slack, and `minmax(max-content,
+     1fr)` stopped the ellipsis but had nowhere to put the overflow, so the last
+     reading in a full rail ran out of the frame.
+
+     Wrapping is the only shape that cannot clip: when a build's numbers genuinely
+     do not fit on one line, the rail spends a row instead of a digit. A cut-off
+     number is a bug; a second row is just a taller panel.
+
+     `space-between` then spreads whatever does fit across the full width, so the
+     rail reads as a scale rather than a left-packed list. */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 4px 7px;
   padding: 6px 1px;
   border-top: 1px solid var(--hud-edge-divider);
 }
@@ -89,8 +97,9 @@
      element escapes to whatever ancestor happens to be positioned. */
   position: relative;
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   border-radius: 2px;
   font-family: monospace;
   font-variant-numeric: tabular-nums;
@@ -101,13 +110,20 @@
   opacity: 0.8;
 }
 
-/* No clipping here on purpose: a truncated number is worse than no number, and
-   the column sizing above guarantees the room. */
+/* Never clipped, never wrapped mid-number: the rail wraps around it instead. */
 .stat-reading__value {
   color: var(--hud-text);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
   white-space: nowrap;
+}
+
+/* The unit rides inside the value rather than beside it — no extra flex gap to
+   pay for, and it reads as part of the measurement instead of a second figure. */
+.stat-reading__unit {
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  font-weight: normal;
 }
 
 /* A rider belongs to its reading's number, so it is smaller and dimmer than the
