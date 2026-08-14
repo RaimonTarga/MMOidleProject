@@ -111,10 +111,10 @@ const identity = identityProjection();
 const projected = projectPoint({ x: 100, y: 200 }, identity);
 assert(projected.x === 100 && projected.y === 200, 'identity projection');
 
-const mini = minimapProjection(0, 0, 220, 165, 3200, 2400);
-const miniPoint = projectPoint({ x: 1600, y: 1200 }, mini);
+const mini = minimapProjection(0, 0, 165, 165, 3200, 3200);
+const miniPoint = projectPoint({ x: 1600, y: 1600 }, mini);
 assert(
-  Math.abs(miniPoint.x - 110) < 0.01 && Math.abs(miniPoint.y - 82.5) < 0.01,
+  Math.abs(miniPoint.x - 82.5) < 0.01 && Math.abs(miniPoint.y - 82.5) < 0.01,
   'minimap projection center',
 );
 

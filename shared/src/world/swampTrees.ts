@@ -12,8 +12,8 @@ import type { TreeInstance } from "./trees";
 export const SWAMP_TREE_CELL_PX = 1254;
 export const SWAMP_TREE_DISPLAY_BASE = 500;
 export const SWAMP_TREE_VARIANT_COUNT = 4;
-export const SWAMP_TREES_PER_NODE = 3;
-export const SWAMP_DUNGEON_TREES_PER_NODE = 2;
+export const SWAMP_TREES_PER_NODE = 4;
+export const SWAMP_DUNGEON_TREES_PER_NODE = 3;
 /**
  * Empty-space ring beyond a rot pool's radius. This covers the whole rendered
  * tree, not only its blocking trunk, so no branch or root is drawn over water.

@@ -5,7 +5,7 @@ import { RESOLVED_NODE_FEATURES, type NodeFeatureShape } from "./nodeFeatures";
 import type { TreeArtSet, TreeInstance } from "./trees";
 
 export const TALL_PROP_CELL_PX = 1254;
-export const TALL_PROPS_PER_NODE = 3;
+export const TALL_PROPS_PER_NODE = 4;
 export const TALL_PROP_DUNGEON_COUNT = 2;
 export const TALL_PROP_ROUTE_CLEARANCE = 320;
 export const TALL_PROP_FEATURE_CLEARANCE = 260;

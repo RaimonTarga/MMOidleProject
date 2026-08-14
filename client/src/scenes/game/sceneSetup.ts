@@ -134,7 +134,12 @@ import {
   updateNodeBoundaryFrame,
   paintActiveNode,
 } from "./overlays";
-import { applyPeekCameraBounds, syncSceneBackdrop } from "./peekCamera";
+import { cameraWorldViewSize } from "../../render/cameraZoom";
+import {
+  applyCameraZoom,
+  applyPeekCameraBounds,
+  syncSceneBackdrop,
+} from "./peekCamera";
 import { showAscensionOverlay, showOverlordFelledOverlay } from "./screenOverlays";
 import type { GameScene } from "./GameScene";
 import { rebuildNeighborLayer } from "../../render/neighborScenes";
@@ -166,23 +171,34 @@ function computeCameraScroll(
 ): { x: number; y: number; maxX: number; maxY: number } {
   const cam = scene.cameras.main;
   const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
-  const bounds = peekSceneBounds(nodeId, cam.width, cam.height);
-  const vw = cam.width;
-  const vh = cam.height;
-  const maxX = Math.max(bounds.x, bounds.x + bounds.width - vw);
-  const maxY = Math.max(bounds.y, bounds.y + bounds.height - vh);
-  let x = clamp(scenePos.x - vw / 2, bounds.x, maxX);
-  let y = clamp(scenePos.y - vh / 2, bounds.y, maxY);
+  // Peek is half a VIEW away in world px, so it has to be measured after zoom.
+  const view = cameraWorldViewSize(cam);
+  const bounds = peekSceneBounds(nodeId, view.width, view.height);
+
+  // Phaser keeps `scrollX/Y` in screen px while the world view spans
+  // `size / zoom`, so the scroll value and the view's top-left corner separate by
+  // this offset once zoom < 1. Everything below clamps the CORNER and converts
+  // back, otherwise a zoomed-out camera stops short of the node edge.
+  const offX = (cam.width - view.width) / 2;
+  const offY = (cam.height - view.height) / 2;
+  const minX = bounds.x - offX;
+  const minY = bounds.y - offY;
+  const maxX = Math.max(minX, bounds.x + bounds.width - view.width - offX);
+  const maxY = Math.max(minY, bounds.y + bounds.height - view.height - offY);
+  // Centering is zoom-independent: the view's center is always
+  // `scroll + camSize / 2`, whatever the zoom.
+  let x = clamp(scenePos.x - cam.width / 2, minX, maxX);
+  let y = clamp(scenePos.y - cam.height / 2, minY, maxY);
 
   const W = GAME_CONFIG.NODE_WIDTH;
   const H = GAME_CONFIG.NODE_HEIGHT;
   if (nodePos.x <= CAMERA_EDGE_PIN_DIST) {
-    x = bounds.x;
+    x = minX;
   } else if (nodePos.x >= W - CAMERA_EDGE_PIN_DIST) {
     x = maxX;
   }
   if (nodePos.y <= CAMERA_EDGE_PIN_DIST) {
-    y = bounds.y;
+    y = minY;
   } else if (nodePos.y >= H - CAMERA_EDGE_PIN_DIST) {
     y = maxY;
   }
@@ -424,6 +440,8 @@ export function createGameScene(scene: GameScene): void {
   // tiles into visible seams — but only while moving. Rounding fixes it without
   // changing sprite filtering (unlike a global pixelArt flag).
   cam.roundPixels = true;
+  // Mobile frames a fixed slice of world instead of a keyhole of screen px.
+  applyCameraZoom(scene);
   scene.bgRect = scene.add
     .rectangle(0, 0, cam.width, cam.height, GAME_CONFIG.SCENE_BACKDROP_COLOR)
     .setOrigin(0, 0)

@@ -6,6 +6,7 @@ import {
   getFlag,
   hitboxGap,
   MELEE_CONTACT_MARGIN,
+  moverOverlapsBlockShapes,
   pointInNodeFeatureShape,
   posHitboxFromEntity,
   RESOLVED_NODE_FEATURES,
@@ -125,6 +126,32 @@ function hasClearDirectApproach(
     suppressedFeatureIdsForEntity(world, player),
   );
   return resolved === destination;
+}
+
+/**
+ * Whether `point` is somewhere the player could actually stand.
+ *
+ * A path goal INSIDE a blocker is worse than useless: the nav layer snaps the goal
+ * cell to the nearest WALKABLE cell, and for a target directly behind an obstacle
+ * that nearest cell is back on the mover's own side. The player then walks a few
+ * px, lands inside the goal-arrival epsilon, clears the path, re-derives the same
+ * unreachable goal next tick, and oscillates against the obstacle forever instead
+ * of routing around it.
+ */
+function isStandablePoint(
+  world: World,
+  player: PlayerEntity,
+  point: Vec2,
+): boolean {
+  const shapes = world.collision.blockShapes(
+    player.hasPosition.nodeId,
+    "player",
+  );
+  return !moverOverlapsBlockShapes(
+    point,
+    shapes,
+    navigationPadForEntity(player),
+  );
 }
 
 function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
@@ -531,10 +558,20 @@ export function steerTowardTarget(
   // we never aim past the target center (which would let fast movers tunnel).
   const aimGap = Math.max(0, settleGap - APPROACH_GOAL_SLACK);
   const advance = Math.max(0, Math.min(gap - aimGap, dist));
-  const dest: Vec2 = {
+  const aimed: Vec2 = {
     x: playerPos.x + (dx / dist) * advance,
     y: playerPos.y + (dy / dist) * advance,
   };
+  // That standoff is derived along the straight line to the target, so whenever the
+  // target hugs the far side of an obstacle the point lands INSIDE it — most easily
+  // when `attackRange` is small enough that APPROACH_GOAL_SLACK zeroes `aimGap` and
+  // the aim advances the whole gap. Fall back to the target's own position, which
+  // is standable by construction and which the nav layer routes around correctly.
+  // The per-tick `settleGap` check above is the real stop, so aiming at the target
+  // does not overshoot.
+  const dest: Vec2 = isStandablePoint(world, player, aimed)
+    ? aimed
+    : targetPos;
   setEntityMotion(
     world,
     player,

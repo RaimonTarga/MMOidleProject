@@ -8,8 +8,8 @@ import type { TreeInstance } from "./trees";
 export const PLAINS_TREE_CELL_PX = 1254;
 export const PLAINS_TREE_DISPLAY_BASE = 500;
 export const PLAINS_TREE_VARIANT_COUNT = 4;
-export const PLAINS_TREES_PER_NODE = 3;
-export const PLAINS_DUNGEON_TREES_PER_NODE = 2;
+export const PLAINS_TREES_PER_NODE = 4;
+export const PLAINS_DUNGEON_TREES_PER_NODE = 3;
 
 /**
  * Smooth lower-trunk footprints for elm, oak, twin aspen, and hawthorn.

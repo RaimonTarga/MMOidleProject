@@ -1,5 +1,6 @@
 import type { GameScene } from './GameScene';
 import { shouldRunClientFx } from '../../fx/guard';
+import { screenSpaceScale } from '../../render/cameraZoom';
 import { DEPTH } from '../../render/depth';
 
 export function showOverlordFelledOverlay(scene: GameScene): void {
@@ -7,9 +8,13 @@ export function showOverlordFelledOverlay(scene: GameScene): void {
 
   const w = scene.scale.width;
   const h = scene.scale.height;
+  // Screen-space objects are pinned against scroll but NOT against zoom, so the
+  // dim has to be grown by 1/zoom to still reach the edges on a zoomed-out
+  // mobile camera. Its center needs no correction — zoom pivots there.
+  const k = screenSpaceScale(scene.cameras.main);
 
   const bg = scene.add
-    .rectangle(w / 2, h / 2, w, h, 0x05030f, 0.72)
+    .rectangle(w / 2, h / 2, w * k, h * k, 0x05030f, 0.72)
     .setScrollFactor(0)
     .setDepth(DEPTH.SCREEN);
 
@@ -21,6 +26,7 @@ export function showOverlordFelledOverlay(scene: GameScene): void {
       fontStyle: 'bold',
     })
     .setScrollFactor(0)
+    .setScale(k)
     .setDepth(DEPTH.SCREEN + 1)
     .setOrigin(0.5);
 
@@ -57,30 +63,36 @@ export function showAscensionOverlay(scene: GameScene, tier: number): void {
 
   const w = scene.scale.width;
   const h = scene.scale.height;
+  // Screen-space objects are pinned against scroll but NOT against zoom, so the
+  // dim has to be grown by 1/zoom to still reach the edges on a zoomed-out
+  // mobile camera. Its center needs no correction — zoom pivots there.
+  const k = screenSpaceScale(scene.cameras.main);
 
   const bg = scene.add
-    .rectangle(w / 2, h / 2, w, h, 0x05030f, 0.72)
+    .rectangle(w / 2, h / 2, w * k, h * k, 0x05030f, 0.72)
     .setScrollFactor(0)
     .setDepth(DEPTH.SCREEN);
 
   const label = scene.add
-    .text(w / 2, h / 2 - 10, 'ASCENSION', {
+    .text(w / 2, h / 2 - 10 * k, 'ASCENSION', {
       color: '#e8c84a',
       fontSize: '46px',
       fontFamily: 'monospace',
       fontStyle: 'bold',
     })
     .setScrollFactor(0)
+    .setScale(k)
     .setDepth(DEPTH.SCREEN + 1)
     .setOrigin(0.5);
 
   const subText = scene.add
-    .text(w / 2, h / 2 + 52, sub, {
+    .text(w / 2, h / 2 + 52 * k, sub, {
       color: '#a888dd',
       fontSize: '13px',
       fontFamily: 'monospace',
     })
     .setScrollFactor(0)
+    .setScale(k)
     .setDepth(DEPTH.SCREEN + 1)
     .setOrigin(0.5);
 

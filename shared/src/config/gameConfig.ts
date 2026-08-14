@@ -5,9 +5,15 @@ import type { AutocombatConfig } from "../components/core/networkedSlices";
 // ─── Game balance constants ───────────────────────────────────────────────────
 
 export const GAME_CONFIG = {
-  /** Logical pixel dimensions of a single node (the scrollable world area) */
+  /**
+   * Logical pixel dimensions of a single node (the scrollable world area).
+   * Square since the node-size pass: a 4:3 node made vertical terrain variety
+   * cramped and gave north/south traversal a different feel to east/west.
+   * 3200 also divides evenly by both the 64px Wang ground cell and the 32px nav
+   * cell, which 2400 did not (2400/64 = 37.5 — see the clip mask in wangGround).
+   */
   NODE_WIDTH: 3200,
-  NODE_HEIGHT: 2400,
+  NODE_HEIGHT: 3200,
   /** Link's-Awakening-style map slide duration (ms). */
   MAP_SLIDE_MS: 600,
   /** Fraction of start→end screen distance the own player walks during a map slide. */
@@ -22,8 +28,13 @@ export const GAME_CONFIG = {
   BROADCAST_TICK_RATE: 5,
   /** Player movement speed in pixels per second */
   PLAYER_SPEED: 120,
-  /** Maximum number of monsters alive in a node at any time */
-  MONSTERS_PER_NODE: 12,
+  /**
+   * Maximum number of monsters alive in a node at any time. Fallback only —
+   * biomes set their own `mobDensity`. Raised 12 -> 16 alongside the square-node
+   * resize so per-AREA density (and therefore fight pacing) held steady while the
+   * node grew 33%.
+   */
+  MONSTERS_PER_NODE: 16,
 
   // ── Player base stats ────────────────────────────────────────────────────────
   PLAYER_MAX_HP: 100,

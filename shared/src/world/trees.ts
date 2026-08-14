@@ -205,7 +205,7 @@ const EDGE_MARGIN = 280;
 /** Minimum distance between two trunk centers (keeps walkable gaps between trees). */
 const MIN_TRUNK_SEPARATION = 440;
 /** Target number of trees per forest node. */
-const TREES_PER_NODE = 11;
+const TREES_PER_NODE = 15;
 /** Forest dungeon nodes pack 5× as many trees (tighter trunk spacing). */
 const FOREST_DUNGEON_TREE_MULTIPLIER = 5;
 /** Dungeon altars need open combat space; no tree trunk anchors inside this radius. */

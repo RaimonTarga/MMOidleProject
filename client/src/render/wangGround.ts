@@ -507,9 +507,11 @@ export function buildWangGroundLayer(
   layer.setScale(scale);
   layer.setDepth(depth);
   // ceil() rows/cols overflow the node when its size is not a multiple of the
-  // cell (2400 / 64 = 37.5): the extra strip of base tiles spills onto the
-  // southern/eastern neighbor and its mismatched grain reads as a seam along
-  // the node edge. Clip the layer to the node rect.
+  // cell: the extra strip of base tiles spills onto the southern/eastern
+  // neighbor and its mismatched grain reads as a seam along the node edge.
+  // The square 3200 node divides evenly by the 64px cell (the old 2400 height
+  // did not — 2400 / 64 = 37.5), so this is currently inert; it stays as the
+  // guard for any future node size or art resolution that does not divide.
   if (cols * cellWorld > GAME_CONFIG.NODE_WIDTH || rows * cellWorld > GAME_CONFIG.NODE_HEIGHT) {
     const clip = scene.add
       .graphics()

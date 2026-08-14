@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { getDefaultStore } from 'jotai';
 import type { GameScene } from '../scenes/GameScene';
 import { hudBus } from '../hudBus';
+import { screenSpaceScale, screenToCameraSpace } from '../render/cameraZoom';
 import {
   captureModeAtom,
   getBindings,
@@ -47,8 +48,15 @@ export function attachKeyboard(scene: GameScene): () => void {
   let groundLabel: Phaser.GameObjects.Text | null = null;
   function showDevLabel(text: string): void {
     if (!groundLabel) {
+      // Corner-pinned screen-space text: camera zoom pivots on the camera center,
+      // so a raw (14, 14) would drift toward the middle and shrink whenever the
+      // mobile camera is zoomed out. Convert the intended SCREEN corner into
+      // object space and cancel the zoom on the glyphs.
+      const cam = scene.cameras.main;
+      const k = screenSpaceScale(cam);
+      const at = screenToCameraSpace(cam, 14, 14);
       groundLabel = scene.add
-        .text(14, 14, '', {
+        .text(at.x, at.y, '', {
           fontFamily: 'monospace',
           fontSize: '18px',
           color: '#ffffff',
@@ -56,6 +64,7 @@ export function attachKeyboard(scene: GameScene): () => void {
           padding: { x: 8, y: 5 },
         })
         .setScrollFactor(0)
+        .setScale(k)
         .setDepth(1_000_000);
     }
     groundLabel.setText(text).setVisible(true);

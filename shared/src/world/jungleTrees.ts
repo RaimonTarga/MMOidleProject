@@ -13,8 +13,8 @@ export const JUNGLE_TREE_CELL_PX = 1254;
 /** The jungle canopy is slightly larger than the forest canopy on screen. */
 export const JUNGLE_TREE_DISPLAY_BASE = 520;
 export const JUNGLE_TREE_VARIANT_COUNT = 4;
-export const JUNGLE_TREES_PER_NODE = 3;
-export const JUNGLE_DUNGEON_TREES_PER_NODE = 2;
+export const JUNGLE_TREES_PER_NODE = 4;
+export const JUNGLE_DUNGEON_TREES_PER_NODE = 3;
 /** Empty-space ring between a brush's authored radius and a tree trunk. */
 export const JUNGLE_BRUSH_TREE_CLEARANCE = 490;
 
