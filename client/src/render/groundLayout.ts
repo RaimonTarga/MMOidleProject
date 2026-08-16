@@ -2,6 +2,10 @@ import {
   GAME_CONFIG,
   NODE_BIOMES,
   getForestPaths,
+  getMountainPasses,
+  getCavePatrols,
+  getCaveRitualSite,
+  caveRitualPoint,
   RESOLVED_NODE_FEATURES,
   getNodeTrees,
   type NodeFeatureShape,
@@ -39,6 +43,17 @@ export interface GroundLayout {
   invert: boolean;
   /** Coarse world-space upper-material test (no per-tile edge wobble). */
   isDirt: (x: number, y: number) => boolean;
+  /**
+   * Whether a point is inside one of the layout's discs, IGNORING `invert`.
+   *
+   * `isDirt` answers "which material paints here", which flips under inversion. Callers
+   * that care about the SHAPE rather than the material need this instead — the dungeon
+   * court is the disc whether the node paints it as the upper material or as a pocket of
+   * the base one. Asking `isDirt` there meant that on an inverted dungeon (jungle, and
+   * now scree mountain) every point outside the court read as "arena floor", and the
+   * decor scatter rejected the entire node.
+   */
+  inDisc: (x: number, y: number) => boolean;
 }
 
 export type DirtPatternName =
@@ -50,6 +65,9 @@ export type DirtPatternName =
   | 'hub-plaza'
   | 'dungeon-court'
   | 'forest-paths'
+  | 'mountain-pass'
+  | 'cave-patrol'
+  | 'cave-ritual'
   | 'tree-canopy'
   | 'plain';
 
@@ -126,36 +144,43 @@ export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
   // Both sheets were generated and accepted long ago; rubble was simply never wired
   // past the developer bake-off. Patrol path stays dominant — it is the canonical
   // cavern read — with rubble as the rougher, less-travelled minority.
+  // Cave has ONE sheet, and it is the patrol path: its base is dark cave stone and its
+  // upper is brown worn earth, so the upper material literally IS the route. That is why
+  // the pattern, not the material, carries the patrolled/wild distinction here — a
+  // patrolled cave has the beat worn into its floor and a wild one is unbroken stone.
+  //
+  // The `rubble` sheet was wired as a second material in the caverns pass and is REMOVED
+  // again: both of its halves are near-black, so the autotiling between them is invisible
+  // and it renders as a flat dark slab. It stays in the bake-off list marked broken.
   cave: [
     {
       material: 'patrol-path',
-      weight: 3,
-      patterns: [
-        { pattern: 'loose-center-path', weight: 2 },
-        { pattern: 'ring-path', weight: 1 },
-      ],
-    },
-    // A rubble floor reads as unworked cave, so it takes the layouts that do not
-    // imply a route: broken pockets rather than a path someone walks.
-    {
-      material: 'rubble',
-      weight: 2,
-      patterns: [
-        { pattern: 'off-center-patch', weight: 3 },
-        { pattern: 'scatter', weight: 2 },
-      ],
+      weight: 1,
+      patterns: [{ pattern: 'cave-patrol', weight: 1 }],
     },
   ],
-  // Mountain always uses regular flat ground. Its blocking ledges are independent
-  // overlays, never a functional Wang material.
+  // Mountain paints the ROUTE. Both styles use the same generated pass layout — the
+  // ground worn through the gaps in the ledge rings — so the floor tells you where the
+  // way up is before you have found it. The two sheets read it in opposite directions,
+  // because their upper materials mean opposite things:
+  //
+  //  - `stone`'s upper is pale cracked flagstone, which IS a trodden surface, so the
+  //    passes paint it over the dark mottled base.
+  //  - `scree`'s upper is loose pebble wash, which is the opposite of a path. That style
+  //    inverts: scree covers the node and the passes wear back down to smooth bedrock.
+  //
+  // The blocking ledges themselves stay independent overlays, never a Wang material.
   mountain: [
     {
       material: 'stone',
-      weight: 1,
-      patterns: [
-        { pattern: 'off-center-patch', weight: 3 },
-        { pattern: 'scatter', weight: 2 },
-      ],
+      weight: 3,
+      patterns: [{ pattern: 'mountain-pass', weight: 1 }],
+    },
+    {
+      material: 'scree',
+      weight: 2,
+      patterns: [{ pattern: 'mountain-pass', weight: 1 }],
+      invert: true,
     },
   ],
   swamp: [
@@ -463,6 +488,48 @@ function forestPaths(_rng: Rng, _W: number, _H: number, nodeId: string): DirtDis
   return getForestPaths(nodeId).discs.map((d) => ({ x: d.x, y: d.y, r: d.r }));
 }
 
+/** The beat worn into the floor by a cave node's guards, from the shared route layout. */
+function cavePatrol(_rng: Rng, _W: number, _H: number, nodeId: string): DirtDisc[] {
+  return getCavePatrols(nodeId).discs.map((d) => ({ x: d.x, y: d.y, r: d.r }));
+}
+
+/**
+ * A cave dungeon's ritual site: the altar court, with approach paths running out along the
+ * gaps in the standing-stone ring.
+ *
+ * This is the one place the "a dungeon is a court and nothing else" rule is relaxed, and
+ * deliberately — the spokes are what make the ring read as built rather than as a rockfall
+ * that happens to be circular. They run from the court out through the ring, not to the
+ * node edge, so the shape still resolves inward on the altar.
+ */
+function caveRitual(rng: Rng, W: number, H: number, nodeId: string): DirtDisc[] {
+  const site = getCaveRitualSite(nodeId);
+  const cx = W / 2;
+  const cy = H / 2;
+  const court = W * 0.115;
+  const out: DirtDisc[] = [{ x: cx, y: cy, r: court * range(rng, 0.97, 1.03) }];
+  if (!site) return out;
+  const reach = site.radius * 1.24;
+  const step = W * 0.02;
+  for (const angle of site.spokes) {
+    for (let t = court * 0.8; t <= reach; t += step) {
+      const p = caveRitualPoint(site, angle, t - site.radius);
+      out.push({ x: p.x, y: p.y, r: W * 0.019 * range(rng, 0.9, 1.1) });
+    }
+  }
+  return out;
+}
+
+/**
+ * The passes worn through a mountain node's ledge gaps, from the shared layout that also
+ * places the blocking ledges themselves. Keeping both ends on one generator is the whole
+ * point: a painted path that misses the gap it is supposed to run through reads worse
+ * than no path at all.
+ */
+function mountainPass(_rng: Rng, _W: number, _H: number, nodeId: string): DirtDisc[] {
+  return getMountainPasses(nodeId).map((d) => ({ x: d.x, y: d.y, r: d.r }));
+}
+
 /**
  * A dungeon's arena floor: ONE round court at the node centre, under the altar,
  * and nothing anywhere else.
@@ -518,6 +585,9 @@ const PATTERN_GENERATORS: Record<
   'hub-plaza': hubPlaza,
   'dungeon-court': dungeonCourt,
   'forest-paths': forestPaths,
+  'mountain-pass': mountainPass,
+  'cave-patrol': cavePatrol,
+  'cave-ritual': caveRitual,
   'tree-canopy': treeCanopy,
   // Base material only — the whole node stays the sheet's lower tile.
   plain: () => [],
@@ -659,11 +729,25 @@ export function computeGroundLayout(biomeGroup: string, nodeId: string): GroundL
   // no trail fall through to the canopy pattern exactly as before.
   const hasForestTrail =
     biomeGroup === 'forest' && !isDungeon && getForestPaths(nodeId).shape !== 'none';
+  // Cave overrides the weighted STYLE roll, not just the pattern: whether the node is
+  // patrolled is decided in shared, and the material reports that rather than choosing it.
+  // Whether a cave is held territory is decided in shared (the server has to agree — it
+  // assigns the brutes), so it overrides the pattern roll. A wild cave paints `plain`:
+  // unbroken cave stone with no worn earth anywhere, which is what makes a beat read as a
+  // beat on the nodes that have one.
+  const cavePatrolled =
+    biomeGroup === 'cave' && !isDungeon ? getCavePatrols(nodeId).patrolled : null;
   const pattern = isDungeon
-    ? 'dungeon-court'
-    : hasForestTrail
-      ? 'forest-paths'
-      : pickWeighted(rng, style.patterns).pattern;
+    ? biomeGroup === 'cave'
+      ? 'cave-ritual'
+      : 'dungeon-court'
+    : cavePatrolled === true
+      ? 'cave-patrol'
+      : cavePatrolled === false
+        ? 'plain'
+        : hasForestTrail
+          ? 'forest-paths'
+          : pickWeighted(rng, style.patterns).pattern;
   const generated = PATTERN_GENERATORS[pattern](rng, W, H, nodeId);
   const discs = style.avoidsFeatures
     ? routeDiscsAroundFeatures(generated, nodeId, W, H)
@@ -671,13 +755,15 @@ export function computeGroundLayout(biomeGroup: string, nodeId: string): GroundL
   // Trails invert the material: foliage becomes the dominant ground and the discs
   // are the bare floor you walk on.
   const invert = hasForestTrail ? true : (style.invert ?? false);
-  const isDirt = (x: number, y: number): boolean => {
+  const inDisc = (x: number, y: number): boolean => {
     for (const d of discs) {
       const dx = x - d.x;
       const dy = y - d.y;
-      if (dx * dx + dy * dy < d.r * d.r) return !invert;
+      if (dx * dx + dy * dy < d.r * d.r) return true;
     }
-    return invert;
+    return false;
   };
-  return { material: style.material, discs, invert, isDirt };
+  const isDirt = (x: number, y: number): boolean =>
+    inDisc(x, y) ? !invert : invert;
+  return { material: style.material, discs, invert, isDirt, inDisc };
 }

@@ -690,3 +690,213 @@ Unlike plains and forest, **tier 1 is tinted too** — swamp should read gloomie
 peers from the first visit, so the wash is biome identity here, not only tier progression.
 
 **Next biomes, in order:** mountain, caves.
+
+### Mountain — DONE (2026-08-16), pending visual review
+
+Baseline: 24 nodes sharing **six** ledge layouts, one ground material, 124 props identical
+on every node, no tint.
+
+**Correcting §1 again:** the duplication was the same shape as swamp's but total. The six
+authored entrance sets were indexed by `featureVariant`, which runs 0–5 within a tier, so
+`t1-mountain-01`, `t2-mountain-01`, `t3-mountain-01` and `t4-mountain-01` were the *same
+node four times*. Every mountain layout in the game existed six times over.
+
+**Ledges are generated now** (`shared/src/world/mountainPasses.ts`). 24/24 distinct.
+
+The rings roll **independently**, which is the change that matters most. The old table drove
+both rings from one entrance list, so the inner gap always sat radially behind the outer one
+and every node was a straight run to the middle. Decoupled, you arrive in the corridor and
+have to find the way up — which is the "guarded ascent" the biome is named for.
+
+**This is the first generator in the pass that makes WALLS.** Swamp pools carry no
+`blocksMovement` and cannot wedge a node; ledges can. Reachability is structural rather than
+checked after the fact: the rings are concentric squares, so the corridor between them is an
+annulus and is connected however the gaps fall. Outside reaches the corridor iff the outer
+ring has ≥1 gap; the corridor reaches the centre iff the inner ring has ≥1 gap. Both floors
+are enforced at generation. `collision.test.ts` then asserts one walkable component on the
+real nav grid for **every** mountain node, not a sampled few.
+
+Measured: **13–16 ledge segments/node** (was 10–14), gaps **3–5 outer / 2–3 inner**. The
+rings still read as walls: the outer is 12–27% open across its perimeter, the inner 8–18%.
+
+**Chokepoints are 5–8 per normal node**, one per opening. A dungeon has only its 1–2
+doorkeepers, which is inherent to a single-entrance arena — but its wall still carries 6–8
+posts for ledge-vaulting monsters, and those now patrol *along* the circle rather than on an
+axis. The first pass at 2–4 outer / 1–3 inner
+gaps bottomed out at *three* openings on a whole node, which read as sealed rather than
+guarded and left too few `holdsChokepoints` monsters posted; the user called it and the gap
+ranges went up. For reference the old authored layouts gave 6–12, but that counted one post
+per entrance *per ring* with every entrance duplicated on both rings — one post per actual
+gap is the right unit, and 5–8 of them sits in the same place.
+
+**Dungeons get a different shape entirely: ONE circular wall around the arena, with one or
+two ways in.** Two nested squares read as terrain you work your way through; a boss node
+should read as a single enclosure you commit to entering, so the layout says "arena" the
+moment it is on screen rather than "more mountain".
+
+Measured across the four mountain dungeons: radius **1213–1305**, openings **542–747px** of
+arc, **76–91** wall segments, 3 nodes with two entrances and 1 with a single one. Nothing
+lands on the altar court.
+
+Three implementation notes worth keeping:
+- **Feature rects do not rotate**, so a curve has to be approximated. The wall is a run of
+  96px SQUARES stepped along the arc — squares, because the same shape follows the ring at
+  any angle — at a pitch of 82px, below the thickness so consecutive squares always overlap.
+  At the cardinal points, where the step is most nearly along one axis, a pitch equal to the
+  thickness would leave them merely touching. ~90 blocking shapes/node is unremarkable: a
+  dense forest node already carries 60.
+- **The art derives the circle back out of the segments**, exactly as the square rings
+  recover their bounds. The collision squares ARE the wall, so the drawn rock and the
+  blocking rock cannot drift apart. `drawMountainElevation` dispatches on the id (`_circle_N`
+  never matches the square parser) — without that, an arena would have had invisible walls,
+  because `buildNodePlaceholderFeatures` skips placeholders for every `mountain_` feature.
+- **Dungeons draw from their own seed** (`:mountain-arena:v1`). With only four dungeon nodes
+  in the world, a 50/50 entrance count is a hand-countable sample, and the shared stream
+  happened to give all four a single entrance — the "one or two" the layout is meant to show
+  would never have appeared. Splitting the seed also leaves the 20 normal nodes untouched.
+
+**Passes — the ground now shows the route.** Each node paints the path worn through its own
+ledge gaps: in from the node border, through an outer gap, along the corridor to the nearest
+way up, through the inner gap to the centre. Derived from the same layout that places the
+ledges, so the painted path cannot miss the hole it runs through — *verified: 0 of the gap
+centres across all 24 nodes fall off the painted pass*.
+
+**Two materials, read in opposite directions.** `scree` was generated and accepted long ago
+and never wired past the bake-off (the cave `rubble` situation exactly). The two sheets mean
+opposite things, so they invert against each other:
+- `stone`'s upper is pale cracked flagstone — a trodden surface — so passes paint it over the
+  dark mottled base.
+- `scree`'s upper is loose pebble wash, the opposite of a path, so that style **inverts**:
+  scree covers the node and the passes wear back to smooth bedrock.
+
+Outcome: **18 stone / 6 scree** across 24 nodes (weights 3:2).
+
+**Density unchanged, distribution varied** — bare rock is the biome, so base counts stay at
+124 (the "keep plains plain" call). Four groups: `rubble` (backbone, never clears), `hardy`
+and `boulder` (roll for presence), `lichen`. Placed **51–145 per node** against a flat 124,
+with **6/24 nodes carrying no hardy grass** and **4/24 no boulders**.
+
+**`presence` — the lever §8 said was missing.** `min: 0` does not buy absence; reaching zero
+through the multiplier needs the far tail of the roll (measured 0/21 cave nodes, 0/12 plains).
+`BiomeDecorVariance.presence` is an explicit per-group probability, opt-in, and drawn only
+when a spec declares it — rolling it unconditionally would consume an extra rng draw for
+every already-reviewed biome and reshuffle their committed placements.
+
+**Tint** is the first four-tier ramp, so the steps are smaller than swamp's three: T1 stays
+untouched bare rock (the plains/forest convention), then `0x7d8f9e` @0.30 → `0x6d8499` @0.38
+→ `0x5c7794` @0.46 — light thinning with altitude, with headroom left above T4.
+
+#### Two bugs found on the way
+
+**An inverted dungeon rejected its entire decor scatter.** The rule "nothing grows on an
+arena floor" tested `isDirt`, but the court is a SHAPE and `isDirt` flips under `invert` — so
+on an inverted dungeon every point *outside* the court read as arena floor. `GroundLayout`
+now exposes `inDisc` (disc membership ignoring `invert`) and the dungeon rule uses it.
+
+This was **pre-existing, not introduced here**: the three jungle dungeons have been placing
+**zero** biome decor on master. They now place 180. Scree mountain dungeons would have been
+two more instances of it.
+
+**A stale comment.** `nodeFeatures.ts` claimed the client painted the ledge rects with a
+mountain ledge Wang tileset. It has not since the procedural cliff renderer landed;
+`ground-ledge-wang.png` is now **dead art** on disk, referenced nowhere.
+
+#### Open for review
+
+- Whether mountain should stay at its 124 base once the passes are eating floor space.
+- Dungeon arenas drop to 1–2 chokepoint posts (from 4–6 under the old square rings). Fewer
+  `holdsChokepoints` monsters guard a boss node's door. Flagged, not tuned.
+
+**Next biome:** caves.
+
+### Caves — pass 2, DONE (2026-08-16), pending visual review
+
+The caverns entry above wired rubble as a second material and varied the decor. This pass
+fixes something more fundamental that entry did not notice.
+
+**The painted patrol path and the walked patrol route were unrelated systems.** Caves already
+had a `patrol-path` ground material, brutes/trolls with patrol loops, and a server-side
+patrol assignment. Nothing connected the three. `CAVE_PATROL_ROUTES` was a module-level
+constant with **no `nodeId` in it** — the same routes on all 21 cave nodes — running a 4080px
+rectangle 360px from the node edges, while the floor painted a wandering `loose-center-path`
+or a ~700px `ring-path` through the middle. **The guards walked the rim and the painted path
+went somewhere else.** That is why the biome "was meant to have paths to patrol but just
+didn't".
+
+`shared/src/world/cavePatrols.ts` is now the single layout all three ends read — the same
+role `mountainPasses` plays for ledges. The worn path on the floor IS the route the troll
+walks.
+
+**The beat is an outer circuit with two arms crossing through the middle** — a garrison walks
+a perimeter and cuts across it, and the floor now shows both. This is the biome's signature
+shape, so it is FIXED rather than rolled; only its proportions vary (circuit inset 731–1028px,
+crossing point drifting up to 168px off dead centre).
+
+Note this is the shape the old hard-coded constants already described — a rectangle plus a
+vertical and a horizontal pingpong. Nothing was wrong with the intent. What was missing was
+that anything drew it, and that it varied per node.
+
+Three routes per patrolled node: the circuit as a **loop**, and each arm as a **pingpong**, so
+an arm's guard meets you head-on rather than always arriving from the same side.
+
+**Paths are narrow** — half-width 82px, against 144 in the first attempt and 154/134 for a
+forest trail and a mountain pass. Those are routes a whole biome moves along; this is the line
+worn by a handful of individual guards walking the same beat.
+
+**Patrolled vs. wild is decided in `shared/`, and the ground reports it** rather than the
+other way round. A cave is held territory or it is not: patrolled nodes wear the beat into
+the floor, wild nodes are unbroken stone with no route, and their brutes roam. Outcome:
+**10 patrolled / 8 wild / 3 dungeons**, 2–3 routes and 34–72 path discs per patrolled node.
+
+**`rubble` is REMOVED as a cave material.** Both halves of that sheet are near-black, so the
+autotiling between them is invisible and it renders as a flat dark slab — the user identified
+it as broken. Cave is back to ONE sheet, which is the right one: its base is dark cave stone
+and its **upper material is brown worn earth**, so the upper literally is the route. That is
+why the patrolled/wild distinction is carried by the PATTERN here, not by the material. The
+sheet stays in the bake-off list relabelled `BROKEN (no contrast)` so it is not wired again.
+
+**Rock formations: more of them, and they block to their silhouette.** Caves now carry **15**
+per node against the 9 the other rock biomes use — a cavern should read as a space broken up
+by rock, not an open floor with a few boulders on it, and the formations are what the beat
+threads between. Their base hitbox was also far too narrow: a 465px formation blocked across
+only ~60px once scaled, so you walked through most of the visible rock. Cave trunks now block
+**~105–125px wide** (halfW 132–156 before scaling). Height is deliberately unchanged — a
+deeper base would make them block from well below their footprint.
+
+They keep off the beat, since they are collision and one standing in the path would block the
+guard that walks it. *Verified: 0 formations on a patrol path across all 21 nodes, and every
+node still one walkable component with 15 wider rocks on it*, both asserted in
+`collision.test.ts`.
+
+#### Cave dungeons — the ritual site
+
+Radial paths converging on the altar, ringed by standing stones: the one thing a cave boss
+room can be that a cave corridor cannot is somewhere that was **built**.
+
+The stones are the biome's existing tall rock formations, repositioned rather than newly
+authored, so they keep the trunk collision they already carry — blocking, with the ring
+broken at every spoke. Measured: radius **1149–1182**, **4 spokes**, **7–8 stones**, one
+walkable component on all three.
+
+Two things that shaped it:
+- **Spokes run to the node's REAL exits.** Not a rolled rotation. It ties the site to the
+  map's topology so the paths lead where you actually walk, and — not optional — it keeps the
+  stone ring off the centre-to-gate travel lanes that every other rock formation in the game
+  is required to clear. Cave dungeons are dead ends with only 1–2 exits, so the spoke count
+  is topped up to four with diagonals, which cannot threaten the cardinal lanes. A site with
+  a single path reads as a corridor, not as somewhere converged upon.
+- **Cave dungeons force the worked floor.** A ritual site was built, so its court and spokes
+  paint the worn-earth upper material. Same principle as mountain's scree: the material has
+  to agree with what the shape claims happened here.
+
+This is the one place the "a dungeon is a court and nothing else" rule is relaxed, at the
+user's explicit request.
+
+#### Open for review
+
+- **11 patrolled / 7 wild** comes from `PATROLLED_CHANCE = 0.53`, set against the actual draw
+  rather than as a nominal probability — over eighteen nodes the draw matters more than the
+  constant, and the nominal 0.66 left only three wild caves. One constant to move.
+- Cave bones still use `min: 0` for absence, which the caverns entry flagged and which
+  `presence` (added in the mountain pass) now actually solves. Not applied — it would reshuffle
+  caverns placements the user has already reviewed.

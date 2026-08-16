@@ -74,7 +74,8 @@ handoffs: both systems have complete machinery and thin, placeholder content.
 | [terrain-variance-plan.md](terrain-variance-plan.md) | DRAFT for review. Making each node feel unique: procedural hazard terrain, per-biome node archetypes, staging. Follows the square-node resize. |
 | [biome-refactor-playtest.md](biome-refactor-playtest.md) | Open playtest notes and unanswered questions from the per-biome T1 dungeon pass. |
 | [briefs/tier-by-tier-monster-balance-handoff-2026-08-13.md](briefs/tier-by-tier-monster-balance-handoff-2026-08-13.md) | Fresh-session roadmap and locked decisions for collaborative tier-by-tier monster authoring and Balance Lab instrumentation. |
-| [briefs/biome-visual-pass-handoff-2026-08-14.md](briefs/biome-visual-pass-handoff-2026-08-14.md) | Continuation brief for the node resize + biome visual pass. Per-biome status, the systems built, and the traps that already cost time. Start here before touching biome visuals. |
+| [briefs/biome-visual-pass-handoff-2026-08-16.md](briefs/biome-visual-pass-handoff-2026-08-16.md) | **Current** continuation brief for the biome visual pass: mountain + caves, traps 9–14, the test-subset timings, and the queued cave-guard-behaviour task. Start here before touching biome visuals. |
+| [briefs/biome-visual-pass-handoff-2026-08-14.md](briefs/biome-visual-pass-handoff-2026-08-14.md) | Earlier brief for the node resize + biome visual pass, superseded by the 08-16 one but still the reference for the tint/decor/trail/pool systems and traps 1–8. |
 | [briefs/d3-t5-t6.md](briefs/d3-t5-t6.md) | Self-contained brief for an external design session on tiers 5–6. Not yet fulfilled. |
 
 ## Reference

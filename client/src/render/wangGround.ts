@@ -103,17 +103,22 @@ export const WANG_GROUND: Partial<Record<string, WangGroundConfig>> = {
     targetCell: 64,
     edgeJitter: 1.4,
   },
+  // ONE sheet: base is dark cave stone, upper is brown worn earth, so the upper material
+  // is literally the patrol route. `rubble` was wired here briefly and removed — see the
+  // bake-off note below.
   cave: {
     sheets: {
-      rubble: { key: 'cave_rubble_wang', file: '/assets/environment/cave/floor-rubble-wang.png' },
       'patrol-path': { key: 'cave_patrol_path_wang', file: '/assets/environment/cave/floor-patrol-path-wang.png' },
     },
     targetCell: 64,
     edgeJitter: 1.2,
   },
+  // Two materials, both already generated and accepted; scree was simply never wired
+  // past the developer bake-off. See GROUND_LAYOUTS.mountain for why scree inverts.
   mountain: {
     sheets: {
       stone: { key: 'mountain_stone_wang', file: '/assets/environment/mountain/ground-stone-wang.png' },
+      scree: { key: 'mountain_scree_wang', file: '/assets/environment/mountain/ground-scree-wang.png' },
     },
     targetCell: 64,
     edgeJitter: 1.2,
@@ -221,7 +226,10 @@ export const GROUND_BAKEOFF: Partial<Record<string, Array<{ key: string; file: s
     { key: 'forest_heavy_foliage_wang_v2', file: '/assets/environment/forest/floor-heavy-foliage-wang-variant-2.png', label: 'heavy foliage · alt candidate' },
   ],
   cave: [
-    { key: 'cave_rubble_wang', file: '/assets/environment/cave/floor-rubble-wang.png', label: 'rubble · accepted' },
+    // BROKEN, do not wire: base and upper are both near-black, so the autotiling between
+    // them is invisible and the node renders as a flat dark slab. Kept only so the
+    // bake-off can show why it was rejected.
+    { key: 'cave_rubble_wang', file: '/assets/environment/cave/floor-rubble-wang.png', label: 'rubble · BROKEN (no contrast)' },
     { key: 'cave_patrol_path_wang', file: '/assets/environment/cave/floor-patrol-path-wang.png', label: 'patrol path · accepted' },
   ],
   mountain: [

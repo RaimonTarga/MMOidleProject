@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { NodeFeatureShape } from '@mmo-idle/shared';
+import { GAME_CONFIG, type NodeFeatureShape } from '@mmo-idle/shared';
 
 type Ring = 'outer' | 'inner';
 type Side = 'north' | 'south' | 'west' | 'east';
@@ -296,13 +296,108 @@ function drawRingCorners(
   drawCornerJoin(graphics, features, ring, 'south', 'east', bounds, offsetX, offsetY);
 }
 
-/** Draw two continuous raised surfaces and only their outward cliff boundaries. */
+/**
+ * A dungeon's arena wall: ONE raised circle with its outward cliff, broken by the one or
+ * two entrances.
+ *
+ * The geometry is recovered from the segments rather than passed in, exactly as the square
+ * rings recover their bounds — the collision squares ARE the wall, so deriving the art from
+ * them is what guarantees the drawn rock and the blocking rock cannot drift apart.
+ */
+function drawMountainArena(
+  graphics: Phaser.GameObjects.Graphics,
+  segments: MountainLedgeFeature[],
+  offsetX: number,
+  offsetY: number,
+): boolean {
+  const cx = GAME_CONFIG.NODE_WIDTH / 2;
+  const cy = GAME_CONFIG.NODE_HEIGHT / 2;
+  const points = segments
+    .map((f) => f.shape)
+    .filter((s): s is Extract<NodeFeatureShape, { kind: 'rect' }> => s.kind === 'rect')
+    .map((s) => ({
+      angle: Math.atan2(s.y - cy, s.x - cx),
+      radius: Math.hypot(s.x - cx, s.y - cy),
+    }))
+    .sort((a, b) => a.angle - b.angle);
+  if (points.length < 8) return false;
+
+  const radius = points.reduce((sum, p) => sum + p.radius, 0) / points.length;
+  const ox = offsetX + cx;
+  const oy = offsetY + cy;
+
+  // Contiguous runs of wall. A jump much larger than the segment pitch is an entrance.
+  const step = (Math.PI * 2) / points.length;
+  const spans: Array<[number, number]> = [];
+  let runStart = points[0].angle;
+  for (let i = 1; i <= points.length; i++) {
+    const prev = points[i - 1].angle;
+    const next = i < points.length ? points[i].angle : points[0].angle + Math.PI * 2;
+    if (next - prev > step * 1.8) {
+      spans.push([runStart, prev]);
+      runStart = next;
+    }
+  }
+  if (spans.length === 0) spans.push([points[0].angle, points[0].angle + Math.PI * 2]);
+  else if (runStart <= points[points.length - 1].angle + Math.PI * 2) {
+    spans.push([runStart, points[0].angle + Math.PI * 2]);
+  }
+
+  // The raised arena floor inside the wall.
+  graphics.fillStyle(LEVEL_TWO, 0.18);
+  graphics.fillCircle(ox, oy, radius);
+
+  const arc = (r: number, width: number, color: number, alpha: number): void => {
+    graphics.lineStyle(width, color, alpha);
+    for (const [from, to] of spans) {
+      if (to - from < 0.01) continue;
+      graphics.beginPath();
+      graphics.arc(ox, oy, r, from, to, false);
+      graphics.strokePath();
+    }
+  };
+
+  // Outward-facing cliff, banded the same way the square faces are: shadow beyond the
+  // base, a dark full-height face, a lighter inner face, then the bright lip on the rim.
+  arc(radius + FACE_DEPTH + SHADOW_DEPTH / 2, SHADOW_DEPTH, SHADOW, 0.34);
+  arc(radius + FACE_DEPTH / 2, FACE_DEPTH, FACE_DARK, 1);
+  arc(radius + FACE_DEPTH * 0.3, FACE_DEPTH * 0.58, FACE, 1);
+  arc(radius + FACE_DEPTH * 0.12, 4, FACE_LIGHT, 0.32);
+  arc(radius, 4, LIP, 0.95);
+
+  // Radial cracks down the face, deterministic from each segment's own id.
+  graphics.lineStyle(2, FACE_DARK, 0.8);
+  for (const feature of segments) {
+    if (feature.shape.kind !== 'rect') continue;
+    const seed = hashString(feature.id);
+    if (detailFraction(seed, 0) > 0.32) continue;
+    const angle = Math.atan2(feature.shape.y - cy, feature.shape.x - cx);
+    const lean = (detailFraction(seed, 1) - 0.5) * 0.05;
+    const inner = radius + 4;
+    const outer = radius + FACE_DEPTH - 3;
+    graphics.beginPath();
+    graphics.moveTo(ox + Math.cos(angle) * inner, oy + Math.sin(angle) * inner);
+    graphics.lineTo(
+      ox + Math.cos(angle + lean) * outer,
+      oy + Math.sin(angle + lean) * outer,
+    );
+    graphics.strokePath();
+  }
+  return true;
+}
+
+/** Draw the raised surfaces of a node and only their outward cliff boundaries. */
 export function drawMountainElevation(
   graphics: Phaser.GameObjects.Graphics,
   features: MountainLedgeFeature[],
   offsetX: number,
   offsetY: number,
 ): boolean {
+  // A dungeon is one broken circle rather than two broken squares, so it has its own
+  // parser and its own renderer. Checked first: its ids never match segmentInfo.
+  const circle = features.filter((feature) => /_circle_\d+$/.test(feature.id));
+  if (circle.length > 0) return drawMountainArena(graphics, circle, offsetX, offsetY);
+
   const ledges = features.filter((feature) => segmentInfo(feature.id));
   if (ledges.length === 0) return false;
 

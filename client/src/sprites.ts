@@ -258,6 +258,20 @@ export interface BiomeDecorVariance {
   /** Multiplier ceiling. */
   max: number;
   /**
+   * Chance in 0..1 that the spec (or its whole group) appears on a node at all.
+   *
+   * `min: 0` does NOT buy this, which is the trap it looks like it solves. Reaching zero
+   * through the multiplier needs the far tail of the roll — measured 0 bone-free nodes in
+   * 21 caves and 0 flower-free nodes in 12 plains — because a spec with `count: 18` only
+   * rounds to nothing below a multiplier of about 0.03. Genuine absence has to be rolled
+   * on its own, so this is that roll. Absent means "always present", i.e. the old
+   * behaviour.
+   *
+   * Grouped specs share ONE presence roll, for the same reason they share the multiplier:
+   * independent rolls average out and the kit never fully clears.
+   */
+  presence?: number;
+  /**
    * Specs sharing a group draw ONE multiplier per node instead of rolling
    * independently.
    *
@@ -482,11 +496,17 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
   // Mountain + swamp kits skip avoidsDirt: those biomes render FUNCTIONAL
   // ground (ledges/pools) so the decorative layout is phantom there — the
   // feature-footprint rejection is what keeps props off walls and out of pools.
+  // Mountain keeps its base counts — bare rock IS the biome, so this varies how the
+  // dressing is distributed rather than adding more of it. Three families move as one:
+  // `rubble` is the backbone and never clears, while `hardy` (the only greenery up here)
+  // and the `boulder` landmarks roll for presence, so a high bare crag and a tufted
+  // lower slope come out of the same kit.
   mountain: [
     {
       key: 'mountain_scree_cluster',
       file: '/assets/environment/mountain/scree-cluster.png',
       count: 20,
+      variance: { min: 0.55, max: 1.45, group: 'rubble' },
       displayW: 48,
       displayH: 48,
       flipX: true,
@@ -496,6 +516,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'mountain_scree_cluster_variant_2',
       file: '/assets/environment/mountain/scree-cluster-variant-2.png',
       count: 18,
+      variance: { min: 0.55, max: 1.45, group: 'rubble' },
       displayW: 48,
       displayH: 48,
       flipX: true,
@@ -505,6 +526,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'mountain_flat_rock_shards',
       file: '/assets/environment/mountain/flat-rock-shards.png',
       count: 18,
+      variance: { min: 0.55, max: 1.45, group: 'rubble' },
       displayW: 46,
       displayH: 46,
       flipX: true,
@@ -514,6 +536,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'mountain_hardy_grass',
       file: '/assets/environment/mountain/hardy-grass.png',
       count: 18,
+      variance: { min: 0.35, max: 1.7, group: 'hardy', presence: 0.72 },
       displayW: 44,
       displayH: 44,
       flipX: true,
@@ -523,6 +546,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'mountain_hardy_grass_variant_2',
       file: '/assets/environment/mountain/hardy-grass-variant-2.png',
       count: 16,
+      variance: { min: 0.35, max: 1.7, group: 'hardy', presence: 0.72 },
       displayW: 44,
       displayH: 44,
       flipX: true,
@@ -532,6 +556,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'mountain_lichen_stone',
       file: '/assets/environment/mountain/lichen-stone.png',
       count: 16,
+      variance: { min: 0.3, max: 1.6, group: 'lichen' },
       displayW: 42,
       displayH: 42,
       flipX: true,
@@ -541,6 +566,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'mountain_lichen_stone_variant_2',
       file: '/assets/environment/mountain/lichen-stone-variant-2.png',
       count: 11,
+      variance: { min: 0.3, max: 1.6, group: 'lichen' },
       displayW: 42,
       displayH: 42,
       flipX: true,
@@ -550,6 +576,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'mountain_split_stone',
       file: '/assets/environment/mountain/split-stone.png',
       count: 7,
+      variance: { min: 0.45, max: 1.9, group: 'boulder', presence: 0.85 },
       displayW: 78,
       displayH: 78,
       flipX: true,

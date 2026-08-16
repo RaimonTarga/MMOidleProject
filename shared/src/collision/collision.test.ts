@@ -26,10 +26,15 @@ import {
 import { moverOverlapsBlockShapes } from '../systems/spatial';
 import { GAME_CONFIG } from '../config/gameConfig';
 import { NODE_BIOMES, WORLD_NODE_LIST, worldNodeExits } from '../world/nodeBiomes';
+import { RESOLVED_NODE_FEATURES } from '../world/nodeFeatures';
 import {
+  getMountainLedgeLayout,
   MOUNTAIN_LEDGE_THICKNESS,
-  RESOLVED_NODE_FEATURES,
-} from '../world/nodeFeatures';
+} from '../world/mountainPasses';
+import {
+  getCaveRitualSite,
+  isOnCavePatrolPath,
+} from '../world/cavePatrols';
 import {
   JUNGLE_BRUSH_TREE_CLEARANCE,
   JUNGLE_DUNGEON_TREES_PER_NODE,
@@ -55,6 +60,7 @@ import {
   getNodeTallProps,
   TALL_PROP_DUNGEON_COUNT,
   TALL_PROPS_PER_NODE,
+  CAVE_TALL_PROPS_PER_NODE,
   TALL_PROP_ROUTE_CLEARANCE,
 } from '../world/tallProps';
 
@@ -366,18 +372,39 @@ for (const [biomeGroup, artSet] of Object.entries(rockArtByBiome)) {
     node => node.biomeGroup === biomeGroup,
   )) {
     const props = getNodeTallProps(nodeId);
-    const expected = NODE_BIOMES[nodeId]?.isDungeon
-      ? TALL_PROP_DUNGEON_COUNT
-      : TALL_PROPS_PER_NODE;
-    assert(props.length === expected, `${nodeId} has its sparse tall rock count`);
+    const ritual = getCaveRitualSite(nodeId);
+    if (ritual) {
+      // A cave dungeon arranges its formations into a standing-stone ring instead of the
+      // sparse scatter, so it carries far more of them — and every one sits on the ring.
+      assert(props.length >= 6, `${nodeId} raises a full standing-stone ring`);
+      const centre = { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 };
+      for (const prop of props) {
+        const shape = prop.shapes[0];
+        const r = Math.hypot(shape.x - centre.x, shape.y - centre.y);
+        assert(
+          Math.abs(r - ritual.radius) <= 40,
+          `${prop.id} stands on the ritual ring`,
+        );
+      }
+    } else {
+      const expected = NODE_BIOMES[nodeId]?.isDungeon
+        ? TALL_PROP_DUNGEON_COUNT
+        : biomeGroup === 'cave'
+          ? CAVE_TALL_PROPS_PER_NODE
+          : TALL_PROPS_PER_NODE;
+      assert(props.length === expected, `${nodeId} has its tall rock count`);
+    }
     assert(props.every(prop => prop.artSet === artSet), `${nodeId} uses matching rock art`);
 
     const center = { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 };
     for (const prop of props) {
       const shape = prop.shapes[0];
+      // Cave formations deliberately block to their silhouette rather than to a token
+      // base; every other rock biome keeps the compact footprint.
+      const maxHalfW = biomeGroup === 'cave' ? 64 : 36;
       assert(
-        shape.kind === 'ellipse' && shape.halfW <= 36 && shape.halfH <= 25,
-        `${prop.id} has a compact base hitbox`,
+        shape.kind === 'ellipse' && shape.halfW <= maxHalfW && shape.halfH <= 25,
+        `${prop.id} has a base hitbox within its biome's budget`,
       );
       for (const direction of Object.keys(worldNodeExits(nodeId))) {
         const gate = direction === 'north'
@@ -393,6 +420,16 @@ for (const [biomeGroup, artSet] of Object.entries(rockArtByBiome)) {
           `${prop.id} stays outside the ${direction} travel lane`,
         );
       }
+    }
+
+    // The whole point of a visible patrol path is that it is walkable, and these rocks are
+    // collision — one standing in the beat would block the guard that walks it.
+    for (const prop of props) {
+      const shape = prop.shapes[0];
+      assert(
+        !isOnCavePatrolPath(nodeId, shape.x, shape.y),
+        `${prop.id} keeps off the patrol beat`,
+      );
     }
 
     const propRegions = buildStaticCollisionRegions(nodeId).filter(
@@ -513,7 +550,30 @@ if (mountainCornerPath) {
   );
 }
 
+// Mountain ledges are the one GENERATED layout that blocks movement, so a bad roll
+// could seal a ring and wedge the node. The generator guarantees >= 1 gap per ring
+// structurally; this asserts the consequence on the real nav grid, for EVERY node
+// rather than a sampled few — a single hard-coded node is exactly how the old
+// approach-goal wedge stayed hidden.
 for (const { id: nodeId } of WORLD_NODE_LIST.filter(node => node.biomeGroup === 'mountain')) {
+  const layout = getMountainLedgeLayout(nodeId);
+  assert(layout !== null, `${nodeId} has a generated ledge layout`);
+  const isDungeon = NODE_BIOMES[nodeId]?.isDungeon === true;
+  assert(
+    layout?.kind === (isDungeon ? 'circle' : 'rings'),
+    `${nodeId} takes the ${isDungeon ? 'arena ring' : 'guarded ascent'} layout`,
+  );
+  if (layout?.kind === 'rings') {
+    assert(layout.outer.length >= 1, `${nodeId} outer ring keeps a way in`);
+    assert(layout.inner.length >= 1, `${nodeId} inner ring keeps a way up`);
+  } else if (layout?.kind === 'circle') {
+    assert(layout.gaps.length >= 1, `${nodeId} arena ring keeps a way in`);
+    assert(layout.gaps.length <= 2, `${nodeId} arena ring has at most two ways in`);
+  }
+  assert(
+    walkableComponentCount(buildNavGrid(nodeId, 'player', { x: 32, y: 32 })) === 1,
+    `${nodeId} stays fully connected through its ledge gaps`,
+  );
   for (const ledge of (RESOLVED_NODE_FEATURES[nodeId] ?? []).filter(
     feature => feature.id.startsWith('mountain_'),
   )) {

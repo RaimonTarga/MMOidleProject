@@ -2,6 +2,20 @@ import { GAME_CONFIG } from "../config/gameConfig";
 import type { AmbientRampPayload } from "../systems/ambientRamp";
 import { pointInNodeFeatureShape, type Vec2 } from "../systems/spatial";
 import { WORLD_NODE_LIST } from "./map/registry";
+import {
+  getMountainLedgeLayout,
+  mountainArcIsGap,
+  mountainGapPoint,
+  mountainRingBounds,
+  mountainRingPoint,
+  MOUNTAIN_DUNGEON_SEGMENT_STEP,
+  MOUNTAIN_INNER_INSET,
+  MOUNTAIN_LEDGE_THICKNESS,
+  MOUNTAIN_OUTER_INSET,
+  type MountainCircleLayout,
+  type MountainGap,
+  type MountainLedgeLayout,
+} from "./mountainPasses";
 import { generateSwampPools } from "./swampPools";
 
 /** Axis-aligned or circular zone in world pixels (node-local coordinates). */
@@ -263,85 +277,75 @@ function rockLedge(
   };
 }
 
-// The two ledge rings are concentric SQUARES on a square node. The insets were
-// once asymmetric (top 280 vs left 430) purely to track the old 4:3 footprint;
-// with NODE_HEIGHT == NODE_WIDTH the same inset on every side is what keeps the
-// guarded ascent reading as a ring rather than a corridor.
-const MOUNTAIN_OUTER_INSET = 645;
+/**
+ * Ledge geometry, the gap layout and the passes worn through it all live in
+ * `./mountainPasses`, because the collision rects here, the server's chokepoint posts
+ * and the client's painted ground have to describe one shape. See that file for the
+ * reachability contract this depends on.
+ */
 const MOUNTAIN_OUTER_LEFT = MOUNTAIN_OUTER_INSET;
 const MOUNTAIN_OUTER_RIGHT = GAME_CONFIG.NODE_WIDTH - MOUNTAIN_OUTER_LEFT;
 const MOUNTAIN_OUTER_TOP = MOUNTAIN_OUTER_INSET;
 const MOUNTAIN_OUTER_BOTTOM = GAME_CONFIG.NODE_HEIGHT - MOUNTAIN_OUTER_TOP;
-const MOUNTAIN_INNER_INSET = 1350;
 const MOUNTAIN_INNER_LEFT = MOUNTAIN_INNER_INSET;
 const MOUNTAIN_INNER_RIGHT = GAME_CONFIG.NODE_WIDTH - MOUNTAIN_INNER_LEFT;
 const MOUNTAIN_INNER_TOP = MOUNTAIN_INNER_INSET;
 const MOUNTAIN_INNER_BOTTOM = GAME_CONFIG.NODE_HEIGHT - MOUNTAIN_INNER_TOP;
-/**
- * The procedural ledge renderer no longer relies on Wang-grid coverage, so the
- * collision band can hug the visible cliff face instead of reserving a broad
- * invisible strip on both sides. Scaled with the node to 3 nav cells (96px) so the
- * rock face keeps its proportion; two cells was already enough for robust walls.
- */
-export const MOUNTAIN_LEDGE_THICKNESS = 96;
+
 /** Hold posts keep the same clearance from the rock face across thickness changes. */
 const MOUNTAIN_LEDGE_HOLD_OFFSET = MOUNTAIN_LEDGE_THICKNESS / 2 + 57;
-const MOUNTAIN_SIDE_ENTRANCE_FRAC = 0.24;
-const MOUNTAIN_CORNER_ENTRANCE_FRAC = 0.16;
 
-type MountainEntrance =
-  | "north"
-  | "south"
-  | "west"
-  | "east"
-  | "northWest"
-  | "northEast"
-  | "southWest"
-  | "southEast";
+/**
+ * A chokepoint sits just inside each gap, on the ring's inward side, so a holder posted
+ * there is guarding the opening rather than standing in the middle of it.
+ */
+const MOUNTAIN_CHOKE_INSET = 138;
 
-interface MountainLedgeVariant {
-  entrances: MountainEntrance[];
-  wobble: number;
-}
-
-const MOUNTAIN_LEDGE_VARIANTS: MountainLedgeVariant[] = [
-  { entrances: ["north", "southEast", "west"], wobble: 0 },
-  { entrances: ["northWest", "east", "south", "west"], wobble: 1 },
-  { entrances: ["northEast", "southWest", "east"], wobble: 2 },
-  { entrances: ["north", "south", "northWest", "east", "southEast"], wobble: 3 },
-  { entrances: ["west", "northEast", "south", "east"], wobble: 4 },
-  { entrances: ["northWest", "northEast", "southWest", "southEast", "east", "west"], wobble: 5 },
-];
-
-export const MOUNTAIN_NODE_LEDGE_VARIANTS: Record<string, number> =
-  Object.fromEntries(
-    WORLD_NODE_LIST
-      .filter((node) => node.biomeGroup === "mountain")
-      .map((node) => [node.id, node.featureVariant ?? 0]),
-  );
-
-function mountainVariant(variantIndex: number): MountainLedgeVariant {
-  return MOUNTAIN_LEDGE_VARIANTS[
-    ((variantIndex % MOUNTAIN_LEDGE_VARIANTS.length) + MOUNTAIN_LEDGE_VARIANTS.length) %
-      MOUNTAIN_LEDGE_VARIANTS.length
-  ];
-}
-
-function mountainChokepointsForVariant(variantIndex: number): Vec2[] {
-  const variant = mountainVariant(variantIndex);
-  return variant.entrances.flatMap((entrance) => [
-    mountainEntrancePoint(entrance, "outer", variant.wobble),
-    mountainEntrancePoint(entrance, "inner", variant.wobble),
-  ]);
+function mountainChokepointsForLayout(layout: MountainLedgeLayout): Vec2[] {
+  const out: Vec2[] = [];
+  if (layout.kind === "circle") {
+    // One post per entrance, set just inside the wall — a doorkeeper, not a wanderer.
+    for (const gap of layout.gaps) {
+      out.push(mountainRingPoint(layout, gap.centre, -MOUNTAIN_CHOKE_INSET));
+    }
+    return out;
+  }
+  for (const ring of ["outer", "inner"] as const) {
+    for (const gap of ring === "outer" ? layout.outer : layout.inner) {
+      const p = mountainGapPoint(ring, gap);
+      // Inward is toward the node centre for both rings.
+      const dx = GAME_CONFIG.NODE_WIDTH / 2 - p.x;
+      const dy = GAME_CONFIG.NODE_HEIGHT / 2 - p.y;
+      const len = Math.hypot(dx, dy) || 1;
+      out.push({
+        x: p.x + (dx / len) * MOUNTAIN_CHOKE_INSET,
+        y: p.y + (dy / len) * MOUNTAIN_CHOKE_INSET,
+      });
+    }
+  }
+  return out;
 }
 
 export function mountainChokepointsForNode(nodeId: string): Vec2[] {
-  const variantIndex = MOUNTAIN_NODE_LEDGE_VARIANTS[nodeId];
-  return variantIndex === undefined ? [] : mountainChokepointsForVariant(variantIndex);
+  const layout = getMountainLedgeLayout(nodeId);
+  return layout ? mountainChokepointsForLayout(layout) : [];
 }
 
 export function mountainLedgeHoldPointsForNode(nodeId: string): Vec2[] {
-  if (MOUNTAIN_NODE_LEDGE_VARIANTS[nodeId] === undefined) return [];
+  const layout = getMountainLedgeLayout(nodeId);
+  if (!layout) return [];
+  if (layout.kind === "circle") {
+    // Ledge-vaulting monsters hold ON the wall, so their posts follow it. Points that fall
+    // in an entrance are dropped: that opening already has a chokepoint holder, and a
+    // vaulter standing in the doorway would double-guard it.
+    const out: Vec2[] = [];
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      if (mountainArcIsGap(layout, angle)) continue;
+      out.push(mountainRingPoint(layout, angle, -MOUNTAIN_LEDGE_HOLD_OFFSET));
+    }
+    return out;
+  }
   const off = MOUNTAIN_LEDGE_HOLD_OFFSET;
   return [
     { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_OUTER_TOP + off },
@@ -357,6 +361,19 @@ export function mountainLedgeHoldPointsForNode(nodeId: string): Vec2[] {
 
 export function mountainLedgePatrolForPost(post: Vec2): Vec2[] {
   const off = MOUNTAIN_LEDGE_HOLD_OFFSET;
+  // A post on a dungeon ring patrols ALONG the circle, so the two ends are found by
+  // rotating about the node centre rather than by stepping on an axis.
+  const cx = GAME_CONFIG.NODE_WIDTH / 2;
+  const cy = GAME_CONFIG.NODE_HEIGHT / 2;
+  const radius = Math.hypot(post.x - cx, post.y - cy);
+  if (radius > MOUNTAIN_INNER_INSET * 0.55 && radius < MOUNTAIN_OUTER_INSET * 2.2) {
+    const angle = Math.atan2(post.y - cy, post.x - cx);
+    const sweep = 285 / radius;
+    return [
+      { x: cx + Math.cos(angle - sweep) * radius, y: cy + Math.sin(angle - sweep) * radius },
+      { x: cx + Math.cos(angle + sweep) * radius, y: cy + Math.sin(angle + sweep) * radius },
+    ];
+  }
   const nearHorizontal =
     Math.abs(post.y - (MOUNTAIN_OUTER_TOP + off)) < 4 ||
     Math.abs(post.y - (MOUNTAIN_OUTER_BOTTOM - off)) < 4 ||
@@ -382,74 +399,62 @@ export function mountainLedgeFeatureIdsForNode(nodeId: string): Set<string> {
   );
 }
 
-function mountainLedgeRings(prefix = "mountain_ledge", variantIndex = 0): NodeFeatureSpec[] {
-  const variant = mountainVariant(variantIndex);
+/** The blocking rock for a node, from its generated layout. */
+function mountainLedgeRings(prefix: string, nodeId: string): NodeFeatureSpec[] {
+  const layout = getMountainLedgeLayout(nodeId);
+  if (!layout) return [];
+  if (layout.kind === "circle") return mountainCircleSegments(prefix, layout);
   return [
-    ...mountainRingSegments(prefix, "outer", variant.entrances, variant.wobble),
-    ...mountainRingSegments(prefix, "inner", variant.entrances, variant.wobble),
+    ...mountainRingSegments(prefix, "outer", layout.outer, layout.wobble),
+    ...mountainRingSegments(prefix, "inner", layout.inner, layout.wobble),
   ];
 }
 
-function mountainEntrancePoint(
-  entrance: MountainEntrance,
-  ring: "outer" | "inner",
-  wobble: number,
-): Vec2 {
-  const b = mountainRingBounds(ring);
-  const inset = ring === "outer" ? 177 : 138;
-  const dx = (wobble % 3 - 1) * 18;
-  const dy = ((wobble + 1) % 3 - 1) * 18;
-  const innerOffset = ring === "inner" ? 390 + wobble * 18 : 0;
-  switch (entrance) {
-    case "north":
-      return { x: (b.left + b.right) / 2 + dx + innerOffset, y: b.top + inset };
-    case "south":
-      return { x: (b.left + b.right) / 2 - dx - innerOffset, y: b.bottom - inset };
-    case "west":
-      return { x: b.left + inset, y: (b.top + b.bottom) / 2 + dy - innerOffset };
-    case "east":
-      return { x: b.right - inset, y: (b.top + b.bottom) / 2 - dy + innerOffset };
-    case "northWest":
-      return { x: b.left + inset + innerOffset * 0.45, y: b.top + inset + innerOffset * 0.25 };
-    case "northEast":
-      return { x: b.right - inset - innerOffset * 0.45, y: b.top + inset + innerOffset * 0.25 };
-    case "southWest":
-      return { x: b.left + inset + innerOffset * 0.45, y: b.bottom - inset - innerOffset * 0.25 };
-    case "southEast":
-      return { x: b.right - inset - innerOffset * 0.45, y: b.bottom - inset - innerOffset * 0.25 };
+/**
+ * A dungeon's circular wall, as a run of small squares stepped along the arc.
+ *
+ * Feature shapes are axis-aligned rects with no rotation, so a curve has to be
+ * approximated. Squares (rather than long rects) are what let the same shape follow the
+ * ring at any angle, and the pitch is kept below the 96px thickness so consecutive squares
+ * always overlap — at the cardinal points, where the step is most nearly along one axis,
+ * a pitch equal to the thickness would leave them merely touching.
+ */
+function mountainCircleSegments(
+  prefix: string,
+  layout: MountainCircleLayout,
+): NodeFeatureSpec[] {
+  const t = MOUNTAIN_LEDGE_THICKNESS;
+  const steps = Math.max(
+    24,
+    Math.round((2 * Math.PI * layout.radius) / MOUNTAIN_DUNGEON_SEGMENT_STEP),
+  );
+  const out: NodeFeatureSpec[] = [];
+  for (let i = 0; i < steps; i++) {
+    const angle = (i / steps) * Math.PI * 2;
+    if (mountainArcIsGap(layout, angle)) continue;
+    // A touch of radial jitter keeps the wall from reading as a drawn circle.
+    const jitter = (((i + layout.wobble) % 3) - 1) * 6;
+    const p = mountainRingPoint(layout, angle, jitter);
+    out.push(rockLedge(`${prefix}_circle_${i}`, p.x, p.y, t / 2, t / 2));
   }
+  return out;
 }
 
-function mountainRingBounds(ring: "outer" | "inner"): {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-} {
-  return ring === "outer"
-    ? {
-        left: MOUNTAIN_OUTER_LEFT,
-        right: MOUNTAIN_OUTER_RIGHT,
-        top: MOUNTAIN_OUTER_TOP,
-        bottom: MOUNTAIN_OUTER_BOTTOM,
-      }
-    : {
-        left: MOUNTAIN_INNER_LEFT,
-        right: MOUNTAIN_INNER_RIGHT,
-        top: MOUNTAIN_INNER_TOP,
-        bottom: MOUNTAIN_INNER_BOTTOM,
-      };
-}
-
+/**
+ * Solid rock between the gaps, as blocking rects.
+ *
+ * The segment IDs matter beyond identity: the client's cliff renderer parses
+ * `_<ring>_<side>_` out of them to work out which face to draw and where the ring
+ * corners are, so the naming here is load-bearing.
+ */
 function mountainRingSegments(
   prefix: string,
   ring: "outer" | "inner",
-  entrances: MountainEntrance[],
+  gaps: MountainGap[],
   wobble: number,
 ): NodeFeatureSpec[] {
   const b = mountainRingBounds(ring);
   const t = MOUNTAIN_LEDGE_THICKNESS;
-  const gaps = mountainRingGaps(entrances);
   const segments: NodeFeatureSpec[] = [];
   let idx = 0;
   for (const [side, length] of [
@@ -458,7 +463,13 @@ function mountainRingSegments(
     ["west", b.bottom - b.top],
     ["east", b.bottom - b.top],
   ] as const) {
-    for (const [a, z] of carveIntervals(gaps[side] ?? [])) {
+    const sideGaps = gaps
+      .filter((g) => g.side === side)
+      .map((g): [number, number] => [
+        Math.max(0, g.centre - g.span / 2),
+        Math.min(1, g.centre + g.span / 2),
+      ]);
+    for (const [a, z] of carveIntervals(sideGaps)) {
       if (z - a < 0.08) continue;
       const center = ((a + z) / 2) * length;
       const half = ((z - a) * length) / 2;
@@ -486,53 +497,6 @@ function mountainRingSegments(
     }
   }
   return segments;
-}
-
-function mountainRingGaps(
-  entrances: MountainEntrance[],
-): Record<"north" | "south" | "west" | "east", Array<[number, number]>> {
-  const gaps: Record<"north" | "south" | "west" | "east", Array<[number, number]>> = {
-    north: [],
-    south: [],
-    west: [],
-    east: [],
-  };
-  const add = (side: keyof typeof gaps, center: number, size: number): void => {
-    gaps[side].push([Math.max(0, center - size / 2), Math.min(1, center + size / 2)]);
-  };
-  for (const entrance of entrances) {
-    switch (entrance) {
-      case "north":
-        add("north", 0.5, MOUNTAIN_SIDE_ENTRANCE_FRAC);
-        break;
-      case "south":
-        add("south", 0.5, MOUNTAIN_SIDE_ENTRANCE_FRAC);
-        break;
-      case "west":
-        add("west", 0.5, MOUNTAIN_SIDE_ENTRANCE_FRAC);
-        break;
-      case "east":
-        add("east", 0.5, MOUNTAIN_SIDE_ENTRANCE_FRAC);
-        break;
-      case "northWest":
-        add("north", 0.08, MOUNTAIN_CORNER_ENTRANCE_FRAC);
-        add("west", 0.08, MOUNTAIN_CORNER_ENTRANCE_FRAC);
-        break;
-      case "northEast":
-        add("north", 0.92, MOUNTAIN_CORNER_ENTRANCE_FRAC);
-        add("east", 0.08, MOUNTAIN_CORNER_ENTRANCE_FRAC);
-        break;
-      case "southWest":
-        add("south", 0.08, MOUNTAIN_CORNER_ENTRANCE_FRAC);
-        add("west", 0.92, MOUNTAIN_CORNER_ENTRANCE_FRAC);
-        break;
-      case "southEast":
-        add("south", 0.92, MOUNTAIN_CORNER_ENTRANCE_FRAC);
-        add("east", 0.92, MOUNTAIN_CORNER_ENTRANCE_FRAC);
-        break;
-    }
-  }
-  return gaps;
 }
 
 function carveIntervals(gaps: Array<[number, number]>): Array<[number, number]> {
@@ -654,27 +618,6 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
       // No `blocksMovement`: players (and minions) can walk through it freely.
     },
   ],
-  // MOUNTAIN - "guarded ascent": two broken ledge rings. Ledges block players and
-  // monsters for movement/pathing, but combat does not treat them as projectile
-  // cover, so archers can hold a pass and shoot across the rock line. The client
-  // paints these rects with the mountain ledge Wang tileset (render/wangGround.ts),
-  // so the drawn rock face is exactly this blocking geometry.
-  "node-0-3": mountainLedgeRings("mountain_0_3", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-3"]),
-  "node-0-4": mountainLedgeRings("mountain_0_4", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-4"]),
-  "node-0-5": mountainLedgeRings("mountain_0_5", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-5"]),
-  "node-0-6": mountainLedgeRings("mountain_0_6", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-6"]),
-  "node-0-7": mountainLedgeRings("mountain_0_7", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-7"]),
-  "node-0-8": mountainLedgeRings("mountain_0_8", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-8"]),
-  "node-1-2": mountainLedgeRings("mountain_1_2", MOUNTAIN_NODE_LEDGE_VARIANTS["node-1-2"]),
-  "node-1-3": mountainLedgeRings("mountain_1_3", MOUNTAIN_NODE_LEDGE_VARIANTS["node-1-3"]),
-  "node-1-4": mountainLedgeRings("mountain_1_4", MOUNTAIN_NODE_LEDGE_VARIANTS["node-1-4"]),
-  "node-2-2": mountainLedgeRings("mountain_2_2", MOUNTAIN_NODE_LEDGE_VARIANTS["node-2-2"]),
-  "node-2-3": mountainLedgeRings("mountain_2_3", MOUNTAIN_NODE_LEDGE_VARIANTS["node-2-3"]),
-  "node-2-4": mountainLedgeRings("mountain_2_4", MOUNTAIN_NODE_LEDGE_VARIANTS["node-2-4"]),
-  "node-3-2": mountainLedgeRings("mountain_3_2", MOUNTAIN_NODE_LEDGE_VARIANTS["node-3-2"]),
-  "node-3-3": mountainLedgeRings("mountain_3_3", MOUNTAIN_NODE_LEDGE_VARIANTS["node-3-3"]),
-  "node-3-4": mountainLedgeRings("mountain_3_4", MOUNTAIN_NODE_LEDGE_VARIANTS["node-3-4"]),
-  "node-4-4": mountainLedgeRings("mountain_4_4", MOUNTAIN_NODE_LEDGE_VARIANTS["node-4-4"]),
   // SWAMP — "attrition terrain": each node has a few varied rot pools with clear
   // lanes between them. Hazard-aware movement is the read; dot-resistance /
   // cleanse / regen is the build answer. Pool count stays restrained by tier.
@@ -912,10 +855,14 @@ function canonicalFeaturesForNode(
     return templateFeatures("node-5-5");
   }
   if (node.biomeGroup === "mountain") {
-    return mountainLedgeRings(
-      `mountain_${node.id}`,
-      node.featureVariant ?? 0,
-    );
+    // "Guarded ascent": two broken ledge rings. Ledges block players and monsters for
+    // movement/pathing, but combat does not treat them as projectile cover, so archers
+    // can hold a pass and shoot across the rock line.
+    //
+    // Generated per node rather than drawn from a six-entry variant table. Those six
+    // entrance sets were reused verbatim at every tier, so `t1-mountain-01` through
+    // `t4-mountain-01` were the same node four times over.
+    return mountainLedgeRings(`mountain_${node.id}`, node.id);
   }
   if (node.biomeGroup === "swamp") {
     // Generated per node rather than drawn from a template table. The six authored

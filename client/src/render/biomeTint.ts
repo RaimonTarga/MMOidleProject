@@ -93,6 +93,22 @@ export const BIOME_TIER_TINTS: Readonly<
     3: { color: 0x131f26, alpha: 0.46 }, // dead water
   },
 
+  /**
+   * Mountain climbs into thin air. T1 is untinted bare rock — the same convention plains
+   * and forest keep, where the base tier is the honest baseline the ramp is read against
+   * — and T2-T4 wash progressively colder and paler, as light thinning out with altitude
+   * rather than as a different place.
+   *
+   * Mountain spans FOUR tiers, more than any biome tinted so far, so the steps are
+   * smaller than swamp's three: the arc has to stay gradual across twice the ground and
+   * still leave headroom above T4, which is the middle of an eight-tier world.
+   */
+  mountain: {
+    2: { color: 0x7d8f9e, alpha: 0.30 }, // pale cold grey — the air starts to thin
+    3: { color: 0x6d8499, alpha: 0.38 }, // colder, bluer
+    4: { color: 0x5c7794, alpha: 0.46 }, // high and exposed
+  },
+
   sanctuary: {
     2: { color: 0x2f4f9e, alpha: 0.36 }, // cold blue — barely touched
     3: { color: 0x3d43a4, alpha: 0.41 },

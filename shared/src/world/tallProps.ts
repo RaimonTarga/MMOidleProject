@@ -1,11 +1,22 @@
 import { GAME_CONFIG } from "../config/gameConfig";
 import type { HitboxRect } from "../hitbox/types";
+import {
+  caveRitualPoint,
+  getCaveRitualSite,
+  isOnCavePatrolPath,
+} from "./cavePatrols";
 import { NODE_BIOMES, worldNodeExits, type NodeDirection } from "./nodeBiomes";
 import { RESOLVED_NODE_FEATURES, type NodeFeatureShape } from "./nodeFeatures";
 import type { TreeArtSet, TreeInstance } from "./trees";
 
 export const TALL_PROP_CELL_PX = 1254;
 export const TALL_PROPS_PER_NODE = 9;
+/**
+ * Caves carry more formations than the other rock biomes. A cavern should read as a space
+ * broken up by rock, not as an open floor with a few boulders on it — and now that the
+ * patrol beat is drawn on the ground, the formations are what the beat threads between.
+ */
+export const CAVE_TALL_PROPS_PER_NODE = 15;
 export const TALL_PROP_DUNGEON_COUNT = 2;
 export const TALL_PROP_ROUTE_CLEARANCE = 320;
 export const TALL_PROP_FEATURE_CLEARANCE = 260;
@@ -19,13 +30,17 @@ interface RockSet {
 }
 
 const ROCK_SETS: Readonly<Record<RockBiome, RockSet>> = {
+  // Cave rocks block WIDER than the other sets. Their art is a broad 465px formation but the
+  // base was only about 60px across once scaled, so you walked through most of the visible
+  // rock. These are sized to the silhouette instead: roughly 100-115px of blocking width.
+  // Height is left alone — a deep base would make them block from far below their footprint.
   cave: {
     artSet: "cave-rock",
     displayBase: 465,
     trunks: [
-      { offsetX: 0, offsetY: 445, halfW: 78, halfH: 58 },
-      { offsetX: 0, offsetY: 450, halfW: 86, halfH: 60 },
-      { offsetX: 0, offsetY: 440, halfW: 72, halfH: 58 },
+      { offsetX: 0, offsetY: 445, halfW: 142, halfH: 58 },
+      { offsetX: 0, offsetY: 450, halfW: 156, halfH: 60 },
+      { offsetX: 0, offsetY: 440, halfW: 132, halfH: 58 },
     ],
   },
   desert: {
@@ -93,6 +108,10 @@ export function distancePointToSegment(
   return Math.hypot(px - (ax + abx * t), py - (ay + aby * t));
 }
 
+function range(rng: () => number, lo: number, hi: number): number {
+  return lo + rng() * (hi - lo);
+}
+
 function exitAnchor(direction: NodeDirection): { x: number; y: number } {
   const w = GAME_CONFIG.NODE_WIDTH;
   const h = GAME_CONFIG.NODE_HEIGHT;
@@ -129,12 +148,40 @@ const EDGE_MARGIN_BOTTOM = 300;
 const MIN_SEPARATION = 590;
 const DUNGEON_CENTER_CLEARANCE = 850;
 
+/** Rocks clear a patrol beat by their own footprint plus a walking margin. */
+const CAVE_PATROL_ROCK_CLEARANCE = 190;
+
 function generateTallProps(nodeId: string, biomeGroup: RockBiome): TreeInstance[] {
   const set = ROCK_SETS[biomeGroup];
   const biome = NODE_BIOMES[nodeId];
   const rng = mulberry32(hashString(`${nodeId}:tall-rock-props`));
   const props: TreeInstance[] = [];
-  const target = biome?.isDungeon ? TALL_PROP_DUNGEON_COUNT : TALL_PROPS_PER_NODE;
+
+  // A cave dungeon arranges its formations into a standing-stone ring around the altar
+  // rather than scattering them. Same props, same collision, placed with intent — which is
+  // what makes a boss room read as somewhere that was built rather than merely found.
+  const ritual = biomeGroup === "cave" ? getCaveRitualSite(nodeId) : null;
+  if (ritual) {
+    for (const angle of ritual.stones) {
+      const variant = Math.floor(rng() * set.trunks.length) % set.trunks.length;
+      const trunk = set.trunks[variant];
+      const displaySize = set.displayBase * (0.92 + rng() * 0.16);
+      const scale = displaySize / TALL_PROP_CELL_PX;
+      const p = caveRitualPoint(ritual, angle, range(rng, -34, 34));
+      // The spokes already open the ring at every exit, but the clearance is asserted
+      // across all rock biomes, so enforce it here too rather than trusting the geometry.
+      if (!isClearOfRoutes(nodeId, p.x, p.y)) continue;
+      props.push(
+        makeTallProp(nodeId, props.length, set, variant, trunk, displaySize, scale, p.x, p.y),
+      );
+    }
+    return props;
+  }
+  const target = biome?.isDungeon
+    ? TALL_PROP_DUNGEON_COUNT
+    : biomeGroup === "cave"
+      ? CAVE_TALL_PROPS_PER_NODE
+      : TALL_PROPS_PER_NODE;
   const features = RESOLVED_NODE_FEATURES[nodeId] ?? [];
 
   for (let attempt = 0; attempt < target * 192 && props.length < target; attempt++) {
@@ -147,6 +194,10 @@ function generateTallProps(nodeId: string, biomeGroup: RockBiome): TreeInstance[
       rng() * (GAME_CONFIG.NODE_HEIGHT - EDGE_MARGIN_TOP - EDGE_MARGIN_BOTTOM);
 
     if (!isClearOfRoutes(nodeId, anchorX, anchorY)) continue;
+    // A rock formation standing in the middle of a painted patrol path is exactly the
+    // mismatch this pass exists to remove, and these carry trunk collision, so it would
+    // block the beat as well as look wrong. Cleared by the prop's own footprint.
+    if (isOnCavePatrolPath(nodeId, anchorX, anchorY, CAVE_PATROL_ROCK_CLEARANCE)) continue;
     if (features.some((feature) =>
       distanceFromShape(anchorX, anchorY, feature.shape) < TALL_PROP_FEATURE_CLEARANCE
     )) continue;
@@ -160,30 +211,43 @@ function generateTallProps(nodeId: string, biomeGroup: RockBiome): TreeInstance[
       return Math.hypot(anchorX - shape.x, anchorY - shape.y) < MIN_SEPARATION;
     })) continue;
 
-    const spriteX = anchorX - trunk.offsetX * scale;
-    const spriteY = anchorY - trunk.offsetY * scale;
-    props.push({
-      id: `${nodeId}:tall-prop:${props.length}`,
-      artSet: set.artSet,
-      variant,
-      cellPx: TALL_PROP_CELL_PX,
-      trunkTopPx: Math.round(
-        TALL_PROP_CELL_PX / 2 + trunk.offsetY - trunk.halfH,
-      ),
-      spriteX,
-      spriteY,
-      displaySize,
-      shapes: [{
-        kind: "ellipse",
-        x: anchorX,
-        y: anchorY,
-        halfW: trunk.halfW * scale,
-        halfH: trunk.halfH * scale,
-      }],
-      baseY: anchorY + trunk.halfH * scale,
-    });
+    props.push(
+      makeTallProp(nodeId, props.length, set, variant, trunk, displaySize, scale, anchorX, anchorY),
+    );
   }
   return props;
+}
+
+/** One rock instance. Shared so the scatter and the ritual ring cannot drift apart. */
+function makeTallProp(
+  nodeId: string,
+  index: number,
+  set: RockSet,
+  variant: number,
+  trunk: HitboxRect,
+  displaySize: number,
+  scale: number,
+  anchorX: number,
+  anchorY: number,
+): TreeInstance {
+  return {
+    id: `${nodeId}:tall-prop:${index}`,
+    artSet: set.artSet,
+    variant,
+    cellPx: TALL_PROP_CELL_PX,
+    trunkTopPx: Math.round(TALL_PROP_CELL_PX / 2 + trunk.offsetY - trunk.halfH),
+    spriteX: anchorX - trunk.offsetX * scale,
+    spriteY: anchorY - trunk.offsetY * scale,
+    displaySize,
+    shapes: [{
+      kind: "ellipse",
+      x: anchorX,
+      y: anchorY,
+      halfW: trunk.halfW * scale,
+      halfH: trunk.halfH * scale,
+    }],
+    baseY: anchorY + trunk.halfH * scale,
+  };
 }
 
 const cache = new Map<string, TreeInstance[]>();

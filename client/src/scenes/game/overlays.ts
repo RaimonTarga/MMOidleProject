@@ -3,6 +3,8 @@ import {
   DUNGEON_ALTAR_SIZE,
   GAME_CONFIG,
   isOnForestPath,
+  isOnMountainPass,
+  isOnCavePatrolPath,
   getDungeonDef,
   NODE_BIOMES,
   NODE_FEATURES,
@@ -328,9 +330,12 @@ function buildBiomeDecorImages(
   // One multiplier per variance group per node, drawn the first time the group is
   // seen (spec order, so it stays deterministic). Grouped specs share the roll.
   const groupRolls = new Map<string, number>();
+  // Presence is a SEPARATE roll from the multiplier, and grouped specs share it too.
+  // A `min: 0` multiplier does not make a spec vanish in practice — see BiomeDecorVariance.
+  const groupPresent = new Map<string, boolean>();
 
   for (const spec of specs) {
-    // Draw the variance roll BEFORE the texture check so a missing texture cannot
+    // Draw the variance rolls BEFORE the texture check so a missing texture cannot
     // shift the rng stream and reshuffle every later spec's placement.
     const variance = spec.variance;
     let target = spec.count;
@@ -339,6 +344,19 @@ function buildBiomeDecorImages(
       if (mult === undefined) {
         mult = variance.min + rng() * (variance.max - variance.min);
         if (variance.group) groupRolls.set(variance.group, mult);
+      }
+      // Draw ONLY when the spec opts in. Rolling unconditionally would consume an extra
+      // rng draw for every already-tuned biome and reshuffle placements that have
+      // already been reviewed and committed. Every member of a group declares the same
+      // presence, so the draws stay aligned within a group either way.
+      if (variance.presence !== undefined) {
+        let present = variance.group ? groupPresent.get(variance.group) : undefined;
+        const roll = rng();
+        if (present === undefined) {
+          present = roll < variance.presence;
+          if (variance.group) groupPresent.set(variance.group, present);
+        }
+        if (!present) mult = 0;
       }
       target = Math.round(spec.count * mult);
     }
@@ -356,12 +374,23 @@ function buildBiomeDecorImages(
       // into `avoidsDirt`. Plains' pebbles and low shrubs are exactly the case:
       // pebbles scattered on a worn path read fine, a shrub sprouting in the middle
       // of a boss arena does not.
-      if ((spec.avoidsDirt || isDungeonNode) && groundLayout?.isDirt(x, y)) continue;
+      if (spec.avoidsDirt && groundLayout?.isDirt(x, y)) continue;
+      // The arena court is a SHAPE, so it is tested with `inDisc` rather than `isDirt`.
+      // On an inverted dungeon the two disagree everywhere, and `isDirt` would reject the
+      // whole node instead of just the court.
+      if (isDungeonNode && groundLayout?.inDisc(x, y)) continue;
       // Forest trails need an explicit test rather than `avoidsDirt`. A trail node
       // paints INVERTED — foliage is the dominant material and the trail is the bare
       // discs — so `isDirt` is true off the trail and false on it. Relying on the flag
       // would scatter props down the middle of the path, precisely backwards.
       if (isOnForestPath(nodeId, x, y, DECOR_PATH_CLEARANCE)) continue;
+      // Mountain passes need the same explicit test rather than `avoidsDirt`: the scree
+      // style paints INVERTED, so `isDirt` is true OFF the pass there and relying on the
+      // flag would strew rubble straight down the route on exactly those nodes.
+      if (isOnMountainPass(nodeId, x, y, DECOR_PATH_CLEARANCE)) continue;
+      // The cave beat is a route someone walks nightly; rubble and bones strewn down the
+      // middle of it would undo the one thing that makes it read as a patrol path.
+      if (isOnCavePatrolPath(nodeId, x, y, DECOR_PATH_CLEARANCE)) continue;
       if (featureShapes.some((s) => nearFeatureShape(s, x, y, featurePad))) continue;
 
       const scale = 0.82 + rng() * 0.36;

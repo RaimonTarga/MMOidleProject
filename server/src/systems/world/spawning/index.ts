@@ -32,6 +32,7 @@ import {
   resetTracksCombat,
   initScriptsBoss,
   initScriptsUltimate,
+  getCavePatrols,
 } from "@mmo-idle/shared";
 import type { MonsterEntity } from "../../../ecs/entity";
 import { recalculatePlayerEntityStats } from "../../../ecs/playerEntityFormulas";
@@ -82,69 +83,28 @@ interface CavePatrolAssignment {
   patrol: MonsterPatrolRoute;
 }
 
-const CAVE_PATROL_ROUTES: CavePatrolAssignment[] = [
-  {
-    anchor: { x: 360, y: 360 },
+/**
+ * Routes come from the shared per-node layout, so the beat a brute walks is the same shape
+ * the client paints on the floor and the same shape the rock formations keep off.
+ *
+ * This used to be a module-level constant with no `nodeId` in it — one 4080px rectangle,
+ * identical on all 21 cave nodes, while the ground painted an unrelated trail somewhere
+ * else. A wild (unpatrolled) cave now returns nothing here, and its brutes roam instead.
+ */
+function cavePatrolRoutes(nodeId: string): CavePatrolAssignment[] {
+  return getCavePatrols(nodeId).routes.map((route) => ({
+    anchor: { ...route.anchor },
     patrol: {
       absolute: true,
-      mode: "loop",
-      waypoints: [
-        { x: 360, y: 360 },
-        { x: GAME_CONFIG.NODE_WIDTH - 360, y: 360 },
-        { x: GAME_CONFIG.NODE_WIDTH - 360, y: GAME_CONFIG.NODE_HEIGHT - 360 },
-        { x: 360, y: GAME_CONFIG.NODE_HEIGHT - 360 },
-      ],
+      // The circuit loops; each cross arm is walked back and forth, so its guard meets you
+      // head-on instead of always arriving from the same side.
+      mode: route.mode,
+      waypoints: route.waypoints.map((wp) => ({ ...wp })),
       holdMinMs: 900,
       holdMaxMs: 1800,
     },
-  },
-  {
-    anchor: {
-      x: GAME_CONFIG.NODE_WIDTH - 360,
-      y: GAME_CONFIG.NODE_HEIGHT - 360,
-    },
-    patrol: {
-      absolute: true,
-      mode: "loop",
-      waypoints: [
-        { x: GAME_CONFIG.NODE_WIDTH - 360, y: GAME_CONFIG.NODE_HEIGHT - 360 },
-        { x: 360, y: GAME_CONFIG.NODE_HEIGHT - 360 },
-        { x: 360, y: 360 },
-        { x: GAME_CONFIG.NODE_WIDTH - 360, y: 360 },
-      ],
-      holdMinMs: 900,
-      holdMaxMs: 1800,
-    },
-  },
-  {
-    anchor: { x: GAME_CONFIG.NODE_WIDTH / 2, y: 360 },
-    patrol: {
-      absolute: true,
-      mode: "pingpong",
-      waypoints: [
-        { x: GAME_CONFIG.NODE_WIDTH / 2, y: 360 },
-        { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-        { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT - 360 },
-      ],
-      holdMinMs: 800,
-      holdMaxMs: 1600,
-    },
-  },
-  {
-    anchor: { x: 360, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-    patrol: {
-      absolute: true,
-      mode: "pingpong",
-      waypoints: [
-        { x: 360, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-        { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-        { x: GAME_CONFIG.NODE_WIDTH - 360, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-      ],
-      holdMinMs: 800,
-      holdMaxMs: 1600,
-    },
-  },
-];
+  }));
+}
 
 function clampMonsterSpawnToNode(nodeId: string, pos: Vec2, pad: Vec2): Vec2 {
   const node = NODE_REGISTRY.get(nodeId);
@@ -444,7 +404,7 @@ function cavePatrolAssignment(
     occupied.push(e.controlsMonster.spawn);
   }
 
-  const free = CAVE_PATROL_ROUTES.filter((route) =>
+  const free = cavePatrolRoutes(nodeId).filter((route) =>
     occupied.every((pos) => distanceSq(pos, route.anchor) > occupySq),
   );
   if (free.length > 0) {

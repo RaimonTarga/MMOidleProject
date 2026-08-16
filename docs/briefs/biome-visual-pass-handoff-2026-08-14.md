@@ -1,3 +1,8 @@
+> **SUPERSEDED (2026-08-16)** by
+> [`biome-visual-pass-handoff-2026-08-16.md`](./biome-visual-pass-handoff-2026-08-16.md).
+> Still the reference for the systems built before mountain (tint, decor variance, forest
+> trails, swamp pools) and for traps 1–8. Per-biome status here is out of date.
+
 # Biome Visual Pass — Session Handoff (2026-08-14)
 
 Continuation brief for the node-resize + biome-visual-variance program. Written because
@@ -122,6 +127,28 @@ layout trees must avoid (a trail, a clearing) has to live in `shared/`, not the 
 
 ---
 
+**9. `invert` also breaks the DUNGEON rule, not just `avoidsDirt`.** The decor scatter's
+"nothing grows on an arena floor" test used `isDirt`, but a court is a SHAPE and `isDirt`
+flips under inversion — so on an inverted dungeon every point *outside* the court read as
+arena floor and the whole node's scatter was rejected. Three jungle dungeons had been
+placing zero props on master because of it. `GroundLayout.inDisc` is the invert-blind
+test; use it whenever you mean the shape rather than the material.
+
+**10. Adding an rng draw to a shared generator reshuffles every biome already reviewed.**
+The new `variance.presence` roll is drawn ONLY when a spec declares it, for exactly this
+reason — an unconditional draw would have re-rolled plains, forest, caverns and swamp
+placements that the user has already signed off.
+
+**11. A biome can have a system that LOOKS wired and is not.** Cave had a `patrol-path`
+material, monsters with patrol loops, and a server-side patrol assignment — and no
+relationship between any of them: the route table was a module-level constant with no
+`nodeId` in it, identical on all 21 nodes, describing a completely different shape from the
+painted path. Check that the two ends read the SAME layout, not merely that both exist.
+
+**12. Check the ART before building on a sheet.** `cave/floor-rubble-wang.png` was wired as a
+second material in the caverns pass and is near-black in BOTH its halves, so its autotiling
+is invisible. It was shipped as variance that could not be seen. Open the PNG.
+
 ## Per-biome status
 
 | Biome | Nodes | State |
@@ -132,11 +159,11 @@ layout trees must avoid (a trail, a clearing) has to live in `shared/`, not the 
 | Forest | 12 | **DONE** — seeded trails (ring/cross/partial/none), trees 24–40, dungeon 170→60 trees with a 1536 clearing, T2 green-blue tint |
 | All dungeons | 26 | **DONE** — `dungeon-court` pattern on 21; swamp/volcanic keep hazard floors |
 | **Swamp** | 21 | **DONE, committed `5f09a2f`, NOT visually reviewed** — procedural pools (21/21 distinct), coverage 5.4–8.5%, props 133–215, 3-tier darkening tint |
-| **Mountain** | 24 | **NEXT** |
-| **Caves** | — | after mountain (note: "Caverns" above is the `cave` biome group; the user lists "caves" last in their own ordering — confirm what they mean) |
+| **Mountain** | 24 | **DONE (2026-08-16), NOT yet visually reviewed** — generated ledge rings (24/24 distinct), passes painted through the gaps, `scree` wired as a 2nd material (18 stone / 6 scree), decor 51–145, 5–8 chokepoints, 4-tier cold ramp; **dungeons are a single circular arena wall** with 1–2 entrances, not the two square rings |
+| **Caves** | 21 | **pass 2 DONE (2026-08-16), NOT yet visually reviewed** — generated patrol routes that the guards actually walk (10 patrolled / 8 wild), `rubble` REMOVED as broken art, cave dungeons rebuilt as ritual sites |
 | Jungle, desert, tundra, volcanic, wasteland, trench | | not started |
 
-**User's stated order:** plains → forest → swamp → **mountain** → caves.
+**User's stated order:** plains → forest → swamp → mountain → **caves**.
 
 ---
 
