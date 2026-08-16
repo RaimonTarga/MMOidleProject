@@ -375,7 +375,7 @@ counts, and decor counts.
 
 ## 9. Per-biome visual log
 
-### Caverns — DONE (2026-08-14), pending visual review
+### Caverns — DONE (2026-08-14), REVIEWED AND APPROVED
 
 Baseline: one ground material (`patrol-path`), 27 props/node identical on all 21 nodes.
 
@@ -395,7 +395,7 @@ sparse and 11 as an ossuary, so chasing zero may make it read as missing art ins
 dial is the `bones` group `max` — lowering it widens the share of the range that rounds
 to nothing.
 
-### Clearing + Sanctuaries — DONE (2026-08-14), pending visual review
+### Clearing + Sanctuaries — DONE (2026-08-14), REVIEWED AND APPROVED
 
 Baseline: `hubPlaza` produced two detached paving discs, ONE southern trail, and three
 stray scatter blobs — it read as "some paving happened here", not as a plaza. Sanctuaries
@@ -466,7 +466,7 @@ avoid swallowing the spawn, which forced a second lobe of paving and made the co
 a dumbbell. Size is `NODE_WIDTH * 0.11667` — a fraction, so it cannot silently drift the way
 the original literal `560` did through two resizes, but reproducing exactly that 560px today.
 
-### Plains + all dungeons — DONE (2026-08-14), pending visual review
+### Plains + all dungeons — DONE (2026-08-14), REVIEWED AND APPROVED
 
 Plains was deliberately left plain: it is the floor biome and the baseline the rest of the
 world is read against. Two changes only.
@@ -542,7 +542,7 @@ rather than a low floor.
 alternate sitting unused, so a second ground material is the one remaining lever and it costs
 art. Cave and forest both have a spare sheet already paid for; plains does not.
 
-### Forest — DONE (2026-08-14), pending visual review
+### Forest — DONE (2026-08-14), REVIEWED AND APPROVED
 
 Baseline: identical everywhere. All 10 normal nodes carried exactly 34 trees and 119 props,
 and the only ground pattern was `tree-canopy` (foliage pooled under the trees).
@@ -647,7 +647,7 @@ less, so trees came out visibly under-tinted against ground washed at the same a
 correction, not a derivation: exact parity is impossible, since multiply cannot lighten and
 compositing can.
 
-### Swamp — DONE (2026-08-14), pending visual review
+### Swamp — DONE (2026-08-14), still NOT visually confirmed
 
 **Correcting §1:** this doc claimed swamp had 2 authored layouts. It had **six** normal
 templates, and 9 distinct layouts across 21 nodes. The real duplication was ACROSS TIERS —
@@ -691,7 +691,7 @@ peers from the first visit, so the wash is biome identity here, not only tier pr
 
 **Next biomes, in order:** mountain, caves.
 
-### Mountain — DONE (2026-08-16), pending visual review
+### Mountain — DONE (2026-08-16), REVIEWED AND APPROVED
 
 Baseline: 24 nodes sharing **six** ledge layouts, one ground material, 124 props identical
 on every node, no tint.
@@ -809,7 +809,7 @@ mountain ledge Wang tileset. It has not since the procedural cliff renderer land
 
 **Next biome:** caves.
 
-### Caves — pass 2, DONE (2026-08-16), pending visual review
+### Caves — pass 2, DONE (2026-08-16), REVIEWED AND APPROVED
 
 The caverns entry above wired rubble as a second material and varied the decor. This pass
 fixes something more fundamental that entry did not notice.
@@ -901,7 +901,7 @@ user's explicit request.
   `presence` (added in the mountain pass) now actually solves. Not applied — it would reshuffle
   caverns placements the user has already reviewed.
 
-### Desert — DONE (2026-08-16), pending visual review
+### Desert — DONE (2026-08-16), REVIEWED AND APPROVED (2026-08-17)
 
 Baseline: one ground material (`hardpan`), 2–3 wind-stripped pockets per node, 85 props
 identical on all 18 nodes, no tint. The user's read going in was that the biome was already
@@ -1079,7 +1079,7 @@ and `crystal-gargoyle` are all down there. Headroom is deliberate — a T4+ cave
 further violet toward the Abyss palette without rewriting these.
 
 
-### Jungle — DONE (2026-08-16), pending visual review
+### Jungle — DONE (2026-08-16), REVIEWED AND APPROVED (2026-08-17)
 
 Baseline: the user liked the look and asked only for variance between nodes. Measuring it
 found why there was none.
@@ -1218,7 +1218,7 @@ bushes standing on it. Fixed the same way trees are, including the flat/y-sorted
 so non-ySort scatter is not double-tinted.
 
 
-### Volcano + Tundra — DONE (2026-08-17), pending visual review
+### Volcano + Tundra — DONE (2026-08-17), REVIEWED AND APPROVED (2026-08-17)
 
 The user was happy with both overall and asked for four specific things: bigger/more lava,
 more volcanic rock, tundra ice in big frozen-lake chunks rather than small patches, and
@@ -1364,7 +1364,7 @@ every lake clamped to it — which silently inflated dungeon coverage to 9.5-11.
 away the size variation the shares exist to create. At three, nothing clamps: 8.5-9.2%.
 
 
-### Wasteland + Deep-Sea Trench — DONE (2026-08-17), pending visual review
+### Wasteland + Deep-Sea Trench — DONE (2026-08-17), REVIEWED AND APPROVED (2026-08-17)
 
 The last two biomes. The user was happy with both and asked for variation, plus more density
 in the trench, plus "think of a way to make the dungeons special".
@@ -1476,3 +1476,28 @@ half is the reason it is not being attempted:
 So the honest position: trench can have "darker" today and "higher contrast" only once a
 render pipeline exists. That is the extra wiring the user did not want to take on, and it is
 correctly deferred.
+
+
+## 10. Programme closed — 2026-08-17
+
+**Every biome has been reviewed in-game and approved by the user.** The visual pass that ran
+from 2026-08-14 to 2026-08-17 is finished; the per-biome entries in §9 are the record of what
+each one does and, more usefully, of the numbers each one was measured at.
+
+The one caveat: **swamp is the sole biome never visually confirmed.** It was committed early
+(`5f09a2f`) for safety before its review happened, and no later session covered it. Its
+numbers — pool coverage, prop density, the tier-1 tint — should still be treated as
+provisional rather than signed off.
+
+### What is deferred, deliberately
+
+- **Wasteland and trench tints.** Conjecture recorded in §9 with values ready to wire.
+  Trench's "darker with higher contrast" is the half that cannot be done at all with the
+  current mechanism — a rectangle overlay is a linear transform with gain <= 1, so real
+  contrast needs a post-processing shader (trap 21).
+- **The `saturate` tint mode on plains, forest and desert.** All three are washes sitting over
+  art already in the wash's own hue, so all three have jungle's flattening problem to a lesser
+  degree. The user's call was "interesting option for the future", not now.
+- Open per-biome dials are listed under each §9 entry's "Open for review" section. They are
+  all single constants, and every one of them was chosen against a MEASURED draw rather than a
+  nominal probability — so moving one moves a known outcome, not a guess.

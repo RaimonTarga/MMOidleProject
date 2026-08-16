@@ -12,35 +12,21 @@ and §9 (per-biome log). §1–§7 are a parked gameplay-terrain plan; do not st
 
 ---
 
-## ⚠ FIRST: the next task is cave guard behaviour
+## ✅ The visual pass is COMPLETE (2026-08-17)
 
-The user's words: *"later we'll have to modify the cave guards behavior to stick to those
-paths."* Caves now have real patrol routes that the ground paints, but the guards' behaviour
-around them has not been touched. **This is the top of the queue.**
+All eleven biomes are done, reviewed in-game and approved (swamp excepted — see the status
+table). Nothing in this brief is an open queue any more; it is kept for **traps 1-22** and for
+the measured numbers behind each biome's decisions.
 
-Research already done, so it is not re-derived:
-
-- **Patrolling already follows the path exactly.** `getCavePatrols(nodeId).routes` feeds both
-  the painted discs and the server's patrol waypoints, so a brute walking its route IS walking
-  the drawn line. Nothing to fix there.
-- **Wander is already tight enough.** `CAVE_PATROL_WANDER_RADIUS = 80` against a path
-  half-width of 82, so idle drift stays on the path by construction.
-- **The actual gaps are chase and return.** `CAVE_PATROL_LEASH = 980` lets a guard leave the
-  beat to chase, and the return is a straight line back to `controlsMonster.spawn` — neither
-  is path-aware. A guard that chases across the node walks home through the rock rather than
-  back along its route.
-- **Only three cave monsters patrol at all**: `cave-brute`, `cave-troll`, `cavern-troll` (they
-  are the ones with a `patrol` block in `shared/src/data/monsters/cave.monsters.ts`). Lurkers,
-  spiders and gargoyles roam solo *by design* — the file says so explicitly. Do not "fix" them
-  into patrollers without asking.
-- Relevant code: `assignCavePatrol` / `cavePatrolRoutes` in
-  `server/src/systems/world/spawning/index.ts`, and `advancePatrol` in
-  `server/src/systems/combat/ai/ai.ts`.
-
-**Balance numbers are the user's.** Leash/pull/wander values are theirs to set — propose,
-do not tune.
-
----
+The cave-guard behaviour item that used to head this brief was researched but never actioned,
+and is still open if it is wanted: `CAVE_PATROL_LEASH = 980` lets a guard leave its beat to
+chase, and the return is a straight line back to `controlsMonster.spawn` rather than a walk
+back along the route. Patrolling itself already follows the painted path exactly, and idle
+wander is already tight enough (`CAVE_PATROL_WANDER_RADIUS = 80` against a path half-width of
+82). Only three cave monsters patrol at all — `cave-brute`, `cave-troll`, `cavern-troll`;
+lurkers, spiders and gargoyles roam solo by design. Relevant code: `assignCavePatrol` /
+`cavePatrolRoutes` in `server/src/systems/world/spawning/index.ts`, and `advancePatrol` in
+`server/src/systems/combat/ai/ai.ts`. **Leash/pull/wander values are the user's to set.**
 
 ## Testing: run the subset, not the suite
 
@@ -68,7 +54,7 @@ Run one file with:
 
 ## What shipped this session
 
-### Mountain (24 nodes) — DONE, not yet visually reviewed
+### Mountain (24 nodes) — DONE, reviewed and approved
 
 - **Ledges generated per node** — `shared/src/world/mountainPasses.ts`. Was 6 authored
   entrance sets indexed by `featureVariant` (0–5 *within* a tier), so `t1/t2/t3/t4-mountain-01`
@@ -86,7 +72,7 @@ Run one file with:
   Radius 1213–1305, openings 542–747px. Built from 96px SQUARES stepped at 82px along the arc,
   because feature rects do not rotate.
 
-### Caves (21 nodes) — pass 2 DONE, not yet visually reviewed
+### Caves (21 nodes) — pass 2 DONE, reviewed and approved
 
 - **Patrol routes are real** — `shared/src/world/cavePatrols.ts`. See trap 11 below for what
   was broken. Shape is an **outer circuit with two arms crossing the middle**, fixed as the
@@ -105,7 +91,7 @@ Run one file with:
 
 ---
 
-### Desert (18 nodes) — DONE, not yet visually reviewed
+### Desert (18 nodes) — DONE, reviewed and approved
 
 - **Caravan tracks** — `shared/src/world/desertTracks.ts`. **11/15 open nodes tracked**, plus
   an arrival road on all 3 dungeons. Two open-pan shapes, `through` (edge to edge) and
@@ -146,7 +132,7 @@ Caves had no tint entry at all. T1 stays untinted, T2 `0x2f6b6b` @ 0.32 (mineral
 stone), T3 `0x5a3f8c` @ 0.44 (crystal violet — `crystal-gargoyle` and `deep-spider` back it
 on screen). The ramp says the ROCK changed, not just the light.
 
-### Jungle (18 nodes) — DONE, not yet visually reviewed
+### Jungle (18 nodes) — DONE, reviewed and approved
 
 - **Thickets are generated** — `shared/src/world/jungleBushes.ts`. Was TWO authored sets
   across fifteen walkable nodes, at identical coordinates and identical radii; now 15/15
@@ -169,7 +155,7 @@ on screen). The ramp says the ROCK changed, not just the light.
 - Dead code removed: both jungle templates, the dungeon set, `JUNGLE_NORMAL_TEMPLATES` and
   `JUNGLE_TREES_PER_NODE`.
 
-### Volcano (14 nodes) + Tundra (12 nodes) — DONE 2026-08-17, not yet visually reviewed
+### Volcano (14 nodes) + Tundra (12 nodes) — DONE 2026-08-17, reviewed and approved
 
 - **Volcanic lava is generated** — `shared/src/world/volcanicLakes.ts`. Was FOUR authored
   layouts across fourteen nodes (two alternating on the twelve walkable ones); now 14/14
@@ -201,7 +187,7 @@ on screen). The ramp says the ROCK changed, not just the light.
   as a baseline — swamp's reasoning). Tundra stays properly blue and dark, deliberately
   unlike mountain's pale desaturated grey-blue.
 
-### Wasteland (7 nodes) + Trench (7 nodes) — DONE 2026-08-17, not yet visually reviewed
+### Wasteland (7 nodes) + Trench (7 nodes) — DONE 2026-08-17, reviewed and approved
 
 - **Two premises were already true**, do not re-do them: wasteland props ALREADY sit on the
   ash (`avoidsDirt` on nothing, by design), and neither biome has any features at all.
@@ -326,18 +312,23 @@ check the markers still quantise onto distinct lines), not just the count.
 | Caverns / Caves | 21 | DONE — visually reviewed; **tints added 2026-08-16** (T2 teal, T3 violet) |
 | Plains | 12 | DONE — deliberately kept plain |
 | Forest | 12 | DONE |
-| Swamp | 21 | DONE (`5f09a2f`), never visually confirmed |
+| **Swamp** | 21 | DONE (`5f09a2f`) — **the one biome never visually confirmed** |
 | Mountain | 24 | DONE — visually reviewed |
-| **Desert** | 18 | **DONE 2026-08-16, NOT visually reviewed** |
-| **Jungle** | 18 | **DONE 2026-08-16, NOT visually reviewed** |
-| **Volcanic** | 14 | **DONE 2026-08-17, NOT visually reviewed** |
-| **Tundra** | 12 | **DONE 2026-08-17, NOT visually reviewed** |
-| **Wasteland** | 7 | **DONE 2026-08-17, NOT visually reviewed** |
-| **Trench** | 7 | **DONE 2026-08-17, NOT visually reviewed** |
+| Desert | 18 | DONE — reviewed and approved |
+| Jungle | 18 | DONE — reviewed and approved |
+| Volcanic | 14 | DONE — reviewed and approved |
+| Tundra | 12 | DONE — reviewed and approved |
+| Wasteland | 7 | DONE — reviewed and approved |
+| Trench | 7 | DONE — reviewed and approved |
 
-> **Correction (2026-08-16):** an earlier revision of this brief said mountain and caves were
-> not visually reviewed. The user confirms they were. What caves were actually missing was
-> **tints**, which is what this session added.
+> **CLOSED (2026-08-17):** every biome above has now been reviewed in-game and approved by
+> the user, with the single exception of **swamp** — committed early for safety before its
+> review happened, and never covered since. Treat swamp's numbers as provisional.
+>
+> This brief is therefore a HISTORICAL record rather than a live queue. Its value now is
+> traps 1-22 and the measured numbers; the living per-biome truth is
+> [`docs/terrain-variance-plan.md`](../terrain-variance-plan.md) §9, and §10 records what was
+> deliberately deferred.
 
 ---
 
