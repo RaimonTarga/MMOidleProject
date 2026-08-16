@@ -7,6 +7,7 @@ import type {
   AdminPlayerSummary,
   AdminWorldLogEntry,
   NodeTelemetrySnapshot,
+  BalanceLabSnapshot,
 } from '@mmo-idle/shared';
 
 export const connectedAtom = atom(false);
@@ -18,3 +19,4 @@ export const logsAtom = atom<AdminLogEntry[]>([]);
 export const worldLogAtom = atom<AdminWorldLogEntry[]>([]);
 export const telemetryAtom = atom<NodeTelemetrySnapshot | null>(null);
 export const actionResultsAtom = atom<AdminActionResult[]>([]);
+export const balanceLabAtom = atom<BalanceLabSnapshot | null>(null);

@@ -3,6 +3,7 @@ import type { WorldLogEvent } from './worldLogEvents';
 import type { EssenceType } from '../items';
 import type { EquippedAbilities } from '../abilities';
 import type { EquippedStances } from '../stances';
+import type { BalanceLabSnapshot } from '../systems/balanceLab';
 
 export type AdminLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
@@ -211,6 +212,7 @@ export interface AdminAnalyticsSnapshot {
 }
 
 export interface AdminServerToClientEvents {
+  'admin:balanceLab': (snapshot: BalanceLabSnapshot) => void;
   'admin:players': (players: AdminPlayerSummary[]) => void;
   'admin:characters': (characters: AdminCharacterRecord[]) => void;
   'admin:logs': (logs: AdminLogEntry[]) => void;
@@ -223,6 +225,7 @@ export interface AdminServerToClientEvents {
 }
 
 export interface AdminClientToServerEvents {
+  'admin:requestBalanceLab': () => void;
   'admin:requestPlayers': () => void;
   'admin:requestCharacters': () => void;
   'admin:requestLogs': (query: AdminLogQuery) => void;

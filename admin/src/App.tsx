@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type * as React from 'react';
 import { useAtomValue } from 'jotai';
-import { Activity, Database, Shield, Users } from 'lucide-react';
+import { Activity, Database, FlaskConical, Shield, Users } from 'lucide-react';
 import {
   connectedAtom,
   connectionErrorAtom,
@@ -16,6 +16,7 @@ import { LogsTab } from './tabs/LogsTab';
 import { OpsMapTab } from './tabs/OpsMapTab';
 import { PlayersTab } from './tabs/PlayersTab';
 import { WorldLogTab } from './tabs/WorldLogTab';
+import { BalanceLabTab } from './tabs/BalanceLabTab';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -64,6 +65,7 @@ export function App() {
         <TabsList>
           <TabsTrigger value="logs">Logs</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="balance"><FlaskConical className="mr-1 h-4 w-4" />Balance Lab</TabsTrigger>
           <TabsTrigger value="world-log">World Log</TabsTrigger>
           <TabsTrigger value="ops">Ops Map</TabsTrigger>
           <TabsTrigger value="players">Players</TabsTrigger>
@@ -72,6 +74,7 @@ export function App() {
         </TabsList>
         <TabsContent value="logs"><LogsTab /></TabsContent>
         <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
+        <TabsContent value="balance"><BalanceLabTab /></TabsContent>
         <TabsContent value="world-log"><WorldLogTab /></TabsContent>
         <TabsContent value="ops"><OpsMapTab /></TabsContent>
         <TabsContent value="players"><PlayersTab /></TabsContent>

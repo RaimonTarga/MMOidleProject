@@ -18,6 +18,7 @@ import {
   playersAtom,
   telemetryAtom,
   worldLogAtom,
+  balanceLabAtom,
 } from './state';
 
 type AdminSocket = Socket<AdminServerToClientEvents, AdminClientToServerEvents>;
@@ -47,6 +48,7 @@ export function connectAdminSocket(): void {
     store.set(connectionErrorAtom, err.message);
   });
   socket.on('admin:players', (players) => store.set(playersAtom, players));
+  socket.on('admin:balanceLab', (snapshot) => store.set(balanceLabAtom, snapshot));
   socket.on('admin:logs', (logs) => store.set(logsAtom, logs));
   socket.on('admin:worldLog', (entries) => store.set(worldLogAtom, entries));
   socket.on('admin:analytics', (snapshot) => store.set(analyticsAtom, snapshot));
@@ -69,6 +71,10 @@ export function disconnectAdminSocket(): void {
 
 export function requestPlayers(): void {
   socket?.emit('admin:requestPlayers');
+}
+
+export function requestBalanceLab(): void {
+  socket?.emit('admin:requestBalanceLab');
 }
 
 export function requestCharacters(): void {

@@ -10,6 +10,7 @@ import type {
   AdminLogQuery,
   AdminWorldLogQuery,
 } from '@mmo-idle/shared';
+import { buildBalanceLabSnapshot } from '@mmo-idle/shared';
 import type { DB } from '../db/playerRepo';
 import type { World } from '../world/World';
 import { log, recentAdminLogs, subscribeAdminLogs } from '../log';
@@ -38,6 +39,10 @@ export function registerAdminNamespace(
     AdminServerToClientEvents
   >;
   let latestTelemetry: NodeTelemetrySnapshot | null = null;
+  // Authored balance data is immutable for the lifetime of this server build.
+  // Build once during boot, before the simulation loop starts, so opening or
+  // refreshing the Lab can never spend hundreds of milliseconds on the tick.
+  const balanceLabSnapshot = buildBalanceLabSnapshot();
 
   // TODO: re-add admin authentication before exposing this beyond trusted dev use.
 
@@ -72,6 +77,10 @@ export function registerAdminNamespace(
         'admin:players',
         buildPlayerSummaries(world, sessionsBySocket, inactiveSockets),
       );
+    });
+
+    socket.on('admin:requestBalanceLab', () => {
+      socket.emit('admin:balanceLab', balanceLabSnapshot);
     });
 
     socket.on('admin:requestCharacters', () => {
