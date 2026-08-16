@@ -7,13 +7,17 @@ import type { AutocombatConfig } from "../components/core/networkedSlices";
 export const GAME_CONFIG = {
   /**
    * Logical pixel dimensions of a single node (the scrollable world area).
-   * Square since the node-size pass: a 4:3 node made vertical terrain variety
-   * cramped and gave north/south traversal a different feel to east/west.
-   * 3200 also divides evenly by both the 64px Wang ground cell and the 32px nav
-   * cell, which 2400 did not (2400/64 = 37.5 — see the clip mask in wangGround).
+   *
+   * Square, and 4800 on both axes. The first pass only squared the node by raising
+   * height 2400 -> 3200, which grew it 33% but left the WIDTH untouched — and width
+   * is the axis you actually read on a widescreen, so the node did not feel any
+   * bigger, just longer to walk north-south. Both axes now grow together.
+   *
+   * 4800 divides evenly by the 64px Wang ground cell (75) and the 32px nav cell
+   * (150), so no partial-cell clipping — see the clip mask note in wangGround.
    */
-  NODE_WIDTH: 3200,
-  NODE_HEIGHT: 3200,
+  NODE_WIDTH: 4800,
+  NODE_HEIGHT: 4800,
   /** Link's-Awakening-style map slide duration (ms). */
   MAP_SLIDE_MS: 600,
   /** Fraction of start→end screen distance the own player walks during a map slide. */
@@ -30,11 +34,13 @@ export const GAME_CONFIG = {
   PLAYER_SPEED: 120,
   /**
    * Maximum number of monsters alive in a node at any time. Fallback only —
-   * biomes set their own `mobDensity`. Raised 12 -> 16 alongside the square-node
-   * resize so per-AREA density (and therefore fight pacing) held steady while the
-   * node grew 33%.
+   * biomes set their own `mobDensity`.
+   *
+   * Scaled x1.5 with the 4800 node, NOT by the x2.25 area. Mobs are deliberately
+   * scaled sub-linearly so a bigger node reads as genuinely roomier to fight in;
+   * props and decor take the full area scale so the ground still looks dressed.
    */
-  MONSTERS_PER_NODE: 16,
+  MONSTERS_PER_NODE: 24,
 
   // ── Player base stats ────────────────────────────────────────────────────────
   PLAYER_MAX_HP: 100,

@@ -7,8 +7,8 @@ import type { TreeArtSet, TreeInstance } from "./trees";
 export const DEAD_TREE_CELL_PX = 1254;
 export const DEAD_TREE_DISPLAY_BASE = 500;
 export const DEAD_TREE_VARIANT_COUNT = 3;
-export const DEAD_TREES_PER_NODE = 4;
-export const DEAD_DUNGEON_TREES_PER_NODE = 3;
+export const DEAD_TREES_PER_NODE = 9;
+export const DEAD_DUNGEON_TREES_PER_NODE = 7;
 
 const TRUNKS: Readonly<Record<"tundra" | "wasteland", readonly HitboxRect[]>> = {
   tundra: [

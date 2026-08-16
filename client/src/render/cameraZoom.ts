@@ -2,14 +2,22 @@ import { isMobileViewport } from '../breakpoints';
 
 /**
  * World width (px) a mobile viewport should show regardless of device size.
- * Nodes are 3200px square; a phone at zoom 1 would frame ~400px of that, which
+ * Nodes are 4800px square; a phone at zoom 1 would frame ~400px of that, which
  * is a keyhole. Fitting a fixed slice instead means a small phone and a large
- * tablet frame the same amount of fight.
+ * tablet frame the same amount of fight. Scaled x1.5 with the node so mobile keeps
+ * a comparable share of it, though the floor below binds on most phones.
  */
-export const MOBILE_TARGET_VIEW_WIDTH = 900;
+export const MOBILE_TARGET_VIEW_WIDTH = 1350;
 
-/** Never shrink sprites below half size — past that, pixel art stops reading. */
-export const MIN_CAMERA_ZOOM = 0.5;
+/**
+ * Zoom floor. Raised out to 0.4 with the 4800 node: at the old 0.5 floor a phone
+ * framed 800x1600, which is 5.5% of a 4800² node — a keyhole. 0.4 frames 1000x2000.
+ *
+ * This is a stopgap, not a solution. Both numbers are guesses pending a proper
+ * mobile UI pass; the real fix is likely a mobile-specific HUD and camera rather
+ * than a scalar on the desktop one.
+ */
+export const MIN_CAMERA_ZOOM = 0.4;
 
 /**
  * Camera zoom for the current viewport.

@@ -106,6 +106,20 @@ export type ResolvedNodeFeature = NodeFeatureSpec & { shape: NodeFeatureShape };
 /** Shared id for the Clearing/sanctuary rune altar (client decor + server gating). */
 export const RUNE_ALTAR_FEATURE_ID = "rune_altar";
 
+/**
+ * How large the rune altar draws.
+ *
+ * The altar sits EXACTLY on the node centre, which is also the player spawn — so
+ * you arrive standing on it. It carries no `blocksMovement`, so occupying the same
+ * ground is fine, and the plaza is built around that single shared centre point.
+ *
+ * A fraction of the node rather than a flat number: the original literal `560` was
+ * authored against a 3200x2400 node and was silently missed by both resizes. The
+ * fraction below reproduces that same 560px at today's 4800 node — the intended
+ * size — while tracking any future resize on its own.
+ */
+export const RUNE_ALTAR_SIZE = GAME_CONFIG.NODE_WIDTH * 0.11667;
+
 export function resolveFeatureShape(spec: NodeFeatureSpec): NodeFeatureShape {
   if (spec.shape) return spec.shape;
   const scale = spec.hitboxScale ?? DEFAULT_HITBOX_SCALE;
@@ -252,12 +266,12 @@ function rockLedge(
 // once asymmetric (top 280 vs left 430) purely to track the old 4:3 footprint;
 // with NODE_HEIGHT == NODE_WIDTH the same inset on every side is what keeps the
 // guarded ascent reading as a ring rather than a corridor.
-const MOUNTAIN_OUTER_INSET = 430;
+const MOUNTAIN_OUTER_INSET = 645;
 const MOUNTAIN_OUTER_LEFT = MOUNTAIN_OUTER_INSET;
 const MOUNTAIN_OUTER_RIGHT = GAME_CONFIG.NODE_WIDTH - MOUNTAIN_OUTER_LEFT;
 const MOUNTAIN_OUTER_TOP = MOUNTAIN_OUTER_INSET;
 const MOUNTAIN_OUTER_BOTTOM = GAME_CONFIG.NODE_HEIGHT - MOUNTAIN_OUTER_TOP;
-const MOUNTAIN_INNER_INSET = 900;
+const MOUNTAIN_INNER_INSET = 1350;
 const MOUNTAIN_INNER_LEFT = MOUNTAIN_INNER_INSET;
 const MOUNTAIN_INNER_RIGHT = GAME_CONFIG.NODE_WIDTH - MOUNTAIN_INNER_LEFT;
 const MOUNTAIN_INNER_TOP = MOUNTAIN_INNER_INSET;
@@ -265,11 +279,12 @@ const MOUNTAIN_INNER_BOTTOM = GAME_CONFIG.NODE_HEIGHT - MOUNTAIN_INNER_TOP;
 /**
  * The procedural ledge renderer no longer relies on Wang-grid coverage, so the
  * collision band can hug the visible cliff face instead of reserving a broad
- * invisible strip on both sides. Two nav cells remain enough for robust walls.
+ * invisible strip on both sides. Scaled with the node to 3 nav cells (96px) so the
+ * rock face keeps its proportion; two cells was already enough for robust walls.
  */
-export const MOUNTAIN_LEDGE_THICKNESS = 64;
+export const MOUNTAIN_LEDGE_THICKNESS = 96;
 /** Hold posts keep the same clearance from the rock face across thickness changes. */
-const MOUNTAIN_LEDGE_HOLD_OFFSET = MOUNTAIN_LEDGE_THICKNESS / 2 + 38;
+const MOUNTAIN_LEDGE_HOLD_OFFSET = MOUNTAIN_LEDGE_THICKNESS / 2 + 57;
 const MOUNTAIN_SIDE_ENTRANCE_FRAC = 0.24;
 const MOUNTAIN_CORNER_ENTRANCE_FRAC = 0.16;
 
@@ -346,7 +361,7 @@ export function mountainLedgePatrolForPost(post: Vec2): Vec2[] {
     Math.abs(post.y - (MOUNTAIN_OUTER_BOTTOM - off)) < 4 ||
     Math.abs(post.y - (MOUNTAIN_INNER_TOP - off)) < 4 ||
     Math.abs(post.y - (MOUNTAIN_INNER_BOTTOM + off)) < 4;
-  const span = 190;
+  const span = 285;
   return nearHorizontal
     ? [
         { x: post.x - span, y: post.y },
@@ -380,10 +395,10 @@ function mountainEntrancePoint(
   wobble: number,
 ): Vec2 {
   const b = mountainRingBounds(ring);
-  const inset = ring === "outer" ? 118 : 92;
+  const inset = ring === "outer" ? 177 : 138;
   const dx = (wobble % 3 - 1) * 18;
   const dy = ((wobble + 1) % 3 - 1) * 18;
-  const innerOffset = ring === "inner" ? 260 + wobble * 12 : 0;
+  const innerOffset = ring === "inner" ? 390 + wobble * 18 : 0;
   switch (entrance) {
     case "north":
       return { x: (b.left + b.right) / 2 + dx + innerOffset, y: b.top + inset };
@@ -628,9 +643,10 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
     {
       id: RUNE_ALTAR_FEATURE_ID,
       x: GAME_CONFIG.NODE_WIDTH / 2,
-      y: GAME_CONFIG.NODE_HEIGHT / 2 - 320,
-      displayW: 560,
-      displayH: 560,
+      // Dead centre — the player spawn point sits on top of the altar by design.
+      y: GAME_CONFIG.NODE_HEIGHT / 2,
+      displayW: RUNE_ALTAR_SIZE,
+      displayH: RUNE_ALTAR_SIZE,
       hitboxScale: 0.7,
       hitboxKind: "ellipse",
       hitboxHeightScale: 0.62,
@@ -662,104 +678,104 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
   // lanes between them. Hazard-aware movement is the read; dot-resistance /
   // cleanse / regen is the build answer. Pool count stays restrained by tier.
   "node-6-5": [
-    rotPool("rot_pool_a", 760, 907, 240),
-    rotPool("rot_pool_b", 2030, 1387, 310),
-    rotPool("rot_pool_c", 1260, 2373, 260),
-    rotPool("rot_pool_d", 2680, 2347, 150),
-    rotPool("rot_pool_e", 430, 2027, 170),
+    rotPool("rot_pool_a", 1140, 1360, 360),
+    rotPool("rot_pool_b", 3045, 2080, 465),
+    rotPool("rot_pool_c", 1890, 3560, 390),
+    rotPool("rot_pool_d", 4020, 3520, 225),
+    rotPool("rot_pool_e", 645, 3040, 255),
   ],
   "node-6-6": [
-    rotPool("rot_pool_a", 820, 960, 300),
-    rotPool("rot_pool_b", 2350, 1013, 240),
-    rotPool("rot_pool_c", 1500, 2200, 320),
-    rotPool("rot_pool_d", 520, 2320, 160),
-    rotPool("rot_pool_e", 2660, 1920, 180),
+    rotPool("rot_pool_a", 1230, 1440, 450),
+    rotPool("rot_pool_b", 3525, 1520, 360),
+    rotPool("rot_pool_c", 2250, 3300, 480),
+    rotPool("rot_pool_d", 780, 3480, 240),
+    rotPool("rot_pool_e", 3990, 2880, 270),
   ],
   // SWAMP T1 dungeon (node-7-4, Grave Toadeater) — the boss exam is a hazard field:
   // pools ring the arena (center left clear for the boss), so "survive the rot"
   // pressures positioning during the fight too.
   "node-7-4": [
-    rotPool("boss_rot_a", 900, 1067, 250),
-    rotPool("boss_rot_b", 2300, 1200, 300),
-    rotPool("boss_rot_c", 1600, 2373, 270),
-    rotPool("boss_rot_d", 620, 2213, 150),
+    rotPool("boss_rot_a", 1350, 1600, 375),
+    rotPool("boss_rot_b", 3450, 1800, 450),
+    rotPool("boss_rot_c", 2400, 3560, 405),
+    rotPool("boss_rot_d", 930, 3320, 225),
   ],
   "node-7-5": [
-    rotPool("rot_pool_a", 620, 1920, 280),
-    rotPool("rot_pool_b", 1700, 827, 230),
-    rotPool("rot_pool_c", 2500, 2160, 310),
-    rotPool("rot_pool_d", 840, 693, 160),
-    rotPool("rot_pool_e", 1740, 2480, 170),
+    rotPool("rot_pool_a", 930, 2880, 420),
+    rotPool("rot_pool_b", 2550, 1240, 345),
+    rotPool("rot_pool_c", 3750, 3240, 465),
+    rotPool("rot_pool_d", 1260, 1040, 240),
+    rotPool("rot_pool_e", 2610, 3720, 255),
   ],
   "node-7-6": [
-    rotPool("rot_pool_a", 1020, 693, 220),
-    rotPool("rot_pool_b", 2460, 1387, 330),
-    rotPool("rot_pool_c", 1180, 2507, 270),
-    rotPool("rot_pool_d", 480, 1573, 150),
-    rotPool("rot_pool_e", 2060, 2453, 170),
+    rotPool("rot_pool_a", 1530, 1040, 330),
+    rotPool("rot_pool_b", 3690, 2080, 495),
+    rotPool("rot_pool_c", 1770, 3760, 405),
+    rotPool("rot_pool_d", 720, 2360, 225),
+    rotPool("rot_pool_e", 3090, 3680, 255),
   ],
   "node-7-7": [
-    rotPool("rot_pool_a", 740, 1200, 300, 3),
-    rotPool("rot_pool_b", 1660, 2067, 250, 3),
-    rotPool("rot_pool_c", 2600, 773, 270, 3),
-    rotPool("rot_pool_d", 650, 2453, 160, 3),
-    rotPool("rot_pool_e", 2420, 2347, 150, 3),
+    rotPool("rot_pool_a", 1110, 1800, 450, 3),
+    rotPool("rot_pool_b", 2490, 3100, 375, 3),
+    rotPool("rot_pool_c", 3900, 1160, 405, 3),
+    rotPool("rot_pool_d", 975, 3680, 240, 3),
+    rotPool("rot_pool_e", 3630, 3520, 225, 3),
   ],
   "node-8-4": [
-    rotPool("rot_pool_a", 860, 827, 260, 2),
-    rotPool("rot_pool_b", 1600, 2000, 310, 2),
-    rotPool("rot_pool_c", 2550, 1387, 230, 2),
-    rotPool("rot_pool_d", 520, 2160, 180, 2),
-    rotPool("rot_pool_e", 2200, 2453, 150, 2),
+    rotPool("rot_pool_a", 1290, 1240, 390, 2),
+    rotPool("rot_pool_b", 2400, 3000, 465, 2),
+    rotPool("rot_pool_c", 3825, 2080, 345, 2),
+    rotPool("rot_pool_d", 780, 3240, 270, 2),
+    rotPool("rot_pool_e", 3300, 3680, 225, 2),
   ],
   "node-8-5": [
-    rotPool("rot_pool_a", 560, 1467, 240, 2),
-    rotPool("rot_pool_b", 1840, 1013, 320, 2),
-    rotPool("rot_pool_c", 2400, 2453, 260, 2),
-    rotPool("rot_pool_d", 980, 2453, 160, 2),
-    rotPool("rot_pool_e", 2650, 1040, 150, 2),
+    rotPool("rot_pool_a", 840, 2200, 360, 2),
+    rotPool("rot_pool_b", 2760, 1520, 480, 2),
+    rotPool("rot_pool_c", 3600, 3680, 390, 2),
+    rotPool("rot_pool_d", 1470, 3680, 240, 2),
+    rotPool("rot_pool_e", 3975, 1560, 225, 2),
   ],
   "node-8-6": [
-    rotPool("boss_rot_a", 760, 1013, 280, 2),
-    rotPool("boss_rot_b", 2400, 1013, 260, 2),
-    rotPool("boss_rot_c", 1600, 2373, 300, 2),
-    rotPool("boss_rot_d", 620, 2213, 160, 2),
-    rotPool("boss_rot_e", 2600, 2213, 150, 2),
+    rotPool("boss_rot_a", 1140, 1520, 420, 2),
+    rotPool("boss_rot_b", 3600, 1520, 390, 2),
+    rotPool("boss_rot_c", 2400, 3560, 450, 2),
+    rotPool("boss_rot_d", 930, 3320, 240, 2),
+    rotPool("boss_rot_e", 3900, 3320, 225, 2),
   ],
   "node-8-7": [
-    rotPool("rot_pool_a", 980, 2240, 290, 3),
-    rotPool("rot_pool_b", 1720, 693, 240, 3),
-    rotPool("rot_pool_c", 2460, 2373, 270, 3),
-    rotPool("rot_pool_d", 540, 1013, 160, 3),
-    rotPool("rot_pool_e", 2720, 1067, 150, 3),
+    rotPool("rot_pool_a", 1470, 3360, 435, 3),
+    rotPool("rot_pool_b", 2580, 1040, 360, 3),
+    rotPool("rot_pool_c", 3690, 3560, 405, 3),
+    rotPool("rot_pool_d", 810, 1520, 240, 3),
+    rotPool("rot_pool_e", 4080, 1600, 225, 3),
   ],
   "node-9-4": [
-    rotPool("boss_rot_a", 820, 1227, 300, 3),
-    rotPool("boss_rot_b", 2320, 1093, 250, 3),
-    rotPool("boss_rot_c", 1660, 2293, 280, 3),
-    rotPool("boss_rot_d", 520, 2320, 150, 3),
-    rotPool("boss_rot_e", 2660, 2053, 160, 3),
+    rotPool("boss_rot_a", 1230, 1840, 450, 3),
+    rotPool("boss_rot_b", 3480, 1640, 375, 3),
+    rotPool("boss_rot_c", 2490, 3440, 420, 3),
+    rotPool("boss_rot_d", 780, 3480, 225, 3),
+    rotPool("boss_rot_e", 3990, 3080, 240, 3),
   ],
   "node-9-5": [
-    rotPool("rot_pool_a", 720, 853, 230, 3),
-    rotPool("rot_pool_b", 1400, 2267, 320, 3),
-    rotPool("rot_pool_c", 2600, 1253, 280, 3),
-    rotPool("rot_pool_d", 520, 2107, 170, 3),
-    rotPool("rot_pool_e", 1960, 693, 150, 3),
+    rotPool("rot_pool_a", 1080, 1280, 345, 3),
+    rotPool("rot_pool_b", 2100, 3400, 480, 3),
+    rotPool("rot_pool_c", 3900, 1880, 420, 3),
+    rotPool("rot_pool_d", 780, 3160, 255, 3),
+    rotPool("rot_pool_e", 2940, 1040, 225, 3),
   ],
   "node-9-6": [
-    rotPool("rot_pool_a", 940, 1840, 310, 3),
-    rotPool("rot_pool_b", 1800, 880, 250, 3),
-    rotPool("rot_pool_c", 2500, 2373, 230, 3),
-    rotPool("rot_pool_d", 540, 827, 150, 3),
-    rotPool("rot_pool_e", 1510, 2613, 160, 3),
+    rotPool("rot_pool_a", 1410, 2760, 465, 3),
+    rotPool("rot_pool_b", 2700, 1320, 375, 3),
+    rotPool("rot_pool_c", 3750, 3560, 345, 3),
+    rotPool("rot_pool_d", 810, 1240, 225, 3),
+    rotPool("rot_pool_e", 2265, 3920, 240, 3),
   ],
   "node-9-7": [
-    rotPool("rot_pool_a", 620, 2347, 270, 3),
-    rotPool("rot_pool_b", 1540, 1093, 300, 3),
-    rotPool("rot_pool_c", 2480, 827, 250, 3),
-    rotPool("rot_pool_d", 820, 827, 160, 3),
-    rotPool("rot_pool_e", 2360, 2373, 170, 3),
+    rotPool("rot_pool_a", 930, 3520, 405, 3),
+    rotPool("rot_pool_b", 2310, 1640, 450, 3),
+    rotPool("rot_pool_c", 3720, 1240, 375, 3),
+    rotPool("rot_pool_d", 1230, 1240, 240, 3),
+    rotPool("rot_pool_e", 3540, 3560, 255, 3),
   ],
   // JUNGLE — "ambush ecology": dense overgrowth thickets that slow the player and
   // multiply every monster's detection radius while they are inside, so stepping into
@@ -767,23 +783,23 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
   // are the safe read (the ground layout routes its open floor around the thickets);
   // evasion + hardening is the build answer. Non-blocking → no passability concern.
   "node-3-7": [
-    denseBush("jungle_bush_a", 820, 960, 300),
-    denseBush("jungle_bush_b", 2360, 1040, 280),
-    denseBush("jungle_bush_c", 1600, 2293, 320),
-    denseBush("jungle_bush_d", 2420, 2400, 260),
+    denseBush("jungle_bush_a", 1230, 1440, 450),
+    denseBush("jungle_bush_b", 3540, 1560, 420),
+    denseBush("jungle_bush_c", 2400, 3440, 480),
+    denseBush("jungle_bush_d", 3630, 3600, 390),
   ],
   "node-3-8": [
-    denseBush("jungle_bush_a", 760, 1067, 300),
-    denseBush("jungle_bush_b", 2300, 2187, 300),
-    denseBush("jungle_bush_c", 1500, 1013, 260),
+    denseBush("jungle_bush_a", 1140, 1600, 450),
+    denseBush("jungle_bush_b", 3450, 3280, 450),
+    denseBush("jungle_bush_c", 2250, 1520, 390),
   ],
   // JUNGLE T2 dungeon (node-2-8, Jungle Dread-Gorger) — the boss exam adds an ambush
   // layer: thickets ring the arena (center clear for the boss) so the pack adds the
   // boss summons can melt into cover and the "survive the ambush" pressure persists.
   "node-2-8": [
-    denseBush("boss_bush_a", 900, 1093, 280),
-    denseBush("boss_bush_b", 2300, 1200, 280),
-    denseBush("boss_bush_c", 1640, 2347, 300),
+    denseBush("boss_bush_a", 1350, 1640, 420),
+    denseBush("boss_bush_b", 3450, 1800, 420),
+    denseBush("boss_bush_c", 2460, 3520, 450),
   ],
   // VOLCANIC T3 (node-7-8, node-8-8) — "escalating heat": a node-wide ambient ramp
   // (the soft timer — climbs while you fight, sheds when you disengage/leave) layered
@@ -793,16 +809,16 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
   // can only win by ending it. Non-blocking → no passability concern.
   "node-7-8": [
     volcanicHeat("volcanic_heat"),
-    lavaVent("lava_vent_a", 820, 960, 280),
-    lavaVent("lava_vent_b", 2360, 1093, 260),
-    lavaVent("lava_vent_c", 1560, 2267, 300),
-    lavaVent("lava_vent_d", 2440, 2373, 240),
+    lavaVent("lava_vent_a", 1230, 1440, 420),
+    lavaVent("lava_vent_b", 3540, 1640, 390),
+    lavaVent("lava_vent_c", 2340, 3400, 450),
+    lavaVent("lava_vent_d", 3660, 3560, 360),
   ],
   "node-8-8": [
     volcanicHeat("volcanic_heat"),
-    lavaVent("lava_vent_a", 760, 1120, 280),
-    lavaVent("lava_vent_b", 2300, 2187, 280),
-    lavaVent("lava_vent_c", 1520, 1013, 240),
+    lavaVent("lava_vent_a", 1140, 1680, 420),
+    lavaVent("lava_vent_b", 3450, 3280, 420),
+    lavaVent("lava_vent_c", 2280, 1520, 360),
   ],
   // VOLCANIC T3 dungeon (node-8-9, Cinder-Shell Magma-Salamander) + T4 dungeon
   // (node-10-10, Caldera Sovereign) — the heat soft-timer becomes the boss exam: the
@@ -810,15 +826,15 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
   // a slow attrition kill walks into the damage cap on a boss that is itself ramping.
   "node-8-9": [
     volcanicHeat("volcanic_heat"),
-    lavaVent("boss_vent_a", 900, 1067, 260),
-    lavaVent("boss_vent_b", 2300, 1173, 260),
-    lavaVent("boss_vent_c", 1620, 2347, 280),
+    lavaVent("boss_vent_a", 1350, 1600, 390),
+    lavaVent("boss_vent_b", 3450, 1760, 390),
+    lavaVent("boss_vent_c", 2430, 3520, 420),
   ],
   "node-10-10": [
     volcanicHeat("volcanic_heat"),
-    lavaVent("boss_vent_a", 880, 1093, 280),
-    lavaVent("boss_vent_b", 2320, 1200, 280),
-    lavaVent("boss_vent_c", 1600, 2373, 300),
+    lavaVent("boss_vent_a", 1320, 1640, 420),
+    lavaVent("boss_vent_b", 3480, 1800, 420),
+    lavaVent("boss_vent_c", 2400, 3560, 450),
   ],
   "node-10-0": [
     {

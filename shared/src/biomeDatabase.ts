@@ -51,7 +51,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x101a10,
     monsterPoolByTier: { 0: ['tiny-slime'] },
     essenceType: 'essence',
-    mobDensity: 16,
+    mobDensity: 24,
   }],
 
   ['sanctuary', {
@@ -86,7 +86,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['apex-timberclaw'],
     },
     essenceType: 'essence',
-    mobDensity: 24,
+    mobDensity: 36,
   }],
 
   // MOUNTAIN — rare HUGE hits that trip the damage cap; slow + charge to connect.
@@ -107,7 +107,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['iron-crest-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 16,
+    mobDensity: 24,
   }],
 
   // PLAINS — swarm of small, fast, low-per-hit mobs; volume is the threat.
@@ -125,7 +125,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['gorging-razortusk'],
     },
     essenceType: 'essence',
-    mobDensity: 32,
+    mobDensity: 48,
   }],
 
   // SWAMP — trivial direct damage, heavy stacking DoT; attrition. Dot-resist's
@@ -144,7 +144,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       3: ['rot-spore-croc-behemoth']
     },
     essenceType: 'essence',
-    mobDensity: 13,
+    mobDensity: 20,
   }],
 
   // CAVE — few ELITE mobs, MIXED shapes (fast / bruiser / ranged), real DR +
@@ -164,7 +164,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       3: ['deep-core-burrow-gorger'],
     },
     essenceType: 'essence',
-    mobDensity: 11,
+    mobDensity: 16,
   }],
 
   // ── T2+ biomes (not available at T1) ──────────────────────────────────────
@@ -187,10 +187,13 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     // Jungle bills itself as the Forest successor and a SWARM biome, but sat below
     // Forest (18). Raised past it: the biome now groups fights through terrain rather
     // than packs, so the mobs that used to arrive clumped three-at-a-time are spread
-    // out and the node read thin. At 27 on a 3200x3200 node the mean spacing is ~615px,
-    // so a thicket's doubled detection (480-580px) gathers roughly three mobs — a
-    // fight, not a wipe. Balance-pass number: this is the dial to turn.
-    mobDensity: 27,
+    // out and the node read thin. At 40 on a 4800x4800 node the mean spacing is ~759px.
+    // NOTE this drifted with the 4800 resize: mobs scale x1.5 while area scales x2.25,
+    // so spacing widened from ~615px while a thicket's doubled detection (480-580px,
+    // derived from unscaled monster pullRange) did not. A thicket now gathers closer to
+    // two mobs than three. Raise this, or the bush radius, if ambushes read as toothless.
+    // Balance-pass number: this is the dial to turn.
+    mobDensity: 40,
   }],
 
   ['tundra', {
@@ -205,7 +208,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['glacial-patriarch'],
     },
     essenceType: 'essence',
-    mobDensity: 11,
+    mobDensity: 16,
   }],
 
   // DESERT (debuts T2) — the LOW-density "standoff": few tough, debuff-laden
@@ -225,7 +228,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['dune-throne-sovereign'],
     },
     essenceType: 'essence',
-    mobDensity: 11,
+    mobDensity: 16,
   }],
 
   // Volcanic first appears at T3 — not available in T1 or T2 zones.
@@ -241,7 +244,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['caldera-sovereign'],
     },
     essenceType: 'essence',
-    mobDensity: 24,
+    mobDensity: 36,
   }],
 
   // GRAVEYARD (T4) — EXTREME-high-density weak undead swarm; plague/contagion
@@ -256,7 +259,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['charnel-crown-sovereign'],
     },
     essenceType: 'essence',
-    mobDensity: 27,
+    mobDensity: 40,
   }],
 
   // DEEP-SEA TRENCH (T4) — EXTREME-low-density rare abyssal terrors; execute /
@@ -272,7 +275,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['elder-trench-serpent'],
     },
     essenceType: 'essence',
-    mobDensity: 7,
+    mobDensity: 10,
   }],
 
   // ABYSS (T4) — the Void Overlord's throne. Has NO ambient monsters: the only
