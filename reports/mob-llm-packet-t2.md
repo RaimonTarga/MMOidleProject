@@ -6,7 +6,7 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier 2.
 - Reference players are tier 3 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
-- Reference player DPS is **direct-hit only** (class empowered/cadence/DoT mechanics omitted) → boss TTK is an UPPER bound. Shields/soft-caps extend TTK further. Cross-check the DPS packet for real clear speed.
+- Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
 - TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 21 mobs; tier avg HP 295, avg total DPS 21.0.
 
@@ -14,10 +14,10 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 | Player | Gear | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Entry (prev-tier +3) | T2 +3 | 229 | 24.8 | 9.67% | 16.5% | 90.3 | 1.27 |
-| Same-tier +0 | T3 +0 | 240 | 25.1 | 10.7% | 12.1% | 104 | 1.02 |
-| Same-tier +3 | T3 +3 | 295 | 37.1 | 11.5% | 13.7% | 151 | 1.02 |
-| Boss-ready (tankiest +3) | T3 +3 | 325 | 35.4 | 6.39% | 6.78% | 151 | 1.02 |
+| Entry (prev-tier +3) | T2 +3 | 229 | 24.8 | 9.67% | 16.5% | 88.6 | 1.22 |
+| Same-tier +0 | T3 +0 | 240 | 25.1 | 10.7% | 12.1% | 103 | 0.98 |
+| Same-tier +3 | T3 +3 | 295 | 37.1 | 11.5% | 13.7% | 150 | 0.98 |
+| Boss-ready (tankiest +3) | T3 +3 | 325 | 35.4 | 6.39% | 6.78% | 150 | 0.98 |
 
 
 ## Cross-Biome Threat & Reward
@@ -119,17 +119,17 @@ _Per-biome aggregates for biome tier 2. "Hardest hitter" uses raw direct DPS; "t
 
 ## Boss / Elite Table
 
-_Bosses for biome tier 2 vs the boss-ready reference player (T3 +3). TTK is an UPPER bound from direct-hit DPS only (class empowered/DoT mechanics omitted; shields/soft-caps extend it). TTL is player survival with no recovery modeled._
+_Bosses for biome tier 2 vs the boss-ready reference player (T3 +3). TTK uses the shared class-aware planning estimator; T3 specs, abilities, and shields/soft-caps remain unmodeled. TTL is player survival with no recovery modeled._
 
 | Boss | Biome | HP | Attack profile | Raw DPS | Spike | Defenses | Expected TTK | Player TTL | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Chitinous Dreadbore | Caverns | 3500 | 65.0 @ 0.28 aps | 18.1 | ×1.60 | plate 12.0, DR 12.0% | 27.3s | 42.2s | Safe | - |
-| Dune-Stalker Emperor | Desert | 3000 | 40.0 @ 0.38 aps | 15.4 | ×1.20 | plate 12.0, DR 8.00% | 22.3s | 213s | Safe | - |
-| Apex Timberclaw | Forest | 3000 | 30.0 @ 0.67 aps | 20.0 | ×1.15 | plate 0.00, DR 0.00% | 19.0s | 492s | Safe | - |
-| Jungle Dread-Gorger | Jungle | 2900 | 40.0 @ 0.42 aps | 16.7 | ×1.10 | plate 0.00, DR 3.00% | 18.9s | 197s | Safe | - |
-| Stoneplate Juggernaut | Mountain | 4000 | 60.0 @ 0.24 aps | 14.3 | ×1.60 | plate 10.0, DR 5.00% | 28.5s | 59.9s | Safe | - |
-| Gorging Razortusk | Plains | 3200 | 45.0 @ 0.45 aps | 20.5 | ×1.30 | plate 8.00, DR 5.00% | 22.5s | 80.2s | Safe | - |
-| Mire-Gorged Behemoth | Swamp | 2700 | 18.0 @ 0.36 aps | 22.4 | ×1.60 | plate 6.00, DR 8.00% | 19.4s | 19.9s | Risky | - |
+| Chitinous Dreadbore | Caverns | 3500 | 65.0 @ 0.28 aps | 18.1 | ×1.60 | plate 12.0, DR 12.0% | 23.4s | 42.2s | Safe | - |
+| Dune-Stalker Emperor | Desert | 3000 | 40.0 @ 0.38 aps | 15.4 | ×1.20 | plate 12.0, DR 8.00% | 19.3s | 213s | Safe | - |
+| Apex Timberclaw | Forest | 3000 | 30.0 @ 0.67 aps | 20.0 | ×1.15 | plate 0.00, DR 0.00% | 16.2s | 492s | Safe | - |
+| Jungle Dread-Gorger | Jungle | 2900 | 40.0 @ 0.42 aps | 16.7 | ×1.10 | plate 0.00, DR 3.00% | 16.0s | 197s | Safe | - |
+| Stoneplate Juggernaut | Mountain | 4000 | 60.0 @ 0.24 aps | 14.3 | ×1.60 | plate 10.0, DR 5.00% | 24.6s | 59.9s | Safe | - |
+| Gorging Razortusk | Plains | 3200 | 45.0 @ 0.45 aps | 20.5 | ×1.30 | plate 8.00, DR 5.00% | 19.3s | 80.2s | Safe | - |
+| Mire-Gorged Behemoth | Swamp | 2700 | 18.0 @ 0.36 aps | 22.4 | ×1.60 | plate 6.00, DR 8.00% | 16.5s | 19.9s | Risky | - |
 
 ## Mob / Boss Diagnostic Signals
 

@@ -28,7 +28,8 @@
  * effects, target defences and cooldown drift that no closed-form estimate can
  * see. Deliberately excluded rather than guessed at:
  *
- * - enemy plating and damage reduction (this is damage DEALT, pre-mitigation);
+ * - enemy plating and damage reduction for the character panel (report callers
+ *   may supply a target when they need a matchup estimate);
  * - the T4 spec behaviours (rampage stacks, crescendo ramps, storm DoTs, ...),
  *   which depend on combat state that does not exist outside a fight;
  * - abilities, relic delivery changes, and anything with an uptime that depends
@@ -46,6 +47,12 @@ import { resolveEnergyMax } from './energyMax';
 import { resolveDotClassProfile } from './dotClassProfile';
 import { resolveSummonerProfile, type SummonerProfileInput } from './summonerProfile';
 import { summonerSpecializationFor, type SummonerFrame } from '../data/summoner';
+import { estimatePlayerHitDamage } from './combatEstimates';
+
+export interface DpsEstimateTarget {
+  plating: number;
+  damageReduction: number;
+}
 
 export interface DpsEstimateInput {
   /** Final attack stat, after gear, cores and the skill tree. */
@@ -77,6 +84,13 @@ export interface DpsEstimateInput {
    * holding a weapon they are allowed to use.
    */
   cannotAttack?: boolean;
+  /**
+   * Optional target for report/tooling callers. The character panel leaves this
+   * unset and receives the familiar pre-mitigation planning number; balance
+   * reports provide it so every archetype is compared against the same authored
+   * monster defences.
+   */
+  target?: DpsEstimateTarget;
 }
 
 export interface DpsEstimatePart {
@@ -86,7 +100,7 @@ export interface DpsEstimatePart {
 }
 
 export interface DpsEstimate {
-  /** Estimated damage per second dealt, before the target's defences. */
+  /** Estimated DPS, pre-mitigation unless the input supplies a target. */
   total: number;
   /** Named contributions. These sum to `total`. */
   parts: DpsEstimatePart[];
@@ -96,16 +110,45 @@ export interface DpsEstimate {
 
 const round1 = (n: number): number => Math.round(n * 10) / 10;
 
-/** Shared by every archetype: what a plain swing is worth, per second. */
-function autoAttackDps(input: DpsEstimateInput): number {
-  const cd = Math.max(1, input.attackCooldownMs);
-  return ((input.attack + input.onHitDamage) * 1000) / cd;
+/** Attack-derived damage after optional target mitigation (flat on-hit is later). */
+function attackDamage(
+  input: DpsEstimateInput,
+  attack: number,
+  platingMult = 1,
+): number {
+  if (!input.target) return attack;
+  return estimatePlayerHitDamage({
+    attack,
+    onHitDamage: 0,
+    targetPlating: input.target.plating,
+    targetDamageReduction: input.target.damageReduction,
+    platingMult,
+  });
 }
 
-const GENERIC_CAVEATS = [
-  'Before the target’s plating and damage reduction.',
-  'Excludes abilities, and spec behaviours that only exist mid-fight.',
-];
+function hitDamage(
+  input: DpsEstimateInput,
+  attack: number,
+  onHitDamage: number,
+  platingMult = 1,
+): number {
+  return attackDamage(input, attack, platingMult) + Math.max(0, onHitDamage);
+}
+
+/** Shared by every archetype: what a plain swing is worth, per second. */
+function autoAttackDps(input: DpsEstimateInput, platingMult = 1): number {
+  const cd = Math.max(1, input.attackCooldownMs);
+  return (hitDamage(input, input.attack, input.onHitDamage, platingMult) * 1000) / cd;
+}
+
+function genericCaveats(input: DpsEstimateInput): string[] {
+  return [
+    input.target
+      ? 'Includes the supplied target’s plating and damage reduction; DoT still bypasses them.'
+      : 'Before the target’s plating and damage reduction.',
+    'Excludes abilities, and spec behaviours that only exist mid-fight.',
+  ];
+}
 
 /**
  * Estimate sustained damage per second for a build.
@@ -117,7 +160,7 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
   const cdSec = Math.max(1, input.attackCooldownMs) / 1000;
   const auto = autoAttackDps(input);
   const parts: DpsEstimatePart[] = [];
-  const caveats: string[] = [...GENERIC_CAVEATS];
+  const caveats = genericCaveats(input);
 
   const empowered = resolveEmpoweredMultiplier(
     input.passives,
@@ -140,11 +183,11 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       const cycleSec = threshold * cdSec;
       parts.push({
         label: 'Regular attacks',
-        dps: (regularHits * (input.attack + input.onHitDamage)) / cycleSec,
+        dps: (regularHits * hitDamage(input, input.attack, input.onHitDamage)) / cycleSec,
       });
       parts.push({
         label: `Finisher (every ${threshold})`,
-        dps: (input.attack * mult + input.onHitDamage) / cycleSec,
+        dps: hitDamage(input, input.attack * mult, input.onHitDamage) / cycleSec,
       });
       break;
     }
@@ -157,7 +200,7 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       parts.push({ label: 'Regular attacks', dps: auto });
       parts.push({
         label: `Execution (every ${round1(executionCdMs / 1000)}s)`,
-        dps: (input.attack * mult) / (executionCdMs / 1000),
+        dps: attackDamage(input, input.attack * mult) / (executionCdMs / 1000),
       });
       break;
     }
@@ -172,12 +215,12 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       const normalShots = Math.max(0, magazine - (empowered ? 1 : 0));
       parts.push({
         label: `Clip of ${magazine}`,
-        dps: (normalShots * (input.attack + input.onHitDamage)) / cycleSec,
+        dps: (normalShots * hitDamage(input, input.attack, input.onHitDamage, 0.5)) / cycleSec,
       });
       if (empowered) {
         parts.push({
           label: 'Last bullet',
-          dps: (input.attack * lastShotMult + input.onHitDamage) / cycleSec,
+          dps: hitDamage(input, input.attack * lastShotMult, input.onHitDamage, 0.5) / cycleSec,
         });
       }
       caveats.push(`Averaged across the ${round1(reloadMs / 1000)}s reload, so burst output is higher.`);
@@ -194,7 +237,7 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       const conv = Math.min(1, Math.max(0, profile.conversionPct));
       parts.push({
         label: 'Direct hits',
-        dps: (input.attack * (1 - conv) + input.onHitDamage) / cdSec,
+        dps: (attackDamage(input, input.attack) * (1 - conv) + input.onHitDamage) / cdSec,
       });
       parts.push({
         label: 'Damage over time',
@@ -214,11 +257,11 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       const cycleSec = hitsPerDischarge * cdSec;
       parts.push({
         label: 'Regular attacks',
-        dps: ((hitsPerDischarge - 1) * (input.attack + input.onHitDamage)) / cycleSec,
+        dps: ((hitsPerDischarge - 1) * hitDamage(input, input.attack, input.onHitDamage)) / cycleSec,
       });
       parts.push({
         label: `Discharge (every ${hitsPerDischarge})`,
-        dps: (input.attack * mult + input.onHitDamage) / cycleSec,
+        dps: hitDamage(input, input.attack * mult, input.onHitDamage) / cycleSec,
       });
       break;
     }
@@ -238,10 +281,15 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
         // Mirrors spawn.ts: a summon's attack is the owner's, scaled by the
         // damage passive, the formation multiplier, and ITS OWN slot weight.
         // Sum the live slots rather than multiplying one weight by the count.
-        const weightSum = profile.slots
+        const volley = profile.slots
           .slice(0, active)
-          .reduce((sum, slot) => sum + slot.offenseWeight, 0);
-        const volley = input.attack * damagePct * profile.formationOffenseMult * weightSum;
+          .reduce(
+            (sum, slot) => sum + attackDamage(
+              input,
+              input.attack * damagePct * profile.formationOffenseMult * slot.offenseWeight,
+            ),
+            0,
+          );
         parts.push({
           label: `${active} summon${active === 1 ? '' : 's'}`,
           dps: (volley * 1000) / minionCdMs,

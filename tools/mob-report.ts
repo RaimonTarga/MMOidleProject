@@ -4,13 +4,15 @@ import path from 'node:path';
 import {
   emptyEquipment,
   estimateMonsterHitDamage,
-  estimatePlayerHitDamage,
+  estimatePlayerDps,
   GAME_CONFIG,
   getMaxUpgrade,
   recalculatePlayerStats,
+  resolveSummonerProfile,
   SKILL_TREE,
   type BiomeDefinition,
   type CombatArchetype,
+  type DpsEstimateInput,
   type ItemDefinition,
   type MonsterDefinition,
   type PlayerStatsTarget,
@@ -35,9 +37,10 @@ import { balanceData } from './balance-data';
 //
 // This is NOT a combat simulator. No movement, kiting, real AoE target count, AI,
 // party effects, or player recovery throughput (that lives in the eHP tool). The
-// reference player DPS is a direct-hit estimate only — it deliberately omits class
-// empowered/cadence/DoT mechanics, so boss TTK here is an UPPER bound; cross-check
-// the DPS packet for true clear speed. Every approximation is surfaced in notes.
+// reference player DPS uses the shared archetype-aware planning estimator over
+// concrete class builds, including full Conduit formations. T3 specialization,
+// abilities, movement, and target-state mechanics remain outside this report;
+// every approximation is surfaced in notes.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -52,8 +55,6 @@ const REPORT_PATH = path.join(REPO_ROOT, 'reports', 'mob-report.html');
 const ITEM_UPGRADE_LEVEL = 3;
 const TUTORIAL_MONSTER_IDS = new Set(['tiny-slime']);
 const TUTORIAL_WEAPON_IDS = new Set(['primordial-club']);
-const SUMMONER_CLASS_ID = 'summoner-root';
-
 // Discovery threshold only: this highlights spread and is not a balance target.
 const OUTLIER_PCT = 0.25;
 // Status thresholds (seconds of survival), mirroring the eHP tool's bands.
@@ -357,10 +358,11 @@ interface PlayerProfile {
   damageReduction: number;
   dodgeRate: number;
   evadeMitigation: number;
-  // Reference offence (direct-hit only, class mechanics omitted).
+  // Display summaries plus the concrete class builds used for target-aware DPS.
   attack: number;
   onHitDamage: number;
   attackCooldown: number;
+  offenceSamples: DpsEstimateInput[];
   usedFallbackTier: boolean;
 }
 
@@ -384,21 +386,52 @@ function averageDefence(combos: BuildCombo[], gearTier: number, plus: number, cl
   return { maxHp: acc.maxHp / n, plating: acc.plating / n, damageReduction: acc.dr / n, dodgeRate: acc.dodge / n, evadeMitigation: acc.evadeMit / n };
 }
 
-/** Mean offensive stats over non-summoner combos × weapon (armor/recovery empty). */
+/** Mean offensive stats and concrete class builds across combos × weapon. */
+function dpsInputForStats(stats: PlayerStatsTarget): DpsEstimateInput {
+  const profileInput = {
+    selectedSubVariant: stats.usesSkills.selectedSubVariant,
+    selectedRange: stats.usesSkills.selectedRange,
+    unlockedSkills: stats.usesSkills.unlockedSkills,
+    passives: stats.usesSkills.passives,
+  };
+  const summoner = stats.usesSkills.combatArchetype === 'summoner'
+    ? {
+      profileInput,
+      activeCount: resolveSummonerProfile(profileInput).slots.length,
+    }
+    : undefined;
+  return {
+    attack: stats.dealsDamage.attack,
+    onHitDamage: stats.dealsDamage.onHitDamage,
+    attackCooldownMs: stats.performsAttack.attackCooldown,
+    archetype: stats.usesSkills.combatArchetype,
+    passives: stats.usesSkills.passives,
+    selectedSubVariant: stats.usesSkills.selectedSubVariant,
+    playerTier: stats.playerTier,
+    summoner,
+  };
+}
+
 function averageOffence(combos: BuildCombo[], gearTier: number, plus: number, classTier: number) {
   const weapons = itemsForSlotTier('weapon', gearTier);
-  const offenceCombos = combos.filter((c) => c.classId !== SUMMONER_CLASS_ID);
   const acc = { attack: 0, onHit: 0, cooldown: 0, n: 0 };
-  for (const combo of offenceCombos) for (const weapon of weapons) {
+  const offenceSamples: DpsEstimateInput[] = [];
+  for (const combo of combos) for (const weapon of weapons) {
     const stats = makeStatsTarget(combo, { weapon }, plus, classTier);
     recalculatePlayerStats(stats);
     acc.attack += stats.dealsDamage.attack;
     acc.onHit += stats.dealsDamage.onHitDamage;
     acc.cooldown += stats.performsAttack.attackCooldown;
+    offenceSamples.push(dpsInputForStats(stats));
     acc.n++;
   }
   const n = Math.max(1, acc.n);
-  return { attack: acc.attack / n, onHitDamage: acc.onHit / n, attackCooldown: acc.cooldown / n };
+  return {
+    attack: acc.attack / n,
+    onHitDamage: acc.onHit / n,
+    attackCooldown: acc.cooldown / n,
+    offenceSamples,
+  };
 }
 
 /** The four reference player baselines for a biome tier, per the report spec. */
@@ -519,13 +552,18 @@ function threatStatus(spikePctHp: number, ttlSec: number, isBoss: boolean): Stat
   return 'Safe';
 }
 
-/** Direct-hit reference DPS the player lands on a target (class mechanics omitted). */
+/** Mean class-aware DPS of the concrete reference builds against one target. */
 function referenceDpsAgainst(p: PlayerProfile, target: MonsterDefinition): number {
-  const hit = estimatePlayerHitDamage({ attack: p.attack, onHitDamage: p.onHitDamage, targetPlating: target.stats.plating, targetDamageReduction: target.stats.damageReduction, platingMult: 1 });
-  return hit * (1000 / Math.max(100, p.attackCooldown));
+  return mean(p.offenceSamples.map((sample) => estimatePlayerDps({
+    ...sample,
+    target: {
+      plating: target.stats.plating,
+      damageReduction: target.stats.damageReduction,
+    },
+  }).total));
 }
 
-/** Upper-bound TTK: HP ÷ direct DPS. Shield/soft-cap extend it; noted, not modeled. */
+/** Planning TTK: HP ÷ class-aware DPS. Shield/soft-cap remain unmodeled. */
 function expectedTtkSec(p: PlayerProfile, target: MonsterDefinition): number {
   const dps = referenceDpsAgainst(p, target);
   return dps > 0 ? target.stats.hp / dps : Number.POSITIVE_INFINITY;
@@ -795,7 +833,7 @@ function bossTableView(biomeTier: number, profiles: PlayerProfile[]): DataView {
   }
   return {
     title: 'Boss / Elite Table',
-    note: `Bosses for biome tier ${biomeTier} vs the boss-ready reference player (${bossReady?.gearLabel ?? 'n/a'}). TTK is an UPPER bound from direct-hit DPS only (class empowered/DoT mechanics omitted; shields/soft-caps extend it). TTL is player survival with no recovery modeled.`,
+    note: `Bosses for biome tier ${biomeTier} vs the boss-ready reference player (${bossReady?.gearLabel ?? 'n/a'}). TTK uses the shared class-aware planning estimator; T3 specs, abilities, and shields/soft-caps remain unmodeled. TTL is player survival with no recovery modeled.`,
     headers: ['Boss', 'Biome', 'HP', 'Attack profile', 'Raw DPS', 'Spike', 'Defenses', 'Expected TTK', 'Player TTL', 'Status', 'Notes'],
     rows,
   };
@@ -840,7 +878,7 @@ function outlierView(biomeTier: number, profiles: PlayerProfile[]): DataView {
       for (const boss of group.bosses) {
         const ttk = expectedTtkSec(bossReady, boss);
         const t = threatAgainst(bossReady, boss, true);
-        if (Number.isFinite(ttk) && ttk < BOSS_TTK_TRIVIAL_SEC) rows.push(['short boss TTK', boss.name, `TTK ${ttl(ttk)} (≥ upper bound)`]);
+        if (Number.isFinite(ttk) && ttk < BOSS_TTK_TRIVIAL_SEC) rows.push(['short boss TTK', boss.name, `planning TTK ${ttl(ttk)}`]);
         if (t.status === 'Blocked' || (Number.isFinite(t.ttlSec) && t.ttlSec < BOSS_TTL_BLOCK_SEC)) rows.push(['high boss lethality', boss.name, `player TTL ${ttl(t.ttlSec)}, spike ${pct(t.spikePctHp)}`]);
       }
     }
@@ -932,13 +970,13 @@ function renderReport(tiers: number[]): string {
   <h1>MMO Idle Monster Balance & Threat Report</h1>
   <p>
     Monster-centric balance report built from shared monster, item, skill, and stat formulas plus the shared
-    direct-hit estimators. The subject is the world's offence: every spawn and boss is profiled and bucketed by
+    class-aware DPS estimator. The subject is the world's offence: every spawn and boss is profiled and bucketed by
     biome tier. Player-facing numbers use neutral reference players rebuilt with <code>recalculatePlayerStats</code>.
   </p>
   <p class="meta">
     Not a combat simulator: no movement, kiting, real AoE target count, AI, party effects, or player recovery
-    throughput (that lives in the eHP report). Reference player DPS is direct-hit only — class empowered/cadence/DoT
-    mechanics are omitted, so boss TTK is an upper bound; cross-check the DPS packet for true clear speed. Raw mob DPS
+    throughput (that lives in the eHP report). Reference player DPS includes each root archetype's sustained cycle and
+    full Conduit formations; T3 specs, abilities, and target-state mechanics remain omitted. Raw mob DPS
     is pre-mitigation; DoT/s assumes full refreshed stacks; spike is the largest single-hit multiplier available.
   </p>
   ${tiers.map(renderTierSection).join('\n')}
@@ -976,7 +1014,7 @@ Generated from \`tools/mob-report.ts --llm-packet\`. Markdown only. Companion to
 
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier ${biomeTier}.
 - Reference players are tier ${playerTier} (a player of tier P fights biome tier P-1)${profiles[0]?.usedFallbackTier ? `; **no tier-${biomeTier + 1} gear authored yet, best-available T${maxItemTier()} used as the reference**` : ''}. Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
-- Reference player DPS is **direct-hit only** (class empowered/cadence/DoT mechanics omitted) → boss TTK is an UPPER bound. Shields/soft-caps extend TTK further. Cross-check the DPS packet for real clear speed.
+- Reference player DPS uses shared \`estimatePlayerDps\` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
 - TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. ${mobs.length} mobs; tier avg HP ${asNumber(avgHp)}, avg total DPS ${asNumber(avgDps)}.
 

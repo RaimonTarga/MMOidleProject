@@ -6,7 +6,7 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier 3.
 - Reference players are tier 4 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
-- Reference player DPS is **direct-hit only** (class empowered/cadence/DoT mechanics omitted) → boss TTK is an UPPER bound. Shields/soft-caps extend TTK further. Cross-check the DPS packet for real clear speed.
+- Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
 - TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 22 mobs; tier avg HP 690, avg total DPS 25.5.
 
@@ -14,10 +14,10 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 | Player | Gear | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Entry (prev-tier +3) | T3 +3 | 295 | 37.1 | 11.5% | 13.7% | 151 | 1.02 |
-| Same-tier +0 | T4 +0 | 299 | 37.0 | 11.2% | 11.6% | 165 | 0.96 |
-| Same-tier +3 | T4 +3 | 400 | 58.9 | 11.8% | 12.0% | 252 | 0.96 |
-| Boss-ready (tankiest +3) | T4 +3 | 465 | 57.4 | 6.39% | 6.78% | 252 | 0.96 |
+| Entry (prev-tier +3) | T3 +3 | 295 | 37.1 | 11.5% | 13.7% | 150 | 0.98 |
+| Same-tier +0 | T4 +0 | 299 | 37.0 | 11.2% | 11.6% | 164 | 0.92 |
+| Same-tier +3 | T4 +3 | 400 | 58.9 | 11.8% | 12.0% | 252 | 0.92 |
+| Boss-ready (tankiest +3) | T4 +3 | 465 | 57.4 | 6.39% | 6.78% | 252 | 0.92 |
 
 
 ## Cross-Biome Threat & Reward
@@ -114,17 +114,17 @@ _Per-biome aggregates for biome tier 3. "Hardest hitter" uses raw direct DPS; "t
 
 ## Boss / Elite Table
 
-_Bosses for biome tier 3 vs the boss-ready reference player (T4 +3). TTK is an UPPER bound from direct-hit DPS only (class empowered/DoT mechanics omitted; shields/soft-caps extend it). TTL is player survival with no recovery modeled._
+_Bosses for biome tier 3 vs the boss-ready reference player (T4 +3). TTK uses the shared class-aware planning estimator; T3 specs, abilities, and shields/soft-caps remain unmodeled. TTL is player survival with no recovery modeled._
 
 | Boss | Biome | HP | Attack profile | Raw DPS | Spike | Defenses | Expected TTK | Player TTL | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Deep-Core Burrow-Gorger | Caverns | 5400 | 120 @ 0.22 aps | 26.7 | ×1.80 | plate 16.0, DR 15.0% | 27.4s | 35.8s | Safe | - |
-| Dune-Carapace Monarch | Desert | 5000 | 120 @ 0.33 aps | 40.0 | ×1.60 | plate 10.0, DR 8.00% | 22.9s | 23.9s | Safe | - |
-| Apex Bramble-Slasher | Jungle | 4900 | 64.0 @ 0.67 aps | 42.7 | ×1.40 | plate 0.00, DR 3.00% | 20.5s | 117s | Safe | - |
-| Crag-Gorged Horn-Behemoth | Mountain | 5200 | 125 @ 0.24 aps | 29.8 | ×2.20 | plate 12.0, DR 5.00% | 23.2s | 31.3s | Safe | - |
-| Rot-Spore Croc-Behemoth | Swamp | 5000 | 32.0 @ 0.29 aps | 57.4 | ×4.00 | plate 8.00, DR 10.0% | 23.2s | 9.64s | Risky | - |
-| Frost-Plated Rime-Mammoth | Tundra | 5400 | 125 @ 0.24 aps | 29.8 | ×1.80 | plate 12.0, DR 12.0%, shield 18.0% | 26.0s | 31.3s | Safe | TTK undercounted (shield/softcap) |
-| Cinder-Shell Magma-Salamander | Volcanic | 4800 | 110 @ 0.33 aps | 36.7 | ×2.00 | plate 8.00, DR 4.00% | 20.9s | 28.7s | Safe | - |
+| Deep-Core Burrow-Gorger | Caverns | 5400 | 120 @ 0.22 aps | 26.7 | ×1.80 | plate 16.0, DR 15.0% | 22.9s | 35.8s | Safe | - |
+| Dune-Carapace Monarch | Desert | 5000 | 120 @ 0.33 aps | 40.0 | ×1.60 | plate 10.0, DR 8.00% | 19.2s | 23.9s | Safe | - |
+| Apex Bramble-Slasher | Jungle | 4900 | 64.0 @ 0.67 aps | 42.7 | ×1.40 | plate 0.00, DR 3.00% | 17.0s | 117s | Safe | - |
+| Crag-Gorged Horn-Behemoth | Mountain | 5200 | 125 @ 0.24 aps | 29.8 | ×2.20 | plate 12.0, DR 5.00% | 19.6s | 31.3s | Safe | - |
+| Rot-Spore Croc-Behemoth | Swamp | 5000 | 32.0 @ 0.29 aps | 57.4 | ×4.00 | plate 8.00, DR 10.0% | 19.3s | 9.64s | Risky | - |
+| Frost-Plated Rime-Mammoth | Tundra | 5400 | 125 @ 0.24 aps | 29.8 | ×1.80 | plate 12.0, DR 12.0%, shield 18.0% | 21.8s | 31.3s | Safe | TTK undercounted (shield/softcap) |
+| Cinder-Shell Magma-Salamander | Volcanic | 4800 | 110 @ 0.33 aps | 36.7 | ×2.00 | plate 8.00, DR 4.00% | 17.6s | 28.7s | Safe | - |
 
 ## Mob / Boss Diagnostic Signals
 

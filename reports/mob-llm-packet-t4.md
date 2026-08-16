@@ -6,7 +6,7 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier 4.
 - Reference players are tier 4 (a player of tier P fights biome tier P-1); **no tier-5 gear authored yet, best-available T4 used as the reference**. Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
-- Reference player DPS is **direct-hit only** (class empowered/cadence/DoT mechanics omitted) → boss TTK is an UPPER bound. Shields/soft-caps extend TTK further. Cross-check the DPS packet for real clear speed.
+- Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
 - TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 30 mobs; tier avg HP 1519, avg total DPS 49.6.
 
@@ -14,10 +14,10 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 | Player | Gear | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Entry (prev-tier +3) | T3 +3 | 295 | 37.1 | 11.5% | 13.7% | 151 | 1.02 |
-| Same-tier +0 | T4 +0 | 299 | 37.0 | 11.2% | 11.6% | 165 | 0.96 |
-| Same-tier +3 | T4 +3 | 400 | 58.9 | 11.8% | 12.0% | 252 | 0.96 |
-| Boss-ready (tankiest +3) | T4 +3 | 465 | 57.4 | 6.39% | 6.78% | 252 | 0.96 |
+| Entry (prev-tier +3) | T3 +3 | 295 | 37.1 | 11.5% | 13.7% | 150 | 0.98 |
+| Same-tier +0 | T4 +0 | 299 | 37.0 | 11.2% | 11.6% | 164 | 0.92 |
+| Same-tier +3 | T4 +3 | 400 | 58.9 | 11.8% | 12.0% | 252 | 0.92 |
+| Boss-ready (tankiest +3) | T4 +3 | 465 | 57.4 | 6.39% | 6.78% | 252 | 0.92 |
 
 
 ## Cross-Biome Threat & Reward
@@ -116,17 +116,17 @@ _Per-biome aggregates for biome tier 4. "Hardest hitter" uses raw direct DPS; "t
 
 ## Boss / Elite Table
 
-_Bosses for biome tier 4 vs the boss-ready reference player (T4 +3). TTK is an UPPER bound from direct-hit DPS only (class empowered/DoT mechanics omitted; shields/soft-caps extend it). TTL is player survival with no recovery modeled._
+_Bosses for biome tier 4 vs the boss-ready reference player (T4 +3). TTK uses the shared class-aware planning estimator; T3 specs, abilities, and shields/soft-caps remain unmodeled. TTL is player survival with no recovery modeled._
 
 | Boss | Biome | HP | Attack profile | Raw DPS | Spike | Defenses | Expected TTK | Player TTL | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Elder Trench Serpent | Deep-Sea Trench | 9500 | 110 @ 0.31 aps | 34.4 | ×2.50 | plate 20.0, DR 22.0%, shield 28.0% | 53.1s | 30.7s | Safe | TTK undercounted (shield/softcap) |
-| Dune-Throne Sovereign | Desert | 7800 | 142 @ 0.36 aps | 50.7 | ×1.80 | plate 8.00, DR 8.00% | 35.4s | 16.6s | Risky | - |
-| Verdant-Crown Predator | Jungle | 8000 | 90.0 @ 0.71 aps | 94.3 | ×2.10 | plate 0.00, DR 4.00%, evasion 25.0% | 33.7s | 8.96s | Risky | - |
-| Iron-Crest Titan | Mountain | 8500 | 175 @ 0.24 aps | 41.7 | ×2.20 | plate 14.0, DR 6.00% | 38.7s | 17.9s | Risky | - |
-| Glacial Patriarch | Tundra | 10000 | 145 @ 0.22 aps | 32.2 | ×1.80 | plate 22.0, DR 14.0%, shield 20.0% | 51.2s | 25.8s | Safe | TTK undercounted (shield/softcap) |
-| Caldera Sovereign | Volcanic | 9000 | 100 @ 0.38 aps | 78.5 | ×2.00 | plate 10.0, DR 5.00% | 39.8s | 8.42s | Risky | - |
-| Charnel-Crown Sovereign | Wasteland | 8500 | 88.0 @ 0.43 aps | 80.3 | ×1.60 | plate 14.0, DR 8.00% | 39.4s | 8.54s | Risky | - |
+| Elder Trench Serpent | Deep-Sea Trench | 9500 | 110 @ 0.31 aps | 34.4 | ×2.50 | plate 20.0, DR 22.0%, shield 28.0% | 44.2s | 30.7s | Safe | TTK undercounted (shield/softcap) |
+| Dune-Throne Sovereign | Desert | 7800 | 142 @ 0.36 aps | 50.7 | ×1.80 | plate 8.00, DR 8.00% | 29.6s | 16.6s | Risky | - |
+| Verdant-Crown Predator | Jungle | 8000 | 90.0 @ 0.71 aps | 94.3 | ×2.10 | plate 0.00, DR 4.00%, evasion 25.0% | 28.1s | 8.96s | Risky | - |
+| Iron-Crest Titan | Mountain | 8500 | 175 @ 0.24 aps | 41.7 | ×2.20 | plate 14.0, DR 6.00% | 32.7s | 17.9s | Risky | - |
+| Glacial Patriarch | Tundra | 10000 | 145 @ 0.22 aps | 32.2 | ×1.80 | plate 22.0, DR 14.0%, shield 20.0% | 43.3s | 25.8s | Safe | TTK undercounted (shield/softcap) |
+| Caldera Sovereign | Volcanic | 9000 | 100 @ 0.38 aps | 78.5 | ×2.00 | plate 10.0, DR 5.00% | 33.6s | 8.42s | Risky | - |
+| Charnel-Crown Sovereign | Wasteland | 8500 | 88.0 @ 0.43 aps | 80.3 | ×1.60 | plate 14.0, DR 8.00% | 33.3s | 8.54s | Risky | - |
 
 ## Mob / Boss Diagnostic Signals
 

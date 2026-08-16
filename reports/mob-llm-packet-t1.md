@@ -6,7 +6,7 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier 1.
 - Reference players are tier 2 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
-- Reference player DPS is **direct-hit only** (class empowered/cadence/DoT mechanics omitted) → boss TTK is an UPPER bound. Shields/soft-caps extend TTK further. Cross-check the DPS packet for real clear speed.
+- Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
 - TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 11 mobs; tier avg HP 160, avg total DPS 9.45.
 
@@ -14,10 +14,10 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 | Player | Gear | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Entry (prev-tier +3) | T1 +3 | 182 | 15.6 | 5.96% | 11.7% | 64.5 | 0.96 |
-| Same-tier +0 | T2 +0 | 182 | 13.3 | 5.98% | 11.9% | 59.2 | 1.16 |
-| Same-tier +3 | T2 +3 | 213 | 21.0 | 6.84% | 15.8% | 86.5 | 1.16 |
-| Boss-ready (tankiest +3) | T2 +3 | 223 | 23.6 | 3.56% | 6.00% | 86.5 | 1.16 |
+| Entry (prev-tier +3) | T1 +3 | 182 | 15.6 | 5.96% | 11.7% | 63.1 | 0.94 |
+| Same-tier +0 | T2 +0 | 182 | 13.3 | 5.98% | 11.9% | 57.8 | 1.13 |
+| Same-tier +3 | T2 +3 | 213 | 21.0 | 6.84% | 15.8% | 85.5 | 1.13 |
+| Boss-ready (tankiest +3) | T2 +3 | 223 | 23.6 | 3.56% | 6.00% | 85.5 | 1.13 |
 
 
 ## Cross-Biome Threat & Reward
@@ -99,15 +99,15 @@ _Per-biome aggregates for biome tier 1. "Hardest hitter" uses raw direct DPS; "t
 
 ## Boss / Elite Table
 
-_Bosses for biome tier 1 vs the boss-ready reference player (T2 +3). TTK is an UPPER bound from direct-hit DPS only (class empowered/DoT mechanics omitted; shields/soft-caps extend it). TTL is player survival with no recovery modeled._
+_Bosses for biome tier 1 vs the boss-ready reference player (T2 +3). TTK uses the shared class-aware planning estimator; T3 specs, abilities, and shields/soft-caps remain unmodeled. TTL is player survival with no recovery modeled._
 
 | Boss | Biome | HP | Attack profile | Raw DPS | Spike | Defenses | Expected TTK | Player TTL | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Obsidian Broodmother | Caverns | 1050 | 40.0 @ 0.36 aps | 14.3 | ×1.60 | plate 6.00, DR 10.0% | 12.1s | 39.2s | Safe | - |
-| Gnarled Greatbear | Forest | 1250 | 36.0 @ 0.71 aps | 25.7 | ×1.10 | plate 0.00, DR 0.00% | 12.0s | 26.1s | Safe | - |
-| Crag Behemoth | Mountain | 1400 | 60.0 @ 0.29 aps | 17.1 | ×1.60 | plate 0.00, DR 0.00% | 13.4s | 22.4s | Safe | - |
-| Tusked Razorback | Plains | 1500 | 42.0 @ 0.50 aps | 21.0 | ×1.10 | plate 4.00, DR 2.00% | 15.4s | 24.9s | Safe | - |
-| Grave Toadeater | Swamp | 1150 | 12.0 @ 0.38 aps | 13.6 | ×1.60 | plate 2.00, DR 2.00% | 11.5s | 23.7s | Safe | - |
+| Obsidian Broodmother | Caverns | 1050 | 40.0 @ 0.36 aps | 14.3 | ×1.60 | plate 6.00, DR 10.0% | 10.6s | 39.2s | Safe | - |
+| Gnarled Greatbear | Forest | 1250 | 36.0 @ 0.71 aps | 25.7 | ×1.10 | plate 0.00, DR 0.00% | 10.5s | 26.1s | Safe | - |
+| Crag Behemoth | Mountain | 1400 | 60.0 @ 0.29 aps | 17.1 | ×1.60 | plate 0.00, DR 0.00% | 11.8s | 22.4s | Safe | - |
+| Tusked Razorback | Plains | 1500 | 42.0 @ 0.50 aps | 21.0 | ×1.10 | plate 4.00, DR 2.00% | 13.6s | 24.9s | Safe | - |
+| Grave Toadeater | Swamp | 1150 | 12.0 @ 0.38 aps | 13.6 | ×1.60 | plate 2.00, DR 2.00% | 10.1s | 23.7s | Safe | - |
 
 ## Mob / Boss Diagnostic Signals
 

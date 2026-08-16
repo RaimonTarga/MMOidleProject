@@ -163,6 +163,29 @@ function testScalesWithAttack(): void {
   }
 }
 
+function testOptionalTargetMitigation(): void {
+  const target = { plating: 20, damageReduction: 0.25 };
+  const cadence = inputFor('cadence');
+  const raw = estimatePlayerDps(cadence);
+  const mitigated = estimatePlayerDps({ ...cadence, target });
+  assert(mitigated.total < raw.total, 'target defences should lower direct class output');
+  assert(
+    mitigated.caveats.some((caveat) => caveat.includes('supplied target')),
+    'target-aware estimate should state that mitigation was applied',
+  );
+
+  const rawDot = estimatePlayerDps(inputFor('dot'));
+  const dot = estimatePlayerDps({ ...inputFor('dot'), target });
+  const direct = dot.parts.find((part) => part.label === 'Direct hits');
+  const overTime = dot.parts.find((part) => part.label === 'Damage over time');
+  const rawOverTime = rawDot.parts.find((part) => part.label === 'Damage over time');
+  assert(direct !== undefined && overTime !== undefined, 'target-aware DoT keeps both channels');
+  assert(
+    overTime!.dps === rawOverTime?.dps,
+    'DoT throughput bypasses target plating and DR',
+  );
+}
+
 testEveryArchetypeReportsDamage();
 testPartsSumToTotal();
 testUnknownArchetypeStillReports();
@@ -170,5 +193,6 @@ testMechanicBeatsPlainAutoAttack();
 testDotCountsConvertedDamage();
 testSummonerWithoutAttackingStillReports();
 testScalesWithAttack();
+testOptionalTargetMitigation();
 
 console.log('dpsEstimate: ok');
