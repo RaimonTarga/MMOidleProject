@@ -51,9 +51,17 @@ pnpm ui:shot "--html=tools/uishot/harness/bestiary.html?rows=10&log=14" --audit
 pnpm ui:shot "--html=tools/uishot/harness/bestiary-detail.html?rows=10&mechs=5" --audit
 ```
 
-Each harness copies the `#left-sidebar` shell rules out of `client/index.html`,
-because those live in an inline `<style>` rather than a stylesheet. Keep them in
-sync, or a harness will happily report a false negative.
+Sidebar harnesses copy their outer rail rules out of `client/index.html`, because
+those live in an inline `<style>` rather than a stylesheet. Keep them in sync, or
+a harness will happily report a false negative.
+
+W2's discoverability surfaces have focused harnesses too:
+
+- `system-nav.html` mirrors the expanded desktop Loadout navigation and the
+  standalone Runes, Crafting, and Upgrade destinations.
+- `crown.html` covers the desktop active-stance chip alongside health layers.
+- `mobile-status.html` pushes the active-stance/status strip through narrow phone
+  widths.
 
 Two things a harness cannot tell you: whether the React state that produces the
 DOM is correct, and how it behaves with real fonts under `zoom`. For those, point

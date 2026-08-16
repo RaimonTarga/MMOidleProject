@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- W2 mobile status harness. Keeps the active-stance chip and shared class
+     mechanic honest at the narrowest supported phone widths. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobile status harness</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/kit.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/hud.css" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b0a08; }
+  </style>
+</head>
+<body>
+  <div class="mhud-top">
+    <div class="mhud-top__row1">
+      <span class="status-dot connected"></span>
+      <span class="mhud-top__name">Raimon Longname</span>
+      <div class="mhud-hp">
+        <div class="hp-bar-track">
+          <div class="hp-layer hp-layer--hp" style="width:72%;background:#44ee44"></div>
+        </div>
+      </div>
+      <span class="mhud-hp__text">720/1000</span>
+      <span class="mhud-top__zone">Volcanic T4</span>
+    </div>
+    <div class="mhud-context">
+      <span class="mhud-stance" title="Active stance: Berserker Stance">Berserker Stance</span>
+      <div class="mhud-mech">
+        <div class="stat-section">
+          <div class="stat-row"><span class="stat-label">Cadence</span><span class="stat-value">3 / 5</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

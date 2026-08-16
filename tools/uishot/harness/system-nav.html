@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- W2 desktop navigation harness. Mirrors RightSidebar's settled destination
+     set so label wrapping, expanded Loadout sections, and rail overflow can be
+     checked without a database or character fixture. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>System navigation harness</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/kit.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/hud.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/rail.css" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b0a08; }
+    body { display: flex; justify-content: flex-end; }
+    #right-sidebar {
+      width: 260px; min-width: 260px; height: 100%; overflow-y: auto;
+      overflow-x: hidden; border-left: 1px solid rgba(50, 50, 80, 0.6);
+      scrollbar-width: thin; scrollbar-color: var(--hud-edge-medium, #63553e) transparent;
+    }
+    .right-nav-button { width: 100%; }
+    .harness-icon {
+      display: grid; width: 20px; height: 20px; place-items: center;
+      color: var(--hud-primary); font-size: 9px; font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="right-sidebar">
+    <div class="sidebar sidebar-right desktop-hud">
+      <nav class="right-system-nav" aria-label="Character systems">
+        <div class="right-nav-entry"><button class="right-nav-button"><span class="right-nav-button__icon"><span class="harness-icon">P</span></span><span class="right-nav-button__label">Passive Tree</span></button></div>
+        <div class="right-nav-entry right-nav-entry--expanded">
+          <button class="right-nav-button right-nav-button--selected"><span class="right-nav-button__icon"><span class="harness-icon">L</span></span><span class="right-nav-button__label">Loadout</span><span class="right-nav-button__chevron">▾</span></button>
+          <ul class="right-nav-sections">
+            <li><button class="right-nav-section right-nav-section--selected">Overview</button></li>
+            <li><button class="right-nav-section">Abilities</button></li>
+            <li><button class="right-nav-section">Stances</button></li>
+            <li><button class="right-nav-section">Rites</button></li>
+          </ul>
+        </div>
+        <div class="right-nav-entry"><button class="right-nav-button"><span class="right-nav-button__icon"><span class="harness-icon">R</span></span><span class="right-nav-button__label">Runes</span></button></div>
+        <div class="right-nav-entry"><button class="right-nav-button"><span class="right-nav-button__icon"><span class="harness-icon">I</span></span><span class="right-nav-button__label">Inventory</span></button></div>
+        <div class="right-nav-entry"><button class="right-nav-button"><span class="right-nav-button__icon"><span class="harness-icon">C</span></span><span class="right-nav-button__label">Crafting</span></button></div>
+        <div class="right-nav-entry"><button class="right-nav-button"><span class="right-nav-button__icon"><span class="harness-icon">U</span></span><span class="right-nav-button__label">Upgrade</span></button></div>
+        <div class="right-nav-entry"><button class="right-nav-button"><span class="right-nav-button__icon"><span class="harness-icon">M</span></span><span class="right-nav-button__label">Map</span></button></div>
+        <div class="right-nav-entry"><button class="right-nav-button"><span class="right-nav-button__icon"><span class="harness-icon">S</span></span><span class="right-nav-button__label">Settings</span></button></div>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>
