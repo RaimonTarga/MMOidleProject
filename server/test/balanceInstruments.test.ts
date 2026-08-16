@@ -1,6 +1,6 @@
 import { ITEM_DATABASE } from '@mmo-idle/shared';
-import { canonicalLoadout } from './botFactory';
-import { resolveGearLoadout } from './progression';
+import { canonicalLoadout } from '../bench/balance/botFactory';
+import { resolveGearLoadout } from '../bench/balance/progression';
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
