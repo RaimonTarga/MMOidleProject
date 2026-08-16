@@ -1,7 +1,7 @@
 # Documentation Index
 
 Map of every living doc, what it is for, and where history goes.
-Last sorted: 2026-08-11.
+Last sorted: 2026-08-13.
 
 **If code and any doc disagree, the code wins — fix the doc.**
 
@@ -42,6 +42,7 @@ top-level doc.
 | Aspects + catalysts | [aspects-catalysts-current-state.md](aspects-catalysts-current-state.md) | — |
 | Audio | [audio-current-state.md](audio-current-state.md) | — |
 | Auth + characters | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) | — |
+| Balance Lab | [balance-lab-current-state.md](balance-lab-current-state.md) | [player-power-curve.md](../design_docs/player-power-curve.md) |
 | Biome identity / ecology | [biome-ecology-current-state.md](biome-ecology-current-state.md) | — |
 | Charms + recovery | [charms-current-state.md](charms-current-state.md) | — |
 | Conduit (summoner) | [conduit-current-state.md](conduit-current-state.md) | [summoner-overhaul-design-source.md](../design_docs/summoner-overhaul-design-source.md) |
@@ -70,7 +71,10 @@ handoffs: both systems have complete machinery and thin, placeholder content.
 | [abilities-evolution-implementation-plan.md](abilities-evolution-implementation-plan.md) | Wave 1 shipped 2026-07-24; Waves 2–3 (T3/T4 rosters) not started. |
 | [ui-redesign-plan.md](ui-redesign-plan.md) | Phased desktop HUD redesign with review gates; Part III (apparatus wave) still ahead. |
 | [map-variety-plan.md](map-variety-plan.md) | Design authority for the world map. Both stages shipped; no separate current-state doc — this plus the code is the record. |
+| [terrain-variance-plan.md](terrain-variance-plan.md) | DRAFT for review. Making each node feel unique: procedural hazard terrain, per-biome node archetypes, staging. Follows the square-node resize. |
 | [biome-refactor-playtest.md](biome-refactor-playtest.md) | Open playtest notes and unanswered questions from the per-biome T1 dungeon pass. |
+| [briefs/tier-by-tier-monster-balance-handoff-2026-08-13.md](briefs/tier-by-tier-monster-balance-handoff-2026-08-13.md) | Fresh-session roadmap and locked decisions for collaborative tier-by-tier monster authoring and Balance Lab instrumentation. |
+| [briefs/biome-visual-pass-handoff-2026-08-14.md](briefs/biome-visual-pass-handoff-2026-08-14.md) | Continuation brief for the node resize + biome visual pass. Per-biome status, the systems built, and the traps that already cost time. Start here before touching biome visuals. |
 | [briefs/d3-t5-t6.md](briefs/d3-t5-t6.md) | Self-contained brief for an external design session on tiers 5–6. Not yet fulfilled. |
 
 ## Reference
