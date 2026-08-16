@@ -1,6 +1,7 @@
 import {
   GAME_CONFIG,
   NODE_BIOMES,
+  getForestPaths,
   RESOLVED_NODE_FEATURES,
   getNodeTrees,
   type NodeFeatureShape,
@@ -48,6 +49,7 @@ export type DirtPatternName =
   | 'sparse-scatter'
   | 'hub-plaza'
   | 'dungeon-court'
+  | 'forest-paths'
   | 'tree-canopy'
   | 'plain';
 
@@ -447,6 +449,21 @@ function hubPlaza(rng: Rng, W: number, H: number): DirtDisc[] {
 }
 
 /**
+ * Forest trails, read straight off the SHARED layout in `world/forestPaths.ts`.
+ *
+ * The geometry cannot be generated here: trees are collision and are placed
+ * server-side, so the trail has to be decided somewhere both sides can see it. This
+ * generator only paints what that module already decided, which is what keeps the
+ * painted trail and the gap in the treeline describing the same shape.
+ *
+ * Used INVERTED — the discs are the bare forest floor of the trail and the heavy
+ * foliage is everything else. Same trick jungle uses for its clearings.
+ */
+function forestPaths(_rng: Rng, _W: number, _H: number, nodeId: string): DirtDisc[] {
+  return getForestPaths(nodeId).discs.map((d) => ({ x: d.x, y: d.y, r: d.r }));
+}
+
+/**
  * A dungeon's arena floor: ONE round court at the node centre, under the altar,
  * and nothing anywhere else.
  *
@@ -500,6 +517,7 @@ const PATTERN_GENERATORS: Record<
   'sparse-scatter': (rng, W, H) => scatterDiscs(rng, W, H, 2 + Math.floor(rng() * 2), 100, 180),
   'hub-plaza': hubPlaza,
   'dungeon-court': dungeonCourt,
+  'forest-paths': forestPaths,
   'tree-canopy': treeCanopy,
   // Base material only — the whole node stays the sheet's lower tile.
   plain: () => [],
@@ -636,14 +654,23 @@ export function computeGroundLayout(biomeGroup: string, nodeId: string): GroundL
   // buildWangGroundLayer discards the decorative layout entirely on those nodes. Their
   // hazard floor is the arena.
   const isDungeon = NODE_BIOMES[nodeId]?.isDungeon === true;
+  // A forest node's shape is decided in shared (the trees have to avoid the trail),
+  // so when a trail exists it overrides the weighted pattern roll. Nodes that rolled
+  // no trail fall through to the canopy pattern exactly as before.
+  const hasForestTrail =
+    biomeGroup === 'forest' && !isDungeon && getForestPaths(nodeId).shape !== 'none';
   const pattern = isDungeon
     ? 'dungeon-court'
-    : pickWeighted(rng, style.patterns).pattern;
+    : hasForestTrail
+      ? 'forest-paths'
+      : pickWeighted(rng, style.patterns).pattern;
   const generated = PATTERN_GENERATORS[pattern](rng, W, H, nodeId);
   const discs = style.avoidsFeatures
     ? routeDiscsAroundFeatures(generated, nodeId, W, H)
     : generated;
-  const invert = style.invert ?? false;
+  // Trails invert the material: foliage becomes the dominant ground and the discs
+  // are the bare floor you walk on.
+  const invert = hasForestTrail ? true : (style.invert ?? false);
   const isDirt = (x: number, y: number): boolean => {
     for (const d of discs) {
       const dx = x - d.x;

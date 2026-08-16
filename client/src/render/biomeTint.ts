@@ -23,10 +23,12 @@ export interface BiomeTint {
   /**
    * 0–1, straight alpha blend.
    *
-   * Calibration note: the first attempt at this ran 0.13–0.30 and was reported as
-   * having no visible effect at all. The scene is dark, so a low-alpha wash simply
-   * vanishes into it. Treat ~0.20 as the floor for "subtle but perceptible" rather
-   * than as a moderate value.
+   * Calibration history, because this took three passes to get right:
+   *  - 0.13–0.30 read as no effect at all. That turned out to be a WIRING bug (the
+   *    active node was never painted), not a value problem — see updateNodeTintForNode.
+   *  - Once actually rendering, 0.20–0.34 was still judged too subtle.
+   *  - Current values start at 0.32. Treat ~0.30 as the floor for a wash that reads
+   *    as deliberate; below that it looks like a rendering artefact rather than mood.
    */
   alpha: number;
 }
@@ -67,17 +69,26 @@ export const BIOME_TIER_TINTS: Readonly<
    * colour filter.
    */
   plains: {
-    2: { color: 0xc4622a, alpha: 0.20 }, // low sun
+    2: { color: 0xc4622a, alpha: 0.32 }, // low sun
+  },
+
+  /**
+   * Deeper forest as you climb: T1 is ordinary woodland, T2 takes a cool green-blue
+   * so the same trees read as older and further in — light filtered through a
+   * heavier canopy rather than a different place.
+   */
+  forest: {
+    2: { color: 0x1f6b70, alpha: 0.34 }, // deep canopy teal
   },
 
   sanctuary: {
-    2: { color: 0x2f4f9e, alpha: 0.24 }, // cold blue — barely touched
-    3: { color: 0x3d43a4, alpha: 0.29 },
-    4: { color: 0x4a2f9e, alpha: 0.34 }, // indigo — unmistakable
-    5: { color: 0x5c2fae, alpha: 0.39 },
-    6: { color: 0x7132bd, alpha: 0.44 },
-    7: { color: 0x8a34c4, alpha: 0.49 }, // violet
-    8: { color: 0xa63ad6, alpha: 0.54 }, // the last sanctuary, and it looks it
+    2: { color: 0x2f4f9e, alpha: 0.36 }, // cold blue — barely touched
+    3: { color: 0x3d43a4, alpha: 0.41 },
+    4: { color: 0x4a2f9e, alpha: 0.46 }, // indigo — unmistakable
+    5: { color: 0x5c2fae, alpha: 0.51 },
+    6: { color: 0x7132bd, alpha: 0.56 },
+    7: { color: 0x8a34c4, alpha: 0.61 }, // violet
+    8: { color: 0xa63ad6, alpha: 0.66 }, // the last sanctuary, and it looks it
   },
 };
 
@@ -86,4 +97,44 @@ export function nodeTint(nodeId: string): BiomeTint | null {
   const info = NODE_BIOMES[nodeId];
   if (!info) return null;
   return BIOME_TIER_TINTS[info.biomeGroup]?.[info.biomeTier] ?? null;
+}
+
+/**
+ * The wash expressed as a multiply-tint colour, for objects the overlay cannot reach.
+ *
+ * The depth-banded rectangle only covers what renders BELOW it — ground and ground
+ * decor. Trees do not qualify: their roots draw just under the entities and their
+ * canopies draw above them (y-sorted, so the player walks behind a trunk), which puts
+ * them either side of any band that excludes creatures. On a forest node the trees are
+ * the dominant visual, so leaving them untouched reads as a bug rather than as
+ * atmosphere.
+ *
+ * Phaser Images DO support tint (it is only `TilemapLayer` that does not), so those get
+ * tinted directly. `setTint` multiplies rather than alpha-blends, so the colour is
+ * pre-mixed from white toward the wash by its alpha — the multiplicative equivalent of
+ * laying the same rectangle over them.
+ *
+ * Returns null when the node is untinted, so callers can skip the work entirely.
+ */
+const IMAGE_TINT_BOOST = 1.35;
+
+export function nodeTintMultiply(nodeId: string): number | null {
+  const tint = nodeTint(nodeId);
+  if (!tint) return null;
+  // The two paths are not equivalent, and matching their ALPHAS does not match their
+  // LOOK. Compositing the overlay gives `base*(1-a) + tint*a`; a multiply tint gives
+  // `base * mix/255`. Those agree only where the base is white — on a mid or dark pixel
+  // (tree bark, deep foliage) multiply shifts the colour far less, so trees come out
+  // visibly under-tinted against ground washed at the same alpha.
+  //
+  // This boost pulls the multiply path back toward parity. It is an empirical
+  // correction, not a derivation: exact parity is impossible because multiply cannot
+  // lighten and compositing can.
+  const a = Math.min(1, tint.alpha * IMAGE_TINT_BOOST);
+  const mix = (channel: number): number =>
+    Math.round(255 * (1 - a) + channel * a);
+  const r = mix((tint.color >> 16) & 0xff);
+  const g = mix((tint.color >> 8) & 0xff);
+  const b = mix(tint.color & 0xff);
+  return (r << 16) | (g << 8) | b;
 }

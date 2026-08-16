@@ -1,6 +1,7 @@
 import { GAME_CONFIG } from "../config/gameConfig";
 import type { HitboxRect } from "../hitbox/types";
 import { generateJungleNodeTrees } from "./jungleTrees";
+import { isOnForestPath } from "./forestPaths";
 import { NODE_BIOMES } from "./nodeBiomes";
 import type { NodeFeatureShape } from "./nodeFeatures";
 import { generatePlainsNodeTrees } from "./plainsTrees";
@@ -202,33 +203,65 @@ function mulberry32(seed: number): () => number {
 
 /** Trunks stay this far from node edges so they never sit on gates/spawns. */
 const EDGE_MARGIN = 280;
+/** Extra clearance a trunk keeps from a forest trail (see world/forestPaths.ts). */
+const TRUNK_PATH_CLEARANCE = 150;
 /** Minimum distance between two trunk centers (keeps walkable gaps between trees). */
 const MIN_TRUNK_SEPARATION = 440;
-/** Target number of trees per forest node. */
-const TREES_PER_NODE = 34;
-/** Forest dungeon nodes pack 5× as many trees (tighter trunk spacing). */
-const FOREST_DUNGEON_TREE_MULTIPLIER = 5;
-/** Dungeon altars need open combat space; no tree trunk anchors inside this radius. */
-const DUNGEON_CENTER_TREE_CLEAR_RADIUS = 760;
+/**
+ * CEILING on trees per forest node, not a fixed count — normal nodes draw a seeded
+ * count in `[FOREST_TREES_MIN_PER_NODE, TREES_PER_NODE]` so one stretch of forest is
+ * open and the next is thick, instead of all ten nodes carrying an identical 34.
+ */
+const TREES_PER_NODE = 40;
+const FOREST_TREES_MIN_PER_NODE = 24;
+/**
+ * Forest dungeons ring their clearing with denser woodland.
+ *
+ * Was 5x, which put 170 trunks on a dungeon node at ~368px mean spacing — a wall
+ * rather than a treeline, and the x2.25 node resize had quietly made it worse (it
+ * was 75 trees before). 2x keeps the ring clearly denser than open forest while
+ * staying somewhere you can fight and path through.
+ */
+const FOREST_DUNGEON_TREE_MULTIPLIER = 1.5;
+/**
+ * Radius of a forest dungeon's central clearing — no trunk may stand inside it.
+ *
+ * Raised sharply from a flat 760. At that size the trees read as a loose collection
+ * scattered over most of the node with a small hole punched in it; the arena is
+ * supposed to be the SHAPE, with the trees forming a rough circle around it and
+ * filling out to the borders behind. A clearing this size is what makes the treeline
+ * read as a ring rather than as scatter.
+ *
+ * Node-relative so it holds its proportion through any resize.
+ */
+const DUNGEON_CENTER_TREE_CLEAR_RADIUS = GAME_CONFIG.NODE_WIDTH * 0.32;
 
-function treesForNode(nodeId: string): { target: number; minSeparation: number } {
+function treesForNode(
+  nodeId: string,
+  rng: () => number,
+): { target: number; minSeparation: number } {
   const biome = NODE_BIOMES[nodeId];
   if (biome?.isDungeon) {
-    const target = TREES_PER_NODE * FOREST_DUNGEON_TREE_MULTIPLIER;
+    // Dungeons stay a FIXED count: the clearing and its treeline are the shape a boss
+    // node must read as, and varying the ring muddies it.
+    const target = Math.round(TREES_PER_NODE * FOREST_DUNGEON_TREE_MULTIPLIER);
     const densityMult = target / TREES_PER_NODE;
     return {
       target,
       minSeparation: MIN_TRUNK_SEPARATION / Math.sqrt(densityMult),
     };
   }
-  return { target: TREES_PER_NODE, minSeparation: MIN_TRUNK_SEPARATION };
+  const target =
+    FOREST_TREES_MIN_PER_NODE +
+    Math.floor(rng() * (TREES_PER_NODE - FOREST_TREES_MIN_PER_NODE + 1));
+  return { target, minSeparation: MIN_TRUNK_SEPARATION };
 }
 
 const treeCache = new Map<string, TreeInstance[]>();
 
 function generateForestNodeTrees(nodeId: string): TreeInstance[] {
-  const { target: treesPerNode, minSeparation } = treesForNode(nodeId);
   const rng = mulberry32(hashString(`${nodeId}:trees`));
+  const { target: treesPerNode, minSeparation } = treesForNode(nodeId, rng);
   const W = GAME_CONFIG.NODE_WIDTH;
   const H = GAME_CONFIG.NODE_HEIGHT;
 
@@ -247,6 +280,10 @@ function generateForestNodeTrees(nodeId: string): TreeInstance[] {
     const footX = EDGE_MARGIN + rng() * (W - 2 * EDGE_MARGIN);
     const footY = EDGE_MARGIN + rng() * (H - 2 * EDGE_MARGIN);
     if (isInsideDungeonCenterClearing(nodeId, footX, footY)) continue;
+    // Keep the trails walkable. Padded by roughly a trunk's own half-width so a tree
+    // clears the path by its footprint rather than merely having its anchor outside
+    // it — an unpadded test leaves trunks overhanging the trail edge.
+    if (isOnForestPath(nodeId, footX, footY, TRUNK_PATH_CLEARANCE)) continue;
 
     const tooClose = anchors.some((a) => {
       const dx = footX - a.x;

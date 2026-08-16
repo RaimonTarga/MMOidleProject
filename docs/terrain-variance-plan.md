@@ -449,13 +449,15 @@ toward. Alpha climbs in even 0.05 steps so no single tier is a jump.
 | Tier | Colour | Alpha |
 |---|---|---|
 | clearing (tier 0) | — none — | — |
-| 2 | `0x2f4f9e` cold blue | 0.24 |
-| 3 | `0x3d43a4` | 0.29 |
-| 4 | `0x4a2f9e` indigo | 0.34 |
-| 5 | `0x5c2fae` | 0.39 |
-| 6 | `0x7132bd` | 0.44 |
-| 7 | `0x8a34c4` violet | 0.49 |
-| 8 | `0xa63ad6` void violet | 0.54 |
+| 2 | `0x2f4f9e` cold blue | 0.36 |
+| 3 | `0x3d43a4` | 0.41 |
+| 4 | `0x4a2f9e` indigo | 0.46 |
+| 5 | `0x5c2fae` | 0.51 |
+| 6 | `0x7132bd` | 0.56 |
+| 7 | `0x8a34c4` violet | 0.61 |
+| 8 | `0xa63ad6` void violet | 0.66 |
+
+Other biomes: plains T2 `0xc4622a` @ 0.32, forest T2 `0x1f6b70` @ 0.34.
 
 **The altar sits dead centre**, on the player spawn — you arrive standing on it. It carries
 no `blocksMovement`, so sharing that ground is fine. That also let the plaza collapse from
@@ -540,4 +542,108 @@ rather than a low floor.
 alternate sitting unused, so a second ground material is the one remaining lever and it costs
 art. Cave and forest both have a spare sheet already paid for; plains does not.
 
-**Next biomes, in order:** forest, swamp, mountain, caves.
+### Forest — DONE (2026-08-14), pending visual review
+
+Baseline: identical everywhere. All 10 normal nodes carried exactly 34 trees and 119 props,
+and the only ground pattern was `tree-canopy` (foliage pooled under the trees).
+
+**Trails, and why they live in `shared/`.** New `shared/src/world/forestPaths.ts` picks a
+seeded trail per node: `ring` (O), `cross` (X, diagonal — deliberately unlike the hub's
+cardinal roads), `partial` (a loop with a bite out of it, or an X missing arms, so the node
+reads as forest never fully cut through), or `none`.
+
+This could not live in the client renderer. **Trees carry trunk hitboxes, so they are
+collision and are generated server-side** — a trail is only a trail if nothing stands in it,
+so the tree scatter has to see the same geometry. Ground rendering and decor scatter read
+that one layout too, which is what keeps the painted trail, the gap in the treeline and the
+gap in the undergrowth describing the same shape. Derived from the node id, so both sides
+agree with nothing on the wire.
+
+Trails paint **inverted** (foliage dominant, discs are the bare floor you walk on) — the same
+trick jungle uses for its clearings. Two consequences worth knowing:
+
+- The shape overrides the weighted pattern roll for that node, because the decision has
+  already been made in shared. Nodes that roll `none` fall through to `tree-canopy` unchanged.
+- **Props need an explicit path test, not `avoidsDirt`.** Under inversion `isDirt` is true
+  OFF the trail and false ON it, so the flag would scatter undergrowth straight down the
+  middle of the path. `isOnForestPath` is checked directly instead.
+
+*Verified: 0 trunks sitting on a trail across all 12 nodes. Shape spread over the 10 normal
+nodes came out ring 3 / cross 3 / partial 3 / none 1.*
+
+**Dungeon density.** `FOREST_DUNGEON_TREE_MULTIPLIER` 5 -> 2. It was putting **170 trunks**
+on a dungeon node at ~368px mean spacing — a wall rather than a treeline — and the x2.25
+resize had quietly made it worse (75 before). Now 80 trees at ~537px, still clearly denser
+than open forest (759-924px) but somewhere you can fight and path. Dungeons stay a FIXED
+count on purpose: the clearing and its treeline are the shape a boss node must read as.
+
+**Normal tree count seeded 24-40** (was a flat 34), same ceiling framing as plains.
+**Decor variance on three groups** — `undergrowth` (ferns + broadleaf), `fungi` (mushrooms),
+`litter` (leaf litter). Totals 73-157 against a flat 119.
+
+**T2 tint** `0x1f6b70` at 0.22 — a cool green-blue so the same trees read as older and
+deeper in, light through a heavier canopy rather than a different place.
+
+**Open for review:** only 1 of 10 nodes rolled `none`. The weights favour it (3 vs 2/2/2) so
+that is seed luck, but if unbroken forest should be more common — it is the contrast that
+makes a trail feel like a route — raise the `none` weight in `SHAPE_WEIGHTS`.
+
+**Watch:** a `cross` node generates ~104 trail discs, and `isDirt` is O(discs) per query.
+Node paint runs it over every Wang corner (~5.8k), so ~600k checks per cross node. Fine at
+this size, but it is the first layout dense enough to be worth remembering.
+
+### THE TINT BUG — read this before touching tints again
+
+Tints were reported invisible **twice**. The first response was to raise the alphas
+(0.13-0.30 -> 0.24-0.34). That was wrong: the numbers were never the problem.
+
+**`paintActiveNode` does not call `paintNodeStatic`.** They are two entirely separate
+paint paths. `paintNodeStatic` builds the four NEIGHBOUR previews; the node you are
+actually standing in is assembled by `paintActiveNode` from `scene.bgWang` /
+`scene.bgTile` / decor. The tint rectangle was only ever wired into the first one — so it
+existed only on four previews, each already buried under a 0.6-alpha black fog.
+
+The verification that "passed" only ever checked that `nodeTint()` returned a colour from
+the lookup table. It never checked that anything got drawn. **A data-level check is not a
+rendering check**, and that gap is what let the same bug survive two rounds.
+
+Fixed by giving the active path its own `updateNodeTintForNode` (+ `scene.nodeTintOverlay`).
+
+**Trees needed a second mechanism.** The overlay only washes what renders below its depth
+band. Tree roots draw just under the entities and canopies draw above them (y-sorted, so
+you walk behind a trunk), putting them either side of any band that excludes creatures. On
+a forest node the trees ARE the visual, so an untinted treeline over washed ground reads as
+a bug. Phaser Images do support tint (only `TilemapLayer` does not), so trees and y-sorted
+decor are tinted directly via `nodeTintMultiply` — the wash pre-mixed from white toward the
+colour by its alpha, since `setTint` multiplies rather than alpha-blends. Flat ground decor
+is deliberately NOT tinted this way: it already sits under the overlay, and doing both would
+double the effect.
+
+### Forest dungeon — the clearing is the shape
+
+`DUNGEON_CENTER_TREE_CLEAR_RADIUS` 760 -> `NODE_WIDTH * 0.32` (1536), multiplier 2 -> 1.5.
+
+At 760 the trees read as a loose collection covering most of the node with a small hole
+punched in it. The arena is meant to BE the shape, with the treeline forming a rough circle
+around it and filling out to the borders behind. Measured: 60 trees (was 170), nearest trunk
+at 1552 against a 1536 clearing, farthest 2900 (the corners), ~510px mean spacing in the
+treed band.
+
+**Next biomes, in order:** swamp, mountain, caves.
+
+### Tint strength — final calibration
+
+Three passes to land this, and only the last one was actually about the numbers:
+
+1. **0.13–0.30** — reported invisible. Root cause was the WIRING bug above, not the value.
+2. **0.20–0.34** — now genuinely rendering, still judged too subtle.
+3. **0.32–0.66** — current. Treat **~0.30 as the floor** for a wash that reads as deliberate;
+   below that it looks like a rendering artefact rather than mood.
+
+**The two paths need different alphas to look the same.** The overlay composites
+(`base*(1-a) + tint*a`); the image path multiplies (`base * mix/255`). Those agree only where
+the base is white — on a mid or dark pixel like tree bark, multiply shifts the colour far
+less, so trees came out visibly under-tinted against ground washed at the same alpha.
+`IMAGE_TINT_BOOST = 1.35` pulls the multiply path back toward parity. It is an empirical
+correction, not a derivation: exact parity is impossible, since multiply cannot lighten and
+compositing can.

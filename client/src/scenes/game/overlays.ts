@@ -2,6 +2,7 @@ import {
   BIOME_DATABASE,
   DUNGEON_ALTAR_SIZE,
   GAME_CONFIG,
+  isOnForestPath,
   getDungeonDef,
   NODE_BIOMES,
   NODE_FEATURES,
@@ -51,7 +52,7 @@ import { MM_H, MM_PAD, MM_W } from "./nodeExits";
 import { isVoidThroneUnblocked } from "./voidThrone";
 import { resolvedMinimapTierPalette, uiTierActivationIsActive } from "../../hud/uiTier";
 import { isMobileViewport } from "../../breakpoints";
-import { TINT_DEPTH, nodeTint } from "../../render/biomeTint";
+import { TINT_DEPTH, nodeTint, nodeTintMultiply } from "../../render/biomeTint";
 
 const BG_DEPTH = -11;
 const BOUNDARY_DEPTH = -9.5;
@@ -63,6 +64,8 @@ const BOUNDARY_DEPTH = -9.5;
 const MINIMAP_MIN_SCENE_WIDTH = 760;
 /** Tree trunk/root pass sits on the ground, just below shadows + entities. */
 const TREE_ROOT_DEPTH = DEPTH.SHADOW - 0.5;
+/** Undergrowth keeps this far off a forest trail so the edge stays legible. */
+const DECOR_PATH_CLEARANCE = 20;
 /**
  * Source-cell rows duplicated on both tree render passes so the over/under
  * crop seam does not show a hairline gap after display scaling.
@@ -303,6 +306,9 @@ function buildBiomeDecorImages(
   const rng = mulberry32(hashString(`${nodeId}:biome-decor:v2`));
   const groundLayout = computeGroundLayout(biomeGroup, nodeId);
   const isDungeonNode = NODE_BIOMES[nodeId]?.isDungeon === true;
+  // Only y-sorted props escape the overlay band; flat ground decal props sit under it
+  // and are already washed, so tinting those too would double the effect.
+  const tintMul = nodeTintMultiply(nodeId);
   const out: Phaser.GameObjects.Image[] = [];
   const edgeMargin = 110;
   const centerX = GAME_CONFIG.NODE_WIDTH / 2;
@@ -348,6 +354,11 @@ function buildBiomeDecorImages(
       // pebbles scattered on a worn path read fine, a shrub sprouting in the middle
       // of a boss arena does not.
       if ((spec.avoidsDirt || isDungeonNode) && groundLayout?.isDirt(x, y)) continue;
+      // Forest trails need an explicit test rather than `avoidsDirt`. A trail node
+      // paints INVERTED — foliage is the dominant material and the trail is the bare
+      // discs — so `isDirt` is true off the trail and false on it. Relying on the flag
+      // would scatter props down the middle of the path, precisely backwards.
+      if (isOnForestPath(nodeId, x, y, DECOR_PATH_CLEARANCE)) continue;
       if (featureShapes.some((s) => nearFeatureShape(s, x, y, featurePad))) continue;
 
       const scale = 0.82 + rng() * 0.36;
@@ -372,6 +383,7 @@ function buildBiomeDecorImages(
         .setDepth((ySort ? DEPTH.SPRITE + sceneDepthY(y) : DEPTH.BG_DECOR) + depthBias);
       if (spec.flipX && rng() < 0.5) image.setFlipX(true);
       if (spec.alpha != null) image.setAlpha(spec.alpha);
+      if (ySort && tintMul !== null) image.setTint(tintMul);
       out.push(image);
       count++;
     }
@@ -592,6 +604,9 @@ function buildNodeTreeImages(
   opts: { ySort: boolean; depthBias: number },
 ): Phaser.GameObjects.Image[] {
   const images: Phaser.GameObjects.Image[] = [];
+  // Trees straddle the tint overlay's depth band (roots below entities, canopy above),
+  // so the rectangle cannot reach them — they are tinted directly instead.
+  const tintMul = nodeTintMultiply(nodeId);
   for (const tree of [...getNodeTrees(nodeId), ...getNodeTallProps(nodeId)]) {
     const texture = treeTexture(tree);
     if (!scene.textures.exists(texture.key)) continue;
@@ -625,6 +640,7 @@ function buildNodeTreeImages(
       .setDisplaySize(tree.displaySize, tree.displaySize)
       .setDepth(TREE_ROOT_DEPTH);
     roots.setCrop(0, rootsCropY, tree.cellPx, tree.cellPx - rootsCropY);
+    if (tintMul !== null) roots.setTint(tintMul);
     images.push(roots);
 
     // Pass 1: canopy + upper trunk (top slice) over the player — walk-behind.
@@ -634,6 +650,7 @@ function buildNodeTreeImages(
       .setDisplaySize(tree.displaySize, tree.displaySize)
       .setDepth(DEPTH.SPRITE + sceneDepthY(tree.baseY));
     canopy.setCrop(0, 0, tree.cellPx, canopyCropH);
+    if (tintMul !== null) canopy.setTint(tintMul);
     images.push(canopy);
   }
   return images;
@@ -776,7 +793,38 @@ export function createGridBackground(scene: GameScene): void {
 export function paintActiveNode(scene: GameScene, nodeId: string): void {
   updateBiomeBackgroundForNode(scene, nodeId);
   updateNodeDecorForNode(scene, nodeId);
+  updateNodeTintForNode(scene, nodeId);
   updateNodeBoundaryFrame(scene);
+}
+
+/**
+ * Atmosphere wash for the ACTIVE node.
+ *
+ * This has to exist separately from `buildNodeTint` because the active node and the
+ * neighbour previews are painted by two completely different code paths: previews go
+ * through `paintNodeStatic`, while the node you are standing in is assembled here from
+ * `scene.bgWang` / `scene.bgTile` / decor. Wiring the wash into only the shared-looking
+ * one made it invisible in play — present on four fogged previews and absent on the one
+ * node anyone actually looks at.
+ */
+function updateNodeTintForNode(scene: GameScene, nodeId: string): void {
+  scene.nodeTintOverlay?.destroy();
+  scene.nodeTintOverlay = null;
+
+  const tint = nodeTint(nodeId);
+  if (!tint) return;
+
+  scene.nodeTintOverlay = scene.add
+    .rectangle(
+      0,
+      0,
+      GAME_CONFIG.NODE_WIDTH,
+      GAME_CONFIG.NODE_HEIGHT,
+      tint.color,
+      tint.alpha,
+    )
+    .setOrigin(0, 0)
+    .setDepth(TINT_DEPTH);
 }
 
 function updateBiomeBackgroundForNode(scene: GameScene, nodeId: string): void {

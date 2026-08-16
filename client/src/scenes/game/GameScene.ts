@@ -43,6 +43,8 @@ export class GameScene extends Phaser.Scene {
   bgTile: Phaser.GameObjects.TileSprite | null = null;
   /** Active-node painted Wang ground (grass + dirt patches), when the biome has one. */
   bgWang: Phaser.Tilemaps.TilemapLayer | null = null;
+  /** Atmosphere wash over the ACTIVE node's ground + decor (render/biomeTint.ts). */
+  nodeTintOverlay: Phaser.GameObjects.Rectangle | null = null;
   nodeDecor: Phaser.GameObjects.Image[] = [];
   /** Deterministically scattered, non-gameplay decoration for the active biome. */
   nodeBiomeDecor: Phaser.GameObjects.Image[] = [];
