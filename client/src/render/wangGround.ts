@@ -446,6 +446,9 @@ export function buildWangGroundLayer(
     cx: d.x / cellWorld,
     cy: d.y / cellWorld,
     r: d.r / cellWorld,
+    // A disc may damp the biome's edge wobble. See DirtDisc.jitter: a blob wants a ragged
+    // edge, a road wants a legible one, and desert carries both on the same node.
+    jitter: d.jitter ?? 1,
   }));
   const isUpper = (cx: number, cy: number): boolean => {
     if (cx <= 0 || cy <= 0 || cx >= cCols - 1 || cy >= cRows - 1) {
@@ -462,7 +465,7 @@ export function buildWangGroundLayer(
     }
     for (let d = 0; d < discs.length; d++) {
       const disc = discs[d];
-      const wobble = (hash01(cx, cy, d + 1) - 0.5) * 2 * cfg.edgeJitter;
+      const wobble = (hash01(cx, cy, d + 1) - 0.5) * 2 * cfg.edgeJitter * disc.jitter;
       const rr = disc.r + wobble;
       if (rr <= 0) continue;
       const ddx = cx - disc.cx;

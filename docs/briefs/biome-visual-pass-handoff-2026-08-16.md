@@ -105,6 +105,122 @@ Run one file with:
 
 ---
 
+### Desert (18 nodes) — DONE, not yet visually reviewed
+
+- **Caravan tracks** — `shared/src/world/desertTracks.ts`. **11/15 open nodes tracked**, plus
+  an arrival road on all 3 dungeons. Two open-pan shapes, `through` (edge to edge) and
+  `broken` (arrives and fails, tail dissolving into sand). The track deliberately does NOT
+  serve the node's exits — a road going somewhere else.
+- **The road is THIN, LONG and DASHED** (half-width 91px, narrowest route line in the game;
+  patches of 700–1500px with 220–520px of swept sand between). Width is the wrong lever on
+  open sand — a wide band reads as a discoloured area, not as something travelled.
+- **Trackless nodes are byte-identical to before.** The track overrides the pattern roll only
+  where one exists, so the other eight nodes keep the exact `sparse-scatter` draw they made.
+- **Every desert spec now sets `avoidsDirt`** (no other biome does — hardpan always means
+  scoured ground here) *plus* an explicit `isOnDesertTrack` clearance test, because
+  `avoidsDirt` tests the disc exactly and cannot express a margin.
+- **Four decor variance groups**, two of them presence-rolled: props **37–112/node, mean 77**
+  (was a flat 85), **6/18 nodes with no scrub at all**. 0 props on hardpan, 0 on a track.
+- **Hoodoos clear a track by 210px** (cave uses 190 for a beat), asserted in
+  `collision.test.ts` and in the new `server/test/desertTracks.test.ts`.
+- **Desert dungeons are the END OF THE ROAD.** The one biome that does NOT exempt its
+  dungeons from its route layout: an `arrival` road comes in from a real travel gate,
+  straight to the arena court, and stops there. Never rolled — all 3 have one. It runs along
+  a centre-to-gate travel lane, which costs nothing (rocks already clear those lanes, and the
+  dungeon decor rule already rejects every layout disc).
+- **Tint** T2 untinted (desert's base tier — there is no T1 desert), T3 bleached ochre, T4
+  dust-red.
+- **The first cut was invisible in play, and one cause was a rendering finding.** Half the
+  biome had no road including the entry node (fixed by the weights above), AND the autotiler
+  was destroying the line: `edgeJitter` wobbles every corner test by up to 1.4 CELLS = 90
+  world px, against a 125px road. The solid core was ~70px with a wide speckled fringe, so it
+  painted as a smudge. `DirtDisc.jitter` (default 1, road discs pass 0.35) now lets a LINE be
+  crisp on the same node where a BLOB stays ragged. **Nothing already reviewed moves.**
+- Ruled out first, so do not re-derive: both paint paths reach `computeGroundLayout`,
+  `preloadWangGround` queues the desert sheet, and hardpan's base-to-upper contrast is ΔLum
+  **48.7** — third strongest of the ten ground sheets, double the visible cave patrol path.
+
+### Cave tints — added 2026-08-16
+
+Caves had no tint entry at all. T1 stays untinted, T2 `0x2f6b6b` @ 0.32 (mineral teal, wet
+stone), T3 `0x5a3f8c` @ 0.44 (crystal violet — `crystal-gargoyle` and `deep-spider` back it
+on screen). The ramp says the ROCK changed, not just the light.
+
+### Jungle (18 nodes) — DONE, not yet visually reviewed
+
+- **Thickets are generated** — `shared/src/world/jungleBushes.ts`. Was TWO authored sets
+  across fifteen walkable nodes, at identical coordinates and identical radii; now 15/15
+  distinct, 4-6 thickets at radii 360-500. `denseBush` gameplay values untouched.
+- **Four ARRANGEMENTS, dealt not rolled**: gauntlet / ring / cluster / scatter, 4/4/4/3. See
+  trap 17 — rolling could not hit the mix at this sample size.
+- **Trees follow the arrangement**, 6-13 (was flat 9): a cluster node keeps its open ground,
+  a scatter node carries a real canopy. 0 nodes fall short of target.
+- **Jungle dungeons are a HACKED CLEARING**: no thickets (which also removed three debug
+  placeholder circles — `boss_bush_*` ids never matched the `jungle_bush` art scatter), a
+  clearing at `0.135 * W` with jitter damped to **0.3** so its edge reads as CUT, and the
+  trees ringing it in an annulus just outside that edge (934-1191 against a 648 clearing).
+- **Decor**: four variance groups on the heaviest kit in the game (it had none). Props
+  **70-243/node, mean 160** (was flat 180); 6/18 nodes with no flowers, 6/18 with no stones.
+- **Tint** T2 untinted (jungle's base tier), T3/T4 on the NEW `saturate` mode — jungle gets
+  more VIVID with depth, not dimmer. The first attempt was a wash and read as mud; a wash
+  cannot add contrast, only remove it. See traps 18-19.
+- **Thicket sprites are now tinted** — they never were (y-sorted, so above the overlay band,
+  and `buildFeatureScatterImages` never called `nodeTintMultiply`).
+- Dead code removed: both jungle templates, the dungeon set, `JUNGLE_NORMAL_TEMPLATES` and
+  `JUNGLE_TREES_PER_NODE`.
+
+### Volcano (14 nodes) + Tundra (12 nodes) — DONE 2026-08-17, not yet visually reviewed
+
+- **Volcanic lava is generated** — `shared/src/world/volcanicLakes.ts`. Was FOUR authored
+  layouts across fourteen nodes (two alternating on the twelve walkable ones); now 14/14
+  distinct. **Exactly 3 lakes at r 456-753**, coverage **6.6-9.0% -> 14.2-17.0%**. Coverage
+  is a BALANCE number (lava burns) and is flagged as the first dial to move.
+- **Lake radii are DEALT from the area budget**, not drawn per lake. Once the count is
+  fixed, `[MIN_RADIUS, budget-solved-for-count]` is a range of ~27px, so independent draws
+  gave three near-identical circles (607/623/654). Splitting the AREA into uneven shares
+  (+/-45%) keeps coverage exact AND gives a big/middling/small trio.
+- Borrows swamp's coverage-first budget but inverts its intent: swamp's `MIN_POOLS = 3` stops
+  a budget being eaten by two huge bogs; volcano's floor is **2** because that is exactly
+  what it wants.
+- **Volcanic rock formations 9 -> 15**, matching caves.
+- **Tundra ice is generated** — `shared/src/world/tundraLakes.ts`. Was 5-14 small discs
+  (~3%); now **2-3 lakes at r 649-755, 11.5-19.5%**, 12/12 distinct.
+- **Trees and props now keep OFF the ice.** They could not before: the ice was client-only
+  renderer state, so server-side trees grew out of the lakes, and only the vegetation props
+  set `avoidsDirt`. 0 trees and 0 props on ice; the prop kit still places its full 159.
+- **Tundra dungeons inverted**: arena is cleared solid ground, lakes pushed to the sides
+  (was: the arena court itself was painted as ice).
+- `DirtDisc.jitter` damped to **0.55** for a lake shore — smooth but not cut, between the
+  desert road's 0.35 and full wobble.
+- Dead code removed: all four volcanic legacy templates and both template id constants.
+- **Tints, added as a deliberate pair.** Volcano `saturate` (T3 `0xd4521a` @0.30, T4 @0.46) —
+  firelight on grey basalt, lava pops. Tundra `wash` (T3 `0x3a5c8c` @0.30, T4 `0x1e3559`
+  @0.42) — the one biome where a wash is clearly right, because snow is bright and has
+  contrast to spare, so dimming toward blue IS the blue-hour effect rather than a cost.
+  Both tint their BASE tier (both start at T3, so neither has an "ordinary" tier to hold
+  as a baseline — swamp's reasoning). Tundra stays properly blue and dark, deliberately
+  unlike mountain's pale desaturated grey-blue.
+
+### Wasteland (7 nodes) + Trench (7 nodes) — DONE 2026-08-17, not yet visually reviewed
+
+- **Two premises were already true**, do not re-do them: wasteland props ALREADY sit on the
+  ash (`avoidsDirt` on nothing, by design), and neither biome has any features at all.
+- **Wasteland: the path pattern is GONE.** `loose-center-path` held 2/7 of the roll and on ash
+  art read as a long patch, not a road. Replaced by `ash-drift` — lobed banks (2-4 overlapping
+  discs walking in a shared direction), 3-6 per node, each with its own size scale.
+- **Wasteland decor**: four variance groups where there were none (`drifts`, `thorns`,
+  `bones`, `remains` presence-rolled at 0.55).
+- **Wasteland dungeon = THE GRAVE ROWS.** Rows, not a ring — four dungeons already use rings.
+  43 markers in 9 rows, fraying with distance, and the arena is a GAP in the grid so the rows
+  continue on the far side. Grid rotated per node so it does not parallel the border.
+- **Trench density**: decor 103 -> 155 props, rock formations 9 -> 15. Five variance groups.
+- **Trench dungeon = THE WHALE FALL.** A spine of vertebrae laid ACROSS the node — the only
+  dungeon shape in the game with a direction. Existing vertebra art, rotated to the spine
+  tangent, tapering ribcage-to-tail. 12 vertebrae; rocks clear it.
+- **Tints: conjecture recorded, nothing wired**, at the user's request. Wasteland desaturating
+  grey wash is achievable today (a wash toward neutral grey IS desaturation). Trench "darker"
+  is easy but "higher contrast" is IMPOSSIBLE with a rectangle — see trap 21.
+
 ## Traps learned this session (9–12 continue the earlier brief's list)
 
 **9. `invert` breaks the DUNGEON rule, not just `avoidsDirt`.** The decor scatter's "nothing
@@ -140,17 +256,88 @@ height mean different things for a top-down base: width is silhouette, height is
 
 ---
 
+**15. A disc count is not a coverage measurement.** A desert track with 12 discs measured
+0.45% node coverage where its disc count implied ~3%: a quarter-turn had picked both edge
+points either side of one corner, so the entire road lay off the map bar a disc. Fixed twice
+over — adjacent-side ends are forced away from the shared corner, and a `broken` run is now a
+fraction of the **on-node** crossing (Liang-Barsky clip) rather than of the raw segment. The
+throwaway script printed both numbers, which is the only reason it was caught; printing one
+would have shown a healthy-looking track.
+
+**16. `edgeJitter` can destroy a thin shape while leaving a fat one perfect.** The autotiler
+wobbles each corner test by up to `edgeJitter` CELLS — desert's 1.4 is 90 world px. That is
+free character on a 200px blob and fatal on a 180px-wide road, which painted as a smudge with
+a speckled fringe. Blobs want ragged edges, lines want crisp ones, and a single node carries
+both — so the damping is per DISC (`DirtDisc.jitter`, default 1), never per biome. Check the
+jitter-to-width ratio before concluding a shape is "too subtle" and reaching for the size.
+
+**17. `mulberry32` seeded from a string hash has a clumpy FIRST draw, and a small biome cannot
+roll its way to a distribution.** Rolling one of four arrangements per jungle node gave 6/5/2/2
+against a target of 4/4/4/3 — 7 of 15 node ids produced a first draw above 0.818, exactly one
+band. Burning a draw just moves the clump (the second draw had nothing above 0.81, starving the
+opposite band). When a biome has ~15 nodes and you need a MIX, **deal from a shuffled deck**
+(largest-remainder allocation + fixed-seed Fisher-Yates over sorted node ids): deterministic,
+both ends agree, and the player is guaranteed to meet every variant. Roll only where any
+outcome is acceptable on any node.
+
+**18. Only MULTIPLY, ADD, SCREEN and ERASE are real blend modes under Phaser WebGL.** Every
+other `Phaser.BlendModes` constant — OVERLAY, SOFT_LIGHT, HARD_LIGHT, SATURATION, COLOR,
+COLOR_BURN — is initialised to the DEFAULT `[ONE, ONE_MINUS_SRC_ALPHA]` in `WebGLRenderer.js`
+(checked against 3.90), i.e. plain alpha blending. They exist for the Canvas renderer, which
+maps them to CSS composite operations. Setting one under WebGL silently does nothing and
+looks exactly like a value that is too weak — the same failure shape as the original tint
+wiring bug. If a grade needs contrast or saturation, it has to be built out of MULTIPLY.
+
+**19. A wash cannot make anything more vivid; it can only reduce contrast.** Blending toward
+a colour moves every pixel toward that colour, so on art already in that hue (dark green
+foliage under a dark green wash) it removes exactly the contrast that made the art read.
+Multiply CAN saturate, if you choose the colour correctly: keep the hue's brightest channel
+at 255 and cut the others. Jungle T4 went from multiplying every channel to ~50% (mud) to
+`(60%, 100%, 73%)` — same brightness on the greens, the competing channels removed.
+
+**20. A "few and big" generator cannot satisfy a large centre exclusion on a square node.**
+Both the volcanic and tundra dungeon layouts came out with one lake or NONE. A lake must fit
+between the arena clearance and the node edge, and the furthest a lake centre can sit from
+the middle is `sqrt(2) * (half - edgeMargin - r)`, in a corner. Against tundra's 0.3 arena
+clearance that admits nothing above r≈612 — below that biome's own MINIMUM radius — so every
+candidate was rejected and the node came back empty. Give dungeons their own smaller radius
+band rather than shrinking the arena, and assert "at least one" in the test so an empty node
+cannot return silently.
+
+**21. A rectangle overlay can never increase contrast — that needs a shader.** Compositing a
+rect over the scene is at best a linear `y = kx + b` with `k <= 1`, and MULTIPLY (the only
+useful real WebGL blend mode here, see trap 18) scales all channels by the same factor, which
+SHRINKS the differences between them. Darker is easy; "darker with more contrast" needs an
+S-curve, i.e. a post-processing pipeline. Say so up front rather than shipping a wash and
+hoping it reads as contrast.
+
+**22. Decay has to stay legible AS decay.** The wasteland grave rows were frayed with a wander
+comparable to the gap between markers, and thinned hard on top — the grid dissolved into a
+17-marker scatter, destroying the one idea the layout existed for. Any "ordered thing falling
+apart" effect needs its disorder bounded well under its order's spacing, or it stops reading
+as ordered at all. Assert the STRUCTURE in the test (recover the row axis by best fit and
+check the markers still quantise onto distinct lines), not just the count.
+
 ## Per-biome status
 
 | Biome | Nodes | State |
 |---|---|---|
 | Clearing / Sanctuary | 1 + 3 | DONE |
-| Caverns / **Caves** | 21 | **pass 2 DONE 2026-08-16, NOT visually reviewed** |
+| Caverns / Caves | 21 | DONE — visually reviewed; **tints added 2026-08-16** (T2 teal, T3 violet) |
 | Plains | 12 | DONE — deliberately kept plain |
 | Forest | 12 | DONE |
 | Swamp | 21 | DONE (`5f09a2f`), never visually confirmed |
-| **Mountain** | 24 | **DONE 2026-08-16, NOT visually reviewed** |
-| Jungle, desert, tundra, volcanic, wasteland, trench | | not started |
+| Mountain | 24 | DONE — visually reviewed |
+| **Desert** | 18 | **DONE 2026-08-16, NOT visually reviewed** |
+| **Jungle** | 18 | **DONE 2026-08-16, NOT visually reviewed** |
+| **Volcanic** | 14 | **DONE 2026-08-17, NOT visually reviewed** |
+| **Tundra** | 12 | **DONE 2026-08-17, NOT visually reviewed** |
+| **Wasteland** | 7 | **DONE 2026-08-17, NOT visually reviewed** |
+| **Trench** | 7 | **DONE 2026-08-17, NOT visually reviewed** |
+
+> **Correction (2026-08-16):** an earlier revision of this brief said mountain and caves were
+> not visually reviewed. The user confirms they were. What caves were actually missing was
+> **tints**, which is what this session added.
 
 ---
 

@@ -5,6 +5,8 @@ import {
   getCaveRitualSite,
   isOnCavePatrolPath,
 } from "./cavePatrols";
+import { isOnDesertTrack } from "./desertTracks";
+import { isOnWhaleFall } from "./whaleFall";
 import { NODE_BIOMES, worldNodeExits, type NodeDirection } from "./nodeBiomes";
 import { RESOLVED_NODE_FEATURES, type NodeFeatureShape } from "./nodeFeatures";
 import type { TreeArtSet, TreeInstance } from "./trees";
@@ -17,6 +19,19 @@ export const TALL_PROPS_PER_NODE = 9;
  * patrol beat is drawn on the ground, the formations are what the beat threads between.
  */
 export const CAVE_TALL_PROPS_PER_NODE = 15;
+/**
+ * Volcanic carries the cave count too. A caldera should read as broken ground the lava
+ * threads between, not as an ash plain with a few boulders on it — and now that the lava
+ * is two or three large lakes rather than a scatter of vents, the rock is what gives the
+ * space between them any shape.
+ */
+export const VOLCANIC_TALL_PROPS_PER_NODE = 15;
+/**
+ * The trench carries the same count. A chemosynthetic trench floor is crowded — the
+ * formations are what the tubeworms and anemones grow around, so nine of them across a
+ * 4800px node left the life with nothing to cling to.
+ */
+export const TRENCH_TALL_PROPS_PER_NODE = 15;
 export const TALL_PROP_DUNGEON_COUNT = 2;
 export const TALL_PROP_ROUTE_CLEARANCE = 320;
 export const TALL_PROP_FEATURE_CLEARANCE = 260;
@@ -150,6 +165,15 @@ const DUNGEON_CENTER_CLEARANCE = 850;
 
 /** Rocks clear a patrol beat by their own footprint plus a walking margin. */
 const CAVE_PATROL_ROCK_CLEARANCE = 190;
+/**
+ * Hoodoos clear a caravan track the same way, and by more: a desert formation is the
+ * tallest thing for a screen in every direction, so one straddling the road is the single
+ * most visible way to break the illusion that anything ever travelled it.
+ */
+const DESERT_TRACK_ROCK_CLEARANCE = 210;
+/** A trench formation clears the whale carcass — a boulder growing out of the spine
+ * breaks the one image that boss room is built on. */
+const WHALE_FALL_ROCK_CLEARANCE = 200;
 
 function generateTallProps(nodeId: string, biomeGroup: RockBiome): TreeInstance[] {
   const set = ROCK_SETS[biomeGroup];
@@ -181,7 +205,11 @@ function generateTallProps(nodeId: string, biomeGroup: RockBiome): TreeInstance[
     ? TALL_PROP_DUNGEON_COUNT
     : biomeGroup === "cave"
       ? CAVE_TALL_PROPS_PER_NODE
-      : TALL_PROPS_PER_NODE;
+      : biomeGroup === "volcanic"
+        ? VOLCANIC_TALL_PROPS_PER_NODE
+        : biomeGroup === "trench"
+          ? TRENCH_TALL_PROPS_PER_NODE
+          : TALL_PROPS_PER_NODE;
   const features = RESOLVED_NODE_FEATURES[nodeId] ?? [];
 
   for (let attempt = 0; attempt < target * 192 && props.length < target; attempt++) {
@@ -198,6 +226,11 @@ function generateTallProps(nodeId: string, biomeGroup: RockBiome): TreeInstance[
     // mismatch this pass exists to remove, and these carry trunk collision, so it would
     // block the beat as well as look wrong. Cleared by the prop's own footprint.
     if (isOnCavePatrolPath(nodeId, anchorX, anchorY, CAVE_PATROL_ROCK_CLEARANCE)) continue;
+    if (isOnDesertTrack(nodeId, anchorX, anchorY, DESERT_TRACK_ROCK_CLEARANCE)) continue;
+    if (
+      biomeGroup === "trench" && biome?.isDungeon &&
+      isOnWhaleFall(nodeId, anchorX, anchorY, WHALE_FALL_ROCK_CLEARANCE)
+    ) continue;
     if (features.some((feature) =>
       distanceFromShape(anchorX, anchorY, feature.shape) < TALL_PROP_FEATURE_CLEARANCE
     )) continue;

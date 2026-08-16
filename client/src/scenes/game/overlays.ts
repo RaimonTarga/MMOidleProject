@@ -5,6 +5,9 @@ import {
   isOnForestPath,
   isOnMountainPass,
   isOnCavePatrolPath,
+  isOnDesertTrack,
+  isOnTundraLake,
+  getWhaleFall,
   getDungeonDef,
   NODE_BIOMES,
   NODE_FEATURES,
@@ -54,7 +57,7 @@ import { MM_H, MM_PAD, MM_W } from "./nodeExits";
 import { isVoidThroneUnblocked } from "./voidThrone";
 import { resolvedMinimapTierPalette, uiTierActivationIsActive } from "../../hud/uiTier";
 import { isMobileViewport } from "../../breakpoints";
-import { TINT_DEPTH, nodeTint, nodeTintMultiply } from "../../render/biomeTint";
+import { TINT_DEPTH, nodeTintOverlay, nodeTintMultiply } from "../../render/biomeTint";
 
 const BG_DEPTH = -11;
 const BOUNDARY_DEPTH = -9.5;
@@ -334,7 +337,13 @@ function buildBiomeDecorImages(
   // A `min: 0` multiplier does not make a spec vanish in practice — see BiomeDecorVariance.
   const groupPresent = new Map<string, boolean>();
 
+  // A trench dungeon lays its whale bones out as a CARCASS rather than scattering them, so
+  // the ordinary spec is skipped there and `buildWhaleFallImages` places them instead.
+  const whaleFallNode =
+    biomeGroup === 'trench' && isDungeonNode;
+
   for (const spec of specs) {
+    if (whaleFallNode && spec.key === 'trench_whale_vertebra') continue;
     // Draw the variance rolls BEFORE the texture check so a missing texture cannot
     // shift the rng stream and reshuffle every later spec's placement.
     const variance = spec.variance;
@@ -391,6 +400,15 @@ function buildBiomeDecorImages(
       // The cave beat is a route someone walks nightly; rubble and bones strewn down the
       // middle of it would undo the one thing that makes it read as a patrol path.
       if (isOnCavePatrolPath(nodeId, x, y, DECOR_PATH_CLEARANCE)) continue;
+      // A desert track is scoured hardpan, so `avoidsDirt` (which every desert spec now
+      // sets) already covers the discs themselves. This adds the CLEARANCE that flag
+      // cannot express: the flag tests the disc exactly, and a stone cluster sitting with
+      // its centre one pixel off the edge of a road is still a stone cluster in the road.
+      if (isOnDesertTrack(nodeId, x, y, DECOR_PATH_CLEARANCE)) continue;
+      // Nothing sits on a frozen lake — not a boulder, not a snow drift, not a shrub. The
+      // tundra kit previously set `avoidsDirt` on the vegetation only, which was right when
+      // the ice was small wind-polished patches and wrong now that it is a lake surface.
+      if (isOnTundraLake(nodeId, x, y, DECOR_PATH_CLEARANCE)) continue;
       if (featureShapes.some((s) => nearFeatureShape(s, x, y, featurePad))) continue;
 
       const scale = 0.82 + rng() * 0.36;
@@ -421,6 +439,7 @@ function buildBiomeDecorImages(
     }
   }
 
+  if (whaleFallNode) out.push(...buildWhaleFallImages(scene, nodeId, offsetX, offsetY, depthBias, preview, tintMul));
   return out;
 }
 
@@ -432,6 +451,45 @@ function featureScatterFor(scene: GameScene, featureId: string) {
       featureId.startsWith(spec.featureIdPrefix) &&
       spec.variants.some((v) => scene.textures.exists(v.key)),
   );
+}
+
+/**
+ * The trench dungeon's whale fall: a spine of vertebrae laid across the node.
+ *
+ * Placed from the shared layout rather than scattered, and each sprite is ROTATED to the
+ * spine's tangent — vertebrae that do not turn with the curve read as a row of unrelated
+ * stones instead of one animal. Sizes taper from ribcage to tail for the same reason.
+ *
+ * Lives inside the biome-decor builder's call so it inherits BOTH paint paths (the active
+ * node and the neighbour previews) rather than needing its own wiring in each — that split
+ * is what made the tint invisible the first time.
+ */
+function buildWhaleFallImages(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+  preview: boolean,
+  tintMul: number | null,
+): Phaser.GameObjects.Image[] {
+  const key = 'trench_whale_vertebra';
+  if (!scene.textures.exists(key)) return [];
+  const base = 78;
+  const out: Phaser.GameObjects.Image[] = [];
+  for (const vertebra of getWhaleFall(nodeId)) {
+    const size = base * vertebra.scale * 2.1;
+    const image = scene.add
+      .image(offsetX + vertebra.x, offsetY + vertebra.y, key)
+      .setOrigin(0.5, 0.5)
+      .setDisplaySize(size, size)
+      .setRotation(vertebra.angle)
+      .setDepth(DEPTH.BG_DECOR + depthBias)
+      .setAlpha(0.95);
+    if (tintMul !== null && !preview) image.setTint(tintMul);
+    out.push(image);
+  }
+  return out;
 }
 
 /**
@@ -455,6 +513,10 @@ function buildFeatureScatterImages(
   const features = NODE_FEATURES[nodeId];
   if (!features) return [];
   const out: Phaser.GameObjects.Image[] = [];
+  // Thicket props are y-sorted, so they draw ABOVE the tint overlay's depth band and it
+  // cannot reach them — the same reason trees are tinted directly. Without this a tinted
+  // jungle node showed washed ground and full-colour bushes standing on it.
+  const tintMul = nodeTintMultiply(nodeId);
 
   for (const feature of features) {
     const spec = featureScatterFor(scene, feature.id);
@@ -490,6 +552,9 @@ function buildFeatureScatterImages(
           );
         if (rng() < 0.5) image.setFlipX(true);
         if (spec.alpha != null) image.setAlpha(spec.alpha);
+        // Flat (non-ySort) props sit UNDER the overlay and are already washed by it;
+        // tinting those too would double the effect.
+        if (tintMul !== null && spec.ySort && !preview) image.setTint(tintMul);
         image.setData("featureId", feature.id);
         out.push(image);
       }
@@ -715,7 +780,7 @@ function buildNodeTint(
   offsetY: number,
   depthBias: number,
 ): Phaser.GameObjects.Rectangle | null {
-  const tint = nodeTint(nodeId);
+  const tint = nodeTintOverlay(nodeId);
   if (!tint) return null;
   return scene.add
     .rectangle(
@@ -727,6 +792,7 @@ function buildNodeTint(
       tint.alpha,
     )
     .setOrigin(0, 0)
+    .setBlendMode(tint.blendMode)
     .setDepth(TINT_DEPTH + depthBias);
 }
 
@@ -843,7 +909,7 @@ function updateNodeTintForNode(scene: GameScene, nodeId: string): void {
   scene.nodeTintOverlay?.destroy();
   scene.nodeTintOverlay = null;
 
-  const tint = nodeTint(nodeId);
+  const tint = nodeTintOverlay(nodeId);
   if (!tint) return;
 
   scene.nodeTintOverlay = scene.add
@@ -856,6 +922,7 @@ function updateNodeTintForNode(scene: GameScene, nodeId: string): void {
       tint.alpha,
     )
     .setOrigin(0, 0)
+    .setBlendMode(tint.blendMode)
     .setDepth(TINT_DEPTH);
 }
 

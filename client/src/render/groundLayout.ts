@@ -6,6 +6,9 @@ import {
   getCavePatrols,
   getCaveRitualSite,
   caveRitualPoint,
+  getDesertTracks,
+  JUNGLE_CLEARING_R,
+  getTundraLakes,
   RESOLVED_NODE_FEATURES,
   getNodeTrees,
   type NodeFeatureShape,
@@ -29,6 +32,21 @@ export interface DirtDisc {
   x: number;
   y: number;
   r: number;
+  /**
+   * Per-disc multiplier on the biome's `edgeJitter`, default 1.
+   *
+   * The autotiler wobbles every corner test by up to `edgeJitter` CELLS, which is what
+   * keeps a patch of dirt from reading as a stamped circle. On a blob that is free
+   * character; on a thin line it is destruction. Desert's jitter is 1.4 cells (90 world
+   * px) against a road barely 2 cells wide, so the road painted as a smudge with a
+   * speckled fringe instead of a line.
+   *
+   * A LINE needs a crisp edge to read as deliberate, and a BLOB needs a ragged one to
+   * read as natural. Both live in the same layout, so the scale is per disc rather than
+   * per biome — a desert node keeps organically-edged wind pockets and a legible road at
+   * the same time, and no already-reviewed biome changes, because absent means 1.
+   */
+  jitter?: number;
 }
 
 export interface GroundLayout {
@@ -68,6 +86,11 @@ export type DirtPatternName =
   | 'mountain-pass'
   | 'cave-patrol'
   | 'cave-ritual'
+  | 'desert-track'
+  | 'desert-dungeon-road'
+  | 'jungle-clearing'
+  | 'tundra-lakes'
+  | 'ash-drift'
   | 'tree-canopy'
   | 'plain';
 
@@ -196,6 +219,13 @@ export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
   ],
   // Open standoff biome: broad unbroken sand, hardpan only shows in rare
   // wind-stripped pockets.
+  //
+  // A minority of nodes additionally carry a caravan TRACK, decided in
+  // `shared/world/desertTracks.ts` (the rock formations there are collision, so the
+  // route cannot be a renderer-local decision). When a node has one it overrides the
+  // pattern roll below; the rest keep the sparse pockets exactly as before. Hardpan is
+  // the scoured material either way, so the same sheet reads as "wind stripped the sand
+  // off here" for both a pocket and a road.
   desert: [
     {
       material: 'hardpan',
@@ -223,15 +253,15 @@ export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
       ],
     },
   ],
+  // The ice is a FROZEN LAKE, not a rash of patches. One or two big sheets, generated in
+  // `shared/world/tundraLakes.ts` because the trees (collision, server-side) and the props
+  // both have to keep off them — a tree growing out of a lake was the tell that the ice was
+  // renderer-only state nothing else could see.
   tundra: [
     {
       material: 'ice',
       weight: 1,
-      patterns: [
-        { pattern: 'off-center-patch', weight: 3 },
-        { pattern: 'scatter', weight: 2 },
-        { pattern: 'ring-path', weight: 1 },
-      ],
+      patterns: [{ pattern: 'tundra-lakes', weight: 1 }],
     },
   ],
   // Ventless volcanic nodes render plain basalt: the sheet's lava upper is a
@@ -256,17 +286,18 @@ export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
       ],
     },
   ],
-  // Wasteland art (biomeGroup id is still 'graveyard'): drifted ash banks over
-  // dead earth.
+  // Wasteland art (biomeGroup id is still 'graveyard'): drifted ash banks over dead earth.
+  //
+  // NO path pattern. `loose-center-path` used to take 2/7 of the roll, and on this art it
+  // did not read as a road — the ash has no worn-track character, so a trail through it
+  // just looked like a patch that happened to be long. The user's call: these are drifts,
+  // not routes. `ash-drift` replaces the generic patterns with lobed banks that vary in
+  // size and count per node, which is where the variation went instead.
   graveyard: [
     {
       material: 'ash',
       weight: 1,
-      patterns: [
-        { pattern: 'off-center-patch', weight: 3 },
-        { pattern: 'scatter', weight: 2 },
-        { pattern: 'loose-center-path', weight: 2 },
-      ],
+      patterns: [{ pattern: 'ash-drift', weight: 1 }],
     },
   ],
 };
@@ -531,6 +562,114 @@ function mountainPass(_rng: Rng, _W: number, _H: number, nodeId: string): DirtDi
 }
 
 /**
+ * A desert node's caravan track, from the shared layout the rock formations also clear.
+ *
+ * The track is joined by one or two of the biome's usual wind-stripped pockets: a node
+ * that traded ALL its scoured patches for a road would lose the texture that makes the
+ * open pan read as desert rather than as a blank sheet with a line on it.
+ */
+function desertTrack(rng: Rng, W: number, H: number, nodeId: string): DirtDisc[] {
+  const track = getDesertTracks(nodeId).discs.map((d) => ({ x: d.x, y: d.y, r: d.r }));
+  return [...track, ...scatterDiscs(rng, W, H, 1 + Math.floor(rng() * 2), 100, 180)];
+}
+
+/**
+ * Wind-drifted ash banks.
+ *
+ * Each bank is a CLUSTER of two to four overlapping discs rather than one circle, which is
+ * the whole point: a single disc reads as a stamped blob, while overlapping lobes read as
+ * something the wind piled up. Sizes run wide (a node may carry one broad bank and three
+ * small ones, or five middling ones), because "more variation between nodes" was the entire
+ * brief for this biome and the ash is the only ground element it has.
+ *
+ * No path pattern in the mix at all — see the biome config above.
+ */
+function ashDrift(rng: Rng, W: number, H: number): DirtDisc[] {
+  const out: DirtDisc[] = [];
+  const banks = 3 + Math.floor(rng() * 4);
+  for (let i = 0; i < banks; i++) {
+    const cx = range(rng, W * 0.12, W * 0.88);
+    const cy = range(rng, H * 0.12, H * 0.88);
+    // Bank scale is drawn per bank, not per node, so one node can hold a broad drift and a
+    // couple of small ones at the same time.
+    const scale = range(rng, 0.45, 1.35);
+    const lobes = 2 + Math.floor(rng() * 3);
+    // The lobes walk away from the bank centre rather than scattering around it, so the
+    // drift has a direction — the wind came from somewhere.
+    const drift = rng() * Math.PI * 2;
+    let x = cx;
+    let y = cy;
+    for (let l = 0; l < lobes; l++) {
+      const r = range(rng, 180, 430) * scale;
+      out.push({ x, y, r });
+      const step = r * range(rng, 0.55, 0.95);
+      const wander = drift + range(rng, -0.7, 0.7);
+      x += Math.cos(wander) * step;
+      y += Math.sin(wander) * step;
+    }
+  }
+  return out;
+}
+
+/**
+ * A desert dungeon: the arena court, plus the road that arrives at it and stops.
+ *
+ * The "a dungeon is a court and nothing else" rule is relaxed here the same way it is for
+ * a cave ritual site, and for the same kind of reason — the shape has to say what happened
+ * on this node. Every other track in the desert is a road going somewhere else; this is
+ * the one that arrives, and what it arrives at is the boss. End of the road.
+ *
+ * The court is generated by the same `dungeonCourt` call every other biome uses, so a
+ * desert arena is exactly the size of all the others and the two cannot drift apart.
+ */
+/**
+ * A jungle dungeon: overgrowth running right up to a clearing that was CUT, not found.
+ *
+ * The layout inverts (jungle always does), so the disc is a pocket of open floor in
+ * dominant overgrowth — the shape is already right. What was missing is the EDGE. Every
+ * other court gets the Wang autotiler's full `edgeJitter` so its outline reads as worn or
+ * eroded, which is correct for an arena that was uncovered and wrong for one that was
+ * hacked out with blades. Damping the jitter is what makes the boundary read as a cut
+ * line, and it is the same lever the desert road uses for the opposite reason.
+ *
+ * Slightly larger than the standard court, because the trees ring it: at the standard
+ * radius the ring closed in tight enough to read as a wall rather than as a treeline.
+ */
+function jungleDungeonClearing(rng: Rng, W: number, H: number): DirtDisc[] {
+  return [
+    {
+      x: W / 2,
+      y: H / 2,
+      r: W * JUNGLE_CLEARING_R * range(rng, 0.98, 1.02),
+      jitter: 0.3,
+    },
+  ];
+}
+
+/**
+ * A tundra node's frozen lakes, from the shared layout the trees and props keep off.
+ *
+ * Jitter is damped: a lake freezes to a smooth edge, so the autotiler's full 1.2 cells of
+ * per-corner wobble made the shoreline read as a torn patch rather than as ice. Not as hard
+ * an edge as the jungle clearing (which was CUT) — a shore is still irregular, just not
+ * ragged.
+ */
+function tundraLakes(_rng: Rng, _W: number, _H: number, nodeId: string): DirtDisc[] {
+  return getTundraLakes(nodeId).map((lake) => ({
+    x: lake.x,
+    y: lake.y,
+    r: lake.radius,
+    jitter: 0.55,
+  }));
+}
+
+function desertDungeonRoad(rng: Rng, W: number, H: number, nodeId: string): DirtDisc[] {
+  const court = dungeonCourt(rng, W, H);
+  const road = getDesertTracks(nodeId).discs.map((d) => ({ x: d.x, y: d.y, r: d.r }));
+  return [...court, ...road];
+}
+
+/**
  * A dungeon's arena floor: ONE round court at the node centre, under the altar,
  * and nothing anywhere else.
  *
@@ -588,6 +727,11 @@ const PATTERN_GENERATORS: Record<
   'mountain-pass': mountainPass,
   'cave-patrol': cavePatrol,
   'cave-ritual': caveRitual,
+  'desert-track': desertTrack,
+  'desert-dungeon-road': desertDungeonRoad,
+  'jungle-clearing': jungleDungeonClearing,
+  'tundra-lakes': tundraLakes,
+  'ash-drift': ashDrift,
   'tree-canopy': treeCanopy,
   // Base material only — the whole node stays the sheet's lower tile.
   plain: () => [],
@@ -737,17 +881,31 @@ export function computeGroundLayout(biomeGroup: string, nodeId: string): GroundL
   // beat on the nodes that have one.
   const cavePatrolled =
     biomeGroup === 'cave' && !isDungeon ? getCavePatrols(nodeId).patrolled : null;
+  // Desert works the way forest does rather than the way cave does: only the MINORITY of
+  // nodes that rolled a caravan track override the pattern, and every trackless node falls
+  // through to the sparse-pocket roll it has always made. That is deliberate — the roll is
+  // untouched, so a desert node without a track renders byte-identical to before this pass.
+  const hasDesertTrack =
+    biomeGroup === 'desert' && !isDungeon && getDesertTracks(nodeId).shape !== 'none';
   const pattern = isDungeon
     ? biomeGroup === 'cave'
       ? 'cave-ritual'
-      : 'dungeon-court'
+      : biomeGroup === 'desert'
+        ? 'desert-dungeon-road'
+        : biomeGroup === 'jungle'
+          ? 'jungle-clearing'
+          : biomeGroup === 'tundra'
+            ? 'tundra-lakes'
+            : 'dungeon-court'
     : cavePatrolled === true
       ? 'cave-patrol'
       : cavePatrolled === false
         ? 'plain'
         : hasForestTrail
           ? 'forest-paths'
-          : pickWeighted(rng, style.patterns).pattern;
+          : hasDesertTrack
+            ? 'desert-track'
+            : pickWeighted(rng, style.patterns).pattern;
   const generated = PATTERN_GENERATORS[pattern](rng, W, H, nodeId);
   const discs = style.avoidsFeatures
     ? routeDiscsAroundFeatures(generated, nodeId, W, H)

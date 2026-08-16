@@ -16,7 +16,9 @@ import {
   type MountainGap,
   type MountainLedgeLayout,
 } from "./mountainPasses";
+import { getJungleBushes } from "./jungleBushes";
 import { generateSwampPools } from "./swampPools";
+import { generateVolcanicLakes } from "./volcanicLakes";
 
 /** Axis-aligned or circular zone in world pixels (node-local coordinates). */
 export type NodeFeatureShape =
@@ -721,65 +723,6 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
     rotPool("rot_pool_d", 1230, 1240, 240, 3),
     rotPool("rot_pool_e", 3540, 3560, 255, 3),
   ],
-  // JUNGLE — "ambush ecology": dense overgrowth thickets that slow the player and
-  // multiply every monster's detection radius while they are inside, so stepping into
-  // cover is what pulls the pack rather than hiding from it. Open lanes between bushes
-  // are the safe read (the ground layout routes its open floor around the thickets);
-  // evasion + hardening is the build answer. Non-blocking → no passability concern.
-  "node-3-7": [
-    denseBush("jungle_bush_a", 1230, 1440, 450),
-    denseBush("jungle_bush_b", 3540, 1560, 420),
-    denseBush("jungle_bush_c", 2400, 3440, 480),
-    denseBush("jungle_bush_d", 3630, 3600, 390),
-  ],
-  "node-3-8": [
-    denseBush("jungle_bush_a", 1140, 1600, 450),
-    denseBush("jungle_bush_b", 3450, 3280, 450),
-    denseBush("jungle_bush_c", 2250, 1520, 390),
-  ],
-  // JUNGLE T2 dungeon (node-2-8, Jungle Dread-Gorger) — the boss exam adds an ambush
-  // layer: thickets ring the arena (center clear for the boss) so the pack adds the
-  // boss summons can melt into cover and the "survive the ambush" pressure persists.
-  "node-2-8": [
-    denseBush("boss_bush_a", 1350, 1640, 420),
-    denseBush("boss_bush_b", 3450, 1800, 420),
-    denseBush("boss_bush_c", 2460, 3520, 450),
-  ],
-  // VOLCANIC T3 (node-7-8, node-8-8) — "escalating heat": a node-wide ambient ramp
-  // (the soft timer — climbs while you fight, sheds when you disengage/leave) layered
-  // over scattered lava vents (positional fire DoT). You weave the vents while a
-  // ramping fire swarm chases AND the room heats: every heat stack pays you more
-  // damage dealt but charges you more damage taken, so a long fight is a bet you
-  // can only win by ending it. Non-blocking → no passability concern.
-  "node-7-8": [
-    volcanicHeat("volcanic_heat"),
-    lavaVent("lava_vent_a", 1230, 1440, 420),
-    lavaVent("lava_vent_b", 3540, 1640, 390),
-    lavaVent("lava_vent_c", 2340, 3400, 450),
-    lavaVent("lava_vent_d", 3660, 3560, 360),
-  ],
-  "node-8-8": [
-    volcanicHeat("volcanic_heat"),
-    lavaVent("lava_vent_a", 1140, 1680, 420),
-    lavaVent("lava_vent_b", 3450, 3280, 420),
-    lavaVent("lava_vent_c", 2280, 1520, 360),
-  ],
-  // VOLCANIC T3 dungeon (node-8-9, Cinder-Shell Magma-Salamander) + T4 dungeon
-  // (node-10-10, Caldera Sovereign) — the heat soft-timer becomes the boss exam: the
-  // arena heats during the fight (vents ring the edges, center clear for the boss), so
-  // a slow attrition kill walks into the damage cap on a boss that is itself ramping.
-  "node-8-9": [
-    volcanicHeat("volcanic_heat"),
-    lavaVent("boss_vent_a", 1350, 1600, 390),
-    lavaVent("boss_vent_b", 3450, 1760, 390),
-    lavaVent("boss_vent_c", 2430, 3520, 420),
-  ],
-  "node-10-10": [
-    volcanicHeat("volcanic_heat"),
-    lavaVent("boss_vent_a", 1320, 1640, 420),
-    lavaVent("boss_vent_b", 3480, 1800, 420),
-    lavaVent("boss_vent_c", 2400, 3560, 450),
-  ],
   "node-10-0": [
     {
       id: "abyssal_throne",
@@ -829,12 +772,6 @@ const SWAMP_DUNGEON_TEMPLATES: Record<number, string> = {
   2: "node-8-6",
   3: "node-9-4",
 };
-const JUNGLE_NORMAL_TEMPLATES = ["node-3-7", "node-3-8"];
-const VOLCANIC_NORMAL_TEMPLATES = ["node-7-8", "node-8-8"];
-const VOLCANIC_DUNGEON_TEMPLATES: Record<number, string> = {
-  3: "node-8-9",
-  4: "node-10-10",
-};
 
 function templateFeatures(
   templateId: string | undefined,
@@ -883,13 +820,22 @@ function canonicalFeaturesForNode(
     );
   }
   if (node.biomeGroup === "jungle") {
-    const templateId =
-      node.kind === "dungeon"
-        ? "node-2-8"
-        : JUNGLE_NORMAL_TEMPLATES[
-            (node.featureVariant ?? 0) % JUNGLE_NORMAL_TEMPLATES.length
-          ];
-    return templateFeatures(templateId);
+    // Generated per node rather than drawn from a two-entry template table. Those two
+    // authored sets covered all fifteen walkable jungle nodes at identical coordinates
+    // and identical radii, so the biome's defining feature sat in the same place on
+    // every node in the game. Same move mountain ledges and swamp pools already made.
+    //
+    // A dungeon returns NOTHING: no thickets in a jungle arena, at the user's request.
+    // (The three it used to carry were also invisible — their `boss_bush` ids never
+    // matched the `jungle_bush` art scatter, so they drew the debug hazard placeholder.)
+    return getJungleBushes(node.id).bushes.map((bush, i) =>
+      denseBush(
+        `jungle_bush_${i}`,
+        Math.round(bush.x),
+        Math.round(bush.y),
+        Math.round(bush.radius),
+      ),
+    );
   }
   if (node.biomeGroup === "tundra") {
     // Every tundra node — normal AND dungeon — carries the chill and nothing else.
@@ -898,12 +844,21 @@ function canonicalFeaturesForNode(
     return [tundraChill("tundra_chill")];
   }
   if (node.biomeGroup === "volcanic") {
-    if (node.kind === "dungeon") {
-      return templateFeatures(VOLCANIC_DUNGEON_TEMPLATES[node.biomeTier]);
-    }
-    const index =
-      (node.featureVariant ?? 0) % VOLCANIC_NORMAL_TEMPLATES.length;
-    return templateFeatures(VOLCANIC_NORMAL_TEMPLATES[index]);
+    // Generated per node rather than drawn from a two-entry template table, which put the
+    // same two vent arrangements on all twelve walkable volcanic nodes. The heat ramp is
+    // node-wide and unchanged; only the positional lava varies.
+    const isDungeon = node.kind === "dungeon";
+    return [
+      volcanicHeat("volcanic_heat"),
+      ...generateVolcanicLakes(node.id, isDungeon).map((lake, i) =>
+        lavaVent(
+          `${isDungeon ? "boss_vent" : "lava_vent"}_${i}`,
+          Math.round(lake.x),
+          Math.round(lake.y),
+          Math.round(lake.radius),
+        ),
+      ),
+    ];
   }
   return [];
 }

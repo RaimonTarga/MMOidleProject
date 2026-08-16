@@ -1,6 +1,8 @@
 import { GAME_CONFIG } from "../config/gameConfig";
 import type { HitboxRect } from "../hitbox/types";
 import { NODE_BIOMES } from "./nodeBiomes";
+import { getGraveRows } from "./graveRows";
+import { isOnTundraLake } from "./tundraLakes";
 import type { NodeFeatureShape } from "./nodeFeatures";
 import type { TreeArtSet, TreeInstance } from "./trees";
 
@@ -47,6 +49,8 @@ const EDGE_MARGIN_TOP = 500;
 const EDGE_MARGIN_BOTTOM = 320;
 const MIN_SEPARATION = 620;
 const DUNGEON_CENTER_CLEARANCE = 900;
+/** A tundra tree clears the shore by its own footprint plus a margin. */
+const ICE_TREE_CLEARANCE = 150;
 
 function generateDeadNodeTrees(
   nodeId: string,
@@ -58,6 +62,13 @@ function generateDeadNodeTrees(
   const target = biome?.isDungeon
     ? DEAD_DUNGEON_TREES_PER_NODE
     : DEAD_TREES_PER_NODE;
+
+  // A WASTELAND dungeon lays its dead trees out in rows as grave markers instead of
+  // scattering them — the only orderly thing left in the world. Tundra dungeons keep the
+  // ordinary scatter; they have their frozen lakes to carry the node.
+  if (biome?.isDungeon && artSet === "wasteland") {
+    return graveRowTrees(nodeId, rng, artSet);
+  }
 
   for (let attempt = 0; attempt < target * 128 && trees.length < target; attempt++) {
     const variant = Math.floor(rng() * DEAD_TREE_VARIANT_COUNT) % DEAD_TREE_VARIANT_COUNT;
@@ -74,6 +85,12 @@ function generateDeadNodeTrees(
       const dx = trunkX - GAME_CONFIG.NODE_WIDTH / 2;
       const dy = trunkY - GAME_CONFIG.NODE_HEIGHT / 2;
       if (dx * dx + dy * dy < DUNGEON_CENTER_CLEARANCE ** 2) continue;
+    }
+    // Nothing grows out of a frozen lake. Tundra only — wasteland shares this generator
+    // and has no ice. Cleared by the trunk's own footprint plus a shore margin, so a tree
+    // never overhangs the ice it is supposed to be standing beside.
+    if (artSet === "tundra" && isOnTundraLake(nodeId, trunkX, trunkY, ICE_TREE_CLEARANCE)) {
+      continue;
     }
     if (
       trees.some((tree) => {
@@ -106,6 +123,47 @@ function generateDeadNodeTrees(
       displaySize,
       shapes,
       baseY: trunkY + trunk.halfH * scale,
+    });
+  }
+  return trees;
+}
+
+/**
+ * The wasteland dungeon's grave markers: one dead tree per row position.
+ *
+ * Placement comes from the shared row layout, so the count is whatever the rows produce
+ * rather than a fixed target — a grid that has been thinned by fraying should not be topped
+ * back up to a quota, because the thinning IS the effect.
+ */
+function graveRowTrees(
+  nodeId: string,
+  rng: () => number,
+  artSet: "tundra" | "wasteland",
+): TreeInstance[] {
+  const trees: TreeInstance[] = [];
+  for (const marker of getGraveRows(nodeId)) {
+    const variant = Math.floor(rng() * DEAD_TREE_VARIANT_COUNT) % DEAD_TREE_VARIANT_COUNT;
+    const trunk = TRUNKS[artSet][variant];
+    // Markers vary less in size than a wild scatter does: they were placed, not grown.
+    const displaySize = DEAD_TREE_DISPLAY_BASE * (0.9 + rng() * 0.13);
+    const scale = displaySize / DEAD_TREE_CELL_PX;
+    trees.push({
+      id: `${nodeId}:tree:${trees.length}`,
+      artSet: artSet as TreeArtSet,
+      variant,
+      cellPx: DEAD_TREE_CELL_PX,
+      trunkTopPx: Math.round(DEAD_TREE_CELL_PX / 2 + trunk.offsetY - trunk.halfH),
+      spriteX: marker.x - trunk.offsetX * scale,
+      spriteY: marker.y - trunk.offsetY * scale,
+      displaySize,
+      shapes: [{
+        kind: "ellipse",
+        x: marker.x,
+        y: marker.y,
+        halfW: trunk.halfW * scale,
+        halfH: trunk.halfH * scale,
+      }],
+      baseY: marker.y + trunk.halfH * scale,
     });
   }
   return trees;

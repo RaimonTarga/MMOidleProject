@@ -35,10 +35,11 @@ import {
   getCaveRitualSite,
   isOnCavePatrolPath,
 } from '../world/cavePatrols';
+import { isOnDesertTrack } from '../world/desertTracks';
+import { jungleTreeTarget } from '../world/jungleBushes';
 import {
   JUNGLE_BRUSH_TREE_CLEARANCE,
   JUNGLE_DUNGEON_TREES_PER_NODE,
-  JUNGLE_TREES_PER_NODE,
 } from '../world/jungleTrees';
 import {
   isSwampRotPool,
@@ -61,6 +62,8 @@ import {
   TALL_PROP_DUNGEON_COUNT,
   TALL_PROPS_PER_NODE,
   CAVE_TALL_PROPS_PER_NODE,
+  VOLCANIC_TALL_PROPS_PER_NODE,
+  TRENCH_TALL_PROPS_PER_NODE,
   TALL_PROP_ROUTE_CLEARANCE,
 } from '../world/tallProps';
 
@@ -220,11 +223,13 @@ function walkableComponentCount(grid: NavGrid): number {
 for (const { id: nodeId } of WORLD_NODE_LIST.filter(node => node.biomeGroup === 'jungle')) {
   const trees = getNodeTrees(nodeId);
   const brushes = (RESOLVED_NODE_FEATURES[nodeId] ?? []).filter(
-    feature => feature.id.startsWith('jungle_bush_') || feature.id.startsWith('boss_bush_'),
+    feature => feature.id.startsWith('jungle_bush_'),
   );
+  // Tree count is no longer flat: it follows the node's thicket ARRANGEMENT (6-13), so the
+  // ceiling is that node's own target rather than one constant for the biome.
   const maxTrees = NODE_BIOMES[nodeId]?.isDungeon
     ? JUNGLE_DUNGEON_TREES_PER_NODE
-    : JUNGLE_TREES_PER_NODE;
+    : jungleTreeTarget(nodeId);
   assert(
     trees.length >= 1 && trees.length <= maxTrees,
     `${nodeId} has a sparse open-ground jungle tree scatter`,
@@ -391,7 +396,11 @@ for (const [biomeGroup, artSet] of Object.entries(rockArtByBiome)) {
         ? TALL_PROP_DUNGEON_COUNT
         : biomeGroup === 'cave'
           ? CAVE_TALL_PROPS_PER_NODE
-          : TALL_PROPS_PER_NODE;
+          : biomeGroup === 'volcanic'
+            ? VOLCANIC_TALL_PROPS_PER_NODE
+            : biomeGroup === 'trench'
+              ? TRENCH_TALL_PROPS_PER_NODE
+              : TALL_PROPS_PER_NODE;
       assert(props.length === expected, `${nodeId} has its tall rock count`);
     }
     assert(props.every(prop => prop.artSet === artSet), `${nodeId} uses matching rock art`);
@@ -430,6 +439,13 @@ for (const [biomeGroup, artSet] of Object.entries(rockArtByBiome)) {
         !isOnCavePatrolPath(nodeId, shape.x, shape.y),
         `${prop.id} keeps off the patrol beat`,
       );
+      // Same contract for a desert caravan track, and it matters more visually: a hoodoo is
+      // the tallest thing on an open pan, so one straddling the road is the loudest possible
+      // way to say nothing ever travelled it.
+      assert(
+        !isOnDesertTrack(nodeId, shape.x, shape.y),
+        `${prop.id} keeps off the caravan track`,
+      );
     }
 
     const propRegions = buildStaticCollisionRegions(nodeId).filter(
@@ -451,10 +467,30 @@ for (const [biomeGroup, artSet] of [
     node => node.biomeGroup === biomeGroup,
   )) {
     const trees = getNodeTrees(nodeId);
-    const expected = NODE_BIOMES[nodeId]?.isDungeon
-      ? DEAD_DUNGEON_TREES_PER_NODE
-      : DEAD_TREES_PER_NODE;
-    assert(trees.length === expected, `${nodeId} has its sparse dead-tree count`);
+    const isGraveRows = biomeGroup === 'graveyard' && NODE_BIOMES[nodeId]?.isDungeon;
+    if (isGraveRows) {
+      // The wasteland dungeon lays its dead trees out as GRAVE ROWS, so its count is
+      // whatever the thinned grid produces rather than a fixed quota — topping a decayed
+      // grid back up to a target would undo the decay that is the whole effect.
+      assert(
+        trees.length >= 24 && trees.length <= 72,
+        `${nodeId} raises a legible field of grave markers`,
+      );
+      const centre = { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 };
+      for (const tree of trees) {
+        const shape = tree.shapes[0];
+        assert(
+          Math.hypot(shape.x - centre.x, shape.y - centre.y) >=
+            GAME_CONFIG.NODE_WIDTH * 0.2,
+          `${tree.id} leaves the boss arena clear`,
+        );
+      }
+    } else {
+      const expected = NODE_BIOMES[nodeId]?.isDungeon
+        ? DEAD_DUNGEON_TREES_PER_NODE
+        : DEAD_TREES_PER_NODE;
+      assert(trees.length === expected, `${nodeId} has its sparse dead-tree count`);
+    }
     assert(trees.every(tree => tree.artSet === artSet), `${nodeId} uses ${artSet} tree art`);
     const regions = buildStaticCollisionRegions(nodeId).filter(
       region => region.kind === 'block' && trees.some(tree => tree.id === region.ownerId),

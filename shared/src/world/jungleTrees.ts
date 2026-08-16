@@ -1,5 +1,6 @@
 import { GAME_CONFIG } from "../config/gameConfig";
 import type { HitboxRect } from "../hitbox/types";
+import { jungleTreeTarget } from "./jungleBushes";
 import { NODE_BIOMES } from "./nodeBiomes";
 import {
   RESOLVED_NODE_FEATURES,
@@ -13,8 +14,17 @@ export const JUNGLE_TREE_CELL_PX = 1254;
 /** The jungle canopy is slightly larger than the forest canopy on screen. */
 export const JUNGLE_TREE_DISPLAY_BASE = 520;
 export const JUNGLE_TREE_VARIANT_COUNT = 4;
-export const JUNGLE_TREES_PER_NODE = 9;
 export const JUNGLE_DUNGEON_TREES_PER_NODE = 7;
+/**
+ * Radius of a jungle dungeon's hacked clearing, as a fraction of `NODE_WIDTH`.
+ *
+ * Larger than the 0.115 every other biome's arena court uses, because here the trees RING
+ * it: at the standard radius the ring closed in tight enough to read as a wall rather than
+ * as a treeline. Lives here rather than in the renderer because both the ground (which
+ * paints the clearing) and the tree placement (which rings it) have to agree — the same
+ * reason every other layout in this folder is shared.
+ */
+export const JUNGLE_CLEARING_R = 0.135;
 /** Empty-space ring between a brush's authored radius and a tree trunk. */
 export const JUNGLE_BRUSH_TREE_CLEARANCE = 490;
 
@@ -83,6 +93,80 @@ function overlapsBrushClearance(
   });
 }
 
+/** One tree instance at a trunk position, shared by the scatter and the dungeon ring. */
+function makeJungleTree(
+  nodeId: string,
+  index: number,
+  variant: number,
+  trunkX: number,
+  trunkY: number,
+  displaySize: number,
+): TreeInstance {
+  const trunk = JUNGLE_TREE_TRUNK_RECTS[variant];
+  const scale = displaySize / JUNGLE_TREE_CELL_PX;
+  return {
+    id: `${nodeId}:tree:${index}`,
+    artSet: "jungle",
+    variant,
+    cellPx: JUNGLE_TREE_CELL_PX,
+    trunkTopPx: JUNGLE_TREE_TRUNK_TOP_PX[variant] ?? JUNGLE_TREE_CELL_PX,
+    spriteX: trunkX - trunk.offsetX * scale,
+    spriteY: trunkY - trunk.offsetY * scale,
+    displaySize,
+    shapes: [
+      {
+        kind: "ellipse",
+        x: trunkX,
+        y: trunkY,
+        halfW: trunk.halfW * scale,
+        halfH: trunk.halfH * scale,
+      },
+    ],
+    baseY: trunkY + trunk.halfH * scale,
+  };
+}
+
+/**
+ * The treeline around a dungeon's hacked clearing.
+ *
+ * Trunks sit in a narrow annulus just OUTSIDE the cut edge, evenly spaced with enough angle
+ * and radius jitter that the ring reads as a treeline rather than as a fence. A tree that
+ * cannot clear the node border is dropped rather than pulled inward — an incomplete ring is
+ * a gap you can walk out through, which is better than a trunk crushed against the edge.
+ */
+function ringedDungeonTrees(
+  nodeId: string,
+  rng: () => number,
+  target: number,
+): TreeInstance[] {
+  const cx = GAME_CONFIG.NODE_WIDTH / 2;
+  const cy = GAME_CONFIG.NODE_HEIGHT / 2;
+  const clearing = GAME_CONFIG.NODE_WIDTH * JUNGLE_CLEARING_R;
+  const phase = rng() * Math.PI * 2;
+  const trees: TreeInstance[] = [];
+  for (let i = 0; i < target; i++) {
+    const variant =
+      Math.floor(rng() * JUNGLE_TREE_VARIANT_COUNT) % JUNGLE_TREE_VARIANT_COUNT;
+    const displaySize = JUNGLE_TREE_DISPLAY_BASE * (0.92 + rng() * 0.16);
+    const angle = phase + (i / target) * Math.PI * 2 + (rng() - 0.5) * 0.42;
+    // Just off the cut edge: close enough to frame it, far enough that a canopy does not
+    // hang over the arena the fight happens in.
+    const radius = clearing * (1.34 + rng() * 0.5);
+    const trunkX = cx + Math.cos(angle) * radius;
+    const trunkY = cy + Math.sin(angle) * radius;
+    if (
+      trunkX < EDGE_MARGIN_X ||
+      trunkX > GAME_CONFIG.NODE_WIDTH - EDGE_MARGIN_X ||
+      trunkY < EDGE_MARGIN_TOP ||
+      trunkY > GAME_CONFIG.NODE_HEIGHT - EDGE_MARGIN_BOTTOM
+    ) {
+      continue;
+    }
+    trees.push(makeJungleTree(nodeId, trees.length, variant, trunkX, trunkY, displaySize));
+  }
+  return trees;
+}
+
 /**
  * Sparse jungle trees occupy open ground only. Candidate trunks are rejected
  * when their canopy clearance could overlap a brush section, so tree and thicket
@@ -93,9 +177,21 @@ export function generateJungleNodeTrees(nodeId: string): TreeInstance[] {
   const brushes = (RESOLVED_NODE_FEATURES[nodeId] ?? []).filter(isJungleBrush);
   const rng = mulberry32(hashString(`${nodeId}:jungle-trees`));
   const trees: TreeInstance[] = [];
+  // Tree count follows the thicket ARRANGEMENT rather than being flat at 9 — see
+  // jungleTreeTarget. A cluster node already carries its cover in one mass and wants the
+  // rest open; a scatter node has thin cover everywhere and can hold a proper canopy.
   const target = biome?.isDungeon
     ? JUNGLE_DUNGEON_TREES_PER_NODE
-    : JUNGLE_TREES_PER_NODE;
+    : jungleTreeTarget(nodeId);
+
+  // A dungeon RINGS its clearing instead of scattering. The clearing is the one thing a
+  // jungle boss node has to read as — jungle that was cut back, not jungle that happens to
+  // be open — and a treeline standing just off the cut edge is what says something did the
+  // cutting. Same principle as the cave dungeon's standing stones: same trees, same
+  // collision, placed with intent.
+  if (biome?.isDungeon) {
+    return ringedDungeonTrees(nodeId, rng, target);
+  }
   const maxAttempts = target * 256;
 
   for (let attempt = 0; attempt < maxAttempts && trees.length < target; attempt++) {
