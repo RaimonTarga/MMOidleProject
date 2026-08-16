@@ -1,5 +1,6 @@
 import {
   GAME_CONFIG,
+  NODE_BIOMES,
   RESOLVED_NODE_FEATURES,
   getNodeTrees,
   type NodeFeatureShape,
@@ -46,6 +47,7 @@ export type DirtPatternName =
   | 'scatter'
   | 'sparse-scatter'
   | 'hub-plaza'
+  | 'dungeon-court'
   | 'tree-canopy'
   | 'plain';
 
@@ -117,15 +119,28 @@ export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
       patterns: [{ pattern: 'tree-canopy', weight: 1 }],
     },
   ],
+  // Caverns is the first biome to carry MORE THAN ONE ground style, so the floor
+  // material itself changes from node to node rather than only the patch layout.
+  // Both sheets were generated and accepted long ago; rubble was simply never wired
+  // past the developer bake-off. Patrol path stays dominant — it is the canonical
+  // cavern read — with rubble as the rougher, less-travelled minority.
   cave: [
-    // Patrol path is the canonical cavern floor. Rubble remains available in
-    // the developer ground bake-off, but is no longer selected by default.
     {
       material: 'patrol-path',
-      weight: 1,
+      weight: 3,
       patterns: [
         { pattern: 'loose-center-path', weight: 2 },
         { pattern: 'ring-path', weight: 1 },
+      ],
+    },
+    // A rubble floor reads as unworked cave, so it takes the layouts that do not
+    // imply a route: broken pockets rather than a path someone walks.
+    {
+      material: 'rubble',
+      weight: 2,
+      patterns: [
+        { pattern: 'off-center-patch', weight: 3 },
+        { pattern: 'scatter', weight: 2 },
       ],
     },
   ],
@@ -360,17 +375,96 @@ function ringPath(rng: Rng, W: number, H: number): DirtDisc[] {
  * altar (which NODE_FEATURES pins at (W/2, H/2 - 320)) flowing into the spawn
  * point at node center, plus a loose walked-in trail and a few crumbs.
  */
+/**
+ * One paved road from the plaza out to a node edge.
+ *
+ * Deliberately NOT `looseTrail`: that drops ~30% of its segments to read as an
+ * organic game trail, which is right for a worn path through the wild and wrong
+ * here. The hub's four roads are the motif the whole node is built around, and a
+ * gap in one reads as a mistake rather than as character. Segments overlap, so the
+ * road is continuous; the waver keeps it from looking CAD-drawn.
+ */
+function plazaRoad(
+  rng: Rng,
+  cx: number,
+  cy: number,
+  dirX: number,
+  dirY: number,
+  startAt: number,
+  reach: number,
+  width: number,
+): DirtDisc[] {
+  const out: DirtDisc[] = [];
+  const nx = -dirY;
+  const ny = dirX;
+  const step = width * 0.7; // < 2r, so consecutive discs always overlap
+  for (let t = startAt; t <= reach; t += step) {
+    const waver =
+      Math.sin(t / (width * 2.6)) * width * 0.3 + range(rng, -width * 0.1, width * 0.1);
+    out.push({
+      x: cx + dirX * t + nx * waver,
+      y: cy + dirY * t + ny * waver,
+      r: width * range(rng, 0.46, 0.56),
+    });
+  }
+  return out;
+}
+
+/**
+ * The hub motif: ONE central plaza holding the rune altar, with four paved roads
+ * running to the four cardinal edges. Every hub node (Clearing and all three
+ * sanctuaries) has all four cardinal exits, so the roads match real topology
+ * rather than being decoration.
+ *
+ * Previously this was two detached discs plus a single southern trail and three
+ * loose scatter blobs — it read as "some paving happened here", not as a plaza.
+ * It is now a single round court centred on the altar and the player spawn, and
+ * the stray scatter is gone: it diluted the very shape this node is supposed to
+ * be legible as.
+ *
+ * All sizes are fractions of the node so the composition survives a resize.
+ */
 function hubPlaza(rng: Rng, W: number, H: number): DirtDisc[] {
-  const altarX = W / 2;
-  const altarY = H / 2 - 320;
-  const centerX = W / 2;
-  const centerY = H / 2;
+  const cx = W / 2;
+  const cy = H / 2;
+  // ONE disc, not two. The altar used to sit north of centre so it would not
+  // swallow the player spawn, which forced a second lobe of paving to sit under it
+  // and made the court read as a dumbbell. The altar is centred now and the player
+  // spawns standing on it, so plaza, altar and spawn share a single centre and the
+  // shape can be the simple thing it always wanted to be.
+  const plazaR = W * 0.16;
+  const roadW = W * 0.055;
+  // Start inside the plaza so road and court merge seamlessly; overshoot the edge
+  // so the road visibly meets the border instead of stopping short of it.
+  const startAt = plazaR * 0.8;
   return [
-    { x: altarX, y: altarY, r: range(rng, 330, 370) },
-    { x: centerX, y: centerY, r: range(rng, 210, 250) },
-    ...looseTrail(rng, centerX + range(rng, -160, 160), H, centerX, centerY),
-    ...scatterDiscs(rng, W, H, 3, 70, 120),
+    { x: cx, y: cy, r: plazaR * range(rng, 0.95, 1.05) },
+    ...plazaRoad(rng, cx, cy, 0, -1, startAt, H / 2 + roadW, roadW),
+    ...plazaRoad(rng, cx, cy, 0, 1, startAt, H / 2 + roadW, roadW),
+    ...plazaRoad(rng, cx, cy, -1, 0, startAt, W / 2 + roadW, roadW),
+    ...plazaRoad(rng, cx, cy, 1, 0, startAt, W / 2 + roadW, roadW),
   ];
+}
+
+/**
+ * A dungeon's arena floor: ONE round court at the node centre, under the altar,
+ * and nothing anywhere else.
+ *
+ * Dungeons previously drew whatever their biome's normal pattern rolled — a wandering
+ * path, an off-centre patch — so a boss node looked like any other node of its biome.
+ * A single centred court makes "this is the arena" legible the moment it is on screen,
+ * and reads as constructed rather than worn: no trails, no satellite patches.
+ *
+ * Sized off the altar it has to seat, so the two cannot drift apart.
+ */
+function dungeonCourt(rng: Rng, W: number, _H: number): DirtDisc[] {
+  const cx = W / 2;
+  const cy = _H / 2;
+  // Comfortably larger than the altar sprite so the court frames it rather than
+  // being hidden under it. The Wang autotiler's edgeJitter ragged-edges this, so a
+  // clean circle here still renders with a natural outline.
+  const r = W * 0.115;
+  return [{ x: cx, y: cy, r: r * range(rng, 0.97, 1.03) }];
 }
 
 /**
@@ -405,6 +499,7 @@ const PATTERN_GENERATORS: Record<
   // A couple of small pockets — for biomes whose upper material should stay rare.
   'sparse-scatter': (rng, W, H) => scatterDiscs(rng, W, H, 2 + Math.floor(rng() * 2), 100, 180),
   'hub-plaza': hubPlaza,
+  'dungeon-court': dungeonCourt,
   'tree-canopy': treeCanopy,
   // Base material only — the whole node stays the sheet's lower tile.
   plain: () => [],
@@ -533,7 +628,17 @@ export function computeGroundLayout(biomeGroup: string, nodeId: string): GroundL
   const H = GAME_CONFIG.NODE_HEIGHT;
   const rng = mulberry32(hashString(`${nodeId}:ground-layout:v1`));
   const style = pickWeighted(rng, styles);
-  const pattern = pickWeighted(rng, style.patterns).pattern;
+  // A dungeon keeps its biome's ground MATERIAL — a cave dungeon still reads as cave —
+  // but its layout is always the arena court, never the biome's wandering patterns.
+  //
+  // Note this has no effect on swamp or volcanic dungeons: their authored rot pools and
+  // lava vents drive a FUNCTIONAL Wang sheet that takes over the whole node, and
+  // buildWangGroundLayer discards the decorative layout entirely on those nodes. Their
+  // hazard floor is the arena.
+  const isDungeon = NODE_BIOMES[nodeId]?.isDungeon === true;
+  const pattern = isDungeon
+    ? 'dungeon-court'
+    : pickWeighted(rng, style.patterns).pattern;
   const generated = PATTERN_GENERATORS[pattern](rng, W, H, nodeId);
   const discs = style.avoidsFeatures
     ? routeDiscsAroundFeatures(generated, nodeId, W, H)

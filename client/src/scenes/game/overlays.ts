@@ -1,5 +1,6 @@
 import {
   BIOME_DATABASE,
+  DUNGEON_ALTAR_SIZE,
   GAME_CONFIG,
   getDungeonDef,
   NODE_BIOMES,
@@ -50,6 +51,7 @@ import { MM_H, MM_PAD, MM_W } from "./nodeExits";
 import { isVoidThroneUnblocked } from "./voidThrone";
 import { resolvedMinimapTierPalette, uiTierActivationIsActive } from "../../hud/uiTier";
 import { isMobileViewport } from "../../breakpoints";
+import { TINT_DEPTH, nodeTint } from "../../render/biomeTint";
 
 const BG_DEPTH = -11;
 const BOUNDARY_DEPTH = -9.5;
@@ -77,6 +79,8 @@ export interface NodeStaticGroup {
     | Phaser.Tilemaps.TilemapLayer
     | null;
   shade: Phaser.GameObjects.Rectangle | null;
+  /** Per-node atmosphere wash over ground + decor, under creatures. */
+  tint: Phaser.GameObjects.Rectangle | null;
   biomeDecor: Phaser.GameObjects.Image[];
   decor: Phaser.GameObjects.Image[];
   /** Placeholder fills for blocking features that have no decor sprite yet. */
@@ -223,7 +227,7 @@ function buildNodeDecorImages(
       .image(offsetX + dungeon.altar.x, offsetY + dungeon.altar.y, altarTexture)
       .setOrigin(0.5, 0.5)
       .setDepth(DEPTH.BG_DECOR + depthBias)
-      .setDisplaySize(250, 250);
+      .setDisplaySize(DUNGEON_ALTAR_SIZE, DUNGEON_ALTAR_SIZE);
     img.setData("featureId", "dungeon_altar");
     decor.push(img);
   }
@@ -298,6 +302,7 @@ function buildBiomeDecorImages(
 
   const rng = mulberry32(hashString(`${nodeId}:biome-decor:v2`));
   const groundLayout = computeGroundLayout(biomeGroup, nodeId);
+  const isDungeonNode = NODE_BIOMES[nodeId]?.isDungeon === true;
   const out: Phaser.GameObjects.Image[] = [];
   const edgeMargin = 110;
   const centerX = GAME_CONFIG.NODE_WIDTH / 2;
@@ -311,17 +316,38 @@ function buildBiomeDecorImages(
   const featurePad = 30;
   const placed: Array<{ x: number; y: number; r: number }> = [];
 
+  // One multiplier per variance group per node, drawn the first time the group is
+  // seen (spec order, so it stays deterministic). Grouped specs share the roll.
+  const groupRolls = new Map<string, number>();
+
   for (const spec of specs) {
-    if (!scene.textures.exists(spec.key)) continue;
+    // Draw the variance roll BEFORE the texture check so a missing texture cannot
+    // shift the rng stream and reshuffle every later spec's placement.
+    const variance = spec.variance;
+    let target = spec.count;
+    if (variance) {
+      let mult = variance.group ? groupRolls.get(variance.group) : undefined;
+      if (mult === undefined) {
+        mult = variance.min + rng() * (variance.max - variance.min);
+        if (variance.group) groupRolls.set(variance.group, mult);
+      }
+      target = Math.round(spec.count * mult);
+    }
+    if (!scene.textures.exists(spec.key) || target <= 0) continue;
     let count = 0;
-    const maxAttempts = spec.count * 24;
-    for (let attempt = 0; attempt < maxAttempts && count < spec.count; attempt++) {
+    const maxAttempts = target * 24;
+    for (let attempt = 0; attempt < maxAttempts && count < target; attempt++) {
       const x = edgeMargin + rng() * (GAME_CONFIG.NODE_WIDTH - edgeMargin * 2);
       const y = edgeMargin + rng() * (GAME_CONFIG.NODE_HEIGHT - edgeMargin * 2);
       const dx = x - centerX;
       const dy = y - centerY;
       if (dx * dx + dy * dy < centerClearRadius * centerClearRadius) continue;
-      if (spec.avoidsDirt && groundLayout?.isDirt(x, y)) continue;
+      // On a dungeon node the only "dirt" is the arena court, and nothing grows on
+      // an arena floor — so every spec keeps off it, not just the ones that opted
+      // into `avoidsDirt`. Plains' pebbles and low shrubs are exactly the case:
+      // pebbles scattered on a worn path read fine, a shrub sprouting in the middle
+      // of a boss arena does not.
+      if ((spec.avoidsDirt || isDungeonNode) && groundLayout?.isDirt(x, y)) continue;
       if (featureShapes.some((s) => nearFeatureShape(s, x, y, featurePad))) continue;
 
       const scale = 0.82 + rng() * 0.36;
@@ -628,6 +654,33 @@ function buildBoundary(
 }
 
 /** Builds bg + decor + boundary for `nodeId` at the given scene offset. */
+/**
+ * Flat colour wash over one node's ground and dressing (see render/biomeTint.ts).
+ * Sized to the node footprint, not the camera, so it travels with the node — the
+ * neighbour previews get their own wash at their own offset.
+ */
+function buildNodeTint(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+): Phaser.GameObjects.Rectangle | null {
+  const tint = nodeTint(nodeId);
+  if (!tint) return null;
+  return scene.add
+    .rectangle(
+      offsetX,
+      offsetY,
+      GAME_CONFIG.NODE_WIDTH,
+      GAME_CONFIG.NODE_HEIGHT,
+      tint.color,
+      tint.alpha,
+    )
+    .setOrigin(0, 0)
+    .setDepth(TINT_DEPTH + depthBias);
+}
+
 export function paintNodeStatic(
   scene: GameScene,
   nodeId: string,
@@ -646,6 +699,7 @@ export function paintNodeStatic(
     shade: preview
       ? buildPreviewShade(scene, offsetX, offsetY, depthBias)
       : null,
+    tint: buildNodeTint(scene, nodeId, offsetX, offsetY, depthBias),
     // Scattered feature dressing rides in the biomeDecor bucket: same lifetime,
     // same teardown, no extra scene field to keep in sync.
     biomeDecor: [
@@ -680,6 +734,7 @@ export function paintNodeStatic(
 export function destroyNodeStatic(group: NodeStaticGroup): void {
   group.bg?.destroy();
   group.shade?.destroy();
+  group.tint?.destroy();
   for (const img of group.biomeDecor) img.destroy();
   for (const img of group.decor) img.destroy();
   for (const g of group.placeholders) g.destroy();

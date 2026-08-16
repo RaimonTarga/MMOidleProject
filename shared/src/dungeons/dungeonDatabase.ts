@@ -22,6 +22,16 @@ const ALTAR_X = GAME_CONFIG.NODE_WIDTH / 2;
 const ALTAR_Y = GAME_CONFIG.NODE_HEIGHT / 2;
 
 /**
+ * On-screen size of a dungeon altar, matching the hub's rune altar so the two read
+ * as the same class of object.
+ *
+ * Was a hardcoded `250` at the render site and missed by BOTH node resizes — on a
+ * 4800 node that is a ~5% span, small enough to read as ground clutter rather than
+ * the centrepiece of a boss arena. A fraction of the node so it cannot drift again.
+ */
+export const DUNGEON_ALTAR_SIZE = GAME_CONFIG.NODE_WIDTH * 0.11667;
+
+/**
  * How far a guardian may be dragged past its own territory before it gives up and
  * walks back. Deliberately tighter than these monsters' ambient leash: guardians
  * protect the altar and nothing else, so they can never be kited across the node.
