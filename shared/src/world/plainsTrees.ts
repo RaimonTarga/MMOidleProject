@@ -8,7 +8,23 @@ import type { TreeInstance } from "./trees";
 export const PLAINS_TREE_CELL_PX = 1254;
 export const PLAINS_TREE_DISPLAY_BASE = 500;
 export const PLAINS_TREE_VARIANT_COUNT = 4;
-export const PLAINS_TREES_PER_NODE = 9;
+/**
+ * CEILING on field trees per node, not a fixed count — normal nodes draw a seeded
+ * count in `[PLAINS_TREES_MIN_PER_NODE, PLAINS_TREES_PER_NODE]`, so one field is
+ * open and the next is dotted. The ceiling is raised from the old flat 9 so the
+ * AVERAGE stays about where it was while gaining spread.
+ *
+ * It stays a ceiling in the literal sense the collision tests rely on: placement
+ * attempts can still fall short of the target, so `<= PLAINS_TREES_PER_NODE` remains
+ * the only safe assertion.
+ */
+export const PLAINS_TREES_PER_NODE = 12;
+export const PLAINS_TREES_MIN_PER_NODE = 6;
+/**
+ * Dungeons stay a FIXED count deliberately. The arena court is the thing a boss node
+ * has to read as, and a varying ring of trees around it muddies that; consistency is
+ * worth more than variety here.
+ */
 export const PLAINS_DUNGEON_TREES_PER_NODE = 7;
 
 /**
@@ -62,7 +78,8 @@ export function generatePlainsNodeTrees(nodeId: string): TreeInstance[] {
   const trees: TreeInstance[] = [];
   const target = biome?.isDungeon
     ? PLAINS_DUNGEON_TREES_PER_NODE
-    : PLAINS_TREES_PER_NODE;
+    : PLAINS_TREES_MIN_PER_NODE +
+      Math.floor(rng() * (PLAINS_TREES_PER_NODE - PLAINS_TREES_MIN_PER_NODE + 1));
   const maxAttempts = target * 128;
 
   for (let attempt = 0; attempt < maxAttempts && trees.length < target; attempt++) {

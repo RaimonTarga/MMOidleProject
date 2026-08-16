@@ -515,4 +515,29 @@ that ground — but it is the one to revisit if the altar ever grows again.
 low. Six nodes each. Also the first non-sanctuary use of the tier-tint table, confirming it
 generalises as intended.
 
+**Plains dressing variance (follow-up, same session).** A variance audit against Caverns
+showed plains had good ground-SHAPE variance (4 weighted patterns, 5-13 discs) and
+**zero dressing variance** — every node carried an identical 230 props, because `variance`
+had only ever been applied to the cave kit.
+
+- **Four independent decor groups** rather than one: `grass`, `bloom`, `stone`, `scrub`.
+  Independent axes multiply into distinct reads (bloomed-and-clean, bare-and-stony); a
+  single shared roll would only make a node uniformly dense or uniformly sparse.
+  Measured: grass 76-162, flowers 10-68, pebbles 12-87, shrubs 6-33, **total 172-292**.
+- **Tree count seeded 6-12** (was a flat 9). `PLAINS_TREES_PER_NODE` is raised to 12 and
+  reframed as a CEILING with `PLAINS_TREES_MIN_PER_NODE = 6` — the average holds while
+  gaining spread, and `<= PLAINS_TREES_PER_NODE` stays the only safe assertion, which is
+  what the collision tests already relied on. Dungeons stay fixed at 7: the arena court is
+  what a boss node must read as, and a varying tree ring muddies it.
+
+**A repeated lesson worth generalising:** a `min: 0` variance group does NOT mean "sometimes
+absent". Reaching zero needs the far tail of the roll, so it effectively never happens —
+measured at 0/21 for cave bones and 0/12 for plains flowers. Treat `min: 0` as "swings hard
+toward nothing" and, if genuine absence is wanted, that needs an explicit presence roll
+rather than a low floor.
+
+**Still open for plains:** it has only one Wang sheet (`grass-dirt-wang.png`) and no accepted
+alternate sitting unused, so a second ground material is the one remaining lever and it costs
+art. Cave and forest both have a spare sheet already paid for; plains does not.
+
 **Next biomes, in order:** forest, swamp, mountain, caves.

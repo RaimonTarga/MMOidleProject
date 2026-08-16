@@ -685,11 +685,24 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       alpha: 0.9,
     },
   ],
+  // Dressing varies on FOUR independent axes rather than one, so the combinations
+  // multiply into distinct reads: bloomed-and-clean, bare-and-stony, and so on.
+  // Grouping everything under a single roll would only make a node uniformly dense
+  // or uniformly sparse, which is a much weaker kind of variance.
+  //
+  // Grass is floored well above zero because this is grassland — a plains node with
+  // no grass reads as missing art, not as dry. The other three run their floor down
+  // to near-nothing. Measured across the 12 plains nodes: grass 76-162, flowers
+  // 10-68, pebbles 12-87, shrubs 6-33, total 172-292 against a flat 230 before.
+  // Note flowers bottom out around 10 rather than literally 0 — a `min: 0` group
+  // only reaches zero in the far tail of its roll, so treat these as "swings hard",
+  // not "sometimes absent".
   plains: [
     {
       key: 'plains_grass_tuft',
       file: '/assets/environment/plains/grass-tuft.png',
       count: 43,
+      variance: { min: 0.5, max: 1.45, group: 'grass' },
       displayW: 52,
       displayH: 52,
       flipX: true,
@@ -700,6 +713,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_grass_tuft_variant_2',
       file: '/assets/environment/plains/grass-tuft-variant-2.png',
       count: 36,
+      variance: { min: 0.5, max: 1.45, group: 'grass' },
       displayW: 52,
       displayH: 52,
       flipX: true,
@@ -710,6 +724,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_grass_tuft_variant_3',
       file: '/assets/environment/plains/grass-tuft-variant-3.png',
       count: 36,
+      variance: { min: 0.5, max: 1.45, group: 'grass' },
       displayW: 52,
       displayH: 52,
       flipX: true,
@@ -720,6 +735,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_pebble_cluster',
       file: '/assets/environment/plains/pebble-cluster.png',
       count: 20,
+      variance: { min: 0.2, max: 1.8, group: 'stone' },
       displayW: 42,
       displayH: 42,
       flipX: true,
@@ -729,6 +745,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_pebble_cluster_variant_2',
       file: '/assets/environment/plains/pebble-cluster-variant-2.png',
       count: 18,
+      variance: { min: 0.2, max: 1.8, group: 'stone' },
       displayW: 42,
       displayH: 42,
       flipX: true,
@@ -738,6 +755,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_pebble_cluster_variant_3',
       file: '/assets/environment/plains/pebble-cluster-variant-3.png',
       count: 18,
+      variance: { min: 0.2, max: 1.8, group: 'stone' },
       displayW: 42,
       displayH: 42,
       flipX: true,
@@ -747,6 +765,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_wildflower_patch',
       file: '/assets/environment/plains/wildflower-patch.png',
       count: 16,
+      variance: { min: 0, max: 1.8, group: 'bloom' },
       displayW: 50,
       displayH: 50,
       flipX: true,
@@ -757,6 +776,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_wildflower_patch_variant_2',
       file: '/assets/environment/plains/wildflower-patch-variant-2.png',
       count: 11,
+      variance: { min: 0, max: 1.8, group: 'bloom' },
       displayW: 50,
       displayH: 50,
       flipX: true,
@@ -767,6 +787,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_wildflower_patch_variant_3',
       file: '/assets/environment/plains/wildflower-patch-variant-3.png',
       count: 11,
+      variance: { min: 0, max: 1.8, group: 'bloom' },
       displayW: 50,
       displayH: 50,
       flipX: true,
@@ -777,6 +798,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_low_shrub',
       file: '/assets/environment/plains/low-shrub.png',
       count: 7,
+      variance: { min: 0.2, max: 1.7, group: 'scrub' },
       displayW: 88,
       displayH: 88,
       ySort: true,
@@ -786,6 +808,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_low_shrub_variant_2',
       file: '/assets/environment/plains/low-shrub-variant-2.png',
       count: 7,
+      variance: { min: 0.2, max: 1.7, group: 'scrub' },
       displayW: 88,
       displayH: 88,
       ySort: true,
@@ -795,6 +818,7 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
       key: 'plains_low_shrub_variant_3',
       file: '/assets/environment/plains/low-shrub-variant-3.png',
       count: 7,
+      variance: { min: 0.2, max: 1.7, group: 'scrub' },
       displayW: 88,
       displayH: 88,
       ySort: true,
