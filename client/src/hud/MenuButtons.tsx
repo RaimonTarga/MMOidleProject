@@ -4,6 +4,7 @@ import { atlasIcon, GameIcon, type IconSource } from "../ui/GameIcon";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { BuildPanel } from "../ui/BuildPanel";
+import { RunesPanel } from "../ui/RunesPanel";
 import { MasteryPanel } from "../ui/MasteryPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
 import { CraftingPanel } from "../ui/CraftingPanel";
@@ -22,7 +23,6 @@ import { eligibleMakeKeys, useMakeEntries } from "../ui/crafting/useMakeEntries"
 import type { UiUnlockSystem } from "./uiUnlocks";
 import {
   closePrimaryOverlays,
-  openPrimaryOverlay,
   togglePrimaryOverlay,
 } from "../input/overlayStack";
 import {
@@ -48,6 +48,7 @@ import {
   knownStancesAtom,
   deathOverlayAtom,
   buildOpenAtom,
+  runesOpenAtom,
   globalMasteryAtom,
   inventoryOpenAtom,
   mapHighlightNodesAtom,
@@ -91,7 +92,7 @@ interface RightNavButtonProps {
 
 /**
  * Icon-led navigation entry. Destinations that have sections reveal them here
- * while open, so "Crafting → Upgrade" is one action instead of open-then-tab.
+ * while open, so related loadout choices stay one action away.
  * The entry itself still opens on its default section in a single click, so
  * flat destinations cost no extra step.
  */
@@ -174,6 +175,7 @@ export function RightSidebar() {
   const isMobile = useIsMobile();
   const [treeOpen, setTreeOpen] = useAtom(skillTreeOpenAtom);
   const [buildOpen, setBuildOpen] = useAtom(buildOpenAtom);
+  const [runesOpen, setRunesOpen] = useAtom(runesOpenAtom);
   const [masteryOpen, setMasteryOpen] = useAtom(masteryOpenAtom);
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
@@ -210,14 +212,7 @@ export function RightSidebar() {
     if (isMobile) closePrimaryOverlays();
   }, [isMobile]);
 
-  // Section shortcuts, surfaced in the rail while their dialog is open. Build's
-  // gated sections reuse the same `data-ui-unlock-system` tokens as the tabs
-  // they mirror, so a reveal wakes the rail entry too.
-  const craftSections: NavSection[] = [
-    { key: "make", label: "Craft", selected: craftTab === "make", onSelect: () => setCraftTab("make") },
-    { key: "upgrade", label: "Upgrade", selected: craftTab === "upgrade", onSelect: () => setCraftTab("upgrade") },
-  ];
-
+  // Loadout keeps the choices changed together; Runes is now its own destination.
   const buildSections: NavSection[] = [
     { key: "overview", label: "Overview", selected: buildTab === "overview", onSelect: () => setBuildTab("overview") },
     ...(visibility.abilities
@@ -229,8 +224,16 @@ export function RightSidebar() {
     ...(visibility.rites
       ? [{ key: "rites", label: "Rites", selected: buildTab === "rites", unlockSystems: ["rites"] as const, onSelect: () => setBuildTab("rites") }]
       : []),
-    { key: "runes", label: "Runes", selected: buildTab === "runes", onSelect: () => setBuildTab("runes") },
   ];
+
+  const toggleCraftDestination = (tab: 'make' | 'upgrade') => {
+    if (craftTab === tab) {
+      closePrimaryOverlays();
+      return;
+    }
+    closePrimaryOverlays();
+    setCraftTab(tab);
+  };
 
   // The rail itself is `display: none` below the breakpoint, but its dialogs
   // portal to document.body and would escape that. MobileHUD owns every mobile
@@ -264,7 +267,7 @@ export function RightSidebar() {
         {visibility.loadout && (
           <RightNavButton
             label="Loadout"
-            icon={atlasIcon("UI_icons/runes-icon.png")}
+            icon={atlasIcon("UI_icons/abilities/sweep.png")}
             selected={buildOpen}
             badge={badges.has("loadout")}
             badgeTone="unlock"
@@ -274,6 +277,15 @@ export function RightSidebar() {
               badges.clear("loadout");
               togglePrimaryOverlay("build");
             }}
+          />
+        )}
+        {visibility.loadout && (
+          <RightNavButton
+            label="Runes"
+            icon={atlasIcon("UI_icons/runes-icon.png")}
+            selected={runesOpen}
+            unlockSystems={["loadout"]}
+            onClick={() => togglePrimaryOverlay("runes")}
           />
         )}
         {visibility.inventory && (
@@ -295,16 +307,25 @@ export function RightSidebar() {
           <RightNavButton
             label="Crafting"
             icon={atlasIcon("UI_icons/forge-icon.png")}
-            selected={craftTab !== null}
+            selected={craftTab === "make"}
             disabled={dead}
             badge={badges.has("crafting") || newRecipes.count > 0}
             badgeCount={newRecipes.count}
             unlockSystems={["crafting"]}
-            sections={craftSections}
             onClick={() => {
               badges.clear("crafting");
-              togglePrimaryOverlay("crafting");
+              toggleCraftDestination("make");
             }}
+          />
+        )}
+        {visibility.crafting && (
+          <RightNavButton
+            label="Upgrade"
+            icon={atlasIcon("UI_icons/craft-upgrade-icon.png")}
+            selected={craftTab === "upgrade"}
+            disabled={dead}
+            unlockSystems={["crafting"]}
+            onClick={() => toggleCraftDestination("upgrade")}
           />
         )}
         {visibility.map && (
@@ -339,12 +360,12 @@ export function RightSidebar() {
           onClose={() => setBuildOpen(false)}
         />
       )}
+      {runesOpen && <RunesPanel onClose={() => setRunesOpen(false)} />}
       {masteryOpen && <MasteryPanel onClose={() => setMasteryOpen(false)} />}
       {invOpen && <InventoryPanel onClose={() => setInvOpen(false)} />}
       {craftTab !== null && (
         <CraftingPanel
           tab={craftTab}
-          onTabChange={setCraftTab}
           onClose={() => setCraftTab(null)}
         />
       )}

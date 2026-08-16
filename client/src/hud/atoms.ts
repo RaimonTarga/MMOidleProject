@@ -338,7 +338,7 @@ export const equippedRitesAtom = atom<string[]>([]);
 export const riteSlotsAtom = atom<number>(0);
 
 export const skillTreeOpenAtom = atom<boolean>(false);
-export type BuildPanelTab = 'overview' | 'abilities' | 'stances' | 'rites' | 'runes';
+export type BuildPanelTab = 'overview' | 'abilities' | 'stances' | 'rites';
 export const buildOpenAtom = atom<boolean>(false);
 /**
  * The dialog these drive is called **Loadout** in the UI (renamed in V5, when

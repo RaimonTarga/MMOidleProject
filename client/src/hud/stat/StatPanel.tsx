@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { estimatePlayerDps, resolveEmpoweredMultiplier } from '@mmo-idle/shared';
+import { estimatePlayerDps, resolveEmpoweredMultiplier, riteDef, stanceDef } from '@mmo-idle/shared';
 import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
@@ -13,10 +13,12 @@ import {
   attackAtom,
   attackCooldownAtom,
   attackRangeAtom,
+  activeStanceAtom,
   autoIntentAtom,
   combatArchetypeAtom,
   damageReductionAtom,
   equipmentAtom,
+  equippedRitesAtom,
   dodgeRateAtom,
   evadeMitigationAtom,
   hpAtom,
@@ -136,6 +138,13 @@ export function StatPanel() {
   const selectedRange = useAtomValue(selectedRangeAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const summonActiveCount = useAtomValue(summonActiveCountAtom);
+  const activeStance = useAtomValue(activeStanceAtom);
+  const equippedRites = useAtomValue(equippedRitesAtom);
+  const activeStanceName = stanceDef(activeStance)?.name ?? 'No stance';
+  const equippedRiteDefs = equippedRites.flatMap((id) => {
+    const def = riteDef(id);
+    return def ? [def] : [];
+  });
   const player = playerId
     ? {
       name,
@@ -262,6 +271,7 @@ export function StatPanel() {
         <StatPlate
           crown={{
             name: player.name ?? '—',
+            stance: activeStanceName,
             status,
             hp: player.hp,
             maxHp: player.maxHp,
@@ -403,6 +413,19 @@ export function StatPanel() {
               <StatRow label="Damage avoided" value={`${Math.round(player.evadeMitigation * 100)}% per dodge`} help={STAT_HELP.evadeMitigation} />
             </div>
           )}
+          <div className="stat-section">
+            <div className="stat-section-title">Rites</div>
+            {equippedRiteDefs.length > 0 ? equippedRiteDefs.map((rite) => (
+              <StatRow
+                key={rite.id}
+                label={rite.name}
+                value={`${rite.runeCost} RP`}
+                help={rite.blurb}
+              />
+            )) : (
+              <StatRow label="Equipped" value="None" dim />
+            )}
+          </div>
           {player && <DefensePassivesSection passives={player.passives ?? {}} />}
           {player && <MobilityPassivesSection passives={player.passives ?? {}} />}
         </div>

@@ -6,12 +6,13 @@ import { BuildPanel } from '../ui/BuildPanel';
 import { MasteryPanel } from '../ui/MasteryPanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
+import { RunesPanel } from '../ui/RunesPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { QuestPanel } from '../ui/QuestPanel';
 import { StatPanel } from './StatPanel';
 import { BiomeXpBar } from './BiomeXpBar';
 import { ArchetypeMechanics } from './stat/mechanics';
-import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
+import { NODE_BIOMES, BIOME_DATABASE, stanceDef } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { useIsMobile } from './useIsMobile';
 import { atlasIcon, GameIcon, nodeIcon, type IconSource } from '../ui/GameIcon';
@@ -23,23 +24,10 @@ import type { UiUnlockSystem } from './uiUnlocks';
 import {
   activeStanceAtom,
   autoAtom,
-  catalystProgressAtom,
-  catalystsAtom,
-  essencesAtom,
-  passivesAtom,
-  unlockedRecipesAtom,
   bestiaryOpenAtom,
-  buildPanelTabAtom,
-  type BuildPanelTab,
   deathOverlayAtom,
-  equippedAbilitiesAtom,
-  equippedRitesAtom,
-  equippedStancesAtom,
   hpAtom,
   incomingDotAtom,
-  knownAbilitiesAtom,
-  knownRitesAtom,
-  knownStancesAtom,
   maxHpAtom,
   pendingHealAtom,
   playerNameAtom,
@@ -65,9 +53,11 @@ type MobileView =
   | 'skills'
   | 'bag'
   | 'craft'
+  | 'upgrade'
   | 'map'
   | 'quests'
   | 'build'
+  | 'runes'
   | 'mastery'
   | 'more'
   | null;
@@ -80,14 +70,13 @@ interface MoreEntry {
   icon: IconSource | null;
   fallback: ReactNode;
   unlockSystem?: UiUnlockSystem;
+  disabled?: boolean;
   onSelect: () => void;
 }
 
 function MobileHUDContent() {
   const [view, setView] = useState<MobileView>(null);
-  const [craftTab, setCraftTab] = useState<'make' | 'upgrade'>('make');
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
-  const [, setBuildPanelTab] = useAtom(buildPanelTabAtom);
   const setBestiaryOpen = useSetAtom(bestiaryOpenAtom);
 
   const status = useAtomValue(statusAtom);
@@ -101,19 +90,8 @@ function MobileHUDContent() {
   const skillPoints = useAtomValue(skillPointsAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const dead = useAtomValue(deathOverlayAtom).active;
-
-  const knownAbilities = useAtomValue(knownAbilitiesAtom);
-  const equippedAbilities = useAtomValue(equippedAbilitiesAtom);
-  const knownStances = useAtomValue(knownStancesAtom);
-  const equippedStances = useAtomValue(equippedStancesAtom);
   const activeStance = useAtomValue(activeStanceAtom);
-  const knownRites = useAtomValue(knownRitesAtom);
-  const equippedRites = useAtomValue(equippedRitesAtom);
-  const essences = useAtomValue(essencesAtom);
-  const catalysts = useAtomValue(catalystsAtom);
-  const catalystProgress = useAtomValue(catalystProgressAtom);
-  const unlockedRecipes = useAtomValue(unlockedRecipesAtom);
-  const passives = useAtomValue(passivesAtom);
+  const activeStanceName = stanceDef(activeStance)?.name ?? 'No stance';
 
   // Phase 5 approved reveal gates, previously desktop-only. The same resolver
   // and ownership overrides run here, so a migrated save never loses a
@@ -152,7 +130,8 @@ function MobileHUDContent() {
     if (!visibility.mastery && view === 'mastery') setView(null);
     if (!visibility.passiveTree && view === 'skills') setView(null);
     if (!visibility.inventory && view === 'bag') setView(null);
-    if (!visibility.crafting && view === 'craft') setView(null);
+    if (!visibility.crafting && (view === 'craft' || view === 'upgrade')) setView(null);
+    if (!visibility.loadout && (view === 'build' || view === 'runes')) setView(null);
     if (!visibility.map && view === 'map') setView(null);
   }, [
     view,
@@ -160,20 +139,15 @@ function MobileHUDContent() {
     visibility.passiveTree,
     visibility.inventory,
     visibility.crafting,
+    visibility.loadout,
     visibility.map,
   ]);
 
   const close = () => setView(null);
 
   function toggle(key: Exclude<MobileView, null>) {
-    if ((key === 'bag' || key === 'craft') && dead) return;
-    if (key === 'craft' && view !== 'craft') setCraftTab('make');
+    if ((key === 'bag' || key === 'craft' || key === 'upgrade') && dead) return;
     setView(v => (v === key ? null : key));
-  }
-
-  function openBuildTab(tab: BuildPanelTab) {
-    setBuildPanelTab(tab);
-    setView('build');
   }
 
   // Destinations that share a desktop navigation entry resolve to the same
@@ -256,49 +230,33 @@ function MobileHUDContent() {
       ? [{
         key: 'overview' as const,
         label: 'Loadout',
-        icon: atlasIcon('UI_icons/runes-icon.png'),
+        icon: atlasIcon('UI_icons/abilities/sweep.png'),
         fallback: 'B',
         unlockSystem: 'loadout' as const,
-        onSelect: () => openBuildTab('overview'),
+        onSelect: () => setView('build'),
       }]
       : []),
-    ...(visibility.abilities
+    ...(visibility.loadout
       ? [{
-        key: 'abilities',
-        label: 'Abilities',
-        icon: null,
-        fallback: 'A',
-        unlockSystem: 'abilities' as const,
-        onSelect: () => openBuildTab('abilities'),
-      }]
-      : []),
-    ...(visibility.stances
-      ? [{
-        key: 'stances',
-        label: 'Stances',
-        icon: null,
-        fallback: 'S',
-        unlockSystem: 'stances' as const,
-        onSelect: () => openBuildTab('stances'),
-      }]
-      : []),
-    ...(visibility.rites
-      ? [{
-        key: 'rites',
-        label: 'Rites',
-        icon: null,
+        key: 'runes' as const,
+        label: 'Runes',
+        icon: atlasIcon('UI_icons/runes-icon.png'),
         fallback: 'R',
-        unlockSystem: 'rites' as const,
-        onSelect: () => openBuildTab('rites'),
+        unlockSystem: 'loadout' as const,
+        onSelect: () => setView('runes'),
       }]
       : []),
-    {
-      key: 'runes',
-      label: 'Runes',
-      icon: atlasIcon('UI_icons/runes-icon.png'),
-      fallback: 'R',
-      onSelect: () => openBuildTab('runes'),
-    },
+    ...(visibility.crafting
+      ? [{
+        key: 'upgrade' as const,
+        label: 'Upgrade',
+        icon: atlasIcon('UI_icons/craft-upgrade-icon.png'),
+        fallback: 'U',
+        unlockSystem: 'crafting' as const,
+        disabled: dead,
+        onSelect: () => setView('upgrade'),
+      }]
+      : []),
     ...(visibility.mastery
       ? [{
         key: 'mastery',
@@ -362,9 +320,14 @@ function MobileHUDContent() {
           {zoneLabel && <span className="mhud-top__zone">{zoneLabel}</span>}
         </div>
 
-        {/* Compact archetype mechanic — shares the desktop renderer */}
-        <div className="mhud-mech">
-          <ArchetypeMechanics compact />
+        <div className="mhud-context">
+          <span className="mhud-stance" title={`Active stance: ${activeStanceName}`}>
+            {activeStanceName}
+          </span>
+          {/* Compact archetype mechanic — shares the desktop renderer */}
+          <div className="mhud-mech">
+            <ArchetypeMechanics compact />
+          </div>
         </div>
       </div>
 
@@ -434,6 +397,7 @@ function MobileHUDContent() {
                 type="button"
                 className="mhud-more__btn"
                 data-ui-unlock-system={entry.unlockSystem}
+                disabled={entry.disabled}
                 onClick={entry.onSelect}
               >
                 <GameIcon
@@ -453,15 +417,11 @@ function MobileHUDContent() {
       {/* ── Self-overlaying panels (reused from desktop, full-screen) ───── */}
       {view === 'skills' && <SkillTreePanel onClose={close} />}
       {view === 'bag'    && <InventoryPanel onClose={close} />}
-      {view === 'craft'  && (
-        <CraftingPanel
-          tab={craftTab}
-          onTabChange={(t) => (t ? setCraftTab(t) : close())}
-          onClose={close}
-        />
-      )}
+      {view === 'craft' && <CraftingPanel tab="make" onClose={close} />}
+      {view === 'upgrade' && <CraftingPanel tab="upgrade" onClose={close} />}
       {view === 'map'    && <MapPanel onClose={close} />}
       {view === 'build' && <BuildPanel progressiveDisclosure onClose={close} />}
+      {view === 'runes' && <RunesPanel onClose={close} />}
       {view === 'mastery' && <MasteryPanel onClose={close} />}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
     </>

@@ -4,6 +4,7 @@ import {
   debugPanelOpenAtom,
   inventoryOpenAtom,
   buildOpenAtom,
+  runesOpenAtom,
   mapOpenAtom,
   masteryOpenAtom,
   questOpenAtom,
@@ -15,6 +16,7 @@ import {
 export type PrimaryOverlay =
   | 'skill-tree'
   | 'build'
+  | 'runes'
   | 'mastery'
   | 'inventory'
   | 'crafting'
@@ -27,6 +29,7 @@ function primaryOverlayIsOpen(overlay: PrimaryOverlay): boolean {
   switch (overlay) {
     case 'skill-tree': return store.get(skillTreeOpenAtom);
     case 'build': return store.get(buildOpenAtom);
+    case 'runes': return store.get(runesOpenAtom);
     case 'mastery': return store.get(masteryOpenAtom);
     case 'inventory': return store.get(inventoryOpenAtom);
     case 'crafting': return store.get(craftTabAtom) !== null;
@@ -40,6 +43,7 @@ export function closePrimaryOverlays(): void {
   const store = getDefaultStore();
   store.set(skillTreeOpenAtom, false);
   store.set(buildOpenAtom, false);
+  store.set(runesOpenAtom, false);
   store.set(masteryOpenAtom, false);
   store.set(inventoryOpenAtom, false);
   store.set(craftTabAtom, null);
@@ -55,6 +59,7 @@ export function openPrimaryOverlay(overlay: PrimaryOverlay): void {
   switch (overlay) {
     case 'skill-tree': store.set(skillTreeOpenAtom, true); break;
     case 'build': store.set(buildOpenAtom, true); break;
+    case 'runes': store.set(runesOpenAtom, true); break;
     case 'mastery': store.set(masteryOpenAtom, true); break;
     case 'inventory': store.set(inventoryOpenAtom, true); break;
     case 'crafting': store.set(craftTabAtom, 'make'); break;
@@ -96,6 +101,10 @@ export function closeTopmostOverlay(): void {
   }
   if (store.get(buildOpenAtom)) {
     store.set(buildOpenAtom, false);
+    return;
+  }
+  if (store.get(runesOpenAtom)) {
+    store.set(runesOpenAtom, false);
     return;
   }
   if (store.get(masteryOpenAtom)) {

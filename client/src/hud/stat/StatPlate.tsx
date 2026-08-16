@@ -12,6 +12,8 @@ import './statPlate.css';
  */
 export interface PlateCrown {
   name: string;
+  /** Current combat posture, kept visible even while details are collapsed. */
+  stance: string;
   /** Connection status, rendered as the dot beside the name. */
   status: string;
   hp: number;
@@ -49,7 +51,12 @@ function Crown({ crown }: { crown: PlateCrown }) {
     <div className="stat-crown">
       <div className="stat-crown__identity">
         <span className="stat-crown__name">{crown.name}</span>
-        <span className={`status-dot ${crown.status}`} title={crown.status} />
+        <span className="stat-crown__state">
+          <span className="stat-crown__stance" title={`Active stance: ${crown.stance}`}>
+            {crown.stance}
+          </span>
+          <span className={`status-dot ${crown.status}`} title={crown.status} />
+        </span>
       </div>
 
       <div className="stat-crown__readout" {...(crown.hpTip?.handlers ?? {})}>

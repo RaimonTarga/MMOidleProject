@@ -31,7 +31,6 @@ import type { IconSource } from "./GameIcon";
 import { AbilitiesPanelContent } from "./AbilitiesPanel";
 import { StancesPanelContent } from "./StancesPanel";
 import { RitesPanelContent } from "./RitesPanel";
-import { BuildRunesTab } from "./BuildRunesTab";
 import { DialogHeader, DialogTab, DialogTabs, EngravedMeter, GameDialog } from "../hud/primitives";
 import "./buildPanel.css";
 
@@ -46,7 +45,6 @@ const TABS: { id: BuildPanelTab; label: string; gate?: keyof SystemVisibility }[
   { id: "abilities", label: "Abilities", gate: "abilities" },
   { id: "stances", label: "Stances", gate: "stances" },
   { id: "rites", label: "Rites", gate: "rites" },
-  { id: "runes", label: "Runes" },
 ];
 
 interface Socket {
@@ -246,14 +244,10 @@ function LoadoutBoard({
         )}
 
         <section className="loadout-group">
-          <button
-            type="button"
-            className="loadout-group__title loadout-group__title--link"
-            onClick={() => onOpenTab('runes')}
-          >
-            Rune Rules
+          <div className="loadout-group__title">
+            Runic Budget
             <span className="loadout-group__count">{runesEquipped.length} equipped</span>
-          </button>
+          </div>
           <div className="loadout-budget">
             <span className="loadout-budget__label">Budget</span>
             <EngravedMeter
@@ -327,7 +321,6 @@ export function BuildPanel({ onClose, progressiveDisclosure = false }: Props) {
         {effectiveTab === "abilities" && <AbilitiesPanelContent />}
         {effectiveTab === "stances" && <StancesPanelContent />}
         {effectiveTab === "rites" && <RitesPanelContent />}
-        {effectiveTab === "runes" && <BuildRunesTab />}
       </div>
     </GameDialog>
   );

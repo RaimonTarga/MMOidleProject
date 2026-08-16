@@ -187,11 +187,34 @@
 }
 
 .stat-crown__name {
+  flex: 1;
   min-width: 0;
   overflow: hidden;
   color: var(--hud-text);
   font-size: 12px;
   font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-crown__state {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 5px;
+}
+
+.stat-crown__stance {
+  max-width: 88px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 1px 4px;
+  border: 1px solid var(--hud-edge-divider);
+  border-radius: 2px;
+  color: var(--hud-text-dim);
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
