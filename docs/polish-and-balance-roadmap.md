@@ -66,17 +66,16 @@ mid-word break; and a test fails if a new unlabelled effect key is authored.
 
 ### W2 — Panel architecture & discoverability — 🔨 **PARTLY DONE**
 
-Every item here is one problem: **the player cannot find what matters.** Upgrading gear
-is behind a tab; runes are behind a tab; the active stance is not shown at all.
+Every item here is one problem: **the player cannot find what matters.** The settled
+information-architecture work landed 2026-08-12; temporary stat colouring remains.
 
-- Split the loadout button into several top-level entries; promote **Runes** out of
-  `BuildPanel`'s tab strip (`TABS` at `client/src/ui/BuildPanel.tsx:44` is currently
-  overview / abilities / stances / rites / runes).
-- Split the **Upgrade** panel out of Inventory — a player may not realise gear can be
-  upgraded at all. `client/src/ui/crafting/UpgradeTab.tsx` is already its own component,
-  so this is a routing/shell change, not a rewrite.
-- Active-stance indicator (placement undecided).
-- Rites listed in detailed stats.
+- ✅ **Runes** is a standalone destination; Loadout now groups only Overview,
+  Abilities, Stances and Rites.
+- ✅ **Crafting (Make)** and **Upgrade** are separate direct destinations backed by
+  their existing content components rather than hidden tabs in one shell.
+- ✅ The active stance is visible in the character crown and mobile status strip.
+- ✅ Equipped rites, their RP costs and descriptions are listed in expanded character
+  stats.
 
 **Minimized stat panel — SETTLED 2026-08-11.** Contents, in this weighting:
 
@@ -233,9 +232,23 @@ What its first run revealed at biome tier 3, entry-player column:
 not deliberate. Swamp T3 is unclearable for an entry player; Volcanic T3 is a rest stop.
 That is the raw material the authored-per-mob model has to organise.
 
-Remaining work is therefore *extension*, not construction: a fixed-tier cross-biome
-ranking view, rewards folded in beside threat, a deviation report, and a single data
-accessor so the planned tuning overlay can slot in later.
+The shipped extensions add a fixed-tier cross-biome ranking view, rewards beside
+threat, a deviation report, and a single data accessor for the planned tuning overlay.
+
+**Balance Lab MVP, 2026-08-12.** Those analytical views now also have one interactive,
+read-only home in the trusted local Admin app: tier-level world overview, entry-reference
+context, searchable encounter roster, and authored/derived encounter inspection. The
+typed snapshot is built from shared formulas and delivered by the server; the React UI
+does not own a second model. Farm income, layered build sweeps, reversible overrides and
+the full route timeline remain subsequent Lab slices.
+
+**Instrument hardening, 2026-08-12.** Those extensions are now shipped. The monster
+packet also uses shared `estimatePlayerDps` across concrete class builds (including a
+full Conduit formation) for boss TTK instead of averaging non-summoner auto-attacks.
+The detailed DPS report remains intentionally richer: its use of
+`estimatePlayerHitDamage` is the target-mitigation primitive inside a T3/T4
+spec/weapon model, not a direct-hit-only output model. The balance-instrument wiring
+test now lives under `server/test/`, so the normal CI suite discovers it.
 
 **W5d — Route bots: the honest income measurement.** The framing — *bots with an
 established route, not driven by agents* — is worth highlighting:
