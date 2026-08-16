@@ -319,7 +319,10 @@ function buildBiomeDecorImages(
   // ledge wall, …) — those are either painted by the functional ground sheet
   // or covered by their own decor sprite.
   const featureShapes = (RESOLVED_NODE_FEATURES[nodeId] ?? []).map((f) => f.shape);
-  const featurePad = 30;
+  // Must exceed the functional Wang sheet's `inflatePx` (32 for swamp pools and lava),
+  // because that sheet paints the hazard OUTSIDE its collision shape. At the old 30 a
+  // prop could clear the shape and still be standing in the visible water.
+  const featurePad = 64;
   const placed: Array<{ x: number; y: number; r: number }> = [];
 
   // One multiplier per variance group per node, drawn the first time the group is

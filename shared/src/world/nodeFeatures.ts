@@ -2,6 +2,7 @@ import { GAME_CONFIG } from "../config/gameConfig";
 import type { AmbientRampPayload } from "../systems/ambientRamp";
 import { pointInNodeFeatureShape, type Vec2 } from "../systems/spatial";
 import { WORLD_NODE_LIST } from "./map/registry";
+import { generateSwampPools } from "./swampPools";
 
 /** Axis-aligned or circular zone in world pixels (node-local coordinates). */
 export type NodeFeatureShape =
@@ -917,11 +918,22 @@ function canonicalFeaturesForNode(
     );
   }
   if (node.biomeGroup === "swamp") {
-    if (node.kind === "dungeon") {
-      return templateFeatures(SWAMP_DUNGEON_TEMPLATES[node.biomeTier]);
-    }
-    const index = (node.featureVariant ?? 0) % SWAMP_NORMAL_TEMPLATES.length;
-    return templateFeatures(SWAMP_NORMAL_TEMPLATES[index]);
+    // Generated per node rather than drawn from a template table. The six authored
+    // layouts were reused verbatim at every tier, so `t1-swamp-01`, `t2-swamp-01` and
+    // `t3-swamp-01` were the same node three times over.
+    //
+    // Rot strength still climbs with tier — that was the only thing the per-tier
+    // templates actually varied, and it is a single number rather than a whole layout.
+    const isDungeon = node.kind === "dungeon";
+    return generateSwampPools(node.id, isDungeon).map((pool, i) =>
+      rotPool(
+        `${isDungeon ? "boss_rot" : "rot_pool"}_${i}`,
+        Math.round(pool.x),
+        Math.round(pool.y),
+        Math.round(pool.radius),
+        Math.max(1, node.biomeTier),
+      ),
+    );
   }
   if (node.biomeGroup === "jungle") {
     const templateId =

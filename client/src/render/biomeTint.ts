@@ -81,6 +81,18 @@ export const BIOME_TIER_TINTS: Readonly<
     2: { color: 0x1f6b70, alpha: 0.34 }, // deep canopy teal
   },
 
+  /**
+   * Swamp gets DARKER as you descend, rather than shifting hue for its own sake: the
+   * water goes from murky green to dead and cold. Unlike plains and forest, tier 1 is
+   * tinted too — swamp is meant to read as gloomier than its T1 peers from the first
+   * visit, so the wash is biome identity here, not only tier progression.
+   */
+  swamp: {
+    1: { color: 0x24301f, alpha: 0.26 }, // murky green
+    2: { color: 0x1b2a28, alpha: 0.36 }, // colder, deeper
+    3: { color: 0x131f26, alpha: 0.46 }, // dead water
+  },
+
   sanctuary: {
     2: { color: 0x2f4f9e, alpha: 0.36 }, // cold blue — barely touched
     3: { color: 0x3d43a4, alpha: 0.41 },

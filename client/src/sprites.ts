@@ -560,7 +560,8 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
     {
       key: 'swamp_sedge_tuft',
       file: '/assets/environment/swamp/sedge-tuft.png',
-      count: 20,
+      count: 32,
+      variance: { min: 0.5, max: 1.5, group: 'sedge' },
       displayW: 50,
       displayH: 50,
       flipX: true,
@@ -569,7 +570,8 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
     {
       key: 'swamp_sedge_tuft_variant_2',
       file: '/assets/environment/swamp/sedge-tuft-variant-2.png',
-      count: 18,
+      count: 29,
+      variance: { min: 0.5, max: 1.5, group: 'sedge' },
       displayW: 50,
       displayH: 50,
       flipX: true,
@@ -578,7 +580,8 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
     {
       key: 'swamp_bogleaf_clump',
       file: '/assets/environment/swamp/bogleaf-clump.png',
-      count: 16,
+      count: 26,
+      variance: { min: 0.4, max: 1.6, group: 'bogleaf' },
       displayW: 50,
       displayH: 50,
       flipX: true,
@@ -587,7 +590,8 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
     {
       key: 'swamp_bogleaf_clump_variant_2',
       file: '/assets/environment/swamp/bogleaf-clump-variant-2.png',
-      count: 11,
+      count: 18,
+      variance: { min: 0.4, max: 1.6, group: 'bogleaf' },
       displayW: 50,
       displayH: 50,
       flipX: true,
@@ -596,7 +600,8 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
     {
       key: 'swamp_dead_reed_scatter',
       file: '/assets/environment/swamp/dead-reed-scatter.png',
-      count: 18,
+      count: 29,
+      variance: { min: 0.3, max: 1.7, group: 'deadreed' },
       displayW: 54,
       displayH: 54,
       flipX: true,
@@ -605,7 +610,8 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
     {
       key: 'swamp_dead_reed_scatter_variant_2',
       file: '/assets/environment/swamp/dead-reed-scatter-variant-2.png',
-      count: 16,
+      count: 26,
+      variance: { min: 0.3, max: 1.7, group: 'deadreed' },
       displayW: 54,
       displayH: 54,
       flipX: true,
@@ -614,7 +620,8 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
     {
       key: 'swamp_moss_clumps',
       file: '/assets/environment/swamp/moss-clumps.png',
-      count: 18,
+      count: 29,
+      variance: { min: 0.3, max: 1.7, group: 'moss' },
       displayW: 52,
       displayH: 52,
       flipX: true,

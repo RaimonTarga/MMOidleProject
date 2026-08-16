@@ -629,7 +629,6 @@ around it and filling out to the borders behind. Measured: 60 trees (was 170), n
 at 1552 against a 1536 clearing, farthest 2900 (the corners), ~510px mean spacing in the
 treed band.
 
-**Next biomes, in order:** swamp, mountain, caves.
 
 ### Tint strength — final calibration
 
@@ -647,3 +646,47 @@ less, so trees came out visibly under-tinted against ground washed at the same a
 `IMAGE_TINT_BOOST = 1.35` pulls the multiply path back toward parity. It is an empirical
 correction, not a derivation: exact parity is impossible, since multiply cannot lighten and
 compositing can.
+
+### Swamp — DONE (2026-08-14), pending visual review
+
+**Correcting §1:** this doc claimed swamp had 2 authored layouts. It had **six** normal
+templates, and 9 distinct layouts across 21 nodes. The real duplication was ACROSS TIERS —
+`t1-swamp-01`, `t2-swamp-01` and `t3-swamp-01` were the same node three times, because the
+same six templates were reused at every tier. Within a tier the six nodes were already
+distinct.
+
+**Pools are generated now** (`shared/src/world/swampPools.ts`), replacing the template
+table. 21/21 distinct layouts. Rot strength still climbs with tier (`damagePerStack` =
+biomeTier) — that was the only thing the per-tier templates actually varied, and it is one
+number rather than a whole layout.
+
+**Coverage-first, not count-first.** The generator picks a water BUDGET as a fraction of the
+node and lets pool count fall out of it. Picking a count first lets total water swing wildly
+between nodes; picking coverage first keeps a node of few large pools and a node of many
+small ones equally crossable. Coverage now runs **5.4–8.5%** against the authored 8.3–9.4%,
+so the ceiling came down as asked.
+
+Two guards learned by measuring:
+- **Radius is capped so the budget cannot be eaten by one or two enormous pools.** The first
+  version produced a node of two vast bogs 2340px apart — within budget, but barely reading
+  as swamp. The cap solves for `MIN_POOLS` pools of that size.
+- **A minimum gap between pool edges.** Pools that touch merge into one bog and destroy the
+  read the biome is built on: hazard-aware routing needs visible lanes BETWEEN the water.
+
+Pools carry no `blocksMovement`, so there is no reachability risk here — unlike a wall
+generator, this one cannot wedge a node.
+
+**Props no longer stand in the water.** They already avoided feature SHAPES, but at
+`featurePad = 30` against the functional sheet's `inflatePx: 32` — the sheet paints the
+hazard *outside* its collision shape, so a prop could clear the shape and still be standing
+in visible water. Pad raised to 64. *Verified: 0 props inside the painted pool edge.*
+
+**Density up.** Base counts x1.6 (117 -> 189) with variance on four groups; placed props now
+**133–215 per node** against a flat 117.
+
+**Tint** darkens across all three tiers rather than shifting hue for its own sake:
+`0x24301f` @0.26 (murky green) -> `0x1b2a28` @0.36 (colder) -> `0x131f26` @0.46 (dead water).
+Unlike plains and forest, **tier 1 is tinted too** — swamp should read gloomier than its T1
+peers from the first visit, so the wash is biome identity here, not only tier progression.
+
+**Next biomes, in order:** mountain, caves.

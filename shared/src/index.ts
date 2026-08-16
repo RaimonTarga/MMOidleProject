@@ -79,6 +79,7 @@ export * from './world/map/validation';
 export * from './world/nodeFeatures';
 export * from './world/groundZones';
 export * from './world/forestPaths';
+export * from './world/swampPools';
 export * from './world/trees';
 export * from './world/tallProps';
 export * from './quests/questDatabase';
