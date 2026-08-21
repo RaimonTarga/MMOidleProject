@@ -1,188 +1,190 @@
 # MMO Idle LLM Survivability Packet - T2
 
-Generated from `tools/ehp-report.ts`. Markdown only; the full HTML report is omitted. Companion to the DPS LLM packet.
+Generated from `tools/ehp-report.ts --llm-packet`. Progression-focused companion to the DPS packet.
 
-## 1. Assumptions / Omissions
+## Assumptions / Omissions
 
-- Report tier T2; class unlock tier 1; armor + charm are tier 2 at +3.
-- Every class build (root/frame/range/spec) is crossed with every armor × charm (recovery) combination. Weapon is empty; mobility slot excluded (movement only, no eHP value).
-- Incoming pressure comes from biome spawn pools one tier below report tier (tutorial/test/interact/boss excluded), plus representative shape attackers and boss spikes.
-- **eHP** = maxHP × (raw attacker DPS ÷ post-mitigation DPS): folds plating, DR, evasion, damage-cap, and DoT-resistance into one number. **TTL** = effective pool ÷ (incoming − recovery); "sustains" when recovery ≥ incoming. **Net HP/s** = recovery − incoming.
-- Defense mechanics are deterministic steady-state re-implementations of `server/src/systems/defense/*`: shields/regen-bursts/absorb are averaged as HP/s throughput; ramps use their mid-point; cheat-death adds one extra near-full bar; kill-burst and shield-break heals are omitted (need a kill/break cadence).
-- Single-target, in-combat steady state only. No movement, kiting, real AoE target count, enemy AI, party effects, antiheal stacking, or overkill timing.
+- Class unlock tier 1. Views model progression moments, not just same-tier +3 gear.
+- Checkpoints: prev-tier +3 entering, current +0 entry, current +3 geared, current +3 vs boss, current +3 vs next-tier mobs. "Current mobs" = biome spawn pools one tier below report tier (the established convention); bosses come from boss pools.
+- Comparison/route/checkpoint views are **spec-agnostic** (root+frame+range only) to keep the cross-product readable; the HTML report's collapsed dump keeps full per-spec rows.
+- eHP = maxHP × (raw ÷ post-mitigation DPS). Survival = (maxHP + recovery×15s) × mitigation, so charms rank. TTL/"sustains" use averaged recovery.
+- Status: Safe / Risky / Blocked from TTL + one-shot risk (mob risk<30s/block<10s; boss risk<20s/block<8s).
 
-## 2. Attacker Baseline
+## Undercounted / Unmodeled Mechanics
 
-| Metric | Value |
-| --- | --- |
-| Source | biome tier 1 |
-| Mob count | 10 |
-| Average attack | 18.4 |
-| Average APS | 0.43 |
-| Average DoT/s | 1.60 |
-| Average spike mult | ×1.00 |
-| Reference optimal-loadout average eHP | 1458 |
+- **Range & movement**: kiting, attack range, and repositioning are ignored — melee-range pressure is assumed.
+- **Kill-burst** recovery is undercounted (no kill cadence modeled); flagged in the charm table.
+- **Evasion** is averaged (dodgeRate × evade-mitigation), not the deterministic first-hit accumulator.
+- **Shield timing** is treated as flat HP/s throughput — no burst-vs-chip interaction or DoT bypass beyond notes.
+- **Multi-enemy pressure** is not modeled; a single attacker profile is assumed (idle pulls are often several mobs).
 
-| Shape | Monster | Attack | APS | DoT/s | Spike |
+## Progression Checkpoints
+
+| Checkpoint | Gear | Attacker | Avg eHP | Avg net/s | Min TTL | Safe % | Blocked |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev-tier +3 vs current mobs | T1 +3 | 40.3 atk / 0.48 aps / 3.30 dot / ×1.00 | 335 | -7.27 | 12.8s | 0.00% | 0 |
+| Current +0 vs current mobs (entry) | T2 +0 | 40.3 atk / 0.48 aps / 3.30 dot / ×1.00 | 300 | -8.28 | 11.8s | 0.00% | 0 |
+| Current +3 vs current mobs (geared) | T2 +3 | 40.3 atk / 0.48 aps / 3.30 dot / ×1.00 | 766 | -0.11 | 35.3s | 50.0% | 0 |
+| Current +3 vs boss/elite | T2 +3 | 56.0 atk / 0.29 aps / 0.00 dot / ×1.60 | 576 | 0.01 | 42.2s | 50.0% | 0 |
+| Current +3 vs next-tier mobs | T2 +3 | 32.7 atk / 0.45 aps / 5.38 dot / ×1.02 | 623 | -0.02 | 50.5s | 50.0% | 0 |
+
+## Class Average eHP By Checkpoint
+
+| Class | Prev-tier +3 vs current mobs | Current +0 vs current mobs (entry) | Current +3 vs current mobs (geared) | Current +3 vs boss/elite | Current +3 vs next-tier mobs |
 | --- | --- | --- | --- | --- | --- |
-| Hardest hitter | Cave Brute | 40.0 | 0.26 | 0.00 | ×1.00 |
-| Fastest attacker | Wolf | 11.0 | 0.83 | 0.00 | ×1.00 |
-| DoT-heavy | Bog Slime | 4.00 | 0.45 | 8.00 | ×1.00 |
-| Biggest spike | Boar | 18.0 | 0.53 | 0.00 | ×1.00 |
-| Boss spike | Iron-Crest Titan | 175 | 0.24 | 0.00 | ×2.20 |
+| Apprentice | 345 | 297 | 832 | 494 | 721 |
+| Conduit | 270 | 247 | 537 | 393 | 549 |
+| Slinger | 308 | 294 | 570 | 495 | 533 |
+| Spirit | 256 | 233 | 508 | 372 | 519 |
+| Squire | 482 | 419 | 1215 | 1103 | 789 |
+| Striker | 352 | 313 | 935 | 600 | 629 |
 
+## Armor Comparison
 
-## 3. Class / Loadout Input Table (optimal charm+armor per build)
+_No charm equipped; eHP/TTL/net are vs the avg-mob profile, averaged over spec-agnostic class builds. Best/worst = profile handled best/worst._
 
-| Build | Loadout | maxHP | Plating | DR | Dodge | hpRegen | Defensive passives | eHP | TTL |
+| Armor | Plus | maxHP | Plating | DR | Evasion | Special | eHP | TTL | Net/s | Best matchup | Worst matchup |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Bog Wrappings | +0 | 44.0 | 6.00 | 0.00% | 0.00 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.08 | 257 | 12.7s | -14.2 | DoT-heavy | hardest |
+| Bog Wrappings | +5 | 104 | 16.0 | 0.00% | 0.00 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.08 | 553 | 34.1s | -8.38 | next-tier | hardest |
+| Dire Bestial Hide | +0 | 46.0 | 5.00 | 12.0% | 0.00 | - | 257 | 12.7s | -14.3 | avg mob | DoT-heavy |
+| Dire Bestial Hide | +5 | 96.0 | 15.0 | 22.0% | 0.00 | - | 539 | 33.0s | -8.20 | avg mob | DoT-heavy |
+| Duneplate of the Last Stand | +0 | 44.0 | 10.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00 | 269 | 26.9s | -13.5 | next-tier | hardest |
+| Duneplate of the Last Stand | +5 | 104 | 25.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00 | 894 | 220s | -4.86 | avg mob | DoT-heavy |
+| Enduring Robe | +0 | 24.0 | 16.0 | 0.00% | 0.00 | - | 299 | 15.3s | -10.5 | next-tier | DoT-heavy |
+| Enduring Robe | +5 | 54.0 | 36.0 | 0.00% | 0.00 | - | 1149 | 93.7s | -2.10 | boss | DoT-heavy |
+| Iron Crusader Plate | +0 | 29.0 | 12.0 | 5.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25 | 271 | 13.6s | -12.0 | hardest | DoT-heavy |
+| Iron Crusader Plate | +5 | 69.0 | 27.0 | 5.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25 | 850 | 89.0s | -4.37 | avg mob | DoT-heavy |
+| Phantom Bindings | +0 | 43.0 | 6.00 | 0.00% | 0.28 | - | 267 | 13.2s | -13.5 | boss | DoT-heavy |
+| Phantom Bindings | +5 | 103 | 16.0 | 0.00% | 0.58 | - | 613 | 40.4s | -7.23 | avg mob | DoT-heavy |
+| Verdant Weave | +0 | 44.0 | 6.00 | 0.00% | 0.15 | - | 252 | 12.5s | -14.4 | avg mob | DoT-heavy |
+| Verdant Weave | +5 | 104 | 16.0 | 0.00% | 0.35 | - | 568 | 35.4s | -8.02 | avg mob | DoT-heavy |
+
+## Charm Comparison
+
+_Reference armor Dire Bestial Hide +3; metrics vs avg-mob profile averaged over class builds. eHP contribution = eHP with charm − without. Kill-burst needs a kill cadence to value fully._
+
+| Charm | Plus | hpRegen | Special | Recov/s | eHP contrib | TTL | Best matchup | Worst matchup |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ancient Heartroot Amulet | +0 | 10.0 | - | 1.93 | -282 | 13.2s | boss | DoT-heavy |
+| Ancient Heartroot Amulet | +5 | 25.0 | - | 3.28 | 0.00 | 95.7s | avg mob | DoT-heavy |
+| Bog Eye | +0 | 6.00 | defense.absorb-pct=0.09 | 2.93 | -282 | 14.2s | hardest | DoT-heavy |
+| Bog Eye | +5 | 6.00 | defense.absorb-pct=0.19 | 3.75 | 0.00 | 47.2s | avg mob | DoT-heavy |
+| Canopy Heart | +0 | 6.00 | defense.ramp-regen-max-pct=0.10, defense.ramp-regen-ramptime-ms=10000, defense.ramp-regen-start-pct=0.04 | 3.80 | -282 | 15.4s | boss | DoT-heavy |
+| Canopy Heart | +5 | 6.00 | defense.ramp-regen-max-pct=0.20, defense.ramp-regen-ramptime-ms=10000, defense.ramp-regen-start-pct=0.04 | 7.03 | 0.00 | 176s | avg mob | DoT-heavy |
+| Iron Bulwark | +0 | 6.00 | defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.12 | 3.90 | -282 | 15.6s | boss | DoT-heavy |
+| Iron Bulwark | +5 | 6.00 | defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.22 | 7.99 | 0.00 | 151s | avg mob | DoT-heavy |
+| Mirage Talisman | +0 | 6.00 | defense.cleanse-empty-heal-pct=0.03, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 2.68 | -282 | 14.0s | boss | DoT-heavy |
+| Mirage Talisman | +5 | 6.00 | defense.cleanse-empty-heal-pct=0.08, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 5.61 | 0.00 | 103s | avg mob | DoT-heavy |
+| Resonant Gem | +0 | 6.00 | defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.06 | 3.58 | -282 | 15.1s | boss | DoT-heavy |
+| Resonant Gem | +5 | 6.00 | defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.16 | 8.83 | 0.00 | 250s | avg mob | DoT-heavy |
+| Stalwart Heart | +0 | 7.00 | defense.kill-burst-pct=0.09 (kill-burst undercounted) | 1.82 | -282 | 13.1s | boss | DoT-heavy |
+| Stalwart Heart | +5 | 7.00 | defense.kill-burst-pct=0.14 (kill-burst undercounted) | 2.44 | 0.00 | 37.4s | avg mob | DoT-heavy |
+
+## Biome Route
+
+_Player at current +3 gear, spec-agnostic best loadout, vs each biome's tier-1 pool._
+
+| Biome | Attacker | Best loadout | eHP | In DPS | Recov/s | Net/s | TTL | Spike %HP | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice / Ember mage | Void Wrappings / Ancient Heartroot Amulet | 231 | 27.0 | 4.00% | 0.00% | 34.0 | defense.dot-resistance=0.48, defense.hit-to-dot-pct=0.25 | 1810 | 191s |
-| Apprentice / Rime-Bound | Void Wrappings / Ancient Heartroot Amulet | 247 | 30.0 | 10.0% | 0.00% | 37.0 | defense.dot-resistance=0.48, defense.hit-to-dot-pct=0.25 | 1935 | 204s |
-| Apprentice / Venom vessel | Void Wrappings / Ancient Heartroot Amulet | 221 | 24.0 | 4.00% | 0.00% | 31.0 | defense.dot-resistance=0.48, defense.hit-to-dot-pct=0.25 | 1731 | 183s |
-| Conduit / Heavy Frame | Void Wrappings / Ancient Heartroot Amulet | 225 | 23.0 | 0.00% | 0.00% | 29.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15 | 1393 | 147s |
-| Conduit / Light Frame | Void Wrappings / Ancient Heartroot Amulet | 200 | 23.0 | 0.00% | 0.00% | 29.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15 | 1239 | 131s |
-| Conduit / Medium Frame | Void Wrappings / Ancient Heartroot Amulet | 212 | 23.0 | 0.00% | 0.00% | 29.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15 | 1313 | 139s |
-| Slinger / Artillerist | Void Wrappings / Ancient Heartroot Amulet | 224 | 27.0 | 0.00% | 25.0% | 33.0 | defense.dot-resistance=0.30, defense.evade-mitigation=0.20, defense.hit-to-dot-pct=0.15, defense.kill-burst-pct=0.05 | 1455 | 154s |
-| Slinger / Marksman | Void Wrappings / Ancient Heartroot Amulet | 218 | 23.0 | 0.00% | 38.0% | 31.0 | defense.dot-resistance=0.30, defense.evade-mitigation=0.20, defense.hit-to-dot-pct=0.15, defense.kill-burst-pct=0.05 | 1453 | 154s |
-| Slinger / Scout | Void Wrappings / Ancient Heartroot Amulet | 208 | 23.0 | 0.00% | 45.0% | 29.0 | defense.dot-resistance=0.30, defense.evade-mitigation=0.20, defense.hit-to-dot-pct=0.15, defense.kill-burst-pct=0.05 | 1406 | 149s |
-| Spirit / Phantasm | Void Wrappings / Ancient Heartroot Amulet | 208 | 25.0 | 2.00% | 0.00% | 32.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.shield-duration-ms=10000, defense.shield-interval-ms=10000, defense.shield-pct=0.30 | 1288 | sustains |
-| Spirit / Spark | Void Wrappings / Ancient Heartroot Amulet | 196 | 23.0 | 0.00% | 0.00% | 29.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.shield-duration-ms=10000, defense.shield-interval-ms=10000, defense.shield-pct=0.30 | 1214 | sustains |
-| Spirit / Wraith | Void Wrappings / Ancient Heartroot Amulet | 195 | 24.0 | 0.00% | 0.00% | 29.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.shield-duration-ms=10000, defense.shield-interval-ms=10000, defense.shield-pct=0.30 | 1208 | sustains |
-| Squire / Bulwark | Void Wrappings / Ancient Heartroot Amulet | 262 | 31.0 | 11.0% | 0.00% | 36.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.in-combat-regen-pct=0.10 | 1622 | sustains |
-| Squire / Knight | Void Wrappings / Ancient Heartroot Amulet | 250 | 29.0 | 11.0% | 0.00% | 34.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.in-combat-regen-pct=0.10 | 1548 | sustains |
-| Squire / Warrior | Void Wrappings / Ancient Heartroot Amulet | 236 | 26.0 | 8.00% | 0.00% | 29.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.in-combat-regen-pct=0.10 | 1461 | sustains |
-| Striker / Breaker | Void Wrappings / Ancient Heartroot Amulet | 234 | 29.0 | 6.00% | 0.00% | 34.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.08 | 1449 | sustains |
-| Striker / Flurry | Void Wrappings / Ancient Heartroot Amulet | 212 | 25.0 | 4.00% | 0.00% | 29.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.08 | 1313 | sustains |
-| Striker / Skirmisher | Void Wrappings / Ancient Heartroot Amulet | 226 | 26.0 | 4.00% | 0.00% | 31.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.08 | 1400 | sustains |
+| Forest | 18.5 atk / 0.80 aps / 0.00 dot / ×1.00 | Squire / Bulwark · Phantom Bindings/Iron Bulwark | 6535 | 0.62 | 10.5 | 9.86 | sustains | 0.37% | Safe |
+| Mountain | 82.0 atk / 0.33 aps / 0.00 dot / ×1.00 | Squire / Bulwark · Enduring Robe/Iron Bulwark | 537 | 10.9 | 8.32 | -2.56 | 84.3s | 15.3% | Risky |
+| Plains | 15.0 atk / 0.51 aps / 0.00 dot / ×1.00 | Squire / Bulwark · Phantom Bindings/Iron Bulwark | 5299 | 0.39 | 10.5 | 10.1 | sustains | 0.37% | Safe |
+| Swamp | 11.5 atk / 0.48 aps / 16.5 dot / ×1.00 | Squire / Bulwark · Bog Wrappings/Iron Bulwark | 501 | 12.0 | 10.5 | -1.47 | 187s | 0.36% | Risky |
+| Caverns | 74.5 atk / 0.48 aps / 0.00 dot / ×1.00 | Squire / Bulwark · Enduring Robe/Iron Bulwark | 619 | 12.4 | 8.32 | -4.06 | 53.1s | 12.0% | Risky |
 
+## Boss Matchups By Class
 
-## 4. Armor Input Table (+0 and +3)
+_Best current +3 loadout for each class vs each boss; cell = TTL (⚠ = one-shot risk)._
 
-| Armor | Plus | Stats | Effects | Scaling |
-| --- | --- | --- | --- | --- |
-| Dire Bestial Hide | +0 | damageReduction=0.10, maxHp=30.0, plating=4.00 | - | steps 0/3 |
-| Dire Bestial Hide | +3 | damageReduction=0.13, maxHp=54.0, plating=7.00 | - | steps 3/3 |
-| Duneplate of the Last Stand | +0 | maxHp=44.0, plating=10.0 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00 | steps 0/3 |
-| Duneplate of the Last Stand | +3 | maxHp=80.0, plating=19.0 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00 | steps 3/3 |
-| Enduring Robe | +0 | maxHp=20.0, plating=24.0 | - | steps 0/3 |
-| Enduring Robe | +3 | maxHp=35.0, plating=42.0 | - | steps 3/3 |
-| Iron Crusader Plate | +0 | damageReduction=0.05, maxHp=29.0, plating=12.0 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25 | steps 0/3 |
-| Iron Crusader Plate | +3 | damageReduction=0.05, maxHp=53.0, plating=21.0 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25 | steps 3/3 |
-| Phantom Bindings | +0 | evasion=0.28, maxHp=43.0, plating=4.00 | - | steps 0/3 |
-| Phantom Bindings | +3 | evasion=0.46, maxHp=79.0, plating=7.00 | - | steps 3/3 |
-| Verdant Weave | +0 | evasion=0.15, maxHp=44.0, plating=6.00 | - | steps 0/3 |
-| Verdant Weave | +3 | evasion=0.27, maxHp=80.0, plating=12.0 | - | steps 3/3 |
-| Void Wrappings | +0 | maxHp=44.0, plating=12.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15 | steps 0/3 |
-| Void Wrappings | +3 | maxHp=80.0, plating=21.0 | defense.dot-resistance=0.30, defense.hit-to-dot-pct=0.15 | steps 3/3 |
+| Class | Crag Behemoth | Obsidian Broodmother | Tusked Razorback | Gnarled Greatbear | Grave Toadeater |
+| --- | --- | --- | --- | --- | --- |
+| Apprentice | 305s | sustains | sustains | sustains | 68.7s |
+| Conduit | 75.7s | 258s | sustains | sustains | 34.0s |
+| Slinger | 131s | sustains | sustains | sustains | 33.0s |
+| Spirit | sustains | sustains | sustains | sustains | 206s |
+| Squire | sustains | sustains | sustains | sustains | 267s |
+| Striker | sustains | sustains | sustains | sustains | 87.6s |
 
+## Best Gear Per Boss
 
-## 5. Charm Input Table (+0 and +3)
+_Single highest-survival loadout (any class) at current +3 vs each boss._
 
-| Charm | Plus | Stats | Effects | Scaling |
-| --- | --- | --- | --- | --- |
-| Ancient Heartroot Amulet | +0 | hpRegen=10.0 | - | steps 0/3 |
-| Ancient Heartroot Amulet | +3 | hpRegen=19.0 | - | steps 3/3 |
-| Canopy Heart | +0 | hpRegen=6.00 | defense.ramp-regen-max-pct=0.14, defense.ramp-regen-ramptime-ms=10000, defense.ramp-regen-start-pct=0.05 | steps 0/3 |
-| Canopy Heart | +3 | hpRegen=6.00 | defense.ramp-regen-max-pct=0.20, defense.ramp-regen-ramptime-ms=10000, defense.ramp-regen-start-pct=0.05 | steps 3/3 |
-| Iron Bulwark | +0 | hpRegen=6.00 | defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.12 | steps 0/3 |
-| Iron Bulwark | +3 | hpRegen=6.00 | defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.18 | steps 3/3 |
-| Mirage Core | +0 | hpRegen=6.00 | defense.cleanse-empty-heal-pct=0.03, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | steps 0/3 |
-| Mirage Core | +3 | hpRegen=6.00 | defense.cleanse-empty-heal-pct=0.06, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | steps 3/3 |
-| Resonant Gem | +0 | hpRegen=6.00 | defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.09 | steps 0/3 |
-| Resonant Gem | +3 | hpRegen=6.00 | defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.15 | steps 3/3 |
-| Stalwart Core | +0 | hpRegen=7.00 | defense.kill-burst-pct=0.09 | steps 0/3 |
-| Stalwart Core | +3 | hpRegen=7.00 | defense.kill-burst-pct=0.12 | steps 3/3 |
-| Void Eye | +0 | hpRegen=6.00 | defense.absorb-pct=0.09 | steps 0/3 |
-| Void Eye | +3 | hpRegen=6.00 | defense.absorb-pct=0.15 | steps 3/3 |
-
-
-## 6. Tankiest / Most Fragile Optimal Loadouts
-
-Top 10 (tankiest):
-
-| Build | Armor | Charm | eHP | maxHP | Mitig% | In DPS | Recov/s | TTL | Spike %HP |
+| Boss | Attacker | Best build | Armor | Charm | eHP | TTL | Net/s | Spike %HP | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice / Rime-Bound | Void Wrappings +3 | Ancient Heartroot Amulet | 1935 | 247 | 87.2% | 1.21 | 0.00 | 204s | 0.40% |
-| Apprentice / Ember mage | Void Wrappings +3 | Ancient Heartroot Amulet | 1810 | 231 | 87.2% | 1.21 | 0.00 | 191s | 0.43% |
-| Apprentice / Venom vessel | Void Wrappings +3 | Ancient Heartroot Amulet | 1731 | 221 | 87.2% | 1.21 | 0.00 | 183s | 0.45% |
-| Squire / Bulwark | Void Wrappings +3 | Ancient Heartroot Amulet | 1622 | 262 | 83.9% | 1.53 | 9.43 | sustains | 0.38% |
-| Squire / Knight | Void Wrappings +3 | Ancient Heartroot Amulet | 1548 | 250 | 83.9% | 1.53 | 8.50 | sustains | 0.40% |
-| Squire / Warrior | Void Wrappings +3 | Ancient Heartroot Amulet | 1461 | 236 | 83.9% | 1.53 | 6.84 | sustains | 0.42% |
-| Slinger / Artillerist | Void Wrappings +3 | Ancient Heartroot Amulet | 1455 | 224 | 84.6% | 1.46 | 0.00 | 154s | 0.45% |
-| Slinger / Marksman | Void Wrappings +3 | Ancient Heartroot Amulet | 1453 | 218 | 85.0% | 1.42 | 0.00 | 154s | 0.46% |
-| Striker / Breaker | Void Wrappings +3 | Ancient Heartroot Amulet | 1449 | 234 | 83.9% | 1.53 | 3.12 | sustains | 0.43% |
-| Slinger / Scout | Void Wrappings +3 | Ancient Heartroot Amulet | 1406 | 208 | 85.2% | 1.40 | 0.00 | 149s | 0.48% |
+| Crag Behemoth | 56.0 atk / 0.29 aps / 0.00 dot / ×1.60 | Squire / Bulwark | Enduring Robe | Iron Bulwark | 1512 | sustains | 6.03 | 18.5% | Safe |
+| Obsidian Broodmother | 47.0 atk / 0.36 aps / 0.00 dot / ×1.60 | Squire / Bulwark | Enduring Robe | Iron Bulwark | 10152 | sustains | 7.96 | 12.0% | Safe |
+| Tusked Razorback | 34.0 atk / 0.50 aps / 0.00 dot / ×1.10 | Squire / Bulwark | Duneplate of the Last Stand | Iron Bulwark | 9316 | sustains | 10.0 | 1.46% | Safe |
+| Gnarled Greatbear | 24.0 atk / 0.71 aps / 0.00 dot / ×1.28 | Squire / Bulwark | Duneplate of the Last Stand | Iron Bulwark | 6576 | sustains | 9.83 | 0.36% | Safe |
+| Grave Toadeater | 13.0 atk / 0.38 aps / 16.0 dot / ×1.60 | Squire / Bulwark | Bog Wrappings | Iron Bulwark | 497 | 267s | -1.03 | 0.36% | Risky |
+
+## Armor Matrix By Attacker Profile
+
+_Survival score (mitigation × pool incl. recovery) at +3, no charm, averaged over class builds._
+
+| Armor | avg mob | DoT-heavy | hardest | boss | next-tier |
+| --- | --- | --- | --- | --- | --- |
+| Bog Wrappings | 623 | 524 | 390 | 505 | 708 |
+| Dire Bestial Hide | 608 | 350 | 455 | 590 | 593 |
+| Duneplate of the Last Stand | 1010 | 364 | 421 | 735 | 902 |
+| Enduring Robe | 1295 | 275 | 381 | 2650 | 761 |
+| Iron Crusader Plate | 961 | 302 | 429 | 727 | 798 |
+| Phantom Bindings | 691 | 365 | 524 | 678 | 660 |
+| Verdant Weave | 640 | 366 | 466 | 603 | 632 |
+
+## Charm Matrix By Attacker Profile
+
+_Survival score at +3 with reference armor Dire Bestial Hide, averaged over class builds._
+
+| Charm | avg mob | DoT-heavy | hardest | boss | next-tier |
+| --- | --- | --- | --- | --- | --- |
+| Ancient Heartroot Amulet | 654 | 372 | 486 | 634 | 636 |
+| Bog Eye | 663 | 357 | 583 | 646 | 628 |
+| Canopy Heart | 774 | 445 | 579 | 751 | 754 |
+| Iron Bulwark | 811 | 464 | 606 | 787 | 789 |
+| Mirage Talisman | 727 | 418 | 544 | 705 | 708 |
+| Resonant Gem | 835 | 480 | 624 | 810 | 813 |
+| Stalwart Heart | 621 | 356 | 464 | 602 | 605 |
 
 
-Bottom 10 (most fragile):
+## Top / Bottom Loadouts (current +3 vs current mobs)
 
-| Build | Armor | Charm | eHP | maxHP | Mitig% | In DPS | Recov/s | TTL | Spike %HP |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Spirit / Wraith | Void Wrappings +3 | Ancient Heartroot Amulet | 1208 | 195 | 83.9% | 1.53 | 5.85 | sustains | 0.51% |
-| Spirit / Spark | Void Wrappings +3 | Ancient Heartroot Amulet | 1214 | 196 | 83.9% | 1.53 | 5.88 | sustains | 0.51% |
-| Conduit / Light Frame | Void Wrappings +3 | Ancient Heartroot Amulet | 1239 | 200 | 83.9% | 1.53 | 0.00 | 131s | 0.50% |
-| Spirit / Phantasm | Void Wrappings +3 | Ancient Heartroot Amulet | 1288 | 208 | 83.9% | 1.53 | 6.24 | sustains | 0.48% |
-| Striker / Flurry | Void Wrappings +3 | Ancient Heartroot Amulet | 1313 | 212 | 83.9% | 1.53 | 2.83 | sustains | 0.47% |
-| Conduit / Medium Frame | Void Wrappings +3 | Ancient Heartroot Amulet | 1313 | 212 | 83.9% | 1.53 | 0.00 | 139s | 0.47% |
-| Conduit / Heavy Frame | Void Wrappings +3 | Ancient Heartroot Amulet | 1393 | 225 | 83.9% | 1.53 | 0.00 | 147s | 0.44% |
-| Striker / Skirmisher | Void Wrappings +3 | Ancient Heartroot Amulet | 1400 | 226 | 83.9% | 1.53 | 3.01 | sustains | 0.44% |
-| Slinger / Scout | Void Wrappings +3 | Ancient Heartroot Amulet | 1406 | 208 | 85.2% | 1.40 | 0.00 | 149s | 0.48% |
-| Striker / Breaker | Void Wrappings +3 | Ancient Heartroot Amulet | 1449 | 234 | 83.9% | 1.53 | 3.12 | sustains | 0.43% |
-
-
-## 7. Outliers (vs optimal-loadout average eHP)
-
-_No data._
+| Build | Loadout | Survival | eHP | In DPS | Recov/s | TTL | Spike %HP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Squire / Bulwark | Enduring Robe/Iron Bulwark | 2036 | 1291 | 3.78 | 8.32 | sustains | 0.46% |
+| Squire / Knight | Enduring Robe/Iron Bulwark | 1904 | 1207 | 3.78 | 7.78 | sustains | 0.50% |
+| Squire / Warrior | Enduring Robe/Iron Bulwark | 1810 | 1148 | 3.78 | 7.39 | sustains | 0.52% |
+| Striker / Breaker | Enduring Robe/Iron Bulwark | 1773 | 1153 | 3.78 | 6.92 | sustains | 0.52% |
+| Apprentice / Rime-Bound | Enduring Robe/Iron Bulwark | 1533 | 1146 | 3.65 | 4.16 | sustains | 1.08% |
+| Striker / Skirmisher | Enduring Robe/Iron Bulwark | 1484 | 965 | 4.26 | 6.52 | sustains | 1.10% |
+| Spirit / Phantasm | Enduring Robe/Resonant Gem | 1063 | 607 | 6.17 | 8.30 | sustains | 3.61% |
+| Striker / Flurry | Enduring Robe/Iron Bulwark | 1055 | 686 | 5.69 | 6.20 | sustains | 2.89% |
+| Apprentice / Ember mage | Enduring Robe/Iron Bulwark | 1034 | 773 | 5.06 | 3.89 | 149s | 2.89% |
+| Slinger / Artillerist | Enduring Robe/Iron Bulwark | 916 | 685 | 5.67 | 3.87 | 95.6s | 3.49% |
 
 
-## 8. Burst & Sustain Risk
+| Build | Loadout | Survival | eHP | In DPS | Recov/s | TTL | Spike %HP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Conduit / Splinter | Enduring Robe/Iron Bulwark | 594 | 444 | 8.08 | 3.58 | 35.3s | 6.29% |
+| Slinger / Scout | Enduring Robe/Iron Bulwark | 680 | 509 | 7.01 | 3.55 | 45.7s | 6.33% |
+| Slinger / Marksman | Enduring Robe/Iron Bulwark | 692 | 517 | 7.11 | 3.67 | 47.3s | 6.13% |
+| Conduit / Consort | Enduring Robe/Iron Bulwark | 699 | 523 | 7.13 | 3.71 | 48.3s | 4.85% |
+| Spirit / Spark | Enduring Robe/Resonant Gem | 738 | 422 | 8.08 | 7.55 | 282s | 6.62% |
+| Apprentice / Venom vessel | Enduring Robe/Iron Bulwark | 771 | 576 | 6.46 | 3.71 | 59.9s | 4.85% |
+| Conduit / Effigy | Enduring Robe/Iron Bulwark | 861 | 644 | 6.17 | 3.96 | 79.6s | 3.41% |
+| Spirit / Wraith | Enduring Robe/Resonant Gem | 865 | 494 | 7.13 | 7.80 | sustains | 5.13% |
+| Slinger / Artillerist | Enduring Robe/Iron Bulwark | 916 | 685 | 5.67 | 3.87 | 95.6s | 3.49% |
+| Apprentice / Ember mage | Enduring Robe/Iron Bulwark | 1034 | 773 | 5.06 | 3.89 | 149s | 2.89% |
 
-- One-shot risk (a single modeled spike ≥ HP + standing shield, no cheat-death): 0 of 18 optimal builds.
-- Builds that fully sustain the neutral attacker (recovery ≥ incoming): 9 of 18.
 
-_No data._
+## Outlier Summary
 
+_Flags items >±25% of tier-average survival, dominant items, early-sustain loadouts, and sub-20s boss TTLs._
 
-## 9. Average eHP Per Class
-
-| Class | Avg eHP | Samples |
+| Flag | Item / Build | Detail |
 | --- | --- | --- |
-| Apprentice | 1136 | 147 |
-| Squire | 1089 | 147 |
-| Striker | 914 | 147 |
-| Slinger | 896 | 147 |
-| Conduit | 771 | 147 |
-| Spirit | 745 | 147 |
+| armor < -25% tier avg | Bog Wrappings | survival 623 vs avg 833 |
+| armor < -25% tier avg | Dire Bestial Hide | survival 608 vs avg 833 |
+| armor > +25% tier avg | Enduring Robe | survival 1295 vs avg 833 |
+| dominant charm | Resonant Gem | best survival in every matchup profile |
 
-
-## 10. Average eHP Per Armor / Charm
-
-| Armor | Avg eHP | Samples |
-| --- | --- | --- |
-| Void Wrappings | 1458 | 126 |
-| Duneplate of the Last Stand | 1079 | 126 |
-| Iron Crusader Plate | 948 | 126 |
-| Verdant Weave | 944 | 126 |
-| Enduring Robe | 861 | 126 |
-| Phantom Bindings | 651 | 126 |
-| Dire Bestial Hide | 534 | 126 |
-
-
-| Charm | Avg eHP | Samples |
-| --- | --- | --- |
-| Ancient Heartroot Amulet | 925 | 126 |
-| Canopy Heart | 925 | 126 |
-| Iron Bulwark | 925 | 126 |
-| Mirage Core | 925 | 126 |
-| Resonant Gem | 925 | 126 |
-| Stalwart Core | 925 | 126 |
-| Void Eye | 925 | 126 |
-
-
-## 11. Formula Caveats / Unmodeled Mechanics
-
-- Mitigation uses shared `estimateMonsterHitDamage`: `max(1, round(max(0, attack - plating × 1) × (1 - DR)))`; stats rebuilt via shared `recalculatePlayerStats`.
-- Evasion is averaged (`1 - dodgeRate × evadeMitigation`), not played out as a deterministic accumulator; first-hit timing and OOC reset are ignored.
-- Shields/absorb/regen-burst are steady-state HP/s; a shield that out-sizes a hit still only counts its per-interval value (no burst-vs-chip interaction). DoT bypass-shield is respected only in notes.
-- Cheat-death, hardening/stationary/sustained-fight DR ramps use mid-point or one-shot approximations; reactive plating and shield-break/kill-burst heals are not summed.
-- Report notes observed in this tier: `-18% dot-resistance on incoming DoT`, `-30% dot-resistance on incoming DoT`, `-48% dot-resistance on incoming DoT`, `absorb repays 15% of incoming as HoT`, `cheat-death grants one extra near-full bar`, `cleanse empty-heal 6% maxHp / 14s`, `cleanse empty-heal 6% maxHp / 6s`, `hit-to-dot redirects 10% (then -18% dot-resist)`, `hit-to-dot redirects 15% (then -30% dot-resist)`, `hit-to-dot redirects 25% (then -48% dot-resist)`, `in-combat regen 10% of OOC (30.6/s base)`, `in-combat regen 10% of OOC (32.5/s base)`, `in-combat regen 10% of OOC (33.4/s base)`, `in-combat regen 10% of OOC (33.6/s base)`, `in-combat regen 10% of OOC (35.5/s base)`, `in-combat regen 10% of OOC (35.7/s base)`, `in-combat regen 10% of OOC (37.6/s base)`, `in-combat regen 10% of OOC (37.8/s base)`, `in-combat regen 10% of OOC (40.0/s base)`, `in-combat regen 10% of OOC (40.1/s base)`, `in-combat regen 10% of OOC (43.0/s base)`, `in-combat regen 10% of OOC (45.1/s base)`, `in-combat regen 10% of OOC (46.8/s base)`, `in-combat regen 10% of OOC (47.0/s base)`, `in-combat regen 10% of OOC (49.1/s base)`, `in-combat regen 10% of OOC (49.3/s base)`, `in-combat regen 10% of OOC (49.9/s base)`, `in-combat regen 10% of OOC (52.1/s base)`, `in-combat regen 10% of OOC (52.3/s base)`, `in-combat regen 10% of OOC (52.5/s base)`, `in-combat regen 10% of OOC (54.1/s base)`, `in-combat regen 10% of OOC (54.3/s base)`, `in-combat regen 10% of OOC (54.8/s base)`, `in-combat regen 10% of OOC (55.0/s base)`, `in-combat regen 10% of OOC (55.4/s base)`, `in-combat regen 10% of OOC (56.4/s base)`, `in-combat regen 10% of OOC (56.6/s base)`, `in-combat regen 10% of OOC (60.0/s base)`, `in-combat regen 10% of OOC (60.3/s base)`, `in-combat regen 10% of OOC (60.6/s base)`, `in-combat regen 10% of OOC (60.9/s base)`, `in-combat regen 10% of OOC (62.6/s base)`, `in-combat regen 10% of OOC (62.9/s base)`, `in-combat regen 10% of OOC (68.1/s base)`, `in-combat regen 10% of OOC (68.4/s base)`, `in-combat regen 10% of OOC (69.7/s base)`, `in-combat regen 10% of OOC (75.8/s base)`, `in-combat regen 10% of OOC (76.2/s base)`, `in-combat regen 10% of OOC (78.1/s base)`, `in-combat regen 10% of OOC (84.6/s base)`, `in-combat regen 10% of OOC (84.7/s base)`, `in-combat regen 10% of OOC (85.0/s base)`, `in-combat regen 10% of OOC (94.0/s base)`, `in-combat regen 10% of OOC (94.3/s base)`, `periodic shield 18% maxHp / 8s (treated as HP/s absorbed)`, `periodic shield 30% maxHp / 10s (treated as HP/s absorbed)`, `periodic shield 48% maxHp / 18s (treated as HP/s absorbed)`, `ramp regen averaged 13% of OOC over the ramp window`, `regen burst 15% maxHp / 6s`, `regen burst 23% maxHp / 6s`, `regen burst 8% maxHp / 6s`.

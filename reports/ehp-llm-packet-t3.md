@@ -1,206 +1,193 @@
 # MMO Idle LLM Survivability Packet - T3
 
-Generated from `tools/ehp-report.ts`. Markdown only; the full HTML report is omitted. Companion to the DPS LLM packet.
+Generated from `tools/ehp-report.ts --llm-packet`. Progression-focused companion to the DPS packet.
 
-## 1. Assumptions / Omissions
+## Assumptions / Omissions
 
-- Report tier T3; class unlock tier 2; armor + charm are tier 3 at +3.
-- Every class build (root/frame/range/spec) is crossed with every armor × charm (recovery) combination. Weapon is empty; mobility slot excluded (movement only, no eHP value).
-- Incoming pressure comes from biome spawn pools one tier below report tier (tutorial/test/interact/boss excluded), plus representative shape attackers and boss spikes.
-- **eHP** = maxHP × (raw attacker DPS ÷ post-mitigation DPS): folds plating, DR, evasion, damage-cap, and DoT-resistance into one number. **TTL** = effective pool ÷ (incoming − recovery); "sustains" when recovery ≥ incoming. **Net HP/s** = recovery − incoming.
-- Defense mechanics are deterministic steady-state re-implementations of `server/src/systems/defense/*`: shields/regen-bursts/absorb are averaged as HP/s throughput; ramps use their mid-point; cheat-death adds one extra near-full bar; kill-burst and shield-break heals are omitted (need a kill/break cadence).
-- Single-target, in-combat steady state only. No movement, kiting, real AoE target count, enemy AI, party effects, antiheal stacking, or overkill timing.
+- Class unlock tier 2. Views model progression moments, not just same-tier +3 gear.
+- Checkpoints: prev-tier +3 entering, current +0 entry, current +3 geared, current +3 vs boss, current +3 vs next-tier mobs. "Current mobs" = biome spawn pools one tier below report tier (the established convention); bosses come from boss pools.
+- Comparison/route/checkpoint views are **spec-agnostic** (root+frame+range only) to keep the cross-product readable; the HTML report's collapsed dump keeps full per-spec rows.
+- eHP = maxHP × (raw ÷ post-mitigation DPS). Survival = (maxHP + recovery×15s) × mitigation, so charms rank. TTL/"sustains" use averaged recovery.
+- Status: Safe / Risky / Blocked from TTL + one-shot risk (mob risk<30s/block<10s; boss risk<20s/block<8s).
 
-## 2. Attacker Baseline
+## Undercounted / Unmodeled Mechanics
 
-| Metric | Value |
-| --- | --- |
-| Source | biome tier 2 |
-| Mob count | 21 |
-| Average attack | 27.4 |
-| Average APS | 0.45 |
-| Average DoT/s | 7.05 |
-| Average spike mult | ×1.00 |
-| Reference optimal-loadout average eHP | 1336 |
+- **Range & movement**: kiting, attack range, and repositioning are ignored — melee-range pressure is assumed.
+- **Kill-burst** recovery is undercounted (no kill cadence modeled); flagged in the charm table.
+- **Evasion** is averaged (dodgeRate × evade-mitigation), not the deterministic first-hit accumulator.
+- **Shield timing** is treated as flat HP/s throughput — no burst-vs-chip interaction or DoT bypass beyond notes.
+- **Multi-enemy pressure** is not modeled; a single attacker profile is assumed (idle pulls are often several mobs).
 
-| Shape | Monster | Attack | APS | DoT/s | Spike |
+## Progression Checkpoints
+
+| Checkpoint | Gear | Attacker | Avg eHP | Avg net/s | Min TTL | Safe % | Blocked |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Prev-tier +3 vs current mobs | T2 +3 | 32.7 atk / 0.45 aps / 5.38 dot / ×1.02 | 691 | 2.02 | 58.3s | 50.0% | 0 |
+| Current +0 vs current mobs (entry) | T3 +0 | 32.7 atk / 0.45 aps / 5.38 dot / ×1.02 | 693 | 1.80 | 43.9s | 50.0% | 0 |
+| Current +3 vs current mobs (geared) | T3 +3 | 32.7 atk / 0.45 aps / 5.38 dot / ×1.02 | 1365 | 11.1 | sustains | 100% | 0 |
+| Current +3 vs boss/elite | T3 +3 | 65.0 atk / 0.28 aps / 0.00 dot / ×1.60 | 3875 | 9.76 | sustains | 100% | 0 |
+| Current +3 vs next-tier mobs | T3 +3 | 46.4 atk / 0.42 aps / 5.95 dot / ×1.13 | 1240 | 9.08 | sustains | 100% | 0 |
+
+## Class Average eHP By Checkpoint
+
+| Class | Prev-tier +3 vs current mobs | Current +0 vs current mobs (entry) | Current +3 vs current mobs (geared) | Current +3 vs boss/elite | Current +3 vs next-tier mobs |
 | --- | --- | --- | --- | --- | --- |
-| Hardest hitter | Granite Titan | 70.0 | 0.26 | 0.00 | ×1.00 |
-| Fastest attacker | Ironwood Golem | 15.0 | 1.11 | 0.00 | ×1.00 |
-| DoT-heavy | Swamp Hydra | 8.00 | 0.45 | 40.0 | ×1.00 |
-| Biggest spike | Ancient Wolf | 20.0 | 0.91 | 0.00 | ×1.00 |
-| Boss spike | Iron-Crest Titan | 175 | 0.24 | 0.00 | ×2.20 |
+| Apprentice | 773 | 783 | 1548 | 1709 | 1474 |
+| Conduit | 626 | 595 | 1175 | 1242 | 1118 |
+| Slinger | 608 | 567 | 1133 | 1282 | 1013 |
+| Spirit | 580 | 511 | 1090 | 977 | 967 |
+| Squire | 884 | 958 | 1831 | 15236 | 1536 |
+| Striker | 677 | 742 | 1413 | 2803 | 1330 |
 
+## Armor Comparison
 
-## 3. Class / Loadout Input Table (optimal charm+armor per build)
+_No charm equipped; eHP/TTL/net are vs the avg-mob profile, averaged over spec-agnostic class builds. Best/worst = profile handled best/worst._
 
-| Build | Loadout | maxHP | Plating | DR | Dodge | hpRegen | Defensive passives | eHP | TTL |
+| Armor | Plus | maxHP | Plating | DR | Evasion | Special | eHP | TTL | Net/s | Best matchup | Worst matchup |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Deepscale Hide | +0 | 65.0 | 14.0 | 20.0% | 0.00 | - | 468 | 53.7s | -6.89 | avg mob | DoT-heavy |
+| Deepscale Hide | +5 | 140 | 24.0 | 30.0% | 0.00 | - | 1061 | 82.0s | -2.27 | avg mob | DoT-heavy |
+| Emberforge Plate | +0 | 90.0 | 20.0 | 0.00% | 0.00 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25 | 674 | 117s | -4.80 | avg mob | DoT-heavy |
+| Emberforge Plate | +5 | 190 | 45.0 | 0.00% | 0.00 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25 | 1372 | 159s | -0.98 | boss | DoT-heavy |
+| Eternal Duneplate | +0 | 90.0 | 20.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00, defense.debuff-resistance=0.20 | 674 | 234s | -4.80 | avg mob | DoT-heavy |
+| Eternal Duneplate | +5 | 190 | 45.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00, defense.debuff-resistance=0.20 | 1372 | 318s | -0.98 | boss | DoT-heavy |
+| Glacial Bulwark | +0 | 100 | 15.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.15, defense.stationary-dr-ramptime-ms=6000 | 539 | 45.0s | -6.91 | avg mob | DoT-heavy |
+| Glacial Bulwark | +5 | 210 | 35.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.15, defense.stationary-dr-ramptime-ms=6000 | 1466 | 382s | -0.66 | boss | DoT-heavy |
+| Plaguebound Shroud | +0 | 86.0 | 12.0 | 0.00% | 0.00 | defense.debuff-resistance=0.20, defense.dot-resistance=0.35, defense.hit-to-dot-pct=0.10 | 531 | 122s | -6.50 | avg mob | hardest |
+| Plaguebound Shroud | +5 | 176 | 27.0 | 0.00% | 0.00 | defense.debuff-resistance=0.20, defense.dot-resistance=0.35, defense.hit-to-dot-pct=0.10 | 1908 | 259s | 0.50 | avg mob | DoT-heavy |
+| Summit Aegis | +0 | 55.0 | 23.0 | 10.0% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25 | 654 | 75.0s | -4.00 | avg mob | DoT-heavy |
+| Summit Aegis | +5 | 125 | 53.0 | 10.0% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25 | 1064 | 76.5s | -2.03 | boss | DoT-heavy |
+| Wildgrowth Weave | +0 | 80.0 | 13.0 | 0.00% | 0.40 | - | 491 | 287s | -6.98 | avg mob | DoT-heavy |
+| Wildgrowth Weave | +5 | 170 | 28.0 | 0.00% | 0.65 | - | 1295 | 127s | -1.24 | boss | DoT-heavy |
+
+## Charm Comparison
+
+_Reference armor Glacial Bulwark +3; metrics vs avg-mob profile averaged over class builds. eHP contribution = eHP with charm − without. Kill-burst needs a kill cadence to value fully._
+
+| Charm | Plus | hpRegen | Special | Recov/s | eHP contrib | TTL | Best matchup | Worst matchup |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Bastion Heart | +0 | 11.0 | defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.17 | 8.88 | -927 | 69.4s | avg mob | DoT-heavy |
+| Bastion Heart | +5 | 11.0 | defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.32 | 20.7 | 0.00 | sustains | boss | DoT-heavy |
+| Echo Geode | +0 | 11.0 | defense.in-combat-regen-pct=0.02, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.07 | 8.58 | -927 | 117s | avg mob | DoT-heavy |
+| Echo Geode | +5 | 11.0 | defense.in-combat-regen-pct=0.07, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.17 | 24.4 | 0.00 | sustains | boss | DoT-heavy |
+| Frostward Charm | +0 | 11.0 | defense.absorb-pct=0.08, defense.shield-duration-ms=9000, defense.shield-interval-ms=9000, defense.shield-pct=0.12 | 7.33 | -927 | 113s | avg mob | DoT-heavy |
+| Frostward Charm | +5 | 11.0 | defense.absorb-pct=0.18, defense.shield-duration-ms=9000, defense.shield-interval-ms=9000, defense.shield-pct=0.22 | 15.0 | 0.00 | sustains | boss | DoT-heavy |
+| Magmaheart Stone | +0 | 11.0 | defense.in-combat-regen-pct=0.06, defense.kill-burst-pct=0.04 (kill-burst undercounted) | 7.71 | -927 | 140s | avg mob | DoT-heavy |
+| Magmaheart Stone | +5 | 11.0 | defense.in-combat-regen-pct=0.16, defense.kill-burst-pct=0.14 (kill-burst undercounted) | 20.5 | 0.00 | sustains | boss | DoT-heavy |
+| Oasis Heart | +0 | 11.0 | defense.cleanse-empty-heal-pct=0.05, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 6.58 | -927 | 779s | avg mob | DoT-heavy |
+| Oasis Heart | +5 | 11.0 | defense.cleanse-empty-heal-pct=0.10, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 13.6 | 0.00 | sustains | boss | DoT-heavy |
+| Sorrow Eye | +0 | 11.0 | defense.absorb-pct=0.18 | 5.26 | -927 | 127s | avg mob | DoT-heavy |
+| Sorrow Eye | +5 | 11.0 | defense.absorb-pct=0.38 | 6.87 | 0.00 | 191s | boss | DoT-heavy |
+| Worldvine Heart | +0 | 11.0 | defense.ramp-regen-max-pct=0.14, defense.ramp-regen-ramptime-ms=10000, defense.ramp-regen-start-pct=0.05 | 9.66 | -927 | 145s | avg mob | DoT-heavy |
+| Worldvine Heart | +5 | 11.0 | defense.ramp-regen-max-pct=0.24, defense.ramp-regen-ramptime-ms=10000, defense.ramp-regen-start-pct=0.05 | 19.2 | 0.00 | sustains | boss | DoT-heavy |
+
+## Biome Route
+
+_Player at current +3 gear, spec-agnostic best loadout, vs each biome's tier-2 pool._
+
+| Biome | Attacker | Best loadout | eHP | In DPS | Recov/s | Net/s | TTL | Spike %HP | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice / Ember mage / Harbinger | Plaguebound Shroud / Bastion Heart | 299 | 46.0 | 4.00% | 0.00% | 26.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.58, defense.hit-to-dot-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1736 | sustains |
-| Apprentice / Ember mage / Hexblade | Plaguebound Shroud / Bastion Heart | 316 | 55.0 | 10.0% | 0.00% | 28.0 | defense.absorb-pct=0.12, defense.debuff-resistance=0.20, defense.dot-resistance=0.58, defense.hit-to-dot-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1834 | sustains |
-| Apprentice / Rime-Bound / Harbinger | Plaguebound Shroud / Bastion Heart | 315 | 49.0 | 10.0% | 0.00% | 29.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.58, defense.hit-to-dot-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1829 | sustains |
-| Apprentice / Rime-Bound / Hexblade | Plaguebound Shroud / Bastion Heart | 332 | 58.0 | 16.0% | 0.00% | 31.0 | defense.absorb-pct=0.12, defense.debuff-resistance=0.20, defense.dot-resistance=0.58, defense.hit-to-dot-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1927 | sustains |
-| Apprentice / Venom vessel / Harbinger | Plaguebound Shroud / Bastion Heart | 289 | 43.0 | 4.00% | 0.00% | 23.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.58, defense.hit-to-dot-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1678 | sustains |
-| Apprentice / Venom vessel / Hexblade | Plaguebound Shroud / Bastion Heart | 306 | 52.0 | 10.0% | 0.00% | 25.0 | defense.absorb-pct=0.12, defense.debuff-resistance=0.20, defense.dot-resistance=0.58, defense.hit-to-dot-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1776 | sustains |
-| Conduit / Heavy Frame / Close Range | Plaguebound Shroud / Bastion Heart | 310 | 47.0 | 6.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1291 | sustains |
-| Conduit / Heavy Frame / Far Range | Plaguebound Shroud / Bastion Heart | 293 | 42.0 | 0.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1221 | sustains |
-| Conduit / Light Frame / Close Range | Plaguebound Shroud / Bastion Heart | 285 | 47.0 | 6.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1187 | sustains |
-| Conduit / Light Frame / Far Range | Plaguebound Shroud / Bastion Heart | 268 | 42.0 | 0.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1116 | sustains |
-| Conduit / Medium Frame / Close Range | Plaguebound Shroud / Bastion Heart | 297 | 47.0 | 6.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1237 | sustains |
-| Conduit / Medium Frame / Far Range | Plaguebound Shroud / Bastion Heart | 280 | 42.0 | 0.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1166 | sustains |
-| Slinger / Artillerist / Breacher | Plaguebound Shroud / Bastion Heart | 309 | 53.0 | 6.00% | 35.0% | 29.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.evade-mitigation=0.30, defense.hit-to-dot-pct=0.20, defense.kill-burst-pct=0.05, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1320 | sustains |
-| Slinger / Artillerist / Deadeye | Plaguebound Shroud / Bastion Heart | 292 | 46.0 | 0.00% | 25.0% | 25.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.evade-mitigation=0.20, defense.hit-to-dot-pct=0.20, defense.kill-burst-pct=0.05, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1236 | sustains |
-| Slinger / Marksman / Breacher | Plaguebound Shroud / Bastion Heart | 303 | 49.0 | 6.00% | 48.0% | 27.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.evade-mitigation=0.30, defense.hit-to-dot-pct=0.20, defense.kill-burst-pct=0.05, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1307 | sustains |
-| Slinger / Marksman / Deadeye | Plaguebound Shroud / Bastion Heart | 286 | 42.0 | 0.00% | 38.0% | 23.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.evade-mitigation=0.20, defense.hit-to-dot-pct=0.20, defense.kill-burst-pct=0.05, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1220 | sustains |
-| Slinger / Scout / Breacher | Plaguebound Shroud / Bastion Heart | 293 | 49.0 | 6.00% | 53.2% | 25.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.evade-mitigation=0.30, defense.hit-to-dot-pct=0.20, defense.kill-burst-pct=0.05, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1269 | sustains |
-| Slinger / Scout / Deadeye | Plaguebound Shroud / Bastion Heart | 276 | 42.0 | 0.00% | 45.0% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.evade-mitigation=0.20, defense.hit-to-dot-pct=0.20, defense.kill-burst-pct=0.05, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1183 | sustains |
-| Spirit / Phantasm / Haunt | Plaguebound Shroud / Bastion Heart | 293 | 50.0 | 8.00% | 0.00% | 29.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=18000, defense.shield-interval-ms=18000, defense.shield-pct=0.66 | 1221 | sustains |
-| Spirit / Phantasm / Wisp | Plaguebound Shroud / Bastion Heart | 276 | 44.0 | 2.00% | 0.00% | 24.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=18000, defense.shield-interval-ms=18000, defense.shield-pct=0.56 | 1150 | sustains |
-| Spirit / Spark / Haunt | Plaguebound Shroud / Bastion Heart | 281 | 48.0 | 6.00% | 0.00% | 26.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=18000, defense.shield-interval-ms=18000, defense.shield-pct=0.66 | 1171 | sustains |
-| Spirit / Spark / Wisp | Plaguebound Shroud / Bastion Heart | 264 | 42.0 | 0.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=18000, defense.shield-interval-ms=18000, defense.shield-pct=0.56 | 1100 | sustains |
-| Spirit / Wraith / Haunt | Plaguebound Shroud / Bastion Heart | 280 | 49.0 | 6.00% | 0.00% | 26.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=18000, defense.shield-interval-ms=18000, defense.shield-pct=0.66 | 1166 | sustains |
-| Spirit / Wraith / Wisp | Plaguebound Shroud / Bastion Heart | 263 | 43.0 | 0.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.shield-duration-ms=18000, defense.shield-interval-ms=18000, defense.shield-pct=0.56 | 1096 | sustains |
-| Squire / Bulwark / Sentinel | Plaguebound Shroud / Bastion Heart | 330 | 50.0 | 11.0% | 0.00% | 28.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.in-combat-regen-pct=0.10, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1375 | sustains |
-| Squire / Bulwark / Vanguard | Plaguebound Shroud / Bastion Heart | 347 | 60.0 | 17.0% | 0.00% | 29.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.in-combat-regen-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1445 | sustains |
-| Squire / Knight / Sentinel | Plaguebound Shroud / Bastion Heart | 318 | 48.0 | 11.0% | 0.00% | 26.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.in-combat-regen-pct=0.10, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1325 | sustains |
-| Squire / Knight / Vanguard | Plaguebound Shroud / Bastion Heart | 335 | 58.0 | 17.0% | 0.00% | 27.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.in-combat-regen-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1395 | sustains |
-| Squire / Warrior / Sentinel | Plaguebound Shroud / Bastion Heart | 304 | 45.0 | 8.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.in-combat-regen-pct=0.10, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1266 | sustains |
-| Squire / Warrior / Vanguard | Plaguebound Shroud / Bastion Heart | 321 | 55.0 | 14.0% | 0.00% | 22.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.in-combat-regen-pct=0.30, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1337 | sustains |
-| Striker / Breaker / In-Fighter | Plaguebound Shroud / Bastion Heart | 319 | 56.0 | 12.0% | 0.00% | 29.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.12, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1329 | sustains |
-| Striker / Breaker / Phantom-Blade | Plaguebound Shroud / Bastion Heart | 302 | 48.0 | 6.00% | 0.00% | 26.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.08, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1258 | sustains |
-| Striker / Flurry / In-Fighter | Plaguebound Shroud / Bastion Heart | 297 | 52.0 | 10.0% | 0.00% | 24.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.12, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1237 | sustains |
-| Striker / Flurry / Phantom-Blade | Plaguebound Shroud / Bastion Heart | 280 | 44.0 | 4.00% | 0.00% | 21.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.08, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1166 | sustains |
-| Striker / Skirmisher / In-Fighter | Plaguebound Shroud / Bastion Heart | 311 | 53.0 | 10.0% | 0.00% | 26.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.12, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1295 | sustains |
-| Striker / Skirmisher / Phantom-Blade | Plaguebound Shroud / Bastion Heart | 294 | 45.0 | 4.00% | 0.00% | 23.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.08, defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | 1225 | sustains |
+| Forest | 26.7 atk / 0.68 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard · Wildgrowth Weave/Bastion Heart | 13768 | 0.50 | 36.2 | 35.7 | sustains | 0.26% | Safe |
+| Mountain | 60.0 atk / 0.30 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard · Emberforge Plate/Bastion Heart | 24300 | 0.30 | 38.7 | 38.4 | sustains | 0.25% | Safe |
+| Plains | 34.0 atk / 0.57 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard · Wildgrowth Weave/Bastion Heart | 17554 | 0.42 | 36.2 | 35.8 | sustains | 0.26% | Safe |
+| Swamp | 16.7 atk / 0.43 aps / 17.7 dot / ×1.00 | Squire / Bulwark / Vanguard · Plaguebound Shroud/Bastion Heart | 811 | 11.9 | 37.1 | 25.3 | sustains | 0.26% | Safe |
+| Caverns | 39.7 atk / 0.35 aps / 6.00 dot / ×1.00 | Squire / Bulwark / Vanguard · Plaguebound Shroud/Bastion Heart | 1687 | 4.57 | 37.1 | 32.6 | sustains | 0.51% | Safe |
+| Jungle | 19.3 atk / 0.64 aps / 14.0 dot / ×1.15 | Squire / Bulwark / Vanguard · Plaguebound Shroud/Bastion Heart | 1055 | 9.72 | 37.1 | 27.4 | sustains | 0.26% | Safe |
+| Desert | 32.7 atk / 0.45 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard · Wildgrowth Weave/Bastion Heart | 16865 | 0.33 | 36.2 | 35.9 | sustains | 0.26% | Safe |
 
+## Boss Matchups By Class
 
-## 4. Armor Input Table (+0 and +3)
+_Best current +3 loadout for each class vs each boss; cell = TTL (⚠ = one-shot risk)._
 
-| Armor | Plus | Stats | Effects | Scaling |
-| --- | --- | --- | --- | --- |
-| Deepscale Hide | +0 | damageReduction=0.20, maxHp=50.0, plating=10.0 | - | steps 0/3 |
-| Deepscale Hide | +3 | damageReduction=0.26, maxHp=80.0, plating=16.0 | - | steps 3/3 |
-| Emberforge Plate | +0 | maxHp=90.0, plating=20.0 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25 | steps 0/3 |
-| Emberforge Plate | +3 | maxHp=150, plating=35.0 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25 | steps 3/3 |
-| Eternal Duneplate | +0 | maxHp=90.0, plating=20.0 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00, defense.debuff-resistance=0.20 | steps 0/3 |
-| Eternal Duneplate | +3 | maxHp=150, plating=35.0 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00, defense.debuff-resistance=0.20 | steps 3/3 |
-| Glacial Bulwark | +0 | maxHp=100, plating=15.0 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.15, defense.stationary-dr-ramptime-ms=6000 | steps 0/3 |
-| Glacial Bulwark | +3 | maxHp=166, plating=27.0 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.15, defense.stationary-dr-ramptime-ms=6000 | steps 3/3 |
-| Plaguebound Shroud | +0 | maxHp=86.0, plating=22.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20 | steps 0/3 |
-| Plaguebound Shroud | +3 | maxHp=140, plating=40.0 | defense.debuff-resistance=0.20, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.20 | steps 3/3 |
-| Summit Aegis | +0 | damageReduction=0.10, maxHp=55.0, plating=23.0 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25 | steps 0/3 |
-| Summit Aegis | +3 | damageReduction=0.10, maxHp=97.0, plating=41.0 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25 | steps 3/3 |
-| Wildgrowth Weave | +0 | evasion=0.40, maxHp=80.0, plating=13.0 | - | steps 0/3 |
-| Wildgrowth Weave | +3 | evasion=0.55, maxHp=134, plating=22.0 | - | steps 3/3 |
+| Class | Chitinous Dreadbore | Stoneplate Juggernaut | Gorging Razortusk | Apex Timberclaw | Dune-Stalker Emperor | Jungle Dread-Gorger | Mire-Gorged Behemoth |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Apprentice | sustains | sustains | sustains | sustains | sustains | sustains | sustains |
+| Conduit | sustains | sustains | sustains | sustains | sustains | sustains | sustains |
+| Slinger | sustains | sustains | sustains | sustains | sustains | sustains | sustains |
+| Spirit | sustains | sustains | sustains | sustains | sustains | sustains | sustains |
+| Squire | sustains | sustains | sustains | sustains | sustains | sustains | sustains |
+| Striker | sustains | sustains | sustains | sustains | sustains | sustains | sustains |
 
+## Best Gear Per Boss
 
-## 5. Charm Input Table (+0 and +3)
+_Single highest-survival loadout (any class) at current +3 vs each boss._
 
-| Charm | Plus | Stats | Effects | Scaling |
-| --- | --- | --- | --- | --- |
-| Bastion Heart | +0 | hpRegen=11.0 | defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.17 | steps 0/3 |
-| Bastion Heart | +3 | hpRegen=11.0 | defense.shield-duration-ms=8000, defense.shield-interval-ms=8000, defense.shield-pct=0.26 | steps 3/3 |
-| Echo Geode | +0 | hpRegen=11.0 | defense.in-combat-regen-pct=0.07, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.13 | steps 0/3 |
-| Echo Geode | +3 | hpRegen=11.0 | defense.in-combat-regen-pct=0.10, defense.regen-burst-interval-ms=6000, defense.regen-burst-pct=0.22 | steps 3/3 |
-| Frostward Charm | +0 | hpRegen=11.0 | defense.absorb-pct=0.08, defense.shield-duration-ms=9000, defense.shield-interval-ms=9000, defense.shield-pct=0.12 | steps 0/3 |
-| Frostward Charm | +3 | hpRegen=11.0 | defense.absorb-pct=0.14, defense.shield-duration-ms=9000, defense.shield-interval-ms=9000, defense.shield-pct=0.18 | steps 3/3 |
-| Magmaheart Core | +0 | hpRegen=11.0 | defense.in-combat-regen-pct=0.14, defense.kill-burst-pct=0.08 | steps 0/3 |
-| Magmaheart Core | +3 | hpRegen=11.0 | defense.in-combat-regen-pct=0.20, defense.kill-burst-pct=0.14 | steps 3/3 |
-| Oasis Core | +0 | hpRegen=11.0 | defense.cleanse-empty-heal-pct=0.05, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | steps 0/3 |
-| Oasis Core | +3 | hpRegen=11.0 | defense.cleanse-empty-heal-pct=0.08, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | steps 3/3 |
-| Sorrow Eye | +0 | hpRegen=11.0 | defense.absorb-pct=0.13 | steps 0/3 |
-| Sorrow Eye | +3 | hpRegen=11.0 | defense.absorb-pct=0.22 | steps 3/3 |
-| Worldvine Heart | +0 | hpRegen=11.0 | defense.ramp-regen-max-pct=0.19, defense.ramp-regen-ramptime-ms=10000, defense.ramp-regen-start-pct=0.05 | steps 0/3 |
-| Worldvine Heart | +3 | hpRegen=11.0 | defense.ramp-regen-max-pct=0.25, defense.ramp-regen-ramptime-ms=10000, defense.ramp-regen-start-pct=0.05 | steps 3/3 |
-
-
-## 6. Tankiest / Most Fragile Optimal Loadouts
-
-Top 10 (tankiest):
-
-| Build | Armor | Charm | eHP | maxHP | Mitig% | In DPS | Recov/s | TTL | Spike %HP |
+| Boss | Attacker | Best build | Armor | Charm | eHP | TTL | Net/s | Spike %HP | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice / Rime-Bound / Hexblade | Plaguebound Shroud +3 | Bastion Heart | 1927 | 332 | 82.8% | 3.33 | 10.8 | sustains | 0.30% |
-| Apprentice / Ember mage / Hexblade | Plaguebound Shroud +3 | Bastion Heart | 1834 | 316 | 82.8% | 3.33 | 10.3 | sustains | 0.32% |
-| Apprentice / Rime-Bound / Harbinger | Plaguebound Shroud +3 | Bastion Heart | 1829 | 315 | 82.8% | 3.33 | 10.2 | sustains | 0.32% |
-| Apprentice / Venom vessel / Hexblade | Plaguebound Shroud +3 | Bastion Heart | 1776 | 306 | 82.8% | 3.33 | 9.99 | sustains | 0.33% |
-| Apprentice / Ember mage / Harbinger | Plaguebound Shroud +3 | Bastion Heart | 1736 | 299 | 82.8% | 3.33 | 9.72 | sustains | 0.33% |
-| Apprentice / Venom vessel / Harbinger | Plaguebound Shroud +3 | Bastion Heart | 1678 | 289 | 82.8% | 3.33 | 9.39 | sustains | 0.35% |
-| Squire / Bulwark / Vanguard | Plaguebound Shroud +3 | Bastion Heart | 1445 | 347 | 76.0% | 4.64 | 41.5 | sustains | 0.29% |
-| Squire / Knight / Vanguard | Plaguebound Shroud +3 | Bastion Heart | 1395 | 335 | 76.0% | 4.64 | 38.0 | sustains | 0.30% |
-| Squire / Bulwark / Sentinel | Plaguebound Shroud +3 | Bastion Heart | 1375 | 330 | 76.0% | 4.64 | 20.0 | sustains | 0.30% |
-| Squire / Warrior / Vanguard | Plaguebound Shroud +3 | Bastion Heart | 1337 | 321 | 76.0% | 4.64 | 31.6 | sustains | 0.31% |
+| Chitinous Dreadbore | 65.0 atk / 0.28 aps / 0.00 dot / ×1.60 | Squire / Bulwark / Vanguard | Summit Aegis | Bastion Heart | 20735 | sustains | 30.2 | 8.46% | Safe |
+| Stoneplate Juggernaut | 60.0 atk / 0.24 aps / 0.00 dot / ×1.60 | Squire / Bulwark / Vanguard | Emberforge Plate | Bastion Heart | 24300 | sustains | 38.4 | 7.90% | Safe |
+| Gorging Razortusk | 45.0 atk / 0.45 aps / 0.00 dot / ×1.30 | Squire / Bulwark / Vanguard | Glacial Bulwark | Bastion Heart | 19395 | sustains | 40.7 | 2.32% | Safe |
+| Apex Timberclaw | 30.0 atk / 0.67 aps / 0.00 dot / ×1.60 | Squire / Bulwark / Vanguard | Wildgrowth Weave | Bastion Heart | 15489 | sustains | 35.7 | 1.85% | Safe |
+| Dune-Stalker Emperor | 40.0 atk / 0.38 aps / 0.00 dot / ×1.20 | Squire / Bulwark / Vanguard | Wildgrowth Weave | Bastion Heart | 20651 | sustains | 35.9 | 1.85% | Safe |
+| Jungle Dread-Gorger | 40.0 atk / 0.42 aps / 0.00 dot / ×1.10 | Squire / Bulwark / Vanguard | Wildgrowth Weave | Bastion Heart | 20651 | sustains | 35.9 | 1.06% | Safe |
+| Mire-Gorged Behemoth | 18.0 atk / 0.36 aps / 16.0 dot / ×1.60 | Squire / Bulwark / Vanguard | Plaguebound Shroud | Bastion Heart | 812 | sustains | 26.4 | 0.26% | Safe |
+
+## Armor Matrix By Attacker Profile
+
+_Survival score (mitigation × pool incl. recovery) at +3, no charm, averaged over class builds._
+
+| Armor | avg mob | DoT-heavy | hardest | boss | next-tier |
+| --- | --- | --- | --- | --- | --- |
+| Deepscale Hide | 1247 | 464 | 1105 | 1189 | 1013 |
+| Emberforge Plate | 1612 | 561 | 8274 | 10842 | 1862 |
+| Eternal Duneplate | 1612 | 561 | 8274 | 10842 | 1862 |
+| Glacial Bulwark | 1723 | 599 | 1748 | 2322 | 1774 |
+| Plaguebound Shroud | 2236 | 831 | 1031 | 1135 | 1568 |
+| Summit Aegis | 1251 | 435 | 13050 | 16517 | 1445 |
+| Wildgrowth Weave | 1522 | 525 | 1435 | 1599 | 1332 |
+
+## Charm Matrix By Attacker Profile
+
+_Survival score at +3 with reference armor Glacial Bulwark, averaged over class builds._
+
+| Charm | avg mob | DoT-heavy | hardest | boss | next-tier |
+| --- | --- | --- | --- | --- | --- |
+| Bastion Heart | 2568 | 893 | 2703 | 3653 | 2673 |
+| Echo Geode | 2758 | 959 | 2854 | 3833 | 2851 |
+| Frostward Charm | 2257 | 785 | 2433 | 3281 | 2357 |
+| Magmaheart Stone | 2551 | 887 | 2649 | 3566 | 2637 |
+| Oasis Heart | 2178 | 757 | 2281 | 3086 | 2254 |
+| Sorrow Eye | 1821 | 633 | 2024 | 2716 | 1902 |
+| Worldvine Heart | 2482 | 863 | 2581 | 3477 | 2566 |
 
 
-Bottom 10 (most fragile):
+## Top / Bottom Loadouts (current +3 vs current mobs)
 
-| Build | Armor | Charm | eHP | maxHP | Mitig% | In DPS | Recov/s | TTL | Spike %HP |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Spirit / Wraith / Wisp | Plaguebound Shroud +3 | Bastion Heart | 1096 | 263 | 76.0% | 4.64 | 8.18 | sustains | 0.38% |
-| Spirit / Spark / Wisp | Plaguebound Shroud +3 | Bastion Heart | 1100 | 264 | 76.0% | 4.64 | 8.21 | sustains | 0.38% |
-| Conduit / Light Frame / Far Range | Plaguebound Shroud +3 | Bastion Heart | 1116 | 268 | 76.0% | 4.64 | 8.71 | sustains | 0.37% |
-| Spirit / Phantasm / Wisp | Plaguebound Shroud +3 | Bastion Heart | 1150 | 276 | 76.0% | 4.64 | 8.59 | sustains | 0.36% |
-| Striker / Flurry / Phantom-Blade | Plaguebound Shroud +3 | Bastion Heart | 1166 | 280 | 76.0% | 4.64 | 12.8 | sustains | 0.36% |
-| Spirit / Wraith / Haunt | Plaguebound Shroud +3 | Bastion Heart | 1166 | 280 | 76.0% | 4.64 | 10.3 | sustains | 0.36% |
-| Conduit / Medium Frame / Far Range | Plaguebound Shroud +3 | Bastion Heart | 1166 | 280 | 76.0% | 4.64 | 9.10 | sustains | 0.36% |
-| Spirit / Spark / Haunt | Plaguebound Shroud +3 | Bastion Heart | 1171 | 281 | 76.0% | 4.64 | 10.3 | sustains | 0.36% |
-| Slinger / Scout / Deadeye | Plaguebound Shroud +3 | Bastion Heart | 1183 | 276 | 76.7% | 4.51 | 8.97 | sustains | 0.36% |
-| Conduit / Light Frame / Close Range | Plaguebound Shroud +3 | Bastion Heart | 1187 | 285 | 76.0% | 4.64 | 9.26 | sustains | 0.35% |
-
-
-## 7. Outliers (vs optimal-loadout average eHP)
-
-_No data._
+| Build | Loadout | Survival | eHP | In DPS | Recov/s | TTL | Spike %HP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Squire / Bulwark / Vanguard | Plaguebound Shroud/Bastion Heart | 4829 | 1985 | 3.93 | 37.1 | sustains | 0.26% |
+| Squire / Knight / Vanguard | Plaguebound Shroud/Bastion Heart | 4531 | 1863 | 3.93 | 34.9 | sustains | 0.27% |
+| Squire / Warrior / Vanguard | Plaguebound Shroud/Bastion Heart | 4320 | 1776 | 3.93 | 33.2 | sustains | 0.29% |
+| Squire / Bulwark / Sentinel | Plaguebound Shroud/Bastion Heart | 3422 | 1899 | 3.93 | 19.9 | sustains | 0.27% |
+| Striker / Breaker / In-Fighter | Plaguebound Shroud/Bastion Heart | 3239 | 1812 | 3.93 | 18.6 | sustains | 0.28% |
+| Squire / Knight / Sentinel | Plaguebound Shroud/Bastion Heart | 3201 | 1776 | 3.93 | 18.6 | sustains | 0.29% |
+| Apprentice / Rime-Bound / Hexblade | Plaguebound Shroud/Bastion Heart | 3126 | 2096 | 3.33 | 11.4 | sustains | 0.57% |
+| Squire / Warrior / Sentinel | Plaguebound Shroud/Bastion Heart | 3045 | 1689 | 3.93 | 17.7 | sustains | 0.30% |
+| Striker / Skirmisher / In-Fighter | Plaguebound Shroud/Bastion Heart | 2761 | 1545 | 4.36 | 17.6 | sustains | 0.60% |
+| Spirit / Phantasm / Haunt | Glacial Bulwark/Echo Geode | 2608 | 1253 | 5.83 | 26.3 | sustains | 0.27% |
 
 
-## 8. Burst & Sustain Risk
+| Build | Loadout | Survival | eHP | In DPS | Recov/s | TTL | Spike %HP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Slinger / Scout / Deadeye | Emberforge Plate/Bastion Heart | 1484 | 998 | 5.73 | 9.26 | sustains | 0.35% |
+| Conduit / Splinter / Vigil | Emberforge Plate/Bastion Heart | 1510 | 1015 | 5.83 | 9.59 | sustains | 0.34% |
+| Slinger / Marksman / Deadeye | Emberforge Plate/Bastion Heart | 1534 | 1031 | 5.74 | 9.59 | sustains | 0.34% |
+| Conduit / Consort / Vigil | Glacial Bulwark/Bastion Heart | 1664 | 1118 | 5.83 | 10.6 | sustains | 0.31% |
+| Slinger / Scout / Breacher | Emberforge Plate/Bastion Heart | 1697 | 1141 | 5.68 | 10.5 | sustains | 0.31% |
+| Slinger / Artillerist / Deadeye | Glacial Bulwark/Bastion Heart | 1712 | 1151 | 5.75 | 10.7 | sustains | 0.30% |
+| Slinger / Marksman / Breacher | Emberforge Plate/Bastion Heart | 1746 | 1174 | 5.69 | 10.8 | sustains | 0.30% |
+| Conduit / Splinter / Harrier | Glacial Bulwark/Bastion Heart | 1771 | 1191 | 5.83 | 11.2 | sustains | 0.29% |
+| Conduit / Effigy / Vigil | Glacial Bulwark/Bastion Heart | 1771 | 1191 | 5.83 | 11.2 | sustains | 0.29% |
+| Spirit / Spark / Wisp | Emberforge Plate/Echo Geode | 1815 | 939 | 5.83 | 17.0 | sustains | 0.37% |
 
-- One-shot risk (a single modeled spike ≥ HP + standing shield, no cheat-death): 0 of 36 optimal builds.
-- Builds that fully sustain the neutral attacker (recovery ≥ incoming): 36 of 36.
 
-_No data._
+## Outlier Summary
 
+_Flags items >±25% of tier-average survival, dominant items, early-sustain loadouts, and sub-20s boss TTLs._
 
-## 9. Average eHP Per Class
-
-| Class | Avg eHP | Samples |
+| Flag | Item / Build | Detail |
 | --- | --- | --- |
-| Apprentice | 1046 | 294 |
-| Squire | 890 | 294 |
-| Striker | 816 | 294 |
-| Slinger | 807 | 294 |
-| Conduit | 769 | 294 |
-| Spirit | 741 | 294 |
+| armor > +25% tier avg | Plaguebound Shroud | survival 2236 vs avg 1601 |
+| dominant charm | Echo Geode | best survival in every matchup profile |
+| sustains too early | 18 build(s) | already immortal vs avg mobs on entry (+0) gear |
 
-
-## 10. Average eHP Per Armor / Charm
-
-| Armor | Avg eHP | Samples |
-| --- | --- | --- |
-| Plaguebound Shroud | 1336 | 252 |
-| Glacial Bulwark | 870 | 252 |
-| Emberforge Plate | 828 | 252 |
-| Eternal Duneplate | 828 | 252 |
-| Wildgrowth Weave | 786 | 252 |
-| Summit Aegis | 686 | 252 |
-| Deepscale Hide | 580 | 252 |
-
-
-| Charm | Avg eHP | Samples |
-| --- | --- | --- |
-| Bastion Heart | 845 | 252 |
-| Echo Geode | 845 | 252 |
-| Frostward Charm | 845 | 252 |
-| Magmaheart Core | 845 | 252 |
-| Oasis Core | 845 | 252 |
-| Sorrow Eye | 845 | 252 |
-| Worldvine Heart | 845 | 252 |
-
-
-## 11. Formula Caveats / Unmodeled Mechanics
-
-- Mitigation uses shared `estimateMonsterHitDamage`: `max(1, round(max(0, attack - plating × 1) × (1 - DR)))`; stats rebuilt via shared `recalculatePlayerStats`.
-- Evasion is averaged (`1 - dodgeRate × evadeMitigation`), not played out as a deterministic accumulator; first-hit timing and OOC reset are ignored.
-- Shields/absorb/regen-burst are steady-state HP/s; a shield that out-sizes a hit still only counts its per-interval value (no burst-vs-chip interaction). DoT bypass-shield is respected only in notes.
-- Cheat-death, hardening/stationary/sustained-fight DR ramps use mid-point or one-shot approximations; reactive plating and shield-break/kill-burst heals are not summed.
-- Report notes observed in this tier: `-18% dot-resistance on incoming DoT`, `-40% dot-resistance on incoming DoT`, `-58% dot-resistance on incoming DoT`, `absorb repays 12% of incoming as HoT`, `absorb repays 14% of incoming as HoT`, `absorb repays 22% of incoming as HoT`, `absorb repays 26% of incoming as HoT`, `absorb repays 34% of incoming as HoT`, `cheat-death grants one extra near-full bar`, `cleanse empty-heal 8% maxHp / 14s`, `cleanse empty-heal 8% maxHp / 6s`, `hit-to-dot redirects 10% (then -18% dot-resist)`, `hit-to-dot redirects 20% (then -40% dot-resist)`, `hit-to-dot redirects 30% (then -58% dot-resist)`, `in-combat regen 10% of OOC (100/s base)`, `in-combat regen 10% of OOC (101/s base)`, `in-combat regen 10% of OOC (103/s base)`, `in-combat regen 10% of OOC (106/s base)`, `in-combat regen 10% of OOC (111/s base)`, `in-combat regen 10% of OOC (42.6/s base)`, `in-combat regen 10% of OOC (42.8/s base)`, `in-combat regen 10% of OOC (43.7/s base)`, `in-combat regen 10% of OOC (45.4/s base)`, `in-combat regen 10% of OOC (46.2/s base)`, `in-combat regen 10% of OOC (46.4/s base)`, `in-combat regen 10% of OOC (47.3/s base)`, `in-combat regen 10% of OOC (48.9/s base)`, `in-combat regen 10% of OOC (49.8/s base)`, `in-combat regen 10% of OOC (50.8/s base)`, `in-combat regen 10% of OOC (51.2/s base)`, `in-combat regen 10% of OOC (51.8/s base)`, `in-combat regen 10% of OOC (52.0/s base)`, `in-combat regen 10% of OOC (52.5/s base)`, `in-combat regen 10% of OOC (52.7/s base)`, `in-combat regen 10% of OOC (53.3/s base)`, `in-combat regen 10% of OOC (53.8/s base)`, `in-combat regen 10% of OOC (54.0/s base)`, `in-combat regen 10% of OOC (54.2/s base)`, `in-combat regen 10% of OOC (54.8/s base)`, `in-combat regen 10% of OOC (55.0/s base)`, `in-combat regen 10% of OOC (55.2/s base)`, `in-combat regen 10% of OOC (55.4/s base)`, `in-combat regen 10% of OOC (55.9/s base)`, `in-combat regen 10% of OOC (56.1/s base)`, `in-combat regen 10% of OOC (56.3/s base)`, `in-combat regen 10% of OOC (56.6/s base)`, `in-combat regen 10% of OOC (56.7/s base)`, `in-combat regen 10% of OOC (56.9/s base)`, `in-combat regen 10% of OOC (57.2/s base)`, `in-combat regen 10% of OOC (57.3/s base)`, `in-combat regen 10% of OOC (57.5/s base)`, `in-combat regen 10% of OOC (57.7/s base)`, `in-combat regen 10% of OOC (58.0/s base)`, `in-combat regen 10% of OOC (58.3/s base)`, `in-combat regen 10% of OOC (58.4/s base)`, `in-combat regen 10% of OOC (58.6/s base)`, `in-combat regen 10% of OOC (58.8/s base)`, `in-combat regen 10% of OOC (59.8/s base)`, `in-combat regen 10% of OOC (60.1/s base)`, `in-combat regen 10% of OOC (60.3/s base)`, `in-combat regen 10% of OOC (60.7/s base)`, `in-combat regen 10% of OOC (60.9/s base)`, `in-combat regen 10% of OOC (61.0/s base)`, `in-combat regen 10% of OOC (61.1/s base)`, `in-combat regen 10% of OOC (61.5/s base)`, `in-combat regen 10% of OOC (61.6/s base)`, `in-combat regen 10% of OOC (61.7/s base)`, `in-combat regen 10% of OOC (61.9/s base)`, `in-combat regen 10% of OOC (62.1/s base)`, `in-combat regen 10% of OOC (62.3/s base)`, `in-combat regen 10% of OOC (62.4/s base)`, `in-combat regen 10% of OOC (62.5/s base)`, `in-combat regen 10% of OOC (62.6/s base)`, `in-combat regen 10% of OOC (62.9/s base)`, `in-combat regen 10% of OOC (63.4/s base)`, `in-combat regen 10% of OOC (63.6/s base)`, `in-combat regen 10% of OOC (63.8/s base)`, `in-combat regen 10% of OOC (64.3/s base)`, `in-combat regen 10% of OOC (64.4/s base)`, `in-combat regen 10% of OOC (64.5/s base)`, `in-combat regen 10% of OOC (64.8/s base)`, `in-combat regen 10% of OOC (65.1/s base)`, `in-combat regen 10% of OOC (65.3/s base)`, `in-combat regen 10% of OOC (65.6/s base)`, `in-combat regen 10% of OOC (65.8/s base)`, `in-combat regen 10% of OOC (65.9/s base)`, `in-combat regen 10% of OOC (66.2/s base)`, `in-combat regen 10% of OOC (66.5/s base)`, `in-combat regen 10% of OOC (66.6/s base)`, `in-combat regen 10% of OOC (67.0/s base)`, `in-combat regen 10% of OOC (67.1/s base)`, `in-combat regen 10% of OOC (67.2/s base)`, `in-combat regen 10% of OOC (67.3/s base)`, `in-combat regen 10% of OOC (67.6/s base)`, `in-combat regen 10% of OOC (67.8/s base)`, `in-combat regen 10% of OOC (68.1/s base)`, `in-combat regen 10% of OOC (68.6/s base)`, `in-combat regen 10% of OOC (68.8/s base)`, `in-combat regen 10% of OOC (69.3/s base)`, `in-combat regen 10% of OOC (69.7/s base)`, `in-combat regen 10% of OOC (69.8/s base)`, `in-combat regen 10% of OOC (69.9/s base)`, `in-combat regen 10% of OOC (70.2/s base)`, `in-combat regen 10% of OOC (70.6/s base)`, `in-combat regen 10% of OOC (71.2/s base)`, `in-combat regen 10% of OOC (71.3/s base)`, `in-combat regen 10% of OOC (71.5/s base)`, `in-combat regen 10% of OOC (71.7/s base)`, `in-combat regen 10% of OOC (71.8/s base)`, `in-combat regen 10% of OOC (72.2/s base)`, `in-combat regen 10% of OOC (72.5/s base)`, `in-combat regen 10% of OOC (72.8/s base)`, `in-combat regen 10% of OOC (73.0/s base)`, `in-combat regen 10% of OOC (73.1/s base)`, `in-combat regen 10% of OOC (73.3/s base)`, `in-combat regen 10% of OOC (73.6/s base)`, `in-combat regen 10% of OOC (73.7/s base)`, `in-combat regen 10% of OOC (73.9/s base)`, `in-combat regen 10% of OOC (75.0/s base)`, `in-combat regen 10% of OOC (75.1/s base)`, `in-combat regen 10% of OOC (75.4/s base)`, `in-combat regen 10% of OOC (75.5/s base)`, `in-combat regen 10% of OOC (75.6/s base)`, `in-combat regen 10% of OOC (75.7/s base)`, `in-combat regen 10% of OOC (75.8/s base)`, `in-combat regen 10% of OOC (76.2/s base)`, `in-combat regen 10% of OOC (76.4/s base)`, `in-combat regen 10% of OOC (76.5/s base)`, `in-combat regen 10% of OOC (77.0/s base)`, `in-combat regen 10% of OOC (77.1/s base)`, `in-combat regen 10% of OOC (77.5/s base)`, `in-combat regen 10% of OOC (77.7/s base)`, `in-combat regen 10% of OOC (78.5/s base)`, `in-combat regen 10% of OOC (78.9/s base)`, `in-combat regen 10% of OOC (79.0/s base)`, `in-combat regen 10% of OOC (79.3/s base)`, `in-combat regen 10% of OOC (79.5/s base)`, `in-combat regen 10% of OOC (79.6/s base)`, `in-combat regen 10% of OOC (79.8/s base)`, `in-combat regen 10% of OOC (80.0/s base)`, `in-combat regen 10% of OOC (80.2/s base)`, `in-combat regen 10% of OOC (80.3/s base)`, `in-combat regen 10% of OOC (80.4/s base)`, `in-combat regen 10% of OOC (80.9/s base)`, `in-combat regen 10% of OOC (81.1/s base)`, `in-combat regen 10% of OOC (81.8/s base)`, `in-combat regen 10% of OOC (82.7/s base)`, `in-combat regen 10% of OOC (83.0/s base)`, `in-combat regen 10% of OOC (83.2/s base)`, `in-combat regen 10% of OOC (83.5/s base)`, `in-combat regen 10% of OOC (84.3/s base)`, `in-combat regen 10% of OOC (84.5/s base)`, `in-combat regen 10% of OOC (85.0/s base)`, `in-combat regen 10% of OOC (85.3/s base)`, `in-combat regen 10% of OOC (86.8/s base)`, `in-combat regen 10% of OOC (87.6/s base)`, `in-combat regen 10% of OOC (87.9/s base)`, `in-combat regen 10% of OOC (88.5/s base)`, `in-combat regen 10% of OOC (88.8/s base)`, `in-combat regen 10% of OOC (89.4/s base)`, `in-combat regen 10% of OOC (89.6/s base)`, `in-combat regen 10% of OOC (90.7/s base)`, `in-combat regen 10% of OOC (90.8/s base)`, `in-combat regen 10% of OOC (91.3/s base)`, `in-combat regen 10% of OOC (92.4/s base)`, `in-combat regen 10% of OOC (92.5/s base)`, `in-combat regen 10% of OOC (94.3/s base)`, `in-combat regen 10% of OOC (95.2/s base)`, `in-combat regen 10% of OOC (95.4/s base)`, `in-combat regen 10% of OOC (95.8/s base)`, `in-combat regen 10% of OOC (97.1/s base)`, `in-combat regen 10% of OOC (98.9/s base)`, `in-combat regen 10% of OOC (99.7/s base)`, `in-combat regen 20% of OOC (100/s base)`, `in-combat regen 20% of OOC (101/s base)`, `in-combat regen 20% of OOC (103/s base)`, `in-combat regen 20% of OOC (106/s base)`, `in-combat regen 20% of OOC (111/s base)`, `in-combat regen 20% of OOC (42.6/s base)`, `in-combat regen 20% of OOC (42.8/s base)`, `in-combat regen 20% of OOC (43.7/s base)`, `in-combat regen 20% of OOC (45.4/s base)`, `in-combat regen 20% of OOC (46.2/s base)`, `in-combat regen 20% of OOC (46.4/s base)`, `in-combat regen 20% of OOC (47.3/s base)`, `in-combat regen 20% of OOC (48.9/s base)`, `in-combat regen 20% of OOC (49.8/s base)`, `in-combat regen 20% of OOC (50.8/s base)`, `in-combat regen 20% of OOC (51.2/s base)`, `in-combat regen 20% of OOC (51.8/s base)`, `in-combat regen 20% of OOC (52.0/s base)`, `in-combat regen 20% of OOC (52.5/s base)`, `in-combat regen 20% of OOC (52.7/s base)`, `in-combat regen 20% of OOC (53.3/s base)`, `in-combat regen 20% of OOC (53.8/s base)`, `in-combat regen 20% of OOC (54.0/s base)`, `in-combat regen 20% of OOC (54.2/s base)`, `in-combat regen 20% of OOC (54.8/s base)`, `in-combat regen 20% of OOC (55.0/s base)`, `in-combat regen 20% of OOC (55.2/s base)`, `in-combat regen 20% of OOC (55.4/s base)`, `in-combat regen 20% of OOC (55.9/s base)`, `in-combat regen 20% of OOC (56.1/s base)`, `in-combat regen 20% of OOC (56.3/s base)`, `in-combat regen 20% of OOC (56.6/s base)`, `in-combat regen 20% of OOC (56.7/s base)`, `in-combat regen 20% of OOC (56.9/s base)`, `in-combat regen 20% of OOC (57.2/s base)`, `in-combat regen 20% of OOC (57.3/s base)`, `in-combat regen 20% of OOC (57.5/s base)`, `in-combat regen 20% of OOC (57.7/s base)`, `in-combat regen 20% of OOC (58.0/s base)`, `in-combat regen 20% of OOC (58.3/s base)`, `in-combat regen 20% of OOC (58.4/s base)`, `in-combat regen 20% of OOC (58.6/s base)`, `in-combat regen 20% of OOC (58.8/s base)`, `in-combat regen 20% of OOC (59.8/s base)`, `in-combat regen 20% of OOC (60.1/s base)`, `in-combat regen 20% of OOC (60.3/s base)`, `in-combat regen 20% of OOC (60.7/s base)`, `in-combat regen 20% of OOC (60.9/s base)`, `in-combat regen 20% of OOC (61.0/s base)`, `in-combat regen 20% of OOC (61.1/s base)`, `in-combat regen 20% of OOC (61.5/s base)`, `in-combat regen 20% of OOC (61.6/s base)`, `in-combat regen 20% of OOC (61.7/s base)`, `in-combat regen 20% of OOC (61.9/s base)`, `in-combat regen 20% of OOC (62.1/s base)`, `in-combat regen 20% of OOC (62.3/s base)`, `in-combat regen 20% of OOC (62.4/s base)`, `in-combat regen 20% of OOC (62.5/s base)`, `in-combat regen 20% of OOC (62.6/s base)`, `in-combat regen 20% of OOC (62.9/s base)`, `in-combat regen 20% of OOC (63.4/s base)`, `in-combat regen 20% of OOC (63.6/s base)`, `in-combat regen 20% of OOC (63.8/s base)`, `in-combat regen 20% of OOC (64.3/s base)`, `in-combat regen 20% of OOC (64.4/s base)`, `in-combat regen 20% of OOC (64.5/s base)`, `in-combat regen 20% of OOC (64.8/s base)`, `in-combat regen 20% of OOC (65.1/s base)`, `in-combat regen 20% of OOC (65.3/s base)`, `in-combat regen 20% of OOC (65.6/s base)`, `in-combat regen 20% of OOC (65.8/s base)`, `in-combat regen 20% of OOC (65.9/s base)`, `in-combat regen 20% of OOC (66.2/s base)`, `in-combat regen 20% of OOC (66.5/s base)`, `in-combat regen 20% of OOC (66.6/s base)`, `in-combat regen 20% of OOC (67.0/s base)`, `in-combat regen 20% of OOC (67.1/s base)`, `in-combat regen 20% of OOC (67.2/s base)`, `in-combat regen 20% of OOC (67.3/s base)`, `in-combat regen 20% of OOC (67.6/s base)`, `in-combat regen 20% of OOC (67.8/s base)`, `in-combat regen 20% of OOC (68.1/s base)`, `in-combat regen 20% of OOC (68.6/s base)`, `in-combat regen 20% of OOC (68.8/s base)`, `in-combat regen 20% of OOC (69.3/s base)`, `in-combat regen 20% of OOC (69.7/s base)`, `in-combat regen 20% of OOC (69.8/s base)`, `in-combat regen 20% of OOC (69.9/s base)`, `in-combat regen 20% of OOC (70.2/s base)`, `in-combat regen 20% of OOC (70.6/s base)`, `in-combat regen 20% of OOC (71.2/s base)`, `in-combat regen 20% of OOC (71.3/s base)`, `in-combat regen 20% of OOC (71.5/s base)`, `in-combat regen 20% of OOC (71.7/s base)`, `in-combat regen 20% of OOC (71.8/s base)`, `in-combat regen 20% of OOC (72.2/s base)`, `in-combat regen 20% of OOC (72.5/s base)`, `in-combat regen 20% of OOC (72.8/s base)`, `in-combat regen 20% of OOC (73.0/s base)`, `in-combat regen 20% of OOC (73.1/s base)`, `in-combat regen 20% of OOC (73.3/s base)`, `in-combat regen 20% of OOC (73.6/s base)`, `in-combat regen 20% of OOC (73.7/s base)`, `in-combat regen 20% of OOC (73.9/s base)`, `in-combat regen 20% of OOC (75.0/s base)`, `in-combat regen 20% of OOC (75.1/s base)`, `in-combat regen 20% of OOC (75.4/s base)`, `in-combat regen 20% of OOC (75.5/s base)`, `in-combat regen 20% of OOC (75.6/s base)`, `in-combat regen 20% of OOC (75.7/s base)`, `in-combat regen 20% of OOC (75.8/s base)`, `in-combat regen 20% of OOC (76.2/s base)`, `in-combat regen 20% of OOC (76.4/s base)`, `in-combat regen 20% of OOC (76.5/s base)`, `in-combat regen 20% of OOC (77.0/s base)`, `in-combat regen 20% of OOC (77.1/s base)`, `in-combat regen 20% of OOC (77.5/s base)`, `in-combat regen 20% of OOC (77.7/s base)`, `in-combat regen 20% of OOC (78.5/s base)`, `in-combat regen 20% of OOC (78.9/s base)`, `in-combat regen 20% of OOC (79.0/s base)`, `in-combat regen 20% of OOC (79.3/s base)`, `in-combat regen 20% of OOC (79.5/s base)`, `in-combat regen 20% of OOC (79.6/s base)`, `in-combat regen 20% of OOC (79.8/s base)`, `in-combat regen 20% of OOC (80.0/s base)`, `in-combat regen 20% of OOC (80.2/s base)`, `in-combat regen 20% of OOC (80.3/s base)`, `in-combat regen 20% of OOC (80.4/s base)`, `in-combat regen 20% of OOC (80.9/s base)`, `in-combat regen 20% of OOC (81.1/s base)`, `in-combat regen 20% of OOC (81.8/s base)`, `in-combat regen 20% of OOC (82.7/s base)`, `in-combat regen 20% of OOC (83.0/s base)`, `in-combat regen 20% of OOC (83.2/s base)`, `in-combat regen 20% of OOC (83.5/s base)`, `in-combat regen 20% of OOC (84.3/s base)`, `in-combat regen 20% of OOC (84.5/s base)`, `in-combat regen 20% of OOC (85.0/s base)`, `in-combat regen 20% of OOC (85.3/s base)`, `in-combat regen 20% of OOC (86.8/s base)`, `in-combat regen 20% of OOC (87.6/s base)`, `in-combat regen 20% of OOC (87.9/s base)`, `in-combat regen 20% of OOC (88.5/s base)`, `in-combat regen 20% of OOC (88.8/s base)`, `in-combat regen 20% of OOC (89.4/s base)`, `in-combat regen 20% of OOC (89.6/s base)`, `in-combat regen 20% of OOC (90.7/s base)`, `in-combat regen 20% of OOC (90.8/s base)`, `in-combat regen 20% of OOC (91.3/s base)`, `in-combat regen 20% of OOC (92.4/s base)`, `in-combat regen 20% of OOC (92.5/s base)`, `in-combat regen 20% of OOC (94.3/s base)`, `in-combat regen 20% of OOC (95.2/s base)`, `in-combat regen 20% of OOC (95.4/s base)`, `in-combat regen 20% of OOC (95.8/s base)`, `in-combat regen 20% of OOC (97.1/s base)`, `in-combat regen 20% of OOC (98.9/s base)`, `in-combat regen 20% of OOC (99.7/s base)`, `in-combat regen 30% of OOC (101/s base)`, `in-combat regen 30% of OOC (104/s base)`, `in-combat regen 30% of OOC (108/s base)`, `in-combat regen 30% of OOC (51.2/s base)`, `in-combat regen 30% of OOC (54.8/s base)`, `in-combat regen 30% of OOC (57.4/s base)`, `in-combat regen 30% of OOC (61.2/s base)`, `in-combat regen 30% of OOC (62.6/s base)`, `in-combat regen 30% of OOC (63.8/s base)`, `in-combat regen 30% of OOC (65.9/s base)`, `in-combat regen 30% of OOC (67.1/s base)`, `in-combat regen 30% of OOC (69.3/s base)`, `in-combat regen 30% of OOC (70.6/s base)`, `in-combat regen 30% of OOC (71.5/s base)`, `in-combat regen 30% of OOC (72.8/s base)`, `in-combat regen 30% of OOC (74.3/s base)`, `in-combat regen 30% of OOC (75.6/s base)`, `in-combat regen 30% of OOC (76.3/s base)`, `in-combat regen 30% of OOC (78.8/s base)`, `in-combat regen 30% of OOC (80.4/s base)`, `in-combat regen 30% of OOC (81.1/s base)`, `in-combat regen 30% of OOC (82.7/s base)`, `in-combat regen 30% of OOC (83.2/s base)`, `in-combat regen 30% of OOC (85.3/s base)`, `in-combat regen 30% of OOC (88.2/s base)`, `in-combat regen 30% of OOC (88.8/s base)`, `in-combat regen 30% of OOC (89.4/s base)`, `in-combat regen 30% of OOC (90.5/s base)`, `in-combat regen 30% of OOC (90.7/s base)`, `in-combat regen 30% of OOC (92.4/s base)`, `in-combat regen 30% of OOC (93.2/s base)`, `in-combat regen 30% of OOC (95.2/s base)`, `in-combat regen 30% of OOC (97.5/s base)`, `in-combat regen 30% of OOC (98.9/s base)`, `in-combat regen 30% of OOC (99.7/s base)`, `in-combat regen 40% of OOC (101/s base)`, `in-combat regen 40% of OOC (104/s base)`, `in-combat regen 40% of OOC (108/s base)`, `in-combat regen 40% of OOC (57.4/s base)`, `in-combat regen 40% of OOC (61.2/s base)`, `in-combat regen 40% of OOC (69.3/s base)`, `in-combat regen 40% of OOC (70.6/s base)`, `in-combat regen 40% of OOC (72.8/s base)`, `in-combat regen 40% of OOC (74.3/s base)`, `in-combat regen 40% of OOC (76.3/s base)`, `in-combat regen 40% of OOC (78.8/s base)`, `in-combat regen 40% of OOC (83.2/s base)`, `in-combat regen 40% of OOC (88.2/s base)`, `in-combat regen 40% of OOC (88.8/s base)`, `in-combat regen 40% of OOC (90.5/s base)`, `in-combat regen 40% of OOC (93.2/s base)`, `in-combat regen 40% of OOC (97.5/s base)`, `in-combat regen 40% of OOC (98.9/s base)`, `in-combat regen 50% of OOC (101/s base)`, `in-combat regen 50% of OOC (104/s base)`, `in-combat regen 50% of OOC (108/s base)`, `in-combat regen 50% of OOC (57.4/s base)`, `in-combat regen 50% of OOC (61.2/s base)`, `in-combat regen 50% of OOC (69.3/s base)`, `in-combat regen 50% of OOC (70.6/s base)`, `in-combat regen 50% of OOC (72.8/s base)`, `in-combat regen 50% of OOC (74.3/s base)`, `in-combat regen 50% of OOC (76.3/s base)`, `in-combat regen 50% of OOC (78.8/s base)`, `in-combat regen 50% of OOC (83.2/s base)`, `in-combat regen 50% of OOC (88.2/s base)`, `in-combat regen 50% of OOC (88.8/s base)`, `in-combat regen 50% of OOC (90.5/s base)`, `in-combat regen 50% of OOC (93.2/s base)`, `in-combat regen 50% of OOC (97.5/s base)`, `in-combat regen 50% of OOC (98.9/s base)`, `periodic shield 18% maxHp / 9s (treated as HP/s absorbed)`, `periodic shield 26% maxHp / 8s (treated as HP/s absorbed)`, `periodic shield 30% maxHp / 10s (treated as HP/s absorbed)`, `periodic shield 40% maxHp / 10s (treated as HP/s absorbed)`, `periodic shield 48% maxHp / 19s (treated as HP/s absorbed)`, `periodic shield 56% maxHp / 18s (treated as HP/s absorbed)`, `periodic shield 58% maxHp / 19s (treated as HP/s absorbed)`, `periodic shield 66% maxHp / 18s (treated as HP/s absorbed)`, `ramp regen averaged 15% of OOC over the ramp window`, `regen burst 12% maxHp / 6s`, `regen burst 22% maxHp / 6s`, `regen burst 30% maxHp / 6s`, `regen burst 34% maxHp / 6s`, `regen burst 8% maxHp / 6s`.

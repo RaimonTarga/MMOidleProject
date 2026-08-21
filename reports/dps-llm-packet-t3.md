@@ -5,11 +5,11 @@ Generated from `tools/dps-report.ts`. This packet is Markdown only; it intention
 ## 1. Assumptions / Omissions
 
 - Report tier T3; class unlock tier 2; weapons are tier 3.
-- DPS conclusions use +3 weapons only. Weapon input context includes +0 and +3.
+- DPS conclusions use +5 weapons only. Weapon input context includes +0 and +5.
 - Target mobs come from biome spawn pools one tier below report tier; tutorial/test/interact/boss monsters are excluded.
 - When the shifted target tier contains only tutorial/test content, the packet falls back to the first real non-tutorial biome tier.
 - Single-target theoretical steady-state only: no movement, enemy attacks, deaths, sustain, AoE value, pathing, aggro, party effects, or eHP.
-- Outliers/top/bottom use each class combination's optimal +3 weapon. Class/weapon averages use all +3 weapon samples.
+- Outliers/top/bottom use each class combination's optimal +5 weapon. Class/weapon averages use all +5 weapon samples.
 
 ## 2. Target Monster Baseline
 
@@ -17,84 +17,84 @@ Generated from `tools/dps-report.ts`. This packet is Markdown only; it intention
 | --- | --- |
 | Source | biome tier 2 |
 | Mob count | 21 |
-| Average mob HP | 235 |
+| Average mob HP | 295 |
 | Average plating | 0.33 |
-| Average DR | 4.29% |
-| Reference optimal-build average DPS | 280 |
-| Target TTK at reference DPS | 0.84s |
-| Expected DPS band | 188 - 420 |
+| Average DR | 4.19% |
+| Reference optimal-build average DPS | 295 |
+| Target TTK at reference DPS | 1.00s |
+| Expected DPS band | 197 - 442 |
 
 | Profile | Monster | HP | Plating | DR | Defensive notes |
 | --- | --- | --- | --- | --- | --- |
-| Lightest | Savanna Hawk | 90.0 | 0.00 | 0.00% | HP 90.0, plating 0.00, DR 0.00% |
-| Mid profile | Jungle Snake | 150 | 0.00 | 0.00% | HP 150, plating 0.00, DR 0.00% |
-| Low plating/DR | Ancient Wolf | 165 | 0.00 | 0.00% | HP 165, plating 0.00, DR 0.00% |
-| High DR/special | Mire Stalker | 280 | 0.00 | 12.0% | HP 280, plating 0.00, DR 12.0%, evasion 20.0% |
-| High plating | Cave Troll | 640 | 4.00 | 15.0% | HP 640, plating 4.00, DR 15.0% |
+| Lightest | Gilded Scarab | 340 | 0.00 | 0.00% | HP 340, plating 0.00, DR 0.00% |
+| Low plating/DR | Avalanche Ram | 620 | 0.00 | 0.00% | HP 620, plating 0.00, DR 0.00% |
+| High plating | Magma Tortoise | 800 | 6.00 | 0.00% | HP 800, plating 6.00, DR 0.00%, ramp |
+| High DR/special | Bog Lurker | 720 | 0.00 | 14.0% | HP 720, plating 0.00, DR 14.0%, evasion 25.0% |
+| Heaviest | Cavern Troll | 1600 | 4.00 | 15.0% | HP 1600, plating 4.00, DR 15.0% |
 
 
 ## 3. Class / Spec Input Table
 
 | Build | Optimal Weapon | ATK | On-hit | APS | CD ms | Range | HP | Plating | DR | Class passives | Mechanic frequency | Formula notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice / Ember mage / Harbinger | Cataclysm Axe +3 | 190 | 0.00 | 1.26 | 793 | 192 | 159 | 6.00 | 4.00% | dot.conversion-pct=0.50, dot.max-stacks=6.00 | DoT cap 6 stacks, tick 1500ms | dead swing every 5 hits |
-| Apprentice / Ember mage / Hexblade | Cataclysm Axe +3 | 194 | 0.00 | 1.38 | 724 | 32.0 | 176 | 15.0 | 10.0% | dot.conversion-pct=0.50, dot.max-stacks=6.00, shared.damage-mult=0.10 | DoT cap 6 stacks, tick 1500ms | dead swing every 5 hits |
-| Apprentice / Rime-Bound / Harbinger | Cataclysm Axe +3 | 191 | 0.00 | 1.02 | 980 | 192 | 175 | 9.00 | 10.0% | dot.conversion-pct=0.70, dot.max-stacks=3.00 | DoT cap 3 stacks, tick 2000ms | dead swing every 5 hits |
-| Apprentice / Rime-Bound / Hexblade | Cataclysm Axe +3 | 195 | 0.00 | 1.14 | 877 | 32.0 | 192 | 18.0 | 16.0% | dot.conversion-pct=0.70, dot.max-stacks=3.00, shared.damage-mult=0.10 | DoT cap 3 stacks, tick 2000ms | dead swing every 5 hits |
-| Apprentice / Venom vessel / Harbinger | Cataclysm Axe +3 | 187 | 0.00 | 1.50 | 666 | 192 | 149 | 3.00 | 4.00% | dot.conversion-pct=0.30, dot.max-stacks=8.00 | DoT cap 8 stacks, tick 1000ms | dead swing every 5 hits |
-| Apprentice / Venom vessel / Hexblade | Cataclysm Axe +3 | 191 | 0.00 | 1.62 | 617 | 32.0 | 166 | 12.0 | 10.0% | dot.conversion-pct=0.30, dot.max-stacks=8.00, shared.damage-mult=0.10 | DoT cap 8 stacks, tick 1000ms | dead swing every 5 hits |
-| Conduit / Heavy Frame / Close Range | Permafrost Maul +3 | 182 | 0.00 | 0.48 | 2070 | 122 | 170 | 7.00 | 6.00% | shared.damage-mult=0.10, summoner.damage-sponge-pct=0.60, summoner.leash-mult=2.00, summoner.minion-attack-cooldown=1000, summoner.minion-count=3.00, summoner.minion-count-mult=0.50, summoner.minion-damage-mult=2.00, summoner.minion-damage-pct=1.00, summoner.minion-hp-mult=1.50, summoner.minion-hp-pct=0.45, summoner.minion-range=12.0, summoner.minion-respawn-ms=5000, +2 more | 1 minions at 1.00 APS each | 1 minions at 1.00 APS each |
-| Conduit / Heavy Frame / Far Range | Permafrost Maul +3 | 178 | 0.00 | 0.44 | 2268 | 282 | 153 | 2.00 | 0.00% | summoner.damage-sponge-pct=0.50, summoner.leash-mult=2.00, summoner.minion-attack-cooldown=1000, summoner.minion-count=3.00, summoner.minion-count-mult=0.50, summoner.minion-damage-mult=2.00, summoner.minion-damage-pct=1.00, summoner.minion-hp-mult=1.50, summoner.minion-hp-pct=0.45, summoner.minion-range=12.0, summoner.minion-respawn-ms=5000, summoner.minion-size-mult=2.00, +1 more | 1 minions at 1.00 APS each | 1 minions at 1.00 APS each |
-| Conduit / Light Frame / Close Range | Permafrost Maul +3 | 182 | 0.00 | 0.48 | 2070 | 122 | 145 | 7.00 | 6.00% | shared.damage-mult=0.10, summoner.damage-sponge-pct=0.60, summoner.leash-mult=2.00, summoner.minion-attack-cooldown=1000, summoner.minion-count=3.00, summoner.minion-count-mult=2.00, summoner.minion-damage-mult=0.50, summoner.minion-damage-pct=1.00, summoner.minion-hp-pct=0.45, summoner.minion-range=12.0, summoner.minion-respawn-ms=5000, summoner.minion-size-mult=0.50 | 6 minions at 1.00 APS each | 6 minions at 1.00 APS each |
-| Conduit / Light Frame / Far Range | Permafrost Maul +3 | 178 | 0.00 | 0.44 | 2268 | 282 | 128 | 2.00 | 0.00% | summoner.damage-sponge-pct=0.50, summoner.leash-mult=2.00, summoner.minion-attack-cooldown=1000, summoner.minion-count=3.00, summoner.minion-count-mult=2.00, summoner.minion-damage-mult=0.50, summoner.minion-damage-pct=1.00, summoner.minion-hp-pct=0.45, summoner.minion-range=12.0, summoner.minion-respawn-ms=5000, summoner.minion-size-mult=0.50 | 6 minions at 1.00 APS each | 6 minions at 1.00 APS each |
-| Conduit / Medium Frame / Close Range | Permafrost Maul +3 | 182 | 0.00 | 0.48 | 2070 | 122 | 157 | 7.00 | 6.00% | shared.damage-mult=0.10, summoner.damage-sponge-pct=0.60, summoner.leash-mult=2.00, summoner.minion-attack-cooldown=1000, summoner.minion-count=3.00, summoner.minion-damage-pct=1.00, summoner.minion-hp-pct=0.45, summoner.minion-range=12.0, summoner.minion-respawn-ms=5000 | 3 minions at 1.00 APS each | 3 minions at 1.00 APS each |
-| Conduit / Medium Frame / Far Range | Permafrost Maul +3 | 178 | 0.00 | 0.44 | 2268 | 282 | 140 | 2.00 | 0.00% | summoner.damage-sponge-pct=0.50, summoner.leash-mult=2.00, summoner.minion-attack-cooldown=1000, summoner.minion-count=3.00, summoner.minion-damage-pct=1.00, summoner.minion-hp-pct=0.45, summoner.minion-range=12.0, summoner.minion-respawn-ms=5000 | 3 minions at 1.00 APS each | 3 minions at 1.00 APS each |
-| Slinger / Artillerist / Breacher | Venomthorn Rapier +3 | 55.0 | 30.0 | 2.61 | 233 | 92.0 | 169 | 13.0 | 6.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=20.0, reload.reload-time-ms=3000, shared.damage-mult=0.10 | 20 shots, 3000ms reload, 2.61 effective shots/s | reload steady-state hit estimate |
-| Slinger / Artillerist / Deadeye | Venomthorn Rapier +3 | 53.0 | 30.0 | 2.48 | 253 | 252 | 152 | 6.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=20.0, reload.reload-time-ms=3000 | 20 shots, 3000ms reload, 2.48 effective shots/s | reload steady-state hit estimate |
-| Slinger / Marksman / Breacher | Venomthorn Rapier +3 | 53.0 | 30.0 | 2.35 | 225 | 92.0 | 163 | 9.00 | 6.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=10.0, reload.reload-time-ms=2000, shared.damage-mult=0.10 | 10 shots, 2000ms reload, 2.35 effective shots/s | reload steady-state hit estimate |
-| Slinger / Marksman / Deadeye | Venomthorn Rapier +3 | 50.0 | 30.0 | 2.26 | 243 | 252 | 146 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=10.0, reload.reload-time-ms=2000 | 10 shots, 2000ms reload, 2.26 effective shots/s | reload steady-state hit estimate |
-| Slinger / Scout / Breacher | Venomthorn Rapier +3 | 51.0 | 30.0 | 2.27 | 200 | 92.0 | 153 | 9.00 | 6.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=5.00, reload.reload-time-ms=1200, shared.damage-mult=0.10 | 5 shots, 1200ms reload, 2.27 effective shots/s | reload steady-state hit estimate |
-| Slinger / Scout / Deadeye | Venomthorn Rapier +3 | 49.0 | 30.0 | 2.21 | 212 | 252 | 136 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=5.00, reload.reload-time-ms=1200 | 5 shots, 1200ms reload, 2.21 effective shots/s | reload steady-state hit estimate |
-| Spirit / Phantasm / Haunt | Cataclysm Axe +3 | 188 | 0.00 | 1.38 | 724 | 102 | 153 | 10.0 | 8.00% | energy.empowered-mult=6.00, energy.per-hit=10.0, shared.damage-mult=0.10 | discharge every 11 hits (0.13/s) | dead swing every 5 hits |
-| Spirit / Phantasm / Wisp | Cataclysm Axe +3 | 184 | 0.00 | 1.26 | 793 | 262 | 136 | 4.00 | 2.00% | energy.empowered-mult=6.00, energy.per-hit=10.0 | discharge every 11 hits (0.11/s) | dead swing every 5 hits |
-| Spirit / Spark / Haunt | Cinderlash +3 | 90.0 | 0.00 | 3.42 | 379 | 102 | 141 | 8.00 | 6.00% | energy.empowered-mult=1.50, energy.per-hit=20.0, shared.damage-mult=0.10 | discharge every 6 hits (0.57/s) | energy steady-state hit estimate |
-| Spirit / Spark / Wisp | Cinderlash +3 | 86.0 | 0.00 | 3.22 | 404 | 262 | 124 | 2.00 | 0.00% | energy.empowered-mult=1.50, energy.per-hit=20.0 | discharge every 6 hits (0.54/s) | energy steady-state hit estimate |
-| Spirit / Wraith / Haunt | Cinderlash +3 | 90.0 | 0.00 | 3.22 | 404 | 102 | 140 | 9.00 | 6.00% | energy.empowered-mult=2.00, energy.per-hit=14.0, shared.damage-mult=0.10 | discharge every 9 hits (0.36/s) | energy steady-state hit estimate |
-| Spirit / Wraith / Wisp | Cinderlash +3 | 86.0 | 0.00 | 3.00 | 433 | 262 | 123 | 3.00 | 0.00% | energy.empowered-mult=2.00, energy.per-hit=14.0 | discharge every 9 hits (0.33/s) | energy steady-state hit estimate |
-| Squire / Bulwark / Sentinel | Cataclysm Axe +3 | 198 | 0.00 | 0.96 | 1041 | 132 | 190 | 10.0 | 11.0% | cooldown.empowered-cd-ms=9000, cooldown.empowered-mult=3.00 | empowered every 9.00s (0.11/s) | dead swing every 5 hits |
-| Squire / Bulwark / Vanguard | Cataclysm Axe +3 | 202 | 0.00 | 1.08 | 926 | 12.0 | 207 | 20.0 | 17.0% | cooldown.empowered-cd-ms=9000, cooldown.empowered-mult=3.00, shared.damage-mult=0.10 | empowered every 9.00s (0.11/s) | dead swing every 5 hits |
-| Squire / Knight / Sentinel | Cinderlash +3 | 93.0 | 0.00 | 2.25 | 577 | 132 | 178 | 8.00 | 11.0% | cooldown.empowered-cd-ms=7000, cooldown.empowered-mult=2.00 | empowered every 7.00s (0.14/s) | cooldown steady-state hit estimate |
-| Squire / Knight / Vanguard | Cinderlash +3 | 97.0 | 0.00 | 2.47 | 527 | 12.0 | 195 | 18.0 | 17.0% | cooldown.empowered-cd-ms=7000, cooldown.empowered-mult=2.00, shared.damage-mult=0.10 | empowered every 7.00s (0.14/s) | cooldown steady-state hit estimate |
-| Squire / Warrior / Sentinel | Cinderlash +3 | 95.0 | 0.00 | 2.79 | 466 | 132 | 164 | 5.00 | 8.00% | cooldown.empowered-cd-ms=5000, cooldown.empowered-mult=1.50 | empowered every 5.00s (0.20/s) | cooldown steady-state hit estimate |
-| Squire / Warrior / Vanguard | Cinderlash +3 | 99.0 | 0.00 | 3.00 | 433 | 12.0 | 181 | 15.0 | 14.0% | cooldown.empowered-cd-ms=5000, cooldown.empowered-mult=1.50, shared.damage-mult=0.10 | empowered every 5.00s (0.20/s) | cooldown steady-state hit estimate |
-| Striker / Breaker / In-Fighter | Cataclysm Axe +3 | 193 | 0.00 | 1.08 | 926 | 12.0 | 179 | 16.0 | 12.0% | cadence.empowered-mult=4.00, cadence.empowered-threshold=6.00, shared.damage-mult=0.10 | finisher every 6 hits (0.18/s) | dead swing every 5 hits |
-| Striker / Breaker / Phantom-Blade | Cataclysm Axe +3 | 189 | 0.00 | 0.96 | 1041 | 132 | 162 | 8.00 | 6.00% | cadence.empowered-mult=4.00, cadence.empowered-threshold=6.00 | finisher every 6 hits (0.16/s) | dead swing every 5 hits |
-| Striker / Flurry / In-Fighter | Cinderlash +3 | 93.0 | 0.00 | 3.07 | 424 | 12.0 | 157 | 12.0 | 10.0% | cadence.empowered-mult=1.50, cadence.empowered-threshold=4.00, shared.damage-mult=0.10 | finisher every 4 hits (0.77/s) | cadence steady-state hit estimate |
-| Striker / Flurry / Phantom-Blade | Cinderlash +3 | 89.0 | 0.00 | 2.85 | 456 | 132 | 140 | 4.00 | 4.00% | cadence.empowered-mult=1.50, cadence.empowered-threshold=4.00 | finisher every 4 hits (0.71/s) | cadence steady-state hit estimate |
-| Striker / Skirmisher / In-Fighter | Cinderlash +3 | 94.0 | 0.00 | 2.47 | 527 | 12.0 | 171 | 13.0 | 10.0% | cadence.empowered-mult=2.00, cadence.empowered-threshold=5.00, shared.damage-mult=0.10 | finisher every 5 hits (0.49/s) | cadence steady-state hit estimate |
-| Striker / Skirmisher / Phantom-Blade | Cinderlash +3 | 90.0 | 0.00 | 2.25 | 577 | 132 | 154 | 5.00 | 4.00% | cadence.empowered-mult=2.00, cadence.empowered-threshold=5.00 | finisher every 5 hits (0.45/s) | cadence steady-state hit estimate |
+| Apprentice / Ember mage / Harbinger | Permafrost Maul +5 | 342 | 0.00 | 0.54 | 1869 | 172 | 125 | 2.00 | 0.00% | dot.conversion-pct=0.50, dot.duration-ms=5500, dot.max-stacks=6.00, dot.mechanic-mult=1.20, dot.tick-interval-ms=1500 | DoT cap 6 stacks, tick 1500ms | dot steady-state hit estimate |
+| Apprentice / Ember mage / Hexblade | Permafrost Maul +5 | 345 | 0.00 | 0.55 | 1802 | 12.0 | 137 | 3.00 | 0.00% | dot.conversion-pct=0.50, dot.duration-ms=5500, dot.max-stacks=6.00, dot.mechanic-mult=1.20, dot.tick-interval-ms=1500, shared.damage-mult=0.10 | DoT cap 6 stacks, tick 1500ms | shared.damage-mult +10% applied to direct + class |
+| Apprentice / Rime-Bound / Harbinger | Permafrost Maul +5 | 345 | 0.00 | 0.47 | 2128 | 172 | 133 | 3.00 | 3.00% | dot.conversion-pct=0.70, dot.duration-ms=6500, dot.max-stacks=3.00, dot.mechanic-mult=1.15, dot.tick-interval-ms=2000 | DoT cap 3 stacks, tick 2000ms | dot steady-state hit estimate |
+| Apprentice / Rime-Bound / Hexblade | Permafrost Maul +5 | 348 | 0.00 | 0.49 | 2041 | 12.0 | 145 | 3.00 | 3.00% | dot.conversion-pct=0.70, dot.duration-ms=6500, dot.max-stacks=3.00, dot.mechanic-mult=1.15, dot.tick-interval-ms=2000, shared.damage-mult=0.10 | DoT cap 3 stacks, tick 2000ms | shared.damage-mult +10% applied to direct + class |
+| Apprentice / Venom vessel / Harbinger | Rimebrand +5 | 275 | 0.00 | 0.68 | 1462 | 172 | 119 | 2.00 | 0.00% | dot.conversion-pct=0.30, dot.duration-ms=5000, dot.max-stacks=8.00, dot.mechanic-mult=1.25, dot.tick-interval-ms=1000 | DoT cap 8 stacks, tick 1000ms | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Apprentice / Venom vessel / Hexblade | Rimebrand +5 | 277 | 0.00 | 0.71 | 1413 | 12.0 | 131 | 2.00 | 0.00% | dot.conversion-pct=0.30, dot.duration-ms=5000, dot.max-stacks=8.00, dot.mechanic-mult=1.25, dot.tick-interval-ms=1000, shared.damage-mult=0.10 | DoT cap 8 stacks, tick 1000ms | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Conduit / Consort / Harrier | Cataclysm Axe +5 | 191 | 0.00 | 1.25 | 801 | 162 | 134 | 2.00 | 2.00% | - | 5 balanced/far summons at 1.25 APS each; one formation budget | 5 balanced far summons at 1.25 APS; formation budget normalized; dead swing every 5 hits |
+| Conduit / Consort / Vigil | Cataclysm Axe +5 | 191 | 0.00 | 1.25 | 801 | 162 | 122 | 2.00 | 0.00% | - | 5 balanced/close summons at 1.25 APS each; one formation budget | 5 balanced close summons at 1.25 APS; formation budget normalized; dead swing every 5 hits |
+| Conduit / Effigy / Harrier | Cataclysm Axe +5 | 191 | 0.00 | 1.18 | 850 | 162 | 142 | 2.00 | 3.00% | - | 2 heavy/far summons at 1.18 APS each; one formation budget | 2 heavy far summons at 1.18 APS; formation budget normalized; dead swing every 5 hits |
+| Conduit / Effigy / Vigil | Cataclysm Axe +5 | 191 | 0.00 | 1.18 | 850 | 162 | 130 | 2.00 | 1.00% | - | 2 heavy/close summons at 1.18 APS each; one formation budget | 2 heavy close summons at 1.18 APS; formation budget normalized; dead swing every 5 hits |
+| Conduit / Splinter / Harrier | Cataclysm Axe +5 | 191 | 0.00 | 1.32 | 757 | 162 | 130 | 2.00 | 2.00% | - | 6 light/far summons at 1.32 APS each; one formation budget | 6 light far summons at 1.32 APS; formation budget normalized; dead swing every 5 hits |
+| Conduit / Splinter / Vigil | Cataclysm Axe +5 | 191 | 0.00 | 1.32 | 757 | 162 | 118 | 2.00 | 0.00% | - | 6 light/close summons at 1.32 APS each; one formation budget | 6 light close summons at 1.32 APS; formation budget normalized; dead swing every 5 hits |
+| Slinger / Artillerist / Breacher | Rimebrand +5 | 185 | 0.00 | 1.12 | 744 | 12.0 | 139 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=20.0, reload.reload-time-ms=3000, shared.damage-mult=0.10 | 20 shots, 3000ms reload, 1.12 effective shots/s | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Slinger / Artillerist / Deadeye | Rimebrand +5 | 184 | 0.00 | 1.08 | 772 | 212 | 124 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=20.0, reload.reload-time-ms=3000 | 20 shots, 3000ms reload, 1.08 effective shots/s | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Slinger / Marksman / Breacher | Rimebrand +5 | 183 | 0.00 | 1.12 | 695 | 12.0 | 133 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=10.0, reload.reload-time-ms=2000, shared.damage-mult=0.10 | 10 shots, 2000ms reload, 1.12 effective shots/s | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Slinger / Marksman / Deadeye | Rimebrand +5 | 182 | 0.00 | 1.09 | 719 | 212 | 118 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=10.0, reload.reload-time-ms=2000 | 10 shots, 2000ms reload, 1.09 effective shots/s | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Slinger / Scout / Breacher | Rimebrand +5 | 183 | 0.00 | 1.11 | 662 | 12.0 | 129 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=5.00, reload.reload-time-ms=1200, shared.damage-mult=0.10 | 5 shots, 1200ms reload, 1.11 effective shots/s | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Slinger / Scout / Deadeye | Rimebrand +5 | 182 | 0.00 | 1.08 | 683 | 212 | 114 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50, reload.max-ammo=5.00, reload.reload-time-ms=1200 | 5 shots, 1200ms reload, 1.08 effective shots/s | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Spirit / Phantasm / Haunt | Rimebrand +5 | 298 | 0.00 | 0.65 | 1544 | 12.0 | 137 | 2.00 | 2.00% | energy.empowered-mult=6.00, energy.per-hit=10.0, shared.damage-mult=0.10 | discharge every 11 hits (0.06/s) | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Spirit / Phantasm / Wisp | Rimebrand +5 | 296 | 0.00 | 0.62 | 1603 | 222 | 120 | 2.00 | 2.00% | energy.empowered-mult=6.00, energy.per-hit=10.0 | discharge every 11 hits (0.06/s) | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Spirit / Spark / Haunt | Rimebrand +5 | 291 | 0.00 | 0.78 | 1282 | 12.0 | 126 | 2.00 | 0.00% | energy.empowered-mult=1.50, energy.per-hit=20.0, shared.damage-mult=0.10 | discharge every 6 hits (0.13/s) | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Spirit / Spark / Wisp | Rimebrand +5 | 289 | 0.00 | 0.76 | 1323 | 222 | 109 | 2.00 | 0.00% | energy.empowered-mult=1.50, energy.per-hit=20.0 | discharge every 6 hits (0.13/s) | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Spirit / Wraith / Haunt | Rimebrand +5 | 293 | 0.00 | 0.74 | 1344 | 12.0 | 130 | 2.00 | 0.00% | energy.empowered-mult=2.00, energy.per-hit=14.0, shared.damage-mult=0.10 | discharge every 9 hits (0.08/s) | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Spirit / Wraith / Wisp | Rimebrand +5 | 291 | 0.00 | 0.72 | 1389 | 222 | 113 | 2.00 | 0.00% | energy.empowered-mult=2.00, energy.per-hit=14.0 | discharge every 9 hits (0.08/s) | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Squire / Bulwark / Sentinel | Avalanche Maul +5 | 360 | 0.00 | 0.41 | 2424 | 132 | 155 | 3.00 | 7.00% | cooldown.empowered-cd-ms=8000, cooldown.empowered-mult=3.50 | empowered every 8.00s (0.13/s) | cooldown steady-state hit estimate |
+| Squire / Bulwark / Vanguard | Avalanche Maul +5 | 363 | 0.00 | 0.43 | 2331 | 12.0 | 162 | 3.00 | 7.00% | cooldown.empowered-cd-ms=8000, cooldown.empowered-mult=3.50, shared.damage-mult=0.10 | empowered every 8.00s (0.13/s) | shared.damage-mult +10% applied to direct + class |
+| Squire / Knight / Sentinel | Avalanche Maul +5 | 355 | 0.00 | 0.50 | 2020 | 132 | 145 | 3.00 | 6.00% | cooldown.empowered-cd-ms=7000, cooldown.empowered-mult=2.00 | empowered every 7.00s (0.14/s) | cooldown steady-state hit estimate |
+| Squire / Knight / Vanguard | Avalanche Maul +5 | 358 | 0.00 | 0.51 | 1955 | 12.0 | 152 | 3.00 | 6.00% | cooldown.empowered-cd-ms=7000, cooldown.empowered-mult=2.00, shared.damage-mult=0.10 | empowered every 7.00s (0.14/s) | shared.damage-mult +10% applied to direct + class |
+| Squire / Warrior / Sentinel | Avalanche Maul +5 | 352 | 0.00 | 0.54 | 1836 | 132 | 138 | 3.00 | 4.00% | cooldown.empowered-cd-ms=5000, cooldown.empowered-mult=1.50 | empowered every 5.00s (0.20/s) | cooldown steady-state hit estimate |
+| Squire / Warrior / Vanguard | Avalanche Maul +5 | 355 | 0.00 | 0.56 | 1782 | 12.0 | 145 | 3.00 | 4.00% | cooldown.empowered-cd-ms=5000, cooldown.empowered-mult=1.50, shared.damage-mult=0.10 | empowered every 5.00s (0.20/s) | shared.damage-mult +10% applied to direct + class |
+| Striker / Breaker / In-Fighter | Rimebrand +5 | 270 | 0.00 | 0.61 | 1634 | 12.0 | 148 | 3.00 | 4.00% | cadence.empowered-mult=4.00, cadence.empowered-threshold=6.00, shared.damage-mult=0.10 | finisher every 6 hits (0.10/s) | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Striker / Breaker / Phantom-Blade | Rimebrand +5 | 268 | 0.00 | 0.59 | 1701 | 132 | 139 | 3.00 | 4.00% | cadence.empowered-mult=4.00, cadence.empowered-threshold=6.00 | finisher every 6 hits (0.10/s) | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Striker / Flurry / In-Fighter | Rimebrand +5 | 273 | 0.00 | 0.74 | 1344 | 12.0 | 134 | 3.00 | 2.00% | cadence.empowered-mult=1.50, cadence.empowered-threshold=4.00, shared.damage-mult=0.10 | finisher every 4 hits (0.19/s) | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Striker / Flurry / Phantom-Blade | Rimebrand +5 | 270 | 0.00 | 0.72 | 1389 | 132 | 125 | 2.00 | 2.00% | cadence.empowered-mult=1.50, cadence.empowered-threshold=4.00 | finisher every 4 hits (0.18/s) | tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Striker / Skirmisher / In-Fighter | Rimebrand +5 | 275 | 0.00 | 0.70 | 1437 | 12.0 | 140 | 3.00 | 2.00% | cadence.empowered-mult=2.00, cadence.empowered-threshold=5.00, shared.damage-mult=0.10 | finisher every 5 hits (0.14/s) | shared.damage-mult +10% applied to direct + class; tundra-rimebrand-burn reservoir DoT from weapon profile |
+| Striker / Skirmisher / Phantom-Blade | Rimebrand +5 | 273 | 0.00 | 0.67 | 1488 | 132 | 131 | 3.00 | 2.00% | cadence.empowered-mult=2.00, cadence.empowered-threshold=5.00 | finisher every 5 hits (0.13/s) | tundra-rimebrand-burn reservoir DoT from weapon profile |
 
 
-## 4. Weapon Input Table (+0 and +3)
+## 4. Weapon Input Table (+0 and +5)
 
 | Weapon | Plus | Stats | Effects | Formulas | Scaling notes |
 | --- | --- | --- | --- | --- | --- |
-| Avalanche Maul | +0 | attack=74.0 | - | 0.40 APS base | explicit steps 0/3 |
-| Avalanche Maul | +3 | attack=146 | - | 0.40 APS base | explicit steps 3/3 |
-| Blightbrand | +0 | attack=34.0 | weapon.dot-conversion-pct=0.30, weapon.dot-stacks=5.00 | 0.80 APS base; swamp-blightbrand-burn DoT reservoir 30.0% conversion x1.15 | explicit steps 0/3 |
-| Blightbrand | +3 | attack=58.0 | weapon.dot-conversion-pct=0.30, weapon.dot-stacks=5.00 | 0.80 APS base; swamp-blightbrand-burn DoT reservoir 30.0% conversion x1.15 | explicit steps 3/3 |
-| Cataclysm Axe | +0 | attack=92.0 | weapon.dead-swing-interval=5.00 | 1.20 APS base | explicit steps 0/3 |
-| Cataclysm Axe | +3 | attack=152 | weapon.dead-swing-interval=5.00 | 1.20 APS base | explicit steps 3/3 |
-| Cinderlash | +0 | attack=34.0 | weapon.flurry-pct=0.06, weapon.flurry-stacks=5.00 | 1.65 APS base | explicit steps 0/3 |
-| Cinderlash | +3 | attack=52.0 | weapon.flurry-pct=0.06, weapon.flurry-stacks=5.00 | 1.65 APS base | explicit steps 3/3 |
-| Permafrost Maul | +0 | attack=76.0 | weapon.brittle-dr=0.01, weapon.brittle-plating=2.00, weapon.brittle-stacks=8.00 | 0.42 APS base | explicit steps 0/3 |
-| Permafrost Maul | +3 | attack=151 | weapon.brittle-dr=0.01, weapon.brittle-plating=2.00, weapon.brittle-stacks=8.00 | 0.42 APS base | explicit steps 3/3 |
-| Rimebrand | +0 | attack=48.0 | weapon.dot-conversion-pct=0.45, weapon.dot-stacks=3.00 | 0.55 APS base; swamp-rimebrand-burn DoT reservoir 45.0% conversion x1.15 | explicit steps 0/3 |
-| Rimebrand | +3 | attack=84.0 | weapon.dot-conversion-pct=0.45, weapon.dot-stacks=3.00 | 0.55 APS base; swamp-rimebrand-burn DoT reservoir 45.0% conversion x1.15 | explicit steps 3/3 |
-| Solar Cross | +0 | attack=34.0 | weapon.first-strike-mult=2.50 | 0.70 APS base | explicit steps 0/3 |
-| Solar Cross | +3 | attack=58.0 | weapon.first-strike-mult=2.50 | 0.70 APS base | explicit steps 3/3 |
-| Venomthorn Rapier | +0 | attack=24.0, onHitDamage=18.0 | - | 1.65 APS base | explicit steps 0/3 |
-| Venomthorn Rapier | +3 | attack=42.0, onHitDamage=30.0 | - | 1.65 APS base | explicit steps 3/3 |
+| Avalanche Maul | +0 | attack=120 | weapon.empowered-mult-bonus=0.50 | 0.55 APS base | explicit steps 0/5 |
+| Avalanche Maul | +5 | attack=260 | weapon.empowered-mult-bonus=0.50 | 0.55 APS base | explicit steps 5/5 |
+| Cataclysm Axe | +0 | attack=82.0 | weapon.dead-swing-interval=5.00 | 1.20 APS base | explicit steps 0/5 |
+| Cataclysm Axe | +5 | attack=162 | weapon.dead-swing-interval=5.00 | 1.20 APS base | explicit steps 5/5 |
+| Cinderlash | +0 | attack=34.0 | weapon.flurry-pct=0.03, weapon.flurry-stacks=5.00 | 1.65 APS base | explicit steps 0/5 |
+| Cinderlash | +5 | attack=64.0 | weapon.flurry-pct=0.03, weapon.flurry-stacks=5.00 | 1.65 APS base | explicit steps 5/5 |
+| Permafrost Maul | +0 | attack=120 | weapon.brittle-dr=0.01, weapon.brittle-plating=2.00, weapon.brittle-stacks=8.00 | 0.50 APS base | explicit steps 0/5 |
+| Permafrost Maul | +5 | attack=270 | weapon.brittle-dr=0.01, weapon.brittle-plating=2.00, weapon.brittle-stacks=8.00 | 0.50 APS base | explicit steps 5/5 |
+| Plague Fang | +0 | attack=46.0 | - | 1.00 APS base; swamp-blightbrand-burn DoT reservoir 50.0% conversion x1.50 | explicit steps 0/5 |
+| Plague Fang | +5 | attack=116 | - | 1.00 APS base; swamp-blightbrand-burn DoT reservoir 50.0% conversion x1.50 | explicit steps 5/5 |
+| Rimebrand | +0 | attack=96.0 | - | 0.60 APS base; tundra-rimebrand-burn DoT reservoir 70.0% conversion x1.50 | explicit steps 0/5 |
+| Rimebrand | +5 | attack=216 | - | 0.60 APS base; tundra-rimebrand-burn DoT reservoir 70.0% conversion x1.50 | explicit steps 5/5 |
+| Solar Falchion | +0 | attack=42.0 | weapon.first-strike-mult=2.50 | 0.80 APS base | explicit steps 0/5 |
+| Solar Falchion | +5 | attack=102 | weapon.first-strike-mult=2.50 | 0.80 APS base | explicit steps 5/5 |
+| Venomthorn Rapier | +0 | attack=22.0, onHitDamage=18.0 | - | 1.65 APS base | explicit steps 0/5 |
+| Venomthorn Rapier | +5 | attack=42.0, onHitDamage=38.0 | - | 1.65 APS base | explicit steps 5/5 |
 
 
 ## 5. Top / Bottom Builds And Outliers
@@ -103,129 +103,111 @@ Top 10 builds:
 
 | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Conduit / Light Frame / Close Range | Permafrost Maul +3 | 546 | 0.00 | 546 | 0.00 | 0.00 | HIGH |
-| Conduit / Medium Frame / Close Range | Permafrost Maul +3 | 546 | 0.00 | 546 | 0.00 | 0.00 | HIGH |
-| Conduit / Light Frame / Far Range | Permafrost Maul +3 | 534 | 0.00 | 534 | 0.00 | 0.00 | HIGH |
-| Conduit / Medium Frame / Far Range | Permafrost Maul +3 | 534 | 0.00 | 534 | 0.00 | 0.00 | HIGH |
-| Conduit / Heavy Frame / Close Range | Permafrost Maul +3 | 364 | 0.00 | 364 | 0.00 | 0.00 | - |
-| Conduit / Heavy Frame / Far Range | Permafrost Maul +3 | 356 | 0.00 | 356 | 0.00 | 0.00 | - |
-| Spirit / Spark / Haunt | Cinderlash +3 | 319 | 295 | 24.5 | 0.00 | 0.00 | - |
-| Spirit / Phantasm / Haunt | Cataclysm Axe +3 | 312 | 199 | 113 | 0.00 | 0.00 | - |
-| Spirit / Wraith / Haunt | Cinderlash +3 | 307 | 277 | 30.7 | 0.00 | 0.00 | - |
-| Striker / Flurry / In-Fighter | Cinderlash +3 | 307 | 273 | 33.7 | 0.00 | 0.00 | - |
+| Spirit / Phantasm / Haunt | Rimebrand +5 | 399 | 60.9 | 27.7 | 0.00 | 310 | - |
+| Squire / Bulwark / Vanguard | Avalanche Maul +5 | 367 | 164 | 203 | 0.00 | 0.00 | - |
+| Striker / Breaker / In-Fighter | Rimebrand +5 | 352 | 52.1 | 26.1 | 0.00 | 274 | - |
+| Spirit / Spark / Haunt | Rimebrand +5 | 349 | 71.6 | 6.01 | 0.00 | 271 | - |
+| Spirit / Phantasm / Wisp | Rimebrand +5 | 347 | 53.0 | 24.1 | 0.00 | 270 | - |
+| Spirit / Wraith / Haunt | Rimebrand +5 | 344 | 68.8 | 7.67 | 0.00 | 267 | - |
+| Apprentice / Rime-Bound / Hexblade | Permafrost Maul +5 | 337 | 56.1 | 0.00 | 281 | 0.00 | - |
+| Apprentice / Rime-Bound / Harbinger | Permafrost Maul +5 | 326 | 48.9 | 0.00 | 278 | 0.00 | - |
+| Striker / Skirmisher / In-Fighter | Rimebrand +5 | 326 | 60.4 | 12.1 | 0.00 | 254 | - |
+| Squire / Bulwark / Sentinel | Avalanche Maul +5 | 325 | 142 | 183 | 0.00 | 0.00 | - |
 
 
 Bottom 10 builds:
 
 | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Slinger / Scout / Deadeye | Venomthorn Rapier +3 | 170 | 170 | 0.00 | 0.00 | 0.00 | LOW |
-| Slinger / Marksman / Deadeye | Venomthorn Rapier +3 | 176 | 176 | 0.00 | 0.00 | 0.00 | LOW |
-| Slinger / Scout / Breacher | Venomthorn Rapier +3 | 180 | 180 | 0.00 | 0.00 | 0.00 | LOW |
-| Squire / Bulwark / Sentinel | Cataclysm Axe +3 | 187 | 145 | 42.1 | 0.00 | 0.00 | LOW |
-| Slinger / Marksman / Breacher | Venomthorn Rapier +3 | 191 | 191 | 0.00 | 0.00 | 0.00 | - |
-| Slinger / Artillerist / Deadeye | Venomthorn Rapier +3 | 201 | 201 | 0.00 | 0.00 | 0.00 | - |
-| Apprentice / Ember mage / Harbinger | Cataclysm Axe +3 | 208 | 91.8 | 0.00 | 116 | 0.00 | - |
-| Squire / Bulwark / Vanguard | Cataclysm Axe +3 | 210 | 167 | 43.0 | 0.00 | 0.00 | - |
-| Squire / Knight / Sentinel | Cinderlash +3 | 213 | 200 | 12.7 | 0.00 | 0.00 | - |
-| Slinger / Artillerist / Breacher | Venomthorn Rapier +3 | 214 | 214 | 0.00 | 0.00 | 0.00 | - |
+| Conduit / Effigy / Harrier | Cataclysm Axe +5 | 209 | 0.00 | 209 | 0.00 | 0.00 | - |
+| Conduit / Effigy / Vigil | Cataclysm Axe +5 | 209 | 0.00 | 209 | 0.00 | 0.00 | - |
+| Conduit / Consort / Harrier | Cataclysm Axe +5 | 225 | 0.00 | 225 | 0.00 | 0.00 | - |
+| Conduit / Consort / Vigil | Cataclysm Axe +5 | 225 | 0.00 | 225 | 0.00 | 0.00 | - |
+| Conduit / Splinter / Harrier | Cataclysm Axe +5 | 254 | 0.00 | 254 | 0.00 | 0.00 | - |
+| Conduit / Splinter / Vigil | Cataclysm Axe +5 | 254 | 0.00 | 254 | 0.00 | 0.00 | - |
+| Slinger / Scout / Deadeye | Rimebrand +5 | 254 | 56.6 | 0.00 | 0.00 | 198 | - |
+| Slinger / Marksman / Deadeye | Rimebrand +5 | 256 | 56.8 | 0.00 | 0.00 | 199 | - |
+| Slinger / Artillerist / Deadeye | Rimebrand +5 | 258 | 57.3 | 0.00 | 0.00 | 200 | - |
+| Squire / Knight / Sentinel | Avalanche Maul +5 | 265 | 168 | 97.1 | 0.00 | 0.00 | - |
 
 
 All optimal-weapon outliers:
 
-| Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Conduit / Light Frame / Close Range | Permafrost Maul +3 | 546 | 0.00 | 546 | 0.00 | 0.00 | HIGH |
-| Conduit / Medium Frame / Close Range | Permafrost Maul +3 | 546 | 0.00 | 546 | 0.00 | 0.00 | HIGH |
-| Conduit / Light Frame / Far Range | Permafrost Maul +3 | 534 | 0.00 | 534 | 0.00 | 0.00 | HIGH |
-| Conduit / Medium Frame / Far Range | Permafrost Maul +3 | 534 | 0.00 | 534 | 0.00 | 0.00 | HIGH |
-| Squire / Bulwark / Sentinel | Cataclysm Axe +3 | 187 | 145 | 42.1 | 0.00 | 0.00 | LOW |
-| Slinger / Scout / Breacher | Venomthorn Rapier +3 | 180 | 180 | 0.00 | 0.00 | 0.00 | LOW |
-| Slinger / Marksman / Deadeye | Venomthorn Rapier +3 | 176 | 176 | 0.00 | 0.00 | 0.00 | LOW |
-| Slinger / Scout / Deadeye | Venomthorn Rapier +3 | 170 | 170 | 0.00 | 0.00 | 0.00 | LOW |
+_No data._
 
 
 ## 6. Average DPS Per Class
 
 | Class | Avg DPS | Samples |
 | --- | --- | --- |
-| Conduit | 316 | 48 |
-| Spirit | 184 | 48 |
-| Striker | 161 | 48 |
-| Squire | 157 | 48 |
-| Apprentice | 149 | 48 |
-| Slinger | 123 | 48 |
+| Spirit | 292 | 48 |
+| Striker | 269 | 48 |
+| Squire | 238 | 48 |
+| Apprentice | 224 | 48 |
+| Slinger | 207 | 48 |
+| Conduit | 167 | 48 |
 
 
 ## 7. Average DPS Per Weapon
 
 | Weapon | Avg DPS | Samples |
 | --- | --- | --- |
-| Cataclysm Axe | 271 | 36 |
-| Cinderlash | 215 | 36 |
-| Venomthorn Rapier | 206 | 36 |
-| Permafrost Maul | 185 | 36 |
-| Avalanche Maul | 169 | 36 |
-| Solar Cross | 143 | 36 |
-| Rimebrand | 136 | 36 |
-| Blightbrand | 127 | 36 |
+| Rimebrand | 285 | 36 |
+| Avalanche Maul | 267 | 36 |
+| Cataclysm Axe | 256 | 36 |
+| Permafrost Maul | 243 | 36 |
+| Plague Fang | 232 | 36 |
+| Solar Falchion | 195 | 36 |
+| Cinderlash | 193 | 36 |
+| Venomthorn Rapier | 193 | 36 |
 
 
 Weapon DPS against target shapes:
 
 | Weapon | neutral T3 dummy | high-plating T3 dummy | high-HP elite T3 dummy | Shape sources |
 | --- | --- | --- | --- | --- |
-| Avalanche Maul +3 | 169 | 150 | 150 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
-| Blightbrand +3 | 127 | 110 | 110 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
-| Cataclysm Axe +3 | 271 | 239 | 239 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
-| Cinderlash +3 | 215 | 186 | 186 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
-| Permafrost Maul +3 | 185 | 173 | 173 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
-| Rimebrand +3 | 136 | 119 | 119 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
-| Solar Cross +3 | 143 | 106 | 106 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
-| Venomthorn Rapier +3 | 206 | 184 | 184 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+| Avalanche Maul +5 | 267 | 273 | 238 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Magma Tortoise; high-HP elite T3 dummy: Cavern Troll |
+| Cataclysm Axe +5 | 256 | 257 | 224 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Magma Tortoise; high-HP elite T3 dummy: Cavern Troll |
+| Cinderlash +5 | 193 | 186 | 164 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Magma Tortoise; high-HP elite T3 dummy: Cavern Troll |
+| Permafrost Maul +5 | 243 | 243 | 228 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Magma Tortoise; high-HP elite T3 dummy: Cavern Troll |
+| Plague Fang +5 | 232 | 230 | 202 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Magma Tortoise; high-HP elite T3 dummy: Cavern Troll |
+| Rimebrand +5 | 285 | 290 | 253 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Magma Tortoise; high-HP elite T3 dummy: Cavern Troll |
+| Solar Falchion +5 | 195 | 159 | 129 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Magma Tortoise; high-HP elite T3 dummy: Cavern Troll |
+| Venomthorn Rapier +5 | 193 | 183 | 171 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Magma Tortoise; high-HP elite T3 dummy: Cavern Troll |
 
 
 ## 8. Best Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |
 | --- | --- | --- | --- |
-| Striker | Cinderlash | 259 | 6 |
-| Squire | Cinderlash | 233 | 6 |
-| Apprentice | Cataclysm Axe | 221 | 6 |
-| Spirit | Cataclysm Axe | 292 | 6 |
-| Slinger | Venomthorn Rapier | 189 | 6 |
-| Conduit | Permafrost Maul | 480 | 6 |
+| Striker | Rimebrand | 312 | 6 |
+| Squire | Avalanche Maul | 305 | 6 |
+| Apprentice | Permafrost Maul | 303 | 6 |
+| Spirit | Rimebrand | 341 | 6 |
+| Slinger | Rimebrand | 273 | 6 |
+| Conduit | Cataclysm Axe | 229 | 6 |
 
 
 ## 9. Worst Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |
 | --- | --- | --- | --- |
-| Striker | Rimebrand | 95.5 | 6 |
-| Squire | Rimebrand | 100 | 6 |
-| Apprentice | Blightbrand | 105 | 6 |
-| Spirit | Rimebrand | 109 | 6 |
-| Slinger | Rimebrand | 88.1 | 6 |
-| Conduit | Venomthorn Rapier | 181 | 6 |
+| Striker | Venomthorn Rapier | 231 | 6 |
+| Squire | Venomthorn Rapier | 183 | 6 |
+| Apprentice | Venomthorn Rapier | 139 | 6 |
+| Spirit | Venomthorn Rapier | 250 | 6 |
+| Slinger | Cinderlash | 148 | 6 |
+| Conduit | Solar Falchion | 101 | 6 |
 
 
 ## 10. Outlier Detail
 
-| Flag | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Suspected source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| HIGH | Conduit / Light Frame / Close Range | Permafrost Maul +3 | 546 | 0.00 | 546 | 0.00 | 0.00 | class mechanic share; 6 minions at 1.00 APS each |
-| HIGH | Conduit / Medium Frame / Close Range | Permafrost Maul +3 | 546 | 0.00 | 546 | 0.00 | 0.00 | class mechanic share; 3 minions at 1.00 APS each |
-| HIGH | Conduit / Light Frame / Far Range | Permafrost Maul +3 | 534 | 0.00 | 534 | 0.00 | 0.00 | class mechanic share; 6 minions at 1.00 APS each |
-| HIGH | Conduit / Medium Frame / Far Range | Permafrost Maul +3 | 534 | 0.00 | 534 | 0.00 | 0.00 | class mechanic share; 3 minions at 1.00 APS each |
-| LOW | Squire / Bulwark / Sentinel | Cataclysm Axe +3 | 187 | 145 | 42.1 | 0.00 | 0.00 | direct share; dead swing every 5 hits |
-| LOW | Slinger / Scout / Breacher | Venomthorn Rapier +3 | 180 | 180 | 0.00 | 0.00 | 0.00 | direct share |
-| LOW | Slinger / Marksman / Deadeye | Venomthorn Rapier +3 | 176 | 176 | 0.00 | 0.00 | 0.00 | direct share |
-| LOW | Slinger / Scout / Deadeye | Venomthorn Rapier +3 | 170 | 170 | 0.00 | 0.00 | 0.00 | direct share |
+_No data._
 
 
 ## 11. Formula Caveats / Unmapped Mechanics
 
 - Direct hit formula is shared `estimatePlayerHitDamage`; stats are rebuilt through shared `recalculatePlayerStats`.
-- Cadence, cooldown, energy, reload, DoT, summoner, weapon debuffs, weapon DoT reservoirs, and sacred-family burst effects are deterministic steady-state estimates.
+- Cadence, cooldown, energy, reload, DoT, summoner, weapon debuffs, and weapon DoT reservoirs are deterministic steady-state estimates.
 - Runtime combat events, proc randomness, target swapping, overkill, downtime, minion death/pathing, AoE splash value, and enemy offensive pressure are not modeled.
-- Report notes observed in this tier: `1 minions at 1.00 APS each`, `3 minions at 1.00 APS each`, `6 minions at 1.00 APS each`, `dead swing every 5 hits`, `first strike amortized over tier dummy HP`, `swamp-blightbrand-burn reservoir DoT from weapon profile`, `swamp-rimebrand-burn reservoir DoT from weapon profile`.
+- Report notes observed in this tier: `2 heavy close summons at 0.49 APS; formation budget normalized`, `2 heavy close summons at 0.54 APS; formation budget normalized`, `2 heavy close summons at 0.59 APS; formation budget normalized`, `2 heavy close summons at 0.78 APS; formation budget normalized`, `2 heavy close summons at 0.98 APS; formation budget normalized`, `2 heavy close summons at 1.18 APS; formation budget normalized`, `2 heavy close summons at 1.62 APS; formation budget normalized`, `2 heavy far summons at 0.49 APS; formation budget normalized`, `2 heavy far summons at 0.54 APS; formation budget normalized`, `2 heavy far summons at 0.59 APS; formation budget normalized`, `2 heavy far summons at 0.78 APS; formation budget normalized`, `2 heavy far summons at 0.98 APS; formation budget normalized`, `2 heavy far summons at 1.18 APS; formation budget normalized`, `2 heavy far summons at 1.62 APS; formation budget normalized`, `5 balanced close summons at 0.52 APS; formation budget normalized`, `5 balanced close summons at 0.57 APS; formation budget normalized`, `5 balanced close summons at 0.62 APS; formation budget normalized`, `5 balanced close summons at 0.83 APS; formation budget normalized`, `5 balanced close summons at 1.04 APS; formation budget normalized`, `5 balanced close summons at 1.25 APS; formation budget normalized`, `5 balanced close summons at 1.72 APS; formation budget normalized`, `5 balanced far summons at 0.52 APS; formation budget normalized`, `5 balanced far summons at 0.57 APS; formation budget normalized`, `5 balanced far summons at 0.62 APS; formation budget normalized`, `5 balanced far summons at 0.83 APS; formation budget normalized`, `5 balanced far summons at 1.04 APS; formation budget normalized`, `5 balanced far summons at 1.25 APS; formation budget normalized`, `5 balanced far summons at 1.72 APS; formation budget normalized`, `6 light close summons at 0.55 APS; formation budget normalized`, `6 light close summons at 0.60 APS; formation budget normalized`, `6 light close summons at 0.66 APS; formation budget normalized`, `6 light close summons at 0.88 APS; formation budget normalized`, `6 light close summons at 1.10 APS; formation budget normalized`, `6 light close summons at 1.32 APS; formation budget normalized`, `6 light close summons at 1.81 APS; formation budget normalized`, `6 light far summons at 0.55 APS; formation budget normalized`, `6 light far summons at 0.60 APS; formation budget normalized`, `6 light far summons at 0.66 APS; formation budget normalized`, `6 light far summons at 0.88 APS; formation budget normalized`, `6 light far summons at 1.10 APS; formation budget normalized`, `6 light far summons at 1.32 APS; formation budget normalized`, `6 light far summons at 1.81 APS; formation budget normalized`, `dead swing every 5 hits`, `first strike amortized over tier dummy HP`, `shared.damage-mult +10% applied to direct + class`, `swamp-blightbrand-burn reservoir DoT from weapon profile`, `tundra-rimebrand-burn reservoir DoT from weapon profile`.
