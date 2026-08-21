@@ -64,7 +64,8 @@ export function enumerateFarmPairs(
 }
 
 export function countFarmMatrix(args: BalanceCliArgs): number {
-  return enumerateFarmPairs(args).length;
+  // A gear sweep multiplies the run count: every pair runs once per level.
+  return enumerateFarmPairs(args).length * Math.max(1, args.gearSweep?.length ?? 1);
 }
 
 export function* iterateFarmMatrix(
@@ -74,17 +75,23 @@ export function* iterateFarmMatrix(
   const sharded = shardCount > 1 && !args.single;
   let globalIndex = 0;
 
+  // `undefined` = one run at the bench default (fully upgraded gear).
+  const gearLevels: (number | undefined)[] = args.gearSweep ?? [undefined];
+
   for (const { build, target } of enumerateFarmPairs(args)) {
     const take = !sharded || globalIndex % shardCount === args.shardIndex;
     globalIndex++;
     if (!take) continue;
-    yield {
-      build,
-      target,
-      result: runFarm(build, target, {
-        maxSimSeconds: args.maxSimSeconds,
-        timeScale: args.timeScale,
-      }),
-    };
+    for (const upgradeLevel of gearLevels) {
+      yield {
+        build,
+        target,
+        result: runFarm(build, target, {
+          maxSimSeconds: args.maxSimSeconds,
+          timeScale: args.timeScale,
+          upgradeLevel,
+        }),
+      };
+    }
   }
 }

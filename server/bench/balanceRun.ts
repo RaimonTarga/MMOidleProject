@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 import {
   ESSENCE_TYPES,
-  PACE_FAMILIES,
+  NODE_MODIFIER_FAMILIES,
   SKILL_TREE,
   ITEM_DATABASE,
   getMaxUpgrade,
@@ -99,6 +99,9 @@ Farm-mode options (--mode farm):
   --hours <n>            Simulated hours per run (default: 1). Alias for
                          --max-seconds n*3600
   --all-builds           Run every enumerated build instead of one per class root
+  --gear-sweep <n,...>   Re-run every pair at each item-upgrade level (e.g. 0,3,5).
+                         Concurrency depends on how fast the player kills, so a
+                         single power level biases it; the sweep reports the band
   --scale-sweep <n,...>  Re-run the FIRST (build x node) pair at each time scale
                          and report how far the rates drift. This is the
                          trust-check for fast runs; slowest scale is the baseline
@@ -202,6 +205,15 @@ function parseArgs(argv: string[]): BalanceCliArgs {
         );
       }
       args.scaleSweep = [...new Set(scales)].sort((a, b) => a - b);
+    } else if (arg === '--gear-sweep' && argv[i + 1]) {
+      const levels = argv[++i]
+        .split(',')
+        .map((s) => Number(s.trim()))
+        .filter((n) => Number.isFinite(n) && n >= 0);
+      if (levels.length === 0) {
+        throw new Error('Invalid --gear-sweep (need >= 1 upgrade level, e.g. 0,3,5)');
+      }
+      args.gearSweep = [...new Set(levels)].sort((a, b) => a - b);
     } else if (arg === '--party' && argv[i + 1]) {
       // Build ids join skill nodes with `+`, never a comma — safe to split.
       args.partyIds = argv[++i]
@@ -288,8 +300,7 @@ const FARM_CSV_HEADER = [
   'biome_group',
   'content_tier',
   'node_id',
-  'pace',
-  'density',
+  'modifier',
   'mob_density',
   'sim_seconds',
   'time_scale',
@@ -298,7 +309,7 @@ const FARM_CSV_HEADER = [
   'essence_per_hr',
   ...ESSENCE_TYPES.map((t) => `ess_${t}_per_hr`),
   'catalysts_per_hr',
-  ...PACE_FAMILIES.map((f) => `cat_${f}_per_hr`),
+  ...NODE_MODIFIER_FAMILIES.map((f) => `cat_${f}_per_hr`),
   'biome_xp_per_hr',
   'biome_level_end',
   'biome_level_cap',
@@ -310,6 +321,21 @@ const FARM_CSV_HEADER = [
   // look identical in a low kills/hr on its own.
   'damage_dealt',
   'damage_taken',
+  'damage_taken_per_hr',
+  // Pipeline-only vs everything: hp_lost also captures DoT, AoE and environmental.
+  'hp_lost_per_hr',
+  // Concurrency: the measured input to the encounter model. `mean_in_range` is
+  // the term the model calls (N+1)/2; `predicted_dmg_per_hr` is what the model
+  // says that implies, so the two damage columns validate the model itself.
+  'gear_upgrade',
+  'mean_aggroed',
+  'mean_in_range',
+  'mean_in_range_in_combat',
+  'peak_in_range',
+  'combat_uptime',
+  'contact_uptime',
+  'aggro_per_kill',
+  ...[0, 1, 2, 3, 4, 5, 6].map((n) => `pct_in_range_${n}${n === 6 ? 'plus' : ''}`),
 ].join(',');
 
 /** Rates are read by eye; 2dp is plenty and keeps the CSV narrow. */
@@ -325,8 +351,7 @@ function printFarmCsvRow(result: FarmRunResult): void {
       result.biomeGroup,
       result.contentTier,
       result.nodeId,
-      result.pace ?? '',
-      result.density ?? '',
+      result.modifier ?? '',
       result.mobDensity,
       round2(result.simDurationMs / 1000),
       result.timeScale,
@@ -335,7 +360,7 @@ function printFarmCsvRow(result: FarmRunResult): void {
       round2(result.essenceSumPerHour),
       ...ESSENCE_TYPES.map((t) => round2(result.essencePerHour[t] ?? 0)),
       round2(result.catalystSumPerHour),
-      ...PACE_FAMILIES.map((f) => round2(result.catalystPerHour[f] ?? 0)),
+      ...NODE_MODIFIER_FAMILIES.map((f) => round2(result.catalystPerHour[f] ?? 0)),
       round2(result.biomeXpPerHour),
       result.biomeLevelEnd,
       result.biomeLevelCap,
@@ -345,6 +370,17 @@ function printFarmCsvRow(result: FarmRunResult): void {
       round2(result.deathsPerHour),
       result.damageDealt,
       result.damageTaken,
+      round2(result.damageTakenPerHour),
+      round2(result.hpLostPerHour),
+      result.upgradeLevel ?? 'max',
+      round2(result.concurrency.meanAggroed),
+      round2(result.concurrency.meanInRange),
+      round2(result.concurrency.meanInRangeInCombat),
+      result.concurrency.peakInRange,
+      round2(result.concurrency.combatUptime),
+      round2(result.concurrency.contactUptime),
+      round2(result.concurrency.aggroPerKill),
+      ...result.concurrency.inRangeHistogram.map((share) => round2(share)),
     ].join(','),
   );
 }

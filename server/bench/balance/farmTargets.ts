@@ -1,16 +1,15 @@
 import {
   CLEARING_NODE_ID,
-  NATIVE_FAMILY,
+  NATIVE_MODIFIER,
   NODE_BIOMES,
-  type PaceFamily,
+  type NodeModifierFamily,
 } from '@mmo-idle/shared';
 import type { ContentTarget, MatrixFilter } from './types';
 
 /** A farm target plus the node-modifier identity that shapes its income. */
 export interface FarmTarget extends ContentTarget {
-  /** Pace family = the node's catalyst key. Absent on excluded nodes (clearing). */
-  pace?: PaceFamily;
-  density?: string;
+  /** The node's modifier = its catalyst key. Absent on excluded nodes (clearing). */
+  modifier?: NodeModifierFamily;
 }
 
 function toFarmTarget(nodeId: string): FarmTarget | null {
@@ -21,8 +20,7 @@ function toFarmTarget(nodeId: string): FarmTarget | null {
     biomeGroup: info.biomeGroup,
     contentTier: info.biomeTier,
     isDungeon: false,
-    pace: info.pace,
-    density: info.density,
+    modifier: info.modifier,
   };
 }
 
@@ -81,9 +79,9 @@ export function enumerateFarmTargets(
       byPair.set(key, toFarmTarget(nodeId)!);
       continue;
     }
-    // Upgrade to the native-family node if we have not already picked one.
-    const native = NATIVE_FAMILY[info.biomeGroup];
-    if (native && info.pace === native && existing.pace !== native) {
+    // Upgrade to the native-modifier node if we have not already picked one.
+    const native = NATIVE_MODIFIER[info.biomeGroup];
+    if (native && info.modifier === native && existing.modifier !== native) {
       byPair.set(key, toFarmTarget(nodeId)!);
     }
   }

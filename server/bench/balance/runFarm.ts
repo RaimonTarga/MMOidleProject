@@ -16,6 +16,7 @@ import { createFarmWorld } from './worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from './arena';
 import { materializeBot, BENCH_BOT_ID } from './botFactory';
 import { BalanceMetricsCollector } from './metrics';
+import { ConcurrencySampler } from './concurrency';
 import { diffLedger, perHour, snapshotLedger } from './ledger';
 import type { FarmTarget } from './farmTargets';
 import type { BuildSpec, FarmRunResult } from './types';
@@ -106,6 +107,12 @@ function reviveInFarmNode(
 export interface FarmRunOptions {
   maxSimSeconds: number;
   timeScale: number;
+  /**
+   * Item upgrade level for the bot; omitted = fully upgraded (the bench default).
+   * Used by the concurrency sweep, where player kill speed materially changes how
+   * many monsters end up on the player at once.
+   */
+  upgradeLevel?: number;
 }
 
 export function runFarm(
@@ -117,6 +124,7 @@ export function runFarm(
   const dt = BENCH_DT_MS * opts.timeScale;
   const metrics = new BalanceMetricsCollector(BENCH_BOT_ID);
   metrics.register();
+  const concurrency = new ConcurrencySampler();
 
   let ticks = 0;
   let kills = 0;
@@ -125,7 +133,7 @@ export function runFarm(
 
   try {
     setupArena(world, target);
-    const bot = materializeBot(world, build, target, BOT_SPAWN);
+    const bot = materializeBot(world, build, target, BOT_SPAWN, undefined, opts.upgradeLevel);
     resetFarmedBiome(world, bot, target.biomeGroup);
 
     const levelCap = biomeLevelCap(build.playerTier, target.biomeGroup);
@@ -148,6 +156,8 @@ export function runFarm(
       // grow for the whole run. The live server drains it every broadcast tick;
       // do the same, or an hour-long farm accumulates six figures of events.
       world.clearNodeEvents(target.nodeId);
+
+      concurrency.sample(world, target.nodeId, bot);
 
       const nextIds = monsterIdsInNode(world, target.nodeId);
       for (const id of liveIds) {
@@ -177,6 +187,7 @@ export function runFarm(
 
     const simDurationMs = ticks * dt;
     const hours = simDurationMs / MS_PER_HOUR;
+    const concurrencyStats = concurrency.result(kills);
     // Past the cap `applyBiomeXP` grants nothing, so averaging over the whole
     // run would report a rate that decays with run length instead of an income.
     const xpHours = (cappedAtMs ?? simDurationMs) / MS_PER_HOUR;
@@ -187,8 +198,7 @@ export function runFarm(
       biomeGroup: target.biomeGroup,
       contentTier: target.contentTier,
       nodeId: target.nodeId,
-      pace: target.pace,
-      density: target.density,
+      modifier: target.modifier,
       mobDensity: world.getMobDensity(target.nodeId),
       simDurationMs,
       ticks,
@@ -220,6 +230,11 @@ export function runFarm(
 
       damageDealt: metrics.damageDealt,
       damageTaken: metrics.damageTaken,
+      damageTakenPerHour: hours > 0 ? metrics.damageTaken / hours : 0,
+      hpLostPerHour: hours > 0 ? concurrencyStats.hpLost / hours : 0,
+
+      upgradeLevel: opts.upgradeLevel ?? null,
+      concurrency: concurrencyStats,
     };
   } finally {
     metrics.dispose();

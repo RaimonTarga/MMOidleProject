@@ -1,4 +1,5 @@
 import type { WorldLogDisplayKind, EssenceType } from '@mmo-idle/shared';
+import type { ConcurrencyStats } from './concurrency';
 
 export const BALANCE_JSONL_SCHEMA_VERSION = 1;
 
@@ -84,9 +85,8 @@ export interface FarmRunResult {
   biomeGroup: string;
   contentTier: number;
   nodeId: string;
-  /** The node's pace family — its catalyst key. Absent on excluded nodes. */
-  pace?: string;
-  density?: string;
+  /** The node's modifier — its catalyst key. Absent on excluded nodes. */
+  modifier?: string;
   /** Target monster population the node repopulates back to. */
   mobDensity: number;
   simDurationMs: number;
@@ -103,7 +103,7 @@ export interface FarmRunResult {
   essenceSum: number;
   essenceSumPerHour: number;
 
-  /** Catalysts by pace family, counting banked partial progress fractionally. */
+  /** Catalysts by node modifier, counting banked partial progress fractionally. */
   catalystTotal: Record<string, number>;
   catalystPerHour: Record<string, number>;
   catalystSum: number;
@@ -126,6 +126,14 @@ export interface FarmRunResult {
 
   damageDealt: number;
   damageTaken: number;
+  damageTakenPerHour: number;
+  /** HP lost per hour from EVERY damage source; `damageTaken` is pipeline-only. */
+  hpLostPerHour: number;
+
+  /** Item upgrade level the bot ran at; null = fully upgraded. */
+  upgradeLevel: number | null;
+  /** How many monsters were actually on the player — see concurrency.ts. */
+  concurrency: ConcurrencyStats;
 }
 
 /** Composite difficulty bucket for a match. */
@@ -221,6 +229,12 @@ export interface BalanceCliArgs {
    * this is the check that the fast runs are not lying.
    */
   scaleSweep?: number[];
+  /**
+   * Farm mode: re-run every (build x node) pair once per item-upgrade level.
+   * Concurrency is not player-independent — a bot that kills faster lingers less
+   * and is swarmed less — so measuring it at one power level biases the result.
+   */
+  gearSweep?: number[];
 }
 
 export interface BalanceJsonlMeta {

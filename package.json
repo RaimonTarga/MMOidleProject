@@ -37,6 +37,7 @@
     "ehp:llm": "pnpm -C server exec tsx --tsconfig ../tools/tsconfig.json --conditions=development ../tools/ehp-report.ts --llm-packet",
     "mob:report": "pnpm -C server exec tsx --tsconfig ../tools/tsconfig.json --conditions=development ../tools/mob-report.ts",
     "mob:llm": "pnpm -C server exec tsx --tsconfig ../tools/tsconfig.json --conditions=development ../tools/mob-report.ts --llm-packet",
+    "tier:table": "pnpm -C server exec tsx --tsconfig ../tools/tsconfig.json --conditions=development ../tools/tier-table.ts",
     "monster:ref": "pnpm --dir server exec tsx --conditions=development ../tools/monster-ref.ts",
     "monster:ref:md": "pnpm --dir server exec tsx --conditions=development ../tools/monster-ref.ts --md",
     "art:import": "pnpm --dir server exec tsx --conditions=development ../tools/pixellab/import.ts",

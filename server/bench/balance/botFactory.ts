@@ -216,6 +216,16 @@ export function materializeBot(
   target: ContentTarget,
   pos: Vec2,
   id: string = BENCH_BOT_ID,
+  /**
+   * Item upgrade level to equip at, clamped per item to its own legal maximum.
+   * Omitted = fully upgraded, the long-standing bench default.
+   *
+   * Parameterised for the concurrency sweep: how many monsters end up on the
+   * player is not player-independent — a bot that kills fast lingers less and is
+   * swarmed less — so measuring concurrency at a single (maximum) power level
+   * would systematically understate it.
+   */
+  upgradeLevel?: number,
 ): PlayerEntity {
   const entity = world.attachPlayerEntity(
     buildBotSlices(id, build, target.nodeId, pos),
@@ -241,11 +251,13 @@ export function materializeBot(
     if (!itemId) continue;
     entity.holdsInventory.inventory.push(itemId);
     equipItem(world, entity, itemId);
-    // Bench bots always run fully upgraded gear. Upgrade bonuses are applied by
-    // recalculatePlayerEntityStats from itemUpgrades (no biome-level gate there).
+    // Upgrade bonuses are applied by recalculatePlayerEntityStats from
+    // itemUpgrades (no biome-level gate there). Default is fully upgraded.
     const def = ITEM_DATABASE.get(itemId);
     if (def) {
-      entity.holdsInventory.itemUpgrades[itemId] = getMaxUpgrade(def);
+      const max = getMaxUpgrade(def);
+      entity.holdsInventory.itemUpgrades[itemId] =
+        upgradeLevel === undefined ? max : Math.max(0, Math.min(upgradeLevel, max));
     }
   }
 
