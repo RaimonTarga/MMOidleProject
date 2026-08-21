@@ -1,11 +1,8 @@
 import {
-  DENSITY_BANS,
-  DENSITY_MODIFIERS_ENABLED,
-  NATIVE_FAMILY,
-  PACE_FAMILIES,
-  PACE_HARD_BANS,
-  type DensityModifier,
-  type PaceFamily,
+  MODIFIER_BANS,
+  NATIVE_MODIFIER,
+  NODE_MODIFIER_FAMILIES,
+  type NodeModifierFamily,
 } from '../nodeModifierTypes';
 import type {
   WorldMapCoord,
@@ -24,7 +21,6 @@ export interface RegionAuthoringInput {
   origin: WorldMapCoord;
   mask: readonly string[];
   biomes: readonly string[];
-  eliteGroundBiomes?: readonly string[];
   specials: readonly RegionSpecialNode[];
   dungeonCells: readonly WorldMapCoord[];
 }
@@ -101,9 +97,9 @@ function allocateNormalCellsByBiome(
 ): Map<string, WorldMapCoord[]> {
   const remaining = new Map(normalCells.map((coord) => [cellKey(coord), coord]));
   const territories = input.biomes.map((biomeGroup, biomeIndex) => {
-    const native = NATIVE_FAMILY[biomeGroup];
+    const native = NATIVE_MODIFIER[biomeGroup];
     const capacity =
-      allowedPacesForBiome(biomeGroup).length + (native ? 1 : 0);
+      allowedModifiersForBiome(biomeGroup).length + (native ? 1 : 0);
     const seed = input.dungeonCells[biomeIndex];
     return {
       biomeGroup,
@@ -352,36 +348,13 @@ function maskCells(input: RegionAuthoringInput): WorldMapCoord[] {
   return cells;
 }
 
-function allowedPacesForBiome(biomeGroup: string): PaceFamily[] {
-  const bans = new Set(PACE_HARD_BANS[biomeGroup] ?? []);
-  return PACE_FAMILIES.filter((pace) => !bans.has(pace));
-}
-
-function assignDensity(
-  biomeGroup: string,
-  tier: number,
-  paces: readonly PaceFamily[],
-  eliteGroundBiomes: ReadonlySet<string>,
-): Array<DensityModifier | undefined> {
-  const result = paces.map(() => undefined as DensityModifier | undefined);
-  if (!DENSITY_MODIFIERS_ENABLED) return result;
-  const bans = new Set(DENSITY_BANS[biomeGroup] ?? []);
-
-  if (!bans.has('swarming')) {
-    result[result.length - 1] = 'swarming';
-  }
-
-  if (eliteGroundBiomes.has(biomeGroup) && !bans.has('elite-ground')) {
-    const eliteIndex = result.findIndex((density) => density === undefined);
-    if (eliteIndex < 0) {
-      throw new Error(
-        `Cannot place Elite Ground for ${biomeGroup} T${tier}: no free normal node`,
-      );
-    }
-    result[eliteIndex] = 'elite-ground';
-  }
-
-  return result;
+/**
+ * The modifiers a biome may host. This also fixes how many normal nodes the biome
+ * gets — see the warning on `MODIFIER_BANS`.
+ */
+function allowedModifiersForBiome(biomeGroup: string): NodeModifierFamily[] {
+  const bans = new Set(MODIFIER_BANS[biomeGroup] ?? []);
+  return NODE_MODIFIER_FAMILIES.filter((modifier) => !bans.has(modifier));
 }
 
 /**
@@ -420,7 +393,6 @@ export function buildRegionNodes(
       !occupiedDungeonCells.has(cellKey(coord)),
   );
   const normalCellsByBiome = allocateNormalCellsByBiome(input, normalCells);
-  const eliteGroundBiomes = new Set(input.eliteGroundBiomes ?? []);
   const nodes: WorldNodeAuthoring[] = input.specials.map((special) => ({
     ...special,
     regionId: input.regionId,
@@ -428,18 +400,12 @@ export function buildRegionNodes(
   }));
 
   input.biomes.forEach((biomeGroup, biomeIndex) => {
-    const allowedPaces = allowedPacesForBiome(biomeGroup);
-    const native = NATIVE_FAMILY[biomeGroup];
-    const paces = native ? [...allowedPaces, native] : allowedPaces;
-    const densities = assignDensity(
-      biomeGroup,
-      input.tier,
-      paces,
-      eliteGroundBiomes,
-    );
+    const allowedModifiers = allowedModifiersForBiome(biomeGroup);
+    const native = NATIVE_MODIFIER[biomeGroup];
+    const modifiers = native ? [...allowedModifiers, native] : allowedModifiers;
     const biomeCells = normalCellsByBiome.get(biomeGroup) ?? [];
 
-    paces.forEach((pace, normalIndex) => {
+    modifiers.forEach((modifier, normalIndex) => {
       const map = biomeCells[normalIndex];
       if (!map) {
         throw new Error(
@@ -454,8 +420,7 @@ export function buildRegionNodes(
         kind: 'normal',
         biomeGroup,
         biomeTier: input.tier,
-        pace,
-        density: densities[normalIndex],
+        modifier,
         featureSetId: biomeGroup,
         featureVariant: normalIndex,
       });
@@ -471,7 +436,7 @@ export function buildRegionNodes(
       biomeGroup,
       biomeTier: input.tier,
       featureSetId: biomeGroup,
-      featureVariant: paces.length,
+      featureVariant: modifiers.length,
     });
   });
 

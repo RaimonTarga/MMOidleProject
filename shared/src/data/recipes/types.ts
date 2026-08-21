@@ -39,11 +39,13 @@ export interface Recipe {
   /** Essence costs keyed by type. Only types with non-zero amounts are listed. */
   cost: Partial<Record<EssenceType, number>>;
   /**
-   * Optional biome-catalyst costs keyed by biome group (e.g. `{ forest: 3 }`).
+   * Optional catalyst costs keyed by NODE MODIFIER
+   * (alacrity/heavy/swarming/dominion/fortified), not by biome group.
    * Parallel axis to `cost` — crafting checks and spends both. Only listed when
-   * the recipe demands catalysts; absent means essence-only. Keyed by combat
-   * FAMILY (alacrity/brutality/blight/volatility/predation) after the Map Variety
-   * Stage A re-key, not by biome group.
+   * the recipe demands catalysts; absent means essence-only.
+   *
+   * The key reflects what the ITEM does, not where it is farmed, which is why a
+   * biome's recipes do not all demand that biome's native catalyst.
    *
    * TODO (Map Variety, deferred): the neutral Broadsword exception (design §2.3)
    * needs a `catalystCostFlexible?: number` — a total payable with any combination

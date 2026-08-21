@@ -83,7 +83,7 @@ export const swampRecipeEntries = [
     // Recipe id kept stable (persisted); rethemed fire → poison (Venom Knife).
     id: 'swamp-mirebrand', name: 'Venom Knife',
     recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'weapon',
-    cost: { purple: 52 }, catalystCost: { blight: 2 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Blight
+    cost: { purple: 52 }, catalystCost: { fortified: 2 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Fortified
     weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/venom-knife.png',
     description: 'The venom runs deeper now; what it touches keeps rotting.',
@@ -101,7 +101,7 @@ export const swampRecipeEntries = [
   ['swamp-vest-t2', {
     id: 'swamp-vest-t2', name: 'Bog Wrappings',
     recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { purple: 54 }, catalystCost: { blight: 2 }, stats: { maxHp: 44, plating: 6 }, // family-tag: dot-resistance armor → Blight
+    cost: { purple: 54 }, catalystCost: { fortified: 2 }, stats: { maxHp: 44, plating: 6 }, // family-tag: dot-resistance armor → Fortified
     mechanicEffects: { 'defense.dot-resistance': 0.30, 'defense.hit-to-dot-pct': 0.08 },
     tier: 2,
     icon: 'items/armor/bog-wrappings.png',
@@ -119,7 +119,7 @@ export const swampRecipeEntries = [
   ['swamp-charm-t2', {
     id: 'swamp-charm-t2', name: 'Bog Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { purple: 44 }, catalystCost: { blight: 2 }, stats: { hpRegen: 6 }, // family-tag: absorb charm (attrition answer) → Blight
+    cost: { purple: 44 }, catalystCost: { fortified: 2 }, stats: { hpRegen: 6 }, // family-tag: absorb charm (attrition answer) → Fortified
     mechanicEffects: { 'defense.absorb-pct': 0.09 },
     tier: 2,
     icon: 'items/charms/bog-eye.png',
@@ -136,7 +136,7 @@ export const swampRecipeEntries = [
   ['swamp-boots-t2', {
     id: 'swamp-boots-t2', name: 'Wetland Wraps',
     recipeGroup: 'swamp', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { purple: 44 }, catalystCost: { blight: 2 }, stats: { speed: 31 }, tier: 2, // family-tag: swamp mobility → Blight
+    cost: { purple: 44 }, catalystCost: { fortified: 2 }, stats: { speed: 31 }, tier: 2, // family-tag: swamp mobility → Fortified
     mechanicEffects: { 'mobility.tenacity-pct': 0.25 },
     icon: 'items/boots/wetland-wraps.png',
     description: 'Enchanted bindings that find footing where there should be none.',
@@ -155,7 +155,7 @@ export const swampRecipeEntries = [
     // poison-themed Plague Fang (fire → poison).
     id: 'swamp-blightbrand', name: 'Plague Fang',
     recipeGroup: 'swamp', requiredBiomeLevel: 13, slot: 'weapon',
-    cost: { purple: 116 }, catalystCost: { blight: 3 }, stats: { attack: 46 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Blight
+    cost: { purple: 116 }, catalystCost: { fortified: 3 }, stats: { attack: 46 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Fortified
     weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/plague-fang.png',
     description: 'The rot it carries does more work than the edge ever could.',
@@ -174,7 +174,7 @@ export const swampRecipeEntries = [
   ['swamp-vest-t3', {
     id: 'swamp-vest-t3', name: 'Plaguebound Shroud',
     recipeGroup: 'swamp', requiredBiomeLevel: 14, slot: 'armor',
-    cost: { purple: 140 }, catalystCost: { blight: 3 }, stats: { maxHp: 86, plating: 12 }, // family-tag: dot-resistance armor → Blight
+    cost: { purple: 140 }, catalystCost: { fortified: 3 }, stats: { maxHp: 86, plating: 12 }, // family-tag: dot-resistance armor → Fortified
     mechanicEffects: { 'defense.dot-resistance': 0.35, 'defense.hit-to-dot-pct': 0.10, 'defense.debuff-resistance': 0.20 },
     tier: 3,
     icon: 'items/armor/plaguebound-shroud.png',
@@ -192,7 +192,7 @@ export const swampRecipeEntries = [
   ['swamp-charm-t3', {
     id: 'swamp-charm-t3', name: 'Sorrow Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { purple: 100 }, catalystCost: { blight: 3 }, stats: { hpRegen: 11 }, // family-tag: absorb charm → Blight
+    cost: { purple: 100 }, catalystCost: { fortified: 3 }, stats: { hpRegen: 11 }, // family-tag: absorb charm → Fortified
     mechanicEffects: { 'defense.absorb-pct': 0.18 },
     tier: 3,
     icon: 'items/charms/sorrow-eye.png',
@@ -209,7 +209,7 @@ export const swampRecipeEntries = [
   ['swamp-boots-t3', {
     id: 'swamp-boots-t3', name: 'Mire Striders',
     recipeGroup: 'swamp', requiredBiomeLevel: 16, slot: 'mobility',
-    cost: { purple: 100 }, catalystCost: { blight: 3 }, stats: { speed: 44 }, tier: 3, // family-tag: swamp mobility → Blight
+    cost: { purple: 100 }, catalystCost: { fortified: 3 }, stats: { speed: 44 }, tier: 3, // family-tag: swamp mobility → Fortified
     mechanicEffects: { 'mobility.tenacity-pct': 0.30 },
     icon: 'items/boots/mire-striders.png',
     description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
@@ -233,7 +233,7 @@ export const swampRecipeEntries = [
     id: 'core-controller', name: 'Controller Core',
     recipeGroup: 'swamp', requiredBiomeLevel: 15, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-controller',
-    cost: { purple: 90 }, catalystCost: { blight: 2 }, // family-tag: debuff/affliction → Blight
+    cost: { purple: 90 }, catalystCost: { fortified: 2 }, // family-tag: debuff/affliction → Fortified
     stats: {}, tier: 3,
     // Does nothing for a build that applies no debuffs. That is the intended
     // opportunity cost, so no direct-damage penalty is authored on top of it.
@@ -246,7 +246,7 @@ export const swampRecipeEntries = [
     id: 'relic-virulent-hourglass', name: 'Virulent Hourglass',
     recipeGroup: 'swamp', requiredBiomeLevel: 24, slot: 'relic',
     lineageId: 'relic-virulent-hourglass',
-    cost: { purple: 220 }, catalystCost: { blight: 4 },
+    cost: { purple: 220 }, catalystCost: { fortified: 4 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.20,

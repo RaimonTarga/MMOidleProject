@@ -9,7 +9,7 @@ export const desertRecipeEntries = [
   ['desert-sunsteel-cross', {
     id: 'desert-sunsteel-cross', name: 'Sunsteel Falchion',
     recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { yellow: 70 }, catalystCost: { predation: 2 }, stats: { attack: 24 }, attacksPerSecond: 0.80, tier: 2, // family-tag: first-strike ambush weapon → Predation
+    cost: { yellow: 70 }, catalystCost: { dominion: 2 }, stats: { attack: 24 }, attacksPerSecond: 0.80, tier: 2, // family-tag: first-strike ambush weapon → Dominion
     // Technique Power (abilities evolution §6.2) on Desert's opener weapon — it
     // pairs with Charge, whose whole point is converting a gap-close into one
     // big opening blow. Scales opted-in offensive payloads ONLY (never stun
@@ -32,7 +32,7 @@ export const desertRecipeEntries = [
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Duneplate of the Last Stand',
     recipeGroup: 'desert', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { yellow: 35, purple: 25 }, catalystCost: { predation: 2 }, stats: { maxHp: 44, plating: 10 }, // family-tag: last-stand (cheat-death) armor → Predation
+    cost: { yellow: 35, purple: 25 }, catalystCost: { dominion: 2 }, stats: { maxHp: 44, plating: 10 }, // family-tag: last-stand (cheat-death) armor → Dominion
     mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000 },
     tier: 2,
     icon: 'items/armor/duneplate-last-stand.png',
@@ -50,7 +50,7 @@ export const desertRecipeEntries = [
   ['desert-charm-t2', {
     id: 'desert-charm-t2', name: 'Mirage Talisman',
     recipeGroup: 'desert', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { yellow: 50, purple: 25 }, catalystCost: { predation: 2 }, stats: { hpRegen: 6 }, // family-tag: cleanse/last-stand recovery → Predation
+    cost: { yellow: 50, purple: 25 }, catalystCost: { dominion: 2 }, stats: { hpRegen: 6 }, // family-tag: cleanse/last-stand recovery → Dominion
     mechanicEffects: { 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 6000, 'defense.cleanse-empty-heal-pct': 0.03 },
     tier: 2,
     icon: 'items/charms/mirage-talisman.png',
@@ -67,7 +67,7 @@ export const desertRecipeEntries = [
   ['desert-boots-t2', {
     id: 'desert-boots-t2', name: 'Sand Sprint',
     recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { yellow: 58 }, catalystCost: { predation: 2 }, stats: { speed: 58 }, tier: 2, // family-tag: desert kite mobility → Predation
+    cost: { yellow: 58 }, catalystCost: { dominion: 2 }, stats: { speed: 58 }, tier: 2, // family-tag: desert kite mobility → Dominion
     mechanicEffects: { 'mobility.kite-speed-pct': 0.20 },
     icon: 'items/boots/sand-sprint.png',
     description: 'Wide and light, made to outpace a storm across open dune.',
@@ -84,7 +84,7 @@ export const desertRecipeEntries = [
   ['desert-solar-cross', {
     id: 'desert-solar-cross', name: 'Solar Falchion',
     recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
-    cost: { yellow: 116 }, catalystCost: { predation: 3 }, stats: { attack: 42 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Predation
+    cost: { yellow: 116 }, catalystCost: { dominion: 3 }, stats: { attack: 42 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Dominion
     mechanicEffects: { 'weapon.first-strike-mult': 2.5 },
     icon: 'items/weapons/solar-falchion.png',
     description: 'It saves its fury for the opening blow, and spends it all at once.',
@@ -100,7 +100,7 @@ export const desertRecipeEntries = [
   ['desert-vest-t3', {
     id: 'desert-vest-t3', name: 'Eternal Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { yellow: 120, purple: 30 }, catalystCost: { predation: 3 }, stats: { maxHp: 90, plating: 20 }, // family-tag: last-stand armor → Predation
+    cost: { yellow: 120, purple: 30 }, catalystCost: { dominion: 3 }, stats: { maxHp: 90, plating: 20 }, // family-tag: last-stand armor → Dominion
     mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000, 'defense.debuff-resistance': 0.20 },
     tier: 3,
     icon: 'items/armor/eternal-duneplate.png',
@@ -118,7 +118,7 @@ export const desertRecipeEntries = [
   ['desert-charm-t3', {
     id: 'desert-charm-t3', name: 'Oasis Heart',
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { yellow: 100, purple: 25 }, catalystCost: { predation: 3 }, stats: { hpRegen: 11 }, // family-tag: cleanse recovery → Predation
+    cost: { yellow: 100, purple: 25 }, catalystCost: { dominion: 3 }, stats: { hpRegen: 11 }, // family-tag: cleanse recovery → Dominion
     mechanicEffects: { 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 6000, 'defense.cleanse-empty-heal-pct': 0.05 },
     tier: 3,
     icon: 'items/charms/oasis-heart.png',
@@ -135,7 +135,7 @@ export const desertRecipeEntries = [
   ['desert-boots-t3', {
     id: 'desert-boots-t3', name: 'Mirage Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { yellow: 90 }, catalystCost: { predation: 3 }, stats: { speed: 96 }, tier: 3, // family-tag: desert kite mobility → Predation
+    cost: { yellow: 90 }, catalystCost: { dominion: 3 }, stats: { speed: 96 }, tier: 3, // family-tag: desert kite mobility → Dominion
     mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
     icon: 'items/boots/mirage-striders.png',
     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
@@ -237,7 +237,7 @@ export const desertRecipeEntries = [
     id: 'core-sniper', name: 'Sniper Core',
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'core', coreEligibility: 'ranged',
     lineageId: 'core-sniper',
-    cost: { yellow: 110 }, catalystCost: { predation: 3 }, // family-tag: ranged alpha-strike → Predation
+    cost: { yellow: 110 }, catalystCost: { dominion: 3 }, // family-tag: ranged alpha-strike → Dominion
     stats: {}, tier: 3,
     // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
     mechanicEffects: { 'core.attack-mult': 0.26, 'core.maxhp-mult': -0.20, 'core.plating-mult': -0.15 },
@@ -249,7 +249,7 @@ export const desertRecipeEntries = [
     id: 'relic-withering-lens', name: 'Withering Lens',
     recipeGroup: 'desert', requiredBiomeLevel: 18, slot: 'relic',
     lineageId: 'relic-withering-lens',
-    cost: { yellow: 220 }, catalystCost: { predation: 4 },
+    cost: { yellow: 220 }, catalystCost: { dominion: 4 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.20,

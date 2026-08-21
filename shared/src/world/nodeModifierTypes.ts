@@ -1,64 +1,78 @@
-export type PaceFamily =
+/**
+ * Node modifier vocabulary.
+ *
+ * Every non-excluded node carries exactly ONE modifier. This replaced the earlier
+ * two-axis design (a mandatory "pace family" of five plus an optional, permanently
+ * dormant "density" overlay of two) — the split bought nothing and the dormant half
+ * meant swarm/elite ground never shipped. Density is now simply two of the five
+ * modifiers, so there is one list, one field, and one catalyst per modifier.
+ *
+ * All five are NET DIFFICULTY INCREASES over an unmodified node (user decision
+ * 2026-08-18). The old families were threat-budget-neutral by construction — every
+ * one traded something away, so nodes differed in texture but not in difficulty.
+ * They now differ in both, and rewards scale to match. Note the consequence: since
+ * every combat node carries a modifier, the unmodified baseline is never actually
+ * played — it exists only as the reference the multipliers are measured against.
+ */
+export type NodeModifierFamily =
   | 'alacrity'
-  | 'brutality'
-  | 'blight'
-  | 'volatility'
-  | 'predation';
+  | 'heavy'
+  | 'swarming'
+  | 'dominion'
+  | 'fortified';
 
 /** Canonical order used by world authoring, wallets, legends, and validation. */
-export const PACE_FAMILIES: PaceFamily[] = [
+export const NODE_MODIFIER_FAMILIES: NodeModifierFamily[] = [
   'alacrity',
-  'brutality',
-  'blight',
-  'volatility',
-  'predation',
+  'heavy',
+  'swarming',
+  'dominion',
+  'fortified',
 ];
 
-export type DensityModifier = 'swarming' | 'elite-ground';
-
-export const DENSITY_MODIFIERS: DensityModifier[] = ['swarming', 'elite-ground'];
-
-/**
- * Density overlays are intentionally dormant. Keep their vocabulary and
- * implementation available for a future redesign, but authoring, projections,
- * runtime math, rewards, and UI must all behave as though no density exists.
- */
-export const DENSITY_MODIFIERS_ENABLED = false;
-
 export interface NodeModifierInfo {
-  pace: PaceFamily;
-  density?: DensityModifier;
+  modifier: NodeModifierFamily;
 }
 
-/** Pace families a biome may never carry. */
-export const PACE_HARD_BANS: Record<string, PaceFamily[]> = {
-  forest: ['brutality'],
-  mountain: ['alacrity'],
-  jungle: ['brutality'],
+/**
+ * Modifiers a biome may never carry.
+ *
+ * ⚠ This table also controls the MAP'S NODE COUNT. `buildRegionNodes` emits one node
+ * per non-banned modifier plus a second node for the biome's native modifier, so a
+ * biome's node count is `(5 - bans) + (native ? 1 : 0)` and the hand-authored region
+ * masks are cut to fit exactly. Adding or removing a ban changes how many cells that
+ * biome needs and will break its region mask. Keep one ban for each biome listed here
+ * and none for any other unless you are also re-cutting masks.
+ *
+ * Consequence accepted by the user 2026-08-18: biomes with no ban host all five
+ * modifiers, so a swarming Caverns and a swarming Trench exist despite their low
+ * native density. Variety was preferred over thematic purity.
+ */
+export const MODIFIER_BANS: Record<string, NodeModifierFamily[]> = {
+  forest: ['heavy'],      // fast and light — never ponderous
+  mountain: ['alacrity'], // ponderous by identity
+  jungle: ['heavy'],
   desert: ['alacrity'],
   tundra: ['alacrity'],
 };
 
-/** Density modifiers a biome may never carry. */
-export const DENSITY_BANS: Record<string, DensityModifier[]> = {
-  mountain: ['elite-ground'],
-  cave: ['elite-ground'],
-  desert: ['elite-ground'],
-  trench: ['elite-ground'],
-  graveyard: ['swarming'],
-};
-
-/** Each biome's native family. `null` means the deliberately neutral Plains. */
-export const NATIVE_FAMILY: Record<string, PaceFamily | null> = {
+/**
+ * Each biome's native modifier — the one it carries on an extra node, making it that
+ * biome's most common flavour and its catalyst identity. `null` means the
+ * deliberately neutral Plains, which has no native and therefore no extra node.
+ *
+ * A native must not appear in that biome's `MODIFIER_BANS` entry.
+ */
+export const NATIVE_MODIFIER: Record<string, NodeModifierFamily | null> = {
   plains: null,
   forest: 'alacrity',
-  mountain: 'brutality',
-  swamp: 'blight',
-  cave: 'volatility',
+  mountain: 'heavy',
+  swamp: 'fortified',   // slow, armoured, attritional
+  cave: 'dominion',     // few but elite — the biome's whole shape
   jungle: 'alacrity',
-  desert: 'predation',
-  tundra: 'brutality',
-  volcanic: 'blight',
-  graveyard: 'blight',
-  trench: 'predation',
+  desert: 'dominion',
+  tundra: 'heavy',
+  volcanic: 'swarming',
+  graveyard: 'swarming',
+  trench: 'dominion',
 };

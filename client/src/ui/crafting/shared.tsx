@@ -1,5 +1,5 @@
 import type { EssenceType } from '@mmo-idle/shared';
-import { ESSENCE_TYPES, PACE_FAMILIES } from '@mmo-idle/shared';
+import { ESSENCE_TYPES, NODE_MODIFIER_FAMILIES } from '@mmo-idle/shared';
 import {
   catalystMaterial,
   essenceMaterial,
@@ -19,7 +19,7 @@ export function affordsCatalysts(
 
 interface WalletSummaryProps {
   essences: Record<EssenceType, number>;
-  /** Catalyst wallet keyed by pace family. */
+  /** Catalyst wallet keyed by node modifier. */
   catalysts?: Record<string, number>;
 }
 
@@ -30,7 +30,7 @@ interface WalletSummaryProps {
  * zero — they arrive with the biomes that grant them.
  */
 export function WalletSummary({ essences, catalysts }: WalletSummaryProps) {
-  const ownedFamilies = PACE_FAMILIES.filter((family) => (catalysts?.[family] ?? 0) > 0);
+  const ownedFamilies = NODE_MODIFIER_FAMILIES.filter((family) => (catalysts?.[family] ?? 0) > 0);
 
   return (
     <div className="craft-wallet material-chip-strip">
@@ -57,9 +57,9 @@ export function WalletSummary({ essences, catalysts }: WalletSummaryProps) {
 interface CostDisplayProps {
   cost: Partial<Record<EssenceType, number>>;
   essences: Record<EssenceType, number>;
-  /** Optional catalyst cost, keyed by pace family. */
+  /** Optional catalyst cost, keyed by node modifier. */
   catalystCost?: Partial<Record<string, number>>;
-  /** Player's catalyst wallet, keyed by pace family. */
+  /** Player's catalyst wallet, keyed by node modifier. */
   catalysts?: Record<string, number>;
 }
 

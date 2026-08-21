@@ -4,7 +4,7 @@ import {
   respawnNodeIdForNodeId,
   shortestWorldPath,
 } from '../nodeBiomes';
-import { DENSITY_MODIFIERS_ENABLED } from '../nodeModifiers';
+import { NODE_MODIFIER_FAMILIES } from '../nodeModifiers';
 import { NODE_MODIFIERS } from '../nodeModifierMap';
 import { NODE_FEATURES, RUNE_ALTAR_FEATURE_ID } from '../nodeFeatures';
 import { validateWorldMap } from './validation';
@@ -19,10 +19,13 @@ assert(
   `canonical world is invalid:\n- ${violations.join('\n- ')}`,
 );
 assert(WORLD_NODE_LIST.length === 170, 'world count snapshot');
-assert(DENSITY_MODIFIERS_ENABLED === false, 'density modifiers stay disabled');
+// Node count is derived from the modifier list: one node per non-banned modifier,
+// plus a second for each biome's native. Changing the list or the ban table shifts
+// this snapshot and will break the hand-cut region masks.
+const knownModifiers = new Set<string>(NODE_MODIFIER_FAMILIES);
 assert(
-  Object.values(NODE_MODIFIERS).every((modifier) => modifier.density === undefined),
-  'canonical world projects no density modifiers',
+  Object.values(NODE_MODIFIERS).every((info) => knownModifiers.has(info.modifier)),
+  'canonical world projects only known modifiers',
 );
 
 const canonicalDungeonBiomes = new Set(

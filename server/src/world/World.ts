@@ -11,6 +11,8 @@ import {
   BIOME_DATABASE,
   GAME_CONFIG,
   NODE_BIOMES,
+  NODE_MODIFIERS,
+  modifierSpawnFactor,
   CLEARING_NODE_ID,
   TEST_ROOM_NODE_ID,
   type DeathCause,
@@ -566,7 +568,14 @@ export class World {
         : (biomeInfo
             ? BIOME_DATABASE.get(biomeInfo.biomeGroup)?.mobDensity
             : undefined) ?? GAME_CONFIG.MONSTERS_PER_NODE;
-    return base;
+    // Swarming and Dominion nodes reshape the POPULATION rather than the monsters:
+    // this is the single seam where a node's target headcount is decided, so the
+    // factor belongs here and nowhere else. Excluded nodes carry no modifier and
+    // are therefore untouched. Never round a positive target down to zero — a
+    // 1-monster node under Dominion must still spawn one.
+    const factor = modifierSpawnFactor(NODE_MODIFIERS[nodeId]?.modifier);
+    if (factor === 1 || base <= 0) return base;
+    return Math.max(1, Math.round(base * factor));
   }
 
   // ── EVENTS ─────────────────────────────────────────

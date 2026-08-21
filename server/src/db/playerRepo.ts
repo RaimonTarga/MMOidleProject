@@ -28,7 +28,7 @@ import {
   validAbilityIds,
   validStanceIds,
   validRiteIds,
-  PACE_FAMILIES,
+  NODE_MODIFIER_FAMILIES,
   CLEARING_NODE_ID,
   WORLD_NODES,
   buildCharacterSummary,
@@ -441,13 +441,19 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
 
 type CharacterRow = typeof characters.$inferSelect;
 
-/** Keep only combat-family keys in a catalyst wallet (drops stale biome keys). */
+/**
+ * Keep only current modifier keys in a catalyst wallet.
+ *
+ * This is also the migration path when the modifier set changes: catalysts saved
+ * under a retired key (the old blight / volatility / predation families) are simply
+ * dropped on load rather than converted, since no recipe consumes them any more.
+ */
 function sanitizeFamilyWallet(
   wallet: Record<string, number> | undefined,
 ): Record<string, number> {
   const out: Record<string, number> = {};
   if (!wallet) return out;
-  for (const family of PACE_FAMILIES) {
+  for (const family of NODE_MODIFIER_FAMILIES) {
     const value = wallet[family];
     if (typeof value === 'number') out[family] = value;
   }

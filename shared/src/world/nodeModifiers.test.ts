@@ -1,17 +1,20 @@
 import {
   validateNodeModifiers,
-  paceStatScalars,
-  paceMechanicOverlay,
-  paceModifierDetails,
+  modifierStatScalars,
+  modifiedDamageReduction,
+  modifierDetails,
+  modifierSpawnFactor,
+  modifierRewardMult,
   catalystFamilyLabel,
-  densitySpawnFactor,
-  densityRewardMult,
-  elitePoolWeight,
-  DENSITY_MODIFIERS_ENABLED,
-  PACE_FAMILIES,
-  PACE_MAGNITUDE_BY_TIER,
-  type PaceFamily,
+  MODIFIER_LABELS,
+  MODIFIER_SUMMARIES,
+  MODIFIER_COLORS,
+  NODE_MODIFIER_FAMILIES,
+  MODIFIER_MAGNITUDE_BY_TIER,
+  MODIFIER_BANS,
+  NATIVE_MODIFIER,
 } from './nodeModifiers';
+import { NODE_MODIFIERS } from './nodeModifierMap';
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
@@ -24,110 +27,171 @@ assert(
   `NODE_MODIFIERS invalid:\n  ${violations.join('\n  ')}`,
 );
 
-// ── 2. Scalar neutrality sanity per family/tier ───────────────────────────────
+// ── 2. Exactly five modifiers, each fully described ───────────────────────────
+assert(NODE_MODIFIER_FAMILIES.length === 5, 'five modifiers');
+assert(
+  new Set(NODE_MODIFIER_FAMILIES).size === 5,
+  'modifier list has no duplicates',
+);
+for (const family of NODE_MODIFIER_FAMILIES) {
+  assert(Boolean(MODIFIER_LABELS[family]), `${family} has a label`);
+  assert(Boolean(MODIFIER_SUMMARIES[family]), `${family} has a summary`);
+  assert(Boolean(MODIFIER_COLORS[family]), `${family} has a color`);
+  assert(
+    catalystFamilyLabel(family) === `${MODIFIER_LABELS[family]} Catalyst`,
+    `${family} catalyst label`,
+  );
+}
+
+// ── 3. Every modifier is a NET difficulty increase ────────────────────────────
+// This is the load-bearing property of the new design: the old families were
+// threat-budget-neutral, these are not. A modifier must raise offence throughput,
+// durability, or population — never leave a node at parity, and never soften it.
 for (const tier of [1, 2, 3, 4]) {
-  const m = PACE_MAGNITUDE_BY_TIER[tier];
+  const m = MODIFIER_MAGNITUDE_BY_TIER[tier];
   assert(m !== undefined && m > 0, `magnitude for tier ${tier}`);
 
-  // Alacrity & brutality keep DPS neutral: attackMult / cooldownMult ≈ 1.
-  for (const fam of ['alacrity', 'brutality'] as PaceFamily[]) {
-    const s = paceStatScalars(fam, tier);
-    const ratio = s.attackMult / s.attackCooldownMult;
-    assert(
-      ratio >= 0.95 && ratio <= 1.05,
-      `${fam} T${tier} DPS ratio off budget: ${ratio}`,
-    );
+  for (const family of NODE_MODIFIER_FAMILIES) {
+    const s = modifierStatScalars(family, tier);
+    const dpsMult = s.attackMult / s.attackCooldownMult;
+    const spawn = modifierSpawnFactor(family);
+    const tougher =
+      s.hpMult > 1 || s.platingMult > 1 || s.incomingDamageMult < 1;
+    const harder = dpsMult > 1.0001 || tougher || spawn > 1;
+    assert(harder, `${family} T${tier} must be a net difficulty increase`);
+    assert(dpsMult >= 0.9999, `${family} T${tier} must not LOWER dps`);
+
+    // Rewards must pay for the added difficulty.
+    assert(modifierRewardMult(family) > 1, `${family} pays extra reward`);
   }
+}
 
-  // Volatility: (1−M) baseline × average cadence multiplier over its cycle ≈ 1.
-  const vScalars = paceStatScalars('volatility', tier);
-  const overlay = paceMechanicOverlay('volatility', tier, {
-    stats: { attack: 100, attackCooldown: 1000 } as never,
-    dotEffect: undefined,
-    cadenceFinisher: undefined,
-  });
-  assert(overlay.cadence !== undefined, `volatility T${tier} has cadence`);
-  const { everyNAttacks, multiplier } = overlay.cadence!;
-  const avgCadence =
-    ((everyNAttacks - 1) * 1 + multiplier) / everyNAttacks;
-  const avgDamage = vScalars.attackMult * avgCadence;
+// ── 4. Per-modifier shape ─────────────────────────────────────────────────────
+const tier = 2;
+const m = MODIFIER_MAGNITUDE_BY_TIER[tier]!;
+
+// alacrity: faster attacks AND faster movement, with damage untouched.
+const alacrity = modifierStatScalars('alacrity', tier);
+assert(alacrity.attackMult === 1, 'alacrity leaves attack damage alone');
+assert(alacrity.attackCooldownMult < 1, 'alacrity attacks faster');
+assert(alacrity.moveSpeedMult > 1, 'alacrity moves faster');
+assert(modifierSpawnFactor('alacrity') === 1, 'alacrity does not change count');
+
+// heavy: bigger hits, slower cadence, net more damage.
+const heavy = modifierStatScalars('heavy', tier);
+assert(heavy.attackMult > 1 + m, 'heavy hits harder than its cadence loss');
+assert(heavy.attackCooldownMult > 1, 'heavy attacks slower');
+assert(
+  heavy.attackMult / heavy.attackCooldownMult > 1,
+  'heavy is net dps-positive',
+);
+
+// swarming: population only, stats untouched.
+const swarming = modifierStatScalars('swarming', tier);
+assert(
+  swarming.attackMult === 1 &&
+    swarming.attackCooldownMult === 1 &&
+    swarming.hpMult === 1 &&
+    swarming.platingMult === 1 &&
+    swarming.incomingDamageMult === 1 &&
+    swarming.moveSpeedMult === 1,
+  'swarming changes no stat',
+);
+assert(modifierSpawnFactor('swarming') > 1, 'swarming raises the count');
+
+// dominion: fewer bodies, stronger in every respect.
+const dominion = modifierStatScalars('dominion', tier);
+assert(modifierSpawnFactor('dominion') < 1, 'dominion lowers the count');
+assert(
+  dominion.attackMult > 1 &&
+    dominion.hpMult > 1 &&
+    dominion.platingMult > 1 &&
+    dominion.incomingDamageMult < 1 &&
+    dominion.moveSpeedMult > 1,
+  'dominion raises every aspect',
+);
+assert(
+  dominion.moveSpeedMult < dominion.attackMult,
+  'dominion move speed rises more slowly than its damage',
+);
+
+// fortified: defence only.
+const fortified = modifierStatScalars('fortified', tier);
+assert(
+  fortified.attackMult === 1 && fortified.attackCooldownMult === 1,
+  'fortified leaves offence alone',
+);
+assert(fortified.moveSpeedMult === 1, 'fortified leaves speed alone');
+assert(fortified.platingMult > 1, 'fortified raises plating');
+assert(fortified.incomingDamageMult < 1, 'fortified reduces damage taken');
+assert(modifierSpawnFactor('fortified') === 1, 'fortified does not change count');
+
+// ── 5. Damage-reduction folding stays in range ────────────────────────────────
+// The multiplicative form must work from DR 0 (where a naive `DR × k` cannot) and
+// must never reach 1.0, which would make a monster immortal.
+assert(
+  modifiedDamageReduction(0, 1 - m) > 0,
+  'a 0-DR monster still gains reduction',
+);
+for (const baseDr of [0, 0.05, 0.1, 0.2, 0.5, 0.9, 0.95]) {
+  for (const mult of [1, 0.85, 0.7, 0.5, 0.1]) {
+    const dr = modifiedDamageReduction(baseDr, mult);
+    assert(dr >= 0 && dr <= 0.95, `DR ${baseDr}x${mult} stays within [0, 0.95]`);
+    assert(dr >= baseDr - 1e-9, `DR ${baseDr}x${mult} never drops below base`);
+  }
+}
+// Epsilon, not equality: the fold is `1 - (1 - dr) * mult`, so an identity multiplier
+// still round-trips through float subtraction (0.3 comes back as 0.30000000000000004).
+assert(
+  Math.abs(modifiedDamageReduction(0.3, 1) - 0.3) < 1e-9,
+  'a neutral multiplier is identity',
+);
+
+// ── 6. Neutral outside the authored tiers ─────────────────────────────────────
+const untiered = modifierStatScalars('dominion', 99);
+assert(
+  untiered.attackMult === 1 && untiered.hpMult === 1,
+  'unknown tier yields no reshaping',
+);
+
+// ── 7. UI details are populated and mention the reward ────────────────────────
+for (const family of NODE_MODIFIER_FAMILIES) {
+  const rows = modifierDetails(family, 1);
+  assert(rows.length > 0, `${family} has detail rows`);
   assert(
-    avgDamage >= 0.9 && avgDamage <= 1.05,
-    `volatility T${tier} cycle average off budget: ${avgDamage}`,
+    rows.some((detail) => detail.label === 'Rewards'),
+    `${family} surfaces its reward bonus`,
   );
+  for (const detail of rows) {
+    assert(detail.value.length > 0, `${family} detail '${detail.label}' has a value`);
+  }
+}
+assert(
+  modifierDetails('swarming', 1).some((d) => d.label === 'Monster count'),
+  'swarming reports its count change',
+);
 
-  // Alacrity moves faster; brutality does not.
-  assert(paceStatScalars('alacrity', tier).moveSpeedMult > 1, 'alacrity faster');
-  assert(paceStatScalars('brutality', tier).moveSpeedMult === 1, 'brutality move');
-
-  // Predation opener > 1.
-  const pOverlay = paceMechanicOverlay('predation', tier, undefined);
+// ── 8. A native modifier is never also banned for its own biome ───────────────
+for (const [biome, native] of Object.entries(NATIVE_MODIFIER)) {
+  if (!native) continue;
   assert(
-    (pOverlay.openingStrikeMult ?? 0) > 1,
-    `predation T${tier} opener > 1`,
+    !(MODIFIER_BANS[biome] ?? []).includes(native),
+    `${biome}: native '${native}' must not be banned`,
   );
 }
 
-// Exact player-facing modifier values stay tied to the gameplay formulas.
-const t1Alacrity = paceModifierDetails('alacrity', 1);
-assert(
-  t1Alacrity.some((detail) => detail.label === 'Direct attack' && detail.value === '−15%'),
-  'T1 Alacrity exposes its direct-attack reduction',
-);
-assert(
-  t1Alacrity.some((detail) => detail.label === 'Move speed' && detail.value === '+7.5%'),
-  'T1 Alacrity exposes its move-speed increase',
-);
-assert(
-  paceModifierDetails('predation', 4).some(
-    (detail) => detail.label === 'Full-HP opening strike' && detail.value === '×2.20',
-  ),
-  'T4 Predation exposes its exact opener multiplier',
-);
-
-// ── 3. Blight overlay: preserve debuffId when amplifying ───────────────────────
-const authoredDot = {
-  debuffId: 'venom',
-  damagePerStack: 10,
-  maxStacks: 4,
-  tickIntervalMs: 1000,
-};
-const amplified = paceMechanicOverlay('blight', 3, {
-  stats: { attack: 50, attackCooldown: 1000 } as never,
-  dotEffect: authoredDot as never,
-  cadenceFinisher: undefined,
-});
-assert(amplified.dot !== undefined, 'blight amplifies present dot');
-assert(amplified.dot!.debuffId === 'venom', 'blight preserves debuffId');
-assert(
-  amplified.dot!.damagePerStack > authoredDot.damagePerStack,
-  'blight raises damagePerStack',
-);
-
-// Blight synthesizes a DoT for a monster without one.
-const synth = paceMechanicOverlay('blight', 2, {
-  stats: { attack: 40, attackCooldown: 800 } as never,
-  dotEffect: undefined,
-  cadenceFinisher: undefined,
-});
-assert(synth.dot !== undefined, 'blight synthesizes dot when absent');
-assert(synth.dot!.damagePerStack >= 1, 'synthesized dot has ≥1 per stack');
-
-// ── 4. Label fallbacks ─────────────────────────────────────────────────────────
-assert(catalystFamilyLabel('alacrity') === 'Alacrity Catalyst', 'known label');
-assert(catalystFamilyLabel('mystery') === 'Mystery Catalyst', 'fallback label');
-
-// ── 5. Density system is dormant ───────────────────────────────────────────────
-assert(DENSITY_MODIFIERS_ENABLED === false, 'density modifiers stay disabled');
-for (const density of [undefined, 'swarming', 'elite-ground'] as const) {
-  assert(densitySpawnFactor(density) === 1, `${density ?? 'none'} spawn factor is inert`);
-  assert(densityRewardMult(density) === 1, `${density ?? 'none'} reward factor is inert`);
-  assert(elitePoolWeight(density, true) === 1, `${density ?? 'none'} pool weighting is inert`);
+// ── 9. The projection only ever carries known modifiers ───────────────────────
+const known = new Set<string>(NODE_MODIFIER_FAMILIES);
+for (const [nodeId, info] of Object.entries(NODE_MODIFIERS)) {
+  assert(known.has(info.modifier), `${nodeId}: unknown modifier '${info.modifier}'`);
 }
 
-// Every family maps to a color/summary/label (sanity over the enum).
-for (const fam of PACE_FAMILIES) {
-  assert(catalystFamilyLabel(fam).endsWith('Catalyst'), `label for ${fam}`);
-}
+// ── 10. Unknown catalyst keys stay readable ───────────────────────────────────
+// Wallets persisted under a previous modifier set keep their old keys, so the label
+// helper must not return a blank or throw on them.
+assert(
+  catalystFamilyLabel('blight') === 'Blight Catalyst',
+  'a retired catalyst key still renders',
+);
 
-console.log('nodeModifiers.test: ok');
+console.log('nodeModifiers: ok');

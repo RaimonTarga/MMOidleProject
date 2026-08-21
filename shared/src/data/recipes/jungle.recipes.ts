@@ -248,7 +248,7 @@ export const jungleRecipeEntries = [
     id: 'core-bruiser', name: 'Bruiser Core',
     recipeGroup: 'jungle', requiredBiomeLevel: 9, slot: 'core', coreEligibility: 'melee',
     lineageId: 'core-bruiser',
-    cost: { green: 110 }, catalystCost: { brutality: 3 }, // family-tag: sustained melee pressure → Brutality
+    cost: { green: 110 }, catalystCost: { heavy: 3 }, // family-tag: sustained melee pressure → Heavy
     stats: {}, tier: 3,
     // The refund is INERT without an ability tagged `mobility` (today: Charge). The
     // stat half is always on, so the slot is never dead — and the clause widens for

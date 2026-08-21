@@ -187,7 +187,7 @@ export const plainsRecipeEntries = [
     id: 'core-tempered', name: 'Tempered Core',
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-tempered',
-    cost: { yellow: 45 }, catalystCost: { volatility: 1 }, // family-tag: reliable always-on generalist → Volatility
+    cost: { yellow: 45 }, catalystCost: { swarming: 1 }, // family-tag: reliable always-on generalist → Swarming
     stats: {}, tier: 2,
     mechanicEffects: { 'core.attack-mult': 0.09, 'core.maxhp-mult': 0.09 },
     icon: 'items/cores/tempered.png',
@@ -198,7 +198,7 @@ export const plainsRecipeEntries = [
     id: 'relic-equilibrium-shard', name: 'Equilibrium Shard',
     recipeGroup: 'plains', requiredBiomeLevel: 24, slot: 'relic',
     lineageId: 'relic-equilibrium-shard',
-    cost: { yellow: 200 }, catalystCost: { volatility: 4 },
+    cost: { yellow: 200 }, catalystCost: { swarming: 4 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.10,

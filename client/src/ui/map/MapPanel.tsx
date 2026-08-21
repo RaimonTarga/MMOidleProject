@@ -10,9 +10,9 @@ import {
   BIOME_DATABASE,
   NODE_BIOMES,
   NODE_MODIFIERS,
-  PACE_FAMILY_COLORS,
-  PACE_FAMILY_LABELS,
-  PACE_FAMILY_SUMMARIES,
+  MODIFIER_COLORS,
+  MODIFIER_LABELS,
+  MODIFIER_SUMMARIES,
   WORLD_MAP_BOUNDS,
   WORLD_NODE_LIST,
   WORLD_REGIONS,
@@ -33,7 +33,7 @@ import {
 } from './constants';
 import { NodeInfo } from './NodeInfo';
 import { BiomeIcon } from './BiomeIcon';
-import { PaceIcon } from './PaceIcon';
+import { ModifierIcon } from './ModifierIcon';
 import { atlasIcon, GameIcon } from '../GameIcon';
 import { DEV_TOOLS_ENABLED } from '../../devTools';
 import { DialogHeader, GameDialog } from '../../hud/primitives';
@@ -278,7 +278,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
     return [
       node.displayName,
       node.biomeGroup,
-      modifier?.pace,
+      modifier?.modifier,
     ]
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(normalizedQuery));
@@ -499,11 +499,11 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                     <span
                       className="world-map-node__pace"
                       style={{
-                        background: PACE_FAMILY_COLORS[modifier.pace],
+                        background: MODIFIER_COLORS[modifier.modifier],
                       }}
-                      title={`${PACE_FAMILY_LABELS[modifier.pace]} — ${PACE_FAMILY_SUMMARIES[modifier.pace]}`}
+                      title={`${MODIFIER_LABELS[modifier.modifier]} — ${MODIFIER_SUMMARIES[modifier.modifier]}`}
                     >
-                      <PaceIcon pace={modifier.pace} size={16} />
+                      <ModifierIcon modifier={modifier.modifier} size={16} />
                     </span>
                   )}
                   {dungeonBadge && (

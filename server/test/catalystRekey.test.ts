@@ -1,8 +1,10 @@
 import {
   GAME_CONFIG,
+  NODE_MODIFIERS,
   RECIPE_DATABASE,
   checkReconstruct,
   emptyEquipment,
+  modifierRewardMult,
   type EssenceType,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -65,10 +67,15 @@ function makePlayer(id: string): PersistedPlayerSlices {
 
 const world = new World();
 
-// ── Kills grant catalyst progress under the NODE's pace family, and mint ───────
+// ── Kills grant catalyst progress under the NODE's modifier, and mint ─────────
 const alacP = world.attachPlayerEntity(makePlayer("p-alac"), "p-alac");
-const wolf = world.createMonster("node-t1-forest-01", "wolf", { x: 800, y: 800 })!;
-const weight = 4; // wolf essence reward, no explicit catalystWeight
+const FARM_NODE = "node-t1-forest-01";
+const farmModifier = NODE_MODIFIERS[FARM_NODE]?.modifier;
+assert(farmModifier === "alacrity", "the farm node under test is an alacrity node");
+const wolf = world.createMonster(FARM_NODE, "wolf", { x: 800, y: 800 })!;
+// Wolf's essence reward (no explicit catalystWeight), scaled by the node modifier's
+// reward premium — modifiers are net difficulty increases and pay for themselves.
+const weight = Math.round(4 * modifierRewardMult(farmModifier));
 const per = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
 const kills = 30;
 for (let i = 0; i < kills; i++) grantMonsterRewards(world, "p-alac", wolf);

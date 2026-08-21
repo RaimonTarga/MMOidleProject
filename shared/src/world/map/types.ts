@@ -1,4 +1,4 @@
-import type { DensityModifier, PaceFamily } from '../nodeModifierTypes';
+import type { NodeModifierFamily } from '../nodeModifierTypes';
 
 export type WorldRegionId = `t${number}`;
 
@@ -22,8 +22,7 @@ export interface WorldNodeAuthoring {
   kind: WorldNodeKind;
   biomeGroup: string;
   biomeTier: number;
-  pace?: PaceFamily;
-  density?: DensityModifier;
+  modifier?: NodeModifierFamily;
   bossTypeId?: string;
   mobDensity?: number;
   featureSetId?: string;

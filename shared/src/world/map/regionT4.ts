@@ -22,7 +22,6 @@ export const REGION_T4_NODES = buildRegionNodes({
     'graveyard',
     'trench',
   ],
-  eliteGroundBiomes: ['tundra', 'jungle', 'volcanic', 'graveyard'],
   dungeonCells: [
     { row: 9, col: 2 },
     { row: 9, col: 6 },

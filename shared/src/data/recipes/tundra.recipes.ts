@@ -11,7 +11,7 @@ export const tundraRecipeEntries = [
   ['tundra-permafrost-maul', {
     id: 'tundra-permafrost-maul', name: 'Permafrost Maul',
     recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { blue: 124 }, catalystCost: { brutality: 3 }, stats: { attack: 120 }, attacksPerSecond: 0.50, tier: 3, // family-tag: slow heavy maul → Brutality
+    cost: { blue: 124 }, catalystCost: { heavy: 3 }, stats: { attack: 120 }, attacksPerSecond: 0.50, tier: 3, // family-tag: slow heavy maul → Heavy
     mechanicEffects: { 'weapon.brittle-plating': 2, 'weapon.brittle-dr': 0.01, 'weapon.brittle-stacks': 8 },
     icon: 'items/weapons/permafrost-maul.png',
     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
@@ -30,7 +30,7 @@ export const tundraRecipeEntries = [
   ['tundra-rimebrand', {
     id: 'tundra-rimebrand', name: 'Rimebrand',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'weapon',
-    cost: { blue: 120 }, catalystCost: { blight: 3 }, stats: { attack: 96 }, attacksPerSecond: 0.60, tier: 3, // family-tag: frost DoT-conversion weapon → Blight
+    cost: { blue: 120 }, catalystCost: { fortified: 3 }, stats: { attack: 96 }, attacksPerSecond: 0.60, tier: 3, // family-tag: frost DoT-conversion weapon → Fortified
     weaponDot: { effectId: 'tundra-rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/rimebrand.png',
     description: 'The first true frost-brand — slow and heavy, planting a cold in the wound that goes on biting after the blade is gone.',
@@ -46,7 +46,7 @@ export const tundraRecipeEntries = [
   ['tundra-vest-t3', {
     id: 'tundra-vest-t3', name: 'Glacial Bulwark',
     recipeGroup: 'tundra', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { blue: 100, red: 25 }, catalystCost: { brutality: 3 }, stats: { maxHp: 100, plating: 15 }, // family-tag: DR + damage-cap armor → Brutality
+    cost: { blue: 100, red: 25 }, catalystCost: { heavy: 3 }, stats: { maxHp: 100, plating: 15 }, // family-tag: DR + damage-cap armor → Heavy
     mechanicEffects: {
       'defense.stationary-dr-pct': 0.15, 'defense.stationary-dr-ramptime-ms': 6000,
       'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
@@ -67,7 +67,7 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t3', {
     id: 'tundra-charm-t3', name: 'Frostward Charm',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { blue: 75, purple: 25 }, catalystCost: { brutality: 3 }, stats: { hpRegen: 11 }, // family-tag: shield charm (anti-spike) → Brutality
+    cost: { blue: 75, purple: 25 }, catalystCost: { heavy: 3 }, stats: { hpRegen: 11 }, // family-tag: shield charm (anti-spike) → Heavy
     mechanicEffects: {
       'defense.shield-pct': 0.12, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
       'defense.absorb-pct': 0.08,
@@ -87,7 +87,7 @@ export const tundraRecipeEntries = [
   ['tundra-boots-t3', {
     id: 'tundra-boots-t3', name: 'Glacier Striders',
     recipeGroup: 'tundra', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { blue: 80 }, catalystCost: { brutality: 3 }, stats: { speed: 30 }, tier: 3, // family-tag: tundra momentum mobility → Brutality
+    cost: { blue: 80 }, catalystCost: { heavy: 3 }, stats: { speed: 30 }, tier: 3, // family-tag: tundra momentum mobility → Heavy
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
     icon: 'items/boots/glacier-striders.png',
     description: 'They gather momentum across the ice and are loath to give it back.',
@@ -104,7 +104,7 @@ export const tundraRecipeEntries = [
   ['tundra-glacial-tyrant-maul', {
     id: 'tundra-glacial-tyrant-maul', name: 'Glacial Tyrant Maul',
     recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
-    cost: { blue: 273 }, catalystCost: { brutality: 4 }, stats: { attack: 200 }, attacksPerSecond: 0.50, tier: 4, // family-tag: capstone heavy maul → Brutality
+    cost: { blue: 273 }, catalystCost: { heavy: 4 }, stats: { attack: 200 }, attacksPerSecond: 0.50, tier: 4, // family-tag: capstone heavy maul → Heavy
     // † brittle-shatter-threshold: at max brittle stacks (8), strip the target's
     //   DR for 2s (brittle-shatter-dr-strip-ms). (new key)
     mechanicEffects: {
@@ -127,7 +127,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
     // ⚠ INHERITED (Swamp slow-DoT lineage) — base attack carried from doc, not
     //   scaled from a T3 ancestor. VERIFY in the DoT-conversion budget pass.
-    cost: { blue: 258 }, catalystCost: { blight: 4 }, stats: { attack: 155 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Blight
+    cost: { blue: 258 }, catalystCost: { fortified: 4 }, stats: { attack: 155 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Fortified
     weaponDot: { effectId: 'rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/glacial-rimebrand.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
@@ -143,7 +143,7 @@ export const tundraRecipeEntries = [
   ['tundra-vest-t4', {
     id: 'tundra-vest-t4', name: 'Permafrost Sovereign',
     recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { blue: 256, red: 64 }, catalystCost: { brutality: 4 }, stats: { maxHp: 180, plating: 28 }, // family-tag: DR + damage-cap armor → Brutality
+    cost: { blue: 256, red: 64 }, catalystCost: { heavy: 4 }, stats: { maxHp: 180, plating: 28 }, // family-tag: DR + damage-cap armor → Heavy
     mechanicEffects: {
       'defense.stationary-dr-pct': 0.20, 'defense.stationary-dr-ramptime-ms': 5000,
       'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
@@ -163,7 +163,7 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t4', {
     id: 'tundra-charm-t4', name: 'Glacial Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 220, purple: 30 }, catalystCost: { brutality: 4 }, stats: { hpRegen: 16 }, // family-tag: shield charm (anti-spike) → Brutality
+    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: shield charm (anti-spike) → Heavy
     mechanicEffects: {
       'defense.shield-pct': 0.17, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
       'defense.absorb-pct': 0.12,
@@ -183,7 +183,7 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t4-deepfreeze', {
     id: 'tundra-charm-t4-deepfreeze', name: 'Deepfreeze Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 220, purple: 30 }, catalystCost: { brutality: 4 }, stats: { hpRegen: 16 }, // family-tag: shield + absorb ward → Brutality
+    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: shield + absorb ward → Heavy
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
     //   (weaker early, stronger in long fights). (new keys)
     mechanicEffects: {
@@ -206,7 +206,7 @@ export const tundraRecipeEntries = [
   ['tundra-boots-t4', {
     id: 'tundra-boots-t4', name: 'Avalanche Striders',
     recipeGroup: 'tundra', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { blue: 176 }, catalystCost: { brutality: 4 }, stats: { speed: 42 }, tier: 4, // family-tag: tundra momentum mobility → Brutality
+    cost: { blue: 176 }, catalystCost: { heavy: 4 }, stats: { speed: 42 }, tier: 4, // family-tag: tundra momentum mobility → Heavy
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.75, 'mobility.ramp-rate': 0.35 },
     icon: 'items/boots/avalanche-striders.png',
     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
@@ -245,7 +245,7 @@ export const tundraRecipeEntries = [
     id: 'relic-glacial-bell', name: 'Glacial Bell',
     recipeGroup: 'tundra', requiredBiomeLevel: 12, slot: 'relic',
     lineageId: 'relic-glacial-bell',
-    cost: { blue: 220 }, catalystCost: { brutality: 4 },
+    cost: { blue: 220 }, catalystCost: { heavy: 4 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.20,

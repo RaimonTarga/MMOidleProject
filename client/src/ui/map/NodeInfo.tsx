@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import type {
   EssenceType,
   MonsterDefinition,
-  PaceFamily,
+  NodeModifierFamily,
 } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
@@ -11,8 +11,8 @@ import {
   catalystLabel, catalystFamilyLabel,
   coreEligibilityLabel, isRestrictedCore,
   relicRatingsFromEffects, resolveRelicPreview,
-  NODE_MODIFIERS, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS, PACE_FAMILY_SUMMARIES,
-  paceModifierDetails,
+  NODE_MODIFIERS, MODIFIER_COLORS, MODIFIER_LABELS, MODIFIER_SUMMARIES,
+  modifierDetails,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
   WORLD_REGIONS,
 } from '@mmo-idle/shared';
@@ -30,7 +30,7 @@ import { dungeonBadgeLabel, hexDot, tileColor } from './constants';
 import { bfsPath } from './pathing';
 import { useMapClock } from './useMapClock';
 import { BiomeIcon } from './BiomeIcon';
-import { PaceIcon } from './PaceIcon';
+import { ModifierIcon } from './ModifierIcon';
 import {
   formatMonsterMechanics,
   monsterQuickStats,
@@ -57,18 +57,18 @@ interface NodeInfoProps {
 }
 
 // ── Expandable monster row ──────────────────────────────────────────────────────
-function MonsterRow({ m, isBoss, pace, biomeTier, open, onToggle }: {
+function MonsterRow({ m, isBoss, modifier, biomeTier, open, onToggle }: {
   m: MonsterDefinition;
   isBoss: boolean;
-  pace?: PaceFamily;
+  modifier?: NodeModifierFamily;
   biomeTier: number;
   open: boolean;
   onToggle: () => void;
 }) {
-  const effectivePace = isBoss ? undefined : pace;
+  const effectiveModifier = isBoss ? undefined : modifier;
   const tags  = monsterTags(m);
-  const lines = formatMonsterMechanics(m, effectivePace, biomeTier);
-  const quick = monsterQuickStats(m, effectivePace, biomeTier);
+  const lines = formatMonsterMechanics(m, effectiveModifier, biomeTier);
+  const quick = monsterQuickStats(m, effectiveModifier, biomeTier);
   return (
     <div className={`map-monster${isBoss ? ' map-monster--boss' : ''}${open ? ' map-monster--open' : ''}`}>
       <button className="map-monster__row" onClick={onToggle}>
@@ -95,7 +95,7 @@ function MonsterRow({ m, isBoss, pace, biomeTier, open, onToggle }: {
       {open && (
         <div className="map-monster__detail">
           <div className="map-monster__statgrid">
-            {monsterStatRows(m, effectivePace, biomeTier).map(cell => (
+            {monsterStatRows(m, effectiveModifier, biomeTier).map(cell => (
               <div key={cell.label} className="map-monster__statcell">
                 <span className="map-monster__statlabel">{cell.label}</span>
                 <span className="map-monster__statvalue">
@@ -341,20 +341,20 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       {modifier && (
         <section
           className="map-modifier"
-          style={{ borderLeftColor: PACE_FAMILY_COLORS[modifier.pace] }}
+          style={{ borderLeftColor: MODIFIER_COLORS[modifier.modifier] }}
         >
           <div className="map-modifier__head">
             <span
               className="map-modifier__chip"
-              style={{ background: PACE_FAMILY_COLORS[modifier.pace] }}
+              style={{ background: MODIFIER_COLORS[modifier.modifier] }}
             >
-              <PaceIcon pace={modifier.pace} size={16} />
-              <span>{PACE_FAMILY_LABELS[modifier.pace]}</span>
+              <ModifierIcon modifier={modifier.modifier} size={16} />
+              <span>{MODIFIER_LABELS[modifier.modifier]}</span>
             </span>
           </div>
-          <p className="map-modifier__summary">{PACE_FAMILY_SUMMARIES[modifier.pace]}</p>
+          <p className="map-modifier__summary">{MODIFIER_SUMMARIES[modifier.modifier]}</p>
           <dl className="map-modifier__values">
-            {paceModifierDetails(modifier.pace, biomeTier).map((detail) => (
+            {modifierDetails(modifier.modifier, biomeTier).map((detail) => (
               <div key={detail.label} className="map-modifier__value-row">
                 <dt>{detail.label}</dt>
                 <dd className={`map-modifier__value--${detail.direction}`}>
@@ -364,7 +364,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
             ))}
           </dl>
           <div className="map-modifier__grant">
-            Grants: <strong>{catalystFamilyLabel(modifier.pace)}</strong>
+            Grants: <strong>{catalystFamilyLabel(modifier.modifier)}</strong>
           </div>
         </section>
       )}
@@ -408,7 +408,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
               key={m.id}
               m={m}
               isBoss={false}
-              pace={modifier?.pace}
+              modifier={modifier?.modifier}
               biomeTier={biomeTier}
               open={openMonster === m.id}
               onToggle={() => setOpenMonster(prev => prev === m.id ? null : m.id)}

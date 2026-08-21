@@ -1,94 +1,293 @@
-// ─── Node modifiers (Map Variety Stage A) ─────────────────────────────────────
+// ─── Node modifiers ───────────────────────────────────────────────────────────
 //
-// Every non-excluded node carries exactly one PACE family (its personality and
-// catalyst key) and optionally one DENSITY modifier. This module owns:
-//   - the family/density vocabulary, labels, summaries, and badge colors
-//   - the biome ban tables + native-family table (design §1.5)
+// Every non-excluded node carries exactly ONE modifier, which is both its
+// personality and its catalyst key. This module owns:
+//   - the modifier vocabulary, labels, summaries, and badge colors
+//   - the biome ban table + native-modifier table
 //   - the PURE, DETERMINISTIC reshaping math applied to non-boss monsters
+//   - spawn-count and reward scaling
 //   - validation of the authored per-node assignment (`NODE_MODIFIERS`)
 //
-// It reshapes a monster's OFFENSE only (attack / cadence / opening / DoT /
-// movement pressure) around a threat-budget-neutral centre — never HP, never
-// player stats (design §1.3). All magnitudes below are PLACEHOLDER — the user
-// owns numeric tuning; they live in one block so they are trivially retunable.
+// Unlike the previous design, modifiers may reshape DEFENCE and POPULATION as well
+// as offence, and they are not threat-budget-neutral — each is a net difficulty
+// increase paid for with a reward multiplier. Bosses remain immune, and dungeons are
+// excluded entirely (static hand-designed exams).
+//
+// There are no "mechanic overlays" any more: the old blight/volatility/predation
+// families synthesised DoTs, counted bursts and opening strikes onto monsters at
+// spawn. All five current modifiers are plain scalars plus a spawn count, so the
+// overlay machinery (and the `moddedByNode` component that carried it) is gone.
+//
+// All magnitudes below are PLACEHOLDER — the user owns numeric tuning; they live in
+// one block so they are trivially retunable.
 
-import type { MonsterDefinition } from '../data/monsters/types';
-import type { MonsterDotEffect } from '../components/targeting/scriptsBoss';
 import { NODE_BIOMES, TEST_ROOM_NODE_ID } from './nodeBiomes';
 import { NODE_MODIFIERS } from './nodeModifierMap';
-// Runtime-only refs used inside validateNodeModifiers (function body, not module
-// top level) — safe despite the biomeDatabase → nodeModifiers import cycle.
-import { BIOME_DATABASE } from '../biomeDatabase';
-import { MONSTER_DATABASE } from '../monsterDatabase';
 import {
-  DENSITY_BANS,
-  DENSITY_MODIFIERS_ENABLED,
-  DENSITY_MODIFIERS,
-  NATIVE_FAMILY,
-  PACE_FAMILIES,
-  PACE_HARD_BANS,
-  type DensityModifier,
+  MODIFIER_BANS,
+  NATIVE_MODIFIER,
+  NODE_MODIFIER_FAMILIES,
+  type NodeModifierFamily,
   type NodeModifierInfo,
-  type PaceFamily,
 } from './nodeModifierTypes';
 
 export {
-  DENSITY_BANS,
-  DENSITY_MODIFIERS_ENABLED,
-  DENSITY_MODIFIERS,
-  NATIVE_FAMILY,
-  PACE_FAMILIES,
-  PACE_HARD_BANS,
+  MODIFIER_BANS,
+  NATIVE_MODIFIER,
+  NODE_MODIFIER_FAMILIES,
 };
-export type { DensityModifier, NodeModifierInfo, PaceFamily };
+export type { NodeModifierFamily, NodeModifierInfo };
 
-// ── Vocabulary ────────────────────────────────────────────────────────────────
+// ── Labels / player-facing copy ───────────────────────────────────────────────
 
-// ── Labels / player-facing copy ─────────────────────────────────────────────
-
-export const PACE_FAMILY_LABELS: Record<PaceFamily, string> = {
+export const MODIFIER_LABELS: Record<NodeModifierFamily, string> = {
   alacrity: 'Alacrity',
-  brutality: 'Brutality',
-  blight: 'Blight',
-  volatility: 'Volatility',
-  predation: 'Predation',
-};
-
-export const DENSITY_LABELS: Record<DensityModifier, string> = {
+  heavy: 'Heavy',
   swarming: 'Swarming',
-  'elite-ground': 'Elite Ground',
+  dominion: 'Dominion',
+  fortified: 'Fortified',
 };
 
-/** One-line threat summary shown on the map (design §1.2 table). */
-export const PACE_FAMILY_SUMMARIES: Record<PaceFamily, string> = {
+/** One-line threat summary shown on the map. */
+export const MODIFIER_SUMMARIES: Record<NodeModifierFamily, string> = {
   alacrity:
-    'Faster, lighter attacks — monsters strike and move quicker but hit softer.',
-  brutality:
-    'Slower, heavier attacks — bigger spikes at a lower tempo.',
-  blight:
-    'Attacks carry damage-over-time; existing DoT is amplified and direct hits soften.',
-  volatility:
-    'Deterministic but irregular pressure — skip-beats and counted bursts.',
-  predation:
-    'Much harder opening strikes against full-HP targets, with weaker follow-up.',
-};
-
-export const DENSITY_SUMMARIES: Record<DensityModifier, string> = {
-  swarming: 'Far more monsters, biased away from elites — volume is the threat.',
-  'elite-ground':
-    'Fewer monsters, biased toward the biome’s toughest entries — the horde falls silent, something bigger walks.',
+    'Monsters attack and move faster, and hit just as hard.',
+  heavy:
+    'Slower attacks that land much harder — fewer, bigger spikes.',
+  swarming:
+    'Far more monsters. Volume is the threat.',
+  dominion:
+    'Fewer monsters, each stronger in every respect — the horde falls silent, something bigger walks.',
+  fortified:
+    'Monsters are armoured well past their kind — the same fight, twice as long.',
 };
 
 /** Badge accent hues (readable in light+dark; user may retint). */
-export const PACE_FAMILY_COLORS: Record<PaceFamily, string> = {
-  alacrity: '#4fc3f7', // cyan — quick
-  brutality: '#e57373', // red — heavy
-  blight: '#81c784', // green — rot/DoT
-  volatility: '#ba68c8', // purple — chaos
-  predation: '#ffb74d', // amber — ambush
+export const MODIFIER_COLORS: Record<NodeModifierFamily, string> = {
+  alacrity: '#4fc3f7',  // cyan — quick
+  heavy: '#e57373',     // red — heavy
+  swarming: '#ffb74d',  // amber — many
+  dominion: '#ba68c8',  // purple — the big one
+  fortified: '#90a4ae', // steel — armour
 };
 
-export interface PaceModifierDetail {
+/**
+ * Player-facing catalyst name for a modifier, e.g. `alacrity` → "Alacrity Catalyst".
+ * Falls back to capitalizing an unknown key, which keeps stale wallet entries from a
+ * previous modifier set readable rather than blank.
+ */
+export function catalystFamilyLabel(family: string): string {
+  const name =
+    MODIFIER_LABELS[family as NodeModifierFamily] ??
+    family.charAt(0).toUpperCase() + family.slice(1);
+  return `${name} Catalyst`;
+}
+
+// ── Magnitudes (PLACEHOLDER — user tunes here) ────────────────────────────────
+
+/** Modifier strength by node tier — sharper at higher tiers. */
+export const MODIFIER_MAGNITUDE_BY_TIER: Record<number, number> = {
+  1: 0.15,
+  2: 0.2,
+  3: 0.25,
+  4: 0.3,
+};
+
+/**
+ * Extra attack granted by `heavy` on top of its slower cadence, as a multiple of M.
+ * `heavy` is net-positive DPS by design: attack ×(1 + HEAVY_ATTACK_FACTOR×M) against
+ * a cadence of ×(1 + M), so at M=0.15 it deals ~13% more DPS in ~30% bigger bites.
+ */
+const HEAVY_ATTACK_FACTOR = 2;
+
+/** `fortified` plating multiplier factor: plating ×(1 + FORTIFIED_PLATING_FACTOR×M). */
+const FORTIFIED_PLATING_FACTOR = 2;
+
+/**
+ * `dominion` raises HP and armour by M and move speed by M/2 (a bigger monster
+ * should not also be the fastest thing in the biome), but its ATTACK gets the same
+ * ×(1+2M) as `heavy`.
+ *
+ * The attack factor is load-bearing, not flavour. Dominion removes bodies, and
+ * sustained pressure is `d(N+1)/2` — so cutting the count drags pressure DOWN by
+ * roughly 10-13% before any stat rise. At the original ×(1+M) that made Dominion the
+ * SAFEST modifier in every biome, quietly below an unmodified node, which is the
+ * opposite of its intent. ×(1+2M) covers the body loss and leaves it a genuine
+ * increase.
+ */
+const DOMINION_MOVE_FACTOR = 0.5;
+const DOMINION_ATTACK_FACTOR = 2;
+
+/**
+ * Spawn-count multipliers. Damage taken from a pull is QUADRATIC in the number of
+ * concurrent attackers (see tools/tier-table.ts), so these swing much harder than
+ * they read.
+ *
+ * They are deliberately timid. Population enters sustained pressure through
+ * `(N+1)/2`, which is far more sensitive than any stat multiplier: the earlier
+ * 1.4/0.7 pair spanned ×1.51 of pressure inside a single biome, against a
+ * progression step of only ×1.20 between biomes — so a Swarming Plains out-pressured
+ * a Dominion Forest and the biome order stopped being readable. At 1.2/0.85 the whole
+ * modifier set fits inside the step and every railroad step orders cleanly.
+ * (The dormant pre-rework values were 1.75/0.5, wider still.)
+ */
+const SWARMING_SPAWN_FACTOR = 1.2;
+const DOMINION_SPAWN_FACTOR = 0.85;
+
+/**
+ * Per-kill reward multiplier, paying out the difficulty each modifier adds.
+ *
+ * `swarming` is deliberately close to 1: it already pays more per hour simply by
+ * providing more bodies, so a large per-kill bonus on top would make it the only
+ * node type worth farming. `dominion` pays most because it removes bodies AND
+ * strengthens what remains, so each kill carries the whole difficulty increase.
+ */
+const MODIFIER_REWARD_MULT: Record<NodeModifierFamily, number> = {
+  alacrity: 1.15,
+  heavy: 1.15,
+  swarming: 1.05,
+  dominion: 1.4,
+  fortified: 1.25,
+};
+
+function magnitudeForTier(biomeTier: number): number {
+  return MODIFIER_MAGNITUDE_BY_TIER[biomeTier] ?? 0;
+}
+
+// ── Stat reshaping (pure) ─────────────────────────────────────────────────────
+
+export interface ModifierStatScalars {
+  attackMult: number;
+  /** Time BETWEEN attacks, so below 1 means faster. */
+  attackCooldownMult: number;
+  moveSpeedMult: number;
+  hpMult: number;
+  platingMult: number;
+  /**
+   * Multiplier on the damage the monster TAKES, folded into damageReduction as
+   * `DR' = 1 - (1 - DR) × incomingDamageMult`. Expressing it this way keeps the
+   * result below 1 for any input and works even when the monster has DR 0, which a
+   * naive `DR × k` cannot do.
+   */
+  incomingDamageMult: number;
+}
+
+const NEUTRAL: ModifierStatScalars = {
+  attackMult: 1,
+  attackCooldownMult: 1,
+  moveSpeedMult: 1,
+  hpMult: 1,
+  platingMult: 1,
+  incomingDamageMult: 1,
+};
+
+/**
+ * Plain-scalar reshaping applied at spawn.
+ *
+ *   alacrity  : cadence ×(1−M) and move ×(1+M) with attack UNCHANGED, so it is a
+ *               straight throughput increase — monsters are simply faster.
+ *   heavy     : attack ×(1+2M) against cadence ×(1+M) — bigger bites, slower tempo,
+ *               net more damage.
+ *   swarming  : no stat change at all; its entire effect is population.
+ *   dominion  : everything up by M (move by M/2), and population down.
+ *   fortified : defence only — plating ×(1+2M) and incoming damage ×(1−M). Offence
+ *               and speed untouched, so the fight is the same shape but far longer.
+ */
+export function modifierStatScalars(
+  family: NodeModifierFamily,
+  biomeTier: number,
+): ModifierStatScalars {
+  const m = magnitudeForTier(biomeTier);
+  if (m <= 0) return { ...NEUTRAL };
+
+  switch (family) {
+    case 'alacrity':
+      return { ...NEUTRAL, attackCooldownMult: 1 - m, moveSpeedMult: 1 + m };
+    case 'heavy':
+      return {
+        ...NEUTRAL,
+        attackMult: 1 + HEAVY_ATTACK_FACTOR * m,
+        attackCooldownMult: 1 + m,
+      };
+    case 'swarming':
+      return { ...NEUTRAL };
+    case 'dominion':
+      return {
+        attackMult: 1 + DOMINION_ATTACK_FACTOR * m,
+        attackCooldownMult: 1,
+        moveSpeedMult: 1 + DOMINION_MOVE_FACTOR * m,
+        hpMult: 1 + m,
+        platingMult: 1 + m,
+        incomingDamageMult: 1 - DOMINION_MOVE_FACTOR * m,
+      };
+    case 'fortified':
+      return {
+        ...NEUTRAL,
+        platingMult: 1 + FORTIFIED_PLATING_FACTOR * m,
+        incomingDamageMult: 1 - m,
+      };
+  }
+}
+
+/**
+ * Scale a monster's damage-over-time under a node modifier.
+ *
+ * Without this, modifiers barely touched the DoT biomes at all — roughly 78% of
+ * Swamp's output is poison, so its modifier spread was ×1.04 where every other biome
+ * sat near ×1.18, making Swamp nodes nearly indistinguishable from one another.
+ *
+ * The scale is the modifier's NET DAMAGE multiplier (`attackMult / cooldownMult`),
+ * not `attackMult` alone. The rule is "a modifier multiplies the monster's total
+ * damage output"; direct damage realises that through attack and cadence together,
+ * DoT realises it through damage-per-stack. Scaling DoT on `attackMult` alone would
+ * hand `heavy` its full +30% on poison while the −15% cadence penalty that offsets it
+ * applies only to direct hits — which made a Heavy Swamp ×1.30 where a Heavy Plains
+ * was ×1.13, and pushed Swamp back over Mountain in the progression.
+ *
+ * The trade is a little physical nuance: capped DoT throughput does not really depend
+ * on how fast the stacks were applied, so `alacrity` deepening poison is a modelling
+ * convention rather than a simulation. It buys uniform modifier strength across every
+ * biome, which is what keeps the biome order readable.
+ */
+export function modifiedDotDamagePerStack(
+  baseDamagePerStack: number,
+  family: NodeModifierFamily | undefined,
+  biomeTier: number,
+): number {
+  if (!family) return baseDamagePerStack;
+  const { attackMult, attackCooldownMult } = modifierStatScalars(family, biomeTier);
+  const damageMult = attackMult / Math.max(0.01, attackCooldownMult);
+  if (damageMult === 1) return baseDamagePerStack;
+  return Math.max(1, Math.round(baseDamagePerStack * damageMult));
+}
+
+/** Resolve a monster's damageReduction under a modifier, clamped to [0, 0.95]. */
+export function modifiedDamageReduction(
+  baseDamageReduction: number,
+  incomingDamageMult: number,
+): number {
+  const survived = (1 - baseDamageReduction) * incomingDamageMult;
+  return Math.min(0.95, Math.max(0, 1 - survived));
+}
+
+// ── Population + rewards (pure) ───────────────────────────────────────────────
+
+/** Multiplier on a node's target monster population. */
+export function modifierSpawnFactor(family: NodeModifierFamily | undefined): number {
+  if (family === 'swarming') return SWARMING_SPAWN_FACTOR;
+  if (family === 'dominion') return DOMINION_SPAWN_FACTOR;
+  return 1;
+}
+
+/** Per-kill reward multiplier for essence / biome XP / catalyst progress. */
+export function modifierRewardMult(family: NodeModifierFamily | undefined): number {
+  if (!family) return 1;
+  return MODIFIER_REWARD_MULT[family] ?? 1;
+}
+
+// ── UI detail rows ────────────────────────────────────────────────────────────
+
+export interface ModifierDetail {
   label: string;
   value: string;
   direction: 'up' | 'down' | 'neutral';
@@ -102,281 +301,71 @@ const signedPercent = (fraction: number): string => {
   return `${fraction >= 0 ? '+' : '−'}${value}%`;
 };
 
-const multiplier = (value: number): string => `×${value.toFixed(2)}`;
-
-/** Exact player-facing values for a pace family at a given biome tier. */
-export function paceModifierDetails(
-  family: PaceFamily,
+/** Exact player-facing values for a modifier at a given biome tier. */
+export function modifierDetails(
+  family: NodeModifierFamily,
   biomeTier: number,
-): PaceModifierDetail[] {
+): ModifierDetail[] {
   const m = magnitudeForTier(biomeTier);
+  const rows: ModifierDetail[] = [];
+
   switch (family) {
     case 'alacrity':
-      return [
-        { label: 'Direct attack', value: signedPercent(-m), direction: 'down' },
-        { label: 'Attack interval', value: signedPercent(-m), direction: 'down' },
-        { label: 'Move speed', value: signedPercent(m / 2), direction: 'up' },
-      ];
-    case 'brutality':
-      return [
-        { label: 'Direct attack', value: signedPercent(m), direction: 'up' },
-        { label: 'Attack interval', value: signedPercent(m), direction: 'up' },
-      ];
-    case 'blight':
-      return [
-        { label: 'Direct attack', value: signedPercent(-m), direction: 'down' },
-        {
-          label: 'Existing DoT damage',
-          value: signedPercent(BLIGHT_AMPLIFY_FACTOR * m),
-          direction: 'up',
-        },
-        {
-          label: 'New DoT at full stacks',
-          value: `${compactNumber(m * 100)}% base DPS`,
-          direction: 'up',
-        },
-        {
-          label: 'New DoT shape',
-          value: `${BLIGHT_DOT_MAX_STACKS} stacks · ${BLIGHT_DOT_TICK_MS / 1000}s tick · ${BLIGHT_DOT_DURATION_MS / 1000}s duration`,
-          direction: 'neutral',
-        },
-      ];
-    case 'volatility':
-      return [
-        { label: 'Direct attack', value: signedPercent(-m), direction: 'down' },
-        {
-          label: 'New cadence burst',
-          value: `Every ${VOLATILITY_EVERY_N}rd attack · ${multiplier(1 + VOLATILITY_SPIKE_FACTOR * m)}`,
-          direction: 'up',
-        },
-        {
-          label: 'Authored cadence burst',
-          value: multiplier(1 + m),
-          direction: 'up',
-        },
-      ];
-    case 'predation':
-      return [
-        {
-          label: 'Follow-up attack',
-          value: signedPercent(-m / 2),
-          direction: 'down',
-        },
-        {
-          label: 'Full-HP opening strike',
-          value: multiplier(1 + PREDATION_OPENER_FACTOR * m),
-          direction: 'up',
-        },
-      ];
+      rows.push({ label: 'Attack interval', value: signedPercent(-m), direction: 'down' });
+      rows.push({ label: 'Move speed', value: signedPercent(m), direction: 'up' });
+      rows.push({ label: 'Attack damage', value: 'unchanged', direction: 'neutral' });
+      break;
+    case 'heavy':
+      rows.push({
+        label: 'Attack damage',
+        value: signedPercent(HEAVY_ATTACK_FACTOR * m),
+        direction: 'up',
+      });
+      rows.push({ label: 'Attack interval', value: signedPercent(m), direction: 'up' });
+      break;
+    case 'swarming':
+      rows.push({
+        label: 'Monster count',
+        value: signedPercent(SWARMING_SPAWN_FACTOR - 1),
+        direction: 'up',
+      });
+      rows.push({ label: 'Monster stats', value: 'unchanged', direction: 'neutral' });
+      break;
+    case 'dominion':
+      rows.push({
+        label: 'Monster count',
+        value: signedPercent(DOMINION_SPAWN_FACTOR - 1),
+        direction: 'down',
+      });
+      rows.push({ label: 'Health', value: signedPercent(m), direction: 'up' });
+      rows.push({ label: 'Attack damage', value: signedPercent(m), direction: 'up' });
+      rows.push({ label: 'Armour', value: signedPercent(m), direction: 'up' });
+      rows.push({
+        label: 'Move speed',
+        value: signedPercent(DOMINION_MOVE_FACTOR * m),
+        direction: 'up',
+      });
+      break;
+    case 'fortified':
+      rows.push({
+        label: 'Plating',
+        value: signedPercent(FORTIFIED_PLATING_FACTOR * m),
+        direction: 'up',
+      });
+      rows.push({ label: 'Damage taken', value: signedPercent(-m), direction: 'down' });
+      rows.push({ label: 'Offence', value: 'unchanged', direction: 'neutral' });
+      break;
   }
-}
 
-/**
- * Player-facing catalyst name for a pace family, e.g. `alacrity` → "Alacrity
- * Catalyst". Falls back to capitalizing an unknown key (mirrors the old
- * biome-keyed `catalystLabel` fallback behavior).
- */
-export function catalystFamilyLabel(family: string): string {
-  const name =
-    PACE_FAMILY_LABELS[family as PaceFamily] ??
-    family.charAt(0).toUpperCase() + family.slice(1);
-  return `${name} Catalyst`;
-}
-
-// ── Ban / native tables (design §1.5) ─────────────────────────────────────────
-
-// ── Reshaping magnitudes (PLACEHOLDER — user tunes here) ───────────────────────
-
-/** Modifier strength by node tier (design §1.3 — sharper at higher tiers). */
-export const PACE_MAGNITUDE_BY_TIER: Record<number, number> = {
-  1: 0.15,
-  2: 0.2,
-  3: 0.25,
-  4: 0.3,
-};
-
-/** Blight synthesized/amplified DoT shape (PLACEHOLDER). */
-const BLIGHT_DOT_MAX_STACKS = 5;
-const BLIGHT_DOT_TICK_MS = 1000;
-const BLIGHT_DOT_DURATION_MS = 4000;
-const BLIGHT_AMPLIFY_FACTOR = 2; // existing DoT damagePerStack ×(1 + AMPLIFY×M)
-
-/** Predation opening-strike bonus factor (PLACEHOLDER): mult = 1 + FACTOR×M. */
-const PREDATION_OPENER_FACTOR = 4;
-
-/** Volatility synthesized cadence (no def cadence): every N attacks ×(1+FACTOR×M). */
-const VOLATILITY_EVERY_N = 3;
-const VOLATILITY_SPIKE_FACTOR = 3;
-
-/** Density spawn-count multipliers (PLACEHOLDER — user tunes). */
-const SWARMING_SPAWN_FACTOR = 1.75;
-const ELITE_GROUND_SPAWN_FACTOR = 0.5;
-
-/** Elite-vs-non-elite pool weights per density (PLACEHOLDER). */
-const SWARMING_ELITE_WEIGHT = 0.25;
-const ELITE_GROUND_ELITE_WEIGHT = 4;
-
-function magnitudeForTier(biomeTier: number): number {
-  return PACE_MAGNITUDE_BY_TIER[biomeTier] ?? 0;
-}
-
-// ── Stat reshaping (pure, threat-budget-neutral by construction) ───────────────
-
-export interface PaceStatScalars {
-  attackMult: number;
-  attackCooldownMult: number;
-  moveSpeedMult: number;
-}
-
-/**
- * Plain-scalar reshaping applied at spawn. Cooldown is time-between-attacks, so
- * a smaller cooldownMult = faster attacks. Each family keeps DPS on budget:
- *   - alacrity   : attack ×(1−M), cooldown ×(1−M) (DPS-neutral), move ×(1+M/2)
- *   - brutality  : attack ×(1+M), cooldown ×(1+M) (spikier, slower), move ×1
- *   - blight     : attack ×(1−M) (throughput returns as DoT), cooldown/move ×1
- *   - volatility : attack ×(1−M) (average restored by the counted burst)
- *   - predation  : attack ×(1−M/2) (the opener carries the rest)
- */
-export function paceStatScalars(
-  family: PaceFamily,
-  biomeTier: number,
-): PaceStatScalars {
-  const m = magnitudeForTier(biomeTier);
-  switch (family) {
-    case 'alacrity':
-      return {
-        attackMult: 1 - m,
-        attackCooldownMult: 1 - m,
-        moveSpeedMult: 1 + m / 2,
-      };
-    case 'brutality':
-      return {
-        attackMult: 1 + m,
-        attackCooldownMult: 1 + m,
-        moveSpeedMult: 1,
-      };
-    case 'blight':
-      return { attackMult: 1 - m, attackCooldownMult: 1, moveSpeedMult: 1 };
-    case 'volatility':
-      return { attackMult: 1 - m, attackCooldownMult: 1, moveSpeedMult: 1 };
-    case 'predation':
-      return { attackMult: 1 - m / 2, attackCooldownMult: 1, moveSpeedMult: 1 };
+  const reward = modifierRewardMult(family);
+  if (reward !== 1) {
+    rows.push({
+      label: 'Rewards',
+      value: signedPercent(reward - 1),
+      direction: 'up',
+    });
   }
-}
-
-// ── Mechanic overlays (added/amplified mechanics — ride `moddedByNode`) ────────
-
-export interface PaceMechanicOverlay {
-  /** Blight: resolved (already amplified/synthesized) monster DoT. */
-  dot?: MonsterDotEffect;
-  /** Predation: opening-strike multiplier (composes multiplicatively). */
-  openingStrikeMult?: number;
-  /**
-   * Volatility: counted-burst pattern. When the def already has a
-   * `cadenceFinisher`, `multiplier` is a RELATIVE amplification applied on the
-   * def's beats; otherwise it is the absolute spike run on the overlay's own beat.
-   */
-  cadence?: { everyNAttacks: number; multiplier: number };
-}
-
-/**
- * Compute the mechanic overlay for a family/tier/def. Deterministic and pure —
- * no RNG (core invariant #1). Returns `{}` for alacrity/brutality.
- */
-export function paceMechanicOverlay(
-  family: PaceFamily,
-  biomeTier: number,
-  def: Pick<MonsterDefinition, 'stats' | 'dotEffect' | 'cadenceFinisher'> | undefined,
-): PaceMechanicOverlay {
-  const m = magnitudeForTier(biomeTier);
-  if (m <= 0) return {};
-
-  switch (family) {
-    case 'blight': {
-      const existing = def?.dotEffect;
-      if (existing) {
-        // Amplify in place; preserve debuffId so stacking identity is kept.
-        return {
-          dot: {
-            ...existing,
-            damagePerStack: Math.max(
-              1,
-              Math.round(existing.damagePerStack * (1 + BLIGHT_AMPLIFY_FACTOR * m)),
-            ),
-          },
-        };
-      }
-      // Synthesize a generic DoT whose full-stack throughput ≈ M × base direct DPS.
-      const attack = def?.stats.attack ?? 0;
-      const cooldownMs = def?.stats.attackCooldown ?? 1000;
-      const baseDps = cooldownMs > 0 ? (attack * 1000) / cooldownMs : attack;
-      const targetDotDps = m * baseDps;
-      // fullStackDps = damagePerStack × maxStacks × (1000 / tickIntervalMs)
-      const perTickDps = BLIGHT_DOT_MAX_STACKS * (1000 / BLIGHT_DOT_TICK_MS);
-      const damagePerStack = Math.max(
-        1,
-        Math.round(perTickDps > 0 ? targetDotDps / perTickDps : targetDotDps),
-      );
-      return {
-        dot: {
-          debuffId: 'blight',
-          damagePerStack,
-          maxStacks: BLIGHT_DOT_MAX_STACKS,
-          tickIntervalMs: BLIGHT_DOT_TICK_MS,
-          durationMs: BLIGHT_DOT_DURATION_MS,
-        },
-      };
-    }
-    case 'predation':
-      return { openingStrikeMult: 1 + PREDATION_OPENER_FACTOR * m };
-    case 'volatility': {
-      const existing = def?.cadenceFinisher;
-      if (existing && existing.everyNAttacks > 0) {
-        return {
-          cadence: { everyNAttacks: existing.everyNAttacks, multiplier: 1 + m },
-        };
-      }
-      return {
-        cadence: {
-          everyNAttacks: VOLATILITY_EVERY_N,
-          multiplier: 1 + VOLATILITY_SPIKE_FACTOR * m,
-        },
-      };
-    }
-    case 'alacrity':
-    case 'brutality':
-      return {};
-  }
-}
-
-// ── Density reshaping (pure) ───────────────────────────────────────────────────
-
-export function densitySpawnFactor(density: DensityModifier | undefined): number {
-  if (!DENSITY_MODIFIERS_ENABLED) return 1;
-  if (density === 'swarming') return SWARMING_SPAWN_FACTOR;
-  if (density === 'elite-ground') return ELITE_GROUND_SPAWN_FACTOR;
-  return 1;
-}
-
-/**
- * Inverse of the spawn factor so aggregate reward throughput stays comparable
- * (design §1.6). PLACEHOLDER — the user tunes, since elite mobs already carry
- * higher per-kill rewards.
- */
-export function densityRewardMult(density: DensityModifier | undefined): number {
-  const factor = densitySpawnFactor(density);
-  return factor > 0 ? 1 / factor : 1;
-}
-
-/** Spawn-pool selection weight for an entry given the node density. */
-export function elitePoolWeight(
-  density: DensityModifier | undefined,
-  isElite: boolean,
-): number {
-  if (!DENSITY_MODIFIERS_ENABLED) return 1;
-  if (density === 'swarming') return isElite ? SWARMING_ELITE_WEIGHT : 1;
-  if (density === 'elite-ground') return isElite ? ELITE_GROUND_ELITE_WEIGHT : 1;
-  return 1;
+  return rows;
 }
 
 // ── Exclusions + validation ───────────────────────────────────────────────────
@@ -385,7 +374,7 @@ export function elitePoolWeight(
  * Nodes excluded from the modifier system entirely: the Clearing, the dev test
  * room, non-combat nodes (`mobDensity: 0`, currently sanctuaries), and ALL
  * dungeon nodes — dungeons are static hand-designed exams and are never
- * reshaped (user decision 2026-07-24, overriding the original design §1.1).
+ * reshaped (user decision 2026-07-24).
  */
 export function isModifierExcludedNode(nodeId: string): boolean {
   if (nodeId === TEST_ROOM_NODE_ID) return true;
@@ -397,10 +386,7 @@ export function isModifierExcludedNode(nodeId: string): boolean {
   return false;
 }
 
-/**
- * Human-readable violations of the authored `NODE_MODIFIERS` map (empty = valid).
- * Stage A approximates the "regional supply" rule by TIER BAND (biomeTier).
- */
+/** Human-readable violations of the authored `NODE_MODIFIERS` map (empty = valid). */
 export function validateNodeModifiers(): string[] {
   const violations: string[] = [];
 
@@ -412,7 +398,7 @@ export function validateNodeModifiers(): string[] {
       violations.push(`${nodeId}: excluded node must not have a modifier`);
     }
     if (!excluded && !entry) {
-      violations.push(`${nodeId}: missing pace modifier`);
+      violations.push(`${nodeId}: missing node modifier`);
     }
   }
   for (const nodeId of Object.keys(NODE_MODIFIERS)) {
@@ -427,76 +413,74 @@ export function validateNodeModifiers(): string[] {
   for (const [nodeId, mod] of Object.entries(NODE_MODIFIERS)) {
     const info = NODE_BIOMES[nodeId];
     if (!info) continue;
-    const paceBans = PACE_HARD_BANS[info.biomeGroup] ?? [];
-    if (paceBans.includes(mod.pace)) {
+    const bans = MODIFIER_BANS[info.biomeGroup] ?? [];
+    if (bans.includes(mod.modifier)) {
       violations.push(
-        `${nodeId}: pace '${mod.pace}' is hard-banned for biome '${info.biomeGroup}'`,
+        `${nodeId}: modifier '${mod.modifier}' is banned for biome '${info.biomeGroup}'`,
       );
-    }
-    if (!DENSITY_MODIFIERS_ENABLED && mod.density) {
-      violations.push(`${nodeId}: density modifiers are disabled`);
-    } else if (mod.density) {
-      const densityBans = DENSITY_BANS[info.biomeGroup] ?? [];
-      if (densityBans.includes(mod.density)) {
-        violations.push(
-          `${nodeId}: density '${mod.density}' is banned for biome '${info.biomeGroup}'`,
-        );
-      }
     }
   }
 
-  // 3. Family supply per tier band: each family on ≥1 non-dungeon node.
-  const bandFamilies = new Map<number, Set<PaceFamily>>();
+  // 3. A native modifier must never also be banned for its own biome.
+  for (const [biome, native] of Object.entries(NATIVE_MODIFIER)) {
+    if (!native) continue;
+    if ((MODIFIER_BANS[biome] ?? []).includes(native)) {
+      violations.push(`biome '${biome}': native modifier '${native}' is also banned`);
+    }
+  }
+
+  // 4. Supply per tier band: each modifier on ≥1 non-dungeon node.
+  const bandModifiers = new Map<number, Set<NodeModifierFamily>>();
   for (const [nodeId, mod] of Object.entries(NODE_MODIFIERS)) {
     const info = NODE_BIOMES[nodeId];
     if (!info || info.isDungeon) continue;
-    if (!bandFamilies.has(info.biomeTier)) {
-      bandFamilies.set(info.biomeTier, new Set());
+    if (!bandModifiers.has(info.biomeTier)) {
+      bandModifiers.set(info.biomeTier, new Set());
     }
-    bandFamilies.get(info.biomeTier)!.add(mod.pace);
+    bandModifiers.get(info.biomeTier)!.add(mod.modifier);
   }
-  for (const [band, families] of bandFamilies) {
-    for (const family of PACE_FAMILIES) {
+  for (const [band, families] of bandModifiers) {
+    for (const family of NODE_MODIFIER_FAMILIES) {
       if (!families.has(family)) {
         violations.push(
-          `tier band ${band}: family '${family}' missing from all non-dungeon nodes`,
+          `tier band ${band}: modifier '${family}' missing from all non-dungeon nodes`,
         );
       }
     }
   }
 
-  // 4. Native distribution: native is that biome's single most-frequent family
+  // 5. Native distribution: native is that biome's single most-frequent modifier
   //    globally, and present on ≥1 non-dungeon node per band the biome appears in.
   const byBiome = new Map<
     string,
-    { counts: Map<PaceFamily, number>; nativeNonDungeonBands: Set<number>; bands: Set<number> }
+    {
+      counts: Map<NodeModifierFamily, number>;
+      nativeNonDungeonBands: Set<number>;
+      bands: Set<number>;
+    }
   >();
   for (const [nodeId, mod] of Object.entries(NODE_MODIFIERS)) {
     const info = NODE_BIOMES[nodeId];
     if (!info) continue;
     let rec = byBiome.get(info.biomeGroup);
     if (!rec) {
-      rec = {
-        counts: new Map(),
-        nativeNonDungeonBands: new Set(),
-        bands: new Set(),
-      };
+      rec = { counts: new Map(), nativeNonDungeonBands: new Set(), bands: new Set() };
       byBiome.set(info.biomeGroup, rec);
     }
-    rec.counts.set(mod.pace, (rec.counts.get(mod.pace) ?? 0) + 1);
+    rec.counts.set(mod.modifier, (rec.counts.get(mod.modifier) ?? 0) + 1);
     rec.bands.add(info.biomeTier);
-    const native = NATIVE_FAMILY[info.biomeGroup];
-    if (native && mod.pace === native && !info.isDungeon) {
+    const native = NATIVE_MODIFIER[info.biomeGroup];
+    if (native && mod.modifier === native && !info.isDungeon) {
       rec.nativeNonDungeonBands.add(info.biomeTier);
     }
   }
   for (const [biome, rec] of byBiome) {
-    const native = NATIVE_FAMILY[biome];
+    const native = NATIVE_MODIFIER[biome];
     if (!native) continue; // Plains — no native to enforce
-    // Native must STRICTLY exceed every other family's count (ties are not enough).
+    // Native must STRICTLY exceed every other modifier's count (ties are not enough).
     const nativeCount = rec.counts.get(native) ?? 0;
-    let tiedOrBeaten: PaceFamily | null = null;
-    for (const family of PACE_FAMILIES) {
+    let tiedOrBeaten: NodeModifierFamily | null = null;
+    for (const family of NODE_MODIFIER_FAMILIES) {
       if (family === native) continue;
       if ((rec.counts.get(family) ?? 0) >= nativeCount) {
         tiedOrBeaten = family;
@@ -505,34 +489,13 @@ export function validateNodeModifiers(): string[] {
     }
     if (tiedOrBeaten) {
       violations.push(
-        `biome '${biome}': native family '${native}' (${nativeCount}) does not strictly exceed '${tiedOrBeaten}' (${rec.counts.get(tiedOrBeaten) ?? 0})`,
+        `biome '${biome}': native modifier '${native}' (${nativeCount}) does not strictly exceed '${tiedOrBeaten}' (${rec.counts.get(tiedOrBeaten) ?? 0})`,
       );
     }
     for (const band of rec.bands) {
       if (!rec.nativeNonDungeonBands.has(band)) {
         violations.push(
-          `biome '${biome}' tier band ${band}: no non-dungeon node uses native family '${native}'`,
-        );
-      }
-    }
-  }
-
-  // 5. Elite Ground biases the pool TOWARD elites, so it needs ≥1 elite entry;
-  //    a biome with no elites in its pool cannot be an Elite Ground candidate.
-  //    Swarming raises count regardless of composition, so it carries no such
-  //    requirement (user decision 2026-07-24).
-  if (DENSITY_MODIFIERS_ENABLED) {
-    for (const [nodeId, mod] of Object.entries(NODE_MODIFIERS)) {
-      if (mod.density !== 'elite-ground') continue;
-      const info = NODE_BIOMES[nodeId];
-      if (!info) continue;
-      const pool =
-        BIOME_DATABASE.get(info.biomeGroup)?.monsterPoolByTier[info.biomeTier] ?? [];
-      const hasElite = pool.some((id) => MONSTER_DATABASE.get(id)?.elite);
-      if (!hasElite) {
-        violations.push(
-          `${nodeId}: Elite Ground needs a pool with ≥1 elite entry ` +
-            `(biome '${info.biomeGroup}' tier ${info.biomeTier} has none)`,
+          `biome '${biome}' tier band ${band}: no non-dungeon node uses native modifier '${native}'`,
         );
       }
     }

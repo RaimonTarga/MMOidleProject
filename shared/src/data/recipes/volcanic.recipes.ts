@@ -198,7 +198,7 @@ export const volcanicRecipeEntries = [
     id: 'core-catalyst', name: 'Catalyst Core',
     recipeGroup: 'volcanic', requiredBiomeLevel: 3, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-catalyst',
-    cost: { red: 90 }, catalystCost: { volatility: 2 }, // family-tag: on-hit proc amplifier → Volatility
+    cost: { red: 90 }, catalystCost: { swarming: 2 }, // family-tag: on-hit proc amplifier → Swarming
     stats: {}, tier: 3,
     // Trading attack (mitigated) for on-hit (unmitigated) is the actual shape here:
     // better against heavily armoured targets, worse against soft ones. Worth little

@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -183,24 +183,34 @@ function applyKillRewardsToPlayer(
   const biomeInfo = NODE_BIOMES[nodeId];
   const biomeTier = biomeInfo?.biomeTier ?? 1;
   const essenceMult = GAME_CONFIG.BIOME_ESSENCE_TIER_MULT[biomeTier] ?? 1;
-  const scaledEssence = Math.max(1, Math.round(rewards.essence * essenceMult));
+  // Node modifiers are net difficulty increases, so they pay a matching premium on
+  // everything the kill is worth: essence, biome XP and catalyst progress alike.
+  // Bosses are modifier-immune for STATS, but the node's reward identity still
+  // applies to them (as it always has for the catalyst bundle below).
+  const nodeModifier = NODE_MODIFIERS[nodeId]?.modifier;
+  const rewardMult = modifierRewardMult(nodeModifier);
+  const scaledEssence = Math.max(
+    1,
+    Math.round(rewards.essence * essenceMult * rewardMult),
+  );
   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
-  // Catalyst progress is keyed by the NODE'S pace family (not its biome): every
-  // kill in an Alacrity node grants Alacrity Catalyst regardless of biome. The
-  // weight defaults to the monster's base essence reward (a tuned per-mob
-  // toughness number) unless it sets an explicit `catalystWeight`. No modifier
+  // Catalyst progress is keyed by the NODE'S modifier (not its biome): every kill in
+  // an Alacrity node grants Alacrity Catalyst regardless of biome. The weight
+  // defaults to the monster's base essence reward (a tuned per-mob toughness
+  // number) unless it sets an explicit `catalystWeight`. No modifier
   // (clearing / test room / throne) → no grant.
-  const paceFamily = NODE_MODIFIERS[nodeId]?.pace;
-  const catalystWeight = Math.round(def?.rewards.catalystWeight ?? rewards.essence);
-  if (catalystWeight > 0 && paceFamily) {
-    grantCatalystProgress(recipient, paceFamily, catalystWeight);
+  const catalystWeight = Math.round(
+    (def?.rewards.catalystWeight ?? rewards.essence) * rewardMult,
+  );
+  if (catalystWeight > 0 && nodeModifier) {
+    grantCatalystProgress(recipient, nodeModifier, catalystWeight);
     markSliceDirty(world, recipient, 'tracksProgression');
   }
   const biomeResult = applyBiomeXP(
     world,
     recipient,
     nodeId,
-    Math.max(1, Math.round(rewards.biomeXp ?? 1)),
+    Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult)),
   );
   const questResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (monster.isMonster.isBoss && !monster.isEncounterAdd) {
@@ -212,11 +222,11 @@ function applyKillRewardsToPlayer(
       const key = bossClearKey(info.biomeGroup, info.biomeTier);
       if (!recipient.tracksProgression.bossesCleared.includes(key)) {
         recipient.tracksProgression.bossesCleared.push(key);
-        // One-time catalyst bundle for the first clear — keyed by the node's pace
-        // family (the boss entity is immune, but the NODE's catalyst identity
-        // still applies; §2.2). Skipped on excluded nodes (e.g. the throne).
+        // One-time catalyst bundle for the first clear — keyed by the node's
+        // modifier (the boss entity is stat-immune, but the NODE's catalyst
+        // identity still applies). Skipped on excluded nodes (e.g. the throne).
         const bundle = def?.rewards.catalystBundle ?? 0;
-        const bundleFamily = NODE_MODIFIERS[monster.hasPosition.nodeId]?.pace;
+        const bundleFamily = NODE_MODIFIERS[monster.hasPosition.nodeId]?.modifier;
         if (bundle > 0 && bundleFamily) {
           recipient.tracksProgression.catalysts[bundleFamily] =
             (recipient.tracksProgression.catalysts[bundleFamily] ?? 0) + bundle;

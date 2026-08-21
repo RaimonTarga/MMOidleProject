@@ -19,8 +19,8 @@ import {
   navigationBodyHalfExtents,
   nearestWalkableCell,
   NODE_MODIFIERS,
-  paceStatScalars,
-  paceMechanicOverlay,
+  modifierStatScalars,
+  modifiedDamageReduction,
   respawnNodeIdForNodeId,
   type MonsterPatrolRoute,
   type Vec2,
@@ -203,24 +203,35 @@ export function createMonster(
       ? Math.round(def.stats.attack * DUNGEON_ATK_MULT)
       : def.stats.attack;
 
-  // Map Variety Stage A: reshape non-boss monster OFFENSE around the node's pace
-  // modifier (threat-budget-neutral; composes on top of dungeon mults). Bosses
-  // are immune (design §1.1). Plain scalars bake into the entity at spawn; the
-  // mechanic overlay rides `moddedByNode` (attached after ecs.add).
+  // Reshape non-boss monsters around the node's modifier, composing on top of the
+  // dungeon mults above. Bosses are immune. Unlike the previous pace design these
+  // scalars touch DEFENCE and HEALTH as well as offence, and they are not
+  // threat-budget-neutral — a modifier is a net difficulty increase that
+  // `modifierRewardMult` pays for at kill time. Every value bakes into the entity
+  // at spawn; nothing rides a runtime component.
   const nodeModifier = isBoss ? undefined : NODE_MODIFIERS[nodeId];
   const modBiomeTier = NODE_BIOMES[nodeId]?.biomeTier ?? 0;
-  const paceScalars = nodeModifier
-    ? paceStatScalars(nodeModifier.pace, modBiomeTier)
+  const modScalars = nodeModifier
+    ? modifierStatScalars(nodeModifier.modifier, modBiomeTier)
     : null;
-  const attack = paceScalars
-    ? Math.max(1, Math.round(atkBase * paceScalars.attackMult))
+  const hp = modScalars
+    ? Math.max(1, Math.round(hpBase * modScalars.hpMult))
+    : hpBase;
+  const attack = modScalars
+    ? Math.max(1, Math.round(atkBase * modScalars.attackMult))
     : atkBase;
-  const attackCooldown = paceScalars
-    ? Math.max(1, Math.round(def.stats.attackCooldown * paceScalars.attackCooldownMult))
+  const attackCooldown = modScalars
+    ? Math.max(1, Math.round(def.stats.attackCooldown * modScalars.attackCooldownMult))
     : def.stats.attackCooldown;
-  const speed = paceScalars
-    ? def.stats.speed * paceScalars.moveSpeedMult
+  const speed = modScalars
+    ? def.stats.speed * modScalars.moveSpeedMult
     : def.stats.speed;
+  const plating = modScalars
+    ? Math.round(def.stats.plating * modScalars.platingMult)
+    : def.stats.plating;
+  const damageReduction = modScalars
+    ? modifiedDamageReduction(def.stats.damageReduction, modScalars.incomingDamageMult)
+    : def.stats.damageReduction;
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
   const pullRange = isTestRoom ? 0 : def.stats.pullRange;
@@ -243,8 +254,8 @@ export function createMonster(
       speed,
     },
     hasHealth: {
-      hp: hpBase,
-      maxHp: hpBase,
+      hp,
+      maxHp: hp,
     },
     dealsDamage: {
       attack,
@@ -257,8 +268,8 @@ export function createMonster(
       lastAttackAt: 0,
     },
     mitigatesDamage: {
-      plating: def.stats.plating,
-      damageReduction: def.stats.damageReduction,
+      plating,
+      damageReduction,
     },
     hasAwareness: {
       state: "idle",
@@ -296,14 +307,6 @@ export function createMonster(
   if (def.ultimateEncounter) {
     world.ecs.addComponent(entity, "scriptsUltimate", initScriptsUltimate());
     applyDormantUltimateBoss(world, entity, def);
-  }
-
-  if (nodeModifier) {
-    const overlay = paceMechanicOverlay(nodeModifier.pace, modBiomeTier, def);
-    world.ecs.addComponent(entity, "moddedByNode", {
-      family: nodeModifier.pace,
-      ...overlay,
-    });
   }
 
   world.adjustMonsterCount(nodeId, 1, isBoss);

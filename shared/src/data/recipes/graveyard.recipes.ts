@@ -138,7 +138,7 @@ export const graveyardRecipeEntries = [
     id: 'relic-haunted-prism', name: 'Haunted Prism',
     recipeGroup: 'graveyard', requiredBiomeLevel: 6, slot: 'relic',
     lineageId: 'relic-haunted-prism',
-    cost: { purple: 240 }, catalystCost: { blight: 4 },
+    cost: { purple: 240 }, catalystCost: { fortified: 4 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.10,

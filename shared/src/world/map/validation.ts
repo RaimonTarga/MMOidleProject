@@ -1,12 +1,10 @@
 import { BIOME_DATABASE } from '../../biomeDatabase';
 import { MONSTER_DATABASE } from '../../monsterDatabase';
 import {
-  DENSITY_BANS,
-  DENSITY_MODIFIERS_ENABLED,
-  NATIVE_FAMILY,
-  PACE_FAMILIES,
-  PACE_HARD_BANS,
-  type PaceFamily,
+  MODIFIER_BANS,
+  NATIVE_MODIFIER,
+  NODE_MODIFIER_FAMILIES,
+  type NodeModifierFamily,
 } from '../nodeModifierTypes';
 import {
   WORLD_NODE_LIST,
@@ -105,39 +103,26 @@ function validateKindsAndContent(violations: string[]): void {
     }
 
     if (node.kind === 'normal') {
-      if (!node.pace) violations.push(`${node.id}: normal node has no pace`);
+      if (!node.modifier) violations.push(`${node.id}: normal node has no modifier`);
       const pool = biome.monsterPoolByTier[node.biomeTier] ?? [];
       if (pool.length === 0) {
         violations.push(`${node.id}: normal node has no monster pool`);
       }
-      if (node.pace && (PACE_HARD_BANS[node.biomeGroup] ?? []).includes(node.pace)) {
-        violations.push(`${node.id}: banned pace '${node.pace}'`);
-      }
-      if (!DENSITY_MODIFIERS_ENABLED && node.density) {
-        violations.push(`${node.id}: density modifiers are disabled`);
-      } else if (
-        node.density &&
-        (DENSITY_BANS[node.biomeGroup] ?? []).includes(node.density)
+      if (
+        node.modifier &&
+        (MODIFIER_BANS[node.biomeGroup] ?? []).includes(node.modifier)
       ) {
-        violations.push(`${node.id}: banned density '${node.density}'`);
-      }
-      if (node.density === 'elite-ground') {
-        const hasElite = pool.some((monsterId) =>
-          Boolean(MONSTER_DATABASE.get(monsterId)?.elite),
-        );
-        if (!hasElite) {
-          violations.push(`${node.id}: Elite Ground pool contains no elite`);
-        }
+        violations.push(`${node.id}: banned modifier '${node.modifier}'`);
       }
     } else if (node.kind === 'dungeon') {
-      if (node.pace || node.density) {
+      if (node.modifier) {
         violations.push(`${node.id}: dungeon must be modifier-free`);
       }
       if ((biome.bossPoolByTier?.[node.biomeTier] ?? []).length === 0) {
         violations.push(`${node.id}: dungeon has no boss pool`);
       }
     } else if (node.kind === 'sanctuary') {
-      if (node.pace || node.density || node.bossTypeId || node.mobDensity !== 0) {
+      if (node.modifier || node.bossTypeId || node.mobDensity !== 0) {
         violations.push(`${node.id}: sanctuary must be empty and modifier-free`);
       }
     } else if (node.kind === 'tutorial') {
@@ -164,31 +149,29 @@ function validateBiomeCoverage(violations: string[]): void {
       const biomeNormals = normals.filter(
         (node) => node.biomeGroup === biomeGroup,
       );
-      const allowed = PACE_FAMILIES.filter(
-        (pace) => !(PACE_HARD_BANS[biomeGroup] ?? []).includes(pace),
+      const allowed = NODE_MODIFIER_FAMILIES.filter(
+        (modifier) => !(MODIFIER_BANS[biomeGroup] ?? []).includes(modifier),
       );
-      const paceCounts = new Map<PaceFamily, number>();
+      const modifierCounts = new Map<NodeModifierFamily, number>();
       for (const node of biomeNormals) {
-        if (node.pace) {
-          paceCounts.set(node.pace, (paceCounts.get(node.pace) ?? 0) + 1);
+        if (node.modifier) {
+          modifierCounts.set(
+            node.modifier,
+            (modifierCounts.get(node.modifier) ?? 0) + 1,
+          );
         }
       }
-      for (const pace of allowed) {
-        const expected = NATIVE_FAMILY[biomeGroup] === pace ? 2 : 1;
-        if ((paceCounts.get(pace) ?? 0) !== expected) {
+      // One node per allowed modifier, two for the biome's native — this is also
+      // what fixes the biome's node count against its hand-cut region mask.
+      for (const modifier of allowed) {
+        const expected = NATIVE_MODIFIER[biomeGroup] === modifier ? 2 : 1;
+        if ((modifierCounts.get(modifier) ?? 0) !== expected) {
           violations.push(
-            `T${tier} ${biomeGroup}: expected ${expected} '${pace}' nodes`,
+            `T${tier} ${biomeGroup}: expected ${expected} '${modifier}' nodes`,
           );
         }
       }
 
-      if (
-        DENSITY_MODIFIERS_ENABLED &&
-        !(DENSITY_BANS[biomeGroup] ?? []).includes('swarming') &&
-        !biomeNormals.some((node) => node.density === 'swarming')
-      ) {
-        violations.push(`T${tier} ${biomeGroup}: missing Swarming node`);
-      }
       if (
         dungeons.filter((node) => node.biomeGroup === biomeGroup).length !== 1
       ) {

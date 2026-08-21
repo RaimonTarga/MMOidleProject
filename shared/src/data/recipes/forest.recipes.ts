@@ -172,7 +172,7 @@ export const forestRecipeEntries = [
     id: 'core-survivalist', name: 'Survivalist Core',
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-survivalist',
-    cost: { green: 45 }, catalystCost: { blight: 1 }, // family-tag: attrition survival → Blight
+    cost: { green: 45 }, catalystCost: { fortified: 1 }, // family-tag: attrition survival → Fortified
     stats: {}, tier: 2,
     // recovery-mult scales the passive regen stat AND every heal, so this is real
     // sustain rather than the near-nothing a regen-stat-only core would give.

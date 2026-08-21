@@ -6,8 +6,8 @@ import {
   ESSENCE_LABELS,
   ESSENCE_TYPES,
   GAME_CONFIG,
-  PACE_FAMILIES,
-  PACE_FAMILY_COLORS,
+  NODE_MODIFIER_FAMILIES,
+  MODIFIER_COLORS,
   type EssenceType,
 } from "@mmo-idle/shared";
 import { GameIcon } from "../ui/GameIcon";
@@ -79,7 +79,7 @@ export function MaterialsPanel() {
   const detailsId = useId();
   const flashClass = useEssenceGainFlash(essences);
 
-  const families = PACE_FAMILIES.filter(
+  const families = NODE_MODIFIER_FAMILIES.filter(
     (family) => (catalysts[family] ?? 0) > 0 || (progress[family] ?? 0) > 0,
   );
   const perUnit = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
@@ -170,7 +170,7 @@ export function MaterialsPanel() {
                 className="economy-icon catalyst-icon"
                 decorative
               />
-              <span className="essence-name" style={{ color: PACE_FAMILY_COLORS[family] }}>
+              <span className="essence-name" style={{ color: MODIFIER_COLORS[family] }}>
                 {catalystLabel(family)}
               </span>
               <span className="essence-value">{catalysts[family] ?? 0}</span>

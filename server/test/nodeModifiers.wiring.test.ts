@@ -1,13 +1,10 @@
 import {
-  DENSITY_MODIFIERS_ENABLED,
   MONSTER_DATABASE,
   NODE_MODIFIERS,
+  modifierRewardMult,
+  modifierSpawnFactor,
 } from "@mmo-idle/shared";
 import { World } from "../src/world/World";
-import {
-  effectiveMonsterDot,
-  monsterEmpoweredMultiplier,
-} from "../src/systems/combat/engine/monsterMechanics";
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
@@ -16,106 +13,146 @@ function assert(cond: boolean, msg: string): void {
 const world = new World();
 const POS = { x: 800, y: 800 };
 
-// Sanity: the nodes this test leans on carry the modifiers it expects.
-assert(NODE_MODIFIERS["node-t1-forest-01"].pace === "alacrity", "forest 01 is alacrity");
-assert(NODE_MODIFIERS["node-t1-mountain-01"].pace === "brutality", "mountain 01 is brutality");
-assert(NODE_MODIFIERS["node-t1-swamp-03"].pace === "blight", "swamp 03 is blight");
-assert(NODE_MODIFIERS["node-t1-cave-04"].pace === "volatility", "cave 04 is volatility");
+// Nodes chosen so each modifier is exercised against a same-biome control, since
+// population targets are per-biome.
+const ALACRITY = "node-t1-forest-01";
+const FOREST_CONTROL = "node-t1-forest-04"; // fortified — no population change
+const HEAVY = "node-t1-mountain-01";
+const SWARMING = "node-t1-plains-03";
+const PLAINS_CONTROL = "node-t1-plains-01"; // alacrity — no population change
+const DOMINION = "node-t1-cave-04";
+const CAVE_CONTROL = "node-t1-cave-01"; // alacrity — no population change
+const FORTIFIED = "node-t1-swamp-05";
 
-// ── Alacrity: faster + lighter than the def ────────────────────────────────────
+// Sanity: the nodes this test leans on carry the modifiers it expects.
+assert(NODE_MODIFIERS[ALACRITY].modifier === "alacrity", "forest 01 is alacrity");
+assert(NODE_MODIFIERS[HEAVY].modifier === "heavy", "mountain 01 is heavy");
+assert(NODE_MODIFIERS[SWARMING].modifier === "swarming", "plains 03 is swarming");
+assert(NODE_MODIFIERS[DOMINION].modifier === "dominion", "cave 04 is dominion");
+assert(NODE_MODIFIERS[FORTIFIED].modifier === "fortified", "swamp 05 is fortified");
+
+// ── Alacrity: faster cadence and movement, damage untouched ───────────────────
 const wolfDef = MONSTER_DATABASE.get("wolf")!;
-const alac = world.createMonster("node-t1-forest-01", "wolf", POS)!;
+const alac = world.createMonster(ALACRITY, "wolf", POS)!;
 assert(!!alac, "alacrity spawn");
-assert(alac.dealsDamage.attack < wolfDef.stats.attack, "alacrity lowers attack");
+assert(alac.dealsDamage.attack === wolfDef.stats.attack, "alacrity leaves attack alone");
 assert(
   alac.performsAttack.attackCooldown < wolfDef.stats.attackCooldown,
   "alacrity lowers cooldown (faster)",
 );
-assert(alac.moddedByNode?.family === "alacrity", "alacrity attaches moddedByNode");
+assert(alac.hasPosition.speed > wolfDef.stats.speed, "alacrity raises move speed");
+assert(alac.hasHealth.maxHp === wolfDef.stats.hp, "alacrity leaves HP alone");
 
-// ── Brutality: harder + slower than the def ────────────────────────────────────
+// ── Heavy: bigger hits, slower cadence, net more damage ───────────────────────
 const hopperDef = MONSTER_DATABASE.get("cliff-hopper")!;
-const brut = world.createMonster("node-t1-mountain-01", "cliff-hopper", POS)!;
-assert(brut.dealsDamage.attack > hopperDef.stats.attack, "brutality raises attack");
+const heavy = world.createMonster(HEAVY, "cliff-hopper", POS)!;
+assert(heavy.dealsDamage.attack > hopperDef.stats.attack, "heavy raises attack");
 assert(
-  brut.performsAttack.attackCooldown > hopperDef.stats.attackCooldown,
-  "brutality raises cooldown (slower)",
+  heavy.performsAttack.attackCooldown > hopperDef.stats.attackCooldown,
+  "heavy raises cooldown (slower)",
+);
+const baseDps = (hopperDef.stats.attack * 1000) / hopperDef.stats.attackCooldown;
+const heavyDps =
+  (heavy.dealsDamage.attack * 1000) / heavy.performsAttack.attackCooldown;
+assert(heavyDps > baseDps, "heavy is net dps-positive despite the slower cadence");
+
+// ── Swarming: population only, monsters untouched ─────────────────────────────
+const hareDef = MONSTER_DATABASE.get("plains-slime")!;
+const swarmMob = world.createMonster(SWARMING, "plains-slime", POS)!;
+assert(swarmMob.dealsDamage.attack === hareDef.stats.attack, "swarming leaves attack alone");
+assert(
+  swarmMob.performsAttack.attackCooldown === hareDef.stats.attackCooldown,
+  "swarming leaves cooldown alone",
+);
+assert(swarmMob.hasHealth.maxHp === hareDef.stats.hp, "swarming leaves HP alone");
+assert(
+  world.getMobDensity(SWARMING) > world.getMobDensity(PLAINS_CONTROL),
+  "swarming raises the node population",
 );
 
-// ── Boss immunity in a modified (non-dungeon) node ─────────────────────────────
+// ── Dominion: fewer bodies, each stronger in every respect ────────────────────
+const bruteDef = MONSTER_DATABASE.get("cave-brute")!;
+const dom = world.createMonster(DOMINION, "cave-brute", POS)!;
+assert(dom.hasHealth.maxHp > bruteDef.stats.hp, "dominion raises HP");
+assert(dom.dealsDamage.attack > bruteDef.stats.attack, "dominion raises attack");
+assert(dom.hasPosition.speed > bruteDef.stats.speed, "dominion raises move speed");
+assert(
+  dom.mitigatesDamage.damageReduction > bruteDef.stats.damageReduction,
+  "dominion raises damage reduction",
+);
+assert(
+  world.getMobDensity(DOMINION) < world.getMobDensity(CAVE_CONTROL),
+  "dominion lowers the node population",
+);
+assert(world.getMobDensity(DOMINION) >= 1, "dominion never empties a node");
+
+// ── Fortified: defence only ───────────────────────────────────────────────────
+const toadDef = MONSTER_DATABASE.get("mud-toad")!;
+const fort = world.createMonster(FORTIFIED, "mud-toad", POS)!;
+assert(fort.dealsDamage.attack === toadDef.stats.attack, "fortified leaves attack alone");
+assert(
+  fort.performsAttack.attackCooldown === toadDef.stats.attackCooldown,
+  "fortified leaves cooldown alone",
+);
+assert(fort.hasPosition.speed === toadDef.stats.speed, "fortified leaves speed alone");
+assert(fort.mitigatesDamage.plating > toadDef.stats.plating, "fortified raises plating");
+assert(
+  fort.mitigatesDamage.damageReduction > toadDef.stats.damageReduction,
+  "fortified raises damage reduction",
+);
+assert(fort.mitigatesDamage.damageReduction < 1, "damage reduction never reaches 1");
+assert(
+  world.getMobDensity(FORTIFIED) === world.getMobDensity("node-t1-swamp-01"),
+  "fortified does not change the node population",
+);
+
+// A monster authored with DR 0 still gains reduction — the multiplicative fold has
+// to work from zero, which a naive `DR x k` cannot do.
+const oozeDef = MONSTER_DATABASE.get("bog-slime")!;
+assert(oozeDef.stats.damageReduction === 0, "bog-slime is authored with no DR");
+const fortOoze = world.createMonster(FORTIFIED, "bog-slime", POS)!;
+assert(
+  fortOoze.mitigatesDamage.damageReduction > 0,
+  "fortified grants DR to a monster authored with none",
+);
+
+// ── Boss immunity in a modified (non-dungeon) node ────────────────────────────
 const bossDef = MONSTER_DATABASE.get("gnarled-greatbear")!;
 assert(bossDef.isBoss === true, "gnarled-greatbear is a boss");
-const boss = world.createMonster("node-t1-forest-01", "gnarled-greatbear", POS)!;
+const boss = world.createMonster(ALACRITY, "gnarled-greatbear", POS)!;
 assert(boss.dealsDamage.attack === bossDef.stats.attack, "boss keeps def attack");
 assert(
   boss.performsAttack.attackCooldown === bossDef.stats.attackCooldown,
   "boss keeps def cooldown",
 );
-assert(boss.moddedByNode === undefined, "boss carries no moddedByNode");
+assert(boss.hasHealth.maxHp === bossDef.stats.hp, "boss keeps def HP");
 
-// ── Dungeons are excluded — no modifier, trash unmodified ──────────────────────
+// ── Dungeons are excluded — no modifier, trash unmodified ─────────────────────
 assert(NODE_MODIFIERS["node-t1-forest-dungeon"] === undefined, "dungeon node has no modifier");
-const dungeonMob = world.createMonster("node-t1-forest-dungeon", "wolf", POS)!;
-assert(dungeonMob.moddedByNode === undefined, "dungeon trash carries no moddedByNode");
-
-// ── Blight: DoT added to a monster that lacks one ──────────────────────────────
-assert(wolfDef.dotEffect === undefined, "wolf has no authored DoT");
-const blightWolf = world.createMonster("node-t1-swamp-03", "wolf", POS)!;
-assert(blightWolf.moddedByNode?.dot !== undefined, "blight synthesizes a DoT");
 assert(
-  effectiveMonsterDot(blightWolf, wolfDef) === blightWolf.moddedByNode!.dot,
-  "effectiveMonsterDot returns the overlay DoT",
+  modifierSpawnFactor(NODE_MODIFIERS["node-t1-forest-dungeon"]?.modifier) === 1,
+  "an absent modifier leaves population alone",
 );
 
-// ── Blight: existing DoT amplified, identity preserved ─────────────────────────
-const bogDef = MONSTER_DATABASE.get("bog-slime")!;
-assert(bogDef.dotEffect !== undefined, "bog-slime has an authored DoT");
-assert(NODE_MODIFIERS["node-t3-swamp-03"].pace === "blight", "T3 swamp 03 is blight");
-const blightBog = world.createMonster("node-t3-swamp-03", "bog-slime", POS)!;
-const bogEff = effectiveMonsterDot(blightBog, bogDef)!;
-assert(bogEff !== undefined, "amplified DoT resolves");
-assert(
-  bogEff.damagePerStack > bogDef.dotEffect!.damagePerStack,
-  "blight raises damagePerStack",
-);
-assert(
-  bogEff.debuffId === bogDef.dotEffect!.debuffId,
-  "blight preserves the debuff identity",
-);
-
-// ── Volatility: counted burst fires on the expected beat ───────────────────────
-const volWolf = world.createMonster("node-t1-cave-04", "wolf", POS)!;
-const cadence = volWolf.moddedByNode?.cadence;
-assert(cadence !== undefined, "volatility attaches a cadence overlay");
-assert(cadence!.everyNAttacks === 3, "synthesized cadence every 3 attacks");
-const now = 1_000;
-const m1 = monsterEmpoweredMultiplier(volWolf, wolfDef, now);
-const m2 = monsterEmpoweredMultiplier(volWolf, wolfDef, now);
-const m3 = monsterEmpoweredMultiplier(volWolf, wolfDef, now);
-assert(m1 === 1 && m2 === 1, "no burst on the off-beats");
-assert(m3 > 1, "burst on the 3rd (counted) attack");
-
-// ── Density modifiers are fully dormant while their design is reconsidered ─────
-assert(DENSITY_MODIFIERS_ENABLED === false, "density modifiers stay disabled");
-assert(
-  Object.values(NODE_MODIFIERS).every((modifier) => modifier.density === undefined),
-  "authored modifiers expose no density slot",
-);
-assert(
-  world.getMobDensity("node-t1-forest-05") === world.getMobDensity("node-t1-forest-01"),
-  "former swarming node keeps the biome population target",
-);
-assert(
-  world.getMobDensity("node-t4-jungle-01") === world.getMobDensity("node-t4-jungle-02"),
-  "former elite-ground node keeps the biome population target",
-);
-
-// ── Unmodified nodes stay byte-identical to the def ────────────────────────────
+// ── Unmodified nodes stay identical to the def ────────────────────────────────
 assert(NODE_MODIFIERS["node-clearing"] === undefined, "clearing has no modifier");
 const clearingMob = world.createMonster("node-clearing", "wolf", POS);
 if (clearingMob) {
   assert(clearingMob.dealsDamage.attack === wolfDef.stats.attack, "clearing spawn unmodified");
-  assert(clearingMob.moddedByNode === undefined, "clearing spawn has no moddedByNode");
+  assert(clearingMob.hasHealth.maxHp === wolfDef.stats.hp, "clearing HP unmodified");
+  assert(
+    clearingMob.performsAttack.attackCooldown === wolfDef.stats.attackCooldown,
+    "clearing cooldown unmodified",
+  );
 }
+
+// ── Rewards pay for the added difficulty ──────────────────────────────────────
+for (const nodeId of [ALACRITY, HEAVY, SWARMING, DOMINION, FORTIFIED]) {
+  assert(
+    modifierRewardMult(NODE_MODIFIERS[nodeId].modifier) > 1,
+    `${nodeId} pays a reward premium`,
+  );
+}
+assert(modifierRewardMult(undefined) === 1, "an unmodified node pays no premium");
 
 console.log("nodeModifiers.wiring.test: ok");

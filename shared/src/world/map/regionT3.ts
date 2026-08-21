@@ -15,7 +15,6 @@ export const REGION_T3_NODES = buildRegionNodes({
     '.####..',
   ],
   biomes: ['tundra', 'mountain', 'cave', 'jungle', 'desert', 'volcanic', 'swamp'],
-  eliteGroundBiomes: ['jungle'],
   dungeonCells: [
     { row: 17, col: 9 },
     { row: 17, col: 12 },

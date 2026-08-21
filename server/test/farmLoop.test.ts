@@ -62,13 +62,13 @@ assert(
   "farm sweep produced more than one node for some (biome x tier) pair",
 );
 
-// Non-excluded farm nodes carry a pace family — that is the catalyst key, and a
+// Non-excluded farm nodes carry a modifier — that is the catalyst key, and a
 // node without one mints nothing.
 for (const target of targets) {
   if (target.nodeId === CLEARING_NODE_ID) continue;
   assert(
-    target.pace !== undefined,
-    `farm target ${target.nodeId} has no pace family — it would mint no catalysts`,
+    target.modifier !== undefined,
+    `farm target ${target.nodeId} has no modifier — it would mint no catalysts`,
   );
 }
 
@@ -168,10 +168,10 @@ assert(
   result.biomeLevelStart === 0,
   "the farmed biome must start at level 0 or applyBiomeXP early-returns at cap",
 );
-if (target!.pace) {
+if (target!.modifier) {
   assert(
-    (result.catalystTotal[target!.pace] ?? 0) > 0,
-    `no ${target!.pace} catalyst progress on a ${target!.pace} node`,
+    (result.catalystTotal[target!.modifier] ?? 0) > 0,
+    `no ${target!.modifier} catalyst progress on a ${target!.modifier} node`,
   );
 }
 

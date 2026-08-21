@@ -2,9 +2,9 @@ import {
   catalystLabel,
   ESSENCE_COLORS,
   ESSENCE_LABELS,
-  PACE_FAMILY_COLORS,
+  MODIFIER_COLORS,
   type EssenceType,
-  type PaceFamily,
+  type NodeModifierFamily,
 } from '@mmo-idle/shared';
 import { GameIcon, type IconSource } from './GameIcon';
 import { catalystIconSource, essenceIconSource } from './economyIcons';
@@ -42,13 +42,13 @@ export function materialLabel(material: MaterialRef): string {
 
 export function materialAccent(material: MaterialRef): string {
   if (material.kind === 'essence') return ESSENCE_COLORS[material.type];
-  return PACE_FAMILY_COLORS[material.family as PaceFamily] ?? 'var(--hud-primary)';
+  return MODIFIER_COLORS[material.family as NodeModifierFamily] ?? 'var(--hud-primary)';
 }
 
 export function materialIconSource(material: MaterialRef): IconSource {
   return material.kind === 'essence'
     ? essenceIconSource(material.type)
-    : catalystIconSource(material.family as PaceFamily);
+    : catalystIconSource(material.family as NodeModifierFamily);
 }
 
 export interface MaterialChipProps {

@@ -1,7 +1,5 @@
 import {
-  DENSITY_MODIFIERS_ENABLED,
-  type DensityModifier,
-  type PaceFamily,
+  type NodeModifierFamily,
 } from './nodeModifierTypes';
 import {
   WORLD_MAP_BOUNDS,
@@ -44,8 +42,7 @@ export interface NodeBiomeInfo {
   kind: WorldNodeKind;
   displayName: string;
   map: WorldMapCoord;
-  pace?: PaceFamily;
-  density?: DensityModifier;
+  modifier?: NodeModifierFamily;
   isDungeon?: boolean;
   bossTypeId?: string;
   mobDensity?: number;
@@ -83,10 +80,7 @@ export const NODE_BIOMES: Record<string, NodeBiomeInfo> = Object.fromEntries(
       kind: node.kind,
       displayName: node.displayName,
       map: node.map,
-      pace: node.pace,
-      ...(DENSITY_MODIFIERS_ENABLED && node.density
-        ? { density: node.density }
-        : {}),
+      modifier: node.modifier,
       isDungeon: node.kind === 'dungeon' || node.kind === 'unique',
       bossTypeId: node.bossTypeId,
       mobDensity: node.mobDensity,
