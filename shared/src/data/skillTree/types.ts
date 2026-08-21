@@ -5,7 +5,27 @@ import type { MechanicEffects } from '../../passives';
 /** The three sub-variants available within every class. */
 export type SubVariant = 'light' | 'balanced' | 'heavy';
 
-/** Stat deltas applied immediately and permanently when a node is unlocked. */
+/**
+ * Stat deltas applied immediately and permanently when a node is unlocked.
+ *
+ * Two kinds of field live here and they are NOT interchangeable:
+ *
+ *   FLAT (`attack`, `plating`, `maxHp`, `speed`, `hpRegen`, `attackRange`)
+ *     add raw magnitude. Gear scales, so a flat grant is diluted as the
+ *     character progresses: `+14 attack` is the whole build at T1 and a
+ *     rounding error at T5. Reserve these for positional rules (`attackRange`)
+ *     and for systems outside the class tree.
+ *
+ *   AFFINITY (`*Pct`) contribute PERCENTAGE POINTS into a shared bucket per
+ *     stat. Every contribution from every source is summed, then the total is
+ *     applied ONCE to the post-equipment stat. They never compound tier by
+ *     tier: root +30% / frame +22% / range +10% max HP is `raw × 1.62`, NOT
+ *     `raw × 1.30 × 1.22 × 1.10`. This is what makes class identity survive
+ *     gear scaling — see `applyClassAffinities` in systems/stats.ts.
+ *
+ * `damageReduction` and `evasion` are already fractions by construction, so
+ * gear never dilutes them and they need no percentage twin.
+ */
 export interface StatEffects {
   attack?: number;
   plating?: number;
@@ -18,11 +38,24 @@ export interface StatEffects {
    * Percentage attack speed modifier. Positive = faster (shorter cooldown), negative = slower.
    * All unlocked nodes are summed additively, then applied as:
    * finalCooldown = weaponBaseCooldown / (1 + totalAttackSpeedPct).
+   *
+   * This is the attack-speed member of the affinity family — it already had the
+   * sum-then-apply-once semantics the `*Pct` fields below share.
    */
   attackSpeedPct?: number;
   maxHp?: number;
   hpRegen?: number;
   speed?: number;
+
+  // ── Class affinities: summed across all sources, applied once ─────────────
+  /** e.g. 0.18 → +18% attack, applied to base + equipment. */
+  attackPct?: number;
+  /** e.g. 0.30 → +30% max HP, applied to base + equipment. */
+  maxHpPct?: number;
+  /** e.g. 0.30 → +30% plating gained, applied to base + equipment. */
+  platingPct?: number;
+  /** e.g. -0.10 → −10% move speed, applied to base + equipment. */
+  moveSpeedPct?: number;
 }
 
 export interface SkillNode {

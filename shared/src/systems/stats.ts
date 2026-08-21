@@ -8,7 +8,7 @@ import type {
   PerformsAttack,
   UsesSkills,
 } from '../components/core/networkedSlices';
-import { SKILL_TREE } from '../skillTree';
+import { SKILL_TREE, type StatEffects } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
@@ -66,14 +66,50 @@ export interface PlayerStatsTarget {
 }
 
 
-// Class-specific bonus applied when the player chose close range (range-close).
-const CLOSE_RANGE_CLASS_BONUS: Record<string, { plating: number; hpRegen: number }> = {
-  'cooldown-root': { plating: 5, hpRegen: 1 },
-  'dot-root':      { plating: 4, hpRegen: 2 },
-  'cadence-root':  { plating: 3, hpRegen: 3 },
-  'reload-root':   { plating: 2, hpRegen: 4 },
-  'energy-root':   { plating: 1, hpRegen: 5 },
-};
+/**
+ * Running total of every class-affinity contribution, in percentage points.
+ *
+ * Gear establishes raw magnitude; the class tree establishes ratios. Each node
+ * adds into this bucket and the total lands ONCE on the post-equipment stat, so
+ * a root/frame/range chain reads `raw × (1 + 0.30 + 0.22 + 0.10)` rather than
+ * compounding tier by tier. Attack speed is deliberately absent: it rides the
+ * pre-existing `attackSpeedPct` accumulator, which already had these semantics
+ * and must stay ahead of the reload archetype's cadence layers.
+ */
+interface ClassAffinities {
+  attack: number;
+  maxHp: number;
+  plating: number;
+  moveSpeed: number;
+}
+
+function addAffinities(acc: ClassAffinities, e: StatEffects): void {
+  acc.attack    += e.attackPct    ?? 0;
+  acc.maxHp     += e.maxHpPct     ?? 0;
+  acc.plating   += e.platingPct   ?? 0;
+  acc.moveSpeed += e.moveSpeedPct ?? 0;
+}
+
+/**
+ * Fold the summed affinities into the target's stats. Called once, after base +
+ * equipment have established raw magnitude and before the archetype/core layers
+ * that deliberately sit on top of the finished stat line.
+ *
+ * A −100% or worse affinity would zero (or invert) a stat, so each multiplier is
+ * floored at 0.05 — an authored penalty stays a penalty without producing a
+ * degenerate character.
+ */
+function applyClassAffinities(p: PlayerStatsTarget, a: ClassAffinities): void {
+  const mult = (pct: number): number => Math.max(0.05, 1 + pct);
+  if (a.attack !== 0)
+    p.dealsDamage.attack = Math.max(1, Math.round(p.dealsDamage.attack * mult(a.attack)));
+  if (a.maxHp !== 0)
+    p.hasHealth.maxHp = Math.max(1, Math.round(p.hasHealth.maxHp * mult(a.maxHp)));
+  if (a.plating !== 0)
+    p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * mult(a.plating)));
+  if (a.moveSpeed !== 0)
+    p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * mult(a.moveSpeed)));
+}
 
 function applyStatModToTarget(p: PlayerStatsTarget, stat: string, value: number): void {
   switch (stat) {
@@ -130,6 +166,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // Evasion sources combine additively: each source is a fraction (0–1) expressing
   // dodge frequency. Converted to a deterministic per-hit dodge rate via evasionDodgeRate().
   let evasionChance = 0;
+  // Class affinities accumulate here and land once, after equipment (step 3d).
+  const affinities: ClassAffinities = { attack: 0, maxHp: 0, plating: 0, moveSpeed: 0 };
   p.usesSkills.passives = {};
   // Regen-burst pair is resolved frequency-weighted across all sources rather
   // than summed; collect contributions here and finalize after equipment.
@@ -147,6 +185,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.hasHealth.maxHp             += e.maxHp           ?? 0;
     p.hasHealth.hpRegen           = (p.hasHealth.hpRegen ?? 0) + (e.hpRegen ?? 0);
     p.hasPosition.speed           += e.speed           ?? 0;
+    addAffinities(affinities, e);
     mergePassives(p.usesSkills.passives, node.mechanicEffects, burstAcc);
   }
 
@@ -167,6 +206,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.hasHealth.maxHp             += e.maxHp           ?? 0;
     p.hasHealth.hpRegen           = (p.hasHealth.hpRegen ?? 0) + (e.hpRegen ?? 0);
     p.hasPosition.speed           += e.speed           ?? 0;
+    addAffinities(affinities, e);
   }
   if (stance?.mechanicEffects) {
     mergePassives(p.usesSkills.passives, stance.mechanicEffects, burstAcc);
@@ -178,14 +218,10 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   p.performsAttack.attackCooldown = Math.max(200, p.performsAttack.attackCooldown);
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 
-  // 2b. Class-specific close-range bonus
-  if (p.usesSkills.selectedRange?.endsWith('-range-close') && p.usesSkills.selectedClass) {
-    const bonus = CLOSE_RANGE_CLASS_BONUS[p.usesSkills.selectedClass];
-    if (bonus) {
-      p.mitigatesDamage.plating += bonus.plating;
-      p.hasHealth.hpRegen = (p.hasHealth.hpRegen ?? 0) + bonus.hpRegen;
-    }
-  }
+  // NOTE: the old step 2b granted a hardcoded per-class flat plating/hpRegen bonus
+  // for picking any `-range-close` node. That was invisible budget living in code
+  // rather than in the node tables; the close-range nodes now carry their whole
+  // payoff as `platingPct`/`maxHpPct` affinities plus their authored mechanic.
 
   // 3. Apply equipped item stat modifiers and mechanic effects
   for (const slot of EQUIPMENT_SLOTS) {
@@ -218,6 +254,14 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     }
   }
   finalizeBurst(burstAcc, p.usesSkills.passives);
+
+  // 3d. Class affinity layer. Base + equipment have now established raw magnitude,
+  // so the summed class-tree percentages land here — once each, never compounding
+  // per tier. This sits BEFORE the reload archetype layer (so reload's half-damage
+  // trade prices the affinity-boosted attack, exactly as it priced the old flat
+  // grants) and BEFORE the core layer (cores stay the deliberate final multiplier,
+  // a separate layer stacked on the finished class chassis).
+  applyClassAffinities(p, affinities);
 
   // Cadence must resolve after equipment is folded so item/relic threshold
   // changes are live. The old pre-equipment callback made those values inert.

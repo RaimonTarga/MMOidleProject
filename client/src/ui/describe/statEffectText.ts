@@ -91,19 +91,57 @@ const STAT_EFFECT_META: Record<keyof StatEffects, StatEffectMeta> = {
     glyph: 'UI_icons/stats/speed.png',
     helpKey: 'speed',
   },
+
+  // Class affinities. Rendered as plain percentages because that is what the
+  // player experiences — "+30% Max HP" is the promise, and it holds at every
+  // gear level, which is the whole point of the affinity model.
+  attackPct: {
+    label: 'Attack',
+    format: signedPct,
+    glyph: 'UI_icons/stats/attack.png',
+    helpKey: 'classAffinity',
+  },
+  maxHpPct: {
+    label: 'Max HP',
+    format: signedPct,
+    glyph: 'UI_icons/stats/shield.png',
+    helpKey: 'classAffinity',
+  },
+  platingPct: {
+    label: 'Plating',
+    format: signedPct,
+    glyph: 'UI_icons/stats/plating.png',
+    helpKey: 'classAffinity',
+  },
+  moveSpeedPct: {
+    label: 'Move Speed',
+    format: signedPct,
+    glyph: 'UI_icons/stats/speed.png',
+    helpKey: 'classAffinity',
+  },
 };
 
-/** Canonical display order — offense, then defense, then utility. */
+/**
+ * Canonical display order — offense, then defense, then utility.
+ *
+ * Each affinity sits next to its flat counterpart rather than in a block of its
+ * own: a node grants "Attack" whichever shape it uses, and the player should not
+ * have to learn the difference to read a card.
+ */
 const STAT_EFFECT_ORDER: (keyof StatEffects)[] = [
   'attack',
+  'attackPct',
   'attackSpeedPct',
   'attackRange',
   'maxHp',
+  'maxHpPct',
   'plating',
+  'platingPct',
   'damageReduction',
   'evasion',
   'hpRegen',
   'speed',
+  'moveSpeedPct',
 ];
 
 export function statEffectLines(effects: StatEffects | undefined): StatEffectLine[] {
