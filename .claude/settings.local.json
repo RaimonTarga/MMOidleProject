@@ -149,11 +149,34 @@
       "Bash(rm -f server/test/_cave3.test.ts)",
       "Bash(sed -i \"s|const maxHalfW = biomeGroup === 'cave' ? 60 : 36;|const maxHalfW = biomeGroup === 'cave' ? 64 : 36;|\" shared/src/collision/collision.test.ts)",
       "Bash(rm -f server/test/_cave4.test.ts)",
-      "Bash(sed -i 's|This lands 12/6.|This lands 11/7.|' shared/src/world/cavePatrols.ts)"
+      "Bash(sed -i 's|This lands 12/6.|This lands 11/7.|' shared/src/world/cavePatrols.ts)",
+      "Bash(cd \"c:/Users/osaif/Documents/Claude/Projects/MMO idle\" && rm -f server/test/_biomecount.test.ts && git status --short server/test | head)",
+      "Bash(rm -f scratch_desert_kit.txt)",
+      "Bash(rm -f server/test/_desertAscii.test.ts server/test/_desertWhere.test.ts)",
+      "Bash(pnpm --filter @mmo-idle/server exec tsx --conditions=development test/desertTracks.test.ts)",
+      "Bash(pnpm --filter @mmo-idle/server exec tsx --conditions=development test/dungeons.test.ts)",
+      "Bash(rm -f server/test/_desertAscii.test.ts)",
+      "Bash(cd \"c:/Users/osaif/Documents/Claude/Projects/MMO idle\" && rm -f server/test/_jungle.test.ts && grep -rn \"bush\" client/src --include=*.ts | grep -vi \"shrub\" | head -20)",
+      "Bash(sed -i \"s|export \\\\* from './world/desertTracks';|export * from './world/desertTracks';\\\\nexport * from './world/jungleBushes';|\" shared/src/index.ts)",
+      "Bash(rm -f server/test/_rng.test.ts)",
+      "Bash(pnpm --filter @mmo-idle/server exec tsx --conditions=development test/_jungle.test.ts)",
+      "Bash(cd \"c:/Users/osaif/Documents/Claude/Projects/MMO idle\" && rm -f server/test/_jungle.test.ts && grep -n \"JUNGLE_NORMAL_TEMPLATES\\\\|node-3-7\\\\|node-3-8\\\\|node-2-8\\\\|boss_bush\" shared/src/world/nodeFeatures.ts)",
+      "Bash(sed -i \"s|export \\\\* from './world/jungleBushes';|export * from './world/jungleBushes';\\\\nexport * from './world/jungleTrees';|\" shared/src/index.ts)",
+      "Bash(sed -i \"s|import { getJungleBushes, jungleTreeTarget } from '../world/jungleBushes';|import { jungleTreeTarget } from '../world/jungleBushes';|\" shared/src/collision/collision.test.ts)",
+      "Bash(python -c ' *)",
+      "Bash(cd \"c:/Users/osaif/Documents/Claude/Projects/MMO idle\" && rm -f server/test/_throne.test.ts && grep -n \"abyssal_throne\" -B 20 shared/src/world/nodeFeatures.ts | grep -n '\":\\\\|abyss' | head -5)",
+      "Bash(rm -f server/test/_ice2.test.ts)",
+      "Bash(pnpm --filter @mmo-idle/server exec tsx --conditions=development test/lavaAndIceLakes.test.ts)",
+      "Bash(cd \"c:/Users/osaif/Documents/Claude/Projects/MMO idle\" && rm -f server/test/_ice.test.ts && git status --short | grep \"^??\")",
+      "Bash(rm -f server/test/_wt.test.ts)",
+      "Bash(sed -i 's|  artSet: DeadTreeArtSet,|  artSet: \"tundra\" \\\\| \"wasteland\",|' shared/src/world/deadTrees.ts)",
+      "Bash(sed -i \"s|export \\\\* from './world/tundraLakes';|export * from './world/graveRows';\\\\nexport * from './world/tundraLakes';|\" shared/src/index.ts)"
     ],
     "additionalDirectories": [
       "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\shared\\src",
-      "c:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\client\\src\\render"
+      "c:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\client\\src\\render",
+      "c:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\test",
+      "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\test"
     ]
   }
 }
