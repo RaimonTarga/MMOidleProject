@@ -222,9 +222,17 @@ function modifiedDps(
   return (attack * 1000) / cd;
 }
 
-/** Direct auto-attack DPS, pre-mitigation. Pure authored offence. */
+/**
+ * Direct auto-attack DPS, pre-mitigation. Pure authored offence.
+ *
+ * `consecutiveHits` multiplies in: one attack opportunity resolves that many full
+ * pipeline hits (see the loop in combat.ts), so a 2-hit combo really is double DPS.
+ * Leaving it out understated the Gnarled Greatbear by exactly 2x — the biggest
+ * sustained-damage monster in T1 read as an average one.
+ */
 function directDps(m: MonsterDefinition): number {
-  return (m.stats.attack * 1000) / Math.max(1, m.stats.attackCooldown);
+  const hits = Math.max(1, Math.round(m.consecutiveHits ?? 1));
+  return (m.stats.attack * hits * 1000) / Math.max(1, m.stats.attackCooldown);
 }
 
 /** Sustained DoT DPS at capped stacks. */

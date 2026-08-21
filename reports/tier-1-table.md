@@ -103,7 +103,7 @@ one, and the biome order stops being the thing the player reads.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
 | Field Hare `plains-slime` | x1 | 50 | 12 | 2000 | 6 | — | — | 6 | — | — | 0 | — | — | 48 | 50 | 1 | 46 | 12 | — | follower, swarm | — |
 | Boar `boar` | x1 | 100 | 18 | 1900 | 9.5 | — | — | 9.5 | — | — | 0 | — | — | 95 | 100 | 1 | 50 | 12 | — | swarm, charge x2.5 | — |
-| BOSS Tusked Razorback `tusked-razorback` | — | 1500 | 42 | 2000 | 21 | — | — | 21 | — | — | 4 | 2% | — | 2850 | 1606 | 1.8 | 50 | 15 | — | — | boss-script |
+| BOSS Tusked Razorback `tusked-razorback` | — | 1700 | 34 | 2000 | 17 | — | — | 17 | — | — | 4 | 2% | — | 3230 | 1820 | 1.8 | 50 | 15 | — | — | boss-script |
 
 ## Forest  (density 36, 2 pool slots)
 
@@ -112,7 +112,7 @@ one, and the biome order stops being the thing the player reads.
 | Moss Rat `forest-slime` | x1 | 160 | 17 | 1400 | 12.1 | — | — | 12.1 | — | — | 0 | — | — | 152 | 160 | 1 | 54 | 12 | — | — | — |
 | Wolf `wolf` | x1 | 130 | 20 | 1100 | 18.2 | — | — | 18.2 | — | — | 0 | — | — | 124 | 130 | 1 | 82 | 12 | — | alpha +2 | — |
 | follower Young Wolf `young-wolf` | x2 | 70 | 14 | 1150 | 12.2 | — | — | 12.2 | — | — | 0 | — | — | 67 | 70 | 1 | 86 | 12 | — | follower | — |
-| BOSS Gnarled Greatbear `gnarled-greatbear` | — | 1250 | 36 | 1400 | 25.7 | — | — | 25.7 | x2.4 = 86 (charged/1200ms) | — | 0 | — | — | 1188 | 1250 | 1 | 60 | 15 | — | — | boss-script |
+| BOSS Gnarled Greatbear `gnarled-greatbear` | — | 2000 | 24 | 1400 | 34.3 | — | — | 34.3 | — | x1.3 | 0 | — | — | 1900 | 2000 | 1 | 60 | 15 | — | — | boss-script |
 
 ## Swamp  (density 20, 2 pool slots)
 
@@ -120,7 +120,7 @@ one, and the biome order stops being the thing the player reads.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
 | Mire Ooze `bog-slime` | x1 | 140 | 10 | 2000 | 5 | 18 | 4s | 23 | — | — | 0 | — | — | 133 | 140 | 1 | 28 | 12 | — | — | — |
 | Mud Toad `mud-toad` | x1 | 120 | 13 | 2200 | 5.9 | 15 | 4.4s | 20.9 | — | — | 2 | — | — | 143 | 123 | 1.2 | 30 | 12 | slow 40% | — | — |
-| BOSS Grave Toadeater `grave-toadeater` | — | 1150 | 12 | 2600 | 4.6 | 9 | 5.2s | 13.6 | — | — | 2 | 2% | — | 1561 | 1197 | 1.3 | 28 | 15 | — | aoe r120 | boss-script |
+| BOSS Grave Toadeater `grave-toadeater` | — | 2100 | 13 | 2600 | 5 | 16 | 7.8s | 21 | — | — | 2 | 2% | — | 2850 | 2186 | 1.3 | 28 | 15 | — | aoe r120 | boss-script |
 
 ## Mountain  (density 24, 3 pool slots)
 
@@ -128,7 +128,7 @@ one, and the biome order stops being the thing the player reads.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
 | Cliff Hopper `cliff-hopper` | x2 | 190 | 82 | 3000 | 27.3 | — | — | 27.3 | x1.5 = 123 (charged/1100ms) | — | 0 | — | — | 181 | 190 | 1 | 28 | 12 | — | patrol, charge x3, vaults | — |
 | Ridge Ambusher `ridge-archer` | x1 | 240 | 82 | 3100 | 26.5 | — | — | 26.5 | x1.8 = 148 (charged/2000ms) | — | 0 | — | — | 228 | 240 | 1 | 26 | **210** | — | holds-choke | — |
-| BOSS Crag Behemoth `crag-behemoth` | — | 1400 | 60 | 3500 | 17.1 | — | — | 17.1 | — | — | 0 | — | — | 1330 | 1400 | 1 | 22 | 18 | — | aoe r120, charge x3 | boss-script |
+| BOSS Crag Behemoth `crag-behemoth` | — | 2100 | 56 | 3500 | 16 | — | — | 16 | x1.9 = 106 (charged/2400ms) | — | 0 | — | — | 1995 | 2100 | 1 | 22 | 18 | — | aoe r120, charge x3 | boss-script |
 
 ## Caverns  (density 16, 2 pool slots)
 
@@ -136,7 +136,7 @@ one, and the biome order stops being the thing the player reads.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
 | Cave Lurker `cave-lurker` | x1 | 200 | 31 | 1400 | 22.1 | — | — | 22.1 | — | — | 1 | 5% | 10% | 264 | 238 | 1.1 | 68 | 12 | — | — | — |
 | Cave Brute `cave-brute` | x1 | 220 | 118 | 2800 | 42.1 | — | — | 42.1 | x1.5 = 177 (charged/1800ms) | — | 1 | 10% | — | 261 | 246 | 1.1 | 18 | 12 | — | patrol, charge x2.5, ELITE | — |
-| BOSS Obsidian Broodmother `obsidian-broodmother` | — | 1050 | 40 | 2800 | 14.3 | — | — | 14.3 | — | — | 6 | 10% | — | 3325 | 1267 | 2.6 | 24 | 18 | — | aoe r120, charge x2.5 | boss-script |
+| BOSS Obsidian Broodmother `obsidian-broodmother` | — | 1750 | 47 | 2800 | 16.8 | — | — | 16.8 | x1.8 = 85 (charged/1700ms) | — | 6 | 10% | — | 5542 | 2111 | 2.6 | 24 | 18 | — | aoe r120, charge x2.5 | boss-script |
 
 ## Mechanic coverage
 
