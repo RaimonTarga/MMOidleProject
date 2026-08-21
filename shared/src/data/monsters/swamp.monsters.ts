@@ -33,22 +33,36 @@ export const swampMonsterEntries = [
   // (Per request: base attack lowered, DoT raised — same-ish DPS, DoT-weighted.)
   ['bog-slime', {
     id: 'bog-slime', name: 'Mire Ooze', color: 0x558833,
-    // A weak slap, but the toxin does the real work over time.
-    stats: { hp: 110, attack: 8, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2200, pullRange: 165 },
+    // The DEALER of the swamp pair: a weak slap, but the toxin does all the work.
+    // Almost all of its output is the DoT, which is the whole point of the biome —
+    // direct-damage mitigation barely helps here, DoT-resist does.
+    stats: { hp: 140, attack: 10, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2000, pullRange: 165 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 2, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
+    // Fewer, heavier, faster-ticking stacks than before. The old 4-stack/1500ms poison
+    // needed ~6.6s of uninterrupted hits to reach cap, which is longer than the mob
+    // lives — the authored sustained DoT was a number players never actually met.
+    // 3 stacks at 2000ms cadence caps in ~4s, so the ramp resolves inside a real fight.
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
   }],
 
   ['mud-toad', {
     id: 'mud-toad', name: 'Mud Toad', color: 0x778844,
-    // Sturdier; a feeble strike but a deeper, faster-stacking poison.
-    stats: { hp: 145, attack: 10, plating: 2, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 180 },
+    // The CONTROLLER of the swamp pair. Previously this was a stat-identical clone of
+    // Mire Ooze carrying the exact same DoT block — two copies of one monster in the
+    // biome whose whole identity is attrition. Its job now is to stop you leaving:
+    // a shallower poison than the Ooze, plus a mire-clinging slow, so the answer to
+    // Swamp is "cleanse and disengage" and the failure state is being unable to.
+    stats: { hp: 120, attack: 13, plating: 2, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2200, pullRange: 180 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 6, essenceType: 'green', level: 1, biomeXp: 42 }, // beast → Wild (biome mixture; tunable)
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
-    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 2, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 5, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
+    // Clinging mire — refreshed on every landed hit, so staying in contact keeps you
+    // slowed while the Ooze's poison stacks. Skipped on an evaded hit like every
+    // other on-hit rider.
+    slowEffect: { speedMult: 0.6, durationMs: 2000 },
   }],
 
   // ── SWAMP T2 — DoT engines; trivial direct hits, brutal stacking poison ──

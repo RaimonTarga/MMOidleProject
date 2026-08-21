@@ -573,7 +573,7 @@ function monsterDotDps(monster: MonsterDefinition): number {
 }
 
 function rawTotalDps(monster: MonsterDefinition): number {
-  return monster.stats.attack * aps(monster) + monsterDotDps(monster);
+  return monster.stats.attack * aps(monster) * Math.max(1, monster.consecutiveHits ?? 1) + monsterDotDps(monster);
 }
 
 function monsterSpikeMultiplier(monster: MonsterDefinition): number {
@@ -592,7 +592,6 @@ function monsterSpikeMultiplier(monster: MonsterDefinition): number {
   for (const action of scriptedActions) {
     if (action.type === 'enrage') multiplier = Math.max(multiplier, action.atkMult);
     if (action.type === 'stat-buff' && action.stat === 'attack') multiplier = Math.max(multiplier, action.mult);
-    if (action.type === 'slam') multiplier = Math.max(multiplier, action.damageMult ?? 1);
   }
   return multiplier;
 }

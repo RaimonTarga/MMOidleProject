@@ -34,7 +34,7 @@ export const mountainMonsterEntries = [
     id: 'cliff-hopper', name: 'Cliff Hopper', color: 0x99aacc,
     // Sturdy mountain goat (caprine line T1: hopper -> ram -> tyrant). Slow charging
     // bruiser (atk trips the ~25%-HP cap); charges once to close, then lumbers.
-    stats: { hp: 170, attack: 36, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3500, pullRange: 420 },
+    stats: { hp: 190, attack: 82, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 42 }, // charging brute → Might (biome mixture; tunable)
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -42,7 +42,11 @@ export const mountainMonsterEntries = [
     vaultsMountainLedges: true,
     // STRONG KICK — a telegraphed shove that tests positioning around ledges.
     // Brace reduces both the heavy hit and the knockback distance.
-    chargedAttack: { name: 'Strong Kick', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3200, multiplier: 1.8, fx: 'strong-kick', knockback: { distance: 180 } },
+    // Multiplier cut 1.8 -> 1.5 alongside the base-attack lift. Mountain's identity is
+    // rare huge hits, so raising attack to hit the tier's damage target already makes
+    // every swing cap-tripping; leaving the old multiplier on top would have turned the
+    // telegraph into a one-shot rather than a spike worth bracing for.
+    chargedAttack: { name: 'Strong Kick', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3200, multiplier: 1.5, fx: 'strong-kick', knockback: { distance: 180 } },
     // Mountain SENTINEL: holds its post, pacing a short fixed line instead of
     // random wander — the guarded-position identity. Placeholder route — user pass.
     patrol: { waypoints: [{ x: -160, y: 0 }, { x: 160, y: 0 }], mode: 'pingpong', holdMinMs: 1500, holdMaxMs: 3500 },
@@ -53,14 +57,18 @@ export const mountainMonsterEntries = [
     // Stone-folk vessel crossbowman (artillery line T1: ambusher -> thrower -> mortar).
     // A big, slow bolt from range. Punishes standing still; the ranged half of
     // mountain's "stand and trade" pressure. No charge (ranged).
-    stats: { hp: 200, attack: 32, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3500, pullRange: 350 },
+    stats: { hp: 240, attack: 82, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3100, pullRange: 350 },
     behavior: 'ranged', attackStyle: 'arrow', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 8, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
     // POWER SHOT — a telegraphed 2× boulder. 2 s wind-up; armed ~3.5 s into the fight
     // (≈ the 2nd shot), then every 8 s. Mitigate it (Brace / damage-cap) or interrupt
     // the wind-up with a stun/freeze. Placeholder numbers — user balance pass.
-    chargedAttack: { name: 'Power Shot', castMs: 2000, cooldownMs: 8000, initialCooldownMs: 3500, multiplier: 3, fx: 'power-shot' },
+    // Multiplier cut 3 -> 1.8 for the same reason as the Hopper's kick: with the base
+    // bolt raised to the tier's damage target, a 3x power shot lands well past a T1
+    // player's whole health bar. 1.8 keeps it the scariest single hit in T1 without
+    // making the wind-up unsurvivable rather than merely urgent.
+    chargedAttack: { name: 'Power Shot', castMs: 2000, cooldownMs: 8000, initialCooldownMs: 3500, multiplier: 1.8, fx: 'power-shot' },
   }],
 
   // ── MOUNTAIN T2 — everything hits like a truck and trips the cap ──

@@ -19,8 +19,8 @@ import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { isMonsterStunned } from "../status/stun";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import {
+  chargedCastEndsAt,
   isChargeAoePlanted,
-  isMonsterCharging,
 } from "../engine/monsterMechanics";
 import { isMonsterKnockedBack } from "../damage/knockback";
 import { setEntityMotion, stopEntity } from "../../world/movement";
@@ -56,7 +56,7 @@ const CAVE_LURKER_WANDER_SAMPLES = 8;
 const CAVE_LURKER_BRUTE_AVOID_RANGE = 560;
 
 /**
- * Volcano in-combat attack ramp. While engaged, the monster's attack grows by
+ * In-combat offensive ramp. While engaged, the configured stat grows by
  * perTickPct every tickIntervalMs up to maxPct. We capture the unmodified attack
  * once (baseAttack) and mutate dealsDamage.attack so the damage-number breakdown
  * stays consistent — mirrors how chargeOnAggro mutates hasPosition.speed.
@@ -67,7 +67,9 @@ function tickCombatRamp(monster: MonsterEntity, dt: number): void {
   )?.rampOnCombat;
   if (!ramp) return;
   const ai = monster.controlsMonster;
-  if (ai.baseAttack === undefined) ai.baseAttack = monster.dealsDamage.attack;
+  if (ramp.stat === "attack" && ai.baseAttack === undefined) {
+    ai.baseAttack = monster.dealsDamage.attack;
+  }
   if ((ai.rampPct ?? 0) < ramp.maxPct) {
     ai.rampAccumMs = (ai.rampAccumMs ?? 0) + dt;
     while (ai.rampAccumMs >= ramp.tickIntervalMs) {
@@ -79,10 +81,12 @@ function tickCombatRamp(monster: MonsterEntity, dt: number): void {
       }
     }
   }
-  monster.dealsDamage.attack = Math.round(ai.baseAttack * (1 + (ai.rampPct ?? 0)));
+  if (ramp.stat === "attack" && ai.baseAttack !== undefined) {
+    monster.dealsDamage.attack = Math.round(ai.baseAttack * (1 + (ai.rampPct ?? 0)));
+  }
 }
 
-/** Restore base attack and clear ramp state when the monster disengages. */
+/** Restore the base stat and clear ramp state when the monster disengages. */
 function resetCombatRamp(monster: MonsterEntity): void {
   const ai = monster.controlsMonster;
   if (ai.baseAttack !== undefined) monster.dealsDamage.attack = ai.baseAttack;
@@ -256,7 +260,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
         continue;
       }
 
-      // In-combat attack ramp (Volcano) advances while a target is held.
+      // The configured offensive ramp advances while a target is held.
       tickCombatRamp(e, dt);
 
       // COMMITTED GROUND SLAM: while a planted `chargedAttack.aoe` wind-up is
@@ -265,7 +269,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
       // resolves the cast instead of aborting it. Without this hold, a player
       // stepping out of the telegraph would flip the mob to "chasing" and
       // cancel the very slam they were supposed to be dodging.
-      if (isChargeAoePlanted(e) && isMonsterCharging(e, now)) {
+      if (isChargeAoePlanted(e) && chargedCastEndsAt(e) > 0) {
         e.hasAwareness.state = "attacking";
         stopMonster(world, e);
         continue;

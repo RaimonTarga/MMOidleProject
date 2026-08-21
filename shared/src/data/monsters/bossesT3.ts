@@ -11,14 +11,16 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 340, essenceType: 'blue', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 100, leashRange: 920, idleMinMs: 3500, idleMaxMs: 8500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
+    engageSequence: { kind: 'charge-lock-charged-attack', speedMult: 3.0, maxChargeMs: 1800, lockoutMs: 500 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    chargedAttack: {
+      name: 'Cragbreaker Slam', castMs: 2400, cooldownMs: 9000, initialCooldownMs: 4500,
+      multiplier: 2.0, fx: 'strong-kick', aoe: { radius: 205 },
+    },
     bossScript: {
-      repeating: [
-        { intervalMs: 7000, initialDelayMs: 4000, actions: [{ type: 'slam', radius: 200, damageMult: 1.3 }] },
-      ],
       phases: [
         { hpPct: 0.5,  actions: [{ type: 'enrage', atkMult: 1.25, cdMult: 0.90 }] },
-        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.3 }, { type: 'slam', radius: 280, damageMult: 2.2 }] },
+        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.3 }] },
       ],
     },
   }],
@@ -32,10 +34,28 @@ export const bossMonsterEntriesT3 = [
     ai: { wanderRadius: 85, leashRange: 890, idleMinMs: 4000, idleMaxMs: 10000 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    appliesPlatingShred: {
+      platingPerStack: 2,
+      maxStacks: 8,
+      thresholdPoison: {
+        atStacks: [3, 6],
+        debuffId: 'deep-core-corrosive-venom',
+        label: 'Corrosive Venom',
+        damagePerStack: 10,
+        maxStacks: 2,
+        tickIntervalMs: 1000,
+        durationMs: 6000,
+        element: 'poison',
+      },
+    },
+    chargedAttack: {
+      name: 'Deep-Core Slam', castMs: 1500, cooldownMs: 8500, initialCooldownMs: 4000,
+      multiplier: 1.7, fx: 'strong-kick', aoe: { radius: 155 },
+    },
     bossScript: {
       phases: [
         { hpPct: 0.5,  actions: [{ type: 'enrage', atkMult: 1.25, cdMult: 0.88 }] },
-        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.35 }, { type: 'slam', radius: 220, damageMult: 1.8 }] },
+        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.35 }] },
       ],
     },
   }],
@@ -50,10 +70,19 @@ export const bossMonsterEntriesT3 = [
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     dotEffect: { debuffId: 'rot-spore-plague', label: 'Rot Spores', damagePerStack: 8, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    chargedAttack: {
+      name: 'Spore Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
+      multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 130 },
+      pool: {
+        durationMs: 9000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.55,
+        vulnerability: { damageTakenPct: 0.16, durationMs: 1800 },
+        detonationMultiplier: 2.25,
+      },
+    },
     bossScript: {
       phases: [
         { hpPct: 0.5,  actions: [{ type: 'enrage', atkMult: 1.0, cdMult: 0.65 }] },
-        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'attack', mult: 4.0 }, { type: 'slam', radius: 200, damageMult: 1.5 }] },
+        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'attack', mult: 4.0 }] },
       ],
     },
   }],
@@ -67,13 +96,17 @@ export const bossMonsterEntriesT3 = [
     ai: { wanderRadius: 140, leashRange: 900, idleMinMs: 2200, idleMaxMs: 6500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     slowEffect: { speedMult: 0.6, durationMs: 2000 },
+    chargedAttack: {
+      name: 'Sandburst', castMs: 1300, cooldownMs: 9000, initialCooldownMs: 4500,
+      multiplier: 1.6, fx: 'strong-kick', aoe: { radius: 155 },
+    },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 240, kite: true },
           { type: 'enrage', atkMult: 1.15, cdMult: 0.90 },
         ] },
-        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.3 }, { type: 'slam', radius: 200, damageMult: 1.6 }] },
+        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.3 }] },
       ],
     },
   }],
@@ -103,13 +136,14 @@ export const bossMonsterEntriesT3 = [
     ai: { wanderRadius: 120, leashRange: 920, idleMinMs: 2500, idleMaxMs: 7000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     aoeAttack: { radius: 120, damageMult: 0.7 },
+    chargedAttack: {
+      name: 'Eruption', castMs: 1400, cooldownMs: 7000, initialCooldownMs: 3500,
+      multiplier: 1.6, fx: 'strong-kick', aoe: { radius: 175 },
+    },
     bossScript: {
-      repeating: [
-        { intervalMs: 6000, initialDelayMs: 3000, actions: [{ type: 'slam', radius: 180, damageMult: 1.3 }] },
-      ],
       phases: [
         { hpPct: 0.5,  actions: [{ type: 'enrage', atkMult: 1.30, cdMult: 0.85 }] },
-        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.25 }, { type: 'slam', radius: 240, damageMult: 2.0 }] },
+        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.25 }] },
       ],
     },
   }],
@@ -130,13 +164,14 @@ export const bossMonsterEntriesT3 = [
       shieldPct: 0.18, intervalMs: 12000, durationMs: 6000,
       shatter: { selfDamagePct: 0.08, freezeRadius: 240, freezeDurationMs: 1500 },
     },
+    chargedAttack: {
+      name: 'Permafrost Slam', castMs: 1900, cooldownMs: 8500, initialCooldownMs: 4500,
+      multiplier: 1.7, fx: 'strong-kick', aoe: { radius: 195 },
+    },
     bossScript: {
-      repeating: [
-        { intervalMs: 7000, initialDelayMs: 4000, actions: [{ type: 'slam', radius: 200, damageMult: 1.4 }] },
-      ],
       phases: [
         { hpPct: 0.5,  actions: [{ type: 'enrage', atkMult: 1.25, cdMult: 0.90 }] },
-        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.3 }, { type: 'slam', radius: 240, damageMult: 1.8 }] },
+        { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.3 }] },
       ],
     },
   }],

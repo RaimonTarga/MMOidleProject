@@ -13,7 +13,11 @@
  *   'toxic-pool' — expiry-lived server hazard; ticks damage and slow inside.
  */
 
-export type GroundZoneKind = 'slam-telegraph' | 'toxic-pool';
+/** Linked-circle fault lines share the countdown contract but resolve as one hit. */
+export type GroundZoneKind =
+  | 'slam-telegraph'
+  | 'toxic-pool'
+  | 'fault-line-telegraph';
 
 /**
  * Client-facing view of one zone. Mirrors the shape of the gauntlet's

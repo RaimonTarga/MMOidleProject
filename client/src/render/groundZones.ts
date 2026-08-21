@@ -18,6 +18,8 @@ const SLAM_FILL = 0xc25b2a;
 const SLAM_LINE = 0xffb066;
 const TOXIC_FILL = 0x63852c;
 const TOXIC_LINE = 0xb8dc56;
+const FAULT_FILL = 0x8a4d2a;
+const FAULT_LINE = 0xffc06a;
 
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
@@ -99,6 +101,22 @@ export function drawGroundZones(scene: GameScene): void {
 function drawZone(sprite: GroundZoneSprite, progress: number): void {
   const { graphic, x, y, radius } = sprite;
   graphic.clear();
+
+  if (sprite.kind === 'fault-line-telegraph') {
+    // Each view is one linked segment in a radial crack. The dark footprint is
+    // visible immediately; the hot core fills toward impact across the chain.
+    graphic.fillStyle(FAULT_FILL, 0.25);
+    graphic.fillCircle(x, y, radius);
+    graphic.lineStyle(2, FAULT_LINE, 0.9);
+    graphic.strokeCircle(x, y, radius);
+    graphic.fillStyle(FAULT_LINE, 0.48);
+    graphic.fillCircle(x, y, radius * progress);
+    if (progress > 0.86) {
+      graphic.lineStyle(2, 0xffffff, (progress - 0.86) / 0.14);
+      graphic.strokeCircle(x, y, radius);
+    }
+    return;
+  }
 
   if (sprite.kind === 'toxic-pool') {
     const remainingAlpha = Math.min(1, Math.max(0, (1 - progress) * 4));

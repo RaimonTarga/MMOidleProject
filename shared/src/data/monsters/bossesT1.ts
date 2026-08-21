@@ -63,20 +63,13 @@ export const bossMonsterEntriesT1 = [
     id: 'gnarled-greatbear', name: 'Gnarled Greatbear', color: 0x33aa44,
     isBoss: true,
     stats: { hp: 1250, attack: 36, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
+    behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150, catalystBundle: 5 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
-    // FOREST EXAM = alpha-priority / predator-burst. The boss's whole identity is the
-    // MARKED-PREY → SAVAGE MAUL sequence: it paints "Scent of Blood" on you (a readable
-    // MARKED tell, `marksTarget`), then — after the ~1.2s wind-up cast bar — lands the
-    // charged Maul (single-target ×spike + a short pounce-shove on impact). The mark
-    // opens at cast-start and is consumed when the Maul lands; cleanse strips it early,
-    // a stun/freeze in the wind-up interrupts the pounce, and Brace cuts both the hit
-    // and the knockback. Tests Brace timing + burst, NOT AoE survival. Placeholder
-    // numbers — user balance pass.
-    chargedAttack: { name: 'Savage Maul', castMs: 1200, cooldownMs: 6500, initialCooldownMs: 3500, multiplier: 2.4, fx: 'savage-maul', knockback: { distance: 130 }, marksTarget: { durationMs: 1800 } },
-    // One readable 50% beat: a light enrage. The Maul, not adds, is the threat
-    // (T1 adds removed everywhere except Plains — fights stay simple).
+    consecutiveHits: 2,
+    rampOnCombat: { stat: 'attackSpeed', perTickPct: 0.08, maxPct: 0.48, tickIntervalMs: 3000 },
+    // FOREST EXAM = a clean claw duel. Every swing is a two-hit bear-claw combo,
+    // and its attack cadence ramps while the pull remains active. No adds.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
@@ -96,6 +89,10 @@ export const bossMonsterEntriesT1 = [
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    chargedAttack: {
+      name: 'Ground Slam', castMs: 2400, cooldownMs: 10000, initialCooldownMs: 4500,
+      multiplier: 2.0, fx: 'strong-kick', aoe: { radius: 155 },
+    },
     // MOUNTAIN EXAM = "break the guarded position". T1: at 50% it digs in (a timed
     // shield) while you grind it down. (T1 adds removed except Plains.)
     // Numbers placeholder — user balance pass; structure formalizes in Step 13.
@@ -119,8 +116,13 @@ export const bossMonsterEntriesT1 = [
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
     dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
-    // SWAMP EXAM = "survive the rot". T1: the arena pools already pressure position;
-    // at 50% it gets a light enrage. (T1 adds removed except Plains.)
+    chargedAttack: {
+      name: 'Bile Pool', castMs: 1200, cooldownMs: 9000, initialCooldownMs: 4000,
+      multiplier: 1.0, fx: 'strong-kick', aoe: { radius: 105 },
+      pool: { durationMs: 7000, damagePerTick: 3, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
+    },
+    // SWAMP EXAM = "survive the rot". The boss plants its own telegraphed pool;
+    // at 50% it gets a light enrage. No encounter adds.
     // Numbers placeholder — user balance pass; structure formalizes in Step 13.
     bossScript: {
       phases: [
@@ -141,6 +143,11 @@ export const bossMonsterEntriesT1 = [
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    appliesPlatingShred: { platingPerStack: 1, maxStacks: 6 },
+    chargedAttack: {
+      name: 'Obsidian Slam', castMs: 1700, cooldownMs: 9500, initialCooldownMs: 4500,
+      multiplier: 1.5, fx: 'strong-kick', aoe: { radius: 125 },
+    },
     // CAVE EXAM = "survive the elite" (a durable %DR sponge). T1: at 50% it digs in
     // (timed shield) — the focus stays on grinding the durable boss; Heavy Strike
     // (single-target burst) and Second Wind (sustain) both pay off here.

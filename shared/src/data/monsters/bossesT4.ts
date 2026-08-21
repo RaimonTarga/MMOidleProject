@@ -34,8 +34,8 @@ import type { MonsterDefinition } from './types';
 //
 //   shed-defense   { type }
 //     Removes any active enemyShield and enemySoftCap; reduces current plating
-//     to ~20% of its value. The desperation finale — trades tankiness for raw
-//     aggression. Also triggers a free slam for the transition impact.
+//     to ~20% of its value. The desperation finale trades tankiness for raw
+//     aggression.
 //
 //   modify-ramp-debuff { type, moveSlowMaxPct, atkSlowMaxPct }
 //     Raises the caps on the active rampDebuff. Used at 25% for Tundra:
@@ -48,7 +48,7 @@ import type { MonsterDefinition } from './types';
 //
 //   stat-buff extends to support: speed · attack · evasion (existing T3 stats).
 //
-// Existing reused actions: enrage · stat-buff · slam · morph
+// Existing reused actions: enrage · stat-buff · morph
 // ════════════════════════════════════════════════════════════════════════
 
 export const bossMonsterEntriesT4 = [
@@ -70,13 +70,18 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 620, essenceType: 'blue', level: 5, biomeXp: 930 },
     ai: { wanderRadius: 95, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
+    engageSequence: { kind: 'charge-lock-charged-attack', speedMult: 3.2, maxChargeMs: 1900, lockoutMs: 550 },
     aoeAttack: { radius: 140, damageMult: 0.5 },
+    chargedAttack: {
+      name: 'Titan Earthshatter', castMs: 2600, cooldownMs: 9000, initialCooldownMs: 4500,
+      multiplier: 2.2, fx: 'strong-kick', aoe: { radius: 240 },
+      aftershock: {
+        kind: 'radial-fault-lines', delayMs: 900, rayCount: 6,
+        length: 330, lineRadius: 24, innerRadius: 95, damageMultiplier: 1.35,
+      },
+    },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 350 — deep cap trip
     bossScript: {
-      repeating: [
-        // Earthshatter: a ground-slam AoE every 8s. At 1.5× = 262. Trips the cap.
-        { intervalMs: 8000, initialDelayMs: 5000, actions: [{ type: 'slam', radius: 240, damageMult: 1.5 }] },
-      ],
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.20, cdMult: 0.90 },
@@ -85,7 +90,6 @@ export const bossMonsterEntriesT4 = [
         { hpPct: 0.25, actions: [
           { type: 'shed-defense' },                                 // NEW — soft-cap drops, plating crumbles
           { type: 'stat-buff', stat: 'speed', mult: 1.35 },
-          { type: 'slam', radius: 320, damageMult: 2.2 },           // 385 — the final push
         ] },
       ],
     },
@@ -113,11 +117,11 @@ export const bossMonsterEntriesT4 = [
     ai: { wanderRadius: 140, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     slowEffect: { speedMult: 0.45, durationMs: 3000 },
+    chargedAttack: {
+      name: 'Sandstorm Rupture', castMs: 1500, cooldownMs: 9000, initialCooldownMs: 4500,
+      multiplier: 1.8, fx: 'strong-kick', aoe: { radius: 180 },
+    },
     bossScript: {
-      repeating: [
-        // Sandstorm lash — a debuff slam every 9s that also applies the full slow.
-        { intervalMs: 9000, initialDelayMs: 5000, actions: [{ type: 'slam', radius: 180, damageMult: 1.4 }] },
-      ],
       phases: [
         { hpPct: 0.5, actions: [
           // Transforms to ranged kiter — maintains standoff and plinks.
@@ -128,7 +132,6 @@ export const bossMonsterEntriesT4 = [
           // Sheds the kite, charges back in. Desperate close-range finale.
           { type: 'morph', isRanged: false, attackRange: 20, kite: false },
           { type: 'stat-buff', stat: 'speed', mult: 1.35 },
-          { type: 'slam', radius: 240, damageMult: 1.8 },           // 255 — close-range eruption
         ] },
       ],
     },
@@ -178,7 +181,7 @@ export const bossMonsterEntriesT4 = [
   // TUNDRA — "Glacial Patriarch"
   //
   // Identity: the patience test — a war of attrition that tightens the vice.
-  //   BASE: rampDebuff (move and atk slow, capped) + repeating freeze slam.
+  //   BASE: rampDebuff (move and atk slow, capped) + charged freeze slam.
   //     The longer the fight, the more debuffed you are.
   //   50% phase: ENEMY SOFT-CAP (armor hardens — your empowered attacks get
   //     clipped). The fight now demands fast consistent damage AND the brittle
@@ -197,6 +200,10 @@ export const bossMonsterEntriesT4 = [
     chargeOnAggro: { speedMult: 2.0, durationMs: 1300 },
     aoeAttack: { radius: 140, damageMult: 0.5 },
     rampDebuff: { moveSlowPerHit: 0.08, moveSlowMaxPct: 0.50, atkSlowPerHit: 0.06, atkSlowMaxPct: 0.40, stackDurationMs: 5000 },
+    chargedAttack: {
+      name: 'Glacial Collapse', castMs: 2200, cooldownMs: 9500, initialCooldownMs: 5000,
+      multiplier: 1.9, fx: 'strong-kick', aoe: { radius: 250 },
+    },
     // ECOLOGY exam "shatter the ice" (apex): a thick periodic frost barrier — BURST it to
     // shatter (bonus self-dmg + freezing shockwave that stuns any adds). Stacks with the
     // 50% soft-cap + plating 22 to make weapon/burst matchup the whole fight.
@@ -205,10 +212,6 @@ export const bossMonsterEntriesT4 = [
       shatter: { selfDamagePct: 0.08, freezeRadius: 260, freezeDurationMs: 1800 },
     },
     bossScript: {
-      repeating: [
-        // Permafrost slam every 9s. 1.5× = 217 — trips the cap.
-        { intervalMs: 9000, initialDelayMs: 5000, actions: [{ type: 'slam', radius: 250, damageMult: 1.5 }] },
-      ],
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.20, cdMult: 0.90 },
@@ -217,7 +220,6 @@ export const bossMonsterEntriesT4 = [
         { hpPct: 0.25, actions: [
           // The vice closes: debuff caps lift. Without debuff-resist, you're near-frozen.
           { type: 'modify-ramp-debuff', moveSlowMaxPct: 0.85, atkSlowMaxPct: 0.70 },  // NEW
-          { type: 'slam', radius: 300, damageMult: 1.8 },           // 261
         ] },
       ],
     },
@@ -229,7 +231,7 @@ export const bossMonsterEntriesT4 = [
   //
   // Identity: sustained ramp + explosive finale.
   //   BASE: rampOnCombat (attack escalates over time, capped at +80%) + DoT on
-  //     every hit + repeating fire slam. Starts manageable, becomes a furnace.
+  //     every hit + charged fire slam. Starts manageable, becomes a furnace.
   //   50% phase: ENEMY SHIELD (lava-hardened hide flares). Tests burst builds
   //     vs DoT/chip — a pointed question in a biome that rewards DoT weapons.
   //     Enrage also fires: attacks get faster AND ramp is already building.
@@ -247,11 +249,11 @@ export const bossMonsterEntriesT4 = [
     aoeAttack: { radius: 130, damageMult: 0.6 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.80, tickIntervalMs: 2000 },
     dotEffect: { debuffId: 'caldera-burn', label: 'Caldera Burn', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
+    chargedAttack: {
+      name: 'Caldera Eruption', castMs: 1300, cooldownMs: 7000, initialCooldownMs: 3500,
+      multiplier: 1.8, fx: 'strong-kick', aoe: { radius: 200 },
+    },
     bossScript: {
-      repeating: [
-        // Eruption slam every 6s. At 1.3× early = 153; at full ramp = 213. Escalating threat.
-        { intervalMs: 6000, initialDelayMs: 3000, actions: [{ type: 'slam', radius: 200, damageMult: 1.3 }] },
-      ],
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.30, cdMult: 0.85 },
@@ -260,7 +262,6 @@ export const bossMonsterEntriesT4 = [
         { hpPct: 0.25, actions: [
           { type: 'shed-defense' },                                  // NEW — shield cracks, plating crumbles
           { type: 'stat-buff', stat: 'attack', mult: 1.50 },
-          { type: 'slam', radius: 280, damageMult: 2.0 },            // at full ramp: ~354
         ] },
       ],
     },
@@ -288,6 +289,10 @@ export const bossMonsterEntriesT4 = [
     chargeOnAggro: { speedMult: 2.0, durationMs: 1100 },
     dotEffect: { debuffId: 'charnel-crown-decay', label: 'Crown Decay', damagePerStack: 7, maxStacks: 6, tickIntervalMs: 1000, durationMs: 5000 },
     aoeAttack: { radius: 130, damageMult: 0.5 },
+    chargedAttack: {
+      name: 'Charnel Burst', castMs: 1500, cooldownMs: 9000, initialCooldownMs: 4500,
+      multiplier: 1.7, fx: 'strong-kick', aoe: { radius: 210 },
+    },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
@@ -297,7 +302,6 @@ export const bossMonsterEntriesT4 = [
         { hpPct: 0.25, actions: [
           { type: 'enrage', atkMult: 1.40, cdMult: 0.60 },
           { type: 'spawn-adds', monsterTypeId: 'plague-hound', count: 3, offsetRange: 200 }, // NEW
-          { type: 'slam', radius: 220, damageMult: 1.6 },            // 140 + massive DoT splash
         ] },
       ],
     },
@@ -333,16 +337,16 @@ export const bossMonsterEntriesT4 = [
     aoeAttack: { radius: 130, damageMult: 0.5 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.5 },   // 275 — deep cap trip
     enemyShield: { shieldPct: 0.28, intervalMs: 15000, durationMs: 6000 },
+    chargedAttack: {
+      name: 'Abyssal Slam', castMs: 2100, cooldownMs: 10500, initialCooldownMs: 5500,
+      multiplier: 2.1, fx: 'strong-kick', aoe: { radius: 220 },
+    },
     bossScript: {
-      repeating: [
-        { intervalMs: 10000, initialDelayMs: 6000, actions: [{ type: 'slam', radius: 220, damageMult: 1.8 }] },
-      ],
       phases: [
         { hpPct: 0.5,  actions: [{ type: 'enrage', atkMult: 1.25, cdMult: 0.88 }] },
         { hpPct: 0.25, actions: [
           { type: 'shed-defense' },
           { type: 'stat-buff', stat: 'speed', mult: 1.30 },
-          { type: 'slam', radius: 280, damageMult: 2.2 },
         ] },
       ],
     },

@@ -32,19 +32,21 @@ export const forestMonsterEntries = [
   ['forest-slime', {
     id: 'forest-slime', name: 'Moss Rat', color: 0x55ff55,
     // Attacks faster than its plains cousin — frequency over force.
-    stats: { hp: 100, attack: 10, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1500, pullRange: 210 },
+    // Deliberately a plain stat block: T1 is the introductory tier and Forest's
+    // texture comes from the wolf pack, so the filler stays readable and simple.
+    stats: { hp: 160, attack: 17, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1400, pullRange: 600 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
     rewards: { essence: 3, essenceType: 'green', level: 1, biomeXp: 18 },
-    ai: { wanderRadius: 230, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
+    ai: { wanderRadius: 230, leashRange: 1200, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
 
   ['wolf', {
     id: 'wolf', name: 'Wolf', color: 0xaaaacc,
     // Fast baseline speed IS the anti-kite — no charge needed. Frequent light bites.
-    stats: { hp: 60, attack: 14, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 255 },
+    stats: { hp: 130, attack: 20, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 680 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
-    ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
+    ai: { wanderRadius: 290, leashRange: 1360, idleMinMs: 700, idleMaxMs: 2800 },
     // Forest predator-pack ALPHA: a roaming adult wolf spawns with two young wolves
     // and calls them onto anything it engages.
     pack: { role: 'alpha', callRange: 320, followers: [{ typeId: 'young-wolf', count: 2 }] },
@@ -54,10 +56,10 @@ export const forestMonsterEntries = [
     id: 'young-wolf', name: 'Young Wolf', color: 0xaaaacc,
     // Uses the wolf sprite for now. Slightly smaller/softer than the adult alpha,
     // but still fast enough that the pack reads as one moving threat.
-    stats: { hp: 38, attack: 9, plating: 0, damageReduction: 0, speed: 86, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
+    stats: { hp: 70, attack: 14, plating: 0, damageReduction: 0, speed: 86, attackRange: 12, attackCooldown: 1150, pullRange: 620 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 2, essenceType: 'green', level: 1, biomeXp: 12 },
-    ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 700, idleMaxMs: 2800 },
+    ai: { wanderRadius: 260, leashRange: 1240, idleMinMs: 700, idleMaxMs: 2800 },
     pack: { role: 'follower', callRange: 300 },
   }],
 

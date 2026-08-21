@@ -3,6 +3,8 @@ import {
   applyStatusEffect,
   distanceSq,
   getStatusEffect,
+  PLATING_SHRED_EFFECT_ID,
+  pruneStatusEffects,
 } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -77,6 +79,14 @@ function spawnDeathHazard(world: World, dead: MonsterEntity): void {
 export function initMonsterDeathEffects(): void {
   registerCombatListener('onKill', (ctx, world) => {
     if (ctx.defenderType !== 'monster') return;
+    for (const player of world.livePlayersInNode(ctx.defender.hasPosition.nodeId)) {
+      pruneStatusEffects(
+        player.tracksCombat,
+        (effect) =>
+          effect.id === PLATING_SHRED_EFFECT_ID &&
+          effect.sourceId === ctx.defender.isMonster.id,
+      );
+    }
     onPackAlphaDead(world, ctx.defender);
     onRaiserDead(world, ctx.defender);
     spawnDeathHazard(world, ctx.defender);

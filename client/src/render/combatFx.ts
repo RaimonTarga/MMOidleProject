@@ -41,7 +41,7 @@ import { fxSandblast } from "../fx/sandblast";
 import { fxQuake } from "../fx/quake";
 import { fxHex } from "../fx/hex";
 import { fxStoneSpit } from "../fx/stoneSpit";
-import { fxSummonBurst, fxShieldUp, fxMorph } from "../fx/bossCues";
+import { fxSummonBurst, fxShieldUp, fxMorph, fxBossRoar } from "../fx/bossCues";
 import { fxLightning } from "../fx/lightning";
 import { fxFireFlame } from "../fx/dotFire";
 import { fxFrostSnowflake } from "../fx/dotFrost";
@@ -326,6 +326,8 @@ const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
 const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   slash: ({ scene, ev, from, to }) =>
     fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered),
+  'bear-claws': ({ scene, ev, to }) =>
+    fxDualSlash(scene, to.x, to.y, ev.empowered),
   poison: ({ scene, to }) => fxPoison(scene, to.x, to.y),
   magic: ({ scene, from, to }) => fxMagic(scene, from.x, from.y, to.x, to.y),
   // Conduit summons — range picks which of these their attacks use.
@@ -571,6 +573,8 @@ export function dispatchCombatEvent(
         fxShieldUp(scene, at.x, at.y);
       } else if (ev.fx === "morph") {
         fxMorph(scene, at.x, at.y);
+      } else if (ev.fx === "roar") {
+        fxBossRoar(scene, at.x, at.y, ev.radius ?? 260);
       }
     }
     return;

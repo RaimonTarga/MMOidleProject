@@ -29,7 +29,7 @@ export interface ControlsMonster {
   chargeRemainingMs?: number;
   /** Unmodified attack captured at first ramp tick — rampOnCombat multiplies this. */
   baseAttack?: number;
-  /** Current in-combat attack ramp fraction (0..rampOnCombat.maxPct). */
+  /** Current in-combat attack or attack-speed ramp fraction (0..maxPct). */
   rampPct?: number;
   /** Ms accumulated toward the next rampOnCombat tick. */
   rampAccumMs?: number;

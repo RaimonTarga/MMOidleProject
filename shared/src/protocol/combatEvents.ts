@@ -66,7 +66,7 @@ export type CombatEvent =
   // boss's attackStyle tints the shockwave); `summon` marks an add-spawn beat;
   // `shield` a barrier coming up; `morph` a shape/range flip. The damage/spawn/
   // shield are all server-authoritative — this only drives the animation.
-  | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph'; radius?: number; element?: string }
+  | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph' | 'roar'; radius?: number; element?: string }
   // A self-facing Guard ability fired (Brace / Cleanse / Second Wind). Drives the
   // in-world Guard FX on the player's sprite, shown to the whole node so allies see
   // each other react. `ability` is the ability id; the client picks the FX by id.

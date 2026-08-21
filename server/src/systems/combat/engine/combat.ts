@@ -23,6 +23,7 @@ import {
   plantChargeAoe,
   isChargeAoePlanted,
   chargeAoeImpactPoint,
+  monsterAttackCooldown,
 } from "./monsterMechanics";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import {
@@ -34,7 +35,9 @@ import {
   FROST_RAMP_EFFECT_ID,
   SUN_MARK_EFFECT_ID,
   SUNDERED_EFFECT_ID,
+  PLATING_SHRED_EFFECT_ID,
   DAMAGE_TAKEN_PCT_KEY,
+  platingAfterShred,
   playerOutgoingDamageMult,
   frostRampMaxStacks,
   frostRampAtkSlowPct,
@@ -44,6 +47,9 @@ import {
 import { applyMonsterAoe } from "../damage/aoeDamage";
 import {
   publishGroundZone,
+  publishToxicPool,
+  publishFaultLineBurst,
+  takeDueGroundZoneImpacts,
   clearGroundZonesByOwner,
 } from "../../world/groundZones";
 import { monsterDeathEmpowerMult } from "../damage/monsterDeathEffects";
@@ -51,6 +57,7 @@ import { applyPlayerKnockback } from "../damage/knockback";
 import { canApplyPlayerDebuff } from "../status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
+import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
 import {
@@ -618,7 +625,11 @@ export function runMonsterAttack(
   ctx.damage = Math.max(
     1,
     Math.round(
-      Math.max(0, monster.dealsDamage.attack - target.mitigatesDamage.plating) *
+      Math.max(
+        0,
+        monster.dealsDamage.attack -
+          platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
+      ) *
         (1 - target.mitigatesDamage.damageReduction) *
         (1 - drLayer2),
     ),
@@ -692,7 +703,10 @@ export function runMonsterAttack(
   const shieldAbsorbed = Number(ctx.metadata["shieldAbsorbed"] ?? 0);
   const mitigation = buildPlatingDrBreakdown({
     grossDamage: monster.dealsDamage.attack,
-    effectivePlating: target.mitigatesDamage.plating,
+    effectivePlating: platingAfterShred(
+      target.mitigatesDamage.plating,
+      target.tracksCombat,
+    ),
     platingMult: 1,
     damageReduction: target.mitigatesDamage.damageReduction,
   });
@@ -863,6 +877,25 @@ export function runMonsterAttack(
 
   // Tundra rampDebuff — stacking move-slow + attack-slow on the player, each
   // capped, decaying stackDurationMs after the last hit (refreshed every hit).
+  const platingShred = def?.appliesPlatingShred;
+  if (platingShred && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+    const corrosion = applyStatusEffect(target.tracksCombat, {
+      id: PLATING_SHRED_EFFECT_ID,
+      maxStacks: platingShred.maxStacks,
+      remainingMs: -1,
+      refreshable: false,
+      sourceId: monster.isMonster.id,
+      data: { platingPerStack: platingShred.platingPerStack },
+    });
+    const poison = platingShred.thresholdPoison;
+    if (
+      target.hasHealth.hp > 0 &&
+      poison?.atStacks.includes(corrosion.stacks)
+    ) {
+      applyMonsterDotToPlayer(world, monster, target, poison);
+    }
+  }
+
   const rampDebuff = def?.rampDebuff;
   if (rampDebuff && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     const durMs = Math.round(
@@ -1083,6 +1116,9 @@ function resolveChargedSlam(
     if (!world.getPlayerEntity(victim.isPlayer.id)) continue;
     const outcome = runMonsterAttack(world, monster, victim, now, slamMult);
     if (outcome === "hit") {
+      if (charged.stunMs && canApplyPlayerDebuff(victim)) {
+        applyStun(victim.tracksCombat, charged.stunMs, monster.isMonster.id);
+      }
       applyChargedAttackKnockback(world, monster, victim, charged);
       const refreshed = world.getPlayerEntity(victim.isPlayer.id);
       if (refreshed) markEngaged(world, refreshed, now);
@@ -1099,6 +1135,52 @@ function resolveChargedSlam(
     runMonsterAttackOnMinion(world, monster, minion, now);
   }
 
+  if (charged.pool) {
+    const pool = charged.pool;
+    publishToxicPool(world, nodeId, {
+      kind: "toxic-pool",
+      pos: { ...impact },
+      radius: aoe.radius,
+      startedAtMs: now,
+      expiresAtMs: now + pool.durationMs,
+      damagePerTick: pool.damagePerTick,
+      tickIntervalMs: pool.tickIntervalMs,
+      slowSpeedMult: pool.slowSpeedMult,
+      vulnerability: pool.vulnerability,
+      ownerId: monster.isMonster.id,
+      detonationMultiplier: pool.detonationMultiplier,
+      killer: buildKillerFromMonster(monster),
+    });
+  }
+
+  if (charged.aftershock?.kind === 'radial-fault-lines') {
+    const aftershock = charged.aftershock;
+    const points: Vec2[] = [];
+    const innerRadius = aftershock.innerRadius ?? Math.max(aoe.radius * 0.45, 48);
+    const step = Math.max(1, aftershock.lineRadius * 1.7);
+    // Rotate each burst so the safe wedges are readable but not fixed cardinal lanes.
+    const rotation = ((now % 4_000) / 4_000) * Math.PI * 2;
+    for (let ray = 0; ray < aftershock.rayCount; ray++) {
+      const angle = rotation + (ray / aftershock.rayCount) * Math.PI * 2;
+      for (let distance = innerRadius; distance <= aftershock.length; distance += step) {
+        points.push({
+          x: impact.x + Math.cos(angle) * distance,
+          y: impact.y + Math.sin(angle) * distance,
+        });
+      }
+    }
+    publishFaultLineBurst(world, nodeId, {
+      kind: 'fault-line-telegraph',
+      pos: { ...impact },
+      radius: aftershock.lineRadius,
+      startedAtMs: now,
+      resolvesAtMs: now + aftershock.delayMs,
+      ownerId: monster.isMonster.id,
+      points,
+      damageMultiplier: aftershock.damageMultiplier,
+    });
+  }
+
   world.pushEvent(nodeId, {
     kind: "monster-cast-end",
     monsterId: monster.isMonster.id,
@@ -1107,7 +1189,65 @@ function resolveChargedSlam(
   });
 }
 
+/** Resolve expiry detonations and linked fault lines through real monster hits. */
+function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
+  for (const impact of takeDueGroundZoneImpacts(world, now)) {
+    const ownerId = impact.ownerId;
+    if (!ownerId) continue;
+    const monster = world.getMonsterEntity(ownerId);
+    if (!monster || monster.hasHealth.hp <= 0) continue;
+
+    const points = impact.kind === 'toxic-pool' ? [impact.pos] : impact.points;
+    const multiplier = impact.kind === 'toxic-pool'
+      ? impact.detonationMultiplier ?? 1
+      : impact.damageMultiplier;
+    const players = new Map<string, PlayerEntity>();
+    const minions = new Map<string, MinionEntity>();
+    for (const point of points) {
+      for (const player of world.collision.bodiesInCircle(
+        world.livePlayersInNode(monster.hasPosition.nodeId),
+        point,
+        impact.radius,
+      )) players.set(player.isPlayer.id, player);
+      for (const minion of world.collision.bodiesInCircle(
+        world.minionEntitiesInNode(monster.hasPosition.nodeId),
+        point,
+        impact.radius,
+      )) minions.set(minion.isMinion.id, minion);
+    }
+
+    for (const player of players.values()) {
+      if (!world.getPlayerEntity(player.isPlayer.id)) continue;
+      runMonsterAttack(world, monster, player, now, multiplier);
+      if (!world.hasMonster(ownerId)) break;
+    }
+    if (world.hasMonster(ownerId)) {
+      for (const minion of minions.values()) {
+        if (minion.hasHealth.hp > 0) runMonsterAttackOnMinion(world, monster, minion, now);
+      }
+    }
+
+    const maxRadius = impact.kind === 'toxic-pool'
+      ? impact.radius
+      : Math.max(
+          impact.radius,
+          ...impact.points.map(point => Math.sqrt(distanceSq(point, impact.pos))),
+        );
+    const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+    world.pushEvent(monster.hasPosition.nodeId, {
+      kind: 'boss-fx',
+      monsterId: impact.id,
+      pos: { ...impact.pos },
+      fx: 'slam',
+      radius: maxRadius,
+      element: def?.attackStyle,
+    });
+  }
+}
+
 export function updateCombat(world: World, dt: number, now: number) {
+  resolveDelayedGroundZoneImpacts(world, now);
+
   // PLAYER → MONSTER
   for (const player of world.livePlayers) {
     // Entities can attack by default; the CannotAttack marker is the only thing
@@ -1309,7 +1449,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         // its attack rhythm), turning that attack into the Power Shot. So gate on
         // both the attack cooldown AND the charge being ready (and not mid-stun).
         const attackDue =
-          now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown;
+          now - e.performsAttack.lastAttackAt >= monsterAttackCooldown(e);
         const initialCd = charged.initialCooldownMs ?? charged.cooldownMs;
         const forcedByEngageSequence = engageSequenceSlamReady(e);
         // Initialize the ordinary charge session before the forced opener so
@@ -1336,6 +1476,9 @@ export function updateCombat(world: World, dt: number, now: number) {
             });
           }
           applyChargedAttackMark(world, e, target, charged);
+          if (charged.precastStunMs && canApplyPlayerDebuff(target)) {
+            applyStun(target.tracksCombat, charged.precastStunMs, e.isMonster.id);
+          }
           if (forcedByEngageSequence) completeEngageSequence(e);
           world.pushEvent(e.hasPosition.nodeId, {
             kind: "monster-cast-start",
@@ -1352,16 +1495,25 @@ export function updateCombat(world: World, dt: number, now: number) {
       // lengthened attack cooldown applied in updateChillAndFreeze paces them.
       if (
         now - e.performsAttack.lastAttackAt >=
-        e.performsAttack.attackCooldown
+        monsterAttackCooldown(e)
       ) {
-        const outcome = runMonsterAttack(world, e, target, now);
-        if ((outcome === "hit" || outcome === "killed") && world.hasMonster(e.isMonster.id)) {
-          applyMonsterAttackSplash(
-            world,
-            e,
-            target.hasPosition.current,
-            target.isPlayer.id,
-          );
+        const hitCount = Math.max(
+          1,
+          Math.round(MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.consecutiveHits ?? 1),
+        );
+        let outcome: MonsterAttackOutcome = "cancelled";
+        for (let hit = 0; hit < hitCount; hit++) {
+          if (!world.getPlayerEntity(target.isPlayer.id)) break;
+          outcome = runMonsterAttack(world, e, target, now);
+          if ((outcome === "hit" || outcome === "killed") && world.hasMonster(e.isMonster.id)) {
+            applyMonsterAttackSplash(
+              world,
+              e,
+              target.hasPosition.current,
+              target.isPlayer.id,
+            );
+          }
+          if (outcome === "killed" || !world.hasMonster(e.isMonster.id)) break;
         }
         if (outcome === "hit") {
           // Landing a hit halves the accumulated kite ramp so the monster must re-earn speed.
@@ -1393,15 +1545,21 @@ export function updateCombat(world: World, dt: number, now: number) {
     }
     setAttackTarget(world, e, minion.isMinion.id);
     if (
-      now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown
+      now - e.performsAttack.lastAttackAt >= monsterAttackCooldown(e)
     ) {
-      runMonsterAttackOnMinion(world, e, minion, now);
-      applyMonsterAttackSplash(
-        world,
-        e,
-        minion.hasPosition.current,
-        minion.isMinion.id,
+      const hitCount = Math.max(
+        1,
+        Math.round(MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.consecutiveHits ?? 1),
       );
+      for (let hit = 0; hit < hitCount && minion.hasHealth.hp > 0; hit++) {
+        runMonsterAttackOnMinion(world, e, minion, now);
+        applyMonsterAttackSplash(
+          world,
+          e,
+          minion.hasPosition.current,
+          minion.isMinion.id,
+        );
+      }
     }
   }
 

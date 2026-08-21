@@ -1,4 +1,4 @@
-import type { Vec2 } from "@mmo-idle/shared";
+import { platingAfterShred, type Vec2 } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { grantMonsterRewards } from "../../player/progression/rewards";
@@ -125,7 +125,10 @@ export function applyMonsterAoe(
 
     const mitigation = buildPlatingDrBreakdown({
       grossDamage: baseDamage,
-      effectivePlating: player.mitigatesDamage.plating,
+      effectivePlating: platingAfterShred(
+        player.mitigatesDamage.plating,
+        player.tracksCombat,
+      ),
       platingMult: 1,
       damageReduction: player.mitigatesDamage.damageReduction,
     });

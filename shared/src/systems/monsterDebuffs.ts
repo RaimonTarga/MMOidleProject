@@ -1,4 +1,5 @@
 import type { StatusEffect } from '../components/combat/effects';
+import type { TracksCombat } from '../components/combat/tracksCombat';
 import { AMBIENT_RAMP_KEY } from './ambientRamp';
 import { isMonsterDotStatusEffectId } from './monsterDotFlavor';
 
@@ -55,6 +56,16 @@ export const CAVE_LOCKDOWN_EFFECT_ID = 'cave-lockdown';
  */
 export const SUNDERED_EFFECT_ID = 'sundered';
 
+/** Cave boss corrosion: stacking, encounter-long reduction to player plating. */
+export const PLATING_SHRED_EFFECT_ID = 'plating-shred';
+
+/** Player plating after encounter corrosion, clamped so it never becomes negative. */
+export function platingAfterShred(basePlating: number, state: TracksCombat): number {
+  const effect = state.statusEffects.find((candidate) => candidate.id === PLATING_SHRED_EFFECT_ID);
+  if (!effect) return basePlating;
+  return Math.max(0, basePlating - effect.stacks * (effect.data.platingPerStack ?? 0));
+}
+
 /** Movement-slow fraction (0..moveSlowMaxPct) from the current frost-ramp stacks. */
 export function frostRampMoveSlowPct(effect: StatusEffect): number {
   const perHit = effect.data['moveSlowPerHit'] ?? 0;
@@ -108,6 +119,7 @@ export function isHarmfulPlayerStatusEffect(
   if (id === 'slow' || id === FROST_RAMP_EFFECT_ID) return true;
   if (id === SUN_MARK_EFFECT_ID || id === VOLCANIC_HEAT_EFFECT_ID) return true;
   if (id === CAVE_LOCKDOWN_EFFECT_ID || id === SUNDERED_EFFECT_ID) return true;
+  if (id === PLATING_SHRED_EFFECT_ID) return true;
   if (id === 'antiheal' || id === 'swamp-rot') return true;
   if (isMonsterDotStatusEffectId(id)) return true;
   if ((data['isDot'] ?? 0) !== 0) return true;

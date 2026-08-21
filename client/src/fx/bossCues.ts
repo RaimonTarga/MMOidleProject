@@ -137,3 +137,30 @@ export function fxMorph(scene: GameScene, x: number, y: number): void {
     rotate: { min: 0, max: 360 },
   });
 }
+
+/** Rallying roar: two warm pressure waves plus sparks lifting from nearby allies. */
+export function fxBossRoar(scene: GameScene, x: number, y: number, radius: number): void {
+  for (let i = 0; i < 2; i++) {
+    const ring = scene.add.graphics({ x, y }).setDepth(DEPTH.FX);
+    ring.lineStyle(4 - i, i === 0 ? 0xffcc55 : 0xff7744, 0.9);
+    ring.strokeCircle(0, 0, 18);
+    scene.tweens.add({
+      targets: ring,
+      scaleX: radius / 18,
+      scaleY: radius / 36,
+      alpha: 0,
+      delay: i * 110,
+      duration: 520,
+      ease: 'Quad.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+  }
+  burstFx(scene, 'ptx-spark', x, y, 18, 480, {
+    tint: 0xffcc55,
+    speed: { min: 70, max: 180 },
+    angle: { min: 205, max: 335 },
+    scale: { start: 0.9, end: 0 },
+    alpha: { start: 1, end: 0 },
+    gravityY: -80,
+  });
+}

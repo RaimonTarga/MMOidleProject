@@ -4,7 +4,6 @@ import {
   computeLinearDotDamage,
   computeScaledDotDamage,
   isMonsterDotStatusEffectId,
-  resolveMonsterDotDebuff,
   resolveDotClassProfile,
   relicRatingsFromPassives,
   resolveDotRelicDeliveryProfile,
@@ -34,6 +33,7 @@ import {
 } from "../../../../ecs/markerHelpers";
 import { canApplyPlayerDebuff } from "../../../combat/status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../../defense/mitigation/evasion";
+import { applyMonsterDotToPlayer } from '../../../combat/status/monsterDot';
 import {
   pushDotTickEvent,
   dotElementForSource,
@@ -57,7 +57,7 @@ import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/inv
 import { applyMonsterDamageTakenDebuffs } from "../../shared/debuffs";
 import { tryCheatDeath } from "../../../defense/mitigation/cheatDeath";
 import { drainPlayerShields } from "../../../defense/shields/shields";
-import { DOT_DURATION_MS, DOT_EFFECT_ID } from "./t3/core/constants";
+import { DOT_EFFECT_ID } from "./t3/core/constants";
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
 export { computeScaledDotDamage };
@@ -393,43 +393,7 @@ export function initDotArchetype(): void {
     if (!canApplyPlayerDebuff(player)) return;
     if (evadeBlocksDebuffs(ctx)) return; // evaded monster hit applies no DoT
 
-    const playerCombatState = player.tracksCombat;
-
-    const { damagePerStack, maxStacks, tickIntervalMs } = dotEffect;
-    const durationMs = dotEffect.durationMs ?? DOT_DURATION_MS;
-    const debuff = resolveMonsterDotDebuff({
-      monster: monsterDef,
-      dotEffect,
-    });
-
-    const effect = applyStatusEffect(playerCombatState, {
-      id: debuff.statusEffectId,
-      maxStacks,
-      instanced: false,
-      sourceId: ctx.attacker.isMonster.id,
-      remainingMs: durationMs,
-      refreshable: true,
-      data: {
-        damagePerStack,
-        nextTickIn: tickIntervalMs,
-        tickIntervalMs,
-        tickOnExpire: 1,
-        totalMs: durationMs,
-        flavorCode: debuff.code,
-        isDot: 1,
-        // Exception flag (status data is numbers only): 1 = ignore shields.
-        bypassShield: dotEffect.bypassShield ? 1 : 0,
-      },
-    });
-    effect.data.damagePerStack = damagePerStack;
-    effect.data.tickIntervalMs = tickIntervalMs;
-    effect.data.tickOnExpire = 1;
-    effect.data.totalMs = durationMs;
-    effect.data.flavorCode = debuff.code;
-    effect.data.isDot = 1;
-    effect.data.bypassShield = dotEffect.bypassShield ? 1 : 0;
-
-    attachMarker(world, ctx.defender, "hasDot");
+    applyMonsterDotToPlayer(world, ctx.attacker, player, dotEffect);
   });
 }
 

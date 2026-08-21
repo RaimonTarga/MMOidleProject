@@ -48,15 +48,18 @@ export const bossMonsterEntriesT2 = [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.30, cdMult: 0.85 },
           { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 220 },
+          { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
         ] },
         { hpPct: 0.25, actions: [
           { type: 'spawn-adds', monsterTypeId: 'boar', count: 2, offsetRange: 220 },
           { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, offsetRange: 220 },
+          { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
         ] },
       ],
       repeating: [
         { intervalMs: 10000, initialDelayMs: 6000, actions: [
           { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, offsetRange: 240 },
+          { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
         ] },
       ],
     },
@@ -67,26 +70,21 @@ export const bossMonsterEntriesT2 = [
     id: 'apex-timberclaw', name: 'Apex Timberclaw', color: 0x226622,
     isBoss: true,
     stats: { hp: 3000, attack: 30, plating: 0, damageReduction: 0, speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
+    behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 155, essenceType: 'green', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 1200, idleMaxMs: 4000 },
-    // FOREST EXAM = "survive the pack", T2 escalation: sustained pack pressure on a
-    // timer plus two readable phase beats (50% = enrage + wolf wave, 25% = a lieutenant
-    // Dire Wolf joins). Adds despawn on boss death. Numbers placeholder — user pass.
+    consecutiveHits: 2,
+    rampOnCombat: { stat: 'attackSpeed', perTickPct: 0.10, maxPct: 0.60, tickIntervalMs: 2500 },
+    chargedAttack: {
+      name: 'Stunning Swipe', castMs: 700, cooldownMs: 8000, initialCooldownMs: 3500,
+      multiplier: 1.25, fx: 'savage-maul', stunMs: 900, aoe: { radius: 90 },
+    },
+    // FOREST EXAM = an accelerating claw duel. T2 adds a quick, compact charged
+    // swipe that stuns anyone caught in the tell; there are no encounter adds.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.15, cdMult: 0.70 }, // frequency surge
-          { type: 'spawn-adds', monsterTypeId: 'wolf', count: 3, offsetRange: 200 },
-        ] },
-        { hpPct: 0.25, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'ancient-wolf', count: 1, offsetRange: 200 }, // lieutenant
-          { type: 'spawn-adds', monsterTypeId: 'wolf', count: 2, offsetRange: 200 },
-        ] },
-      ],
-      repeating: [
-        { intervalMs: 12000, initialDelayMs: 8000, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'wolf', count: 1, offsetRange: 220 },
         ] },
       ],
     },
@@ -102,6 +100,10 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 120, leashRange: 850, idleMinMs: 3000, idleMaxMs: 7500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    chargedAttack: {
+      name: 'Stunning Earthshatter', castMs: 2300, cooldownMs: 10000, initialCooldownMs: 4500,
+      multiplier: 2.0, fx: 'strong-kick', precastStunMs: 450, aoe: { radius: 180 },
+    },
     // MOUNTAIN EXAM = "break the guarded position", T2 escalation: it calls a pair of
     // Boulder Throwers (ranged behind the frontline) at 50% and periodically digs in
     // (a timed shield) — break the defended position before the ranged grind wins.
@@ -130,14 +132,20 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
     dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 5000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
-    // SWAMP EXAM = "survive the rot", T2 escalation: arena pools + at 50% it stacks
-    // venom faster (enrage) AND calls two Mire Hex Spitters (ranged DoT kiters) to
-    // grind you through the marsh. Adds despawn on boss death. Numbers placeholder.
+    chargedAttack: {
+      name: 'Corrosive Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
+      multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115 },
+      pool: {
+        durationMs: 8000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.60,
+        vulnerability: { damageTakenPct: 0.12, durationMs: 1500 },
+      },
+    },
+    // SWAMP EXAM = "survive the rot". Its charged pool now leaves Corrosion,
+    // increasing damage taken while the player remains in the hazard. No adds.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.10, cdMult: 0.70 }, // DoT stacks faster
-          { type: 'spawn-adds', monsterTypeId: 'mire-hex-spitter', count: 2, offsetRange: 260 },
         ] },
       ],
     },
@@ -153,6 +161,11 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    appliesPlatingShred: { platingPerStack: 2, maxStacks: 6 },
+    chargedAttack: {
+      name: 'Chitin Slam', castMs: 1600, cooldownMs: 9000, initialCooldownMs: 4000,
+      multiplier: 1.6, fx: 'strong-kick', aoe: { radius: 140 },
+    },
     // CAVE EXAM = "survive the elite", T2 escalation: at 50% it enrages, closes faster,
     // AND a Cave Troll elite joins — now you must outlast two armored brutes. Add
     // despawns on boss death. Numbers placeholder — user balance pass.

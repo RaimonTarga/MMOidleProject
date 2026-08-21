@@ -809,6 +809,10 @@ function canonicalFeaturesForNode(
     // Rot strength still climbs with tier — that was the only thing the per-tier
     // templates actually varied, and it is a single number rather than a whole layout.
     const isDungeon = node.kind === "dungeon";
+    // Boss arenas begin dry. Their rot pools are runtime ground zones planted by
+    // the boss's charged Bile/Corrosive/Spore Pool casts, so the telegraph and the
+    // resulting hazard share one authoritative combat lifecycle.
+    if (isDungeon) return [];
     return generateSwampPools(node.id, isDungeon).map((pool, i) =>
       rotPool(
         `${isDungeon ? "boss_rot" : "rot_pool"}_${i}`,

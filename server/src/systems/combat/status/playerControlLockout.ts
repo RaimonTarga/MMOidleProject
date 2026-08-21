@@ -9,6 +9,7 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import type { World } from '../../../world/World';
 import { setRooted } from '../../world/rooted';
+import { STUN_EFFECT } from './stun';
 
 const OWNS_ROOT_FLAG = 'caveLockdownOwnsRoot';
 const OWNS_ATTACK_LOCK_FLAG = 'caveLockdownOwnsAttackLock';
@@ -32,7 +33,8 @@ export function syncPlayerControlLockout(
 ): void {
   const state = player.tracksCombat;
   const active =
-    getStatusEffects(state, CAVE_LOCKDOWN_EFFECT_ID).length > 0;
+    getStatusEffects(state, CAVE_LOCKDOWN_EFFECT_ID).length > 0 ||
+    getStatusEffects(state, STUN_EFFECT).length > 0;
 
   if (active) {
     if (!player.isRooted) {

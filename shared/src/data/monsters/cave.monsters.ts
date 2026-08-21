@@ -35,18 +35,28 @@ export const caveMonsterEntries = [
   // earn their keep here (unlike the squishy plains/forest mobs).
   ['cave-lurker', {
     id: 'cave-lurker', name: 'Cave Lurker', color: 0x664466,
-    // The fast elite of the pair — quick, armored a little, relentless.
-    stats: { hp: 250, attack: 16, plating: 4, damageReduction: 0.05, speed: 68, attackRange: 12, attackCooldown: 1400, pullRange: 200 },
+    // The fast half of the pair — quick, lightly armored, relentless, and hard to
+    // pin down. Plating dropped 4 -> 1: at 4 it was doing enormous effective-HP work
+    // against light hits (a chip weapon was reduced almost to the 1-damage floor),
+    // which is what made Caverns a slog rather than a threat. The evasion below is a
+    // cheaper, more readable version of the same "consistency check" — you need
+    // reliable damage, not necessarily heavy damage.
+    stats: { hp: 200, attack: 31, plating: 1, damageReduction: 0.05, speed: 68, attackRange: 12, attackCooldown: 1400, pullRange: 200 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: false,
     rewards: { essence: 10, essenceType: 'red', level: 1, biomeXp: 70 },
     ai: { wanderRadius: 380, leashRange: 620, idleMinMs: 450, idleMaxMs: 1500 },
+    // Deterministic dodge — every 10th incoming hit is skipped. Previously this
+    // monster had no mechanic whatsoever in a two-monster biome; evasion gives it a
+    // readable identity (the thing you can't quite land on) and matches the T2/T3
+    // cave roster, where giant-spider and deep-spider already evade.
+    evasion: 0.10,
   }],
 
   ['cave-brute', {
     id: 'cave-brute', name: 'Cave Brute', color: 0x443344,
     // The bruiser elite — a cap-tripping slam, slow, charges to connect, and
     // armored enough that fast weapons don't trivially shred it.
-    stats: { hp: 400, attack: 40, plating: 2, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 3800, pullRange: 240 }, // pullRange 145→240: high-detection patrolling elite (overpull risk)
+    stats: { hp: 220, attack: 118, plating: 1, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 2800, pullRange: 240 }, // pullRange 145→240: high-detection patrolling elite (overpull risk)
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 13, essenceType: 'red', level: 1, biomeXp: 90 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8000 },
@@ -58,7 +68,10 @@ export const caveMonsterEntries = [
     // slam second. PLACEHOLDER numbers — balance pass owns them.
     chargedAttack: {
       name: 'Ground Slam', castMs: 1800, cooldownMs: 12000, initialCooldownMs: 9000,
-      multiplier: 2.2, fx: 'strong-kick',
+      // Multiplier cut 2.2 -> 1.5 to sit alongside the raised base attack. The slam is
+      // meant to be dodged, not tanked, so its job is a hard punish for standing in the
+      // circle rather than an unsurvivable number regardless of footwork.
+      multiplier: 1.5, fx: 'strong-kick',
       aoe: { radius: 110 },
     },
     // Cave elite: patrols a fixed loop around its territory (predictable route the

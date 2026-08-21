@@ -13,7 +13,7 @@
  *   summon         — spawn N minions of a given type near the boss
  *   stat-buff      — multiply any single stat (incl. evasion), optional duration
  *   morph          — flip non-numeric stance fields (ranged/style/range/dot/kite)
- *   slam           — instant AoE burst centered on the boss
+ *   roar           — temporarily hasten the boss and nearby monster allies
  *   apply-shield   — gain a runtime enemyShield override mid-fight
  *   apply-soft-cap — gain a runtime enemySoftCap override mid-fight
  *   shed-defense   — drop all defenses (clear overrides, suppress static, cut plating)
@@ -26,6 +26,8 @@
 
 import type { BossAction, BossPhase, BossScript, RepeatingAction } from '@mmo-idle/shared';
 import {
+  applyStatusEffect,
+  distanceSq,
   MONSTER_DATABASE,
   GAME_CONFIG,
   FROST_RAMP_EFFECT_ID,
@@ -39,8 +41,8 @@ import type { ActiveBossEffect, ScriptsBoss } from '@mmo-idle/shared';
 import { initScriptsBoss } from '@mmo-idle/shared';
 import { attachComponent } from '../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
-import { applyMonsterAoe } from '../damage/aoeDamage';
 import { setAggroTarget, setAttackTarget } from './targeting';
+import { BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss } from '@mmo-idle/shared';
@@ -190,7 +192,7 @@ function inheritBossTarget(world: World, boss: MonsterEntity, add: MonsterEntity
 function pushBossFx(
   world: World,
   monster: MonsterEntity,
-  fx: 'slam' | 'summon' | 'shield' | 'morph',
+  fx: 'summon' | 'shield' | 'morph' | 'roar',
   extra?: { radius?: number; element?: string },
 ): void {
   world.pushEvent(monster.hasPosition.nodeId, {
@@ -285,6 +287,27 @@ function applyAction(
       break;
     }
 
+    case 'roar': {
+      const radiusSq = action.radius === undefined ? Infinity : action.radius * action.radius;
+      for (const ally of world.monsterEntitiesInNode(monster.hasPosition.nodeId)) {
+        if (ally.hasHealth.hp <= 0) continue;
+        if (distanceSq(ally.hasPosition.current, monster.hasPosition.current) > radiusSq) continue;
+        applyStatusEffect(ally.tracksCombat, {
+          id: BOSS_ROAR_HASTE_EFFECT_ID,
+          maxStacks: 1,
+          remainingMs: action.durationMs,
+          refreshable: true,
+          sourceId: monster.isMonster.id,
+          data: {
+            attackSpeedPct: action.attackSpeedPct,
+            totalMs: action.durationMs,
+          },
+        });
+      }
+      pushBossFx(world, monster, 'roar', { radius: action.radius });
+      break;
+    }
+
     case 'summon': {
       const nodeDef     = NODE_REGISTRY.get(monster.hasPosition.nodeId);
       const nodeWidth   = nodeDef?.width  ?? GAME_CONFIG.NODE_WIDTH;
@@ -345,24 +368,6 @@ function applyAction(
       // Only track the effect when it can expire — a permanent morph needs no bookkeeping.
       if (timed) state.activeEffects.push(effect);
       pushBossFx(world, monster, 'morph');
-      break;
-    }
-
-    case 'slam': {
-      // Instant AoE burst centered on the boss — hits all players and enemy
-      // summons in radius (no exclude). Pure damage, no slow/DoT.
-      applyMonsterAoe(
-        world,
-        monster,
-        monster.hasPosition.current,
-        action.radius,
-        monster.dealsDamage.attack * (action.damageMult ?? 1),
-      );
-      // Telegraphed ground-slam shockwave, element-tinted by the boss's style.
-      pushBossFx(world, monster, 'slam', {
-        radius: action.radius,
-        element: MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.attackStyle,
-      });
       break;
     }
 

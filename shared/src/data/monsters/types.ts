@@ -19,10 +19,7 @@ import type { MonsterBehavior } from './behavior';
  *               optional; only provided fields change. `dotEffect: null` clears an
  *               existing DoT override. To kite after a flip, set `kite: true` AND
  *               extend `attackRange` (the standoff band scales off the live range).
- *   slam      — instant AoE burst centered on the boss, hitting all players AND
- *               enemy summons within `radius`. Pure damage (no slow/DoT). Pair with
- *               a RepeatingAction to slam every N seconds. `damageMult` scales off
- *               the boss's current attack (default 1.0).
+ *   roar      — briefly hasten the boss and nearby monster allies.
  *
  *   apply-shield   — gain a runtime enemyShield override mid-fight (same mechanic as
  *               the static MonsterDefinition.enemyShield). The barrier comes up on the
@@ -53,7 +50,7 @@ export type BossAction =
   | { type: 'shield';    drAdd: number;   durationMs: number }
   | { type: 'summon';    monsterTypeId: string; count: number; offsetRange?: number }
   | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction' | 'evasion'; mult: number; durationMs?: number }
-  | { type: 'slam';      radius: number; damageMult?: number }
+  | { type: 'roar'; attackSpeedPct: number; durationMs: number; radius?: number }
   | { type: 'apply-shield';   shieldPct: number; intervalMs: number; durationMs: number }
   | { type: 'apply-soft-cap'; capPct: number; capMult: number }
   | { type: 'shed-defense' }
@@ -476,16 +473,35 @@ export interface MonsterDefinition {
    * enrage / stat-buff / morph.
    */
   aoeAttack?: { radius: number; damageMult?: number };
+  /** Full combat-pipeline hits delivered by one basic-attack beat. */
+  consecutiveHits?: number;
   /**
    * In-combat attack ramp. While the monster has an aggro target, a multiplier on
    * `stat` grows by perTickPct every tickIntervalMs, clamped at maxPct. Deterministic
    * (counts elapsed ticks). Resets to zero on de-aggro / leash.
    */
   rampOnCombat?: {
-    stat: 'attack';
+    stat: 'attack' | 'attackSpeed';
     perTickPct: number;
     maxPct: number;
     tickIntervalMs: number;
+  };
+  /** Encounter-long, stacking player plating reduction applied on landed hits. */
+  appliesPlatingShred?: {
+    platingPerStack: number;
+    maxStacks: number;
+    /** Optional poison payoff applied only when corrosion reaches these stacks. */
+    thresholdPoison?: {
+      atStacks: number[];
+      debuffId: string;
+      label: string;
+      damagePerStack: number;
+      maxStacks: number;
+      tickIntervalMs: number;
+      durationMs: number;
+      element?: DamageElement;
+      bypassShield?: boolean;
+    };
   };
   /**
    * Tundra capstone — this monster's outgoing damage scales with the AMBIENT NODE RAMP
@@ -644,6 +660,10 @@ export interface MonsterDefinition {
      * Scent-of-Blood → Savage Maul predator sequence.
      */
     marksTarget?: { durationMs: number };
+    /** Briefly stun the primary target when the wind-up starts. */
+    precastStunMs?: number;
+    /** Stun each player caught by the resolved AoE. */
+    stunMs?: number;
     /**
      * GROUND-SLAM rider. Turns the charge from a target-following power shot into
      * a COMMITTED circle: the impact point is planted at the target's position
@@ -661,5 +681,26 @@ export interface MonsterDefinition {
      * splash should hit softer than a single-target spike of the same charge.
      */
     aoe?: { radius: number; damageMult?: number };
+    /** Lingering toxic pool left at the planted impact point after resolution. */
+    pool?: {
+      durationMs: number;
+      damagePerTick: number;
+      tickIntervalMs: number;
+      slowSpeedMult?: number;
+      /** Non-stacking damage-taken debuff refreshed while inside. */
+      vulnerability?: { damageTakenPct: number; durationMs: number };
+      /** Burst at expiry, resolved through the owning monster's hit pipeline. */
+      detonationMultiplier?: number;
+    };
+    /** Delayed spoke-shaped aftershock planted when the main charged AoE lands. */
+    aftershock?: {
+      kind: 'radial-fault-lines';
+      delayMs: number;
+      rayCount: number;
+      length: number;
+      lineRadius: number;
+      innerRadius?: number;
+      damageMultiplier: number;
+    };
   };
 }

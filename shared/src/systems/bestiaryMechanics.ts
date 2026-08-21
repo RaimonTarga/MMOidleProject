@@ -49,8 +49,8 @@ function describeBossAction(a: BossAction): string {
       return `spawn ${a.count}× ${a.monsterTypeId}`;
     case 'stat-buff':
       return `${fmtMult(a.mult)} ${a.stat}${a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ''}`;
-    case 'slam':
-      return `AoE slam (${a.radius}px, ${fmtMult(a.damageMult ?? 1)} attack)`;
+    case 'roar':
+      return `roar: +${fmtPct(a.attackSpeedPct)} ally attack speed for ${fmtMs(a.durationMs)}`;
     case 'apply-shield':
       return `gains a ${fmtPct(a.shieldPct)} max-HP barrier every ${fmtMs(a.intervalMs)}`;
     case 'apply-soft-cap':
@@ -142,6 +142,47 @@ export function describeMonsterMechanics(
       icon: '✸',
       label: 'Cleave',
       detail: `Basic attack splashes ${fmtMult(def.aoeAttack.damageMult ?? 1)} attack to everything within ${def.aoeAttack.radius}px.`,
+    });
+  }
+
+  if ((def.consecutiveHits ?? 1) > 1) {
+    lines.push({
+      id: 'multi-hit',
+      icon: '⚔',
+      label: 'Consecutive strikes',
+      detail: `Each basic attack lands ${def.consecutiveHits} separate hits.`,
+    });
+  }
+
+  if (def.appliesPlatingShred) {
+    lines.push({
+      id: 'plating-shred',
+      icon: '◫',
+      label: 'Corrosion',
+      detail:
+        `Each hit permanently removes ${def.appliesPlatingShred.platingPerStack} plating for this encounter, ` +
+        `up to ${def.appliesPlatingShred.maxStacks} stacks. Cleansable.` +
+        (def.appliesPlatingShred.thresholdPoison
+          ? ` Reaching ${def.appliesPlatingShred.thresholdPoison.atStacks.join(' or ')} stacks applies ${def.appliesPlatingShred.thresholdPoison.label}.`
+          : ''),
+    });
+  }
+
+  if (def.chargedAttack) {
+    const charged = def.chargedAttack;
+    const pool = charged.pool;
+    const aftershock = charged.aftershock;
+    lines.push({
+      id: 'charged-attack',
+      icon: '!',
+      label: charged.name,
+      detail:
+        `Charges for ${fmtMs(charged.castMs)} before a ${fmtMult(charged.multiplier)} hit` +
+        (charged.aoe ? ` in a ${charged.aoe.radius}px planted circle` : '') +
+        (pool ? `, leaving a ${fmtMs(pool.durationMs)} pool` : '') +
+        (pool?.detonationMultiplier ? ` that detonates for ${fmtMult(pool.detonationMultiplier)} damage` : '') +
+        (aftershock ? `, then telegraphs ${aftershock.rayCount} radial fault lines` : '') +
+        '.',
     });
   }
 

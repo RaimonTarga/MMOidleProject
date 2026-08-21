@@ -161,6 +161,25 @@ function castEvents(world: World) {
     monster.hasAwareness.state === "attacking",
     "the brute should hold its swing rather than break off after the fleeing target",
   );
+
+  // AI runs before combat in World.tick. On the exact resolution tick the cast
+  // is no longer "charging" (`endsAt > now`), but it is still pending until the
+  // combat system consumes it. The brute must remain committed through that
+  // boundary instead of resuming its chase and cancelling the impact.
+  const hpAfterEscape = player.hasHealth.hp;
+  const resolvesAt = armedAt + SLAM!.castMs;
+  updateMonsters(world, 100, resolvesAt);
+  updateCombat(world, 100, resolvesAt);
+  assert(zones(world, resolvesAt).length === 0, "the committed slam should resolve on schedule");
+  assert(
+    player.hasHealth.hp === hpAfterEscape,
+    "a player who left the planted circle should avoid the resolved slam",
+  );
+  const end = castEvents(world).find((e) => e.kind === "monster-cast-end");
+  assert(
+    end?.kind === "monster-cast-end" && end.fired === true,
+    "fleeing the circle must not cancel the slam on its resolution tick",
+  );
 }
 
 // ── 2a. Knockback mid-cast aborts, reports fired:false, retires the circle ────
