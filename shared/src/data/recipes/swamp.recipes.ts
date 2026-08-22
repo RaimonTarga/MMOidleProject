@@ -3,7 +3,7 @@ import type { Recipe } from './types';
 // ─────────────────────────────────────────────────────────────────────────
 // SWAMP — full lineage (T1→T3). Identity: dot-resist (+debt at T2/T3) armor /
 // absorb charm / POISON DoT-conversion weapon. Charm rework: upgrades ramp
-// absorb; hpRegen flat (see mountain.recipes.ts header).
+// absorb; recovery flat (see mountain.recipes.ts header).
 // Swamp is the poison biome and owns the poison DoT weapon line. Frost DoT lives
 // on Tundra (from T3), fire DoT on Volcanic (from T4) — see item-identity-audit.md.
 // ─────────────────────────────────────────────────────────────────────────
@@ -44,11 +44,11 @@ export const swampRecipeEntries = [
     ],
   }],
 
-  // CHARM (absorb): base 0.07 -> +0.01/step -> 0.10 at +3. hpRegen 3 flat.
+  // CHARM (absorb): base 0.07 -> +0.01/step -> 0.10 at +3. recovery 3 flat.
   ['swamp-charm-t1', {
     id: 'swamp-charm-t1', name: 'Murk Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { purple: 18 }, stats: { hpRegen: 3 },
+    cost: { purple: 18 }, stats: { recovery: 3 },
     mechanicEffects: { 'defense.absorb-pct': 0.07 },
     tier: 1,
     icon: 'items/charms/murk-eye.png',
@@ -115,11 +115,11 @@ export const swampRecipeEntries = [
     ],
   }],
 
-  // CHARM (absorb): base 0.09 -> +0.02/step -> 0.15 at +3. hpRegen 6 flat.
+  // CHARM (absorb): base 0.09 -> +0.02/step -> 0.15 at +3. recovery 6 flat.
   ['swamp-charm-t2', {
     id: 'swamp-charm-t2', name: 'Bog Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { purple: 44 }, catalystCost: { fortified: 2 }, stats: { hpRegen: 6 }, // family-tag: absorb charm (attrition answer) → Fortified
+    cost: { purple: 44 }, catalystCost: { fortified: 2 }, stats: { recovery: 6 }, // family-tag: absorb charm (attrition answer) → Fortified
     mechanicEffects: { 'defense.absorb-pct': 0.09 },
     tier: 2,
     icon: 'items/charms/bog-eye.png',
@@ -188,11 +188,11 @@ export const swampRecipeEntries = [
     ],
   }],
 
-  // CHARM (absorb): base 0.13 -> +0.03/step -> 0.22 at +3. hpRegen 11 flat.
+  // CHARM (absorb): base 0.13 -> +0.03/step -> 0.22 at +3. recovery 11 flat.
   ['swamp-charm-t3', {
     id: 'swamp-charm-t3', name: 'Sorrow Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { purple: 100 }, catalystCost: { fortified: 3 }, stats: { hpRegen: 11 }, // family-tag: absorb charm → Fortified
+    cost: { purple: 100 }, catalystCost: { fortified: 3 }, stats: { recovery: 11 }, // family-tag: absorb charm → Fortified
     mechanicEffects: { 'defense.absorb-pct': 0.18 },
     tier: 3,
     icon: 'items/charms/sorrow-eye.png',

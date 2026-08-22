@@ -32,7 +32,7 @@ export const STAT_META: Record<string, StatMeta> = {
   damageReduction: { label: 'DR',     fmt: v => `${Math.round(v * 100)}%`,    fmtDelta: d => `${signed(Math.round(d * 100))}%` },
   evasion:         { label: 'EVS',    fmt: v => `${Math.round(v * 100)}%`,    fmtDelta: d => `${signed(Math.round(d * 100))}%` },
   maxHp:           { label: 'HP',     fmt: v => String(Math.round(v)),        fmtDelta: d => signed(Math.round(d)) },
-  hpRegen:         { label: 'REGEN',  fmt: v => String(round1(v)),            fmtDelta: d => signed(round1(d)) },
+  recovery:         { label: 'RECOV',  fmt: v => String(round1(v)),            fmtDelta: d => signed(round1(d)) },
   speed:           { label: 'SPD',    fmt: v => String(Math.round(v)),        fmtDelta: d => signed(Math.round(d)) },
   attackRange:     { label: 'RNG',    fmt: v => String(Math.round(v)),        fmtDelta: d => signed(Math.round(d)) },
   attackCooldown:  { label: 'CD',     fmt: v => `${Math.round(v)}ms`,         fmtDelta: d => `${signed(Math.round(d))}ms` },
@@ -276,20 +276,29 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.barrier-pct', 'defense.barrier-delay-ms', 'defense.barrier-recharge-pct');
   }
 
-  if (has('defense.in-combat-regen-pct')) {
-    lines.push(`${pctK('defense.in-combat-regen-pct')} of HP regen applies while in combat`);
-    mark('defense.in-combat-regen-pct');
+  // Recovery access reads as a SHARE OF YOUR RECOVERY RATE, never a % of max HP —
+  // the whole point is that it scales with the Recovery stat.
+  if (has('defense.recovery-active-pct')) {
+    lines.push(`${pctK('defense.recovery-active-pct')} of your Recovery stays active in combat`);
+    mark('defense.recovery-active-pct');
   }
 
-  if (has('defense.regen-burst-pct')) {
-    const every = has('defense.regen-burst-interval-ms') ? ` every ${secK('defense.regen-burst-interval-ms')}` : '';
-    lines.push(`Restore ${pctK('defense.regen-burst-pct')} max HP${every} in combat`);
-    mark('defense.regen-burst-pct', 'defense.regen-burst-interval-ms');
+  if (has('defense.recovery-pulse-pct')) {
+    const every = has('defense.recovery-pulse-interval-ms') ? ` every ${secK('defense.recovery-pulse-interval-ms')}` : '';
+    const forDuration = has('defense.recovery-pulse-duration-ms') ? ` for ${secK('defense.recovery-pulse-duration-ms')}` : '';
+    lines.push(`In combat${every}, activate ${pctK('defense.recovery-pulse-pct')} Recovery${forDuration}`);
+    mark('defense.recovery-pulse-pct', 'defense.recovery-pulse-interval-ms', 'defense.recovery-pulse-duration-ms');
   }
 
-  if (has('defense.kill-burst-pct')) {
-    lines.push(`Restore ${pctK('defense.kill-burst-pct')} max HP over 4s on kill`);
-    mark('defense.kill-burst-pct');
+  if (has('defense.recovery-on-kill-pct')) {
+    const forMs = has('defense.recovery-on-kill-ms') ? ` for ${secK('defense.recovery-on-kill-ms')}` : '';
+    lines.push(`On kill, activate ${pctK('defense.recovery-on-kill-pct')} Recovery${forMs} (kills refresh it)`);
+    mark('defense.recovery-on-kill-pct', 'defense.recovery-on-kill-ms');
+  }
+
+  if (has('defense.recovery-skill-potency')) {
+    lines.push(`+${pctK('defense.recovery-skill-potency')} Recovery activated by Recovery skills`);
+    mark('defense.recovery-skill-potency');
   }
 
   if (has('defense.cheat-death')) {
@@ -561,9 +570,10 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     lines.push(`+${pctK('guard.duration-pct')} Guard ability duration`);
     mark('guard.duration-pct');
   }
-  if (has('guard.heal-on-fire-pct')) {
-    lines.push(`A Guard ability firing heals ${pctK('guard.heal-on-fire-pct')} max HP`);
-    mark('guard.heal-on-fire-pct');
+  if (has('guard.recovery-on-fire-pct')) {
+    const forMs = has('guard.recovery-on-fire-ms') ? ` for ${secK('guard.recovery-on-fire-ms')}` : '';
+    lines.push(`A Guard ability firing activates ${pctK('guard.recovery-on-fire-pct')} Recovery${forMs}`);
+    mark('guard.recovery-on-fire-pct', 'guard.recovery-on-fire-ms');
   }
 
   // ── Weapon families with no prose elsewhere ────────────────────────────────
@@ -588,11 +598,11 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.hardening-per-sec', 'defense.hardening-max', 'defense.hardening-reset-pct');
   }
 
-  if (has('defense.ramp-regen-max-pct')) {
-    const from = has('defense.ramp-regen-start-pct') ? `${pctK('defense.ramp-regen-start-pct')}→` : '';
-    const over = has('defense.ramp-regen-ramptime-ms') ? ` over ${secK('defense.ramp-regen-ramptime-ms')}` : '';
-    lines.push(`HP regen ramps ${from}${pctK('defense.ramp-regen-max-pct')} of max HP while unhit${over}`);
-    mark('defense.ramp-regen-max-pct', 'defense.ramp-regen-start-pct', 'defense.ramp-regen-ramptime-ms');
+  if (has('defense.recovery-ramp-max-pct')) {
+    const from = has('defense.recovery-ramp-start-pct') ? `${pctK('defense.recovery-ramp-start-pct')}→` : '';
+    const over = has('defense.recovery-ramp-ramptime-ms') ? ` over ${secK('defense.recovery-ramp-ramptime-ms')}` : '';
+    lines.push(`Recovery activated ramps ${from}${pctK('defense.recovery-ramp-max-pct')} the longer you fight${over}`);
+    mark('defense.recovery-ramp-max-pct', 'defense.recovery-ramp-start-pct', 'defense.recovery-ramp-ramptime-ms');
   }
 
   // Burn-DoT weapons describe their effect via formatWeaponEffects (BURN_FAMILY,

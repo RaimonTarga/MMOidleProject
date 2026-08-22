@@ -103,7 +103,7 @@ Everything else has its own consumer:
 | Key | Consumer |
 |---|---|
 | `core.dr-layer-pct` | Combat pipeline. A **separate** multiplicative DR layer: `base × (1−DR) × (1−layer)`. Clamped 0.9. |
-| `core.recovery-mult` | Stat rebuild (`hpRegen`) **and** `applyHealToPlayer` — so it covers regen bursts, in-combat regen, guard heals, ability heals. Applied before antiheal. |
+| `core.recovery-mult` | Stat rebuild **only**, on the `recovery` stat (`stats.ts`). Because every in-combat regen effect activates a fraction of that rate, scaling the rate covers all of them exactly once. Deliberately NOT re-applied in `applyHealToPlayer` — that would compound it. Absorb and the cheat-death HoT are not Recovery-derived and do not scale with it. |
 | `core.elite-damage-mult` | `onHit` listener in `server/src/systems/combat/cores.ts`, vs `elite`/`isBoss` monsters. |
 | `core.onhit-mult` | `runPlayerAttack`, folded into the existing `onHitMult` so it composes with reload's Alternating Cadence. |
 | `core.debuff-{duration,potency}-mult` | `applyPlayerDebuff`, via the `SCALABLE_DEBUFFS` registry. |

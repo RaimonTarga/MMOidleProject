@@ -686,8 +686,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "movement speed reduced; the tundra apex hits harder";
     case "defense-absorb":
       return "healing pool active";
-    case "defense-burst":
-      return "regen burst pool active";
+    case "defense-recovery":
+      return `${buff.stacks}% Recovery active`;
     case "defense-debt":
       return "deferred damage pool";
     case "debuff-stunned":

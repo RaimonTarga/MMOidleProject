@@ -387,8 +387,8 @@ Player-owned DoT-like tick kills now also emit `onKill` through
 - Hemorrhage ticks.
 - Energy Storm ticks.
 
-This means on-kill systems such as kill-burst healing and mobility kill buffs
-refresh from player-credited DoT kills.
+This means on-kill systems such as on-kill Recovery (`defense.recovery-on-kill-pct`)
+and mobility kill buffs refresh from player-credited DoT kills.
 
 Monster DoTs that kill players do not emit player `onKill`; they route through
 normal player death handling instead.

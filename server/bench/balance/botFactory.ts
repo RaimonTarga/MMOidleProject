@@ -162,7 +162,7 @@ function buildBotSlices(
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
+      recovery: GAME_CONFIG.PLAYER_RECOVERY,
     },
     tracksProgression: {
       level: 0,

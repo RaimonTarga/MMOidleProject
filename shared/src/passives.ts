@@ -1,3 +1,5 @@
+import { GAME_CONFIG } from './config/gameConfig';
+
 // ── Passive keys: declare-once source of truth ────────────────────────────────
 //
 // Each namespace is a single `as const` array. Type unions are derived via
@@ -9,10 +11,32 @@
 // compile-time only with no schema migration required.
 
 export const DEFENSE_KEYS = [
-  'defense.in-combat-regen-pct',
-  'defense.regen-burst-pct',
-  'defense.regen-burst-interval-ms',
-  'defense.kill-burst-pct',
+  // ── Recovery access ──────────────────────────────────────────────────────
+  // Recovery is the canonical HP-restoration RATE: 1 point = 1% of maxHp per
+  // second at 100% active Recovery, held on `HasHealth.recovery`. Out of combat
+  // (past the OOC delay) the player runs at 100%. In combat, effects do NOT
+  // invent their own %-maxHp heals — they ACTIVATE a fraction of that one rate,
+  // and fractions from different sources ADD (see recoveryFraction()).
+  //
+  // `-active-pct` is permanent-while-in-combat access (Squire, stances).
+  'defense.recovery-active-pct',
+  // Periodic pulse: every `interval-ms`, activate `pulse-pct` of Recovery for
+  // `duration-ms`. The pulse refreshes its own timer rather than stacking a
+  // second copy. Duration falls back to GAME_CONFIG.RECOVERY_PULSE_MS.
+  'defense.recovery-pulse-pct',
+  'defense.recovery-pulse-interval-ms',
+  'defense.recovery-pulse-duration-ms',
+  // On kill, activate `on-kill-pct` of Recovery for `on-kill-ms` (default
+  // GAME_CONFIG.RECOVERY_ON_KILL_MS). Further kills REFRESH the window; they do
+  // not stack another copy, which is what makes it a chain-farming mechanic that
+  // is deliberately weak against bosses and isolated enemies.
+  'defense.recovery-on-kill-pct',
+  'defense.recovery-on-kill-ms',
+  // Multiplies the fraction activated by Recovery-TAGGED SKILLS only (abilities
+  // carrying the `recovery` tag, e.g. Second Wind). Deliberately does NOT touch
+  // passive Recovery access — Squire, the pulse, on-kill, ramp — nor Barrier,
+  // Ward, Absorb, Cleanse or damage reduction.
+  'defense.recovery-skill-potency',
   // ── Barrier: the permanent, self-recharging absorb pool ──────────────────
   // Pool size as a fraction of maxHp. Presence of a non-zero value is what
   // attaches HasBarrier. The two companions override GAME_CONFIG defaults:
@@ -39,9 +63,11 @@ export const DEFENSE_KEYS = [
   'defense.post-cheat-death-heal-pct',
   // Duration (ms) of the post-cheat-death heal-over-time window.
   'defense.post-cheat-death-heal-ms',
-  'defense.ramp-regen-start-pct',
-  'defense.ramp-regen-max-pct',
-  'defense.ramp-regen-ramptime-ms',
+  // Ramping Recovery access: climbs from `start` to `max` over `ramptime-ms` of
+  // continuous combat, then holds. Same units as the other access keys.
+  'defense.recovery-ramp-start-pct',
+  'defense.recovery-ramp-max-pct',
+  'defense.recovery-ramp-ramptime-ms',
   'defense.hardening-per-sec',
   'defense.hardening-max',
   'defense.hardening-reset-pct',
@@ -495,8 +521,10 @@ export const GUARD_KEYS = [
   'guard.potency-pct',
   // Extend the Guard buff duration by (1 + X).
   'guard.duration-pct',
-  // Heal X% of maxHp into the recovery pool when the Guard fires.
-  'guard.heal-on-fire-pct',
+  // When the Guard fires, activate X% of Recovery for `on-fire-ms` (default
+  // GAME_CONFIG.RECOVERY_ON_GUARD_MS). Recovery access, not a flat maxHp heal.
+  'guard.recovery-on-fire-pct',
+  'guard.recovery-on-fire-ms',
 ] as const;
 
 // Core amplifiers. Carried by the `core` equipment slot (one core, always).
@@ -521,11 +549,11 @@ export const CORE_KEYS = [
   'core.speed-mult',
   'core.attack-speed-mult',
   'core.dr-layer-pct',
-  // Survivalist: ONE recovery number covering both halves of sustain — the passive
-  // hpRegen stat (stat rebuild) and every heal routed through applyHealToPlayer
-  // (regen burst, in-combat regen, ramp regen, kill burst, guard.heal-on-fire,
-  // ability heals, the post-cheat-death HoT). Scaling only the passive stat would
-  // make a Survivalist core read as a trap: the stat is the small half.
+  // Survivalist: ONE recovery number covering the whole sustain engine.
+  // Multiplies the `recovery` STAT (the canonical HP-restoration rate) once, in
+  // recalculatePlayerStats. Because every in-combat regen effect activates a
+  // fraction of that rate, this lifts OOC regen and all Recovery access together.
+  // Deliberately NOT re-applied per-heal — that would compound it.
   'core.recovery-mult',
   // Duelist: extra damage vs monsters flagged `elite` or `isBoss`. Applied on the
   // player->monster onHit, after the base damage formula.
@@ -623,77 +651,94 @@ export function hasPassive(map: PassiveMap, key: PassiveKey): boolean {
 // compounds as a product (identity = 1) rather than a sum (identity = 0).
 const MULTIPLICATIVE_PASSIVES = new Set<PassiveKey>(['defense.max-hit-mult']);
 
-// Regen burst is a paired mechanic: every `interval-ms`, heal `pct × maxHp`.
-// Naively summing both keys is wrong — adding intervals makes stacked sources
-// proc *less* often (a nerf). Instead these two keys are resolved through a
-// BurstAccumulator (see below) so stacked sources keep the highest frequency
-// and combine their healing throughput. They are excluded from the generic
-// additive/multiplicative merge whenever an accumulator is supplied.
-const BURST_PCT_KEY: PassiveKey      = 'defense.regen-burst-pct';
-const BURST_INTERVAL_KEY: PassiveKey = 'defense.regen-burst-interval-ms';
+// The Recovery pulse is a paired mechanic: every `interval-ms`, activate
+// `pulse-pct` of Recovery for `duration-ms`. Naively summing the interval is
+// wrong — adding intervals makes stacked sources proc *less* often (a nerf).
+// Instead these keys are resolved through a PulseAccumulator (see below) so
+// stacked sources keep the highest frequency and combine their Recovery
+// throughput. They are excluded from the generic additive/multiplicative merge
+// whenever an accumulator is supplied.
+const PULSE_PCT_KEY: PassiveKey      = 'defense.recovery-pulse-pct';
+const PULSE_INTERVAL_KEY: PassiveKey = 'defense.recovery-pulse-interval-ms';
+const PULSE_DURATION_KEY: PassiveKey = 'defense.recovery-pulse-duration-ms';
 
 export function mergePassives(
   target: PassiveMap,
   source: MechanicEffects | undefined,
-  burstAcc?: BurstAccumulator,
+  pulseAcc?: PulseAccumulator,
 ): void {
   if (!source) return;
   for (const [key, val] of Object.entries(source) as [PassiveKey, number][]) {
-    // When an accumulator is threaded through, the burst pair is resolved
+    // When an accumulator is threaded through, the pulse triple is resolved
     // separately (frequency-weighted) and must not be summed here.
-    if (burstAcc && (key === BURST_PCT_KEY || key === BURST_INTERVAL_KEY)) continue;
+    if (
+      pulseAcc &&
+      (key === PULSE_PCT_KEY || key === PULSE_INTERVAL_KEY || key === PULSE_DURATION_KEY)
+    ) continue;
     if (MULTIPLICATIVE_PASSIVES.has(key)) {
       target[key] = (target[key] ?? 1) * val;
     } else {
       target[key] = (target[key] ?? 0) + val;
     }
   }
-  if (burstAcc) accrueBurst(burstAcc, source);
+  if (pulseAcc) accruePulse(pulseAcc, source);
 }
 
 /**
- * Order-independent accumulator for the regen-burst pair. Combining stacked
- * sources by raw summation would slow the proc cadence; instead we preserve
- * total healing throughput at the highest available frequency:
+ * Order-independent accumulator for the Recovery-pulse triple. Combining
+ * stacked sources by raw summation would slow the proc cadence; instead we
+ * preserve total Recovery throughput at the highest available frequency:
  *
  *   final interval = min interval across full (pct + interval) sources
- *   final pct      = throughput × final interval + flat pct
+ *   final duration = min duration across full sources (shortest active window)
+ *   final pct      = throughput × final interval / final duration + flat pct
  *
- * where `throughput = Σ pct_i / interval_i` over full sources and `flatPct`
- * is the sum of pct-only sources (which carry no cadence of their own and
- * simply boost the magnitude of whatever burst is active).
+ * where `throughput = Σ (pct_i × duration_i) / interval_i` over full sources —
+ * i.e. the average Recovery fraction each source contributes across its whole
+ * cycle — and `flatPct` is the sum of pct-only sources, which carry no cadence
+ * of their own and simply boost whatever pulse is active.
+ *
+ * Note the units: unlike the old %-maxHp burst, `pct` here is a fraction of the
+ * player's Recovery RATE, so duration is load-bearing and has to ride along.
  */
-export interface BurstAccumulator {
-  throughput: number;   // Σ pct_i / interval_i  over sources that define both
+export interface PulseAccumulator {
+  throughput: number;   // Σ (pct_i × duration_i) / interval_i  over full sources
   minInterval: number;  // highest frequency = smallest interval among full sources
-  flatPct: number;      // Σ pct  over pct-only sources (no interval of their own)
+  minDuration: number;  // shortest active window among full sources
+  flatPct: number;      // Σ pct  over pct-only sources (no cadence of their own)
 }
 
-export function makeBurstAccumulator(): BurstAccumulator {
-  return { throughput: 0, minInterval: Infinity, flatPct: 0 };
+export function makePulseAccumulator(): PulseAccumulator {
+  return { throughput: 0, minInterval: Infinity, minDuration: Infinity, flatPct: 0 };
 }
 
-function accrueBurst(acc: BurstAccumulator, source: MechanicEffects): void {
-  const pct      = source[BURST_PCT_KEY] ?? 0;
-  const interval = source[BURST_INTERVAL_KEY] ?? 0;
+function accruePulse(acc: PulseAccumulator, source: MechanicEffects): void {
+  const pct      = source[PULSE_PCT_KEY] ?? 0;
+  const interval = source[PULSE_INTERVAL_KEY] ?? 0;
   if (pct > 0 && interval > 0) {
-    acc.throughput  += pct / interval;
+    // A source may omit duration and inherit the engine default; resolve it here
+    // so throughput is computed against the window the pulse will actually run.
+    const duration = source[PULSE_DURATION_KEY] ?? GAME_CONFIG.RECOVERY_PULSE_MS;
+    acc.throughput  += (pct * duration) / interval;
     acc.minInterval  = Math.min(acc.minInterval, interval);
+    acc.minDuration  = Math.min(acc.minDuration, duration);
   } else if (pct > 0) {
     // pct-only source: no cadence, just adds magnitude at the active interval.
     acc.flatPct += pct;
   }
-  // interval-only (pct <= 0) is inert: the mechanic needs both to fire.
+  // interval/duration-only (pct <= 0) is inert: the mechanic needs a pct to fire.
 }
 
-/** Write the resolved burst pct/interval back onto the passive map. */
-export function finalizeBurst(acc: BurstAccumulator, target: PassiveMap): void {
+/** Write the resolved pulse pct/interval/duration back onto the passive map. */
+export function finalizePulse(acc: PulseAccumulator, target: PassiveMap): void {
   if (acc.minInterval !== Infinity) {
-    target[BURST_INTERVAL_KEY] = acc.minInterval;
-    target[BURST_PCT_KEY]      = acc.throughput * acc.minInterval + acc.flatPct;
+    target[PULSE_INTERVAL_KEY] = acc.minInterval;
+    target[PULSE_DURATION_KEY] = acc.minDuration;
+    target[PULSE_PCT_KEY]      =
+      (acc.throughput * acc.minInterval) / acc.minDuration + acc.flatPct;
   } else if (acc.flatPct > 0) {
     // pct sources but no cadence source: store pct; interval stays 0 so the
-    // mechanic remains inactive (runRegenBurst requires interval > 0).
-    target[BURST_PCT_KEY] = acc.flatPct;
+    // mechanic remains inactive (the pulse requires interval > 0).
+    target[PULSE_PCT_KEY] = acc.flatPct;
   }
 }

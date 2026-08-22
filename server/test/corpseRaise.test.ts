@@ -28,7 +28,7 @@ function makePlayerSlices(id: string, x: number, y: number): PersistedPlayerSlic
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x, y }, nodeId: NODE, speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 100_000, maxHp: 100_000, hpRegen: 0 },
+    hasHealth: { hp: 100_000, maxHp: 100_000, recovery: 0 },
     tracksProgression: {
       level: 0,
       skillPoints: 0,

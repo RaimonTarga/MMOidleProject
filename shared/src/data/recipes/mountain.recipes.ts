@@ -5,8 +5,8 @@ import type { Recipe } from './types';
 // slow big-hit hammer. (Reorg: per-biome files; see index.recipes.ts.)
 //
 // CHARM REWORK (this pass): charm upgrades now ramp the SECONDARY EFFECT, not the
-// low-value hpRegen stat. Base mechanic ≈70% of the old flat value; three steps
-// bring it to the old value at +3. hpRegen is now a flat per-tier base (no upgrade).
+// low-value recovery stat. Base mechanic ≈70% of the old flat value; three steps
+// bring it to the old value at +3. recovery is now a flat per-tier base (no upgrade).
 // ⚠ Engine: upgrade `mechanicEffects` are additive deltas onto the base mechanic.
 // ─────────────────────────────────────────────────────────────────────────
 
@@ -45,11 +45,11 @@ export const mountainRecipeEntries = [
     ],
   }],
 
-   // CHARM (barrier): base 0.09 -> +0.01/step -> 0.12 at +3. hpRegen 3 flat.
+   // CHARM (barrier): base 0.09 -> +0.01/step -> 0.12 at +3. recovery 3 flat.
   ['mountain-charm-t1', {
     id: 'mountain-charm-t1', name: 'Granite Barrier',
     recipeGroup: 'mountain', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { blue: 18 }, stats: { hpRegen: 3 },
+    cost: { blue: 18 }, stats: { recovery: 3 },
     mechanicEffects: { 'defense.barrier-pct': 0.09 },
     tier: 1,
     icon: 'items/charms/granite-barrier.png',
@@ -119,11 +119,11 @@ export const mountainRecipeEntries = [
     ],
   }],
 
-  // CHARM (barrier): base 0.12 -> +0.02/step -> 0.18 at +3. hpRegen 6 flat.
+  // CHARM (barrier): base 0.12 -> +0.02/step -> 0.18 at +3. recovery 6 flat.
   ['mountain-charm-t2', {
     id: 'mountain-charm-t2', name: 'Iron Bulwark',
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 42 }, catalystCost: { heavy: 2 }, stats: { hpRegen: 6 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 42 }, catalystCost: { heavy: 2 }, stats: { recovery: 6 }, // family-tag: barrier pool (anti-spike) → Heavy
     mechanicEffects: { 'defense.barrier-pct': 0.12 },
     tier: 2,
     icon: 'items/charms/iron-bulwark.png',
@@ -187,11 +187,11 @@ export const mountainRecipeEntries = [
     ],
   }],
 
-  // CHARM (barrier): base 0.17 -> +0.03/step -> 0.26 at +3. hpRegen 11 flat.
+  // CHARM (barrier): base 0.17 -> +0.03/step -> 0.26 at +3. recovery 11 flat.
   ['mountain-charm-t3', {
     id: 'mountain-charm-t3', name: 'Bastion Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { blue: 100, red: 25 }, catalystCost: { heavy: 3 }, stats: { hpRegen: 11 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 100, red: 25 }, catalystCost: { heavy: 3 }, stats: { recovery: 11 }, // family-tag: barrier pool (anti-spike) → Heavy
     mechanicEffects: { 'defense.barrier-pct': 0.17 },
     tier: 3,
     icon: 'items/charms/bastion-heart.png',
@@ -307,7 +307,7 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t4', {
     id: 'mountain-charm-t4', name: 'Fortress Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    cost: { blue: 220, red: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 220, red: 30 }, catalystCost: { heavy: 4 }, stats: { recovery: 16 }, // family-tag: barrier pool (anti-spike) → Heavy
     mechanicEffects: { 'defense.barrier-pct': 0.18 },
     tier: 4,
     icon: 'items/charms/fortress-heart.png',
@@ -324,7 +324,7 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t4-shieldmend', {
     id: 'mountain-charm-t4-shieldmend', name: 'Shieldmend Ward',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    cost: { blue: 220, red: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: barrier-break survival → Heavy
+    cost: { blue: 220, red: 30 }, catalystCost: { heavy: 4 }, stats: { recovery: 16 }, // family-tag: barrier-break survival → Heavy
     // † barrier-break-heal-pct: when the barrier is emptied, heal 25% of its max
     //   value as HP (rider cooldown applies).
     mechanicEffects: {

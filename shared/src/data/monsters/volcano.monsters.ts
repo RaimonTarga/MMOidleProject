@@ -41,7 +41,7 @@ export const volcanoMonsterEntries = [
   // ══════════════════ VOLCANO (debut T3) — high-density fire swarm, RAMPING ══════════════════
   // Debut → legible single-mechanic intro. Fast dense swarm; every enemy RAMPS
   // attack while in combat (capped) — "burst it or out-sustain it." Density + speed
-  // catch Far, ramp punishes slow kills. Answer: hardening + in-combat-regen/kill-burst.
+  // catch Far, ramp punishes slow kills. Answer: hardening + active/on-kill Recovery.
   ['ember-scuttler', {
     id: 'ember-scuttler', name: 'Ember Scuttler', color: 0xff6622,
     // Young fire skink (role-name kept; grows into the T4 Ember Skink).

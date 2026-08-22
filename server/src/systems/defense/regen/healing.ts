@@ -6,7 +6,7 @@ import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromMinion, actorFromPlayer } from '../../../world/worldLogActors';
 import { applyWard } from '../barrier/wards';
 
-// Duration of the temp shield minted from overheal (defense.overheal-shield-pct).
+// Duration of the temporary ward minted from overheal (defense.overheal-ward-pct).
 const OVERHEAL_WARD_MS = 6000;
 
 /**
@@ -28,14 +28,16 @@ export function getDebuffResistanceMult(player: PlayerEntity): number {
  * Apply healing to a player with antiheal and maxHp cap applied.
  * When `world` is provided, emits a heal log event for applied HP.
  *
- * This is the single funnel for every player heal — regen burst, in-combat regen,
- * ramp regen, kill burst, guard.heal-on-fire, ability heals, the post-cheat-death
- * HoT — which is what makes `core.recovery-mult` a one-line change rather than a
- * subsystem. Route new healing through here; anything that writes `hasHealth.hp`
- * directly silently opts out of antiheal, overheal-shield AND core recovery.
+ * This is the single funnel for every player heal — all Recovery access, the
+ * absorb drain, the post-cheat-death HoT — so antiheal and the overheal ward are
+ * one place, not a per-effect concern. Route new healing through here; anything
+ * that writes `hasHealth.hp` directly silently opts out of both.
  *
- * Deliberately NOT applied to applyHealToMinion: minion sustain is the summoner's
- * budget, not the core slot's.
+ * NOTE: `core.recovery-mult` is deliberately NOT applied here. It scales the
+ * `recovery` STAT in shared/src/systems/stats.ts, and every in-combat regen
+ * effect now activates a fraction of that stat — so applying it again per-heal
+ * would compound it. Absorb and the cheat-death HoT are not Recovery-derived and
+ * are not meant to scale with it (handoff §7).
  */
 export function applyHealToPlayer(
   player: PlayerEntity,
@@ -47,11 +49,7 @@ export function applyHealToPlayer(
   if (amount <= 0) return;
   const before = player.hasHealth.hp;
   const maxHp = player.hasHealth.maxHp;
-  // Core recovery scales the heal BEFORE antiheal, so an antiheal debuff still
-  // counters a Survivalist rather than being outrun by one.
-  const recoveryMult = 1 + (player.usesSkills.passives['core.recovery-mult'] ?? 0);
-  const scaled = Math.max(0, amount * recoveryMult);
-  const raw = before + scaled * getAntiHealMult(cs);
+  const raw = before + amount * getAntiHealMult(cs);
   player.hasHealth.hp = Math.min(maxHp, raw);
   const applied = Math.round(player.hasHealth.hp - before);
 

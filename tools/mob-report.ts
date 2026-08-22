@@ -480,7 +480,7 @@ function bossReadyProfile(combos: BuildCombo[], playerTier: number, classTier: n
   if (armors.length === 0) return null;
   const tankiestArmor = [...armors].sort((a, b) => (b.statModifiers.maxHp ?? 0) + (b.statModifiers.plating ?? 0) - ((a.statModifiers.maxHp ?? 0) + (a.statModifiers.plating ?? 0)))[0];
   const bestRecovery = recoveries.length
-    ? [...recoveries].sort((a, b) => ((b.mechanicEffects?.['defense.barrier-pct'] ?? 0) + (b.statModifiers.hpRegen ?? 0)) - ((a.mechanicEffects?.['defense.barrier-pct'] ?? 0) + (a.statModifiers.hpRegen ?? 0)))[0]
+    ? [...recoveries].sort((a, b) => ((b.mechanicEffects?.['defense.barrier-pct'] ?? 0) + (b.statModifiers.recovery ?? 0)) - ((a.mechanicEffects?.['defense.barrier-pct'] ?? 0) + (a.statModifiers.recovery ?? 0)))[0]
     : null;
   const acc = { maxHp: 0, plating: 0, dr: 0, dodge: 0, evadeMit: 0, n: 0 };
   for (const combo of combos) {

@@ -14,7 +14,7 @@ export const STAT_LABELS: Record<string, string> = {
   attack:          'ATK',
   defense:         'DEF',
   maxHp:           'HP',
-  hpRegen:         'REGEN',
+  recovery:         'RECOV',
   speed:           'SPD',
   attackRange:     'RNG',
   attackCooldown:  'CD',

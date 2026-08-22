@@ -9,7 +9,6 @@ import { getResource, type TracksCombat } from '@mmo-idle/shared';
 
 export const DEBT_POOL_KEY   = 'damageDebtPool';
 export const ABSORB_POOL_KEY = 'absorbPool';
-export const BURST_POOL_KEY  = 'regenBurstPool';
 
 // Post-cheat-death recovery: remaining HP to restore, plus the fixed drain rate
 // (HP per ms) computed at trigger time so an arbitrary heal window drains linearly.
@@ -21,15 +20,8 @@ export const CHEAT_DEATH_HEAL_RATE_KEY = 'cheatDeathHealRate';
 // (sustained-fight DR, absorb ramp) including from the combat pipeline.
 export const COMBAT_ELAPSED_KEY = 'combatElapsedMs';
 
-/** Duration over which hit-to-DoT debt and leech/burst pools drain (ms). */
+/** Duration over which hit-to-DoT debt and the absorb pool drain (ms). */
 export const POOL_DRAIN_MS = 4000;
-
-/** Drain window for the regen-burst healing pool (ms). Also the duration shown
- *  on the "Regen" buff tile via the `regenBurstDrain` cooldown. */
-export const BURST_DRAIN_MS = 2000;
-
-/** Cooldown key tracking the regen-burst pool's drain window for the HUD sweep. */
-export const BURST_DRAIN_CD = 'regenBurstDrain';
 
 // ── Public pool accessors (for buffSync HUD descriptors) ─────────────────────
 
@@ -39,10 +31,6 @@ export function getDefenseDebtPool(cs: TracksCombat): number {
 
 export function getDefenseAbsorbPool(cs: TracksCombat): number {
   return getResource(cs, ABSORB_POOL_KEY);
-}
-
-export function getDefenseBurstPool(cs: TracksCombat): number {
-  return getResource(cs, BURST_POOL_KEY);
 }
 
 export function getCheatDeathHealPool(cs: TracksCombat): number {

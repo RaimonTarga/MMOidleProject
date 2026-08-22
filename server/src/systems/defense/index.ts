@@ -8,10 +8,9 @@ import { registerBarrierBreakHeal } from "./barrier/barrierBreakHeal";
 import { registerHitToDot, runDebtDrain, resetDebtCheatDeath } from "./mitigation/hitToDot";
 import { registerCheatDeath, resetCheatDeath, runPostCheatDeathHeal } from "./mitigation/cheatDeath";
 import { registerDamageAbsorb, runAbsorbDrain } from "./regen/damageAbsorb";
-import { registerKillBurst, runRegenBurst } from "./regen/regenBurst";
+import { registerRecoveryOnKill } from "./regen/recoveryOnKill";
 import { runDebuffCleanse } from "./mitigation/debuffCleanse";
-import { runInCombatRegen } from "./regen/inCombatRegen";
-import { runRampRegen, resetRampRegen } from "./regen/rampRegen";
+import { runRecovery, resetRecoveryRamp } from "./regen/recovery";
 import { registerHardening, runHardening, resetHardening, runHardeningMaxDr, resetHardeningMaxDr } from "./mitigation/hardening";
 import { runStationaryDr } from "./mitigation/stationaryDr";
 import { runSustainedFightDr } from "./mitigation/sustainedFightDr";
@@ -22,7 +21,6 @@ import {
 } from "../player/abilities/abilityBramble";
 import { COMBAT_ELAPSED_KEY } from "./core/pools";
 import { isPlayerInCombat } from "../combat/ai/engagement";
-import { applyHealToPlayer } from "./regen/healing";
 
 /**
  * Register all defense-layer combat pipeline listeners.
@@ -48,7 +46,7 @@ export function initDefenseSystems(): void {
   registerHitToDot();
   registerCheatDeath();
   registerDamageAbsorb();
-  registerKillBurst();
+  registerRecoveryOnKill();
   registerHardening();
   registerReactivePlating();
   registerBrambleReflect();
@@ -74,7 +72,7 @@ export function updateDefensiveSystems(
       resetEvadeAccumulator(world, player);
       resetCheatDeath(player);
       resetDebtCheatDeath(player);
-      resetRampRegen(player);
+      resetRecoveryRamp(player);
       resetHardening(player);
       resetHardeningMaxDr(player);
     }
@@ -91,23 +89,18 @@ export function updateDefensiveSystems(
 
     runAbsorbDrain(world, player, dt);
     runPostCheatDeathHeal(world, player, dt);
-    runRegenBurst(world, player, dt, inCombat);
     runBarrierRecharge(world, player, dt);
     runDebuffCleanse(world, player);
-    runInCombatRegen(world, player, dt);
-    runRampRegen(world, player, dt);
+    // One Recovery pass covers OOC regen AND every in-combat regen effect: they
+    // all activate a fraction of the same rate, so they must not be applied
+    // separately (that is what made them independent %-maxHp heals before).
+    runRecovery(world, player, dt, inCombat, player.hasNodeFeatureEffect !== undefined);
     runHardening(world, player, dt);
     runHardeningMaxDr(world, player);
     runStationaryDr(world, player, dt);
     runSustainedFightDr(world, player);
     runReactivePlating(world, player);
     runBramblePlating(world, player);
-    if (!inCombat && !player.hasNodeFeatureEffect) {
-      const amount = player.hasHealth.maxHp
-        * ((player.hasHealth.hpRegen ?? 0) / 100)
-        * (dt / 1000);
-      applyHealToPlayer(player, player.tracksCombat, amount, world);
-    }
   }
 }
 
@@ -122,7 +115,12 @@ export {
 } from "./regen/healing";
 export {
   getDefenseAbsorbPool,
-  getDefenseBurstPool,
   getDefenseDebtPool,
 } from "./core/pools";
+export {
+  activateRecovery,
+  activeRecoveryFraction,
+  recoveryPerSecond,
+  type RecoverySourceId,
+} from "./regen/recovery";
 export { DEFENSE_BUFFS } from "./core/buffs";

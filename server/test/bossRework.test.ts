@@ -48,7 +48,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
       nodeId: NODE,
       speed: GAME_CONFIG.PLAYER_SPEED,
     },
-    hasHealth: { hp: 100_000, maxHp: 100_000, hpRegen: 0 },
+    hasHealth: { hp: 100_000, maxHp: 100_000, recovery: 0 },
     tracksProgression: {
       level: 0,
       skillPoints: 0,

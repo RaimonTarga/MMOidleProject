@@ -71,7 +71,7 @@ export const rootsAndFramesEntries = [
   //                        mechanics, summon formation rules. This pass replaces
   //                        generic stat growth; it does not flatten identity.
   //
-  // Flat `hpRegen` was removed from tiers 0–2 entirely: regen now comes from the
+  // Flat `recovery` was removed from tiers 0–2 entirely: regen now comes from the
   // base rate, gear, and the authored sustain mechanics (in-combat regen, regen
   // burst) rather than a flat number that gear outgrows.
   //
@@ -90,12 +90,16 @@ export const rootsAndFramesEntries = [
     id: 'cadence-root', name: 'Striker', tier: 0,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A balanced bruiser — periodic bursts of healing sustain you through prolonged engagements.',
+    description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.18, platingPct: 0.15,
       attackSpeedPct: 0.06, moveSpeedPct: 0.04, damageReduction: 0.02,
     },
-    mechanicEffects: { 'defense.regen-burst-pct': 0.08, 'defense.regen-burst-interval-ms': 6000, 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 } as Record<string, number>,
+    // Recovery pulse: every 6s, run at +20% Recovery for 4s. At the naked baseline
+    // (Recovery 10) that is 10% × 0.20 × 4s ≈ 8% max HP per cycle — the same
+    // throughput as the flat 8% burst this replaces, but it now scales with
+    // Recovery gear instead of ignoring it. Numbers are a first pass.
+    mechanicEffects: { 'defense.recovery-pulse-pct': 0.20, 'defense.recovery-pulse-interval-ms': 6000, 'defense.recovery-pulse-duration-ms': 4000, 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 } as Record<string, number>,
   }],
 
 
@@ -103,12 +107,12 @@ export const rootsAndFramesEntries = [
     id: 'cooldown-root', name: 'Squire', tier: 0,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Patience is power. Prepare a devastating strike on a set cycle. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet — and 10% of your regen rate applies even while you fight.',
+    description: 'Patience is power. Prepare a devastating strike on a set cycle. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet — and 10% of your Recovery rate stays active even while you fight.',
     cost: 1, statEffects: {
       attackPct: 0.18, maxHpPct: 0.30, platingPct: 0.30,
       attackSpeedPct: -0.15, moveSpeedPct: -0.10, damageReduction: 0.04,
     },
-    mechanicEffects: { 'defense.in-combat-regen-pct': 0.10 } as Record<string, number>,
+    mechanicEffects: { 'defense.recovery-active-pct': 0.10 } as Record<string, number>,
   }],
 
 
@@ -126,7 +130,7 @@ export const rootsAndFramesEntries = [
     // not here — passives merge additively, so seeding them on the root too would stack
     // with the frame (e.g. 10 + 5 = 15 ammo). T3 nodes then delta off the frame's base
     // (e.g. snipe's reload.max-ammo: -2). Root-only falls back to the consumer defaults.
-    mechanicEffects: { 'defense.kill-burst-pct': 0.05, 'defense.evade-mitigation': 0.20, 'reload.acquire-radius-mult': 2.5 } as Record<string, number>,
+    mechanicEffects: { 'defense.recovery-on-kill-pct': 0.20, 'defense.recovery-on-kill-ms': 4000, 'defense.evade-mitigation': 0.20, 'reload.acquire-radius-mult': 2.5 } as Record<string, number>,
   }],
 
 
@@ -442,7 +446,7 @@ export const rootsAndFramesEntries = [
     cost: 1, statEffects: {
       attackPct: 0.04, maxHpPct: 0.12, platingPct: 0.10, attackSpeedPct: 0.06,
     },
-    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.regen-burst-pct': 0.04 } as Record<string, number>,
+    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.recovery-pulse-pct': 0.10 } as Record<string, number>,
   }],
   ['cadence-range-mid', {
     id: 'cadence-range-mid', name: 'Lancer', tier: 2,
@@ -477,7 +481,7 @@ export const rootsAndFramesEntries = [
       attackRange: -40,
       attackPct: 0.04, maxHpPct: 0.10, platingPct: 0.12, attackSpeedPct: 0.05,
     },
-    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.in-combat-regen-pct': 0.20 } as Record<string, number>,
+    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.recovery-active-pct': 0.20 } as Record<string, number>,
   }],
   ['cooldown-range-mid', {
     id: 'cooldown-range-mid', name: 'Phalanx', tier: 2,

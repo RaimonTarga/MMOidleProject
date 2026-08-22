@@ -638,7 +638,7 @@ function maxItemTier(): number {
 }
 
 function defensiveItemScore(item: ItemDefinition): number {
-  return (item.statModifiers.maxHp ?? 0) + (item.statModifiers.plating ?? 0) * 5 + (item.statModifiers.damageReduction ?? 0) * 100 + (item.statModifiers.hpRegen ?? 0) * 4 + (item.mechanicEffects?.['defense.barrier-pct'] ?? 0) * 100;
+  return (item.statModifiers.maxHp ?? 0) + (item.statModifiers.plating ?? 0) * 5 + (item.statModifiers.damageReduction ?? 0) * 100 + (item.statModifiers.recovery ?? 0) * 4 + (item.mechanicEffects?.['defense.barrier-pct'] ?? 0) * 100;
 }
 
 function countIds(ids: readonly string[]): Map<string, number> {

@@ -16,8 +16,15 @@ export type AbilitySlot = "technique" | "guard";
 /** Every slot kind, for iteration. */
 export const ABILITY_SLOTS: readonly AbilitySlot[] = ["technique", "guard"];
 
-/** Behavioral tags. Mobility is a tag, not a slot. Grows as content lands. */
-export type AbilityTag = "mobility";
+/**
+ * Behavioral tags. Mobility is a tag, not a slot. Grows as content lands.
+ *
+ * `recovery` marks an ability as a Recovery SKILL: it activates a fraction of the
+ * player's Recovery rate, and is the only thing `defense.recovery-skill-potency`
+ * amplifies. Passive Recovery access — the Squire root, the periodic pulse, the
+ * on-kill window, the ramp — is deliberately NOT tagged and never benefits.
+ */
+export type AbilityTag = "mobility" | "recovery";
 
 /**
  * How an ability EXECUTES, independent of which slot it occupies (abilities
@@ -57,8 +64,11 @@ export type AbilityTrigger =
  * - `cleanse`: Guard immediate — strips up to `stacks` from each harmful debuff/DoT
  *   on the player. When `drPct`/`durationMs` are set, also grants a short
  *   damage-reduction guard buff (post-cleanse resilience), reusing the same buff.
- * - `heal`: Guard heal-over-time — recover `healPct` of max HP over `durationMs`
- *   (antiheal applies), a cooldown sustain button.
+ * - `heal`: Guard Recovery access — switches on `recoveryPct` of the player's
+ *   Recovery rate for `durationMs` (antiheal applies), a cooldown sustain button.
+ *   NOT a flat % of max HP: it scales with the Recovery stat, so investing in
+ *   Recovery gear makes the button better. Carries the `recovery` tag, so
+ *   `defense.recovery-skill-potency` scales the fraction.
  */
 export type AbilityEffectSpec =
   | { kind: "cleave"; splashPct: number; radius: number }
@@ -91,7 +101,7 @@ export type AbilityEffectSpec =
   | { kind: "bramble"; platingBonus: number; reflectFlat: number; durationMs: number }
   | { kind: "damage-reduction"; drPct: number; durationMs: number; knockbackResistPct?: number }
   | { kind: "cleanse"; stacks: number; drPct?: number; durationMs?: number }
-  | { kind: "heal"; healPct: number; durationMs?: number };
+  | { kind: "heal"; recoveryPct: number; durationMs?: number };
 
 /**
  * Status-effect id for the active Guard-ability buff (system rework Step 7).
@@ -243,7 +253,7 @@ export const ABILITY_SCALABLE_FIELDS: Record<
   bramble: ["platingBonus", "reflectFlat"], // NOT durationMs
   "damage-reduction": ["drPct", "knockbackResistPct"], // NOT durationMs
   cleanse: ["stacks", "drPct"], // NOT durationMs
-  heal: ["healPct"], // NOT durationMs
+  heal: ["recoveryPct"], // NOT durationMs
 };
 
 /**
@@ -356,13 +366,13 @@ const abilities: AbilityDef[] = [
     name: "Second Wind",
     slot: "guard",
     shape: "instant",
-    tags: [],
-    blurb: "Catch your breath and recover health over a few seconds.",
+    tags: ["recovery"],
+    blurb: "Catch your breath, sharply raising your recovery rate for a few seconds.",
     tier: 1,
     scalePerTierPct: 0.1,
     cooldownMs: 12000,
     trigger: { kind: "in-combat" },
-    effect: { kind: "heal", healPct: 0.3, durationMs: 4000 },
+    effect: { kind: "heal", recoveryPct: 0.5, durationMs: 4000 },
     icon: "second-wind",
   },
   // ── T2 (abilities evolution §9): NOT roster growth for its own sake. These three

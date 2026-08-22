@@ -26,7 +26,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       // Below Brace's hp-below 0.5 trigger so the Guard fires this tick.
       hp: Math.round(GAME_CONFIG.PLAYER_MAX_HP * 0.4),
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
+      recovery: GAME_CONFIG.PLAYER_RECOVERY,
     },
     tracksProgression: {
       level: 0,

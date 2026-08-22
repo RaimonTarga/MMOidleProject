@@ -79,11 +79,13 @@ const STAT_EFFECT_META: Record<keyof StatEffects, StatEffectMeta> = {
     glyph: 'UI_icons/stats/shield.png',
     helpKey: 'hp',
   },
-  hpRegen: {
-    label: 'HP Regen',
-    format: (v) => `${signed(v, 1)}/s`,
+  recovery: {
+    label: 'Recovery',
+    // A Recovery point is 1% of max HP per second at 100% active Recovery, so the
+    // bare number is the unit — not an HP-per-second figure.
+    format: (v) => signed(v, 1),
     glyph: 'UI_icons/stats/regen.png',
-    helpKey: 'hpRegen',
+    helpKey: 'recovery',
   },
   speed: {
     label: 'Move Speed',
@@ -139,7 +141,7 @@ const STAT_EFFECT_ORDER: (keyof StatEffects)[] = [
   'platingPct',
   'damageReduction',
   'evasion',
-  'hpRegen',
+  'recovery',
   'speed',
   'moveSpeedPct',
 ];

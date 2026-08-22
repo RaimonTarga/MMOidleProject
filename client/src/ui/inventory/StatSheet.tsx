@@ -19,7 +19,7 @@ import {
   equipmentAtom,
   dodgeRateAtom,
   evadeMitigationAtom,
-  hpRegenAtom,
+  recoveryAtom,
   itemUpgradesAtom,
   maxHpAtom,
   onHitDamageAtom,
@@ -38,7 +38,7 @@ import type { FocusedItem } from './useFocus';
 // STAT_META so crafting + inventory read identically. onHitDamage/attackRange
 // are appended so weapons with those secondaries are fully represented.
 const STAT_ROWS = (
-  ['attack', 'maxHp', 'hpRegen', 'plating', 'damageReduction', 'speed', 'onHitDamage', 'attackRange'] as const
+  ['attack', 'maxHp', 'recovery', 'plating', 'damageReduction', 'speed', 'onHitDamage', 'attackRange'] as const
 ).map(key => ({ key, ...STAT_META[key] }));
 
 function getItemContribs(defId: string | null | undefined, upgrades: Record<string, number>): Record<string, number> {
@@ -69,7 +69,7 @@ function weaponBaseMs(defId: string | null | undefined): number {
 export function StatSheet({ focused, onFocus }: Props) {
   const attack          = useAtomValue(attackAtom);
   const maxHp           = useAtomValue(maxHpAtom);
-  const hpRegen         = useAtomValue(hpRegenAtom);
+  const recovery         = useAtomValue(recoveryAtom);
   const plating         = useAtomValue(platingAtom);
   const damageReduction = useAtomValue(damageReductionAtom);
   const speed           = useAtomValue(speedAtom);
@@ -89,7 +89,7 @@ export function StatSheet({ focused, onFocus }: Props) {
   const empMult = resolveEmpoweredMultiplier(passives, combatArchetype, playerTier);
 
   const playerStats: Record<string, number> = {
-    attack, maxHp, hpRegen, plating, damageReduction, speed, onHitDamage, attackRange,
+    attack, maxHp, recovery, plating, damageReduction, speed, onHitDamage, attackRange,
   };
 
   // Derived combat stats. On-hit damage is flat per hit (ignores enemy defenses),

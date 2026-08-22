@@ -58,7 +58,7 @@ function applyQueueScopedCombatRecovery(
 ): void {
   if (!hasReconstructionDebt(owner)) return;
   if (!isPlayerInCombat(owner, now)) return;
-  const regenPctPerSecond = owner.hasHealth.hpRegen ?? 0;
+  const regenPctPerSecond = owner.hasHealth.recovery ?? 0;
   if (regenPctPerSecond <= 0) return;
   const recoveryRatio = summonerProfileFor(owner).reconstructionCombatRegenPct;
   const amount = owner.hasHealth.maxHp * (regenPctPerSecond / 100) * (dt / 1_000) * recoveryRatio;

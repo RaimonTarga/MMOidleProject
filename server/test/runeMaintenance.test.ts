@@ -36,7 +36,7 @@ function makeReloadPlayerSlices(id: string): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP / 2,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
+      recovery: GAME_CONFIG.PLAYER_RECOVERY,
     },
     tracksProgression: {
       level: 0,

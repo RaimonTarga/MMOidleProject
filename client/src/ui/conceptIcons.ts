@@ -110,7 +110,7 @@ const BUFF_IDS = new Set([
   'cooldown-temporal-ext',
   'cooldown-vengeance',
   'defense-absorb',
-  'defense-burst',
+  'defense-recovery',
   'defense-debt',
   'defense-hardening',
   'defense-hardening-maxdr',
@@ -207,12 +207,22 @@ export function riteIconSource(id: string): AssetIconSource | null {
   return RITE_IDS.has(iconId) ? source('rites', iconId) : null;
 }
 
+/**
+ * Buff ids whose artwork still lives under an older filename. The Recovery tile
+ * was `defense-burst` before regen became one Recovery rate; the green-regen icon
+ * is still exactly right for it, so the id moved and the art did not.
+ */
+const BUFF_ICON_ALIASES: Record<string, string> = {
+  'defense-recovery': 'defense-burst',
+};
+
 export function statusIconSource(id: string): AssetIconSource | null {
   if (BUFF_IDS.has(id)) {
-    // The player-facing Regen tile is `defense-burst`, not the boss `regen`
+    // The player-facing Recovery tile is its own art, not the boss `regen`
     // effect. Version its replaced art so a long-running client cannot retain
     // the old blue/gold shield from the browser image cache.
-    return source('statuses/buffs', id, id === 'defense-burst' ? 'green-regen-v2' : undefined);
+    const iconId = BUFF_ICON_ALIASES[id] ?? id;
+    return source('statuses/buffs', iconId, iconId === 'defense-burst' ? 'green-regen-v2' : undefined);
   }
   if (DEBUFF_IDS.has(id)) return source('statuses/debuffs', id);
   if (id === 'second-wind') return source('abilities', id);

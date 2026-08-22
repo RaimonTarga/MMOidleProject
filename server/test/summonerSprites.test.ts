@@ -36,7 +36,7 @@ function slices(
       nodeId: 'node-clearing',
       speed: GAME_CONFIG.PLAYER_SPEED,
     },
-    hasHealth: { hp: 10_000, maxHp: 10_000, hpRegen: 5 },
+    hasHealth: { hp: 10_000, maxHp: 10_000, recovery: 5 },
     tracksProgression: {
       level: 0,
       skillPoints: 0,

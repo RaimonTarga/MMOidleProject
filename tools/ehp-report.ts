@@ -486,32 +486,33 @@ function applyDamageCap(hit: number, maxHp: number, p: PassiveMap): number {
 }
 
 /**
- * Averaged steady-state recovery (HP/s) from regen, absorb, shields, bursts and
- * cleanse. In-combat only (base OOC regen is gated off while a target is up), so
- * regen contributions are scaled by their defense.* in-combat fractions.
+ * Averaged steady-state healing (HP/s) from Recovery access, absorb and cleanse.
+ * In-combat only, so every Recovery source is expressed as the fraction of the
+ * player's Recovery RATE it switches on, averaged across its duty cycle.
  */
 function recoveryPerSec(
   maxHp: number,
-  hpRegen: number,
+  recoveryStat: number,
   p: PassiveMap,
   incomingDirectDps: number,
   notes: string[],
 ): number {
-  const oocRate = maxHp * (hpRegen / 100); // HP/s out of combat (base regen)
-  let recovery = 0;
+  // HP/s at 100% active Recovery. Every access fraction below is a share of this.
+  const fullRate = maxHp * (recoveryStat / 100);
+  let healPerSec = 0;
 
-  const inCombatPct = p['defense.in-combat-regen-pct'] ?? 0;
+  const inCombatPct = p['defense.recovery-active-pct'] ?? 0;
   if (inCombatPct > 0) {
-    recovery += oocRate * inCombatPct;
-    notes.push(`in-combat regen ${Math.round(inCombatPct * 100)}% of OOC (${asNumber(oocRate)}/s base)`);
+    healPerSec += fullRate * inCombatPct;
+    notes.push(`${Math.round(inCombatPct * 100)}% Recovery always active (${asNumber(fullRate)}/s at 100%)`);
   }
 
-  const rampStart = p['defense.ramp-regen-start-pct'] ?? 0;
+  const rampStart = p['defense.recovery-ramp-start-pct'] ?? 0;
   if (rampStart > 0) {
-    const rampMax = p['defense.ramp-regen-max-pct'] ?? rampStart;
+    const rampMax = p['defense.recovery-ramp-max-pct'] ?? rampStart;
     const avgPct = (rampStart + rampMax) / 2;
-    recovery += oocRate * avgPct;
-    notes.push(`ramp regen averaged ${Math.round(avgPct * 100)}% of OOC over the ramp window`);
+    healPerSec += fullRate * avgPct;
+    notes.push(`ramping Recovery averaged ${Math.round(avgPct * 100)}% over the ramp window`);
   }
 
   // Damage absorb: a fraction of incoming direct damage is repaid as a HoT.
@@ -523,17 +524,27 @@ function recoveryPerSec(
     absorbPct = Math.max(flatAbsorb, (rampStartPct + rampAbsorbMax) / 2);
   }
   if (absorbPct > 0) {
-    recovery += incomingDirectDps * absorbPct;
+    healPerSec += incomingDirectDps * absorbPct;
     notes.push(`absorb repays ${Math.round(absorbPct * 100)}% of incoming as HoT`);
   }
 
-  // Periodic regen burst.
-  const burstPct = p['defense.regen-burst-pct'] ?? 0;
-  const burstInterval = p['defense.regen-burst-interval-ms'] ?? 0;
-  if (burstPct > 0 && burstInterval > 0) {
-    recovery += (maxHp * burstPct) / (burstInterval / 1000);
-    notes.push(`regen burst ${Math.round(burstPct * 100)}% maxHp / ${burstInterval / 1000}s`);
+  // Periodic Recovery pulse, averaged over its duty cycle: the fraction is only
+  // switched on for `duration` out of every `interval`.
+  const pulsePct = p['defense.recovery-pulse-pct'] ?? 0;
+  const pulseInterval = p['defense.recovery-pulse-interval-ms'] ?? 0;
+  if (pulsePct > 0 && pulseInterval > 0) {
+    const pulseDuration = p['defense.recovery-pulse-duration-ms'] ?? GAME_CONFIG.RECOVERY_PULSE_MS;
+    const duty = Math.min(1, pulseDuration / pulseInterval);
+    healPerSec += fullRate * pulsePct * duty;
+    notes.push(
+      `Recovery pulse ${Math.round(pulsePct * 100)}% for ${pulseDuration / 1000}s every ${pulseInterval / 1000}s`,
+    );
   }
+
+  // On-kill Recovery is deliberately NOT modeled: its value is entirely a
+  // function of kill cadence, which this tool does not simulate. A chain-farming
+  // charm will therefore read as worthless here — that is a known blind spot,
+  // not a balance signal.
 
   // NOTE: the barrier is deliberately NOT modeled here. It is a one-time buffer,
   // not throughput — under the recharge rule it only refills after 4s undamaged,
@@ -544,11 +555,11 @@ function recoveryPerSec(
   const cleanseEmpty = p['defense.cleanse-empty-heal-pct'] ?? 0;
   const cleanseInterval = p['defense.cleanse-interval-ms'] ?? 0;
   if (cleanseEmpty > 0 && cleanseInterval > 0) {
-    recovery += (maxHp * cleanseEmpty) / (cleanseInterval / 1000);
+    healPerSec += (maxHp * cleanseEmpty) / (cleanseInterval / 1000);
     notes.push(`cleanse empty-heal ${Math.round(cleanseEmpty * 100)}% maxHp / ${cleanseInterval / 1000}s`);
   }
 
-  return recovery;
+  return healPerSec;
 }
 
 function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Survivability {
@@ -558,7 +569,7 @@ function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Su
   const damageReduction = stats.mitigatesDamage.damageReduction;
   const dodgeRate = stats.evadesHits.dodgeRate;
   const evadeMitigation = stats.evadesHits.evadeMitigation;
-  const hpRegen = stats.hasHealth.hpRegen ?? 0;
+  const recovery = stats.hasHealth.recovery ?? 0;
   const notes: string[] = [];
 
   const hitsPerSec = 1000 / attacker.attackCooldown;
@@ -594,7 +605,7 @@ function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Su
   const ehp = incomingDps > 0 ? maxHp * (rawDps / incomingDps) : Number.POSITIVE_INFINITY;
 
   // Recovery and sustain.
-  const recoveryDps = recoveryPerSec(maxHp, hpRegen, p, directDps, notes);
+  const recoveryDps = recoveryPerSec(maxHp, recovery, p, directDps, notes);
   const netHpPerSec = recoveryDps - incomingDps;
 
   // Survival score: real pool + recovery over a fixed window, scaled by the same
@@ -1130,11 +1141,11 @@ function bestWorstLabel(per: Array<{ label: string; surv: number }>): { best: st
   return { best: sorted[0]?.label ?? '-', worst: sorted[sorted.length - 1]?.label ?? '-' };
 }
 
-function itemStatLine(item: ItemDefinition, plus: number): { maxHp: number; plating: number; dr: number; evasion: number; hpRegen: number; special: string } {
+function itemStatLine(item: ItemDefinition, plus: number): { maxHp: number; plating: number; dr: number; evasion: number; recovery: number; special: string } {
   const clamped = Math.min(plus, getMaxUpgrade(item));
   const stats = mergedNumberMaps(item.statModifiers, upgradeStatBonusTotal(item, clamped));
   const fx = mergedNumberMaps(item.mechanicEffects, upgradeMechanicEffectsTotal(item, clamped));
-  return { maxHp: stats.maxHp ?? 0, plating: stats.plating ?? 0, dr: stats.damageReduction ?? 0, evasion: stats.evasion ?? 0, hpRegen: stats.hpRegen ?? 0, special: mapSummary(fx, 6) };
+  return { maxHp: stats.maxHp ?? 0, plating: stats.plating ?? 0, dr: stats.damageReduction ?? 0, evasion: stats.evasion ?? 0, recovery: stats.recovery ?? 0, special: mapSummary(fx, 6) };
 }
 
 function armorComparisonView(reportTier: number): DataView {
@@ -1174,14 +1185,16 @@ function charmComparisonView(reportTier: number): DataView {
     const avg = per.find((p) => p.label === 'avg mob') ?? per[0];
     const { best, worst } = bestWorstLabel(per);
     const stat = itemStatLine(charm, plus);
-    const undercounted = (stat.special.includes('kill-burst') ? ' (kill-burst undercounted)' : '');
-    rows.push([charm.name, `+${Math.min(plus, getMaxUpgrade(charm))}`, asNumber(stat.hpRegen), stat.special + undercounted,
+    // On-kill Recovery is not modeled (no kill cadence), so flag charms that
+    // carry it rather than letting them read as dead weight.
+    const undercounted = (stat.special.includes('recovery-on-kill') ? ' (on-kill Recovery undercounted)' : '');
+    rows.push([charm.name, `+${Math.min(plus, getMaxUpgrade(charm))}`, asNumber(stat.recovery), stat.special + undercounted,
       asNumber(avg.rec), asNumber(avg.ehp - baseEhp), ttl(avg.ttl), best, worst]);
   }
   return {
     title: 'Charm Comparison',
     note: `Reference armor ${refArmor.name} +3; metrics vs avg-mob profile averaged over class builds. eHP contribution = eHP with charm − without. Kill-burst needs a kill cadence to value fully.`,
-    headers: ['Charm', 'Plus', 'hpRegen', 'Special', 'Recov/s', 'eHP contrib', 'TTL', 'Best matchup', 'Worst matchup'],
+    headers: ['Charm', 'Plus', 'recovery', 'Special', 'Recov/s', 'eHP contrib', 'TTL', 'Best matchup', 'Worst matchup'],
     rows,
   };
 }
@@ -1528,7 +1541,7 @@ function renderLlmPacket(reportTier: number, rows: ReportRow[]): string {
         asNumber(stats.mitigatesDamage.plating),
         `${asNumber(stats.mitigatesDamage.damageReduction * 100)}%`,
         `${asNumber(stats.evadesHits.dodgeRate * 100)}%`,
-        asNumber(stats.hasHealth.hpRegen ?? 0),
+        asNumber(stats.hasHealth.recovery ?? 0),
         defensivePassiveSummary(stats.usesSkills.passives),
         asNumber(row.ehp),
         ttl(row.ttlSec),
@@ -1545,7 +1558,7 @@ Generated from \`tools/ehp-report.ts\`. Markdown only; the full HTML report is o
 - Every class build (root/frame/range/spec) is crossed with every armor × charm (recovery) combination. Weapon is empty; mobility slot excluded (movement only, no eHP value).
 - Incoming pressure comes from biome spawn pools one tier below report tier (tutorial/test/interact/boss excluded), plus representative shape attackers and boss spikes.
 - **eHP** = maxHP × (raw attacker DPS ÷ post-mitigation DPS): folds plating, DR, evasion, damage-cap, and DoT-resistance into one number. **TTL** = effective pool ÷ (incoming − recovery); "sustains" when recovery ≥ incoming. **Net HP/s** = recovery − incoming.
-- Defense mechanics are deterministic steady-state re-implementations of \`server/src/systems/defense/*\`: regen-bursts/absorb are averaged as HP/s throughput; the barrier is a one-time buffer added to the pool (it never recharges inside a modeled fight); ramps use their mid-point; cheat-death adds one extra near-full bar; kill-burst and barrier-break heals are omitted (need a kill/break cadence).
+- Defense mechanics are deterministic steady-state re-implementations of \`server/src/systems/defense/*\`: Recovery access is summed as a fraction of the Recovery rate and averaged over each source's duty cycle; absorb is averaged as HP/s throughput; the barrier is a one-time buffer added to the pool (it never recharges inside a modeled fight); ramps use their mid-point; cheat-death adds one extra near-full bar; on-kill Recovery and barrier-break heals are omitted (need a kill/break cadence).
 - Single-target, in-combat steady state only. No movement, kiting, real AoE target count, enemy AI, party effects, antiheal stacking, or overkill timing.
 
 ## 2. Attacker Baseline
@@ -1568,7 +1581,7 @@ ${mdTable(
 ## 3. Class / Loadout Input Table (optimal charm+armor per build)
 
 ${mdTable(
-  ['Build', 'Loadout', 'maxHP', 'Plating', 'DR', 'Dodge', 'hpRegen', 'Defensive passives', 'eHP', 'TTL'],
+  ['Build', 'Loadout', 'maxHP', 'Plating', 'DR', 'Dodge', 'recovery', 'Defensive passives', 'eHP', 'TTL'],
   classInputRows,
 )}
 
@@ -1621,8 +1634,8 @@ ${mdTable(['Charm', 'Avg survival', 'Samples'], charmAverages.map((i) => [i.key,
 
 - Mitigation uses shared \`estimateMonsterHitDamage\`: \`max(1, round(max(0, attack - plating × 1) × (1 - DR)))\`; stats rebuilt via shared \`recalculatePlayerStats\`.
 - Evasion is averaged (\`1 - dodgeRate × evadeMitigation\`), not played out as a deterministic accumulator; first-hit timing and OOC reset are ignored.
-- Absorb/regen-burst are steady-state HP/s. The barrier is a flat one-time buffer: correct for a single engagement, but it ignores the between-pack recharge that is the whole point of the mechanic, so multi-pack farm throughput is understated. DoT bypass-barrier is respected only in notes.
-- Cheat-death, hardening/stationary/sustained-fight DR ramps use mid-point or one-shot approximations; reactive plating and shield-break/kill-burst heals are not summed.
+- Absorb and Recovery access are steady-state HP/s. The barrier is a flat one-time buffer: correct for a single engagement, but it ignores the between-pack recharge that is the whole point of the mechanic, so multi-pack farm throughput is understated. DoT bypass-barrier is respected only in notes.
+- Cheat-death, hardening/stationary/sustained-fight DR ramps use mid-point or one-shot approximations; reactive plating, barrier-break heals and on-kill Recovery are not summed.
 - Report notes observed in this tier: ${caveatNotes.length ? caveatNotes.map((n) => `\`${md(n)}\``).join(', ') : 'none'}.
 `;
 }

@@ -76,7 +76,9 @@ export const ABILITY_BUFFS = [
       const eff = getStatusEffect(playerCs, ABILITY_SECOND_WIND_EFFECT_ID);
       if (!eff || eff.remainingMs <= 0) return null;
       const totalMs = eff.data["totalMs"] ?? eff.remainingMs;
-      const healPct = Math.round((eff.data["healPct"] ?? 0) * 100);
+      // Post-potency fraction of the player's Recovery RATE, not a % of max HP —
+      // what this converts to in HP depends on their Recovery stat.
+      const recoveryPct = Math.round((eff.data["recoveryPct"] ?? 0) * 100);
       return {
         id: "ability-second-wind",
         label: "Wind",
@@ -86,7 +88,7 @@ export const ABILITY_BUFFS = [
         color: "#73d7ff",
         logSourceName: "Second Wind",
         logSourceSide: "ally",
-        logDetail: `heals ${healPct}% max HP`,
+        logDetail: `+${recoveryPct}% Recovery`,
       };
     },
     {

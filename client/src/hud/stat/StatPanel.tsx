@@ -22,7 +22,7 @@ import {
   dodgeRateAtom,
   evadeMitigationAtom,
   hpAtom,
-  hpRegenAtom,
+  recoveryAtom,
   incomingDotAtom,
   maxHpAtom,
   onHitDamageAtom,
@@ -133,7 +133,7 @@ export function StatPanel() {
   const attackCooldown = useAtomValue(attackCooldownAtom);
   const attackRange = useAtomValue(attackRangeAtom);
   const speed = useAtomValue(speedAtom);
-  const hpRegen = useAtomValue(hpRegenAtom);
+  const recovery = useAtomValue(recoveryAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const passives = useAtomValue(passivesAtom);
   const equipment = useAtomValue(equipmentAtom);
@@ -169,7 +169,7 @@ export function StatPanel() {
       attackCooldown,
       attackRange,
       speed,
-      hpRegen,
+      recovery,
       combatArchetype,
       passives,
       equipment,
@@ -373,11 +373,13 @@ export function StatPanel() {
               {
                 id: 'regen',
                 glyph: STAT_GLYPH.regen,
-                value: String(Math.round(player.hpRegen * 10) / 10),
-                unit: '/s',
-                name: 'Health regeneration',
-                help: STAT_HELP.hpRegen,
-                watch: player.hpRegen,
+                value: String(Math.round(player.recovery * 10) / 10),
+                // Recovery is a rate expressed in points, where 1 point = 1% of
+                // max HP per second at 100% active Recovery — not raw HP/s.
+                unit: '',
+                name: 'Recovery',
+                help: STAT_HELP.recovery,
+                watch: player.recovery,
               },
               {
                 id: 'speed',
@@ -415,7 +417,7 @@ export function StatPanel() {
             />
             <StatRow label="Range" value={player ? `${player.attackRange}` : '—'} help={STAT_HELP.attackRange} />
             <StatRow label="Move Speed" value={player ? `${player.speed}` : '—'} help={STAT_HELP.speed} />
-            <StatRow label="HP Regen" value={player ? `${player.hpRegen}/s` : '—'} help={STAT_HELP.hpRegen} />
+            <StatRow label="Recovery" value={player ? `${player.recovery}` : '—'} help={STAT_HELP.recovery} />
           </div>
 
           {player && player.dodgeRate > 0 && (

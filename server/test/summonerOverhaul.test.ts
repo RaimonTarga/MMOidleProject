@@ -35,7 +35,7 @@ function slices(
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: 'node-clearing', speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 1_000, maxHp: 1_000, hpRegen: 5 },
+    hasHealth: { hp: 1_000, maxHp: 1_000, recovery: 5 },
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },

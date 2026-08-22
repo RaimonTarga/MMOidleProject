@@ -21,7 +21,7 @@ const slices: PersistedPlayerSlices = {
     nodeId: CLEARING_NODE_ID,
     speed: GAME_CONFIG.PLAYER_SPEED,
   },
-  hasHealth: { hp: 90, maxHp: 100, hpRegen: 2 },
+  hasHealth: { hp: 90, maxHp: 100, recovery: 2 },
   tracksProgression: {
     level: 77,
     skillPoints: 9,

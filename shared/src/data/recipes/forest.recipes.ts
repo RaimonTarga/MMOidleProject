@@ -1,7 +1,7 @@
 import type { Recipe } from './types';
 
 // FOREST (T1-T2; retires at T2). Identity: EVASION armor / raw OOC-regen charm /
-// fast weapon. The charm is pure-regen -> it keeps upgrading hpRegen (its identity).
+// fast weapon. The charm is pure-regen -> it keeps upgrading recovery (its identity).
 
 export const forestRecipeEntries = [
   // ── Rapier lineage (system rework Step 6 worked example) ───────────────────
@@ -44,16 +44,16 @@ export const forestRecipeEntries = [
   ['forest-charm-t1', {
     id: 'forest-charm-t1', name: 'Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 15 }, stats: { hpRegen: 6 }, tier: 1,
-    mechanicEffects: { 'guard.cooldown-reduction-pct': 0.15, 'guard.heal-on-fire-pct': 0.08 },
+    cost: { green: 15 }, stats: { recovery: 6 }, tier: 1,
+    mechanicEffects: { 'guard.cooldown-reduction-pct': 0.15, 'guard.recovery-on-fire-pct': 0.08 },
     icon: 'items/charms/heartroot-amulet.png',
     description: 'Heartroot drawn from the oldest tree in the grove, still faintly warm.',
     upgrades: [
-      { stats: { hpRegen: 2 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 2 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 2 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 2 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -128,19 +128,19 @@ export const forestRecipeEntries = [
     ],
   }],
 
-  // Pure-regen charm: keeps upgrading hpRegen.
+  // Pure-regen charm: keeps upgrading recovery.
   ['forest-charm-t2', {
     id: 'forest-charm-t2', name: 'Ancient Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { green: 50 }, stats: { hpRegen: 10 }, tier: 2,
+    cost: { green: 50 }, stats: { recovery: 10 }, tier: 2,
     icon: 'items/charms/ancient-heartroot-amulet.png',
     description: 'A relic of a grove that burned an age ago, its life somehow undimmed.',
     upgrades: [
-      { stats: { hpRegen: 3 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
-      { stats: { hpRegen: 3 }, cost: { green: 60 }, requiredBiomeLevel: 10 },
-      { stats: { hpRegen: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
-      { stats: { hpRegen: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
-      { stats: { hpRegen: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 3 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 3 }, cost: { green: 60 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -174,8 +174,9 @@ export const forestRecipeEntries = [
     lineageId: 'core-survivalist',
     cost: { green: 45 }, catalystCost: { fortified: 1 }, // family-tag: attrition survival → Fortified
     stats: {}, tier: 2,
-    // recovery-mult scales the passive regen stat AND every heal, so this is real
-    // sustain rather than the near-nothing a regen-stat-only core would give.
+    // recovery-mult scales the Recovery RATE, and every in-combat regen effect
+    // activates a fraction of that rate — so this lifts OOC regen and all active
+    // sustain at once, rather than the near-nothing a flat regen bump would give.
     mechanicEffects: { 'core.recovery-mult': 0.20, 'core.maxhp-mult': 0.10 },
     icon: 'items/cores/survivalist.png',
     description: 'Wound-knit heartwood. It does not stop the blow — it shortens the time you spend regretting it.',

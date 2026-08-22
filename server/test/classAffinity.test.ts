@@ -28,7 +28,7 @@ function build(skills: string[], armor?: string, plus = 0): PlayerStatsTarget {
     mitigatesDamage: { plating: 0, damageReduction: 0 },
     evadesHits: { dodgeRate: 0, evadeMitigation: 0, charge: 0 },
     performsAttack: { attackRange: 0, attackCooldown: 0, lastAttackAt: 0 },
-    hasHealth: { hp: 1, maxHp: 1, hpRegen: 0 },
+    hasHealth: { hp: 1, maxHp: 1, recovery: 0 },
     hasPosition: { current: { x: 0, y: 0 }, nodeId: "node-5-5", speed: 0 },
     usesSkills: {
       unlockedSkills: skills,
@@ -152,7 +152,7 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
     `close-range plating should come only from the node tables (${expected}), got ${closeOnly.mitigatesDamage.plating}`,
   );
   assert(
-    closeOnly.hasHealth.hpRegen === rootOnly.hasHealth.hpRegen,
+    closeOnly.hasHealth.recovery === rootOnly.hasHealth.recovery,
     "close range must not grant off-table hp regen",
   );
 }
@@ -162,7 +162,7 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
 // express those as affinities. attackRange (a positional rule), evasion and
 // damageReduction (already fractions) are the authored exceptions.
 {
-  const flatKeys = ["attack", "maxHp", "plating", "speed", "hpRegen"] as const;
+  const flatKeys = ["attack", "maxHp", "plating", "speed", "recovery"] as const;
   for (const node of SKILL_TREE.values()) {
     if (node.tier > 2) continue;
     for (const key of flatKeys) {

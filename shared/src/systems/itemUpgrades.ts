@@ -48,7 +48,7 @@ export const UPGRADE_STAT_BY_SLOT: Record<EquipmentSlot, string> = {
   weapon:   'attack',
   armor:    'damageReduction',
   mobility: 'speed',
-  recovery: 'hpRegen',
+  recovery: 'recovery',
   core:     'attack',
   relic:    'attack',
 };

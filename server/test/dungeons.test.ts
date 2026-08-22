@@ -54,7 +54,7 @@ function makePlayerSlices(
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { ...pos }, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: maxHp, maxHp, hpRegen: GAME_CONFIG.PLAYER_HP_REGEN },
+    hasHealth: { hp: maxHp, maxHp, recovery: GAME_CONFIG.PLAYER_RECOVERY },
     tracksProgression: {
       level: 0,
       skillPoints: 0,

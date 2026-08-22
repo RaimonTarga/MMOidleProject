@@ -17,7 +17,7 @@
 import {
   ABILITY_DATABASE,
   ABILITY_SECOND_WIND_EFFECT_ID,
-  addResource,
+  GAME_CONFIG,
   applyStatusEffect,
   getCooldown,
   getFlag,
@@ -40,12 +40,7 @@ import {
   RUNE_FIRE_TECHNIQUE_2_FLAG,
   RUNE_FIRE_TECHNIQUE_FLAG,
 } from "../../combat/ai/runeConfig";
-import {
-  BURST_DRAIN_CD,
-  BURST_DRAIN_MS,
-  BURST_POOL_KEY,
-} from "../../defense/core/pools";
-import { applyHealToPlayer } from "../../defense/regen/healing";
+import { activateRecovery } from "../../defense/regen/recovery";
 import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, techniqueCooldownMs } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
@@ -77,9 +72,6 @@ const GUARD_RUNE_OVERRIDES = [
 const GUARD_WINDOW_KEY = "ability.guard.window";
 const GUARD_WINDOW_MS = 100; // one logic tick at 10 Hz
 
-const ABILITY_HEAL_REMAINING_KEY = "ability.guard.healRemaining";
-const ABILITY_HEAL_DURATION_LEFT_KEY = "ability.guard.healDurationLeft";
-const DEFAULT_HEAL_DURATION_MS = 4000;
 
 interface FireContext {
   inCombat: boolean;
@@ -110,25 +102,6 @@ export function updateAbilityFiring(world: World, now: number): void {
     for (const [index, abilityId] of guards.entries()) {
       if (maybeFireGuard(world, player, abilityId, index, fctx)) break;
     }
-  }
-}
-
-export function updateAbilityHealing(world: World, dt: number): void {
-  for (const player of world.livePlayers) {
-    const cs = player.tracksCombat;
-    const remaining = getResource(cs, ABILITY_HEAL_REMAINING_KEY);
-    const durationLeft = getResource(cs, ABILITY_HEAL_DURATION_LEFT_KEY);
-    if (remaining <= 0 || durationLeft <= 0) {
-      if (remaining !== 0) setResource(cs, ABILITY_HEAL_REMAINING_KEY, 0);
-      if (durationLeft !== 0) setResource(cs, ABILITY_HEAL_DURATION_LEFT_KEY, 0);
-      continue;
-    }
-
-    const tickMs = Math.min(dt, durationLeft);
-    const healAmount = remaining * (tickMs / durationLeft);
-    setResource(cs, ABILITY_HEAL_REMAINING_KEY, Math.max(0, remaining - healAmount));
-    setResource(cs, ABILITY_HEAL_DURATION_LEFT_KEY, Math.max(0, durationLeft - tickMs));
-    applyHealToPlayer(player, cs, healAmount, world);
   }
 }
 
@@ -281,12 +254,16 @@ function maybeFireGuard(
 
   applyGuardEffect(world, player, ability, slotIndex, passives);
 
-  // guard.heal-on-fire-pct: deposit into the recovery pool so antiheal applies and
-  // the Regen buff tile shows (consistent with kill-burst / regen-burst).
-  const healPct = passives["guard.heal-on-fire-pct"] ?? 0;
-  if (healPct > 0) {
-    addResource(player.tracksCombat, BURST_POOL_KEY, player.hasHealth.maxHp * healPct);
-    setCooldown(player.tracksCombat, BURST_DRAIN_CD, BURST_DRAIN_MS);
+  // guard.recovery-on-fire-pct: firing any Guard switches on a slice of Recovery.
+  // A charm rider, NOT a Recovery skill — recovery-skill-potency does not touch it.
+  const onFirePct = passives["guard.recovery-on-fire-pct"] ?? 0;
+  if (onFirePct > 0) {
+    activateRecovery(
+      player.tracksCombat,
+      "guard",
+      onFirePct,
+      passives["guard.recovery-on-fire-ms"] ?? GAME_CONFIG.RECOVERY_ON_GUARD_MS,
+    );
   }
 
   // guard.cooldown-reduction-pct: fire the Guard more often.
@@ -343,7 +320,7 @@ function applyGuardEffect(
       applyGuardDrBuff(player, slotIndex, effect.drPct, effect.durationMs, passives);
     }
   } else if (effect.kind === "heal") {
-    applyGuardHeal(player, effect.healPct, effect.durationMs ?? DEFAULT_HEAL_DURATION_MS);
+    applyGuardHeal(player, ability, effect.recoveryPct, effect.durationMs, passives);
   } else if (effect.kind === "bramble") {
     applyBrambleGuard(player, effect.platingBonus, effect.reflectFlat, effect.durationMs);
   } else if (effect.kind === "reposition") {
@@ -377,22 +354,37 @@ function guardEffectCanFire(player: PlayerEntity, ability: AbilityDef): boolean 
   return true;
 }
 
+/**
+ * Fire a Recovery-skill Guard (Second Wind): switch on a fraction of the player's
+ * Recovery rate for a window. The healing itself is paid out by the Recovery
+ * engine, so this shares antiheal, the overheal ward and `core.recovery-mult`
+ * with every other regen effect instead of running its own HoT.
+ *
+ * `defense.recovery-skill-potency` scales the fraction, and ONLY for abilities
+ * carrying the `recovery` tag — that is the whole point of the tag. The status
+ * effect is kept purely so the buff bar can show the ability's own icon/timer.
+ */
 function applyGuardHeal(
   player: PlayerEntity,
-  healPct: number,
-  durationMs: number,
+  ability: AbilityDef,
+  recoveryPct: number,
+  durationMs: number | undefined,
+  passives: Record<string, number>,
 ): void {
-  const totalHeal = player.hasHealth.maxHp * healPct;
-  setResource(player.tracksCombat, ABILITY_HEAL_REMAINING_KEY, totalHeal);
-  setResource(player.tracksCombat, ABILITY_HEAL_DURATION_LEFT_KEY, durationMs);
+  const ms = durationMs ?? GAME_CONFIG.RECOVERY_SKILL_MS;
+  const potency = ability.tags.includes("recovery")
+    ? Math.max(0, passives["defense.recovery-skill-potency"] ?? 0)
+    : 0;
+  const fraction = recoveryPct * (1 + potency);
+  activateRecovery(player.tracksCombat, "skill", fraction, ms);
   applyStatusEffect(player.tracksCombat, {
     id: ABILITY_SECOND_WIND_EFFECT_ID,
-    remainingMs: durationMs,
+    remainingMs: ms,
     refreshable: true,
     sourceId: player.isPlayer.id,
     data: {
-      totalMs: durationMs,
-      healPct,
+      totalMs: ms,
+      recoveryPct: fraction,
     },
   });
 }

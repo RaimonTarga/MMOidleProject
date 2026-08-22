@@ -31,7 +31,7 @@ export type NodeSentSlices = Map<NetworkedComponentKey, string>;
 export type NodeDeltaState = Map<string, NodeSentSlices>;
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
-import { updateAbilityFiring, updateAbilityHealing } from "../systems/player/abilities/abilityFiring";
+import { updateAbilityFiring } from "../systems/player/abilities/abilityFiring";
 import { updateAbilityCasts } from "../systems/player/abilities/abilityCasting";
 import { updateStanceSwitch } from "../systems/player/stances/stanceSwitch";
 import { updateCombatTransitions } from "../systems/combat/ai/engagement";
@@ -395,7 +395,6 @@ export class World {
     updateCombat(this, dt, now);
     updateCombatTransitions(this, now);
     updateDefensiveSystems(this, dt, now);
-    updateAbilityHealing(this, dt);
     syncPlayerBuffs(this, now);
     mirrorHpForecast(this);
     updateAutoIntent(this);

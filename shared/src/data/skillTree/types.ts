@@ -10,7 +10,7 @@ export type SubVariant = 'light' | 'balanced' | 'heavy';
  *
  * Two kinds of field live here and they are NOT interchangeable:
  *
- *   FLAT (`attack`, `plating`, `maxHp`, `speed`, `hpRegen`, `attackRange`)
+ *   FLAT (`attack`, `plating`, `maxHp`, `speed`, `recovery`, `attackRange`)
  *     add raw magnitude. Gear scales, so a flat grant is diluted as the
  *     character progresses: `+14 attack` is the whole build at T1 and a
  *     rounding error at T5. Reserve these for positional rules (`attackRange`)
@@ -44,7 +44,7 @@ export interface StatEffects {
    */
   attackSpeedPct?: number;
   maxHp?: number;
-  hpRegen?: number;
+  recovery?: number;
   speed?: number;
 
   // ── Class affinities: summed across all sources, applied once ─────────────

@@ -2293,7 +2293,7 @@ Generated from \`SKILL_TREE\`, shared stat rebuild rules, and the report's formu
 - Base stats reset from \`GAME_CONFIG\`, then equipped weapon APS sets base attack cooldown when present.
 - Skill stat effects apply additively. \`attackSpeedPct\` sources sum, then cooldown becomes \`round(cooldown / max(0.1, 1 + attackSpeedPct))\`, floored to 200 ms before reload-specific layers.
 - Equipment stats and item upgrade stats apply after skill stats. Mechanic effects merge into \`usesSkills.passives\`.
-- Close range gets its authored range node plus class-specific close bonus from the stat pipeline: Squire +5 plating/+1 hpRegen, Apprentice +4/+2, Striker +3/+3, Slinger +2/+4, Spirit +1/+5.
+- Close range gets its authored range node plus class-specific close bonus from the stat pipeline: Squire +5 plating/+1 recovery, Apprentice +4/+2, Striker +3/+3, Slinger +2/+4, Spirit +1/+5.
 - \`shared.damage-mult\` matches the live pipeline (combat.ts): direct DPS and class-mechanic DPS are multiplied by \`1 + shared.damage-mult\` (applied before weapon-DoT conversion so the converted reservoir inherits it). Standalone class DoT is unaffected, mirroring the separate live DoT path.
 - Empowered multiplier formula: \`effective = (archetypeBase + archetypeAdd + shared.empowered-mult-add) * (1 + weapon.empowered-mult-bonus)\`, then \`ctx.damage = floor(ctx.damage * effective)\`.
 

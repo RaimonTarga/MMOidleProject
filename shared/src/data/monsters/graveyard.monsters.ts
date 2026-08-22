@@ -4,7 +4,7 @@ import type { MonsterDefinition } from './types';
 // GRAVEYARD — EXTREME high density · PLAGUE DoT · undead swarm
 // Threat is DoT accumulation from overwhelming numbers, not per-hit size.
 // Per-hit runs low; the SUM of 5–10 simultaneous attackers + stacking DoT is
-// lethal. Answer: dot-resist + hit-to-dot armor, regen-burst charm.
+// lethal. Answer: dot-resist + hit-to-dot armor, Recovery-pulse charm.
 // Anti-Far: raw speed + density. No kiters (the swarm IS the threat).
 // ══════════════════════════════════════════════════════════════════════════
 export const graveyardMonsterEntries = [

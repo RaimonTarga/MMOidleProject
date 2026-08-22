@@ -115,7 +115,7 @@ export const barrierAtom = atom<number>(0);
 export const barrierMaxAtom = atom<number>(0);
 export const barrierRechargingAtom = atom<boolean>(false);
 export const wardsAtom = atom<WardState[]>([]);
-export const hpRegenAtom = atom<number>(0);
+export const recoveryAtom = atom<number>(0);
 /** HP-bar forecast layers: pending DoT damage (red) and pending heal (dark green). */
 export const incomingDotAtom = atom<number>(0);
 export const pendingHealAtom = atom<number>(0);
@@ -685,7 +685,7 @@ function resetPlayerAtoms(): void {
 
   store.set(hpAtom, 0);
   store.set(maxHpAtom, 0);
-  store.set(hpRegenAtom, 0);
+  store.set(recoveryAtom, 0);
   store.set(incomingDotAtom, 0);
   store.set(pendingHealAtom, 0);
   store.set(attackAtom, 0);
@@ -801,7 +801,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
 
   setIfChanged(hpAtom, player.hp);
   setIfChanged(maxHpAtom, player.maxHp);
-  setIfChanged(hpRegenAtom, player.hpRegen);
+  setIfChanged(recoveryAtom, player.recovery);
   setIfChanged(incomingDotAtom, player.incomingDot);
   setIfChanged(pendingHealAtom, player.pendingHeal);
   setIfChanged(attackAtom, player.attack);

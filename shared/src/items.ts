@@ -102,7 +102,7 @@ export interface ItemStats {
   /** Hit threshold for evasion. Lower = more frequent dodge. */
   evasion?: number;
   maxHp?: number;
-  hpRegen?: number;
+  recovery?: number;
   speed?: number;
   attackRange?: number;
   attackCooldown?: number;
@@ -132,7 +132,7 @@ export interface UpgradeStep {
 /**
  * A static item template shared by all instances of that item.
  * statModifiers keys map directly to player stat field names:
- *   attack | plating | damageReduction | evasion | attackRange | attackCooldown | maxHp | hpRegen | speed
+ *   attack | plating | damageReduction | evasion | attackRange | attackCooldown | maxHp | recovery | speed
  */
 export interface ItemDefinition {
   id: string;
@@ -151,9 +151,18 @@ export interface ItemDefinition {
    *   defense.hit-to-dot-pct       — redirect X% of hit damage to 4s debt
    *   defense.dot-resistance        — mitigate incoming DoT damage by X (0–1)
    *   defense.debuff-resistance     — reduce non-DoT debuff magnitude by X (0–1)
-   *   defense.in-combat-regen-pct  — fraction of OOC regen applied while in combat
-   *   defense.regen-burst-pct      — % maxHp healed per burst (needs interval)
-   *   defense.regen-burst-interval-ms — ms between regen bursts
+   *   ── Recovery access. These do NOT heal a % of maxHp; each switches on a
+   *   fraction of the player's Recovery RATE (1 Recovery = 1% maxHp/sec at 100%).
+   *   Fractions from different sources ADD; see defense/regen/recovery.ts.
+   *   defense.recovery-active-pct  — fraction of Recovery kept active while in combat
+   *   defense.recovery-pulse-pct      — fraction of Recovery switched on per pulse (needs interval)
+   *   defense.recovery-pulse-interval-ms — ms between Recovery pulses
+   *   defense.recovery-pulse-duration-ms — how long each pulse stays active
+   *   defense.recovery-on-kill-pct — fraction of Recovery switched on by a kill (refreshes)
+   *   defense.recovery-on-kill-ms  — how long the on-kill window lasts
+   *   defense.recovery-ramp-start-pct / -max-pct / -ramptime-ms — Recovery access
+   *                                  that climbs from start to max over a fight
+   *   defense.recovery-skill-potency — scales `recovery`-TAGGED skills only
    *   defense.absorb-pct           — fraction of damage taken converted to HoT pool
    *   defense.barrier-pct          — permanent absorb pool worth % maxHp; refills
    *                                  after BARRIER_DELAY_MS without taking damage
@@ -167,7 +176,8 @@ export interface ItemDefinition {
    *   guard.cooldown-reduction-pct — shorten the Guard ability cooldown by this fraction
    *   guard.potency-pct            — scale the Guard effect magnitude (e.g. drPct) by (1 + X)
    *   guard.duration-pct           — extend the Guard buff duration by (1 + X)
-   *   guard.heal-on-fire-pct       — heal X% of maxHp into the recovery pool when the Guard fires
+   *   guard.recovery-on-fire-pct   — switch on X% of Recovery when the Guard fires
+   *   guard.recovery-on-fire-ms    — how long that Recovery window lasts
    */
   mechanicEffects?: MechanicEffects;
   /**

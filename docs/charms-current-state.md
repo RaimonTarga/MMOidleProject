@@ -16,7 +16,9 @@ into `PassiveKey` and `ALL_PASSIVE_KEYS`:
 - `guard.cooldown-reduction-pct` — shorten the Guard ability cooldown by this fraction.
 - `guard.potency-pct` — scale the Guard effect magnitude (e.g. `drPct`) by `(1 + X)`.
 - `guard.duration-pct` — extend the Guard buff duration by `(1 + X)`.
-- `guard.heal-on-fire-pct` — heal `X% × maxHp` into the recovery pool when the Guard fires.
+- `guard.recovery-on-fire-pct` — activate `X%` of the player's **Recovery rate** when the Guard fires,
+  for `guard.recovery-on-fire-ms` (default `GAME_CONFIG.RECOVERY_ON_GUARD_MS`). Not a flat `% maxHp`
+  heal — see [recovery-current-state.md](recovery-current-state.md).
 
 Documented in the `ItemDefinition.mechanicEffects` JSDoc (`items.ts`) alongside the `defense.*` keys.
 
@@ -28,14 +30,13 @@ invariant, protocol field, or combat listener.** They are dead stats unless a Gu
 
 ## Reads — `abilityFiring.ts`
 
-In `maybeFireGuard(player, abilityId, fctx)` (the `world` param was removed — it became unused once the
-heal routes through the recovery pool):
+In `maybeFireGuard(player, abilityId, fctx)`:
 
 - After a successful fire, read `player.usesSkills.passives`.
-- **heal-on-fire:** `addResource(tracksCombat, BURST_POOL_KEY, maxHp × pct)` +
-  `setCooldown(tracksCombat, BURST_DRAIN_CD, BURST_DRAIN_MS)`. The always-called `runRegenBurst`
-  (defense tick) drains it as a heal — antiheal applies, and the Regen buff tile shows. Consistent with
-  kill-burst / regen-burst.
+- **recovery-on-fire:** `activateRecovery(tracksCombat, 'guard', pct, ms)`. The Recovery engine
+  (defense tick) pays it out — antiheal applies, and it adds into the Recovery buff tile alongside
+  every other source. It is a charm rider, **not** a Recovery *skill*, so
+  `defense.recovery-skill-potency` deliberately does not scale it.
 - **cooldown-reduction:** `effectiveCd = ability.cooldownMs × (1 − clamp(pct, 0, 0.9))`, passed to
   `setCooldown(GUARD_CD_KEY, …)`.
 
@@ -69,9 +70,9 @@ regenerate and were left.)
 
 ## Worked content (placeholders — user balance pass)
 
-- `forest-charm-t1` (Heartroot Amulet): `guard.cooldown-reduction-pct` 0.15 + `guard.heal-on-fire-pct`
+- `forest-charm-t1` (Heartroot Amulet): `guard.cooldown-reduction-pct` 0.15 + `guard.recovery-on-fire-pct`
   0.08 (recovery-themed; pairs with Brace, the forest Guard ability).
-- `plains-charm-t1` (Plains Stone): keeps `defense.kill-burst-pct` 0.05, adds `guard.potency-pct` 0.20
+- `plains-charm-t1` (Plains Stone): keeps `defense.recovery-on-kill-pct` 0.05, adds `guard.potency-pct` 0.20
   (contrasting identity).
 
 ## Verified

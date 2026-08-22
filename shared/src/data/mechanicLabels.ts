@@ -56,10 +56,13 @@ export interface MechanicLabel {
 
 export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   // ── Defense: sustain, mitigation, and the shapes they ramp in ──────────────
-  'defense.in-combat-regen-pct':          { label: 'Combat regen' },
-  'defense.regen-burst-pct':              { label: 'Regen burst' },
-  'defense.regen-burst-interval-ms':      { label: 'Burst rate', companion: true },
-  'defense.kill-burst-pct':               { label: 'Kill heal' },
+  'defense.recovery-active-pct':          { label: 'Combat Recovery' },
+  'defense.recovery-pulse-pct':           { label: 'Recovery pulse' },
+  'defense.recovery-pulse-interval-ms':   { label: 'Pulse rate', companion: true },
+  'defense.recovery-pulse-duration-ms':   { label: 'Pulse duration', companion: true },
+  'defense.recovery-on-kill-pct':         { label: 'Recovery on kill' },
+  'defense.recovery-on-kill-ms':          { label: 'Kill Recovery duration', companion: true },
+  'defense.recovery-skill-potency':       { label: 'Recovery skill potency' },
   'defense.barrier-pct':                  { label: 'Barrier' },
   'defense.barrier-recharge-pct':         { label: 'Barrier recharge', companion: true },
   'defense.barrier-delay-ms':             { label: 'Barrier delay', companion: true },
@@ -79,9 +82,9 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'defense.post-cheat-death-heal-pct':    { label: 'Revive heal' },
   'defense.post-cheat-death-heal-ms':     { label: 'Revive heal time', companion: true },
   'defense.debt-cheat-death':             { label: 'Debt cheat-death' },
-  'defense.ramp-regen-max-pct':           { label: 'Ramping regen' },
-  'defense.ramp-regen-start-pct':         { label: 'Ramping regen start', companion: true },
-  'defense.ramp-regen-ramptime-ms':       { label: 'Ramping regen time', companion: true },
+  'defense.recovery-ramp-max-pct':        { label: 'Ramping Recovery' },
+  'defense.recovery-ramp-start-pct':      { label: 'Ramping Recovery start', companion: true },
+  'defense.recovery-ramp-ramptime-ms':    { label: 'Ramping Recovery time', companion: true },
   'defense.hardening-per-sec':            { label: 'Hardening rate' },
   'defense.hardening-max':                { label: 'Hardening cap', companion: true },
   'defense.hardening-reset-pct':          { label: 'Hardening lost per hit', companion: true },
@@ -165,7 +168,8 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'guard.cooldown-reduction-pct':         { label: 'Guard cooldown' },
   'guard.potency-pct':                    { label: 'Guard potency' },
   'guard.duration-pct':                   { label: 'Guard duration' },
-  'guard.heal-on-fire-pct':               { label: 'Guard heal' },
+  'guard.recovery-on-fire-pct':           { label: 'Guard Recovery' },
+  'guard.recovery-on-fire-ms':            { label: 'Guard Recovery duration', companion: true },
 
   // ── Cores. Every `-mult` here is a FRACTION on the final summed stat
   //    (0.15 = +15%), not a multiplier — see the formatter table. ─────────────
@@ -175,7 +179,7 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'core.speed-mult':                      { label: 'Move speed' },
   'core.attack-speed-mult':               { label: 'Attack speed' },
   'core.dr-layer-pct':                    { label: 'Core damage reduction' },
-  'core.recovery-mult':                   { label: 'Healing and regen' },
+  'core.recovery-mult':                   { label: 'Recovery rate' },
   'core.elite-damage-mult':               { label: 'Elite and boss damage' },
   'core.onhit-mult':                      { label: 'On-hit damage' },
   'core.debuff-duration-mult':            { label: 'Debuff duration' },

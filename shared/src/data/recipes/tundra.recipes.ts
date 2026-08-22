@@ -1,7 +1,7 @@
 import type { Recipe } from './types';
 
 // TUNDRA (debuts T3). Identity: stationary-ramp DR + cap armor / brittle weapon /
-// barrier + absorb charm. Charm rework: upgrades ramp BOTH mechanics, hpRegen flat
+// barrier + absorb charm. Charm rework: upgrades ramp BOTH mechanics, recovery flat
 // (see mountain.recipes.ts header).
 // Tundra owns the FROST DoT weapon line (relocated from Swamp): Rimebrand (T3) →
 // Glacial Rimebrand (T4). See item-identity-audit.md.
@@ -63,11 +63,11 @@ export const tundraRecipeEntries = [
     ],
   }],
 
-  // Charm: hpRegen flat; upgrades ramp barrier 0.12 -> 0.18 AND absorb 0.08 -> 0.14.
+  // Charm: recovery flat; upgrades ramp barrier 0.12 -> 0.18 AND absorb 0.08 -> 0.14.
   ['tundra-charm-t3', {
     id: 'tundra-charm-t3', name: 'Frostward Charm',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { blue: 75, purple: 25 }, catalystCost: { heavy: 3 }, stats: { hpRegen: 11 }, // family-tag: barrier charm (anti-spike) → Heavy
+    cost: { blue: 75, purple: 25 }, catalystCost: { heavy: 3 }, stats: { recovery: 11 }, // family-tag: barrier charm (anti-spike) → Heavy
     mechanicEffects: {
       'defense.barrier-pct': 0.12,
       'defense.absorb-pct': 0.08,
@@ -163,7 +163,7 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t4', {
     id: 'tundra-charm-t4', name: 'Glacial Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: barrier charm (anti-spike) → Heavy
+    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { recovery: 16 }, // family-tag: barrier charm (anti-spike) → Heavy
     mechanicEffects: {
       'defense.barrier-pct': 0.17,
       'defense.absorb-pct': 0.12,
@@ -183,7 +183,7 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t4-deepfreeze', {
     id: 'tundra-charm-t4-deepfreeze', name: 'Deepfreeze Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: barrier + absorb ward → Heavy
+    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { recovery: 16 }, // family-tag: barrier + absorb ward → Heavy
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
     //   (weaker early, stronger in long fights). (new keys)
     mechanicEffects: {

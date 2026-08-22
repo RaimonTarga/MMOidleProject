@@ -95,7 +95,7 @@ export interface PlayerView {
   selectedSubVariant: SubVariant | null;
   selectedRange: string | null;
   currentSkillTier: number;
-  hpRegen: number;
+  recovery: number;
   speed: number;
   attackStyle: string;
   inventory: string[];
@@ -338,7 +338,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     selectedSubVariant: skills.selectedSubVariant,
     selectedRange: skills.selectedRange,
     currentSkillTier: progression.currentSkillTier,
-    hpRegen: entity.hasHealth.hpRegen ?? 0,
+    recovery: entity.hasHealth.recovery ?? 0,
     speed: entity.hasPosition.speed,
     attackStyle: damage.attackStyle,
     inventory: inventory.inventory,

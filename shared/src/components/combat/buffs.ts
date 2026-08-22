@@ -58,7 +58,7 @@ export const BUFF_IDS = [
   'defense-barrier',          // permanent absorb pool (fill % on the tile)
   'defense-ward',             // temporary absorb pools
   'defense-absorb',
-  'defense-burst',
+  'defense-recovery',
   'defense-debt',
   'defense-hardening',
   'defense-revive-heal',     // post-cheat-death heal-over-time

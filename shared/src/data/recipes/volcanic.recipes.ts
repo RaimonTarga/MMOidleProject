@@ -1,7 +1,7 @@
 import type { Recipe } from './types';
 
-// VOLCANIC (debuts T3). Identity: hardening armor / flurry weapon / in-combat-regen
-// + kill-burst charm. Charm rework: upgrades ramp BOTH mechanics, hpRegen flat
+// VOLCANIC (debuts T3). Identity: hardening armor / flurry weapon / always-active
+// + on-kill Recovery charm. Charm rework: upgrades ramp BOTH mechanics, recovery flat
 // (see mountain.recipes.ts header).
 
 export const volcanicRecipeEntries = [
@@ -39,21 +39,21 @@ export const volcanicRecipeEntries = [
     ],
   }],
 
-  // Charm: hpRegen flat; upgrades ramp in-combat-regen 0.14 -> 0.20 AND kill-burst 0.08 -> 0.14.
+  // Charm: recovery flat; upgrades ramp active Recovery 0.14 -> 0.20 AND on-kill 0.08 -> 0.14.
   ['volcanic-charm-t3', {
     id: 'volcanic-charm-t3', name: 'Magmaheart Stone',
     recipeGroup: 'volcanic', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { red: 75, yellow: 25 }, stats: { hpRegen: 11 },
-    mechanicEffects: { 'defense.in-combat-regen-pct': 0.06, 'defense.kill-burst-pct': 0.04 },
+    cost: { red: 75, yellow: 25 }, stats: { recovery: 11 },
+    mechanicEffects: { 'defense.recovery-active-pct': 0.06, 'defense.recovery-on-kill-pct': 0.04 },
     tier: 3,
     icon: 'items/charms/magmaheart-stone.png',
     description: 'A still-molten heart that mends you mid-fight, and flares with every kill.',
     upgrades: [
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 50, yellow: 25 },  requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 100, yellow: 50 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 50, yellow: 25 },  requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 100, yellow: 50 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -135,7 +135,7 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t4-lavatempered', name: 'Lava-Tempered Hide',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     cost: { red: 220, yellow: 55 }, stats: { maxHp: 150, plating: 28 },
-    // † overheal-ward-pct: overheal from in-combat-regen becomes a temporary ward.
+    // † overheal-ward-pct: overheal from always-active Recovery becomes a temporary ward.
     //   Pairs naturally with Inferno Heart. (new key)
     mechanicEffects: {
       'defense.hardening-per-sec': 3, 'defense.hardening-max': 24, 'defense.hardening-reset-pct': 0.25,
@@ -156,17 +156,17 @@ export const volcanicRecipeEntries = [
   ['volcanic-charm-t4', {
     id: 'volcanic-charm-t4', name: 'Inferno Heart',
     recipeGroup: 'volcanic', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { red: 200, yellow: 50 }, stats: { hpRegen: 16 },
-    mechanicEffects: { 'defense.in-combat-regen-pct': 0.06, 'defense.kill-burst-pct': 0.04 },
+    cost: { red: 200, yellow: 50 }, stats: { recovery: 16 },
+    mechanicEffects: { 'defense.recovery-active-pct': 0.06, 'defense.recovery-on-kill-pct': 0.04 },
     tier: 4,
     icon: 'items/charms/inferno-heart.png',
     description: 'A heart that never fully cools — it mends you mid-swing and flares brighter with every fallen foe.',
     upgrades: [
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 110, yellow: 30 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 220, yellow: 60 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 110, yellow: 30 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 220, yellow: 60 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
 

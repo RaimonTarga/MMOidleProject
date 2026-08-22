@@ -77,7 +77,7 @@ function reconcileMinionSlots(world: World, owner: SummonerPlayerEntity): void {
 function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): void {
   const profile = summonerProfileFor(owner);
   const desiredSpeed = computeMinionSpeed(owner);
-  const desiredHpRegen = owner.hasHealth.hpRegen;
+  const desiredHpRegen = owner.hasHealth.recovery;
   for (let index = 0; index < owner.summonsMinions.minionIds.length; index++) {
     const id = owner.summonsMinions.minionIds[index];
     const minion = id ? world.getMinionEntity(id) : undefined;
@@ -108,8 +108,8 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       markSliceDirty(world, minion, 'isMinion');
     }
     syncMinionMaxHp(world, minion, computeMinionMaxHp(owner, index));
-    if (minion.hasHealth.hpRegen !== desiredHpRegen) {
-      minion.hasHealth.hpRegen = desiredHpRegen;
+    if (minion.hasHealth.recovery !== desiredHpRegen) {
+      minion.hasHealth.recovery = desiredHpRegen;
       markSliceDirty(world, minion, 'hasHealth');
     }
     const desiredAttack = Math.max(
@@ -155,12 +155,12 @@ function runMinionRegen(
   now: number,
 ): void {
   if (minion.hasHealth.hp >= minion.hasHealth.maxHp) return;
-  const hpRegen = minion.hasHealth.hpRegen ?? 0;
-  if (hpRegen <= 0 || isMinionInCombat(world, owner, minion, now)) return;
+  const recovery = minion.hasHealth.recovery ?? 0;
+  if (recovery <= 0 || isMinionInCombat(world, owner, minion, now)) return;
   applyHealToMinion(
     minion,
     owner.isPlayer.id,
-    minion.hasHealth.maxHp * (hpRegen / 100) * (dt / 1_000),
+    minion.hasHealth.maxHp * (recovery / 100) * (dt / 1_000),
     world,
   );
 }

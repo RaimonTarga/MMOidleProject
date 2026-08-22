@@ -50,10 +50,23 @@ export const GAME_CONFIG = {
   PLAYER_ATTACK_RANGE: 12,
   /** Milliseconds between attacks when unarmed. Overridden by weapon attacksPerSecond when a weapon is equipped. */
   PLAYER_ATTACK_COOLDOWN: 3000,
-  /** Out-of-combat HP regen as a percentage of maxHp per second (10 = 10%/s). */
-  PLAYER_HP_REGEN: 10,
-  /** Milliseconds after leaving combat (no monster aggroed) before player regen starts */
+  /** Recovery: 1 point = 1% of maxHp restored per second at 100% active Recovery. */
+  PLAYER_RECOVERY: 10,
+  /** Milliseconds after leaving combat (no monster aggroed) before Recovery returns to 100% */
   COMBAT_REGEN_DELAY: 4000,
+
+  // ── Recovery access windows ───────────────────────────────────────────────
+  // Default durations for the timed Recovery sources, used when an item or node
+  // does not author its own companion duration key. All are "how long a fraction
+  // of the Recovery rate stays switched on", never a heal amount.
+  /** Default window for `defense.recovery-pulse-pct` (ms). */
+  RECOVERY_PULSE_MS: 4000,
+  /** Default window for `defense.recovery-on-kill-pct` (ms). Kills refresh it. */
+  RECOVERY_ON_KILL_MS: 4000,
+  /** Default window for `guard.recovery-on-fire-pct` (ms). */
+  RECOVERY_ON_GUARD_MS: 4000,
+  /** Default window for a Recovery-tagged skill that omits its own duration (ms). */
+  RECOVERY_SKILL_MS: 4000,
   /** Milliseconds after last aggro drop before a monster starts regenerating */
   MONSTER_REGEN_DELAY: 5000,
   /** Monster OOC regen rate as a percentage of maxHp per second */

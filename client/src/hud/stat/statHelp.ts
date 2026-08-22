@@ -29,8 +29,8 @@ export const STAT_HELP: Record<string, string> = {
   speed: 'Movement speed (pixels/second). Affects chasing, kiting, and escaping.',
   classAffinity:
     'A class affinity: a percentage of the stat you already have, rather than a flat number. Every affinity your class tree grants for a stat is added together, then applied once to your gear-built total — root +30%, frame +22% and range +10% Max HP is +62%, not three separate multiplications. Because it scales with your equipment, your class keeps the same shape at every tier instead of being drowned out by better gear.',
-  hpRegen:
-    'Health restored per second. Only applies out of combat unless you have an in-combat regen passive.',
+  recovery:
+    'Your recovery rate: 1 point restores 1% of your max HP per second while Recovery is fully active. Out of combat it runs at 100%. In combat it is off by default — class passives, charms and skills each switch on a share of it, and those shares add together.',
 
   // ── Evasion ───────────────────────────────────────────────────────────────
   dodgeRate:
@@ -39,9 +39,16 @@ export const STAT_HELP: Record<string, string> = {
     'How much of a hit a dodge removes. A dodge isn’t always a full block — by default it avoids half the damage unless boosted.',
 
   // ── Defense passives ────────────────────────────────────────────────────────
-  'defense.in-combat-regen-pct':
-    'Fraction of your HP regen that keeps working while in combat (normally regen pauses in combat).',
-  'defense.regen-burst-pct': 'Heals a burst of max HP on a fixed timer while fighting.',
+  'defense.recovery-active-pct':
+    'Share of your Recovery rate that stays switched on the whole time you are fighting. Adds with every other Recovery source.',
+  'defense.recovery-pulse-pct':
+    'On a fixed timer while fighting, switches on this share of your Recovery rate for a few seconds. Does not stack with itself — each pulse refreshes the window.',
+  'defense.recovery-on-kill-pct':
+    'Landing a kill switches on this share of your Recovery rate for a few seconds. Further kills refresh the window rather than stacking, so it rewards fighting through a dense pack and does little against a lone boss.',
+  'defense.recovery-ramp-max-pct':
+    'Recovery access that climbs the longer a fight lasts, from its starting share up to this one. Resets when you leave combat.',
+  'defense.recovery-skill-potency':
+    'Scales the share of Recovery your Recovery-tagged skills switch on, such as Second Wind. It does not touch passive Recovery from your class, charms, or barrier and absorb.',
   'defense.barrier-pct':
     'A permanent pool worth this % of max HP that absorbs damage before your health does. It never expires: once you have gone 4 seconds without taking damage (hits and damage-over-time both count), it refills at 25% of its size per second. In a sustained fight it will not recharge — it is the buffer you open each engagement with.',
   'defense.absorb-pct':
@@ -54,8 +61,8 @@ export const STAT_HELP: Record<string, string> = {
   'defense.cleanse-stacks': 'Periodically strips debuff stacks off you on a timer.',
   'defense.max-hit-pct':
     'Caps a single hit relative to your max HP, shaving the excess off very large hits.',
-  'defense.kill-burst':
-    'A kill restores this share of your max HP, spread over the next few seconds.',
+  'defense.recovery-on-kill':
+    'A kill switches on this share of your Recovery rate for a few seconds.',
   'defense.evade-mitigation':
     'Added to how much damage an evade avoids, on top of the base. An evade is not automatically a full block — this is what pushes it toward one.',
   'reload.acquire-radius':
@@ -224,7 +231,7 @@ export const STAT_HELP: Record<string, string> = {
   'guard.cooldown-reduction-pct': 'Shortens your Guard’s cooldown, so it fires more often. Capped at 90%.',
   'guard.potency-pct': 'Scales your Guard’s magnitude, e.g. the damage reduction its buff grants.',
   'guard.duration-pct': 'Extends how long your Guard’s buff lasts.',
-  'guard.heal-on-fire-pct': 'Firing your Guard also heals this share of your max HP, over time.',
+  'guard.recovery-on-fire-pct': 'Firing your Guard also switches on this share of your Recovery rate for a few seconds.',
 
   // ── Core amplifiers ────────────────────────────────────────────────────────
   'core.attack-mult': 'Percentage multiplier on your final attack, applied after everything else adds up.',

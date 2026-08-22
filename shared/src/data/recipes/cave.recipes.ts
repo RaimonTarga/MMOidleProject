@@ -1,9 +1,9 @@
 import type { Recipe } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────
-// CAVE — full lineage (T1→T3). Identity: %DR armor / regen-burst charm /
+// CAVE — full lineage (T1→T3). Identity: %DR armor / Recovery-pulse charm /
 // above-curve chaotic-axe (dead-swing tax). Charm rework: upgrades ramp the
-// recovery mechanic(s); hpRegen flat (see mountain.recipes.ts header).
+// recovery mechanic(s); recovery flat (see mountain.recipes.ts header).
 // ─────────────────────────────────────────────────────────────────────────
 
 export const caveRecipeEntries = [
@@ -39,21 +39,21 @@ export const caveRecipeEntries = [
     ],
   }],
 
-  // CHARM (regen-burst): base 0.05 -> +0.01/step -> 0.08 at +3. hpRegen 3 flat.
+  // CHARM (Recovery pulse): base 0.05 -> +0.01/step -> 0.08 at +3. recovery 3 flat.
   ['cave-charm-t1', {
     id: 'cave-charm-t1', name: 'Pulse Stone',
     recipeGroup: 'cave', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { red: 18 }, stats: { hpRegen: 3 },
-    mechanicEffects: { 'defense.regen-burst-pct': 0.05, 'defense.regen-burst-interval-ms': 6000 },
+    cost: { red: 18 }, stats: { recovery: 3 },
+    mechanicEffects: { 'defense.recovery-pulse-pct': 0.05, 'defense.recovery-pulse-interval-ms': 6000 },
     tier: 1,
     icon: 'items/charms/pulse-stone.png',
     description: 'A cave-crystal that beats, slow and steady, like a sleeping heart.',
     upgrades: [
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 33 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01 }, cost: { red: 33 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -105,21 +105,21 @@ export const caveRecipeEntries = [
     ],
   }],
 
-  // CHARM (regen-burst): base 0.09 -> +0.02/step -> 0.15 at +3. hpRegen 6 flat.
+  // CHARM (Recovery pulse): base 0.09 -> +0.02/step -> 0.15 at +3. recovery 6 flat.
   ['cave-charm-t2', {
     id: 'cave-charm-t2', name: 'Resonant Gem',
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { red: 44 }, catalystCost: { swarming: 2 }, stats: { hpRegen: 6 }, // family-tag: reliable generalist recovery → Swarming
-    mechanicEffects: { 'defense.regen-burst-pct': 0.06, 'defense.regen-burst-interval-ms': 6000 },
+    cost: { red: 44 }, catalystCost: { swarming: 2 }, stats: { recovery: 6 }, // family-tag: reliable generalist recovery → Swarming
+    mechanicEffects: { 'defense.recovery-pulse-pct': 0.06, 'defense.recovery-pulse-interval-ms': 6000 },
     tier: 2,
     icon: 'items/charms/resonant-gem.png',
     description: 'A gem that rings on its own in the dark, answering a song no one else hears.',
     upgrades: [
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 33 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 66 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { red: 33 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { red: 66 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -172,22 +172,22 @@ export const caveRecipeEntries = [
     ],
   }],
 
-  // CHARM (regen-burst + in-combat-regen): both ramp.
-  //   regen-burst 0.13 -> +0.03/step -> 0.22 ; in-combat 0.07 -> +0.01/step -> 0.10. hpRegen 11 flat.
+  // CHARM (Recovery pulse + always-active Recovery): both ramp.
+  //   pulse 0.13 -> +0.03/step -> 0.22 ; active 0.07 -> +0.01/step -> 0.10. recovery 11 flat.
   ['cave-charm-t3', {
     id: 'cave-charm-t3', name: 'Echo Geode',
     recipeGroup: 'cave', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { red: 100, green: 25 }, catalystCost: { swarming: 3 }, stats: { hpRegen: 11 }, // family-tag: reliable generalist recovery → Swarming
-    mechanicEffects: { 'defense.regen-burst-pct': 0.07, 'defense.regen-burst-interval-ms': 6000, 'defense.in-combat-regen-pct': 0.02 },
+    cost: { red: 100, green: 25 }, catalystCost: { swarming: 3 }, stats: { recovery: 11 }, // family-tag: reliable generalist recovery → Swarming
+    mechanicEffects: { 'defense.recovery-pulse-pct': 0.07, 'defense.recovery-pulse-interval-ms': 6000, 'defense.recovery-active-pct': 0.02 },
     tier: 3,
     icon: 'items/charms/echo-geode.png',
     description: 'It pulses on its own clock, and hums a low, steady mending between the beats.',
     upgrades: [
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 50, green: 25 },  requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 112, green: 38}, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.01 }, cost: { red: 50, green: 25 },  requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.01 }, cost: { red: 112, green: 38}, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
     ],
   }],
 

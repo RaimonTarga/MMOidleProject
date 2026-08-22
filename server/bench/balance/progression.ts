@@ -72,7 +72,7 @@ function classPrefixFromRoot(classRoot: string): string {
 const SLOT_PRIMARY_STAT: Record<Exclude<GearSlot, 'core' | 'relic'>, string> = {
   weapon: 'attack',
   armor: 'damageReduction',
-  recovery: 'hpRegen',
+  recovery: 'recovery',
   mobility: 'speed',
 };
 

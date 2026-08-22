@@ -45,7 +45,7 @@ top-level doc.
 | Balance Lab | [balance-lab-current-state.md](balance-lab-current-state.md) | [player-power-curve.md](../design_docs/player-power-curve.md) |
 | Barrier & Ward | [barrier-ward-current-state.md](barrier-ward-current-state.md) | — |
 | Biome identity / ecology | [biome-ecology-current-state.md](biome-ecology-current-state.md) | — |
-| Charms + recovery | [charms-current-state.md](charms-current-state.md) | — |
+| Charms (Guard amplifiers) | [charms-current-state.md](charms-current-state.md) | — |
 | Conduit (summoner) | [conduit-current-state.md](conduit-current-state.md) | [summoner-overhaul-design-source.md](../design_docs/summoner-overhaul-design-source.md) |
 | Cores | [cores-current-state.md](cores-current-state.md) | [CORE_DESIGN_PHILOSOPHY.md](../design_docs/CORE_DESIGN_PHILOSOPHY.md), [CORE_CAST_REVIEW_DRAFT.md](../design_docs/CORE_CAST_REVIEW_DRAFT.md) |
 | DoT systems | [dot-systems-current-state.md](dot-systems-current-state.md) | — |
@@ -55,6 +55,7 @@ top-level doc.
 | Monster behavior | [monster-behavior-current-state.md](monster-behavior-current-state.md) | [boss-design.md](../design_docs/boss-design.md) |
 | Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) | — |
 | Player sprites | [player-sprites-current-state.md](player-sprites-current-state.md) | [player-visual-identity-bible.md](../design_docs/visual_and_aesthetics_design/player-visual-identity-bible.md) |
+| Recovery | [recovery-current-state.md](recovery-current-state.md) | [T1_ITEM_DESIGN_PHILOSOPHY.md](../design_docs/T1_ITEM_DESIGN_PHILOSOPHY.md), [RECOVERY_REGEN_REWORK_HANDOFF.md](../design_docs/archive/RECOVERY_REGEN_REWORK_HANDOFF.md) (historical) |
 | Relics | [relics-current-state.md](relics-current-state.md) | [relics-design.md](../design_docs/relics-design.md) |
 | Rites | [rites-current-state.md](rites-current-state.md) | — |
 | Runes | [rune-system-current-state.md](rune-system-current-state.md) | — |

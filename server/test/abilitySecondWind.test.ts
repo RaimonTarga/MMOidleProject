@@ -10,10 +10,11 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
+import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
 import {
-  updateAbilityFiring,
-  updateAbilityHealing,
-} from "../src/systems/player/abilities/abilityFiring";
+  activeRecoveryFraction,
+  runRecovery,
+} from "../src/systems/defense/regen/recovery";
 import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
 
@@ -32,7 +33,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
+      recovery: GAME_CONFIG.PLAYER_RECOVERY,
     },
     tracksProgression: {
       level: 0,
@@ -96,9 +97,13 @@ updateRuneDerivedConfig(world, 1_100);
 updateAbilityFiring(world, Date.now());
 const effect = getStatusEffect(player.tracksCombat, ABILITY_SECOND_WIND_EFFECT_ID);
 assert(!!effect, "In Combat -> Fire Guard should activate Second Wind when damaged");
-assert(effect.data.healPct === 0.3, "Second Wind status carries heal metadata");
+assert(effect.data.recoveryPct === 0.5, "Second Wind status carries its Recovery fraction");
 assert(effect.data.totalMs === 4000, "Second Wind lasts four seconds");
 assert(player.hasHealth.hp === hpBefore, "Second Wind should not heal instantly");
+assert(
+  Math.abs(activeRecoveryFraction(player, true) - 0.5) < 1e-9,
+  "Second Wind should switch on 50% of the player's Recovery",
+);
 assert(
   getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID) === undefined,
   "Second Wind should not reuse the generic Guard status",
@@ -115,18 +120,33 @@ assert(
   "Second Wind should not project the generic Guard buff",
 );
 
-updateAbilityHealing(world, 1000);
-const expectedAfterOneSecond = hpBefore + maxHp * 0.3 * 0.25;
+// Healing is paid out by the Recovery engine, not a bespoke HoT: at Recovery 10
+// and 50% active, one second restores maxHp × (10/100) × 0.5 = 5% of max HP.
+runRecovery(world, player, 1000, true);
+const perSecond = maxHp * (GAME_CONFIG.PLAYER_RECOVERY / 100) * 0.5;
 assert(
-  Math.abs(player.hasHealth.hp - expectedAfterOneSecond) < 0.001,
-  "Second Wind should heal one quarter of its total amount after one second",
+  Math.abs(player.hasHealth.hp - (hpBefore + perSecond)) < 0.001,
+  `Second Wind should restore ${perSecond} HP in its first second, got ${player.hasHealth.hp - hpBefore}`,
 );
 
-updateAbilityHealing(world, 3000);
-assert(player.hasHealth.hp === maxHp, "Second Wind should finish its heal over four seconds");
+// Run out the remaining three seconds, then confirm the window has closed and
+// the Recovery it was switching on has gone with it.
+runRecovery(world, player, 1000, true);
+runRecovery(world, player, 1000, true);
+runRecovery(world, player, 1000, true);
 assert(
-  getResource(player.tracksCombat, "ability.guard.healRemaining") === 0,
-  "Second Wind heal pool should be empty after the duration",
+  Math.abs(player.hasHealth.hp - (hpBefore + perSecond * 4)) < 0.001,
+  "Second Wind should pay out for its full four seconds",
+);
+
+runRecovery(world, player, 100, true);
+assert(
+  activeRecoveryFraction(player, true) === 0,
+  "Second Wind's Recovery access should lapse when the window expires",
+);
+assert(
+  getResource(player.tracksCombat, "recovery.skillMs") === 0,
+  "the skill Recovery source should be cleared once it expires",
 );
 
 console.log("abilitySecondWind.test.ts: ok");

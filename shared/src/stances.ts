@@ -91,10 +91,10 @@ const stances: StanceDef[] = [
   {
     id: "recuperating-stance",
     name: "Recuperating Stance",
-    blurb: "Sacrifice most offensive pressure to recover health during combat.",
+    blurb: "Sacrifice most offensive pressure to keep most of your recovery rate active in combat.",
     runeCost: 4,
-    statEffects: { attack: -65, attackSpeedPct: -0.3, hpRegen: 4 },
-    mechanicEffects: { "defense.in-combat-regen-pct": 0.8 },
+    statEffects: { attack: -65, attackSpeedPct: -0.3, recovery: 4 },
+    mechanicEffects: { "defense.recovery-active-pct": 0.8 },
     icon: "recuperating-stance",
   },
   {

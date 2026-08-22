@@ -1,13 +1,11 @@
-import { getCooldown } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../combat/buffs/descriptor';
 import {
   getCheatDeathHealPool,
   getDefenseAbsorbPool,
-  getDefenseBurstPool,
   getDefenseDebtPool,
-  BURST_DRAIN_MS,
-  BURST_DRAIN_CD,
 } from './pools';
+import { activeRecoveryFraction, recoveryPerSecond } from '../regen/recovery';
+import { isPlayerInCombat } from '../../combat/ai/engagement';
 import { getHardeningBonus, getHardeningMaxDrBonus } from '../mitigation/hardening';
 import { getStationaryDrBonus } from '../mitigation/stationaryDr';
 import { getSustainedFightDrBonus } from '../mitigation/sustainedFightDr';
@@ -60,18 +58,28 @@ export const DEFENSE_BUFFS = [
       ? { id: 'defense-absorb', label: 'Absrb', stacks: 1, durationPct: -1, color: '#ff88aa', logDetail: `${Math.round(pool)} healing pool` }
       : null;
   }, NEUTRAL_OPTS),
-  defineBuff('defense-burst', ({ playerCs }) => {
-    if (!playerCs) return null;
-    const pool = getDefenseBurstPool(playerCs);
-    if (pool <= 0) return null;
-    const drainLeft = getCooldown(playerCs, BURST_DRAIN_CD);
+  // Recovery access is the one thing on the buff bar that is a RATE, not a pool
+  // or a timer. Fractions from every source (Squire, the pulse, the on-kill
+  // window, Second Wind) add invisibly, so this tile is the only place the player
+  // can see what their sustain actually adds up to mid-fight. Shown in combat
+  // only — out of combat everyone is at a flat 100% and there is nothing to say.
+  defineBuff('defense-recovery', ({ player, now }) => {
+    if (!isPlayerInCombat(player, now)) return null;
+    const fraction = activeRecoveryFraction(player, true);
+    if (fraction <= 0) return null;
+    const perSec = recoveryPerSecond(player, fraction);
+    const pctOfMax = player.hasHealth.maxHp > 0
+      ? (perSec / player.hasHealth.maxHp) * 100
+      : 0;
     return {
-      id: 'defense-burst',
-      label: 'Regen',
-      stacks: 1,
-      durationPct: drainLeft > 0 ? (drainLeft / BURST_DRAIN_MS) * 100 : -1,
+      id: 'defense-recovery',
+      label: 'Recovery',
+      stacks: Math.round(fraction * 100),
+      // A rate has no natural sweep: the sources under it refresh independently,
+      // so an emptying arc would lie about when it ends.
+      durationPct: -1,
       color: '#aaffaa',
-      logDetail: `${Math.round(pool)} healing pool`,
+      logDetail: `${Math.round(fraction * 100)}% Recovery — ${pctOfMax.toFixed(1)}% max HP/s`,
     };
   }, NEUTRAL_OPTS),
   defineBuff('defense-revive-heal', ({ playerCs }) => {

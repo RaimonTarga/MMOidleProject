@@ -1,7 +1,7 @@
 import type { Recipe } from './types';
 
 // CLEARING (T0 tutorial). Charm is pure-regen (no secondary effect) -> it keeps
-// upgrading hpRegen (the regen IS its mechanic). See recipes index for conventions.
+// upgrading recovery (the regen IS its mechanic). See recipes index for conventions.
 
 export const clearingRecipeEntries = [
   ['primordial-club', {
@@ -34,19 +34,19 @@ export const clearingRecipeEntries = [
     ],
   }],
 
-  // Pure-regen charm: keeps upgrading hpRegen (regen is its only effect).
+  // Pure-regen charm: keeps upgrading recovery (regen is its only effect).
   ['clearing-charm-t1', {
     id: 'clearing-charm-t1', name: 'Herb Pouch',
     recipeGroup: 'clearing', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 3 }, stats: { hpRegen: 2 }, tier: 0,
+    cost: { green: 3 }, stats: { recovery: 2 }, tier: 0,
     icon: 'items/charms/herb-pouch.png',
     description: 'A drawstring pouch of bruised green leaves, gathered at the forest edge.',
     upgrades: [
-      { stats: { hpRegen: 1 }, cost: { green: 1 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { green: 3 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, cost: { green: 1 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, cost: { green: 3 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
     ],
   }],
 

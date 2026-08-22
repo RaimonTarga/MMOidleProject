@@ -35,11 +35,11 @@ export interface IsMoving {
   motion: MotionVector;
 }
 
-/** Hit points and any player-only regen rate. */
+/** Hit points and the player-only Recovery rate (points = % of maxHp per second). */
 export interface HasHealth {
   hp: number;
   maxHp: number;
-  hpRegen?: number;
+  recovery?: number;
 }
 
 /** Outgoing damage values and visual attack style. */

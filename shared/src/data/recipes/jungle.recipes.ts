@@ -1,7 +1,7 @@
 import type { Recipe } from './types';
 
 // JUNGLE (debuts T2; Forest successor). Identity: evasion + bulk armor / on-hit
-// rapier / ramping-regen charm. Charm rework: upgrades ramp the mechanic, hpRegen flat
+// rapier / ramping-regen charm. Charm rework: upgrades ramp the mechanic, recovery flat
 // (see mountain.recipes.ts header). MIGRATION: hardening stripped from the T2 armor
 // (it now lives on Volcano) — Jungle armor is pure evasion+bulk at every tier.
 
@@ -38,25 +38,25 @@ export const jungleRecipeEntries = [
     ],
   }],
 
-  // Charm: hpRegen flat; upgrades ramp ramp-regen MAX 0.21 -> 0.30 (start/ramptime flat).
+  // Charm: recovery flat; upgrades ramp ramp-regen MAX 0.21 -> 0.30 (start/ramptime flat).
   ['jungle-charm-t2', {
     id: 'jungle-charm-t2', name: 'Canopy Heart',
     recipeGroup: 'jungle', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 45 }, catalystCost: { alacrity: 2 }, stats: { hpRegen: 6 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 45 }, catalystCost: { alacrity: 2 }, stats: { recovery: 6 }, // family-tag: jungle recovery → Alacrity
     mechanicEffects: {
-      'defense.ramp-regen-start-pct': 0.04,
-      'defense.ramp-regen-max-pct': 0.10,
-      'defense.ramp-regen-ramptime-ms': 10000,
+      'defense.recovery-ramp-start-pct': 0.04,
+      'defense.recovery-ramp-max-pct': 0.10,
+      'defense.recovery-ramp-ramptime-ms': 10000,
     },
     tier: 2,
     icon: 'items/charms/canopy-heart.png',
     description: 'A knot of ancient vine that wakes, slowly, to the rhythm of a long fight.',
     upgrades: [
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 33 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 66 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 33 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 66 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -108,25 +108,25 @@ export const jungleRecipeEntries = [
     ],
   }],
 
-  // Charm: hpRegen flat; upgrades ramp ramp-regen MAX 0.23 -> 0.35.
+  // Charm: recovery flat; upgrades ramp ramp-regen MAX 0.23 -> 0.35.
   ['jungle-charm-t3', {
     id: 'jungle-charm-t3', name: 'Worldvine Heart',
     recipeGroup: 'jungle', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { green: 100 }, catalystCost: { alacrity: 3 }, stats: { hpRegen: 11 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 100 }, catalystCost: { alacrity: 3 }, stats: { recovery: 11 }, // family-tag: jungle recovery → Alacrity
     mechanicEffects: {
-      'defense.ramp-regen-start-pct': 0.05,
-      'defense.ramp-regen-max-pct': 0.14,
-      'defense.ramp-regen-ramptime-ms': 10000,
+      'defense.recovery-ramp-start-pct': 0.05,
+      'defense.recovery-ramp-max-pct': 0.14,
+      'defense.recovery-ramp-ramptime-ms': 10000,
     },
     tier: 3,
     icon: 'items/charms/worldvine-heart.png',
     description: 'It wakes slowly to a long fight, and by the end is pouring life back faster than it leaves.',
     upgrades: [
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 75 },  requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 75 },  requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -184,40 +184,40 @@ export const jungleRecipeEntries = [
   ['jungle-charm-t4', {
     id: 'jungle-charm-t4', name: 'Ancient Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { green: 200 }, catalystCost: { alacrity: 4 }, stats: { hpRegen: 16 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 200 }, catalystCost: { alacrity: 4 }, stats: { recovery: 16 }, // family-tag: jungle recovery → Alacrity
     mechanicEffects: {
-      'defense.ramp-regen-start-pct': 0.04, 'defense.ramp-regen-max-pct': 0.14, 'defense.ramp-regen-ramptime-ms': 9000,
+      'defense.recovery-ramp-start-pct': 0.04, 'defense.recovery-ramp-max-pct': 0.14, 'defense.recovery-ramp-ramptime-ms': 9000,
     },
     tier: 4,
     icon: 'items/charms/ancient-canopy.png',
     description: 'Older than the trees around it, and by a long fight\'s end it is pouring life back faster than any blade can take it.',
     upgrades: [
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 300 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 300 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
     ],
   }],
 
   ['jungle-charm-t4-overgrowth', {
     id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { green: 200 }, catalystCost: { alacrity: 4 }, stats: { hpRegen: 16 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 200 }, catalystCost: { alacrity: 4 }, stats: { recovery: 16 }, // family-tag: jungle recovery → Alacrity
     // † overheal-ward-pct: regen beyond max HP converts to a temporary ward.
     mechanicEffects: {
-      'defense.ramp-regen-start-pct': 0.04, 'defense.ramp-regen-max-pct': 0.12, 'defense.ramp-regen-ramptime-ms': 9000,
+      'defense.recovery-ramp-start-pct': 0.04, 'defense.recovery-ramp-max-pct': 0.12, 'defense.recovery-ramp-ramptime-ms': 9000,
       'defense.overheal-ward-pct': 0.25,
     },
     tier: 4,
     icon: 'items/charms/overgrowth-pulse.png',
     description: 'It grows past the wound and keeps growing, hardening the surplus into a living shell.',
     upgrades: [
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 300 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 300 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
     ],
   }],
 

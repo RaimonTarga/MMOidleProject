@@ -43,7 +43,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: {
       hp: 100_000,
       maxHp: 100_000,
-      hpRegen: 0,
+      recovery: 0,
     },
     tracksProgression: {
       level: 0,

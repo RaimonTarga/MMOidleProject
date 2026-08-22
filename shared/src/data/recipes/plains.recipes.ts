@@ -2,8 +2,8 @@ import type { Recipe } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────
 // PLAINS — full lineage (T1→T2; retires after T2). Identity: plating armor /
-// kill-burst charm / honest no-mechanic broadsword. Charm rework: see header
-// in mountain.recipes.ts (upgrades ramp the mechanic; hpRegen flat).
+// Recovery-on-kill charm / honest no-mechanic broadsword. Charm rework: see header
+// in mountain.recipes.ts (upgrades ramp the mechanic; recovery flat).
 // ─────────────────────────────────────────────────────────────────────────
 
 export const plainsRecipeEntries = [
@@ -40,22 +40,22 @@ export const plainsRecipeEntries = [
     ],
   }],
 
-  // CHARM (kill-burst): base 0.05 -> +0.01/step -> 0.08 at +3. hpRegen 4 flat.
+  // CHARM (Recovery on kill): base 0.05 -> +0.01/step -> 0.08 at +3. recovery 4 flat.
   // + Guard amplifier (Step 8): potency — makes the Guard effect hit harder. PLACEHOLDER.
   ['plains-charm-t1', {
     id: 'plains-charm-t1', name: 'Plains Stone',
     recipeGroup: 'plains', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { yellow: 10 }, stats: { hpRegen: 4 },
-    mechanicEffects: { 'defense.kill-burst-pct': 0.05, 'guard.potency-pct': 0.20 },
+    cost: { yellow: 10 }, stats: { recovery: 4 },
+    mechanicEffects: { 'defense.recovery-on-kill-pct': 0.05, 'guard.potency-pct': 0.20 },
     tier: 1,
     icon: 'items/charms/plains-stone.png',
     description: 'A sun-warmed stone from the heart of the grasslands, humming with quiet vigor.',
     upgrades: [
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 12 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 24 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 12 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 24 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -110,21 +110,21 @@ export const plainsRecipeEntries = [
     ],
   }],
 
-  // CHARM (kill-burst): base 0.09 -> +0.01/step -> 0.12 at +3. hpRegen 7 flat.
+  // CHARM (Recovery on kill): base 0.09 -> +0.01/step -> 0.12 at +3. recovery 7 flat.
   ['plains-charm-t2', {
     id: 'plains-charm-t2', name: 'Stalwart Heart',
     recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { yellow: 50 }, catalystCost: { alacrity: 2 }, stats: { hpRegen: 7 }, // family-tag: kill-burst answers swarm attrition → Alacrity
-    mechanicEffects: { 'defense.kill-burst-pct': 0.09 },
+    cost: { yellow: 50 }, catalystCost: { alacrity: 2 }, stats: { recovery: 7 }, // family-tag: on-kill Recovery answers swarm attrition → Alacrity
+    mechanicEffects: { 'defense.recovery-on-kill-pct': 0.09 },
     tier: 2,
     icon: 'items/charms/stalwart-heart.png',
     description: 'A greater plains-stone, its warmth swelling with every foe laid low.',
     upgrades: [
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
     ],
   }],
 

@@ -1,5 +1,6 @@
-// Integration wiring for the core mechanics that need a real World: the recovery
-// heal funnel, the Duelist elite/boss damage listener, and both mobility clauses.
+// Integration wiring for the core mechanics that need a real World: where
+// core.recovery-mult lands, the Duelist elite/boss damage listener, and both
+// mobility clauses.
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/coreCombat.test.ts
 
@@ -16,6 +17,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { applyHealToPlayer } from "../src/systems/defense/regen/healing";
+import { recalculatePlayerEntityStats } from "../src/ecs/playerEntityFormulas";
 import { emitCombatEvent, type CombatContext } from "../src/systems/combat/engine/combatPipeline";
 import {
   abilityCooldownKey,
@@ -33,7 +35,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
+      recovery: GAME_CONFIG.PLAYER_RECOVERY,
     },
     tracksProgression: {
       level: 0, skillPoints: 0,
@@ -57,7 +59,12 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
 initCombatSystems();
 const world = new World();
 
-// ── core.recovery-mult scales every heal through the funnel ─────────────────
+// ── core.recovery-mult lands on the Recovery STAT, never on the heal funnel ──
+//
+// Recovery is the canonical restoration rate and every in-combat regen effect
+// activates a fraction of it, so multiplying the rate already covers all of them.
+// Applying it a second time per-heal would compound it (a +25% core landing as
+// +56%), so applyHealToPlayer must stay neutral.
 
 {
   const player = world.attachPlayerEntity(makePlayerSlices("heal-player"), "heal-player");
@@ -69,10 +76,34 @@ const world = new World();
   assert(baseline === 100, `expected an unmodified heal of 100, got ${baseline}`);
 
   player.usesSkills.passives["core.recovery-mult"] = 0.25;
+  player.hasHealth.maxHp = 1000;
   player.hasHealth.hp = 500;
   applyHealToPlayer(player, player.tracksCombat, 100);
   const scaled = player.hasHealth.hp - 500;
-  assert(scaled === 125, `expected a +25% recovery heal of 125, got ${scaled}`);
+  assert(
+    scaled === 100,
+    `the heal funnel must not re-apply core.recovery-mult, got ${scaled}`,
+  );
+}
+
+{
+  // The same core DOES scale the rate itself, once, during recalc.
+  const player = world.attachPlayerEntity(makePlayerSlices("recovery-stat"), "recovery-stat");
+  recalculatePlayerEntityStats(world, player);
+  const base = player.hasHealth.recovery ?? 0;
+  assert(
+    base === GAME_CONFIG.PLAYER_RECOVERY,
+    `expected the naked baseline Recovery ${GAME_CONFIG.PLAYER_RECOVERY}, got ${base}`,
+  );
+
+  player.usesSkills.unlockedSkills = [];
+  player.holdsInventory.equipment.core = "core-survivalist";
+  recalculatePlayerEntityStats(world, player);
+  const boosted = player.hasHealth.recovery ?? 0;
+  assert(
+    boosted > base,
+    `a recovery-mult core should raise the Recovery stat, got ${boosted} vs ${base}`,
+  );
 }
 
 // ── core.elite-damage-mult applies to elites/bosses only ───────────────────

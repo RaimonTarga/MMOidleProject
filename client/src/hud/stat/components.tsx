@@ -6,15 +6,26 @@ export function DefensePassivesSection({ passives: p }: { passives: Record<strin
   const rows: { label: string; value: string; help?: ReactNode }[] = [];
   const help = (k: string) => STAT_HELP[k];
 
-  const inCombatRegen = p['defense.in-combat-regen-pct'] ?? 0;
-  if (inCombatRegen > 0)
-    rows.push({ label: 'In-combat Regen', value: `${Math.round(inCombatRegen * 100)}%`, help: help('defense.in-combat-regen-pct') });
+  // Recovery access rows. Each is a SHARE OF THE RECOVERY RATE, not a % of max
+  // HP, and shares from different sources add — so they read as percentages that
+  // can legitimately sum past 100%.
+  const activeRecovery = p['defense.recovery-active-pct'] ?? 0;
+  if (activeRecovery > 0)
+    rows.push({ label: 'Combat Recovery', value: `${Math.round(activeRecovery * 100)}%`, help: help('defense.recovery-active-pct') });
 
-  const burstRegen = p['defense.regen-burst-pct'] ?? 0;
-  if (burstRegen > 0) {
-    const iv = ((p['defense.regen-burst-interval-ms'] ?? 0) / 1000).toFixed(0);
-    rows.push({ label: 'Burst Regen', value: `${Math.round(burstRegen * 100)}% / ${iv}s`, help: help('defense.regen-burst-pct') });
+  const pulseRecovery = p['defense.recovery-pulse-pct'] ?? 0;
+  if (pulseRecovery > 0) {
+    const iv = ((p['defense.recovery-pulse-interval-ms'] ?? 0) / 1000).toFixed(0);
+    rows.push({ label: 'Recovery Pulse', value: `${Math.round(pulseRecovery * 100)}% / ${iv}s`, help: help('defense.recovery-pulse-pct') });
   }
+
+  const killRecovery = p['defense.recovery-on-kill-pct'] ?? 0;
+  if (killRecovery > 0)
+    rows.push({ label: 'Recovery on Kill', value: `${Math.round(killRecovery * 100)}%`, help: help('defense.recovery-on-kill-pct') });
+
+  const skillPotency = p['defense.recovery-skill-potency'] ?? 0;
+  if (skillPotency > 0)
+    rows.push({ label: 'Recovery Skill Potency', value: `+${Math.round(skillPotency * 100)}%`, help: help('defense.recovery-skill-potency') });
 
   const barrierPct = p['defense.barrier-pct'] ?? 0;
   if (barrierPct > 0) {

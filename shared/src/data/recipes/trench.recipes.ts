@@ -55,20 +55,20 @@ export const trenchRecipeEntries = [
   ['trench-charm-t4', {
     id: 'trench-charm-t4', name: 'Pressure Vessel',
     recipeGroup: 'trench', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 150 }, stats: { hpRegen: 16 },
+    cost: { green: 150 }, stats: { recovery: 16 },
     mechanicEffects: {
       'defense.absorb-pct': 0.16,
-      'defense.regen-burst-pct': 0.10, 'defense.regen-burst-interval-ms': 8000,
+      'defense.recovery-pulse-pct': 0.10, 'defense.recovery-pulse-interval-ms': 8000,
     },
     tier: 4,
     icon: 'items/charms/pressure-vessel.png',
     description: 'Built to hold against a crushing deep — it softens the one enormous blow and breathes life back on a slow count.',
     upgrades: [
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 100 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
     ],
   }],
 

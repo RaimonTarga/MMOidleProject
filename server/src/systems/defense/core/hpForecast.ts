@@ -1,12 +1,15 @@
 import { computeLinearDotDamage, isMonsterDotStatusEffectId } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
-import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseBurstPool, getDefenseDebtPool } from './pools';
+import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseDebtPool } from './pools';
 
 // Display-only HP-bar forecast: how much pending damage will hit the player
 // (ticking DoT + deferred hit-to-DoT debt), and how much heal-over-time
-// (regen/absorb pools) is queued. Mirrored onto hasStatus each tick so the HP
-// bar can render the red (pending damage) and dark-green (regen) layers.
+// (absorb + post-cheat-death pools) is queued. Mirrored onto hasStatus each tick
+// so the HP bar can render the red (pending damage) and dark-green (regen) layers.
+//
+// Recovery is deliberately absent: it is a RATE, not a queued pool, so there is no
+// finite amount owed to draw past current HP. The Recovery buff tile surfaces it.
 // Read-only — never feeds back into combat math.
 
 function forecastIncomingDot(player: PlayerEntity): number {
@@ -35,7 +38,7 @@ function forecastIncomingDot(player: PlayerEntity): number {
 
 function forecastPendingHeal(player: PlayerEntity): number {
   const cs = player.tracksCombat;
-  return Math.round(getDefenseBurstPool(cs) + getDefenseAbsorbPool(cs) + getCheatDeathHealPool(cs));
+  return Math.round(getDefenseAbsorbPool(cs) + getCheatDeathHealPool(cs));
 }
 
 export function mirrorHpForecast(world: World): void {
