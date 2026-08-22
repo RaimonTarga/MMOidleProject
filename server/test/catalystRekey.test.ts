@@ -75,7 +75,7 @@ assert(farmModifier === "alacrity", "the farm node under test is an alacrity nod
 const wolf = world.createMonster(FARM_NODE, "wolf", { x: 800, y: 800 })!;
 // Wolf's essence reward (no explicit catalystWeight), scaled by the node modifier's
 // reward premium — modifiers are net difficulty increases and pay for themselves.
-const weight = Math.round(4 * modifierRewardMult(farmModifier));
+const weight = Math.round(4 * modifierRewardMult(farmModifier, 1));
 const per = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
 const kills = 30;
 for (let i = 0; i < kills; i++) grantMonsterRewards(world, "p-alac", wolf);

@@ -55,6 +55,7 @@ top-level doc.
 | Monster behavior | [monster-behavior-current-state.md](monster-behavior-current-state.md) | [boss-design.md](../design_docs/boss-design.md) |
 | Monster combat rework (T1-T4) | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) | [MONSTER_COMBAT_REWORK_HANDOFF_T1_T4_2026-08-22.md](../design_docs/MONSTER_COMBAT_REWORK_HANDOFF_T1_T4_2026-08-22.md) |
 | Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) | — |
+| Node modifiers | [node-modifiers-current-state.md](node-modifiers-current-state.md) | [map-variety-plan.md](map-variety-plan.md) (map design authority; its §1.2/§1.6 are superseded) |
 | Player sprites | [player-sprites-current-state.md](player-sprites-current-state.md) | [player-visual-identity-bible.md](../design_docs/visual_and_aesthetics_design/player-visual-identity-bible.md) |
 | Recovery | [recovery-current-state.md](recovery-current-state.md) | [T1_ITEM_DESIGN_PHILOSOPHY.md](../design_docs/T1_ITEM_DESIGN_PHILOSOPHY.md), [RECOVERY_REGEN_REWORK_HANDOFF.md](../design_docs/archive/RECOVERY_REGEN_REWORK_HANDOFF.md) (historical) |
 | Relics | [relics-current-state.md](relics-current-state.md) | [relics-design.md](../design_docs/relics-design.md) |
@@ -73,7 +74,7 @@ handoffs: both systems have complete machinery and thin, placeholder content.
 | Doc | State |
 |---|---|
 | [ui-redesign-plan.md](ui-redesign-plan.md) | Phased desktop HUD redesign with review gates; Part III (apparatus wave) still ahead. |
-| [map-variety-plan.md](map-variety-plan.md) | Design authority for the world map. Both stages shipped; no separate current-state doc — this plus the code is the record. |
+| [map-variety-plan.md](map-variety-plan.md) | Design authority for the world map (layout, regions, catalyst economy). Both stages shipped. Its node-modifier sections (§1.2 pace families, §1.6 density overlay) were superseded 2026-08-21 — live modifier behavior is in [node-modifiers-current-state.md](node-modifiers-current-state.md). |
 | [terrain-variance-plan.md](terrain-variance-plan.md) | **Living record of the biome visual pass (CLOSED 2026-08-17).** SS8-9 are the levers and the per-biome log — every biome's generators, measured numbers and open dials. S10 records what was deferred. SS1-7 are an earlier, PARKED gameplay-terrain plan; do not start on those. |
 | [biome-refactor-playtest.md](biome-refactor-playtest.md) | Open playtest notes and unanswered questions from the per-biome T1 dungeon pass. |
 | [briefs/t1-boss-numbers-2026-08-21.md](briefs/t1-boss-numbers-2026-08-21.md) | **Open brief.** The T1 boss numerical pass: all five calibrated to one end-of-tier band (5.5x cost spread -> 1.11x). Records two tooling defects it found — `--mode boss` never fought a boss, and the tier table ignored `consecutiveHits` — and why the Gnarled Greatbear cannot be tuned off the plating cliff until the mitigation pass lands. |

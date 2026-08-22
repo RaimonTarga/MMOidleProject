@@ -529,7 +529,7 @@ function md(tier: number, blocks: BiomeBlock[], anchor: number): string {
   function underModifier(b: BiomeBlock, modifier: NodeModifierFamily | null) {
     const tierOf = tier;
     const n = (CONCURRENCY[b.id] ?? DEFAULT_CONCURRENCY) *
-      (modifier ? modifierSpawnFactor(modifier) : 1);
+      (modifier ? modifierSpawnFactor(modifier, tierOf) : 1);
     const defs = b.rows
       .map((r) => ({ def: MONSTER_DATABASE.get(r.id)!, w: r.weight, row: r }))
       .filter((x) => x.def);

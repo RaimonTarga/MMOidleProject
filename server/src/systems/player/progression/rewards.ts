@@ -188,7 +188,7 @@ function applyKillRewardsToPlayer(
   // Bosses are modifier-immune for STATS, but the node's reward identity still
   // applies to them (as it always has for the catalyst bundle below).
   const nodeModifier = NODE_MODIFIERS[nodeId]?.modifier;
-  const rewardMult = modifierRewardMult(nodeModifier);
+  const rewardMult = modifierRewardMult(nodeModifier, biomeTier);
   const scaledEssence = Math.max(
     1,
     Math.round(rewards.essence * essenceMult * rewardMult),

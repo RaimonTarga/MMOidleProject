@@ -54,7 +54,7 @@ for (const tier of [1, 2, 3, 4]) {
   for (const family of NODE_MODIFIER_FAMILIES) {
     const s = modifierStatScalars(family, tier);
     const dpsMult = s.attackMult / s.attackCooldownMult;
-    const spawn = modifierSpawnFactor(family);
+    const spawn = modifierSpawnFactor(family, tier);
     const tougher =
       s.hpMult > 1 || s.platingMult > 1 || s.incomingDamageMult < 1;
     const harder = dpsMult > 1.0001 || tougher || spawn > 1;
@@ -62,9 +62,37 @@ for (const tier of [1, 2, 3, 4]) {
     assert(dpsMult >= 0.9999, `${family} T${tier} must not LOWER dps`);
 
     // Rewards must pay for the added difficulty.
-    assert(modifierRewardMult(family) > 1, `${family} pays extra reward`);
+    assert(modifierRewardMult(family, tier) > 1, `${family} pays extra reward`);
   }
 }
+
+// ── 3b. Everything scales with the tier ───────────────────────────────────────
+// Modifiers are meant to be a small distinction in T1 and a real one by T4, so
+// magnitude, population swing and reward must all widen monotonically.
+for (const tier of [2, 3, 4]) {
+  const prev = tier - 1;
+  assert(
+    MODIFIER_MAGNITUDE_BY_TIER[tier]! > MODIFIER_MAGNITUDE_BY_TIER[prev]!,
+    `T${tier} magnitude exceeds T${prev}`,
+  );
+  assert(
+    modifierSpawnFactor('swarming', tier) > modifierSpawnFactor('swarming', prev),
+    `T${tier} swarming adds more bodies than T${prev}`,
+  );
+  assert(
+    modifierSpawnFactor('dominion', tier) < modifierSpawnFactor('dominion', prev),
+    `T${tier} dominion removes more bodies than T${prev}`,
+  );
+  for (const family of NODE_MODIFIER_FAMILIES) {
+    assert(
+      modifierRewardMult(family, tier) > modifierRewardMult(family, prev),
+      `T${tier} ${family} pays more than T${prev}`,
+    );
+  }
+}
+// Outside the authored tiers nothing applies at all.
+assert(modifierSpawnFactor('swarming', 99) === 1, 'unknown tier leaves population alone');
+assert(modifierRewardMult('dominion', 99) === 1, 'unknown tier pays no premium');
 
 // ── 4. Per-modifier shape ─────────────────────────────────────────────────────
 const tier = 2;
@@ -75,7 +103,7 @@ const alacrity = modifierStatScalars('alacrity', tier);
 assert(alacrity.attackMult === 1, 'alacrity leaves attack damage alone');
 assert(alacrity.attackCooldownMult < 1, 'alacrity attacks faster');
 assert(alacrity.moveSpeedMult > 1, 'alacrity moves faster');
-assert(modifierSpawnFactor('alacrity') === 1, 'alacrity does not change count');
+assert(modifierSpawnFactor('alacrity', tier) === 1, 'alacrity does not change count');
 
 // heavy: bigger hits, slower cadence, net more damage.
 const heavy = modifierStatScalars('heavy', tier);
@@ -97,11 +125,11 @@ assert(
     swarming.moveSpeedMult === 1,
   'swarming changes no stat',
 );
-assert(modifierSpawnFactor('swarming') > 1, 'swarming raises the count');
+assert(modifierSpawnFactor('swarming', tier) > 1, 'swarming raises the count');
 
 // dominion: fewer bodies, stronger in every respect.
 const dominion = modifierStatScalars('dominion', tier);
-assert(modifierSpawnFactor('dominion') < 1, 'dominion lowers the count');
+assert(modifierSpawnFactor('dominion', tier) < 1, 'dominion lowers the count');
 assert(
   dominion.attackMult > 1 &&
     dominion.hpMult > 1 &&
@@ -124,7 +152,7 @@ assert(
 assert(fortified.moveSpeedMult === 1, 'fortified leaves speed alone');
 assert(fortified.platingMult > 1, 'fortified raises plating');
 assert(fortified.incomingDamageMult < 1, 'fortified reduces damage taken');
-assert(modifierSpawnFactor('fortified') === 1, 'fortified does not change count');
+assert(modifierSpawnFactor('fortified', tier) === 1, 'fortified does not change count');
 
 // ── 5. Damage-reduction folding stays in range ────────────────────────────────
 // The multiplicative form must work from DR 0 (where a naive `DR × k` cannot) and
@@ -170,6 +198,43 @@ assert(
   modifierDetails('swarming', 1).some((d) => d.label === 'Monster count'),
   'swarming reports its count change',
 );
+
+// The rows are a READOUT of the runtime, not a second authoring of the numbers, so
+// every displayed value must match what spawning actually applies. Dominion is the
+// case that regressed before: it displayed +M attack while spawning +2M.
+const pct = (fraction: number): string => {
+  const value = Math.round(Math.abs(fraction) * 1000) / 10;
+  return `${fraction >= 0 ? '+' : '−'}${Number.isInteger(value) ? value : value.toFixed(1)}%`;
+};
+for (const detailTier of [1, 2, 3, 4]) {
+  for (const family of NODE_MODIFIER_FAMILIES) {
+    const rows = modifierDetails(family, detailTier);
+    const scalars = modifierStatScalars(family, detailTier);
+    // A row reading 'unchanged' is prose, not a number — parity only binds numbers.
+    const find = (label: string): string | undefined => {
+      const value = rows.find((row) => row.label === label)?.value;
+      return value === 'unchanged' ? undefined : value;
+    };
+    const expect = (label: string, want: string): void => {
+      const value = find(label);
+      if (value === undefined) return; // the row is optional; a present one must be right
+      assert(value === want, `${family} T${detailTier} ${label}: ${value} vs ${want}`);
+    };
+    expect('Attack damage', pct(scalars.attackMult - 1));
+    expect('Attack interval', pct(scalars.attackCooldownMult - 1));
+    expect('Move speed', pct(scalars.moveSpeedMult - 1));
+    expect('Health', pct(scalars.hpMult - 1));
+    expect('Plating', pct(scalars.platingMult - 1));
+    expect('Damage taken', pct(scalars.incomingDamageMult - 1));
+    expect('Monster count', pct(modifierSpawnFactor(family, detailTier) - 1));
+    expect('Rewards', pct(modifierRewardMult(family, detailTier) - 1));
+    // Dominion's damage-taken reduction must be surfaced, not silently applied.
+    if (family === 'dominion') {
+      assert(find('Damage taken') !== undefined, 'dominion surfaces its damage-taken cut');
+      assert(find('Attack damage') !== undefined, 'dominion shows a numeric attack row');
+    }
+  }
+}
 
 // ── 8. A native modifier is never also banned for its own biome ───────────────
 for (const [biome, native] of Object.entries(NATIVE_MODIFIER)) {

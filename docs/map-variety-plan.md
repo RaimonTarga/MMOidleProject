@@ -73,6 +73,14 @@ economy through some other key. Bosses remain one-per-biome exams (Step 13), not
 
 ### 1.2 Five combat-pattern families — one player-facing vocabulary
 
+> **SUPERSEDED 2026-08-21.** The Alacrity / Brutality / Blight / Volatility / Predation
+> pace vocabulary below was collapsed into five upside modifiers — Alacrity, Heavy,
+> Swarming, Dominion, Fortified — and the mechanic overlays (synthesised DoT, counted
+> bursts, opening strikes) were deleted. The catalyst-per-modifier rule and the
+> one-name-for-node-tag-and-catalyst principle both survive; the family list, effects,
+> and per-biome native/ban tables below do not. Live behavior and numbers:
+> [node-modifiers-current-state.md](node-modifiers-current-state.md).
+
 These are the game's five **distinctive combat patterns**, not a 1:1 list of its five base
 weapons. Rapier, Hammer, DoT-conversion, Chaotic Axe, and Ambush each express one clearly;
 Broadsword is deliberately outside the taxonomy as the neutral generalist. Summoner is also not
@@ -201,11 +209,13 @@ Mountain assignment. Exhaustive per-biome coverage now satisfies this rule by co
 
 ### 1.6 Density modifiers — optional second slot, threat/reward-budgeted
 
-> **Current implementation status (2026-07-24): dormant.** Swarming and Elite
-> Ground are retained as design vocabulary and dormant helper code, but
-> `DENSITY_MODIFIERS_ENABLED = false` prevents authoring/projection and every
-> population, spawn-pool, reward, and UI effect. The remainder of this section is
-> preserved as the shelved proposal to revisit, not current gameplay behavior.
+> **SUPERSEDED 2026-08-21.** There is no second slot. Density shipped as two of the
+> five modifiers — Swarming and Dominion (the former Elite Ground) — so they key
+> catalysts like any other modifier and are net difficulty increases rather than
+> threat/reward-neutral trades. `DENSITY_MODIFIERS_ENABLED` and the overlay machinery
+> are gone. The remainder of this section is the shelved two-axis proposal, kept for
+> its threat/reward reasoning only. Live behavior:
+> [node-modifiers-current-state.md](node-modifiers-current-state.md).
 
 - **Swarming** — non-elite spawn count way up, pool biased away from elites.
 - **Elite Ground** — spawn count down, pool biased toward the biome's toughest entries.

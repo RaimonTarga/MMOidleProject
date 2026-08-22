@@ -85,18 +85,22 @@ export function catalystFamilyLabel(family: string): string {
 
 // ── Magnitudes (PLACEHOLDER — user tunes here) ────────────────────────────────
 
-/** Modifier strength by node tier — sharper at higher tiers. */
+/**
+ * Modifier strength by node tier. Modifiers are a small distinction in T1 and grow
+ * into a real one by T4 — a new player should barely notice which node they picked,
+ * a late player should plan around it.
+ */
 export const MODIFIER_MAGNITUDE_BY_TIER: Record<number, number> = {
-  1: 0.15,
-  2: 0.2,
-  3: 0.25,
-  4: 0.3,
+  1: 0.05,
+  2: 0.1,
+  3: 0.15,
+  4: 0.2,
 };
 
 /**
  * Extra attack granted by `heavy` on top of its slower cadence, as a multiple of M.
  * `heavy` is net-positive DPS by design: attack ×(1 + HEAVY_ATTACK_FACTOR×M) against
- * a cadence of ×(1 + M), so at M=0.15 it deals ~13% more DPS in ~30% bigger bites.
+ * a cadence of ×(1 + M), so at M=0.05 it deals ~5% more DPS in ~10% bigger bites.
  */
 const HEAVY_ATTACK_FACTOR = 2;
 
@@ -109,44 +113,52 @@ const FORTIFIED_PLATING_FACTOR = 2;
  * ×(1+2M) as `heavy`.
  *
  * The attack factor is load-bearing, not flavour. Dominion removes bodies, and
- * sustained pressure is `d(N+1)/2` — so cutting the count drags pressure DOWN by
- * roughly 10-13% before any stat rise. At the original ×(1+M) that made Dominion the
- * SAFEST modifier in every biome, quietly below an unmodified node, which is the
- * opposite of its intent. ×(1+2M) covers the body loss and leaves it a genuine
- * increase.
+ * sustained pressure is `d(N+1)/2` — so cutting the count drags pressure DOWN before
+ * any stat rise. At the original ×(1+M) that made Dominion the SAFEST modifier in
+ * every biome, quietly below an unmodified node, which is the opposite of its intent.
+ * ×(1+2M) covers the body loss and leaves it a genuine increase.
  */
 const DOMINION_MOVE_FACTOR = 0.5;
 const DOMINION_ATTACK_FACTOR = 2;
 
 /**
- * Spawn-count multipliers. Damage taken from a pull is QUADRATIC in the number of
- * concurrent attackers (see tools/tier-table.ts), so these swing much harder than
- * they read.
+ * Spawn-count multipliers BY TIER. Damage taken from a pull is QUADRATIC in the
+ * number of concurrent attackers (see tools/tier-table.ts), so these swing much
+ * harder than they read, and they are deliberately timid.
  *
- * They are deliberately timid. Population enters sustained pressure through
- * `(N+1)/2`, which is far more sensitive than any stat multiplier: the earlier
- * 1.4/0.7 pair spanned ×1.51 of pressure inside a single biome, against a
- * progression step of only ×1.20 between biomes — so a Swarming Plains out-pressured
- * a Dominion Forest and the biome order stopped being readable. At 1.2/0.85 the whole
- * modifier set fits inside the step and every railroad step orders cleanly.
- * (The dormant pre-rework values were 1.75/0.5, wider still.)
+ * Population enters sustained pressure through `(N+1)/2`, which is far more sensitive
+ * than any stat multiplier: a spread wider than the ×1.20 progression step between
+ * biomes lets a Swarming Plains out-pressure a Dominion Forest and the biome order
+ * stops being readable. Keeping the whole tier's spread inside that step is the
+ * constraint these numbers exist to satisfy.
  */
-const SWARMING_SPAWN_FACTOR = 1.2;
-const DOMINION_SPAWN_FACTOR = 0.85;
+const SWARMING_SPAWN_BY_TIER: Record<number, number> = {
+  1: 1.08,
+  2: 1.12,
+  3: 1.16,
+  4: 1.2,
+};
+const DOMINION_SPAWN_BY_TIER: Record<number, number> = {
+  1: 0.95,
+  2: 0.92,
+  3: 0.88,
+  4: 0.85,
+};
 
 /**
- * Per-kill reward multiplier, paying out the difficulty each modifier adds.
+ * Per-kill reward premium, as a multiple of M: the payout is `1 + factor × M`, so it
+ * scales with the tier exactly as the difficulty does.
  *
- * `swarming` is deliberately close to 1: it already pays more per hour simply by
- * providing more bodies, so a large per-kill bonus on top would make it the only
- * node type worth farming. `dominion` pays most because it removes bodies AND
- * strengthens what remains, so each kill carries the whole difficulty increase.
+ * `swarming` is deliberately near zero: it already pays more per hour simply by
+ * providing more bodies, so a large per-kill bonus on top would make it the only node
+ * type worth farming. `dominion` pays most because it removes bodies AND strengthens
+ * what remains, so each kill carries the whole difficulty increase.
  */
-const MODIFIER_REWARD_MULT: Record<NodeModifierFamily, number> = {
-  alacrity: 1.15,
-  heavy: 1.15,
-  swarming: 1.05,
-  dominion: 1.4,
+const MODIFIER_REWARD_FACTOR: Record<NodeModifierFamily, number> = {
+  alacrity: 1,
+  heavy: 0.8,
+  swarming: 0.2,
+  dominion: 2,
   fortified: 1.25,
 };
 
@@ -273,16 +285,27 @@ export function modifiedDamageReduction(
 // ── Population + rewards (pure) ───────────────────────────────────────────────
 
 /** Multiplier on a node's target monster population. */
-export function modifierSpawnFactor(family: NodeModifierFamily | undefined): number {
-  if (family === 'swarming') return SWARMING_SPAWN_FACTOR;
-  if (family === 'dominion') return DOMINION_SPAWN_FACTOR;
+export function modifierSpawnFactor(
+  family: NodeModifierFamily | undefined,
+  biomeTier: number,
+): number {
+  if (family === 'swarming') return SWARMING_SPAWN_BY_TIER[biomeTier] ?? 1;
+  if (family === 'dominion') return DOMINION_SPAWN_BY_TIER[biomeTier] ?? 1;
   return 1;
 }
 
-/** Per-kill reward multiplier for essence / biome XP / catalyst progress. */
-export function modifierRewardMult(family: NodeModifierFamily | undefined): number {
+/**
+ * Per-kill reward multiplier for essence / biome XP / catalyst progress, rounded to
+ * the nearest whole percent so both the payout and its UI row stay legible.
+ */
+export function modifierRewardMult(
+  family: NodeModifierFamily | undefined,
+  biomeTier: number,
+): number {
   if (!family) return 1;
-  return MODIFIER_REWARD_MULT[family] ?? 1;
+  const m = magnitudeForTier(biomeTier);
+  if (m <= 0) return 1;
+  return 1 + Math.round((MODIFIER_REWARD_FACTOR[family] ?? 0) * m * 100) / 100;
 }
 
 // ── UI detail rows ────────────────────────────────────────────────────────────
@@ -293,15 +316,25 @@ export interface ModifierDetail {
   direction: 'up' | 'down' | 'neutral';
 }
 
-const compactNumber = (value: number): string =>
-  Number.isInteger(value) ? String(value) : value.toFixed(1);
+// Round before testing for integrality: 2 × 0.05 × 100 is 10.000000000000002 in
+// floating point, which would otherwise render as "10.0".
+const compactNumber = (value: number): string => {
+  const rounded = Math.round(value * 10) / 10;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+};
 
 const signedPercent = (fraction: number): string => {
   const value = compactNumber(Math.abs(fraction) * 100);
   return `${fraction >= 0 ? '+' : '−'}${value}%`;
 };
 
-/** Exact player-facing values for a modifier at a given biome tier. */
+/**
+ * Exact player-facing values for a modifier at a given biome tier.
+ *
+ * Every row here must mirror `modifierStatScalars` / `modifierSpawnFactor` /
+ * `modifierRewardMult` exactly — this is a readout of the runtime, not a second
+ * authoring of the numbers.
+ */
 export function modifierDetails(
   family: NodeModifierFamily,
   biomeTier: number,
@@ -326,7 +359,7 @@ export function modifierDetails(
     case 'swarming':
       rows.push({
         label: 'Monster count',
-        value: signedPercent(SWARMING_SPAWN_FACTOR - 1),
+        value: signedPercent(modifierSpawnFactor('swarming', biomeTier) - 1),
         direction: 'up',
       });
       rows.push({ label: 'Monster stats', value: 'unchanged', direction: 'neutral' });
@@ -334,12 +367,21 @@ export function modifierDetails(
     case 'dominion':
       rows.push({
         label: 'Monster count',
-        value: signedPercent(DOMINION_SPAWN_FACTOR - 1),
+        value: signedPercent(modifierSpawnFactor('dominion', biomeTier) - 1),
         direction: 'down',
       });
       rows.push({ label: 'Health', value: signedPercent(m), direction: 'up' });
-      rows.push({ label: 'Attack damage', value: signedPercent(m), direction: 'up' });
-      rows.push({ label: 'Armour', value: signedPercent(m), direction: 'up' });
+      rows.push({
+        label: 'Attack damage',
+        value: signedPercent(DOMINION_ATTACK_FACTOR * m),
+        direction: 'up',
+      });
+      rows.push({ label: 'Plating', value: signedPercent(m), direction: 'up' });
+      rows.push({
+        label: 'Damage taken',
+        value: signedPercent(-DOMINION_MOVE_FACTOR * m),
+        direction: 'down',
+      });
       rows.push({
         label: 'Move speed',
         value: signedPercent(DOMINION_MOVE_FACTOR * m),
@@ -357,7 +399,7 @@ export function modifierDetails(
       break;
   }
 
-  const reward = modifierRewardMult(family);
+  const reward = modifierRewardMult(family, biomeTier);
   if (reward !== 1) {
     rows.push({
       label: 'Rewards',

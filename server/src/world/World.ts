@@ -584,7 +584,10 @@ export class World {
     // factor belongs here and nowhere else. Excluded nodes carry no modifier and
     // are therefore untouched. Never round a positive target down to zero — a
     // 1-monster node under Dominion must still spawn one.
-    const factor = modifierSpawnFactor(NODE_MODIFIERS[nodeId]?.modifier);
+    const factor = modifierSpawnFactor(
+      NODE_MODIFIERS[nodeId]?.modifier,
+      biomeInfo?.biomeTier ?? 0,
+    );
     if (factor === 1 || base <= 0) return base;
     return Math.max(1, Math.round(base * factor));
   }

@@ -95,7 +95,16 @@ assert(
   "fortified leaves cooldown alone",
 );
 assert(fort.hasPosition.speed === toadDef.stats.speed, "fortified leaves speed alone");
-assert(fort.mitigatesDamage.plating > toadDef.stats.plating, "fortified raises plating");
+// Plating is rounded at spawn, and T1 magnitude is only 5% — a 2-plating toad
+// cannot move. Assert the shape here and prove the scaling on a monster whose
+// plating is large enough for the rounding not to swallow it.
+assert(fort.mitigatesDamage.plating >= toadDef.stats.plating, "fortified never lowers plating");
+const hydraDef = MONSTER_DATABASE.get("swamp-hydra")!;
+const fortHydra = world.createMonster(FORTIFIED, "swamp-hydra", POS)!;
+assert(
+  fortHydra.mitigatesDamage.plating > hydraDef.stats.plating,
+  "fortified raises plating where rounding allows it",
+);
 assert(
   fort.mitigatesDamage.damageReduction > toadDef.stats.damageReduction,
   "fortified raises damage reduction",
@@ -130,7 +139,7 @@ assert(boss.hasHealth.maxHp === bossDef.stats.hp, "boss keeps def HP");
 // ── Dungeons are excluded — no modifier, trash unmodified ─────────────────────
 assert(NODE_MODIFIERS["node-t1-forest-dungeon"] === undefined, "dungeon node has no modifier");
 assert(
-  modifierSpawnFactor(NODE_MODIFIERS["node-t1-forest-dungeon"]?.modifier) === 1,
+  modifierSpawnFactor(NODE_MODIFIERS["node-t1-forest-dungeon"]?.modifier, 1) === 1,
   "an absent modifier leaves population alone",
 );
 
@@ -149,10 +158,16 @@ if (clearingMob) {
 // ── Rewards pay for the added difficulty ──────────────────────────────────────
 for (const nodeId of [ALACRITY, HEAVY, SWARMING, DOMINION, FORTIFIED]) {
   assert(
-    modifierRewardMult(NODE_MODIFIERS[nodeId].modifier) > 1,
+    modifierRewardMult(NODE_MODIFIERS[nodeId].modifier, 1) > 1,
     `${nodeId} pays a reward premium`,
   );
+  // ...and pays MORE for the same modifier deeper in the world.
+  assert(
+    modifierRewardMult(NODE_MODIFIERS[nodeId].modifier, 4) >
+      modifierRewardMult(NODE_MODIFIERS[nodeId].modifier, 1),
+    `${nodeId} pays more at T4 than at T1`,
+  );
 }
-assert(modifierRewardMult(undefined) === 1, "an unmodified node pays no premium");
+assert(modifierRewardMult(undefined, 1) === 1, "an unmodified node pays no premium");
 
 console.log("nodeModifiers.wiring.test: ok");
