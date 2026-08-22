@@ -13,7 +13,7 @@ import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
 import { stanceDef } from '../stances';
-import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
+import { effectiveAttacksPerSecond, upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
@@ -154,11 +154,17 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   p.hasHealth.recovery           = GAME_CONFIG.PLAYER_RECOVERY;
   p.hasPosition.speed           = GAME_CONFIG.PLAYER_SPEED;
 
-  // 1b. Weapon attack rate
+  // 1b. Weapon attack rate. Upgrade steps may add an APS delta (the rapier
+  // lineage buys cadence instead of Attack), so the effective rate is resolved
+  // here rather than read straight off the base definition.
   const weaponId = p.holdsInventory.equipment.weapon;
   const weapon   = weaponId ? ITEM_DATABASE.get(weaponId) : undefined;
-  if (weapon?.attacksPerSecond) {
-    p.performsAttack.attackCooldown = Math.round(1000 / weapon.attacksPerSecond);
+  if (weapon) {
+    const aps = effectiveAttacksPerSecond(
+      weapon,
+      p.holdsInventory.itemUpgrades?.[weapon.id] ?? 0,
+    );
+    if (aps) p.performsAttack.attackCooldown = Math.round(1000 / aps);
   }
 
   // 2. Apply unlocked skill effects

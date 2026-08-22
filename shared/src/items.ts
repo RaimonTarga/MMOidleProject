@@ -118,6 +118,15 @@ export interface ItemStats {
 export interface UpgradeStep {
   stats?: Partial<ItemStats>;
   mechanicEffects?: Record<string, number>;
+  /**
+   * Weapons only. ADDITIVE delta on the weapon's base `attacksPerSecond`, so a
+   * lineage can spend part of its upgrade budget on cadence instead of Attack
+   * (the Forest rapier's identity: +0.02 APS per level rather than more damage).
+   * Summed across steps like every other delta, then applied once in the stat
+   * rebuild BEFORE `attackSpeedPct` — an upgraded weapon behaves exactly as if
+   * its base APS had been authored higher.
+   */
+  attacksPerSecond?: number;
   cost: Partial<Record<EssenceType, number>>;
   /**
    * Optional biome-catalyst cost for this step, keyed by biome group (e.g.

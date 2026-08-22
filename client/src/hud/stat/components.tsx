@@ -78,11 +78,11 @@ export function MobilityPassivesSection({ passives: p }: { passives: Record<stri
   if (has('mobility.kill-speed-pct'))
     rows.push({ label: 'On-kill Haste', value: `+${pct('mobility.kill-speed-pct')} / ${sec('mobility.kill-speed-ms')}`, help: help('mobility.kill-speed-pct') });
 
-  if (has('mobility.acquire-speed-pct'))
+  if (has('mobility.approach-speed-pct'))
     rows.push({
-      label: 'New-target Burst',
-      value: `+${pct('mobility.acquire-speed-pct')} / ${sec('mobility.acquire-speed-ms')} (${sec('mobility.acquire-cooldown-ms')} cd)`,
-      help: help('mobility.acquire-speed-pct'),
+      label: 'Closing Speed',
+      value: `+${pct('mobility.approach-speed-pct')} toward target`,
+      help: help('mobility.approach-speed-pct'),
     });
 
   if (has('mobility.kite-speed-pct'))
@@ -106,6 +106,9 @@ export function MobilityPassivesSection({ passives: p }: { passives: Record<stri
 
   if (has('mobility.aggro-pull-pct'))
     rows.push({ label: 'Aggro Pull', value: `+${pct('mobility.aggro-pull-pct')} enemy detection`, help: help('mobility.aggro-pull-pct') });
+
+  if (has('mobility.slow-resistance'))
+    rows.push({ label: 'Slow Resist', value: `${pct('mobility.slow-resistance')} weaker slows`, help: help('mobility.slow-resistance') });
 
   if (has('mobility.tenacity-pct'))
     rows.push({ label: 'Tenacity', value: `${pct('mobility.tenacity-pct')} faster slow/root recovery`, help: help('mobility.tenacity-pct') });

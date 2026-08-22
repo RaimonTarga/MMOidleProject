@@ -71,8 +71,8 @@ export const STAT_HELP: Record<string, string> = {
   // ── Mobility passives ────────────────────────────────────────────────────────
   'mobility.ooc-speed-pct': 'Extra move speed while out of combat — faster travel between fights.',
   'mobility.kill-speed-pct': 'A burst of move speed for a short time after each kill.',
-  'mobility.acquire-speed-pct':
-    'A move-speed burst when you lock onto a new target, on its own cooldown.',
+  'mobility.approach-speed-pct':
+    'Extra move speed while you are closing on your target. It switches off once you reach them, and never helps you retreat.',
   'mobility.kite-speed-pct':
     'Extra move speed while retreating from your current target — for kiting.',
   'mobility.ramp-speed-pct': 'Move speed that builds the longer you keep moving.',
@@ -81,6 +81,8 @@ export const STAT_HELP: Record<string, string> = {
     'Stacking move speed and faster slow/root recovery on kills, up to a few stacks.',
   'mobility.stealth-pct': 'Enemies notice you from closer — easier to slip past.',
   'mobility.aggro-pull-pct': 'Enemies notice you from farther — pulls more onto you.',
+  'mobility.slow-resistance':
+    'Slows hit weaker — a 50% slow at 30% resistance is only a 35% slow. It does not shorten them, and it does nothing against a root.',
   'mobility.tenacity-pct': 'Slows and roots wear off faster.',
 
   // ── Shared / weapon mechanics ───────────────────────────────────────────────

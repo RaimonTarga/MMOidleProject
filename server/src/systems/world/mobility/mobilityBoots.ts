@@ -11,10 +11,12 @@
  *     timed-buff readers) folded into movement.ts via {@link bootSpeedMultiplier}.
  *   - Player-side detection-radius multiplier (Cave stealth / Jungle pull) read by
  *     ai.ts findAggro via {@link playerDetectionMult}.
- *   - Tenacity: incoming slow/CC duration scaling (Swamp + Graveyard) via
+ *   - Tenacity: incoming hard-CC duration scaling (Graveyard/Trench) via
  *     {@link mobilityTenacityDurationMult}, applied at the slow-application site.
- *   - Timed/stacking buffs (Forest/Mountain/Graveyard on-kill & on-acquire,
- *     Volcanic suppression) built on the existing tracksCombat status-effect API.
+ *   - Slow resistance: incoming soft-slow MAGNITUDE scaling (Swamp) via
+ *     {@link slowResistedMult}, applied wherever a slow multiplier is read.
+ *   - Timed/stacking buffs (Plains/Graveyard on-kill, Volcanic suppression)
+ *     built on the existing tracksCombat status-effect API.
  *
  * (Trench — Nth-hit backward glide — is intentionally not implemented yet.)
  */
@@ -22,15 +24,11 @@
 import {
   addCounter,
   applyStatusEffect,
-  getCooldown,
   getCounter,
   getStatusEffect,
   detectionMultForPoint,
-  getString,
   hasStatusEffect,
-  setCooldown,
   setCounter,
-  setString,
   vectorTo,
 } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -45,18 +43,21 @@ import {
 // ── Status-effect ids (player tracksCombat) ─────────────────────────────────────
 // Exported so the Hunter's Instinct rite (system rework Step 11) can reuse the same
 // on-kill haste buff — the `mob-haste` descriptor projects it unconditionally.
-export const FOREST_HASTE = "mob-forest-haste"; // Forest on-kill speed
-const MOUNTAIN_BURST = "mob-mountain-burst"; // Mountain on-acquire speed
+export const FOREST_HASTE = "mob-forest-haste"; // on-kill speed (Plains boots + Hunter's Instinct)
 const GRAVEYARD_HASTE = "mob-graveyard-haste"; // Graveyard on-kill speed + tenacity (stacks)
 const VOLCANIC_SUPPRESS = "mob-volcanic-suppress"; // Volcanic: suppresses passive speed on hit
 
 // ── tracksCombat scratch keys ───────────────────────────────────────────────────
 const MOVE_TIMER = "mobMoveTimerMs"; // counter — Tundra continuous-move accumulator
-const LAST_TARGET = "mobLastTargetId"; // string  — Mountain edge detection
-const ACQUIRE_CD = "mobAcquireCd"; // cooldown — Mountain re-trigger gate
 
 // ── Tuning floors/caps (structural, not balance) ────────────────────────────────
 const TENACITY_CAP = 0.9; // CC duration can be cut at most 90% — never fully nullified
+const SLOW_RESIST_CAP = 0.9; // a slow can be softened at most 90% — never fully nullified
+// Mountain gap-closing only pays out while there is a gap to close. Below this
+// centre-to-centre distance the player is effectively in contact and the bonus
+// switches off, so the boots read as "these help me REACH the target" rather than
+// as unconditional combat move speed.
+const APPROACH_MIN_DISTANCE = 64;
 const DETECTION_FLOOR = 0.1; // a stealthed player is never fully invisible to pull aggro
 // Guard on the compound case only. Jungle aggro-pull boots reach +0.80, so boots
 // alone top out at 1.8 and are UNAFFECTED by this cap; it exists so boots stacked
@@ -66,8 +67,6 @@ const DETECTION_CAP = 3;
 
 // ── Defaults for timed effects when the boot omits an explicit duration ─────────
 const DEFAULT_KILL_SPEED_MS = 3000;
-const DEFAULT_ACQUIRE_SPEED_MS = 1500;
-const DEFAULT_ACQUIRE_CD_MS = 8000;
 const DEFAULT_KILL_STACK_MS = 4000;
 const DEFAULT_SUPPRESS_MS = 4000;
 const GRAVEYARD_MAX_STACKS = 3;
@@ -98,6 +97,11 @@ export function bootSpeedMultiplier(
   const kite = p["mobility.kite-speed-pct"] ?? 0;
   if (kite > 0 && isMovingAwayFromTarget(world, player)) pct += kite;
 
+  // Mountain — continuous gap closing: only while closing on the target and only
+  // while a gap still exists. No proc, no cooldown; the condition IS the mechanic.
+  const approach = p["mobility.approach-speed-pct"] ?? 0;
+  if (approach > 0 && isClosingOnTarget(world, player)) pct += approach;
+
   // Tundra — ramp scales with continuous-move time, capped; bleeds off on stop
   // (the timer is reset in updateMobilityState the moment the player is idle).
   const rampCap = p["mobility.ramp-speed-pct"] ?? 0;
@@ -107,30 +111,54 @@ export function bootSpeedMultiplier(
     pct += Math.min(rampCap, secs * rate);
   }
 
-  // Timed buffs (Forest / Mountain / Graveyard). Graveyard scales by stack count.
+  // Timed buffs (on-kill haste / Graveyard). Graveyard scales by stack count.
   const forest = getStatusEffect(cs, FOREST_HASTE);
   if (forest) pct += forest.data["speedPct"] ?? 0;
-  const mountain = getStatusEffect(cs, MOUNTAIN_BURST);
-  if (mountain) pct += mountain.data["speedPct"] ?? 0;
   const grave = getStatusEffect(cs, GRAVEYARD_HASTE);
   if (grave) pct += grave.stacks * (grave.data["speedPct"] ?? 0);
 
   return pct > 0 ? 1 + pct : 1;
 }
 
+/**
+ * Signed alignment between the player's motion and the direction to its attack
+ * target, plus the distance to that target. `null` when there is nothing to
+ * measure against (not moving, no target, target gone).
+ *
+ * One helper for both directional boots so "toward" and "away" can never drift
+ * apart: Desert reads a negative dot, Mountain reads a positive one.
+ */
+function targetApproach(
+  world: World,
+  player: PlayerEntity,
+): { dot: number; distance: number } | null {
+  if (!player.isMoving) return null;
+  const targetId = player.hasAttackTarget?.targetId;
+  if (!targetId) return null;
+  const target = world.getMonsterEntity(targetId);
+  if (!target) return null;
+  const to = vectorTo(player.hasPosition.current, target.hasPosition.current);
+  const dir = player.isMoving.motion.direction;
+  return {
+    dot: dir.x * to.direction.x + dir.y * to.direction.y,
+    distance: to.magnitude,
+  };
+}
+
 /** True when the player's current motion points away from its attack target. */
 function isMovingAwayFromTarget(world: World, player: PlayerEntity): boolean {
-  if (!player.isMoving) return false;
-  const targetId = player.hasAttackTarget?.targetId;
-  if (!targetId) return false;
-  const target = world.getMonsterEntity(targetId);
-  if (!target) return false;
-  const toTarget = vectorTo(
-    player.hasPosition.current,
-    target.hasPosition.current,
-  ).direction;
-  const dir = player.isMoving.motion.direction;
-  return dir.x * toTarget.x + dir.y * toTarget.y < 0;
+  const a = targetApproach(world, player);
+  return a !== null && a.dot < 0;
+}
+
+/**
+ * True when the player is moving toward its attack target and is still further
+ * than {@link APPROACH_MIN_DISTANCE} from it. Once inside that gap the bonus
+ * switches off, so gap-closing boots never become free in-contact move speed.
+ */
+function isClosingOnTarget(world: World, player: PlayerEntity): boolean {
+  const a = targetApproach(world, player);
+  return a !== null && a.dot > 0 && a.distance > APPROACH_MIN_DISTANCE;
 }
 
 /**
@@ -160,8 +188,30 @@ export function playerDetectionMult(player: PlayerEntity): number {
 }
 
 /**
- * Multiplier applied to an incoming slow/CC duration at application time
- * (Swamp static tenacity + active Graveyard buff stacks). 1.0 = no reduction.
+ * Softened move-speed multiplier after `mobility.slow-resistance` (Swamp boots).
+ *
+ * Slow resistance reduces the MAGNITUDE of a soft slow, not its duration: a 50%
+ * slow (mult 0.5) at 30% resistance becomes a 35% slow (mult 0.65). It is the
+ * counterpart to tenacity, which shortens hard-CC duration instead.
+ *
+ * A ROOT (mult <= 0) is hard control and passes through untouched — no amount of
+ * slow resistance lets a rooted player walk. Values >= 1 are not slows and are
+ * returned as-is, so callers can pipe every multiplier through this one seam.
+ *
+ * Called from BOTH `playerSpeedMults` (movement.ts) and the buff descriptors that
+ * project `speedMult` to the client, so the client's own-player extrapolation
+ * keeps matching the server's effective speed.
+ */
+export function slowResistedMult(player: PlayerEntity, mult: number): number {
+  if (mult <= 0 || mult >= 1) return mult;
+  const resist = player.usesSkills.passives["mobility.slow-resistance"] ?? 0;
+  if (resist <= 0) return mult;
+  return 1 - (1 - mult) * (1 - Math.min(SLOW_RESIST_CAP, resist));
+}
+
+/**
+ * Multiplier applied to an incoming hard-CC duration at application time
+ * (Graveyard buff stacks + Trench tenacity). 1.0 = no reduction.
  * Only ever scales movement CC — never damage debuffs.
  */
 export function mobilityTenacityDurationMult(player: PlayerEntity): number {
@@ -177,7 +227,9 @@ export function mobilityTenacityDurationMult(player: PlayerEntity): number {
  * Per-tick mobility bookkeeping. Runs over every live player BEFORE updateMovement
  * so the speed multiplier reads current state:
  *   - Tundra: accumulate / reset the continuous-move timer.
- *   - Mountain: edge-detect a newly-locked target and fire the cooldown-gated burst.
+ *
+ * The directional boots (Desert kiting, Mountain gap closing) need no bookkeeping
+ * at all — their condition is evaluated fresh in `bootSpeedMultiplier`.
  */
 export function updateMobilityState(world: World, dt: number): void {
   for (const player of world.livePlayers) {
@@ -190,42 +242,13 @@ export function updateMobilityState(world: World, dt: number): void {
       else setCounter(cs, MOVE_TIMER, 0);
     }
 
-    // Mountain on-acquire burst — fires when the locked target id changes to a new
-    // non-empty id and the cooldown is clear. The cooldown debounces the natural
-    // flip-flop of hasAttackTarget as monsters drift in/out of range.
-    const acquirePct = p["mobility.acquire-speed-pct"] ?? 0;
-    if (acquirePct > 0) {
-      const currentId = player.hasAttackTarget?.targetId ?? "";
-      const lastId = getString(cs, LAST_TARGET) ?? "";
-      if (
-        currentId !== "" &&
-        currentId !== lastId &&
-        getCooldown(cs, ACQUIRE_CD) <= 0
-      ) {
-        const ms = p["mobility.acquire-speed-ms"] ?? DEFAULT_ACQUIRE_SPEED_MS;
-        applyStatusEffect(cs, {
-          id: MOUNTAIN_BURST,
-          maxStacks: 1,
-          remainingMs: ms,
-          refreshable: true,
-          sourceId: player.isPlayer.id,
-          data: { speedPct: acquirePct, totalMs: ms },
-        });
-        setCooldown(
-          cs,
-          ACQUIRE_CD,
-          p["mobility.acquire-cooldown-ms"] ?? DEFAULT_ACQUIRE_CD_MS,
-        );
-      }
-      setString(cs, LAST_TARGET, currentId);
-    }
   }
 }
 
 /**
  * Register the combat-pipeline listeners that drive event-triggered boots.
  * Called once from combatBootstrap.
- *   - onKill (player attacker): Forest haste + Graveyard stacking haste/tenacity.
+ *   - onKill (player attacker): Plains haste + Graveyard stacking haste/tenacity.
  *   - onDamageTaken (player defender): Volcanic passive-speed suppression.
  *
  * Direct-attack kills and player-owned DoT tick kills both emit onKill, so these
@@ -238,8 +261,8 @@ export function initMobilityBoots(): void {
     const cs = player.tracksCombat;
     const p = player.usesSkills.passives;
 
-    const forestPct = p["mobility.kill-speed-pct"] ?? 0;
-    if (forestPct > 0) {
+    const killPct = p["mobility.kill-speed-pct"] ?? 0;
+    if (killPct > 0) {
       const ms = p["mobility.kill-speed-ms"] ?? DEFAULT_KILL_SPEED_MS;
       applyStatusEffect(cs, {
         id: FOREST_HASTE,
@@ -247,7 +270,7 @@ export function initMobilityBoots(): void {
         remainingMs: ms,
         refreshable: true,
         sourceId: player.isPlayer.id,
-        data: { speedPct: forestPct, totalMs: ms },
+        data: { speedPct: killPct, totalMs: ms },
       });
     }
 
@@ -299,7 +322,7 @@ function effectDurationPct(remainingMs: number, totalMs: number): number {
 }
 
 export const MOBILITY_BUFFS = [
-  // Plains — out-of-combat sprint (collapses the instant combat starts).
+  // Forest — out-of-combat sprint (collapses the instant combat starts).
   defineBuff(
     "mob-sprint",
     ({ player, now }) => {
@@ -318,7 +341,7 @@ export const MOBILITY_BUFFS = [
     { ...NEUTRAL_CIRCLE, color: "#7cfc00", label: "Sprint" },
   ),
 
-  // Forest — on-kill haste.
+  // Plains — on-kill haste (also projected by the Hunter's Instinct rite).
   defineBuff(
     "mob-haste",
     ({ playerCs }) => {
@@ -339,25 +362,23 @@ export const MOBILITY_BUFFS = [
     { ...NEUTRAL_CIRCLE, color: "#9acd32", label: "Haste" },
   ),
 
-  // Mountain — on-new-target burst.
+  // Mountain — continuous gap closing (present only while actually closing).
   defineBuff(
     "mob-burst",
-    ({ playerCs }) => {
-      if (!playerCs) return null;
-      const fx = getStatusEffect(playerCs, MOUNTAIN_BURST);
-      if (!fx) return null;
-      const pct = fx.data["speedPct"] ?? 0;
+    ({ player, world }) => {
+      const pct = player.usesSkills.passives["mobility.approach-speed-pct"] ?? 0;
+      if (pct <= 0 || !isClosingOnTarget(world, player)) return null;
       return {
         id: "mob-burst",
-        label: "Burst",
+        label: "Close",
         stacks: 1,
-        durationPct: effectDurationPct(fx.remainingMs, fx.data["totalMs"] ?? 0),
+        durationPct: -1,
         speedMult: 1 + pct,
         color: "#87cefa",
-        logDetail: `+${Math.round(pct * 100)}% move speed (new target)`,
+        logDetail: `+${Math.round(pct * 100)}% move speed (closing)`,
       };
     },
-    { ...NEUTRAL_CIRCLE, color: "#87cefa", label: "Burst" },
+    { ...NEUTRAL_CIRCLE, color: "#87cefa", label: "Close" },
   ),
 
   // Graveyard — stacking on-kill speed + tenacity.

@@ -32,20 +32,23 @@ import { actorFromPlayer } from "../../../world/worldLogActors";
 import { collectMechanicBuffs } from "../../classes/registry";
 import { DEFENSE_BUFFS } from "../../defense";
 import { WEAPON_BUFFS } from "../damage/weaponEffects";
-import { MOBILITY_BUFFS } from "../../world/mobility/mobilityBoots";
+import { MOBILITY_BUFFS, slowResistedMult } from "../../world/mobility/mobilityBoots";
 import { ABILITY_BUFFS } from "../../player/abilities/abilityBuffs";
 import { defineBuff, type BuffDescriptor, type BuffProjectionContext } from "./descriptor";
 
 const DEBUFF_BUFFS = [
   defineBuff(
     "debuff-slow",
-    ({ playerCs, world }) => {
+    ({ player, playerCs, world }) => {
       if (!playerCs) return null;
       const slow = getStatusEffect(playerCs, "slow");
       if (!slow || (slow.data["speedMult"] ?? 1) <= 0) return null;
       const totalMs = slow.data["totalMs"] ?? slow.remainingMs;
       const source = world.getMonsterEntity(slow.sourceId);
-      const speedPct = Math.round((slow.data["speedMult"] ?? 1) * 100);
+      // Slow resistance softens the magnitude, so the bar and the client's own-
+      // player extrapolation both show what the player will ACTUALLY move at.
+      const mult = slowResistedMult(player, Math.max(0, slow.data["speedMult"] ?? 1));
+      const speedPct = Math.round(mult * 100);
       return {
         id: "debuff-slow",
         label: "SLOW",
@@ -54,7 +57,7 @@ const DEBUFF_BUFFS = [
           totalMs > 0 && slow.remainingMs > 0
             ? (slow.remainingMs / totalMs) * 100
             : -1,
-        speedMult: Math.max(0, slow.data["speedMult"] ?? 1),
+        speedMult: mult,
         color: "#55aaff",
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
@@ -96,14 +99,14 @@ const DEBUFF_BUFFS = [
   ),
   defineBuff(
     "debuff-frost-ramp",
-    ({ playerCs, world }) => {
+    ({ player, playerCs, world }) => {
       if (!playerCs) return null;
       const ramp = getStatusEffect(playerCs, FROST_RAMP_EFFECT_ID);
       if (!ramp) return null;
       const totalMs = ramp.data["totalMs"] ?? ramp.remainingMs;
       const source = world.getMonsterEntity(ramp.sourceId);
-      const moveSlow = frostRampMoveSlowPct(ramp);
-      const movePct = Math.round(moveSlow * 100);
+      const moveMult = slowResistedMult(player, Math.max(0, 1 - frostRampMoveSlowPct(ramp)));
+      const movePct = Math.round((1 - moveMult) * 100);
       const atkPct = Math.round(frostRampAtkSlowPct(ramp) * 100);
       return {
         id: "debuff-frost-ramp",
@@ -114,7 +117,7 @@ const DEBUFF_BUFFS = [
             ? (ramp.remainingMs / totalMs) * 100
             : -1,
         // Keep client own-player prediction aligned with the server move-slow.
-        speedMult: Math.max(0, 1 - moveSlow),
+        speedMult: moveMult,
         color: "#aaddff",
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
@@ -200,7 +203,7 @@ const DEBUFF_BUFFS = [
   ),
   defineBuff(
     "debuff-volcanic-heat",
-    ({ playerCs }) => {
+    ({ player, playerCs }) => {
       if (!playerCs) return null;
       const heat = getStatusEffect(playerCs, VOLCANIC_HEAT_EFFECT_ID);
       if (!heat || heat.stacks <= 0) return null;
@@ -224,7 +227,7 @@ const DEBUFF_BUFFS = [
         durationPct: ambientRampFillPct(heat) * 100,
         // Volcano's payload carries no move slow; Tundra's chill (Session 6) will,
         // and the client extrapolation reads this to stay in step with the server.
-        speedMult: ambientRampMoveMult(heat),
+        speedMult: slowResistedMult(player, ambientRampMoveMult(heat)),
         color: "#ff5522",
         logSourceName: "Volcanic heat",
         logSourceSide: "enemy",
@@ -235,11 +238,11 @@ const DEBUFF_BUFFS = [
   ),
   defineBuff(
     "debuff-tundra-chill",
-    ({ playerCs }) => {
+    ({ player, playerCs }) => {
       if (!playerCs) return null;
       const chill = getStatusEffect(playerCs, TUNDRA_CHILL_EFFECT_ID);
       if (!chill || chill.stacks <= 0) return null;
-      const speedMult = ambientRampMoveMult(chill);
+      const speedMult = slowResistedMult(player, ambientRampMoveMult(chill));
       return {
         id: "debuff-tundra-chill",
         label: "CHILL",

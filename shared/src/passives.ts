@@ -469,13 +469,19 @@ export const MOBILITY_KEYS = [
   // Forest — on-kill haste (chain through packs).
   'mobility.kill-speed-pct',
   'mobility.kill-speed-ms',
-  // Mountain — on-new-target burst, cooldown-gated.
-  'mobility.acquire-speed-pct',
-  'mobility.acquire-speed-ms',
-  'mobility.acquire-cooldown-ms',
+  // Mountain — continuous gap closing: extra speed while moving TOWARD the
+  // current combat target and still further away than APPROACH_MIN_DISTANCE.
+  // No proc, no cooldown, no benefit while retreating or already in contact —
+  // the mirror image of Desert's `kite-speed-pct`.
+  'mobility.approach-speed-pct',
   // Cave — stealth: reduces enemies' effective detection radius vs the player.
   'mobility.stealth-pct',
-  // Swamp — tenacity: reduces incoming slow/CC duration.
+  // Swamp — slow resistance: reduces the MAGNITUDE of soft movement slows (a
+  // 50% slow at 30% resistance becomes a 35% slow). Deliberately distinct from
+  // `tenacity-pct`, which shortens hard-CC DURATION: a root is control, not a
+  // slow, and slow resistance never touches it. See T1_ITEM_DESIGN_PHILOSOPHY §24.
+  'mobility.slow-resistance',
+  // Graveyard/Trench — tenacity: reduces incoming slow/CC DURATION.
   'mobility.tenacity-pct',
   // Jungle — aggro-pull: increases enemies' effective detection radius vs the player.
   'mobility.aggro-pull-pct',

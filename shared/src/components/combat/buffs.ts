@@ -84,9 +84,9 @@ export const BUFF_IDS = [
   'ability-bramble',
   'ability-second-wind',
   // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
-  'mob-sprint',   // Plains — out-of-combat sprint
-  'mob-haste',    // Forest — on-kill haste
-  'mob-burst',    // Mountain — on-new-target burst
+  'mob-sprint',   // Forest — out-of-combat sprint
+  'mob-haste',    // Plains — on-kill haste
+  'mob-burst',    // Mountain — speed while closing the gap to the target
   'mob-grave',    // Graveyard — stacking on-kill speed + tenacity
   'mob-kite',     // Desert — moving-away-from-target speed
   'mob-rush',     // Tundra — continuous-move ramp

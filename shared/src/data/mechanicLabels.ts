@@ -135,14 +135,13 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'mobility.kill-stack-speed-pct':        { label: 'Stacking speed on kill' },
   'mobility.kill-stack-tenacity-pct':     { label: 'Stacking tenacity on kill' },
   'mobility.kill-stack-ms':               { label: 'On-kill stack time', companion: true },
-  'mobility.acquire-speed-pct':           { label: 'Lock-on speed' },
-  'mobility.acquire-speed-ms':            { label: 'Lock-on speed time', companion: true },
-  'mobility.acquire-cooldown-ms':         { label: 'Lock-on cooldown', companion: true },
+  'mobility.approach-speed-pct':          { label: 'Closing speed' },
   'mobility.ramp-speed-pct':              { label: 'Ramping speed' },
   'mobility.ramp-rate':                   { label: 'Ramping speed rate', companion: true },
   'mobility.kite-speed-pct':              { label: 'Kiting speed' },
   'mobility.stealth-pct':                 { label: 'Stealth' },
   'mobility.aggro-pull-pct':              { label: 'Aggro range' },
+  'mobility.slow-resistance':             { label: 'Slow resist' },
   'mobility.tenacity-pct':                { label: 'Tenacity' },
 
   // ── Summoner (minion gear) ─────────────────────────────────────────────────

@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
-  ITEM_DATABASE, RECIPE_DATABASE, upgradeStatBonusTotal,
+  ITEM_DATABASE, RECIPE_DATABASE, upgradeStatBonusTotal, effectiveAttacksPerSecond,
   resolveEmpoweredMultiplier,
   relicRatingsFromEffects,
   resolveRelicPreview,
@@ -61,8 +61,14 @@ interface Props {
 }
 
 // Returns the base cooldown (ms) a weapon dictates, before skill multipliers.
-function weaponBaseMs(defId: string | null | undefined): number {
-  const aps = defId ? (ITEM_DATABASE.get(defId)?.attacksPerSecond ?? null) : null;
+// Upgrade level matters: a lineage may buy cadence with its upgrade budget, so
+// the swap preview has to price the weapon AT ITS CURRENT +N, not at +0.
+function weaponBaseMs(
+  defId: string | null | undefined,
+  itemUpgrades: Record<string, number>,
+): number {
+  const def = defId ? ITEM_DATABASE.get(defId) : undefined;
+  const aps = def ? effectiveAttacksPerSecond(def, itemUpgrades[def.id] ?? 0) : undefined;
   return aps != null ? Math.round(1000 / aps) : GAME_CONFIG.PLAYER_ATTACK_COOLDOWN;
 }
 
@@ -127,8 +133,8 @@ export function StatSheet({ focused, onFocus }: Props) {
     // of the two weapons' base cooldowns (preserves skill speed multipliers exactly).
     let apsProposed: number | null = null;
     if (slot === 'weapon') {
-      const currentBase  = weaponBaseMs(isEquipped ? focused.defId  : equipment.weapon);
-      const proposedBase = weaponBaseMs(isEquipped ? null           : focused.defId);
+      const currentBase  = weaponBaseMs(isEquipped ? focused.defId : equipment.weapon, itemUpgrades);
+      const proposedBase = weaponBaseMs(isEquipped ? null          : focused.defId, itemUpgrades);
       if (currentBase !== proposedBase) {
         // Capture attackCooldown from outer scope — it's a dep of this memo.
         apsProposed = null; // resolved below after memo (requires attackCooldown closure)
@@ -140,8 +146,8 @@ export function StatSheet({ focused, onFocus }: Props) {
 
     return { itemDef, plus, isEquipped, slot, recipe, color, delta, actionLabel,
              weaponSwap: slot === 'weapon' ? {
-               currentBase:  weaponBaseMs(isEquipped ? focused.defId : equipment.weapon),
-               proposedBase: weaponBaseMs(isEquipped ? null          : focused.defId),
+               currentBase:  weaponBaseMs(isEquipped ? focused.defId : equipment.weapon, itemUpgrades),
+               proposedBase: weaponBaseMs(isEquipped ? null          : focused.defId, itemUpgrades),
              } : null };
   }, [focused, equipment, itemUpgrades]);
 

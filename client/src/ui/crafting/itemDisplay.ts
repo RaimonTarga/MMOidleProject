@@ -6,6 +6,7 @@
 import type { ItemDefinition, ResolvedRelicProfile } from '@mmo-idle/shared';
 import {
   BURN_FAMILY,
+  effectiveAttacksPerSecond,
   isCompanionMechanic, mechanicLabelOrKey,
   upgradeMechanicEffectsTotal, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
@@ -14,6 +15,7 @@ import {
 
 const signed = (n: number): string => `${n >= 0 ? '+' : ''}${n}`;
 const round1 = (n: number): number => Math.round(n * 10) / 10;
+const round2 = (n: number): number => Math.round(n * 100) / 100;
 
 // ─── Stat metadata (covers every ItemStats key) ────────────────────────────────
 
@@ -108,6 +110,7 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   // Fractions whose key does not say so.
   'defense.dot-resistance':           pct,
   'defense.debuff-resistance':        pct,
+  'mobility.slow-resistance':         pct,
   'defense.evade-mitigation':         pct,
   'defense.sustained-fight-dr-max':   pct,
   'defense.sustained-fight-dr-bonus': pct,
@@ -193,6 +196,20 @@ export interface UpgradeDiffRow {
  */
 export function computeUpgradeDiff(def: ItemDefinition, currentPlus: number): UpgradeDiffRow[] {
   const rows: UpgradeDiffRow[] = [];
+
+  // Attacks per second. A weapon lineage may spend upgrade budget on cadence
+  // instead of Attack, and that has to read as a real upgrade row.
+  const curAps  = effectiveAttacksPerSecond(def, currentPlus);
+  const nextAps = effectiveAttacksPerSecond(def, currentPlus + 1);
+  if (curAps !== undefined && nextAps !== undefined && nextAps !== curAps) {
+    rows.push({
+      label: 'APS',
+      from: String(round2(curAps)),
+      to:   String(round2(nextAps)),
+      delta: `${nextAps >= curAps ? '+' : ''}${round2(nextAps - curAps)}`,
+      up: nextAps > curAps,
+    });
+  }
 
   // Direct stats
   const curStats  = upgradeStatBonusTotal(def, currentPlus);
@@ -368,11 +385,9 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('mobility.kill-speed-pct', 'mobility.kill-speed-ms');
   }
 
-  if (has('mobility.acquire-speed-pct')) {
-    const dur = has('mobility.acquire-speed-ms') ? ` for ${secK('mobility.acquire-speed-ms')}` : '';
-    const cd = has('mobility.acquire-cooldown-ms') ? ` (every ${secK('mobility.acquire-cooldown-ms')})` : '';
-    lines.push(`When you lock onto a new target: +${pctK('mobility.acquire-speed-pct')} move speed${dur}${cd}`);
-    mark('mobility.acquire-speed-pct', 'mobility.acquire-speed-ms', 'mobility.acquire-cooldown-ms');
+  if (has('mobility.approach-speed-pct')) {
+    lines.push(`+${pctK('mobility.approach-speed-pct')} move speed while closing on your target`);
+    mark('mobility.approach-speed-pct');
   }
 
   if (has('mobility.stealth-pct')) {
@@ -383,6 +398,11 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   if (has('mobility.aggro-pull-pct')) {
     lines.push(`Enemies notice you from ${pctK('mobility.aggro-pull-pct')} farther away`);
     mark('mobility.aggro-pull-pct');
+  }
+
+  if (has('mobility.slow-resistance')) {
+    lines.push(`Slows on you are ${pctK('mobility.slow-resistance')} weaker`);
+    mark('mobility.slow-resistance');
   }
 
   if (has('mobility.tenacity-pct')) {

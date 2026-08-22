@@ -24,7 +24,7 @@ import type { PlayerEntity, ServerEntity } from '../../ecs/entity';
 import { detachComponent } from '../../ecs/markerHelpers';
 import { markSliceDirty } from '../../ecs/dirtyHelpers';
 import { resolveObstaclesForNode } from './nodeFeatures';
-import { bootSpeedMultiplier } from './mobility/mobilityBoots';
+import { bootSpeedMultiplier, slowResistedMult } from './mobility/mobilityBoots';
 import {
   advanceMovePath,
   clearMovePath,
@@ -288,18 +288,23 @@ function playerSpeedMults(
   const cs = player.tracksCombat;
   const mults: number[] = [];
 
+  // Every soft slow is piped through `slowResistedMult`, so Swamp's Slow
+  // Resistance softens the whole family with one rule instead of each source
+  // having to remember the stat. Roots pass through it untouched — a root is
+  // hard control, and only tenacity/control resistance speaks to those.
+
   // Shared 'slow' id — monster slowEffects, hazard/ground-zone pools, dungeon
   // hazards. speedMult 0 is a ROOT and short-circuits the whole product.
   const slow = getStatusEffect(cs, 'slow');
-  if (slow) mults.push(Math.max(0, slow.data['speedMult'] ?? 1));
+  if (slow) mults.push(slowResistedMult(player, Math.max(0, slow.data['speedMult'] ?? 1)));
 
   // Tundra rampDebuff — stacking, self-capped.
   const frostRamp = getStatusEffect(cs, FROST_RAMP_EFFECT_ID);
-  if (frostRamp) mults.push(1 - frostRampMoveSlowPct(frostRamp));
+  if (frostRamp) mults.push(slowResistedMult(player, 1 - frostRampMoveSlowPct(frostRamp)));
 
   // P4 ambient node ramp, when its payload carries a move slow (Tundra chill).
   const ambient = ambientRampStatus(cs);
-  if (ambient) mults.push(ambientRampMoveMult(ambient));
+  if (ambient) mults.push(slowResistedMult(player, ambientRampMoveMult(ambient)));
 
   mults.push(bootSpeedMultiplier(world, player, now));
   return mults;

@@ -118,6 +118,31 @@ export function upgradeMechanicEffectsTotal(item: ItemDefinition, plus: number):
   return totals;
 }
 
+/**
+ * Cumulative `attacksPerSecond` delta for an item at `plus` (0 when the lineage
+ * spends nothing on cadence). Weapons only; summed like every other upgrade delta.
+ */
+export function upgradeApsBonusTotal(item: ItemDefinition, plus: number): number {
+  if (plus <= 0 || !item.upgrades) return 0;
+  let total = 0;
+  for (let i = 0; i < plus && i < item.upgrades.length; i++) {
+    total += item.upgrades[i].attacksPerSecond ?? 0;
+  }
+  return total;
+}
+
+/**
+ * The weapon's effective attacks-per-second at `plus`, or undefined when it
+ * authors no cadence at all (unarmed keeps GAME_CONFIG.PLAYER_ATTACK_COOLDOWN).
+ */
+export function effectiveAttacksPerSecond(
+  item: ItemDefinition,
+  plus: number,
+): number | undefined {
+  if (!item.attacksPerSecond) return undefined;
+  return Math.max(0.05, item.attacksPerSecond + upgradeApsBonusTotal(item, plus));
+}
+
 /** Essence cost for going from (targetPlus-1) → targetPlus. */
 export function upgradeCostFor(
   item: ItemDefinition,
