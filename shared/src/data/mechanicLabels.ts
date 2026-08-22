@@ -33,7 +33,7 @@
  * will fail and the key belongs here.
  *
  * REGISTER. Labels are terse and sentence-case, because the surfaces that consume
- * them are compact diff rows and one-line summaries ("Shield 15% · Cleanse rate
+ * them are compact diff rows and one-line summaries ("Barrier 15% · Cleanse rate
  * 8s"). Terse is a constraint of the UI, not an excuse for jargon — every entry
  * should read as something a player would say.
  */
@@ -60,9 +60,9 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'defense.regen-burst-pct':              { label: 'Regen burst' },
   'defense.regen-burst-interval-ms':      { label: 'Burst rate', companion: true },
   'defense.kill-burst-pct':               { label: 'Kill heal' },
-  'defense.shield-pct':                   { label: 'Shield' },
-  'defense.shield-interval-ms':           { label: 'Shield rate', companion: true },
-  'defense.shield-duration-ms':           { label: 'Shield duration', companion: true },
+  'defense.barrier-pct':                  { label: 'Barrier' },
+  'defense.barrier-recharge-pct':         { label: 'Barrier recharge', companion: true },
+  'defense.barrier-delay-ms':             { label: 'Barrier delay', companion: true },
   'defense.dot-resistance':               { label: 'DoT resist' },
   'defense.debuff-resistance':            { label: 'Debuff resist' },
   'defense.hit-to-dot-pct':               { label: 'Damage deferred' },
@@ -73,7 +73,7 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'defense.cleanse-per-stack-heal-pct':   { label: 'Cleanse heal per stack' },
   'defense.max-hit-pct':                  { label: 'Damage cap' },
   'defense.max-hit-mult':                 { label: 'Excess reduction', companion: true },
-  'defense.max-hit-rearms-shield':        { label: 'Cap rearms shield' },
+  'defense.max-hit-refills-barrier':      { label: 'Cap refills barrier' },
   'defense.evade-mitigation':             { label: 'Evade mitigation' },
   'defense.cheat-death':                  { label: 'Cheat death' },
   'defense.post-cheat-death-heal-pct':    { label: 'Revive heal' },
@@ -95,11 +95,11 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'defense.absorb-ramp-max-pct':          { label: 'Ramping absorb' },
   'defense.absorb-ramp-start-pct':        { label: 'Ramping absorb start', companion: true },
   'defense.absorb-ramptime-ms':           { label: 'Ramping absorb time', companion: true },
-  'defense.shield-break-heal-pct':        { label: 'Shield-break heal' },
+  'defense.barrier-break-heal-pct':       { label: 'Barrier-break heal' },
   // The armor and charm variants of the same effect; the renderer sums them and
   // prints one line, so only the first stands alone.
-  'defense.shield-break-hp-recovery-pct': { label: 'Shield-break heal', companion: true },
-  'defense.overheal-shield-pct':          { label: 'Overheal shield' },
+  'defense.barrier-break-hp-recovery-pct': { label: 'Barrier-break heal', companion: true },
+  'defense.overheal-ward-pct':            { label: 'Overheal ward' },
   'defense.hit-plating-per-stack':        { label: 'Reactive plating' },
   'defense.hit-plating-max-stacks':       { label: 'Reactive plating stacks', companion: true },
   'defense.hit-plating-duration-ms':      { label: 'Reactive plating time', companion: true },

@@ -4,10 +4,10 @@ import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import type { World } from '../../../world/World';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromMinion, actorFromPlayer } from '../../../world/worldLogActors';
-import { applyShield } from '../shields/shields';
+import { applyWard } from '../barrier/wards';
 
 // Duration of the temp shield minted from overheal (defense.overheal-shield-pct).
-const OVERHEAL_SHIELD_MS = 6000;
+const OVERHEAL_WARD_MS = 6000;
 
 /**
  * Returns the healing multiplier for this entity (1 = full, 0.1 = hard floor).
@@ -55,10 +55,10 @@ export function applyHealToPlayer(
   player.hasHealth.hp = Math.min(maxHp, raw);
   const applied = Math.round(player.hasHealth.hp - before);
 
-  // Overheal → temporary shield: convert HP that would spill past max into a shield.
-  const overhealPct = player.usesSkills.passives['defense.overheal-shield-pct'] ?? 0;
+  // Overheal → ward: convert HP that would spill past max into a temporary pool.
+  const overhealPct = player.usesSkills.passives['defense.overheal-ward-pct'] ?? 0;
   if (world && overhealPct > 0 && raw > maxHp) {
-    applyShield(world, player, Math.round((raw - maxHp) * overhealPct), OVERHEAL_SHIELD_MS);
+    applyWard(world, player, Math.round((raw - maxHp) * overhealPct), OVERHEAL_WARD_MS);
   }
   if (world && player.hasHealth.hp > before) {
     markSliceDirty(world, player, 'hasHealth');

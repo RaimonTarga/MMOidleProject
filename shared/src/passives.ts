@@ -13,9 +13,15 @@ export const DEFENSE_KEYS = [
   'defense.regen-burst-pct',
   'defense.regen-burst-interval-ms',
   'defense.kill-burst-pct',
-  'defense.shield-pct',
-  'defense.shield-interval-ms',
-  'defense.shield-duration-ms',
+  // ── Barrier: the permanent, self-recharging absorb pool ──────────────────
+  // Pool size as a fraction of maxHp. Presence of a non-zero value is what
+  // attaches HasBarrier. The two companions override GAME_CONFIG defaults:
+  // recharge-pct is the fraction of MAX refilled per second, delay-ms is how
+  // long the player must go undamaged (direct hits AND DoT ticks) before it
+  // starts. There is no interval or duration — the barrier never expires.
+  'defense.barrier-pct',
+  'defense.barrier-recharge-pct',
+  'defense.barrier-delay-ms',
   'defense.dot-resistance',
   'defense.hit-to-dot-pct',
   'defense.absorb-pct',
@@ -61,17 +67,20 @@ export const DEFENSE_KEYS = [
   // when there was nothing to cleanse.
   'defense.cleanse-empty-heal-pct',
   'defense.cleanse-per-stack-heal-pct',
-  // Heal a fraction of a broken shield's max value when it fully breaks (two keys
-  // for the charm and armor variants; summed).
-  'defense.shield-break-heal-pct',
-  'defense.shield-break-hp-recovery-pct',
-  // 1 = when the damage cap triggers, immediately rearm the periodic shield.
-  'defense.max-hit-rearms-shield',
+  // Heal a fraction of the barrier's max value when it is emptied, or of a ward's
+  // max value when that ward breaks (two keys for the charm and armor variants;
+  // summed). Barrier depletion is a routine event under the recharge model, so
+  // both are gated by GAME_CONFIG.BARRIER_BREAK_RIDER_CD_MS.
+  'defense.barrier-break-heal-pct',
+  'defense.barrier-break-hp-recovery-pct',
+  // 1 = when the damage cap triggers, immediately refill the barrier to full
+  // (same cooldown gate as the break heal).
+  'defense.max-hit-refills-barrier',
   // At max hardening stacks, pulse +`bonus` DR for `ms`.
   'defense.hardening-max-dr-bonus',
   'defense.hardening-max-dr-ms',
-  // Fraction of healing past max HP converted into a temporary shield.
-  'defense.overheal-shield-pct',
+  // Fraction of healing past max HP converted into a temporary ward.
+  'defense.overheal-ward-pct',
   // Reactive plating: each hit taken grants +`per-stack` plating for `duration-ms`,
   // stacking (refreshing the timer) up to `max-stacks`.
   'defense.hit-plating-per-stack',

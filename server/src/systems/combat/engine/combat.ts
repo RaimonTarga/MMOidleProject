@@ -425,7 +425,7 @@ export function runPlayerAttack(
       source: sourceActor,
       target: actorFromMonster(target),
       hpDamage: ctx.damage,
-      shieldAbsorbed: enemyShieldAbsorbed,
+      absorbed: enemyShieldAbsorbed,
       damageType: "direct",
       mitigation,
       tags: [
@@ -444,7 +444,7 @@ export function runPlayerAttack(
     recordWorldLogEvent(
       world,
       {
-        kind: "shield-absorb",
+        kind: "absorb",
         nodeId: player.hasPosition.nodeId,
         target: actorFromMonster(target),
         source: sourceActor,
@@ -513,7 +513,7 @@ export function runPlayerAttack(
       typeof ctx.metadata["blunderbussPelletTotal"] === "number"
         ? (ctx.metadata["blunderbussPelletTotal"] as number)
         : undefined,
-    shieldAbsorbed: enemyShieldAbsorbed > 0 ? enemyShieldAbsorbed : undefined,
+    absorbed: enemyShieldAbsorbed > 0 ? enemyShieldAbsorbed : undefined,
     // `evaded` is only still set here on a PARTIAL evade — a full avoid returned
     // "dodged" earlier and never reaches this event.
     evadedPartial: evaded ? true : undefined,
@@ -700,7 +700,7 @@ export function runMonsterAttack(
   emitCombatEvent("onHit", ctx, world);
   emitCombatEvent("onDamageTaken", ctx, world);
 
-  const shieldAbsorbed = Number(ctx.metadata["shieldAbsorbed"] ?? 0);
+  const absorbed = Number(ctx.metadata["absorbed"] ?? 0);
   const mitigation = buildPlatingDrBreakdown({
     grossDamage: monster.dealsDamage.attack,
     effectivePlating: platingAfterShred(
@@ -723,7 +723,7 @@ export function runMonsterAttack(
       source: actorFromMonster(monster),
       target: actorFromPlayer(target),
       hpDamage: ctx.damage,
-      shieldAbsorbed,
+      absorbed,
       damageType: "direct",
       mitigation,
     },
@@ -734,15 +734,15 @@ export function runMonsterAttack(
     },
   );
 
-  if (shieldAbsorbed > 0) {
+  if (absorbed > 0) {
     recordWorldLogEvent(
       world,
       {
-        kind: "shield-absorb",
+        kind: "absorb",
         nodeId: target.hasPosition.nodeId,
         target: actorFromPlayer(target),
         source: actorFromMonster(monster),
-        amount: shieldAbsorbed,
+        amount: absorbed,
       },
       {
         visibility: "combat",
@@ -769,7 +769,7 @@ export function runMonsterAttack(
       targetId: target.isPlayer.id,
       empowered: empoweredMult > 1 ? true : undefined,
       damage: ctx.damage,
-      shieldAbsorbed: shieldAbsorbed > 0 ? shieldAbsorbed : undefined,
+      absorbed: absorbed > 0 ? absorbed : undefined,
       evadedPartial: playerEvaded ? true : undefined,
       capped: ctx.metadata["damageCapped"] === true ? true : undefined,
     });

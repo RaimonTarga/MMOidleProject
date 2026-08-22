@@ -8,7 +8,7 @@ import type { BuffId, PlayerBuff } from "../components/combat/buffs";
 import type {
   CombatArchetype,
   MonsterAIState,
-  ShieldState,
+  WardState,
 } from "../types/combat";
 import type { HitboxRect } from "../hitbox/types";
 import type { EquippedRule } from "../runeDatabase";
@@ -57,7 +57,13 @@ export interface PlayerView {
    * means the next hit taken WILL be evaded — anticipation, not a prediction.
    */
   evadeCharge: number;
-  shields: ShieldState[];
+  /** Permanent absorb pool. 0/0 when the build has no `defense.barrier-pct`. */
+  barrier: number;
+  barrierMax: number;
+  /** True while the barrier is actively refilling (no damage for the delay window). */
+  barrierRecharging: boolean;
+  /** Temporary absorb pools, oldest first — drained before the barrier. */
+  wards: WardState[];
   /** Total pending damage-over-time on the player (HP-bar red layer). */
   incomingDot: number;
   /** Pending heal-over-time from regen/absorb pools (HP-bar regen layer). */
@@ -301,7 +307,10 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     dodgeRate: entity.evadesHits?.dodgeRate ?? 0,
     evadeMitigation: entity.evadesHits?.evadeMitigation ?? 0,
     evadeCharge: entity.evadesHits?.charge ?? 0,
-    shields: entity.holdsShields?.shields ?? [],
+    barrier: entity.hasBarrier?.current ?? 0,
+    barrierMax: entity.hasBarrier?.max ?? 0,
+    barrierRecharging: entity.hasBarrier?.recharging ?? false,
+    wards: entity.holdsWards?.wards ?? [],
     incomingDot: entity.hasStatus?.incomingDot ?? 0,
     pendingHeal: entity.hasStatus?.pendingHeal ?? 0,
     attackRange: attack.attackRange,

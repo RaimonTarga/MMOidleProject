@@ -12,7 +12,7 @@ export interface DamageLogRowProps {
 /**
  * Line 2 of a damage entry: `(⛨mit − ⚔gross) = −final`.
  * Each number is colored by who owns that stat:
- *   ⛨ mitigated → defender (plating/DR/shield)
+ *   ⛨ mitigated → defender (plating/DR/absorb)
  *   ⚔ gross     → attacker
  *   final       → target (HP lost), shown as −N
  */

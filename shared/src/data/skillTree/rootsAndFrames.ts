@@ -67,7 +67,7 @@ export const rootsAndFramesEntries = [
   //   `damageReduction`  — likewise already a fraction. It needs no percentage
   //                        twin, and folding it into the existing additive DR
   //                        stat keeps one mitigation layer instead of two.
-  //   all `mechanicEffects` — cadence thresholds, shield/regen/DoT/reload/energy
+  //   all `mechanicEffects` — cadence thresholds, barrier/regen/DoT/reload/energy
   //                        mechanics, summon formation rules. This pass replaces
   //                        generic stat growth; it does not flatten identity.
   //
@@ -134,13 +134,13 @@ export const rootsAndFramesEntries = [
     id: 'energy-root', name: 'Spirit', tier: 0,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a periodic energy shield absorbs the hits that do reach you.',
+    description: 'Channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges between fights, not during them.',
     cost: 1, statEffects: {
       attackPct: 0.15, maxHpPct: 0.03,
       attackSpeedPct: 0.12, moveSpeedPct: 0.12,
       attackRange: 130,
     },
-    mechanicEffects: { 'defense.shield-pct': 0.30, 'defense.shield-interval-ms': 10000, 'defense.shield-duration-ms': 10000 } as Record<string, number>,
+    mechanicEffects: { 'defense.barrier-pct': 0.30 } as Record<string, number>,
   }],
 
 
@@ -432,7 +432,7 @@ export const rootsAndFramesEntries = [
   // heavy one that was designed to live there — Haunt gets +20% HP, Vanguard
   // only +10%, because Squire already fights in melee. Compensation restores
   // FUNCTION, never identity: a melee Spirit survives on HP, speed and its
-  // shield, and must not converge on a Squire.
+  // barrier, and must not converge on a Squire.
 
   ['cadence-range-close', {
     id: 'cadence-range-close', name: 'In-Fighter', tier: 2,
@@ -577,14 +577,14 @@ export const rootsAndFramesEntries = [
     parent: null, children: [],
     // The largest HP compensation in the tree, because Spirit sacrifices the
     // most natural defensive value when forced into contact. It stays light
-    // armor / high tempo / shield-driven — never a Squire in disguise.
-    description: 'Fight at point-blank range. Reduced reach, repaid with by far the deepest HP compensation in the tree — and your energy shield swells to 40% of max HP to weather the constant melee pressure.',
+    // armor / high tempo / barrier-driven — never a Squire in disguise.
+    description: 'Fight at point-blank range. Reduced reach, repaid with by far the deepest HP compensation in the tree — and your barrier swells to 40% of max HP, a deeper buffer to open each melee engagement with.',
     cost: 1, statEffects: {
       attackRange: -140,
       attackPct: 0.04, maxHpPct: 0.20, platingPct: 0.04,
       attackSpeedPct: 0.06, moveSpeedPct: 0.02,
     },
-    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.shield-pct': 0.10 } as Record<string, number>,
+    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.barrier-pct': 0.10 } as Record<string, number>,
   }],
   ['energy-range-mid', {
     id: 'energy-range-mid', name: 'Shade', tier: 2,
@@ -600,7 +600,7 @@ export const rootsAndFramesEntries = [
     id: 'energy-range-far', name: 'Wisp', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed keep you safely behind your shield — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed buy the untouched seconds your barrier needs to recharge — distance as armor.',
     cost: 1, statEffects: {
       attackRange: 80,
       attackPct: 0.03, maxHpPct: 0.03, attackSpeedPct: 0.02, moveSpeedPct: 0.12,

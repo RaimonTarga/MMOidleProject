@@ -151,8 +151,8 @@ function testNoItemRendersOnlyCompanions(): void {
 }
 
 function testCompanionsAreSkippedInSummaries(): void {
-  assert(isCompanionMechanic('defense.shield-interval-ms'), 'shield interval is a companion');
-  assert(!isCompanionMechanic('defense.shield-pct'), 'shield percent is not a companion');
+  assert(isCompanionMechanic('defense.barrier-delay-ms'), 'barrier delay is a companion');
+  assert(!isCompanionMechanic('defense.barrier-pct'), 'barrier percent is not a companion');
   assert(!isCompanionMechanic('nonexistent.key'), 'unknown keys are not companions');
 }
 

@@ -125,8 +125,14 @@ function checkAbsentState(entity: ServerEntity, violations: string[]): void {
   if (entity.isRooted && entity.isMoving) {
     violations.push(`${entity.entityId}: isRooted but isMoving present`);
   }
-  if (entity.holdsShields && entity.holdsShields.shields.length === 0) {
-    violations.push(`${entity.entityId}: holdsShields present with no shields`);
+  if (entity.holdsWards && entity.holdsWards.wards.length === 0) {
+    violations.push(`${entity.entityId}: holdsWards present with no wards`);
+  }
+  if (entity.hasBarrier && entity.hasBarrier.max <= 0) {
+    violations.push(`${entity.entityId}: hasBarrier present with no pool`);
+  }
+  if (entity.hasBarrier && entity.hasBarrier.current > entity.hasBarrier.max) {
+    violations.push(`${entity.entityId}: hasBarrier current exceeds max`);
   }
   if (entity.evadesHits && entity.evadesHits.dodgeRate <= 0) {
     violations.push(`${entity.entityId}: evadesHits present with zero dodgeRate`);

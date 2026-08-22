@@ -74,10 +74,10 @@ assert(deepSplash.breakdown !== undefined, "scaled value must show its authored 
 // ── Units ────────────────────────────────────────────────────────────────────
 // The failure this module exists to prevent is a fraction reported as "+0.18".
 
-assert(formatPassiveValue("defense.shield-pct", 0.15) === "15%", "-pct must render as a percentage");
+assert(formatPassiveValue("defense.barrier-pct", 0.15) === "15%", "-pct must render as a percentage");
 assert(formatPassiveValue("defense.dot-resistance", 0.18) === "18%", "unit-less fractions must render as percentages");
-assert(formatPassiveValue("defense.shield-interval-ms", 8000) === "8s", "ms must render as seconds");
-assert(formatPassiveValue("defense.shield-interval-ms", 250) === "250ms", "sub-second ms stays in ms");
+assert(formatPassiveValue("defense.barrier-delay-ms", 8000) === "8s", "ms must render as seconds");
+assert(formatPassiveValue("defense.barrier-delay-ms", 250) === "250ms", "sub-second ms stays in ms");
 assert(formatPassiveValue("cadence.empowered-mult", 2.5) === "×2.5", "-mult must render as a multiplier");
 assert(formatPassiveValue("cadence.threshold-mod", -2, { signed: true }) === "−2", "signed values keep their sign");
 
@@ -109,16 +109,16 @@ for (const source of sources) {
 }
 
 // Companion keys collapse into one row rather than three.
-const shieldRows = passiveLines({
-  "defense.shield-pct": 0.15,
-  "defense.shield-interval-ms": 8000,
-  "defense.shield-duration-ms": 4000,
+const barrierRows = passiveLines({
+  "defense.barrier-pct": 0.15,
+  "defense.barrier-delay-ms": 8000,
+  "defense.barrier-recharge-pct": 0.4,
 });
-assert(shieldRows.length === 1, `companion keys should collapse, got ${shieldRows.length} rows`);
-assert(shieldRows[0].value === "15%", `wrong headline value: ${shieldRows[0].value}`);
+assert(barrierRows.length === 1, `companion keys should collapse, got ${barrierRows.length} rows`);
+assert(barrierRows[0].value === "15%", `wrong headline value: ${barrierRows[0].value}`);
 assert(
-  shieldRows[0].detail.includes("8s") && shieldRows[0].detail.includes("4s"),
-  `companions missing from detail: ${shieldRows[0].detail}`,
+  barrierRows[0].detail.includes("8s") && barrierRows[0].detail.includes("40%"),
+  `companions missing from detail: ${barrierRows[0].detail}`,
 );
 
 // A bare flag reads as a switch, not as the quantity "1".

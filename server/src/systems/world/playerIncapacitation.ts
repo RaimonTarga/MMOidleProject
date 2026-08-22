@@ -57,7 +57,7 @@ export function killPlayer(
 
   detachComponent(world, entity, "hasAutoIntent");
   detachComponent(world, entity, "hasEmote");
-  detachComponent(world, entity, "holdsShields");
+  detachComponent(world, entity, "holdsWards");
   detachComponent(world, entity, "tracksEngagement");
   detachComponent(world, entity, "hasEmpoweredAttack");
   detachComponent(world, entity, "isChanneling");

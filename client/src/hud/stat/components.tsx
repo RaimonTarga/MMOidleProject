@@ -16,10 +16,11 @@ export function DefensePassivesSection({ passives: p }: { passives: Record<strin
     rows.push({ label: 'Burst Regen', value: `${Math.round(burstRegen * 100)}% / ${iv}s`, help: help('defense.regen-burst-pct') });
   }
 
-  const shieldPct = p['defense.shield-pct'] ?? 0;
-  if (shieldPct > 0) {
-    const iv = ((p['defense.shield-interval-ms'] ?? 0) / 1000).toFixed(0);
-    rows.push({ label: 'Shield', value: `${Math.round(shieldPct * 100)}% / ${iv}s`, help: help('defense.shield-pct') });
+  const barrierPct = p['defense.barrier-pct'] ?? 0;
+  if (barrierPct > 0) {
+    // The pool size is the stat; the recharge shape is the same for everyone
+    // unless an item overrides it, so it lives in the tooltip, not the value.
+    rows.push({ label: 'Barrier', value: `${Math.round(barrierPct * 100)}% max HP`, help: help('defense.barrier-pct') });
   }
 
   const absorb = p['defense.absorb-pct'] ?? 0;

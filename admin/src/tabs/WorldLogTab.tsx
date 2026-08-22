@@ -16,8 +16,8 @@ import { Input } from '@/components/ui/input';
 const WORLD_LOG_KINDS: Array<WorldLogEvent['kind']> = [
   'damage',
   'heal',
-  'shield-gain',
-  'shield-absorb',
+  'ward-gain',
+  'absorb',
   'buff-gain',
   'buff-update',
   'buff-expire',

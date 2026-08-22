@@ -108,7 +108,7 @@ export function describeMonsterMechanics(
         `(${perStackPerSec}/s per stack), up to ${def.dotEffect.maxStacks} stacks ` +
         `(${maxPerSec}/s at max)` +
         (def.dotEffect.durationMs ? `, lasts ${fmtMs(def.dotEffect.durationMs)}.` : '.') +
-        (def.dotEffect.bypassShield ? ' Bypasses shields.' : ''),
+        (def.dotEffect.bypassBarrier ? ' Bypasses the barrier.' : ''),
     });
   }
 

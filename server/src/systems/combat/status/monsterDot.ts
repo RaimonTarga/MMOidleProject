@@ -33,7 +33,7 @@ export function applyMonsterDotToPlayer(
       totalMs: durationMs,
       flavorCode: debuff.code,
       isDot: 1,
-      bypassShield: dotEffect.bypassShield ? 1 : 0,
+      bypassBarrier: dotEffect.bypassBarrier ? 1 : 0,
     },
   });
   effect.data.damagePerStack = dotEffect.damagePerStack;
@@ -42,6 +42,6 @@ export function applyMonsterDotToPlayer(
   effect.data.totalMs = durationMs;
   effect.data.flavorCode = debuff.code;
   effect.data.isDot = 1;
-  effect.data.bypassShield = dotEffect.bypassShield ? 1 : 0;
+  effect.data.bypassBarrier = dotEffect.bypassBarrier ? 1 : 0;
   attachMarker(world, player, 'hasDot');
 }

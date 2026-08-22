@@ -1,7 +1,7 @@
 import type { Recipe } from './types';
 
 // TUNDRA (debuts T3). Identity: stationary-ramp DR + cap armor / brittle weapon /
-// shield + absorb charm. Charm rework: upgrades ramp BOTH mechanics, hpRegen flat
+// barrier + absorb charm. Charm rework: upgrades ramp BOTH mechanics, hpRegen flat
 // (see mountain.recipes.ts header).
 // Tundra owns the FROST DoT weapon line (relocated from Swamp): Rimebrand (T3) →
 // Glacial Rimebrand (T4). See item-identity-audit.md.
@@ -63,24 +63,24 @@ export const tundraRecipeEntries = [
     ],
   }],
 
-  // Charm: hpRegen flat; upgrades ramp shield 0.12 -> 0.18 AND absorb 0.08 -> 0.14.
+  // Charm: hpRegen flat; upgrades ramp barrier 0.12 -> 0.18 AND absorb 0.08 -> 0.14.
   ['tundra-charm-t3', {
     id: 'tundra-charm-t3', name: 'Frostward Charm',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { blue: 75, purple: 25 }, catalystCost: { heavy: 3 }, stats: { hpRegen: 11 }, // family-tag: shield charm (anti-spike) → Heavy
+    cost: { blue: 75, purple: 25 }, catalystCost: { heavy: 3 }, stats: { hpRegen: 11 }, // family-tag: barrier charm (anti-spike) → Heavy
     mechanicEffects: {
-      'defense.shield-pct': 0.12, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
+      'defense.barrier-pct': 0.12,
       'defense.absorb-pct': 0.08,
     },
     tier: 3,
     icon: 'items/charms/frostward-charm.png',
     description: 'A rime-cold ward that throws up a sheet of ice, and drinks the blows that get through.',
     upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 50, purple: 25 },  requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 100, purple: 50 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 50, purple: 25 },  requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 100, purple: 50 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -163,42 +163,42 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t4', {
     id: 'tundra-charm-t4', name: 'Glacial Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: shield charm (anti-spike) → Heavy
+    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: barrier charm (anti-spike) → Heavy
     mechanicEffects: {
-      'defense.shield-pct': 0.17, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
+      'defense.barrier-pct': 0.17,
       'defense.absorb-pct': 0.12,
     },
     tier: 4,
     icon: 'items/charms/glacial-ward.png',
     description: 'A sheet of ice thrown up against the blow, and a slow cold that drinks whatever slips past it.',
     upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['tundra-charm-t4-deepfreeze', {
     id: 'tundra-charm-t4-deepfreeze', name: 'Deepfreeze Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: shield + absorb ward → Heavy
+    cost: { blue: 220, purple: 30 }, catalystCost: { heavy: 4 }, stats: { hpRegen: 16 }, // family-tag: barrier + absorb ward → Heavy
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
     //   (weaker early, stronger in long fights). (new keys)
     mechanicEffects: {
-      'defense.shield-pct': 0.14, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
+      'defense.barrier-pct': 0.14,
       'defense.absorb-ramp-start-pct': 0.04, 'defense.absorb-ramp-max-pct': 0.18, 'defense.absorb-ramptime-ms': 12000,
     },
     tier: 4,
     icon: 'items/charms/deepfreeze-ward.png',
     description: 'The longer the cold has to settle in, the more of the blow it swallows whole.',
     upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
 

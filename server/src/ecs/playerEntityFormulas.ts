@@ -13,6 +13,7 @@ import { resetStationaryDr } from '../systems/defense/mitigation/stationaryDr';
 import { resetSustainedFightDr } from '../systems/defense/mitigation/sustainedFightDr';
 import { resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
 import { resetBramblePlating } from '../systems/player/abilities/abilityBramble';
+import { syncBarrier } from '../systems/defense/barrier/barrier';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   resetHardening(entity);
@@ -77,6 +78,10 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   } else {
     detachComponent(world, entity, 'cannotAttack');
   }
+
+  // The ONLY place the barrier is sized. Gear, levels and class affinities all
+  // move maxHp; a second sizing site would desync the pool from its percentage.
+  syncBarrier(world, entity);
 
   syncDevInvulnerability(world, entity);
 

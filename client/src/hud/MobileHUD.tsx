@@ -34,7 +34,10 @@ import {
   playerIdAtom,
   playerNodeIdAtom,
   settingsOpenAtom,
-  shieldsAtom,
+  barrierAtom,
+  barrierMaxAtom,
+  barrierRechargingAtom,
+  wardsAtom,
   skillPointsAtom,
   statusAtom,
 } from './atoms';
@@ -83,7 +86,10 @@ function MobileHUDContent() {
   const playerName = useAtomValue(playerNameAtom);
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
-  const shields = useAtomValue(shieldsAtom);
+  const barrier = useAtomValue(barrierAtom);
+  const barrierMax = useAtomValue(barrierMaxAtom);
+  const barrierRecharging = useAtomValue(barrierRechargingAtom);
+  const wards = useAtomValue(wardsAtom);
   const incomingDot = useAtomValue(incomingDotAtom);
   const pendingHeal = useAtomValue(pendingHealAtom);
   const auto = useAtomValue(autoAtom);
@@ -110,8 +116,12 @@ function MobileHUDContent() {
   // ── HP-bar layers (all as % of maxHp), mirroring the desktop StatPanel ──
   const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
-  const totalShield = shields.reduce((s, sh) => s + sh.amount, 0);
-  const shieldPct   = maxHp > 0 ? Math.min(100, (totalShield / maxHp) * 100) : 0;
+  // The barrier strip runs on its OWN scale (fraction of the pool), so an empty
+  // barrier still shows the pool that is missing. Wards, which have no fixed
+  // ceiling, stay a capping band measured against max HP like the other layers.
+  const barrierPct  = barrierMax > 0 ? Math.min(100, (barrier / barrierMax) * 100) : 0;
+  const totalWard   = wards.reduce((s, w) => s + w.amount, 0);
+  const wardPct     = maxHp > 0 ? Math.min(100, (totalWard / maxHp) * 100) : 0;
   const dotPct      = maxHp > 0 ? Math.min(hpPct, (incomingDot / maxHp) * 100) : 0;
   const safePct     = Math.max(0, hpPct - dotPct);
   const healPct     = maxHp > 0 ? Math.min(100 - hpPct, (pendingHeal / maxHp) * 100) : 0;
@@ -301,12 +311,15 @@ function MobileHUDContent() {
           <span className={`status-dot ${status}`} />
           <span className="mhud-top__name">{playerName ?? '…'}</span>
           <div className="mhud-hp">
-            {shieldPct > 0 && (
-              <div className="hp-shield-strip">
-                <div className="hp-shield-strip__fill" style={{ width: `${shieldPct}%` }} />
+            {barrierMax > 0 && (
+              <div className={`hp-shield-strip${barrierRecharging ? ' hp-shield-strip--recharging' : ''}`}>
+                <div className="hp-shield-strip__fill" style={{ width: `${barrierPct}%` }} />
               </div>
             )}
             <div className="hp-bar-track">
+              {wardPct > 0 && (
+                <div className="hp-layer hp-layer--ward" style={{ width: `${wardPct}%` }} />
+              )}
               {healPct > 0 && (
                 <div className="hp-layer hp-layer--regen" style={{ left: `${hpPct}%`, width: `${healPct}%` }} />
               )}

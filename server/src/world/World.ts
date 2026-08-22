@@ -61,7 +61,7 @@ import { tickAllMechanics } from "../systems/classes/registry";
 import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
 import { updateBossScripts } from "../systems/combat/ai/bossScripts";
 import { updateUltimateEncounters } from "../systems/combat/ai/ultimateEncounter";
-import { updateShields, updateDefensiveSystems } from "../systems/defense";
+import { updateWards, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
@@ -224,7 +224,7 @@ export class World {
   readonly nodeFeatureEffectPlayers =
     this.livePlayers.with("hasNodeFeatureEffect");
   readonly movingPlayers = this.livePlayers.with("isMoving");
-  readonly shieldedPlayers = this.livePlayers.with("holdsShields");
+  readonly wardedPlayers = this.livePlayers.with("holdsWards");
   readonly channelingPlayers = this.cooldownPlayers.with("isChanneling");
   readonly overdrivenPlayers = this.cooldownPlayers.with("hasOverdrive");
   readonly alignedPlayers = this.cooldownPlayers.with("hasAlignment");
@@ -366,7 +366,7 @@ export class World {
   tick(dt: number, now: number) {
     this.tickCounter++;
     updateCombatState(this, dt);
-    updateShields(this, dt);
+    updateWards(this, dt);
     updateRuneDerivedConfig(this, now);
     tickAllMechanics(this, dt, now);
     updateWeaponEffects(this, dt);

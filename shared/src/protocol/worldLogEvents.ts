@@ -47,14 +47,14 @@ export type WorldLogEvent =
       source: WorldLogActor;
       target: WorldLogActor;
       hpDamage: number;
-      shieldAbsorbed: number;
+      absorbed: number;
       damageType: WorldLogDamageType;
       mitigation?: DamageMitigationBreakdown;
       glancing?: boolean;
       tags?: string[];
     }
   | {
-      kind: 'heal' | 'shield-gain' | 'shield-absorb';
+      kind: 'heal' | 'ward-gain' | 'absorb';
       id: number;
       tick: number;
       serverTime: number;
@@ -389,37 +389,37 @@ export function formatWorldLogEntry(
         detail: `+${formatLogNumber(event.amount)} HP`,
       };
     }
-    case 'shield-gain': {
+    case 'ward-gain': {
       const who = actorLabel(event.target, viewerId);
       return {
         kind: 'shield',
         text:
           event.target.id === viewerId
-            ? `Shield +${formatLogNumber(event.amount)}`
-            : `${event.target.name} gained ${formatLogNumber(event.amount)} shield`,
-        headline: `${who} shielded`,
-        headlineParts: [actorPart(event.target, viewerId), neutral(' shielded')],
+            ? `Ward +${formatLogNumber(event.amount)}`
+            : `${event.target.name} gained a ${formatLogNumber(event.amount)} ward`,
+        headline: `${who} warded`,
+        headlineParts: [actorPart(event.target, viewerId), neutral(' warded')],
         detail: `+${formatLogNumber(event.amount)}`,
       };
     }
-    case 'shield-absorb': {
+    case 'absorb': {
       const who = actorLabel(event.target, viewerId);
       const src = event.source ? actorLabel(event.source, viewerId) : 'Something';
       return {
         kind: 'shield',
         text:
           event.target.id === viewerId
-            ? `Shield absorbed ${formatLogNumber(event.amount)} from ${src}`
-            : `${event.target.name}'s shield absorbed ${formatLogNumber(event.amount)}`,
-        headline: `${src} → ${who} (shield)`,
+            ? `Absorbed ${formatLogNumber(event.amount)} from ${src}`
+            : `${event.target.name} absorbed ${formatLogNumber(event.amount)}`,
+        headline: `${src} → ${who} (absorbed)`,
         headlineParts: event.source
           ? [
               actorPart(event.source, viewerId),
               neutral(' → '),
               actorPart(event.target, viewerId),
-              neutral(' (shield)'),
+              neutral(' (absorbed)'),
             ]
-          : [neutral('Something → '), actorPart(event.target, viewerId), neutral(' (shield)')],
+          : [neutral('Something → '), actorPart(event.target, viewerId), neutral(' (absorbed)')],
         detail: `${formatLogNumber(event.amount)} absorbed`,
       };
     }

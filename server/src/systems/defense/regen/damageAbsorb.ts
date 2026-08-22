@@ -3,7 +3,7 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { ABSORB_POOL_KEY, POOL_DRAIN_MS, COMBAT_ELAPSED_KEY } from '../core/pools';
-import { applyHealToPlayer } from '../regen/healing';
+import { applyHealToPlayer } from './healing';
 
 /**
  * Register the damage-absorb listener on `onDamageTaken`.

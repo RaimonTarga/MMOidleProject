@@ -46,6 +46,7 @@ import { thawNode } from "../../../world/nodeLifecycle";
 import { despawnMinionsForOwner } from "../../classes/archetypes/summoner";
 import { resetNodeFeatureRuntimeState } from "../nodeFeatures";
 import { resetEvadeAccumulator } from "../../defense/mitigation/evasion";
+import { refillBarrier } from "../../defense/barrier/barrier";
 import { applyDormantUltimateBoss } from "../../combat/ai/ultimateEncounter";
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
@@ -948,10 +949,11 @@ export function respawnPlayer(world: World, playerId: string): void {
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);
   entity.hasHealth.hp = entity.hasHealth.maxHp;
+  refillBarrier(world, entity); // the barrier is runtime-only and always respawns full
 
   resetEvadeAccumulator(world, entity); // reset deterministic dodge accumulator on respawn
   detachComponent(world, entity, "isFleeing");
-  detachComponent(world, entity, "holdsShields");
+  detachComponent(world, entity, "holdsWards");
   detachComponent(world, entity, "tracksEngagement");
   detachComponent(world, entity, "hasEmpoweredAttack");
   detachComponent(world, entity, "isChanneling");

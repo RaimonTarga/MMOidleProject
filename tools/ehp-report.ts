@@ -535,13 +535,10 @@ function recoveryPerSec(
     notes.push(`regen burst ${Math.round(burstPct * 100)}% maxHp / ${burstInterval / 1000}s`);
   }
 
-  // Periodic shield: effective HP/s absorbed (only direct hits, not bypass DoT).
-  const shieldPct = p['defense.shield-pct'] ?? 0;
-  const shieldInterval = p['defense.shield-interval-ms'] ?? 0;
-  if (shieldPct > 0 && shieldInterval > 0) {
-    recovery += (maxHp * shieldPct) / (shieldInterval / 1000);
-    notes.push(`periodic shield ${Math.round(shieldPct * 100)}% maxHp / ${shieldInterval / 1000}s (treated as HP/s absorbed)`);
-  }
+  // NOTE: the barrier is deliberately NOT modeled here. It is a one-time buffer,
+  // not throughput — under the recharge rule it only refills after 4s undamaged,
+  // which never happens inside a modeled fight. It is added to the effective pool
+  // in `survivability` instead.
 
   // Cleanse empty-heal (no player debuffs modeled, so the empty-heal branch).
   const cleanseEmpty = p['defense.cleanse-empty-heal-pct'] ?? 0;
@@ -604,12 +601,22 @@ function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Su
   // mitigation multiplier eHP uses. Unlike raw eHP this responds to recovery, so
   // charms (which live in the recovery lane) actually rank.
   const mitigationMult = maxHp > 0 && Number.isFinite(ehp) ? ehp / maxHp : Number.POSITIVE_INFINITY;
+  // The barrier scales with the same mitigation multiplier as the HP pool: it
+  // absorbs post-mitigation damage one-for-one, exactly like health does.
+  const barrierPool = (p['defense.barrier-pct'] ?? 0) * maxHp;
   const survivalScore = Number.isFinite(ehp)
-    ? ehp + recoveryDps * RECOVERY_WINDOW_SEC * mitigationMult
+    ? ehp + (barrierPool + recoveryDps * RECOVERY_WINDOW_SEC) * mitigationMult
     : Number.POSITIVE_INFINITY;
 
   // Effective health pool for time-to-live (one-time saves, not throughput).
-  let pool = maxHp;
+  const barrierAmount = (p['defense.barrier-pct'] ?? 0) * maxHp;
+  let pool = maxHp + barrierAmount;
+  if (barrierAmount > 0) {
+    notes.push(
+      `barrier ${Math.round((p['defense.barrier-pct'] ?? 0) * 100)}% maxHp `
+      + '(one-time buffer — no in-fight recharge)',
+    );
+  }
   if ((p['defense.cheat-death'] ?? 0) > 0) {
     const postHeal = (p['defense.post-cheat-death-heal-pct'] ?? 0) * maxHp;
     pool += maxHp + postHeal; // a second near-full bar plus its recovery HoT
@@ -627,9 +634,11 @@ function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Su
     targetDamageReduction: damageReduction,
   });
   const biggestHit = applyDamageCap(spikeBase, maxHp, p);
-  const standingShield = (p['defense.shield-pct'] ?? 0) * maxHp;
-  const oneShotRisk = biggestHit >= maxHp + standingShield && (p['defense.cheat-death'] ?? 0) <= 0;
-  if (oneShotRisk) notes.push(`spike hit ${asNumber(biggestHit)} can one-shot (${asNumber(maxHp + standingShield)} buffer)`);
+  // A full barrier is the realistic opening state of an engagement, so it counts
+  // toward the one-shot buffer.
+  const standingBarrier = (p['defense.barrier-pct'] ?? 0) * maxHp;
+  const oneShotRisk = biggestHit >= maxHp + standingBarrier && (p['defense.cheat-death'] ?? 0) <= 0;
+  if (oneShotRisk) notes.push(`spike hit ${asNumber(biggestHit)} can one-shot (${asNumber(maxHp + standingBarrier)} buffer)`);
 
   return {
     maxHp,
@@ -1536,7 +1545,7 @@ Generated from \`tools/ehp-report.ts\`. Markdown only; the full HTML report is o
 - Every class build (root/frame/range/spec) is crossed with every armor × charm (recovery) combination. Weapon is empty; mobility slot excluded (movement only, no eHP value).
 - Incoming pressure comes from biome spawn pools one tier below report tier (tutorial/test/interact/boss excluded), plus representative shape attackers and boss spikes.
 - **eHP** = maxHP × (raw attacker DPS ÷ post-mitigation DPS): folds plating, DR, evasion, damage-cap, and DoT-resistance into one number. **TTL** = effective pool ÷ (incoming − recovery); "sustains" when recovery ≥ incoming. **Net HP/s** = recovery − incoming.
-- Defense mechanics are deterministic steady-state re-implementations of \`server/src/systems/defense/*\`: shields/regen-bursts/absorb are averaged as HP/s throughput; ramps use their mid-point; cheat-death adds one extra near-full bar; kill-burst and shield-break heals are omitted (need a kill/break cadence).
+- Defense mechanics are deterministic steady-state re-implementations of \`server/src/systems/defense/*\`: regen-bursts/absorb are averaged as HP/s throughput; the barrier is a one-time buffer added to the pool (it never recharges inside a modeled fight); ramps use their mid-point; cheat-death adds one extra near-full bar; kill-burst and barrier-break heals are omitted (need a kill/break cadence).
 - Single-target, in-combat steady state only. No movement, kiting, real AoE target count, enemy AI, party effects, antiheal stacking, or overkill timing.
 
 ## 2. Attacker Baseline
@@ -1612,7 +1621,7 @@ ${mdTable(['Charm', 'Avg survival', 'Samples'], charmAverages.map((i) => [i.key,
 
 - Mitigation uses shared \`estimateMonsterHitDamage\`: \`max(1, round(max(0, attack - plating × 1) × (1 - DR)))\`; stats rebuilt via shared \`recalculatePlayerStats\`.
 - Evasion is averaged (\`1 - dodgeRate × evadeMitigation\`), not played out as a deterministic accumulator; first-hit timing and OOC reset are ignored.
-- Shields/absorb/regen-burst are steady-state HP/s; a shield that out-sizes a hit still only counts its per-interval value (no burst-vs-chip interaction). DoT bypass-shield is respected only in notes.
+- Absorb/regen-burst are steady-state HP/s. The barrier is a flat one-time buffer: correct for a single engagement, but it ignores the between-pack recharge that is the whole point of the mechanic, so multi-pack farm throughput is understated. DoT bypass-barrier is respected only in notes.
 - Cheat-death, hardening/stationary/sustained-fight DR ramps use mid-point or one-shot approximations; reactive plating and shield-break/kill-burst heals are not summed.
 - Report notes observed in this tier: ${caveatNotes.length ? caveatNotes.map((n) => `\`${md(n)}\``).join(', ') : 'none'}.
 `;
@@ -1650,7 +1659,7 @@ Generated from \`tools/ehp-report.ts --llm-packet\`. Progression-focused compani
 - **Range & movement**: kiting, attack range, and repositioning are ignored — melee-range pressure is assumed.
 - **Kill-burst** recovery is undercounted (no kill cadence modeled); flagged in the charm table.
 - **Evasion** is averaged (dodgeRate × evade-mitigation), not the deterministic first-hit accumulator.
-- **Shield timing** is treated as flat HP/s throughput — no burst-vs-chip interaction or DoT bypass beyond notes.
+- **Barrier** is a flat one-time buffer — no between-engagement recharge, no burst-vs-chip interaction, no DoT bypass beyond notes.
 - **Multi-enemy pressure** is not modeled; a single attacker profile is assumed (idle pulls are often several mobs).
 
 ${renderMdView(progressionView(checkpoints))}

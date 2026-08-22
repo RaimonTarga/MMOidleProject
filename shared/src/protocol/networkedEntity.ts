@@ -11,8 +11,9 @@ import type {
   HasHealth,
   HasHitbox,
   HasPosition,
+  HasBarrier,
   HasStatus,
-  HoldsShields,
+  HoldsWards,
   HoldsInventory,
   IsChanneling,
   InParty,
@@ -62,7 +63,8 @@ export const SPECTATOR_PLAYER_KEYS = [
   "performsAttack",
   "mitigatesDamage",
   "evadesHits",
-  "holdsShields",
+  "hasBarrier",
+  "holdsWards",
   "hasEmote",
   "hasStatus",
   "inParty",
@@ -82,7 +84,8 @@ export const NETWORKED_PLAYER_KEYS = [
   "performsAttack",
   "mitigatesDamage",
   "evadesHits",
-  "holdsShields",
+  "hasBarrier",
+  "holdsWards",
   "usesAutocombat",
   "hasAutoIntent",
   "hasEmote",
@@ -153,7 +156,8 @@ export interface NetworkedEntity {
   performsAttack?: PerformsAttack;
   mitigatesDamage?: MitigatesDamage;
   evadesHits?: EvadesHits;
-  holdsShields?: HoldsShields;
+  hasBarrier?: HasBarrier;
+  holdsWards?: HoldsWards;
   usesAutocombat?: UsesAutocombat;
   hasAutoIntent?: HasAutoIntent;
   hasEmote?: HasEmote;

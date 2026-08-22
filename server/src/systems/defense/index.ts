@@ -2,13 +2,13 @@ import { getResource, setResource } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
 import { registerEvasion, resetEvadeAccumulator } from "./mitigation/evasion";
 import { registerDamageCap } from "./mitigation/damageCap";
-import { registerShieldAbsorb } from "./shields/shields";
-import { registerShieldBreakHeal } from "./shields/shieldBreakHeal";
+import { registerWardAbsorb } from "./barrier/wards";
+import { registerBarrierAbsorb, runBarrierRecharge } from "./barrier/barrier";
+import { registerBarrierBreakHeal } from "./barrier/barrierBreakHeal";
 import { registerHitToDot, runDebtDrain, resetDebtCheatDeath } from "./mitigation/hitToDot";
 import { registerCheatDeath, resetCheatDeath, runPostCheatDeathHeal } from "./mitigation/cheatDeath";
-import { registerDamageAbsorb, runAbsorbDrain } from "./shields/damageAbsorb";
+import { registerDamageAbsorb, runAbsorbDrain } from "./regen/damageAbsorb";
 import { registerKillBurst, runRegenBurst } from "./regen/regenBurst";
-import { runPeriodicShield } from "./shields/periodicShield";
 import { runDebuffCleanse } from "./mitigation/debuffCleanse";
 import { runInCombatRegen } from "./regen/inCombatRegen";
 import { runRampRegen, resetRampRegen } from "./regen/rampRegen";
@@ -32,16 +32,19 @@ import { applyHealToPlayer } from "./regen/healing";
  * Listener order within onDamageTaken (player as defender):
  *   1. Evasion         — reduces ctx.damage by the evade-mitigation fraction
  *   2. Damage cap      — clamps to defense.max-hit-pct of maxHp
- *   3. Shield          — absorbs remaining damage
- *   4. Hit-to-DoT      — redirects defense.hit-to-dot-pct to debt pool
- *   5. Cheat death     — caps lethal damage to hp-1 (once per combat)
- *   6. Damage absorb   — converts defense.absorb-pct of hit into HoT pool
+ *   3. Wards           — temporary absorb pools spend first (use-it-or-lose-it)
+ *   4. Barrier         — the permanent pool absorbs what the wards left
+ *   5. Break heal      — reads the emptied-pool metadata both absorbs set
+ *   6. Hit-to-DoT      — redirects defense.hit-to-dot-pct to debt pool
+ *   7. Cheat death     — caps lethal damage to hp-1 (once per combat)
+ *   8. Damage absorb   — converts defense.absorb-pct of hit into HoT pool
  */
 export function initDefenseSystems(): void {
   registerEvasion();
   registerDamageCap();
-  registerShieldAbsorb();
-  registerShieldBreakHeal(); // after shield absorb — reads its shieldBrokenMax metadata
+  registerWardAbsorb();      // before the barrier — wards are use-it-or-lose-it
+  registerBarrierAbsorb();
+  registerBarrierBreakHeal(); // after both absorbs — reads their emptied-pool metadata
   registerHitToDot();
   registerCheatDeath();
   registerDamageAbsorb();
@@ -89,7 +92,7 @@ export function updateDefensiveSystems(
     runAbsorbDrain(world, player, dt);
     runPostCheatDeathHeal(world, player, dt);
     runRegenBurst(world, player, dt, inCombat);
-    runPeriodicShield(world, player, inCombat);
+    runBarrierRecharge(world, player, dt);
     runDebuffCleanse(world, player);
     runInCombatRegen(world, player, dt);
     runRampRegen(world, player, dt);
@@ -110,11 +113,8 @@ export function updateDefensiveSystems(
 
 // ── Public re-exports (preserve `defenseSystems` public API) ─────────────────
 
-export {
-  applyShield,
-  applyShieldPercent,
-  updateShields,
-} from "./shields/shields";
+export { applyWard, applyWardPercent, updateWards } from "./barrier/wards";
+export { refillBarrier, syncBarrier } from "./barrier/barrier";
 export {
   applyHealToPlayer,
   getAntiHealMult,

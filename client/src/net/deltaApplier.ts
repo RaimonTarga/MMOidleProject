@@ -60,8 +60,8 @@ export function applyDelta(
       hint.hasDirectHit = true;
       if (ev.empowered) hint.empowered = true;
       if (ev.execution) hint.execution = true;
-      if (ev.shieldAbsorbed)
-        hint.shieldAbsorbed = (hint.shieldAbsorbed ?? 0) + ev.shieldAbsorbed;
+      if (ev.absorbed)
+        hint.absorbed = (hint.absorbed ?? 0) + ev.absorbed;
       if (ev.evadedPartial) hint.evadedPartial = true;
       if (ev.capped) hint.capped = true;
     } else if (ev.kind === "monster-hit") {
@@ -69,8 +69,8 @@ export function applyDelta(
       hint.hasDirectHit = true;
       if (ev.empowered) hint.empowered = true;
       if (ev.execution) hint.execution = true;
-      if (ev.shieldAbsorbed)
-        hint.shieldAbsorbed = (hint.shieldAbsorbed ?? 0) + ev.shieldAbsorbed;
+      if (ev.absorbed)
+        hint.absorbed = (hint.absorbed ?? 0) + ev.absorbed;
       if (ev.evadedPartial) hint.evadedPartial = true;
       if (ev.capped) hint.capped = true;
     } else if (ev.kind === "dot-tick") {

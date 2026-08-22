@@ -16,7 +16,7 @@ import type {
   PlayerDeathPayload,
   PlayerView,
   ReleaseAnnouncementPayload,
-  ShieldState,
+  WardState,
   SubVariant,
   SummonSlotView,
   TargetStatusView,
@@ -110,7 +110,11 @@ export const levelAtom = atom<number>(1);
 
 export const hpAtom = atom<number>(0);
 export const maxHpAtom = atom<number>(0);
-export const shieldsAtom = atom<ShieldState[]>([]);
+/** Permanent absorb pool and its ceiling; 0/0 when the build has no barrier. */
+export const barrierAtom = atom<number>(0);
+export const barrierMaxAtom = atom<number>(0);
+export const barrierRechargingAtom = atom<boolean>(false);
+export const wardsAtom = atom<WardState[]>([]);
 export const hpRegenAtom = atom<number>(0);
 /** HP-bar forecast layers: pending DoT damage (red) and pending heal (dark green). */
 export const incomingDotAtom = atom<number>(0);
@@ -727,7 +731,10 @@ function resetPlayerAtoms(): void {
   store.set(channelingPctAtom, 0);
   store.set(skillPointsAtom, 0);
 
-  setIfShallowArrayEqual(shieldsAtom, []);
+  store.set(barrierAtom, 0);
+  store.set(barrierMaxAtom, 0);
+  store.set(barrierRechargingAtom, false);
+  setIfShallowArrayEqual(wardsAtom, []);
   setIfShallowArrayEqual(summonSlotsAtom, []);
   setSummonHealth([]);
   setIfChanged(summonActiveCountAtom, 0);
@@ -844,7 +851,10 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(cannonChargePctAtom, player.cannonChargePct);
   setIfChanged(skillPointsAtom, player.skillPoints);
 
-  setIfShallowArrayEqual(shieldsAtom, player.shields);
+  setIfChanged(barrierAtom, player.barrier);
+  setIfChanged(barrierMaxAtom, player.barrierMax);
+  setIfChanged(barrierRechargingAtom, player.barrierRecharging);
+  setIfShallowArrayEqual(wardsAtom, player.wards);
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
   setIfShallowArrayEqual(runeRecipesCraftedAtom, player.runeRecipesCrafted);

@@ -204,10 +204,10 @@ export const jungleRecipeEntries = [
     id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
     cost: { green: 200 }, catalystCost: { alacrity: 4 }, stats: { hpRegen: 16 }, // family-tag: jungle recovery → Alacrity
-    // † overheal-shield-pct: regen beyond max HP converts to temp shield at 50%.
+    // † overheal-ward-pct: regen beyond max HP converts to a temporary ward.
     mechanicEffects: {
       'defense.ramp-regen-start-pct': 0.04, 'defense.ramp-regen-max-pct': 0.12, 'defense.ramp-regen-ramptime-ms': 9000,
-      'defense.overheal-shield-pct': 0.25,
+      'defense.overheal-ward-pct': 0.25,
     },
     tier: 4,
     icon: 'items/charms/overgrowth-pulse.png',

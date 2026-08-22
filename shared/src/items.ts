@@ -155,9 +155,10 @@ export interface ItemDefinition {
    *   defense.regen-burst-pct      — % maxHp healed per burst (needs interval)
    *   defense.regen-burst-interval-ms — ms between regen bursts
    *   defense.absorb-pct           — fraction of damage taken converted to HoT pool
-   *   defense.shield-pct           — % maxHp shield applied on combat entry/cooldown
-   *   defense.shield-interval-ms   — ms between shield applications (needs shield-pct)
-   *   defense.shield-duration-ms   — ms before a shield expires even if not depleted; omit for permanent shields
+   *   defense.barrier-pct          — permanent absorb pool worth % maxHp; refills
+   *                                  after BARRIER_DELAY_MS without taking damage
+   *   defense.barrier-recharge-pct — fraction of the pool refilled per second (overrides the default)
+   *   defense.barrier-delay-ms     — undamaged time before the refill starts (overrides the default)
    *   defense.cleanse-stacks       — stacks removed per cleanse trigger
    *   defense.cleanse-interval-ms  — ms between cleanse triggers
    *

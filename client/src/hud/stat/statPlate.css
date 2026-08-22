@@ -274,6 +274,22 @@
   background: rgba(220, 70, 60, 0.75);
 }
 
+/* The barrier's own conduit, on its own scale — a standing pool with a known
+   ceiling, unlike the ward band above. Recharging is shown as motion. */
+.stat-crown__barrier {
+  margin-top: 3px;
+  opacity: 0.85;
+}
+
+.stat-crown__barrier.is-recharging {
+  animation: barrier-recharge 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes barrier-recharge {
+  from { opacity: 0.55; }
+  to   { opacity: 1; }
+}
+
 /* A capping band along the top edge: absorb sitting on top of health. */
 .stat-crown__layer--shield {
   top: 0;

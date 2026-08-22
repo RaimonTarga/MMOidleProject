@@ -321,7 +321,7 @@ export function upsertPlayer(
 
   // Shield-absorbed damage renders as a separate blue number, independent of the
   // HP delta — so a fully absorbed incoming hit (no HP loss) still shows feedback.
-  if (damageHint?.shieldAbsorbed && damageHint.shieldAbsorbed > 0) {
+  if (damageHint?.absorbed && damageHint.absorbed > 0) {
     const sprite = state.sprite.get(player.id);
     const meta = state.spriteMeta.get(player.id);
     if (sprite && meta) {
@@ -329,7 +329,7 @@ export function upsertPlayer(
         scene,
         { x: sprite.x, y: sprite.y },
         meta.barOffsetY,
-        Math.round(damageHint.shieldAbsorbed),
+        Math.round(damageHint.absorbed),
         SHIELD_DAMAGE_COLOR,
         { symbol: SHIELD_DAMAGE_SYMBOL },
       );

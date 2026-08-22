@@ -55,6 +55,8 @@ export const BUFF_IDS = [
   'debuff-tundra-chill',
   'debuff-sundered',
   'debuff-antiheal',
+  'defense-barrier',          // permanent absorb pool (fill % on the tile)
+  'defense-ward',             // temporary absorb pools
   'defense-absorb',
   'defense-burst',
   'defense-debt',

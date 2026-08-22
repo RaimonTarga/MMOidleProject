@@ -135,11 +135,11 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t4-lavatempered', name: 'Lava-Tempered Hide',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     cost: { red: 220, yellow: 55 }, stats: { maxHp: 150, plating: 28 },
-    // † overheal-shield-pct: overheal from in-combat-regen becomes temp shield.
+    // † overheal-ward-pct: overheal from in-combat-regen becomes a temporary ward.
     //   Pairs naturally with Inferno Heart. (new key)
     mechanicEffects: {
       'defense.hardening-per-sec': 3, 'defense.hardening-max': 24, 'defense.hardening-reset-pct': 0.25,
-      'defense.overheal-shield-pct': 0.50,
+      'defense.overheal-ward-pct': 0.50,
     },
     tier: 4,
     icon: 'items/armor/lava-tempered-hide.png',

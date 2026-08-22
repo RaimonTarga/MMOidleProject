@@ -272,8 +272,8 @@ export function applyEnemySoftCap(
 }
 
 /**
- * Periodic absorb barrier on the monster — mirror of the player periodic shield
- * (defense.shield-pct). Lazily refreshes the barrier when its interval comes due
+ * Periodic absorb shield on the monster. NOT the player's barrier — this one is
+ * timed and cyclic. Lazily refreshes the shield when its interval comes due
  * (sized `shieldPct × maxHp`, lasting `durationMs`) and drains incoming player
  * direct-hit damage off it before HP. Like the player shield it only sees the
  * combat-pipeline direct hit; a big burst pops it in one go while small chip

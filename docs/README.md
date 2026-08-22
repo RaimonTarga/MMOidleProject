@@ -43,6 +43,7 @@ top-level doc.
 | Audio | [audio-current-state.md](audio-current-state.md) | — |
 | Auth + characters | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) | — |
 | Balance Lab | [balance-lab-current-state.md](balance-lab-current-state.md) | [player-power-curve.md](../design_docs/player-power-curve.md) |
+| Barrier & Ward | [barrier-ward-current-state.md](barrier-ward-current-state.md) | — |
 | Biome identity / ecology | [biome-ecology-current-state.md](biome-ecology-current-state.md) | — |
 | Charms + recovery | [charms-current-state.md](charms-current-state.md) | — |
 | Conduit (summoner) | [conduit-current-state.md](conduit-current-state.md) | [summoner-overhaul-design-source.md](../design_docs/summoner-overhaul-design-source.md) |

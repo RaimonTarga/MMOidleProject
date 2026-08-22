@@ -23,14 +23,17 @@ export function drawHealthBars(state: RenderState): void {
     const barY = sprite.y - meta.barOffsetY;
     const hpPct = snap.maxHp > 0 ? Math.max(0, snap.hp / snap.maxHp) : 0;
     const hpColor = hpPct > 0.5 ? 0x44ee44 : hpPct > 0.25 ? 0xeeaa22 : 0xee3322;
+    // Barrier and wards share one absorb band above the HP fill — overhead bars
+    // are 32px wide, so splitting them would give each a sub-pixel sliver.
     let shieldPct = 0;
     let shieldShown = false;
 
     if (state.kind.get(id) === 'player') {
       const player = snap as PlayerView;
-      const totalShield = player.shields.reduce((sum, s) => sum + s.amount, 0);
-      shieldPct = snap.maxHp > 0 ? totalShield / snap.maxHp : 0;
-      shieldShown = totalShield > 0;
+      const totalAbsorb =
+        player.barrier + player.wards.reduce((sum, w) => sum + w.amount, 0);
+      shieldPct = snap.maxHp > 0 ? totalAbsorb / snap.maxHp : 0;
+      shieldShown = totalAbsorb > 0;
     }
 
     const prev = state.hpBarCache.get(id);

@@ -72,6 +72,25 @@ export const GAME_CONFIG = {
   /** Attack multiplier applied to non-boss monsters in regular dungeon nodes. */
   DUNGEON_ATK_MULT: 1.6,
 
+  // ── Barrier (permanent, self-recharging absorb pool) ──────────────────────────
+  // Sized by `defense.barrier-pct` × maxHp. It never expires; instead it refills
+  // once the player has gone BARRIER_DELAY_MS without taking damage. Direct hits
+  // and DoT ticks both restart the delay, so in sustained combat the barrier is a
+  // per-engagement buffer that recharges between packs rather than a throughput
+  // stat. Items override either default via `defense.barrier-recharge-pct` /
+  // `defense.barrier-delay-ms`.
+  /** Fraction of the barrier's MAX refilled per second while recharging (0.25 = full in 4s). */
+  BARRIER_RECHARGE_PCT: 0.25,
+  /** Milliseconds the player must go undamaged before the barrier starts refilling. */
+  BARRIER_DELAY_MS: 4000,
+  /**
+   * Cooldown on the barrier-break riders (`defense.barrier-break-heal-pct` and
+   * `defense.max-hit-refills-barrier`). Barrier depletion is routine under the
+   * recharge model — without this gate a barrier flickering at zero would fire
+   * them every tick.
+   */
+  BARRIER_BREAK_RIDER_CD_MS: 8000,
+
   // ── Evasion (fully deterministic — fractional accumulator, no RNG) ─────────────
   /**
    * Baseline fraction of a hit's damage avoided when it is evaded (0.5 = half).

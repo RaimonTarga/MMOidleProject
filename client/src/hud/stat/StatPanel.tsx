@@ -35,7 +35,10 @@ import {
   playerTierAtom,
   selectedRangeAtom,
   selectedSubVariantAtom,
-  shieldsAtom,
+  barrierAtom,
+  barrierMaxAtom,
+  barrierRechargingAtom,
+  wardsAtom,
   summonActiveCountAtom,
   unlockedSkillsAtom,
   speedAtom,
@@ -117,7 +120,10 @@ export function StatPanel() {
   const name = useAtomValue(playerNameAtom);
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
-  const shields = useAtomValue(shieldsAtom);
+  const barrier = useAtomValue(barrierAtom);
+  const barrierMax = useAtomValue(barrierMaxAtom);
+  const barrierRecharging = useAtomValue(barrierRechargingAtom);
+  const wards = useAtomValue(wardsAtom);
   const incomingDot = useAtomValue(incomingDotAtom);
   const pendingHeal = useAtomValue(pendingHealAtom);
   const attack = useAtomValue(attackAtom);
@@ -150,7 +156,10 @@ export function StatPanel() {
       name,
       hp,
       maxHp,
-      shields,
+      barrier,
+      barrierMax,
+      barrierRecharging,
+      wards,
       incomingDot,
       pendingHeal,
       attack,
@@ -172,9 +181,9 @@ export function StatPanel() {
   const maxHpVal    = player?.maxHp ?? 0;
   const hpPct       = player && maxHpVal > 0 ? (player.hp / maxHpVal) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
-  const totalShield = player?.shields.reduce((s, sh) => s + sh.amount, 0) ?? 0;
-  // Shield sits in its own strip above the bar and stays visible at full HP.
-  const shieldPct   = maxHpVal > 0 ? Math.min(100, (totalShield / maxHpVal) * 100) : 0;
+  const totalWard   = player?.wards.reduce((s, w) => s + w.amount, 0) ?? 0;
+  // Absorb layering is the plate's own job (StatPlate draws the capping band and
+  // the barrier's dedicated conduit); the panel only forwards the raw numbers.
   // HP-bar layers (all as % of maxHp): pending DoT eats the right edge of current
   // HP (red); pending regen extends past current HP (dark green).
   const dotPct      = player && maxHpVal > 0 ? Math.min(hpPct, (player.incomingDot / maxHpVal) * 100) : 0;
@@ -275,7 +284,10 @@ export function StatPanel() {
             status,
             hp: player.hp,
             maxHp: player.maxHp,
-            shield: totalShield,
+            barrier: player.barrier,
+            barrierMax: player.barrierMax,
+            barrierRecharging: player.barrierRecharging,
+            ward: totalWard,
             incomingDot: player.incomingDot,
             pendingHeal: player.pendingHeal,
             hpTip,

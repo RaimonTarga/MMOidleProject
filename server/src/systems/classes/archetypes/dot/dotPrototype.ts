@@ -56,7 +56,8 @@ import {
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
 import { applyMonsterDamageTakenDebuffs } from "../../shared/debuffs";
 import { tryCheatDeath } from "../../../defense/mitigation/cheatDeath";
-import { drainPlayerShields } from "../../../defense/shields/shields";
+import { drainWards } from "../../../defense/barrier/wards";
+import { drainBarrier, stampBarrierDamage } from "../../../defense/barrier/barrier";
 import { DOT_EFFECT_ID } from "./t3/core/constants";
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
@@ -208,13 +209,22 @@ export function updateDotArchetype(world: World, dt: number): void {
       Math.round(base * (1 - drForDot) * (1 - dotResist)),
     );
 
-    // DoT respects shields by default — drain the barrier before HP, mirroring
-    // direct hits. A DoT may opt out (the exception) via dotEffect.bypassShield,
-    // stored as data.bypassShield = 1.
-    const bypassShield = effect.data.bypassShield === 1;
-    const { damage: hpDamage, absorbed: shieldAbsorbed } = bypassShield
-      ? { damage, absorbed: 0 }
-      : drainPlayerShields(entity, damage);
+    // A DoT tick counts as being hit: it restarts the barrier's recharge delay
+    // even when it bypasses the pool, so a burning player cannot recharge
+    // straight through the burn.
+    stampBarrierDamage(world, entity);
+
+    // DoT drains wards then the barrier before HP, mirroring direct hits. A DoT
+    // may opt out of the pools (the exception) via dotEffect.bypassBarrier,
+    // stored as data.bypassBarrier = 1 — the delay stamp above still applies.
+    let hpDamage = damage;
+    let absorbed = 0;
+    if (effect.data.bypassBarrier !== 1) {
+      const ward = drainWards(entity, hpDamage);
+      const pool = drainBarrier(world, entity, ward.damage);
+      hpDamage = pool.damage;
+      absorbed = ward.absorbed + pool.absorbed;
+    }
 
     const killer = buildKillerFromSourceId(
       world,
@@ -230,7 +240,7 @@ export function updateDotArchetype(world: World, dt: number): void {
         actorType: 'monster',
       },
       hpDamage,
-      shieldAbsorbed,
+      absorbed,
       'dot',
       buildSimpleBreakdown(base, hpDamage),
     );

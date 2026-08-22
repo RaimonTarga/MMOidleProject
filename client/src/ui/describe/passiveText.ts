@@ -15,9 +15,9 @@ import { STAT_HELP } from '../../hud/stat/statHelp';
  * shows up as the row's tooltip — a key with no prose still reports its number,
  * it just explains itself less.
  *
- * Companion keys collapse into their feature's row: `defense.shield-pct`,
- * `defense.shield-interval-ms` and `defense.shield-duration-ms` are one line
- * ("Shield — 15%, every 8s, for 4s"), not three.
+ * Companion keys collapse into their feature's row: `defense.barrier-pct`,
+ * `defense.barrier-delay-ms` and `defense.barrier-recharge-pct` are one line
+ * ("Barrier — 15%, 4s, 25%"), not three.
  */
 
 export interface PassiveLine {
@@ -41,9 +41,11 @@ export interface PassiveLine {
  * `-stacks` and `-interval-ms` before `-ms`. Order is load-bearing.
  */
 const QUALIFIER_SUFFIXES = [
+  '-recharge-pct',
   '-ramptime-ms',
   '-interval-ms',
   '-duration-ms',
+  '-delay-ms',
   '-max-stacks',
   '-per-stack',
   '-per-tier',
@@ -208,11 +210,13 @@ export function formatPassiveValue(
 
   switch (suffix) {
     case '-pct':
+    case '-recharge-pct':
       return formatPercent(value, withSign);
     case '-ms':
     case '-tick-ms':
     case '-interval-ms':
     case '-duration-ms':
+    case '-delay-ms':
     case '-ramptime-ms':
       return formatDuration(value);
     case '-mult':
@@ -239,6 +243,10 @@ function qualifierPhrase(suffix: QualifierSuffix, key: string, value: number): s
       return `for ${formatted}`;
     case '-ramptime-ms':
       return `ramps over ${formatted}`;
+    case '-delay-ms':
+      return `after ${formatted} undamaged`;
+    case '-recharge-pct':
+      return `${formatted} per second`;
     case '-max-stacks':
       return `up to ${formatted} stacks`;
     case '-stacks':
@@ -279,6 +287,7 @@ function qualifierPhrase(suffix: QualifierSuffix, key: string, value: number): s
 /** Which qualifier gets promoted to the headline when the stem itself is absent. */
 const HEADLINE_PRIORITY: QualifierSuffix[] = [
   '-pct',
+  '-recharge-pct',
   '-mult',
   '-flat',
   '-bonus',
@@ -363,7 +372,7 @@ export function passiveLines(
   return lines;
 }
 
-/** Terse one-line form for dense rows, e.g. "Shield 15% · DoT Resist 20%". */
+/** Terse one-line form for dense rows, e.g. "Barrier 15% · DoT Resist 20%". */
 export function passiveSummary(effects: Record<string, number> | undefined): string {
   return passiveLines(effects)
     .map((line) => `${line.label} ${line.value}`)

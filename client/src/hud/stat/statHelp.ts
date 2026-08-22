@@ -11,7 +11,7 @@
 
 export const STAT_HELP: Record<string, string> = {
   // ── Core ──────────────────────────────────────────────────────────────────
-  hp: 'Your health. At 0 you die and respawn at the clearing, leaving a corpse at the death site. Bar layers: blue strip above = shield; red = HP that pending damage (damage-over-time + deferred debt) will remove; dark green = healing queued from regen/absorb.',
+  hp: 'Your health. At 0 you die and respawn at the clearing, leaving a corpse at the death site. Bar layers: blue strip above = barrier (on its own scale); red = HP that pending damage (damage-over-time + deferred debt) will remove; dark green = healing queued from regen/absorb.',
   attack:
     'Base damage per hit before the target’s defenses. Final hit = (Attack − their Plating) × (1 − their Damage Reduction), floored at 1.',
   onHitDamage:
@@ -42,8 +42,8 @@ export const STAT_HELP: Record<string, string> = {
   'defense.in-combat-regen-pct':
     'Fraction of your HP regen that keeps working while in combat (normally regen pauses in combat).',
   'defense.regen-burst-pct': 'Heals a burst of max HP on a fixed timer while fighting.',
-  'defense.shield-pct':
-    'Periodically grants a temporary shield worth a % of max HP that absorbs damage before your health does.',
+  'defense.barrier-pct':
+    'A permanent pool worth this % of max HP that absorbs damage before your health does. It never expires: once you have gone 4 seconds without taking damage (hits and damage-over-time both count), it refills at 25% of its size per second. In a sustained fight it will not recharge — it is the buffer you open each engagement with.',
   'defense.absorb-pct':
     'Diverts part of incoming damage into a pool that heals back over time. You still take the hit, then recover some of it gradually.',
   'defense.dot-resistance':

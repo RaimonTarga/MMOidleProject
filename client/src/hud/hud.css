@@ -419,7 +419,9 @@
   opacity: 0.9;
 }
 
-/* Shield strip — its own bar above the HP bar, always visible. */
+/* Barrier strip — its own bar above the HP bar, on its OWN scale (fraction of
+   the barrier pool, not of max HP), so an empty barrier still shows the pool
+   that is missing. Always visible once the build has a barrier at all. */
 .hp-shield-strip {
   position: relative;
   height: 4px;
@@ -438,6 +440,22 @@
   border-radius: 2px;
   transition: width 0.3s ease;
   animation: shield-shimmer 1.8s ease-in-out infinite alternate;
+}
+
+/* Recharging reads as motion, not as a different colour: the pool is filling. */
+.hp-shield-strip--recharging .hp-shield-strip__fill {
+  background: linear-gradient(90deg, #33aacc, #88ddff);
+  animation: shield-shimmer 0.7s ease-in-out infinite alternate;
+}
+
+/* Wards cap the HP track like the desktop plate does — they have no fixed
+   ceiling of their own, so they are measured against max HP. */
+.hp-layer--ward {
+  top: 0;
+  bottom: auto;
+  height: 2px;
+  background: #bfe6ff;
+  box-shadow: 0 0 4px rgba(191, 230, 255, 0.55);
 }
 
 .hp-bar-fill {

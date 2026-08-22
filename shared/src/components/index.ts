@@ -4,10 +4,11 @@ export * from "./combat/buffs";
 export * from "./combat/cannotAttack";
 export * from "./combat/isDead";
 export * from "./combat/effects";
+export * from "./combat/hasBarrier";
 export * from "./combat/hasEmpoweredAttack";
 export * from "./combat/hasEnvironmentalDot";
 export * from "./combat/hasNodeFeatureEffect";
-export * from "./combat/holdsShields";
+export * from "./combat/holdsWards";
 export * from "./combat/statusEffects";
 export * from "./combat/tracksCombat";
 

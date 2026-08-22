@@ -22,6 +22,7 @@ import { syncArchetypeSlices } from '../ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../ecs/playerEntityFormulas';
 import { setAggroTarget, setAttackTarget } from '../systems/combat/ai/targeting';
 import { clearEngagement } from '../systems/combat/ai/engagement';
+import { refillBarrier } from '../systems/defense/barrier/barrier';
 import { grantDevLoadout } from '../systems/player/economy/grantDevWeapon';
 import { checkRecipeUnlocks } from '../systems/player/progression/rewards';
 import {
@@ -232,11 +233,12 @@ function clearPlayerSkillState(world: World, player: PlayerEntity): void {
   detachComponent(world, player, 'hasAlignment');
   detachComponent(world, player, 'inAcChargePhase');
   detachComponent(world, player, 'inAcDischarge');
-  detachComponent(world, player, 'holdsShields');
+  detachComponent(world, player, 'holdsWards');
   despawnMinionsForOwner(world, player);
   resetTracksCombat(player.tracksCombat);
   syncArchetypeSlices(world, player);
   recalculatePlayerEntityStats(world, player);
+  refillBarrier(world, player);
   syncArchetypeSlices(world, player);
 }
 

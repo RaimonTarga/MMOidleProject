@@ -136,7 +136,7 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   // Switches: the value is 1, and "1" is not the information.
   'defense.cheat-death':              flag,
   'defense.debt-cheat-death':         flag,
-  'defense.max-hit-rearms-shield':    flag,
+  'defense.max-hit-refills-barrier':  flag,
   'shared.applies-through-evade':     flag,
   // Counted things that read wrong as a bare number.
   'defense.cleanse-stacks':           v => `${num(v)} stack${v === 1 ? '' : 's'}`,
@@ -263,11 +263,17 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark(key);
   }
 
-  if (has('defense.shield-pct')) {
-    const interval = fx['defense.shield-interval-ms'];
-    const every = interval ? ` every ${Math.round(interval / 1000)}s` : '';
-    lines.push(`${pctK('defense.shield-pct')} max HP shield in combat${every}`);
-    mark('defense.shield-pct', 'defense.shield-interval-ms', 'defense.shield-duration-ms');
+  if (has('defense.barrier-pct')) {
+    const delay = fx['defense.barrier-delay-ms'];
+    const rate = fx['defense.barrier-recharge-pct'];
+    const detail: string[] = [];
+    if (delay) detail.push(`recharges after ${Math.round(delay / 1000)}s undamaged`);
+    if (rate) detail.push(`${Math.round(rate * 100)}% per second`);
+    lines.push(
+      `${pctK('defense.barrier-pct')} max HP barrier`
+      + (detail.length > 0 ? ` (${detail.join(', ')})` : ''),
+    );
+    mark('defense.barrier-pct', 'defense.barrier-delay-ms', 'defense.barrier-recharge-pct');
   }
 
   if (has('defense.in-combat-regen-pct')) {
@@ -452,15 +458,15 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.debt-cheat-death');
   }
 
-  if (has('defense.shield-break-heal-pct') || has('defense.shield-break-hp-recovery-pct')) {
-    const breakPct = (fx['defense.shield-break-heal-pct'] ?? 0) + (fx['defense.shield-break-hp-recovery-pct'] ?? 0);
-    lines.push(`When a shield breaks, heal ${Math.round(breakPct * 100)}% of its max value as HP`);
-    mark('defense.shield-break-heal-pct', 'defense.shield-break-hp-recovery-pct');
+  if (has('defense.barrier-break-heal-pct') || has('defense.barrier-break-hp-recovery-pct')) {
+    const breakPct = (fx['defense.barrier-break-heal-pct'] ?? 0) + (fx['defense.barrier-break-hp-recovery-pct'] ?? 0);
+    lines.push(`When your barrier is emptied, heal ${Math.round(breakPct * 100)}% of its max value as HP`);
+    mark('defense.barrier-break-heal-pct', 'defense.barrier-break-hp-recovery-pct');
   }
 
-  if (has('defense.max-hit-rearms-shield')) {
-    lines.push('When the damage cap triggers, immediately rearm your shield');
-    mark('defense.max-hit-rearms-shield');
+  if (has('defense.max-hit-refills-barrier')) {
+    lines.push('When the damage cap triggers, immediately refill your barrier');
+    mark('defense.max-hit-refills-barrier');
   }
 
   if (has('defense.hardening-max-dr-bonus')) {
@@ -469,9 +475,9 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.hardening-max-dr-bonus', 'defense.hardening-max-dr-ms');
   }
 
-  if (has('defense.overheal-shield-pct')) {
-    lines.push(`Healing past full HP becomes a temporary shield (${pctK('defense.overheal-shield-pct')} of the overflow)`);
-    mark('defense.overheal-shield-pct');
+  if (has('defense.overheal-ward-pct')) {
+    lines.push(`Healing past full HP becomes a temporary ward (${pctK('defense.overheal-ward-pct')} of the overflow)`);
+    mark('defense.overheal-ward-pct');
   }
 
   if (has('defense.cleanse-per-stack-heal-pct')) {

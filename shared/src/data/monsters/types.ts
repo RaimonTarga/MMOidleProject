@@ -71,7 +71,7 @@ export type BossAction =
         tickIntervalMs: number;
         durationMs?: number;
         element?: DamageElement;
-        bypassShield?: boolean;
+        bypassBarrier?: boolean;
       } | null;
       kite?: boolean;
       /** When set, revert to pre-morph values after durationMs. Omit = permanent phase flip. */
@@ -434,11 +434,12 @@ export interface MonsterDefinition {
     /** DoT element for damage-number flavor (color/glyph). Defaults to poison. */
     element?: DamageElement;
     /**
-     * Exception flag: when true this DoT's ticks ignore the player's shields and
-     * hit HP directly. The DEFAULT (omitted/false) is that DoT ticks are absorbed
-     * by shields like any other damage — bypass should stay rare and deliberate.
+     * Exception flag: when true this DoT's ticks ignore the player's wards and
+     * barrier and hit HP directly. The DEFAULT (omitted/false) is that DoT ticks
+     * are absorbed like any other damage — bypass should stay rare and deliberate.
+     * Either way the tick still restarts the barrier's recharge delay.
      */
-    bypassShield?: boolean;
+    bypassBarrier?: boolean;
   };
   /**
    * If set, this monster applies a movement slow (or root when speedMult = 0) to
@@ -500,7 +501,7 @@ export interface MonsterDefinition {
       tickIntervalMs: number;
       durationMs: number;
       element?: DamageElement;
-      bypassShield?: boolean;
+      bypassBarrier?: boolean;
     };
   };
   /**
@@ -573,12 +574,12 @@ export interface MonsterDefinition {
    */
   markedStrike?: { multiplier: number };
   /**
-   * Periodic absorb barrier on the MONSTER — mirror of the player periodic shield
-   * (defense.shield-pct). Every `intervalMs` the monster gains a shield equal to
-   * `shieldPct × maxHp` lasting `durationMs`; it absorbs incoming player direct-hit
-   * damage before the monster's HP (same scope as the player shield, which likewise
-   * only absorbs combat-pipeline hits). Rewards burst (one big hit pops it) and
-   * punishes chip (small hits waste themselves against it). Timer is deterministic.
+   * Periodic absorb shield on the MONSTER. Deliberately NOT the player's barrier:
+   * this one is timed and cyclic. Every `intervalMs` the monster gains a shield
+   * equal to `shieldPct × maxHp` lasting `durationMs`; it absorbs incoming player
+   * direct-hit damage before the monster's HP (it only sees combat-pipeline hits).
+   * Rewards burst (one big hit pops it) and punishes chip (small hits waste
+   * themselves against it). Timer is deterministic.
    */
   enemyShield?: {
     shieldPct: number;

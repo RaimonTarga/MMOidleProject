@@ -37,7 +37,7 @@ interface GradientConduitCommonProps {
    * though the player had lost the progress.
    */
   snap?: boolean;
-  /** Extra marks inside the track: a shield band, a regen or incoming preview. */
+  /** Extra marks inside the track: an absorb band, a regen or incoming preview. */
   layers?: ReactNode;
   className?: string;
   style?: CSSProperties;

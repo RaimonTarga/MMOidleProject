@@ -31,7 +31,8 @@ import type {
   HasOverdrive,
   HasPosition,
   HasStatus,
-  HoldsShields,
+  HasBarrier,
+  HoldsWards,
   HoldsInventory,
   InAcChargePhase,
   InAcDischarge,
@@ -179,7 +180,8 @@ export interface ServerEntity {
   // Player-only slices
   isPlayer?: IsPlayer;
   evadesHits?: EvadesHits;
-  holdsShields?: HoldsShields;
+  hasBarrier?: HasBarrier;
+  holdsWards?: HoldsWards;
   usesAutocombat?: UsesAutocombat;
   hasAutoIntent?: HasAutoIntent;
   hasEmote?: HasEmote;

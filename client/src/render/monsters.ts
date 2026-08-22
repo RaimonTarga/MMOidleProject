@@ -321,14 +321,14 @@ export function upsertMonster(
 
   // Shield-absorbed damage renders as a separate blue number, independent of the
   // HP delta — so a fully absorbed hit (no HP loss) still shows feedback.
-  if (hint?.shieldAbsorbed && hint.shieldAbsorbed > 0) {
+  if (hint?.absorbed && hint.absorbed > 0) {
     const sprite = state.sprite.get(monster.id);
     if (sprite && meta) {
       spawnDamageNumber(
         scene,
         { x: sprite.x, y: sprite.y },
         meta.barOffsetY,
-        Math.round(hint.shieldAbsorbed),
+        Math.round(hint.absorbed),
         SHIELD_DAMAGE_COLOR,
         { symbol: SHIELD_DAMAGE_SYMBOL },
       );
