@@ -34,7 +34,7 @@ to answer with tooling, not an invariant to clamp.
 | Passive | Shape |
 |---|---|
 | `defense.recovery-active-pct` | Permanent while in combat (Squire root, Recuperating Stance) |
-| `defense.recovery-pulse-pct` + `-interval-ms` + `-duration-ms` | Every interval, on for duration (Striker root, cave charms) |
+| `defense.recovery-pulse-pct` + `-interval-ms` + `-duration-ms` | Every interval, on for duration (Striker root, swamp charms) |
 | `defense.recovery-on-kill-pct` + `-ms` | A kill switches it on; further kills **refresh** (Slinger root, plains charm) |
 | `defense.recovery-ramp-start-pct` / `-max-pct` / `-ramptime-ms` | Climbs start→max over a fight, resets on leaving combat (jungle charm) |
 | `guard.recovery-on-fire-pct` + `-ms` | Firing any Guard ability switches it on (forest charm) |

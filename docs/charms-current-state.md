@@ -68,12 +68,17 @@ for Step 9's 5th-slot Core system.
 artifacts under `reports/` and reference docs under `design_docs/` still mention old names; they
 regenerate and were left.)
 
-## Worked content (placeholders — user balance pass)
+## Worked content — SUPERSEDED by the T1 item rework
 
-- `forest-charm-t1` (Heartroot Amulet): `guard.cooldown-reduction-pct` 0.15 + `guard.recovery-on-fire-pct`
-  0.08 (recovery-themed; pairs with Brace, the forest Guard ability).
-- `plains-charm-t1` (Plains Stone): keeps `defense.recovery-on-kill-pct` 0.05, adds `guard.potency-pct` 0.20
-  (contrasting identity).
+The two worked charms this step shipped (`forest-charm-t1` with `guard.cooldown-reduction-pct` +
+`guard.recovery-on-fire-pct`, and `plains-charm-t1` with `guard.potency-pct`) were **re-authored**
+by the T1 item rework. Forest's charm is now raw Recovery + `defense.recovery-skill-potency`;
+Plains' is on-kill Recovery only, and the Guard-potency rider moved to Mountain's armor, where
+defensive-skill amplification is the locked identity. See
+[t1-item-rework-current-state.md](t1-item-rework-current-state.md).
+
+The `guard.*` MACHINERY documented above is unchanged and still the authority — only which items
+author which keys moved.
 
 ## Verified
 

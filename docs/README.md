@@ -62,6 +62,7 @@ top-level doc.
 | Tier seals | [seals-current-state.md](seals-current-state.md) | — |
 | Spectator landing | [spectator-landing-current-state.md](spectator-landing-current-state.md) | — |
 | Stances | [stances-current-state.md](stances-current-state.md) | — |
+| T1 item rework | [t1-item-rework-current-state.md](t1-item-rework-current-state.md) | [T1_ITEM_DESIGN_PHILOSOPHY.md](../design_docs/T1_ITEM_DESIGN_PHILOSOPHY.md), [T1_ITEM_NUMERICAL_BASELINE.md](../design_docs/T1_ITEM_NUMERICAL_BASELINE.md) |
 
 `rites-current-state.md` and `stances-current-state.md` double as external-review
 handoffs: both systems have complete machinery and thin, placeholder content.
