@@ -47,10 +47,12 @@ export function suppressedFeatureIdsForEntity(
   const nodeId = entity.hasPosition?.nodeId;
   if (!nodeId) return new Set();
   const ids = suppressedFeatureIdsForNode(world, nodeId);
-  if (
-    entity.isMonster &&
-    MONSTER_DATABASE.get(entity.isMonster.monsterTypeId)?.vaultsMountainLedges === true
-  ) {
+  // Ledges do not apply to a caprine (it hops them) or to a flyer (it is in the
+  // air). Two different fantasies, one pathing consequence.
+  const monsterDef = entity.isMonster
+    ? MONSTER_DATABASE.get(entity.isMonster.monsterTypeId)
+    : undefined;
+  if (monsterDef?.vaultsMountainLedges === true || monsterDef?.flies === true) {
     for (const id of mountainLedgeFeatureIdsForNode(nodeId)) ids.add(id);
   }
   return ids;

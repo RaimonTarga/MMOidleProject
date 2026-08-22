@@ -29,8 +29,7 @@ import type { MonsterDefinition } from './types';
 //
 // NEW fields used below (engine gate — see bottom of file):
 //   behavior: 'kiter'     — ranged AI maintains standoff (see monsterKites)
-//   rampOnCombat: {...}    — Volcano: attack ramps while in combat, capped
-//   rampDebuff: {...}      — Tundra: stacking slow/atk-slow on the PLAYER, capped
+//   ⚠ rampOnCombat/rampDebuff are NO LONGER authored here — see the biome banner.
 // Existing/reused: chargeOnAggro, behavior: 'ranged', dotEffect, evasion, slowEffect.
 // Costs/essence/biomeXp = placeholder (economy deferred).
 // ─────────────────────────────────────────────────────────────────────────
@@ -38,116 +37,129 @@ import type { MonsterDefinition } from './types';
 export const volcanoMonsterEntries = [
 
 
-  // ══════════════════ VOLCANO (debut T3) — high-density fire swarm, RAMPING ══════════════════
-  // Debut → legible single-mechanic intro. Fast dense swarm; every enemy RAMPS
-  // attack while in combat (capped) — "burst it or out-sustain it." Density + speed
-  // catch Far, ramp punishes slow kills. Answer: hardening + active/on-kill Recovery.
+  // ══════════════════ VOLCANO — high-density fire swarm under GLOBAL HEAT ══════════════════
+  // "The fight gets more dangerous over time" is owned by ONE thing: the node-wide
+  // ambient HEAT ramp (`volcanicHeat` in shared/src/world/nodeFeatures.ts), which
+  // raises the player's damage DEALT and TAKEN together the longer combat runs.
+  //
+  // ⚠ NO monster in this biome carries `rampOnCombat` (T1–T4 rework, locked). Nine
+  // per-mob ramps stacked on top of the global ramp was two difficulty knobs doing
+  // one job, and made every volcano mob the same monster. Each mob's job now is to
+  // give the fight a reason NOT to end quickly, and Heat does the rest.
+  // Density + speed catch Far. Answer: hardening + active/on-kill Recovery.
   ['ember-scuttler', {
     id: 'ember-scuttler', name: 'Ember Scuttler', color: 0xff6622,
     // Young fire skink (role-name kept; grows into the T4 Ember Skink).
-    // Swarm filler that heats up: starts weak, ramps if the fight drags. Fast.
+    // Basic swarm filler: weak, fast, numerous. No ability — deliberately.
     stats: { hp: 380, attack: 24, plating: 2, damageReduction: 0, speed: 64, attackRange: 12, attackCooldown: 1600, pullRange: 210 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 25, essenceType: 'red', level: 2, biomeXp: 150 },
+    // Loose cohesion/separation so the high-density biome READS as a swarm.
+    // WARNING: no alpha, no followers, no call-allies (locked) - density is the
+    // swarm, monster coordination is not.
+    swarm: { cohesion: 0.1, separation: 44 },
     ai: { wanderRadius: 230, leashRange: 620, idleMinMs: 1000, idleMaxMs: 3600 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.60, tickIntervalMs: 2000 },
   }],
 
   ['cinder-hound', {
     id: 'cinder-hound', name: 'Cinder Hound', color: 0xff8800,
-    // Fast charger that ramps: closes instantly, gets hotter the longer it lives.
+    // SWARM CATCHER / anti-kite: charges on engagement so you cannot simply walk
+    // away from the density. No personal ramp.
     stats: { hp: 460, attack: 30, plating: 3, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 260 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 29, essenceType: 'red', level: 2, biomeXp: 175 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 700, idleMaxMs: 3000 },
+    swarm: { cohesion: 0.08, separation: 56 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.60, tickIntervalMs: 2000 },
   }],
 
   ['magma-brute', {
     id: 'magma-brute', name: 'Magma Tortoise', color: 0xcc2200,
-    // Molten tortoise (line T3, grows into the T4 Obsidian Tortoise).
-    // Slow bruiser that ramps HARDER (cap +60%): kitable alone, but in the swarm you
-    // can't kite freely, and a slow kill lets it spiral toward dangerous. Plt 6.
+    // Molten tortoise (line T3, grows into the T4 Obsidian Tortoise). Slow armored
+    // ANCHOR: high HP, plating, very slow, heavier attacks, no signature ability.
+    // Its strategic role is that it keeps combat ALIVE — which is what lets the
+    // node's global Heat keep climbing.
     stats: { hp: 800, attack: 56, plating: 6, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.15, maxPct: 0.75, tickIntervalMs: 2000 },
   }],
 
   ['ash-slinger', {
     id: 'ash-slinger', name: 'Ash Salamander', color: 0xff4422,
-    // Salamander line T3 (ranged ember-lobber that ramps) — pokes while the swarm
-    // closes; ignoring it lets its ramp build. Stationary ranged (not a kiter).
+    // Salamander line T3: STATIONARY ranged pressure that fires from the background
+    // while the swarm closes. Does not kite. No personal ramp.
     stats: { hp: 420, attack: 34, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
     behavior: 'ranged', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
+    // Fires from the background and does NOT kite (locked).
+    staticSentry: true,
     ai: { wanderRadius: 220, leashRange: 600, idleMinMs: 1200, idleMaxMs: 4000 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.50, tickIntervalMs: 2000 },
   }],
 
   // T4
 
   ['ember-skink', {
     id: 'ember-skink', name: 'Ember Skink', color: 0xff6622,
-    // Fast swarm filler that heats up. Fire DoT per hit. DPS 64 × (1000/1300) = 49
-    // early → ~73 at max ramp. Burst it before it spirals.
+    // Evolved swarm filler: the T3 Scuttler plus a light Burn on hit. No ramp.
     stats: { hp: 790, attack: 64, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 47, essenceType: 'red', level: 3, biomeXp: 280 },
+    // Loose cohesion/separation so the high-density biome READS as a swarm.
+    // WARNING: no alpha, no followers, no call-allies (locked) - density is the
+    // swarm, monster coordination is not.
+    swarm: { cohesion: 0.1, separation: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.09, maxPct: 0.50, tickIntervalMs: 2000 },
     dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 5, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['infernal-direhound', {
     id: 'infernal-direhound', name: 'Infernal Direhound', color: 0xff8800,
-    // Fast charger that ramps hard: closes instantly, gets hotter the longer it
-    // lives. DPS 80 × (1000/1400) = 57 early → ~91 at max ramp.
+    // Evolved catcher: high speed + charge on engagement. No ramp.
     stats: { hp: 1050, attack: 80, plating: 4, damageReduction: 0, speed: 72, attackRange: 12, attackCooldown: 1400, pullRange: 280 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 68, essenceType: 'red', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 700, idleMaxMs: 3000 },
+    swarm: { cohesion: 0.08, separation: 56 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.60, tickIntervalMs: 2000 },
   }],
 
   ['obsidian-tortoise', {
     id: 'obsidian-tortoise', name: 'Obsidian Tortoise', color: 0xcc2200,
-    // Slow heavy brute. CADENCE every 4 = a 220 eruption that trips the cap.
-    // Ramps to +80%. Plating 8 rewards pierce. Slow alone, brutal in the swarm.
+    // Evolved anchor. Its escalation over the Magma Tortoise is a predictable
+    // CADENCE Eruption every 4th attack (220, trips the cap) — not a ramp.
+    // Plating 8 rewards pierce. Slow alone, brutal inside the swarm.
     // avg/attack (3·100+220)/4 = 130 → ×(1000/3000) = 43 (pre-ramp).
     stats: { hp: 1700, attack: 100, plating: 8, damageReduction: 0, speed: 20, attackRange: 15, attackCooldown: 3000, pullRange: 155 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 140, essenceType: 'red', level: 4, biomeXp: 840 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9500 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.2 },   // 220
-    rampOnCombat: { stat: 'attack', perTickPct: 0.12, maxPct: 0.80, tickIntervalMs: 2000 },
   }],
 
   ['ashspitter-salamander', {
     id: 'ashspitter-salamander', name: 'Ashspitter Salamander', color: 0xff4422,
-    // Ranged fire-lobber that ramps. Stationary (not a kiter). High DoT.
-    // Ignoring it lets the background fire stack. DPS 70 × (1000/1900) = 37 + DoT.
+    // Evolved ranged Burn pressure: stationary (not a kiter), stronger and more
+    // persistent Burn than the Ash Salamander. Ignoring it lets the fire stack.
     stats: { hp: 900, attack: 70, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
+    // Fires from the background and does NOT kite (locked).
+    staticSentry: true,
     ai: { wanderRadius: 230, leashRange: 630, idleMinMs: 1200, idleMaxMs: 4000 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.08, maxPct: 0.50, tickIntervalMs: 2000 },
     dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
   }],
 
   ['magma-salamander', {
     id: 'magma-salamander', name: 'Magma Salamander', color: 0xaa1100,
-    // Elite. ENEMY SHIELD (lava-hardened hide flares periodically) — rewards
-    // BURST over DoT/chip, a pointed test in a DoT-leaning biome. Ramps hard,
-    // so the kill window matters. DPS 94 × (1000/2600) = 36 early → ~60 at max ramp.
+    // Elite DEFENSIVE-WINDOW enemy. OBSIDIAN SHELL (`enemyShield`): a molten
+    // barrier that periodically reforms, rewarding BURST over DoT/chip. The exam is
+    // to break through its shell windows BEFORE the node's global Heat turns
+    // dangerous — the shell is what makes the fight run long, Heat is the cost.
     stats: { hp: 2200, attack: 94, plating: 6, damageReduction: 0.06, speed: 22, attackRange: 15, attackCooldown: 2600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic', elite: true,
     rewards: { essence: 190, essenceType: 'red', level: 4, biomeXp: 1140 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 4000, idleMaxMs: 11000 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.65, tickIntervalMs: 2000 },
     enemyShield: { shieldPct: 0.28, intervalMs: 14000, durationMs: 5000 },
   }],
 

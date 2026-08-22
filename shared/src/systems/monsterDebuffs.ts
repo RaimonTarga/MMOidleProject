@@ -59,6 +59,15 @@ export const SUNDERED_EFFECT_ID = 'sundered';
 /** Cave boss corrosion: stacking, encounter-long reduction to player plating. */
 export const PLATING_SHRED_EFFECT_ID = 'plating-shred';
 
+/**
+ * Tundra ice-armor SHATTER WINDOW — sits on the MONSTER, not the player. Applied
+ * when a player's hit breaks a `enemyShield.shatter` barrier; while it is up the
+ * monster takes extra damage from every source. The payoff for bursting the shell
+ * instead of chipping at it, and the reason the Bear line is a defensive-WINDOW
+ * enemy rather than just a bulkier bear.
+ */
+export const SHATTER_VULNERABLE_EFFECT_ID = 'shatter-vulnerable';
+
 /** Player plating after encounter corrosion, clamped so it never becomes negative. */
 export function platingAfterShred(basePlating: number, state: TracksCombat): number {
   const effect = state.statusEffects.find((candidate) => candidate.id === PLATING_SHRED_EFFECT_ID);

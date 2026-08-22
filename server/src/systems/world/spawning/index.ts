@@ -310,6 +310,16 @@ export function createMonster(
     applyDormantUltimateBoss(world, entity, def);
   }
 
+  // STATIC SENTRY: a perched mob holds the spot it spawned on. Unlike
+  // `holdsChokepoints` this needs no authored terrain, so any biome can use it —
+  // it simply makes the spawn point the hold post and stops the wander.
+  // `updateMonsters` already knows how to return a mob to a `holdPost` and idle
+  // there, so the whole behavior is this assignment.
+  if (def.staticSentry === true && !isTestRoom) {
+    entity.controlsMonster.holdPost = { ...spawnPos };
+    entity.controlsMonster.wanderRadius = 0;
+  }
+
   world.adjustMonsterCount(nodeId, 1, isBoss);
   return entity;
 }

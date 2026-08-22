@@ -217,10 +217,19 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
   ['desert', {
     id: 'desert', name: 'Desert',
     backgroundColor: 0x1a1608,
+    // ⚠ CONTROLLERS ONLY. The dealers (`dust-djinn`, `sandweaver`,
+    // `sandspitter-cobra`) are deliberately NOT in these pools: a Desert group is an
+    // EXACT 1:1 DUO (T1-T4 monster rework, locked), so every dealer must arrive as
+    // half of one. Each controller roll spawns itself + its dealer, so the effective
+    // population per roll is 2 and node density is unchanged.
+    // Listing a dealer here would let a lone kiter spawn with no controller, which
+    // breaks the biome's whole read ("it is exactly two things — which do I kill
+    // first?"). Both controller FAMILIES are listed at each tier: the basilisk (hard
+    // control: root + sunder) and the scorpion (soft control: slow/cripple).
     monsterPoolByTier: {
-      2: ['sand-scorpion', 'stone-basilisk', 'dust-djinn'],
-      3: ['dune-stalker', 'desert-basilisk', 'sandweaver'],
-      4: ['sand-viper', 'dune-basilisk', 'sandspitter-cobra', 'dune-tyrant'],
+      2: ['sand-scorpion', 'stone-basilisk'],
+      3: ['dune-stalker', 'desert-basilisk'],
+      4: ['sand-viper', 'dune-basilisk', 'dune-tyrant'],
     },
     bossPoolByTier: {
       2: ['dune-stalker-emperor'],
@@ -247,19 +256,26 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     mobDensity: 36,
   }],
 
-  // GRAVEYARD (T4) — EXTREME-high-density weak undead swarm; plague/contagion
-  // theme. Debuts at T4 (all graveyard nodes are biomeTier 4 — no T3 pool).
+  // WASTELAND (legacy id `graveyard`, T4) — corpses and necromancy: death does not
+  // cleanly remove enemies from the encounter. Moderate/moderately-high density (NOT
+  // an extreme swarm) so raises and death effects stay readable. Debuts at T4.
   ['graveyard', {
     id: 'graveyard', name: 'Wasteland',
     backgroundColor: 0x0c0810,
     monsterPoolByTier: {
-      4: ['bone-crawler', 'plague-hound', 'carrion-vulture', 'charnel-brute', 'plague-rat', 'gravewright'],
+      // `charnel-brute` is DEFERRED TO T5 (T1–T4 monster rework, locked) — its
+      // definition still lives in graveyard.monsters.ts but nothing spawns it.
+      4: ['bone-crawler', 'plague-hound', 'carrion-vulture', 'plague-rat', 'gravewright'],
     },
     bossPoolByTier: {
       4: ['charnel-crown-sovereign'],
     },
     essenceType: 'essence',
-    mobDensity: 40,
+    // 40 -> 28 (T1-T4 rework): the locked ecology asks for moderate/moderately-high
+    // density, NOT another extreme initial swarm. Combat here is supposed to persist
+    // through CORPSES and resurrection rather than through sheer starting numbers,
+    // and a Gravewright raising into a 40-mob node is unreadable. Placeholder.
+    mobDensity: 28,
   }],
 
   // DEEP-SEA TRENCH (T4) — EXTREME-low-density rare abyssal terrors; execute /

@@ -1,4 +1,4 @@
-import { onPackAlphaDead, updatePacks } from "../src/systems/combat/ai/packs";
+import { updatePacks } from "../src/systems/combat/ai/packs";
 import { updateSwarm } from "../src/systems/combat/ai/swarm";
 import { setAggroTarget } from "../src/systems/combat/ai/targeting";
 import { updateMonsters } from "../src/systems/combat/ai/ai";
@@ -37,10 +37,13 @@ assert(
   "call-allies should telegraph a pack-call ecology-pulse event",
 );
 
-onPackAlphaDead(world, alpha);
+// The alpha-death SCATTER is gone (T1-T4 monster rework, locked): killing an alpha
+// must leave its followers alive and killable for full rewards. Desert's duo is a
+// target-priority exam, so the Dealer surviving its Controller is the whole point.
+world.removeMonsterEntity(alpha.isMonster.id);
 assert(
-  !world.hasMonster(follower1.isMonster.id) && !world.hasMonster(follower2.isMonster.id),
-  "surviving followers should be removed (scattered) when the pack alpha dies",
+  world.hasMonster(follower1.isMonster.id) && world.hasMonster(follower2.isMonster.id),
+  "surviving followers must NOT be removed when the pack alpha dies",
 );
 
 // ── Fixed patrol routes (mountain identity, e.g. `cliff-hopper`) ───────────────

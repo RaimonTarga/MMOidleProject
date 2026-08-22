@@ -61,24 +61,17 @@ export function updatePacks(world: World, now: number): void {
   }
 }
 
-/**
- * Called when a pack alpha dies. Removes all surviving followers from the world
- * without granting rewards — they scatter rather than being killed.
+/*
+ * REMOVED: the pack-alpha scatter (T1-T4 monster rework, locked).
+ *
+ * Killing a pack alpha used to remove every surviving follower from the world with
+ * no rewards. Two problems: it was a hidden "you lose essence by killing the wrong
+ * thing first" rule the player was never told about, and Desert's locked design
+ * needs the opposite - its Controller/Dealer duo is a TARGET-PRIORITY exam, so
+ * killing the Controller must leave the Dealer alive and hurting you rather than
+ * making it evaporate. Removing it globally also makes Forest/Plains packs read as
+ * plain packs. Every follower is now killable for full rewards.
  */
-export function onPackAlphaDead(world: World, alpha: MonsterEntity): void {
-  const packId = alpha.inPack?.packId;
-  if (!packId) return;
-  const toRemove: string[] = [];
-  for (const e of world.monsterEntities) {
-    const ip = e.inPack;
-    if (ip?.packId === packId && ip.role !== "alpha") {
-      toRemove.push(e.isMonster.id);
-    }
-  }
-  for (const id of toRemove) {
-    if (world.hasMonster(id)) world.removeMonsterEntity(id);
-  }
-}
 
 function nearAggroedMate(
   m: MonsterEntity,

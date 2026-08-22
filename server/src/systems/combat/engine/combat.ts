@@ -16,6 +16,9 @@ import {
   monsterEmpoweredMultiplier,
   applyEnemySoftCap,
   applyEnemyShield,
+  cadenceFiredThisTick,
+  monsterVolleyHits,
+  noteMonsterHitTaken,
   chargedCastEndsAt,
   chargeReady,
   beginCharge,
@@ -37,12 +40,15 @@ import {
   SUN_MARK_EFFECT_ID,
   SUNDERED_EFFECT_ID,
   PLATING_SHRED_EFFECT_ID,
+  SHATTER_VULNERABLE_EFFECT_ID,
   DAMAGE_TAKEN_PCT_KEY,
   platingAfterShred,
   playerOutgoingDamageMult,
   frostRampMaxStacks,
   frostRampAtkSlowPct,
+  ambientRampAttackSlowPct,
   ambientRampScalingMult,
+  ambientRampStatus,
   CHAOTIC_HIT_COUNTER_KEY,
 } from "@mmo-idle/shared";
 import { applyMonsterAoe } from "../damage/aoeDamage";
@@ -59,6 +65,7 @@ import { canApplyPlayerDebuff } from "../status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
+import { shellDamageMult } from '../ai/shellUp';
 import { setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
 import {
@@ -94,17 +101,26 @@ export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
 const PLAYER_KNOCKBACK_RESIST_CAP = 0.9;
 
 /**
- * Tundra ICE-ARMOR shatter (fires when a player hit breaks the mob's frost barrier).
- * Cracks the shell for bonus self-damage (rewarding the burst that broke it) and sends
- * a freezing shockwave that briefly STUNS nearby non-boss enemies (crowd-control upside
- * that helps melee fighting in the pile — never touches the player). Telegraphed by a
- * frost-shatter pulse. No-op unless the mob defines `enemyShield.shatter`.
+ * Tundra ICE-ARMOR shatter — fires when a player hit BREAKS the mob's frost barrier.
+ *
+ * The payoff for timing a burst into the shell instead of chipping at it:
+ *   1. bonus self-damage (the shell cracking into the thing wearing it), and
+ *   2. a VULNERABILITY WINDOW — the monster takes more damage from every source for
+ *      a few seconds, which is the actual reward the locked design asks for.
+ *
+ * The legacy "freezing shockwave stuns nearby enemies" rider is still supported for
+ * any def that authors `freezeRadius`, but it is de-emphasised: a crowd-control
+ * upside was a strange thing to hang off a defensive window, and it paid out most in
+ * exactly the crowded fights Tundra is not supposed to have.
+ *
+ * Telegraphed by a frost-shatter pulse. No-op unless the mob defines
+ * `enemyShield.shatter`.
  */
 function applyIceShatter(
   world: World,
   target: MonsterEntity,
   def: MonsterDefinition | undefined,
-  _now: number,
+  now: number,
 ): void {
   const shatter = def?.enemyShield?.shatter;
   if (!shatter) return;
@@ -116,16 +132,37 @@ function applyIceShatter(
   target.hasHealth.hp -= bonus;
 
   const nodeId = target.hasPosition.nodeId;
-  const r2 = shatter.freezeRadius * shatter.freezeRadius;
-  for (const other of world.monsterEntitiesInNode(nodeId)) {
-    if (other === target || other.isMonster.isBoss) continue;
-    if (
-      distanceSq(other.hasPosition.current, target.hasPosition.current) > r2
-    ) {
-      continue;
-    }
-    applyStun(other.tracksCombat, shatter.freezeDurationMs, target.isMonster.id);
+
+  // The damage window. Read by `monsterShatterVulnerabilityMult` on the way in.
+  const vulnerable = shatter.vulnerability;
+  if (vulnerable) {
+    applyStatusEffect(target.tracksCombat, {
+      id: SHATTER_VULNERABLE_EFFECT_ID,
+      maxStacks: 1,
+      remainingMs: vulnerable.durationMs,
+      refreshable: true,
+      sourceId: target.isMonster.id,
+      data: {
+        [DAMAGE_TAKEN_PCT_KEY]: vulnerable.damageTakenPct,
+        totalMs: vulnerable.durationMs,
+      },
+    });
   }
+
+  // Legacy freezing shockwave (optional; prefer the vulnerability window above).
+  if (shatter.freezeRadius && shatter.freezeDurationMs) {
+    const r2 = shatter.freezeRadius * shatter.freezeRadius;
+    for (const other of world.monsterEntitiesInNode(nodeId)) {
+      if (other === target || other.isMonster.isBoss) continue;
+      if (
+        distanceSq(other.hasPosition.current, target.hasPosition.current) > r2
+      ) {
+        continue;
+      }
+      applyStun(other.tracksCombat, shatter.freezeDurationMs, target.isMonster.id);
+    }
+  }
+  void now;
 
   world.pushEvent(nodeId, {
     kind: "ecology-pulse",
@@ -133,6 +170,20 @@ function applyIceShatter(
     pos: { ...target.hasPosition.current },
     pulse: "frost-shatter",
   });
+}
+
+/**
+ * Incoming-damage multiplier on a monster standing in its own shatter window.
+ * 1 when the window is closed. Applied to player damage the same way the player's
+ * `sundered` is — one generic amplifier keyed off status `data`, not an id list.
+ */
+export function monsterShatterVulnerabilityMult(monster: MonsterEntity): number {
+  const effect = getStatusEffect(
+    monster.tracksCombat,
+    SHATTER_VULNERABLE_EFFECT_ID,
+  );
+  if (!effect) return 1;
+  return 1 + Math.max(0, effect.data[DAMAGE_TAKEN_PCT_KEY] ?? 0);
 }
 
 /**
@@ -387,6 +438,20 @@ export function runPlayerAttack(
   // amount, then drain the periodic absorb barrier before HP. Both are no-ops
   // unless the monster defines enemySoftCap / enemyShield. Like the player's own
   // cap/shield they act on the direct combat-pipeline hit only (DoT/AoE bypass).
+  // SHELL UP: a retracted Snapper takes a fraction of direct damage. Applied to
+  // the DIRECT hit path only — DoT ticks resolve elsewhere and deliberately keep
+  // working at full strength, which is the authored way through the shell.
+  ctx.damage = Math.max(
+    ctx.damage > 0 ? 1 : 0,
+    Math.round(ctx.damage * shellDamageMult(target, now)),
+  );
+
+  // SHATTER WINDOW: a monster whose ice armor was just broken takes more from
+  // every source. Applied BEFORE the cap/barrier so the window amplifies the real
+  // hit rather than the post-mitigation remainder — the point is to reward the
+  // burst that cracked the shell.
+  ctx.damage = Math.round(ctx.damage * monsterShatterVulnerabilityMult(target));
+
   const preCapDamage = ctx.damage;
   ctx.damage = applyEnemySoftCap(target, monsterDef, ctx.damage);
   const enemyCapped = ctx.damage < preCapDamage;
@@ -458,6 +523,11 @@ export function runPlayerAttack(
       },
     );
   }
+
+  // Clean-recharge barriers (`enemyShield.rechargeAfterCleanMs`) read this: any
+  // landed hit restarts the "has not been hit for a while" window, so keeping the
+  // pressure on a Sunshield Scarab is what stops its shield coming back.
+  noteMonsterHitTaken(target, now);
 
   target.hasHealth.hp -= ctx.damage;
   // Tundra ice-armor shatter: breaking the frost barrier cracks it for bonus damage
@@ -649,10 +719,14 @@ export function runMonsterAttack(
   // carrying. Like the death-empower above this is a plain outgoing-damage layer,
   // NOT an empowered spike — it scales every hit without claiming the cadence/charge
   // metadata that the player's spike-answering defenses key off.
-  const ambientFedMult = ambientRampScalingMult(
-    def?.scalesWithAmbientRamp,
-    target.tracksCombat,
-  );
+  const ambientScaling = def?.scalesWithAmbientRamp;
+  // `chargedOnly` restricts the ramp feed to the telegraphed slam, so the apex's
+  // ordinary swings stay flat and the Chill interaction reads as ONE tell rather
+  // than a blanket damage bonus.
+  const ambientFedMult =
+    ambientScaling?.chargedOnly === true && chargeMult <= 1
+      ? 1
+      : ambientRampScalingMult(ambientScaling, target.tracksCombat);
   if (ambientFedMult > 1) {
     ctx.damage = Math.max(1, Math.round(ctx.damage * ambientFedMult));
     ctx.metadata["ambientRampFed"] = true;
@@ -817,6 +891,29 @@ export function runMonsterAttack(
     }
   }
 
+  // CONSTRICT — when the cadence finisher fires, the boosted hit also roots.
+  // Gated on `cadenceFiredThisTick` so it lands on the heavy beat only, and on the
+  // usual debuff rules so an evaded hit pins nobody.
+  const cadenceRootMs = def?.cadenceFinisher?.rootMs;
+  if (
+    cadenceRootMs &&
+    cadenceFiredThisTick(monster, now) &&
+    canApplyPlayerDebuff(target) &&
+    !evadeBlocksDebuffs(ctx)
+  ) {
+    const rootMs = Math.round(
+      cadenceRootMs * mobilityTenacityDurationMult(target),
+    );
+    applyStatusEffect(target.tracksCombat, {
+      id: "slow",
+      maxStacks: 1,
+      remainingMs: rootMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: { speedMult: 0, totalMs: rootMs },
+    });
+  }
+
   const slow = def?.slowEffect;
   if (slow && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     // Mobility-boot tenacity (Swamp + Graveyard stacks) shortens the CC duration.
@@ -975,6 +1072,119 @@ function playerKnockbackResistPct(player: PlayerEntity): number {
  * beat). Reuses the mark status/pulse so it shows in the player buff bar and is
  * cleansable. Edge-triggered pulse only on a fresh mark.
  */
+/**
+ * Riders applied when a charged attack LANDS. These are the locked designs'
+ * "periodic non-damage abilities": rather than each getting its own subsystem,
+ * they hang off the one telegraphed-cast primitive the game already has, so every
+ * one of them arrives with a cast bar the player can see and a `target-casting`
+ * rune condition that can react to it.
+ *
+ *   rootMs              Petrifying Gaze / Frostbind / Constrict
+ *   appliesAntiheal     Wither / Abyssal Wound
+ *   refreshesPlayerDots the evolved Swamp hexer's plague hex
+ *
+ * All are skipped when the target cannot take debuffs, matching every other
+ * on-hit rider. (A charged hit is never "evaded" as a whole, so there is no
+ * `evadeBlocksDebuffs` check here — the cast either lands or was interrupted.)
+ */
+function applyChargedAttackRiders(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  charged: NonNullable<MonsterDefinition["chargedAttack"]>,
+): void {
+  if (!canApplyPlayerDebuff(target)) return;
+
+  // ROOT — the shared `slow` status at speedMult 0. Movement stops; attacks do
+  // NOT, which is what keeps these solvable by configuration. Mobility tenacity
+  // shortens it and Cleanse strips it, like any other monster debuff.
+  if (charged.rootMs && charged.rootMs > 0) {
+    const rootMs = Math.round(
+      charged.rootMs * mobilityTenacityDurationMult(target),
+    );
+    applyStatusEffect(target.tracksCombat, {
+      id: "slow",
+      maxStacks: 1,
+      remainingMs: rootMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: { speedMult: 0, totalMs: rootMs },
+    });
+    world.pushEvent(target.hasPosition.nodeId, {
+      kind: "ecology-pulse",
+      monsterId: monster.isMonster.id,
+      pos: { ...monster.hasPosition.current },
+      pulse: "sun-mark",
+    });
+  }
+
+  // WITHER — one NON-STACKING Recovery suppression. Same `antiheal` status the
+  // Trench uses, so `getAntiHealMult` and the buff tile need no changes; the
+  // difference is that this one comes from a telegraphed ability instead of
+  // every ordinary hit.
+  const wither = charged.appliesAntiheal;
+  if (wither) {
+    const durMs = Math.round(
+      wither.durationMs * mobilityTenacityDurationMult(target),
+    );
+    applyStatusEffect(target.tracksCombat, {
+      id: "antiheal",
+      maxStacks: 1,
+      remainingMs: durMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: { reductionPerStack: wither.reduction, totalMs: durMs },
+    });
+  }
+
+  // PLAGUE HEX — extend the monster DoTs already on the player. Creates NOTHING:
+  // no new stacks, no new effect, and with no poison already ticking it does
+  // nothing at all. That restriction is the design — the evolved hexer SUPPORTS
+  // the biome's poison rather than adding a fourth source of it.
+  const hex = charged.refreshesPlayerDots;
+  if (hex) {
+    let extended = false;
+    for (const effect of target.tracksCombat.statusEffects) {
+      if ((effect.data["isDot"] ?? 0) === 0) continue;
+      if (effect.remainingMs <= 0) continue;
+      const total = effect.data["totalMs"] ?? effect.remainingMs;
+      const capped = Math.min(hex.maxTotalMs, effect.remainingMs + hex.extendMs);
+      if (capped <= effect.remainingMs) continue;
+      effect.remainingMs = capped;
+      // Keep the buff clock honest: the tile reads remaining/total.
+      effect.data["totalMs"] = Math.max(total, capped);
+      extended = true;
+    }
+    if (extended) {
+      world.pushEvent(target.hasPosition.nodeId, {
+        kind: "ecology-pulse",
+        monsterId: monster.isMonster.id,
+        pos: { ...monster.hasPosition.current },
+        pulse: "sun-mark",
+      });
+    }
+  }
+}
+
+/**
+ * CHILL GATE — is this charged attack allowed to start casting yet?
+ *
+ * True unless the def sets `requiresAmbientStacks` and the target is not yet
+ * carrying that many stacks of the node's ambient ramp. Tundra's Frostbind: the
+ * caster's root only comes online once the ROOM has already chilled you, which is
+ * what fuses the environment and the roster into one mechanic. While the gate is
+ * shut the monster just keeps making ordinary attacks and the charge stays armed.
+ */
+function chargedAttackGateOpen(
+  target: PlayerEntity,
+  charged: NonNullable<MonsterDefinition["chargedAttack"]>,
+): boolean {
+  const required = charged.requiresAmbientStacks;
+  if (!required || required <= 0) return true;
+  const ramp = ambientRampStatus(target.tracksCombat);
+  return (ramp?.stacks ?? 0) >= required;
+}
+
 function applyChargedAttackMark(
   world: World,
   monster: MonsterEntity,
@@ -1293,7 +1503,16 @@ export function updateCombat(world: World, dt: number, now: number) {
         player.tracksCombat,
         FROST_RAMP_EFFECT_ID,
       );
-      const atkSlowMult = frostRamp ? 1 + frostRampAtkSlowPct(frostRamp) : 1;
+      // P4 ambient node ramp, when its payload carries an attack slow. This is
+      // TUNDRA CHILL: the environment, not the roster, owns combat-tempo
+      // suppression now (the T1-T4 rework stripped `rampDebuff` off every mob).
+      // Additive with frost-ramp rather than multiplicative so the two cannot
+      // compound into an unauthored stun.
+      const ambientRamp = ambientRampStatus(player.tracksCombat);
+      const atkSlowMult =
+        1 +
+        (frostRamp ? frostRampAtkSlowPct(frostRamp) : 0) +
+        (ambientRamp ? ambientRampAttackSlowPct(ambientRamp) : 0);
       // Frenzy (Technique) speeds the cadence the same way, from the other
       // direction. It is applied HERE rather than written into attackCooldown
       // because the Zealot's own Frenzy already mutates that stat from a cached
@@ -1427,6 +1646,7 @@ export function updateCombat(world: World, dt: number, now: number) {
           const outcome = runMonsterAttack(world, e, target, now, charged.multiplier);
           if (outcome === "hit") {
             applyChargedAttackKnockback(world, e, target, charged);
+            applyChargedAttackRiders(world, e, target, charged);
           }
           world.pushEvent(e.hasPosition.nodeId, {
             kind: "monster-cast-end",
@@ -1467,7 +1687,8 @@ export function updateCombat(world: World, dt: number, now: number) {
         // completeCharge's recurring cooldown is not overwritten next tick.
         const normallyReady = chargeReady(e, now, initialCd);
         if (
-          (forcedByEngageSequence || (attackDue && normallyReady)) &&
+          (forcedByEngageSequence ||
+            (attackDue && normallyReady && chargedAttackGateOpen(target, charged))) &&
           !isMonsterStunned(world, e.isMonster.id) &&
           !isMonsterFrozen(world, e.isMonster.id)
         ) {
@@ -1508,9 +1729,13 @@ export function updateCombat(world: World, dt: number, now: number) {
         now - e.performsAttack.lastAttackAt >=
         monsterAttackCooldown(e)
       ) {
-        const hitCount = Math.max(
-          1,
-          Math.round(MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.consecutiveHits ?? 1),
+        // How many pipeline hits this BEAT delivers: an opening volley (first beat
+        // of the session), a cadence volley (every Nth beat), or the flat
+        // consecutiveHits. Called exactly once per beat - it advances counters.
+        const hitCount = monsterVolleyHits(
+          e,
+          MONSTER_DATABASE.get(e.isMonster.monsterTypeId),
+          now,
         );
         let outcome: MonsterAttackOutcome = "cancelled";
         for (let hit = 0; hit < hitCount; hit++) {
@@ -1558,9 +1783,10 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (
       now - e.performsAttack.lastAttackAt >= monsterAttackCooldown(e)
     ) {
-      const hitCount = Math.max(
-        1,
-        Math.round(MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.consecutiveHits ?? 1),
+      const hitCount = monsterVolleyHits(
+        e,
+        MONSTER_DATABASE.get(e.isMonster.monsterTypeId),
+        now,
       );
       for (let hit = 0; hit < hitCount && minion.hasHealth.hp > 0; hit++) {
         runMonsterAttackOnMinion(world, e, minion, now);

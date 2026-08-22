@@ -273,7 +273,12 @@ initCombatSystems();
   const apex = world.createMonster(CHILL_NODE, APEX_ID, { x: SPOT.x + 10, y: SPOT.y });
   assert(!!apex, `test needs a ${APEX_ID}`);
 
-  // Same monster, same tick, same attack — the only difference is the target's chill.
+  // ⚠ `chargedOnly` (T1-T4 monster rework, locked): ONLY the apex's telegraphed
+  // Glacial Slam feeds on the chill. Scaling every swing made this a flat difficulty
+  // knob; scaling just the slam makes it a TELL — arrive cold and the one hit you
+  // most need to walk out of is the one you cannot walk out of.
+
+  // Ordinary swing (chargeMult 1): identical against a warm and a frozen target.
   const warmHp = warm.hasHealth.hp;
   runMonsterAttack(world, apex!, warm, 1_000);
   const warmHit = warmHp - warm.hasHealth.hp;
@@ -282,15 +287,30 @@ initCombatSystems();
   runMonsterAttack(world, apex!, cold, 1_000);
   const coldHit = coldHp - cold.hasHealth.hp;
 
-  const fed = MONSTER_DATABASE.get(APEX_ID)!.scalesWithAmbientRamp!;
-  const expected = 1 + Math.min(fed.maxPct, fed.perStackPct * MAX_STACKS);
   assert(warmHit > 0 && coldHit > 0, 'both hits must land');
   assert(
-    Math.abs(coldHit / warmHit - expected) < 0.02,
-    `the apex must hit a fully chilled target ${expected}× harder (got ${coldHit / warmHit})`,
+    warmHit === coldHit,
+    `the apex's ORDINARY swing must ignore chill (warm ${warmHit} vs cold ${coldHit})`,
   );
 
-  // A roster mob standing in the same room does NOT get the same payout — locked
+  // The Glacial Slam (any chargeMult > 1) does feed on it.
+  const fed = MONSTER_DATABASE.get(APEX_ID)!.scalesWithAmbientRamp!;
+  const expected = 1 + Math.min(fed.maxPct, fed.perStackPct * MAX_STACKS);
+  const warmSlamHp = warm.hasHealth.hp;
+  runMonsterAttack(world, apex!, warm, 2_500, 2);
+  const warmSlam = warmSlamHp - warm.hasHealth.hp;
+
+  const coldSlamHp = cold.hasHealth.hp;
+  runMonsterAttack(world, apex!, cold, 2_500, 2);
+  const coldSlam = coldSlamHp - cold.hasHealth.hp;
+
+  assert(warmSlam > 0 && coldSlam > 0, 'both slams must land');
+  assert(
+    Math.abs(coldSlam / warmSlam - expected) < 0.02,
+    `the apex's SLAM must hit a fully chilled target ${expected}x harder (got ${coldSlam / warmSlam})`,
+  );
+
+  // A roster mob standing in the same room does NOT get the payout at all — locked
   // decision 5 is one elite, not a biome-wide damage ramp.
   const grunt = world.createMonster(CHILL_NODE, 'glacial-direbear', { x: SPOT.x + 10, y: SPOT.y });
   assert(!!grunt, 'test needs a non-apex tundra mob');

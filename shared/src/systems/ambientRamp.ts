@@ -30,6 +30,17 @@ export interface AmbientRampPayload {
   outgoingDamagePct?: number;
   /** Per stack: fraction of move speed removed (folded into the clamped slow product). */
   moveSlowPct?: number;
+  /**
+   * Per stack: fraction added to the player's ATTACK COOLDOWN — combat tempo
+   * suppression, the Tundra half of the ramp contract. Read at the player attack
+   * gate exactly like the (now-retired) `frost-ramp` attack slow, so it never
+   * mutates the recalc-owned `attackCooldown` stat.
+   *
+   * ⚠ The `maxStacks` cap is LOAD-BEARING. An uncapped attack-speed debuff death-
+   * spirals: slower attacks -> slower kill -> more stacks. It is also deliberately
+   * NOT allowed to become a stun — max Chill must still leave you fighting.
+   */
+  attackSlowPct?: number;
 }
 
 /**
@@ -42,6 +53,9 @@ export const AMBIENT_RAMP_KEY = 'isAmbientRamp';
 
 /** Status `data` key: move-slow fraction PER STACK. */
 export const MOVE_SLOW_PCT_KEY = 'moveSlowPct';
+
+/** Status `data` key: attack-cooldown penalty fraction PER STACK. */
+export const ATTACK_SLOW_PCT_KEY = 'rampAttackSlowPct';
 
 /** The player's active ambient ramp, whatever biome authored it. */
 export function ambientRampStatus(cs: TracksCombat): StatusEffect | undefined {
@@ -71,6 +85,7 @@ export function ambientRampData(
     data[DAMAGE_DEALT_PCT_KEY] = payload.outgoingDamagePct;
   }
   if (payload.moveSlowPct) data[MOVE_SLOW_PCT_KEY] = payload.moveSlowPct;
+  if (payload.attackSlowPct) data[ATTACK_SLOW_PCT_KEY] = payload.attackSlowPct;
   return data;
 }
 
@@ -112,6 +127,23 @@ export function ambientRampScalingMult(
   const stacks = Math.min(effect.stacks, maxStacks);
   if (stacks <= 0) return 1;
   return 1 + Math.min(scaling.maxPct, stacks * scaling.perStackPct);
+}
+
+/**
+ * Added attack-cooldown fraction from a ramp's current stacks (0 when the payload
+ * carries none — Volcano's heat is damage-only). Multiplied into the player's
+ * attack-cooldown gate as `1 + pct`, never written back into the stat.
+ *
+ * Capped by the ramp's own `maxStacks`, and then hard-clamped here: even a
+ * mis-authored payload cannot push the player past a doubled cooldown, because
+ * Tundra's locked design says max Chill is suppression, never a stun.
+ */
+export function ambientRampAttackSlowPct(effect: StatusEffect): number {
+  const perStack = effect.data[ATTACK_SLOW_PCT_KEY] ?? 0;
+  if (perStack <= 0) return 0;
+  const maxStacks = effect.data['maxStacks'] ?? effect.stacks;
+  const stacks = Math.min(effect.stacks, maxStacks);
+  return Math.min(1, perStack * stacks);
 }
 
 /** Fill fraction (0..1) toward full stacks — the soft-timer read for the buff tile. */

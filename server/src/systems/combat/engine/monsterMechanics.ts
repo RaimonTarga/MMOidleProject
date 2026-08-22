@@ -38,6 +38,10 @@ export function monsterAttackCooldown(monster: MonsterEntity): number {
 // despawn). Keys are private to this module — do not reuse them elsewhere.
 
 const CADENCE_COUNTER_KEY = "t4CadenceCount";
+// The tick on which a cadence finisher last fired. Read by the Constrict root
+// rider so it lands only on the boosted beat, without threading a return-shape
+// change through every caller of monsterEmpoweredMultiplier.
+const CADENCE_FIRED_AT_KEY = "cadenceFiredAt";
 // Private counter for a node Volatility overlay cadence when the def itself has
 // NO cadenceFinisher (kept separate from CADENCE_COUNTER_KEY so they never mix).
 const EMP_CD_NEXT_KEY = "t4EmpCooldownNextAt";
@@ -47,6 +51,17 @@ const SHIELD_AMOUNT_KEY = "t4EnemyShieldAmount";
 const SHIELD_EXPIRES_KEY = "t4EnemyShieldExpiresAt";
 const SHIELD_NEXT_KEY = "t4EnemyShieldNextAt";
 const SHIELD_SESSION_KEY = "t4EnemyShieldSession";
+// Clean-recharge barrier (`enemyShield.rechargeAfterCleanMs`): the last time this
+// monster was hit. The barrier returns only once `now` clears it by the configured
+// window, and every landed hit pushes it forward again.
+const SHIELD_LAST_HIT_KEY = "enemyShieldLastHitAt";
+// Volley counters — beat-keyed, deliberately separate from CADENCE_COUNTER_KEY so
+// a cadence volley and a cadence finisher never share a counter.
+const VOLLEY_COUNTER_KEY = "volleyBeatCount";
+const OPENING_VOLLEY_SESSION_KEY = "openingVolleyFiredSession";
+// Venomous opener (`dotEffect.openerStacks`): the session whose first hit has
+// already paid out the multi-stack bite.
+const DOT_OPENER_SESSION_KEY = "dotOpenerFiredSession";
 
 // Charged (cast-time) attack state — the telegraphed Power-Shot wind-up.
 const CHARGE_CAST_ENDS_KEY = "chargeCastEndsAt"; // >now while winding up (0 = idle)
@@ -124,7 +139,10 @@ export function monsterEmpoweredMultiplier(
   const cadence = def?.cadenceFinisher;
   if (cadence && cadence.everyNAttacks > 0) {
     const count = getCounter(cs, CADENCE_COUNTER_KEY) + 1;
-    if (count % cadence.everyNAttacks === 0) mult *= cadence.multiplier;
+    if (count % cadence.everyNAttacks === 0) {
+      mult *= cadence.multiplier;
+      setCounter(cs, CADENCE_FIRED_AT_KEY, now);
+    }
     setCounter(cs, CADENCE_COUNTER_KEY, count);
   }
 
@@ -158,6 +176,82 @@ export function monsterEmpoweredMultiplier(
   }
 
   return mult;
+}
+
+/**
+ * How many full combat-pipeline hits this attack BEAT delivers.
+ *
+ * Three sources, in precedence order (highest wins — they never multiply, because
+ * a mob that stacked an opening volley on top of a cadence volley would fire a
+ * wall of projectiles on one beat):
+ *
+ *   openingVolley  the FIRST beat of each combat session (the Chameleon uncloaking
+ *                  and emptying two shots before you have closed);
+ *   cadenceVolley  every Nth beat (the Thorn Spitter's periodic burst);
+ *   consecutiveHits the flat, always-on multi-hit already in the schema.
+ *
+ * Deterministic — session tokens and counters off the authoritative clock, no RNG.
+ * Mutates counters, so call EXACTLY ONCE per attack beat (not once per hit).
+ */
+export function monsterVolleyHits(
+  monster: MonsterEntity,
+  def: MonsterDefinition | undefined,
+  now: number,
+): number {
+  const cs = monster.tracksCombat;
+  const base = Math.max(1, Math.round(def?.consecutiveHits ?? 1));
+
+  const cadence = def?.cadenceVolley;
+  let cadenceHits = 0;
+  if (cadence && cadence.everyNAttacks > 0) {
+    const count = getCounter(cs, VOLLEY_COUNTER_KEY) + 1;
+    setCounter(cs, VOLLEY_COUNTER_KEY, count);
+    if (count % cadence.everyNAttacks === 0) {
+      cadenceHits = Math.max(1, Math.round(cadence.hits));
+    }
+  }
+
+  const opening = def?.openingVolley;
+  if (opening && opening.hits > 1) {
+    const session = combatSession(monster, now);
+    if (getCounter(cs, OPENING_VOLLEY_SESSION_KEY) !== session) {
+      setCounter(cs, OPENING_VOLLEY_SESSION_KEY, session);
+      return Math.max(base, cadenceHits, Math.round(opening.hits));
+    }
+  }
+
+  return Math.max(base, cadenceHits);
+}
+
+/**
+ * VENOMOUS OPENER — how many DoT stacks this landed hit should apply.
+ *
+ * 1 for an ordinary bite; `dotEffect.openerStacks` for the first landed hit of a
+ * combat session. Session-keyed and consumed on the first hit that actually lands,
+ * so a whiffed or evaded opener does not silently burn the ambush.
+ */
+export function monsterDotStacksForHit(
+  monster: MonsterEntity,
+  dot: MonsterDotEffect | undefined,
+  now: number,
+): number {
+  const opener = dot?.openerStacks;
+  if (!opener || opener <= 1) return 1;
+  const cs = monster.tracksCombat;
+  const session = combatSession(monster, now);
+  if (getCounter(cs, DOT_OPENER_SESSION_KEY) === session) return 1;
+  setCounter(cs, DOT_OPENER_SESSION_KEY, session);
+  return Math.min(Math.round(opener), dot!.maxStacks);
+}
+
+/** True when this monster's cadence finisher fired on THIS tick. */
+export function cadenceFiredThisTick(monster: MonsterEntity, now: number): boolean {
+  return getCounter(monster.tracksCombat, CADENCE_FIRED_AT_KEY) === now;
+}
+
+/** Record a landed player hit, for the clean-recharge barrier's idle timer. */
+export function noteMonsterHitTaken(monster: MonsterEntity, now: number): void {
+  setCounter(monster.tracksCombat, SHIELD_LAST_HIT_KEY, now);
 }
 
 // ── Charged (cast-time) attacks ──────────────────────────────────────────────
@@ -303,10 +397,33 @@ export function applyEnemyShield(
     setCounter(cs, SHIELD_NEXT_KEY, session); // due immediately
     setCounter(cs, SHIELD_AMOUNT_KEY, 0);
     setCounter(cs, SHIELD_EXPIRES_KEY, 0);
+    // A clean-recharge barrier starts the fight ALREADY UP: it has by definition
+    // been un-hit for a long time. Seeding the idle clock at the session start
+    // makes that fall out of the ordinary rule rather than needing a special case.
+    setCounter(cs, SHIELD_LAST_HIT_KEY, session - (shield.rechargeAfterCleanMs ?? 0));
   }
 
-  // Refresh the barrier when the interval comes due.
-  if (now >= getCounter(cs, SHIELD_NEXT_KEY)) {
+  // CLEAN-RECHARGE variant (Sunshield Scarab): the barrier is NOT on a metronome.
+  // It returns only after the monster has gone `rechargeAfterCleanMs` without being
+  // hit — so pressure keeps it down and losing the kiter gives it back. `noteMonsterHitTaken`
+  // pushes the idle timer forward on every landed hit, including this one.
+  const cleanMs = shield.rechargeAfterCleanMs;
+  if (cleanMs !== undefined) {
+    const lastHitAt = getCounter(cs, SHIELD_LAST_HIT_KEY);
+    const barrierUp = now < getCounter(cs, SHIELD_EXPIRES_KEY);
+    if (!barrierUp && lastHitAt > 0 && now - lastHitAt >= cleanMs) {
+      setCounter(
+        cs,
+        SHIELD_AMOUNT_KEY,
+        Math.round(monster.hasHealth.maxHp * shield.shieldPct),
+      );
+      // Duration is the barrier's own lifetime once reformed; it is dropped early
+      // by the next hit that drains it, which is the whole point.
+      setCounter(cs, SHIELD_EXPIRES_KEY, now + shield.durationMs);
+    }
+  } else if (now >= getCounter(cs, SHIELD_NEXT_KEY)) {
+    // Plain metronome barrier.
+
     setCounter(
       cs,
       SHIELD_AMOUNT_KEY,

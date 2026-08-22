@@ -16,6 +16,7 @@ import {
   DAMAGE_TAKEN_PCT_KEY,
   MAX_DAMAGE_DEALT_PCT,
   MAX_DAMAGE_TAKEN_PCT,
+  ambientRampAttackSlowPct,
   ambientRampFillPct,
   ambientRampMoveMult,
   frostRampMoveSlowPct,
@@ -225,8 +226,8 @@ const DEBUFF_BUFFS = [
         stacks: heat.stacks,
         // Fill toward max stacks (the soft-timer read), not a fixed duration.
         durationPct: ambientRampFillPct(heat) * 100,
-        // Volcano's payload carries no move slow; Tundra's chill (Session 6) will,
-        // and the client extrapolation reads this to stay in step with the server.
+        // Volcano's payload carries no move slow (Tundra's chill does); the client
+        // extrapolation reads this to stay in step with the server either way.
         speedMult: slowResistedMult(player, ambientRampMoveMult(heat)),
         color: "#ff5522",
         logSourceName: "Volcanic heat",
@@ -243,6 +244,7 @@ const DEBUFF_BUFFS = [
       const chill = getStatusEffect(playerCs, TUNDRA_CHILL_EFFECT_ID);
       if (!chill || chill.stacks <= 0) return null;
       const speedMult = slowResistedMult(player, ambientRampMoveMult(chill));
+      const atkPct = Math.round(ambientRampAttackSlowPct(chill) * 100);
       return {
         id: "debuff-tundra-chill",
         label: "CHILL",
@@ -257,7 +259,7 @@ const DEBUFF_BUFFS = [
         color: "#88ccff",
         logSourceName: "Tundra chill",
         logSourceSide: "enemy",
-        logDetail: `movement speed ${Math.round(speedMult * 100)}% — the cold takes your legs, and feeds what hunts you`,
+        logDetail: `movement speed ${Math.round(speedMult * 100)}%, +${atkPct}% attack cooldown — the cold takes your legs and your tempo, and feeds what hunts you`,
       };
     },
     { category: "neutral", shape: "diamond", color: "#88ccff", label: "CHILL" },

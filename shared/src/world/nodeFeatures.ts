@@ -570,8 +570,9 @@ function volcanicHeat(id: string): NodeFeatureSpec {
  * volcanic heat. Invisible; the buff tile is the whole tell.
  *
  * The mirror image of the caldera's greed ramp — this one is ALL cost. Every stack
- * takes a slice of movement speed and nothing else, so a long tundra fight ends with
- * you unable to reposition or walk away from the thing that is still hitting you.
+ * takes a slice of movement speed AND a slice of attack speed, so a long tundra
+ * fight ends with you unable to reposition, walk away from, or out-trade the thing
+ * that is still hitting you. Capped, and deliberately never a stun.
  * The pressure is legible because the roster already slows you: the chill is the
  * floor those slows sit on, and the shared `playerMoveSpeedMult` clamp is what keeps
  * chill + frost-ramp + a slowEffect from compounding into an unauthored root.
@@ -597,7 +598,11 @@ function tundraChill(id: string): NodeFeatureSpec {
       effectId: "tundra-chill",
       maxStacks: 6,
       rampMs: 4000,
-      payload: { moveSlowPct: 0.05 },
+      // Chill takes BOTH movement and attack speed: "Tundra suppresses combat
+      // tempo" is the locked biome read, and after the T1-T4 rework no individual
+      // mob reapplies a generic slow, so the environment has to carry it alone.
+      // Placeholder magnitudes - user balance pass.
+      payload: { moveSlowPct: 0.05, attackSlowPct: 0.04 },
     },
   };
 }

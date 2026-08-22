@@ -368,6 +368,51 @@ export interface MonsterDefinition {
    */
   vaultsMountainLedges?: boolean;
   /**
+   * FLIGHT. This monster is airborne: it crosses mountain ledges for pathing (like
+   * `vaultsMountainLedges`, but because it is in the air rather than because it
+   * hops), and while un-aggroed it ROAMS AERIALLY — a wide, lazy circuit rather
+   * than the ground wander every other mob uses.
+   *
+   * Deliberately separate from `vaultsMountainLedges` even though both ignore
+   * ledges: the caprine identity is "climbs the terrain", the flyer identity is
+   * "the terrain does not apply", and only the latter should get the aerial idle
+   * or the client's hover presentation.
+   *
+   * ⚠ Flight changes IDLE and PATHING only. A flyer fights on the ground plane like
+   * anything else, and must never become a repeated hit-and-run loop — the locked
+   * rule is one approach/dive on engagement, then ordinary combat.
+   */
+  flies?: boolean;
+  /**
+   * STATIC SENTRY. The monster does not roam at all: it holds the spot it spawned
+   * on, activates when a player enters its pull range, fires from that position,
+   * and walks back to it afterwards.
+   *
+   * The generalisation of `holdsChokepoints` past Mountain. `holdsChokepoints`
+   * needs authored chokepoint geometry (which only mountain nodes have) and picks a
+   * post NEAR the spawn; this one needs no terrain data at all and pins the mob to
+   * its own spawn point, so any biome can use it. A def may carry either, not both.
+   *
+   * Explicit intent, NOT inferred from `behavior: 'ranged'` — a roaming ranged mob
+   * must not be accidentally nailed to the floor.
+   */
+  staticSentry?: boolean;
+  /**
+   * PREFERRED IDLE TERRAIN. While un-aggroed, this monster picks its wander
+   * destinations in/around a specific kind of node feature instead of wandering
+   * freely, so the biome's terrain and its ambushers read as one thing:
+   *
+   *   'jungle-bush' — the thicket-lurking ambusher (Jungle Snake). The bush already
+   *                   doubles player detection, so a snake that LIVES there turns
+   *                   "I walked into the undergrowth" into the ambush.
+   *   'swamp-pool'  — the half-submerged pool dweller (Bog Lurker). It idles INSIDE
+   *                   the pool rather than roaming past it, and erupts when a player
+   *                   comes near.
+   *
+   * Falls back to ordinary wander when the node has no such feature.
+   */
+  idleAnchor?: 'jungle-bush' | 'swamp-pool';
+  /**
    * Defensive-post ecology tag. When true, this monster spawns ON a terrain
    * chokepoint and holds it (short leash + reduced wander) instead of roaming —
    * the "archer guarding the pass" fantasy. Explicit intent, NOT inferred from
@@ -440,6 +485,16 @@ export interface MonsterDefinition {
      * Either way the tick still restarts the barrier's recharge delay.
      */
     bypassBarrier?: boolean;
+    /**
+     * VENOMOUS OPENER — the FIRST landed hit of each combat session applies this
+     * many stacks at once instead of one. The Swamp ambush lineage: a normal bite
+     * is one stack, the bite that opens the fight is two (Mire Stalker) or three
+     * (Bog Lurker), so the ambush lands as poison ALPHA rather than a damage spike.
+     *
+     * Session-keyed and deterministic, like `openingStrike`. Still clamped by
+     * `maxStacks`, and still skipped entirely on an evaded hit.
+     */
+    openerStacks?: number;
   };
   /**
    * If set, this monster applies a movement slow (or root when speedMult = 0) to
@@ -476,6 +531,74 @@ export interface MonsterDefinition {
   aoeAttack?: { radius: number; damageMult?: number };
   /** Full combat-pipeline hits delivered by one basic-attack beat. */
   consecutiveHits?: number;
+  /**
+   * OPENING VOLLEY — the first attack of each combat session delivers `hits` full
+   * pipeline hits instead of one, then the monster settles into ordinary combat.
+   *
+   * The reveal-and-fire beat for the Chameleon line: it uncloaks and empties a
+   * couple of shots before you have closed. Session-keyed exactly like
+   * `openingStrike` (re-arms on a fresh aggro, deterministic, no RNG), and a
+   * deliberate ALTERNATIVE to it — a volley is more shots, not one bigger shot, so
+   * it reads as a burst of pressure rather than a spike the damage cap must answer.
+   */
+  openingVolley?: { hits: number };
+  /**
+   * CADENCE VOLLEY — every `everyNAttacks` attack beats, that beat delivers `hits`
+   * full pipeline hits instead of one.
+   *
+   * Forest's Thorn Spitter: a periodic burst of thorns rather than a constant
+   * stream. Counter-based and deterministic, the same shape as `cadenceFinisher`,
+   * and composable with it (a beat can be both a volley and empowered) — though
+   * authoring both on one monster is almost always too much.
+   */
+  cadenceVolley?: { everyNAttacks: number; hits: number };
+  /**
+   * SHELL UP — a one-shot defensive state, the Snapper lineage's identity.
+   *
+   * The first time this monster drops to or below `atHpPct` of its max HP it
+   * retracts into its shell for `durationMs`: it cannot move and cannot attack, and
+   * incoming DIRECT damage is multiplied by `directDamageMult` (a small number —
+   * "extremely resistant", not immune).
+   *
+   * ⚠ DoTs deliberately keep ticking at full strength while shelled. That is the
+   * counterplay and the reason the state cannot stall a fight forever: a build with
+   * any damage-over-time simply keeps working, and a pure-burst build waits.
+   *
+   * Once per life (not per combat session) so it can never become a stall loop.
+   * `pool` is the evolved version: shelling also contaminates the ground around it,
+   * turning a defensive beat into space denial.
+   */
+  shellUp?: {
+    /** HP fraction (0..1) that triggers the retract. */
+    atHpPct: number;
+    durationMs: number;
+    /** Multiplier on incoming DIRECT damage while shelled (e.g. 0.15). */
+    directDamageMult: number;
+    /** Evolved Snapper: a lingering toxic pool laid down when the shell closes. */
+    pool?: {
+      radius: number;
+      durationMs: number;
+      damagePerTick: number;
+      tickIntervalMs: number;
+      slowSpeedMult?: number;
+    };
+  };
+  /**
+   * NECROTIC SCREECH — periodically hastens nearby allied monsters while this one
+   * is engaged. The Wasteland's ranged support: it does not hurt you directly, it
+   * makes everything else hurt you faster.
+   *
+   * Distinct from `onDeath.empowerAllies` (a death rattle) — this fires on a timer
+   * during the fight. Attack speed only, and non-stacking by refresh, because the
+   * locked rule is not to stack a big damage boost and a big speed boost at once.
+   */
+  empowersAllies?: {
+    intervalMs: number;
+    radius: number;
+    /** Added attack-speed fraction on each affected ally (e.g. 0.25). */
+    attackSpeedPct: number;
+    durationMs: number;
+  };
   /**
    * In-combat attack ramp. While the monster has an aggro target, a multiplier on
    * `stat` grows by perTickPct every tickIntervalMs, clamped at maxPct. Deterministic
@@ -516,7 +639,21 @@ export interface MonsterDefinition {
    * plant-and-outlast the one fight where outlasting is worst. A roster-wide version
    * would just be a second difficulty knob on the ramp payload.
    */
-  scalesWithAmbientRamp?: { perStackPct: number; maxPct: number };
+  scalesWithAmbientRamp?: {
+    perStackPct: number;
+    maxPct: number;
+    /**
+     * When true, ONLY charged/empowered hits scale with the ramp — ordinary
+     * attacks are untouched.
+     *
+     * The Tundra apex's locked shape: its huge telegraphed Glacial Slam becomes
+     * more dangerous the colder the room has made you, but its normal swings do
+     * not. Scaling everything turned "arrive cold and the slam lands on someone
+     * who cannot walk out of it" into a flat damage bonus, which is a difficulty
+     * knob rather than a tell.
+     */
+    chargedOnly?: boolean;
+  };
   /**
    * Stacking debuff applied to the PLAYER on every landed hit: a movement slow and
    * an attack-speed slow, each accumulating per hit and clamped at its own MaxPct.
@@ -539,7 +676,22 @@ export interface MonsterDefinition {
    * exactly like a player empowered attack — these spikes are what the player's
    * damage-cap armor is meant to answer.
    */
-  cadenceFinisher?: { everyNAttacks: number; multiplier: number };
+  cadenceFinisher?: {
+    everyNAttacks: number;
+    multiplier: number;
+    /**
+     * CONSTRICT — the boosted cadence hit also ROOTS the target for `rootMs`.
+     *
+     * The Emerald Constrictor's headline: a predictable heavier hit that briefly
+     * pins you, which is dangerous less for its damage than for WHERE it happens —
+     * it roots you inside a Jungle pull the terrain already gathered. Uses the same
+     * shared `slow`-at-zero root as the charged-attack rider, so Cleanse strips it,
+     * mobility tenacity shortens it, and the player can still fight while rooted.
+     *
+     * Only fires on the beats the cadence actually fires; skipped on an evaded hit.
+     */
+    rootMs?: number;
+  };
   /**
    * Deterministic cooldown finisher — port of the player cooldown empowered attack.
    * The timer starts on combat entry; once `cooldownMs` elapses the monster's NEXT
@@ -593,7 +745,34 @@ export interface MonsterDefinition {
      * within `freezeRadius` for `freezeDurationMs` (crowd-control upside — never the
      * player). Chip damage just chinks the shell; a burst pops it and triggers the shatter.
      */
-    shatter?: { selfDamagePct: number; freezeRadius: number; freezeDurationMs: number };
+    shatter?: {
+      selfDamagePct: number;
+      /**
+       * SHATTER PAYOFF (Tundra Bear line). Breaking the shell staggers the monster:
+       * for `durationMs` it takes `damageTakenPct` MORE damage from every source —
+       * the reward for timing a burst into the shell instead of chipping at it.
+       *
+       * This replaces the old "shatter freezes nearby enemies" rider (de-emphasised
+       * in the T1-T4 rework): a crowd-control upside was a strange thing to hang off
+       * a defensive window, and it paid out most in exactly the crowded fights
+       * Tundra is not supposed to have.
+       */
+      vulnerability?: { damageTakenPct: number; durationMs: number };
+      /** Legacy freezing shockwave. Optional; prefer `vulnerability`. */
+      freezeRadius?: number;
+      freezeDurationMs?: number;
+    };
+    /**
+     * RECHARGE ON CLEAN — when set, the barrier does NOT come back on the plain
+     * `intervalMs` metronome. It returns only once this monster has gone
+     * `rechargeAfterCleanMs` without taking a hit, and any hit restarts that timer.
+     *
+     * The Sunshield Scarab: catch the kiting dealer and keep pressure on it and it
+     * stays as fragile as its HP says; lose it for a few seconds and the shield is
+     * back. It makes the dealer hard to kill without making it generically tanky,
+     * which is the distinction the locked design cares about.
+     */
+    rechargeAfterCleanMs?: number;
   };
   /**
    * Soft damage cap protecting the MONSTER — mirror of the player damage-cap
@@ -663,6 +842,56 @@ export interface MonsterDefinition {
     marksTarget?: { durationMs: number };
     /** Briefly stun the primary target when the wind-up starts. */
     precastStunMs?: number;
+    /**
+     * ROOT the primary target for `rootMs` when the charged hit LANDS.
+     *
+     * Reuses the shared `slow` status at `speedMult: 0`, which is already the
+     * game's root: movement stops, the buff HUD renders it as ROOT, Cleanse strips
+     * it and mobility tenacity shortens it. Crucially it does NOT lock attacks —
+     * a rooted player still fights, which is what keeps these abilities solvable by
+     * configuration rather than by reflex. Hard control (movement AND attacks) stays
+     * the Cave Troll's `engageSequence` lockdown alone.
+     *
+     * The one telegraphed-root primitive behind three locked designs: the Basilisk's
+     * PETRIFYING GAZE, the Rime Caster's FROSTBIND, and the Emerald Constrictor's
+     * CONSTRICT. Skipped on an evaded hit like every other on-hit rider.
+     */
+    rootMs?: number;
+    /**
+     * WITHER — the landed charged hit suppresses the target's Recovery
+     * effectiveness by `reduction` for `durationMs`, as ONE non-stacking debuff.
+     *
+     * Reuses the existing `antiheal` status, so `getAntiHealMult` and the buff tile
+     * both pick it up unchanged. The difference from `appliesAntiheal` is WHERE it
+     * comes from: that one fires on every ordinary hit (which is how the Trench
+     * ended up at 75-90% suppression), this one is a periodic, telegraphed ability
+     * you can see coming. The Bog Witch's whole reason to exist, and the shape the
+     * Abyssal Serpent's Bite uses.
+     */
+    appliesAntiheal?: { reduction: number; durationMs: number };
+    /**
+     * PLAGUE HEX — the landed charged hit EXTENDS every monster DoT already on the
+     * target by `extendMs` (clamped to `maxTotalMs` so a support mob cannot make a
+     * poison effectively permanent).
+     *
+     * ⚠ It creates NO new stacks and no new DoT. That restriction is the whole
+     * design: the evolved Swamp hexer is a SUPPORT creature that makes the rest of
+     * the biome's poison matter longer, not a fourth thing applying its own poison.
+     * With nothing else in the fight it does nothing at all, which is correct.
+     */
+    refreshesPlayerDots?: { extendMs: number; maxTotalMs: number };
+    /**
+     * CHILL GATE — the ability is unavailable until the target is carrying at least
+     * this many stacks of the node's ambient ramp (`AmbientRampPayload`).
+     *
+     * Tundra's Frostbind: the caster's root only comes online once the room has
+     * already chilled you, so the environment and the roster are one mechanic
+     * instead of two. A simple threshold on purpose — no continuous formula.
+     *
+     * When the gate is closed the monster simply keeps making ordinary attacks; the
+     * charge stays armed and fires as soon as the threshold is met.
+     */
+    requiresAmbientStacks?: number;
     /** Stun each player caught by the resolved AoE. */
     stunMs?: number;
     /**

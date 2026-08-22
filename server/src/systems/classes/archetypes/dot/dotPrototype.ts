@@ -9,7 +9,10 @@ import {
   resolveDotRelicDeliveryProfile,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../../combat/engine/combatPipeline";
-import { effectiveMonsterDot } from "../../../combat/engine/monsterMechanics";
+import {
+  effectiveMonsterDot,
+  monsterDotStacksForHit,
+} from "../../../combat/engine/monsterMechanics";
 import {
   applyStatusEffect,
   getStatusEffects,
@@ -403,7 +406,13 @@ export function initDotArchetype(): void {
     if (!canApplyPlayerDebuff(player)) return;
     if (evadeBlocksDebuffs(ctx)) return; // evaded monster hit applies no DoT
 
-    applyMonsterDotToPlayer(world, ctx.attacker, player, dotEffect);
+    // VENOMOUS OPENER (`dotEffect.openerStacks`): the ambush lineage's first bite
+    // of a combat session lands several stacks at once. Consumed on the first hit
+    // that actually LANDS, so an evaded opener (returned above) does not burn it.
+    const stacks = monsterDotStacksForHit(ctx.attacker, dotEffect, Date.now());
+    for (let i = 0; i < stacks; i++) {
+      applyMonsterDotToPlayer(world, ctx.attacker, player, dotEffect);
+    }
   });
 }
 

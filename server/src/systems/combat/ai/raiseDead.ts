@@ -116,7 +116,10 @@ export function updateRaisers(world: World, now: number): void {
 
 /**
  * The raiser died: everything it pulled up crumbles. Removed, never killed, so
- * the sweep cannot become a reward path (mirrors `onPackAlphaDead`).
+ * the sweep cannot become a reward path. This is the ONLY remaining mass-removal
+ * on death: the pack-alpha scatter was deleted in the T1-T4 monster rework, and
+ * risen mobs are the one case where it is still correct (they were never the
+ * player's kills to begin with).
  */
 export function onRaiserDead(world: World, raiser: MonsterEntity): void {
   if (!MONSTER_DATABASE.get(raiser.isMonster.monsterTypeId)?.raisesDead) return;

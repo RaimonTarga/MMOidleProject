@@ -149,8 +149,10 @@ initCombatSystems();
   );
 }
 
-// The same centralized death listener also closes the previously unwired live
-// pack-alpha cleanup path (the old ecology test invoked it directly).
+// The pack-alpha SCATTER is gone (T1-T4 monster rework, locked). Killing an alpha
+// must leave its followers alive and killable for full rewards: the old behavior was
+// a hidden "you lose essence by killing the wrong thing first" rule, and Desert's duo
+// needs the opposite - killing the Controller has to leave the Dealer hurting you.
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices('pack-killer', 400, 400), 'pack-killer');
@@ -159,12 +161,19 @@ initCombatSystems();
   const [alpha, ...followers] = pack!;
   applyPlayerProcDamage(world, player, alpha, alpha.hasHealth.maxHp * 2);
   assert(
-    followers.every((follower) => !world.hasMonster(follower.isMonster.id)),
-    'killing a pack alpha through the live pipeline should scatter its followers',
+    !world.hasMonster(alpha.isMonster.id),
+    'the alpha itself should die through the live pipeline',
+  );
+  assert(
+    followers.every((follower) => world.hasMonster(follower.isMonster.id)),
+    'killing a pack alpha must NOT remove its surviving followers',
   );
 }
 
 // Shared presentation must expose the authored mechanic without a server round trip.
+// NOTE: `charnel-brute` is DEFERRED TO T5 and no longer in any spawn pool, but its
+// definition is deliberately kept so a future tier can pick it up - and so this
+// death-empower wiring stays covered.
 {
   const def = MONSTER_DATABASE.get('charnel-brute');
   assert(!!def, 'charnel brute definition should exist');

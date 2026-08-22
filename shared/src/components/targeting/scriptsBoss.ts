@@ -57,7 +57,13 @@ export interface ScriptsBoss {
    * Runtime enemyShield gained mid-fight (set by an 'apply-shield' action). When
    * present, the monster→player shield mechanic uses this instead of the static def.
    */
-  shieldOverride?: { shieldPct: number; intervalMs: number; durationMs: number };
+  shieldOverride?: {
+    shieldPct: number;
+    intervalMs: number;
+    durationMs: number;
+    /** See `MonsterDefinition.enemyShield.rechargeAfterCleanMs`. */
+    rechargeAfterCleanMs?: number;
+  };
   /**
    * Runtime enemySoftCap gained mid-fight (set by an 'apply-soft-cap' action). When
    * present, the player→monster soft-cap mechanic uses this instead of the static def.

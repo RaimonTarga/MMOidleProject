@@ -49,7 +49,27 @@ export type CombatEvent =
   // ally's necrotic surge; `raise-dead` = a necromancer pulling a corpse back up.
   // Purely cosmetic — the
   // underlying aggro/debuff/freeze is server-authoritative.
-  | { kind: 'ecology-pulse'; monsterId: string; pos: Vec2; pulse: 'pack-call' | 'sun-mark' | 'frost-shatter' | 'death-empower' | 'raise-dead' }
+  // Ecology telegraphs — one-shot pulses at a monster, so a mechanic that is
+  // otherwise invisible (an alpha calling, a shell closing, a screech going out)
+  // gets a readable client beat without a per-tick networked flag.
+  | {
+      kind: 'ecology-pulse';
+      monsterId: string;
+      pos: Vec2;
+      pulse:
+        | 'pack-call'
+        | 'sun-mark'
+        | 'frost-shatter'
+        | 'death-empower'
+        | 'raise-dead'
+        // Snapper lineage: retracting into / emerging from the shell.
+        | 'shell-up'
+        | 'shell-open'
+        // Wasteland Carrion Vulture: the screech that hastens nearby undead.
+        | 'ally-haste'
+        // Chameleon / ambusher lineages: breaking concealment to attack.
+        | 'reveal';
+    }
   // Monster charged (cast-time) attack telegraph, shown to the whole node. `start`
   // opens a `castMs` cast bar over the monster (label = ability name). `end` clears
   // it: `fired` true ⇒ the charged shot landed (play the flashy FX toward `targetId`),

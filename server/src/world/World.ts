@@ -53,7 +53,9 @@ import {
 import { updateMonsters } from "../systems/combat/ai/ai";
 import { updatePacks } from "../systems/combat/ai/packs";
 import { updateRaisers } from "../systems/combat/ai/raiseDead";
+import { updateShellUp } from "../systems/combat/ai/shellUp";
 import { updateSwarm } from "../systems/combat/ai/swarm";
+import { updateAllyEmpower } from "../systems/combat/ai/allyEmpower";
 import { updateCombat } from "../systems/combat/engine/combat";
 import { updateTransitions } from "../systems/world/transitions";
 import { updateCombatState } from "../systems/combat/engine/combatState";
@@ -397,6 +399,9 @@ export class World {
     if (IS_DEV) updateTestRoomInteract(this, now);
     updatePacks(this, now);
     updateRaisers(this, now);
+    // Ecology coordinators run BEFORE updateMonsters and only set intent/state.
+    updateShellUp(this, now);
+    updateAllyEmpower(this, now);
     updateMonsters(this, dt, now);
     updateSwarm(this);
     updateCombat(this, dt, now);

@@ -35,21 +35,17 @@ export const caveMonsterEntries = [
   // earn their keep here (unlike the squishy plains/forest mobs).
   ['cave-lurker', {
     id: 'cave-lurker', name: 'Cave Lurker', color: 0x664466,
-    // The fast half of the pair — quick, lightly armored, relentless, and hard to
-    // pin down. Plating dropped 4 -> 1: at 4 it was doing enormous effective-HP work
-    // against light hits (a chip weapon was reduced almost to the 1-damage floor),
-    // which is what made Caverns a slog rather than a threat. The evasion below is a
-    // cheaper, more readable version of the same "consistency check" — you need
-    // reliable damage, not necessarily heavy damage.
+    // CHAOTIC ROAMER — the biome's other half. Cave's contrast is "predictable
+    // territorial brutes vs roamers that unexpectedly walk into your fight", so this
+    // one's identity is MOVEMENT: fast, wide wander, short idles. Plating stays at 1
+    // (at 4 it did enormous effective-HP work against light hits, which is what made
+    // Caverns a slog).
     stats: { hp: 200, attack: 31, plating: 1, damageReduction: 0.05, speed: 68, attackRange: 12, attackCooldown: 1400, pullRange: 200 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: false,
     rewards: { essence: 10, essenceType: 'red', level: 1, biomeXp: 70 },
     ai: { wanderRadius: 380, leashRange: 620, idleMinMs: 450, idleMaxMs: 1500 },
-    // Deterministic dodge — every 10th incoming hit is skipped. Previously this
-    // monster had no mechanic whatsoever in a two-monster biome; evasion gives it a
-    // readable identity (the thing you can't quite land on) and matches the T2/T3
-    // cave roster, where giant-spider and deep-spider already evade.
-    evasion: 0.10,
+    // NO evasion (T1-T4 rework, locked): random misses are not an identity, roaming
+    // is. Deliberately NOT replaced with DR — the roaming line stays killable.
   }],
 
   ['cave-brute', {
@@ -88,12 +84,12 @@ export const caveMonsterEntries = [
   // ── CAVE T2 — three distinct ELITE shapes: fast/dodgy, bruiser, ranged ──
   ['giant-spider', {
     id: 'giant-spider', name: 'Giant Spider', color: 0x992266,
-    // Fast ambush hunter; DR hide + evasion make it slippery, plus a little venom.
+    // Evolved Cave Lurker: fast chaotic roamer that can wander into an existing
+    // fight. VENOM is the tier's escalation — not evasion (removed, locked).
     stats: { hp: 460, attack: 22, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 12, attackCooldown: 1800, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave', elite: true,
     rewards: { essence: 15, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
-    evasion: 0.2,
     dotEffect: { debuffId: 'spider-venom', label: 'Spider Venom', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
@@ -133,6 +129,15 @@ export const caveMonsterEntries = [
     stats: { hp: 530, attack: 32, plating: 3, damageReduction: 0.10, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
     behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
     rewards: { essence: 18, essenceType: 'blue', level: 1, biomeXp: 100 }, // stone construct → Stone (biome mixture; tunable)
+    // STATIC RANGED SENTRY - it does not roam like a normal ranged mob. It stays
+    // perched, activates when a player enters its pull range, and fires from that
+    // position. The static behavior IS the mechanic.
+    staticSentry: true,
+    // Occasional telegraphed heavy stalactite - the optional secondary.
+    chargedAttack: {
+      name: 'Stalactite Shot', castMs: 1600, cooldownMs: 11000, initialCooldownMs: 4500,
+      multiplier: 1.8, fx: 'power-shot',
+    },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
 
@@ -142,13 +147,15 @@ export const caveMonsterEntries = [
   // NO shield / soft-cap here (those are the T4 weapon-matchup axis).
   ['deep-spider', {
     id: 'deep-spider', name: 'Deep Spider', color: 0x992266,
-    // Fast dodgy elite: high speed catches kiters (anti-Far), evasion whiffs many-hit
-    // weapons, consistent medium hits = %DR's home. Light venom.
+    // The roaming line's ceiling: even more active roaming over a large wander
+    // space, stronger venom, and high speed that catches kiters (anti-Far).
+    // NO evasion (locked) and deliberately no DR added back in its place.
     stats: { hp: 1000, attack: 42, plating: 0, damageReduction: 0.08, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave', elite: true,
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
-    ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
-    evasion: 0.25,
+    // Roams harder and idles less than the Giant Spider - the T3 escalation of the
+    // chaotic-roamer line is SPACE COVERED, since its evasion is gone.
+    ai: { wanderRadius: 380, leashRange: 820, idleMinMs: 500, idleMaxMs: 2000 },
     dotEffect: { debuffId: 'deep-spider-venom', label: 'Deep Venom', damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3000 },
   }],
 
@@ -161,6 +168,18 @@ export const caveMonsterEntries = [
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 83, essenceType: 'red', level: 3, biomeXp: 500 },
     ai: { wanderRadius: 120, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8500 },
+    // ENGAGE -> CONTROL -> SLAM, inherited from the Cave Troll (locked override:
+    // do NOT simplify this line into 'walk up and Slam'). The point is that the
+    // player has to ANSWER the slam - Brace, Disengage after the control window,
+    // a Guard, or another defensive tool.
+    // Design contract: the control must end early enough that a configured
+    // Disengage can still fire before impact. No frame-perfect requirement.
+    engageSequence: {
+      kind: 'charge-lock-charged-attack',
+      speedMult: 6,
+      maxChargeMs: 3000,
+      lockoutMs: 1000,
+    },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     // GROUND SLAM — the elite ceiling's version: widest footprint, longest tell.
     // Still escapable on foot at player base speed; that is the contract.
@@ -181,6 +200,11 @@ export const caveMonsterEntries = [
     stats: { hp: 1150, attack: 60, plating: 3, damageReduction: 0.10, speed: 20, attackRange: 210, attackCooldown: 3200, pullRange: 185 },
     behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
     rewards: { essence: 60, essenceType: 'red', level: 3, biomeXp: 360 },
+    // Same perch/static identity as the Cave Gargoyle. The evolution is a CHARGED
+    // CRYSTAL VOLLEY: several rapid shards on a periodic beat rather than one
+    // bigger rock. WARNING: not a kiter (locked).
+    staticSentry: true,
+    cadenceVolley: { everyNAttacks: 3, hits: 3 },
     ai: { wanderRadius: 120, leashRange: 450, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
 

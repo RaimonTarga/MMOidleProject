@@ -6,6 +6,7 @@ import type {
 } from "../../../ecs/entity";
 import {
   distanceSq,
+  getJungleBushes,
   MONSTER_DATABASE,
   monsterKites,
   RESOLVED_NODE_FEATURES,
@@ -54,6 +55,10 @@ const MOUNTAIN_WANDER_SAMPLES = 8;
 const MOUNTAIN_WANDER_SEPARATION_RANGE = 620;
 const CAVE_LURKER_WANDER_SAMPLES = 8;
 const CAVE_LURKER_BRUTE_AVOID_RANGE = 560;
+// A flyer's idle circuit is wider and lazier than a walker's: it is not picking its
+// way around terrain, it is riding over it. Multiplies the def's own wanderRadius so
+// authoring still controls the scale.
+const FLYER_WANDER_RADIUS_MULT = 1.8;
 
 /**
  * In-combat offensive ramp. While engaged, the configured stat grows by
@@ -506,13 +511,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
               setMonsterTarget(
                 world,
                 e,
-                monsterDef?.biome === "swamp" && Math.random() < 0.65
-                  ? swampPoolWanderTarget(e, node) ?? randomWanderTarget(ai, node)
-                  : isCaveLurker(e)
-                  ? caveLurkerWanderTarget(world, e, node)
-                  : monsterDef?.biome === "mountain"
-                  ? mountainSpreadWanderTarget(world, e, node)
-                  : randomWanderTarget(ai, node),
+                idleWanderTarget(world, e, monsterDef, node),
               );
             }
           } else {
@@ -522,6 +521,68 @@ export function updateMonsters(world: World, dt: number, now: number) {
       }
     }
   }
+}
+
+/**
+ * Where a disengaged monster wanders next.
+ *
+ * Precedence, most specific first:
+ *   1. `idleAnchor`  — the mob LIVES in a terrain feature (thicket, bog pool) and
+ *                      idles in and around it rather than roaming past it. This is
+ *                      what turns an "ambusher" into an ambush: the player meets it
+ *                      by entering the terrain, not by being unlucky.
+ *   2. `flies`       — a wide, lazy aerial circuit that ignores ground spacing.
+ *   3. cave lurker   — chaotic roaming that avoids the brutes' patrol territory, so
+ *                      the biome reads as "roamer wanders into the brute's fight".
+ *   4. mountain      — spread scoring, so the low-density biome does not clump.
+ *   5. plain random wander.
+ *
+ * The swamp-pool case used to be a hardcoded `biome === "swamp"` 65% roll applied
+ * to EVERY swamp mob. It is now `idleAnchor: 'swamp-pool'`, authored on the one
+ * monster whose identity is living in the pool.
+ */
+function idleWanderTarget(
+  world: World,
+  monster: MonsterEntity,
+  def: MonsterDefinition | undefined,
+  node: { width: number; height: number } | undefined,
+): Vec2 {
+  const ai = monster.controlsMonster;
+
+  const anchor = def?.idleAnchor;
+  if (anchor) {
+    const anchored =
+      anchor === "swamp-pool"
+        ? poolIdleTarget(monster, node)
+        : bushIdleTarget(monster, node);
+    if (anchored) return anchored;
+  }
+
+  if (def?.flies === true) return aerialWanderTarget(ai, node);
+  if (isCaveLurker(monster)) return caveLurkerWanderTarget(world, monster, node);
+  if (def?.biome === "mountain") return mountainSpreadWanderTarget(world, monster, node);
+  return randomWanderTarget(ai, node);
+}
+
+/** A wide, lazy circuit around the roost — the flyer idle. */
+function aerialWanderTarget(
+  ai: ControlsMonster,
+  node: { width: number; height: number } | undefined,
+): Vec2 {
+  const angle = Math.random() * 2 * Math.PI;
+  // Biased OUTWARD (sqrt distribution) so a flyer actually patrols a circuit
+  // instead of hovering near its roost the way a uniform radius roll would.
+  const radius =
+    Math.sqrt(Math.random()) * ai.wanderRadius * FLYER_WANDER_RADIUS_MULT;
+  const margin = 40;
+  const minX = node ? margin : 0;
+  const maxX = node ? node.width - margin : Infinity;
+  const minY = node ? margin : 0;
+  const maxY = node ? node.height - margin : Infinity;
+  return {
+    x: Math.max(minX, Math.min(maxX, ai.spawn.x + Math.cos(angle) * radius)),
+    y: Math.max(minY, Math.min(maxY, ai.spawn.y + Math.sin(angle) * radius)),
+  };
 }
 
 function randBetween(min: number, max: number): number {
@@ -653,7 +714,54 @@ function caveLurkerWanderScore(
   return score;
 }
 
-function swampPoolWanderTarget(
+/**
+ * IDLE ANCHOR: 'jungle-bush'. Pick a point inside the nearest thicket, so the
+ * bush-lurking ambusher LIVES in the cover rather than roaming past it.
+ *
+ * This is the whole Jungle contract in one function: the thicket already doubles a
+ * standing player's detection radius, so a snake that idles inside one means
+ * "stepping into the undergrowth is what starts the fight" — terrain creates the
+ * pull, not an alpha calling followers. Null when the node has no thicket (dungeon
+ * arenas carry none), in which case the caller falls back to a plain wander.
+ */
+function bushIdleTarget(
+  monster: MonsterEntity,
+  node: { width: number; height: number } | undefined,
+): Vec2 | null {
+  const bushes = getJungleBushes(monster.hasPosition.nodeId).bushes;
+  if (bushes.length === 0) return null;
+
+  const origin = monster.controlsMonster.spawn;
+  let best = bushes[0]!;
+  let bestDistSq = distanceSq(origin, best);
+  for (const bush of bushes.slice(1)) {
+    const d2 = distanceSq(origin, bush);
+    if (d2 < bestDistSq) {
+      best = bush;
+      bestDistSq = d2;
+    }
+  }
+
+  const angle = Math.random() * 2 * Math.PI;
+  const radius = Math.random() * best.radius * 0.8;
+  const margin = 40;
+  const minX = node ? margin : 0;
+  const maxX = node ? node.width - margin : Infinity;
+  const minY = node ? margin : 0;
+  const maxY = node ? node.height - margin : Infinity;
+  return {
+    x: Math.max(minX, Math.min(maxX, best.x + Math.cos(angle) * radius)),
+    y: Math.max(minY, Math.min(maxY, best.y + Math.sin(angle) * radius)),
+  };
+}
+
+/**
+ * IDLE ANCHOR: 'swamp-pool'. Pick a point inside (or on the lip of) the nearest bog
+ * pool, so the Lurker sits half-submerged in its ambush spot rather than roaming
+ * like an ordinary crocodile. Null when the node has no pool, in which case the
+ * caller falls back to a plain wander.
+ */
+function poolIdleTarget(
   monster: MonsterEntity,
   node: { width: number; height: number } | undefined,
 ): Vec2 | null {
@@ -678,7 +786,9 @@ function swampPoolWanderTarget(
   const shape = best.shape;
   if (shape.kind !== "circle") return null;
   const angle = Math.random() * 2 * Math.PI;
-  const radius = shape.radius + 40 + Math.random() * 140;
+  // INSIDE the pool (up to 85% of its radius), not orbiting outside it — the
+  // difference between "lives in the bog" and "walks past the bog".
+  const radius = Math.random() * shape.radius * 0.85;
   const margin = 40;
   const minX = node ? margin : 0;
   const maxX = node ? node.width - margin : Infinity;

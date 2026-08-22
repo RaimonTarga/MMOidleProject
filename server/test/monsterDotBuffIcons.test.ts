@@ -101,7 +101,13 @@ const poisonBuffs = (player.hasStatus.activeBuffs ?? []).filter(
   (buff) => buff.id === "debuff-dot",
 );
 
-assert(poisonDefinitionCount >= 19, "the poison authoring audit unexpectedly shrank");
+// Floor lowered 19 -> 12 by the T1-T4 monster rework, which deliberately took the
+// generic stacking poison OFF most of the roster: Wasteland stopped being universal
+// plague, the Swamp Witch/Hexer lineage became support rather than a fourth poison
+// source, and the Jungle's evolved ambushers and Chameleon apex lost theirs. This
+// number guards the HUD wiring (distinct flavors must still project distinct
+// entries), not a design target, so it tracks the roster rather than pinning it.
+assert(poisonDefinitionCount >= 12, `the poison authoring audit unexpectedly shrank (${poisonDefinitionCount})`);
 assert(
   poisonBuffs.length === expectedEffectIds.size,
   "every distinct authored poison should project a HUD entry",

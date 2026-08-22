@@ -29,13 +29,20 @@ import type { MonsterDefinition } from './types';
 
 export const swampMonsterEntries = [
 
-  // ══ SWAMP — low DIRECT damage, heavy DoT; dot-resist + debt is the answer ══
-  // (Per request: base attack lowered, DoT raised — same-ish DPS, DoT-weighted.)
+  // ══ SWAMP — POISON ATTRITION, EXPRESSED FOUR DIFFERENT WAYS ══
+  // Low direct damage, heavy DoT; dot-resist + the debt loop is the answer. What
+  // changed in the T1-T4 rework is that every mob no longer expresses that the same
+  // way. The biome now reads as: pure poison (Ooze), sticking power (Toad), SHELL
+  // defense (Snappers), support CURSES (Witch/Hexer), and environmental AMBUSH
+  // (Stalker/Lurker).
+  //
+  // WARNING: current Swamp damage values were called out in playtesting as likely
+  // FAR TOO HIGH. Do not treat any number in this file as authoritative; a broad
+  // damage retune is expected.
   ['bog-slime', {
     id: 'bog-slime', name: 'Mire Ooze', color: 0x558833,
-    // The DEALER of the swamp pair: a weak slap, but the toxin does all the work.
-    // Almost all of its output is the DoT, which is the whole point of the biome —
-    // direct-damage mitigation barely helps here, DoT-resist does.
+    // BASELINE POISON ENEMY. Weak direct attack; the stacking poison is the whole
+    // threat. No extra mechanic, deliberately.
     stats: { hp: 140, attack: 10, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2000, pullRange: 165 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 35 },
@@ -49,11 +56,9 @@ export const swampMonsterEntries = [
 
   ['mud-toad', {
     id: 'mud-toad', name: 'Mud Toad', color: 0x778844,
-    // The CONTROLLER of the swamp pair. Previously this was a stat-identical clone of
-    // Mire Ooze carrying the exact same DoT block — two copies of one monster in the
-    // biome whose whole identity is attrition. Its job now is to stop you leaving:
-    // a shallower poison than the Ooze, plus a mire-clinging slow, so the answer to
-    // Swamp is "cleanse and disengage" and the failure state is being unable to.
+    // POISON + STICKING POWER. A LIGHTER poison than the Ooze plus a mire-clinging
+    // slow on hit, so the answer to Swamp is "cleanse and disengage" and the failure
+    // state is being unable to. No further mechanic required.
     stats: { hp: 120, attack: 13, plating: 2, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2200, pullRange: 180 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 6, essenceType: 'green', level: 1, biomeXp: 42 }, // beast → Wild (biome mixture; tunable)
@@ -68,33 +73,58 @@ export const swampMonsterEntries = [
   // ── SWAMP T2 — DoT engines; trivial direct hits, brutal stacking poison ──
   ['swamp-hydra', {
     id: 'swamp-hydra', name: 'Moss-Shell Snapper', color: 0x335533,
-    // Giant snapping turtle DoT engine; lives long enough to stack poison deep.
-    // Direct bite is almost nothing — the festering venom is the whole fight.
-    stats: { hp: 370, attack: 12, plating: 0, damageReduction: 0.10, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    // ARMORED SWAMP ANCHOR. Was "big HP + DR + more poison"; it is now a recognisable
+    // SHELL identity: high HP, slow movement, plating as the main defense, generic DR
+    // removed, poison de-emphasised.
+    // Signature SHELL UP (behavior pass): at a single authored HP threshold (~50%) it
+    // retracts — it cannot meaningfully attack or move, and becomes extremely
+    // resistant to DIRECT damage. DoTs keep ticking while shelled, which is the out.
+    stats: { hp: 370, attack: 12, plating: 8, damageReduction: 0, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
+    // SHELL UP - one authored HP threshold, once per life. It retracts, stops
+    // moving and attacking, and direct damage barely scratches it. DoTs keep
+    // ticking at full strength, which is the way through.
+    // Placeholder numbers - balance pass owns them.
+    shellUp: { atHpPct: 0.5, durationMs: 3500, directDamageMult: 0.15 },
     dotEffect: { debuffId: 'hydra-venom', label: 'Snapper Venom', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['bog-witch', {
     id: 'bog-witch', name: 'Bog Witch', color: 0x884499,
-    // Ranged curse — flings a weak hex that festers; the DoT poke of the marsh.
-    stats: { hp: 230, attack: 16, plating: 0, damageReduction: 0.05, speed: 38, attackRange: 180, attackCooldown: 2200, pullRange: 215 },
+    // RANGED ATTRITION SUPPORT. No longer "another ranged mob stacking poison"
+    // (its dotEffect is REMOVED, locked). Its normal attacks are relatively weak;
+    // the reason the Witch matters is WITHER — a periodic debuff suppressing the
+    // player's Recovery effectiveness (~25-35%, exact value balance-owned).
+    stats: { hp: 230, attack: 16, plating: 0, damageReduction: 0, speed: 38, attackRange: 180, attackCooldown: 2200, pullRange: 215 },
     behavior: 'ranged', attackStyle: 'hex', biome: 'swamp',
     rewards: { essence: 11, essenceType: 'purple', level: 1, biomeXp: 62 },
+    // WITHER - the reason the Witch matters. A periodic telegraphed hex that
+    // suppresses the player's Recovery effectiveness. Its normal attacks stay
+    // weak on purpose; this is the whole kit.
+    // Multiplier is deliberately ~1: Wither is a debuff, not a damage spike.
+    chargedAttack: {
+      name: 'Wither', castMs: 1400, cooldownMs: 11000, initialCooldownMs: 4000,
+      multiplier: 1.0, fx: 'power-shot',
+      appliesAntiheal: { reduction: 0.30, durationMs: 6000 },
+    },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
-    dotEffect: { debuffId: 'swamp-hex', label: 'Swamp Hex', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['mire-stalker', {
     id: 'mire-stalker', name: 'Mire Stalker', color: 0x445533,
-    // Venomous marsh serpent; light strike, heavy toxin, and it dodges some blows.
-    stats: { hp: 320, attack: 22, plating: 0, damageReduction: 0.12, speed: 40, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
+    // VENOMOUS AMBUSH PREDATOR. Fast, light, and EVASION is its defensive
+    // specialisation — so the generic DR bulk that used to sit on top is removed.
+    // Signature: the OPENING BITE after aggro lands MULTIPLE poison stacks at once
+    // (normal bite 1, opener ~2); ordinary combat afterwards. It does NOT repeatedly
+    // vanish and re-ambush.
+    stats: { hp: 320, attack: 22, plating: 0, damageReduction: 0, speed: 40, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 13, essenceType: 'purple', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 170, leashRange: 540, idleMinMs: 2000, idleMaxMs: 6000 },
-    dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800 },
+    // Opening bite lands 2 stacks at once; every bite after it lands 1.
+    dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800, openerStacks: 2 },
     evasion: 0.2,
   }],
 
@@ -103,36 +133,68 @@ export const swampMonsterEntries = [
   // bulky/evasive walls. One ranged DoT-kiter. Answer: dot-resist + debt loop.
   ['plague-hydra', {
     id: 'plague-hydra', name: 'Plague-Shell Snapper', color: 0x335533,
-    // Rotting snapper DoT wall: bulky, DR, lives long enough to stack venom deep.
-    // The bite is nothing; the poison is the whole fight. Kitable, but DoT ticks regardless.
-    stats: { hp: 820, attack: 26, plating: 0, damageReduction: 0.12, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    // EVOLVED SHELL ANCHOR. Inherits Shell Up; the evolution is that shelling also
+    // CONTAMINATES the surrounding area with a poison cloud/pool.
+    // Progression: earlier Snapper shell = defense; later Snapper shell = defense +
+    // space denial. Generic DR removed so HP + plating + shell carry the defense.
+    stats: { hp: 820, attack: 26, plating: 14, damageReduction: 0, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },
+    // SHELL UP, evolved: retracting also CONTAMINATES the ground around it, so the
+    // later Snapper's shell is defense AND space denial. Earlier Snapper: shell =
+    // defense. Later Snapper: shell = defense + a circle you cannot stand in.
+    shellUp: {
+      atHpPct: 0.5, durationMs: 4000, directDamageMult: 0.15,
+      pool: { radius: 150, durationMs: 6000, damagePerTick: 12, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
+    },
     dotEffect: { debuffId: 'plague-venom', label: 'Plague', damagePerStack: 7, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
   }],
 
   ['mire-hex-spitter', {
-    id: 'mire-hex-spitter', name: 'Mire Hex Spitter', color: 0x884499,
-    // Ranged DoT KITER: plinks festering hexes, backs away. Anti-Close — chasing
-    // it just walks you through more poison. Speed 36 (catchable on charge).
+    // Renamed for lineage continuity (Bog Witch -> Mire Hexer): the locked design
+    // makes this the evolved WITCH, and "Hex Spitter" read as a fourth poison mob.
+    // The `mire-hex-spitter` ID is unchanged - art, saves and pools all key on it.
+    id: 'mire-hex-spitter', name: 'Mire Hexer', color: 0x884499,
+    // EVOLVED SWAMP SUPPORT (Witch/Hexer lineage). Inherits WITHER, and adds a
+    // periodic hex that REFRESHES/EXTENDS the durations of poison already on the
+    // player.
+    // WARNING: it does NOT create extra poison stacks (its own dotEffect is removed,
+    // locked). It SUPPORTS poison applied by the rest of the biome.
     stats: { hp: 500, attack: 30, plating: 0, damageReduction: 0, speed: 36, attackRange: 200, attackCooldown: 2200, pullRange: 230 },
     behavior: 'kiter', attackStyle: 'hex', biome: 'swamp',
     rewards: { essence: 35, essenceType: 'purple', level: 2, biomeXp: 210 },
+    // PLAGUE HEX - inherits Wither and adds the lineage's evolution: it EXTENDS
+    // the poison already on the player rather than adding its own.
+    // WARNING: creates no stacks and no new DoT. Against a lone Hexer it does
+    // nothing at all, which is correct - it is a SUPPORT creature.
+    chargedAttack: {
+      name: 'Plague Hex', castMs: 1500, cooldownMs: 10000, initialCooldownMs: 4000,
+      multiplier: 1.0, fx: 'power-shot',
+      appliesAntiheal: { reduction: 0.30, durationMs: 6000 },
+      refreshesPlayerDots: { extendMs: 3000, maxTotalMs: 12000 },
+    },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
-    dotEffect: { debuffId: 'mire-hex', label: 'Mire Hex', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
   }],
 
   ['bog-lurker', {
     id: 'bog-lurker', name: 'Bog Lurker', color: 0x445533,
-    // Half-submerged bog crocodile: evasive ambush DoT wall — dodges every 5th hit
-    // (slips underwater) + DR bulk + heavy toxin. Hard to burn down fast.
-    stats: { hp: 720, attack: 28, plating: 0, damageReduction: 0.14, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
+    // EVOLVED ENVIRONMENTAL AMBUSHER. Lives and idles INSIDE bog/poison pools,
+    // semi-hidden while idle, and does not roam like a normal crocodile — it ERUPTS
+    // when the player comes near.
+    // Signature opener: the first bite lands a larger multi-stack poison alpha strike
+    // (~3 stacks). Ordinary combat afterwards — no pool retreat, no stealth reset.
+    // Evasion is its defensive specialisation, so the DR bulk is removed.
+    stats: { hp: 720, attack: 28, plating: 0, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 57, essenceType: 'purple', level: 3, biomeXp: 345 },
+    // It LIVES in the bog: `idleAnchor` keeps it idling inside the nearest pool
+    // instead of roaming past it, so the player meets it by approaching the water.
+    idleAnchor: 'swamp-pool',
     ai: { wanderRadius: 160, leashRange: 540, idleMinMs: 2200, idleMaxMs: 6500 },
     evasion: 0.25,
-    dotEffect: { debuffId: 'lurker-venom', label: 'Lurker Venom', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
+    // Erupting from the pool is a poison ALPHA STRIKE: 3 stacks on the first bite.
+    dotEffect: { debuffId: 'lurker-venom', label: 'Lurker Venom', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500, openerStacks: 3 },
   }],
 
 

@@ -1,30 +1,42 @@
 import type { MonsterDefinition } from './types';
 
 // ══════════════════════════════════════════════════════════════════════════
-// GRAVEYARD — EXTREME high density · PLAGUE DoT · undead swarm
-// Threat is DoT accumulation from overwhelming numbers, not per-hit size.
-// Per-hit runs low; the SUM of 5–10 simultaneous attackers + stacking DoT is
-// lethal. Answer: dot-resist + hit-to-dot armor, Recovery-pulse charm.
-// Anti-Far: raw speed + density. No kiters (the swarm IS the threat).
+// WASTELAND (legacy id `graveyard`) — CORPSES AND NECROMANCY
+//
+// The identity is NOT universal plague (T1–T4 rework, locked — nearly every mob
+// used to carry a `dotEffect`, which made the whole roster one monster). It is:
+//
+//     DEATH DOES NOT CLEANLY REMOVE ENEMIES FROM THE ENCOUNTER.
+//
+// Combat persists through corpses, resurrection, and SELECTIVE death effects:
+//   • basic bodies (Bone Crawler, Bone Rat) have NO death effect — they are
+//     corpse fodder, and the corpse is the point;
+//   • the Plague Hound is the ONE dedicated plague creature (DoT + death pool);
+//   • the Gravewright raises the player's own kills;
+//   • the Carrion Vulture EMPOWERS nearby undead instead of applying DoT.
+//
+// ⚠ RECURSION RULE (enforced in server/src/systems/world/corpses.ts): risen mobs
+// never record a reusable corpse, so corpse→raise→kill→corpse can never loop.
+// Density: moderate/moderately-high, NOT another extreme swarm.
 // ══════════════════════════════════════════════════════════════════════════
 export const graveyardMonsterEntries = [
 
 
   ['bone-crawler', {
     id: 'bone-crawler', name: 'Bone Crawler', color: 0x886688,
-    // Swarm backbone. Fast, low individual HP, disease DoT every hit. The threat
-    // is 8 of them at once. DPS 54 × (1000/1200) = 45 each (× the pack).
+    // Basic undead body / CORPSE FODDER. Simple melee, no plague (removed, locked).
+    // Its contribution to the biome is that it dies and leaves a valid corpse.
     stats: { hp: 520, attack: 54, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 30, essenceType: 'purple', level: 3, biomeXp: 180 },
     ai: { wanderRadius: 330, leashRange: 820, idleMinMs: 600, idleMaxMs: 2500 },
-    dotEffect: { debuffId: 'bone-rot', label: 'Bone Rot', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['plague-hound', {
     id: 'plague-hound', name: 'Plague Hound', color: 0x664466,
-    // Fast charging runner: closes instantly, spreads heavy disease DoT. Keeps
-    // the pressure constant. DPS 76 × (1000/1500) = 51 + strong DoT.
+    // THE dedicated plague creature — the one mob that keeps the DoT identity.
+    // Aggressive charge, modest plague, and a contaminated pool on death that
+    // matters for POSITIONING (short-lived; it must not dominate encounter damage).
     stats: { hp: 800, attack: 76, plating: 0, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 50, essenceType: 'purple', level: 3, biomeXp: 300 },
@@ -43,27 +55,37 @@ export const graveyardMonsterEntries = [
 
   ['carrion-vulture', {
     id: 'carrion-vulture', name: 'Carrion Vulture', color: 0x996699,
-    // Ranged contagion-lobber: stationary, fires disease projectiles from afar.
-    // Background DoT while the swarm engages. DPS 64 × (1000/1700) = 38 + DoT.
+    // RANGED UNDEAD SUPPORT. Generic plague DoT removed (locked); its job is now
+    // NECROTIC SCREECH — periodically empowering nearby undead (attack speed).
+    // See the behavior pass for the screech itself.
     stats: { hp: 680, attack: 64, plating: 0, damageReduction: 0, speed: 46, attackRange: 200, attackCooldown: 1700, pullRange: 260 },
     behavior: 'ranged', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 40, essenceType: 'purple', level: 3, biomeXp: 240 },
+    // NECROTIC SCREECH - periodically hastens nearby undead. It does not hurt you
+    // directly; it makes everything ELSE hurt you faster, which is a different job
+    // from the plague DoT it used to carry.
+    // WARNING: attack speed only. Do not also stack a big damage boost here.
+    empowersAllies: { intervalMs: 8000, radius: 260, attackSpeedPct: 0.25, durationMs: 5000 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 4000 },
-    dotEffect: { debuffId: 'carrion-blight', label: 'Carrion Blight', damagePerStack: 7, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2200 },
   }],
 
   ['charnel-brute', {
     id: 'charnel-brute', name: 'Charnel Brute', color: 0x553355,
-    // Bone amalgam hulk — a shambling mass of many beasts' fused bones.
-    // Slow bone-armored anchor. CADENCE every 4 = a 216 necrotic slam + massive
-    // DoT burst. Heavy plating (16) rewards Rupture/pierce. The swarm's anchor.
-    // avg/attack (3·90+216)/4 = 121.5 → ×(1000/3200) = 38 + DoT.
+    // ⚠ DEFERRED TO T5 — NOT IN ANY SPAWN POOL (T1–T4 rework, locked decision).
+    // Removed from graveyard's T4 `monsterPoolByTier` for a cleaner T4 debut: five
+    // mobs expressing corpses/necromancy read better than six, and this one's
+    // armored-anchor role duplicates work the Gravewright already carries.
+    // The definition is kept intact so a future T5 Wasteland pass can pick it up.
+    //
+    // Bone amalgam hulk — a shambling mass of many beasts' fused bones. Slow
+    // bone-armored anchor. CADENCE every 4 = a 216 necrotic slam. Heavy plating (16)
+    // rewards Rupture/pierce. Its stacking DoT is already stripped per the locked
+    // Wasteland identity; on-death ally empowerment (capped) is the mechanic it keeps.
     stats: { hp: 1800, attack: 90, plating: 16, damageReduction: 0.08, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 160, essenceType: 'purple', level: 4, biomeXp: 960 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 4000, idleMaxMs: 11000 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.4 },   // 216
-    dotEffect: { debuffId: 'charnel-decay', label: 'Decay', damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
     // Killing the swarm's anchor sends a short necrotic surge through nearby undead.
     // Placeholder values â€” the balance pass owns radius, duration, and cap.
     onDeath: { empowerAllies: { radius: 220, damagePct: 0.12, durationMs: 6000, maxStacks: 3 } },
@@ -79,12 +101,13 @@ export const graveyardMonsterEntries = [
     // worth ZERO rewards. Its risen dead crumble the instant it dies.
     // Squishy + ranged → reachable and dies fast once you commit. Yellow elite outline;
     // the `focus-elites` rune (taught by the graveyard recipe) is the intended counter.
+    // Its personal Grave Curse DoT is REMOVED (locked): the power budget is
+    // RESURRECTION ALONE — a weak ranged attacker whose only real weapon is the tide.
     stats: { hp: 720, attack: 40, plating: 0, damageReduction: 0, speed: 40, attackRange: 200, attackCooldown: 1900, pullRange: 300 },
     behavior: 'ranged', attackStyle: 'magic', biome: 'graveyard',
     elite: true,
     rewards: { essence: 70, essenceType: 'purple', level: 3, biomeXp: 420 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
-    dotEffect: { debuffId: 'grave-curse', label: 'Grave Curse', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2500 },
     // Raise on a 5s cadence while engaged, capped at 4 living (the cap = no flood).
     // No corpse in reach = no raise. Placeholder numbers — the balance pass owns
     // rate/reach/cap and the risen scalars vs base node density.
@@ -96,14 +119,12 @@ export const graveyardMonsterEntries = [
 
   ['plague-rat', {
     id: 'plague-rat', name: 'Bone Rat', color: 0xaa88aa,
-    // Ultra-fast trivial filler — the overwhelming-density unit. Individually
-    // nothing; in packs of 8+ the tick-fast attacks make evasion-rate matter and
-    // the cumulative DoT compounds fast. DPS 46 × (1000/950) = 48.
+    // Fast nuisance filler / corpse fodder. Individually nothing. No plague
+    // (removed, locked) — it is simple on purpose, and it leaves a valid corpse.
     stats: { hp: 400, attack: 46, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 950, pullRange: 310 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 22, essenceType: 'purple', level: 3, biomeXp: 130 },
     ai: { wanderRadius: 360, leashRange: 860, idleMinMs: 400, idleMaxMs: 2000 },
-    dotEffect: { debuffId: 'rat-plague', label: 'Rat Plague', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1800 },
   }],
 
 ] satisfies [string, MonsterDefinition][];

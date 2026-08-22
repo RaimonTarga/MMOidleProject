@@ -29,11 +29,23 @@ import type { MonsterDefinition } from './types';
 
 export const mountainMonsterEntries = [
 
-  // ══ MOUNTAIN — rare HUGE hits that trip the cap; slow + charge to connect ══
+  // ══ MOUNTAIN — FIVE IDENTITIES, NOT ONE ══
+  // Rare HUGE hits that trip the damage cap is still the biome's damage SHAPE, but
+  // the roster is organised by lineage (T1-T4 rework):
+  //   1. LEDGE-CROSSING CAPRINES  cliff-hopper -> avalanche-ram -> avalanche-tyrant
+  //   2. GROUND BRUISERS/SLAMMERS granite-titan -> mountain-colossus -> granite-mammoth
+  //   3. POSITIONAL ARTILLERY     ridge-ambusher -> boulder-thrower -> crag-mortar
+  //   4. FLYERS                   stone-eagle -> (gap) -> cliffside-roc
+  //   5. STANDALONE LATE ELITE    cragback-rhino
+  // A lineage may DISAPPEAR for a tier and return later. Do NOT add monsters merely
+  // to fill a missing tier link.
+  // WARNING: ledge traversal belongs to CAPRINES AND FLYERS ONLY. The Titan line
+  // must never vault (locked).
   ['cliff-hopper', {
     id: 'cliff-hopper', name: 'Cliff Hopper', color: 0x99aacc,
-    // Sturdy mountain goat (caprine line T1: hopper -> ram -> tyrant). Slow charging
-    // bruiser (atk trips the ~25%-HP cap); charges once to close, then lumbers.
+    // CAPRINE T1. Identity: it VAULTS mountain ledges, and its Strong Kick knocks
+    // you back — which matters most around ledges and drop-offs. Mobile roaming, not
+    // a guarded post.
     stats: { hp: 190, attack: 82, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 42 }, // charging brute → Might (biome mixture; tunable)
@@ -47,16 +59,14 @@ export const mountainMonsterEntries = [
     // every swing cap-tripping; leaving the old multiplier on top would have turned the
     // telegraph into a one-shot rather than a spike worth bracing for.
     chargedAttack: { name: 'Strong Kick', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3200, multiplier: 1.5, fx: 'strong-kick', knockback: { distance: 180 } },
-    // Mountain SENTINEL: holds its post, pacing a short fixed line instead of
-    // random wander — the guarded-position identity. Placeholder route — user pass.
-    patrol: { waypoints: [{ x: -160, y: 0 }, { x: 160, y: 0 }], mode: 'pingpong', holdMinMs: 1500, holdMaxMs: 3500 },
+    // NO patrol (T1-T4 rework, locked): the sentinel-style fixed post was the wrong
+    // fantasy for a caprine. It roams normally; `vaultsMountainLedges` is the identity.
   }],
 
   ['ridge-archer', {
     id: 'ridge-archer', name: 'Ridge Ambusher', color: 0x778899,
-    // Stone-folk vessel crossbowman (artillery line T1: ambusher -> thrower -> mortar).
-    // A big, slow bolt from range. Punishes standing still; the ranged half of
-    // mountain's "stand and trade" pressure. No charge (ranged).
+    // ARTILLERY T1 — already good, no additional mechanic needed. Holds chokepoints,
+    // heavy slow ranged attacks, and a telegraphed Power Shot.
     stats: { hp: 240, attack: 82, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3100, pullRange: 350 },
     behavior: 'ranged', attackStyle: 'arrow', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 8, essenceType: 'blue', level: 1, biomeXp: 52 },
@@ -74,66 +84,115 @@ export const mountainMonsterEntries = [
   // ── MOUNTAIN T2 — everything hits like a truck and trips the cap ──
   ['granite-titan', {
     id: 'granite-titan', name: 'Granite Titan', color: 0x99aabb,
-    // The flagship cap-tripper: a slow, charging slam well over 25% of player HP.
-    // No DR — it's a glass cannon you survive via the cap, not a sponge.
+    // GROUND BRUISER T1. Very slow, territorial, readable.
+    // WARNING: NO ledge vaulting (locked) — that identity is the caprines' and the
+    // flyers'. It gets the reusable Cave/Cavern GROUND SLAM instead (behavior pass).
+    // A modest engagement charge may remain against trivial kiting.
     stats: { hp: 400, attack: 70, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     // T2 sentinel — an even slower, shorter hold (it barely budges from its post).
+    // GROUND SLAM - the same reusable committed circle the Cave Brute/Troll use.
+    // The Titan line's shared beat: plant it, walk out of it. Placeholder numbers.
+    chargedAttack: {
+      name: 'Ground Slam', castMs: 1800, cooldownMs: 12000, initialCooldownMs: 8000,
+      multiplier: 1.5, fx: 'strong-kick',
+      aoe: { radius: 120 },
+    },
     patrol: { waypoints: [{ x: -120, y: 0 }, { x: 120, y: 0 }], mode: 'pingpong', holdMinMs: 2500, holdMaxMs: 5000 },
   }],
 
   ['stone-eagle', {
     id: 'stone-eagle', name: 'Stone Eagle', color: 0xccdde8,
-    // REBALANCED: was a fast low-hitter. Now a swooping dive-bomber — faster than
-    // the titan but still a heavy hit; the charge IS the dive.
+    // FLYER T1 — the DIVE-BOMBER. Aerial roaming while idle; it crosses ledges
+    // because it FLIES. One dive/charge on engagement, then ordinary combat.
+    // WARNING: no repeated hit-and-run loop (locked).
     stats: { hp: 290, attack: 50, plating: 0, damageReduction: 0, speed: 40, attackRange: 12, attackCooldown: 2800, pullRange: 285 },
     behavior: 'melee', attackStyle: 'slash', biome: 'mountain',
     rewards: { essence: 12, essenceType: 'blue', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 500, idleMaxMs: 2000 },
+    // Aerial roaming; ledges do not apply because it FLIES. The `chargeOnAggro`
+    // below IS the one-time dive on engagement - it does not repeat.
+    flies: true,
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
   }],
 
   ['peak-archer', {
     id: 'peak-archer', name: 'Boulder Thrower', color: 0xaabbcc,
-    // Ranged cap-tripper — a devastating boulder from extreme range; stand still
-    // and a single shot can carve a quarter of your HP. No charge (ranged).
+    // ARTILLERY T2 — evolved. Still a chokepoint/position-holding ranged threat with
+    // a heavy boulder. Optional (only if cheap): a lobbed/delayed impact with a small
+    // telegraphed landing area. Do NOT build a subsystem solely for this.
     stats: { hp: 330, attack: 60, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
     behavior: 'ranged', attackStyle: 'boulder', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 13, essenceType: 'blue', level: 1, biomeXp: 75 },
+    // Optional lobbed impact with a small telegraphed landing area - cheap because
+    // it is the same planted-circle primitive, not a new subsystem.
+    chargedAttack: {
+      name: 'Boulder Toss', castMs: 1700, cooldownMs: 10000, initialCooldownMs: 4500,
+      multiplier: 1.6, fx: 'power-shot',
+      aoe: { radius: 110 },
+    },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
 
   // ══════════════════ T3 MOUNTAIN — the big-hitters that trip the cap, with some new wrinkles (charge, kite) ══════════════════
   ['mountain-colossus', {
     id: 'mountain-colossus', name: 'Mountain Colossus', color: 0x8899aa,
-    // Flagship cap-tripper: a slow charging slam well past the cap. Anti-Far.
+    // GROUND BRUISER T2. Same Slam family as the Titan, with a larger/more
+    // threatening footprint and/or damage. Still deliberate and readable.
     stats: { hp: 870, attack: 95, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 440 },
     ai: { wanderRadius: 90, leashRange: 420, idleMinMs: 4000, idleMaxMs: 10500 },
+    // Same Slam family as the Titan; the escalation is FOOTPRINT and damage, not
+    // speed, so the tell stays readable while the safe ground shrinks.
+    chargedAttack: {
+      name: 'Ground Slam', castMs: 2000, cooldownMs: 12000, initialCooldownMs: 8500,
+      multiplier: 1.8, fx: 'strong-kick',
+      aoe: { radius: 145 },
+    },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
   }],
 
   ['avalanche-ram', {
     id: 'avalanche-ram', name: 'Avalanche Ram', color: 0x99aabb,
-    // Faster charger, still a heavy (near-cap) hit — the mobile anti-Far threat.
+    // CAPRINE T2 — the Hopper lineage returns. Ledge traversal, an aggressive charge,
+    // and a heavy knockback ram/kick.
     stats: { hp: 620, attack: 64, plating: 0, damageReduction: 0, speed: 38, attackRange: 12, attackCooldown: 2600, pullRange: 245 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 47, essenceType: 'blue', level: 2, biomeXp: 280 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 500, idleMaxMs: 2200 },
+    vaultsMountainLedges: true,
+    // RAM - the caprine lineage's knockback beat, heavier than the Hopper's kick.
+    chargedAttack: {
+      name: 'Avalanche Ram', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3500,
+      multiplier: 1.6, fx: 'strong-kick', knockback: { distance: 220 },
+    },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
   }],
 
   ['crag-mortar', {
     id: 'crag-mortar', name: 'Crag Mortar', color: 0x778899,
-    // Ranged cap-tripper that KITES — backs off, lobs boulders. Anti-Close:
-    // melee chasing eats free 80-dmg hits. Slow (30) so a charge can still catch it.
+    // ARTILLERY T3. Conventional backpedal-kiting is NOT preferred (locked): it should
+    // be a relatively STATIONARY, terrain-holding artillery piece that lobs delayed
+    // bombardment. The player solves it by repositioning or build, not by an endless
+    // chase. Behavior pass converts it off `kiter`.
     stats: { hp: 700, attack: 80, plating: 0, damageReduction: 0, speed: 30, attackRange: 250, attackCooldown: 3600, pullRange: 360 },
-    behavior: 'kiter', attackStyle: 'boulder', biome: 'mountain',
+    // STATIONARY TERRAIN ARTILLERY, not a kiter (locked): it holds its ground and
+    // bombards, and the player answers with repositioning or build rather than an
+    // endless chase.
+    behavior: 'ranged', attackStyle: 'boulder', biome: 'mountain',
+    staticSentry: true,
     rewards: { essence: 60, essenceType: 'blue', level: 3, biomeXp: 360 },
+    // DELAYED BOMBARDMENT: a planted circle with a telegraphed landing area -
+    // the existing committed-slam primitive, used at range.
+    chargedAttack: {
+      name: 'Bombardment', castMs: 1800, cooldownMs: 9000, initialCooldownMs: 4000,
+      multiplier: 1.6, fx: 'power-shot',
+      aoe: { radius: 130 },
+    },
     ai: { wanderRadius: 200, leashRange: 620, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
 
@@ -141,10 +200,9 @@ export const mountainMonsterEntries = [
 
   ['granite-mammoth', {
     id: 'granite-mammoth', name: 'Granite Mammoth', color: 0x8899aa,
-    // Flagship cap-tripper. Base 155 already trips the cap; CADENCE every 4 = 310
-    // slam. Charges once to close, then lumbers. The Mountain teaching unit:
-    // its NORMAL hit is scary, its finisher is lethal without the cap.
-    // DPS: avg/attack (3·155+310)/4 = 194 → ×(1000/3600) = 54 (slow spiker; the spike is the threat).
+    // GROUND BRUISER T3 — evolved Slam expressed as a predictable CADENCE finisher:
+    // large normal attacks, and every 4th is the major Slam. The Mountain teaching
+    // unit: its NORMAL hit is scary, its finisher is lethal without the damage cap.
     stats: { hp: 1900, attack: 155, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 95, essenceType: 'blue', level: 4, biomeXp: 570 },
@@ -155,32 +213,41 @@ export const mountainMonsterEntries = [
 
   ['avalanche-tyrant', {
     id: 'avalanche-tyrant', name: 'Avalanche Tyrant', color: 0x99aabb,
-    // Fast charging bruiser, heavy near-cap hit. The mobile anti-Far threat —
-    // a kiter that lets it close eats a 122 hit. DPS 122 × (1000/2500) = 49.
+    // CAPRINE T3 — apex. Ledge traversal, extreme mobility/charge, and a brutal
+    // knockback ram.
     stats: { hp: 1300, attack: 122, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 68, essenceType: 'blue', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2500 },
+    vaultsMountainLedges: true,
+    // APEX CAPRINE: extreme mobility plus a brutal knockback ram.
+    chargedAttack: {
+      name: 'Avalanche Ram', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
+      multiplier: 1.8, fx: 'strong-kick', knockback: { distance: 280 },
+    },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
   }],
 
   ['cliffside-roc', {
     id: 'cliffside-roc', name: 'Cliffside Roc', color: 0x778899,
-    // Ranged KITER: backs off and drops boulders that trip the cap from afar.
-    // Anti-Close — chasing it in melee eats a 150 hit every 3.5s. Speed 34
-    // (catchable on charge). DPS 150 × (1000/3500) = 43 (kiter; safety > DPS).
+    // FLYER T2 — AERIAL ARTILLERY (the lineage skipped a tier and returned).
+    // Progression: Stone Eagle is the dive-bomber, the Roc is the bombardier. It
+    // maintains useful spacing through FLIGHT, not ordinary ground backpedaling.
+    // Behavior pass converts it off `kiter`.
     stats: { hp: 1400, attack: 150, plating: 0, damageReduction: 0, speed: 34, attackRange: 260, attackCooldown: 3500, pullRange: 380 },
-    behavior: 'kiter', attackStyle: 'boulder', biome: 'mountain',
+    // AERIAL ARTILLERY, not a ground kiter (locked): it keeps useful spacing by
+    // being in the air, so it is plain `ranged` and lets flight do the work.
+    behavior: 'ranged', attackStyle: 'boulder', biome: 'mountain',
+    flies: true,
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 450 },
     ai: { wanderRadius: 210, leashRange: 640, idleMinMs: 2000, idleMaxMs: 5500 },
   }],
 
   ['cragback-rhino', {
     id: 'cragback-rhino', name: 'Cragback Rhino', color: 0x6677aa,
-    // Armored elite. Modest base (95 ≈ H_med, survivable) but a COOLDOWN slam
-    // every 10s = 304 (deep cap trip). Heavy plating + ENEMY SOFT-CAP: the
-    // weapon-matchup exam — pierce tools (Rupture/Sunder/brittle) beat the plate,
-    // fast consistent damage beats the soft-cap, slow empowered builds struggle.
+    // STANDALONE LATE ELITE — the weapon-matchup exam, kept exactly as it is:
+    // heavy plating, some DR, the enemy soft-cap, and one large periodic empowered
+    // hit. Do NOT add another mechanic (locked).
     stats: { hp: 2250, attack: 95, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain', elite: true,
     rewards: { essence: 185, essenceType: 'blue', level: 4, biomeXp: 1110 },

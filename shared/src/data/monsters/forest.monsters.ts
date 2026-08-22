@@ -73,15 +73,16 @@ export const forestMonsterEntries = [
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 900 },
-    // Forest predator-pack ALPHA (the biome's T2 identity): spawns a MIXED pack —
-    // 2 young wolves + 1 Thorn Spitter for ranged thorn support — clustered around
-    // it, and is itself called in (charging via chargeOnAggro) when a packmate
-    // engages. (Placeholder counts/range — user balance pass.)
+    // Forest predator-pack ALPHA (the biome's T2 identity): a PURE wolf pack —
+    // the evolved Wolf leading a larger litter. The mixed wolf+Thorn-Spitter pack
+    // was rejected in the T1–T4 monster rework: a ranged support creature in a
+    // predator pack read as neither. Baseline 3; 4 is acceptable later if the
+    // balance pass supports it.
     pack: {
       role: 'alpha',
       callRange: 320,
       followers: [
-        { typeId: 'young-wolf', count: 4 },
+        { typeId: 'young-wolf', count: 3 },
       ],
     },
   }],
@@ -99,15 +100,19 @@ export const forestMonsterEntries = [
 
   ['canopy-sprite', {
     id: 'canopy-sprite', name: 'Thorn Spitter', color: 0x88ff44,
-    // Ranged thorn-volleys; frequent, light, from the treetops.
+    // RANGED FOREST PRESSURE. Signature: a PERIODIC BURST VOLLEY — every 3rd attack
+    // fires a second thorn in quick succession, so the Spitter reads as bursts from
+    // the treetops rather than a metronome.
+    // Deliberately NOT a generic root/slow support creature (locked).
     stats: { hp: 190, attack: 26, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 2400, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'arrow', biome: 'forest',
     rewards: { essence: 9, essenceType: 'green', level: 1, biomeXp: 50 },
+    // Placeholder cadence - balance pass owns the split between the two thorns.
+    cadenceVolley: { everyNAttacks: 3, hits: 2 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
-    // Pack-support follower: when spawned in a Dire Wolf pack, a spitter that's
-    // hit/engaged calls in via the same call-allies net (ranged thorns from the
-    // treetops while the wolves close). Roams solo when not spawned in a pack.
-    pack: { role: 'follower', callRange: 300 },
+    // NO pack role: the Dire Wolf pack is pure wolves now, so nothing ever spawns
+    // a Spitter as a follower and the role was inert. Thorn Spitter is Forest's
+    // solo ranged pressure — its identity is the burst volley, not pack support.
   }],
 
 ] satisfies [string, MonsterDefinition][];

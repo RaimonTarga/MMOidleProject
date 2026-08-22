@@ -209,6 +209,12 @@ const DEATH_EMPOWER_PULSE_COLOR = 0xcc66dd;
 // pulled back up. Deliberately a different family from the purple death-empower
 // surge so the two wasteland death tells never read as the same event.
 const RAISE_DEAD_PULSE_COLOR = 0x88dd66;
+/** Snapper shell closing/opening — dull shell green. */
+const SHELL_PULSE_COLOR = 0x77aa66;
+/** Carrion Vulture screech hastening nearby undead — sickly bone yellow. */
+const ALLY_HASTE_PULSE_COLOR = 0xddcc77;
+/** Camouflaged ambusher breaking cover — bright foliage flash. */
+const REVEAL_PULSE_COLOR = 0x99ff66;
 
 function snapPlayerToServerTarget(
   state: RenderState,
@@ -590,8 +596,17 @@ export function dispatchCombatEvent(
               ? DEATH_EMPOWER_PULSE_COLOR
               : ev.pulse === "raise-dead"
                 ? RAISE_DEAD_PULSE_COLOR
-                : ECOLOGY_PULSE_COLOR;
-      fxAoeRing(scene, ev.pos, 70, color);
+                : ev.pulse === "shell-up" || ev.pulse === "shell-open"
+                  ? SHELL_PULSE_COLOR
+                  : ev.pulse === "ally-haste"
+                    ? ALLY_HASTE_PULSE_COLOR
+                    : ev.pulse === "reveal"
+                      ? REVEAL_PULSE_COLOR
+                      : ECOLOGY_PULSE_COLOR;
+      // A shell closing is a bigger, slower beat than a status pulse: it is the
+      // moment the fight changes shape, so it gets a wider ring.
+      const radius = ev.pulse === "shell-up" ? 110 : 70;
+      fxAoeRing(scene, ev.pos, radius, color);
     }
     return;
   }

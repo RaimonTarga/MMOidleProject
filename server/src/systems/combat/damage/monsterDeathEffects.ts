@@ -8,7 +8,6 @@ import {
 } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
-import { onPackAlphaDead } from '../ai/packs';
 import { onRaiserDead } from '../ai/raiseDead';
 import { registerCombatListener } from '../engine/combatPipeline';
 import { publishToxicPool } from '../../world/groundZones';
@@ -87,7 +86,6 @@ export function initMonsterDeathEffects(): void {
           effect.sourceId === ctx.defender.isMonster.id,
       );
     }
-    onPackAlphaDead(world, ctx.defender);
     onRaiserDead(world, ctx.defender);
     spawnDeathHazard(world, ctx.defender);
     empowerNearbyAllies(world, ctx.defender);

@@ -309,8 +309,11 @@ initCombatSystems();
     );
   }
 
+  // EXACT 1:1 DUO (T1-T4 monster rework, locked): a controller pulls ONE dealer,
+  // never two. "It is exactly two things - which do I kill first?" is the biome's
+  // whole read, and a third body turns a priority test into a pile.
   const members = spawnPack(world, NODE, 'desert-basilisk', { x: 400, y: 400 });
-  assert(!!members && members.length === 3, 'a T3 controller should pull two dealers');
+  assert(!!members && members.length === 2, 'a controller should pull exactly one dealer');
   const packId = members![0]!.inPack?.packId;
   assert(!!packId, 'the alpha should carry the shared pack link');
   assert(
@@ -318,9 +321,16 @@ initCombatSystems();
     'every pack member should share one packId',
   );
   assert(
-    members!.filter((member) => member.inPack?.role === 'follower').length === 2,
-    'the two dealers should be tagged as followers',
+    members!.filter((member) => member.inPack?.role === 'follower').length === 1,
+    'the single dealer should be tagged as the follower',
   );
+
+  // Every controller in the roster pulls exactly one dealer, at every tier.
+  for (const [controllerId] of pairs) {
+    const followers = MONSTER_DATABASE.get(controllerId)!.pack!.followers ?? [];
+    const total = followers.reduce((sum, group) => sum + group.count, 0);
+    assert(total === 1, `${controllerId} should pull exactly 1 dealer, not ${total}`);
+  }
 
   for (const [, def] of MONSTER_DATABASE) {
     if (def.biome !== 'desert' || def.isBoss) continue;

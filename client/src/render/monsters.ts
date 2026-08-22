@@ -48,6 +48,10 @@ const PACK_ALPHA_TINT = 0xff7755;
 const ELITE_OUTLINE = 0xffdd33;
 const LEDGE_HOP_COOLDOWN_MS = 450;
 const LEDGE_HOP_HEIGHT = 34;
+/** Constant lift for an airborne monster. Its shadow stays on the ground. */
+const FLYER_HOVER_HEIGHT = 26;
+/** How faded a camouflaged monster draws while it is still hidden. */
+const CAMOUFLAGE_ALPHA = 0.45;
 const LEDGE_HOP_DURATION_MS = 260;
 
 function isPackAlphaType(typeId: string): boolean {
@@ -60,6 +64,38 @@ function isEliteType(typeId: string): boolean {
 
 function canPlayLedgeHop(typeId: string): boolean {
   return MONSTER_DATABASE.get(typeId)?.vaultsMountainLedges === true;
+}
+
+/**
+ * Flight and ledge-vaulting both ignore ledges, but only a FLYER hovers: the
+ * caprine climbs the terrain, the flyer is above it.
+ */
+function isFlyingType(typeId: string): boolean {
+  return MONSTER_DATABASE.get(typeId)?.flies === true;
+}
+
+/**
+ * CAMOUFLAGE. A concealed monster is one that idles inside terrain (`idleAnchor`)
+ * or opens with a volley out of hiding (`openingVolley`) — the Chameleon line, the
+ * bush-lurking Snake, the half-submerged Bog Lurker.
+ *
+ * Derived from the def plus the already-networked AI state rather than a new
+ * networked flag: concealment is purely presentational, and "is it fighting yet"
+ * is something the client already knows.
+ */
+function isConcealingType(typeId: string): boolean {
+  const def = MONSTER_DATABASE.get(typeId);
+  return def?.idleAnchor !== undefined || def?.openingVolley !== undefined;
+}
+
+/**
+ * Reveal on engagement, conceal when it goes back to idling. Deliberately NOT a
+ * repeated in-combat re-camouflage — the locked designs all say "reveal when
+ * attacking, then ordinary combat".
+ */
+function isConcealedNow(monster: MonsterView): boolean {
+  if (!isConcealingType(monster.monsterTypeId)) return false;
+  return monster.state === 'idle' || monster.state === 'wandering';
 }
 
 function rectSegmentCrossesShape(from: Vec2, to: Vec2, shape: NodeFeatureShape): boolean {
@@ -144,11 +180,39 @@ function syncMonsterThroneTint(
   }
 }
 
+/**
+ * The T1-T4 monster-rework presentation tells, all derived from the def plus
+ * already-networked state — no new protocol surface:
+ *
+ *   FLIGHT      a constant hover offset, so an aerial roamer reads as airborne
+ *               and its shadow sits on the ground beneath it;
+ *   CAMOUFLAGE  faded while idle, full opacity the moment it engages;
+ *   SHELLED     the Snapper darkens while retracted (its `cannotAttack` +
+ *               stationary state is otherwise silent).
+ *
+ * Hover deliberately does NOT touch `meta.visualOffsetY` while a ledge-hop tween
+ * owns it — flyers never hop, so the two can never fight over the field.
+ */
+function syncMonsterEcologyTells(state: RenderState, monster: MonsterView): void {
+  const sprite = state.sprite.get(monster.id);
+  const meta = state.spriteMeta.get(monster.id);
+
+  if (meta && isFlyingType(monster.monsterTypeId)) {
+    meta.visualOffsetY = -FLYER_HOVER_HEIGHT;
+  }
+
+  if (!sprite) return;
+  sprite.setAlpha(isConcealedNow(monster) ? CAMOUFLAGE_ALPHA : 1);
+}
+
 export function refreshMonsterTints(state: RenderState): void {
   for (const id of state.ids) {
     if (state.kind.get(id) !== "monster") continue;
     const monster = state.view.get(id) as MonsterView | undefined;
-    if (monster) syncMonsterThroneTint(state, monster);
+    if (monster) {
+      syncMonsterThroneTint(state, monster);
+      syncMonsterEcologyTells(state, monster);
+    }
   }
 }
 
@@ -239,6 +303,7 @@ export function upsertMonster(
     ensureHpBar(state, monster.id, scene);
     ensureCdBar(state, monster.id, scene);
     syncMonsterThroneTint(state, monster);
+    syncMonsterEcologyTells(state, monster);
     return;
   }
 
@@ -354,4 +419,5 @@ export function upsertMonster(
   }
 
   syncMonsterThroneTint(state, monster);
+  syncMonsterEcologyTells(state, monster);
 }
