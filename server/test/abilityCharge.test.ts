@@ -87,8 +87,9 @@ initCombatSystems();
 // ── 1 & 2. Closes distance, then arms the strike rider ───────────────────────
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices("charge-player"), "charge-player");
-// Far enough away that the dash cannot overshoot past the target.
-const target = world.createMonster("node-5-5", "plains-slime", { x: 900, y: 400 });
+// Inside Charge's ENGAGEMENT range (attack range + its 220px dash) but well
+// outside the player's own reach — the case the gap-closer exists for.
+const target = world.createMonster("node-5-5", "plains-slime", { x: 360, y: 400 });
 if (!target) throw new Error("failed to create target");
 setAttackTarget(world, player, target.isMonster.id);
 
@@ -115,9 +116,9 @@ const player2 = world2.attachPlayerEntity(
   makePlayerSlices("charge-player-2"),
   "charge-player-2",
 );
-// An aggroed monster puts the player "in combat" (satisfying the trigger) while
-// leaving hasAttackTarget unset — the case where a dash has no anchor.
-const bystander = world2.createMonster("node-5-5", "plains-slime", { x: 900, y: 400 });
+// A monster far outside even the ability's extended reach: nothing to anchor the
+// dash to, so the trigger never goes valid.
+const bystander = world2.createMonster("node-5-5", "plains-slime", { x: 1400, y: 400 });
 if (!bystander) throw new Error("failed to create bystander");
 
 const posBefore = { ...player2.hasPosition.current };
@@ -126,11 +127,31 @@ updateAbilityFiring(world2, Date.now());
 assert(
   player2.hasPosition.current.x === posBefore.x &&
     player2.hasPosition.current.y === posBefore.y,
-  "with no attack target, Charge must not move the player",
+  "with nothing inside its engagement range, Charge must not move the player",
 );
 assert(
   getCooldown(player2.tracksCombat, abilityCooldownKey("charge")) === 0,
   "a reposition that could not resolve must not waste its cooldown",
+);
+
+
+// ── 4. Already in contact: the gap-closer holds its cooldown ─────────────────
+// The whole point of the `target-beyond-reach` trigger. Firing a dash at
+// something already at arm's length spends a 9s cooldown to travel nowhere,
+// which is exactly what made Charge feel pointless before.
+const world3 = new World();
+const player3 = world3.attachPlayerEntity(
+  makePlayerSlices("charge-player-3"),
+  "charge-player-3",
+);
+const adjacent = world3.createMonster("node-5-5", "plains-slime", { x: 215, y: 400 });
+if (!adjacent) throw new Error("failed to create adjacent monster");
+setAttackTarget(world3, player3, adjacent.isMonster.id);
+
+updateAbilityFiring(world3, Date.now());
+assert(
+  getCooldown(player3.tracksCombat, abilityCooldownKey("charge")) === 0,
+  "Charge must not fire at a target that is already in contact",
 );
 
 console.log("abilityCharge.test.ts: ok");

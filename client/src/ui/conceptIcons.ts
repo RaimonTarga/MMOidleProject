@@ -14,6 +14,16 @@ const ABILITY_IDS = new Set([
   'sweep',
 ]);
 
+/**
+ * Ability ids whose art lives under an older filename. Power Strike is the T1
+ * Mountain re-home of Charged Strike — the same wind-up-and-deliver cast — so it
+ * keeps the art rather than falling back to a placeholder while a redraw waits
+ * in the manifest.
+ */
+const ABILITY_ICON_ALIASES: Record<string, string> = {
+  'power-strike': 'charged-strike',
+};
+
 const CONDITION_IDS = new Set([
   'always',
   'before-empowered',
@@ -181,7 +191,8 @@ function source(directory: string, id: string, revision?: string): AssetIconSour
 }
 
 export function conceptAbilityIconSource(id: string): AssetIconSource | null {
-  return ABILITY_IDS.has(id) ? source('abilities', id) : null;
+  const iconId = ABILITY_ICON_ALIASES[id] ?? id;
+  return ABILITY_IDS.has(iconId) ? source('abilities', iconId) : null;
 }
 
 export function runeConditionIconSource(id: string): AssetIconSource | null {

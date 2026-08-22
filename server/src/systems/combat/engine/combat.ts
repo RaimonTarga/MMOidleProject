@@ -1,5 +1,6 @@
 import type { World } from "../../../world/World";
 import {
+  ABILITY_FRENZY_EFFECT_ID,
   ABILITY_GUARD_EFFECT_IDS,
   applyStatusEffect,
   GAME_CONFIG,
@@ -1293,9 +1294,19 @@ export function updateCombat(world: World, dt: number, now: number) {
         FROST_RAMP_EFFECT_ID,
       );
       const atkSlowMult = frostRamp ? 1 + frostRampAtkSlowPct(frostRamp) : 1;
+      // Frenzy (Technique) speeds the cadence the same way, from the other
+      // direction. It is applied HERE rather than written into attackCooldown
+      // because the Zealot's own Frenzy already mutates that stat from a cached
+      // base — two mutators each treating the other's output as "the clean base"
+      // ratchet the cooldown toward zero over a few ticks.
+      const frenzy = getStatusEffect(player.tracksCombat, ABILITY_FRENZY_EFFECT_ID);
+      const atkHasteMult =
+        frenzy && frenzy.remainingMs > 0
+          ? 1 / (1 + Math.max(0, frenzy.data["attackSpeedPct"] ?? 0))
+          : 1;
       if (
         now - player.performsAttack.lastAttackAt >=
-        player.performsAttack.attackCooldown * atkSlowMult
+        player.performsAttack.attackCooldown * atkSlowMult * atkHasteMult
       ) {
         const outcome = runPlayerAttack(world, player, target, now, {
           attackOrigin: player.hasPosition.current,

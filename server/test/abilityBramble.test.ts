@@ -90,7 +90,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
 }
 
 const BRAMBLE = ABILITY_DATABASE.get("bramble-guard");
-if (!BRAMBLE || BRAMBLE.effect.kind !== "bramble") {
+const BRAMBLE_RANK = BRAMBLE?.ranks[0];
+if (!BRAMBLE || !BRAMBLE_RANK || BRAMBLE_RANK.effect.kind !== "bramble") {
   throw new Error("bramble-guard ability missing or wrong effect kind");
 }
 
@@ -152,7 +153,7 @@ assert(
 );
 
 // ── Expiry unwinds the plating exactly back to baseline ──────────────────────
-updateCombatState(world, BRAMBLE.effect.durationMs + 100);
+updateCombatState(world, BRAMBLE_RANK.effect.durationMs + 100);
 runBramblePlating(world, player);
 assert(
   player.mitigatesDamage.plating === platingBefore,

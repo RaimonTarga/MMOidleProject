@@ -1,5 +1,6 @@
 import {
   ABILITY_DATABASE,
+  abilityCooldownMs,
   MONSTER_DATABASE,
   getCooldown,
   setCooldown,
@@ -71,7 +72,7 @@ function registerMobilityRefundOnKill(): void {
       // subtraction. Refund a fraction of the ability's FULL cooldown rather than
       // of what is left, so the reward for a kill does not shrink as the cooldown
       // runs out (which would make chained kills feel worse, not better).
-      setCooldown(player.tracksCombat, key, Math.max(0, remaining - ability.cooldownMs * pct));
+      setCooldown(player.tracksCombat, key, Math.max(0, remaining - abilityCooldownMs(ability, player.tracksProgression.playerTier) * pct));
     }
   });
 }

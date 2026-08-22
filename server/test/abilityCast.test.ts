@@ -63,8 +63,8 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
       runesEquipped: [],
-      knownAbilities: ["charged-strike"],
-      equippedAbilities: { techniques: ["charged-strike"], guards: [] },
+      knownAbilities: ["power-strike"],
+      equippedAbilities: { techniques: ["power-strike"], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -87,9 +87,9 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
   };
 }
 
-const CHARGED_STRIKE = ABILITY_DATABASE.get("charged-strike");
-if (!CHARGED_STRIKE) throw new Error("charged-strike ability missing");
-const CAST_MS = CHARGED_STRIKE.castMs ?? 0;
+const POWER_STRIKE = ABILITY_DATABASE.get("power-strike");
+if (!POWER_STRIKE) throw new Error("power-strike ability missing");
+const CAST_MS = POWER_STRIKE.ranks[0].castMs ?? 0;
 assert(CAST_MS > 0, "a cast-shaped ability must declare a castMs wind-up");
 
 initCombatSystems();
@@ -105,7 +105,7 @@ const t0 = 1_000_000;
 updateAbilityFiring(world, t0);
 
 assert(
-  player.isCastingAbility?.abilityId === "charged-strike",
+  player.isCastingAbility?.abilityId === "power-strike",
   "firing a cast-shaped Technique should attach isCastingAbility",
 );
 assert(
@@ -113,7 +113,7 @@ assert(
   "a cast must NOT also arm the next attack — one offensive channel only",
 );
 assert(
-  getCooldown(player.tracksCombat, abilityCooldownKey("charged-strike")) === 0,
+  getCooldown(player.tracksCombat, abilityCooldownKey("power-strike")) === 0,
   "a cast pays its cooldown on resolve, not on begin",
 );
 
@@ -143,7 +143,7 @@ assert(
   "a resolved cast should damage the target it was started against",
 );
 assert(
-  getCooldown(player.tracksCombat, abilityCooldownKey("charged-strike")) > 0,
+  getCooldown(player.tracksCombat, abilityCooldownKey("power-strike")) > 0,
   "a RESOLVED cast should start its cooldown",
 );
 
@@ -185,7 +185,7 @@ assert(
   "an interrupted cast must deal no damage",
 );
 assert(
-  getCooldown(player2.tracksCombat, abilityCooldownKey("charged-strike")) === 0,
+  getCooldown(player2.tracksCombat, abilityCooldownKey("power-strike")) === 0,
   "an interrupted cast must NOT burn its cooldown",
 );
 

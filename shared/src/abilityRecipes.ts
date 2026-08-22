@@ -1,11 +1,21 @@
 /**
- * Ability recipes (system rework Step 7) — parallel to `RuneRecipe`.
+ * Ability recipes — parallel to `RuneRecipe`.
  *
  * Crafting an ability recipe LEARNS the ability permanently (adds its id to
- * `TracksProgression.knownAbilities`); the player then freely slots it into the
+ * `TracksProgression.knownAbilities`); the player then freely slots it into a
  * Technique / Guard slot. Recipes gate on Biome Mastery (`recipeGroup` +
  * `requiredBiomeLevel`), mirroring gear and rune recipes. The boss channel
- * (`requiredBossClear`) is reserved for advanced/signature abilities (Step 13).
+ * (`requiredBossClear`) is reserved for advanced/signature abilities.
+ *
+ * PLACEMENT RULE. Each ability is its biome's "answer tool", placed MID-BAND so
+ * the player meets the biome's challenge first and then earns the response. A
+ * biome that owns two abilities staggers them at level 3 and level 5 of its own
+ * native band, so the second is a real second reward rather than a duplicate
+ * unlock moment. Levels are the biome's OWN levels — a biome that debuts at T3
+ * still counts 1..6 in its first tier (see `biomeLevelCap`).
+ *
+ * The Clearing deliberately teaches basic combat and equipment only: the ability
+ * system begins in Tier 1.
  */
 import type { EssenceType } from "./items";
 import { ABILITY_DATABASE } from "./abilities";
@@ -27,17 +37,10 @@ export interface AbilityRecipe {
   requiredBossClear?: string;
 }
 
-// requiredBiomeLevel + costs are PLACEHOLDERS — user balance pass owns the numbers.
-//
-// Each ability is its biome's "answer tool" — placed MID-band so the player meets
-// the biome's challenge first, then earns the response. T1 sits at level 3 of the
-// L1–6 T1 band; T2 sits at level 9 of the L7–12 band (BIOME_LEVELS_PER_TIER = 6),
-// which is how a T2 ability can live in a biome that debuts at T1.
-//
-// Re-keyed to the abilities-evolution T1 table: Sweep→Plains, Second Wind→Forest,
-// Brace→Mountain, Expose Weakness→Cave (Cleanse was already Swamp). Safe to move —
-// `knownAbilities` stores ABILITY ids, so nobody loses a learned ability.
+// requiredBiomeLevel + costs are PLACEHOLDERS — the balance pass owns the numbers.
+// Costs use the biome's own essence colour and roughly double per tier.
 const recipes: AbilityRecipe[] = [
+  // ── T1: the fundamentals ───────────────────────────────────────────────────
   {
     id: "ability-recipe-sweep",
     name: "Sweep",
@@ -47,12 +50,12 @@ const recipes: AbilityRecipe[] = [
     // Plains is the swarm biome — density is the problem Sweep answers.
     recipeGroup: "plains",
     requiredBiomeLevel: 3,
-    cost: { green: 160 },
+    cost: { yellow: 160 },
   },
   {
     id: "ability-recipe-second-wind",
     name: "Second Wind",
-    description: "Learn the Second Wind guard: recover health when badly wounded.",
+    description: "Learn the Second Wind guard: sharply raise your recovery when badly wounded.",
     abilityId: "second-wind",
     tier: 1,
     // Forest pressures through frequent small hits — sustain is the answer.
@@ -61,26 +64,38 @@ const recipes: AbilityRecipe[] = [
     cost: { green: 150 },
   },
   {
-    id: "ability-recipe-brace",
-    name: "Brace",
-    description: "Learn the Brace guard: shield yourself under heavy pressure.",
-    abilityId: "brace",
-    tier: 1,
-    // Mountain is the telegraphed-huge-hit biome — Brace is the mitigation beat.
-    recipeGroup: "mountain",
-    requiredBiomeLevel: 3,
-    cost: { yellow: 140, green: 60 },
-  },
-  {
     id: "ability-recipe-cleanse",
     name: "Cleanse",
-    description: "Learn the Cleanse guard: purge rot and debuffs under pressure.",
+    description: "Learn the Cleanse guard: strip the affliction that is eating you.",
     abilityId: "cleanse",
     tier: 1,
     // Swamp is attrition-by-DoT — stripping stacks is the answer.
     recipeGroup: "swamp",
     requiredBiomeLevel: 3,
-    cost: { green: 150 },
+    cost: { purple: 150 },
+  },
+  {
+    id: "ability-recipe-brace",
+    name: "Brace",
+    description: "Learn the Brace guard: shed the worst of one heavy blow.",
+    abilityId: "brace",
+    tier: 1,
+    // Mountain is the telegraphed-huge-hit biome — Brace is the mitigation beat.
+    recipeGroup: "mountain",
+    requiredBiomeLevel: 3,
+    cost: { blue: 150 },
+  },
+  {
+    id: "ability-recipe-power-strike",
+    name: "Power Strike",
+    description: "Learn Power Strike: wind up a heavy blow that hard control can interrupt.",
+    abilityId: "power-strike",
+    tier: 1,
+    // Mountain again, later in its band — the biome that taught you to READ a
+    // wind-up is the one that teaches you to perform one.
+    recipeGroup: "mountain",
+    requiredBiomeLevel: 5,
+    cost: { blue: 190 },
   },
   {
     id: "ability-recipe-expose-weakness",
@@ -91,19 +106,31 @@ const recipes: AbilityRecipe[] = [
     // Cave is few-but-elite — killing the big one faster is the answer.
     recipeGroup: "cave",
     requiredBiomeLevel: 3,
-    cost: { purple: 150 },
+    cost: { red: 150 },
   },
-  // ── T2 (abilities evolution §9): reflect, repositioning, and the first cast. ──
+
+  // ── T2: positioning, soft control, sustained mitigation ────────────────────
+  {
+    id: "ability-recipe-hamstring",
+    name: "Hamstring",
+    description: "Learn Hamstring: arm your next attack to cripple the target's stride.",
+    abilityId: "hamstring",
+    tier: 2,
+    // Jungle swarms and chases — taking the legs out of the chase is the answer.
+    recipeGroup: "jungle",
+    requiredBiomeLevel: 3,
+    cost: { green: 320 },
+  },
   {
     id: "ability-recipe-bramble-guard",
     name: "Bramble Guard",
     description: "Learn the Bramble Guard: armor yourself with thorns that injure attackers.",
     abilityId: "bramble-guard",
     tier: 2,
-    // Jungle: high density + aggressive on-hit profile.
+    // Jungle again: high density plus an aggressive on-hit profile.
     recipeGroup: "jungle",
-    requiredBiomeLevel: 3,
-    cost: { green: 320 },
+    requiredBiomeLevel: 5,
+    cost: { green: 380 },
   },
   {
     id: "ability-recipe-charge",
@@ -117,16 +144,104 @@ const recipes: AbilityRecipe[] = [
     cost: { yellow: 320 },
   },
   {
-    id: "ability-recipe-charged-strike",
-    name: "Charged Strike",
-    description: "Learn Charged Strike: wind up a heavy blow that hard control can interrupt.",
-    abilityId: "charged-strike",
+    id: "ability-recipe-endure",
+    name: "Endure",
+    description: "Learn Endure: modest mitigation held long enough to outlast a bad stretch.",
+    abilityId: "endure",
     tier: 2,
-    // Mountain again, in its T2 band — the biome that taught you to READ a
-    // wind-up is the one that teaches you to perform one.
-    recipeGroup: "mountain",
-    requiredBiomeLevel: 9,
-    cost: { yellow: 300, blue: 120 },
+    // Desert grinds rather than spikes — a long window beats a short one.
+    recipeGroup: "desert",
+    requiredBiomeLevel: 5,
+    cost: { yellow: 380 },
+  },
+
+  // ── T3: tempo, and hard movement/control counterplay ───────────────────────
+  {
+    id: "ability-recipe-binding-strike",
+    name: "Binding Strike",
+    description: "Learn Binding Strike: arm your next attack to pin the target where it stands.",
+    abilityId: "binding-strike",
+    tier: 3,
+    // Tundra is where the ground fights you — pinning something is the answer.
+    recipeGroup: "tundra",
+    requiredBiomeLevel: 3,
+    cost: { blue: 650 },
+  },
+  {
+    id: "ability-recipe-break-free",
+    name: "Break Free",
+    description: "Learn Break Free: tear out of hard control, even while it holds you.",
+    abilityId: "break-free",
+    tier: 3,
+    // Tundra again: the biome that freezes you teaches the escape.
+    recipeGroup: "tundra",
+    requiredBiomeLevel: 5,
+    cost: { blue: 760 },
+  },
+  {
+    id: "ability-recipe-frenzy",
+    name: "Frenzy",
+    description: "Learn Frenzy: a short, furious window of raw attack speed.",
+    abilityId: "frenzy",
+    tier: 3,
+    // Volcano rewards burning a fight down before the ambient ramp burns you.
+    recipeGroup: "volcanic",
+    requiredBiomeLevel: 3,
+    cost: { red: 650 },
+  },
+  {
+    id: "ability-recipe-quick-strike",
+    name: "Quick Strike",
+    description: "Learn Quick Strike: a small, fast opening that is almost always ready.",
+    abilityId: "quick-strike",
+    tier: 3,
+    recipeGroup: "volcanic",
+    requiredBiomeLevel: 5,
+    cost: { red: 760 },
+  },
+
+  // ── T4: advanced range, escape, hard CC, long sustain ──────────────────────
+  {
+    id: "ability-recipe-disengage",
+    name: "Disengage",
+    description: "Learn Disengage: break contact and buy back the room to keep fighting.",
+    abilityId: "disengage",
+    tier: 4,
+    // The Trench presses in from every side — room is the scarce resource.
+    recipeGroup: "trench",
+    requiredBiomeLevel: 3,
+    cost: { green: 1300 },
+  },
+  {
+    id: "ability-recipe-recuperate",
+    name: "Recuperate",
+    description: "Learn Recuperate: a long, steady mend that outlasts a fight's worst stretch.",
+    abilityId: "recuperate",
+    tier: 4,
+    recipeGroup: "trench",
+    requiredBiomeLevel: 5,
+    cost: { green: 1500 },
+  },
+  {
+    id: "ability-recipe-snipe",
+    name: "Snipe",
+    description: "Learn Snipe: a deliberate shot lined up far outside your usual reach.",
+    abilityId: "snipe",
+    tier: 4,
+    // The Wasteland's open sightlines are what make extraordinary range legible.
+    recipeGroup: "graveyard",
+    requiredBiomeLevel: 3,
+    cost: { purple: 1300 },
+  },
+  {
+    id: "ability-recipe-stunning-strike",
+    name: "Stunning Strike",
+    description: "Learn Stunning Strike: a committed blow that puts the target on the floor.",
+    abilityId: "stunning-strike",
+    tier: 4,
+    recipeGroup: "graveyard",
+    requiredBiomeLevel: 5,
+    cost: { purple: 1500 },
   },
 ];
 
@@ -162,9 +277,28 @@ export function isAbilityRecipeUnlocked(
 
 export function validateAbilityRecipes(): string[] {
   const errors: string[] = [];
+  const learned = new Set<string>();
   for (const recipe of ABILITY_RECIPE_DATABASE.values()) {
-    if (!ABILITY_DATABASE.has(recipe.abilityId)) {
+    const ability = ABILITY_DATABASE.get(recipe.abilityId);
+    if (!ability) {
       errors.push(`${recipe.id} points at unknown ability ${recipe.abilityId}.`);
+      continue;
+    }
+    // Two recipes teaching one ability would make the second permanently
+    // un-craftable ("already learned") — a dead reward slot in a biome band.
+    if (learned.has(recipe.abilityId)) {
+      errors.push(`${recipe.abilityId} is taught by more than one recipe.`);
+    }
+    learned.add(recipe.abilityId);
+    if (recipe.tier !== ability.tier) {
+      errors.push(
+        `${recipe.id} is tier ${recipe.tier} but ${ability.id} is homed at T${ability.tier}.`,
+      );
+    }
+  }
+  for (const ability of ABILITY_DATABASE.values()) {
+    if (!learned.has(ability.id)) {
+      errors.push(`${ability.id} has no recipe and can never be learned.`);
     }
   }
   return errors;

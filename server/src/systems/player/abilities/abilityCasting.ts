@@ -1,42 +1,40 @@
 /**
- * Player casted-Technique lifecycle (abilities evolution plan §5.2).
+ * Player casted-Technique lifecycle.
  *
- * The first player-side cast. Deliberately mirrors the PROVEN monster
- * `chargedAttack` state machine (`combat.ts` + `monsterMechanics.ts`):
+ * Deliberately mirrors the PROVEN monster `chargedAttack` state machine
+ * (`combat.ts` + `monsterMechanics.ts`):
  *
  *   arm -> begin wind-up (telegraph) -> resolve -> cooldown
  *                    \-> interrupted by hard CC / lost target -> abort
  *
  * Differences from the monster version, both deliberate:
- * - **Movement continues.** A monster roots itself while charging; the player
- *   does not, because auto-movement is rune-driven and a cast that fought
- *   pathing would be unusable in an idle game. Only NORMAL ATTACKS are
- *   suppressed (see the `isCastingAbility` check in `combat.ts`).
  * - **An aborted cast costs nothing.** The cooldown is only set when the cast
- *   actually resolves, so losing a target mid-wind-up is not punished.
+ *   actually resolves, so losing a target mid-wind-up is not punished twice.
+ * - **Movement is held only for a RANGED cast.** A monster roots itself while
+ *   charging. A player casting Power Strike keeps walking, because auto-movement
+ *   is rune-driven and a cast that fought pathing would be unusable in an idle
+ *   game. A cast that carries a `rangeBonus`, though, exists precisely to be
+ *   delivered from out there — so auto-combat holds position for its duration
+ *   (see `holdsPositionWhileCasting`), which is what makes Snipe a standoff tool
+ *   instead of a slow opener you immediately walk out of.
  *
  * `isCastingAbility` and `hasArmedAbility` are mutually exclusive: together they
- * are the single offensive execution channel (plan §7.1).
+ * are the single offensive execution channel.
  */
 import {
   ABILITY_DATABASE,
-  hasStatusEffect,
+  abilityCastMs,
+  abilityRangeBonus,
   setCooldown,
   type AbilityDef,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
-import { STUN_EFFECT } from "../../combat/status/stun";
-import { FROZEN_EFFECT } from "../../classes/archetypes/dot/t3/core/constants";
+import { isHardControlled } from "../../combat/status/playerHardControl";
 import { abilityCooldownKey, techniqueCooldownMs } from "./abilityCooldowns";
 import { resolveCastPayload } from "./abilityEffects";
-
-/** Hard CC that breaks a wind-up — same rule the monster cast machine uses. */
-function isHardCCd(player: PlayerEntity): boolean {
-  const cs = player.tracksCombat;
-  return hasStatusEffect(cs, STUN_EFFECT) || hasStatusEffect(cs, FROZEN_EFFECT);
-}
+import { abilityEngagementRange, abilityTarget } from "./abilityTargeting";
 
 /**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
@@ -49,14 +47,15 @@ export function beginAbilityCast(
   slotIndex: number,
   now: number,
 ): boolean {
-  const castMs = ability.castMs ?? 0;
+  const castMs = abilityCastMs(ability, player.tracksProgression.playerTier);
   if (castMs <= 0) return false;
-  if (isHardCCd(player)) return false;
+  if (isHardControlled(player.tracksCombat)) return false;
 
-  // A cast needs something to resolve INTO. Without a live target the wind-up
-  // would just abort on the next tick, so don't start it at all.
-  const targetId = player.hasAttackTarget?.targetId;
-  if (!targetId || !world.hasMonster(targetId)) return false;
+  // A cast needs something to resolve INTO. Resolved through the ability's own
+  // reach, not the player's, so a `rangeBonus` cast can open on something the
+  // player could not otherwise touch.
+  const target = abilityTarget(world, player, ability);
+  if (!target) return false;
 
   const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
   attachComponent(world, player, "isCastingAbility", {
@@ -64,7 +63,7 @@ export function beginAbilityCast(
     slotIndex,
     endsAt: now + effectiveMs,
     castMs: effectiveMs,
-    targetId,
+    targetId: target.isMonster.id,
   });
 
   world.pushEvent(player.hasPosition.nodeId, {
@@ -77,9 +76,24 @@ export function beginAbilityCast(
 }
 
 /**
+ * True while the player is mid-cast on an ability whose reach exceeds their own.
+ *
+ * Auto-combat reads this and stops closing: the whole value of the extended reach
+ * is spending the wind-up at distance. A cast with no range bonus is unaffected,
+ * so ordinary casts still walk with the fight.
+ */
+export function holdsPositionWhileCasting(player: PlayerEntity): boolean {
+  const casting = player.isCastingAbility;
+  if (!casting) return false;
+  const ability = ABILITY_DATABASE.get(casting.abilityId);
+  if (!ability) return false;
+  return abilityRangeBonus(ability, player.tracksProgression.playerTier) > 0;
+}
+
+/**
  * `technique.cast-speed-pct` shortens the wind-up. Capped so a cast can never
  * collapse to an instant — the telegraph IS the cost that makes Technique Power
- * on casts a fair trade (plan §6.1).
+ * on casts a fair trade.
  */
 const CAST_SPEED_CAP = 0.6;
 
@@ -106,17 +120,18 @@ export function updateAbilityCasts(world: World, now: number): void {
 
     // Hard CC breaks the wind-up — the player's counterplay against a caster is
     // exactly the counterplay a monster has against theirs.
-    if (isHardCCd(player)) {
+    if (isHardControlled(player.tracksCombat)) {
       abortCast(world, player, casting.abilityId);
       continue;
     }
 
-    // Target died, left the node, or we drifted out of reach: abort harmlessly.
+    // Target died, left the node, or we drifted out of the ability's reach.
     const target = world.getMonsterEntity(casting.targetId);
     if (
       !target ||
       target.hasHealth.hp <= 0 ||
-      target.hasPosition.nodeId !== player.hasPosition.nodeId
+      target.hasPosition.nodeId !== player.hasPosition.nodeId ||
+      !world.collision.canReach(player, target, abilityEngagementRange(player, ability))
     ) {
       abortCast(world, player, casting.abilityId);
       continue;
@@ -138,6 +153,7 @@ export function updateAbilityCasts(world: World, now: number): void {
       playerId: player.isPlayer.id,
       ability: ability.id,
       fired: true,
+      targetPos: { ...target.hasPosition.current },
     });
   }
 }

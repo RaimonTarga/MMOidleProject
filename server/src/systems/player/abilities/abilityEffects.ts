@@ -1,5 +1,5 @@
 /**
- * Ability combat effects (system rework Step 7).
+ * Ability combat effects.
  *
  * Registers the Technique rider: when a player lands an attack with a Technique
  * armed (`hasArmedAbility`), consume the charge and apply the ability's rider
@@ -10,11 +10,14 @@
  * balance bench stay identical.
  */
 import {
-  ABILITY_DATABASE,
+  ABILITY_BINDING_STRIKE_FX,
   ABILITY_EXPOSE_WEAKNESS_FX,
   ABILITY_GUARD_EFFECT_IDS,
+  ABILITY_HAMSTRING_FX,
+  ABILITY_QUICK_STRIKE_FX,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
+  ABILITY_DATABASE,
   EXPOSE_WEAKNESS_EFFECT_ID,
   applyStatusEffect,
   getStatusEffect,
@@ -24,8 +27,11 @@ import {
   type AbilityEffectSpec,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
+import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { applyPlayerDebuff } from "../../classes/shared/applyPlayerDebuff";
 import { applyPlayerAoe } from "../../combat/damage/aoeDamage";
+import { applyMonsterRoot, applyMonsterSlow } from "../../combat/status/monsterControl";
+import { applyStun } from "../../combat/status/stun";
 import { detachComponent } from "../../../ecs/markerHelpers";
 import type { CombatContext } from "../../combat/engine/combatPipeline";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
@@ -49,13 +55,14 @@ export function initAbilitySystems(): void {
     applyTechniqueRider(ctx, world, ability);
   });
 
-  // Guard buff: while a Guard DR buff (e.g. Brace) is active, reduce incoming
+  // Guard buff: while a Guard DR buff (Brace / Endure) is active, reduce incoming
   // damage by its drPct. Mirrors reload's cover-fire DR listener.
   //
   // Two Guard slots can be active at once, so the slots stack MULTIPLICATIVELY
   // (each is a separate reduction of what got through) rather than additively —
   // additive stacking would reach the cap far too easily and make the second
-  // Guard slot a strictly-better defensive choice than any other pairing.
+  // Guard slot a strictly-better defensive choice than any other pairing. This is
+  // the global "simultaneous Guard mitigation" rule the roster depends on.
   registerCombatListener("onDamageTaken", (ctx) => {
     if (ctx.defenderType !== "player") return;
     let survives = 1;
@@ -72,10 +79,10 @@ export function initAbilitySystems(): void {
 }
 
 /**
- * Resolve an ability's effect through the shared scaling seam: automatic tier
- * deepening plus Technique Power on the fields that opt in. Every Technique path
- * must go through this — reading `ability.effect` raw silently opts the ability
- * out of both.
+ * Resolve an ability's effect through the shared scaling seam: the authored rank
+ * for the player's tier, plus Technique Power on the fields that opt in. Every
+ * Technique path must go through this — reading a rank's `effect` raw silently
+ * opts the ability out of Technique Power.
  */
 function techniqueEffect(
   player: PlayerEntity,
@@ -87,16 +94,22 @@ function techniqueEffect(
   });
 }
 
+/** Append a client-effect tag to the hit that combat.ts is about to broadcast. */
+function tagClientEffect(ctx: CombatContext, tag: string): void {
+  const existing = ctx.metadata["clientEffects"];
+  ctx.metadata["clientEffects"] = Array.isArray(existing) ? [...existing, tag] : [tag];
+}
+
 /**
- * Resolve a completed CAST (abilities evolution §5.2). Unlike an armed
- * Technique, a cast has no triggering attack to ride, so it applies its payload
- * directly to the target it was started against.
+ * Resolve a completed CAST. Unlike an armed Technique, a cast has no triggering
+ * attack to ride, so it applies its payload directly to the target it was started
+ * against.
  *
  * Deliberately NOT routed through the normal attack pipeline: a cast is its own
  * action, so "every on-hit effect procs off the cast too" is an explicit design
- * decision rather than a side effect of reusing `runPlayerAttack` (plan §11).
- * The payload still passes through the target's defensive pipeline via
- * `applyPlayerAoe`, so plating/DR/caps all apply.
+ * decision rather than a side effect of reusing `runPlayerAttack`. The payload
+ * still passes through the target's defensive pipeline via `applyPlayerAoe`, so
+ * plating/DR/caps all apply.
  */
 export function resolveCastPayload(
   world: World,
@@ -117,6 +130,13 @@ export function resolveCastPayload(
   const damage = Math.max(1, Math.round(player.dealsDamage.attack * effect.damageMult));
   const radius = effect.radius && effect.radius > 0 ? effect.radius : 1;
   applyPlayerAoe(world, player, target.hasPosition.current, radius, damage);
+
+  // Stunning Strike: the control lands with the blow. Applied after the damage so
+  // a killing blow doesn't spend the stun on a corpse, and through `applyStun` so
+  // the shared post-stun immunity keeps chain-locking off the table.
+  if (effect.stunMs && effect.stunMs > 0 && target.hasHealth.hp > 0) {
+    applyStun(target.tracksCombat, effect.stunMs, player.isPlayer.id);
+  }
 }
 
 function applyTechniqueRider(
@@ -138,15 +158,13 @@ function applyTechniqueRider(
       }).formationOffenseMult,
     ))
     : ctx.damage;
+
   if (effect.kind === "cleave") {
     // Tag this landed hit so the client overlays the Sweep slash FX on the normal
     // attack and pulses the Technique HUD icon. Stamped before the splash check so
     // the slash still reads even when the splash rounds to 0. combat.ts reads
     // `clientEffects` when it pushes the primary `player-hit` event (post-onHit).
-    const existing = ctx.metadata["clientEffects"];
-    ctx.metadata["clientEffects"] = Array.isArray(existing)
-      ? [...existing, ABILITY_SWEEP_FX]
-      : [ABILITY_SWEEP_FX];
+    tagClientEffect(ctx, ABILITY_SWEEP_FX);
 
     const splash = Math.floor(formationBasis * effect.splashPct);
     if (splash <= 0) return;
@@ -158,25 +176,26 @@ function applyTechniqueRider(
       splash,
       ctx.defender.isMonster.id,
     );
-  } else if (effect.kind === "empower" || effect.kind === "reposition") {
+    return;
+  }
+
+  if (effect.kind === "empower" || effect.kind === "reposition") {
     // A reposition's dash already happened at fire time; what rides the next hit
     // is its optional strike rider, which behaves exactly like `empower`.
     const mult =
       effect.kind === "empower" ? effect.damageMult : (effect.empowerMult ?? 1);
-    const existing = ctx.metadata["clientEffects"];
-    ctx.metadata["clientEffects"] = Array.isArray(existing)
-      ? [...existing, ABILITY_TECHNIQUE_FIRED_FX]
-      : [ABILITY_TECHNIQUE_FIRED_FX];
-    // Scale the landed hit's damage; no splash. Runs in onHit so onDamageTaken
-    // still mitigates the boosted value.
-    ctx.damage = Math.max(0, Math.round(
-      ctx.damage + formationBasis * Math.max(0, mult - 1),
-    ));
-  } else if (effect.kind === "expose-weakness") {
-    const existing = ctx.metadata["clientEffects"];
-    ctx.metadata["clientEffects"] = Array.isArray(existing)
-      ? [...existing, ABILITY_EXPOSE_WEAKNESS_FX]
-      : [ABILITY_EXPOSE_WEAKNESS_FX];
+    tagClientEffect(
+      ctx,
+      effect.kind === "empower" ? ABILITY_QUICK_STRIKE_FX : ABILITY_TECHNIQUE_FIRED_FX,
+    );
+    addEmpoweredDamage(ctx, formationBasis, mult);
+    return;
+  }
+
+  if (effect.kind === "expose-weakness") {
+    tagClientEffect(ctx, ABILITY_EXPOSE_WEAKNESS_FX);
+    // An evaded hit lands no debuff — the shared rule for every on-hit applier.
+    if (evadeBlocksDebuffs(ctx)) return;
     applyPlayerDebuff(ctx.attacker, ctx.defender.tracksCombat, {
       id: EXPOSE_WEAKNESS_EFFECT_ID,
       instanced: false,
@@ -189,7 +208,44 @@ function applyTechniqueRider(
         totalMs: effect.durationMs,
       },
     });
+    return;
   }
-  // `damage-reduction`/`cleanse`/`heal` are Guard immediates, never Technique
-  // riders — applied in abilityFiring.ts, ignored here.
+
+  if (effect.kind === "slow-strike") {
+    tagClientEffect(ctx, ABILITY_HAMSTRING_FX);
+    addEmpoweredDamage(ctx, formationBasis, effect.damageMult);
+    if (evadeBlocksDebuffs(ctx)) return;
+    applyMonsterSlow(
+      world,
+      ctx.defender,
+      effect.slowPct,
+      effect.slowDurationMs,
+      ctx.attacker.isPlayer.id,
+    );
+    return;
+  }
+
+  if (effect.kind === "root-strike") {
+    tagClientEffect(ctx, ABILITY_BINDING_STRIKE_FX);
+    addEmpoweredDamage(ctx, formationBasis, effect.damageMult);
+    if (evadeBlocksDebuffs(ctx)) return;
+    applyMonsterRoot(world, ctx.defender, effect.rootMs, ctx.attacker.isPlayer.id);
+    return;
+  }
+
+  // Guard immediates are never Technique riders — applied in abilityFiring.ts.
+}
+
+/**
+ * Scale the landed hit. Runs in onHit so `onDamageTaken` still mitigates the
+ * boosted value — an empowered blow is a bigger blow, not an unmitigated one.
+ */
+function addEmpoweredDamage(
+  ctx: CombatContext,
+  formationBasis: number,
+  mult: number,
+): void {
+  ctx.damage = Math.max(0, Math.round(
+    ctx.damage + formationBasis * Math.max(0, mult - 1),
+  ));
 }

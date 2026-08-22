@@ -6,6 +6,7 @@
 
 import {
   ABILITY_DATABASE,
+  abilityCooldownMs,
   GAME_CONFIG,
   MONSTER_DATABASE,
   STARTER_RUNE_IDS,
@@ -153,6 +154,11 @@ const plainAbility = [...ABILITY_DATABASE.values()].find(
   (a) => a.slot === "technique" && !a.tags?.includes("mobility"),
 );
 assert(!!plainAbility, "expected at least one technique NOT tagged `mobility`");
+// Cooldowns are authored PER RANK, so the expectation has to read the same rank
+// the fixture's player tier resolves to.
+const FIXTURE_TIER = 4;
+const MOB_CD = abilityCooldownMs(mobilityAbility!, FIXTURE_TIER);
+const PLAIN_CD = abilityCooldownMs(plainAbility!, FIXTURE_TIER);
 
 {
   const player = world.attachPlayerEntity(makePlayerSlices("mob-player"), "mob-player");
@@ -160,13 +166,13 @@ assert(!!plainAbility, "expected at least one technique NOT tagged `mobility`");
 
   const mobCd = techniqueCooldownMs(player, mobilityAbility!);
   assert(
-    mobCd === mobilityAbility!.cooldownMs * 0.8,
+    mobCd === MOB_CD * 0.8,
     `mobility ability cooldown should be cut 20%, got ${mobCd}`,
   );
 
   const plainCd = techniqueCooldownMs(player, plainAbility!);
   assert(
-    plainCd === plainAbility!.cooldownMs,
+    plainCd === PLAIN_CD,
     `a non-mobility technique must be unaffected, got ${plainCd}`,
   );
 
@@ -175,7 +181,7 @@ assert(!!plainAbility, "expected at least one technique NOT tagged `mobility`");
   player.usesSkills.passives["technique.cooldown-reduction-pct"] = 0.8;
   const capped = techniqueCooldownMs(player, mobilityAbility!);
   assert(
-    Math.abs(capped - mobilityAbility!.cooldownMs * 0.1) < 1e-9,
+    Math.abs(capped - MOB_CD * 0.1) < 1e-9,
     `stacked reductions must clamp at the 0.9 cap, got ${capped}`,
   );
 }
@@ -192,8 +198,8 @@ assert(!!plainAbility, "expected at least one technique NOT tagged `mobility`");
 
   const mobKey = abilityCooldownKey(mobilityAbility!.id);
   const plainKey = abilityCooldownKey(plainAbility!.id);
-  setCooldown(player.tracksCombat, mobKey, mobilityAbility!.cooldownMs);
-  setCooldown(player.tracksCombat, plainKey, plainAbility!.cooldownMs);
+  setCooldown(player.tracksCombat, mobKey, MOB_CD);
+  setCooldown(player.tracksCombat, plainKey, PLAIN_CD);
 
   const ctx = {
     attacker: player, attackerType: "player",
@@ -204,13 +210,13 @@ assert(!!plainAbility, "expected at least one technique NOT tagged `mobility`");
 
   // Refund is a fraction of the FULL cooldown, not of what remains, so a kill is
   // worth the same whenever it lands.
-  const expected = mobilityAbility!.cooldownMs * 0.6;
+  const expected = MOB_CD * 0.6;
   assert(
     Math.abs(getCooldown(player.tracksCombat, mobKey) - expected) < 1e-9,
     `mobility cooldown should drop by 40% of full, got ${getCooldown(player.tracksCombat, mobKey)}`,
   );
   assert(
-    getCooldown(player.tracksCombat, plainKey) === plainAbility!.cooldownMs,
+    getCooldown(player.tracksCombat, plainKey) === PLAIN_CD,
     "a non-mobility technique's cooldown must not be refunded",
   );
 }

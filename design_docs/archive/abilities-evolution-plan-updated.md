@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-08-22) — HISTORICAL.** Superseded by
+> `design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md`, which replaced this document's
+> percentage tier-scaling model with authored per-tier ranks. Live state in
+> `docs/abilities-current-state.md`. Kept for rationale — do not treat as current.
+
 # Abilities Evolution Plan — Planning Baseline
 
 **STATUS:** design direction substantially locked; ready for implementation planning.

@@ -11,6 +11,8 @@ import {
   GAME_CONFIG,
   ITEM_DATABASE,
   NODE_BIOMES,
+  validateAbilities,
+  validateAbilityRecipes,
   validateNodeModifiers,
   validateTierAdvancement,
   pointInNodeFeatureShape,
@@ -313,6 +315,15 @@ async function boot(): Promise<void> {
       log.error({ sealViolations }, "tier advancement seal requirement unreachable");
     } else {
       log.info("tier advancement OK");
+    }
+    // Ability ranks and unlocks: an ability with no recipe can never be learned,
+    // and a rank that changes effect kind is a different ability wearing the same
+    // id. Both are silent in play and obvious here.
+    const abilityViolations = [...validateAbilities(), ...validateAbilityRecipes()];
+    if (abilityViolations.length > 0) {
+      log.error({ abilityViolations }, "ability roster invalid");
+    } else {
+      log.info("abilities OK");
     }
   }
 

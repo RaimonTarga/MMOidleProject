@@ -38,7 +38,7 @@ top-level doc.
 
 | System | Doc | Design authority |
 |---|---|---|
-| Abilities (Technique / Guard) | [abilities-current-state.md](abilities-current-state.md) | [abilities-evolution-plan-updated.md](../design_docs/abilities-evolution-plan-updated.md) |
+| Abilities (Technique / Guard) | [abilities-current-state.md](abilities-current-state.md) | [ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md) |
 | Aspects + catalysts | [aspects-catalysts-current-state.md](aspects-catalysts-current-state.md) | — |
 | Audio | [audio-current-state.md](audio-current-state.md) | — |
 | Auth + characters | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) | — |
@@ -71,7 +71,6 @@ handoffs: both systems have complete machinery and thin, placeholder content.
 
 | Doc | State |
 |---|---|
-| [abilities-evolution-implementation-plan.md](abilities-evolution-implementation-plan.md) | Wave 1 shipped 2026-07-24; Waves 2–3 (T3/T4 rosters) not started. |
 | [ui-redesign-plan.md](ui-redesign-plan.md) | Phased desktop HUD redesign with review gates; Part III (apparatus wave) still ahead. |
 | [map-variety-plan.md](map-variety-plan.md) | Design authority for the world map. Both stages shipped; no separate current-state doc — this plus the code is the record. |
 | [terrain-variance-plan.md](terrain-variance-plan.md) | **Living record of the biome visual pass (CLOSED 2026-08-17).** SS8-9 are the levers and the per-biome log — every biome's generators, measured numbers and open dials. S10 records what was deferred. SS1-7 are an earlier, PARKED gameplay-terrain plan; do not start on those. |
@@ -107,6 +106,7 @@ holds the art bibles, the overhaul roadmap, and the icon-generation workflows.
 | [boss-design.md](../design_docs/boss-design.md) | Boss philosophy and per-tier layer curve. |
 | [t5-t8-endgame-suggestions.md](../design_docs/t5-t8-endgame-suggestions.md) | Proposals for the back half. Not canon. |
 | [CORE_T4_CAST.md](../design_docs/CORE_T4_CAST.md) | T4 core cast — design draft, not implemented. |
+| [ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md) | The T1–T4 ability roster, biome placement and authored per-tier ranks. **Implemented** — live state in `docs/abilities-current-state.md`. |
 
 Generated balance packets (`reports/dps-*`, `ehp-*`, `mob-*`,
 `*-mechanics-packet.md`) are build output of `pnpm dps:report` / `ehp:report` /

@@ -63,6 +63,7 @@ import { updateBossScripts } from "../systems/combat/ai/bossScripts";
 import { updateUltimateEncounters } from "../systems/combat/ai/ultimateEncounter";
 import { updateWards, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
+import { updateMonsterSlows } from "../systems/combat/status/monsterControl";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
@@ -164,6 +165,8 @@ export class World {
     this.monsterEntities.with("hasConflagration");
   readonly chilledMonsters = this.monsterEntities.with("hasChill");
   readonly frozenMonsters = this.monsterEntities.with("hasFrozen");
+  readonly abilitySlowedMonsters = this.monsterEntities.with("hasAbilitySlow");
+  readonly abilityRootedMonsters = this.monsterEntities.with("hasAbilityRoot");
   readonly entropyMonsters = this.monsterEntities.with("hasEntropy");
   readonly weaponDotMonsters = this.monsterEntities.with("hasWeaponDot");
   readonly smolderMonsters = this.monsterEntities.with("hasSmolder");
@@ -369,6 +372,10 @@ export class World {
     updateWards(this, dt);
     updateRuneDerivedConfig(this, now);
     tickAllMechanics(this, dt, now);
+    // Single writer for monster slowed speed / root: chill, freeze and ability
+    // slows all overwrite the same fields, so they are reconciled in one place
+    // after their mechanic ticks and before anything moves.
+    updateMonsterSlows(this);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
     updateUltimateEncounters(this, dt);

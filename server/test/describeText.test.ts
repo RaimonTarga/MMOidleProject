@@ -59,17 +59,51 @@ for (const ability of ABILITY_DATABASE.values()) {
   }
 }
 
-// Tier deepening is reported, not silently applied: a scaling ability described
-// above its home tier must differ from the same ability at its home tier, and
-// must say why.
+// Progression is AUTHORED, not scaled: describing an ability above its home tier
+// reads a different RANK — a different value with no multiplier attached — and
+// says which rank it is. A fabricated "×1.3 tier deepening" line here would be a
+// lie about how the number was produced.
 const sweep = ABILITY_DATABASE.get("sweep")!;
 const atHome = describeAbility(sweep, { ...context, playerTier: sweep.tier, passives: {} });
 const deepened = describeAbility(sweep, { ...context, playerTier: sweep.tier + 2, passives: {} });
 const homeSplash = atHome.lines.find((line) => line.key === "splashPct")!;
 const deepSplash = deepened.lines.find((line) => line.key === "splashPct")!;
-assert(homeSplash.value !== deepSplash.value, "tier deepening did not change the reported value");
-assert(homeSplash.breakdown === undefined, "unscaled value should carry no breakdown");
-assert(deepSplash.breakdown !== undefined, "scaled value must show its authored base");
+assert(homeSplash.value !== deepSplash.value, "a later rank did not change the reported value");
+assert(atHome.rank === "I", `home tier should be rank I, got ${atHome.rank}`);
+assert(deepened.rank === "III", `two tiers up should be rank III, got ${deepened.rank}`);
+assert(homeSplash.breakdown === undefined, "an authored rank carries no multiplier breakdown");
+assert(deepSplash.breakdown === undefined, "an authored rank carries no multiplier breakdown");
+
+// A REAL multiplier still has to show its authored base and where it came from.
+const powered = describeAbility(sweep, {
+  ...context,
+  playerTier: sweep.tier,
+  passives: { "technique.power-pct": 0.3 },
+});
+const poweredSplash = powered.lines.find((line) => line.key === "splashPct")!;
+assert(poweredSplash.value !== homeSplash.value, "Technique Power did not change the value");
+assert(
+  poweredSplash.breakdown?.includes("Technique Power") === true,
+  "a multiplied value must name the multiplier and its authored base",
+);
+
+// Every ability past its last authored rank clamps rather than reading past the
+// end of the table — the T5+ story until bespoke ranks are written.
+for (const ability of ABILITY_DATABASE.values()) {
+  const beyond = describeAbility(ability, { ...context, playerTier: ability.tier + 12 });
+  assert(
+    beyond.rankLabel.includes("fully deepened"),
+    `${ability.id}: rank should clamp past its last authored rank`,
+  );
+}
+
+// An ability with extra reach must SAY so — that reach is the whole reason it is
+// worth a slot, and it is invisible in every other line.
+const snipe = ABILITY_DATABASE.get("snipe")!;
+const sniped = describeAbility(snipe, { ...context, playerTier: snipe.tier, attackRange: 12 });
+const reach = sniped.lines.find((line) => line.key === "rangeBonus");
+assert(!!reach, "Snipe must report its ability reach");
+assert(reach.value === "312px", `Snipe reach should fold in attack range, got ${reach.value}`);
 
 // ── Units ────────────────────────────────────────────────────────────────────
 // The failure this module exists to prevent is a fraction reported as "+0.18".

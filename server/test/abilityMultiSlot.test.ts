@@ -69,7 +69,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       knownAbilities: ["sweep", "expose-weakness", "brace", "cleanse"],
       equippedAbilities: {
         techniques: ["sweep", "expose-weakness"],
-        guards: ["brace", "cleanse"],
+        guards: ["brace", "endure"],
       },
       knownStances: [],
       equippedStances: { default: null },
@@ -145,8 +145,10 @@ if (!target) throw new Error("failed to create target");
 setAttackTarget(world, player, target.isMonster.id);
 
 // Both Guards must WANT to fire, or "the second didn't fire" proves nothing about
-// the activation window. Brace triggers on hp-below (already at 40%); Cleanse
-// triggers on has-debuff, so paint one.
+// the activation window. Brace and Endure both trigger on hp-below (the fixture
+// is already at 40%), and both grant a per-slot DR buff, so the two slots are
+// directly comparable. A debuff is painted on as well so the harmful-status path
+// stays exercised.
 applyStatusEffect(player.tracksCombat, {
   id: "antiheal",
   maxStacks: 3,

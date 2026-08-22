@@ -4,7 +4,7 @@
  * Split out from `abilityFiring.ts` so the firing driver and the cast driver can
  * both use them without an import cycle.
  */
-import type { AbilityDef } from "@mmo-idle/shared";
+import { abilityCooldownMs, type AbilityDef } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
 
 /**
@@ -20,9 +20,10 @@ export function abilityCooldownKey(abilityId: string): string {
 const CD_REDUCTION_CAP = 0.9;
 
 /**
- * Technique cooldown after `technique.cooldown-reduction-pct`. The offensive
- * sibling of `guard.cooldown-reduction-pct`; the two namespaces stay separate so
- * offensive and defensive budgets can't be bought with one stat (plan §3.3).
+ * Technique cooldown after `technique.cooldown-reduction-pct`, starting from the
+ * AUTHORED cooldown for the player's rank. The offensive sibling of
+ * `guard.cooldown-reduction-pct`; the two namespaces stay separate so offensive
+ * and defensive budgets can't be bought with one stat.
  *
  * Abilities tagged `mobility` additionally take the Scout core's
  * `core.mobility-cooldown-reduction-pct`. The two reductions are SUMMED before the
@@ -41,5 +42,15 @@ export function techniqueCooldownMs(
   }
 
   const clamped = Math.min(CD_REDUCTION_CAP, Math.max(0, reduction));
-  return ability.cooldownMs * (1 - clamped);
+  return abilityCooldownMs(ability, player.tracksProgression.playerTier) * (1 - clamped);
+}
+
+/** Guard cooldown after `guard.cooldown-reduction-pct`, from the authored rank. */
+export function guardCooldownMs(
+  player: PlayerEntity,
+  ability: AbilityDef,
+): number {
+  const reduction = player.usesSkills.passives["guard.cooldown-reduction-pct"] ?? 0;
+  const clamped = Math.min(CD_REDUCTION_CAP, Math.max(0, reduction));
+  return abilityCooldownMs(ability, player.tracksProgression.playerTier) * (1 - clamped);
 }

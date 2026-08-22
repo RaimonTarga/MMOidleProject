@@ -39,6 +39,7 @@ import {
   RUNE_WAIT_FOR_REGEN_FLAG,
 } from "./runeConfig";
 import { isPlayerInCombat } from "./engagement";
+import { holdsPositionWhileCasting } from "../../player/abilities/abilityCasting";
 
 const NODE_MARGIN = 40;
 
@@ -364,6 +365,16 @@ export function steerTowardTarget(
   target: MonsterEntity,
   now: number,
 ): void {
+  // A cast that reaches FURTHER than the player does is delivered from out there:
+  // walking into normal reach mid-wind-up would throw away the only thing the
+  // extra range bought. Ordinary casts (no range bonus) keep moving with the
+  // fight, so this never fights rune-driven pathing for anything else.
+  if (holdsPositionWhileCasting(player)) {
+    setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+    stopEntity(world, player);
+    return;
+  }
+
   const targetIsAggroed =
     target.hasAggroTarget?.targetKind === "player" &&
     target.hasAggroTarget.targetId === player.isPlayer.id;

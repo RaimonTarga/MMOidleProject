@@ -14,6 +14,8 @@ import type {
   HasHemorrhage,
   HasDot,
   HasConflagration,
+  HasAbilityRoot,
+  HasAbilitySlow,
   HasChill,
   HasFrozen,
   HasSmolder,
@@ -228,6 +230,8 @@ export interface ServerEntity {
   hasConflagration?: HasConflagration;
   hasChill?: HasChill;
   hasFrozen?: HasFrozen;
+  hasAbilitySlow?: HasAbilitySlow;
+  hasAbilityRoot?: HasAbilityRoot;
   hasSmolder?: HasSmolder;
   hasEntropy?: HasEntropy;
   hasWeaponDot?: HasWeaponDot;

@@ -1,4 +1,6 @@
 import {
+  ABILITY_ROOT_EFFECT_ID,
+  ABILITY_SLOW_EFFECT_ID,
   getStatusEffect,
   getStatusEffects,
   isMonsterDotStatusEffectId,
@@ -39,6 +41,8 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasConflagration", effectId: "dot-conf" },
   { marker: "hasChill", effectId: "dot-chill" },
   { marker: "hasFrozen", effectId: "dot-frozen" },
+  { marker: "hasAbilitySlow", effectId: ABILITY_SLOW_EFFECT_ID },
+  { marker: "hasAbilityRoot", effectId: ABILITY_ROOT_EFFECT_ID },
   { marker: "hasSmolder", effectId: "dot-smolder" },
   { marker: "hasEntropy", effectId: ENT_DOT_FX },
   {

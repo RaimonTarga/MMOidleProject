@@ -83,7 +83,8 @@ const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "abilities-player");
 // Cooldowns are keyed PER ABILITY (two Guard slots can be equipped), not per slot.
 const GUARD_CD_KEY = abilityCooldownKey("brace");
-const BRACE_COOLDOWN_MS = 7000;
+// Rank I (a T0/T1 character sits at Brace I): 35% DR on a 10s cooldown.
+const BRACE_COOLDOWN_MS = 10000;
 
 // Full HP: Brace's `hp-below 0.5` trigger should not fire.
 updateAbilityFiring(world, Date.now());
@@ -97,10 +98,10 @@ player.hasHealth.hp = player.hasHealth.maxHp * 0.4;
 updateAbilityFiring(world, Date.now());
 const firstBuff = getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID);
 assert(!!firstBuff, "Brace should fire on its built-in hp-below trigger with no rune override");
-assert(firstBuff.data.drPct === 0.4, "Brace should apply its 40% damage-reduction magnitude");
+assert(firstBuff.data.drPct === 0.35, "Brace I should apply its 35% damage-reduction magnitude");
 assert(
   getCooldown(player.tracksCombat, GUARD_CD_KEY) === BRACE_COOLDOWN_MS,
-  "firing Brace should start its full 7s cooldown",
+  "firing Brace should start its full authored cooldown",
 );
 
 // Still below the threshold, but the cooldown is active: firing again this tick

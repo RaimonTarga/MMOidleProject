@@ -1,5 +1,8 @@
 import {
+  ABILITY_BINDING_STRIKE_FX,
   ABILITY_EXPOSE_WEAKNESS_FX,
+  ABILITY_HAMSTRING_FX,
+  ABILITY_QUICK_STRIKE_FX,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
   abilityDef,
@@ -58,6 +61,18 @@ import { fxSweep } from "../fx/sweep";
 import { fxExposeWeakness } from "../fx/heavyStrike";
 import { fxBrace } from "../fx/brace";
 import { fxSecondWind } from "../fx/secondWind";
+import { fxEndure } from "../fx/endure";
+import { fxBreakFree } from "../fx/breakFree";
+import { fxRecuperate } from "../fx/recuperate";
+import { fxBramble } from "../fx/bramble";
+import { fxFrenzy } from "../fx/frenzy";
+import { fxHamstring } from "../fx/hamstring";
+import { fxBindingStrike } from "../fx/bindingStrike";
+import { fxQuickStrike } from "../fx/quickStrike";
+import { fxPowerStrike } from "../fx/powerStrike";
+import { fxSnipe } from "../fx/snipe";
+import { fxStunningStrike } from "../fx/stunningStrike";
+import { fxCharge, fxDisengage } from "../fx/reposition";
 import { fxCleanse } from "../fx/cleanse";
 import { fxPowerShot } from "../fx/powerShot";
 import { shouldRunClientFx } from "../fx/guard";
@@ -369,6 +384,48 @@ const GUARD_FX_BY_ABILITY: Record<
   brace: fxBrace,
   cleanse: fxCleanse,
   "second-wind": fxSecondWind,
+  endure: fxEndure,
+  "bramble-guard": fxBramble,
+  "break-free": fxBreakFree,
+  recuperate: fxRecuperate,
+};
+
+/**
+ * Self-facing TECHNIQUE FX, keyed by ability id. A Technique is usually
+ * enemy-facing, but an instant offensive self-buff (Frenzy) has no target to
+ * draw on — it plays on the caster, exactly like a Guard, and still belongs to
+ * the Technique slot.
+ */
+const TECHNIQUE_SELF_FX_BY_ABILITY: Record<
+  string,
+  (scene: GameScene, x: number, y: number) => void
+> = {
+  frenzy: fxFrenzy,
+};
+
+/**
+ * Resolve FX for a completed CAST, keyed by ability id. A cast resolves on its
+ * own target instead of riding an attack, so it has no `player-hit` to hang FX
+ * on — the `player-cast-end` event carries the impact point instead.
+ */
+const CAST_FX_BY_ABILITY: Record<
+  string,
+  (scene: GameScene, from: Vec2, to: Vec2) => void
+> = {
+  "power-strike": (scene, _from, to) => fxPowerStrike(scene, to.x, to.y),
+  "stunning-strike": (scene, _from, to) => fxStunningStrike(scene, to.x, to.y),
+  // Snipe is the one cast whose FX needs BOTH points: the distance crossed is
+  // the ability, and an impact alone would not show it.
+  snipe: (scene, from, to) => fxSnipe(scene, from.x, from.y, to.x, to.y),
+};
+
+/** Reposition FX, keyed by ability id. Both endpoints come from the event. */
+const REPOSITION_FX_BY_ABILITY: Record<
+  string,
+  (scene: GameScene, from: Vec2, to: Vec2) => void
+> = {
+  charge: fxCharge,
+  disengage: fxDisengage,
 };
 
 // Skill-callout text colors: Guards keyed by ability id (matched to each Guard's
@@ -377,6 +434,10 @@ const GUARD_CALLOUT_COLORS: Record<string, string> = {
   brace: "#9cd2ff",
   cleanse: "#eef6ff",
   "second-wind": "#9cff8a",
+  endure: "#e0c07a",
+  "bramble-guard": "#c4e88a",
+  "break-free": "#d9c2ff",
+  recuperate: "#bdf3e4",
 };
 const GUARD_CALLOUT_FALLBACK = "#9cd2ff";
 const TECHNIQUE_CALLOUT_COLOR = "#ffd24a";
@@ -384,6 +445,9 @@ const TECHNIQUE_CALLOUT_COLOR = "#ffd24a";
 const TECHNIQUE_CONSUMED_TAGS = [
   ABILITY_SWEEP_FX,
   ABILITY_EXPOSE_WEAKNESS_FX,
+  ABILITY_HAMSTRING_FX,
+  ABILITY_BINDING_STRIKE_FX,
+  ABILITY_QUICK_STRIKE_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
 ];
 
@@ -618,15 +682,50 @@ export function dispatchCombatEvent(
     if (ev.playerId === scene.myId) {
       notifyAbilityCooldownStarted(ev.ability);
     }
-    if (shouldRunClientFx() && state.sprite.has(ev.playerId)) {
-      const name = abilityDef(ev.ability)?.name ?? ev.ability;
-      spawnSkillCallout(
-        state,
-        scene,
-        ev.playerId,
-        name,
-        TECHNIQUE_CALLOUT_COLOR,
-      );
+    if (shouldRunClientFx()) {
+      const sprite = state.sprite.get(ev.playerId);
+      if (sprite) {
+        // An instant Technique has no target to draw on, so it plays on the
+        // caster. It also never arms anything, so the red armed-bar telegraph
+        // above would otherwise sit there until some unrelated hit cleared it.
+        const selfFx = TECHNIQUE_SELF_FX_BY_ABILITY[ev.ability];
+        if (selfFx) {
+          selfFx(scene, sprite.x, sprite.y);
+          state.techniqueArmed.delete(ev.playerId);
+          if (ev.playerId === scene.myId) notifyAbilityFired(ev.ability);
+        }
+        const name = abilityDef(ev.ability)?.name ?? ev.ability;
+        spawnSkillCallout(
+          state,
+          scene,
+          ev.playerId,
+          name,
+          TECHNIQUE_CALLOUT_COLOR,
+        );
+      }
+    }
+    return;
+  }
+
+  if (ev.kind === "player-reposition") {
+    // A reposition is an instant server-side move: without a trail along the old
+    // path the sprite just blinks and nothing tells the player an ability fired.
+    if (shouldRunClientFx()) {
+      const fx = REPOSITION_FX_BY_ABILITY[ev.ability];
+      if (fx) fx(scene, ev.from, ev.to);
+      if (state.sprite.has(ev.playerId)) {
+        spawnSkillCallout(
+          state,
+          scene,
+          ev.playerId,
+          abilityDef(ev.ability)?.name ?? ev.ability,
+          TECHNIQUE_CALLOUT_COLOR,
+        );
+      }
+      if (ev.playerId === scene.myId) {
+        notifyAbilityCooldownStarted(ev.ability);
+        notifyAbilityFired(ev.ability);
+      }
     }
     return;
   }
@@ -649,6 +748,14 @@ export function dispatchCombatEvent(
 
   if (ev.kind === "player-cast-end") {
     endCastBar(state, ev.playerId);
+    // A cast resolves on its own target rather than riding an attack, so its
+    // impact FX hangs off this event and its carried impact point — there is no
+    // `player-hit` for it. Node-wide, so allies see each other's casts land.
+    if (ev.fired && ev.targetPos && shouldRunClientFx()) {
+      const fx = CAST_FX_BY_ABILITY[ev.ability];
+      const origin = state.sprite.get(ev.playerId);
+      if (fx && origin) fx(scene, { x: origin.x, y: origin.y }, ev.targetPos);
+    }
     if (ev.playerId === scene.myId) {
       notifyAbilityCastEnded();
       // Only a cast that actually RESOLVED pays a cooldown — an interrupted
@@ -874,6 +981,19 @@ function runFxForAttackStyle(
     if (effectId === ABILITY_EXPOSE_WEAKNESS_FX) {
       // Expose Weakness: target-marking impact cue plus a Technique HUD-icon pulse.
       fxExposeWeakness(scene, to.x, to.y, ev.empowered);
+      continue;
+    }
+    if (effectId === ABILITY_HAMSTRING_FX) {
+      // Played low, at the legs — the slow is what the ability bought.
+      fxHamstring(scene, to.x, to.y, ev.empowered);
+      continue;
+    }
+    if (effectId === ABILITY_BINDING_STRIKE_FX) {
+      fxBindingStrike(scene, to.x, to.y, ev.empowered);
+      continue;
+    }
+    if (effectId === ABILITY_QUICK_STRIKE_FX) {
+      fxQuickStrike(scene, to.x, to.y, ev.empowered);
       continue;
     }
     if (effectId === ABILITY_TECHNIQUE_FIRED_FX) {

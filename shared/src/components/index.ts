@@ -1,6 +1,7 @@
 export * from "./core/networkedSlices";
 
 export * from "./combat/buffs";
+export * from "./combat/abilityControl";
 export * from "./combat/cannotAttack";
 export * from "./combat/isDead";
 export * from "./combat/effects";

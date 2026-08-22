@@ -99,15 +99,15 @@ assert(player.hasArmedAbility === undefined, "Technique should be consumed by th
 
 const dealt = hpBefore - Math.max(0, target.hasHealth.hp);
 assert(
-  dealt === Math.round(baseDamage * 1.2),
-  `Expose Weakness should increase its landed hit by 20% (${dealt} !== ${Math.round(baseDamage * 1.2)})`,
+  dealt === Math.round(baseDamage * 1.15),
+  `Expose Weakness I should increase its landed hit by 15% (${dealt} !== ${Math.round(baseDamage * 1.15)})`,
 );
 
 const exposed = getStatusEffect(target.tracksCombat, EXPOSE_WEAKNESS_EFFECT_ID);
 assert(!!exposed, "Expose Weakness should apply its target debuff");
 assert(
-  exposed.remainingMs === 4000 && exposed.data.damageTakenPct === 0.2,
-  "Expose Weakness debuff should last 4s and increase damage taken by 20%",
+  exposed.remainingMs === 4000 && exposed.data.damageTakenPct === 0.15,
+  "Expose Weakness I should last 4s and increase damage taken by 15%",
 );
 
 const hit = world

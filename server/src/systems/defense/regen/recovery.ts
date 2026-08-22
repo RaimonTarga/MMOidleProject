@@ -39,7 +39,14 @@ import { applyHealToPlayer } from './healing';
 // potency-scaled skill) keeps the value it was activated with even if gear
 // changes mid-window.
 
-export type RecoverySourceId = 'pulse' | 'kill' | 'guard' | 'skill';
+/**
+ * `skill` and `skill-2` are the two GUARD SLOTS' Recovery skills, not two kinds
+ * of skill. Second Wind (strong/short) and Recuperate (weak/long) are deliberate
+ * opposites and may be equipped together; sharing one source would let the
+ * stronger fraction ride the longer window — strictly better than either
+ * ability as authored.
+ */
+export type RecoverySourceId = 'pulse' | 'kill' | 'guard' | 'skill' | 'skill-2';
 
 interface TimedSource {
   /** Remaining active time, ms. */
@@ -53,6 +60,7 @@ const TIMED_SOURCES: Record<RecoverySourceId, TimedSource> = {
   kill:  { msKey: 'recovery.killMs',  pctKey: 'recovery.killPct'  },
   guard: { msKey: 'recovery.guardMs', pctKey: 'recovery.guardPct' },
   skill: { msKey: 'recovery.skillMs', pctKey: 'recovery.skillPct' },
+  'skill-2': { msKey: 'recovery.skill2Ms', pctKey: 'recovery.skill2Pct' },
 };
 
 const TIMED_SOURCE_IDS = Object.keys(TIMED_SOURCES) as RecoverySourceId[];

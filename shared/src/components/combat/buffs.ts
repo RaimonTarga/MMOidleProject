@@ -82,7 +82,13 @@ export const BUFF_IDS = [
   'ability-guard',
   'ability-guard-2',
   'ability-bramble',
+  // Recovery-skill window, also one id per Guard slot: Second Wind (strong/short)
+  // and Recuperate (weak/long) are opposite shapes of the same access and may be
+  // equipped together, so they need independent windows and tiles.
   'ability-second-wind',
+  'ability-second-wind-2',
+  'ability-frenzy',
+  'ability-control-resist',
   // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
   'mob-sprint',   // Forest — out-of-combat sprint
   'mob-haste',    // Plains — on-kill haste

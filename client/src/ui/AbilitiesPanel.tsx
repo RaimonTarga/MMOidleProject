@@ -3,6 +3,9 @@ import {
   ABILITY_DATABASE,
   ABILITY_SLOTS,
   abilityDef,
+  abilityDisplayName,
+  abilityMaxRank,
+  abilityRankNumber,
   equippedForSlot,
   type AbilityDef,
   type AbilitySlot,
@@ -13,6 +16,7 @@ import {
   abilitySlotsAtom,
   equippedAbilitiesAtom,
   knownAbilitiesAtom,
+  playerTierAtom,
 } from "../hud/atoms";
 import { LoadoutBrowser, type LoadoutSlot } from "./LoadoutBrowser";
 import { abilityIconSource } from "./abilityIcons";
@@ -41,6 +45,23 @@ export function AbilitiesPanelContent() {
   const known = useAtomValue(knownAbilitiesAtom);
   const equipped = useAtomValue(equippedAbilitiesAtom);
   const slotCounts = useAtomValue(abilitySlotsAtom);
+  const playerTier = useAtomValue(playerTierAtom);
+
+  /**
+   * An owned ability deepens one authored rank every time the player tiers up,
+   * and it is the SAME entry throughout — so the rank has to ride the name here,
+   * or a player who just advanced sees no acknowledgement that anything changed.
+   * Abilities that have run out of authored ranks say so rather than implying a
+   * next one is coming.
+   */
+  function rankedBlurb(ability: AbilityDef): string {
+    const rank = abilityRankNumber(ability, playerTier);
+    const max = abilityMaxRank(ability);
+    const note = rank >= max
+      ? "At its deepest authored rank."
+      : `Deepens again at tier ${ability.tier + rank}.`;
+    return `${ability.blurb} ${note}`;
+  }
 
   /**
    * Rebuild the WHOLE loadout for one slot index and send it — the server takes
@@ -86,8 +107,8 @@ export function AbilitiesPanelContent() {
       .filter((ability): ability is AbilityDef => !!ability && ability.slot === slot)
       .map((ability) => ({
         id: ability.id,
-        name: ability.name,
-        blurb: ability.blurb,
+        name: abilityDisplayName(ability, playerTier),
+        blurb: rankedBlurb(ability),
         icon: abilityIconSource(ability),
         disabledReason: takenElsewhere.has(ability.id)
           ? "Already in another slot of this kind"
@@ -101,8 +122,14 @@ export function AbilitiesPanelContent() {
       iconKind="ability"
       slots={slots}
       candidatesFor={candidatesFor}
-      nameOf={(id) => abilityDef(id)?.name ?? null}
-      blurbOf={(id) => abilityDef(id)?.blurb ?? ""}
+      nameOf={(id) => {
+        const ability = abilityDef(id);
+        return ability ? abilityDisplayName(ability, playerTier) : null;
+      }}
+      blurbOf={(id) => {
+        const ability = abilityDef(id);
+        return ability ? rankedBlurb(ability) : "";
+      }}
       iconOf={(id) => {
         const ability = abilityDef(id);
         return ability ? abilityIconSource(ability) : undefined;

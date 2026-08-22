@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
-  ABILITY_SECOND_WIND_EFFECT_ID,
+  ABILITY_FRENZY_EFFECT_ID,
+  abilityCooldownMs,
   abilityDef,
+  abilityRankNumber,
+  abilityRankNumeral,
   equippedForSlot,
   guardEffectIdForSlot,
+  recoveryEffectIdForSlot,
   type AbilityDef,
   type AbilitySlot,
 } from "@mmo-idle/shared";
@@ -14,6 +18,7 @@ import {
   abilityCooldownStartedAtAtom,
   activeBuffsAtom,
   equippedAbilitiesAtom,
+  playerTierAtom,
 } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
 import { abilityIconSource } from "../ui/abilityIcons";
@@ -78,6 +83,10 @@ function castStatus(startedAt: number, castMs: number, now: number): SlotStatus 
 function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotStatus }) {
   const meta = SLOT_META[ability.slot];
   const icon = abilityIconSource(ability);
+  // The rank numeral rides the tile because it is the same learned ability the
+  // whole way up — a player needs to see that Sweep got deeper, not go looking
+  // for a second Sweep.
+  const rank = abilityRankNumeral(abilityRankNumber(ability, useAtomValue(playerTierAtom)));
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
   const cooling = remainingPct > 0;
   const glowClass = status.justFired
@@ -172,7 +181,7 @@ function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotSta
           whiteSpace: "nowrap",
         }}
       >
-        {ability.name}
+        {ability.name} {rank}
       </span>
     </div>
   );
@@ -192,8 +201,12 @@ function DesktopAbilitySlot({
 }: DesktopAbilitySlotProps) {
   const meta = SLOT_META[ability.slot];
   const icon = abilityIconSource(ability);
+  const playerTier = useAtomValue(playerTierAtom);
+  const rank = abilityRankNumeral(abilityRankNumber(ability, playerTier));
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
-  const remainingSeconds = Math.ceil((status.remainingFrac * ability.cooldownMs) / 1000);
+  const remainingSeconds = Math.ceil(
+    (status.remainingFrac * abilityCooldownMs(ability, playerTier)) / 1000,
+  );
   const cooling = remainingPct > 0;
   const state: DesktopAbilityState = status.justFired
     ? "triggered"
@@ -202,7 +215,7 @@ function DesktopAbilitySlot({
       : cooling
         ? "cooling"
         : "ready";
-  const tooltip = `${meta.label}: ${ability.name} — ${
+  const tooltip = `${meta.label}: ${ability.name} ${rank} — ${
     state === "cooling" ? `cooling, ${remainingSeconds}s remaining` : state
   }`;
   return (
@@ -238,7 +251,7 @@ function DesktopAbilitySlot({
         )}
       </div>
 
-      <div className="combat-ability-slot__name">{ability.name}</div>
+      <div className="combat-ability-slot__name">{ability.name} {rank}</div>
     </div>
   );
 }
@@ -250,14 +263,15 @@ export function AbilityBar() {
   const cooldownStartedAt = useAtomValue(abilityCooldownStartedAtAtom);
   const buffs = useAtomValue(activeBuffsAtom);
   const cast = useAtomValue(abilityCastAtom);
+  const playerTier = useAtomValue(playerTierAtom);
 
   // Tick a wall clock so cooldown sweeps / flashes animate. The bar only mounts
   // content when an ability is equipped, so this stays cheap.
   const [now, setNow] = useState(() => Date.now());
 
   // Guard buffs are per-slot ids, so the tile for guard slot N lights up only
-  // when THAT slot's buff is up. Second Wind has no DR buff of its own, so it
-  // still keys off its dedicated effect id.
+  // when THAT slot's buff is up. A Recovery guard has no DR buff of its own, so
+  // it keys off its own per-slot Recovery effect id.
   const activeBuffIds = new Set(buffs.map((b) => b.id));
 
   // Ordered so every Technique sits left of every Guard.
@@ -285,15 +299,18 @@ export function AbilityBar() {
         return { ability, status: castStatus(cast.startedAt, cast.castMs, now) };
       }
       const active =
-        slot === "guard" &&
-        (activeBuffIds.has(guardEffectIdForSlot(index)) ||
-          activeBuffIds.has(ABILITY_SECOND_WIND_EFFECT_ID));
+        slot === "guard"
+          ? activeBuffIds.has(guardEffectIdForSlot(index)) ||
+            activeBuffIds.has(recoveryEffectIdForSlot(index)) ||
+            activeBuffIds.has("ability-bramble")
+          : activeBuffIds.has(ABILITY_FRENZY_EFFECT_ID) &&
+            ability.shape === "instant";
       return {
         ability,
         status: computeStatus(
           cooldownStartedAt[ability.id] ?? 0,
           firedAt[ability.id] ?? 0,
-          ability.cooldownMs,
+          abilityCooldownMs(ability, playerTier),
           now,
           active,
         ),

@@ -78,12 +78,20 @@ export type CombatEvent =
   // ability client-effect tag which clears it). Purely cosmetic — the rider itself
   // is server-authoritative. Shown to the whole node, mirroring `player-guard`.
   | { kind: 'player-technique-armed'; playerId: string; ability: string }
+  // A reposition Technique moved the player (Charge / Disengage). Both endpoints
+  // are carried because a dash reads as a TRAIL: the client cannot reconstruct
+  // where the player came from once the authoritative position has already
+  // changed. Purely cosmetic — the movement is server-authoritative.
+  | { kind: 'player-reposition'; playerId: string; ability: string; from: Vec2; to: Vec2 }
   // A casted Technique began its wind-up. Mirrors `monster-cast-start`: the client
   // shows a cast bar over the player for `castMs` plus a skill-name callout.
   | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number }
   // The wind-up ended. `fired: false` means it was interrupted by hard CC or lost
   // its target, so the client clears the bar without playing the resolve FX.
-  | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean }
+  // `targetPos` is present only when it fired, and is where the payload landed —
+  // a cast resolves on its own target rather than riding an attack, so there is
+  // no `player-hit` to hang its FX on.
+  | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean; targetPos?: Vec2 }
   // A Rune changed the player's active posture. The authoritative progression
   // delta carries the state; this event exists for immediate visual feedback.
   | { kind: 'stance-switch'; playerId: string; stanceId: string | null };

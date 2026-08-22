@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-08-22) — HISTORICAL.** Superseded by the T1–T4 ability rework; live state in
+> `docs/abilities-current-state.md`, design authority in
+> `design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md`. Wave 1 shipped; Waves 2–3 were replaced
+> by the full 18-ability roster on authored ranks. Kept for rationale — do not treat as current.
+
 # Abilities Evolution — Implementation Plan
 
 **STATUS: Wave 1 SHIPPED (2026-07-24).** Waves 2–3 not started.

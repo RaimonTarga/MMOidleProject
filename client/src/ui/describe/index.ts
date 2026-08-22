@@ -98,12 +98,24 @@ export function abilityLines(
   context: AbilityContext,
 ): DetailLine[] {
   if (!ability) return [];
-  return describeAbility(ability, context).lines.map((line) => ({
-    key: `ability:${line.key}`,
-    label: line.label,
-    value: line.value,
-    help: line.breakdown,
-  }));
+  const described = describeAbility(ability, context);
+  return [
+    // Rank leads, because every number below it comes from that rank and from
+    // nowhere else — an ability deepens by being re-authored a tier up, not by
+    // being multiplied, and the reader has to know which version they are seeing.
+    {
+      key: "ability:rank",
+      label: "Rank",
+      value: described.rank,
+      help: described.rankLabel,
+    },
+    ...described.lines.map((line) => ({
+      key: `ability:${line.key}`,
+      label: line.label,
+      value: line.value,
+      help: line.breakdown,
+    })),
+  ];
 }
 
 /**

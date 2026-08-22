@@ -169,17 +169,17 @@
       "notes": "R1 DRAFT — not generated yet. T2 Desert reposition technique (gap-close + empowered strike). Explicit bans on curved/refresh arrows, which the reticle round showed this style drifts toward."
     },
     {
-      "id": "charged-strike",
-      "out": "UI_icons/abilities/charged-strike.png",
+      "id": "power-strike",
+      "out": "UI_icons/abilities/power-strike.png",
       "size": {
         "w": 32,
         "h": 32
       },
-      "prompt": "full-square fantasy game ability icon for a heavy blow being charged up, one thick blunt wedge-shaped strike mark angles down from upper-left to lower-right through the center of the frame, and three or four short straight charge sparks radiate outward from its widest point like a simple starburst with clear black gaps between them, built from just two flat layers with no shading: a thick deep-indigo outer outline and a solid pale-lightning-white face, the mark fills about 85 percent of the frame, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, limited palette of black deep-indigo and pale-lightning-white, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
-      "negative": "sword, hammer, mace, axe, weapon, blade, hilt, handle, fist, hand, arm, character, lightning bolt zigzag, storm cloud, battery, plug, power symbol, electrical outlet, gauge, meter, progress bar, hourglass, clock, full starburst, many rays, sunburst, star shape, sparkle cluster, glossy, shiny, gradient, glow, halo, soft blur, logo, clipart, transparent background, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "prompt": "full-square fantasy game ability icon for one enormous overhead blow landing, a thick blunt wedge of pale-gold force drives straight down through the center of the frame and flattens into a wide shallow impact bar at the bottom, three short straight force lines splay outward from the impact point with clear black gaps between them, built from two flat layers with no shading: a thick deep-bronze outline and a solid pale-gold face, the mark fills about 85 percent of the frame, limited palette of black deep-bronze and pale-gold, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, lightning bolt zigzag, storm cloud, anvil, hammer head, exclamation mark, arrow, downward chevron, star shape, sunburst, sparkle cluster",
       "status": "draft",
       "sources": [
-        "ability:charged-strike"
+        "ability:power-strike"
       ],
       "params": {
         "outline": "selective outline",
@@ -189,7 +189,237 @@
         "generationScale": 2,
         "noBackground": false
       },
-      "notes": "R1 DRAFT — not generated yet. T2 Mountain casted technique (first player cast). Weapon bans carried over from the sweep round, which repeatedly rendered literal swords."
+      "notes": "R1 DRAFT - not generated. T1 Mountain reference all-damage cast (renamed lineage of charged-strike). Must read as WEIGHT, not speed - it is the ability every other cast is measured against."
+    },
+    {
+      "id": "hamstring",
+      "out": "UI_icons/abilities/hamstring.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a crippling low cut, one short curved sickly-green gash sweeps flat across the lower third of the frame from left to right and two thin drag lines trail behind it toward the left, the gash is a disembodied cut of green light with nothing making it, thickest at its middle and pointed at both ends, the whole mark sits low in the frame and fills about 80 percent of its width, limited palette of black deep-olive and bright sickly-green, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, crescent moon, full circle, boomerang, ribbon, banner, snake, worm, rope, chain, leaf, vine, plant, wind gust, swirl",
+      "status": "draft",
+      "sources": [
+        "ability:hamstring"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T2 Jungle slow technique. The cut must read LOW and horizontal: the ability takes the legs and leaves everything else working."
+    },
+    {
+      "id": "endure",
+      "out": "UI_icons/abilities/endure.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for stubborn lasting endurance, one wide low bronze dome arches over a thick flat baseline bar across the bottom of the frame, two thinner concentric bronze arcs sit inside it with clear black gaps between them, built from two flat layers with no shading: a thick dark-brown outline and a solid warm-bronze face, the shape is squat and heavy and fills about 85 percent of the frame, limited palette of black dark-brown and warm-bronze, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, heater shield, kite shield, shield crest, tower shield, helmet, armor plate, rainbow, umbrella, bridge, tortoise, turtle shell, hourglass, clock",
+      "status": "draft",
+      "sources": [
+        "ability:endure"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T2 Desert sustained mitigation. Deliberately WIDE AND LOW where Brace is a tall shield - the two Guards must not read as the same icon in different colors."
+    },
+    {
+      "id": "binding-strike",
+      "out": "UI_icons/abilities/binding-strike.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for roots locking a target in place, four short thick pale-blue bands close inward toward the center of the frame from the four diagonals and meet at a small bright ring, three blunt spikes drive down into a flat ground bar at the bottom, built from two flat layers with no shading: a thick deep-slate outline and a solid pale-ice-blue face, the arrangement fills about 85 percent of the frame, limited palette of black deep-slate and pale-ice-blue, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, chain links, padlock, handcuffs, rope knot, spider web, net, snowflake, ice crystal, clock, gear, cog, target reticle, crosshair",
+      "status": "draft",
+      "sources": [
+        "ability:binding-strike"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T3 Tundra root. Bands close at GROUND level - root stops movement only, so nothing here may suggest the head or the hands."
+    },
+    {
+      "id": "break-free",
+      "out": "UI_icons/abilities/break-free.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for shattering out of restraint, four thick violet arc fragments fly apart from the center of the frame toward the four corners with wide black gaps between them, they are clearly broken pieces of one ring with jagged snapped ends, a small bright white burst sits at the center where the ring gave way, built from two flat layers with no shading: a thick deep-purple outline and a solid bright-violet face, the pieces fill about 85 percent of the frame, limited palette of black deep-purple and bright-violet, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, intact ring, complete circle, chain links, padlock, handcuffs, explosion cloud, fire, star shape, sunburst, sparkle cluster, glass shards, mirror, crack texture",
+      "status": "draft",
+      "sources": [
+        "ability:break-free"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T3 Tundra hard-CC counter. The ring must be UNMISTAKABLY broken - an intact ring reads as a buff, which is the opposite of the ability."
+    },
+    {
+      "id": "frenzy",
+      "out": "UI_icons/abilities/frenzy.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a burst of raw attack speed, six thick straight orange speed streaks radiate outward from a small hot core at the center of the frame with wide black gaps between them, the streaks are tapered and clearly point outward, built from two flat layers with no shading: a thick deep-rust outline and a solid bright-orange face, the burst fills about 85 percent of the frame, limited palette of black deep-rust and bright-orange, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, sun, sunburst rays all around, star shape, sparkle, fire, flame, explosion, clock, stopwatch, gauge, speedometer, wing, feather, lightning bolt",
+      "status": "draft",
+      "sources": [
+        "ability:frenzy"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T3 Volcano attack-speed window. Pure MOTION - Frenzy grants attack speed and nothing else, so no blade, no impact and no numbers may appear."
+    },
+    {
+      "id": "quick-strike",
+      "out": "UI_icons/abilities/quick-strike.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a small fast jab, two short thin pale-gold tick marks cross near the center of the frame in a loose X with a clear black gap where they nearly meet, both ticks are tapered and pointed at each end, they are disembodied marks of light with nothing making them, deliberately small and simple, the marks fill about 60 percent of the frame, limited palette of black deep-amber and pale-gold, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, large slash, big crescent, crossed swords, scissors, letter X, plus sign, star shape, sparkle cluster, explosion, impact burst",
+      "status": "draft",
+      "sources": [
+        "ability:quick-strike"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T3 Volcano spam technique. Deliberately the QUIETEST icon in the set - it fires every 2.5s and must not out-shout Sweep or Power Strike on the bar."
+    },
+    {
+      "id": "disengage",
+      "out": "UI_icons/abilities/disengage.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for breaking away to open up distance, one thick tapered pale-grey-blue streak sweeps from the right side of the frame toward the lower left and two thinner motion lines trail behind it to the right, a faint hollow outline of where it started sits at the right edge, built from two flat layers with no shading: a thick deep-navy outline and a solid pale-grey-blue face, the streak fills about 85 percent of the frame, limited palette of black deep-navy and pale-grey-blue, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, bow, arrow with fletching, quiver, boot, footprint, wing, feather, cloud, smoke puff, door, exit sign, refresh icon, circular arrow",
+      "status": "draft",
+      "sources": [
+        "ability:disengage"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T4 Trench escape. Reads COLD and backward where Charge reads hot and forward - the two mobility techniques are mirror images and must not share a color."
+    },
+    {
+      "id": "recuperate",
+      "out": "UI_icons/abilities/recuperate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a slow steady mend, three thin pale-teal rings stack upward through the center of the frame getting smaller toward the top with clear black gaps between them, a soft solid teal core sits at the bottom ring, built from two flat layers with no shading: a thick deep-teal outline and a solid pale-teal face, the stack fills about 80 percent of the frame, limited palette of black deep-teal and pale-teal, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, heart, cross, plus sign, medical symbol, potion bottle, flask, leaf, plant, water droplet, wave, spiral, target rings, bullseye",
+      "status": "draft",
+      "sources": [
+        "ability:recuperate"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T4 Trench long Recovery. Must read SLOW and stacked where Second Wind reads as one upward burst - they are opposite shapes of the same access."
+    },
+    {
+      "id": "snipe",
+      "out": "UI_icons/abilities/snipe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a long deliberate shot, one very long thin pale-blue tracer line runs corner to corner across the frame on a diagonal from lower left to upper right, a small bright burst sits at its upper-right end and a smaller one at its lower-left origin, two short parallel range ticks cross the line near its middle, built from two flat layers with no shading: a thick deep-steel outline and a solid pale-ice-blue face, the line spans about 95 percent of the frame, limited palette of black deep-steel and pale-ice-blue, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, rifle, gun, crossbow, bow, arrow with fletching, scope, crosshair, target reticle, bullseye, concentric circles, laser beam glow, lightning bolt",
+      "status": "draft",
+      "sources": [
+        "ability:snipe"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T4 Wasteland long-range cast. The LENGTH of the line is the ability - it must span the whole frame corner to corner or the icon says nothing."
+    },
+    {
+      "id": "stunning-strike",
+      "out": "UI_icons/abilities/stunning-strike.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a concussive blow that puts a target down, one thick blunt pale-yellow impact wedge drives in from the upper left to a burst point just above the center of the frame, and three small four-pointed stars circle above that point in a shallow arc with clear black gaps between them, built from two flat layers with no shading: a thick deep-ochre outline and a solid pale-yellow face, the arrangement fills about 85 percent of the frame, limited palette of black deep-ochre and pale-yellow, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, dagger, axe, hammer, mace, spear, blade, hilt, handle, weapon, character, humanoid figure, hand, arm, face, glossy, shiny, gradient, glow, halo, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow, logo, clipart, transparent background, hammer, mace, club, fist, skull, face, head, helmet, lightning bolt, explosion cloud, sunburst, single large star, sparkle cluster, spiral, swirl",
+      "status": "draft",
+      "sources": [
+        "ability:stunning-strike"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT - not generated. T4 Wasteland hard control. Plays HIGH with circling stars where Binding Strike plays at the ground - that placement is the only fast read distinguishing stun from root."
     }
   ]
 }

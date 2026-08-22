@@ -30,7 +30,7 @@ Update this doc at the end of every session. The roadmap says *what and why*; th
 | 4 | Global Mastery | all | 🔨 | resolved | `global-mastery-*.md` | IMPLEMENTED; `globalMastery()` = sum of biome levels (excl clearing, derived); replaces tier in RP budget (`/10` placeholder) + upgrade-cap seam (`min(structural, gmCeiling)`, non-binding placeholder); on PlayerView + admin; numbers = your balance pass |
 | 5 | Rune reward sourcing & RP budget | all | 🔨 | resolved | `rune-system-*.md` | IMPLEMENTED; RuneRecipe biome gating (recipeGroup+requiredBiomeLevel) + shared isRuneRecipeUnlocked; all 11 runes moved to biome gating (boss channel reserved); RP-capacity recipes + runePointBonus fully retired (RP from GM); requiredBiomeLevel values = your balance pass |
 | 6 | Gear evolution & reconstruction | all | 🔨 | resolved | `gear-evolution-*.md` | MACHINERY + 1 worked lineage IMPLEMENTED; Recipe lineageId/evolvesFrom + reconstructCost; MAX_UPGRADE→5; systems/evolution.ts; server evolveItem (evolve/reconstruct) + crafting:evolveItem; ForgeTab Evolve/Reconstruct; rapier lineage (flash-rapier→gale-needle/thorn-needle). Other slots/biomes + numbers = your pass |
-| 7 | Skills rework | T1+ | 🔨 | resolved | `abilities-*.md` | IMPLEMENTED (system + Sweep/Brace pair). New Abilities system; state on TracksProgression (like runes); Technique=arm-next-attack (hasArmedAbility) / Guard=immediate via the BUFF SYSTEM (explicit `ability-guard` buff, e.g. Brace=DR); built-in heuristic + dedicated TECHNIQUE/GUARD rune-override channels (fire-technique/fire-guard, starter); AbilityRecipe biome-gated; desktop + mobile UI. Evolution + per-biome content + numbers = later |
+| 7 | Skills rework | T1+ | 🔨 | resolved | `abilities-*.md` | IMPLEMENTED (full T1–T4 roster of 18 on authored ranks; see 2026-08-22 below). New Abilities system; state on TracksProgression (like runes); Technique=arm-next-attack (hasArmedAbility) / Guard=immediate via the BUFF SYSTEM (explicit `ability-guard` buff, e.g. Brace=DR); built-in heuristic + dedicated TECHNIQUE/GUARD rune-override channels (fire-technique/fire-guard, starter); AbilityRecipe biome-gated; desktop + mobile UI. Evolution + per-biome content + numbers = later |
 | 8 | Charms & recovery layers | all | 🔨 | resolved | `charms-*.md` | IMPLEMENTED (machinery + 2 worked charms). Net-new = Guard-ability amplifier: 4 `guard.*` passives (cooldown-reduction / potency / duration / heal-on-fire) read at fire time in `abilityFiring.ts`; ride the existing mechanicEffects→passives pipeline (no new state). 7 "X Core" charms renamed (slot stays `recovery`). Class baseline recovery untouched. Numbers + per-biome charm identities = your pass |
 | 9 | Cores | T2+ | 🔨 | resolved | `cores-*.md` | **REWORKED 2026-08-03; ICONS 2026-08-04** — see `docs/archive/cores-rework-implementation-plan.md`. Eligibility collapsed from `rangeTag` (close/mid/far/universal/party) to `coreEligibility` (melee/ranged/unrestricted); `party` dropped. 12-core cast authored one per biome (3 biomes carry two), replacing the 5 placeholder forest cores (deleted; `playerRepo` now prunes unknown item ids on hydrate), with twelve bespoke PixelLab icons wired to the recipes. Fixed a TIER-PLACEMENT bug: a range is not picked until player tier 3, so the old restricted cores sat in the T2 band and were craftable-but-inert. 7 new passive consumers (recovery funnel, elite damage, on-hit, debuff duration/potency via an enumerated registry, 2 mobility clauses). NO DoT core — `core.attack-mult` already scales DoT. Growth = evolve into named branches at the next tier (none authored yet). Numbers = your pass |
 | 10 | Stances | T2 | 🔨 | resolved | `stances-*.md` | REWORKED: 11 modal stances; one free default; any learned stance can be a destination on a priority-ordered `switch-stance` Rune rule; destination-specific RP; non-destructive 1.5s-dwell switching with HP-percentage preservation; game-style destination sigil UI. Numbers remain a balance pass. |
@@ -172,9 +172,23 @@ current-state docs are linked where available; the rest are filled at the step's
   forest (flash-rapier base → gale-needle evolved + thorn-needle branch). See `gear-evolution-*.md`.
 - Per-id upgrade model unchanged (item id = recipe id; `itemUpgrades` per-id). Numbers = user pass.
 
-### 7. Skills rework  — 🔨 IMPLEMENTED (system + T1 roster + abilities-evolution Wave 1; paired docs `abilities-*.md`)
-- **2026-07-24 — abilities-evolution Wave 1 shipped** (plan: `docs/abilities-evolution-implementation-plan.md`,
-  design baseline: `design_docs/abilities-evolution-plan-updated.md`). Engine: `equippedAbilities` became
+### 7. Skills rework  — 🔨 IMPLEMENTED (full T1–T4 ability roster; paired docs `abilities-*.md`)
+- **2026-08-22 — T1–T4 ability rework shipped** (design: `design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md`,
+  live state: `docs/abilities-current-state.md`). Replaced `scalePerTierPct` with **authored per-tier
+  ranks** (`AbilityRank`: effect + cooldown + castMs + rangeBonus, clamped at both ends) — an ability now
+  deepens by being re-authored a tier up, and may change which axis it deepens once one caps. Roster went
+  8 → **18** (11 Techniques / 7 Guards) across all eleven biomes, two per biome where a biome owns two.
+  Net-new mechanics: the **control ladder** (slow / root / stun, kept structurally distinct) with
+  `combat/status/monsterControl.ts` as the single writer for a monster's slowed stats (chill + freeze +
+  ability slow reconciled to the strongest per axis — two writers each caching "the clean base" ratcheted);
+  **ability engagement range** (`attackRange + rank.rangeBonus`) with its own target resolution, which is
+  what finally makes Charge and Snipe worth a slot; `has-hard-control` / `target-beyond-reach` /
+  `enemy-within` triggers; Frenzy's attack speed as a cadence-gate multiplier (never an `attackCooldown`
+  write — the Zealot already mutates that stat); per-slot Recovery sources; Cleanse made discrete with no
+  DR rider; `charged-strike` → `power-strike` re-home with an id migration. Bespoke procedural FX for all
+  18 abilities. 89/89 tests. Ten icons drafted, NOT generated. T5+ ranks not authored.
+- **2026-07-24 — abilities-evolution Wave 1 shipped** (plan: `docs/archive/abilities-evolution-implementation-plan.md`,
+  design baseline: `design_docs/archive/abilities-evolution-plan-updated.md`; both now archived). Engine: `equippedAbilities` became
   ORDERED LISTS per slot kind (order = fire priority) with `abilitySlotCount(playerTier)` granting
   T3 → 2 Technique / T4 → 2 Guard; per-ABILITY cooldowns; one offensive channel with deterministic
   arbitration; one Guard activation per window (buffs still layer); per-slot Guard buff ids
