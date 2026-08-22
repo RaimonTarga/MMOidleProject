@@ -35,9 +35,19 @@ interface StanceDef {
   name: string;
   blurb: string;
   runeCost: number;
-  statEffects?: Partial<StatEffects>;
+  modifiers?: StanceModifiers;
   mechanicEffects?: MechanicEffects;
+  behaviors?: readonly StanceBehavior[];
   icon?: string;
+}
+
+interface StanceModifiers {
+  attackPct?: number;       // 0.15 -> x1.15 Attack
+  attackSpeedPct?: number;  // percentage points into the shared attack-speed accumulator
+  platingPct?: number;
+  moveSpeedPct?: number;
+  evasion?: number;         // percentage POINTS; evasion is already a 0-1 fraction
+  damageTakenPct?: number;  // 0.10 -> take 10% more; -0.25 -> take 25% less
 }
 ```
 
@@ -46,9 +56,20 @@ Authoring rules:
 - IDs are stable, lowercase kebab-case, and should normally end in `-stance`.
 - Names and blurbs describe the posture and its tradeoff, not a recommended Rune rule.
 - `runeCost` is the destination surcharge paid by every Rune rule targeting the Stance.
-- Static numeric modifiers belong in `statEffects`.
+- **Every static modifier is a PERCENTAGE.** A Stance is a temporary mode that can switch
+  automatically, so a flat grant is the whole character at T1 and a rounding error at T5.
+  `StanceModifiers` deliberately has no flat fields; do not add one.
+- **No Stance may change Max HP.** Resizing the pool means preserving HP percentage across
+  a switch the player never asked for. A survival posture buys its survival with plating,
+  a damage-taken multiplier, and an offensive sacrifice.
+- **Incoming damage uses `damageTakenPct`, never `damageReduction`.** The additive DR pool
+  clamps to [0, 0.9], which silently discards a Stance's "you take more damage" drawback for
+  any character without gear DR, and lets the upside compound into the shared cap.
+- Recovery-shaped effects **activate a fraction of the player's own Recovery rate**
+  (`defense.recovery-active-pct`); they never grant flat Recovery.
 - Use `mechanicEffects` only when an existing generic mechanic reader supports the design.
-- Truly behavioral effects belong in the server Stance runtime, not in misleading stat keys.
+- Truly behavioral effects belong in the server Stance runtime, not in misleading stat keys —
+  and every one of them must be written out in `behaviors` so the player can read it.
 - Add renamed-ID migration before changing an ID that may exist in saves.
 
 `NO_STANCE_ID` is reserved. It is not learned or crafted, has no modifiers, and contributes
@@ -79,7 +100,10 @@ These are relative authoring bands, not immutable balance values.
 
 Choose the smallest implementation seam that expresses the effect:
 
-1. Static stats: add `statEffects`; the normal stance-stat recalculation applies them.
+1. Static stats: add `modifiers`; the normal stance-stat recalculation applies them. Attack
+   speed and evasion fold with the skill nodes (step 2a of `recalculatePlayerStats`); attack,
+   plating and move speed are a Stance-owned multiplicative layer applied *after* the class
+   affinity fold, so `+15% Attack` means x1.15 for every class at every gear level.
 2. Existing generic mechanic: add a documented `mechanicEffects` entry and reader.
 3. Combat event: register a deterministic listener in
    `server/src/systems/player/stances/stanceSwitch.ts`.
@@ -100,11 +124,20 @@ lethal self-damage—must be explicit and tested.
 
 Every learnable Stance needs:
 
-- a recipe in `shared/src/stanceRecipes.ts` with an intentional tier/mastery gate;
+- a recipe in `shared/src/stanceRecipes.ts` with an intentional tier/mastery gate that is
+  actually REACHABLE — the biome must have nodes at the recipe's tier, `requiredBiomeLevel`
+  must be within `biomeLevelCap(tier, group)`, and `catalystCost` must name a live modifier
+  family the biome is allowed to roll. `shared/src/data/recipeGates.test.ts` enforces all three;
 - a visible entry in the Stance sanctum after it is learned;
 - a destination token in the Rune wheel;
 - a concept-icon mapping or dedicated asset in `client/src/ui/conceptIcons.ts`;
-- readable effect text that exposes both benefit and drawback.
+- readable effect text that exposes every static modifier, every server-side behavior, all
+  thresholds/caps, any in-combat-only restriction, whether the Stance can kill the player,
+  and the destination RP cost.
+
+Effect text describes what the posture does once ACTIVE. It must never present a Rune-owned
+condition as a Stance property: Enraged does not "activate below 25% HP" — a rule the player
+built does that, and the Rune UI already says so.
 
 The generic introductory pair should teach the system cheaply. More trajectory-defining or
 sustain-heavy Stances should appear later, when enemies can provide meaningful counterplay.

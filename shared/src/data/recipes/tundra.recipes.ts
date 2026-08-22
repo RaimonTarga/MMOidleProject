@@ -229,7 +229,7 @@ export const tundraRecipeEntries = [
     id: 'core-scout', name: 'Scout Core',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'core', coreEligibility: 'ranged',
     lineageId: 'core-scout',
-    cost: { blue: 110 }, catalystCost: { alacrity: 3 }, // family-tag: mobility/tempo → Alacrity
+    cost: { blue: 110 }, catalystCost: { heavy: 3 }, // Alacrity is BANNED in Tundra; its native family is Heavy
     stats: {}, tier: 3,
     // The cooldown clause is INERT without an ability tagged `mobility` (today:
     // Charge); the damage and movement halves are always on.

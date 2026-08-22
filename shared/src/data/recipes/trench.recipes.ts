@@ -108,4 +108,22 @@ export const trenchRecipeEntries = [
   }],
 
 
+  // Debuff-forward Relic in the abyss: what the trench leaves on you is the point.
+  // Moved off Swamp, which stops at T3 — its level-24 gate cost ~1,500 kills of
+  // outgrown content. Trench starts at T4, so its whole T4 band is levels 1-6.
+  ['relic-virulent-hourglass', {
+    id: 'relic-virulent-hourglass', name: 'Virulent Hourglass',
+    recipeGroup: 'trench', requiredBiomeLevel: 5, slot: 'relic',
+    lineageId: 'relic-virulent-hourglass',
+    cost: { green: 220 }, catalystCost: { dominion: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': 0.20,
+      'relic.mechanic-potency': -0.20,
+      'relic.mechanic-debuff-effect': 0.25,
+    },
+    icon: 'items/relics/virulent-hourglass.png',
+    description: 'The sand falls quickly; what it leaves behind grows harder to escape.',
+  }],
+
 ] satisfies [string, Recipe][];

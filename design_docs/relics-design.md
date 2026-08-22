@@ -35,10 +35,10 @@ system centralizes this in `RELIC_UNLOCK_PLAYER_TIER` and `relicIsUnlocked()`.
 | Secondary stats | Mechanic Buff Effect and Mechanic Debuff Effect |
 | Negative values | Frequency and potency may be negative and are the principal trade-off axes |
 | Unlock | Tier 4 / live `playerTier: 4` |
-| Acquisition | One unique mastery-gated recipe in each participating biome; not every biome must ship a relic |
+| Acquisition | One mastery-gated recipe per participating biome; not every biome must ship a relic. AMENDED 2026-08-22: a relic may only live in a biome that has nodes at tier 4, otherwise its T4 mastery gate is reachable only by grinding retired content. Mountain hosts two as a result. |
 | Item upgrades | No `+0…+5` enhancement track |
 | Long-term progression | Named evolution lineages, consuming the predecessor at `+0` |
-| Launch scope | Eight base relics; Cave, Volcanic, and Trench may receive later lines |
+| Launch scope | Eight base relics; Cave, Forest, Plains and Swamp may receive later lines |
 
 ## Design principles
 

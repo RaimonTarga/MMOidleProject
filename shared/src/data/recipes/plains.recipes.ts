@@ -226,18 +226,4 @@ export const plainsRecipeEntries = [
     description: 'Balanced for any hand. It asks no commitment, and rewards none in particular.',
   }],
 
-  ['relic-equilibrium-shard', {
-    id: 'relic-equilibrium-shard', name: 'Equilibrium Shard',
-    recipeGroup: 'plains', requiredBiomeLevel: 24, slot: 'relic',
-    lineageId: 'relic-equilibrium-shard',
-    cost: { yellow: 200 }, catalystCost: { swarming: 4 },
-    stats: {}, tier: 4,
-    mechanicEffects: {
-      'relic.mechanic-frequency': 0.10,
-      'relic.mechanic-potency': 0.10,
-    },
-    icon: 'items/relics/equilibrium-shard.png',
-    description: 'A clean answer with no hidden edge: a little more rhythm, a little more force.',
-  }],
-
 ] satisfies [string, Recipe][];

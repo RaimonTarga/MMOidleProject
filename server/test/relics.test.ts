@@ -49,12 +49,12 @@ function slices(id: string, tier: number, nodeId = 'node-clearing'): PersistedPl
 }
 
 const expectedRelics = {
-  'relic-hastebound-dial':     { biome: 'forest',    frequency: 0.35, potency: -0.25, buffEffect: 0,    debuffEffect: 0 },
+  'relic-hastebound-dial':     { biome: 'volcanic',  frequency: 0.35, potency: -0.25, buffEffect: 0,    debuffEffect: 0 },
   'relic-colossus-heart':      { biome: 'mountain',  frequency: -0.30, potency: 0.40, buffEffect: 0,    debuffEffect: 0 },
-  'relic-equilibrium-shard':   { biome: 'plains',    frequency: 0.10, potency: 0.10, buffEffect: 0,     debuffEffect: 0 },
+  'relic-equilibrium-shard':   { biome: 'mountain',  frequency: 0.10, potency: 0.10, buffEffect: 0,     debuffEffect: 0 },
   'relic-verdant-flywheel':    { biome: 'jungle',    frequency: 0.20, potency: -0.20, buffEffect: 0.25, debuffEffect: 0 },
   'relic-glacial-bell':        { biome: 'tundra',    frequency: -0.20, potency: 0.25, buffEffect: 0.25, debuffEffect: 0 },
-  'relic-virulent-hourglass':  { biome: 'swamp',     frequency: 0.20, potency: -0.20, buffEffect: 0,    debuffEffect: 0.25 },
+  'relic-virulent-hourglass':  { biome: 'trench',    frequency: 0.20, potency: -0.20, buffEffect: 0,    debuffEffect: 0.25 },
   'relic-withering-lens':      { biome: 'desert',    frequency: -0.20, potency: 0.25, buffEffect: 0,    debuffEffect: 0.25 },
   'relic-haunted-prism':       { biome: 'graveyard', frequency: -0.10, potency: -0.10, buffEffect: 0.35, debuffEffect: 0.35 },
 } as const;
@@ -93,7 +93,12 @@ for (const recipe of relics) {
   assert(getMaxUpgrade(ITEM_DATABASE.get(recipe.id)!) === 0, `${recipe.id} stays off the +N track`);
 }
 
-for (const biome of ['cave', 'volcanic', 'trench']) {
+// Forest, Plains and Swamp lost their Relics on 2026-08-22: none of the three has a
+// node past T3, so their T4-band mastery gates were only reachable by grinding thousands
+// of kills of content the player had outgrown. Volcanic and Trench took two of them and
+// Mountain — the one biome with nodes at every tier — took the third, so it is now the
+// only biome hosting two.
+for (const biome of ['cave', 'forest', 'plains', 'swamp']) {
   assert(!relics.some((recipe) => recipe.recipeGroup === biome), `${biome} intentionally has no launch Relic`);
 }
 

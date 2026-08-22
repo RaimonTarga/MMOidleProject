@@ -1,4 +1,15 @@
-import { GAME_CONFIG, NO_STANCE_ID, STARTER_RUNE_IDS, emptyEquipment, sanitizeRuneLoadout } from "@mmo-idle/shared";
+import {
+  BRAWLER_MAX_REDUCTION,
+  BERSERKER_SELF_DAMAGE_PCT,
+  GAME_CONFIG,
+  NO_STANCE_ID,
+  STANCE_DATABASE,
+  STARTER_RUNE_IDS,
+  brawlerDamageReduction,
+  emptyEquipment,
+  sanitizeRuneLoadout,
+  stanceDef,
+} from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
@@ -53,7 +64,12 @@ const advance = (ms: number): void => { now += ms; updateCombatState(world, ms);
 updateRuneDerivedConfig(world, now);
 updateStanceSwitch(world, 0, now);
 assert(player.tracksProgression.activeStance === "offensive-stance", "default stance should initialize active");
-assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK + 20, "offensive stats should be folded");
+// Percentage posture, not a flat grant: the promise is a multiple of the stat line
+// underneath, which is what makes a stance read the same at T1 and at T5.
+assert(
+  player.dealsDamage.attack === Math.round(GAME_CONFIG.PLAYER_ATTACK * 1.15),
+  "offensive stance should multiply attack by its authored percentage",
+);
 
 player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
 advance(200);
@@ -68,18 +84,32 @@ player.tracksCombat.counters["test.combo"] = 4;
 updateRuneDerivedConfig(world, now);
 updateStanceSwitch(world, STANCE_SWITCH_COOLDOWN_MS, now);
 assert(player.tracksProgression.activeStance === "defensive-stance", "rule should switch to its own destination");
-assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK - 15, "destination should replace old stance stats");
+assert(
+  player.dealsDamage.attack === Math.round(GAME_CONFIG.PLAYER_ATTACK * 0.85),
+  "destination should replace, not compound with, the old stance's posture",
+);
 assert(player.tracksCombat.cooldowns["ability.cd.test"] === 9_000, "unrelated cooldown should survive a stance recalc unchanged");
 assert(player.tracksCombat.counters["test.combo"] === 4, "unrelated counters should survive stance recalc");
 assert(Math.abs(player.hasHealth.hp / player.hasHealth.maxHp - hpPctBefore) < 0.001, "stance switches should preserve HP percentage");
 
-// Max-HP semantics are observable by switching to Tanking as a new rule destination.
+// Tanking is the heaviest posture in the cast and is the max-HP canary: stances are
+// temporary modes that switch on their own, so none of them may resize the HP pool.
+const tankingMaxHp = player.hasHealth.maxHp;
 player.tracksProgression.runesEquipped[0].targetStanceId = "tanking-stance";
 advance(STANCE_SWITCH_COOLDOWN_MS);
 updateRuneDerivedConfig(world, now);
 updateStanceSwitch(world, STANCE_SWITCH_COOLDOWN_MS, now);
 assert(player.tracksProgression.activeStance === "tanking-stance", "a rule destination should be freely replaceable");
-assert(Math.abs(player.hasHealth.hp / player.hasHealth.maxHp - hpPctBefore) < 0.001, "max-HP stance should preserve HP percentage");
+assert(player.hasHealth.maxHp === tankingMaxHp, "no stance may change max HP");
+assert(Math.abs(player.hasHealth.hp / player.hasHealth.maxHp - hpPctBefore) < 0.001, "a stance switch should preserve HP percentage");
+
+for (const stance of STANCE_DATABASE.values()) {
+  const mods = stance.modifiers ?? {};
+  assert(
+    !("maxHp" in mods) && !("maxHpPct" in mods),
+    `${stance.id} must not carry a max-HP modifier`,
+  );
+}
 
 // The neutral posture is a real, zero-cost Rune destination despite not being a learned stance.
 player.tracksProgression.runesEquipped[0].targetStanceId = NO_STANCE_ID;
@@ -120,16 +150,69 @@ for (let i = 0; i < 3; i++) {
 const surrounded = makeCombatContext(target, "monster", player, "player");
 surrounded.damage = 100;
 emitCombatEvent("onDamageTaken", surrounded, world);
-assert(surrounded.damage < 100 && surrounded.damage >= 60, "Brawler should apply capped crowd-pressure mitigation");
+assert(
+  surrounded.damage === Math.round(100 * (1 - brawlerDamageReduction(3))),
+  "Brawler should read the authoritative aggressor count",
+);
+assert(brawlerDamageReduction(99) === BRAWLER_MAX_REDUCTION, "Brawler mitigation should be capped");
+assert(brawlerDamageReduction(0) === 0, "Brawler should do nothing with nobody engaging");
+
+// Incoming-damage postures must survive a bare stat line. The old model pushed them
+// into the additive DR pool, which clamps at 0 — so with no gear DR the drawback was
+// silently free and the whole trade evaporated.
+player.tracksProgression.activeStance = "offensive-stance";
+recalculatePlayerStanceStats(world, player);
+assert(player.mitigatesDamage.damageReduction === 0, "setup: the bare test character has no gear DR");
+const punished = makeCombatContext(target, "monster", player, "player");
+punished.damage = 100;
+emitCombatEvent("onDamageTaken", punished, world);
+const offensiveTaken = stanceDef("offensive-stance")?.modifiers?.damageTakenPct ?? 0;
+assert(offensiveTaken > 0, "setup: Offensive should carry a damage-taken drawback");
+assert(
+  punished.damage === Math.round(100 * (1 + offensiveTaken)),
+  "an offensive posture's damage-taken drawback must apply with zero gear DR",
+);
+
+player.tracksProgression.activeStance = "tanking-stance";
+recalculatePlayerStanceStats(world, player);
+const braced = makeCombatContext(target, "monster", player, "player");
+braced.damage = 100;
+emitCombatEvent("onDamageTaken", braced, world);
+assert(braced.damage < 100, "a defensive posture should reduce incoming damage multiplicatively");
 
 player.tracksProgression.activeStance = "berserker-stance";
 recalculatePlayerStanceStats(world, player);
 markEngaged(world, player, now);
 const berserkerHp = player.hasHealth.hp;
 updateStanceSwitch(world, 1_000, now + 1_000);
-assert(player.hasHealth.hp === berserkerHp - Math.round(player.hasHealth.maxHp * 0.02), "Berserker should deal deterministic self-damage");
+assert(
+  player.hasHealth.hp === berserkerHp - Math.round(player.hasHealth.maxHp * BERSERKER_SELF_DAMAGE_PCT),
+  "Berserker should deal deterministic self-damage",
+);
 player.hasHealth.hp = 1;
 updateStanceSwitch(world, 1_000, now + 2_000);
 assert(world.getPlayerEntity(player.isPlayer.id)?.isDead !== undefined, "Berserker self-damage should be lethal");
+
+// Every server-runtime effect must be written down for the player. A stance whose
+// behavior lives in a combat listener cannot describe itself, so an unlisted one is
+// invisible — which is the exact failure this pass existed to fix.
+const BEHAVIORAL_STANCES = [
+  "berserker-stance",
+  "predator-stance",
+  "brawler-stance",
+  "execute-stance",
+];
+for (const id of BEHAVIORAL_STANCES) {
+  const stance = stanceDef(id);
+  assert(!!stance, `${id} should exist`);
+  assert(
+    (stance!.behaviors?.length ?? 0) > 0 || !!stance!.mechanicEffects,
+    `${id} has server-side behavior and must describe it to the player`,
+  );
+}
+assert(
+  !!stanceDef("recuperating-stance")?.mechanicEffects?.["defense.recovery-active-pct"],
+  "Recuperating's identity is in-combat Recovery access, not a flat Recovery grant",
+);
 
 console.log("stances.test.ts: ok");

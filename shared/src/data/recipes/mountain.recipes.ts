@@ -463,4 +463,24 @@ export const mountainRecipeEntries = [
     description: 'A mountain heartbeat: slow enough to feel inevitable, heavy enough to end the argument.',
   }],
 
+  // The no-trade Relic. Mountain is the only biome with nodes at every tier T1-T4,
+  // which makes it the natural home for the one Relic that asks nothing back — and
+  // its level-24 gate is unchanged, because Mountain actually reaches 24 through T4
+  // play. Moved off Plains, which stops at T2: the same gate there cost ~12,500
+  // kills of T2 content. Mountain is the one biome hosting two Relics; the Cores
+  // already double up here for the same reason.
+  ['relic-equilibrium-shard', {
+    id: 'relic-equilibrium-shard', name: 'Equilibrium Shard',
+    recipeGroup: 'mountain', requiredBiomeLevel: 24, slot: 'relic',
+    lineageId: 'relic-equilibrium-shard',
+    cost: { blue: 200 }, catalystCost: { heavy: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': 0.10,
+      'relic.mechanic-potency': 0.10,
+    },
+    icon: 'items/relics/equilibrium-shard.png',
+    description: 'A clean answer with no hidden edge: a little more rhythm, a little more force.',
+  }],
+
 ] satisfies [string, Recipe][];

@@ -218,32 +218,4 @@ export const forestRecipeEntries = [
     description: 'Wound-knit heartwood. It does not stop the blow — it shortens the time you spend regretting it.',
   }],
 
-  // T3 unrestricted — Accelerant: tempo. Trades hit size for hit count, which is
-  // why it reads so differently on an on-hit build than on a big-swing one.
-  ['core-accelerant', {
-    id: 'core-accelerant', name: 'Accelerant Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 15, slot: 'core', coreEligibility: 'unrestricted',
-    lineageId: 'core-accelerant',
-    cost: { green: 90 }, catalystCost: { alacrity: 2 }, // family-tag: attack-speed tempo → Alacrity
-    stats: {}, tier: 3,
-    mechanicEffects: { 'core.attack-speed-mult': 0.25, 'core.attack-mult': -0.12 },
-    icon: 'items/cores/accelerant.png',
-    description: 'The forest keeps a fast rhythm. Match it, and you will find you are swinging before you decide to.',
-  }],
-
-  ['relic-hastebound-dial', {
-    id: 'relic-hastebound-dial', name: 'Hastebound Dial',
-    recipeGroup: 'forest', requiredBiomeLevel: 24, slot: 'relic',
-    lineageId: 'relic-hastebound-dial',
-    cost: { green: 220 }, catalystCost: { alacrity: 4 },
-    stats: {}, tier: 4,
-    mechanicEffects: {
-      'relic.mechanic-frequency': 0.35,
-      'relic.mechanic-potency': -0.25,
-    },
-    icon: 'items/relics/hastebound-dial.png',
-    description: 'The dial runs ahead of every rhythm, trading weight for relentless motion.',
-  }],
-
-
 ] satisfies [string, Recipe][];

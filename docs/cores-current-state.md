@@ -90,8 +90,13 @@ now asserts every restricted core is unreachable at T2 and reachable at T3.
 |---|---|---|
 | Arcanist | mountain (17) | Technique cooldown + power |
 | Controller | swamp (15) | Debuff duration + potency |
-| Accelerant | forest (15) | Attack speed for attack damage |
+| Accelerant | jungle (11) | Attack speed for attack damage |
 | Catalyst | volcanic (3) | On-hit potency for attack damage |
+
+Accelerant moved off Forest on 2026-08-22: Forest has no nodes past T2, so its
+level-15 gate cost a T3 character roughly 1,000 extra kills of outgrown content.
+Jungle carries Alacrity — the core's authored family tag — past T2, so the home and
+the family tag now agree. Cost and amounts are unchanged (Jungle also drops green).
 
 ## Passive keys and their consumers
 

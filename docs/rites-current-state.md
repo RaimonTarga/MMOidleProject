@@ -75,6 +75,27 @@ No SQL migration is required. `PlayerView.riteSlots` remains temporarily as a co
 - Rune and overview meters include Rite and stance-destination costs.
 - Crafting contains all six Rite recipes in the T3 mastery band.
 
+## Progression
+
+One Rite per biome, each charging that biome's native catalyst family and homed where its
+effect answers that biome's pressure:
+
+| Rite | Biome (level) | Why there |
+|---|---|---|
+| Swift Repose | cave (15) | Sparse elite fights leave long gaps worth recovering in |
+| Purification | swamp (15) | The poison biome is where carryover is the problem |
+| Lingering Battle | mountain (15) | Ponderous by identity; a rite about staying engaged |
+| Blood Offering | volcanic (5) | Kill-credit recovery wants the biome that supplies the chain |
+| Mechanic Renewal | tundra (5) | Unchanged |
+| Ability Reprieve | desert (11) | Unchanged |
+
+Fixed 2026-08-22. Four of the six previously sat in Forest, which has no nodes past T2, so
+reaching forest 13-14 as a T3 character meant 300-600 extra kills of outgrown content.
+Separately, three charged retired catalyst families (blight / predation / volatility) and
+one charged Alacrity in a Tundra that bans it — those four could not be crafted at all
+outside the test room. Essence amounts are unchanged; each moved recipe's primary essence
+follows its new home. `shared/src/data/recipeGates.test.ts` enforces all of this.
+
 New Rites currently reuse the closest existing Rite glyphs until dedicated concept art is authored.
 
 ## Coverage

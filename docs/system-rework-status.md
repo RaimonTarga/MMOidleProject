@@ -33,7 +33,7 @@ Update this doc at the end of every session. The roadmap says *what and why*; th
 | 7 | Skills rework | T1+ | 🔨 | resolved | `abilities-*.md` | IMPLEMENTED (full T1–T4 roster of 18 on authored ranks; see 2026-08-22 below). New Abilities system; state on TracksProgression (like runes); Technique=arm-next-attack (hasArmedAbility) / Guard=immediate via the BUFF SYSTEM (explicit `ability-guard` buff, e.g. Brace=DR); built-in heuristic + dedicated TECHNIQUE/GUARD rune-override channels (fire-technique/fire-guard, starter); AbilityRecipe biome-gated; desktop + mobile UI. Evolution + per-biome content + numbers = later |
 | 8 | Charms & recovery layers | all | 🔨 | resolved | `charms-*.md` | IMPLEMENTED (machinery + 2 worked charms). Net-new = Guard-ability amplifier: 4 `guard.*` passives (cooldown-reduction / potency / duration / heal-on-fire) read at fire time in `abilityFiring.ts`; ride the existing mechanicEffects→passives pipeline (no new state). 7 "X Core" charms renamed (slot stays `recovery`). Class baseline recovery untouched. Numbers + per-biome charm identities = your pass |
 | 9 | Cores | T2+ | 🔨 | resolved | `cores-*.md` | **REWORKED 2026-08-03; ICONS 2026-08-04** — see `docs/archive/cores-rework-implementation-plan.md`. Eligibility collapsed from `rangeTag` (close/mid/far/universal/party) to `coreEligibility` (melee/ranged/unrestricted); `party` dropped. 12-core cast authored one per biome (3 biomes carry two), replacing the 5 placeholder forest cores (deleted; `playerRepo` now prunes unknown item ids on hydrate), with twelve bespoke PixelLab icons wired to the recipes. Fixed a TIER-PLACEMENT bug: a range is not picked until player tier 3, so the old restricted cores sat in the T2 band and were craftable-but-inert. 7 new passive consumers (recovery funnel, elite damage, on-hit, debuff duration/potency via an enumerated registry, 2 mobility clauses). NO DoT core — `core.attack-mult` already scales DoT. Growth = evolve into named branches at the next tier (none authored yet). Numbers = your pass |
-| 10 | Stances | T2 | 🔨 | resolved | `stances-*.md` | REWORKED: 11 modal stances; one free default; any learned stance can be a destination on a priority-ordered `switch-stance` Rune rule; destination-specific RP; non-destructive 1.5s-dwell switching with HP-percentage preservation; game-style destination sigil UI. Numbers remain a balance pass. |
+| 10 | Stances | T2 | 🔨 | resolved | `stances-*.md` | REWORKED: 11 modal stances; one free default; any learned stance can be a destination on a priority-ordered `switch-stance` Rune rule; destination-specific RP; non-destructive 1.5s-dwell switching with HP-percentage preservation; game-style destination sigil UI. CORRECTIVE PASS 2026-08-22: flat modifiers replaced by percentages, no stance touches max HP, damage-taken is a stance-local multiplier instead of additive DR, all server behavior exposed in the effect text, recipe gates un-rotted. Magnitudes remain a balance pass. |
 | 11 | Rites (name locked) | T3 | 🔨 | resolved | `rites-*.md` | REWORKED: 6 combat-boundary Rites with RP as the sole constraint; unified ACTIVE/POST/OOC boundary; exact-once combat-end effects; Purification, Mechanic Renewal, Ability Reprieve, Blood Offering, Lingering Battle, and Swift Repose. Numbers remain a balance pass. |
 | 12 | Biome identity / combat ecology | all | 🔨 | resolved | `biome-ecology-*.md` | **multi-session program**. PRIMITIVES + TELEGRAPHS done (A1 packs+call-allies / A2 patrols / A3 swarm; alpha tint + `ecology-pulse`). **ALL 5 STARTERS authored end-to-end** (Forest packs / Plains swarm+caller / Mountain sentinel-patrols+chokepoint-terrain / Swamp rot-pool-hazard-terrain / Cave patrolled-elites+high-detection). Each: open-world primitive tags + biome boss exams + terrain where core identity. **ALL 6 ADVANCED BIOMES authored** (Jungle/Desert/Volcanic/Tundra/Graveyard/Trench) + 5 new shared mechanics + an ELITE-TAG SYSTEM: `openingStrike` (jungle pounce / desert alpha-strike), Sun Mark (`appliesMark`+`markedStrike`, cleansable), `ambientHeat` (Volcanic node-wide soft-timer, `updateAmbientHeat`), `enemyShield.shatter` (Tundra ice-armor break → bonus + freeze via applyStun), `appliesAntiheal` (Trench abyssal pressure, stacks the existing `antiheal` status). ELITE system = `elite` def tag + yellow client outline (derived, no networked field) + `focus-elites` TARGETING rune (ELITE_FOCUS_WEIGHT in targetPriority) + `spawn-adds maxAlive` cap. Graveyard REWORKED to necromancers (`gravewright` raises capped undead that crumble on death — a normal mob with a repeating-spawn-adds bossScript). Terrain helpers: `denseBush()`/`lavaVent()`/`volcanicHeat()`. Reusable terrain placeholder visual (block=gray, hazard=toxic-green). REMAINING: Step 13 boss scaffolding, onAlphaDeath, real terrain sprites, numbers (Step 15) |
 | 12b | Monster combat rework (T1-T4) | all | 🔨 | resolved | `monster-combat-rework-current-state.md` + `design_docs/MONSTER_COMBAT_REWORK_HANDOFF_T1_T4_2026-08-22.md` | **IMPLEMENTED 2026-08-22** (structure + behavior; numbers are NOT). Follows Step 12: that pass gave every biome an ecology, this one gave individual monsters and LINEAGES a readable identity. A good implementation deleted more than it added — blanket evasion, roster-wide DoT, per-mob `rampOnCombat`, per-hit slow spam, universal anti-heal and the pack-alpha SCATTER all removed. Volcano Heat / Tundra Chill already existed as `ambientRamp` node features (Chill gained an attack-slow term); non-recursive corpses were already enforced. New primitives: `flies`, `staticSentry`, `idleAnchor`, `openingVolley`, `cadenceVolley`, `dotEffect.openerStacks`, `cadenceFinisher.rootMs`, `shellUp`, `empowersAllies`, `enemyShield.rechargeAfterCleanMs`, `enemyShield.shatter.vulnerability`, `scalesWithAmbientRamp.chargedOnly`, and four `chargedAttack` riders (`rootMs` / `appliesAntiheal` / `refreshesPlayerDots` / `requiresAmbientStacks`) so every periodic ability arrives with a cast bar instead of its own subsystem. Desert re-cast as EXACT 1:1 controller/dealer duos (dealers removed from the spawn pools so a lone kiter can never spawn). `charnel-brute` DEFERRED TO T5. Bosses untouched. Numbers = Step 15 |
@@ -321,8 +321,9 @@ current-state docs are linked where available; the rest are filled at the step's
   chain. 5 phases (shared → server → UI → content → verify). No new combat listener, no migration,
   no networked-allowlist change. Ready to implement.
 
-### 10. Stances
-- Current state: _none expected_ — confirm.
+### 10. Stances  — ✅ REWORKED + CORRECTED (paired docs `stances-*.md`)
+- Corrective pass 2026-08-22 (`design_docs/archive/STANCE_CORRECTIVE_PASS_HANDOFF_2026-08-22.md`):
+  structure frozen, magnitudes still seeds. See `docs/stances-current-state.md`.
 
 ### 11. Rites/Disciplines/Protocols
 - Current state: _none expected_ — confirm; locate any OOC/between-fight hook.
@@ -1084,4 +1085,69 @@ Append one line per working session: date · step(s) touched · outcome.
             sidebar shows per-tier caps. New shared test itemUpgrades.test.ts (band boundaries,
             thresholds fill bands, tier-scoped ceilings, checkUpgrade tier gating). Verified: 4-pkg
             typecheck + full pnpm test 21/21.
+2026-08-22  STANCE CORRECTIVE PASS (design_docs/archive/STANCE_CORRECTIVE_PASS_HANDOFF_2026-08-22.md).
+            Structure only; magnitudes are seeds for the balance loop. (1) AUTHORING MODEL: StanceDef
+            drops `statEffects` for a percentages-only `StanceModifiers` — flat +65 attack / +250 maxHp
+            / +45 plating / +70 speed are gone. NO stance may change max HP (it forced HP-percentage
+            preservation on a switch the player never asked for). attackSpeedPct + evasion still fold
+            at stats.ts step 2a; attackPct/platingPct/moveSpeedPct are a NEW stance-owned multiplicative
+            layer at step 3e, AFTER applyClassAffinities — deliberately not summed into the affinity
+            bucket, so "+15% Attack" is x1.15 for every class and the tooltip is literally true.
+            (2) DAMAGE TAKEN: new `damageTakenPct`, a multiplicative layer read at hit time by the
+            stance onDamageTaken listener. The old additive `damageReduction` route clamped to [0,0.9],
+            so every stance's "you take more damage" drawback was SILENTLY FREE for any character
+            without gear DR. NOTE this reverses the class-affinity-rework call to fold damageTakenPct
+            into plain DR — that was decided for 4-15% class values; stance values are 10-25% and
+            signed both ways. (3) BEHAVIORAL magnitudes are now named constants in shared/src/stances.ts
+            (BERSERKER_SELF_DAMAGE_PCT, PREDATOR_*, EXECUTE_*, BRAWLER_REDUCTION_BY_AGGRESSORS table
+            8/16/24/31/40% capped at 5+) read by BOTH the server systems and the player-facing copy, so
+            a stance cannot advertise a number it does not apply. Recuperating lost its flat +4 Recovery;
+            its identity is the 80% in-combat Recovery ACTIVATION. (4) UI: new `behaviors` field on
+            StanceDef spells out every server-side effect; stanceLines renders modifiers + behaviors +
+            mechanicEffects + destination RP; every `blurb` rewritten as a mechanics sentence (crafting /
+            rune wheel / map unlocks show only the blurb). Rune-owned CONDITIONS are deliberately never
+            presented as stance properties. (5) RECIPE GATES: eight stance + three rite recipes still
+            charged the RETIRED blight/volatility/predation/brutality catalyst families (uncraftable
+            outside the test room); core-bruiser charged Heavy in a jungle that BANS it and core-scout
+            Alacrity in a tundra that bans it; six recipes had requiredBiomeLevel above their own tier's
+            biomeLevelCap; Fleeting/Brawler/Recuperating sat in biomes retired at their tier (-> jungle /
+            volcanic / jungle). Essence + catalyst AMOUNTS untouched. New shared/src/data/recipeGates.test.ts
+            enforces all three rules across item/stance/rite/rune/ability databases, with an explicit
+            RETIRED_BIOME_DEBT allowlist for 8 pre-existing item/rite placements (out of scope; the
+            allowlist self-expires when one is fixed). Bench baseline MOVED: canonicalLoadout now gives
+            T2 bots all six T2 stances and T3 bots five rites (was three) because those gates finally
+            resolve — balanceInstruments.test.ts updated. Verified: 4-pkg typecheck + bench tsconfig,
+            full pnpm test 91/91.
+2026-08-23  RECIPE RE-HOMING (follow-on to the stance corrective pass). The gate test written the
+            day before flagged 8 recipes sitting in biomes RETIRED at their own tier; measured the
+            cost before acting and it was severe, so all 8 moved. A biome keeps levelling past its
+            last node band, so these were craftable — but only by farming content the player had
+            outgrown: relic-equilibrium-shard's Plains 24 gate = ~12,540 extra kills of T2 mobs at
+            playerTier 4, relic-hastebound-dial's Forest 24 = ~6,967, relic-virulent-hourglass's
+            Swamp 24 = ~1,489, core-accelerant's Forest 15 = ~1,014, the four Forest rites 293-630.
+            Lowering the gates was NOT an option for the relics: the T4 band for a T1-start biome is
+            levels 19-24 and every value in it is above what that biome's live content can produce.
+            (1) RELICS -> the only free T4-capable biomes were Volcanic and Trench, so 3 relics into
+            2 slots: Hastebound Dial (frequency-forward) -> Volcanic lvl 11 (native Swarming);
+            Virulent Hourglass (debuff-forward) -> Trench lvl 5 (native Dominion); Equilibrium Shard
+            (the no-trade relic) -> Mountain lvl 24 UNCHANGED, the only biome with nodes at every
+            tier. USER CHOSE the doubling over the alternative (boss-clear gating in place): Mountain
+            now hosts two relics, and the deliberate pairing of the neutral relic with Plains — the
+            one biome authored with NO native modifier — is the price. relics-design.md's Acquisition
+            row amended, launch-scope row now names Cave/Forest/Plains/Swamp as the relic-less four.
+            (2) RITES -> one per biome, each on its biome's native family: swift-repose -> cave 15,
+            purification -> swamp 15, lingering-battle -> mountain 15, blood-offering -> volcanic 5
+            (kill-chain recovery in the swarm biome); mechanic-renewal/ability-reprieve unchanged.
+            (3) CORE -> core-accelerant Forest 15 -> Jungle 11; Alacrity is its authored family tag
+            and Jungle is the only biome carrying Alacrity past T2, so home and tag finally agree.
+            (4) ESSENCE: amounts identical everywhere; USER CHOSE to re-colour each moved recipe's
+            PRIMARY essence to its new home (repo convention = you pay in the essence of the biome
+            you level). Catalyst amounts identical, families re-keyed to the new native.
+            recipeGates.test.ts RETIRED_BIOME_DEBT allowlist is now EMPTY and the check is a hard
+            failure — every core/relic/rite/stance recipe (37) is reachable from live content.
+            relics.test.ts biome map + relic-less-biome list updated. Verified: 4-pkg typecheck +
+            bench tsconfig, full pnpm test 91/91, pnpm build.
+            KNOWN LEFTOVER: rite-recipe-ability-reprieve costs red+purple while its Desert home drops
+            yellow — a PRE-EXISTING primary-essence mismatch, deliberately not touched (economy is a
+            user-owned axis).
 ```

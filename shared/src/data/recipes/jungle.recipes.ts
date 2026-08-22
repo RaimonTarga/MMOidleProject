@@ -248,7 +248,7 @@ export const jungleRecipeEntries = [
     id: 'core-bruiser', name: 'Bruiser Core',
     recipeGroup: 'jungle', requiredBiomeLevel: 9, slot: 'core', coreEligibility: 'melee',
     lineageId: 'core-bruiser',
-    cost: { green: 110 }, catalystCost: { heavy: 3 }, // family-tag: sustained melee pressure → Heavy
+    cost: { green: 110 }, catalystCost: { alacrity: 3 }, // Heavy is BANNED in Jungle; its native family is Alacrity
     stats: {}, tier: 3,
     // The refund is INERT without an ability tagged `mobility` (today: Charge). The
     // stat half is always on, so the slot is never dead — and the clause widens for
@@ -259,6 +259,22 @@ export const jungleRecipeEntries = [
     },
     icon: 'items/cores/bruiser.png',
     description: 'Kill, and the jungle opens. Stop, and it closes. The core only knows how to do the first one.',
+  }],
+
+  // T3 unrestricted — Accelerant: tempo. Trades hit size for hit count, which is
+  // why it reads so differently on an on-hit build than on a big-swing one.
+  // Homed here because Alacrity is Jungle's native family and Jungle is the only
+  // biome carrying it past T2 — Forest, where this used to live, stops at T2, so a
+  // T3 character had to grind ~1,000 kills of outgrown content to reach forest 15.
+  ['core-accelerant', {
+    id: 'core-accelerant', name: 'Accelerant Core',
+    recipeGroup: 'jungle', requiredBiomeLevel: 11, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-accelerant',
+    cost: { green: 90 }, catalystCost: { alacrity: 2 }, // family-tag: attack-speed tempo → Alacrity
+    stats: {}, tier: 3,
+    mechanicEffects: { 'core.attack-speed-mult': 0.25, 'core.attack-mult': -0.12 },
+    icon: 'items/cores/accelerant.png',
+    description: 'The canopy keeps a fast rhythm. Match it, and you will find you are swinging before you decide to.',
   }],
 
   ['relic-verdant-flywheel', {

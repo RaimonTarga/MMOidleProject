@@ -8,13 +8,13 @@ import {
 } from '@mmo-idle/shared';
 import { describeAbility, type AbilityContext } from './abilityText';
 import { passiveLines } from './passiveText';
-import { statEffectLines } from './statEffectText';
+import { stanceModifierLines, statEffectLines } from './statEffectText';
 
 export { describeAbility, abilitySummary, triggerSentence } from './abilityText';
 export type { AbilityContext, AbilityDescription, AbilityLine } from './abilityText';
 export { passiveLines, passiveSummary, passiveNamespaceLabel, formatPassiveValue } from './passiveText';
 export type { PassiveLine } from './passiveText';
-export { statEffectLines, statEffectGlyph, statEffectChipValue } from './statEffectText';
+export { statEffectLines, stanceModifierLines, statEffectGlyph, statEffectChipValue } from './statEffectText';
 export type { StatEffectLine } from './statEffectText';
 export { actionLines, conditionLines, ruleLines, hasRuneNumbers } from './runeText';
 
@@ -77,12 +77,42 @@ export function skillNodeLines(node: {
   };
 }
 
-/** Everything a stance does while it is the active posture. */
+/**
+ * Everything a stance does while it is the active posture — the static percentages,
+ * every server-runtime behavior it owns, and what a Rune rule pays to reach it.
+ *
+ * Behaviors are authored on the stance rather than derived, because the effects that
+ * decide whether a posture is survivable (Berserker's lethal self-damage, Predator's
+ * opener, Brawler's cap) live in combat listeners and cannot describe themselves.
+ * What is deliberately NOT here: the Rune CONDITION a stance is usually reached by.
+ * "Activates below 25% HP" is a property of the rule, not of Enraged.
+ */
 export function stanceLines(stance: StanceDef | undefined): DetailLine[] {
   if (!stance) return [];
   return [
-    ...fromStatEffects(stance.statEffects),
+    ...stanceModifierLines(stance.modifiers).map((line) => ({
+      key: `stat:${line.key}`,
+      label: line.label,
+      value: line.value,
+      help: line.help,
+      good: line.good,
+      glyph: line.glyph,
+    })),
+    ...(stance.behaviors ?? []).map((behavior) => ({
+      key: `behavior:${behavior.key}`,
+      label: behavior.label,
+      value: behavior.value,
+      detail: behavior.detail,
+      help: behavior.help,
+      good: behavior.good ?? true,
+    })),
     ...fromMechanicEffects(stance.mechanicEffects),
+    {
+      key: `stance:${stance.id}:rp`,
+      label: "Rune destination cost",
+      value: `${stance.runeCost} RP`,
+      help: "Every Rune rule that switches to this stance pays this on top of its own cost. Your free default stance pays nothing.",
+    },
   ];
 }
 

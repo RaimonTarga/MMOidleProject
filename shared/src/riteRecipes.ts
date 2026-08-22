@@ -8,13 +8,39 @@ export interface RiteRecipe {
   recipeGroup?: string; requiredBiomeLevel?: number; requiredBossClear?: string;
 }
 
+/**
+ * Same placement rules as stance recipes — see the header in stanceRecipes.ts, and
+ * `recipeGates.test.ts` for the enforcement.
+ *
+ * Two rounds of drift were cleared on 2026-08-22. First, three recipes charged retired
+ * catalyst families (blight / predation / volatility) and one charged a family BANNED in
+ * its own biome, so four of these six rites could never be crafted at all. Second, four
+ * sat in FOREST, which has no nodes past T2: reaching forest 13-14 as a T3 character meant
+ * 300-600 extra kills of content you had already outgrown, purely to buy a T3 rite.
+ *
+ * The cast is now one rite per biome, each taking that biome's NATIVE catalyst family, and
+ * each homed where its effect is the answer to that biome's pressure. Amounts are unchanged;
+ * the PRIMARY essence follows the new home, per the repo-wide convention that a recipe is
+ * paid for in the essence of the biome you level to unlock it.
+ */
 const recipes: RiteRecipe[] = [
-  { id: "rite-recipe-swift-repose", name: "Swift Repose", description: "Leave combat sooner and begin recovery earlier.", riteId: "swift-repose", tier: 3, recipeGroup: "forest", requiredBiomeLevel: 13, cost: { green: 120 }, catalystCost: { alacrity: 4 } },
-  { id: "rite-recipe-purification", name: "Purification", description: "Remove harmful carryover when combat ends.", riteId: "purification", tier: 3, recipeGroup: "forest", requiredBiomeLevel: 13, cost: { green: 120, purple: 40 }, catalystCost: { blight: 4 } },
-  { id: "rite-recipe-lingering-battle", name: "Lingering Battle", description: "Remain in combat state longer between engagements.", riteId: "lingering-battle", tier: 3, recipeGroup: "forest", requiredBiomeLevel: 14, cost: { green: 130, yellow: 40 }, catalystCost: { alacrity: 5 } },
-  { id: "rite-recipe-blood-offering", name: "Blood Offering", description: "Recover health from credited kills.", riteId: "blood-offering", tier: 3, recipeGroup: "forest", requiredBiomeLevel: 14, cost: { green: 130, red: 40 }, catalystCost: { predation: 5 } },
-  { id: "rite-recipe-mechanic-renewal", name: "Mechanic Renewal", description: "Prepare your class mechanic when combat ends.", riteId: "mechanic-renewal", tier: 3, recipeGroup: "tundra", requiredBiomeLevel: 14, cost: { blue: 160, yellow: 60 }, catalystCost: { alacrity: 6 } },
-  { id: "rite-recipe-ability-reprieve", name: "Ability Reprieve", description: "Reduce equipped ability cooldowns when combat ends.", riteId: "ability-reprieve", tier: 3, recipeGroup: "desert", requiredBiomeLevel: 14, cost: { red: 160, purple: 60 }, catalystCost: { volatility: 6 } },
+  // Cave is sparse and elite-heavy (native Dominion): long gaps between hard fights, so
+  // getting back to out-of-combat recovery sooner is what the biome asks for.
+  { id: "rite-recipe-swift-repose", name: "Swift Repose", description: "Leave combat sooner and begin recovery earlier.", riteId: "swift-repose", tier: 3, recipeGroup: "cave", requiredBiomeLevel: 15, cost: { red: 120 }, catalystCost: { dominion: 4 } },
+  // Swamp is the poison/blight biome (native Fortified). Cleansing what a fight left on you
+  // is its signature problem.
+  { id: "rite-recipe-purification", name: "Purification", description: "Remove harmful carryover when combat ends.", riteId: "purification", tier: 3, recipeGroup: "swamp", requiredBiomeLevel: 15, cost: { purple: 120, green: 40 }, catalystCost: { fortified: 4 } },
+  // Mountain is ponderous by identity (native Heavy) and bans Alacrity. A rite about staying
+  // in the combat state longer belongs to the slowest biome in the game.
+  { id: "rite-recipe-lingering-battle", name: "Lingering Battle", description: "Remain in combat state longer between engagements.", riteId: "lingering-battle", tier: 3, recipeGroup: "mountain", requiredBiomeLevel: 15, cost: { blue: 130, yellow: 40 }, catalystCost: { heavy: 5 } },
+  // Volcanic is the swarm biome (native Swarming). Kill-credit recovery is a chain-farming
+  // mechanic, so it wants the biome that supplies the chain. Volcanic starts at T3, so its
+  // whole T3 band is levels 1-6.
+  { id: "rite-recipe-blood-offering", name: "Blood Offering", description: "Recover health from credited kills.", riteId: "blood-offering", tier: 3, recipeGroup: "volcanic", requiredBiomeLevel: 5, cost: { red: 130, green: 40 }, catalystCost: { swarming: 5 } },
+  // Tundra starts at T3 (band 1-6) and BANS Alacrity; its native family is Heavy.
+  { id: "rite-recipe-mechanic-renewal", name: "Mechanic Renewal", description: "Prepare your class mechanic when combat ends.", riteId: "mechanic-renewal", tier: 3, recipeGroup: "tundra", requiredBiomeLevel: 5, cost: { blue: 160, yellow: 60 }, catalystCost: { heavy: 6 } },
+  // Desert starts at T2, so its T3 cap is level 12.
+  { id: "rite-recipe-ability-reprieve", name: "Ability Reprieve", description: "Reduce equipped ability cooldowns when combat ends.", riteId: "ability-reprieve", tier: 3, recipeGroup: "desert", requiredBiomeLevel: 11, cost: { red: 160, purple: 60 }, catalystCost: { dominion: 6 } },
 ];
 
 export const RITE_RECIPE_DATABASE = new Map<string, RiteRecipe>(recipes.map((r) => [r.id, r]));

@@ -72,16 +72,42 @@ under `biomeLevelCap()`.
 
 | Relic | Biome | Mastery | Frequency | Potency | Buff | Debuff |
 |---|---|---:|---:|---:|---:|---:|
-| Hastebound Dial | Forest | 24 | +35% | -25% | — | — |
+| Hastebound Dial | Volcanic | 11 | +35% | -25% | — | — |
 | Colossus Heart | Mountain | 24 | -30% | +40% | — | — |
-| Equilibrium Shard | Plains | 24 | +10% | +10% | — | — |
+| Equilibrium Shard | Mountain | 24 | +10% | +10% | — | — |
 | Verdant Flywheel | Jungle | 18 | +20% | -20% | +25% | — |
 | Glacial Bell | Tundra | 12 | -20% | +25% | +25% | — |
-| Virulent Hourglass | Swamp | 24 | +20% | -20% | — | +25% |
+| Virulent Hourglass | Deep-Sea Trench | 5 | +20% | -20% | — | +25% |
 | Withering Lens | Desert | 18 | -20% | +25% | — | +25% |
 | Haunted Prism | Wasteland (`graveyard`) | 6 | -10% | -10% | +35% | +35% |
 
-Cave, Volcanic, and Trench intentionally have no launch Relic.
+Cave, Forest, Plains and Swamp have no Relic. Mountain hosts two.
+
+### Why the launch homes moved (2026-08-22)
+
+The cast originally read one Relic per biome across Forest, Mountain, Plains, Jungle,
+Tundra, Swamp, Desert and Wasteland. Three of those biomes have no nodes past T3, so
+their T4-band mastery gates were only reachable by farming content the player had long
+outgrown — measured at roughly **7,000 extra kills for Forest 24, 12,500 for Plains 24**
+and 1,500 for Swamp 24, all against trivial low-tier monsters.
+
+The gates could not simply be lowered: the T4 band for a T1-start biome is levels 19-24,
+and every value in it sits above what that biome's live content can produce. So the three
+Relics moved to biomes that actually reach T4:
+
+- **Hastebound Dial → Volcanic.** The frequency-forward Relic (many small mechanic events)
+  in the biome whose native modifier is Swarming.
+- **Virulent Hourglass → Deep-Sea Trench.** The debuff-forward Relic in the abyss; what
+  the trench leaves on you is its whole identity.
+- **Equilibrium Shard → Mountain.** The no-trade Relic in the only biome with nodes at
+  every tier T1-T4. Its level-24 gate is unchanged — Mountain genuinely reaches 24 through
+  T4 play. This is the one doubling in the cast, and it costs the deliberate pairing of the
+  neutral Relic with Plains, the one biome authored with no native modifier.
+
+Essence amounts are unchanged; each moved recipe's primary essence follows its new home
+(red / green / blue) and its catalyst is the new biome's native family. `shared/src/data/
+recipeGates.test.ts` now fails any recipe placed in a biome that has retired at its tier,
+so this class of drift cannot return.
 
 ## Presentation
 

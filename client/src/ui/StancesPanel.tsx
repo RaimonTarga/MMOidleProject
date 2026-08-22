@@ -55,7 +55,8 @@ export function StancesPanelContent() {
                   <GameIcon source={stanceIconSource(stance.id)} size={50} fallback={stance.name.slice(0, 1)} decorative />
                 </span>
                 <span className="stance-sigil__name">{stance.name}</span>
-                <span className="stance-sigil__cost">{stance.runeCost} RP destination</span>
+                {/* The RP surcharge is one of the DetailLines below, so it is not
+                    repeated as its own chip. */}
                 <span className="stance-sigil__blurb">{stance.blurb}</span>
                 <DetailLines className="stance-sigil__effects" lines={stanceLines(stance)} />
                 <span className="stance-sigil__state">{isActive ? "ACTIVE" : isDefault ? "DEFAULT" : "SET DEFAULT"}</span>

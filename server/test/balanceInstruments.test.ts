@@ -14,12 +14,19 @@ const t2 = canonicalLoadout(2);
 assert(t2.activeStance === 'perfection-stance', 'T2 bench bot must use the explicit neutral stance');
 assert(t2.equippedRites.length === 0, 'T2 bench bot must not receive T3 rite recipes');
 
+// All six rites are T3 recipes and, since the 2026-08-22 gate fixes, all six are
+// actually reachable at T3 — `ability-reprieve` and `mechanic-renewal` previously
+// demanded a biome level above their own tier's cap, so the bench bot could not
+// reach them until T4. The T3 and T4 rite sets are therefore identical now; what
+// still separates the tiers is the RP budget, which is what these assertions check.
+const CANONICAL_T3_RITES = 'blood-offering,purification,ability-reprieve,mechanic-renewal,swift-repose';
+
 const t3 = canonicalLoadout(3);
-assert(t3.equippedRites.join(',') === 'blood-offering,purification,swift-repose', 'T3 rites must fill the legal canonical budget');
+assert(t3.equippedRites.join(',') === CANONICAL_T3_RITES, 'T3 rites must fill the legal canonical budget');
 
 const t4 = canonicalLoadout(4);
 assert(t4.activeStance === 'perfection-stance', 'T4 roster growth must not change the canonical stance');
-assert(t4.equippedRites.join(',') === 'blood-offering,purification,ability-reprieve,swift-repose', 'T4 rites must fill the legal canonical budget');
+assert(t4.equippedRites.join(',') === CANONICAL_T3_RITES, 'T4 rites must fill the legal canonical budget');
 
 const t2Gear = resolveGearLoadout('plains', 2, 2, 'cadence-root', null);
 assert(t2Gear.relic === undefined, 'relic must not be equipped below T4');

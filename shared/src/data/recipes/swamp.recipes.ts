@@ -285,19 +285,4 @@ export const swampRecipeEntries = [
     description: 'The swamp never kills quickly. It simply makes sure nothing leaves the way it came in.',
   }],
 
-  ['relic-virulent-hourglass', {
-    id: 'relic-virulent-hourglass', name: 'Virulent Hourglass',
-    recipeGroup: 'swamp', requiredBiomeLevel: 24, slot: 'relic',
-    lineageId: 'relic-virulent-hourglass',
-    cost: { purple: 220 }, catalystCost: { fortified: 4 },
-    stats: {}, tier: 4,
-    mechanicEffects: {
-      'relic.mechanic-frequency': 0.20,
-      'relic.mechanic-potency': -0.20,
-      'relic.mechanic-debuff-effect': 0.25,
-    },
-    icon: 'items/relics/virulent-hourglass.png',
-    description: 'The sand falls quickly; what it leaves behind grows harder to escape.',
-  }],
-
 ] satisfies [string, Recipe][];

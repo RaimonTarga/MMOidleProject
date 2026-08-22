@@ -1,5 +1,11 @@
 import {
+  BERSERKER_SELF_DAMAGE_INTERVAL_MS,
+  BERSERKER_SELF_DAMAGE_PCT,
+  EXECUTE_BONUS,
+  EXECUTE_HP_THRESHOLD,
   NO_STANCE_ID,
+  PREDATOR_OPENER_BONUS,
+  brawlerDamageReduction,
   getCooldown,
   getCounter,
   getFlag,
@@ -8,6 +14,7 @@ import {
   setCounter,
   setFlag,
   setString,
+  stanceDamageTakenMult,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import { recalculatePlayerStanceStats } from "../../../ecs/playerEntityFormulas";
@@ -21,8 +28,6 @@ const PREDATOR_OPENER_FLAG = "stance.predator.opener";
 const BERSERKER_TICK_ACC = "stance.berserker.tick";
 const STANCE_LAST_ACTIVE_KEY = "stance.lastActive";
 export const STANCE_SWITCH_COOLDOWN_MS = 1500;
-const BERSERKER_TICK_MS = 1000;
-const BERSERKER_HP_DAMAGE_PCT = 0.02;
 
 export function updateStanceSwitch(world: World, dt: number, now: number): void {
   for (const player of world.livePlayers) {
@@ -62,9 +67,9 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
       continue;
     }
     let accumulator = getCounter(player.tracksCombat, BERSERKER_TICK_ACC) + dt;
-    while (accumulator >= BERSERKER_TICK_MS && player.hasHealth.hp > 0) {
-      accumulator -= BERSERKER_TICK_MS;
-      const damage = Math.max(1, Math.round(player.hasHealth.maxHp * BERSERKER_HP_DAMAGE_PCT));
+    while (accumulator >= BERSERKER_SELF_DAMAGE_INTERVAL_MS && player.hasHealth.hp > 0) {
+      accumulator -= BERSERKER_SELF_DAMAGE_INTERVAL_MS;
+      const damage = Math.max(1, Math.round(player.hasHealth.maxHp * BERSERKER_SELF_DAMAGE_PCT));
       player.hasHealth.hp -= damage;
       markSliceDirty(world, player, "hasHealth");
       if (player.hasHealth.hp <= 0) {
@@ -83,25 +88,46 @@ export function initStanceCombatEffects(): void {
   registerCombatListener("onHit", (ctx) => {
     if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
     const player = ctx.attacker;
-    if (player.tracksProgression.activeStance === "predator-stance" && getFlag(player.tracksCombat, PREDATOR_OPENER_FLAG)) {
-      ctx.damage = Math.round(ctx.damage * 1.75);
+    const stanceId = player.tracksProgression.activeStance;
+    if (stanceId === "predator-stance" && getFlag(player.tracksCombat, PREDATOR_OPENER_FLAG)) {
+      ctx.damage = Math.round(ctx.damage * (1 + PREDATOR_OPENER_BONUS));
       setFlag(player.tracksCombat, PREDATOR_OPENER_FLAG, false);
     }
     if (
-      player.tracksProgression.activeStance === "execute-stance" &&
-      ctx.defender.hasHealth.hp / Math.max(1, ctx.defender.hasHealth.maxHp) <= 0.25
+      stanceId === "execute-stance" &&
+      ctx.defender.hasHealth.hp / Math.max(1, ctx.defender.hasHealth.maxHp) <= EXECUTE_HP_THRESHOLD
     ) {
-      ctx.damage = Math.round(ctx.damage * 1.75);
+      ctx.damage = Math.round(ctx.damage * (1 + EXECUTE_BONUS));
     }
   });
 
+  // Incoming-damage posture. Both clauses are MULTIPLICATIVE layers on the already
+  // mitigated hit rather than contributions to `mitigatesDamage.damageReduction`:
+  // that pool clamps to [0, 0.9], which silently swallowed every stance's "you take
+  // more damage" drawback for any character without gear DR, and let the "less
+  // damage" side compound into the shared cap alongside gear and class DR.
   registerCombatListener("onDamageTaken", (ctx, world) => {
-    if (ctx.defenderType !== "player" || ctx.defender.tracksProgression.activeStance !== "brawler-stance") return;
-    let attackers = 0;
-    for (const monster of world.aggroedMonsters) {
-      if (monster.hasAggroTarget.targetKind === "player" && monster.hasAggroTarget.targetId === ctx.defender.isPlayer.id) attackers++;
+    if (ctx.defenderType !== "player") return;
+    const player = ctx.defender;
+    const stanceId = player.tracksProgression.activeStance;
+    if (!stanceId) return;
+
+    let mult = stanceDamageTakenMult(stanceId);
+
+    if (stanceId === "brawler-stance") {
+      let attackers = 0;
+      for (const monster of world.aggroedMonsters) {
+        if (
+          monster.hasAggroTarget.targetKind === "player" &&
+          monster.hasAggroTarget.targetId === player.isPlayer.id
+        ) attackers++;
+      }
+      mult *= 1 - brawlerDamageReduction(attackers);
     }
-    const reduction = Math.min(0.4, 0.1 * Math.log2(1 + attackers));
-    ctx.damage = Math.max(0, Math.round(ctx.damage * (1 - reduction)));
+
+    if (mult === 1) return;
+    // Floored at 1 while the hit was doing anything at all, so a heavy defensive
+    // posture reads as a glancing hit rather than as immunity.
+    ctx.damage = Math.max(ctx.damage > 0 ? 1 : 0, Math.round(ctx.damage * mult));
   });
 }

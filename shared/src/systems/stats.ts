@@ -12,7 +12,7 @@ import { SKILL_TREE, type StatEffects } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
-import { stanceDef } from '../stances';
+import { stanceDef, type StanceModifiers } from '../stances';
 import { effectiveAttacksPerSecond, upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
@@ -111,6 +111,29 @@ function applyClassAffinities(p: PlayerStatsTarget, a: ClassAffinities): void {
     p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * mult(a.moveSpeed)));
 }
 
+/**
+ * Fold the active stance's percentage posture onto the finished stat line.
+ *
+ * Separate from {@link applyClassAffinities} on purpose. Affinities are a shared
+ * bucket because the class tree is one long additive chain the player builds over
+ * tiers. A stance is a single mode with a single tooltip, and the player has to be
+ * able to read that tooltip literally — so its percentages multiply the result of
+ * everything below them rather than joining the class's sum.
+ *
+ * Attack speed and evasion are absent: both fold earlier, in step 2a, because they
+ * already had once-applied semantics of their own.
+ */
+function applyStanceModifiers(p: PlayerStatsTarget, mods: StanceModifiers | undefined): void {
+  if (!mods) return;
+  const mult = (pct: number): number => Math.max(0.05, 1 + pct);
+  if (mods.attackPct)
+    p.dealsDamage.attack = Math.max(1, Math.round(p.dealsDamage.attack * mult(mods.attackPct)));
+  if (mods.platingPct)
+    p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * mult(mods.platingPct)));
+  if (mods.moveSpeedPct)
+    p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * mult(mods.moveSpeedPct)));
+}
+
 function applyStatModToTarget(p: PlayerStatsTarget, stat: string, value: number): void {
   switch (stat) {
     case 'attack':          p.dealsDamage.attack          += value; break;
@@ -195,24 +218,19 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     mergePassives(p.usesSkills.passives, node.mechanicEffects, pulseAcc);
   }
 
-  // 2a. Apply the active stance posture (system rework Step 10). The active stance's
-  // stat/mechanic deltas apply while it is the current posture. Most fields fold here,
-  // before the attack-cooldown computation, so attackSpeedPct/evasion ride the same
-  // once-applied path as skill nodes. `damageReduction` is deferred to the equipment
-  // pass (below) so a negative DR tradeoff survives the intermediate [0,0.9] clamp and
-  // combines with gear before the final clamp. The stance-switch system recalcs on change.
+  // 2a. Apply the active stance posture (system rework Step 10, corrected 2026-08-22).
+  // Only the two fields with pre-existing sum-then-apply-once semantics fold here, so
+  // they ride the same path as skill nodes: attack speed must land before the cooldown
+  // computation below, and evasion is already a fraction. The stance's attack / plating
+  // / move-speed PERCENTAGES are a separate multiplicative layer applied after the class
+  // affinity fold (step 3e) — a posture the player toggles has to mean exactly what its
+  // tooltip says for every class. `damageTakenPct` is not a stat at all: it is read at
+  // hit time by the stance combat listener. The stance-switch system recalcs on change.
   const stance = stanceDef(p.activeStance);
-  if (stance?.statEffects) {
-    const e = stance.statEffects;
-    p.dealsDamage.attack          += e.attack          ?? 0;
-    p.mitigatesDamage.plating     += e.plating         ?? 0;
-    if ((e.evasion ?? 0) > 0) evasionChance += e.evasion!;
-    p.performsAttack.attackRange  += e.attackRange     ?? 0;
-    attackSpeedPct                 += e.attackSpeedPct  ?? 0;
-    p.hasHealth.maxHp             += e.maxHp           ?? 0;
-    p.hasHealth.recovery           = (p.hasHealth.recovery ?? 0) + (e.recovery ?? 0);
-    p.hasPosition.speed           += e.speed           ?? 0;
-    addAffinities(affinities, e);
+  const stanceMods = stance?.modifiers;
+  if (stanceMods) {
+    attackSpeedPct += stanceMods.attackSpeedPct ?? 0;
+    if ((stanceMods.evasion ?? 0) > 0) evasionChance += stanceMods.evasion!;
   }
   if (stance?.mechanicEffects) {
     mergePassives(p.usesSkills.passives, stance.mechanicEffects, pulseAcc);
@@ -269,6 +287,13 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // a separate layer stacked on the finished class chassis).
   applyClassAffinities(p, affinities);
 
+  // 3e. Active-stance percentages. A stance is a MODE with a printed tooltip, so its
+  // multipliers sit on top of the finished class chassis instead of summing into the
+  // affinity bucket: "+40% Plating" is x1.40 for a Squire and for an Apprentice alike.
+  // Placed immediately after the affinity fold and before the reload/core layers, which
+  // both deliberately price the completed stat line.
+  applyStanceModifiers(p, stanceMods);
+
   // Cadence must resolve after equipment is folded so item/relic threshold
   // changes are live. The old pre-equipment callback made those values inert.
   if (p.usesSkills.combatArchetype === 'cadence' && p.resetCadenceCounters) {
@@ -299,13 +324,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   const altOnHitPerTier = p.usesSkills.passives['reload.alternating-onhit-per-tier'] ?? 0;
   if (altOnHitPerTier > 0) {
     p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * altOnHitPerTier;
-  }
-
-  // Active-stance damageReduction (system rework Step 10): deferred from the 2a fold
-  // so a negative DR tradeoff combines with skill + equipment DR before the final
-  // clamp, instead of being zeroed by the intermediate step-2 clamp.
-  if (stance?.statEffects?.damageReduction) {
-    p.mitigatesDamage.damageReduction += stance.statEffects.damageReduction;
   }
 
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
