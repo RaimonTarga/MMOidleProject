@@ -81,8 +81,7 @@ export const forestMonsterEntries = [
       role: 'alpha',
       callRange: 320,
       followers: [
-        { typeId: 'young-wolf', count: 2 },
-        { typeId: 'canopy-sprite', count: 1 },
+        { typeId: 'young-wolf', count: 4 },
       ],
     },
   }],

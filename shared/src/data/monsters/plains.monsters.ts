@@ -91,7 +91,7 @@ export const plainsMonsterEntries = [
     // Ranged poke — pecks from distance, the anti-kite-from-afar of the plains.
     stats: { hp: 140, attack: 30, plating: 0, damageReduction: 0, speed: 50, attackRange: 165, attackCooldown: 2400, pullRange: 245 },
     behavior: 'ranged', attackStyle: 'slash', biome: 'plains',
-    rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 }, // wild bird → Wild (biome mixture; tunable)
+    rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 38 }, // wild bird → Wild (biome mixture; tunable)
     ai: { wanderRadius: 280, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3200 },
   }],
 
