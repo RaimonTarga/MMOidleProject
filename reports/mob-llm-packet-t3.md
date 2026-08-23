@@ -6,115 +6,73 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 - Player model: weapon, armour, charm and mobility only, plus skill nodes, item upgrades and class affinities. NO core, relic, rune, rite, stance or ability is equipped — the bench bots carry all six, so these numbers are comparable to each other but NOT to bench output in absolute terms.
 
+**Read the Walk first.** It is the only section that measures each biome against the
+player who actually arrives there. Everything below it is detail for a biome the Walk
+already told you to look at.
+
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier 3.
-- Reference players are tier 4 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
+- Reference players are tier 4 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery.
 - Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
-- TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
+- TTL = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 21 mobs; tier avg HP 899, avg total DPS 68.3.
 
-## Reference Players
+## The Walk
 
-| Player | Gear | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Entry (prev-tier +3) | T3 +3 | 318 | 32.4 | 5.03% | 12.7% | 130 | 0.94 |
-| Same-tier +0 | T4 +0 | 341 | 35.1 | 4.09% | 10.6% | 147 | 0.89 |
-| Same-tier +3 | T4 +3 | 470 | 57.0 | 4.69% | 11.0% | 224 | 0.89 |
-| Boss-ready (tankiest +3) | T4 +3 | 455 | 48.8 | 1.89% | 5.61% | 224 | 0.89 |
+_Each biome measured against the player who actually arrives there, in authored ladder order. Arrival gear is DERIVED: Global Mastery accrues as you master each biome, and GM is the only gate on upgrade level, so the ladder walks +0 to +4. "Cost/kill" is the share of your health pool one average kill spends — it folds offence and defence into one number. "Step" is this rung's cost divided by the previous rung's: 1.0 means the biome got no harder once your own growth is counted. Labels flag extremes for investigation; they are not pass/fail gates._
 
-
-## Cross-Biome Threat & Reward
-
-_Every biome at tier 3, ranked by mean incoming DPS against Entry (prev-tier +3). Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target._
-
-| Biome | Threat index | Mean HP | Max HP | Mean incoming DPS | Max incoming DPS | Worst spike %HP | Density | Essence / kill | Biome XP / kill |
+| # | Biome | Arrive with | GM | Mob TTK | Your TTL | Worst hit %HP | Cost/kill | Step |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Tundra | ×3.36 | 1110 | 1500 | 98.7 | 111 | 114% (Glacier Bear) | 16 | 46.3 | 278 |
-| Volcanic | ×3.00 | 1498 | 2000 | 88.3 | 108 | 92.7% (Magma Tortoise) | 36 | 34.0 | 205 |
-| Caverns | ×1.29 | 557 | 700 | 38.0 | 52.9 | 71.0% (Cavern Troll) | 16 | 66.0 | 397 |
-| Mountain | ×1.00 | 511 | 610 | 29.4 | 33.5 | 52.6% (Mountain Colossus) | 24 | 60.7 | 360 |
-| Desert | ×0.77 | 1350 | 1350 | 22.5 | 31.6 | 24.2% (Desert Basilisk) | 16 | 37.5 | 225 |
-| Swamp | ×0.73 | 363 | 400 | 21.6 | 31.8 | 3.14% (Bog Lurker) | 20 | 52.3 | 315 |
-| Jungle | ×0.62 | 852 | 1045 | 18.3 | 26.0 | 21.9% (Silverback) | 40 | 29.0 | 175 |
+| 1 | Swamp | T3 +0 | 72 | 3.51s | 9.81s | 7.81% (Bog Lurker) | 35.8% | - | baseline |
+| 2 | Mountain | T3 +0 | 80 | 4.83s | 7.60s | 72.4% (Mountain Colossus) | 63.6% | 1.78x | ok |
+| 3 | Caverns | T3 +1 | 87 | 5.04s | 6.63s | 88.3% (Cavern Troll) | 75.9% | 1.19x | ok |
+| 4 | Jungle | T3 +2 | 95 | 6.27s | 14.1s | 25.3% (Silverback) | 44.4% | 0.58x | EASIER |
+| 5 | Desert | T3 +2 | 103 | 11.1s | 12.5s | 26.9% (Desert Basilisk) | 88.4% | 1.99x | WALL |
+| 6 | Tundra | T3 +3 | 111 | 8.18s | 3.22s | 114% (Glacier Bear) | 254% | 2.87x | WALL |
+| 7 | Volcanic | T3 +4 | 118 | 9.30s | 3.93s | 85.9% (Magma Tortoise) | 236% | 0.93x | EASIER |
 
-## Cross-Biome Deviation Signals
+## Walls & Stalls
 
-_Discovery-only signals for values at least 25% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band._
+_Only the rungs that break the pattern. Everything absent from this table walked cleanly._
 
-| Biome | Axis | Metric | Value | Sibling median | Deviation |
-| --- | --- | --- | --- | --- | --- |
-| Tundra | Threat | Mean incoming DPS | 98.7 | 29.4 | +236% |
-| Tundra | Threat | Max incoming DPS | 111 | 33.5 | +230% |
-| Volcanic | Threat | Max incoming DPS | 108 | 33.5 | +223% |
-| Volcanic | Threat | Mean incoming DPS | 88.3 | 29.4 | +200% |
-| Tundra | Threat | Worst spike %HP | 114% | 52.6% | +117% |
-| Jungle | Exposure | Mob density | 40.0 | 20.0 | +100% |
-| Swamp | Threat | Worst spike %HP | 3.14% | 52.6% | -94.0% |
-| Volcanic | Exposure | Mob density | 36.0 | 20.0 | +80.0% |
-| Volcanic | Threat | Worst spike %HP | 92.7% | 52.6% | +76.2% |
-| Jungle | Threat | Worst spike %HP | 21.9% | 52.6% | -58.4% |
-| Caverns | Threat | Max incoming DPS | 52.9 | 33.5 | +57.8% |
-| Desert | Threat | Worst spike %HP | 24.2% | 52.6% | -54.0% |
-| Caverns | Reward | Biome XP / kill | 397 | 278 | +42.5% |
-| Caverns | Reward | Essence / kill | 66.0 | 46.3 | +42.4% |
-| Jungle | Threat | Mean incoming DPS | 18.3 | 29.4 | -37.8% |
-| Jungle | Reward | Essence / kill | 29.0 | 46.3 | -37.4% |
-| Jungle | Reward | Biome XP / kill | 175 | 278 | -37.1% |
-| Caverns | Threat | Worst spike %HP | 71.0% | 52.6% | +35.1% |
-| Mountain | Reward | Essence / kill | 60.7 | 46.3 | +30.9% |
-| Mountain | Reward | Biome XP / kill | 360 | 278 | +29.3% |
-| Caverns | Threat | Mean incoming DPS | 38.0 | 29.4 | +29.2% |
-| Volcanic | Reward | Essence / kill | 34.0 | 46.3 | -26.6% |
-| Swamp | Threat | Mean incoming DPS | 21.6 | 29.4 | -26.5% |
-| Volcanic | Reward | Biome XP / kill | 205 | 278 | -26.3% |
+| Biome | Signal | Detail |
+| --- | --- | --- |
+| Swamp | Low TTL | 9.81s to die under mean pressure (no recovery modelled) |
+| Mountain | Heavy spike | Mountain Colossus hits for 72.4% of maxHP |
+| Mountain | Low TTL | 7.60s to die under mean pressure (no recovery modelled) |
+| Caverns | Heavy spike | Cavern Troll hits for 88.3% of maxHP |
+| Caverns | Low TTL | 6.63s to die under mean pressure (no recovery modelled) |
+| Jungle | No progression | cost/kill is 0.58x the previous rung — the climb stalls here |
+| Jungle | Low TTL | 14.1s to die under mean pressure (no recovery modelled) |
+| Desert | Difficulty wall | cost/kill jumps 1.99x over the previous rung |
+| Desert | Low TTL | 12.5s to die under mean pressure (no recovery modelled) |
+| Tundra | Difficulty wall | cost/kill jumps 2.87x over the previous rung |
+| Tundra | One-shot | Glacier Bear hits for 114% of the arrival player's maxHP |
+| Tundra | Low TTL | 3.22s to die under mean pressure (no recovery modelled) |
+| Volcanic | No progression | cost/kill is 0.93x the previous rung — the climb stalls here |
+| Volcanic | Heavy spike | Magma Tortoise hits for 85.9% of maxHP |
+| Volcanic | Low TTL | 3.93s to die under mean pressure (no recovery modelled) |
 
-## Player Matchup Summary
 
-_Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
+## Arrival Players
 
-| Biome | Player | Incoming DPS | Worst spike %HP | TTL pressure | Status |
-| --- | --- | --- | --- | --- | --- |
-| Caverns | Entry (prev-tier +3) | 38.0 | 71.0% (Cavern Troll) | 8.38s | Blocked |
-| Caverns | Same-tier +0 | 37.1 | 64.9% (Cavern Troll) | 9.19s | Blocked |
-| Caverns | Same-tier +3 | 26.0 | 35.4% (Cavern Troll) | 18.0s | Risky |
-| Caverns | Boss-ready (tankiest +3) | 30.7 | 42.3% (Cavern Troll) | 14.8s | Risky |
-| Desert | Entry (prev-tier +3) | 22.5 | 24.2% (Desert Basilisk) | 14.1s | Risky |
-| Desert | Same-tier +0 | 21.8 | 22.0% (Desert Basilisk) | 15.6s | Risky |
-| Desert | Same-tier +3 | 12.7 | 11.3% (Desert Basilisk) | 36.8s | Safe |
-| Desert | Boss-ready (tankiest +3) | 16.9 | 13.9% (Desert Basilisk) | 27.0s | Risky |
-| Jungle | Entry (prev-tier +3) | 18.3 | 21.9% (Silverback) | 17.4s | Risky |
-| Jungle | Same-tier +0 | 16.9 | 19.6% (Silverback) | 20.2s | Risky |
-| Jungle | Same-tier +3 | 5.09 | 7.72% (Silverback) | 92.2s | Safe |
-| Jungle | Boss-ready (tankiest +3) | 8.47 | 10.8% (Silverback) | 53.7s | Safe |
-| Mountain | Entry (prev-tier +3) | 29.4 | 52.6% (Mountain Colossus) | 10.8s | Risky |
-| Mountain | Same-tier +0 | 28.7 | 48.1% (Mountain Colossus) | 11.9s | Risky |
-| Mountain | Same-tier +3 | 19.9 | 26.8% (Mountain Colossus) | 23.7s | Risky |
-| Mountain | Boss-ready (tankiest +3) | 23.9 | 31.7% (Mountain Colossus) | 19.0s | Risky |
-| Swamp | Entry (prev-tier +3) | 21.6 | 3.14% (Bog Lurker) | 14.7s | Risky |
-| Swamp | Same-tier +0 | 20.7 | 2.35% (Bog Lurker) | 16.4s | Risky |
-| Swamp | Same-tier +3 | 18.8 | 0.21% (Plague-Shell Snapper) | 25.0s | Risky |
-| Swamp | Boss-ready (tankiest +3) | 18.8 | 0.22% (Plague-Shell Snapper) | 24.2s | Risky |
-| Tundra | Entry (prev-tier +3) | 98.7 | 114% (Glacier Bear) | 3.22s | Blocked |
-| Tundra | Same-tier +0 | 99.2 | 107% (Glacier Bear) | 3.43s | Blocked |
-| Tundra | Same-tier +3 | 90.8 | 72.6% (Glacier Bear) | 5.17s | Blocked |
-| Tundra | Boss-ready (tankiest +3) | 97.7 | 79.0% (Glacier Bear) | 4.65s | Blocked |
-| Volcanic | Entry (prev-tier +3) | 88.3 | 92.7% (Magma Tortoise) | 3.60s | Blocked |
-| Volcanic | Same-tier +0 | 88.1 | 86.6% (Magma Tortoise) | 3.87s | Blocked |
-| Volcanic | Same-tier +3 | 76.1 | 58.1% (Magma Tortoise) | 6.17s | Blocked |
-| Volcanic | Boss-ready (tankiest +3) | 83.8 | 63.6% (Magma Tortoise) | 5.42s | Blocked |
+_Derived, not assumed: GM accrues per biome mastered and gates upgrade level, so the ladder walks +0 to +4._
 
-## Biome Threat Summary
+| # | Arrive at | Gear | GM | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Swamp | T3 +0 | 72 | 256 | 21.7 | 4.60% | 11.0% | 89.2 | 0.94 |
+| 2 | Mountain | T3 +0 | 80 | 256 | 21.7 | 4.60% | 11.0% | 89.2 | 0.94 |
+| 3 | Caverns | T3 +1 | 87 | 277 | 25.3 | 4.75% | 11.7% | 103 | 0.94 |
+| 4 | Jungle | T3 +2 | 95 | 298 | 28.8 | 4.89% | 12.3% | 116 | 0.94 |
+| 5 | Desert | T3 +2 | 103 | 298 | 28.8 | 4.89% | 12.3% | 116 | 0.94 |
+| 6 | Tundra | T3 +3 | 111 | 318 | 32.4 | 5.03% | 12.7% | 130 | 0.94 |
+| 7 | Volcanic | T3 +4 | 118 | 339 | 36.3 | 5.17% | 13.0% | 143 | 0.94 |
 
-_Per-biome aggregates for biome tier 3. "Hardest hitter" uses raw direct DPS; "tankiest" weights plating ×8 against HP._
 
-| Biome | Mobs | Avg HP | Avg DPS | Avg atk | Avg APS | Avg DoT/s | Hardest | Fastest | Tankiest | DoT-heavy | Biggest spike | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Caverns | 3 | 557 | 45.4 | 89.7 | 0.42 | 12.0 | Cavern Troll | Deep Spider | Cavern Troll | Deep Spider | Cavern Troll ×2.60 | density 16; 1/3 carry DoT |
-| Desert | 2 | 1350 | 37.7 | 90.0 | 0.39 | 0.00 | Desert Basilisk | Dune Stalker | Dune Stalker | - | Desert Basilisk ×1.00 | density 16; 0/2 carry DoT |
-| Jungle | 3 | 852 | 44.4 | 61.0 | 0.76 | 0.00 | Jungle Stalker | Jungle Stalker | Silverback | - | Jungle Stalker ×2.20 | density 40; 0/3 carry DoT |
-| Mountain | 3 | 511 | 45.5 | 109 | 0.31 | 0.00 | Mountain Colossus | Avalanche Ram | Mountain Colossus | - | Mountain Colossus ×1.80 | density 24; 0/3 carry DoT |
-| Swamp | 3 | 363 | 17.9 | 40.7 | 0.43 | 18.3 | Mire Hexer | Plague-Shell Snapper | Plague-Shell Snapper | Plague-Shell Snapper | Bog Lurker ×1.00 | density 20; 2/3 carry DoT |
-| Tundra | 3 | 1110 | 119 | 324 | 0.35 | 0.00 | Glacier Bear | Frost Lurker | Glacier Bear | - | Glacier Bear ×1.00 | density 16; 0/3 carry DoT |
-| Volcanic | 4 | 1498 | 113 | 221 | 0.56 | 0.00 | Cinder Hound | Cinder Hound | Magma Tortoise | - | Magma Tortoise ×1.00 | density 36; 0/4 carry DoT |
+---
+
+## Detail
+
+_Fixed-reference views, kept for cross-biome comparison at one power level. These do NOT account for the walk — read them only after the Walk has pointed you at a biome._
 
 ## Boss / Elite Table
 

@@ -6,117 +6,69 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 - Player model: weapon, armour, charm and mobility only, plus skill nodes, item upgrades and class affinities. NO core, relic, rune, rite, stance or ability is equipped — the bench bots carry all six, so these numbers are comparable to each other but NOT to bench output in absolute terms.
 
+**Read the Walk first.** It is the only section that measures each biome against the
+player who actually arrives there. Everything below it is detail for a biome the Walk
+already told you to look at.
+
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier 2.
-- Reference players are tier 3 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
+- Reference players are tier 3 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery.
 - Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
-- TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
+- TTL = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 20 mobs; tier avg HP 313, avg total DPS 34.5.
 
-## Reference Players
+## The Walk
 
-| Player | Gear | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Entry (prev-tier +3) | T2 +3 | 226 | 17.1 | 4.17% | 13.1% | 53.0 | 1.18 |
-| Same-tier +0 | T3 +0 | 256 | 21.7 | 4.60% | 11.0% | 89.2 | 0.94 |
-| Same-tier +3 | T3 +3 | 318 | 32.4 | 5.03% | 12.7% | 130 | 0.94 |
-| Boss-ready (tankiest +3) | T3 +3 | 313 | 28.1 | 1.89% | 5.61% | 130 | 0.94 |
+_Each biome measured against the player who actually arrives there, in authored ladder order. Arrival gear is DERIVED: Global Mastery accrues as you master each biome, and GM is the only gate on upgrade level, so the ladder walks +0 to +4. "Cost/kill" is the share of your health pool one average kill spends — it folds offence and defence into one number. "Step" is this rung's cost divided by the previous rung's: 1.0 means the biome got no harder once your own growth is counted. Labels flag extremes for investigation; they are not pass/fail gates._
 
-
-## Cross-Biome Threat & Reward
-
-_Every biome at tier 2, ranked by mean incoming DPS against Entry (prev-tier +3). Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target._
-
-| Biome | Threat index | Mean HP | Max HP | Mean incoming DPS | Max incoming DPS | Worst spike %HP | Density | Essence / kill | Biome XP / kill |
+| # | Biome | Arrive with | GM | Mob TTK | Your TTL | Worst hit %HP | Cost/kill | Step |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Desert | ×1.81 | 660 | 660 | 45.6 | 46.8 | 51.4% (Stone Basilisk) | 16 | 7.50 | 43.0 |
-| Caverns | ×1.45 | 320 | 400 | 36.5 | 45.5 | 119% (Cave Troll) | 16 | 18.7 | 110 |
-| Mountain | ×1.20 | 286 | 336 | 30.1 | 34.1 | 67.2% (Granite Titan) | 24 | 13.0 | 74.3 |
-| Swamp | ×1.00 | 177 | 210 | 25.1 | 38.1 | 12.4% (Mire Stalker) | 20 | 12.0 | 68.3 |
-| Jungle | ×0.82 | 425 | 500 | 20.6 | 29.5 | 9.64% (Jungle Ape) | 40 | 7.33 | 40.0 |
-| Forest | ×0.47 | 247 | 270 | 11.7 | 14.1 | 7.09% (Dire Wolf) | 36 | 9.00 | 51.0 |
-| Plains | ×0.13 | 193 | 230 | 3.35 | 4.44 | 4.88% (Savanna Hawk) | 48 | 6.67 | 37.7 |
+| 1 | Plains | T2 +0 | 30 | 3.34s | 33.6s | 8.10% (Savanna Hawk) | 9.94% | - | baseline |
+| 2 | Forest | T2 +0 | 36 | 4.18s | 12.4s | 10.6% (Dire Wolf) | 33.7% | 3.39x | WALL |
+| 3 | Swamp | T2 +1 | 42 | 2.89s | 7.82s | 15.0% (Mire Stalker) | 37.0% | 1.10x | ok |
+| 4 | Mountain | T2 +2 | 48 | 4.07s | 7.02s | 70.9% (Granite Titan) | 58.0% | 1.57x | ok |
+| 5 | Caverns | T2 +2 | 54 | 4.95s | 5.82s | 127% (Cave Troll) | 85.1% | 1.47x | ok |
+| 6 | Jungle | T2 +3 | 60 | 5.62s | 11.0s | 9.64% (Jungle Ape) | 51.2% | 0.60x | EASIER |
+| 7 | Desert | T2 +4 | 66 | 8.97s | 5.25s | 48.6% (Stone Basilisk) | 171% | 3.33x | WALL |
 
-## Cross-Biome Deviation Signals
+## Walls & Stalls
 
-_Discovery-only signals for values at least 25% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band._
+_Only the rungs that break the pattern. Everything absent from this table walked cleanly._
 
-| Biome | Axis | Metric | Value | Sibling median | Deviation |
-| --- | --- | --- | --- | --- | --- |
-| Caverns | Threat | Worst spike %HP | 119% | 12.4% | +860% |
-| Mountain | Threat | Worst spike %HP | 67.2% | 12.4% | +441% |
-| Desert | Threat | Worst spike %HP | 51.4% | 12.4% | +314% |
-| Caverns | Reward | Biome XP / kill | 110 | 51.0 | +116% |
-| Caverns | Reward | Essence / kill | 18.7 | 9.00 | +107% |
-| Plains | Exposure | Mob density | 48.0 | 24.0 | +100% |
-| Plains | Threat | Max incoming DPS | 4.44 | 34.1 | -87.0% |
-| Plains | Threat | Mean incoming DPS | 3.35 | 25.1 | -86.7% |
-| Desert | Threat | Mean incoming DPS | 45.6 | 25.1 | +81.4% |
-| Jungle | Exposure | Mob density | 40.0 | 24.0 | +66.7% |
-| Plains | Threat | Worst spike %HP | 4.88% | 12.4% | -60.7% |
-| Forest | Threat | Max incoming DPS | 14.1 | 34.1 | -58.7% |
-| Forest | Threat | Mean incoming DPS | 11.7 | 25.1 | -53.5% |
-| Forest | Exposure | Mob density | 36.0 | 24.0 | +50.0% |
-| Mountain | Reward | Biome XP / kill | 74.3 | 51.0 | +45.8% |
-| Caverns | Threat | Mean incoming DPS | 36.5 | 25.1 | +45.2% |
-| Mountain | Reward | Essence / kill | 13.0 | 9.00 | +44.4% |
-| Forest | Threat | Worst spike %HP | 7.09% | 12.4% | -42.9% |
-| Desert | Threat | Max incoming DPS | 46.8 | 34.1 | +37.2% |
-| Swamp | Reward | Biome XP / kill | 68.3 | 51.0 | +34.0% |
-| Caverns | Threat | Max incoming DPS | 45.5 | 34.1 | +33.5% |
-| Caverns | Exposure | Mob density | 16.0 | 24.0 | -33.3% |
-| Desert | Exposure | Mob density | 16.0 | 24.0 | -33.3% |
-| Swamp | Reward | Essence / kill | 12.0 | 9.00 | +33.3% |
-| Plains | Reward | Biome XP / kill | 37.7 | 51.0 | -26.1% |
-| Plains | Reward | Essence / kill | 6.67 | 9.00 | -25.9% |
+| Biome | Signal | Detail |
+| --- | --- | --- |
+| Forest | Difficulty wall | cost/kill jumps 3.39x over the previous rung |
+| Forest | Low TTL | 12.4s to die under mean pressure (no recovery modelled) |
+| Swamp | Low TTL | 7.82s to die under mean pressure (no recovery modelled) |
+| Mountain | Heavy spike | Granite Titan hits for 70.9% of maxHP |
+| Mountain | Low TTL | 7.02s to die under mean pressure (no recovery modelled) |
+| Caverns | One-shot | Cave Troll hits for 127% of the arrival player's maxHP |
+| Caverns | Low TTL | 5.82s to die under mean pressure (no recovery modelled) |
+| Jungle | No progression | cost/kill is 0.60x the previous rung — the climb stalls here |
+| Jungle | Low TTL | 11.0s to die under mean pressure (no recovery modelled) |
+| Desert | Difficulty wall | cost/kill jumps 3.33x over the previous rung |
+| Desert | Low TTL | 5.25s to die under mean pressure (no recovery modelled) |
 
-## Player Matchup Summary
 
-_Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
+## Arrival Players
 
-| Biome | Player | Incoming DPS | Worst spike %HP | TTL pressure | Status |
-| --- | --- | --- | --- | --- | --- |
-| Caverns | Entry (prev-tier +3) | 36.5 | 119% (Cave Troll) | 6.19s | Blocked |
-| Caverns | Same-tier +0 | 34.5 | 100% (Cave Troll) | 7.43s | Blocked |
-| Caverns | Same-tier +3 | 29.7 | 72.4% (Cave Troll) | 10.7s | Risky |
-| Caverns | Boss-ready (tankiest +3) | 32.7 | 79.8% (Cave Troll) | 9.55s | Blocked |
-| Desert | Entry (prev-tier +3) | 45.6 | 51.4% (Stone Basilisk) | 4.95s | Blocked |
-| Desert | Same-tier +0 | 44.1 | 43.4% (Stone Basilisk) | 5.81s | Blocked |
-| Desert | Same-tier +3 | 39.7 | 31.4% (Stone Basilisk) | 8.03s | Blocked |
-| Desert | Boss-ready (tankiest +3) | 43.4 | 34.5% (Stone Basilisk) | 7.20s | Blocked |
-| Forest | Entry (prev-tier +3) | 11.7 | 7.09% (Dire Wolf) | 19.3s | Risky |
-| Forest | Same-tier +0 | 8.46 | 4.69% (Dire Wolf) | 30.3s | Safe |
-| Forest | Same-tier +3 | 0.84 | 0.31% (Dire Wolf) | 380s | Safe |
-| Forest | Boss-ready (tankiest +3) | 3.46 | 1.92% (Dire Wolf) | 90.4s | Safe |
-| Jungle | Entry (prev-tier +3) | 20.6 | 9.64% (Jungle Ape) | 11.0s | Risky |
-| Jungle | Same-tier +0 | 18.9 | 6.23% (Jungle Ape) | 13.5s | Risky |
-| Jungle | Same-tier +3 | 17.0 | 0.69% (Jungle Snake) | 18.7s | Risky |
-| Jungle | Boss-ready (tankiest +3) | 17.8 | 2.32% (Jungle Ape) | 17.6s | Risky |
-| Mountain | Entry (prev-tier +3) | 30.1 | 67.2% (Granite Titan) | 7.49s | Blocked |
-| Mountain | Same-tier +0 | 28.7 | 56.2% (Granite Titan) | 8.94s | Blocked |
-| Mountain | Same-tier +3 | 24.9 | 40.0% (Granite Titan) | 12.8s | Risky |
-| Mountain | Boss-ready (tankiest +3) | 27.6 | 44.1% (Granite Titan) | 11.3s | Risky |
-| Plains | Entry (prev-tier +3) | 3.35 | 4.88% (Savanna Hawk) | 67.4s | Safe |
-| Plains | Same-tier +0 | 1.61 | 2.73% (Savanna Hawk) | 159s | Safe |
-| Plains | Same-tier +3 | 0.60 | 0.31% (Stampede Bull) | 532s | Safe |
-| Plains | Boss-ready (tankiest +3) | 0.61 | 0.32% (Stampede Bull) | 514s | Safe |
-| Swamp | Entry (prev-tier +3) | 25.1 | 12.4% (Mire Stalker) | 8.98s | Blocked |
-| Swamp | Same-tier +0 | 23.1 | 8.98% (Mire Stalker) | 11.1s | Risky |
-| Swamp | Same-tier +3 | 20.0 | 4.08% (Mire Stalker) | 15.9s | Risky |
-| Swamp | Boss-ready (tankiest +3) | 21.5 | 5.76% (Mire Stalker) | 14.5s | Risky |
+_Derived, not assumed: GM accrues per biome mastered and gates upgrade level, so the ladder walks +0 to +4._
 
-## Biome Threat Summary
+| # | Arrive at | Gear | GM | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Plains | T2 +0 | 30 | 198 | 12.4 | 3.75% | 11.1% | 41.8 | 1.18 |
+| 2 | Forest | T2 +0 | 36 | 198 | 12.4 | 3.75% | 11.1% | 41.8 | 1.18 |
+| 3 | Swamp | T2 +1 | 42 | 207 | 14.1 | 3.89% | 11.8% | 45.2 | 1.18 |
+| 4 | Mountain | T2 +2 | 48 | 216 | 15.6 | 4.03% | 12.4% | 49.3 | 1.18 |
+| 5 | Caverns | T2 +2 | 54 | 216 | 15.6 | 4.03% | 12.4% | 49.3 | 1.18 |
+| 6 | Jungle | T2 +3 | 60 | 226 | 17.1 | 4.17% | 13.1% | 53.0 | 1.18 |
+| 7 | Desert | T2 +4 | 66 | 235 | 19.0 | 4.32% | 13.7% | 57.1 | 1.18 |
 
-_Per-biome aggregates for biome tier 2. "Hardest hitter" uses raw direct DPS; "tankiest" weights plating ×8 against HP._
 
-| Biome | Mobs | Avg HP | Avg DPS | Avg atk | Avg APS | Avg DoT/s | Hardest | Fastest | Tankiest | DoT-heavy | Biggest spike | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Caverns | 3 | 320 | 35.4 | 79.7 | 0.38 | 11.0 | Cave Troll | Giant Spider | Cave Troll | Giant Spider | Cave Troll ×2.40 | density 16; 1/3 carry DoT |
-| Desert | 2 | 660 | 56.3 | 135 | 0.39 | 0.00 | Stone Basilisk | Sand Scorpion | Sand Scorpion | - | Stone Basilisk ×1.00 | density 16; 0/2 carry DoT |
-| Forest | 3 | 247 | 27.5 | 32.0 | 0.81 | 0.00 | Ironclaw Badger | Ironclaw Badger | Dire Wolf | - | Dire Wolf ×1.00 | density 36; 0/3 carry DoT |
-| Jungle | 3 | 425 | 16.0 | 24.3 | 0.67 | 16.3 | Jungle Ape | Jungle Snake | Jungle Ape | Vine Chameleon | Jungle Ape ×1.45 | density 40; 2/3 carry DoT |
-| Mountain | 3 | 286 | 38.7 | 105 | 0.30 | 0.00 | Granite Titan | Stone Eagle | Granite Titan | - | Granite Titan ×1.50 | density 24; 0/3 carry DoT |
-| Plains | 3 | 193 | 14.0 | 24.0 | 0.61 | 0.00 | Prairie Wolf | Prairie Wolf | Stampede Bull | - | Savanna Hawk ×1.00 | density 48; 0/3 carry DoT |
-| Swamp | 3 | 177 | 16.2 | 37.0 | 0.43 | 17.0 | Bog Witch | Moss-Shell Snapper | Mire Stalker | Moss-Shell Snapper | Mire Stalker ×1.00 | density 20; 2/3 carry DoT |
+---
+
+## Detail
+
+_Fixed-reference views, kept for cross-biome comparison at one power level. These do NOT account for the walk — read them only after the Walk has pointed you at a biome._
 
 ## Boss / Elite Table
 

@@ -2,6 +2,9 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import {
+  T1_STARTER_PROGRESSION,
+  maxGlobalMasteryAtTier,
+  upgradeCeilingFromGlobalMastery,
   emptyEquipment,
   estimateMonsterHitDamage,
   estimatePlayerDps,
@@ -556,6 +559,182 @@ function playerProfilesForBiomeTier(biomeTier: number): PlayerProfile[] {
   });
 }
 
+// ─── The progression walk ────────────────────────────────────────────────────
+//
+// A player does not meet all of a tier's biomes in the same gear. They walk the
+// tier's ladder in a fixed order, and every biome they master raises Global
+// Mastery, which is the ONLY gate on item upgrade level
+// (`upgradeCeilingFromGlobalMastery`). So arriving at the last biome of a tier
+// means arriving four upgrade levels above where the first one was fought.
+//
+// Measuring every biome against one fixed reference player — which this report
+// did until 2026-08-23 — therefore answers the wrong question. It reports the
+// progression the player is MISSING rather than how hard the biome is for the
+// player who is actually standing in it, and it makes the end of every tier look
+// like a cliff by construction.
+//
+// The arrival gear below is DERIVED, not assumed: GM at rung k is the tier's
+// starting GM plus k biomes' worth of levels, and the ceiling falls straight out
+// of the shared upgrade gate. For T1 that yields +0/+1/+2/+3/+4 across
+// plains→forest→swamp→mountain→cave.
+
+/**
+ * Authored intra-tier progression order, easiest → hardest.
+ *
+ * Locked with the designer 2026-08-23; the authority is
+ * `docs/tier-balance-current-state.md` §2. Tier 1 additionally exists in code as
+ * `T1_STARTER_PROGRESSION`, and `assertLadderMatchesAuthoredPolicy` below fails
+ * the run if the two ever drift apart.
+ */
+const BIOME_LADDER: Record<number, string[]> = {
+  1: ['plains', 'forest', 'swamp', 'mountain', 'cave'],
+  2: ['plains', 'forest', 'swamp', 'mountain', 'cave', 'jungle', 'desert'],
+  3: ['swamp', 'mountain', 'cave', 'jungle', 'desert', 'tundra', 'volcanic'],
+  4: ['mountain', 'jungle', 'desert', 'tundra', 'volcanic', 'graveyard', 'trench'],
+};
+
+function assertLadderMatchesAuthoredPolicy(): void {
+  const authored = [...T1_STARTER_PROGRESSION.steps]
+    .sort((a, b) => a.order - b.order)
+    .map((s) => s.biomeId);
+  const ours = BIOME_LADDER[1];
+  if (authored.join(',') !== ours.join(',')) {
+    throw new Error(
+      `T1 ladder disagrees with T1_STARTER_PROGRESSION.\n`
+      + `  authored: ${authored.join(' -> ')}\n`
+      + `  report:   ${ours.join(' -> ')}\n`
+      + `Fix BIOME_LADDER (or the policy) — they must not drift.`,
+    );
+  }
+}
+
+/**
+ * Upgrade level a player can hold on arriving at rung `index` of `biomeTier`'s ladder.
+ *
+ * The band is the BIOME's own tier, not `biomeTier + 1`. A player walks a tier's
+ * ladder while they are of that tier — the seal gate proves it, since advancing out
+ * of tier N requires clearing tier-N bosses, which sit at the top of this very
+ * ladder. Using the next tier's band instead credits the player with mastery they
+ * only earn by finishing the walk, which collapses the whole climb to +5 and hides
+ * exactly the pacing this table exists to show.
+ *
+ * GM is cumulative across the game, so the band runs from "everything the previous
+ * tier could offer" to "everything this one can".
+ */
+function arrivalUpgradeFor(biomeTier: number, index: number): { plus: number; gm: number } {
+  const gmStart = maxGlobalMasteryAtTier(biomeTier - 1);
+  const gmEnd = maxGlobalMasteryAtTier(biomeTier);
+  const rungs = BIOME_LADDER[biomeTier]?.length ?? 1;
+  const gm = Math.round(gmStart + index * ((gmEnd - gmStart) / rungs));
+  // Gear is crafted from the tier being farmed, so it is the BIOME's tier; only
+  // the upgrade level moves along the walk.
+  return { plus: upgradeCeilingFromGlobalMastery(gm, biomeTier), gm };
+}
+
+interface WalkRung {
+  index: number;
+  biomeId: string;
+  biomeName: string;
+  profile: PlayerProfile;
+  gm: number;
+  /** Mean seconds to kill one pool-average mob of this biome. */
+  mobTtkSec: number;
+  /** Seconds the player survives the biome's mean incoming pressure, no recovery. */
+  ttlSec: number;
+  /** Worst single mitigated hit in the biome, as a share of the arrival player's maxHp. */
+  worstSpikePct: number;
+  worstSpikeName: string;
+  /**
+   * Share of the arrival player's health pool spent killing one average mob —
+   * incoming DPS x time-to-kill. This is the walk's load-bearing number: it folds
+   * offence and defence into "what does one kill here cost me?", which is the
+   * quantity that should climb smoothly across a tier.
+   */
+  burden: number;
+  /** burden(this) / burden(previous). 1.0 = no change in real difficulty. */
+  step: number | null;
+}
+
+function buildWalk(biomeTier: number): WalkRung[] {
+  const ladder = BIOME_LADDER[biomeTier];
+  if (!ladder) return [];
+  const groups = new Map(biomeGroupsAtTier(biomeTier).map((g) => [g.biome.id, g]));
+  const playerTier = Math.min(biomeTier + 1, maxItemTier());
+  const classTier = playerTier - 1;
+  const combos = comparisonCombos(classTier);
+  const rungs: WalkRung[] = [];
+
+  ladder.forEach((biomeId, index) => {
+    const group = groups.get(biomeId);
+    if (!group || group.mobs.length === 0) return;
+    const { plus, gm } = arrivalUpgradeFor(biomeTier, index);
+    if (itemsForSlotTier('armor', biomeTier).length === 0) return;
+
+    const def = averageDefence(combos, biomeTier, plus, classTier);
+    const off = averageOffence(combos, biomeTier, plus, classTier);
+    const profile: PlayerProfile = {
+      label: `Arrive ${group.biome.name}`,
+      gearLabel: `T${biomeTier} +${plus}`,
+      ...def,
+      ...off,
+      usedFallbackTier: false,
+    };
+
+    const threats = group.mobs.map((m) => threatAgainst(profile, m, false));
+    const ttks = group.mobs.map((m) => expectedTtkSec(profile, m));
+    const meanIncoming = mean(threats.map((t) => t.incomingDps));
+    const meanTtk = mean(ttks.filter((v) => Number.isFinite(v)));
+    const worst = maxBy(
+      group.mobs.map((m, i) => ({ m, spike: threats[i].spikeHit })),
+      (x) => x.spike,
+    );
+
+    const ttlSec = meanIncoming > 0 ? profile.maxHp / meanIncoming : Number.POSITIVE_INFINITY;
+    const burden = profile.maxHp > 0 && Number.isFinite(meanTtk)
+      ? (meanIncoming * meanTtk) / profile.maxHp
+      : Number.POSITIVE_INFINITY;
+
+    rungs.push({
+      index,
+      biomeId,
+      biomeName: group.biome.name,
+      profile,
+      gm,
+      mobTtkSec: meanTtk,
+      ttlSec,
+      worstSpikePct: worst ? worst.spike / Math.max(1, profile.maxHp) : 0,
+      worstSpikeName: worst?.m.name ?? '-',
+      burden,
+      step: null,
+    });
+  });
+
+  for (let i = 1; i < rungs.length; i++) {
+    const prev = rungs[i - 1].burden;
+    rungs[i].step = prev > 0 && Number.isFinite(prev) ? rungs[i].burden / prev : null;
+  }
+  return rungs;
+}
+
+/**
+ * Step band used only to LABEL a rung, never to gate one.
+ *
+ * A tier is supposed to climb, so a step near 1.0 means the biome got no harder
+ * once the player's own growth is accounted for. These edges are discovery
+ * thresholds picked to surface the extremes, not authored balance targets — the
+ * designer owns what a healthy step actually is (see the audit's D2/D5).
+ */
+const STEP_FLAT = 1.05;
+const STEP_WALL = 1.8;
+
+function stepLabel(step: number | null): string {
+  if (step === null) return 'baseline';
+  if (step < 0.95) return 'EASIER';
+  if (step < STEP_FLAT) return 'flat';
+  if (step > STEP_WALL) return 'WALL';
+  return 'ok';
+}
+
 /** Boss-ready: same-tier +3, but biased to the tankiest armor and best recovery. */
 function bossReadyProfile(combos: BuildCombo[], playerTier: number, classTier: number, usedFallbackTier: boolean): PlayerProfile | null {
   const armors = itemsForSlotTier('armor', playerTier);
@@ -702,6 +881,61 @@ interface BiomeComparison {
   density: number | null;
   meanEssence: number;
   meanBiomeXp: number;
+}
+
+function walkView(rungs: WalkRung[]): DataView {
+  return {
+    title: 'The Walk',
+    note:
+      'Each biome measured against the player who actually arrives there, in authored '
+      + 'ladder order. Arrival gear is DERIVED: Global Mastery accrues as you master each '
+      + 'biome, and GM is the only gate on upgrade level, so the ladder walks +0 to +4. '
+      + '"Cost/kill" is the share of your health pool one average kill spends — it folds '
+      + 'offence and defence into one number. "Step" is this rung\'s cost divided by the '
+      + 'previous rung\'s: 1.0 means the biome got no harder once your own growth is '
+      + 'counted. Labels flag extremes for investigation; they are not pass/fail gates.',
+    headers: ['#', 'Biome', 'Arrive with', 'GM', 'Mob TTK', 'Your TTL', 'Worst hit %HP', 'Cost/kill', 'Step', ''],
+    rows: rungs.map((r) => [
+      r.index + 1,
+      r.biomeName,
+      r.profile.gearLabel,
+      r.gm,
+      `${asNumber(r.mobTtkSec)}s`,
+      ttl(r.ttlSec),
+      `${asNumber(r.worstSpikePct * 100)}% (${r.worstSpikeName})`,
+      `${asNumber(r.burden * 100)}%`,
+      r.step === null ? '-' : `${asNumber(r.step)}x`,
+      stepLabel(r.step),
+    ]),
+  };
+}
+
+function walkSignalsView(rungs: WalkRung[]): DataView {
+  const rows: Array<Array<string | number>> = [];
+  for (const r of rungs) {
+    const label = stepLabel(r.step);
+    if (label === 'WALL') {
+      rows.push([r.biomeName, 'Difficulty wall', `cost/kill jumps ${asNumber(r.step ?? 0)}x over the previous rung`]);
+    } else if (label === 'EASIER' || label === 'flat') {
+      rows.push([r.biomeName, 'No progression', `cost/kill is ${asNumber(r.step ?? 0)}x the previous rung — the climb stalls here`]);
+    }
+    if (r.worstSpikePct >= 1) {
+      rows.push([r.biomeName, 'One-shot', `${r.worstSpikeName} hits for ${asNumber(r.worstSpikePct * 100)}% of the arrival player's maxHP`]);
+    } else if (r.worstSpikePct >= 0.5) {
+      rows.push([r.biomeName, 'Heavy spike', `${r.worstSpikeName} hits for ${asNumber(r.worstSpikePct * 100)}% of maxHP`]);
+    }
+    if (Number.isFinite(r.ttlSec) && r.ttlSec < 15) {
+      rows.push([r.biomeName, 'Low TTL', `${asNumber(r.ttlSec)}s to die under mean pressure (no recovery modelled)`]);
+    }
+  }
+  return {
+    title: 'Walls & Stalls',
+    note: rows.length
+      ? 'Only the rungs that break the pattern. Everything absent from this table walked cleanly.'
+      : 'Nothing flagged: every rung climbed within the step band and no mob spikes past half the arrival player\'s health.',
+    headers: ['Biome', 'Signal', 'Detail'],
+    rows: rows.length ? rows : [['-', 'clean walk', 'no walls, stalls, or one-shots at this tier']],
+  };
 }
 
 function crossBiomeComparisons(biomeTier: number, profiles: PlayerProfile[]): BiomeComparison[] {
@@ -1028,17 +1262,21 @@ function renderHtmlView(view: DataView, collapsed = false): string {
 
 function renderTierSection(biomeTier: number): string {
   const profiles = playerProfilesForBiomeTier(biomeTier);
+  const rungs = buildWalk(biomeTier);
   const playerTier = Math.min(biomeTier + 1, maxItemTier());
   return `
     <section>
       <h2>Biome Tier ${biomeTier}</h2>
-      <p class="meta">Matched against tier-${playerTier} reference players (a player of tier P fights biome tier P-1).${profiles[0]?.usedFallbackTier ? ` No tier-${biomeTier + 1} gear authored yet — best-available T${maxItemTier()} used.` : ''}</p>
-      ${renderHtmlView(crossBiomeComparisonView(biomeTier, profiles))}
-      ${renderHtmlView(biomeDeviationView(biomeTier, profiles))}
-      ${renderHtmlView(playerMatchupView(biomeTier, profiles))}
-      ${renderHtmlView(biomeThreatSummaryView(biomeTier))}
+      <p class="meta"><strong>Read the Walk first.</strong> It measures each biome against the player who actually arrives there. Everything below it holds the player fixed, so it compares biomes at one power level rather than along the climb.${profiles[0]?.usedFallbackTier ? ` No tier-${biomeTier + 1} gear authored yet — best-available T${maxItemTier()} used.` : ''}</p>
+      ${renderHtmlView(walkView(rungs))}
+      ${renderHtmlView(walkSignalsView(rungs))}
+      <h3>Detail — fixed reference (tier ${playerTier})</h3>
       ${renderHtmlView(bossTableView(biomeTier, profiles))}
       ${renderHtmlView(outlierView(biomeTier, profiles))}
+      ${renderHtmlView(crossBiomeComparisonView(biomeTier, profiles), true)}
+      ${renderHtmlView(biomeDeviationView(biomeTier, profiles), true)}
+      ${renderHtmlView(playerMatchupView(biomeTier, profiles), true)}
+      ${renderHtmlView(biomeThreatSummaryView(biomeTier), true)}
       ${renderHtmlView(mobStatSummaryView(biomeTier), true)}
     </section>`;
 }
@@ -1100,6 +1338,7 @@ function renderMdView(view: DataView): string {
 
 function renderLlmPacket(biomeTier: number): string {
   const profiles = playerProfilesForBiomeTier(biomeTier);
+  const rungs = buildWalk(biomeTier);
   const playerTier = Math.min(biomeTier + 1, maxItemTier());
   const mobs = allMobsAtTier(biomeTier);
   const avgHp = mean(mobs.map((m) => m.stats.hp));
@@ -1113,23 +1352,34 @@ Generated from \`tools/mob-report.ts --llm-packet\`. Markdown only. Companion to
 
 - ${LOADOUT_MODEL_NOTE}
 
+**Read the Walk first.** It is the only section that measures each biome against the
+player who actually arrives there. Everything below it is detail for a biome the Walk
+already told you to look at.
+
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier ${biomeTier}.
-- Reference players are tier ${playerTier} (a player of tier P fights biome tier P-1)${profiles[0]?.usedFallbackTier ? `; **no tier-${biomeTier + 1} gear authored yet, best-available T${maxItemTier()} used as the reference**` : ''}. Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
+- Reference players are tier ${playerTier} (a player of tier P fights biome tier P-1)${profiles[0]?.usedFallbackTier ? `; **no tier-${biomeTier + 1} gear authored yet, best-available T${maxItemTier()} used as the reference**` : ''}. Defensive stats are averaged over spec-agnostic class builds × armor × recovery.
 - Reference player DPS uses shared \`estimatePlayerDps\` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
-- TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
+- TTL = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. ${mobs.length} mobs; tier avg HP ${asNumber(avgHp)}, avg total DPS ${asNumber(avgDps)}.
 
-## Reference Players
+${renderMdView(walkView(rungs))}
+${renderMdView(walkSignalsView(rungs))}
+
+## Arrival Players
+
+_Derived, not assumed: GM accrues per biome mastered and gates upgrade level, so the ladder walks +0 to +4._
 
 ${mdTable(
-    ['Player', 'Gear', 'maxHP', 'Plating', 'DR', 'Dodge', 'Ref atk', 'Ref APS'],
-    profiles.map((p) => [p.label, p.gearLabel, asNumber(p.maxHp), asNumber(p.plating), pct(p.damageReduction), pct(p.dodgeRate), asNumber(p.attack), asNumber(1000 / Math.max(100, p.attackCooldown))]),
+    ['#', 'Arrive at', 'Gear', 'GM', 'maxHP', 'Plating', 'DR', 'Dodge', 'Ref atk', 'Ref APS'],
+    rungs.map((r) => [r.index + 1, r.biomeName, r.profile.gearLabel, r.gm, asNumber(r.profile.maxHp), asNumber(r.profile.plating), pct(r.profile.damageReduction), pct(r.profile.dodgeRate), asNumber(r.profile.attack), asNumber(1000 / Math.max(100, r.profile.attackCooldown))]),
   )}
 
-${renderMdView(crossBiomeComparisonView(biomeTier, profiles))}
-${renderMdView(biomeDeviationView(biomeTier, profiles))}
-${renderMdView(playerMatchupView(biomeTier, profiles))}
-${renderMdView(biomeThreatSummaryView(biomeTier))}
+---
+
+## Detail
+
+_Fixed-reference views, kept for cross-biome comparison at one power level. These do NOT account for the walk — read them only after the Walk has pointed you at a biome._
+
 ${renderMdView(bossTableView(biomeTier, profiles))}
 ${renderMdView(outlierView(biomeTier, profiles))}
 ${renderMdView(mobStatSummaryView(biomeTier))}`;
@@ -1150,6 +1400,8 @@ async function writeLlmPackets(): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  // Fail loudly if the report's ladder and the authored T1 policy ever drift.
+  assertLadderMatchesAuthoredPolicy();
   if (OPTIONS.llmPacket) {
     await writeLlmPackets();
     return;

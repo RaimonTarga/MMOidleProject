@@ -6,118 +6,74 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 - Player model: weapon, armour, charm and mobility only, plus skill nodes, item upgrades and class affinities. NO core, relic, rune, rite, stance or ability is equipped — the bench bots carry all six, so these numbers are comparable to each other but NOT to bench output in absolute terms.
 
+**Read the Walk first.** It is the only section that measures each biome against the
+player who actually arrives there. Everything below it is detail for a biome the Walk
+already told you to look at.
+
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier 4.
-- Reference players are tier 4 (a player of tier P fights biome tier P-1); **no tier-5 gear authored yet, best-available T4 used as the reference**. Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
+- Reference players are tier 4 (a player of tier P fights biome tier P-1); **no tier-5 gear authored yet, best-available T4 used as the reference**. Defensive stats are averaged over spec-agnostic class builds × armor × recovery.
 - Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
-- TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
+- TTL = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 28 mobs; tier avg HP 1788, avg total DPS 117.
 
-## Reference Players
+## The Walk
 
-| Player | Gear | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Entry (prev-tier +3) | T3 +3 | 318 | 32.4 | 5.03% | 12.7% | 130 | 0.94 |
-| Same-tier +0 | T4 +0 | 341 | 35.1 | 4.09% | 10.6% | 147 | 0.89 |
-| Same-tier +3 | T4 +3 | 470 | 57.0 | 4.69% | 11.0% | 224 | 0.89 |
-| Boss-ready (tankiest +3) | T4 +3 | 455 | 48.8 | 1.89% | 5.61% | 224 | 0.89 |
+_Each biome measured against the player who actually arrives there, in authored ladder order. Arrival gear is DERIVED: Global Mastery accrues as you master each biome, and GM is the only gate on upgrade level, so the ladder walks +0 to +4. "Cost/kill" is the share of your health pool one average kill spends — it folds offence and defence into one number. "Step" is this rung's cost divided by the previous rung's: 1.0 means the biome got no harder once your own growth is counted. Labels flag extremes for investigation; they are not pass/fail gates._
 
-
-## Cross-Biome Threat & Reward
-
-_Every biome at tier 4, ranked by mean incoming DPS against Entry (prev-tier +3). Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target._
-
-| Biome | Threat index | Mean HP | Max HP | Mean incoming DPS | Max incoming DPS | Worst spike %HP | Density | Essence / kill | Biome XP / kill |
+| # | Biome | Arrive with | GM | Mob TTK | Your TTL | Worst hit %HP | Cost/kill | Step |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Deep-Sea Trench | ×1.65 | 4293 | 5880 | 182 | 196 | 323% (Elder Leviathan) | 10 | 290 | 1740 |
-| Tundra | ×1.10 | 1188 | 1914 | 122 | 155 | 285% (Permafrost Behemoth) | 16 | 146 | 873 |
-| Volcanic | ×1.06 | 1753 | 2904 | 118 | 154 | 151% (Obsidian Tortoise) | 36 | 99.4 | 596 |
-| Wasteland | ×1.00 | 2471 | 3168 | 111 | 228 | 57.2% (Plague Hound) | 28 | 42.4 | 254 |
-| Desert | ×0.42 | 1527 | 1738 | 46.1 | 93.9 | 165% (Dune Tyrant) | 16 | 108 | 650 |
-| Mountain | ×0.41 | 702 | 923 | 45.6 | 58.5 | 90.5% (Granite Mammoth) | 24 | 106 | 635 |
-| Jungle | ×0.23 | 979 | 1408 | 25.0 | 49.4 | 20.1% (Emerald Constrictor) | 40 | 78.3 | 470 |
+| 1 | Mountain | T4 +0 | 126 | 4.37s | 7.55s | 84.0% (Granite Mammoth) | 57.9% | - | baseline |
+| 2 | Jungle | T4 +0 | 135 | 5.69s | 14.6s | 17.6% (Emerald Constrictor) | 38.9% | 0.67x | EASIER |
+| 3 | Desert | T4 +1 | 145 | 8.67s | 9.03s | 131% (Dune Tyrant) | 96.0% | 2.47x | WALL |
+| 4 | Tundra | T4 +2 | 154 | 5.96s | 3.67s | 203% (Permafrost Behemoth) | 162% | 1.69x | ok |
+| 5 | Volcanic | T4 +2 | 164 | 7.89s | 3.90s | 105% (Obsidian Tortoise) | 202% | 1.25x | ok |
+| 6 | Wasteland | T4 +3 | 173 | 9.32s | 4.97s | 33.9% (Plague Hound) | 187% | 0.93x | EASIER |
+| 7 | Deep-Sea Trench | T4 +4 | 183 | 19.5s | 3.04s | 186% (Elder Leviathan) | 642% | 3.42x | WALL |
 
-## Cross-Biome Deviation Signals
+## Walls & Stalls
 
-_Discovery-only signals for values at least 25% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band._
+_Only the rungs that break the pattern. Everything absent from this table walked cleanly._
 
-| Biome | Axis | Metric | Value | Sibling median | Deviation |
-| --- | --- | --- | --- | --- | --- |
-| Deep-Sea Trench | Reward | Essence / kill | 290 | 106 | +174% |
-| Deep-Sea Trench | Reward | Biome XP / kill | 1740 | 635 | +174% |
-| Deep-Sea Trench | Threat | Worst spike %HP | 323% | 151% | +114% |
-| Tundra | Threat | Worst spike %HP | 285% | 151% | +89.5% |
-| Jungle | Threat | Worst spike %HP | 20.1% | 151% | -86.7% |
-| Jungle | Threat | Mean incoming DPS | 25.0 | 111 | -77.4% |
-| Jungle | Threat | Max incoming DPS | 49.4 | 154 | -67.8% |
-| Jungle | Exposure | Mob density | 40.0 | 24.0 | +66.7% |
-| Deep-Sea Trench | Threat | Mean incoming DPS | 182 | 111 | +64.7% |
-| Wasteland | Threat | Worst spike %HP | 57.2% | 151% | -62.1% |
-| Mountain | Threat | Max incoming DPS | 58.5 | 154 | -61.9% |
-| Wasteland | Reward | Biome XP / kill | 254 | 635 | -60.0% |
-| Wasteland | Reward | Essence / kill | 42.4 | 106 | -59.9% |
-| Mountain | Threat | Mean incoming DPS | 45.6 | 111 | -58.8% |
-| Desert | Threat | Mean incoming DPS | 46.1 | 111 | -58.4% |
-| Deep-Sea Trench | Exposure | Mob density | 10.0 | 24.0 | -58.3% |
-| Volcanic | Exposure | Mob density | 36.0 | 24.0 | +50.0% |
-| Wasteland | Threat | Max incoming DPS | 228 | 154 | +48.3% |
-| Mountain | Threat | Worst spike %HP | 90.5% | 151% | -39.9% |
-| Desert | Threat | Max incoming DPS | 93.9 | 154 | -38.8% |
-| Tundra | Reward | Essence / kill | 146 | 106 | +37.6% |
-| Tundra | Reward | Biome XP / kill | 873 | 635 | +37.4% |
-| Desert | Exposure | Mob density | 16.0 | 24.0 | -33.3% |
-| Tundra | Exposure | Mob density | 16.0 | 24.0 | -33.3% |
-| Deep-Sea Trench | Threat | Max incoming DPS | 196 | 154 | +27.9% |
-| Jungle | Reward | Biome XP / kill | 470 | 635 | -26.1% |
-| Jungle | Reward | Essence / kill | 78.3 | 106 | -26.0% |
+| Biome | Signal | Detail |
+| --- | --- | --- |
+| Mountain | Heavy spike | Granite Mammoth hits for 84.0% of maxHP |
+| Mountain | Low TTL | 7.55s to die under mean pressure (no recovery modelled) |
+| Jungle | No progression | cost/kill is 0.67x the previous rung — the climb stalls here |
+| Jungle | Low TTL | 14.6s to die under mean pressure (no recovery modelled) |
+| Desert | Difficulty wall | cost/kill jumps 2.47x over the previous rung |
+| Desert | One-shot | Dune Tyrant hits for 131% of the arrival player's maxHP |
+| Desert | Low TTL | 9.03s to die under mean pressure (no recovery modelled) |
+| Tundra | One-shot | Permafrost Behemoth hits for 203% of the arrival player's maxHP |
+| Tundra | Low TTL | 3.67s to die under mean pressure (no recovery modelled) |
+| Volcanic | One-shot | Obsidian Tortoise hits for 105% of the arrival player's maxHP |
+| Volcanic | Low TTL | 3.90s to die under mean pressure (no recovery modelled) |
+| Wasteland | No progression | cost/kill is 0.93x the previous rung — the climb stalls here |
+| Wasteland | Low TTL | 4.97s to die under mean pressure (no recovery modelled) |
+| Deep-Sea Trench | Difficulty wall | cost/kill jumps 3.42x over the previous rung |
+| Deep-Sea Trench | One-shot | Elder Leviathan hits for 186% of the arrival player's maxHP |
+| Deep-Sea Trench | Low TTL | 3.04s to die under mean pressure (no recovery modelled) |
 
-## Player Matchup Summary
 
-_Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked). ⚠ No tier-5 gear authored; using best-available T4 as reference._
+## Arrival Players
 
-| Biome | Player | Incoming DPS | Worst spike %HP | TTL pressure | Status |
-| --- | --- | --- | --- | --- | --- |
-| Deep-Sea Trench | Entry (prev-tier +3) | 182 | 323% (Elder Leviathan) | 1.75s | Blocked |
-| Deep-Sea Trench | Same-tier +0 | 184 | 303% (Elder Leviathan) | 1.86s | Blocked |
-| Deep-Sea Trench | Same-tier +3 | 172 | 208% (Elder Leviathan) | 2.73s | Blocked |
-| Deep-Sea Trench | Boss-ready (tankiest +3) | 184 | 225% (Elder Leviathan) | 2.48s | Blocked |
-| Desert | Entry (prev-tier +3) | 46.1 | 165% (Dune Tyrant) | 6.91s | Blocked |
-| Desert | Same-tier +0 | 45.5 | 154% (Dune Tyrant) | 7.48s | Blocked |
-| Desert | Same-tier +3 | 36.2 | 98.4% (Dune Tyrant) | 13.0s | Risky |
-| Desert | Boss-ready (tankiest +3) | 41.4 | 110% (Dune Tyrant) | 11.0s | Blocked |
-| Jungle | Entry (prev-tier +3) | 25.0 | 20.1% (Emerald Constrictor) | 12.7s | Risky |
-| Jungle | Same-tier +0 | 23.3 | 17.6% (Emerald Constrictor) | 14.6s | Risky |
-| Jungle | Same-tier +3 | 10.9 | 5.87% (Apex Silverback) | 43.0s | Safe |
-| Jungle | Boss-ready (tankiest +3) | 14.5 | 8.93% (Apex Silverback) | 31.3s | Safe |
-| Mountain | Entry (prev-tier +3) | 45.6 | 90.5% (Granite Mammoth) | 6.98s | Blocked |
-| Mountain | Same-tier +0 | 45.1 | 84.0% (Granite Mammoth) | 7.55s | Blocked |
-| Mountain | Same-tier +3 | 36.2 | 51.5% (Granite Mammoth) | 13.0s | Risky |
-| Mountain | Boss-ready (tankiest +3) | 41.2 | 58.5% (Granite Mammoth) | 11.0s | Risky |
-| Tundra | Entry (prev-tier +3) | 122 | 285% (Permafrost Behemoth) | 2.62s | Blocked |
-| Tundra | Same-tier +0 | 122 | 267% (Permafrost Behemoth) | 2.79s | Blocked |
-| Tundra | Same-tier +3 | 113 | 179% (Permafrost Behemoth) | 4.16s | Blocked |
-| Tundra | Boss-ready (tankiest +3) | 121 | 195% (Permafrost Behemoth) | 3.76s | Blocked |
-| Volcanic | Entry (prev-tier +3) | 118 | 151% (Obsidian Tortoise) | 2.70s | Blocked |
-| Volcanic | Same-tier +0 | 117 | 141% (Obsidian Tortoise) | 2.90s | Blocked |
-| Volcanic | Same-tier +3 | 105 | 91.4% (Obsidian Tortoise) | 4.46s | Blocked |
-| Volcanic | Boss-ready (tankiest +3) | 113 | 101% (Obsidian Tortoise) | 4.02s | Blocked |
-| Wasteland | Entry (prev-tier +3) | 111 | 57.2% (Plague Hound) | 2.88s | Blocked |
-| Wasteland | Same-tier +0 | 110 | 53.1% (Plague Hound) | 3.09s | Blocked |
-| Wasteland | Same-tier +3 | 94.4 | 33.9% (Plague Hound) | 4.97s | Blocked |
-| Wasteland | Boss-ready (tankiest +3) | 104 | 37.8% (Plague Hound) | 4.39s | Blocked |
+_Derived, not assumed: GM accrues per biome mastered and gates upgrade level, so the ladder walks +0 to +4._
 
-## Biome Threat Summary
+| # | Arrive at | Gear | GM | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Mountain | T4 +0 | 126 | 341 | 35.1 | 4.09% | 10.6% | 147 | 0.89 |
+| 2 | Jungle | T4 +0 | 135 | 341 | 35.1 | 4.09% | 10.6% | 147 | 0.89 |
+| 3 | Desert | T4 +1 | 145 | 384 | 42.4 | 4.29% | 10.7% | 173 | 0.89 |
+| 4 | Tundra | T4 +2 | 154 | 426 | 49.7 | 4.49% | 10.9% | 199 | 0.89 |
+| 5 | Volcanic | T4 +2 | 164 | 426 | 49.7 | 4.49% | 10.9% | 199 | 0.89 |
+| 6 | Wasteland | T4 +3 | 173 | 470 | 57.0 | 4.69% | 11.0% | 224 | 0.89 |
+| 7 | Deep-Sea Trench | T4 +4 | 183 | 512 | 64.4 | 4.89% | 11.1% | 250 | 0.89 |
 
-_Per-biome aggregates for biome tier 4. "Hardest hitter" uses raw direct DPS; "tankiest" weights plating ×8 against HP._
 
-| Biome | Mobs | Avg HP | Avg DPS | Avg atk | Avg APS | Avg DoT/s | Hardest | Fastest | Tankiest | DoT-heavy | Biggest spike | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Deep-Sea Trench | 3 | 4293 | 212 | 435 | 0.31 | 0.00 | Abyssal Serpent | Abyssal Serpent | Elder Leviathan | - | Elder Leviathan ×2.40 | density 10; 0/3 carry DoT |
-| Desert | 3 | 1527 | 64.1 | 137 | 0.35 | 0.00 | Dune Tyrant | Sand Viper | Dune Tyrant | - | Dune Tyrant ×2.80 | density 16; 0/3 carry DoT |
-| Jungle | 4 | 979 | 43.1 | 61.8 | 0.67 | 6.25 | Emerald Constrictor | Hunting Panther | Emerald Constrictor | Emerald Constrictor | Emerald Constrictor ×2.00 | density 40; 1/4 carry DoT |
-| Mountain | 4 | 702 | 62.7 | 155 | 0.31 | 0.00 | Avalanche Tyrant | Avalanche Tyrant | Cragback Rhino | - | Granite Mammoth ×2.00 | density 24; 0/4 carry DoT |
-| Tundra | 4 | 1188 | 144 | 361 | 0.30 | 0.00 | Permafrost Behemoth | Hoarfrost Yeti | Permafrost Behemoth | - | Permafrost Behemoth ×3.00 | density 16; 0/4 carry DoT |
-| Volcanic | 5 | 1753 | 117 | 214 | 0.55 | 26.4 | Infernal Direhound | Ember Skink | Magma Salamander | Ashspitter Salamander | Obsidian Tortoise ×2.20 | density 36; 2/5 carry DoT |
-| Wasteland | 5 | 2471 | 120 | 165 | 0.73 | 21.8 | Plague Hound | Bone Rat | Plague Hound | Plague Hound | Plague Hound ×1.00 | density 28; 1/5 carry DoT |
+---
+
+## Detail
+
+_Fixed-reference views, kept for cross-biome comparison at one power level. These do NOT account for the walk — read them only after the Walk has pointed you at a biome._
 
 ## Boss / Elite Table
 

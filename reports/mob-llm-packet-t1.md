@@ -6,97 +6,60 @@ Generated from `tools/mob-report.ts --llm-packet`. Markdown only. Companion to t
 
 - Player model: weapon, armour, charm and mobility only, plus skill nodes, item upgrades and class affinities. NO core, relic, rune, rite, stance or ability is equipped — the bench bots carry all six, so these numbers are comparable to each other but NOT to bench output in absolute terms.
 
+**Read the Walk first.** It is the only section that measures each biome against the
+player who actually arrives there. Everything below it is detail for a biome the Walk
+already told you to look at.
+
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier 1.
-- Reference players are tier 2 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.
+- Reference players are tier 2 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery.
 - Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
-- TTL pressure = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
+- TTL = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
 - Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 11 mobs; tier avg HP 163, avg total DPS 21.3.
 
-## Reference Players
+## The Walk
 
-| Player | Gear | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Entry (prev-tier +3) | T1 +3 | 171 | 9.34 | 3.52% | 8.57% | 37.4 | 0.97 |
-| Same-tier +0 | T2 +0 | 183 | 11.9 | 3.58% | 10.3% | 40.8 | 1.14 |
-| Same-tier +3 | T2 +3 | 209 | 16.4 | 4.01% | 12.4% | 51.7 | 1.14 |
-| Boss-ready (tankiest +3) | T2 +3 | 216 | 16.6 | 1.72% | 4.78% | 51.7 | 1.14 |
+_Each biome measured against the player who actually arrives there, in authored ladder order. Arrival gear is DERIVED: Global Mastery accrues as you master each biome, and GM is the only gate on upgrade level, so the ladder walks +0 to +4. "Cost/kill" is the share of your health pool one average kill spends — it folds offence and defence into one number. "Step" is this rung's cost divided by the previous rung's: 1.0 means the biome got no harder once your own growth is counted. Labels flag extremes for investigation; they are not pass/fail gates._
 
-
-## Cross-Biome Threat & Reward
-
-_Every biome at tier 1, ranked by mean incoming DPS against Entry (prev-tier +3). Threat is post-mitigation; spike is the worst individual hit. Rewards are authored per-kill means, not hourly yield. The threat index is relative to this tier's sibling median, not a target._
-
-| Biome | Threat index | Mean HP | Max HP | Mean incoming DPS | Max incoming DPS | Worst spike %HP | Density | Essence / kill | Biome XP / kill |
+| # | Biome | Arrive with | GM | Mob TTK | Your TTL | Worst hit %HP | Cost/kill | Step |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Caverns | ×1.44 | 238 | 250 | 25.4 | 36.0 | 91.5% (Cave Brute) | 16 | 11.5 | 80.0 |
-| Mountain | ×1.16 | 207 | 240 | 20.5 | 21.3 | 57.2% (Ridge Ambusher) | 24 | 6.67 | 45.3 |
-| Swamp | ×1.00 | 130 | 140 | 17.6 | 18.5 | 2.35% (Mud Toad) | 20 | 5.50 | 38.5 |
-| Forest | ×0.39 | 145 | 160 | 6.92 | 8.94 | 5.86% (Wolf) | 36 | 3.50 | 21.5 |
-| Plains | ×0.16 | 75.0 | 100 | 2.81 | 4.14 | 4.69% (Boar) | 48 | 2.50 | 14.0 |
+| 1 | Plains | T1 +0 | 0 | 1.90s | 44.2s | 6.33% (Boar) | 4.29% | - | baseline |
+| 2 | Forest | T1 +1 | 6 | 3.52s | 19.0s | 7.40% (Wolf) | 18.5% | 4.31x | WALL |
+| 3 | Swamp | T1 +2 | 12 | 3.12s | 9.43s | 2.40% (Mud Toad) | 33.1% | 1.79x | ok |
+| 4 | Mountain | T1 +3 | 18 | 4.62s | 8.31s | 57.2% (Ridge Ambusher) | 55.6% | 1.68x | ok |
+| 5 | Caverns | T1 +4 | 24 | 5.62s | 7.11s | 87.0% (Cave Brute) | 79.0% | 1.42x | ok |
 
-## Cross-Biome Deviation Signals
+## Walls & Stalls
 
-_Discovery-only signals for values at least 25% from the tier-sibling median. Deliberate outliers are expected; this is neither a pass/fail gate nor a recommended balance band._
+_Only the rungs that break the pattern. Everything absent from this table walked cleanly._
 
-| Biome | Axis | Metric | Value | Sibling median | Deviation |
-| --- | --- | --- | --- | --- | --- |
-| Caverns | Threat | Worst spike %HP | 91.5% | 5.86% | +1460% |
-| Mountain | Threat | Worst spike %HP | 57.2% | 5.86% | +875% |
-| Caverns | Reward | Essence / kill | 11.5 | 5.50 | +109% |
-| Caverns | Reward | Biome XP / kill | 80.0 | 38.5 | +108% |
-| Plains | Exposure | Mob density | 48.0 | 24.0 | +100% |
-| Caverns | Threat | Max incoming DPS | 36.0 | 18.5 | +95.0% |
-| Plains | Threat | Mean incoming DPS | 2.81 | 17.6 | -84.1% |
-| Plains | Threat | Max incoming DPS | 4.14 | 18.5 | -77.6% |
-| Plains | Reward | Biome XP / kill | 14.0 | 38.5 | -63.6% |
-| Forest | Threat | Mean incoming DPS | 6.92 | 17.6 | -60.7% |
-| Swamp | Threat | Worst spike %HP | 2.35% | 5.86% | -60.0% |
-| Plains | Reward | Essence / kill | 2.50 | 5.50 | -54.5% |
-| Forest | Threat | Max incoming DPS | 8.94 | 18.5 | -51.7% |
-| Forest | Exposure | Mob density | 36.0 | 24.0 | +50.0% |
-| Forest | Reward | Biome XP / kill | 21.5 | 38.5 | -44.2% |
-| Caverns | Threat | Mean incoming DPS | 25.4 | 17.6 | +44.0% |
-| Forest | Reward | Essence / kill | 3.50 | 5.50 | -36.4% |
-| Caverns | Exposure | Mob density | 16.0 | 24.0 | -33.3% |
+| Biome | Signal | Detail |
+| --- | --- | --- |
+| Forest | Difficulty wall | cost/kill jumps 4.31x over the previous rung |
+| Swamp | Low TTL | 9.43s to die under mean pressure (no recovery modelled) |
+| Mountain | Heavy spike | Ridge Ambusher hits for 57.2% of maxHP |
+| Mountain | Low TTL | 8.31s to die under mean pressure (no recovery modelled) |
+| Caverns | Heavy spike | Cave Brute hits for 87.0% of maxHP |
+| Caverns | Low TTL | 7.11s to die under mean pressure (no recovery modelled) |
 
-## Player Matchup Summary
 
-_Mean resolved per-mob pressure vs the four reference players, with worst-spike %HP from the biome's hardest-spiking individual mob. Incoming DPS folds plating/DR/evasion; TTL = maxHP ÷ incoming (no player recovery — see eHP packet). Status: Safe/Risky/Blocked (mob risk<30s, block<10s, ≥50% spike = Risky, one-shot = Blocked)._
+## Arrival Players
 
-| Biome | Player | Incoming DPS | Worst spike %HP | TTL pressure | Status |
-| --- | --- | --- | --- | --- | --- |
-| Caverns | Entry (prev-tier +3) | 25.4 | 91.5% (Cave Brute) | 6.72s | Blocked |
-| Caverns | Same-tier +0 | 23.5 | 81.8% (Cave Brute) | 7.81s | Blocked |
-| Caverns | Same-tier +3 | 21.1 | 67.8% (Cave Brute) | 9.94s | Blocked |
-| Caverns | Boss-ready (tankiest +3) | 21.8 | 66.8% (Cave Brute) | 9.88s | Blocked |
-| Forest | Entry (prev-tier +3) | 6.92 | 5.86% (Wolf) | 24.6s | Risky |
-| Forest | Same-tier +0 | 5.29 | 4.36% (Wolf) | 34.7s | Safe |
-| Forest | Same-tier +3 | 1.67 | 1.43% (Wolf) | 125s | Safe |
-| Forest | Boss-ready (tankiest +3) | 1.71 | 1.39% (Wolf) | 126s | Safe |
-| Mountain | Entry (prev-tier +3) | 20.5 | 57.2% (Ridge Ambusher) | 8.31s | Blocked |
-| Mountain | Same-tier +0 | 19.3 | 50.5% (Ridge Ambusher) | 9.49s | Blocked |
-| Mountain | Same-tier +3 | 16.6 | 38.2% (Ridge Ambusher) | 12.6s | Risky |
-| Mountain | Boss-ready (tankiest +3) | 17.6 | 38.3% (Ridge Ambusher) | 12.3s | Risky |
-| Plains | Entry (prev-tier +3) | 2.81 | 4.69% (Boar) | 60.8s | Safe |
-| Plains | Same-tier +0 | 1.78 | 3.27% (Boar) | 103s | Safe |
-| Plains | Same-tier +3 | 0.50 | 0.48% (Field Hare) | 420s | Safe |
-| Plains | Boss-ready (tankiest +3) | 0.51 | 0.46% (Field Hare) | 422s | Safe |
-| Swamp | Entry (prev-tier +3) | 17.6 | 2.35% (Mud Toad) | 9.67s | Blocked |
-| Swamp | Same-tier +0 | 17.0 | 0.55% (Mire Ooze) | 10.8s | Risky |
-| Swamp | Same-tier +3 | 17.0 | 0.48% (Mire Ooze) | 12.3s | Risky |
-| Swamp | Boss-ready (tankiest +3) | 17.0 | 0.46% (Mire Ooze) | 12.7s | Risky |
+_Derived, not assumed: GM accrues per biome mastered and gates upgrade level, so the ladder walks +0 to +4._
 
-## Biome Threat Summary
+| # | Arrive at | Gear | GM | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Plains | T1 +0 | 0 | 158 | 7.76 | 2.92% | 7.98% | 33.2 | 0.97 |
+| 2 | Forest | T1 +1 | 6 | 162 | 8.02 | 3.12% | 8.18% | 34.6 | 0.97 |
+| 3 | Swamp | T1 +2 | 12 | 166 | 9.13 | 3.32% | 8.38% | 36.1 | 0.97 |
+| 4 | Mountain | T1 +3 | 18 | 171 | 9.34 | 3.52% | 8.57% | 37.4 | 0.97 |
+| 5 | Caverns | T1 +4 | 24 | 175 | 10.6 | 3.72% | 8.77% | 39.2 | 0.98 |
 
-_Per-biome aggregates for biome tier 1. "Hardest hitter" uses raw direct DPS; "tankiest" weights plating ×8 against HP._
 
-| Biome | Mobs | Avg HP | Avg DPS | Avg atk | Avg APS | Avg DoT/s | Hardest | Fastest | Tankiest | DoT-heavy | Biggest spike | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Caverns | 2 | 238 | 32.2 | 60.5 | 0.54 | 0.00 | Cave Brute | Cave Lurker | Cave Brute | - | Cave Brute ×2.00 | density 16; 0/2 carry DoT |
-| Forest | 2 | 145 | 15.2 | 18.5 | 0.81 | 0.00 | Wolf | Wolf | Moss Rat | - | Wolf ×1.00 | density 36; 0/2 carry DoT |
-| Mountain | 3 | 207 | 26.8 | 50.0 | 0.33 | 0.00 | Ridge Ambusher | Cliff Hopper | Ridge Ambusher | - | Ridge Ambusher ×2.50 | density 24; 0/3 carry DoT |
-| Plains | 2 | 75.0 | 7.74 | 15.0 | 0.51 | 0.00 | Boar | Boar | Boar | - | Boar ×1.00 | density 48; 0/2 carry DoT |
-| Swamp | 2 | 130 | 5.45 | 11.5 | 0.48 | 16.5 | Mud Toad | Mire Ooze | Mire Ooze | Mire Ooze | Mud Toad ×1.00 | density 20; 2/2 carry DoT |
+---
+
+## Detail
+
+_Fixed-reference views, kept for cross-biome comparison at one power level. These do NOT account for the walk — read them only after the Walk has pointed you at a biome._
 
 ## Boss / Elite Table
 
