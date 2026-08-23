@@ -20,13 +20,13 @@ never folded into DPS — it has its own column.
 
 ## Biome summary
 
-| biome | density | N | uniq | w.mean eHP@10 | w.mean total DPS | sustained | cost/kill | pull load | w.mean essence | w.mean biomeXp |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Plains | 48 | 5 | 2 | 71 | 7.7 | 23.2 | 1654 | 8269 | 2.5 | 14 |
-| Forest | 36 | 3 | 3 | 102 | 13.7 | 27.3 | 2792 | 8375 | 2.8 | 17 |
-| Swamp | 20 | 2 | 2 | 138 | 22 | 32.9 | 4536 | 9073 | 5.5 | 39 |
-| Mountain | 24 | 2 | 2 | 196 | 27 | 40.6 | 7963 | 15926 | 6.7 | 45 |
-| Caverns | 16 | 2 | 2 | 249 | 32.1 | 48.2 | 12023 | 24047 | 11.5 | 80 |
+| biome | density | N | uniq | w.mean eHP@10 | w.mean total DPS | ally haste | sustained | cost/kill | pull load | w.mean essence | w.mean biomeXp |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Plains | 48 | 5 | 2 | 71 | 7.7 | — | 23.2 | 1654 | 8269 | 2.5 | 14 |
+| Forest | 36 | 3 | 3 | 102 | 13.7 | — | 27.3 | 2792 | 8375 | 2.8 | 17 |
+| Swamp | 20 | 2 | 2 | 138 | 22 | — | 32.9 | 4536 | 9073 | 5.5 | 39 |
+| Mountain | 24 | 2 | 2 | 196 | 26.8 | — | 40.2 | 7884 | 15768 | 6.7 | 45 |
+| Caverns | 16 | 2 | 2 | 282 | 32.2 | — | 48.3 | 13636 | 27271 | 11.5 | 80 |
 
 `N` is DESIGNER-SET expected concurrent attackers (see `CONCURRENCY` in the tool), not
 derived from density. `sustained` = `d(N+1)/2` is incoming DPS the player must out-sustain
@@ -34,24 +34,33 @@ derived from density. `sustained` = `d(N+1)/2` is incoming DPS the player must o
 unit of progress. `pull load` = `d·h·N(N+1)/2` is the spike of one full pull, quadratic in N.
 All three are valid only as biome-vs-biome ratios.
 
+`ally haste` is the biome-wide `empowersAllies` correction already folded into the DPS
+column — a support monster that hastens its neighbours contributes offence no per-monster
+column can show.
+
 ### Progression curve (indexed to the first biome in the row order above)
 
-- sustained pressure: `1.00 → 1.18 → 1.42 → 1.75 → 2.08`
-- cost per kill:      `1.00 → 1.69 → 2.74 → 4.82 → 7.27`
-- pull load:          `1.00 → 1.01 → 1.10 → 1.93 → 2.91`
+- sustained pressure: `1.00 → 1.18 → 1.42 → 1.73 → 2.08`
+- cost per kill:      `1.00 → 1.69 → 2.74 → 4.77 → 8.25`
+- pull load:          `1.00 → 1.01 → 1.10 → 1.91 → 3.30`
 
 ### Target vs current
 
-Targets grow `x1.2`/stage on sustained danger and `x1.41`/stage on eHP, indexed to Plains as the measured baseline.
+Targets grow `x1.2`/stage on sustained danger and `x1.41`/stage on eHP, positioned by the **`first`** anchor rule.
 Per-mob DPS is then forced: `DPS = sustained / ((N+1)/2)`.
 
-| biome | N | eHP now | eHP target | Δ | DPS now | DPS target | Δ | sustained now | target |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Plains | 5 | 71 | 71 | **x1** | 7.7 | 7.7 | **x1** | 23.2 | 23.2 |
-| Forest | 3 | 102 | 100 | x1 | 13.7 | 13.9 | **x1** | 27.3 | 27.9 |
-| Swamp | 2 | 138 | 142 | **x1** | 22 | 22.3 | **x1** | 32.9 | 33.4 |
-| Mountain | 2 | 196 | 200 | **x1** | 27 | 26.7 | x1 | 40.6 | 40.1 |
-| Caverns | 2 | 249 | 282 | **x1.1** | 32.1 | 32.1 | x1 | 48.2 | 48.1 |
+> **`first`** holds Plains exactly where it is and builds the ladder upward
+> from it. That is only sound where the first biome is genuinely the tier floor, which
+> is true here and was locked as the measured baseline — so every biome already sitting
+> on the ladder keeps the numbers it was tuned and playtested with.
+
+| biome | N | eHP now | eHP target | Δ | DPS now | DPS target | Δ | sustained now | target | cost/kill now | target |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Plains | 5 | 71 | 71 | **x1** | 7.7 | 7.7 | **x1** | 23.2 | 23.2 | 1654 | 1654 |
+| Forest | 3 | 102 | 100 | x1 | 13.7 | 13.9 | **x1** | 27.3 | 27.9 | 2792 | 2798 |
+| Swamp | 2 | 138 | 142 | **x1** | 22 | 22.3 | **x1** | 32.9 | 33.4 | 4536 | 4734 |
+| Mountain | 2 | 196 | 200 | **x1** | 26.8 | 26.7 | x1 | 40.2 | 40.1 | 7884 | 8011 |
+| Caverns | 2 | 282 | 282 | x1 | 32.2 | 32.1 | x1 | 48.3 | 48.1 | 13636 | 13554 |
 
 ## With node modifiers applied
 
@@ -66,8 +75,8 @@ baseline the player never plays. Values are indexed to **unmodified Plains**.
 | Plains | 1.00 | 1.05 | 1.05 | 1.07 | 1.05 | 1.00 | x1.07 |
 | Forest | 1.18 | 1.24 | — | 1.25 | 1.24 | 1.18 | x1.06 |
 | Swamp | 1.42 | 1.44 | 1.43 | 1.49 | 1.59 | 1.42 | x1.12 |
-| Mountain | 1.75 | — | 1.83 | 1.84 | 1.85 | 1.75 | x1.06 |
-| Caverns | 2.08 | 2.19 | 2.18 | 2.19 | 2.21 | 2.08 | x1.06 |
+| Mountain | 1.73 | — | 1.86 | 1.82 | 1.84 | 1.73 | x1.07 |
+| Caverns | 2.08 | 2.17 | 2.21 | 2.19 | 2.21 | 2.08 | x1.06 |
 
 ### Cost per kill
 
@@ -76,8 +85,8 @@ baseline the player never plays. Values are indexed to **unmodified Plains**.
 | Plains | 1.00 | 1.05 | 1.05 | 1.07 | 1.23 | 1.11 | x1.18 |
 | Forest | 1.69 | 1.78 | — | 1.79 | 2.08 | 1.88 | x1.17 |
 | Swamp | 2.74 | 2.78 | 2.77 | 2.89 | 3.64 | 3.09 | x1.31 |
-| Mountain | 4.82 | — | 5.03 | 5.07 | 5.97 | 5.35 | x1.19 |
-| Caverns | 7.27 | 7.65 | 7.62 | 7.66 | 8.72 | 7.81 | x1.15 |
+| Mountain | 4.77 | — | 5.12 | 5.02 | 5.92 | 5.30 | x1.18 |
+| Caverns | 8.25 | 8.58 | 8.73 | 8.69 | 9.89 | 8.87 | x1.15 |
 
 ### Does the railroad survive?
 
@@ -92,51 +101,51 @@ one, and the biome order stops being the thing the player reads.
 | Plains → Forest | cost/kill | 1.23 | 1.78 | clean |
 | Forest → Swamp | sustained | 1.25 | 1.42 | clean |
 | Forest → Swamp | cost/kill | 2.08 | 2.77 | clean |
-| Swamp → Mountain | sustained | 1.59 | 1.75 | clean |
-| Swamp → Mountain | cost/kill | 3.64 | 5.03 | clean |
-| Mountain → Caverns | sustained | 1.85 | 2.08 | clean |
-| Mountain → Caverns | cost/kill | 5.97 | 7.62 | clean |
+| Swamp → Mountain | sustained | 1.59 | 1.73 | clean |
+| Swamp → Mountain | cost/kill | 3.64 | 5.02 | clean |
+| Mountain → Caverns | sustained | 1.86 | 2.08 | clean |
+| Mountain → Caverns | cost/kill | 5.92 | 8.58 | clean |
 
 ## Plains  (density 48, 2 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Field Hare `plains-slime` | x1 | 50 | 12 | 2000 | 6 | — | — | 6 | — | — | 0 | — | — | 48 | 50 | 1 | 46 | 12 | — | follower, swarm | — |
-| Boar `boar` | x1 | 100 | 18 | 1900 | 9.5 | — | — | 9.5 | — | — | 0 | — | — | 95 | 100 | 1 | 50 | 12 | — | swarm, charge x2.5 | — |
-| BOSS Tusked Razorback `tusked-razorback` | — | 1700 | 34 | 2000 | 17 | — | — | 17 | — | — | 4 | 2% | — | 3230 | 1820 | 1.8 | 50 | 15 | — | — | boss-script |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
+| Field Hare `plains-slime` | x1 | 50 | 12 | 2000 | 6 | — | — | 6 | — | — | — | 0 | — | — | 48 | 50 | 1 | 46 | 12 | — | follower, swarm | — |
+| Boar `boar` | x1 | 100 | 18 | 1900 | 9.5 | — | — | 9.5 | — | — | — | 0 | — | — | 95 | 100 | 1 | 50 | 12 | — | swarm, charge x2.5 | — |
+| BOSS Tusked Razorback `tusked-razorback` | — | 1700 | 34 | 2000 | 17 | — | — | 17 | — | — | — | 4 | 2% | — | 3230 | 1820 | 1.8 | 50 | 15 | — | — | boss-script |
 
 ## Forest  (density 36, 2 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Moss Rat `forest-slime` | x1 | 160 | 17 | 1400 | 12.1 | — | — | 12.1 | — | — | 0 | — | — | 152 | 160 | 1 | 54 | 12 | — | — | — |
-| Wolf `wolf` | x1 | 130 | 20 | 1100 | 18.2 | — | — | 18.2 | — | — | 0 | — | — | 124 | 130 | 1 | 82 | 12 | — | alpha +2 | — |
-| follower Young Wolf `young-wolf` | x2 | 70 | 14 | 1150 | 12.2 | — | — | 12.2 | — | — | 0 | — | — | 67 | 70 | 1 | 86 | 12 | — | follower | — |
-| BOSS Gnarled Greatbear `gnarled-greatbear` | — | 2000 | 24 | 1400 | 34.3 | — | — | 34.3 | — | x1.3 | 0 | — | — | 1900 | 2000 | 1 | 60 | 15 | — | — | boss-script |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
+| Moss Rat `forest-slime` | x1 | 160 | 17 | 1400 | 12.1 | — | — | 12.1 | — | — | — | 0 | — | — | 152 | 160 | 1 | 54 | 12 | — | — | — |
+| Wolf `wolf` | x1 | 130 | 20 | 1100 | 18.2 | — | — | 18.2 | — | — | — | 0 | — | — | 124 | 130 | 1 | 82 | 12 | — | alpha +2 | — |
+| follower Young Wolf `young-wolf` | x2 | 70 | 14 | 1150 | 12.2 | — | — | 12.2 | — | — | — | 0 | — | — | 67 | 70 | 1 | 86 | 12 | — | follower | — |
+| BOSS Gnarled Greatbear `gnarled-greatbear` | — | 2000 | 24 | 1400 | 34.3 | — | — | 34.3 | — | — | x1.3 | 0 | — | — | 1900 | 2000 | 1 | 60 | 15 | — | — | boss-script |
 
 ## Swamp  (density 20, 2 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Mire Ooze `bog-slime` | x1 | 140 | 10 | 2000 | 5 | 18 | 4s | 23 | — | — | 0 | — | — | 133 | 140 | 1 | 28 | 12 | — | — | — |
-| Mud Toad `mud-toad` | x1 | 120 | 13 | 2200 | 5.9 | 15 | 4.4s | 20.9 | — | — | 2 | — | — | 143 | 123 | 1.2 | 30 | 12 | slow 40% | — | — |
-| BOSS Grave Toadeater `grave-toadeater` | — | 2100 | 13 | 2600 | 5 | 16 | 7.8s | 21 | — | — | 2 | 2% | — | 2850 | 2186 | 1.3 | 28 | 15 | — | aoe r120 | boss-script |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
+| Mire Ooze `bog-slime` | x1 | 140 | 10 | 2000 | 5 | 18 | 4s | 23 | — | — | — | 0 | — | — | 133 | 140 | 1 | 28 | 12 | — | — | — |
+| Mud Toad `mud-toad` | x1 | 120 | 13 | 2200 | 5.9 | 15 | 4.4s | 20.9 | — | — | — | 2 | — | — | 143 | 123 | 1.2 | 30 | 12 | slow 40% | — | — |
+| BOSS Grave Toadeater `grave-toadeater` | — | 2100 | 13 | 2600 | 5.8 | 16 | 7.8s | 21.8 | — | — | — | 2 | 2% | — | 2850 | 2186 | 1.3 | 28 | 15 | — | aoe r120 | boss-script |
 
 ## Mountain  (density 24, 3 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Cliff Hopper `cliff-hopper` | x2 | 190 | 82 | 3000 | 27.3 | — | — | 27.3 | x1.5 = 123 (charged/1100ms) | — | 0 | — | — | 181 | 190 | 1 | 28 | 12 | — | charge x3, vaults | — |
-| Ridge Ambusher `ridge-archer` | x1 | 240 | 82 | 3100 | 26.5 | — | — | 26.5 | x1.8 = 148 (charged/2000ms) | — | 0 | — | — | 228 | 240 | 1 | 26 | **210** | — | holds-choke | — |
-| BOSS Crag Behemoth `crag-behemoth` | — | 2100 | 56 | 3500 | 16 | — | — | 16 | x1.9 = 106 (charged/2400ms) | — | 0 | — | — | 1995 | 2100 | 1 | 22 | 18 | — | aoe r120, charge x3 | boss-script |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
+| Cliff Hopper `cliff-hopper` | x2 | 190 | 50 | 3000 | 26.3 | — | — | 26.3 | x2.1 = 105 (charged/1100ms) | — | — | 0 | — | — | 181 | 190 | 1 | 28 | 12 | — | charge x3, vaults | — |
+| Ridge Ambusher `ridge-archer` | x1 | 240 | 50 | 3100 | 27.7 | — | — | 27.7 | x2.5 = 125 (charged/2000ms) | — | — | 0 | — | — | 228 | 240 | 1 | 26 | **210** | — | holds-choke | — |
+| BOSS Crag Behemoth `crag-behemoth` | — | 2100 | 56 | 3500 | 22.8 | — | — | 22.8 | x1.9 = 106 (charged/2400ms) | — | — | 0 | — | — | 1995 | 2100 | 1 | 22 | 18 | — | aoe r120, charge x3 | boss-script |
 
 ## Caverns  (density 16, 2 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Cave Lurker `cave-lurker` | x1 | 200 | 31 | 1400 | 22.1 | — | — | 22.1 | — | — | 1 | 5% | — | 238 | 214 | 1.1 | 68 | 12 | — | — | — |
-| Cave Brute `cave-brute` | x1 | 220 | 118 | 2800 | 42.1 | — | — | 42.1 | x1.5 = 177 (charged/1800ms) | — | 1 | 10% | — | 261 | 246 | 1.1 | 18 | 12 | — | patrol, charge x2.5, ELITE | — |
-| BOSS Obsidian Broodmother `obsidian-broodmother` | — | 1750 | 47 | 2800 | 16.8 | — | — | 16.8 | x1.8 = 85 (charged/1700ms) | — | 6 | 10% | — | 5542 | 2111 | 2.6 | 24 | 18 | — | aoe r120, charge x2.5 | boss-script |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
+| Cave Lurker `cave-lurker` | x1 | 225 | 31 | 1400 | 22.1 | — | — | 22.1 | — | — | — | 1 | 5% | — | 267 | 241 | 1.1 | 68 | 12 | — | — | — |
+| Cave Brute `cave-brute` | x1 | 250 | 90 | 2800 | 42.3 | — | — | 42.3 | x2 = 180 (charged/1800ms) | — | — | 1 | 10% | — | 297 | 279 | 1.1 | 18 | 12 | — | patrol, charge x2.5, ELITE | — |
+| BOSS Obsidian Broodmother `obsidian-broodmother` | — | 1750 | 47 | 2800 | 22.7 | — | — | 22.7 | x1.8 = 85 (charged/1700ms) | — | — | 6 | 10% | — | 5542 | 2111 | 2.6 | 24 | 18 | shred 1 x6 | aoe r120, charge x2.5 | boss-script |
 
 ## Mechanic coverage
 
