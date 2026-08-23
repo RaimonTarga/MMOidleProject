@@ -12,6 +12,7 @@ import { onRaiserDead } from '../ai/raiseDead';
 import { registerCombatListener } from '../engine/combatPipeline';
 import { publishToxicPool } from '../../world/groundZones';
 import { recordCorpse } from '../../world/corpses';
+import { clearAmbientRampOverride } from '../../world/nodeFeatures';
 
 export const DEATH_EMPOWER_EFFECT_ID = 'monster-death-empower';
 
@@ -87,6 +88,10 @@ export function initMonsterDeathEffects(): void {
       );
     }
     onRaiserDead(world, ctx.defender);
+    // A boss that stoked its room's ambient ramp takes the stoke with it.
+    if (ctx.defender.isMonster.isBoss) {
+      clearAmbientRampOverride(world, ctx.defender.hasPosition.nodeId);
+    }
     spawnDeathHazard(world, ctx.defender);
     empowerNearbyAllies(world, ctx.defender);
     // Last: the corpse this kill leaves behind must not be raisable by the very

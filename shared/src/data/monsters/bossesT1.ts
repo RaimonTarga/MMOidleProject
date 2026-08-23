@@ -23,18 +23,21 @@ import type { MonsterDefinition } from './types';
 // ~30s time-to-kill and ~1.1-1.35 health bars spent over the full fight. NOTE that
 // `--mode boss` in the balance bench does NOT fight bosses — see bossExam's header.
 //
-// T1: Slow bosses gain CLEAVE (aoeAttack) so summon-spam can't body-block them —
-//     see the anti-summon guardrail in boss-design.md.
-// T2: + ONE phase at 50% HP (the tier's new layer — escalation, not a 2nd shape;
-//     true shape-swaps/range-flips start at T3 via `morph`). Slow bosses cleave.
+// ENCOUNTER REWORK (2026-08-23) — the anti-summon cleave is GONE. Every slow boss
+// used to carry `aoeAttack` for one reason: a wall of summons could body-block it.
+// That is now solved at the targeting layer (`targeting.prefersPlayers`), so boss
+// AoE exists only where the ENCOUNTER wants it — the Slam, the pool, the Eruption.
+// Those same charged attacks are the periodic sweep that keeps summons honest.
 //
-// Cleave criterion = SLOW swing rate (vulnerable to body-block), not hit size:
-//   cleave  -> Mountain, Swamp, Cave (speed <= ~30)
-//   single  -> Plains, Forest, Desert, Jungle (fast enough to keep pace)
-// aoeAttack: { radius, damageMult } — every swing splashes damageMult x attack to
-//   others within radius of the target (full damage to the primary target).
+// Phases now have to DEEPEN the boss's one idea. `empower-charged` scales the
+// signature telegraphed attack, `empower-shred` deepens Cave's corrosion, `roar`
+// escalates the Plains swarm. Generic timed shields and arbitrary attack multipliers
+// were removed: they made every boss the same fight with a different sprite.
 //
-// Phases use enrage (atk x atkMult, cd x cdMult) + stat-buff (movement speed).
+// ⚠ NUMBERS: the T1 band above was measured WITH the old 50% shields (Mountain,
+// Cave) and WITH cleave. Replacing a defensive beat with an offensive one moves both
+// TTK and damage taken; re-run `server/bench/bossExam.ts` before trusting the band.
+//
 // No two enrages on one boss (last-write-wins restore bug) — speed pressure uses
 // stat-buff. Phase buffs omit durationMs = permanent for the rest of the life.
 //
@@ -50,7 +53,8 @@ import type { MonsterDefinition } from './types';
 export const bossMonsterEntriesT1 = [
   // ════════════════════════ T1 BOSSES (pure shape, no phase) ════════════════════════
 
-  // PLAINS — honest bruiser, no gimmick. The floor. (fast enough: single-target)
+  // PLAINS — SWARM COMMANDER. The boss is only half the encounter; the herd is the
+  // other half. It is deliberately NOT the tier's strongest personal attacker.
   ['tusked-razorback', {
     id: 'tusked-razorback', name: 'Tusked Razorback', color: 0xddaa44,
     isBoss: true,
@@ -61,15 +65,17 @@ export const bossMonsterEntriesT1 = [
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150, catalystBundle: 5 }, // one-time first-clear bundle (placeholder)
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
-    // PLAINS EXAM = "survive the swarm". T1 stays simple: one 50% beat where the
-    // razorback rallies a slime swarm (adds despawn on boss death) + a light enrage.
-    // Numbers placeholder — user balance pass; structure formalizes in Step 13.
+    targeting: { prefersPlayers: true },
+    // PLAINS EXAM = "survive the swarm". T1 teaches the pure identity: a trickle of
+    // reinforcements, and one 50% RALLY where the razorback calls a wave and drives
+    // the whole herd faster. The old self-enrage is gone on purpose — Plains
+    // escalates by CONCURRENCY, never by the boss becoming a better duellist.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, maxAlive: 6, offsetRange: 220 },
           { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, maxAlive: 6, offsetRange: 220 },
-          { type: 'enrage', atkMult: 1.1, cdMult: 0.9 },
+          { type: 'roar', attackSpeedPct: 0.20, durationMs: 8000, radius: 320 },
         ] },
       ],
       // The swarm is HALF this encounter's output, so it is left at its authored
@@ -105,6 +111,7 @@ export const bossMonsterEntriesT1 = [
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150, catalystBundle: 5 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
+    targeting: { prefersPlayers: true },
     consecutiveHits: 2,
     // Caps at +28% after 4 ticks = 12s, comfortably inside the fight, so the ramp is
     // a beat the player actually meets rather than a number that never lands.
@@ -120,7 +127,8 @@ export const bossMonsterEntriesT1 = [
     },
   }],
 
-  // MOUNTAIN — slow charging mega-slam that trips the cap. Burst exam. Cleaves.
+  // MOUNTAIN — TELEGRAPHED CATASTROPHIC IMPACT. One enormous readable hit, and the
+  // whole fight is whether you can answer it. Everything else is deliberately plain.
   ['crag-behemoth', {
     id: 'crag-behemoth', name: 'Crag Behemoth', color: 0x8899bb,
     isBoss: true,
@@ -128,8 +136,8 @@ export const bossMonsterEntriesT1 = [
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158, catalystBundle: 5 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
+    targeting: { prefersPlayers: true },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
     // 56 x1.9 = 106 — the tier's biggest single hit, ~55-60% of an end-of-T1 pool.
     // Above the 40-50% anchor in boss-design.md on purpose: this is the one T1 fight
     // that is supposed to make the damage cap (mountain plate / Striker root) read as
@@ -138,20 +146,21 @@ export const bossMonsterEntriesT1 = [
       name: 'Ground Slam', castMs: 2400, cooldownMs: 10000, initialCooldownMs: 4500,
       multiplier: 1.9, fx: 'strong-kick', aoe: { radius: 155 },
     },
-    // MOUNTAIN EXAM = "break the guarded position". T1: at 50% it digs in (a timed
-    // shield) while you grind it down. (T1 adds removed except Plains.)
-    // Numbers placeholder — user balance pass; structure formalizes in Step 13.
+    // MOUNTAIN EXAM = "survive the slam". The 50% beat makes the SLAM worse rather
+    // than making the boss briefly unkillable: it comes around sooner and lands
+    // heavier. The old timed DR shield taught nothing about this encounter, and the
+    // slam is the mechanic every later Mountain boss evolves.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'shield', drAdd: 0.3, durationMs: 5000 },
+          { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.80 },
         ] },
       ],
     },
   }],
 
-  // SWAMP — trivial direct hit, real (beatable) DoT. dot-resist exam. Cleaves
-  // (slow: a body-blocked DoT swing lands on summons instead of the player).
+  // SWAMP — ROT / ATTRITION. The direct hit is nothing; the poison and the pool are
+  // the fight. The arena is as dangerous as the monster standing in it.
   ['grave-toadeater', {
     id: 'grave-toadeater', name: 'Grave Toadeater', color: 0x1e3d1e,
     isBoss: true,
@@ -162,30 +171,31 @@ export const bossMonsterEntriesT1 = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150, catalystBundle: 5 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
+    targeting: { prefersPlayers: true },
     // 4 x4 = 16 dps at cap, reached after 3 swings (7.8s) and held there because each
     // landed hit refreshes the whole duration. Was 3 x3 = 9 dps — LESS
     // poison than the Mire Ooze trash mob (6 x3 = 18) in the biome whose whole identity
     // is poison, which is most of why this boss was the tier's pushover.
     dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
     chargedAttack: {
       name: 'Bile Pool', castMs: 1200, cooldownMs: 8500, initialCooldownMs: 4000,
       multiplier: 1.0, fx: 'strong-kick', aoe: { radius: 105 },
       pool: { durationMs: 7000, damagePerTick: 3, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
     },
-    // SWAMP EXAM = "survive the rot". The boss plants its own telegraphed pool;
-    // at 50% it gets a light enrage. No encounter adds.
-    // Numbers placeholder — user balance pass; structure formalizes in Step 13.
+    // SWAMP EXAM = "survive the rot". At 50% the ROT escalates: pools come around
+    // far sooner and sit wider, so the arena keeps shrinking. The boss's own slap is
+    // left alone — a swamp boss that suddenly hits hard is a different encounter.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.15, cdMult: 0.85 },
+          { type: 'empower-charged', cooldownMult: 0.60, radiusMult: 1.15 },
         ] },
       ],
     },
   }],
 
-  // CAVE — tanky mixed elite: high HP, DR + plating, charges. Endurance exam. Cleaves.
+  // CAVE — ENDURANCE / DEFENSIVE EROSION. The longer it lasts, the less armour you
+  // have left. Its own bulk buys the time its corrosion needs.
   ['obsidian-broodmother', {
     id: 'obsidian-broodmother', name: 'Obsidian Broodmother', color: 0x334455,
     isBoss: true,
@@ -196,8 +206,8 @@ export const bossMonsterEntriesT1 = [
     behavior: 'melee', attackStyle: 'quake', biome: 'cave',
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165, catalystBundle: 5 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
+    targeting: { prefersPlayers: true },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
     appliesPlatingShred: { platingPerStack: 1, maxStacks: 6 },
     // 47 x1.8 = 85, ~47% of an end-of-T1 pool — squarely on the cap-exam anchor in
     // boss-design.md, and deliberately a step below the Behemoth's 106: Caverns is the
@@ -206,14 +216,14 @@ export const bossMonsterEntriesT1 = [
       name: 'Obsidian Slam', castMs: 1700, cooldownMs: 9500, initialCooldownMs: 4500,
       multiplier: 1.8, fx: 'strong-kick', aoe: { radius: 125 },
     },
-    // CAVE EXAM = "survive the elite" (a durable %DR sponge). T1: at 50% it digs in
-    // (timed shield) — the focus stays on grinding the durable boss; Heavy Strike
-    // (single-target burst) and Second Wind (sustain) both pay off here.
-    // (T1 adds removed except Plains.) Numbers placeholder — user pass.
+    // CAVE EXAM = "your shell erodes". At 50% the corrosion deepens: three more
+    // stacks of plating shred, so the back half of the fight is fought in measurably
+    // worse armour than the front half. That is the lineage's whole idea, and it
+    // replaces the generic timed shield the boss used to gain here.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'shield', drAdd: 0.25, durationMs: 5000 },
+          { type: 'empower-shred', maxStacksAdd: 3 },
         ] },
       ],
     },

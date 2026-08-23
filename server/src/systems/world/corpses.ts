@@ -13,8 +13,14 @@ export interface RuntimeCorpse {
  * How long a corpse stays raisable. Short on purpose: the necromancer's tide has
  * to track the fight happening NOW, not a pile banked minutes ago. Placeholder —
  * the balance pass owns it.
+ *
+ * Raised from 15s by the boss encounter rework: the Charnel-Crown Sovereign's Mass
+ * Resurrection fires on an HP threshold, not on a timer, so at 15s a phase burst
+ * routinely found an empty registry and did nothing at all. 30s still cannot bank a
+ * pile from a previous pull (the boss fight is longer than that), but it does mean
+ * "everything you have put down recently gets back up" is reliably true.
  */
-export const CORPSE_TTL_MS = 15_000;
+export const CORPSE_TTL_MS = 30_000;
 /** Ring-buffer bound. The oldest corpse is dropped once a node is this full. */
 export const MAX_CORPSES_PER_NODE = 16;
 

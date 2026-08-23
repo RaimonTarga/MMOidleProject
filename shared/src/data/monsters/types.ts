@@ -51,11 +51,101 @@ export type BossAction =
   | { type: 'summon';    monsterTypeId: string; count: number; offsetRange?: number }
   | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction' | 'evasion'; mult: number; durationMs?: number }
   | { type: 'roar'; attackSpeedPct: number; durationMs: number; radius?: number }
-  | { type: 'apply-shield';   shieldPct: number; intervalMs: number; durationMs: number }
+  | {
+      type: 'apply-shield';
+      shieldPct: number;
+      intervalMs: number;
+      durationMs: number;
+      /** Optional brittle-shell rider — same shape as `MonsterDefinition.enemyShield.shatter`. */
+      shatter?: {
+        selfDamagePct: number;
+        vulnerability?: { damageTakenPct: number; durationMs: number };
+        freezeRadius?: number;
+        freezeDurationMs?: number;
+      };
+    }
   | { type: 'apply-soft-cap'; capPct: number; capMult: number }
   | { type: 'shed-defense' }
   | { type: 'modify-ramp-debuff'; moveSlowMaxPct: number; atkSlowMaxPct: number }
   | { type: 'spawn-adds'; monsterTypeId: string; count: number; offsetRange?: number; maxAlive?: number }
+  /**
+   * RAISE DEAD (Wasteland) — one burst resurrection. Claims up to `count` corpses
+   * from the node's corpse registry within `corpseRange` and raises each as a risen
+   * copy (zero rewards, leaves no corpse of its own, crumbles when the raiser dies).
+   * Raises fewer than `count` when fewer corpses are in reach — never conjures.
+   *
+   * `maxAliveAdd` permanently raises this boss's `raisesDead.maxAlive` ceiling, so a
+   * later phase can let the tide stand deeper rather than only arriving faster.
+   */
+  | {
+      type: 'raise-dead';
+      count: number;
+      corpseRange?: number;
+      hpMult?: number;
+      damageMult?: number;
+      maxAliveAdd?: number;
+    }
+  /**
+   * STOKE RAMP (Volcano) — bend the node's ambient ramp (`NodeFeatureSpec.ambientRamp`)
+   * for everyone in the boss's node. `rampMsMult` scales the accumulate/decay cadence
+   * (< 1 = the room heats faster and cools slower in equal measure), `minStacks` is a
+   * floor the ramp can no longer decay below, and `maxStacksAdd` raises the ceiling.
+   *
+   * Node-scoped, not per-player: someone who arrives late walks into the same caldera.
+   * Cleared when the boss dies or the node freezes — the room cools with it.
+   */
+  | {
+      type: 'stoke-ramp';
+      rampMsMult?: number;
+      minStacks?: number;
+      maxStacksAdd?: number;
+    }
+  /**
+   * SPAWN POOL — lay a hazard pool centred on the boss. The same ground zone the
+   * charged-attack `pool` rider and `onDeath.spawnHazard` publish, exposed as a
+   * scripted beat so a phase can flood the arena (Swamp Rot Bloom, Volcano magma).
+   */
+  | {
+      type: 'spawn-pool';
+      radius: number;
+      durationMs: number;
+      damagePerTick: number;
+      tickIntervalMs: number;
+      slowSpeedMult?: number;
+    }
+  /**
+   * EMPOWER CHARGED — escalate the boss's SIGNATURE telegraphed attack instead of
+   * bolting a new mechanic onto it. Multipliers compose across phases (two phases
+   * each passing `cooldownMult: 0.8` land at 0.64), so a lineage can deepen one idea
+   * rather than acquiring unrelated ones. All fields optional; omitted = unchanged.
+   */
+  | {
+      type: 'empower-charged';
+      /** Scales `chargedAttack.multiplier`. */
+      multiplierMult?: number;
+      /** Scales `chargedAttack.cooldownMs` (< 1 = it comes around sooner). */
+      cooldownMult?: number;
+      /** Scales `chargedAttack.aoe.radius`. */
+      radiusMult?: number;
+      /** Scales `chargedAttack.castMs` (< 1 = a shorter tell). */
+      castMsMult?: number;
+      /** Added rays on a `radial-fault-lines` aftershock. */
+      aftershockRayCountAdd?: number;
+      /** Scales the aftershock's `damageMultiplier`. */
+      aftershockDamageMult?: number;
+    }
+  /**
+   * EMPOWER SHRED (Cave) — deepen the boss's `appliesPlatingShred` mid-fight. The
+   * Cave lineage's whole idea is that your shell erodes as the fight runs long, so
+   * its escalation is "the erosion goes further", not a second unrelated mechanic.
+   */
+  | {
+      type: 'empower-shred';
+      platingPerStackAdd?: number;
+      maxStacksAdd?: number;
+      /** Extra stack counts at which the threshold poison fires (Cave T3+). */
+      extraThresholds?: number[];
+    }
   | {
       type: 'morph';
       isRanged?: boolean;
@@ -208,6 +298,19 @@ export interface MonsterTargeting {
    * the taunt system ships.
    */
   ignoresTaunts?: boolean;
+  /**
+   * ANTI-BODY-BLOCK. While at least one PLAYER is inside this monster's pull range,
+   * minions are not aggro candidates at all — it walks past the summon wall and
+   * fights the person who sent it. It still falls back to minions when no player is
+   * in reach, and minions are still hit by anything area-shaped it does.
+   *
+   * This is the systemic replacement for the old anti-summon `aoeAttack` cleave that
+   * every slow boss carried: bosses no longer need to periodically wipe summons in
+   * order to stay on their intended target, so boss AoE can go back to existing
+   * because the ENCOUNTER wants it (Earthshatter, Eruption, pools) rather than
+   * because the Summoner class exists.
+   */
+  prefersPlayers?: boolean;
 }
 
 /** Effects a monster can leave behind when a player kills it. */
@@ -572,6 +675,15 @@ export interface MonsterDefinition {
     /** HP fraction (0..1) that triggers the retract. */
     atHpPct: number;
     durationMs: number;
+    /**
+     * BOSS SHELL CYCLE. When set, the shell is no longer once-per-life: after it
+     * opens it re-arms, and every shell after the first ignores `atHpPct` and simply
+     * comes back this many ms later. Reserved for bosses whose identity IS the cycle
+     * (Volcano T3): pair it with a mild `directDamageMult` and a `pool`, so the beat
+     * reads as "it hardens, then floods the ground when it opens" rather than as a
+     * repeating invulnerability that stalls the fight.
+     */
+    repeatIntervalMs?: number;
     /** Multiplier on incoming DIRECT damage while shelled (e.g. 0.15). */
     directDamageMult: number;
     /** Evolved Snapper: a lingering toxic pool laid down when the shell closes. */
@@ -910,6 +1022,13 @@ export interface MonsterDefinition {
      * `damageMult` stacks on top of `multiplier` (default 1) — use it when the
      * splash should hit softer than a single-target spike of the same charge.
      */
+    /**
+     * DEVOUR — the caster restores this fraction of its own maxHp when the charged
+     * hit LANDS (never on a miss, an evade, or an aborted wind-up). The Trench
+     * serpent's signature: a slow, enormous, entirely readable bite that you have to
+     * actually answer, because eating it hands the fight back to the boss.
+     */
+    healsSelfPct?: number;
     aoe?: { radius: number; damageMult?: number };
     /** Lingering toxic pool left at the planted impact point after resolution. */
     pool?: {

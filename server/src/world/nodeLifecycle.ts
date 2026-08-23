@@ -4,6 +4,7 @@ import { removeMonsterEntity } from './monsterLifecycle';
 import { ensurePopulation, ensureBoss } from '../systems/world/spawning';
 import { clearGroundZonesForNode } from '../systems/world/groundZones';
 import { clearCorpsesForNode } from '../systems/world/corpses';
+import { clearAmbientRampOverride } from '../systems/world/nodeFeatures';
 import {
   clearDungeonRuntime,
   ensureDungeon,
@@ -20,6 +21,7 @@ export function freezeNode(world: World, nodeId: string): void {
   clearDungeonRuntime(world, nodeId);
   clearGroundZonesForNode(world, nodeId);
   clearCorpsesForNode(world, nodeId);
+  clearAmbientRampOverride(world, nodeId);
   world.nextMonsterIdByNode.delete(nodeId);
   world.reconcileMonsterCounts();
 

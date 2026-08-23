@@ -50,6 +50,7 @@ import {
   updateCorpses,
   type RuntimeCorpse,
 } from "../systems/world/corpses";
+import type { AmbientRampOverride } from "../systems/world/nodeFeatures";
 import { updateMonsters } from "../systems/combat/ai/ai";
 import { updatePacks } from "../systems/combat/ai/packs";
 import { updateRaisers } from "../systems/combat/ai/raiseDead";
@@ -258,6 +259,12 @@ export class World {
    * persisted. Read by `raisesDead` necromancers.
    */
   corpses = new Map<string, RuntimeCorpse[]>();
+  /**
+   * Per-node overrides on the ambient node ramp, written by a boss's 'stoke-ramp'
+   * action (Volcano). Node-scoped so a player arriving mid-fight walks into the same
+   * caldera; runtime-only, cleared on boss death and on node freeze.
+   */
+  ambientRampOverrides = new Map<string, AmbientRampOverride>();
   /**
    * Persist (marker) or clear (null) the server-global Void Overlord respawn
    * cooldown so it survives node freeze/thaw and server restarts. Set by

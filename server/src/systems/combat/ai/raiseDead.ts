@@ -71,6 +71,36 @@ function raiseCorpse(
 }
 
 /**
+ * BURST RESURRECTION — raise up to `count` corpses in one beat, honouring the
+ * raiser's living-risen cap. Returns how many actually clawed up: fewer than asked
+ * whenever the node has not fed it enough corpses, and zero when it has none. The
+ * boss-script `raise-dead` action is the only caller; the ordinary cadence in
+ * `updateRaisers` still raises one at a time.
+ */
+export function raiseCorpsesBurst(
+  world: World,
+  raiser: MonsterEntity,
+  spec: MonsterRaisesDead,
+  count: number,
+  maxAlive: number,
+  now: number,
+): number {
+  let raised = 0;
+  for (let i = 0; i < count; i++) {
+    if (countRaisedBy(world, raiser) >= maxAlive) break;
+    const corpse = takeNearestCorpse(
+      world,
+      raiser.hasPosition.nodeId,
+      raiser.hasPosition.current,
+      spec.corpseRange,
+    );
+    if (!corpse) break;
+    if (raiseCorpse(world, raiser, corpse, spec, now)) raised++;
+  }
+  return raised;
+}
+
+/**
  * Necromancy tick. Runs BEFORE `updateMonsters` alongside the other ecology
  * coordinators — it only creates entities and sets intent; `updateMonsters` stays
  * the single executor for movement and attacks.
@@ -102,7 +132,8 @@ export function updateRaisers(world: World, now: number): void {
     if (now < getCounter(state, NEXT_RAISE_KEY)) continue;
     setCounter(state, NEXT_RAISE_KEY, now + spec.intervalMs);
 
-    if (countRaisedBy(world, raiser) >= spec.maxAlive) continue;
+    const maxAlive = spec.maxAlive + (raiser.scriptsBoss?.raiseMaxAliveAdd ?? 0);
+    if (countRaisedBy(world, raiser) >= maxAlive) continue;
     const corpse = takeNearestCorpse(
       world,
       raiser.hasPosition.nodeId,

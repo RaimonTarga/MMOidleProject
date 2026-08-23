@@ -122,7 +122,9 @@ function applyIceShatter(
   def: MonsterDefinition | undefined,
   now: number,
 ): void {
-  const shatter = def?.enemyShield?.shatter;
+  // A runtime barrier granted mid-fight ('apply-shield') may carry its own shatter
+  // rider — Tundra's T4 Ice Armour is thickened by a phase, not by a second def.
+  const shatter = target.scriptsBoss?.shieldOverride?.shatter ?? def?.enemyShield?.shatter;
   if (!shatter) return;
 
   const bonus = Math.max(
@@ -977,18 +979,37 @@ export function runMonsterAttack(
   // capped, decaying stackDurationMs after the last hit (refreshed every hit).
   const platingShred = def?.appliesPlatingShred;
   if (platingShred && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+    // A Cave boss phase ('empower-shred') deepens the same corrosion instead of
+    // bolting on a second mechanic: more plating per stack, a higher ceiling, and
+    // further stack counts at which the threshold poison fires.
+    const deepen = monster.scriptsBoss?.shredOverride;
+    const maxStacks = platingShred.maxStacks + (deepen?.maxStacksAdd ?? 0);
+    const perStack =
+      platingShred.platingPerStack + (deepen?.platingPerStackAdd ?? 0);
+    // `applyStatusEffect` keeps an EXISTING effect's cap and data, so a deepening
+    // that lands mid-corrosion has to be written onto the live stack before the
+    // increment — otherwise the raised ceiling only takes effect on a fresh pull.
+    if (deepen) {
+      const live = getStatusEffect(target.tracksCombat, PLATING_SHRED_EFFECT_ID);
+      if (live) {
+        live.maxStacks = maxStacks;
+        live.data.platingPerStack = perStack;
+      }
+    }
     const corrosion = applyStatusEffect(target.tracksCombat, {
       id: PLATING_SHRED_EFFECT_ID,
-      maxStacks: platingShred.maxStacks,
+      maxStacks,
       remainingMs: -1,
       refreshable: false,
       sourceId: monster.isMonster.id,
-      data: { platingPerStack: platingShred.platingPerStack },
+      data: { platingPerStack: perStack },
     });
     const poison = platingShred.thresholdPoison;
     if (
       target.hasHealth.hp > 0 &&
-      poison?.atStacks.includes(corrosion.stacks)
+      poison &&
+      (poison.atStacks.includes(corrosion.stacks) ||
+        deepen?.extraThresholds.includes(corrosion.stacks))
     ) {
       applyMonsterDotToPlayer(world, monster, target, poison);
     }
@@ -1164,6 +1185,51 @@ function applyChargedAttackRiders(
       });
     }
   }
+}
+
+/**
+ * The boss's signature attack AFTER any 'empower-charged' phases have scaled it.
+ * Returns the authored definition untouched when no override is present, so the
+ * common path allocates nothing.
+ *
+ * Escalating the attack the encounter is already about is the rework's preferred
+ * shape of a phase: Mountain's slam lands harder and sooner, Tundra's Collapse
+ * widens, the Trench's Devour comes around faster — rather than each tier bolting
+ * on an unrelated defensive keyword.
+ */
+function effectiveChargedAttack(
+  monster: MonsterEntity,
+): MonsterDefinition["chargedAttack"] {
+  const charged = MONSTER_DATABASE.get(
+    monster.isMonster.monsterTypeId,
+  )?.chargedAttack;
+  const scale = monster.scriptsBoss?.chargedOverride;
+  if (!charged || !scale) return charged;
+  return {
+    ...charged,
+    multiplier: charged.multiplier * scale.multiplierMult,
+    cooldownMs: Math.max(1000, Math.round(charged.cooldownMs * scale.cooldownMult)),
+    castMs: Math.max(200, Math.round(charged.castMs * scale.castMsMult)),
+    ...(charged.aoe
+      ? {
+          aoe: {
+            ...charged.aoe,
+            radius: Math.round(charged.aoe.radius * scale.radiusMult),
+          },
+        }
+      : {}),
+    ...(charged.aftershock
+      ? {
+          aftershock: {
+            ...charged.aftershock,
+            rayCount:
+              charged.aftershock.rayCount + scale.aftershockRayCountAdd,
+            damageMultiplier:
+              charged.aftershock.damageMultiplier * scale.aftershockDamageMult,
+          },
+        }
+      : {}),
+  };
 }
 
 /**
@@ -1613,7 +1679,7 @@ export function updateCombat(world: World, dt: number, now: number) {
       // Charged (cast-time) attack state machine — telegraphed big hit (e.g. the
       // Ridge Archer's Power Shot). Takes priority over the normal attack while
       // active; pauses normal attacks/movement during the wind-up.
-      const charged = MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.chargedAttack;
+      const charged = effectiveChargedAttack(e);
       if (charged) {
         // A cast is pending while castEndsAt > 0 (set on begin, cleared on
         // fire/abort). Gate on that, NOT on "still winding up" (castEndsAt > now) —
@@ -1644,6 +1710,18 @@ export function updateCombat(world: World, dt: number, now: number) {
             removeStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
           }
           const outcome = runMonsterAttack(world, e, target, now, charged.multiplier);
+          if (outcome === "hit" || outcome === "killed") {
+            // DEVOUR — landing the bite feeds the caster. Deliberately gated on a
+            // landed hit only: dodging it, killing the wind-up, or walking out of
+            // reach all deny the heal, which is what makes the tell worth reading.
+            const healPct = charged.healsSelfPct ?? 0;
+            if (healPct > 0 && world.hasMonster(e.isMonster.id)) {
+              e.hasHealth.hp = Math.min(
+                e.hasHealth.maxHp,
+                e.hasHealth.hp + Math.round(e.hasHealth.maxHp * healPct),
+              );
+            }
+          }
           if (outcome === "hit") {
             applyChargedAttackKnockback(world, e, target, charged);
             applyChargedAttackRiders(world, e, target, charged);

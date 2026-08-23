@@ -61,6 +61,13 @@ export interface ScriptsBoss {
     shieldPct: number;
     intervalMs: number;
     durationMs: number;
+    /** See `MonsterDefinition.enemyShield.shatter`. */
+    shatter?: {
+      selfDamagePct: number;
+      vulnerability?: { damageTakenPct: number; durationMs: number };
+      freezeRadius?: number;
+      freezeDurationMs?: number;
+    };
     /** See `MonsterDefinition.enemyShield.rechargeAfterCleanMs`. */
     rechargeAfterCleanMs?: number;
   };
@@ -86,6 +93,31 @@ export interface ScriptsBoss {
   defenseShed?: boolean;
   /** Ids of adds spawned by 'spawn-adds' — despawned when the boss dies. */
   spawnedAddIds?: string[];
+  /**
+   * Runtime scalars on the boss's `chargedAttack` (set by 'empower-charged'). Stored
+   * as MULTIPLIERS rather than resolved values so repeated phases compose, and so the
+   * authored definition stays the single source of the base numbers.
+   */
+  chargedOverride?: {
+    multiplierMult: number;
+    cooldownMult: number;
+    radiusMult: number;
+    castMsMult: number;
+    aftershockRayCountAdd: number;
+    aftershockDamageMult: number;
+  };
+  /**
+   * Runtime deepening of `appliesPlatingShred` (set by 'empower-shred'). Additive on
+   * top of the static def; `extraThresholds` are merged into the threshold-poison
+   * stack counts.
+   */
+  shredOverride?: {
+    platingPerStackAdd: number;
+    maxStacksAdd: number;
+    extraThresholds: number[];
+  };
+  /** Added to `raisesDead.maxAlive` by a 'raise-dead' action carrying `maxAliveAdd`. */
+  raiseMaxAliveAdd?: number;
 }
 
 export function initScriptsBoss(script: BossScript): ScriptsBoss {

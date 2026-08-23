@@ -326,16 +326,31 @@ initCombatSystems();
   );
 }
 
-// ── The scaling is scoped to exactly one T4 elite, and it is described ────────
+// ── The scaling is scoped to one T4 roster elite (+ the two apex bosses) ─────
 {
   const carriers = [...MONSTER_DATABASE.entries()].filter(
     ([, def]) => def.scalesWithAmbientRamp !== undefined,
   );
+  // Locked decision 5 is a rule about the ROSTER: exactly one non-boss mob may feed
+  // on the ramp, so it stays a capstone tell rather than a biome-wide damage knob.
+  //
+  // The 2026-08-23 boss encounter rework added the two APEX BOSSES of the two ramp
+  // biomes. Bosses are explicitly allowed to be more bespoke than roster mobs, and
+  // in both cases the ramp IS the encounter: the Glacial Patriarch's Collapse hits
+  // harder the colder the room has made you (chargedOnly — a tell, not a flat
+  // bonus), and the Caldera Sovereign's whole fight is the Heat race it stokes
+  // itself. Neither is a third difficulty knob on the roster.
+  const RAMP_FED_BOSSES = new Set(['glacial-patriarch', 'caldera-sovereign']);
+  const rosterCarriers = carriers.filter(([id]) => !RAMP_FED_BOSSES.has(id));
   assert(
-    carriers.length === 1 && carriers[0][0] === APEX_ID,
-    `locked decision 5: exactly one mob may scale off the ramp (found ${carriers.map(([id]) => id).join(', ')})`,
+    rosterCarriers.length === 1 && rosterCarriers[0][0] === APEX_ID,
+    `locked decision 5: exactly one ROSTER mob may scale off the ramp (found ${rosterCarriers.map(([id]) => id).join(', ')})`,
   );
-  const apexDef = carriers[0][1];
+  for (const [id, bossDef] of carriers) {
+    if (!RAMP_FED_BOSSES.has(id)) continue;
+    assert(bossDef.isBoss === true, `${id} is allowlisted as a ramp-fed BOSS but is not one`);
+  }
+  const apexDef = rosterCarriers[0][1];
   assert(apexDef.elite === true, 'the chill-scaling mob must be the biome capstone, not trash');
   assert(apexDef.biome === 'tundra', 'the chill-scaling mob belongs to the biome that authors it');
 

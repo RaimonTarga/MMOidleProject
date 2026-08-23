@@ -37,6 +37,8 @@ import { publishToxicPool } from '../../world/groundZones';
  */
 const SHELL_USED_KEY = 'shellUpUsed';
 const SHELL_ENDS_KEY = 'shellUpEndsAt';
+/** Earliest time a `repeatIntervalMs` shell may close again (0 = no cycle armed). */
+const SHELL_NEXT_KEY = 'shellUpNextAt';
 
 export const SHELLED_EFFECT_ID = 'shelled';
 
@@ -78,6 +80,11 @@ export function updateShellUp(world: World, now: number): void {
         continue;
       }
       setCounter(cs, SHELL_ENDS_KEY, 0);
+      // Boss shell CYCLE: re-arm instead of retiring. Every shell after the first
+      // is on the clock, not on the HP threshold.
+      if (spec.repeatIntervalMs) {
+        setCounter(cs, SHELL_NEXT_KEY, now + spec.repeatIntervalMs);
+      }
       detachComponent(world, monster, 'cannotAttack');
       setRooted(world, monster, false);
       world.pushEvent(monster.hasPosition.nodeId, {
@@ -89,9 +96,18 @@ export function updateShellUp(world: World, now: number): void {
       continue;
     }
 
-    if (getCounter(cs, SHELL_USED_KEY) === 1) continue;
-    const threshold = monster.hasHealth.maxHp * spec.atHpPct;
-    if (monster.hasHealth.hp > threshold) continue;
+    if (getCounter(cs, SHELL_USED_KEY) === 1) {
+      // Once-per-life unless the def opts into the cycle.
+      if (!spec.repeatIntervalMs) continue;
+      const nextAt = getCounter(cs, SHELL_NEXT_KEY);
+      if (nextAt === 0 || now < nextAt) continue;
+      // A cycling shell only closes while the thing is actually in a fight —
+      // otherwise it spends its life retracted in an empty room.
+      if (!monster.hasAggroTarget) continue;
+    } else {
+      const threshold = monster.hasHealth.maxHp * spec.atHpPct;
+      if (monster.hasHealth.hp > threshold) continue;
+    }
 
     // Retract.
     setCounter(cs, SHELL_USED_KEY, 1);

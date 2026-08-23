@@ -32,12 +32,22 @@ export function selectMonsterAggroCandidate(
   world: World,
   monster: MonsterEntity,
 ): MonsterAggroCandidate | null {
-  const candidates = candidatesInPullRange(world, monster);
-  const mode =
-    MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.targeting?.mode ??
-    "closest";
+  const targeting = MONSTER_DATABASE.get(
+    monster.isMonster.monsterTypeId,
+  )?.targeting;
+  let candidates = candidatesInPullRange(world, monster);
 
-  return bestCandidate(candidates, mode)?.candidate ?? null;
+  // ANTI-BODY-BLOCK (`targeting.prefersPlayers`). A wall of summons standing between
+  // a boss and its owner used to win the positioning argument outright, which is why
+  // every slow boss carried an anti-summon cleave. Drop the minions from the pool
+  // whenever a player is in reach instead; the minions are still legal targets when
+  // the player genuinely is not.
+  if (targeting?.prefersPlayers) {
+    const players = candidates.filter((c) => c.candidate.kind === "player");
+    if (players.length > 0) candidates = players;
+  }
+
+  return bestCandidate(candidates, targeting?.mode ?? "closest")?.candidate ?? null;
 }
 
 function candidatesInPullRange(

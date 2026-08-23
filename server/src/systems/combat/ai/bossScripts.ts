@@ -19,6 +19,11 @@
  *   shed-defense   — drop all defenses (clear overrides, suppress static, cut plating)
  *   modify-ramp-debuff — raise the rampDebuff slow caps mid-fight
  *   spawn-adds     — spawn tracked adds despawned on boss death
+ *   raise-dead     — burst-resurrect nearby corpses (Wasteland)
+ *   stoke-ramp     — bend the node's ambient ramp: faster, deeper, with a floor (Volcano)
+ *   spawn-pool     — lay a hazard pool centred on the boss (Swamp / Volcano)
+ *   empower-charged— scale the boss's signature telegraphed attack
+ *   empower-shred  — deepen the boss's plating-shred package (Cave)
  *
  * Runtime state lives on `entity.scriptsBoss` (server-only, never serialized).
  * Dead bosses are pruned when the monster entity is removed from the world.
@@ -43,6 +48,9 @@ import { attachComponent } from '../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { setAggroTarget, setAttackTarget } from './targeting';
 import { BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
+import { publishToxicPool } from '../../world/groundZones';
+import { stokeAmbientRamp } from '../../world/nodeFeatures';
+import { raiseCorpsesBurst } from './raiseDead';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss } from '@mmo-idle/shared';
@@ -378,6 +386,7 @@ function applyAction(
         shieldPct:  action.shieldPct,
         intervalMs: action.intervalMs,
         durationMs: action.durationMs,
+        ...(action.shatter ? { shatter: action.shatter } : {}),
       };
       pushBossFx(world, monster, 'shield');
       break;
@@ -458,6 +467,107 @@ function applyAction(
         }
       }
       if (budget > 0) pushBossFx(world, monster, 'summon');
+      break;
+    }
+
+    case 'raise-dead': {
+      // MASS RESURRECTION. Reads the same node corpse registry the ordinary
+      // `raisesDead` cadence uses, so it can only ever give back what the player
+      // already killed — an empty arena produces nothing.
+      const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+      const base = def?.raisesDead;
+      if (!base) break;
+      if (action.maxAliveAdd) {
+        state.raiseMaxAliveAdd = (state.raiseMaxAliveAdd ?? 0) + action.maxAliveAdd;
+      }
+      const spec = {
+        ...base,
+        corpseRange: action.corpseRange ?? base.corpseRange,
+        hpMult: action.hpMult ?? base.hpMult,
+        damageMult: action.damageMult ?? base.damageMult,
+      };
+      const raised = raiseCorpsesBurst(
+        world,
+        monster,
+        spec,
+        action.count,
+        base.maxAlive + (state.raiseMaxAliveAdd ?? 0),
+        Date.now(),
+      );
+      if (raised > 0) pushBossFx(world, monster, 'summon');
+      break;
+    }
+
+    case 'stoke-ramp': {
+      stokeAmbientRamp(world, monster.hasPosition.nodeId, {
+        rampMsMult: action.rampMsMult,
+        minStacks: action.minStacks,
+        maxStacksAdd: action.maxStacksAdd,
+      });
+      pushBossFx(world, monster, 'roar', { radius: 360 });
+      break;
+    }
+
+    case 'spawn-pool': {
+      const now = Date.now();
+      publishToxicPool(world, monster.hasPosition.nodeId, {
+        kind: 'toxic-pool',
+        pos: { ...monster.hasPosition.current },
+        radius: action.radius,
+        startedAtMs: now,
+        expiresAtMs: now + action.durationMs,
+        damagePerTick: action.damagePerTick,
+        tickIntervalMs: action.tickIntervalMs,
+        slowSpeedMult: action.slowSpeedMult,
+        killer: {
+          monsterTypeId: monster.isMonster.monsterTypeId,
+          monsterName: monster.isMonster.name,
+          isBoss: monster.isMonster.isBoss,
+          nodeId: monster.hasPosition.nodeId,
+        },
+      });
+      break;
+    }
+
+    case 'empower-charged': {
+      // Multipliers COMPOSE so a lineage can deepen one idea across several phases
+      // instead of acquiring unrelated ones.
+      const current = state.chargedOverride ?? {
+        multiplierMult: 1,
+        cooldownMult: 1,
+        radiusMult: 1,
+        castMsMult: 1,
+        aftershockRayCountAdd: 0,
+        aftershockDamageMult: 1,
+      };
+      state.chargedOverride = {
+        multiplierMult: current.multiplierMult * (action.multiplierMult ?? 1),
+        cooldownMult:   current.cooldownMult   * (action.cooldownMult   ?? 1),
+        radiusMult:     current.radiusMult     * (action.radiusMult     ?? 1),
+        castMsMult:     current.castMsMult     * (action.castMsMult     ?? 1),
+        aftershockRayCountAdd:
+          current.aftershockRayCountAdd + (action.aftershockRayCountAdd ?? 0),
+        aftershockDamageMult:
+          current.aftershockDamageMult * (action.aftershockDamageMult ?? 1),
+      };
+      break;
+    }
+
+    case 'empower-shred': {
+      const current = state.shredOverride ?? {
+        platingPerStackAdd: 0,
+        maxStacksAdd: 0,
+        extraThresholds: [],
+      };
+      state.shredOverride = {
+        platingPerStackAdd:
+          current.platingPerStackAdd + (action.platingPerStackAdd ?? 0),
+        maxStacksAdd: current.maxStacksAdd + (action.maxStacksAdd ?? 0),
+        extraThresholds: [
+          ...current.extraThresholds,
+          ...(action.extraThresholds ?? []),
+        ],
+      };
       break;
     }
   }

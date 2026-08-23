@@ -3,19 +3,14 @@ import type { MonsterDefinition } from './types';
 // ─────────────────────────────────────────────────────────────────────────
 // BOSS REBALANCE — T1 + T2 (Pass 1). Follows boss-design.md.
 //
-// T1: HP bumped ~1.8x (they read weaker than cave elites). NO phases (T1 = the
-//     "pure shape" floor). Slow bosses gain CLEAVE (aoeAttack) so summon-spam
-//     can't body-block them — see the anti-summon guardrail in boss-design.md.
-// T2: + ONE phase at 50% HP (the tier's new layer — escalation, not a 2nd shape;
-//     true shape-swaps/range-flips start at T3 via `morph`). Slow bosses cleave.
+// ENCOUNTER REWORK (2026-08-23). T2 = the tier that adds ONE meaningful escalation
+// or supporting mechanic on top of the T1 identity — never a second, unrelated shape.
+// True shape-swaps and range-flips start at T3 via `morph`.
 //
-// Cleave criterion = SLOW swing rate (vulnerable to body-block), not hit size:
-//   cleave  -> Mountain, Swamp, Cave (speed <= ~30)
-//   single  -> Plains, Forest, Desert, Jungle (fast enough to keep pace)
-// aoeAttack: { radius, damageMult } — every swing splashes damageMult x attack to
-//   others within radius of the target (full damage to the primary target).
+// The anti-summon cleave is GONE from every boss: body-blocking is solved at the
+// targeting layer (`targeting.prefersPlayers`), so AoE now exists only where the
+// encounter wants it, and each boss's charged attack doubles as the periodic sweep.
 //
-// Phases use enrage (atk x atkMult, cd x cdMult) + stat-buff (movement speed).
 // No two enrages on one boss (last-write-wins restore bug) — speed pressure uses
 // stat-buff. Phase buffs omit durationMs = permanent for the rest of the life.
 //
@@ -32,7 +27,9 @@ export const bossMonsterEntriesT2 = [
 
   // ════════════════════════ T2 BOSSES (+ one phase @50%) ════════════════════════
 
-  // PLAINS — honest big bruiser; phase is the simplest: it just gets angrier.
+  // PLAINS — SWARM COMMANDER, deepened. T2 adds composition and reinforcement
+  // TIMING, not a stronger duellist: boars join the slime trickle, and both phase
+  // beats are a rally rather than a self-buff.
   ['gorging-razortusk', {
     id: 'gorging-razortusk', name: 'Gorging Razortusk', color: 0xcc9922,
     isBoss: true,
@@ -40,15 +37,18 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
+    targeting: { prefersPlayers: true },
     // PLAINS EXAM = "survive the swarm", T2 escalation: a constant slime trickle plus
-    // two phase beats (50% = enrage + slime wave, 25% = a boar pair + more slimes).
+    // two rally beats (50% = a slime wave and a boar, 25% = a boar pair and more
+    // slimes). The old 50% self-enrage was removed — the razortusk's answer to losing
+    // is to call MORE of the herd, never to become the tier's best personal attacker.
     // Adds despawn on boss death. Numbers placeholder — user balance pass.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.30, cdMult: 0.85 },
           { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 220 },
-          { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+          { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, offsetRange: 220 },
+          { type: 'roar', attackSpeedPct: 0.25, durationMs: 8000, radius: 320 },
         ] },
         { hpPct: 0.25, actions: [
           { type: 'spawn-adds', monsterTypeId: 'boar', count: 2, offsetRange: 220 },
@@ -73,14 +73,18 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 155, essenceType: 'green', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 1200, idleMaxMs: 4000 },
+    targeting: { prefersPlayers: true },
     consecutiveHits: 2,
     rampOnCombat: { stat: 'attackSpeed', perTickPct: 0.10, maxPct: 0.60, tickIntervalMs: 2500 },
     chargedAttack: {
       name: 'Stunning Swipe', castMs: 700, cooldownMs: 8000, initialCooldownMs: 3500,
       multiplier: 1.25, fx: 'savage-maul', stunMs: 900, aoe: { radius: 90 },
     },
-    // FOREST EXAM = an accelerating claw duel. T2 adds a quick, compact charged
-    // swipe that stuns anyone caught in the tell; there are no encounter adds.
+    // FOREST EXAM = an accelerating claw duel — LOCKED by the encounter rework: the
+    // Forest lineage retires after T2, and its cadence identity was already right.
+    // T2 adds a quick, compact charged swipe that stuns anyone caught in the tell.
+    // The 50% phase is a FREQUENCY surge, which is this boss's whole idea, so it
+    // survives the generic-enrage cull that emptied the other lineages' phases.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
@@ -90,7 +94,10 @@ export const bossMonsterEntriesT2 = [
     },
   }],
 
-  // MOUNTAIN — flagship burst-check: ~40%-pool slam, slow, charges, reach. Cleaves.
+  // MOUNTAIN — TELEGRAPHED CATASTROPHIC IMPACT + DEFENDED POSITION. T2's one added
+  // layer is that the slam now comes from behind a guarded line: archers plink while
+  // the juggernaut periodically digs in, so you have to break the position to reach
+  // the thing that is actually killing you.
   ['stoneplate-juggernaut', {
     id: 'stoneplate-juggernaut', name: 'Stoneplate Juggernaut', color: 0x667788,
     isBoss: true,
@@ -98,19 +105,20 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 160, essenceType: 'blue', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 120, leashRange: 850, idleMinMs: 3000, idleMaxMs: 7500 },
+    targeting: { prefersPlayers: true },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
     chargedAttack: {
       name: 'Stunning Earthshatter', castMs: 2300, cooldownMs: 10000, initialCooldownMs: 4500,
       multiplier: 2.0, fx: 'strong-kick', precastStunMs: 450, aoe: { radius: 180 },
     },
-    // MOUNTAIN EXAM = "break the guarded position", T2 escalation: it calls a pair of
-    // Boulder Throwers (ranged behind the frontline) at 50% and periodically digs in
-    // (a timed shield) — break the defended position before the ranged grind wins.
+    // MOUNTAIN EXAM = "break the guarded position". At 50% it calls a pair of Boulder
+    // Throwers AND the Earthshatter escalates — the same slam, wider and sooner. The
+    // old generic enrage is gone: this lineage escalates its ONE readable hit, and
+    // the repeating dig-in is the "position" half of the identity, not a stall.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.30, cdMult: 0.85 }, // deeper, faster cap-trips
+          { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.80, radiusMult: 1.15 },
           { type: 'spawn-adds', monsterTypeId: 'peak-archer', count: 2, offsetRange: 240 },
         ] },
       ],
@@ -122,7 +130,8 @@ export const bossMonsterEntriesT2 = [
     },
   }],
 
-  // SWAMP — tiny direct, the venom is the fight; phase makes it apply faster. Cleaves.
+  // SWAMP — ROT / ATTRITION. T2's added layer is CORROSION: the pool no longer just
+  // hurts, it makes everything else hurt more while you stand in it.
   ['mire-gorged-behemoth', {
     id: 'mire-gorged-behemoth', name: 'Mire-Gorged Behemoth', color: 0x2a4011,
     isBoss: true,
@@ -130,8 +139,8 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 155, essenceType: 'purple', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
+    targeting: { prefersPlayers: true },
     dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 9, maxStacks: 4, tickIntervalMs: 1000, durationMs: 5000 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
     chargedAttack: {
       name: 'Corrosive Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
       multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115 },
@@ -140,18 +149,22 @@ export const bossMonsterEntriesT2 = [
         vulnerability: { damageTakenPct: 0.12, durationMs: 1500 },
       },
     },
-    // SWAMP EXAM = "survive the rot". Its charged pool now leaves Corrosion,
-    // increasing damage taken while the player remains in the hazard. No adds.
+    // SWAMP EXAM = "survive the rot". Its charged pool leaves Corrosion, increasing
+    // damage taken while the player remains in the hazard. At 50% the rot escalates
+    // on BOTH channels it owns: venom stacks faster (cadence, not hit size) and the
+    // pools arrive sooner and wider. No adds — Swamp's pressure is the ground.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.10, cdMult: 0.70 }, // DoT stacks faster
+          { type: 'enrage', atkMult: 1.0, cdMult: 0.70 }, // pure cadence: DoT stacks faster
+          { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },
         ] },
       ],
     },
   }],
 
-  // CAVE — endurance bruiser: high HP, DR + plating, cap-slam, charges. Cleaves.
+  // CAVE — ENDURANCE / DEFENSIVE EROSION. T2's added layer is ARMOURED SUPPORT: a
+  // second brute to outlast, while the corrosion keeps eating your plating.
   ['chitinous-dreadbore', {
     id: 'chitinous-dreadbore', name: 'Chitinous Dreadbore', color: 0x442244,
     isBoss: true,
@@ -159,39 +172,42 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'quake', biome: 'cave',
     rewards: { essence: 160, essenceType: 'red', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
+    targeting: { prefersPlayers: true },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
     appliesPlatingShred: { platingPerStack: 2, maxStacks: 6 },
     chargedAttack: {
       name: 'Chitin Slam', castMs: 1600, cooldownMs: 9000, initialCooldownMs: 4000,
       multiplier: 1.6, fx: 'strong-kick', aoe: { radius: 140 },
     },
-    // CAVE EXAM = "survive the elite", T2 escalation: at 50% it enrages, closes faster,
-    // AND a Cave Troll elite joins — now you must outlast two armored brutes. Add
-    // despawns on boss death. Numbers placeholder — user balance pass.
+    // CAVE EXAM = "your shell erodes". At 50% the corrosion bites deeper (+1 plating
+    // per stack) AND a Cave Troll joins — armoured support is the sanctioned Cave
+    // escalation, so the erosion now runs on two bodies. The old enrage + speed buff
+    // were generic and said nothing about this lineage.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.25, cdMult: 0.90 },
-          { type: 'stat-buff', stat: 'speed', mult: 1.2 }, // closes faster (permanent)
+          { type: 'empower-shred', platingPerStackAdd: 1 },
           { type: 'spawn-adds', monsterTypeId: 'cave-troll', count: 1, offsetRange: 240 },
         ] },
       ],
     },
   }],
 
-  // DESERT (debut T2) — the DUEL exam "win the duel". The Emperor opens with a lethal
-  // alpha strike (openingStrike → last-stand answers), then runs the Sun Mark cycle
-  // ITSELF: its hits paint the mark (appliesMark) and its next heavy blow cashes it
-  // (markedStrike) — cleanse the mark or eat it. At 50% it summons Sun Scarabs as
-  // extra standoff pressure. Keeps its slow. Single-target.
+  // DESERT (debut T2) — SETUP / CONTROL -> PUNISHMENT. The lineage anchor. The
+  // Emperor opens with a lethal alpha strike (openingStrike → last-stand answers),
+  // then runs the Sun Mark cycle ITSELF: its hits paint the mark (appliesMark) and
+  // the next blow cashes it (markedStrike), so the duel alternates paint/cash and the
+  // player's answer is Cleanse, defensive automation, or a response window used well.
+  //
+  // ENCOUNTER REWORK: the Dust Djinn adds at 50% are GONE. Desert compresses the
+  // biome's controller/dealer pairing into ONE duellist, and outsourcing the pressure
+  // to adds made it a weaker Plains fight. Instead it gains SCOURING SANDBURST — a
+  // telegraphed AoE that is the visible cash-out of the setup (and, incidentally, the
+  // periodic beat that keeps a summon wall from standing in the way for free).
   //
   // Biome Ecology Pass 2 (Session 4) moved the painting onto the boss. Sun Mark was
   // stripped from all desert trash (locked decision 3), and the phase-2 adds used to
-  // be the only painters — which meant markedStrike could never fire before 50% HP,
-  // and never at all if the adds were killed on arrival. Self-marking makes the duel
-  // a real 1v1 mark/cleanse race that does not depend on adds surviving. This is the
-  // ONE boss line Session 4 touched.
+  // be the only painters — which meant markedStrike could never fire before 50% HP.
   ['dune-stalker-emperor', {
     id: 'dune-stalker-emperor', name: 'Dune-Stalker Emperor', color: 0xddcc44,
     isBoss: true,
@@ -199,26 +215,36 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'sandblast', biome: 'desert',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
-    slowEffect: { speedMult: 0.6, durationMs: 2000 }, // debuff identity
+    targeting: { prefersPlayers: true },
+    slowEffect: { speedMult: 0.6, durationMs: 2000 }, // control half of the identity
     openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
     appliesMark: { durationMs: 4000 },    // placeholder — user balance pass
     markedStrike: { multiplier: 2.0 },    // placeholder — user balance pass
+    // The telegraphed cash-out. Landing it on a marked player stacks the charge
+    // multiplier with markedStrike — the punishment for ignoring the setup.
+    chargedAttack: {
+      name: 'Scouring Sandburst', castMs: 1300, cooldownMs: 9000, initialCooldownMs: 4500,
+      multiplier: 1.5, fx: 'strong-kick', aoe: { radius: 150 },
+    },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.20, cdMult: 0.85 },
+          // The setup tightens: it closes faster and the cash-out comes around sooner.
           { type: 'stat-buff', stat: 'speed', mult: 1.3 },
-          { type: 'spawn-adds', monsterTypeId: 'dust-djinn', count: 2, offsetRange: 280 },
+          { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.75 },
         ] },
       ],
     },
   }],
 
-  // JUNGLE (debut T2) — fast, frequent, squishy (plating stripped); phase = frequency
-  // storm + chase. ECOLOGY exam "survive the ambush": opens with a pounce (openingStrike
-  // → damage-cap answers), and at 50% the pack leaps from the thickets (spawn-adds:
-  // snakes + an ape) so the ambush identity carries into the boss room. Adds are
-  // lone mobs (createMonster), not packs — no recursion. Single-target.
+  // JUNGLE (debut T2) — AMBUSH. The start of the predator lineage, and deliberately
+  // its simplest statement: an opening pounce (openingStrike → damage-cap answers),
+  // and ONE mid-fight wave where the pack leaps from the thickets. Evasion, the hunt
+  // state, and the frenzy finale all arrive later; T2 only teaches "it jumps you, and
+  // then the jungle jumps you". Adds are lone mobs (createMonster), not packs.
+  //
+  // ENCOUNTER REWORK: the 50% enrage was dropped. This boss is already fast; a
+  // frequency storm on top of the ambush made it read as a Forest fight.
   ['jungle-dread-gorger', {
     id: 'jungle-dread-gorger', name: 'Jungle Dread-Gorger', color: 0x117722,
     isBoss: true,
@@ -226,11 +252,11 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 145, essenceType: 'green', level: 5, biomeXp: 218 },
     ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },
+    targeting: { prefersPlayers: true },
     openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.10, cdMult: 0.70 },
           { type: 'stat-buff', stat: 'speed', mult: 1.35 },
           { type: 'spawn-adds', monsterTypeId: 'jungle-snake', count: 2, offsetRange: 260 },
           { type: 'spawn-adds', monsterTypeId: 'jungle-ape', count: 1, offsetRange: 260 },

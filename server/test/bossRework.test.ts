@@ -87,10 +87,16 @@ function hasAction(id: string, type: string): boolean {
   return scriptActions(id).some(action => String(action.type) === type);
 }
 
-// Plains keeps its summon identity; only T2 layers the allied haste roar on top.
-assert(!hasAction('tusked-razorback', 'roar'), 'T1 Plains must remain unchanged');
+// Plains is the swarm commander at BOTH tiers. The 2026-08-23 encounter rework
+// moved the rally roar down to T1 and deleted both self-enrages: this lineage
+// escalates by concurrency, never by the boss becoming a better duellist.
+assert(hasAction('tusked-razorback', 'spawn-adds'), 'T1 Plains should spawn its swarm');
+assert(hasAction('tusked-razorback', 'roar'), 'T1 Plains should rally the swarm at 50%');
 assert(hasAction('gorging-razortusk', 'spawn-adds'), 'T2 Plains should still spawn mobs');
-assert(hasAction('gorging-razortusk', 'roar'), 'T2 Plains should add the allied haste roar');
+assert(hasAction('gorging-razortusk', 'roar'), 'T2 Plains should keep the allied haste roar');
+for (const id of ['tusked-razorback', 'gorging-razortusk']) {
+  assert(!hasAction(id, 'enrage'), `${id} must not self-enrage — Plains escalates the herd`);
+}
 
 // Forest is always the two-claw, accelerating duel with no mid-fight adds.
 for (const id of ['gnarled-greatbear', 'apex-timberclaw']) {
@@ -165,7 +171,10 @@ const migratedSlamIds = [
   'dune-carapace-monarch', 'dune-throne-sovereign',
   'cinder-shell-magma-salamander', 'caldera-sovereign',
   'frost-plated-rime-mammoth', 'glacial-patriarch',
-  'charnel-crown-sovereign', 'elder-trench-serpent',
+  'charnel-crown-sovereign',
+  // NOT `elder-trench-serpent`: the encounter rework replaced its Abyssal Slam with
+  // DEVOUR, which is deliberately single-target (a bite, and the self-heal only
+  // resolves on the direct-hit path). It is covered by bossEncounterRework.test.ts.
 ];
 for (const id of migratedSlamIds) {
   const charged = def(id).chargedAttack;

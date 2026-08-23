@@ -236,6 +236,17 @@ export function updateMonsters(world: World, dt: number, now: number) {
       if (pulled) {
         setAggroTarget(world, e, aggroSourceFromCandidate(pulled), now);
       }
+    } else if (
+      e.hasAggroTarget.targetKind === "minion" &&
+      MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.targeting?.prefersPlayers
+    ) {
+      // A `prefersPlayers` boss that got pulled by a scouting minion re-acquires the
+      // moment a player is actually in reach. Without this the whole anti-body-block
+      // rule is defeated by sending the summons in first.
+      const repulled = selectMonsterAggroCandidate(world, e);
+      if (repulled && repulled.kind === "player") {
+        setAggroTarget(world, e, aggroSourceFromCandidate(repulled), now);
+      }
     }
 
     // Resolve and validate the current aggro target.

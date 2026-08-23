@@ -204,15 +204,28 @@ export function updateNodeFeatures(world: World, dt: number): void {
  */
 function updateAmbientRamp(world: World, dt: number, now: number): void {
   for (const player of world.livePlayers) {
-    const features = RESOLVED_NODE_FEATURES[player.hasPosition.nodeId];
-    const ramp = features?.find((f) => f.ambientRamp)?.ambientRamp;
+    const nodeId = player.hasPosition.nodeId;
+    const features = RESOLVED_NODE_FEATURES[nodeId];
+    const base = features?.find((f) => f.ambientRamp)?.ambientRamp;
     const cs = player.tracksCombat;
     // Found by the generic marker, not by id: a player who walked out of the
     // caldera still has to shed the heat they are carrying.
     const effect = ambientRampStatus(cs);
+    // A boss can bend its own room's ramp — faster, deeper, and with a floor it can
+    // no longer cool below. The floor follows the player out of combat but not out
+    // of the node, which is what makes it a race rather than a wait.
+    const override = world.ambientRampOverrides.get(nodeId);
+    const ramp = base
+      ? {
+          ...base,
+          rampMs: Math.max(200, Math.round(base.rampMs * (override?.rampMsMult ?? 1))),
+          maxStacks: base.maxStacks + (override?.maxStacksAdd ?? 0),
+        }
+      : undefined;
+    const floor = ramp ? Math.min(override?.minStacks ?? 0, ramp.maxStacks) : 0;
 
     if (!ramp || !isPlayerInCombat(player, now)) {
-      if (effect) decayAmbientRamp(cs, effect, dt);
+      if (effect) decayAmbientRamp(cs, effect, dt, ramp ? floor : 0);
       continue;
     }
 
@@ -229,6 +242,12 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
       continue;
     }
 
+    // A live override can raise the ceiling under a status that is already applied.
+    effect.maxStacks = ramp.maxStacks;
+    effect.data.maxStacks = ramp.maxStacks;
+    effect.data.rampMs = ramp.rampMs;
+    if (effect.stacks < floor) effect.stacks = floor;
+
     effect.data.rampAccum = (effect.data.rampAccum ?? 0) + dt;
     while (effect.data.rampAccum >= ramp.rampMs && effect.stacks < ramp.maxStacks) {
       effect.stacks++;
@@ -240,19 +259,56 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
   }
 }
 
-/** Cool down: shed one stack per `rampMs` of elapsed time; clear the status at zero. */
+/**
+ * Cool down: shed one stack per `rampMs` of elapsed time; clear the status at zero.
+ * `floor` is a boss-imposed minimum the ramp cannot decay below (0 normally) — at a
+ * non-zero floor the status is held rather than removed.
+ */
 function decayAmbientRamp(
   cs: PlayerEntity['tracksCombat'],
   effect: PlayerEntity['tracksCombat']['statusEffects'][number],
   dt: number,
+  floor: number,
 ): void {
   const rampMs = effect.data.rampMs ?? 3000;
   effect.data.rampAccum = (effect.data.rampAccum ?? 0) + dt;
-  while (effect.data.rampAccum >= rampMs && effect.stacks > 0) {
+  while (effect.data.rampAccum >= rampMs && effect.stacks > floor) {
     effect.stacks--;
     effect.data.rampAccum -= rampMs;
   }
   if (effect.stacks <= 0) removeStatusEffect(cs, effect.id);
+}
+
+/**
+ * A boss's live bend on its node's ambient ramp (`stoke-ramp`). Runtime-only and
+ * node-scoped; cleared when the boss dies and on node freeze.
+ */
+export interface AmbientRampOverride {
+  /** Scales the accumulate AND decay cadence. < 1 = hotter faster, cooler slower. */
+  rampMsMult?: number;
+  /** Stacks the ramp can no longer decay below while the override stands. */
+  minStacks?: number;
+  /** Added to the ramp's stack ceiling. */
+  maxStacksAdd?: number;
+}
+
+/** Merge a boss's stoke into the node's live override (multipliers compose). */
+export function stokeAmbientRamp(
+  world: World,
+  nodeId: string,
+  stoke: AmbientRampOverride,
+): void {
+  const current = world.ambientRampOverrides.get(nodeId);
+  world.ambientRampOverrides.set(nodeId, {
+    rampMsMult: (current?.rampMsMult ?? 1) * (stoke.rampMsMult ?? 1),
+    minStacks: Math.max(current?.minStacks ?? 0, stoke.minStacks ?? 0),
+    maxStacksAdd: (current?.maxStacksAdd ?? 0) + (stoke.maxStacksAdd ?? 0),
+  });
+}
+
+/** The room cools: drop a node's ramp override (boss death, node freeze). */
+export function clearAmbientRampOverride(world: World, nodeId: string): void {
+  world.ambientRampOverrides.delete(nodeId);
 }
 
 function isPreFinalUltimateStage(world: World, nodeId: string): boolean {
