@@ -4,6 +4,8 @@ import { relicRatingsFromPassives, resolveSummonerRelicProfile } from './relics'
 import {
   SUMMON_SIZE_MULT_MAX,
   SUMMON_SIZE_MULT_MIN,
+  SUMMONER_BASELINE_ATTACK_MODE,
+  SUMMONER_BASELINE_RANGE,
   SUMMONER_CORE_TUNING,
   SUMMONER_FRAME_TUNING,
   SUMMONER_RANGE_TUNING,
@@ -54,10 +56,12 @@ export interface SummonerProfile {
   battleBondConduitOffenseWeight: number;
 }
 
-function rangeFromSelection(selectedRange: string | null): SummonerRange {
+/** null until the tier-2 range choice is taken - see SUMMONER_BASELINE_RANGE. */
+function rangeFromSelection(selectedRange: string | null): SummonerRange | null {
   if (selectedRange === 'summoner-range-close') return 'close';
+  if (selectedRange === 'summoner-range-mid') return 'mid';
   if (selectedRange === 'summoner-range-far') return 'far';
-  return 'mid';
+  return null;
 }
 
 function equalSlots(count: number, sizeMult: number): SummonerSlotProfile[] {
@@ -128,7 +132,8 @@ function resolveSlots(
 
 export function resolveSummonerProfile(input: SummonerProfileInput): SummonerProfile {
   const frame: SummonerFrame = input.selectedSubVariant ?? 'root';
-  const range = rangeFromSelection(input.selectedRange);
+  const selectedRange = rangeFromSelection(input.selectedRange);
+  const range = selectedRange ?? SUMMONER_BASELINE_RANGE;
   const specialization = summonerSpecializationFor(frame, input.unlockedSkills);
   const frameTuning = SUMMONER_FRAME_TUNING[frame];
   const rangeTuning = SUMMONER_RANGE_TUNING[range];
@@ -168,7 +173,7 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
     totalSummonHpPct: frameTuning.totalSummonHpPct * rangeTuning.summonHpMult,
     summonMoveSpeedMult: frameTuning.moveSpeedMult * rangeTuning.moveSpeedMult,
     summonAttackCooldownMult: 1 / SUMMONER_CORE_TUNING.apsInheritanceMult,
-    attackMode: rangeTuning.attackMode,
+    attackMode: selectedRange ? rangeTuning.attackMode : SUMMONER_BASELINE_ATTACK_MODE,
     formationPolicy: rangeTuning.policy,
     attackRange: rangeTuning.attackRange,
     preferredDistance: rangeTuning.preferredDistance,

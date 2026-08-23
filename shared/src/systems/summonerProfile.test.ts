@@ -131,6 +131,15 @@ for (const [frame, expected] of [
     'Procession summons fire at reach and must not lunge');
   assert(isRangedSummonStyle(SUMMON_ATTACK_STYLE[profiles.far.attackMode]),
     'Harrier summons fire at range and must not lunge');
+
+  // Before the range choice exists, the summons walk in and hit things: the
+  // bolt belongs to Procession and must not leak into the baseline formation.
+  const baseline = profile('balanced', null);
+  assert(baseline.attackMode === 'melee', 'baseline summons attack in melee');
+  assert(SUMMON_ATTACK_STYLE[baseline.attackMode] !== SUMMON_ATTACK_STYLE.reach,
+    'baseline summons do not borrow the Procession bolt');
+  assert(baseline.range === profiles.mid.range,
+    'baseline still inherits Procession tuning, only the animation differs');
 }
 
 console.log('summonerProfile.test.ts: ok');

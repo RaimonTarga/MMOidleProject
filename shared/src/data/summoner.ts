@@ -156,6 +156,15 @@ export const SUMMON_ATTACK_STYLE: Record<SummonerAttackMode, string> = {
 };
 
 /**
+ * Baseline formation: a Conduit who has not taken the tier-2 range choice yet.
+ * It inherits Procession's tuning, but NOT Procession's bolt — `conduit-bolt`
+ * is that choice's signature and only earns its meaning once the choice exists.
+ * An unchosen formation is just bodies that walk in and hit things.
+ */
+export const SUMMONER_BASELINE_RANGE: SummonerRange = 'mid';
+export const SUMMONER_BASELINE_ATTACK_MODE: SummonerAttackMode = 'melee';
+
+/**
  * Summon styles that fire from a distance. Drives the client's lunge gate the
  * same way `MonsterView.isRanged` does for monsters: a Procession bolt or a
  * Harrier beam must NOT animate a melee lunge into the target.
