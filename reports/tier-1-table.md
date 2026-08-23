@@ -26,7 +26,7 @@ never folded into DPS — it has its own column.
 | Forest | 36 | 3 | 3 | 102 | 13.7 | 27.3 | 2792 | 8375 | 2.8 | 17 |
 | Swamp | 20 | 2 | 2 | 138 | 22 | 32.9 | 4536 | 9073 | 5.5 | 39 |
 | Mountain | 24 | 2 | 2 | 196 | 27 | 40.6 | 7963 | 15926 | 6.7 | 45 |
-| Caverns | 16 | 2 | 2 | 263 | 32.1 | 48.2 | 12660 | 25319 | 11.5 | 80 |
+| Caverns | 16 | 2 | 2 | 249 | 32.1 | 48.2 | 12023 | 24047 | 11.5 | 80 |
 
 `N` is DESIGNER-SET expected concurrent attackers (see `CONCURRENCY` in the tool), not
 derived from density. `sustained` = `d(N+1)/2` is incoming DPS the player must out-sustain
@@ -37,8 +37,8 @@ All three are valid only as biome-vs-biome ratios.
 ### Progression curve (indexed to the first biome in the row order above)
 
 - sustained pressure: `1.00 → 1.18 → 1.42 → 1.75 → 2.08`
-- cost per kill:      `1.00 → 1.69 → 2.74 → 4.82 → 7.66`
-- pull load:          `1.00 → 1.01 → 1.10 → 1.93 → 3.06`
+- cost per kill:      `1.00 → 1.69 → 2.74 → 4.82 → 7.27`
+- pull load:          `1.00 → 1.01 → 1.10 → 1.93 → 2.91`
 
 ### Target vs current
 
@@ -51,7 +51,7 @@ Per-mob DPS is then forced: `DPS = sustained / ((N+1)/2)`.
 | Forest | 3 | 102 | 100 | x1 | 13.7 | 13.9 | **x1** | 27.3 | 27.9 |
 | Swamp | 2 | 138 | 142 | **x1** | 22 | 22.3 | **x1** | 32.9 | 33.4 |
 | Mountain | 2 | 196 | 200 | **x1** | 27 | 26.7 | x1 | 40.6 | 40.1 |
-| Caverns | 2 | 263 | 282 | **x1.1** | 32.1 | 32.1 | x1 | 48.2 | 48.1 |
+| Caverns | 2 | 249 | 282 | **x1.1** | 32.1 | 32.1 | x1 | 48.2 | 48.1 |
 
 ## With node modifiers applied
 
@@ -63,21 +63,21 @@ baseline the player never plays. Values are indexed to **unmodified Plains**.
 
 | biome | unmodified | alacrity | heavy | swarming | dominion | fortified | spread |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Plains | 1.00 | 1.18 | 1.13 | 1.17 | 1.14 | 1.00 | x1.18 |
-| Forest | 1.18 | 1.39 | — | 1.35 | 1.35 | 1.18 | x1.18 |
-| Swamp | 1.42 | 1.67 | 1.66 | 1.61 | 1.72 | 1.42 | x1.21 |
-| Mountain | 1.75 | — | 1.98 | 1.98 | 2.05 | 1.75 | x1.17 |
-| Caverns | 2.08 | 2.44 | 2.34 | 2.35 | 2.42 | 2.08 | x1.18 |
+| Plains | 1.00 | 1.05 | 1.05 | 1.07 | 1.05 | 1.00 | x1.07 |
+| Forest | 1.18 | 1.24 | — | 1.25 | 1.24 | 1.18 | x1.06 |
+| Swamp | 1.42 | 1.44 | 1.43 | 1.49 | 1.59 | 1.42 | x1.12 |
+| Mountain | 1.75 | — | 1.83 | 1.84 | 1.85 | 1.75 | x1.06 |
+| Caverns | 2.08 | 2.19 | 2.18 | 2.19 | 2.21 | 2.08 | x1.06 |
 
 ### Cost per kill
 
 | biome | unmodified | alacrity | heavy | swarming | dominion | fortified | spread |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Plains | 1.00 | 1.18 | 1.13 | 1.17 | 1.45 | 1.25 | x1.28 |
-| Forest | 1.69 | 1.99 | — | 1.94 | 2.48 | 2.11 | x1.28 |
-| Swamp | 2.74 | 3.24 | 3.21 | 3.11 | 4.32 | 3.55 | x1.39 |
-| Mountain | 4.82 | — | 5.46 | 5.46 | 7.22 | 6.02 | x1.32 |
-| Caverns | 7.66 | 9.01 | 8.62 | 8.68 | 11.72 | 8.75 | x1.36 |
+| Plains | 1.00 | 1.05 | 1.05 | 1.07 | 1.23 | 1.11 | x1.18 |
+| Forest | 1.69 | 1.78 | — | 1.79 | 2.08 | 1.88 | x1.17 |
+| Swamp | 2.74 | 2.78 | 2.77 | 2.89 | 3.64 | 3.09 | x1.31 |
+| Mountain | 4.82 | — | 5.03 | 5.07 | 5.97 | 5.35 | x1.19 |
+| Caverns | 7.27 | 7.65 | 7.62 | 7.66 | 8.72 | 7.81 | x1.15 |
 
 ### Does the railroad survive?
 
@@ -88,14 +88,14 @@ one, and the biome order stops being the thing the player reads.
 
 | step | axis | hardest earlier | easiest later | ordering |
 |---|---|---:|---:|---|
-| Plains → Forest | sustained | 1.18 | 1.18 | clean |
-| Plains → Forest | cost/kill | 1.45 | 1.94 | clean |
-| Forest → Swamp | sustained | 1.39 | 1.42 | clean |
-| Forest → Swamp | cost/kill | 2.48 | 3.11 | clean |
-| Swamp → Mountain | sustained | 1.72 | 1.75 | clean |
-| Swamp → Mountain | cost/kill | 4.32 | 5.46 | clean |
-| Mountain → Caverns | sustained | 2.05 | 2.08 | clean |
-| Mountain → Caverns | cost/kill | 7.22 | 8.62 | clean |
+| Plains → Forest | sustained | 1.07 | 1.18 | clean |
+| Plains → Forest | cost/kill | 1.23 | 1.78 | clean |
+| Forest → Swamp | sustained | 1.25 | 1.42 | clean |
+| Forest → Swamp | cost/kill | 2.08 | 2.77 | clean |
+| Swamp → Mountain | sustained | 1.59 | 1.75 | clean |
+| Swamp → Mountain | cost/kill | 3.64 | 5.03 | clean |
+| Mountain → Caverns | sustained | 1.85 | 2.08 | clean |
+| Mountain → Caverns | cost/kill | 5.97 | 7.62 | clean |
 
 ## Plains  (density 48, 2 pool slots)
 
@@ -126,7 +126,7 @@ one, and the biome order stops being the thing the player reads.
 
 | monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Cliff Hopper `cliff-hopper` | x2 | 190 | 82 | 3000 | 27.3 | — | — | 27.3 | x1.5 = 123 (charged/1100ms) | — | 0 | — | — | 181 | 190 | 1 | 28 | 12 | — | patrol, charge x3, vaults | — |
+| Cliff Hopper `cliff-hopper` | x2 | 190 | 82 | 3000 | 27.3 | — | — | 27.3 | x1.5 = 123 (charged/1100ms) | — | 0 | — | — | 181 | 190 | 1 | 28 | 12 | — | charge x3, vaults | — |
 | Ridge Ambusher `ridge-archer` | x1 | 240 | 82 | 3100 | 26.5 | — | — | 26.5 | x1.8 = 148 (charged/2000ms) | — | 0 | — | — | 228 | 240 | 1 | 26 | **210** | — | holds-choke | — |
 | BOSS Crag Behemoth `crag-behemoth` | — | 2100 | 56 | 3500 | 16 | — | — | 16 | x1.9 = 106 (charged/2400ms) | — | 0 | — | — | 1995 | 2100 | 1 | 22 | 18 | — | aoe r120, charge x3 | boss-script |
 
@@ -134,7 +134,7 @@ one, and the biome order stops being the thing the player reads.
 
 | monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Cave Lurker `cave-lurker` | x1 | 200 | 31 | 1400 | 22.1 | — | — | 22.1 | — | — | 1 | 5% | 10% | 264 | 238 | 1.1 | 68 | 12 | — | — | — |
+| Cave Lurker `cave-lurker` | x1 | 200 | 31 | 1400 | 22.1 | — | — | 22.1 | — | — | 1 | 5% | — | 238 | 214 | 1.1 | 68 | 12 | — | — | — |
 | Cave Brute `cave-brute` | x1 | 220 | 118 | 2800 | 42.1 | — | — | 42.1 | x1.5 = 177 (charged/1800ms) | — | 1 | 10% | — | 261 | 246 | 1.1 | 18 | 12 | — | patrol, charge x2.5, ELITE | — |
 | BOSS Obsidian Broodmother `obsidian-broodmother` | — | 1750 | 47 | 2800 | 16.8 | — | — | 16.8 | x1.8 = 85 (charged/1700ms) | — | 6 | 10% | — | 5542 | 2111 | 2.6 | 24 | 18 | — | aoe r120, charge x2.5 | boss-script |
 
@@ -143,3 +143,4 @@ one, and the biome order stops being the thing the player reads.
 Monsters carrying no mechanic at all — pure stat blocks with nothing to read or counter:
 
 - Moss Rat (`forest-slime`, Forest)
+- Cave Lurker (`cave-lurker`, Caverns)

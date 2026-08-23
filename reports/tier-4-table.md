@@ -7,9 +7,9 @@ comparisons are monster-vs-monster within this tier, and biome-vs-biome.
 **eHP probes.** Mitigation is `max(1, round(max(0, hit - plating) x (1 - DR)))` — flat
 subtract then multiplicative reduction, floored at 1. Effective HP therefore depends on
 incoming hit size. Probes are anchored to this tier’s median normal-monster attack
-(**88**) at 0.5x / 1x / 2x / 4x = 44 / 88 / 176 / 352 damage.
-`eHP@44` is the chip-weapon reading, `eHP@352` the heavy-weapon reading, and **spread**
-(`eHP@44 / eHP@352`) is the armour character: 1.0 = armour-neutral, >1.5 = punishes fast chip.
+(**87**) at 0.5x / 1x / 2x / 4x = 44 / 87 / 174 / 348 damage.
+`eHP@44` is the chip-weapon reading, `eHP@348` the heavy-weapon reading, and **spread**
+(`eHP@44 / eHP@348`) is the armour character: 1.0 = armour-neutral, >1.5 = punishes fast chip.
 
 > Because the probes are tier-anchored, eHP is comparable WITHIN this tier only.
 > For cross-tier scale read raw HP, and for cross-tier armour character read spread.
@@ -20,94 +20,157 @@ never folded into DPS — it has its own column.
 
 ## Biome summary
 
-| biome | density | pool slots | uniq | w.mean eHP@44 | w.mean eHP@352 | w.mean total DPS | biome DPS (density x mean) | w.mean essence | w.mean biomeXp |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Mountain | 24 | 4 | 4 | 2102 | 1777 | 39.9 | 958 | 105.8 | 635 |
-| Jungle | 40 | 4 | 4 | 1404 | 1401 | 61.6 | 2464 | 78.3 | 470 |
-| Tundra | 16 | 4 | 4 | 2883 | 2118 | 30.4 | 487 | 145.5 | 873 |
-| Desert | 16 | 4 | 4 | 1923 | 1647 | 36.5 | 585 | 95.8 | 575 |
-| Volcanic | 36 | 5 | 5 | 1592 | 1424 | 52.5 | 1891 | 99.4 | 596 |
-| Wasteland | 40 | 6 | 6 | 1028 | 862 | 70.7 | 2829 | 62 | 372 |
-| Deep-Sea Trench | 10 | 3 | 3 | 7654 | 4539 | 42.1 | 421 | 290 | 1740 |
+| biome | density | N | uniq | w.mean eHP@44 | w.mean total DPS | sustained | cost/kill | pull load | w.mean essence | w.mean biomeXp |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Jungle | 40 | 4 | 4 | 1100 | 54.1 | 135.2 | 148748 | 594993 | 78.3 | 470 |
+| Volcanic | 36 | 3 | 5 | 1591 | 52.5 | 105.1 | 167165 | 501496 | 99.4 | 596 |
+| Wasteland | 28 | 4 | 5 | 617 | 47.8 | 119.6 | 73767 | 295069 | 42.4 | 254 |
+| Mountain | 24 | 2 | 4 | 2078 | 39.9 | 59.9 | 124458 | 248917 | 105.8 | 635 |
+| Desert | 16 | 2 | 4 | 1662 | 38 | 57 | 94631 | 189262 | 83.2 | 500 |
+| Tundra | 16 | 2 | 4 | 2867 | 30.4 | 45.7 | 130882 | 261764 | 145.5 | 873 |
+| Deep-Sea Trench | 10 | 1 | 3 | 7790 | 42.1 | 42.1 | 328298 | 328298 | 290 | 1740 |
 
-> `biome DPS` is a *ceiling* comparator: mean per-mob DPS times authored population. It
-> assumes every body is engaged at once, which never happens. Use it to compare biomes
-> against each other, never as an absolute threat number.
+`N` is DESIGNER-SET expected concurrent attackers (see `CONCURRENCY` in the tool), not
+derived from density. `sustained` = `d(N+1)/2` is incoming DPS the player must out-sustain
+— eHP and player DPS both cancel out of it. `cost/kill` = `d·h(N+1)/2` is punishment per
+unit of progress. `pull load` = `d·h·N(N+1)/2` is the spike of one full pull, quadratic in N.
+All three are valid only as biome-vs-biome ratios.
 
-## Mountain  (density 24, 4 pool slots)
+### Progression curve (indexed to the first biome in the row order above)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@352 | spread | spd | rng | control | ecology | partial |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Granite Mammoth `granite-mammoth` | x1 | 1900 | 155 | 3600 | 43.1 | — | — | 43.1 | x2 = 310 (cadence/4) | — | 0 | — | — | 1900 | 1900 | 1 | 16 | 15 | — | charge x2.5 | — |
-| Avalanche Tyrant `avalanche-tyrant` | x1 | 1300 | 122 | 2500 | 48.8 | — | — | 48.8 | — | — | 0 | — | — | 1300 | 1300 | 1 | 42 | 12 | — | charge x2.8 | — |
-| Cliffside Roc `cliffside-roc` | x1 | 1400 | 150 | 3500 | 42.9 | — | — | 42.9 | — | — | 0 | — | — | 1400 | 1400 | 1 | 34 | **260** | — | — | — |
-| Cragback Rhino `cragback-rhino` | x1 | 2250 | 95 | 3800 | 25 | — | — | 25 | x3.2 = 304 (cooldown/10s) | — | 16 | 6% | — | 3808 | 2506 | 1.5 | 14 | 15 | — | charge x2.2, ELITE | soft-cap |
-| BOSS Iron-Crest Titan `iron-crest-titan` | — | 8500 | 175 | 4200 | 41.7 | — | — | 41.7 | x2 = 350 (cadence/4) | — | 14 | 6% | — | 13357 | 9409 | 1.4 | 16 | 20 | — | aoe r140, charge x2.5 | boss-script |
+- sustained pressure: `1.00 → 0.78 → 0.88 → 0.44 → 0.42 → 0.34 → 0.31`
+- cost per kill:      `1.00 → 1.12 → 0.50 → 0.84 → 0.64 → 0.88 → 2.21`
+- pull load:          `1.00 → 0.84 → 0.50 → 0.42 → 0.32 → 0.44 → 0.55`
+
+## With node modifiers applied
+
+Every combat node carries one of the five modifiers, so the biome rows above are a
+baseline the player never plays. Values are indexed to **unmodified Jungle**.
+`—` marks a modifier banned in that biome.
+
+### Sustained pressure
+
+| biome | unmodified | alacrity | heavy | swarming | dominion | fortified | spread |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Jungle | 1.00 | 1.26 | — | 1.16 | 1.22 | 1.00 | x1.26 |
+| Volcanic | 0.78 | 0.98 | 0.91 | 0.89 | 0.96 | 0.78 | x1.26 |
+| Wasteland | 0.88 | 1.11 | 1.03 | 1.03 | 1.09 | 0.88 | x1.25 |
+| Mountain | 0.44 | — | 0.52 | 0.50 | 0.56 | 0.44 | x1.26 |
+| Desert | 0.42 | — | 0.49 | 0.48 | 0.53 | 0.42 | x1.26 |
+| Tundra | 0.34 | — | 0.39 | 0.38 | 0.43 | 0.34 | x1.26 |
+| Deep-Sea Trench | 0.31 | 0.39 | 0.36 | 0.34 | 0.40 | 0.31 | x1.30 |
+
+### Cost per kill
+
+| biome | unmodified | alacrity | heavy | swarming | dominion | fortified | spread |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Jungle | 1.00 | 1.26 | — | 1.16 | 1.65 | 1.26 | x1.43 |
+| Volcanic | 1.12 | 1.41 | 1.32 | 1.29 | 1.92 | 1.49 | x1.49 |
+| Wasteland | 0.50 | 0.62 | 0.58 | 0.58 | 0.82 | 0.62 | x1.43 |
+| Mountain | 0.84 | — | 0.98 | 0.95 | 1.49 | 1.19 | x1.57 |
+| Desert | 0.64 | — | 0.74 | 0.72 | 1.12 | 0.86 | x1.55 |
+| Tundra | 0.88 | — | 1.03 | 1.00 | 1.69 | 1.44 | x1.69 |
+| Deep-Sea Trench | 2.21 | 2.76 | 2.58 | 2.43 | 4.56 | 4.17 | x1.88 |
+
+### Does the railroad survive?
+
+A step is *clean* when the easiest node of the later biome is still harder than the
+hardest node of the earlier one — i.e. modifier variance stays inside the progression
+step. Where it overlaps, a well-rolled earlier node out-pressures a badly-rolled later
+one, and the biome order stops being the thing the player reads.
+
+| step | axis | hardest earlier | easiest later | ordering |
+|---|---|---:|---:|---|
+| Jungle → Volcanic | sustained | 1.26 | 0.78 | **overlaps** |
+| Jungle → Volcanic | cost/kill | 1.65 | 1.29 | **overlaps** |
+| Volcanic → Wasteland | sustained | 0.98 | 0.88 | **overlaps** |
+| Volcanic → Wasteland | cost/kill | 1.92 | 0.58 | **overlaps** |
+| Wasteland → Mountain | sustained | 1.11 | 0.44 | **overlaps** |
+| Wasteland → Mountain | cost/kill | 0.82 | 0.95 | clean |
+| Mountain → Desert | sustained | 0.56 | 0.42 | **overlaps** |
+| Mountain → Desert | cost/kill | 1.49 | 0.72 | **overlaps** |
+| Desert → Tundra | sustained | 0.53 | 0.34 | **overlaps** |
+| Desert → Tundra | cost/kill | 1.12 | 1.00 | **overlaps** |
+| Tundra → Deep-Sea Trench | sustained | 0.43 | 0.31 | **overlaps** |
+| Tundra → Deep-Sea Trench | cost/kill | 1.69 | 2.43 | clean |
 
 ## Jungle  (density 40, 4 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@352 | spread | spd | rng | control | ecology | partial |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@348 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Hunting Panther `hunting-panther` | x1 | 800 | 60 | 1200 | 50 | — | — | 50 | x2.2 = 132 (opener) | — | 0 | — | — | 800 | 800 | 1 | 82 | 12 | — | — | — |
-| Apex Silverback `apex-silverback` | x1 | 1200 | 88 | 1800 | 48.9 | — | — | 48.9 | x2.5 = 220 (opener) | x1.5 | 0 | 5% | 25% | 1676 | 1686 | 1 | 54 | 12 | — | charge x2.8, ELITE | — |
-| Thornback Lizard `thornback-lizard` | x1 | 850 | 60 | 1500 | 40 | 30 | 6s | 70 | — | — | 0 | — | — | 850 | 850 | 1 | 50 | **200** | — | — | — |
-| Emerald Constrictor `emerald-constrictor` | x1 | 1600 | 76 | 1600 | 47.5 | 30 | 6.4s | 77.5 | x2 = 152 (cadence/4) | x1.5 | 0 | 6% | 25% | 2289 | 2269 | 1 | 62 | 12 | — | ELITE | — |
-| BOSS Verdant-Crown Predator `verdant-crown-predator` | — | 8000 | 90 | 1400 | 64.3 | 30 | 5.6s | 94.3 | x2.1 = 189 (cadence/5) | — | 0 | 4% | 25% | 11175 | 11108 | 1 | 76 | 20 | — | charge x2.8 | boss-script |
-
-## Tundra  (density 16, 4 pool slots)
-
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@352 | spread | spd | rng | control | ecology | partial |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Rime-Tusk Mastodon `rime-tusk-mastodon` | x1 | 1400 | 120 | 3500 | 34.3 | — | — | 34.3 | x2 = 240 (cadence/4) | — | 12 | — | — | 1925 | 1449 | 1.3 | 18 | 15 | slow 55% | charge x2.3 | — |
-| Glacial Dire-Bear `glacial-direbear` | x1 | 1850 | 105 | 3200 | 32.8 | — | — | 32.8 | — | — | 0 | 14% | — | 2378 | 2386 | 1 | 18 | 15 | ramp-slow 50/40% | — | shatter |
-| Hoarfrost Yeti `hoarfrost-yeti` | x1 | 1050 | 86 | 2900 | 29.7 | — | — | 29.7 | — | — | 0 | 8% | — | 1155 | 1141 | 1 | 36 | **220** | ramp-slow 35/25% | — | — |
-| Permafrost Behemoth `permafrost-behemoth` | x1 | 2900 | 100 | 4000 | 25 | — | — | 25 | x3 = 300 (cooldown/9s) | — | 20 | 12% | — | 6076 | 3496 | 1.7 | 12 | 15 | — | charge x2, ELITE | soft-cap, ambient-scaled |
-| BOSS Glacial Patriarch `glacial-patriarch` | — | 10000 | 145 | 4500 | 32.2 | — | — | 32.2 | — | — | 22 | 14% | — | 25474 | 13634 | 1.9 | 14 | 20 | ramp-slow 50/40% | aoe r140, charge x2 | shatter, boss-script |
-
-## Desert  (density 16, 4 pool slots)
-
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@352 | spread | spd | rng | control | ecology | partial |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Sand Viper `sand-viper` | x1 | 980 | 78 | 1600 | 48.8 | — | — | 48.8 | — | — | 0 | 8% | — | 1078 | 1065 | 1 | 60 | 12 | slow 55% | — | — |
-| Dune Basilisk `dune-basilisk` | x1 | 1900 | 40 | 3000 | 13.3 | — | — | 13.3 | — | — | 10 | 14% | — | 2883 | 2275 | 1.3 | 26 | 15 | root, vuln 10% x4 | alpha +2 | — |
-| Sunshield Scarab `sandspitter-cobra` | x1 | 720 | 112 | 1900 | 58.9 | — | — | 58.9 | — | — | 0 | — | — | 799 | 799 | 1 | 54 | **230** | slow 40% | follower | — |
-| Dune Tyrant `dune-tyrant` | x1 | 2200 | 88 | 3500 | 25.1 | — | — | 25.1 | x2.8 = 246 (cooldown/10s) | — | 8 | 8% | — | 2933 | 2451 | 1.2 | 20 | 15 | slow 60%, vuln 6% x3 | alpha +2, ELITE | — |
-| BOSS Dune-Throne Sovereign `dune-throne-sovereign` | — | 7800 | 142 | 2800 | 50.7 | — | — | 50.7 | — | — | 8 | 8% | — | 10400 | 8689 | 1.2 | 44 | 20 | slow 55% | charge x2.5 | boss-script |
+| Hunting Panther `hunting-panther` | x1 | 800 | 60 | 1200 | 50 | — | — | 50 | x2.2 = 132 (opener) | — | 0 | — | — | 791 | 800 | 1 | 82 | 12 | — | — | — |
+| Apex Silverback `apex-silverback` | x1 | 1200 | 88 | 1800 | 48.9 | — | — | 48.9 | — | x1.5 | 0 | — | — | 1186 | 1200 | 1 | 54 | 12 | — | charge x2.8, ELITE | — |
+| Thornback Chameleon `thornback-lizard` | x1 | 850 | 60 | 1500 | 40 | — | — | 40 | — | — | 0 | — | — | 840 | 850 | 1 | 50 | **200** | — | — | — |
+| Emerald Constrictor `emerald-constrictor` | x1 | 1600 | 76 | 1600 | 47.5 | 30 | 6.4s | 77.5 | x2 = 152 (cadence/4) | — | 0 | — | — | 1582 | 1600 | 1 | 62 | 12 | — | ELITE | — |
+| BOSS Verdant-Crown Predator `verdant-crown-predator` | — | 8000 | 90 | 1400 | 64.3 | 30 | 5.6s | 94.3 | x2.1 = 189 (cadence/5) | — | 0 | 4% | 25% | 11048 | 11114 | 1 | 76 | 20 | — | charge x2.8 | boss-script |
 
 ## Volcanic  (density 36, 5 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@352 | spread | spd | rng | control | ecology | partial |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@348 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Ember Skink `ember-skink` | x1 | 790 | 64 | 1300 | 49.2 | 20 | 3.9s | 69.2 | — | x1.5 | 2 | — | — | 828 | 795 | 1 | 70 | 12 | — | — | — |
-| Infernal Direhound `infernal-direhound` | x1 | 1050 | 80 | 1400 | 57.1 | — | — | 57.1 | — | x1.6 | 4 | — | — | 1155 | 1062 | 1.1 | 72 | 12 | — | charge x2.5 | — |
-| Obsidian Tortoise `obsidian-tortoise` | x1 | 1700 | 100 | 3000 | 33.3 | — | — | 33.3 | x2.2 = 220 (cadence/4) | x1.8 | 8 | — | — | 2078 | 1740 | 1.2 | 20 | 15 | — | — | — |
-| Ashspitter Salamander `ashspitter-salamander` | x1 | 900 | 70 | 1900 | 36.8 | 30 | 7.6s | 66.8 | — | x1.5 | 2 | — | — | 943 | 905 | 1 | 46 | **190** | — | — | — |
-| Magma Salamander `magma-salamander` | x1 | 2200 | 94 | 2600 | 36.2 | — | — | 36.2 | — | x1.7 | 6 | 6% | — | 2958 | 2621 | 1.1 | 22 | 15 | — | ELITE | — |
-| BOSS Caldera Sovereign `caldera-sovereign` | — | 9000 | 100 | 2600 | 38.5 | 40 | 10.4s | 78.5 | — | x1.8 | 10 | 5% | — | 12375 | 9748 | 1.3 | 24 | 20 | — | aoe r130, charge x2.5 | boss-script |
+| Ember Skink `ember-skink` | x1 | 790 | 64 | 1300 | 49.2 | 20 | 3.9s | 69.2 | — | — | 2 | — | — | 818 | 795 | 1 | 70 | 12 | — | swarm | — |
+| Infernal Direhound `infernal-direhound` | x1 | 1050 | 80 | 1400 | 57.1 | — | — | 57.1 | — | — | 4 | — | — | 1142 | 1062 | 1.1 | 72 | 12 | — | swarm, charge x2.5 | — |
+| Obsidian Tortoise `obsidian-tortoise` | x1 | 1700 | 100 | 3000 | 33.3 | — | — | 33.3 | x2.2 = 220 (cadence/4) | — | 8 | — | — | 2054 | 1740 | 1.2 | 20 | 15 | — | — | — |
+| Ashspitter Salamander `ashspitter-salamander` | x1 | 900 | 70 | 1900 | 36.8 | 30 | 7.6s | 66.8 | — | — | 2 | — | — | 932 | 905 | 1 | 46 | **190** | — | — | — |
+| Magma Salamander `magma-salamander` | x1 | 2200 | 94 | 2600 | 36.2 | — | — | 36.2 | — | — | 6 | 6% | — | 3008 | 2624 | 1.1 | 22 | 15 | — | ELITE | — |
+| BOSS Caldera Sovereign `caldera-sovereign` | — | 9000 | 100 | 2600 | 38.5 | 40 | 10.4s | 78.5 | x1.8 = 180 (charged/1300ms) | x1.8 | 10 | 5% | — | 12234 | 9757 | 1.3 | 24 | 20 | — | aoe r130, charge x2.5 | boss-script |
 
-## Wasteland  (density 40, 6 pool slots)
+## Wasteland  (density 28, 5 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@352 | spread | spd | rng | control | ecology | partial |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@348 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Bone Crawler `bone-crawler` | x1 | 520 | 54 | 1200 | 45 | 30 | 4.8s | 75 | — | — | 0 | — | — | 520 | 520 | 1 | 78 | 12 | — | — | — |
-| Plague Hound `plague-hound` | x1 | 800 | 76 | 1500 | 50.7 | 36.4 | 6s | 87 | — | — | 0 | — | — | 800 | 800 | 1 | 70 | 12 | — | on-death, charge x2.5 | — |
-| Carrion Vulture `carrion-vulture` | x1 | 680 | 64 | 1700 | 37.6 | 35 | 6.8s | 72.6 | — | — | 0 | — | — | 680 | 680 | 1 | 46 | **200** | — | — | — |
-| Charnel Brute `charnel-brute` | x1 | 1800 | 90 | 3200 | 28.1 | 50 | 12.8s | 78.1 | x2.4 = 216 (cadence/4) | — | 16 | 8% | — | 3046 | 2050 | 1.5 | 18 | 15 | — | on-death | — |
-| Bone Rat `plague-rat` | x1 | 400 | 46 | 950 | 48.4 | 18 | 1.9s | 66.4 | — | — | 0 | — | — | 400 | 400 | 1 | 92 | 12 | — | — | — |
-| Gravewright `gravewright` | x1 | 720 | 40 | 1900 | 21.1 | 24 | 5.7s | 45.1 | — | — | 0 | — | — | 720 | 720 | 1 | 40 | **200** | — | raises-dead, ELITE | raise-adds |
-| BOSS Charnel-Crown Sovereign `charnel-crown-sovereign` | — | 8500 | 88 | 2300 | 38.3 | 42 | 11.5s | 80.3 | — | — | 14 | 8% | — | 13357 | 9621 | 1.4 | 28 | 20 | — | aoe r130, charge x2 | boss-script |
+| Bone Crawler `bone-crawler` | x1 | 520 | 54 | 1200 | 45 | — | — | 45 | — | — | 0 | — | — | 514 | 520 | 1 | 78 | 12 | — | — | — |
+| Plague Hound `plague-hound` | x1 | 800 | 76 | 1500 | 50.7 | 36.4 | 6s | 87 | — | — | 0 | — | — | 791 | 800 | 1 | 70 | 12 | — | on-death, charge x2.5 | — |
+| Carrion Vulture `carrion-vulture` | x1 | 680 | 64 | 1700 | 37.6 | — | — | 37.6 | — | — | 0 | — | — | 672 | 680 | 1 | 46 | **200** | — | — | — |
+| Bone Rat `plague-rat` | x1 | 400 | 46 | 950 | 48.4 | — | — | 48.4 | — | — | 0 | — | — | 395 | 400 | 1 | 92 | 12 | — | — | — |
+| Gravewright `gravewright` | x1 | 720 | 40 | 1900 | 21.1 | — | — | 21.1 | — | — | 0 | — | — | 712 | 720 | 1 | 40 | **200** | — | raises-dead, ELITE | raise-adds |
+| BOSS Charnel-Crown Sovereign `charnel-crown-sovereign` | — | 8500 | 88 | 2300 | 38.3 | 42 | 11.5s | 80.3 | x1.7 = 150 (charged/1500ms) | — | 14 | 8% | — | 13694 | 9635 | 1.4 | 28 | 20 | — | aoe r130, charge x2 | boss-script |
+
+## Mountain  (density 24, 4 pool slots)
+
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@348 | spread | spd | rng | control | ecology | partial |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
+| Granite Mammoth `granite-mammoth` | x1 | 1900 | 155 | 3600 | 43.1 | — | — | 43.1 | x2 = 310 (cadence/4) | — | 0 | — | — | 1878 | 1900 | 1 | 16 | 15 | — | charge x2.5 | — |
+| Avalanche Tyrant `avalanche-tyrant` | x1 | 1300 | 122 | 2500 | 48.8 | — | — | 48.8 | x1.8 = 220 (charged/1100ms) | — | 0 | — | — | 1285 | 1300 | 1 | 42 | 12 | — | charge x2.8, vaults | — |
+| Cliffside Roc `cliffside-roc` | x1 | 1400 | 150 | 3500 | 42.9 | — | — | 42.9 | — | — | 0 | — | — | 1384 | 1400 | 1 | 34 | **260** | — | — | — |
+| Cragback Rhino `cragback-rhino` | x1 | 2250 | 95 | 3800 | 25 | — | — | 25 | x3.2 = 304 (cooldown/10s) | — | 16 | 6% | — | 3764 | 2510 | 1.5 | 14 | 15 | — | charge x2.2, ELITE | soft-cap |
+| BOSS Iron-Crest Titan `iron-crest-titan` | — | 8500 | 175 | 4200 | 41.7 | — | — | 41.7 | x2.2 = 385 (charged/2600ms+cadence/4) | — | 14 | 6% | — | 13205 | 9420 | 1.4 | 16 | 20 | lockout 550ms | aoe r140, charge x2.5 | boss-script |
+
+## Desert  (density 16, 3 pool slots)
+
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@348 | spread | spd | rng | control | ecology | partial |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
+| Sand Viper `sand-viper` | x1 | 1700 | 30 | 2400 | 12.5 | — | — | 12.5 | — | — | 0 | 8% | — | 1849 | 1849 | 1 | 28 | 12 | slow 55% | alpha +1 | — |
+| Dune Basilisk `dune-basilisk` | x1 | 1900 | 40 | 3000 | 13.3 | — | — | 13.3 | — | — | 10 | 14% | — | 2850 | 2272 | 1.3 | 26 | 15 | vuln 18% x1 | alpha +1 | — |
+| Dune Tyrant `dune-tyrant` | x1 | 2200 | 88 | 3500 | 25.1 | — | — | 25.1 | x2.8 = 246 (charged/1900ms) | — | 8 | 8% | — | 2900 | 2446 | 1.2 | 20 | 15 | slow 60% | alpha +1, ELITE | — |
+| follower Sunshield Scarab `sandspitter-cobra` | x3 | 720 | 112 | 1900 | 58.9 | — | — | 58.9 | — | — | 0 | — | — | 790 | 799 | 1 | 54 | **230** | — | follower | — |
+| BOSS Dune-Throne Sovereign `dune-throne-sovereign` | — | 7800 | 142 | 2800 | 50.7 | — | — | 50.7 | x1.8 = 256 (charged/1500ms) | — | 8 | 8% | — | 10282 | 8672 | 1.2 | 44 | 20 | slow 55% | charge x2.5 | boss-script |
+
+## Tundra  (density 16, 4 pool slots)
+
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@348 | spread | spd | rng | control | ecology | partial |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
+| Rime-Tusk Mastodon `rime-tusk-mastodon` | x1 | 1400 | 120 | 3500 | 34.3 | — | — | 34.3 | x2 = 240 (cadence/4) | — | 12 | — | — | 1903 | 1450 | 1.3 | 18 | 15 | — | charge x2.3 | — |
+| Glacial Dire-Bear `glacial-direbear` | x1 | 1850 | 105 | 3200 | 32.8 | — | — | 32.8 | — | — | 0 | 14% | — | 2414 | 2390 | 1 | 18 | 15 | — | — | shatter |
+| Hoarfrost Yeti `hoarfrost-yeti` | x1 | 1050 | 86 | 2900 | 29.7 | — | — | 29.7 | x1.2 = 103 (charged/1500ms) | — | 0 | 8% | — | 1142 | 1142 | 1 | 36 | **220** | — | — | — |
+| Permafrost Behemoth `permafrost-behemoth` | x1 | 2900 | 100 | 4000 | 25 | — | — | 25 | x3 = 300 (charged/2200ms) | — | 20 | 12% | — | 6007 | 3492 | 1.7 | 12 | 15 | — | charge x2, ELITE | ambient-scaled |
+| BOSS Glacial Patriarch `glacial-patriarch` | — | 10000 | 145 | 4500 | 32.2 | — | — | 32.2 | x1.9 = 276 (charged/2200ms) | — | 22 | 14% | — | 26583 | 13671 | 1.9 | 14 | 20 | ramp-slow 50/40% | aoe r140, charge x2 | shatter, boss-script |
 
 ## Deep-Sea Trench  (density 10, 3 pool slots)
 
-| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@352 | spread | spd | rng | control | ecology | partial |
+| monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | ramp | pl | DR | ev | eHP@44 | eHP@348 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Abyssal Serpent `abyssal-serpent` | x1 | 3000 | 132 | 2800 | 47.1 | — | — | 47.1 | x2.5 = 330 (cooldown/10s) | — | 18 | 20% | — | 6286 | 3955 | 1.6 | 28 | 15 | antiheal 25% x3 | charge x2.5, ELITE | — |
-| Hadal Stalker `hadal-stalker` | x1 | 2500 | 126 | 3400 | 37.1 | — | — | 37.1 | x2.4 = 302 (cadence/5) | — | 15 | 16% | — | 4583 | 3110 | 1.5 | 22 | 15 | antiheal 25% x3 | charge x2.2, ELITE | — |
-| Elder Leviathan `elder-leviathan` | x1 | 4200 | 152 | 3600 | 42.2 | — | — | 42.2 | x2 = 304 (cooldown/10s) | — | 22 | 24% | — | 12094 | 6553 | 1.8 | 20 | 15 | antiheal 30% x3 | charge x2, ELITE | soft-cap |
-| BOSS Elder Trench Serpent `elder-trench-serpent` | — | 9500 | 110 | 3200 | 34.4 | — | — | 34.4 | x2.5 = 275 (cadence/4) | — | 20 | 22% | — | 24464 | 14357 | 1.7 | 22 | 22 | — | aoe r130, charge x2.3 | boss-script |
+| Abyssal Serpent `abyssal-serpent` | x1 | 3000 | 132 | 2800 | 47.1 | — | — | 47.1 | x2.5 = 330 (charged/1700ms) | — | 18 | 20% | — | 6525 | 3955 | 1.7 | 28 | 15 | — | charge x2.5, ELITE | — |
+| Hadal Stalker `hadal-stalker` | x1 | 2000 | 126 | 3400 | 37.1 | — | — | 37.1 | x2.4 = 302 (charged/1900ms) | — | 20 | 10% | — | 4143 | 2359 | 1.8 | 22 | **240** | — | ELITE | — |
+| Elder Leviathan `elder-leviathan` | x1 | 4200 | 152 | 3600 | 42.2 | — | — | 42.2 | x2.4 = 365 (charged/2600ms) | — | 22 | 24% | — | 12703 | 6557 | 1.9 | 20 | 15 | — | ELITE | — |
+| BOSS Elder Trench Serpent `elder-trench-serpent` | — | 9500 | 110 | 3200 | 34.4 | — | — | 34.4 | x2.5 = 275 (cadence/4+charged/2100ms) | — | 20 | 22% | — | 25530 | 14360 | 1.8 | 22 | 22 | — | aoe r130, charge x2.3 | boss-script |
 
 ## Mechanic coverage
 
 Monsters carrying no mechanic at all — pure stat blocks with nothing to read or counter:
 
+- Thornback Chameleon (`thornback-lizard`, Jungle)
+- Bone Crawler (`bone-crawler`, Wasteland)
+- Carrion Vulture (`carrion-vulture`, Wasteland)
+- Bone Rat (`plague-rat`, Wasteland)
 - Cliffside Roc (`cliffside-roc`, Mountain)
