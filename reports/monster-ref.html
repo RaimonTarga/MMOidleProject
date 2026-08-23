@@ -1,0 +1,2893 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MMO Idle Monster Reference</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #0f1117; color: #d4d8e0; font-size: 13px; }
+    .layout { display: flex; }
+    nav { width: 220px; min-width: 220px; position: sticky; top: 0; height: 100vh; overflow-y: auto; background: #161920; padding: 16px; border-right: 1px solid #2a2e3a; }
+    nav h2 { font-size: 14px; margin: 0 0 10px; color: #7eb8f7; }
+    nav ul { margin: 0; padding: 0; list-style: none; font-size: 12px; }
+    nav li { margin: 4px 0; }
+    nav a { color: #9ab8e0; text-decoration: none; }
+    nav a:hover { color: #fff; }
+    main { flex: 1; padding: 24px; overflow-x: auto; }
+    h1 { font-size: 24px; margin: 0 0 6px; color: #e8edf5; }
+    h3 { font-size: 16px; margin: 32px 0 8px; color: #b8d4f8; border-bottom: 1px solid #2a2e3a; padding-bottom: 6px; }
+    h4 { font-size: 13px; margin: 16px 0 6px; color: #90a8c4; }
+    h5 { font-size: 13px; margin: 0 0 8px; color: #d4e8ff; }
+    h5 small { color: #6a8090; font-weight: normal; font-size: 11px; }
+    p.meta { color: #6a7a8a; font-size: 11px; margin: 2px 0 16px; }
+
+    /* Main monster table */
+    table { border-collapse: collapse; width: 100%; margin: 0 0 16px; background: #161920; }
+    th, td { border: 1px solid #272d3a; padding: 5px 7px; vertical-align: top; }
+    th { background: #1e2433; color: #9ab8e0; font-size: 11px; position: sticky; top: 0; z-index: 1; white-space: nowrap; }
+    td { font-size: 12px; color: #c4ccd8; }
+    td.specials { max-width: 420px; font-size: 11px; line-height: 1.5; }
+    tr:nth-child(even) td { background: #191f2a; }
+
+    /* Boss cards */
+    .boss-card { border: 1px solid #3a4a5a; border-radius: 6px; padding: 12px 14px; margin: 0 0 14px; background: #14181e; }
+    .boss-stat-table th, .boss-stat-table td { font-size: 11px; }
+    .boss-stat-table { margin: 0 0 10px; }
+    .specials-table { margin: 8px 0; border: none; }
+    .specials-table td { border: none; border-bottom: 1px solid #1e2433; padding: 3px 6px; font-size: 11px; }
+    .spec-label { color: #7eb8f7; font-weight: bold; white-space: nowrap; padding-right: 12px; }
+    details.boss-script { margin-top: 8px; }
+    details.boss-script summary { cursor: pointer; color: #7eb8f7; font-size: 11px; font-weight: bold; }
+    details.boss-script pre { background: #0d1016; border: 1px solid #2a2e3a; border-radius: 4px; padding: 10px; font-size: 11px; line-height: 1.55; color: #b0c4d8; overflow-x: auto; margin: 6px 0 0; }
+    .tier-section { margin-bottom: 40px; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <h2>Monster Reference</h2>
+    <p style="font-size:11px;color:#6a7a8a;margin:0 0 12px">106 monsters across 26 biome tiers</p>
+    <ul><li><b>Caverns</b>: <a href="#cave-t1">T1</a> <a href="#cave-t2">T2</a> <a href="#cave-t3">T3</a></li>
+<li><b>Forest</b>: <a href="#forest-t1">T1</a> <a href="#forest-t2">T2</a></li>
+<li><b>Mountain</b>: <a href="#mountain-t1">T1</a> <a href="#mountain-t2">T2</a> <a href="#mountain-t3">T3</a> <a href="#mountain-t4">T4</a></li>
+<li><b>Plains</b>: <a href="#plains-t1">T1</a> <a href="#plains-t2">T2</a></li>
+<li><b>Swamp</b>: <a href="#swamp-t1">T1</a> <a href="#swamp-t2">T2</a> <a href="#swamp-t3">T3</a></li>
+<li><b>Desert</b>: <a href="#desert-t2">T2</a> <a href="#desert-t3">T3</a> <a href="#desert-t4">T4</a></li>
+<li><b>Jungle</b>: <a href="#jungle-t2">T2</a> <a href="#jungle-t3">T3</a> <a href="#jungle-t4">T4</a></li>
+<li><b>Tundra</b>: <a href="#tundra-t3">T3</a> <a href="#tundra-t4">T4</a></li>
+<li><b>Volcanic</b>: <a href="#volcanic-t3">T3</a> <a href="#volcanic-t4">T4</a></li>
+<li><b>Wasteland</b>: <a href="#graveyard-t4">T4</a></li>
+<li><b>Deep-Sea Trench</b>: <a href="#trench-t4">T4</a></li></ul>
+  </nav>
+  <main>
+    <h1>MMO Idle Monster Reference</h1>
+    <p class="meta">
+      Raw stat dump for every non-tutorial monster, organised by biome then biome tier.
+      Bosses are shown as detailed cards with full fight scripts.
+      No player matchup analysis — this is the world-side data only.
+    </p>
+    <section class="tier-section" id="cave-t1">
+    <h3>Caverns — Biome Tier 1</h3>
+    <h4>Monsters (2)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Cave Lurker</b><br><small style="color:#888">cave-lurker</small></td>
+      <td>225</td>
+      <td>31</td>
+      <td>0.71</td>
+      <td>1400ms</td>
+      <td>1</td>
+      <td>5.0%</td>
+      <td>68</td>
+      <td>12</td>
+      <td>200</td>
+      <td>380</td>
+      <td>620</td>
+      <td>450ms</td>
+      <td>1500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>10 red</td>
+      <td>70</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Cave Brute</b><br><small style="color:#888">cave-brute</small></td>
+      <td>250</td>
+      <td>90</td>
+      <td>0.36</td>
+      <td>2800ms</td>
+      <td>1</td>
+      <td>10.0%</td>
+      <td>18</td>
+      <td>12</td>
+      <td>240</td>
+      <td>130</td>
+      <td>460</td>
+      <td>3000ms</td>
+      <td>8000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>13 red</td>
+      <td>90</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1200ms</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Obsidian Broodmother <small>obsidian-broodmother</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>1750</td>
+        <td>47</td>
+        <td>0.36</td>
+        <td>2800ms</td>
+        <td>6</td>
+        <td>10.0%</td>
+        <td>24</td>
+        <td>18</td>
+        <td>240</td>
+        <td>80</td>
+        <td>680</td>
+        <td>quake</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.5× speed for 1200ms</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-shred&quot;,&quot;maxStacksAdd&quot;:3}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="forest-t1">
+    <h3>Forest — Biome Tier 1</h3>
+    <h4>Monsters (2)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Moss Rat</b><br><small style="color:#888">forest-slime</small></td>
+      <td>160</td>
+      <td>17</td>
+      <td>0.71</td>
+      <td>1400ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>54</td>
+      <td>12</td>
+      <td>600</td>
+      <td>230</td>
+      <td>1200</td>
+      <td>1200ms</td>
+      <td>4000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>3 green</td>
+      <td>18</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Wolf</b><br><small style="color:#888">wolf</small></td>
+      <td>130</td>
+      <td>20</td>
+      <td>0.91</td>
+      <td>1100ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>82</td>
+      <td>12</td>
+      <td>680</td>
+      <td>290</td>
+      <td>1360</td>
+      <td>700ms</td>
+      <td>2800ms</td>
+      <td>bite</td>
+      <td>—</td>
+      <td>—</td>
+      <td>4 green</td>
+      <td>25</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Gnarled Greatbear <small>gnarled-greatbear</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>2000</td>
+        <td>24</td>
+        <td>0.71</td>
+        <td>1400ms</td>
+        <td>0</td>
+        <td>0.0%</td>
+        <td>60</td>
+        <td>15</td>
+        <td>300</td>
+        <td>160</td>
+        <td>800</td>
+        <td>bear-claws</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Combat ramp</td><td>attackSpeed +7.0% per 3000ms, cap +28.0%; resets on de-aggro</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Enrage: attack × 1.10, cooldown × 0.85 (permanent)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="mountain-t1">
+    <h3>Mountain — Biome Tier 1</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Cliff Hopper</b><br><small style="color:#888">cliff-hopper</small></td>
+      <td>190</td>
+      <td>50</td>
+      <td>0.33</td>
+      <td>3000ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>28</td>
+      <td>12</td>
+      <td>420</td>
+      <td>200</td>
+      <td>640</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>6 yellow</td>
+      <td>42</td>
+      <td class="specials"><b>Charge on aggro:</b> 3.0× speed for 1200ms</td>
+    </tr>
+<tr>
+      <td><b>Cliff Hopper</b><br><small style="color:#888">cliff-hopper</small></td>
+      <td>190</td>
+      <td>50</td>
+      <td>0.33</td>
+      <td>3000ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>28</td>
+      <td>12</td>
+      <td>420</td>
+      <td>200</td>
+      <td>640</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>6 yellow</td>
+      <td>42</td>
+      <td class="specials"><b>Charge on aggro:</b> 3.0× speed for 1200ms</td>
+    </tr>
+<tr>
+      <td><b>Ridge Ambusher</b><br><small style="color:#888">ridge-archer</small></td>
+      <td>240</td>
+      <td>50</td>
+      <td>0.32</td>
+      <td>3100ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>26</td>
+      <td>210</td>
+      <td>350</td>
+      <td>210</td>
+      <td>600</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>arrow</td>
+      <td>—</td>
+      <td>—</td>
+      <td>8 blue</td>
+      <td>52</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Crag Behemoth <small>crag-behemoth</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>2100</td>
+        <td>56</td>
+        <td>0.29</td>
+        <td>3500ms</td>
+        <td>0</td>
+        <td>0.0%</td>
+        <td>22</td>
+        <td>18</td>
+        <td>280</td>
+        <td>120</td>
+        <td>750</td>
+        <td>quake</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>3.0× speed for 1200ms</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.15,&quot;cooldownMult&quot;:0.8}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="plains-t1">
+    <h3>Plains — Biome Tier 1</h3>
+    <h4>Monsters (2)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Field Hare</b><br><small style="color:#888">plains-slime</small></td>
+      <td>50</td>
+      <td>12</td>
+      <td>0.50</td>
+      <td>2000ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>46</td>
+      <td>12</td>
+      <td>190</td>
+      <td>250</td>
+      <td>640</td>
+      <td>1200ms</td>
+      <td>4000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>2 yellow</td>
+      <td>10</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Boar</b><br><small style="color:#888">boar</small></td>
+      <td>100</td>
+      <td>18</td>
+      <td>0.53</td>
+      <td>1900ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>50</td>
+      <td>12</td>
+      <td>205</td>
+      <td>260</td>
+      <td>660</td>
+      <td>1000ms</td>
+      <td>3500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>3 yellow</td>
+      <td>18</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1000ms</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Tusked Razorback <small>tusked-razorback</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>1700</td>
+        <td>34</td>
+        <td>0.50</td>
+        <td>2000ms</td>
+        <td>4</td>
+        <td>2.0%</td>
+        <td>50</td>
+        <td>15</td>
+        <td>280</td>
+        <td>120</td>
+        <td>750</td>
+        <td>impact</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Spawn adds: 4× plains-slime (tracked; despawn on boss death)
+    • Spawn adds: 1× boar (tracked; despawn on boss death)
+    • {&quot;type&quot;:&quot;roar&quot;,&quot;attackSpeedPct&quot;:0.2,&quot;durationMs&quot;:8000,&quot;radius&quot;:320}
+— Repeating triggers —
+  Every 10000ms, first after 4000ms:
+    • Spawn adds: 2× plains-slime (tracked; despawn on boss death)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="swamp-t1">
+    <h3>Swamp — Biome Tier 1</h3>
+    <h4>Monsters (2)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Mire Ooze</b><br><small style="color:#888">bog-slime</small></td>
+      <td>140</td>
+      <td>10</td>
+      <td>0.50</td>
+      <td>2000ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>28</td>
+      <td>12</td>
+      <td>165</td>
+      <td>160</td>
+      <td>530</td>
+      <td>2000ms</td>
+      <td>5500ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>5 purple</td>
+      <td>35</td>
+      <td class="specials"><b>DoT &quot;Poison&quot; [swamp-poison]:</b> 6.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 4000ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Mud Toad</b><br><small style="color:#888">mud-toad</small></td>
+      <td>120</td>
+      <td>13</td>
+      <td>0.45</td>
+      <td>2200ms</td>
+      <td>2</td>
+      <td>0.0%</td>
+      <td>30</td>
+      <td>12</td>
+      <td>180</td>
+      <td>180</td>
+      <td>550</td>
+      <td>1800ms</td>
+      <td>5000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>6 green</td>
+      <td>42</td>
+      <td class="specials"><b>DoT &quot;Poison&quot; [swamp-poison]:</b> 5.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 4000ms after last hit<br><b>Slow / Root on hit:</b> Slow (speed × 0.60) for 2000ms, refreshes on each hit</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Grave Toadeater <small>grave-toadeater</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>2100</td>
+        <td>13</td>
+        <td>0.38</td>
+        <td>2600ms</td>
+        <td>2</td>
+        <td>2.0%</td>
+        <td>28</td>
+        <td>15</td>
+        <td>260</td>
+        <td>100</td>
+        <td>700</td>
+        <td>poison</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">DoT &quot;Toad Poison&quot; [grave-toadeater-poison]</td><td>4.00 dmg/stack, max 4 stacks, tick every 1000ms, expires 4000ms after last hit</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.6,&quot;radiusMult&quot;:1.15}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="cave-t2">
+    <h3>Caverns — Biome Tier 2</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Giant Spider</b><br><small style="color:#888">giant-spider</small></td>
+      <td>260</td>
+      <td>39</td>
+      <td>0.56</td>
+      <td>1800ms</td>
+      <td>0</td>
+      <td>8.0%</td>
+      <td>72</td>
+      <td>12</td>
+      <td>220</td>
+      <td>260</td>
+      <td>680</td>
+      <td>800ms</td>
+      <td>3200ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>15 red</td>
+      <td>85</td>
+      <td class="specials"><b>DoT &quot;Spider Venom&quot; [spider-venom]:</b> 11.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 2000ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Cave Troll</b><br><small style="color:#888">cave-troll</small></td>
+      <td>400</td>
+      <td>134</td>
+      <td>0.28</td>
+      <td>3600ms</td>
+      <td>1</td>
+      <td>8.0%</td>
+      <td>15</td>
+      <td>15</td>
+      <td>240</td>
+      <td>130</td>
+      <td>470</td>
+      <td>3000ms</td>
+      <td>8500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>23 red</td>
+      <td>145</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Cave Gargoyle</b><br><small style="color:#888">cave-gargoyle</small></td>
+      <td>300</td>
+      <td>66</td>
+      <td>0.31</td>
+      <td>3200ms</td>
+      <td>1</td>
+      <td>5.0%</td>
+      <td>22</td>
+      <td>200</td>
+      <td>185</td>
+      <td>130</td>
+      <td>460</td>
+      <td>2500ms</td>
+      <td>7000ms</td>
+      <td>stonespit</td>
+      <td>—</td>
+      <td>—</td>
+      <td>18 blue</td>
+      <td>100</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Chitinous Dreadbore <small>chitinous-dreadbore</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>4375</td>
+        <td>139</td>
+        <td>0.28</td>
+        <td>3600ms</td>
+        <td>12</td>
+        <td>12.0%</td>
+        <td>20</td>
+        <td>72</td>
+        <td>280</td>
+        <td>90</td>
+        <td>800</td>
+        <td>quake</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.0× speed for 1200ms</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-shred&quot;,&quot;platingPerStackAdd&quot;:1}
+    • Spawn adds: 1× cave-troll (tracked; despawn on boss death)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="desert-t2">
+    <h3>Desert — Biome Tier 2</h3>
+    <h4>Monsters (2)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Sand Scorpion</b><br><small style="color:#888">sand-scorpion</small></td>
+      <td>660</td>
+      <td>132</td>
+      <td>0.42</td>
+      <td>2400ms</td>
+      <td>0</td>
+      <td>8.0%</td>
+      <td>30</td>
+      <td>12</td>
+      <td>210</td>
+      <td>240</td>
+      <td>640</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>7 yellow</td>
+      <td>40</td>
+      <td class="specials"><b>Slow / Root on hit:</b> Slow (speed × 0.50) for 2500ms, refreshes on each hit</td>
+    </tr>
+<tr>
+      <td><b>Stone Basilisk</b><br><small style="color:#888">stone-basilisk</small></td>
+      <td>660</td>
+      <td>138</td>
+      <td>0.36</td>
+      <td>2800ms</td>
+      <td>0</td>
+      <td>15.0%</td>
+      <td>26</td>
+      <td>12</td>
+      <td>190</td>
+      <td>180</td>
+      <td>560</td>
+      <td>2000ms</td>
+      <td>5500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>8 yellow</td>
+      <td>46</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Dune-Stalker Emperor <small>dune-stalker-emperor</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>3750</td>
+        <td>85</td>
+        <td>0.38</td>
+        <td>2600ms</td>
+        <td>12</td>
+        <td>8.0%</td>
+        <td>42</td>
+        <td>40</td>
+        <td>340</td>
+        <td>140</td>
+        <td>880</td>
+        <td>sandblast</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Slow / Root on hit</td><td>Slow (speed × 0.60) for 2000ms, refreshes on each hit</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Stat buff: speed × 1.30 (permanent)
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.15,&quot;cooldownMult&quot;:0.75}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="forest-t2">
+    <h3>Forest — Biome Tier 2</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Dire Wolf</b><br><small style="color:#888">ancient-wolf</small></td>
+      <td>270</td>
+      <td>34</td>
+      <td>0.91</td>
+      <td>1100ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>96</td>
+      <td>12</td>
+      <td>280</td>
+      <td>300</td>
+      <td>750</td>
+      <td>600ms</td>
+      <td>2500ms</td>
+      <td>bite</td>
+      <td>—</td>
+      <td>—</td>
+      <td>8 green</td>
+      <td>45</td>
+      <td class="specials"><b>Charge on aggro:</b> 3.0× speed for 900ms</td>
+    </tr>
+<tr>
+      <td><b>Ironclaw Badger</b><br><small style="color:#888">ironwood-golem</small></td>
+      <td>240</td>
+      <td>31</td>
+      <td>1.11</td>
+      <td>900ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>22</td>
+      <td>15</td>
+      <td>150</td>
+      <td>120</td>
+      <td>480</td>
+      <td>2500ms</td>
+      <td>7000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>10 blue</td>
+      <td>58</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Thorn Spitter</b><br><small style="color:#888">canopy-sprite</small></td>
+      <td>230</td>
+      <td>31</td>
+      <td>0.42</td>
+      <td>2400ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>48</td>
+      <td>190</td>
+      <td>250</td>
+      <td>240</td>
+      <td>650</td>
+      <td>1200ms</td>
+      <td>3500ms</td>
+      <td>arrow</td>
+      <td>—</td>
+      <td>—</td>
+      <td>9 green</td>
+      <td>50</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Apex Timberclaw <small>apex-timberclaw</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>3750</td>
+        <td>64</td>
+        <td>0.67</td>
+        <td>1500ms</td>
+        <td>0</td>
+        <td>0.0%</td>
+        <td>60</td>
+        <td>18</td>
+        <td>310</td>
+        <td>130</td>
+        <td>830</td>
+        <td>bear-claws</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Combat ramp</td><td>attackSpeed +10.0% per 2500ms, cap +60.0%; resets on de-aggro</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Enrage: attack × 1.15, cooldown × 0.70 (permanent)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="jungle-t2">
+    <h3>Jungle — Biome Tier 2</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Jungle Snake</b><br><small style="color:#888">jungle-snake</small></td>
+      <td>400</td>
+      <td>20</td>
+      <td>0.91</td>
+      <td>1100ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>76</td>
+      <td>12</td>
+      <td>270</td>
+      <td>290</td>
+      <td>740</td>
+      <td>600ms</td>
+      <td>2600ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>7 green</td>
+      <td>38</td>
+      <td class="specials"><b>DoT &quot;Snake Venom&quot; [snake-venom]:</b> 7.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 1500ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Jungle Ape</b><br><small style="color:#888">jungle-ape</small></td>
+      <td>500</td>
+      <td>33</td>
+      <td>0.59</td>
+      <td>1700ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>62</td>
+      <td>12</td>
+      <td>240</td>
+      <td>250</td>
+      <td>660</td>
+      <td>1000ms</td>
+      <td>3800ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>8 green</td>
+      <td>44</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.8× speed for 1000ms<br><b>Combat ramp:</b> attack +3.0% per 1000ms, cap +45.0%; resets on de-aggro</td>
+    </tr>
+<tr>
+      <td><b>Vine Chameleon</b><br><small style="color:#888">jungle-blowdarter</small></td>
+      <td>375</td>
+      <td>20</td>
+      <td>0.53</td>
+      <td>1900ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>48</td>
+      <td>190</td>
+      <td>250</td>
+      <td>250</td>
+      <td>660</td>
+      <td>1200ms</td>
+      <td>4000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>7 green</td>
+      <td>38</td>
+      <td class="specials"><b>DoT &quot;Dart Poison&quot; [dart-poison]:</b> 7.00 dmg/stack, max 4 stacks, tick every 1000ms, expires 2100ms after last hit</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Jungle Dread-Gorger <small>jungle-dread-gorger</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>3625</td>
+        <td>85</td>
+        <td>0.42</td>
+        <td>2400ms</td>
+        <td>0</td>
+        <td>3.0%</td>
+        <td>56</td>
+        <td>18</td>
+        <td>320</td>
+        <td>150</td>
+        <td>840</td>
+        <td>slash</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Stat buff: speed × 1.35 (permanent)
+    • Spawn adds: 2× jungle-snake (tracked; despawn on boss death)
+    • Spawn adds: 1× jungle-ape (tracked; despawn on boss death)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="mountain-t2">
+    <h3>Mountain — Biome Tier 2</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Granite Titan</b><br><small style="color:#888">granite-titan</small></td>
+      <td>336</td>
+      <td>122</td>
+      <td>0.26</td>
+      <td>3800ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>18</td>
+      <td>15</td>
+      <td>160</td>
+      <td>110</td>
+      <td>460</td>
+      <td>3500ms</td>
+      <td>9000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>14 blue</td>
+      <td>80</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1200ms</td>
+    </tr>
+<tr>
+      <td><b>Stone Eagle</b><br><small style="color:#888">stone-eagle</small></td>
+      <td>244</td>
+      <td>88</td>
+      <td>0.36</td>
+      <td>2800ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>40</td>
+      <td>12</td>
+      <td>285</td>
+      <td>320</td>
+      <td>800</td>
+      <td>500ms</td>
+      <td>2000ms</td>
+      <td>slash</td>
+      <td>—</td>
+      <td>—</td>
+      <td>12 blue</td>
+      <td>68</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1000ms</td>
+    </tr>
+<tr>
+      <td><b>Boulder Thrower</b><br><small style="color:#888">peak-archer</small></td>
+      <td>277</td>
+      <td>106</td>
+      <td>0.29</td>
+      <td>3500ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>28</td>
+      <td>240</td>
+      <td>265</td>
+      <td>200</td>
+      <td>600</td>
+      <td>2000ms</td>
+      <td>5000ms</td>
+      <td>boulder</td>
+      <td>—</td>
+      <td>—</td>
+      <td>13 blue</td>
+      <td>75</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Stoneplate Juggernaut <small>stoneplate-juggernaut</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>5000</td>
+        <td>128</td>
+        <td>0.24</td>
+        <td>4200ms</td>
+        <td>10</td>
+        <td>5.0%</td>
+        <td>20</td>
+        <td>72</td>
+        <td>320</td>
+        <td>120</td>
+        <td>850</td>
+        <td>quake</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.5× speed for 1200ms</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.15,&quot;cooldownMult&quot;:0.8,&quot;radiusMult&quot;:1.15}
+    • Spawn adds: 2× peak-archer (tracked; despawn on boss death)
+— Repeating triggers —
+  Every 14000ms, first after 9000ms:
+    • Shield: +25.0% DR for 4000ms</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="plains-t2">
+    <h3>Plains — Biome Tier 2</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Stampede Bull</b><br><small style="color:#888">stampede-bull</small></td>
+      <td>230</td>
+      <td>24</td>
+      <td>0.59</td>
+      <td>1700ms</td>
+      <td>0</td>
+      <td>5.0%</td>
+      <td>62</td>
+      <td>12</td>
+      <td>235</td>
+      <td>260</td>
+      <td>680</td>
+      <td>800ms</td>
+      <td>3000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>7 yellow</td>
+      <td>40</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1000ms</td>
+    </tr>
+<tr>
+      <td><b>Prairie Wolf</b><br><small style="color:#888">prairie-wolf</small></td>
+      <td>180</td>
+      <td>19</td>
+      <td>0.83</td>
+      <td>1200ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>92</td>
+      <td>12</td>
+      <td>275</td>
+      <td>290</td>
+      <td>720</td>
+      <td>700ms</td>
+      <td>2800ms</td>
+      <td>bite</td>
+      <td>—</td>
+      <td>—</td>
+      <td>6 yellow</td>
+      <td>35</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Savanna Hawk</b><br><small style="color:#888">savanna-hawk</small></td>
+      <td>170</td>
+      <td>29</td>
+      <td>0.42</td>
+      <td>2400ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>50</td>
+      <td>165</td>
+      <td>245</td>
+      <td>280</td>
+      <td>680</td>
+      <td>1000ms</td>
+      <td>3200ms</td>
+      <td>slash</td>
+      <td>—</td>
+      <td>—</td>
+      <td>7 yellow</td>
+      <td>38</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Gorging Razortusk <small>gorging-razortusk</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>4000</td>
+        <td>96</td>
+        <td>0.45</td>
+        <td>2200ms</td>
+        <td>8</td>
+        <td>5.0%</td>
+        <td>46</td>
+        <td>15</td>
+        <td>320</td>
+        <td>140</td>
+        <td>850</td>
+        <td>impact</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Spawn adds: 5× plains-slime (tracked; despawn on boss death)
+    • Spawn adds: 1× boar (tracked; despawn on boss death)
+    • {&quot;type&quot;:&quot;roar&quot;,&quot;attackSpeedPct&quot;:0.25,&quot;durationMs&quot;:8000,&quot;radius&quot;:320}
+  HP ≤ 25.0%:
+    • Spawn adds: 2× boar (tracked; despawn on boss death)
+    • Spawn adds: 4× plains-slime (tracked; despawn on boss death)
+    • {&quot;type&quot;:&quot;roar&quot;,&quot;attackSpeedPct&quot;:0.25,&quot;durationMs&quot;:6000,&quot;radius&quot;:300}
+— Repeating triggers —
+  Every 10000ms, first after 6000ms:
+    • Spawn adds: 2× plains-slime (tracked; despawn on boss death)
+    • {&quot;type&quot;:&quot;roar&quot;,&quot;attackSpeedPct&quot;:0.25,&quot;durationMs&quot;:6000,&quot;radius&quot;:300}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="swamp-t2">
+    <h3>Swamp — Biome Tier 2</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Moss-Shell Snapper</b><br><small style="color:#888">swamp-hydra</small></td>
+      <td>150</td>
+      <td>24</td>
+      <td>0.45</td>
+      <td>2200ms</td>
+      <td>6</td>
+      <td>0.0%</td>
+      <td>28</td>
+      <td>15</td>
+      <td>185</td>
+      <td>170</td>
+      <td>560</td>
+      <td>2500ms</td>
+      <td>7000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>12 purple</td>
+      <td>68</td>
+      <td class="specials"><b>DoT &quot;Snapper Venom&quot; [hydra-venom]:</b> 7.00 dmg/stack, max 5 stacks, tick every 1000ms, expires 2400ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Bog Witch</b><br><small style="color:#888">bog-witch</small></td>
+      <td>170</td>
+      <td>41</td>
+      <td>0.45</td>
+      <td>2200ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>38</td>
+      <td>180</td>
+      <td>215</td>
+      <td>200</td>
+      <td>580</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>hex</td>
+      <td>—</td>
+      <td>—</td>
+      <td>11 purple</td>
+      <td>62</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Mire Stalker</b><br><small style="color:#888">mire-stalker</small></td>
+      <td>210</td>
+      <td>46</td>
+      <td>0.38</td>
+      <td>2600ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>40</td>
+      <td>12</td>
+      <td>155</td>
+      <td>170</td>
+      <td>540</td>
+      <td>2000ms</td>
+      <td>6000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>13 purple</td>
+      <td>75</td>
+      <td class="specials"><b>DoT &quot;Stalker Venom&quot; [stalker-venom]:</b> 4.00 dmg/stack, max 4 stacks, tick every 1000ms, expires 2800ms after last hit<br><b>Evasion (deterministic):</b> dodge rate 20.0%</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Mire-Gorged Behemoth <small>mire-gorged-behemoth</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>3375</td>
+        <td>38</td>
+        <td>0.36</td>
+        <td>2800ms</td>
+        <td>6</td>
+        <td>8.0%</td>
+        <td>30</td>
+        <td>15</td>
+        <td>300</td>
+        <td>110</td>
+        <td>800</td>
+        <td>poison</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">DoT &quot;Gorged Venom&quot; [mire-gorged-venom]</td><td>9.00 dmg/stack, max 4 stacks, tick every 1000ms, expires 5000ms after last hit</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Enrage: attack × 1.00, cooldown × 0.70 (permanent)
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.7,&quot;radiusMult&quot;:1.15}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="cave-t3">
+    <h3>Caverns — Biome Tier 3</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Deep Spider</b><br><small style="color:#888">deep-spider</small></td>
+      <td>450</td>
+      <td>60</td>
+      <td>0.67</td>
+      <td>1500ms</td>
+      <td>0</td>
+      <td>8.0%</td>
+      <td>70</td>
+      <td>12</td>
+      <td>220</td>
+      <td>380</td>
+      <td>820</td>
+      <td>500ms</td>
+      <td>2000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>55 red</td>
+      <td>330</td>
+      <td class="specials"><b>DoT &quot;Deep Venom&quot; [deep-spider-venom]:</b> 12.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 3000ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Cavern Troll</b><br><small style="color:#888">cavern-troll</small></td>
+      <td>700</td>
+      <td>124</td>
+      <td>0.28</td>
+      <td>3600ms</td>
+      <td>2</td>
+      <td>10.0%</td>
+      <td>14</td>
+      <td>15</td>
+      <td>240</td>
+      <td>120</td>
+      <td>460</td>
+      <td>3000ms</td>
+      <td>8500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>83 red</td>
+      <td>500</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.0× speed for 1200ms</td>
+    </tr>
+<tr>
+      <td><b>Crystal Gargoyle</b><br><small style="color:#888">crystal-gargoyle</small></td>
+      <td>520</td>
+      <td>85</td>
+      <td>0.31</td>
+      <td>3200ms</td>
+      <td>1</td>
+      <td>5.0%</td>
+      <td>20</td>
+      <td>210</td>
+      <td>185</td>
+      <td>120</td>
+      <td>450</td>
+      <td>2500ms</td>
+      <td>7000ms</td>
+      <td>stonespit</td>
+      <td>—</td>
+      <td>—</td>
+      <td>60 red</td>
+      <td>360</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Deep-Core Burrow-Gorger <small>deep-core-burrow-gorger</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>12895</td>
+        <td>196</td>
+        <td>0.22</td>
+        <td>4500ms</td>
+        <td>16</td>
+        <td>15.0%</td>
+        <td>16</td>
+        <td>72</td>
+        <td>330</td>
+        <td>85</td>
+        <td>890</td>
+        <td>quake</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.0× speed for 1200ms</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-shred&quot;,&quot;maxStacksAdd&quot;:4,&quot;extraThresholds&quot;:[9,12]}
+  HP ≤ 25.0%:
+    • {&quot;type&quot;:&quot;empower-shred&quot;,&quot;platingPerStackAdd&quot;:1}
+    • Spawn adds: 1× cavern-troll (tracked; despawn on boss death)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="desert-t3">
+    <h3>Desert — Biome Tier 3</h3>
+    <h4>Monsters (2)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Dune Stalker</b><br><small style="color:#888">dune-stalker</small></td>
+      <td>1350</td>
+      <td>67</td>
+      <td>0.42</td>
+      <td>2400ms</td>
+      <td>0</td>
+      <td>8.0%</td>
+      <td>30</td>
+      <td>12</td>
+      <td>210</td>
+      <td>240</td>
+      <td>640</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>30 yellow</td>
+      <td>180</td>
+      <td class="specials"><b>Slow / Root on hit:</b> Slow (speed × 0.50) for 2500ms, refreshes on each hit</td>
+    </tr>
+<tr>
+      <td><b>Desert Basilisk</b><br><small style="color:#888">desert-basilisk</small></td>
+      <td>1350</td>
+      <td>113</td>
+      <td>0.36</td>
+      <td>2800ms</td>
+      <td>0</td>
+      <td>15.0%</td>
+      <td>26</td>
+      <td>12</td>
+      <td>190</td>
+      <td>180</td>
+      <td>560</td>
+      <td>2000ms</td>
+      <td>5500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>45 yellow</td>
+      <td>270</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Dune-Carapace Monarch <small>dune-carapace-monarch</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>11940</td>
+        <td>196</td>
+        <td>0.33</td>
+        <td>3000ms</td>
+        <td>10</td>
+        <td>8.0%</td>
+        <td>42</td>
+        <td>20</td>
+        <td>350</td>
+        <td>140</td>
+        <td>900</td>
+        <td>sandblast</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.5× speed for 1000ms</td></tr><tr><td class="spec-label">Slow / Root on hit</td><td>Slow (speed × 0.60) for 2000ms, refreshes on each hit</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Morph (permanent): ranged: true; style: sandblast; range: 240px; kite: true
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.2,&quot;cooldownMult&quot;:0.8}
+  HP ≤ 25.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.65}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="jungle-t3">
+    <h3>Jungle — Biome Tier 3</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Jungle Stalker</b><br><small style="color:#888">jungle-stalker</small></td>
+      <td>790</td>
+      <td>55</td>
+      <td>1.00</td>
+      <td>1000ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>78</td>
+      <td>12</td>
+      <td>270</td>
+      <td>300</td>
+      <td>760</td>
+      <td>600ms</td>
+      <td>2600ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>25 green</td>
+      <td>150</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Silverback</b><br><small style="color:#888">silverback</small></td>
+      <td>1045</td>
+      <td>83</td>
+      <td>0.56</td>
+      <td>1800ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>60</td>
+      <td>12</td>
+      <td>240</td>
+      <td>250</td>
+      <td>660</td>
+      <td>1000ms</td>
+      <td>3800ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>35 green</td>
+      <td>210</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.8× speed for 1100ms<br><b>Combat ramp:</b> attack +3.0% per 1000ms, cap +45.0%; resets on de-aggro</td>
+    </tr>
+<tr>
+      <td><b>Canopy Chameleon</b><br><small style="color:#888">canopy-harrier</small></td>
+      <td>720</td>
+      <td>45</td>
+      <td>0.71</td>
+      <td>1400ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>52</td>
+      <td>190</td>
+      <td>250</td>
+      <td>240</td>
+      <td>650</td>
+      <td>1200ms</td>
+      <td>3500ms</td>
+      <td>arrow</td>
+      <td>—</td>
+      <td>—</td>
+      <td>27 green</td>
+      <td>165</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Apex Bramble-Slasher <small>apex-bramble-slasher</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>11701</td>
+        <td>104</td>
+        <td>0.67</td>
+        <td>1500ms</td>
+        <td>0</td>
+        <td>3.0%</td>
+        <td>64</td>
+        <td>18</td>
+        <td>340</td>
+        <td>140</td>
+        <td>920</td>
+        <td>slash</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.8× speed for 900ms</td></tr><tr><td class="spec-label">Evasion (deterministic)</td><td>dodge rate 15.0%</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Stat buff: evasion × 2.00 for 5000ms
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.2,&quot;cooldownMult&quot;:0.55}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="mountain-t3">
+    <h3>Mountain — Biome Tier 3</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Mountain Colossus</b><br><small style="color:#888">mountain-colossus</small></td>
+      <td>610</td>
+      <td>130</td>
+      <td>0.26</td>
+      <td>3800ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>16</td>
+      <td>15</td>
+      <td>160</td>
+      <td>90</td>
+      <td>420</td>
+      <td>4000ms</td>
+      <td>10500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>75 blue</td>
+      <td>440</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1200ms</td>
+    </tr>
+<tr>
+      <td><b>Avalanche Ram</b><br><small style="color:#888">avalanche-ram</small></td>
+      <td>434</td>
+      <td>87</td>
+      <td>0.38</td>
+      <td>2600ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>38</td>
+      <td>12</td>
+      <td>245</td>
+      <td>300</td>
+      <td>760</td>
+      <td>500ms</td>
+      <td>2200ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>47 blue</td>
+      <td>280</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1000ms</td>
+    </tr>
+<tr>
+      <td><b>Crag Mortar</b><br><small style="color:#888">crag-mortar</small></td>
+      <td>490</td>
+      <td>109</td>
+      <td>0.28</td>
+      <td>3600ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>30</td>
+      <td>250</td>
+      <td>360</td>
+      <td>200</td>
+      <td>620</td>
+      <td>2000ms</td>
+      <td>5000ms</td>
+      <td>boulder</td>
+      <td>—</td>
+      <td>—</td>
+      <td>60 blue</td>
+      <td>360</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Crag-Gorged Horn-Behemoth <small>crag-gorged-horn-behemoth</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>12418</td>
+        <td>204</td>
+        <td>0.24</td>
+        <td>4200ms</td>
+        <td>12</td>
+        <td>5.0%</td>
+        <td>18</td>
+        <td>72</td>
+        <td>360</td>
+        <td>100</td>
+        <td>920</td>
+        <td>quake</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.5× speed for 1200ms</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.2,&quot;radiusMult&quot;:1.15}
+  HP ≤ 25.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.7}
+    • Stat buff: speed × 1.25 (permanent)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="swamp-t3">
+    <h3>Swamp — Biome Tier 3</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Plague-Shell Snapper</b><br><small style="color:#888">plague-hydra</small></td>
+      <td>400</td>
+      <td>37</td>
+      <td>0.45</td>
+      <td>2200ms</td>
+      <td>4</td>
+      <td>0.0%</td>
+      <td>26</td>
+      <td>15</td>
+      <td>185</td>
+      <td>150</td>
+      <td>520</td>
+      <td>2800ms</td>
+      <td>8000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>65 purple</td>
+      <td>390</td>
+      <td class="specials"><b>DoT &quot;Plague&quot; [plague-venom]:</b> 5.00 dmg/stack, max 6 stacks, tick every 1000ms, expires 6000ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Mire Hexer</b><br><small style="color:#888">mire-hex-spitter</small></td>
+      <td>350</td>
+      <td>42</td>
+      <td>0.45</td>
+      <td>2200ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>36</td>
+      <td>200</td>
+      <td>230</td>
+      <td>200</td>
+      <td>580</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>hex</td>
+      <td>—</td>
+      <td>—</td>
+      <td>35 purple</td>
+      <td>210</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Bog Lurker</b><br><small style="color:#888">bog-lurker</small></td>
+      <td>340</td>
+      <td>43</td>
+      <td>0.38</td>
+      <td>2600ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>30</td>
+      <td>12</td>
+      <td>155</td>
+      <td>160</td>
+      <td>540</td>
+      <td>2200ms</td>
+      <td>6500ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>57 purple</td>
+      <td>345</td>
+      <td class="specials"><b>DoT &quot;Lurker Venom&quot; [lurker-venom]:</b> 5.00 dmg/stack, max 5 stacks, tick every 1000ms, expires 4500ms after last hit<br><b>Evasion (deterministic):</b> dodge rate 25.0%</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Rot-Spore Croc-Behemoth <small>rot-spore-croc-behemoth</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>11940</td>
+        <td>52</td>
+        <td>0.29</td>
+        <td>3400ms</td>
+        <td>8</td>
+        <td>10.0%</td>
+        <td>28</td>
+        <td>18</td>
+        <td>330</td>
+        <td>105</td>
+        <td>880</td>
+        <td>poison</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.0× speed for 1200ms</td></tr><tr><td class="spec-label">DoT &quot;Rot Spores&quot; [rot-spore-plague]</td><td>13.00 dmg/stack, max 6 stacks, tick every 1000ms, expires 6000ms after last hit</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Enrage: attack × 1.00, cooldown × 0.65 (permanent)
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.7,&quot;radiusMult&quot;:1.15}
+  HP ≤ 25.0%:
+    • Morph (permanent): override DoT: 17.00/stack × 8, tick 1000ms
+    • {&quot;type&quot;:&quot;spawn-pool&quot;,&quot;radius&quot;:260,&quot;durationMs&quot;:20000,&quot;damagePerTick&quot;:14,&quot;tickIntervalMs&quot;:1000,&quot;slowSpeedMult&quot;:0.55}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="tundra-t3">
+    <h3>Tundra — Biome Tier 3</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Frost Lurker</b><br><small style="color:#888">frost-lurker</small></td>
+      <td>950</td>
+      <td>259</td>
+      <td>0.38</td>
+      <td>2600ms</td>
+      <td>0</td>
+      <td>10.0%</td>
+      <td>26</td>
+      <td>12</td>
+      <td>170</td>
+      <td>150</td>
+      <td>510</td>
+      <td>2500ms</td>
+      <td>7000ms</td>
+      <td>frost</td>
+      <td>—</td>
+      <td>—</td>
+      <td>29 blue</td>
+      <td>175</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Glacier Bear</b><br><small style="color:#888">glacier-bear</small></td>
+      <td>1500</td>
+      <td>415</td>
+      <td>0.31</td>
+      <td>3200ms</td>
+      <td>0</td>
+      <td>14.0%</td>
+      <td>22</td>
+      <td>15</td>
+      <td>175</td>
+      <td>140</td>
+      <td>500</td>
+      <td>3000ms</td>
+      <td>8500ms</td>
+      <td>frost</td>
+      <td>—</td>
+      <td>—</td>
+      <td>65 blue</td>
+      <td>390</td>
+      <td class="specials"><b>Periodic barrier:</b> shield = 20.0% × maxHP, every 11000ms, lasts 6000ms; absorbs player direct hits before HP</td>
+    </tr>
+<tr>
+      <td><b>Rime Caster</b><br><small style="color:#888">rime-caster</small></td>
+      <td>880</td>
+      <td>297</td>
+      <td>0.36</td>
+      <td>2800ms</td>
+      <td>0</td>
+      <td>8.0%</td>
+      <td>30</td>
+      <td>200</td>
+      <td>230</td>
+      <td>200</td>
+      <td>600</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>frost</td>
+      <td>—</td>
+      <td>—</td>
+      <td>45 blue</td>
+      <td>270</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Frost-Plated Rime-Mammoth <small>frost-plated-rime-mammoth</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>12895</td>
+        <td>204</td>
+        <td>0.24</td>
+        <td>4200ms</td>
+        <td>12</td>
+        <td>12.0%</td>
+        <td>18</td>
+        <td>20</td>
+        <td>360</td>
+        <td>100</td>
+        <td>900</td>
+        <td>frost</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.0× speed for 1200ms</td></tr><tr><td class="spec-label">Stacking debuff on player</td><td>move slow: +6.0%/hit cap 40.0%; atk slow: +5.0%/hit cap 30.0%; fades 4000ms after last hit</td></tr><tr><td class="spec-label">Periodic barrier</td><td>shield = 18.0% × maxHP, every 12000ms, lasts 6000ms; absorbs player direct hits before HP</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.2,&quot;radiusMult&quot;:1.1}
+  HP ≤ 25.0%:
+    • Apply barrier: 24.0% × maxHP, every 9000ms, lasts 6500ms</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="volcanic-t3">
+    <h3>Volcanic — Biome Tier 3</h3>
+    <h4>Monsters (4)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Ember Scuttler</b><br><small style="color:#888">ember-scuttler</small></td>
+      <td>1220</td>
+      <td>148</td>
+      <td>0.63</td>
+      <td>1600ms</td>
+      <td>2</td>
+      <td>0.0%</td>
+      <td>64</td>
+      <td>12</td>
+      <td>210</td>
+      <td>230</td>
+      <td>620</td>
+      <td>1000ms</td>
+      <td>3600ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>25 red</td>
+      <td>150</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Cinder Hound</b><br><small style="color:#888">cinder-hound</small></td>
+      <td>1440</td>
+      <td>184</td>
+      <td>0.77</td>
+      <td>1300ms</td>
+      <td>3</td>
+      <td>0.0%</td>
+      <td>70</td>
+      <td>12</td>
+      <td>260</td>
+      <td>260</td>
+      <td>680</td>
+      <td>700ms</td>
+      <td>3000ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>29 red</td>
+      <td>175</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 900ms</td>
+    </tr>
+<tr>
+      <td><b>Magma Tortoise</b><br><small style="color:#888">magma-brute</small></td>
+      <td>2000</td>
+      <td>343</td>
+      <td>0.33</td>
+      <td>3000ms</td>
+      <td>4</td>
+      <td>0.0%</td>
+      <td>22</td>
+      <td>15</td>
+      <td>150</td>
+      <td>120</td>
+      <td>470</td>
+      <td>3000ms</td>
+      <td>8500ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>55 red</td>
+      <td>330</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Ash Salamander</b><br><small style="color:#888">ash-slinger</small></td>
+      <td>1330</td>
+      <td>209</td>
+      <td>0.50</td>
+      <td>2000ms</td>
+      <td>2</td>
+      <td>0.0%</td>
+      <td>44</td>
+      <td>180</td>
+      <td>230</td>
+      <td>220</td>
+      <td>600</td>
+      <td>1200ms</td>
+      <td>4000ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>27 red</td>
+      <td>165</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Cinder-Shell Magma-Salamander <small>cinder-shell-magma-salamander</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>11462</td>
+        <td>179</td>
+        <td>0.33</td>
+        <td>3000ms</td>
+        <td>8</td>
+        <td>4.0%</td>
+        <td>26</td>
+        <td>18</td>
+        <td>340</td>
+        <td>120</td>
+        <td>920</td>
+        <td>fire</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.5× speed for 1000ms</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.2,&quot;radiusMult&quot;:1.15}
+  HP ≤ 25.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.6}
+    • {&quot;type&quot;:&quot;spawn-pool&quot;,&quot;radius&quot;:240,&quot;durationMs&quot;:16000,&quot;damagePerTick&quot;:16,&quot;tickIntervalMs&quot;:1000,&quot;slowSpeedMult&quot;:0.7}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="desert-t4">
+    <h3>Desert — Biome Tier 4</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Sand Viper</b><br><small style="color:#888">sand-viper</small></td>
+      <td>1343</td>
+      <td>78</td>
+      <td>0.42</td>
+      <td>2400ms</td>
+      <td>0</td>
+      <td>8.0%</td>
+      <td>28</td>
+      <td>12</td>
+      <td>230</td>
+      <td>260</td>
+      <td>680</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>55 yellow</td>
+      <td>330</td>
+      <td class="specials"><b>Slow / Root on hit:</b> Slow (speed × 0.45) for 3000ms, refreshes on each hit</td>
+    </tr>
+<tr>
+      <td><b>Dune Basilisk</b><br><small style="color:#888">dune-basilisk</small></td>
+      <td>1501</td>
+      <td>104</td>
+      <td>0.33</td>
+      <td>3000ms</td>
+      <td>10</td>
+      <td>14.0%</td>
+      <td>26</td>
+      <td>15</td>
+      <td>190</td>
+      <td>170</td>
+      <td>560</td>
+      <td>2500ms</td>
+      <td>7000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>100 yellow</td>
+      <td>600</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Dune Tyrant</b><br><small style="color:#888">dune-tyrant</small></td>
+      <td>1738</td>
+      <td>230</td>
+      <td>0.29</td>
+      <td>3500ms</td>
+      <td>8</td>
+      <td>8.0%</td>
+      <td>20</td>
+      <td>15</td>
+      <td>160</td>
+      <td>100</td>
+      <td>450</td>
+      <td>4500ms</td>
+      <td>12000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>170 yellow</td>
+      <td>1020</td>
+      <td class="specials"><b>Slow / Root on hit:</b> Slow (speed × 0.40) for 4000ms, refreshes on each hit</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Dune-Throne Sovereign <small>dune-throne-sovereign</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>17893</td>
+        <td>185</td>
+        <td>0.36</td>
+        <td>2800ms</td>
+        <td>8</td>
+        <td>8.0%</td>
+        <td>44</td>
+        <td>20</td>
+        <td>400</td>
+        <td>140</td>
+        <td>960</td>
+        <td>sandblast</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.5× speed for 1000ms</td></tr><tr><td class="spec-label">Slow / Root on hit</td><td>Slow (speed × 0.45) for 3000ms, refreshes on each hit</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Morph (permanent): ranged: true; style: sandblast; range: 250px; kite: true
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.25,&quot;cooldownMult&quot;:0.75,&quot;radiusMult&quot;:1.1}
+  HP ≤ 25.0%:
+    • Morph (permanent): ranged: false; range: 20.0px; kite: false
+    • Stat buff: speed × 1.35 (permanent)
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.7}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="graveyard-t4">
+    <h3>Wasteland — Biome Tier 4</h3>
+    <h4>Monsters (5)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Bone Crawler</b><br><small style="color:#888">bone-crawler</small></td>
+      <td>2059</td>
+      <td>159</td>
+      <td>0.83</td>
+      <td>1200ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>78</td>
+      <td>12</td>
+      <td>290</td>
+      <td>330</td>
+      <td>820</td>
+      <td>600ms</td>
+      <td>2500ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>30 purple</td>
+      <td>180</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Plague Hound</b><br><small style="color:#888">plague-hound</small></td>
+      <td>3168</td>
+      <td>224</td>
+      <td>0.67</td>
+      <td>1500ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>70</td>
+      <td>12</td>
+      <td>270</td>
+      <td>290</td>
+      <td>750</td>
+      <td>700ms</td>
+      <td>3000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>50 purple</td>
+      <td>300</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 900ms<br><b>DoT &quot;Hound Plague&quot; [hound-plague]:</b> 24.00 dmg/stack, max 5 stacks, tick every 1100ms, expires 2500ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Carrion Vulture</b><br><small style="color:#888">carrion-vulture</small></td>
+      <td>2693</td>
+      <td>189</td>
+      <td>0.59</td>
+      <td>1700ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>46</td>
+      <td>200</td>
+      <td>260</td>
+      <td>240</td>
+      <td>650</td>
+      <td>1200ms</td>
+      <td>4000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>40 purple</td>
+      <td>240</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Bone Rat</b><br><small style="color:#888">plague-rat</small></td>
+      <td>1584</td>
+      <td>136</td>
+      <td>1.05</td>
+      <td>950ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>92</td>
+      <td>12</td>
+      <td>310</td>
+      <td>360</td>
+      <td>860</td>
+      <td>400ms</td>
+      <td>2000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>22 purple</td>
+      <td>130</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Gravewright</b><br><small style="color:#888">gravewright</small></td>
+      <td>2851</td>
+      <td>118</td>
+      <td>0.53</td>
+      <td>1900ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>40</td>
+      <td>200</td>
+      <td>300</td>
+      <td>200</td>
+      <td>640</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>magic</td>
+      <td>—</td>
+      <td>—</td>
+      <td>70 purple</td>
+      <td>420</td>
+      <td class="specials">—</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Charnel-Crown Sovereign <small>charnel-crown-sovereign</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>19499</td>
+        <td>115</td>
+        <td>0.43</td>
+        <td>2300ms</td>
+        <td>14</td>
+        <td>8.0%</td>
+        <td>28</td>
+        <td>20</td>
+        <td>400</td>
+        <td>105</td>
+        <td>960</td>
+        <td>poison</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.0× speed for 1100ms</td></tr><tr><td class="spec-label">DoT &quot;Crown Decay&quot; [charnel-crown-decay]</td><td>5.00 dmg/stack, max 4 stacks, tick every 1000ms, expires 4000ms after last hit</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 100.0%:
+    • Spawn adds: 3× bone-crawler (tracked; despawn on boss death)
+    • Spawn adds: 1× plague-hound (tracked; despawn on boss death)
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;raise-dead&quot;,&quot;count&quot;:3,&quot;maxAliveAdd&quot;:2}
+    • Spawn adds: 2× bone-crawler (tracked; despawn on boss death)
+  HP ≤ 25.0%:
+    • {&quot;type&quot;:&quot;raise-dead&quot;,&quot;count&quot;:4,&quot;maxAliveAdd&quot;:2}
+    • {&quot;type&quot;:&quot;roar&quot;,&quot;attackSpeedPct&quot;:0.3,&quot;durationMs&quot;:12000,&quot;radius&quot;:420}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="jungle-t4">
+    <h3>Jungle — Biome Tier 4</h3>
+    <h4>Monsters (4)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Hunting Panther</b><br><small style="color:#888">hunting-panther</small></td>
+      <td>704</td>
+      <td>52</td>
+      <td>0.83</td>
+      <td>1200ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>82</td>
+      <td>12</td>
+      <td>290</td>
+      <td>320</td>
+      <td>800</td>
+      <td>600ms</td>
+      <td>2400ms</td>
+      <td>slash</td>
+      <td>—</td>
+      <td>—</td>
+      <td>45 green</td>
+      <td>270</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Apex Silverback</b><br><small style="color:#888">apex-silverback</small></td>
+      <td>1056</td>
+      <td>77</td>
+      <td>0.56</td>
+      <td>1800ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>54</td>
+      <td>12</td>
+      <td>250</td>
+      <td>260</td>
+      <td>680</td>
+      <td>1000ms</td>
+      <td>3600ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>88 green</td>
+      <td>528</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.8× speed for 1000ms<br><b>Combat ramp:</b> attack +3.0% per 1000ms, cap +45.0%; resets on de-aggro</td>
+    </tr>
+<tr>
+      <td><b>Thornback Chameleon</b><br><small style="color:#888">thornback-lizard</small></td>
+      <td>748</td>
+      <td>52</td>
+      <td>0.67</td>
+      <td>1500ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>50</td>
+      <td>200</td>
+      <td>260</td>
+      <td>250</td>
+      <td>660</td>
+      <td>1200ms</td>
+      <td>4000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>50 green</td>
+      <td>300</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Emerald Constrictor</b><br><small style="color:#888">emerald-constrictor</small></td>
+      <td>1408</td>
+      <td>66</td>
+      <td>0.63</td>
+      <td>1600ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>62</td>
+      <td>12</td>
+      <td>280</td>
+      <td>280</td>
+      <td>720</td>
+      <td>800ms</td>
+      <td>3000ms</td>
+      <td>poison</td>
+      <td>—</td>
+      <td>—</td>
+      <td>130 green</td>
+      <td>780</td>
+      <td class="specials"><b>DoT &quot;Constrictor Venom&quot; [constrictor-venom]:</b> 5.00 dmg/stack, max 5 stacks, tick every 1000ms, expires 3000ms after last hit<br><b>Cadence finisher:</b> every 4 landed hits → 2.00× damage (counter-based, goes through player's full defensive pipeline)</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Verdant-Crown Predator <small>verdant-crown-predator</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>18352</td>
+        <td>117</td>
+        <td>0.71</td>
+        <td>1400ms</td>
+        <td>0</td>
+        <td>4.0%</td>
+        <td>76</td>
+        <td>20</td>
+        <td>400</td>
+        <td>150</td>
+        <td>960</td>
+        <td>slash</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.8× speed for 900ms</td></tr><tr><td class="spec-label">DoT &quot;Crown Venom&quot; [verdant-crown-venom]</td><td>8.00 dmg/stack, max 5 stacks, tick every 1000ms, expires 3500ms after last hit</td></tr><tr><td class="spec-label">Evasion (deterministic)</td><td>dodge rate 25.0%</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Stat buff: evasion × 0.00 (permanent)
+    • Stat buff: attack × 1.40 (permanent)
+    • Stat buff: speed × 1.25 (permanent)
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.55}
+  HP ≤ 25.0%:
+    • Enrage: attack × 1.00, cooldown × 0.75 (permanent)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="mountain-t4">
+    <h3>Mountain — Biome Tier 4</h3>
+    <h4>Monsters (4)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Granite Mammoth</b><br><small style="color:#888">granite-mammoth</small></td>
+      <td>779</td>
+      <td>184</td>
+      <td>0.28</td>
+      <td>3600ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>16</td>
+      <td>15</td>
+      <td>160</td>
+      <td>90</td>
+      <td>430</td>
+      <td>4000ms</td>
+      <td>11000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>95 blue</td>
+      <td>570</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1200ms<br><b>Cadence finisher:</b> every 4 landed hits → 2.00× damage (counter-based, goes through player's full defensive pipeline)</td>
+    </tr>
+<tr>
+      <td><b>Avalanche Tyrant</b><br><small style="color:#888">avalanche-tyrant</small></td>
+      <td>533</td>
+      <td>145</td>
+      <td>0.40</td>
+      <td>2500ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>42</td>
+      <td>12</td>
+      <td>300</td>
+      <td>300</td>
+      <td>760</td>
+      <td>600ms</td>
+      <td>2500ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>68 blue</td>
+      <td>410</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.8× speed for 1000ms</td>
+    </tr>
+<tr>
+      <td><b>Cliffside Roc</b><br><small style="color:#888">cliffside-roc</small></td>
+      <td>574</td>
+      <td>179</td>
+      <td>0.29</td>
+      <td>3500ms</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>34</td>
+      <td>260</td>
+      <td>380</td>
+      <td>210</td>
+      <td>640</td>
+      <td>2000ms</td>
+      <td>5500ms</td>
+      <td>boulder</td>
+      <td>—</td>
+      <td>—</td>
+      <td>75 blue</td>
+      <td>450</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Cragback Rhino</b><br><small style="color:#888">cragback-rhino</small></td>
+      <td>923</td>
+      <td>113</td>
+      <td>0.26</td>
+      <td>3800ms</td>
+      <td>16</td>
+      <td>6.0%</td>
+      <td>14</td>
+      <td>15</td>
+      <td>150</td>
+      <td>80</td>
+      <td>400</td>
+      <td>5000ms</td>
+      <td>13000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>185 blue</td>
+      <td>1110</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.2× speed for 1300ms<br><b>Cooldown finisher:</b> 10000ms countdown → next attack × 3.20 (waits for next attack if timer expires between swings; resets each proc)<br><b>Damage soft cap:</b> hits above 25.0% × maxHP are scaled by 0.50 on the excess; punishes burst, rewards fast consistent damage</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Iron-Crest Titan <small>iron-crest-titan</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>19499</td>
+        <td>228</td>
+        <td>0.24</td>
+        <td>4200ms</td>
+        <td>14</td>
+        <td>6.0%</td>
+        <td>16</td>
+        <td>20</td>
+        <td>420</td>
+        <td>95</td>
+        <td>960</td>
+        <td>quake</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.5× speed for 1200ms</td></tr><tr><td class="spec-label">Cadence finisher</td><td>every 4 landed hits → 2.00× damage (counter-based, goes through player's full defensive pipeline)</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.15,&quot;aftershockRayCountAdd&quot;:3,&quot;aftershockDamageMult&quot;:1.15}
+  HP ≤ 25.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.7,&quot;radiusMult&quot;:1.1}
+    • Stat buff: speed × 1.35 (permanent)</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="trench-t4">
+    <h3>Deep-Sea Trench — Biome Tier 4</h3>
+    <h4>Monsters (3)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Abyssal Serpent</b><br><small style="color:#888">abyssal-serpent</small></td>
+      <td>4200</td>
+      <td>420</td>
+      <td>0.36</td>
+      <td>2800ms</td>
+      <td>18</td>
+      <td>20.0%</td>
+      <td>28</td>
+      <td>15</td>
+      <td>420</td>
+      <td>320</td>
+      <td>760</td>
+      <td>5000ms</td>
+      <td>14000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>260 blue</td>
+      <td>1560</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 1200ms</td>
+    </tr>
+<tr>
+      <td><b>Hadal Stalker</b><br><small style="color:#888">hadal-stalker</small></td>
+      <td>2800</td>
+      <td>401</td>
+      <td>0.29</td>
+      <td>3400ms</td>
+      <td>20</td>
+      <td>10.0%</td>
+      <td>22</td>
+      <td>240</td>
+      <td>400</td>
+      <td>300</td>
+      <td>720</td>
+      <td>5500ms</td>
+      <td>14000ms</td>
+      <td>gunshot</td>
+      <td>—</td>
+      <td>—</td>
+      <td>210 blue</td>
+      <td>1260</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Elder Leviathan</b><br><small style="color:#888">elder-leviathan</small></td>
+      <td>5880</td>
+      <td>483</td>
+      <td>0.28</td>
+      <td>3600ms</td>
+      <td>22</td>
+      <td>24.0%</td>
+      <td>20</td>
+      <td>15</td>
+      <td>440</td>
+      <td>280</td>
+      <td>700</td>
+      <td>8000ms</td>
+      <td>20000ms</td>
+      <td>impact</td>
+      <td>—</td>
+      <td>—</td>
+      <td>400 blue</td>
+      <td>2400</td>
+      <td class="specials"><b>Periodic barrier:</b> shield = 30.0% × maxHP, every 16000ms, lasts 6000ms; absorbs player direct hits before HP</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Elder Trench Serpent <small>elder-trench-serpent</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>21793</td>
+        <td>143</td>
+        <td>0.31</td>
+        <td>3200ms</td>
+        <td>20</td>
+        <td>22.0%</td>
+        <td>22</td>
+        <td>22</td>
+        <td>400</td>
+        <td>100</td>
+        <td>960</td>
+        <td>impact</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.3× speed for 1200ms</td></tr><tr><td class="spec-label">AoE basic attack</td><td>radius 130px, splash × 0.50 of base attack</td></tr><tr><td class="spec-label">Periodic barrier</td><td>shield = 28.0% × maxHP, every 15000ms, lasts 6000ms; absorbs player direct hits before HP</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.2,&quot;cooldownMult&quot;:0.8}
+  HP ≤ 25.0%:
+    • Apply barrier: 34.0% × maxHP, every 11000ms, lasts 6500ms
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.75}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="tundra-t4">
+    <h3>Tundra — Biome Tier 4</h3>
+    <h4>Monsters (4)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Rime-Tusk Mastodon</b><br><small style="color:#888">rime-tusk-mastodon</small></td>
+      <td>924</td>
+      <td>421</td>
+      <td>0.29</td>
+      <td>3500ms</td>
+      <td>12</td>
+      <td>0.0%</td>
+      <td>18</td>
+      <td>15</td>
+      <td>165</td>
+      <td>140</td>
+      <td>490</td>
+      <td>3500ms</td>
+      <td>9500ms</td>
+      <td>frost</td>
+      <td>—</td>
+      <td>—</td>
+      <td>110 blue</td>
+      <td>660</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.3× speed for 1200ms<br><b>Cadence finisher:</b> every 4 landed hits → 2.00× damage (counter-based, goes through player's full defensive pipeline)</td>
+    </tr>
+<tr>
+      <td><b>Glacial Dire-Bear</b><br><small style="color:#888">glacial-direbear</small></td>
+      <td>1221</td>
+      <td>369</td>
+      <td>0.31</td>
+      <td>3200ms</td>
+      <td>0</td>
+      <td>14.0%</td>
+      <td>18</td>
+      <td>15</td>
+      <td>175</td>
+      <td>130</td>
+      <td>490</td>
+      <td>3500ms</td>
+      <td>9000ms</td>
+      <td>frost</td>
+      <td>—</td>
+      <td>—</td>
+      <td>150 blue</td>
+      <td>900</td>
+      <td class="specials"><b>Periodic barrier:</b> shield = 22.0% × maxHP, every 12000ms, lasts 6000ms; absorbs player direct hits before HP</td>
+    </tr>
+<tr>
+      <td><b>Hoarfrost Yeti</b><br><small style="color:#888">hoarfrost-yeti</small></td>
+      <td>693</td>
+      <td>302</td>
+      <td>0.34</td>
+      <td>2900ms</td>
+      <td>0</td>
+      <td>8.0%</td>
+      <td>36</td>
+      <td>220</td>
+      <td>260</td>
+      <td>210</td>
+      <td>620</td>
+      <td>1500ms</td>
+      <td>4500ms</td>
+      <td>frost</td>
+      <td>—</td>
+      <td>—</td>
+      <td>62 blue</td>
+      <td>370</td>
+      <td class="specials">—</td>
+    </tr>
+<tr>
+      <td><b>Permafrost Behemoth</b><br><small style="color:#888">permafrost-behemoth</small></td>
+      <td>1914</td>
+      <td>351</td>
+      <td>0.25</td>
+      <td>4000ms</td>
+      <td>20</td>
+      <td>12.0%</td>
+      <td>12</td>
+      <td>15</td>
+      <td>140</td>
+      <td>70</td>
+      <td>380</td>
+      <td>6000ms</td>
+      <td>15000ms</td>
+      <td>frost</td>
+      <td>—</td>
+      <td>—</td>
+      <td>260 blue</td>
+      <td>1560</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.0× speed for 1400ms</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Glacial Patriarch <small>glacial-patriarch</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>22940</td>
+        <td>189</td>
+        <td>0.22</td>
+        <td>4500ms</td>
+        <td>22</td>
+        <td>14.0%</td>
+        <td>14</td>
+        <td>20</td>
+        <td>420</td>
+        <td>90</td>
+        <td>960</td>
+        <td>frost</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.0× speed for 1300ms</td></tr><tr><td class="spec-label">Stacking debuff on player</td><td>move slow: +7.0%/hit cap 40.0%; atk slow: +5.0%/hit cap 30.0%; fades 5000ms after last hit</td></tr><tr><td class="spec-label">Periodic barrier</td><td>shield = 20.0% × maxHP, every 13000ms, lasts 6500ms; absorbs player direct hits before HP</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • Apply barrier: 28.0% × maxHP, every 10000ms, lasts 7000ms
+  HP ≤ 25.0%:
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.2,&quot;cooldownMult&quot;:0.75,&quot;radiusMult&quot;:1.1}</pre></details>
+  </div>
+  </section>
+<section class="tier-section" id="volcanic-t4">
+    <h3>Volcanic — Biome Tier 4</h3>
+    <h4>Monsters (5)</h4><table>
+    <thead><tr><th>Name</th><th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th><th>Plating</th><th>DR</th><th>Speed</th><th>Atk Range</th><th>Pull Range</th><th>Wander R</th><th>Leash R</th><th>Idle min</th><th>Idle max</th><th>Style</th><th>Ranged</th><th>Kite</th><th>Essence</th><th>Biome XP</th><th>Specials</th></tr></thead>
+    <tbody><tr>
+      <td><b>Ember Skink</b><br><small style="color:#888">ember-skink</small></td>
+      <td>1043</td>
+      <td>168</td>
+      <td>0.77</td>
+      <td>1300ms</td>
+      <td>2</td>
+      <td>0.0%</td>
+      <td>70</td>
+      <td>12</td>
+      <td>230</td>
+      <td>250</td>
+      <td>660</td>
+      <td>1000ms</td>
+      <td>3500ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>47 red</td>
+      <td>280</td>
+      <td class="specials"><b>DoT &quot;Ember Burn&quot; [ember-burn]:</b> 13.00 dmg/stack, max 4 stacks, tick every 1000ms, expires 2000ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Infernal Direhound</b><br><small style="color:#888">infernal-direhound</small></td>
+      <td>1386</td>
+      <td>210</td>
+      <td>0.71</td>
+      <td>1400ms</td>
+      <td>4</td>
+      <td>0.0%</td>
+      <td>72</td>
+      <td>12</td>
+      <td>280</td>
+      <td>280</td>
+      <td>720</td>
+      <td>700ms</td>
+      <td>3000ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>68 red</td>
+      <td>410</td>
+      <td class="specials"><b>Charge on aggro:</b> 2.5× speed for 900ms</td>
+    </tr>
+<tr>
+      <td><b>Obsidian Tortoise</b><br><small style="color:#888">obsidian-tortoise</small></td>
+      <td>2244</td>
+      <td>262</td>
+      <td>0.33</td>
+      <td>3000ms</td>
+      <td>8</td>
+      <td>0.0%</td>
+      <td>20</td>
+      <td>15</td>
+      <td>155</td>
+      <td>110</td>
+      <td>460</td>
+      <td>3500ms</td>
+      <td>9500ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>140 red</td>
+      <td>840</td>
+      <td class="specials"><b>Cadence finisher:</b> every 4 landed hits → 2.20× damage (counter-based, goes through player's full defensive pipeline)</td>
+    </tr>
+<tr>
+      <td><b>Ashspitter Salamander</b><br><small style="color:#888">ashspitter-salamander</small></td>
+      <td>1188</td>
+      <td>183</td>
+      <td>0.53</td>
+      <td>1900ms</td>
+      <td>2</td>
+      <td>0.0%</td>
+      <td>46</td>
+      <td>190</td>
+      <td>250</td>
+      <td>230</td>
+      <td>630</td>
+      <td>1200ms</td>
+      <td>4000ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>52 red</td>
+      <td>310</td>
+      <td class="specials"><b>DoT &quot;Ash Burn&quot; [ashspitter-burn]:</b> 16.00 dmg/stack, max 5 stacks, tick every 1000ms, expires 2500ms after last hit</td>
+    </tr>
+<tr>
+      <td><b>Magma Salamander</b><br><small style="color:#888">magma-salamander</small></td>
+      <td>2904</td>
+      <td>246</td>
+      <td>0.38</td>
+      <td>2600ms</td>
+      <td>6</td>
+      <td>6.0%</td>
+      <td>22</td>
+      <td>15</td>
+      <td>160</td>
+      <td>120</td>
+      <td>470</td>
+      <td>4000ms</td>
+      <td>11000ms</td>
+      <td>fire</td>
+      <td>—</td>
+      <td>—</td>
+      <td>190 red</td>
+      <td>1140</td>
+      <td class="specials"><b>Periodic barrier:</b> shield = 28.0% × maxHP, every 14000ms, lasts 5000ms; absorbs player direct hits before HP</td>
+    </tr></tbody>
+  </table>
+    <h4>Boss</h4><div class="boss-card">
+    <h5>Caldera Sovereign <small>caldera-sovereign</small></h5>
+    <table class="boss-stat-table">
+      <thead><tr>
+        <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
+        <th>Plating</th><th>DR</th><th>Speed</th>
+        <th>Atk Range</th><th>Pull Range</th>
+        <th>Wander R</th><th>Leash R</th>
+        <th>Style</th><th>Ranged</th><th>Kite</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>20646</td>
+        <td>130</td>
+        <td>0.38</td>
+        <td>2600ms</td>
+        <td>10</td>
+        <td>5.0%</td>
+        <td>24</td>
+        <td>20</td>
+        <td>400</td>
+        <td>120</td>
+        <td>960</td>
+        <td>fire</td>
+        <td>—</td>
+        <td>—</td>
+      </tr></tbody>
+    </table>
+    <table class="specials-table"><tbody><tr><td class="spec-label">Charge on aggro</td><td>2.5× speed for 1000ms</td></tr><tr><td class="spec-label">DoT &quot;Caldera Burn&quot; [caldera-burn]</td><td>10.00 dmg/stack, max 5 stacks, tick every 1000ms, expires 3000ms after last hit</td></tr></tbody></table>
+    <details class="boss-script"><summary>Fight script</summary><pre>— HP-threshold phases —
+  HP ≤ 50.0%:
+    • {&quot;type&quot;:&quot;stoke-ramp&quot;,&quot;rampMsMult&quot;:0.65,&quot;minStacks&quot;:2}
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;multiplierMult&quot;:1.15,&quot;cooldownMult&quot;:0.85}
+  HP ≤ 25.0%:
+    • {&quot;type&quot;:&quot;stoke-ramp&quot;,&quot;rampMsMult&quot;:0.7,&quot;minStacks&quot;:4,&quot;maxStacksAdd&quot;:3}
+    • {&quot;type&quot;:&quot;empower-charged&quot;,&quot;cooldownMult&quot;:0.7,&quot;radiusMult&quot;:1.15}
+    • {&quot;type&quot;:&quot;spawn-pool&quot;,&quot;radius&quot;:260,&quot;durationMs&quot;:20000,&quot;damagePerTick&quot;:20,&quot;tickIntervalMs&quot;:1000,&quot;slowSpeedMult&quot;:0.7}</pre></details>
+  </div>
+  </section>
+  </main>
+</div>
+</body>
+</html>

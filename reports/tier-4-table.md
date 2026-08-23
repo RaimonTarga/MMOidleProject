@@ -143,7 +143,7 @@ one, and the biome order stops being the thing the player reads.
 | Avalanche Tyrant `avalanche-tyrant` | x1 | 533 | 145 | 2500 | 81.2 | — | — | 81.2 | x1.8 = 261 (charged/1100ms) | — | — | 0 | — | — | 532 | 533 | 1 | 42 | 12 | — | charge x2.8, vaults | — |
 | Cliffside Roc `cliffside-roc` | x1 | 574 | 179 | 3500 | 51.1 | — | — | 51.1 | — | — | — | 0 | — | — | 572 | 574 | 1 | 34 | **260** | — | — | — |
 | Cragback Rhino `cragback-rhino` | x1 | 923 | 113 | 3800 | 54.6 | — | — | 54.6 | x3.2 = 362 (cooldown/10s) | — | — | 16 | 6% | — | 1193 | 1004 | 1.2 | 14 | 15 | — | charge x2.2, ELITE | soft-cap |
-| BOSS Iron-Crest Titan `iron-crest-titan` | — | 19499 | 228 | 4200 | 104 | — | — | 104 | x2.2 = 502 (charged/2600ms+cadence/4) | — | — | 14 | 6% | — | 24507 | 21141 | 1.2 | 16 | 20 | lockout 550ms | aoe r140, charge x2.5 | boss-script |
+| BOSS Iron-Crest Titan `iron-crest-titan` | — | 19499 | 228 | 4200 | 104 | — | — | 104 | x2.2 = 502 (charged/2600ms+cadence/4) | — | — | 14 | 6% | — | 24507 | 21141 | 1.2 | 16 | 20 | lockout 550ms | charge x2.5 | boss-script |
 
 ## Jungle  (density 40, 4 pool slots)
 
@@ -153,7 +153,7 @@ one, and the biome order stops being the thing the player reads.
 | Apex Silverback `apex-silverback` | x1 | 1056 | 77 | 1800 | 42.8 | — | — | 42.8 | — | — | x1.5 | 0 | — | — | 1053 | 1056 | 1 | 54 | 12 | — | charge x2.8, ELITE | — |
 | Thornback Chameleon `thornback-lizard` | x1 | 748 | 52 | 1500 | 34.7 | — | — | 34.7 | — | x3 | — | 0 | — | — | 746 | 748 | 1 | 50 | **200** | — | — | — |
 | Emerald Constrictor `emerald-constrictor` | x1 | 1408 | 66 | 1600 | 51.6 | 25 | 6.4s | 76.6 | x2 = 132 (cadence/4) | — | — | 0 | — | — | 1404 | 1408 | 1 | 62 | 12 | cadence-root 1200ms | ELITE | — |
-| BOSS Verdant-Crown Predator `verdant-crown-predator` | — | 18352 | 117 | 1400 | 102 | 40 | 5.6s | 142 | x2.1 = 246 (cadence/5) | — | — | 0 | 4% | 25% | 25512 | 25476 | 1 | 76 | 20 | — | charge x2.8 | boss-script |
+| BOSS Verdant-Crown Predator `verdant-crown-predator` | — | 18352 | 117 | 1400 | 100.1 | 40 | 5.6s | 140.1 | x2.6 = 304 (opener+charged/850ms) | x2.6 | — | 0 | 4% | 25% | 25512 | 25476 | 1 | 76 | 20 | — | charge x2.8 | boss-script |
 
 ## Desert  (density 16, 3 pool slots)
 
@@ -163,7 +163,7 @@ one, and the biome order stops being the thing the player reads.
 | Dune Basilisk `dune-basilisk` | x1 | 1501 | 104 | 3000 | 42 | — | — | 42 | — | — | — | 10 | 14% | — | 1967 | 1768 | 1.1 | 26 | 15 | vuln 18% x1, Petrifying Gaze: root 1800ms | alpha +1 | — |
 | Dune Tyrant `dune-tyrant` | x1 | 1738 | 230 | 3500 | 117.6 | — | — | 117.6 | x2.8 = 644 (charged/1900ms) | — | — | 8 | 8% | — | 2071 | 1910 | 1.1 | 20 | 15 | slow 60% | alpha +1, ELITE | — |
 | follower Sunshield Scarab `sandspitter-cobra` | x3 | 569 | 292 | 1900 | 153.7 | — | — | 153.7 | — | — | — | 0 | — | — | 630 | 632 | 1 | 54 | **230** | — | follower | — |
-| BOSS Dune-Throne Sovereign `dune-throne-sovereign` | — | 17893 | 185 | 2800 | 92.1 | — | — | 92.1 | x1.8 = 333 (charged/1500ms) | — | — | 8 | 8% | — | 21321 | 19661 | 1.1 | 44 | 20 | slow 55% | charge x2.5 | boss-script |
+| BOSS Dune-Throne Sovereign `dune-throne-sovereign` | — | 17893 | 185 | 2800 | 92.1 | — | — | 92.1 | x2 = 370 (mark+charged/1500ms) | — | — | 8 | 8% | — | 21321 | 19661 | 1.1 | 44 | 20 | slow 55%, mark | charge x2.5 | boss-script |
 
 ## Tundra  (density 16, 4 pool slots)
 
@@ -173,7 +173,7 @@ one, and the biome order stops being the thing the player reads.
 | Glacial Dire-Bear `glacial-direbear` | x1 | 1221 | 369 | 3200 | 115.3 | — | — | 115.3 | — | — | — | 0 | 14% | — | 1574 | 1577 | 1 | 18 | 15 | — | — | shatter |
 | Hoarfrost Yeti `hoarfrost-yeti` | x1 | 693 | 302 | 2900 | 127 | — | — | 127 | x1.2 = 362 (charged/1500ms) | — | — | 0 | 8% | — | 757 | 754 | 1 | 36 | **220** | Deep Freeze: root 2200ms @2 ambient | — | — |
 | Permafrost Behemoth `permafrost-behemoth` | x1 | 1914 | 351 | 4000 | 183.3 | — | — | 183.3 | x3 = 1053 (charged/2200ms) | — | — | 20 | 12% | — | 2787 | 2237 | 1.2 | 12 | 15 | — | charge x2, ELITE | ambient-scaled |
-| BOSS Glacial Patriarch `glacial-patriarch` | — | 22940 | 189 | 4500 | 70.1 | — | — | 70.1 | x1.9 = 359 (charged/2200ms) | — | — | 22 | 14% | — | 38587 | 30264 | 1.3 | 14 | 20 | ramp-slow 50/40% | aoe r140, charge x2 | shatter, boss-script |
+| BOSS Glacial Patriarch `glacial-patriarch` | — | 22940 | 189 | 4500 | 70.1 | — | — | 70.1 | x1.9 = 359 (charged/2200ms) | — | — | 22 | 14% | — | 38587 | 30264 | 1.3 | 14 | 20 | ramp-slow 40/30% | charge x2 | shatter, ambient-scaled, boss-script |
 
 ## Volcanic  (density 36, 5 pool slots)
 
@@ -184,7 +184,7 @@ one, and the biome order stops being the thing the player reads.
 | Obsidian Tortoise `obsidian-tortoise` | x1 | 2244 | 262 | 3000 | 113.5 | — | — | 113.5 | x2.2 = 576 (cadence/4) | — | — | 8 | — | — | 2451 | 2269 | 1.1 | 20 | 15 | — | — | — |
 | Ashspitter Salamander `ashspitter-salamander` | x1 | 1188 | 183 | 1900 | 96.3 | 80 | 7.6s | 176.3 | — | — | — | 2 | — | — | 1211 | 1191 | 1 | 46 | **190** | — | — | — |
 | Magma Salamander `magma-salamander` | x1 | 2904 | 246 | 2600 | 94.6 | — | — | 94.6 | — | — | — | 6 | 6% | — | 3618 | 3428 | 1.1 | 22 | 15 | — | ELITE | — |
-| BOSS Caldera Sovereign `caldera-sovereign` | — | 20646 | 130 | 2600 | 74.1 | 50 | 10.4s | 124.1 | x1.8 = 234 (charged/1300ms) | — | x1.8 | 10 | 5% | — | 24286 | 22026 | 1.1 | 24 | 20 | — | aoe r130, charge x2.5 | boss-script |
+| BOSS Caldera Sovereign `caldera-sovereign` | — | 20646 | 130 | 2600 | 74.1 | 50 | 10.4s | 124.1 | x1.8 = 234 (charged/1300ms) | — | — | 10 | 5% | — | 24286 | 22026 | 1.1 | 24 | 20 | — | charge x2.5 | ambient-scaled, boss-script |
 
 ## Wasteland  (density 28, 5 pool slots)
 
@@ -195,7 +195,7 @@ one, and the biome order stops being the thing the player reads.
 | Carrion Vulture `carrion-vulture` | x1 | 2693 | 189 | 1700 | 111.2 | — | — | 111.2 | — | — | — | 0 | — | — | 2686 | 2693 | 1 | 46 | **200** | — | hastes-allies +25% r260 | — |
 | Bone Rat `plague-rat` | x1 | 1584 | 136 | 950 | 143.2 | — | — | 143.2 | — | — | — | 0 | — | — | 1580 | 1584 | 1 | 92 | 12 | — | — | — |
 | Gravewright `gravewright` | x1 | 2851 | 118 | 1900 | 62.1 | — | — | 62.1 | — | — | — | 0 | — | — | 2843 | 2851 | 1 | 40 | **200** | — | raises-dead, ELITE | raise-adds |
-| BOSS Charnel-Crown Sovereign `charnel-crown-sovereign` | — | 19499 | 115 | 2300 | 63.4 | 54 | 11.5s | 117.4 | x1.7 = 196 (charged/1500ms) | — | — | 14 | 8% | — | 24848 | 21620 | 1.1 | 28 | 20 | — | aoe r130, charge x2 | boss-script |
+| BOSS Charnel-Crown Sovereign `charnel-crown-sovereign` | — | 19499 | 115 | 2300 | 63.4 | 20 | 6.9s | 83.4 | x1.7 = 196 (charged/1500ms) | — | — | 14 | 8% | — | 24848 | 21620 | 1.1 | 28 | 20 | — | raises-dead, charge x2 | boss-script, raise-adds |
 
 ## Deep-Sea Trench  (density 10, 3 pool slots)
 
@@ -204,7 +204,7 @@ one, and the biome order stops being the thing the player reads.
 | Abyssal Serpent `abyssal-serpent` | x1 | 4200 | 420 | 2800 | 229.5 | — | — | 229.5 | x2.5 = 1050 (charged/1700ms) | — | — | 18 | 20% | — | 6531 | 5380 | 1.2 | 28 | 15 | Abyssal Bite: antiheal 28% | charge x2.5, ELITE | — |
 | Hadal Stalker `hadal-stalker` | x1 | 2800 | 401 | 3400 | 200 | — | — | 200 | x2.4 = 962 (charged/1900ms) | — | — | 20 | 10% | — | 3952 | 3196 | 1.2 | 22 | **240** | — | ELITE | — |
 | Elder Leviathan `elder-leviathan` | x1 | 5880 | 483 | 3600 | 207.8 | — | — | 207.8 | x2.4 = 1159 (charged/2600ms) | — | — | 22 | 24% | — | 11324 | 8875 | 1.3 | 20 | 15 | — | ELITE | — |
-| BOSS Elder Trench Serpent `elder-trench-serpent` | — | 21793 | 143 | 3200 | 77.8 | — | — | 77.8 | x2.5 = 358 (cadence/4+charged/2100ms) | — | — | 20 | 22% | — | 39705 | 31935 | 1.2 | 22 | 22 | — | aoe r130, charge x2.3 | boss-script |
+| BOSS Elder Trench Serpent `elder-trench-serpent` | — | 21793 | 143 | 3200 | 67.2 | — | — | 67.2 | x2.7 = 386 (charged/2600ms) | — | — | 20 | 22% | — | 39705 | 31935 | 1.2 | 22 | 22 | — | aoe r130, charge x2.3 | boss-script |
 
 ## Mechanic coverage
 

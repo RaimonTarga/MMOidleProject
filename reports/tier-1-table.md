@@ -129,7 +129,7 @@ one, and the biome order stops being the thing the player reads.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
 | Mire Ooze `bog-slime` | x1 | 140 | 10 | 2000 | 5 | 18 | 4s | 23 | — | — | — | 0 | — | — | 133 | 140 | 1 | 28 | 12 | — | — | — |
 | Mud Toad `mud-toad` | x1 | 120 | 13 | 2200 | 5.9 | 15 | 4.4s | 20.9 | — | — | — | 2 | — | — | 143 | 123 | 1.2 | 30 | 12 | slow 40% | — | — |
-| BOSS Grave Toadeater `grave-toadeater` | — | 2100 | 13 | 2600 | 5.8 | 16 | 7.8s | 21.8 | — | — | — | 2 | 2% | — | 2850 | 2186 | 1.3 | 28 | 15 | — | aoe r120 | boss-script |
+| BOSS Grave Toadeater `grave-toadeater` | — | 2100 | 13 | 2600 | 5.8 | 16 | 7.8s | 21.8 | — | — | — | 2 | 2% | — | 2850 | 2186 | 1.3 | 28 | 15 | — | — | boss-script |
 
 ## Mountain  (density 24, 3 pool slots)
 
@@ -137,7 +137,7 @@ one, and the biome order stops being the thing the player reads.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
 | Cliff Hopper `cliff-hopper` | x2 | 190 | 50 | 3000 | 26.3 | — | — | 26.3 | x2.1 = 105 (charged/1100ms) | — | — | 0 | — | — | 181 | 190 | 1 | 28 | 12 | — | charge x3, vaults | — |
 | Ridge Ambusher `ridge-archer` | x1 | 240 | 50 | 3100 | 27.7 | — | — | 27.7 | x2.5 = 125 (charged/2000ms) | — | — | 0 | — | — | 228 | 240 | 1 | 26 | **210** | — | holds-choke | — |
-| BOSS Crag Behemoth `crag-behemoth` | — | 2100 | 56 | 3500 | 22.8 | — | — | 22.8 | x1.9 = 106 (charged/2400ms) | — | — | 0 | — | — | 1995 | 2100 | 1 | 22 | 18 | — | aoe r120, charge x3 | boss-script |
+| BOSS Crag Behemoth `crag-behemoth` | — | 2100 | 56 | 3500 | 22.8 | — | — | 22.8 | x1.9 = 106 (charged/2400ms) | — | — | 0 | — | — | 1995 | 2100 | 1 | 22 | 18 | — | charge x3 | boss-script |
 
 ## Caverns  (density 16, 2 pool slots)
 
@@ -145,7 +145,7 @@ one, and the biome order stops being the thing the player reads.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
 | Cave Lurker `cave-lurker` | x1 | 225 | 31 | 1400 | 22.1 | — | — | 22.1 | — | — | — | 1 | 5% | — | 267 | 241 | 1.1 | 68 | 12 | — | — | — |
 | Cave Brute `cave-brute` | x1 | 250 | 90 | 2800 | 42.3 | — | — | 42.3 | x2 = 180 (charged/1800ms) | — | — | 1 | 10% | — | 297 | 279 | 1.1 | 18 | 12 | — | patrol, charge x2.5, ELITE | — |
-| BOSS Obsidian Broodmother `obsidian-broodmother` | — | 1750 | 47 | 2800 | 22.7 | — | — | 22.7 | x1.8 = 85 (charged/1700ms) | — | — | 6 | 10% | — | 5542 | 2111 | 2.6 | 24 | 18 | shred 1 x6 | aoe r120, charge x2.5 | boss-script |
+| BOSS Obsidian Broodmother `obsidian-broodmother` | — | 1750 | 47 | 2800 | 22.7 | — | — | 22.7 | x1.8 = 85 (charged/1700ms) | — | — | 6 | 10% | — | 5542 | 2111 | 2.6 | 24 | 18 | shred 1 x6 | charge x2.5 | boss-script |
 
 ## Mechanic coverage
 

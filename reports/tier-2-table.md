@@ -156,7 +156,7 @@ one, and the biome order stops being the thing the player reads.
 | Moss-Shell Snapper `swamp-hydra` | x1 | 150 | 24 | 2200 | 10.9 | 35 | 8.8s | 45.9 | — | — | — | 6 | — | — | 228 | 156 | 1.5 | 28 | 15 | — | — | shell-up |
 | Bog Witch `bog-witch` | x1 | 170 | 41 | 2200 | 20 | — | — | 20 | — | — | — | 0 | — | — | 172 | 170 | 1 | 38 | **180** | Wither: antiheal 30% | — | — |
 | Mire Stalker `mire-stalker` | x1 | 210 | 46 | 2600 | 17.7 | 16 | 7.8s | 33.7 | — | — | — | 0 | — | 20% | 266 | 263 | 1 | 40 | 12 | — | — | — |
-| BOSS Mire-Gorged Behemoth `mire-gorged-behemoth` | — | 3375 | 38 | 2800 | 16.7 | 36 | 8.4s | 52.7 | x1.1 = 42 (charged/1100ms) | — | — | 6 | 8% | — | 5599 | 3820 | 1.5 | 30 | 15 | — | aoe r120 | boss-script |
+| BOSS Mire-Gorged Behemoth `mire-gorged-behemoth` | — | 3375 | 38 | 2800 | 16.7 | 36 | 8.4s | 52.7 | x1.1 = 42 (charged/1100ms) | — | — | 6 | 8% | — | 5599 | 3820 | 1.5 | 30 | 15 | — | — | boss-script |
 
 ## Mountain  (density 24, 3 pool slots)
 
@@ -165,7 +165,7 @@ one, and the biome order stops being the thing the player reads.
 | Granite Titan `granite-titan` | x1 | 336 | 122 | 3800 | 42.5 | — | — | 42.5 | x1.5 = 183 (charged/1800ms) | — | — | 0 | — | — | 341 | 336 | 1 | 18 | 15 | — | patrol, charge x2.5 | — |
 | Stone Eagle `stone-eagle` | x1 | 244 | 88 | 2800 | 31.4 | — | — | 31.4 | — | — | — | 0 | — | — | 247 | 244 | 1 | 40 | 12 | — | charge x2.5 | — |
 | Boulder Thrower `peak-archer` | x1 | 277 | 106 | 3500 | 42.1 | — | — | 42.1 | x1.6 = 170 (charged/1700ms) | — | — | 0 | — | — | 281 | 277 | 1 | 28 | **240** | — | holds-choke | — |
-| BOSS Stoneplate Juggernaut `stoneplate-juggernaut` | — | 5000 | 128 | 4200 | 49.1 | — | — | 49.1 | x2 = 256 (charged/2300ms) | — | — | 10 | 5% | — | 11406 | 5659 | 2 | 20 | **72** | Stunning Earthshatter: precast-stun 450ms | aoe r120, charge x2.5 | boss-script |
+| BOSS Stoneplate Juggernaut `stoneplate-juggernaut` | — | 5000 | 128 | 4200 | 49.1 | — | — | 49.1 | x2 = 256 (charged/2300ms) | — | — | 10 | 5% | — | 11406 | 5659 | 2 | 20 | **72** | Stunning Earthshatter: precast-stun 450ms | charge x2.5 | boss-script |
 
 ## Caverns  (density 16, 3 pool slots)
 
@@ -174,7 +174,7 @@ one, and the biome order stops being the thing the player reads.
 | Giant Spider `giant-spider` | x1 | 260 | 39 | 1800 | 21.7 | 33 | 3.6s | 54.7 | — | — | — | 0 | 8% | — | 279 | 283 | 1 | 72 | 12 | — | ELITE | — |
 | Cave Troll `cave-troll` | x1 | 400 | 134 | 3600 | 56.2 | — | — | 56.2 | x2.4 = 322 (charged/2000ms) | — | — | 1 | 8% | — | 456 | 439 | 1 | 15 | 15 | lockout 1000ms | patrol, ELITE | — |
 | Cave Gargoyle `cave-gargoyle` | x1 | 300 | 66 | 3200 | 28.4 | — | — | 28.4 | x1.8 = 119 (charged/1600ms) | — | — | 1 | 5% | — | 342 | 317 | 1.1 | 22 | **200** | — | ELITE | — |
-| BOSS Chitinous Dreadbore `chitinous-dreadbore` | — | 4375 | 139 | 3600 | 56.5 | — | — | 56.5 | x1.6 = 222 (charged/1600ms) | — | — | 12 | 12% | — | 13307 | 5413 | 2.5 | 20 | **72** | shred 2 x6 | aoe r120, charge x2 | boss-script |
+| BOSS Chitinous Dreadbore `chitinous-dreadbore` | — | 4375 | 139 | 3600 | 56.5 | — | — | 56.5 | x1.6 = 222 (charged/1600ms) | — | — | 12 | 12% | — | 13307 | 5413 | 2.5 | 20 | **72** | shred 2 x6 | charge x2 | boss-script |
 
 ## Jungle  (density 40, 3 pool slots)
 
@@ -192,7 +192,7 @@ one, and the biome order stops being the thing the player reads.
 | Sand Scorpion `sand-scorpion` | x1 | 660 | 132 | 2400 | 55 | — | — | 55 | — | — | — | 0 | 8% | — | 709 | 719 | 1 | 30 | 12 | slow 50% | alpha +1 | — |
 | Stone Basilisk `stone-basilisk` | x1 | 660 | 138 | 2800 | 57.5 | — | — | 57.5 | — | — | — | 0 | 15% | — | 753 | 777 | 1 | 26 | 12 | Petrifying Gaze: root 1400ms | alpha +1 | — |
 | follower Sun Scarab `dust-djinn` | x2 | 320 | 156 | 1900 | 82.1 | — | — | 82.1 | — | — | — | 0 | — | — | 324 | 320 | 1 | 52 | **190** | — | follower | — |
-| BOSS Dune-Stalker Emperor `dune-stalker-emperor` | — | 3750 | 85 | 2600 | 32.7 | — | — | 32.7 | x2.5 = 213 (opener+mark) | x2.5 | — | 12 | 8% | — | 11406 | 4451 | 2.6 | 42 | 40 | slow 40%, mark | — | boss-script |
+| BOSS Dune-Stalker Emperor `dune-stalker-emperor` | — | 3750 | 85 | 2600 | 42.1 | — | — | 42.1 | x2.5 = 213 (opener+mark+charged/1300ms) | x2.5 | — | 12 | 8% | — | 11406 | 4451 | 2.6 | 42 | 40 | slow 40%, mark | — | boss-script |
 
 ## Mechanic coverage
 

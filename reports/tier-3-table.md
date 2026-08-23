@@ -136,7 +136,7 @@ one, and the biome order stops being the thing the player reads.
 | Plague-Shell Snapper `plague-hydra` | x1 | 400 | 37 | 2200 | 16.8 | 30 | 11s | 46.8 | — | — | — | 4 | — | — | 427 | 404 | 1.1 | 26 | 15 | — | — | shell-up |
 | Mire Hexer `mire-hex-spitter` | x1 | 350 | 42 | 2200 | 20.4 | — | — | 20.4 | — | — | — | 0 | — | — | 347 | 350 | 1 | 36 | **200** | Plague Hex: antiheal 30%+dot-extend 3000ms | — | — |
 | Bog Lurker `bog-lurker` | x1 | 340 | 43 | 2600 | 16.5 | 25 | 10.4s | 41.5 | — | — | — | 0 | — | 25% | 449 | 453 | 1 | 30 | 12 | — | — | — |
-| BOSS Rot-Spore Croc-Behemoth `rot-spore-croc-behemoth` | — | 11940 | 52 | 3400 | 21.2 | 78 | 17s | 99.2 | x1.2 = 62 (charged/1000ms) | — | — | 8 | 10% | — | 15494 | 13522 | 1.1 | 28 | 18 | — | aoe r120, charge x2 | boss-script |
+| BOSS Rot-Spore Croc-Behemoth `rot-spore-croc-behemoth` | — | 11940 | 52 | 3400 | 21.2 | 78 | 17s | 99.2 | x1.2 = 62 (charged/1000ms) | — | — | 8 | 10% | — | 15494 | 13522 | 1.1 | 28 | 18 | — | charge x2 | boss-script |
 
 ## Mountain  (density 24, 3 pool slots)
 
@@ -145,7 +145,7 @@ one, and the biome order stops being the thing the player reads.
 | Mountain Colossus `mountain-colossus` | x1 | 610 | 130 | 3800 | 48 | — | — | 48 | x1.8 = 234 (charged/2000ms) | — | — | 0 | — | — | 604 | 610 | 1 | 16 | 15 | — | charge x2.5 | — |
 | Avalanche Ram `avalanche-ram` | x1 | 434 | 87 | 2600 | 44.8 | — | — | 44.8 | x1.6 = 139 (charged/1100ms) | — | — | 0 | — | — | 430 | 434 | 1 | 38 | 12 | — | charge x2.5, vaults | — |
 | Crag Mortar `crag-mortar` | x1 | 490 | 109 | 3600 | 43.6 | — | — | 43.6 | x1.6 = 174 (charged/1800ms) | — | — | 0 | — | — | 486 | 490 | 1 | 30 | **250** | — | — | — |
-| BOSS Crag-Gorged Horn-Behemoth `crag-gorged-horn-behemoth` | — | 12418 | 204 | 4200 | 81 | — | — | 81 | x2 = 408 (charged/2400ms) | — | — | 12 | 5% | — | 16920 | 13435 | 1.3 | 18 | **72** | lockout 500ms | aoe r120, charge x2.5 | boss-script |
+| BOSS Crag-Gorged Horn-Behemoth `crag-gorged-horn-behemoth` | — | 12418 | 204 | 4200 | 81 | — | — | 81 | x2 = 408 (charged/2400ms) | — | — | 12 | 5% | — | 16920 | 13435 | 1.3 | 18 | **72** | lockout 500ms | charge x2.5 | boss-script |
 
 ## Caverns  (density 16, 3 pool slots)
 
@@ -154,7 +154,7 @@ one, and the biome order stops being the thing the player reads.
 | Deep Spider `deep-spider` | x1 | 450 | 60 | 1500 | 40 | 36 | 3s | 76 | — | — | — | 0 | 8% | — | 491 | 489 | 1 | 70 | 12 | — | ELITE | — |
 | Cavern Troll `cavern-troll` | x1 | 700 | 124 | 3600 | 52.1 | — | — | 52.1 | x2.6 = 322 (charged/2200ms) | — | — | 2 | 10% | — | 812 | 781 | 1 | 14 | 15 | lockout 1000ms | patrol, charge x2, ELITE | — |
 | Crystal Gargoyle `crystal-gargoyle` | x1 | 520 | 85 | 3200 | 44.3 | — | — | 44.3 | — | — | — | 1 | 5% | — | 556 | 549 | 1 | 20 | **210** | — | ELITE | — |
-| BOSS Deep-Core Burrow-Gorger `deep-core-burrow-gorger` | — | 12895 | 196 | 4500 | 75.1 | — | — | 75.1 | x1.7 = 333 (charged/1500ms) | — | — | 16 | 15% | — | 21296 | 15749 | 1.4 | 16 | **72** | shred 2 x8 | aoe r120, charge x2 | boss-script |
+| BOSS Deep-Core Burrow-Gorger `deep-core-burrow-gorger` | — | 12895 | 196 | 4500 | 75.1 | — | — | 75.1 | x1.7 = 333 (charged/1500ms) | — | — | 16 | 15% | — | 21296 | 15749 | 1.4 | 16 | **72** | shred 2 x8 | charge x2 | boss-script |
 
 ## Jungle  (density 40, 3 pool slots)
 
@@ -163,7 +163,7 @@ one, and the biome order stops being the thing the player reads.
 | Jungle Stalker `jungle-stalker` | x1 | 790 | 55 | 1000 | 55 | — | — | 55 | x2.2 = 121 (opener) | x2.2 | — | 0 | — | — | 783 | 790 | 1 | 78 | 12 | — | — | — |
 | Silverback `silverback` | x1 | 1045 | 83 | 1800 | 46.1 | — | — | 46.1 | — | — | x1.5 | 0 | — | — | 1036 | 1045 | 1 | 60 | 12 | — | charge x2.8, ELITE | — |
 | Canopy Chameleon `canopy-harrier` | x1 | 720 | 45 | 1400 | 32.1 | — | — | 32.1 | — | x2 | — | 0 | — | — | 713 | 720 | 1 | 52 | **190** | — | — | — |
-| BOSS Apex Bramble-Slasher `apex-bramble-slasher` | — | 11701 | 104 | 1500 | 69.3 | — | — | 69.3 | — | — | — | 0 | 3% | — | 12032 | 12061 | 1 | 64 | 18 | — | charge x2.8 | boss-script |
+| BOSS Apex Bramble-Slasher `apex-bramble-slasher` | — | 11701 | 104 | 1500 | 84.5 | — | — | 84.5 | x2.5 = 260 (opener+charged/900ms) | x2.5 | — | 0 | 3% | 15% | 14155 | 14189 | 1 | 64 | 18 | — | charge x2.8 | boss-script |
 
 ## Desert  (density 16, 2 pool slots)
 
@@ -172,7 +172,7 @@ one, and the biome order stops being the thing the player reads.
 | Dune Stalker `dune-stalker` | x1 | 1350 | 67 | 2400 | 27.9 | — | — | 27.9 | — | — | — | 0 | 8% | — | 1472 | 1468 | 1 | 30 | 12 | slow 50% | alpha +1 | — |
 | Desert Basilisk `desert-basilisk` | x1 | 1350 | 113 | 2800 | 47.5 | — | — | 47.5 | — | — | — | 0 | 15% | — | 1599 | 1587 | 1 | 26 | 12 | vuln 12% x1, Petrifying Gaze: root 1600ms | alpha +1 | — |
 | follower Gilded Scarab `sandweaver` | x2 | 510 | 224 | 1900 | 149.3 | — | — | 149.3 | x2 = 448 (charged/1400ms) | — | — | 0 | — | — | 505 | 510 | 1 | 52 | **220** | — | follower | — |
-| BOSS Dune-Carapace Monarch `dune-carapace-monarch` | — | 11940 | 196 | 3000 | 90.7 | — | — | 90.7 | x1.6 = 314 (charged/1300ms) | — | — | 10 | 8% | — | 15871 | 13280 | 1.2 | 42 | 20 | slow 40% | charge x2.5 | boss-script |
+| BOSS Dune-Carapace Monarch `dune-carapace-monarch` | — | 11940 | 196 | 3000 | 90.7 | — | — | 90.7 | x1.9 = 372 (mark+charged/1300ms) | — | — | 10 | 8% | — | 15871 | 13280 | 1.2 | 42 | 20 | slow 40%, mark | charge x2.5 | boss-script |
 
 ## Tundra  (density 16, 3 pool slots)
 
@@ -181,7 +181,7 @@ one, and the biome order stops being the thing the player reads.
 | Frost Lurker `frost-lurker` | x1 | 950 | 259 | 2600 | 99.6 | — | — | 99.6 | — | — | — | 0 | 10% | — | 1057 | 1057 | 1 | 26 | 12 | — | — | — |
 | Glacier Bear `glacier-bear` | x1 | 1500 | 415 | 3200 | 129.7 | — | — | 129.7 | — | — | — | 0 | 14% | — | 1929 | 1934 | 1 | 22 | 15 | — | — | shatter |
 | Rime Caster `rime-caster` | x1 | 880 | 297 | 2800 | 126.9 | — | — | 126.9 | x1.2 = 356 (charged/1400ms) | — | — | 0 | 8% | — | 959 | 957 | 1 | 30 | **200** | Frostbind: root 1500ms @3 ambient | — | — |
-| BOSS Frost-Plated Rime-Mammoth `frost-plated-rime-mammoth` | — | 12895 | 204 | 4200 | 78.5 | — | — | 78.5 | x1.7 = 347 (charged/1900ms) | — | — | 12 | 12% | — | 20703 | 16430 | 1.3 | 18 | 20 | ramp-slow 40/30% | aoe r120, charge x2 | shatter, boss-script |
+| BOSS Frost-Plated Rime-Mammoth `frost-plated-rime-mammoth` | — | 12895 | 204 | 4200 | 78.5 | — | — | 78.5 | x1.7 = 347 (charged/1900ms) | — | — | 12 | 12% | — | 20703 | 16430 | 1.3 | 18 | 20 | ramp-slow 40/30% | charge x2 | shatter, boss-script |
 
 ## Volcanic  (density 36, 4 pool slots)
 
@@ -191,7 +191,7 @@ one, and the biome order stops being the thing the player reads.
 | Cinder Hound `cinder-hound` | x1 | 1440 | 184 | 1300 | 141.5 | — | — | 141.5 | — | — | — | 3 | — | — | 1509 | 1450 | 1 | 70 | 12 | — | swarm, charge x2.5 | — |
 | Magma Tortoise `magma-brute` | x1 | 2000 | 343 | 3000 | 114.3 | — | — | 114.3 | — | — | — | 4 | — | — | 2137 | 2019 | 1.1 | 22 | 15 | — | — | — |
 | Ash Salamander `ash-slinger` | x1 | 1330 | 209 | 2000 | 104.5 | — | — | 104.5 | — | — | — | 2 | — | — | 1368 | 1336 | 1 | 44 | **180** | — | — | — |
-| BOSS Cinder-Shell Magma-Salamander `cinder-shell-magma-salamander` | — | 11462 | 179 | 3000 | 88.6 | — | — | 88.6 | x1.6 = 286 (charged/1400ms) | — | — | 8 | 4% | — | 13882 | 12159 | 1.1 | 26 | 18 | — | aoe r120, charge x2.5 | boss-script |
+| BOSS Cinder-Shell Magma-Salamander `cinder-shell-magma-salamander` | — | 11462 | 179 | 3000 | 88.6 | — | — | 88.6 | x1.6 = 286 (charged/1400ms) | — | — | 8 | 4% | — | 13882 | 12159 | 1.1 | 26 | 18 | — | charge x2.5 | boss-script, shell-up |
 
 ## Mechanic coverage
 
