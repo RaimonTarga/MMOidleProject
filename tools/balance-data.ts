@@ -29,3 +29,25 @@ const AUTHORED_DATA: BalanceData = {
 export function balanceData(): BalanceData {
   return AUTHORED_DATA;
 }
+
+/**
+ * What the analytical reports actually put on the player.
+ *
+ * Every generated report builds a `PlayerStatsTarget` and hands it to the real
+ * `recalculatePlayerStats`, so base stats, skill nodes, equipment, item upgrades,
+ * class affinities and the reload archetype layer are correct by construction. The
+ * gap is what never gets INTO that target: no core, relic, rune or rite is equipped
+ * and `activeStance` is never set, so the stance step (stats.ts 2a/3e), the core
+ * multiplier layer (3c) and the cadence relic profile are all silently inert.
+ *
+ * The bench (`server/bench/balance/`) equips all of them. That makes the two
+ * families non-comparable in ABSOLUTE terms. Relative ranking inside one report
+ * survives, because the omission is uniform across every row.
+ *
+ * Keep this string in one place so all three reports state the same thing.
+ */
+export const LOADOUT_MODEL_NOTE =
+  'Player model: weapon, armour, charm and mobility only, plus skill nodes, item '
+  + 'upgrades and class affinities. NO core, relic, rune, rite, stance or ability is '
+  + 'equipped — the bench bots carry all six, so these numbers are comparable to each '
+  + 'other but NOT to bench output in absolute terms.';

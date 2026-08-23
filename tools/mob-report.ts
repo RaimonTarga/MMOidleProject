@@ -19,7 +19,7 @@ import {
   type SkillNode,
   type SubVariant,
 } from '@mmo-idle/shared';
-import { balanceData } from './balance-data';
+import { balanceData, LOADOUT_MODEL_NOTE } from './balance-data';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Monster balance / threat report — the offence-of-the-world sibling of
@@ -116,9 +116,85 @@ function aps(monster: MonsterDefinition): number {
   return 1000 / Math.max(100, monster.stats.attackCooldown);
 }
 
-/** Raw (pre-mitigation) direct DPS: attack × attacks-per-second. */
+/**
+ * Mean number of full pipeline hits one attack opportunity resolves.
+ *
+ * Mirrors `beatMultiple` in tools/tier-table.ts — kept in the same shape so the two
+ * monster instruments cannot disagree about what a "beat" is:
+ *
+ *   consecutiveHits  one opportunity resolves this many hits (the loop in combat.ts)
+ *   cadenceVolley    every Nth beat delivers `hits` hits INSTEAD OF one
+ *   cadenceFinisher  every Nth beat is multiplied by `multiplier`
+ *
+ * `openingStrike` / `openingVolley` are excluded on purpose: they fire once per combat
+ * session, so they are burst rather than sustained pressure.
+ */
+function beatMultiple(monster: MonsterDefinition): number {
+  const base = Math.max(1, Math.round(monster.consecutiveHits ?? 1));
+  let mult = base;
+  const volley = monster.cadenceVolley;
+  if (volley) {
+    const n = Math.max(1, Math.round(volley.everyNAttacks));
+    mult = (base * (n - 1) + Math.max(1, volley.hits)) / n;
+  }
+  const finisher = monster.cadenceFinisher;
+  if (finisher) {
+    const n = Math.max(1, Math.round(finisher.everyNAttacks));
+    mult *= ((n - 1) + finisher.multiplier) / n;
+  }
+  return mult;
+}
+
+/**
+ * Raw (pre-mitigation) direct DPS.
+ *
+ * Was `attack x attacks-per-second` until 2026-08-23, which ignored both
+ * `consecutiveHits` and the whole charged-attack cycle — 47 of 134 authored monsters
+ * carry a `chargedAttack`, so a third of the roster read as carrying no offensive
+ * mechanic at all.
+ *
+ * A charged attack is not free damage added to the auto-attack stream: during `castMs`
+ * the monster neither moves nor auto-attacks, so a cycle TRADES normal beats for one
+ * multiplied hit. Modelling the trade is what makes a pure-control cast (multiplier 1.0
+ * — Petrifying Gaze, Wither, Frostbind) read correctly as a small sustained-damage loss
+ * rather than as no mechanic. This mirrors `directDps` in tools/tier-table.ts.
+ */
+function directDpsWith(
+  monster: MonsterDefinition,
+  hitOf: (attack: number) => number,
+): number {
+  const { attack, attackCooldown } = monster.stats;
+  const cd = Math.max(1, attackCooldown);
+  const beat = beatMultiple(monster);
+  // `hitOf` resolves ONE hit at the monster's base attack; every mechanic below is a
+  // multiplier on top of it. That ordering is deliberate — the runtime mitigates
+  // first and multiplies the empowered/charged beat afterwards, so a mitigated
+  // `hitOf` composes correctly here without re-deriving mitigation per beat size.
+  const hit = hitOf(attack);
+  let dps = (hit * beat * 1000) / cd;
+
+  const charged = monster.chargedAttack;
+  if (charged) {
+    const cycle = Math.max(1, charged.cooldownMs);
+    // Beats actually taken in a cycle: the wind-up is dead time for normal attacks.
+    const beats = Math.max(0, (cycle - charged.castMs) / cd);
+    const perCycle = hit * beat * beats + hit * charged.multiplier;
+    dps = (perCycle * 1000) / cycle;
+  }
+
+  if (monster.empoweredCooldown) {
+    // A timer finisher with no cast: it adds its surplus over a normal beat,
+    // amortised across its cooldown.
+    const cycle = Math.max(1, monster.empoweredCooldown.cooldownMs);
+    const surplus = hit * (monster.empoweredCooldown.multiplier - beat);
+    if (surplus > 0) dps += (surplus * 1000) / cycle;
+  }
+
+  return dps;
+}
+
 function rawDirectDps(monster: MonsterDefinition): number {
-  return monster.stats.attack * aps(monster);
+  return directDpsWith(monster, (attack) => attack);
 }
 
 /** Steady-state raw DoT DPS assuming the player carries the full refreshed stack. */
@@ -133,11 +209,18 @@ function rawTotalDps(monster: MonsterDefinition): number {
   return rawDirectDps(monster) + monsterDotDps(monster).dps;
 }
 
-/** Largest single-hit multiplier the monster can land (cadence/cooldown/aoe/ramp/boss). */
+/** Largest single-hit multiplier the monster can land (cadence/cooldown/charged/aoe/ramp/boss). */
 function monsterSpikeMult(monster: MonsterDefinition): number {
   let mult = 1;
   if (monster.cadenceFinisher) mult = Math.max(mult, monster.cadenceFinisher.multiplier);
   if (monster.empoweredCooldown) mult = Math.max(mult, monster.empoweredCooldown.multiplier);
+  // The charged cast is the largest telegraphed hit in the reworked design and was
+  // missing here entirely until 2026-08-23, so every charged monster reported a x1
+  // spike. `openingStrike` fires once per session but is still the biggest hit the
+  // player eats on the pull, so it belongs in a "worst spike" column.
+  if (monster.chargedAttack) mult = Math.max(mult, monster.chargedAttack.multiplier);
+  if (monster.openingStrike) mult = Math.max(mult, monster.openingStrike.multiplier);
+  if (monster.markedStrike) mult = Math.max(mult, monster.markedStrike.multiplier);
   if (monster.aoeAttack) mult = Math.max(mult, 1 + (monster.aoeAttack.damageMult ?? 1));
   if (monster.rampOnCombat) mult = Math.max(mult, 1 + monster.rampOnCombat.maxPct);
   if (monster.bossScript) {
@@ -523,23 +606,38 @@ function evadeFactor(p: PlayerProfile): number {
 }
 
 function threatAgainst(p: PlayerProfile, monster: MonsterDefinition, isBoss: boolean): Threat {
-  const hitsPerSec = aps(monster);
   const hit = estimateMonsterHitDamage({ attack: monster.stats.attack, targetPlating: p.plating, targetDamageReduction: p.damageReduction });
   const dot = monsterDotDps(monster).dps; // player dot-resistance not modeled here (lives in eHP tool)
-  const incomingDps = hit * hitsPerSec * evadeFactor(p) + dot;
-  const spikeHit = estimateMonsterHitDamage({ attack: monster.stats.attack * monsterSpikeMult(monster), targetPlating: p.plating, targetDamageReduction: p.damageReduction });
+  // Mitigate one hit, then let the cadence mechanics multiply it — the same
+  // ordering the runtime uses, and the same beat/charged model the raw-DPS column
+  // uses. Before 2026-08-23 this was a flat `hit x attacks-per-second`, which
+  // silently dropped consecutiveHits, volleys, finishers and the whole charged
+  // cycle from the player-facing pressure number.
+  const directDps = directDpsWith(monster, () => hit);
+  const incomingDps = directDps * evadeFactor(p) + dot;
+  const spikeHit = mitigatedSpike(p, monster);
   const spikePctHp = spikeHit / Math.max(1, p.maxHp);
   const ttlSec = incomingDps > 0 ? p.maxHp / incomingDps : Number.POSITIVE_INFINITY;
   return { incomingDps, spikeHit, spikePctHp, ttlSec, status: threatStatus(spikePctHp, ttlSec, isBoss) };
 }
 
-/** Biggest mitigated single hit a specific monster can land on the player. */
+/**
+ * Biggest mitigated single hit a specific monster can land on the player.
+ *
+ * ORDER MATTERS. The runtime mitigates FIRST and applies the empowered / charged
+ * multiplier afterwards (`runMonsterAttack` in server/src/systems/combat/engine/combat.ts:
+ * the base hit resolves against plating and DR, then `ctx.damage *= empoweredMult`).
+ * Multiplying the attack before the plating subtraction — which this did until
+ * 2026-08-23 — inflates the spike by a plating-dependent factor, since
+ * `(A - P) * M < (A * M - P)` for any P > 0.
+ */
 function mitigatedSpike(p: PlayerProfile, monster: MonsterDefinition): number {
-  return estimateMonsterHitDamage({
-    attack: monster.stats.attack * monsterSpikeMult(monster),
+  const base = estimateMonsterHitDamage({
+    attack: monster.stats.attack,
     targetPlating: p.plating,
     targetDamageReduction: p.damageReduction,
   });
+  return base * monsterSpikeMult(monster);
 }
 
 function threatStatus(spikePctHp: number, ttlSec: number, isBoss: boolean): Status {
@@ -967,7 +1065,8 @@ function renderReport(tiers: number[]): string {
   </style>
 </head>
 <body>
-  <h1>MMO Idle Monster Balance & Threat Report</h1>
+  <h1>MMO Idle Monster Balance &amp; Threat Report</h1>
+  <p class="meta"><strong>${LOADOUT_MODEL_NOTE}</strong></p>
   <p>
     Monster-centric balance report built from shared monster, item, skill, and stat formulas plus the shared
     class-aware DPS estimator. The subject is the world's offence: every spawn and boss is profiled and bucketed by
@@ -1011,6 +1110,8 @@ function renderLlmPacket(biomeTier: number): string {
 Generated from \`tools/mob-report.ts --llm-packet\`. Markdown only. Companion to the DPS and eHP packets.
 
 ## Assumptions / Omissions
+
+- ${LOADOUT_MODEL_NOTE}
 
 - Monster-centric: subject is the world's offence and durability, bucketed by biome tier ${biomeTier}.
 - Reference players are tier ${playerTier} (a player of tier P fights biome tier P-1)${profiles[0]?.usedFallbackTier ? `; **no tier-${biomeTier + 1} gear authored yet, best-available T${maxItemTier()} used as the reference**` : ''}. Defensive stats are averaged over spec-agnostic class builds × armor × recovery; the boss-ready profile biases to the tankiest armor.

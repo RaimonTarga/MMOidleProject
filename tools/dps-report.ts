@@ -33,6 +33,7 @@ import {
   type SkillNode,
   type SubVariant,
 } from '@mmo-idle/shared';
+import { LOADOUT_MODEL_NOTE } from './balance-data';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ARGS = process.argv.slice(2);
@@ -2045,6 +2046,7 @@ Generated from \`tools/dps-report.ts\`. This packet is Markdown only; it intenti
 
 ## 1. Assumptions / Omissions
 
+- ${LOADOUT_MODEL_NOTE}
 - Report tier T${reportTier}; class unlock tier ${reportTier - 1}; weapons are tier ${reportTier}.
 - DPS conclusions use +${WEAPON_UPGRADE_LEVEL} weapons only. Weapon input context includes +0 and +${WEAPON_UPGRADE_LEVEL}.
 - Target mobs come from biome spawn pools one tier below report tier; tutorial/test/interact/boss monsters are excluded.
@@ -2395,9 +2397,10 @@ function renderReport(sections: string[]): string {
     a combat simulator. It omits movement, enemies attacking back, deaths, sustain, AoE,
     pathing, aggro, and eHP.
   </p>
+  <p class="meta"><strong>${LOADOUT_MODEL_NOTE}</strong></p>
   <p class="meta">
     Unlock model: T1 class root, T2 frame, T3 close/far range, T4 path/spec.
-    Weapons: each report tier's non-tutorial weapons at +3. Targets use biome spawn pools one tier below the report tier,
+    Weapons: each report tier's non-tutorial weapons at +${WEAPON_UPGRADE_LEVEL}. Targets use biome spawn pools one tier below the report tier,
     excluding tutorial/test monsters. Mechanics with runtime
     state are represented as deterministic steady-state estimates and are called out in row notes.
     ${OPTIONS.excludeConduit ? 'Conduit and its subclasses are excluded.' : 'Run with --exclude-conduit to omit Conduit and its subclasses.'}

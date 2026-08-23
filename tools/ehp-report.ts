@@ -22,6 +22,7 @@ import {
   type SkillNode,
   type SubVariant,
 } from '@mmo-idle/shared';
+import { LOADOUT_MODEL_NOTE } from './balance-data';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Survivability (eHP / TTL / sustain) report — the defensive sibling of
@@ -64,6 +65,34 @@ const RECOVERY_WINDOW_SEC = 15;
 const CONDUIT_CLASS_ID = 'summoner-root';
 const TUTORIAL_MONSTER_IDS = new Set(['tiny-slime']);
 const DR_CAP = 0.9; // mirrors the shared stats.ts DR clamp and the in-place server clamps
+
+// ─── Conditional-defence duty cycles ────────────────────────────────────────
+// The three ramping mitigations below are NOT permanently active, and pricing
+// them as if they were is the single easiest way to over-value a late-tier armour.
+// Each one is averaged over the modelled window using the runtime's own ramp
+// shape (see server/src/systems/defense/mitigation/*), never assumed at max.
+
+/**
+ * Fraction of combat time the player is stationary, for `defense.stationary-dr-*`
+ * (Tundra). NOT a guess: anchored to the farm bench's measured `contact_uptime`
+ * — a fully-upgraded cadence bot on a T1 cave node reported 0.50 (2026-08-23).
+ * The runtime ramp erodes symmetrically while moving, so a player in contact half
+ * the time converges on roughly half the printed bonus rather than all of it.
+ * Override with `--stationary-fraction` when sweeping.
+ */
+const STATIONARY_FRACTION = clamp01(numberArg('--stationary-fraction') ?? 0.5);
+
+/**
+ * Assumed seconds between hits large enough to trip `defense.hardening-reset-pct`
+ * when only the attacker's SPIKE crosses that threshold (Volcanic). The report has
+ * no spike cadence for a generic attacker, so this stands in. Chosen to sit between
+ * a cadence finisher (every ~5 swings) and a boss charged cast (~10-20 s).
+ */
+const HARDENING_SPIKE_INTERVAL_SEC = 12;
+
+function clamp01(v: number): number {
+  return Math.max(0, Math.min(1, v));
+}
 
 function numberArg(name: string): number | null {
   const equals = ARGS.find((arg) => arg.startsWith(`${name}=`));
@@ -562,15 +591,161 @@ function recoveryPerSec(
   return healPerSec;
 }
 
+/**
+ * Time-averaged mitigation from the four RAMPING defences, over `REPORT_HORIZON_SEC`.
+ *
+ * These are conditional, so each is averaged over its own runtime ramp shape rather
+ * than credited at its printed maximum:
+ *
+ *   hardening          (Volcanic)  plating +perSec/s, capped at `hardening-max`,
+ *                                  reset to 0 by any hit >= `hardening-reset-pct x maxHp`
+ *   reactive plating   (Wasteland) +perStack per direct hit taken, up to maxStacks,
+ *                                  each hit refreshing a duration window
+ *   stationary DR      (Tundra)    ramps to `stationary-dr-pct` over ramptime while
+ *                                  standing, erodes at the same rate while moving
+ *   sustained-fight DR (Trench)    +bonus per step, reaching `-max` at ramptime
+ *
+ * The hardening reset test is evaluated against the player's BASE mitigation, not
+ * the hardened value. That breaks the circular dependency (hardening changes the
+ * hit size that decides whether hardening resets) on the conservative side: it is
+ * the reading at the start of a fight, before any plating has accumulated.
+ */
+function rampedMitigation(
+  stats: PlayerStatsTarget,
+  attacker: Attacker,
+  notes: string[],
+): { plating: number; damageReduction: number } {
+  const p = stats.usesSkills.passives;
+  const maxHp = stats.hasHealth.maxHp;
+  const basePlating = stats.mitigatesDamage.plating;
+  const baseDr = stats.mitigatesDamage.damageReduction;
+  const hitsPerSec = 1000 / attacker.attackCooldown;
+
+  let platingBonus = 0;
+  let drBonus = 0;
+
+  // ── Hardening (plating ramp with a big-hit reset) ─────────────────────────
+  const hardenPerSec = p['defense.hardening-per-sec'] ?? 0;
+  const hardenMax = p['defense.hardening-max'] ?? 0;
+  if (hardenPerSec > 0 && hardenMax > 0) {
+    const resetPct = p['defense.hardening-reset-pct'] ?? 0;
+    const threshold = resetPct > 0 ? maxHp * resetPct : Number.POSITIVE_INFINITY;
+    const baseHit = estimateMonsterHitDamage({
+      attack: attacker.attack,
+      targetPlating: basePlating,
+      targetDamageReduction: baseDr,
+    });
+    // Runtime multiplies the spike AFTER mitigation, so mirror that ordering here.
+    const spikeHit = baseHit * attacker.spikeMult;
+
+    let resetSec: number;
+    if (baseHit >= threshold) resetSec = 1 / hitsPerSec;
+    else if (spikeHit >= threshold) resetSec = HARDENING_SPIKE_INTERVAL_SEC;
+    else resetSec = Number.POSITIVE_INFINITY;
+
+    const rampSec = hardenMax / hardenPerSec;
+    let avg: number;
+    if (!Number.isFinite(resetSec)) {
+      // Never reset: ramps once, then holds at max for the rest of the window.
+      avg = REPORT_HORIZON_SEC > rampSec
+        ? hardenMax * (1 - rampSec / (2 * REPORT_HORIZON_SEC))
+        : (hardenPerSec * REPORT_HORIZON_SEC) / 2;
+    } else if (resetSec >= rampSec) {
+      // Sawtooth that reaches max before each reset.
+      avg = hardenMax * (1 - rampSec / (2 * resetSec));
+    } else {
+      // Reset before the ramp completes: a pure triangle wave.
+      avg = (hardenPerSec * resetSec) / 2;
+    }
+    platingBonus += avg;
+    notes.push(
+      `hardening averages +${asNumber(avg)} plating (max ${asNumber(hardenMax)}, `
+      + (Number.isFinite(resetSec) ? `reset every ${asNumber(resetSec)}s` : 'never reset')
+      + ')',
+    );
+
+    // Max-DR pulse: only live while hardening sits AT max, so it inherits the
+    // fraction of the window spent there.
+    const maxDrBonus = p['defense.hardening-max-dr-bonus'] ?? 0;
+    if (maxDrBonus > 0 && (p['defense.hardening-max-dr-ms'] ?? 0) > 0) {
+      const atMaxFrac = !Number.isFinite(resetSec)
+        ? Math.max(0, 1 - rampSec / REPORT_HORIZON_SEC)
+        : Math.max(0, 1 - rampSec / resetSec);
+      if (atMaxFrac > 0) {
+        drBonus += maxDrBonus * atMaxFrac;
+        notes.push(`hardening max-DR pulse active ${Math.round(atMaxFrac * 100)}% of the window`);
+      }
+    }
+  }
+
+  // ── Reactive plating (stacks per hit taken) ───────────────────────────────
+  const reactivePerStack = p['defense.hit-plating-per-stack'] ?? 0;
+  if (reactivePerStack > 0) {
+    const maxStacks = Math.max(1, Math.round(p['defense.hit-plating-max-stacks'] ?? 1));
+    const durationMs = p['defense.hit-plating-duration-ms'] ?? 4000;
+    // Stacks only hold if hits land faster than the window expires.
+    const heldStacks = attacker.attackCooldown < durationMs
+      ? maxStacks
+      : 1;
+    // Ramp: one stack per hit taken, so `maxStacks` hits to saturate.
+    const rampSec = (heldStacks * attacker.attackCooldown) / 1000;
+    const avgStacks = REPORT_HORIZON_SEC > rampSec
+      ? heldStacks * (1 - rampSec / (2 * REPORT_HORIZON_SEC))
+      : heldStacks / 2;
+    platingBonus += avgStacks * reactivePerStack;
+    notes.push(
+      `reactive plating averages +${asNumber(avgStacks * reactivePerStack)} `
+      + `(${asNumber(avgStacks)} of ${heldStacks} stacks held)`,
+    );
+  }
+
+  // ── Stationary DR (Tundra) ────────────────────────────────────────────────
+  const stationaryMax = p['defense.stationary-dr-pct'] ?? 0;
+  if (stationaryMax > 0 && (p['defense.stationary-dr-ramptime-ms'] ?? 0) > 0) {
+    // The ramp erodes symmetrically while moving, so the steady-state bonus tracks
+    // the stationary duty cycle directly rather than saturating at the maximum.
+    const avg = stationaryMax * STATIONARY_FRACTION;
+    drBonus += avg;
+    notes.push(
+      `stationary DR averages +${Math.round(avg * 100)}% `
+      + `(${Math.round(STATIONARY_FRACTION * 100)}% stationary; max ${Math.round(stationaryMax * 100)}%)`,
+    );
+  }
+
+  // ── Sustained-fight DR (Trench) ───────────────────────────────────────────
+  const sustainedStep = p['defense.sustained-fight-dr-bonus'] ?? 0;
+  const sustainedMax = p['defense.sustained-fight-dr-max'] ?? 0;
+  const sustainedRampMs = p['defense.sustained-fight-ramptime-ms'] ?? 0;
+  if (sustainedStep > 0 && sustainedMax > 0 && sustainedRampMs > 0) {
+    const rampSec = sustainedRampMs / 1000;
+    const avg = REPORT_HORIZON_SEC >= rampSec
+      ? sustainedMax * (1 - rampSec / (2 * REPORT_HORIZON_SEC))
+      : (sustainedMax * REPORT_HORIZON_SEC) / (2 * rampSec);
+    drBonus += avg;
+    notes.push(
+      `sustained-fight DR averages +${Math.round(avg * 100)}% over ${REPORT_HORIZON_SEC}s `
+      + `(max ${Math.round(sustainedMax * 100)}% at ${asNumber(rampSec)}s)`,
+    );
+  }
+
+  return {
+    plating: basePlating + platingBonus,
+    // Mirrors the in-place DR_CAP clamp every runtime ramp applies.
+    damageReduction: Math.min(DR_CAP, baseDr + drBonus),
+  };
+}
+
 function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Survivability {
   const p = stats.usesSkills.passives;
   const maxHp = stats.hasHealth.maxHp;
-  const plating = stats.mitigatesDamage.plating;
-  const damageReduction = stats.mitigatesDamage.damageReduction;
+  const notesRamp: string[] = [];
+  const ramped = rampedMitigation(stats, attacker, notesRamp);
+  const plating = ramped.plating;
+  const damageReduction = ramped.damageReduction;
   const dodgeRate = stats.evadesHits.dodgeRate;
   const evadeMitigation = stats.evadesHits.evadeMitigation;
   const recovery = stats.hasHealth.recovery ?? 0;
-  const notes: string[] = [];
+  const notes: string[] = [...notesRamp];
 
   const hitsPerSec = 1000 / attacker.attackCooldown;
   // Average fraction of a hit's damage that lands after deterministic evasion.
@@ -639,11 +814,19 @@ function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Su
     : pool / -netHpPerSec;
 
   // Burst survivability: the biggest single hit this attacker can land.
+  //
+  // ORDER MATTERS. The runtime mitigates FIRST and multiplies the empowered /
+  // charged spike afterwards (`runMonsterAttack`: the base hit is computed against
+  // plating and DR, then `ctx.damage *= empoweredMult`). Multiplying the attack
+  // before the plating subtraction — which this did until 2026-08-23 — inflates the
+  // spike by a plating-dependent factor, because `(A - P) * M < (A * M - P)` for any
+  // P > 0. The damage cap still lands last, on the boosted hit, as it does in the
+  // pipeline's `onDamageTaken` chain.
   const spikeBase = estimateMonsterHitDamage({
-    attack: attacker.attack * attacker.spikeMult,
+    attack: attacker.attack,
     targetPlating: plating,
     targetDamageReduction: damageReduction,
-  });
+  }) * attacker.spikeMult;
   const biggestHit = applyDamageCap(spikeBase, maxHp, p);
   // A full barrier is the realistic opening state of an engagement, so it counts
   // toward the one-shot buffer.
@@ -1419,6 +1602,7 @@ function renderReport(sections: string[]): string {
 </head>
 <body>
   <h1>MMO Idle Survivability (eHP) Report</h1>
+  <p class="meta"><strong>${LOADOUT_MODEL_NOTE}</strong></p>
   <p>
     External balance/debug report built from shared item, skill, monster, and stat formulas, plus a
     steady-state re-implementation of the server defense pipeline (mitigation, shields, regen, absorb,
@@ -1513,135 +1697,12 @@ function itemInputRows(slot: 'armor' | 'recovery', reportTier: number): Array<Ar
     }));
 }
 
-function renderLlmPacket(reportTier: number, rows: ReportRow[]): string {
-  const attacker = averageAttackerForTier(reportTier);
-  const optimalRows = optimalRowsByBuild(rows).sort((a, b) => b.survivalScore - a.survivalScore);
-  const optimalAverage = optimalRows.reduce((s, r) => s + r.survivalScore, 0) / Math.max(1, optimalRows.length);
-  const flagged = optimalRows.map((row) => ({ row, flag: outlierFlag(row.survivalScore, optimalAverage) }));
-  const outliers = flagged.filter((f) => f.flag);
-  const classAverages = averageBy(rows, (row) => row.className).sort((a, b) => b.avg - a.avg);
-  const armorAverages = averageBy(rows, (row) => row.armorName).sort((a, b) => b.avg - a.avg);
-  const charmAverages = averageBy(rows, (row) => row.recoveryName).sort((a, b) => b.avg - a.avg);
-  const oneShots = optimalRows.filter((r) => r.oneShotRisk);
-  const sustained = optimalRows.filter((r) => !Number.isFinite(r.ttlSec));
-  const reps = representativeAttackers(reportTier);
-  const caveatNotes = [...new Set(rows.flatMap((r) => r.notes))].sort();
-
-  const classInputRows = optimalRows.slice()
-    .sort((a, b) => a.buildKey.localeCompare(b.buildKey))
-    .map((row) => {
-      const armor = ITEM_DATABASE.get(row.armorId)!;
-      const recovery = row.recoveryId ? ITEM_DATABASE.get(row.recoveryId) ?? null : null;
-      const stats = makeStatsTarget(row.combo, armor, recovery, row.plus, row.tier - 1);
-      recalculatePlayerStats(stats);
-      return [
-        row.buildKey,
-        `${row.armorName} / ${row.recoveryName}`,
-        asNumber(stats.hasHealth.maxHp),
-        asNumber(stats.mitigatesDamage.plating),
-        `${asNumber(stats.mitigatesDamage.damageReduction * 100)}%`,
-        `${asNumber(stats.evadesHits.dodgeRate * 100)}%`,
-        asNumber(stats.hasHealth.recovery ?? 0),
-        defensivePassiveSummary(stats.usesSkills.passives),
-        asNumber(row.ehp),
-        ttl(row.ttlSec),
-      ];
-    });
-
-  return `# MMO Idle LLM Survivability Packet - T${reportTier}${OPTIONS.excludeConduit ? ' (No Conduit)' : ''}
-
-Generated from \`tools/ehp-report.ts\`. Markdown only; the full HTML report is omitted. Companion to the DPS LLM packet.
-
-## 1. Assumptions / Omissions
-
-- Report tier T${reportTier}; class unlock tier ${reportTier - 1}; armor + charm are tier ${reportTier} at +${ITEM_UPGRADE_LEVEL}.
-- Every class build (root/frame/range/spec) is crossed with every armor × charm (recovery) combination. Weapon is empty; mobility slot excluded (movement only, no eHP value).
-- Incoming pressure comes from biome spawn pools one tier below report tier (tutorial/test/interact/boss excluded), plus representative shape attackers and boss spikes.
-- **eHP** = maxHP × (raw attacker DPS ÷ post-mitigation DPS): folds plating, DR, evasion, damage-cap, and DoT-resistance into one number. **TTL** = effective pool ÷ (incoming − recovery); "sustains" when recovery ≥ incoming. **Net HP/s** = recovery − incoming.
-- Defense mechanics are deterministic steady-state re-implementations of \`server/src/systems/defense/*\`: Recovery access is summed as a fraction of the Recovery rate and averaged over each source's duty cycle; absorb is averaged as HP/s throughput; the barrier is a one-time buffer added to the pool (it never recharges inside a modeled fight); ramps use their mid-point; cheat-death adds one extra near-full bar; on-kill Recovery and barrier-break heals are omitted (need a kill/break cadence).
-- Single-target, in-combat steady state only. No movement, kiting, real AoE target count, enemy AI, party effects, antiheal stacking, or overkill timing.
-
-## 2. Attacker Baseline
-
-| Metric | Value |
-| --- | --- |
-| Source | biome tier ${attacker.sourceTier}${attacker.usedFallback ? ' fallback' : ''} |
-| Mob count | ${attacker.monsterCount} |
-| Average attack | ${asNumber(attacker.attack)} |
-| Average APS | ${asNumber(1000 / attacker.attackCooldown)} |
-| Average DoT/s | ${asNumber(attacker.dotDps)} |
-| Average spike mult | ×${asNumber(attacker.spikeMult)} |
-| Reference optimal-loadout average eHP | ${asNumber(optimalAverage)} |
-
-${mdTable(
-  ['Shape', 'Monster', 'Attack', 'APS', 'DoT/s', 'Spike'],
-  reps.map((a) => [a.label, a.source, asNumber(a.attack), asNumber(1000 / a.attackCooldown), asNumber(a.dotDps), `×${asNumber(a.spikeMult)}`]),
-)}
-
-## 3. Class / Loadout Input Table (optimal charm+armor per build)
-
-${mdTable(
-  ['Build', 'Loadout', 'maxHP', 'Plating', 'DR', 'Dodge', 'recovery', 'Defensive passives', 'eHP', 'TTL'],
-  classInputRows,
-)}
-
-## 4. Armor Input Table (+0 and +${ITEM_UPGRADE_LEVEL})
-
-${mdTable(['Armor', 'Plus', 'Stats', 'Effects', 'Scaling'], itemInputRows('armor', reportTier))}
-
-## 5. Charm Input Table (+0 and +${ITEM_UPGRADE_LEVEL})
-
-${mdTable(['Charm', 'Plus', 'Stats', 'Effects', 'Scaling'], itemInputRows('recovery', reportTier))}
-
-## 6. Tankiest / Most Fragile Optimal Loadouts
-
-Top 10 (tankiest):
-
-${mdTable(['Build', 'Armor', 'Charm', 'Survival', 'eHP', 'maxHP', 'Mitig%', 'In DPS', 'Recov/s', 'TTL', 'Spike %HP'], optimalRows.slice(0, 10).map(rowMarkdownSummary))}
-
-Bottom 10 (most fragile):
-
-${mdTable(['Build', 'Armor', 'Charm', 'Survival', 'eHP', 'maxHP', 'Mitig%', 'In DPS', 'Recov/s', 'TTL', 'Spike %HP'], optimalRows.slice().sort((a, b) => a.survivalScore - b.survivalScore).slice(0, 10).map(rowMarkdownSummary))}
-
-## 7. Outliers (vs optimal-loadout average eHP)
-
-${mdTable(
-  ['Flag', 'Build', 'Armor', 'Charm', 'Survival', 'eHP', 'TTL', 'Spike %HP'],
-  outliers.map(({ row, flag }) => [flag, row.buildKey, row.armorName, row.recoveryName, asNumber(row.survivalScore), asNumber(row.ehp), ttl(row.ttlSec), `${asNumber(row.biggestHitPct * 100)}%${row.oneShotRisk ? ' ⚠' : ''}`]),
-)}
-
-## 8. Burst & Sustain Risk
-
-- One-shot risk (a single modeled spike ≥ HP + standing shield, no cheat-death): ${oneShots.length} of ${optimalRows.length} optimal builds.
-- Builds that fully sustain the neutral attacker (recovery ≥ incoming): ${sustained.length} of ${optimalRows.length}.
-
-${mdTable(
-  ['Build', 'Armor', 'Charm', 'Spike %HP', 'TTL'],
-  oneShots.slice(0, 20).map((row) => [row.buildKey, row.armorName, row.recoveryName, `${asNumber(row.biggestHitPct * 100)}%`, ttl(row.ttlSec)]),
-)}
-
-## 9. Average eHP Per Class
-
-${mdTable(['Class', 'Avg survival', 'Samples'], classAverages.map((i) => [i.key, asNumber(i.avg), i.count]))}
-
-## 10. Average eHP Per Armor / Charm
-
-${mdTable(['Armor', 'Avg survival', 'Samples'], armorAverages.map((i) => [i.key, asNumber(i.avg), i.count]))}
-
-${mdTable(['Charm', 'Avg survival', 'Samples'], charmAverages.map((i) => [i.key, asNumber(i.avg), i.count]))}
-
-## 11. Formula Caveats / Unmodeled Mechanics
-
-- Mitigation uses shared \`estimateMonsterHitDamage\`: \`max(1, round(max(0, attack - plating × 1) × (1 - DR)))\`; stats rebuilt via shared \`recalculatePlayerStats\`.
-- Evasion is averaged (\`1 - dodgeRate × evadeMitigation\`), not played out as a deterministic accumulator; first-hit timing and OOC reset are ignored.
-- Absorb and Recovery access are steady-state HP/s. The barrier is a flat one-time buffer: correct for a single engagement, but it ignores the between-pack recharge that is the whole point of the mechanic, so multi-pack farm throughput is understated. DoT bypass-barrier is respected only in notes.
-- Cheat-death, hardening/stationary/sustained-fight DR ramps use mid-point or one-shot approximations; reactive plating, barrier-break heals and on-kill Recovery are not summed.
-- Report notes observed in this tier: ${caveatNotes.length ? caveatNotes.map((n) => `\`${md(n)}\``).join(', ') : 'none'}.
-`;
-}
-
 function renderMdView(view: DataView): string {
-  return `## ${view.title}\n\n${view.note ? `_${md(view.note)}_\n\n` : ''}${mdTable(view.headers, view.rows)}`;
+  return `## ${view.title}
+
+${view.note ? `_${md(view.note)}_
+
+` : ''}${mdTable(view.headers, view.rows)}`;
 }
 
 function renderLlmPacketV2(reportTier: number): string {
@@ -1661,6 +1722,8 @@ Generated from \`tools/ehp-report.ts --llm-packet\`. Progression-focused compani
 
 ## Assumptions / Omissions
 
+- ${LOADOUT_MODEL_NOTE}
+
 - Class unlock tier ${reportTier - 1}. Views model progression moments, not just same-tier +3 gear.
 - Checkpoints: prev-tier +3 entering, current +0 entry, current +3 geared, current +3 vs boss, current +3 vs next-tier mobs. "Current mobs" = biome spawn pools one tier below report tier (the established convention); bosses come from boss pools.
 - Comparison/route/checkpoint views are **spec-agnostic** (root+frame+range only) to keep the cross-product readable; the HTML report's collapsed dump keeps full per-spec rows.
@@ -1673,6 +1736,8 @@ Generated from \`tools/ehp-report.ts --llm-packet\`. Progression-focused compani
 - **Kill-burst** recovery is undercounted (no kill cadence modeled); flagged in the charm table.
 - **Evasion** is averaged (dodgeRate × evade-mitigation), not the deterministic first-hit accumulator.
 - **Barrier** is a flat one-time buffer — no between-engagement recharge, no burst-vs-chip interaction, no DoT bypass beyond notes.
+- **Ramping mitigations ARE modelled**, as duty-cycle averages over the ${REPORT_HORIZON_SEC}s window, never at their printed maximum: hardening (ramp + big-hit reset, assumed spike cadence ${HARDENING_SPIKE_INTERVAL_SEC}s when only a spike trips it), reactive plating (stack ramp against the attacker's own cadence), stationary DR (scaled by an assumed ${Math.round(STATIONARY_FRACTION * 100)}% stationary duty cycle — override with \`--stationary-fraction\`), and sustained-fight DR. Each is printed in the affected row's notes. The assumed duty cycles are the two judgement calls in this report; treat Tundra and Volcanic rows accordingly.
+- **Not** modelled: core DR layer, wards, barrier recharge, barrier-break heals, on-kill Recovery.
 - **Multi-enemy pressure** is not modeled; a single attacker profile is assumed (idle pulls are often several mobs).
 
 ${renderMdView(progressionView(checkpoints))}
