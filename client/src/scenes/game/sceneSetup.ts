@@ -16,6 +16,7 @@ import {
   showReleaseAnnouncement,
   triggerDeathOverlay,
   setBossFelledMarkers,
+  setRewardMultiplier,
 } from "../../hud/atoms";
 import { applyWorldLogEvents } from "../../worldLog/formatWorldLog";
 import { loadGameplaySettings } from "../../settings/gameplaySettings";
@@ -751,6 +752,9 @@ function connectSocket(scene: GameScene): () => void {
     },
     onBossFelled: (markers) => {
       setBossFelledMarkers(markers);
+    },
+    onRewardMultiplier: (multiplier) => {
+      setRewardMultiplier(multiplier);
     },
     onUpdateAnnouncement: (payload) => {
       showReleaseAnnouncement(payload);

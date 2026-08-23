@@ -57,6 +57,8 @@ export interface SocketHandlers {
   onSpectateSnapshot(snapshot: DeltaSnapshot): void;
   onSpectateStatus(status: SpectateStatus): void;
   onSpectateError(reason: string): void;
+  /** Dev-only: server-global kill-reward multiplier changed (or initial value). */
+  onRewardMultiplier(multiplier: number): void;
 }
 
 export function wireSocketHandlers(
@@ -91,6 +93,7 @@ export function wireSocketHandlers(
   socket.on('world:bossFelled', (m) => h.onBossFelled(m));
   socket.on('world:events', (e) => h.onWorldEvents(e));
   socket.on('game:updateAnnouncement', (p) => h.onUpdateAnnouncement(p));
+  socket.on('debug:rewardMultiplier', (m) => h.onRewardMultiplier(m));
   socket.on('session:kicked', () => {
     socket.io.reconnection(false);
     h.onSessionKicked();
@@ -123,6 +126,7 @@ export function wireSocketHandlers(
     socket.off('world:bossFelled');
     socket.off('world:events');
     socket.off('game:updateAnnouncement');
+    socket.off('debug:rewardMultiplier');
     socket.off('session:kicked');
   };
 }

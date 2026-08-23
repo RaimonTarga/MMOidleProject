@@ -177,6 +177,27 @@ the lie into the content. All four are known and specific:
 - The fight bench defaults to `--time-scale 5`, where measured T3 throughput ran ~18%
   low. Farm mode already caps at 2. Decide the default now.
 
+**W5a-bis — In-game reward multiplier. ✅ DONE 2026-08-23.** The bench measures balance;
+this is the affordance for *playing* it. A dev-only, server-global scalar on everything a
+kill pays out — essence, biome XP, catalyst progress, and the boss first-clear catalyst
+bundle — so a playtest can reach T3/T4 content in an evening instead of farming to it.
+
+- Set it from the in-game **debug panel** (backtick): presets 1× / 5× / 10× / 25× / 100×,
+  plus a custom field, clamped to 1–1000.
+- **Server-global and runtime-only.** It lives on `World.rewardMultiplier`, is never
+  persisted, and resets to 1× on restart. Headless runs can seed it with the
+  `DEBUG_REWARD_MULT` env var.
+- The handler is registered under `IS_DEV`, so production can only ever run at 1×, and at
+  1× every line of the reward formula is byte-identical to shipped.
+- **It is not a cap bypass.** The biome level cap still binds, so 10× XP does not mean 10×
+  biome levels for a tier-gated character — the excess is discarded exactly as it is today.
+- **It does not touch difficulty**, only payout. A boosted character reaches T4 gear
+  against T1-tuned mobs, so it is a *content-reach* tool, not a balance measurement — the
+  bench remains the instrument for judging numbers.
+
+Applied in `server/src/systems/player/progression/rewards.ts` (the single reward seam);
+guarded by `server/test/rewardMultiplier.test.ts`.
+
 **W5b — Write down what "balanced" means, before measuring anything.** A design
 statement, not tooling, and it changes what every later number is judged against:
 

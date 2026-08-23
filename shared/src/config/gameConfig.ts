@@ -158,6 +158,28 @@ export const GAME_CONFIG = {
   CATALYST_PROGRESS_PER_UNIT: 100,
 } as const;
 
+// ── Dev reward multiplier ─────────────────────────────────────────────────────
+// A dev-only, server-global scalar on everything a kill is worth (essence, biome
+// XP, catalyst progress and the boss catalyst bundle) so a balance/playtest cycle
+// can reach late content without farming it. 1 = shipped rates; it is the only
+// value production ever runs at, because the debug handler that changes it is
+// registered under IS_DEV.
+export const DEBUG_REWARD_MULT_DEFAULT = 1;
+export const DEBUG_REWARD_MULT_MIN = 1;
+export const DEBUG_REWARD_MULT_MAX = 1000;
+
+/**
+ * Coerce an arbitrary inbound value to a usable reward multiplier: non-finite or
+ * non-numeric input falls back to 1x rather than poisoning every later kill with
+ * NaN, and anything in range is clamped and rounded to 2 decimals.
+ */
+export function clampRewardMultiplier(value: unknown): number {
+  const n = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(n)) return DEBUG_REWARD_MULT_DEFAULT;
+  const clamped = Math.min(DEBUG_REWARD_MULT_MAX, Math.max(DEBUG_REWARD_MULT_MIN, n));
+  return Math.round(clamped * 100) / 100;
+}
+
 /**
  * Total XP required to reach biome level `n` (from 0).
  * Formula: round(BASE × n ^ EXPONENT)

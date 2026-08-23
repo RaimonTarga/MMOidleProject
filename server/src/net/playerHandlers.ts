@@ -10,6 +10,7 @@ import {
   runeBudgetForGlobalMastery,
   sanitizeRuneLoadout,
   runicPointLoadoutCost,
+  clampRewardMultiplier,
 } from "@mmo-idle/shared";
 import type {
   AutocombatConfig,
@@ -477,6 +478,21 @@ export function registerPlayerHandlers(
   });
 
   if (IS_DEV) {
+    // Tell the freshly connected socket what the server-global reward multiplier
+    // currently is, so the debug panel opens showing server truth rather than a
+    // client-side guess that a reload or a second tab would have desynced.
+    socket.emit("debug:rewardMultiplier", world.rewardMultiplier);
+
+    socket.on("debug:setRewardMultiplier", (multiplier) => {
+      const next = clampRewardMultiplier(multiplier);
+      if (next === world.rewardMultiplier) return;
+      world.rewardMultiplier = next;
+      log.info({ playerId: socket.id, multiplier: next }, "debug reward multiplier set");
+      // Global setting, so every connected client (not just this one) has to be
+      // told; the broadcast hook is installed by index.ts.
+      world.rewardMultiplierBroadcast?.(next);
+    });
+
     socket.on("debug:goToTestRoom", () => {
       const p = world.getPlayerEntity(socket.id);
       if (!p) return;

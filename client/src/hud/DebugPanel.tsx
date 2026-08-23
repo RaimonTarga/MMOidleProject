@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import {
+  DEBUG_REWARD_MULT_MAX,
+  DEBUG_REWARD_MULT_MIN,
+  TEST_ROOM_NODE_ID,
+  clampRewardMultiplier,
+} from '@mmo-idle/shared';
 import { DEV_TOOLS_ENABLED } from '../devTools';
 import { hudBus } from '../hudBus';
 import {
@@ -21,6 +26,7 @@ import {
   playerNameAtom,
   playerNodeIdAtom,
   debugPanelOpenAtom,
+  rewardMultiplierAtom,
   selectedRangeAtom,
   selectedSubVariantAtom,
 } from './atoms';
@@ -117,6 +123,64 @@ function buildPlayerSection(p: DebugPlayer): DebugSection {
       row('hp',        `${p.hp} / ${p.maxHp}`),
     ],
   };
+}
+
+// ── Reward multiplier ─────────────────────────────────────────────────────────
+// Server-global scalar on essence, biome XP and catalyst progress, so a
+// balance/playtest cycle can reach late content without farming it. The atom
+// mirrors the server, which is the authority: pressing a preset only *asks*, and
+// the displayed value updates when the server echoes the change back.
+
+const REWARD_MULT_PRESETS = [1, 5, 10, 25, 100];
+
+function RewardMultiplierSection() {
+  const multiplier = useAtomValue(rewardMultiplierAtom);
+  const [draft, setDraft] = useState('');
+
+  function commitDraft() {
+    const trimmed = draft.trim();
+    setDraft('');
+    if (!trimmed) return;
+    const parsed = Number(trimmed);
+    if (!Number.isFinite(parsed)) return;
+    hudBus.requestSetRewardMultiplier(clampRewardMultiplier(parsed));
+  }
+
+  return (
+    <div className="debug-section">
+      <div className="debug-row">
+        <span className="debug-key">rewards</span>
+        <span className="debug-val">{multiplier}x</span>
+      </div>
+      <div className="debug-div">essence · biome xp · catalysts</div>
+      <div style={{ display: 'flex', gap: 4 }}>
+        {REWARD_MULT_PRESETS.map(preset => (
+          <button
+            key={preset}
+            className={`debug-btn${multiplier === preset ? ' active' : ''}`}
+            style={{ flex: 1, letterSpacing: '0.04em' }}
+            onClick={() => hudBus.requestSetRewardMultiplier(preset)}
+          >
+            {preset}x
+          </button>
+        ))}
+      </div>
+      <input
+        className="debug-input"
+        type="number"
+        min={DEBUG_REWARD_MULT_MIN}
+        max={DEBUG_REWARD_MULT_MAX}
+        step="any"
+        placeholder={`custom (${DEBUG_REWARD_MULT_MIN}-${DEBUG_REWARD_MULT_MAX}) ↵`}
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') commitDraft();
+        }}
+        onBlur={commitDraft}
+      />
+    </div>
+  );
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -219,6 +283,8 @@ function DebugPanelContent() {
           </button>
         </div>
       )}
+
+      {DEV_TOOLS_ENABLED && <RewardMultiplierSection />}
 
       {/* Moved out of the right rail: this draws attack ranges and hitboxes, which
           is a debugging overlay rather than a system the player navigates to. */}

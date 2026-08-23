@@ -362,6 +362,12 @@ export const craftTabAtom = atom<'make' | 'upgrade' | null>(null);
 export const questOpenAtom = atom<boolean>(false);
 export const settingsOpenAtom = atom<boolean>(false);
 export const debugPanelOpenAtom = atom<boolean>(false);
+/**
+ * Dev-only: the server-global kill-reward multiplier, mirrored from
+ * `debug:rewardMultiplier`. Display-only — the server is the authority, and the
+ * debug panel only ever asks it to change.
+ */
+export const rewardMultiplierAtom = atom<number>(1);
 /** Whether the bestiary detail overlay is open. */
 export const bestiaryOpenAtom = atom<boolean>(false);
 /** Which monster the bestiary detail overlay has selected (null = first/none). */
@@ -571,6 +577,10 @@ export function setBossFelledMarkers(markers: BossFelledMarker[]): void {
   const next: Record<string, BossFelledMarker> = {};
   for (const marker of markers) next[marker.nodeId] = marker;
   getDefaultStore().set(bossFelledByNodeAtom, next);
+}
+
+export function setRewardMultiplier(multiplier: number): void {
+  getDefaultStore().set(rewardMultiplierAtom, multiplier);
 }
 
 export function setDungeon(next: DungeonView | null): void {

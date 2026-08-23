@@ -189,9 +189,13 @@ function applyKillRewardsToPlayer(
   // applies to them (as it always has for the catalyst bundle below).
   const nodeModifier = NODE_MODIFIERS[nodeId]?.modifier;
   const rewardMult = modifierRewardMult(nodeModifier, biomeTier);
+  // Dev-only flat scalar on top of the real reward maths, so a playtest can reach
+  // late content without farming it. 1x in production and by default, which makes
+  // every line below identical to the shipped formula.
+  const debugMult = world.rewardMultiplier;
   const scaledEssence = Math.max(
     1,
-    Math.round(rewards.essence * essenceMult * rewardMult),
+    Math.round(rewards.essence * essenceMult * rewardMult * debugMult),
   );
   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
   // Catalyst progress is keyed by the NODE'S modifier (not its biome): every kill in
@@ -200,7 +204,7 @@ function applyKillRewardsToPlayer(
   // number) unless it sets an explicit `catalystWeight`. No modifier
   // (clearing / test room / throne) → no grant.
   const catalystWeight = Math.round(
-    (def?.rewards.catalystWeight ?? rewards.essence) * rewardMult,
+    (def?.rewards.catalystWeight ?? rewards.essence) * rewardMult * debugMult,
   );
   if (catalystWeight > 0 && nodeModifier) {
     grantCatalystProgress(recipient, nodeModifier, catalystWeight);
@@ -210,7 +214,7 @@ function applyKillRewardsToPlayer(
     world,
     recipient,
     nodeId,
-    Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult)),
+    Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult * debugMult)),
   );
   const questResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (monster.isMonster.isBoss && !monster.isEncounterAdd) {
@@ -225,7 +229,7 @@ function applyKillRewardsToPlayer(
         // One-time catalyst bundle for the first clear — keyed by the node's
         // modifier (the boss entity is stat-immune, but the NODE's catalyst
         // identity still applies). Skipped on excluded nodes (e.g. the throne).
-        const bundle = def?.rewards.catalystBundle ?? 0;
+        const bundle = Math.round((def?.rewards.catalystBundle ?? 0) * debugMult);
         const bundleFamily = NODE_MODIFIERS[monster.hasPosition.nodeId]?.modifier;
         if (bundle > 0 && bundleFamily) {
           recipient.tracksProgression.catalysts[bundleFamily] =

@@ -96,6 +96,12 @@ export interface ServerToClientEvents {
   "session:kicked": (payload: { reason: string }) => void;
   /** Player-facing release notes for versions newer than the player's previous login. */
   "game:updateAnnouncement": (payload: ReleaseAnnouncementPayload) => void;
+  /**
+   * Dev-only: the server-global kill-reward multiplier (essence, biome XP and
+   * catalyst progress). Sent on connect and to every client whenever it changes,
+   * so the debug panel always shows server truth. Never emitted in production.
+   */
+  "debug:rewardMultiplier": (multiplier: number) => void;
 }
 
 /** Events clients send to the server */
@@ -190,4 +196,9 @@ export interface ClientToServerEvents {
   "debug:respawnNode": () => void;
   /** Dev-only: grant and equip the Phase Tester weapon + Godmode armor. */
   "debug:equipPhaseTester": () => void;
+  /**
+   * Dev-only: set the server-global kill-reward multiplier. Clamped server-side to
+   * [DEBUG_REWARD_MULT_MIN, DEBUG_REWARD_MULT_MAX]. Server ignores in production.
+   */
+  "debug:setRewardMultiplier": (multiplier: number) => void;
 }

@@ -278,6 +278,9 @@ async function boot(): Promise<void> {
     io.emit("world:bossFelled", world.buildBossFelledSnapshot());
   };
   world.bossFelledBroadcast = emitBossFelledState;
+  world.rewardMultiplierBroadcast = (multiplier) => {
+    io.emit("debug:rewardMultiplier", multiplier);
+  };
   const adminControls = registerAdminNamespace(
     io,
     world,

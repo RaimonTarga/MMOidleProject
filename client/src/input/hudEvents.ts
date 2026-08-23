@@ -19,6 +19,7 @@ import {
   sendNavigateTo,
   sendRenameCharacter,
   sendEquipPhaseTester,
+  sendSetRewardMultiplier,
   sendResetProgress,
   sendResetClass,
   sendSetAutoTraverse,
@@ -176,6 +177,10 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("equipPhaseTester", () => {
     if (isDeathOverlayActive()) return;
     sendEquipPhaseTester(scene.socket);
+  });
+
+  intents.on("setRewardMultiplier", (multiplier) => {
+    sendSetRewardMultiplier(scene.socket, multiplier);
   });
 
   intents.on("joinParty", (targetPlayerId) => {

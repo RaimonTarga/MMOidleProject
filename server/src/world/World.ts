@@ -15,6 +15,8 @@ import {
   modifierSpawnFactor,
   CLEARING_NODE_ID,
   TEST_ROOM_NODE_ID,
+  DEBUG_REWARD_MULT_DEFAULT,
+  clampRewardMultiplier,
   type DeathCause,
   type NetworkedComponentKey,
   type Vec2,
@@ -240,6 +242,17 @@ export class World {
   pendingAscensions: string[] = [];
   /** Contributors on-node when the Void Overlord dies — drained for overlay emit. */
   pendingOverlordFelled: string[] = [];
+  /**
+   * Dev-only multiplier on everything a kill pays out (essence, biome XP,
+   * catalyst progress, boss catalyst bundle). Server-global and runtime-only: it
+   * is never persisted, so a restart returns to shipped rates. Set from the
+   * in-game debug panel, or seeded from DEBUG_REWARD_MULT for headless runs.
+   */
+  rewardMultiplier = clampRewardMultiplier(
+    process.env.DEBUG_REWARD_MULT ?? DEBUG_REWARD_MULT_DEFAULT,
+  );
+  /** Notify every connected client that `rewardMultiplier` changed. Set by index.ts. */
+  rewardMultiplierBroadcast: ((multiplier: number) => void) | null = null;
   /** Dungeon boss respawn cooldowns keyed by node id. */
   bossRespawnAt = new Map<string, number>();
   /** Runtime-only dungeon guard/boss state keyed by node id. */

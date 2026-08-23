@@ -134,6 +134,11 @@ export const hudBus = {
     intents.emit('equipPhaseTester', undefined);
   },
 
+  /** Dev-only: ask the server to change the global kill-reward multiplier. */
+  requestSetRewardMultiplier(multiplier: number): void {
+    intents.emit('setRewardMultiplier', multiplier);
+  },
+
   notifyRecipeUnlock(name: string, biomeGroup: string): void {
     recipeUnlockListeners.forEach(fn => fn(name, biomeGroup));
   },

@@ -1614,6 +1614,28 @@
   color: #ff5533;
 }
 
+/* Numeric field inside the debug panel (reward multiplier). Matches .debug-btn's
+   material so the row reads as one control group. */
+.debug-input {
+  width: 100%;
+  min-width: 0;
+  margin: 3px 0;
+  padding: 4px 6px;
+  background: rgba(20, 4, 3, 0.92);
+  border: 1px solid rgba(180, 45, 25, 0.28);
+  color: #ee7755;
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  border-radius: 3px;
+}
+
+.debug-input:focus {
+  outline: none;
+  border-color: rgba(255, 85, 51, 0.5);
+  color: #ff9977;
+}
+
 .debug-btn.active {
   background: linear-gradient(135deg, rgba(120, 24, 12, 0.92), rgba(80, 14, 8, 0.96));
   border-color: rgba(255, 85, 51, 0.5);

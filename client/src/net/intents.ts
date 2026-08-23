@@ -163,3 +163,7 @@ export function sendRenameCharacter(socket: GameSocket, name: string): void {
 export function sendEquipPhaseTester(socket: GameSocket): void {
   socket.emit('debug:equipPhaseTester');
 }
+
+export function sendSetRewardMultiplier(socket: GameSocket, multiplier: number): void {
+  socket.emit('debug:setRewardMultiplier', multiplier);
+}

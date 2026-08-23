@@ -27,6 +27,7 @@ export interface IntentMap {
   resetProgress: undefined;
   renameCharacter: string;
   equipPhaseTester: undefined;
+  setRewardMultiplier: number;
   tacticalView: undefined;
   joinParty: string;
   leaveParty: undefined;
