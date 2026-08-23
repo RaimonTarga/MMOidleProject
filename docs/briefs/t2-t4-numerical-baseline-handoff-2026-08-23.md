@@ -1,5 +1,11 @@
 # T2–T4 Numerical Baseline — Fresh-Session Handoff
 
+> **FULFILLED 2026-08-23 — live state in [`../tier-balance-current-state.md`](../tier-balance-current-state.md).**
+> Kept for the pre-pass measurements in §4 and the instrument-gap list in §5, both of which
+> are still the record of what was wrong. Two things here were overtaken by the work:
+> §3's ordering questions are all answered, and §2's "first biome is the measured anchor"
+> method does **not** generalise past T1 — T2–T4 anchor by chaining from T1's floor instead.
+
 **Prepared:** 2026-08-23
 **Purpose:** establish a numerical baseline for tiers 2–4, the way
 [`t1-balance-context-2026-08-18.md`](t1-balance-context-2026-08-18.md) did for T1.

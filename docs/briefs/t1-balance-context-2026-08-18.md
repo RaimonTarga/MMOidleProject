@@ -1,5 +1,16 @@
 # Tier 1 Balance — Full Context Pack
 
+> ⚠ **Partly superseded 2026-08-23.** The method, formulas and encounter model here are all
+> still current and this remains the best explanation of *why* the balance works the way it
+> does. Three sets of FIGURES moved after it was written and are stale below:
+> **(1)** node-modifier magnitudes (§6) — now 0.05/0.10/0.15/0.20;
+> **(2)** Mountain and Caverns stat blocks (§7) and the derived tables (§8) — the tier table
+> could not see charged attacks, which understated Mountain by 42%, and both biomes were
+> retuned once it could;
+> **(3)** the "tiers 2–4 have not had this pass" note (§9) — they have.
+> Live state: [`../tier-balance-current-state.md`](../tier-balance-current-state.md).
+> Regenerate any figure with `pnpm tier:table --tier=1`.
+
 **Prepared:** 2026-08-18
 **Purpose:** self-contained context for discussing the Tier 1 monster/zone balance pass
 with someone (or something) that has no access to the codebase. Everything needed to
@@ -230,8 +241,14 @@ the node's catalyst identity still applies to them.
 A single scalar `M` drives everything, rising by tier:
 
 ```
-T1 M = 0.15    T2 M = 0.20    T3 M = 0.25    T4 M = 0.30
+T1 M = 0.05    T2 M = 0.10    T3 M = 0.15    T4 M = 0.20
 ```
+
+> ⚠ **Corrected 2026-08-23.** This doc originally recorded 0.15/0.20/0.25/0.30. `d38625b`
+> softened them to the values above; the multiplier matrix and modifier tables further down
+> still show the OLD magnitudes and are stale. `shared/src/world/nodeModifiers.ts` is the
+> truth. The gap matters: the T3/T4 ladder steps were widened to outrun this spread — see
+> [`../tier-balance-current-state.md`](../tier-balance-current-state.md) §5.
 
 ### The five modifiers
 
@@ -518,8 +535,16 @@ rewards: 110 essence, 165 biome XP, 5-catalyst bundle
 | Plains | 5 | 48 | 71 | 7.7 | 23.2 | 1.00 | 1.00 |
 | Forest | 3 | 36 | 102 | 13.7 | 27.3 | 1.69 | 1.01 |
 | Swamp | 2 | 20 | 138 | 22.0 | 32.9 | 2.74 | 1.10 |
-| Mountain | 2 | 24 | 196 | 27.0 | 40.6 | 4.82 | 1.93 |
-| Caverns | 2 | 16 | 263 | 32.1 | 48.2 | 7.66 | 3.06 |
+| Mountain | 2 | 24 | 196 | 26.8 | 40.2 | 4.77 | 1.91 |
+| Caverns | 2 | 16 | 282 | 32.2 | 48.3 | 8.25 | 3.30 |
+
+> Mountain and Caverns updated 2026-08-23. The figures this pass originally produced (40.6
+> and 48.2 sustained) were measured by a tier table that ignored the charged-attack cycle.
+> Once it modelled that, Mountain read **56.8** — 42% over target, and out-pressuring
+> Caverns, inverting the last step of the railroad. Both biomes were retuned: Cliff Hopper
+> and Ridge Ambusher traded base attack (82 → 50) for bigger telegraphed spikes (×1.5 → ×2.1,
+> ×1.8 → ×2.5), and Cave Brute did the same (118 → 90, ×1.5 → ×2.0) with HP raised. The stat
+> blocks in §7 above still show the pre-correction values.
 
 Indexed progression curves (Plains = 1.00):
 
