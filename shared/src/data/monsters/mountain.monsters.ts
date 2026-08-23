@@ -46,7 +46,7 @@ export const mountainMonsterEntries = [
     // CAPRINE T1. Identity: it VAULTS mountain ledges, and its Strong Kick knocks
     // you back — which matters most around ledges and drop-offs. Mobile roaming, not
     // a guarded post.
-    stats: { hp: 190, attack: 82, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
+    stats: { hp: 190, attack: 50, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 42 }, // charging brute → Might (biome mixture; tunable)
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -58,7 +58,7 @@ export const mountainMonsterEntries = [
     // rare huge hits, so raising attack to hit the tier's damage target already makes
     // every swing cap-tripping; leaving the old multiplier on top would have turned the
     // telegraph into a one-shot rather than a spike worth bracing for.
-    chargedAttack: { name: 'Strong Kick', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3200, multiplier: 1.5, fx: 'strong-kick', knockback: { distance: 180 } },
+    chargedAttack: { name: 'Strong Kick', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3200, multiplier: 2.1, fx: 'strong-kick', knockback: { distance: 180 } },
     // NO patrol (T1-T4 rework, locked): the sentinel-style fixed post was the wrong
     // fantasy for a caprine. It roams normally; `vaultsMountainLedges` is the identity.
   }],
@@ -67,7 +67,7 @@ export const mountainMonsterEntries = [
     id: 'ridge-archer', name: 'Ridge Ambusher', color: 0x778899,
     // ARTILLERY T1 — already good, no additional mechanic needed. Holds chokepoints,
     // heavy slow ranged attacks, and a telegraphed Power Shot.
-    stats: { hp: 240, attack: 82, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3100, pullRange: 350 },
+    stats: { hp: 240, attack: 50, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3100, pullRange: 350 },
     behavior: 'ranged', attackStyle: 'arrow', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 8, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -78,7 +78,7 @@ export const mountainMonsterEntries = [
     // bolt raised to the tier's damage target, a 3x power shot lands well past a T1
     // player's whole health bar. 1.8 keeps it the scariest single hit in T1 without
     // making the wind-up unsurvivable rather than merely urgent.
-    chargedAttack: { name: 'Power Shot', castMs: 2000, cooldownMs: 8000, initialCooldownMs: 3500, multiplier: 1.8, fx: 'power-shot' },
+    chargedAttack: { name: 'Power Shot', castMs: 2000, cooldownMs: 8000, initialCooldownMs: 3500, multiplier: 2.5, fx: 'power-shot' },
   }],
 
   // ── MOUNTAIN T2 — everything hits like a truck and trips the cap ──
@@ -88,7 +88,7 @@ export const mountainMonsterEntries = [
     // WARNING: NO ledge vaulting (locked) — that identity is the caprines' and the
     // flyers'. It gets the reusable Cave/Cavern GROUND SLAM instead (behavior pass).
     // A modest engagement charge may remain against trivial kiting.
-    stats: { hp: 400, attack: 70, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    stats: { hp: 336, attack: 122, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
@@ -109,7 +109,7 @@ export const mountainMonsterEntries = [
     // FLYER T1 — the DIVE-BOMBER. Aerial roaming while idle; it crosses ledges
     // because it FLIES. One dive/charge on engagement, then ordinary combat.
     // WARNING: no repeated hit-and-run loop (locked).
-    stats: { hp: 290, attack: 50, plating: 0, damageReduction: 0, speed: 40, attackRange: 12, attackCooldown: 2800, pullRange: 285 },
+    stats: { hp: 244, attack: 88, plating: 0, damageReduction: 0, speed: 40, attackRange: 12, attackCooldown: 2800, pullRange: 285 },
     behavior: 'melee', attackStyle: 'slash', biome: 'mountain',
     rewards: { essence: 12, essenceType: 'blue', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 500, idleMaxMs: 2000 },
@@ -124,7 +124,7 @@ export const mountainMonsterEntries = [
     // ARTILLERY T2 — evolved. Still a chokepoint/position-holding ranged threat with
     // a heavy boulder. Optional (only if cheap): a lobbed/delayed impact with a small
     // telegraphed landing area. Do NOT build a subsystem solely for this.
-    stats: { hp: 330, attack: 60, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
+    stats: { hp: 277, attack: 106, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
     behavior: 'ranged', attackStyle: 'boulder', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 13, essenceType: 'blue', level: 1, biomeXp: 75 },
     // Optional lobbed impact with a small telegraphed landing area - cheap because
@@ -142,7 +142,7 @@ export const mountainMonsterEntries = [
     id: 'mountain-colossus', name: 'Mountain Colossus', color: 0x8899aa,
     // GROUND BRUISER T2. Same Slam family as the Titan, with a larger/more
     // threatening footprint and/or damage. Still deliberate and readable.
-    stats: { hp: 870, attack: 95, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    stats: { hp: 610, attack: 130, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 440 },
     ai: { wanderRadius: 90, leashRange: 420, idleMinMs: 4000, idleMaxMs: 10500 },
@@ -160,7 +160,7 @@ export const mountainMonsterEntries = [
     id: 'avalanche-ram', name: 'Avalanche Ram', color: 0x99aabb,
     // CAPRINE T2 — the Hopper lineage returns. Ledge traversal, an aggressive charge,
     // and a heavy knockback ram/kick.
-    stats: { hp: 620, attack: 64, plating: 0, damageReduction: 0, speed: 38, attackRange: 12, attackCooldown: 2600, pullRange: 245 },
+    stats: { hp: 434, attack: 87, plating: 0, damageReduction: 0, speed: 38, attackRange: 12, attackCooldown: 2600, pullRange: 245 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 47, essenceType: 'blue', level: 2, biomeXp: 280 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 500, idleMaxMs: 2200 },
@@ -179,7 +179,7 @@ export const mountainMonsterEntries = [
     // be a relatively STATIONARY, terrain-holding artillery piece that lobs delayed
     // bombardment. The player solves it by repositioning or build, not by an endless
     // chase. Behavior pass converts it off `kiter`.
-    stats: { hp: 700, attack: 80, plating: 0, damageReduction: 0, speed: 30, attackRange: 250, attackCooldown: 3600, pullRange: 360 },
+    stats: { hp: 490, attack: 109, plating: 0, damageReduction: 0, speed: 30, attackRange: 250, attackCooldown: 3600, pullRange: 360 },
     // STATIONARY TERRAIN ARTILLERY, not a kiter (locked): it holds its ground and
     // bombards, and the player answers with repositioning or build rather than an
     // endless chase.
@@ -203,7 +203,7 @@ export const mountainMonsterEntries = [
     // GROUND BRUISER T3 — evolved Slam expressed as a predictable CADENCE finisher:
     // large normal attacks, and every 4th is the major Slam. The Mountain teaching
     // unit: its NORMAL hit is scary, its finisher is lethal without the damage cap.
-    stats: { hp: 1900, attack: 155, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
+    stats: { hp: 779, attack: 184, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 95, essenceType: 'blue', level: 4, biomeXp: 570 },
     ai: { wanderRadius: 90, leashRange: 430, idleMinMs: 4000, idleMaxMs: 11000 },
@@ -215,7 +215,7 @@ export const mountainMonsterEntries = [
     id: 'avalanche-tyrant', name: 'Avalanche Tyrant', color: 0x99aabb,
     // CAPRINE T3 — apex. Ledge traversal, extreme mobility/charge, and a brutal
     // knockback ram.
-    stats: { hp: 1300, attack: 122, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
+    stats: { hp: 533, attack: 145, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 68, essenceType: 'blue', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2500 },
@@ -234,7 +234,7 @@ export const mountainMonsterEntries = [
     // Progression: Stone Eagle is the dive-bomber, the Roc is the bombardier. It
     // maintains useful spacing through FLIGHT, not ordinary ground backpedaling.
     // Behavior pass converts it off `kiter`.
-    stats: { hp: 1400, attack: 150, plating: 0, damageReduction: 0, speed: 34, attackRange: 260, attackCooldown: 3500, pullRange: 380 },
+    stats: { hp: 574, attack: 179, plating: 0, damageReduction: 0, speed: 34, attackRange: 260, attackCooldown: 3500, pullRange: 380 },
     // AERIAL ARTILLERY, not a ground kiter (locked): it keeps useful spacing by
     // being in the air, so it is plain `ranged` and lets flight do the work.
     behavior: 'ranged', attackStyle: 'boulder', biome: 'mountain',
@@ -248,7 +248,7 @@ export const mountainMonsterEntries = [
     // STANDALONE LATE ELITE — the weapon-matchup exam, kept exactly as it is:
     // heavy plating, some DR, the enemy soft-cap, and one large periodic empowered
     // hit. Do NOT add another mechanic (locked).
-    stats: { hp: 2250, attack: 95, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
+    stats: { hp: 923, attack: 113, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain', elite: true,
     rewards: { essence: 185, essenceType: 'blue', level: 4, biomeXp: 1110 },
     ai: { wanderRadius: 80, leashRange: 400, idleMinMs: 5000, idleMaxMs: 13000 },

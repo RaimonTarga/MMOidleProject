@@ -160,6 +160,9 @@ export const MONSTER_FRAMES: Record<string, string> = {
 
   // ── T2: Plains ──────────────────────────────────────────────────────────────
   'prairie-wolf':   'sprites/monsters/prairie-wolf.png',
+  // Shares the adult frame for now, exactly as `young-wolf` shared `wolf.png` before it
+  // earned its own smaller-silhouette sprite. Art pass can split it the same way.
+  'prairie-yearling': 'sprites/monsters/prairie-wolf.png',
   'stampede-bull':  'sprites/monsters/stampede-bull.png',
   'savanna-hawk':   'sprites/monsters/savanna-hawk.png',
 
@@ -167,6 +170,8 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'ancient-wolf':   'sprites/monsters/ancient-wolf.png',   // display: Dire Wolf
   'ironwood-golem': 'sprites/monsters/ironclaw-badger.png', // display: Ironclaw Badger
   'canopy-sprite':  'sprites/monsters/thorn-spitter.png',   // display: Thorn Spitter
+  // Shares the adult frame until the art pass splits it, as `young-wolf` once did.
+  'dire-whelp':     'sprites/monsters/ancient-wolf.png',
 
   // ── T2: Mountain ────────────────────────────────────────────────────────────
   'granite-titan':  'sprites/monsters/granite-titan.png',

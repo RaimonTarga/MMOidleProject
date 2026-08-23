@@ -65,7 +65,7 @@ export const bossMonsterEntriesT4 = [
   ['iron-crest-titan', {
     id: 'iron-crest-titan', name: 'Iron-Crest Titan', color: 0x8899bb,
     isBoss: true,
-    stats: { hp: 8500, attack: 175, plating: 14, damageReduction: 0.06, speed: 16, attackRange: 20, attackCooldown: 4200, pullRange: 420 },
+    stats: { hp: 19499, attack: 228, plating: 14, damageReduction: 0.06, speed: 16, attackRange: 20, attackCooldown: 4200, pullRange: 420 },
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 620, essenceType: 'blue', level: 5, biomeXp: 930 },
     ai: { wanderRadius: 95, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
@@ -111,7 +111,7 @@ export const bossMonsterEntriesT4 = [
   ['dune-throne-sovereign', {
     id: 'dune-throne-sovereign', name: 'Dune-Throne Sovereign', color: 0xddbb33,
     isBoss: true,
-    stats: { hp: 7800, attack: 142, plating: 8, damageReduction: 0.08, speed: 44, attackRange: 20, attackCooldown: 2800, pullRange: 400 },
+    stats: { hp: 17893, attack: 185, plating: 8, damageReduction: 0.08, speed: 44, attackRange: 20, attackCooldown: 2800, pullRange: 400 },
     behavior: 'melee', attackStyle: 'sandblast', biome: 'desert',
     rewards: { essence: 595, essenceType: 'yellow', level: 5, biomeXp: 893 },
     ai: { wanderRadius: 140, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -152,14 +152,14 @@ export const bossMonsterEntriesT4 = [
   ['verdant-crown-predator', {
     id: 'verdant-crown-predator', name: 'Verdant-Crown Predator', color: 0x115522,
     isBoss: true,
-    stats: { hp: 8000, attack: 90, plating: 0, damageReduction: 0.04, speed: 76, attackRange: 20, attackCooldown: 1400, pullRange: 400 },
+    stats: { hp: 18352, attack: 117, plating: 0, damageReduction: 0.04, speed: 76, attackRange: 20, attackCooldown: 1400, pullRange: 400 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 605, essenceType: 'green', level: 5, biomeXp: 908 },
     ai: { wanderRadius: 150, leashRange: 960, idleMinMs: 2000, idleMaxMs: 6000 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 900 },
     evasion: 0.25,
     cadenceFinisher: { everyNAttacks: 5, multiplier: 2.1 },   // 235
-    dotEffect: { debuffId: 'verdant-crown-venom', label: 'Crown Venom', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
+    dotEffect: { debuffId: 'verdant-crown-venom', label: 'Crown Venom', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
@@ -193,7 +193,7 @@ export const bossMonsterEntriesT4 = [
   ['glacial-patriarch', {
     id: 'glacial-patriarch', name: 'Glacial Patriarch', color: 0x77aadd,
     isBoss: true,
-    stats: { hp: 10000, attack: 145, plating: 22, damageReduction: 0.14, speed: 14, attackRange: 20, attackCooldown: 4500, pullRange: 420 },
+    stats: { hp: 22940, attack: 189, plating: 22, damageReduction: 0.14, speed: 14, attackRange: 20, attackCooldown: 4500, pullRange: 420 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 640, essenceType: 'blue', level: 5, biomeXp: 960 },
     ai: { wanderRadius: 90, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
@@ -241,14 +241,14 @@ export const bossMonsterEntriesT4 = [
   ['caldera-sovereign', {
     id: 'caldera-sovereign', name: 'Caldera Sovereign', color: 0xee3300,
     isBoss: true,
-    stats: { hp: 9000, attack: 100, plating: 10, damageReduction: 0.05, speed: 24, attackRange: 20, attackCooldown: 2600, pullRange: 400 },
+    stats: { hp: 20646, attack: 130, plating: 10, damageReduction: 0.05, speed: 24, attackRange: 20, attackCooldown: 2600, pullRange: 400 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 625, essenceType: 'red', level: 5, biomeXp: 938 },
     ai: { wanderRadius: 120, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     aoeAttack: { radius: 130, damageMult: 0.6 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.80, tickIntervalMs: 2000 },
-    dotEffect: { debuffId: 'caldera-burn', label: 'Caldera Burn', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
+    dotEffect: { debuffId: 'caldera-burn', label: 'Caldera Burn', damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
     chargedAttack: {
       name: 'Caldera Eruption', castMs: 1300, cooldownMs: 7000, initialCooldownMs: 3500,
       multiplier: 1.8, fx: 'strong-kick', aoe: { radius: 200 },
@@ -282,12 +282,12 @@ export const bossMonsterEntriesT4 = [
   ['charnel-crown-sovereign', {
     id: 'charnel-crown-sovereign', name: 'Charnel-Crown Sovereign', color: 0x553366,
     isBoss: true,
-    stats: { hp: 8500, attack: 88, plating: 14, damageReduction: 0.08, speed: 28, attackRange: 20, attackCooldown: 2300, pullRange: 400 },
+    stats: { hp: 19499, attack: 115, plating: 14, damageReduction: 0.08, speed: 28, attackRange: 20, attackCooldown: 2300, pullRange: 400 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 615, essenceType: 'purple', level: 5, biomeXp: 923 },
     ai: { wanderRadius: 105, leashRange: 960, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1100 },
-    dotEffect: { debuffId: 'charnel-crown-decay', label: 'Crown Decay', damagePerStack: 7, maxStacks: 6, tickIntervalMs: 1000, durationMs: 5000 },
+    dotEffect: { debuffId: 'charnel-crown-decay', label: 'Crown Decay', damagePerStack: 9, maxStacks: 6, tickIntervalMs: 1000, durationMs: 5000 },
     aoeAttack: { radius: 130, damageMult: 0.5 },
     chargedAttack: {
       name: 'Charnel Burst', castMs: 1500, cooldownMs: 9000, initialCooldownMs: 4500,
@@ -329,7 +329,7 @@ export const bossMonsterEntriesT4 = [
   ['elder-trench-serpent', {
     id: 'elder-trench-serpent', name: 'Elder Trench Serpent', color: 0x335577,
     isBoss: true,
-    stats: { hp: 9500, attack: 110, plating: 20, damageReduction: 0.22, speed: 22, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
+    stats: { hp: 21793, attack: 143, plating: 20, damageReduction: 0.22, speed: 22, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 660, essenceType: 'purple', level: 5, biomeXp: 990 },
     ai: { wanderRadius: 100, leashRange: 960, idleMinMs: 4500, idleMaxMs: 11000 },
@@ -356,7 +356,7 @@ export const bossMonsterEntriesT4 = [
     id: 'elder-trench-serpent-warden', name: 'Elder Trench Serpent Warden', color: 0x223355,
     // Elite encounter unit; spawned in Stage 2 of the Void Overlord encounter.
     // Not a dungeon boss — no biomeXp, no essence reward of its own.
-    stats: { hp: 3200, attack: 105, plating: 18, damageReduction: 0.18, speed: 20, attackRange: 22, attackCooldown: 3400, pullRange: 350 },
+    stats: { hp: 7341, attack: 137, plating: 18, damageReduction: 0.18, speed: 20, attackRange: 22, attackCooldown: 3400, pullRange: 350 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
     ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
@@ -368,7 +368,7 @@ export const bossMonsterEntriesT4 = [
   ['void-overlord', {
     id: 'void-overlord', name: 'Void Overlord', color: 0x220044,
     isBoss: true,
-    stats: { hp: 13000, attack: 115, plating: 22, damageReduction: 0.24, speed: 18, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
+    stats: { hp: 29822, attack: 150, plating: 22, damageReduction: 0.24, speed: 18, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 2000, essenceType: 'purple', level: 5, biomeXp: 3000 },
     ai: { wanderRadius: 0, leashRange: 980, idleMinMs: 4000, idleMaxMs: 9000 },
@@ -445,18 +445,18 @@ export const bossMonsterEntriesT4 = [
     id: 'void-horror', name: 'Void Horror', color: 0x331144,
     // Stage-1 swarm filler. Fast, low HP, frequent light hits. The threat
     // is volume (12 → 9 → 8 of them). DoT pressure adds up fast.
-    stats: { hp: 380, attack: 52, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 310 },
+    stats: { hp: 872, attack: 68, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 310 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
     ai: { wanderRadius: 350, leashRange: 850, idleMinMs: 400, idleMaxMs: 2000 },
-    dotEffect: { debuffId: 'void-horror-corruption', label: 'Void Corruption', damagePerStack: 9, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
+    dotEffect: { debuffId: 'void-horror-corruption', label: 'Void Corruption', damagePerStack: 12, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['void-hulk', {
     id: 'void-hulk', name: 'Void Hulk', color: 0x221133,
     // Stage-1 heavy add. Slow, hard-hitting, high plating — the anchor unit
     // in each wave. Tests pierce tools (Rupture, brittle weapon) mid-encounter.
-    stats: { hp: 2200, attack: 95, plating: 16, damageReduction: 0.16, speed: 22, attackRange: 15, attackCooldown: 3500, pullRange: 200 },
+    stats: { hp: 5047, attack: 124, plating: 16, damageReduction: 0.16, speed: 22, attackRange: 15, attackCooldown: 3500, pullRange: 200 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
     ai: { wanderRadius: 100, leashRange: 750, idleMinMs: 3000, idleMaxMs: 8000 },

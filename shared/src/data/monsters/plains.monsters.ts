@@ -59,17 +59,34 @@ export const plainsMonsterEntries = [
 
 
   // ── PLAINS T2 — bigger swarm: a pack runner, a charger, a ranged poke ──
+  ['prairie-yearling', {
+    id: 'prairie-yearling', name: 'Prairie Yearling', color: 0xeebb77,
+    // T2 PACK FOLLOWER. Exists only as two thirds of a Prairie Wolf pack; it is never
+    // in a spawn pool, exactly like Forest's `young-wolf`.
+    //
+    // WHY IT EXISTS: the Prairie Wolf used to call 3x `plains-slime` — the *T1* Field
+    // Hare — so half of T2 Plains' effective spawn weight was a tier-1 monster that
+    // could not be retuned without moving T1. A T2 alpha now calls a T2 pack.
+    stats: { hp: 90, attack: 11, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1250, pullRange: 275 },
+    behavior: 'melee', attackStyle: 'bite', biome: 'plains',
+    rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 18 },
+    ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
+    pack: { role: 'follower', callRange: 300 },
+    // Runs with the herd its alpha gathers, rather than pathing on its own.
+    swarm: { cohesion: 0.12, separation: 48 },
+  }],
+
   ['prairie-wolf', {
     id: 'prairie-wolf', name: 'Prairie Wolf', color: 0xddaa55,
     // Fastest plains mob; high base speed is its anti-kite. Glassy, low per-hit.
-    stats: { hp: 150, attack: 32, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 1200, pullRange: 275 },
+    stats: { hp: 180, attack: 19, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 1200, pullRange: 275 },
     behavior: 'melee', attackStyle: 'bite', biome: 'plains',
     rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
     // Plains CALLER (the brainstorm's "callers / small swarm group"): the fast runner
-    // rallies a slime swarm — spawns with 3 Plains Slimes and pulls them onto its
+    // rallies its own yearlings — spawns with 3 Prairie Yearlings and pulls them onto its
     // target via call-allies when it engages. Placeholder counts/range — user pass.
-    pack: { role: 'alpha', callRange: 300, followers: [{ typeId: 'plains-slime', count: 3 }] },
+    pack: { role: 'alpha', callRange: 300, followers: [{ typeId: 'prairie-yearling', count: 3 }] },
     // The alpha should wander with the herd it spawns, not path independently of it.
     swarm: { cohesion: 0.12, separation: 52 },
   }],
@@ -77,7 +94,7 @@ export const plainsMonsterEntries = [
   ['stampede-bull', {
     id: 'stampede-bull', name: 'Stampede Bull', color: 0xdd5500,
     // Swarm-catcher charger; thick hide gives a little DR but hits stay modest.
-    stats: { hp: 200, attack: 40, plating: 0, damageReduction: 0.05, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 235 },
+    stats: { hp: 230, attack: 24, plating: 0, damageReduction: 0.05, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 235 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3000 },
@@ -93,7 +110,7 @@ export const plainsMonsterEntries = [
     // Once engaged it is an ORDINARY ranged mob.
     // WARNING: no repeated swoops, no hit-and-run, no constant disengage/re-engage.
     // A one-time approach is fine if it falls out of implementation; a loop is not.
-    stats: { hp: 140, attack: 30, plating: 0, damageReduction: 0, speed: 50, attackRange: 165, attackCooldown: 2400, pullRange: 245 },
+    stats: { hp: 170, attack: 29, plating: 0, damageReduction: 0, speed: 50, attackRange: 165, attackCooldown: 2400, pullRange: 245 },
     behavior: 'ranged', attackStyle: 'slash', biome: 'plains',
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 38 }, // wild bird → Wild (biome mixture; tunable)
     flies: true,

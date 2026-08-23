@@ -56,7 +56,7 @@ export const tundraMonsterEntries = [
     // slow-to-moderate movement, meaningful direct hits, and NOTHING else — its giant
     // per-hit slow is gone. The synergy does the work: ambient Chill is what makes an
     // otherwise plain enemy hard to kite.
-    stats: { hp: 560, attack: 40, plating: 0, damageReduction: 0.10, speed: 26, attackRange: 12, attackCooldown: 2600, pullRange: 170 },
+    stats: { hp: 950, attack: 259, plating: 0, damageReduction: 0.10, speed: 26, attackRange: 12, attackCooldown: 2600, pullRange: 170 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 29, essenceType: 'blue', level: 2, biomeXp: 175 },
     ai: { wanderRadius: 150, leashRange: 510, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -67,7 +67,7 @@ export const tundraMonsterEntries = [
     // DEFENSIVE-WINDOW elite. ICE ARMOR (`enemyShield`) is the whole identity: chip
     // wastes itself against the shell, a burst POPS it and shatters for a damage
     // window. No per-hit slows, no ramping debuff (both removed, locked).
-    stats: { hp: 880, attack: 64, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    stats: { hp: 1500, attack: 415, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 65, essenceType: 'blue', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 140, leashRange: 500, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -91,7 +91,7 @@ export const tundraMonsterEntries = [
     // RANGED CONTROL CASTER — the biome's root specialist. Normal frost projectiles
     // carry no slow (removed, locked); its weapon is FROSTBIND, gated on the node's
     // Chill (see the chargedAttack authored in the behavior pass).
-    stats: { hp: 520, attack: 46, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
+    stats: { hp: 880, attack: 297, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
     // Relatively STATIONARY ranged caster, not a kiter (locked).
     behavior: 'ranged', attackStyle: 'frost', biome: 'tundra',
     staticSentry: true,
@@ -114,7 +114,7 @@ export const tundraMonsterEntries = [
     // TELEGRAPHED HEAVY HITTER: predictable CADENCE Frost/Tusk Slam every 4th attack
     // (240, trips the cap). No giant slow rider — ambient Chill already makes walking
     // out of the telegraph hard enough. Heavy ICE PLATING (12) rewards a brittle weapon.
-    stats: { hp: 1400, attack: 120, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
+    stats: { hp: 924, attack: 421, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 110, essenceType: 'blue', level: 4, biomeXp: 660 },
     ai: { wanderRadius: 140, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9500 },
@@ -126,7 +126,7 @@ export const tundraMonsterEntries = [
     id: 'glacial-direbear', name: 'Glacial Dire-Bear', color: 0x5599cc,
     // Evolved defensive-window elite: bigger Ice Armor, bigger Shatter payoff.
     // No ramping per-hit slows (removed, locked).
-    stats: { hp: 1850, attack: 105, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    stats: { hp: 1221, attack: 369, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 150, essenceType: 'blue', level: 4, biomeXp: 900 },
     ai: { wanderRadius: 130, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9000 },
@@ -145,7 +145,7 @@ export const tundraMonsterEntries = [
     // Evolved ranged Chill-control caster: the Rime Caster's Frostbind grown into a
     // stronger/longer Deep Freeze at high Chill. NO generic slow stacks on every
     // projectile (removed, locked).
-    stats: { hp: 1050, attack: 86, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
+    stats: { hp: 693, attack: 302, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
     behavior: 'ranged', attackStyle: 'frost', biome: 'tundra',
     staticSentry: true,
     rewards: { essence: 62, essenceType: 'blue', level: 3, biomeXp: 370 },
@@ -167,7 +167,7 @@ export const tundraMonsterEntries = [
     // (locked) — extreme plating is already enough defensive identity, and stacking a
     // second weapon-matchup layer on the apex was the kitchen sink.
     // Base 100 ≈ H_med (survivable between slams).
-    stats: { hp: 2900, attack: 100, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
+    stats: { hp: 1914, attack: 351, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra', elite: true,
     rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 70, leashRange: 380, idleMinMs: 6000, idleMaxMs: 15000 },

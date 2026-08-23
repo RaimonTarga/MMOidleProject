@@ -41,14 +41,14 @@ export const jungleMonsterEntries = [
     // strong pounce, then fights as ordinary melee. Its LIGHT poison is early
     // Jungle's entire poison presence — the evolved ambushers below carry none.
     // No evasion needed.
-    stats: { hp: 200, attack: 16, plating: 0, damageReduction: 0, speed: 76, attackRange: 12, attackCooldown: 1100, pullRange: 270 },
+    stats: { hp: 400, attack: 20, plating: 0, damageReduction: 0, speed: 76, attackRange: 12, attackCooldown: 1100, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     // It LIVES in the thicket. Combined with the bush's doubled player detection,
     // this is how Jungle gathers a fight: you walked into the undergrowth.
     idleAnchor: 'jungle-bush',
     ai: { wanderRadius: 290, leashRange: 740, idleMinMs: 600, idleMaxMs: 2600 },
-    dotEffect: { debuffId: 'snake-venom', label: 'Snake Venom', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1500 },
+    dotEffect: { debuffId: 'snake-venom', label: 'Snake Venom', damagePerStack: 7, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1500 },
     openingStrike: { multiplier: 2.2 },   // placeholder — user balance pass
   }],
 
@@ -59,7 +59,7 @@ export const jungleMonsterEntries = [
     // thicket's slow is what keeps you in it). The separate opening-strike
     // multiplier and the generic DR are REMOVED (locked) — charge + ramp was
     // already the whole idea, and a third spike layer just made it a mini-boss.
-    stats: { hp: 250, attack: 26, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
+    stats: { hp: 500, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
@@ -73,11 +73,11 @@ export const jungleMonsterEntries = [
     // when it attacks, then behaves as an ordinary ranged mob. It does NOT
     // re-camouflage in combat. Light poison is optional flavor at this first stage,
     // not the identity.
-    stats: { hp: 190, attack: 16, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
+    stats: { hp: 375, attack: 20, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
-    dotEffect: { debuffId: 'dart-poison', label: 'Dart Poison', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2100 },
+    dotEffect: { debuffId: 'dart-poison', label: 'Dart Poison', damagePerStack: 7, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2100 },
   }],
 
   // ══════════════════ JUNGLE — fast aggressive evasive swarm (Forest successor) ══════════════════
@@ -92,7 +92,7 @@ export const jungleMonsterEntries = [
     // EVOLVED AMBUSHER: very fast, moves through/around foliage effectively, opens
     // with a pounce. Poison is DE-EMPHASIZED here (removed, locked) — venom is the
     // Snake's early-tier note, speed is this one's.
-    stats: { hp: 440, attack: 26, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
+    stats: { hp: 790, attack: 55, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
@@ -103,7 +103,7 @@ export const jungleMonsterEntries = [
     id: 'silverback', name: 'Silverback', color: 0xaa6633,
     // Evolved Ape: charge + a STRONGER combat ramp. Unrelated pack/evasion/opening
     // clutter removed (locked).
-    stats: { hp: 580, attack: 40, plating: 0, damageReduction: 0, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
+    stats: { hp: 1045, attack: 83, plating: 0, damageReduction: 0, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 35, essenceType: 'green', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
@@ -116,7 +116,7 @@ export const jungleMonsterEntries = [
     // EVOLVED CONCEALED RANGED THREAT. Signature OPENING VOLLEY: reveal from
     // camouflage and fire ~2 shots in quick succession, then ordinary ranged
     // combat. No poison necessary.
-    stats: { hp: 400, attack: 22, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1400, pullRange: 250 },
+    stats: { hp: 720, attack: 45, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1400, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'arrow', biome: 'jungle',
     rewards: { essence: 27, essenceType: 'green', level: 2, biomeXp: 165 },
     // OPENING VOLLEY: reveal from camouflage and fire 2 shots in quick succession,
@@ -131,7 +131,7 @@ export const jungleMonsterEntries = [
     id: 'hunting-panther', name: 'Hunting Panther', color: 0x33cc44,
     // APEX AMBUSHER: the strongest fast foliage predator. Pounce / engagement
     // burst. No generic evasion gimmick.
-    stats: { hp: 800, attack: 60, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
+    stats: { hp: 704, attack: 52, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 45, essenceType: 'green', level: 3, biomeXp: 270 },
     ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 600, idleMaxMs: 2400 },
@@ -143,7 +143,7 @@ export const jungleMonsterEntries = [
     // APEX APE: charge + the STRONGEST combat ramp, and nothing else. Evasion,
     // the separate opening strike and the DR layering are all REMOVED (locked).
     // A visual Rage state at high ramp is optional presentation, not a mechanic.
-    stats: { hp: 1200, attack: 88, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1800, pullRange: 250 },
+    stats: { hp: 1056, attack: 77, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1800, pullRange: 250 },
     behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 88, essenceType: 'green', level: 4, biomeXp: 528 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3600 },
@@ -158,7 +158,7 @@ export const jungleMonsterEntries = [
     // Chameleon line T4 apex: thorn-spiked elder chameleon. Camouflage while idle,
     // then a STRONGER opening volley (~3 rapid projectiles), then ordinary ranged
     // combat. Its stacking venom is REMOVED (locked) — late tier is not a reason.
-    stats: { hp: 850, attack: 60, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },
+    stats: { hp: 748, attack: 52, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },
     behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 50, essenceType: 'green', level: 3, biomeXp: 300 },
     // Stronger opening volley than the Canopy Chameleon: ~3 rapid projectiles out
@@ -175,7 +175,7 @@ export const jungleMonsterEntries = [
     // dangerous Jungle pull.
     // REMOVED (locked): evasion, combat ramp, and the extra defensive layers. Light
     // venom stays for snake flavor.
-    stats: { hp: 1600, attack: 76, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1600, pullRange: 280 },
+    stats: { hp: 1408, attack: 66, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1600, pullRange: 280 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle', elite: true,
     rewards: { essence: 130, essenceType: 'green', level: 4, biomeXp: 780 },
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 800, idleMaxMs: 3000 },
@@ -183,7 +183,7 @@ export const jungleMonsterEntries = [
     // The root is dangerous less for its damage than for WHERE it lands: inside a
     // Jungle pull the terrain already gathered.
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0, rootMs: 1200 },
-    dotEffect: { debuffId: 'constrictor-venom', label: 'Constrictor Venom', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
+    dotEffect: { debuffId: 'constrictor-venom', label: 'Constrictor Venom', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
     // ECOLOGY: solo elite that HARDENS over a drawn-out fight (the constrictor
     // squeezes tighter) — the sustained pressure Jungle's hardening charm answers.
   }],

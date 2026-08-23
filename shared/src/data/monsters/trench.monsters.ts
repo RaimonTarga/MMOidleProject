@@ -36,7 +36,7 @@ export const trenchMonsterEntries = [
     // Signature: a periodic telegraphed heavy bite carrying ABYSSAL WOUND, the only
     // anti-Recovery left in the biome. Answers: enough sustain to survive the Wound,
     // Brace for the bite, burst/execute, or stealth-route to avoid a second pull.
-    stats: { hp: 3000, attack: 132, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
+    stats: { hp: 4200, attack: 420, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     elite: true,
     rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
@@ -63,7 +63,7 @@ export const trenchMonsterEntries = [
     // Its ranged presentation + Pressure Lance land in the behavior pass.
     // HP down vs the other two elites, plating stays heavy: armor is this one's
     // defensive identity. attackRange lifted to a real standoff.
-    stats: { hp: 2000, attack: 126, plating: 20, damageReduction: 0.10, speed: 22, attackRange: 240, attackCooldown: 3400, pullRange: 400 },
+    stats: { hp: 2800, attack: 401, plating: 20, damageReduction: 0.10, speed: 22, attackRange: 240, attackCooldown: 3400, pullRange: 400 },
     // `kiter`: it maintains standoff. Speed 22 is far below player base, so a
     // charging or mobile build always catches it - that contract is load-bearing.
     behavior: 'kiter', attackStyle: 'gunshot', biome: 'trench',
@@ -89,7 +89,7 @@ export const trenchMonsterEntries = [
     // The fight should read: huge target, shell windows, survive Devour, finish it
     // before another elite wanders in.
     // WARNING: no low-HP enrage. That is saved for a later Leviathan evolution.
-    stats: { hp: 4200, attack: 152, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
+    stats: { hp: 5880, attack: 483, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     elite: true,
     rewards: { essence: 400, essenceType: 'blue', level: 4, biomeXp: 2400 },

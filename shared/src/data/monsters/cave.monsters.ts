@@ -40,7 +40,7 @@ export const caveMonsterEntries = [
     // one's identity is MOVEMENT: fast, wide wander, short idles. Plating stays at 1
     // (at 4 it did enormous effective-HP work against light hits, which is what made
     // Caverns a slog).
-    stats: { hp: 200, attack: 31, plating: 1, damageReduction: 0.05, speed: 68, attackRange: 12, attackCooldown: 1400, pullRange: 200 },
+    stats: { hp: 225, attack: 31, plating: 1, damageReduction: 0.05, speed: 68, attackRange: 12, attackCooldown: 1400, pullRange: 200 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: false,
     rewards: { essence: 10, essenceType: 'red', level: 1, biomeXp: 70 },
     ai: { wanderRadius: 380, leashRange: 620, idleMinMs: 450, idleMaxMs: 1500 },
@@ -52,7 +52,7 @@ export const caveMonsterEntries = [
     id: 'cave-brute', name: 'Cave Brute', color: 0x443344,
     // The bruiser elite — a cap-tripping slam, slow, charges to connect, and
     // armored enough that fast weapons don't trivially shred it.
-    stats: { hp: 220, attack: 118, plating: 1, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 2800, pullRange: 240 }, // pullRange 145→240: high-detection patrolling elite (overpull risk)
+    stats: { hp: 250, attack: 90, plating: 1, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 2800, pullRange: 240 }, // pullRange 145→240: high-detection patrolling elite (overpull risk)
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 13, essenceType: 'red', level: 1, biomeXp: 90 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8000 },
@@ -67,7 +67,7 @@ export const caveMonsterEntries = [
       // Multiplier cut 2.2 -> 1.5 to sit alongside the raised base attack. The slam is
       // meant to be dodged, not tanked, so its job is a hard punish for standing in the
       // circle rather than an unsurvivable number regardless of footwork.
-      multiplier: 1.5, fx: 'strong-kick',
+      multiplier: 2.0, fx: 'strong-kick',
       aoe: { radius: 110 },
     },
     // Cave elite: patrols a fixed loop around its territory (predictable route the
@@ -86,11 +86,11 @@ export const caveMonsterEntries = [
     id: 'giant-spider', name: 'Giant Spider', color: 0x992266,
     // Evolved Cave Lurker: fast chaotic roamer that can wander into an existing
     // fight. VENOM is the tier's escalation — not evasion (removed, locked).
-    stats: { hp: 460, attack: 22, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 12, attackCooldown: 1800, pullRange: 220 },
+    stats: { hp: 260, attack: 39, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 12, attackCooldown: 1800, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave', elite: true,
     rewards: { essence: 15, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
-    dotEffect: { debuffId: 'spider-venom', label: 'Spider Venom', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2000 },
+    dotEffect: { debuffId: 'spider-venom', label: 'Spider Venom', damagePerStack: 11, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['cave-troll', {
@@ -99,7 +99,7 @@ export const caveMonsterEntries = [
     // The elite where slow/piercing weapons pay off.
     // pullRange bumped 150→240 (placeholder): cave elites notice you from afar —
     // the "high detection / overpull risk" Cave identity (countered by stealth boots).
-    stats: { hp: 740, attack: 65, plating: 4, damageReduction: 0.15, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
+    stats: { hp: 400, attack: 134, plating: 1, damageReduction: 0.08, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 23, essenceType: 'red', level: 1, biomeXp: 145 },
     ai: { wanderRadius: 130, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -126,7 +126,7 @@ export const caveMonsterEntries = [
   ['cave-gargoyle', {
     id: 'cave-gargoyle', name: 'Cave Gargoyle', color: 0x554455,
     // Ranged elite — hurls stalactites from its perch; armored and patient.
-    stats: { hp: 530, attack: 32, plating: 3, damageReduction: 0.10, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
+    stats: { hp: 300, attack: 66, plating: 1, damageReduction: 0.05, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
     behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
     rewards: { essence: 18, essenceType: 'blue', level: 1, biomeXp: 100 }, // stone construct → Stone (biome mixture; tunable)
     // STATIC RANGED SENTRY - it does not roam like a normal ranged mob. It stays
@@ -150,13 +150,13 @@ export const caveMonsterEntries = [
     // The roaming line's ceiling: even more active roaming over a large wander
     // space, stronger venom, and high speed that catches kiters (anti-Far).
     // NO evasion (locked) and deliberately no DR added back in its place.
-    stats: { hp: 1000, attack: 42, plating: 0, damageReduction: 0.08, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 220 },
+    stats: { hp: 450, attack: 60, plating: 0, damageReduction: 0.08, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave', elite: true,
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     // Roams harder and idles less than the Giant Spider - the T3 escalation of the
     // chaotic-roamer line is SPACE COVERED, since its evasion is gone.
     ai: { wanderRadius: 380, leashRange: 820, idleMinMs: 500, idleMaxMs: 2000 },
-    dotEffect: { debuffId: 'deep-spider-venom', label: 'Deep Venom', damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3000 },
+    dotEffect: { debuffId: 'deep-spider-venom', label: 'Deep Venom', damagePerStack: 12, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3000 },
   }],
 
   ['cavern-troll', {
@@ -164,7 +164,7 @@ export const caveMonsterEntries = [
     // The elite ceiling: armored cap-tripping bruiser, charges to connect. Heavy
     // DR + plating means slow/piercing weapons earn their keep. Anti-Far.
     // pullRange 150→240 (placeholder): high-detection elite — overpull risk.
-    stats: { hp: 1600, attack: 88, plating: 4, damageReduction: 0.15, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
+    stats: { hp: 700, attack: 124, plating: 2, damageReduction: 0.10, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 83, essenceType: 'red', level: 3, biomeXp: 500 },
     ai: { wanderRadius: 120, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -197,7 +197,7 @@ export const caveMonsterEntries = [
     id: 'crystal-gargoyle', name: 'Crystal Gargoyle', color: 0x554455,
     // Armored ranged sentry — perched, patient, hurls shards. Stationary ranged
     // (NOT a kiter: it holds its perch), armored so it isn't trivially bursted.
-    stats: { hp: 1150, attack: 60, plating: 3, damageReduction: 0.10, speed: 20, attackRange: 210, attackCooldown: 3200, pullRange: 185 },
+    stats: { hp: 520, attack: 85, plating: 1, damageReduction: 0.05, speed: 20, attackRange: 210, attackCooldown: 3200, pullRange: 185 },
     behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
     rewards: { essence: 60, essenceType: 'red', level: 3, biomeXp: 360 },
     // Same perch/static identity as the Cave Gargoyle. The evolution is a CHARGED
