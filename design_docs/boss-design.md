@@ -1,5 +1,13 @@
 # Boss Design — philosophy, layer curve, stat anchors
 
+> ⚠ **PARTLY SUPERSEDED (2026-08-23).** The T1–T4 boss encounter rework replaced this
+> doc's tier-layer TEMPLATE and its anti-summon guardrail. Read
+> [`BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md`](BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md)
+> for the current design authority and
+> [`docs/boss-encounter-rework-current-state.md`](../docs/boss-encounter-rework-current-state.md)
+> for what actually shipped. What is still live here: the combat invariants
+> (no-dodge / deterministic / capped), the stat anchors, and the reward shape.
+
 The reference for all boss work (rebalancing earlier tiers + building new ones).
 Companion to design-bible.md (combat invariants) and player-power-curve.md (numbers).
 
@@ -55,7 +63,15 @@ on a timer: attack (or attack-speed) ramps over the fight, clamped. Reuses the
 Volcano `rampOnCombat` mechanic, boss-tuned. "Out-DPS or out-sustain." Add **one
 layer at a time** — T2 is *just* the phase; enrage waits for T3.
 
-## AoE / cleave on slow-heavy bosses (anti-summon guardrail)
+## AoE / cleave on slow-heavy bosses (anti-summon guardrail) — RETIRED 2026-08-23
+
+> ⚠ **This rule no longer holds.** The encounter rework removed `aoeAttack` from every
+> boss but the Elder Trench Serpent and solved body-blocking at the targeting layer
+> instead (`MonsterDefinition.targeting.prefersPlayers`: while a player is in pull range,
+> minions are not aggro candidates at all). Boss AoE now exists only where the ENCOUNTER
+> wants it — the Slam, the pool, the Eruption — and those charged attacks double as the
+> periodic beat that stops a summon wall being free. The section below is kept because it
+> is still the clearest statement of the PROBLEM; its solution is history.
 
 **Problem:** a slow heavy single-target swing overkills a cheap, fast-respawning
 summon. The summoner out-spawns the boss's cooldown, so every slam is wasted on a

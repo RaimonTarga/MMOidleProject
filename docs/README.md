@@ -54,6 +54,7 @@ top-level doc.
 | Global mastery + recipes | [global-mastery-current-state.md](global-mastery-current-state.md) | — |
 | Monster behavior | [monster-behavior-current-state.md](monster-behavior-current-state.md) | [boss-design.md](../design_docs/boss-design.md) |
 | Monster combat rework (T1-T4) | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) | [MONSTER_COMBAT_REWORK_HANDOFF_T1_T4_2026-08-22.md](../design_docs/MONSTER_COMBAT_REWORK_HANDOFF_T1_T4_2026-08-22.md) |
+| Boss encounters (T1-T4) | [boss-encounter-rework-current-state.md](boss-encounter-rework-current-state.md) | [BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md](../design_docs/BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md) |
 | Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) | — |
 | Node modifiers | [node-modifiers-current-state.md](node-modifiers-current-state.md) | [map-variety-plan.md](map-variety-plan.md) (map design authority; its §1.2/§1.6 are superseded) |
 | Player sprites | [player-sprites-current-state.md](player-sprites-current-state.md) | [player-visual-identity-bible.md](../design_docs/visual_and_aesthetics_design/player-visual-identity-bible.md) |
