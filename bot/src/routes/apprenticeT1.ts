@@ -18,13 +18,14 @@ import {
 /**
  * Tier 1 baseline route for the Apprentice (DoT root).
  *
- * Same biome spine and ability rhythm as Striker, Chaotic Axe final weapon
- * (bot-route-reference.md §10 -- Poison Dagger is Experiment E, not assumed
- * better just because both are DoT-flavored). One class-specific armor swap:
- * Arcane Wrappings (`swamp-vest-t1`, DoT resistance) during the Swamp leg,
- * since Apprentice's own affinity is a toxin-hardened body that already
- * converts part of incoming direct damage into DoT it can outlast -- the two
- * stack. Fallen Knight Plate returns for Mountain/Cave's cast pressure.
+ * Reordered per designer instruction: Plains -> Forest -> Swamp -> Mountain ->
+ * Cave. Chaotic Axe final weapon (bot-route-reference.md §10 -- Poison Dagger
+ * is Experiment E, not assumed better just because both are DoT-flavored).
+ * Arcane Wrappings (`swamp-vest-t1`, DoT resistance) is now crafted at the
+ * 3rd leg instead of the 4th -- otherwise unchanged, since Apprentice's own
+ * affinity (toxin-hardened, converts part of incoming direct damage into DoT
+ * it can outlast) stacks with it regardless of when Swamp falls in the spine.
+ * Fallen Knight Plate returns for Mountain (now 4th)/Cave's cast pressure.
  *
  * ── The targeting fix ─────────────────────────────────────────────────────
  * Prior runtime traces showed Apprentice spreading damage across several
@@ -39,6 +40,10 @@ import {
  * `let-dots-finish` is the natural refinement (only leave a target once its
  * DoT is guaranteed to finish it) and is Experiment D's alternate arm, not
  * dropped -- it just cannot be equipped simultaneously with focus-lowest-hp.
+ *
+ * The targeting fix now arrives at the 3rd leg instead of the 4th -- one leg
+ * earlier than the original spine, which is a straightforward improvement
+ * given the failure mode it answers.
  *
  * `avoid-hazards` is dropped from the baseline loadout on a Runic Point
  * budget the harness statically enforces at the GM-0 floor (8 RP): chase-
@@ -72,10 +77,10 @@ const BOSS_KIT = [
 
 export const APPRENTICE_T1: Route = {
   id: "apprentice-t1",
-  version: "1.0.0",
+  version: "1.1.0",
   classRoot: "dot-root",
   description:
-    "Baseline for the Apprentice: five-biome GM-30 spine to Chaotic Axe at +5, Arcane Wrappings swapped in for Swamp's DoT-resistance synergy, focus-lowest-hp targeting to fix the observed damage-spreading failure mode.",
+    "Baseline for the Apprentice: five-biome GM-30 spine (Plains -> Forest -> Swamp -> Mountain -> Cave) to Chaotic Axe at +5, Arcane Wrappings swapped in for Swamp's DoT-resistance synergy, focus-lowest-hp targeting to fix the observed damage-spreading failure mode.",
 
   steps: [
     ...clearingOpening("dot-root", RUNES_BASE),
@@ -107,21 +112,7 @@ export const APPRENTICE_T1: Route = {
     { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
     { type: "milestone", id: "forest-maxed" },
 
-    // ── Mountain: Brace, the plate -> +3 ──────────────────────────────────────
-    { type: "travel", to: biome("mountain") },
-    learnBrace(),
-    ...getPiece(biome("mountain"), "mountain-vest-t1"),
-    { type: "configureRunes", rules: RUNES_BASE, label: "arm the charged-attack Brace rune" },
-
-    maxOut("mountain"),
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 3, farmAt: biome("mountain") },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
-    { type: "milestone", id: "mountain-maxed" },
-
-    // ── Swamp: Cleanse, Arcane Wrappings, the charm, the targeting fix -> +4 ─
+    // ── Swamp: Cleanse, Arcane Wrappings, the charm, targeting fix -> +3 ─────
     { type: "travel", to: biome("swamp") },
     {
       type: "craftRune",
@@ -135,12 +126,26 @@ export const APPRENTICE_T1: Route = {
     ...getPiece(biome("swamp"), "swamp-charm-t1"),
 
     maxOut("swamp"),
-    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 4, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
+    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 3, farmAt: biome("swamp") },
+    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3 },
+    { type: "upgrade", definitionId: "flash-rapier", toPlus: 3 },
+    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
+    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
     { type: "milestone", id: "swamp-maxed" },
+
+    // ── Mountain: Brace, the plate -> +4 (now the 4th leg) ───────────────────
+    { type: "travel", to: biome("mountain") },
+    learnBrace(),
+    ...getPiece(biome("mountain"), "mountain-vest-t1"),
+    { type: "configureRunes", rules: RUNES_TARGETING, label: "arm the charged-attack Brace rune" },
+
+    maxOut("mountain"),
+    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4, farmAt: biome("mountain") },
+    { type: "upgrade", definitionId: "flash-rapier", toPlus: 4 },
+    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 4 },
+    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
+    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
+    { type: "milestone", id: "mountain-maxed" },
 
     // ── Cave: the Chaotic Axe and Expose Weakness -> GM 30 ───────────────────
     { type: "travel", to: biome("cave") },

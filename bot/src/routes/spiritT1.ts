@@ -18,23 +18,25 @@ import {
 /**
  * Tier 1 baseline route for the Spirit (energy root).
  *
- * Same biome spine and ability rhythm as Striker/Squire, Chaotic Axe final
- * weapon (bot-route-reference.md §9 -- the +5 model favors it here too, and
- * Flash Rapier's cadence is only the transitional hypothesis, not the final
- * pick). Spirit's own defensive identity -- almost no natural bulk, but an
- * innate 30%-max-HP rechargeable barrier -- gets the same Granite Barrier
- * (Mountain, transitional) -> Murk Eye (Swamp, final) charm arc as Slinger,
- * since a barrier charm doubles down on the class's own mechanic while it is
- * cheap to try. Armor stays generic (Survivor's Robe -> Fallen Knight Plate)
- * rather than picking a class-specific piece -- the brief explicitly warns
- * against replacing every defensive slot with one universal loadout, and
- * Spirit has no armor analogue to Slinger's evasion synergy.
+ * Reordered per designer instruction: Plains -> Forest -> Swamp -> Mountain ->
+ * Cave. Chaotic Axe final weapon (bot-route-reference.md §9), generic armor
+ * (Survivor's Robe -> Fallen Knight Plate -- the brief warns against
+ * replacing every defensive slot with one universal loadout, and Spirit has
+ * no armor analogue to Slinger's evasion synergy).
  *
- * Rune loadout: `orbit` once Mountain L3 unlocks it (fits the low-bulk,
- * barrier-reliant identity -- more distance is more time for the barrier to
- * matter before a hit lands), `target-casting -> fire-guard`, and
- * `avoid-hazards` once Swamp L2 unlocks it. Total 8 RP, exactly the GM-0
- * floor the harness enforces on every `configureRunes` step.
+ * The charm arc is reinterpreted the same way as Slinger's, for the same
+ * reason: Swamp now comes BEFORE Mountain, so the ORIGINAL "Granite Barrier
+ * transitional at Mountain -> Murk Eye final at Swamp" reasoning is inverted.
+ * Murk Eye (`swamp-charm-t1`) is crafted the moment Swamp unlocks it and worn
+ * as the default charm everywhere; Granite Barrier (`mountain-charm-t1`) is
+ * crafted and worn ONLY during the Mountain leg as a content-specific
+ * experiment (it doubles down on the innate 30%-max-HP barrier against
+ * Mountain's own heavy-hit rhythm), capped at +1, then reverted to Murk Eye.
+ *
+ * Rune loadout: `orbit` once Mountain L3 unlocks it (now the 4th leg),
+ * `target-casting -> fire-guard`, and `avoid-hazards` once Swamp L2 unlocks
+ * it (now the 3rd leg). Final loadout is unchanged from the original spine
+ * (8 RP, the GM-0 floor) -- only the order the pieces arrive in changes.
  */
 
 const RUNES_BASE: EquippedRule[] = [
@@ -43,14 +45,17 @@ const RUNES_BASE: EquippedRule[] = [
   { conditionId: "target-casting", actionId: "fire-guard" },
 ];
 
-const RUNES_ORBIT: EquippedRule[] = [
+// Swamp L2 unlocks `avoid-hazards` (now the 3rd leg).
+const RUNES_HAZARDS: EquippedRule[] = [
+  ...RUNES_BASE,
+  { conditionId: "always", actionId: "avoid-hazards" },
+];
+
+// Mountain L3 unlocks `orbit` (now the 4th leg); it replaces chase-enemy.
+const RUNES_FULL: EquippedRule[] = [
   { conditionId: "always", actionId: "auto-path-enemy" },
   { conditionId: "in-combat", actionId: "orbit" },
   { conditionId: "target-casting", actionId: "fire-guard" },
-];
-
-const RUNES_FULL: EquippedRule[] = [
-  ...RUNES_ORBIT,
   { conditionId: "always", actionId: "avoid-hazards" },
 ];
 
@@ -64,10 +69,10 @@ const BOSS_KIT = [
 
 export const SPIRIT_T1: Route = {
   id: "spirit-t1",
-  version: "1.0.0",
+  version: "1.1.0",
   classRoot: "energy-root",
   description:
-    "Baseline for the Spirit: five-biome GM-30 spine to Chaotic Axe at +5, generic Survivor's Robe -> Fallen Knight Plate armor, Granite Barrier (transitional) -> Murk Eye charm arc doubling down on the innate barrier, orbit kiting once unlocked.",
+    "Baseline for the Spirit: five-biome GM-30 spine (Plains -> Forest -> Swamp -> Mountain -> Cave) to Chaotic Axe at +5, generic Survivor's Robe -> Fallen Knight Plate armor, Murk Eye as the default charm with Granite Barrier tried specifically during the Mountain leg, orbit kiting once unlocked.",
 
   steps: [
     ...clearingOpening("energy-root", RUNES_BASE),
@@ -99,7 +104,21 @@ export const SPIRIT_T1: Route = {
     { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
     { type: "milestone", id: "forest-maxed" },
 
-    // ── Mountain: Brace, Granite Barrier (transitional), orbit rune -> +3 ────
+    // ── Swamp: Cleanse, hazard pathing, Murk Eye -> +3 (now the 3rd leg) ─────
+    { type: "travel", to: biome("swamp") },
+    { type: "craftRune", recipeId: "rune-recipe-avoid-hazards", farmAt: biome("swamp") },
+    { type: "configureRunes", rules: RUNES_HAZARDS, label: "add hazard-aware pathing" },
+    learnCleanse(),
+    ...getPiece(biome("swamp"), "swamp-charm-t1"),
+
+    maxOut("swamp"),
+    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3, farmAt: biome("swamp") },
+    { type: "upgrade", definitionId: "flash-rapier", toPlus: 3 },
+    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
+    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
+    { type: "milestone", id: "swamp-maxed" },
+
+    // ── Mountain: Brace, orbit rune, Granite Barrier tried in-context -> +4 ──
     { type: "travel", to: biome("mountain") },
     learnBrace(),
     ...getPiece(biome("mountain"), "mountain-charm-t1"),
@@ -110,32 +129,20 @@ export const SPIRIT_T1: Route = {
       farmAt: biome("mountain"),
       label: "unlock orbit (Keep Distance)",
     },
-    { type: "configureRunes", rules: RUNES_ORBIT, label: "kite with orbit; arm the Brace rune" },
+    { type: "configureRunes", rules: RUNES_FULL, label: "kite with orbit; arm the Brace rune" },
 
     maxOut("mountain"),
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 3, farmAt: biome("mountain") },
-    // Granite Barrier is transitional -- it is replaced by Murk Eye at Swamp,
-    // so it is deliberately taken no further than +1.
+    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4, farmAt: biome("mountain") },
+    // Granite Barrier is a content-specific experiment for this leg only --
+    // never the standing kit, so it is taken no further than +1.
     { type: "upgrade", definitionId: "mountain-charm-t1", toPlus: 1 },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
-    { type: "milestone", id: "mountain-maxed" },
-
-    // ── Swamp: Cleanse, hazard pathing, Murk Eye replaces the barrier -> +4 ──
-    { type: "travel", to: biome("swamp") },
-    { type: "craftRune", recipeId: "rune-recipe-avoid-hazards", farmAt: biome("swamp") },
-    { type: "configureRunes", rules: RUNES_FULL, label: "add hazard-aware pathing" },
-    learnCleanse(),
-    ...getPiece(biome("swamp"), "swamp-charm-t1"),
-
-    maxOut("swamp"),
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4 },
     { type: "upgrade", definitionId: "flash-rapier", toPlus: 4 },
+    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
     { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 4 },
     { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
-    { type: "milestone", id: "swamp-maxed" },
+    { type: "milestone", id: "mountain-maxed" },
+    // Revert to Murk Eye now that Mountain's own content is behind us.
+    { type: "equip", definitionIds: ["swamp-charm-t1"], label: "revert to Murk Eye" },
 
     // ── Cave: the Chaotic Axe and Expose Weakness -> GM 30 ───────────────────
     { type: "travel", to: biome("cave") },

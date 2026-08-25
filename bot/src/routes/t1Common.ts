@@ -4,12 +4,18 @@ import { allOf, type NodeRef, type RouteStep } from "../route/types";
 /**
  * Shared spine for every T1 baseline route (bot-route-reference.md §3-4).
  *
- * All six root classes share ONE biome order (Clearing -> Plains -> Forest ->
- * Mountain -> Swamp -> Cave -> all five bosses) and one ability-learning
- * rhythm (Sweep at Plains, Second Wind at Forest, Brace at Mountain, Cleanse
- * at Swamp, Expose Weakness at Cave -- see the brief §4, "shared baseline
- * progression behavior"). What differs per class is gear (weapon/armor/charm)
- * and rune movement/targeting choices, authored per-class in each routeXT1.ts.
+ * All six root classes share ONE biome order and one ability-learning rhythm;
+ * what differs per class is gear (weapon/armor/charm) and rune movement/
+ * targeting choices, authored per-class in each routeXT1.ts.
+ *
+ * ORDER (designer override, 2026-08-25): Clearing -> Plains -> Forest ->
+ * Swamp -> Mountain -> Cave -> all five bosses. This SWAPS Swamp and Mountain
+ * from the original spine (Plains -> Forest -> Mountain -> Swamp -> Cave) --
+ * Cleanse is now learned at Swamp L3 (3rd leg, replacing Second Wind) and
+ * Brace at Mountain L3 (4th leg, replacing Cleanse); Expose Weakness still
+ * caps it off at Cave. Upgrade targets follow leg position, not biome name:
+ * Plains -> +1 (GM6), Forest -> +2 (GM12), Swamp -> +3 (GM18),
+ * Mountain -> +4 (GM24), Cave -> +5 (GM30).
  */
 
 export const CLEARING: NodeRef = { kind: "node", nodeId: CLEARING_NODE_ID };
