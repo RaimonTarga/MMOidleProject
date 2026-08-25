@@ -33,6 +33,28 @@ When no eligible player exists, active spectators watch the tier-0 Clearing. The
 manager holds a thaw lease while that fallback is watched and freezes it after the last
 fallback viewer leaves or pauses, provided no real player occupies it.
 
+## Dev-only target pinning (bot harness)
+
+Added 2026-08-25 for the headless bot harness. When the server is not in
+production it registers two extra events:
+
+- `spectate:setTarget(playerId | null)` pins the camera to one character instead
+  of the automatic pick, or clears the pin.
+- `spectate:targets` pushes an identity-only roster (`id`, `name`, `playerTier`,
+  `nodeId`).
+
+The client reads `?watch=<playerId>` on spectator boot and emits the pin, so the
+bot dashboard can link straight into a live view of one bot.
+
+This is **selection only**. No field was added to the anonymous player
+projection: `SPECTATOR_PLAYER_KEYS` and its privacy regression test are
+unchanged, and neither event is registered in production, so the public landing
+spectator behaves exactly as before and learns nothing new about who is online.
+
+A pin is held across the target's death (the camera borrows the automatic pick as
+cover and snaps back on respawn) and released only when that player entity is
+gone. Covered by `server/test/spectatorManager.test.ts`.
+
 ## Guardrails
 
 - 16 concurrent spectators server-wide.

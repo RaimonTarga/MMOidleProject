@@ -58,8 +58,32 @@ export function hasPlayerCredential(): boolean {
   return Boolean(getSessionToken() || devAccountId);
 }
 
+/**
+ * The `?watch=<playerId>` deep link used by the bot harness dashboard.
+ *
+ * Returns null unless the value looks like a socket id, so a junk query string
+ * cannot strand a signed-in player in a spectator session.
+ */
+export function watchTargetFromUrl(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = new URLSearchParams(window.location.search).get('watch');
+    if (!raw) return null;
+    const id = raw.trim();
+    return /^[\w-]{1,64}$/.test(id) ? id : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Spectate when there is no player credential — or when the URL explicitly asks
+ * to watch someone. Without the second clause a signed-in developer clicking a
+ * "watch this bot" link lands in their own character lobby instead, because the
+ * session token wins and the whole spectator path never runs.
+ */
 export function isSpectatorSession(): boolean {
-  return !hasPlayerCredential();
+  return !hasPlayerCredential() || watchTargetFromUrl() !== null;
 }
 
 export function loginWithDiscord(): void {

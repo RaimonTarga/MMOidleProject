@@ -919,6 +919,20 @@ async function boot(): Promise<void> {
       spectatorManager.setActive(socket.id, active === true);
     });
     socket.on("spectate:resume", () => spectatorManager.resume(socket.id));
+
+    // Dev-only camera pinning, used by the bot harness dashboard to jump
+    // straight to one bot. Never registered in production, so the public
+    // landing spectator keeps its automatic pick and learns nothing new.
+    if (IS_DEV) {
+      socket.emit("spectate:targets", spectatorManager.targetRoster());
+      socket.on("spectate:setTarget", (playerId) => {
+        spectatorManager.setTarget(
+          socket.id,
+          typeof playerId === "string" && playerId.length > 0 ? playerId : null,
+        );
+        socket.emit("spectate:targets", spectatorManager.targetRoster());
+      });
+    }
     const refuseCharacterAction = (): void => {
       socket.emit("character:selectResult", {
         success: false,

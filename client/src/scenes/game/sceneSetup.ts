@@ -42,6 +42,7 @@ import {
 } from "../../auth/lobbyState";
 import { applyDelta } from "../../net/deltaApplier";
 import { hydrateSpectatorSnapshot } from "../../net/spectatorSnapshot";
+import { watchTargetFromUrl } from "../../net/session";
 import {
   ATLAS_KEY,
   BIOME_DECOR,
@@ -247,9 +248,6 @@ function instantReskinNode(scene: GameScene, nodeId: string): void {
   syncSceneBackdrop(scene, nodeId);
 }
 
-/** The clearing-cam's biome — all a landing spectator needs before first paint. */
-const SPECTATOR_BOOT_BIOMES: ReadonlySet<string> = new Set(["clearing"]);
-
 /**
  * Queue biome ground textures, Wang sheets, and biome decor, optionally
  * restricted to a set of biome groups. Already-loaded textures are skipped, so
@@ -319,13 +317,28 @@ function queueTreeAssets(scene: GameScene): void {
   }
 }
 
-export function preloadGameAssets(scene: GameScene): void {
+/**
+ * Everything a spectator needs before the pane can paint at all: the sprite
+ * atlas and the shadow definitions `createGameScene` reads synchronously.
+ * Nothing else belongs here — `create()` does not run until the boot queue
+ * drains, so every extra megabyte is dead time staring at an empty pane.
+ */
+function queueFirstPaintAssets(scene: GameScene): void {
   scene.load.atlas(ATLAS_KEY, "/assets/sprites.png", "/assets/sprites.json");
+  scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
+}
+
+/**
+ * Presentation art — graves, emotes, effect sheets, hazard pools, node decor.
+ * All of it degrades gracefully behind `textures.exists` guards, and the two
+ * frame/animation builders that consume it are idempotent, so it can arrive
+ * after first paint and be wired up then.
+ */
+function queuePresentationAssets(scene: GameScene): void {
   scene.load.spritesheet(GRAVES_KEY, "/assets/environment/graves.png", {
     frameWidth: GRAVE_FRAME_SIZE,
     frameHeight: GRAVE_FRAME_SIZE,
   });
-  scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
   scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
   for (const art of Object.values(HAZARD_POOL_ART)) {
     scene.load.image(art.key, art.file);
@@ -370,16 +383,25 @@ export function preloadGameAssets(scene: GameScene): void {
     }
   }
 
+}
+
+export function preloadGameAssets(scene: GameScene): void {
+  queueFirstPaintAssets(scene);
+
   if (scene.spectatorMode) {
-    // Landing spectate: first paint is the whole point of the pane, so boot
-    // with only the clearing-cam's biome (the fallback view and spawn node)
-    // and stream the other biomes, trees, and overlord art in the background
-    // from create() — see startDeferredSpectatorAssets. Audio never loads for
-    // spectators: initAudio is skipped and the sound manager is muted.
-    queueBiomeAssets(scene, SPECTATOR_BOOT_BIOMES);
+    // Landing spectate: `create()` is gated on this queue draining, so the boot
+    // pass carries ONLY first-paint essentials and everything else streams from
+    // create() — see startDeferredSpectatorAssets. Previously "slim" still meant
+    // every effect sheet, emote, hazard, decor and feature prop up front: ~26
+    // files and tens of megabytes, which on a cold cache left the pane showing
+    // nothing at all because create() never ran. The node paints its flat biome
+    // fill first and is re-skinned when the ground texture lands.
+    // Audio never loads for spectators: initAudio is skipped and the sound
+    // manager is muted.
     return;
   }
 
+  queuePresentationAssets(scene);
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   queueTreeAssets(scene);
@@ -404,11 +426,17 @@ export function preloadGameAssets(scene: GameScene): void {
  * textures replace their fallbacks.
  */
 function startDeferredSpectatorAssets(scene: GameScene): void {
+  queuePresentationAssets(scene);
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   queueTreeAssets(scene);
   queueBiomeAssets(scene, null);
   scene.load.once("complete", () => {
+    // Wire up the art that arrived after create() ran. All three are
+    // idempotent and skip textures that are still missing, so a partial batch
+    // is safe and a later batch finishes the job.
+    initEffectFrames(scene);
+    initEmoteAnimations(scene);
     initVoidOverlordSheet(scene);
     const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
     if (nodeId && !scene.transitioning) instantReskinNode(scene, nodeId);
@@ -648,6 +676,13 @@ function connectSocket(scene: GameScene): () => void {
       // Re-assert tab focus so a reconnect while hidden doesn't resume streaming.
       if (scene.spectatorMode) {
         socket.emit("spectate:setActive", !document.hidden);
+        // `?watch=<playerId>` pins the camera to one character instead of the
+        // automatic pick. The bot harness dashboard links here so a card click
+        // opens the live world already following that bot. Dev-only: the server
+        // does not register the handler in production, and re-emitting on every
+        // reconnect keeps the pin across a dropped socket.
+        const watchId = watchTargetFromUrl();
+        if (watchId) socket.emit("spectate:setTarget", watchId);
       } else {
         sendSetActive(socket, !document.hidden);
         const gameplaySettings = loadGameplaySettings();

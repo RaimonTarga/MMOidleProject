@@ -39,6 +39,22 @@ export interface SpectateStatus {
   targetId?: string;
   targetName?: string;
   paused: boolean;
+  /** True while the viewer has pinned this target instead of auto-following. */
+  pinned?: boolean;
+}
+
+/**
+ * One watchable player, for the DEV-ONLY spectator target picker.
+ *
+ * Deliberately identity-only: no progression, inventory or build data. This is
+ * a "who can I point the camera at" list, not a widening of the audited
+ * anonymous player projection (`SPECTATOR_PLAYER_KEYS`).
+ */
+export interface SpectateTarget {
+  id: string;
+  name: string;
+  playerTier: number;
+  nodeId: string;
 }
 
 /** Events the server sends to clients */
@@ -49,6 +65,11 @@ export interface ServerToClientEvents {
   "spectate:status": (status: SpectateStatus) => void;
   /** Admission/stream failure for anonymous spectators. */
   "spectate:error": (payload: { reason: string }) => void;
+  /**
+   * Dev-only: who the viewer may follow. Never emitted in production, so the
+   * public landing spectator learns nothing new about who is online.
+   */
+  "spectate:targets": (targets: SpectateTarget[]) => void;
   /** Current non-deleted characters for the authenticated account. */
   "account:characters": (payload: AccountCharactersPayload) => void;
   /** Authoritative result of a lobby character-creation request. */
@@ -110,6 +131,12 @@ export interface ClientToServerEvents {
   "spectate:setActive": (active: boolean) => void;
   /** Resume a spectator paused by the idle guardrail. */
   "spectate:resume": () => void;
+  /**
+   * Dev-only: pin the camera to one player instead of the automatic pick, or
+   * `null` to hand control back to auto-follow. Server ignores in production.
+   * Selection only - it exposes no data the stream did not already carry.
+   */
+  "spectate:setTarget": (playerId: string | null) => void;
   /** Create an isolated character for the authenticated account. */
   "character:create": (payload: { name: string }) => void;
   /** Enter the world as one owned, non-deleted character. */

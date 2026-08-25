@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const serverDir = path.join(root, 'server');
+const botDir = path.join(root, 'bot');
 
 function walk(dir) {
   const out = [];
@@ -26,13 +27,30 @@ function isTestFile(filePath) {
 
 const serverTestDir = path.join(root, 'server', 'test');
 const sharedSrcDir = path.join(root, 'shared', 'src');
+const botSrcDir = path.join(root, 'bot', 'src');
 
-const files = [
-  ...fs.readdirSync(serverTestDir).map((name) => path.join(serverTestDir, name)),
-  ...walk(sharedSrcDir),
-]
-  .filter(isTestFile)
-  .sort();
+// Server and shared tests run from the server package; the bot harness is a
+// separate workspace package that may not import server internals, so its tests
+// run from its own package with its own resolver.
+const suites = [
+  {
+    pkg: '@mmo-idle/server',
+    cwd: serverDir,
+    files: [
+      ...fs.readdirSync(serverTestDir).map((name) => path.join(serverTestDir, name)),
+      ...walk(sharedSrcDir),
+    ],
+  },
+  {
+    pkg: '@mmo-idle/bot',
+    cwd: botDir,
+    files: fs.existsSync(botSrcDir) ? walk(botSrcDir) : [],
+  },
+];
+
+const files = suites.flatMap((suite) =>
+  suite.files.filter(isTestFile).sort().map((file) => ({ suite, file })),
+);
 
 if (files.length === 0) {
   console.error('No test files found.');
@@ -41,16 +59,17 @@ if (files.length === 0) {
 
 const results = [];
 
-for (const file of files) {
-  const relFromServer = path.relative(serverDir, file).split(path.sep).join('/');
-  console.log(`\n=== ${relFromServer} ===`);
+for (const { suite, file } of files) {
+  const relFromPkg = path.relative(suite.cwd, file).split(path.sep).join('/');
+  const label = path.relative(root, file).split(path.sep).join('/');
+  console.log(`\n=== ${label} ===`);
   const res = spawnSync(
     'pnpm',
-    ['--filter', '@mmo-idle/server', 'exec', 'tsx', '--conditions=development', relFromServer],
+    ['--filter', suite.pkg, 'exec', 'tsx', '--conditions=development', relFromPkg],
     { cwd: root, stdio: 'inherit', shell: true },
   );
   const passed = res.status === 0;
-  results.push({ file: relFromServer, passed });
+  results.push({ file: label, passed });
 }
 
 console.log('\n=== Test Summary ===');

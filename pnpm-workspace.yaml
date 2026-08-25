@@ -2,6 +2,7 @@ packages:
   - "client"
   - "admin"
   - "server"
+  - "bot"
   - "shared"
 allowBuilds:
   esbuild: true

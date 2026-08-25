@@ -1,4 +1,13 @@
-import type { SpectateStatus } from "@mmo-idle/shared";
+import {
+  CLEARING_NODE_ID,
+  GAME_CONFIG,
+  emptyEquipment,
+  emptyEquippedAbilities,
+  emptyEquippedRites,
+  emptyEquippedStances,
+  type SpectateStatus,
+} from "@mmo-idle/shared";
+import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import {
   pickSpectatorTarget,
@@ -80,5 +89,132 @@ assert(!world.isNodeFrozen("node-clearing"), "resuming a fallback viewer should 
 manager.remove(first.id);
 manager.remove(second.id);
 manager.shutdown();
+
+// ── Dev-only camera pinning ──────────────────────────────────────────────────
+
+function playerSlices(id: string, name: string, playerTier: number): PersistedPlayerSlices {
+  return {
+    isPlayer: { id, name },
+    hasPosition: {
+      current: { x: 400, y: 400 },
+      nodeId: CLEARING_NODE_ID,
+      speed: GAME_CONFIG.PLAYER_SPEED,
+    },
+    hasHealth: { hp: 100, maxHp: 100, recovery: 2 },
+    tracksProgression: {
+      level: 0,
+      skillPoints: 0,
+      essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
+      catalysts: {},
+      catalystProgress: {},
+      biomeXP: {},
+      biomeLevel: {},
+      unlockedRecipes: [],
+      questProgress: {},
+      playerTier,
+      currentSkillTier: 0,
+      bossesCleared: [],
+      clearedNodes: [],
+      visitedNodes: [],
+      runesOwned: [],
+      runeRecipesCrafted: [],
+      runesEquipped: [],
+      knownAbilities: [],
+      equippedAbilities: emptyEquippedAbilities(),
+      knownStances: [],
+      equippedStances: emptyEquippedStances(),
+      activeStance: null,
+      knownRites: [],
+      equippedRites: emptyEquippedRites(),
+    },
+    holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
+    usesSkills: {
+      unlockedSkills: [],
+      passives: {},
+      selectedClass: null,
+      selectedSubVariant: null,
+      selectedRange: null,
+      combatArchetype: null,
+    },
+  };
+}
+
+{
+  const pinWorld = new World();
+  pinWorld.attachPlayerEntity(playerSlices("bot-a", "Bot A", 3), "bot-a");
+  pinWorld.attachPlayerEntity(playerSlices("bot-b", "Bot B", 1), "bot-b");
+
+  const disconnected = new Set<string>();
+  const pinManager = new SpectatorManager(pinWorld, {
+    maxGlobal: 4,
+    maxPerIp: 4,
+    idleMs: 60_000,
+    random: () => 0,
+    isPlayerConnected: (id) => !disconnected.has(id),
+  });
+
+  const viewer = fakeSocket("pin-viewer");
+  assert(pinManager.admit(viewer as never, "10.0.0.1", 0), "viewer should be admitted");
+
+  // Auto-pick prefers the highest tier, so it lands on Bot A.
+  assert(
+    viewer.statuses.at(-1)?.targetId === "bot-a",
+    "auto-follow should pick the highest-tier player",
+  );
+
+  // Pinning overrides the automatic pick, even onto a lower-tier character.
+  pinManager.setTarget(viewer.id, "bot-b", 1);
+  assert(viewer.statuses.at(-1)?.targetId === "bot-b", "pinning should override auto-follow");
+  assert(viewer.statuses.at(-1)?.pinned === true, "a pinned status should say so");
+
+  // Reconciling must not silently wander back to the auto pick.
+  pinManager.reconcile(2);
+  assert(viewer.statuses.at(-1)?.targetId === "bot-b", "a live pin should survive reconcile");
+
+  // The roster is identity-only: no progression, inventory or build data.
+  const roster = pinManager.targetRoster();
+  assert(roster.length === 2, "roster should list both live players");
+  const keys = Object.keys(roster[0]).sort().join(",");
+  assert(
+    keys === "id,name,nodeId,playerTier",
+    `roster entries must stay identity-only (got ${keys})`,
+  );
+
+  // A pinned bot that DIES is still the one the viewer asked to watch. Bots die
+  // constantly, so the camera takes temporary cover and must snap back.
+  const botB = pinWorld.getPlayerEntity("bot-b")!;
+  botB.isDead = { diedAtMs: -10_000 } as never;
+  pinManager.reconcile(3);
+  assert(
+    viewer.statuses.at(-1)?.targetId === "bot-a",
+    "a dead pinned target should fall back to temporary cover",
+  );
+  delete botB.isDead;
+  pinManager.reconcile(4);
+  assert(
+    viewer.statuses.at(-1)?.targetId === "bot-b",
+    "the pin must resume once the target is alive again",
+  );
+
+  // A pin whose PLAYER IS GONE (disconnected) is released for good.
+  disconnected.add("bot-b");
+  pinManager.reconcile(5);
+  assert(
+    viewer.statuses.at(-1)?.targetId === "bot-a",
+    "a disconnected pin should fall back to the automatic pick",
+  );
+  disconnected.clear();
+
+  // Clearing the pin hands control back to auto-follow.
+  pinManager.setTarget(viewer.id, "bot-b", 6);
+  assert(viewer.statuses.at(-1)?.targetId === "bot-b", "re-pin should take effect");
+  pinManager.setTarget(viewer.id, null, 7);
+  assert(
+    viewer.statuses.at(-1)?.targetId === "bot-a",
+    "clearing the pin should return to the automatic pick",
+  );
+
+  pinManager.shutdown();
+}
 
 console.log("spectatorManager.test.ts: ok");

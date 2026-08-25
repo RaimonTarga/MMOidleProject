@@ -13,7 +13,7 @@ import type {
   AccountCharactersPayload,
   SpectateStatus,
 } from '@mmo-idle/shared';
-import { getSessionToken } from './session';
+import { getSessionToken, watchTargetFromUrl } from './session';
 import { SERVER_URL } from './serverUrl';
 
 export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -21,11 +21,16 @@ export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 export function connectGameSocket(): GameSocket {
   const token = getSessionToken();
   const devAccountId = import.meta.env.VITE_AUTH_DEV_ACCOUNT_ID as string | undefined;
-  const auth = token
-    ? { token }
-    : devAccountId
-      ? { devAccountId }
-      : { spectate: true };
+  // An explicit `?watch=` link is always an anonymous spectator session, even
+  // for a signed-in developer: authenticating would enter the character lobby
+  // and there would be no camera to pin.
+  const auth = watchTargetFromUrl()
+    ? { spectate: true }
+    : token
+      ? { token }
+      : devAccountId
+        ? { devAccountId }
+        : { spectate: true };
   return io(SERVER_URL, { auth }) as GameSocket;
 }
 

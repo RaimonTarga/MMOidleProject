@@ -3,6 +3,7 @@ import {
   type ClientToServerEvents,
   type ServerToClientEvents,
   type SpectateStatus,
+  type SpectateTarget,
 } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import type { PlayerEntity } from "../ecs/entity";
@@ -21,6 +22,8 @@ interface SpectatorRecord {
   paused: boolean;
   lastActivityAt: number;
   lastStatusKey: string;
+  /** Dev-only manual follow. While set, auto-retargeting is suppressed. */
+  pinnedTargetId: string | null;
 }
 
 export interface SpectatorManagerOptions {
@@ -89,6 +92,7 @@ export class SpectatorManager {
       paused: false,
       lastActivityAt: now,
       lastStatusKey: "",
+      pinnedTargetId: null,
     });
     this.reconcile(now);
     return true;
@@ -113,6 +117,39 @@ export class SpectatorManager {
     this.setActive(socketId, true, now);
   }
 
+  /**
+   * Pin the camera to one player (dev tooling), or clear the pin with `null`.
+   *
+   * Pinning a character that is currently dead or not yet loaded is fine: the
+   * pin is remembered and {@link followPin} adopts it as soon as it is
+   * watchable.
+   */
+  setTarget(socketId: string, playerId: string | null, now = Date.now()): void {
+    const record = this.records.get(socketId);
+    if (!record) return;
+    record.lastActivityAt = now;
+    record.paused = false;
+    record.pinnedTargetId = playerId;
+    if (!playerId) record.targetId = null;
+    this.reconcile(now);
+  }
+
+  /** Identity-only roster for the dev target picker. */
+  targetRoster(): SpectateTarget[] {
+    const out: SpectateTarget[] = [];
+    for (const player of this.world.livePlayers) {
+      if (!this.isPlayerConnected(player.isPlayer.id)) continue;
+      if (this.isPlayerInactive(player.isPlayer.id)) continue;
+      out.push({
+        id: player.isPlayer.id,
+        name: player.isPlayer.name,
+        playerTier: player.tracksProgression.playerTier,
+        nodeId: player.hasPosition.nodeId,
+      });
+    }
+    return out.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   reconcile(now = Date.now()): void {
     for (const [socketId, record] of this.records) {
       if (!record.socket.connected) {
@@ -122,7 +159,9 @@ export class SpectatorManager {
       if (!record.paused && now - record.lastActivityAt >= this.idleMs) {
         record.paused = true;
       }
-      if (!record.paused && !this.targetIsEligible(record.targetId, now)) {
+      if (!record.paused && record.pinnedTargetId) {
+        this.followPin(record, now);
+      } else if (!record.paused && !this.targetIsEligible(record.targetId, now)) {
         this.assignTarget(record);
       } else if (record.targetId) {
         const target = this.world.getPlayerEntity(record.targetId);
@@ -134,6 +173,33 @@ export class SpectatorManager {
       this.emitStatus(record);
     }
     this.reconcileClearingLease();
+  }
+
+  /**
+   * Hold a manual pin across the target's ordinary ups and downs.
+   *
+   * A pinned character that is merely DEAD is still the one the viewer asked to
+   * watch, so the pin is kept and the camera borrows the automatic pick only as
+   * temporary cover, snapping back on respawn. Bots die constantly, so dropping
+   * the pin on every death would make pinning useless. The pin is released only
+   * when the player entity is gone entirely (disconnected).
+   */
+  private followPin(record: SpectatorRecord, now: number): void {
+    const pinnedId = record.pinnedTargetId;
+    if (!pinnedId) return;
+
+    if (this.targetIsEligible(pinnedId, now)) {
+      const player = this.world.getPlayerEntity(pinnedId)!;
+      record.targetId = pinnedId;
+      record.targetName = player.isPlayer.name;
+      record.nodeId = player.hasPosition.nodeId;
+      return;
+    }
+
+    if (!this.world.getPlayerEntity(pinnedId)) {
+      record.pinnedTargetId = null;
+    }
+    if (!this.targetIsEligible(record.targetId, now)) this.assignTarget(record);
   }
 
   recipientsByNode(): Map<string, GameSocket[]> {
@@ -189,6 +255,7 @@ export class SpectatorManager {
           targetId: record.targetId,
           targetName: record.targetName,
           paused: record.paused,
+          pinned: record.pinnedTargetId === record.targetId,
         }
       : { mode: "clearing", nodeId: CLEARING_NODE_ID, paused: record.paused };
     const key = JSON.stringify(status);
