@@ -52,12 +52,15 @@ export const mountainRecipeEntries = [
     icon: 'items/weapons/heavy-hammer.png',
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.15 },
     description: 'Two-handed, brutal, and honest. It asks only that you find the time to swing it.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~497 (was 496).
+    // +5 catalyst from its own T2 hammer successor's tag ("slow heavy hammer →
+    // Heavy").
     upgrades: [
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 30 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 66 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 45 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 205 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -69,12 +72,15 @@ export const mountainRecipeEntries = [
     tier: 1,
     icon: 'items/armor/fallen-knight-plate.png',
     description: 'Stripped from a knight who fell at the high pass and was never named.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~497 (was 496).
+    // +5 catalyst from mountain-vest-t2's own tag ("Guard-amplifying plate →
+    // Heavy").
     upgrades: [
-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 30 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 66 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 25 }, requiredBiomeLevel: 3 },
+      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 45 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 205 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -89,12 +95,13 @@ export const mountainRecipeEntries = [
     tier: 1,
     icon: 'items/charms/granite-barrier.png',
     description: 'A palm of carved granite, cold and patient as the peak it came from.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
     upgrades: [
-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 15 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 33 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 63 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 63 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 60 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -108,12 +115,13 @@ export const mountainRecipeEntries = [
     mechanicEffects: { 'mobility.approach-speed-pct': 0.35 },
     icon: 'items/boots/iron-treads.png',
     description: 'Heavy soles that bite into scree and loose rock alike.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
     upgrades: [
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 15 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 70 }, requiredBiomeLevel: 4 },
     ],
   }],
 

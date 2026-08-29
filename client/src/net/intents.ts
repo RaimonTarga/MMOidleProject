@@ -167,3 +167,11 @@ export function sendEquipPhaseTester(socket: GameSocket): void {
 export function sendSetRewardMultiplier(socket: GameSocket, multiplier: number): void {
   socket.emit('debug:setRewardMultiplier', multiplier);
 }
+
+export function sendStartPlaytestLogging(socket: GameSocket): void {
+  socket.emit('debug:startPlaytestLogging');
+}
+
+export function sendStopPlaytestLogging(socket: GameSocket): void {
+  socket.emit('debug:stopPlaytestLogging');
+}

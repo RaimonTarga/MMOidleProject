@@ -7,9 +7,17 @@ open `shared/src/data/recipes/*` to write one.
 Routes live in `bot/src/routes/` and are registered in `bot/src/routes/index.ts`.
 They are pure data — adding a class must never need executor changes.
 
-`bot/src/harness.test.ts` fails the build if a route names a recipe, item,
-ability, rune fragment or dungeon that does not exist, or a rune loadout that
-does not fit the starting Runic Point budget. Write freely; the test catches typos.
+`bot/src/harness.test.ts` fails the build if a route names content that does not
+exist or uses content before acquiring it. Rune budgets are checked against the
+minimum Global Mastery guaranteed at each generated configuration, not a flat
+starting budget. `bot/src/routes/t1Routes.semantic.test.ts` additionally checks
+the generated controlled T1 boss kits, movement priority, ability matrix, and
+experimental isolation.
+
+Controlled T1 routes are generated through `t1RouteBuilder.ts`. Add class gear
+and economy choices to a `T1RouteConfig`; do not duplicate Rune arrays or boss
+ability logic in a new route file. The clean batch admits only
+`T1_CONTROLLED_ROUTE_IDS` unless `--controlled=false` is explicitly supplied.
 
 ---
 
@@ -62,6 +70,20 @@ Every step also accepts:
 { kind: "biome",   biomeGroup: "plains", tier: 1, pick: "first" | "rotate" | "uncleared" }
 { kind: "dungeon", biomeGroup: "plains", tier: 1 }
 ```
+
+`pick` also decides how much room the isolated-parallel coordinator has:
+
+- `"uncleared"` is a **biome-level** choice — the executor already picks the node
+  dynamically, so under `--executionMode=isolated-parallel` a bot may be given a
+  different uncleared node of the same biome when its preferred one is leased.
+  Its first choice is unchanged from a solo run.
+- `"first"` and `"rotate"` name **one** node on purpose, and `kind: "node"` /
+  `kind: "dungeon"` are single nodes by definition. These never widen: a bot
+  queues for that exact node instead. Use them when the node itself is the point
+  (a specific catalyst supplier, a boss dungeon).
+
+Node modifiers rescale monster stats, so nodes inside a biome are *not* equal
+difficulty. Prefer `"uncleared"` unless a step genuinely needs one node.
 
 ## Condition
 

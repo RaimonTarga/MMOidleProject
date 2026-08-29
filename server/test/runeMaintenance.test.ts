@@ -10,7 +10,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { syncArchetypeSlices } from "../src/ecs/archetypeSliceSync";
 import { updateAutoTargets } from "../src/systems/combat/ai/autoTarget";
 import { markEngaged } from "../src/systems/combat/ai/engagement";
-import { setAttackTarget } from "../src/systems/combat/ai/targeting";
+import { setAggroTarget, setAttackTarget } from "../src/systems/combat/ai/targeting";
 import {
   RUNE_TACTICAL_RELOAD_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
@@ -203,6 +203,105 @@ updateAutoTargets(noRuneWorld, 1_200);
 assert(
   noRunePlayer.isMoving !== undefined,
   "reloading without Reload Safely should not pause autonomous movement",
+);
+
+// ── "Always -> Recover First": hold whenever nothing is actually on you ──
+// "Out of Combat" keys off the post-combat grace timer, so the seconds right
+// after a kill are still spent walking to the next pull. "Always" keys off
+// actual engagement instead.
+const alwaysRules = [{ conditionId: "always", actionId: "wait-for-regen" }];
+
+const disengagedInGrace = deriveAutoConfigFromRunes(alwaysRules, {
+  hpPct: 0.4,
+  inCombat: true,
+  activelyEngaged: false,
+  inParty: false,
+  aggroCount: 0,
+  combatArchetype: "reload",
+});
+assert(
+  disengagedInGrace.waitForRegen,
+  "Always -> Recover First should claim recovery during the post-combat grace window",
+);
+
+const stillFighting = deriveAutoConfigFromRunes(alwaysRules, {
+  hpPct: 0.4,
+  inCombat: true,
+  activelyEngaged: true,
+  inParty: false,
+  aggroCount: 1,
+  combatArchetype: "reload",
+});
+assert(
+  !stillFighting.waitForRegen,
+  "Always -> Recover First must not hold while something is attacking you",
+);
+
+const idleOnlyInGrace = deriveAutoConfigFromRunes(
+  [{ conditionId: "when-idle", actionId: "wait-for-regen" }],
+  {
+    hpPct: 0.4,
+    inCombat: true,
+    activelyEngaged: false,
+    inParty: false,
+    aggroCount: 0,
+    combatArchetype: "reload",
+  },
+);
+assert(
+  !idleOnlyInGrace.waitForRegen,
+  "Out of Combat -> Recover First keeps its stricter combat-timer gate",
+);
+
+// End to end: the runtime flag and the movement hold follow the same rule.
+const alwaysWorld = new World();
+const alwaysPlayer = alwaysWorld.attachPlayerEntity(
+  makeReloadPlayerSlices("always-recover-player"),
+  "always-recover-player",
+);
+syncArchetypeSlices(alwaysWorld, alwaysPlayer);
+Object.assign(alwaysPlayer.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, {
+  auto: true,
+  focusLeaderTarget: false,
+});
+alwaysPlayer.tracksProgression.runesEquipped = alwaysRules;
+
+// A mob is on the node but has NOT aggroed: the player is mid-grace and hurt.
+const bystander = alwaysWorld.createMonster(
+  "node-5-5",
+  "plains-slime",
+  { x: 900, y: 400 },
+);
+if (!bystander) throw new Error("failed to create bystander monster");
+markEngaged(alwaysWorld, alwaysPlayer, Date.now());
+updateRuneDerivedConfig(alwaysWorld);
+assert(
+  getFlag(alwaysPlayer.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG),
+  "Always -> Recover First should be active while nothing is attacking, mid-grace",
+);
+setEntityMotion(alwaysWorld, alwaysPlayer, { x: 900, y: 400 });
+updateAutoTargets(alwaysWorld, Date.now());
+assert(
+  alwaysPlayer.isMoving === undefined,
+  "Always -> Recover First should stop the player seeking the next enemy",
+);
+
+// Now the mob aggroes onto the player: the hold must yield to the fight.
+setAggroTarget(
+  alwaysWorld,
+  bystander,
+  { id: alwaysPlayer.isPlayer.id, kind: "player" },
+  Date.now(),
+);
+updateRuneDerivedConfig(alwaysWorld);
+assert(
+  !getFlag(alwaysPlayer.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG),
+  "Always -> Recover First must release the moment something aggroes onto the player",
+);
+updateAutoTargets(alwaysWorld, Date.now());
+assert(
+  alwaysPlayer.isMoving !== undefined,
+  "an aggroed enemy should send the recovering player back into the fight",
 );
 
 console.log("runeMaintenance.test.ts: ok");

@@ -58,6 +58,7 @@ import {
   publishFaultLineBurst,
   takeDueGroundZoneImpacts,
   clearGroundZonesByOwner,
+  type RuntimeSlamTelegraph,
 } from "../../world/groundZones";
 import { monsterDeathEmpowerMult } from "../damage/monsterDeathEffects";
 import { applyPlayerKnockback } from "../damage/knockback";
@@ -94,6 +95,11 @@ import {
   effectivePlatingAfterShred,
   effectiveDamageReductionAfterBrittle,
 } from "../damage/effectivePlating";
+import {
+  beginTelegraphResolutionTelemetry,
+  finishTelegraphResolutionTelemetry,
+  recordTelegraphResolutionVictim,
+} from "../ai/telegraphEvasion";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -1376,6 +1382,13 @@ function resolveChargedSlam(
   now: number,
 ): void {
   const nodeId = monster.hasPosition.nodeId;
+  const telegraph = (world.groundZones.get(nodeId) ?? []).find(
+    (zone): zone is RuntimeSlamTelegraph =>
+      zone.kind === "slam-telegraph" && zone.ownerId === monster.isMonster.id,
+  );
+  const telemetryCapture = telegraph
+    ? beginTelegraphResolutionTelemetry(world, nodeId, telegraph, now)
+    : null;
   // The telegraph resolved — retire it before anything can kill the owner and
   // leave the circle stranded for the sweeper to collect.
   clearGroundZonesByOwner(world, nodeId, monster.isMonster.id);
@@ -1392,6 +1405,9 @@ function resolveChargedSlam(
     // the node (party wipe) and invalidate the rest of the list.
     if (!world.getPlayerEntity(victim.isPlayer.id)) continue;
     const outcome = runMonsterAttack(world, monster, victim, now, slamMult);
+    if (telemetryCapture) {
+      recordTelegraphResolutionVictim(world, telemetryCapture, victim.isPlayer.id);
+    }
     if (outcome === "hit") {
       if (charged.stunMs && canApplyPlayerDebuff(victim)) {
         applyStun(victim.tracksCombat, charged.stunMs, monster.isMonster.id);
@@ -1400,8 +1416,12 @@ function resolveChargedSlam(
       const refreshed = world.getPlayerEntity(victim.isPlayer.id);
       if (refreshed) markEngaged(world, refreshed, now);
     }
-    if (!world.hasMonster(monster.isMonster.id)) return; // reflected to death
+    if (!world.hasMonster(monster.isMonster.id)) {
+      if (telemetryCapture) finishTelegraphResolutionTelemetry(world, telemetryCapture);
+      return; // reflected to death
+    }
   }
+  if (telemetryCapture) finishTelegraphResolutionTelemetry(world, telemetryCapture);
 
   const minions = world.collision.bodiesInCircle(
     world.minionEntitiesInNode(nodeId),
@@ -1426,6 +1446,8 @@ function resolveChargedSlam(
       vulnerability: pool.vulnerability,
       ownerId: monster.isMonster.id,
       detonationMultiplier: pool.detonationMultiplier,
+      sourceId: charged.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      sourceLabel: charged.name,
       killer: buildKillerFromMonster(monster),
     });
   }
@@ -1464,6 +1486,20 @@ function resolveChargedSlam(
     fired: true,
     fx: charged.fx,
   });
+
+  // The slam ALWAYS erupts where it was planted, hit or miss. A telegraphed
+  // circle that resolves silently on empty ground reads as a bug; the shockwave
+  // is what pays off the wind-up and teaches that stepping out was the answer.
+  // Anchored to `impact`, never the caster — the two have diverged by now.
+  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+  world.pushEvent(nodeId, {
+    kind: "boss-fx",
+    monsterId: monster.isMonster.id,
+    pos: { ...impact },
+    fx: "slam",
+    radius: aoe.radius,
+    element: def?.attackStyle,
+  });
 }
 
 /** Resolve expiry detonations and linked fault lines through real monster hits. */
@@ -1473,6 +1509,9 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
     if (!ownerId) continue;
     const monster = world.getMonsterEntity(ownerId);
     if (!monster || monster.hasHealth.hp <= 0) continue;
+    const telemetryCapture = impact.kind === 'fault-line-telegraph'
+      ? beginTelegraphResolutionTelemetry(world, monster.hasPosition.nodeId, impact, now)
+      : null;
 
     const points = impact.kind === 'toxic-pool' ? [impact.pos] : impact.points;
     const multiplier = impact.kind === 'toxic-pool'
@@ -1496,8 +1535,12 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
     for (const player of players.values()) {
       if (!world.getPlayerEntity(player.isPlayer.id)) continue;
       runMonsterAttack(world, monster, player, now, multiplier);
+      if (telemetryCapture) {
+        recordTelegraphResolutionVictim(world, telemetryCapture, player.isPlayer.id);
+      }
       if (!world.hasMonster(ownerId)) break;
     }
+    if (telemetryCapture) finishTelegraphResolutionTelemetry(world, telemetryCapture);
     if (world.hasMonster(ownerId)) {
       for (const minion of minions.values()) {
         if (minion.hasHealth.hp > 0) runMonsterAttackOnMinion(world, monster, minion, now);

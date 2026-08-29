@@ -13,6 +13,7 @@ import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
 import { World } from "../src/world/World";
+import { takeWorldLogEvents } from "../src/world/worldLog";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -86,6 +87,12 @@ updateAbilityFiring(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "expose-weakness",
   "In Combat -> Fire Technique should arm Expose Weakness when off cooldown",
+);
+assert(
+  takeWorldLogEvents(world, player.isPlayer.id).some(
+    (event) => event.kind === "ability-activation" && event.abilityId === "expose-weakness",
+  ),
+  "Technique activation should reach bot-visible telemetry",
 );
 
 const hpBefore = target.hasHealth.hp;

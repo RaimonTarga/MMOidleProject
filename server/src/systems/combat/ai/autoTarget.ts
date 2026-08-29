@@ -3,6 +3,7 @@ import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
   MONSTER_DATABASE,
   distanceSq,
+  getCounter,
   getFlag,
   hitboxGap,
   MELEE_CONTACT_MARGIN,
@@ -15,8 +16,11 @@ import {
   RUNE_CAREFUL_PULLING_SIDE_STEP,
   RUNE_KEEP_DISTANCE_GAP,
   RUNE_KEEP_DISTANCE_RANGED_BUFFER,
+  setCounter,
   setFlag,
+  type HitboxRect,
   type NodeFeatureShape,
+  type PosHitbox,
   type Vec2,
 } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
@@ -33,11 +37,15 @@ import {
   RUNE_FOLLOW_LEADER_FLAG,
   RUNE_AVOID_NODE_HAZARDS_FLAG,
   RUNE_CAREFUL_PULLING_FLAG,
+  RUNE_EVADE_TELEGRAPH_FLAG,
   RUNE_KEEP_DISTANCE_FLAG,
   RUNE_TACTICAL_RELOAD_FLAG,
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
 } from "./runeConfig";
+import { steerOutOfTelegraphs } from "./telegraphEvasion";
+import { steerOutOfPersistentHazards } from "./dynamicHazardAvoidance";
+import { activeAvoidablePersistentGroundZones } from "../../world/groundZones";
 import { isPlayerInCombat } from "./engagement";
 import { holdsPositionWhileCasting } from "../../player/abilities/abilityCasting";
 
@@ -105,6 +113,302 @@ const HAZARD_PULL_EDGE_BUFFER = 72;
 const HAZARD_PULL_ARRIVE_SQ = 42 * 42;
 const HAZARD_SKIRT_ANGLE = 0.65;
 
+// ─── Keep-distance standoff ring ──────────────────────────────────────────────
+//
+// The standoff is solved as a RING around the target rather than a single point
+// on the target→player ray. The radial solve had no answer whenever the one
+// direction it could pick was unavailable — pinned against a node edge, behind a
+// tree, or backing into a second mob — because `clampToNode` silently squashed
+// the destination onto roughly the player's own position, which reads to the nav
+// layer as "already there". The player then stood still and ate the fight.
+//
+// Sampling the whole ring turns every one of those into an ordinary scoring
+// question: a blocked bearing simply loses to an open one, and the player slides
+// along the wall (or around the trunk) instead of planting.
+
+/** Bearings sampled per solve. 16 gives 22.5° resolution — fine enough that the
+ *  chosen point is never visibly off the best one, coarse enough to stay cheap. */
+const RING_SAMPLES = 16;
+
+/**
+ * How many of the cheaply-scored candidates get the expensive checks
+ * (standable / hazard-free). Collision and feature queries are far dearer than
+ * the arithmetic terms, so the ring is ranked on cheap terms first and only the
+ * head of that ranking is verified. The cheap terms already encode most of the
+ * ordering, so widening this changes the outcome rarely.
+ */
+const RING_FULL_CHECK_COUNT = 4;
+
+/**
+ * Iterations of the gap→center-distance solve. `idealGap` is EDGE-to-edge (it is
+ * compared against `hitboxGap`), but a ring is defined in center space, so the
+ * radius that achieves a wanted gap depends on both hitboxes and on the bearing.
+ * Gap grows very nearly 1:1 with center distance, so this converges immediately;
+ * three passes is comfortably exact for any hitbox in the database.
+ */
+const RING_GAP_SOLVE_ITERATIONS = 3;
+
+/** Score weights, all in px-equivalent units so they compose additively. */
+const RING_TRAVEL_WEIGHT = 1;
+/** Damps large angular jumps between ticks. */
+const RING_ANGULAR_WEIGHT = 120;
+/**
+ * Flat cost of reversing the established direction of travel around the ring.
+ * This is the soft latch: the solve still re-decides every tick, but a one-tick
+ * scoring tie cannot flip the player's heading — that churn is what the 5 Hz
+ * broadcast samples as movement stutter.
+ */
+const RING_REVERSAL_PENALTY = 200;
+/**
+ * Below this angular delta a candidate is "the same place", so it neither
+ * establishes nor reverses a direction of travel.
+ */
+const RING_SPIN_EPSILON = 0.15;
+/** Other monsters push candidates away from themselves, inside this radius. */
+const RING_MONSTER_THREAT_RADIUS = 320;
+const RING_MONSTER_REPULSION_WEIGHT = 420;
+
+/** Last chosen ring bearing (radians) and direction of travel around it (-1/0/+1). */
+const RING_ANGLE_COUNTER = "rune.orbitAngle";
+const RING_SPIN_COUNTER = "rune.orbitSpin";
+/**
+ * Bearings are stored biased by this so that an UNSET counter — `getCounter`
+ * returns 0 for any key never written — is distinguishable from a genuine
+ * bearing of 0 radians (due east). Without the bias the very first solve of a
+ * fight would be told it had a previous heading of east and score against it.
+ */
+const RING_ANGLE_BIAS = 100;
+
+interface RingCandidate {
+  point: Vec2;
+  angle: number;
+  /** Signed angular delta from the previous bearing; 0 when there is none. */
+  delta: number;
+  cost: number;
+}
+
+/**
+ * Center distance along `dir` at which the player's hitbox sits `wantGap`
+ * edge-to-edge from `targetPH`.
+ *
+ * Solved numerically rather than as `wantGap + radii` because a hitbox is a set
+ * of rects, not a circle: which rect pair is closest — and therefore how much
+ * center distance a given gap costs — changes with the bearing. Treating a
+ * gap-space value as a center-space distance is what put the old standoff
+ * systematically off by the two bodies' extents.
+ */
+function centerDistanceForGap(
+  playerRects: HitboxRect[],
+  targetPH: PosHitbox,
+  dir: Vec2,
+  wantGap: number,
+): number {
+  let r = Math.max(1, wantGap);
+  for (let i = 0; i < RING_GAP_SOLVE_ITERATIONS; i++) {
+    const pos: Vec2 = {
+      x: targetPH.pos.x + dir.x * r,
+      y: targetPH.pos.y + dir.y * r,
+    };
+    const achieved = hitboxGap({ pos, rects: playerRects }, targetPH);
+    if (!Number.isFinite(achieved)) break;
+    r = Math.max(1, r + (wantGap - achieved));
+  }
+  return r;
+}
+
+/** True while `point` sits inside the node's walkable rectangle. */
+function isInsideNode(world: World, nodeId: string, point: Vec2): boolean {
+  const node = NODE_REGISTRY.get(nodeId);
+  if (!node) return true;
+  return (
+    point.x >= NODE_MARGIN &&
+    point.x <= node.width - NODE_MARGIN &&
+    point.y >= NODE_MARGIN &&
+    point.y <= node.height - NODE_MARGIN
+  );
+}
+
+/**
+ * Summed pressure from every monster on the node other than the one being
+ * fought. Generalises the Careful Pulling nudge: that rule only considers
+ * elites, and only when equipped, but backing into ANY second mob is a bad
+ * standoff regardless of which runes are slotted.
+ */
+function ringMonsterPenalty(
+  world: World,
+  player: PlayerEntity,
+  target: MonsterEntity,
+  point: Vec2,
+): number {
+  let penalty = 0;
+  for (const other of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+    if (other.entityId === target.entityId) continue;
+    const d = Math.hypot(
+      point.x - other.hasPosition.current.x,
+      point.y - other.hasPosition.current.y,
+    );
+    if (d >= RING_MONSTER_THREAT_RADIUS) continue;
+    const pressure = (RING_MONSTER_THREAT_RADIUS - d) / RING_MONSTER_THREAT_RADIUS;
+    penalty += pressure * RING_MONSTER_REPULSION_WEIGHT;
+  }
+  return penalty;
+}
+
+/** Shortest signed angle from `from` to `to`, in (-PI, PI]. */
+function signedAngleDelta(from: number, to: number): number {
+  let d = to - from;
+  while (d > Math.PI) d -= Math.PI * 2;
+  while (d <= -Math.PI) d += Math.PI * 2;
+  return d;
+}
+
+/**
+ * Choose a standoff point on the ring of edge-to-edge radius `wantGap` around
+ * `target`.
+ *
+ * Cheap terms rank every bearing; the expensive geometry checks then run down
+ * that ranking until one candidate survives. Returns null when nothing on the
+ * ring is usable — the caller falls back to the old radial behaviour, so a
+ * player boxed into a corner degrades to the previous conduct rather than
+ * freezing.
+ */
+function solveStandoffRing(
+  world: World,
+  player: PlayerEntity,
+  target: MonsterEntity,
+  wantGap: number,
+  opts: { retreatOnly: boolean },
+  now: number,
+): Vec2 | null {
+  const playerPos = player.hasPosition.current;
+  const nodeId = player.hasPosition.nodeId;
+  const targetPH = posHitboxFromEntity(target);
+  const playerRects = posHitboxFromEntity(player).rects;
+
+  const storedAngle = getCounter(player.tracksCombat, RING_ANGLE_COUNTER);
+  const hasPrev = storedAngle !== 0;
+  const prevAngle = storedAngle - RING_ANGLE_BIAS;
+  const prevSpin = getCounter(player.tracksCombat, RING_SPIN_COUNTER);
+
+  // Retreat-only (the idle rule) may never pick a bearing that closes distance.
+  const currentCenterDist = Math.hypot(
+    playerPos.x - targetPH.pos.x,
+    playerPos.y - targetPH.pos.y,
+  );
+
+  // Start from the player's own bearing so "hold roughly where I am" is always
+  // among the samples and wins on travel cost when it is viable.
+  const baseAngle = Math.atan2(
+    playerPos.y - targetPH.pos.y,
+    playerPos.x - targetPH.pos.x,
+  );
+
+  const scored: RingCandidate[] = [];
+  for (let i = 0; i < RING_SAMPLES; i++) {
+    const angle = baseAngle + (i * Math.PI * 2) / RING_SAMPLES;
+    const dir: Vec2 = { x: Math.cos(angle), y: Math.sin(angle) };
+    const radius = centerDistanceForGap(playerRects, targetPH, dir, wantGap);
+    const point: Vec2 = {
+      x: targetPH.pos.x + dir.x * radius,
+      y: targetPH.pos.y + dir.y * radius,
+    };
+
+    // Node bounds are a REJECT, not a clamp. Squashing an out-of-node point back
+    // onto the boundary is precisely how the old solve produced a destination the
+    // player was already standing on.
+    if (!isInsideNode(world, nodeId, point)) continue;
+    if (opts.retreatOnly && radius < currentCenterDist) continue;
+
+    const delta = hasPrev ? signedAngleDelta(prevAngle, angle) : 0;
+    let cost =
+      Math.hypot(point.x - playerPos.x, point.y - playerPos.y) * RING_TRAVEL_WEIGHT;
+    cost += ringMonsterPenalty(world, player, target, point);
+    if (hasPrev) {
+      cost += (Math.abs(delta) / Math.PI) * RING_ANGULAR_WEIGHT;
+      const reverses =
+        prevSpin !== 0 &&
+        Math.abs(delta) > RING_SPIN_EPSILON &&
+        Math.sign(delta) !== prevSpin;
+      if (reverses) cost += RING_REVERSAL_PENALTY;
+    }
+    scored.push({ point, angle, delta, cost });
+  }
+
+  scored.sort((a, b) => a.cost - b.cost);
+
+  let checked = 0;
+  for (const candidate of scored) {
+    if (checked >= RING_FULL_CHECK_COUNT) break;
+    checked++;
+    if (!isStandablePoint(world, player, candidate.point)) continue;
+    if (playerHazardContainingPoint(world, nodeId, candidate.point, now)) continue;
+
+    setCounter(
+      player.tracksCombat,
+      RING_ANGLE_COUNTER,
+      candidate.angle + RING_ANGLE_BIAS,
+    );
+    if (Math.abs(candidate.delta) > RING_SPIN_EPSILON) {
+      setCounter(player.tracksCombat, RING_SPIN_COUNTER, Math.sign(candidate.delta));
+    }
+    return candidate.point;
+  }
+  return null;
+}
+
+/**
+ * Drive `player` to a solved standoff point.
+ *
+ * Mirrors the approach path's two-mode delivery, which the keep-distance branch
+ * never had. Both modes exist because the nav layer treats a mover as arrived
+ * within `PATH_GOAL_EPSILON` (~48px) of its goal: close in, that epsilon is the
+ * entire standoff band, so pathing alone can strand a player just outside its own
+ * attack range against anything that will not close the gap for it.
+ */
+function driveToStandoff(
+  world: World,
+  player: PlayerEntity,
+  target: MonsterEntity,
+  dest: Vec2,
+  minCenterDist: number,
+): void {
+  const playerPos = player.hasPosition.current;
+  const travel = Math.hypot(dest.x - playerPos.x, dest.y - playerPos.y);
+  if (travel <= 0) {
+    stopEntity(world, player);
+    return;
+  }
+
+  if (travel <= DIRECT_APPROACH_DIST && hasClearDirectApproach(world, player, dest)) {
+    // Short correction: steer DIRECTLY so the radius lands pixel-exact instead of
+    // at nav resolution. This is the fix for a standoff that settles just outside
+    // its own attack range and then oscillates there.
+    setEntityMotion(world, player, dest, { mode: "direct" });
+    return;
+  }
+
+  // Longer correction: pathfind, but aim a slack PAST the standoff so the goal
+  // epsilon cannot stop the player short of it. The per-tick hold-band check is
+  // the authoritative stop, exactly as on the approach path.
+  const ux = (dest.x - playerPos.x) / travel;
+  const uy = (dest.y - playerPos.y) / travel;
+  const pushed: Vec2 = {
+    x: dest.x + ux * APPROACH_GOAL_SLACK,
+    y: dest.y + uy * APPROACH_GOAL_SLACK,
+  };
+  // Overshooting outward is harmless, but overshooting INWARD would aim the
+  // player deeper than the standoff it just solved for — clamp against that.
+  const targetPos = target.hasPosition.current;
+  const pushedDist = Math.hypot(pushed.x - targetPos.x, pushed.y - targetPos.y);
+  const goal =
+    pushedDist >= minCenterDist &&
+    isInsideNode(world, player.hasPosition.nodeId, pushed) &&
+    isStandablePoint(world, player, pushed)
+      ? pushed
+      : dest;
+  setEntityMotion(world, player, goal);
+}
+
 /**
  * Direct steering is only safe when the mover's whole body has an unobstructed
  * segment to the requested standoff. Distance alone is insufficient: two actors
@@ -170,12 +474,24 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
  * arbitration uses active targets/aggro instead, so it can claim movement while
  * this post-combat cooldown is still running.
  */
-function playerHazardContainingPoint(nodeId: string, pos: Vec2): NodeFeatureShape | null {
-  const features = RESOLVED_NODE_FEATURES[nodeId];
-  if (!features) return null;
-  for (const feature of features) {
+function playerHazardContainingPoint(
+  world: World,
+  nodeId: string,
+  pos: Vec2,
+  now: number,
+): NodeFeatureShape | null {
+  for (const feature of RESOLVED_NODE_FEATURES[nodeId] ?? []) {
     if (!feature.damage?.targets.includes("player")) continue;
     if (pointInNodeFeatureShape(pos, feature.shape)) return feature.shape;
+  }
+  for (const zone of activeAvoidablePersistentGroundZones(world, nodeId, now)) {
+    const shape: NodeFeatureShape = {
+      kind: "circle",
+      x: zone.pos.x,
+      y: zone.pos.y,
+      radius: zone.radius,
+    };
+    if (pointInNodeFeatureShape(pos, shape)) return shape;
   }
   return null;
 }
@@ -269,7 +585,27 @@ export function updateAutoTargets(world: World, now: number) {
 
     // Active escape remains higher priority than voluntary recovery/maintenance.
     if (player.isFleeing) {
-      stepFlee(world, player);
+      stepFlee(world, player, now);
+      continue;
+    }
+
+    // A Step Back response owns movement through authoritative telegraph end.
+    // Once geometrically safe it stops issuing motion, but Chase/Orbit still
+    // yield so they cannot undo the dodge before the attack resolves.
+    if (getFlag(player.tracksCombat, RUNE_EVADE_TELEGRAPH_FLAG)) {
+      setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+      steerOutOfTelegraphs(world, player);
+      continue;
+    }
+
+    // Persistent terrain is the next temporary movement owner. It is deliberately
+    // below Step Back (an imminent resolving hit) and above ordinary Chase/Orbit.
+    // The response latches until an authoritative safe position is observed.
+    if (
+      getFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG) &&
+      steerOutOfPersistentHazards(world, player, now)
+    ) {
+      setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       continue;
     }
 
@@ -332,7 +668,7 @@ export function updateAutoTargets(world: World, now: number) {
     );
     if (action.kind === "flee") {
       beginFlee(world, player);
-      stepFlee(world, player);
+      stepFlee(world, player, now);
     } else if (action.kind === "attack") {
       steerTowardTarget(world, player, action.target, now);
     } else {
@@ -412,12 +748,16 @@ export function steerTowardTarget(
 
   if (avoidHazards) {
     const targetHazard = playerHazardContainingPoint(
+      world,
       player.hasPosition.nodeId,
       targetPos,
+      now,
     );
     const playerHazard = playerHazardContainingPoint(
+      world,
       player.hasPosition.nodeId,
       playerPos,
+      now,
     );
     const pullPoint = targetHazard
       ? hazardPullPoint(targetHazard, playerPos, targetPos)
@@ -450,27 +790,39 @@ export function steerTowardTarget(
     }
   }
 
-  if (keepDist && inCombat && dist > 0) {
-    // In combat: full kite formula — reposition to the ideal standoff gap,
+  // The mob can hit us at or below its own reach (same edge-to-edge gap combat
+  // uses). Keep-distance exists to stand beyond it whenever we can still fire.
+  const mobReach = target.performsAttack.attackRange;
+  const maxFireGap = attackRange * 0.92;            // farthest we reliably fire
+  const minStandoff = Math.min(maxFireGap, attackRange * 0.72);
+  // Smallest gap that is both safe (past the mob's reach) and within our firing
+  // range.
+  const safeFireGap = Math.min(maxFireGap, mobReach + RANGED_SAFE_BUFFER);
+
+  // When the mob out-reaches us there is no gap that is both safe and firing, so
+  // the rule's whole promise is unsatisfiable. Holding at our farthest firing
+  // distance — the old safeguard — buys nothing (we are shot at every gap) and
+  // parks the player in a band only 8% of attack range wide, where the nav goal
+  // epsilon alone is enough to drift us out of our own reach and strand us there,
+  // because nothing that out-ranges us will close the gap on its own. Keep
+  // Distance yields the movement channel instead and the ordinary approach path
+  // below closes to a settled standoff, which is the only real answer to being
+  // out-ranged. A yield, not a disengage — the fight continues.
+  const outranged = mobReach + RANGED_SAFE_BUFFER > maxFireGap;
+  if (keepDist && inCombat && outranged) {
+    setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+  }
+
+  if (keepDist && inCombat && !outranged && dist > 0) {
+    // In combat: hold a standoff gap and reposition on a ring around the target,
     // moving both toward and away to stay in firing range. (Kiter / Desperate
     // Kiter.)
-    // The mob can hit us at or below its own reach (same edge-to-edge gap combat
-    // uses). Keep-distance exists to stand beyond it whenever we can still fire.
-    const mobReach = target.performsAttack.attackRange;
-    const maxFireGap = attackRange * 0.92;            // farthest we reliably fire
-    const minStandoff = Math.min(maxFireGap, attackRange * 0.72);
-
-    // Smallest gap that is both safe (past the mob's reach) and within our firing
-    // range. If the mob outranges us this clamps to maxFireGap: we cannot be safe
-    // and fire at once, so the safeguard is to hold at our farthest firing
-    // distance — taking the fewest hits — instead of parking deep inside reach.
-    const safeFireGap = Math.min(maxFireGap, mobReach + RANGED_SAFE_BUFFER);
-    const idealGap = Math.max(minStandoff, safeFireGap);
+  const idealGap = Math.max(minStandoff, safeFireGap);
     const inRange = world.collision.canReach(player, target, attackRange);
 
     // Hysteresis widens the hold window once firing, but the lower bound never
-    // drops below the safe-fire gap, so a latched player can't creep back inside a
-    // ranged mob's reach — the "out of position but still getting hit" case.
+    // drops below the safe-fire gap, so a latched player can't creep back inside
+    // a ranged mob's reach — the "out of position but still getting hit" case.
     const firing = getFlag(player.tracksCombat, AUTO_FIRING_FLAG);
     const holdMinGap = firing
       ? Math.max(minStandoff * 0.85, safeFireGap * 0.95)
@@ -481,13 +833,56 @@ export function steerTowardTarget(
 
     if (inRange && gap >= holdMinGap && gap <= holdMaxGap) {
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, true);
+      // Remember where we are holding. A hold can last many ticks, and the
+      // continuity term must score against the bearing we are actually on when
+      // motion resumes, not the one we last solved for.
+      setCounter(
+        player.tracksCombat,
+        RING_ANGLE_COUNTER,
+        Math.atan2(playerPos.y - targetPos.y, playerPos.x - targetPos.x) +
+          RING_ANGLE_BIAS,
+      );
       stopEntity(world, player);
       return;
     }
 
-    // Out of the hold window — reposition to the ideal standoff gap. Too close
-    // pushes the standoff point outward; too far pulls it inward (same formula).
+    // Out of the hold window — reposition onto the standoff ring. Too close and
+    // too far are the same solve; the ring merely also has an answer when the
+    // straight-back bearing is unusable.
     setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+    const solved = solveStandoffRing(
+      world,
+      player,
+      target,
+      idealGap,
+      { retreatOnly: false },
+      now,
+    );
+    if (solved) {
+      // Never let the pathing overshoot aim us deeper than the minimum standoff.
+      const inward = {
+        x: (playerPos.x - targetPos.x) / dist,
+        y: (playerPos.y - targetPos.y) / dist,
+      };
+      const minCenterDist = centerDistanceForGap(
+        playerPH.rects,
+        targetPH,
+        inward,
+        minStandoff,
+      );
+      driveToStandoff(
+        world,
+        player,
+        target,
+        carefulPullingDest(world, player, target, solved),
+        minCenterDist,
+      );
+      return;
+    }
+
+    // Nothing on the ring is usable (boxed into a corner by a pack): fall back
+    // to the original radial solve so behaviour degrades to what it was rather
+    // than to standing still.
     const candidate: Vec2 = {
       x: targetPos.x - (dx / dist) * (idealGap + 32),
       y: targetPos.y - (dy / dist) * (idealGap + 32),
@@ -507,9 +902,27 @@ export function steerTowardTarget(
 
   if (keepDist && !inCombat && dist > 0) {
     // Idle: retreat-only avoidance — hold still until an enemy enters personal
-    // space, then step directly away. Never advance. (Skittish.)
+    // space, then give ground. Never advance. (Skittish.)
     setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
     if (gap <= AVOID_GAP) {
+      const solved = solveStandoffRing(
+        world,
+        player,
+        target,
+        AVOID_GAP,
+        { retreatOnly: true },
+        now,
+      );
+      if (solved) {
+        const minCenterDist = Math.hypot(
+          playerPos.x - targetPos.x,
+          playerPos.y - targetPos.y,
+        );
+        driveToStandoff(world, player, target, solved, minCenterDist);
+        return;
+      }
+      // Cornered with nowhere on the ring to give ground to: keep the original
+      // step-directly-away so the behaviour degrades rather than freezing.
       const candidate: Vec2 = {
         x: playerPos.x - (dx / dist) * AVOID_GAP,
         y: playerPos.y - (dy / dist) * AVOID_GAP,

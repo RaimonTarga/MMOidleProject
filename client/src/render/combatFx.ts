@@ -640,9 +640,14 @@ export function dispatchCombatEvent(
     // Node-wide cosmetic cue for a boss scripted action.
     if (shouldRunClientFx()) {
       const sprite = state.sprite.get(ev.monsterId);
-      const at = sprite
-        ? { x: sprite.x, y: sprite.y }
-        : nodeToScene(ev.pos.x, ev.pos.y);
+      // A slam lands on its PLANTED point, which is not where the caster stands
+      // by the time the wind-up finishes — always anchor it to the broadcast
+      // impact position. Every other cue is centred on the monster itself, where
+      // the live sprite position is the smoother anchor.
+      const at =
+        ev.fx !== "slam" && sprite
+          ? { x: sprite.x, y: sprite.y }
+          : nodeToScene(ev.pos.x, ev.pos.y);
       if (ev.fx === "slam") {
         playSfx("attack-blunt");
         fxSlam(scene, at.x, at.y, ev.radius ?? 120, ev.element);

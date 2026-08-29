@@ -3,6 +3,7 @@ import { join } from "node:path";
 import type { PlayerView } from "@mmo-idle/shared";
 import type { Route } from "../route/types";
 import type { CompletionState, RunHeader } from "./events";
+import type { LeaseSessionEvidence } from "../concurrency/routeLeaseSession";
 import type { Recorder } from "./recorder";
 
 /**
@@ -83,6 +84,85 @@ export interface RunSummary {
     attempts: number;
     victories: number;
     successRate: number;
+    attemptResults: Array<{
+      nodeId: string;
+      biomeGroup: string | null;
+      attempt: number;
+      outcome?: "victory" | "death" | "timeout" | "unreachable";
+      bossHpFraction?: number;
+      totalAttemptDurationMs?: number;
+      bossCombatStartedAtMs?: number;
+      bossCombatEndedAtMs?: number;
+      bossCombatDurationMs?: number;
+    }>;
+  };
+  mechanics: {
+    abilityActivations: Record<string, number>;
+    cleanseRemovedByEffect: Record<string, number>;
+    persistentHazards: Record<string, {
+      contacts: number;
+      durationMs: number;
+      damageReceived: number;
+      harmfulEffects: Record<string, number>;
+    }>;
+    hazardEscape: {
+      attempts: number;
+      successes: number;
+      failures: number;
+      expired: number;
+      interrupted: number;
+    };
+    stepBack: {
+      activations: number;
+      attempts: number;
+      successes: number;
+      failures: number;
+      discarded: number;
+      damageReceived: number;
+    };
+    /**
+     * Part 2 diagnostics: class-specific Technique/Sweep adapter contribution.
+     * Counts are authoritative; damage totals are included only where the
+     * server attributed them directly at the application site.
+     */
+    apprenticeSweep: { secondaryTargets: number; stacksApplied: number };
+    slingerSweep: {
+      clipsCreated: number;
+      shotsFired: number;
+      splashHits: number;
+      splashDamage: number;
+    };
+    conduitFormation: {
+      arms: number;
+      meanEligibleSummons: number;
+      deliveries: number;
+      sharesLost: number;
+      secondaryDamage: number;
+    };
+    /**
+     * Read-only boss-fight diagnostics. `range` answers "did Orbit/Chase hold
+     * the intended distance"; `barrier`/`summons` stay all-zero for builds that
+     * have neither.
+     */
+    bossDiagnostics: {
+      samples: number;
+      range: {
+        samples: number;
+        meanDistance: number;
+        maxDistance: number;
+        huggingFraction: number;
+        inReachFraction: number;
+        outOfReachFraction: number;
+      };
+      adds: { meanOthers: number; maxOthers: number };
+      barrier: {
+        samples: number;
+        meanFraction: number;
+        rechargingFraction: number;
+        depletedFraction: number;
+      };
+      summons: { samples: number; meanLiving: number; maxLiving: number; emptyFraction: number };
+    };
   };
   equipment: {
     finalLoadout: Record<string, string | null>;
@@ -105,6 +185,40 @@ export interface RunSummary {
     contestedSamples: number;
     contestedFraction: number;
   };
+  coordination: {
+    executionMode: RunHeader["executionMode"];
+    maxConcurrency: number;
+    maximumSimultaneouslyProgressing: number;
+    leaseAcquisitions: number;
+    leaseReleases: number;
+    leaseWaitMs: number;
+    maximumLeaseWaitMs: number;
+    contaminated: boolean;
+    controlledOverlaps: LeaseSessionEvidence["overlaps"];
+    /**
+     * Waits the bot spent still fighting in a node it exclusively owned. Safe
+     * for isolation, but it banks essence/XP a solo run would not have yet --
+     * check this before comparing a parallel run against a sequential baseline.
+     */
+    productiveWaits: number;
+    productiveWaitMs: number;
+    /** Overlaps that actually taint the run (another bot engaged in our node). */
+    contaminatingOverlaps: number;
+    /** Benign pass-throughs: recorded so the mode stays auditable, not a taint. */
+    transitCoPresences: number;
+    /**
+     * Which nodes this run actually spent its time in, and their modifiers.
+     * Node choice inside a biome is schedule-dependent under isolated-parallel,
+     * and modifiers change monster stats, so two runs are only comparable when
+     * this mix is comparable. Recorded so that stays checkable after the fact.
+     */
+    nodeMix: Array<{
+      nodeId: string;
+      biomeGroup: string | null;
+      nodeModifier: string | null;
+      timeMs: number;
+    }>;
+  };
   stalls: Array<{ reason: string; detail?: Record<string, unknown> }>;
 }
 
@@ -119,6 +233,8 @@ export function buildSummary(params: {
   milestonesReached: string[];
   routeStepsCompleted: number;
   endedAt: number;
+  leaseEvidence?: LeaseSessionEvidence;
+  maximumSimultaneouslyProgressing?: number;
 }): RunSummary {
   const { header, recorder, route, self } = params;
   const durationMs = params.endedAt - header.startedAt;
@@ -233,6 +349,49 @@ export function buildSummary(params: {
       victories: recorder.bossVictories,
       successRate:
         recorder.bossAttempts > 0 ? round(recorder.bossVictories / recorder.bossAttempts) : 0,
+      attemptResults: recorder.bossAttemptResults.map((attempt) => ({
+        nodeId: attempt.nodeId,
+        biomeGroup: attempt.biomeGroup,
+        attempt: attempt.attempt,
+        outcome: attempt.outcome,
+        bossHpFraction: attempt.bossHpFraction,
+        totalAttemptDurationMs: attempt.durationMs,
+        bossCombatStartedAtMs: attempt.bossCombatStartedAtMs,
+        bossCombatEndedAtMs: attempt.bossCombatEndedAtMs,
+        bossCombatDurationMs: attempt.bossCombatDurationMs,
+      })),
+    },
+    mechanics: {
+      abilityActivations: { ...recorder.abilityActivations },
+      cleanseRemovedByEffect: { ...recorder.cleanseRemovedByEffect },
+      persistentHazards: Object.fromEntries(
+        Object.entries(recorder.persistentHazardStats(durationMs)).map(([key, value]) => [key, {
+          ...value,
+          durationMs: round(value.durationMs),
+          damageReceived: round(value.damageReceived),
+          harmfulEffects: { ...value.harmfulEffects },
+        }]),
+      ),
+      hazardEscape: { ...recorder.hazardEscape },
+      stepBack: {
+        ...recorder.stepBack,
+        damageReceived: round(recorder.stepBack.damageReceived),
+      },
+      apprenticeSweep: { ...recorder.apprenticeSweep },
+      slingerSweep: {
+        ...recorder.slingerSweep,
+        splashDamage: round(recorder.slingerSweep.splashDamage),
+      },
+      conduitFormation: {
+        arms: recorder.conduitFormation.arms,
+        meanEligibleSummons: recorder.conduitFormation.arms > 0
+          ? round(recorder.conduitFormation.eligibleSummonsSum / recorder.conduitFormation.arms)
+          : 0,
+        deliveries: recorder.conduitFormation.deliveries,
+        sharesLost: recorder.conduitFormation.sharesLost,
+        secondaryDamage: round(recorder.conduitFormation.secondaryDamage),
+      },
+      bossDiagnostics: buildBossDiagnostics(recorder.bossDiagnostics),
     },
     equipment: {
       finalLoadout: { ...(self?.equipment ?? {}) },
@@ -254,6 +413,26 @@ export function buildSummary(params: {
       otherPlayersSeen: recorder.otherPlayerSightings.size,
       contestedSamples: recorder.contestedSamples,
       contestedFraction: samples > 0 ? round(recorder.contestedSamples / samples) : 0,
+    },
+    coordination: {
+      executionMode: header.executionMode,
+      maxConcurrency: header.maxConcurrency,
+      maximumSimultaneouslyProgressing: params.maximumSimultaneouslyProgressing ?? 1,
+      leaseAcquisitions: params.leaseEvidence?.acquisitions ?? 0,
+      leaseReleases: params.leaseEvidence?.releases ?? 0,
+      leaseWaitMs: params.leaseEvidence?.totalWaitMs ?? recorder.leaseWaitMs,
+      maximumLeaseWaitMs: params.leaseEvidence?.maximumWaitMs ?? 0,
+      contaminated: params.leaseEvidence?.contaminated ?? false,
+      controlledOverlaps: params.leaseEvidence?.overlaps ?? [],
+      productiveWaits: params.leaseEvidence?.productiveWaits ?? 0,
+      productiveWaitMs: params.leaseEvidence?.productiveWaitMs ?? 0,
+      contaminatingOverlaps:
+        params.leaseEvidence?.overlaps.filter((entry) => entry.contaminating).length ?? 0,
+      transitCoPresences:
+        params.leaseEvidence?.overlaps.filter((entry) => !entry.contaminating).length ?? 0,
+      nodeMix: Object.entries(recorder.nodeTimeMs)
+        .map(([nodeId, entry]) => ({ nodeId, ...entry }))
+        .sort((a, b) => b.timeMs - a.timeMs),
     },
     stalls: params.stalls,
   };
@@ -283,6 +462,41 @@ function topKills(
   n: number,
 ): Array<{ name: string; kills: number }> {
   return rank(record, n).map(([name, value]) => ({ name, kills: value }));
+}
+
+/** Collapse the recorder's raw boss-fight sample counters into read-only rates. */
+function buildBossDiagnostics(
+  diag: Recorder["bossDiagnostics"],
+): RunSummary["mechanics"]["bossDiagnostics"] {
+  const rate = (part: number, whole: number): number => (whole > 0 ? round(part / whole) : 0);
+  const mean = (sum: number, whole: number): number => (whole > 0 ? round(sum / whole) : 0);
+  return {
+    samples: diag.samples,
+    range: {
+      samples: diag.range.samples,
+      meanDistance: mean(diag.range.sumDistance, diag.range.samples),
+      maxDistance: round(diag.range.maxDistance),
+      huggingFraction: rate(diag.range.hugging, diag.range.samples),
+      inReachFraction: rate(diag.range.inReach, diag.range.samples),
+      outOfReachFraction: rate(diag.range.outOfReach, diag.range.samples),
+    },
+    adds: {
+      meanOthers: mean(diag.adds.sumOthers, diag.adds.samples),
+      maxOthers: diag.adds.maxOthers,
+    },
+    barrier: {
+      samples: diag.barrier.samples,
+      meanFraction: mean(diag.barrier.sumFraction, diag.barrier.samples),
+      rechargingFraction: rate(diag.barrier.rechargingSamples, diag.barrier.samples),
+      depletedFraction: rate(diag.barrier.depletedSamples, diag.barrier.samples),
+    },
+    summons: {
+      samples: diag.summons.samples,
+      meanLiving: mean(diag.summons.sumLiving, diag.summons.samples),
+      maxLiving: diag.summons.maxLiving,
+      emptyFraction: rate(diag.summons.emptySamples, diag.summons.samples),
+    },
+  };
 }
 
 function roundRecord(record: Record<string, number>): Record<string, number> {

@@ -122,9 +122,9 @@ export const rootsAndFramesEntries = [
     parent: null, children: [],
     description: 'Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — a light, evasive frame that fights from range and weaves around incoming blows.',
     cost: 1, statEffects: {
-      attackPct: 0.10, maxHpPct: 0.07,
+      attackPct: 0.20, maxHpPct: 0.07,
       attackSpeedPct: 0.10, moveSpeedPct: 0.10,
-      attackRange: 120, evasion: 0.25,
+      attackRange: 120, evasion: 0.30,
     },
     // NOTE: max-ammo / reload-time-ms are set by the FRAME (Scout/Marksman/Artillerist),
     // not here — passives merge additively, so seeding them on the root too would stack

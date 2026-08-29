@@ -30,6 +30,9 @@ export const RUNE_KEEP_DISTANCE_GAP = 220;
  */
 export const RUNE_KEEP_DISTANCE_RANGED_BUFFER = 45;
 
+/** Extra center-point clearance beyond a telegraph's damage radius when stepping out. */
+export const RUNE_TELEGRAPH_ESCAPE_CLEARANCE = 20;
+
 /**
  * Careful Pulling gives elites a berth scaled to their leash, clamped to this
  * band (px). The route bends around anything inside the radius.

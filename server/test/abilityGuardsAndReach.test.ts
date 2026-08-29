@@ -41,6 +41,7 @@ import { STUN_EFFECT, applyStun } from "../src/systems/combat/status/stun";
 import { syncPlayerControlLockout } from "../src/systems/combat/status/playerControlLockout";
 import { ABILITY_DATABASE } from "@mmo-idle/shared";
 import { World } from "../src/world/World";
+import { takeWorldLogEvents } from "../src/world/worldLog";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -148,6 +149,14 @@ initCombatSystems();
   assert(
     getStatusEffect(player.tracksCombat, guardEffectIdForSlot(0)) === undefined,
     "Cleanse must not grant a damage-reduction buff",
+  );
+  const activation = takeWorldLogEvents(world, player.isPlayer.id).find(
+    (event) => event.kind === "ability-activation" && event.abilityId === "cleanse",
+  );
+  assert(
+    activation?.kind === "ability-activation" &&
+      activation.removedEffects?.some((effect) => effect.effectId === "swamp-rot" && effect.stacks === 3),
+    "Cleanse telemetry should record the actual harmful stacks removed",
   );
 }
 

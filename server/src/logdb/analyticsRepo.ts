@@ -94,6 +94,11 @@ function buildSnapshot(
   const sankeyNodeNames = new Set<string>();
   let deaths = 0;
   let progressionEvents = 0;
+  let runeActivations = 0;
+  let telegraphDodgeAttempts = 0;
+  let telegraphDodgeSuccesses = 0;
+  let telegraphDodgeFailures = 0;
+  let telegraphDamageReceived = 0;
 
   for (const row of rows) {
     const day = dayKey(row.ts);
@@ -143,6 +148,14 @@ function buildSnapshot(
       if (bucket) bucket.progressionEvents += 1;
     }
 
+    if (row.kind === 'rune-activation') runeActivations += 1;
+    if (row.kind === 'telegraph-dodge-attempt') telegraphDodgeAttempts += 1;
+    if (row.kind === 'telegraph-dodge-success') telegraphDodgeSuccesses += 1;
+    if (row.kind === 'telegraph-dodge-failure') {
+      telegraphDodgeFailures += 1;
+      telegraphDamageReceived += Math.max(0, row.value ?? 0);
+    }
+
     if (row.kind === 'server-sample' && bucket) {
       bucket.peakPlayers = Math.max(bucket.peakPlayers, row.value ?? 0);
     }
@@ -169,6 +182,11 @@ function buildSnapshot(
       activeAccounts,
       deaths,
       progressionEvents,
+      runeActivations,
+      telegraphDodgeAttempts,
+      telegraphDodgeSuccesses,
+      telegraphDodgeFailures,
+      telegraphDamageReceived,
     },
     versions,
     perkSankey: {

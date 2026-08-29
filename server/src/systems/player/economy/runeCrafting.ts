@@ -27,6 +27,12 @@ export function craftRuneRecipe(
 ): RuneCraftResult {
   const recipe = RUNE_RECIPE_DATABASE.get(recipeId);
   if (!recipe) return { recipeId, success: false, reason: "Unknown rune recipe." };
+  // Deprecated recipes (their rune was promoted to a starter default) grant
+  // nothing — reject explicitly, before any essence check, rather than relying
+  // on the "already unlocked" fallback below.
+  if (recipe.deprecated) {
+    return { recipeId, success: false, reason: "This recipe is no longer craftable." };
+  }
 
   const crafted = entity.tracksProgression.runeRecipesCrafted ?? [];
   if (crafted.includes(recipeId)) {

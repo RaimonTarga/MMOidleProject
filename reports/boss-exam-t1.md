@@ -10,31 +10,31 @@ Guard stripped, boss woken immediately. 5 armour set(s) x 6 class roots per boss
 
 | boss | biome | win | ttk s | cost bars | hp/s %pool | burst %pool | spike% | attrition% |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| Gnarled Greatbear | forest | 0/30 | 57.0 | 5.02 | 8.9 | 15.5 | 0 | 0 |
-| Obsidian Broodmother | cave | 0/30 | 84.3 | 4.93 | 6.1 | 22.7 | 0 | 0 |
-| Tusked Razorback | plains | 0/30 | 80.1 | 4.73 | 6.2 | 16.6 | 0 | 0 |
-| Crag Behemoth | mountain | 0/30 | 57.0 | 3.36 | 5.9 | 25.4 | 0 | 0 |
-| Grave Toadeater | swamp | 0/30 | 62.2 | 3.34 | 5.4 | 10.2 | 0 | 89 |
+| Obsidian Broodmother | cave | 0/30 | 85.3 | 4.99 | 6.1 | 22.7 | 0 | 0 |
+| Gnarled Greatbear | forest | 0/30 | 57.2 | 4.95 | 8.8 | 15.5 | 0 | 0 |
+| Tusked Razorback | plains | 0/30 | 79.3 | 4.67 | 6.1 | 16.2 | 0 | 0 |
+| Crag Behemoth | mountain | 0/30 | 57.6 | 3.39 | 5.9 | 25.4 | 0 | 0 |
+| Grave Toadeater | swamp | 0/30 | 62.9 | 3.39 | 5.4 | 10.2 | 0 | 89 |
 
 ## Per class root (cost bars)
 
 | boss | cadence | cooldown | reload | energy | dot | summoner |
 |---|---:|---:|---:|---:|---:|---:|
-| Gnarled Greatbear | 5.04 | 4.84 | 4.97 | 4.90 | 5.54 | 4.84 |
-| Obsidian Broodmother | 3.99 | 3.90 | 3.79 | 3.58 | 3.67 | 10.63 |
-| Tusked Razorback | 3.62 | 3.39 | 4.05 | 3.96 | 4.29 | 9.07 |
-| Crag Behemoth | 3.27 | 3.19 | 3.50 | 3.42 | 3.72 | 3.04 |
-| Grave Toadeater | 3.28 | 3.48 | 2.51 | 3.13 | 2.96 | 4.71 |
+| Obsidian Broodmother | 4.03 | 3.96 | 3.86 | 3.65 | 3.69 | 10.72 |
+| Gnarled Greatbear | 5.03 | 4.69 | 4.93 | 4.77 | 5.54 | 4.72 |
+| Tusked Razorback | 3.63 | 3.59 | 4.17 | 3.91 | 4.37 | 8.38 |
+| Crag Behemoth | 3.31 | 3.24 | 3.55 | 3.46 | 3.73 | 3.06 |
+| Grave Toadeater | 3.32 | 3.53 | 2.56 | 3.17 | 2.97 | 4.76 |
 
 ## Per armour set (cost bars)
 
 | boss | plains | forest | swamp | mountain | cave |
 |---|---:|---:|---:|---:|---:|
-| Gnarled Greatbear | 4.58 | 5.30 | 6.43 | 4.82 | 3.99 |
-| Obsidian Broodmother | 6.32 | 5.85 | 6.00 | 3.64 | 2.83 |
-| Tusked Razorback | 5.27 | 5.47 | 6.65 | 3.50 | 2.77 |
-| Crag Behemoth | 3.81 | 3.39 | 3.87 | 3.26 | 2.45 |
-| Grave Toadeater | 4.70 | 2.90 | 3.21 | 3.26 | 2.64 |
+| Obsidian Broodmother | 6.32 | 5.85 | 6.00 | 3.64 | 3.12 |
+| Gnarled Greatbear | 4.33 | 5.26 | 6.18 | 4.72 | 4.23 |
+| Tusked Razorback | 4.81 | 5.02 | 6.70 | 3.78 | 3.06 |
+| Crag Behemoth | 3.81 | 3.39 | 3.87 | 3.26 | 2.63 |
+| Grave Toadeater | 4.70 | 2.90 | 3.21 | 3.26 | 2.86 |
 
 ## Every fight
 
@@ -64,12 +64,12 @@ Guard stripped, boss woken immediately. 5 armour set(s) x 6 class roots per boss
 | Crag Behemoth | mountain | energy | bot_died | 14.1 | 24% | 58.3 | 4.13 | 29.9 |
 | Crag Behemoth | mountain | dot | bot_died | 17.6 | 33% | 53.0 | 3.01 | 24.9 |
 | Crag Behemoth | mountain | summoner | bot_died | 21.1 | 32% | 66.7 | 3.16 | 20.1 |
-| Crag Behemoth | cave | cadence | bot_died | 24.6 | 62% | 39.8 | 2.39 | 24.3 |
-| Crag Behemoth | cave | cooldown | bot_died | 28.1 | 59% | 48.0 | 2.50 | 20.9 |
-| Crag Behemoth | cave | reload | bot_died | 17.6 | 37% | 47.4 | 2.95 | 28.2 |
-| Crag Behemoth | cave | energy | bot_died | 17.6 | 45% | 39.0 | 2.41 | 29.4 |
-| Crag Behemoth | cave | dot | bot_died | 17.6 | 40% | 44.1 | 2.72 | 24.3 |
-| Crag Behemoth | cave | summoner | bot_died | 24.6 | 67% | 36.5 | 1.74 | 19.5 |
+| Crag Behemoth | cave | cadence | bot_died | 24.6 | 58% | 42.8 | 2.57 | 24.3 |
+| Crag Behemoth | cave | cooldown | bot_died | 28.1 | 54% | 52.5 | 2.73 | 20.9 |
+| Crag Behemoth | cave | reload | bot_died | 17.6 | 34% | 51.3 | 3.19 | 28.2 |
+| Crag Behemoth | cave | energy | bot_died | 17.6 | 41% | 42.7 | 2.64 | 29.4 |
+| Crag Behemoth | cave | dot | bot_died | 17.6 | 39% | 45.3 | 2.80 | 24.3 |
+| Crag Behemoth | cave | summoner | bot_died | 24.6 | 63% | 39.2 | 1.87 | 19.5 |
 | Obsidian Broodmother | plains | cadence | bot_died | 19.7 | 25% | 78.0 | 4.96 | 21.3 |
 | Obsidian Broodmother | plains | cooldown | bot_died | 22.5 | 25% | 89.5 | 4.88 | 18.7 |
 | Obsidian Broodmother | plains | reload | bot_died | 16.9 | 22% | 75.4 | 4.46 | 24.2 |
@@ -94,72 +94,72 @@ Guard stripped, boss woken immediately. 5 armour set(s) x 6 class roots per boss
 | Obsidian Broodmother | mountain | energy | bot_died | 16.9 | 31% | 54.1 | 3.20 | 26.8 |
 | Obsidian Broodmother | mountain | dot | bot_died | 16.9 | 34% | 49.4 | 2.92 | 22.3 |
 | Obsidian Broodmother | mountain | summoner | bot_died | 19.7 | 17% | 113.4 | 5.76 | 18.3 |
-| Obsidian Broodmother | cave | cadence | bot_died | 19.7 | 47% | 42.2 | 2.99 | 22.3 |
-| Obsidian Broodmother | cave | cooldown | bot_died | 25.3 | 54% | 46.8 | 2.64 | 19.8 |
-| Obsidian Broodmother | cave | reload | bot_died | 16.9 | 38% | 44.8 | 2.90 | 24.2 |
-| Obsidian Broodmother | cave | energy | bot_died | 16.9 | 38% | 43.9 | 2.83 | 25.9 |
-| Obsidian Broodmother | cave | dot | bot_died | 16.9 | 44% | 38.4 | 2.46 | 21.4 |
-| Obsidian Broodmother | cave | summoner | bot_died | 22.5 | 37% | 60.4 | 3.13 | 18.2 |
-| Gnarled Greatbear | plains | cadence | bot_died | 17.4 | 28% | 62.5 | 4.44 | 9.8 |
-| Gnarled Greatbear | plains | cooldown | bot_died | 25.1 | 36% | 70.0 | 3.51 | 6.5 |
-| Gnarled Greatbear | plains | reload | bot_died | 13.2 | 22% | 61.1 | 4.63 | 13.4 |
-| Gnarled Greatbear | plains | energy | bot_died | 13.2 | 21% | 62.7 | 4.75 | 14.0 |
-| Gnarled Greatbear | plains | dot | bot_died | 14.2 | 21% | 68.8 | 4.84 | 10.4 |
-| Gnarled Greatbear | plains | summoner | bot_died | 15.4 | 19% | 81.3 | 5.28 | 9.3 |
-| Gnarled Greatbear | forest | cadence | bot_died | 10.7 | 25% | 42.3 | 4.69 | 18.9 |
-| Gnarled Greatbear | forest | cooldown | bot_died | 13.0 | 23% | 57.0 | 5.08 | 14.9 |
-| Gnarled Greatbear | forest | reload | bot_died | 10.8 | 20% | 53.5 | 4.95 | 22.2 |
-| Gnarled Greatbear | forest | energy | bot_died | 9.6 | 22% | 43.2 | 4.50 | 23.1 |
-| Gnarled Greatbear | forest | dot | bot_died | 9.5 | 14% | 66.7 | 7.02 | 19.2 |
-| Gnarled Greatbear | forest | summoner | bot_died | 10.8 | 18% | 60.0 | 5.56 | 15.6 |
-| Gnarled Greatbear | swamp | cadence | bot_died | 11.9 | 18% | 64.7 | 7.41 | 16.9 |
-| Gnarled Greatbear | swamp | cooldown | bot_died | 15.2 | 22% | 69.9 | 6.44 | 13.2 |
-| Gnarled Greatbear | swamp | reload | bot_died | 12.1 | 20% | 61.4 | 6.24 | 19.9 |
-| Gnarled Greatbear | swamp | energy | bot_died | 11.0 | 18% | 59.8 | 6.19 | 20.6 |
-| Gnarled Greatbear | swamp | dot | bot_died | 12.0 | 19% | 64.2 | 6.58 | 16.1 |
-| Gnarled Greatbear | swamp | summoner | bot_died | 14.3 | 22% | 64.6 | 5.71 | 13.6 |
-| Gnarled Greatbear | mountain | cadence | bot_died | 13.0 | 25% | 52.4 | 4.71 | 15.6 |
-| Gnarled Greatbear | mountain | cooldown | bot_died | 15.2 | 24% | 64.3 | 4.80 | 12.0 |
-| Gnarled Greatbear | mountain | reload | bot_died | 12.0 | 23% | 52.5 | 4.38 | 18.4 |
-| Gnarled Greatbear | mountain | energy | bot_died | 11.0 | 19% | 57.7 | 5.25 | 19.1 |
+| Obsidian Broodmother | cave | cadence | bot_died | 19.7 | 43% | 45.5 | 3.22 | 22.3 |
+| Obsidian Broodmother | cave | cooldown | bot_died | 25.3 | 49% | 51.9 | 2.93 | 19.8 |
+| Obsidian Broodmother | cave | reload | bot_died | 16.9 | 34% | 50.3 | 3.26 | 24.2 |
+| Obsidian Broodmother | cave | energy | bot_died | 16.9 | 34% | 49.2 | 3.17 | 25.9 |
+| Obsidian Broodmother | cave | dot | bot_died | 16.9 | 43% | 39.6 | 2.54 | 21.4 |
+| Obsidian Broodmother | cave | summoner | bot_died | 22.5 | 32% | 69.8 | 3.62 | 18.2 |
+| Gnarled Greatbear | plains | cadence | bot_died | 18.1 | 28% | 65.0 | 4.44 | 9.8 |
+| Gnarled Greatbear | plains | cooldown | bot_died | 26.5 | 38% | 70.0 | 3.37 | 6.5 |
+| Gnarled Greatbear | plains | reload | bot_died | 13.5 | 23% | 59.2 | 4.39 | 13.4 |
+| Gnarled Greatbear | plains | energy | bot_died | 13.6 | 23% | 59.0 | 4.34 | 14.0 |
+| Gnarled Greatbear | plains | dot | bot_died | 14.6 | 22% | 67.4 | 4.62 | 10.4 |
+| Gnarled Greatbear | plains | summoner | bot_died | 16.0 | 21% | 77.3 | 4.83 | 9.3 |
+| Gnarled Greatbear | forest | cadence | bot_died | 10.9 | 25% | 43.1 | 4.69 | 18.9 |
+| Gnarled Greatbear | forest | cooldown | bot_died | 13.3 | 23% | 58.3 | 5.10 | 14.9 |
+| Gnarled Greatbear | forest | reload | bot_died | 11.0 | 21% | 52.4 | 4.76 | 22.2 |
+| Gnarled Greatbear | forest | energy | bot_died | 9.7 | 22% | 43.7 | 4.50 | 23.1 |
+| Gnarled Greatbear | forest | dot | bot_died | 9.6 | 14% | 67.4 | 7.02 | 19.2 |
+| Gnarled Greatbear | forest | summoner | bot_died | 11.0 | 18% | 60.1 | 5.46 | 15.6 |
+| Gnarled Greatbear | swamp | cadence | bot_died | 12.1 | 18% | 65.8 | 7.41 | 16.9 |
+| Gnarled Greatbear | swamp | cooldown | bot_died | 15.7 | 24% | 66.4 | 5.95 | 13.2 |
+| Gnarled Greatbear | swamp | reload | bot_died | 12.3 | 20% | 60.4 | 6.06 | 19.9 |
+| Gnarled Greatbear | swamp | energy | bot_died | 11.2 | 20% | 54.6 | 5.59 | 20.6 |
+| Gnarled Greatbear | swamp | dot | bot_died | 12.2 | 19% | 65.2 | 6.62 | 16.1 |
+| Gnarled Greatbear | swamp | summoner | bot_died | 14.8 | 23% | 63.9 | 5.47 | 13.6 |
+| Gnarled Greatbear | mountain | cadence | bot_died | 13.3 | 25% | 53.6 | 4.74 | 15.6 |
+| Gnarled Greatbear | mountain | cooldown | bot_died | 15.7 | 27% | 57.9 | 4.21 | 12.0 |
+| Gnarled Greatbear | mountain | reload | bot_died | 12.2 | 23% | 53.4 | 4.38 | 18.4 |
+| Gnarled Greatbear | mountain | energy | bot_died | 11.2 | 19% | 58.8 | 5.25 | 19.1 |
 | Gnarled Greatbear | mountain | dot | bot_died | 11.0 | 20% | 55.6 | 5.05 | 16.0 |
-| Gnarled Greatbear | mountain | summoner | bot_died | 13.2 | 21% | 62.3 | 4.72 | 12.2 |
-| Gnarled Greatbear | cave | cadence | bot_died | 13.0 | 33% | 39.8 | 3.95 | 15.4 |
-| Gnarled Greatbear | cave | cooldown | bot_died | 14.1 | 29% | 49.0 | 4.35 | 12.8 |
-| Gnarled Greatbear | cave | reload | bot_died | 10.8 | 23% | 46.8 | 4.67 | 18.4 |
-| Gnarled Greatbear | cave | energy | bot_died | 10.9 | 28% | 38.4 | 3.79 | 19.1 |
-| Gnarled Greatbear | cave | dot | bot_died | 10.8 | 25% | 42.8 | 4.23 | 15.8 |
-| Gnarled Greatbear | cave | summoner | bot_died | 13.2 | 38% | 34.7 | 2.96 | 13.0 |
-| Tusked Razorback | plains | cadence | bot_died | 26.1 | 36% | 72.1 | 4.02 | 12.0 |
-| Tusked Razorback | plains | cooldown | bot_died | 36.1 | 44% | 82.6 | 3.58 | 10.1 |
-| Tusked Razorback | plains | reload | bot_died | 35.5 | 50% | 70.6 | 3.77 | 14.8 |
-| Tusked Razorback | plains | energy | bot_died | 20.1 | 29% | 69.2 | 3.89 | 15.4 |
-| Tusked Razorback | plains | dot | bot_died | 28.1 | 30% | 92.9 | 4.65 | 11.5 |
-| Tusked Razorback | plains | summoner | bot_died | 50.1 | 20% | 253.5 | 11.73 | 18.7 |
-| Tusked Razorback | forest | cadence | bot_died | 18.1 | 38% | 47.0 | 3.29 | 18.0 |
-| Tusked Razorback | forest | cooldown | bot_died | 18.1 | 30% | 60.3 | 4.01 | 16.8 |
-| Tusked Razorback | forest | reload | bot_died | 14.1 | 27% | 52.3 | 3.71 | 22.2 |
-| Tusked Razorback | forest | energy | bot_died | 14.1 | 29% | 48.7 | 3.46 | 22.4 |
-| Tusked Razorback | forest | dot | bot_died | 14.1 | 23% | 61.9 | 4.39 | 17.5 |
-| Tusked Razorback | forest | summoner | bot_died | 18.1 | 7% | 252.2 | 13.93 | 14.3 |
-| Tusked Razorback | swamp | cadence | bot_died | 20.1 | 34% | 58.7 | 4.75 | 20.9 |
-| Tusked Razorback | swamp | cooldown | bot_died | 28.1 | 44% | 64.6 | 3.91 | 14.4 |
-| Tusked Razorback | swamp | reload | bot_died | 16.1 | 21% | 75.0 | 6.09 | 21.7 |
-| Tusked Razorback | swamp | energy | bot_died | 16.1 | 18% | 90.3 | 6.44 | 21.9 |
-| Tusked Razorback | swamp | dot | bot_died | 20.1 | 22% | 93.1 | 6.28 | 16.6 |
-| Tusked Razorback | swamp | summoner | bot_died | 24.1 | 11% | 212.3 | 12.42 | 14.8 |
-| Tusked Razorback | mountain | cadence | bot_died | 20.1 | 40% | 50.3 | 3.07 | 15.6 |
-| Tusked Razorback | mountain | cooldown | bot_died | 24.1 | 44% | 55.4 | 2.79 | 12.4 |
-| Tusked Razorback | mountain | reload | bot_died | 20.1 | 34% | 59.6 | 3.36 | 17.2 |
-| Tusked Razorback | mountain | energy | bot_died | 16.1 | 29% | 54.8 | 3.41 | 19.7 |
-| Tusked Razorback | mountain | dot | bot_died | 16.1 | 29% | 55.2 | 3.43 | 15.8 |
-| Tusked Razorback | mountain | summoner | bot_died | 22.1 | 20% | 109.2 | 4.94 | 11.6 |
-| Tusked Razorback | cave | cadence | bot_died | 20.1 | 47% | 42.3 | 2.95 | 16.4 |
-| Tusked Razorback | cave | cooldown | bot_died | 23.8 | 51% | 46.3 | 2.63 | 12.3 |
-| Tusked Razorback | cave | reload | bot_died | 16.1 | 36% | 45.2 | 3.34 | 20.1 |
-| Tusked Razorback | cave | energy | bot_died | 14.7 | 41% | 35.9 | 2.63 | 21.0 |
-| Tusked Razorback | cave | dot | bot_died | 17.8 | 40% | 44.0 | 2.71 | 16.4 |
-| Tusked Razorback | cave | summoner | bot_died | 24.1 | 50% | 48.5 | 2.36 | 14.2 |
+| Gnarled Greatbear | mountain | summoner | bot_died | 13.6 | 21% | 64.2 | 4.72 | 12.2 |
+| Gnarled Greatbear | cave | cadence | bot_died | 13.3 | 33% | 39.9 | 3.90 | 15.4 |
+| Gnarled Greatbear | cave | cooldown | bot_died | 14.5 | 26% | 55.0 | 4.78 | 12.8 |
+| Gnarled Greatbear | cave | reload | bot_died | 11.0 | 21% | 51.6 | 5.07 | 18.4 |
+| Gnarled Greatbear | cave | energy | bot_died | 11.1 | 26% | 42.9 | 4.16 | 19.1 |
+| Gnarled Greatbear | cave | dot | bot_died | 11.0 | 24% | 45.0 | 4.37 | 15.3 |
+| Gnarled Greatbear | cave | summoner | bot_died | 13.6 | 36% | 37.6 | 3.12 | 13.0 |
+| Tusked Razorback | plains | cadence | bot_died | 22.3 | 36% | 62.5 | 3.61 | 13.2 |
+| Tusked Razorback | plains | cooldown | bot_died | 28.1 | 40% | 69.9 | 3.11 | 9.5 |
+| Tusked Razorback | plains | reload | bot_died | 28.1 | 41% | 68.5 | 3.92 | 14.8 |
+| Tusked Razorback | plains | energy | bot_died | 20.1 | 29% | 69.2 | 3.91 | 15.4 |
+| Tusked Razorback | plains | dot | bot_died | 26.5 | 28% | 96.3 | 5.07 | 12.2 |
+| Tusked Razorback | plains | summoner | bot_died | 40.1 | 19% | 215.7 | 9.26 | 9.3 |
+| Tusked Razorback | forest | cadence | bot_died | 20.1 | 41% | 49.3 | 3.26 | 18.6 |
+| Tusked Razorback | forest | cooldown | bot_died | 22.1 | 31% | 70.8 | 4.10 | 15.8 |
+| Tusked Razorback | forest | reload | bot_died | 14.1 | 27% | 52.3 | 3.71 | 19.0 |
+| Tusked Razorback | forest | energy | bot_died | 14.1 | 33% | 43.0 | 3.05 | 22.4 |
+| Tusked Razorback | forest | dot | bot_died | 15.9 | 26% | 61.3 | 3.85 | 19.1 |
+| Tusked Razorback | forest | summoner | bot_died | 18.1 | 8% | 219.8 | 12.14 | 16.2 |
+| Tusked Razorback | swamp | cadence | bot_died | 22.1 | 34% | 65.1 | 5.01 | 18.0 |
+| Tusked Razorback | swamp | cooldown | bot_died | 30.1 | 39% | 76.6 | 4.48 | 14.4 |
+| Tusked Razorback | swamp | reload | bot_died | 16.1 | 21% | 75.0 | 6.09 | 21.1 |
+| Tusked Razorback | swamp | energy | bot_died | 16.1 | 25% | 63.8 | 4.52 | 24.5 |
+| Tusked Razorback | swamp | dot | bot_died | 20.1 | 18% | 109.2 | 7.38 | 16.6 |
+| Tusked Razorback | swamp | summoner | bot_died | 24.1 | 11% | 217.9 | 12.71 | 14.8 |
+| Tusked Razorback | mountain | cadence | bot_died | 20.1 | 40% | 50.3 | 3.06 | 15.6 |
+| Tusked Razorback | mountain | cooldown | bot_died | 26.1 | 36% | 72.3 | 3.40 | 11.4 |
+| Tusked Razorback | mountain | reload | bot_died | 18.1 | 32% | 57.0 | 3.56 | 19.0 |
+| Tusked Razorback | mountain | energy | bot_died | 16.1 | 20% | 78.6 | 4.89 | 17.8 |
+| Tusked Razorback | mountain | dot | bot_died | 16.6 | 35% | 46.9 | 2.82 | 15.9 |
+| Tusked Razorback | mountain | summoner | bot_died | 22.1 | 20% | 109.2 | 4.94 | 12.8 |
+| Tusked Razorback | cave | cadence | bot_died | 18.1 | 41% | 44.0 | 3.23 | 15.9 |
+| Tusked Razorback | cave | cooldown | bot_died | 22.1 | 47% | 47.0 | 2.84 | 13.4 |
+| Tusked Razorback | cave | reload | bot_died | 16.1 | 33% | 48.4 | 3.59 | 20.7 |
+| Tusked Razorback | cave | energy | bot_died | 14.1 | 34% | 41.8 | 3.17 | 21.1 |
+| Tusked Razorback | cave | dot | bot_died | 18.1 | 41% | 44.5 | 2.70 | 16.4 |
+| Tusked Razorback | cave | summoner | bot_died | 22.1 | 41% | 54.2 | 2.84 | 12.3 |
 | Grave Toadeater | plains | cadence | bot_died | 18.7 | 27% | 70.3 | 4.47 | 10.4 |
 | Grave Toadeater | plains | cooldown | bot_died | 19.7 | 25% | 80.3 | 4.78 | 9.3 |
 | Grave Toadeater | plains | reload | bot_died | 21.1 | 30% | 69.7 | 3.30 | 8.7 |
@@ -184,9 +184,9 @@ Guard stripped, boss woken immediately. 5 armour set(s) x 6 class roots per boss
 | Grave Toadeater | mountain | energy | bot_died | 16.7 | 30% | 55.1 | 3.30 | 12.7 |
 | Grave Toadeater | mountain | dot | bot_died | 19.7 | 36% | 54.1 | 2.75 | 9.2 |
 | Grave Toadeater | mountain | summoner | bot_died | 16.7 | 23% | 73.1 | 4.38 | 11.6 |
-| Grave Toadeater | cave | cadence | bot_died | 19.7 | 46% | 42.9 | 2.70 | 10.7 |
-| Grave Toadeater | cave | cooldown | bot_died | 20.7 | 41% | 50.5 | 2.94 | 9.5 |
-| Grave Toadeater | cave | reload | bot_died | 20.1 | 40% | 50.1 | 2.49 | 9.9 |
-| Grave Toadeater | cave | energy | bot_died | 16.7 | 37% | 44.7 | 2.68 | 13.0 |
-| Grave Toadeater | cave | dot | bot_died | 18.3 | 43% | 42.5 | 2.32 | 9.8 |
-| Grave Toadeater | cave | summoner | bot_died | 15.7 | 37% | 42.8 | 2.73 | 11.8 |
+| Grave Toadeater | cave | cadence | bot_died | 19.7 | 42% | 46.7 | 2.94 | 10.7 |
+| Grave Toadeater | cave | cooldown | bot_died | 20.7 | 37% | 55.4 | 3.23 | 9.5 |
+| Grave Toadeater | cave | reload | bot_died | 20.1 | 37% | 54.6 | 2.72 | 9.9 |
+| Grave Toadeater | cave | energy | bot_died | 16.7 | 34% | 48.8 | 2.92 | 13.0 |
+| Grave Toadeater | cave | dot | bot_died | 18.3 | 42% | 43.7 | 2.39 | 9.8 |
+| Grave Toadeater | cave | summoner | bot_died | 15.7 | 34% | 46.4 | 2.95 | 11.8 |

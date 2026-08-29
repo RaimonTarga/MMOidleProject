@@ -35,6 +35,9 @@ export function recordWorldLogEvent(
       world.worldLogByPlayer.set(playerId, q);
     }
     q.push(event);
+    // The human recorder observes exactly the same authoritative event stream
+    // delivered to this player. It never drains or changes the normal log queue.
+    world.humanPlaytests?.recordWorldEvent(playerId, event);
   }
 }
 

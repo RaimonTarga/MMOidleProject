@@ -36,7 +36,13 @@ export const trenchMonsterEntries = [
     // Signature: a periodic telegraphed heavy bite carrying ABYSSAL WOUND, the only
     // anti-Recovery left in the biome. Answers: enough sustain to survive the Wound,
     // Brace for the bite, burst/execute, or stealth-route to avoid a second pull.
-    stats: { hp: 4200, attack: 420, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
+    // Ordinary attack cut 420 -> 230 (item/monster diagnostic, 2026-08-24): a
+    // death-trace found the PLAIN ordinary hit alone landing 321-370 (up to 81% of
+    // a T4 arrival player's maxHP), on top of which Abyssal Bite still lands its
+    // full telegraphed multiplier untouched. Only the ordinary-attack base moved;
+    // the signature ability is left for manual playtest per the standing rule on
+    // CC/telegraph-gated spikes.
+    stats: { hp: 4200, attack: 230, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     elite: true,
     rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
@@ -63,7 +69,12 @@ export const trenchMonsterEntries = [
     // Its ranged presentation + Pressure Lance land in the behavior pass.
     // HP down vs the other two elites, plating stays heavy: armor is this one's
     // defensive identity. attackRange lifted to a real standoff.
-    stats: { hp: 2800, attack: 401, plating: 20, damageReduction: 0.10, speed: 22, attackRange: 240, attackCooldown: 3400, pullRange: 400 },
+    // Ordinary attack cut 401 -> 210 (item/monster diagnostic, 2026-08-24): a
+    // death-trace found the PLAIN ordinary hit alone landing 304-342 (up to 75% of
+    // a T4 arrival player's maxHP), before Pressure Lance's own telegraphed
+    // multiplier. Only the ordinary-attack base moved; Pressure Lance is left for
+    // manual playtest per the standing rule on CC/telegraph-gated spikes.
+    stats: { hp: 2800, attack: 210, plating: 20, damageReduction: 0.10, speed: 22, attackRange: 240, attackCooldown: 3400, pullRange: 400 },
     // `kiter`: it maintains standoff. Speed 22 is far below player base, so a
     // charging or mobile build always catches it - that contract is load-bearing.
     behavior: 'kiter', attackStyle: 'gunshot', biome: 'trench',
@@ -89,7 +100,12 @@ export const trenchMonsterEntries = [
     // The fight should read: huge target, shell windows, survive Devour, finish it
     // before another elite wanders in.
     // WARNING: no low-HP enrage. That is saved for a later Leviathan evolution.
-    stats: { hp: 5880, attack: 483, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
+    // Ordinary attack cut 483 -> 260 (item/monster diagnostic, 2026-08-24): a
+    // death-trace found the PLAIN ordinary hit alone landing 370-376 (up to 82% of
+    // a T4 arrival player's maxHP), before Devour's own telegraphed multiplier.
+    // Only the ordinary-attack base moved; Devour is left for manual playtest per
+    // the standing rule on CC/telegraph-gated spikes.
+    stats: { hp: 5880, attack: 260, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     elite: true,
     rewards: { essence: 400, essenceType: 'blue', level: 4, biomeXp: 2400 },

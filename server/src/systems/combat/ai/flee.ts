@@ -10,6 +10,10 @@ import {
   gateApproachTarget,
 } from "../../../world/nodePath";
 import { setEntityMotion, stopEntity } from "../../world/movement";
+import {
+  activeAvoidablePersistentGroundZones,
+  pointInsideGroundZone,
+} from "../../world/groundZones";
 import { setAttackTarget } from "./targeting";
 
 const GATE_ORDER: NodeDirection[] = ["north", "south", "west", "east"];
@@ -55,9 +59,18 @@ export function beginFlee(world: World, player: PlayerEntity): void {
  * return  -> path back to `returnNodeId`, then detach the marker so normal
  *            target scoring resumes and can re-engage.
  */
-export function stepFlee(world: World, player: PlayerEntity): void {
+export function stepFlee(world: World, player: PlayerEntity, now = Date.now()): void {
   const state = player.isFleeing;
   if (!state) return;
+
+  // Flee remains the higher-priority owner. If it starts inside a runtime
+  // blocker, its first leg must be allowed to leave that blocker; subsequent
+  // legs resume the normal hazard-aware route planning.
+  const avoidHazards = !activeAvoidablePersistentGroundZones(
+    world,
+    player.hasPosition.nodeId,
+    now,
+  ).some((zone) => pointInsideGroundZone(zone, player.hasPosition.current));
 
   setAttackTarget(world, player, null);
 
@@ -81,7 +94,7 @@ export function stepFlee(world: World, player: PlayerEntity): void {
         stopEntity(world, player);
         return;
       }
-      setEntityMotion(world, player, gate);
+      setEntityMotion(world, player, gate, { avoidHazards });
       return;
     }
 
@@ -103,7 +116,7 @@ export function stepFlee(world: World, player: PlayerEntity): void {
       if (!isClearOfGateBands(player)) {
         const center = nodeCenter(player.hasPosition.nodeId);
         if (center) {
-          setEntityMotion(world, player, center);
+          setEntityMotion(world, player, center, { avoidHazards });
           return;
         }
       }
@@ -130,6 +143,7 @@ export function stepFlee(world: World, player: PlayerEntity): void {
         world,
         player,
         gateApproachTarget(player.hasPosition.nodeId, dir, player.hasPosition.current),
+        { avoidHazards },
       );
       return;
     }

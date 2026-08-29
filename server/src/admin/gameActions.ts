@@ -5,6 +5,7 @@ import {
   emptyEquippedStances,
   emptyEquippedRites,
   ESSENCE_TYPES,
+  FAST_BOSS_RETRY_TAINT,
   GAME_CONFIG,
   NODE_BIOMES,
   pointInNodeFeatureShape,
@@ -14,6 +15,7 @@ import {
   SKILL_TREE,
   TEST_ROOM_NODE_ID,
   runeIdsFromCraftedRecipes,
+  type FastBossRetryResult,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
 import { detachComponent } from '../ecs/markerHelpers';
@@ -33,6 +35,9 @@ import { ensureBoss, ensurePopulation } from '../systems/world/spawning';
 import { thawNode } from '../world/nodeLifecycle';
 import { rightmostEntranceTarget } from '../world/nodePath';
 import type { World } from '../world/World';
+import { recordWorldLogEvent } from '../world/worldLog';
+import { actorFromPlayer } from '../world/worldLogActors';
+import { resetDungeonEncounterForFastRetry } from '../systems/world/dungeons/dungeon';
 import {
   clearSummonerCommand,
 } from '../systems/classes/archetypes/summoner/command';
@@ -164,6 +169,67 @@ export function teleportPlayerToNode(
   markSliceDirty(world, player, 'hasPosition');
   markSliceDirty(world, player, 'usesAutocombat');
   return { ok: true, message: `Player teleported to ${nodeId}.` };
+}
+
+/**
+ * Explicit harness-only boss retry. The socket registration is development
+ * gated; this function keeps the authoritative reset/teleport transaction in
+ * one place and refuses to mutate a dungeon occupied by another character.
+ */
+export function prepareFastBossRetry(
+  world: World,
+  player: PlayerEntity,
+  nodeId: string,
+  includeGuardians: boolean,
+): FastBossRetryResult {
+  const tainted = { taint: FAST_BOSS_RETRY_TAINT } as const;
+  if (!NODE_BIOMES[nodeId]?.isDungeon) {
+    return { ...tainted, success: false, reason: `Not a dungeon node: ${nodeId}` };
+  }
+  const occupiedByOther = [...world.playerEntitiesInNode(nodeId)].some(
+    (other) => other.isPlayer.id !== player.isPlayer.id,
+  );
+  if (occupiedByOther) {
+    return {
+      ...tainted,
+      success: false,
+      reason: `Dungeon ${nodeId} is occupied by another player.`,
+      nodeId,
+      includeGuardians,
+    };
+  }
+
+  // A legitimate post-death retry reaches the next attempt with full HP,
+  // barrier, cleared statuses/cooldowns/resources, no minions, and no aggro.
+  // Reuse that exact authoritative lifecycle, then skip only its travel time.
+  world.respawnPlayer(player.isPlayer.id);
+  const teleported = teleportPlayerToNode(world, player, nodeId);
+  if (!teleported.ok) {
+    return { ...tainted, success: false, reason: teleported.message, nodeId, includeGuardians };
+  }
+  resetDungeonEncounterForFastRetry(world, nodeId, { includeGuardians });
+
+  recordWorldLogEvent(world, {
+    kind: 'fast-boss-retry',
+    nodeId,
+    player: actorFromPlayer(player),
+    taint: FAST_BOSS_RETRY_TAINT,
+    includeGuardians,
+    playerReset: 'respawn-baseline',
+    message: `${FAST_BOSS_RETRY_TAINT}: encounter rebuilt for harness retry`,
+  }, {
+    visibility: 'combat',
+    relatedPlayerIds: [player.isPlayer.id],
+    nodeId,
+  });
+
+  return {
+    ...tainted,
+    success: true,
+    nodeId,
+    includeGuardians,
+    playerReset: 'respawn-baseline',
+  };
 }
 
 export function goToTestRoom(world: World, player: PlayerEntity): GameActionResult {

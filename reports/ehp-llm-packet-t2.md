@@ -30,18 +30,18 @@ Generated from `tools/ehp-report.ts --llm-packet`. Progression-focused companion
 | Current +0 vs current mobs (entry) | T2 +0 | 31.1 atk / 0.48 aps / 3.30 dot / ×1.00 | 350 | -4.35 | 21.7s | 5.56% | 0 |
 | Current +3 vs current mobs (geared) | T2 +3 | 31.1 atk / 0.48 aps / 3.30 dot / ×1.00 | 708 | 1.64 | 166s | 50.0% | 0 |
 | Current +3 vs boss/elite | T2 +3 | 56.0 atk / 0.29 aps / 0.00 dot / ×1.00 | 436 | -0.59 | 95.2s | 33.3% | 0 |
-| Current +3 vs next-tier mobs | T2 +3 | 58.9 atk / 0.44 aps / 6.65 dot / ×1.02 | 355 | -12.8 | 15.2s | 0.00% | 0 |
+| Current +3 vs next-tier mobs | T2 +3 | 51.9 atk / 0.44 aps / 6.65 dot / ×1.02 | 374 | -10.0 | 17.8s | 0.00% | 0 |
 
 ## Class Average eHP By Checkpoint
 
 | Class | Prev-tier +3 vs current mobs | Current +0 vs current mobs (entry) | Current +3 vs current mobs (geared) | Current +3 vs boss/elite | Current +3 vs next-tier mobs |
 | --- | --- | --- | --- | --- | --- |
-| Apprentice | 278 | 358 | 746 | 414 | 361 |
-| Conduit | 235 | 292 | 521 | 353 | 302 |
-| Slinger | 268 | 329 | 567 | 451 | 360 |
-| Spirit | 223 | 276 | 493 | 338 | 288 |
-| Squire | 372 | 483 | 1161 | 611 | 456 |
-| Striker | 290 | 365 | 759 | 450 | 365 |
+| Apprentice | 278 | 358 | 746 | 414 | 386 |
+| Conduit | 235 | 292 | 521 | 353 | 317 |
+| Slinger | 268 | 329 | 567 | 451 | 363 |
+| Spirit | 223 | 276 | 493 | 338 | 302 |
+| Squire | 372 | 483 | 1161 | 611 | 486 |
+| Striker | 290 | 365 | 759 | 450 | 388 |
 
 ## Armor Comparison
 
@@ -57,7 +57,7 @@ _No charm equipped; eHP/TTL/net are vs the avg-mob profile, averaged over spec-a
 | Duneplate of the Last Stand | +5 | 104 | 25.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00 | 1165 | 718s | -2.96 | avg mob | DoT-heavy |
 | Enduring Robe | +0 | 43.0 | 13.0 | 0.00% | 0.00 | - | 350 | 22.9s | -8.59 | avg mob | DoT-heavy |
 | Enduring Robe | +5 | 65.0 | 19.0 | 0.00% | 0.00 | - | 649 | 59.8s | -5.29 | avg mob | DoT-heavy |
-| Iron Crusader Plate | +0 | 58.0 | 9.00 | 0.00% | 0.00 | guard.potency-pct=0.28 | 315 | 20.1s | -10.6 | avg mob | next-tier |
+| Iron Crusader Plate | +0 | 58.0 | 9.00 | 0.00% | 0.00 | guard.potency-pct=0.28 | 315 | 20.1s | -10.6 | avg mob | hardest |
 | Iron Crusader Plate | +5 | 86.0 | 14.0 | 0.00% | 0.00 | guard.potency-pct=0.38 | 488 | 35.2s | -7.83 | avg mob | DoT-heavy |
 | Phantom Bindings | +0 | 50.0 | 5.00 | 0.00% | 0.24 | - | 277 | 17.3s | -11.4 | avg mob | DoT-heavy |
 | Phantom Bindings | +5 | 75.0 | 7.00 | 0.00% | 0.30 | - | 361 | 23.2s | -10.1 | avg mob | DoT-heavy |
@@ -70,19 +70,19 @@ _Reference armor Iron Crusader Plate +3; metrics vs avg-mob profile averaged ove
 
 | Charm | Plus | recovery | Special | Recov/s | eHP contrib | TTL | Best matchup | Worst matchup |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Ancient Heartroot Amulet | +0 | 5.00 | defense.recovery-skill-potency=0.18 | 1.24 | -174 | 21.7s | avg mob | next-tier |
+| Ancient Heartroot Amulet | +0 | 5.00 | defense.recovery-skill-potency=0.18 | 1.24 | -174 | 21.7s | avg mob | DoT-heavy |
 | Ancient Heartroot Amulet | +5 | 8.00 | defense.recovery-skill-potency=0.23 | 1.76 | 0.00 | 58.9s | avg mob | DoT-heavy |
-| Bog Eye | +0 | 4.00 | defense.recovery-pulse-duration-ms=4000, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.32 | 5.51 | -174 | 59.0s | avg mob | next-tier |
+| Bog Eye | +0 | 4.00 | defense.recovery-pulse-duration-ms=4000, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.32 | 5.51 | -174 | 59.0s | avg mob | hardest |
 | Bog Eye | +5 | 6.00 | defense.recovery-pulse-duration-ms=4000, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.42 | 9.36 | 0.00 | 132s | avg mob | DoT-heavy |
-| Canopy Heart | +0 | 6.00 | defense.recovery-ramp-max-pct=0.10, defense.recovery-ramp-ramptime-ms=10000, defense.recovery-ramp-start-pct=0.04 | 3.50 | -174 | 31.4s | avg mob | next-tier |
+| Canopy Heart | +0 | 6.00 | defense.recovery-ramp-max-pct=0.10, defense.recovery-ramp-ramptime-ms=10000, defense.recovery-ramp-start-pct=0.04 | 3.50 | -174 | 31.4s | avg mob | DoT-heavy |
 | Canopy Heart | +5 | 6.00 | defense.recovery-ramp-max-pct=0.20, defense.recovery-ramp-ramptime-ms=10000, defense.recovery-ramp-start-pct=0.04 | 5.96 | 0.00 | 98.1s | avg mob | DoT-heavy |
-| Iron Bulwark | +0 | 2.00 | defense.barrier-pct=0.20 | 0.99 | -174 | 24.7s | avg mob | next-tier |
+| Iron Bulwark | +0 | 2.00 | defense.barrier-pct=0.20 | 0.99 | -174 | 24.7s | avg mob | hardest |
 | Iron Bulwark | +5 | 3.00 | defense.barrier-pct=0.26 | 1.27 | 0.00 | 49.9s | avg mob | DoT-heavy |
-| Mirage Talisman | +0 | 6.00 | defense.cleanse-empty-heal-pct=0.03, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 2.30 | -174 | 25.4s | avg mob | next-tier |
+| Mirage Talisman | +0 | 6.00 | defense.cleanse-empty-heal-pct=0.03, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 2.30 | -174 | 25.4s | avg mob | DoT-heavy |
 | Mirage Talisman | +5 | 6.00 | defense.cleanse-empty-heal-pct=0.08, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 4.61 | 0.00 | 158s | avg mob | DoT-heavy |
 | Resonant Gem | +0 | 4.00 | defense.absorb-pct=0.14 | 2.31 | -174 | 24.3s | avg mob | DoT-heavy |
 | Resonant Gem | +5 | 6.00 | defense.absorb-pct=0.19 | 2.62 | 0.00 | 64.3s | avg mob | DoT-heavy |
-| Stalwart Heart | +0 | 2.00 | defense.recovery-on-kill-ms=4000, defense.recovery-on-kill-pct=0.32 (on-kill Recovery undercounted) | 0.99 | -174 | 20.7s | avg mob | next-tier |
+| Stalwart Heart | +0 | 2.00 | defense.recovery-on-kill-ms=4000, defense.recovery-on-kill-pct=0.32 (on-kill Recovery undercounted) | 0.99 | -174 | 20.7s | avg mob | hardest |
 | Stalwart Heart | +5 | 3.00 | defense.recovery-on-kill-ms=4000, defense.recovery-on-kill-pct=0.42 (on-kill Recovery undercounted) | 1.27 | 0.00 | 39.8s | avg mob | DoT-heavy |
 
 ## Biome Route
@@ -119,7 +119,7 @@ _Single highest-survival loadout (any class) at current +3 vs each boss._
 | Crag Behemoth | 56.0 atk / 0.29 aps / 0.00 dot / ×1.00 | Squire / Bulwark | Duneplate of the Last Stand | Bog Eye | 731 | sustains | 5.92 | 7.66% | Safe |
 | Obsidian Broodmother | 47.0 atk / 0.36 aps / 0.00 dot / ×1.00 | Squire / Bulwark | Duneplate of the Last Stand | Bog Eye | 991 | sustains | 7.28 | 4.74% | Safe |
 | Tusked Razorback | 34.0 atk / 0.50 aps / 0.00 dot / ×1.00 | Squire / Bulwark | Duneplate of the Last Stand | Bog Eye | 9316 | sustains | 11.4 | 0.36% | Safe |
-| Gnarled Greatbear | 24.0 atk / 0.71 aps / 0.00 dot / ×1.28 | Squire / Bulwark | Duneplate of the Last Stand | Bog Eye | 6576 | sustains | 11.2 | 0.47% | Safe |
+| Gnarled Greatbear | 24.0 atk / 0.71 aps / 0.00 dot / ×1.20 | Squire / Bulwark | Duneplate of the Last Stand | Bog Eye | 6576 | sustains | 11.2 | 0.44% | Safe |
 | Grave Toadeater | 13.0 atk / 0.38 aps / 16.0 dot / ×1.00 | Apprentice / Rime-Bound | Bog Wrappings | Bog Eye | 642 | 238s | -0.93 | 0.45% | Risky |
 
 ## Armor Matrix By Attacker Profile
@@ -128,13 +128,13 @@ _Survival score (mitigation × pool incl. recovery) at +3, no charm, averaged ov
 
 | Armor | avg mob | DoT-heavy | hardest | boss | next-tier |
 | --- | --- | --- | --- | --- | --- |
-| Bog Wrappings | 534 | 554 | 336 | 381 | 386 |
-| Dire Bestial Hide | 496 | 308 | 374 | 429 | 367 |
-| Duneplate of the Last Stand | 1290 | 357 | 461 | 724 | 521 |
-| Enduring Robe | 721 | 289 | 336 | 439 | 358 |
-| Iron Crusader Plate | 542 | 326 | 345 | 410 | 360 |
-| Phantom Bindings | 399 | 308 | 353 | 376 | 335 |
-| Verdant Weave | 767 | 359 | 478 | 592 | 475 |
+| Bog Wrappings | 534 | 554 | 336 | 381 | 403 |
+| Dire Bestial Hide | 496 | 308 | 374 | 429 | 375 |
+| Duneplate of the Last Stand | 1290 | 357 | 461 | 724 | 572 |
+| Enduring Robe | 721 | 289 | 336 | 439 | 378 |
+| Iron Crusader Plate | 542 | 326 | 345 | 410 | 373 |
+| Phantom Bindings | 399 | 308 | 353 | 376 | 339 |
+| Verdant Weave | 767 | 359 | 478 | 592 | 490 |
 
 ## Charm Matrix By Attacker Profile
 
@@ -142,13 +142,13 @@ _Survival score at +3 with reference armor Iron Crusader Plate, averaged over cl
 
 | Charm | avg mob | DoT-heavy | hardest | boss | next-tier |
 | --- | --- | --- | --- | --- | --- |
-| Ancient Heartroot Amulet | 570 | 341 | 362 | 430 | 377 |
-| Bog Eye | 812 | 488 | 517 | 613 | 539 |
-| Canopy Heart | 703 | 422 | 447 | 531 | 467 |
-| Iron Bulwark | 679 | 408 | 432 | 513 | 451 |
-| Mirage Talisman | 660 | 396 | 420 | 498 | 438 |
-| Resonant Gem | 595 | 339 | 449 | 470 | 440 |
-| Stalwart Heart | 552 | 331 | 351 | 417 | 367 |
+| Ancient Heartroot Amulet | 570 | 341 | 362 | 430 | 390 |
+| Bog Eye | 812 | 488 | 517 | 613 | 558 |
+| Canopy Heart | 703 | 422 | 447 | 531 | 483 |
+| Iron Bulwark | 679 | 408 | 432 | 513 | 467 |
+| Mirage Talisman | 660 | 396 | 420 | 498 | 453 |
+| Resonant Gem | 595 | 339 | 449 | 470 | 443 |
+| Stalwart Heart | 552 | 331 | 351 | 417 | 379 |
 
 
 ## Top / Bottom Loadouts (current +3 vs current mobs)

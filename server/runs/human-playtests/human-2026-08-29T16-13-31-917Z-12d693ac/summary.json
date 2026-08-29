@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-08-29T16-13-31-917Z-12d693ac",
+    "startedAt": 1788020011917,
+    "endedAt": 1788020931588,
+    "durationMs": 919671,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-08-29T16-13-31-917Z-12d693ac",
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 25
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 2,
+    "finalGlobalMastery": 30,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 6,
+      "forest": 6,
+      "swamp": 6,
+      "cave": 6,
+      "mountain": 6
+    }
+  },
+  "combat": {
+    "totalKills": 58,
+    "killsByMonster": {
+      "Tiny Wisp": 13,
+      "Field Hare": 4,
+      "Boar": 7,
+      "Moss Rat": 7,
+      "Young Wolf": 4,
+      "Wolf": 2,
+      "Mud Toad": 3,
+      "Mire Ooze": 1,
+      "Cave Brute": 3,
+      "Cave Lurker": 1,
+      "Cliff Hopper": 3,
+      "Ridge Ambusher": 1,
+      "Stone Warden": 4,
+      "Crag Behemoth": 1,
+      "Cave Sentinel": 3,
+      "Obsidian Broodmother": 1
+    },
+    "totalDamageTaken": 4275,
+    "playerDamageDealt": 12666,
+    "totalHealed": 4148,
+    "deaths": 1,
+    "abilityActivations": {
+      "sweep": 34,
+      "second-wind": 21,
+      "expose-weakness": 27
+    }
+  },
+  "positioning": {
+    "samples": 1698,
+    "movementFraction": 0.4840989399293286,
+    "stationaryCombatFraction": 0.4558303886925795,
+    "nearBoundaryFraction": 0.0706713780918728,
+    "boss": {
+      "movementFraction": 0.013477088948787063,
+      "nearBoundaryFraction": 0,
+      "range": {
+        "samples": 371,
+        "mean": 50.942102931851615,
+        "min": 37.88436103265332,
+        "max": 64.508451778543,
+        "p50": 49.139825407779355,
+        "p90": 64.48142131463175
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 304114,
+      "playerDamage": 5195,
+      "incomingDamage": 1690
+    },
+    {
+      "bossName": "Obsidian Broodmother",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 57242,
+      "playerDamage": 1766,
+      "incomingDamage": 539
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "chaotic-axe",
+      "armor": "cave-vest-t1",
+      "recovery": "swamp-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 5,
+      "iron-broadsword": 1,
+      "plains-charm-t1": 2,
+      "plains-vest-t1": 4,
+      "flash-rapier": 4,
+      "swamp-charm-t1": 5,
+      "chaotic-axe": 5,
+      "cave-vest-t1": 5
+    },
+    "classRoot": "cadence-root",
+    "frame": null,
+    "range": null,
+    "techniques": [
+      "expose-weakness"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stats": {
+      "attack": 51,
+      "attackRange": 12,
+      "attackCooldown": 858,
+      "maxHp": 168,
+      "plating": 9,
+      "damageReduction": 0.13
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

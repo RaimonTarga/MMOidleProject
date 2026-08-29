@@ -70,6 +70,7 @@ import type { With } from "miniplex";
 import type { ControlsMinion } from "../systems/classes/archetypes/summoner/controlsMinion";
 import type { ControlsSummons } from "../systems/classes/archetypes/summoner/controlsSummons";
 import type { HasSummonerCommand } from "../systems/classes/archetypes/summoner/command";
+import type { EvadesTelegraphs } from "../systems/combat/ai/telegraphEvasion";
 
 export type EntityId = string;
 
@@ -91,6 +92,8 @@ export interface HasMovePath {
   waypoints: Vec2[];
   mover: FeatureTarget;
   avoidHazards?: boolean;
+  /** Active runtime-hazard geometry used to build this path. */
+  dynamicHazardSignature?: string;
 }
 
 /**
@@ -101,6 +104,32 @@ export interface HasMovePath {
  */
 export interface HasArmedAbility {
   abilityId: string;
+}
+
+/**
+ * Server-only Slinger Sweep adapter state. Presence means ammo-backed shots in
+ * the current clip carry Sweep; reload lifecycle hooks remove it at the clip
+ * boundary. `damageRemainder` preserves the normalized budget across integer
+ * damage rounding without making larger magazines stronger.
+ */
+export interface HasSweepClip {
+  splashPct: number;
+  radius: number;
+  clipSize: number;
+  damageRemainder: number;
+}
+
+/**
+ * Server-only Conduit armed-Technique adapter. Each snapshotted physical summon
+ * may deliver the rider once. Weights are normalized across the living formation
+ * at arm time, keeping one bounded Technique budget regardless of summon count.
+ */
+export interface HasFormationTechnique {
+  abilityId: string;
+  pendingEntityIds: string[];
+  weightByEntityId: Record<string, number>;
+  /** Carries fractional integer damage between summon deliveries. */
+  damageRemainder: number;
 }
 
 /**
@@ -206,6 +235,8 @@ export interface ServerEntity {
   inAcDischarge?: InAcDischarge;
   hasEmpoweredAttack?: HasEmpoweredAttack;
   hasArmedAbility?: HasArmedAbility;
+  hasSweepClip?: HasSweepClip;
+  hasFormationTechnique?: HasFormationTechnique;
   isCastingAbility?: IsCastingAbility;
   hasEnvironmentalDot?: HasEnvironmentalDot;
   hasNodeFeatureEffect?: HasNodeFeatureEffect;
@@ -252,6 +283,8 @@ export interface ServerEntity {
   hasAutoTraversePath?: HasAutoTraversePath;
   hasMovePath?: HasMovePath;
   isFleeing?: IsFleeing;
+  /** Server-only movement owner for one live Step Back response. */
+  evadesTelegraphs?: EvadesTelegraphs;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
   tracksCombat?: TracksCombat;

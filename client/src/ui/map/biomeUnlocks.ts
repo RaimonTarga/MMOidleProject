@@ -28,7 +28,9 @@ import { KIND_ORDER, type MakeKind } from '../crafting/makeEntries';
  *
  * Unlike the Craft browser's `MakeEntry`, nothing is filtered out for being
  * already owned or learned: the map is the reference ladder for a biome, so it
- * has to keep showing the rungs you have already climbed.
+ * has to keep showing the rungs you have already climbed. The one exception is
+ * a `deprecated` rune recipe (2026-08-28) — its reward is a starter default,
+ * so it was never really a rung on the ladder and is dropped entirely.
  */
 export interface BiomeUnlock {
   /** Unique across kinds; recipe ids are only unique within their database. */
@@ -59,6 +61,8 @@ interface LearnedRecipe {
   catalystCost?: Partial<Record<string, number>>;
   recipeGroup?: string;
   requiredBiomeLevel?: number;
+  /** Only rune recipes ever set this; see `RuneRecipe.deprecated`. */
+  deprecated?: true;
 }
 
 function learnedUnlocks<T extends LearnedRecipe>(
@@ -72,6 +76,10 @@ function learnedUnlocks<T extends LearnedRecipe>(
   const unlocks: BiomeUnlock[] = [];
   for (const recipe of recipes) {
     if (recipe.recipeGroup !== group) continue;
+    // A deprecated recipe's reward is already a starter default — it is not a
+    // real rung on this biome's ladder, even though the map otherwise shows
+    // already-climbed rungs.
+    if (recipe.deprecated) continue;
     const learnedId = learnedIdOf(recipe);
     if (!learnedId) continue;
     const name = nameOf(recipe, learnedId);

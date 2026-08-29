@@ -138,6 +138,10 @@ export type AnalyticsEventKind =
   | 'skill-unlock'
   | 'player-death'
   | 'progression'
+  | 'rune-activation'
+  | 'telegraph-dodge-attempt'
+  | 'telegraph-dodge-success'
+  | 'telegraph-dodge-failure'
   | 'server-sample';
 
 export interface AdminAnalyticsQuery {
@@ -153,6 +157,11 @@ export interface AdminAnalyticsSummary {
   activeAccounts: number;
   deaths: number;
   progressionEvents: number;
+  runeActivations: number;
+  telegraphDodgeAttempts: number;
+  telegraphDodgeSuccesses: number;
+  telegraphDodgeFailures: number;
+  telegraphDamageReceived: number;
 }
 
 export interface AdminAnalyticsSankeyNode {

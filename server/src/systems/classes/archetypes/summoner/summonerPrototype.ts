@@ -23,6 +23,7 @@ import {
 import { onSummonDeath, tickSummonerSpecializations } from './specs';
 import { syncSummonerFormationTarget } from './formationTarget';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
+import { pruneFormationTechnique } from './formationTechnique';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -213,6 +214,7 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
       );
     }
     collectDeaths(world, summoner);
+    pruneFormationTechnique(world, summoner);
     spawnFreshSlots(world, summoner);
     tickSummonReconstruction(world, summoner, dt, now);
     syncLiveMinionFrameStats(world, summoner);

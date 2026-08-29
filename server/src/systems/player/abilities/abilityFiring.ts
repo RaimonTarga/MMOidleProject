@@ -55,6 +55,9 @@ import { abilityCooldownKey, guardCooldownMs, techniqueCooldownMs } from "./abil
 import { beginAbilityCast } from "./abilityCasting";
 import { applyBrambleGuard } from "./abilityBramble";
 import { abilityTarget, gapToTarget, nearestMonsterGap } from "./abilityTargeting";
+import { beginFormationTechnique } from "../../classes/archetypes/summoner/formationTechnique";
+import { actorFromPlayer } from "../../../world/worldLogActors";
+import { recordWorldLogEvent } from "../../../world/worldLog";
 
 /** Hard cap on amplified Guard damage reduction (mirrors abilityEffects' GUARD_DR_CAP). */
 const GUARD_DR_CAP = 0.9;
@@ -237,6 +240,7 @@ function maybeFireTechnique(
     if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
     if (!shouldFire(world, player, ability, slotIndex, fctx)) return false;
     applyInstantTechnique(world, player, ability);
+    recordAbilityActivation(world, player, abilityId, 'technique');
     setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-technique-armed",
@@ -246,16 +250,22 @@ function maybeFireTechnique(
     return false;
   }
 
+  // The previous Sweep charge is already being paid out across this ammo clip.
+  // Do not spend another Sweep cooldown into it; later slots remain eligible.
+  if (ability.id === "sweep" && player.hasSweepClip) return false;
+
   // One offensive channel: an armed charge persists until a hit consumes it, and
   // a cast owns the channel until it resolves. Neither may be pre-empted.
-  if (player.hasArmedAbility || player.isCastingAbility) return true;
+  if (player.hasArmedAbility || player.hasFormationTechnique || player.isCastingAbility) return true;
   if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
   if (!shouldFire(world, player, ability, slotIndex, fctx)) return false;
 
   // A cast pays its cooldown on RESOLVE, not on begin (see abilityCasting.ts),
   // so nothing is charged here.
   if (ability.shape === "cast") {
-    return beginAbilityCast(world, player, ability, slotIndex, now);
+    const started = beginAbilityCast(world, player, ability, slotIndex, now);
+    if (started) recordAbilityActivation(world, player, abilityId, 'technique');
+    return started;
   }
 
   // Reposition (Charge / Disengage): the movement resolves NOW. If it carries a
@@ -298,13 +308,14 @@ function maybeFireTechnique(
       from,
       to: { ...player.hasPosition.current },
     });
+    recordAbilityActivation(world, player, abilityId, 'technique');
     if (effect.empowerMult !== undefined) {
-      attachComponent(world, player, "hasArmedAbility", { abilityId });
+      armTechnique(world, player, abilityId);
     }
     return true;
   }
 
-  attachComponent(world, player, "hasArmedAbility", { abilityId });
+  armTechnique(world, player, abilityId);
   setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
 
   // Cosmetic: tell the node the Technique armed so the client telegraphs it
@@ -314,7 +325,39 @@ function maybeFireTechnique(
     playerId: player.isPlayer.id,
     ability: abilityId,
   });
+  recordAbilityActivation(world, player, abilityId, 'technique');
   return true;
+}
+
+type RemovedEffect = { effectId: string; stacks: number };
+
+function recordAbilityActivation(
+  world: World,
+  player: PlayerEntity,
+  abilityId: string,
+  slot: 'guard' | 'technique',
+  removedEffects?: RemovedEffect[],
+): void {
+  recordWorldLogEvent(world, {
+    kind: 'ability-activation',
+    nodeId: player.hasPosition.nodeId,
+    player: actorFromPlayer(player),
+    abilityId,
+    slot,
+    ...(removedEffects && removedEffects.length > 0 ? { removedEffects } : {}),
+  }, {
+    visibility: 'combat',
+    relatedPlayerIds: [player.isPlayer.id],
+    nodeId: player.hasPosition.nodeId,
+  });
+}
+
+/** Conduit Techniques belong to its current summon formation, not one body. */
+function armTechnique(world: World, player: PlayerEntity, abilityId: string): void {
+  if (player.summonsMinions && beginFormationTechnique(world, player, abilityId)) return;
+  // A Conduit with no living summons keeps the legacy armed marker. The first
+  // reconstructed summon hit can convert it instead of silently wasting it.
+  attachComponent(world, player, "hasArmedAbility", { abilityId });
 }
 
 function resolveTechniqueEffect(player: PlayerEntity, ability: AbilityDef) {
@@ -371,7 +414,7 @@ function maybeFireGuard(
   // equipped; they merge into passives via the equipment loop in stats.ts.
   const passives = player.usesSkills.passives;
 
-  applyGuardEffect(world, player, ability, slotIndex, passives);
+  const removedEffects = applyGuardEffect(world, player, ability, slotIndex, passives);
 
   // guard.recovery-on-fire-pct: firing any Guard switches on a slice of Recovery.
   // A charm rider, NOT a Recovery skill — recovery-skill-potency does not touch it.
@@ -395,6 +438,7 @@ function maybeFireGuard(
     playerId: player.isPlayer.id,
     ability: abilityId,
   });
+  recordAbilityActivation(world, player, abilityId, 'guard', removedEffects);
   return true;
 }
 
@@ -404,7 +448,7 @@ function applyGuardEffect(
   ability: AbilityDef,
   slotIndex: number,
   passives: Record<string, number>,
-): void {
+): RemovedEffect[] | undefined {
   // Guards resolve their magnitudes through the shared seam so the authored rank
   // applies. Technique Power deliberately does NOT — guard potency is the
   // defensive stat family and the budgets must not cross.
@@ -421,7 +465,7 @@ function applyGuardEffect(
       effect.knockbackResistPct,
     );
   } else if (effect.kind === "cleanse") {
-    applyCleanse(player, effect.stacks, effect.debuffs);
+    return applyCleanse(player, effect.stacks, effect.debuffs);
   } else if (effect.kind === "break-free") {
     applyBreakFree(world, player, effect.controlResistPct, effect.controlResistMs);
   } else if (effect.kind === "heal") {
@@ -443,7 +487,7 @@ function applyGuardEffect(
  * per-source entries, and stripping one of five identical burns reads as the
  * button doing nothing.
  */
-function applyCleanse(player: PlayerEntity, stacks: number, debuffs: number): void {
+function applyCleanse(player: PlayerEntity, stacks: number, debuffs: number): RemovedEffect[] {
   const cs = player.tracksCombat;
   const byId = new Map<string, number>();
   for (const effect of cs.statusEffects) {
@@ -455,9 +499,14 @@ function applyCleanse(player: PlayerEntity, stacks: number, debuffs: number): vo
   const ordered = [...byId.entries()]
     .sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]))
     .slice(0, Math.max(1, debuffs));
-  for (const [id] of ordered) {
+  const removed: RemovedEffect[] = [];
+  for (const [id, before] of ordered) {
     removeStatusEffectStacks(cs, id, Math.max(1, stacks));
+    const after = cs.statusEffects.find((effect) => effect.id === id)?.stacks ?? 0;
+    const removedStacks = Math.max(0, before - after);
+    if (removedStacks > 0) removed.push({ effectId: id, stacks: removedStacks });
   }
+  return removed;
 }
 
 /**

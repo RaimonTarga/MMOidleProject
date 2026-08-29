@@ -12,7 +12,7 @@ Bosses include full fight scripts.
 | Name | id | HP | Attack | APS | Atk CD | Plating | DR | Speed | Atk Range | Pull Range | Wander R | Leash R | Idle min | Idle max | Style | Ranged | Kite | Essence | Biome XP |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Cave Lurker | cave-lurker | 225 | 31 | 0.71 | 1400ms | 1 | 5.0% | 68 | 12 | 200 | 380 | 620 | 450ms | 1500ms | impact |  |  | 10 red | 70 |
-| Cave Brute | cave-brute | 250 | 90 | 0.36 | 2800ms | 1 | 10.0% | 18 | 12 | 240 | 130 | 460 | 3000ms | 8000ms | impact |  |  | 13 red | 90 |
+| Cave Brute | cave-brute | 250 | 80 | 0.36 | 2800ms | 1 | 10.0% | 18 | 12 | 240 | 130 | 460 | 3000ms | 8000ms | impact |  |  | 13 red | 90 |
 
 **Cave Brute — mechanics:**
   - **Charge on aggro:** 2.5× speed for 1200ms
@@ -52,10 +52,10 @@ Bosses include full fight scripts.
 
 | Name | id | HP | Attack | APS | Atk CD | Plating | DR | Speed | Atk Range | Pull Range | Wander R | Leash R | Idle min | Idle max | Style | Ranged | Kite | Essence | Biome XP |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Gnarled Greatbear | gnarled-greatbear | 2000 | 24 | 0.71 | 1400ms | 0 | 0.0% | 60 | 15 | 300 | 160 | 800 | 1200ms | 4000ms | bear-claws |  |  | 100 green | 150 |
+| Gnarled Greatbear | gnarled-greatbear | 2000 | 24 | 0.53 | 1900ms | 0 | 0.0% | 60 | 15 | 300 | 160 | 800 | 1200ms | 4000ms | bear-claws |  |  | 100 green | 150 |
 
 **Mechanics:**
-- **Combat ramp:** attackSpeed +7.0% per 3000ms, cap +28.0%; resets on de-aggro
+- **Combat ramp:** attackSpeed +5.0% per 3000ms, cap +20.0%; resets on de-aggro
 
 **Fight script:**
 ```
@@ -146,10 +146,10 @@ Bosses include full fight scripts.
 | Mud Toad | mud-toad | 120 | 13 | 0.45 | 2200ms | 2 | 0.0% | 30 | 12 | 180 | 180 | 550 | 1800ms | 5000ms | poison |  |  | 6 green | 42 |
 
 **Mire Ooze — mechanics:**
-  - **DoT "Poison" [swamp-poison]:** 6.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 4000ms after last hit
+  - **DoT "Poison" [swamp-poison]:** 5.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 4000ms after last hit
 
 **Mud Toad — mechanics:**
-  - **DoT "Poison" [swamp-poison]:** 5.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 4000ms after last hit
+  - **DoT "Poison" [swamp-poison]:** 4.00 dmg/stack, max 3 stacks, tick every 1000ms, expires 4000ms after last hit
   - **Slow / Root on hit:** Slow (speed × 0.60) for 2000ms, refreshes on each hit
 
 **Bosses:**
@@ -212,8 +212,8 @@ Bosses include full fight scripts.
 
 | Name | id | HP | Attack | APS | Atk CD | Plating | DR | Speed | Atk Range | Pull Range | Wander R | Leash R | Idle min | Idle max | Style | Ranged | Kite | Essence | Biome XP |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Sand Scorpion | sand-scorpion | 660 | 132 | 0.42 | 2400ms | 0 | 8.0% | 30 | 12 | 210 | 240 | 640 | 1500ms | 4500ms | poison |  |  | 7 yellow | 40 |
-| Stone Basilisk | stone-basilisk | 660 | 138 | 0.36 | 2800ms | 0 | 15.0% | 26 | 12 | 190 | 180 | 560 | 2000ms | 5500ms | impact |  |  | 8 yellow | 46 |
+| Sand Scorpion | sand-scorpion | 660 | 75 | 0.42 | 2400ms | 0 | 8.0% | 30 | 12 | 210 | 240 | 640 | 1500ms | 4500ms | poison |  |  | 7 yellow | 40 |
+| Stone Basilisk | stone-basilisk | 660 | 55 | 0.36 | 2800ms | 0 | 15.0% | 26 | 12 | 190 | 180 | 560 | 2000ms | 5500ms | impact |  |  | 8 yellow | 46 |
 
 **Sand Scorpion — mechanics:**
   - **Slow / Root on hit:** Slow (speed × 0.50) for 2500ms, refreshes on each hit
@@ -628,7 +628,7 @@ Bosses include full fight scripts.
 | Name | id | HP | Attack | APS | Atk CD | Plating | DR | Speed | Atk Range | Pull Range | Wander R | Leash R | Idle min | Idle max | Style | Ranged | Kite | Essence | Biome XP |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Frost Lurker | frost-lurker | 950 | 259 | 0.38 | 2600ms | 0 | 10.0% | 26 | 12 | 170 | 150 | 510 | 2500ms | 7000ms | frost |  |  | 29 blue | 175 |
-| Glacier Bear | glacier-bear | 1500 | 415 | 0.31 | 3200ms | 0 | 14.0% | 22 | 15 | 175 | 140 | 500 | 3000ms | 8500ms | frost |  |  | 65 blue | 390 |
+| Glacier Bear | glacier-bear | 1500 | 300 | 0.31 | 3200ms | 0 | 14.0% | 22 | 15 | 175 | 140 | 500 | 3000ms | 8500ms | frost |  |  | 65 blue | 390 |
 | Rime Caster | rime-caster | 880 | 297 | 0.36 | 2800ms | 0 | 8.0% | 30 | 200 | 230 | 200 | 600 | 1500ms | 4500ms | frost |  |  | 45 blue | 270 |
 
 **Glacier Bear — mechanics:**
@@ -664,9 +664,9 @@ Bosses include full fight scripts.
 
 | Name | id | HP | Attack | APS | Atk CD | Plating | DR | Speed | Atk Range | Pull Range | Wander R | Leash R | Idle min | Idle max | Style | Ranged | Kite | Essence | Biome XP |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Ember Scuttler | ember-scuttler | 1220 | 148 | 0.63 | 1600ms | 2 | 0.0% | 64 | 12 | 210 | 230 | 620 | 1000ms | 3600ms | fire |  |  | 25 red | 150 |
-| Cinder Hound | cinder-hound | 1440 | 184 | 0.77 | 1300ms | 3 | 0.0% | 70 | 12 | 260 | 260 | 680 | 700ms | 3000ms | fire |  |  | 29 red | 175 |
-| Magma Tortoise | magma-brute | 2000 | 343 | 0.33 | 3000ms | 4 | 0.0% | 22 | 15 | 150 | 120 | 470 | 3000ms | 8500ms | fire |  |  | 55 red | 330 |
+| Ember Scuttler | ember-scuttler | 1220 | 70 | 0.63 | 1600ms | 2 | 0.0% | 64 | 12 | 210 | 230 | 620 | 1000ms | 3600ms | fire |  |  | 25 red | 150 |
+| Cinder Hound | cinder-hound | 1440 | 135 | 0.77 | 1300ms | 3 | 0.0% | 70 | 12 | 260 | 260 | 680 | 700ms | 3000ms | fire |  |  | 29 red | 175 |
+| Magma Tortoise | magma-brute | 2000 | 190 | 0.33 | 3000ms | 4 | 0.0% | 22 | 15 | 150 | 120 | 470 | 3000ms | 8500ms | fire |  |  | 55 red | 330 |
 | Ash Salamander | ash-slinger | 1330 | 209 | 0.50 | 2000ms | 2 | 0.0% | 44 | 180 | 230 | 220 | 600 | 1200ms | 4000ms | fire |  |  | 27 red | 165 |
 
 **Cinder Hound — mechanics:**
@@ -880,9 +880,9 @@ Bosses include full fight scripts.
 
 | Name | id | HP | Attack | APS | Atk CD | Plating | DR | Speed | Atk Range | Pull Range | Wander R | Leash R | Idle min | Idle max | Style | Ranged | Kite | Essence | Biome XP |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Abyssal Serpent | abyssal-serpent | 4200 | 420 | 0.36 | 2800ms | 18 | 20.0% | 28 | 15 | 420 | 320 | 760 | 5000ms | 14000ms | impact |  |  | 260 blue | 1560 |
-| Hadal Stalker | hadal-stalker | 2800 | 401 | 0.29 | 3400ms | 20 | 10.0% | 22 | 240 | 400 | 300 | 720 | 5500ms | 14000ms | gunshot |  |  | 210 blue | 1260 |
-| Elder Leviathan | elder-leviathan | 5880 | 483 | 0.28 | 3600ms | 22 | 24.0% | 20 | 15 | 440 | 280 | 700 | 8000ms | 20000ms | impact |  |  | 400 blue | 2400 |
+| Abyssal Serpent | abyssal-serpent | 4200 | 230 | 0.36 | 2800ms | 18 | 20.0% | 28 | 15 | 420 | 320 | 760 | 5000ms | 14000ms | impact |  |  | 260 blue | 1560 |
+| Hadal Stalker | hadal-stalker | 2800 | 210 | 0.29 | 3400ms | 20 | 10.0% | 22 | 240 | 400 | 300 | 720 | 5500ms | 14000ms | gunshot |  |  | 210 blue | 1260 |
+| Elder Leviathan | elder-leviathan | 5880 | 260 | 0.28 | 3600ms | 22 | 24.0% | 20 | 15 | 440 | 280 | 700 | 8000ms | 20000ms | impact |  |  | 400 blue | 2400 |
 
 **Abyssal Serpent — mechanics:**
   - **Charge on aggro:** 2.5× speed for 1200ms
@@ -968,7 +968,7 @@ Bosses include full fight scripts.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Ember Skink | ember-skink | 1043 | 168 | 0.77 | 1300ms | 2 | 0.0% | 70 | 12 | 230 | 250 | 660 | 1000ms | 3500ms | fire |  |  | 47 red | 280 |
 | Infernal Direhound | infernal-direhound | 1386 | 210 | 0.71 | 1400ms | 4 | 0.0% | 72 | 12 | 280 | 280 | 720 | 700ms | 3000ms | fire |  |  | 68 red | 410 |
-| Obsidian Tortoise | obsidian-tortoise | 2244 | 262 | 0.33 | 3000ms | 8 | 0.0% | 20 | 15 | 155 | 110 | 460 | 3500ms | 9500ms | fire |  |  | 140 red | 840 |
+| Obsidian Tortoise | obsidian-tortoise | 2244 | 100 | 0.33 | 3000ms | 8 | 0.0% | 20 | 15 | 155 | 110 | 460 | 3500ms | 9500ms | fire |  |  | 140 red | 840 |
 | Ashspitter Salamander | ashspitter-salamander | 1188 | 183 | 0.53 | 1900ms | 2 | 0.0% | 46 | 190 | 250 | 230 | 630 | 1200ms | 4000ms | fire |  |  | 52 red | 310 |
 | Magma Salamander | magma-salamander | 2904 | 246 | 0.38 | 2600ms | 6 | 6.0% | 22 | 15 | 160 | 120 | 470 | 4000ms | 11000ms | fire |  |  | 190 red | 1140 |
 

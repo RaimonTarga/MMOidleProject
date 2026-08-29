@@ -84,6 +84,7 @@ import {
 import { updateTestRoomInteract } from "../systems/world/testRoomInteract";
 import { NODE_REGISTRY } from "./nodeRegistry";
 import { IS_DEV } from "../env";
+import type { HumanPlaytestRecorderManager } from "../playtest/humanPlaytestRecorder";
 import { createEcsWorld, type EcsWorld } from "../ecs/world";
 import type {
   EntityId,
@@ -298,6 +299,19 @@ export class World {
   analyticsProgression:
     | ((playerId: string, nodeId: string, progressionKind: string, value?: number) => void)
     | null = null;
+  analyticsRuneTelegraph:
+    | ((
+        playerId: string,
+        nodeId: string,
+        kind:
+          | "rune-activation"
+          | "telegraph-dodge-attempt"
+          | "telegraph-dodge-success"
+          | "telegraph-dodge-failure",
+        value?: number,
+        meta?: Record<string, unknown>,
+      ) => void)
+    | null = null;
   /** Generic NODE_FEATURES spawn runtime state keyed `${nodeId}:${featureId}`. */
   nodeFeatureSpawnState = new Map<
     string,
@@ -314,6 +328,8 @@ export class World {
   /** Per-player queues drained at broadcast tick. */
   worldLogByPlayer = new Map<string, WorldLogEvent[]>();
   nextWorldLogId = 1;
+  /** Dev-only, filesystem-backed manual-playtest evidence recorder. */
+  humanPlaytests?: HumanPlaytestRecorderManager;
   /**
    * ID of the test-room boss that has been attacked by a player.
    * While set (and the boss still exists), the boss-rotation loop is paused so
@@ -433,6 +449,7 @@ export class World {
     updateExpiredEmotes(this, now);
     updateDeadPlayersInWorld(this, now);
     tickDungeons(this, now);
+    this.humanPlaytests?.sample(this, now);
 
     if (IS_DEV) {
       ensureCurrentTestRoomBoss(this);

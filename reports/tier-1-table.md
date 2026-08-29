@@ -24,9 +24,9 @@ never folded into DPS — it has its own column.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Plains | 48 | 5 | 2 | 71 | 7.7 | — | 23.2 | 1654 | 8269 | 2.5 | 14 |
 | Forest | 36 | 3 | 3 | 102 | 13.7 | — | 27.3 | 2792 | 8375 | 2.8 | 17 |
-| Swamp | 20 | 2 | 2 | 138 | 22 | — | 32.9 | 4536 | 9073 | 5.5 | 39 |
-| Mountain | 24 | 2 | 2 | 196 | 26.8 | — | 40.2 | 7884 | 15768 | 6.7 | 45 |
-| Caverns | 16 | 2 | 2 | 282 | 32.2 | — | 48.3 | 13636 | 27271 | 11.5 | 80 |
+| Swamp | 20 | 2 | 2 | 138 | 19 | — | 28.4 | 3916 | 7833 | 5.5 | 39 |
+| Mountain | 24 | 2 | 2 | 196 | 25.4 | — | 38.1 | 7482 | 14964 | 6.7 | 45 |
+| Caverns | 16 | 2 | 2 | 282 | 29.9 | — | 44.8 | 12641 | 25282 | 11.5 | 80 |
 
 `N` is DESIGNER-SET expected concurrent attackers (see `CONCURRENCY` in the tool), not
 derived from density. `sustained` = `d(N+1)/2` is incoming DPS the player must out-sustain
@@ -40,9 +40,9 @@ column can show.
 
 ### Progression curve (indexed to the first biome in the row order above)
 
-- sustained pressure: `1.00 → 1.18 → 1.42 → 1.73 → 2.08`
-- cost per kill:      `1.00 → 1.69 → 2.74 → 4.77 → 8.25`
-- pull load:          `1.00 → 1.01 → 1.10 → 1.91 → 3.30`
+- sustained pressure: `1.00 → 1.18 → 1.22 → 1.64 → 1.93`
+- cost per kill:      `1.00 → 1.69 → 2.37 → 4.52 → 7.64`
+- pull load:          `1.00 → 1.01 → 0.95 → 1.81 → 3.06`
 
 ### Target vs current
 
@@ -58,9 +58,9 @@ Per-mob DPS is then forced: `DPS = sustained / ((N+1)/2)`.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Plains | 5 | 71 | 71 | **x1** | 7.7 | 7.7 | **x1** | 23.2 | 23.2 | 1654 | 1654 |
 | Forest | 3 | 102 | 100 | x1 | 13.7 | 13.9 | **x1** | 27.3 | 27.9 | 2792 | 2798 |
-| Swamp | 2 | 138 | 142 | **x1** | 22 | 22.3 | **x1** | 32.9 | 33.4 | 4536 | 4734 |
-| Mountain | 2 | 196 | 200 | **x1** | 26.8 | 26.7 | x1 | 40.2 | 40.1 | 7884 | 8011 |
-| Caverns | 2 | 282 | 282 | x1 | 32.2 | 32.1 | x1 | 48.3 | 48.1 | 13636 | 13554 |
+| Swamp | 2 | 138 | 142 | **x1** | 19 | 22.3 | **x1.2** | 28.4 | 33.4 | 3916 | 4734 |
+| Mountain | 2 | 196 | 200 | **x1** | 25.4 | 26.7 | **x1.1** | 38.1 | 40.1 | 7482 | 8011 |
+| Caverns | 2 | 282 | 282 | x1 | 29.9 | 32.1 | **x1.1** | 44.8 | 48.1 | 12641 | 13554 |
 
 ## With node modifiers applied
 
@@ -74,9 +74,9 @@ baseline the player never plays. Values are indexed to **unmodified Plains**.
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Plains | 1.00 | 1.05 | 1.05 | 1.07 | 1.05 | 1.00 | x1.07 |
 | Forest | 1.18 | 1.24 | — | 1.25 | 1.24 | 1.18 | x1.06 |
-| Swamp | 1.42 | 1.44 | 1.43 | 1.49 | 1.59 | 1.42 | x1.12 |
-| Mountain | 1.73 | — | 1.86 | 1.82 | 1.84 | 1.73 | x1.07 |
-| Caverns | 2.08 | 2.17 | 2.21 | 2.19 | 2.21 | 2.08 | x1.06 |
+| Swamp | 1.22 | 1.24 | 1.24 | 1.29 | 1.31 | 1.22 | x1.07 |
+| Mountain | 1.64 | — | 1.76 | 1.73 | 1.75 | 1.64 | x1.07 |
+| Caverns | 1.93 | 2.01 | 2.04 | 2.03 | 2.05 | 1.93 | x1.06 |
 
 ### Cost per kill
 
@@ -84,9 +84,9 @@ baseline the player never plays. Values are indexed to **unmodified Plains**.
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Plains | 1.00 | 1.05 | 1.05 | 1.07 | 1.23 | 1.11 | x1.18 |
 | Forest | 1.69 | 1.78 | — | 1.79 | 2.08 | 1.88 | x1.17 |
-| Swamp | 2.74 | 2.78 | 2.77 | 2.89 | 3.64 | 3.09 | x1.31 |
-| Mountain | 4.77 | — | 5.12 | 5.02 | 5.92 | 5.30 | x1.18 |
-| Caverns | 8.25 | 8.58 | 8.73 | 8.69 | 9.89 | 8.87 | x1.15 |
+| Swamp | 2.37 | 2.40 | 2.39 | 2.49 | 2.99 | 2.67 | x1.25 |
+| Mountain | 4.52 | — | 4.85 | 4.77 | 5.62 | 5.03 | x1.18 |
+| Caverns | 7.64 | 7.96 | 8.09 | 8.05 | 9.17 | 8.22 | x1.15 |
 
 ### Does the railroad survive?
 
@@ -99,12 +99,12 @@ one, and the biome order stops being the thing the player reads.
 |---|---|---:|---:|---|
 | Plains → Forest | sustained | 1.07 | 1.18 | clean |
 | Plains → Forest | cost/kill | 1.23 | 1.78 | clean |
-| Forest → Swamp | sustained | 1.25 | 1.42 | clean |
-| Forest → Swamp | cost/kill | 2.08 | 2.77 | clean |
-| Swamp → Mountain | sustained | 1.59 | 1.73 | clean |
-| Swamp → Mountain | cost/kill | 3.64 | 5.02 | clean |
-| Mountain → Caverns | sustained | 1.86 | 2.08 | clean |
-| Mountain → Caverns | cost/kill | 5.92 | 8.58 | clean |
+| Forest → Swamp | sustained | 1.25 | 1.22 | **overlaps** |
+| Forest → Swamp | cost/kill | 2.08 | 2.39 | clean |
+| Swamp → Mountain | sustained | 1.31 | 1.64 | clean |
+| Swamp → Mountain | cost/kill | 2.99 | 4.77 | clean |
+| Mountain → Caverns | sustained | 1.76 | 1.93 | clean |
+| Mountain → Caverns | cost/kill | 5.62 | 7.96 | clean |
 
 ## Plains  (density 48, 2 pool slots)
 
@@ -121,22 +121,22 @@ one, and the biome order stops being the thing the player reads.
 | Moss Rat `forest-slime` | x1 | 160 | 17 | 1400 | 12.1 | — | — | 12.1 | — | — | — | 0 | — | — | 152 | 160 | 1 | 54 | 12 | — | — | — |
 | Wolf `wolf` | x1 | 130 | 20 | 1100 | 18.2 | — | — | 18.2 | — | — | — | 0 | — | — | 124 | 130 | 1 | 82 | 12 | — | alpha +2 | — |
 | follower Young Wolf `young-wolf` | x2 | 70 | 14 | 1150 | 12.2 | — | — | 12.2 | — | — | — | 0 | — | — | 67 | 70 | 1 | 86 | 12 | — | follower | — |
-| BOSS Gnarled Greatbear `gnarled-greatbear` | — | 2000 | 24 | 1400 | 34.3 | — | — | 34.3 | — | — | x1.3 | 0 | — | — | 1900 | 2000 | 1 | 60 | 15 | — | — | boss-script |
+| BOSS Gnarled Greatbear `gnarled-greatbear` | — | 2000 | 24 | 1900 | 25.3 | — | — | 25.3 | — | — | x1.2 | 0 | — | — | 1900 | 2000 | 1 | 60 | 15 | — | — | boss-script |
 
 ## Swamp  (density 20, 2 pool slots)
 
 | monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Mire Ooze `bog-slime` | x1 | 140 | 10 | 2000 | 5 | 18 | 4s | 23 | — | — | — | 0 | — | — | 133 | 140 | 1 | 28 | 12 | — | — | — |
-| Mud Toad `mud-toad` | x1 | 120 | 13 | 2200 | 5.9 | 15 | 4.4s | 20.9 | — | — | — | 2 | — | — | 143 | 123 | 1.2 | 30 | 12 | slow 40% | — | — |
+| Mire Ooze `bog-slime` | x1 | 140 | 10 | 2000 | 5 | 15 | 4s | 20 | — | — | — | 0 | — | — | 133 | 140 | 1 | 28 | 12 | — | — | — |
+| Mud Toad `mud-toad` | x1 | 120 | 13 | 2200 | 5.9 | 12 | 4.4s | 17.9 | — | — | — | 2 | — | — | 143 | 123 | 1.2 | 30 | 12 | slow 40% | — | — |
 | BOSS Grave Toadeater `grave-toadeater` | — | 2100 | 13 | 2600 | 5.8 | 16 | 7.8s | 21.8 | — | — | — | 2 | 2% | — | 2850 | 2186 | 1.3 | 28 | 15 | — | — | boss-script |
 
 ## Mountain  (density 24, 3 pool slots)
 
 | monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Cliff Hopper `cliff-hopper` | x2 | 190 | 50 | 3000 | 26.3 | — | — | 26.3 | x2.1 = 105 (charged/1100ms) | — | — | 0 | — | — | 181 | 190 | 1 | 28 | 12 | — | charge x3, vaults | — |
-| Ridge Ambusher `ridge-archer` | x1 | 240 | 50 | 3100 | 27.7 | — | — | 27.7 | x2.5 = 125 (charged/2000ms) | — | — | 0 | — | — | 228 | 240 | 1 | 26 | **210** | — | holds-choke | — |
+| Cliff Hopper `cliff-hopper` | x2 | 190 | 50 | 3000 | 25.2 | — | — | 25.2 | x1.9 = 95 (charged/1100ms) | — | — | 0 | — | — | 181 | 190 | 1 | 28 | 12 | — | charge x3, vaults | — |
+| Ridge Ambusher `ridge-archer` | x1 | 240 | 50 | 3100 | 25.8 | — | — | 25.8 | x2.2 = 110 (charged/2000ms) | — | — | 0 | — | — | 228 | 240 | 1 | 26 | **210** | — | holds-choke | — |
 | BOSS Crag Behemoth `crag-behemoth` | — | 2100 | 56 | 3500 | 22.8 | — | — | 22.8 | x1.9 = 106 (charged/2400ms) | — | — | 0 | — | — | 1995 | 2100 | 1 | 22 | 18 | — | charge x3 | boss-script |
 
 ## Caverns  (density 16, 2 pool slots)
@@ -144,7 +144,7 @@ one, and the biome order stops being the thing the player reads.
 | monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@10 | eHP@76 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
 | Cave Lurker `cave-lurker` | x1 | 225 | 31 | 1400 | 22.1 | — | — | 22.1 | — | — | — | 1 | 5% | — | 267 | 241 | 1.1 | 68 | 12 | — | — | — |
-| Cave Brute `cave-brute` | x1 | 250 | 90 | 2800 | 42.3 | — | — | 42.3 | x2 = 180 (charged/1800ms) | — | — | 1 | 10% | — | 297 | 279 | 1.1 | 18 | 12 | — | patrol, charge x2.5, ELITE | — |
+| Cave Brute `cave-brute` | x1 | 250 | 80 | 2800 | 37.6 | — | — | 37.6 | x2 = 160 (charged/1800ms) | — | — | 1 | 10% | — | 297 | 279 | 1.1 | 18 | 12 | — | patrol, charge x2.5, ELITE | — |
 | BOSS Obsidian Broodmother `obsidian-broodmother` | — | 1750 | 47 | 2800 | 22.7 | — | — | 22.7 | x1.8 = 85 (charged/1700ms) | — | — | 6 | 10% | — | 5542 | 2111 | 2.6 | 24 | 18 | shred 1 x6 | charge x2.5 | boss-script |
 
 ## Mechanic coverage

@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-08-29T16-45-38-899Z-b53726f3",
+    "startedAt": 1788021938899,
+    "endedAt": 1788022054725,
+    "durationMs": 115826,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-08-29T16-45-38-899Z-b53726f3",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 2,
+    "finalGlobalMastery": 37,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 6,
+      "forest": 8,
+      "swamp": 9,
+      "cave": 8,
+      "mountain": 6
+    }
+  },
+  "combat": {
+    "totalKills": 5,
+    "killsByMonster": {
+      "Mire Ooze": 2,
+      "Mire Keeper": 2,
+      "Grave Toadeater": 1
+    },
+    "totalDamageTaken": 472,
+    "playerDamageDealt": 2749,
+    "totalHealed": 471,
+    "deaths": 0,
+    "abilityActivations": {
+      "expose-weakness": 7,
+      "cleanse": 9
+    }
+  },
+  "positioning": {
+    "samples": 317,
+    "movementFraction": 0.07255520504731862,
+    "stationaryCombatFraction": 0.8801261829652997,
+    "nearBoundaryFraction": 0,
+    "boss": {
+      "movementFraction": 0.02577319587628866,
+      "nearBoundaryFraction": 0,
+      "range": {
+        "samples": 194,
+        "mean": 64.3664267130374,
+        "min": 21.063556398420392,
+        "max": 79.83729959203613,
+        "p50": 68.12199095004489,
+        "p90": 79.83729959203613
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8514285714285714,
+      "combatDurationMs": 6203,
+      "playerDamage": 256,
+      "incomingDamage": 12
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.36333333333333334,
+      "combatDurationMs": 22625,
+      "playerDamage": 1025,
+      "incomingDamage": 146
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.24523809523809523,
+      "combatDurationMs": 5706,
+      "playerDamage": 200,
+      "incomingDamage": 27
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.11142857142857143,
+      "combatDurationMs": 5602,
+      "playerDamage": 225,
+      "incomingDamage": 27
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 3506,
+      "playerDamage": 192,
+      "incomingDamage": 6
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "chaotic-axe",
+      "armor": "cave-vest-t1",
+      "recovery": "swamp-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 5,
+      "iron-broadsword": 1,
+      "plains-charm-t1": 2,
+      "plains-vest-t1": 4,
+      "flash-rapier": 4,
+      "swamp-charm-t1": 5,
+      "chaotic-axe": 5,
+      "cave-vest-t1": 5
+    },
+    "classRoot": "cadence-root",
+    "frame": null,
+    "range": null,
+    "techniques": [
+      "expose-weakness"
+    ],
+    "guards": [
+      "cleanse"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stats": {
+      "attack": 51,
+      "attackRange": 12,
+      "attackCooldown": 858,
+      "maxHp": 168,
+      "plating": 9,
+      "damageReduction": 0.13
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

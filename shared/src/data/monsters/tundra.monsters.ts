@@ -67,7 +67,14 @@ export const tundraMonsterEntries = [
     // DEFENSIVE-WINDOW elite. ICE ARMOR (`enemyShield`) is the whole identity: chip
     // wastes itself against the shell, a burst POPS it and shatters for a damage
     // window. No per-hit slows, no ramping debuff (both removed, locked).
-    stats: { hp: 1500, attack: 415, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    // Attack cut 415 -> 300 (T1-T4 numerical balance pass, 2026-08-24): unlike this
+    // tier's other flagged elites (Petrifying Gaze's root, Cave Troll's lockdown),
+    // this monster's danger comes from a plain, untelegraphed ORDINARY hit with no
+    // counterplay tool to answer it — mob-llm-packet-t3 read it at 114% of the
+    // arrival player's maxHP (a literal one-shot) and 2.48x the tier's average
+    // spike. 300 lands it in line with this tier's other flagged-but-accepted
+    // spikes (Mountain Colossus 72%, Cavern Troll 88%) rather than over 100%.
+    stats: { hp: 1500, attack: 300, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 65, essenceType: 'blue', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 140, leashRange: 500, idleMinMs: 3000, idleMaxMs: 8500 },

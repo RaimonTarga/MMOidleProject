@@ -2,6 +2,8 @@
  * Run configuration for one headless bot. Everything here is either a CLI flag
  * or an environment variable — nothing is read from the server.
  */
+import { basename, isAbsolute } from "node:path";
+import type { HarnessExecutionMode } from "./telemetry/events";
 
 /** Prefix that marks an account as bot-owned. `cleanup.ts` deletes on this. */
 export const BOT_ACCOUNT_PREFIX = "bot-";
@@ -39,6 +41,17 @@ export interface BotConfig {
    * It is server-GLOBAL, so it changes rewards for every client on the dev world.
    */
   rewardMultiplier?: number;
+  /** Batch runs hold the server-global multiplier until the whole cohort ends. */
+  restoreRewardMultiplier: boolean;
+  /**
+   * Explicit harness-only retry acceleration. The first boss attempt remains
+   * fully routed; attempts 2+ use the dev authoritative encounter reset.
+   */
+  fastBossRetry: boolean;
+  /** Rebuild guardians on accelerated retries instead of the default boss-only retry. */
+  fastBossRetryIncludeGuardians: boolean;
+  executionMode: HarnessExecutionMode;
+  maxConcurrency: number;
   /**
    * Port for the read-only local dashboard, or null to run headless. The runner
    * serves the bots' OWN state — no game-server, protocol or admin change, and
@@ -68,6 +81,56 @@ export function parseArgs(argv: string[]): Record<string, string> {
   return out;
 }
 
+/** Canonical controlled batches never admit the noncanonical retry mutation. */
+export function assertFastRetryBatchSafety(
+  args: Record<string, string>,
+  controlled: boolean,
+): void {
+  if (controlled && args.fastBossRetry === "true") {
+    throw new Error(
+      "controlled T1 batch forbids --fastBossRetry; use --controlled=false for the explicitly noncanonical retry harness",
+    );
+  }
+}
+
+export function controlledBatchSettings(args: Record<string, string>): {
+  executionMode: "sequential" | "isolated-parallel";
+  maxConcurrency: number;
+  staggerMs: number;
+} {
+  const executionMode = args.executionMode ?? "sequential";
+  if (executionMode !== "sequential" && executionMode !== "isolated-parallel") {
+    throw new Error("controlled executionMode must be sequential or isolated-parallel");
+  }
+  if (args.parallel === "true") {
+    throw new Error("controlled batches reject legacy --parallel; use --executionMode=isolated-parallel");
+  }
+  // A launch spread, and ONLY that: it smooths the opening rush through the
+  // shared Clearing instead of having eight bots connect on the same tick. It
+  // is never a substitute for isolation -- the leases still gate every activity
+  // -- so it is meaningless in sequential mode, where bots already run one at a
+  // time, and is rejected there to keep the two ideas from being conflated.
+  const staggerMs = Number(args.staggerMs ?? "0");
+  if (!Number.isFinite(staggerMs) || staggerMs < 0) {
+    throw new Error("--staggerMs must be a non-negative number");
+  }
+  if (staggerMs !== 0 && executionMode === "sequential") {
+    throw new Error(
+      "sequential controlled mode rejects --staggerMs; it already runs one bot at a time",
+    );
+  }
+  const maxConcurrency = Number(
+    args.maxConcurrency ?? (executionMode === "isolated-parallel" ? "6" : "1"),
+  );
+  if (!Number.isInteger(maxConcurrency) || maxConcurrency < 1) {
+    throw new Error("--maxConcurrency must be a positive integer");
+  }
+  if (executionMode === "sequential" && maxConcurrency !== 1) {
+    throw new Error("sequential controlled mode requires --maxConcurrency=1");
+  }
+  return { executionMode, maxConcurrency, staggerMs };
+}
+
 /** Server-safe character name: strip anything the name validator rejects. */
 export function sanitizeCharacterName(raw: string): string {
   const cleaned = raw
@@ -76,6 +139,20 @@ export function sanitizeCharacterName(raw: string): string {
     .replace(/\s+/g, " ")
     .trim();
   return Array.from(cleaned).slice(0, 24).join("");
+}
+
+/**
+ * `pnpm --filter` runs the bot with `bot/` as the cwd, so a repo-root-shaped
+ * `--out=bot/runs/<label>` silently lands in `bot/bot/runs/<label>`. Both
+ * spellings mean the same directory to whoever typed them; normalise the
+ * redundant prefix away instead of writing runs somewhere nobody looks.
+ */
+export function normalizeOutDir(raw: string, cwd: string = process.cwd()): string {
+  if (isAbsolute(raw)) return raw;
+  if (basename(cwd) !== "bot") return raw;
+  const parts = raw.split(/[\\/]/).filter((part) => part.length > 0 && part !== ".");
+  if (parts[0] === "bot") parts.shift();
+  return parts.join("/");
 }
 
 export function buildConfig(args: Record<string, string>): BotConfig {
@@ -90,7 +167,7 @@ export function buildConfig(args: Record<string, string>): BotConfig {
     characterName: sanitizeCharacterName(args.name ?? `Bot ${routeId} ${index}`),
     routeId,
     policyId,
-    outDir: args.out ?? envOr("BOT_OUT_DIR", "runs"),
+    outDir: normalizeOutDir(args.out ?? envOr("BOT_OUT_DIR", "runs")),
     maxRunMs: Number(args.maxRunMs ?? envOr("BOT_MAX_RUN_MS", String(24 * 60 * 60 * 1000))),
     freshCharacter: args.fresh !== "false",
     clientUrl: args.clientUrl ?? envOr("BOT_CLIENT_URL", "http://localhost:3000"),
@@ -103,5 +180,10 @@ export function buildConfig(args: Record<string, string>): BotConfig {
       : envOr("BOT_REWARD_MULT", "")
         ? Number(envOr("BOT_REWARD_MULT", "1"))
         : undefined,
+    restoreRewardMultiplier: args.restoreRewardMultiplier !== "false",
+    fastBossRetry: args.fastBossRetry === "true",
+    fastBossRetryIncludeGuardians: args.fastBossRetryIncludeGuardians === "true",
+    executionMode: (args.executionMode as HarnessExecutionMode | undefined) ?? "single",
+    maxConcurrency: Number(args.maxConcurrency ?? "1"),
   };
 }

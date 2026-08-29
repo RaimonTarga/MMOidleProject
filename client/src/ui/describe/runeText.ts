@@ -9,6 +9,7 @@ import {
   RUNE_KEEP_DISTANCE_GAP,
   RUNE_KEEP_DISTANCE_RANGED_BUFFER,
   RUNE_NODE_ACQUIRE_RADIUS,
+  RUNE_TELEGRAPH_ESCAPE_CLEARANCE,
   runeChannelLabel,
   runeRuleCost,
   type EquippedRule,
@@ -47,6 +48,14 @@ const CONDITION_FACTS: Record<string, DetailLine[]> = {
       help: 'Only while an enemy that is attacking YOU is charging a cast-time attack, e.g. the Ridge Archer’s Power Shot. It goes inactive the moment that attack resolves.',
     },
   ],
+  'inside-telegraph': [
+    {
+      key: 'region',
+      label: 'Active while',
+      value: 'inside visible incoming AoE damage',
+      help: 'Checks the same unresolved ground circles the server will damage. Enemy casts that do not paint damaging ground, and casts you are already outside, do not trigger it.',
+    },
+  ],
   'before-empowered': [
     {
       key: 'window',
@@ -64,21 +73,21 @@ const ACTION_FACTS: Record<string, DetailLine[]> = {
       key: 'gap',
       label: 'Holds a gap of',
       value: px(RUNE_KEEP_DISTANCE_GAP),
-      help: 'Edge-to-edge, not centre-to-centre. Hold position until an enemy is closer than this, then back away.',
+      help: 'Edge-to-edge, not centre-to-centre. Hold position until an enemy is closer than this, then give ground. The retreat is not limited to a straight line back: when that way is blocked — a node edge, terrain, another enemy — it circles the target to open the gap instead of stalling.',
     },
     {
       key: 'buffer',
       label: 'Past enemy reach by',
       value: px(RUNE_KEEP_DISTANCE_RANGED_BUFFER),
-      help: 'When kiting, aim to stand this far outside the target’s own attack range. Only achievable while you out-range it.',
+      help: 'When kiting, aim to stand this far outside the target’s own attack range. Against an enemy that out-ranges you there is no such distance, so the rule stands down and you close on it normally instead of holding at a gap that keeps you shot at.',
     },
   ],
   'step-back': [
     {
-      key: 'gap',
-      label: 'Backs off to',
-      value: px(RUNE_KEEP_DISTANCE_GAP),
-      help: 'Edge-to-edge gap, the same standoff Keep Distance holds.',
+      key: 'clearance',
+      label: 'Clears the edge by',
+      value: px(RUNE_TELEGRAPH_ESCAPE_CLEARANCE),
+      help: 'Searches nearby standable points and chooses the shortest one outside every currently visible hostile attack telegraph. It does not guarantee an exit before a short cast resolves.',
     },
   ],
   flee: [

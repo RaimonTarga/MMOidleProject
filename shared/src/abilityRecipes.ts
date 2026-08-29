@@ -47,10 +47,14 @@ const recipes: AbilityRecipe[] = [
     description: "Learn the Sweep technique: arm your next attack to cleave.",
     abilityId: "sweep",
     tier: 1,
-    // Plains is the swarm biome — density is the problem Sweep answers.
+    // Plains is the swarm biome — density is the problem Sweep answers. T1
+    // economy pass (2026-08-28): moved from L3 to L2 (armor's own level) so the
+    // pack-pressure "answer tool" doesn't lag a full level behind the mechanic
+    // it solves — mandatory counterplay must arrive at/before the threat, cheap
+    // enough to be a same-level side-purchase alongside the armor.
     recipeGroup: "plains",
-    requiredBiomeLevel: 3,
-    cost: { yellow: 160 },
+    requiredBiomeLevel: 2,
+    cost: { yellow: 25 },
   },
   {
     id: "ability-recipe-second-wind",
@@ -58,10 +62,12 @@ const recipes: AbilityRecipe[] = [
     description: "Learn the Second Wind guard: sharply raise your recovery when badly wounded.",
     abilityId: "second-wind",
     tier: 1,
-    // Forest pressures through frequent small hits — sustain is the answer.
+    // Forest pressures through frequent small hits — sustain is the answer. T1
+    // economy pass (2026-08-28): moved from L3 to L2 for the same reason as
+    // Sweep above.
     recipeGroup: "forest",
-    requiredBiomeLevel: 3,
-    cost: { green: 150 },
+    requiredBiomeLevel: 2,
+    cost: { green: 25 },
   },
   {
     id: "ability-recipe-cleanse",
@@ -69,10 +75,12 @@ const recipes: AbilityRecipe[] = [
     description: "Learn the Cleanse guard: strip the affliction that is eating you.",
     abilityId: "cleanse",
     tier: 1,
-    // Swamp is attrition-by-DoT — stripping stacks is the answer.
+    // Swamp is attrition-by-DoT — stripping stacks is the answer. Already
+    // well-placed at L3 (DoT stacking ramps in slightly after the hazard
+    // terrain Avoid Hazards answers) — only the cost changed, 2026-08-28.
     recipeGroup: "swamp",
     requiredBiomeLevel: 3,
-    cost: { purple: 150 },
+    cost: { purple: 30 },
   },
   {
     id: "ability-recipe-brace",
@@ -80,10 +88,11 @@ const recipes: AbilityRecipe[] = [
     description: "Learn the Brace guard: shed the worst of one heavy blow.",
     abilityId: "brace",
     tier: 1,
-    // Mountain is the telegraphed-huge-hit biome — Brace is the mitigation beat.
+    // Mountain is the telegraphed-huge-hit biome — Brace is the mitigation
+    // beat. Already well-placed at L3 — only the cost changed, 2026-08-28.
     recipeGroup: "mountain",
     requiredBiomeLevel: 3,
-    cost: { blue: 150 },
+    cost: { blue: 45 },
   },
   {
     id: "ability-recipe-power-strike",
@@ -103,10 +112,13 @@ const recipes: AbilityRecipe[] = [
     description: "Learn the Expose Weakness technique: make a target take increased damage.",
     abilityId: "expose-weakness",
     tier: 1,
-    // Cave is few-but-elite — killing the big one faster is the answer.
+    // Cave is few-but-elite — killing the big one faster is the answer. This is
+    // a strong single-target Technique, NOT mandatory Cave counterplay (that's
+    // %DR/Absorb/Careful Pulling/HP-Below-25%) — priced above the mandatory
+    // tier accordingly, 2026-08-28.
     recipeGroup: "cave",
     requiredBiomeLevel: 3,
-    cost: { red: 150 },
+    cost: { red: 85 },
   },
 
   // ── T2: positioning, soft control, sustained mitigation ────────────────────

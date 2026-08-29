@@ -14,7 +14,7 @@ already told you to look at.
 - Reference players are tier 2 (a player of tier P fights biome tier P-1). Defensive stats are averaged over spec-agnostic class builds × armor × recovery.
 - Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
 - TTL = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
-- Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 11 mobs; tier avg HP 163, avg total DPS 21.3.
+- Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 11 mobs; tier avg HP 163, avg total DPS 20.0.
 
 ## The Walk
 
@@ -22,11 +22,11 @@ _Each biome measured against the player who actually arrives there, in authored 
 
 | # | Biome | Arrive with | GM | Mob TTK | Your TTL | Worst hit %HP | Cost/kill | Step |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Plains | T1 +0 | 0 | 1.90s | 44.2s | 6.33% (Boar) | 4.29% | - | baseline |
-| 2 | Forest | T1 +1 | 6 | 3.52s | 19.0s | 7.40% (Wolf) | 18.5% | 4.31x | WALL |
-| 3 | Swamp | T1 +2 | 12 | 3.12s | 9.43s | 2.40% (Mud Toad) | 33.1% | 1.79x | ok |
-| 4 | Mountain | T1 +3 | 18 | 4.62s | 8.31s | 57.2% (Ridge Ambusher) | 55.6% | 1.68x | ok |
-| 5 | Caverns | T1 +4 | 24 | 5.62s | 7.11s | 87.0% (Cave Brute) | 79.0% | 1.42x | ok |
+| 1 | Plains | T1 +0 | 0 | 1.91s | 44.3s | 6.33% (Boar) | 4.30% | - | baseline |
+| 2 | Forest | T1 +1 | 6 | 3.57s | 19.1s | 7.40% (Wolf) | 18.7% | 4.35x | WALL |
+| 3 | Swamp | T1 +2 | 12 | 3.14s | 11.4s | 2.40% (Mud Toad) | 27.7% | 1.48x | ok |
+| 4 | Mountain | T1 +3 | 18 | 4.67s | 8.77s | 50.3% (Ridge Ambusher) | 53.2% | 1.92x | WALL |
+| 5 | Caverns | T1 +4 | 24 | 5.65s | 7.78s | 76.7% (Cave Brute) | 72.7% | 1.36x | ok |
 
 ## Walls & Stalls
 
@@ -34,12 +34,13 @@ _Only the rungs that break the pattern. Everything absent from this table walked
 
 | Biome | Signal | Detail |
 | --- | --- | --- |
-| Forest | Difficulty wall | cost/kill jumps 4.31x over the previous rung |
-| Swamp | Low TTL | 9.43s to die under mean pressure (no recovery modelled) |
-| Mountain | Heavy spike | Ridge Ambusher hits for 57.2% of maxHP |
-| Mountain | Low TTL | 8.31s to die under mean pressure (no recovery modelled) |
-| Caverns | Heavy spike | Cave Brute hits for 87.0% of maxHP |
-| Caverns | Low TTL | 7.11s to die under mean pressure (no recovery modelled) |
+| Forest | Difficulty wall | cost/kill jumps 4.35x over the previous rung |
+| Swamp | Low TTL | 11.4s to die under mean pressure (no recovery modelled) |
+| Mountain | Difficulty wall | cost/kill jumps 1.92x over the previous rung |
+| Mountain | Heavy spike | Ridge Ambusher hits for 50.3% of maxHP |
+| Mountain | Low TTL | 8.77s to die under mean pressure (no recovery modelled) |
+| Caverns | Heavy spike | Cave Brute hits for 76.7% of maxHP |
+| Caverns | Low TTL | 7.78s to die under mean pressure (no recovery modelled) |
 
 
 ## Arrival Players
@@ -48,11 +49,11 @@ _Derived, not assumed: GM accrues per biome mastered and gates upgrade level, so
 
 | # | Arrive at | Gear | GM | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Plains | T1 +0 | 0 | 158 | 7.76 | 2.92% | 7.98% | 33.2 | 0.97 |
-| 2 | Forest | T1 +1 | 6 | 162 | 8.02 | 3.12% | 8.18% | 34.6 | 0.97 |
-| 3 | Swamp | T1 +2 | 12 | 166 | 9.13 | 3.32% | 8.38% | 36.1 | 0.97 |
-| 4 | Mountain | T1 +3 | 18 | 171 | 9.34 | 3.52% | 8.57% | 37.4 | 0.97 |
-| 5 | Caverns | T1 +4 | 24 | 175 | 10.6 | 3.72% | 8.77% | 39.2 | 0.98 |
+| 1 | Plains | T1 +0 | 0 | 158 | 7.76 | 2.92% | 8.80% | 33.1 | 0.97 |
+| 2 | Forest | T1 +1 | 6 | 162 | 8.02 | 3.12% | 8.99% | 34.2 | 0.97 |
+| 3 | Swamp | T1 +2 | 12 | 166 | 9.13 | 3.32% | 9.18% | 35.8 | 0.97 |
+| 4 | Mountain | T1 +3 | 18 | 171 | 9.34 | 3.52% | 9.37% | 37.1 | 0.97 |
+| 5 | Caverns | T1 +4 | 24 | 175 | 10.6 | 3.72% | 9.57% | 38.9 | 0.98 |
 
 
 ---
@@ -67,11 +68,11 @@ _Bosses for biome tier 1 vs the boss-ready reference player (T2 +3). TTK uses th
 
 | Boss | Biome | HP | Attack profile | Raw DPS | Spike | Defenses | Expected TTK | Player TTL | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Obsidian Broodmother | Caverns | 1750 | 47.0 @ 0.36 aps | 22.7 | ×1.80 | plate 6.00, DR 10.0% | 30.7s | 15.0s | Risky | - |
-| Gnarled Greatbear | Forest | 2000 | 24.0 @ 0.71 aps | 34.3 | ×1.28 | plate 0.00, DR 0.00% | 27.8s | 21.7s | Safe | - |
-| Crag Behemoth | Mountain | 2100 | 56.0 @ 0.29 aps | 22.8 | ×1.90 | plate 0.00, DR 0.00% | 29.2s | 13.6s | Risky | - |
-| Tusked Razorback | Plains | 1700 | 34.0 @ 0.50 aps | 17.0 | ×1.00 | plate 4.00, DR 2.00% | 26.6s | 25.5s | Safe | - |
-| Grave Toadeater | Swamp | 2100 | 13.0 @ 0.38 aps | 21.8 | ×1.00 | plate 2.00, DR 2.00% | 31.2s | 13.1s | Risky | - |
+| Obsidian Broodmother | Caverns | 1750 | 47.0 @ 0.36 aps | 22.7 | ×1.80 | plate 6.00, DR 10.0% | 30.4s | 15.0s | Risky | - |
+| Gnarled Greatbear | Forest | 2000 | 24.0 @ 0.53 aps | 25.3 | ×1.20 | plate 0.00, DR 0.00% | 27.5s | 29.4s | Safe | - |
+| Crag Behemoth | Mountain | 2100 | 56.0 @ 0.29 aps | 22.8 | ×1.90 | plate 0.00, DR 0.00% | 28.8s | 13.7s | Risky | - |
+| Tusked Razorback | Plains | 1700 | 34.0 @ 0.50 aps | 17.0 | ×1.00 | plate 4.00, DR 2.00% | 26.3s | 25.5s | Safe | - |
+| Grave Toadeater | Swamp | 2100 | 13.0 @ 0.38 aps | 21.8 | ×1.00 | plate 2.00, DR 2.00% | 30.8s | 13.1s | Risky | - |
 
 ## Mob / Boss Diagnostic Signals
 
@@ -80,31 +81,32 @@ _Attention signals only: mobs >±25% of biome-tier average on HP / raw DPS / spi
 | Flag | Subject | Detail |
 | --- | --- | --- |
 | HP > +25% tier avg | Cave Lurker | 225 vs avg 163 (×1.38) |
-| Spike < -25% tier avg | Cave Lurker | 31.0 vs avg 57.8 (×0.54) |
+| Raw DPS > +25% tier avg | Cave Lurker | 22.1 vs avg 17.5 (×1.26) |
+| Spike < -25% tier avg | Cave Lurker | 31.0 vs avg 52.8 (×0.59) |
 | HP > +25% tier avg | Cave Brute | 250 vs avg 163 (×1.53) |
-| Raw DPS > +25% tier avg | Cave Brute | 42.3 vs avg 18.3 (×2.31) |
-| Spike > +25% tier avg | Cave Brute | 180 vs avg 57.8 (×3.11) |
-| Raw DPS < -25% tier avg | Moss Rat | 12.1 vs avg 18.3 (×0.66) |
-| Spike < -25% tier avg | Moss Rat | 17.0 vs avg 57.8 (×0.29) |
-| Spike < -25% tier avg | Wolf | 20.0 vs avg 57.8 (×0.35) |
-| Raw DPS > +25% tier avg | Cliff Hopper | 26.3 vs avg 18.3 (×1.44) |
-| Spike > +25% tier avg | Cliff Hopper | 105 vs avg 57.8 (×1.82) |
-| Raw DPS > +25% tier avg | Cliff Hopper | 26.3 vs avg 18.3 (×1.44) |
-| Spike > +25% tier avg | Cliff Hopper | 105 vs avg 57.8 (×1.82) |
+| Raw DPS > +25% tier avg | Cave Brute | 37.6 vs avg 17.5 (×2.15) |
+| Spike > +25% tier avg | Cave Brute | 160 vs avg 52.8 (×3.03) |
+| Raw DPS < -25% tier avg | Moss Rat | 12.1 vs avg 17.5 (×0.69) |
+| Spike < -25% tier avg | Moss Rat | 17.0 vs avg 52.8 (×0.32) |
+| Spike < -25% tier avg | Wolf | 20.0 vs avg 52.8 (×0.38) |
+| Raw DPS > +25% tier avg | Cliff Hopper | 25.2 vs avg 17.5 (×1.44) |
+| Spike > +25% tier avg | Cliff Hopper | 95.0 vs avg 52.8 (×1.80) |
+| Raw DPS > +25% tier avg | Cliff Hopper | 25.2 vs avg 17.5 (×1.44) |
+| Spike > +25% tier avg | Cliff Hopper | 95.0 vs avg 52.8 (×1.80) |
 | HP > +25% tier avg | Ridge Ambusher | 240 vs avg 163 (×1.47) |
-| Raw DPS > +25% tier avg | Ridge Ambusher | 27.7 vs avg 18.3 (×1.51) |
-| Spike > +25% tier avg | Ridge Ambusher | 125 vs avg 57.8 (×2.16) |
+| Raw DPS > +25% tier avg | Ridge Ambusher | 25.8 vs avg 17.5 (×1.48) |
+| Spike > +25% tier avg | Ridge Ambusher | 110 vs avg 52.8 (×2.08) |
 | HP < -25% tier avg | Field Hare | 50.0 vs avg 163 (×0.31) |
-| Raw DPS < -25% tier avg | Field Hare | 6.00 vs avg 18.3 (×0.33) |
-| Spike < -25% tier avg | Field Hare | 12.0 vs avg 57.8 (×0.21) |
+| Raw DPS < -25% tier avg | Field Hare | 6.00 vs avg 17.5 (×0.34) |
+| Spike < -25% tier avg | Field Hare | 12.0 vs avg 52.8 (×0.23) |
 | HP < -25% tier avg | Boar | 100 vs avg 163 (×0.61) |
-| Raw DPS < -25% tier avg | Boar | 9.47 vs avg 18.3 (×0.52) |
-| Spike < -25% tier avg | Boar | 18.0 vs avg 57.8 (×0.31) |
-| Raw DPS < -25% tier avg | Mire Ooze | 5.00 vs avg 18.3 (×0.27) |
-| Spike < -25% tier avg | Mire Ooze | 10.0 vs avg 57.8 (×0.17) |
+| Raw DPS < -25% tier avg | Boar | 9.47 vs avg 17.5 (×0.54) |
+| Spike < -25% tier avg | Boar | 18.0 vs avg 52.8 (×0.34) |
+| Raw DPS < -25% tier avg | Mire Ooze | 5.00 vs avg 17.5 (×0.29) |
+| Spike < -25% tier avg | Mire Ooze | 10.0 vs avg 52.8 (×0.19) |
 | HP < -25% tier avg | Mud Toad | 120 vs avg 163 (×0.74) |
-| Raw DPS < -25% tier avg | Mud Toad | 5.91 vs avg 18.3 (×0.32) |
-| Spike < -25% tier avg | Mud Toad | 13.0 vs avg 57.8 (×0.22) |
+| Raw DPS < -25% tier avg | Mud Toad | 5.91 vs avg 17.5 (×0.34) |
+| Spike < -25% tier avg | Mud Toad | 13.0 vs avg 52.8 (×0.25) |
 | biome single-type | Caverns | 100% Direct damage |
 | biome single-type | Forest | 100% Direct damage |
 | biome single-type | Mountain | 100% Direct damage |
@@ -117,14 +119,14 @@ _Every non-boss spawn in biome tier 1, sorted by raw total DPS within each biome
 
 | Biome | Mob | Role | HP | Attack | APS / CD | Raw DPS | DoT/s | Plating | DR | Range | Speed | Spike | Specials |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Caverns | Cave Brute | Spiker | 250 | 90.0 | 0.36 / 2800ms | 42.3 | 0.00 | 1.00 | 10.0% | 12.0 | 18.0 | ×2.00 | charge ×2.50 |
+| Caverns | Cave Brute | Spiker | 250 | 80.0 | 0.36 / 2800ms | 37.6 | 0.00 | 1.00 | 10.0% | 12.0 | 18.0 | ×2.00 | charge ×2.50 |
 | Caverns | Cave Lurker | Bruiser | 225 | 31.0 | 0.71 / 1400ms | 22.1 | 0.00 | 1.00 | 5.00% | 12.0 | 68.0 | ×1.00 | - |
 | Forest | Wolf | Bruiser | 130 | 20.0 | 0.91 / 1100ms | 18.2 | 0.00 | 0.00 | 0.00% | 12.0 | 82.0 | ×1.00 | - |
 | Forest | Moss Rat | Bruiser | 160 | 17.0 | 0.71 / 1400ms | 12.1 | 0.00 | 0.00 | 0.00% | 12.0 | 54.0 | ×1.00 | - |
-| Mountain | Ridge Ambusher | Spiker | 240 | 50.0 | 0.32 / 3100ms | 27.7 | 0.00 | 0.00 | 0.00% | 210 | 26.0 | ×2.50 | - |
-| Mountain | Cliff Hopper | Spiker | 190 | 50.0 | 0.33 / 3000ms | 26.3 | 0.00 | 0.00 | 0.00% | 12.0 | 28.0 | ×2.10 | charge ×3.00 |
-| Mountain | Cliff Hopper | Spiker | 190 | 50.0 | 0.33 / 3000ms | 26.3 | 0.00 | 0.00 | 0.00% | 12.0 | 28.0 | ×2.10 | charge ×3.00 |
+| Mountain | Ridge Ambusher | Spiker | 240 | 50.0 | 0.32 / 3100ms | 25.8 | 0.00 | 0.00 | 0.00% | 210 | 26.0 | ×2.20 | - |
+| Mountain | Cliff Hopper | Spiker | 190 | 50.0 | 0.33 / 3000ms | 25.2 | 0.00 | 0.00 | 0.00% | 12.0 | 28.0 | ×1.90 | charge ×3.00 |
+| Mountain | Cliff Hopper | Spiker | 190 | 50.0 | 0.33 / 3000ms | 25.2 | 0.00 | 0.00 | 0.00% | 12.0 | 28.0 | ×1.90 | charge ×3.00 |
 | Plains | Boar | Bruiser | 100 | 18.0 | 0.53 / 1900ms | 9.47 | 0.00 | 0.00 | 0.00% | 12.0 | 50.0 | ×1.00 | charge ×2.50 |
 | Plains | Field Hare | Bruiser | 50.0 | 12.0 | 0.50 / 2000ms | 6.00 | 0.00 | 0.00 | 0.00% | 12.0 | 46.0 | ×1.00 | - |
-| Swamp | Mire Ooze | DoT | 140 | 10.0 | 0.50 / 2000ms | 5.00 | 18.0 | 0.00 | 0.00% | 12.0 | 28.0 | ×1.00 | dot 18.0/s×3 |
-| Swamp | Mud Toad | DoT | 120 | 13.0 | 0.45 / 2200ms | 5.91 | 15.0 | 2.00 | 0.00% | 12.0 | 30.0 | ×1.00 | dot 15.0/s×3, slow ×0.60 |
+| Swamp | Mire Ooze | DoT | 140 | 10.0 | 0.50 / 2000ms | 5.00 | 15.0 | 0.00 | 0.00% | 12.0 | 28.0 | ×1.00 | dot 15.0/s×3 |
+| Swamp | Mud Toad | DoT | 120 | 13.0 | 0.45 / 2200ms | 5.91 | 12.0 | 2.00 | 0.00% | 12.0 | 30.0 | ×1.00 | dot 12.0/s×3, slow ×0.60 |

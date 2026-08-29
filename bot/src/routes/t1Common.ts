@@ -2,18 +2,19 @@ import { CLEARING_NODE_ID, type EquippedRule } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type RouteStep } from "../route/types";
 
 /**
- * Shared spine for every T1 baseline route (bot-route-reference.md §3-4).
+ * Low-level T1 step helpers used by the controlled route builder and retained
+ * historical routes.
  *
- * All six root classes share ONE biome order and one ability-learning rhythm;
- * what differs per class is gear (weapon/armor/charm) and rune movement/
- * targeting choices, authored per-class in each routeXT1.ts.
+ * `t1RouteBuilder.ts` owns the current controlled biome order, Rune profiles,
+ * ability/Guard matrix, and boss preparation. Historical routes still import
+ * some helpers below, but they are not controlled-batch authority.
  *
  * ORDER (designer override, 2026-08-25): Clearing -> Plains -> Forest ->
  * Swamp -> Mountain -> Cave -> all five bosses. This SWAPS Swamp and Mountain
  * from the original spine (Plains -> Forest -> Mountain -> Swamp -> Cave) --
- * Cleanse is now learned at Swamp L3 (3rd leg, replacing Second Wind) and
- * Brace at Mountain L3 (4th leg, replacing Cleanse); Expose Weakness still
- * caps it off at Cave. Upgrade targets follow leg position, not biome name:
+ * Cleanse is learned at Swamp L3 (3rd leg); Mountain uses its available
+ * movement tools, Step Back is learned at Cave L2, and Expose Weakness caps it
+ * off at Cave. Upgrade targets follow leg position:
  * Plains -> +1 (GM6), Forest -> +2 (GM12), Swamp -> +3 (GM18),
  * Mountain -> +4 (GM24), Cave -> +5 (GM30).
  */
@@ -77,7 +78,7 @@ export function clearingOpening(skillId: string, runes: EquippedRule[]): RouteSt
   ];
 }
 
-/** Learn Sweep at Plains L3 -- the shared T1 offensive Technique baseline. */
+/** Learn Sweep at Plains L2 -- the shared T1 offensive Technique baseline. */
 export function learnSweep(): RouteStep {
   return {
     type: "learnAbility",
@@ -88,7 +89,7 @@ export function learnSweep(): RouteStep {
   };
 }
 
-/** Learn Second Wind at Forest L3, replacing nothing (first Guard slot fill). */
+/** Learn Second Wind at Forest L2, replacing nothing (first Guard slot fill). */
 export function learnSecondWind(): RouteStep {
   return {
     type: "learnAbility",
@@ -111,7 +112,7 @@ export function learnBrace(): RouteStep {
   };
 }
 
-/** Learn Cleanse at Swamp L3, replacing Brace for the Swamp leg. */
+/** Learn Cleanse at Swamp L3, replacing Second Wind for the Swamp leg. */
 export function learnCleanse(): RouteStep {
   return {
     type: "learnAbility",
@@ -119,7 +120,17 @@ export function learnCleanse(): RouteStep {
     abilityId: "cleanse",
     slot: "guard",
     farmAt: biome("swamp"),
-    label: "learn Cleanse (replaces Brace for the Swamp leg)",
+    label: "learn Cleanse (replaces Second Wind for the Swamp leg)",
+  };
+}
+
+/** Re-equip the already learned Second Wind after the Swamp Cleanse leg. */
+export function restoreSecondWind(): RouteStep {
+  return {
+    type: "setAbilities",
+    techniques: ["sweep"],
+    guards: ["second-wind"],
+    label: "restore Second Wind for telegraph-dodge progression",
   };
 }
 
@@ -136,9 +147,34 @@ export function learnExposeWeakness(): RouteStep {
 }
 
 /**
+ * BUG FIX, 2026-08-26: `abilityFiring.ts`'s `shouldFire()` suppresses a Guard's
+ * OWN built-in trigger the instant a `fire-guard` rune rule is equipped AT
+ * ALL, regardless of which condition it is paired with or whether that
+ * condition is currently true (`hasRuneAction` only checks the action id is
+ * present in the loadout). `target-casting -> fire-guard` was designed for
+ * Brace specifically ("the primary legitimate bot answer to charged/cast
+ * attacks"), but every route kept it equipped unconditionally -- so Second
+ * Wind (built-in default `hp-below 60%`) and Cleanse (built-in default
+ * `has-debuff`) have never fired on their own sensible default this entire
+ * session; they only fired in the rare window an enemy happened to be
+ * mid-cast. Confirmed live: bots fighting bosses with `second-wind` equipped
+ * still carried the rune, HP never triggering it.
+ *
+ * The fix is this rune ONLY when Brace is the currently-equipped Guard.
+ */
+const FIRE_GUARD_ON_CAST: EquippedRule = { conditionId: "target-casting", actionId: "fire-guard" };
+
+/** `guard` is the currently-equipped Guard ability id, or "none" before one is learned. */
+export function reactiveGuardRune(guard: string): EquippedRule[] {
+  return guard === "brace" ? [FIRE_GUARD_ON_CAST] : [];
+}
+
+/**
  * One boss fight: set the standing kit's armor slot and the ability pair,
  * then attempt. `wornKit` is everything else worn alongside `armor`
- * (weapon/charm/boots), constant across the gauntlet.
+ * (weapon/charm/boots), constant across the gauntlet. `baseRunes` is the
+ * route's own movement/targeting/survival loadout WITHOUT any Guard-reactive
+ * rule -- this appends the correct one (or none) for `guard` automatically.
  */
 export function bossFight(opts: {
   biomeGroup: string;
@@ -146,10 +182,16 @@ export function bossFight(opts: {
   armor: string;
   technique: string;
   guard: string;
+  baseRunes: EquippedRule[];
 }): RouteStep[] {
   return [
     { type: "equip", definitionIds: [...opts.wornKit, opts.armor] },
     { type: "setAbilities", techniques: [opts.technique], guards: [opts.guard] },
+    {
+      type: "configureRunes",
+      rules: [...opts.baseRunes, ...reactiveGuardRune(opts.guard)],
+      label: `arm the Guard-reactive rune for ${opts.guard}`,
+    },
     { type: "attemptBoss", biomeGroup: opts.biomeGroup, tier: 1, maxAttempts: 6 },
     { type: "milestone", id: `${opts.biomeGroup}-boss-cleared` },
   ];

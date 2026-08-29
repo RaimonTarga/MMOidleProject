@@ -61,9 +61,17 @@ export const SUMMONER_CORE_TUNING = {
   rootCount: 4,
   apsInheritanceMult: 1,
   formationOffenseMult: 1,
-  reconstructionIntervalMs: 5_000,
+  // DESIGNER BUFF, 2026-08-25: Conduit's own bot playtesting hadn't reached a
+  // boss fight yet when this was flagged, but the structural problem is
+  // visible directly in the formula (`reconstruction.ts`): every fallen
+  // summon slot paid HALF the new minion's max HP out of the OWNER's own
+  // pool to come back, on top of a 5s queue delay — a cost that compounds
+  // hard exactly when the formation is under the most pressure (a bad fight
+  // loses slots faster than they can be afforded back). Cut on both axes:
+  // the HP tax and the queue delay. Re-measure once Conduit clears a boss.
+  reconstructionIntervalMs: 3_500, // was 5_000
   minimumReconstructionIntervalMs: 2_500,
-  reconstructionHpCostRatio: 0.5,
+  reconstructionHpCostRatio: 0.3, // was 0.5
   reconstructionSafetyFloorPct: 0.2,
   reconstructionCombatRegenPct: 0.2,
   leashRadius: 320,

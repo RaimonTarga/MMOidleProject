@@ -12,7 +12,11 @@ import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { isMonsterCharging } from "../engine/monsterMechanics";
-import { isPlayerInCombat } from "./engagement";
+import { isPlayerActivelyInCombat, isPlayerInCombat } from "./engagement";
+import {
+  telegraphsContainingPlayer,
+  updateTelegraphEvasionLifecycle,
+} from "./telegraphEvasion";
 
 /** Server-only runtime flags read by the auto-combat systems. */
 export const RUNE_FLEE_FLAG = "rune.flee";
@@ -28,6 +32,7 @@ export const RUNE_SPREAD_DOTS_FLAG = "rune.spreadDots";
 export const RUNE_FOCUS_ELITES_FLAG = "rune.focusElites";
 export const RUNE_AVOID_NODE_HAZARDS_FLAG = "rune.avoidNodeHazards";
 export const RUNE_CAREFUL_PULLING_FLAG = "rune.carefulPulling";
+export const RUNE_EVADE_TELEGRAPH_FLAG = "rune.evadeTelegraph";
 /** System rework Step 7: a fire-technique / fire-guard rule is active this tick. */
 export const RUNE_FIRE_TECHNIQUE_FLAG = "rune.fireTechnique";
 export const RUNE_FIRE_GUARD_FLAG = "rune.fireGuard";
@@ -75,7 +80,7 @@ function isEliteTarget(world: World, targetId: string | undefined): boolean {
  * overwriting any stale settings-tab values, and the flee / keep-distance flags
  * are written to the server-only combat-state bag.
  */
-export function updateRuneDerivedConfig(world: World, now: number): void {
+export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
   for (const player of world.livePlayers) {
     const { count: currentAggroCount, charging: enemyCharging } = aggroStats(
       world,
@@ -84,6 +89,7 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
     );
     const attackTargetId = player.hasAttackTarget?.targetId;
     const attackTarget = attackTargetId ? world.getMonsterEntity(attackTargetId) : undefined;
+    const dangerousTelegraphs = telegraphsContainingPlayer(world, player, now);
     const ctx: RuneContext = {
       hpPct:
         player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp),
@@ -91,6 +97,7 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
         ? attackTarget.hasHealth.hp / Math.max(1, attackTarget.hasHealth.maxHp)
         : undefined,
       inCombat: currentAggroCount > 0 || isPlayerInCombat(player, now),
+      activelyEngaged: isPlayerActivelyInCombat(world, player),
       inParty: player.inParty !== undefined,
       aggroCount: currentAggroCount,
       combatArchetype: player.usesSkills.combatArchetype,
@@ -98,6 +105,7 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
         (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
       ),
       enemyCharging,
+      insideDangerousTelegraph: dangerousTelegraphs.length > 0,
       // The shared empowered-attack flag is armed → the next attack is empowered.
       // Set by each class when its finisher/execution/discharge becomes ready
       // (cadence/cooldown/energy); absent for classes with no empowered attack.
@@ -153,6 +161,11 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
       player.tracksProgression.runesEquipped.some(
         (rule) => rule.actionId === "wait-for-regen",
       );
+    // Note: "Always -> Recover First" reaches this point with the combat timer
+    // still running. It is `deriveAutoConfigFromRunes` that keeps the hold from
+    // outranking a live fight — the rule only claims the recovery channel while
+    // `activelyEngaged` is false, so anything aggroing onto the player releases
+    // it and the player fights back instead of standing still while being hit.
     setFlag(
       player.tracksCombat,
       RUNE_WAIT_FOR_REGEN_FLAG,
@@ -172,6 +185,21 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
     setFlag(player.tracksCombat, RUNE_FOCUS_ELITES_FLAG, d.focusElites);
     setFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG, d.avoidHazards);
     setFlag(player.tracksCombat, RUNE_CAREFUL_PULLING_FLAG, d.carefulPulling);
+    const stepBackOwnsMovement = updateTelegraphEvasionLifecycle(
+      world,
+      player,
+      now,
+      d.evadeTelegraph ? dangerousTelegraphs : [],
+      {
+        autoEnabled: player.usesAutocombat.auto,
+        manualOverride: player.hasManualMoveIntent !== undefined,
+        fleePriority: player.isFleeing !== undefined || d.fleeRequested,
+        stepBackEquipped: player.tracksProgression.runesEquipped.some(
+          (rule) => rule.actionId === "step-back",
+        ),
+      },
+    );
+    setFlag(player.tracksCombat, RUNE_EVADE_TELEGRAPH_FLAG, stepBackOwnsMovement);
     setFlag(player.tracksCombat, RUNE_FIRE_TECHNIQUE_FLAG, d.fireTechnique);
     setFlag(player.tracksCombat, RUNE_FIRE_TECHNIQUE_2_FLAG, d.fireTechnique2);
     setFlag(player.tracksCombat, RUNE_FIRE_GUARD_FLAG, d.fireGuard);

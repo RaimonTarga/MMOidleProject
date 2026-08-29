@@ -27,6 +27,7 @@ import {
   playerNodeIdAtom,
   debugPanelOpenAtom,
   rewardMultiplierAtom,
+  humanPlaytestStatusAtom,
   selectedRangeAtom,
   selectedSubVariantAtom,
 } from './atoms';
@@ -183,6 +184,32 @@ function RewardMultiplierSection() {
   );
 }
 
+function PlaytestLoggingSection() {
+  const status = useAtomValue(humanPlaytestStatusAtom);
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!status.active) return;
+    const timer = window.setInterval(() => setNow(Date.now()), 1_000);
+    return () => window.clearInterval(timer);
+  }, [status.active]);
+  const elapsed = status.active && status.startedAt ? Math.max(0, Math.floor((now - status.startedAt) / 1000)) : 0;
+  const duration = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, '0')}`;
+  return (
+    <div className="debug-section" style={status.active ? { border: '1px solid #ff4f4f', background: 'rgba(130, 18, 18, 0.35)' } : undefined}>
+      <div className="debug-row" style={status.active ? { color: '#ff6a6a', fontWeight: 800 } : undefined}>
+        <span className="debug-key">{status.active ? '● PLAYTEST LOGGING ACTIVE' : 'PLAYTEST LOGGING INACTIVE'}</span>
+        <span className="debug-val">{status.active ? duration : '—'}</span>
+      </div>
+      {status.runId && <div className="debug-div">run: {status.runId}</div>}
+      {status.message && <div className="debug-div">{status.message}</div>}
+      {status.artifactPath && !status.active && <div className="debug-div">artifact: {status.artifactPath}</div>}
+      <button className={`debug-btn${status.active ? ' active' : ''}`} onClick={() => status.active ? hudBus.requestStopPlaytestLogging() : hudBus.requestStartPlaytestLogging()}>
+        {status.active ? 'STOP PLAYTEST LOGGING' : 'START PLAYTEST LOGGING'}
+      </button>
+    </div>
+  );
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 function fmt(v: DebugValue): string {
@@ -194,6 +221,7 @@ function fmt(v: DebugValue): string {
 
 export function DebugPanel() {
   const [open, setOpen] = useAtom(debugPanelOpenAtom);
+  const playtest = useAtomValue(humanPlaytestStatusAtom);
 
   // Dev tooling only: the panel (reset/rename/live combat readouts) is hidden in
   // production builds, matching the server, which only registers debug:* handlers
@@ -203,7 +231,7 @@ export function DebugPanel() {
   return (
     <div className="debug-panel">
       <button className="debug-panel__toggle" onClick={() => setOpen(o => !o)}>
-        <span className="debug-panel__title">DEBUG</span>
+        <span className="debug-panel__title" style={playtest.active ? { color: '#ff5a5a' } : undefined}>{playtest.active ? '● PLAYTEST ACTIVE' : 'DEBUG'}</span>
         <span className="debug-panel__chevron">{open ? '▼' : '▶'}</span>
       </button>
       {open && <DebugPanelContent />}
@@ -285,6 +313,7 @@ function DebugPanelContent() {
       )}
 
       {DEV_TOOLS_ENABLED && <RewardMultiplierSection />}
+      {DEV_TOOLS_ENABLED && <PlaytestLoggingSection />}
 
       {/* Moved out of the right rail: this draws attack ranges and hitboxes, which
           is a debugging overlay rather than a system the player navigates to. */}

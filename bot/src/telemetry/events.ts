@@ -1,12 +1,20 @@
 import type { DeathCause, EssenceType } from "@mmo-idle/shared";
 
 /** Bump when an event shape changes incompatibly. Mirrors the bench convention. */
-export const BOT_JSONL_SCHEMA_VERSION = 1;
+export const BOT_JSONL_SCHEMA_VERSION = 2;
 
 /** Tags that mark a run as unfit for canonical balance conclusions. */
 export type RunTaint =
   | "NON_CANONICAL_REWARD_MULTIPLIER"
-  | "NON_CANONICAL_TIME_SCALE";
+  | "NON_CANONICAL_TIME_SCALE"
+  | "NON_CANONICAL_FAST_BOSS_RETRY"
+  | "CONTAMINATED_CONTROLLED_OVERLAP";
+
+export type HarnessExecutionMode =
+  | "single"
+  | "sequential"
+  | "isolated-parallel"
+  | "uncontrolled-parallel";
 
 export interface RunHeader {
   schemaVersion: number;
@@ -25,6 +33,8 @@ export interface RunHeader {
   /** Server-global kill-reward multiplier observed at connect. 1 = canonical. */
   rewardMultiplier: number;
   taints: RunTaint[];
+  executionMode: HarnessExecutionMode;
+  maxConcurrency: number;
 }
 
 export type CompletionState =
@@ -177,6 +187,43 @@ export type BotEvent =
       outcome?: "victory" | "death" | "timeout" | "unreachable";
       durationMs?: number;
       bossHpFraction?: number;
+      bossCombatStartedAtMs?: number;
+      bossCombatEndedAtMs?: number;
+      bossCombatDurationMs?: number;
+    }
+  | {
+      kind: "fast-boss-retry";
+      atMs: number;
+      nodeId: string;
+      attempt: number;
+      taint: "NON_CANONICAL_FAST_BOSS_RETRY";
+      includeGuardians: boolean;
+      playerReset: "respawn-baseline";
+      skipped: string[];
+    }
+  | {
+      kind: "area-lease";
+      atMs: number;
+      phase: "wait-start" | "acquired" | "released";
+      areaIds: string[];
+      reason: string;
+      waitDurationMs?: number;
+      conflictingOwnerId?: string;
+    }
+  | {
+      kind: "controlled-overlap";
+      atMs: number;
+      areaId: string;
+      nodeId: string;
+      ownerIds: string[];
+      entityIds: string[];
+      reason: "unleased-entry" | "controlled-player-observed" | "transit-co-presence";
+      /**
+       * Only a bot ENGAGED in a node it does not own taints a run. A bot merely
+       * walking through is recorded but harmless -- transit is unleased by
+       * design, and a transiting bot does not fight.
+       */
+      contaminating: boolean;
     }
   | {
       kind: "concurrency-sample";
@@ -207,4 +254,73 @@ export type BotEvent =
       hpDamage: number;
       absorbed: number;
       nodeId: string;
+    }
+  | {
+      kind: "ability-activation";
+      atMs: number;
+      abilityId: string;
+      slot: "guard" | "technique";
+      removedEffects?: Array<{ effectId: string; stacks: number }>;
+    }
+  | {
+      kind: "hazard-contact";
+      atMs: number;
+      hazardId: string;
+      hazardKind: string;
+      sourceId: string;
+      sourceName: string;
+      phase: "enter" | "leave";
+      durationMs?: number;
+      damageReceived?: number;
+      harmfulEffects?: string[];
+      endReason?: "exited" | "expired" | "death" | "node-cleared";
+    }
+  | {
+      kind: "hazard-escape";
+      atMs: number;
+      hazardIds: string[];
+      hazardKinds: string[];
+      phase: "attempt" | "result";
+      outcome?: "success" | "failed" | "expired" | "interrupted";
+      reason?: string;
+    }
+  | {
+      kind: "telegraph-dodge";
+      atMs: number;
+      phase: "activation" | "attempt" | "safe" | "reenter" | "resolution" | "release" | "result";
+      telegraphId?: string;
+      telegraphKind?: string;
+      ownerId?: string;
+      trackedTelegraphIds?: string[];
+      acquiredAtMs?: number;
+      startingPosition?: { x: number; y: number };
+      telegraphGeometry?: Array<{ pos: { x: number; y: number }; radius: number }>;
+      escapePoint?: { x: number; y: number };
+      firstSafeAtMs?: number;
+      resolvedAtMs?: number;
+      releasedAtMs?: number;
+      releaseReason?: string;
+      reenteredAfterSafe?: boolean;
+      outcome?: "success" | "failure" | "discarded";
+      damageReceived?: number;
+      reason?: string;
+    }
+  | {
+      kind: "technique-adapter";
+      atMs: number;
+      adapter: "apprentice-sweep" | "slinger-sweep" | "conduit-formation";
+      event:
+        | "apprentice-secondary-target"
+        | "slinger-clip-created"
+        | "slinger-clip-shot"
+        | "slinger-splash-hit"
+        | "conduit-arm"
+        | "conduit-delivery"
+        | "conduit-share-lost"
+        | "conduit-secondary-damage";
+      targetName?: string;
+      stacksApplied?: number;
+      clipSize?: number;
+      splashDamage?: number;
+      eligibleSummons?: number;
     };

@@ -26,22 +26,22 @@ Generated from `tools/ehp-report.ts --llm-packet`. Progression-focused companion
 
 | Checkpoint | Gear | Attacker | Avg eHP | Avg net/s | Min TTL | Safe % | Blocked |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev-tier +3 vs current mobs | T2 +3 | 58.9 atk / 0.44 aps / 6.65 dot / ×1.02 | 395 | -10.7 | 15.8s | 8.33% | 0 |
-| Current +0 vs current mobs (entry) | T3 +0 | 58.9 atk / 0.44 aps / 6.65 dot / ×1.02 | 839 | 2.12 | 52.9s | 47.2% | 0 |
-| Current +3 vs current mobs (geared) | T3 +3 | 58.9 atk / 0.44 aps / 6.65 dot / ×1.02 | 1582 | 12.1 | sustains | 100% | 0 |
+| Prev-tier +3 vs current mobs | T2 +3 | 51.9 atk / 0.44 aps / 6.65 dot / ×1.02 | 416 | -7.87 | 18.5s | 11.1% | 0 |
+| Current +0 vs current mobs (entry) | T3 +0 | 51.9 atk / 0.44 aps / 6.65 dot / ×1.02 | 983 | 4.52 | 135s | 80.6% | 0 |
+| Current +3 vs current mobs (geared) | T3 +3 | 51.9 atk / 0.44 aps / 6.65 dot / ×1.02 | 1432 | 12.1 | sustains | 100% | 0 |
 | Current +3 vs boss/elite | T3 +3 | 139 atk / 0.28 aps / 0.00 dot / ×1.00 | 660 | -1.06 | 28.9s | 36.1% | 0 |
-| Current +3 vs next-tier mobs | T3 +3 | 140 atk / 0.41 aps / 4.33 dot / ×1.02 | 610 | -15.4 | 11.4s | 11.1% | 0 |
+| Current +3 vs next-tier mobs | T3 +3 | 121 atk / 0.41 aps / 4.33 dot / ×1.02 | 706 | -7.09 | 13.3s | 25.0% | 0 |
 
 ## Class Average eHP By Checkpoint
 
 | Class | Prev-tier +3 vs current mobs | Current +0 vs current mobs (entry) | Current +3 vs current mobs (geared) | Current +3 vs boss/elite | Current +3 vs next-tier mobs |
 | --- | --- | --- | --- | --- | --- |
-| Apprentice | 394 | 885 | 1828 | 580 | 563 |
-| Conduit | 348 | 706 | 1488 | 528 | 506 |
-| Slinger | 416 | 732 | 1476 | 720 | 655 |
-| Spirit | 320 | 635 | 1410 | 501 | 482 |
-| Squire | 496 | 1204 | 1721 | 923 | 821 |
-| Striker | 395 | 873 | 1568 | 706 | 630 |
+| Apprentice | 422 | 1161 | 1654 | 580 | 689 |
+| Conduit | 368 | 878 | 1347 | 528 | 610 |
+| Slinger | 419 | 844 | 1336 | 720 | 688 |
+| Spirit | 336 | 776 | 1277 | 501 | 514 |
+| Squire | 532 | 1184 | 1558 | 923 | 982 |
+| Striker | 422 | 1052 | 1419 | 706 | 753 |
 
 ## Armor Comparison
 
@@ -49,20 +49,20 @@ _No charm equipped; eHP/TTL/net are vs the avg-mob profile, averaged over spec-a
 
 | Armor | Plus | maxHP | Plating | DR | Evasion | Special | eHP | TTL | Net/s | Best matchup | Worst matchup |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Deepscale Hide | +0 | 91.0 | 13.0 | 19.0% | 0.00 | - | 419 | 15.7s | -18.1 | avg mob | DoT-heavy |
-| Deepscale Hide | +5 | 136 | 19.0 | 23.0% | 0.00 | - | 611 | 28.2s | -14.7 | avg mob | DoT-heavy |
-| Emberforge Plate | +0 | 90.0 | 20.0 | 0.00% | 0.00 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25 | 839 | 91.5s | -8.48 | avg mob | DoT-heavy |
-| Emberforge Plate | +5 | 190 | 45.0 | 0.00% | 0.00 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25 | 1834 | 82.1s | -4.30 | avg mob | DoT-heavy |
-| Eternal Duneplate | +0 | 90.0 | 20.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00, defense.debuff-resistance=0.20 | 427 | 32.3s | -17.8 | avg mob | DoT-heavy |
-| Eternal Duneplate | +5 | 190 | 45.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00, defense.debuff-resistance=0.20 | 1578 | 137s | -5.77 | avg mob | DoT-heavy |
-| Glacial Bulwark | +0 | 100 | 15.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.15, defense.stationary-dr-ramptime-ms=6000 | 417 | 15.7s | -19.0 | hardest | DoT-heavy |
-| Glacial Bulwark | +5 | 210 | 35.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.15, defense.stationary-dr-ramptime-ms=6000 | 1229 | 57.9s | -8.89 | avg mob | DoT-heavy |
-| Plaguebound Shroud | +0 | 97.0 | 13.0 | 0.00% | 0.00 | defense.debuff-resistance=0.20, defense.dot-resistance=0.46, defense.hit-to-dot-pct=0.10 | 452 | 17.2s | -17.2 | DoT-heavy | boss |
-| Plaguebound Shroud | +5 | 146 | 19.0 | 0.00% | 0.00 | defense.debuff-resistance=0.20, defense.dot-resistance=0.52, defense.hit-to-dot-pct=0.10 | 687 | 56.3s | -13.5 | DoT-heavy | boss |
-| Summit Aegis | +0 | 104 | 16.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, guard.potency-pct=0.41 | 412 | 15.4s | -19.7 | hardest | DoT-heavy |
-| Summit Aegis | +5 | 156 | 24.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, guard.potency-pct=0.51 | 642 | 41.9s | -15.2 | avg mob | DoT-heavy |
-| Wildgrowth Weave | +0 | 80.0 | 13.0 | 0.00% | 0.40 | - | 401 | 14.8s | -17.9 | hardest | DoT-heavy |
-| Wildgrowth Weave | +5 | 170 | 28.0 | 0.00% | 0.65 | - | 936 | 38.2s | -10.4 | avg mob | DoT-heavy |
+| Deepscale Hide | +0 | 91.0 | 13.0 | 19.0% | 0.00 | - | 429 | 18.4s | -15.8 | avg mob | DoT-heavy |
+| Deepscale Hide | +5 | 136 | 19.0 | 23.0% | 0.00 | - | 638 | 54.6s | -12.5 | avg mob | DoT-heavy |
+| Emberforge Plate | +0 | 90.0 | 20.0 | 0.00% | 0.00 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25 | 983 | 50.0s | -6.08 | avg mob | DoT-heavy |
+| Emberforge Plate | +5 | 190 | 45.0 | 0.00% | 0.00 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25 | 1660 | 82.1s | -4.30 | avg mob | DoT-heavy |
+| Eternal Duneplate | +0 | 90.0 | 20.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00, defense.debuff-resistance=0.20 | 455 | 41.3s | -14.9 | avg mob | DoT-heavy |
+| Eternal Duneplate | +5 | 190 | 45.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=1.00, defense.debuff-resistance=0.20 | 1622 | 157s | -4.52 | avg mob | DoT-heavy |
+| Glacial Bulwark | +0 | 100 | 15.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.15, defense.stationary-dr-ramptime-ms=6000 | 434 | 18.9s | -16.4 | avg mob | DoT-heavy |
+| Glacial Bulwark | +5 | 210 | 35.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.15, defense.stationary-dr-ramptime-ms=6000 | 1374 | 89.2s | -6.59 | avg mob | DoT-heavy |
+| Plaguebound Shroud | +0 | 97.0 | 13.0 | 0.00% | 0.00 | defense.debuff-resistance=0.20, defense.dot-resistance=0.46, defense.hit-to-dot-pct=0.10 | 476 | 21.3s | -14.6 | DoT-heavy | boss |
+| Plaguebound Shroud | +5 | 146 | 19.0 | 0.00% | 0.00 | defense.debuff-resistance=0.20, defense.dot-resistance=0.52, defense.hit-to-dot-pct=0.10 | 754 | 43.0s | -10.8 | DoT-heavy | boss |
+| Summit Aegis | +0 | 104 | 16.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, guard.potency-pct=0.41 | 431 | 18.8s | -16.8 | avg mob | DoT-heavy |
+| Summit Aegis | +5 | 156 | 24.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, guard.potency-pct=0.51 | 704 | 37.1s | -12.3 | avg mob | DoT-heavy |
+| Wildgrowth Weave | +0 | 80.0 | 13.0 | 0.00% | 0.40 | - | 410 | 17.2s | -15.7 | avg mob | DoT-heavy |
+| Wildgrowth Weave | +5 | 170 | 28.0 | 0.00% | 0.65 | - | 1009 | 54.8s | -8.42 | avg mob | DoT-heavy |
 
 ## Charm Comparison
 
@@ -70,20 +70,20 @@ _Reference armor Summit Aegis +3; metrics vs avg-mob profile averaged over class
 
 | Charm | Plus | recovery | Special | Recov/s | eHP contrib | TTL | Best matchup | Worst matchup |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Bastion Heart | +0 | 3.00 | defense.barrier-pct=0.28 | 2.50 | -231 | 21.4s | boss | DoT-heavy |
-| Bastion Heart | +5 | 5.00 | defense.barrier-pct=0.34 | 3.51 | 0.00 | 35.3s | avg mob | DoT-heavy |
-| Echo Geode | +0 | 7.00 | defense.absorb-pct=0.20 | 6.27 | -231 | 28.2s | next-tier | DoT-heavy |
-| Echo Geode | +5 | 10.0 | defense.absorb-pct=0.24 | 7.32 | 0.00 | 273s | avg mob | DoT-heavy |
-| Frostward Charm | +0 | 11.0 | defense.absorb-pct=0.08, defense.barrier-pct=0.12 | 5.17 | -231 | 28.4s | hardest | DoT-heavy |
-| Frostward Charm | +5 | 11.0 | defense.absorb-pct=0.18, defense.barrier-pct=0.22 | 6.88 | 0.00 | 45.4s | avg mob | DoT-heavy |
-| Magmaheart Stone | +0 | 11.0 | defense.recovery-active-pct=0.06, defense.recovery-on-kill-pct=0.04 (on-kill Recovery undercounted) | 7.35 | -231 | 20.8s | boss | DoT-heavy |
-| Magmaheart Stone | +5 | 11.0 | defense.recovery-active-pct=0.16, defense.recovery-on-kill-pct=0.14 (on-kill Recovery undercounted) | 16.3 | 0.00 | 58.3s | avg mob | DoT-heavy |
-| Oasis Heart | +0 | 11.0 | defense.cleanse-empty-heal-pct=0.05, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 6.20 | -231 | 18.7s | boss | DoT-heavy |
-| Oasis Heart | +5 | 11.0 | defense.cleanse-empty-heal-pct=0.10, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 10.5 | 0.00 | 56.2s | avg mob | DoT-heavy |
-| Sorrow Eye | +0 | 7.00 | defense.recovery-pulse-duration-ms=4000, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.44 | 13.3 | -231 | 41.6s | boss | DoT-heavy |
-| Sorrow Eye | +5 | 10.0 | defense.recovery-pulse-duration-ms=4000, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.54 | 23.2 | 0.00 | 1184s | avg mob | DoT-heavy |
-| Worldvine Heart | +0 | 11.0 | defense.recovery-ramp-max-pct=0.14, defense.recovery-ramp-ramptime-ms=10000, defense.recovery-ramp-start-pct=0.05 | 9.34 | -231 | 27.0s | boss | DoT-heavy |
-| Worldvine Heart | +5 | 11.0 | defense.recovery-ramp-max-pct=0.24, defense.recovery-ramp-ramptime-ms=10000, defense.recovery-ramp-start-pct=0.05 | 15.2 | 0.00 | 87.3s | avg mob | DoT-heavy |
+| Bastion Heart | +0 | 3.00 | defense.barrier-pct=0.28 | 2.47 | -272 | 28.5s | avg mob | DoT-heavy |
+| Bastion Heart | +5 | 5.00 | defense.barrier-pct=0.34 | 3.48 | 0.00 | 57.2s | avg mob | DoT-heavy |
+| Echo Geode | +0 | 7.00 | defense.absorb-pct=0.20 | 5.66 | -272 | 43.9s | boss | DoT-heavy |
+| Echo Geode | +5 | 10.0 | defense.absorb-pct=0.24 | 6.59 | 0.00 | 43.8s | avg mob | DoT-heavy |
+| Frostward Charm | +0 | 11.0 | defense.absorb-pct=0.08, defense.barrier-pct=0.12 | 4.90 | -272 | 24.0s | avg mob | DoT-heavy |
+| Frostward Charm | +5 | 11.0 | defense.absorb-pct=0.18, defense.barrier-pct=0.22 | 6.32 | 0.00 | 52.6s | avg mob | DoT-heavy |
+| Magmaheart Stone | +0 | 11.0 | defense.recovery-active-pct=0.06, defense.recovery-on-kill-pct=0.04 (on-kill Recovery undercounted) | 7.32 | -272 | 32.7s | avg mob | DoT-heavy |
+| Magmaheart Stone | +5 | 11.0 | defense.recovery-active-pct=0.16, defense.recovery-on-kill-pct=0.14 (on-kill Recovery undercounted) | 16.2 | 0.00 | 101s | avg mob | DoT-heavy |
+| Oasis Heart | +0 | 11.0 | defense.cleanse-empty-heal-pct=0.05, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 6.17 | -272 | 25.5s | avg mob | DoT-heavy |
+| Oasis Heart | +5 | 11.0 | defense.cleanse-empty-heal-pct=0.10, defense.cleanse-interval-ms=6000, defense.cleanse-stacks=1.00 | 10.5 | 0.00 | 43.4s | avg mob | DoT-heavy |
+| Sorrow Eye | +0 | 7.00 | defense.recovery-pulse-duration-ms=4000, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.44 | 13.3 | -272 | 56.2s | avg mob | DoT-heavy |
+| Sorrow Eye | +5 | 10.0 | defense.recovery-pulse-duration-ms=4000, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.54 | 23.1 | 0.00 | 602s | avg mob | DoT-heavy |
+| Worldvine Heart | +0 | 11.0 | defense.recovery-ramp-max-pct=0.14, defense.recovery-ramp-ramptime-ms=10000, defense.recovery-ramp-start-pct=0.05 | 9.31 | -272 | 40.5s | avg mob | DoT-heavy |
+| Worldvine Heart | +5 | 11.0 | defense.recovery-ramp-max-pct=0.24, defense.recovery-ramp-ramptime-ms=10000, defense.recovery-ramp-start-pct=0.05 | 15.2 | 0.00 | 128s | avg mob | DoT-heavy |
 
 ## Biome Route
 
@@ -97,7 +97,7 @@ _Player at current +3 gear, spec-agnostic best loadout, vs each biome's tier-2 p
 | Swamp | 37.0 atk / 0.43 aps / 17.0 dot / ×1.00 | Squire / Bulwark / Vanguard · Plaguebound Shroud/Sorrow Eye | 1049 | 11.5 | 36.4 | 24.9 | sustains | 1.90% | Safe |
 | Caverns | 79.7 atk / 0.35 aps / 11.0 dot / ×1.00 | Squire / Bulwark / Vanguard · Emberforge Plate/Sorrow Eye | 1384 | 11.3 | 40.1 | 28.7 | sustains | 0.25% | Safe |
 | Jungle | 24.3 atk / 0.64 aps / 16.3 dot / ×1.15 | Squire / Bulwark / Vanguard · Plaguebound Shroud/Sorrow Eye | 1312 | 8.94 | 36.4 | 27.5 | sustains | 0.31% | Safe |
-| Desert | 135 atk / 0.38 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard · Emberforge Plate/Sorrow Eye | 1163 | 18.1 | 40.1 | 22.0 | sustains | 11.6% | Safe |
+| Desert | 65.0 atk / 0.38 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard · Emberforge Plate/Sorrow Eye | 26325 | 0.38 | 40.1 | 39.7 | sustains | 0.25% | Safe |
 
 ## Boss Matchups By Class
 
@@ -132,13 +132,13 @@ _Survival score (mitigation × pool incl. recovery) at +3, no charm, averaged ov
 
 | Armor | avg mob | DoT-heavy | hardest | boss | next-tier |
 | --- | --- | --- | --- | --- | --- |
-| Deepscale Hide | 709 | 481 | 635 | 634 | 606 |
-| Emberforge Plate | 2108 | 593 | 1161 | 1147 | 1024 |
-| Eternal Duneplate | 1823 | 593 | 846 | 841 | 791 |
-| Glacial Bulwark | 1439 | 634 | 842 | 837 | 798 |
-| Plaguebound Shroud | 797 | 1082 | 551 | 548 | 566 |
-| Summit Aegis | 748 | 523 | 602 | 602 | 583 |
-| Wildgrowth Weave | 1088 | 554 | 882 | 879 | 817 |
+| Deepscale Hide | 740 | 481 | 637 | 634 | 618 |
+| Emberforge Plate | 1908 | 593 | 1226 | 1147 | 1273 |
+| Eternal Duneplate | 1865 | 593 | 865 | 841 | 871 |
+| Glacial Bulwark | 1596 | 634 | 852 | 837 | 847 |
+| Plaguebound Shroud | 874 | 1082 | 551 | 548 | 578 |
+| Summit Aegis | 820 | 523 | 600 | 602 | 579 |
+| Wildgrowth Weave | 1173 | 554 | 889 | 879 | 846 |
 
 ## Charm Matrix By Attacker Profile
 
@@ -146,43 +146,43 @@ _Survival score at +3 with reference armor Summit Aegis, averaged over class bui
 
 | Charm | avg mob | DoT-heavy | hardest | boss | next-tier |
 | --- | --- | --- | --- | --- | --- |
-| Bastion Heart | 1002 | 700 | 803 | 803 | 777 |
-| Echo Geode | 893 | 569 | 829 | 790 | 830 |
-| Frostward Charm | 1023 | 673 | 904 | 874 | 895 |
-| Magmaheart Stone | 1150 | 801 | 918 | 918 | 887 |
-| Oasis Heart | 987 | 686 | 786 | 786 | 760 |
-| Sorrow Eye | 1345 | 940 | 1076 | 1076 | 1040 |
-| Worldvine Heart | 1120 | 780 | 893 | 893 | 864 |
+| Bastion Heart | 1100 | 700 | 800 | 803 | 772 |
+| Echo Geode | 960 | 569 | 783 | 790 | 800 |
+| Frostward Charm | 1109 | 673 | 869 | 874 | 872 |
+| Magmaheart Stone | 1264 | 801 | 915 | 918 | 884 |
+| Oasis Heart | 1086 | 686 | 784 | 786 | 758 |
+| Sorrow Eye | 1478 | 940 | 1072 | 1076 | 1035 |
+| Worldvine Heart | 1231 | 780 | 891 | 893 | 860 |
 
 
 ## Top / Bottom Loadouts (current +3 vs current mobs)
 
 | Build | Loadout | Survival | eHP | In DPS | Recov/s | TTL | Spike %HP |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Squire / Bulwark / Vanguard | Emberforge Plate/Sorrow Eye | 4631 | 1864 | 7.09 | 40.1 | sustains | 0.25% |
-| Squire / Knight / Vanguard | Emberforge Plate/Sorrow Eye | 4345 | 1749 | 7.09 | 37.6 | sustains | 0.27% |
-| Squire / Warrior / Vanguard | Emberforge Plate/Sorrow Eye | 4151 | 1670 | 7.09 | 35.9 | sustains | 0.28% |
-| Striker / Breaker / In-Fighter | Emberforge Plate/Sorrow Eye | 3817 | 1703 | 7.09 | 30.6 | sustains | 0.28% |
-| Striker / Skirmisher / In-Fighter | Emberforge Plate/Sorrow Eye | 3611 | 1611 | 7.09 | 29.0 | sustains | 0.29% |
-| Squire / Bulwark / Sentinel | Emberforge Plate/Sorrow Eye | 3473 | 1785 | 7.09 | 24.4 | sustains | 0.26% |
-| Striker / Flurry / In-Fighter | Emberforge Plate/Sorrow Eye | 3456 | 1542 | 7.09 | 27.7 | sustains | 0.31% |
-| Apprentice / Rime-Bound / Hexblade | Emberforge Plate/Sorrow Eye | 3375 | 2012 | 5.89 | 16.4 | sustains | 0.28% |
-| Striker / Breaker / Phantom-Blade | Emberforge Plate/Sorrow Eye | 3302 | 1601 | 7.09 | 24.6 | sustains | 0.29% |
-| Spirit / Phantasm / Haunt | Emberforge Plate/Sorrow Eye | 3275 | 1578 | 7.09 | 15.4 | sustains | 0.30% |
+| Squire / Bulwark / Vanguard | Emberforge Plate/Sorrow Eye | 4193 | 1687 | 7.09 | 40.1 | sustains | 0.25% |
+| Squire / Knight / Vanguard | Emberforge Plate/Sorrow Eye | 3934 | 1583 | 7.09 | 37.6 | sustains | 0.27% |
+| Squire / Warrior / Vanguard | Emberforge Plate/Sorrow Eye | 3758 | 1512 | 7.09 | 35.9 | sustains | 0.28% |
+| Striker / Breaker / In-Fighter | Emberforge Plate/Sorrow Eye | 3456 | 1541 | 7.09 | 30.6 | sustains | 0.28% |
+| Striker / Skirmisher / In-Fighter | Emberforge Plate/Sorrow Eye | 3269 | 1458 | 7.09 | 29.0 | sustains | 0.29% |
+| Squire / Bulwark / Sentinel | Emberforge Plate/Sorrow Eye | 3144 | 1616 | 7.09 | 24.4 | sustains | 0.26% |
+| Striker / Flurry / In-Fighter | Emberforge Plate/Sorrow Eye | 3129 | 1396 | 7.09 | 27.7 | sustains | 0.31% |
+| Apprentice / Rime-Bound / Hexblade | Emberforge Plate/Sorrow Eye | 3055 | 1822 | 5.89 | 16.4 | sustains | 0.28% |
+| Striker / Breaker / Phantom-Blade | Emberforge Plate/Sorrow Eye | 2989 | 1450 | 7.09 | 24.6 | sustains | 0.29% |
+| Spirit / Phantasm / Haunt | Emberforge Plate/Sorrow Eye | 2965 | 1429 | 7.09 | 15.4 | sustains | 0.30% |
 
 
 | Build | Loadout | Survival | eHP | In DPS | Recov/s | TTL | Spike %HP |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Slinger / Scout / Deadeye | Emberforge Plate/Sorrow Eye | 2228 | 1330 | 6.99 | 12.8 | sustains | 0.36% |
-| Conduit / Splinter / Vigil | Emberforge Plate/Sorrow Eye | 2274 | 1357 | 7.09 | 13.3 | sustains | 0.35% |
-| Slinger / Marksman / Deadeye | Emberforge Plate/Sorrow Eye | 2303 | 1375 | 7.00 | 13.3 | sustains | 0.35% |
-| Conduit / Consort / Vigil | Emberforge Plate/Sorrow Eye | 2351 | 1403 | 7.09 | 13.7 | sustains | 0.34% |
-| Slinger / Artillerist / Deadeye | Emberforge Plate/Sorrow Eye | 2416 | 1442 | 7.01 | 13.9 | sustains | 0.33% |
-| Spirit / Spark / Wisp | Emberforge Plate/Sorrow Eye | 2481 | 1256 | 7.09 | 12.3 | sustains | 0.37% |
-| Conduit / Splinter / Harrier | Emberforge Plate/Sorrow Eye | 2505 | 1496 | 7.09 | 14.6 | sustains | 0.31% |
-| Conduit / Effigy / Vigil | Emberforge Plate/Sorrow Eye | 2505 | 1496 | 7.09 | 14.6 | sustains | 0.31% |
-| Slinger / Scout / Breacher | Emberforge Plate/Sorrow Eye | 2543 | 1518 | 6.94 | 14.5 | sustains | 0.32% |
-| Spirit / Wraith / Wisp | Emberforge Plate/Sorrow Eye | 2572 | 1302 | 7.09 | 12.7 | sustains | 0.36% |
+| Slinger / Scout / Deadeye | Emberforge Plate/Sorrow Eye | 2017 | 1204 | 6.99 | 12.8 | sustains | 0.36% |
+| Conduit / Splinter / Vigil | Emberforge Plate/Sorrow Eye | 2058 | 1229 | 7.09 | 13.3 | sustains | 0.35% |
+| Slinger / Marksman / Deadeye | Emberforge Plate/Sorrow Eye | 2085 | 1245 | 7.00 | 13.3 | sustains | 0.35% |
+| Conduit / Consort / Vigil | Emberforge Plate/Sorrow Eye | 2128 | 1271 | 7.09 | 13.7 | sustains | 0.34% |
+| Slinger / Artillerist / Deadeye | Emberforge Plate/Sorrow Eye | 2187 | 1306 | 7.01 | 13.9 | sustains | 0.33% |
+| Spirit / Spark / Wisp | Emberforge Plate/Sorrow Eye | 2246 | 1137 | 7.09 | 12.3 | sustains | 0.37% |
+| Conduit / Splinter / Harrier | Emberforge Plate/Sorrow Eye | 2268 | 1354 | 7.09 | 14.6 | sustains | 0.31% |
+| Conduit / Effigy / Vigil | Emberforge Plate/Sorrow Eye | 2268 | 1354 | 7.09 | 14.6 | sustains | 0.31% |
+| Slinger / Scout / Breacher | Emberforge Plate/Sorrow Eye | 2302 | 1374 | 6.94 | 14.5 | sustains | 0.32% |
+| Spirit / Wraith / Wisp | Emberforge Plate/Sorrow Eye | 2328 | 1179 | 7.09 | 12.7 | sustains | 0.36% |
 
 
 ## Outlier Summary
@@ -191,12 +191,12 @@ _Flags items >±25% of tier-average survival, dominant items, early-sustain load
 
 | Flag | Item / Build | Detail |
 | --- | --- | --- |
-| armor < -25% tier avg | Deepscale Hide | survival 709 vs avg 1245 |
-| armor > +25% tier avg | Emberforge Plate | survival 2108 vs avg 1245 |
-| armor > +25% tier avg | Eternal Duneplate | survival 1823 vs avg 1245 |
-| armor < -25% tier avg | Plaguebound Shroud | survival 797 vs avg 1245 |
-| armor < -25% tier avg | Summit Aegis | survival 748 vs avg 1245 |
-| charm > +25% tier avg | Sorrow Eye | survival 1345 vs avg 1075 |
+| armor < -25% tier avg | Deepscale Hide | survival 740 vs avg 1282 |
+| armor > +25% tier avg | Emberforge Plate | survival 1908 vs avg 1282 |
+| armor > +25% tier avg | Eternal Duneplate | survival 1865 vs avg 1282 |
+| armor < -25% tier avg | Plaguebound Shroud | survival 874 vs avg 1282 |
+| armor < -25% tier avg | Summit Aegis | survival 820 vs avg 1282 |
+| charm > +25% tier avg | Sorrow Eye | survival 1478 vs avg 1175 |
 | dominant charm | Sorrow Eye | best survival in every matchup profile |
-| sustains too early | 17 build(s) | already immortal vs avg mobs on entry (+0) gear |
+| sustains too early | 29 build(s) | already immortal vs avg mobs on entry (+0) gear |
 

@@ -51,7 +51,11 @@ export const volcanoMonsterEntries = [
     id: 'ember-scuttler', name: 'Ember Scuttler', color: 0xff6622,
     // Young fire skink (role-name kept; grows into the T4 Ember Skink).
     // Basic swarm filler: weak, fast, numerous. No ability — deliberately.
-    stats: { hp: 1220, attack: 148, plating: 2, damageReduction: 0, speed: 64, attackRange: 12, attackCooldown: 1600, pullRange: 210 },
+    // Attack cut 148 -> 70 (item/monster diagnostic, 2026-08-24): a death-trace
+    // found it hitting for 110-122 (up to 42% of a T3 arrival player's maxHP) as
+    // an ordinary hit — directly contradicting its own "weak... filler" identity
+    // above. See the Magma Tortoise and Ember Scuttler fixes in this same pass.
+    stats: { hp: 1220, attack: 70, plating: 2, damageReduction: 0, speed: 64, attackRange: 12, attackCooldown: 1600, pullRange: 210 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 25, essenceType: 'red', level: 2, biomeXp: 150 },
     // Loose cohesion/separation so the high-density biome READS as a swarm.
@@ -65,7 +69,11 @@ export const volcanoMonsterEntries = [
     id: 'cinder-hound', name: 'Cinder Hound', color: 0xff8800,
     // SWARM CATCHER / anti-kite: charges on engagement so you cannot simply walk
     // away from the density. No personal ramp.
-    stats: { hp: 1440, attack: 184, plating: 3, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 260 },
+    // Attack cut 184 -> 135 (item/monster diagnostic, 2026-08-24): a death-trace
+    // found this landing 150-165 (up to 57% of a T3 arrival player's maxHP) as a
+    // plain ordinary hit, stacked on top of Ember Scuttler and Magma Tortoise's
+    // own oversized hits in the same pull.
+    stats: { hp: 1440, attack: 135, plating: 3, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 260 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 29, essenceType: 'red', level: 2, biomeXp: 175 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 700, idleMaxMs: 3000 },
@@ -79,7 +87,13 @@ export const volcanoMonsterEntries = [
     // ANCHOR: high HP, plating, very slow, heavier attacks, no signature ability.
     // Its strategic role is that it keeps combat ALIVE — which is what lets the
     // node's global Heat keep climbing.
-    stats: { hp: 2000, attack: 343, plating: 4, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
+    // Attack cut 343 -> 190 (item/monster diagnostic, 2026-08-24): a death-trace
+    // found this literally one-shotting a T3 arrival player (320-342 raw damage
+    // against ~291 maxHP) as a PLAIN ordinary hit — "no signature ability" per the
+    // comment above means this base number was the entire threat, with no
+    // telegraph or counterplay gate. 190 keeps it the tier's heaviest sustained
+    // hitter without being an unconditional kill on contact.
+    stats: { hp: 2000, attack: 190, plating: 4, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -130,7 +144,12 @@ export const volcanoMonsterEntries = [
     // CADENCE Eruption every 4th attack (220, trips the cap) — not a ramp.
     // Plating 8 rewards pierce. Slow alone, brutal inside the swarm.
     // avg/attack (3·100+220)/4 = 130 → ×(1000/3000) = 43 (pre-ramp).
-    stats: { hp: 2244, attack: 262, plating: 8, damageReduction: 0, speed: 20, attackRange: 15, attackCooldown: 3000, pullRange: 155 },
+    // Attack was authored 262 -- 2.6x the design comment's own intended base of
+    // 100 (item/monster diagnostic, 2026-08-24). A death-trace found it one-shot
+    // territory (105% of a T4 arrival player's maxHP per the analytical Walk
+    // table) and the cadence-finisher comment below ("// 220") only makes sense
+    // at attack=100 (100*2.2=220) -- restoring the documented value.
+    stats: { hp: 2244, attack: 100, plating: 8, damageReduction: 0, speed: 20, attackRange: 15, attackCooldown: 3000, pullRange: 155 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 140, essenceType: 'red', level: 4, biomeXp: 840 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9500 },

@@ -20,6 +20,8 @@ import {
   sendRenameCharacter,
   sendEquipPhaseTester,
   sendSetRewardMultiplier,
+  sendStartPlaytestLogging,
+  sendStopPlaytestLogging,
   sendResetProgress,
   sendResetClass,
   sendSetAutoTraverse,
@@ -181,6 +183,14 @@ export function attachHudEvents(scene: GameScene): () => void {
 
   intents.on("setRewardMultiplier", (multiplier) => {
     sendSetRewardMultiplier(scene.socket, multiplier);
+  });
+
+  intents.on("startPlaytestLogging", () => {
+    sendStartPlaytestLogging(scene.socket);
+  });
+
+  intents.on("stopPlaytestLogging", () => {
+    sendStopPlaytestLogging(scene.socket);
   });
 
   intents.on("joinParty", (targetPlayerId) => {

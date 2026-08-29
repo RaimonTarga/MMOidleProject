@@ -38,12 +38,15 @@ export const swampRecipeEntries = [
     weaponDot: { effectId: 'poison-dagger-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/poison-dagger.png',
     description: 'A short blade kept slick with mire-venom that refuses to dry.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (472).
+    // +5 catalyst from ashbrand-blade's own T2 successor tag ("poison
+    // DoT-conversion weapon → Fortified").
     upgrades: [
-      { stats: { attack: 1 }, cost: { purple: 30 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, cost: { purple: 60 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 1 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, cost: { purple: 20 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 1 }, cost: { purple: 45 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 1 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, cost: { purple: 115 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, cost: { purple: 200 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -57,12 +60,15 @@ export const swampRecipeEntries = [
     tier: 1,
     icon: 'items/armor/arcane-wrappings.png',
     description: 'Marsh-cloth steeped in old wardings against rot and fume.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (472).
+    // +5 catalyst from swamp-vest-t2's own family-tag ("dot-resistance armor →
+    // Fortified").
     upgrades: [
-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 30 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 60 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 20 }, requiredBiomeLevel: 3 },
+      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 115 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 200 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -81,12 +87,13 @@ export const swampRecipeEntries = [
     tier: 1,
     icon: 'items/charms/murk-eye.png',
     description: 'A preserved golem eye, still weeping faint green light.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 15 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 33 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 63 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 63 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 25 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 40 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 60 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -100,12 +107,13 @@ export const swampRecipeEntries = [
     mechanicEffects: { 'mobility.slow-resistance': 0.25 },
     icon: 'items/boots/marsh-treads.png',
     description: 'Broad soles that ride the surface of soft, sucking ground.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
     upgrades: [
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 15 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 25 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
     ],
   }],
 

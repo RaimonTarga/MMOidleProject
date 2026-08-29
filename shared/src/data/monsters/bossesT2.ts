@@ -144,8 +144,9 @@ export const bossMonsterEntriesT2 = [
     chargedAttack: {
       name: 'Corrosive Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
       multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115 },
+      // Effectively permanent (10 min) — retired with the boss, like T1's Bile Pool.
       pool: {
-        durationMs: 8000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.60,
+        durationMs: 600000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.60,
         vulnerability: { damageTakenPct: 0.12, durationMs: 1500 },
       },
     },

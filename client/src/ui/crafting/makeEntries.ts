@@ -249,7 +249,10 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
     // and it was the last recipe kind still being spent from inside Build.
     ...techniqueEntries({
       kind: 'rune',
-      recipes: [...RUNE_RECIPE_DATABASE.values()].filter((r) => !!r.runeId),
+      // `!r.deprecated` is belt-and-suspenders: a deprecated recipe's rune is
+      // always a starter default too, so `known` already filters it below —
+      // but this keeps the exclusion correct even if that stops being true.
+      recipes: [...RUNE_RECIPE_DATABASE.values()].filter((r) => !!r.runeId && !r.deprecated),
       learnedId: (id) => RUNE_RECIPE_DATABASE.get(id)?.runeId ?? null,
       blurb: (id) =>
         ACTION_DATABASE.get(id)?.blurb ?? CONDITION_DATABASE.get(id)?.blurb ?? '',

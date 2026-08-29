@@ -110,7 +110,7 @@ _Single highest-survival loadout (any class) at current +3 vs each boss._
 | Crag Behemoth | 56.0 atk / 0.29 aps / 0.00 dot / ×1.00 | Squire | Survivor's Robe | Murk Eye | 255 | 30.4s | -5.68 | 22.0% | Risky |
 | Obsidian Broodmother | 47.0 atk / 0.36 aps / 0.00 dot / ×1.00 | Squire | Survivor's Robe | Murk Eye | 271 | 31.2s | -5.54 | 17.3% | Risky |
 | Tusked Razorback | 34.0 atk / 0.50 aps / 0.00 dot / ×1.00 | Squire | Survivor's Robe | Murk Eye | 346 | 52.0s | -3.33 | 9.83% | Risky |
-| Gnarled Greatbear | 24.0 atk / 0.71 aps / 0.00 dot / ×1.28 | Squire | Survivor's Robe | Murk Eye | 519 | 319s | -0.54 | 5.92% | Risky |
+| Gnarled Greatbear | 24.0 atk / 0.71 aps / 0.00 dot / ×1.20 | Squire | Survivor's Robe | Murk Eye | 519 | 319s | -0.54 | 5.55% | Risky |
 | Grave Toadeater | 13.0 atk / 0.38 aps / 16.0 dot / ×1.00 | Squire | Arcane Wrappings | Murk Eye | 290 | 23.6s | -7.85 | 2.16% | Risky |
 
 ## Armor Matrix By Attacker Profile

@@ -12,6 +12,7 @@ import type {
   CharacterSummary,
   AccountCharactersPayload,
   SpectateStatus,
+  HumanPlaytestStatus,
 } from '@mmo-idle/shared';
 import { getSessionToken, watchTargetFromUrl } from './session';
 import { SERVER_URL } from './serverUrl';
@@ -64,6 +65,7 @@ export interface SocketHandlers {
   onSpectateError(reason: string): void;
   /** Dev-only: server-global kill-reward multiplier changed (or initial value). */
   onRewardMultiplier(multiplier: number): void;
+  onHumanPlaytestStatus(status: HumanPlaytestStatus): void;
 }
 
 export function wireSocketHandlers(
@@ -99,6 +101,7 @@ export function wireSocketHandlers(
   socket.on('world:events', (e) => h.onWorldEvents(e));
   socket.on('game:updateAnnouncement', (p) => h.onUpdateAnnouncement(p));
   socket.on('debug:rewardMultiplier', (m) => h.onRewardMultiplier(m));
+  socket.on('debug:playtestStatus', (s) => h.onHumanPlaytestStatus(s));
   socket.on('session:kicked', () => {
     socket.io.reconnection(false);
     h.onSessionKicked();
@@ -132,6 +135,7 @@ export function wireSocketHandlers(
     socket.off('world:events');
     socket.off('game:updateAnnouncement');
     socket.off('debug:rewardMultiplier');
+    socket.off('debug:playtestStatus');
     socket.off('session:kicked');
   };
 }

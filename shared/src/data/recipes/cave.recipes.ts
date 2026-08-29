@@ -31,16 +31,19 @@ export const caveRecipeEntries = [
   ['chaotic-axe', {
     id: 'chaotic-axe', name: 'Chaotic Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { red: 26 }, stats: { attack: 24 }, attacksPerSecond: 1.10, tier: 1,
+    cost: { red: 26 }, stats: { attack: 22 }, attacksPerSecond: 1.10, tier: 1,
     mechanicEffects: { 'weapon.dead-swing-interval': 3 },
     icon: 'items/weapons/chaotic-axe.png',
     description: 'A wild, top-heavy thing that fights as much as it is wielded.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~501 (was 500).
+    // +5 catalyst from its own T2 successor's tag ("chaotic-axe (counted
+    // disruption) → Swarming").
     upgrades: [
-      { stats: { attack: 2 }, cost: { red: 30 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 2 }, cost: { red: 66 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 2 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 3 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 3 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, cost: { red: 25 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 2 }, cost: { red: 45 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 2 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 3 }, cost: { red: 125 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, cost: { red: 205 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -53,12 +56,15 @@ export const caveRecipeEntries = [
     cost: { red: 22 }, stats: { maxHp: 28, plating: 4, damageReduction: 0.06 }, tier: 1,
     icon: 'items/armor/bestial-hide.png',
     description: 'The hide of something large and unlucky, cured to a stubborn toughness.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (622).
+    // +5 catalyst from cave-vest-t2's own tag ("premium %DR generalist wall →
+    // Swarming").
     upgrades: [
-      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 50 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 100 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 150 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 150 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 2, damageReduction: 0.01 }, cost: { red: 150 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 30 }, requiredBiomeLevel: 3 },
+      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 60 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 95 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 155 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 2, damageReduction: 0.01 }, cost: { red: 260 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -73,12 +79,13 @@ export const caveRecipeEntries = [
     tier: 1,
     icon: 'items/charms/pulse-stone.png',
     description: 'A cave-crystal that beats, slow and steady, like a sleeping heart.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
     upgrades: [
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 33 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 25 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, cost: { red: 40 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 60 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -89,12 +96,13 @@ export const caveRecipeEntries = [
     mechanicEffects: { 'mobility.stealth-pct': 0.25 },
     icon: 'items/boots/bat-wing-boots.png',
     description: 'Stretched membrane that falls on stone without a whisper.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
     upgrades: [
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 25 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 70 }, requiredBiomeLevel: 4 },
     ],
   }],
 

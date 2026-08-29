@@ -139,6 +139,14 @@ export const hudBus = {
     intents.emit('setRewardMultiplier', multiplier);
   },
 
+  requestStartPlaytestLogging(): void {
+    intents.emit('startPlaytestLogging', undefined);
+  },
+
+  requestStopPlaytestLogging(): void {
+    intents.emit('stopPlaytestLogging', undefined);
+  },
+
   notifyRecipeUnlock(name: string, biomeGroup: string): void {
     recipeUnlockListeners.forEach(fn => fn(name, biomeGroup));
   },

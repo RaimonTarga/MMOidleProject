@@ -32,6 +32,15 @@ export interface RuneRecipe {
   requiredBossClear?: string;
   runeId?: string;
   runeKind?: RuneFragmentKind;
+  /**
+   * Marks a recipe whose `runeId` has since been promoted onto
+   * `STARTER_RUNE_IDS` (or otherwise made obsolete), so crafting it grants
+   * nothing. Kept live and craftable-gate-legal for save/id stability, but
+   * MUST be excluded from every player-facing "what can I make / what's next"
+   * surface, and MUST be rejected before any essence is spent. See
+   * `craftRuneRecipe` (server) and every `deprecated` filter on the client.
+   */
+  deprecated?: true;
 }
 
 // System rework Step 5: all current (basic) runes source from BIOME MASTERY
@@ -97,7 +106,9 @@ const recipes: RuneRecipe[] = [
     requiredBiomeLevel: 2,
     runeId: "hp-below-25",
     runeKind: "condition",
-    cost: { red: 180 },
+    // T1 economy pass (2026-08-28): broadly useful, not mandatory counterplay —
+    // cheapened from 180 but kept above the mandatory-tool tier.
+    cost: { red: 90 },
   },
   {
     id: "rune-recipe-avoid-hazards",
@@ -109,7 +120,9 @@ const recipes: RuneRecipe[] = [
     requiredBiomeLevel: 2,
     runeId: "avoid-hazards",
     runeKind: "action",
-    cost: { purple: 90 },
+    // Required counterplay — hazard terrain is live from the moment the player
+    // enters Swamp. Cheapened 90 -> 25, 2026-08-28.
+    cost: { purple: 25 },
   },
   {
     id: "rune-recipe-flee",
@@ -122,6 +135,13 @@ const recipes: RuneRecipe[] = [
     runeId: "flee",
     runeKind: "action",
     cost: { red: 160, green: 80 },
+    // OBSOLETE (2026-08-28 final cleanup pass): `flee` was made a STARTER rune
+    // action by the 2026-08-25 designer call (see `runeDatabase.ts`
+    // STARTER_RUNE_IDS) — this recipe now grants nothing. Kept live (not
+    // deleted) for recipe-id/save stability; `deprecated: true` hides it from
+    // every player-facing craft/unlock surface and `craftRuneRecipe` rejects
+    // it before any essence is spent.
+    deprecated: true,
   },
   {
     id: "rune-recipe-careful-pulling",
@@ -133,7 +153,8 @@ const recipes: RuneRecipe[] = [
     requiredBiomeLevel: 3,
     runeId: "careful-pulling",
     runeKind: "action",
-    cost: { red: 180 },
+    // Broadly useful/specialized, not mandatory — cheapened 180 -> 115, 2026-08-28.
+    cost: { red: 115 },
   },
   {
     id: "rune-recipe-recover-first",
@@ -145,7 +166,28 @@ const recipes: RuneRecipe[] = [
     requiredBiomeLevel: 3,
     runeId: "wait-for-regen",
     runeKind: "action",
-    cost: { red: 140, green: 100 },
+    // OBSOLETE (2026-08-28 final cleanup pass): `wait-for-regen` was made a
+    // STARTER rune action by the 2026-08-25 designer call (see
+    // `runeDatabase.ts` STARTER_RUNE_IDS) — this recipe now grants nothing.
+    // Kept live (not deleted) for recipe-id/save stability; `deprecated: true`
+    // hides it from every player-facing craft/unlock surface and
+    // `craftRuneRecipe` rejects it before any essence is spent.
+    cost: { red: 50, green: 30 },
+    deprecated: true,
+  },
+  {
+    id: "rune-recipe-step-back",
+    name: "Step Back",
+    description: "Unlocks movement that exits visible attack telegraphs before they resolve.",
+    kind: "unlock-rune",
+    tier: 1,
+    recipeGroup: "cave",
+    requiredBiomeLevel: 2,
+    runeId: "step-back",
+    runeKind: "action",
+    // Required counterplay — Cave's telegraphed slams are live from the moment
+    // the player enters Cave. Use Cave's red essence for the recipe cost.
+    cost: { red: 35 },
   },
   {
     id: "rune-recipe-keep-distance",
@@ -157,7 +199,10 @@ const recipes: RuneRecipe[] = [
     requiredBiomeLevel: 3,
     runeId: "orbit",
     runeKind: "action",
-    cost: { blue: 180, yellow: 80 },
+    // Important for ranged builds, but not equivalent in mechanical necessity
+    // to Cleanse/Avoid Hazards — kept slightly above Step Back. Simplified to a
+    // single color and cheapened from a 260-total two-color cost, 2026-08-28.
+    cost: { blue: 45 },
   },
   {
     id: "rune-recipe-surrounded",

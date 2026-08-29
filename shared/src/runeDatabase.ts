@@ -42,6 +42,10 @@ export type RuneConditionId =
   | "target-hp-below-25"
   | "has-debuff"
   | "in-party"
+  // Active only while the player is standing inside a visible, unresolved
+  // hostile ground telegraph. Being safely outside the damage region does not
+  // satisfy this condition.
+  | "inside-telegraph"
   // Reactive telegraph hook: active while an enemy attacking you is charging a
   // cast-time attack (e.g. the Ridge Archer's Power Shot). Pairs with Fire Guard /
   // Switch Stance for read-and-react defense.
@@ -146,6 +150,18 @@ const TARGETING_CONDITIONS: readonly RuneConditionId[] = [
 const RECOVERY_CONDITIONS: readonly RuneConditionId[] = [
   "when-idle",
   "hp-below-25",
+];
+
+/**
+ * Recover First additionally accepts "Always". Out of Combat keys off the
+ * post-combat grace timer, so a player who has just killed the last thing on
+ * top of them is still "in combat" for several seconds and spends them walking
+ * to the next pull. Always keys off actual engagement instead: hold the moment
+ * nothing is attacking you and you have no live target, timer or not.
+ */
+const RECOVER_FIRST_CONDITIONS: readonly RuneConditionId[] = [
+  "always",
+  ...RECOVERY_CONDITIONS,
 ];
 
 const STRATEGY_CONDITIONS: readonly RuneConditionId[] = [
@@ -296,6 +312,17 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
     },
   ],
   [
+    "inside-telegraph",
+    {
+      id: "inside-telegraph",
+      name: "Inside Telegraph",
+      blurb: "Works while you are standing inside an unresolved hostile attack telegraph.",
+      cost: 1,
+      tier: 1,
+      kind: "state",
+    },
+  ],
+  [
     "target-casting",
     {
       id: "target-casting",
@@ -376,11 +403,11 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     {
       id: "step-back",
       name: "Step Back",
-      blurb: "Back out of a telegraphed danger zone. Placeholder for cast telegraphs.",
-      cost: 3,
-      tier: 4,
+      blurb: "Take the shortest reasonable route out of visible attack telegraphs.",
+      cost: 2,
+      tier: 1,
       channel: "MOVEMENT",
-      allowedConditionIds: [],
+      allowedConditionIds: ["inside-telegraph"],
     },
   ],
   [
@@ -501,11 +528,12 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     {
       id: "wait-for-regen",
       name: "Recover First",
-      blurb: "Out of combat, hold position until HP is full.",
+      blurb:
+        "Hold position until HP is full instead of moving on. With Always, it holds as soon as nothing is attacking you, without waiting for combat to time out.",
       cost: 1,
       tier: 1,
       channel: "OOC_MAINTENANCE",
-      allowedConditionIds: RECOVERY_CONDITIONS,
+      allowedConditionIds: RECOVER_FIRST_CONDITIONS,
     },
   ],
   [
@@ -677,6 +705,16 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // "Elite Target" condition — the situation that makes a specialised second
     // Technique worth equipping. Same TEMPORARY-starter caveat as above.
     "target-elite",
+    // DESIGNER CALL, 2026-08-25: default-unlocked so every character can
+    // answer danger the way a human does without waiting on a Cave-gated
+    // recipe first -- recover before pulling again, and retreat when a fight
+    // has gone bad. Previously gated behind rune-recipe-recover-first and
+    // rune-recipe-flee. CLEANUP, 2026-08-28: both recipes are marked
+    // `deprecated: true` in `runeRecipes.ts` -- kept live for recipe-id/save
+    // stability, but hidden from every player-facing surface and rejected by
+    // `craftRuneRecipe` before any essence is spent.
+    "wait-for-regen",
+    "flee",
   ]),
 );
 
@@ -862,6 +900,13 @@ function ruleKey(conditionId: string, actionId: string): string {
 
 export const NAMED_RULES = new Map<string, NamedRule>([
   [
+    ruleKey("inside-telegraph", "step-back"),
+    {
+      name: "Read The Ground",
+      blurb: "Step out of an incoming ground attack, then resume your normal movement rule.",
+    },
+  ],
+  [
     ruleKey("always", "auto-path-enemy"),
     {
       name: "Scout",
@@ -974,6 +1019,14 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     },
   ],
   [
+    ruleKey("always", "wait-for-regen"),
+    {
+      name: "Convalescent",
+      blurb:
+        "Whenever nothing is attacking you, wait for full HP before looking for the next enemy.",
+    },
+  ],
+  [
     ruleKey("when-idle", "wait-for-execution"),
     {
       name: "Patient Strike",
@@ -1028,6 +1081,13 @@ export interface RuneContext {
   hpPct: number;
   targetHpPct?: number;
   inCombat: boolean;
+  /**
+   * Something is actually on the player right now: a live attack target, or at
+   * least one monster aggroed onto them. Narrower than `inCombat`, which stays
+   * true through the post-combat grace window. Absent for callers that have not
+   * measured it — they fall back to `inCombat`.
+   */
+  activelyEngaged?: boolean;
   inParty: boolean;
   aggroCount: number;
   combatArchetype?: CombatArchetype;
@@ -1035,6 +1095,8 @@ export interface RuneContext {
   debuffed?: boolean;
   /** An enemy attacking this player is currently winding up a cast-time attack. */
   enemyCharging?: boolean;
+  /** Player is currently inside a visible, unresolved hostile ground telegraph. */
+  insideDangerousTelegraph?: boolean;
   /**
    * This player's next attack is empowered (the shared empowered-attack flag is
    * armed). Drives the `before-empowered` condition. False/absent for classes that
@@ -1074,6 +1136,7 @@ export interface DerivedRuneConfig {
   stanceTargetId: string | null;
   fleeRequested: boolean;
   orbit: boolean;
+  evadeTelegraph: boolean;
   autoPathEnemy: boolean;
   avoidHazards: boolean;
   carefulPulling: boolean;
@@ -1134,6 +1197,8 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.debuffed ?? false;
     case "in-party":
       return ctx.inParty;
+    case "inside-telegraph":
+      return ctx.insideDangerousTelegraph ?? false;
     case "n-aggro-3":
       return ctx.aggroCount >= 3;
     case "target-casting":
@@ -1170,6 +1235,7 @@ export function deriveAutoConfigFromRunes(
     stanceTargetId: null,
     fleeRequested: false,
     orbit: false,
+    evadeTelegraph: false,
     autoPathEnemy: false,
     avoidHazards: false,
     carefulPulling: false,
@@ -1189,15 +1255,24 @@ export function deriveAutoConfigFromRunes(
     switchStance: false,
   };
 
+  const engaged = ctx.activelyEngaged ?? ctx.inCombat;
+
   for (const raw of normalizeRuneLoadout(equipped)) {
     const condition = CONDITION_DATABASE.get(raw.conditionId);
     const action = ACTION_DATABASE.get(raw.actionId);
     if (!condition || !action) continue;
     if (!isRuneRuleCompatibleForArchetype(raw, ctx.combatArchetype)) continue;
+    // "Always -> Recover First" is the one maintenance rule allowed to claim its
+    // channel while the combat timer is still running. It self-gates on actual
+    // engagement instead, so it stops the player from seeking the next enemy the
+    // moment nothing is attacking them.
+    const holdsWhileDisengaged =
+      action.id === "wait-for-regen" && condition.id === "always" && !engaged;
     if (
       (action.channel === "OOC_MAINTENANCE" ||
         action.channel === "RESOURCE_MAINTENANCE") &&
-      ctx.inCombat
+      ctx.inCombat &&
+      !holdsWhileDisengaged
     ) {
       continue;
     }
@@ -1243,8 +1318,7 @@ export function deriveAutoConfigFromRunes(
       derived.orbit = true;
       break;
     case "step-back":
-      // Until cast telegraphs exist, step-back uses the same steering as orbit.
-      derived.orbit = true;
+      derived.evadeTelegraph = true;
       break;
     case "follow-and-assist":
       derived.followLeader = true;

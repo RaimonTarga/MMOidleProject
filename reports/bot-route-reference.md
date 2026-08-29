@@ -73,7 +73,7 @@ Patience is power. Prepare a devastating strike on a set cycle. The heaviest cha
 
 Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — a light, evasive frame that fights from range and weaves around incoming blows.
 
-- **Affinities:** attackPct 0.1, maxHpPct 0.07, attackSpeedPct 0.1, moveSpeedPct 0.1, attackRange 120, evasion 0.25
+- **Affinities:** attackPct 0.2, maxHpPct 0.07, attackSpeedPct 0.1, moveSpeedPct 0.1, attackRange 120, evasion 0.3
 - **Mechanics:** defense.recovery-on-kill-pct 0.2, defense.recovery-on-kill-ms 4000, defense.evade-mitigation 0.2, reload.acquire-radius-mult 2.5
 
 ### Spirit — `energy-root`
@@ -188,14 +188,14 @@ Essence type per biome: plains = yellow · forest = green · cave = red · mount
 |---|---|---|---|---|---|---|---|---|---|
 | Moss Rat `forest-slime` | normal | 160 | 17 | 0 | 0 | 12 | 1400 | melee | 3 |
 | Wolf `wolf` | normal | 130 | 20 | 0 | 0 | 12 | 1100 | melee | 4 |
-| Gnarled Greatbear `gnarled-greatbear` | **BOSS** | 2000 | 24 | 0 | 0 | 15 | 1400 | melee | 100 |
+| Gnarled Greatbear `gnarled-greatbear` | **BOSS** | 2000 | 24 | 0 | 0 | 15 | 1900 | melee | 100 |
 
 ### Caverns (`cave`, red essence)
 
 | monster | role | hp | atk | plate | DR | rng | cd(ms) | behavior | essence |
 |---|---|---|---|---|---|---|---|---|---|
 | Cave Lurker `cave-lurker` | normal | 225 | 31 | 1 | 0.05 | 12 | 1400 | melee | 10 |
-| Cave Brute `cave-brute` | normal | 250 | 90 | 1 | 0.1 | 12 | 2800 | melee | 13 |
+| Cave Brute `cave-brute` | normal | 250 | 80 | 1 | 0.1 | 12 | 2800 | melee | 13 |
 | Obsidian Broodmother `obsidian-broodmother` | **BOSS** | 1750 | 47 | 6 | 0.1 | 18 | 2800 | melee | 110 |
 
 ### Mountain (`mountain`, blue essence)
@@ -255,26 +255,26 @@ upgraded at all, and is meant to be replaced wholesale by T1 gear.
 
 | item | total |
 |---|---|
-| `chaotic-axe` | 474 red |
+| `chaotic-axe` | 475 red |
 | `cave-vest-t1` | 600 red |
-| `cave-charm-t1` | 237 red |
-| `cave-boots-t1` | 158 red |
-| `flash-rapier` | 930 green |
+| `cave-charm-t1` | 235 red |
+| `cave-boots-t1` | 160 red |
+| `flash-rapier` | 480 green |
 | `forest-vest-t1` | 450 green |
 | `forest-charm-t1` | 225 green |
 | `forest-boots-t1` | 150 green |
-| `heavy-hammer` | 474 blue |
-| `mountain-vest-t1` | 474 blue |
-| `mountain-charm-t1` | 237 blue |
-| `mountain-boots-t1` | 158 blue |
+| `heavy-hammer` | 475 blue |
+| `mountain-vest-t1` | 475 blue |
+| `mountain-charm-t1` | 235 blue |
+| `mountain-boots-t1` | 160 blue |
 | `iron-broadsword` | 230 yellow |
 | `plains-vest-t1` | 450 yellow |
 | `plains-charm-t1` | 180 yellow |
 | `plains-boots-t1` | 150 yellow |
 | `ashbrand-blade` | 450 purple |
 | `swamp-vest-t1` | 450 purple |
-| `swamp-charm-t1` | 237 purple |
-| `swamp-boots-t1` | 158 purple |
+| `swamp-charm-t1` | 235 purple |
+| `swamp-boots-t1` | 160 purple |
 
 ## 6. Abilities
 
@@ -283,12 +283,12 @@ on a built-in heuristic, which a Rune rule can override.
 
 | ability | slot | tier | learn via | gate | cost | what it does |
 |---|---|---|---|---|---|---|
-| **Sweep** `sweep` | technique | 1 | `ability-recipe-sweep` | plains L3 | 160 yellow | Arms your next attack to cleave nearby enemies. |
-| **Second Wind** `second-wind` | guard | 1 | `ability-recipe-second-wind` | forest L3 | 150 green | Catch your breath, sharply raising your recovery rate for a few seconds. |
-| **Cleanse** `cleanse` | guard | 1 | `ability-recipe-cleanse` | swamp L3 | 150 purple | Purge the worst of what is eating you — stacks first, then a second affliction. |
-| **Brace** `brace` | guard | 1 | `ability-recipe-brace` | mountain L3 | 150 blue | Brace for impact — heavy mitigation and footing, for a moment. |
+| **Sweep** `sweep` | technique | 1 | `ability-recipe-sweep` | plains L2 | 25 yellow | Arms your next attack to cleave nearby enemies. |
+| **Second Wind** `second-wind` | guard | 1 | `ability-recipe-second-wind` | forest L2 | 25 green | Catch your breath, sharply raising your recovery rate for a few seconds. |
+| **Cleanse** `cleanse` | guard | 1 | `ability-recipe-cleanse` | swamp L3 | 30 purple | Purge the worst of what is eating you — stacks first, then a second affliction. |
+| **Brace** `brace` | guard | 1 | `ability-recipe-brace` | mountain L3 | 45 blue | Brace for impact — heavy mitigation and footing, for a moment. |
 | **Power Strike** `power-strike` | technique | 1 | `ability-recipe-power-strike` | mountain L5 | 190 blue | Wind up a devastating blow. You stop attacking while it charges — and hard control breaks it. |
-| **Expose Weakness** `expose-weakness` | technique | 1 | `ability-recipe-expose-weakness` | cave L3 | 150 red | Arms your next attack to expose the target, increasing all damage it takes. |
+| **Expose Weakness** `expose-weakness` | technique | 1 | `ability-recipe-expose-weakness` | cave L3 | 85 red | Arms your next attack to expose the target, increasing all damage it takes. |
 
 ## 7. Runes
 
@@ -309,6 +309,7 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | `has-debuff` | 1 | yes | Works while you are carrying a harmful debuff or damage-over-time effect. |
 | `in-party` | 1 | yes | Works while in a party with one or more players. |
 | `n-aggro-3` | 2 | yes | Works when three or more enemies are chasing you. |
+| `inside-telegraph` | 1 | yes | Works while you are standing inside an unresolved hostile attack telegraph. |
 | `target-casting` | 2 | yes | Works while an enemy attacking you is winding up a cast-time attack. |
 | `before-empowered` | 2 | yes | Works the instant your next attack becomes empowered — a finisher, execution, or full-energy discharge that is armed and waiting to land. |
 | `target-elite` | 2 | yes | Works while the enemy you are attacking is an elite — the high-value target worth spending a specialised ability on. |
@@ -318,9 +319,9 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | id | cost | channel | starter | what it does |
 |---|---|---|---|---|
 | `chase-enemy` | 0 | MOVEMENT | yes | Move into the weapon's normal attack range. |
-| `flee` | 1 | MOVEMENT | **no** | Retreat from the current fight. |
+| `flee` | 1 | MOVEMENT | yes | Retreat from the current fight. |
 | `orbit` | 2 | MOVEMENT | **no** | Hold a standoff gap and kite while attacking. |
-| `step-back` | 3 | MOVEMENT | **no** | Back out of a telegraphed danger zone. Placeholder for cast telegraphs. |
+| `step-back` | 2 | MOVEMENT | **no** | Take the shortest reasonable route out of visible attack telegraphs. |
 | `follow-and-assist` | 1 | MOVEMENT | yes | Follow the party leader out of combat, and attack their target in combat. |
 | `focus-closest` | 0 | TARGETING | yes | Prefer the nearest valid enemy. |
 | `focus-lowest-hp` | 2 | TARGETING | **no** | Prefer fast kills to reduce enemy count. |
@@ -330,7 +331,7 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | `focus-elites` | 2 | TARGETING | **no** | Prioritize elite enemies (the yellow-outlined standouts) — necromancers, apex predators — before clearing the rest. |
 | `tactical-reload` | 1 | RESOURCE_MAINTENANCE | **no** | Out of combat, pause to refill reload-class clips. |
 | `wait-for-execution` | 1 | OOC_MAINTENANCE | **no** | Out of combat, wait until your cooldown-class execution is ready. |
-| `wait-for-regen` | 1 | OOC_MAINTENANCE | **no** | Out of combat, hold position until HP is full. |
+| `wait-for-regen` | 1 | OOC_MAINTENANCE | yes | Hold position until HP is full instead of moving on. With Always, it holds as soon as nothing is attacking you, without waiting for combat to time out. |
 | `auto-path-enemy` | 0 | GLOBAL_STRATEGY | yes | When idle, path to the nearest valid enemy in this node. |
 | `avoid-hazards` | 2 | PATHING | **no** | Route around damaging and slowing terrain when pathing. |
 | `careful-pulling` | 2 | PATHING | **no** | While approaching a target, bias movement away from nearby non-target elites. |
@@ -350,12 +351,11 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | `rune-recipe-reload-safely` | `tactical-reload` | action | forest L2 | 140 green + 60 blue |
 | `rune-recipe-ready-execution` | `wait-for-execution` | action | forest L3 | 140 green + 60 red |
 | `rune-recipe-focus-highest-hp` | `focus-highest-max-hp` | action | forest L4 | 220 green |
-| `rune-recipe-low-hp` | `hp-below-25` | condition | cave L2 | 180 red |
-| `rune-recipe-avoid-hazards` | `avoid-hazards` | action | swamp L2 | 90 purple |
-| `rune-recipe-flee` | `flee` | action | cave L2 | 160 red + 80 green |
-| `rune-recipe-careful-pulling` | `careful-pulling` | action | cave L3 | 180 red |
-| `rune-recipe-recover-first` | `wait-for-regen` | action | cave L3 | 140 red + 100 green |
-| `rune-recipe-keep-distance` | `orbit` | action | mountain L3 | 180 blue + 80 yellow |
+| `rune-recipe-low-hp` | `hp-below-25` | condition | cave L2 | 90 red |
+| `rune-recipe-avoid-hazards` | `avoid-hazards` | action | swamp L2 | 25 purple |
+| `rune-recipe-careful-pulling` | `careful-pulling` | action | cave L3 | 115 red |
+| `rune-recipe-step-back` | `step-back` | action | mountain L2 | 35 blue |
+| `rune-recipe-keep-distance` | `orbit` | action | mountain L3 | 45 blue |
 
 ## 8. Stances and Rites
 
@@ -422,19 +422,19 @@ One executor, three parameter sets — never forked route code.
 | `optional` steps | performed | skipped | skipped |
 | rune loadout | as authored | starter default | starter default |
 
-## 10. Worked example — the Striker baseline
+## 10. Worked example — the controlled Striker dodge baseline
 
-Authored by the designer, 2026-08-25. Full source:
-[`bot/src/routes/strikerT1.ts`](../bot/src/routes/strikerT1.ts).
+The route config is in [`bot/src/routes/strikerT1.ts`](../bot/src/routes/strikerT1.ts);
+generated movement and defense semantics live in `t1RouteBuilder.ts`.
 
 Its spine, and *why* it is shaped that way:
 
 ```text
 Clearing   full tutorial set, tier 0->1, pick Striker
-Plains     whole set + Sweep,               max out -> +1
-Forest     flash-rapier + Second Wind,      max out -> +2
-Mountain   plate + Brace + brace rune,      max out -> +3   (nothing else crafted)
-Swamp      Cleanse + avoid-hazards + charm, max out -> +4   (charm only)
+Plains     Sweep at L2 + whole set,          max out -> +1
+Forest     flash-rapier + Second Wind,       max out -> +2
+Swamp      Cleanse + Avoid Hazards + charm,  max out -> +3
+Mountain   Step Back L2 + plate,             max out -> +4
 Cave       Chaotic Axe + Expose Weakness,   max out -> GM 30, everything -> +5
 Bosses     Plains, Forest, Mountain, Swamp, Cave
 ```
@@ -442,8 +442,8 @@ Bosses     Plains, Forest, Mountain, Swamp, Cave
 - **All five bosses at the END, not per biome.** +5 needs GM 30, which needs all
   five biomes maxed. The gear ladder and the boss tuning agree on this.
 - **Each biome maxed adds exactly one upgrade level** (6 GM per biome, gates every 6).
-- **Mountain is walked before Swamp** because Brace — the Guard the reactive rune
-  fires — is gated at Mountain L3, and Swamp's DoT attrition punishes weak kit.
+- **Swamp precedes Mountain.** Cleanse and Avoid Hazards answer Swamp; Mountain
+  then unlocks Step Back at GM20 to answer planted Slam telegraphs.
 - **Only one piece is taken from Mountain and Swamp.** Breadth exists to raise GM,
   not to collect a full set from every biome.
 
@@ -457,20 +457,21 @@ Per-boss loadout — one Technique + one Guard is all tier 1 allows:
 |---|---|---|---|
 | Plains | plains-vest-t1 | sweep | second-wind |
 | Forest | plains-vest-t1 | expose-weakness | second-wind |
-| Mountain | mountain-vest-t1 | expose-weakness | brace |
+| Mountain | mountain-vest-t1 | expose-weakness | second-wind |
 | Swamp | mountain-vest-t1 | expose-weakness | cleanse |
-| Cave | mountain-vest-t1 | expose-weakness | brace |
+| Cave | mountain-vest-t1 | expose-weakness | cleanse |
 
-Rune loadout (6 RP of a budget that starts at 8):
+Standing Rune loadout after Mountain L2 (8/10 RP at GM20):
 
 ```ts
 { conditionId: "always",         actionId: "auto-path-enemy" }  // 0 RP
+{ conditionId: "inside-telegraph", actionId: "step-back" }      // 3 RP
 { conditionId: "in-combat",      actionId: "chase-enemy" }      // 1 RP
-{ conditionId: "target-casting", actionId: "fire-guard" }       // 3 RP
 { conditionId: "always",         actionId: "avoid-hazards" }    // 2 RP, Swamp L2 recipe
+{ conditionId: "always",         actionId: "wait-for-regen" }   // 1 RP
 ```
 
-`target-casting -> fire-guard` is the ONLY reactive-to-telegraph behavior in the
-harness, and the game supplies it. Bots do not manually dodge. The rule is legal
-from minute one but INERT until a Guard is learned — which is deliberate.
+Step Back must precede Chase because both claim MOVEMENT. Avoid Hazards is a separate
+PATHING channel. Second Wind and Cleanse use built-in triggers, so neither carries
+`fire-guard`. The Brace-tank A/B omits Step Back and equips that rule only with Brace.
 

@@ -23,6 +23,7 @@ import type {
   UltimateStatus,
   BossFelledMarker,
   DungeonView,
+  HumanPlaytestStatus,
   Vec2,
 } from '@mmo-idle/shared';
 
@@ -368,6 +369,8 @@ export const debugPanelOpenAtom = atom<boolean>(false);
  * debug panel only ever asks it to change.
  */
 export const rewardMultiplierAtom = atom<number>(1);
+/** Dev-only server-authoritative status for the local human evidence recorder. */
+export const humanPlaytestStatusAtom = atom<HumanPlaytestStatus>({ active: false, eventCount: 0 });
 /** Whether the bestiary detail overlay is open. */
 export const bestiaryOpenAtom = atom<boolean>(false);
 /** Which monster the bestiary detail overlay has selected (null = first/none). */
@@ -581,6 +584,10 @@ export function setBossFelledMarkers(markers: BossFelledMarker[]): void {
 
 export function setRewardMultiplier(multiplier: number): void {
   getDefaultStore().set(rewardMultiplierAtom, multiplier);
+}
+
+export function setHumanPlaytestStatus(status: HumanPlaytestStatus): void {
+  getDefaultStore().set(humanPlaytestStatusAtom, status);
 }
 
 export function setDungeon(next: DungeonView | null): void {

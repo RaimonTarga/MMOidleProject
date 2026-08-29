@@ -109,7 +109,7 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   assert(summons.activeReconstruction?.slotId === 'normal:0', 'first dead slot must own queue progress');
   assert(summons.reconstructionQueue[0] === 'normal:1', 'second dead slot must wait in FIFO order');
 
-  const expectedCost = 100; // 1000 max HP * 0.8 formation HP * 1/4 slot * 50% cost.
+  const expectedCost = 60; // 1000 max HP * 0.8 formation HP * 1/4 slot * 30% cost.
   player.hasHealth.hp = 250;
   player.dealsDamage.attack = 999_999;
   updateSummonerArchetype(world, 5_000, 6_100);

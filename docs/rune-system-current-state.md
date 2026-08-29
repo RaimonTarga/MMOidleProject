@@ -52,16 +52,15 @@ Conditions:
 - `hp-below-25`
 - `in-party` (shown as "In A Party")
 - `n-aggro-3` (shown as "Surrounded")
-
-`target-casting` is kept only as a commented future hook in code; it is not in
-the live catalog or UI.
+- `target-casting` (shown as "Enemy Charging")
+- `inside-telegraph` (shown as "Inside Telegraph")
 
 Actions:
 
 - `chase-enemy`
 - `flee`
 - `orbit` (shown as "Keep Distance")
-- `step-back` placeholder
+- `step-back` (shown as "Step Back")
 - `follow-and-assist`
 - `focus-closest`
 - `focus-lowest-hp`
@@ -71,12 +70,14 @@ Actions:
 - `wait-for-execution` (shown as "Ready Execution"; cooldown classes only)
 - `wait-for-regen` (shown as "Recover First")
 - `auto-path-enemy` (shown as "Find Enemies")
+- `avoid-hazards`
 - `lead-the-way`
 - `taunt-current-target` (shown as "Taunt Target")
 
-New players only start with the fragments required by the default loadout:
-`always`, `auto-path-enemy`, `in-combat`, and `chase-enemy`. Additional live
-fragments come from one-time rune forge recipes.
+New players start with all situation fragments as baseline vocabulary, including
+`inside-telegraph`, plus the responses required by the default loadout and a small
+set of basic timing/party responses. Additional responses come from one-time rune
+forge recipes. `step-back` unlocks at Cave mastery level 2.
 
 ## Budget
 
@@ -148,11 +149,13 @@ per live player each world tick. It builds the live rune context from:
 - party membership
 - aggro count
 - combat archetype
+- unresolved hostile telegraph geometry at the player's current position
 
 The derived rune result is translated into existing AI controls:
 
 - `flee` sets `rune.flee`
-- `orbit` and temporary `step-back` set `rune.keepDistance`
+- `orbit` sets `rune.keepDistance`
+- `inside-telegraph -> step-back` sets `rune.evadeTelegraph`
 - `wait-for-regen` sets `rune.waitForRegen`
 - `wait-for-execution` sets `rune.waitForExecution`
 - `tactical-reload` sets `rune.tacticalReload`
@@ -177,6 +180,22 @@ regeneration itself still observes `COMBAT_REGEN_DELAY`.
 ## AI Consumers
 
 `rune.flee` is read by `server/src/systems/combat/ai/targetPriority.ts`.
+
+`rune.evadeTelegraph` is read before ordinary chase/orbit/maintenance steering by
+`server/src/systems/combat/ai/autoTarget.ts`. It searches nearby standable points
+and chooses the shortest sampled escape outside the hostile telegraphs that
+actually contain the player. Acquisition attaches the server-only
+`evadesTelegraphs` movement owner keyed by those runtime ground-zone IDs. Crossing
+the raw telegraph boundary stops further Step Back motion but does not detach the
+owner: Chase and Orbit continue to yield until every tracked cast authoritatively
+resolves or disappears. A newly overlapping cast that contains the player joins
+the response deterministically; unrelated node telegraphs do not. Manual movement
+and Flee remain higher authority and explicitly interrupt the response.
+
+`avoid-hazards` remains a separate pathing-channel response for persistent node
+features. Step Back owns first while its imminent attack is pending; immediately
+after that response ends, Avoid Hazards may acquire if the player is still in
+harmful terrain. It does not treat pending attack telegraphs as persistent terrain.
 
 `rune.keepDistance`, `rune.waitForRegen`, `rune.waitForExecution`, and
 `rune.tacticalReload` are read by `server/src/systems/combat/ai/autoTarget.ts`.
@@ -224,6 +243,17 @@ stacks, so the player rotates pressure across multi-enemy fights.
 `server/src/systems/combat/ai/taunt.ts`. On direct player hits, it forces the
 monster target to aggro that player unless the monster has `ignoresTaunts`. The
 taunt response has a 4 second internal cooldown per player.
+
+## Telegraph Dodge Telemetry
+
+The buffered analytics stream retains edge-triggered `rune-activation`, per-zone
+`telegraph-dodge-attempt`, resolution-time `telegraph-dodge-success`, and
+`telegraph-dodge-failure` totals. Bot-visible world-log artifacts additionally
+record transition-only `activation -> attempt -> safe/reenter -> resolution ->
+result -> release` events with runtime telegraph identity/type/owner, acquisition
+time, starting position and circle geometry, selected escape point, first-safe
+time, authoritative resolution/release times, release reason, pre-resolution
+re-entry, outcome, and actual HP damage. No per-tick logging is emitted.
 
 ## Persistence And Protocol
 
@@ -310,7 +340,6 @@ Still not implemented:
 - quest/hidden rune recipe unlocks beyond boss-gated recipes,
 - editable parameters for threshold conditions,
 - drag reorder UI,
-- real target-casting telegraphs,
 - taunt stance/mechanic,
 - Rune Malfunction death attribution,
 - dedicated rune debugger/logging.

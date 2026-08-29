@@ -17,6 +17,7 @@ import {
   triggerDeathOverlay,
   setBossFelledMarkers,
   setRewardMultiplier,
+  setHumanPlaytestStatus,
 } from "../../hud/atoms";
 import { applyWorldLogEvents } from "../../worldLog/formatWorldLog";
 import { loadGameplaySettings } from "../../settings/gameplaySettings";
@@ -790,6 +791,9 @@ function connectSocket(scene: GameScene): () => void {
     },
     onRewardMultiplier: (multiplier) => {
       setRewardMultiplier(multiplier);
+    },
+    onHumanPlaytestStatus: (status) => {
+      setHumanPlaytestStatus(status);
     },
     onUpdateAnnouncement: (payload) => {
       showReleaseAnnouncement(payload);

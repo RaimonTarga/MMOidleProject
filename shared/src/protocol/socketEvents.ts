@@ -33,6 +33,24 @@ export interface CharacterCreateResult extends CharacterActionResult {
   characterId?: string;
 }
 
+export const FAST_BOSS_RETRY_TAINT = "NON_CANONICAL_FAST_BOSS_RETRY" as const;
+export interface FastBossRetryResult extends CharacterActionResult {
+  taint: typeof FAST_BOSS_RETRY_TAINT;
+  nodeId?: string;
+  includeGuardians?: boolean;
+  playerReset?: "respawn-baseline";
+}
+
+/** Dev-only state for one opt-in, local human manual-playtest recording. */
+export interface HumanPlaytestStatus {
+  active: boolean;
+  runId?: string;
+  startedAt?: number;
+  eventCount: number;
+  artifactPath?: string;
+  message?: string;
+}
+
 export interface SpectateStatus {
   mode: "player" | "clearing";
   nodeId: string;
@@ -123,6 +141,10 @@ export interface ServerToClientEvents {
    * so the debug panel always shows server truth. Never emitted in production.
    */
   "debug:rewardMultiplier": (multiplier: number) => void;
+  /** Acknowledgement for the explicit noncanonical fast boss-retry operation. */
+  "debug:fastBossRetryResult": (result: FastBossRetryResult) => void;
+  /** Dev-only acknowledgement/state update for manual playtest evidence capture. */
+  "debug:playtestStatus": (status: HumanPlaytestStatus) => void;
 }
 
 /** Events clients send to the server */
@@ -213,6 +235,14 @@ export interface ClientToServerEvents {
   "debug:goToTestRoom": () => void;
   /** Dev-only: teleport the player directly to a world-map node. Server ignores in production. */
   "debug:teleportToNode": (nodeId: string) => void;
+  /**
+   * Dev/harness only: respawn-reset this player, teleport to a dungeon, and
+   * authoritatively rebuild that encounter. Always noncanonical.
+   */
+  "debug:prepareFastBossRetry": (payload: {
+    nodeId: string;
+    includeGuardians: boolean;
+  }) => void;
   /** Dev-only: leave the debug test room and return to the clearing. Server ignores in production. */
   "debug:leaveTestRoom": () => void;
   /** Dev-only: reset the current player's progression for playtesting. */
@@ -228,4 +258,8 @@ export interface ClientToServerEvents {
    * [DEBUG_REWARD_MULT_MIN, DEBUG_REWARD_MULT_MAX]. Server ignores in production.
    */
   "debug:setRewardMultiplier": (multiplier: number) => void;
+  /** Dev-only: start one local filesystem-backed human playtest recording. */
+  "debug:startPlaytestLogging": () => void;
+  /** Dev-only: finalize the active human playtest recording. */
+  "debug:stopPlaytestLogging": () => void;
 }

@@ -6,6 +6,7 @@ import path from "path";
 
 import { World, type PersistedBossRespawn } from "./world/World";
 import { takeWorldLogEvents } from "./world/worldLog";
+import { HumanPlaytestRecorderManager } from "./playtest/humanPlaytestRecorder";
 import {
   emptyEquipment,
   GAME_CONFIG,
@@ -255,6 +256,7 @@ async function boot(): Promise<void> {
   // ── WORLD ─────────────────────────────────────────────
 
   const world = new World();
+  if (IS_DEV) world.humanPlaytests = new HumanPlaytestRecorderManager();
   const spectatorManager = new SpectatorManager(world, {
     isPlayerConnected: (playerId) => io.sockets.sockets.has(playerId),
     isPlayerInactive: (playerId) => inactiveSockets.has(playerId),
@@ -425,6 +427,14 @@ async function boot(): Promise<void> {
       nodeId,
       value,
       meta: { progressionKind },
+    });
+  };
+  world.analyticsRuneTelegraph = (playerId, nodeId, kind, value, meta) => {
+    queuePlayerAnalyticsEvent(playerId, {
+      kind,
+      nodeId,
+      value,
+      meta,
     });
   };
 
@@ -975,11 +985,16 @@ async function boot(): Promise<void> {
 
   const shutdown = (signal: string) => {
     log.info({ signal }, "shutting down");
-    spectatorManager.shutdown();
-    io.close();
-    httpServer.closeAllConnections?.();
-    httpServer.close(() => process.exit(0));
-    setTimeout(() => process.exit(1), 5_000).unref();
+    const flushPlaytests = world.humanPlaytests
+      ? world.humanPlaytests.interruptAll(world, `server shutdown (${signal})`)
+      : Promise.resolve();
+    void flushPlaytests.finally(() => {
+      spectatorManager.shutdown();
+      io.close();
+      httpServer.closeAllConnections?.();
+      httpServer.close(() => process.exit(0));
+      setTimeout(() => process.exit(1), 5_000).unref();
+    });
   };
   process.once("SIGTERM", () => shutdown("SIGTERM"));
   process.once("SIGINT", () => shutdown("SIGINT"));

@@ -19,6 +19,7 @@ import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { World } from "../src/world/World";
+import { takeWorldLogEvents } from "../src/world/worldLog";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -99,6 +100,12 @@ updateAbilityFiring(world, Date.now());
 const firstBuff = getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID);
 assert(!!firstBuff, "Brace should fire on its built-in hp-below trigger with no rune override");
 assert(firstBuff.data.drPct === 0.35, "Brace I should apply its 35% damage-reduction magnitude");
+assert(
+  takeWorldLogEvents(world, player.isPlayer.id).some(
+    (event) => event.kind === "ability-activation" && event.abilityId === "brace",
+  ),
+  "Brace activation should reach bot-visible telemetry",
+);
 assert(
   getCooldown(player.tracksCombat, GUARD_CD_KEY) === BRACE_COOLDOWN_MS,
   "firing Brace should start its full authored cooldown",

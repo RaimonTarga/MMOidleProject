@@ -1,17 +1,23 @@
 import {
+  buildNavGrid,
+  cellToWorld,
   distanceSq,
-  findPathForMover,
+  findPathOnGrid,
   goalsNearEnough,
   MONSTER_DATABASE,
   mountainLedgeFeatureIdsForNode,
   PATH_ARRIVAL_THRESHOLD,
+  moverOverlapsBlockShapes,
   vectorTo,
   type FeatureTarget,
   type Vec2,
+  type NavGrid,
+  type NodeFeatureShape,
 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import type { ServerEntity } from '../../ecs/entity';
 import { attachComponent, detachComponent } from '../../ecs/markerHelpers';
+import { activeAvoidablePersistentGroundZones } from './groundZones';
 
 const REPLAN_COOLDOWN_MS = 300;
 
@@ -24,8 +30,73 @@ type PathEntity = ServerEntity & {
     waypoints: Vec2[];
     mover: FeatureTarget;
     avoidHazards?: boolean;
+    dynamicHazardSignature?: string;
   };
 };
+
+// The nav grid applies the mover's body pad to every shape. Do not inflate a
+// second time here; the escape owner already supplies a small center clearance.
+const DYNAMIC_HAZARD_PATH_CLEARANCE = 0;
+
+function dynamicHazardShapes(
+  world: World,
+  entity: PathEntity,
+  now = Date.now(),
+): NodeFeatureShape[] {
+  if (!entity.isPlayer) return [];
+  return activeAvoidablePersistentGroundZones(world, entity.hasPosition.nodeId, now).map((zone) => ({
+    kind: 'circle' as const,
+    x: zone.pos.x,
+    y: zone.pos.y,
+    radius: zone.radius + DYNAMIC_HAZARD_PATH_CLEARANCE,
+  }));
+}
+
+function dynamicHazardSignature(
+  world: World,
+  entity: PathEntity,
+  now = Date.now(),
+): string {
+  if (!entity.isPlayer) return '';
+  return activeAvoidablePersistentGroundZones(world, entity.hasPosition.nodeId, now)
+    .map((zone) => `${zone.id}:${zone.pos.x},${zone.pos.y},${zone.radius}`)
+    .sort()
+    .join('|');
+}
+
+function withDynamicHazards(base: NavGrid, shapes: NodeFeatureShape[]): NavGrid {
+  if (shapes.length === 0) return base;
+  const blocked = base.blocked.slice();
+  for (let row = 0; row < base.rows; row++) {
+    for (let col = 0; col < base.cols; col++) {
+      if (blocked[row * base.cols + col] !== 0) continue;
+      const center = cellToWorld(base, col, row);
+      if (moverOverlapsBlockShapes(center, shapes, base.pad)) {
+        blocked[row * base.cols + col] = 1;
+      }
+    }
+  }
+  return { ...base, blocked, shapes: [...base.shapes, ...shapes] };
+}
+
+function segmentTouchesDynamicHazard(
+  from: Vec2,
+  to: Vec2,
+  shapes: NodeFeatureShape[],
+  pad: Vec2,
+): boolean {
+  const distance = Math.hypot(to.x - from.x, to.y - from.y);
+  const steps = Math.max(2, Math.ceil(distance / 8));
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const point = {
+      x: from.x + (to.x - from.x) * t,
+      y: from.y + (to.y - from.y) * t,
+    };
+    if (moverOverlapsBlockShapes(point, shapes, pad)) return true;
+  }
+  return false;
+}
 
 export function inferMoverTarget(entity: ServerEntity): FeatureTarget {
   return entity.isPlayer ? 'player' : 'monster';
@@ -84,15 +155,17 @@ function planPath(
   pad: Vec2,
   avoidHazards: boolean,
 ): Vec2[] | null {
-  return findPathForMover(
+  const base = buildNavGrid(
     entity.hasPosition.nodeId,
     mover,
     pad,
-    entity.hasPosition.current,
-    goal,
     suppressedFeatureIdsForEntity(world, entity),
     avoidHazards,
   );
+  const grid = avoidHazards
+    ? withDynamicHazards(base, dynamicHazardShapes(world, entity))
+    : base;
+  return findPathOnGrid(grid, entity.hasPosition.current, goal);
 }
 
 export function setMovePath(
@@ -102,6 +175,7 @@ export function setMovePath(
   waypoints: Vec2[],
   mover: FeatureTarget,
   avoidHazards = false,
+  hazardSignature = '',
 ): void {
   if (waypoints.length === 0) {
     clearMovePath(world, entity);
@@ -114,6 +188,7 @@ export function setMovePath(
     waypoints: waypoints.map(wp => ({ x: wp.x, y: wp.y })),
     mover,
     avoidHazards,
+    dynamicHazardSignature: hazardSignature,
   });
   attachMotionToward(world, entity, waypoints[0]);
 }
@@ -169,14 +244,24 @@ export function replanIfBlocked(
     path.avoidHazards === true,
   );
   const fallbackWaypoints =
-    (!waypoints || waypoints.length === 0) && path.avoidHazards === true
+    (!waypoints || waypoints.length === 0) &&
+    path.avoidHazards === true &&
+    dynamicHazardSignature(world, entity) === ''
       ? planPath(world, entity, path.goal, path.mover, pad, false)
       : null;
   const nextWaypoints = waypoints && waypoints.length > 0 ? waypoints : fallbackWaypoints;
   if (!nextWaypoints || nextWaypoints.length === 0) return false;
 
   replanCooldown.set(entity.entityId, now);
-  setMovePath(world, entity, path.goal, nextWaypoints, path.mover, path.avoidHazards === true);
+  setMovePath(
+    world,
+    entity,
+    path.goal,
+    nextWaypoints,
+    path.mover,
+    path.avoidHazards === true,
+    path.avoidHazards === true ? dynamicHazardSignature(world, entity) : '',
+  );
   return true;
 }
 
@@ -190,8 +275,13 @@ export function requestNavMotion(
   const mover = opts?.mover ?? inferMoverTarget(entity);
   const mode = opts?.mode ?? 'path';
   const avoidHazards = opts?.avoidHazards === true;
+  const hazardSignature = avoidHazards ? dynamicHazardSignature(world, entity) : '';
 
-  if (mode === 'direct') {
+  const directHazards = avoidHazards ? dynamicHazardShapes(world, entity) : [];
+  if (
+    mode === 'direct' &&
+    !segmentTouchesDynamicHazard(entity.hasPosition.current, goal, directHazards, pad)
+  ) {
     clearMovePath(world, entity);
     attachMotionToward(world, entity, goal);
     return;
@@ -204,6 +294,7 @@ export function requestNavMotion(
     && existing.waypoints.length > 0
     && existing.mover === mover
     && (existing.avoidHazards === true) === avoidHazards
+    && (existing.dynamicHazardSignature ?? '') === hazardSignature
   ) {
     // Pop any waypoint we are already standing on before steering at the head.
     // `advanceMovePath` normally does this, but its only caller is
@@ -227,7 +318,7 @@ export function requestNavMotion(
 
   const waypoints = planPath(world, entity, goal, mover, pad, avoidHazards);
   const fallbackWaypoints =
-    (!waypoints || waypoints.length === 0) && avoidHazards
+    (!waypoints || waypoints.length === 0) && avoidHazards && hazardSignature === ''
       ? planPath(world, entity, goal, mover, pad, false)
       : null;
   const nextWaypoints = waypoints && waypoints.length > 0 ? waypoints : fallbackWaypoints;
@@ -237,5 +328,5 @@ export function requestNavMotion(
     return;
   }
 
-  setMovePath(world, entity, goal, nextWaypoints, mover, avoidHazards);
+  setMovePath(world, entity, goal, nextWaypoints, mover, avoidHazards, hazardSignature);
 }

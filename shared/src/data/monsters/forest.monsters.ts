@@ -43,7 +43,7 @@ export const forestMonsterEntries = [
   ['wolf', {
     id: 'wolf', name: 'Wolf', color: 0xaaaacc,
     // Fast baseline speed IS the anti-kite — no charge needed. Frequent light bites.
-    stats: { hp: 130, attack: 20, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 680 },
+    stats: { hp: 130, attack: 20, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 476 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
     ai: { wanderRadius: 290, leashRange: 1360, idleMinMs: 700, idleMaxMs: 2800 },
@@ -56,7 +56,7 @@ export const forestMonsterEntries = [
     id: 'young-wolf', name: 'Young Wolf', color: 0xaaaacc,
     // Uses the wolf sprite for now. Slightly smaller/softer than the adult alpha,
     // but still fast enough that the pack reads as one moving threat.
-    stats: { hp: 70, attack: 14, plating: 0, damageReduction: 0, speed: 86, attackRange: 12, attackCooldown: 1150, pullRange: 620 },
+    stats: { hp: 70, attack: 14, plating: 0, damageReduction: 0, speed: 86, attackRange: 12, attackCooldown: 1150, pullRange: 434 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 2, essenceType: 'green', level: 1, biomeXp: 12 },
     ai: { wanderRadius: 260, leashRange: 1240, idleMinMs: 700, idleMaxMs: 2800 },
@@ -68,7 +68,7 @@ export const forestMonsterEntries = [
   ['ancient-wolf', {
     id: 'ancient-wolf', name: 'Dire Wolf', color: 0x8888ff,
     // Explosive fast charger; closes instantly then bites in a blur.
-    stats: { hp: 270, attack: 34, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 280 },
+    stats: { hp: 270, attack: 34, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 196 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
@@ -95,7 +95,7 @@ export const forestMonsterEntries = [
     // WHY IT EXISTS: `ancient-wolf` (T2) used to call 3x `young-wolf`, which is the T1
     // Wolf's follower. The two tiers shared one monster, so nothing in T2 Forest could
     // be retuned without silently moving T1 Forest with it.
-    stats: { hp: 120, attack: 14, plating: 0, damageReduction: 0, speed: 90, attackRange: 12, attackCooldown: 1150, pullRange: 255 },
+    stats: { hp: 120, attack: 14, plating: 0, damageReduction: 0, speed: 90, attackRange: 12, attackCooldown: 1150, pullRange: 179 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 3, essenceType: 'green', level: 1, biomeXp: 20 },
     ai: { wanderRadius: 260, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
@@ -109,7 +109,7 @@ export const forestMonsterEntries = [
     // evasion answers; squishy (no DR) so it still dies to burst.
     stats: { hp: 240, attack: 31, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
-    rewards: { essence: 10, essenceType: 'blue', level: 1, biomeXp: 58 }, // construct → Stone (biome mixture; tunable)
+    rewards: { essence: 10, essenceType: 'green', level: 1, biomeXp: 58 },
     ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
 

@@ -60,6 +60,8 @@ export function killPlayer(
   detachComponent(world, entity, "holdsWards");
   detachComponent(world, entity, "tracksEngagement");
   detachComponent(world, entity, "hasEmpoweredAttack");
+  detachComponent(world, entity, "hasSweepClip");
+  detachComponent(world, entity, "hasFormationTechnique");
   detachComponent(world, entity, "isChanneling");
   detachComponent(world, entity, "hasOverdrive");
   detachComponent(world, entity, "hasAlignment");

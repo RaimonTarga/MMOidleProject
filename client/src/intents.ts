@@ -28,6 +28,8 @@ export interface IntentMap {
   renameCharacter: string;
   equipPhaseTester: undefined;
   setRewardMultiplier: number;
+  startPlaytestLogging: undefined;
+  stopPlaytestLogging: undefined;
   tacticalView: undefined;
   joinParty: string;
   leaveParty: undefined;

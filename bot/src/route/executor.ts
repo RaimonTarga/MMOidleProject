@@ -5,6 +5,7 @@ import {
   abilitySlotCount,
   ITEM_DATABASE,
   NODE_BIOMES,
+  NODE_MODIFIERS,
   biomeLevelCap,
   RECIPE_DATABASE,
   canUnlockSkillFromView,
@@ -18,11 +19,20 @@ import {
   type EssenceType,
 } from "@mmo-idle/shared";
 import type { Intents } from "../net/intents";
+import type { RouteLeaseSession } from "../concurrency/routeLeaseSession";
 import type { Policy } from "../policy/profiles";
 import type { Observation } from "../state/observation";
-import { dungeonNodeFor } from "../state/observation";
+import { dungeonNodeFor, normalNodesFor } from "../state/observation";
 import type { Activity, Recorder } from "../telemetry/recorder";
-import { describe, evaluate, recipeShortfall, resolveNode, shortfall } from "./conditions";
+import {
+  describe,
+  evaluate,
+  recipeShortfall,
+  resolveNode,
+  resolveNearCandidates,
+  resolveNodeCandidates,
+  shortfall,
+} from "./conditions";
 import type { Condition, NodeRef, Route, RouteStep } from "./types";
 
 const POLL_MS = 500;
@@ -30,6 +40,20 @@ const POLL_MS = 500;
 const DEFAULT_NO_PROGRESS_MS = 12 * 60 * 1000;
 /** Ceiling on any single step, so one impossible goal cannot eat a whole run. */
 const DEFAULT_STEP_TIMEOUT_MS = 6 * 60 * 60 * 1000;
+/**
+ * How much further than the closest candidate a node may be and still count as
+ * "near". Two hops keeps a bot inside its target biome's local cluster; beyond
+ * that a fall-through starts crossing other biomes.
+ */
+const NEAR_CANDIDATE_SLACK_HOPS = 2;
+/**
+ * How long to hold out for a near node before accepting any free one. A bot that
+ * owns the node it is standing in keeps farming while it waits, so waiting is
+ * usually cheaper than a multi-biome walk -- but this bounds it so a busy
+ * cluster can never wedge a run.
+ */
+const NEAR_CANDIDATE_WIDEN_MS = 90_000;
+
 const TRAVEL_TIMEOUT_MS = 10 * 60 * 1000;
 /**
  * Grace before declaring a capped biome a dead end. Long enough that a goal
@@ -42,6 +66,17 @@ const BOSS_FIGHT_TIMEOUT_MS = 12 * 60 * 1000;
  * and the bot may die to it and walk back several times.
  */
 const GUARD_CLEAR_TIMEOUT_MS = 15 * 60 * 1000;
+
+/**
+ * The server answers every acknowledged mutating intent with this exact reason
+ * while the player is dead (or before its entity has resolved after a
+ * reconnect). It is a transient state, not a refusal: the same request works a
+ * few seconds later, once the respawn lands. Treat it as "wait and retry"
+ * rather than as a fatal stall.
+ */
+const NOT_LIVE_REJECTION = "Not available while dead or disconnected.";
+/** Ceiling so a genuinely stuck-dead bot still stalls instead of looping forever. */
+const NOT_LIVE_RETRY_LIMIT = 20;
 
 export class StallError extends Error {
   constructor(
@@ -67,10 +102,16 @@ export interface ExecutorDeps {
   awaitAlive: () => Promise<void>;
   /** Deaths so far — used to detect a death during a boss attempt. */
   deathCount: () => number;
+  /** Explicit noncanonical retry acceleration; never inferred from route data. */
+  fastBossRetry: boolean;
+  fastBossRetryIncludeGuardians: boolean;
+  leaseSession?: RouteLeaseSession;
 }
 
 export class RouteExecutor {
   private rotation = 0;
+  /** Near cluster for the farm step being set up, consumed by `farmUntil`. */
+  private nearCandidates: readonly string[] | undefined;
   private readonly firedMilestones = new Set<string>();
   private stepIndex = 0;
   private stepLabel = "";
@@ -223,9 +264,28 @@ export class RouteExecutor {
   }
 
   private async doTravel(ref: NodeRef): Promise<void> {
-    const target = resolveNode(ref, this.deps.obs, this.rotation);
-    if (!target) throw new StallError("cannot reach target area", { ref });
-    await this.ensureAt(target);
+    const candidates = resolveNodeCandidates(ref, this.deps.obs, this.rotation);
+    if (candidates.length === 0) throw new StallError("cannot reach target area", { ref });
+    // A travel step ENDS with the bot standing still in the destination, so it
+    // must own it on arrival. Travelling unleased into a node another controlled
+    // bot is farming would park us in its fight -- the same overlap as walking
+    // out late, just at the other end of the journey.
+    const granted = await this.deps.leaseSession?.acquireActivity(
+      candidates,
+      this.deps.obs,
+      this.deps.intents,
+      `travel:${candidates[0]}`,
+      {
+        preferredNodeIds: resolveNearCandidates(
+          ref,
+          this.deps.obs,
+          this.rotation,
+          NEAR_CANDIDATE_SLACK_HOPS,
+        ),
+        widenAfterMs: NEAR_CANDIDATE_WIDEN_MS,
+      },
+    );
+    await this.ensureAt(granted ?? candidates[0]);
   }
 
   /**
@@ -236,6 +296,14 @@ export class RouteExecutor {
   private async ensureAt(nodeId: string): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     if (obs.nodeId === nodeId) return;
+
+    // The lease on the node we are LEAVING is held until the server confirms we
+    // are no longer standing in it. Releasing at the decision to travel opened a
+    // multi-second window where the node was free but our avatar was still in
+    // it, so the next controlled bot could be granted it and start farming
+    // around us -- exactly the overlap the leases exist to prevent. The
+    // destination lease is never touched here; `acquireActivity` already owns it.
+    const departingFrom = obs.nodeId;
 
     recorder.setActivity("travel");
     intents.setAuto(false);
@@ -252,6 +320,12 @@ export class RouteExecutor {
       onPoll: () => {
         const self = obs.self;
         if (!self) return;
+
+        // Authoritative departure: our own position slice says we are somewhere
+        // else, so the node we left is genuinely free for the next bot.
+        if (departingFrom && obs.nodeId && obs.nodeId !== departingFrom) {
+          this.deps.leaseSession?.releaseNode(departingFrom, "departed-node");
+        }
 
         // A death clears the traverse path and dumps us at the region hub, so
         // the walk has to be re-issued rather than waited out. Without this the
@@ -275,14 +349,32 @@ export class RouteExecutor {
         // deaths in a row crossing one Forest node. The game's own auto-traverse
         // keeps combat on, so this uses the same shipped behavior: swing back
         // while engaged, resume the walk once clear. No bespoke tactics.
+        // ...but NEVER inside a node another controlled bot holds. Fighting back
+        // parks the bot mid-transit until nothing is attacking it, and in a
+        // leased node that meant real kills, catalyst gains and stolen aggro in
+        // someone else's evidence (measured at 8-bot scale: 21s and 15s+ bouts,
+        // a kill and a catalyst inside nodes the bot did not own). Walking on
+        // through is the correct behaviour: the crossing is short, and taking
+        // the hits only risks THIS run, which is ours to lose.
+        const inForeignNode = this.deps.leaseSession?.isForeignNode(obs.nodeId) ?? false;
         const attackers = obs.attackersOnSelf().length;
-        if (attackers > 0) {
+        if (attackers > 0 && !inForeignNode) {
           if (!fightingBack) {
             fightingBack = true;
             intents.setAutocombatConfig(this.deps.policy.autocombat);
             intents.setAuto(true);
           }
           // Being jumped mid-transit is not a stall.
+          lastProgressAt = Date.now();
+          return;
+        }
+        if (attackers > 0 && inForeignNode) {
+          // Keep the walk alive rather than trading blows in a leased node.
+          if (fightingBack) {
+            fightingBack = false;
+            intents.setAuto(false);
+            intents.navigateTo(nodeId);
+          }
           lastProgressAt = Date.now();
           return;
         }
@@ -306,6 +398,11 @@ export class RouteExecutor {
       },
       onStall: () => ({ from: obs.nodeId, to: nodeId, deaths: this.deps.deathCount() }),
     });
+    // Arrival satisfies the predicate, which can end the wait before `onPoll`
+    // observes the last hop -- so the departure release is repeated here.
+    if (departingFrom && departingFrom !== nodeId) {
+      this.deps.leaseSession?.releaseNode(departingFrom, "departed-node");
+    }
     intents.setAuto(false);
     recorder.setActivity("idle");
   }
@@ -316,9 +413,15 @@ export class RouteExecutor {
     stallAfterMs?: number,
   ): Promise<void> {
     const condition = this.deps.policy.farmCondition(step.until);
-    const node = resolveNode(step.at, this.deps.obs, this.rotation);
-    if (!node) throw new StallError("cannot reach target area", { at: step.at });
-    await this.farmUntil(node, () => this.test(condition), {
+    const nodes = resolveNodeCandidates(step.at, this.deps.obs, this.rotation);
+    if (nodes.length === 0) throw new StallError("cannot reach target area", { at: step.at });
+    this.nearCandidates = resolveNearCandidates(
+      step.at,
+      this.deps.obs,
+      this.rotation,
+      NEAR_CANDIDATE_SLACK_HOPS,
+    );
+    await this.farmUntil(nodes, () => this.test(condition), {
       what: describe(condition),
       noProgressMs: stallAfterMs ?? DEFAULT_NO_PROGRESS_MS,
       onStall: () => shortfall(condition, this.deps.obs),
@@ -330,8 +433,15 @@ export class RouteExecutor {
    * behavior: no bot-only tactics, no hazard avoidance, no manual dodging. The
    * only tactical reactions come from equipped Runes.
    */
+  /**
+   * `candidates` is an ordered preference list. Index 0 is the node a solo run
+   * uses, so sequential behaviour is unchanged; the coordinator may hand back a
+   * later entry under isolated-parallel when the preferred node is leased by
+   * another controlled bot. Callers that must hit ONE specific node (a catalyst
+   * supplier, a dungeon) pass a single-entry list and therefore queue instead.
+   */
   private async farmUntil(
-    nodeId: string,
+    candidates: string | readonly string[],
     done: () => boolean,
     opts: {
       what: string;
@@ -350,6 +460,20 @@ export class RouteExecutor {
     const { obs, intents, recorder } = this.deps;
     if (done()) return;
 
+    const preference = typeof candidates === "string" ? [candidates] : [...candidates];
+    if (preference.length === 0) throw new StallError("cannot reach target area", {});
+    const granted = await this.deps.leaseSession?.acquireActivity(
+      preference,
+      obs,
+      intents,
+      opts.activity === "blocked" ? `resource-farm:${opts.what}` : `farm:${opts.what}`,
+      {
+        preferredNodeIds: this.nearCandidates,
+        widenAfterMs: NEAR_CANDIDATE_WIDEN_MS,
+      },
+    );
+    this.nearCandidates = undefined;
+    const nodeId = granted ?? preference[0];
     await this.ensureAt(nodeId);
     recorder.setActivity(opts.activity ?? "farm");
     intents.setAutocombatConfig(this.deps.policy.autocombat);
@@ -427,6 +551,34 @@ export class RouteExecutor {
     }
   }
 
+  /**
+   * Send one acknowledged mutating intent, retrying the dead/disconnected
+   * rejection. A route can reach a craft/upgrade step the same tick something
+   * kills the bot -- that is normal, and the run should continue after the
+   * respawn instead of ending on an incidental rejection.
+   *
+   * `record` runs for EVERY attempt, so the rejected ones stay in telemetry.
+   */
+  private async mutate<T extends { success: boolean; reason?: string }>(
+    send: () => Promise<T>,
+    record?: (result: T) => void,
+  ): Promise<T> {
+    for (let attempt = 1; ; attempt += 1) {
+      if (this.deps.aborted()) throw new AbortError("run aborted");
+      await this.deps.awaitAlive();
+
+      const result = await send();
+      record?.(result);
+      if (result.success || result.reason !== NOT_LIVE_REJECTION) return result;
+      if (attempt >= NOT_LIVE_RETRY_LIMIT) return result;
+
+      // `awaitAlive` only watches `isDead`; the entity can also be mid-resolve
+      // (reconnect), where `obs.self` is simply absent. Give the world a beat
+      // either way before asking again.
+      await sleep(POLL_MS * 2);
+    }
+  }
+
   private async doCraft(step: Extract<RouteStep, { type: "craft" }>): Promise<void> {
     const { obs, intents, recorder } = this.deps;
 
@@ -455,21 +607,25 @@ export class RouteExecutor {
         );
       }
 
-      const result = await intents.craftRecipe(recipeId);
-
-      // The spend is the recipe's authored cost, not a wallet diff: the wallet
-      // only moves when the next 5 Hz delta lands, so a diff taken here reads
-      // zero. `crafting:result` already tells us the charge went through.
-      recorder.emit({
-        kind: "craft",
-        atMs: recorder.now(),
-        recipeId,
-        success: result.success,
-        reason: result.reason,
-        essenceSpent: result.success ? { ...recipe.cost } : {},
-        catalystsSpent: result.success ? definedNumbers(recipe.catalystCost ?? {}) : {},
-        context: recorder.context(obs.nodeId),
-      });
+      const result = await this.mutate(
+        () => intents.craftRecipe(recipeId),
+        // The spend is the recipe's authored cost, not a wallet diff: the wallet
+        // only moves when the next 5 Hz delta lands, so a diff taken here reads
+        // zero. `crafting:result` already tells us the charge went through.
+        (attempt) =>
+          recorder.emit({
+            kind: "craft",
+            atMs: recorder.now(),
+            recipeId,
+            success: attempt.success,
+            reason: attempt.reason,
+            essenceSpent: attempt.success ? { ...recipe.cost } : {},
+            catalystsSpent: attempt.success
+              ? definedNumbers(recipe.catalystCost ?? {})
+              : {},
+            context: recorder.context(obs.nodeId),
+          }),
+      );
 
       if (!result.success) {
         throw new StallError(`craft rejected: ${result.reason ?? "unknown"}`, { recipeId });
@@ -553,15 +709,13 @@ export class RouteExecutor {
     }
     if (target <= 0) return;
 
-    const farmNode =
-      (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null) ??
-      (recipe ? this.defaultFarmNodeFor(recipe.recipeGroup) : null);
-
     while (obs.itemPlus(step.definitionId) < target) {
       if (this.deps.aborted()) throw new AbortError("run aborted");
 
       const check = obs.canUpgrade(step.definitionId);
       if (!check.ok) {
+        const nextPlus = obs.itemPlus(step.definitionId) + 1;
+        const farmNode = this.upgradeFarmNode(step, recipe, nextPlus);
         if (!farmNode) {
           throw new StallError(`cannot upgrade ${step.definitionId}: ${check.reason}`, {
             definitionId: step.definitionId,
@@ -574,7 +728,6 @@ export class RouteExecutor {
         // from a biome sitting at its level cap — so the capped-biome guard must
         // NOT fire. This is exactly the case in the pre-boss push to +5, where
         // every biome is maxed by construction.
-        const nextPlus = obs.itemPlus(step.definitionId) + 1;
         const gmAllowsNext =
           !!recipe &&
           upgradeCeilingFromGlobalMastery(obs.self?.globalMastery ?? 0, recipe.tier) >=
@@ -599,27 +752,31 @@ export class RouteExecutor {
         continue;
       }
 
-      const result = await intents.upgradeItem(step.definitionId);
-
       // Same reasoning as craft: read the authored step cost for the level the
       // server says we reached, rather than racing the wallet delta.
       const item = ITEM_DATABASE.get(step.definitionId);
-      const stepCost =
-        result.success && item ? (upgradeCostFor(item, result.newLevel) ?? {}) : {};
-      const stepCatalysts =
-        result.success && item ? (upgradeCatalystCostFor(item, result.newLevel) ?? {}) : {};
-
-      recorder.emit({
-        kind: "upgrade",
-        atMs: recorder.now(),
-        itemId: step.definitionId,
-        newLevel: result.newLevel,
-        success: result.success,
-        reason: result.reason,
-        essenceSpent: { ...stepCost },
-        catalystsSpent: definedNumbers(stepCatalysts),
-        context: recorder.context(obs.nodeId),
-      });
+      const result = await this.mutate(
+        () => intents.upgradeItem(step.definitionId),
+        (attempt) => {
+          const stepCost =
+            attempt.success && item ? (upgradeCostFor(item, attempt.newLevel) ?? {}) : {};
+          const stepCatalysts =
+            attempt.success && item
+              ? (upgradeCatalystCostFor(item, attempt.newLevel) ?? {})
+              : {};
+          recorder.emit({
+            kind: "upgrade",
+            atMs: recorder.now(),
+            itemId: step.definitionId,
+            newLevel: attempt.newLevel,
+            success: attempt.success,
+            reason: attempt.reason,
+            essenceSpent: { ...stepCost },
+            catalystsSpent: definedNumbers(stepCatalysts),
+            context: recorder.context(obs.nodeId),
+          });
+        },
+      );
 
       if (!result.success) {
         throw new StallError(`upgrade rejected: ${result.reason ?? "unknown"}`, {
@@ -661,9 +818,16 @@ export class RouteExecutor {
 
     await this.emitUntil(
       () => intents.setRuneLoadout(usable),
-      () => (obs.self?.runesEquipped.length ?? -1) === usable.length,
-      { timeoutMs: 2 * 60 * 1000, what: "rune loadout applied" },
-    ).catch(() => undefined);
+      () => runeLoadoutsEqual(obs.self?.runesEquipped ?? [], usable),
+      {
+        timeoutMs: 2 * 60 * 1000,
+        what: "exact ordered rune loadout applied",
+        onStall: () => ({
+          wanted: usable,
+          live: obs.self?.runesEquipped ?? [],
+        }),
+      },
+    );
 
     recorder.emit({
       kind: "build-change",
@@ -720,7 +884,7 @@ export class RouteExecutor {
         });
       }
 
-      const result = await intents.craftAbilityRecipe(step.recipeId);
+      const result = await this.mutate(() => intents.craftAbilityRecipe(step.recipeId));
       if (!result.success) {
         throw new StallError(`ability craft rejected: ${result.reason ?? "unknown"}`, { step });
       }
@@ -840,7 +1004,7 @@ export class RouteExecutor {
       );
     }
 
-    const result = await intents.craftRuneRecipe(step.recipeId);
+    const result = await this.mutate(() => intents.craftRuneRecipe(step.recipeId));
     if (!result.success) {
       throw new StallError(`rune craft rejected: ${result.reason ?? "unknown"}`, { step });
     }
@@ -902,7 +1066,7 @@ export class RouteExecutor {
 
     let outcome: "cleared" | "reformed" | "gave-up" = "cleared";
     try {
-      if ((alive() ?? 0) > 0) {
+      if ((alive() ?? 0) > 0 && !obs.bossCleared(step.biomeGroup, step.tier)) {
         intents.setAutocombatConfig(this.deps.policy.autocombat);
         intents.setAutoTraverse(false);
         intents.setAuto(true);
@@ -910,11 +1074,21 @@ export class RouteExecutor {
         let lastAlive = alive() ?? 0;
         let lastProgressAt = Date.now();
 
-        await this.waitUntil(() => alive() === 0, {
-          timeoutMs: GUARD_CLEAR_TIMEOUT_MS,
-          what: `${step.biomeGroup} guard cleared`,
-          onPoll: () => {
-            const now = alive();
+        // Also exit the moment the boss itself is already down (e.g. a mutual
+        // kill against the guard pack in a PRIOR attempt landed the boss's
+        // killing blow too). The guard's own "reformed" timer means its alive
+        // count can keep changing forever on an already-irrelevant fight,
+        // which resets `lastProgressAt` below and defeats the stall timeout --
+        // without this, a bot can be stuck re-clearing a beaten boss's guard
+        // pack indefinitely. `doAttemptBoss`'s own post-guard check (see its
+        // comment) is what actually turns this into "victory" once we return.
+        await this.waitUntil(
+          () => alive() === 0 || obs.bossCleared(step.biomeGroup, step.tier),
+          {
+            timeoutMs: GUARD_CLEAR_TIMEOUT_MS,
+            what: `${step.biomeGroup} guard cleared`,
+            onPoll: () => {
+              const now = alive();
             if (now === null) {
               // View gone: we died or left. Get back and look again.
               if (obs.nodeId !== nodeId && !(obs.self?.isDead ?? false)) {
@@ -995,6 +1169,71 @@ export class RouteExecutor {
       if (obs.bossCleared(step.biomeGroup, step.tier)) return;
 
       await this.deps.awaitAlive();
+      // A dungeon has exactly one node, so this is a genuine exclusive queue:
+      // no alternate candidate exists, and the boss/guardian runtime state it
+      // protects is the reason fast retry is gated on owning it below.
+      await this.deps.leaseSession?.acquireActivity(
+        [nodeId],
+        obs,
+        intents,
+        `dungeon-boss:${step.biomeGroup}:attempt-${attempt}`,
+      );
+      // Re-check immediately after respawning, before paying for another full
+      // guard-clear + travel + altar cycle. `bossCleared` can flip true while
+      // we were dead: the killing blow that finally drops the boss can land in
+      // the same exchange that kills us (a mutual trade against the guard pack
+      // still swinging). Without
+      // this check an already-won boss still forces a fresh guard-clear (and a
+      // real chance of dying to IT instead), which is what an outside observer
+      // sees as "stuck re-fighting a boss it already beat".
+      if (obs.bossCleared(step.biomeGroup, step.tier)) return;
+
+      if (attempt > 1 && this.deps.fastBossRetry) {
+        if (this.deps.leaseSession && !this.deps.leaseSession.ownsNode(nodeId)) {
+          throw new StallError("fast boss retry attempted without the dungeon area lease", {
+            nodeId,
+            heldAreas: this.deps.leaseSession.heldAreas(),
+          });
+        }
+        const result = await intents.prepareFastBossRetry(
+          nodeId,
+          this.deps.fastBossRetryIncludeGuardians,
+        );
+        if (!result.success) {
+          throw new StallError(`fast boss retry rejected: ${result.reason ?? "unknown"}`, {
+            nodeId,
+            attempt,
+          });
+        }
+        recorder.emit({
+          kind: "fast-boss-retry",
+          atMs: recorder.now(),
+          nodeId,
+          attempt,
+          taint: "NON_CANONICAL_FAST_BOSS_RETRY",
+          includeGuardians: this.deps.fastBossRetryIncludeGuardians,
+          playerReset: "respawn-baseline",
+          skipped: [
+            "overworld-travel",
+            "dungeon-traversal",
+            "guardian-reform-wait",
+            ...(this.deps.fastBossRetryIncludeGuardians ? [] : ["guardian-reclear"]),
+          ],
+        });
+        await this.waitUntil(
+          () =>
+            obs.nodeId === nodeId &&
+            obs.dungeon?.status === "idle" &&
+            obs.dungeon.guardianAlive ===
+              (this.deps.fastBossRetryIncludeGuardians ? obs.dungeon.guardianTotal : 0),
+          {
+            timeoutMs: 30_000,
+            what: "authoritative fast boss retry snapshot",
+            onPoll: () => intents.requestSync(),
+          },
+        );
+      }
+
       recorder.bossAttempts += 1;
       recorder.emit({
         kind: "boss-attempt",
@@ -1005,7 +1244,21 @@ export class RouteExecutor {
         attempt,
       });
       const attemptStartedAt = Date.now();
-      const deathsBefore = this.deps.deathCount();
+      let bossCombatStartedAt: number | null = null;
+      let bossCombatEndedAt: number | null = null;
+      let bossHpFraction: number | undefined;
+      const sampleBoss = (): void => {
+        if (obs.dungeon?.status === "boss") bossCombatStartedAt ??= Date.now();
+        const bossId = obs.dungeon?.bossMonsterId;
+        const boss = bossId
+          ? obs.monsters().find((monster) => monster.id === bossId)
+          : obs.monsters().find((monster) => monster.isBoss);
+        if (!boss) return;
+        bossCombatStartedAt ??= Date.now();
+        bossHpFraction = boss.maxHp > 0
+          ? Math.max(0, Math.min(1, boss.hp / boss.maxHp))
+          : 0;
+      };
 
       let outcome: "victory" | "death" | "timeout" | "unreachable" = "timeout";
       try {
@@ -1019,15 +1272,46 @@ export class RouteExecutor {
         // boss plus 11 guardians and loses a damage race it would otherwise win.
         await this.clearDungeonGuard(nodeId, step, attempt);
 
+        // The guard-clear itself can take a while and can die to or alongside
+        // a party member (see the comment at the top of this loop) -- bail
+        // before walking to the altar if the boss is already down.
+        const clearedDuringGuard = obs.bossCleared(step.biomeGroup, step.tier);
+
+        // Dying during the guard-clear is normal and already survived by
+        // `clearDungeonGuard` itself (see its own doc comment) -- it must not
+        // count against THIS attempt's own outcome. Rebase the death baseline
+        // to right here, after the guard is settled, so only a death from this
+        // point on (altar walk-up onward) can flip the classification below.
+        //
+        // Another same-node player can also win the shared dungeon session's
+        // own race against us: they can clear guardians, activate the altar,
+        // or even get the boss to land a killing blow on THIS character while
+        // we are still walking up, waiting for the altar to go idle, or
+        // waiting for our own `activateDungeonAltar` emit to land (dungeon
+        // state is one-per-node, not per-player). None of the waits below used
+        // to check for a death, so a genuine kill by the (very real,
+        // already-awake) boss sat silently until its own multi-minute wait
+        // timed out on a StallError and the whole attempt was mis-recorded
+        // "unreachable" -- indistinguishable from never having found the
+        // dungeon at all, even though the character died fighting the genuine
+        // article. Checking `diedThisAttempt()` after every phase below turns
+        // that into the "death" it actually was, and skips the remaining
+        // minutes of a wait nothing will ever satisfy once the character is
+        // already a corpse elsewhere.
+        const deathsAfterGuardClear = this.deps.deathCount();
+        const diedThisAttempt = (): boolean => this.deps.deathCount() > deathsAfterGuardClear;
+
         // Walk onto the altar, then disturb it. The server checks proximity
         // itself (`isNearAltar`), so this is the ordinary player sequence.
         // Prompt, because the guard reforms 90s after the last guardian kill.
-        const altar = obs.dungeon?.altar;
-        if (altar) {
+        const altar = clearedDuringGuard ? null : obs.dungeon?.altar;
+        if (altar && !diedThisAttempt()) {
           intents.setAuto(false);
           intents.moveTo({ x: altar.x, y: altar.y });
           await this.waitUntil(
             () => {
+              sampleBoss();
+              if (diedThisAttempt()) return true;
               const self = obs.self;
               const a = obs.dungeon?.altar;
               if (!self || !a) return false;
@@ -1045,36 +1329,78 @@ export class RouteExecutor {
           );
         }
 
-        await this.waitUntil(() => obs.dungeon?.canActivate === true, {
-          timeoutMs: 15 * 60 * 1000,
-          what: "altar ready (dungeon idle)",
-          onStall: () => ({
-            status: obs.dungeon?.status ?? "unknown",
-            cooldownRemainingMs: obs.dungeon?.cooldownRemainingMs ?? 0,
-          }),
-        });
+        if (!clearedDuringGuard && !diedThisAttempt()) {
+          await this.waitUntil(
+            () => {
+              sampleBoss();
+              return diedThisAttempt() || obs.dungeon?.canActivate === true;
+            },
+            {
+              timeoutMs: 15 * 60 * 1000,
+              what: "altar ready (dungeon idle)",
+              onStall: () => ({
+                status: obs.dungeon?.status ?? "unknown",
+                cooldownRemainingMs: obs.dungeon?.cooldownRemainingMs ?? 0,
+              }),
+            },
+          );
 
-        intents.activateDungeonAltar();
-        intents.setAutocombatConfig(this.deps.policy.autocombat);
-        intents.setAutoTraverse(false);
-        intents.setAuto(true);
+          if (!diedThisAttempt()) {
+            // One fire-and-forget emit is a coin flip here for the same reason
+            // equip is: the server drops every unacknowledged intent from a
+            // corpse. Losing this one is expensive -- the bot then stands in an
+            // idle dungeon until the 12-minute boss wait burns the whole attempt
+            // -- so re-emit until the dungeon actually wakes.
+            await this.emitUntil(
+              () => intents.activateDungeonAltar(),
+              () => {
+                sampleBoss();
+                return (
+                  diedThisAttempt() ||
+                  (obs.dungeon?.status ?? "idle") !== "idle" ||
+                  obs.bossCleared(step.biomeGroup, step.tier)
+                );
+              },
+              {
+                timeoutMs: 3 * 60 * 1000,
+                what: "dungeon activated",
+                onStall: () => ({
+                  status: obs.dungeon?.status ?? "unknown",
+                  canActivate: obs.dungeon?.canActivate ?? false,
+                }),
+              },
+            );
+          }
+          if (!diedThisAttempt()) {
+            intents.setAutocombatConfig(this.deps.policy.autocombat);
+            intents.setAutoTraverse(false);
+            intents.setAuto(true);
+          }
+        }
 
-        await this.waitUntil(
-          () =>
-            obs.bossCleared(step.biomeGroup, step.tier) ||
-            this.deps.deathCount() > deathsBefore,
-          {
-            timeoutMs: BOSS_FIGHT_TIMEOUT_MS,
-            what: `${step.biomeGroup} T${step.tier} boss resolved`,
-            throwOnTimeout: false,
-          },
-        );
+        if (!diedThisAttempt()) {
+          await this.waitUntil(
+            () => {
+              sampleBoss();
+              return obs.bossCleared(step.biomeGroup, step.tier) || diedThisAttempt();
+            },
+            {
+              timeoutMs: BOSS_FIGHT_TIMEOUT_MS,
+              what: `${step.biomeGroup} T${step.tier} boss resolved`,
+              throwOnTimeout: false,
+            },
+          );
+        }
 
         if (obs.bossCleared(step.biomeGroup, step.tier)) outcome = "victory";
-        else if (this.deps.deathCount() > deathsBefore) outcome = "death";
+        else if (diedThisAttempt()) outcome = "death";
+        if (bossCombatStartedAt !== null) bossCombatEndedAt = Date.now();
+        if (outcome === "victory") bossHpFraction = 0;
       } catch (err) {
         if (err instanceof AbortError) throw err;
         outcome = err instanceof StallError ? "unreachable" : "timeout";
+        sampleBoss();
+        if (bossCombatStartedAt !== null) bossCombatEndedAt = Date.now();
       } finally {
         recorder.setActivity("idle");
       }
@@ -1090,6 +1416,15 @@ export class RouteExecutor {
         attempt,
         outcome,
         durationMs: Date.now() - attemptStartedAt,
+        bossHpFraction,
+        bossCombatStartedAtMs:
+          bossCombatStartedAt === null ? undefined : bossCombatStartedAt - this.deps.startedAt,
+        bossCombatEndedAtMs:
+          bossCombatEndedAt === null ? undefined : bossCombatEndedAt - this.deps.startedAt,
+        bossCombatDurationMs:
+          bossCombatStartedAt === null || bossCombatEndedAt === null
+            ? undefined
+            : bossCombatEndedAt - bossCombatStartedAt,
       });
 
       if (outcome === "victory") return;
@@ -1171,6 +1506,37 @@ export class RouteExecutor {
       this.deps.obs,
       this.rotation,
     );
+  }
+
+  /**
+   * Resolve the next live upgrade's actual bottleneck. Essence stays in the
+   * authored biome; a missing catalyst selects that biome's node carrying the
+   * required live modifier instead of assuming the generic `uncleared` pick
+   * happens to mint the right family.
+   */
+  private upgradeFarmNode(
+    step: Extract<RouteStep, { type: "upgrade" }>,
+    recipe: ReturnType<typeof RECIPE_DATABASE.get>,
+    nextPlus: number,
+  ): string | null {
+    const preferred =
+      (step.farmAt ? resolveNode(step.farmAt, this.deps.obs, this.rotation) : null) ??
+      (recipe ? this.defaultFarmNodeFor(recipe.recipeGroup) : null);
+    if (!recipe) return preferred;
+
+    const item = ITEM_DATABASE.get(step.definitionId);
+    const catalystCost = item ? (upgradeCatalystCostFor(item, nextPlus) ?? {}) : {};
+    const missingFamily = Object.entries(catalystCost).find(
+      ([family, amount]) => this.deps.obs.catalyst(family) < (amount ?? 0),
+    )?.[0];
+    if (!missingFamily) return preferred;
+
+    const preferredInfo = preferred ? NODE_BIOMES[preferred] : undefined;
+    const biomeGroup = preferredInfo?.biomeGroup ?? recipe.recipeGroup;
+    const tier = preferredInfo?.biomeTier ?? BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
+    return normalNodesFor(biomeGroup, tier).find(
+      (nodeId) => NODE_MODIFIERS[nodeId]?.modifier === missingFamily,
+    ) ?? preferred;
   }
 
   /**
@@ -1318,4 +1684,27 @@ function refLabel(ref: NodeRef): string {
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Rune order is behavior: the first active rule claims its channel. Comparing
+ * only array length lets a same-sized Chase loadout masquerade as Orbit (or a
+ * lower-priority Step Back loadout as the intended one).
+ */
+export function runeLoadoutsEqual(
+  live: readonly EquippedRule[],
+  wanted: readonly EquippedRule[],
+): boolean {
+  return (
+    live.length === wanted.length &&
+    live.every((rule, index) => {
+      const expected = wanted[index];
+      return (
+        expected !== undefined &&
+        rule.conditionId === expected.conditionId &&
+        rule.actionId === expected.actionId &&
+        (rule.targetStanceId ?? null) === (expected.targetStanceId ?? null)
+      );
+    })
+  );
 }

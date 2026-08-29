@@ -51,7 +51,7 @@ export const swampMonsterEntries = [
     // needed ~6.6s of uninterrupted hits to reach cap, which is longer than the mob
     // lives — the authored sustained DoT was a number players never actually met.
     // 3 stacks at 2000ms cadence caps in ~4s, so the ramp resolves inside a real fight.
-    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 5, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
   }],
 
   ['mud-toad', {
@@ -61,9 +61,9 @@ export const swampMonsterEntries = [
     // state is being unable to. No further mechanic required.
     stats: { hp: 120, attack: 13, plating: 2, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2200, pullRange: 180 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 6, essenceType: 'green', level: 1, biomeXp: 42 }, // beast → Wild (biome mixture; tunable)
+    rewards: { essence: 6, essenceType: 'purple', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
-    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 5, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
     // Clinging mire — refreshed on every landed hit, so staying in contact keeps you
     // slowed while the Ooze's poison stacks. Skipped on an evaded hit like every
     // other on-hit rider.

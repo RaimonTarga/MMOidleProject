@@ -197,6 +197,7 @@ export function conceptAbilityIconSource(id: string): AssetIconSource | null {
 
 export function runeConditionIconSource(id: string): AssetIconSource | null {
   if (id === 'hp-above-90' || id === 'target-hp-below-25') return source('runes/conditions', 'hp-below-25');
+  if (id === 'inside-telegraph') return source('runes/conditions', 'target-casting');
   return CONDITION_IDS.has(id) ? source('runes/conditions', id) : null;
 }
 

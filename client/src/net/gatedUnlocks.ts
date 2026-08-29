@@ -65,7 +65,9 @@ export function openGatedUnlocks(input: UnlockGateInput): GatedUnlock[] {
   }
 
   for (const recipe of RUNE_RECIPE_DATABASE.values()) {
-    if (!recipe.runeId || !isRuneRecipeUnlocked(recipe, input)) continue;
+    // Deprecated recipes' runes are already owned as starter defaults — never
+    // announce them as a newly-opened gate.
+    if (!recipe.runeId || recipe.deprecated || !isRuneRecipeUnlocked(recipe, input)) continue;
     unlocks.push({
       key: `rune:${recipe.id}`,
       name: recipe.name,

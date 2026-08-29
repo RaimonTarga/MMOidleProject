@@ -2321,7 +2321,7 @@ ${mdTable(['Class', 'Mechanic', 'Passive formulas', 'Final damage multipliers', 
 
 ## Reload Exact Notes
 
-- Root Slinger stats: attack +18, maxHp +24, attackSpeedPct +0.20, attackRange +120, evasion +0.25, speed +15.
+- Root Slinger stats: attack +18, maxHp +24, attackSpeedPct +0.20, attackRange +120, evasion +0.30, speed +15.
 - Frame magazine/reload bases: Scout 5 ammo / 1200 ms reload; Marksman 10 ammo / 2000 ms reload; Artillerist 20 ammo / 3000 ms reload.
 - Generic reload stat layer in \`recalculatePlayerStats\`: after normal stat rebuild, if not Sniper and not Laser, \`attack = max(1, floor(attack * 0.65))\`; if not Sniper, \`attackCooldown = max(200, round(attackCooldown * 0.5))\`; Gatling halves cooldown again with a 100 ms floor.
 - Sniper: \`attack += round(attack * attackSpeedPct * (reload.snipe-as-to-dmg ?? 0.5))\`, then cooldown hard-sets to \`reload.snipe-cadence-ms ?? 2000\`; it ignores weapon APS, attack-speed cooldown scaling, and reload double-speed.

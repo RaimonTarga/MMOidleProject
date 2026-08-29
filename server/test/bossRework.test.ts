@@ -333,4 +333,31 @@ initCombatSystems();
   assert(!(buildGroundZoneViews(world, NODE, 1_900) ?? []).some(zone => zone.kind === 'fault-line-telegraph'), 'resolved faults should clear');
 }
 
+// Swamp boss pools now run for minutes, so they must be retired with the boss that
+// planted them. An owned pool dies with its maker; an unowned one (corpse hazard)
+// deliberately survives.
+{
+  const world = new World();
+  const boss = world.createMonster(NODE, 'grave-toadeater', { x: 400, y: 400 });
+  assert(!!boss, 'T1 Swamp boss should spawn');
+  const bossId = boss.isMonster.id;
+  const basePool = {
+    kind: 'toxic-pool' as const, pos: { x: 400, y: 400 }, radius: 80,
+    startedAtMs: 1_000, expiresAtMs: 601_000, damagePerTick: 3,
+    tickIntervalMs: 1_000, killer: buildKillerFromMonster(boss),
+  };
+  const owned = publishToxicPool(world, NODE, { ...basePool, ownerId: bossId });
+  const corpse = publishToxicPool(world, NODE, basePool);
+
+  assert(
+    MONSTER_DATABASE.get('grave-toadeater')?.chargedAttack?.pool?.durationMs === 600_000,
+    'the Bile Pool should last for the whole fight',
+  );
+
+  world.removeMonsterEntity(bossId);
+  const remaining = world.groundZones.get(NODE) ?? [];
+  assert(!remaining.some(zone => zone.id === owned.id), 'a boss-owned pool should die with the boss');
+  assert(remaining.some(zone => zone.id === corpse.id), 'an unowned corpse pool should outlive its maker');
+}
+
 console.log('boss rework tests passed');

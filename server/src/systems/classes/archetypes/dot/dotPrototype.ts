@@ -27,6 +27,7 @@ import {
   getFrostbiteDotTakenMult,
 } from "./t3";
 import type { DeathCause } from "@mmo-idle/shared";
+import type { MonsterEntity, PlayerEntity } from "../../../../ecs/entity";
 import type { World } from "../../../../world/World";
 import { playerDebuffConfig } from '../../shared/applyPlayerDebuff';
 import {
@@ -62,6 +63,80 @@ import { tryCheatDeath } from "../../../defense/mitigation/cheatDeath";
 import { drainWards } from "../../../defense/barrier/wards";
 import { drainBarrier, stampBarrierDamage } from "../../../defense/barrier/barrier";
 import { DOT_EFFECT_ID } from "./t3/core/constants";
+
+interface ClassDotStackApplication {
+  conversionPct: number;
+  durationMs: number;
+  maxStacks: number;
+  tickIntervalMs: number;
+  damagePerStack: number;
+}
+
+/** Resolve the live Apprentice root profile, relic delivery, and debuff scaling. */
+function resolveClassDotStackApplication(
+  attacker: PlayerEntity,
+): ClassDotStackApplication {
+  const profile = resolveDotClassProfile(
+    attacker.usesSkills.passives,
+    attacker.usesSkills.selectedSubVariant,
+  );
+  const delivery = resolveDotRelicDeliveryProfile(
+    profile.tickIntervalMs,
+    profile.maxStacks,
+    relicRatingsFromPassives(attacker.usesSkills.passives),
+  );
+  // Class DoT stack value is generated from base attack, not final hit damage.
+  // Relic delivery changes happen after the reference calculation, matching the
+  // normal Apprentice hit pipeline.
+  const rawDamagePerStack = computeDotClassDamagePerStack(
+    attacker.dealsDamage.attack,
+    profile,
+  );
+  const damagePerStack = playerDebuffConfig(attacker, {
+    id: DOT_EFFECT_ID,
+    sourceId: attacker.isPlayer.id,
+    data: { damagePerStack: rawDamagePerStack },
+  }, { origin: 'mechanic' }).data?.damagePerStack ?? rawDamagePerStack;
+  return {
+    conversionPct: profile.conversionPct,
+    durationMs: profile.durationMs,
+    maxStacks: delivery.maxStacks.after,
+    tickIntervalMs: delivery.tickIntervalMs.after,
+    damagePerStack,
+  };
+}
+
+/**
+ * Apply exactly one authoritative Apprentice root DoT stack. Sweep uses this
+ * seam for secondary targets, so it cannot drift into a parallel/fake DoT.
+ */
+export function applyClassDotStack(
+  world: World,
+  attacker: PlayerEntity,
+  defender: MonsterEntity,
+  application = resolveClassDotStackApplication(attacker),
+): void {
+  const effect = applyStatusEffect(defender.tracksCombat, {
+    id: DOT_EFFECT_ID,
+    maxStacks: application.maxStacks,
+    instanced: false,
+    sourceId: attacker.isPlayer.id,
+    remainingMs: application.durationMs,
+    refreshable: true,
+    data: {
+      damagePerStack: application.damagePerStack,
+      nextTickIn: application.tickIntervalMs,
+      tickIntervalMs: application.tickIntervalMs,
+      tickOnExpire: 1,
+    },
+  });
+
+  // Refresh dynamic values on every application so live buffs take effect now.
+  effect.data.damagePerStack = application.damagePerStack;
+  effect.data.tickIntervalMs = application.tickIntervalMs;
+  effect.data.tickOnExpire = 1;
+  attachMarker(world, defender, "hasDot");
+}
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
 export { computeScaledDotDamage };
@@ -338,55 +413,17 @@ export function initDotArchetype(): void {
     const attacker = ctx.attacker;
     if (!attacker?.appliesDots) return;
 
-    const state = ctx.defender.tracksCombat;
-    const profile = resolveDotClassProfile(
-      attacker.usesSkills.passives,
-      attacker.usesSkills.selectedSubVariant,
-    );
-    const delivery = resolveDotRelicDeliveryProfile(
-      profile.tickIntervalMs,
-      profile.maxStacks,
-      relicRatingsFromPassives(attacker.usesSkills.passives),
-    );
-    const maxStacks = delivery.maxStacks.after;
-    const tickIntervalMs = delivery.tickIntervalMs.after;
-    const { conversionPct: convPct, durationMs } = profile;
-    // Class DoT stack value is generated from base attack, not final ctx.damage.
-    // Final-hit multipliers still affect the direct portion before this reduction.
-    // Relic delivery changes happen after this reference calculation so faster
-    // ticks and a higher cap are real throughput rather than normalized away.
-    const rawDamagePerStack = computeDotClassDamagePerStack(attacker.dealsDamage.attack, profile);
-    const damagePerStack = playerDebuffConfig(attacker, {
-      id: 'dot',
-      sourceId: attacker.isPlayer.id,
-      data: { damagePerStack: rawDamagePerStack },
-    }, { origin: 'mechanic' }).data?.damagePerStack ?? rawDamagePerStack;
+    const application = resolveClassDotStackApplication(attacker);
 
     // Apply conversion reduction only if the T3 handler hasn't already done so.
     if (!ctx.metadata["dotConvApplied"]) {
-      ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - convPct)));
+      ctx.damage = Math.max(
+        1,
+        Math.round(ctx.damage * (1 - application.conversionPct)),
+      );
     }
 
-    const effect = applyStatusEffect(state, {
-      id: DOT_EFFECT_ID,
-      maxStacks,
-      instanced: false,
-      sourceId: ctx.attacker.isPlayer.id,
-      remainingMs: durationMs,
-      refreshable: true,
-      data: {
-        damagePerStack,
-        nextTickIn: tickIntervalMs,
-        tickIntervalMs,
-        tickOnExpire: 1,
-      },
-    });
-
-    // Refresh dynamic stat values on every hit so buffs take effect immediately.
-    effect.data.damagePerStack = damagePerStack;
-    effect.data.tickIntervalMs = tickIntervalMs;
-    effect.data.tickOnExpire = 1;
-    attachMarker(world, ctx.defender, "hasDot");
+    applyClassDotStack(world, attacker, ctx.defender, application);
   });
 
   // ── Monster → Player: DoT stack application ───────────────────────────────

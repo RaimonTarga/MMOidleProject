@@ -66,6 +66,8 @@ function spawnDeathHazard(world: World, dead: MonsterEntity): void {
     damagePerTick: hazard.damagePerTick,
     tickIntervalMs: hazard.tickIntervalMs,
     slowSpeedMult: hazard.slowSpeedMult,
+    sourceId: 'death-pool',
+    sourceLabel: 'Death Pool',
     killer: {
       monsterTypeId: dead.isMonster.monsterTypeId,
       monsterName: dead.isMonster.name,

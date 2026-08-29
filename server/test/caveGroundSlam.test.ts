@@ -175,10 +175,24 @@ function castEvents(world: World) {
     player.hasHealth.hp === hpAfterEscape,
     "a player who left the planted circle should avoid the resolved slam",
   );
-  const end = castEvents(world).find((e) => e.kind === "monster-cast-end");
+  const resolved = world.takeNodeEvents(NODE);
+  const end = resolved.find((e) => e.kind === "monster-cast-end");
   assert(
     end?.kind === "monster-cast-end" && end.fired === true,
     "fleeing the circle must not cancel the slam on its resolution tick",
+  );
+
+  // ...and the shockwave still erupts on the empty ground it was planted on.
+  // A telegraph that resolves with nobody inside used to be silent, which read
+  // as a missing animation rather than as a dodge.
+  const burst = resolved.find((e) => e.kind === "boss-fx" && e.fx === "slam");
+  assert(!!burst, "a slam that catches nobody must still emit its impact FX");
+  assert(
+    burst!.kind === "boss-fx" &&
+      burst!.pos.x === 405 &&
+      burst!.pos.y === 400 &&
+      burst!.radius === RADIUS,
+    "the impact FX must be centred on the planted point and sized to the aoe radius",
   );
 }
 

@@ -95,7 +95,9 @@ export const bossMonsterEntriesT1 = [
     // The tier's SUSTAINED-pressure boss: no spike, no adds, no attrition — just the
     // fastest cadence and the highest steady incoming DPS of the five. `attack` is low
     // BECAUSE every beat is two full pipeline hits and the cadence ramps: 24 x2 / 1.4s
-    // = 34 dps raw, ~56 dps once the ramp caps and the 50% enrage has fired. At the old
+    // = 34 dps raw, ~41 dps once the ramp caps (STALE: figures below predate the
+    // 2026-08-29 removal of the 50% enrage at T1 — kept for the historical dps math).
+    // ~56 dps once the ramp caps and the 50% enrage has fired. At the old
     // 36 the combo+ramp+enrage stack reached ~99 dps and killed all 30 bench builds.
     //
     // ⚠ THIS BOSS IS PARKED ON THE PLATING CLIFF and cannot be tuned off it here.
@@ -107,24 +109,34 @@ export const bossMonsterEntriesT1 = [
     // this plating scale. The MEDIAN is on band; the armour spread (~3.5x, vs ~1.8x for
     // the other four) is the gear problem from mitigation-rebalance-handoff-2026-08-18,
     // not a boss problem. Re-measure this boss FIRST after the mitigation pass.
-    stats: { hp: 2000, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
+    //
+    // DESIGNER NERF, 2026-08-25: bot playtesting (headless T1 baseline routes,
+    // none of which carry evasion into this fight — see "the evasion exam"
+    // above) hit repeated deaths here, all death-by-rhythm rather than a
+    // single spike: killing blows landed 8-10 damage after mitigation, always
+    // at `concurrentAttackers: 1` (the boss alone, not the guard pack). Cadence
+    // cut per designer direction, damage left untouched: attackCooldown
+    // 1400ms -> 1900ms (~26% slower swings), preserving the "fastest cadence
+    // of the five" identity relative to the others (still faster than Plains'
+    // 2000ms) while giving Guards/Recovery meaningfully more room between
+    // hits. Re-measure against the bot baselines before tuning further.
+    stats: { hp: 2000, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150, catalystBundle: 5 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
     targeting: { prefersPlayers: true },
     consecutiveHits: 2,
-    // Caps at +28% after 4 ticks = 12s, comfortably inside the fight, so the ramp is
+    // Caps at +20% after 4 ticks = 12s, comfortably inside the fight, so the ramp is
     // a beat the player actually meets rather than a number that never lands.
-    rampOnCombat: { stat: 'attackSpeed', perTickPct: 0.07, maxPct: 0.28, tickIntervalMs: 3000 },
+    // Cut 7%/28% -> 5%/20% (T1 balance iteration 3, 2026-08-24): manual +5 Striker play
+    // could not bring the boss below ~50% HP, so the post-50% enrage (since removed,
+    // 2026-08-29) was not the primary cause of failure — this was a first-pass cut to
+    // the pre-50% ramp alone. HP, base attack, and cadence are untouched.
+    rampOnCombat: { stat: 'attackSpeed', perTickPct: 0.05, maxPct: 0.20, tickIntervalMs: 3000 },
     // FOREST EXAM = a clean claw duel. Every swing is a two-hit bear-claw combo,
-    // and its attack cadence ramps while the pull remains active. No adds.
-    bossScript: {
-      phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.1, cdMult: 0.85 },
-        ] },
-      ],
-    },
+    // and its attack cadence ramps while the pull remains active. No adds, no enrage
+    // (T1 balance iteration, 2026-08-29: designer removed the 50% enrage entirely —
+    // the cadence ramp alone carries this fight's identity at T1).
   }],
 
   // MOUNTAIN — TELEGRAPHED CATASTROPHIC IMPACT. One enormous readable hit, and the
@@ -172,15 +184,17 @@ export const bossMonsterEntriesT1 = [
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150, catalystBundle: 5 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
     targeting: { prefersPlayers: true },
-    // 4 x4 = 16 dps at cap, reached after 3 swings (7.8s) and held there because each
-    // landed hit refreshes the whole duration. Was 3 x3 = 9 dps — LESS
-    // poison than the Mire Ooze trash mob (6 x3 = 18) in the biome whose whole identity
-    // is poison, which is most of why this boss was the tier's pushover.
-    dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
+    // 3 x4 = 12 dps at cap, reached after 3 swings (7.8s) and held there because each
+    // landed hit refreshes the whole duration. Was 4 x4 = 16 dps — approved 2026-08-28
+    // after live evidence showed poison, not direct hits or Bile Pool, was the fatal
+    // pressure in two clean boss fights (Striker died ~31% HP both times, ~38.2s each).
+    dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
     chargedAttack: {
       name: 'Bile Pool', castMs: 1200, cooldownMs: 8500, initialCooldownMs: 4000,
       multiplier: 1.0, fx: 'strong-kick', aoe: { radius: 105 },
-      pool: { durationMs: 7000, damagePerTick: 3, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
+      // Effectively permanent (10 min): the rot stays until the Toadeater dies or
+      // despawns, so the arena only ever shrinks. No fight is meant to run that long.
+      pool: { durationMs: 600000, damagePerTick: 3, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
     },
     // SWAMP EXAM = "survive the rot". At 50% the ROT escalates: pools come around
     // far sooner and sit wider, so the arena keeps shrinking. The boss's own slap is

@@ -355,7 +355,10 @@ w();
 w("| recipe | unlocks | kind | gate | cost |");
 w("|---|---|---|---|---|");
 for (const recipe of RUNE_RECIPE_DATABASE.values()) {
-  if (recipe.tier > 1) continue;
+  // Deprecated recipes' runes are already starter defaults (see the "starter"
+  // column above) — excluded here so this table keeps meaning what its header
+  // says: how NON-starter fragments are unlocked.
+  if (recipe.tier > 1 || recipe.deprecated) continue;
   const cost = Object.entries(recipe.cost)
     .map(([k, v]) => `${v} ${k}`)
     .join(" + ");
@@ -439,19 +442,19 @@ w();
 
 // ── Worked example ───────────────────────────────────────────────────────────
 
-w("## 10. Worked example — the Striker baseline");
+w("## 10. Worked example — the controlled Striker dodge baseline");
 w();
-w("Authored by the designer, 2026-08-25. Full source:");
-w("[`bot/src/routes/strikerT1.ts`](../bot/src/routes/strikerT1.ts).");
+w("The route config is in [`bot/src/routes/strikerT1.ts`](../bot/src/routes/strikerT1.ts);");
+w("generated movement and defense semantics live in `t1RouteBuilder.ts`.");
 w();
 w("Its spine, and *why* it is shaped that way:");
 w();
 w("```text");
 w("Clearing   full tutorial set, tier 0->1, pick Striker");
-w("Plains     whole set + Sweep,               max out -> +1");
-w("Forest     flash-rapier + Second Wind,      max out -> +2");
-w("Mountain   plate + Brace + brace rune,      max out -> +3   (nothing else crafted)");
-w("Swamp      Cleanse + avoid-hazards + charm, max out -> +4   (charm only)");
+w("Plains     Sweep at L2 + whole set,          max out -> +1");
+w("Forest     flash-rapier + Second Wind,       max out -> +2");
+w("Swamp      Cleanse + Avoid Hazards + charm,  max out -> +3");
+w("Mountain   plate,                          max out -> +4");
 w("Cave       Chaotic Axe + Expose Weakness,   max out -> GM 30, everything -> +5");
 w("Bosses     Plains, Forest, Mountain, Swamp, Cave");
 w("```");
@@ -459,8 +462,8 @@ w();
 w("- **All five bosses at the END, not per biome.** +5 needs GM 30, which needs all");
 w("  five biomes maxed. The gear ladder and the boss tuning agree on this.");
 w("- **Each biome maxed adds exactly one upgrade level** (6 GM per biome, gates every 6).");
-w("- **Mountain is walked before Swamp** because Brace — the Guard the reactive rune");
-w("  fires — is gated at Mountain L3, and Swamp's DoT attrition punishes weak kit.");
+w("- **Swamp precedes Mountain.** Cleanse and Avoid Hazards answer Swamp; Mountain");
+w("  then unlocks Step Back at Cave L2 / GM26 to answer planted Slam telegraphs.");
 w("- **Only one piece is taken from Mountain and Swamp.** Breadth exists to raise GM,");
 w("  not to collect a full set from every biome.");
 w();
@@ -474,22 +477,23 @@ w("| boss | armor | technique | guard |");
 w("|---|---|---|---|");
 w("| Plains | plains-vest-t1 | sweep | second-wind |");
 w("| Forest | plains-vest-t1 | expose-weakness | second-wind |");
-w("| Mountain | mountain-vest-t1 | expose-weakness | brace |");
+w("| Mountain | mountain-vest-t1 | expose-weakness | second-wind |");
 w("| Swamp | mountain-vest-t1 | expose-weakness | cleanse |");
-w("| Cave | mountain-vest-t1 | expose-weakness | brace |");
+w("| Cave | mountain-vest-t1 | expose-weakness | cleanse |");
 w();
-w("Rune loadout (6 RP of a budget that starts at 8):");
+w("Standing Rune loadout after Mountain L2 (8/10 RP at GM20):");
 w();
 w("```ts");
 w('{ conditionId: "always",         actionId: "auto-path-enemy" }  // 0 RP');
+w('{ conditionId: "inside-telegraph", actionId: "step-back" }      // 3 RP');
 w('{ conditionId: "in-combat",      actionId: "chase-enemy" }      // 1 RP');
-w('{ conditionId: "target-casting", actionId: "fire-guard" }       // 3 RP');
 w('{ conditionId: "always",         actionId: "avoid-hazards" }    // 2 RP, Swamp L2 recipe');
+w('{ conditionId: "always",         actionId: "wait-for-regen" }   // 1 RP');
 w("```");
 w();
-w("`target-casting -> fire-guard` is the ONLY reactive-to-telegraph behavior in the");
-w("harness, and the game supplies it. Bots do not manually dodge. The rule is legal");
-w("from minute one but INERT until a Guard is learned — which is deliberate.");
+w("Step Back must precede Chase because both claim MOVEMENT. Avoid Hazards is a separate");
+w("PATHING channel. Second Wind and Cleanse use built-in triggers, so neither carries");
+w("`fire-guard`. The Brace-tank A/B omits Step Back and equips that rule only with Brace.");
 w();
 
 // ── Write ────────────────────────────────────────────────────────────────────

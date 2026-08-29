@@ -25,8 +25,20 @@ pnpm bot:run --route=striker-t1 --policy=intended --ui
 # pipeline test (NOT an evaluation): 25x rewards, auto-tagged non-canonical
 pnpm bot:run --route=striker-t1 --policy=intended --ui --rewardMultiplier=25
 
-# shared-world batch: 2 bots per policy, all in the same dev world at once
-pnpm bot:batch --routes=striker-t1 --policies=intended,rusher --count=2
+# clean T1 controlled batch: eight routes, 25x, sequential, one bot at a time
+pnpm bot:batch
+
+# same eight routes, run concurrently under exclusive world-area leases
+pnpm bot:batch --executionMode=isolated-parallel --maxConcurrency=6
+
+# ...spreading the launches so the Clearing opening is not a thundering herd
+pnpm bot:batch --executionMode=isolated-parallel --maxConcurrency=6 --staggerMs=60000
+
+# explicit exploratory shared-world batch (not controlled evidence)
+pnpm bot:batch --controlled=false --routes=striker-v2-t1 --parallel=true
+
+# NONCANONICAL: authentic route + accelerated attempts 2+ against each boss
+pnpm bot:run --route=striker-t1 --policy=intended --fastBossRetry=true
 
 # delete bot characters between runs (accounts are reused, not orphaned)
 pnpm bot:cleanup --routes=striker-t1 --policies=intended,rusher,generic --count=2
@@ -34,7 +46,9 @@ pnpm bot:cleanup --routes=striker-t1 --policies=intended,rusher,generic --count=
 
 Flags: `--route` `--policy` `--index` `--server` `--out` `--maxRunMs`
 `--fresh=false` (keep the existing character instead of starting from zero),
-`--ui[=port]` (dashboard, default 4500), `--rewardMultiplier=N` (dev-only, 1-1000).
+`--ui[=port]` (dashboard, default 4500), `--rewardMultiplier=N` (dev-only, 1-1000),
+`--fastBossRetry=true` (dev-only, always noncanonical), and
+`--fastBossRetryIncludeGuardians=true` (rebuild/reclear guardians on accelerated retries).
 
 Canonical runs take **hours**. The runner streams telemetry to disk as it goes,
 so a run killed at hour six is still fully analysable.
@@ -68,10 +82,13 @@ bot and refreshing every second:
 - route progress: step N of M, the step label, milestones reached
 - run totals and a colour-coded feed of recent events
 
-`pnpm bot:batch` runs every bot in one process, so a single dashboard shows the
-whole cohort side by side. Separate `pnpm bot:run` invocations are separate
-processes and therefore separate dashboards — the second one lands on 4501, and
-so on.
+`pnpm bot:batch` defaults to the eight-route controlled T1 registry and awaits
+each terminal result before starting the next bot. It uses 25x rewards and a
+finite six-hour per-run watchdog by default, so its output is pipeline-validation
+evidence rather than canonical economy evidence. Parallel/shared-world execution
+requires `--controlled=false --parallel=true`. Separate `pnpm bot:run`
+invocations are separate processes and therefore separate dashboards — the
+second one lands on 4501, and so on.
 
 It reads the bots' **own** player views. No game-server, protocol or admin
 change was needed, and the audited anonymous-spectator projection
@@ -135,8 +152,21 @@ A run is canonical only when `summary.run.canonical === true`. It is tainted by:
 |---|---|
 | `NON_CANONICAL_REWARD_MULTIPLIER` | the server's kill-reward multiplier was not 1 at ANY point in the run |
 | `NON_CANONICAL_TIME_SCALE` | `BOT_TIME_SCALE` set (reserved for the future loop accelerator) |
+| `NON_CANONICAL_FAST_BOSS_RETRY` | attempts 2+ may use the explicit dev encounter reset and teleport |
 
 Never mix a tainted run into balance or economy conclusions.
+
+Fast boss retry never changes the first attempt: the authored route progresses,
+equips, travels, clears the guard, and activates the real boss normally. After a
+failed attempt, it applies the ordinary authoritative respawn baseline (full HP
+and barrier; combat statuses, cooldowns, class resources, aggro, targets, motion,
+and summons reset), teleports the same character back to the same dungeon, and
+rebuilds encounter-local monsters, script state, telegraphs, persistent zones,
+corpses, node ramp overrides, timers, and dungeon phase. Equipment, upgrades,
+progression, Techniques, Guards, Runes, stats, boss implementation/numbers, and
+the combat engine remain real. By default it skips guard reform and reclear;
+guardian-inclusive retries are separately explicit. Controlled batches reject
+the flag; use an exploratory single run or `--controlled=false` batch.
 
 The multiplier is **server-global**: one bot (or a human on the debug panel)
 raising it changes rewards for every bot in the world. The taint is therefore
@@ -180,6 +210,76 @@ WorldMirror ──► Observation ──► RouteExecutor ──► Intents ─�
   unlocks. Every craft, upgrade and boss clear is earned.
 - **Waiting is data.** When the economy makes the bot wait, that is recorded as
   a `blocked-on-resource` span, not shortcut.
+
+## Controlled concurrency (`--executionMode=isolated-parallel`)
+
+Controlled batches default to `sequential` — one bot at a time, unchanged.
+`isolated-parallel` runs several at once without letting them contaminate one
+another. The bots are **not** taught to avoid each other; a coordinator-owned
+lease manager decides who may proceed, and a blocked bot waits.
+
+**The isolation boundary is one world node.** The server scopes monster
+allocation, auto-targeting, AoE and reward sharing by `hasPosition.nodeId` —
+`grantMonsterRewards` explicitly skips party members standing in a different
+node — so two bots in different nodes cannot reach each other's combat or
+progression evidence. A dungeon is its own node id, so boss/guardian state
+serializes under the same rule.
+
+Consequences worth knowing:
+
+- **Transit is deliberately unleased**, and so is the **Clearing**. Every route
+  opens there for the tier-0 quest and starter set; leasing it would serialize
+  the whole batch behind one node before any bot reached the content under test,
+  and the tutorial is not a difficulty measurement anyone reads. Sharing it is
+  explicitly not contamination. Only the node a bot is *working* in is exclusive.
+- **Same biome, different nodes is legal and expected.** Every T1 farm step is
+  authored as a biome with `pick: "uncleared"`, so which node gets used was
+  always the executor's dynamic choice. `resolveNodeCandidates` returns that
+  choice as an ordered list; index 0 is exactly what a solo run picks, and the
+  coordinator only falls through to a later entry when the head is leased.
+- **Nodes are not equal.** Each carries a node modifier that rescales monster
+  HP/attack/plating at spawn, so node choice is a difficulty variable. Runs
+  record `coordination.nodeMix` (node, modifier, dwell time) so two runs can be
+  checked for comparability instead of assumed comparable.
+- **A node is released only when the bot is observed to have left it**, never
+  when the executor merely decides to travel. Walking out takes real seconds,
+  and releasing at the decision left the node free while the avatar was still
+  standing in it -- the next bot was granted it and farmed around a bot that had
+  not gone yet (live defect, 2026-08-28). A travel step also acquires its
+  destination, so a bot never *arrives* in a node it does not own.
+- **A waiter keeps the node it is parked in** until its next lease is granted,
+  so nobody farms around a stopped bot. If waiters ever form a ring, the
+  manager's parked-hold breaker drops the parked areas — never the pending
+  requests — so the batch cannot wedge.
+- **Lease waiting is not a stall.** It is its own `lease-wait` activity and is
+  reported separately from combat/economy stalls.
+- **Fall-through is biased toward nearby nodes.** When the preferred node is
+  leased, the coordinator holds out for another node within a couple of hops
+  rather than accepting whatever happens to be free -- a distant free node meant
+  a multi-biome walk (measured: ~66s of travel). The hold-out is bounded
+  (`NEAR_CANDIDATE_WIDEN_MS`), so a permanently busy cluster still widens instead
+  of wedging the run, and waiting is cheap because a bot that owns the node it is
+  standing in keeps farming while it waits.
+- **A bot never fights in a node another controlled bot holds.** The travel
+  loop's "fight back when attacked" rule is suppressed while crossing a leased
+  node -- it keeps walking instead. Without this, a long crossing parked bots
+  mid-transit and had them take real kills and catalyst gains inside someone
+  else's node (live defect at 8-bot scale, 2026-08-28). Fight-back is unchanged
+  in unleased ground, including the Clearing.
+- **Co-presence is classified, not blanket-tainting.** A bot merely passing
+  through a leased node is recorded as `transit-co-presence` and does not taint
+  the run; only another bot *engaged* in a node this one holds counts as
+  `controlled-player-observed` and marks it contaminated. Summaries report both
+  as `contaminatingOverlaps` / `transitCoPresences`.
+  "Engaged" is **derived**, never declared: `observe()` reads the server's own
+  `auto` combat flag each tick. It was briefly a hand-set flag, and the one
+  travel path nobody wired -- the walk home after dying mid-farm -- left it stuck
+  true, so a purely transiting bot poisoned every node it crossed. The executor
+  has eleven navigation call sites; deriving from authoritative state covers all
+  of them, and a source guard in `harness.test.ts` blocks hand-wiring it again.
+- Overlap detection stays on regardless. If two controlled bots are ever seen in
+  the same leased node, both runs are marked `CONTAMINATED_CONTROLLED_OVERLAP`
+  and the artifacts are kept, never silently accepted.
 
 ## Adding a class route (Stage C)
 

@@ -95,6 +95,13 @@ export function AnalyticsTab() {
         <SummaryCard label="Deaths / Progression" value={`${analytics.summary.deaths} / ${analytics.summary.progressionEvents}`} />
       </div>
 
+      <div className="grid grid-cols-4 gap-4">
+        <SummaryCard label="Telegraph Rune Activations" value={analytics.summary.runeActivations} />
+        <SummaryCard label="Dodge Attempts / Exits" value={`${analytics.summary.telegraphDodgeAttempts} / ${analytics.summary.telegraphDodgeSuccesses}`} />
+        <SummaryCard label="Failed Dodges" value={analytics.summary.telegraphDodgeFailures} />
+        <SummaryCard label="Telegraph Damage" value={analytics.summary.telegraphDamageReceived} />
+      </div>
+
       <div className="grid grid-cols-[1fr_420px] gap-4">
         <ChartCard title="Perk Path Sankey">
           {analytics.perkSankey.links.length > 0 ? (

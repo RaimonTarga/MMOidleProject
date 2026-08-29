@@ -87,6 +87,7 @@ Removed tier-wide, with no replacement:
 | self-`enrage` | Plains T1 + T2 | Plains escalates by concurrency, never by the boss becoming a better duellist. |
 | timed `shield` at 50% | Mountain T1, Cave T1 | A generic stall that taught nothing about either encounter. |
 | `spawn-adds` | Desert T2 | Desert compresses the biome's controller/dealer pairing into ONE duellist; outsourcing to adds made it a weaker Plains fight. |
+| self-`enrage` | Forest T1 (added 2026-08-29, after the rework shipped) | Designer call: the pre-50% attack-speed ramp alone carries the T1 fight's identity; T2 `apex-timberclaw` keeps its own frequency-surge enrage. |
 
 The default replacement is **escalate the thing the encounter is already about** — see
 `empower-charged` and `empower-shred` below.
@@ -151,7 +152,9 @@ Cleared when the boss dies (`monsterDeathEffects.ts`) and on node freeze
 ### `spawn-pool` (boss action)
 Lays a hazard pool centred on the boss, publishing the same ground zone the charged-attack
 `pool` rider and `onDeath.spawnHazard` already use. Used for Swamp's Rot Bloom and
-Volcanic's floor collapse.
+Volcanic's floor collapse. Like the charged-attack rider it stamps an `ownerId`, so the
+pool is cleared when the boss leaves the world; only `onDeath.spawnHazard` corpse pools
+stay ownerless and outlive their maker.
 
 ### `apply-shield.shatter` (boss action rider)
 The runtime barrier granted mid-fight can now carry the brittle-shell `shatter` rider, so
@@ -183,12 +186,23 @@ an aggro target, so it never spends its life retracted in an empty room.
 
 Contrast Wasteland deliberately: here new creatures keep **arriving**.
 
-### Forest — relentless cadence duel (T1–T2) — LOCKED
-Unchanged apart from `prefersPlayers`. Two-hit claw combo, attack-speed ramp, and at T2 a
-compact stunning swipe. Its 50% enrage is a **frequency** surge, which is this boss's whole
-idea, so it survives the generic-enrage cull. Forest retires after T2.
+### Forest — relentless cadence duel (T1–T2)
+Two-hit claw combo and attack-speed ramp, apart from `prefersPlayers`. At T2 a compact
+stunning swipe. Forest retires after T2.
+
+> **2026-08-29 — T1 enrage removed.** The T1 `gnarled-greatbear`'s 50% enrage (a
+> frequency surge) was previously LOCKED as surviving the generic-enrage cull because
+> it read as this boss's whole idea. Designer direction removed it entirely at T1:
+> the pre-50% attack-speed ramp alone carries the fight's identity now, and no phase
+> fires at 50%. T2 `apex-timberclaw` is unaffected and still carries its own 50%
+> frequency-surge enrage (`bossesT2.ts`) — this change is T1-only.
 
 ### Swamp — rot / attrition (T1–T3)
+Swamp pools are **fight-length hazards**: `durationMs` is 600 000 (10 min) on T1's Bile
+Pool, T2's Corrosive Pool and T3's Rot Bloom, so the arena only ever shrinks during an
+encounter. They are retired by `clearToxicPoolsByOwner` when the owning boss dies or
+despawns (`removeMonsterEntity`), never by expiry. T3's *Spore Pool* is the deliberate
+exception — it keeps a short duration because its payoff is the detonation on expiry.
 - **T1** `grave-toadeater`: 50% → pools come far sooner and wider (`empower-charged`). The
   slap stays trivial.
 - **T2** `mire-gorged-behemoth`: pool leaves Corrosion. 50% → cadence-only enrage (venom

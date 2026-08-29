@@ -48,6 +48,7 @@ import { resetNodeFeatureRuntimeState } from "../nodeFeatures";
 import { resetEvadeAccumulator } from "../../defense/mitigation/evasion";
 import { refillBarrier } from "../../defense/barrier/barrier";
 import { applyDormantUltimateBoss } from "../../combat/ai/ultimateEncounter";
+import { cancelActiveTelegraphResponse } from "../../combat/ai/telegraphEvasion";
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
 // Multipliers live in shared GAME_CONFIG so the client bestiary shows the same scaled stats.
@@ -929,6 +930,7 @@ export function respawnPlayer(world: World, playerId: string): void {
   const entity = world.getPlayerEntity(playerId);
   if (!entity) return;
 
+  cancelActiveTelegraphResponse(world, entity, "player-respawned");
   detachComponent(world, entity, "isDead");
 
   const spawn: Vec2 = {
@@ -971,7 +973,6 @@ export function respawnPlayer(world: World, playerId: string): void {
   detachComponent(world, entity, "hasAlignment");
   detachComponent(world, entity, "inAcChargePhase");
   detachComponent(world, entity, "inAcDischarge");
-
   resetTracksCombat(entity.tracksCombat);
 
   for (const e of world.aggroedMonsters) {

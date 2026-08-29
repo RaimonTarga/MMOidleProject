@@ -42,12 +42,16 @@ export const plainsRecipeEntries = [
     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.06 },
     icon: 'items/weapons/iron-broadsword.png',
     description: 'Mass-forged for the ranks, dependable as sunrise. Ten thousand like it have won quiet wars.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (240)
+    // as before — reshaped, not inflated. No catalyst: stays neutral like its
+    // own T2 successor (knight-steelsword), an intentional "flexible payment"
+    // identity noted on plains-boots-t2's family-tag comment.
     upgrades: [
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 20 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 30 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 10 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 25 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 35 }, requiredBiomeLevel: 4 },
       { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -59,12 +63,15 @@ export const plainsRecipeEntries = [
     cost: { yellow: 20 }, stats: { maxHp: 24, plating: 7 }, tier: 1,
     icon: 'items/armor/survivors-robe.png',
     description: 'Field plate patched and repatched by those who lived to patch it.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (470).
+    // +5 catalyst inherited from plains-vest-t2's own family-tag ("plating
+    // answers frequent light hits → Alacrity").
     upgrades: [
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 30 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 120 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 120 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 120 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 20 }, requiredBiomeLevel: 3 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 70 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 115 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 200 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -80,12 +87,14 @@ export const plainsRecipeEntries = [
     tier: 1,
     icon: 'items/charms/plains-stone.png',
     description: 'A sun-warmed stone from the heart of the grasslands, humming with quiet vigor.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (190).
+    // No catalyst — charms stay clean at T1.
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 12 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 24 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 20 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 30 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 75 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -98,12 +107,13 @@ export const plainsRecipeEntries = [
     mechanicEffects: { 'mobility.kill-speed-pct': 0.25, 'mobility.kill-speed-ms': 3000 },
     icon: 'items/boots/fleet-boots.png',
     description: 'Open sandals built for crossing flat ground at a dead run.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (160).
     upgrades: [
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 20 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 15 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 25 }, requiredBiomeLevel: 4 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
     ],
   }],
 

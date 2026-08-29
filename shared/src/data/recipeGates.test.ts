@@ -18,6 +18,7 @@ import { RECIPE_DATABASE } from './recipes';
 import { STANCE_RECIPE_DATABASE } from '../stanceRecipes';
 import { RITE_RECIPE_DATABASE } from '../riteRecipes';
 import { RUNE_RECIPE_DATABASE } from '../runeRecipes';
+import { STARTER_RUNE_IDS } from '../runeDatabase';
 import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
 import { biomeLevelCap } from '../config/gameConfig';
 import { NODE_BIOMES } from '../world/nodeBiomes';
@@ -134,5 +135,20 @@ for (const entry of RETIRED_BIOME_DEBT) {
     `RETIRED_BIOME_DEBT lists '${entry}', which is no longer stale — remove the entry`,
   );
 }
+
+// A `deprecated: true` rune recipe promises its reward is already a starter
+// default (see `RuneRecipe.deprecated`'s doc comment) — verify that promise
+// holds, rather than trusting the flag. A recipe deprecated without its rune
+// actually being a starter would silently strand players who never craft it.
+const deprecationProblems: string[] = [];
+for (const recipe of RUNE_RECIPE_DATABASE.values()) {
+  if (!recipe.deprecated) continue;
+  if (!recipe.runeId || !STARTER_RUNE_IDS.includes(recipe.runeId)) {
+    deprecationProblems.push(
+      `rune ${recipe.id}: marked deprecated but its rune '${recipe.runeId}' is not a starter default`,
+    );
+  }
+}
+assert(deprecationProblems.length === 0, `bad deprecated rune recipes:\n  ${deprecationProblems.join('\n  ')}`);
 
 console.log('recipeGates.test.ts: ok');

@@ -52,18 +52,17 @@ export const caveMonsterEntries = [
     id: 'cave-brute', name: 'Cave Brute', color: 0x443344,
     // The bruiser elite — a cap-tripping slam, slow, charges to connect, and
     // armored enough that fast weapons don't trivially shred it.
-    stats: { hp: 250, attack: 90, plating: 1, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 2800, pullRange: 240 }, // pullRange 145→240: high-detection patrolling elite (overpull risk)
+    stats: { hp: 250, attack: 80, plating: 1, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 2800, pullRange: 240 }, // pullRange 145→240: high-detection patrolling elite (overpull risk)
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 13, essenceType: 'red', level: 1, biomeXp: 90 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     // GROUND SLAM — the cave's readable "get out of the circle" beat. A long
     // wind-up plants a wide circle on the ground; it lands there whether or not
-    // you are still in it, so footwork (not mitigation) is the answer. Generous
-    // initialCooldownMs keeps it off the opener — you meet the brute first, the
-    // slam second. PLACEHOLDER numbers — balance pass owns them.
+    // you are still in it, so footwork (not mitigation) is the answer. The slam
+    // starts ready so the brute gets to show its defining mechanic in the opener.
     chargedAttack: {
-      name: 'Ground Slam', castMs: 1800, cooldownMs: 12000, initialCooldownMs: 9000,
+      name: 'Ground Slam', castMs: 1800, cooldownMs: 12000, initialCooldownMs: 0,
       // Multiplier cut 2.2 -> 1.5 to sit alongside the raised base attack. The slam is
       // meant to be dodged, not tanked, so its job is a hard punish for standing in the
       // circle rather than an unsurvivable number regardless of footwork.
@@ -115,7 +114,7 @@ export const caveMonsterEntries = [
     // FOOTPRINT, not speed, so the tell stays readable while the safe ground
     // shrinks. PLACEHOLDER numbers — balance pass owns them.
     chargedAttack: {
-      name: 'Ground Slam', castMs: 2000, cooldownMs: 13000, initialCooldownMs: 9500,
+      name: 'Ground Slam', castMs: 2000, cooldownMs: 13000, initialCooldownMs: 0,
       multiplier: 2.4, fx: 'strong-kick',
       aoe: { radius: 130 },
     },
@@ -128,7 +127,7 @@ export const caveMonsterEntries = [
     // Ranged elite — hurls stalactites from its perch; armored and patient.
     stats: { hp: 300, attack: 66, plating: 1, damageReduction: 0.05, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
     behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
-    rewards: { essence: 18, essenceType: 'blue', level: 1, biomeXp: 100 }, // stone construct → Stone (biome mixture; tunable)
+    rewards: { essence: 18, essenceType: 'red', level: 1, biomeXp: 100 },
     // STATIC RANGED SENTRY - it does not roam like a normal ranged mob. It stays
     // perched, activates when a player enters its pull range, and fires from that
     // position. The static behavior IS the mechanic.
@@ -185,7 +184,7 @@ export const caveMonsterEntries = [
     // Still escapable on foot at player base speed; that is the contract.
     // PLACEHOLDER numbers — balance pass owns them.
     chargedAttack: {
-      name: 'Ground Slam', castMs: 2200, cooldownMs: 14000, initialCooldownMs: 10000,
+      name: 'Ground Slam', castMs: 2200, cooldownMs: 14000, initialCooldownMs: 0,
       multiplier: 2.6, fx: 'strong-kick',
       aoe: { radius: 145 },
     },

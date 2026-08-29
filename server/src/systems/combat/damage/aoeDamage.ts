@@ -19,6 +19,27 @@ import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { emitPlayerMonsterOnKill } from "./killHooks";
 
 /**
+ * Authoritative target selection shared by direct AoE and class-specific riders.
+ * Body overlap (not origin distance) defines Sweep's valid secondary targets.
+ */
+export function playerAoeTargets(
+  world: World,
+  attacker: PlayerEntity,
+  center: Vec2,
+  radius: number,
+  excludeId?: string,
+): MonsterEntity[] {
+  return world.collision.bodiesInCircle(
+    world.monsterEntitiesInNode(attacker.hasPosition.nodeId),
+    center,
+    radius,
+  ).filter(
+    (monster) =>
+      monster.isMonster.id !== excludeId && !isInvulnerableMonster(monster),
+  );
+}
+
+/**
  * Apply splash AoE damage from a player to all monsters within radius of a
  * center point, skipping any excluded monster (the primary target).
  */
@@ -35,16 +56,9 @@ export function applyPlayerAoe(
   const attackerId = attacker.isPlayer.id;
   const source = actorFromPlayer(attacker);
 
-  const victims = world.collision.bodiesInCircle(
-    world.monsterEntitiesInNode(attackerNodeId),
-    center,
-    radius,
-  );
+  const victims = playerAoeTargets(world, attacker, center, radius, excludeId);
 
   for (const monster of victims) {
-    if (monster.isMonster.id === excludeId) continue;
-    if (isInvulnerableMonster(monster)) continue;
-
     const mitigation = buildPlatingDrBreakdown({
       grossDamage: baseDamage,
       effectivePlating: monster.mitigatesDamage.plating,

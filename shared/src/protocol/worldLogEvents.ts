@@ -3,6 +3,7 @@ import { essenceLabel } from '../items';
 import type { BuffCategory, BuffId } from '../components/combat/buffs';
 import type { DeathCause } from './death';
 import { formatDeathCauseLabel } from './death';
+import type { Vec2 } from '../systems/spatial';
 
 export type WorldLogActorType = 'player' | 'monster' | 'minion';
 
@@ -151,6 +152,128 @@ export type WorldLogEvent =
       serverTime: number;
       nodeId: string;
       message: string;
+    }
+  | {
+      /** Authoritative Guard/Technique activation for combat-run diagnostics. */
+      kind: 'ability-activation';
+      id: number;
+      tick: number;
+      serverTime: number;
+      nodeId: string;
+      player: WorldLogActor;
+      abilityId: string;
+      slot: 'guard' | 'technique';
+      removedEffects?: Array<{ effectId: string; stacks: number }>;
+    }
+  | {
+      /** One continuous stay inside one hostile persistent runtime hazard. */
+      kind: 'hazard-contact';
+      id: number;
+      tick: number;
+      serverTime: number;
+      nodeId: string;
+      player: WorldLogActor;
+      hazardId: string;
+      hazardKind: string;
+      sourceId: string;
+      sourceName: string;
+      phase: 'enter' | 'leave';
+      durationMs?: number;
+      damageReceived?: number;
+      harmfulEffects?: string[];
+      endReason?: 'exited' | 'expired' | 'death' | 'node-cleared';
+    }
+  | {
+      /** Avoid Hazards movement response, distinct from telegraph dodging. */
+      kind: 'hazard-escape';
+      id: number;
+      tick: number;
+      serverTime: number;
+      nodeId: string;
+      player: WorldLogActor;
+      hazardIds: string[];
+      hazardKinds: string[];
+      phase: 'attempt' | 'result';
+      outcome?: 'success' | 'failed' | 'expired' | 'interrupted';
+      reason?: string;
+    }
+  | {
+      /** Step Back lifecycle measured against authoritative telegraph resolution. */
+      kind: 'telegraph-dodge';
+      id: number;
+      tick: number;
+      serverTime: number;
+      nodeId: string;
+      player: WorldLogActor;
+      phase: 'activation' | 'attempt' | 'safe' | 'reenter' | 'resolution' | 'release' | 'result';
+      telegraphId?: string;
+      telegraphKind?: string;
+      ownerId?: string;
+      trackedTelegraphIds?: string[];
+      acquiredAtMs?: number;
+      startingPosition?: Vec2;
+      telegraphGeometry?: Array<{ pos: Vec2; radius: number }>;
+      escapePoint?: Vec2;
+      firstSafeAtMs?: number;
+      resolvedAtMs?: number;
+      releasedAtMs?: number;
+      releaseReason?:
+        | 'resolved'
+        | 'telegraph-discarded'
+        | 'caster-gone'
+        | 'node-changed'
+        | 'manual-override'
+        | 'flee-priority'
+        | 'autocombat-disabled'
+        | 'step-back-unequipped'
+        | 'player-respawned';
+      reenteredAfterSafe?: boolean;
+      outcome?: 'success' | 'failure' | 'discarded';
+      damageReceived?: number;
+      reason?: string;
+    }
+  | {
+      /** Explicit development-harness mutation; never canonical gameplay. */
+      kind: 'fast-boss-retry';
+      id: number;
+      tick: number;
+      serverTime: number;
+      nodeId: string;
+      player: WorldLogActor;
+      taint: 'NON_CANONICAL_FAST_BOSS_RETRY';
+      includeGuardians: boolean;
+      playerReset: 'respawn-baseline';
+      message: string;
+    }
+  | {
+      /**
+       * Class-specific Technique/Sweep adapter contribution, for combat-run
+       * diagnostics only. `event` disambiguates the adapter-specific occurrence;
+       * damage fields are populated only where the amount is known directly at
+       * the application site (never inferred from unrelated damage events).
+       */
+      kind: 'technique-adapter';
+      id: number;
+      tick: number;
+      serverTime: number;
+      nodeId: string;
+      player: WorldLogActor;
+      adapter: 'apprentice-sweep' | 'slinger-sweep' | 'conduit-formation';
+      event:
+        | 'apprentice-secondary-target'
+        | 'slinger-clip-created'
+        | 'slinger-clip-shot'
+        | 'slinger-splash-hit'
+        | 'conduit-arm'
+        | 'conduit-delivery'
+        | 'conduit-share-lost'
+        | 'conduit-secondary-damage';
+      target?: WorldLogActor;
+      stacksApplied?: number;
+      clipSize?: number;
+      splashDamage?: number;
+      eligibleSummons?: number;
+      formationRoot?: string;
     };
 
 type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
@@ -534,6 +657,55 @@ export function formatWorldLogEntry(
         headline: event.message,
         headlineParts: [neutral(event.message)],
       };
+    }
+    case 'ability-activation': {
+      const who = actorLabel(event.player, viewerId);
+      const removed = event.removedEffects?.length
+        ? `; removed ${event.removedEffects.map((effect) => `${effect.effectId} x${effect.stacks}`).join(', ')}`
+        : '';
+      const text = `${who} activated ${event.abilityId}${removed}`;
+      return { kind: 'info', text, headline: text, headlineParts: [neutral(text)] };
+    }
+    case 'hazard-contact': {
+      const who = actorLabel(event.player, viewerId);
+      const text = event.phase === 'enter'
+        ? `${who} entered ${event.sourceName}`
+        : `${who} left ${event.sourceName} after ${formatLogNumber(event.durationMs ?? 0)}ms (${formatLogNumber(event.damageReceived ?? 0)} damage)`;
+      return { kind: 'info', text, headline: text, headlineParts: [neutral(text)] };
+    }
+    case 'hazard-escape': {
+      const who = actorLabel(event.player, viewerId);
+      const text = event.phase === 'attempt'
+        ? `${who} attempted to escape a persistent hazard`
+        : `${who} hazard escape: ${event.outcome ?? 'unknown'}`;
+      return { kind: 'info', text, headline: text, headlineParts: [neutral(text)] };
+    }
+    case 'telegraph-dodge': {
+      const who = actorLabel(event.player, viewerId);
+      const text = event.phase === 'activation'
+        ? `${who} activated Step Back`
+        : event.phase === 'attempt'
+          ? `${who} attempted a telegraph dodge`
+          : event.phase === 'safe'
+            ? `${who} moved outside the telegraph and held Step Back ownership`
+            : event.phase === 'reenter'
+              ? `${who} re-entered the telegraph before it resolved`
+              : event.phase === 'resolution'
+                ? `${who}'s Step Back telegraph resolved`
+                : event.phase === 'release'
+                  ? `${who} released Step Back ownership (${event.releaseReason ?? 'unknown'})`
+          : `${who} telegraph dodge: ${event.outcome ?? 'unknown'}${event.damageReceived ? ` (${formatLogNumber(event.damageReceived)} damage)` : ''}`;
+      return { kind: 'info', text, headline: text, headlineParts: [neutral(text)] };
+    }
+    case 'fast-boss-retry': {
+      const who = actorLabel(event.player, viewerId);
+      const text = `${event.taint}: ${who} prepared a fast boss retry`;
+      return { kind: 'info', text, headline: text, headlineParts: [neutral(text)] };
+    }
+    case 'technique-adapter': {
+      const who = actorLabel(event.player, viewerId);
+      const text = `${who} technique adapter: ${event.adapter} (${event.event})`;
+      return { kind: 'info', text, headline: text, headlineParts: [neutral(text)] };
     }
     default:
       return {

@@ -21,9 +21,9 @@ Generated from `tools/dps-report.ts`. This packet is Markdown only; it intention
 | Average mob HP | 161 |
 | Average plating | 0.40 |
 | Average DR | 1.50% |
-| Reference optimal-build average DPS | 51.4 |
-| Target TTK at reference DPS | 3.12s |
-| Expected DPS band | 34.4 - 77.1 |
+| Reference optimal-build average DPS | 47.8 |
+| Target TTK at reference DPS | 3.36s |
+| Expected DPS band | 32.0 - 71.7 |
 
 | Profile | Monster | HP | Plating | DR | Defensive notes |
 | --- | --- | --- | --- | --- | --- |
@@ -38,20 +38,20 @@ Generated from `tools/dps-report.ts`. This packet is Markdown only; it intention
 
 | Build | Optimal Weapon | ATK | On-hit | APS | CD ms | Range | HP | Plating | DR | Class passives | Mechanic frequency | Formula notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice | Chaotic Axe +5 | 56.0 | 0.00 | 1.12 | 891 | 72.0 | 112 | 2.00 | 0.00% | - | DoT cap 6 stacks, tick 1500ms | dead swing every 3 hits |
-| Conduit | Chaotic Axe +5 | 55.0 | 0.00 | 1.14 | 874 | 162 | 108 | 2.00 | 0.00% | - | 4 root/mid summons at 1.14 APS each; one formation budget | 4 root mid summons at 1.14 APS; formation budget normalized; dead swing every 3 hits |
-| Slinger | Chaotic Axe +5 | 36.0 | 0.00 | 1.75 | 413 | 132 | 107 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50 | 10 shots, 1600ms reload, 1.75 effective shots/s | dead swing every 3 hits |
-| Spirit | Chaotic Axe +5 | 59.0 | 0.00 | 1.23 | 812 | 142 | 103 | 2.00 | 0.00% | - | discharge every 9 hits (0.14/s) | dead swing every 3 hits |
-| Squire | Chaotic Axe +5 | 60.0 | 0.00 | 0.94 | 1069 | 12.0 | 130 | 3.00 | 4.00% | - | empowered every 7.00s (0.14/s) | dead swing every 3 hits |
-| Striker | Chaotic Axe +5 | 55.0 | 0.00 | 1.17 | 858 | 12.0 | 118 | 2.00 | 2.00% | - | finisher every 5 hits (0.23/s) | dead swing every 3 hits |
+| Apprentice | Chaotic Axe +5 | 52.0 | 0.00 | 1.12 | 891 | 72.0 | 112 | 2.00 | 0.00% | - | DoT cap 6 stacks, tick 1500ms | dead swing every 3 hits |
+| Conduit | Chaotic Axe +5 | 51.0 | 0.00 | 1.14 | 874 | 162 | 108 | 2.00 | 0.00% | - | 4 root/mid summons at 1.14 APS each; one formation budget | 4 root mid summons at 1.14 APS; formation budget normalized; dead swing every 3 hits |
+| Slinger | Poison Dagger +5 | 21.0 | 0.00 | 1.50 | 505 | 132 | 107 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50 | 10 shots, 1600ms reload, 1.50 effective shots/s | poison-dagger-burn reservoir DoT from weapon profile |
+| Spirit | Chaotic Axe +5 | 54.0 | 0.00 | 1.23 | 812 | 142 | 103 | 2.00 | 0.00% | - | discharge every 9 hits (0.14/s) | dead swing every 3 hits |
+| Squire | Chaotic Axe +5 | 55.0 | 0.00 | 0.94 | 1069 | 12.0 | 130 | 3.00 | 4.00% | - | empowered every 7.00s (0.14/s) | dead swing every 3 hits |
+| Striker | Chaotic Axe +5 | 51.0 | 0.00 | 1.17 | 858 | 12.0 | 118 | 2.00 | 2.00% | - | finisher every 5 hits (0.23/s) | dead swing every 3 hits |
 
 
 ## 4. Weapon Input Table (+0 and +5)
 
 | Weapon | Plus | Stats | Effects | Formulas | Scaling notes |
 | --- | --- | --- | --- | --- | --- |
-| Chaotic Axe | +0 | attack=24.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 0/5 |
-| Chaotic Axe | +5 | attack=36.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 5/5 |
+| Chaotic Axe | +0 | attack=22.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 0/5 |
+| Chaotic Axe | +5 | attack=32.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 5/5 |
 | Flash Rapier | +0 | attack=5.00 | - | 1.50 APS base | explicit steps 0/5 |
 | Flash Rapier | +5 | attack=8.00 | - | 1.50 APS base | explicit steps 5/5 |
 | Heavy Hammer | +0 | attack=26.0 | weapon.empowered-mult-bonus=0.15 | 0.55 APS base | explicit steps 0/5 |
@@ -68,24 +68,24 @@ Top 10 builds:
 
 | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Conduit | Chaotic Axe +5 | 59.5 | 0.00 | 59.5 | 0.00 | 0.00 | - |
-| Spirit | Chaotic Axe +5 | 55.6 | 47.6 | 7.94 | 0.00 | 0.00 | - |
-| Striker | Chaotic Axe +5 | 54.5 | 42.0 | 12.6 | 0.00 | 0.00 | - |
-| Apprentice | Chaotic Axe +5 | 53.0 | 21.0 | 0.00 | 32.0 | 0.00 | - |
-| Squire | Chaotic Axe +5 | 45.2 | 36.8 | 8.43 | 0.00 | 0.00 | - |
-| Slinger | Chaotic Axe +5 | 40.7 | 40.7 | 0.00 | 0.00 | 0.00 | - |
+| Conduit | Chaotic Axe +5 | 54.9 | 0.00 | 54.9 | 0.00 | 0.00 | - |
+| Apprentice | Chaotic Axe +5 | 51.5 | 19.5 | 0.00 | 32.0 | 0.00 | - |
+| Spirit | Chaotic Axe +5 | 50.8 | 43.5 | 7.25 | 0.00 | 0.00 | - |
+| Striker | Chaotic Axe +5 | 50.5 | 38.9 | 11.7 | 0.00 | 0.00 | - |
+| Squire | Chaotic Axe +5 | 41.4 | 33.7 | 7.71 | 0.00 | 0.00 | - |
+| Slinger | Poison Dagger +5 | 37.6 | 15.0 | 0.00 | 0.00 | 22.6 | - |
 
 
 Bottom 10 builds:
 
 | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Slinger | Chaotic Axe +5 | 40.7 | 40.7 | 0.00 | 0.00 | 0.00 | - |
-| Squire | Chaotic Axe +5 | 45.2 | 36.8 | 8.43 | 0.00 | 0.00 | - |
-| Apprentice | Chaotic Axe +5 | 53.0 | 21.0 | 0.00 | 32.0 | 0.00 | - |
-| Striker | Chaotic Axe +5 | 54.5 | 42.0 | 12.6 | 0.00 | 0.00 | - |
-| Spirit | Chaotic Axe +5 | 55.6 | 47.6 | 7.94 | 0.00 | 0.00 | - |
-| Conduit | Chaotic Axe +5 | 59.5 | 0.00 | 59.5 | 0.00 | 0.00 | - |
+| Slinger | Poison Dagger +5 | 37.6 | 15.0 | 0.00 | 0.00 | 22.6 | - |
+| Squire | Chaotic Axe +5 | 41.4 | 33.7 | 7.71 | 0.00 | 0.00 | - |
+| Striker | Chaotic Axe +5 | 50.5 | 38.9 | 11.7 | 0.00 | 0.00 | - |
+| Spirit | Chaotic Axe +5 | 50.8 | 43.5 | 7.25 | 0.00 | 0.00 | - |
+| Apprentice | Chaotic Axe +5 | 51.5 | 19.5 | 0.00 | 32.0 | 0.00 | - |
+| Conduit | Chaotic Axe +5 | 54.9 | 0.00 | 54.9 | 0.00 | 0.00 | - |
 
 
 All optimal-weapon outliers:
@@ -97,19 +97,19 @@ _No data._
 
 | Class | Avg DPS | Samples |
 | --- | --- | --- |
-| Spirit | 45.4 | 5 |
-| Striker | 43.6 | 5 |
-| Apprentice | 41.5 | 5 |
-| Squire | 37.5 | 5 |
-| Conduit | 37.0 | 5 |
-| Slinger | 35.5 | 5 |
+| Spirit | 44.4 | 5 |
+| Striker | 42.8 | 5 |
+| Apprentice | 41.2 | 5 |
+| Squire | 36.7 | 5 |
+| Conduit | 36.1 | 5 |
+| Slinger | 34.8 | 5 |
 
 
 ## 7. Average DPS Per Weapon
 
 | Weapon | Avg DPS | Samples |
 | --- | --- | --- |
-| Chaotic Axe | 51.4 | 6 |
+| Chaotic Axe | 47.7 | 6 |
 | Flash Rapier | 41.7 | 6 |
 | Poison Dagger | 40.0 | 6 |
 | Heavy Hammer | 37.7 | 6 |
@@ -120,7 +120,7 @@ Weapon DPS against target shapes:
 
 | Weapon | neutral T1 dummy | high-plating T1 dummy | high-HP elite T1 dummy | Shape sources |
 | --- | --- | --- | --- | --- |
-| Chaotic Axe +5 | 51.4 | 50.2 | 46.4 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
+| Chaotic Axe +5 | 47.7 | 46.5 | 43.8 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
 | Flash Rapier +5 | 41.7 | 38.2 | 37.4 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
 | Heavy Hammer +5 | 37.7 | 37.0 | 34.3 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
 | Iron Broadsword +5 | 29.6 | 28.6 | 27.0 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
@@ -131,12 +131,12 @@ Weapon DPS against target shapes:
 
 | Class | Weapon | Avg DPS | Samples |
 | --- | --- | --- | --- |
-| Striker | Chaotic Axe | 54.5 | 1 |
-| Squire | Chaotic Axe | 45.2 | 1 |
-| Apprentice | Chaotic Axe | 53.0 | 1 |
-| Spirit | Chaotic Axe | 55.6 | 1 |
-| Slinger | Chaotic Axe | 40.7 | 1 |
-| Conduit | Chaotic Axe | 59.5 | 1 |
+| Striker | Chaotic Axe | 50.5 | 1 |
+| Squire | Chaotic Axe | 41.4 | 1 |
+| Apprentice | Chaotic Axe | 51.5 | 1 |
+| Spirit | Chaotic Axe | 50.8 | 1 |
+| Slinger | Poison Dagger | 37.6 | 1 |
+| Conduit | Chaotic Axe | 54.9 | 1 |
 
 
 ## 9. Worst Weapon Per Class

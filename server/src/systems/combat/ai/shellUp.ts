@@ -140,6 +140,8 @@ export function updateShellUp(world: World, now: number): void {
         damagePerTick: pool.damagePerTick,
         tickIntervalMs: pool.tickIntervalMs,
         slowSpeedMult: pool.slowSpeedMult,
+        sourceId: 'shell-pool',
+        sourceLabel: 'Shell Pool',
         killer: {
           monsterTypeId: monster.isMonster.monsterTypeId,
           monsterName: monster.isMonster.name,

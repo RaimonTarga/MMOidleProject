@@ -37,14 +37,9 @@ const THRONE_HEAL_TINT = 0xbb66ff;
 // Dungeon guardians wear a red outline (glow) rather than a tint, so their own
 // sprite colors stay readable while still flagging them as the room's threat.
 const GUARDIAN_OUTLINE = 0xff3333;
-// Persistent pack-alpha marker tint (warm red, same family as the call-allies pulse).
-// Derived from the monster type — a `pack.role: 'alpha'` type is always a pack leader —
-// so no networked field is needed. Guardian/throne states take precedence.
-const PACK_ALPHA_TINT = 0xff7755;
 // Persistent ELITE marker — a bright yellow outline (glow) on the biome's standout
 // dangerous mob (necromancers, apex predators). Derived from the static `elite` def
-// flag, so no networked field is needed. Takes precedence over the pack-alpha tint (an
-// elite that also leads a pack still reads as "the dangerous one"); guardian/throne win.
+// flag, so no networked field is needed. Guardian/throne states take precedence.
 const ELITE_OUTLINE = 0xffdd33;
 const LEDGE_HOP_COOLDOWN_MS = 450;
 const LEDGE_HOP_HEIGHT = 34;
@@ -53,10 +48,6 @@ const FLYER_HOVER_HEIGHT = 26;
 /** How faded a camouflaged monster draws while it is still hidden. */
 const CAMOUFLAGE_ALPHA = 0.45;
 const LEDGE_HOP_DURATION_MS = 260;
-
-function isPackAlphaType(typeId: string): boolean {
-  return MONSTER_DATABASE.get(typeId)?.pack?.role === 'alpha';
-}
 
 function isEliteType(typeId: string): boolean {
   return MONSTER_DATABASE.get(typeId)?.elite === true;
@@ -171,9 +162,6 @@ function syncMonsterThroneTint(
   } else if (isEliteType(monster.monsterTypeId)) {
     resetSpriteTint(sprite, monster.color);
     applySpriteOutline(sprite, ELITE_OUTLINE);
-  } else if (isPackAlphaType(monster.monsterTypeId)) {
-    clearSpriteOutline(sprite);
-    applySpriteTint(sprite, PACK_ALPHA_TINT);
   } else {
     clearSpriteOutline(sprite);
     resetSpriteTint(sprite, monster.color);

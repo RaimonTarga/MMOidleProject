@@ -37,12 +37,17 @@ export const forestRecipeEntries = [
     cost: { green: 20 }, stats: { attack: 5 }, attacksPerSecond: 1.50, tier: 1,
     icon: 'items/weapons/flash-rapier.png',
     description: 'Forged thin as a reed by duelists who prized speed above all.',
+    // T1 economy pass (2026-08-28): Flash Rapier was the one T1 item whose total
+    // (950) ran roughly double every other specialist weapon's — normalized here
+    // to ~500, in line with Heavy Hammer/Chaotic Axe. Curve stays accelerating;
+    // no attacksPerSecond/attack stat changes. +5 catalyst from its own T2
+    // evolutions (gale-needle/thorn-needle), both tagged alacrity.
     upgrades: [
-      { attacksPerSecond: 0.02, cost: { green: 30 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 60 }, requiredBiomeLevel: 3 },
-      { attacksPerSecond: 0.02, cost: { green: 120 }, requiredBiomeLevel: 4 }, // +3 = evolution-ready
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 240 }, requiredBiomeLevel: 5 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 480 }, requiredBiomeLevel: 6 },
+      { attacksPerSecond: 0.02, cost: { green: 25 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 50 }, requiredBiomeLevel: 3 },
+      { attacksPerSecond: 0.02, cost: { green: 75 }, requiredBiomeLevel: 4 }, // +3 = evolution-ready
+      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 125 }, requiredBiomeLevel: 5 },
+      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 205 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 6 },
     ],
   }],
 
@@ -55,12 +60,15 @@ export const forestRecipeEntries = [
     cost: { green: 20 }, stats: { maxHp: 28, plating: 3, evasion: 0.16 }, tier: 1,
     icon: 'items/armor/shaded-bindings.png',
     description: 'Woven in the dappled dark beneath the canopy, where shadow clings to cloth.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (470).
+    // +5 catalyst from forest-vest-t2's own family-tag ("evasion armor answers
+    // frequent light hits → Alacrity").
     upgrades: [
-      { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 30 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, evasion: 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 20 }, requiredBiomeLevel: 3 },
+      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 70 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 115 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, evasion: 0.02 }, cost: { green: 200 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -79,12 +87,13 @@ export const forestRecipeEntries = [
     mechanicEffects: { 'defense.recovery-skill-potency': 0.10 },
     icon: 'items/charms/heartroot-amulet.png',
     description: 'Heartroot drawn from the oldest tree in the grove, still faintly warm.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (240).
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 20 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 35 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -97,12 +106,13 @@ export const forestRecipeEntries = [
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.25 },
     icon: 'items/boots/sprinter-wraps.png',
     description: 'Strips of supple hide that move when you move, and never before.',
+    // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (160).
     upgrades: [
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 20 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 25 }, requiredBiomeLevel: 4 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
     ],
   }],
 

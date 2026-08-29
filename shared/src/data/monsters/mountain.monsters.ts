@@ -48,17 +48,16 @@ export const mountainMonsterEntries = [
     // a guarded post.
     stats: { hp: 190, attack: 50, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
-    rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 42 }, // charging brute → Might (biome mixture; tunable)
+    rewards: { essence: 6, essenceType: 'blue', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
     vaultsMountainLedges: true,
     // STRONG KICK — a telegraphed shove that tests positioning around ledges.
     // Brace reduces both the heavy hit and the knockback distance.
-    // Multiplier cut 1.8 -> 1.5 alongside the base-attack lift. Mountain's identity is
-    // rare huge hits, so raising attack to hit the tier's damage target already makes
-    // every swing cap-tripping; leaving the old multiplier on top would have turned the
-    // telegraph into a one-shot rather than a spike worth bracing for.
-    chargedAttack: { name: 'Strong Kick', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3200, multiplier: 2.1, fx: 'strong-kick', knockback: { distance: 180 } },
+    // Multiplier history: 2.1 -> 1.9 (T1 balance iteration 2, 2026-08-24), a ~10% spike
+    // cut targeting Mountain's two-attacker lethality while leaving one-attacker fights
+    // dangerous. Keep this line updated on the next pass instead of letting it drift.
+    chargedAttack: { name: 'Strong Kick', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3200, multiplier: 1.9, fx: 'strong-kick', knockback: { distance: 180 } },
     // NO patrol (T1-T4 rework, locked): the sentinel-style fixed post was the wrong
     // fantasy for a caprine. It roams normally; `vaultsMountainLedges` is the identity.
   }],
@@ -78,7 +77,7 @@ export const mountainMonsterEntries = [
     // bolt raised to the tier's damage target, a 3x power shot lands well past a T1
     // player's whole health bar. 1.8 keeps it the scariest single hit in T1 without
     // making the wind-up unsurvivable rather than merely urgent.
-    chargedAttack: { name: 'Power Shot', castMs: 2000, cooldownMs: 8000, initialCooldownMs: 3500, multiplier: 2.5, fx: 'power-shot' },
+    chargedAttack: { name: 'Power Shot', castMs: 2000, cooldownMs: 8000, initialCooldownMs: 3500, multiplier: 2.2, fx: 'power-shot' },
   }],
 
   // ── MOUNTAIN T2 — everything hits like a truck and trips the cap ──

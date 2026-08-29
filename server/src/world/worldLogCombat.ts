@@ -109,6 +109,7 @@ export function recordPlayerDamaged(
   absorbed: number,
   damageType: WorldLogDamageType,
   mitigation?: DamageMitigationBreakdown,
+  tags?: string[],
 ): void {
   recordWorldLogEvent(
     world,
@@ -126,6 +127,7 @@ export function recordPlayerDamaged(
       damageType,
       mitigation,
       glancing: mitigation?.glancing,
+      tags,
     },
     {
       visibility: 'combat',

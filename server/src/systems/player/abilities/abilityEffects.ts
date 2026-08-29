@@ -29,25 +29,139 @@ import {
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { applyPlayerDebuff } from "../../classes/shared/applyPlayerDebuff";
-import { applyPlayerAoe } from "../../combat/damage/aoeDamage";
+import {
+  applyPlayerAoe,
+  playerAoeTargets,
+} from "../../combat/damage/aoeDamage";
+import { applyClassDotStack } from "../../classes/archetypes/dot/dotPrototype";
+import { registerReloadLifecycleHook } from "../../classes/archetypes/reload/reloadLifecycle";
 import { applyMonsterRoot, applyMonsterSlow } from "../../combat/status/monsterControl";
 import { applyStun } from "../../combat/status/stun";
-import { detachComponent } from "../../../ecs/markerHelpers";
+import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
+import {
+  beginFormationTechnique,
+  consumeFormationTechniqueDelivery,
+  type FormationTechniqueDelivery,
+} from "../../classes/archetypes/summoner/formationTechnique";
+import { actorFromMonster, actorFromPlayer } from "../../../world/worldLogActors";
+import { recordWorldLogEvent } from "../../../world/worldLog";
 import type { CombatContext } from "../../combat/engine/combatPipeline";
-import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
+import type {
+  HasSweepClip,
+  MonsterEntity,
+  PlayerEntity,
+} from "../../../ecs/entity";
 import type { World } from "../../../world/World";
+import type { WorldLogActor } from "@mmo-idle/shared";
+
+/** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
+function recordTechniqueAdapter(
+  world: World,
+  player: PlayerEntity,
+  fields: {
+    adapter: "apprentice-sweep" | "slinger-sweep" | "conduit-formation";
+    event:
+      | "apprentice-secondary-target"
+      | "slinger-clip-created"
+      | "slinger-clip-shot"
+      | "slinger-splash-hit"
+      | "conduit-arm"
+      | "conduit-delivery"
+      | "conduit-share-lost"
+      | "conduit-secondary-damage";
+    target?: WorldLogActor;
+    stacksApplied?: number;
+    clipSize?: number;
+    splashDamage?: number;
+    eligibleSummons?: number;
+    formationRoot?: string;
+  },
+): void {
+  recordWorldLogEvent(
+    world,
+    {
+      kind: "technique-adapter",
+      nodeId: player.hasPosition.nodeId,
+      player: actorFromPlayer(player),
+      ...fields,
+    },
+    {
+      visibility: "combat",
+      relatedPlayerIds: [player.isPlayer.id],
+      nodeId: player.hasPosition.nodeId,
+    },
+  );
+}
 
 /** Hard cap on Guard-buff damage reduction (mirrors cover-fire's DR cap). */
 const GUARD_DR_CAP = 0.9;
 
+/**
+ * A full Slinger clip receives 1.5 old one-projectile Sweep budgets. With the
+ * root's 0.65 per-shot damage layer, that is 0.975 of a normal class attack:
+ * materially above the old 0.65 budget without exceeding a generic full hit.
+ */
+export const SLINGER_SWEEP_CLIP_BUDGET_MULT = 1.5;
+
 export function initAbilitySystems(): void {
+  // A Sweep clip is exactly one ammo lifecycle. Partial tactical reloads and
+  // ordinary empty-clip reloads share these hooks, so both end it identically.
+  registerReloadLifecycleHook({
+    onStart(world, player) {
+      detachComponent(world, player, "hasSweepClip");
+    },
+    onComplete(world, player) {
+      // Defensive cleanup for restored/legacy state that missed its start hook.
+      detachComponent(world, player, "hasSweepClip");
+    },
+  });
+
   // Technique rider: apply the armed ability's effect on the landed hit.
   registerCombatListener("onHit", (ctx, world) => {
     if (ctx.attackerType !== "player") return;
+    // Chaotic misses neither spend ammo nor consume/apply Technique payloads.
+    if (ctx.metadata["chaoticMiss"]) return;
+
+    // Once activated, every real ammo-backed shot in this clip carries the
+    // normalized Slinger cleave. The first shot is handled below while consuming
+    // the armed Technique; later shots arrive here with no armed charge.
+    if (ctx.attacker.hasSweepClip && isReloadClipShot(ctx)) {
+      applySlingerSweepShot(ctx, world, ctx.attacker.hasSweepClip);
+    }
+
+    // Conduit owns one formation-wide armed payload. A snapshotted summon can
+    // deliver it once; direct Battle Bond attacks and repeat attacks by the same
+    // summon cannot steal another summon body's share.
+    if (ctx.attacker.hasFormationTechnique) {
+      const state = ctx.attacker.hasFormationTechnique;
+      const delivery = consumeFormationTechniqueDelivery(
+        world,
+        ctx.attacker,
+        ctx.formation,
+      );
+      const ability = ABILITY_DATABASE.get(state.abilityId);
+      if (delivery && ability) applyTechniqueRider(ctx, world, ability, delivery);
+      return;
+    }
+
     const armed = ctx.attacker.hasArmedAbility;
     if (!armed) return;
-    // Chaotic miss: the attack whiffs — keep the charge armed for the next real hit.
-    if (ctx.metadata["chaoticMiss"]) return;
+
+    // Restored state, or a Conduit armed while its formation was down: convert
+    // only once a living formation exists. With no summons, preserve the charge.
+    if (ctx.attacker.summonsMinions) {
+      const state = beginFormationTechnique(world, ctx.attacker, armed.abilityId);
+      if (!state) return;
+      detachComponent(world, ctx.attacker, "hasArmedAbility");
+      const delivery = consumeFormationTechniqueDelivery(
+        world,
+        ctx.attacker,
+        ctx.formation,
+      );
+      const ability = ABILITY_DATABASE.get(state.abilityId);
+      if (delivery && ability) applyTechniqueRider(ctx, world, ability, delivery);
+      return;
+    }
 
     detachComponent(world, ctx.attacker, "hasArmedAbility");
     const ability = ABILITY_DATABASE.get(armed.abilityId);
@@ -143,6 +257,7 @@ function applyTechniqueRider(
   ctx: CombatContext,
   world: World,
   ability: AbilityDef,
+  formationDelivery?: FormationTechniqueDelivery,
 ): void {
   // Riders act on enemy-facing hits only.
   if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
@@ -160,14 +275,72 @@ function applyTechniqueRider(
     : ctx.damage;
 
   if (effect.kind === "cleave") {
+    // Apprentice: the primary already received its normal on-hit class stack
+    // earlier in the pipeline. Spread exactly one stack-equivalent through the
+    // same root DoT seam, with no fake direct cleave or shortcut to full stacks.
+    if (ctx.attacker.appliesDots) {
+      tagClientEffect(ctx, ABILITY_SWEEP_FX);
+      for (const target of playerAoeTargets(
+        world,
+        ctx.attacker,
+        ctx.defender.hasPosition.current,
+        effect.radius,
+        ctx.defender.isMonster.id,
+      )) {
+        applyClassDotStack(world, ctx.attacker, target);
+        recordTechniqueAdapter(world, ctx.attacker, {
+          adapter: "apprentice-sweep",
+          event: "apprentice-secondary-target",
+          target: actorFromMonster(target),
+          stacksApplied: 1,
+        });
+      }
+      return;
+    }
+
+    // Slinger: consume the armed charge on the first ammo-backed shot, then let
+    // the clip component carry reduced cleave until reload starts. Reload attacks
+    // without a clip-shot tag retain the safe generic one-hit Sweep behavior.
+    if (ctx.attacker.usesReload && isReloadClipShot(ctx)) {
+      if (!ctx.attacker.hasSweepClip) {
+        const clipSize = reloadClipSize(ctx);
+        attachComponent(world, ctx.attacker, "hasSweepClip", {
+          splashPct: effect.splashPct,
+          radius: effect.radius,
+          clipSize,
+          damageRemainder: 0,
+        });
+        recordTechniqueAdapter(world, ctx.attacker, {
+          adapter: "slinger-sweep",
+          event: "slinger-clip-created",
+          clipSize,
+        });
+      }
+      if (ctx.metadata["slingerSweepApplied"] !== true) {
+        applySlingerSweepShot(ctx, world, ctx.attacker.hasSweepClip!);
+      }
+      return;
+    }
+
     // Tag this landed hit so the client overlays the Sweep slash FX on the normal
     // attack and pulses the Technique HUD icon. Stamped before the splash check so
     // the slash still reads even when the splash rounds to 0. combat.ts reads
     // `clientEffects` when it pushes the primary `player-hit` event (post-onHit).
     tagClientEffect(ctx, ABILITY_SWEEP_FX);
 
-    const splash = Math.floor(formationBasis * effect.splashPct);
+    const splash = formationTechniqueAmount(
+      formationBasis * effect.splashPct,
+      formationDelivery,
+    );
     if (splash <= 0) return;
+    if (formationDelivery) {
+      recordTechniqueAdapter(world, ctx.attacker, {
+        adapter: "conduit-formation",
+        event: "conduit-secondary-damage",
+        target: actorFromMonster(ctx.defender),
+        splashDamage: splash,
+      });
+    }
     applyPlayerAoe(
       world,
       ctx.attacker,
@@ -188,7 +361,19 @@ function applyTechniqueRider(
       ctx,
       effect.kind === "empower" ? ABILITY_QUICK_STRIKE_FX : ABILITY_TECHNIQUE_FIRED_FX,
     );
-    addEmpoweredDamage(ctx, formationBasis, mult);
+    const beforeDamage = ctx.damage;
+    addEmpoweredDamage(ctx, formationBasis, mult, formationDelivery);
+    if (formationDelivery) {
+      const delta = ctx.damage - beforeDamage;
+      if (delta > 0) {
+        recordTechniqueAdapter(world, ctx.attacker, {
+          adapter: "conduit-formation",
+          event: "conduit-secondary-damage",
+          target: actorFromMonster(ctx.defender),
+          splashDamage: delta,
+        });
+      }
+    }
     return;
   }
 
@@ -213,7 +398,7 @@ function applyTechniqueRider(
 
   if (effect.kind === "slow-strike") {
     tagClientEffect(ctx, ABILITY_HAMSTRING_FX);
-    addEmpoweredDamage(ctx, formationBasis, effect.damageMult);
+    addEmpoweredDamage(ctx, formationBasis, effect.damageMult, formationDelivery);
     if (evadeBlocksDebuffs(ctx)) return;
     applyMonsterSlow(
       world,
@@ -227,13 +412,65 @@ function applyTechniqueRider(
 
   if (effect.kind === "root-strike") {
     tagClientEffect(ctx, ABILITY_BINDING_STRIKE_FX);
-    addEmpoweredDamage(ctx, formationBasis, effect.damageMult);
+    addEmpoweredDamage(ctx, formationBasis, effect.damageMult, formationDelivery);
     if (evadeBlocksDebuffs(ctx)) return;
     applyMonsterRoot(world, ctx.defender, effect.rootMs, ctx.attacker.isPlayer.id);
     return;
   }
 
   // Guard immediates are never Technique riders — applied in abilityFiring.ts.
+}
+
+function isReloadClipShot(ctx: CombatContext): boolean {
+  return ctx.metadata["reloadClipShot"] === true;
+}
+
+function reloadClipSize(ctx: CombatContext): number {
+  const value = ctx.metadata["reloadClipSize"];
+  return typeof value === "number" && Number.isFinite(value)
+    ? Math.max(1, Math.round(value))
+    : 1;
+}
+
+/** Apply one normalized share of the Slinger clip's Sweep budget. */
+function applySlingerSweepShot(
+  ctx: Extract<CombatContext, { attackerType: "player" }>,
+  world: World,
+  sweep: HasSweepClip,
+): void {
+  if (ctx.defenderType !== "monster") return;
+
+  tagClientEffect(ctx, ABILITY_SWEEP_FX);
+  ctx.metadata["slingerSweepApplied"] = true;
+  recordTechniqueAdapter(world, ctx.attacker, {
+    adapter: "slinger-sweep",
+    event: "slinger-clip-shot",
+    clipSize: sweep.clipSize,
+  });
+
+  const rawSplash =
+    (ctx.damage * sweep.splashPct * SLINGER_SWEEP_CLIP_BUDGET_MULT) /
+      sweep.clipSize +
+    sweep.damageRemainder;
+  const splash = Math.floor(rawSplash);
+  sweep.damageRemainder = rawSplash - splash;
+  if (splash <= 0) return;
+
+  recordTechniqueAdapter(world, ctx.attacker, {
+    adapter: "slinger-sweep",
+    event: "slinger-splash-hit",
+    target: actorFromMonster(ctx.defender),
+    splashDamage: splash,
+    clipSize: sweep.clipSize,
+  });
+  applyPlayerAoe(
+    world,
+    ctx.attacker,
+    ctx.defender.hasPosition.current,
+    sweep.radius,
+    splash,
+    ctx.defender.isMonster.id,
+  );
 }
 
 /**
@@ -244,8 +481,33 @@ function addEmpoweredDamage(
   ctx: CombatContext,
   formationBasis: number,
   mult: number,
+  formationDelivery?: FormationTechniqueDelivery,
 ): void {
+  if (formationDelivery) {
+    ctx.damage = Math.max(0, ctx.damage + formationTechniqueAmount(
+      formationBasis * Math.max(0, mult - 1),
+      formationDelivery,
+    ));
+    return;
+  }
   ctx.damage = Math.max(0, Math.round(
     ctx.damage + formationBasis * Math.max(0, mult - 1),
   ));
+}
+
+/**
+ * Pay one summon's normalized share while carrying fractional integer damage.
+ * Across a complete formation this totals floor(fullAmount), independent of its
+ * summon count or attack speed. If a snapshotted summon dies, its unpaid share
+ * is deliberately lost rather than transferred to a reconstructed replacement.
+ */
+function formationTechniqueAmount(
+  fullAmount: number,
+  delivery?: FormationTechniqueDelivery,
+): number {
+  if (!delivery) return Math.floor(fullAmount);
+  const raw = fullAmount * delivery.magnitudeWeight + delivery.state.damageRemainder;
+  const amount = Math.floor(raw + 1e-9);
+  delivery.state.damageRemainder = raw - amount;
+  return Math.max(0, amount);
 }

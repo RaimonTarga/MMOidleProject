@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-08-29T16-58-39-255Z-d81f9630",
+    "startedAt": 1788022719255,
+    "endedAt": 1788022737090,
+    "durationMs": 17835,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "socket disconnected",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-08-29T16-58-39-255Z-d81f9630",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 25,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        },
+        {
+          "atMs": 1662,
+          "multiplier": 25
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 0,
+    "finalGlobalMastery": 0,
+    "biomeLevels": {
+      "clearing": 3
+    }
+  },
+  "combat": {
+    "totalKills": 1,
+    "killsByMonster": {
+      "Tiny Wisp": 1
+    },
+    "totalDamageTaken": 3,
+    "playerDamageDealt": 30,
+    "totalHealed": 2,
+    "deaths": 0,
+    "abilityActivations": {}
+  },
+  "positioning": {
+    "samples": 26,
+    "movementFraction": 0.6538461538461539,
+    "stationaryCombatFraction": 0.23076923076923078,
+    "nearBoundaryFraction": 0,
+    "boss": {
+      "movementFraction": null,
+      "nearBoundaryFraction": null,
+      "range": {
+        "samples": 0,
+        "mean": null,
+        "min": null,
+        "max": null,
+        "p50": null,
+        "p90": null
+      }
+    }
+  },
+  "bosses": [],
+  "build": {
+    "equipment": {
+      "weapon": null,
+      "armor": null,
+      "recovery": null,
+      "mobility": null,
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {},
+    "classRoot": null,
+    "frame": null,
+    "range": null,
+    "techniques": [],
+    "guards": [],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      }
+    ],
+    "stats": {
+      "attack": 15,
+      "attackRange": 12,
+      "attackCooldown": 3000,
+      "maxHp": 100,
+      "plating": 2,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

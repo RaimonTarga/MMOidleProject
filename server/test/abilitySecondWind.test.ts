@@ -17,6 +17,7 @@ import {
 } from "../src/systems/defense/regen/recovery";
 import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
+import { takeWorldLogEvents } from "../src/world/worldLog";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -100,6 +101,12 @@ assert(!!effect, "In Combat -> Fire Guard should activate Second Wind when damag
 assert(effect.data.recoveryPct === 0.5, "Second Wind status carries its Recovery fraction");
 assert(effect.data.totalMs === 4000, "Second Wind lasts four seconds");
 assert(player.hasHealth.hp === hpBefore, "Second Wind should not heal instantly");
+assert(
+  takeWorldLogEvents(world, player.isPlayer.id).some(
+    (event) => event.kind === "ability-activation" && event.abilityId === "second-wind",
+  ),
+  "Second Wind activation should reach bot-visible telemetry",
+);
 assert(
   Math.abs(activeRecoveryFraction(player, true) - 0.5) < 1e-9,
   "Second Wind should switch on 50% of the player's Recovery",

@@ -113,6 +113,12 @@ export function initReloadArchetype(): void {
     // The cancel guards above already ran, so a miss can't fire on an empty clip.
     if (ctx.metadata['chaoticMiss']) return;
 
+    // Class adapters can key off the authoritative ammo pipeline instead of
+    // naming weapon paths. Follow-up Blunderbuss pellets are still shots from
+    // this clip; Laser ticks never pass this ammo gate and therefore stay out.
+    ctx.metadata['reloadClipShot'] = true;
+    ctx.metadata['reloadClipSize'] = Math.max(1, reload.ammoMax);
+
     if ((passives['reload.blunderbuss'] ?? 0) > 0 && !isBlunderbussPellet) {
       const pelletCount = reload.ammo;
       if (pelletCount <= 0) {

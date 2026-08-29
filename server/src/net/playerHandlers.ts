@@ -74,6 +74,7 @@ import {
   equipPhaseTester,
   goToTestRoom,
   leaveTestRoom,
+  prepareFastBossRetry,
   renamePlayer,
   resetPlayerClass,
   resetPlayerProgress,
@@ -179,6 +180,12 @@ export function registerPlayerHandlers(
     return p && !p.isDead ? p : null;
   }
 
+  // `liveSelf()` is null exactly when the request arrives while dead or before
+  // the entity resolves. Every acknowledged mutating intent below MUST still
+  // emit its result event in that case: silently returning leaves the caller's
+  // ack-await hanging with no server-side trace at all, until it times out.
+  const NOT_LIVE_REASON = "Not available while dead or disconnected.";
+
   // NOTE: unused — no caller anywhere in the codebase. Moved verbatim from
   // index.ts to keep this a pure move; safe to delete in a follow-up.
   function teleportLiveSelfToNode(nodeId: string): void {
@@ -241,6 +248,10 @@ export function registerPlayerHandlers(
     const clamped = clampMoveTargetToNode(p.hasPosition.nodeId, pos);
     setEntityMotion(world, p, clamped, {
       mode: opts?.mode === "direct" ? "direct" : "path",
+      // A player-issued move owns the movement channel. In particular, do not
+      // let the Avoid Hazards rune replace or reject a committed click/keyboard
+      // path when its origin is already inside a runtime ground zone.
+      avoidHazards: false,
     });
     if (p.isMoving) {
       attachComponent(world, p, "hasManualMoveIntent", {});
@@ -383,14 +394,21 @@ export function registerPlayerHandlers(
 
   socket.on("crafting:craftRecipe", (recipeId: string) => {
     const p = liveSelf();
-    if (!p) return;
+    if (!p) {
+      socket.emit("crafting:result", { success: false, reason: NOT_LIVE_REASON });
+      return;
+    }
     const result = craftRecipe(world, p, recipeId);
     socket.emit("crafting:result", result);
   });
 
   socket.on("crafting:evolveItem", (payload) => {
     const p = liveSelf();
-    if (!p || !payload || typeof payload.recipeId !== "string") return;
+    if (!p || !payload || typeof payload.recipeId !== "string") {
+      if (p) return; // malformed payload: no ack contract to honor either way
+      socket.emit("crafting:result", { success: false, reason: NOT_LIVE_REASON });
+      return;
+    }
     if (payload.mode !== "evolve" && payload.mode !== "reconstruct") return;
     const result = evolveItem(world, p, payload.recipeId, payload.mode);
     socket.emit("crafting:result", result);
@@ -398,14 +416,22 @@ export function registerPlayerHandlers(
 
   socket.on("rune:craftRecipe", (recipeId: string) => {
     const p = liveSelf();
-    if (!p || typeof recipeId !== "string") return;
+    if (!p || typeof recipeId !== "string") {
+      if (p) return;
+      socket.emit("rune:craftResult", { recipeId, success: false, reason: NOT_LIVE_REASON });
+      return;
+    }
     const result = craftRuneRecipe(world, p, recipeId);
     socket.emit("rune:craftResult", result);
   });
 
   socket.on("ability:craftRecipe", (recipeId: string) => {
     const p = liveSelf();
-    if (!p || typeof recipeId !== "string") return;
+    if (!p || typeof recipeId !== "string") {
+      if (p) return;
+      socket.emit("ability:craftResult", { recipeId, success: false, reason: NOT_LIVE_REASON });
+      return;
+    }
     const result = craftAbilityRecipe(world, p, recipeId);
     socket.emit("ability:craftResult", result);
   });
@@ -454,7 +480,15 @@ export function registerPlayerHandlers(
 
   socket.on("inventory:upgradeItem", (itemId: string) => {
     const p = liveSelf();
-    if (!p) return;
+    if (!p) {
+      socket.emit("inventory:upgradeResult", {
+        success: false,
+        reason: NOT_LIVE_REASON,
+        itemId,
+        newLevel: 0,
+      });
+      return;
+    }
     const result = upgradeItem(world, p, itemId);
     socket.emit("inventory:upgradeResult", result);
   });
@@ -482,11 +516,23 @@ export function registerPlayerHandlers(
     // currently is, so the debug panel opens showing server truth rather than a
     // client-side guess that a reload or a second tab would have desynced.
     socket.emit("debug:rewardMultiplier", world.rewardMultiplier);
+    socket.emit("debug:playtestStatus", world.humanPlaytests?.status(socket.id) ?? { active: false, eventCount: 0 });
+
+    socket.on("debug:startPlaytestLogging", () => {
+      const p = liveSelf();
+      if (!p || !world.humanPlaytests) return;
+      socket.emit("debug:playtestStatus", world.humanPlaytests.start(world, p));
+    });
+
+    socket.on("debug:stopPlaytestLogging", () => {
+      void world.humanPlaytests?.stop(world, socket.id).then(status => socket.emit("debug:playtestStatus", status));
+    });
 
     socket.on("debug:setRewardMultiplier", (multiplier) => {
       const next = clampRewardMultiplier(multiplier);
       if (next === world.rewardMultiplier) return;
       world.rewardMultiplier = next;
+      world.humanPlaytests?.noteRewardMultiplier(next);
       log.info({ playerId: socket.id, multiplier: next }, "debug reward multiplier set");
       // Global setting, so every connected client (not just this one) has to be
       // told; the broadcast hook is installed by index.ts.
@@ -505,6 +551,25 @@ export function registerPlayerHandlers(
       const p = liveSelf();
       if (!p) return;
       teleportPlayerToNode(world, p, nodeId);
+      adminControls.emitPlayerSummaries();
+    });
+
+    socket.on("debug:prepareFastBossRetry", (payload) => {
+      const p = liveSelf();
+      if (!p || !payload || typeof payload.nodeId !== "string" || typeof payload.includeGuardians !== "boolean") {
+        socket.emit("debug:fastBossRetryResult", {
+          success: false,
+          reason: !p ? NOT_LIVE_REASON : "Invalid fast boss-retry request.",
+          taint: "NON_CANONICAL_FAST_BOSS_RETRY",
+        });
+        return;
+      }
+      const result = prepareFastBossRetry(world, p, payload.nodeId, payload.includeGuardians);
+      log.warn(
+        { playerId: p.isPlayer.id, nodeId: payload.nodeId, includeGuardians: payload.includeGuardians, result },
+        "NON_CANONICAL_FAST_BOSS_RETRY requested",
+      );
+      socket.emit("debug:fastBossRetryResult", result);
       adminControls.emitPlayerSummaries();
     });
 
@@ -545,6 +610,8 @@ export function registerPlayerHandlers(
   }
 
   socket.on("disconnect", () => {
+    // A partial JSONL trace is more useful than silently losing a manual session.
+    void world.humanPlaytests?.stop(world, socket.id, "interrupted", "socket disconnected");
     const p = world.getPlayerEntity(socket.id);
     if (p?.isDead) world.respawnPlayer(socket.id);
     const characterId = session.characterId;

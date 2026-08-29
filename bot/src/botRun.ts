@@ -1,7 +1,11 @@
 import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import type { PlayerDeathPayload } from "@mmo-idle/shared";
-import { GAME_CONFIG, NODE_BIOMES } from "@mmo-idle/shared";
+import {
+  GAME_CONFIG,
+  NODE_BIOMES,
+} from "@mmo-idle/shared";
+import type { RouteLeaseSession } from "./concurrency/routeLeaseSession";
 import type { BotConfig } from "./config";
 import { BotConnection } from "./net/connection";
 import { Intents } from "./net/intents";
@@ -21,10 +25,23 @@ import { botRegistry, type BotStatus, type WorldEntity, type WorldView } from ".
 const RECORDER_TICK_MS = 1_000;
 /** How long to lie dead before acknowledging — a human is not instant either. */
 const DEATH_ACK_DELAY_MS = 2_000;
+/** Controlled evidence must never gain same-node party credit. */
+export const BOT_AUTO_PARTY_ENABLED = false;
 
 export interface RunOutcome {
   summary: RunSummary;
   dir: string;
+}
+
+/** Sticky taints implied by explicit harness configuration before gameplay starts. */
+export function initialRunTaints(
+  config: Pick<BotConfig, "fastBossRetry">,
+  timeScale = process.env.BOT_TIME_SCALE,
+): RunTaint[] {
+  const taints: RunTaint[] = [];
+  if (timeScale && timeScale !== "1") taints.push("NON_CANONICAL_TIME_SCALE");
+  if (config.fastBossRetry) taints.push("NON_CANONICAL_FAST_BOSS_RETRY");
+  return taints;
 }
 
 function gitRevision(): string {
@@ -40,7 +57,13 @@ function gitRevision(): string {
  * authored route, and emit telemetry. Nothing here is seeded — no gear, no
  * currency, no unlocks, no checkpoint power.
  */
-export async function runBot(config: BotConfig): Promise<RunOutcome> {
+export async function runBot(
+  config: BotConfig,
+  leaseSession?: RouteLeaseSession,
+): Promise<RunOutcome> {
+  if (config.executionMode === "isolated-parallel" && !leaseSession) {
+    throw new Error("isolated-parallel runs require a coordinator-owned lease session");
+  }
   const route = requireRoute(config.routeId);
   const policy = requirePolicy(config.policyId);
   const runId = `${config.routeId}-${config.policyId}-${new Date()
@@ -63,7 +86,7 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
    * 40x rewards be published as canonical, so the taint is sticky: once seen,
    * never cleared.
    */
-  const taints: RunTaint[] = [];
+  const taints: RunTaint[] = initialRunTaints(config);
   const noteRewardMultiplier = (multiplier: number): void => {
     rewardMultiplier = multiplier;
     if (multiplier !== 1 && !taints.includes("NON_CANONICAL_REWARD_MULTIPLIER")) {
@@ -110,8 +133,21 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
 
     // Acknowledging is the normal player action that triggers respawn. Bots die
     // and respawn like anyone else; there is no revive shortcut.
-    setTimeout(() => {
-      if (!aborted) intents.ackDeath();
+    setTimeout(async () => {
+      if (aborted) return;
+      try {
+        intents.ackDeath();
+      } catch (err) {
+        // The socket can have dropped in the 2s since this timer was set (a
+        // disconnect, a server restart under a busy shared-world batch). This
+        // fires from a bare setTimeout callback with nothing above it on the
+        // stack, so an uncaught throw here is an UNCAUGHT EXCEPTION at the
+        // process level -- and because `bot:batch` runs every bot in ONE
+        // process, that kills every other bot too, not just this one. The
+        // reconnect logic (`reconnection: true`) will bring the socket back;
+        // losing this one ack is a stalled respawn to retry, not a crash.
+        console.warn(`[bot] ackDeath failed (socket likely reconnecting): ${String(err)}`);
+      }
     }, DEATH_ACK_DELAY_MS);
   };
 
@@ -130,7 +166,8 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
     },
   });
 
-  const characterId = await enterFreshCharacter(conn, config);
+  const characterId = await prepareFreshCharacter(conn, config);
+  await conn.selectCharacter(characterId);
 
   // The world admits us asynchronously; the first snapshot names our entity.
   await waitFor(() => obs.self !== null, 60_000, "own player to appear in the world");
@@ -169,8 +206,12 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
     );
   }
 
-  if (process.env.BOT_TIME_SCALE && process.env.BOT_TIME_SCALE !== "1") {
-    taints.push("NON_CANONICAL_TIME_SCALE");
+  if (config.fastBossRetry) {
+    if (!devToolingSeen) {
+      throw new Error(
+        "fast boss retry requires development server tooling (NODE_ENV!=production or DEV_TOOLS=true)",
+      );
+    }
   }
 
   const header: RunHeader = {
@@ -189,8 +230,11 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
     startedAt,
     rewardMultiplier,
     taints,
+    executionMode: config.executionMode,
+    maxConcurrency: config.maxConcurrency,
   };
   recorder.emit({ kind: "run-start", atMs: 0, header });
+  leaseSession?.attachRecorder(recorder);
 
   if (taints.length > 0) {
     console.warn(`[bot] ${runId} is NON-CANONICAL: ${taints.join(", ")}`);
@@ -199,6 +243,7 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
   const ticker = setInterval(() => {
     try {
       recorder.tick(obs);
+      leaseSession?.observe(obs, conn.id);
     } catch (err) {
       console.error("[bot] recorder tick failed", err);
     }
@@ -228,6 +273,9 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
     startedAt,
     aborted: () => aborted,
     deathCount: () => deathCount,
+    fastBossRetry: config.fastBossRetry,
+    fastBossRetryIncludeGuardians: config.fastBossRetryIncludeGuardians,
+    leaseSession,
     awaitAlive: async () => {
       while (obs.self?.isDead ?? false) {
         if (aborted) throw new AbortError("run aborted");
@@ -436,6 +484,12 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
     stalls.push({ reason: stallReason });
   }
 
+  leaseSession?.releaseAll(`run-${completion}`);
+  const leaseEvidence = leaseSession?.evidence();
+  if (leaseEvidence?.contaminated && !taints.includes("CONTAMINATED_CONTROLLED_OVERLAP")) {
+    taints.push("CONTAMINATED_CONTROLLED_OVERLAP");
+  }
+
   const endedAt = Date.now();
   recorder.emit({
     kind: "run-end",
@@ -456,6 +510,8 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
     milestonesReached: executor.milestonesFired,
     routeStepsCompleted: executor.currentStepIndex,
     endedAt,
+    leaseEvidence,
+    maximumSimultaneouslyProgressing: leaseSession?.maximumSimultaneouslyProgressing(),
   });
 
   await sink.close();
@@ -463,7 +519,11 @@ export async function runBot(config: BotConfig): Promise<RunOutcome> {
 
   // The multiplier is server-GLOBAL and outlives the run, so a browser player
   // (or the next bot) would otherwise inherit it. Hand it back before leaving.
-  if (rewardMultiplierBeforeRun !== null && rewardMultiplier !== rewardMultiplierBeforeRun) {
+  if (
+    config.restoreRewardMultiplier &&
+    rewardMultiplierBeforeRun !== null &&
+    rewardMultiplier !== rewardMultiplierBeforeRun
+  ) {
     try {
       intents.setRewardMultiplier(rewardMultiplierBeforeRun);
       await waitFor(
@@ -496,7 +556,7 @@ function routeComplete(route: Route, obs: Observation): boolean {
  * Take a genuinely fresh character. Existing characters on the bot account are
  * deleted first so a canonical run can never inherit power from a previous one.
  */
-async function enterFreshCharacter(
+async function prepareFreshCharacter(
   conn: BotConnection,
   config: BotConfig,
 ): Promise<string> {
@@ -507,14 +567,11 @@ async function enterFreshCharacter(
       await conn.deleteCharacter(character.id);
     }
     const characterId = await conn.createCharacter(config.characterName);
-    await conn.selectCharacter(characterId);
     return characterId;
   }
 
   const existing = roster.characters[0];
-  const characterId = existing?.id ?? (await conn.createCharacter(config.characterName));
-  await conn.selectCharacter(characterId);
-  return characterId;
+  return existing?.id ?? (await conn.createCharacter(config.characterName));
 }
 
 async function waitFor(

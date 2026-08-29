@@ -519,6 +519,9 @@ function applyAction(
         damagePerTick: action.damagePerTick,
         tickIntervalMs: action.tickIntervalMs,
         slowSpeedMult: action.slowSpeedMult,
+        ownerId: monster.isMonster.id,
+        sourceId: 'scripted-pool',
+        sourceLabel: 'Scripted Pool',
         killer: {
           monsterTypeId: monster.isMonster.monsterTypeId,
           monsterName: monster.isMonster.name,

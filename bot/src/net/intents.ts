@@ -3,6 +3,7 @@ import type {
   EquipmentSlot,
   EquippedAbilities,
   EquippedRule,
+  FastBossRetryResult,
   Vec2,
 } from "@mmo-idle/shared";
 import type { BotConnection } from "./connection";
@@ -62,6 +63,23 @@ export class Intents {
 
   activateDungeonAltar(): void {
     this.conn.raw.emit("player:activateDungeonAltar");
+  }
+
+  /** Dev-only and always tainted; acknowledged by the authoritative server reset. */
+  prepareFastBossRetry(nodeId: string, includeGuardians: boolean): Promise<FastBossRetryResult> {
+    return this.conn.request("debug:fastBossRetryResult", () =>
+      this.conn.raw.emit("debug:prepareFastBossRetry", { nodeId, includeGuardians }),
+    );
+  }
+
+  // ── Social ────────────────────────────────────────────────────────────────
+
+  partyJoin(targetPlayerId: string): void {
+    this.conn.raw.emit("party:join", targetPlayerId);
+  }
+
+  partyLeave(): void {
+    this.conn.raw.emit("party:leave");
   }
 
   // ── Progression ──────────────────────────────────────────────────────────

@@ -18,6 +18,12 @@ import { recordWorldLogEvent } from "../../../world/worldLog";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { setAggroTarget, setAttackTarget } from "../../combat/ai/targeting";
+import { clearGroundZonesForNode } from "../groundZones";
+import { clearCorpsesForNode } from "../corpses";
+import {
+  clearAmbientRampOverride,
+  resetNodeFeatureRuntimeState,
+} from "../nodeFeatures";
 
 /**
  * Runtime state for one dungeon node. Never persisted: node freeze discards it
@@ -103,6 +109,34 @@ export function resetDungeon(
     nodeId,
     options.reason === "node_wipe" ? "The guard reforms." : "The altar reforms.",
   );
+}
+
+/**
+ * Harness-only encounter reset primitive. The caller owns the development-mode
+ * gate. Dungeon nodes contain only encounter-owned monsters, so clearing the
+ * node precisely removes guardians, boss, script-spawned adds, raised corpses,
+ * and any other encounter-local entity before rebuilding an idle altar.
+ */
+export function resetDungeonEncounterForFastRetry(
+  world: World,
+  nodeId: string,
+  options: { includeGuardians: boolean },
+): void {
+  if (!getDungeonDef(nodeId)) throw new Error(`Not a dungeon node: ${nodeId}`);
+
+  for (const monster of [...world.monsterEntitiesInNode(nodeId)]) {
+    world.removeMonsterEntity(monster.isMonster.id);
+  }
+  clearGroundZonesForNode(world, nodeId);
+  clearCorpsesForNode(world, nodeId);
+  clearAmbientRampOverride(world, nodeId);
+  resetNodeFeatureRuntimeState(world, nodeId);
+  resetDungeon(world, nodeId, {
+    reason: "noncanonical_fast_boss_retry",
+    spawnGuardians: options.includeGuardians,
+  });
+  world.reconcileMonsterCounts();
+  world.resetNodeDeltaState(nodeId);
 }
 
 export function clearDungeonRuntime(world: World, nodeId: string): void {

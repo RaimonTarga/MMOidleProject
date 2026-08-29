@@ -150,6 +150,8 @@ export const bossMonsterEntriesT3 = [
     chargedAttack: {
       name: 'Spore Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
       multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 130 },
+      // Deliberately NOT extended to the swamp lineage's 10-minute pools: this one
+      // detonates on expiry, so a fight-length duration would delete the payoff.
       pool: {
         durationMs: 9000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.55,
         vulnerability: { damageTakenPct: 0.16, durationMs: 1800 },
@@ -171,7 +173,9 @@ export const bossMonsterEntriesT3 = [
             debuffId: 'rot-spore-plague', label: 'Rot Spores',
             damagePerStack: 17, maxStacks: 8, tickIntervalMs: 1000, durationMs: 6000,
           } },
-          { type: 'spawn-pool', radius: 260, durationMs: 20000, damagePerTick: 14, tickIntervalMs: 1000, slowSpeedMult: 0.55 },
+          // Effectively permanent (10 min), retired with the boss. Unlike the Spore
+          // Pool above this one never detonates, so nothing is lost by it lingering.
+          { type: 'spawn-pool', radius: 260, durationMs: 600000, damagePerTick: 14, tickIntervalMs: 1000, slowSpeedMult: 0.55 },
         ] },
       ],
     },

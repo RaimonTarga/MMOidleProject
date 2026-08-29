@@ -84,6 +84,9 @@ export function syncArchetypeSlices(world: World, entity: PlayerEntity): void {
     'usesReload',
     () => initUsesReload({ ammoMax: entity.usesReload?.ammoMax ?? 0 }),
   );
+  if (archetype !== 'reload') {
+    detachComponent(world, entity, 'hasSweepClip');
+  }
 
   const summonerProfile = resolveSummonerProfile({
     selectedSubVariant: entity.usesSkills.selectedSubVariant,
@@ -112,5 +115,7 @@ export function syncArchetypeSlices(world: World, entity: PlayerEntity): void {
     summons.reconstructionQueue ??= [];
     summons.redirectCursor ??= 0;
     summons.formationTargetId ??= null;
+  } else {
+    detachComponent(world, entity, 'hasFormationTechnique');
   }
 }

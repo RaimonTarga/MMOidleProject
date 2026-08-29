@@ -28,7 +28,7 @@ never folded into DPS — it has its own column.
 | Mountain | 24 | 2 | 3 | 290 | 38.7 | — | 58 | 16808 | 33616 | 13 | 74 |
 | Caverns | 16 | 2 | 3 | 359 | 46.4 | — | 69.7 | 25022 | 50044 | 18.7 | 110 |
 | Jungle | 40 | 4 | 3 | 431 | 32.4 | — | 80.9 | 34874 | 139497 | 7.3 | 40 |
-| Desert | 16 | 2 | 3 | 528 | 69.2 | — | 103.8 | 54743 | 109486 | 7.8 | 43 |
+| Desert | 16 | 2 | 3 | 528 | 35.9 | — | 53.9 | 28417 | 56834 | 7.8 | 43 |
 
 `N` is DESIGNER-SET expected concurrent attackers (see `CONCURRENCY` in the tool), not
 derived from density. `sustained` = `d(N+1)/2` is incoming DPS the player must out-sustain
@@ -42,9 +42,9 @@ column can show.
 
 ### Progression curve (indexed to the first biome in the row order above)
 
-- sustained pressure: `1.00 → 1.16 → 1.46 → 1.70 → 2.04 → 2.37 → 3.03`
-- cost per kill:      `1.00 → 1.48 → 2.22 → 3.37 → 5.01 → 6.98 → 10.96`
-- pull load:          `1.00 → 0.89 → 0.89 → 1.35 → 2.00 → 5.59 → 4.39`
+- sustained pressure: `1.00 → 1.16 → 1.46 → 1.70 → 2.04 → 2.37 → 1.57`
+- cost per kill:      `1.00 → 1.48 → 2.22 → 3.37 → 5.01 → 6.98 → 5.69`
+- pull load:          `1.00 → 0.89 → 0.89 → 1.35 → 2.00 → 5.59 → 2.28`
 
 ### Target vs current
 
@@ -75,7 +75,7 @@ Per-mob DPS is then forced: `DPS = sustained / ((N+1)/2)`.
 | Mountain | 2 | 290 | 282 | x1 | 38.7 | 38.5 | x1 | 58 | 57.8 | 16808 | 16299 |
 | Caverns | 2 | 359 | 356 | x1 | 46.4 | 46.2 | x1 | 69.7 | 69.3 | 25022 | 24644 |
 | Jungle | 4 | 431 | 448 | **x1** | 32.4 | 33.3 | **x1** | 80.9 | 83.2 | 34874 | 37261 |
-| Desert | 2 | 528 | 565 | **x1.1** | 69.2 | 66.5 | x1 | 103.8 | 99.8 | 54743 | 56339 |
+| Desert | 2 | 528 | 565 | **x1.1** | 35.9 | 66.5 | **x1.9** | 53.9 | 99.8 | 28417 | 56339 |
 
 ## With node modifiers applied
 
@@ -93,7 +93,7 @@ baseline the player never plays. Values are indexed to **unmodified Plains**.
 | Mountain | 1.70 | — | 1.90 | 1.83 | 1.93 | 1.70 | x1.14 |
 | Caverns | 2.04 | 2.19 | 2.28 | 2.20 | 2.31 | 2.04 | x1.13 |
 | Jungle | 2.37 | 2.67 | — | 2.59 | 2.60 | 2.37 | x1.13 |
-| Desert | 3.03 | — | 3.32 | 3.28 | 3.44 | 3.03 | x1.14 |
+| Desert | 1.57 | — | 1.72 | 1.70 | 1.79 | 1.57 | x1.14 |
 
 ### Cost per kill
 
@@ -105,7 +105,7 @@ baseline the player never plays. Values are indexed to **unmodified Plains**.
 | Mountain | 3.37 | — | 3.77 | 3.64 | 4.45 | 3.79 | x1.22 |
 | Caverns | 5.01 | 5.40 | 5.61 | 5.41 | 6.52 | 5.59 | x1.21 |
 | Jungle | 6.98 | 7.87 | — | 7.66 | 8.94 | 7.86 | x1.17 |
-| Desert | 10.96 | — | 12.02 | 11.84 | 14.55 | 12.43 | x1.23 |
+| Desert | 5.69 | — | 6.24 | 6.15 | 7.56 | 6.45 | x1.23 |
 
 ### Does the railroad survive?
 
@@ -126,8 +126,8 @@ one, and the biome order stops being the thing the player reads.
 | Mountain → Caverns | cost/kill | 4.45 | 5.40 | clean |
 | Caverns → Jungle | sustained | 2.31 | 2.37 | clean |
 | Caverns → Jungle | cost/kill | 6.52 | 7.66 | clean |
-| Jungle → Desert | sustained | 2.67 | 3.03 | clean |
-| Jungle → Desert | cost/kill | 8.94 | 11.84 | clean |
+| Jungle → Desert | sustained | 2.67 | 1.57 | **overlaps** |
+| Jungle → Desert | cost/kill | 8.94 | 6.15 | **overlaps** |
 
 ## Plains  (density 48, 3 pool slots)
 
@@ -189,9 +189,9 @@ one, and the biome order stops being the thing the player reads.
 
 | monster | w | HP | atk | cd | direct | dot | dot ramp | total | spike | opener | ramp | pl | DR | ev | eHP@18 | eHP@146 | spread | spd | rng | control | ecology | partial |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| Sand Scorpion `sand-scorpion` | x1 | 660 | 132 | 2400 | 55 | — | — | 55 | — | — | — | 0 | 8% | — | 709 | 719 | 1 | 30 | 12 | slow 50% | alpha +1 | — |
-| Stone Basilisk `stone-basilisk` | x1 | 660 | 138 | 2800 | 57.5 | — | — | 57.5 | — | — | — | 0 | 15% | — | 753 | 777 | 1 | 26 | 12 | Petrifying Gaze: root 1400ms | alpha +1 | — |
-| follower Sun Scarab `dust-djinn` | x2 | 320 | 156 | 1900 | 82.1 | — | — | 82.1 | — | — | — | 0 | — | — | 324 | 320 | 1 | 52 | **190** | — | follower | — |
+| Sand Scorpion `sand-scorpion` | x1 | 660 | 75 | 2400 | 31.3 | — | — | 31.3 | — | — | — | 0 | 8% | — | 709 | 719 | 1 | 30 | 12 | slow 50% | alpha +1 | — |
+| Stone Basilisk `stone-basilisk` | x1 | 660 | 55 | 2800 | 22.9 | — | — | 22.9 | — | — | — | 0 | 15% | — | 753 | 777 | 1 | 26 | 12 | Petrifying Gaze: root 1400ms | alpha +1 | — |
+| follower Sun Scarab `dust-djinn` | x2 | 320 | 85 | 1900 | 44.7 | — | — | 44.7 | — | — | — | 0 | — | — | 324 | 320 | 1 | 52 | **190** | — | follower | — |
 | BOSS Dune-Stalker Emperor `dune-stalker-emperor` | — | 3750 | 85 | 2600 | 42.1 | — | — | 42.1 | x2.5 = 213 (opener+mark+charged/1300ms) | x2.5 | — | 12 | 8% | — | 11406 | 4451 | 2.6 | 42 | 40 | slow 40%, mark | — | boss-script |
 
 ## Mechanic coverage
