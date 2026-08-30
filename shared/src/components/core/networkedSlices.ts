@@ -132,6 +132,8 @@ export interface HasStatus {
   activeBuffs?: PlayerBuff[];
   /** Bosses only — populated by `bossScripts.ts` each tick. */
   bossEffects?: string[];
+  /** Bosses only — active effect stack counts, keyed by `bossEffects` id. */
+  bossEffectStacks?: Record<string, number>;
   /** Monsters only — current debuffs for the target frame (targeted monsters). */
   targetStatus?: TargetStatusView[];
   /** Players only — total pending damage-over-time on the player (HP-bar forecast). */

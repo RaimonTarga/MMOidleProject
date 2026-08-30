@@ -243,6 +243,19 @@
   font-weight: normal;
 }
 
+/* Barrier reads in the same grammar as health — current / max — because it is
+   the same kind of pool, just the one that empties first. Tinted to the conduit
+   under the bar so the number and the bar are obviously one reading. */
+.stat-crown__barrier-read {
+  color: #6fd8e6;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.stat-crown__barrier-read .stat-crown__max {
+  color: rgba(111, 216, 230, 0.6);
+}
+
 /* Shield is a chip, not another line of prose. */
 .stat-crown__shield {
   padding: 1px 4px;

@@ -96,7 +96,7 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
  * state. Max-HP changes preserve current HP percentage instead of healing or
  * chopping off a flat amount.
  */
-export function recalculatePlayerStanceStats(world: World, entity: PlayerEntity): void {
+export function recalculatePlayerStatsPreservingCombatState(world: World, entity: PlayerEntity): void {
   const hpPct = entity.hasHealth.hp / Math.max(1, entity.hasHealth.maxHp);
   const cs = entity.tracksCombat;
   const combatSnapshot = {
@@ -132,6 +132,9 @@ export function recalculatePlayerStanceStats(world: World, entity: PlayerEntity)
   entity.hasHealth.hp = Math.max(1, Math.min(entity.hasHealth.maxHp, entity.hasHealth.maxHp * hpPct));
   markSliceDirty(world, entity, "hasHealth");
 }
+
+/** Stance changes use the same state-preserving rebuild contract as Core swaps. */
+export const recalculatePlayerStanceStats = recalculatePlayerStatsPreservingCombatState;
 
 export function canUnlockEntitySkill(
   entity: PlayerEntity,

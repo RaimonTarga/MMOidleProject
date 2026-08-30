@@ -63,7 +63,7 @@ export const bossMonsterEntriesT1 = [
     // of its own encounter. 34 is still under 2x the Boar, the biome's biggest trash hit.
     stats: { hp: 1700, attack: 34, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
-    rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150, catalystBundle: 5 }, // one-time first-clear bundle (placeholder)
+    rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
     targeting: { prefersPlayers: true },
     // PLAINS EXAM = "survive the swarm". T1 teaches the pure identity: a trickle of
@@ -73,16 +73,20 @@ export const bossMonsterEntriesT1 = [
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, maxAlive: 6, offsetRange: 220 },
-          { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, maxAlive: 6, offsetRange: 220 },
-          { type: 'roar', attackSpeedPct: 0.20, durationMs: 8000, radius: 320 },
+          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, maxAlive: 6, offsetRange: 220 },
+            { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, maxAlive: 6, offsetRange: 220 },
+            { type: 'roar', attackSpeedPct: 0.20, durationMs: 8000, radius: 320 },
+          ] },
         ] },
       ],
       // The swarm is HALF this encounter's output, so it is left at its authored
       // strength and the boss's own stat block pays for it instead.
       repeating: [
         { intervalMs: 10_000, initialDelayMs: 4_000, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, maxAlive: 5, offsetRange: 220 },
+          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, maxAlive: 5, offsetRange: 220 },
+          ] },
         ] },
       ],
     },
@@ -120,23 +124,25 @@ export const bossMonsterEntriesT1 = [
     // of the five" identity relative to the others (still faster than Plains'
     // 2000ms) while giving Guards/Recovery meaningfully more room between
     // hits. Re-measure against the bot baselines before tuning further.
-    stats: { hp: 2000, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
+    stats: { hp: 1800, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
-    rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150, catalystBundle: 5 },
+    rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
     targeting: { prefersPlayers: true },
     consecutiveHits: 2,
-    // Caps at +20% after 4 ticks = 12s, comfortably inside the fight, so the ramp is
-    // a beat the player actually meets rather than a number that never lands.
-    // Cut 7%/28% -> 5%/20% (T1 balance iteration 3, 2026-08-24): manual +5 Striker play
-    // could not bring the boss below ~50% HP, so the post-50% enrage (since removed,
-    // 2026-08-29) was not the primary cause of failure — this was a first-pass cut to
-    // the pre-50% ramp alone. HP, base attack, and cadence are untouched.
-    rampOnCombat: { stat: 'attackSpeed', perTickPct: 0.05, maxPct: 0.20, tickIntervalMs: 3000 },
-    // FOREST EXAM = a clean claw duel. Every swing is a two-hit bear-claw combo,
-    // and its attack cadence ramps while the pull remains active. No adds, no enrage
-    // (T1 balance iteration, 2026-08-29: designer removed the 50% enrage entirely —
-    // the cadence ramp alone carries this fight's identity at T1).
+    // FOREST EXAM = a clean claw duel. Every swing is a two-hit bear-claw combo.
+    // Bestial Frenzy replaces the invisible cadence ramp: every 6 seconds it takes
+    // a readable 1.5s cast, then permanently gains another 20% attack-speed and
+    // 10% movement-speed stack, capped at five stacks.
+    bossScript: {
+      repeating: [
+        { intervalMs: 6000, initialDelayMs: 5000, actions: [
+          { type: 'cast', castMs: 1500, label: 'Bestial Frenzy', fx: 'frenzy', actions: [
+            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.20, moveSpeedMult: 1.10, maxStacks: 5, label: 'bestial-frenzy' },
+          ] },
+        ] },
+      ],
+    },
   }],
 
   // MOUNTAIN — TELEGRAPHED CATASTROPHIC IMPACT. One enormous readable hit, and the
@@ -146,7 +152,7 @@ export const bossMonsterEntriesT1 = [
     isBoss: true,
     stats: { hp: 2100, attack: 56, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
-    rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158, catalystBundle: 5 },
+    rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
     targeting: { prefersPlayers: true },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
@@ -181,14 +187,14 @@ export const bossMonsterEntriesT1 = [
     // trivial (13 is exactly the Mud Toad's hit) — the toxin and the rot pool are the boss.
     stats: { hp: 2100, attack: 13, plating: 2, damageReduction: 0.02, speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150, catalystBundle: 5 },
+    rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
     targeting: { prefersPlayers: true },
     // 3 x4 = 12 dps at cap, reached after 3 swings (7.8s) and held there because each
     // landed hit refreshes the whole duration. Was 4 x4 = 16 dps — approved 2026-08-28
     // after live evidence showed poison, not direct hits or Bile Pool, was the fatal
     // pressure in two clean boss fights (Striker died ~31% HP both times, ~38.2s each).
-    dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 7000 },
     chargedAttack: {
       name: 'Bile Pool', castMs: 1200, cooldownMs: 8500, initialCooldownMs: 4000,
       multiplier: 1.0, fx: 'strong-kick', aoe: { radius: 105 },
@@ -218,7 +224,7 @@ export const bossMonsterEntriesT1 = [
     // several times the effective HP a heavy hitter does. That is the endurance exam.
     stats: { hp: 1750, attack: 47, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'quake', biome: 'cave',
-    rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165, catalystBundle: 5 },
+    rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
     targeting: { prefersPlayers: true },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },

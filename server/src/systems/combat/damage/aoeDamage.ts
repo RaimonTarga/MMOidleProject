@@ -50,6 +50,7 @@ export function applyPlayerAoe(
   radius: number,
   baseDamage: number,
   excludeId?: string,
+  physicalSource: "player" | "summon" = "player",
 ): void {
   const toKill: Array<{ monster: MonsterEntity; damage: number }> = [];
   const attackerNodeId = attacker.hasPosition.nodeId;
@@ -84,7 +85,7 @@ export function applyPlayerAoe(
   }
 
   for (const { monster, damage } of toKill) {
-    emitPlayerMonsterOnKill(world, attackerId, monster, damage, "aoe");
+    emitPlayerMonsterOnKill(world, attackerId, monster, damage, "aoe", physicalSource);
     const rewardInfo = grantMonsterRewards(world, attackerId, monster);
     recordWorldLogEvent(
       world,

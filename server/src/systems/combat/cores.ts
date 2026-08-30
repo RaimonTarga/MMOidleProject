@@ -1,12 +1,20 @@
 import {
   ABILITY_DATABASE,
   abilityCooldownMs,
-  MONSTER_DATABASE,
+  getCounter,
   getCooldown,
+  getString,
+  resetCounter,
+  setCounter,
   setCooldown,
+  setString,
 } from "@mmo-idle/shared";
-import { registerCombatListener } from "./engine/combatPipeline";
+import { registerCombatListener, type CombatContext } from "./engine/combatPipeline";
 import { abilityCooldownKey } from "../player/abilities/abilityCooldowns";
+import type { PlayerEntity } from "../../ecs/entity";
+
+const DUELIST_TARGET_KEY = "core.duelist-target-id";
+const DUELIST_STACKS_KEY = "core.duelist-focus-stacks";
 
 /**
  * Combat-time core effects.
@@ -15,7 +23,7 @@ import { abilityCooldownKey } from "../player/abilities/abilityCooldowns";
  * (`shared/src/systems/stats.ts`, the `core.*-mult` pass). The two here need a
  * combat event instead, because they depend on WHO was hit or WHAT died:
  *
- *  - `core.elite-damage-mult`            (Duelist) — onHit, vs elites and bosses
+ *  - `core.focus-damage-per-hit-mult`    (Duelist) — onHit, same-target ramp
  *  - `core.mobility-refund-on-kill-pct`  (Bruiser) — onKill, refunds mobility cd
  *
  * `core.onhit-mult` (Catalyst) is NOT here: it folds into the on-hit term inside
@@ -25,25 +33,51 @@ import { abilityCooldownKey } from "../player/abilities/abilityCooldowns";
  * identically.
  */
 export function initCoreCombatEffects(): void {
-  registerEliteDamage();
+  registerDuelistFocus();
   registerMobilityRefundOnKill();
 }
 
-// ── Duelist: extra damage vs elites and bosses ───────────────────────────────
+// ── Duelist: consecutive direct hits build focused pressure ─────────────────
 
-function registerEliteDamage(): void {
+function isDirectPlayerEvent(ctx: CombatContext): boolean {
+  if (ctx.formation?.side === "summon") return false;
+  if (ctx.metadata.physicalSource === "summon") return false;
+  const aggroSource = ctx.metadata.aggroSource;
+  return !(
+    typeof aggroSource === "object" &&
+    aggroSource !== null &&
+    "kind" in aggroSource &&
+    aggroSource.kind === "minion"
+  );
+}
+
+/** Clear only Core-owned scratch state; unrelated combat ramps are preserved. */
+export function resetCoreCombatState(player: PlayerEntity): void {
+  setString(player.tracksCombat, DUELIST_TARGET_KEY, "");
+  resetCounter(player.tracksCombat, DUELIST_STACKS_KEY);
+}
+
+function registerDuelistFocus(): void {
   registerCombatListener("onHit", (ctx, _world) => {
     if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
+    if (!isDirectPlayerEvent(ctx)) return;
 
-    const mult = ctx.attacker.usesSkills.passives["core.elite-damage-mult"] ?? 0;
-    if (mult === 0) return;
+    const perHit = ctx.attacker.usesSkills.passives["core.focus-damage-per-hit-mult"] ?? 0;
+    const maxStacks = Math.max(
+      0,
+      Math.round(ctx.attacker.usesSkills.passives["core.focus-max-stacks"] ?? 0),
+    );
+    if (perHit <= 0 || maxStacks <= 0) return;
 
-    const def = MONSTER_DATABASE.get(ctx.defender.isMonster.monsterTypeId);
-    // `elite` marks a biome's standout; `isBoss` marks a dungeon boss. A Duelist
-    // is paid for single-target commitment, so both count.
-    if (!def?.elite && !def?.isBoss) return;
+    const targetId = ctx.defender.isMonster.id;
+    const previousTargetId = getString(ctx.attacker.tracksCombat, DUELIST_TARGET_KEY);
+    const stacks = previousTargetId === targetId
+      ? Math.min(maxStacks, getCounter(ctx.attacker.tracksCombat, DUELIST_STACKS_KEY) + 1)
+      : 1;
 
-    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + mult)));
+    setString(ctx.attacker.tracksCombat, DUELIST_TARGET_KEY, targetId);
+    setCounter(ctx.attacker.tracksCombat, DUELIST_STACKS_KEY, stacks);
+    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + perHit * stacks)));
   });
 }
 
@@ -52,6 +86,7 @@ function registerEliteDamage(): void {
 function registerMobilityRefundOnKill(): void {
   registerCombatListener("onKill", (ctx, _world) => {
     if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
+    if (!isDirectPlayerEvent(ctx)) return;
 
     const player = ctx.attacker;
     const pct = player.usesSkills.passives["core.mobility-refund-on-kill-pct"] ?? 0;

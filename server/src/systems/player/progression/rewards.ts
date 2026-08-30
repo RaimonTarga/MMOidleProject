@@ -106,6 +106,10 @@ function applyBiomeXP(
   const { biomeGroup, biomeTier } = biomeInfo;
   const levelCap = biomeLevelCap(entity.tracksProgression.playerTier, biomeGroup);
   const prevLevel = entity.tracksProgression.biomeLevel[biomeGroup] ?? 0;
+  // GAIN STOP, never a clamp. Since the T3 economy pass a retired biome's cap stops
+  // growing, so a legacy save can sit ABOVE its cap — it keeps that level and the Global
+  // Mastery it confers (globalMastery() sums raw biomeLevel and has no ceiling), it just
+  // banks no further XP here. Nothing below writes a lower level.
   if (prevLevel >= levelCap) {
     return { xpGain: 0, prevLevel, newLevel: prevLevel, unlockedRecipeIds: [] };
   }
@@ -226,15 +230,6 @@ function applyKillRewardsToPlayer(
       const key = bossClearKey(info.biomeGroup, info.biomeTier);
       if (!recipient.tracksProgression.bossesCleared.includes(key)) {
         recipient.tracksProgression.bossesCleared.push(key);
-        // One-time catalyst bundle for the first clear — keyed by the node's
-        // modifier (the boss entity is stat-immune, but the NODE's catalyst
-        // identity still applies). Skipped on excluded nodes (e.g. the throne).
-        const bundle = Math.round((def?.rewards.catalystBundle ?? 0) * debugMult);
-        const bundleFamily = NODE_MODIFIERS[monster.hasPosition.nodeId]?.modifier;
-        if (bundle > 0 && bundleFamily) {
-          recipient.tracksProgression.catalysts[bundleFamily] =
-            (recipient.tracksProgression.catalysts[bundleFamily] ?? 0) + bundle;
-        }
         markSliceDirty(world, recipient, 'tracksProgression');
       }
     }

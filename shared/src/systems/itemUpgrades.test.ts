@@ -15,14 +15,16 @@ function assert(cond: boolean, msg: string): void {
 
 const NO_ESSENCES = {} as Record<EssenceType, number>;
 
-// Band boundaries derived from NODE_BIOMES start tiers (5 T1 biomes, +2 at T2,
-// +2 at T3, +2 at T4) × 6 levels per tier; special nodes are excluded.
+// Band boundaries derived from NODE_BIOMES start AND final tiers × 6 levels per tier;
+// special nodes are excluded. Since the T3 economy pass (2026-08-30) a RETIRED biome
+// stops adding headroom, so T3 is 114 (not 126) and T4 is 156 (not 192) — both tiers'
+// +5 now land on content the player can actually reach.
 function testBandBoundaries(): void {
   assert(maxGlobalMasteryAtTier(0) === 0, 'max GM at tier 0');
   assert(maxGlobalMasteryAtTier(1) === 30, 'max GM at tier 1');
   assert(maxGlobalMasteryAtTier(2) === 72, 'max GM at tier 2');
-  assert(maxGlobalMasteryAtTier(3) === 126, 'max GM at tier 3');
-  assert(maxGlobalMasteryAtTier(4) === 192, 'max GM at tier 4');
+  assert(maxGlobalMasteryAtTier(3) === 114, 'max GM at tier 3');
+  assert(maxGlobalMasteryAtTier(4) === 156, 'max GM at tier 4');
 }
 
 function testTierOneThresholds(): void {
@@ -64,7 +66,8 @@ function testCeilingIsTierScoped(): void {
   assert(upgradeCeilingFromGlobalMastery(71, 2) === 4, 'GM 71 tier 2 +4');
   assert(upgradeCeilingFromGlobalMastery(72, 2) === MAX_UPGRADE, 'GM 72 tier 2 +5');
   assert(upgradeCeilingFromGlobalMastery(72, 3) === 0, 'GM 72 tier 3 ceiling');
-  assert(upgradeCeilingFromGlobalMastery(198, 4) === MAX_UPGRADE, 'GM 198 tier 4 +5');
+  assert(upgradeCeilingFromGlobalMastery(156, 4) === MAX_UPGRADE, 'GM 156 tier 4 +5');
+  assert(upgradeCeilingFromGlobalMastery(155, 4) === 4, 'GM 155 tier 4 +4');
   assert(upgradeCeilingFromGlobalMastery(9999, 1) === MAX_UPGRADE, 'ceiling capped at MAX_UPGRADE');
 }
 

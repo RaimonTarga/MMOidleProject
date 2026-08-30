@@ -1,5 +1,6 @@
 import {
   CLEARING_NODE_ID,
+  GAME_CONFIG,
   MONSTER_DATABASE,
   NODE_BIOMES,
   RECIPE_DATABASE,
@@ -15,7 +16,6 @@ import {
   type SubVariant,
   biomeLevelCap,
   coreIsActive,
-  isRestrictedCore,
   listBiomeGroupsAtTier,
 } from '@mmo-idle/shared';
 import { findDungeonNodeFor } from '../../src/world/nodePath';
@@ -89,21 +89,8 @@ function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'core' | 'relic'>): n
   return primary * 1000 + total;
 }
 
-/**
- * Rank a core by the total budget it spends, using ABSOLUTE magnitudes.
- *
- * Cores are authored with deliberate tradeoffs — the Sniper Core's `-15% maxHp`
- * is *paying for* its `+25% attack`, not a penalty. Summing signed values would
- * rank tradeoff cores far below pure-upside ones and systematically dress every
- * bot in defensive cores, biasing the whole DPS matrix. Absolute magnitude is the
- * closest available proxy for "how much power this core is allowed to move".
- */
-function coreScore(recipe: Recipe): number {
-  let total = 0;
-  for (const v of Object.values(recipe.mechanicEffects ?? {})) total += Math.abs(v);
-  return total;
-}
-
+// Core scoring lives below the shared path-profile helpers because it needs the
+// selected build's passives and fully-upgraded weapon, not authored magnitude alone.
 const RELIC_BUFF_PASSIVES = [
   'cadence.momentum-echo',
   'cooldown.overdrive',
@@ -181,6 +168,68 @@ function relicProfileFactor(profile: ResolvedRelicProfile): number {
 
 function hasAnyPassive(passives: PassiveMap, keys: readonly PassiveKey[]): boolean {
   return keys.some((key) => (passives[key] ?? 0) > 0);
+}
+
+function fullyUpgradedStat(recipe: Recipe | undefined, stat: string): number {
+  if (!recipe) return 0;
+  let total = (recipe.stats as Record<string, number>)[stat] ?? 0;
+  for (const step of recipe.upgrades ?? []) {
+    total += (step.stats as Record<string, number> | undefined)?.[stat] ?? 0;
+  }
+  return total;
+}
+
+/** Score the Core's signed, build-relevant effect instead of its absolute budget. */
+function coreScore(
+  recipe: Recipe,
+  classRoot: string,
+  skillPath: string[],
+  gearItemIds: string[],
+): number {
+  const effects = recipe.mechanicEffects ?? {};
+  const { passives } = skillPathProfile(skillPath, gearItemIds);
+  const weapon = gearItemIds
+    .map((id) => RECIPE_DATABASE.get(id))
+    .find((candidate) => candidate?.slot === 'weapon');
+  const attack = Math.max(0.1, 1 + (effects['core.attack-mult'] ?? 0));
+  const attackSpeed = Math.max(0.1, 1 + (effects['core.attack-speed-mult'] ?? 0));
+  const focusStacks = Math.min(3, effects['core.focus-max-stacks'] ?? 0);
+  const focus = 1 + (effects['core.focus-damage-per-hit-mult'] ?? 0) * focusStacks;
+  const onHit = Math.max(0.1, 1 + (effects['core.onhit-mult'] ?? 0));
+
+  const rawAttack = GAME_CONFIG.PLAYER_ATTACK + fullyUpgradedStat(weapon, 'attack');
+  const rawOnHit = fullyUpgradedStat(weapon, 'onHitDamage') +
+    (passives['cadence.aftershock-onhit-per-tier'] ?? 0) +
+    (passives['reload.alternating-onhit-per-tier'] ?? 0);
+  const onHitShare = rawOnHit > 0
+    ? Math.min(0.8, rawOnHit / Math.max(1, rawAttack + rawOnHit))
+    : 0;
+  const directFactor = attack * attackSpeed * focus;
+  const onHitFactor = onHit * attackSpeed;
+  let score = directFactor * (1 - onHitShare) + onHitFactor * onHitShare;
+
+  const techniqueCdr = Math.min(0.9, Math.max(0, effects['technique.cooldown-reduction-pct'] ?? 0));
+  const techniquePower = Math.max(0.1, 1 + (effects['technique.power-pct'] ?? 0));
+  const techniqueThroughput = techniquePower / (1 - techniqueCdr);
+  score *= 1 + (techniqueThroughput - 1) * 0.35;
+
+  const appliesScalableDebuff = classRoot === 'dot-root' || hasAnyPassive(passives, RELIC_DEBUFF_PASSIVES);
+  if (appliesScalableDebuff) {
+    const debuffFactor =
+      (1 + (effects['core.debuff-duration-mult'] ?? 0)) *
+      (1 + (effects['core.debuff-potency-mult'] ?? 0));
+    score *= 1 + (debuffFactor - 1) * 0.5;
+  }
+
+  const defensiveWeight = skillPath.some((id) => id.includes('-heavy')) ? 0.75 : 0.3;
+  const survivability =
+    Math.max(0.1, 1 + (effects['core.maxhp-mult'] ?? 0)) *
+    Math.max(0.1, 1 + (effects['core.plating-mult'] ?? 0) * 0.35) /
+    Math.max(0.1, 1 - (effects['core.dr-layer-pct'] ?? 0));
+  score *= Math.pow(survivability, defensiveWeight);
+  score *= Math.pow(Math.max(0.1, 1 + (effects['core.recovery-mult'] ?? 0)), defensiveWeight * 0.4);
+  score *= Math.pow(Math.max(0.1, 1 + (effects['core.speed-mult'] ?? 0)), 0.15);
+  return score;
 }
 
 /** Score only relic channels the selected path demonstrably exercises. */
@@ -299,21 +348,22 @@ function bestRelicForBuild(
  * Pick the core this build would actually wear.
  *
  * A core only contributes if `coreIsActive` says so, so an ineligible core is worth
- * exactly nothing — equipping one would silently under-power the bot. We therefore
- * filter to eligible cores first, then prefer a RESTRICTED core (melee/ranged) over an
- * unrestricted one — matching your build is the entire point of the system, and
- * unrestricted is the deliberately weaker always-on fallback — and only then rank by
- * budget. A build with no range node yet (T1/T2 runs) can wear unrestricted cores
- * alone, which is correct: restricted cores do not unlock until player tier 3.
+ * exactly nothing — equipping one would silently under-power the bot. Eligible Cores
+ * then compete on estimated signed effect in this build: direct/on-hit output,
+ * Technique throughput, scalable debuffs, and weighted survivability. Native biome
+ * is only a tie-breaker. Before range selection, only unrestricted Cores are eligible.
  */
 function bestCoreForBuild(
   gearTier: number,
   biomeGroup: string,
   playerTier: number,
   selectedRange: string | null,
+  classRoot: string,
+  skillPath: string[],
+  gearItemIds: string[],
 ): string | undefined {
   let best: Recipe | undefined;
-  let bestRank = -1;
+  let bestScore = Number.NEGATIVE_INFINITY;
 
   for (const recipe of RECIPE_DATABASE.values()) {
     if (recipe.slot !== 'core') continue;
@@ -321,13 +371,16 @@ function bestCoreForBuild(
     if (!isBenchEquippable(recipe, playerTier)) continue;
     if (!coreIsActive(recipe.coreEligibility, selectedRange)) continue;
 
-    // Rank: native+restricted > restricted > native unrestricted > unrestricted.
-    const rank =
-      (isRestrictedCore(recipe.coreEligibility) ? 2 : 0) +
-      (recipe.recipeGroup === biomeGroup ? 1 : 0);
-    if (rank > bestRank || (rank === bestRank && best && coreScore(recipe) > coreScore(best))) {
+    const score = coreScore(recipe, classRoot, skillPath, gearItemIds);
+    const native = recipe.recipeGroup === biomeGroup;
+    const bestNative = best?.recipeGroup === biomeGroup;
+    if (
+      score > bestScore ||
+      (score === bestScore && native && !bestNative) ||
+      (score === bestScore && native === bestNative && best && recipe.id.localeCompare(best.id) < 0)
+    ) {
       best = recipe;
-      bestRank = rank;
+      bestScore = score;
     }
   }
 
@@ -351,7 +404,15 @@ export function resolveGearLoadout(
   for (const slot of GEAR_SLOTS) {
     const id =
       slot === 'core'
-        ? bestCoreForBuild(gearTier, biomeGroup, playerTier, selectedRange)
+        ? bestCoreForBuild(
+            gearTier,
+            biomeGroup,
+            playerTier,
+            selectedRange,
+            classRoot,
+            skillPath,
+            Object.values(loadout),
+          )
         : slot === 'relic'
           ? bestRelicForBuild(
               gearTier,

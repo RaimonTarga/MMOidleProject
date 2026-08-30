@@ -32,7 +32,7 @@ Update this doc at the end of every session. The roadmap says *what and why*; th
 | 6 | Gear evolution & reconstruction | all | 🔨 | resolved | `gear-evolution-*.md` | MACHINERY + 1 worked lineage IMPLEMENTED; Recipe lineageId/evolvesFrom + reconstructCost; MAX_UPGRADE→5; systems/evolution.ts; server evolveItem (evolve/reconstruct) + crafting:evolveItem; ForgeTab Evolve/Reconstruct; rapier lineage (flash-rapier→gale-needle/thorn-needle). Other slots/biomes + numbers = your pass |
 | 7 | Skills rework | T1+ | 🔨 | resolved | `abilities-*.md` | IMPLEMENTED (full T1–T4 roster of 18 on authored ranks; see 2026-08-22 below). New Abilities system; state on TracksProgression (like runes); Technique=arm-next-attack (hasArmedAbility) / Guard=immediate via the BUFF SYSTEM (explicit `ability-guard` buff, e.g. Brace=DR); built-in heuristic + dedicated TECHNIQUE/GUARD rune-override channels (fire-technique/fire-guard, starter); AbilityRecipe biome-gated; desktop + mobile UI. Evolution + per-biome content + numbers = later |
 | 8 | Charms & recovery layers | all | 🔨 | resolved | `charms-*.md` | IMPLEMENTED (machinery + 2 worked charms). Net-new = Guard-ability amplifier: 4 `guard.*` passives (cooldown-reduction / potency / duration / heal-on-fire) read at fire time in `abilityFiring.ts`; ride the existing mechanicEffects→passives pipeline (no new state). 7 "X Core" charms renamed (slot stays `recovery`). Class baseline recovery untouched. Numbers + per-biome charm identities = your pass |
-| 9 | Cores | T2+ | 🔨 | resolved | `cores-*.md` | **REWORKED 2026-08-03; ICONS 2026-08-04** — see `docs/archive/cores-rework-implementation-plan.md`. Eligibility collapsed from `rangeTag` (close/mid/far/universal/party) to `coreEligibility` (melee/ranged/unrestricted); `party` dropped. 12-core cast authored one per biome (3 biomes carry two), replacing the 5 placeholder forest cores (deleted; `playerRepo` now prunes unknown item ids on hydrate), with twelve bespoke PixelLab icons wired to the recipes. Fixed a TIER-PLACEMENT bug: a range is not picked until player tier 3, so the old restricted cores sat in the T2 band and were craftable-but-inert. 7 new passive consumers (recovery funnel, elite damage, on-hit, debuff duration/potency via an enumerated registry, 2 mobility clauses). NO DoT core — `core.attack-mult` already scales DoT. Growth = evolve into named branches at the next tier (none authored yet). Numbers = your pass |
+| 9 | Cores | T2+ | ✅ | resolved | `cores-*.md` | **CAPSTONE BALANCE PASS 2026-08-29.** All 12 Cores retuned into T2/T3 power bands; final class × stance × archetype × Core ordering and independent Core DR locked by tests. Duelist's elite/boss flag became a 5-hit same-target Focus ramp. Summon-owned hits/kills no longer trigger Duelist/Bruiser owner-event hooks, while inherited owner stats still flow through formations. In-combat Core swaps preserve unrelated combat state and clear only Focus. Bench selection now scores signed, build-relevant channels instead of absolute tradeoff magnitude, and specialist UI copy makes Catalyst's no-provider contract explicit. Full evolution/T4 roster remain deferred. |
 | 10 | Stances | T2 | 🔨 | resolved | `stances-*.md` | REWORKED: 11 modal stances; one free default; any learned stance can be a destination on a priority-ordered `switch-stance` Rune rule; destination-specific RP; non-destructive 1.5s-dwell switching with HP-percentage preservation; game-style destination sigil UI. CORRECTIVE PASS 2026-08-22: flat modifiers replaced by percentages, no stance touches max HP, damage-taken is a stance-local multiplier instead of additive DR, all server behavior exposed in the effect text, recipe gates un-rotted. Magnitudes remain a balance pass. |
 | 11 | Rites (name locked) | T3 | 🔨 | resolved | `rites-*.md` | REWORKED: 6 combat-boundary Rites with RP as the sole constraint; unified ACTIVE/POST/OOC boundary; exact-once combat-end effects; Purification, Mechanic Renewal, Ability Reprieve, Blood Offering, Lingering Battle, and Swift Repose. Numbers remain a balance pass. |
 | 12 | Biome identity / combat ecology | all | 🔨 | resolved | `biome-ecology-*.md` | **multi-session program**. PRIMITIVES + TELEGRAPHS done (A1 packs+call-allies / A2 patrols / A3 swarm; alpha tint + `ecology-pulse`). **ALL 5 STARTERS authored end-to-end** (Forest packs / Plains swarm+caller / Mountain sentinel-patrols+chokepoint-terrain / Swamp rot-pool-hazard-terrain / Cave patrolled-elites+high-detection). Each: open-world primitive tags + biome boss exams + terrain where core identity. **ALL 6 ADVANCED BIOMES authored** (Jungle/Desert/Volcanic/Tundra/Graveyard/Trench) + 5 new shared mechanics + an ELITE-TAG SYSTEM: `openingStrike` (jungle pounce / desert alpha-strike), Sun Mark (`appliesMark`+`markedStrike`, cleansable), `ambientHeat` (Volcanic node-wide soft-timer, `updateAmbientHeat`), `enemyShield.shatter` (Tundra ice-armor break → bonus + freeze via applyStun), `appliesAntiheal` (Trench abyssal pressure, stacks the existing `antiheal` status). ELITE system = `elite` def tag + yellow client outline (derived, no networked field) + `focus-elites` TARGETING rune (ELITE_FOCUS_WEIGHT in targetPriority) + `spawn-adds maxAlive` cap. Graveyard REWORKED to necromancers (`gravewright` raises capped undead that crumble on death — a normal mob with a repeating-spawn-adds bossScript). Terrain helpers: `denseBush()`/`lavaVent()`/`volcanicHeat()`. Reusable terrain placeholder visual (block=gray, hazard=toxic-green). REMAINING: Step 13 boss scaffolding, onAlphaDeath, real terrain sprites, numbers (Step 15) |
@@ -150,7 +150,12 @@ current-state docs are linked where available; the rest are filled at the step's
   seam (`itemUpgrades.ts`); effective max = `min(structural, gmCeiling)`. **Tier-banded since
   2026-07-10**: each item tier owns the GM band `(maxGlobalMasteryAtTier(T-1), maxGlobalMasteryAtTier(T)]`
   (derived from biome start tiers × `BIOME_LEVELS_PER_TIER`, clearing excluded); +1…+5 spread evenly
-  across the band so +5 lands at full tier mastery (T1 @ GM 30, T2 @ 72, T3 @ 126, T4 @ 198). GM
+  across the band so +5 lands at full tier mastery (T1 @ GM 30, T2 @ 72, **T3 @ 114, T4 @ 156**). GM
+  *(Updated 2026-08-30 by the T3 progression/economy pass: `biomeLevelCap` now also clamps by
+  `BIOME_FINAL_TIER_BY_GROUP`, so a RETIRED biome stops adding headroom. The old figures — 126 and
+  198, the latter never even matching live code, which computed 192 — counted Plains/Forest against
+  T3 and Cave/Swamp against T4, biomes with no nodes at those tiers. See
+  `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`.)*
   threaded into server `itemUpgrade.ts` + client `UpgradeTab`/`MasteryPanel`/`MenuButtons`.
 - Numbers (RP divisor) = user balance pass.
 
@@ -245,7 +250,7 @@ current-state docs are linked where available; the rest are filled at the step's
   (contrasting). Other ~30 charms' amplifier identities + all numbers = user content/balance pass.
 - Verified: 4-pkg typecheck, both server tests, clean `autoCombatSameNode` bench (5 players).
 
-### 9. Cores  — 🔨 REWORKED 2026-08-03 (12-core cast; paired docs `cores-*.md`)
+### 9. Cores — ✅ CAPSTONE BALANCE PASS 2026-08-29 (paired docs `cores-*.md`)
 - **Living truth is `docs/cores-current-state.md`.** Plan + rationale:
   `docs/archive/cores-rework-implementation-plan.md`. Design source: `design_docs/CORE_*.md`.
 - Rework summary: eligibility is now `coreEligibility: melee | ranged | unrestricted`
@@ -256,19 +261,25 @@ current-state docs are linked where available; the rest are filled at the step's
   restricted cores sat in the T2 biome-level band — craftable, equippable, permanently inert.
   Distinct from the 2026-08-02 suffix-match fix; this one was content placement.
   `coreAuthoring.test.ts` now asserts the invariant.
-- New consumers: `core.recovery-mult` (stat rebuild + the `applyHealToPlayer` funnel),
-  `core.elite-damage-mult` + `core.mobility-refund-on-kill-pct` (listeners in
+- Consumers: `core.recovery-mult` (stat rebuild),
+  `core.focus-{damage-per-hit-mult,max-stacks}` + `core.mobility-refund-on-kill-pct` (listeners in
   `systems/combat/cores.ts`), `core.onhit-mult` (folded into `onHitMult` in `runPlayerAttack`),
   `core.debuff-{duration,potency}-mult` (via `SCALABLE_DEBUFFS` + `applyPlayerDebuff`),
   `core.mobility-cooldown-reduction-pct` (`techniqueCooldownMs`). `core.hpregen-mult` was
   folded into `core.recovery-mult`. Arcanist reuses the existing `technique.*` keys.
+- 2026-08-29: all 12 recipes received first-pass capstone values. Duelist now ramps on
+  consecutive direct hits to any one target rather than checking elite/boss flags. Summon-owned
+  hits/kills are excluded from owner-event hooks; inherited owner stat scaling remains intact.
+  Core swaps preserve unrelated live combat state and clear only Core-owned Focus.
+- Bench selection evaluates signed, build-relevant output/defense/subsystem channels rather than
+  preferring restricted Cores and summing absolute tradeoff magnitude.
 - **No DoT core, deliberately** — DoT damage per stack derives from the final
   `dealsDamage.attack`, which `core.attack-mult` already multiplies, so a DoT-potency core is
   a redundant second multiplier. See the plan doc before proposing one.
 - Growth model: evolve into one of several named branches at the next tier (one evolve, one
   decision). Every core carries a `lineageId`; no branches authored yet.
-- Verified: typecheck clean (4 pkgs + bench); `pnpm test` 45/45; bench bots equip an eligible
-  core on every T2 and T3 build.
+- Verification is tracked in `docs/cores-current-state.md`; ordering, attribution, swap semantics,
+  specialist selection, and layered DR have dedicated regression coverage.
 - (Original Step 9 implementation notes retained below for history — the `rangeTag` model and
   the 4 placeholder cores they describe are SUPERSEDED.)
 

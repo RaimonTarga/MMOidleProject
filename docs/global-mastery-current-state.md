@@ -1,5 +1,15 @@
 # Steps 3 + 4 — Current State (audited 2026-06-23)
 
+> ⚠ **LARGELY STALE — read the code, not this doc.** It was audited before
+> `BIOME_LEVELS_PER_TIER` went 4 → 6 (it still says 4 throughout), and before the T3
+> progression/economy pass (2026-08-30) made `biomeLevelCap` **retirement-aware**: the
+> player's tier is now also clamped by the derived `BIOME_FINAL_TIER_BY_GROUP`, so a biome
+> stops adding mastery headroom once its authored content ends. Live ceilings are
+> **T1 30 / T2 72 / T3 114 / T4 156**, and the +1…+5 gates are 6/12/18/24/30, 38/47/55/64/72,
+> 80/89/97/106/114 and 122/131/139/148/156. The living description of that architecture is
+> `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`; a full rewrite of this
+> doc is overdue.
+
 Paired with `docs/archive/global-mastery-plan.md`. Covers **Step 3 (Recipe system + Biome Mastery,
 incl. the biome-levels-per-tier 4→6 expansion)** and **Step 4 (Global Mastery)**, planned and
 built together because GM derives from the biome-level track Step 3 reshapes.

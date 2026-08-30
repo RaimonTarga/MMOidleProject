@@ -14,23 +14,9 @@ import { getReactivePlatingBonus } from '../mitigation/reactivePlating';
 const NEUTRAL_OPTS = { category: 'neutral' as const, shape: 'square' as const };
 
 export const DEFENSE_BUFFS = [
-  // The barrier is a standing pool, so its tile shows how full it is rather than a
-  // sweep. `durationPct` doubles as the fill percentage; -1 while it is recharging
-  // would hide the very state the player wants to watch.
-  defineBuff('defense-barrier', ({ player }) => {
-    if (!player?.hasBarrier || player.hasBarrier.max <= 0) return null;
-    const { current, max, recharging } = player.hasBarrier;
-    if (current <= 0 && !recharging) return null;
-    return {
-      id: 'defense-barrier',
-      label: recharging ? 'Recharge' : 'Barrier',
-      stacks: Math.round(current),
-      durationPct: (current / max) * 100,
-      color: recharging ? '#88ddff' : '#44ccdd',
-      logDetail: `${Math.round(current)} of ${Math.round(max)} barrier`
-        + (recharging ? ' (recharging)' : ''),
-    };
-  }, NEUTRAL_OPTS),
+  // NOTE deliberately no barrier tile. The barrier already has its own conduit
+  // under the HP bar and a current/max readout beside health; a third copy in
+  // the buff row was the same state said three times.
   defineBuff('defense-ward', ({ player }) => {
     if (!player?.holdsWards) return null;
     const total = player.holdsWards.wards.reduce((sum, w) => sum + w.amount, 0);

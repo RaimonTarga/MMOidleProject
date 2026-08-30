@@ -210,11 +210,15 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks rules for being chased by three or more enemies.",
     kind: "unlock-rune",
     tier: 2,
+    // T2 economy pass (2026-08-29): moved out of Swamp's T1 band (was L3, inside
+    // levels 1-6) into Swamp's actual T2 band (levels 7-12) — a Tier-2-tagged
+    // recipe should not be reachable during ordinary T1 farming. Simplified to
+    // single-color purple, essence-only.
     recipeGroup: "swamp",
-    requiredBiomeLevel: 3,
+    requiredBiomeLevel: 7,
     runeId: "n-aggro-3",
     runeKind: "condition",
-    cost: { purple: 240, red: 100 },
+    cost: { purple: 70 },
   },
   {
     id: "rune-recipe-focus-lowest-hp",
@@ -222,11 +226,12 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks target selection for finishing weakened enemies.",
     kind: "unlock-rune",
     tier: 2,
+    // T2 economy pass (2026-08-29): moved out of Swamp's T1 band (was L2) into L8.
     recipeGroup: "swamp",
-    requiredBiomeLevel: 2,
+    requiredBiomeLevel: 8,
     runeId: "focus-lowest-hp",
     runeKind: "action",
-    cost: { purple: 240, yellow: 120 },
+    cost: { purple: 90 },
   },
   {
     id: "rune-recipe-let-dots-finish",
@@ -234,11 +239,12 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks DoT-class target selection that leaves enemies your DoTs should finish.",
     kind: "unlock-rune",
     tier: 2,
+    // T2 economy pass (2026-08-29): moved out of Swamp's T1 band (was L3) into L9.
     recipeGroup: "swamp",
-    requiredBiomeLevel: 3,
+    requiredBiomeLevel: 9,
     runeId: "let-dots-finish",
     runeKind: "action",
-    cost: { purple: 220, green: 120 },
+    cost: { purple: 90 },
   },
   {
     id: "rune-recipe-spread-dots",
@@ -246,11 +252,12 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks DoT-class target selection that rotates between enemies to upkeep DoTs.",
     kind: "unlock-rune",
     tier: 2,
+    // T2 economy pass (2026-08-29): moved out of Swamp's T1 band (was L4) into L10.
     recipeGroup: "swamp",
-    requiredBiomeLevel: 4,
+    requiredBiomeLevel: 10,
     runeId: "spread-dots",
     runeKind: "action",
-    cost: { purple: 280, red: 120 },
+    cost: { purple: 120 },
   },
   {
     // Graveyard teaches the counter to its own necromancers: prioritize the

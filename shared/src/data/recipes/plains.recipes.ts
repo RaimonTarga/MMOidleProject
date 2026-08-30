@@ -118,10 +118,20 @@ export const plainsRecipeEntries = [
   }],
 
   // ── T2 ──
+  // T2 economy pass (2026-08-29): now an EVOLUTION of iron-broadsword at +5
+  // (§5/§6). DELIBERATE EXCEPTION to §8's weapon catalyst schedule: this weapon
+  // stays catalyst-neutral at every step, same as its T1 predecessor ("flexible
+  // payment, deferred" — see plains-boots-t2's old family-tag comment) — there is
+  // no established family for the Plains generalist sidearm, and inventing one
+  // would contradict the T1 precedent. Reconstruct is essence-only too, priced at
+  // 4x (not the usual 3.5x) so evolving still reads as strictly better even
+  // without a catalyst gap. See T2_PROGRESSION_ECONOMY_IMPLEMENTATION ledger §11.
   ['knight-steelsword', {
     id: 'knight-steelsword', name: "Knight's Steelsword",
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'weapon',
+    evolvesFrom: 'iron-broadsword',
     cost: { yellow: 45 }, stats: { attack: 18 }, attacksPerSecond: 1.00, tier: 2,
+    reconstructCost: { yellow: 180 },
     icon: 'items/weapons/knight-steelsword.png',
     // The generalist Technique stat, inherited from the Broadsword: Plains is the
     // generalist biome, and this sidearm is still bought for its cadence of
@@ -129,60 +139,69 @@ export const plainsRecipeEntries = [
     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.12 },
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
     upgrades: [
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 45 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 90 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 180 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 180 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 180 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 27 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 68 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 108 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 176 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 296 }, requiredBiomeLevel: 10 },
     ],
   }],
 
+  // T2 economy pass (2026-08-29): now an EVOLUTION of plains-vest-t1 at +5.
   ['plains-vest-t2', {
     id: 'plains-vest-t2', name: 'Enduring Robe',
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { yellow: 60 }, catalystCost: { alacrity: 2 }, stats: { maxHp: 43, plating: 13 }, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
+    evolvesFrom: 'plains-vest-t1',
+    cost: { yellow: 60 }, stats: { maxHp: 43, plating: 13 }, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
+    reconstructCost: { yellow: 210 }, reconstructCatalystCost: { alacrity: 2 },
     icon: 'items/armor/enduring-robe.png',
     description: 'Plate that has outlasted the wars it was made for, and the smith who made it.',
     upgrades: [
-      { stats: { maxHp: 4, plating: 1 }, cost: { yellow: 60 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 4, plating: 1 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 240 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 4, plating: 2 }, cost: { yellow: 240 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 240 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 4, plating: 1 }, cost: { yellow: 36 }, requiredBiomeLevel: 9 },
+      { stats: { maxHp: 4, plating: 1 }, cost: { yellow: 90 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 144 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 4, plating: 2 }, cost: { yellow: 234 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 396 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   // CHARM — kill-chain Recovery, deepened. Same shape as the Plains Stone.
+  // T2 economy pass (2026-08-29): now an EVOLUTION of plains-charm-t1 at +5.
   ['plains-charm-t2', {
     id: 'plains-charm-t2', name: 'Stalwart Heart',
     recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { yellow: 50 }, catalystCost: { alacrity: 2 }, stats: { recovery: 2 }, // family-tag: on-kill Recovery answers swarm attrition → Alacrity
+    evolvesFrom: 'plains-charm-t1',
+    cost: { yellow: 50 }, stats: { recovery: 2 }, // family-tag: on-kill Recovery answers swarm attrition → Alacrity
+    reconstructCost: { yellow: 175 }, reconstructCatalystCost: { alacrity: 2 },
     mechanicEffects: { 'defense.recovery-on-kill-pct': 0.32, 'defense.recovery-on-kill-ms': 4000 },
     tier: 2,
     icon: 'items/charms/stalwart-heart.png',
     description: 'A greater plains-stone, its warmth swelling with every foe laid low.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 60 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 18 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 45 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 72 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 117 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 198 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
     ],
   }],
 
+  // T2 economy pass (2026-08-29): now an EVOLUTION of plains-boots-t1 at +5.
   ['plains-boots-t2', {
     id: 'plains-boots-t2', name: 'Gale Boots',
     recipeGroup: 'plains', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { yellow: 40 }, catalystCost: { alacrity: 2 }, stats: { speed: 32 }, tier: 2, // family-tag: plains speed → Alacrity (Broadsword weapon stays neutral — flexible payment, deferred)
+    evolvesFrom: 'plains-boots-t1',
+    cost: { yellow: 40 }, stats: { speed: 32 }, tier: 2, // family-tag: plains speed → Alacrity
+    reconstructCost: { yellow: 140 }, reconstructCatalystCost: { alacrity: 2 },
     mechanicEffects: { 'mobility.kill-speed-pct': 0.45, 'mobility.kill-speed-ms': 3000 },
     icon: 'items/boots/gale-boots.png',
     description: 'Wind-cured leather that seems to lean into every stride.',
     upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 20 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 40 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 80 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 80 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 80 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 12 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 48 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 78 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -214,14 +233,17 @@ export const plainsRecipeEntries = [
   // named branches at the next tier — one evolve, one decision. Every core therefore
   // carries a `lineageId` for those future branches to hang from.
   //
-  // ALL NUMBERS ARE PLACEHOLDERS inside the design doc's bands, pending the balance pass.
+  // Values are the 2026-08-29 first-pass capstone tune; validate with benches/playtests.
   //
-  // The cast, one core per biome (forest/cave/mountain carry two):
+  // The cast, one core per biome (jungle/cave/mountain carry two):
   //   plains   Tempered      swamp    Controller     tundra   Scout
   //   forest   Survivalist   jungle   Bruiser        volcanic Catalyst
-  //            Accelerant    desert   Sniper
-  //   cave     Force         mountain Juggernaut
-  //            Duelist                Arcanist
+  //                                   Accelerant
+  //   cave     Force         desert   Sniper
+  //            Duelist       mountain Juggernaut
+  //                                   Arcanist
+  // (Corrected 2026-08-30: Accelerant is homed in JUNGLE — `jungle.recipes.ts` — not
+  //  Forest; Forest carries only Survivalist.)
 
   // T2 starter — Tempered: the benchmark. Deliberately simple and never a trap,
   // so specialising stays a choice rather than a requirement.
@@ -231,7 +253,7 @@ export const plainsRecipeEntries = [
     lineageId: 'core-tempered',
     cost: { yellow: 45 }, catalystCost: { swarming: 1 }, // family-tag: reliable always-on generalist → Swarming
     stats: {}, tier: 2,
-    mechanicEffects: { 'core.attack-mult': 0.09, 'core.maxhp-mult': 0.09 },
+    mechanicEffects: { 'core.attack-mult': 0.12, 'core.maxhp-mult': 0.12 },
     icon: 'items/cores/tempered.png',
     description: 'Balanced for any hand. It asks no commitment, and rewards none in particular.',
   }],

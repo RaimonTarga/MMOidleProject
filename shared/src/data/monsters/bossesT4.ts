@@ -417,7 +417,10 @@ export const bossMonsterEntriesT4 = [
     isBoss: true,
     stats: { hp: 21793, attack: 143, plating: 20, damageReduction: 0.22, speed: 22, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
-    rewards: { essence: 660, essenceType: 'purple', level: 5, biomeXp: 990 },
+    // T4 economy pass (2026-08-30): essenceType purple → green, matching Trench's
+    // own gear home colour and its trash-mob essence correction. Quantity/level/
+    // biomeXp untouched.
+    rewards: { essence: 660, essenceType: 'green', level: 5, biomeXp: 990 },
     ai: { wanderRadius: 100, leashRange: 960, idleMinMs: 4500, idleMaxMs: 11000 },
     targeting: { prefersPlayers: true },
     chargeOnAggro: { speedMult: 2.3, durationMs: 1200 },

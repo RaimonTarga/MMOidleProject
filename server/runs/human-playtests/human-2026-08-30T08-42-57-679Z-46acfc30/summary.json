@@ -1,0 +1,382 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-08-30T08-42-57-679Z-46acfc30",
+    "startedAt": 1788079377679,
+    "endedAt": 1788080869988,
+    "durationMs": 1492309,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-08-30T08-42-57-679Z-46acfc30",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 25,
+      "end": 25,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 25
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 2,
+    "finalGlobalMastery": 43,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 6,
+      "forest": 6,
+      "swamp": 10,
+      "cave": 11,
+      "mountain": 10
+    }
+  },
+  "combat": {
+    "totalKills": 122,
+    "killsByMonster": {
+      "Tiny Wisp": 15,
+      "Field Hare": 38,
+      "Boar": 12,
+      "Young Wolf": 11,
+      "Wolf": 2,
+      "Mud Toad": 5,
+      "Mire Ooze": 4,
+      "Moss Rat": 2,
+      "Cave Lurker": 2,
+      "Cave Brute": 3,
+      "Cliff Hopper": 3,
+      "Ridge Ambusher": 1,
+      "Prairie Defender": 6,
+      "Tusked Razorback": 1,
+      "Forest Sentinel": 3,
+      "Gnarled Greatbear": 1,
+      "Mire Keeper": 3,
+      "Grave Toadeater": 1,
+      "Stone Warden": 4,
+      "Crag Behemoth": 1,
+      "Cave Sentinel": 3,
+      "Obsidian Broodmother": 1
+    },
+    "totalDamageTaken": 6200,
+    "playerDamageDealt": 25291,
+    "totalHealed": 5838,
+    "deaths": 2,
+    "abilityActivations": {
+      "sweep": 69,
+      "second-wind": 29,
+      "expose-weakness": 35
+    }
+  },
+  "positioning": {
+    "samples": 2914,
+    "movementFraction": 0.3685655456417296,
+    "stationaryCombatFraction": 0.5806451612903226,
+    "nearBoundaryFraction": 0.05662319835277969,
+    "boss": {
+      "movementFraction": 0.029013539651837523,
+      "nearBoundaryFraction": 0,
+      "range": {
+        "samples": 1034,
+        "mean": 51.23381881065186,
+        "min": 14.518690659491137,
+        "max": 77.11663213174305,
+        "p50": 51.87879650067944,
+        "p90": 59.0408929283389
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7023529411764706,
+      "combatDurationMs": 12817,
+      "playerDamage": 566,
+      "incomingDamage": 156
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5129411764705882,
+      "combatDurationMs": 8413,
+      "playerDamage": 368,
+      "incomingDamage": 133
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8917647058823529,
+      "combatDurationMs": 3805,
+      "playerDamage": 138,
+      "incomingDamage": 20
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.648235294117647,
+      "combatDurationMs": 9506,
+      "playerDamage": 468,
+      "incomingDamage": 94
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4858823529411765,
+      "combatDurationMs": 7815,
+      "playerDamage": 331,
+      "incomingDamage": 79
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 18816,
+      "playerDamage": 836,
+      "incomingDamage": 171
+    },
+    {
+      "bossName": "Gnarled Greatbear",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 39642,
+      "playerDamage": 2035,
+      "incomingDamage": 384
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9195238095238095,
+      "combatDurationMs": 3503,
+      "playerDamage": 169,
+      "incomingDamage": 9
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7895238095238095,
+      "combatDurationMs": 4106,
+      "playerDamage": 225,
+      "incomingDamage": 53
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7895238095238095,
+      "combatDurationMs": 1202,
+      "playerDamage": 0,
+      "incomingDamage": 22
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6257142857142857,
+      "combatDurationMs": 8312,
+      "playerDamage": 296,
+      "incomingDamage": 94
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4080952380952381,
+      "combatDurationMs": 9217,
+      "playerDamage": 344,
+      "incomingDamage": 68
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2819047619047619,
+      "combatDurationMs": 5602,
+      "playerDamage": 209,
+      "incomingDamage": 27
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.259047619047619,
+      "combatDurationMs": 500,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.16,
+      "combatDurationMs": 4605,
+      "playerDamage": 208,
+      "incomingDamage": 24
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.045714285714285714,
+      "combatDurationMs": 5709,
+      "playerDamage": 192,
+      "incomingDamage": 27
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 1802,
+      "playerDamage": 113,
+      "incomingDamage": 3
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9142857142857143,
+      "combatDurationMs": 4104,
+      "playerDamage": 120,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6542857142857142,
+      "combatDurationMs": 10911,
+      "playerDamage": 546,
+      "incomingDamage": 82
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.39,
+      "combatDurationMs": 11010,
+      "playerDamage": 555,
+      "incomingDamage": 82
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.12571428571428572,
+      "combatDurationMs": 11211,
+      "playerDamage": 555,
+      "incomingDamage": 82
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 4508,
+      "playerDamage": 300,
+      "incomingDamage": 41
+    },
+    {
+      "bossName": "Obsidian Broodmother",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9177142857142857,
+      "combatDurationMs": 3303,
+      "playerDamage": 96,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Obsidian Broodmother",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6634285714285715,
+      "combatDurationMs": 11714,
+      "playerDamage": 445,
+      "incomingDamage": 108
+    },
+    {
+      "bossName": "Obsidian Broodmother",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.36628571428571427,
+      "combatDurationMs": 11616,
+      "playerDamage": 438,
+      "incomingDamage": 115
+    },
+    {
+      "bossName": "Obsidian Broodmother",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.09257142857142857,
+      "combatDurationMs": 11515,
+      "playerDamage": 438,
+      "incomingDamage": 123
+    },
+    {
+      "bossName": "Obsidian Broodmother",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 3606,
+      "playerDamage": 192,
+      "incomingDamage": 41
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "chaotic-axe",
+      "armor": "cave-vest-t1",
+      "recovery": "swamp-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "flash-rapier": 3,
+      "plains-boots-t1": 5,
+      "plains-charm-t1": 2,
+      "plains-vest-t1": 5,
+      "swamp-charm-t1": 5,
+      "cave-vest-t1": 5,
+      "chaotic-axe": 5
+    },
+    "classRoot": "cadence-root",
+    "frame": null,
+    "range": null,
+    "techniques": [
+      "expose-weakness"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      }
+    ],
+    "stats": {
+      "attack": 51,
+      "attackRange": 12,
+      "attackCooldown": 858,
+      "maxHp": 168,
+      "plating": 9,
+      "damageReduction": 0.13
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-08-30T14-43-08-200Z-4ae4d9bb",
+    "startedAt": 1788100988200,
+    "endedAt": 1788102150601,
+    "durationMs": 1162401,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-08-30T14-43-08-200Z-4ae4d9bb",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 25,
+      "end": 25,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 25
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 2,
+    "finalGlobalMastery": 30,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 6,
+      "forest": 6,
+      "swamp": 6,
+      "mountain": 6,
+      "cave": 6
+    }
+  },
+  "combat": {
+    "totalKills": 121,
+    "killsByMonster": {
+      "Tiny Wisp": 14,
+      "Boar": 6,
+      "Field Hare": 39,
+      "Young Wolf": 24,
+      "Wolf": 3,
+      "Moss Rat": 2,
+      "Mud Toad": 7,
+      "Mire Ooze": 2,
+      "Cliff Hopper": 3,
+      "Ridge Ambusher": 1,
+      "Cave Lurker": 3,
+      "Cave Brute": 3,
+      "Prairie Defender": 3,
+      "Tusked Razorback": 1,
+      "Forest Sentinel": 9,
+      "Gnarled Greatbear": 1
+    },
+    "totalDamageTaken": 2305,
+    "playerDamageDealt": 16946,
+    "totalHealed": 2804,
+    "deaths": 2,
+    "abilityActivations": {
+      "sweep": 35,
+      "second-wind": 15,
+      "expose-weakness": 19
+    }
+  },
+  "positioning": {
+    "samples": 1945,
+    "movementFraction": 0.45604113110539846,
+    "stationaryCombatFraction": 0.49203084832904886,
+    "nearBoundaryFraction": 0.0442159383033419,
+    "boss": {
+      "movementFraction": null,
+      "nearBoundaryFraction": null,
+      "range": {
+        "samples": 0,
+        "mean": null,
+        "min": null,
+        "max": null,
+        "p50": null,
+        "p90": null
+      }
+    }
+  },
+  "bosses": [],
+  "build": {
+    "equipment": {
+      "weapon": "chaotic-axe",
+      "armor": "plains-vest-t1",
+      "recovery": "swamp-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 5,
+      "iron-broadsword": 1,
+      "plains-charm-t1": 5,
+      "plains-vest-t1": 5,
+      "flash-rapier": 3,
+      "swamp-charm-t1": 5,
+      "cave-vest-t1": 5,
+      "chaotic-axe": 5
+    },
+    "classRoot": "summoner-root",
+    "frame": null,
+    "range": null,
+    "techniques": [
+      "expose-weakness"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stats": {
+      "attack": 51,
+      "attackRange": 162,
+      "attackCooldown": 874,
+      "maxHp": 150,
+      "plating": 14,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

@@ -45,6 +45,12 @@ export interface ControlsMonster {
   holdPatrol?: Vec2[];
   /** Index of the next holdPatrol waypoint. */
   holdPatrolIndex?: number;
+  /**
+   * Boss that spawned this add. Boss-script AI keeps the add on the boss's
+   * current target and shares the boss's leash anchor/range for the encounter.
+   * Server-only runtime state; boss death already removes its tracked adds.
+   */
+  bossSpawnerId?: string;
 }
 
 /**

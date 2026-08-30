@@ -27,15 +27,22 @@ export interface RangedCombatantInput {
 
 /**
  * Single source of truth for whether a combatant fights at range (kites to an
- * ideal gap) or in melee (closes to contact). Shared by server auto-steering
- * (`steerTowardTarget`) and the client lunge animation gate so the two never
- * disagree. Range nodes win over archetype; Flash is always melee.
+ * ideal gap) or in melee (closes to contact). Apprentice defaults to a short
+ * spell range: it does not need a long attack range to cast instead of lunging.
+ * Shared by server auto-steering (`steerTowardTarget`) and the client lunge
+ * animation gate so the two never disagree. Range nodes win over archetype;
+ * Flash is always melee.
  */
 export function isRangedCombatant(input: RangedCombatantInput): boolean {
   if (input.flashActive) return false;
   if (input.selectedRange?.endsWith('-range-close')) return false;
   if (input.selectedRange?.endsWith('-range-mid') || input.selectedRange?.endsWith('-range-far')) return true;
-  if (input.combatArchetype === 'reload' || input.combatArchetype === 'energy') return true;
+  if (
+    input.combatArchetype === 'reload' ||
+    input.combatArchetype === 'energy' ||
+    input.combatArchetype === 'dot'
+  )
+    return true;
   return input.attackRange > 100;
 }
 

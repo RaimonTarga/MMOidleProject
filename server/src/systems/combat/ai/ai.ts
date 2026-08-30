@@ -195,11 +195,41 @@ function stopMonster(world: World, entity: MonsterEntity): void {
   stopEntity(world, entity);
 }
 
+/**
+ * Boss-script adds are encounter bodies, not independent ambient monsters. Keep
+ * their aggro exactly aligned with their living summoner so they neither retarget
+ * nor wander off while the boss is still fighting.
+ */
+function syncBossSpawnedAddTarget(
+  world: World,
+  add: MonsterEntity,
+  now: number,
+): boolean {
+  const bossId = add.controlsMonster.bossSpawnerId;
+  if (!bossId) return false;
+
+  const boss = world.getMonsterEntity(bossId);
+  const target = boss?.hasAggroTarget;
+  if (boss && target && boss.hasPosition.nodeId === add.hasPosition.nodeId) {
+    if (
+      add.hasAggroTarget?.targetId !== target.targetId ||
+      add.hasAggroTarget.targetKind !== target.targetKind
+    ) {
+      setAggroTarget(world, add, { id: target.targetId, kind: target.targetKind }, now);
+    }
+  } else if (add.hasAggroTarget) {
+    setAggroTarget(world, add, null, now);
+    setAttackTarget(world, add, null);
+  }
+  return true;
+}
+
 export function updateMonsters(world: World, dt: number, now: number) {
   for (const e of world.monsterEntities) {
     const ai = e.controlsMonster;
     const id = e.isMonster.id;
     const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+    const isBossSpawnedAdd = syncBossSpawnedAddTarget(world, e, now);
 
     // Stun is full CC (movement halt). Frozen is only a severe slow (handled via
     // reduced speed/attack-cooldown in updateChillAndFreeze), so frozen monsters
@@ -231,10 +261,12 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // This preserves retaliation aggro set by the combat system when a
     // player attacks from outside pull range.
     if (!e.hasAggroTarget) {
-      // Future taunt override should run before normal policy acquisition here.
-      const pulled = selectMonsterAggroCandidate(world, e);
-      if (pulled) {
-        setAggroTarget(world, e, aggroSourceFromCandidate(pulled), now);
+      if (!isBossSpawnedAdd) {
+        // Future taunt override should run before normal policy acquisition here.
+        const pulled = selectMonsterAggroCandidate(world, e);
+        if (pulled) {
+          setAggroTarget(world, e, aggroSourceFromCandidate(pulled), now);
+        }
       }
     } else if (
       e.hasAggroTarget.targetKind === "minion" &&

@@ -26,7 +26,11 @@ export interface PlateCrown {
   barrier: number;
   barrierMax: number;
   barrierRecharging: boolean;
-  /** Total absorb across all temporary wards; drawn as a capping band. */
+  /**
+   * Total absorb across all temporary wards; drawn as the capping band on the
+   * HP track. The barrier deliberately does NOT join it — it owns the conduit
+   * under the bar and the current/max readout beside HP.
+   */
   ward: number;
   /** Damage already committed against current HP. */
   incomingDot: number;
@@ -53,10 +57,10 @@ function Crown({ crown }: { crown: PlateCrown }) {
   const dotPct = Math.min(hpPct, pct(crown.incomingDot));
   const safePct = Math.max(0, hpPct - dotPct);
   const healPct = Math.min(100 - hpPct, pct(crown.pendingHeal));
-  // The capping band on the HP track is the effective-HP read: everything that
-  // absorbs before health does, measured against max HP like the other layers.
-  const absorb = crown.barrier + crown.ward;
-  const absorbPct = pct(absorb);
+  // The capping band is WARDS only. The barrier has its own conduit below, on
+  // its own scale, so drawing it here as well said the same thing twice; wards
+  // have no ceiling of their own and this band is their only reading.
+  const wardPct = pct(crown.ward);
   const barrierFill = crown.barrierMax > 0 ? crown.barrier / crown.barrierMax : 0;
 
   return (
@@ -75,9 +79,14 @@ function Crown({ crown }: { crown: PlateCrown }) {
         <span className="stat-crown__hp">
           {Math.ceil(crown.hp)}<span className="stat-crown__max"> / {crown.maxHp}</span>
         </span>
-        {absorb > 0 && (
-          <span className="stat-crown__shield" title="Absorbed before health">
-            +{Math.ceil(absorb)}
+        {crown.barrierMax > 0 && (
+          <span className="stat-crown__barrier-read" title="Barrier — absorbed before health">
+            {Math.ceil(crown.barrier)}<span className="stat-crown__max"> / {crown.barrierMax}</span>
+          </span>
+        )}
+        {crown.ward > 0 && (
+          <span className="stat-crown__shield" title="Ward — absorbed before health">
+            +{Math.ceil(crown.ward)}
           </span>
         )}
         {crown.hpTip?.node}
@@ -89,8 +98,8 @@ function Crown({ crown }: { crown: PlateCrown }) {
         ramp={hpRamp(hpPct / 100)}
         height={9}
         label={`Health ${Math.ceil(crown.hp)} of ${crown.maxHp}`}
-        valueText={absorb > 0
-          ? `${Math.ceil(crown.hp)} of ${crown.maxHp}, plus ${Math.ceil(absorb)} absorbed`
+        valueText={crown.ward > 0
+          ? `${Math.ceil(crown.hp)} of ${crown.maxHp}, plus ${Math.ceil(crown.ward)} warded`
           : `${Math.ceil(crown.hp)} of ${crown.maxHp}`}
         layers={
           <>
@@ -106,10 +115,10 @@ function Crown({ crown }: { crown: PlateCrown }) {
                 style={{ left: `${safePct}%`, width: `${dotPct}%` }}
               />
             )}
-            {absorbPct > 0 && (
+            {wardPct > 0 && (
               <span
                 className="stat-crown__layer stat-crown__layer--shield"
-                style={{ width: `${absorbPct}%` }}
+                style={{ width: `${wardPct}%` }}
               />
             )}
           </>

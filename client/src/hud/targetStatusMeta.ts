@@ -42,6 +42,7 @@ const BOSS_META: Record<string, StatusMeta> = {
   shield:      { label: 'Shield',    color: '#5599ff' },
   summon:      { label: 'Summon',    color: '#cc88ff' },
   'stat-buff': { label: 'Empowered', color: '#ffaa33' },
+  'bestial-frenzy': { label: 'Bestial Frenzy', color: '#e85d45' },
   morph:       { label: 'Morph',     color: '#dd66cc' },
   slam:        { label: 'Slam',      color: '#ff7744' },
 };

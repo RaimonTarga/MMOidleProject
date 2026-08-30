@@ -75,7 +75,6 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 1200, idleMaxMs: 4000 },
     targeting: { prefersPlayers: true },
     consecutiveHits: 2,
-    rampOnCombat: { stat: 'attackSpeed', perTickPct: 0.10, maxPct: 0.60, tickIntervalMs: 2500 },
     chargedAttack: {
       name: 'Stunning Swipe', castMs: 700, cooldownMs: 8000, initialCooldownMs: 3500,
       multiplier: 1.25, fx: 'savage-maul', stunMs: 900, aoe: { radius: 90 },
@@ -89,6 +88,13 @@ export const bossMonsterEntriesT2 = [
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.15, cdMult: 0.70 }, // frequency surge
+        ] },
+      ],
+      repeating: [
+        { intervalMs: 5000, initialDelayMs: 5000, actions: [
+          { type: 'cast', castMs: 1500, label: 'Bestial Frenzy', fx: 'frenzy', actions: [
+            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.20, moveSpeedMult: 1.10, maxStacks: 5, label: 'bestial-frenzy' },
+          ] },
         ] },
       ],
     },
@@ -140,7 +146,7 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 155, essenceType: 'purple', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
     targeting: { prefersPlayers: true },
-    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 9, maxStacks: 4, tickIntervalMs: 1000, durationMs: 5000 },
+    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 9, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
     chargedAttack: {
       name: 'Corrosive Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
       multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115 },

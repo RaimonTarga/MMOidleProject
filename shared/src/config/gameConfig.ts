@@ -223,6 +223,29 @@ export const BIOME_START_TIER_BY_GROUP: Record<string, number> = (() => {
 })();
 
 /**
+ * Maps biomeGroup -> the HIGHEST tier the group appears at in NODE_BIOMES (its
+ * "final tier"). Derived, never authored, exactly like {@link BIOME_START_TIER_BY_GROUP}
+ * — a biome's contribution to mastery stops expanding when its authored content does.
+ *
+ * Node-kind set matches the start-tier derivation (`normal | dungeon`). This is safe
+ * because dungeons are authored *inside* a region (see `world/map/authoring.ts`), so a
+ * group's dungeon tiers are always a subset of its normal tiers — verified and pinned
+ * by `server/test/t3ProgressionEconomy.test.ts`. If side dungeons ever outlive their
+ * biome's normal nodes, that test fails and the derivation must be narrowed to
+ * `normal` before the caps drift.
+ */
+export const BIOME_FINAL_TIER_BY_GROUP: Record<string, number> = (() => {
+  const map: Record<string, number> = {};
+  for (const { biomeGroup, biomeTier, kind } of Object.values(NODE_BIOMES)) {
+    if (kind !== 'normal' && kind !== 'dungeon') continue;
+    if (map[biomeGroup] === undefined || biomeTier > map[biomeGroup]) {
+      map[biomeGroup] = biomeTier;
+    }
+  }
+  return map;
+})();
+
+/**
  * Each tier spans this many biome levels. Expanded 4 → 6 (system rework Step 3) to
  * make reward space for skills/runes/cores. Levels 1–4 of each segment hold the
  * existing item recipes; levels 5–6 are reward space filled by later steps. Drives
@@ -252,13 +275,22 @@ export function biomeLevelOffset(biomeGroup: string): number {
  * a biome they haven't unlocked — this is the case that matters for biomes that
  * first appear above T1, e.g. a T1 player must not gain levels in the T2 jungle).
  * Clearing is always capped at 4.
+ *
+ * The player's tier is also clamped by the biome's {@link BIOME_FINAL_TIER_BY_GROUP}
+ * (T3 economy pass 2026-08-30): a RETIRED biome stops growing headroom once it has no
+ * more authored content, so Plains/Forest contribute 12 forever rather than demanding
+ * six more levels of outgrown T2 grinding per player tier. This is a GAIN STOP, never a
+ * retroactive clamp — a legacy save above the cap keeps its level and its Global Mastery
+ * (see `progression/rewards.ts`, which only ever early-returns `xpGain: 0`).
  */
 export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
   if (biomeGroup === 'clearing') return 4;
   const startTier = BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
+  const finalTier = BIOME_FINAL_TIER_BY_GROUP[biomeGroup] ?? startTier;
+  const effectiveTier = Math.min(playerTier, finalTier);
   return Math.max(
     0,
-    (playerTier - startTier + 1) * BIOME_LEVELS_PER_TIER,
+    (effectiveTier - startTier + 1) * BIOME_LEVELS_PER_TIER,
   );
 }
 

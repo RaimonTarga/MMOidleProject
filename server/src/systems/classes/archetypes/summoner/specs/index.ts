@@ -217,6 +217,8 @@ function detonate(
     center,
     tuning.explosionRadius,
     explosionDamage(owner, minion, mult),
+    undefined,
+    'summon',
   );
 }
 
@@ -373,7 +375,7 @@ function tickChorus(world: World, owner: SummonerOwner, now: number): void {
       owner,
       target,
       Math.max(1, Math.round(owner.dealsDamage.attack * tuning.damagePctPerSlot * state.slotIds.length)),
-      { tags: ['summoner', 'withering-chorus'] },
+      { tags: ['summoner', 'withering-chorus'], physicalSource: 'summon' },
     );
   }
 }

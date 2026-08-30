@@ -561,9 +561,10 @@ export const CORE_KEYS = [
   // fraction of that rate, this lifts OOC regen and all Recovery access together.
   // Deliberately NOT re-applied per-heal — that would compound it.
   'core.recovery-mult',
-  // Duelist: extra damage vs monsters flagged `elite` or `isBoss`. Applied on the
-  // player->monster onHit, after the base damage formula.
-  'core.elite-damage-mult',
+  // Duelist: consecutive direct hits against one target build Focus. The current
+  // hit uses the newly-earned stack; switching targets resets the ramp.
+  'core.focus-damage-per-hit-mult',
+  'core.focus-max-stacks',
   // Catalyst: scales the flat on-hit term, which is added AFTER plating and DR.
   // That unmitigated placement is exactly why this is a real axis and not a
   // re-skin of core.attack-mult.

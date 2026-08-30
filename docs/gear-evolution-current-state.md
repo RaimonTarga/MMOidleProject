@@ -21,7 +21,17 @@ still recipe id; `itemUpgrades` is still per-id.
 - The GM ceiling seam (`upgradeCeilingFromGlobalMastery(gm, itemTier)`, Step 4) gates the effective
   max and is now **tier-banded and binding** (2026-07-10): each item tier's +1…+5 unlocks spread
   across that tier's GM band, with +5 landing at full mastery of the tier's biomes (T1 @ GM 30,
-  T2 @ 72, T3 @ 126, T4 @ 198). See `globalMasteryRequiredForUpgrade` in `systems/itemUpgrades.ts`.
+  T2 @ 72, **T3 @ 114, T4 @ 156** — updated 2026-08-30, see below). See
+  `globalMasteryRequiredForUpgrade` in `systems/itemUpgrades.ts`.
+- **Retirement-aware since 2026-08-30** (T3 progression/economy pass): `biomeLevelCap` clamps the
+  player's tier by `BIOME_FINAL_TIER_BY_GROUP` (derived from `NODE_BIOMES` the same way the start-tier
+  map is), so a biome stops growing mastery headroom when its authored content ends. T1/T2 gates are
+  bit-identical to before; T3 gates are 80/89/97/106/114 and T4's are 122/131/139/148/156.
+- **T4 gear gained real lineage on 2026-08-30** (T4 progression/economy pass, see
+  `docs/briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`): 36 of the 39 ordinary T4 gear
+  items now carry `evolvesFrom` (26 distinct T3/Cave/Swamp predecessors, 10 branch groups incl. 3
+  cross-biome Cave/Swamp→Graveyard/Trench handoffs); 3 are genuinely new. Before this pass T4 was
+  the one tier boundary with zero evolution instances despite commented mechanical continuity.
 
 ## Shared authority — `systems/evolution.ts` (new)
 

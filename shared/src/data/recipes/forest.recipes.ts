@@ -45,9 +45,9 @@ export const forestRecipeEntries = [
     upgrades: [
       { attacksPerSecond: 0.02, cost: { green: 25 }, requiredBiomeLevel: 2 },
       { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 50 }, requiredBiomeLevel: 3 },
-      { attacksPerSecond: 0.02, cost: { green: 75 }, requiredBiomeLevel: 4 }, // +3 = evolution-ready
+      { attacksPerSecond: 0.02, cost: { green: 75 }, requiredBiomeLevel: 4 },
       { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 125 }, requiredBiomeLevel: 5 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 205 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 205 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 6 }, // +5 = evolution-ready (T2 econ pass 2026-08-29: raised from +3)
     ],
   }],
 
@@ -119,90 +119,106 @@ export const forestRecipeEntries = [
   // ── T2 — Rapier lineage evolved forms (system rework Step 6) ───────────────
   // Gale Needle = the primary evolution of Flash Rapier; Thorn Needle = a branch.
   // Evolve consumes the predecessor at +3; reconstruct skips it for a higher cost.
+  // T2 economy pass (2026-08-29): normalized off the old doubling-to-+5 curve
+  // (was 1,920 total) into the normal T2 specialist-weapon band (~1,000 total).
+  // Evolution costs no catalyst (§2/§7); catalysts moved to +4/+5 only (§8).
+  // Evolution now requires flash-rapier at +5 (EVOLUTION_REQUIRED_PLUS), not +3.
   ['gale-needle', {
     id: 'gale-needle', name: 'Gale Needle',
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'weapon',
     lineageId: 'rapier', evolvesFrom: 'flash-rapier',
-    cost: { green: 60 }, catalystCost: { alacrity: 2 },           // family-tag: fast rapier → Alacrity
-    reconstructCost: { green: 240 }, reconstructCatalystCost: { alacrity: 5 }, // RECONSTRUCT (no predecessor)
+    cost: { green: 60 },                                     // family-tag: fast rapier → Alacrity
+    reconstructCost: { green: 210 }, reconstructCatalystCost: { alacrity: 2 }, // RECONSTRUCT (no predecessor)
     stats: { attack: 9 }, attacksPerSecond: 1.60, tier: 2,
     icon: 'items/weapons/gale-needle.png',
     description: 'A fencing blade machined to an impossible point, humming faintly when drawn.',
     upgrades: [
-      { attacksPerSecond: 0.02, cost: { green: 60 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 120 }, requiredBiomeLevel: 9 },
-      { attacksPerSecond: 0.02, cost: { green: 240 }, requiredBiomeLevel: 10 }, // +3 evolution-ready
-      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: { green: 480 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: { green: 960 }, requiredBiomeLevel: 12 },
+      { attacksPerSecond: 0.02, cost: { green: 38 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 94 }, requiredBiomeLevel: 9 },
+      { attacksPerSecond: 0.02, cost: { green: 150 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: { green: 244 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: { green: 414 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
     ],
   }],
 
   // Branch B: trades part of the Attack budget for flat on-hit damage, which the
-  // rapier's cadence turns into its real payload. Same total budget, split.
+  // rapier's cadence turns into its real payload. Same total budget as Gale
+  // Needle, split ~75/25 green/purple (retains the hybrid identity per §4/§13).
   ['thorn-needle', {
     id: 'thorn-needle', name: 'Thorn Needle',
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'weapon',
     lineageId: 'rapier', evolvesFrom: 'flash-rapier',         // branch B of the rapier lineage
-    cost: { green: 50, purple: 20 }, catalystCost: { alacrity: 2 }, // family-tag: rapid on-hit rapier → Alacrity (bleed flavor could argue Blight)
-    reconstructCost: { green: 200, purple: 80 }, reconstructCatalystCost: { alacrity: 5 },
+    cost: { green: 45, purple: 15 },                          // family-tag: rapid on-hit rapier → Alacrity
+    reconstructCost: { green: 157, purple: 53 }, reconstructCatalystCost: { alacrity: 2 },
     stats: { attack: 5, onHitDamage: 4 }, attacksPerSecond: 1.50, tier: 2,
     icon: 'items/weapons/thorn-needle.png',
     description: 'The same blade, barbed — it bites and lets the wound do the rest.',
     upgrades: [
-      { stats: { onHitDamage: 1 }, cost: { green: 60, purple: 20 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 1 }, cost: { green: 120, purple: 40 }, requiredBiomeLevel: 9 },
-      { stats: { onHitDamage: 1 }, cost: { green: 240, purple: 80 }, requiredBiomeLevel: 10 }, // +3 evolution-ready
-      { stats: { attack: 1 }, cost: { green: 480, purple: 160 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 1, onHitDamage: 1 }, cost: { green: 960, purple: 320 }, requiredBiomeLevel: 12 },
+      { stats: { onHitDamage: 1 }, cost: { green: 31, purple: 11 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 1 }, cost: { green: 78, purple: 26 }, requiredBiomeLevel: 9 },
+      { stats: { onHitDamage: 1 }, cost: { green: 124, purple: 42 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 1 }, cost: { green: 202, purple: 68 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 1, onHitDamage: 1 }, cost: { green: 344, purple: 114 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
     ],
   }],
 
+  // T2 economy pass (2026-08-29): now an EVOLUTION of forest-vest-t1 (Shaded
+  // Bindings) at +5 — see §5/§6/§7. Evolve pays no catalyst; reconstruct (no
+  // predecessor) costs ~3.5x essence + 2 alacrity. Catalysts moved to +4/+5.
   ['forest-vest-t2', {
     id: 'forest-vest-t2', name: 'Phantom Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { green: 48, yellow: 12 }, catalystCost: { alacrity: 2 }, stats: { maxHp: 50, plating: 5, evasion: 0.24 }, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
+    evolvesFrom: 'forest-vest-t1',
+    cost: { green: 48, yellow: 12 }, stats: { maxHp: 50, plating: 5, evasion: 0.24 }, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
+    reconstructCost: { green: 168, yellow: 42 }, reconstructCatalystCost: { alacrity: 2 },
     icon: 'items/armor/phantom-bindings.png',
     description: 'They say the weaver vanished the day it was finished. The cloth remembers the trick.',
     upgrades: [
-      { stats: { maxHp: 5, evasion: 0.01 }, cost: { green: 45, yellow: 15 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: { green: 90, yellow: 30 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, evasion: 0.01 }, cost: { green: 180, yellow: 60 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: { green: 180, yellow: 60 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, evasion: 0.02 }, cost: { green: 180, yellow: 60 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 5, evasion: 0.01 }, cost: { green: 29, yellow: 7 }, requiredBiomeLevel: 9 },
+      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: { green: 72, yellow: 18 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 5, evasion: 0.01 }, cost: { green: 115, yellow: 29 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: { green: 187, yellow: 47 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 5, evasion: 0.02 }, cost: { green: 317, yellow: 79 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   // CHARM — Recovery + Recovery-skill potency, deepened. Same shape as the
   // Heartroot Amulet: raw rate for everyone, potency for those who build on it.
+  // T2 economy pass (2026-08-29): now an EVOLUTION of forest-charm-t1 at +5.
   ['forest-charm-t2', {
     id: 'forest-charm-t2', name: 'Ancient Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 9, slot: 'recovery',
+    evolvesFrom: 'forest-charm-t1',
     cost: { green: 50 }, stats: { recovery: 5 }, tier: 2,
+    reconstructCost: { green: 175 }, reconstructCatalystCost: { alacrity: 2 }, // family-tag: recovery charm → Alacrity
     mechanicEffects: { 'defense.recovery-skill-potency': 0.18 },
     icon: 'items/charms/ancient-heartroot-amulet.png',
     description: 'A relic of a grove that burned an age ago, its life somehow undimmed.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 60 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 18 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 45 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 72 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 117 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 198 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
     ],
   }],
 
+  // T2 economy pass (2026-08-29): now an EVOLUTION of forest-boots-t1 at +5.
   ['forest-boots-t2', {
     id: 'forest-boots-t2', name: 'Windstep Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 10, slot: 'mobility',
+    evolvesFrom: 'forest-boots-t1',
     cost: { green: 40 }, stats: { speed: 40 }, tier: 2,
+    reconstructCost: { green: 140 }, reconstructCatalystCost: { alacrity: 2 }, // family-tag: forest mobility → Alacrity
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.55 },
     icon: 'items/boots/windstep-wraps.png',
     description: 'Light enough that the wind mistakes the wearer for one of its own.',
     upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 20 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 40 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 80 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 80 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 80 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 12 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 48 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 3 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 78 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -223,7 +239,7 @@ export const forestRecipeEntries = [
     // recovery-mult scales the Recovery RATE, and every in-combat regen effect
     // activates a fraction of that rate — so this lifts OOC regen and all active
     // sustain at once, rather than the near-nothing a flat regen bump would give.
-    mechanicEffects: { 'core.recovery-mult': 0.20, 'core.maxhp-mult': 0.10 },
+    mechanicEffects: { 'core.recovery-mult': 0.30, 'core.maxhp-mult': 0.15 },
     icon: 'items/cores/survivalist.png',
     description: 'Wound-knit heartwood. It does not stop the blow — it shortens the time you spend regretting it.',
   }],

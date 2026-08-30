@@ -76,6 +76,9 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   for (const id of player.summonsMinions.minionIds) {
     const minion = world.getMinionEntity(id)!;
     assert(minion.performsAttack.attackCooldown === 1_375, 'summon cadence must inherit weapon cooldown');
+    assert(minion.performsAttack.attackRange === 24, 'root summons must fight at near-melee range');
+    assert(minion.hasPosition.speed >= player.hasPosition.speed,
+      'root summons must keep pace with their Conduit');
   }
 
   // Four fractional physical hits create exactly one generic logical proc.
@@ -95,6 +98,22 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
     triggers += consumeWeightedProc(ctx, 'test.logical-proc');
   }
   assert(triggers === 1, `four summon hits should create one proc, got ${triggers}`);
+}
+
+// Frame penalties may not make summons lag behind a fast-moving owner.
+{
+  const world = new World();
+  const player = attachSummoner(
+    world,
+    slices('heavy-speed-floor', ['summoner-root', 'summoner-heavy'], 'heavy'),
+  );
+  player.hasPosition.speed = 400;
+  updateSummonerArchetype(world, 0, 1_000);
+  for (const id of player.summonsMinions!.minionIds) {
+    const minion = world.getMinionEntity(id)!;
+    assert(minion.hasPosition.speed === player.hasPosition.speed,
+      'summon speed must not fall below its Conduit after frame multipliers');
+  }
 }
 
 // Shared FIFO reconstruction, defensive cost, and safety-floor pause/resume.

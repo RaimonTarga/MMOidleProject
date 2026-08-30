@@ -4,8 +4,9 @@ import { DEPTH } from '../render/depth';
 
 /**
  * Boss scripted-action cues (non-attack): a summon beat, a barrier coming up, and
- * a morph/transform flash. Each is drawn on the boss's sprite from a `boss-fx`
- * event so the otherwise-silent script beats read at a glance. Cosmetic only.
+ * a morph/transform flash. Summon beats anchor to the arriving add, while the
+ * other cues draw on the boss, so otherwise-silent script beats read at a glance.
+ * Cosmetic only.
  */
 
 const SUMMON_DARK = 0x7733bb;
@@ -162,5 +163,50 @@ export function fxBossRoar(scene: GameScene, x: number, y: number, radius: numbe
     scale: { start: 0.9, end: 0 },
     alpha: { start: 1, end: 0 },
     gravityY: -80,
+  });
+}
+
+/** Bestial Frenzy: boss-scale crimson claw-rings, a red flash, and a violent burst. */
+export function fxBestialFrenzy(scene: GameScene, x: number, y: number): void {
+  // A fresh, slightly irregular claw angle per cast keeps repeated Frenzies from
+  // reading as the same stamped decal while retaining the three-rake silhouette.
+  const rakeAngle = (Math.random() - 0.5) * 0.9;
+  for (let i = 0; i < 3; i++) {
+    const ring = scene.add.graphics({ x, y: y - 6 }).setDepth(DEPTH.FX);
+    ring.lineStyle(5 - i, i === 1 ? 0xffd166 : 0xe85d45, 0.98);
+    ring.strokeEllipse(0, 0, 34 + i * 14, 18 + i * 8);
+    ring.setRotation(rakeAngle + (i - 1) * 0.48 + (Math.random() - 0.5) * 0.22);
+    scene.tweens.add({
+      targets: ring,
+      scaleX: 7.2 + i * 0.9,
+      scaleY: 3.5 + i * 0.4,
+      alpha: 0,
+      delay: i * 70,
+      duration: 480 + i * 80,
+      ease: 'Cubic.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+  }
+
+  const flash = scene.add.graphics({ x, y: y - 6 }).setDepth(DEPTH.FX);
+  flash.fillStyle(0xff6b4a, 0.7);
+  flash.fillCircle(0, 0, 34);
+  scene.tweens.add({
+    targets: flash,
+    alpha: 0,
+    scaleX: 3.2,
+    scaleY: 3.2,
+    duration: 360,
+    ease: 'Quad.easeOut',
+    onComplete: () => flash.destroy(),
+  });
+
+  burstFx(scene, 'ptx-spark', x, y - 4, 36, 600, {
+    tint: 0xe85d45,
+    speed: { min: 110, max: 300 },
+    angle: { min: 0, max: 360 },
+    scale: { start: 1.2, end: 0 },
+    alpha: { start: 1, end: 0 },
+    gravityY: -55,
   });
 }

@@ -70,7 +70,7 @@ export function initCombatSystems(): void {
   initAbilitySystems();
   // Rites (Step 11): Hunter's Instinct onKill movement-haste buff.
   initRiteListeners();
-  // Cores: Duelist elite/boss damage (onHit) + Bruiser mobility refund (onKill).
+  // Cores: Duelist same-target Focus (onHit) + Bruiser mobility refund (onKill).
   initCoreCombatEffects();
   // Summoner mountain-path cover + damage sponge (after defense systems).
   registerSummonerDamageSponge();

@@ -127,7 +127,7 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   'core.speed-mult':                  signedPct,
   'core.attack-speed-mult':           signedPct,
   'core.recovery-mult':               signedPct,
-  'core.elite-damage-mult':           signedPct,
+  'core.focus-damage-per-hit-mult':   signedPct,
   'core.onhit-mult':                  signedPct,
   'core.debuff-duration-mult':        signedPct,
   'core.debuff-potency-mult':         signedPct,
@@ -537,14 +537,19 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     ['core.plating-mult',      'plating'],
     ['core.speed-mult',        'move speed'],
     ['core.attack-speed-mult', 'attack speed'],
-    ['core.recovery-mult',     'healing and HP regen'],
-    ['core.elite-damage-mult', 'damage vs elites and bosses'],
+    ['core.recovery-mult',     'Recovery rate'],
     ['core.onhit-mult',        'on-hit damage'],
     ['core.debuff-duration-mult', 'duration of debuffs you apply'],
     ['core.debuff-potency-mult',  'strength of debuffs you apply'],
   ];
   for (const [k, label] of coreMults) {
     if (has(k)) { lines.push(`${signedPctK(k)} ${label}`); mark(k); }
+  }
+  if (has('core.focus-damage-per-hit-mult')) {
+    lines.push(
+      `Consecutive direct hits on one target gain ${signedPctK('core.focus-damage-per-hit-mult')} direct attack damage each, up to ${num(fx['core.focus-max-stacks'] ?? 0)} stacks; switching targets resets Focus`,
+    );
+    mark('core.focus-damage-per-hit-mult', 'core.focus-max-stacks');
   }
   if (has('core.dr-layer-pct')) {
     lines.push(`${pctK('core.dr-layer-pct')} damage reduction (separate multiplicative layer)`);
@@ -560,6 +565,11 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   if (has('core.mobility-refund-on-kill-pct')) {
     lines.push(`Kills refund ${pctK('core.mobility-refund-on-kill-pct')} of your mobility ability's cooldown`);
     mark('core.mobility-refund-on-kill-pct');
+  }
+  if (has('core.onhit-mult')) {
+    // The generic Core line above states the magnitude; this warning prevents a
+    // no-on-hit build from mistaking Catalyst for a provider of the mechanic.
+    lines.push('Amplifies existing on-hit damage only; grants no on-hit damage by itself');
   }
 
   // ── Ability amplifiers ─────────────────────────────────────────────────────

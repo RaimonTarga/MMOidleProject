@@ -25,6 +25,8 @@ export interface PlayerProcDamageOpts {
   /** Tag the damage number with empowered (yellow "!") styling. Proc damage never
    *  splashes, so this is purely cosmetic — no AoE is involved. */
   empowered?: boolean;
+  /** Physical owner of the proc for owner-only event hooks such as Cores. */
+  physicalSource?: 'player' | 'summon';
 }
 
 /**
@@ -87,7 +89,7 @@ export function applyPlayerProcDamage(
   });
 
   if (target.hasHealth.hp <= 0) {
-    emitPlayerMonsterOnKill(world, playerId, target, hpDamage, 'proc');
+    emitPlayerMonsterOnKill(world, playerId, target, hpDamage, 'proc', opts.physicalSource);
     const rewardInfo = grantMonsterRewards(world, playerId, target);
     recordPlayerKillMonster(world, playerId, target, hpDamage, rewardInfo);
     recordWorldLogEvent(

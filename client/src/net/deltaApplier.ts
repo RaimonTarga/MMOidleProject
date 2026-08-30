@@ -262,13 +262,14 @@ export function applyDelta(
         isBoss: tm.isBoss,
         statuses: tm.targetStatus ?? [],
         bossEffects: tm.bossEffects ?? [],
+        bossEffectStacks: tm.bossEffectStacks ?? {},
       };
       setTargetFrame(data);
       lastTargetRef = { id: tm.id, data };
     } else if (lastTargetRef && !state.view.has(lastTargetRef.id)) {
       // The target vanished from view (it died) — emit one final frame at 0 HP so
       // the bar animates down to empty, then clear so the linger fade takes over.
-      setTargetFrame({ ...lastTargetRef.data, hp: 0, statuses: [], bossEffects: [] });
+      setTargetFrame({ ...lastTargetRef.data, hp: 0, statuses: [], bossEffects: [], bossEffectStacks: {} });
       lastTargetRef = null;
     } else {
       setTargetFrame(null);

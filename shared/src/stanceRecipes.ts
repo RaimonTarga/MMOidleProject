@@ -27,24 +27,33 @@ export interface StanceRecipe {
  * economy.
  */
 const recipes: StanceRecipe[] = [
-  { id: "stance-recipe-offensive", name: "Offensive Stance", description: "Trade defense for damage and tempo.", stanceId: "offensive-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 7, cost: { green: 60 }, catalystCost: { alacrity: 2 } },
-  { id: "stance-recipe-defensive", name: "Defensive Stance", description: "Trade offense for dependable protection.", stanceId: "defensive-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 7, cost: { green: 60, blue: 20 }, catalystCost: { alacrity: 2 } },
-  { id: "stance-recipe-tanking", name: "Tanking Stance", description: "Become dramatically safer and dramatically slower.", stanceId: "tanking-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 8, cost: { green: 70, blue: 30 }, catalystCost: { alacrity: 3 } },
+  // T2 economy pass (2026-08-29): every T2-accessible stance's catalyst reduced
+  // to exactly 1 unit (§12) — essence costs and mechanic identities unchanged.
+  { id: "stance-recipe-offensive", name: "Offensive Stance", description: "Trade defense for damage and tempo.", stanceId: "offensive-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 7, cost: { green: 60 }, catalystCost: { alacrity: 1 } },
+  { id: "stance-recipe-defensive", name: "Defensive Stance", description: "Trade offense for dependable protection.", stanceId: "defensive-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 7, cost: { green: 60, blue: 20 }, catalystCost: { alacrity: 1 } },
+  { id: "stance-recipe-tanking", name: "Tanking Stance", description: "Become dramatically safer and dramatically slower.", stanceId: "tanking-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 8, cost: { green: 70, blue: 30 }, catalystCost: { alacrity: 1 } },
   // Desert starts at T2, so its whole T2 band is levels 1-6.
-  { id: "stance-recipe-enraged", name: "Enraged Stance", description: "Answer danger with finishing pressure.", stanceId: "enraged-stance", tier: 2, recipeGroup: "desert", requiredBiomeLevel: 5, cost: { red: 80, yellow: 30 }, catalystCost: { dominion: 3 } },
-  { id: "stance-recipe-perfection", name: "Perfection Stance", description: "Reward near-perfect control.", stanceId: "perfection-stance", tier: 2, recipeGroup: "plains", requiredBiomeLevel: 8, cost: { yellow: 80, green: 30 }, catalystCost: { alacrity: 3 } },
+  { id: "stance-recipe-enraged", name: "Enraged Stance", description: "Answer danger with finishing pressure.", stanceId: "enraged-stance", tier: 2, recipeGroup: "desert", requiredBiomeLevel: 5, cost: { red: 80, yellow: 30 }, catalystCost: { dominion: 1 } },
+  { id: "stance-recipe-perfection", name: "Perfection Stance", description: "Reward near-perfect control.", stanceId: "perfection-stance", tier: 2, recipeGroup: "plains", requiredBiomeLevel: 8, cost: { yellow: 80, green: 30 }, catalystCost: { alacrity: 1 } },
   // Re-homed: Tundra has no T2 nodes at all. Jungle runs T2-T4 and drops the green
   // essence half of this cost.
-  { id: "stance-recipe-fleeting", name: "Fleeting Stance", description: "Abandon pressure to reposition and escape.", stanceId: "fleeting-stance", tier: 2, recipeGroup: "jungle", requiredBiomeLevel: 5, cost: { blue: 80, green: 30 }, catalystCost: { alacrity: 3 } },
-  { id: "stance-recipe-berserker", name: "Berserker Stance", description: "Gain tempo while bleeding your own life away.", stanceId: "berserker-stance", tier: 3, recipeGroup: "desert", requiredBiomeLevel: 11, cost: { red: 140, purple: 40 }, catalystCost: { dominion: 5 } },
-  { id: "stance-recipe-predator", name: "Predator Stance", description: "Stalk enemies and empower the opening strike.", stanceId: "predator-stance", tier: 3, recipeGroup: "jungle", requiredBiomeLevel: 11, cost: { green: 130, red: 50 }, catalystCost: { alacrity: 5 } },
+  { id: "stance-recipe-fleeting", name: "Fleeting Stance", description: "Abandon pressure to reposition and escape.", stanceId: "fleeting-stance", tier: 2, recipeGroup: "jungle", requiredBiomeLevel: 5, cost: { blue: 80, green: 30 }, catalystCost: { alacrity: 1 } },
+  // T3 economy pass (2026-08-30): every T3 stance catalyst normalised to exactly 2 units,
+  // continuing the T2 pass's 1 (T2 = 1, T3 = 2). The old 5 was a scoping artefact — the T2
+  // pass explicitly left T3/T4 alone, so essence grew 1.8x across the step while catalysts
+  // grew 5x. Essence costs, gates, families and mechanic identities are UNCHANGED.
+  { id: "stance-recipe-berserker", name: "Berserker Stance", description: "Gain tempo while bleeding your own life away.", stanceId: "berserker-stance", tier: 3, recipeGroup: "desert", requiredBiomeLevel: 11, cost: { red: 140, purple: 40 }, catalystCost: { dominion: 2 } },
+  { id: "stance-recipe-predator", name: "Predator Stance", description: "Stalk enemies and empower the opening strike.", stanceId: "predator-stance", tier: 3, recipeGroup: "jungle", requiredBiomeLevel: 11, cost: { green: 130, red: 50 }, catalystCost: { alacrity: 2 } },
   // Re-homed: Plains has retired by T3. Volcanic runs T3-T4 and its NATIVE modifier is
   // Swarming — the exact crowd this stance exists to survive — and it drops the red
   // essence half of the cost.
-  { id: "stance-recipe-brawler", name: "Brawler Stance", description: "Endure the pressure of many attackers.", stanceId: "brawler-stance", tier: 3, recipeGroup: "volcanic", requiredBiomeLevel: 5, cost: { yellow: 130, red: 50 }, catalystCost: { swarming: 5 } },
-  { id: "stance-recipe-execute", name: "Execute Stance", description: "Finish wounded prey at the cost of neutral pressure.", stanceId: "execute-stance", tier: 3, recipeGroup: "swamp", requiredBiomeLevel: 13, cost: { purple: 130, red: 50 }, catalystCost: { fortified: 5 } },
+  { id: "stance-recipe-brawler", name: "Brawler Stance", description: "Endure the pressure of many attackers.", stanceId: "brawler-stance", tier: 3, recipeGroup: "volcanic", requiredBiomeLevel: 5, cost: { yellow: 130, red: 50 }, catalystCost: { swarming: 2 } },
+  { id: "stance-recipe-execute", name: "Execute Stance", description: "Finish wounded prey at the cost of neutral pressure.", stanceId: "execute-stance", tier: 3, recipeGroup: "swamp", requiredBiomeLevel: 13, cost: { purple: 130, red: 50 }, catalystCost: { fortified: 2 } },
   // Re-homed: Forest has retired long before T4. Jungle runs to T4 and drops green.
-  { id: "stance-recipe-recuperating", name: "Recuperating Stance", description: "Surrender offense to regenerate during combat.", stanceId: "recuperating-stance", tier: 4, recipeGroup: "jungle", requiredBiomeLevel: 17, cost: { green: 220, blue: 100 }, catalystCost: { alacrity: 7 } },
+  // T4 economy pass (2026-08-30): catalyst 7 → 3, matching the T3-established
+  // "premium stance/rite" ceiling (T3's 5-RP rites sit at 3). Essence and gate
+  // unchanged.
+  { id: "stance-recipe-recuperating", name: "Recuperating Stance", description: "Surrender offense to regenerate during combat.", stanceId: "recuperating-stance", tier: 4, recipeGroup: "jungle", requiredBiomeLevel: 17, cost: { green: 220, blue: 100 }, catalystCost: { alacrity: 3 } },
 ];
 
 export const STANCE_RECIPE_DATABASE = new Map<string, StanceRecipe>(recipes.map((r) => [r.id, r]));

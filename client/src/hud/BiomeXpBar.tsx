@@ -15,8 +15,10 @@ function deriveBarState(
   playerTier: number,
   biomeGroup: string,
 ) {
-  const levelCap = biomeLevelCap(playerTier, biomeGroup);
-  const absoluteMax = biomeLevelCap(MAX_PLAYER_TIER, biomeGroup);
+  // Display denominators never sit below a legacy save's stored level: retired biomes
+  // stop growing headroom (T3 economy pass), but no stored level is clamped downward.
+  const levelCap = Math.max(biomeLevelCap(playerTier, biomeGroup), level);
+  const absoluteMax = Math.max(biomeLevelCap(MAX_PLAYER_TIER, biomeGroup), level);
   const isMaxed = level >= absoluteMax;
   const isCapped = !isMaxed && level >= levelCap;
 

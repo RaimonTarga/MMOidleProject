@@ -15,8 +15,14 @@ import type { Recipe } from '../data/recipes/types';
  * gates the buttons, exactly like `checkUpgrade`.
  */
 
-/** Minimum predecessor upgrade level required to evolve. +3 = "evolution-ready". */
-export const EVOLUTION_REQUIRED_PLUS = 3;
+/**
+ * Minimum predecessor upgrade level required to evolve. +5 = "fully invested" —
+ * T2 progression/economy pass (2026-08-29): raised from +3 so a player who fully
+ * committed to the T1 item (base->+5 is now the deliberate late-game investment,
+ * see docs/briefs/T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md) gets real
+ * credit, while a +4 (or lower) predecessor must reconstruct instead.
+ */
+export const EVOLUTION_REQUIRED_PLUS = 5;
 
 /**
  * Predecessor +level required to evolve/rank-up into `recipe`. Gear evolves from a

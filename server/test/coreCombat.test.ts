@@ -1,5 +1,5 @@
 // Integration wiring for the core mechanics that need a real World: where
-// core.recovery-mult lands, the Duelist elite/boss damage listener, and both
+// core.recovery-mult lands, the Duelist same-target listener, and both
 // mobility clauses.
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/coreCombat.test.ts
@@ -8,11 +8,17 @@ import {
   ABILITY_DATABASE,
   abilityCooldownMs,
   GAME_CONFIG,
-  MONSTER_DATABASE,
   STARTER_RUNE_IDS,
+  applyStatusEffect,
   emptyEquipment,
+  getCounter,
   getCooldown,
+  getResource,
+  getString,
+  setCounter,
   setCooldown,
+  setResource,
+  setString,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
@@ -20,10 +26,12 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { applyHealToPlayer } from "../src/systems/defense/regen/healing";
 import { recalculatePlayerEntityStats } from "../src/ecs/playerEntityFormulas";
 import { emitCombatEvent, type CombatContext } from "../src/systems/combat/engine/combatPipeline";
+import { runMonsterAttack, runPlayerAttack } from "../src/systems/combat/engine/combat";
 import {
   abilityCooldownKey,
   techniqueCooldownMs,
 } from "../src/systems/player/abilities/abilityCooldowns";
+import { equipItem } from "../src/systems/player/economy/inventory";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -107,45 +115,119 @@ const world = new World();
   );
 }
 
-// ── core.elite-damage-mult applies to elites/bosses only ───────────────────
+// ── Duelist Focus rewards consecutive direct hits, not monster categories ──
 
 {
-  const player = world.attachPlayerEntity(makePlayerSlices("elite-player"), "elite-player");
-  player.usesSkills.passives["core.elite-damage-mult"] = 0.5;
+  const player = world.attachPlayerEntity(makePlayerSlices("focus-player"), "focus-player");
+  player.usesSkills.passives["core.focus-damage-per-hit-mult"] = 0.1;
+  player.usesSkills.passives["core.focus-max-stacks"] = 3;
 
-  const elite = world.createMonster("node-5-5", "cragback-rhino", { x: 500, y: 400 });
-  const normal = world.createMonster("node-5-5", "plains-slime", { x: 600, y: 400 });
-  if (!elite || !normal) throw new Error("failed to create test monsters");
+  const firstTarget = world.createMonster("node-5-5", "plains-slime", { x: 500, y: 400 });
+  const secondTarget = world.createMonster("node-5-5", "plains-slime", { x: 600, y: 400 });
+  if (!firstTarget || !secondTarget) throw new Error("failed to create focus targets");
 
-  // Guard the fixture: if the roster ever re-flags these, the test below would pass
-  // for the wrong reason.
-  assert(
-    MONSTER_DATABASE.get(elite.isMonster.monsterTypeId)?.elite === true,
-    "fixture expects cragback-rhino to be flagged elite",
-  );
-  assert(
-    !MONSTER_DATABASE.get(normal.isMonster.monsterTypeId)?.elite,
-    "fixture expects plains-slime NOT to be flagged elite",
-  );
-
-  const hit = (defender: typeof elite): number => {
+  const hit = (defender: typeof firstTarget, metadata: Record<string, unknown> = {}): number => {
     const ctx = {
       attacker: player, attackerType: "player",
       defender, defenderType: "monster",
-      damage: 100, platingMult: 1, drPierce: 0, cancelled: false, metadata: {},
+      damage: 100, platingMult: 1, drPierce: 0, cancelled: false, metadata,
     } as unknown as CombatContext;
     emitCombatEvent("onHit", ctx, world);
     return ctx.damage;
   };
 
-  assert(hit(elite) === 150, `elite should take +50%, got ${hit(elite)}`);
-  assert(hit(normal) === 100, `a normal monster should take base damage, got ${hit(normal)}`);
+  assert(hit(firstTarget) === 110, "the first direct hit should earn one Focus stack");
+  assert(hit(firstTarget) === 120, "a consecutive hit should earn the next Focus stack");
+  assert(hit(firstTarget) === 130, "Focus should reach its authored cap");
+  assert(hit(firstTarget) === 130, "Focus must remain capped");
+  assert(hit(secondTarget) === 110, "switching targets should reset Focus to one stack");
+
+  const summonHit = hit(secondTarget, { aggroSource: { id: "minion-1", kind: "minion" } });
+  assert(summonHit === 100, "a summon hit must not receive or advance owner-only Duelist Focus");
+  assert(hit(secondTarget) === 120, "the ignored summon hit must not alter the owner's Focus count");
 }
 
 // ── Mobility clauses key off the `mobility` ability tag ────────────────────
 
 // Charge is the only ability tagged `mobility` today. If that ever changes, these
 // two cores widen automatically — which is the intent, not a gap.
+// Core swaps are legal in combat and preserve unrelated live combat state.
+{
+  const player = world.attachPlayerEntity(makePlayerSlices("swap-player"), "swap-player");
+  player.usesSkills.selectedRange = "cadence-range-close";
+  player.holdsInventory.equipment.core = "core-duelist";
+  player.holdsInventory.inventory = ["core-tempered"];
+  setCounter(player.tracksCombat, "class.ramp", 7);
+  setResource(player.tracksCombat, "class.resource", 42);
+  setCooldown(player.tracksCombat, "ability.cooldown", 3_000);
+  setString(player.tracksCombat, "class.mode", "charged");
+  setCounter(player.tracksCombat, "core.duelist-focus-stacks", 5);
+  setString(player.tracksCombat, "core.duelist-target-id", "old-target");
+  applyStatusEffect(player.tracksCombat, {
+    id: "test-preserved-status", sourceId: player.isPlayer.id, remainingMs: 2_000,
+  });
+
+  assert(equipItem(world, player, "core-tempered"), "Core swap should succeed");
+  assert(getCounter(player.tracksCombat, "class.ramp") === 7, "Core swap must preserve class counters");
+  assert(getResource(player.tracksCombat, "class.resource") === 42, "Core swap must preserve resources");
+  assert(getCooldown(player.tracksCombat, "ability.cooldown") === 3_000, "Core swap must preserve cooldowns");
+  assert(getString(player.tracksCombat, "class.mode") === "charged", "Core swap must preserve strings");
+  assert(player.tracksCombat.statusEffects.some((effect) => effect.id === "test-preserved-status"), "Core swap must preserve status effects");
+  assert(getCounter(player.tracksCombat, "core.duelist-focus-stacks") === 0, "Core swap must clear Duelist stacks");
+  assert(getString(player.tracksCombat, "core.duelist-target-id") === "", "Core swap must clear Duelist target state");
+}
+
+// Normal DR and the Core DR layer multiply; they never add toward immunity.
+{
+  const player = world.attachPlayerEntity(makePlayerSlices("dr-player"), "dr-player");
+  const monster = world.createMonster("node-5-5", "plains-slime", { x: 700, y: 500 });
+  if (!monster) throw new Error("failed to create DR test monster");
+  player.hasHealth.maxHp = 1_000;
+  player.hasHealth.hp = 1_000;
+  player.mitigatesDamage.plating = 0;
+  player.mitigatesDamage.damageReduction = 0.5;
+  player.usesSkills.passives["core.dr-layer-pct"] = 0.5;
+  monster.dealsDamage.attack = 100;
+  runMonsterAttack(world, monster, player, 10_000);
+  assert(
+    player.hasHealth.hp === 975,
+    `50% normal DR x 50% Core DR should take 25 damage, got ${1_000 - player.hasHealth.hp}`,
+  );
+}
+
+// Catalyst magnifies an existing owner stat and grants no on-hit damage itself.
+// Because summons inherit owner stats, the magnitude also flows through a minion
+// attack without making that attack an owner-only event.
+{
+  const player = world.attachPlayerEntity(makePlayerSlices("catalyst-player"), "catalyst-player");
+  const target = world.createMonster("node-5-5", "plains-slime", { x: 750, y: 550 });
+  if (!target) throw new Error("failed to create Catalyst target");
+  target.hasHealth.maxHp = 5_000;
+  target.hasHealth.hp = 5_000;
+  target.mitigatesDamage.plating = 0;
+  target.mitigatesDamage.damageReduction = 0;
+  player.dealsDamage.attack = 100;
+  player.dealsDamage.onHitDamage = 0;
+  player.usesSkills.passives["core.onhit-mult"] = 1.15;
+
+  runPlayerAttack(world, player, target, 1_000, {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: "player" },
+  });
+  assert(5_000 - target.hasHealth.hp === 100, "Catalyst must grant no damage when on-hit is zero");
+
+  target.hasHealth.hp = 5_000;
+  player.dealsDamage.onHitDamage = 20;
+  runPlayerAttack(world, player, target, 2_000, {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: "minion-1", kind: "minion" },
+  });
+  assert(
+    5_000 - target.hasHealth.hp === 143,
+    `Catalyst should scale inherited on-hit to 43 while leaving 100 direct damage, got ${5_000 - target.hasHealth.hp}`,
+  );
+}
+
 const mobilityAbility = [...ABILITY_DATABASE.values()].find(
   (a) => a.slot === "technique" && a.tags?.includes("mobility"),
 );
@@ -218,6 +300,14 @@ const PLAIN_CD = abilityCooldownMs(plainAbility!, FIXTURE_TIER);
   assert(
     getCooldown(player.tracksCombat, plainKey) === PLAIN_CD,
     "a non-mobility technique's cooldown must not be refunded",
+  );
+
+  setCooldown(player.tracksCombat, mobKey, MOB_CD);
+  ctx.metadata.physicalSource = "summon";
+  emitCombatEvent("onKill", ctx, world);
+  assert(
+    getCooldown(player.tracksCombat, mobKey) === MOB_CD,
+    "a summon kill must not trigger the owner's Bruiser cooldown refund",
   );
 }
 

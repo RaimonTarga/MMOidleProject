@@ -1,4 +1,4 @@
-import type { BossScript, MonsterDefinition } from '../../monsterDatabase';
+import type { BossAction, BossScript, MonsterDefinition } from '../../monsterDatabase';
 
 /** Runtime DoT override shape — mirrors MonsterDefinition.dotEffect. */
 export type MonsterDotEffect = NonNullable<MonsterDefinition['dotEffect']>;
@@ -93,6 +93,21 @@ export interface ScriptsBoss {
   defenseShed?: boolean;
   /** Ids of adds spawned by 'spawn-adds' — despawned when the boss dies. */
   spawnedAddIds?: string[];
+  /** A scripted cast currently locking the boss in place. */
+  scriptedCast?: {
+    remainingMs: number;
+    label: string;
+    actions: BossAction[];
+    ownsRoot: boolean;
+    ownsCannotAttack: boolean;
+  };
+  /** Scripted casts triggered while another is resolving; starts in FIFO order. */
+  scriptedCastQueue?: {
+    castMs: number;
+    label: string;
+    actions: BossAction[];
+    fx?: 'roar' | 'frenzy';
+  }[];
   /**
    * Runtime scalars on the boss's `chargedAttack` (set by 'empower-charged'). Stored
    * as MULTIPLIERS rather than resolved values so repeated phases compose, and so the

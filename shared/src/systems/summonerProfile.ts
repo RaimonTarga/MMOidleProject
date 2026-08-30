@@ -5,6 +5,7 @@ import {
   SUMMON_SIZE_MULT_MAX,
   SUMMON_SIZE_MULT_MIN,
   SUMMONER_BASELINE_ATTACK_MODE,
+  SUMMONER_BASELINE_ATTACK_RANGE,
   SUMMONER_BASELINE_RANGE,
   SUMMONER_CORE_TUNING,
   SUMMONER_FRAME_TUNING,
@@ -175,7 +176,9 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
     summonAttackCooldownMult: 1 / SUMMONER_CORE_TUNING.apsInheritanceMult,
     attackMode: selectedRange ? rangeTuning.attackMode : SUMMONER_BASELINE_ATTACK_MODE,
     formationPolicy: rangeTuning.policy,
-    attackRange: rangeTuning.attackRange,
+    // Before a range choice, summons fight close in rather than inheriting
+    // Procession's reach with only a melee animation.
+    attackRange: selectedRange ? rangeTuning.attackRange : SUMMONER_BASELINE_ATTACK_RANGE,
     preferredDistance: rangeTuning.preferredDistance,
     conduitDefenseShare: rangeTuning.conduitDefenseShare,
     redirectionPct: rangeTuning.redirectionPct,

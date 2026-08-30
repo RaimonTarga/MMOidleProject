@@ -243,6 +243,7 @@ export interface MonsterView {
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   bossEffects?: string[];
+  bossEffectStacks?: Record<string, number>;
   targetStatus?: TargetStatusView[];
   ultimateStatus?: UltimateStatus;
   throneHealing?: boolean;
@@ -489,6 +490,7 @@ export function composeMonsterView(
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     bossEffects: entity.hasStatus?.bossEffects,
+    bossEffectStacks: entity.hasStatus?.bossEffectStacks,
     targetStatus: entity.hasStatus?.targetStatus,
     ultimateStatus: entity.hasStatus?.ultimateStatus,
     throneHealing: entity.hasStatus?.throneHealing,

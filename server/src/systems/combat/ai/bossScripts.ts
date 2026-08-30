@@ -44,13 +44,14 @@ import type { World } from '../../../world/World';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { ActiveBossEffect, ScriptsBoss } from '@mmo-idle/shared';
 import { initScriptsBoss } from '@mmo-idle/shared';
-import { attachComponent } from '../../../ecs/markerHelpers';
+import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { setAggroTarget, setAttackTarget } from './targeting';
 import { BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
 import { publishToxicPool } from '../../world/groundZones';
 import { stokeAmbientRamp } from '../../world/nodeFeatures';
 import { raiseCorpsesBurst } from './raiseDead';
+import { setRooted } from '../../world/rooted';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss } from '@mmo-idle/shared';
@@ -68,13 +69,19 @@ export function updateBossScripts(world: World, dt: number): void {
     if (e.hasAggroTarget) attachComponent(world, e, 'isBossEngaged', {});
 
     tickActiveEffects(state, e, world, dt);
+    tickScriptedCast(state, e, world, dt);
 
     if (e.isBossEngaged) {
       if (script.phases)    checkPhaseTransitions(state, script.phases,    e, world);
       if (script.repeating) tickRepeatingActions(state,  script.repeating,  e, world, dt);
     }
 
-    e.hasStatus.bossEffects = [...new Set(state.activeEffects.map(fx => fx.type))];
+    const bossEffectStacks: Record<string, number> = {};
+    for (const effect of state.activeEffects) {
+      bossEffectStacks[effect.type] = (bossEffectStacks[effect.type] ?? 0) + 1;
+    }
+    e.hasStatus.bossEffects = Object.keys(bossEffectStacks);
+    e.hasStatus.bossEffectStacks = bossEffectStacks;
   }
 }
 
@@ -105,6 +112,82 @@ function tickActiveEffects(
     restoreStats(effect, monster, world, state);
     state.activeEffects = state.activeEffects.filter(fx => fx !== effect);
   }
+}
+
+/**
+ * Resolve generic boss-script casts. The ownership flags ensure a cast never
+ * releases a root or attack lock that a separate mechanic already owned.
+ */
+function tickScriptedCast(
+  state: ScriptsBoss,
+  monster: MonsterEntity,
+  world: World,
+  dt: number,
+): void {
+  const cast = state.scriptedCast;
+  if (!cast) return;
+
+  cast.remainingMs -= dt;
+  if (cast.remainingMs > 0) return;
+
+  state.scriptedCast = undefined;
+  if (cast.ownsRoot) setRooted(world, monster, false);
+  if (cast.ownsCannotAttack) detachComponent(world, monster, 'cannotAttack');
+
+  for (const action of cast.actions) applyAction(action, monster, world, state);
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: 'monster-cast-end',
+    monsterId: monster.isMonster.id,
+    fired: true,
+  });
+
+  const next = state.scriptedCastQueue?.shift();
+  if (next) beginScriptedCast(next, monster, world, state);
+}
+
+function beginScriptedCast(
+  action: { castMs: number; label: string; actions: BossAction[]; fx?: 'roar' | 'frenzy' },
+  monster: MonsterEntity,
+  world: World,
+  state: ScriptsBoss,
+): void {
+  // A capped cast (currently Bestial Frenzy) should stop being a dead, repeated
+  // wind-up once every action it contains is already saturated.
+  if (!action.actions.some(nestedAction => canApplyAction(nestedAction, state))) return;
+
+  if (state.scriptedCast) {
+    (state.scriptedCastQueue ??= []).push(action);
+    return;
+  }
+
+  const ownsRoot = !monster.isRooted;
+  const ownsCannotAttack = !monster.cannotAttack;
+  if (ownsRoot) setRooted(world, monster, true);
+  if (ownsCannotAttack) attachComponent(world, monster, 'cannotAttack', {});
+  state.scriptedCast = {
+    remainingMs: action.castMs,
+    label: action.label,
+    actions: action.actions,
+    ownsRoot,
+    ownsCannotAttack,
+  };
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: 'monster-cast-start',
+    monsterId: monster.isMonster.id,
+    castMs: action.castMs,
+    label: action.label,
+  });
+  pushBossFx(world, monster, action.fx ?? 'roar', { radius: 360 });
+}
+
+/** Whether a scripted action would still change encounter state. */
+function canApplyAction(action: BossAction, state: ScriptsBoss): boolean {
+  if (action.type === 'stat-buff' && action.maxStacks !== undefined) {
+    const effectType = action.label ?? `stat-buff-${action.stat}`;
+    return state.activeEffects.filter(effect => effect.type === effectType).length < action.maxStacks;
+  }
+  if (action.type === 'cast') return action.actions.some(nestedAction => canApplyAction(nestedAction, state));
+  return true;
 }
 
 function restoreStats(
@@ -180,6 +263,14 @@ function tickRepeatingActions(
 }
 
 function inheritBossTarget(world: World, boss: MonsterEntity, add: MonsterEntity): void {
+  // Boss summons are part of their encounter, not fresh ambient monsters. Give
+  // them the boss's return anchor and leash, then let AI keep their target synced
+  // for the rest of the fight (including boss retargets).
+  add.controlsMonster.bossSpawnerId = boss.isMonster.id;
+  add.controlsMonster.spawn = { ...boss.controlsMonster.spawn };
+  add.controlsMonster.leashRange = boss.controlsMonster.leashRange;
+  add.hasAwareness.leashRange = boss.hasAwareness.leashRange;
+
   const aggroTarget = boss.hasAggroTarget;
   if (!aggroTarget) return;
 
@@ -200,7 +291,7 @@ function inheritBossTarget(world: World, boss: MonsterEntity, add: MonsterEntity
 function pushBossFx(
   world: World,
   monster: MonsterEntity,
-  fx: 'summon' | 'shield' | 'morph' | 'roar',
+  fx: 'summon' | 'shield' | 'morph' | 'roar' | 'frenzy',
   extra?: { radius?: number; element?: string },
 ): void {
   world.pushEvent(monster.hasPosition.nodeId, {
@@ -257,8 +348,13 @@ function applyAction(
     }
 
     case 'stat-buff': {
+      const effectType = action.label ?? `stat-buff-${action.stat}`;
+      if (
+        action.maxStacks !== undefined &&
+        state.activeEffects.filter(effect => effect.type === effectType).length >= action.maxStacks
+      ) break;
       const effect: ActiveBossEffect = {
-        type:        `stat-buff-${action.stat}`,
+        type:        effectType,
         remainingMs: action.durationMs ?? -1,
       };
       switch (action.stat) {
@@ -290,6 +386,17 @@ function applyAction(
           state.evasionOverride = base * action.mult;
           break;
         }
+        case 'attackSpeed':
+          effect.savedCooldown = monster.performsAttack.attackCooldown;
+          monster.performsAttack.attackCooldown = Math.max(
+            200,
+            Math.round(monster.performsAttack.attackCooldown / action.mult),
+          );
+          if (action.moveSpeedMult !== undefined) {
+            effect.savedSpeed = monster.hasPosition.speed;
+            monster.hasPosition.speed = Math.round(monster.hasPosition.speed * action.moveSpeedMult);
+          }
+          break;
       }
       state.activeEffects.push(effect);
       break;
@@ -330,9 +437,11 @@ function applyAction(
           y: Math.max(64, Math.min(nodeHeight - 64, monster.hasPosition.current.y + Math.sin(angle) * dist)),
         };
         const summon = world.createMonster(monster.hasPosition.nodeId, action.monsterTypeId, pos);
-        if (summon) inheritBossTarget(world, monster, summon);
+        if (summon) {
+          inheritBossTarget(world, monster, summon);
+          pushBossFx(world, summon, 'summon');
+        }
       }
-      pushBossFx(world, monster, 'summon');
       break;
     }
 
@@ -464,9 +573,14 @@ function applyAction(
         if (add) {
           inheritBossTarget(world, monster, add);
           state.spawnedAddIds.push(add.isMonster.id);
+          pushBossFx(world, add, 'summon');
         }
       }
-      if (budget > 0) pushBossFx(world, monster, 'summon');
+      break;
+    }
+
+    case 'cast': {
+      beginScriptedCast(action, monster, world, state);
       break;
     }
 

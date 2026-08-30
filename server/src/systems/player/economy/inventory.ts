@@ -3,7 +3,26 @@ import { ITEM_DATABASE, TEST_ROOM_NODE_ID, relicIsUnlocked } from '@mmo-idle/sha
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
-import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
+import {
+  recalculatePlayerEntityStats,
+  recalculatePlayerStatsPreservingCombatState,
+} from '../../../ecs/playerEntityFormulas';
+import { resetCoreCombatState } from '../../combat/cores';
+
+function recalculateAfterEquipmentChange(
+  world: World,
+  entity: PlayerEntity,
+  slot: EquipmentSlot,
+): void {
+  if (slot === 'core') {
+    // Core swapping is allowed in combat, but it must not wipe class resources,
+    // cooldowns, status effects, or ramps. Only Core-owned focus state resets.
+    recalculatePlayerStatsPreservingCombatState(world, entity);
+    resetCoreCombatState(entity);
+    return;
+  }
+  recalculatePlayerEntityStats(world, entity);
+}
 
 export function equipItem(world: World, entity: PlayerEntity, definitionId: string): boolean {
   const def = ITEM_DATABASE.get(definitionId);
@@ -29,7 +48,7 @@ export function equipItem(world: World, entity: PlayerEntity, definitionId: stri
   }
 
   entity.holdsInventory.equipment[slot] = definitionId;
-  recalculatePlayerEntityStats(world, entity);
+  recalculateAfterEquipmentChange(world, entity, slot);
   syncArchetypeSlices(world, entity);
   return true;
 }
@@ -40,7 +59,7 @@ export function unequipItem(world: World, entity: PlayerEntity, slot: EquipmentS
 
   entity.holdsInventory.equipment[slot] = null;
   entity.holdsInventory.inventory = [...entity.holdsInventory.inventory, current];
-  recalculatePlayerEntityStats(world, entity);
+  recalculateAfterEquipmentChange(world, entity, slot);
   syncArchetypeSlices(world, entity);
   return true;
 }

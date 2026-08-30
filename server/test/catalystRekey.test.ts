@@ -102,14 +102,18 @@ assert(
   "clearing kill mints no catalyst",
 );
 
-// ── Boss first-clear bundle keys by the node's family (when the node has one) ───
+// ── Boss kills grant ordinary per-kill catalyst progress under the node's family;
+// there is no separate first-clear bundle ──────────────────────────────────────
 const bossP = world.attachPlayerEntity(makePlayer("p-boss"), "p-boss");
 const boss = world.createMonster("node-t1-forest-01", "gnarled-greatbear", { x: 800, y: 800 })!;
 assert(boss.isMonster.isBoss, "greatbear is a boss");
 grantMonsterRewards(world, "p-boss", boss);
 const bp = bossP.tracksProgression;
-assert((bp.catalysts["alacrity"] ?? 0) >= 5, "boss bundle (5) minted under the family key");
-assert(bp.catalysts["forest"] === undefined, "boss bundle not keyed by biome");
+assert(
+  (bp.catalystProgress["alacrity"] ?? 0) > 0 || (bp.catalysts["alacrity"] ?? 0) > 0,
+  "ordinary per-kill catalyst progress accrues under the family key",
+);
+assert(bp.catalysts["forest"] === undefined, "not keyed by biome");
 assert(bp.bossesCleared.length > 0, "boss clear recorded");
 
 // ── A boss in a dungeon (excluded node) grants no catalyst at all ──────────────
@@ -122,15 +126,18 @@ assert(Object.keys(dbp.catalystProgress).length === 0, "dungeon boss adds no cat
 assert(dbp.bossesCleared.length > 0, "dungeon boss clear still recorded");
 
 // ── A family-keyed catalyst cost blocks and spends correctly ──────────────────
+// T2 economy pass (2026-08-29): gale-needle's reconstruct cost was normalized
+// from green 240 / alacrity 5 to green 210 / alacrity 2 (see
+// docs/briefs/T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md §7).
 const gale = RECIPE_DATABASE.get("gale-needle")!;
-assert(gale.reconstructCatalystCost?.["alacrity"] === 5, "gale-needle reconstruct costs alacrity");
-const fullGreen: Record<EssenceType, number> = { red: 0, blue: 0, green: 240, yellow: 0, purple: 0 };
+assert(gale.reconstructCatalystCost?.["alacrity"] === 2, "gale-needle reconstruct costs alacrity");
+const fullGreen: Record<EssenceType, number> = { red: 0, blue: 0, green: 210, yellow: 0, purple: 0 };
 const blocked = checkReconstruct({ recipe: gale, essences: fullGreen, catalysts: {} });
 assert(!blocked.ok, "reconstruct blocked without the family catalyst");
 const allowed = checkReconstruct({
   recipe: gale,
   essences: fullGreen,
-  catalysts: { alacrity: 5 },
+  catalysts: { alacrity: 2 },
 });
 assert(allowed.ok, "reconstruct allowed once the family catalyst is held");
 

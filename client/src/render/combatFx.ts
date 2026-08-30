@@ -30,6 +30,7 @@ import {
   EMPOWERED_DAMAGE_SIZE_PX,
 } from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
+import { fxApprenticeCast, fxApprenticeCloseCast } from "../fx/apprenticeCast";
 import { PARTIAL_EVADE_COLOR } from "./damageNumberStyle";
 import { fxSlash } from "../fx/slash";
 import { fxImpact } from "../fx/impact";
@@ -44,7 +45,7 @@ import { fxSandblast } from "../fx/sandblast";
 import { fxQuake } from "../fx/quake";
 import { fxHex } from "../fx/hex";
 import { fxStoneSpit } from "../fx/stoneSpit";
-import { fxSummonBurst, fxShieldUp, fxMorph, fxBossRoar } from "../fx/bossCues";
+import { fxSummonBurst, fxShieldUp, fxMorph, fxBossRoar, fxBestialFrenzy } from "../fx/bossCues";
 import { fxLightning } from "../fx/lightning";
 import { fxFireFlame } from "../fx/dotFire";
 import { fxFrostSnowflake } from "../fx/dotFrost";
@@ -57,6 +58,7 @@ import { fxVoid } from "../fx/voidFx";
 import { fxFirstStrike } from "../fx/firstStrike";
 import { fxAftershock } from "../fx/aftershock";
 import { fxDualSlash } from "../fx/dualSlash";
+import { fxBearClaws } from "../fx/bearClaws";
 import { fxSweep } from "../fx/sweep";
 import { fxExposeWeakness } from "../fx/heavyStrike";
 import { fxBrace } from "../fx/brace";
@@ -325,17 +327,35 @@ const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
     fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered),
   energy: ({ scene, ev, from, to }) =>
     fxLightning(scene, from.x, from.y, to.x, to.y, ev.empowered),
-  dot: ({ scene, ev, to, dotPath }) => {
-    switch (dotPath) {
-      case "fire":
-        return fxFireFlame(scene, to.x, to.y, ev.empowered);
-      case "frost":
-        return fxFrostSnowflake(scene, to.x, to.y, ev.empowered);
-      case "doom":
-        return fxDoomCloud(scene, to.x, to.y, ev.empowered);
-      default:
-        return fxPoisonSmog(scene, to.x, to.y, ev.empowered);
-    }
+  dot: ({ scene, ev, player, from, to, dotPath }) => {
+    const element = dotPath ?? "poison";
+    const cast = player.selectedRange?.endsWith("-range-close")
+      ? fxApprenticeCloseCast
+      : fxApprenticeCast;
+    cast(
+      scene,
+      from.x,
+      from.y,
+      to.x,
+      to.y,
+      element,
+      ev.empowered,
+      () => {
+        switch (element) {
+          case "fire":
+            fxFireFlame(scene, to.x, to.y, ev.empowered);
+            break;
+          case "frost":
+            fxFrostSnowflake(scene, to.x, to.y, ev.empowered);
+            break;
+          case "doom":
+            fxDoomCloud(scene, to.x, to.y, ev.empowered);
+            break;
+          default:
+            fxPoisonSmog(scene, to.x, to.y, ev.empowered);
+        }
+      },
+    );
   },
   // Summoner uses a plain melee impact from the slime — the slime sprite is
   // the FX, and the empowered ring is handled separately via the player's
@@ -348,7 +368,7 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   slash: ({ scene, ev, from, to }) =>
     fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered),
   'bear-claws': ({ scene, ev, to }) =>
-    fxDualSlash(scene, to.x, to.y, ev.empowered),
+    fxBearClaws(scene, to.x, to.y, ev.empowered),
   poison: ({ scene, to }) => fxPoison(scene, to.x, to.y),
   magic: ({ scene, from, to }) => fxMagic(scene, from.x, from.y, to.x, to.y),
   // Conduit summons — range picks which of these their attacks use.
@@ -659,6 +679,8 @@ export function dispatchCombatEvent(
         fxMorph(scene, at.x, at.y);
       } else if (ev.fx === "roar") {
         fxBossRoar(scene, at.x, at.y, ev.radius ?? 260);
+      } else if (ev.fx === "frenzy") {
+        fxBestialFrenzy(scene, at.x, at.y);
       }
     }
     return;
@@ -1061,6 +1083,7 @@ export function spawnAttackEffect(
     execution?: boolean;
     archetype?: CombatArchetype;
     dotPath?: DotPath;
+    selectedRange?: string | null;
   },
 ): void {
   if (!shouldRunClientFx()) return;
@@ -1076,6 +1099,7 @@ export function spawnAttackEffect(
   const player = {
     attackStyle: style,
     combatArchetype: flags?.archetype ?? null,
+    selectedRange: flags?.selectedRange ?? null,
   } as PlayerView;
   const args: AttackFxArgs = {
     scene,

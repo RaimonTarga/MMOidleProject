@@ -2,11 +2,12 @@
 
 Living truth for the **Core** equipment slot. Design source is
 `design_docs/CORE_DESIGN_PHILOSOPHY.md` (the locked foundation) and
-`design_docs/CORE_CAST_REVIEW_DRAFT.md` (the roster). The rework that produced this
-state is `docs/archive/cores-rework-implementation-plan.md`.
+`docs/core-rework-design-balance-handoff.md` (the 2026-08-29 capstone balance pass).
+The structural rework that produced the slot is
+`docs/archive/cores-rework-implementation-plan.md`.
 
-**All numbers are PLACEHOLDERS** inside the design doc's bands — the balance pass is
-the user's, edited directly in the recipe files.
+The values below are the implemented first-pass capstone tuning. They remain subject
+to bench and playtest iteration, but are no longer the conservative placeholder cast.
 
 ---
 
@@ -20,6 +21,14 @@ Effects are authored as `mechanicEffects` on an ordinary recipe. Most are percen
 multipliers on the **final summed stat**, applied once in the core-multiplier pass of
 `recalculatePlayerStats`. Sources add (two +10% → +20%); negative values are
 tradeoffs.
+
+The stat order is deliberately:
+
+`base + gear → class affinity × stance × archetype layer × Core`
+
+Core multipliers never join the class-affinity percentage bucket. Tests cover the
+attack ordering, Reload's hard-set Snipe cadence followed by Core attack speed, and
+normal DR multiplied by the independent Core DR layer.
 
 ## Eligibility
 
@@ -75,7 +84,7 @@ now asserts every restricted core is unreachable at T2 and reachable at T3.
 |---|---|---|
 | Juggernaut | mountain (14) | HP + plating + DR layer; slower attacks and movement |
 | Bruiser | jungle (9) | Damage, bulk, speed; kills refund mobility cooldown |
-| Duelist | cave (15) | Modest all-round + elite/boss damage |
+| Duelist | cave (15) | All-round base + Focus ramp on consecutive direct hits to one target |
 
 **T3 ranged** — mid and far.
 
@@ -96,7 +105,24 @@ now asserts every restricted core is unreachable at T2 and reachable at T3.
 Accelerant moved off Forest on 2026-08-22: Forest has no nodes past T2, so its
 level-15 gate cost a T3 character roughly 1,000 extra kills of outgrown content.
 Jungle carries Alacrity — the core's authored family tag — past T2, so the home and
-the family tag now agree. Cost and amounts are unchanged (Jungle also drops green).
+the family tag agree (Jungle also drops green).
+
+### Implemented first-pass values
+
+| Core | Effects |
+|---|---|
+| Tempered | +12% attack, +12% max HP |
+| Survivalist | +30% Recovery, +15% max HP |
+| Force | +22% attack, −12% max HP |
+| Duelist | +18% attack, +10% max HP; direct same-target hits gain +5% direct attack damage each, max 5 Focus |
+| Juggernaut | +30% max HP, +40% plating, 14% independent DR; −25% attack speed, −10% movement |
+| Arcanist | 20% Technique cooldown reduction, +20% Technique power |
+| Controller | +35% debuff duration, +25% debuff potency |
+| Scout | +24% attack, +25% movement, 25% mobility cooldown reduction; −20% max HP |
+| Sniper | +40% attack; −30% max HP, −25% plating |
+| Bruiser | +28% attack, +20% max HP, +18% movement; kills refund 50% of a mobility cooldown |
+| Accelerant | +55% attack speed, −18% attack |
+| Catalyst | +115% existing on-hit damage, −15% attack; provides no on-hit damage itself |
 
 ## Passive keys and their consumers
 
@@ -109,13 +135,30 @@ Everything else has its own consumer:
 |---|---|
 | `core.dr-layer-pct` | Combat pipeline. A **separate** multiplicative DR layer: `base × (1−DR) × (1−layer)`. Clamped 0.9. |
 | `core.recovery-mult` | Stat rebuild **only**, on the `recovery` stat (`stats.ts`). Because every in-combat regen effect activates a fraction of that rate, scaling the rate covers all of them exactly once. Deliberately NOT re-applied in `applyHealToPlayer` — that would compound it. Absorb and the cheat-death HoT are not Recovery-derived and do not scale with it. |
-| `core.elite-damage-mult` | `onHit` listener in `server/src/systems/combat/cores.ts`, vs `elite`/`isBoss` monsters. |
+| `core.focus-{damage-per-hit-mult,max-stacks}` | Direct player `onHit` listener in `server/src/systems/combat/cores.ts`. The current hit earns and uses a stack; changing target resets to one. |
 | `core.onhit-mult` | `runPlayerAttack`, folded into the existing `onHitMult` so it composes with reload's Alternating Cadence. |
 | `core.debuff-{duration,potency}-mult` | `applyPlayerDebuff`, via the `SCALABLE_DEBUFFS` registry. |
 | `core.mobility-cooldown-reduction-pct` | `techniqueCooldownMs`, for abilities tagged `mobility`. Summed with technique CDR before one 0.9 cap. |
 | `core.mobility-refund-on-kill-pct` | `onKill` listener; refunds a fraction of the **full** cooldown. |
 
 Arcanist needs no core key at all — it authors the existing `technique.*` keys.
+
+### Summons and event ownership
+
+Owner stat magnifiers continue to flow through summon scaling. In particular,
+Catalyst magnifies the owner's existing on-hit stat before formation weights are
+applied. Explicit owner-event hooks do not inherit summon attribution: summon hits
+cannot build Duelist Focus, and summon kills cannot trigger Bruiser's cooldown
+refund. Formation attacks and summon-owned AoE/procs carry physical-source metadata
+so `attackerType: 'player'` alone is never treated as proof that the player struck.
+
+### Core swaps during combat
+
+Core swapping remains allowed in combat. Its semantics are explicit: the stat rebuild
+preserves unrelated counters, resources, cooldowns, flags, strings, status effects,
+and cadence ramps. It clears only Core-owned Duelist target/stack state, so Focus
+cannot be banked across a swap. Other equipment slots retain their existing rebuild
+semantics.
 
 ### The debuff registry
 
@@ -175,13 +218,17 @@ an added arcane cue at T3.
 - **Catalyst's audience is thin** — `onHitDamage` exists on only two weapon lineages
   (a forest T2 weapon and the jungle rapier chain) plus a few T4 class specs.
   Widening it is a weapon-recipe balance decision.
-- **The balance bench never picks an unrestricted T3 core.** `bestCoreForBuild` ranks
-  restricted above unrestricted, so Arcanist/Controller/Accelerant/Catalyst are not
-  exercised by `bench:balance`.
+- **Bench Core selection is an estimate, not an encounter optimizer.** It now scores
+  signed effective output, defense, Technique throughput, and only build-relevant
+  debuff/on-hit channels. It exercises unrestricted specialists and Catalyst on
+  on-hit loadouts, but has no encounter target with which to value mobility or
+  fight-length conditions exactly.
 
 ## Tests
 
-`cores` (gate + rebuild integration), `coreRangeGate` (eligibility matrix + bench
+`cores` (gate + rebuild integration), `classAffinity` (class × stance × archetype ×
+Core ordering and hard-set cadence), `coreRangeGate` (eligibility matrix + build-aware bench
 loadout), `coreAuthoring` (authoring invariants + tier placement), `coreMechanics`
-(debuff scaler, pure), `coreCombat` (recovery funnel, elite damage, both mobility
-clauses against a real `World`).
+(debuff scaler, pure), `coreCombat` (recovery funnel, Duelist Focus, summon event
+ownership, Core-swap preservation, layered DR, and both mobility clauses against a
+real `World`).

@@ -37,8 +37,19 @@ export interface AbilityRecipe {
   requiredBossClear?: string;
 }
 
-// requiredBiomeLevel + costs are PLACEHOLDERS — the balance pass owns the numbers.
-// Costs use the biome's own essence colour and roughly double per tier.
+// Costs use the biome's own essence colour.
+//
+// The old "roughly double per tier" ladder (25/90 → 320/380 → 650/760 → 1300/1500) is
+// OBSOLETE and is NOT current policy. The T1 (2026-08-28), T2 (2026-08-29) and T3
+// (2026-08-30) economy passes each repriced their tier against what an ability is
+// WORTH at that tier — an ability should cost roughly one gear upgrade step, not a
+// whole gear track — landing T1 at 25–90, T2 at 70–90 and T3 at 150–210, with the
+// premium set by how optional the tool is rather than by its tier.
+// T4 economy pass (2026-08-30): repriced off actual T4 supply (300/320/380/420),
+// replacing the abandoned 1,300/1,500 ladder. Ordering within each biome (L3 < L5)
+// is preserved; Disengage sits lowest as the game's only Trench escape tool (the
+// same "required counterplay prices lowest" reasoning as T3's Break Free), Stunning
+// Strike sits highest as the most build-warping hard CC of the four.
 const recipes: AbilityRecipe[] = [
   // ── T1: the fundamentals ───────────────────────────────────────────────────
   {
@@ -129,9 +140,11 @@ const recipes: AbilityRecipe[] = [
     abilityId: "hamstring",
     tier: 2,
     // Jungle swarms and chases — taking the legs out of the chase is the answer.
+    // T2 economy pass (2026-08-29): cost dropped from 320 to match the T1
+    // mandatory-counterplay philosophy (essence-only, no post-unlock grind).
     recipeGroup: "jungle",
     requiredBiomeLevel: 3,
-    cost: { green: 320 },
+    cost: { green: 70 },
   },
   {
     id: "ability-recipe-bramble-guard",
@@ -140,9 +153,10 @@ const recipes: AbilityRecipe[] = [
     abilityId: "bramble-guard",
     tier: 2,
     // Jungle again: high density plus an aggressive on-hit profile.
+    // T2 economy pass (2026-08-29): cost dropped from 380, same rationale as Hamstring.
     recipeGroup: "jungle",
     requiredBiomeLevel: 5,
-    cost: { green: 380 },
+    cost: { green: 90 },
   },
   {
     id: "ability-recipe-charge",
@@ -151,9 +165,10 @@ const recipes: AbilityRecipe[] = [
     abilityId: "charge",
     tier: 2,
     // Desert: the low-density standoff biome, where closing distance is the problem.
+    // T2 economy pass (2026-08-29): cost dropped from 320, same rationale as Hamstring.
     recipeGroup: "desert",
     requiredBiomeLevel: 3,
-    cost: { yellow: 320 },
+    cost: { yellow: 70 },
   },
   {
     id: "ability-recipe-endure",
@@ -162,9 +177,10 @@ const recipes: AbilityRecipe[] = [
     abilityId: "endure",
     tier: 2,
     // Desert grinds rather than spikes — a long window beats a short one.
+    // T2 economy pass (2026-08-29): cost dropped from 380, same rationale as Hamstring.
     recipeGroup: "desert",
     requiredBiomeLevel: 5,
-    cost: { yellow: 380 },
+    cost: { yellow: 90 },
   },
 
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
@@ -177,7 +193,9 @@ const recipes: AbilityRecipe[] = [
     // Tundra is where the ground fights you — pinning something is the answer.
     recipeGroup: "tundra",
     requiredBiomeLevel: 3,
-    cost: { blue: 650 },
+    // T3 economy pass: 650 → 150. Ordinary/important counterplay Technique; must be
+    // affordable the first time Tundra roots you.
+    cost: { blue: 150 },
   },
   {
     id: "ability-recipe-break-free",
@@ -188,7 +206,9 @@ const recipes: AbilityRecipe[] = [
     // Tundra again: the biome that freezes you teaches the escape.
     recipeGroup: "tundra",
     requiredBiomeLevel: 5,
-    cost: { blue: 760 },
+    // T3 economy pass: 760 → 190. Required counterplay and the tier's only escape from
+    // hard control — top of the T3 ability band, but never a gear-priced wall.
+    cost: { blue: 190 },
   },
   {
     id: "ability-recipe-frenzy",
@@ -199,7 +219,9 @@ const recipes: AbilityRecipe[] = [
     // Volcano rewards burning a fight down before the ambient ramp burns you.
     recipeGroup: "volcanic",
     requiredBiomeLevel: 3,
-    cost: { red: 650 },
+    // T3 economy pass: 650 → 175. Broadly useful but optional; a small premium over
+    // the pure counterplay tools.
+    cost: { red: 175 },
   },
   {
     id: "ability-recipe-quick-strike",
@@ -209,7 +231,9 @@ const recipes: AbilityRecipe[] = [
     tier: 3,
     recipeGroup: "volcanic",
     requiredBiomeLevel: 5,
-    cost: { red: 760 },
+    // T3 economy pass: 760 → 210. Genuinely optional specialised filler, so the
+    // priciest of the four.
+    cost: { red: 210 },
   },
 
   // ── T4: advanced range, escape, hard CC, long sustain ──────────────────────
@@ -222,7 +246,7 @@ const recipes: AbilityRecipe[] = [
     // The Trench presses in from every side — room is the scarce resource.
     recipeGroup: "trench",
     requiredBiomeLevel: 3,
-    cost: { green: 1300 },
+    cost: { green: 300 },
   },
   {
     id: "ability-recipe-recuperate",
@@ -232,7 +256,7 @@ const recipes: AbilityRecipe[] = [
     tier: 4,
     recipeGroup: "trench",
     requiredBiomeLevel: 5,
-    cost: { green: 1500 },
+    cost: { green: 380 },
   },
   {
     id: "ability-recipe-snipe",
@@ -243,7 +267,7 @@ const recipes: AbilityRecipe[] = [
     // The Wasteland's open sightlines are what make extraordinary range legible.
     recipeGroup: "graveyard",
     requiredBiomeLevel: 3,
-    cost: { purple: 1300 },
+    cost: { purple: 320 },
   },
   {
     id: "ability-recipe-stunning-strike",
@@ -253,7 +277,7 @@ const recipes: AbilityRecipe[] = [
     tier: 4,
     recipeGroup: "graveyard",
     requiredBiomeLevel: 5,
-    cost: { purple: 1500 },
+    cost: { purple: 420 },
   },
 ];
 

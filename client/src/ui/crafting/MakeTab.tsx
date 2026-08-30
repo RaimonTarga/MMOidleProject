@@ -11,6 +11,7 @@ import {
   isEvolvedRecipe,
   isRestrictedCore,
   relicRatingsFromEffects,
+  requiredPlusFor,
   resolveRelicPreview,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -756,9 +757,9 @@ function MakeDetail({
         catalysts={catalysts}
       />
 
-      {evolved && predecessor && (
+      {evolved && predecessor && recipe && (
         <div className="craft-recipe__effect-line">
-          Evolves from {predecessor.name} +3 (consumed)
+          Evolves from {predecessor.name} +{requiredPlusFor(recipe)} (consumed)
         </div>
       )}
 
@@ -793,7 +794,7 @@ function MakeDetail({
               title={evolveCheck?.reason}
               onClick={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'evolve'))}
             >
-              {evolveCheck?.ok ? 'Evolve' : 'Need +3'}
+              {evolveCheck?.ok ? 'Evolve' : `Need +${requiredPlusFor(recipe)}`}
             </button>
             {recipe.reconstructCost && (
               <button

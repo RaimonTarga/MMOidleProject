@@ -55,7 +55,11 @@ export function getMinionIdlePos(owner: PlayerEntity, slot: number): Vec2 {
 export function computeMinionSpeed(owner: PlayerEntity): number {
   const profile = summonerProfileFor(owner);
   const speedMult = owner.usesSkills.passives['summoner.minion-speed-mult'] ?? 1.0;
-  return Math.max(160, Math.round((owner.hasPosition.speed + 40) * speedMult * profile.summonMoveSpeedMult));
+  const inheritedSpeed = Math.round(
+    (owner.hasPosition.speed + 40) * speedMult * profile.summonMoveSpeedMult,
+  );
+  // A summon can be faster, but must never lag behind its Conduit.
+  return Math.max(owner.hasPosition.speed, 160, inheritedSpeed);
 }
 
 export function computeMinionSizeMult(owner: PlayerEntity, slot = 0): number {

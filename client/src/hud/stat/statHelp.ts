@@ -242,12 +242,13 @@ export const STAT_HELP: Record<string, string> = {
   'core.speed-mult': 'Percentage multiplier on your final move speed.',
   'core.attack-speed-mult': 'Percentage multiplier on your final attack speed.',
   'core.recovery-mult':
-    'Percentage multiplier on ALL of your recovery — passive HP regen plus every heal you receive, including regen bursts and healing from abilities.',
+    'Percentage multiplier on your final Recovery rate. This scales passive regeneration and effects that activate a share of Recovery, but not unrelated flat heals or absorbs.',
   'core.dr-layer-pct':
     'A SEPARATE multiplicative damage-reduction layer, applied after your normal DR rather than added to it. Capped at 90%.',
-  'core.elite-damage-mult': 'Extra damage against elite monsters and bosses.',
+  'core.focus-damage-per-hit-mult':
+    'Each consecutive direct hit against the same enemy deals more direct attack damage, up to the Core\u2019s Focus cap. Switching targets resets Focus; summon hits do not build it.',
   'core.onhit-mult':
-    'Percentage multiplier on your flat on-hit damage. On-hit ignores enemy plating and damage reduction, so this is separate from your attack.',
+    'Percentage multiplier on flat on-hit damage you already have. It grants no on-hit damage by itself. On-hit ignores enemy plating and damage reduction, so this is separate from your attack.',
   'core.debuff-duration-mult': 'Debuffs you apply to enemies last longer.',
   'core.debuff-potency-mult': 'Debuffs you apply to enemies hit harder.',
   'core.mobility-cooldown-reduction-pct':

@@ -10,6 +10,7 @@
 
 import {
   GAME_CONFIG,
+  RECIPE_DATABASE,
   SKILL_TREE,
   emptyEquipment,
   recalculatePlayerStats,
@@ -20,9 +21,15 @@ function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
 }
 
-function build(skills: string[], armor?: string, plus = 0): PlayerStatsTarget {
+function build(
+  skills: string[],
+  armor?: string,
+  plus = 0,
+  options?: { core?: string; activeStance?: string; combatArchetype?: string },
+): PlayerStatsTarget {
   const equipment = emptyEquipment();
   if (armor) equipment.armor = armor;
+  if (options?.core) equipment.core = options.core;
   const target = {
     dealsDamage: { attack: 0, onHitDamage: 0, attackStyle: "slash" },
     mitigatesDamage: { plating: 0, damageReduction: 0 },
@@ -36,13 +43,14 @@ function build(skills: string[], armor?: string, plus = 0): PlayerStatsTarget {
       selectedClass: skills[0] ?? null,
       selectedSubVariant: null,
       selectedRange: skills.find((s) => s.includes("-range-")) ?? null,
-      combatArchetype: null,
+      combatArchetype: options?.combatArchetype ?? null,
     },
     holdsInventory: {
       inventory: [],
       equipment,
       itemUpgrades: armor && plus > 0 ? { [armor]: plus } : {},
     },
+    activeStance: options?.activeStance ?? null,
   } as PlayerStatsTarget;
   recalculatePlayerStats(target);
   return target;
@@ -172,6 +180,48 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
       );
     }
   }
+}
+
+// â”€â”€ 7. Core is the final multiplicative capstone layer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+{
+  const skills = ["reload-root", "reload-light", "reload-range-mid"];
+  const core = RECIPE_DATABASE.get("core-tempered")!;
+  const coreAttack = core.mechanicEffects?.["core.attack-mult"] ?? 0;
+  const affinity = skills.reduce(
+    (total, id) => total + (SKILL_TREE.get(id)?.statEffects.attackPct ?? 0),
+    0,
+  );
+  const result = build(skills, undefined, 0, {
+    core: core.id,
+    activeStance: "offensive-stance",
+    combatArchetype: "reload",
+  });
+
+  let expected = Math.round(GAME_CONFIG.PLAYER_ATTACK * (1 + affinity));
+  expected = Math.round(expected * 1.15); // stance
+  expected = Math.max(1, Math.floor(expected * 0.65)); // reload archetype
+  expected = Math.max(1, Math.round(expected * (1 + coreAttack))); // Core
+  assert(
+    result.dealsDamage.attack === expected,
+    `attack ordering must be class x stance x archetype x Core (${expected}), got ${result.dealsDamage.attack}`,
+  );
+}
+
+// A hard-set archetype cadence still receives the final Core attack-speed layer.
+{
+  const accelerant = RECIPE_DATABASE.get("core-accelerant")!;
+  const coreAttackSpeed = accelerant.mechanicEffects?.["core.attack-speed-mult"] ?? 0;
+  const result = build(
+    ["reload-root", "reload-light", "reload-range-mid", "reload-light-t3-c"],
+    undefined,
+    0,
+    { core: accelerant.id, combatArchetype: "reload" },
+  );
+  const expected = Math.round(2_000 / (1 + coreAttackSpeed));
+  assert(
+    result.performsAttack.attackCooldown === expected,
+    `Core attack speed must apply after Snipe hard-sets cadence (${expected}), got ${result.performsAttack.attackCooldown}`,
+  );
 }
 
 console.log("classAffinity: ok");

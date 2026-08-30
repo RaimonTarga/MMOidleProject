@@ -45,7 +45,7 @@ export const trenchMonsterEntries = [
     stats: { hp: 4200, attack: 230, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     elite: true,
-    rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
+    rewards: { essence: 260, essenceType: 'green', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 320, leashRange: 760, idleMinMs: 5000, idleMaxMs: 14000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     // ABYSSAL BITE - a periodic TELEGRAPHED heavy bite that carries the Wound.
@@ -79,7 +79,7 @@ export const trenchMonsterEntries = [
     // charging or mobile build always catches it - that contract is load-bearing.
     behavior: 'kiter', attackStyle: 'gunshot', biome: 'trench',
     elite: true,
-    rewards: { essence: 210, essenceType: 'blue', level: 4, biomeXp: 1260 },
+    rewards: { essence: 210, essenceType: 'green', level: 4, biomeXp: 1260 },
     ai: { wanderRadius: 300, leashRange: 720, idleMinMs: 5500, idleMaxMs: 14000 },
     // PRESSURE LANCE - a periodic telegraphed heavy projectile, replacing the melee
     // cadence finisher it carried as a charger.
@@ -108,7 +108,7 @@ export const trenchMonsterEntries = [
     stats: { hp: 5880, attack: 260, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     elite: true,
-    rewards: { essence: 400, essenceType: 'blue', level: 4, biomeXp: 2400 },
+    rewards: { essence: 400, essenceType: 'green', level: 4, biomeXp: 2400 },
     ai: { wanderRadius: 280, leashRange: 700, idleMinMs: 8000, idleMaxMs: 20000 },
     // No aggressive anti-kite charge (locked, unless testing proves it necessary):
     // this is the stand-and-fight monster, and chasing is the Serpent's job.

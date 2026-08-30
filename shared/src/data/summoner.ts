@@ -171,6 +171,8 @@ export const SUMMON_ATTACK_STYLE: Record<SummonerAttackMode, string> = {
  */
 export const SUMMONER_BASELINE_RANGE: SummonerRange = 'mid';
 export const SUMMONER_BASELINE_ATTACK_MODE: SummonerAttackMode = 'melee';
+/** Base Conduit bodies close to near-melee reach before attacking. */
+export const SUMMONER_BASELINE_ATTACK_RANGE = 24;
 
 /**
  * Summon styles that fire from a distance. Drives the client's lunge gate the

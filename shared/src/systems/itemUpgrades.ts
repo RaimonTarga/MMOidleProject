@@ -21,6 +21,11 @@ export const MAX_ITEM_TIER = 4;
  * evenly across the band, so a tier's +5 opens exactly when every biome
  * available at that tier is fully mastered. Tier 1 (band 0–30): +1@6 … +5@30.
  * Tier 2 (band 31–72): +1@38 … +5@72. Intermediate steps round to integers.
+ *
+ * Since the T3 economy pass (2026-08-30) `biomeLevelCap` clamps retired biomes, so the
+ * higher bands finally describe reachable content: tier 3 (band 73–114): +1@80 … +5@114;
+ * tier 4 (band 115–156): +1@122 … +5@156. Every tier's +5 is attainable from the biomes
+ * that tier can actually be played in — no retired-biome debt.
  */
 export function globalMasteryRequiredForUpgrade(itemTier: number, targetPlus: number): number {
   const tier = Math.max(1, itemTier);

@@ -286,7 +286,8 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
 
   const biomeXP    = biomeXPByGroup[biomeGroup] ?? 0;
   const biomeLevel = biomeLevelByGroup[biomeGroup] ?? 0;
-  const levelCap   = biomeLevelCap(playerTier, biomeGroup);
+  // max(): a legacy save above a retired biome's cap still displays sensibly (T3 pass).
+  const levelCap   = Math.max(biomeLevelCap(playerTier, biomeGroup), biomeLevel);
   const region = info.regionId ? WORLD_REGIONS.get(info.regionId) : undefined;
   const tierLabel  = biomeTier === 0
     ? 'Starting Zone'

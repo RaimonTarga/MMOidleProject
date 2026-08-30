@@ -146,7 +146,7 @@ export const bossMonsterEntriesT3 = [
     ai: { wanderRadius: 105, leashRange: 880, idleMinMs: 2800, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
-    dotEffect: { debuffId: 'rot-spore-plague', label: 'Rot Spores', damagePerStack: 13, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
+    dotEffect: { debuffId: 'rot-spore-plague', label: 'Rot Spores', damagePerStack: 13, maxStacks: 6, tickIntervalMs: 1000, durationMs: 9000 },
     chargedAttack: {
       name: 'Spore Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
       multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 130 },
@@ -171,7 +171,7 @@ export const bossMonsterEntriesT3 = [
         { hpPct: 0.25, actions: [
           { type: 'morph', dotEffect: {
             debuffId: 'rot-spore-plague', label: 'Rot Spores',
-            damagePerStack: 17, maxStacks: 8, tickIntervalMs: 1000, durationMs: 6000,
+            damagePerStack: 17, maxStacks: 8, tickIntervalMs: 1000, durationMs: 9000,
           } },
           // Effectively permanent (10 min), retired with the boss. Unlike the Spore
           // Pool above this one never detonates, so nothing is lost by it lingering.

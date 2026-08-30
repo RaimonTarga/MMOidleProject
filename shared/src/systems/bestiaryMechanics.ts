@@ -47,8 +47,10 @@ function describeBossAction(a: BossAction): string {
       return `summon ${a.count}× ${a.monsterTypeId}`;
     case 'spawn-adds':
       return `spawn ${a.count}× ${a.monsterTypeId}`;
+    case 'cast':
+      return `cast ${a.label} for ${fmtMs(a.castMs)}: ${a.actions.map(describeBossAction).join(', ')}`;
     case 'stat-buff':
-      return `${fmtMult(a.mult)} ${a.stat}${a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ''}`;
+      return `${a.label ?? `${fmtMult(a.mult)} ${a.stat}`}${a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ''}`;
     case 'roar':
       return `roar: +${fmtPct(a.attackSpeedPct)} ally attack speed for ${fmtMs(a.durationMs)}`;
     case 'apply-shield':

@@ -23,6 +23,14 @@ export interface QuestDefinition {
  * All tier-advancement quests — one per tier.
  * Each quest requires slaying any ONE of the dungeon bosses found at that tier.
  * Boss list matches bossPoolByTier entries in biomeDatabase for that biomeTier.
+ *
+ * Data-integrity pass 2026-08-30: 14 IDs across tier-2/3/4 named monsters that no longer
+ * exist in MONSTER_DATABASE — fossils of pre-retirement/pre-rework rosters. Every list is
+ * now exactly its tier's live `bossPoolByTier` union, which is what this comment always
+ * claimed. Guarded by `server/test/questMonsterIds.test.ts`. Only the target lists moved:
+ * names, descriptions, `killsRequired` and `tierRequired` are untouched, and no quest
+ * ADVANCEMENT logic changed (tier advancement gates on boss seals, not these counters —
+ * they now only drive auto-combat target priority and HUD unlock gating).
  */
 export const QUEST_DATABASE = new Map<string, QuestDefinition>([
   ['tier-0', {
@@ -50,10 +58,11 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     name: 'Zone Conqueror',
     description: 'Conquer a Tier 2 dungeon by defeating its mighty guardian.',
     tierRequired: 2,
-    // All T2 dungeon bosses — one per biome at biomeTier 2
+    // All T2 dungeon bosses — one per biome at biomeTier 2 (7). Dropped the dead
+    // `glacial-colossus` (Tundra has no T2 content at all — it debuts at T3).
     targetMonsterTypes: [
-      'glacial-colossus', 'stoneplate-juggernaut', 'apex-timberclaw', 'gorging-razortusk',
-      'dune-stalker-emperor', 'jungle-dread-gorger', 'chitinous-dreadbore', 'mire-gorged-behemoth',
+      'apex-timberclaw', 'stoneplate-juggernaut', 'gorging-razortusk', 'mire-gorged-behemoth',
+      'chitinous-dreadbore', 'jungle-dread-gorger', 'dune-stalker-emperor',
     ],
     killsRequired: 1,
   }],
@@ -62,11 +71,13 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     name: "Veteran's Trial",
     description: 'Prove your might against an elite Tier 3 dungeon lord.',
     tierRequired: 3,
-    // All T3 dungeon bosses — one per biome at biomeTier 3
+    // All T3 dungeon bosses — one per biome at biomeTier 3 (7). Dropped three dead IDs:
+    // `elder-gnarled-greatbear` and `plains-warlord` are fossils of the pre-retirement
+    // roster (Forest and Plains have no T3 content), and `lich-king` never existed.
     targetMonsterTypes: [
-      'frost-plated-rime-mammoth', 'crag-gorged-horn-behemoth', 'elder-gnarled-greatbear', 'plains-warlord',
-      'dune-carapace-monarch', 'apex-bramble-slasher', 'cinder-shell-magma-salamander', 'lich-king',
-      'deep-core-burrow-gorger', 'rot-spore-croc-behemoth',
+      'crag-gorged-horn-behemoth', 'rot-spore-croc-behemoth', 'deep-core-burrow-gorger',
+      'apex-bramble-slasher', 'frost-plated-rime-mammoth', 'dune-carapace-monarch',
+      'cinder-shell-magma-salamander',
     ],
     killsRequired: 1,
   }],
@@ -75,11 +86,12 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     name: 'Final Reckoning',
     description: 'Face the most fearsome dungeon lords of Tier 4 and emerge victorious.',
     tierRequired: 4,
-    // All T4 dungeon bosses — one per biome at biomeTier 4
+    // All T4 dungeon bosses — one per biome at biomeTier 4 (7). Ten of the eleven old IDs
+    // were dead placeholder names from before the boss-encounter rework; `cave-titan` and
+    // `swamp-sovereign` were doubly wrong (Cave and Swamp retire after T3).
     targetMonsterTypes: [
-      'glacial-titan', 'mountain-titan', 'elder-treant-lord', 'stampede-emperor',
-      'desert-eternal', 'jungle-ancient-lord', 'inferno-lord', 'undying-lord',
-      'elder-trench-serpent', 'cave-titan', 'swamp-sovereign',
+      'iron-crest-titan', 'verdant-crown-predator', 'glacial-patriarch', 'dune-throne-sovereign',
+      'caldera-sovereign', 'charnel-crown-sovereign', 'elder-trench-serpent',
     ],
     killsRequired: 1,
   }],

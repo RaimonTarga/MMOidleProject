@@ -358,6 +358,7 @@ export function upsertPlayer(
           archetype: player.combatArchetype ?? undefined,
           dotPath:
             player.combatArchetype === "dot" ? getDotPath(player) : undefined,
+          selectedRange: player.selectedRange,
         },
       );
       if (!isRangedPlayerView(player)) {

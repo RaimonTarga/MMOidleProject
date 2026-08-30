@@ -299,6 +299,7 @@ export interface TargetFrameData {
   isBoss: boolean;
   statuses: TargetStatusView[];
   bossEffects: string[];
+  bossEffectStacks: Record<string, number>;
 }
 export const targetFrameAtom = atom<TargetFrameData | null>(null);
 
@@ -566,6 +567,7 @@ function targetFrameEqual(a: TargetFrameData | null, b: TargetFrameData | null):
   }
   for (let i = 0; i < a.bossEffects.length; i++) {
     if (a.bossEffects[i] !== b.bossEffects[i]) return false;
+    if (a.bossEffectStacks[a.bossEffects[i]] !== b.bossEffectStacks[b.bossEffects[i]]) return false;
   }
   return true;
 }

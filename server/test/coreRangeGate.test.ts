@@ -111,6 +111,7 @@ const builds = enumerateBuildsForContentTier(3, "cave");
 assert(builds.length > 0, "expected T3 builds to enumerate");
 
 let sawCore = false;
+let sawUnrestrictedCore = false;
 for (const build of builds) {
   const range = build.skillPath.find((id) => id.includes("-range-")) ?? null;
   assert(range !== null, `T3 build ${build.id} should have picked a range node`);
@@ -128,6 +129,7 @@ for (const build of builds) {
     coreIsActive(recipe!.coreEligibility, range),
     `bench build ${build.id} equipped ${coreId} (${recipe!.coreEligibility}) which is INACTIVE for ${range}`,
   );
+  if (!isRestrictedCore(recipe!.coreEligibility)) sawUnrestrictedCore = true;
 }
 
 // Cores are currently authored only in forest at the T2 band, so a T3 cave run
@@ -136,6 +138,16 @@ for (const build of builds) {
 assert(
   sawCore || restrictedCores.every((c) => c.tier !== 3),
   "no bench build equipped a core despite T3 cores being authored",
+);
+assert(
+  sawUnrestrictedCore,
+  "build-aware bench selection must allow a relevant unrestricted specialist to beat restricted Cores",
+);
+
+const jungleBuilds = enumerateBuildsForContentTier(3, "jungle", undefined, true);
+assert(
+  jungleBuilds.some((build) => build.gearItemIds.core === "core-catalyst"),
+  "an on-hit Jungle build should select Catalyst; polarized Cores cannot be ranked by absolute budget",
 );
 
 // ── The canonical loadout is populated, not empty ────────────────────────────

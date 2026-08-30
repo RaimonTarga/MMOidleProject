@@ -143,7 +143,7 @@ export function TargetFrame() {
           key: `b-${b}`,
           id: b,
           ...bossEffectMeta(b),
-          stacks: 1,
+          stacks: shown.bossEffectStacks[b] ?? 1,
           remainingMs: -1,
           totalMs: 0,
         }))

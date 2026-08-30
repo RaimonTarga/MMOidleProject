@@ -37,6 +37,9 @@ import type { MonsterBehavior } from './behavior';
  *               the tracked living adds: a repeating spawn-adds tops the swarm back up
  *               to (not past) the cap, so a long-lived summoner (e.g. a graveyard
  *               necromancer with this on a repeating timer) can never flood the node.
+ *   cast           — root the boss and suppress its basic attacks while it visibly
+ *               casts, then resolve the nested scripted actions at completion. This
+ *               is for readable, delayed boss beats such as reinforcement calls.
  *
  * `stat-buff` supports `evasion` in addition to the entity stats: it multiplies the
  * boss's effective per-hit dodge fraction via a runtime override (mult 0 = stop
@@ -49,7 +52,18 @@ export type BossAction =
   | { type: 'regen';     hpPctPerSec: number;                 durationMs?: number }
   | { type: 'shield';    drAdd: number;   durationMs: number }
   | { type: 'summon';    monsterTypeId: string; count: number; offsetRange?: number }
-  | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction' | 'evasion'; mult: number; durationMs?: number }
+  | {
+      type: 'stat-buff';
+      stat: 'attack' | 'speed' | 'plating' | 'damageReduction' | 'evasion' | 'attackSpeed';
+      mult: number;
+      /** Optional paired movement-speed multiplier for an attack-speed buff. */
+      moveSpeedMult?: number;
+      /** Maximum concurrent stacks of this named buff. Omit for no cap. */
+      maxStacks?: number;
+      durationMs?: number;
+      /** Optional target-frame label for this boss effect. */
+      label?: string;
+    }
   | { type: 'roar'; attackSpeedPct: number; durationMs: number; radius?: number }
   | {
       type: 'apply-shield';
@@ -68,6 +82,15 @@ export type BossAction =
   | { type: 'shed-defense' }
   | { type: 'modify-ramp-debuff'; moveSlowMaxPct: number; atkSlowMaxPct: number }
   | { type: 'spawn-adds'; monsterTypeId: string; count: number; offsetRange?: number; maxAlive?: number }
+  | {
+      /** A visible, non-damaging boss cast that resolves its actions at completion. */
+      type: 'cast';
+      castMs: number;
+      label: string;
+      actions: BossAction[];
+      /** Cast-start cue. Defaults to the rallying-roar treatment. */
+      fx?: 'roar' | 'frenzy';
+    }
   /**
    * RAISE DEAD (Wasteland) — one burst resurrection. Claims up to `count` corpses
    * from the node's corpse registry within `corpseRange` and raises each as a risen
@@ -398,11 +421,6 @@ export interface MonsterDefinition {
      * means the monster grants no catalyst progress.
      */
     catalystWeight?: number;
-    /**
-     * One-time catalyst bundle granted the first time this monster is cleared
-     * (guardians / bosses). Applied only on the newly-recorded boss clear.
-     */
-    catalystBundle?: number;
   };
   ai: {
     wanderRadius: number;

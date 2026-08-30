@@ -139,7 +139,10 @@ for (const [frame, expected] of [
   assert(SUMMON_ATTACK_STYLE[baseline.attackMode] !== SUMMON_ATTACK_STYLE.reach,
     'baseline summons do not borrow the Procession bolt');
   assert(baseline.range === profiles.mid.range,
-    'baseline still inherits Procession tuning, only the animation differs');
+    'baseline keeps neutral formation tuning until a range is selected');
+  assert(baseline.attackRange < profiles.mid.attackRange,
+    'baseline summons close to near-melee range instead of borrowing Procession reach');
+  assert(baseline.attackRange === 24, 'baseline summon reach stays at 24px');
 }
 
 console.log('summonerProfile.test.ts: ok');

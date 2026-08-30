@@ -238,7 +238,8 @@ export function MasteryPanel({ onClose }: Props) {
             ) : (
               <div className="mastery-biome-grid">
                 {biomeRows.map(([group, level]) => {
-                  const cap = biomeLevelCap(playerTier, group);
+                  // max(): legacy saves may sit above a retired biome's cap (T3 pass).
+                  const cap = Math.max(biomeLevelCap(playerTier, group), level);
                   const atCap = cap > 0 && level >= cap;
                   return (
                     <div
