@@ -1,3 +1,7 @@
+> **ARCHIVED — superseded by `biome-visual-pass-handoff-2026-08-16.md` below.** Live record
+> is `docs/terrain-variance-plan.md` SS8-9. Kept for the tint/decor/trail/pool systems and
+> traps 1-8.
+
 > **SUPERSEDED (2026-08-16)** by
 > [`biome-visual-pass-handoff-2026-08-16.md`](./biome-visual-pass-handoff-2026-08-16.md).
 > Still the reference for the systems built before mountain (tint, decor variance, forest

@@ -1,3 +1,8 @@
+> **ARCHIVED — implemented 2026-08-30; live state in `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`.**
+> Kept for its philosophy/rationale and per-item derivations. Multi-parent evolution was
+> rejected rather than treated as a blocker; see the implementation ledger's §17 for the
+> full override table.
+
 # T3 Progression Economy — Architecture Proposal
 
 **Date:** 2026-08-30

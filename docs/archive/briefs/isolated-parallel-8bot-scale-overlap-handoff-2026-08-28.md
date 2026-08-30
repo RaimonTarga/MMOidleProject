@@ -1,3 +1,7 @@
+> **ARCHIVED — fixed same-day 2026-08-28.** Follow-up to the walkout-race bug in
+> `isolated-parallel-walkout-race-handoff-2026-08-28.md` above; see
+> `docs/headless-bot-harness-plan.md` for the live harness.
+
 # Handoff: isolated-parallel overlaps at 8-bot scale (found 2026-08-28)
 
 ## Context

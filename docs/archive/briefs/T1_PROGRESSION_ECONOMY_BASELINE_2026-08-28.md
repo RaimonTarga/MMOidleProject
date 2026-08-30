@@ -1,3 +1,6 @@
+> **ARCHIVED — implemented 2026-08-28; live state in `docs/briefs/T1_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-28.md`.**
+> Kept as the pre-rebalance factual baseline that grounded the proposal and implementation.
+
 # T1 Progression Economy Baseline
 **Date:** 2026-08-28
 **Purpose:** Source-of-truth extraction of the current Tier 1 progression/economy, for the upcoming economy redesign session. This is an audit, not a balance patch. No gameplay numbers were changed to produce this document.

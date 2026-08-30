@@ -1,3 +1,7 @@
+> **ARCHIVED — superseded 2026-08-30** by the T1-T4 progression-economy passes; see the
+> note on `BALANCE_TOOL_AUDIT_HANDOFF_2026-08-23.md` above. Kept as the instrument
+> reference sheet and trap list.
+
 # Balance Instrument Inventory — what we can measure, and with what
 
 **Written 2026-08-23** as the reference sheet for planning a sweeping balance patch across

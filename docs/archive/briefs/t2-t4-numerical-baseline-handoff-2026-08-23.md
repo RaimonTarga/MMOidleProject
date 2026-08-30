@@ -1,3 +1,6 @@
+> **ARCHIVED — fulfilled 2026-08-23; live state in `docs/tier-balance-current-state.md`.**
+> Kept for its measurement of where T2-T4 sat before the pass and the instrument-gap list it set.
+
 # T2–T4 Numerical Baseline — Fresh-Session Handoff
 
 > **FULFILLED 2026-08-23 — live state in [`../tier-balance-current-state.md`](../tier-balance-current-state.md).**

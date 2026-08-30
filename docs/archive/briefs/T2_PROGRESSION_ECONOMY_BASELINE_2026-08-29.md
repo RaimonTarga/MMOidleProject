@@ -1,3 +1,6 @@
+> **ARCHIVED — implemented 2026-08-29; live state in `docs/briefs/T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md`.**
+> Kept as the pre-rebalance factual baseline.
+
 # T2 Progression Economy Baseline
 **Date:** 2026-08-29
 **Purpose:** Source-of-truth audit of the current Tier 2 progression/economy, to ground the upcoming T2 redesign now that T1's economy has shipped (`docs/briefs/T1_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-28.md`). Extraction and diagnosis only — no numbers were changed to produce this document.

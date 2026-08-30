@@ -1,3 +1,9 @@
+> **ARCHIVED — superseded 2026-08-30.** The autonomous sweep stopped uncommitted, and this
+> numerical ground was retuned instead through the T1-T4 progression-economy passes
+> (`docs/briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md` and predecessors). Kept
+> for the death-trace methodology and the disproven-hypothesis record (charm buffs tried
+> and reverted; the real cause was monster numbers, not item magnitude).
+
 # Final change ledger — T1-T4 balance iteration, 2026-08-24
 
 Closing document for this session's numerical balance pass. Supersedes the earlier

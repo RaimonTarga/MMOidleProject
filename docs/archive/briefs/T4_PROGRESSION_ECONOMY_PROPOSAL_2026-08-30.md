@@ -1,3 +1,6 @@
+> **ARCHIVED — implemented verbatim 2026-08-30; live state in `docs/briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`.**
+> Kept for its philosophy/rationale and per-item derivations.
+
 # T4 Progression Economy — Proposal
 
 **Date:** 2026-08-30

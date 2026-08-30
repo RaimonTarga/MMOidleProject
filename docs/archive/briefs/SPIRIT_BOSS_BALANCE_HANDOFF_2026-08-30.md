@@ -1,3 +1,6 @@
+> **ARCHIVED — implemented 2026-08-30** (verified live: the Rallying Cry cast is in
+> `shared/src/data/monsters/bossesT1.ts`); live state in `docs/boss-encounter-rework-current-state.md`.
+
 # Spirit T1 boss balance handoff — 2026-08-30
 
 ## Purpose

@@ -1,3 +1,6 @@
+> **ARCHIVED — fixed same-day 2026-08-29.** Third live-validation fix in this same
+> `isolated-parallel` chain; see `docs/headless-bot-harness-plan.md` for the live harness.
+
 # Handoff: stale `engaged` flag survives a death-recovery walk (found 2026-08-29)
 
 ## Context

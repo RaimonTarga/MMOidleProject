@@ -1,3 +1,6 @@
+> **ARCHIVED — implemented 2026-08-30; live state in `docs/briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`.**
+> Kept as the pre-rebalance factual baseline.
+
 # T4 Progression Economy — Baseline Audit
 
 **Date:** 2026-08-30 (baseline pass), **corrected 2026-08-30** (this pass: recomputed

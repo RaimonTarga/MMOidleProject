@@ -1,3 +1,7 @@
+> **ARCHIVED — pass closed 2026-08-17.** Live record is `docs/terrain-variance-plan.md` SS8-9.
+> Kept for traps 1-22 (the mistakes that cost time) and the test-subset timings — read before
+> touching biome visuals or ground rendering.
+
 # Biome Visual Pass — Session Handoff (2026-08-16)
 
 Continuation brief. Supersedes

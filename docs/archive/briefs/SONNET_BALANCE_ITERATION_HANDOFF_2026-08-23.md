@@ -1,3 +1,7 @@
+> **ARCHIVED — superseded 2026-08-30.** This autonomous iteration effort was abandoned in
+> favor of the T1-T4 progression-economy passes (`docs/briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`
+> and predecessors). Kept as the operating-manual record of what was tried and why.
+
 # Balance Iteration Handoff — for the iterating agent
 
 **Written 2026-08-23** at the end of the instrument-repair session. Audience: the model

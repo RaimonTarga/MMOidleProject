@@ -1,3 +1,6 @@
+> **ARCHIVED — one-time context-transfer memo from 2026-08-12.** Its next-step menu items
+> have all long since been decided one way or another.
+
 # Handoff to Codex — 2026-08-12
 
 **Shape of this document:** the previous two briefs were *unattended* specs. This one is

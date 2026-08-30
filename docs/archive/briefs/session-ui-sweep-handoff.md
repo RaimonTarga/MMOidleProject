@@ -1,3 +1,6 @@
+> **ARCHIVED — complete 2026-08-11.** Folded into the HUD; superseded by
+> `docs/ui-redesign-plan.md`.
+
 # Handoff — UI Sweep (W1 + W3)
 
 **Brief:** `docs/briefs/session-ui-sweep.md`. **Date:** 2026-08-11.

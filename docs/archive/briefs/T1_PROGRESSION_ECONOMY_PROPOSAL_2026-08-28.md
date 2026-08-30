@@ -1,3 +1,8 @@
+> **ARCHIVED — implemented 2026-08-28; live state in `docs/briefs/T1_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-28.md`.**
+> Kept for its philosophy/rationale writeup. Several figures were corrected before shipping
+> (mandatory-tool costs, catalyst structure, item totals) — read the implementation ledger
+> for what actually shipped.
+
 # T1 Progression Economy Proposal
 **Date:** 2026-08-28
 **Status:** PROPOSAL — for designer review. Nothing in this document has been implemented. No recipe, reward, route, monster, or class file has been edited to produce it.

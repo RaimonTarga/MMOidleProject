@@ -1,3 +1,6 @@
+> **ARCHIVED — complete 2026-08-11.** See `session-ui-sweep-handoff.md` below for what
+> actually shipped from this unattended session brief.
+
 # Overnight Session Brief — UI Sweep (W1 + W3)
 
 **Agent:** Claude Opus 5. **Mode:** unattended, no back-and-forth.

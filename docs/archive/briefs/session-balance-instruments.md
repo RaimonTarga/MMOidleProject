@@ -1,3 +1,6 @@
+> **ARCHIVED — complete 2026-08-11.** See `session-balance-instruments-handoff.md` below for
+> what actually shipped from this unattended session brief.
+
 # Overnight Session Brief — Balance Instruments & Enemy Tables (W5a + W5c)
 
 **Agent:** GPT Sol 5.6 on Codex. **Mode:** unattended, no back-and-forth.

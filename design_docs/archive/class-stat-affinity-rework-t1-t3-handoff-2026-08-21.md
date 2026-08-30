@@ -1,3 +1,7 @@
+> **ARCHIVED — implemented and merged 2026-08-21 (`45783e1`+`5080393`).** No dedicated
+> current-state doc exists for this system; live behavior is
+> `shared/src/data/skillTree/rootsAndFrames.ts`.
+
 # Class Stat Affinity Rework — T1–T3 Implementation Handoff
 
 **Prepared:** 2026-08-21  

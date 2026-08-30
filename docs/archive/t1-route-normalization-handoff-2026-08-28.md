@@ -1,3 +1,6 @@
+> **ARCHIVED — decisions folded in 2026-08-28.** Live state is
+> `docs/headless-bot-harness-plan.md` and `bot/README.md`.
+
 # T1 Route Normalization & Clean Validation Handoff
 **Date:** 2026-08-28  
 **Purpose:** Prepare a coherent, source-of-truth set of Tier 1 bot routes for clean combat validation, then run them without shared-world contamination.

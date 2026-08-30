@@ -1,3 +1,6 @@
+> **ARCHIVED — fixed same-day 2026-08-28.** Live harness is `bot/src/concurrency`; see
+> `docs/headless-bot-harness-plan.md`. Kept as the bug record.
+
 # Handoff: isolated-parallel lease walk-out race (found 2026-08-28)
 
 ## Context

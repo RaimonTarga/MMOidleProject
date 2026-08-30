@@ -1,3 +1,6 @@
+> **ARCHIVED — implemented 2026-08-30; live state in `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`.**
+> Kept as the pre-rebalance factual baseline.
+
 # T3 Progression Economy Baseline
 
 **Date:** 2026-08-29

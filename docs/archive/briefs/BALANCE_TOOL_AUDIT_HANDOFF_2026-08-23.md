@@ -1,3 +1,9 @@
+> **ARCHIVED — superseded 2026-08-30.** The numerical balance work this audit was scoping
+> for was carried out instead through the T1-T4 progression-economy passes (see
+> `docs/briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md` and its T1-T3
+> predecessors) and `docs/tier-balance-current-state.md`. Kept for the instrument verdict
+> table, confirmed bug list, and combat formula map.
+
 # Balance Tool Audit — Handoff for the Numerical Balance Planner
 
 **Audience:** the AI that will write the numerical balance roadmap. Not written for human presentation.

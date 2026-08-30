@@ -1,3 +1,7 @@
+> **ARCHIVED — superseded by `BALANCE_ITERATION_FINAL_LEDGER_2026-08-24.md` below, itself
+> now superseded 2026-08-30 by the T1-T4 progression-economy passes.** Kept for the
+> death-trace methodology writeup.
+
 # Balance iteration progress report — for an assessing LLM
 
 **Written 2026-08-24**, end of a single continuous session that ran T1-T4 numerical

@@ -1,3 +1,7 @@
+> **ARCHIVED — complete 2026-08-11.** This unattended session's balance-instrument and
+> enemy-table work has long since shipped and been superseded by the current balance
+> tooling; see `docs/tier-balance-current-state.md`.
+
 # Balance Instruments & Enemy Tables — Handoff
 
 Status: complete and verified on 2026-08-11. Changes are intentionally uncommitted.
