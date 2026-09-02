@@ -45,6 +45,8 @@ const GUARD_SLOT_BUFFS = ABILITY_GUARD_EFFECT_IDS.map((effectId, slotIndex) =>
         logSourceName: "Ability",
         logSourceSide: "ally",
         logDetail: `-${drPct}% damage taken`,
+        remainingMs: eff.remainingMs,
+        values: [{ label: "Damage taken", value: `-${drPct}%`, good: true }],
       };
     },
     { category: "neutral", shape: "square", color: "#9ad0ff", label: "Guard" },
@@ -78,6 +80,8 @@ const RECOVERY_SLOT_BUFFS = ABILITY_RECOVERY_EFFECT_IDS.map((effectId, slotIndex
         logSourceName: def?.name ?? "Recovery skill",
         logSourceSide: "ally",
         logDetail: `+${recoveryPct}% Recovery`,
+        remainingMs: eff.remainingMs,
+        values: [{ label: "Recovery activated", value: `+${recoveryPct}%`, good: true }],
       };
     },
     {
@@ -110,6 +114,11 @@ export const ABILITY_BUFFS = [
         logSourceName: "Bramble Guard",
         logSourceSide: "ally",
         logDetail: `+${plating} plating, ${reflect} thorns`,
+        remainingMs: eff.remainingMs,
+        values: [
+          { label: "Plating", value: `+${plating}`, good: true },
+          { label: "Reflected per hit", value: String(reflect), good: true },
+        ],
       };
     },
     { category: "neutral", shape: "square", color: "#8fd48b", label: "Bramble" },
@@ -130,6 +139,8 @@ export const ABILITY_BUFFS = [
         logSourceName: "Frenzy",
         logSourceSide: "ally",
         logDetail: `+${pct}% attack speed`,
+        remainingMs: eff.remainingMs,
+        values: [{ label: "Attack speed", value: `+${pct}%`, good: true }],
       };
     },
     { category: "neutral", shape: "circle", color: "#ff8a3d", label: "Frenzy" },
@@ -150,6 +161,8 @@ export const ABILITY_BUFFS = [
         logSourceName: "Break Free",
         logSourceSide: "ally",
         logDetail: `-${pct}% control duration`,
+        remainingMs: eff.remainingMs,
+        values: [{ label: "Control duration", value: `-${pct}%`, good: true }],
       };
     },
     { category: "neutral", shape: "circle", color: "#d9c2ff", label: "Unbound" },

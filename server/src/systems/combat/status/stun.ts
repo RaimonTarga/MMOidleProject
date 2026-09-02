@@ -41,9 +41,19 @@ export function applyStun(
   targetCs: TracksCombat,
   durationMs: number,
   sourceId: string,
+  /**
+   * Extra duration scaling from the caller's own status resistance
+   * (`harmfulStatusDurationMult`). Passed in rather than read here because this
+   * function takes a bare combat state and cannot see the entity's passives; the
+   * player-targeting call sites in the combat engine supply it.
+   */
+  durationMult = 1,
 ): boolean {
   if (hasStatusEffect(targetCs, STUN_IMMUNE_EFFECT)) return false;
-  const resisted = Math.max(1, Math.round(durationMs * (1 - controlResistPct(targetCs))));
+  const resisted = Math.max(
+    1,
+    Math.round(durationMs * (1 - controlResistPct(targetCs)) * Math.max(0, durationMult)),
+  );
   applyStatusEffect(targetCs, {
     id:           STUN_EFFECT,
     maxStacks:    1,

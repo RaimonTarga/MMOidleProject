@@ -14,7 +14,7 @@ import {
   type MonsterDefinition,
 } from '@mmo-idle/shared';
 import { World } from '../src/world/World';
-import { updateShellUp, isShelled, shellDamageMult } from '../src/systems/combat/ai/shellUp';
+import { updateShellUp, isShellCasting, isShelled, shellDamageMult } from '../src/systems/combat/ai/shellUp';
 import { updateAllyEmpower } from '../src/systems/combat/ai/allyEmpower';
 import {
   monsterVolleyHits,
@@ -99,7 +99,7 @@ assert(
 
 // ── Shell Up: retract at the HP threshold, once per life ────────────────────
 defineTestMonster('test-snapper', {
-  shellUp: { atHpPct: 0.5, durationMs: 2_000, directDamageMult: 0.15 },
+  shellUp: { atHpPct: 0.5, castMs: 500, durationMs: 2_000, directDamageMult: 0.15 },
 });
 const snapper = world.createMonster(NODE, 'test-snapper', { x: 700, y: 700 });
 if (!snapper) throw new Error('failed to create snapper');
@@ -111,7 +111,15 @@ assert(shellDamageMult(snapper, now) === 1, 'an open snapper takes full damage')
 
 snapper.hasHealth.hp = snapper.hasHealth.maxHp * 0.4;
 updateShellUp(world, now);
-assert(isShelled(snapper, now), 'dropping past the threshold should shell it');
+assert(isShellCasting(snapper, now), 'dropping past the threshold should begin Shell Up\'s cast');
+assert(!isShelled(snapper, now), 'the shell should remain open and vulnerable during its cast');
+assert(
+  world.takeNodeEvents(NODE).some((event) => event.kind === 'monster-cast-start' && event.label === 'Shell Up' && event.castMs === 500),
+  'Shell Up should visibly telegraph its half-second cast',
+);
+updateShellUp(world, now + 500);
+now += 500;
+assert(isShelled(snapper, now), 'the shell should close when its cast completes');
 assert(shellDamageMult(snapper, now) === 0.15, 'a shelled snapper resists direct damage');
 assert(snapper.cannotAttack !== undefined, 'a shelled snapper cannot attack');
 assert(snapper.isRooted !== undefined, 'a shelled snapper cannot move');

@@ -113,9 +113,18 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       minion.hasHealth.recovery = desiredHpRegen;
       markSliceDirty(world, minion, 'hasHealth');
     }
+    // `summoner.minion-damage-pct` is applied at SPAWN (`spawnMinionForOwner`)
+    // and was missing here, so this per-tick resync silently overwrote it one
+    // tick after every spawn. Currently a no-op -- no skill node or item sets
+    // the key yet -- but it is a landmine: the first T3/T4 node that grants
+    // minion damage would appear to do nothing, with no error anywhere. Kept
+    // identical to the spawn formula so the two cannot drift again.
+    const damagePct = owner.usesSkills.passives['summoner.minion-damage-pct'] ?? 1.0;
     const desiredAttack = Math.max(
       1,
-      Math.round(owner.dealsDamage.attack * profile.formationOffenseMult * slot.offenseWeight),
+      Math.round(
+        owner.dealsDamage.attack * damagePct * profile.formationOffenseMult * slot.offenseWeight,
+      ),
     );
     if (minion.dealsDamage.attack !== desiredAttack) {
       minion.dealsDamage.attack = desiredAttack;

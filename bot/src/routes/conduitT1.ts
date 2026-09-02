@@ -8,6 +8,7 @@ export const CONDUIT_T1_CONFIG: T1RouteConfig = {
   id: "conduit-t1",
   version: "2.0.0",
   classRoot: "summoner-root",
+  frameId: "summoner-balanced",
   description:
     "Controlled Conduit ranged baseline: Chaotic Axe gear identity, formation-normalized Sweep adapter, Orbit from Mountain L3, and Step Back from Cave L2.",
   movementProfile: "ranged-orbit",

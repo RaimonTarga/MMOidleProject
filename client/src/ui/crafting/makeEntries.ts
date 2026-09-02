@@ -13,12 +13,14 @@ import {
   isAbilityRecipeUnlocked,
   isRiteRecipeUnlocked,
   isRuneRecipeUnlocked,
+  isRuneRecipeAvailableForArchetype,
   isStanceRecipeUnlocked,
   riteDef,
   stanceDef,
   type EquipmentSlot,
   type EssenceType,
   type Recipe,
+  type CombatArchetype,
 } from '@mmo-idle/shared';
 import { biomeName } from './common';
 
@@ -72,6 +74,7 @@ export interface MakeSources {
   bossesCleared: readonly string[];
   /** The test room unlocks every gear recipe regardless of progression. */
   isTestRoom: boolean;
+  combatArchetype: CombatArchetype;
 }
 
 /**
@@ -252,7 +255,12 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
       // `!r.deprecated` is belt-and-suspenders: a deprecated recipe's rune is
       // always a starter default too, so `known` already filters it below —
       // but this keeps the exclusion correct even if that stops being true.
-      recipes: [...RUNE_RECIPE_DATABASE.values()].filter((r) => !!r.runeId && !r.deprecated),
+      recipes: [...RUNE_RECIPE_DATABASE.values()].filter(
+        (r) =>
+          !!r.runeId &&
+          !r.deprecated &&
+          isRuneRecipeAvailableForArchetype(r, sources.combatArchetype),
+      ),
       learnedId: (id) => RUNE_RECIPE_DATABASE.get(id)?.runeId ?? null,
       blurb: (id) =>
         ACTION_DATABASE.get(id)?.blurb ?? CONDITION_DATABASE.get(id)?.blurb ?? '',

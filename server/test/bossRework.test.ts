@@ -127,10 +127,10 @@ for (const id of ['gnarled-greatbear', 'apex-timberclaw']) {
       frenzyStack.stat === 'attackSpeed' &&
       frenzyStack.mult === 1.20 &&
       frenzyStack.moveSpeedMult === 1.10 &&
-      frenzyStack.maxStacks === 5 &&
+      frenzyStack.maxStacks === undefined &&
       frenzyStack.label === 'bestial-frenzy' &&
       frenzyStack.durationMs === undefined,
-    `${id} should gain a permanent Bestial Frenzy attack- and movement-speed stack per cast, capped at five`,
+    `${id} should gain a permanent Bestial Frenzy attack- and movement-speed stack per cast with no cap`,
   );
   const expectedIntervalMs = id === 'gnarled-greatbear' ? 6000 : 5000;
   assert(
@@ -284,7 +284,7 @@ initCombatSystems();
     'second Frenzy stack should further increase the bear movement speed',
   );
 
-  for (const expectedStacks of [3, 4, 5]) {
+  for (const expectedStacks of [3, 4, 5, 6]) {
     updateBossScripts(world, 4_500);
     updateBossScripts(world, 1_500);
     assert(
@@ -292,18 +292,18 @@ initCombatSystems();
       `Frenzy cast should reach stack ${expectedStacks}`,
     );
   }
-  const cappedCooldown = boss.performsAttack.attackCooldown;
-  const cappedSpeed = boss.hasPosition.speed;
+  const sixthStackCooldown = boss.performsAttack.attackCooldown;
+  const sixthStackSpeed = boss.hasPosition.speed;
   world.takeNodeEvents(NODE);
   updateBossScripts(world, 4_500);
-  assert(!boss.isRooted && !boss.cannotAttack, 'capped Frenzy should no longer start a cast');
+  assert(!!boss.isRooted, 'uncapped Frenzy should continue starting casts beyond five stacks');
+  updateBossScripts(world, 1_500);
   assert(
-    !world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Bestial Frenzy'),
-    'capped Frenzy should not publish another cast bar',
+    boss.hasStatus.bossEffectStacks?.['bestial-frenzy'] === 7,
+    'Frenzy should continue past the former five-stack cap',
   );
-  assert(boss.hasStatus.bossEffectStacks?.['bestial-frenzy'] === 5, 'Frenzy should not exceed its five-stack cap');
-  assert(boss.performsAttack.attackCooldown === cappedCooldown, 'capped Frenzy should not further accelerate attack cadence');
-  assert(boss.hasPosition.speed === cappedSpeed, 'capped Frenzy should not further increase movement speed');
+  assert(boss.performsAttack.attackCooldown < sixthStackCooldown, 'the seventh Frenzy stack should further accelerate attack cadence');
+  assert(boss.hasPosition.speed > sixthStackSpeed, 'the seventh Frenzy stack should further increase movement speed');
 }
 
 // Plains reinforcements are a visible downtime beat: no adds or boss attacks land
@@ -398,6 +398,13 @@ initCombatSystems();
   assert(!!boss && !!ally, 'roar fixtures should spawn');
   setAggroTarget(world, boss, { id: 'roar-target', kind: 'player' }, 1_000);
   updateBossScripts(world, 6_000);
+  assert(
+    world.takeNodeEvents(NODE).some(event =>
+      event.kind === 'monster-cast-start' && event.label === 'Rallying Cry',
+    ),
+    'T2 Plains reinforcement cadence should announce Rallying Cry before the roar',
+  );
+  updateBossScripts(world, 2_000);
   assert(!!getStatusEffect(boss.tracksCombat, BOSS_ROAR_HASTE_EFFECT_ID), 'roar should haste the boss');
   assert(!!getStatusEffect(ally.tracksCombat, BOSS_ROAR_HASTE_EFFECT_ID), 'roar should haste nearby allies');
   assert(monsterAttackCooldown(ally) < ally.performsAttack.attackCooldown, 'roar haste should shorten attack cadence');

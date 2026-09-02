@@ -4,6 +4,10 @@ import type { PlayerDeathPayload } from "@mmo-idle/shared";
 import {
   GAME_CONFIG,
   NODE_BIOMES,
+  t1EconomyConfigForArm,
+  t1Plus5EssenceCosts,
+  type PlayerView,
+  type TierEntryInitialState,
 } from "@mmo-idle/shared";
 import type { RouteLeaseSession } from "./concurrency/routeLeaseSession";
 import type { BotConfig } from "./config";
@@ -15,12 +19,20 @@ import { AbortError, RouteExecutor, sleep, StallError } from "./route/executor";
 import type { Route } from "./route/types";
 import { requireRoute } from "./routes";
 import { Observation } from "./state/observation";
-import type { CompletionState, RunHeader, RunTaint } from "./telemetry/events";
+import type {
+  CompletionState,
+  EconomyCandidate,
+  RunHeader,
+  RunTaint,
+  TemplateValidationSummary,
+} from "./telemetry/events";
 import { BOT_JSONL_SCHEMA_VERSION } from "./telemetry/events";
 import { Recorder } from "./telemetry/recorder";
 import { TelemetrySink } from "./telemetry/sink";
 import { buildSummary, writeSummary, type RunSummary } from "./telemetry/summary";
 import { botRegistry, type BotStatus, type WorldEntity, type WorldView } from "./ui/status";
+import { requireTierEntryProfile, t2EntryProfileId } from "./tierEntry/profiles";
+import { formatValidation, validateProfile, validateSpawn } from "./tierEntry/validate";
 
 const RECORDER_TICK_MS = 1_000;
 /** How long to lie dead before acknowledging — a human is not instant either. */
@@ -35,12 +47,14 @@ export interface RunOutcome {
 
 /** Sticky taints implied by explicit harness configuration before gameplay starts. */
 export function initialRunTaints(
-  config: Pick<BotConfig, "fastBossRetry">,
+  config: Pick<BotConfig, "fastBossRetry"> & Partial<Pick<BotConfig, "executionMode" | "completionMode">>,
   timeScale = process.env.BOT_TIME_SCALE,
 ): RunTaint[] {
   const taints: RunTaint[] = [];
   if (timeScale && timeScale !== "1") taints.push("NON_CANONICAL_TIME_SCALE");
   if (config.fastBossRetry) taints.push("NON_CANONICAL_FAST_BOSS_RETRY");
+  if (config.executionMode === "uncontrolled-parallel") taints.push("NON_CANONICAL_SHARED_WORLD");
+  if (config.completionMode === "next-tier") taints.push("NON_CANONICAL_EARLY_STOP");
   return taints;
 }
 
@@ -64,7 +78,47 @@ export async function runBot(
   if (config.executionMode === "isolated-parallel" && !leaseSession) {
     throw new Error("isolated-parallel runs require a coordinator-owned lease session");
   }
-  const route = requireRoute(config.routeId);
+  const authoredRoute = requireRoute(config.routeId);
+  // A route that declares a tier-entry start CANNOT run without one. A tier-0
+  // character sent to a Tier-2 biome banks no XP at all (`biomeLevelCap(0, ...)`
+  // is 0), so the first farm step would spin until the run's watchdog fired --
+  // hours of nothing, reported as a stall rather than as the configuration
+  // mistake it is.
+  // Resolve the class-specific template from the route's own class root, so an
+  // eighteen-route batch spanning six classes needs one `--entryEconomy` flag
+  // rather than eighteen `--tierEntry` ids. The resolved id is recorded in the
+  // run header, so the arm stays explicit and reproducible either way.
+  const resolvedTierEntryId =
+    config.tierEntryProfileId ??
+    (authoredRoute.startsFromTierEntry
+      ? t2EntryProfileId(authoredRoute.classRoot, config.entryEconomy)
+      : undefined);
+  const tierEntryProfile = resolvedTierEntryId
+    ? requireTierEntryProfile(resolvedTierEntryId)
+    : undefined;
+  if (
+    tierEntryProfile &&
+    authoredRoute.startsFromTierEntry &&
+    tierEntryProfile.targetTier !== authoredRoute.startsFromTierEntry
+  ) {
+    throw new Error(
+      `tier-entry profile ${tierEntryProfile.id} targets tier ${tierEntryProfile.targetTier}, ` +
+        `but route ${authoredRoute.id} starts at tier ${authoredRoute.startsFromTierEntry}`,
+    );
+  }
+  if (tierEntryProfile && tierEntryProfile.classRoot !== authoredRoute.classRoot) {
+    throw new Error(
+      `tier-entry profile ${tierEntryProfile.id} is for ${tierEntryProfile.classRoot}, ` +
+        `but route ${authoredRoute.id} is for ${authoredRoute.classRoot}`,
+    );
+  }
+  const route = config.completionMode === "next-tier"
+    ? {
+        ...authoredRoute,
+        completion: { type: "playerTierAtLeast" as const, tier: 2 },
+        description: `${authoredRoute.description} [economy stop: player tier 2]`,
+      }
+    : authoredRoute;
   const policy = requirePolicy(config.policyId);
   const runId = `${config.routeId}-${config.policyId}-${new Date()
     .toISOString()
@@ -73,7 +127,8 @@ export async function runBot(
   const sink = new TelemetrySink(config.outDir, runId);
   const startedAt = Date.now();
   const conn = new BotConnection(config.serverUrl, config.devAccountId);
-  const obs = new Observation(conn.mirror);
+  const economyConfig = t1EconomyConfigForArm(config.economyArm ?? "C");
+  const obs = new Observation(conn.mirror, economyConfig);
   const intents = new Intents(conn);
 
   let rewardMultiplier = 1;
@@ -152,7 +207,7 @@ export async function runBot(
   };
 
   await conn.connect({
-    onDelta: () => undefined,
+    onDelta: (snapshot) => recorder.ingestCombatEvents(snapshot.events, snapshot.nodeId),
     onWorldEvents: (events) => recorder.ingestWorldEvents(events, obs),
     onDied: handleDeath,
     onAscended: () => undefined,
@@ -166,11 +221,78 @@ export async function runBot(
     },
   });
 
+  let templateValidation: TemplateValidationSummary | undefined;
   const characterId = await prepareFreshCharacter(conn, config);
   await conn.selectCharacter(characterId);
 
   // The world admits us asynchronously; the first snapshot names our entity.
   await waitFor(() => obs.self !== null, 60_000, "own player to appear in the world");
+
+  if (tierEntryProfile) {
+    const result = await intents.applyTierEntryProfile(tierEntryProfile);
+    if (!result.success) {
+      throw new Error(`tier-entry profile ${tierEntryProfile.id} rejected: ${result.reason ?? "unknown"}`);
+    }
+    await waitFor(
+      () => {
+        const self = obs.self;
+        return !!self &&
+          self.nodeId === tierEntryProfile.spawnNodeId &&
+          self.playerTier === tierEntryProfile.targetTier &&
+          self.selectedClass === tierEntryProfile.classRoot &&
+          self.unlockedSkills.includes(tierEntryProfile.frameId) &&
+          !self.isDead;
+      },
+      60_000,
+      `tier-entry profile ${tierEntryProfile.id} to appear in the authoritative view`,
+    );
+    if (!taints.includes("SYNTHETIC_TIER_ENTRY")) taints.push("SYNTHETIC_TIER_ENTRY");
+
+    // Prove the template is legal BEFORE a single route step runs. The offline
+    // pass asks whether the template is a character today's game data allows;
+    // the live pass asks whether the server actually built that character. A
+    // failure here is worth more than any amount of downstream telemetry, so
+    // the run refuses to start rather than quietly producing hours of evidence
+    // about an impossible build.
+    const profileReport = validateProfile(tierEntryProfile);
+    const spawnReport = validateSpawn(tierEntryProfile, obs.requireSelf());
+    templateValidation = {
+      profileId: tierEntryProfile.id,
+      profilePass: profileReport.pass,
+      spawnPass: spawnReport.pass,
+      checked: profileReport.checked + spawnReport.checked,
+      failures: [
+        ...profileReport.findings.map((f) => ({ pass: "profile" as const, check: f.check, message: f.message })),
+        ...spawnReport.findings.map((f) => ({ pass: "spawn" as const, check: f.check, message: f.message })),
+      ],
+    };
+    console.log(formatValidation("T2_ENTRY_TEMPLATE_VALIDATION[profile]", profileReport));
+    console.log(formatValidation("T2_ENTRY_TEMPLATE_VALIDATION[spawn]", spawnReport));
+    if (!profileReport.pass || !spawnReport.pass) {
+      throw new Error(
+        `tier-entry template ${tierEntryProfile.id} failed validation; ` +
+          "refusing to produce evidence from an impossible character",
+      );
+    }
+  }
+
+  // Economy arm selection is per-player and must settle before any route action
+  // can earn rewards or attempt a craft/upgrade. The acknowledgement is the
+  // authoritative server echo that the header is safe to stamp.
+  if (config.economyArm !== undefined) {
+    const result = await intents.applyEconomyExperiment(economyConfig.arm);
+    if (
+      !result.success ||
+      result.arm !== economyConfig.arm ||
+      result.config?.revision !== economyConfig.revision ||
+      result.config?.t1Plus5EssenceCostMultiplier !== economyConfig.t1Plus5EssenceCostMultiplier ||
+      result.config?.catalystProgressPerUnitT1 !== economyConfig.catalystProgressPerUnitT1
+    ) {
+      throw new Error(
+        `server rejected or mismatched T1 economy arm ${economyConfig.arm}: ${result.reason ?? "invalid acknowledgement"}`,
+      );
+    }
+  }
 
   // Applied AFTER the character is in the world, not on `connect`. The server
   // registers `debug:setRewardMultiplier` inside `registerPlayerHandlers`, which
@@ -214,26 +336,37 @@ export async function runBot(
     }
   }
 
+  const initialSelf = obs.self;
+  if (!initialSelf) throw new Error("own player disappeared before run-start telemetry");
+
   const header: RunHeader = {
     schemaVersion: BOT_JSONL_SCHEMA_VERSION,
     runId,
-    botId: `${config.routeId}-${config.policyId}`,
+    botId: `${config.economyArm ? `${config.economyArm}-` : ""}${config.routeId}-${config.policyId}`,
     devAccountId: config.devAccountId,
     characterName: config.characterName,
     characterId,
     routeId: route.id,
     routeVersion: route.version,
     policyId: policy.id,
-    classRoot: route.classRoot,
+    classRoot: tierEntryProfile?.classRoot ?? route.classRoot,
     gitRevision: gitRevision(),
     serverUrl: config.serverUrl,
     startedAt,
     rewardMultiplier,
+    economyCandidate: resolveEconomyCandidate(economyConfig),
     taints,
     executionMode: config.executionMode,
     maxConcurrency: config.maxConcurrency,
+    initialEssences: { ...initialSelf.essences },
+    initialCatalysts: { ...initialSelf.catalysts },
+    tierEntry: tierEntryProfile
+      ? buildTierEntryInitialState(tierEntryProfile.id, tierEntryProfile.targetTier, tierEntryProfile.economyPolicy, tierEntryProfile.frameId, initialSelf)
+      : undefined,
+    templateValidation,
   };
   recorder.emit({ kind: "run-start", atMs: 0, header });
+  recorder.walletSnapshot(obs, "run-start", route.id);
   leaseSession?.attachRecorder(recorder);
 
   if (taints.length > 0) {
@@ -491,6 +624,8 @@ export async function runBot(
   }
 
   const endedAt = Date.now();
+  // The T1-completion wallet: what the tier actually left in the player's hands.
+  recorder.walletSnapshot(obs, "run-end", completion);
   recorder.emit({
     kind: "run-end",
     atMs: recorder.now(),
@@ -512,6 +647,7 @@ export async function runBot(
     endedAt,
     leaseEvidence,
     maximumSimultaneouslyProgressing: leaseSession?.maximumSimultaneouslyProgressing(),
+    winCondition: config.completionMode,
   });
 
   await sink.close();
@@ -584,4 +720,66 @@ async function waitFor(
     if (Date.now() > deadline) throw new Error(`timed out waiting for ${what}`);
     await sleep(250);
   }
+}
+
+function buildTierEntryInitialState(
+  profileId: string,
+  targetTier: number,
+  economyPolicy: TierEntryInitialState["economyPolicy"],
+  frameId: string,
+  self: PlayerView,
+): TierEntryInitialState {
+  return {
+    profileId,
+    targetTier,
+    economyPolicy,
+    classRoot: self.selectedClass ?? "unknown",
+    frameId,
+    spawnNodeId: self.nodeId,
+    biomeLevels: { ...self.biomeLevel },
+    globalMastery: self.globalMastery,
+    bossesCleared: [...self.bossesCleared],
+    equipment: { ...self.equipment },
+    inventory: [...self.inventory],
+    itemUpgrades: { ...self.itemUpgrades },
+    knownAbilities: [...self.knownAbilities],
+    equippedAbilities: {
+      techniques: [...self.equippedAbilities.techniques],
+      guards: [...self.equippedAbilities.guards],
+    },
+    runeRecipesCrafted: [...self.runeRecipesCrafted],
+    runesEquipped: self.runesEquipped.map((rule) => ({ ...rule })),
+    knownStances: [...self.knownStances],
+    equippedStances: { ...self.equippedStances },
+    activeStance: self.activeStance,
+    knownRites: [...self.knownRites],
+    equippedRites: [...self.equippedRites],
+    initialEssences: { ...self.essences },
+    initialCatalysts: { ...self.catalysts },
+  };
+}
+
+/**
+ * Read the economy candidate out of the LIVE shared data the connected build is
+ * running, so a run header records what actually applied rather than a
+ * hand-copied intent. `CATALYSTS_SCALED_BY_REWARD_MULTIPLIER` is a constant
+ * mirror of the reward path's decision in
+ * `server/src/systems/player/progression/rewards.ts`; flip both together.
+ */
+const CATALYSTS_SCALED_BY_REWARD_MULTIPLIER = false;
+
+function resolveEconomyCandidate(
+  economyConfig: ReturnType<typeof t1EconomyConfigForArm>,
+): EconomyCandidate {
+  return {
+    id: economyConfig.experimentId,
+    revision: economyConfig.revision,
+    arm: economyConfig.arm,
+    t1Plus5EssenceCostMultiplier: economyConfig.t1Plus5EssenceCostMultiplier,
+    catalystProgressPerUnitT1: economyConfig.catalystProgressPerUnitT1,
+    catalystsScaledByRewardMultiplier: CATALYSTS_SCALED_BY_REWARD_MULTIPLIER,
+    t1Plus5EssenceCosts: t1Plus5EssenceCosts(
+      economyConfig.t1Plus5EssenceCostMultiplier,
+    ),
+  };
 }

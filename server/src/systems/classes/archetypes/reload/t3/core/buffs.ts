@@ -16,7 +16,7 @@ export const RELOAD_T3_BUFFS = [
     if (player.usesSkills.combatArchetype !== 'reload') return null;
     const fullHpMult = player.usesSkills.passives['reload.snipe-fullhp-mult'] ?? DEFAULT_SNIPE_FULL_HP_MULT;
     return getSnipeReady(player, world)
-      ? { id: 'reload-snipe-ready', label: 'Snipe', stacks: 1, durationPct: -1, color: '#ffcc88', logDetail: `${fullHpMult}x damage vs full HP targets` }
+      ? { id: 'reload-snipe-ready', label: 'Snipe', stacks: 1, durationPct: -1, color: '#ffcc88', logDetail: `${fullHpMult}x damage vs full HP targets`, values: [{ label: 'Damage vs a full-HP target', value: `×${fullHpMult}`, good: true }] }
       : null;
   }, { category: 'neutral', shape: 'square' }),
 
@@ -37,6 +37,7 @@ export const RELOAD_T3_BUFFS = [
       durationPct: -1,
       color: '#ffaa44',
       logDetail: `+${Math.round(stacks * pct * 100)}% attack speed`,
+      values: [{ label: 'Attack speed', value: `+${Math.round(stacks * pct * 100)}%`, good: true }],
     };
   }, { category: 'neutral', shape: 'square' }),
 
@@ -55,6 +56,10 @@ export const RELOAD_T3_BUFFS = [
       durationPct: -1,
       color: '#ffcc44',
       logDetail: `+${Math.round(stacks * apsPct * 100)}% attack speed, -${reloadCut}% reload time`,
+      values: [
+        { label: 'Attack speed', value: `+${Math.round(stacks * apsPct * 100)}%`, good: true },
+        { label: 'Reload time', value: `-${reloadCut}%`, good: true },
+      ],
     };
   }, { category: 'neutral', shape: 'square' }),
 
@@ -70,6 +75,7 @@ export const RELOAD_T3_BUFFS = [
       durationPct: -1,
       color: '#ff7733',
       logDetail: `${stored} stored — fires mid-reload`,
+      values: [{ label: 'Stored damage', value: String(stored), good: true }],
     };
   }, { category: 'neutral', shape: 'square' }),
 
@@ -88,6 +94,8 @@ export const RELOAD_T3_BUFFS = [
       durationPct: pct,
       color: '#88aacc',
       logDetail: 'Damage reduction while reloading',
+      remainingMs: buff.remainingMs,
+      values: [{ label: 'While reloading', value: 'damage reduced', good: true }],
     };
   }, { category: 'neutral', shape: 'square' }),
 ] as const satisfies readonly BuffDescriptor[];

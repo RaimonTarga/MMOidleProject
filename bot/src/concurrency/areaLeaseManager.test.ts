@@ -129,6 +129,27 @@ async function parkedHoldBreaker(): Promise<void> {
     solo.shutdown();
   }
 
+  // A second waiter wanting the parked node is still not a cycle. The first
+  // owner may be productively fighting there while it waits for its next
+  // destination, so the parked lease must remain protective.
+  {
+    const busy = new AreaLeaseManager(4, 600_000, () => now, 1_000);
+    await busy.acquire({ ownerId: "p", areaIds: ["node:parked"], reason: "farm" });
+    const queued = busy
+      .acquire({ ownerId: "p", areaIds: ["node:next"], reason: "travel" })
+      .catch(() => undefined);
+    const wantsParked = busy
+      .acquire({ ownerId: "q", areaIds: ["node:parked"], reason: "farm" })
+      .catch(() => undefined);
+    await flush();
+    now += 1_001;
+    assert(busy.breakParkedHolds().length === 0, "non-cyclic parked contention is kept");
+    assert(busy.owns("p", "node:parked"), "productive dungeon waiter keeps its parked lease");
+    busy.shutdown();
+    await Promise.all([queued, wantsParked]);
+    now -= 1_001;
+  }
+
   now += 1_001;
   const broken = manager.breakParkedHolds();
   assert(broken.includes("x") && broken.includes("y"), "the breaker reports whose hold it dropped");

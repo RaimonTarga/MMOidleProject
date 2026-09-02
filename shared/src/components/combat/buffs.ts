@@ -54,6 +54,7 @@ export const BUFF_IDS = [
   'debuff-volcanic-heat',
   'debuff-tundra-chill',
   'debuff-sundered',
+  'debuff-plating-shred',
   'debuff-antiheal',
   'defense-ward',             // temporary absorb pools
   'defense-absorb',
@@ -97,6 +98,10 @@ export const BUFF_IDS = [
   'mob-rush',     // Tundra — continuous-move ramp
   'mob-volcanic', // Volcanic — passive speed (active while not suppressed)
   'mob-suppress', // Volcanic — speed suppressed after a direct hit
+  // Stances (see server/src/systems/player/stances/stanceBehaviors.ts)
+  'stance-reaper',   // Reaper — on-kill momentum, outlives the stance itself
+  'stance-charge',   // Powering Up — the charge accruing, shown as a filling clock
+  'stance-release',  // Powering Up — the spent-charge burst window
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];
@@ -114,6 +119,23 @@ export type BuffCategory =
   | 'summoner';
 
 export type BuffShape = 'square' | 'circle' | 'diamond' | 'small-square';
+
+/**
+ * One resolved, player-facing runtime value on a buff/status — the number that
+ * is applying RIGHT NOW, after resistances and caps.
+ *
+ * Structured rather than prose so the HUD can style the value distinctly from the
+ * explanatory copy around it. `logDetail` remains the world-log sentence; nothing
+ * should parse it to recover these numbers.
+ */
+export interface StatusValue {
+  /** Player-facing name of the thing being changed, e.g. 'Movement speed'. */
+  label: string;
+  /** Pre-formatted value with its unit, e.g. '-28%', '3.2s', '14 damage'. */
+  value: string;
+  /** False when the value is a downside, for tone. Omitted = neutral. */
+  good?: boolean;
+}
 
 /**
  * A single active buff entry, populated server-side each tick and sent to the
@@ -137,6 +159,19 @@ export interface PlayerBuff {
   stacks: number;
   /** 0–100 remaining duration percentage; -1 = no timer. */
   durationPct: number;
+  /**
+   * Remaining duration in ms, when the effect has a real clock. `durationPct` is
+   * a fraction and cannot be turned back into seconds — a ramp's fill percentage
+   * and a timer's remaining percentage look identical on the wire — so tooltips
+   * that want "3.2s left" read this instead. Omitted for pools, rates and ramps.
+   */
+  remainingMs?: number;
+  /**
+   * Resolved runtime values for the tooltip's CURRENT section. Populated by the
+   * server projection for effects whose real magnitude the client cannot derive
+   * (resistance-adjusted slows, ramp stacks, per-stack DoT damage, Guard buffs).
+   */
+  values?: StatusValue[];
   /**
    * Movement-speed multiplier this buff imposes (e.g. 0.5 = 50% slow, 0 = root,
    * 1.25 = +25% boon). Omitted for buffs that don't affect movement speed. The

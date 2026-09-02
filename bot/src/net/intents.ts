@@ -3,7 +3,13 @@ import type {
   EquipmentSlot,
   EquippedAbilities,
   EquippedRule,
+  EvolveMode,
   FastBossRetryResult,
+  StanceSlot,
+  TierEntryApplyResult,
+  TierEntryProfile,
+  T1EconomyArm,
+  T1EconomyExperimentConfig,
   Vec2,
 } from "@mmo-idle/shared";
 import type { BotConnection } from "./connection";
@@ -96,6 +102,12 @@ export class Intents {
     );
   }
 
+  evolveItem(recipeId: string, mode: EvolveMode): Promise<CraftOutcome> {
+    return this.conn.request<CraftOutcome>("crafting:result", () =>
+      this.conn.raw.emit("crafting:evolveItem", { recipeId, mode }),
+    );
+  }
+
   upgradeItem(itemId: string): Promise<UpgradeOutcome> {
     return this.conn.request<UpgradeOutcome>("inventory:upgradeResult", () =>
       this.conn.raw.emit("inventory:upgradeItem", itemId),
@@ -114,6 +126,12 @@ export class Intents {
     );
   }
 
+  craftStanceRecipe(recipeId: string): Promise<{ recipeId: string; success: boolean; reason?: string }> {
+    return this.conn.request("stance:craftResult", () =>
+      this.conn.raw.emit("stance:craftRecipe", recipeId),
+    );
+  }
+
   // ── Economy (fire-and-forget; confirmed by observing the next delta) ─────
 
   equipItem(definitionId: string): void {
@@ -126,6 +144,31 @@ export class Intents {
 
   setRuneLoadout(rules: EquippedRule[]): void {
     this.conn.raw.emit("rune:setLoadout", rules);
+  }
+
+  setDefaultStance(stanceId: string | null): Promise<{ system: "stances"; success: boolean; reason?: string }> {
+    return this.conn.request("build:loadoutResult", () =>
+      this.conn.raw.emit("stance:setLoadout", { slot: "default" as StanceSlot, stanceId }),
+    );
+  }
+
+  /** Dev-only bootstrap; the server remains authoritative over the applied state. */
+  applyTierEntryProfile(profile: TierEntryProfile): Promise<TierEntryApplyResult> {
+    return this.conn.request<TierEntryApplyResult>("debug:tierEntryResult", () =>
+      this.conn.raw.emit("debug:applyTierEntryProfile", profile),
+    );
+  }
+
+  /** Dev-only bootstrap; the server remains authoritative over the selected arm. */
+  applyEconomyExperiment(arm: T1EconomyArm): Promise<{
+    success: boolean;
+    arm?: T1EconomyArm;
+    config?: T1EconomyExperimentConfig;
+    reason?: string;
+  }> {
+    return this.conn.request("debug:economyExperimentResult", () =>
+      this.conn.raw.emit("debug:applyEconomyExperiment", arm),
+    );
   }
 
   setAbilityLoadout(equipped: EquippedAbilities): void {

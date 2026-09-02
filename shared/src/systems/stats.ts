@@ -12,7 +12,7 @@ import { SKILL_TREE, type StatEffects } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
-import { stanceDef, type StanceModifiers } from '../stances';
+import { activeStanceModifiers, stanceDef, type StanceModifiers } from '../stances';
 import { effectiveAttacksPerSecond, upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
@@ -164,6 +164,12 @@ export interface PlayerStatsResult {
  * Mutates slice fields in place. Returns out-of-band signals (see {@link PlayerStatsResult}).
  */
 export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult {
+  // 0. Capture the HP fraction BEFORE step 1 wipes maxHp back to base. A gated stance
+  // (Perfection) reads it to decide whether its upside half is in force. The stance
+  // system re-runs this rebuild whenever the player crosses the threshold; nothing here
+  // moves HP, so the reading cannot feed back into itself.
+  const hpFraction = p.hasHealth.hp / Math.max(1, p.hasHealth.maxHp);
+
   // 1. Reset to base
   p.dealsDamage.attack          = GAME_CONFIG.PLAYER_ATTACK;
   p.dealsDamage.onHitDamage     = 0;
@@ -227,7 +233,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // tooltip says for every class. `damageTakenPct` is not a stat at all: it is read at
   // hit time by the stance combat listener. The stance-switch system recalcs on change.
   const stance = stanceDef(p.activeStance);
-  const stanceMods = stance?.modifiers;
+  // Resolved, never `stance.modifiers`: a gated posture's conditional half only exists
+  // in the resolver, so reading the field directly would silently drop it.
+  const stanceMods = activeStanceModifiers(p.activeStance, hpFraction);
   if (stanceMods) {
     attackSpeedPct += stanceMods.attackSpeedPct ?? 0;
     if ((stanceMods.evasion ?? 0) > 0) evasionChance += stanceMods.evasion!;

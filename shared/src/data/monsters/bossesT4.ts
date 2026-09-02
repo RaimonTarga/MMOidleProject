@@ -357,6 +357,7 @@ export const bossMonsterEntriesT4 = [
     raisesDead: {
       intervalMs: 8000, initialDelayMs: 5000, corpseRange: 520, maxAlive: 4,
       hpMult: 0.75, damageMult: 0.80,
+      castMs: 1300, castName: 'Raise Dead', castFx: 'raise-dead',
     },
     chargedAttack: {
       name: 'Charnel Burst', castMs: 1500, cooldownMs: 9000, initialCooldownMs: 4500,
@@ -374,13 +375,17 @@ export const bossMonsterEntriesT4 = [
         // MASS RESURRECTION — everything you have put down in the last few seconds
         // gets back up at once, and the tide is allowed to stand two deeper.
         { hpPct: 0.5, actions: [
-          { type: 'raise-dead', count: 3, maxAliveAdd: 2 },
-          { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 2, maxAlive: 5, offsetRange: 240 },
+          { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', actions: [
+            { type: 'raise-dead', count: 3, maxAliveAdd: 2 },
+            { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 2, maxAlive: 5, offsetRange: 240 },
+          ] },
         ] },
         // The last wave claws up, and a necrotic roar drives everything it owns.
         { hpPct: 0.25, actions: [
-          { type: 'raise-dead', count: 4, maxAliveAdd: 2 },
-          { type: 'roar', attackSpeedPct: 0.30, durationMs: 12000, radius: 420 },
+          { type: 'cast', castMs: 2000, label: 'Deathless Tide', fx: 'roar', actions: [
+            { type: 'raise-dead', count: 4, maxAliveAdd: 2 },
+            { type: 'roar', attackSpeedPct: 0.30, durationMs: 12000, radius: 420 },
+          ] },
         ] },
       ],
     },

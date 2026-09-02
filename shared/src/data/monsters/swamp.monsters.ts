@@ -79,7 +79,7 @@ export const swampMonsterEntries = [
     // Signature SHELL UP (behavior pass): at a single authored HP threshold (~50%) it
     // retracts — it cannot meaningfully attack or move, and becomes extremely
     // resistant to DIRECT damage. DoTs keep ticking while shelled, which is the out.
-    stats: { hp: 150, attack: 24, plating: 6, damageReduction: 0, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    stats: { hp: 260, attack: 24, plating: 6, damageReduction: 0, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -87,8 +87,8 @@ export const swampMonsterEntries = [
     // moving and attacking, and direct damage barely scratches it. DoTs keep
     // ticking at full strength, which is the way through.
     // Placeholder numbers - balance pass owns them.
-    shellUp: { atHpPct: 0.5, durationMs: 3500, directDamageMult: 0.15 },
-    dotEffect: { debuffId: 'hydra-venom', label: 'Snapper Venom', damagePerStack: 7, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
+    shellUp: { atHpPct: 0.5, castMs: 500, durationMs: 3500, directDamageMult: 0.15 },
+    dotEffect: { debuffId: 'hydra-venom', label: 'Snapper Venom', damagePerStack: 7, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
   }],
 
   ['bog-witch', {
@@ -105,9 +105,9 @@ export const swampMonsterEntries = [
     // weak on purpose; this is the whole kit.
     // Multiplier is deliberately ~1: Wither is a debuff, not a damage spike.
     chargedAttack: {
-      name: 'Wither', castMs: 1400, cooldownMs: 11000, initialCooldownMs: 4000,
+      name: 'Wither', castMs: 1400, cooldownMs: 8000, initialCooldownMs: 0,
       multiplier: 1.0, fx: 'power-shot',
-      appliesAntiheal: { reduction: 0.30, durationMs: 6000 },
+      appliesAntiheal: { reduction: 0.30, durationMs: 9000 },
     },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
   }],
@@ -119,10 +119,10 @@ export const swampMonsterEntries = [
     // Signature: the OPENING BITE after aggro lands MULTIPLE poison stacks at once
     // (normal bite 1, opener ~2); ordinary combat afterwards. It does NOT repeatedly
     // vanish and re-ambush.
-    stats: { hp: 210, attack: 46, plating: 0, damageReduction: 0, speed: 40, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
+    stats: { hp: 210, attack: 46, plating: 0, damageReduction: 0, speed: 75, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 13, essenceType: 'purple', level: 1, biomeXp: 75 },
-    ai: { wanderRadius: 170, leashRange: 540, idleMinMs: 2000, idleMaxMs: 6000 },
+    ai: { wanderRadius: 500, leashRange: 540, idleMinMs: 450, idleMaxMs: 1200 },
     // Opening bite lands 2 stacks at once; every bite after it lands 1.
     dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800, openerStacks: 2 },
     evasion: 0.2,

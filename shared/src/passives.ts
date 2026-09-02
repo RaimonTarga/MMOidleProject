@@ -414,6 +414,14 @@ export const SHARED_KEYS = [
   'shared.applies-through-evade',
   // Additive multiplier applied to final damage after plating/DR. 0.25 = +25%.
   'shared.damage-mult',
+  // Incoming HARMFUL status resistance. Both are fractions REMOVED (0.5 = half),
+  // capped below 1 so a status is always shortened/softened, never nullified.
+  // `-duration-resist` scales the duration an incoming debuff/CC is applied with;
+  // `-potency-resist` scales an incoming DoT's per-stack damage. Read through
+  // `server/src/systems/combat/status/harmfulStatus.ts`, which is the ONE writer —
+  // it folds these together with mobility tenacity so sources cannot ratchet.
+  'shared.status-duration-resist',
+  'shared.status-potency-resist',
   // Damage multiplier applied on the very first hit ever landed on a fresh monster entity.
   'weapon.first-strike-mult',
   // Chaotic ("dead swing") cadence: every Nth player hit deals 0 damage but still

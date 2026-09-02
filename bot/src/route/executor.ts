@@ -2,6 +2,9 @@ import {
   ABILITY_RECIPE_DATABASE,
   BIOME_START_TIER_BY_GROUP,
   RUNE_RECIPE_DATABASE,
+  STANCE_RECIPE_DATABASE,
+  isStanceRecipeUnlocked,
+  NO_STANCE_ID,
   abilitySlotCount,
   ITEM_DATABASE,
   NODE_BIOMES,
@@ -17,6 +20,7 @@ import {
   upgradeCostFor,
   type EquippedRule,
   type EssenceType,
+  type EquipmentSlot,
 } from "@mmo-idle/shared";
 import type { Intents } from "../net/intents";
 import type { RouteLeaseSession } from "../concurrency/routeLeaseSession";
@@ -25,14 +29,20 @@ import type { Observation } from "../state/observation";
 import { dungeonNodeFor, normalNodesFor } from "../state/observation";
 import type { Activity, Recorder } from "../telemetry/recorder";
 import {
+  conditionBlockReasons,
+  craftBlockReasons,
   describe,
   evaluate,
+  missingToReasons,
+  reasonsToMissing,
   recipeShortfall,
   resolveNode,
   resolveNearCandidates,
   resolveNodeCandidates,
   shortfall,
+  upgradeBlockReasons,
 } from "./conditions";
+import type { BlockReason } from "../telemetry/events";
 import type { Condition, NodeRef, Route, RouteStep } from "./types";
 
 const POLL_MS = 500;
@@ -134,7 +144,7 @@ export class RouteExecutor {
     return evaluate(condition, { obs: this.deps.obs, elapsedMs: this.elapsed() });
   }
 
-  /** Run the whole route. Resolves on completion; throws StallError otherwise. */
+  /** Run the whole route. A capped boss step is recorded and yields to the next step. */
   async run(): Promise<void> {
     await this.runSteps(this.deps.route.steps);
   }
@@ -208,8 +218,16 @@ export class RouteExecutor {
         return this.doFarm(step, step.stallAfterMs);
       case "craft":
         return this.doCraft(step);
+      case "evolveItem":
+        return this.doEvolveItem(step);
+      case "craftStance":
+        return this.doCraftStance(step);
+      case "setDefaultStance":
+        return this.doSetDefaultStance(step.stanceId);
       case "equip":
         return this.doEquip(step.definitionIds);
+      case "unequip":
+        return this.doUnequip(step.slot);
       case "upgrade":
         return this.doUpgrade(step);
       case "configureRunes":
@@ -224,6 +242,8 @@ export class RouteExecutor {
         return this.doAttemptBoss(step);
       case "repeatUntil":
         return this.doRepeatUntil(step);
+      case "ifPossible":
+        return this.doIfPossible(step);
     }
   }
 
@@ -588,9 +608,7 @@ export class RouteExecutor {
       const recipe = RECIPE_DATABASE.get(recipeId);
       if (!recipe) throw new StallError("unknown recipe in route", { recipeId });
 
-      const farmNode =
-        (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null) ??
-        this.defaultFarmNodeFor(recipe.recipeGroup);
+      const farmNode = this.resourceFarmNode(step.farmAt, recipe.recipeGroup, recipe.catalystCost);
 
       if (!obs.canCraft(recipeId)) {
         if (!farmNode) {
@@ -600,13 +618,15 @@ export class RouteExecutor {
             unlocked: obs.recipeUnlocked(recipeId),
           });
         }
-        await this.farmBlocked(farmNode, `craft:${recipeId}`, () => obs.canCraft(recipeId), () =>
-          obs.recipeUnlocked(recipeId)
-            ? recipeShortfall(recipeId, obs)
-            : { [`biomeLevel.${recipe.recipeGroup}`]: recipe.requiredBiomeLevel },
+        await this.farmBlocked(
+          farmNode,
+          `craft:${recipeId}`,
+          () => obs.canCraft(recipeId),
+          () => craftBlockReasons(recipeId, obs),
         );
       }
 
+      recorder.walletSnapshot(obs, "pre-craft", recipeId);
       const result = await this.mutate(
         () => intents.craftRecipe(recipeId),
         // The spend is the recipe's authored cost, not a wallet diff: the wallet
@@ -675,6 +695,23 @@ export class RouteExecutor {
     }
   }
 
+  private async doUnequip(slot: EquipmentSlot): Promise<void> {
+    const { obs, intents, recorder } = this.deps;
+    const definitionId = obs.self?.equipment[slot] ?? null;
+    if (!definitionId) return;
+
+    await this.emitUntil(
+      () => intents.unequip(slot),
+      () => (obs.self?.equipment[slot] ?? null) === null,
+      {
+        timeoutMs: 3 * 60 * 1000,
+        what: `${slot} emptied`,
+        onStall: () => ({ slot, definitionId, equipment: obs.self?.equipment ?? {} }),
+      },
+    );
+    recorder.emit({ kind: "unequip", atMs: recorder.now(), slot, definitionId });
+  }
+
   private async doUpgrade(step: Extract<RouteStep, { type: "upgrade" }>): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     const recipe = RECIPE_DATABASE.get(step.definitionId);
@@ -737,17 +774,14 @@ export class RouteExecutor {
           farmNode,
           `upgrade:${step.definitionId}+${nextPlus}`,
           () => obs.canUpgrade(step.definitionId).ok,
-          () => ({
-            blocked: 1,
-            ...(gmAllowsNext
-              ? {}
-              : {
-                  globalMasteryNeeded:
-                    globalMasteryRequiredForUpgrade(recipe?.tier ?? 1, nextPlus) -
-                    (obs.self?.globalMastery ?? 0),
-                }),
-          }),
+          // Every failing predicate by name -- essence colour/current/required,
+          // catalyst family/current/required, GM, biome level. The old
+          // `{blocked:1}` is exactly what made the 2026-08-31 deep-dive infer
+          // essence-vs-catalyst attribution from the farm node instead of
+          // reading it.
+          () => upgradeBlockReasons(step.definitionId, obs),
           gmAllowsNext,
+          () => obs.canUpgrade(step.definitionId).reason,
         );
         continue;
       }
@@ -755,11 +789,21 @@ export class RouteExecutor {
       // Same reasoning as craft: read the authored step cost for the level the
       // server says we reached, rather than racing the wallet delta.
       const item = ITEM_DATABASE.get(step.definitionId);
+      const fromLevel = obs.itemPlus(step.definitionId);
+      // The wallet immediately BEFORE the spend, so the analysis can price the
+      // step against what was actually held rather than a post-spend remainder.
+      recorder.walletSnapshot(obs, "pre-upgrade", `${step.definitionId}+${fromLevel + 1}`);
       const result = await this.mutate(
         () => intents.upgradeItem(step.definitionId),
         (attempt) => {
           const stepCost =
-            attempt.success && item ? (upgradeCostFor(item, attempt.newLevel) ?? {}) : {};
+            attempt.success && item
+              ? (upgradeCostFor(
+                  item,
+                  attempt.newLevel,
+                  obs.economyConfig?.t1Plus5EssenceCostMultiplier,
+                ) ?? {})
+              : {};
           const stepCatalysts =
             attempt.success && item
               ? (upgradeCatalystCostFor(item, attempt.newLevel) ?? {})
@@ -768,6 +812,7 @@ export class RouteExecutor {
             kind: "upgrade",
             atMs: recorder.now(),
             itemId: step.definitionId,
+            fromLevel,
             newLevel: attempt.newLevel,
             success: attempt.success,
             reason: attempt.reason,
@@ -800,6 +845,19 @@ export class RouteExecutor {
     // server sanitises it away, and the run would silently differ from the
     // route. Drop those here so telemetry records what was really equipped.
     const owned = new Set(obs.self?.runesOwned ?? []);
+    const knownStances = new Set(obs.self?.knownStances ?? []);
+    for (const rule of wanted) {
+      if (rule.actionId !== "switch-stance") continue;
+      if (!rule.targetStanceId) {
+        throw new StallError("stance Rune rule is missing its target stance", { rule });
+      }
+      if (rule.targetStanceId !== NO_STANCE_ID && !knownStances.has(rule.targetStanceId)) {
+        throw new StallError("stance Rune rule targets an unlearned stance", {
+          rule,
+          knownStances: [...knownStances],
+        });
+      }
+    }
     const affordable = wanted.filter(
       (rule) => owned.has(rule.conditionId) && owned.has(rule.actionId),
     );
@@ -852,9 +910,9 @@ export class RouteExecutor {
       const recipe = ABILITY_RECIPE_DATABASE.get(step.recipeId);
       if (!recipe) throw new StallError("unknown ability recipe in route", { step });
 
-      const farmNode =
-        (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null) ??
-        (recipe.recipeGroup ? this.defaultFarmNodeFor(recipe.recipeGroup) : null);
+      const farmNode = recipe.recipeGroup
+        ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
+        : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
 
       const affordable = (): boolean => {
         for (const [type, amount] of Object.entries(recipe.cost)) {
@@ -869,7 +927,7 @@ export class RouteExecutor {
         if (!farmNode) {
           throw new StallError("cannot satisfy ability requirement", { step });
         }
-        await this.farmBlocked(farmNode, `ability:${step.abilityId}`, affordable, () => {
+        const abilityMissing = (): Record<string, number> => {
           const missing: Record<string, number> = {};
           for (const [type, amount] of Object.entries(recipe.cost)) {
             const short = (amount ?? 0) - obs.essence(type as EssenceType);
@@ -881,7 +939,10 @@ export class RouteExecutor {
             if (short > 0) missing[`biomeLevel.${recipe.recipeGroup}`] = short;
           }
           return missing;
-        });
+        };
+        await this.farmBlocked(farmNode, `ability:${step.abilityId}`, affordable, () =>
+          missingToReasons(abilityMissing(), obs),
+        );
       }
 
       const result = await this.mutate(() => intents.craftAbilityRecipe(step.recipeId));
@@ -976,9 +1037,9 @@ export class RouteExecutor {
     if (!recipe) throw new StallError("unknown rune recipe in route", { step });
     if (obs.self?.runeRecipesCrafted.includes(step.recipeId)) return;
 
-    const farmNode =
-      (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null) ??
-      (recipe.recipeGroup ? this.defaultFarmNodeFor(recipe.recipeGroup) : null);
+    const farmNode = recipe.recipeGroup
+      ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
+      : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
 
     const missing = (): Record<string, number> => {
       const out: Record<string, number> = {};
@@ -999,7 +1060,7 @@ export class RouteExecutor {
         farmNode,
         `rune:${step.recipeId}`,
         () => Object.keys(missing()).length === 0,
-        missing,
+        () => missingToReasons(missing(), obs),
         true,
       );
     }
@@ -1430,10 +1491,241 @@ export class RouteExecutor {
       if (outcome === "victory") return;
     }
 
-    throw new StallError(
-      `boss attempt loop exhausted (${maxAttempts}) with no clear`,
-      { biomeGroup: step.biomeGroup, tier: step.tier },
+    // A boss can be an individual class/build failure without invalidating the
+    // rest of the authored gauntlet. Record the cap explicitly, then let the
+    // route continue to the next boss step. The run-level completion check will
+    // still classify the overall run as stalled later if the skipped boss means
+    // the route's completion condition is not satisfied.
+    recorder.emit({
+      kind: "boss-step-exhausted",
+      atMs: recorder.now(),
+      nodeId,
+      biomeGroup: step.biomeGroup,
+      tier: step.tier,
+      attempts: maxAttempts,
+      nextAction: "continue-route",
+    });
+  }
+
+  private async doEvolveItem(
+    step: Extract<RouteStep, { type: "evolveItem" }>,
+  ): Promise<void> {
+    const { obs, recorder } = this.deps;
+    const recipe = RECIPE_DATABASE.get(step.recipeId);
+    if (!recipe) throw new StallError("unknown evolution recipe in route", { step });
+    if (!recipe.evolvesFrom) {
+      throw new StallError("evolveItem requires an evolved recipe", { recipeId: step.recipeId });
+    }
+    const predecessor = recipe.evolvesFrom;
+    if (obs.hasItem(step.recipeId)) return;
+
+    // A missing predecessor is a structural evolution failure, not a resource
+    // shortage. Do not farm forever (or silently switch to reconstruction) when
+    // the route explicitly requested consume-the-predecessor evolution.
+    if (step.mode === "evolve" && !(obs.self?.inventory ?? []).includes(predecessor)) {
+      throw new StallError("evolution requires the owned predecessor", {
+        recipeId: step.recipeId,
+        mode: step.mode,
+        predecessor,
+      });
+    }
+
+    const farmNode = this.resourceFarmNode(
+      step.farmAt,
+      recipe.recipeGroup,
+      step.mode === "evolve" ? recipe.catalystCost : recipe.reconstructCatalystCost,
     );
+    const canDo = (): boolean => obs.canEvolve(step.recipeId, step.mode).ok;
+    const missing = (): Record<string, number> => {
+      const cost = step.mode === "evolve" ? recipe.cost : recipe.reconstructCost;
+      const out: Record<string, number> = {};
+      for (const [type, amount] of Object.entries(cost ?? {})) {
+        const short = (amount ?? 0) - obs.essence(type as EssenceType);
+        if (short > 0) out[`essence.${type}`] = short;
+      }
+      const catalysts = step.mode === "evolve"
+        ? recipe.catalystCost
+        : recipe.reconstructCatalystCost;
+      for (const [family, amount] of Object.entries(catalysts ?? {})) {
+        const short = (amount ?? 0) - obs.catalyst(family);
+        if (short > 0) out[`catalyst.${family}`] = short;
+      }
+      if (!obs.recipeUnlocked(step.recipeId)) {
+        out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
+          1,
+          recipe.requiredBiomeLevel - obs.biomeLevel(recipe.recipeGroup),
+        );
+      }
+      if (step.mode === "evolve" && !obs.self?.inventory.includes(predecessor)) {
+        out[`predecessor.${predecessor}`] = 1;
+      }
+      return out;
+    };
+
+    if (!canDo()) {
+      if (!farmNode) {
+        throw new StallError("cannot satisfy evolution requirement", {
+          recipeId: step.recipeId,
+          mode: step.mode,
+          missing: missing(),
+        });
+      }
+      await this.farmBlocked(
+        farmNode,
+        `${step.mode}:${step.recipeId}`,
+        canDo,
+        () => missingToReasons(missing(), obs),
+        true,
+      );
+    }
+
+    const result = await this.mutate(
+      () => this.deps.intents.evolveItem(step.recipeId, step.mode),
+      (attempt) => {
+        const essenceCost = step.mode === "evolve" ? recipe.cost : recipe.reconstructCost;
+        const catalystCost = step.mode === "evolve"
+          ? recipe.catalystCost
+          : recipe.reconstructCatalystCost;
+        recorder.emit({
+          kind: "evolution",
+          atMs: recorder.now(),
+          recipeId: step.recipeId,
+          mode: step.mode,
+          predecessorId: predecessor,
+          success: attempt.success,
+          reason: attempt.reason,
+          essenceSpent: attempt.success ? { ...(essenceCost ?? {}) } : {},
+          catalystsSpent: attempt.success ? definedNumbers(catalystCost ?? {}) : {},
+          context: recorder.context(obs.nodeId),
+        });
+      },
+    );
+    if (!result.success) {
+      throw new StallError(`evolution rejected: ${result.reason ?? "unknown"}`, {
+        recipeId: step.recipeId,
+        mode: step.mode,
+      });
+    }
+    await this.waitUntil(() => obs.hasItem(step.recipeId), {
+      timeoutMs: 30_000,
+      what: `${step.recipeId} in inventory`,
+    });
+    if (step.mode === "evolve") {
+      await this.waitUntil(
+        () => !(obs.self?.inventory ?? []).includes(predecessor),
+        { timeoutMs: 30_000, what: `${predecessor} consumed by evolution` },
+      );
+    }
+  }
+
+  private async doCraftStance(
+    step: Extract<RouteStep, { type: "craftStance" }>,
+  ): Promise<void> {
+    const { obs, recorder } = this.deps;
+    const recipe = STANCE_RECIPE_DATABASE.get(step.recipeId);
+    if (!recipe) throw new StallError("unknown stance recipe in route", { step });
+    if (obs.self?.knownStances.includes(recipe.stanceId)) return;
+
+    const unlocked = (): boolean => isStanceRecipeUnlocked(recipe, {
+      biomeLevel: obs.self?.biomeLevel ?? {},
+      bossesCleared: obs.self?.bossesCleared ?? [],
+    });
+    const affordable = (): boolean => {
+      if (!unlocked()) return false;
+      for (const [type, amount] of Object.entries(recipe.cost)) {
+        if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
+      }
+      for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
+        if (obs.catalyst(family) < (amount ?? 0)) return false;
+      }
+      return true;
+    };
+    const missing = (): Record<string, number> => {
+      const out: Record<string, number> = {};
+      for (const [type, amount] of Object.entries(recipe.cost)) {
+        const short = (amount ?? 0) - obs.essence(type as EssenceType);
+        if (short > 0) out[`essence.${type}`] = short;
+      }
+      for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
+        const short = (amount ?? 0) - obs.catalyst(family);
+        if (short > 0) out[`catalyst.${family}`] = short;
+      }
+      if (!unlocked() && recipe.recipeGroup) {
+        out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
+          1,
+          (recipe.requiredBiomeLevel ?? 0) - obs.biomeLevel(recipe.recipeGroup),
+        );
+      }
+      return out;
+    };
+    if (!affordable()) {
+      const farmNode = recipe.recipeGroup
+        ? this.resourceFarmNode(step.farmAt, recipe.recipeGroup, recipe.catalystCost)
+        : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
+      if (!farmNode) throw new StallError("cannot satisfy stance requirement", { step, missing: missing() });
+      await this.farmBlocked(
+        farmNode,
+        `stance:${recipe.stanceId}`,
+        affordable,
+        () => missingToReasons(missing(), obs),
+        true,
+      );
+    }
+
+    const result = await this.mutate(() => this.deps.intents.craftStanceRecipe(step.recipeId));
+    if (!result.success) {
+      throw new StallError(`stance craft rejected: ${result.reason ?? "unknown"}`, { step });
+    }
+    recorder.emit({
+      kind: "stance-craft",
+      atMs: recorder.now(),
+      recipeId: step.recipeId,
+      stanceId: recipe.stanceId,
+      success: result.success,
+      reason: result.reason,
+      essenceSpent: { ...recipe.cost },
+      catalystsSpent: definedNumbers(recipe.catalystCost ?? {}),
+      context: recorder.context(obs.nodeId),
+    });
+    await this.waitUntil(
+      () => obs.self?.knownStances.includes(recipe.stanceId) ?? false,
+      { timeoutMs: 30_000, what: `${recipe.stanceId} learned` },
+    );
+  }
+
+  private async doSetDefaultStance(stanceId: string | null): Promise<void> {
+    const { obs, recorder } = this.deps;
+    if (stanceId !== null && !(obs.self?.knownStances ?? []).includes(stanceId)) {
+      throw new StallError("cannot equip an unlearned stance", { stanceId });
+    }
+    if ((obs.self?.equippedStances.default ?? null) === stanceId) return;
+    const result = await this.mutate(() => this.deps.intents.setDefaultStance(stanceId));
+    if (!result.success) {
+      throw new StallError(`stance loadout rejected: ${result.reason ?? "unknown"}`, { stanceId });
+    }
+    await this.waitUntil(
+      () => (obs.self?.equippedStances.default ?? null) === stanceId,
+      { timeoutMs: 30_000, what: `default stance ${stanceId ?? NO_STANCE_ID}` },
+    );
+    recorder.emit({
+      kind: "build-change",
+      atMs: recorder.now(),
+      system: "stances",
+      detail: { defaultStanceId: stanceId, activeStance: obs.self?.activeStance ?? null },
+    });
+  }
+
+  private async doIfPossible(step: Extract<RouteStep, { type: "ifPossible" }>): Promise<void> {
+    const holds = this.test(step.when);
+    this.deps.recorder.emit({
+      kind: "route-conditional",
+      atMs: this.deps.recorder.now(),
+      condition: describe(step.when),
+      taken: holds,
+      skippedSteps: holds ? 0 : step.steps.length,
+    });
+    if (!holds) return;
+    await this.runSteps(step.steps);
   }
 
   private async doRepeatUntil(step: Extract<RouteStep, { type: "repeatUntil" }>): Promise<void> {
@@ -1462,11 +1754,13 @@ export class RouteExecutor {
     nodeId: string,
     forWhat: string,
     done: () => boolean,
-    missing: () => Record<string, number>,
+    reasons: () => BlockReason[],
     ignoreBiomeCap = false,
+    gateReason?: () => string | undefined,
   ): Promise<void> {
-    const { recorder } = this.deps;
+    const { recorder, obs } = this.deps;
     const startedAt = Date.now();
+    const missing = (): Record<string, number> => reasonsToMissing(reasons());
     recorder.emit({
       kind: "blocked-on-resource",
       atMs: recorder.now(),
@@ -1474,7 +1768,10 @@ export class RouteExecutor {
       forWhat,
       missing: missing(),
       farmingAt: nodeId,
+      blockReasons: reasons(),
+      gateReason: gateReason?.(),
     });
+    recorder.walletSnapshot(obs, "block-start", forWhat);
     recorder.setActivity("blocked");
     try {
       await this.farmUntil(nodeId, done, {
@@ -1493,7 +1790,10 @@ export class RouteExecutor {
         missing: missing(),
         farmingAt: nodeId,
         durationMs: Date.now() - startedAt,
+        blockReasons: reasons(),
+        gateReason: gateReason?.(),
       });
+      recorder.walletSnapshot(obs, "block-end", forWhat);
       recorder.setActivity("idle");
     }
   }
@@ -1508,6 +1808,32 @@ export class RouteExecutor {
     );
   }
 
+  /** Resolve an authored farm location without falling through to a different
+   * modifier when the route explicitly requested one. */
+  private resolveFarmNode(ref: NodeRef | undefined, biomeGroup: string): string | null {
+    if (ref) return resolveNode(ref, this.deps.obs, this.rotation);
+    return this.defaultFarmNodeFor(biomeGroup);
+  }
+
+  /** Choose a live modifier that can mint the first missing catalyst. An
+   * authored `farmAt` remains authoritative, including its requested modifier. */
+  private resourceFarmNode(
+    ref: NodeRef | undefined,
+    biomeGroup: string,
+    catalystCost: Partial<Record<string, number>> | undefined,
+  ): string | null {
+    const explicit = ref ? resolveNode(ref, this.deps.obs, this.rotation) : null;
+    if (ref) return explicit;
+    const preferred = this.defaultFarmNodeFor(biomeGroup);
+    const missingFamily = Object.entries(catalystCost ?? {}).find(
+      ([family, amount]) => this.deps.obs.catalyst(family) < (amount ?? 0),
+    )?.[0];
+    if (!missingFamily) return preferred;
+    const preferredInfo = preferred ? NODE_BIOMES[preferred] : undefined;
+    const tier = preferredInfo?.biomeTier ?? BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
+    return normalNodesFor(biomeGroup, tier, missingFamily)[0] ?? null;
+  }
+
   /**
    * Resolve the next live upgrade's actual bottleneck. Essence stays in the
    * authored biome; a missing catalyst selects that biome's node carrying the
@@ -1519,10 +1845,18 @@ export class RouteExecutor {
     recipe: ReturnType<typeof RECIPE_DATABASE.get>,
     nextPlus: number,
   ): string | null {
-    const preferred =
-      (step.farmAt ? resolveNode(step.farmAt, this.deps.obs, this.rotation) : null) ??
-      (recipe ? this.defaultFarmNodeFor(recipe.recipeGroup) : null);
+    const explicitPreferred = step.farmAt
+      ? resolveNode(step.farmAt, this.deps.obs, this.rotation)
+      : null;
+    const preferred = step.farmAt
+      ? explicitPreferred
+      : (recipe ? this.defaultFarmNodeFor(recipe.recipeGroup) : null);
     if (!recipe) return preferred;
+
+    // An explicit modifier is a hard authoring request. Farming an unrelated
+    // family forever would make the route look alive while never satisfying its
+    // real resource predicate.
+    if (step.farmAt?.kind === "biome" && step.farmAt.modifier) return preferred;
 
     const item = ITEM_DATABASE.get(step.definitionId);
     const catalystCost = item ? (upgradeCatalystCostFor(item, nextPlus) ?? {}) : {};
@@ -1534,7 +1868,7 @@ export class RouteExecutor {
     const preferredInfo = preferred ? NODE_BIOMES[preferred] : undefined;
     const biomeGroup = preferredInfo?.biomeGroup ?? recipe.recipeGroup;
     const tier = preferredInfo?.biomeTier ?? BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
-    return normalNodesFor(biomeGroup, tier).find(
+    return normalNodesFor(biomeGroup, tier, missingFamily).find(
       (nodeId) => NODE_MODIFIERS[nodeId]?.modifier === missingFamily,
     ) ?? preferred;
   }
@@ -1614,6 +1948,10 @@ export class RouteExecutor {
         nodeId: this.deps.obs.nodeId,
       },
     });
+    // The economy question tomorrow is "what did the wallet hold HERE", and the
+    // milestone set already names every instant that matters -- each biome max,
+    // all-biomes-maxed, and gear-plus-5.
+    this.deps.recorder.walletSnapshot(this.deps.obs, "milestone", id);
   }
 
   get milestonesFired(): string[] {
@@ -1657,6 +1995,14 @@ function defaultLabel(step: RouteStep): string {
       return `farm ${refLabel(step.at)} until ${describe(step.until)}`;
     case "craft":
       return `craft ${step.recipeIds.join(", ")}`;
+    case "evolveItem":
+      return `${step.mode} ${step.recipeId}`;
+    case "craftStance":
+      return `craft stance ${step.recipeId}`;
+    case "setDefaultStance":
+      return `set default stance ${step.stanceId ?? NO_STANCE_ID}`;
+    case "unequip":
+      return `unequip ${step.slot}`;
     case "equip":
       return `equip ${step.definitionIds.join(", ")}`;
     case "upgrade":
@@ -1671,6 +2017,8 @@ function defaultLabel(step: RouteStep): string {
       return `craft rune ${step.recipeId}`;
     case "attemptBoss":
       return `boss ${step.biomeGroup} T${step.tier}`;
+    case "ifPossible":
+      return `if ${describe(step.when)} then ${step.steps.length} step(s)`;
     case "repeatUntil":
       return `repeat until ${describe(step.until)}`;
   }
@@ -1679,7 +2027,7 @@ function defaultLabel(step: RouteStep): string {
 function refLabel(ref: NodeRef): string {
   if (ref.kind === "node") return ref.nodeId;
   if (ref.kind === "dungeon") return `${ref.biomeGroup} T${ref.tier} dungeon`;
-  return `${ref.biomeGroup} T${ref.tier}`;
+  return `${ref.biomeGroup} T${ref.tier}${ref.modifier ? ` (${ref.modifier})` : ""}`;
 }
 
 export function sleep(ms: number): Promise<void> {

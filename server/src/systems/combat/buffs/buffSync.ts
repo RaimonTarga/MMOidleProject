@@ -12,6 +12,7 @@ import {
   TUNDRA_CHILL_EFFECT_ID,
   CAVE_LOCKDOWN_EFFECT_ID,
   SUNDERED_EFFECT_ID,
+  PLATING_SHRED_EFFECT_ID,
   DAMAGE_DEALT_PCT_KEY,
   DAMAGE_TAKEN_PCT_KEY,
   MAX_DAMAGE_DEALT_PCT,
@@ -34,9 +35,19 @@ import { collectMechanicBuffs } from "../../classes/registry";
 import { DEFENSE_BUFFS } from "../../defense";
 import { WEAPON_BUFFS } from "../damage/weaponEffects";
 import { MOBILITY_BUFFS, slowResistedMult } from "../../world/mobility/mobilityBoots";
+import { STANCE_BUFFS } from "../../player/stances/stanceBehaviors";
 import { ABILITY_BUFFS } from "../../player/abilities/abilityBuffs";
 import { defineBuff, type BuffDescriptor, type BuffProjectionContext } from "./descriptor";
 
+/**
+ * The tooltip's CURRENT section is built from these, not from `logDetail`.
+ *
+ * A world-log sentence and an inspectable value table want different shapes: the
+ * log wants one line of prose in the past tense, the tooltip wants labelled
+ * numbers it can style. Both are derived here from the same resolved figures, so
+ * they can never drift apart, and nothing has to parse a sentence to get a number
+ * back out of it.
+ */
 const DEBUFF_BUFFS = [
   defineBuff(
     "debuff-slow",
@@ -63,6 +74,13 @@ const DEBUFF_BUFFS = [
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
         logDetail: `movement speed ${speedPct}%`,
+        remainingMs: slow.remainingMs,
+        values: [
+          { label: "Movement speed", value: `${speedPct}%`, good: false },
+          ...(mult !== Math.max(0, slow.data["speedMult"] ?? 1)
+            ? [{ label: "After slow resistance", value: `from ${Math.round(Math.max(0, slow.data["speedMult"] ?? 1) * 100)}%` }]
+            : []),
+        ],
       };
     },
     { category: "neutral", shape: "diamond", color: "#55aaff", label: "SLOW" },
@@ -94,6 +112,10 @@ const DEBUFF_BUFFS = [
         logDetail: caveLock
           ? "movement and attacks disabled"
           : "movement speed 0%",
+        remainingMs: root.remainingMs,
+        values: caveLock
+          ? [{ label: "Movement and attacks", value: "disabled", good: false }]
+          : [{ label: "Movement speed", value: "0%", good: false }],
       };
     },
     { category: "neutral", shape: "diamond", color: "#aa66ff", label: "ROOT" },
@@ -123,6 +145,12 @@ const DEBUFF_BUFFS = [
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
         logDetail: `move -${movePct}%, attack -${atkPct}%`,
+        remainingMs: ramp.remainingMs,
+        values: [
+          { label: "Stacks", value: String(ramp.stacks) },
+          { label: "Movement speed", value: `-${movePct}%`, good: false },
+          { label: "Attack cooldown", value: `+${atkPct}%`, good: false },
+        ],
       };
     },
     { category: "neutral", shape: "diamond", color: "#aaddff", label: "FROST" },
@@ -151,6 +179,12 @@ const DEBUFF_BUFFS = [
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
         logDetail: `${flavor.label}: ${perStack} dmg/stack per tick`,
+        remainingMs: dot.remainingMs,
+        values: [
+          { label: "Stacks", value: String(dot.stacks) },
+          { label: "Damage per stack", value: `${perStack} per tick`, good: false },
+          { label: "Damage per tick", value: `${perStack * dot.stacks}`, good: false },
+        ],
       };
     },
     { category: "neutral", shape: "diamond", color: "#88bb55", label: "DoT" },
@@ -174,6 +208,12 @@ const DEBUFF_BUFFS = [
         logSourceName: "Swamp rot",
         logSourceSide: "enemy",
         logDetail: `${perStack} dmg/stack per tick`,
+        remainingMs: rot.remainingMs,
+        values: [
+          { label: "Stacks", value: String(rot.stacks) },
+          { label: "Damage per stack", value: `${perStack} per tick`, good: false },
+          { label: "Damage per tick", value: `${perStack * rot.stacks}`, good: false },
+        ],
       };
     },
     { category: "neutral", shape: "diamond", color: "#88bb44", label: "ROT" },
@@ -198,6 +238,8 @@ const DEBUFF_BUFFS = [
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
         logDetail: "marked — the next heavy hit lands amplified (cleanse it)",
+        remainingMs: mark.remainingMs,
+        values: [{ label: "Next heavy hit", value: "amplified", good: false }],
       };
     },
     { category: "neutral", shape: "diamond", color: "#ffaa33", label: "MARKED" },
@@ -233,6 +275,11 @@ const DEBUFF_BUFFS = [
         logSourceName: "Volcanic heat",
         logSourceSide: "enemy",
         logDetail: `+${dealtPct}% damage dealt, +${takenPct}% damage taken — the room pays you to overstay, then collects`,
+        values: [
+          { label: "Stacks", value: String(heat.stacks) },
+          { label: "Damage dealt", value: `+${dealtPct}%`, good: true },
+          { label: "Damage taken", value: `+${takenPct}%`, good: false },
+        ],
       };
     },
     { category: "neutral", shape: "diamond", color: "#ff5522", label: "HEAT" },
@@ -260,6 +307,11 @@ const DEBUFF_BUFFS = [
         logSourceName: "Tundra chill",
         logSourceSide: "enemy",
         logDetail: `movement speed ${Math.round(speedMult * 100)}%, +${atkPct}% attack cooldown — the cold takes your legs and your tempo, and feeds what hunts you`,
+        values: [
+          { label: "Stacks", value: String(chill.stacks) },
+          { label: "Movement speed", value: `${Math.round(speedMult * 100)}%`, good: false },
+          { label: "Attack cooldown", value: `+${atkPct}%`, good: false },
+        ],
       };
     },
     { category: "neutral", shape: "diamond", color: "#88ccff", label: "CHILL" },
@@ -290,9 +342,48 @@ const DEBUFF_BUFFS = [
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
         logDetail: `+${takenPct}% damage taken from every source — cleanse it or break away`,
+        remainingMs: sundered.remainingMs,
+        values: [
+          { label: "Stacks", value: String(sundered.stacks) },
+          { label: "Damage taken", value: `+${takenPct}%`, good: false },
+        ],
       };
     },
     { category: "neutral", shape: "diamond", color: "#dd7744", label: "SUNDERED" },
+  ),
+  defineBuff(
+    "debuff-plating-shred",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      const corrosion = getStatusEffect(playerCs, PLATING_SHRED_EFFECT_ID);
+      if (!corrosion || corrosion.stacks <= 0) return null;
+      const source = world.getMonsterEntity(corrosion.sourceId);
+      const stripped = Math.max(
+        0,
+        Math.round(corrosion.stacks * (corrosion.data["platingPerStack"] ?? 0)),
+      );
+      return {
+        id: "debuff-plating-shred",
+        label: "CORRODED",
+        stacks: corrosion.stacks,
+        durationPct: -1,
+        color: "#9c7456",
+        logSourceName: source?.isMonster.name ?? "Monster corrosion",
+        logSourceSide: "enemy",
+        logDetail: `${stripped} plating stripped until the encounter ends`,
+        values: [
+          { label: "Stacks", value: String(corrosion.stacks) },
+          { label: "Plating stripped", value: `-${stripped}`, good: false },
+        ],
+      };
+    },
+    {
+      category: "neutral",
+      shape: "diamond",
+      color: "#9c7456",
+      label: "CORRODED",
+      iconKey: "debuff-sundered",
+    },
   ),
   defineBuff(
     "debuff-antiheal",
@@ -317,6 +408,11 @@ const DEBUFF_BUFFS = [
         logSourceName: source?.isMonster.name ?? "Abyssal pressure",
         logSourceSide: "enemy",
         logDetail: `healing suppressed ${suppressPct}% — burst/execute, don't out-heal`,
+        remainingMs: ah.remainingMs,
+        values: [
+          { label: "Stacks", value: String(ah.stacks) },
+          { label: "Healing suppressed", value: `${suppressPct}%`, good: false },
+        ],
       };
     },
     { category: "neutral", shape: "diamond", color: "#7755aa", label: "ANTIHEAL" },
@@ -345,6 +441,7 @@ export const ALL_BUFFS = [
   ...WEAPON_BUFFS,
   ...DEFENSE_BUFFS,
   ...MOBILITY_BUFFS,
+  ...STANCE_BUFFS,
   ...ABILITY_BUFFS,
   ...DEBUFF_BUFFS,
 ] as const satisfies readonly BuffDescriptor[];
@@ -431,6 +528,12 @@ function monsterDotBuff(effect: StatusEffect, world: World): PlayerBuff {
     logSourceName: source?.isMonster.name ?? "Monster debuff",
     logSourceSide: "enemy",
     logDetail: `${debuff.label}: ${perStack} dmg/stack per tick`,
+    remainingMs: effect.remainingMs,
+    values: [
+      { label: "Stacks", value: String(effect.stacks) },
+      { label: "Damage per stack", value: `${perStack} per tick`, good: false },
+      { label: "Damage per tick", value: `${perStack * effect.stacks}`, good: false },
+    ],
   };
 }
 

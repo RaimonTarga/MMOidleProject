@@ -6,11 +6,12 @@ import { makeT1Route, type T1RouteConfig } from "./t1RouteBuilder";
 
 export const APPRENTICE_T1_CONFIG: T1RouteConfig = {
   id: "apprentice-t1",
-  version: "2.0.0",
+  version: "2.1.0",
   classRoot: "dot-root",
+  frameId: "dot-balanced",
   description:
-    "Controlled Apprentice chase baseline: Chaotic Axe and Arcane Wrappings identity, Sweep DoT adapter, and the Cave L2 Step Back/chase/hazard/recovery profile.",
-  movementProfile: "apprentice-chase",
+    "Controlled Apprentice Orbit baseline: Chaotic Axe and Arcane Wrappings identity, Sweep DoT adapter, and the Cave L2 Step Back/Orbit/hazard/recovery profile.",
+  movementProfile: "ranged-orbit",
   bossDefenseProfile: "dodge-counterplay",
   progression: apprenticeProgression(),
   bossGear: APPRENTICE_BOSS_GEAR,

@@ -1,6 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { PlayerView } from "@mmo-idle/shared";
+import type { CompletionMode } from "../config";
 import type { Route } from "../route/types";
 import type { CompletionState, RunHeader } from "./events";
 import type { LeaseSessionEvidence } from "../concurrency/routeLeaseSession";
@@ -20,6 +21,10 @@ export interface RunSummary {
     completion: CompletionState;
     stallReason?: string;
     canonical: boolean;
+    /** Synthetic entry is acceptable for combat measurements when no other taint exists. */
+    combatEvidenceEligible: boolean;
+    /** Synthetic wallets are never a continuous economy baseline. */
+    economyEvidenceEligible: boolean;
   };
   progression: {
     finalPlayerTier: number;
@@ -62,6 +67,7 @@ export interface RunSummary {
     summonDamageDealt: number;
     summonDamageShare: number;
     targetSwitches: number;
+    stanceSwitches: Array<{ atMs: number; nodeId: string; stanceId: string | null }>;
     topIncomingSources: Array<{ name: string; damage: number }>;
     incomingByDamageType: Record<string, number>;
     damagePerTarget: Array<{ name: string; damage: number }>;
@@ -171,10 +177,97 @@ export interface RunSummary {
     abilitiesEquipped: unknown;
   };
   economy: {
+    winCondition: CompletionMode;
+    initialEssences: Record<string, number>;
+    initialCatalysts: Record<string, number>;
     finalEssences: Record<string, number>;
     finalCatalysts: Record<string, number>;
+    catalystsGainedByFamily: Record<string, number>;
+    catalystsSpentByFamily: Record<string, number>;
+    essenceSpentByType: Record<string, number>;
     essenceGainedByBiome: Record<string, Record<string, number>>;
     totalBlockedOnResourceMs: number;
+    zoneTiming: Array<{
+      biomeGroup: string;
+      firstEnteredAtMs: number | null;
+      lastEnteredAtMs: number | null;
+      entryCount: number;
+      distinctNodes: string[];
+      timeMs: number;
+      timeToLevelMs: Record<string, number>;
+      timeToMaxMs: number | null;
+      kills: number;
+      killsPerHour: number;
+      essenceGained: Record<string, number>;
+      essencePerHour: Record<string, number>;
+      catalystsByModifier: Record<string, number>;
+      craftsCompleted: number;
+      upgradesCompleted: number;
+    }>;
+    catalystGains: Array<{
+      atMs: number;
+      family: string;
+      amount: number;
+      context: unknown;
+    }>;
+    gearTimeline: {
+      crafts: Array<{
+        atMs: number;
+        recipeId: string;
+        success: boolean;
+        essenceSpent: Record<string, number>;
+        catalystsSpent: Record<string, number>;
+        context: unknown;
+      }>;
+      upgrades: Array<{
+        atMs: number;
+        itemId: string;
+        fromLevel: number;
+        newLevel: number;
+        success: boolean;
+        essenceSpent: Record<string, number>;
+        catalystsSpent: Record<string, number>;
+        context: unknown;
+      }>;
+      evolutions: Array<{
+        atMs: number;
+        recipeId: string;
+        mode: "evolve" | "reconstruct";
+        predecessorId: string;
+        success: boolean;
+        essenceSpent: Record<string, number>;
+        catalystsSpent: Record<string, number>;
+        context: unknown;
+      }>;
+      stanceCrafts: Array<{
+        atMs: number;
+        recipeId: string;
+        stanceId: string;
+        success: boolean;
+        essenceSpent: Record<string, number>;
+        catalystsSpent: Record<string, number>;
+        context: unknown;
+      }>;
+      equips: Array<{ atMs: number; slot: string; definitionId: string | null }>;
+    };
+    milestones: Array<{ atMs: number; id: string; detail?: Record<string, unknown> }>;
+    tierUps: Array<{ atMs: number; newTier: number }>;
+    /**
+     * Full wallet readings at every economically meaningful instant of the run
+     * (start, each milestone, both ends of every resource block, immediately
+     * before every craft/upgrade spend, and end of run).
+     */
+    walletSnapshots: Array<{
+      atMs: number;
+      reason: string;
+      detail?: string;
+      essences: Record<string, number>;
+      catalysts: Record<string, number>;
+      catalystProgress: Record<string, number>;
+      biomeLevels: Record<string, number>;
+      globalMastery: number;
+      nodeId: string;
+    }>;
   };
   catalysts: {
     finalWallet: Record<string, number>;
@@ -235,6 +328,7 @@ export function buildSummary(params: {
   endedAt: number;
   leaseEvidence?: LeaseSessionEvidence;
   maximumSimultaneouslyProgressing?: number;
+  winCondition?: CompletionMode;
 }): RunSummary {
   const { header, recorder, route, self } = params;
   const durationMs = params.endedAt - header.startedAt;
@@ -253,8 +347,54 @@ export function buildSummary(params: {
 
   const essenceGainedByBiome: Record<string, Record<string, number>> = {};
   const catalystsByModifier: Record<string, number> = {};
+  const catalystsGainedByFamily: Record<string, number> = {};
+  const catalystsSpentByFamily: Record<string, number> = {};
+  const essenceSpentByType: Record<string, number> = {};
   let totalKills = 0;
   let blockedTotal = 0;
+
+  for (const event of recorder.economyTimeline.catalystGains) {
+    catalystsGainedByFamily[event.family] =
+      (catalystsGainedByFamily[event.family] ?? 0) + event.amount;
+  }
+  for (const event of [
+    ...recorder.economyTimeline.crafts,
+    ...recorder.economyTimeline.upgrades,
+    ...recorder.economyTimeline.evolutions,
+    ...recorder.economyTimeline.stanceCrafts,
+  ]) {
+    if (!event.success) continue;
+    for (const [type, amount] of Object.entries(event.essenceSpent)) {
+      essenceSpentByType[type] = (essenceSpentByType[type] ?? 0) + amount;
+    }
+    for (const [family, amount] of Object.entries(event.catalystsSpent)) {
+      catalystsSpentByFamily[family] = (catalystsSpentByFamily[family] ?? 0) + amount;
+    }
+  }
+
+  const firstEnteredAt = new Map<string, number>();
+  const lastEnteredAt = new Map<string, number>();
+  const entryCount = new Map<string, number>();
+  const distinctNodes = new Map<string, Set<string>>();
+  for (const entry of recorder.economyTimeline.nodeEntries) {
+    if (!entry.biomeGroup) continue;
+    firstEnteredAt.set(
+      entry.biomeGroup,
+      Math.min(firstEnteredAt.get(entry.biomeGroup) ?? entry.atMs, entry.atMs),
+    );
+    lastEnteredAt.set(entry.biomeGroup, entry.atMs);
+    entryCount.set(entry.biomeGroup, (entryCount.get(entry.biomeGroup) ?? 0) + 1);
+    const nodes = distinctNodes.get(entry.biomeGroup) ?? new Set<string>();
+    nodes.add(entry.nodeId);
+    distinctNodes.set(entry.biomeGroup, nodes);
+  }
+
+  const levelUpsByBiome = new Map<string, Array<{ newLevel: number; atMs: number }>>();
+  for (const levelUp of recorder.economyTimeline.biomeLevelUps) {
+    const levels = levelUpsByBiome.get(levelUp.biomeGroup) ?? [];
+    levels.push({ newLevel: levelUp.newLevel, atMs: levelUp.atMs });
+    levelUpsByBiome.set(levelUp.biomeGroup, levels);
+  }
 
   const biomes = recorder.biomeStats
     .sort((a, b) => b.timeMs - a.timeMs)
@@ -292,6 +432,48 @@ export function buildSummary(params: {
       };
     });
 
+  const economyBiomes = [...new Set([
+    ...biomes.map((biome) => biome.biomeGroup),
+    ...recorder.economyTimeline.nodeEntries
+      .map((entry) => entry.biomeGroup)
+      .filter((biome): biome is string => biome !== null),
+  ])].map((biomeGroup) => {
+    const stats = recorder.biomeStats.find((entry) => entry.biomeGroup === biomeGroup);
+    const first = firstEnteredAt.get(biomeGroup) ?? null;
+    const levels = (levelUpsByBiome.get(biomeGroup) ?? []).map((level) => ({
+      level: level.newLevel,
+      atMs: level.atMs,
+      elapsedMs: first === null ? null : Math.max(0, level.atMs - first),
+    }));
+    const timeMs = stats?.timeMs ?? 0;
+    const hoursInBiome = timeMs / 3_600_000;
+    const essence = { ...(stats?.essenceGained ?? {}) } as Record<string, number>;
+    return {
+      biomeGroup,
+      firstEnteredAtMs: first,
+      lastEnteredAtMs: lastEnteredAt.get(biomeGroup) ?? null,
+      entryCount: entryCount.get(biomeGroup) ?? 0,
+      distinctNodes: [...(distinctNodes.get(biomeGroup) ?? new Set<string>())],
+      timeMs,
+      timeToLevelMs: Object.fromEntries(
+        levels.map((level) => [String(level.level), level.elapsedMs ?? level.atMs]),
+      ),
+      timeToMaxMs: levels.find((level) => level.level >= 6)?.elapsedMs ?? null,
+      kills: stats?.kills ?? 0,
+      killsPerHour: hoursInBiome > 0 ? round((stats?.kills ?? 0) / hoursInBiome) : 0,
+      essenceGained: essence,
+      essencePerHour: Object.fromEntries(
+        Object.entries(essence).map(([type, amount]) => [
+          type,
+          hoursInBiome > 0 ? round(amount / hoursInBiome) : 0,
+        ]),
+      ),
+      catalystsByModifier: { ...(stats?.catalystsByModifier ?? {}) },
+      craftsCompleted: stats?.craftsCompleted ?? 0,
+      upgradesCompleted: stats?.upgradesCompleted ?? 0,
+    };
+  });
+
   const totalOut = recorder.totalDamageDealtByPlayer + recorder.totalDamageDealtBySummons;
   const samples = recorder.totalSamples;
 
@@ -305,6 +487,13 @@ export function buildSummary(params: {
       // The one flag a downstream analysis must respect before mixing this run
       // into balance conclusions.
       canonical: header.taints.length === 0,
+      combatEvidenceEligible: header.taints.every(
+        (taint) => taint === "SYNTHETIC_TIER_ENTRY",
+      ),
+      economyEvidenceEligible:
+        header.taints.length === 0 &&
+        (!header.tierEntry ||
+          header.tierEntry.economyPolicy === "authoritative-economy-continuation"),
     },
     progression: {
       finalPlayerTier: self?.playerTier ?? 0,
@@ -326,6 +515,11 @@ export function buildSummary(params: {
       summonDamageDealt: round(recorder.totalDamageDealtBySummons),
       summonDamageShare: totalOut > 0 ? round(recorder.totalDamageDealtBySummons / totalOut) : 0,
       targetSwitches: recorder.targetSwitches,
+      stanceSwitches: recorder.stanceSwitches.map((event) => ({
+        atMs: event.atMs,
+        nodeId: event.nodeId,
+        stanceId: event.stanceId,
+      })),
       topIncomingSources: topDamage(recorder.damageInBySource, 10),
       incomingByDamageType: roundRecord(recorder.damageInByType),
       damagePerTarget: topDamage(recorder.damageOutByTarget, 10),
@@ -400,10 +594,87 @@ export function buildSummary(params: {
       abilitiesEquipped: self?.equippedAbilities ?? null,
     },
     economy: {
+      winCondition: params.winCondition ?? "full-gauntlet",
+      initialEssences: { ...(header.initialEssences ?? {}) },
+      initialCatalysts: { ...(header.initialCatalysts ?? {}) },
       finalEssences: { ...(self?.essences ?? {}) },
       finalCatalysts: { ...(self?.catalysts ?? {}) },
+      catalystsGainedByFamily,
+      catalystsSpentByFamily,
+      essenceSpentByType,
       essenceGainedByBiome,
       totalBlockedOnResourceMs: blockedTotal,
+      zoneTiming: economyBiomes,
+      catalystGains: recorder.economyTimeline.catalystGains.map((event) => ({
+        atMs: event.atMs,
+        family: event.family,
+        amount: event.amount,
+        context: event.context,
+      })),
+      gearTimeline: {
+        crafts: recorder.economyTimeline.crafts.map((event) => ({
+          atMs: event.atMs,
+          recipeId: event.recipeId,
+          success: event.success,
+          essenceSpent: { ...event.essenceSpent } as Record<string, number>,
+          catalystsSpent: { ...event.catalystsSpent },
+          context: event.context,
+        })),
+        upgrades: recorder.economyTimeline.upgrades.map((event) => ({
+          atMs: event.atMs,
+          itemId: event.itemId,
+          fromLevel: event.fromLevel,
+          newLevel: event.newLevel,
+          success: event.success,
+          essenceSpent: { ...event.essenceSpent } as Record<string, number>,
+          catalystsSpent: { ...event.catalystsSpent },
+          context: event.context,
+        })),
+        evolutions: recorder.economyTimeline.evolutions.map((event) => ({
+          atMs: event.atMs,
+          recipeId: event.recipeId,
+          mode: event.mode,
+          predecessorId: event.predecessorId,
+          success: event.success,
+          essenceSpent: { ...event.essenceSpent } as Record<string, number>,
+          catalystsSpent: { ...event.catalystsSpent },
+          context: event.context,
+        })),
+        stanceCrafts: recorder.economyTimeline.stanceCrafts.map((event) => ({
+          atMs: event.atMs,
+          recipeId: event.recipeId,
+          stanceId: event.stanceId,
+          success: event.success,
+          essenceSpent: { ...event.essenceSpent } as Record<string, number>,
+          catalystsSpent: { ...event.catalystsSpent },
+          context: event.context,
+        })),
+        equips: recorder.economyTimeline.equips.map((event) => ({
+          atMs: event.atMs,
+          slot: event.slot,
+          definitionId: event.definitionId,
+        })),
+      },
+      walletSnapshots: recorder.economyTimeline.walletSnapshots.map((event) => ({
+        atMs: event.atMs,
+        reason: event.reason,
+        detail: event.detail,
+        essences: { ...event.essences },
+        catalysts: { ...event.catalysts },
+        catalystProgress: { ...event.catalystProgress },
+        biomeLevels: { ...event.biomeLevels },
+        globalMastery: event.globalMastery,
+        nodeId: event.nodeId,
+      })),
+      milestones: recorder.economyTimeline.milestones.map((event) => ({
+        atMs: event.atMs,
+        id: event.id,
+        detail: event.detail,
+      })),
+      tierUps: recorder.economyTimeline.tierUps.map((event) => ({
+        atMs: event.atMs,
+        newTier: event.newTier,
+      })),
     },
     catalysts: {
       finalWallet: { ...(self?.catalysts ?? {}) },

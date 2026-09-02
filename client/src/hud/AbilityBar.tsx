@@ -23,7 +23,14 @@ import {
 import { GameIcon } from "../ui/GameIcon";
 import { abilityIconSource } from "../ui/abilityIcons";
 import { useIsMobile } from "./useIsMobile";
-import { HudDock } from "./primitives";
+import { HudDock, TooltipCard, useHoverTooltip } from "./primitives";
+import { useAbilityContext } from "../ui/describe/useAbilityContext";
+import {
+  abilityAccessibleLabel,
+  abilityTooltipContent,
+  cooldownRemainingMs,
+  type AbilityRuntime,
+} from "./statusTooltips";
 import "./hud.css";
 
 const ICON_SIZE = 46;
@@ -48,6 +55,8 @@ interface SlotStatus {
   justFired: boolean;
   /** Guard boon is currently active (its buff is up), or a cast is winding up. */
   active: boolean;
+  /** Wind-up left, in ms — present only while this slot is mid-cast. */
+  castRemainingMs?: number;
 }
 
 type DesktopAbilityState = "cooling" | "active" | "triggered" | "ready";
@@ -77,7 +86,12 @@ function computeStatus(
 function castStatus(startedAt: number, castMs: number, now: number): SlotStatus {
   const elapsed = Math.max(0, now - startedAt);
   const progress = castMs > 0 ? Math.min(1, elapsed / castMs) : 1;
-  return { remainingFrac: 1 - progress, justFired: false, active: true };
+  return {
+    remainingFrac: 1 - progress,
+    justFired: false,
+    active: true,
+    castRemainingMs: Math.max(0, castMs - elapsed),
+  };
 }
 
 function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotStatus }) {
@@ -215,17 +229,37 @@ function DesktopAbilitySlot({
       : cooling
         ? "cooling"
         : "ready";
-  const tooltip = `${meta.label}: ${ability.name} ${rank} — ${
-    state === "cooling" ? `cooling, ${remainingSeconds}s remaining` : state
-  }`;
+
+  // The tile's visual state is a four-way including the just-fired flash, which
+  // is a render cue rather than something the ability is DOING; the tooltip
+  // collapses it back to the three states a player can act on.
+  const runtime: AbilityRuntime = {
+    state: status.castRemainingMs !== undefined
+      ? "casting"
+      : status.active
+        ? "active"
+        : cooling
+          ? "cooling"
+          : "ready",
+    cooldownRemainingMs: cooldownRemainingMs(ability, playerTier, status.remainingFrac),
+    castRemainingMs: status.castRemainingMs,
+  };
+  const abilityContext = useAbilityContext();
+  const label = abilityAccessibleLabel(ability, abilityContext, runtime);
+  // No `title` alongside this: a native browser tooltip would race the custom
+  // one and show the same thing twice, in two different visual languages.
+  const { handlers, node } = useHoverTooltip(
+    <TooltipCard content={abilityTooltipContent(ability, abilityContext, runtime)} />,
+  );
   return (
     <div
       className={`combat-ability-slot combat-ability-slot--${ability.slot} combat-ability-slot--${state}`}
       data-ability-icon={ability.icon ?? ability.id}
       data-ability-state={state}
       role="listitem"
-      aria-label={tooltip}
-      title={tooltip}
+      tabIndex={0}
+      aria-label={label}
+      {...handlers}
     >
       <div className="combat-ability-slot__icon">
         <GameIcon
@@ -252,6 +286,7 @@ function DesktopAbilitySlot({
       </div>
 
       <div className="combat-ability-slot__name">{ability.name} {rank}</div>
+      {node}
     </div>
   );
 }

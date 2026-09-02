@@ -37,12 +37,21 @@ export const BENCH_BOT_ID = `${BENCH_BOT_PREFIX}0`;
  * Deliberate baseline choices. Never derive these from database iteration order:
  * adding a new alphabetically-earlier option must not silently retune the bench.
  *
- * Perfection is the least polarising authored stance: modest offence/tempo with
- * no self-damage, defensive penalty, recovery loop, or conditional target rule.
+ * The canonical stance must be UNCONDITIONAL. It was Perfection until the 2026-09-02
+ * pass gave Perfection an intrinsic >=90% HP gate: a benched fight leaves that gate
+ * within the first exchange, so the bot would have spent most of every measurement
+ * carrying Perfection's -20% Plating with none of its payoff — an instrument that
+ * silently reads a different build than the one it names.
+ *
+ * Offensive is now the least polarising unconditional posture in the cast: the
+ * smallest authored magnitudes, the cheapest destination, no self-damage, no
+ * recovery loop, no target/crowd/HP rule. It still exercises the stance stat path.
+ * NOTE: this MOVES the bench baseline; pre-2026-09-02 runs are not comparable.
+ *
  * The Rite set covers kill recovery, between-fight class reset, and OOC cadence
  * without pairing contradictory options such as Swift Repose/Lingering Battle.
  */
-const CANONICAL_STANCE_ID = 'perfection-stance';
+const CANONICAL_STANCE_ID = 'offensive-stance';
 const CANONICAL_RITE_PRIORITY = [
   'blood-offering',
   'purification',

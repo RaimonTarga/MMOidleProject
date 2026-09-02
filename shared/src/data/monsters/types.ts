@@ -377,6 +377,12 @@ export interface MonsterRaisesDead {
   /** Scalars on the risen copy (default 1) — the dead come back diminished. */
   hpMult?: number;
   damageMult?: number;
+  /** Optional readable wind-up before each cadence raise resolves. */
+  castMs?: number;
+  /** Cast-bar label. Required by authoring convention whenever castMs is set. */
+  castName?: string;
+  /** Client resolve cue, reusing the ordinary monster cast event. */
+  castFx?: string;
 }
 
 export interface MonsterDefinition {
@@ -455,17 +461,40 @@ export interface MonsterDefinition {
    */
   chargeOnAggro?: { speedMult: number; durationMs: number };
   /**
-   * Multi-step opener run once per fresh player-aggro session. The monster
-   * charges to contact, briefly locks the player in place and out of attacks,
-   * then immediately starts its authored chargedAttack. Every stage is
-   * interruptible; the existing charged-attack controller owns the final cast.
+   * Multi-step opener run once per fresh player-aggro session. Every stage is
+   * interruptible. Cave brutes charge, lock and then begin their authored slam;
+   * dive bombers first telegraph their flight, then rush into a brief landing root.
    */
-  engageSequence?: {
-    kind: 'charge-lock-charged-attack';
-    speedMult: number;
-    maxChargeMs: number;
-    lockoutMs: number;
-  };
+  engageSequence?:
+    | {
+        kind: 'charge-lock-charged-attack';
+        speedMult: number;
+        maxChargeMs: number;
+        lockoutMs: number;
+      }
+    | {
+        kind: 'cast-charge-root';
+        name: string;
+        castMs: number;
+        speedMult: number;
+        maxChargeMs: number;
+        rootMs: number;
+        /** On contact, immediately arm this monster's authored charged attack. */
+        followWithChargedAttack?: boolean;
+        /** Client flight tell played as the wind-up resolves. */
+        fx?: string;
+      }
+    | {
+        /** A casted aerial approach whose landing is an amplified first hit. */
+        kind: 'cast-charge-strike';
+        name: string;
+        castMs: number;
+        speedMult: number;
+        maxChargeMs: number;
+        damageMultiplier: number;
+        /** Client flight tell played as the wind-up resolves. */
+        fx?: string;
+      };
   /**
    * Fixed patrol route. Presence replaces random wander: while un-aggroed the
    * monster walks a deterministic path of waypoints (relative to its spawn, so one
@@ -692,6 +721,8 @@ export interface MonsterDefinition {
   shellUp?: {
     /** HP fraction (0..1) that triggers the retract. */
     atHpPct: number;
+    /** Optional wind-up before the shell closes. The monster is planted during it. */
+    castMs?: number;
     durationMs: number;
     /**
      * BOSS SHELL CYCLE. When set, the shell is no longer once-per-life: after it
@@ -905,6 +936,20 @@ export interface MonsterDefinition {
     rechargeAfterCleanMs?: number;
   };
   /**
+   * A one-time, low-health defensive cast. At or below `thresholdPct` max HP the
+   * monster stops to cast, then gains a temporary ward which absorbs direct hits
+   * before HP. Unlike `enemyShield`, this is not periodic and never recharges.
+   */
+  lowHealthWard?: {
+    name: string;
+    thresholdPct: number;
+    castMs: number;
+    wardPct: number;
+    durationMs: number;
+    effectId: string;
+    fx?: string;
+  };
+  /**
    * Soft damage cap protecting the MONSTER — mirror of the player damage-cap
    * (defense.max-hit-pct / max-hit-mult). When a single player hit exceeds
    * `capPct × maxHp`, the portion above the threshold is scaled by `capMult`
@@ -930,6 +975,24 @@ export interface MonsterDefinition {
    * dodges the hit. Default false (a dodged hit applies no debuffs).
    */
   appliesThroughEvade?: boolean;
+  /** Non-damaging cast-time haste applied to self or nearby monster allies. */
+  castedAttackSpeedBuff?: {
+    name: string;
+    castMs: number;
+    cooldownMs: number;
+    initialCooldownMs?: number;
+    effectId: string;
+    attackSpeedPct: number;
+    durationMs?: number;
+    attacks?: number;
+    target: 'self' | 'nearby-monsters';
+    /** Nearby targeting includes the caster by default (Howl); supports can opt out. */
+    includeSelf?: boolean;
+    radius?: number;
+    /** Start and complete this self/ally boon without requiring attack range. */
+    castWhileOutOfRange?: boolean;
+    fx?: string;
+  };
   /**
    * Charged (cast-time) special attack — a TELEGRAPHED big hit. When the per-combat
    * `cooldownMs` is ready and the monster is in range, it begins a `castMs` wind-up
@@ -987,6 +1050,12 @@ export interface MonsterDefinition {
      * CONSTRICT. Skipped on an evaded hit like every other on-hit rider.
      */
     rootMs?: number;
+    /**
+     * SLOW the primary target when the charged hit lands. Unlike `rootMs`, this
+     * retains movement at the authored fraction. Used for the Sand Scorpion's
+     * telegraphed Numbing Sting rather than applying a slow on every basic hit.
+     */
+    appliesSlow?: { speedMult: number; durationMs: number };
     /**
      * WITHER — the landed charged hit suppresses the target's Recovery
      * effectiveness by `reduction` for `durationMs`, as ONE non-stacking debuff.

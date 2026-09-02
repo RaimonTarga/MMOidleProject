@@ -1,0 +1,171 @@
+{
+  "schema": "t2-experiment-ledger/1",
+  "generatedAt": "2026-09-02",
+  "build": "develop @ 721d2b57 + working tree",
+  "evidenceClassRule": "Every run below carries SYNTHETIC_TIER_ENTRY and NON_CANONICAL_REWARD_MULTIPLIER. Progression integrity and combat sanity only; never economy pacing.",
+  "experiments": [
+    {
+      "id": "T2-E001",
+      "date": "2026-09-02",
+      "type": "offline-validation",
+      "hypothesis": "Templates derived from the canonical T1 routes describe characters the game could produce.",
+      "independentVariable": null,
+      "control": null,
+      "rewardMultiplier": null,
+      "result": "fail-then-fixed",
+      "finding": "All 12 templates owned the four Clearing starter items while declaring no clearing biome level, so those recipes never unlocked.",
+      "fix": "Added clearing: 4 to the template manifest. Excluded from globalMastery(), so no rune budget or upgrade ceiling changed.",
+      "classification": "harness-defect",
+      "confidence": "high",
+      "after": "18/18 templates PASS"
+    },
+    {
+      "id": "T2-E002",
+      "date": "2026-09-02",
+      "type": "live-validation",
+      "hypothesis": "applyTierEntryProfile produces exactly the declared character with no stale combat state.",
+      "result": "pass",
+      "finding": "Striker, Squire, Apprentice, Slinger, Spirit all PASS; 212-221 combined offline+live checks each, 0 errors.",
+      "classification": null,
+      "confidence": "high",
+      "gap": "Conduit not exercised live (needs CONDUIT_ENABLED)."
+    },
+    {
+      "id": "T2-E003",
+      "date": "2026-09-02",
+      "type": "rune-regression",
+      "hypothesis": "A targeting preference orders enemies already in the fight; it does not choose which fight to start.",
+      "independentVariable": "equipped targeting rule",
+      "control": "focus-closest in the same scene; the same scene out of combat",
+      "result": "hypothesis-violated-then-fixed",
+      "finding": "In Combat -> Focus Highest HP selected a 4,000 HP unengaged monster 3,200px away over the wolf attacking the player. Cause: distance weight 0.001 against a raw-maxHp score, with the acquire radius raised to 10,000 by Find Enemies. Separately, focus-lowest-hp scored 1/hp and inverted into focus-nearest at large HP scales.",
+      "fix": "HP-preference modes choose from the engaged set while anything is engaged, and score a normalized 0..1 term. focus-elites deliberately excluded.",
+      "classification": "rune-autoplay-defect",
+      "confidence": "high",
+      "test": "server/test/runeTargetingPreference.test.ts",
+      "nextSuggested": "Designer call on whether focus-elites may still start a fight across the node."
+    },
+    {
+      "id": "T2-E004",
+      "date": "2026-09-02",
+      "type": "static-analysis",
+      "hypothesis": "Tier-2 items are crafted the way Tier-1 items are.",
+      "result": "hypothesis-wrong",
+      "finding": "20 of 32 T2 recipes are evolutions and craftRecipe refuses them. Evolution needs the predecessor in the BAG at +5. Across six class plans: 7 evolve, 15 evolve-after-unequip, 22 reconstruct (~3.5x cost), 6 plain craft, 0 unreachable.",
+      "rootCause": "EVOLUTION_REQUIRED_PLUS moved 3 -> 5 on 2026-08-29; the canonical T1 routes were never updated and leave most lineages below +5.",
+      "fix": "Added an unequip route step and a per-item acquisition planner resolved from each class's own template. The +5 shortfall was NOT routed around.",
+      "classification": "harness-gap-fixed + progression-finding-recorded",
+      "confidence": "high"
+    },
+    {
+      "id": "T2-E005",
+      "date": "2026-09-02",
+      "runId": "striker-t2-mid-intended-2026-09-02T00-56-21Z-30f8e515",
+      "type": "live-run",
+      "route": "striker-t2-mid",
+      "template": "striker-t1-t2-entry-clean",
+      "rewardMultiplier": 100,
+      "durationMs": 541581,
+      "hypothesis": "The control route progresses through its first biome leg.",
+      "result": "blocked",
+      "deaths": 1,
+      "kills": 98,
+      "bossAttempts": 0,
+      "finding": "Blocked 521 of 540 seconds on reconstruct:plains-charm-t2 needing 2 alacrity catalysts, while parked in node-t2-plains-04 (dominion) holding 46,044 spare yellow and 5 unspendable dominion catalysts.",
+      "classification": "route-problem",
+      "fix": "t2FarmFor(group, family): cost-farms prefer a node whose modifier mints the required family.",
+      "confidence": "high"
+    },
+    {
+      "id": "T2-E006",
+      "date": "2026-09-02",
+      "runId": "striker-t2-mid-intended-2026-09-02T01-08-02Z-a178ee7c",
+      "type": "live-run",
+      "route": "striker-t2-mid",
+      "template": "striker-t1-t2-entry-clean",
+      "rewardMultiplier": 100,
+      "control": "T2-E005",
+      "independentVariable": "cost-farm node selection",
+      "result": "pass",
+      "finding": "Plains leg completed: evolve vest, reconstruct charm (298s, down from never), unequip+evolve boots, recorded steelsword skip, maxed Plains to 12, three opportunistic upgrades correctly resolving to +0 (the T2 ceiling is +0 below GM 42).",
+      "classification": "fix-verified",
+      "confidence": "high"
+    },
+    {
+      "id": "T2-E007",
+      "date": "2026-09-02",
+      "type": "code-reading-plus-measurement",
+      "finding": "The dev reward multiplier deliberately does not scale catalyst progress, so catalysts mint at 1x in every run. Measured: 2 alacrity in 298s at 100x. Total T2 demand derived live: alacrity 40, swarming 17, fortified 17, heavy 16, dominion 9 = 99, on the order of four hours of irreducible waiting per full-tier run.",
+      "consequence": "An accelerated T2 run is catalyst-bound rather than combat-bound.",
+      "response": "Added the catalyst-primed entry-economy arm: zero essence plus the full derived T2 catalyst demand. Progression-integrity instrument only; never economy evidence.",
+      "classification": "harness-measurement-design",
+      "confidence": "high"
+    },
+    {
+      "id": "T2-E008",
+      "date": "2026-09-02",
+      "runId": "striker-t2-mid-intended-2026-09-02T01-19-10Z-d0f8e5ea",
+      "type": "live-run",
+      "route": "striker-t2-mid",
+      "template": "striker-t1-t2-entry-catalyst-primed",
+      "rewardMultiplier": 100,
+      "control": "T2-E006 (clean)",
+      "independentVariable": "catalyst carryover",
+      "result": "reached-boss-then-walled",
+      "deaths": 2,
+      "bossAttempts": 3,
+      "bossHpFractionRemaining": 0.917,
+      "finding": "Plains leg finished in ~35s (vs ~300s). Two deaths to the Plains T2 boss (gorging-razortusk), largest hit 61 into a 183 HP pool = three hits to kill; boss left at 91.7% both times.",
+      "interpretation": "One class, one branch, non-canonical, synthetic template, fighting the Plains T2 boss with a TIER-1 weapon (chaotic-axe +5) because the control route fights each boss at the end of its own leg. Consistent with the designer's report that T2 numbers are out, but cannot distinguish boss-too-strong from route-fights-too-early from build-has-no-T2-weapon.",
+      "classification": "ambiguous-preserved",
+      "confidence": "low-as-balance-evidence, high-as-description",
+      "nextSuggested": "Same boss from a build already holding a T2 weapon; separately with the boss step moved to the end of the tier. One variable each."
+    },
+    {
+      "id": "T2-E009",
+      "date": "2026-09-02",
+      "type": "live-batch",
+      "batch": "bot/runs/t2-smoke-2026-09-02/batch-2026-09-02T00-50-44-725Z",
+      "routes": ["striker-t2-mid", "squire-t2-mid", "apprentice-t2-mid", "slinger-t2-mid", "spirit-t2-mid"],
+      "template": "clean",
+      "rewardMultiplier": 100,
+      "result": "terminated-early",
+      "finding": "Terminated by the environment at ~2 minutes. All five templates validated live; four of five had already evolved plains-vest-t2. Uncontrolled parallel put all five bots in the same node (contention recorded) - fine as a pipeline check, useless as comparative evidence.",
+      "classification": "infrastructure",
+      "confidence": "high",
+      "nextSuggested": "Admit the T2 routes to the controlled-batch registry so isolated-parallel area leases are available, then re-run to completion."
+    }
+  ],
+  "openHypotheses": [
+    {
+      "id": "T2-H01",
+      "statement": "ruinous-axe is universally dominant: 43 atk x 1.20 aps = 51.6 naive DPS (38.7 after its dead swing) against 25.9 for the next best.",
+      "matters": "If true, five of the seven T2 weapons are decoration."
+    },
+    {
+      "id": "T2-H02",
+      "statement": "knight-steelsword (18 atk @ 1.0 aps) is worse than the T1 weapon every canonical route already ends on; all six class plans skip it.",
+      "matters": "The tier's opening weapon may be dead on arrival."
+    },
+    {
+      "id": "T2-H03",
+      "statement": "Desert mobility boots (58 speed, mobility.kite-speed-pct) are an extreme effective-defence multiplier against melee-heavy Cave.",
+      "matters": "Highest-value single equipment experiment; needs mid-tier checkpoints."
+    },
+    {
+      "id": "T2-H04",
+      "statement": "Conduit prefers slow high-attack weapons. Minion DPS is proportional to owner.attack x owner.APS (speed-neutral); flat plating breaks the tie toward slow, and onHitDamage is not inherited at all.",
+      "matters": "Determines whether Mountain or Cave is Conduit's biome. Derived from code, not yet measured in play."
+    },
+    {
+      "id": "T2-H05",
+      "statement": "Mountain and Jungle armour have no natural adopter (1/6 and 0/6 in the plans).",
+      "matters": "Two of seven armour identities may be inert."
+    },
+    {
+      "id": "T2-H06",
+      "statement": "The +5 evolution gate, not Tier-2 costs, is what makes Tier-2 gear expensive: 22 of 50 acquisitions pay ~3.5x because of a Tier-1 upgrade shortfall.",
+      "matters": "Changes whether the fix is a T1 route change or a T2 cost change."
+    }
+  ]
+}

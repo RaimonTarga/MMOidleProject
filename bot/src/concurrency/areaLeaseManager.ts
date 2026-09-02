@@ -277,26 +277,50 @@ export class AreaLeaseManager {
    */
   breakParkedHolds(): string[] {
     if (this.closed) return [];
+    // A parked hold is normally a physical safety barrier: the owner may
+    // still be standing in that node while its next lease request waits. It
+    // is safe to break only a genuine wait cycle, not merely because another
+    // request happens to want the parked node. The latter can expose a
+    // productively fighting bot to a second bot entering its node.
+    const blockersByOwner = new Map<string, Set<string>>();
+    for (const request of this.pending) {
+      const blockers = new Set<string>();
+      for (const areaId of request.areaIds) {
+        const owner = this.ownerByArea.get(areaId);
+        if (owner && owner !== request.ownerId) blockers.add(owner);
+      }
+      blockersByOwner.set(request.ownerId, blockers);
+    }
+    const cycleOwners = new Set<string>();
+    for (const request of this.pending) {
+      if (hasWaitCycle(request.ownerId, blockersByOwner)) cycleOwners.add(request.ownerId);
+    }
+
     const cutoff = this.now() - this.parkedHoldBreakerMs;
     const broken: string[] = [];
     for (const request of [...this.pending]) {
       if (request.requestedAt > cutoff) continue;
+      if (!cycleOwners.has(request.ownerId)) continue;
       const wanted = new Set(request.areaIds);
       const parked = [...(this.areasByOwner.get(request.ownerId) ?? [])].filter(
         (areaId) => !wanted.has(areaId),
       );
       if (parked.length === 0) continue;
-      // Only give up a parked node that is actually blocking somebody. A bot
-      // simply queueing for a busy dungeon keeps standing where it is, because
-      // releasing it there would expose the very overlap the hold prevents. In
-      // a genuine ring every parked area IS wanted, so the ring still breaks.
-      const contested = parked.some((areaId) =>
+      // Release only parked areas wanted by another member of the same cycle;
+      // unrelated leases held by this owner remain protective.
+      const toRelease = parked.filter((areaId) =>
         this.pending.some(
-          (other) => other.ownerId !== request.ownerId && other.areaIds.includes(areaId),
+          (other) =>
+            other.ownerId !== request.ownerId &&
+            cycleOwners.has(other.ownerId) &&
+            other.areaIds.includes(areaId),
         ),
       );
-      if (!contested) continue;
-      this.releaseExcept(request.ownerId, request.areaIds, "parked-hold-breaker");
+      if (toRelease.length === 0) continue;
+      const retained = [...(this.areasByOwner.get(request.ownerId) ?? [])].filter(
+        (areaId) => !toRelease.includes(areaId),
+      );
+      this.releaseExcept(request.ownerId, retained, "parked-hold-breaker");
       broken.push(request.ownerId);
     }
     return broken.sort();
@@ -461,4 +485,26 @@ function sameAreas(a: readonly string[], b: readonly string[]): boolean {
 function intersects(a: readonly string[], b: readonly string[]): boolean {
   const values = new Set(a);
   return b.some((value) => values.has(value));
+}
+
+function hasWaitCycle(
+  start: string,
+  blockersByOwner: ReadonlyMap<string, ReadonlySet<string>>,
+): boolean {
+  const visiting = new Set<string>();
+  const visited = new Set<string>();
+
+  const visit = (ownerId: string): boolean => {
+    if (ownerId === start && visiting.size > 0) return true;
+    if (visited.has(ownerId) || visiting.has(ownerId)) return false;
+    visiting.add(ownerId);
+    for (const blocker of blockersByOwner.get(ownerId) ?? []) {
+      if (visit(blocker)) return true;
+    }
+    visiting.delete(ownerId);
+    visited.add(ownerId);
+    return false;
+  };
+
+  return visit(start);
 }

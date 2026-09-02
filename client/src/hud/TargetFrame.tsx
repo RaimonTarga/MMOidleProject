@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { dotElementForPlayer, weaponDotProfileForEffect } from '@mmo-idle/shared';
+import { dotElementForPlayer, weaponDotProfileForEffect, type StatusValue } from '@mmo-idle/shared';
 import { targetFrameAtom, zoneBossAtom, combatArchetypeAtom, passivesAtom, selectedSubVariantAtom, type TargetFrameData } from './atoms';
 import { statusMeta, bossEffectMeta } from './targetStatusMeta';
 import { GameIcon } from '../ui/GameIcon';
@@ -15,6 +15,8 @@ const DOT_ELEMENT_COLOR: Record<string, string> = {
   doom:   '#9d4dff',
 };
 import { useHoverTooltip } from './stat/tooltip';
+import { TooltipCard } from './primitives';
+import { bossEffectTooltipContent, targetStatusTooltipContent } from './statusTooltips';
 import './targetFrame.css';
 
 // Keep the frame up briefly after the target dies/clears so fast auto-retargeting
@@ -30,6 +32,8 @@ interface TileData {
   remainingMs: number;
   totalMs: number;
   iconId?: string;
+  /** Server-resolved magnitudes, when this effect publishes any. */
+  values?: StatusValue[];
 }
 
 const DOT_ELEMENT_ICON: Record<string, string> = {
@@ -39,7 +43,7 @@ const DOT_ELEMENT_ICON: Record<string, string> = {
   doom: 'debuff-antiheal',
 };
 
-function StatusTile({ id, iconId, label, color, stacks, remainingMs, totalMs, bossEffect = false }: Omit<TileData, 'key'> & { bossEffect?: boolean }) {
+function StatusTile({ id, iconId, label, color, stacks, remainingMs, totalMs, values, bossEffect = false }: Omit<TileData, 'key'> & { bossEffect?: boolean }) {
   const permanent = remainingMs < 0;
   const durationPct = !permanent && totalMs > 0
     ? Math.max(0, Math.min(100, (remainingMs / totalMs) * 100))
@@ -51,16 +55,23 @@ function StatusTile({ id, iconId, label, color, stacks, remainingMs, totalMs, bo
     : remainingMs > 0 ? '<1s' : '';
 
   const isWeaponReservoir = weaponDotProfileForEffect(id) !== undefined;
-  const stackText = isWeaponReservoir && stacks > 0
-    ? ` — ${stacks} stored damage`
-    : stacks > 1 ? ` ×${stacks}` : '';
-  const tip = `${label}${stackText}`
-    + (permanent ? ' — permanent' : secs ? ` — ${secs} left` : '');
-  const { handlers, node } = useHoverTooltip(tip);
+  // Target tiles get the same explanation grammar the buff bar does. Where the
+  // server has no resolved magnitude for an effect, the card still carries its
+  // name, its authored explanation and the stacks/clock the tile already knew.
+  const content = bossEffect
+    ? bossEffectTooltipContent(id, label, stacks)
+    : targetStatusTooltipContent({ id, stacks, remainingMs, totalMs, values }, label);
+  const { handlers, node } = useHoverTooltip(<TooltipCard content={content} />);
   const icon = bossEffect ? bossEffectIconSource(id) : targetStatusIconSource(iconId ?? id);
 
   return (
-    <div className="tf-tile-wrap" {...handlers}>
+    <div
+      className="tf-tile-wrap"
+      tabIndex={0}
+      role="img"
+      aria-label={`${label}${stacks > 1 ? `, ${stacks} stacks` : ''}`}
+      {...handlers}
+    >
       <div
         className={`tf-tile${icon ? ' tf-tile--art' : ''}`}
         style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}66` }}
@@ -136,6 +147,7 @@ export function TargetFrame() {
         stacks: s.stacks,
         remainingMs: s.remainingMs,
         totalMs: s.totalMs,
+        values: s.values,
       };
     }),
     ...(shown.isBoss
@@ -144,9 +156,29 @@ export function TargetFrame() {
           id: b,
           ...bossEffectMeta(b),
           stacks: shown.bossEffectStacks[b] ?? 1,
-          remainingMs: -1,
-          totalMs: 0,
+          remainingMs: shown.bossEffectDurations[b]?.remainingMs ?? -1,
+          totalMs: shown.bossEffectDurations[b]?.totalMs ?? 0,
         }))
+      : []),
+    ...(shown.enemyBarrier
+      ? [{
+          key: 'enemy-barrier',
+          id: 'enemy-barrier',
+          ...statusMeta('enemy-barrier'),
+          label: shown.enemyBarrier.amount > 0 ? 'BARRIER' : 'REFORMING',
+          stacks: 1,
+          remainingMs: shown.enemyBarrier.amount > 0
+            ? shown.enemyBarrier.remainingMs
+            : shown.enemyBarrier.rechargeRemainingMs ?? 0,
+          totalMs: shown.enemyBarrier.amount > 0
+            ? shown.enemyBarrier.totalMs
+            : shown.enemyBarrier.rechargeTotalMs ?? 0,
+          values: [{
+            label: 'Absorb remaining',
+            value: String(Math.max(0, Math.round(shown.enemyBarrier.amount))),
+            good: false,
+          }],
+        }]
       : []),
   ];
 
@@ -180,6 +212,7 @@ export function TargetFrame() {
               stacks={t.stacks}
               remainingMs={t.remainingMs}
               totalMs={t.totalMs}
+              values={t.values}
               bossEffect={t.key.startsWith('b-')}
             />
           ))}

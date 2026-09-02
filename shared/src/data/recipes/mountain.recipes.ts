@@ -41,6 +41,16 @@ import type { Recipe } from './types';
 // numbers are derived from the T1 baseline.
 // ─────────────────────────────────────────────────────────────────────────
 
+// ── T1 ECONOMY CANDIDATE C (2026-08-31) ───────────────────────────────────
+// Every T1 (+5) step's ESSENCE cost was cut 25%, rounded to the nearest 5
+// (Math.round semantics): 205->155, 260->195, 200->150, 100->75, 75->55,
+// 70->55, 60->45. Catalyst costs, initial crafts and +1..+4 are UNCHANGED, so
+// the per-item "same total (N)" notes below now describe the pre-candidate
+// total, not the current one. The target is the post-mastery affordability
+// tail only -- the 2x bot cohort spent its last ~15m/run earning the final
+// +5 essence after every biome was already maxed.
+// ──────────────────────────────────────────────────────────────────────────
+
 export const mountainRecipeEntries = [
   // ── T1 ──
   // `weapon.empowered-mult-bonus` is MULTIPLICATIVE on the empowered attack's
@@ -60,7 +70,7 @@ export const mountainRecipeEntries = [
       { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 45 }, requiredBiomeLevel: 3 },
       { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
       { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 205 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 155 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -80,7 +90,7 @@ export const mountainRecipeEntries = [
       { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 45 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 205 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 155 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -101,7 +111,7 @@ export const mountainRecipeEntries = [
       { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 60 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -121,7 +131,7 @@ export const mountainRecipeEntries = [
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 15 }, requiredBiomeLevel: 4 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 70 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 55 }, requiredBiomeLevel: 4 },
     ],
   }],
 

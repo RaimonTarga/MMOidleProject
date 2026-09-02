@@ -1,19 +1,17 @@
 import {
-  CAVE_LOCKDOWN_EFFECT_ID,
   GAME_CONFIG,
   MONSTER_DATABASE,
   STARTER_RUNE_IDS,
   emptyEquipment,
-  getStatusEffects,
+  getStatusEffect,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
-import { attachComponent } from '../src/ecs/markerHelpers';
 import { updateMonsters } from '../src/systems/combat/ai/ai';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { updateCombat } from '../src/systems/combat/engine/combat';
-import { updateCombatState } from '../src/systems/combat/engine/combatState';
 import { applyStun } from '../src/systems/combat/status/stun';
 import { buildGroundZoneViews } from '../src/systems/world/groundZones';
+import { updateMovement } from '../src/systems/world/movement';
 import { World } from '../src/world/World';
 
 function assert(condition: boolean, message: string): void {
@@ -25,6 +23,12 @@ const DEF = MONSTER_DATABASE.get('cave-troll');
 assert(!!DEF?.engageSequence, 'cave troll should author the engage sequence');
 assert(!!DEF?.chargedAttack?.aoe, 'cave troll sequence needs the existing slam');
 const SEQUENCE = DEF!.engageSequence!;
+assert(
+  SEQUENCE.kind === 'cast-charge-root' && SEQUENCE.castMs === 500 &&
+    SEQUENCE.speedMult === 15 && SEQUENCE.rootMs === 1_700 &&
+    SEQUENCE.followWithChargedAttack === true,
+  'Cave Troll should use a brief cast, rush, root, then arm its Ground Slam',
+);
 
 function playerSlices(id: string, x: number): PersistedPlayerSlices {
   return {
@@ -62,7 +66,8 @@ function engage(world: World, playerId: string, monsterX: number, now: number) {
   return troll!;
 }
 
-// Contact begins a source-owned root + attack lock, then forces the existing slam.
+// The Troll plants for a short cast, rushes, roots on contact without stunning,
+// then immediately starts its pre-existing Ground Slam.
 {
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('sequence-target', 405), 'sequence-target');
@@ -70,31 +75,35 @@ function engage(world: World, playerId: string, monsterX: number, now: number) {
   const troll = engage(world, player.isPlayer.id, 400, t0);
 
   updateMonsters(world, 100, t0);
-  assert(player.isRooted !== undefined, 'contact should root the player');
-  assert(player.cannotAttack !== undefined, 'contact should lock player attacks');
   assert(
-    getStatusEffects(player.tracksCombat, CAVE_LOCKDOWN_EFFECT_ID).length === 1,
-    'contact should create one source-owned lockdown status',
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Savage Rush' && event.castMs === 500),
+    'the Troll should cast Savage Rush in place before charging',
   );
+  updateMonsters(world, 100, t0 + 500);
+  const root = getStatusEffect(player.tracksCombat, 'slow');
+  assert(root?.data.speedMult === 0 && root.data.totalMs === 1_700, 'Savage Rush should root on landing');
+  assert(player.cannotAttack === undefined, 'Savage Rush should root, not stun or lock player attacks');
 
-  const hp = player.hasHealth.hp;
-  troll.performsAttack.lastAttackAt = 0;
-  updateCombat(world, 100, t0);
-  assert(player.hasHealth.hp === hp, 'the lockdown beat must suppress troll basic attacks');
-
-  updateCombatState(world, SEQUENCE.lockoutMs);
-  assert(!player.isRooted, 'lock expiry should release movement');
-  assert(!player.cannotAttack, 'lock expiry should release attacks');
-
-  const slamAt = t0 + SEQUENCE.lockoutMs + 1;
-  updateMonsters(world, 100, slamAt);
-  updateCombat(world, 100, slamAt);
-  const zones = buildGroundZoneViews(world, NODE, slamAt) ?? [];
-  assert(zones.length === 1, 'lock completion should immediately start one slam telegraph');
-  assert(zones[0].kind === 'slam-telegraph', 'the forced finisher should reuse the slam');
+  updateCombat(world, 100, t0 + 500);
+  const zones = buildGroundZoneViews(world, NODE, t0 + 500) ?? [];
+  assert(zones.length === 1 && zones[0].kind === 'slam-telegraph', 'landing should immediately start the existing Ground Slam telegraph');
 }
 
-// A stun during the lockdown aborts the sequence and releases its markers.
+// The rush speed is an actual position-speed override, not just an animation cue.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('rush-speed-target', 800), 'rush-speed-target');
+  const t0 = 4_000;
+  const troll = engage(world, player.isPlayer.id, 400, t0);
+  updateMonsters(world, 100, t0);
+  updateMonsters(world, 100, t0 + 500);
+  assert(troll.hasPosition.speed === 225, 'Savage Rush should raise the Troll from 15 to 225 movement speed');
+  const before = troll.hasPosition.current.x;
+  updateMovement(world, 100, t0 + 500);
+  assert(troll.hasPosition.current.x - before >= 22, 'Savage Rush should cover about 22.5 units per 100ms while charging');
+}
+
+// A stun during the cast aborts the rush and clears its client telegraph.
 {
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('interrupt-target', 405), 'interrupt-target');
@@ -102,49 +111,13 @@ function engage(world: World, playerId: string, monsterX: number, now: number) {
   updateMonsters(world, 100, 2_000);
   applyStun(troll.tracksCombat, 1_000, player.isPlayer.id);
   updateMonsters(world, 100, 2_100);
-
-  assert(!player.isRooted, 'interrupting the lock should release its root');
-  assert(!player.cannotAttack, 'interrupting the lock should release its attack marker');
   assert(
-    getStatusEffects(player.tracksCombat, CAVE_LOCKDOWN_EFFECT_ID).length === 0,
-    'interrupting should remove only the troll-owned lockdown instance',
+    getStatusEffect(player.tracksCombat, 'slow') === undefined,
+    'interrupting Savage Rush should prevent its landing root',
   );
-}
-
-// Releasing the cave-owned lock must not remove an intrinsic Summoner marker.
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(playerSlices('summoner-target', 405), 'summoner-target');
-  attachComponent(world, player, 'cannotAttack', {});
-  const troll = engage(world, player.isPlayer.id, 400, 3_000);
-  updateMonsters(world, 100, 3_000);
-  applyStun(troll.tracksCombat, 1_000, player.isPlayer.id);
-  updateMonsters(world, 100, 3_100);
   assert(
-    player.cannotAttack !== undefined,
-    'sequence cleanup must preserve a pre-existing cannotAttack marker',
-  );
-}
-
-// At range the opener owns the charge speed; CC aborts it for this session.
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(playerSlices('charge-target', 620), 'charge-target');
-  const troll = engage(world, player.isPlayer.id, 400, 4_000);
-  updateMonsters(world, 100, 4_000);
-  assert(troll.hasAwareness.state === 'chasing', 'distant opener should chase');
-  assert(
-    troll.hasPosition.speed === Math.round(troll.controlsMonster.baseSpeed * SEQUENCE.speedMult),
-    'distant opener should use the authored charge multiplier',
-  );
-
-  applyStun(troll.tracksCombat, 500, player.isPlayer.id);
-  updateMonsters(world, 100, 4_100);
-  updateCombatState(world, 500);
-  updateMonsters(world, 100, 4_700);
-  assert(
-    troll.hasPosition.speed !== Math.round(troll.controlsMonster.baseSpeed * SEQUENCE.speedMult),
-    'an interrupted charge must not resume in the same aggro session',
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-end' && event.fired === false),
+    'interrupting Savage Rush should clear its cast bar',
   );
 }
 

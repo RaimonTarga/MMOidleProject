@@ -65,7 +65,13 @@ export const graveyardMonsterEntries = [
     // directly; it makes everything ELSE hurt you faster, which is a different job
     // from the plague DoT it used to carry.
     // WARNING: attack speed only. Do not also stack a big damage boost here.
-    empowersAllies: { intervalMs: 8000, radius: 260, attackSpeedPct: 0.25, durationMs: 5000 },
+    castedAttackSpeedBuff: {
+      name: 'Necrotic Screech', castMs: 1200, cooldownMs: 8000,
+      initialCooldownMs: 8000, effectId: 'carrion-screech-haste',
+      attackSpeedPct: 0.25, durationMs: 5000,
+      target: 'nearby-monsters', includeSelf: false, radius: 260,
+      castWhileOutOfRange: true, fx: 'howl',
+    },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
 
@@ -114,6 +120,7 @@ export const graveyardMonsterEntries = [
     raisesDead: {
       intervalMs: 5000, initialDelayMs: 2500, corpseRange: 280, maxAlive: 4,
       hpMult: 0.7, damageMult: 0.8,
+      castMs: 1100, castName: 'Raise Dead', castFx: 'raise-dead',
     },
   }],
 

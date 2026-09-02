@@ -5,6 +5,7 @@ export const SLINGER_T1_CONFIG: T1RouteConfig = {
   id: "slinger-t1",
   version: "2.0.0",
   classRoot: "reload-root",
+  frameId: "reload-heavy",
   description:
     "Controlled Slinger ranged baseline: Poison Dagger and evasion-armor identity, Sweep clip adapter, Orbit from Mountain L3, and Step Back from Cave L2.",
   movementProfile: "ranged-orbit",

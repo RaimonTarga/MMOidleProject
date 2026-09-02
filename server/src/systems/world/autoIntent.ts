@@ -21,6 +21,8 @@ import {
   RUNE_LET_DOTS_FINISH_FLAG,
   RUNE_SPREAD_DOTS_FLAG,
   RUNE_TACTICAL_RELOAD_FLAG,
+  RUNE_EVADE_TELEGRAPH_FLAG,
+  RUNE_KEEP_DISTANCE_FLAG,
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
 } from "../combat/ai/runeConfig";
@@ -53,7 +55,7 @@ function resolveIntent(
   world: World,
   player: PlayerEntity,
 ): HasAutoIntent | null {
-  if (!player.usesAutocombat.auto) {
+  if (!player.usesAutocombat.auto && !player.fightsWhileTraveling) {
     return (
       attackIntent(world, player, player.hasAttackTarget?.targetId, false) ??
       travelIntent(player, false)
@@ -71,6 +73,22 @@ function resolveIntent(
       kind: "flee",
       reason,
       source: ruleLabel(player, "flee"),
+      activeRune: runeTrace(player, "flee"),
+      travelPaused: player.fightsWhileTraveling !== undefined,
+    };
+  }
+
+  if (getFlag(player.tracksCombat, RUNE_EVADE_TELEGRAPH_FLAG)) {
+    const overridden = getFlag(player.tracksCombat, RUNE_KEEP_DISTANCE_FLAG)
+      ? runeTrace(player, "orbit")
+      : runeTrace(player, "chase-enemy");
+    return {
+      kind: "idle",
+      reason: "Stepping out of an incoming attack",
+      source: ruleLabel(player, "step-back"),
+      activeRune: runeTrace(player, "step-back"),
+      ...(overridden ? { overriddenRune: overridden } : {}),
+      travelPaused: player.fightsWhileTraveling !== undefined,
     };
   }
 
@@ -83,7 +101,23 @@ function resolveIntent(
       leaderId: effectivePartyLeaderId(world, player) ?? undefined,
       reason: "Staying with the party leader",
       source: ruleLabel(player, "follow-and-assist"),
+      activeRune: runeTrace(player, "follow-and-assist"),
     };
+  }
+
+  // A retained travel path is not the current owner while Fight Back is
+  // resolving the interruption; expose the combat Rune first and annotate it
+  // as a paused route.
+  if (player.fightsWhileTraveling) {
+    const interruptedAttack = attackIntent(
+      world,
+      player,
+      getAutoTargetId(player) ?? player.hasAttackTarget?.targetId,
+      true,
+    );
+    if (interruptedAttack) {
+      return { ...interruptedAttack, travelPaused: true };
+    }
   }
 
   const travel = travelIntent(player, true);
@@ -149,7 +183,13 @@ function travelIntent(
         reason: automated
           ? "Following the hunt's path"
           : "Following your chosen path",
-        source: "",
+        source: getFlag(player.tracksCombat, "rune.avoidEnemies")
+          ? ruleLabel(player, "avoid-enemies")
+          : ruleLabel(player, "fight-back"),
+        activeRune: getFlag(player.tracksCombat, "rune.avoidEnemies")
+          ? runeTrace(player, "avoid-enemies")
+          : runeTrace(player, "fight-back"),
+        travelPaused: player.fightsWhileTraveling !== undefined,
       }
     : null;
 }
@@ -164,6 +204,7 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
       kind: "idle",
       reason: "Waiting to recover to full health",
       source: ruleLabel(player, "wait-for-regen"),
+      activeRune: runeTrace(player, "wait-for-regen"),
     };
   }
   if (
@@ -176,6 +217,7 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
       kind: "idle",
       reason: "Waiting for execution to recharge",
       source: ruleLabel(player, "wait-for-execution"),
+      activeRune: runeTrace(player, "wait-for-execution"),
     };
   }
   if (
@@ -188,6 +230,7 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
       kind: "idle",
       reason: "Waiting for reload to finish",
       source: ruleLabel(player, "tactical-reload"),
+      activeRune: runeTrace(player, "tactical-reload"),
     };
   }
   return null;
@@ -195,23 +238,26 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
 
 function attackExplanation(
   player: PlayerEntity,
-): Pick<HasAutoIntent, "reason" | "source"> {
+): Pick<HasAutoIntent, "reason" | "source" | "activeRune"> {
   if (getFlag(player.tracksCombat, RUNE_FOCUS_ELITES_FLAG)) {
     return {
       reason: "Elite target priority",
       source: ruleLabel(player, "focus-elites"),
+      activeRune: runeTrace(player, "focus-elites"),
     };
   }
   if (getFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG)) {
     return {
       reason: "Spreading damage-over-time effects",
       source: ruleLabel(player, "spread-dots"),
+      activeRune: runeTrace(player, "spread-dots"),
     };
   }
   if (getFlag(player.tracksCombat, RUNE_LET_DOTS_FINISH_FLAG)) {
     return {
       reason: "Avoiding damage-over-time overkill",
       source: ruleLabel(player, "let-dots-finish"),
+      activeRune: runeTrace(player, "let-dots-finish"),
     };
   }
 
@@ -220,11 +266,13 @@ function attackExplanation(
       return {
         reason: "Lowest-health eligible target",
         source: ruleLabel(player, "focus-lowest-hp"),
+        activeRune: runeTrace(player, "focus-lowest-hp"),
       };
     case "highest-max-hp":
       return {
         reason: "Largest eligible health pool",
         source: ruleLabel(player, "focus-highest-max-hp"),
+        activeRune: runeTrace(player, "focus-highest-max-hp"),
       };
     case "damage":
       return { reason: "Best opening for damage", source: "" };
@@ -237,6 +285,9 @@ function attackExplanation(
       return {
         reason: "Nearest eligible target",
         source: ruleLabel(player, "focus-closest"),
+        activeRune: getFlag(player.tracksCombat, RUNE_KEEP_DISTANCE_FLAG)
+          ? runeTrace(player, "orbit")
+          : runeTrace(player, "chase-enemy") ?? runeTrace(player, "focus-closest"),
       };
   }
 }
@@ -254,6 +305,18 @@ function ruleLabel(
     ACTION_DATABASE.get(actionId)?.name ??
     ""
   );
+}
+
+function runeTrace(
+  player: PlayerEntity,
+  actionId: RuneActionId,
+) {
+  const rule = player.tracksProgression.runesEquipped.find(
+    (entry) => entry.actionId === actionId,
+  );
+  return rule
+    ? { conditionId: rule.conditionId, actionId: rule.actionId }
+    : undefined;
 }
 
 function applyIntent(
@@ -281,5 +344,12 @@ function sameIntent(
     a.targetMonsterTypeId === b.targetMonsterTypeId &&
     a.leaderId === b.leaderId &&
     a.destBiomeGroup === b.destBiomeGroup
+    && a.activeRune?.conditionId === b.activeRune?.conditionId
+    && a.activeRune?.actionId === b.activeRune?.actionId
+    && a.overrideRune?.conditionId === b.overrideRune?.conditionId
+    && a.overrideRune?.actionId === b.overrideRune?.actionId
+    && a.overriddenRune?.conditionId === b.overriddenRune?.conditionId
+    && a.overriddenRune?.actionId === b.overriddenRune?.actionId
+    && a.travelPaused === b.travelPaused
   );
 }

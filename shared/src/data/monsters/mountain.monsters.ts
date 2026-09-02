@@ -93,45 +93,54 @@ export const mountainMonsterEntries = [
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     // T2 sentinel — an even slower, shorter hold (it barely budges from its post).
-    // GROUND SLAM - the same reusable committed circle the Cave Brute/Troll use.
-    // The Titan line's shared beat: plant it, walk out of it. Placeholder numbers.
+    // GROUND SLAM — the Crag Behemoth's broad committed circle at trash scale:
+    // plant it, walk out of it, or take the Mountain's catastrophic impact.
     chargedAttack: {
-      name: 'Ground Slam', castMs: 1800, cooldownMs: 12000, initialCooldownMs: 8000,
-      multiplier: 1.5, fx: 'strong-kick',
+      name: 'Ground Slam', castMs: 2400, cooldownMs: 6000, initialCooldownMs: 0,
+      multiplier: 1.9, fx: 'strong-kick',
       aoe: { radius: 120 },
+    },
+    // One readable desperation defense: once at 25% HP, the Titan plants itself
+    // for a second and raises a ward worth a quarter of its maximum health.
+    lowHealthWard: {
+      name: 'Granite Barrier', thresholdPct: 0.25, castMs: 1000,
+      wardPct: 0.25, durationMs: 8000, effectId: 'granite-barrier', fx: 'shield',
     },
     patrol: { waypoints: [{ x: -120, y: 0 }, { x: 120, y: 0 }], mode: 'pingpong', holdMinMs: 2500, holdMaxMs: 5000 },
   }],
 
   ['stone-eagle', {
     id: 'stone-eagle', name: 'Stone Eagle', color: 0xccdde8,
-    // FLYER T1 — the DIVE-BOMBER. Aerial roaming while idle; it crosses ledges
-    // because it FLIES. One dive/charge on engagement, then ordinary combat.
+    // FLYER T1 — a fast, erratic aerial hunter. It crosses ledges because it
+    // FLIES, then opens with a high-damage Skyfall Rend before ordinary combat.
     // WARNING: no repeated hit-and-run loop (locked).
-    stats: { hp: 244, attack: 88, plating: 0, damageReduction: 0, speed: 40, attackRange: 12, attackCooldown: 2800, pullRange: 285 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'mountain',
+    stats: { hp: 244, attack: 88, plating: 0, damageReduction: 0, speed: 105, attackRange: 12, attackCooldown: 2800, pullRange: 410 },
+    behavior: 'melee', attackStyle: 'talons', biome: 'mountain',
     rewards: { essence: 12, essenceType: 'blue', level: 1, biomeXp: 68 },
-    ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 500, idleMaxMs: 2000 },
-    // Aerial roaming; ledges do not apply because it FLIES. The `chargeOnAggro`
-    // below IS the one-time dive on engagement - it does not repeat.
+    ai: { wanderRadius: 430, leashRange: 1200, idleMinMs: 180, idleMaxMs: 720 },
+    // One telegraphed aerial alpha strike. It uses the shared dive trail, but
+    // pays off in damage rather than pinning the player in place.
     flies: true,
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
+    engageSequence: {
+      kind: 'cast-charge-strike', name: 'Skyfall Rend', castMs: 1000,
+      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 2, fx: 'dive-bomb',
+    },
   }],
 
   ['peak-archer', {
     id: 'peak-archer', name: 'Boulder Thrower', color: 0xaabbcc,
-    // ARTILLERY T2 — evolved. Still a chokepoint/position-holding ranged threat with
-    // a heavy boulder. Optional (only if cheap): a lobbed/delayed impact with a small
-    // telegraphed landing area. Do NOT build a subsystem solely for this.
+    // ARTILLERY T2 — evolved. Still a chokepoint/position-holding ranged threat,
+    // now with a huge planted boulder that makes the player leave its impact zone.
     stats: { hp: 277, attack: 106, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
     behavior: 'ranged', attackStyle: 'boulder', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 13, essenceType: 'blue', level: 1, biomeXp: 75 },
-    // Optional lobbed impact with a small telegraphed landing area - cheap because
-    // it is the same planted-circle primitive, not a new subsystem.
+    // HUGE BOULDER — a full three-second wind-up that starts three seconds into
+    // combat, then crushes a large planted circle. It reuses the committed AoE
+    // primitive, so stepping out is real counterplay rather than a target-following hit.
     chargedAttack: {
-      name: 'Boulder Toss', castMs: 1700, cooldownMs: 10000, initialCooldownMs: 4500,
-      multiplier: 1.6, fx: 'power-shot',
-      aoe: { radius: 110 },
+      name: 'Huge Boulder', castMs: 1500, cooldownMs: 12000, initialCooldownMs: 3000,
+      multiplier: 2.25, fx: 'huge-boulder',
+      aoe: { radius: 83 },
     },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
@@ -229,14 +238,10 @@ export const mountainMonsterEntries = [
 
   ['cliffside-roc', {
     id: 'cliffside-roc', name: 'Cliffside Roc', color: 0x778899,
-    // FLYER T2 — AERIAL ARTILLERY (the lineage skipped a tier and returned).
-    // Progression: Stone Eagle is the dive-bomber, the Roc is the bombardier. It
-    // maintains useful spacing through FLIGHT, not ordinary ground backpedaling.
-    // Behavior pass converts it off `kiter`.
-    stats: { hp: 574, attack: 179, plating: 0, damageReduction: 0, speed: 34, attackRange: 260, attackCooldown: 3500, pullRange: 380 },
-    // AERIAL ARTILLERY, not a ground kiter (locked): it keeps useful spacing by
-    // being in the air, so it is plain `ranged` and lets flight do the work.
-    behavior: 'ranged', attackStyle: 'boulder', biome: 'mountain',
+    // FLYER T2 — a huge close-range raptor. It shares the clear talon rake with
+    // the Savanna Hawk rather than reading as another generic ranged artillery mob.
+    stats: { hp: 574, attack: 179, plating: 0, damageReduction: 0, speed: 34, attackRange: 12, attackCooldown: 3500, pullRange: 380 },
+    behavior: 'melee', attackStyle: 'talons', biome: 'mountain',
     flies: true,
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 450 },
     ai: { wanderRadius: 210, leashRange: 640, idleMinMs: 2000, idleMaxMs: 5500 },

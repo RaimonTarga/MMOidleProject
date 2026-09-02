@@ -210,3 +210,149 @@ export function fxBestialFrenzy(scene: GameScene, x: number, y: number): void {
     gravityY: -55,
   });
 }
+
+/** Dire Howl: a large, bright pack-rally wave that is easy to read in the scrum. */
+export function fxDireHowl(scene: GameScene, x: number, y: number): void {
+  for (let i = 0; i < 3; i++) {
+    const ring = scene.add.graphics({ x, y: y - 7 }).setDepth(DEPTH.FX);
+    ring.lineStyle(4 - i, i === 1 ? 0xe0caff : 0xb18cff, 0.96 - i * 0.14);
+    ring.strokeCircle(0, 0, 22 + i * 5);
+    scene.tweens.add({
+      targets: ring,
+      scaleX: 8 + i * 2.1,
+      scaleY: 4.2 + i * 0.95,
+      alpha: 0,
+      delay: i * 105,
+      duration: 600 + i * 80,
+      ease: 'Cubic.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+  }
+  const flash = scene.add.graphics({ x, y: y - 7 }).setDepth(DEPTH.FX);
+  flash.fillStyle(0xdcc8ff, 0.55);
+  flash.fillCircle(0, 0, 28);
+  scene.tweens.add({
+    targets: flash,
+    scale: 2.7,
+    alpha: 0,
+    duration: 420,
+    ease: 'Quad.easeOut',
+    onComplete: () => flash.destroy(),
+  });
+  burstFx(scene, 'ptx-spark', x, y - 7, 26, 620, {
+    tint: 0xc5a7ff,
+    speed: { min: 80, max: 230 },
+    angle: { min: 0, max: 360 },
+    scale: { start: 0.85, end: 0 },
+    alpha: { start: 1, end: 0 },
+    gravityY: -35,
+  });
+}
+
+/** Thorn Spitter Barrage: a contained green charge-up, not a premature volley. */
+export function fxThornBarrage(scene: GameScene, x: number, y: number): void {
+  const aura = scene.add.graphics({ x, y: y - 5 }).setDepth(DEPTH.FX);
+  aura.fillStyle(0x89dd59, 0.28);
+  aura.fillCircle(0, 0, 24);
+  aura.lineStyle(2.5, 0xd9ff9b, 0.9);
+  aura.strokeCircle(0, 0, 24);
+  aura.setScale(0.45);
+  aura.setAlpha(0);
+  scene.tweens.add({
+    targets: aura,
+    scale: 1.35,
+    alpha: 0,
+    duration: 440,
+    ease: 'Cubic.easeOut',
+    onComplete: () => aura.destroy(),
+  });
+
+  // Thorns bloom around the Spitter and stay there: this is stored pressure,
+  // with the later normal-arrow FX paying out the actual shots.
+  for (let i = 0; i < 5; i++) {
+    const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+    const thorn = scene.add.graphics({ x, y: y - 5 }).setDepth(DEPTH.FX);
+    thorn.lineStyle(2.5, 0x89dd59, 0.95);
+    thorn.lineBetween(15, 0, 31, 0);
+    thorn.fillStyle(0xd9ff9b, 0.95);
+    thorn.fillTriangle(36, 0, 27, -4, 27, 4);
+    thorn.setRotation(angle);
+    thorn.setScale(0.45);
+    thorn.setAlpha(0.95);
+    scene.tweens.add({
+      targets: thorn,
+      scale: 1,
+      alpha: 0,
+      delay: i * 32,
+      duration: 410,
+      ease: 'Back.easeOut',
+      onComplete: () => thorn.destroy(),
+    });
+  }
+  burstFx(scene, 'ptx-spark', x, y - 5, 14, 460, {
+    tint: 0x89dd59,
+    speed: { min: 20, max: 75 },
+    angle: { min: 0, max: 360 },
+    scale: { start: 0.6, end: 0 },
+    alpha: { start: 0.85, end: 0 },
+  });
+}
+
+/** Shell Up: a heavy moss-green carapace folds around the Snapper, then locks shut. */
+export function fxShellUp(scene: GameScene, x: number, y: number): void {
+  const shell = scene.add.graphics({ x, y: y - 5 }).setDepth(DEPTH.FX);
+  shell.fillStyle(0x31522b, 0.62);
+  shell.fillEllipse(0, 0, 72, 46);
+  shell.lineStyle(4, 0xb4d66a, 0.95);
+  shell.strokeEllipse(0, 0, 72, 46);
+  shell.lineStyle(2, 0x6c963f, 0.85);
+  shell.strokeEllipse(0, 0, 50, 30);
+  shell.setScale(1.75, 0.42);
+  shell.setAlpha(0);
+  scene.tweens.add({
+    targets: shell,
+    scaleX: 1,
+    scaleY: 1,
+    alpha: 1,
+    duration: 150,
+    ease: 'Back.easeOut',
+    onComplete: () => {
+      scene.tweens.add({
+        targets: shell,
+        alpha: 0,
+        scaleX: 1.18,
+        scaleY: 1.12,
+        delay: 290,
+        duration: 340,
+        ease: 'Quad.easeOut',
+        onComplete: () => shell.destroy(),
+      });
+    },
+  });
+
+  // Two inward pressure rings make this read as armor closing, not an outward hit.
+  for (let i = 0; i < 2; i++) {
+    const ring = scene.add.graphics({ x, y: y - 4 }).setDepth(DEPTH.FX);
+    ring.lineStyle(3 - i, i === 0 ? 0xc9e97a : 0x567f36, 0.9);
+    ring.strokeEllipse(0, 0, 150 - i * 28, 64 - i * 10);
+    scene.tweens.add({
+      targets: ring,
+      scaleX: 0.38,
+      scaleY: 0.48,
+      alpha: 0,
+      delay: i * 70,
+      duration: 380,
+      ease: 'Cubic.easeIn',
+      onComplete: () => ring.destroy(),
+    });
+  }
+
+  burstFx(scene, 'ptx-spark', x, y - 4, 24, 560, {
+    tint: 0xb4d66a,
+    speed: { min: 55, max: 150 },
+    angle: { min: 195, max: 345 },
+    scale: { start: 0.85, end: 0 },
+    alpha: { start: 0.95, end: 0 },
+    gravityY: 85,
+  });
+}

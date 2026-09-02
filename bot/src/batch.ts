@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
 import { join, resolve } from "node:path";
 import {
   buildConfig,
@@ -19,9 +20,47 @@ import {
   isT1ControlledRouteId,
 } from "./routes";
 import { startDashboardOrWarn } from "./ui/server";
+import {
+  T1_ECONOMY_ARMS,
+  T1_ECONOMY_EXPERIMENT_ID,
+  T1_ECONOMY_EXPERIMENT_REVISION,
+  isT1EconomyArm,
+  t1EconomyConfigForArm,
+  t1Plus5EssenceCosts,
+} from "@mmo-idle/shared";
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function setServerRewardMultiplier(
+  serverUrl: string,
+  accountId: string,
+  multiplier: number,
+): Promise<void> {
+  let observed: number | null = null;
+  const controller = new BotConnection(serverUrl, accountId);
+  try {
+    await controller.connect({
+      onDelta: () => undefined,
+      onWorldEvents: () => undefined,
+      onDied: () => undefined,
+      onAscended: () => undefined,
+      onRewardMultiplier: (value) => { observed = value; },
+      onKicked: () => undefined,
+    });
+    const intents = new Intents(controller);
+    const deadline = Date.now() + 5_000;
+    while (observed !== multiplier && Date.now() < deadline) {
+      intents.setRewardMultiplier(multiplier);
+      await sleep(100);
+    }
+    if (observed !== multiplier) {
+      throw new Error(`server did not settle reward multiplier at ${multiplier}x (observed ${observed ?? "none"})`);
+    }
+  } finally {
+    controller.disconnect();
+  }
 }
 
 type ManifestStatus =
@@ -165,6 +204,11 @@ async function main(): Promise<void> {
   const count = Number(args.count ?? "1");
   const outDir = normalizeOutDir(args.out ?? "runs");
   const parallel = args.parallel === "true";
+  const economyArms = (args.economyArms ?? "")
+    .split(",")
+    .map((arm) => arm.trim())
+    .filter(Boolean);
+  const factorial = economyArms.length > 0;
   const controlledSettings = controlled
     ? controlledBatchSettings(args)
     : {
@@ -194,6 +238,23 @@ async function main(): Promise<void> {
   if (routes.length === 0) throw new Error("batch has no routes");
   if (!Number.isInteger(count) || count < 1) throw new Error("--count must be a positive integer");
 
+  if (factorial) {
+    const primaryRoutes = ["striker-t1", "squire-t1", "apprentice-t1", "conduit-t1"];
+    if (controlled) {
+      throw new Error("T1 factorial batches must use --controlled=false so arms interleave in one shared world");
+    }
+    if (
+      JSON.stringify(economyArms) !== JSON.stringify(T1_ECONOMY_ARMS) ||
+      JSON.stringify(routes) !== JSON.stringify(primaryRoutes) ||
+      policies.length !== 1 ||
+      policies[0] !== "intended"
+    ) {
+      throw new Error(
+        "T1 factorial requires --economyArms=C,D,E,F, --routes=striker-t1,squire-t1,apprentice-t1,conduit-t1, --policies=intended",
+      );
+    }
+  }
+
   const effectiveArgs = {
     ...args,
     ...(controlled && args.rewardMultiplier === undefined ? { rewardMultiplier: "25" } : {}),
@@ -217,24 +278,46 @@ async function main(): Promise<void> {
       )
     : null;
   const batchId = manifest?.batchId ?? `batch-${new Date().toISOString().replace(/[:.]/g, "-")}`;
+  const batchDir = join(outDir, batchId);
+  mkdirSync(batchDir, { recursive: true });
   const resumableRoutes = manifest
     ? manifest.routes.filter((entry) => entry.status === "pending").map((entry) => entry.routeId)
     : routes;
 
+  const routeSchedule: Array<{ routeId: string; replica: number; economyArm?: string }> = factorial
+    ? Array.from({ length: count * routes.length }, (_, waveIndex) =>
+        economyArms.map((economyArm, armIndex) => ({
+          // Four successive rotations complete one replicate: each arm sees
+          // Striker, Squire, Apprentice and Conduit once before the next
+          // replicate begins. The first two waves match the requested example.
+          routeId: routes[(waveIndex + armIndex) % routes.length],
+          replica: Math.floor(waveIndex / routes.length) + 1,
+          economyArm,
+        })),
+      ).flat()
+    : !controlled && args.roundRobin === "true"
+      ? Array.from({ length: count }, (_, i) =>
+          resumableRoutes.map((routeId) => ({ routeId, replica: i + 1 })),
+        ).flat()
+      : resumableRoutes.flatMap((routeId) =>
+          Array.from({ length: count }, (_, i) => ({ routeId, replica: i + 1 })),
+        );
   const configs: BotConfig[] = [];
-  for (const routeId of resumableRoutes) {
+  for (const { routeId, replica, economyArm } of routeSchedule) {
     for (const policyId of policies) {
-      for (let i = 1; i <= count; i++) {
-        const index = String(i).padStart(2, "0");
+        const index = String(replica).padStart(2, "0");
         configs.push(
           buildConfig({
             ...effectiveArgs,
             restoreRewardMultiplier: "false",
             route: routeId,
             policy: policyId,
+            ...(economyArm ? { economyArm } : {}),
             index,
             out: join(outDir, batchId),
-            name: sanitizeCharacterName(`Bot ${routeId} ${policyId} ${index}`),
+            name: sanitizeCharacterName(
+              `Bot ${economyArm ? `${economyArm} ` : ""}${routeId} ${policyId} ${index}`,
+            ),
             executionMode: controlled
               ? controlledExecutionMode
               : parallel
@@ -245,8 +328,49 @@ async function main(): Promise<void> {
             ),
           }),
         );
-      }
     }
+  }
+
+  if (factorial) {
+    let revision = "unknown";
+    try {
+      revision = execSync("git rev-parse --short HEAD", { encoding: "utf8" }).trim();
+    } catch {
+      // The per-run header still carries the immutable economy revision.
+    }
+    writeFileSync(
+      join(batchDir, "batch-config.json"),
+      `${JSON.stringify({
+        type: "t1-economy-factorial",
+        experimentId: T1_ECONOMY_EXPERIMENT_ID,
+        economyRevision: T1_ECONOMY_EXPERIMENT_REVISION,
+        gitRevision: revision,
+        createdAt: new Date().toISOString(),
+        arms: economyArms.map((arm) => {
+          if (!isT1EconomyArm(arm)) throw new Error(`invalid factorial arm ${arm}`);
+          const config = t1EconomyConfigForArm(arm);
+          return {
+            ...config,
+            t1Plus5EssenceCosts: t1Plus5EssenceCosts(config.t1Plus5EssenceCostMultiplier),
+          };
+        }),
+        routes,
+        policies,
+        replicatesPerClassPerArm: count,
+        totalRuns: configs.length,
+        rewardMultiplier: configs[0]?.rewardMultiplier ?? 1,
+        staggerMs,
+        executionMode: "uncontrolled-parallel",
+        launchOrder: configs.map((config, index) => ({
+          order: index + 1,
+          arm: config.economyArm,
+          routeId: config.routeId,
+          replica: config.devAccountId.match(/-(\d+)$/)?.[1] ?? null,
+          launchDelayMs: index * staggerMs,
+        })),
+      }, null, 2)}\n`,
+      "utf8",
+    );
   }
 
   // Each bot installs its own SIGINT/SIGTERM handler, and a batch shares one
@@ -260,6 +384,19 @@ async function main(): Promise<void> {
   if (configs[0]?.uiPort != null) {
     dashboard = await startDashboardOrWarn(configs[0].uiPort);
     if (dashboard) console.log(`[batch] dashboard: ${dashboard.url}`);
+  }
+
+  // The reward multiplier is server-global. Establish the requested rate
+  // before the first real bot connects, so a stale rate from an interrupted
+  // batch cannot taint or overpay the first run.
+  const requestedMultiplier = configs.find((config) => config.rewardMultiplier !== undefined)?.rewardMultiplier;
+  if (requestedMultiplier !== undefined) {
+    await setServerRewardMultiplier(
+      configs[0]?.serverUrl ?? "http://localhost:4000",
+      `bot-controller-${batchId}-preflight`,
+      requestedMultiplier,
+    );
+    console.log(`[batch] reward multiplier preflight: ${requestedMultiplier}x`);
   }
 
   const executionMode = controlled
@@ -365,7 +502,7 @@ async function main(): Promise<void> {
   const outcomes: Array<{ botId: string; ok: boolean; detail: unknown }> = settled.map(
     (result, i) => {
       const config = configs[i];
-      const botId = `${config.routeId}-${config.policyId}-${config.devAccountId.slice(-2)}`;
+      const botId = `${config.economyArm ? `${config.economyArm}-` : ""}${config.routeId}-${config.policyId}-${config.devAccountId.slice(-2)}`;
       if (result.status === "rejected") {
         return { botId, ok: false, detail: String(result.reason) };
       }
@@ -389,8 +526,6 @@ async function main(): Promise<void> {
     },
   );
 
-  const batchDir = join(outDir, batchId);
-  mkdirSync(batchDir, { recursive: true });
   writeFileSync(
     join(batchDir, "batch-summary.json"),
     `${JSON.stringify({

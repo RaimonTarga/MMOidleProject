@@ -77,11 +77,25 @@ export function updateBossScripts(world: World, dt: number): void {
     }
 
     const bossEffectStacks: Record<string, number> = {};
+    const bossEffectDurations: Record<string, { remainingMs: number; totalMs: number }> = {};
     for (const effect of state.activeEffects) {
       bossEffectStacks[effect.type] = (bossEffectStacks[effect.type] ?? 0) + 1;
+      const current = bossEffectDurations[effect.type];
+      if (
+        !current ||
+        effect.remainingMs < 0 ||
+        (current.remainingMs >= 0 && effect.remainingMs > current.remainingMs)
+      ) {
+        bossEffectDurations[effect.type] = {
+          remainingMs: effect.remainingMs,
+          totalMs: effect.totalMs,
+        };
+      }
     }
     e.hasStatus.bossEffects = Object.keys(bossEffectStacks);
     e.hasStatus.bossEffectStacks = bossEffectStacks;
+    e.hasStatus.bossEffectDurations = bossEffectDurations;
+    markSliceDirty(world, e, 'hasStatus');
   }
 }
 
@@ -151,8 +165,8 @@ function beginScriptedCast(
   world: World,
   state: ScriptsBoss,
 ): void {
-  // A capped cast (currently Bestial Frenzy) should stop being a dead, repeated
-  // wind-up once every action it contains is already saturated.
+  // A capped cast should stop being a dead, repeated wind-up once every action
+  // it contains is already saturated.
   if (!action.actions.some(nestedAction => canApplyAction(nestedAction, state))) return;
 
   if (state.scriptedCast) {
@@ -316,6 +330,7 @@ function applyAction(
       const effect: ActiveBossEffect = {
         type:          'enrage',
         remainingMs:   action.durationMs ?? -1,
+        totalMs:       action.durationMs ?? -1,
         savedAttack:   monster.dealsDamage.attack,
         savedCooldown: monster.performsAttack.attackCooldown,
       };
@@ -329,6 +344,7 @@ function applyAction(
       const effect: ActiveBossEffect = {
         type:               'regen',
         remainingMs:        action.durationMs ?? -1,
+        totalMs:            action.durationMs ?? -1,
         regenHpPctPerSec:   action.hpPctPerSec,
       };
       state.activeEffects.push(effect);
@@ -339,6 +355,7 @@ function applyAction(
       const effect: ActiveBossEffect = {
         type:                 'shield',
         remainingMs:          action.durationMs,
+        totalMs:              action.durationMs,
         savedDamageReduction: monster.mitigatesDamage.damageReduction,
       };
       monster.mitigatesDamage.damageReduction = Math.min(0.95, monster.mitigatesDamage.damageReduction + action.drAdd);
@@ -356,6 +373,7 @@ function applyAction(
       const effect: ActiveBossEffect = {
         type:        effectType,
         remainingMs: action.durationMs ?? -1,
+        totalMs:     action.durationMs ?? -1,
       };
       switch (action.stat) {
         case 'attack':
@@ -450,6 +468,7 @@ function applyAction(
       const effect: ActiveBossEffect = {
         type:        'morph',
         remainingMs: action.durationMs ?? -1,
+        totalMs:     action.durationMs ?? -1,
       };
 
       if (action.isRanged !== undefined) {

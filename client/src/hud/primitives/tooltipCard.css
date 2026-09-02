@@ -1,0 +1,115 @@
+/* Structured tooltip content. Lives inside .hud-tooltip, which owns the frame,
+   the portal position and the pointer-events:none — this file only styles the
+   reading order inside it. */
+
+.tip-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 168px;
+}
+
+.tip-card__title {
+  font-family: var(--hud-font-display, Georgia, serif);
+  font-weight: var(--hud-font-display-weight, 600);
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  color: var(--hud-primary-strong, #e0c070);
+}
+
+.tip-card__kicker {
+  margin-top: -4px;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hud-text-muted, #8a806c);
+}
+
+.tip-card__body {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--hud-text, #ccc5b4);
+}
+
+.tip-card__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-top: 5px;
+  border-top: 1px solid var(--hud-edge-divider, rgba(100, 88, 60, 0.4));
+}
+
+.tip-card__heading {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hud-text-dim, #524a3f);
+  margin-bottom: 2px;
+}
+
+/* The live heading is the only place the accent appears as a label, so the
+   CURRENT block reads as one unit with the values under it. */
+.tip-card__heading--live {
+  color: var(--tip-live, #7fd6ff);
+  opacity: 0.85;
+}
+
+.tip-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.tip-row__label {
+  color: var(--hud-text-muted, #8a806c);
+  white-space: nowrap;
+}
+
+.tip-row__value {
+  font-family: monospace;
+  font-weight: bold;
+  color: var(--hud-text, #ccc5b4);
+  text-align: right;
+}
+
+/* Live values: bold + a dedicated accent that is used for nothing else in the
+   tooltip. Not underlined (that reads as a link) and not green/red (that would
+   conflate "resolved right now" with "good for me"). */
+.tip-row__value--live {
+  color: var(--tip-live, #7fd6ff);
+}
+
+/* good === false tints the LABEL, leaving the value's live cue intact. */
+.tip-row--down .tip-row__label {
+  color: #b8836f;
+}
+
+.tip-row__detail {
+  font-family: inherit;
+  font-weight: normal;
+  color: var(--hud-text-dim, #524a3f);
+}
+
+.tip-card__footnote {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.4;
+  font-style: italic;
+  color: var(--hud-text-dim, #524a3f);
+}
+
+:root {
+  --tip-live: #7fd6ff;
+}
+
+/* A structured card needs more room than the 240px a one-paragraph help tooltip
+   was sized for: its rows are two columns, and wrapping "Cooldown remaining"
+   onto its own line breaks the label/value alignment the whole card reads by. */
+.hud-tooltip:has(.tip-card) {
+  max-width: 320px;
+}

@@ -4,6 +4,8 @@ import { hudBus } from "../hudBus";
 import {
   activeStanceAtom,
   equippedRitesAtom,
+  hpAtom,
+  maxHpAtom,
   equippedStancesAtom,
   globalMasteryAtom,
   knownStancesAtom,
@@ -19,6 +21,9 @@ export function StancesPanelContent() {
   const known = useAtomValue(knownStancesAtom);
   const equipped = useAtomValue(equippedStancesAtom);
   const active = useAtomValue(activeStanceAtom);
+  // Gated postures (Perfection) report whether their bonuses are live RIGHT NOW, not
+  // just what the threshold is, so the sanctum answers "is this doing anything?".
+  const hpFraction = useAtomValue(hpAtom) / Math.max(1, useAtomValue(maxHpAtom));
   const rules = useAtomValue(runesEquippedAtom);
   const rites = useAtomValue(equippedRitesAtom);
   const budget = runeBudgetForGlobalMastery(useAtomValue(globalMasteryAtom));
@@ -58,7 +63,7 @@ export function StancesPanelContent() {
                 {/* The RP surcharge is one of the DetailLines below, so it is not
                     repeated as its own chip. */}
                 <span className="stance-sigil__blurb">{stance.blurb}</span>
-                <DetailLines className="stance-sigil__effects" lines={stanceLines(stance)} />
+                <DetailLines className="stance-sigil__effects" lines={stanceLines(stance, isActive ? hpFraction : undefined)} />
                 <span className="stance-sigil__state">{isActive ? "ACTIVE" : isDefault ? "DEFAULT" : "SET DEFAULT"}</span>
               </button>
             );

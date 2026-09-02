@@ -3,6 +3,9 @@ import type { BuffCategory, PlayerBuff, BuffShape } from "@mmo-idle/shared";
 import { activeBuffsAtom } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
 import { statusIconSource } from "../ui/conceptIcons";
+import { TooltipCard, useHoverTooltip } from "./primitives";
+import { buffTooltipContent } from "./statusTooltips";
+import { useIsMobile } from "./useIsMobile";
 import "../hud/hud.css";
 
 const ICON_SIZE = 52;
@@ -37,7 +40,18 @@ function displayTone(buff: PlayerBuff): string {
     : buff.color;
 }
 
-function BuffIcon({ buff }: { buff: PlayerBuff }) {
+function BuffIcon({ buff, interactive }: { buff: PlayerBuff; interactive: boolean }) {
+  // Hover explains the tile. The content is rebuilt each render because the
+  // CURRENT block is the whole point of it — a stale stack count would be worse
+  // than no tooltip at all.
+  //
+  // Only on a pointer device. There is no hover on touch, so taking pointer
+  // events there would buy nothing and cost a tap into the world wherever a buff
+  // happens to be sitting. A mobile inspection gesture can reuse
+  // `buffTooltipContent` unchanged when one is designed.
+  const { handlers, node } = useHoverTooltip(
+    interactive ? <TooltipCard content={buffTooltipContent(buff)} /> : undefined,
+  );
   const shapeStyle = SHAPE_STYLE[buff.shape];
   const icon = statusIconSource(buff.iconKey);
   const hasArt = icon !== null;
@@ -57,12 +71,20 @@ function BuffIcon({ buff }: { buff: PlayerBuff }) {
 
   return (
     <div
+      // The bar itself stays click-through so empty HUD space never eats a click
+      // into the world; only this tile — the actual hover target — takes pointer
+      // events back. Its bounding box is the icon plus its label, nothing more.
       style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         gap: 4,
+        pointerEvents: interactive ? "auto" : "none",
       }}
+      tabIndex={interactive ? 0 : undefined}
+      role="img"
+      aria-label={`${buff.label}${buff.stacks > 1 ? `, ${buff.stacks} stacks` : ""}`}
+      {...handlers}
     >
       {/* Icon with optional clock-sweep overlay */}
       <div
@@ -156,12 +178,14 @@ function BuffIcon({ buff }: { buff: PlayerBuff }) {
       >
         {buff.label}
       </span>
+      {node}
     </div>
   );
 }
 
 export function BuffBar() {
   const buffs = useAtomValue(activeBuffsAtom);
+  const isMobile = useIsMobile();
 
   if (buffs.length === 0) return null;
 
@@ -181,7 +205,11 @@ export function BuffBar() {
       }}
     >
       {buffs.map((buff) => (
-        <BuffIcon key={`${buff.instanceKey ?? buff.iconKey}:${buff.id}`} buff={buff} />
+        <BuffIcon
+          key={`${buff.instanceKey ?? buff.iconKey}:${buff.id}`}
+          buff={buff}
+          interactive={!isMobile}
+        />
       ))}
     </div>
   );

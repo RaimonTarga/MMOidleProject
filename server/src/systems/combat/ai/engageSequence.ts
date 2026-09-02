@@ -1,6 +1,7 @@
 import {
   applyStatusEffect,
   CAVE_LOCKDOWN_EFFECT_ID,
+  MONSTER_DATABASE,
   getCounter,
   getString,
   pruneStatusEffects,
@@ -12,11 +13,12 @@ import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { syncPlayerControlLockout } from '../status/playerControlLockout';
 
-type EngageStage = 'charge' | 'lock' | 'slam-ready' | 'done';
+type EngageStage = 'cast' | 'charge' | 'lock' | 'slam-ready' | 'done';
 
 const SESSION_KEY = 'engageSequenceSession';
 const DEADLINE_KEY = 'engageSequenceDeadline';
 const STAGE_KEY = 'engageSequenceStage';
+const LANDING_MULTIPLIER_KEY = 'engageSequenceLandingMultiplier';
 
 /** Current opener stage, initializing it for a fresh player-aggro session. */
 export function engageSequenceStage(
@@ -34,11 +36,25 @@ export function engageSequenceStage(
     getString(state, STAGE_KEY) === undefined
   ) {
     setCounter(state, SESSION_KEY, aggro.sinceMs);
-    setCounter(state, DEADLINE_KEY, aggro.sinceMs + sequence.maxChargeMs);
-    setString(state, STAGE_KEY, 'charge');
+    if (sequence.kind === 'cast-charge-root' || sequence.kind === 'cast-charge-strike') {
+      setCounter(state, DEADLINE_KEY, aggro.sinceMs + sequence.castMs);
+      setString(state, STAGE_KEY, 'cast');
+    } else {
+      setCounter(state, DEADLINE_KEY, aggro.sinceMs + sequence.maxChargeMs);
+      setString(state, STAGE_KEY, 'charge');
+    }
   }
 
   const stage = (getString(state, STAGE_KEY) ?? 'done') as EngageStage;
+  if (
+    (sequence.kind === 'cast-charge-root' || sequence.kind === 'cast-charge-strike') &&
+    stage === 'cast' &&
+    now >= getCounter(state, DEADLINE_KEY)
+  ) {
+    setCounter(state, DEADLINE_KEY, now + sequence.maxChargeMs);
+    setString(state, STAGE_KEY, 'charge');
+    return 'charge';
+  }
   if (stage === 'charge' && now >= getCounter(state, DEADLINE_KEY)) {
     setString(state, STAGE_KEY, 'done');
     return 'done';
@@ -71,15 +87,37 @@ export function beginEngageLock(
 }
 
 export function engageSequenceHoldsAttack(monster: MonsterEntity): boolean {
-  return getString(monster.tracksCombat, STAGE_KEY) === 'lock';
+  const stage = getString(monster.tracksCombat, STAGE_KEY);
+  return stage === 'cast' || stage === 'lock';
 }
 
 export function engageSequenceSlamReady(monster: MonsterEntity): boolean {
   return getString(monster.tracksCombat, STAGE_KEY) === 'slam-ready';
 }
 
-export function completeEngageSequence(monster: MonsterEntity): void {
-  setString(monster.tracksCombat, STAGE_KEY, 'done');
+export function completeEngageSequence(
+  monster: MonsterEntity,
+  armChargedAttack = false,
+): void {
+  setString(monster.tracksCombat, STAGE_KEY, armChargedAttack ? 'slam-ready' : 'done');
+}
+
+/** Arms the next basic attack as the amplified impact of an aerial opener. */
+export function armEngageSequenceLandingAttack(
+  monster: MonsterEntity,
+  damageMultiplier: number,
+): void {
+  setCounter(monster.tracksCombat, LANDING_MULTIPLIER_KEY, damageMultiplier);
+}
+
+/** Consume the one-shot landing multiplier; ordinary attacks always return 1. */
+export function consumeEngageSequenceLandingAttack(
+  monster: MonsterEntity,
+): number {
+  const multiplier = getCounter(monster.tracksCombat, LANDING_MULTIPLIER_KEY);
+  if (multiplier <= 0) return 1;
+  setCounter(monster.tracksCombat, LANDING_MULTIPLIER_KEY, 0);
+  return multiplier;
 }
 
 /**
@@ -91,7 +129,18 @@ export function abortEngageSequence(
   monster: MonsterEntity,
 ): void {
   const stage = getString(monster.tracksCombat, STAGE_KEY);
-  if (stage !== 'charge' && stage !== 'lock' && stage !== 'slam-ready') return;
+  if (stage !== 'cast' && stage !== 'charge' && stage !== 'lock' && stage !== 'slam-ready') return;
+  if (stage === 'cast') {
+    const sequence = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.engageSequence;
+    if (sequence?.kind === 'cast-charge-root' || sequence?.kind === 'cast-charge-strike') {
+      // The client owns the visual bar, so every interrupted wind-up must close
+      // it explicitly instead of leaving a stale tell above the fleeing hawk.
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-end', monsterId: monster.isMonster.id, fired: false,
+        fx: sequence.fx,
+      });
+    }
+  }
   setString(monster.tracksCombat, STAGE_KEY, 'done');
 
   for (const player of world.livePlayers) {

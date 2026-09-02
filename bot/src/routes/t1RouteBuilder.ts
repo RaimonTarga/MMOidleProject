@@ -53,6 +53,8 @@ export interface T1RouteConfig {
   id: string;
   version: string;
   classRoot: string;
+  /** The frame this route intends to spend the first post-T1 skill point on. */
+  frameId?: string;
   description: string;
   movementProfile: T1MovementProfile;
   bossDefenseProfile: T1BossDefenseProfile;
@@ -117,7 +119,7 @@ const DODGE_BOSS_ABILITIES: Record<
   forest: { technique: "expose-weakness", guard: "second-wind" },
   mountain: { technique: "expose-weakness", guard: "second-wind" },
   swamp: { technique: "expose-weakness", guard: "cleanse" },
-  cave: { technique: "expose-weakness", guard: "cleanse" },
+  cave: { technique: "expose-weakness", guard: "second-wind" },
 };
 
 const BRACE_BOSS_ABILITIES: Record<
@@ -277,6 +279,16 @@ function bossSteps(config: T1RouteConfig): RouteStep[] {
       { type: "attemptBoss", biomeGroup, tier: 1, maxAttempts: 6 },
       { type: "milestone", id: `${biomeGroup}-boss-cleared` },
     );
+    // The second T1 seal advances the player to T2 and grants the point for
+    // the frame. Keep this in the route data so an intended frame cannot be
+    // silently replaced by whatever the fresh character happens to select.
+    if (biomeGroup === "forest" && config.frameId) {
+      steps.push({
+        type: "unlockSkill",
+        skillId: config.frameId,
+        label: `spend the T2 point on ${config.frameId}`,
+      });
+    }
   }
 
   return steps;
@@ -319,6 +331,7 @@ export function makeT1Route(config: T1RouteConfig): Route {
     id: config.id,
     version: config.version,
     classRoot: config.classRoot,
+    frameId: config.frameId,
     description: config.description,
     steps,
     completion: standardCompletion(),

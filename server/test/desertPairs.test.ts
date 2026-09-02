@@ -17,9 +17,10 @@ import {
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { PlayerEntity } from '../src/ecs/entity';
+import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
-import { runMonsterAttack, runPlayerAttack } from '../src/systems/combat/engine/combat';
+import { runMonsterAttack, runPlayerAttack, updateCombat } from '../src/systems/combat/engine/combat';
 import { spawnPack } from '../src/systems/world/spawning';
 import { World } from '../src/world/World';
 
@@ -78,6 +79,43 @@ function isolate(player: PlayerEntity): void {
 }
 
 initCombatSystems();
+
+{
+  const scorpion = MONSTER_DATABASE.get('sand-scorpion');
+  const sting = scorpion?.chargedAttack;
+  assert(
+    sting?.name === 'Numbing Sting' && sting.castMs === 500 && sting.cooldownMs === 5_000 &&
+      sting.appliesSlow?.speedMult === 0.5 && sting.appliesSlow.durationMs === 4_000 &&
+      scorpion?.slowEffect === undefined,
+    'Sand Scorpion should trade its on-hit slow for a frequent, telegraphed Numbing Sting',
+  );
+}
+
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(makePlayerSlices('sting-target'), 'sting-target');
+  const scorpion = world.createMonster(NODE, 'sand-scorpion', { x: 405, y: 400 });
+  assert(scorpion, 'Sand Scorpion should spawn for Numbing Sting coverage');
+  setAggroTarget(world, scorpion, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  scorpion.hasAwareness.state = 'attacking';
+  scorpion.performsAttack.lastAttackAt = 0;
+  player.performsAttack.lastAttackAt = 3_000;
+
+  // The first tick initializes the per-combat initial cooldown; the next one
+  // reaches its two-second deadline and begins the short cast.
+  updateCombat(world, 0, 1_000);
+  updateCombat(world, 0, 3_000);
+  assert(
+    world.takeNodeEvents(NODE).some((event) => event.kind === 'monster-cast-start' && event.label === 'Numbing Sting' && event.castMs === 500),
+    'Numbing Sting should telegraph its short cast before applying control',
+  );
+  updateCombat(world, 0, 3_500);
+  const slow = getStatusEffect(player.tracksCombat, 'slow');
+  assert(
+    slow?.data.speedMult === 0.5 && slow.data.totalMs === 4_000,
+    'Numbing Sting should apply its authored longer 50% slow when the cast lands',
+  );
+}
 
 // ── P3: the pure helpers sum across stacks and clamp at their caps ───────────
 {

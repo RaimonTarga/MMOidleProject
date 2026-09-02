@@ -9,6 +9,9 @@ import {
   getMaxUpgrade,
   ITEM_DATABASE,
   checkUpgrade,
+  checkEvolve,
+  checkReconstruct,
+  type EvolveMode,
   type DungeonView,
   type EquipmentSlot,
   type EssenceType,
@@ -16,6 +19,7 @@ import {
   type MonsterView,
   type PlayerView,
   type Recipe,
+  type T1EconomyExperimentConfig,
 } from "@mmo-idle/shared";
 import type { WorldMirror } from "./reducer";
 
@@ -28,7 +32,10 @@ import type { WorldMirror } from "./reducer";
  * `checkUpgrade` rather than restated in route files.
  */
 export class Observation {
-  constructor(private readonly mirror: WorldMirror) {}
+  constructor(
+    private readonly mirror: WorldMirror,
+    readonly economyConfig?: T1EconomyExperimentConfig,
+  ) {}
 
   get nodeId(): string {
     return this.mirror.nodeId;
@@ -136,6 +143,33 @@ export class Observation {
     return this.canAfford(recipe);
   }
 
+  /** Authoritative shared predicate for consuming a fully-upgraded predecessor. */
+  canEvolve(recipeId: string, mode: EvolveMode = "evolve"): { ok: boolean; reason?: string } {
+    const self = this.self;
+    const recipe = RECIPE_DATABASE.get(recipeId);
+    if (!self || !recipe || !self.unlockedRecipes.includes(recipeId)) {
+      return { ok: false, reason: "Recipe is locked or unknown." };
+    }
+    if (mode === "reconstruct") {
+      return checkReconstruct({
+        recipe,
+        essences: self.essences,
+        catalysts: self.catalysts,
+      });
+    }
+    return checkEvolve({
+      recipe,
+      inventory: self.inventory,
+      itemUpgrades: self.itemUpgrades,
+      essences: self.essences,
+      catalysts: self.catalysts,
+    });
+  }
+
+  canReconstruct(recipeId: string): { ok: boolean; reason?: string } {
+    return this.canEvolve(recipeId, "reconstruct");
+  }
+
   canAfford(recipe: Recipe): boolean {
     const self = this.self;
     if (!self) return false;
@@ -165,6 +199,7 @@ export class Observation {
       essences: self.essences,
       catalysts: self.catalysts,
       globalMastery: self.globalMastery,
+      t1Plus5EssenceCostMultiplier: this.economyConfig?.t1Plus5EssenceCostMultiplier,
     });
   }
 
@@ -177,7 +212,11 @@ export class Observation {
 // ── Static world queries (shared data; the map UI reads the same thing) ─────
 
 /** Normal (non-dungeon) node ids for one biome group at one tier. */
-export function normalNodesFor(biomeGroup: string, tier: number): string[] {
+export function normalNodesFor(
+  biomeGroup: string,
+  tier: number,
+  modifier?: string,
+): string[] {
   return Object.entries(NODE_BIOMES)
     .filter(
       ([, info]) =>
@@ -185,6 +224,7 @@ export function normalNodesFor(biomeGroup: string, tier: number): string[] {
         info.biomeTier === tier &&
         info.kind === "normal",
     )
+    .filter(([, info]) => modifier === undefined || info.modifier === modifier)
     .map(([id]) => id)
     .sort();
 }

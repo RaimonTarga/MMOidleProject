@@ -17,8 +17,10 @@ import {
   TEST_ROOM_NODE_ID,
   DEBUG_REWARD_MULT_DEFAULT,
   clampRewardMultiplier,
+  defaultT1EconomyConfig,
   type DeathCause,
   type NetworkedComponentKey,
+  type T1EconomyExperimentConfig,
   type Vec2,
 } from "@mmo-idle/shared";
 
@@ -62,6 +64,7 @@ import { updateAllyEmpower } from "../systems/combat/ai/allyEmpower";
 import { updateCombat } from "../systems/combat/engine/combat";
 import { updateTransitions } from "../systems/world/transitions";
 import { updateCombatState } from "../systems/combat/engine/combatState";
+import { syncEnemyBarrierState } from "../systems/combat/engine/enemyBarrierState";
 import { tickAllMechanics } from "../systems/classes/registry";
 import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
 import { updateBossScripts } from "../systems/combat/ai/bossScripts";
@@ -254,6 +257,8 @@ export class World {
   );
   /** Notify every connected client that `rewardMultiplier` changed. Set by index.ts. */
   rewardMultiplierBroadcast: ((multiplier: number) => void) | null = null;
+  /** Runtime-only T1 economy overlay, keyed by the current socket/entity id. */
+  readonly t1EconomyConfigByPlayerId = new Map<string, T1EconomyExperimentConfig>();
   /** Dungeon boss respawn cooldowns keyed by node id. */
   bossRespawnAt = new Map<string, number>();
   /** Runtime-only dungeon guard/boss state keyed by node id. */
@@ -384,6 +389,7 @@ export class World {
     });
     this.ecs.onEntityRemoved.subscribe((entity) => {
       this.playerById.delete(entity.entityId);
+      this.t1EconomyConfigByPlayerId.delete(entity.entityId);
       this.monsterById.delete(entity.entityId);
       this.minionById.delete(entity.entityId);
     });
@@ -441,6 +447,7 @@ export class World {
     updateMonsters(this, dt, now);
     updateSwarm(this);
     updateCombat(this, dt, now);
+    syncEnemyBarrierState(this, now);
     updateCombatTransitions(this, now);
     updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this, now);
@@ -570,6 +577,18 @@ export class World {
 
   getPlayerEntity(playerId: string): PlayerEntity | undefined {
     return playerLifecycle.getPlayerEntity(this, playerId);
+  }
+
+  /** Effective T1 arm for a player; unassigned live players use current C behavior. */
+  t1EconomyConfigForPlayer(playerId: string): T1EconomyExperimentConfig {
+    return this.t1EconomyConfigByPlayerId.get(playerId) ?? defaultT1EconomyConfig();
+  }
+
+  setT1EconomyConfigForPlayer(
+    playerId: string,
+    config: T1EconomyExperimentConfig,
+  ): void {
+    this.t1EconomyConfigByPlayerId.set(playerId, config);
   }
 
   playerEntitiesInNode(nodeId: string): IterableIterator<PlayerEntity> {

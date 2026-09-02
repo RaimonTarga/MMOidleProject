@@ -45,7 +45,16 @@ import { fxSandblast } from "../fx/sandblast";
 import { fxQuake } from "../fx/quake";
 import { fxHex } from "../fx/hex";
 import { fxStoneSpit } from "../fx/stoneSpit";
-import { fxSummonBurst, fxShieldUp, fxMorph, fxBossRoar, fxBestialFrenzy } from "../fx/bossCues";
+import {
+  fxSummonBurst,
+  fxShieldUp,
+  fxMorph,
+  fxBossRoar,
+  fxBestialFrenzy,
+  fxDireHowl,
+  fxThornBarrage,
+  fxShellUp,
+} from "../fx/bossCues";
 import { fxLightning } from "../fx/lightning";
 import { fxFireFlame } from "../fx/dotFire";
 import { fxFrostSnowflake } from "../fx/dotFrost";
@@ -77,6 +86,7 @@ import { fxStunningStrike } from "../fx/stunningStrike";
 import { fxCharge, fxDisengage } from "../fx/reposition";
 import { fxCleanse } from "../fx/cleanse";
 import { fxPowerShot } from "../fx/powerShot";
+import { fxDiveBomb, fxTalonStrike } from "../fx/talonStrike";
 import { shouldRunClientFx } from "../fx/guard";
 import { playSfx } from "../audio/audioEngine";
 import type { SfxId } from "../audio/manifest";
@@ -369,6 +379,8 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
     fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered),
   'bear-claws': ({ scene, ev, to }) =>
     fxBearClaws(scene, to.x, to.y, ev.empowered),
+  talons: ({ scene, from, to }) =>
+    fxTalonStrike(scene, from.x, from.y, to.x, to.y),
   poison: ({ scene, to }) => fxPoison(scene, to.x, to.y),
   magic: ({ scene, from, to }) => fxMagic(scene, from.x, from.y, to.x, to.y),
   // Conduit summons — range picks which of these their attacks use.
@@ -606,6 +618,10 @@ export function dispatchCombatEvent(
         fxPackCall(scene, ev.pos);
         return;
       }
+      if (ev.pulse === "shell-up") {
+        fxShellUp(scene, ev.pos.x, ev.pos.y);
+        return;
+      }
       if (ev.pulse === "frost-shatter") playSfx("frozen");
       const color =
         ev.pulse === "sun-mark"
@@ -616,7 +632,7 @@ export function dispatchCombatEvent(
               ? DEATH_EMPOWER_PULSE_COLOR
               : ev.pulse === "raise-dead"
                 ? RAISE_DEAD_PULSE_COLOR
-                : ev.pulse === "shell-up" || ev.pulse === "shell-open"
+                : ev.pulse === "shell-open"
                   ? SHELL_PULSE_COLOR
                   : ev.pulse === "ally-haste"
                     ? ALLY_HASTE_PULSE_COLOR
@@ -625,7 +641,7 @@ export function dispatchCombatEvent(
                       : ECOLOGY_PULSE_COLOR;
       // A shell closing is a bigger, slower beat than a status pulse: it is the
       // moment the fight changes shape, so it gets a wider ring.
-      const radius = ev.pulse === "shell-up" ? 110 : 70;
+      const radius = 70;
       fxAoeRing(scene, ev.pos, radius, color);
     }
     return;
@@ -643,7 +659,13 @@ export function dispatchCombatEvent(
     if (ev.fired && shouldRunClientFx()) {
       const monster = state.sprite.get(ev.monsterId);
       const target = ev.targetId ? state.sprite.get(ev.targetId) : undefined;
-      if (monster && target) {
+      if (monster && ev.fx === "howl") {
+        fxDireHowl(scene, monster.x, monster.y);
+      } else if (monster && ev.fx === "barrage") {
+        fxThornBarrage(scene, monster.x, monster.y);
+      } else if (monster && target && ev.fx === "dive-bomb") {
+        fxDiveBomb(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target) {
         if (ev.fx === "strong-kick") {
           fxStrongKick(scene, target.x, target.y);
         } else if (ev.fx === "savage-maul") {

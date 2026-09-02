@@ -87,14 +87,42 @@ export function skillNodeLines(node: {
  * What is deliberately NOT here: the Rune CONDITION a stance is usually reached by.
  * "Activates below 25% HP" is a property of the rule, not of Enraged.
  */
-export function stanceLines(stance: StanceDef | undefined): DetailLine[] {
+export function stanceLines(
+  stance: StanceDef | undefined,
+  /**
+   * The reader's current HP fraction, when a surface has one. A gated posture
+   * (Perfection) then marks its conditional rows ACTIVE or INACTIVE instead of only
+   * naming the threshold — the difference between "I could have this" and "I have
+   * this right now" is the entire point of the gate.
+   */
+  hpFraction?: number,
+): DetailLine[] {
   if (!stance) return [];
+  const gate = stance.gatedModifiers;
+  const gateMet = gate !== undefined && hpFraction !== undefined && hpFraction >= gate.minHpPct;
+  const gateQualifier = gate
+    ? `while at or above ${Math.round(gate.minHpPct * 100)}% HP`
+    : '';
   return [
     ...stanceModifierLines(stance.modifiers).map((line) => ({
       key: `stat:${line.key}`,
       label: line.label,
       value: line.value,
       help: line.help,
+      good: line.good,
+      glyph: line.glyph,
+    })),
+    // The gated half, rendered as its own rows so a player never reads a conditional
+    // bonus as an unconditional one. `detail` carries the threshold, and the live
+    // active/inactive state when the surface knows the reader's HP.
+    ...stanceModifierLines(gate?.modifiers).map((line) => ({
+      key: `gated:${line.key}`,
+      label: line.label,
+      value: line.value,
+      detail: hpFraction === undefined
+        ? gateQualifier
+        : `${gateQualifier} — ${gateMet ? 'ACTIVE' : 'INACTIVE'}`,
+      help: `${line.help} Granted only ${gateQualifier}; the stance's drawback is paid either way.`,
       good: line.good,
       glyph: line.glyph,
     })),

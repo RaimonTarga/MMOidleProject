@@ -9,6 +9,8 @@ import {
   isRuneRuleCompatibleForArchetype,
   runeBudgetForGlobalMastery,
   runicPointLoadoutCost,
+  SKILL_TREE,
+  canUnlockSkill,
   type CombatArchetype,
   type EquippedRule,
 } from "@mmo-idle/shared";
@@ -63,6 +65,7 @@ interface RouteSemantics {
   upgrades: string[];
   learnedAbilities: string[];
   craftedRuneRecipes: string[];
+  frameUnlock?: { index: number; skillId: string };
 }
 
 function updateLevelForCondition(condition: Extract<RouteStep, { type: "farm" }>["until"], levels: Record<string, number>): void {
@@ -103,6 +106,7 @@ function analyze(route: Route): RouteSemantics {
   let currentGuard = "";
   let currentRules: EquippedRule[] = [];
   let currentEquipment: string[] = [];
+  let frameUnlock: { index: number; skillId: string } | undefined;
 
   for (let index = 0; index < route.steps.length; index++) {
     const step = route.steps[index];
@@ -139,6 +143,8 @@ function analyze(route: Route): RouteSemantics {
       learnedAt.set(step.abilityId, { gm: globalMastery(levels), biomeLevels: { ...levels } });
       if (step.slot === "technique") currentTechnique = step.abilityId;
       else currentGuard = step.abilityId;
+    } else if (step.type === "unlockSkill") {
+      frameUnlock = { index, skillId: step.skillId };
     } else if (step.type === "setAbilities") {
       for (const abilityId of [...step.techniques, ...step.guards]) {
         assert(learned.has(abilityId), `${route.id}: ${abilityId} is learned before setAbilities`);
@@ -208,6 +214,7 @@ function analyze(route: Route): RouteSemantics {
     upgrades,
     learnedAbilities,
     craftedRuneRecipes,
+    frameUnlock,
   };
 }
 
@@ -243,11 +250,46 @@ for (const routeId of ROUTES.keys()) {
 }
 
 const semantics = new Map(T1_CONTROLLED_ROUTES.map((route) => [route.id, analyze(route)]));
-const ranged = new Set(["slinger-t1", "spirit-t1", "conduit-t1"]);
+const ranged = new Set(["slinger-t1", "spirit-t1", "apprentice-t1", "conduit-t1"]);
 const braceRoutes = new Set(["striker-brace-tank-t1", "squire-brace-tank-t1"]);
+const EXPECTED_FRAMES: Record<string, string> = {
+  "striker-t1": "cadence-balanced",
+  "striker-brace-tank-t1": "cadence-balanced",
+  "squire-t1": "cooldown-heavy",
+  "squire-brace-tank-t1": "cooldown-heavy",
+  "slinger-t1": "reload-heavy",
+  "spirit-t1": "energy-heavy",
+  "apprentice-t1": "dot-balanced",
+  "conduit-t1": "summoner-balanced",
+};
 
 for (const route of T1_CONTROLLED_ROUTES) {
   const result = semantics.get(route.id)!;
+  const frameId = EXPECTED_FRAMES[route.id];
+  assert(route.frameId === frameId, `${route.id}: declares its intended frame`);
+  assert(result.frameUnlock?.skillId === frameId, `${route.id}: spends exactly the T2 point on its frame`);
+  const forestBossIndex = route.steps.findIndex(
+    (step) => step.type === "attemptBoss" && step.biomeGroup === "forest",
+  );
+  assert((result.frameUnlock?.index ?? -1) > forestBossIndex, `${route.id}: frame follows the Forest seal`);
+  const root = SKILL_TREE.get(route.classRoot);
+  const frame = SKILL_TREE.get(frameId);
+  assert(!!root && !!frame && frame.parent === root.id, `${route.id}: frame is a child of its root`);
+  assert(
+    canUnlockSkill(
+      {
+        usesSkills: {
+          unlockedSkills: [root!.id],
+          selectedClass: root!.id,
+          selectedSubVariant: null,
+          selectedRange: null,
+        },
+        tracksProgression: { skillPoints: 1, currentSkillTier: 1 },
+      },
+      frameId,
+    ).ok,
+    `${route.id}: frame is legal with the post-Forest point`,
+  );
   assert(
     JSON.stringify(result.progressionOrder) === JSON.stringify(T1_PROGRESSION_ORDER),
     `${route.id}: controlled biome progression order`,
@@ -283,7 +325,7 @@ for (const route of T1_CONTROLLED_ROUTES) {
     assert(!result.runeCraftedAt.has("rune-recipe-step-back"), `${route.id}: Brace arm omits Step Back`);
   } else {
     assert(guards.mountain === "second-wind", `${route.id}: Mountain uses Second Wind`);
-    assert(guards.cave === "cleanse", `${route.id}: Cave uses Cleanse against plating shred`);
+    assert(guards.cave === "second-wind", `${route.id}: Cave uses Second Wind for the current boss roster`);
     const stepBack = result.runeCraftedAt.get("rune-recipe-step-back");
     assert(stepBack?.gm === 26 && stepBack.biomeLevels.cave === 2, `${route.id}: Step Back at Cave L2 / GM26`);
   }
@@ -314,7 +356,7 @@ for (const route of T1_CONTROLLED_ROUTES) {
 
 // Apprentice's removed focus-targeting experiment would make the requested
 // Mountain profile 11 RP at GM21. The generated canonical instead exercises
-// its new Sweep adapter and keeps the legal shared chase profile.
+// its new Sweep adapter and now uses the legal shared Orbit profile.
 const apprentice = semantics.get("apprentice-t1")!;
 assert(
   !apprentice.craftedRuneRecipes.includes("rune-recipe-focus-lowest-hp"),

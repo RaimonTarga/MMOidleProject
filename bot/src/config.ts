@@ -3,10 +3,14 @@
  * or an environment variable — nothing is read from the server.
  */
 import { basename, isAbsolute } from "node:path";
+import { isT1EconomyArm, type T1EconomyArm } from "@mmo-idle/shared";
 import type { HarnessExecutionMode } from "./telemetry/events";
+import type { EntryEconomyMode } from "./tierEntry/economy";
 
 /** Prefix that marks an account as bot-owned. `cleanup.ts` deletes on this. */
 export const BOT_ACCOUNT_PREFIX = "bot-";
+
+export type CompletionMode = "full-gauntlet" | "next-tier";
 
 export interface BotConfig {
   /** Server origin, e.g. `http://localhost:4000`. */
@@ -21,8 +25,25 @@ export interface BotConfig {
   characterName: string;
   /** Route id, resolved against the route registry. */
   routeId: string;
+  /** Optional per-player T1 factorial arm; omitted means the live C/default behavior. */
+  economyArm?: T1EconomyArm;
   /** Policy profile id. */
   policyId: string;
+  /** Optional dev-only synthetic tier-entry profile id. */
+  tierEntryProfileId?: string;
+  /**
+   * Carryover-economy arm for a route that starts from a tier-entry template.
+   *
+   * A batch of eighteen Tier-2 routes spans six classes, and a tier-entry
+   * template is class-specific, so one `--tierEntry=<id>` cannot serve them all.
+   * Naming the ECONOMY MODE instead lets the runner resolve the right template
+   * per route while keeping the arm explicit and reproducible in the header:
+   * `clean` carries no essence at all (the economy-isolation control) and
+   * `natural` carries a documented conservative carryover.
+   */
+  entryEconomy: EntryEconomyMode;
+  /** Harness stop condition; gameplay routes remain unchanged. */
+  completionMode: CompletionMode;
   /** Directory that receives `runs/<runId>/`. */
   outDir: string;
   /** Hard stop for a whole run. */
@@ -159,14 +180,29 @@ export function buildConfig(args: Record<string, string>): BotConfig {
   const routeId = args.route ?? "striker-t1";
   const policyId = args.policy ?? "intended";
   const index = args.index ?? "01";
-  const botId = `${routeId}-${policyId}-${index}`;
+  const economyArm = args.economyArm;
+  if (economyArm !== undefined && !isT1EconomyArm(economyArm)) {
+    throw new Error(`unknown --economyArm ${economyArm}; use C,D,E,F`);
+  }
+  const botId = `${economyArm ? `${economyArm}-` : ""}${routeId}-${policyId}-${index}`;
+  const completionMode = (args.winCondition ?? args.completion ?? "full-gauntlet") as CompletionMode;
+  if (completionMode !== "full-gauntlet" && completionMode !== "next-tier") {
+    throw new Error("--winCondition must be full-gauntlet or next-tier");
+  }
 
   return {
     serverUrl: args.server ?? envOr("BOT_SERVER_URL", "http://localhost:4000"),
     devAccountId: args.account ?? `${BOT_ACCOUNT_PREFIX}${botId}`,
     characterName: sanitizeCharacterName(args.name ?? `Bot ${routeId} ${index}`),
     routeId,
+    economyArm: economyArm as T1EconomyArm | undefined,
     policyId,
+    tierEntryProfileId: args.tierEntry || args.entryProfile,
+    entryEconomy:
+      args.entryEconomy === "natural" || args.entryEconomy === "catalyst-primed"
+        ? args.entryEconomy
+        : "clean",
+    completionMode,
     outDir: normalizeOutDir(args.out ?? envOr("BOT_OUT_DIR", "runs")),
     maxRunMs: Number(args.maxRunMs ?? envOr("BOT_MAX_RUN_MS", String(24 * 60 * 60 * 1000))),
     freshCharacter: args.fresh !== "false",

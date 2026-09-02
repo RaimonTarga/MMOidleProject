@@ -13,6 +13,9 @@ const SLAM_PALETTE: Record<string, [number, number, number]> = {
   magic: [0xbb66ff, 0xe0b3ff, 0x9944cc],
   sandblast: [0xeecc66, 0xfff0c0, 0xccaa55],
   slash: [0xdddddd, 0xffffff, 0xaaaaaa],
+  // The Boulder Thrower's delayed impact is still a planted AoE, but its darker
+  // stone palette keeps the huge thrown rock distinct from a body-checking slam.
+  boulder: [0x68717a, 0xc4cdd5, 0x454c53],
 };
 
 /**

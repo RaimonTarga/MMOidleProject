@@ -135,6 +135,7 @@ function risenOf(world: World, raiser: MonsterEntity): MonsterEntity[] {
   const spec = MONSTER_DATABASE.get('gravewright')?.raisesDead;
   assert(!!spec, 'gravewright should author raisesDead');
   const initialDelayMs = spec!.initialDelayMs ?? spec!.intervalMs;
+  const castMs = spec!.castMs ?? 0;
 
   const rat = world.createMonster(NODE, 'plague-rat', { x: 440, y: 400 });
   assert(!!rat, 'plague rat should spawn');
@@ -159,6 +160,14 @@ function risenOf(world: World, raiser: MonsterEntity): MonsterEntity[] {
 
   world.takeNodeEvents(NODE);
   updateRaisers(world, t0 + initialDelayMs);
+  assert(
+    world.takeNodeEvents(NODE).some(event =>
+      event.kind === 'monster-cast-start' && event.label === 'Raise Dead',
+    ),
+    'the cadence should begin a readable Raise Dead cast',
+  );
+  assert(risenOf(world, gravewright!).length === 0, 'the corpse should stay dead during the wind-up');
+  updateRaisers(world, t0 + initialDelayMs + castMs);
   const risen = risenOf(world, gravewright!);
   assert(risen.length === 1, 'the necromancer should raise the corpse once its delay elapses');
   assert(
@@ -200,6 +209,7 @@ function risenOf(world: World, raiser: MonsterEntity): MonsterEntity[] {
   for (let i = 0; i < spec!.maxAlive + 4; i++) {
     t += spec!.intervalMs;
     updateRaisers(world, t);
+    updateRaisers(world, t + castMs);
   }
   assert(
     risenOf(world, gravewright!).length === spec!.maxAlive,

@@ -287,13 +287,35 @@ initCombatSystems();
   updateBossScripts(world, 100);
   assert(
     ![...world.monsterEntitiesInNode(NODE)].some(m => m.isRaised),
-    'raise-dead must never conjure from nothing',
+    'Mass Resurrection should not resolve during its warning cast',
+  );
+  assert(
+    world.takeNodeEvents(NODE).some(event =>
+      event.kind === 'monster-cast-start' && event.label === 'Mass Resurrection',
+    ),
+    'the 50% resurrection burst should announce its source',
+  );
+  updateBossScripts(world, 1_800);
+  assert(
+    ![...world.monsterEntitiesInNode(NODE)].some(m => m.isRaised),
+    'raise-dead must never conjure from nothing when the cast completes',
   );
 
   // Feed it three corpses; the next burst claims them.
   for (const dead of entourage.slice(0, 3)) recordCorpse(world, dead);
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.24;
   updateBossScripts(world, 100);
+  assert(
+    world.takeNodeEvents(NODE).some(event =>
+      event.kind === 'monster-cast-start' && event.label === 'Deathless Tide',
+    ),
+    'the final resurrection wave should announce Deathless Tide',
+  );
+  assert(
+    ![...world.monsterEntitiesInNode(NODE)].some(m => m.isRaised),
+    'the final wave should leave its corpses in place during the warning',
+  );
+  updateBossScripts(world, 2_000);
   const risen = [...world.monsterEntitiesInNode(NODE)].filter(m => m.isRaised);
   assert(risen.length > 0, 'the final wave should claw the corpses back up');
   assert(

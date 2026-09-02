@@ -5,11 +5,14 @@ import type {
   PlayerEntity,
 } from "../../../ecs/entity";
 import {
+  applyStatusEffect,
   distanceSq,
+  getString,
   getJungleBushes,
   MONSTER_DATABASE,
   monsterKites,
   RESOLVED_NODE_FEATURES,
+  setString,
   pointFromMotion,
   type AggroTargetKind,
   type MonsterDefinition,
@@ -21,11 +24,17 @@ import { isMonsterStunned } from "../status/stun";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import {
   chargedCastEndsAt,
+  castedBuffCastEndsAt,
+  castedBuffReady,
+  lowHealthWardCastEndsAt,
+  lowHealthWardReady,
   isChargeAoePlanted,
+  monsterAttackCooldown,
 } from "../engine/monsterMechanics";
 import { isMonsterKnockedBack } from "../damage/knockback";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
+import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { setAggroTarget, setAttackTarget } from "./targeting";
 import {
   selectMonsterAggroCandidate,
@@ -33,7 +42,9 @@ import {
 } from "./monsterTargeting";
 import {
   abortEngageSequence,
+  armEngageSequenceLandingAttack,
   beginEngageLock,
+  completeEngageSequence,
   engageSequenceStage,
 } from './engageSequence';
 
@@ -323,6 +334,34 @@ export function updateMonsters(world: World, dt: number, now: number) {
         continue;
       }
 
+      // Target-independent casts (the Dire Wolf's pack Howl) resolve from the
+      // caster, not from its victim. Once ready or underway, hold the wolf in
+      // place instead of chasing until it reaches melee range.
+      const castedBuff = monsterDef?.castedAttackSpeedBuff;
+      const buffInitialCooldown = castedBuff?.initialCooldownMs ?? castedBuff?.cooldownMs ?? 0;
+      const buffReady = castedBuff?.castWhileOutOfRange === true && castedBuffReady(e, now, buffInitialCooldown);
+      const buffAttackDue = now - e.performsAttack.lastAttackAt >= monsterAttackCooldown(e);
+      if (
+        castedBuff?.castWhileOutOfRange === true &&
+        (castedBuffCastEndsAt(e) > 0 || (buffReady && buffAttackDue))
+      ) {
+        e.hasAwareness.state = 'attacking';
+        stopMonster(world, e);
+        continue;
+      }
+
+      // A low-health ward is a self-cast, not an attack: the Granite Titan
+      // plants itself to raise its barrier even if the player has stepped away.
+      const lowHealthWard = monsterDef?.lowHealthWard;
+      if (
+        lowHealthWard &&
+        (lowHealthWardCastEndsAt(e) > 0 || lowHealthWardReady(e, lowHealthWard))
+      ) {
+        e.hasAwareness.state = 'attacking';
+        stopMonster(world, e);
+        continue;
+      }
+
       // A boss 'morph' action can flip the kite flag at runtime.
       const isKiter =
         e.scriptsBoss?.kiteOverride ??
@@ -345,9 +384,78 @@ export function updateMonsters(world: World, dt: number, now: number) {
           ) === targetPos);
 
       const sequenceStage = engageSequenceStage(e, monsterDef, now);
+      if (
+        (monsterDef?.engageSequence?.kind === 'cast-charge-root' ||
+          monsterDef?.engageSequence?.kind === 'cast-charge-strike') &&
+        sequenceStage === 'cast' &&
+        target.kind === 'player'
+      ) {
+        // Dive Bomb's tell is independent of attack range: the hawk visibly
+        // commits before it crosses the gap, and cannot sneak a basic hit in
+        // during the one-second wind-up.
+        e.hasPosition.speed = ai.baseSpeed;
+        e.hasAwareness.state = 'attacking';
+        setAttackTarget(world, e, target.entity.isPlayer.id);
+        stopMonster(world, e);
+        const session = `${e.hasAggroTarget?.sinceMs ?? 0}`;
+        if (getString(e.tracksCombat, 'engageSequenceCastEvent') !== session) {
+          setString(e.tracksCombat, 'engageSequenceCastEvent', session);
+          world.pushEvent(e.hasPosition.nodeId, {
+            kind: 'monster-cast-start', monsterId: e.isMonster.id,
+            castMs: monsterDef.engageSequence.castMs, label: monsterDef.engageSequence.name,
+            fx: monsterDef.engageSequence.fx,
+          });
+        }
+        continue;
+      }
+
       if (sequenceStage === 'charge') {
         if (target.kind !== 'player') {
           abortEngageSequence(world, e);
+        } else if (
+          monsterDef?.engageSequence?.kind === 'cast-charge-root' ||
+          monsterDef?.engageSequence?.kind === 'cast-charge-strike'
+        ) {
+          const session = `${e.hasAggroTarget?.sinceMs ?? 0}`;
+          if (getString(e.tracksCombat, 'engageSequenceCastEndEvent') !== session) {
+            setString(e.tracksCombat, 'engageSequenceCastEndEvent', session);
+            world.pushEvent(e.hasPosition.nodeId, {
+              kind: 'monster-cast-end', monsterId: e.isMonster.id, fired: true,
+              targetId: target.entity.isPlayer.id, fx: monsterDef.engageSequence.fx,
+            });
+          }
+          if (hasLine) {
+            if (monsterDef.engageSequence.kind === 'cast-charge-root') {
+              // Contact, rather than the ensuing basic hit, is the landing. The
+              // root therefore happens exactly when the dive arrives, stopping
+              // movement but leaving the player's attacks available.
+              const rootMs = Math.round(
+                monsterDef.engageSequence.rootMs * harmfulStatusDurationMult(target.entity),
+              );
+              applyStatusEffect(target.entity.tracksCombat, {
+                id: 'slow', maxStacks: 1, remainingMs: rootMs, refreshable: true,
+                sourceId: e.isMonster.id, data: { speedMult: 0, totalMs: rootMs },
+              });
+            } else {
+              armEngageSequenceLandingAttack(e, monsterDef.engageSequence.damageMultiplier);
+            }
+            completeEngageSequence(
+              e,
+              monsterDef.engageSequence.kind === 'cast-charge-root' &&
+                monsterDef.engageSequence.followWithChargedAttack === true,
+            );
+            e.hasPosition.speed = ai.baseSpeed;
+            e.performsAttack.lastAttackAt = now - e.performsAttack.attackCooldown;
+            e.hasAwareness.state = 'attacking';
+            setAttackTarget(world, e, target.entity.isPlayer.id);
+            stopMonster(world, e);
+            continue;
+          }
+          e.hasPosition.speed = Math.round(ai.baseSpeed * monsterDef.engageSequence.speedMult);
+          e.hasAwareness.state = 'chasing';
+          setAttackTarget(world, e, target.entity.isPlayer.id);
+          setMonsterTarget(world, e, targetPos);
+          continue;
         } else if (hasLine) {
           beginEngageLock(
             world,
@@ -594,10 +702,9 @@ function idleWanderTarget(
 
   const anchor = def?.idleAnchor;
   if (anchor) {
-    const anchored =
-      anchor === "swamp-pool"
-        ? poolIdleTarget(monster, node)
-        : bushIdleTarget(monster, node);
+    const anchored = anchor === "swamp-pool"
+      ? poolIdleTarget(monster, node)
+      : bushIdleTarget(monster, node);
     if (anchored) return anchored;
   }
 

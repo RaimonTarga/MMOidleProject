@@ -7,6 +7,7 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import { attachMarker } from '../../../ecs/markerHelpers';
 import type { World } from '../../../world/World';
+import { harmfulStatusDurationMult, harmfulStatusPotencyMult } from './harmfulStatus';
 
 /** Apply one definition-shaped monster DoT stack through the canonical status path. */
 export function applyMonsterDotToPlayer(
@@ -16,7 +17,17 @@ export function applyMonsterDotToPlayer(
   dotEffect: NonNullable<MonsterDefinition['dotEffect']>,
 ): void {
   const monsterDef = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
-  const durationMs = dotEffect.durationMs ?? 5_000;
+  // Status resistance (mobility tenacity + the Warding posture) lands HERE, at the
+  // single place a monster DoT enters a player, so no caller has to remember it.
+  // Both halves apply: a resisted DoT ticks for less AND stops sooner.
+  const durationMs = Math.max(
+    1,
+    Math.round((dotEffect.durationMs ?? 5_000) * harmfulStatusDurationMult(player)),
+  );
+  const damagePerStack = Math.max(
+    1,
+    Math.round(dotEffect.damagePerStack * harmfulStatusPotencyMult(player)),
+  );
   const debuff = resolveMonsterDotDebuff({ monster: monsterDef, dotEffect });
   const effect = applyStatusEffect(player.tracksCombat, {
     id: debuff.statusEffectId,
@@ -26,7 +37,7 @@ export function applyMonsterDotToPlayer(
     remainingMs: durationMs,
     refreshable: true,
     data: {
-      damagePerStack: dotEffect.damagePerStack,
+      damagePerStack,
       nextTickIn: dotEffect.tickIntervalMs,
       tickIntervalMs: dotEffect.tickIntervalMs,
       tickOnExpire: 1,
@@ -36,7 +47,7 @@ export function applyMonsterDotToPlayer(
       bypassBarrier: dotEffect.bypassBarrier ? 1 : 0,
     },
   });
-  effect.data.damagePerStack = dotEffect.damagePerStack;
+  effect.data.damagePerStack = damagePerStack;
   effect.data.tickIntervalMs = dotEffect.tickIntervalMs;
   effect.data.tickOnExpire = 1;
   effect.data.totalMs = durationMs;

@@ -17,16 +17,10 @@ import { SQUIRE_V2_T1 } from "./squireV2T1";
 import { STRIKER_T1 } from "./strikerT1";
 import { STRIKER_BRACE_TANK_T1 } from "./strikerBraceTankT1";
 import { STRIKER_V2_T1 } from "./strikerV2T1";
+import { T2_CONTROL_ROUTE_IDS, T2_ROUTES, T2_ROUTE_IDS } from "./t2RouteBuilder";
 
 /** Canonical class baselines, excluding the two deliberate Brace A/B arms. */
-export const T1_BASELINE_ROUTE_IDS = [
-  "striker-t1",
-  "squire-t1",
-  "slinger-t1",
-  "spirit-t1",
-  "apprentice-t1",
-  "conduit-t1",
-] as const;
+export { T1_BASELINE_ROUTE_IDS, T1_BASELINE_ROUTES } from "./t1Baselines";
 
 /**
  * The only routes admitted to the clean Tier-1 controlled batch. Historical
@@ -70,8 +64,14 @@ export const ROUTES = new Map<string, Route>(
     SPIRIT_V2_T1,
     APPRENTICE_V2_T1,
     CONDUIT_V2_T1,
+    ...T2_ROUTES,
   ].map((route) => [route.id, route]),
 );
+
+export { T2_CONTROL_ROUTE_IDS, T2_ROUTE_IDS };
+
+/** The eighteen Tier-2 branch routes: 6 class plans x 3 range nodes. */
+export const T2_BRANCH_ROUTES: readonly Route[] = T2_ROUTES;
 
 export function requireRoute(id: string): Route {
   const route = ROUTES.get(id);
@@ -80,9 +80,6 @@ export function requireRoute(id: string): Route {
   }
   return route;
 }
-
-/** Canonical routes only; deliberately excludes every named experiment and v2 route. */
-export const T1_BASELINE_ROUTES: readonly Route[] = T1_BASELINE_ROUTE_IDS.map(requireRoute);
 
 /** Exact eight-route clean combat-validation cohort. */
 export const T1_CONTROLLED_ROUTES: readonly Route[] = T1_CONTROLLED_ROUTE_IDS.map(requireRoute);

@@ -4,6 +4,7 @@ import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import {
   biomeLevelAtom,
   bossesClearedAtom,
+  combatArchetypeAtom,
   equipmentAtom,
   inventoryAtom,
   knownAbilitiesAtom,
@@ -33,6 +34,7 @@ export function useMakeEntries(): MakeEntry[] {
   const ownedRunes = useAtomValue(runesOwnedAtom);
   const biomeLevel = useAtomValue(biomeLevelAtom);
   const bossesCleared = useAtomValue(bossesClearedAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
 
   const equippedSet = useMemo(
     () => new Set(Object.values(equipment).filter((id): id is string => id !== null)),
@@ -56,9 +58,10 @@ export function useMakeEntries(): MakeEntry[] {
     biomeLevel,
     bossesCleared,
     isTestRoom,
+    combatArchetype,
   }), [
     unlockedRecipeIds, ownedGearIds, equippedSet, knownAbilities, knownStances,
-    knownRites, ownedRunes, biomeLevel, bossesCleared, isTestRoom,
+    knownRites, ownedRunes, biomeLevel, bossesCleared, isTestRoom, combatArchetype,
   ]);
 }
 

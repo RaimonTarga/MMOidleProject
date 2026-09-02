@@ -8,6 +8,7 @@ export const STRIKER_T1_CONFIG: T1RouteConfig = {
   id: "striker-t1",
   version: "3.0.0",
   classRoot: "cadence-root",
+  frameId: "cadence-balanced",
   description:
     "Controlled Striker dodge baseline: GM30 progression, Chaotic Axe gear identity, Step Back from Cave L2, and Step Back ahead of chase.",
   movementProfile: "melee-chase",

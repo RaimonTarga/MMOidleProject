@@ -107,6 +107,10 @@ const events: WorldLogEvent[] = [
 ];
 
 recorder.ingestWorldEvents(events, obs);
+recorder.ingestCombatEvents([
+  { kind: 'stance-switch', playerId: 'player-1', stanceId: 'predator-stance' },
+  { kind: 'stance-switch', playerId: 'other-player', stanceId: 'berserker-stance' },
+], 'node-5-5');
 recorder.bossAttempts = 1;
 recorder.emit({
   kind: 'boss-attempt', atMs: 10_000, phase: 'end', nodeId: 'node-5-5', biomeGroup: 'swamp',
@@ -165,6 +169,11 @@ const header: RunHeader = {
   characterId: 'character', routeId: 'route', routeVersion: '1', policyId: 'intended',
   classRoot: 'cadence-root', gitRevision: 'test', serverUrl: 'local', startedAt,
   rewardMultiplier: 1, taints: [],
+  economyCandidate: {
+    id: 'test', revision: 'test-revision', arm: 'C',
+    t1Plus5EssenceCostMultiplier: 0.75, catalystProgressPerUnitT1: 150,
+    catalystsScaledByRewardMultiplier: false, t1Plus5EssenceCosts: {},
+  },
   executionMode: 'single', maxConcurrency: 1,
 };
 const route: Route = {
@@ -177,6 +186,8 @@ const summary = buildSummary({
 });
 
 assert(summary.combat.totalDamageTaken === 3, 'hazard contact telemetry must not double-count its damage event');
+assert(summary.combat.stanceSwitches.length === 1, 'only own authoritative stance-switch events should reach telemetry');
+assert(summary.combat.stanceSwitches[0]?.stanceId === 'predator-stance', 'stance-switch event should preserve its target');
 assert(summary.combat.topIncomingSources[0]?.name.includes('Bile Pool'), 'Bile Pool should be a distinct incoming source');
 assert(summary.mechanics.persistentHazards['bile-pool']?.durationMs === 1_250, 'hazard dwell duration should reach summary');
 assert(summary.mechanics.persistentHazards['bile-pool']?.damageReceived === 3, 'hazard damage should reach mechanic summary');

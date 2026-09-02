@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG, catalystProgressPerUnit } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -40,15 +40,22 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
  * whenever progress crosses the threshold (carrying the remainder). No-op when
  * the node has no pace family (excluded node) or the monster grants no weight.
  * Caller marks the slice dirty.
+ *
+ * The threshold is per BIOME TIER, so a tier can set its own catalyst identity
+ * without touching any other tier's.
  */
 function grantCatalystProgress(
   entity: PlayerEntity,
   familyKey: string | undefined,
   weight: number,
+  biomeTier: number,
+  t1Threshold: number | undefined,
 ): void {
   if (!familyKey || weight <= 0) return;
   const prog = entity.tracksProgression;
-  const per = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
+  const per = biomeTier === 1 && t1Threshold !== undefined
+    ? t1Threshold
+    : catalystProgressPerUnit(biomeTier);
   const total = (prog.catalystProgress[familyKey] ?? 0) + weight;
   const minted = Math.floor(total / per);
   prog.catalystProgress[familyKey] = total - minted * per;
@@ -207,11 +214,24 @@ function applyKillRewardsToPlayer(
   // defaults to the monster's base essence reward (a tuned per-mob toughness
   // number) unless it sets an explicit `catalystWeight`. No modifier
   // (clearing / test room / throne) → no grant.
+  // DELIBERATELY NOT scaled by `debugMult`. The dev multiplier exists to skip
+  // essence/mastery FARMING, but catalysts are a discovery, not a currency pile:
+  // doubling their rate turns "I found a catalyst" into "I have another stack"
+  // and destroys the very thing a playtest is trying to observe. Scaling here
+  // was what produced the 15-fortified-per-run stockpiles in the 2026-08-31 2x
+  // cohort. Node-modifier premium (`rewardMult`) still applies -- that is the
+  // real economy, not a debug knob.
   const catalystWeight = Math.round(
-    (def?.rewards.catalystWeight ?? rewards.essence) * rewardMult * debugMult,
+    (def?.rewards.catalystWeight ?? rewards.essence) * rewardMult,
   );
   if (catalystWeight > 0 && nodeModifier) {
-    grantCatalystProgress(recipient, nodeModifier, catalystWeight);
+    grantCatalystProgress(
+      recipient,
+      nodeModifier,
+      catalystWeight,
+      biomeTier,
+      world.t1EconomyConfigForPlayer(recipient.isPlayer.id).catalystProgressPerUnitT1,
+    );
     markSliceDirty(world, recipient, 'tracksProgression');
   }
   const biomeResult = applyBiomeXP(

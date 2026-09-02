@@ -12,6 +12,7 @@ import {
   type BiomeProgressInput,
 } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
+import { NODE_REGISTRY } from "../../world/nodeRegistry";
 import type { PlayerEntity } from "../../ecs/entity";
 import { attachComponent, detachComponent } from "../../ecs/markerHelpers";
 import { markSliceDirty } from "../../ecs/dirtyHelpers";
@@ -25,7 +26,15 @@ import {
 import { setEntityMotion, stopEntity } from "./movement";
 import { isEffectivePartyFollower } from "../player/party/partySystem";
 import { isFleeing } from "../combat/ai/flee";
-import { RUNE_FOLLOW_LEADER_FLAG } from "../combat/ai/runeConfig";
+import {
+  RUNE_AVOID_ENEMIES_FLAG,
+  RUNE_FOLLOW_LEADER_FLAG,
+  RUNE_FIGHT_BACK_WHILE_TRAVELING_FLAG,
+  RUNE_TACTICAL_RELOAD_FLAG,
+  RUNE_WAIT_FOR_EXECUTION_FLAG,
+  RUNE_WAIT_FOR_REGEN_FLAG,
+} from "../combat/ai/runeConfig";
+import { isPlayerActivelyInCombat, isPlayerInCombat } from "../combat/ai/engagement";
 
 type TraversePhase = "mob" | "boss" | "advance";
 
@@ -168,9 +177,84 @@ function continueAutoTraversePath(world: World, player: PlayerEntity): boolean {
   setEntityMotion(
     world,
     player,
-    gateApproachTarget(player.hasPosition.nodeId, dir, player.hasPosition.current),
+    travelGateTarget(world, player, dir),
   );
   return true;
+}
+
+/**
+ * Phase-one Travel Safely steering: keep the existing node path and A* routing,
+ * but choose a less exposed point along the required exit edge. Monsters remain
+ * soft costs rather than new nav blockers, so an unavoidable route still works.
+ */
+function travelGateTarget(
+  world: World,
+  player: PlayerEntity,
+  dir: "north" | "south" | "west" | "east",
+) {
+  const base = gateApproachTarget(player.hasPosition.nodeId, dir, player.hasPosition.current);
+  if (!getFlag(player.tracksCombat, RUNE_AVOID_ENEMIES_FLAG)) return base;
+  const node = NODE_REGISTRY.get(player.hasPosition.nodeId);
+  if (!node) return base;
+  const lateral = dir === "north" || dir === "south" ? "x" : "y";
+  const extent = lateral === "x" ? node.width : node.height;
+  const current = player.hasPosition.current[lateral];
+  const candidates = [current, current - 180, current + 180, current - 360, current + 360]
+    .map((value) => Math.max(50, Math.min(extent - 50, value)));
+
+  let best = base;
+  let bestScore = Number.POSITIVE_INFINITY;
+  for (const value of candidates) {
+    const candidate = lateral === "x" ? { ...base, x: value } : { ...base, y: value };
+    let score = Math.hypot(
+      candidate.x - player.hasPosition.current.x,
+      candidate.y - player.hasPosition.current.y,
+    );
+    for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+      if (
+        monster.hasAggroTarget?.targetKind === "player" &&
+        monster.hasAggroTarget.targetId === player.isPlayer.id
+      ) continue;
+      const distance = Math.hypot(
+        candidate.x - monster.hasPosition.current.x,
+        candidate.y - monster.hasPosition.current.y,
+      );
+      score += Math.max(0, 1 - distance / 300) ** 2 * 900;
+    }
+    if (score < bestScore) {
+      best = candidate;
+      bestScore = score;
+    }
+  }
+  return best;
+}
+
+function travelMaintenanceOwns(player: PlayerEntity): boolean {
+  return (
+    (getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
+      player.hasHealth.hp < player.hasHealth.maxHp) ||
+    (getFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG) &&
+      player.usesCooldown !== undefined && player.hasEmpoweredAttack === undefined) ||
+    (getFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG) &&
+      player.usesReload !== undefined && player.usesReload.reloadingMs > 0)
+  );
+}
+
+/** Pause and later release a path without copying or persisting its destination. */
+function updateTravelCombatPause(world: World, player: PlayerEntity, now: number): boolean {
+  const path = player.hasAutoTraversePath;
+  if (!path || path.targetNodeId === player.hasPosition.nodeId) return false;
+  const active = isPlayerActivelyInCombat(world, player);
+  const mayFightBack = getFlag(player.tracksCombat, RUNE_FIGHT_BACK_WHILE_TRAVELING_FLAG);
+
+  if (!player.fightsWhileTraveling && mayFightBack && active) {
+    attachComponent(world, player, "fightsWhileTraveling", { startedAtMs: now });
+  }
+  if (!player.fightsWhileTraveling) return false;
+
+  if (active || isPlayerInCombat(player, now) || travelMaintenanceOwns(player)) return true;
+  detachComponent(world, player, "fightsWhileTraveling");
+  return false;
 }
 
 function markCurrentNodeClearedIfUnlocksDone(
@@ -192,8 +276,10 @@ function markCurrentNodeClearedIfUnlocksDone(
 }
 
 export function updateAutoTraverse(world: World): void {
+  const now = Date.now();
   for (const player of world.livePlayers) {
     if (isFleeing(player)) continue;
+    if (updateTravelCombatPause(world, player, now)) continue;
     // Rune-following party members mirror the effective leader
     // (updatePartyFollow owns them) instead of running their own traverse.
     if (

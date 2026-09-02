@@ -29,6 +29,16 @@ import type { Recipe } from './types';
 // rework — the economy is an explicitly separate pass (baseline §17).
 // ─────────────────────────────────────────────────────────────────────────
 
+// ── T1 ECONOMY CANDIDATE C (2026-08-31) ───────────────────────────────────
+// Every T1 (+5) step's ESSENCE cost was cut 25%, rounded to the nearest 5
+// (Math.round semantics): 205->155, 260->195, 200->150, 100->75, 75->55,
+// 70->55, 60->45. Catalyst costs, initial crafts and +1..+4 are UNCHANGED, so
+// the per-item "same total (N)" notes below now describe the pre-candidate
+// total, not the current one. The target is the post-mastery affordability
+// tail only -- the 2x bot cohort spent its last ~15m/run earning the final
+// +5 essence after every biome was already maxed.
+// ──────────────────────────────────────────────────────────────────────────
+
 export const plainsRecipeEntries = [
   // ── T1 ──
   // Cheaper than the other T1 weapons and below their raw budget, on purpose.
@@ -51,7 +61,7 @@ export const plainsRecipeEntries = [
       { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 25 }, requiredBiomeLevel: 3 },
       { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 35 }, requiredBiomeLevel: 4 },
       { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 100 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 75 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -71,7 +81,7 @@ export const plainsRecipeEntries = [
       { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 70 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 115 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 200 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 150 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -94,7 +104,7 @@ export const plainsRecipeEntries = [
       { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 20 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 30 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 75 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 55 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -113,7 +123,7 @@ export const plainsRecipeEntries = [
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 15 }, requiredBiomeLevel: 4 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 25 }, requiredBiomeLevel: 4 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
     ],
   }],
 

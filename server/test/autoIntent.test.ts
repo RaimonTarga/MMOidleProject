@@ -6,8 +6,11 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { attachComponent, detachComponent } from "../src/ecs/markerHelpers";
-import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { RUNE_WAIT_FOR_REGEN_FLAG } from "../src/systems/combat/ai/runeConfig";
+import { setAggroTarget, setAttackTarget } from "../src/systems/combat/ai/targeting";
+import { RUNE_WAIT_FOR_REGEN_FLAG, updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
+import { updateAutoTargets } from "../src/systems/combat/ai/autoTarget";
+import { updateAutoTraverse } from "../src/systems/world/autoTraverse";
+import { findShortestNodePath } from "../src/world/nodePath";
 import { updateAutoIntent } from "../src/systems/world/autoIntent";
 import { World } from "../src/world/World";
 
@@ -94,16 +97,41 @@ assert(
 );
 
 setAttackTarget(world, player, null);
+const manualTravelPath = findShortestNodePath(player.hasPosition.nodeId, "node-t1-forest-01");
+if (!manualTravelPath || manualTravelPath.length < 2) throw new Error("failed to create travel test path");
 attachComponent(world, player, "hasAutoTraversePath", {
   targetNodeId: "node-t1-forest-01",
-  remainingPath: ["node-t1-forest-01"],
+  remainingPath: manualTravelPath.slice(1),
 });
 updateAutoIntent(world);
 assert(player.hasAutoIntent?.kind === "travel", "manual map travel should publish travel intent");
 assert(
-  player.hasAutoIntent?.source === "",
-  "manual travel should identify its governing source",
+  player.hasAutoIntent?.source === "Fight Back",
+  "manual travel should identify its configured travel response",
 );
+
+// Fight Back may temporarily use the normal target loop even though a map click
+// intentionally disabled permanent auto-combat. The original travel path stays
+// attached and resumes once the hostile has cleared.
+player.tracksProgression.runesEquipped = [
+  { conditionId: "while-traveling", actionId: "fight-back" },
+  { conditionId: "in-combat", actionId: "chase-enemy" },
+];
+setAggroTarget(world, target, { id: player.isPlayer.id, kind: "player" }, 1_000);
+updateRuneDerivedConfig(world, 1_000);
+updateAutoTraverse(world);
+assert(player.fightsWhileTraveling !== undefined, "Fight Back pauses an attacked travel route");
+updateAutoTargets(world, 1_000);
+assert(
+  player.isMoving !== undefined,
+  "paused travel uses normal target acquisition",
+);
+setAttackTarget(world, player, null);
+setAggroTarget(world, target, null, 2_000);
+updateRuneDerivedConfig(world, 2_000);
+updateAutoTraverse(world);
+assert(player.fightsWhileTraveling === undefined, "travel pause releases after combat clears");
+assert(player.hasAutoTraversePath !== undefined, "Fight Back retains the original travel destination");
 
 detachComponent(world, player, "hasAutoTraversePath");
 player.usesAutocombat.auto = true;

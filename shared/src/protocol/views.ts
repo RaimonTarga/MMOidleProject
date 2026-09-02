@@ -1,5 +1,5 @@
 import type { EquipmentMap, EssenceType } from "../items";
-import type { HasAutoIntent, HasEmote, PartyMember, TargetStatusView, UltimateStatus } from "../components";
+import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, TargetStatusView, UltimateStatus } from "../components";
 import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { MonsterBehavior } from "../data/monsters/behavior";
@@ -244,6 +244,8 @@ export interface MonsterView {
   activeEffectFrames?: Record<string, number>;
   bossEffects?: string[];
   bossEffectStacks?: Record<string, number>;
+  bossEffectDurations?: Record<string, { remainingMs: number; totalMs: number }>;
+  enemyBarrier?: NonNullable<HasStatus['enemyBarrier']>;
   targetStatus?: TargetStatusView[];
   ultimateStatus?: UltimateStatus;
   throneHealing?: boolean;
@@ -491,6 +493,8 @@ export function composeMonsterView(
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     bossEffects: entity.hasStatus?.bossEffects,
     bossEffectStacks: entity.hasStatus?.bossEffectStacks,
+    bossEffectDurations: entity.hasStatus?.bossEffectDurations,
+    enemyBarrier: entity.hasStatus?.enemyBarrier,
     targetStatus: entity.hasStatus?.targetStatus,
     ultimateStatus: entity.hasStatus?.ultimateStatus,
     throneHealing: entity.hasStatus?.throneHealing,

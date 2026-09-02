@@ -44,6 +44,11 @@ export const DOT_T3_BUFFS = [
     return {
       id: 'dot-frenzy', label: 'Frenzy', stacks: 1, durationPct: pct, color: '#ff3355',
       logDetail: `+${Math.round(attackSpeedPct * 100)}% attack speed, +${Math.round(onHitPerTier * tierMult)} on-hit damage`,
+      remainingMs: fx.remainingMs,
+      values: [
+        { label: 'Attack speed', value: `+${Math.round(attackSpeedPct * 100)}%`, good: true },
+        { label: 'On-hit damage', value: `+${Math.round(onHitPerTier * tierMult)}`, good: true },
+      ],
     };
   }, { category: 'dot-poison', shape: 'square' }),
   defineBuff('dot-frostbite', ({ player, target, targetCs }) => {
@@ -60,6 +65,9 @@ export const DOT_T3_BUFFS = [
       color: '#7fd0ff',
       logSourceName: 'DoT',
       logDetail: `+${Math.round(stacks * getTargetFrostbiteDotTakenPerStack(targetCs) * 100)}% DoT damage taken`,
+      values: [
+        { label: 'Target DoT damage taken', value: `+${Math.round(stacks * getTargetFrostbiteDotTakenPerStack(targetCs) * 100)}%`, good: true },
+      ],
       logTargetId: target?.isMonster.id,
       logTargetName: target?.isMonster.name,
       logTargetType: target ? 'monster' : undefined,
@@ -80,6 +88,10 @@ export const DOT_T3_BUFFS = [
           durationPct: -1,
           color: '#88ff44',
           logDetail: `+${atkBonus} damage, +${speedBonus}% attack speed`,
+          values: [
+            { label: 'Damage', value: `+${atkBonus}`, good: true },
+            { label: 'Attack speed', value: `+${speedBonus}%`, good: true },
+          ],
         }
       : null;
   }, { category: 'dot-poison', shape: 'circle' }),
@@ -96,6 +108,7 @@ export const DOT_T3_BUFFS = [
           color: '#ff6600',
           logSourceName: 'DoT',
           logDetail: 'rapid burn active',
+          values: [{ label: 'Target burn', value: 'accelerated', good: true }],
           logTargetId: target?.isMonster.id,
           logTargetName: target?.isMonster.name,
           logTargetType: target ? 'monster' : undefined,
@@ -120,6 +133,10 @@ export const DOT_T3_BUFFS = [
           color: '#88ddff',
           logSourceName: 'DoT',
           logDetail: `-${speedReductionPct}% move speed, +${attackSlowPct}% attack cooldown`,
+          values: [
+            { label: 'Target movement speed', value: `-${speedReductionPct}%`, good: true },
+            { label: 'Target attack cooldown', value: `+${attackSlowPct}%`, good: true },
+          ],
           logTargetId: target?.isMonster.id,
           logTargetName: target?.isMonster.name,
           logTargetType: target ? 'monster' : undefined,
@@ -139,6 +156,9 @@ export const DOT_T3_BUFFS = [
           color: '#ffffff',
           logSourceName: 'DoT',
           logDetail: `+${Math.round(getTargetFrozenDamageTakenPct(targetCs) * 100)}% damage taken`,
+          values: [
+            { label: 'Target damage taken', value: `+${Math.round(getTargetFrozenDamageTakenPct(targetCs) * 100)}%`, good: true },
+          ],
           logTargetId: target?.isMonster.id,
           logTargetName: target?.isMonster.name,
           logTargetType: target ? 'monster' : undefined,

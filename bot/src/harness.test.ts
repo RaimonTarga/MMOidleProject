@@ -18,6 +18,7 @@ import {
 import { evaluate, resolveNearCandidates, resolveNode, resolveNodeCandidates } from "./route/conditions";
 import { abilitySlotCount } from "@mmo-idle/shared";
 import { POLICIES, requirePolicy } from "./policy/profiles";
+import { TIER_ENTRY_PROFILES } from "./tierEntry/profiles";
 import { ROUTES, T1_BASELINE_ROUTE_IDS, T1_BASELINE_ROUTES, requireRoute } from "./routes";
 import type { Condition, NodeRef, RouteStep } from "./route/types";
 import { Observation, dungeonNodeFor, normalNodesFor } from "./state/observation";
@@ -462,12 +463,32 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
         if (step.type === "craftRune") {
           const runeId = RUNE_RECIPE_DATABASE.get(step.recipeId)?.runeId;
           if (runeId) craftedRuneIds.add(runeId);
-        } else if (step.type === "repeatUntil") {
+        } else if (step.type === "repeatUntil" || step.type === "ifPossible") {
           collectRunes(step.steps);
         }
       }
     };
     collectRunes(route.steps);
+
+    // A route that starts from a tier-entry template already OWNS everything the
+    // preceding tier earned. Without seeding that, static validation reads a
+    // Tier-2 route as a fresh character equipping runes it never crafted and a
+    // Global Mastery of zero -- both false, and both would block correct routes.
+    const entryProfile = route.startsFromTierEntry
+      ? [...TIER_ENTRY_PROFILES.values()].find(
+          (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
+        )
+      : undefined;
+    if (route.startsFromTierEntry) {
+      assert(
+        entryProfile,
+        `${route.id}: declares tier-${route.startsFromTierEntry} entry but no matching template exists`,
+      );
+    }
+    for (const recipeId of entryProfile?.runeRecipesCrafted ?? []) {
+      const runeId = RUNE_RECIPE_DATABASE.get(recipeId)?.runeId;
+      if (runeId) craftedRuneIds.add(runeId);
+    }
 
     // Every NodeRef a route names must resolve to a real node. This is the
     // cheapest possible guard against the most expensive possible mistake: a
@@ -489,6 +510,9 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
         condition.of.forEach(recordBiomeLevelCondition);
       }
     };
+    for (const [group, level] of Object.entries(entryProfile?.biomeLevels ?? {})) {
+      minimumBiomeLevels[group] = Math.max(minimumBiomeLevels[group] ?? 0, level);
+    }
     const currentRuneBudget = (): { gm: number; budget: number } => {
       const gm = globalMastery(minimumBiomeLevels);
       return { gm, budget: runeBudgetForGlobalMastery(gm) };
@@ -592,6 +616,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
             );
             break;
           case "repeatUntil":
+          case "ifPossible":
             walk(step.steps);
             break;
           default:
@@ -651,9 +676,25 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     }
   };
   for (const route of ROUTES.values()) {
-    const craftedItems = new Set<string>();
-    const learnedAbilities = new Set<string>();
+    // A tier-entry route inherits the previous tier's crafted gear, learned
+    // abilities and rune catalogue. Seeding them is what makes ordering checks
+    // ("equipped only after crafting", "slotted only after learning") mean the
+    // same thing for a Tier-2 route as they do for a Tier-1 one.
+    const entry = route.startsFromTierEntry
+      ? [...TIER_ENTRY_PROFILES.values()].find(
+          (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
+        )
+      : undefined;
+    const craftedItems = new Set<string>([
+      ...(entry?.inventory ?? []),
+      ...Object.values(entry?.equipment ?? {}).filter((id): id is string => !!id),
+    ]);
+    const learnedAbilities = new Set<string>(entry?.knownAbilities ?? []);
     const ownedRunes = new Set(STARTER_RUNE_IDS);
+    for (const recipeId of entry?.runeRecipesCrafted ?? []) {
+      const runeId = RUNE_RECIPE_DATABASE.get(recipeId)?.runeId;
+      if (runeId) ownedRunes.add(runeId);
+    }
     const archetype = ARCHETYPE_FOR_ROOT[route.classRoot];
     assert(archetype, `${route.id}: class root maps to a combat archetype`);
 
@@ -663,6 +704,31 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
           checkRecipeConditions(route.id, step.until);
         } else if (step.type === "craft") {
           for (const recipeId of step.recipeIds) craftedItems.add(recipeId);
+        } else if (step.type === "evolveItem") {
+          // Evolution and reconstruction both END with the evolved item in the
+          // bag, so both count as obtaining it. The `evolve` path additionally
+          // CONSUMES the predecessor, which is why it is dropped here -- a route
+          // that tries to wear the predecessor afterwards is authored wrong and
+          // this is where that shows up.
+          const recipe = RECIPE_DATABASE.get(step.recipeId);
+          assert(recipe, `${route.id}: evolution recipe exists (${step.recipeId})`);
+          assert(
+            !!recipe.evolvesFrom,
+            `${route.id}: evolveItem targets an evolved recipe (${step.recipeId})`,
+          );
+          if (step.mode === "reconstruct") {
+            assert(
+              !!recipe.reconstructCost,
+              `${route.id}: ${step.recipeId} authors a reconstruction cost`,
+            );
+          } else {
+            assert(
+              craftedItems.has(recipe.evolvesFrom!),
+              `${route.id}: ${step.recipeId} evolves from an owned ${recipe.evolvesFrom}`,
+            );
+            craftedItems.delete(recipe.evolvesFrom!);
+          }
+          craftedItems.add(step.recipeId);
         } else if (step.type === "equip") {
           for (const definitionId of step.definitionIds) {
             assert(
@@ -700,6 +766,9 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
           }
         } else if (step.type === "repeatUntil") {
           checkRecipeConditions(route.id, step.until);
+          walkInOrder(step.steps);
+        } else if (step.type === "ifPossible") {
+          checkRecipeConditions(route.id, step.when);
           walkInOrder(step.steps);
         }
       }
@@ -929,6 +998,7 @@ async function bossAttemptDeathDuringAltarWaitCheck(): Promise<void> {
     now: () => Date.now(),
     emit: (event: Record<string, unknown>) => events.push(event),
     setActivity: () => {},
+    walletSnapshot: () => {},
   };
 
   const executor = new RouteExecutor({
@@ -937,7 +1007,7 @@ async function bossAttemptDeathDuringAltarWaitCheck(): Promise<void> {
       nodeId,
       dungeon,
       monsters: () => [],
-      bossCleared: () => bossCleared,
+      bossCleared: (group: string) => group === "forest" ? true : bossCleared,
       attackersOnSelf: () => [],
     },
     intents: {
@@ -955,7 +1025,10 @@ async function bossAttemptDeathDuringAltarWaitCheck(): Promise<void> {
       version: "1",
       classRoot: "cadence-root",
       description: "attemptBoss-only fixture",
-      steps: [{ type: "attemptBoss", biomeGroup, tier, maxAttempts: 1 }],
+      steps: [
+        { type: "attemptBoss", biomeGroup, tier, maxAttempts: 1 },
+        { type: "attemptBoss", biomeGroup: "forest", tier, maxAttempts: 1 },
+      ],
       completion: { type: "playerTierAtLeast", tier: 9 },
       milestones: [],
     },
@@ -967,10 +1040,9 @@ async function bossAttemptDeathDuringAltarWaitCheck(): Promise<void> {
     // typed away rather than stubbed wholesale.
   } as unknown as ExecutorDeps);
 
-  // maxAttempts is 1 and this attempt does not win, so the loop legitimately
-  // exhausts and throws -- the assertion of interest is the outcome recorded
-  // for THIS attempt, not whether the overall step resolves.
-  await executor.run().catch(() => undefined);
+  // maxAttempts is 1 and this attempt does not win. The executor must record
+  // the exhaustion and advance to the next boss step instead of throwing.
+  await executor.run();
 
   const ended = events.find(
     (event) => event.kind === "boss-attempt" && event.phase === "end",
@@ -983,6 +1055,14 @@ async function bossAttemptDeathDuringAltarWaitCheck(): Promise<void> {
   assert(
     (ended!.durationMs as number) < 10_000,
     "the death must be caught promptly, not after burning the full altar-ready timeout",
+  );
+  assert(
+    events.some((event) => event.kind === "boss-step-exhausted"),
+    "an exhausted boss step must be recorded before advancing",
+  );
+  assert(
+    events.filter((event) => event.kind === "route-step-start" && event.stepType === "attemptBoss").length === 2,
+    "the route must advance to the next boss after the cap",
   );
 
   console.log("boss attempt death classification: ok");
@@ -1009,6 +1089,7 @@ async function mutationRetryCheck(): Promise<void> {
     context: () => ({ biomeGroup: "clearing", nodeId: CLEARING_NODE_ID }),
     biome: () => ({ craftsCompleted: 0 }),
     setActivity: () => {},
+    walletSnapshot: () => {},
   };
 
   const executor = new RouteExecutor({

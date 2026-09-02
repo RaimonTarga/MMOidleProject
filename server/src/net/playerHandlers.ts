@@ -11,6 +11,8 @@ import {
   sanitizeRuneLoadout,
   runicPointLoadoutCost,
   clampRewardMultiplier,
+  isT1EconomyArm,
+  t1EconomyConfigForArm,
 } from "@mmo-idle/shared";
 import type {
   AutocombatConfig,
@@ -78,6 +80,7 @@ import {
   renamePlayer,
   resetPlayerClass,
   resetPlayerProgress,
+  applyTierEntryProfile,
   respawnNode,
   teleportPlayerToNode,
 } from "../admin/gameActions";
@@ -539,6 +542,31 @@ export function registerPlayerHandlers(
       world.rewardMultiplierBroadcast?.(next);
     });
 
+    socket.on("debug:applyEconomyExperiment", (arm) => {
+      const p = liveSelf();
+      if (!p) {
+        socket.emit("debug:economyExperimentResult", {
+          success: false,
+          reason: "Not available while dead or disconnected.",
+        });
+        return;
+      }
+      if (!isT1EconomyArm(arm)) {
+        socket.emit("debug:economyExperimentResult", {
+          success: false,
+          reason: `Unknown T1 economy arm: ${String(arm)}.`,
+        });
+        return;
+      }
+      const config = t1EconomyConfigForArm(arm);
+      world.setT1EconomyConfigForPlayer(socket.id, config);
+      log.info(
+        { playerId: socket.id, arm, revision: config.revision },
+        "debug T1 economy experiment arm set",
+      );
+      socket.emit("debug:economyExperimentResult", { success: true, arm, config });
+    });
+
     socket.on("debug:goToTestRoom", () => {
       const p = world.getPlayerEntity(socket.id);
       if (!p) return;
@@ -606,6 +634,21 @@ export function registerPlayerHandlers(
       if (!p) return;
       resetPlayerProgress(world, p);
       adminControls.emitPlayerSummaries();
+    });
+
+    socket.on("debug:applyTierEntryProfile", (profile) => {
+      const p = liveSelf();
+      if (!p) {
+        socket.emit("debug:tierEntryResult", {
+          success: false,
+          profileId: profile?.id ?? "unknown",
+          reason: NOT_LIVE_REASON,
+        });
+        return;
+      }
+      const result = applyTierEntryProfile(world, p, profile);
+      socket.emit("debug:tierEntryResult", result);
+      if (result.success) adminControls.emitPlayerSummaries();
     });
   }
 

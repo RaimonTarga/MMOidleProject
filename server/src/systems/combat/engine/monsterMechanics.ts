@@ -5,6 +5,7 @@ import {
   getCounter,
   getStatusEffect,
   modifiedDotDamagePerStack,
+  removeStatusEffect,
   setCounter,
   type MonsterDefinition,
   type MonsterDotEffect,
@@ -22,9 +23,15 @@ export function monsterAttackCooldown(monster: MonsterEntity): number {
     : 0;
   const roar = getStatusEffect(monster.tracksCombat, BOSS_ROAR_HASTE_EFFECT_ID);
   const roarPct = Math.max(0, roar?.data.attackSpeedPct ?? 0);
+  const castedBuffPct = monster.tracksCombat.statusEffects.reduce(
+    (total, effect) => effect.remainingMs !== 0 && effect.data.monsterAttackSpeedBuff === 1
+      ? total + Math.max(0, effect.data.attackSpeedPct ?? 0)
+      : total,
+    0,
+  );
   return Math.max(
     100,
-    Math.round(monster.performsAttack.attackCooldown / (1 + rampPct + roarPct)),
+    Math.round(monster.performsAttack.attackCooldown / (1 + rampPct + roarPct + castedBuffPct)),
   );
 }
 
@@ -75,6 +82,11 @@ const CHARGE_AOE_Y_KEY = "chargeAoeY";
 // Marks that the pending cast is a planted ground slam (1) rather than a
 // target-following power shot (0). Read on the out-of-range bail path.
 const CHARGE_AOE_ACTIVE_KEY = "chargeAoeActive";
+const BUFF_CAST_ENDS_KEY = "buffCastEndsAt";
+const BUFF_CAST_CD_NEXT_KEY = "buffCastCdNextAt";
+const BUFF_CAST_SESSION_KEY = "buffCastSession";
+const LOW_HEALTH_WARD_CAST_ENDS_KEY = "lowHealthWardCastEndsAt";
+const LOW_HEALTH_WARD_USED_KEY = "lowHealthWardUsed";
 
 /** Combat-entry timestamp for the monster's current aggro session (or `now`). */
 function combatSession(monster: MonsterEntity, now: number): number {
@@ -345,6 +357,102 @@ export function cancelCharge(monster: MonsterEntity): void {
   setCounter(monster.tracksCombat, CHARGE_AOE_ACTIVE_KEY, 0);
 }
 
+/** Timestamp the current non-damaging buff cast completes at (0 when idle). */
+export function castedBuffCastEndsAt(monster: MonsterEntity): number {
+  return getCounter(monster.tracksCombat, BUFF_CAST_ENDS_KEY);
+}
+
+/** True when a cast-time haste boon is ready in this combat session. */
+export function castedBuffReady(
+  monster: MonsterEntity,
+  now: number,
+  initialCooldownMs: number,
+): boolean {
+  const cs = monster.tracksCombat;
+  const session = combatSession(monster, now);
+  if (getCounter(cs, BUFF_CAST_SESSION_KEY) !== session) {
+    setCounter(cs, BUFF_CAST_SESSION_KEY, session);
+    setCounter(cs, BUFF_CAST_CD_NEXT_KEY, session + initialCooldownMs);
+    setCounter(cs, BUFF_CAST_ENDS_KEY, 0);
+  }
+  return now >= getCounter(cs, BUFF_CAST_CD_NEXT_KEY);
+}
+
+export function beginCastedBuff(monster: MonsterEntity, now: number, castMs: number): void {
+  setCounter(monster.tracksCombat, BUFF_CAST_ENDS_KEY, now + castMs);
+}
+
+export function completeCastedBuff(monster: MonsterEntity, now: number, cooldownMs: number): void {
+  setCounter(monster.tracksCombat, BUFF_CAST_ENDS_KEY, 0);
+  setCounter(monster.tracksCombat, BUFF_CAST_CD_NEXT_KEY, now + cooldownMs);
+}
+
+export function cancelCastedBuff(monster: MonsterEntity): void {
+  setCounter(monster.tracksCombat, BUFF_CAST_ENDS_KEY, 0);
+}
+
+/** Timestamp the one-time low-health ward cast resolves (0 while idle). */
+export function lowHealthWardCastEndsAt(monster: MonsterEntity): number {
+  return getCounter(monster.tracksCombat, LOW_HEALTH_WARD_CAST_ENDS_KEY);
+}
+
+/** A ward becomes available once per life after the monster crosses its HP threshold. */
+export function lowHealthWardReady(
+  monster: MonsterEntity,
+  ward: NonNullable<MonsterDefinition['lowHealthWard']>,
+): boolean {
+  return (
+    getCounter(monster.tracksCombat, LOW_HEALTH_WARD_USED_KEY) === 0 &&
+    monster.hasHealth.hp <= monster.hasHealth.maxHp * ward.thresholdPct
+  );
+}
+
+export function beginLowHealthWard(monster: MonsterEntity, now: number, castMs: number): void {
+  setCounter(monster.tracksCombat, LOW_HEALTH_WARD_CAST_ENDS_KEY, now + castMs);
+}
+
+export function completeLowHealthWard(monster: MonsterEntity): void {
+  setCounter(monster.tracksCombat, LOW_HEALTH_WARD_CAST_ENDS_KEY, 0);
+  setCounter(monster.tracksCombat, LOW_HEALTH_WARD_USED_KEY, 1);
+}
+
+export function cancelLowHealthWard(monster: MonsterEntity): void {
+  setCounter(monster.tracksCombat, LOW_HEALTH_WARD_CAST_ENDS_KEY, 0);
+}
+
+/** Drain a temporary casted ward before any periodic enemy shield. */
+function applyCastedMonsterWard(
+  monster: MonsterEntity,
+  damage: number,
+): { damage: number; absorbed: number } {
+  if (damage <= 0) return { damage, absorbed: 0 };
+  const ward = monster.tracksCombat.statusEffects.find(effect =>
+    effect.remainingMs > 0 && effect.data.monsterWard === 1 && (effect.data.wardAmount ?? 0) > 0,
+  );
+  if (!ward) return { damage, absorbed: 0 };
+  const amount = Math.max(0, Math.round(ward.data.wardAmount ?? 0));
+  const absorbed = Math.min(amount, damage);
+  ward.data.wardAmount = amount - absorbed;
+  if (ward.data.wardAmount <= 0) removeStatusEffect(monster.tracksCombat, ward.id);
+  return { damage: damage - absorbed, absorbed };
+}
+
+/** Spend one upcoming-attack haste charge after a monster completes a basic beat. */
+export function consumeMonsterAttackSpeedCharge(monster: MonsterEntity): void {
+  for (const effect of monster.tracksCombat.statusEffects) {
+    if (effect.data.monsterAttackSpeedBuff !== 1) continue;
+    const remaining = Math.max(0, Math.round(effect.data.attacksRemaining ?? 0));
+    if (remaining <= 0) continue;
+    if (remaining <= 1) {
+      removeStatusEffect(monster.tracksCombat, effect.id);
+      return;
+    }
+    effect.data.attacksRemaining = remaining - 1;
+    effect.stacks = remaining - 1;
+    return;
+  }
+}
+
 /**
  * Clip an oversized single player hit against this monster — mirror of the
  * player damage-cap (defense.max-hit-pct / max-hit-mult). Damage above
@@ -363,6 +471,74 @@ export function applyEnemySoftCap(
   const threshold = monster.hasHealth.maxHp * cap.capPct;
   if (damage <= threshold) return damage;
   return Math.ceil(threshold + (damage - threshold) * cap.capMult);
+}
+
+export interface EnemyShieldRuntimeState {
+  shield: NonNullable<MonsterDefinition['enemyShield']>;
+  amount: number;
+  expiresAt: number;
+  nextAt: number;
+  lastHitAt: number;
+  activated: boolean;
+}
+
+/**
+ * Advance the deterministic enemy-barrier cadence even when no hit lands this
+ * tick. Combat used to refresh this state lazily on the next incoming hit, which
+ * was mechanically equivalent but left the client with nothing authoritative to
+ * render between hits. Both combat and the presentation mirror share this path.
+ */
+export function refreshEnemyShieldState(
+  monster: MonsterEntity,
+  def: MonsterDefinition | undefined,
+  now: number,
+): EnemyShieldRuntimeState | undefined {
+  if (monster.scriptsBoss?.defenseShed) return undefined;
+  const shield = monster.scriptsBoss?.shieldOverride ?? def?.enemyShield;
+  if (!shield) return undefined;
+  const cs = monster.tracksCombat;
+  const session = combatSession(monster, now);
+
+  if (getCounter(cs, SHIELD_SESSION_KEY) !== session) {
+    setCounter(cs, SHIELD_SESSION_KEY, session);
+    setCounter(cs, SHIELD_NEXT_KEY, session);
+    setCounter(cs, SHIELD_AMOUNT_KEY, 0);
+    setCounter(cs, SHIELD_EXPIRES_KEY, 0);
+    setCounter(cs, SHIELD_LAST_HIT_KEY, session - (shield.rechargeAfterCleanMs ?? 0));
+  }
+
+  if (
+    getCounter(cs, SHIELD_AMOUNT_KEY) > 0 &&
+    now >= getCounter(cs, SHIELD_EXPIRES_KEY)
+  ) {
+    setCounter(cs, SHIELD_AMOUNT_KEY, 0);
+  }
+
+  let activated = false;
+  const cleanMs = shield.rechargeAfterCleanMs;
+  if (cleanMs !== undefined) {
+    const lastHitAt = getCounter(cs, SHIELD_LAST_HIT_KEY);
+    const barrierLifetimeOpen = now < getCounter(cs, SHIELD_EXPIRES_KEY);
+    if (!barrierLifetimeOpen && lastHitAt > 0 && now - lastHitAt >= cleanMs) {
+      setCounter(cs, SHIELD_AMOUNT_KEY, Math.round(monster.hasHealth.maxHp * shield.shieldPct));
+      setCounter(cs, SHIELD_EXPIRES_KEY, now + shield.durationMs);
+      activated = true;
+    }
+  } else if (now >= getCounter(cs, SHIELD_NEXT_KEY)) {
+    setCounter(cs, SHIELD_AMOUNT_KEY, Math.round(monster.hasHealth.maxHp * shield.shieldPct));
+    setCounter(cs, SHIELD_EXPIRES_KEY, now + shield.durationMs);
+    setCounter(cs, SHIELD_NEXT_KEY, now + shield.intervalMs);
+    activated = true;
+  }
+
+  return {
+    shield,
+    amount: Math.max(0, getCounter(cs, SHIELD_AMOUNT_KEY)),
+    expiresAt: getCounter(cs, SHIELD_EXPIRES_KEY),
+    nextAt: getCounter(cs, SHIELD_NEXT_KEY),
+    lastHitAt: getCounter(cs, SHIELD_LAST_HIT_KEY),
+    activated,
+  };
 }
 
 /**
@@ -385,62 +561,19 @@ export function applyEnemyShield(
 ): { damage: number; absorbed: number; broke: boolean } {
   // shed-defense suppresses both the runtime override and any static barrier.
   if (monster.scriptsBoss?.defenseShed) return { damage, absorbed: 0, broke: false };
-  const shield = monster.scriptsBoss?.shieldOverride ?? def?.enemyShield;
-  if (!shield || damage <= 0) return { damage, absorbed: 0, broke: false };
-  const cs = monster.tracksCombat;
-
-  // New combat session: reset the cadence so the first barrier is up immediately
-  // on combat entry (mirrors the player shield firing on combat entry).
-  const session = combatSession(monster, now);
-  if (getCounter(cs, SHIELD_SESSION_KEY) !== session) {
-    setCounter(cs, SHIELD_SESSION_KEY, session);
-    setCounter(cs, SHIELD_NEXT_KEY, session); // due immediately
-    setCounter(cs, SHIELD_AMOUNT_KEY, 0);
-    setCounter(cs, SHIELD_EXPIRES_KEY, 0);
-    // A clean-recharge barrier starts the fight ALREADY UP: it has by definition
-    // been un-hit for a long time. Seeding the idle clock at the session start
-    // makes that fall out of the ordinary rule rather than needing a special case.
-    setCounter(cs, SHIELD_LAST_HIT_KEY, session - (shield.rechargeAfterCleanMs ?? 0));
-  }
-
-  // CLEAN-RECHARGE variant (Sunshield Scarab): the barrier is NOT on a metronome.
-  // It returns only after the monster has gone `rechargeAfterCleanMs` without being
-  // hit — so pressure keeps it down and losing the kiter gives it back. `noteMonsterHitTaken`
-  // pushes the idle timer forward on every landed hit, including this one.
-  const cleanMs = shield.rechargeAfterCleanMs;
-  if (cleanMs !== undefined) {
-    const lastHitAt = getCounter(cs, SHIELD_LAST_HIT_KEY);
-    const barrierUp = now < getCounter(cs, SHIELD_EXPIRES_KEY);
-    if (!barrierUp && lastHitAt > 0 && now - lastHitAt >= cleanMs) {
-      setCounter(
-        cs,
-        SHIELD_AMOUNT_KEY,
-        Math.round(monster.hasHealth.maxHp * shield.shieldPct),
-      );
-      // Duration is the barrier's own lifetime once reformed; it is dropped early
-      // by the next hit that drains it, which is the whole point.
-      setCounter(cs, SHIELD_EXPIRES_KEY, now + shield.durationMs);
-    }
-  } else if (now >= getCounter(cs, SHIELD_NEXT_KEY)) {
-    // Plain metronome barrier.
-
-    setCounter(
-      cs,
-      SHIELD_AMOUNT_KEY,
-      Math.round(monster.hasHealth.maxHp * shield.shieldPct),
-    );
-    setCounter(cs, SHIELD_EXPIRES_KEY, now + shield.durationMs);
-    setCounter(cs, SHIELD_NEXT_KEY, now + shield.intervalMs);
-  }
+  const castedWard = applyCastedMonsterWard(monster, damage);
+  damage = castedWard.damage;
+  const runtime = refreshEnemyShieldState(monster, def, now);
+  if (!runtime || damage <= 0) return { damage, absorbed: castedWard.absorbed, broke: false };
 
   // Absorb only while the active barrier is still up.
-  if (now >= getCounter(cs, SHIELD_EXPIRES_KEY)) return { damage, absorbed: 0, broke: false };
-  const amount = getCounter(cs, SHIELD_AMOUNT_KEY);
-  if (amount <= 0) return { damage, absorbed: 0, broke: false };
+  if (now >= runtime.expiresAt) return { damage, absorbed: castedWard.absorbed, broke: false };
+  const amount = runtime.amount;
+  if (amount <= 0) return { damage, absorbed: castedWard.absorbed, broke: false };
 
   const absorbed = Math.min(amount, damage);
   const remaining = amount - absorbed;
-  setCounter(cs, SHIELD_AMOUNT_KEY, remaining);
+  setCounter(monster.tracksCombat, SHIELD_AMOUNT_KEY, remaining);
   // The barrier broke if this hit drained the last of it (was up, now empty).
-  return { damage: damage - absorbed, absorbed, broke: remaining <= 0 };
+  return { damage: damage - absorbed, absorbed: castedWard.absorbed + absorbed, broke: remaining <= 0 };
 }

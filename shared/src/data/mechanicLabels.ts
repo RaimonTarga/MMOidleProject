@@ -110,6 +110,8 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   // ── Weapon / general offence ───────────────────────────────────────────────
   'shared.empowered-mult-add':            { label: 'Empowered damage' },
   'shared.damage-mult':                   { label: 'Damage bonus' },
+  'shared.status-duration-resist':        { label: 'Harmful effect duration' },
+  'shared.status-potency-resist':         { label: 'Enemy damage-over-time' },
   'shared.applies-through-evade':         { label: 'Effects pierce evasion' },
   'weapon.empowered-mult-bonus':          { label: 'Empowered bonus' },
   'weapon.first-strike-mult':             { label: 'First strike' },

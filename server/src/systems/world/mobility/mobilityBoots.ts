@@ -339,6 +339,7 @@ export const MOBILITY_BUFFS = [
         speedMult: 1 + pct,
         color: "#7cfc00",
         logDetail: `+${Math.round(pct * 100)}% move speed (out of combat)`,
+        values: [{ label: "Movement speed", value: `+${Math.round(pct * 100)}%`, good: true }],
       };
     },
     { ...NEUTRAL_CIRCLE, color: "#7cfc00", label: "Sprint" },
@@ -360,6 +361,8 @@ export const MOBILITY_BUFFS = [
         speedMult: 1 + pct,
         color: "#9acd32",
         logDetail: `+${Math.round(pct * 100)}% move speed (kill)`,
+        remainingMs: fx.remainingMs,
+        values: [{ label: "Movement speed", value: `+${Math.round(pct * 100)}%`, good: true }],
       };
     },
     { ...NEUTRAL_CIRCLE, color: "#9acd32", label: "Haste" },
@@ -379,6 +382,7 @@ export const MOBILITY_BUFFS = [
         speedMult: 1 + pct,
         color: "#87cefa",
         logDetail: `+${Math.round(pct * 100)}% move speed (closing)`,
+        values: [{ label: "Movement speed", value: `+${Math.round(pct * 100)}%`, good: true }],
       };
     },
     { ...NEUTRAL_CIRCLE, color: "#87cefa", label: "Close" },
@@ -403,6 +407,11 @@ export const MOBILITY_BUFFS = [
         logDetail: `+${Math.round(sPct * 100)}% move speed, ${Math.round(
           tPct * 100,
         )}% tenacity`,
+        remainingMs: fx.remainingMs,
+        values: [
+          { label: "Movement speed", value: `+${Math.round(sPct * 100)}%`, good: true },
+          { label: "Tenacity", value: `${Math.round(tPct * 100)}%`, good: true },
+        ],
       };
     },
     { ...NEUTRAL_CIRCLE, color: "#b39ddb", label: "Grave" },
@@ -422,6 +431,7 @@ export const MOBILITY_BUFFS = [
         speedMult: 1 + pct,
         color: "#ffd27f",
         logDetail: `+${Math.round(pct * 100)}% move speed (kiting)`,
+        values: [{ label: "Movement speed", value: `+${Math.round(pct * 100)}%`, good: true }],
       };
     },
     { ...NEUTRAL_CIRCLE, color: "#ffd27f", label: "Kite" },
@@ -445,6 +455,10 @@ export const MOBILITY_BUFFS = [
         speedMult: 1 + pct,
         color: "#80deea",
         logDetail: `+${Math.round(pct * 100)}% move speed (ramp)`,
+        values: [
+          { label: "Movement speed", value: `+${Math.round(pct * 100)}%`, good: true },
+          { label: "Ramped to", value: `${Math.round((pct / cap) * 100)}% of cap` },
+        ],
       };
     },
     { ...NEUTRAL_CIRCLE, color: "#80deea", label: "Rush" },
@@ -465,6 +479,7 @@ export const MOBILITY_BUFFS = [
         speedMult: 1 + pct,
         color: "#ff8a50",
         logDetail: `+${Math.round(pct * 100)}% move speed`,
+        values: [{ label: "Movement speed", value: `+${Math.round(pct * 100)}%`, good: true }],
       };
     },
     { ...NEUTRAL_CIRCLE, color: "#ff8a50", label: "Pyre" },
@@ -486,6 +501,8 @@ export const MOBILITY_BUFFS = [
         durationPct: effectDurationPct(fx.remainingMs, fx.data["totalMs"] ?? 0),
         color: "#a9744f",
         logDetail: "speed bonus suppressed",
+        remainingMs: fx.remainingMs,
+        values: [{ label: "Volcanic stride", value: "suppressed", good: false }],
       };
     },
     { category: "neutral" as const, shape: "diamond" as const, color: "#a9744f", label: "Heavy" },

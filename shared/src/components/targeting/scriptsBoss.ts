@@ -11,6 +11,8 @@ export interface ActiveBossEffect {
   type: string;
   /** Remaining ms. -1 = permanent (lasts until boss dies). */
   remainingMs: number;
+  /** Authored duration used by the client clock. -1 = permanent. */
+  totalMs: number;
   /** For 'regen': HP fraction of maxHp to restore per second. */
   regenHpPctPerSec?: number;
   /** Saved stats — restored when effect expires. */

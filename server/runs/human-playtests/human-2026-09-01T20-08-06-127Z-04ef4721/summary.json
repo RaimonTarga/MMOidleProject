@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-01T20-08-06-127Z-04ef4721",
+    "startedAt": 1788293286127,
+    "endedAt": 1788298632097,
+    "durationMs": 5345970,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "socket disconnected",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-01T20-08-06-127Z-04ef4721",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 2,
+    "finalGlobalMastery": 55,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 12,
+      "forest": 12,
+      "swamp": 10,
+      "cave": 11,
+      "mountain": 10
+    }
+  },
+  "combat": {
+    "totalKills": 1160,
+    "killsByMonster": {
+      "Savanna Hawk": 85,
+      "Prairie Yearling": 315,
+      "Prairie Wolf": 105,
+      "Stampede Bull": 64,
+      "Dire Wolf": 94,
+      "Dire Whelp": 282,
+      "Thorn Spitter": 96,
+      "Ironclaw Badger": 119
+    },
+    "totalDamageTaken": 23409,
+    "playerDamageDealt": 227852,
+    "totalHealed": 17398,
+    "deaths": 0,
+    "abilityActivations": {
+      "sweep": 656,
+      "second-wind": 3
+    }
+  },
+  "positioning": {
+    "samples": 9899,
+    "movementFraction": 0.3658955450045459,
+    "stationaryCombatFraction": 0.6330942519446409,
+    "nearBoundaryFraction": 0.031720375795534904,
+    "boss": {
+      "movementFraction": null,
+      "nearBoundaryFraction": null,
+      "range": {
+        "samples": 0,
+        "mean": null,
+        "min": null,
+        "max": null,
+        "p50": null,
+        "p90": null
+      }
+    }
+  },
+  "bosses": [],
+  "build": {
+    "equipment": {
+      "weapon": "gale-needle",
+      "armor": "plains-vest-t2",
+      "recovery": "plains-charm-t2",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "flash-rapier": 5,
+      "plains-boots-t1": 5,
+      "plains-charm-t1": 2,
+      "plains-vest-t1": 5,
+      "swamp-charm-t1": 5,
+      "cave-vest-t1": 5,
+      "chaotic-axe": 5,
+      "iron-broadsword": 5,
+      "plains-vest-t2": 2,
+      "knight-steelsword": 1,
+      "plains-charm-t2": 2,
+      "gale-needle": 2
+    },
+    "classRoot": "cadence-root",
+    "frame": "balanced",
+    "range": null,
+    "techniques": [
+      "sweep"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "before-empowered",
+        "actionId": "fire-technique"
+      }
+    ],
+    "stats": {
+      "attack": 33,
+      "attackRange": 12,
+      "attackCooldown": 508,
+      "maxHp": 193,
+      "plating": 21,
+      "damageReduction": 0.02
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

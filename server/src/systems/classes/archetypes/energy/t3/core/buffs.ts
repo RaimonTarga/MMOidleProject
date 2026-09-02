@@ -50,7 +50,7 @@ export const ENERGY_T3_BUFFS = [
       'attackDamagePct',
       player.usesSkills.passives['energy.overdrive-attack-damage-pct'] ?? ENERGY_OVERDRIVE_ATK_PCT,
     )) * 100);
-    return { id: 'energy-overdrive', label: 'Surge', stacks: 1, durationPct: pct, color: '#ffdd33', logDetail: `+${atkPct}% attack damage` };
+    return { id: 'energy-overdrive', label: 'Surge', stacks: 1, durationPct: pct, color: '#ffdd33', logDetail: `+${atkPct}% attack damage`, values: [{ label: 'Attack damage', value: `+${atkPct}%`, good: true }] };
   }, ENERGY_OPTS),
   defineBuff('energy-channel', ({ player }) => {
     if (player.usesSkills.combatArchetype !== 'energy') return null;
@@ -68,6 +68,7 @@ export const ENERGY_T3_BUFFS = [
       durationPct: -1,
       color: '#66ccff',
       logDetail: `+${upkeepOnHitBonus(stacks, tier, upkeep)} on-hit damage (${stacks} stacks)`,
+      values: [{ label: 'On-hit damage', value: `+${upkeepOnHitBonus(stacks, tier, upkeep)}`, good: true }],
     };
   }, ENERGY_OPTS),
   defineBuff('energy-binary-charge', ({ player }) => {
@@ -87,6 +88,12 @@ export const ENERGY_T3_BUFFS = [
     return {
       id: 'energy-binary-charge', label: 'Charge', stacks: 1, durationPct: -1, color: '#44dd66',
       logDetail: `+${Math.round(onHitBonus * 100)}% + ${flat} flat on-hit, −${slowAps}% attack speed, −${slowGain}% energy gain, weak discharge`,
+      values: [
+        { label: 'On-hit damage', value: `+${Math.round(onHitBonus * 100)}% and +${flat} flat`, good: true },
+        { label: 'Attack speed', value: `-${slowAps}%`, good: false },
+        { label: 'Energy gain', value: `-${slowGain}%`, good: false },
+        { label: 'Discharge', value: 'weak', good: false },
+      ],
     };
   }, ENERGY_OPTS),
   defineBuff('energy-binary-discharge', ({ player }) => {
@@ -103,6 +110,12 @@ export const ENERGY_T3_BUFFS = [
     return {
       id: 'energy-binary-discharge', label: 'Dischg', stacks: 1, durationPct: -1, color: '#dd44cc',
       logDetail: `+${Math.round(attackBonus * 100)}% attack damage, +${fastAps}% attack speed, +${fastGain}% energy gain, strong discharge`,
+      values: [
+        { label: 'Attack damage', value: `+${Math.round(attackBonus * 100)}%`, good: true },
+        { label: 'Attack speed', value: `+${fastAps}%`, good: true },
+        { label: 'Energy gain', value: `+${fastGain}%`, good: true },
+        { label: 'Discharge', value: 'strong', good: true },
+      ],
     };
   }, ENERGY_OPTS),
   defineBuff('energy-aether', ({ player }) => {
@@ -119,6 +132,10 @@ export const ENERGY_T3_BUFFS = [
     return {
       id: 'energy-aether', label: 'Aether', stacks: powerPct, durationPct: Math.round(pct * 100), color: '#ffaa33',
       logDetail: `current power: ${powerPct}% (${Math.round(minMult * 100)}%→${Math.round(maxMult * 100)}% with energy)`,
+      values: [
+        { label: 'Power', value: `${powerPct}%`, good: true },
+        { label: 'Range with energy', value: `${Math.round(minMult * 100)}% – ${Math.round(maxMult * 100)}%` },
+      ],
     };
   }, ENERGY_OPTS),
   defineBuff('energy-critical-mass', ({ player }) => {
@@ -133,6 +150,11 @@ export const ENERGY_T3_BUFFS = [
     return {
       id: 'energy-critical-mass', label: 'CritM', stacks, durationPct: -1, color: '#ff5577',
       logDetail: `+${Math.round(stacks * damagePerStack * 100)}% discharge, +${Math.round(stacks * gainPerStack * 100)}% energy gain (${stacks}/${maxStacks})`,
+      values: [
+        { label: 'Stacks', value: `${stacks} / ${maxStacks}` },
+        { label: 'Discharge damage', value: `+${Math.round(stacks * damagePerStack * 100)}%`, good: true },
+        { label: 'Energy gain', value: `+${Math.round(stacks * gainPerStack * 100)}%`, good: true },
+      ],
     };
   }, ENERGY_OPTS),
   defineBuff('energy-storm', ({ player }) => {
@@ -144,25 +166,29 @@ export const ENERGY_T3_BUFFS = [
     return {
       id: 'energy-storm', label: 'Storm', stacks: charges, durationPct: -1, color: '#8a5cff',
       logDetail: `next ${charges} attacks empowered at ${damageMult}×`,
+      values: [
+        { label: 'Empowered attacks left', value: String(charges), good: true },
+        { label: 'Damage', value: `×${damageMult}`, good: true },
+      ],
     };
   }, ENERGY_OPTS),
   defineBuff('energy-overcharge', ({ player, playerCs }) => {
     if (!playerCs || player.usesSkills.combatArchetype !== 'energy') return null;
     const stacks = getOverchargeStacks(playerCs);
     return stacks > 0
-      ? { id: 'energy-overcharge', label: 'Overch', stacks, durationPct: -1, color: '#ff88ff', logDetail: `+${stacks * PD_STACK_FLAT_DMG} discharge damage` }
+      ? { id: 'energy-overcharge', label: 'Overch', stacks, durationPct: -1, color: '#ff88ff', logDetail: `+${stacks * PD_STACK_FLAT_DMG} discharge damage`, values: [{ label: 'Discharge damage', value: `+${stacks * PD_STACK_FLAT_DMG}`, good: true }] }
       : null;
   }, ENERGY_OPTS),
   defineBuff('energy-ac-charge', ({ player }) => {
     if (player.usesSkills.combatArchetype !== 'energy') return null;
     return getACPhaseForPlayer(player) === 'charge'
-      ? { id: 'energy-ac-charge', label: 'Chrge', stacks: 1, durationPct: -1, color: '#44ccff', logDetail: `+${Math.round((AC_CHARGE_DMG_MULT - 1) * 100)}% damage, +${Math.round((AC_ENERGY_GAIN_MULT - 1) * 100)}% energy gain` }
+      ? { id: 'energy-ac-charge', label: 'Chrge', stacks: 1, durationPct: -1, color: '#44ccff', logDetail: `+${Math.round((AC_CHARGE_DMG_MULT - 1) * 100)}% damage, +${Math.round((AC_ENERGY_GAIN_MULT - 1) * 100)}% energy gain`, values: [{ label: 'Damage', value: `+${Math.round((AC_CHARGE_DMG_MULT - 1) * 100)}%`, good: true }, { label: 'Energy gain', value: `+${Math.round((AC_ENERGY_GAIN_MULT - 1) * 100)}%`, good: true }] }
       : null;
   }, ENERGY_OPTS),
   defineBuff('energy-ac-discharge', ({ player }) => {
     if (player.usesSkills.combatArchetype !== 'energy') return null;
     if (getACPhaseForPlayer(player) !== 'discharge') return null;
-    return { id: 'energy-ac-discharge', label: 'Disch', stacks: 1, durationPct: getACDischargeRemainingPct(player), color: '#ff6622', logDetail: `+${Math.round((1 / AC_SPEED_FACTOR - 1) * 100)}% attack speed, ${Math.round(AC_TICK_DAMAGE_MULT * 100)}% ATK ticks` };
+    return { id: 'energy-ac-discharge', label: 'Disch', stacks: 1, durationPct: getACDischargeRemainingPct(player), color: '#ff6622', logDetail: `+${Math.round((1 / AC_SPEED_FACTOR - 1) * 100)}% attack speed, ${Math.round(AC_TICK_DAMAGE_MULT * 100)}% ATK ticks`, values: [{ label: 'Attack speed', value: `+${Math.round((1 / AC_SPEED_FACTOR - 1) * 100)}%`, good: true }, { label: 'Damage per tick', value: `${Math.round(AC_TICK_DAMAGE_MULT * 100)}% of attack`, good: true }] };
   }, ENERGY_OPTS),
   defineBuff('energy-reservoir', ({ player }) => {
     if (player.usesSkills.combatArchetype !== 'energy') return null;
@@ -171,7 +197,7 @@ export const ENERGY_T3_BUFFS = [
     const pct = getCapacitorReservoirPct(energy);
     const mult = 1 + energy.csReservoir / CS_RESERVOIR_SCALE;
     return pct > 0
-      ? { id: 'energy-reservoir', label: 'Resvr', stacks: 1, durationPct: pct, color: '#88ddff', logDetail: `reservoir ${Math.round(energy.csReservoir)} / ${CS_RESERVOIR_MAX}, ${mult.toFixed(2)}x discharge scaling` }
+      ? { id: 'energy-reservoir', label: 'Resvr', stacks: 1, durationPct: pct, color: '#88ddff', logDetail: `reservoir ${Math.round(energy.csReservoir)} / ${CS_RESERVOIR_MAX}, ${mult.toFixed(2)}x discharge scaling`, values: [{ label: 'Reservoir', value: `${Math.round(energy.csReservoir)} / ${CS_RESERVOIR_MAX}` }, { label: 'Discharge scaling', value: `×${mult.toFixed(2)}`, good: true }] }
       : null;
   }, ENERGY_OPTS),
   defineBuff('energy-equilibrium', ({ player }) => {
@@ -181,7 +207,7 @@ export const ENERGY_T3_BUFFS = [
     if (!energy) return null;
     const pct = energyPercent(energy);
     return pct > 0.40 && pct < 0.60
-      ? { id: 'energy-equilibrium', label: 'Equil', stacks: 1, durationPct: -1, color: '#aaffcc', logDetail: `+${Math.round((HE_DMG_MULT - 1) * 100)}% damage` }
+      ? { id: 'energy-equilibrium', label: 'Equil', stacks: 1, durationPct: -1, color: '#aaffcc', logDetail: `+${Math.round((HE_DMG_MULT - 1) * 100)}% damage`, values: [{ label: 'Damage', value: `+${Math.round((HE_DMG_MULT - 1) * 100)}%`, good: true }] }
       : null;
   }, ENERGY_OPTS),
   defineBuff('energy-sm-pool', ({ player }) => {
@@ -191,7 +217,7 @@ export const ENERGY_T3_BUFFS = [
     if (!energy) return null;
     const pool = getSMChargePool(energy);
     return pool > 0
-      ? { id: 'energy-sm-pool', label: 'Chrge', stacks: pool, durationPct: -1, color: '#ff4488', logDetail: `${pool} stored true damage` }
+      ? { id: 'energy-sm-pool', label: 'Chrge', stacks: pool, durationPct: -1, color: '#ff4488', logDetail: `${pool} stored true damage`, values: [{ label: 'Stored true damage', value: String(pool), good: true }] }
       : null;
   }, ENERGY_OPTS),
 ] as const satisfies readonly BuffDescriptor[];

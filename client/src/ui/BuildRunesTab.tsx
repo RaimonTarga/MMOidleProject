@@ -3,6 +3,8 @@ import { useAtom, useAtomValue } from "jotai";
 import { ActionChip, EngravedMeter } from "../hud/primitives";
 import {
   ACTION_DATABASE,
+  addRuneRuleWithReplacement,
+  analyzeRuneLoadoutConflicts,
   CONDITION_DATABASE,
   DEFAULT_RUNE_LOADOUT,
   NO_STANCE_ID,
@@ -57,7 +59,10 @@ const CHANNEL_COLOR: Record<string, string> = {
   OOC_MAINTENANCE: "#7ab8ff",
   RESOURCE_MAINTENANCE: "#73d7ff",
   GLOBAL_STRATEGY: "#7affc0",
-  PATHING: "#8fd48b",
+  PATH_SAFETY: "#8fd48b",
+  APPROACH_STYLE: "#8fd48b",
+  TRAVEL_PATHING: "#7ad7ff",
+  TRAVEL_RESPONSE: "#7ad7ff",
   CONTROL: "#ff7a9a",
   TECHNIQUE: "#ffd76b",
   TECHNIQUE_2: "#ffd76b",
@@ -262,14 +267,24 @@ export function BuildRunesTab() {
       && (pendingRule.actionId !== "switch-stance" || !!pendingRule.targetStanceId)
     : false;
   const pendingCost = pendingRule ? runeRuleCost(pendingRule) : 0;
+  /** What adding a rule to THIS destination actually spends, once a situation is chosen. */
+  const stanceTokenCost = (stanceId: string): string =>
+    selCond
+      ? `${runeRuleCost({ conditionId: selCond, actionId: "switch-stance", targetStanceId: stanceId })} RP`
+      : `+${STANCE_DATABASE.get(stanceId)?.runeCost ?? 0} RP`;
   const budget = runeBudgetForGlobalMastery(gm);
   const spent = runicPointLoadoutCost({ rules: loadout, rites: equippedRites });
   const pendingOverBudget = pendingRule
-    ? runicPointLoadoutCost({ rules: [...loadout, pendingRule], rites: equippedRites }) > budget
+    ? runicPointLoadoutCost({ rules: addRuneRuleWithReplacement(loadout, pendingRule), rites: equippedRites }) > budget
     : false;
   const pendingTarget = selAction
     ? resolveRuneTarget(selAction, equippedAbilities, selStance ?? undefined)
     : null;
+  const conflictsByRule = useMemo(() => {
+    const byRule = new Map<number, ReturnType<typeof analyzeRuneLoadoutConflicts>[number]>();
+    for (const conflict of analyzeRuneLoadoutConflicts(loadout)) byRule.set(conflict.ruleIndex, conflict);
+    return byRule;
+  }, [loadout]);
 
   function commit(next: EquippedRule[]): void {
     setLoadout(next);
@@ -278,7 +293,7 @@ export function BuildRunesTab() {
 
   function addRule(): void {
     if (!pendingRule || !pendingCompatible || pendingOverBudget) return;
-    commit([...loadout, pendingRule]);
+    commit(addRuneRuleWithReplacement(loadout, pendingRule));
   }
 
   function removeRule(index: number): void {
@@ -355,6 +370,11 @@ export function BuildRunesTab() {
                     && (rule.actionId !== "switch-stance"
                       || rule.targetStanceId === NO_STANCE_ID
                       || knownStances.includes(rule.targetStanceId ?? ""));
+                  const conflict = conflictsByRule.get(i);
+                  const earlier = conflict ? loadout[conflict.earlierRuleIndex] : null;
+                  const earlierLabel = earlier
+                    ? `${CONDITION_DATABASE.get(earlier.conditionId)?.name ?? earlier.conditionId} → ${ACTION_DATABASE.get(earlier.actionId)?.name ?? earlier.actionId}`
+                    : "";
                   return (
                     <div
                       key={`${rule.conditionId}:${rule.actionId}:${rule.targetStanceId ?? ""}:${i}`}
@@ -390,6 +410,23 @@ export function BuildRunesTab() {
                         >
                           <BuildIcon kind={target.kind} label={target.label} muted={target.missing} size={20} />
                           <span className="rule-card__target-name">{target.label}</span>
+                        </span>
+                      )}
+
+                      {conflict && (
+                        <span
+                          className="rule-card__conflict"
+                          title={conflict.kind === "suppressed"
+                            ? `This rule can never fire while ${earlierLabel} is higher priority.`
+                            : conflict.kind === "redundant"
+                              ? `This repeats ${earlierLabel}.`
+                              : `This can overlap ${earlierLabel}; priority decides when both apply.`}
+                        >
+                          {conflict.kind === "suppressed"
+                            ? `SUPPRESSED BY #${conflict.earlierRuleIndex + 1}`
+                            : conflict.kind === "redundant"
+                              ? `DUPLICATES #${conflict.earlierRuleIndex + 1}`
+                              : `PRIORITY WITH #${conflict.earlierRuleIndex + 1}`}
                         </span>
                       )}
 
@@ -507,7 +544,12 @@ export function BuildRunesTab() {
 
           {selAction === "switch-stance" && (
             <div className="stance-destination-wheel">
-              <div className="stance-destination-wheel__title">Choose destination sigil</div>
+              {/* `Switch Stance` itself costs 0 RP, so each token quotes the WHOLE rule
+                  price (condition + destination) once a situation is picked — the
+                  surcharge alone would understate what pressing ADD RULE spends. */}
+              <div className="stance-destination-wheel__title">
+                {selCond ? "Choose destination sigil — cost shown is the whole rule" : "Choose destination sigil"}
+              </div>
               <div className="stance-destination-wheel__track">
                 <button
                   type="button"
@@ -516,7 +558,7 @@ export function BuildRunesTab() {
                   title="Drop the current stance and fight without stance bonuses or penalties."
                 >
                   <GameIcon source={null} size={32} fallback="Ø" decorative />
-                  <span>No Stance<small>+0 RP</small></span>
+                  <span>No Stance<small>{stanceTokenCost(NO_STANCE_ID)}</small></span>
                 </button>
                 {knownStances.map((id) => STANCE_DATABASE.get(id)).filter(Boolean).map((stance) => (
                   <button
@@ -527,7 +569,7 @@ export function BuildRunesTab() {
                     title={stance!.blurb}
                   >
                     <GameIcon source={stanceIconSource(stance!.id)} size={32} fallback={stance!.name.slice(0, 1)} decorative />
-                    <span>{stance!.name}<small>+{stance!.runeCost} RP</small></span>
+                    <span>{stance!.name}<small>{stanceTokenCost(stance!.id)}</small></span>
                   </button>
                 ))}
               </div>
@@ -558,6 +600,12 @@ export function BuildRunesTab() {
                   ? "That response does not make sense for this situation."
                   : pendingOverBudget
                     ? "This rule exceeds your current rune point budget."
+                    : loadout.some((rule) => {
+                      const action = ACTION_DATABASE.get(rule.actionId);
+                      const pendingAction = ACTION_DATABASE.get(pendingRule?.actionId ?? "");
+                      return rule.conditionId === pendingRule?.conditionId && action?.channel === pendingAction?.channel;
+                    })
+                      ? "This replaces the existing rule with the same situation and behavior channel."
                     : pendingTarget?.text ??
                       preview?.blurb ??
                       `${previewCond?.name ?? selCond} -> ${previewAction?.name ?? selAction}`}

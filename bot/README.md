@@ -47,6 +47,7 @@ pnpm bot:cleanup --routes=striker-t1 --policies=intended,rusher,generic --count=
 Flags: `--route` `--policy` `--index` `--server` `--out` `--maxRunMs`
 `--fresh=false` (keep the existing character instead of starting from zero),
 `--ui[=port]` (dashboard, default 4500), `--rewardMultiplier=N` (dev-only, 1-1000),
+`--tierEntry=<profile-id>` (dev-only synthetic completed-T1 entry in the target-tier Sanctuary),
 `--fastBossRetry=true` (dev-only, always noncanonical), and
 `--fastBossRetryIncludeGuardians=true` (rebuild/reclear guardians on accelerated retries).
 
@@ -143,6 +144,50 @@ its own character sheet.
 A pin survives the target dying — bots die constantly, so the camera takes
 temporary cover on the automatic pick and snaps back on respawn. It is released
 only when that player disconnects.
+
+## Tier 2
+
+A Tier-2 route does not start from zero — it starts from a **tier-entry
+template**, a validated snapshot of a legitimately completed Tier-1 character.
+Full state: [`docs/t2-bot-testing-infrastructure.md`](../docs/t2-bot-testing-infrastructure.md).
+
+```bash
+# one run; the template is resolved from the route's own class root
+pnpm bot:run --route=striker-t2-mid --policy=intended --entryEconomy=clean
+
+# the three carryover-economy arms
+#   clean            zero essence and zero catalysts -- the economy-isolation control
+#   natural          a documented conservative carryover MODEL (unmeasured)
+#   catalyst-primed  zero essence + the full tier catalyst demand; PROGRESSION-INTEGRITY
+#                    runs only, because it deletes catalyst supply by construction
+
+pnpm bot:t2-validate         # T2_ENTRY_TEMPLATE_VALIDATION over all 18 templates
+pnpm bot:t2-templates        # every template, dumped, with its validation report
+pnpm bot:t2-catalogue        # the live T2 item catalogue in control-route order
+pnpm bot:t2-reachability     # which T2 items each template can obtain, and how
+pnpm bot:t2-routes           # the 18 routes and every resolved acquisition path
+pnpm bot:t2-catalyst-demand  # total T2 catalyst demand per family
+pnpm bot:t2-report <batchDir>  # smoke matrix + gear adoption report
+```
+
+Three things about Tier 2 that are easy to get wrong:
+
+- **There is no branch at Tier-2 entry.** A skill point comes from a TIER
+  advance, and `canUnlockSkill` requires `node.tier === currentSkillTier`, so the
+  tier-2 range node is bought with the **tier-3** point — after three Tier-2
+  seals. There are six legal entry templates, not eighteen; the 18 routes buy
+  their branch mid-run behind an `ifPossible`, and a walled run records a skipped
+  conditional instead of stalling.
+- **Most Tier-2 gear cannot be crafted.** 20 of 32 recipes are evolutions;
+  `craftRecipe` refuses them. Evolution consumes a **bag** copy of the
+  predecessor at **+5**, so a worn item must be `unequip`ped first, and anything
+  below +5 pays ~3.5× reconstruction instead. `t2Acquisition.ts` resolves the
+  path per item from the class's own template.
+- **You cannot accelerate past catalysts.** The reward multiplier deliberately
+  does not scale catalyst progress, so catalysts mint at 1x in every run.
+  Measured: 2 alacrity in 298 s at 100x, against a tier-wide demand of 99. Use
+  `--entryEconomy=catalyst-primed` for progression-integrity runs, and never read
+  economy conclusions from one.
 
 ## Canonical vs non-canonical
 

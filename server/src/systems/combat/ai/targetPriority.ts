@@ -57,6 +57,11 @@ interface CandidateContext {
   letDotsFinish: boolean;
   spreadDots: boolean;
   focusElites: boolean;
+  /**
+   * Largest HP pool among this tick's candidates, used to normalize the
+   * HP-preference scores. Filled in after the candidate sweep; 1 until then.
+   */
+  hpScale: number;
 }
 
 interface TargetCandidate {
@@ -154,23 +159,56 @@ export function selectAutoCombatAction(
     letDotsFinish: getFlag(player.tracksCombat, RUNE_LET_DOTS_FINISH_FLAG),
     spreadDots: getFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG),
     focusElites: getFlag(player.tracksCombat, RUNE_FOCUS_ELITES_FLAG),
+    hpScale: 1,
   };
 
   const strictNearest = usesStrictNearest(ctx);
   const currentTargetId = getString(player.tracksCombat, AUTO_TARGET_ID);
-  const candidates: TargetCandidate[] = [];
 
-  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
-    if (!passesGates(world, player, monster, ctx)) continue;
-    candidates.push({
-      monster,
-      score: strictNearest ? 0 : scoreCandidate(world, player, monster, ctx),
-      distSq: distanceSq(
-        player.hasPosition.current,
-        monster.hasPosition.current,
-      ),
-    });
+  let eligible = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)].filter(
+    (monster) => passesGates(world, player, monster, ctx),
+  );
+
+  // ── Target PREFERENCE is not target ACQUISITION ─────────────────────────
+  //
+  // `Focus Highest HP` / `Focus Lowest HP` answer "which enemy do I hit in this
+  // fight", not "which fight do I start". Scored across every monster in the
+  // node they answered the second question instead: with `Find Enemies` raising
+  // the acquire radius past the node's own width, "In Combat -> Focus Highest
+  // HP" walked the player away from the enemy chewing on them and into an
+  // unrelated 4,000 HP pull. From the Rune panel that is invisible -- the rule
+  // did exactly what it says, against a candidate set the player never meant.
+  //
+  // So while anything is actually engaged, these two preferences choose from the
+  // ENGAGED set. When nothing is engaged, there is no encounter to have a
+  // preference within, and acquisition falls through to the ordinary path.
+  //
+  // `focus-elites` is deliberately excluded and keeps its cross-node reach:
+  // reaching the necromancer before it raises the dead is the entire purpose of
+  // that rune, and `eliteTargeting.test.ts` pins that on purpose.
+  const isHpPreference =
+    ctx.cfg.priorityMode === "lowest-hp" || ctx.cfg.priorityMode === "highest-max-hp";
+  if (isHpPreference) {
+    const engagedSet = eligible.filter((monster) => isAggroedOnPlayer(monster, player));
+    if (engagedSet.length > 0) eligible = engagedSet;
   }
+
+  // Normalization base for the HP-preference scores, computed over the set that
+  // will actually be scored so the ordering cannot depend on absolute HP values.
+  ctx.hpScale = eligible.reduce(
+    (max, monster) =>
+      Math.max(
+        max,
+        ctx.cfg.priorityMode === "lowest-hp" ? monster.hasHealth.hp : monster.hasHealth.maxHp,
+      ),
+    1,
+  );
+
+  const candidates: TargetCandidate[] = eligible.map((monster) => ({
+    monster,
+    score: strictNearest ? 0 : scoreCandidate(world, player, monster, ctx),
+    distSq: distanceSq(player.hasPosition.current, monster.hasPosition.current),
+  }));
 
   if (candidates.length === 0) {
     setString(player.tracksCombat, AUTO_TARGET_ID, "");
@@ -394,12 +432,29 @@ function scoreCandidate(
     (dist / Math.max(1, ctx.acquireRadius)) *
     (ctx.ranged ? RANGED_DISTANCE_DAMPEN : 1);
 
+  // The two HP-preference modes score on a NORMALIZED 0..1 term rather than on
+  // raw hit points, so the distance weight is a real tie-break instead of a
+  // rounding error, and so the rule behaves the same way at every HP scale.
+  //
+  // The previous forms were both scale-dependent, in opposite directions:
+  //   `maxHp - w*penalty`   -- maxHp is in the hundreds-to-thousands and the
+  //                            penalty is at most `w` (0.001), so distance was
+  //                            never able to change the ordering.
+  //   `1/hp - w*penalty`    -- the SPACING of 1/hp collapses as HP grows. At
+  //                            1,700 vs 4,000 HP the candidates differ by 3e-4
+  //                            while the distance term contributes 1e-3, so
+  //                            "Focus Lowest HP" silently inverted into "focus
+  //                            nearest" exactly where it mattered most.
+  // `ctx.hpScale` is the largest relevant pool among this tick's candidates,
+  // which makes both terms dimensionless and monotonic.
   if (ctx.cfg.priorityMode === "lowest-hp") {
-    return 1 / Math.max(1, monster.hasHealth.hp) - ctx.weights.distance * distancePenalty;
+    const normalized = 1 - monster.hasHealth.hp / Math.max(1, ctx.hpScale);
+    return normalized - ctx.weights.distance * distancePenalty;
   }
 
   if (ctx.cfg.priorityMode === "highest-max-hp") {
-    return monster.hasHealth.maxHp - ctx.weights.distance * distancePenalty;
+    const normalized = monster.hasHealth.maxHp / Math.max(1, ctx.hpScale);
+    return normalized - ctx.weights.distance * distancePenalty;
   }
 
   const damage = estimatedPlayerDamage(player, monster);

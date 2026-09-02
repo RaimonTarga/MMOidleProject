@@ -73,6 +73,11 @@ export const forestMonsterEntries = [
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 900 },
+    castedAttackSpeedBuff: {
+      name: 'Howl', castMs: 1500, cooldownMs: 12000, initialCooldownMs: 0,
+      effectId: 'monster-howl-haste', attackSpeedPct: 0.5, durationMs: 5000,
+      target: 'nearby-monsters', radius: 320, castWhileOutOfRange: true, fx: 'howl',
+    },
     // Forest predator-pack ALPHA (the biome's T2 identity): a PURE wolf pack —
     // the evolved Wolf leading a larger litter. The mixed wolf+Thorn-Spitter pack
     // was rejected in the T1–T4 monster rework: a ranged support creature in a
@@ -122,8 +127,12 @@ export const forestMonsterEntries = [
     stats: { hp: 230, attack: 31, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 2400, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'arrow', biome: 'forest',
     rewards: { essence: 9, essenceType: 'green', level: 1, biomeXp: 50 },
-    // Placeholder cadence - balance pass owns the split between the two thorns.
-    cadenceVolley: { everyNAttacks: 3, hits: 2 },
+    // Three hasted attacks are tracked as visible Barrage charges.
+    castedAttackSpeedBuff: {
+      name: 'Barrage', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3000,
+      effectId: 'thorn-spitter-barrage', attackSpeedPct: 2, attacks: 3,
+      target: 'self', fx: 'barrage',
+    },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
     // NO pack role: the Dire Wolf pack is pure wolves now, so nothing ever spawns
     // a Spitter as a follower and the role was inert. Thorn Spitter is Forest's

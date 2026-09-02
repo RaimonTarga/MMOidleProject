@@ -31,6 +31,10 @@ Current channels:
 - `OOC_MAINTENANCE`
 - `RESOURCE_MAINTENANCE`
 - `GLOBAL_STRATEGY`
+- `PATH_SAFETY`
+- `APPROACH_STYLE`
+- `TRAVEL_PATHING`
+- `TRAVEL_RESPONSE`
 - `CONTROL`
 
 `GLOBAL_STRATEGY` is suppressed while the player is in combat, except for
@@ -54,6 +58,7 @@ Conditions:
 - `n-aggro-3` (shown as "Surrounded")
 - `target-casting` (shown as "Enemy Charging")
 - `inside-telegraph` (shown as "Inside Telegraph")
+- `while-traveling` (shown as "While Traveling")
 
 Actions:
 
@@ -71,6 +76,8 @@ Actions:
 - `wait-for-regen` (shown as "Recover First")
 - `auto-path-enemy` (shown as "Find Enemies")
 - `avoid-hazards`
+- `avoid-enemies`
+- `fight-back` (shown as "Fight Back")
 - `lead-the-way`
 - `taunt-current-target` (shown as "Taunt Target")
 
@@ -131,6 +138,9 @@ New characters start with a mutable default loadout:
 [
   { conditionId: "always", actionId: "auto-path-enemy" },
   { conditionId: "in-combat", actionId: "chase-enemy" },
+  { conditionId: "always", actionId: "wait-for-regen" },
+  { conditionId: "hp-below-25", actionId: "flee" },
+  { conditionId: "while-traveling", actionId: "fight-back" },
 ]
 ```
 
@@ -150,6 +160,7 @@ per live player each world tick. It builds the live rune context from:
 - aggro count
 - combat archetype
 - unresolved hostile telegraph geometry at the player's current position
+- whether a server-owned map-travel path is active
 
 The derived rune result is translated into existing AI controls:
 
@@ -165,12 +176,14 @@ The derived rune result is translated into existing AI controls:
 - `taunt-current-target` sets `rune.tauntCurrentTarget`
 - `let-dots-finish` sets `rune.letDotsFinish`
 - `spread-dots` sets `rune.spreadDots`
+- `avoid-enemies` sets `rune.avoidEnemies`
+- `while-traveling -> fight-back` sets `rune.fightBackWhileTraveling`
 - `always -> auto-path-enemy` can claim search even while combat state is active,
   so scouting does not wait for combat to fully drop
 - targeting actions map onto existing `AutocombatConfig` priority/focus fields
 - `auto-path-enemy` expands acquisition radius to node-wide range
-- `autoTraverse` is stamped false; overworld auto-traverse is no longer the rune
-  strategy action
+- map traversal keeps its own player-controlled `autoTraverse` setting; Rune
+  travel responses only affect the active path while it is being followed
 
 Rune combat state means an active live attack target or active monster aggro. It
 does not include the post-combat regeneration cooldown, allowing recovery and
@@ -229,6 +242,17 @@ allowed, it keeps the player stopped until HP is full.
 
 `wait-for-execution` stops cooldown classes out of combat until their execution
 is armed (`hasEmpoweredAttack`), then normal targeting/search resumes.
+
+`avoid-hazards` and `careful-pulling` now use independent channels, so a player
+can safely approach a target without losing either behavior. `avoid-enemies` is
+a phase-one travel-safety response: it keeps the existing server path but scores
+several points along the mandatory exit edge, preferring lower exposure to
+unengaged nearby monsters rather than rewriting the world route.
+
+`fight-back` pauses a map-navigation path when a player is actively attacked,
+lets the normal combat target loop own that interruption, and resumes the same
+path after active combat, its grace period, and any higher-priority maintenance
+hold have cleared. Flee preserves the route; death clears it.
 
 `let-dots-finish` restores the old DoT-class behavior as an explicit rune:
 targets whose current DoT projection should finish them receive a targeting
@@ -308,6 +332,9 @@ The Loadout tab:
   `playerTierAtom`,
 - shows a chunked rune point meter with spent and leftover points,
 - lists equipped priority rules before the rule builder,
+- replaces an existing rule automatically when the new rule has the same
+  condition and channel, and annotates suppressed, duplicate, and overlapping
+  channel conflicts,
 - lets players move equipped rules up or down to change priority,
 - asks for confirmation before resetting to the default loadout,
 - lists owned condition fragments and action fragments,
@@ -320,6 +347,10 @@ The Loadout tab:
 - previews named rule text when available,
 - blocks adding a rule that would exceed budget locally,
 - sends changes through `hudBus.requestSetRuneLoadout()`.
+
+The compact HUD Intent panel always shows the active condition â†’ response chain;
+its expanded details add any higher-priority override and whether travel is
+temporarily paused for combat.
 
 The Forge tab:
 

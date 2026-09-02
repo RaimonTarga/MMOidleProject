@@ -51,6 +51,8 @@ export function upgradeItem(
       essences: entity.tracksProgression.essences,
       catalysts: entity.tracksProgression.catalysts,
       globalMastery: globalMastery(entity.tracksProgression.biomeLevel),
+      t1Plus5EssenceCostMultiplier:
+        world.t1EconomyConfigForPlayer(entity.isPlayer.id).t1Plus5EssenceCostMultiplier,
     });
     if (!check.ok) return fail(check.reason ?? 'Cannot upgrade.');
   } else if (current >= getMaxUpgrade(def)) {
@@ -58,7 +60,11 @@ export function upgradeItem(
   }
 
   const targetPlus = current + 1;
-  const cost = upgradeCostFor(def, targetPlus);
+  const cost = upgradeCostFor(
+    def,
+    targetPlus,
+    world.t1EconomyConfigForPlayer(entity.isPlayer.id).t1Plus5EssenceCostMultiplier,
+  );
   if (!cost && !isTestRoom) return fail('This item cannot be upgraded.');
 
   if (!isTestRoom && cost) {

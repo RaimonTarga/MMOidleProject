@@ -1,13 +1,18 @@
 import type { DeathCause, EssenceType } from "@mmo-idle/shared";
+import type { T1EconomyArm, TierEntryInitialState } from "@mmo-idle/shared";
 
 /** Bump when an event shape changes incompatibly. Mirrors the bench convention. */
-export const BOT_JSONL_SCHEMA_VERSION = 2;
+export const BOT_JSONL_SCHEMA_VERSION = 3;
 
 /** Tags that mark a run as unfit for canonical balance conclusions. */
 export type RunTaint =
   | "NON_CANONICAL_REWARD_MULTIPLIER"
   | "NON_CANONICAL_TIME_SCALE"
   | "NON_CANONICAL_FAST_BOSS_RETRY"
+  | "NON_CANONICAL_SHARED_WORLD"
+  | "NON_CANONICAL_EARLY_STOP"
+  /** Synthetic entry state is auditable but does not invalidate combat evidence. */
+  | "SYNTHETIC_TIER_ENTRY"
   | "CONTAMINATED_CONTROLLED_OVERLAP";
 
 export type HarnessExecutionMode =
@@ -15,6 +20,29 @@ export type HarnessExecutionMode =
   | "sequential"
   | "isolated-parallel"
   | "uncontrolled-parallel";
+
+/**
+ * The economy candidate a run was executed under, resolved from the LIVE shared
+ * data at connect time rather than restated by hand -- a run header that merely
+ * repeats a constant cannot detect a mismatched build. Stamped into every run so
+ * a cohort can be audited without the git revision alone.
+ */
+export interface EconomyCandidate {
+  /** Free-form label for the candidate under test. */
+  id: string;
+  /** Immutable revision of the factorial configuration. */
+  revision: string;
+  /** One of the four fixed arms assigned to this run. */
+  arm: T1EconomyArm;
+  /** Exact per-player T1 +5 essence multiplier. */
+  t1Plus5EssenceCostMultiplier: number;
+  /** Kill-weight per catalyst unit at biome tier 1, read from GAME_CONFIG. */
+  catalystProgressPerUnitT1: number;
+  /** Whether the dev reward multiplier also scales catalyst progress. */
+  catalystsScaledByRewardMultiplier: boolean;
+  /** Live `+5` essence costs for the T1 items a route can actually buy. */
+  t1Plus5EssenceCosts: Record<string, number>;
+}
 
 export interface RunHeader {
   schemaVersion: number;
@@ -32,9 +60,37 @@ export interface RunHeader {
   startedAt: number;
   /** Server-global kill-reward multiplier observed at connect. 1 = canonical. */
   rewardMultiplier: number;
+  /** Economy tuning this run was executed under. */
+  economyCandidate: EconomyCandidate;
   taints: RunTaint[];
   executionMode: HarnessExecutionMode;
   maxConcurrency: number;
+  /** Wallet at the first authoritative run snapshot. */
+  initialEssences?: Record<EssenceType, number>;
+  initialCatalysts?: Record<string, number>;
+  /** Present only for an explicit synthetic tier-entry run. */
+  tierEntry?: TierEntryInitialState;
+  /**
+   * Present only for a tier-entry run: proof that the template this run started
+   * from is a character the game could actually have produced.
+   *
+   * A stale template does not announce itself -- it silently spawns an
+   * impossible character and every number the run produces describes a build no
+   * player can hold. The run refuses to start when this fails, and the artifact
+   * records the result either way so a reader never has to take it on trust.
+   */
+  templateValidation?: TemplateValidationSummary;
+}
+
+export interface TemplateValidationSummary {
+  profileId: string;
+  /** Offline legality against today's static game data. */
+  profilePass: boolean;
+  /** Live agreement between the template and the character the server built. */
+  spawnPass: boolean;
+  checked: number;
+  /** Every failing check, verbatim, so a FAIL is diagnosable from the artifact. */
+  failures: Array<{ pass: "profile" | "spawn"; check: string; message: string }>;
 }
 
 export type CompletionState =
@@ -88,6 +144,29 @@ export interface DeathRecord {
   window: DeathTraceFrame[];
 }
 
+/** Where in the run a {@link BotEvent} wallet snapshot was taken. */
+export type WalletSnapshotReason =
+  | "run-start"
+  | "milestone"
+  | "block-start"
+  | "block-end"
+  | "pre-upgrade"
+  | "pre-craft"
+  | "run-end";
+
+/**
+ * One failed predicate behind a block, named precisely enough that an analysis
+ * can separate essence waits from catalyst waits from gate waits without
+ * guessing from the farm node.
+ */
+export type BlockReason =
+  | { kind: "essence"; essence: string; current: number; required: number; missing: number }
+  | { kind: "catalyst"; family: string; current: number; required: number; missing: number }
+  | { kind: "globalMastery"; current: number; required: number; missing: number }
+  | { kind: "biomeLevel"; biomeGroup: string; current: number; required: number; missing: number }
+  | { kind: "recipeLocked"; recipeId: string }
+  | { kind: "prerequisite"; detail: string };
+
 export type BotEvent =
   | { kind: "run-start"; atMs: number; header: RunHeader }
   | {
@@ -96,6 +175,18 @@ export type BotEvent =
       completion: CompletionState;
       reason?: string;
       durationMs: number;
+    }
+  | {
+      /**
+       * An `ifPossible` gate was reached. Recorded whether or not it fired: a
+       * SKIPPED branch is the evidence that the character never got far enough
+       * to buy it, which is exactly what a walled run needs to report.
+       */
+      kind: "route-conditional";
+      atMs: number;
+      condition: string;
+      taken: boolean;
+      skippedSteps: number;
     }
   | {
       kind: "route-step-start";
@@ -143,6 +234,8 @@ export type BotEvent =
       kind: "upgrade";
       atMs: number;
       itemId: string;
+      /** Level held when the intent was sent; `newLevel` is where it landed. */
+      fromLevel: number;
       newLevel: number;
       success: boolean;
       reason?: string;
@@ -150,11 +243,60 @@ export type BotEvent =
       catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
+  | {
+      kind: "evolution";
+      atMs: number;
+      recipeId: string;
+      mode: "evolve" | "reconstruct";
+      predecessorId: string;
+      success: boolean;
+      reason?: string;
+      essenceSpent: Partial<Record<EssenceType, number>>;
+      catalystsSpent: Record<string, number>;
+      context: EconomyContext;
+    }
+  | {
+      kind: "stance-craft";
+      atMs: number;
+      recipeId: string;
+      stanceId: string;
+      success: boolean;
+      reason?: string;
+      essenceSpent: Partial<Record<EssenceType, number>>;
+      catalystsSpent: Record<string, number>;
+      context: EconomyContext;
+    }
   | { kind: "equip"; atMs: number; slot: string; definitionId: string | null }
+  /**
+   * A slot was deliberately emptied. Almost always the prelude to an evolution:
+   * the cheap evolve path consumes a BAG copy of the predecessor, so a worn item
+   * has to come off before it can be evolved.
+   */
+  | { kind: "unequip"; atMs: number; slot: string; definitionId: string }
   | { kind: "build-change"; atMs: number; system: string; detail: Record<string, unknown> }
   | { kind: "biome-level-up"; atMs: number; biomeGroup: string; newLevel: number; unlockedRecipeIds: string[] }
   | { kind: "tier-up"; atMs: number; newTier: number }
   | { kind: "catalyst-gain"; atMs: number; family: string; amount: number; context: EconomyContext }
+  | {
+      /**
+       * A complete wallet reading at an economically meaningful instant.
+       * `reason` names the instant so an analysis can pair snapshots without
+       * having to reconstruct the run's step order.
+       */
+      kind: "wallet-snapshot";
+      atMs: number;
+      reason: WalletSnapshotReason;
+      /** Free-form tag: the milestone id, the `forWhat` of a block, etc. */
+      detail?: string;
+      essences: Record<string, number>;
+      catalysts: Record<string, number>;
+      /** Partial kill-weight banked toward the NEXT catalyst of each family. */
+      catalystProgress: Record<string, number>;
+      biomeLevels: Record<string, number>;
+      globalMastery: number;
+      itemUpgrades: Record<string, number>;
+      nodeId: string;
+    }
   | {
       kind: "blocked-on-resource";
       atMs: number;
@@ -163,6 +305,14 @@ export type BotEvent =
       missing: Record<string, number>;
       farmingAt: string | null;
       durationMs?: number;
+      /**
+       * The exact predicates that were failing when the span opened/closed --
+       * never a generic `{blocked:1}`. Empty on an `end` phase means the block
+       * actually cleared.
+       */
+      blockReasons?: BlockReason[];
+      /** The authority's own rejection string, when one was available. */
+      gateReason?: string;
     }
   | {
       /** Pre-clearing a dungeon's guard before the altar is touched. */
@@ -190,6 +340,16 @@ export type BotEvent =
       bossCombatStartedAtMs?: number;
       bossCombatEndedAtMs?: number;
       bossCombatDurationMs?: number;
+    }
+  | {
+      /** The route exhausted this boss's attempts and intentionally advanced. */
+      kind: "boss-step-exhausted";
+      atMs: number;
+      nodeId: string;
+      biomeGroup: string;
+      tier: number;
+      attempts: number;
+      nextAction: "continue-route";
     }
   | {
       kind: "fast-boss-retry";
@@ -224,6 +384,14 @@ export type BotEvent =
        * design, and a transiting bot does not fight.
        */
       contaminating: boolean;
+    }
+  | {
+      /** Authoritative Rune posture change carried by a DeltaSnapshot when available. */
+      kind: "stance-switch";
+      atMs: number;
+      playerId: string;
+      nodeId: string;
+      stanceId: string | null;
     }
   | {
       kind: "concurrency-sample";

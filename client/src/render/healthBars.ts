@@ -1,4 +1,4 @@
-import type { PlayerView } from '@mmo-idle/shared';
+import type { MonsterView, PlayerView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
@@ -34,6 +34,12 @@ export function drawHealthBars(state: RenderState): void {
         player.barrier + player.wards.reduce((sum, w) => sum + w.amount, 0);
       shieldPct = snap.maxHp > 0 ? totalAbsorb / snap.maxHp : 0;
       shieldShown = totalAbsorb > 0;
+    } else if (state.kind.get(id) === 'monster') {
+      const barrier = (snap as MonsterView).enemyBarrier;
+      shieldPct = barrier && barrier.maxAmount > 0
+        ? Math.max(0, Math.min(1, barrier.amount / barrier.maxAmount))
+        : 0;
+      shieldShown = shieldPct > 0;
     }
 
     const prev = state.hpBarCache.get(id);
@@ -65,6 +71,13 @@ export function drawHealthBars(state: RenderState): void {
           hpBar.fillRect(sprite.x - 16 + shieldStart, barY, shieldWidth, 4);
         }
       }
+    } else if (state.kind.get(id) === 'monster' && shieldShown) {
+      // Enemy absorb is a separate band rather than an HP overlay: at full HP an
+      // active shell must still be obvious, and draining it should read cleanly.
+      hpBar.fillStyle(0x102d38, 0.95);
+      hpBar.fillRect(sprite.x - 16, barY - 3, 32, 2);
+      hpBar.fillStyle(0x55d9f2, 0.95);
+      hpBar.fillRect(sprite.x - 16, barY - 3, Math.max(1, Math.round(32 * shieldPct)), 2);
     }
 
     hpBar.lineStyle(1, 0x000000, 0.75);

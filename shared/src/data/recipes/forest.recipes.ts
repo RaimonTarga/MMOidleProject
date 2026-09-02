@@ -15,6 +15,16 @@ import type { Recipe } from './types';
 // are derived from the T1 baseline.
 // ─────────────────────────────────────────────────────────────────────────
 
+// ── T1 ECONOMY CANDIDATE C (2026-08-31) ───────────────────────────────────
+// Every T1 (+5) step's ESSENCE cost was cut 25%, rounded to the nearest 5
+// (Math.round semantics): 205->155, 260->195, 200->150, 100->75, 75->55,
+// 70->55, 60->45. Catalyst costs, initial crafts and +1..+4 are UNCHANGED, so
+// the per-item "same total (N)" notes below now describe the pre-candidate
+// total, not the current one. The target is the post-mastery affordability
+// tail only -- the 2x bot cohort spent its last ~15m/run earning the final
+// +5 essence after every biome was already maxed.
+// ──────────────────────────────────────────────────────────────────────────
+
 export const forestRecipeEntries = [
   // ── Rapier lineage (system rework Step 6 worked example) ───────────────────
   // Flash Rapier (base) → Gale Needle / Thorn Needle (branches). Evolve consumes
@@ -47,7 +57,7 @@ export const forestRecipeEntries = [
       { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 50 }, requiredBiomeLevel: 3 },
       { attacksPerSecond: 0.02, cost: { green: 75 }, requiredBiomeLevel: 4 },
       { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 125 }, requiredBiomeLevel: 5 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 205 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 6 }, // +5 = evolution-ready (T2 econ pass 2026-08-29: raised from +3)
+      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 155 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 6 }, // +5 = evolution-ready (T2 econ pass 2026-08-29: raised from +3)
     ],
   }],
 
@@ -68,7 +78,7 @@ export const forestRecipeEntries = [
       { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 70 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 115 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, evasion: 0.02 }, cost: { green: 200 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, evasion: 0.02 }, cost: { green: 150 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -93,7 +103,7 @@ export const forestRecipeEntries = [
       { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 20 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 35 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 75 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -112,7 +122,7 @@ export const forestRecipeEntries = [
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 25 }, requiredBiomeLevel: 4 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
     ],
   }],
 

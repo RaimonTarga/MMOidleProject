@@ -1,4 +1,4 @@
-import type { EssenceType, WorldLogEvent } from "@mmo-idle/shared";
+import type { CombatEvent, EssenceType, WorldLogEvent } from "@mmo-idle/shared";
 import { NODE_BIOMES } from "@mmo-idle/shared";
 import type { Observation } from "../state/observation";
 import type {
@@ -6,6 +6,7 @@ import type {
   DeathRecord,
   DeathTraceFrame,
   EconomyContext,
+  WalletSnapshotReason,
 } from "./events";
 import type { TelemetrySink } from "./sink";
 
@@ -38,6 +39,20 @@ export interface BiomeStats {
   maxConcurrency: number;
 }
 
+export interface EconomyTimeline {
+  nodeEntries: Array<Extract<BotEvent, { kind: "node-enter" }>>;
+  biomeLevelUps: Array<Extract<BotEvent, { kind: "biome-level-up" }>>;
+  catalystGains: Array<Extract<BotEvent, { kind: "catalyst-gain" }>>;
+  crafts: Array<Extract<BotEvent, { kind: "craft" }>>;
+  evolutions: Array<Extract<BotEvent, { kind: "evolution" }>>;
+  stanceCrafts: Array<Extract<BotEvent, { kind: "stance-craft" }>>;
+  upgrades: Array<Extract<BotEvent, { kind: "upgrade" }>>;
+  equips: Array<Extract<BotEvent, { kind: "equip" }>>;
+  milestones: Array<Extract<BotEvent, { kind: "milestone" }>>;
+  tierUps: Array<Extract<BotEvent, { kind: "tier-up" }>>;
+  walletSnapshots: Array<Extract<BotEvent, { kind: "wallet-snapshot" }>>;
+}
+
 /**
  * One-line summary for the dashboard. Returns null for high-volume events that
  * would drown the feed (concurrency samples, contention, raw damage).
@@ -56,6 +71,12 @@ function describeEvent(event: BotEvent): string | null {
       return `entered ${event.nodeId}${event.nodeModifier ? ` (${event.nodeModifier})` : ""}`;
     case "craft":
       return `${event.success ? "crafted" : "craft FAILED"} ${event.recipeId}`;
+    case "evolution":
+      return `${event.success ? event.mode : `${event.mode} FAILED`} ${event.recipeId}`;
+    case "stance-craft":
+      return `${event.success ? "learned" : "stance FAILED"} ${event.stanceId}`;
+    case "stance-switch":
+      return `stance: ${event.stanceId ?? "none"}`;
     case "upgrade":
       return `${event.itemId} -> +${event.newLevel}`;
     case "equip":
@@ -79,6 +100,8 @@ function describeEvent(event: BotEvent): string | null {
       return event.phase === "start"
         ? `boss ${event.biomeGroup} attempt ${event.attempt}`
         : `boss ${event.biomeGroup} attempt ${event.attempt}: ${event.outcome}`;
+    case "boss-step-exhausted":
+      return `boss ${event.biomeGroup} exhausted ${event.attempts} attempts; continuing route`;
     case "fast-boss-retry":
       return `${event.taint}: retry ${event.attempt} prepared at ${event.nodeId}`;
     case "area-lease":
@@ -97,6 +120,8 @@ function describeEvent(event: BotEvent): string | null {
         : `unblocked ${event.forWhat}`;
     case "catalyst-gain":
       return `+${event.amount} ${event.family} catalyst`;
+    case "wallet-snapshot":
+      return `wallet @ ${event.reason}${event.detail ? ` (${event.detail})` : ""}`;
     case "stall":
       return `STALL: ${event.reason}`;
     case "run-end":
@@ -163,6 +188,20 @@ export class Recorder {
   private readonly deathWindow: DeathTraceFrame[] = [];
   private readonly deaths: DeathRecord[] = [];
 
+  readonly economyTimeline: EconomyTimeline = {
+    nodeEntries: [],
+    biomeLevelUps: [],
+    catalystGains: [],
+    crafts: [],
+    evolutions: [],
+    stanceCrafts: [],
+    upgrades: [],
+    equips: [],
+    milestones: [],
+    tierUps: [],
+    walletSnapshots: [],
+  };
+
   private activity: Activity = "idle";
   private lastTickAt: number;
   private currentNodeId = "";
@@ -207,6 +246,7 @@ export class Recorder {
   hazardEscape = { attempts: 0, successes: 0, failures: 0, expired: 0, interrupted: 0 };
   stepBack = { activations: 0, attempts: 0, successes: 0, failures: 0, discarded: 0, damageReceived: 0 };
   bossAttemptResults: Array<Extract<BotEvent, { kind: "boss-attempt" }>> = [];
+  stanceSwitches: Array<Extract<BotEvent, { kind: "stance-switch" }>> = [];
 
   /**
    * Technique/Sweep adapter contribution (Part 2). Counts are authoritative
@@ -282,13 +322,48 @@ export class Recorder {
 
   emit(event: BotEvent): void {
     this.sink.write(event);
+    switch (event.kind) {
+      case "node-enter": this.economyTimeline.nodeEntries.push(event); break;
+      case "biome-level-up": this.economyTimeline.biomeLevelUps.push(event); break;
+      case "catalyst-gain": this.economyTimeline.catalystGains.push(event); break;
+      case "craft": this.economyTimeline.crafts.push(event); break;
+      case "evolution": this.economyTimeline.evolutions.push(event); break;
+      case "stance-craft": this.economyTimeline.stanceCrafts.push(event); break;
+      case "upgrade": this.economyTimeline.upgrades.push(event); break;
+      case "equip": this.economyTimeline.equips.push(event); break;
+      case "milestone": this.economyTimeline.milestones.push(event); break;
+      case "tier-up": this.economyTimeline.tierUps.push(event); break;
+      case "wallet-snapshot": this.economyTimeline.walletSnapshots.push(event); break;
+      default: break;
+    }
     if (event.kind === "boss-attempt" && event.phase === "end") {
       this.bossAttemptResults.push(event);
     }
+    if (event.kind === "stance-switch") this.stanceSwitches.push(event);
     const text = describeEvent(event);
     if (text) {
       this.recent.push({ atMs: event.atMs, kind: event.kind, text });
       if (this.recent.length > 60) this.recent.shift();
+    }
+  }
+
+  /**
+   * DeltaSnapshots carry authoritative combat cues separately from the
+   * player-scoped world log. Keep the stance cue when the server provides it;
+   * the player id filter prevents another player's posture from entering this
+   * run's evidence.
+   */
+  ingestCombatEvents(events: CombatEvent[], nodeId: string): void {
+    const ownId = this.ownIdProvider();
+    for (const event of events) {
+      if (event.kind !== "stance-switch" || event.playerId !== ownId) continue;
+      this.emit({
+        kind: "stance-switch",
+        atMs: this.now(),
+        playerId: event.playerId,
+        nodeId,
+        stanceId: event.stanceId,
+      });
     }
   }
 
@@ -308,6 +383,32 @@ export class Recorder {
       biomeGroup: info?.biomeGroup ?? null,
       nodeModifier: info?.modifier ?? null,
     };
+  }
+
+  /**
+   * Emit a complete reading of both wallets plus the gates they feed.
+   *
+   * Every economy question the 2026-08-31 deep-dive could not answer ("what did
+   * the wallet actually hold when the +5 became eligible?") needs a full wallet
+   * at a known instant, not a delta. Cheap enough to take at every milestone and
+   * both ends of every block span, so it is taken there unconditionally.
+   */
+  walletSnapshot(obs: Observation, reason: WalletSnapshotReason, detail?: string): void {
+    const self = obs.self;
+    if (!self) return;
+    this.emit({
+      kind: "wallet-snapshot",
+      atMs: this.now(),
+      reason,
+      detail,
+      essences: { ...self.essences },
+      catalysts: { ...self.catalysts },
+      catalystProgress: { ...self.catalystProgress },
+      biomeLevels: { ...self.biomeLevel },
+      globalMastery: self.globalMastery,
+      itemUpgrades: { ...self.itemUpgrades },
+      nodeId: obs.nodeId,
+    });
   }
 
   biome(biomeGroup: string): BiomeStats {

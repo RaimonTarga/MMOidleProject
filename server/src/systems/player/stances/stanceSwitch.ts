@@ -15,6 +15,8 @@ import {
   setFlag,
   setString,
   stanceDamageTakenMult,
+  stanceDef,
+  stanceGateMet,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import { recalculatePlayerStanceStats } from "../../../ecs/playerEntityFormulas";
@@ -22,10 +24,18 @@ import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { RUNE_STANCE_TARGET_KEY, RUNE_SWITCH_STANCE_FLAG } from "../../combat/ai/runeConfig";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { playerCombatPhase } from "../../combat/ai/engagement";
+import {
+  POWERING_UP_ID,
+  initNewStanceBehaviors,
+  releasePoweringUpCharge,
+  tickPoweringUpCharge,
+} from "./stanceBehaviors";
 
 const STANCE_SWITCH_CD_KEY = "stance.switch.cd";
 const PREDATOR_OPENER_FLAG = "stance.predator.opener";
 const BERSERKER_TICK_ACC = "stance.berserker.tick";
+/** Last observed state of the active stance's HP gate, so a crossing recalcs once. */
+const STANCE_GATE_MET_FLAG = "stance.gate.met";
 const STANCE_LAST_ACTIVE_KEY = "stance.lastActive";
 export const STANCE_SWITCH_COOLDOWN_MS = 1500;
 
@@ -44,7 +54,13 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
       ? (legalTarget === NO_STANCE_ID ? null : legalTarget)
       : (prog.equippedStances?.default ?? null);
 
+    let switched = false;
     if (desired !== prog.activeStance && getCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY) <= 0) {
+      switched = true;
+      // Leaving Powering Up ALWAYS spends its charge, however it was left. Done
+      // before `activeStance` moves, because the release reads the stance we are
+      // leaving, not the one we are entering.
+      if (prog.activeStance === POWERING_UP_ID) releasePoweringUpCharge(player);
       prog.activeStance = desired;
       recalculatePlayerStanceStats(world, player);
       setCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY, STANCE_SWITCH_COOLDOWN_MS);
@@ -57,7 +73,35 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
       });
     }
 
+    // A gated posture (Perfection) turns its upside half on and off as the player crosses
+    // an HP threshold, and those modifiers live in the stat rebuild — so the crossing has
+    // to trigger one. Edge-triggered off a stored flag: recalculating every tick would
+    // throw away rampage/cadence state ten times a second for no reason.
+    //
+    // The rebuild preserves HP PERCENTAGE and no stance touches maxHp, so the fraction is
+    // identical on both sides of the recalc. The gate cannot oscillate.
+    const gateMet = stanceGateMet(
+      stanceDef(prog.activeStance),
+      player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp),
+    );
+    if (switched) {
+      // The switch already rebuilt stats from the current HP, so only the record updates.
+      setFlag(player.tracksCombat, STANCE_GATE_MET_FLAG, gateMet);
+    } else if (getFlag(player.tracksCombat, STANCE_GATE_MET_FLAG) !== gateMet) {
+      recalculatePlayerStanceStats(world, player);
+      // After the rebuild: it restores the combat-state snapshot it took on entry.
+      setFlag(player.tracksCombat, STANCE_GATE_MET_FLAG, gateMet);
+    }
+
     const combatPhase = playerCombatPhase(world, player, now);
+
+    // Powering Up charges only while actually fighting, and loses the charge when
+    // combat ends — never free preparation between pulls. Ticked after the switch so
+    // a stance entered this tick starts charging immediately.
+    if (prog.activeStance === POWERING_UP_ID) {
+      tickPoweringUpCharge(player.tracksCombat, dt, combatPhase !== "OUT_OF_COMBAT");
+    }
+
     if (prog.activeStance === "predator-stance" && combatPhase === "OUT_OF_COMBAT") {
       setFlag(player.tracksCombat, PREDATOR_OPENER_FLAG, true);
     }
@@ -85,6 +129,8 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
 }
 
 export function initStanceCombatEffects(): void {
+  initNewStanceBehaviors();
+
   registerCombatListener("onHit", (ctx) => {
     if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
     const player = ctx.attacker;
@@ -112,7 +158,10 @@ export function initStanceCombatEffects(): void {
     const stanceId = player.tracksProgression.activeStance;
     if (!stanceId) return;
 
-    let mult = stanceDamageTakenMult(stanceId);
+    let mult = stanceDamageTakenMult(
+      stanceId,
+      player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp),
+    );
 
     if (stanceId === "brawler-stance") {
       let attackers = 0;

@@ -16,7 +16,14 @@ export type RuneChannel =
   | "OOC_MAINTENANCE"
   | "RESOURCE_MAINTENANCE"
   | "GLOBAL_STRATEGY"
-  | "PATHING"
+  /** Persistent terrain constraints; composes with approach and travel steering. */
+  | "PATH_SAFETY"
+  /** Optional approach bias around non-target elites; composes with safety. */
+  | "APPROACH_STYLE"
+  /** Optional local steering away from unengaged hostiles during map travel. */
+  | "TRAVEL_PATHING"
+  /** Whether a travel objective may yield to combat and resume afterwards. */
+  | "TRAVEL_RESPONSE"
   | "CONTROL"
   // System rework Step 7: each ability slot gets its own channel so a Technique
   // override and a Guard override (and taunt in CONTROL) can be equipped at once.
@@ -60,6 +67,11 @@ export type RuneConditionId =
   // Techniques specialise against the same enemy — e.g. Expose Weakness to kill
   // the elite faster vs. Stun Strike to control it (abilities evolution §9).
   | "target-elite"
+  /** Active only while a server-owned map navigation path has remaining hops. */
+  | "while-traveling"
+  // Active while the active stance's own charge is full. Currently only Powering Up
+  // charges, and this is how a rule LEAVES it to cash the charge in.
+  | "stance-charged"
   | "n-aggro-3";
 
 export type RuneActionId =
@@ -80,6 +92,8 @@ export type RuneActionId =
   | "auto-path-enemy"
   | "avoid-hazards"
   | "careful-pulling"
+  | "avoid-enemies"
+  | "fight-back"
   | "lead-the-way"
   | "taunt-current-target"
   // System rework Step 7: override the built-in auto-fire timing of an ability.
@@ -125,7 +139,10 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "OOC_MAINTENANCE",
   "RESOURCE_MAINTENANCE",
   "GLOBAL_STRATEGY",
-  "PATHING",
+  "PATH_SAFETY",
+  "APPROACH_STYLE",
+  "TRAVEL_PATHING",
+  "TRAVEL_RESPONSE",
   "CONTROL",
   "TECHNIQUE",
   "TECHNIQUE_2",
@@ -176,6 +193,8 @@ const PATHING_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
 ];
 
+const TRAVEL_CONDITIONS: readonly RuneConditionId[] = ["while-traveling"];
+
 const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "in-party",
@@ -208,6 +227,14 @@ const STANCE_CONDITIONS: readonly RuneConditionId[] = [
   "target-hp-below-25",
   "has-debuff",
   "target-casting",
+  // The empowered window is a posture decision as much as an ability-timing one —
+  // `Empowered Ready -> Time to Strike` is that stance's whole reason to exist. The
+  // condition already existed for ability-fire rules; this only lets Switch Stance
+  // name it too.
+  "before-empowered",
+  // `Stance Charged -> <anything>` is how a charging posture is left on purpose.
+  "stance-charged",
+  "while-traveling",
   "n-aggro-3",
 ];
 
@@ -334,6 +361,20 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
     },
   ],
   [
+    "stance-charged",
+    {
+      id: "stance-charged",
+      name: "Stance Charged",
+      // Deliberately generic rather than "Powering Up is full": a charging posture
+      // is a shape, and a second one would reuse this rather than add a condition.
+      blurb:
+        "Works while your active stance has finished charging and is holding a full charge, waiting to be spent.",
+      cost: 1,
+      tier: 3,
+      kind: "state",
+    },
+  ],
+  [
     "before-empowered",
     {
       id: "before-empowered",
@@ -356,6 +397,17 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
         "Works while the enemy you are attacking is an elite — the high-value target worth spending a specialised ability on.",
       cost: 2,
       tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "while-traveling",
+    {
+      id: "while-traveling",
+      name: "While Traveling",
+      blurb: "Works while you are following an intentional map travel route.",
+      cost: 0,
+      tier: 1,
       kind: "state",
     },
   ],
@@ -556,7 +608,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       blurb: "Route around damaging and slowing terrain when pathing.",
       cost: 2,
       tier: 1,
-      channel: "PATHING",
+      channel: "PATH_SAFETY",
       allowedConditionIds: PATHING_CONDITIONS,
     },
   ],
@@ -568,8 +620,32 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       blurb: "While approaching a target, bias movement away from nearby non-target elites.",
       cost: 2,
       tier: 1,
-      channel: "PATHING",
+      channel: "APPROACH_STYLE",
       allowedConditionIds: PATHING_CONDITIONS,
+    },
+  ],
+  [
+    "avoid-enemies",
+    {
+      id: "avoid-enemies",
+      name: "Avoid Enemies",
+      blurb: "While traveling, take reasonable local detours around unengaged hostiles.",
+      cost: 1,
+      tier: 1,
+      channel: "TRAVEL_PATHING",
+      allowedConditionIds: TRAVEL_CONDITIONS,
+    },
+  ],
+  [
+    "fight-back",
+    {
+      id: "fight-back",
+      name: "Fight Back",
+      blurb: "Pause travel when attacked, use your normal combat rules, then resume the route.",
+      cost: 0,
+      tier: 1,
+      channel: "TRAVEL_RESPONSE",
+      allowedConditionIds: TRAVEL_CONDITIONS,
     },
   ],
   [
@@ -655,7 +731,13 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       name: "Switch Stance",
       blurb:
         "Switch to a chosen learned stance while this situation holds, reverting to your default otherwise.",
-      cost: 2,
+      // Deliberately 0. The action is a verb with no power of its own — every gram of
+      // what a stance rule buys you is the destination, which already carries a 1-4 RP
+      // surcharge. Charging for the verb as well taxed the whole axis twice and made the
+      // cheapest possible tactical transition (1 + 2 + 1) cost as much as a premium Rite,
+      // so Stance micro stopped being a luxury optimization and became unaffordable.
+      // A stance rule now costs condition + destination; see `runeRuleCost`.
+      cost: 0,
       tier: 2,
       channel: "STANCE",
       allowedConditionIds: STANCE_CONDITIONS,
@@ -672,6 +754,9 @@ export const ALL_RUNE_IDS: string[] = [
 export const DEFAULT_RUNE_LOADOUT: EquippedRule[] = [
   { conditionId: "always", actionId: "auto-path-enemy" },
   { conditionId: "in-combat", actionId: "chase-enemy" },
+  { conditionId: "always", actionId: "wait-for-regen" },
+  { conditionId: "hp-below-25", actionId: "flee" },
+  { conditionId: "while-traveling", actionId: "fight-back" },
 ];
 
 export const STARTER_RUNE_IDS: string[] = Array.from(
@@ -715,6 +800,9 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // `craftRuneRecipe` before any essence is spent.
     "wait-for-regen",
     "flee",
+    "while-traveling",
+    "fight-back",
+    "avoid-enemies",
   ]),
 );
 
@@ -774,6 +862,9 @@ export function runeRuleCost(rule: EquippedRule): number {
   const condition = CONDITION_DATABASE.get(rule.conditionId);
   const action = ACTION_DATABASE.get(rule.actionId);
   if (!condition || !action) return 0;
+  // `switch-stance` prices its destination, not itself (its own cost is 0), so the sum
+  // below is the whole and only truth about what a stance rule costs. Every surface that
+  // shows a stance rule's price must call THIS, never `action.cost` plus a guess.
   const destinationCost = action.id === "switch-stance"
     ? (stanceDef(rule.targetStanceId)?.runeCost ?? 0)
     : 0;
@@ -796,8 +887,14 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Resource";
     case "GLOBAL_STRATEGY":
       return "Search";
-    case "PATHING":
-      return "Pathing";
+    case "PATH_SAFETY":
+      return "Path Safety";
+    case "APPROACH_STYLE":
+      return "Approach";
+    case "TRAVEL_PATHING":
+      return "Travel Pathing";
+    case "TRAVEL_RESPONSE":
+      return "Travel Response";
     case "CONTROL":
       return "Control";
     case "TECHNIQUE":
@@ -887,6 +984,88 @@ export function sanitizeRuneLoadout(
     spent += cost;
   }
   return sanitized;
+}
+
+export type RuneConflictKind = "redundant" | "suppressed" | "overlap";
+
+export interface RuneRuleConflict {
+  /** Later rule that needs player-facing explanation. */
+  ruleIndex: number;
+  /** Earlier same-lane rule that interacts with it. */
+  earlierRuleIndex: number;
+  channel: RuneChannel;
+  kind: RuneConflictKind;
+}
+
+/**
+ * True when every activation of `narrower` is also an activation of `broader`.
+ * The deliberately small relation is conservative: equal conditions and Always
+ * are enough to identify permanent suppression without pretending unrelated
+ * combat states have a total ordering.
+ */
+export function runeConditionContains(
+  broaderId: string,
+  narrowerId: string,
+): boolean {
+  return broaderId === narrowerId || broaderId === "always";
+}
+
+/** Only surface an overlap warning when two situations can actually be true together. */
+function runeConditionsCanOverlap(leftId: string, rightId: string): boolean {
+  const pair = new Set([leftId, rightId]);
+  return !(
+    (pair.has("in-combat") && pair.has("when-idle")) ||
+    (pair.has("hp-below-25") && pair.has("hp-above-90"))
+  );
+}
+
+/**
+ * Explain same-lane Rune interactions for the loadout board. A later rule is
+ * only marked suppressed when it can never claim its lane; ordinary overlapping
+ * conditions remain legal priority layering and receive an explanation instead.
+ */
+export function analyzeRuneLoadoutConflicts(
+  rules: readonly EquippedRule[],
+): RuneRuleConflict[] {
+  const conflicts: RuneRuleConflict[] = [];
+  for (let index = 0; index < rules.length; index += 1) {
+    const rule = rules[index];
+    const action = ACTION_DATABASE.get(rule.actionId);
+    if (!action) continue;
+    for (let earlierIndex = 0; earlierIndex < index; earlierIndex += 1) {
+      const earlier = rules[earlierIndex];
+      const earlierAction = ACTION_DATABASE.get(earlier.actionId);
+      if (!earlierAction || earlierAction.channel !== action.channel) continue;
+      if (earlier.conditionId === rule.conditionId && earlier.actionId === rule.actionId) {
+        conflicts.push({ ruleIndex: index, earlierRuleIndex: earlierIndex, channel: action.channel, kind: "redundant" });
+        break;
+      } else if (runeConditionContains(earlier.conditionId, rule.conditionId)) {
+        conflicts.push({ ruleIndex: index, earlierRuleIndex: earlierIndex, channel: action.channel, kind: "suppressed" });
+        break;
+      } else if (runeConditionsCanOverlap(earlier.conditionId, rule.conditionId)) {
+        conflicts.push({ ruleIndex: index, earlierRuleIndex: earlierIndex, channel: action.channel, kind: "overlap" });
+        break;
+      }
+    }
+  }
+  return conflicts;
+}
+
+/** Replace an exact same-condition, same-lane rule; retain legitimate layering. */
+export function addRuneRuleWithReplacement(
+  rules: readonly EquippedRule[],
+  added: EquippedRule,
+): EquippedRule[] {
+  const action = ACTION_DATABASE.get(added.actionId);
+  if (!action) return [...rules, added];
+  const replacementIndex = rules.findIndex((rule) => {
+    const existing = ACTION_DATABASE.get(rule.actionId);
+    return existing?.channel === action.channel && rule.conditionId === added.conditionId;
+  });
+  if (replacementIndex < 0) return [...rules, added];
+  const next = [...rules];
+  next[replacementIndex] = added;
+  return next;
 }
 
 export interface NamedRule {
@@ -1108,6 +1287,14 @@ export interface RuneContext {
    * condition that makes a specialised second Technique worth equipping.
    */
   targetIsElite?: boolean;
+  /** An intentional server-owned map navigation path still has work to do. */
+  traveling?: boolean;
+  /**
+   * The active stance's own charge is full. Only a charging posture (Powering Up)
+   * ever sets this; every other stance leaves it false, so a `Stance Charged` rule
+   * built without one simply never fires.
+   */
+  stanceCharged?: boolean;
 }
 
 export interface ClaimedRuneAction {
@@ -1126,7 +1313,10 @@ export interface DerivedRuneConfig {
   oocMaintenanceAction: RuneActionId | null;
   resourceMaintenanceAction: RuneActionId | null;
   globalStrategyAction: RuneActionId | null;
-  pathingAction: RuneActionId | null;
+  pathSafetyAction: RuneActionId | null;
+  approachStyleAction: RuneActionId | null;
+  travelPathingAction: RuneActionId | null;
+  travelResponseAction: RuneActionId | null;
   controlAction: RuneActionId | null;
   techniqueAction: RuneActionId | null;
   technique2Action: RuneActionId | null;
@@ -1140,6 +1330,8 @@ export interface DerivedRuneConfig {
   autoPathEnemy: boolean;
   avoidHazards: boolean;
   carefulPulling: boolean;
+  avoidEnemies: boolean;
+  fightBackWhileTraveling: boolean;
   waitForRegen: boolean;
   tacticalReload: boolean;
   waitForExecution: boolean;
@@ -1169,7 +1361,10 @@ function emptyClaims(): ClaimedRuneChannels {
     OOC_MAINTENANCE: null,
     RESOURCE_MAINTENANCE: null,
     GLOBAL_STRATEGY: null,
-    PATHING: null,
+    PATH_SAFETY: null,
+    APPROACH_STYLE: null,
+    TRAVEL_PATHING: null,
+    TRAVEL_RESPONSE: null,
     CONTROL: null,
     TECHNIQUE: null,
     TECHNIQUE_2: null,
@@ -1207,6 +1402,10 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.empoweredImminent ?? false;
     case "target-elite":
       return ctx.targetIsElite ?? false;
+    case "while-traveling":
+      return ctx.traveling ?? false;
+    case "stance-charged":
+      return ctx.stanceCharged ?? false;
     default:
       return false;
   }
@@ -1225,7 +1424,10 @@ export function deriveAutoConfigFromRunes(
     oocMaintenanceAction: null,
     resourceMaintenanceAction: null,
     globalStrategyAction: null,
-    pathingAction: null,
+    pathSafetyAction: null,
+    approachStyleAction: null,
+    travelPathingAction: null,
+    travelResponseAction: null,
     controlAction: null,
     techniqueAction: null,
     technique2Action: null,
@@ -1239,6 +1441,8 @@ export function deriveAutoConfigFromRunes(
     autoPathEnemy: false,
     avoidHazards: false,
     carefulPulling: false,
+    avoidEnemies: false,
+    fightBackWhileTraveling: false,
     waitForRegen: false,
     tacticalReload: false,
     waitForExecution: false,
@@ -1301,7 +1505,10 @@ export function deriveAutoConfigFromRunes(
   derived.resourceMaintenanceAction =
     claimed.RESOURCE_MAINTENANCE?.action.id ?? null;
   derived.globalStrategyAction = claimed.GLOBAL_STRATEGY?.action.id ?? null;
-  derived.pathingAction = claimed.PATHING?.action.id ?? null;
+  derived.pathSafetyAction = claimed.PATH_SAFETY?.action.id ?? null;
+  derived.approachStyleAction = claimed.APPROACH_STYLE?.action.id ?? null;
+  derived.travelPathingAction = claimed.TRAVEL_PATHING?.action.id ?? null;
+  derived.travelResponseAction = claimed.TRAVEL_RESPONSE?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
   derived.techniqueAction = claimed.TECHNIQUE?.action.id ?? null;
   derived.technique2Action = claimed.TECHNIQUE_2?.action.id ?? null;
@@ -1374,11 +1581,17 @@ export function deriveAutoConfigFromRunes(
   if (derived.globalStrategyAction === "lead-the-way") {
     derived.leadTheWay = true;
   }
-  if (derived.pathingAction === "avoid-hazards") {
+  if (derived.pathSafetyAction === "avoid-hazards") {
     derived.avoidHazards = true;
   }
-  if (derived.pathingAction === "careful-pulling") {
+  if (derived.approachStyleAction === "careful-pulling") {
     derived.carefulPulling = true;
+  }
+  if (derived.travelPathingAction === "avoid-enemies") {
+    derived.avoidEnemies = true;
+  }
+  if (derived.travelResponseAction === "fight-back") {
+    derived.fightBackWhileTraveling = true;
   }
   if (derived.controlAction === "taunt-current-target") {
     derived.tauntCurrentTarget = true;

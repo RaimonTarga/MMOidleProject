@@ -28,3 +28,5 @@ export type { GlyphTileProps } from "./GlyphTile";
 export { useChangeFlash } from "./useChangeFlash";
 export type { ChangeFlash } from "./useChangeFlash";
 export { HelpTooltip, useHoverTooltip } from "./HelpTooltip";
+export { TooltipCard } from "./TooltipCard";
+export type { TooltipCardContent, TooltipRow } from "./TooltipCard";

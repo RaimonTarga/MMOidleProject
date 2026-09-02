@@ -213,6 +213,16 @@ export function formatMonsterMechanics(
     lines.push(`Charges at ${round1(c.speedMult)}× speed for ${sec(c.durationMs)} when it first spots you`);
   }
 
+  if (def.engageSequence?.kind === 'cast-charge-root') {
+    const d = def.engageSequence;
+    lines.push(`${d.name} — casts for ${sec(d.castMs)}, then charges at ${round1(d.speedMult)}× speed and roots for ${sec(d.rootMs)} on landing`);
+  }
+
+  if (def.engageSequence?.kind === 'cast-charge-strike') {
+    const d = def.engageSequence;
+    lines.push(`${d.name} — casts for ${sec(d.castMs)}, then charges at ${round1(d.speedMult)}× speed and lands for ${round1(d.damageMultiplier)}× damage`);
+  }
+
   if (effectiveDef.dotEffect) {
     const d = effectiveDef.dotEffect;
     const dur = d.durationMs ? `, lasts ${sec(d.durationMs)}` : '';

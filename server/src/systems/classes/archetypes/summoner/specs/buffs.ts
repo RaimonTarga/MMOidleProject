@@ -34,6 +34,7 @@ export const SUMMONER_T4_BUFFS = [
         durationPct: Math.min(100, (remaining / interval) * 100), color: '#ff7043',
         logSourceName: 'Iconoclast', logSourceSide: 'ally',
         logDetail: marked ? 'one summon is armed for detonation' : 'preparing the next detonation',
+        values: [{ label: 'Detonation', value: marked ? 'armed' : 'preparing', good: marked > 0 }],
       };
     },
     { category: 'summoner', shape: 'diamond', color: '#ff7043', label: 'SHARD' },
@@ -45,6 +46,7 @@ export const SUMMONER_T4_BUFFS = [
           id: 'summoner-endless-swarm', label: 'KILN', stacks: Math.max(1, livingCount(world, player)),
           durationPct: -1, color: '#7bd389', logSourceName: 'Kilnmaster', logSourceSide: 'ally',
           logDetail: `${livingCount(world, player)}/${player.summonsMinions.targetCount} summons active`,
+          values: [{ label: 'Summons active', value: `${livingCount(world, player)} / ${player.summonsMinions.targetCount}`, good: true }],
         }
       : null,
     { category: 'summoner', shape: 'circle', color: '#7bd389', label: 'KILN' },
@@ -58,6 +60,10 @@ export const SUMMONER_T4_BUFFS = [
         id: 'summoner-harrier-brood', label: 'ACCUSE', stacks: Math.max(1, state?.slotIds.length ?? 0),
         durationPct: -1, color: '#e6c35c', logSourceName: 'Inquisitor', logSourceSide: 'ally',
         logDetail: `${state?.slotIds.length ?? 0} unique summons marking ${target.isMonster.name}`,
+        values: [
+          { label: 'Unique summons marking', value: String(state?.slotIds.length ?? 0), good: true },
+          { label: 'Target', value: target.isMonster.name },
+        ],
         logTargetId: target.isMonster.id, logTargetName: target.isMonster.name, logTargetType: 'monster',
       };
     },
@@ -76,6 +82,10 @@ export const SUMMONER_T4_BUFFS = [
         durationPct: 100 - ((serial % needed) / needed) * 100, color: '#f3aa52',
         logSourceName: 'Marshal', logSourceSide: 'ally',
         logDetail: `formation cycle ${serial % needed}/${needed}; ${contributors} current contributors`,
+        values: [
+          { label: 'Cycle progress', value: `${serial % needed} / ${needed}` },
+          { label: 'Contributors', value: String(contributors), good: true },
+        ],
       };
     },
     { category: 'summoner', shape: 'square', color: '#f3aa52', label: 'ORDER' },
@@ -89,6 +99,10 @@ export const SUMMONER_T4_BUFFS = [
         id: 'summoner-withering-chorus', label: 'WITHER', stacks: Math.max(1, voices),
         durationPct: -1, color: '#9d6ad6', logSourceName: 'Chorister', logSourceSide: 'ally',
         logDetail: `${voices} unique voices established on ${target.isMonster.name}`,
+        values: [
+          { label: 'Unique voices', value: String(voices), good: true },
+          { label: 'Target', value: target.isMonster.name },
+        ],
         logTargetId: target.isMonster.id, logTargetName: target.isMonster.name, logTargetType: 'monster',
       };
     },
@@ -108,6 +122,9 @@ export const SUMMONER_T4_BUFFS = [
         durationPct: charges > 0 ? -1 : Math.min(100, (remaining / interval) * 100), color: '#66c7d7',
         logSourceName: 'Ritualist', logSourceSide: 'ally',
         logDetail: charges > 0 ? `${charges} empowered summon attacks remain` : 'awaiting the next ritual',
+        values: charges > 0
+          ? [{ label: 'Empowered attacks left', value: String(charges), good: true }]
+          : [{ label: 'Ritual', value: 'rebuilding' }],
       };
     },
     { category: 'summoner', shape: 'square', color: '#66c7d7', label: 'RITUAL' },
@@ -119,6 +136,11 @@ export const SUMMONER_T4_BUFFS = [
           id: 'summoner-colossus', label: 'IDOL', stacks: 1, durationPct: -1, color: '#b58a58',
           logSourceName: 'Idolwright', logSourceSide: 'ally',
           logDetail: livingCount(world, player) > 0 ? 'the condensed formation is active' : 'the condensed formation is reconstructing',
+          values: [{
+            label: 'Colossus',
+            value: livingCount(world, player) > 0 ? 'active' : 'reconstructing',
+            good: livingCount(world, player) > 0,
+          }],
         }
       : null,
     { category: 'summoner', shape: 'circle', color: '#b58a58', label: 'IDOL' },
@@ -134,6 +156,7 @@ export const SUMMONER_T4_BUFFS = [
         durationPct: 100 - (progress / threshold) * 100, color: '#f0d878',
         logSourceName: 'Champion', logSourceSide: 'ally',
         logDetail: `${progress}/${threshold} fixed contributions toward a linked strike`,
+        values: [{ label: 'Toward a linked strike', value: `${progress} / ${threshold}`, good: true }],
       };
     },
     { category: 'summoner', shape: 'diamond', color: '#f0d878', label: 'BOND' },
@@ -147,6 +170,10 @@ export const SUMMONER_T4_BUFFS = [
         id: 'summoner-twin-covenant', label: 'TWINS', stacks: Math.max(1, living),
         durationPct: -1, color: '#d28fca', logSourceName: 'Covenanter', logSourceSide: 'ally',
         logDetail: living === 1 ? 'one twin survives with a bounded fallback' : `${living}/2 complementary twins active`,
+        values: [
+          { label: 'Twins active', value: `${living} / 2`, good: living === 2 },
+          ...(living === 1 ? [{ label: 'Pairing', value: 'bounded fallback', good: false }] : []),
+        ],
       };
     },
     { category: 'summoner', shape: 'circle', color: '#d28fca', label: 'TWINS' },

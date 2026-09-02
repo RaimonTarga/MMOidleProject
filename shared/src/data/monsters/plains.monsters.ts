@@ -105,16 +105,18 @@ export const plainsMonsterEntries = [
 
   ['savanna-hawk', {
     id: 'savanna-hawk', name: 'Savanna Hawk', color: 0xddcc66,
-    // AERIAL RANGED ENEMY. `flies` gives it a wide, lazy aerial idle circuit and
-    // makes terrain not apply to it — the only change the locked design asks for.
-    // Once engaged it is an ORDINARY ranged mob.
-    // WARNING: no repeated swoops, no hit-and-run, no constant disengage/re-engage.
-    // A one-time approach is fine if it falls out of implementation; a loop is not.
-    stats: { hp: 170, attack: 29, plating: 0, damageReduction: 0, speed: 50, attackRange: 165, attackCooldown: 2400, pullRange: 245 },
-    behavior: 'ranged', attackStyle: 'slash', biome: 'plains',
+    // AERIAL MELEE HUNTER. Its wide, rapid idle path makes the hawk hard to
+    // predict, then the single telegraphed Dive Bomb gets it into talon range.
+    // It does not repeat the swoop or disengage after it lands.
+    stats: { hp: 170, attack: 29, plating: 0, damageReduction: 0, speed: 110, attackRange: 12, attackCooldown: 2400, pullRange: 440 },
+    behavior: 'melee', attackStyle: 'talons', biome: 'plains',
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 38 }, // wild bird → Wild (biome mixture; tunable)
     flies: true,
-    ai: { wanderRadius: 280, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3200 },
+    ai: { wanderRadius: 360, leashRange: 1200, idleMinMs: 250, idleMaxMs: 900 },
+    engageSequence: {
+      kind: 'cast-charge-root', name: 'Dive Bomb', castMs: 1000,
+      speedMult: 3.4, maxChargeMs: 3000, rootMs: 2000, fx: 'dive-bomb',
+    },
   }],
 
 

@@ -9,7 +9,7 @@
 import type { MotionVector, Vec2 } from '../../systems/spatial';
 import type { EquipmentMap, EssenceType } from '../../items';
 import type { PassiveMap } from '../../passives';
-import type { PlayerBuff } from '../combat/buffs';
+import type { PlayerBuff, StatusValue } from '../combat/buffs';
 import type { SubVariant } from '../../skillTree';
 import type { CombatArchetype, MonsterAIState } from '../../types/combat';
 import type { MonsterBehavior } from '../../data/monsters/behavior';
@@ -122,6 +122,13 @@ export interface TargetStatusView {
   remainingMs: number;
   /** Total duration when known (from effect.data.totalMs); 0 = unknown → countdown, no sweep. */
   totalMs: number;
+  /**
+   * Resolved runtime magnitudes for the tooltip, for the effects whose numbers a
+   * player can act on (per-stack DoT damage, the damage-taken a mark adds, the
+   * plating it strips). Populated for targeted monsters only, from effect data
+   * that is already on the server — see `buildTargetStatus`.
+   */
+  values?: StatusValue[];
 }
 
 /** Client-facing status overlay and buff slice. */
@@ -134,6 +141,20 @@ export interface HasStatus {
   bossEffects?: string[];
   /** Bosses only — active effect stack counts, keyed by `bossEffects` id. */
   bossEffectStacks?: Record<string, number>;
+  /** Bosses only — live clocks for the effects named by `bossEffects`. */
+  bossEffectDurations?: Record<string, { remainingMs: number; totalMs: number }>;
+  /**
+   * Monsters only — authoritative absorb state for the overhead/target barrier UI.
+   * Amount 0 with a recharge clock represents a broken barrier reforming.
+   */
+  enemyBarrier?: {
+    amount: number;
+    maxAmount: number;
+    remainingMs: number;
+    totalMs: number;
+    rechargeRemainingMs?: number;
+    rechargeTotalMs?: number;
+  };
   /** Monsters only — current debuffs for the target frame (targeted monsters). */
   targetStatus?: TargetStatusView[];
   /** Players only — total pending damage-over-time on the player (HP-bar forecast). */
@@ -187,6 +208,12 @@ export interface UsesAutocombat extends AutocombatConfig {
 /** What a server-directed player is about to do — telegraphed via HUD/bubbles. */
 export type AutoIntentKind = 'attack' | 'follow' | 'travel' | 'flee' | 'idle';
 
+/** Compact server-authored explanation of a Rune decision. */
+export interface RuneTraceRule {
+  conditionId: string;
+  actionId: string;
+}
+
 /**
  * Networked telegraph of the player's current server-directed action. This can
  * remain present with auto-combat off while manual map navigation or an already
@@ -199,6 +226,13 @@ export interface HasAutoIntent {
   reason: string;
   /** Governing automation source or named rune rule. */
   source: string;
+  /** Rune rule presently responsible for this visible action, if one exists. */
+  activeRune?: RuneTraceRule;
+  /** A temporary higher-authority Rune rule and the normal rule it interrupted. */
+  overrideRune?: RuneTraceRule;
+  overriddenRune?: RuneTraceRule;
+  /** A travel route is retained and will resume after this intent settles. */
+  travelPaused?: boolean;
   /** 'attack' — monster type id of the target; the bubble shows that monster's sprite. */
   targetMonsterTypeId?: string;
   /** 'follow' — leader being followed; the client mirrors that leader's bubble. */

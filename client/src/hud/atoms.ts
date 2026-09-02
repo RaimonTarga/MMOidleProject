@@ -15,6 +15,7 @@ import type {
   PlayerBuff,
   PlayerDeathPayload,
   PlayerView,
+  MonsterView,
   ReleaseAnnouncementPayload,
   WardState,
   SubVariant,
@@ -300,6 +301,8 @@ export interface TargetFrameData {
   statuses: TargetStatusView[];
   bossEffects: string[];
   bossEffectStacks: Record<string, number>;
+  bossEffectDurations: Record<string, { remainingMs: number; totalMs: number }>;
+  enemyBarrier?: MonsterView['enemyBarrier'];
 }
 export const targetFrameAtom = atom<TargetFrameData | null>(null);
 
@@ -564,11 +567,26 @@ function targetFrameEqual(a: TargetFrameData | null, b: TargetFrameData | null):
   for (let i = 0; i < a.statuses.length; i++) {
     const x = a.statuses[i], y = b.statuses[i];
     if (x.id !== y.id || x.stacks !== y.stacks || x.remainingMs !== y.remainingMs) return false;
+    // Resolved magnitudes drive the tooltip's CURRENT block, and a shred or a
+    // damage-taken figure can move while stacks and clock both hold still.
+    if ((x.values?.length ?? 0) !== (y.values?.length ?? 0)) return false;
+    for (let v = 0; v < (x.values?.length ?? 0); v++) {
+      if (x.values![v].value !== y.values![v].value) return false;
+    }
   }
   for (let i = 0; i < a.bossEffects.length; i++) {
     if (a.bossEffects[i] !== b.bossEffects[i]) return false;
     if (a.bossEffectStacks[a.bossEffects[i]] !== b.bossEffectStacks[b.bossEffects[i]]) return false;
+    const aDuration = a.bossEffectDurations[a.bossEffects[i]];
+    const bDuration = b.bossEffectDurations[b.bossEffects[i]];
+    if (aDuration?.remainingMs !== bDuration?.remainingMs || aDuration?.totalMs !== bDuration?.totalMs) return false;
   }
+  if (
+    a.enemyBarrier?.amount !== b.enemyBarrier?.amount ||
+    a.enemyBarrier?.maxAmount !== b.enemyBarrier?.maxAmount ||
+    a.enemyBarrier?.remainingMs !== b.enemyBarrier?.remainingMs ||
+    a.enemyBarrier?.rechargeRemainingMs !== b.enemyBarrier?.rechargeRemainingMs
+  ) return false;
   return true;
 }
 

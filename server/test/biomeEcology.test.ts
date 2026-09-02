@@ -5,12 +5,30 @@ import { updateMonsters } from "../src/systems/combat/ai/ai";
 import { setEntityMotion, updateMovement } from "../src/systems/world/movement";
 import { spawnPack } from "../src/systems/world/spawning";
 import { World } from "../src/world/World";
+import { MONSTER_DATABASE } from "@mmo-idle/shared";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
 }
 
 const world = new World();
+
+const witch = MONSTER_DATABASE.get("bog-witch");
+const stalker = MONSTER_DATABASE.get("mire-stalker");
+const snapper = MONSTER_DATABASE.get("swamp-hydra");
+assert(
+  witch?.chargedAttack?.cooldownMs === 8_000 && witch.chargedAttack.initialCooldownMs === 0 && witch.chargedAttack.appliesAntiheal?.durationMs === 9_000,
+  "Bog Witch should open with its longer Wither and repeat it more frequently",
+);
+assert(
+  stalker?.stats.speed === 75 && stalker.idleAnchor === undefined &&
+    stalker.ai.idleMinMs === 450 && stalker.ai.idleMaxMs === 1_200,
+  "Mire Stalker should be a fast, erratic predator without a forced pool route",
+);
+assert(
+  snapper?.stats.hp === 260 && snapper.shellUp?.castMs === 500 && snapper.dotEffect?.durationMs === 4_500,
+  "Moss-Shell Snapper should have a deeper health pool, telegraph Shell Up, and maintain its venom long enough to matter",
+);
 
 // ── Packs + call-allies (forest identity, e.g. `wolf`) ─────────────────────────
 // A real T1 forest node: `docs/biome-ecology-current-state.md` primitive #1.

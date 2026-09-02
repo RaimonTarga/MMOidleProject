@@ -80,6 +80,11 @@ export interface HasAutoTraversePath {
   remainingPath: string[];
 }
 
+/** Server-only marker: a travel route is paused while its owner resolves combat. */
+export interface FightsWhileTraveling {
+  startedAtMs: number;
+}
+
 /** Server-only marker: auto-combat has temporarily yielded to survival movement. */
 export interface IsFleeing {
   phase: "out" | "recover" | "return";
@@ -281,6 +286,7 @@ export interface ServerEntity {
   hasManualMoveIntent?: {};
   hasSummonerCommand?: HasSummonerCommand;
   hasAutoTraversePath?: HasAutoTraversePath;
+  fightsWhileTraveling?: FightsWhileTraveling;
   hasMovePath?: HasMovePath;
   isFleeing?: IsFleeing;
   /** Server-only movement owner for one live Step Back response. */

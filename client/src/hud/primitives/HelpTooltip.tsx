@@ -4,7 +4,14 @@ import { createPortal } from 'react-dom';
 // Custom hover tooltip. Rendered via a portal to <body> (not inside the row) so
 // it is never clipped by a panel's overflow:auto, and positioned with fixed
 // coordinates from the trigger's bounding rect, flipping/clamping to stay
-// on-screen. Desktop hover only; the tooltip itself is pointer-events:none.
+// on-screen. The tooltip itself is pointer-events:none, so it can never sit
+// between the cursor and the thing it is describing.
+//
+// Desktop pointer plus keyboard focus: focus opens the same tooltip hover does,
+// and Escape dismisses it without moving focus, so a keyboard reader is not
+// stuck with a card covering what they are about to tab to. Trigger elements
+// opt in by being focusable — the handlers are inert on an element that cannot
+// take focus, so nothing already using this hook changes behaviour.
 //
 // Lives in primitives because it is the explanation grammar for the whole HUD,
 // not just the character sheet: stat rows, skill nodes, ability effect lines,
@@ -32,9 +39,18 @@ export function useHoverTooltip(tip: ReactNode | undefined) {
   // No help text → inert: no handlers attached, nothing portalled.
   if (!tip) return { handlers: {} as Record<string, never>, node: null as ReactNode };
 
+  const open = (e: { currentTarget: HTMLElement }) =>
+    setAnchor(e.currentTarget.getBoundingClientRect());
+  const close = () => { setAnchor(null); setPos(null); };
+
   const handlers = {
-    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget.getBoundingClientRect()),
-    onMouseLeave: () => { setAnchor(null); setPos(null); },
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => open(e),
+    onMouseLeave: close,
+    onFocus: (e: React.FocusEvent<HTMLElement>) => open(e),
+    onBlur: close,
+    onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === 'Escape') close();
+    },
   };
 
   const node: ReactNode = anchor

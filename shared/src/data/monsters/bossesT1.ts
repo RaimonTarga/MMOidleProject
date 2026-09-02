@@ -133,12 +133,12 @@ export const bossMonsterEntriesT1 = [
     // FOREST EXAM = a clean claw duel. Every swing is a two-hit bear-claw combo.
     // Bestial Frenzy replaces the invisible cadence ramp: every 6 seconds it takes
     // a readable 1.5s cast, then permanently gains another 20% attack-speed and
-    // 10% movement-speed stack, capped at five stacks.
+    // 10% movement-speed stack with no stack cap.
     bossScript: {
       repeating: [
         { intervalMs: 6000, initialDelayMs: 5000, actions: [
           { type: 'cast', castMs: 1500, label: 'Bestial Frenzy', fx: 'frenzy', actions: [
-            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.20, moveSpeedMult: 1.10, maxStacks: 5, label: 'bestial-frenzy' },
+            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.20, moveSpeedMult: 1.10, label: 'bestial-frenzy' },
           ] },
         ] },
       ],

@@ -17,6 +17,7 @@ import {
   telegraphsContainingPlayer,
   updateTelegraphEvasionLifecycle,
 } from "./telegraphEvasion";
+import { POWERING_UP_ID, poweringUpFullyCharged } from "../../player/stances/stanceBehaviors";
 
 /** Server-only runtime flags read by the auto-combat systems. */
 export const RUNE_FLEE_FLAG = "rune.flee";
@@ -32,6 +33,8 @@ export const RUNE_SPREAD_DOTS_FLAG = "rune.spreadDots";
 export const RUNE_FOCUS_ELITES_FLAG = "rune.focusElites";
 export const RUNE_AVOID_NODE_HAZARDS_FLAG = "rune.avoidNodeHazards";
 export const RUNE_CAREFUL_PULLING_FLAG = "rune.carefulPulling";
+export const RUNE_AVOID_ENEMIES_FLAG = "rune.avoidEnemies";
+export const RUNE_FIGHT_BACK_WHILE_TRAVELING_FLAG = "rune.fightBackWhileTraveling";
 export const RUNE_EVADE_TELEGRAPH_FLAG = "rune.evadeTelegraph";
 /** System rework Step 7: a fire-technique / fire-guard rule is active this tick. */
 export const RUNE_FIRE_TECHNIQUE_FLAG = "rune.fireTechnique";
@@ -110,9 +113,18 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       // Set by each class when its finisher/execution/discharge becomes ready
       // (cadence/cooldown/energy); absent for classes with no empowered attack.
       empoweredImminent: player.hasEmpoweredAttack !== undefined,
+      // Only a charging posture ever sets this; every other stance leaves it false,
+      // so a `Stance Charged` rule built without one simply never fires.
+      stanceCharged:
+        player.tracksProgression.activeStance === POWERING_UP_ID &&
+        poweringUpFullyCharged(player.tracksCombat),
       // Elite-ness is a property of the monster DEFINITION, same source the
       // `focus-elites` targeting bonus reads.
       targetIsElite: isEliteTarget(world, attackTargetId),
+      traveling:
+        player.hasAutoTraversePath !== undefined &&
+        player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId &&
+        player.hasAutoTraversePath.remainingPath.length > 0,
     };
 
     const d = deriveAutoConfigFromRunes(
@@ -130,8 +142,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       ac.fleeHpPct !== d.config.fleeHpPct ||
       ac.acquireRadius !== acquireRadius ||
       ac.focusLeaderTarget !== d.config.focusLeaderTarget ||
-      ac.engageUltimateBosses !== d.config.engageUltimateBosses ||
-      ac.autoTraverse !== false;
+      ac.engageUltimateBosses !== d.config.engageUltimateBosses;
 
     if (changed) {
       ac.priorityMode = d.config.priorityMode;
@@ -140,7 +151,6 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       ac.acquireRadius = acquireRadius;
       ac.focusLeaderTarget = d.config.focusLeaderTarget;
       ac.engageUltimateBosses = d.config.engageUltimateBosses;
-      ac.autoTraverse = false;
       markSliceDirty(world, player, "usesAutocombat");
     }
 
@@ -185,6 +195,12 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
     setFlag(player.tracksCombat, RUNE_FOCUS_ELITES_FLAG, d.focusElites);
     setFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG, d.avoidHazards);
     setFlag(player.tracksCombat, RUNE_CAREFUL_PULLING_FLAG, d.carefulPulling);
+    setFlag(player.tracksCombat, RUNE_AVOID_ENEMIES_FLAG, d.avoidEnemies);
+    setFlag(
+      player.tracksCombat,
+      RUNE_FIGHT_BACK_WHILE_TRAVELING_FLAG,
+      d.fightBackWhileTraveling,
+    );
     const stepBackOwnsMovement = updateTelegraphEvasionLifecycle(
       world,
       player,

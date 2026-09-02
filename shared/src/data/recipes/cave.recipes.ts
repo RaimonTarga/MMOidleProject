@@ -21,6 +21,16 @@ import type { Recipe } from './types';
 // numbers are derived from the T1 baseline.
 // ─────────────────────────────────────────────────────────────────────────
 
+// ── T1 ECONOMY CANDIDATE C (2026-08-31) ───────────────────────────────────
+// Every T1 (+5) step's ESSENCE cost was cut 25%, rounded to the nearest 5
+// (Math.round semantics): 205->155, 260->195, 200->150, 100->75, 75->55,
+// 70->55, 60->45. Catalyst costs, initial crafts and +1..+4 are UNCHANGED, so
+// the per-item "same total (N)" notes below now describe the pre-candidate
+// total, not the current one. The target is the post-mastery affordability
+// tail only -- the 2x bot cohort spent its last ~15m/run earning the final
+// +5 essence after every biome was already maxed.
+// ──────────────────────────────────────────────────────────────────────────
+
 export const caveRecipeEntries = [
   // ── T1 ──
   // Every 3rd swing is dead. NOT equivalent to a flat ×2/3 DPS tax in every
@@ -43,7 +53,7 @@ export const caveRecipeEntries = [
       { stats: { attack: 2 }, cost: { red: 45 }, requiredBiomeLevel: 3 },
       { stats: { attack: 2 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
       { stats: { attack: 3 }, cost: { red: 125 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, cost: { red: 205 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, cost: { red: 155 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -64,7 +74,7 @@ export const caveRecipeEntries = [
       { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 60 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 95 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 155 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 2, damageReduction: 0.01 }, cost: { red: 260 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 2, damageReduction: 0.01 }, cost: { red: 195 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -85,7 +95,7 @@ export const caveRecipeEntries = [
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 25 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 1 }, cost: { red: 40 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 60 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -102,7 +112,7 @@ export const caveRecipeEntries = [
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 25 }, requiredBiomeLevel: 4 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 70 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 55 }, requiredBiomeLevel: 4 },
     ],
   }],
 

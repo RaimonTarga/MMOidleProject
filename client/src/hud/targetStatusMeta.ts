@@ -33,6 +33,10 @@ const STATUS_META: Record<string, StatusMeta> = {
   'expose-weakness': { label: 'Exposed', color: '#ff5577' },
   'summoner-harried': { label: 'Accused', color: '#e6c35c' },
   'summoner-withering-chorus': { label: 'Chorus', color: '#9d6ad6' },
+  'monster-howl-haste': { label: 'Howl', color: '#b18cff' },
+  'thorn-spitter-barrage': { label: 'Barrage', color: '#89dd59' },
+  'granite-barrier': { label: 'Granite Barrier', color: '#8faed0' },
+  shelled: { label: 'Shelled', color: '#9fca68' },
   // Pre-encounter aura SOURCE (pack caller / den alpha) — "this one buffs its allies".
 };
 

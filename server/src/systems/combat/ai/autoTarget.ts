@@ -580,7 +580,10 @@ function carefulPullingDest(
 
 export function updateAutoTargets(world: World, now: number) {
   for (const player of world.livePlayers) {
-    if (!player.usesAutocombat.auto) continue;
+    // Map navigation normally leaves auto-combat off. Fight Back temporarily
+    // grants the existing auto-target loop authority while preserving that user
+    // preference and the original navigation path.
+    if (!player.usesAutocombat.auto && !player.fightsWhileTraveling) continue;
     if (player.hasManualMoveIntent) continue;
 
     // Active escape remains higher priority than voluntary recovery/maintenance.
@@ -654,7 +657,7 @@ export function updateAutoTargets(world: World, now: number) {
     // combat.ts. A summoner does its combat through summons as a proxy: the
     // player approaches the target and its leashed minions engage.
 
-    if (player.hasAutoTraversePath) {
+    if (player.hasAutoTraversePath && !player.fightsWhileTraveling) {
       if (player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId) {
         continue;
       }

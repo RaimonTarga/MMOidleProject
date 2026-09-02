@@ -8,6 +8,7 @@ export const SQUIRE_T1_CONFIG: T1RouteConfig = {
   id: "squire-t1",
   version: "2.0.0",
   classRoot: "cooldown-root",
+  frameId: "cooldown-heavy",
   description:
     "Controlled Squire dodge baseline: GM30 progression, Chaotic Axe gear identity, Step Back from Cave L2, and Step Back ahead of chase.",
   movementProfile: "melee-chase",

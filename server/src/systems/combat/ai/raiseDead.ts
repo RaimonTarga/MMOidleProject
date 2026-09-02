@@ -1,18 +1,77 @@
 import {
   MONSTER_DATABASE,
+  distanceSq,
   getCounter,
   setCounter,
   type MonsterRaisesDead,
 } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
-import { attachComponent } from '../../../ecs/markerHelpers';
+import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { mutateSlice } from '../../../ecs/dirtyHelpers';
 import { takeNearestCorpse, type RuntimeCorpse } from '../../world/corpses';
 import { setAggroTarget, setAttackTarget } from './targeting';
+import { setRooted } from '../../world/rooted';
+import { isMonsterStunned } from '../status/stun';
+import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
+import { chargedCastEndsAt } from '../engine/monsterMechanics';
 
 const SESSION_KEY = 'raiseDeadSession';
 const NEXT_RAISE_KEY = 'raiseDeadNextAt';
+const CAST_ENDS_KEY = 'raiseDeadCastEndsAt';
+const CAST_OWNS_ROOT_KEY = 'raiseDeadCastOwnsRoot';
+const CAST_OWNS_ATTACK_LOCK_KEY = 'raiseDeadCastOwnsAttackLock';
+
+function hasCorpseInRange(world: World, raiser: MonsterEntity, range: number): boolean {
+  const rangeSq = range * range;
+  return (world.corpses.get(raiser.hasPosition.nodeId) ?? []).some(
+    corpse => distanceSq(corpse.pos, raiser.hasPosition.current) <= rangeSq,
+  );
+}
+
+function releaseRaiseCast(world: World, raiser: MonsterEntity): void {
+  if (getCounter(raiser.tracksCombat, CAST_OWNS_ROOT_KEY) !== 0) {
+    setRooted(world, raiser, false);
+  }
+  if (getCounter(raiser.tracksCombat, CAST_OWNS_ATTACK_LOCK_KEY) !== 0) {
+    detachComponent(world, raiser, 'cannotAttack');
+  }
+  setCounter(raiser.tracksCombat, CAST_ENDS_KEY, 0);
+  setCounter(raiser.tracksCombat, CAST_OWNS_ROOT_KEY, 0);
+  setCounter(raiser.tracksCombat, CAST_OWNS_ATTACK_LOCK_KEY, 0);
+}
+
+function cancelRaiseCast(world: World, raiser: MonsterEntity): void {
+  if (getCounter(raiser.tracksCombat, CAST_ENDS_KEY) <= 0) return;
+  releaseRaiseCast(world, raiser);
+  world.pushEvent(raiser.hasPosition.nodeId, {
+    kind: 'monster-cast-end',
+    monsterId: raiser.isMonster.id,
+    fired: false,
+  });
+}
+
+function beginRaiseCast(
+  world: World,
+  raiser: MonsterEntity,
+  spec: MonsterRaisesDead,
+  now: number,
+): void {
+  const ownsRoot = !raiser.isRooted;
+  const ownsAttackLock = !raiser.cannotAttack;
+  if (ownsRoot) setRooted(world, raiser, true);
+  if (ownsAttackLock) attachComponent(world, raiser, 'cannotAttack', {});
+  setCounter(raiser.tracksCombat, CAST_ENDS_KEY, now + (spec.castMs ?? 0));
+  setCounter(raiser.tracksCombat, CAST_OWNS_ROOT_KEY, ownsRoot ? 1 : 0);
+  setCounter(raiser.tracksCombat, CAST_OWNS_ATTACK_LOCK_KEY, ownsAttackLock ? 1 : 0);
+  world.pushEvent(raiser.hasPosition.nodeId, {
+    kind: 'monster-cast-start',
+    monsterId: raiser.isMonster.id,
+    castMs: spec.castMs ?? 0,
+    label: spec.castName ?? 'Raise Dead',
+    fx: spec.castFx,
+  });
+}
 
 /** Living risen mobs currently owned by this raiser. */
 export function countRaisedBy(world: World, raiser: MonsterEntity): number {
@@ -120,6 +179,7 @@ export function updateRaisers(world: World, now: number): void {
     const aggro = raiser.hasAggroTarget;
     const state = raiser.tracksCombat;
     if (!aggro) {
+      cancelRaiseCast(world, raiser);
       setCounter(state, SESSION_KEY, 0);
       continue;
     }
@@ -127,13 +187,66 @@ export function updateRaisers(world: World, now: number): void {
     if (getCounter(state, SESSION_KEY) !== aggro.sinceMs) {
       setCounter(state, SESSION_KEY, aggro.sinceMs);
       setCounter(state, NEXT_RAISE_KEY, now + (spec.initialDelayMs ?? spec.intervalMs));
+      cancelRaiseCast(world, raiser);
       continue;
     }
+
+    const castEndsAt = getCounter(state, CAST_ENDS_KEY);
+    if (castEndsAt > 0) {
+      if (
+        isMonsterStunned(world, raiser.isMonster.id) ||
+        isMonsterFrozen(world, raiser.isMonster.id)
+      ) {
+        cancelRaiseCast(world, raiser);
+        continue;
+      }
+      if (now < castEndsAt) continue;
+
+      releaseRaiseCast(world, raiser);
+      const maxAlive = spec.maxAlive + (raiser.scriptsBoss?.raiseMaxAliveAdd ?? 0);
+      const corpse = countRaisedBy(world, raiser) < maxAlive
+        ? takeNearestCorpse(
+            world,
+            raiser.hasPosition.nodeId,
+            raiser.hasPosition.current,
+            spec.corpseRange,
+          )
+        : null;
+      const fired = corpse ? raiseCorpse(world, raiser, corpse, spec, now) : false;
+      world.pushEvent(raiser.hasPosition.nodeId, {
+        kind: 'monster-cast-end',
+        monsterId: raiser.isMonster.id,
+        fired,
+        fx: spec.castFx,
+      });
+      continue;
+    }
+
     if (now < getCounter(state, NEXT_RAISE_KEY)) continue;
-    setCounter(state, NEXT_RAISE_KEY, now + spec.intervalMs);
 
     const maxAlive = spec.maxAlive + (raiser.scriptsBoss?.raiseMaxAliveAdd ?? 0);
-    if (countRaisedBy(world, raiser) >= maxAlive) continue;
+    if (
+      countRaisedBy(world, raiser) >= maxAlive ||
+      !hasCorpseInRange(world, raiser, spec.corpseRange)
+    ) {
+      setCounter(state, NEXT_RAISE_KEY, now + spec.intervalMs);
+      continue;
+    }
+
+    if ((spec.castMs ?? 0) > 0) {
+      if (
+        !raiser.cannotAttack &&
+        !raiser.scriptsBoss?.scriptedCast &&
+        chargedCastEndsAt(raiser) <= 0 &&
+        !isMonsterStunned(world, raiser.isMonster.id) &&
+        !isMonsterFrozen(world, raiser.isMonster.id)
+      ) {
+        beginRaiseCast(world, raiser, spec, now);
+        setCounter(state, NEXT_RAISE_KEY, now + spec.intervalMs);
+      }
+      continue;
+    }
+    setCounter(state, NEXT_RAISE_KEY, now + spec.intervalMs);
     const corpse = takeNearestCorpse(
       world,
       raiser.hasPosition.nodeId,

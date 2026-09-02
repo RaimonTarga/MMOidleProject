@@ -1,5 +1,7 @@
 import {
   DEFAULT_RUNE_LOADOUT,
+  ABILITY_DATABASE,
+  clampEquippedAbilities,
   emptyEquipment,
   emptyEquippedAbilities,
   emptyEquippedStances,
@@ -7,6 +9,7 @@ import {
   ESSENCE_TYPES,
   FAST_BOSS_RETRY_TAINT,
   GAME_CONFIG,
+  ITEM_DATABASE,
   NODE_BIOMES,
   pointInNodeFeatureShape,
   resetTracksCombat,
@@ -15,7 +18,18 @@ import {
   SKILL_TREE,
   TEST_ROOM_NODE_ID,
   runeIdsFromCraftedRecipes,
+  normalizeEquippedAbilities,
+  normalizeEquipment,
+  validStanceIds,
+  validRiteIds,
+  sanitizeRuneLoadout,
+  runeBudgetForGlobalMastery,
+  runicPointLoadoutCost,
+  RUNE_RECIPE_DATABASE,
+  globalMastery,
   type FastBossRetryResult,
+  type TierEntryApplyResult,
+  type TierEntryProfile,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
 import { detachComponent } from '../ecs/markerHelpers';
@@ -264,6 +278,196 @@ export function refreshPlayerRecipes(world: World, player: PlayerEntity): GameAc
   checkRecipeUnlocks(player);
   markSliceDirty(world, player, 'tracksProgression');
   return { ok: true, message: 'Recipe unlocks refreshed.' };
+}
+
+const TIER_ENTRY_ARCHETYPES = {
+  'cadence-root': 'cadence',
+  'cooldown-root': 'cooldown',
+  'reload-root': 'reload',
+  'energy-root': 'energy',
+  'dot-root': 'dot',
+  'summoner-root': 'summoner',
+} as const;
+
+/**
+ * Apply one explicit harness profile to a live player. This is a development
+ * operation, not a save import: only persistent progression/build slices are
+ * accepted, while combat state is rebuilt from scratch below.
+ */
+export function applyTierEntryProfile(
+  world: World,
+  player: PlayerEntity,
+  profile: TierEntryProfile,
+): TierEntryApplyResult {
+  const fail = (reason: string): TierEntryApplyResult => ({
+    success: false,
+    profileId: profile?.id ?? 'unknown',
+    reason,
+  });
+  if (!profile || typeof profile !== 'object') return fail('Profile payload is invalid.');
+  if (!Number.isInteger(profile.targetTier) || profile.targetTier < 1) {
+    return fail('Profile target tier is invalid.');
+  }
+  if (profile.economyPolicy !== 'synthetic-combat-progression' &&
+      profile.economyPolicy !== 'authoritative-economy-continuation') {
+    return fail('Profile economy policy is invalid.');
+  }
+  const root = SKILL_TREE.get(profile.classRoot);
+  const frame = SKILL_TREE.get(profile.frameId);
+  if (!root || root.tier !== 0 || root.classId !== profile.classRoot) {
+    return fail('Profile class root is invalid.');
+  }
+  if (!frame || frame.tier !== 1 || frame.classId !== profile.classRoot || frame.parent !== root.id) {
+    return fail('Profile frame is not a child of its class root.');
+  }
+  if (profile.targetTier < 2) return fail('Tier-entry profiles must target tier 2 or later.');
+  const spawn = NODE_BIOMES[profile.spawnNodeId];
+  if (!spawn || spawn.kind !== 'sanctuary' || spawn.biomeTier !== profile.targetTier) {
+    return fail(`Profile spawn ${profile.spawnNodeId} is not the target-tier Sanctuary.`);
+  }
+  const archetype = TIER_ENTRY_ARCHETYPES[profile.classRoot as keyof typeof TIER_ENTRY_ARCHETYPES];
+  if (!archetype) return fail('Profile class root has no combat archetype.');
+
+  const walletEssences = profile.wallet?.essences;
+  for (const type of ESSENCE_TYPES) {
+    if (!Number.isFinite(walletEssences?.[type]) || (walletEssences?.[type] ?? -1) < 0) {
+      return fail(`Profile wallet has an invalid ${type} essence amount.`);
+    }
+  }
+  for (const [family, amount] of Object.entries(profile.wallet?.catalysts ?? {})) {
+    if (!Number.isFinite(amount) || amount < 0) return fail(`Profile wallet has invalid ${family} catalysts.`);
+  }
+
+  const itemIds = [...new Set([
+    ...profile.inventory,
+    ...Object.values(profile.equipment),
+  ].filter((id): id is string => typeof id === 'string'))];
+  if (itemIds.some((id) => !ITEM_DATABASE.has(id))) return fail('Profile contains an unknown item.');
+  const equipment = normalizeEquipment(profile.equipment);
+  const itemUpgrades: Record<string, number> = {};
+  for (const [id, raw] of Object.entries(profile.itemUpgrades ?? {})) {
+    if (!itemIds.includes(id) || !Number.isFinite(raw) || raw < 0) {
+      return fail(`Profile has an invalid upgrade entry for ${id}.`);
+    }
+    itemUpgrades[id] = Math.min(ITEM_DATABASE.get(id)?.upgrades?.length ?? 0, Math.floor(raw));
+  }
+
+  const knownAbilities = [...new Set(profile.knownAbilities ?? [])];
+  if (knownAbilities.some((id) => !ABILITY_DATABASE.has(id))) return fail('Profile contains an unknown ability.');
+  const equippedAbilities = clampEquippedAbilities(
+    normalizeEquippedAbilities(profile.equippedAbilities),
+    profile.targetTier,
+  );
+  if ([...equippedAbilities.techniques, ...equippedAbilities.guards].some((id) => !knownAbilities.includes(id))) {
+    return fail('Profile equips an ability that is not learned.');
+  }
+
+  const runeRecipesCrafted = [...new Set(profile.runeRecipesCrafted ?? [])];
+  if (runeRecipesCrafted.some((id) => !RUNE_RECIPE_DATABASE.has(id))) {
+    return fail('Profile contains an unknown Rune recipe.');
+  }
+  const runesOwned = runeIdsFromCraftedRecipes(runeRecipesCrafted);
+  const knownStances = validStanceIds(profile.knownStances ?? []);
+  if (knownStances.length !== new Set(profile.knownStances ?? []).size) return fail('Profile contains an unknown stance.');
+  const equippedStances = profile.equippedStances?.default === null || profile.equippedStances?.default === undefined
+    ? emptyEquippedStances()
+    : { default: profile.equippedStances.default };
+  if (equippedStances.default && !knownStances.includes(equippedStances.default)) {
+    return fail('Profile default stance is not learned.');
+  }
+  const knownRites = validRiteIds(profile.knownRites ?? []);
+  if (knownRites.length !== new Set(profile.knownRites ?? []).size) return fail('Profile contains an unknown rite.');
+  const equippedRites = validRiteIds(profile.equippedRites ?? []);
+  if (equippedRites.length !== (profile.equippedRites ?? []).length || equippedRites.some((id) => !knownRites.includes(id))) {
+    return fail('Profile equips an unlearned or unknown rite.');
+  }
+  const budget = runeBudgetForGlobalMastery(globalMastery(profile.biomeLevels ?? {}));
+  const runesEquipped = sanitizeRuneLoadout(
+    Array.isArray(profile.runesEquipped) ? profile.runesEquipped : [],
+    new Set(runesOwned),
+    budget,
+    archetype,
+    new Set(knownStances),
+  );
+  if (runesEquipped.length !== (profile.runesEquipped ?? []).length) {
+    return fail(`Profile Rune loadout is invalid or exceeds the ${budget} RP budget.`);
+  }
+  if (runicPointLoadoutCost({ rules: runesEquipped, rites: equippedRites }) > budget) {
+    return fail(`Profile Rune/Rite loadout exceeds the ${budget} RP budget.`);
+  }
+
+  // Relocate first, then clear every transient combat slice. No monsters or
+  // encounter state is imported from the source route.
+  const fromNodeId = player.hasPosition.nodeId;
+  player.hasPosition.nodeId = profile.spawnNodeId;
+  if (fromNodeId !== profile.spawnNodeId) {
+    world.movePlayerNode(fromNodeId, profile.spawnNodeId, player.isPlayer.id);
+  }
+  if (world.isNodeFrozen(profile.spawnNodeId)) thawNode(world, profile.spawnNodeId);
+  player.hasPosition.current = rightmostEntranceTarget(profile.spawnNodeId);
+  world.resetNodeDeltaState(profile.spawnNodeId);
+  clearPlayerSkillState(world, player);
+  clearAggroForPlayer(world, player.isPlayer.id);
+  player.hasStatus.activeBuffs = [];
+  for (const marker of [
+    'isFleeing', 'isCastingAbility', 'hasArmedAbility', 'hasSweepClip',
+    'hasFormationTechnique', 'hasEnvironmentalDot', 'hasNodeFeatureEffect',
+    'evadesTelegraphs',
+  ] as const) detachComponent(world, player, marker);
+
+  player.tracksProgression.level = Math.max(0, Math.floor(profile.level));
+  player.tracksProgression.skillPoints = Math.max(0, Math.floor(profile.skillPoints));
+  player.tracksProgression.essences = { ...profile.wallet.essences };
+  player.tracksProgression.catalysts = { ...profile.wallet.catalysts };
+  player.tracksProgression.catalystProgress = { ...(profile.wallet.catalystProgress ?? {}) };
+  player.tracksProgression.biomeLevel = { ...(profile.biomeLevels ?? {}) };
+  player.tracksProgression.biomeXP = { ...(profile.biomeXP ?? {}) };
+  player.tracksProgression.playerTier = profile.targetTier;
+  player.tracksProgression.currentSkillTier = Math.max(2, Math.floor(profile.currentSkillTier));
+  player.tracksProgression.bossesCleared = [...new Set(profile.bossesCleared ?? [])];
+  player.tracksProgression.clearedNodes = [...new Set(profile.clearedNodes ?? [])];
+  player.tracksProgression.visitedNodes = [...new Set(profile.visitedNodes ?? [])];
+  player.tracksProgression.questProgress = { ...(profile.questProgress ?? {}) };
+  player.tracksProgression.unlockedRecipes = [];
+  player.tracksProgression.runeRecipesCrafted = runeRecipesCrafted;
+  player.tracksProgression.runesOwned = runesOwned;
+  player.tracksProgression.runesEquipped = runesEquipped;
+  player.tracksProgression.knownAbilities = knownAbilities;
+  player.tracksProgression.equippedAbilities = equippedAbilities;
+  player.tracksProgression.knownStances = knownStances;
+  player.tracksProgression.equippedStances = equippedStances;
+  player.tracksProgression.activeStance = equippedStances.default;
+  player.tracksProgression.knownRites = knownRites;
+  player.tracksProgression.equippedRites = equippedRites;
+  player.holdsInventory.inventory = [...new Set(profile.inventory)];
+  player.holdsInventory.equipment = equipment;
+  player.holdsInventory.itemUpgrades = itemUpgrades;
+  player.usesSkills.unlockedSkills = [root.id, frame.id];
+  player.usesSkills.passives = {};
+  player.usesSkills.selectedClass = root.id;
+  player.usesSkills.selectedSubVariant = frame.subVariantId ?? null;
+  player.usesSkills.selectedRange = null;
+  player.usesSkills.combatArchetype = archetype;
+  player.usesAutocombat.auto = false;
+  player.usesAutocombat.autoTraverse = false;
+
+  // Unlock content from the same authoritative recipe gates the live game uses;
+  // the profile does not carry an invented unlocked-recipe list.
+  checkRecipeUnlocks(player);
+  syncArchetypeSlices(world, player);
+  recalculatePlayerEntityStats(world, player);
+  syncArchetypeSlices(world, player);
+  player.hasHealth.hp = player.hasHealth.maxHp;
+  refillBarrier(world, player);
+
+  markSliceDirty(world, player, 'hasPosition');
+  markSliceDirty(world, player, 'tracksProgression');
+  markSliceDirty(world, player, 'holdsInventory');
+  markSliceDirty(world, player, 'usesSkills');
+  markSliceDirty(world, player, 'usesAutocombat');
+  markSliceDirty(world, player, 'hasHealth');
+  markSliceDirty(world, player, 'hasStatus');
+  return { success: true, profileId: profile.id, targetTier: profile.targetTier };
 }
 
 export function equipPhaseTester(world: World, player: PlayerEntity): GameActionResult {

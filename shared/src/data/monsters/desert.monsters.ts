@@ -89,7 +89,14 @@ export const desertMonsterEntries = [
     // pack fields are spawn + shared-aggro plumbing only - there is no alpha
     // fantasy here, and no scatter when either half dies.
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'dust-djinn', count: 1 }] },
-    slowEffect: { speedMult: 0.5, durationMs: 2500 },
+    // NUMBING STING — telegraphed soft control instead of an invisible slow on
+    // every basic hit. Its short cast is frequent, but the longer slow gives the
+    // paired Sun Scarab time to create a real kiting window.
+    chargedAttack: {
+      name: 'Numbing Sting', castMs: 500, cooldownMs: 5000, initialCooldownMs: 2000,
+      multiplier: 1.0, fx: 'power-shot',
+      appliesSlow: { speedMult: 0.5, durationMs: 4000 },
+    },
   }],
 
   ['stone-basilisk', {

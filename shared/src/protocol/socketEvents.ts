@@ -11,6 +11,11 @@ import type { NodeTelemetrySnapshot } from "./nodeTelemetry";
 import type { WorldLogEvent } from "./worldLogEvents";
 import type { Vec2 } from "../systems/spatial";
 import type { AccountCharactersPayload } from "./characters";
+import type { TierEntryApplyResult, TierEntryProfile } from "./tierEntry";
+import type {
+  T1EconomyArm,
+  T1EconomyExperimentConfig,
+} from "../systems/t1EconomyExperiment";
 
 export type PlayerMoveMode = "path" | "direct";
 export interface PlayerMoveOptions {
@@ -145,6 +150,15 @@ export interface ServerToClientEvents {
   "debug:fastBossRetryResult": (result: FastBossRetryResult) => void;
   /** Dev-only acknowledgement/state update for manual playtest evidence capture. */
   "debug:playtestStatus": (status: HumanPlaytestStatus) => void;
+  /** Dev-only acknowledgement for an explicit synthetic tier-entry profile. */
+  "debug:tierEntryResult": (result: TierEntryApplyResult) => void;
+  /** Dev/harness-only acknowledgement for a per-player T1 economy arm. */
+  "debug:economyExperimentResult": (result: {
+    success: boolean;
+    arm?: T1EconomyArm;
+    config?: T1EconomyExperimentConfig;
+    reason?: string;
+  }) => void;
 }
 
 /** Events clients send to the server */
@@ -262,4 +276,8 @@ export interface ClientToServerEvents {
   "debug:startPlaytestLogging": () => void;
   /** Dev-only: finalize the active human playtest recording. */
   "debug:stopPlaytestLogging": () => void;
+  /** Dev/harness only: apply a validated tier-entry profile to the live player. */
+  "debug:applyTierEntryProfile": (profile: TierEntryProfile) => void;
+  /** Dev/harness only: apply one fixed T1 factorial arm to this player session. */
+  "debug:applyEconomyExperiment": (arm: T1EconomyArm) => void;
 }

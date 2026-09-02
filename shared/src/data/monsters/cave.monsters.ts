@@ -102,13 +102,16 @@ export const caveMonsterEntries = [
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 23, essenceType: 'red', level: 1, biomeXp: 145 },
     ai: { wanderRadius: 130, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
-    // Opener: lunge to contact, pin the player for one beat, then commit the
-    // existing ground slam. Placeholder numbers — balance pass owns them.
+    // Opener: briefly telegraph, lunge to contact, root the player, then commit
+    // the existing ground slam. Unlike the old cave lockdown, the root leaves
+    // attacks available and makes the counterplay match the aerial dive openers.
     engageSequence: {
-      kind: 'charge-lock-charged-attack',
-      speedMult: 6,
+      kind: 'cast-charge-root', name: 'Savage Rush', castMs: 500,
+      speedMult: 15,
       maxChargeMs: 3000,
-      lockoutMs: 1000,
+      rootMs: 1700,
+      followWithChargedAttack: true,
+      fx: 'dive-bomb',
     },
     // GROUND SLAM — wider and slower than the brute's; the T2 escalation is
     // FOOTPRINT, not speed, so the tell stays readable while the safe ground

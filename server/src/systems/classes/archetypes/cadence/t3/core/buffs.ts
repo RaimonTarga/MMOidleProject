@@ -21,6 +21,9 @@ export const CADENCE_T3_BUFFS = [
             durationPct: -1,
             color: '#00ffaa',
             logDetail: `-${stacks * CADENCE_SPEED_PER_STACK_MS}ms attack cooldown`,
+            values: [
+              { label: 'Attack cooldown', value: `-${stacks * CADENCE_SPEED_PER_STACK_MS}ms`, good: true },
+            ],
           }
         : null;
     },
@@ -44,6 +47,10 @@ export const CADENCE_T3_BUFFS = [
             durationPct: -1,
             color: '#4488ff',
             logDetail: `next ${echo} hits echo +${Math.round(echoBonus * 100)}% damage`,
+            values: [
+              { label: 'Echoing hits left', value: String(echo), good: true },
+              { label: 'Echo damage', value: `+${Math.round(echoBonus * 100)}%`, good: true },
+            ],
           }
         : null;
     },
@@ -62,6 +69,9 @@ export const CADENCE_T3_BUFFS = [
             durationPct: -1,
             color: '#22ddcc',
             logDetail: `finisher +${Math.round(stacks * perHit * 100)}% damage`,
+            values: [
+              { label: 'Finisher damage', value: `+${Math.round(stacks * perHit * 100)}%`, good: true },
+            ],
           }
         : null;
     },
@@ -79,6 +89,9 @@ export const CADENCE_T3_BUFFS = [
             durationPct: -1,
             color: '#bb66ff',
             logDetail: `next ${charges} attacks fire on-hit twice`,
+            values: [
+              { label: 'Doubled attacks left', value: String(charges), good: true },
+            ],
           }
         : null;
     },
@@ -97,6 +110,7 @@ export const CADENCE_T3_BUFFS = [
             durationPct: -1,
             color: '#ffcc44',
             logDetail: `+${bonus} damage to next hits`,
+            values: [{ label: 'Damage on next hits', value: `+${bonus}`, good: true }],
           }
         : null;
     },
@@ -120,6 +134,11 @@ export const CADENCE_T3_BUFFS = [
         logDetail: atCap
           ? `MAX — next finisher overloads (resets)`
           : `+${Math.round(stacks * multPerStk * 100)}% finisher (${stacks}/${maxStacks})`,
+        values: [
+          { label: 'Stacks', value: `${stacks} / ${maxStacks}` },
+          { label: 'Finisher damage', value: `+${Math.round(stacks * multPerStk * 100)}%`, good: true },
+          ...(atCap ? [{ label: 'At cap', value: 'next finisher overloads', good: true }] : []),
+        ],
       };
     },
     { label: 'Rage', color: '#ff3322', category: 'cadence', shape: 'square' },
@@ -140,6 +159,7 @@ export const CADENCE_T3_BUFFS = [
         durationPct: -1,
         color: '#ff8800',
         logDetail: `+${pct}% finisher damage`,
+        values: [{ label: 'Finisher damage', value: `+${pct}%`, good: true }],
       };
     },
     { label: 'Cresc', color: '#ff8800', category: 'cadence', shape: 'square' },
@@ -158,6 +178,7 @@ export const CADENCE_T3_BUFFS = [
         durationPct: -1,
         color: '#ff5544',
         logDetail: `executes targets at or below ${Math.round(stored)} HP`,
+        values: [{ label: 'Executes at or below', value: `${Math.round(stored)} HP`, good: true }],
       };
     },
     { label: 'Verdict', color: '#ff5544', category: 'cadence', shape: 'square' },

@@ -45,7 +45,12 @@ export function beginFlee(world: World, player: PlayerEntity): void {
     phase: "out",
     returnNodeId: player.hasPosition.nodeId,
   });
-  detachComponent(world, player, "hasAutoTraversePath");
+  // A Fight Back interruption owns a real map route. Preserve it through the
+  // retreat/recover/return cycle so the traveler can continue afterwards;
+  // ordinary combat Flee still abandons its non-travel objective as before.
+  if (!player.fightsWhileTraveling) {
+    detachComponent(world, player, "hasAutoTraversePath");
+  }
   setAttackTarget(world, player, null);
 }
 

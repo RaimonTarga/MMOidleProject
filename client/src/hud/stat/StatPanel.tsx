@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { estimatePlayerDps, resolveEmpoweredMultiplier, riteDef, stanceDef } from '@mmo-idle/shared';
+import { ACTION_DATABASE, CONDITION_DATABASE, estimatePlayerDps, resolveEmpoweredMultiplier, riteDef, stanceDef } from '@mmo-idle/shared';
 import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
@@ -9,6 +9,8 @@ import { StatPlate } from './StatPlate';
 import { DisclosureHeader, HudPanel } from '../primitives';
 import { useIsMobile } from '../useIsMobile';
 import { composeIntentPresentation } from '../intentPresentation';
+import { GameIcon } from '../../ui/GameIcon';
+import { runeActionIconSource, runeConditionIconSource } from '../../ui/conceptIcons';
 import {
   attackAtom,
   attackCooldownAtom,
@@ -84,6 +86,8 @@ function IntentPanel() {
     intent,
     party?.members ?? [],
   );
+  const active = intent?.activeRune;
+  const overridden = intent?.overriddenRune;
 
   return (
     <section className="intent-panel">
@@ -99,8 +103,27 @@ function IntentPanel() {
         <span className="intent-panel__chevron" aria-hidden>{expanded ? '▼' : '▶'}</span>
       </button>
 
+      {active && (
+        <div className="intent-panel__trace" title={intent?.reason}>
+          <GameIcon source={runeConditionIconSource(active.conditionId)} size={24} fallback="?" decorative />
+          <span>{CONDITION_DATABASE.get(active.conditionId)?.name ?? active.conditionId}</span>
+          <span aria-hidden>→</span>
+          <GameIcon source={runeActionIconSource(active.actionId)} size={24} fallback="?" decorative />
+          <strong>{ACTION_DATABASE.get(active.actionId)?.name ?? active.actionId}</strong>
+          <em>ACTIVE</em>
+        </div>
+      )}
+
       {expanded && (
         <div id={detailsId} className="intent-panel__details">
+          {overridden && (
+            <div className="intent-panel__trace-note">
+              Overrides {CONDITION_DATABASE.get(overridden.conditionId)?.name ?? overridden.conditionId}
+              {' → '}
+              {ACTION_DATABASE.get(overridden.actionId)?.name ?? overridden.actionId}
+            </div>
+          )}
+          {intent?.travelPaused && <div className="intent-panel__trace-note">Travel route paused; it will resume when safe.</div>}
           <StatRow label="Action" value={presentation.action} />
           <StatRow label="Purpose" value={presentation.reason} />
           <StatRow label="Triggered rune" value={presentation.source} />

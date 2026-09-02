@@ -22,8 +22,36 @@ Runes own conditions wherever practical. Prefer `HP Below 25% -> Enraged` over p
 the HP threshold inside Enraged itself. A Stance should describe the mode; the Rune should
 describe when that mode is wanted.
 
+**The one sanctioned exception: `gatedModifiers`.** A Rune decides when you ENTER a posture;
+it cannot switch the posture's bonuses off underneath you once you are in it. Where a Stance's
+identity is a state the player must MAINTAIN, that is a different question and the Stance owns
+it. Perfection is the only current user (`+12% Attack/Attack Speed/Move Speed` while at or
+above 90% HP, `-20% Plating` always), alongside the behavioral equivalents Execute, Brawler and
+Predator already carry.
+
+Two hard rules if you reach for it:
+
+- a gate holds the PAYOFF only. Whatever the posture costs stays in `modifiers` and is paid on
+  both sides of the line, or falling out of the gate is free. `server/test/stances.test.ts`
+  enforces this;
+- do not use it to spare a player from authoring a Rune rule. If `HP Above 90% -> X` would
+  express the whole intent, write the Rune rule.
+
 Avoid permanent encounter labels such as “boss stance,” “AoE stance,” or “single-target
 stance.” Avoid adding Stance energy, capacity, charges, or another automation currency.
+
+### Authored but unplaced
+
+A stance may exist in `shared/src/stances.ts` with no recipe in
+`shared/src/stanceRecipes.ts`. It is then fully implemented and completely unreachable:
+`knownStances` can never contain it, so it can never be equipped or named as a Rune
+destination. That is a legitimate state — it lets a posture's mechanics be built and tested
+before its tier, biome and cost are decided — but it must be DELIBERATE, so
+`server/test/stancesUnplaced.test.ts` pins the current unplaced set and fails the moment one
+of them gets a recipe. Placing one means updating that list in the same change.
+
+Four postures are unplaced today (Time to Strike, Reaper, Warding, Powering Up); see
+`docs/stances-future-design-notes.md`.
 
 ## Data contract
 
@@ -80,12 +108,20 @@ Authoring rules:
 The full cost of an automated transition is:
 
 ```text
-condition cost + Switch Stance action cost + destination Stance cost
+condition cost + destination Stance cost
 ```
 
-The selected default Stance is free. `No Stance` has a zero destination surcharge, although
-the condition and Switch Stance action still cost RP. Each rule pays its own destination
-cost, even if several rules target the same Stance.
+`Switch Stance` itself costs **0 RP** (2026-09-02). The verb has no power of its own — every
+gram of what a stance rule buys is the destination, which already carries its surcharge, so
+charging for the verb taxed the axis twice and priced the cheapest possible transition like a
+premium Rite. The destination surcharge is now the sole measure of how transformative a posture
+is; price new Stances there, never by reaching for the action cost.
+
+The selected default Stance is free. `No Stance` has a zero destination surcharge, so a rule
+entering the neutral posture costs only its condition. Each rule pays its own destination cost,
+even if several rules target the same Stance.
+
+Always quote a rule's price through `runeRuleCost` — never `action.cost` plus a guess.
 
 Use cost as an opportunity-cost lever, not as a substitute for a coherent tradeoff:
 
@@ -133,7 +169,8 @@ Every learnable Stance needs:
 - a concept-icon mapping or dedicated asset in `client/src/ui/conceptIcons.ts`;
 - readable effect text that exposes every static modifier, every server-side behavior, all
   thresholds/caps, any in-combat-only restriction, whether the Stance can kill the player,
-  and the destination RP cost.
+  and the destination RP cost. A `gatedModifiers` half renders as its own rows carrying the
+  threshold, and — where the surface knows the reader's HP — whether it is ACTIVE right now.
 
 Effect text describes what the posture does once ACTIVE. It must never present a Rune-owned
 condition as a Stance property: Enraged does not "activate below 25% HP" — a rule the player

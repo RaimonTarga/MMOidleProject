@@ -694,6 +694,16 @@
   color: var(--hud-danger);
 }
 
+.rule-card__conflict {
+  flex: 0 1 auto;
+  overflow: hidden;
+  color: var(--hud-danger);
+  font-size: 9px;
+  letter-spacing: .35px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .rule-card__controls {
   display: flex;
   flex: 0 0 auto;

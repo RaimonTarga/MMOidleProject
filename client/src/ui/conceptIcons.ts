@@ -86,6 +86,13 @@ const STANCE_ICON_ALIASES: Record<string, string> = {
   'predator-stance': 'defensive-stance',
   'brawler-stance': 'tanking-stance',
   'recuperating-stance': 'tanking-stance',
+  // Unplaced postures (2026-09-02). Borrowed crests until dedicated art exists,
+  // matched to the closest posture in feel: two offensive gambles, one bulwark,
+  // one charging burst.
+  'time-to-strike-stance': 'offensive-stance',
+  'reaper-stance': 'offensive-stance',
+  'warding-stance': 'tanking-stance',
+  'powering-up-stance': 'offensive-stance',
 };
 
 const RITE_ICON_ALIASES: Record<string, string> = {
@@ -198,6 +205,9 @@ export function conceptAbilityIconSource(id: string): AssetIconSource | null {
 export function runeConditionIconSource(id: string): AssetIconSource | null {
   if (id === 'hp-above-90' || id === 'target-hp-below-25') return source('runes/conditions', 'hp-below-25');
   if (id === 'inside-telegraph') return source('runes/conditions', 'target-casting');
+  // "Stance Charged" has no crest yet; the empowered-window icon is the closest
+  // existing idea — a thing that has finished building and is waiting to be spent.
+  if (id === 'stance-charged') return source('runes/conditions', 'before-empowered');
   return CONDITION_IDS.has(id) ? source('runes/conditions', id) : null;
 }
 
@@ -265,6 +275,7 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'expose-weakness': 'expose-weakness',
   'summoner-harried': 'summoner-harrier-brood',
   'summoner-withering-chorus': 'summoner-withering-chorus',
+  'enemy-barrier': 'defense-absorb',
 };
 
 const BOSS_EFFECT_ALIASES: Record<string, string> = {
@@ -275,6 +286,13 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   'stat-buff': 'energy-overcharge',
   morph: 'summoner-volatile-brood',
   slam: 'cadence-aftershock',
+  'bestial-frenzy': 'cadence-rampage',
+  'stat-buff-attack': 'energy-overcharge',
+  'stat-buff-speed': 'mob-haste',
+  'stat-buff-attackSpeed': 'cadence-rampage',
+  'stat-buff-plating': 'defense-hardening',
+  'stat-buff-damageReduction': 'defense-sustained-dr',
+  'stat-buff-evasion': 'mob-sprint',
 };
 
 function aliasedStatusIconSource(alias: string | undefined): AssetIconSource | null {

@@ -4,6 +4,7 @@ import {
   getCounter,
   getStatusEffect,
   setCounter,
+  type MonsterDefinition,
 } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -37,6 +38,7 @@ import { publishToxicPool } from '../../world/groundZones';
  */
 const SHELL_USED_KEY = 'shellUpUsed';
 const SHELL_ENDS_KEY = 'shellUpEndsAt';
+const SHELL_CAST_ENDS_KEY = 'shellUpCastEndsAt';
 /** Earliest time a `repeatIntervalMs` shell may close again (0 = no cycle armed). */
 const SHELL_NEXT_KEY = 'shellUpNextAt';
 
@@ -45,6 +47,11 @@ export const SHELLED_EFFECT_ID = 'shelled';
 /** True while the monster is retracted into its shell. */
 export function isShelled(monster: MonsterEntity, now: number): boolean {
   return getCounter(monster.tracksCombat, SHELL_ENDS_KEY) > now;
+}
+
+/** True while the Snapper is winding up its Shell Up cast. */
+export function isShellCasting(monster: MonsterEntity, now: number): boolean {
+  return getCounter(monster.tracksCombat, SHELL_CAST_ENDS_KEY) > now;
 }
 
 /**
@@ -72,6 +79,22 @@ export function updateShellUp(world: World, now: number): void {
 
     const cs = monster.tracksCombat;
     const endsAt = getCounter(cs, SHELL_ENDS_KEY);
+    const castEndsAt = getCounter(cs, SHELL_CAST_ENDS_KEY);
+
+    // The Shell Up wind-up is deliberately planted and non-defensive: it gives
+    // players a short readable beat before direct-damage resistance begins.
+    if (castEndsAt > 0) {
+      if (now < castEndsAt) {
+        stopEntity(world, monster);
+        continue;
+      }
+      setCounter(cs, SHELL_CAST_ENDS_KEY, 0);
+      closeShell(world, monster, spec, now);
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-end', monsterId: monster.isMonster.id, fired: true,
+      });
+      continue;
+    }
 
     // Currently shelled: hold it still until the timer runs out.
     if (endsAt > 0) {
@@ -109,8 +132,31 @@ export function updateShellUp(world: World, now: number): void {
       if (monster.hasHealth.hp > threshold) continue;
     }
 
-    // Retract.
+    // Reserve the one use as soon as the cast begins, then leave the brief
+    // wind-up fully vulnerable. No-cast specs retain the legacy instant close.
     setCounter(cs, SHELL_USED_KEY, 1);
+    if (spec.castMs && spec.castMs > 0) {
+      setCounter(cs, SHELL_CAST_ENDS_KEY, now + spec.castMs);
+      attachComponent(world, monster, 'cannotAttack', {});
+      setRooted(world, monster, true);
+      stopEntity(world, monster);
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-start', monsterId: monster.isMonster.id,
+        castMs: spec.castMs, label: 'Shell Up',
+      });
+      continue;
+    }
+    closeShell(world, monster, spec, now);
+  }
+}
+
+function closeShell(
+  world: World,
+  monster: MonsterEntity,
+  spec: NonNullable<MonsterDefinition['shellUp']>,
+  now: number,
+): void {
+    const cs = monster.tracksCombat;
     setCounter(cs, SHELL_ENDS_KEY, now + spec.durationMs);
     attachComponent(world, monster, 'cannotAttack', {});
     // setRooted (not a raw marker attach) so the shell also clears any in-flight
@@ -157,5 +203,4 @@ export function updateShellUp(world: World, now: number): void {
       pos: { ...monster.hasPosition.current },
       pulse: 'shell-up',
     });
-  }
 }

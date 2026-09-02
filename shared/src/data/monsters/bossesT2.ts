@@ -46,20 +46,26 @@ export const bossMonsterEntriesT2 = [
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 220 },
-          { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, offsetRange: 220 },
-          { type: 'roar', attackSpeedPct: 0.25, durationMs: 8000, radius: 320 },
+          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 220 },
+            { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, offsetRange: 220 },
+            { type: 'roar', attackSpeedPct: 0.25, durationMs: 8000, radius: 320 },
+          ] },
         ] },
         { hpPct: 0.25, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'boar', count: 2, offsetRange: 220 },
-          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, offsetRange: 220 },
-          { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'boar', count: 2, offsetRange: 220 },
+            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, offsetRange: 220 },
+            { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+          ] },
         ] },
       ],
       repeating: [
         { intervalMs: 10000, initialDelayMs: 6000, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, offsetRange: 240 },
-          { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, offsetRange: 240 },
+            { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+          ] },
         ] },
       ],
     },
@@ -93,7 +99,7 @@ export const bossMonsterEntriesT2 = [
       repeating: [
         { intervalMs: 5000, initialDelayMs: 5000, actions: [
           { type: 'cast', castMs: 1500, label: 'Bestial Frenzy', fx: 'frenzy', actions: [
-            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.20, moveSpeedMult: 1.10, maxStacks: 5, label: 'bestial-frenzy' },
+            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.20, moveSpeedMult: 1.10, label: 'bestial-frenzy' },
           ] },
         ] },
       ],

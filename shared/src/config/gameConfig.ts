@@ -156,12 +156,42 @@ export const GAME_CONFIG = {
    * biome catalyst. Placeholder — tuned in the balance pass (Step 15).
    */
   CATALYST_PROGRESS_PER_UNIT: 100,
+  /**
+   * Per-tier override of {@link GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT}, indexed
+   * by BIOME tier. Absent tiers fall back to the base value.
+   *
+   * T1 economy candidate C (2026-08-31): T1 sits at 150, a x1.5 rate cut on top
+   * of decoupling catalyst progress from the dev reward multiplier. T1 asks for
+   * exactly one catalyst on the important +5 step, so the tier is an
+   * INTRODUCTION to the system -- "I found a catalyst, what does this unlock?"
+   * rather than a currency pile. Measured from the 2x bot cohort
+   * (reports/t1-economy-cohort-deep-dive-2026-08-31.md): a clean route earned
+   * alacrity 2 / swarming 3 / heavy 5 / fortified 15 per run against a demand of
+   * one each. Decoupling halves that, and 150 takes it to roughly
+   * alacrity 0.7 / swarming 1.0 / heavy 1.7 / fortified 5.0 -- 0-2 units in every
+   * family a T1 route actually spends. Later tiers keep 100 and are free to make
+   * catalyst routing a real economy.
+   */
+  CATALYST_PROGRESS_PER_UNIT_BY_TIER: { 1: 150 } as Readonly<Record<number, number>>,
 } as const;
 
+/**
+ * Kill-weight required to mint one catalyst in a tier-`biomeTier` node. The
+ * single place both the reward path and any analysis tooling should ask.
+ */
+export function catalystProgressPerUnit(biomeTier: number): number {
+  return (
+    GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT_BY_TIER[biomeTier] ??
+    GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT
+  );
+}
+
 // ── Dev reward multiplier ─────────────────────────────────────────────────────
-// A dev-only, server-global scalar on everything a kill is worth (essence, biome
-// XP, catalyst progress and the boss catalyst bundle) so a balance/playtest cycle
-// can reach late content without farming it. 1 = shipped rates; it is the only
+// A dev-only, server-global scalar on the FARMABLE half of what a kill is worth
+// (essence and biome XP) so a balance/playtest cycle can reach late content
+// without farming it. It deliberately does NOT scale catalyst progress: a
+// catalyst is a discovery gated on node-modifier exposure, and multiplying it
+// turns the whole system into a currency pile (see rewards.ts). 1 = shipped rates; it is the only
 // value production ever runs at, because the debug handler that changes it is
 // registered under IS_DEV.
 export const DEBUG_REWARD_MULT_DEFAULT = 1;

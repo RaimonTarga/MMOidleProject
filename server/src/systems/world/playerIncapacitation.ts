@@ -48,6 +48,7 @@ export function killPlayer(
   stopEntity(world, entity);
   setAttackTarget(world, entity, null);
   clearAutoTraversePath(world, entity);
+  detachComponent(world, entity, "fightsWhileTraveling");
   // Preserve auto-combat intent across death/respawn; dead players are excluded
   // from livePlayers so auto targeting won't run while incapacitated.
   entity.usesAutocombat.autoTraverse = false;

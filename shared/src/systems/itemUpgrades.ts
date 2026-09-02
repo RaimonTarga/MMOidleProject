@@ -1,6 +1,7 @@
 import type { EquipmentSlot, EssenceType, ItemDefinition } from '../items';
 import { BIOME_PRIMARY_ESSENCE, ESSENCE_LABELS } from '../items';
 import { BIOME_LEVELS_PER_TIER, maxGlobalMasteryAtTier } from '../config/gameConfig';
+import { t1ExperimentUpgradeCost } from './t1EconomyExperiment';
 
 /**
  * Highest upgrade level for items without explicit upgrade definitions. Raised
@@ -152,7 +153,14 @@ export function effectiveAttacksPerSecond(
 export function upgradeCostFor(
   item: ItemDefinition,
   targetPlus: number,
+  t1Plus5EssenceCostMultiplier?: number,
 ): Partial<Record<EssenceType, number>> | null {
+  const experimentCost = t1ExperimentUpgradeCost(
+    item,
+    targetPlus,
+    t1Plus5EssenceCostMultiplier,
+  );
+  if (experimentCost) return experimentCost;
   if (item.upgrades) {
     const step = item.upgrades[targetPlus - 1];
     return step ? step.cost : null;
@@ -187,8 +195,18 @@ export function checkUpgrade(params: {
   catalysts?: Record<string, number>;
   /** Global Mastery — opens the upgrade ceiling. Absent → ceiling non-binding. */
   globalMastery?: number;
+  /** Optional per-player dev experiment overlay for T1 +5 essence pricing. */
+  t1Plus5EssenceCostMultiplier?: number;
 }): UpgradeCheck {
-  const { item, currentPlus, biomeLevel, essences, catalysts, globalMastery } = params;
+  const {
+    item,
+    currentPlus,
+    biomeLevel,
+    essences,
+    catalysts,
+    globalMastery,
+    t1Plus5EssenceCostMultiplier,
+  } = params;
   const targetPlus = currentPlus + 1;
   if (!item.biomeGroup) return { ok: false, reason: 'This item cannot be upgraded.' };
   if (currentPlus >= getMaxUpgrade(item)) return { ok: false, reason: 'Already at maximum upgrade.' };
@@ -204,7 +222,7 @@ export function checkUpgrade(params: {
     return { ok: false, reason: `Requires ${item.biomeGroup} level ${reqLevel}.` };
   }
 
-  const cost = upgradeCostFor(item, targetPlus);
+  const cost = upgradeCostFor(item, targetPlus, t1Plus5EssenceCostMultiplier);
   if (!cost) return { ok: false, reason: 'This item cannot be upgraded.' };
   for (const [type, amount] of Object.entries(cost)) {
     if ((essences[type as EssenceType] ?? 0) < (amount ?? 0)) {

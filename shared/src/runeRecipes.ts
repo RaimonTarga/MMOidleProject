@@ -59,6 +59,9 @@ const recipes: RuneRecipe[] = [
     runeId: "when-idle",
     runeKind: "condition",
     cost: { green: 180 },
+    // All condition fragments are now baseline vocabulary. Retain the id for
+    // save stability, but never offer a recipe that grants an owned fragment.
+    deprecated: true,
   },
   {
     id: "rune-recipe-reload-safely",
@@ -109,6 +112,8 @@ const recipes: RuneRecipe[] = [
     // T1 economy pass (2026-08-28): broadly useful, not mandatory counterplay —
     // cheapened from 180 but kept above the mandatory-tool tier.
     cost: { red: 90 },
+    // Promoted with the rest of the basic situation vocabulary.
+    deprecated: true,
   },
   {
     id: "rune-recipe-avoid-hazards",

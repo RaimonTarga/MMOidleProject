@@ -8,6 +8,7 @@ export const SPIRIT_T1_CONFIG: T1RouteConfig = {
   id: "spirit-t1",
   version: "2.0.0",
   classRoot: "energy-root",
+  frameId: "energy-heavy",
   description:
     "Controlled Spirit ranged baseline: Chaotic Axe gear identity, Orbit from Mountain L3, and Step Back from Cave L2.",
   movementProfile: "ranged-orbit",

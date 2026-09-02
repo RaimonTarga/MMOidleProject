@@ -28,6 +28,17 @@ import {
   isChargeAoePlanted,
   chargeAoeImpactPoint,
   monsterAttackCooldown,
+  castedBuffCastEndsAt,
+  castedBuffReady,
+  beginCastedBuff,
+  completeCastedBuff,
+  cancelCastedBuff,
+  lowHealthWardCastEndsAt,
+  lowHealthWardReady,
+  beginLowHealthWard,
+  completeLowHealthWard,
+  cancelLowHealthWard,
+  consumeMonsterAttackSpeedCharge,
 } from "./monsterMechanics";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import {
@@ -72,10 +83,12 @@ import { markEngaged } from "../ai/engagement";
 import {
   abortEngageSequence,
   completeEngageSequence,
+  consumeEngageSequenceLandingAttack,
   engageSequenceHoldsAttack,
   engageSequenceSlamReady,
 } from '../ai/engageSequence';
-import { mobilityTenacityDurationMult } from "../../world/mobility/mobilityBoots";
+import { harmfulStatusDurationMult } from "../status/harmfulStatus";
+import { stanceAttackSpeedBonus } from "../../player/stances/stanceBehaviors";
 import type {
   MinionEntity,
   MonsterEntity,
@@ -879,7 +892,7 @@ export function runMonsterAttack(
   ) {
     const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
     const markMs = Math.round(
-      mark.durationMs * mobilityTenacityDurationMult(target),
+      mark.durationMs * harmfulStatusDurationMult(target),
     );
     applyStatusEffect(target.tracksCombat, {
       id: SUN_MARK_EFFECT_ID,
@@ -910,7 +923,7 @@ export function runMonsterAttack(
     !evadeBlocksDebuffs(ctx)
   ) {
     const rootMs = Math.round(
-      cadenceRootMs * mobilityTenacityDurationMult(target),
+      cadenceRootMs * harmfulStatusDurationMult(target),
     );
     applyStatusEffect(target.tracksCombat, {
       id: "slow",
@@ -926,7 +939,7 @@ export function runMonsterAttack(
   if (slow && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     // Mobility-boot tenacity (Swamp + Graveyard stacks) shortens the CC duration.
     const slowMs = Math.round(
-      slow.durationMs * mobilityTenacityDurationMult(target),
+      slow.durationMs * harmfulStatusDurationMult(target),
     );
     applyStatusEffect(target.tracksCombat, {
       id: "slow",
@@ -947,7 +960,7 @@ export function runMonsterAttack(
   const antiheal = def?.appliesAntiheal;
   if (antiheal && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     const durMs = Math.round(
-      antiheal.durationMs * mobilityTenacityDurationMult(target),
+      antiheal.durationMs * harmfulStatusDurationMult(target),
     );
     applyStatusEffect(target.tracksCombat, {
       id: "antiheal",
@@ -966,7 +979,7 @@ export function runMonsterAttack(
   const vulnerability = def?.appliesVulnerability;
   if (vulnerability && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     const durMs = Math.round(
-      vulnerability.durationMs * mobilityTenacityDurationMult(target),
+      vulnerability.durationMs * harmfulStatusDurationMult(target),
     );
     applyStatusEffect(target.tracksCombat, {
       id: SUNDERED_EFFECT_ID,
@@ -1024,7 +1037,7 @@ export function runMonsterAttack(
   const rampDebuff = def?.rampDebuff;
   if (rampDebuff && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     const durMs = Math.round(
-      rampDebuff.stackDurationMs * mobilityTenacityDurationMult(target),
+      rampDebuff.stackDurationMs * harmfulStatusDurationMult(target),
     );
     // A boss 'modify-ramp-debuff' action raises the slow caps mid-fight.
     const capOverride = monster.scriptsBoss?.rampDebuffCapOverride;
@@ -1069,8 +1082,14 @@ export function runMonsterAttack(
  * target lost, out of range, can't-attack) so a cast never lingers silently.
  */
 function abortMonsterCast(world: World, monster: MonsterEntity): void {
-  if (chargedCastEndsAt(monster) <= 0) return; // no pending cast
+  if (
+    chargedCastEndsAt(monster) <= 0 &&
+    castedBuffCastEndsAt(monster) <= 0 &&
+    lowHealthWardCastEndsAt(monster) <= 0
+  ) return;
   cancelCharge(monster);
+  cancelCastedBuff(monster);
+  cancelLowHealthWard(monster);
   // A telegraph must never outlive the cast that drew it — an abandoned circle
   // would promise an impact that is no longer coming.
   clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
@@ -1079,6 +1098,125 @@ function abortMonsterCast(world: World, monster: MonsterEntity): void {
     monsterId: monster.isMonster.id,
     fired: false,
   });
+}
+
+/**
+ * Resolve a non-damaging monster haste cast at a valid attack position. It owns
+ * the tick while winding up or resolving, exactly like a charged attack.
+ */
+function updateCastedAttackSpeedBuff(
+  world: World,
+  monster: MonsterEntity,
+  now: number,
+): boolean {
+  const buff = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.castedAttackSpeedBuff;
+  if (!buff) return false;
+
+  if (castedBuffCastEndsAt(monster) > 0) {
+    if (isMonsterStunned(world, monster.isMonster.id) || isMonsterFrozen(world, monster.isMonster.id)) {
+      abortMonsterCast(world, monster);
+      return true;
+    }
+    if (now < castedBuffCastEndsAt(monster)) return true;
+
+    completeCastedBuff(monster, now, buff.cooldownMs);
+    const radiusSq = (buff.radius ?? Infinity) ** 2;
+    const recipients = buff.target === 'self'
+      ? [monster]
+      : [...world.monsterEntitiesInNode(monster.hasPosition.nodeId)].filter(ally =>
+          ally.hasHealth.hp > 0 &&
+          (buff.includeSelf !== false || ally !== monster) &&
+          distanceSq(ally.hasPosition.current, monster.hasPosition.current) <= radiusSq,
+        );
+    for (const recipient of recipients) {
+      const charges = buff.attacks === undefined ? undefined : Math.max(1, Math.round(buff.attacks));
+      const effect = applyStatusEffect(recipient.tracksCombat, {
+        id: buff.effectId,
+        maxStacks: charges ?? 1,
+        remainingMs: buff.durationMs ?? -1,
+        refreshable: true,
+        sourceId: monster.isMonster.id,
+        data: {
+          monsterAttackSpeedBuff: 1,
+          attackSpeedPct: buff.attackSpeedPct,
+          ...(buff.durationMs === undefined ? {} : { totalMs: buff.durationMs }),
+          ...(charges === undefined ? {} : { attacksRemaining: charges }),
+        },
+      });
+      if (charges !== undefined) effect.stacks = charges;
+    }
+    world.pushEvent(monster.hasPosition.nodeId, {
+      kind: 'monster-cast-end', monsterId: monster.isMonster.id, fired: true, fx: buff.fx,
+    });
+    return true;
+  }
+
+  const attackDue = now - monster.performsAttack.lastAttackAt >= monsterAttackCooldown(monster);
+  const initialCooldownMs = buff.initialCooldownMs ?? buff.cooldownMs;
+  const ready = castedBuffReady(monster, now, initialCooldownMs);
+  if (
+    attackDue && ready &&
+    !isMonsterStunned(world, monster.isMonster.id) && !isMonsterFrozen(world, monster.isMonster.id)
+  ) {
+    beginCastedBuff(monster, now, buff.castMs);
+    world.pushEvent(monster.hasPosition.nodeId, {
+      kind: 'monster-cast-start', monsterId: monster.isMonster.id,
+      castMs: buff.castMs, label: buff.name, fx: buff.fx,
+    });
+    return true;
+  }
+  return false;
+}
+
+/** Resolve a one-time low-HP ward cast. It is self-targeted, so it can begin
+ * and finish outside normal attack range exactly like the Dire Wolf's Howl. */
+function updateLowHealthWard(
+  world: World,
+  monster: MonsterEntity,
+  now: number,
+): boolean {
+  const ward = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.lowHealthWard;
+  if (!ward) return false;
+
+  if (lowHealthWardCastEndsAt(monster) > 0) {
+    if (isMonsterStunned(world, monster.isMonster.id) || isMonsterFrozen(world, monster.isMonster.id)) {
+      abortMonsterCast(world, monster);
+      return true;
+    }
+    if (now < lowHealthWardCastEndsAt(monster)) return true;
+
+    completeLowHealthWard(monster);
+    const wardAmount = Math.round(monster.hasHealth.maxHp * ward.wardPct);
+    applyStatusEffect(monster.tracksCombat, {
+      id: ward.effectId,
+      maxStacks: 1,
+      remainingMs: ward.durationMs,
+      refreshable: false,
+      sourceId: monster.isMonster.id,
+      data: {
+        monsterWard: 1,
+        wardAmount,
+        wardMaxAmount: wardAmount,
+        totalMs: ward.durationMs,
+      },
+    });
+    world.pushEvent(monster.hasPosition.nodeId, {
+      kind: 'monster-cast-end', monsterId: monster.isMonster.id, fired: true, fx: ward.fx,
+    });
+    world.pushEvent(monster.hasPosition.nodeId, {
+      kind: 'boss-fx', monsterId: monster.isMonster.id,
+      pos: { ...monster.hasPosition.current }, fx: 'shield',
+    });
+    return true;
+  }
+
+  if (!lowHealthWardReady(monster, ward)) return false;
+  beginLowHealthWard(monster, now, ward.castMs);
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: 'monster-cast-start', monsterId: monster.isMonster.id,
+    castMs: ward.castMs, label: ward.name, fx: ward.fx,
+  });
+  return true;
 }
 
 function playerKnockbackResistPct(player: PlayerEntity): number {
@@ -1127,7 +1265,7 @@ function applyChargedAttackRiders(
   // shortens it and Cleanse strips it, like any other monster debuff.
   if (charged.rootMs && charged.rootMs > 0) {
     const rootMs = Math.round(
-      charged.rootMs * mobilityTenacityDurationMult(target),
+      charged.rootMs * harmfulStatusDurationMult(target),
     );
     applyStatusEffect(target.tracksCombat, {
       id: "slow",
@@ -1145,6 +1283,24 @@ function applyChargedAttackRiders(
     });
   }
 
+  // NUMBING STING — the soft-control counterpart to a charged root. It uses the
+  // same player status and tenacity pipeline, but retains movement at an authored
+  // fraction rather than dropping speed to zero.
+  const slow = charged.appliesSlow;
+  if (slow && slow.durationMs > 0 && slow.speedMult >= 0 && slow.speedMult < 1) {
+    const slowMs = Math.round(
+      slow.durationMs * harmfulStatusDurationMult(target),
+    );
+    applyStatusEffect(target.tracksCombat, {
+      id: "slow",
+      maxStacks: 1,
+      remainingMs: slowMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: { speedMult: slow.speedMult, totalMs: slowMs },
+    });
+  }
+
   // WITHER — one NON-STACKING Recovery suppression. Same `antiheal` status the
   // Trench uses, so `getAntiHealMult` and the buff tile need no changes; the
   // difference is that this one comes from a telegraphed ability instead of
@@ -1152,7 +1308,7 @@ function applyChargedAttackRiders(
   const wither = charged.appliesAntiheal;
   if (wither) {
     const durMs = Math.round(
-      wither.durationMs * mobilityTenacityDurationMult(target),
+      wither.durationMs * harmfulStatusDurationMult(target),
     );
     applyStatusEffect(target.tracksCombat, {
       id: "antiheal",
@@ -1265,7 +1421,7 @@ function applyChargedAttackMark(
 ): void {
   const mark = charged.marksTarget;
   if (!mark || !canApplyPlayerDebuff(target)) return;
-  const markMs = Math.round(mark.durationMs * mobilityTenacityDurationMult(target));
+  const markMs = Math.round(mark.durationMs * harmfulStatusDurationMult(target));
   const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
   applyStatusEffect(target.tracksCombat, {
     id: SUN_MARK_EFFECT_ID,
@@ -1410,7 +1566,12 @@ function resolveChargedSlam(
     }
     if (outcome === "hit") {
       if (charged.stunMs && canApplyPlayerDebuff(victim)) {
-        applyStun(victim.tracksCombat, charged.stunMs, monster.isMonster.id);
+        applyStun(
+          victim.tracksCombat,
+          charged.stunMs,
+          monster.isMonster.id,
+          harmfulStatusDurationMult(victim),
+        );
       }
       applyChargedAttackKnockback(world, monster, victim, charged);
       const refreshed = world.getPlayerEntity(victim.isPlayer.id);
@@ -1627,11 +1788,15 @@ export function updateCombat(world: World, dt: number, now: number) {
       // because the Zealot's own Frenzy already mutates that stat from a cached
       // base — two mutators each treating the other's output as "the clean base"
       // ratchet the cooldown toward zero over a few ticks.
+      // Stance-owned timed windows (Reaper momentum, Powering Up's released charge)
+      // ride this same gate for the same reason, and sum with Frenzy rather than
+      // multiplying: they are all "+X% attack speed" promises, and the shared
+      // accumulator semantics say those add.
       const frenzy = getStatusEffect(player.tracksCombat, ABILITY_FRENZY_EFFECT_ID);
-      const atkHasteMult =
-        frenzy && frenzy.remainingMs > 0
-          ? 1 / (1 + Math.max(0, frenzy.data["attackSpeedPct"] ?? 0))
-          : 1;
+      const hasteBonus =
+        (frenzy && frenzy.remainingMs > 0 ? Math.max(0, frenzy.data["attackSpeedPct"] ?? 0) : 0) +
+        Math.max(0, stanceAttackSpeedBonus(player.tracksCombat));
+      const atkHasteMult = hasteBonus > 0 ? 1 / (1 + hasteBonus) : 1;
       if (
         now - player.performsAttack.lastAttackAt >=
         player.performsAttack.attackCooldown * atkSlowMult * atkHasteMult
@@ -1708,16 +1873,25 @@ export function updateCombat(world: World, dt: number, now: number) {
       // so the swing lands whether or not the target is still standing in it.
       // Every other charge still breaks when the target slips out of reach.
       const slamCommitted = chargedCastEndsAt(e) > 0 && isChargeAoePlanted(e);
+      const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+      const lowHealthWard = monsterDef?.lowHealthWard;
+      const castsOutsideAttackRange =
+        monsterDef?.castedAttackSpeedBuff?.castWhileOutOfRange === true ||
+        lowHealthWardCastEndsAt(e) > 0 ||
+        (lowHealthWard !== undefined && lowHealthWardReady(e, lowHealthWard));
       if (
         !slamCommitted &&
         !world.collision.canReach(e, target, e.performsAttack.attackRange)
       ) {
+        if (castsOutsideAttackRange && (updateLowHealthWard(world, e, now) || updateCastedAttackSpeedBuff(world, e, now))) continue;
         // Target slipped out of range — drop any wind-up (the telegraph is broken).
         abortMonsterCast(world, e);
         setAttackTarget(world, e, null);
         continue;
       }
       setAttackTarget(world, e, target.isPlayer.id);
+      if (updateLowHealthWard(world, e, now)) continue;
+      if (updateCastedAttackSpeedBuff(world, e, now)) continue;
 
       // Charged (cast-time) attack state machine — telegraphed big hit (e.g. the
       // Ridge Archer's Power Shot). Takes priority over the normal attack while
@@ -1830,7 +2004,12 @@ export function updateCombat(world: World, dt: number, now: number) {
           }
           applyChargedAttackMark(world, e, target, charged);
           if (charged.precastStunMs && canApplyPlayerDebuff(target)) {
-            applyStun(target.tracksCombat, charged.precastStunMs, e.isMonster.id);
+            applyStun(
+              target.tracksCombat,
+              charged.precastStunMs,
+              e.isMonster.id,
+              harmfulStatusDurationMult(target),
+            );
           }
           if (forcedByEngageSequence) completeEngageSequence(e);
           world.pushEvent(e.hasPosition.nodeId, {
@@ -1859,9 +2038,10 @@ export function updateCombat(world: World, dt: number, now: number) {
           now,
         );
         let outcome: MonsterAttackOutcome = "cancelled";
+        const landingMultiplier = consumeEngageSequenceLandingAttack(e);
         for (let hit = 0; hit < hitCount; hit++) {
           if (!world.getPlayerEntity(target.isPlayer.id)) break;
-          outcome = runMonsterAttack(world, e, target, now);
+          outcome = runMonsterAttack(world, e, target, now, hit === 0 ? landingMultiplier : 1);
           if ((outcome === "hit" || outcome === "killed") && world.hasMonster(e.isMonster.id)) {
             applyMonsterAttackSplash(
               world,
@@ -1880,27 +2060,33 @@ export function updateCombat(world: World, dt: number, now: number) {
           const t = world.getPlayerEntity(target.isPlayer.id);
           if (t) markEngaged(world, t, now);
         }
+        if (outcome !== "cancelled") consumeMonsterAttackSpeedCharge(e);
       }
       continue;
     }
 
     // targetKind === 'minion'
-    abortMonsterCast(world, e);
     const minion = world.getMinionEntity(e.hasAggroTarget.targetId) ?? null;
     if (
       !minion ||
       minion.hasPosition.nodeId !== e.hasPosition.nodeId ||
       minion.hasHealth.hp <= 0
     ) {
+      abortMonsterCast(world, e);
       setAggroTarget(world, e, null, now);
       setAttackTarget(world, e, null);
       continue;
     }
     if (!world.collision.canReach(e, minion, e.performsAttack.attackRange)) {
+      const castsOutsideAttackRange =
+        MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.castedAttackSpeedBuff?.castWhileOutOfRange === true;
+      if (castsOutsideAttackRange && updateCastedAttackSpeedBuff(world, e, now)) continue;
+      abortMonsterCast(world, e);
       setAttackTarget(world, e, null);
       continue;
     }
     setAttackTarget(world, e, minion.isMinion.id);
+    if (updateCastedAttackSpeedBuff(world, e, now)) continue;
     if (
       now - e.performsAttack.lastAttackAt >= monsterAttackCooldown(e)
     ) {
@@ -1918,6 +2104,7 @@ export function updateCombat(world: World, dt: number, now: number) {
           minion.isMinion.id,
         );
       }
+      consumeMonsterAttackSpeedCharge(e);
     }
   }
 

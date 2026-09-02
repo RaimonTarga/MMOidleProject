@@ -379,6 +379,10 @@ export const WEAPON_BUFFS = [
             : -1,
         color: "#ff8844",
         logDetail: `+${Math.round(effect.stacks * pct * 100)}% attack speed`,
+        remainingMs: effect.remainingMs,
+        values: [
+          { label: "Attack speed", value: `+${Math.round(effect.stacks * pct * 100)}%`, good: true },
+        ],
       };
     },
     { label: "Flurry", color: "#ff8844", category: "weapon", shape: "square" },

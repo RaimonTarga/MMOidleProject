@@ -1,12 +1,16 @@
 import {
+  ACTION_DATABASE,
   BRAWLER_MAX_REDUCTION,
   BERSERKER_SELF_DAMAGE_PCT,
   GAME_CONFIG,
+  PERFECTION_HP_THRESHOLD,
   NO_STANCE_ID,
   STANCE_DATABASE,
   STARTER_RUNE_IDS,
+  activeStanceModifiers,
   brawlerDamageReduction,
   emptyEquipment,
+  runeRuleCost,
   sanitizeRuneLoadout,
   stanceDef,
 } from "@mmo-idle/shared";
@@ -104,11 +108,21 @@ assert(player.hasHealth.maxHp === tankingMaxHp, "no stance may change max HP");
 assert(Math.abs(player.hasHealth.hp / player.hasHealth.maxHp - hpPctBefore) < 0.001, "a stance switch should preserve HP percentage");
 
 for (const stance of STANCE_DATABASE.values()) {
-  const mods = stance.modifiers ?? {};
-  assert(
-    !("maxHp" in mods) && !("maxHpPct" in mods),
-    `${stance.id} must not carry a max-HP modifier`,
-  );
+  for (const mods of [stance.modifiers ?? {}, stance.gatedModifiers?.modifiers ?? {}]) {
+    assert(
+      !("maxHp" in mods) && !("maxHpPct" in mods),
+      `${stance.id} must not carry a max-HP modifier`,
+    );
+  }
+  // A gate is a payoff switch, never a drawback switch: whatever the posture costs has
+  // to be paid on both sides of the threshold, or falling out of it is free.
+  const gated = stance.gatedModifiers?.modifiers;
+  if (gated) {
+    for (const [key, value] of Object.entries(gated)) {
+      const isDrawback = key === "damageTakenPct" ? value > 0 : value < 0;
+      assert(!isDrawback, `${stance.id} put a drawback (${key}) behind its HP gate`);
+    }
+  }
 }
 
 // The neutral posture is a real, zero-cost Rune destination despite not being a learned stance.
@@ -179,6 +193,103 @@ const braced = makeCombatContext(target, "monster", player, "player");
 braced.damage = 100;
 emitCombatEvent("onDamageTaken", braced, world);
 assert(braced.damage < 100, "a defensive posture should reduce incoming damage multiplicatively");
+
+// ── Perfection: the one HP-gated posture ──────────────────────────────────────
+// Runes own conditions, but a Rune can only decide when you ENTER a stance; it cannot
+// switch the bonuses off underneath you once you are in one. Perfection's whole identity
+// is "keep your HP topped up", so the gate lives on the stance and is checked every tick.
+const perfection = stanceDef("perfection-stance");
+assert(!!perfection?.gatedModifiers, "Perfection must carry an HP gate, not flat bonuses");
+assert(
+  perfection!.gatedModifiers!.minHpPct === PERFECTION_HP_THRESHOLD,
+  "Perfection's gate must be the published threshold",
+);
+assert(
+  (perfection!.modifiers?.platingPct ?? 0) < 0,
+  "Perfection's Plating drawback must live in the UNGATED half",
+);
+assert(
+  (activeStanceModifiers("perfection-stance", 1)?.attackPct ?? 0) > 0
+    && (activeStanceModifiers("perfection-stance", 0.5)?.attackPct ?? 0) === 0,
+  "the resolver must be the only thing that knows about the gate",
+);
+
+player.tracksProgression.knownStances.push("perfection-stance");
+player.tracksProgression.equippedStances.default = "perfection-stance";
+player.tracksProgression.runesEquipped.length = 0;
+player.hasHealth.hp = player.hasHealth.maxHp;
+advance(STANCE_SWITCH_COOLDOWN_MS);
+updateRuneDerivedConfig(world, now);
+updateStanceSwitch(world, STANCE_SWITCH_COOLDOWN_MS, now);
+assert(player.tracksProgression.activeStance === "perfection-stance", "setup: Perfection should be active");
+
+const perfectAttack = Math.round(GAME_CONFIG.PLAYER_ATTACK * 1.12);
+const perfectSpeed = Math.round(GAME_CONFIG.PLAYER_SPEED * 1.12);
+const perfectPlating = Math.round(GAME_CONFIG.PLAYER_PLATING * 0.8);
+const gatedCooldown = player.performsAttack.attackCooldown;
+assert(player.dealsDamage.attack === perfectAttack, "Perfection should grant Attack at full HP");
+assert(player.hasPosition.speed === perfectSpeed, "Perfection should grant Move Speed at full HP");
+assert(gatedCooldown < GAME_CONFIG.PLAYER_ATTACK_COOLDOWN, "Perfection should grant Attack Speed at full HP");
+assert(player.mitigatesDamage.plating === perfectPlating, "Perfection's Plating drawback should apply at full HP");
+
+// One tick below the line: the payoff goes, the price stays. That asymmetry is the
+// reason to leave the posture rather than ride it down.
+player.tracksCombat.cooldowns["ability.cd.test"] = 4_000;
+player.hasHealth.hp = player.hasHealth.maxHp * (PERFECTION_HP_THRESHOLD - 0.01);
+updateStanceSwitch(world, 100, now);
+assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK, "Perfection's Attack must switch off below the gate");
+assert(player.hasPosition.speed === GAME_CONFIG.PLAYER_SPEED, "Perfection's Move Speed must switch off below the gate");
+assert(
+  player.performsAttack.attackCooldown === GAME_CONFIG.PLAYER_ATTACK_COOLDOWN,
+  "Perfection's Attack Speed must switch off below the gate",
+);
+assert(
+  player.mitigatesDamage.plating === perfectPlating,
+  "Perfection's Plating drawback must persist below the gate",
+);
+assert(
+  player.tracksProgression.activeStance === "perfection-stance",
+  "the gate must not switch stances — only a Rune rule does that",
+);
+assert(
+  player.tracksCombat.cooldowns["ability.cd.test"] === 4_000,
+  "a gate crossing must not corrupt unrelated combat state",
+);
+assert(
+  Math.abs(player.hasHealth.hp / player.hasHealth.maxHp - (PERFECTION_HP_THRESHOLD - 0.01)) < 0.001,
+  "a gate crossing must preserve HP percentage",
+);
+
+// Back over the line, same tick cadence. The crossing is edge-triggered off a stored
+// flag, so it has to rearm in both directions rather than latching once.
+player.hasHealth.hp = player.hasHealth.maxHp * 0.95;
+updateStanceSwitch(world, 100, now);
+assert(player.dealsDamage.attack === perfectAttack, "Perfection must reactivate on the way back up");
+assert(player.performsAttack.attackCooldown === gatedCooldown, "Perfection's cadence must reactivate too");
+
+// Leave the gate closed so the Berserker section below starts from a settled flag.
+player.hasHealth.hp = player.hasHealth.maxHp * 0.5;
+updateStanceSwitch(world, 100, now);
+assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK, "setup: gate closed before the Berserker section");
+
+// ── Runic cost of a stance rule ───────────────────────────────────────────────
+// `Switch Stance` is a verb with no power of its own; the destination carries the
+// whole charge. Taxing the verb too priced the cheapest tactical transition like a
+// premium Rite and pushed Stance micro out of reach of ordinary budgets.
+assert(ACTION_DATABASE.get("switch-stance")!.cost === 0, "Switch Stance itself must contribute 0 RP");
+assert(
+  runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance", targetStanceId: "offensive-stance" }) === 2,
+  "a stance rule must cost exactly condition + destination",
+);
+assert(
+  runeRuleCost({ conditionId: "hp-above-90", actionId: "switch-stance", targetStanceId: "perfection-stance" }) === 3,
+  "Perfection's destination surcharge must still be authoritative",
+);
+assert(
+  runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance", targetStanceId: NO_STANCE_ID }) ===
+    runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance" }),
+  "the neutral destination must stay free",
+);
 
 player.tracksProgression.activeStance = "berserker-stance";
 recalculatePlayerStanceStats(world, player);
