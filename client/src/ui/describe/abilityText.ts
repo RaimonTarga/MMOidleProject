@@ -246,6 +246,7 @@ export function triggerSentence(trigger: AbilityTrigger): string {
 const SHAPE_SENTENCES: Record<AbilityDef['shape'], string> = {
   armed: 'Arms your next qualifying attack — the payload lands when that attack hits.',
   cast: 'Winds up on the spot. You stop attacking while it charges, and hard control breaks it.',
+  charge: 'Winds up, then rushes to its target. You cannot attack during the approach, and hard control breaks it.',
   reposition: 'Resolves instantly by moving you relative to your current target.',
   instant: 'Resolves immediately on yourself the moment it fires.',
 };
@@ -356,7 +357,11 @@ function timingLines(ability: AbilityDef, context: AbilityContext): AbilityLine[
   });
 
   const authoredCast = abilityCastMs(ability, context.playerTier);
-  if (ability.shape === 'cast' && authoredCast > 0) {
+  // Both wind-up shapes go through `beginAbilityCast` server-side, so both pay the
+  // wind-up and both benefit from cast speed — a charge must not advertise a
+  // wind-up in its shape sentence and then hide the number.
+  const windsUp = ability.shape === 'cast' || ability.shape === 'charge';
+  if (windsUp && authoredCast > 0) {
     const castReduction = Math.min(
       CAST_SPEED_CAP,
       Math.max(0, context.passives['technique.cast-speed-pct'] ?? 0),

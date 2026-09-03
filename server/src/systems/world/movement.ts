@@ -306,6 +306,11 @@ function playerSpeedMults(
   const ambient = ambientRampStatus(cs);
   if (ambient) mults.push(slowResistedMult(player, ambientRampMoveMult(ambient)));
 
+  // An ability charge is a temporary speed layer, not a mutation of the player's
+  // normal position speed. This lets stat recalculation and ordinary movement
+  // resume cleanly once the charge component detaches.
+  if (player.isChargingAbility) mults.push(Math.max(0, player.isChargingAbility.speedMult));
+
   mults.push(bootSpeedMultiplier(world, player, now));
   return mults;
 }

@@ -84,7 +84,7 @@ initCombatSystems();
   const scorpion = MONSTER_DATABASE.get('sand-scorpion');
   const sting = scorpion?.chargedAttack;
   assert(
-    sting?.name === 'Numbing Sting' && sting.castMs === 500 && sting.cooldownMs === 5_000 &&
+    sting?.name === 'Numbing Sting' && sting.castMs === 500 && sting.cooldownMs === 4_000 && sting.initialCooldownMs === 500 &&
       sting.appliesSlow?.speedMult === 0.5 && sting.appliesSlow.durationMs === 4_000 &&
       scorpion?.slowEffect === undefined,
     'Sand Scorpion should trade its on-hit slow for a frequent, telegraphed Numbing Sting',
@@ -101,15 +101,16 @@ initCombatSystems();
   scorpion.performsAttack.lastAttackAt = 0;
   player.performsAttack.lastAttackAt = 3_000;
 
-  // The first tick initializes the per-combat initial cooldown; the next one
-  // reaches its two-second deadline and begins the short cast.
+  // The first tick initializes the per-combat initial cooldown. It is armed half
+  // a second into combat, then begins its cast at the first eligible basic-attack
+  // opportunity instead of bypassing the ordinary attack cadence.
   updateCombat(world, 0, 1_000);
-  updateCombat(world, 0, 3_000);
+  updateCombat(world, 0, 2_400);
   assert(
     world.takeNodeEvents(NODE).some((event) => event.kind === 'monster-cast-start' && event.label === 'Numbing Sting' && event.castMs === 500),
     'Numbing Sting should telegraph its short cast before applying control',
   );
-  updateCombat(world, 0, 3_500);
+  updateCombat(world, 0, 2_900);
   const slow = getStatusEffect(player.tracksCombat, 'slow');
   assert(
     slow?.data.speedMult === 0.5 && slow.data.totalMs === 4_000,

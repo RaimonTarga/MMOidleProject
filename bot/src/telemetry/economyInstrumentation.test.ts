@@ -81,7 +81,9 @@ function assert(condition: unknown, message: string): asserts condition {
 
 // ── T1 catalyst rate ─────────────────────────────────────────────────────────
 {
-  assert(catalystProgressPerUnit(1) === 150, "T1 must mint one catalyst per 150 kill-weight");
+  // Candidate F (2026-09-03) raised this from candidate C's 150. See the rationale
+  // on CATALYST_PROGRESS_PER_UNIT_BY_TIER in shared/src/config/gameConfig.ts.
+  assert(catalystProgressPerUnit(1) === 200, "T1 must mint one catalyst per 200 kill-weight");
   assert(
     catalystProgressPerUnit(2) === GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT,
     "T2+ must fall back to the base threshold",

@@ -101,10 +101,13 @@ So abilities resolve their own target, through their own reach
 engagementRange = player.attackRange + rank.rangeBonus
 ```
 
-- **Charge** carries `rangeBonus: 220` (its dash distance): it engages a target up to 220px
+- **Charge** carries `rangeBonus: 300` (its rush distance): it engages a target up to 300px
   beyond normal reach, closes, and lands the empowered blow. Its `target-beyond-reach`
-  trigger stops it firing at something already in contact, and the dash is **clamped to the
-  gap** (aiming just inside the player's own reach) so it never sails through its target.
+  trigger stops it firing at something already in contact. It is no longer an instant
+  reposition — it is a `charge`: a 400ms wind-up, then a real 4× rush that the target can
+  move during and that hard control can break. `isChargingAbility.speedMult` is a temporary
+  movement layer in `playerSpeedMults`, never a mutation of the player's position speed, so
+  stat recalculation and ordinary movement resume cleanly when the component detaches.
 - **Snipe** carries `rangeBonus: 300`: the cast opens on something the player cannot touch,
   and `holdsPositionWhileCasting` stops auto-combat closing for the wind-up — which is what
   makes it a standoff tool rather than a slow opener you immediately walk out of. Casts with
@@ -146,7 +149,8 @@ the one trigger that must work while the player cannot act) · **`target-beyond-
 |---|---|---|
 | `armed` | attaches `hasArmedAbility`; rider lands in `abilityEffects.ts` on the next hit | Sweep, Expose Weakness, Hamstring, Binding Strike, Quick Strike |
 | `cast` | attaches `isCastingAbility`; see below | Power Strike, Snipe, Stunning Strike |
-| `reposition` | resolves immediately by moving the player; optionally also arms | Charge, Disengage |
+| `charge` | winds up as a `cast`, then attaches `isChargingAbility` and **rushes** the target at `chargeSpeedMult` until contact, interruption or `chargeMaxMs`; hands the armed-hit rider back to the pipeline on arrival | Charge |
+| `reposition` | resolves immediately by moving the player; optionally also arms | Disengage |
 | `instant` | immediate self-facing effect | Brace, Cleanse, Second Wind, Bramble Guard, Endure, Break Free, Recuperate, **Frenzy (a Technique)** |
 
 ### Cast lifecycle — `abilityCasting.ts`
@@ -263,7 +267,7 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 | Ability | Slot / shape | Biome (level) | Job |
 |---|---|---|---|
 | **Hamstring** | Technique / armed | Jungle (3) | Slow — rung one of the ladder |
-| **Charge** | Technique / reposition | Desert (3) | Gap-closer with real extended reach |
+| **Charge** | Technique / charge | Desert (3) | Gap-closer with real extended reach |
 | **Bramble Guard** | Guard / instant | Jungle (5) | Temporary plating + flat thorns |
 | **Endure** | Guard / instant | Desert (5) | Sustained mitigation (Brace's opposite) |
 

@@ -198,7 +198,7 @@ assert(
 // ── T1 mints at its own, scarcer threshold ────────────────────────────────────
 
 assert(
-  catalystProgressPerUnit(1) === 150 && catalystProgressPerUnit(2) === 100,
+  catalystProgressPerUnit(1) === 200 && catalystProgressPerUnit(2) === 100,
   "T1 must carry its own catalyst threshold while later tiers keep the base one",
 );
 

@@ -34,6 +34,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   'summoner-harried': { label: 'Accused', color: '#e6c35c' },
   'summoner-withering-chorus': { label: 'Chorus', color: '#9d6ad6' },
   'monster-howl-haste': { label: 'Howl', color: '#b18cff' },
+  'monster-ape-chestbeat': { label: 'Chestbeat', color: '#c98b5b' },
   'thorn-spitter-barrage': { label: 'Barrage', color: '#89dd59' },
   'granite-barrier': { label: 'Granite Barrier', color: '#8faed0' },
   shelled: { label: 'Shelled', color: '#9fca68' },

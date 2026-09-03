@@ -117,6 +117,7 @@ function loadOrCreateManifest(
   maxRunMs: number,
   executionMode: ControlledExecutionMode,
   maxConcurrency: number,
+  rewardMultiplier: number,
 ): BatchManifest {
   if (existsSync(manifestPath)) {
     const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as BatchManifest;
@@ -124,7 +125,7 @@ function loadOrCreateManifest(
       manifest.controlled !== true ||
       manifest.executionMode !== executionMode ||
       manifest.maxConcurrency !== maxConcurrency ||
-      manifest.rewardMultiplier !== 25 ||
+      manifest.rewardMultiplier !== rewardMultiplier ||
       JSON.stringify(manifest.routes.map((entry) => entry.routeId)) !== JSON.stringify(routes)
     ) {
       throw new Error(`existing manifest does not match the requested clean controlled batch: ${manifestPath}`);
@@ -168,7 +169,7 @@ function loadOrCreateManifest(
     controlled: true,
     executionMode,
     maxConcurrency,
-    rewardMultiplier: 25,
+    rewardMultiplier,
     maxRunMs,
     routes: routes.map((routeId, i) => ({
       routeId,
@@ -266,6 +267,10 @@ async function main(): Promise<void> {
   };
 
   const maxRunMs = Number(effectiveArgs.maxRunMs);
+  const manifestRewardMultiplier = Number(effectiveArgs.rewardMultiplier ?? "1");
+  if (!Number.isFinite(manifestRewardMultiplier)) {
+    throw new Error("controlled batch rewardMultiplier must be finite");
+  }
   const manifestPath = resolve(args.manifest ?? join(outDir, "batch-manifest.json"));
   const manifest = controlled
     ? loadOrCreateManifest(
@@ -275,6 +280,7 @@ async function main(): Promise<void> {
         maxRunMs,
         controlledExecutionMode,
         maxConcurrency,
+        manifestRewardMultiplier,
       )
     : null;
   const batchId = manifest?.batchId ?? `batch-${new Date().toISOString().replace(/[:.]/g, "-")}`;

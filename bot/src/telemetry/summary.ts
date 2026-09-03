@@ -6,6 +6,7 @@ import type { Route } from "../route/types";
 import type { CompletionState, RunHeader } from "./events";
 import type { LeaseSessionEvidence } from "../concurrency/routeLeaseSession";
 import type { Recorder } from "./recorder";
+import type { T1SnapshotManifest } from "./t1Snapshots";
 
 /**
  * The compact machine-readable digest.
@@ -15,6 +16,7 @@ import type { Recorder } from "./recorder";
  * `deaths.jsonl`.
  */
 export interface RunSummary {
+  snapshots: T1SnapshotManifest;
   run: RunHeader & {
     endedAt: number;
     durationMs: number;
@@ -329,6 +331,7 @@ export function buildSummary(params: {
   leaseEvidence?: LeaseSessionEvidence;
   maximumSimultaneouslyProgressing?: number;
   winCondition?: CompletionMode;
+  snapshotArtifacts?: T1SnapshotManifest;
 }): RunSummary {
   const { header, recorder, route, self } = params;
   const durationMs = params.endedAt - header.startedAt;
@@ -478,6 +481,11 @@ export function buildSummary(params: {
   const samples = recorder.totalSamples;
 
   return {
+    snapshots: params.snapshotArtifacts ?? {
+      schemaVersion: 1,
+      snapshotA: null,
+      snapshotB: null,
+    },
     run: {
       ...header,
       endedAt: params.endedAt,

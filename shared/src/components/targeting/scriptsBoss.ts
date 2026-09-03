@@ -108,7 +108,7 @@ export interface ScriptsBoss {
     castMs: number;
     label: string;
     actions: BossAction[];
-    fx?: 'roar' | 'frenzy';
+    fx?: 'roar' | 'frenzy' | 'shield';
   }[];
   /**
    * Runtime scalars on the boss's `chargedAttack` (set by 'empower-charged'). Stored

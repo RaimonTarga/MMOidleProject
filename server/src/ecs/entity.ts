@@ -158,6 +158,18 @@ export interface IsCastingAbility {
   targetId: string;
 }
 
+/**
+ * Server-only: a Technique whose wind-up resolved into a fast, target-bound
+ * rush. It owns movement until contact, interruption, or expiry, then hands the
+ * normal armed-hit rider back to the combat pipeline.
+ */
+export interface IsChargingAbility {
+  abilityId: string;
+  targetId: string;
+  speedMult: number;
+  endsAt: number;
+}
+
 export type DungeonMonsterSource = "dungeonGuardian" | "dungeonBoss";
 
 /** Server-only runtime metadata for monsters owned by a dungeon node. */
@@ -243,6 +255,7 @@ export interface ServerEntity {
   hasSweepClip?: HasSweepClip;
   hasFormationTechnique?: HasFormationTechnique;
   isCastingAbility?: IsCastingAbility;
+  isChargingAbility?: IsChargingAbility;
   hasEnvironmentalDot?: HasEnvironmentalDot;
   hasNodeFeatureEffect?: HasNodeFeatureEffect;
   isDead?: IsDead;

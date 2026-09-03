@@ -24,7 +24,9 @@
 import {
   ABILITY_DATABASE,
   abilityCastMs,
+  abilityRankAt,
   abilityRangeBonus,
+  resolveAbilityEffect,
   setCooldown,
   type AbilityDef,
 } from "@mmo-idle/shared";
@@ -32,9 +34,11 @@ import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { isHardControlled } from "../../combat/status/playerHardControl";
+import { setEntityMotion, stopEntity } from "../../world/movement";
 import { abilityCooldownKey, techniqueCooldownMs } from "./abilityCooldowns";
 import { resolveCastPayload } from "./abilityEffects";
 import { abilityEngagementRange, abilityTarget } from "./abilityTargeting";
+import { armTechnique } from "./abilityArming";
 
 /**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
@@ -142,7 +146,19 @@ export function updateAbilityCasts(world: World, now: number): void {
     // Wind-up complete — resolve, then pay the cooldown. Cooldown is charged
     // ONLY here so an interrupted cast costs the player nothing.
     detachComponent(world, player, "isCastingAbility");
-    resolveCastPayload(world, player, ability, target);
+    if (ability.shape === "charge") {
+      if (!beginAbilityCharge(world, player, ability, target, now)) {
+        world.pushEvent(player.hasPosition.nodeId, {
+          kind: "player-cast-end",
+          playerId: player.isPlayer.id,
+          ability: ability.id,
+          fired: false,
+        });
+        continue;
+      }
+    } else {
+      resolveCastPayload(world, player, ability, target);
+    }
     setCooldown(
       player.tracksCombat,
       abilityCooldownKey(ability.id),
@@ -156,6 +172,125 @@ export function updateAbilityCasts(world: World, now: number): void {
       targetPos: { ...target.hasPosition.current },
     });
   }
+}
+
+/**
+ * Convert a completed charge wind-up into target-bound high-speed movement.
+ * The instant reposition primitive remains untouched for Disengage and future
+ * blink-style Techniques; this state owns an actual, interruptible approach.
+ */
+function beginAbilityCharge(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+  target: NonNullable<ReturnType<typeof abilityTarget>>,
+  now: number,
+): boolean {
+  if (player.isRooted) return false;
+  const rank = abilityRankAt(ability, player.tracksProgression.playerTier);
+  const effect = resolveAbilityEffect(ability, {
+    playerTier: player.tracksProgression.playerTier,
+    techniquePowerPct: player.usesSkills.passives["technique.power-pct"] ?? 0,
+  });
+  const speedMult = rank.chargeSpeedMult ?? 0;
+  const chargeMaxMs = rank.chargeMaxMs ?? 0;
+  if (
+    effect.kind !== "reposition" ||
+    !effect.toward ||
+    effect.distance <= 0 ||
+    speedMult <= 0 ||
+    chargeMaxMs <= 0
+  ) {
+    return false;
+  }
+
+  const from = { ...player.hasPosition.current };
+  attachComponent(world, player, "isChargingAbility", {
+    abilityId: ability.id,
+    targetId: target.isMonster.id,
+    speedMult,
+    endsAt: now + chargeMaxMs,
+  });
+  setEntityMotion(world, player, target.hasPosition.current);
+
+  // Keep Charge's established hot dash trail rather than borrowing the birds'
+  // aerial Dive Bomb treatment. Its projected endpoint matches the initial rush;
+  // the authoritative movement can still bend toward a moving target afterward.
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: "player-reposition",
+    playerId: player.isPlayer.id,
+    ability: ability.id,
+    from,
+    to: chargeVisualDestination(player, target, effect.distance),
+  });
+  return true;
+}
+
+function chargeVisualDestination(
+  player: PlayerEntity,
+  target: NonNullable<ReturnType<typeof abilityTarget>>,
+  maxDistance: number,
+): { x: number; y: number } {
+  const from = player.hasPosition.current;
+  const to = target.hasPosition.current;
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const distance = Math.hypot(dx, dy);
+  if (distance < 0.0001) return { ...from };
+  const travel = Math.min(
+    maxDistance,
+    Math.max(0, distance - player.performsAttack.attackRange * 0.7),
+  );
+  return { x: from.x + (dx / distance) * travel, y: from.y + (dy / distance) * travel };
+}
+
+/** Advance each live charge; called after casts and before the movement tick. */
+export function updateAbilityCharges(world: World, now: number): void {
+  for (const player of world.livePlayers) {
+    const charging = player.isChargingAbility;
+    if (!charging) continue;
+
+    const ability = ABILITY_DATABASE.get(charging.abilityId);
+    const target = world.getMonsterEntity(charging.targetId);
+    if (
+      !ability ||
+      ability.shape !== "charge" ||
+      !target ||
+      target.hasHealth.hp <= 0 ||
+      target.hasPosition.nodeId !== player.hasPosition.nodeId ||
+      player.isRooted ||
+      isHardControlled(player.tracksCombat)
+    ) {
+      abortCharge(world, player);
+      continue;
+    }
+
+    if (world.collision.canReach(player, target, player.performsAttack.attackRange)) {
+      stopEntity(world, player);
+      detachComponent(world, player, "isChargingAbility");
+      armTechnique(world, player, charging.abilityId);
+      // The arrival is the ability's payoff: make its armed strike eligible in
+      // this same combat tick instead of making Charge wait through a full basic
+      // attack cooldown after successfully closing the gap.
+      player.performsAttack.lastAttackAt = now - player.performsAttack.attackCooldown;
+      continue;
+    }
+
+    if (now >= charging.endsAt) {
+      abortCharge(world, player);
+      continue;
+    }
+
+    // Own the move goal while rushing. Auto-targeting runs earlier in the tick,
+    // so it may select targets normally without being able to overwrite this
+    // committed approach.
+    setEntityMotion(world, player, target.hasPosition.current);
+  }
+}
+
+function abortCharge(world: World, player: PlayerEntity): void {
+  stopEntity(world, player);
+  detachComponent(world, player, "isChargingAbility");
 }
 
 function abortCast(world: World, player: PlayerEntity, abilityId: string): void {

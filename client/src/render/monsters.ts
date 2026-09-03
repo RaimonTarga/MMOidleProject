@@ -72,11 +72,12 @@ function isFlyingType(typeId: string): boolean {
  *
  * Derived from the def plus the already-networked AI state rather than a new
  * networked flag: concealment is purely presentational, and "is it fighting yet"
- * is something the client already knows.
+ * is something the client already knows. `concealedWhileIdle` covers camouflage
+ * that is not tied to a terrain anchor.
  */
 function isConcealingType(typeId: string): boolean {
   const def = MONSTER_DATABASE.get(typeId);
-  return def?.idleAnchor !== undefined || def?.openingVolley !== undefined;
+  return def?.idleAnchor !== undefined || def?.openingVolley !== undefined || def?.concealedWhileIdle === true;
 }
 
 /**

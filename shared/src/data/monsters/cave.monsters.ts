@@ -170,19 +170,18 @@ export const caveMonsterEntries = [
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 83, essenceType: 'red', level: 3, biomeXp: 500 },
     ai: { wanderRadius: 120, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8500 },
-    // ENGAGE -> CONTROL -> SLAM, inherited from the Cave Troll (locked override:
-    // do NOT simplify this line into 'walk up and Slam'). The point is that the
-    // player has to ANSWER the slam - Brace, Disengage after the control window,
-    // a Guard, or another defensive tool.
-    // Design contract: the control must end early enough that a configured
-    // Disengage can still fire before impact. No frame-perfect requirement.
+    // The T3 continuation keeps the Cave Troll's readable Savage Rush opener:
+    // cast, fast contact charge, ROOT, then the existing Ground Slam. This
+    // replaces the old charge-lock opener, whose lock step could fail before it
+    // actually delivered the follow-up slam.
     engageSequence: {
-      kind: 'charge-lock-charged-attack',
-      speedMult: 6,
+      kind: 'cast-charge-root', name: 'Savage Rush', castMs: 500,
+      speedMult: 15,
       maxChargeMs: 3000,
-      lockoutMs: 1000,
+      rootMs: 1700,
+      followWithChargedAttack: true,
+      fx: 'dive-bomb',
     },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     // GROUND SLAM — the elite ceiling's version: widest footprint, longest tell.
     // Still escapable on foot at player base speed; that is the contract.
     // PLACEHOLDER numbers — balance pass owns them.

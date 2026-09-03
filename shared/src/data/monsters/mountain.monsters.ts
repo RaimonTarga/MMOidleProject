@@ -157,9 +157,15 @@ export const mountainMonsterEntries = [
     // Same Slam family as the Titan; the escalation is FOOTPRINT and damage, not
     // speed, so the tell stays readable while the safe ground shrinks.
     chargedAttack: {
-      name: 'Ground Slam', castMs: 2000, cooldownMs: 12000, initialCooldownMs: 8500,
+      name: 'Ground Slam', castMs: 2000, cooldownMs: 12000, initialCooldownMs: 0,
       multiplier: 1.8, fx: 'strong-kick',
       aoe: { radius: 145 },
+    },
+    // The Titan line keeps Granite Barrier at higher tiers: the larger Slam is
+    // still its offense, while the planted ward is its readable desperation beat.
+    lowHealthWard: {
+      name: 'Granite Barrier', thresholdPct: 0.25, castMs: 1000,
+      wardPct: 0.25, durationMs: 8000, effectId: 'granite-barrier', fx: 'shield',
     },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
   }],
@@ -217,6 +223,12 @@ export const mountainMonsterEntries = [
     ai: { wanderRadius: 90, leashRange: 430, idleMinMs: 4000, idleMaxMs: 11000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 310 — deep cap trip
+    // Keep the cadence finisher as the apex's damage evolution, but retain the
+    // Titan line's visible low-health Granite Barrier.
+    lowHealthWard: {
+      name: 'Granite Barrier', thresholdPct: 0.25, castMs: 1000,
+      wardPct: 0.25, durationMs: 8000, effectId: 'granite-barrier', fx: 'shield',
+    },
   }],
 
   ['avalanche-tyrant', {
@@ -238,13 +250,17 @@ export const mountainMonsterEntries = [
 
   ['cliffside-roc', {
     id: 'cliffside-roc', name: 'Cliffside Roc', color: 0x778899,
-    // FLYER T2 — a huge close-range raptor. It shares the clear talon rake with
-    // the Savanna Hawk rather than reading as another generic ranged artillery mob.
-    stats: { hp: 574, attack: 179, plating: 0, damageReduction: 0, speed: 34, attackRange: 12, attackCooldown: 3500, pullRange: 380 },
+    // FLYER T2 — the Stone Eagle's apex. It keeps the close-range talon rake and
+    // telegraphed Skyfall opener instead of becoming a generic ranged artillery mob.
+    stats: { hp: 574, attack: 179, plating: 0, damageReduction: 0, speed: 105, attackRange: 12, attackCooldown: 3500, pullRange: 410 },
     behavior: 'melee', attackStyle: 'talons', biome: 'mountain',
     flies: true,
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 450 },
-    ai: { wanderRadius: 210, leashRange: 640, idleMinMs: 2000, idleMaxMs: 5500 },
+    ai: { wanderRadius: 460, leashRange: 1200, idleMinMs: 180, idleMaxMs: 720 },
+    engageSequence: {
+      kind: 'cast-charge-strike', name: 'Skyfall Rend', castMs: 1000,
+      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 2.25, fx: 'dive-bomb',
+    },
   }],
 
   ['cragback-rhino', {

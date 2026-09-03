@@ -23,6 +23,7 @@ import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { isMonsterStunned } from "../status/stun";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import {
+  activeMonsterAbilityId,
   chargedCastEndsAt,
   castedBuffCastEndsAt,
   castedBuffReady,
@@ -330,6 +331,15 @@ export function updateMonsters(world: World, dt: number, now: number) {
       // cancel the very slam they were supposed to be dodging.
       if (isChargeAoePlanted(e) && chargedCastEndsAt(e) > 0) {
         e.hasAwareness.state = "attacking";
+        stopMonster(world, e);
+        continue;
+      }
+
+      // Generic elite abilities have the same movement contract as a committed
+      // charged cast: once the cast bar is up, hold position until resolution or
+      // interruption. The combat loop owns the actual cast/debuff work.
+      if (activeMonsterAbilityId(e)) {
+        e.hasAwareness.state = 'attacking';
         stopMonster(world, e);
         continue;
       }

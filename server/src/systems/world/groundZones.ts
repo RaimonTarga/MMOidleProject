@@ -34,6 +34,8 @@ export interface RuntimeSlamTelegraph extends RuntimeGroundZoneBase {
   resolvesAtMs: number;
   /** Owning monster; every cast-abort path clears its telegraph by this id. */
   ownerId: string;
+  /** Optional ability cue used by the client to distinguish elite telegraphs. */
+  fx?: string;
 }
 
 export interface RuntimeToxicPool extends RuntimeGroundZoneBase {
@@ -519,6 +521,7 @@ export function buildGroundZoneViews(
       radius: zone.radius,
       durationMs: Math.max(1, endsAtMs - zone.startedAtMs),
       remainingMs: Math.max(0, endsAtMs - now),
+      ...(zone.kind === 'slam-telegraph' && zone.fx ? { fx: zone.fx } : {}),
     };
   });
 }

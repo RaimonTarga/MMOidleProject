@@ -9,7 +9,13 @@ import {
   distanceSq,
   resolveSummonerProfile,
 } from "@mmo-idle/shared";
-import type { AggroTargetKind, MonsterDefinition, Vec2 } from "@mmo-idle/shared";
+import type {
+  AggroTargetKind,
+  MonsterAbility,
+  MonsterAbilityAction,
+  MonsterDefinition,
+  Vec2,
+} from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent, type FormationAttackContribution } from "./combatPipeline";
 import {
@@ -33,6 +39,14 @@ import {
   beginCastedBuff,
   completeCastedBuff,
   cancelCastedBuff,
+  activeMonsterAbilityId,
+  beginMonsterAbility,
+  cancelMonsterAbility,
+  completeMonsterAbility,
+  monsterAbilityCastEndsAt,
+  monsterAbilityImpactPoint,
+  monsterAbilityReady,
+  monsterAbilityTargetId,
   lowHealthWardCastEndsAt,
   lowHealthWardReady,
   beginLowHealthWard,
@@ -140,10 +154,11 @@ function applyIceShatter(
   target: MonsterEntity,
   def: MonsterDefinition | undefined,
   now: number,
+  shatterOverride?: NonNullable<MonsterDefinition['enemyShield']>['shatter'],
 ): void {
   // A runtime barrier granted mid-fight ('apply-shield') may carry its own shatter
   // rider — Tundra's T4 Ice Armour is thickened by a phase, not by a second def.
-  const shatter = target.scriptsBoss?.shieldOverride?.shatter ?? def?.enemyShield?.shatter;
+  const shatter = shatterOverride ?? target.scriptsBoss?.shieldOverride?.shatter ?? def?.enemyShield?.shatter;
   if (!shatter) return;
 
   const bonus = Math.max(
@@ -555,7 +570,7 @@ export function runPlayerAttack(
   // and freezes nearby enemies (applied before the death check below so the bonus can
   // finish the mob). No-op unless the mob defines enemyShield.shatter.
   if (enemyShieldResult.broke) {
-    applyIceShatter(world, target, monsterDef, now);
+    applyIceShatter(world, target, monsterDef, now, enemyShieldResult.shatter);
   }
   target.controlsMonster.spawn = { ...target.hasPosition.current };
 
@@ -697,6 +712,7 @@ export function runMonsterAttack(
   target: PlayerEntity,
   now: number,
   chargeMult = 1,
+  resultMetadata?: Record<string, unknown>,
 ): MonsterAttackOutcome {
   const ctx = makeCombatContext(monster, "monster", target, "player");
 
@@ -708,6 +724,9 @@ export function runMonsterAttack(
   if (ctx.cancelled) return "cancelled";
 
   emitCombatEvent("onAttack", ctx, world);
+  if (resultMetadata) {
+    resultMetadata.evadeBlocksDebuffs = evadeBlocksDebuffs(ctx);
+  }
 
   // Core second DR layer (system rework Step 9): a separate MULTIPLICATIVE damage-
   // reduction layer stacked with base DR — final = base × (1 − DR) × (1 − drLayer2).
@@ -1085,11 +1104,13 @@ function abortMonsterCast(world: World, monster: MonsterEntity): void {
   if (
     chargedCastEndsAt(monster) <= 0 &&
     castedBuffCastEndsAt(monster) <= 0 &&
-    lowHealthWardCastEndsAt(monster) <= 0
+    lowHealthWardCastEndsAt(monster) <= 0 &&
+    monsterAbilityCastEndsAt(monster) <= 0
   ) return;
   cancelCharge(monster);
   cancelCastedBuff(monster);
   cancelLowHealthWard(monster);
+  cancelMonsterAbility(monster);
   // A telegraph must never outlive the cast that drew it — an abandoned circle
   // would promise an impact that is no longer coming.
   clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
@@ -1098,6 +1119,461 @@ function abortMonsterCast(world: World, monster: MonsterEntity): void {
     monsterId: monster.isMonster.id,
     fired: false,
   });
+}
+
+const CASTED_BUFF_RALLY_SESSION_KEY = 'castedBuffRallySession';
+const CASTED_BUFF_RALLY_RECEIVED_SESSION_KEY = 'castedBuffRallyReceivedSession';
+
+/**
+ * Pull a capped number of unengaged nearby monsters onto the caster's current
+ * target. This is intentionally a cast completion effect rather than pack
+ * membership: it has a visible tell, does not call bosses, and a rallied monster
+ * cannot relay the same call into a second wave.
+ */
+function rallyNearbyMonsters(
+  world: World,
+  monster: MonsterEntity,
+  buff: NonNullable<MonsterDefinition['castedAttackSpeedBuff']>,
+  now: number,
+): void {
+  const rally = buff.rallyNearby;
+  const aggro = monster.hasAggroTarget;
+  if (!rally || !aggro) return;
+
+  const sessionToken = aggro.sinceMs + 1;
+  if (
+    getCounter(monster.tracksCombat, CASTED_BUFF_RALLY_RECEIVED_SESSION_KEY) === sessionToken ||
+    (rally.oncePerCombat !== false &&
+      getCounter(monster.tracksCombat, CASTED_BUFF_RALLY_SESSION_KEY) === sessionToken)
+  ) return;
+
+  const target = aggro.targetKind === 'player'
+    ? world.getPlayerEntity(aggro.targetId)
+    : world.getMinionEntity(aggro.targetId);
+  if (
+    !target ||
+    target.hasPosition.nodeId !== monster.hasPosition.nodeId ||
+    target.hasHealth.hp <= 0 ||
+    ('isDead' in target && target.isDead)
+  ) return;
+
+  const radius = buff.radius ?? 0;
+  const maxTargets = Math.max(0, Math.round(rally.maxTargets));
+  if (radius <= 0 || maxTargets <= 0) {
+    if (rally.oncePerCombat !== false) {
+      setCounter(monster.tracksCombat, CASTED_BUFF_RALLY_SESSION_KEY, sessionToken);
+    }
+    return;
+  }
+
+  const radiusSq = radius ** 2;
+  const candidates = [...world.monsterEntitiesInNode(monster.hasPosition.nodeId)]
+    .filter((ally) =>
+      ally !== monster &&
+      ally.hasHealth.hp > 0 &&
+      !ally.isMonster.isBoss &&
+      !ally.hasAggroTarget &&
+      distanceSq(ally.hasPosition.current, monster.hasPosition.current) <= radiusSq &&
+      distanceSq(ally.hasPosition.current, ally.controlsMonster.spawn) <= ally.controlsMonster.leashRange ** 2,
+    )
+    .map((ally) => ({
+      ally,
+      distSq: distanceSq(ally.hasPosition.current, monster.hasPosition.current),
+    }))
+    .sort((a, b) => a.distSq - b.distSq || a.ally.isMonster.id.localeCompare(b.ally.isMonster.id))
+    .slice(0, maxTargets);
+
+  for (const { ally } of candidates) {
+    setAggroTarget(world, ally, { id: aggro.targetId, kind: aggro.targetKind }, now);
+    // Keep the rally to one hop. If an allied monster later has its own rally
+    // cast, it should not turn this local call into an accidental pack chain.
+    // Stamp the token from the aggro session the ally ACTUALLY got, rather than
+    // assuming `setAggroTarget` seeded `sinceMs` from `now` — the two would have
+    // to stay in lockstep for a derived token to keep matching.
+    const alliedSession = ally.hasAggroTarget?.sinceMs ?? now;
+    setCounter(ally.tracksCombat, CASTED_BUFF_RALLY_RECEIVED_SESSION_KEY, alliedSession + 1);
+  }
+  if (rally.oncePerCombat !== false) {
+    setCounter(monster.tracksCombat, CASTED_BUFF_RALLY_SESSION_KEY, sessionToken);
+  }
+}
+
+type MonsterAbilityHitAction = Extract<MonsterAbilityAction, { type: 'hit' }>;
+type MonsterAbilityAreaAction = Extract<MonsterAbilityAction, { type: 'area-hit' }>;
+
+/**
+ * Apply one generic player rider so its authored magnitude actually lands.
+ *
+ * `applyStatusEffect` keeps the EXISTING `data` when the effect is already on the
+ * target — it bumps stacks and refreshes the clock, nothing more. So a rider that
+ * loses the race to another source of the same status (a stacking
+ * `appliesAntiheal`, a `sundered` pool, a monster `slowEffect`) would otherwise
+ * apply nothing but a refreshed timer. Write the magnitude back afterwards,
+ * keeping whichever value is HARSHER on the player, and re-stamp `totalMs` so the
+ * buff-UI clock still matches the bar it is drawn against.
+ */
+function applyStrongestPlayerRider(
+  target: PlayerEntity,
+  sourceId: string,
+  id: string,
+  durationMs: number,
+  key: string,
+  value: number,
+  harsher: (existing: number, incoming: number) => number,
+): void {
+  const effect = applyStatusEffect(target.tracksCombat, {
+    id,
+    maxStacks: 1,
+    remainingMs: durationMs,
+    refreshable: true,
+    sourceId,
+    data: { [key]: value, totalMs: durationMs },
+  });
+  const existing = effect.data[key];
+  effect.data[key] = existing === undefined ? value : harsher(existing, value);
+  effect.data.totalMs = Math.max(effect.data.totalMs ?? 0, durationMs);
+}
+
+/** Apply the small, shared set of player riders supported by generic abilities. */
+function applyMonsterAbilityPlayerEffect(
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  effect: NonNullable<MonsterAbilityHitAction['effect']>,
+): void {
+  if (!canApplyPlayerDebuff(target) || effect.durationMs <= 0) return;
+  const durationMs = Math.round(
+    effect.durationMs * harmfulStatusDurationMult(target),
+  );
+  if (durationMs <= 0) return;
+  const sourceId = monster.isMonster.id;
+
+  // A slow is harsher the LOWER its multiplier; the other two are harsher higher.
+  if (effect.kind === 'slow') {
+    applyStrongestPlayerRider(
+      target, sourceId, 'slow', durationMs,
+      'speedMult', Math.max(0, Math.min(1, effect.speedMult)), Math.min,
+    );
+    return;
+  }
+
+  if (effect.kind === 'antiheal') {
+    applyStrongestPlayerRider(
+      target, sourceId, 'antiheal', durationMs,
+      'reductionPerStack', Math.max(0, effect.reduction), Math.max,
+    );
+    return;
+  }
+
+  applyStrongestPlayerRider(
+    target, sourceId, SUNDERED_EFFECT_ID, durationMs,
+    DAMAGE_TAKEN_PCT_KEY, Math.max(0, effect.damageTakenPct), Math.max,
+  );
+}
+
+/** Grant a generic casted self-buff or absorb ward. */
+function applyMonsterAbilitySelfAction(
+  monster: MonsterEntity,
+  action: Extract<MonsterAbilityAction, { type: 'attack-speed-buff' | 'shield' }>,
+): void {
+  if (action.type === 'attack-speed-buff') {
+    const attacks = action.attacks === undefined
+      ? undefined
+      : Math.max(1, Math.round(action.attacks));
+    const effect = applyStatusEffect(monster.tracksCombat, {
+      id: action.effectId,
+      maxStacks: attacks ?? 1,
+      remainingMs: action.durationMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: {
+        monsterAttackSpeedBuff: 1,
+        attackSpeedPct: Math.max(0, action.attackSpeedPct),
+        totalMs: action.durationMs,
+        ...(attacks === undefined ? {} : { attacksRemaining: attacks }),
+      },
+    });
+    if (attacks !== undefined) effect.stacks = attacks;
+    return;
+  }
+
+  // A ward with the same id is a fresh shell, not another stack of the old one.
+  removeStatusEffect(monster.tracksCombat, action.effectId);
+  const wardAmount = Math.max(
+    1,
+    Math.round(monster.hasHealth.maxHp * Math.max(0, action.shieldPct)),
+  );
+  const shatter = action.shatter;
+  applyStatusEffect(monster.tracksCombat, {
+    id: action.effectId,
+    maxStacks: 1,
+    remainingMs: action.durationMs,
+    refreshable: false,
+    sourceId: monster.isMonster.id,
+    data: {
+      monsterWard: 1,
+      wardAmount,
+      wardMaxAmount: wardAmount,
+      totalMs: action.durationMs,
+      ...(shatter
+        ? {
+            monsterWardShatter: 1,
+            shatterSelfDamagePct: shatter.selfDamagePct,
+            ...(shatter.vulnerability
+              ? {
+                  shatterVulnerabilityPct: shatter.vulnerability.damageTakenPct,
+                  shatterVulnerabilityDurationMs: shatter.vulnerability.durationMs,
+                }
+              : {}),
+            ...(shatter.freezeRadius === undefined
+              ? {}
+              : { shatterFreezeRadius: shatter.freezeRadius }),
+            ...(shatter.freezeDurationMs === undefined
+              ? {}
+              : { shatterFreezeDurationMs: shatter.freezeDurationMs }),
+          }
+        : {}),
+    },
+  });
+}
+
+function resolveMonsterAbilityHit(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  action: MonsterAbilityHitAction,
+  now: number,
+): void {
+  const result: Record<string, unknown> = {};
+  const outcome = runMonsterAttack(world, monster, target, now, action.multiplier, result);
+  if (outcome !== 'hit' || result.evadeBlocksDebuffs === true) return;
+  if (action.effect) applyMonsterAbilityPlayerEffect(monster, target, action.effect);
+  if (action.knockback) {
+    applyPlayerKnockback(world, target, monster.hasPosition.current, action.knockback.distance);
+  }
+  const refreshed = world.getPlayerEntity(target.isPlayer.id);
+  if (refreshed) markEngaged(world, refreshed, now);
+}
+
+function resolveMonsterAbilityArea(
+  world: World,
+  monster: MonsterEntity,
+  action: MonsterAbilityAreaAction,
+  impact: Vec2,
+  now: number,
+): void {
+  const nodeId = monster.hasPosition.nodeId;
+  const victims = world.collision.bodiesInCircle(
+    world.livePlayersInNode(nodeId),
+    impact,
+    action.radius,
+  );
+  for (const victim of victims) {
+    const target = world.getPlayerEntity(victim.isPlayer.id);
+    if (!target) continue;
+    const result: Record<string, unknown> = {};
+    const outcome = runMonsterAttack(world, monster, target, now, action.multiplier, result);
+    if (outcome === 'hit' && result.evadeBlocksDebuffs !== true) {
+      if (action.effect) applyMonsterAbilityPlayerEffect(monster, target, action.effect);
+      if (action.stunMs && canApplyPlayerDebuff(target)) {
+        applyStun(
+          target.tracksCombat,
+          action.stunMs,
+          monster.isMonster.id,
+          harmfulStatusDurationMult(target),
+        );
+      }
+      if (action.knockback) {
+        applyPlayerKnockback(world, target, impact, action.knockback.distance);
+      }
+      const refreshed = world.getPlayerEntity(target.isPlayer.id);
+      if (refreshed) markEngaged(world, refreshed, now);
+    }
+    if (!world.hasMonster(monster.isMonster.id)) return;
+  }
+
+  for (const minion of world.collision.bodiesInCircle(
+    world.minionEntitiesInNode(nodeId),
+    impact,
+    action.radius,
+  )) {
+    if (minion.hasHealth.hp > 0) {
+      runMonsterAttackOnMinion(world, monster, minion, now, action.multiplier);
+    }
+  }
+}
+
+/** Resolve all actions in one generic ability at its captured impact point. */
+function resolveMonsterAbility(
+  world: World,
+  monster: MonsterEntity,
+  ability: MonsterAbility,
+  target: PlayerEntity | null,
+  impact: Vec2 | null,
+  now: number,
+): void {
+  for (const action of ability.actions) {
+    if (action.type === 'hit') {
+      if (target) resolveMonsterAbilityHit(world, monster, target, action, now);
+    } else if (action.type === 'area-hit') {
+      resolveMonsterAbilityArea(
+        world,
+        monster,
+        action,
+        impact ?? monster.hasPosition.current,
+        now,
+      );
+    } else {
+      applyMonsterAbilitySelfAction(monster, action);
+    }
+    if (!world.hasMonster(monster.isMonster.id)) return;
+  }
+}
+
+/**
+ * Run the generic ability scheduler. It is intentionally independent of the
+ * ordinary attack timer: abilities have their own cooldowns and a cast replaces
+ * the next few moments of basic pressure with a visible, authored beat.
+ */
+function updateMonsterAbilities(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity | null,
+  now: number,
+): boolean {
+  const abilities = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.monsterAbilities;
+  if (!abilities || abilities.length === 0) return false;
+
+  const activeId = activeMonsterAbilityId(monster);
+  if (activeId) {
+    const ability = abilities.find(candidate => candidate.id === activeId);
+    if (!ability) {
+      abortMonsterCast(world, monster);
+      return true;
+    }
+
+    const area = ability.actions.find(
+      (action): action is MonsterAbilityAreaAction => action.type === 'area-hit',
+    );
+    if (ability.target === 'player') {
+      const capturedId = monsterAbilityTargetId(monster);
+      if (
+        !target ||
+        !capturedId ||
+        capturedId !== target.isPlayer.id ||
+        target.hasPosition.nodeId !== monster.hasPosition.nodeId ||
+        target.hasHealth.hp <= 0
+      ) {
+        abortMonsterCast(world, monster);
+        return true;
+      }
+      const requiresRange = ability.requiresRange ?? true;
+      if (
+        !area &&
+        requiresRange &&
+        !ability.castWhileOutOfRange &&
+        !world.collision.canReach(monster, target, monster.performsAttack.attackRange)
+      ) {
+        abortMonsterCast(world, monster);
+        return true;
+      }
+    }
+
+    if (
+      isMonsterStunned(world, monster.isMonster.id) ||
+      isMonsterFrozen(world, monster.isMonster.id)
+    ) {
+      abortMonsterCast(world, monster);
+      return true;
+    }
+    if (now < monsterAbilityCastEndsAt(monster)) return true;
+
+    const impact = monsterAbilityImpactPoint(monster);
+    clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
+    completeMonsterAbility(monster, ability, now);
+    resolveMonsterAbility(world, monster, ability, target, impact, now);
+    if (!world.hasMonster(monster.isMonster.id)) return true;
+    // A cast COSTS the swing it replaced. `runMonsterAttack` already stamps this
+    // for the damage actions, but a self-only beat (a barrier, a frenzy) touches
+    // nothing — without this it would resolve and then immediately swing for free.
+    // The casted-buff path pays the same cost by waiting on the attack timer.
+    monster.performsAttack.lastAttackAt = now;
+    world.pushEvent(monster.hasPosition.nodeId, {
+      kind: 'monster-cast-end',
+      monsterId: monster.isMonster.id,
+      fired: true,
+      targetId: ability.target === 'player' ? target?.isPlayer.id : undefined,
+      pos: impact ? { ...impact } : { ...monster.hasPosition.current },
+      radius: area?.radius,
+      fx: ability.fx,
+    });
+    return true;
+  }
+
+  if (
+    isMonsterStunned(world, monster.isMonster.id) ||
+    isMonsterFrozen(world, monster.isMonster.id)
+  ) return false;
+
+  // ONE CAST PER MONSTER. Every other cast system in this loop is ordered so it
+  // cannot start on top of a live wind-up, and two invariants depend on that:
+  // `publishGroundZone` clears telegraphs by ownerId (so a second cast ERASES the
+  // first one's committed circle) and the client's cast bar is keyed by monster id
+  // (so a second cast-start steals the bar and the first cast-end closes it early).
+  // Without this guard an ability could begin mid-Devour, wipe its telegraph, and
+  // leave the slam to land unannounced. The generic scheduler yields; the charged /
+  // buff / ward beat it here and keeps its wind-up.
+  if (
+    chargedCastEndsAt(monster) > 0 ||
+    castedBuffCastEndsAt(monster) > 0 ||
+    lowHealthWardCastEndsAt(monster) > 0
+  ) return false;
+
+  for (const ability of abilities) {
+    if (ability.actions.length === 0 || !monsterAbilityReady(monster, ability, now)) continue;
+    if (ability.target === 'player' && !target) continue;
+    const requiresRange = ability.requiresRange ?? ability.target === 'player';
+    if (
+      requiresRange &&
+      !ability.castWhileOutOfRange &&
+      (!target || !world.collision.canReach(monster, target, monster.performsAttack.attackRange))
+    ) continue;
+
+    const area = ability.actions.find(
+      (action): action is MonsterAbilityAreaAction => action.type === 'area-hit',
+    );
+    const impact = area
+      ? ability.target === 'player'
+        ? { ...target!.hasPosition.current }
+        : { ...monster.hasPosition.current }
+      : undefined;
+    beginMonsterAbility(
+      monster,
+      ability,
+      now,
+      ability.target === 'player' ? target!.isPlayer.id : undefined,
+      impact,
+    );
+    if (impact && area) {
+      publishGroundZone(world, monster.hasPosition.nodeId, {
+        kind: 'slam-telegraph',
+        pos: impact,
+        radius: area.radius,
+        startedAtMs: now,
+        resolvesAtMs: now + ability.castMs,
+        ownerId: monster.isMonster.id,
+        fx: ability.fx,
+      });
+    }
+    world.pushEvent(monster.hasPosition.nodeId, {
+      kind: 'monster-cast-start',
+      monsterId: monster.isMonster.id,
+      castMs: ability.castMs,
+      label: ability.name,
+      fx: ability.fx,
+    });
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -1145,6 +1621,7 @@ function updateCastedAttackSpeedBuff(
       });
       if (charges !== undefined) effect.stacks = charges;
     }
+    rallyNearbyMonsters(world, monster, buff, now);
     world.pushEvent(monster.hasPosition.nodeId, {
       kind: 'monster-cast-end', monsterId: monster.isMonster.id, fired: true, fx: buff.fx,
     });
@@ -1477,12 +1954,14 @@ export function runMonsterAttackOnMinion(
   monster: MonsterEntity,
   minion: MinionEntity,
   now: number,
+  damageMultiplier = 1,
 ): void {
   const damage = Math.max(
     1,
     Math.round(
       Math.max(0, monster.dealsDamage.attack - minion.mitigatesDamage.plating) *
-        (1 - minion.mitigatesDamage.damageReduction),
+        (1 - minion.mitigatesDamage.damageReduction) *
+        Math.max(0, damageMultiplier),
     ),
   );
   minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - damage);
@@ -1750,7 +2229,7 @@ export function updateCombat(world: World, dt: number, now: number) {
     // §5.2) — the cost of the burst. MOVEMENT is deliberately NOT suppressed, so
     // casting never fights rune-driven autocombat pathing. Holding lastAttackAt
     // means the attack timer resumes from the end of the cast, not mid-swing.
-    if (player.isCastingAbility) {
+    if (player.isCastingAbility || player.isChargingAbility) {
       player.performsAttack.lastAttackAt = now;
       continue;
     }
@@ -1869,11 +2348,15 @@ export function updateCombat(world: World, dt: number, now: number) {
         setAttackTarget(world, e, null);
         continue;
       }
+      const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+      // Generic self abilities may begin outside attack range, and generic area
+      // abilities are committed to their planted point. Let that scheduler inspect
+      // the target before the ordinary range bail-out below.
+      if (updateMonsterAbilities(world, e, target, now)) continue;
       // A planted ground slam is COMMITTED: the circle was drawn on the ground,
       // so the swing lands whether or not the target is still standing in it.
       // Every other charge still breaks when the target slips out of reach.
       const slamCommitted = chargedCastEndsAt(e) > 0 && isChargeAoePlanted(e);
-      const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
       const lowHealthWard = monsterDef?.lowHealthWard;
       const castsOutsideAttackRange =
         monsterDef?.castedAttackSpeedBuff?.castWhileOutOfRange === true ||
@@ -2077,6 +2560,7 @@ export function updateCombat(world: World, dt: number, now: number) {
       setAttackTarget(world, e, null);
       continue;
     }
+    if (updateMonsterAbilities(world, e, null, now)) continue;
     if (!world.collision.canReach(e, minion, e.performsAttack.attackRange)) {
       const castsOutsideAttackRange =
         MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.castedAttackSpeedBuff?.castWhileOutOfRange === true;

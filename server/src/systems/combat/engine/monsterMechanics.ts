@@ -4,9 +4,12 @@ import {
   NODE_MODIFIERS,
   getCounter,
   getStatusEffect,
+  getString,
   modifiedDotDamagePerStack,
   removeStatusEffect,
   setCounter,
+  setString,
+  type MonsterAbility,
   type MonsterDefinition,
   type MonsterDotEffect,
   type Vec2,
@@ -87,6 +90,14 @@ const BUFF_CAST_CD_NEXT_KEY = "buffCastCdNextAt";
 const BUFF_CAST_SESSION_KEY = "buffCastSession";
 const LOW_HEALTH_WARD_CAST_ENDS_KEY = "lowHealthWardCastEndsAt";
 const LOW_HEALTH_WARD_USED_KEY = "lowHealthWardUsed";
+const MONSTER_ABILITY_CAST_ENDS_KEY = "monsterAbilityCastEndsAt";
+const MONSTER_ABILITY_ID_KEY = "monsterAbilityId";
+const MONSTER_ABILITY_TARGET_ID_KEY = "monsterAbilityTargetId";
+const MONSTER_ABILITY_AREA_ACTIVE_KEY = "monsterAbilityAreaActive";
+const MONSTER_ABILITY_X_KEY = "monsterAbilityX";
+const MONSTER_ABILITY_Y_KEY = "monsterAbilityY";
+const MONSTER_ABILITY_SESSION_PREFIX = "monsterAbilitySession:";
+const MONSTER_ABILITY_CD_NEXT_PREFIX = "monsterAbilityCdNext:";
 
 /** Combat-entry timestamp for the monster's current aggro session (or `now`). */
 function combatSession(monster: MonsterEntity, now: number): number {
@@ -391,6 +402,99 @@ export function cancelCastedBuff(monster: MonsterEntity): void {
   setCounter(monster.tracksCombat, BUFF_CAST_ENDS_KEY, 0);
 }
 
+/** Timestamp the active generic ability resolves at, or 0 while idle. */
+export function monsterAbilityCastEndsAt(monster: MonsterEntity): number {
+  return getCounter(monster.tracksCombat, MONSTER_ABILITY_CAST_ENDS_KEY);
+}
+
+/** The id of the active generic ability, if a cast is in progress. */
+export function activeMonsterAbilityId(monster: MonsterEntity): string | undefined {
+  const id = getString(monster.tracksCombat, MONSTER_ABILITY_ID_KEY);
+  return monsterAbilityCastEndsAt(monster) > 0 && id ? id : undefined;
+}
+
+/** The target captured when a player-targeted ability began casting. */
+export function monsterAbilityTargetId(monster: MonsterEntity): string | undefined {
+  const id = getString(monster.tracksCombat, MONSTER_ABILITY_TARGET_ID_KEY);
+  return id || undefined;
+}
+
+/** True when the active ability has a committed ground impact point. */
+export function isMonsterAbilityAoePlanted(monster: MonsterEntity): boolean {
+  return monsterAbilityCastEndsAt(monster) > 0 &&
+    getCounter(monster.tracksCombat, MONSTER_ABILITY_AREA_ACTIVE_KEY) === 1;
+}
+
+/** The committed impact point, or null for a direct/self-only ability. */
+export function monsterAbilityImpactPoint(monster: MonsterEntity): Vec2 | null {
+  if (!isMonsterAbilityAoePlanted(monster)) return null;
+  return {
+    x: getCounter(monster.tracksCombat, MONSTER_ABILITY_X_KEY),
+    y: getCounter(monster.tracksCombat, MONSTER_ABILITY_Y_KEY),
+  };
+}
+
+/** Whether one generic ability is ready in the current aggro session. */
+export function monsterAbilityReady(
+  monster: MonsterEntity,
+  ability: MonsterAbility,
+  now: number,
+): boolean {
+  const session = combatSession(monster, now);
+  const sessionKey = `${MONSTER_ABILITY_SESSION_PREFIX}${ability.id}`;
+  const cooldownKey = `${MONSTER_ABILITY_CD_NEXT_PREFIX}${ability.id}`;
+  const cs = monster.tracksCombat;
+  if (getCounter(cs, sessionKey) !== session) {
+    setCounter(cs, sessionKey, session);
+    setCounter(cs, cooldownKey, session + (ability.initialCooldownMs ?? ability.cooldownMs));
+  }
+  return now >= getCounter(cs, cooldownKey);
+}
+
+/** Begin a generic ability cast and optionally capture its committed impact. */
+export function beginMonsterAbility(
+  monster: MonsterEntity,
+  ability: MonsterAbility,
+  now: number,
+  targetId?: string,
+  impact?: Vec2,
+): void {
+  const cs = monster.tracksCombat;
+  setCounter(cs, MONSTER_ABILITY_CAST_ENDS_KEY, now + ability.castMs);
+  setString(cs, MONSTER_ABILITY_ID_KEY, ability.id);
+  setString(cs, MONSTER_ABILITY_TARGET_ID_KEY, targetId ?? "");
+  if (impact) {
+    setCounter(cs, MONSTER_ABILITY_AREA_ACTIVE_KEY, 1);
+    setCounter(cs, MONSTER_ABILITY_X_KEY, impact.x);
+    setCounter(cs, MONSTER_ABILITY_Y_KEY, impact.y);
+  } else {
+    setCounter(cs, MONSTER_ABILITY_AREA_ACTIVE_KEY, 0);
+  }
+}
+
+/** Complete a generic ability and arm its recurring cooldown. */
+export function completeMonsterAbility(
+  monster: MonsterEntity,
+  ability: MonsterAbility,
+  now: number,
+): void {
+  const cs = monster.tracksCombat;
+  setCounter(cs, MONSTER_ABILITY_CAST_ENDS_KEY, 0);
+  setCounter(cs, MONSTER_ABILITY_AREA_ACTIVE_KEY, 0);
+  setCounter(cs, `${MONSTER_ABILITY_CD_NEXT_PREFIX}${ability.id}`, now + ability.cooldownMs);
+  setString(cs, MONSTER_ABILITY_ID_KEY, "");
+  setString(cs, MONSTER_ABILITY_TARGET_ID_KEY, "");
+}
+
+/** Abort a generic ability without consuming its cooldown. */
+export function cancelMonsterAbility(monster: MonsterEntity): void {
+  const cs = monster.tracksCombat;
+  setCounter(cs, MONSTER_ABILITY_CAST_ENDS_KEY, 0);
+  setCounter(cs, MONSTER_ABILITY_AREA_ACTIVE_KEY, 0);
+  setString(cs, MONSTER_ABILITY_ID_KEY, "");
+  setString(cs, MONSTER_ABILITY_TARGET_ID_KEY, "");
+}
+
 /** Timestamp the one-time low-health ward cast resolves (0 while idle). */
 export function lowHealthWardCastEndsAt(monster: MonsterEntity): number {
   return getCounter(monster.tracksCombat, LOW_HEALTH_WARD_CAST_ENDS_KEY);
@@ -424,17 +528,47 @@ export function cancelLowHealthWard(monster: MonsterEntity): void {
 function applyCastedMonsterWard(
   monster: MonsterEntity,
   damage: number,
-): { damage: number; absorbed: number } {
-  if (damage <= 0) return { damage, absorbed: 0 };
+): {
+  damage: number;
+  absorbed: number;
+  broke: boolean;
+  shatter?: {
+    selfDamagePct: number;
+    vulnerability?: { damageTakenPct: number; durationMs: number };
+    freezeRadius?: number;
+    freezeDurationMs?: number;
+  };
+} {
+  if (damage <= 0) return { damage, absorbed: 0, broke: false };
   const ward = monster.tracksCombat.statusEffects.find(effect =>
     effect.remainingMs > 0 && effect.data.monsterWard === 1 && (effect.data.wardAmount ?? 0) > 0,
   );
-  if (!ward) return { damage, absorbed: 0 };
+  if (!ward) return { damage, absorbed: 0, broke: false };
   const amount = Math.max(0, Math.round(ward.data.wardAmount ?? 0));
   const absorbed = Math.min(amount, damage);
   ward.data.wardAmount = amount - absorbed;
-  if (ward.data.wardAmount <= 0) removeStatusEffect(monster.tracksCombat, ward.id);
-  return { damage: damage - absorbed, absorbed };
+  const broke = ward.data.wardAmount <= 0;
+  const shatter = broke && ward.data.monsterWardShatter === 1
+    ? {
+        selfDamagePct: Math.max(0, ward.data.shatterSelfDamagePct ?? 0),
+        ...(ward.data.shatterVulnerabilityPct === undefined
+          ? {}
+          : {
+              vulnerability: {
+                damageTakenPct: Math.max(0, ward.data.shatterVulnerabilityPct),
+                durationMs: Math.max(0, ward.data.shatterVulnerabilityDurationMs ?? 0),
+              },
+            }),
+        ...(ward.data.shatterFreezeRadius === undefined
+          ? {}
+          : { freezeRadius: Math.max(0, ward.data.shatterFreezeRadius) }),
+        ...(ward.data.shatterFreezeDurationMs === undefined
+          ? {}
+          : { freezeDurationMs: Math.max(0, ward.data.shatterFreezeDurationMs) }),
+      }
+    : undefined;
+  if (broke) removeStatusEffect(monster.tracksCombat, ward.id);
+  return { damage: damage - absorbed, absorbed, broke, shatter };
 }
 
 /** Spend one upcoming-attack haste charge after a monster completes a basic beat. */
@@ -558,22 +692,66 @@ export function applyEnemyShield(
   def: MonsterDefinition | undefined,
   damage: number,
   now: number,
-): { damage: number; absorbed: number; broke: boolean } {
+): {
+  damage: number;
+  absorbed: number;
+  broke: boolean;
+  shatter?: {
+    selfDamagePct: number;
+    vulnerability?: { damageTakenPct: number; durationMs: number };
+    freezeRadius?: number;
+    freezeDurationMs?: number;
+  };
+} {
   // shed-defense suppresses both the runtime override and any static barrier.
   if (monster.scriptsBoss?.defenseShed) return { damage, absorbed: 0, broke: false };
   const castedWard = applyCastedMonsterWard(monster, damage);
   damage = castedWard.damage;
+  // `lowHealthWard` uses the same absorb marker but has no Ice Armor shatter
+  // payoff. Only a casted ward that explicitly authors shatter may trigger the
+  // shared `broke` signal; otherwise a static periodic barrier is the only source.
+  const castedShatterBroke = castedWard.broke && castedWard.shatter !== undefined;
   const runtime = refreshEnemyShieldState(monster, def, now);
-  if (!runtime || damage <= 0) return { damage, absorbed: castedWard.absorbed, broke: false };
+  if (!runtime || damage <= 0) {
+    return {
+      damage,
+      absorbed: castedWard.absorbed,
+      broke: castedShatterBroke,
+      shatter: castedWard.shatter,
+    };
+  }
 
   // Absorb only while the active barrier is still up.
-  if (now >= runtime.expiresAt) return { damage, absorbed: castedWard.absorbed, broke: false };
+  if (now >= runtime.expiresAt) {
+    return {
+      damage,
+      absorbed: castedWard.absorbed,
+      broke: castedShatterBroke,
+      shatter: castedWard.shatter,
+    };
+  }
   const amount = runtime.amount;
-  if (amount <= 0) return { damage, absorbed: castedWard.absorbed, broke: false };
+  if (amount <= 0) {
+    return {
+      damage,
+      absorbed: castedWard.absorbed,
+      broke: castedShatterBroke,
+      shatter: castedWard.shatter,
+    };
+  }
 
   const absorbed = Math.min(amount, damage);
   const remaining = amount - absorbed;
   setCounter(monster.tracksCombat, SHIELD_AMOUNT_KEY, remaining);
   // The barrier broke if this hit drained the last of it (was up, now empty).
-  return { damage: damage - absorbed, absorbed: castedWard.absorbed + absorbed, broke: remaining <= 0 };
+  return {
+    damage: damage - absorbed,
+    absorbed: castedWard.absorbed + absorbed,
+    broke: castedShatterBroke || remaining <= 0,
+    shatter: castedWard.shatter ?? (
+      remaining <= 0 && runtime.shield.shatter
+        ? runtime.shield.shatter
+        : undefined
+    ),
+  };
 }

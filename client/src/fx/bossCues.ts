@@ -249,6 +249,50 @@ export function fxDireHowl(scene: GameScene, x: number, y: number): void {
   });
 }
 
+/** Jungle Ape Chestbeat: a compact, earthy pulse that reads as a rally rather
+ * than a damage ring. The cast bar carries the wind-up; this is the resolve cue. */
+export function fxChestBeat(scene: GameScene, x: number, y: number): void {
+  const core = scene.add.graphics({ x, y: y - 6 }).setDepth(DEPTH.FX);
+  core.fillStyle(0xc98b5b, 0.42);
+  core.fillCircle(0, 0, 18);
+  core.lineStyle(3, 0xffd09a, 0.95);
+  core.strokeCircle(0, 0, 18);
+  core.setScale(0.55);
+  scene.tweens.add({
+    targets: core,
+    scale: 1.45,
+    alpha: 0,
+    duration: 360,
+    ease: 'Quad.easeOut',
+    onComplete: () => core.destroy(),
+  });
+
+  for (let i = 0; i < 2; i++) {
+    const ring = scene.add.graphics({ x, y: y - 6 }).setDepth(DEPTH.FX);
+    ring.lineStyle(3 - i, i === 0 ? 0xffd09a : 0xc98b5b, 0.9 - i * 0.15);
+    ring.strokeCircle(0, 0, 20 + i * 7);
+    scene.tweens.add({
+      targets: ring,
+      scaleX: 4.4 + i * 1.2,
+      scaleY: 2.15 + i * 0.55,
+      alpha: 0,
+      delay: i * 85,
+      duration: 500 + i * 70,
+      ease: 'Cubic.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+  }
+
+  burstFx(scene, 'ptx-spark', x, y - 6, 20, 520, {
+    tint: 0xffc27f,
+    speed: { min: 45, max: 150 },
+    angle: { min: 0, max: 360 },
+    scale: { start: 0.8, end: 0 },
+    alpha: { start: 0.95, end: 0 },
+    gravityY: -25,
+  });
+}
+
 /** Thorn Spitter Barrage: a contained green charge-up, not a premature volley. */
 export function fxThornBarrage(scene: GameScene, x: number, y: number): void {
   const aura = scene.add.graphics({ x, y: y - 5 }).setDepth(DEPTH.FX);
@@ -354,5 +398,99 @@ export function fxShellUp(scene: GameScene, x: number, y: number): void {
     scale: { start: 0.85, end: 0 },
     alpha: { start: 0.95, end: 0 },
     gravityY: 85,
+  });
+}
+
+const TRENCH_CYAN = 0x72d8e8;
+const TRENCH_BLUE = 0x245f86;
+const TRENCH_VIOLET = 0xe0a8ff;
+
+/** Deep-sea melee sweep: a broad horizontal pressure wave, distinct from a slam. */
+export function fxTrenchSweep(scene: GameScene, x: number, y: number, radius: number): void {
+  const wave = scene.add.graphics({ x, y: y - 5 }).setDepth(DEPTH.FX);
+  wave.fillStyle(TRENCH_BLUE, 0.28);
+  wave.fillEllipse(0, 0, radius * 1.55, radius * 0.54);
+  wave.lineStyle(3, TRENCH_CYAN, 0.95);
+  wave.strokeEllipse(0, 0, radius * 1.55, radius * 0.54);
+  wave.setScale(0.45, 0.8);
+  wave.setAlpha(0);
+  scene.tweens.add({
+    targets: wave,
+    scaleX: 1.35,
+    scaleY: 1.15,
+    alpha: 0,
+    duration: 480,
+    ease: 'Cubic.easeOut',
+    onComplete: () => wave.destroy(),
+  });
+  burstFx(scene, 'ptx-dot', x, y - 5, 18, 500, {
+    tint: TRENCH_CYAN,
+    speed: { min: 50, max: 170 },
+    angle: { min: 0, max: 360 },
+    scale: { start: 0.75, end: 0 },
+    alpha: { start: 0.9, end: 0 },
+  });
+}
+
+/** Silt Mine: a violet warning footprint that snaps shut at the planted point. */
+export function fxTrenchMine(scene: GameScene, x: number, y: number, radius: number): void {
+  const mine = scene.add.graphics({ x, y }).setDepth(DEPTH.FX);
+  mine.fillStyle(TRENCH_VIOLET, 0.48);
+  mine.fillCircle(0, 0, Math.max(10, radius * 0.22));
+  mine.lineStyle(3, TRENCH_VIOLET, 0.95);
+  mine.strokeCircle(0, 0, Math.max(14, radius * 0.38));
+  mine.setScale(0.35);
+  scene.tweens.add({
+    targets: mine,
+    scale: 1.8,
+    alpha: 0,
+    duration: 440,
+    ease: 'Back.easeOut',
+    onComplete: () => mine.destroy(),
+  });
+  burstFx(scene, 'ptx-spark', x, y, 16, 420, {
+    tint: TRENCH_VIOLET,
+    speed: { min: 60, max: 190 },
+    angle: { min: 0, max: 360 },
+    scale: { start: 0.8, end: 0 },
+    alpha: { start: 1, end: 0 },
+  });
+}
+
+/** Current Shift: a tight cyan spiral around the skirmisher. */
+export function fxTrenchCurrent(scene: GameScene, x: number, y: number): void {
+  for (let i = 0; i < 2; i++) {
+    const ring = scene.add.graphics({ x, y: y - 5 }).setDepth(DEPTH.FX);
+    ring.lineStyle(2.5, i === 0 ? TRENCH_CYAN : TRENCH_BLUE, 0.9);
+    ring.strokeEllipse(0, 0, 34 + i * 12, 20 + i * 8);
+    ring.setRotation(i * 0.9);
+    scene.tweens.add({
+      targets: ring,
+      rotation: ring.rotation + (i === 0 ? 2.8 : -2.4),
+      scale: 1.8,
+      alpha: 0,
+      delay: i * 70,
+      duration: 500,
+      ease: 'Cubic.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+  }
+}
+
+/** Lantern Pulse / Predatory Surge: a compact deep-water pressure flash. */
+export function fxTrenchPulse(scene: GameScene, x: number, y: number, color = TRENCH_CYAN): void {
+  const pulse = scene.add.graphics({ x, y: y - 6 }).setDepth(DEPTH.FX);
+  pulse.fillStyle(color, 0.28);
+  pulse.fillCircle(0, 0, 20);
+  pulse.lineStyle(3, color, 0.95);
+  pulse.strokeCircle(0, 0, 20);
+  pulse.setScale(0.5);
+  scene.tweens.add({
+    targets: pulse,
+    scale: 2.2,
+    alpha: 0,
+    duration: 400,
+    ease: 'Quad.easeOut',
+    onComplete: () => pulse.destroy(),
   });
 }

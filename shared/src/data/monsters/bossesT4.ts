@@ -309,8 +309,10 @@ export const bossMonsterEntriesT4 = [
         { hpPct: 0.25, actions: [
           { type: 'stoke-ramp', rampMsMult: 0.70, minStacks: 4, maxStacksAdd: 3 },
           { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },
-          // The floor of the arena gives way.
-          { type: 'spawn-pool', radius: 260, durationMs: 20000, damagePerTick: 20, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
+          // The floor of the arena gives way after a visible rupture cast.
+          { type: 'cast', castMs: 1500, label: 'Caldera Vent', fx: 'frenzy', actions: [
+            { type: 'spawn-pool', radius: 260, durationMs: 20000, damagePerTick: 20, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
+          ] },
         ] },
       ],
     },
@@ -334,10 +336,10 @@ export const bossMonsterEntriesT4 = [
   //     deeper; at 25% a final wave claws up, driven by a necrotic roar.
   //
   // Contrast Plains, deliberately: there, new creatures keep ARRIVING. Here, the
-  // creatures you already killed refuse to stay dead — the entourage is small, and
-  // the pressure comes from having to kill the same bodies repeatedly while the
-  // boss is still up. It needs no big personal DoT package; the attrition is the
-  // entourage, and its Crown Decay is now a light chip rather than the main event.
+  // creatures you already killed refuse to stay dead, and the pressure comes from
+  // having to kill the same bodies repeatedly while the boss is still up. It needs
+  // no big personal DoT package; the corpse tide is the attrition, and Crown Decay
+  // is now a light chip rather than the main event.
   // ══════════════════════════════════════════════════════════════════════
   ['charnel-crown-sovereign', {
     id: 'charnel-crown-sovereign', name: 'Charnel-Crown Sovereign', color: 0x553366,
@@ -365,19 +367,11 @@ export const bossMonsterEntriesT4 = [
     },
     bossScript: {
       phases: [
-        // hpPct 1.0 fires the instant it is engaged: the entourage is part of the
-        // encounter's opening state, not a mid-fight surprise. `maxAlive` keeps the
-        // simultaneous count controlled — Wasteland is no longer a density biome.
-        { hpPct: 1.0, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 3, maxAlive: 5, offsetRange: 240 },
-          { type: 'spawn-adds', monsterTypeId: 'plague-hound', count: 1, maxAlive: 5, offsetRange: 240 },
-        ] },
         // MASS RESURRECTION — everything you have put down in the last few seconds
         // gets back up at once, and the tide is allowed to stand two deeper.
         { hpPct: 0.5, actions: [
           { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', actions: [
             { type: 'raise-dead', count: 3, maxAliveAdd: 2 },
-            { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 2, maxAlive: 5, offsetRange: 240 },
           ] },
         ] },
         // The last wave claws up, and a necrotic roar drives everything it owns.
@@ -431,6 +425,38 @@ export const bossMonsterEntriesT4 = [
     chargeOnAggro: { speedMult: 2.3, durationMs: 1200 },
     aoeAttack: { radius: 130, damageMult: 0.5 },
     enemyShield: { shieldPct: 0.28, intervalMs: 15000, durationMs: 6000 },
+    // The boss's secondary rotation turns the Trench into a sustained duel:
+    // Pressure applies a short recovery wound, Undertow accelerates its ordinary
+    // bites, and Crushing Tide is a committed slow zone around its body. Devour
+    // remains the rare, high-consequence signature; these three beats make the
+    // rest of the fight legible without adding another monster to the room.
+    monsterAbilities: [
+      {
+        id: 'abyssal-pressure', name: 'Abyssal Pressure', castMs: 1000,
+        cooldownMs: 7000, initialCooldownMs: 3500, target: 'player', fx: 'trench-depth-bolt',
+        actions: [{
+          type: 'hit', multiplier: 1.15,
+          effect: { kind: 'antiheal', reduction: 0.18, durationMs: 4500 },
+        }],
+      },
+      {
+        id: 'crushing-tide', name: 'Crushing Tide', castMs: 1200,
+        cooldownMs: 10000, initialCooldownMs: 6500, target: 'self',
+        requiresRange: true, fx: 'trench-body-sweep',
+        actions: [{
+          type: 'area-hit', radius: 175, multiplier: 0.60,
+          effect: { kind: 'slow', speedMult: 0.65, durationMs: 2500 },
+        }],
+      },
+      {
+        id: 'undertow-current', name: 'Undertow Current', castMs: 1100,
+        cooldownMs: 12000, initialCooldownMs: 7000, target: 'self', fx: 'trench-current',
+        actions: [{
+          type: 'attack-speed-buff', effectId: 'elder-undertow-current',
+          attackSpeedPct: 0.25, durationMs: 4500,
+        }],
+      },
+    ],
     // DEVOUR. Single-target by design — no `aoe`, both because a bite is a bite and
     // because the self-heal only resolves on the direct path. A very long tell, a
     // very long cooldown, and a very large consequence.

@@ -160,7 +160,7 @@ function tickScriptedCast(
 }
 
 function beginScriptedCast(
-  action: { castMs: number; label: string; actions: BossAction[]; fx?: 'roar' | 'frenzy' },
+  action: { castMs: number; label: string; actions: BossAction[]; fx?: 'roar' | 'frenzy' | 'shield' },
   monster: MonsterEntity,
   world: World,
   state: ScriptsBoss,

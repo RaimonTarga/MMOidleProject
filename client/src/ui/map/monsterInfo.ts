@@ -2,6 +2,7 @@ import {
   modifiedDamageReduction,
   modifiedDotDamagePerStack,
   modifierStatScalars,
+  describeMonsterAbility,
   monsterIsRanged,
   monsterKites,
   resolveMonsterDotDebuff,
@@ -145,6 +146,7 @@ export function monsterTags(def: MonsterDefinition): string[] {
   else if (monsterIsRanged(def)) tags.push('RANGED');
   if (def.holdsChokepoints) tags.push('HOLDS');
   if (def.chargeOnAggro) tags.push('CHARGE');
+  if (def.castedAttackSpeedBuff || def.monsterAbilities?.length) tags.push('CAST');
   if (def.dotEffect)     tags.push('DOT');
   if (def.slowEffect)    tags.push(def.slowEffect.speedMult === 0 ? 'ROOT' : 'SLOW');
   if (def.aoeAttack)     tags.push('AOE');
@@ -249,6 +251,27 @@ export function formatMonsterMechanics(
 
   if (def.holdsChokepoints) {
     lines.push('Holds a chokepoint — guards the pass instead of roaming');
+  }
+
+  if (def.castedAttackSpeedBuff) {
+    const b = def.castedAttackSpeedBuff;
+    const target = b.target === 'self'
+      ? 'itself'
+      : `nearby monsters within ${b.radius ?? 'the node'}${typeof b.radius === 'number' ? 'px' : ''}`;
+    const outcome = b.attacks !== undefined
+      ? `primes its next ${Math.max(1, Math.round(b.attacks))} attacks at +${pct(b.attackSpeedPct)} attack speed`
+      : `hastens ${target} by +${pct(b.attackSpeedPct)}${b.durationMs ? ` for ${sec(b.durationMs)}` : ''}`;
+    const rally = b.rallyNearby
+      ? ` and rallies up to ${Math.max(0, Math.round(b.rallyNearby.maxTargets))} unengaged nearby monsters`
+      : '';
+    lines.push(`${b.name} — casts for ${sec(b.castMs)}, then ${outcome}${rally}`);
+  }
+
+  if (def.monsterAbilities) {
+    for (const ability of def.monsterAbilities) {
+      // Same shared composer the bestiary uses, so the two panels never drift.
+      lines.push(`${ability.name} — ${describeMonsterAbility(ability)}`);
+    }
   }
 
   if (def.rampOnCombat) {

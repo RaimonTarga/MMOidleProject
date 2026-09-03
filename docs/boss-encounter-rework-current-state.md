@@ -87,10 +87,34 @@ Removed tier-wide, with no replacement:
 | self-`enrage` | Plains T1 + T2 | Plains escalates by concurrency, never by the boss becoming a better duellist. |
 | timed `shield` at 50% | Mountain T1, Cave T1 | A generic stall that taught nothing about either encounter. |
 | `spawn-adds` | Desert T2 | Desert compresses the biome's controller/dealer pairing into ONE duellist; outsourcing to adds made it a weaker Plains fight. |
+| `spawn-adds` | Mountain T2, Cave T2, Cave T3, Jungle T2, Wasteland T4 opener | **Second pass (see §4a).** Each was replaced by a casted beat the boss performs itself. Adds are now Plains' and Wasteland's identity rather than a default escalation any lineage can reach for. |
 | self-`enrage` | Forest T1 (added 2026-08-29, after the rework shipped) | Designer call: the pre-50% attack-speed ramp alone carries the T1 fight's identity; T2 `apex-timberclaw` keeps its own frequency-surge enrage. |
 
 The default replacement is **escalate the thing the encounter is already about** — see
 `empower-charged` and `empower-shred` below.
+
+---
+
+## 4a. Adds → casted beats (second pass)
+
+`spawn-adds` had become the generic escalation: five encounters outside the two lineages that
+*are about* adds reached for another body when the design called for the boss to do something.
+Each was converted to a `cast` action — a visible wind-up the boss performs itself, on the
+existing scripted-cast primitive, so it arrives with a cast bar and a `target-casting` condition.
+
+| Boss | Was | Now |
+|---|---|---|
+| `stoneplate-juggernaut` (Mountain T2) | 2× `peak-archer` | **Stoneplate Lock** — 1.4s cast, `plating ×1.5` for 5s. The "position" half of the identity, escalated. |
+| `chitinous-dreadbore` (Cave T2) | 1× `cave-troll` | **Carapace Seal** — 1.4s cast, `+15%` DR for 5.5s. |
+| `deep-core-burrow-gorger` (Cave T3) | 1× `cavern-troll` | **Deep Burrow** — 1.6s cast, `+18%` DR for 6s. A defensive climax to the corrosion, without a second body. |
+| `jungle-dread-gorger` (Jungle T2) | 2× `jungle-snake` + 1× `jungle-ape` | **Canopy Hunt** — 1.4s cast, `+25%` speed and attack speed for 7s. T2 now teaches "it jumps you, then hunts you". |
+| `charnel-crown-sovereign` (Wasteland T4) | `hpPct: 1.0` opener entourage + 2 more crawlers inside Mass Resurrection | Removed. The corpse tide **is** the attrition; a pre-seeded entourage just gave the resurrection something free to work with. |
+
+Volcanic T3/T4's `spawn-pool` was likewise wrapped in a `cast` (**Vent Rupture** /
+**Caldera Vent**) — the arena floor giving way is now announced rather than instant.
+
+⚠ `BossAction.cast.fx` gained `'shield'` alongside `'roar'` / `'frenzy'` for the defensive
+casts above.
 
 ---
 
@@ -228,10 +252,11 @@ between slams on a 4.2s swing timer.
 ### Cave — endurance / defensive erosion (T1–T3)
 Every phase is the corrosion going further:
 - **T1** `obsidian-broodmother`: 50% → `empower-shred maxStacksAdd: 3`.
-- **T2** `chitinous-dreadbore`: 50% → `platingPerStackAdd: 1` + a Cave Troll (armoured
-  support is the sanctioned Cave escalation).
+- **T2** `chitinous-dreadbore`: 50% → `platingPerStackAdd: 1` + the casted **Carapace Seal**
+  (see §4a — this replaced the Cave Troll add).
 - **T3** `deep-core-burrow-gorger`: threshold poison at 3 and 6; 50% → ceiling +4 with new
-  threshold rungs at 9 and 12; 25% → deeper bite + a Cavern Troll.
+  threshold rungs at 9 and 12; 25% → deeper bite + the casted **Deep Burrow** (replaced the
+  Cavern Troll add).
 
 ### Desert — setup / control → punishment (T2–T4)
 All three tiers now paint **and** cash their own Sun Mark (`appliesMark` + `markedStrike`),
@@ -325,8 +350,9 @@ Removed: `cadenceFinisher`, the 50% enrage, the 25% `shed-defense`.
    `MAX_CORPSES_PER_NODE` (16), the Sovereign's `corpseRange` (520) and `maxAlive` (4)
    together decide how big the tide actually gets. Nobody has measured it.
 5. **`spawn-adds` still does not leash to the boss** — pre-existing TODO in
-   `bossScripts.ts`; adds use normal AI leash. It matters more now that Wasteland and Cave
-   lean on adds.
+   `bossScripts.ts`; adds use normal AI leash. Narrower after the §4a pass: **Plains (T1/T2)
+   is now the only lineage using `spawn-adds` at all**; Wasteland's tide comes from
+   `raise-dead` on corpses the player already made.
 6. **Volcanic Heat magnitudes are placeholders** (`nodeFeatures.ts`: 6 stacks, 3s, +5%
    out / +8% in). The T4 stoke multiplies a number nobody has balanced yet.
 7. **`void-overlord` is untouched legacy.** Not redesigned, not rebalanced, not part of the

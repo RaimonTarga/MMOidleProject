@@ -30,6 +30,17 @@ assert(
   'Cave Troll should use a brief cast, rush, root, then arm its Ground Slam',
 );
 
+const T3_DEF = MONSTER_DATABASE.get('cavern-troll');
+assert(!!T3_DEF?.engageSequence, 'cavern troll should author an engage sequence');
+assert(!!T3_DEF?.chargedAttack?.aoe, 'cavern troll sequence needs its existing slam');
+const T3_SEQUENCE = T3_DEF!.engageSequence!;
+assert(
+  T3_SEQUENCE.kind === 'cast-charge-root' && T3_SEQUENCE.castMs === 500 &&
+    T3_SEQUENCE.speedMult === 15 && T3_SEQUENCE.rootMs === 1_700 &&
+    T3_SEQUENCE.followWithChargedAttack === true && T3_DEF.chargeOnAggro === undefined,
+  'Cavern Troll should replace its legacy charge-lock opener with Savage Rush',
+);
+
 function playerSlices(id: string, x: number): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: id },
@@ -66,6 +77,13 @@ function engage(world: World, playerId: string, monsterX: number, now: number) {
   return troll!;
 }
 
+function engageCavernTroll(world: World, playerId: string, monsterX: number, now: number) {
+  const troll = world.createMonster(NODE, 'cavern-troll', { x: monsterX, y: 400 });
+  assert(!!troll, 'test needs a cavern troll');
+  setAggroTarget(world, troll!, { id: playerId, kind: 'player' }, now);
+  return troll!;
+}
+
 // The Troll plants for a short cast, rushes, roots on contact without stunning,
 // then immediately starts its pre-existing Ground Slam.
 {
@@ -87,6 +105,29 @@ function engage(world: World, playerId: string, monsterX: number, now: number) {
   updateCombat(world, 100, t0 + 500);
   const zones = buildGroundZoneViews(world, NODE, t0 + 500) ?? [];
   assert(zones.length === 1 && zones[0].kind === 'slam-telegraph', 'landing should immediately start the existing Ground Slam telegraph');
+}
+
+// The T3 continuation must run the same cast -> rush -> root -> slam lifecycle,
+// not merely declare a matching data shape.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('t3-sequence-target', 405), 't3-sequence-target');
+  const t0 = 6_000;
+  engageCavernTroll(world, player.isPlayer.id, 400, t0);
+
+  updateMonsters(world, 100, t0);
+  assert(
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Savage Rush' && event.castMs === 500),
+    'the Cavern Troll should telegraph Savage Rush before charging',
+  );
+  updateMonsters(world, 100, t0 + 500);
+  const root = getStatusEffect(player.tracksCombat, 'slow');
+  assert(root?.data.speedMult === 0 && root.data.totalMs === 1_700, 'Cavern Troll Savage Rush should root on landing');
+  assert(player.cannotAttack === undefined, 'Cavern Troll Savage Rush should not lock player attacks');
+
+  updateCombat(world, 100, t0 + 500);
+  const zones = buildGroundZoneViews(world, NODE, t0 + 500) ?? [];
+  assert(zones.length === 1 && zones[0].kind === 'slam-telegraph', 'Cavern Troll landing should start its Ground Slam telegraph');
 }
 
 // The rush speed is an actual position-speed override, not just an animation cue.

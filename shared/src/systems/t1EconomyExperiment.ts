@@ -4,9 +4,9 @@ import type { EssenceType, ItemDefinition } from '../items';
 /** The four pre-registered arms of the fresh T1 economy factorial. */
 export type T1EconomyArm = 'C' | 'D' | 'E' | 'F';
 
-/** Fixed identity for this batch; changing it requires a new experiment. */
-export const T1_ECONOMY_EXPERIMENT_ID = 't1-economy-factorial-2026-09-01';
-export const T1_ECONOMY_EXPERIMENT_REVISION = 't1-economy-factorial-2026-09-01-r1';
+/** Fixed identity for the final Candidate F validation; changing it requires a new experiment. */
+export const T1_ECONOMY_EXPERIMENT_ID = 't1-economy-candidate-f-2026-09-03';
+export const T1_ECONOMY_EXPERIMENT_REVISION = 't1-economy-candidate-f-2026-09-03-r1';
 export const T1_ECONOMY_ARMS: readonly T1EconomyArm[] = ['C', 'D', 'E', 'F'];
 
 /** Configuration that is allowed to vary between factorial arms. */
@@ -16,6 +16,9 @@ export interface T1EconomyExperimentConfig {
   revision: typeof T1_ECONOMY_EXPERIMENT_REVISION;
   t1Plus5EssenceCostMultiplier: 0.6 | 0.75;
   catalystProgressPerUnitT1: 150 | 200;
+  /** Canonical T1 farm rates; these are real at rewardMultiplier=1. */
+  t1BiomeXpRewardMultiplier: 2;
+  t1BiomeEssenceRewardMultiplier: 2;
 }
 
 /** Pre-candidate T1 +5 essence prices. All other upgrade steps remain authored. */
@@ -49,6 +52,8 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.75,
     catalystProgressPerUnitT1: 150,
+    t1BiomeXpRewardMultiplier: 2,
+    t1BiomeEssenceRewardMultiplier: 2,
   },
   D: {
     arm: 'D',
@@ -56,6 +61,8 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.6,
     catalystProgressPerUnitT1: 150,
+    t1BiomeXpRewardMultiplier: 2,
+    t1BiomeEssenceRewardMultiplier: 2,
   },
   E: {
     arm: 'E',
@@ -63,6 +70,8 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.75,
     catalystProgressPerUnitT1: 200,
+    t1BiomeXpRewardMultiplier: 2,
+    t1BiomeEssenceRewardMultiplier: 2,
   },
   F: {
     arm: 'F',
@@ -70,6 +79,8 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.6,
     catalystProgressPerUnitT1: 200,
+    t1BiomeXpRewardMultiplier: 2,
+    t1BiomeEssenceRewardMultiplier: 2,
   },
 };
 
@@ -81,9 +92,9 @@ export function t1EconomyConfigForArm(arm: T1EconomyArm): T1EconomyExperimentCon
   return ARM_CONFIGS[arm];
 }
 
-/** The existing live economy is arm C until a dev bot explicitly selects an arm. */
+/** Candidate F is the live fallback; explicit bots still receive an authoritative arm echo. */
 export function defaultT1EconomyConfig(): T1EconomyExperimentConfig {
-  return ARM_CONFIGS.C;
+  return ARM_CONFIGS.F;
 }
 
 /** Project one T1 +5 cost with the project's nearest-5 Math.round convention. */

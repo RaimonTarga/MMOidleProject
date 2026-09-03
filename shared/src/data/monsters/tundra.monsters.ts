@@ -118,7 +118,7 @@ export const tundraMonsterEntries = [
   // T4
   ['rime-tusk-mastodon', {
     id: 'rime-tusk-mastodon', name: 'Rime-Tusk Mastodon', color: 0xaaddff,
-    // TELEGRAPHED HEAVY HITTER: predictable CADENCE Frost/Tusk Slam every 4th attack
+    // TELEGRAPHED HEAVY HITTER: a named Frost/Tusk Impact now replaces the invisible cadence beat
     // (240, trips the cap). No giant slow rider — ambient Chill already makes walking
     // out of the telegraph hard enough. Heavy ICE PLATING (12) rewards a brittle weapon.
     stats: { hp: 924, attack: 421, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
@@ -126,7 +126,11 @@ export const tundraMonsterEntries = [
     rewards: { essence: 110, essenceType: 'blue', level: 4, biomeXp: 660 },
     ai: { wanderRadius: 140, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9500 },
     chargeOnAggro: { speedMult: 2.3, durationMs: 1200 },
-    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 240
+    monsterAbilities: [{
+      id: 'frost-tusk-impact', name: 'Frost-Tusk Impact', castMs: 1000,
+      cooldownMs: 12000, initialCooldownMs: 5500, target: 'player', fx: 'frost-tusk-impact',
+      actions: [{ type: 'hit', multiplier: 2.0 }],
+    }],
   }],
 
   ['glacial-direbear', {

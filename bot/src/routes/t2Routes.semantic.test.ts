@@ -1,7 +1,14 @@
-import { EVOLUTION_REQUIRED_PLUS, NODE_BIOMES, RECIPE_DATABASE, biomeLevelCap } from "@mmo-idle/shared";
+import {
+  EVOLUTION_REQUIRED_PLUS,
+  NODE_BIOMES,
+  RECIPE_DATABASE,
+  STANCE_RECIPE_DATABASE,
+  biomeLevelCap,
+} from "@mmo-idle/shared";
 import { T2_BRANCHES, T2_CONTROL_ROUTE_IDS, T2_ROUTES, rangeSkillId } from "./t2RouteBuilder";
 import { T2_CLASS_PLANS } from "./t2GearPlans";
-import { T2_PROGRESSION_ORDER } from "./t2Common";
+import { T2_PROGRESSION_ORDER, type T2BiomeGroup } from "./t2Common";
+import { BIOME_ENCOUNTER_SHAPE, guardFor, techniqueFor } from "./t2Loadouts";
 import { planAcquisition } from "./t2Acquisition";
 import { t2EntryProfileId, TIER_ENTRY_PROFILES } from "../tierEntry/profiles";
 import type { RouteStep } from "../route/types";
@@ -167,6 +174,167 @@ for (const route of T2_ROUTES) {
       at.modifier === family,
       `${route.id}: ${id} costs ${family} catalysts but farms at an unfiltered ${at.biomeGroup} ref`,
     );
+  }
+}
+
+// ── Every scheduled purchase must be PAYABLE on the leg it is scheduled ────
+//
+// A gate is a biome LEVEL; affordability is a separate question, and on a clean
+// entry it is the binding one. An essence colour is only earned in the biomes
+// that mint it, so a cost scheduled before its colour's biome farms forever in a
+// node that can never produce it -- no error, no stall, just a run quietly
+// spending its whole budget on nothing. `pnpm bot:t2-payable` reports this;
+// this test refuses to let a route ship with it.
+{
+  const ESSENCE_BIOME: Record<string, string> = {
+    yellow: "plains",
+    green: "forest",
+    purple: "swamp",
+    blue: "mountain",
+    red: "cave",
+  };
+  const legOf = new Map<string, number>();
+  T2_PROGRESSION_ORDER.forEach((g, i) => legOf.set(g, i + 1));
+  const familyLeg = new Map<string, number>();
+  for (const info of Object.values(NODE_BIOMES)) {
+    if (info.biomeTier !== 2 || info.kind !== "normal") continue;
+    const family = (info as { modifier?: string }).modifier;
+    const leg = legOf.get(info.biomeGroup);
+    if (family && leg) familyLeg.set(family, Math.min(familyLeg.get(family) ?? 99, leg));
+  }
+
+  const checkCost = (
+    routeId: string,
+    what: string,
+    scheduledLeg: number,
+    cost: Partial<Record<string, number>> | undefined,
+    catalystCost: Partial<Record<string, number>> | undefined,
+  ): void => {
+    for (const [type, amount] of Object.entries(cost ?? {})) {
+      if ((amount ?? 0) <= 0) continue;
+      const leg = legOf.get(ESSENCE_BIOME[type] ?? "") ?? 99;
+      assert(
+        leg <= scheduledLeg,
+        `${routeId}: ${what} is scheduled on leg ${scheduledLeg} but needs ${amount} ${type}, ` +
+          `first minted on leg ${leg}`,
+      );
+    }
+    for (const [family, amount] of Object.entries(catalystCost ?? {})) {
+      if ((amount ?? 0) <= 0) continue;
+      const leg = familyLeg.get(family) ?? 99;
+      assert(
+        leg <= scheduledLeg,
+        `${routeId}: ${what} is scheduled on leg ${scheduledLeg} but needs ${amount} ${family} ` +
+          `catalysts, first minted on leg ${leg}`,
+      );
+    }
+  };
+
+  for (const route of T2_ROUTES) {
+    let leg = 0;
+    for (const step of flatten(route.steps)) {
+      if (step.type === "travel" && step.to.kind === "biome") {
+        leg = legOf.get(step.to.biomeGroup) ?? leg;
+        continue;
+      }
+      if (step.type === "craft") {
+        for (const id of step.recipeIds) {
+          const r = RECIPE_DATABASE.get(id)!;
+          checkCost(route.id, id, leg, r.cost, r.catalystCost);
+        }
+      } else if (step.type === "evolveItem") {
+        const r = RECIPE_DATABASE.get(step.recipeId)!;
+        checkCost(
+          route.id,
+          step.recipeId,
+          leg,
+          step.mode === "reconstruct" ? r.reconstructCost : r.cost,
+          step.mode === "reconstruct" ? r.reconstructCatalystCost : r.catalystCost,
+        );
+      } else if (step.type === "craftStance") {
+        const r = STANCE_RECIPE_DATABASE.get(step.recipeId)!;
+        assert(r, `${route.id}: stance recipe exists (${step.recipeId})`);
+        checkCost(route.id, step.recipeId, leg, r.cost, r.catalystCost);
+      }
+    }
+  }
+}
+
+// ── The encounter-shape policy, as the designer specified it ───────────────
+for (const route of T2_ROUTES) {
+  const steps = flatten(route.steps);
+  const owned = new Set<string>();
+  let leg: T2BiomeGroup | null = null;
+  const seenFarmKit = new Set<string>();
+
+  for (const step of steps) {
+    if (step.type === "travel" && step.to.kind === "biome") {
+      leg = step.to.biomeGroup as T2BiomeGroup;
+      continue;
+    }
+    if (step.type === "craftStance") {
+      owned.add(STANCE_RECIPE_DATABASE.get(step.recipeId)!.stanceId);
+      continue;
+    }
+    if (step.type === "setDefaultStance" && step.stanceId) {
+      // Never select a stance the run has not learned: the server silently
+      // rejects it and the leg then runs in a kit nobody authored.
+      assert(
+        owned.has(step.stanceId),
+        `${route.id}: selects ${step.stanceId} on the ${leg} leg before crafting it`,
+      );
+    }
+    if (step.type === "setAbilities" && leg && !seenFarmKit.has(leg)) {
+      seenFarmKit.add(leg);
+      const expected = techniqueFor(BIOME_ENCOUNTER_SHAPE[leg]);
+      assert(
+        step.techniques[0] === expected,
+        `${route.id}: ${leg} is a ${BIOME_ENCOUNTER_SHAPE[leg]} biome and must farm with ` +
+          `${expected}, not ${step.techniques[0]}`,
+      );
+      assert(
+        step.guards[0] === guardFor(leg),
+        `${route.id}: ${leg} must farm with ${guardFor(leg)}, not ${step.guards[0]}`,
+      );
+    }
+  }
+
+  // Cleanse is a designer instruction, and Swamp is the only biome that gets it.
+  for (const group of T2_PROGRESSION_ORDER) {
+    const expected = group === "swamp" ? "cleanse" : "second-wind";
+    assert(guardFor(group) === expected, `${group} guard policy is ${expected}`);
+  }
+
+  // Every boss is fought single-target, whatever its biome's farm shape.
+  const bossKits = steps.filter(
+    (s): s is Extract<RouteStep, { type: "setAbilities" }> =>
+      s.type === "setAbilities" && s.techniques[0] === "expose-weakness",
+  );
+  assert(
+    bossKits.length >= T2_PROGRESSION_ORDER.length,
+    `${route.id}: every boss is fought with the single-target technique`,
+  );
+
+  // Cores are only ever equipped after being crafted, and only unrestricted
+  // ones -- a directional core is inert without a range node.
+  const craftedCores = new Set<string>();
+  for (const step of steps) {
+    if (step.type === "craft") {
+      for (const id of step.recipeIds) {
+        if (RECIPE_DATABASE.get(id)?.slot === "core") craftedCores.add(id);
+      }
+    }
+    if (step.type === "equip") {
+      for (const id of step.definitionIds) {
+        const recipe = RECIPE_DATABASE.get(id);
+        if (recipe?.slot !== "core") continue;
+        assert(craftedCores.has(id), `${route.id}: equips core ${id} before crafting it`);
+        assert(
+          recipe.coreEligibility === "unrestricted",
+          `${route.id}: ${id} is a ${recipe.coreEligibility} core, inert without a range node`,
+        );
+      }
+    }
   }
 }
 

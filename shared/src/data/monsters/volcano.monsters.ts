@@ -97,6 +97,13 @@ export const volcanoMonsterEntries = [
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
+    monsterAbilities: [{
+      id: 'molten-guard', name: 'Molten Guard', castMs: 1000,
+      cooldownMs: 14000, initialCooldownMs: 6000, target: 'self', fx: 'volcanic-guard',
+      actions: [{
+        type: 'shield', effectId: 'magma-molten-guard', shieldPct: 0.14, durationMs: 4500,
+      }],
+    }],
   }],
 
   ['ash-slinger', {
@@ -140,8 +147,8 @@ export const volcanoMonsterEntries = [
 
   ['obsidian-tortoise', {
     id: 'obsidian-tortoise', name: 'Obsidian Tortoise', color: 0xcc2200,
-    // Evolved anchor. Its escalation over the Magma Tortoise is a predictable
-    // CADENCE Eruption every 4th attack (220, trips the cap) — not a ramp.
+    // Evolved anchor. Its escalation over the Magma Tortoise is a predictable,
+    // casted Molten Eruption on its own cooldown — not an invisible ramp or cadence.
     // Plating 8 rewards pierce. Slow alone, brutal inside the swarm.
     // avg/attack (3·100+220)/4 = 130 → ×(1000/3000) = 43 (pre-ramp).
     // Attack was authored 262 -- 2.6x the design comment's own intended base of
@@ -153,7 +160,11 @@ export const volcanoMonsterEntries = [
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 140, essenceType: 'red', level: 4, biomeXp: 840 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9500 },
-    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.2 },   // 220
+    monsterAbilities: [{
+      id: 'molten-eruption', name: 'Molten Eruption', castMs: 1100,
+      cooldownMs: 12000, initialCooldownMs: 5500, target: 'player', fx: 'volcanic-eruption',
+      actions: [{ type: 'hit', multiplier: 2.2 }],
+    }],
   }],
 
   ['ashspitter-salamander', {
@@ -171,15 +182,21 @@ export const volcanoMonsterEntries = [
 
   ['magma-salamander', {
     id: 'magma-salamander', name: 'Magma Salamander', color: 0xaa1100,
-    // Elite DEFENSIVE-WINDOW enemy. OBSIDIAN SHELL (`enemyShield`): a molten
-    // barrier that periodically reforms, rewarding BURST over DoT/chip. The exam is
-    // to break through its shell windows BEFORE the node's global Heat turns
-    // dangerous — the shell is what makes the fight run long, Heat is the cost.
+    // Elite DEFENSIVE-WINDOW enemy. OBSIDIAN SHELL is a casted molten barrier,
+    // rewarding BURST over DoT/chip. The exam is to break through its shell windows
+    // BEFORE the node's global Heat turns dangerous — the shell is what makes the
+    // fight run long, Heat is the cost.
     stats: { hp: 2904, attack: 246, plating: 6, damageReduction: 0.06, speed: 22, attackRange: 15, attackCooldown: 2600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic', elite: true,
     rewards: { essence: 190, essenceType: 'red', level: 4, biomeXp: 1140 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 4000, idleMaxMs: 11000 },
-    enemyShield: { shieldPct: 0.28, intervalMs: 14000, durationMs: 5000 },
+    monsterAbilities: [{
+      id: 'obsidian-shell', name: 'Obsidian Shell', castMs: 1200,
+      cooldownMs: 14000, initialCooldownMs: 6000, target: 'self', fx: 'volcanic-shell',
+      actions: [{
+        type: 'shield', effectId: 'magma-obsidian-shell', shieldPct: 0.28, durationMs: 5000,
+      }],
+    }],
   }],
 
 ] satisfies [string, MonsterDefinition][];

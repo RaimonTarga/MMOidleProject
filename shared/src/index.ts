@@ -74,6 +74,7 @@ export * from './protocol/death';
 export * from './protocol/socketEvents';
 export * from './protocol/characters';
 export * from './protocol/tierEntry';
+export * from './protocol/tier1Snapshot';
 export * from './world/nodeBiomes';
 export * from './world/nodeModifiers';
 export * from './world/nodeModifierMap';

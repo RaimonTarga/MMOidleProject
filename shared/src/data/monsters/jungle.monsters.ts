@@ -30,11 +30,11 @@ import type { MonsterDefinition } from './types';
 export const jungleMonsterEntries = [
 
     // ══ JUNGLE — TERRAIN CREATES THE SWARM ══
-    // HARD RULE (T1-T4 rework, locked): NO pack / alpha / follower / call-allies
+    // HARD RULE (T1-T4 rework, locked): no passive pack / alpha / follower
     // mechanics anywhere in this biome. The thicket's doubled detection radius is
-    // what gathers a fight, not monster coordination. Also REJECTED: a Marking Dart
-    // that raises the player's aggro radius. Do not implement it.
-    // Read: "I accidentally pulled six things." (Desert's read is the opposite.)
+    // still what gathers a fight. The Ape's Chestbeat is a deliberately limited,
+    // visible exception: one cast, one nearby rally, no recursive pack behavior.
+    // Also REJECTED: a Marking Dart that raises the player's aggro radius.
   ['jungle-snake', {
     id: 'jungle-snake', name: 'Jungle Snake', color: 0x33cc44,
     // BUSH-LURKING EARLY AMBUSHER. Likes to idle in/around thickets, opens with a
@@ -54,17 +54,21 @@ export const jungleMonsterEntries = [
 
   ['jungle-ape', {
     id: 'jungle-ape', name: 'Jungle Ape', color: 0xaa6633,
-    // PRIORITY BRUISER that punishes long fights. Two things only: a CHARGE to
-    // enter combat, and an attack RAMP that grows the longer the fight drags (the
-    // thicket's slow is what keeps you in it). The separate opening-strike
-    // multiplier and the generic DR are REMOVED (locked) — charge + ramp was
-    // already the whole idea, and a third spike layer just made it a mini-boss.
+    // PRIORITY BRUISER: charges into the fight, then uses a readable Chestbeat
+    // to hasten nearby monsters and call a small number of unengaged creatures
+    // onto its target. The old invisible attack ramp is removed; the casted
+    // window gives the player a clear moment to interrupt or focus the Ape.
     stats: { hp: 500, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
+    castedAttackSpeedBuff: {
+      name: 'Chestbeat', castMs: 1300, cooldownMs: 12000, initialCooldownMs: 1800,
+      effectId: 'monster-ape-chestbeat', attackSpeedPct: 0.3, durationMs: 4500,
+      target: 'nearby-monsters', radius: 320, castWhileOutOfRange: true,
+      rallyNearby: { maxTargets: 2, oncePerCombat: true }, fx: 'chest-beat',
+    },
   }],
  
   ['jungle-blowdarter', {
@@ -76,12 +80,13 @@ export const jungleMonsterEntries = [
     stats: { hp: 375, attack: 20, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
+    concealedWhileIdle: true,
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     dotEffect: { debuffId: 'dart-poison', label: 'Dart Poison', damagePerStack: 7, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2100 },
   }],
 
   // ══════════════════ JUNGLE — fast aggressive evasive swarm (Forest successor) ══════════════════
-  // NO PACK MECHANICS anywhere in this biome (user call): no alphas, no followers,
+  // NO PASSIVE PACK MECHANICS anywhere in this biome (user call): no alphas, no followers,
   // no call-allies. Jungle groups fights through TERRAIN — a thicket multiplies every
   // monster's detection radius while the player stands in it — not through monster
   // coordination. Do not reintroduce `pack` here without revisiting that.
@@ -113,15 +118,18 @@ export const jungleMonsterEntries = [
 
   ['canopy-harrier', {
     id: 'canopy-harrier', name: 'Canopy Chameleon', color: 0x88ff44,
-    // EVOLVED CONCEALED RANGED THREAT. Signature OPENING VOLLEY: reveal from
-    // camouflage and fire ~2 shots in quick succession, then ordinary ranged
-    // combat. No poison necessary.
+    // EVOLVED CONCEALED RANGED THREAT. Its signature is a readable, recurring
+    // Barrage cast: reveal from camouflage, prime two fast attacks, then return
+    // to ordinary ranged combat. No poison necessary.
     stats: { hp: 720, attack: 45, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1400, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'arrow', biome: 'jungle',
     rewards: { essence: 27, essenceType: 'green', level: 2, biomeXp: 165 },
-    // OPENING VOLLEY: reveal from camouflage and fire 2 shots in quick succession,
-    // then ordinary ranged combat. It does NOT re-camouflage mid-fight.
-    openingVolley: { hits: 2 },
+    concealedWhileIdle: true,
+    castedAttackSpeedBuff: {
+      name: 'Canopy Barrage', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3000,
+      effectId: 'canopy-chameleon-barrage', attackSpeedPct: 2, attacks: 2,
+      target: 'self', fx: 'barrage',
+    },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
   }],
 
@@ -156,14 +164,18 @@ export const jungleMonsterEntries = [
     // still reads chameleon. ID unchanged.
     id: 'thornback-lizard', name: 'Thornback Chameleon', color: 0x55bb44,
     // Chameleon line T4 apex: thorn-spiked elder chameleon. Camouflage while idle,
-    // then a STRONGER opening volley (~3 rapid projectiles), then ordinary ranged
-    // combat. Its stacking venom is REMOVED (locked) — late tier is not a reason.
+    // then a STRONGER recurring Barrage cast (~3 rapid attacks), then ordinary
+    // ranged combat. Its stacking venom is REMOVED (locked) — late tier is not a
+    // reason to add another invisible damage layer.
     stats: { hp: 748, attack: 52, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },
     behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 50, essenceType: 'green', level: 3, biomeXp: 300 },
-    // Stronger opening volley than the Canopy Chameleon: ~3 rapid projectiles out
-    // of concealment, then ordinary ranged combat.
-    openingVolley: { hits: 3 },
+    concealedWhileIdle: true,
+    castedAttackSpeedBuff: {
+      name: 'Thorn Barrage', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3000,
+      effectId: 'thornback-chameleon-barrage', attackSpeedPct: 2, attacks: 3,
+      target: 'self', fx: 'barrage',
+    },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
 

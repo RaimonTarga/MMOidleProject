@@ -53,6 +53,7 @@ initCombatSystems();
   assert(eagleDef?.stats.speed === 105 && eagleDef.ai.idleMinMs === 180 && eagleDef.ai.leashRange === 1_200, 'Stone Eagle should be significantly faster, change direction frequently while idle, and keep its target over a longer leash');
   assert(eagleDef.engageSequence?.kind === 'cast-charge-strike' && eagleDef.engageSequence.damageMultiplier === 2, 'Stone Eagle should author Skyfall Rend as a doubled landing strike');
   assert(rocDef?.attackStyle === 'talons' && rocDef.behavior === 'melee', 'Cliffside Roc should reuse the shared talon melee attack');
+  assert(rocDef.engageSequence?.kind === 'cast-charge-strike' && rocDef.engageSequence.damageMultiplier === 2.25 && rocDef.engageSequence.fx === 'dive-bomb', 'Cliffside Roc should inherit the telegraphed Skyfall Rend with an apex landing strike');
 }
 
 // Sighting the player begins the cast in place. Once it resolves, the hawk

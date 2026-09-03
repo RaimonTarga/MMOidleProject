@@ -1,4 +1,4 @@
-import { RECIPE_DATABASE, SKILL_TREE } from "@mmo-idle/shared";
+import { RECIPE_DATABASE, SKILL_TREE, STANCE_RECIPE_DATABASE } from "@mmo-idle/shared";
 import type { TierEntryProfile } from "@mmo-idle/shared";
 import type { Condition, Route, RouteStep } from "../route/types";
 import {
@@ -12,6 +12,21 @@ import {
 } from "./t2Common";
 import { T2_CLASS_PLANS, type T2ClassPlan } from "./t2GearPlans";
 import { obtainSteps, planAcquisition, type AcquisitionPlan } from "./t2Acquisition";
+import {
+  BIOME_ENCOUNTER_SHAPE,
+  CORE_CRAFT_LEG,
+  DEFENSIVE_STANCE,
+  DEFENSIVE_STANCE_LEG,
+  OFFENSIVE_STANCE,
+  OFFENSIVE_STANCE_LEG,
+  STANCE_RECIPES,
+  bossCoreFor,
+  bossStanceFor,
+  farmCoreFor,
+  farmStanceFor,
+  guardFor,
+  techniqueFor,
+} from "./t2Loadouts";
 import { t2EntryProfileId, TIER_ENTRY_PROFILES } from "../tierEntry/profiles";
 
 /**
@@ -147,6 +162,98 @@ function opportunisticUpgrades(worn: readonly string[], group: T2BiomeGroup): Ro
   });
 }
 
+/**
+ * The encounter-shape kit for farming one biome: ability pair, default stance
+ * and core, applied as one block at the top of the leg.
+ *
+ * Emitted even when a component is unchanged from the previous leg. The steps
+ * are idempotent (`setAbilities` and `equip` both no-op when already correct)
+ * and the redundancy buys something worth more than the saved tick: every leg's
+ * telemetry states the loadout it ran under, so a reader of the artifact never
+ * has to reconstruct it by scanning backwards.
+ */
+function farmLoadoutSteps(group: T2BiomeGroup): RouteStep[] {
+  const shape = BIOME_ENCOUNTER_SHAPE[group];
+  const stance = farmStanceFor(group);
+  const core = farmCoreFor(group);
+  const steps: RouteStep[] = [
+    {
+      type: "setAbilities",
+      techniques: [techniqueFor(shape)],
+      guards: [guardFor(group)],
+      label: `${group} farm kit: ${shape} (${techniqueFor(shape)} / ${guardFor(group)})`,
+    },
+    {
+      type: "setDefaultStance",
+      stanceId: stance,
+      label: stance ? `${shape} stance: ${stance}` : `no stance owned yet for the ${group} leg`,
+    },
+  ];
+  if (core) steps.push({ type: "equip", definitionIds: [core], label: `farm core: ${core}` });
+  return steps;
+}
+
+/**
+ * The boss kit. A boss is a single-target encounter whatever biome it lives in,
+ * so the crowd biomes drop Sweep here; the Guard still follows the biome, which
+ * is what keeps Cleanse on the Swamp boss.
+ */
+function bossLoadoutSteps(group: T2BiomeGroup): RouteStep[] {
+  const stance = bossStanceFor(group);
+  const core = bossCoreFor(group);
+  const steps: RouteStep[] = [
+    {
+      type: "setAbilities",
+      techniques: [techniqueFor("single-target")],
+      guards: [guardFor(group)],
+      label: `${group} boss kit: single-target (expose-weakness / ${guardFor(group)})`,
+    },
+    {
+      type: "setDefaultStance",
+      stanceId: stance,
+      label: stance ? `boss stance: ${stance}` : "no defensive stance owned yet",
+    },
+  ];
+  if (core) steps.push({ type: "equip", definitionIds: [core], label: `boss core: ${core}` });
+  return steps;
+}
+
+/** Craft the cores and stances whose craft leg is this one. */
+function buildAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
+  const steps: RouteStep[] = [];
+  for (const [coreId, leg] of Object.entries(CORE_CRAFT_LEG)) {
+    if (leg !== group) continue;
+    const recipe = RECIPE_DATABASE.get(coreId)!;
+    steps.push(
+      {
+        type: "farm",
+        at: t2(group),
+        until: { type: "recipeUnlocked", recipeId: coreId },
+        label: `farm ${group} until ${coreId} unlocks`,
+      },
+      {
+        type: "craft",
+        recipeIds: [coreId],
+        farmAt: t2FarmFor(group, soleCatalystFamily(recipe.catalystCost)),
+      },
+    );
+  }
+  for (const [stanceId, craftLeg] of [
+    [OFFENSIVE_STANCE, OFFENSIVE_STANCE_LEG],
+    [DEFENSIVE_STANCE, DEFENSIVE_STANCE_LEG],
+  ] as const) {
+    if (craftLeg !== group) continue;
+    const recipeId = STANCE_RECIPES[stanceId];
+    steps.push({
+      type: "craftStance",
+      recipeId,
+      farmAt: t2FarmFor(group, soleCatalystFamily(STANCE_RECIPE_DATABASE.get(recipeId)?.catalystCost)),
+      label: `learn ${stanceId}`,
+    });
+  }
+  return steps;
+}
+
 export interface T2RouteConfig {
   plan: T2ClassPlan;
   branch: T2Branch;
@@ -171,24 +278,24 @@ export function makeT2Route(config: T2RouteConfig): Route {
       rules: t2Runes(plan.movementProfile, plan.guard === "brace"),
       label: `carry the Tier-1 endgame ${plan.movementProfile} Rune profile into Tier 2`,
     },
-    {
-      type: "setAbilities",
-      techniques: [plan.technique],
-      guards: [plan.guard],
-      label: `carry the Tier-1 endgame ability pair into Tier 2`,
-    },
     { type: "milestone", id: "t2-entry" },
   );
 
   let bossesAttempted = 0;
   for (const group of T2_PROGRESSION_ORDER) {
     steps.push({ type: "travel", to: t2(group) });
+    // Cores and stances first: they are cheap, they are worn for the whole leg,
+    // and crafting them before the gear farm means the leg is fought in the kit
+    // the leg is supposed to be measuring.
+    steps.push(...buildAcquisitionSteps(group));
+    steps.push(...farmLoadoutSteps(group));
     const adopted: string[] = [];
     steps.push(...biomeLegSteps(plan, group, profile, adopted));
     for (const id of adopted) if (!worn.includes(id)) worn.push(id);
     steps.push(maxOutT2(group));
     steps.push({ type: "milestone", id: `${group}-t2-maxed` });
     steps.push(...opportunisticUpgrades(worn, group));
+    steps.push(...bossLoadoutSteps(group));
     steps.push({ type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 4 });
     steps.push({ type: "milestone", id: `${group}-t2-boss-attempted` });
     bossesAttempted += 1;
