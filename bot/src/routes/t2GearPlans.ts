@@ -343,6 +343,48 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
   },
 ];
 
+/**
+ * PROBE arm: Conduit with the Mountain hammer instead of the Cave axe.
+ *
+ * Reading the summoner spawn path, minion DPS is proportional to
+ * `owner.attack x owner.APS` -- the player's own DPS product -- so weapon SPEED
+ * is neutral to minion throughput. Every tiebreak then favours slow+heavy:
+ * flat plating is subtracted PER HIT, so few big hits lose far less to it than
+ * many small ones; and `onHitDamage` is not inherited by minions at all.
+ * The prediction is therefore `quake-hammer` (47 atk @ 0.55) over `ruinous-axe`
+ * (43 @ 1.20) for a formation build, which is the opposite of the naive DPS
+ * ordering the baseline plan follows.
+ *
+ * This arm varies the WEAPON and nothing else against `conduit`: same movement
+ * profile, same armour, same stance/core policy, same biome order. Note it also
+ * moves Conduit's weapon arrival one leg EARLIER (Mountain, leg 4, rather than
+ * Cave, leg 5), so it must be read against the Conduit baseline only -- never
+ * against another class.
+ */
+export const CONDUIT_HAMMER_PROBE_PLAN: T2ClassPlan = (() => {
+  const base = T2_CLASS_PLANS.find((plan) => plan.slug === "conduit");
+  if (!base) throw new Error("conduit base plan missing");
+  return {
+    ...base,
+    slug: "conduit-hammer",
+    hypothesis:
+      "Conduit prefers a slow high-attack weapon: minion throughput is speed-neutral " +
+      "(minion DPS ~ owner.attack x owner.APS), and flat per-hit plating plus " +
+      "non-inherited onHitDamage both break the tie toward quake-hammer over ruinous-axe.",
+    biomes: {
+      ...base.biomes,
+      mountain: {
+        adopt: ["quake-hammer"],
+        skip: { "mountain-vest-t2": "guard potency does not serve Second Wind" },
+      },
+      cave: {
+        adopt: ["cave-vest-t2"],
+        craftOnly: ["ruinous-axe"],
+      },
+    },
+  };
+})();
+
 export function requireClassPlan(slug: string): T2ClassPlan {
   const plan = T2_CLASS_PLANS.find((p) => p.slug === slug);
   if (!plan) throw new Error(`unknown T2 class plan "${slug}"`);

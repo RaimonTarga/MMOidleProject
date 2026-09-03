@@ -15,7 +15,11 @@ import {
   t2Runes,
   type T2BiomeGroup,
 } from "./t2Common";
-import { T2_CLASS_PLANS, type T2ClassPlan } from "./t2GearPlans";
+import {
+  CONDUIT_HAMMER_PROBE_PLAN,
+  T2_CLASS_PLANS,
+  type T2ClassPlan,
+} from "./t2GearPlans";
 import { obtainSteps, planAcquisition, type AcquisitionPlan } from "./t2Acquisition";
 import {
   BIOME_ENCOUNTER_SHAPE,
@@ -441,3 +445,22 @@ export const T2_PROGRESSION_ROUTES: readonly Route[] = T2_CLASS_PLANS.map((plan)
 export const T2_PROGRESSION_ROUTE_IDS: readonly string[] = T2_PROGRESSION_ROUTES.map(
   (r) => r.id,
 );
+
+/**
+ * Bossless PROBE arms: one variable each, read only against their own baseline.
+ *
+ * Kept out of `T2_PROGRESSION_ROUTES` deliberately. That export is the six-class
+ * comparative cohort, and the cross-class interpretation rules ("degraded for 4
+ * of 6 classes") are only meaningful over exactly one route per class. A probe
+ * is a within-class A/B and would corrupt those counts if pooled.
+ */
+export const T2_PROBE_ROUTES: readonly Route[] = [
+  makeT2Route({
+    plan: CONDUIT_HAMMER_PROBE_PLAN,
+    branch: "mid",
+    version: "1.0.0",
+    bossless: true,
+  }),
+];
+
+export const T2_PROBE_ROUTE_IDS: readonly string[] = T2_PROBE_ROUTES.map((r) => r.id);

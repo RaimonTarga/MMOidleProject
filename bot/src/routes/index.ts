@@ -19,6 +19,8 @@ import { STRIKER_BRACE_TANK_T1 } from "./strikerBraceTankT1";
 import { STRIKER_V2_T1 } from "./strikerV2T1";
 import {
   T2_CONTROL_ROUTE_IDS,
+  T2_PROBE_ROUTES,
+  T2_PROBE_ROUTE_IDS,
   T2_PROGRESSION_ROUTES,
   T2_PROGRESSION_ROUTE_IDS,
   T2_ROUTES,
@@ -72,10 +74,11 @@ export const ROUTES = new Map<string, Route>(
     CONDUIT_V2_T1,
     ...T2_ROUTES,
     ...T2_PROGRESSION_ROUTES,
+    ...T2_PROBE_ROUTES,
   ].map((route) => [route.id, route]),
 );
 
-export { T2_CONTROL_ROUTE_IDS, T2_ROUTE_IDS, T2_PROGRESSION_ROUTE_IDS };
+export { T2_CONTROL_ROUTE_IDS, T2_ROUTE_IDS, T2_PROGRESSION_ROUTE_IDS, T2_PROBE_ROUTE_IDS };
 
 /** The eighteen Tier-2 branch routes: 6 class plans x 3 range nodes. */
 export const T2_BRANCH_ROUTES: readonly Route[] = T2_ROUTES;
@@ -105,7 +108,10 @@ export function isT1ControlledRouteId(id: string): boolean {
  * uncontrolled parallel -- and uncontrolled parallel is what put all five bots
  * of T2-E009 in a single node and voided the run as comparative evidence.
  */
-export const T2_CONTROLLED_ROUTE_IDS: readonly string[] = T2_PROGRESSION_ROUTE_IDS;
+export const T2_CONTROLLED_ROUTE_IDS: readonly string[] = [
+  ...T2_PROGRESSION_ROUTE_IDS,
+  ...T2_PROBE_ROUTE_IDS,
+];
 
 export function isT2ControlledRouteId(id: string): boolean {
   return T2_CONTROLLED_ROUTE_IDS.includes(id);

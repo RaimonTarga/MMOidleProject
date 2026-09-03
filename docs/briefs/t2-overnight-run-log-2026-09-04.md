@@ -38,8 +38,9 @@ class with no snapshot B.
 | 1 T2 routes admitted to controlled batch | done | unlocks isolated-parallel leases; replicates allowed for all-T2 cohorts |
 | 2 bossless route family | done, mutation-checked | 6 routes, 124–137 steps each, `attemptBoss=0`, completion `globalMasteryAtLeast 72` |
 | per-leg dwell brackets | done | `<group>-t2-entered` / `<group>-t2-leg-complete` |
-| 3 per-route snapshot resolution | TODO | `--tierEntrySnapshotDir` |
-| 4 response-map aggregation | TODO | |
+| 3 per-route snapshot resolution | done | `--tierEntrySnapshotDir`, median-wallet per class, `clean` fallback |
+| Conduit quake-hammer probe arm | done | `conduit-hammer-t2-progression`, kept OUT of the 6-class cohort |
+| 4 response-map aggregation | TODO | analysis-side; can land while the cohort runs |
 | 5 missing metrics | TODO | TTK, kills/min, adoption timing, disengagement |
 
 `pnpm typecheck` clean. `t2Routes.semantic.test.ts` ok. `eliteTargeting.test.ts` ok.
@@ -109,3 +110,81 @@ rep2 started 22:37.
 ---
 
 ## Phase D/E — to follow
+
+### F3 — the +5 gate was NOT the dominant cause of expensive Tier-2 gear
+
+Decision 1 (`EVOLUTION_REQUIRED_PLUS` 5 -> 3) was expected to convert most of the
+22-of-50 reconstructions into cheap evolves. Measured across all 18 templates,
+before and after, by re-running `bot:t2-reachability` with the constant flipped:
+
+| path | +5 (old) | +3 (new) | delta |
+|---|---:|---:|---:|
+| CRAFT (plain recipe) | 66 | 66 | 0 |
+| EVOLVE (predecessor in bag) | 7 | **19** | **+12** |
+| EVOLVE after unequip | 24 | 24 | 0 |
+| **RECONSTRUCT** | **95** | **83** | **-12** |
+
+Only **12 of 95** reconstructions flip — a 13% reduction, not the wholesale fix
+the hypothesis implied. The reason is visible in the per-item dump: most
+reconstructions are **"predecessor ABSENT"** (`cave-vest-t1 absent`,
+`forest-vest-t1 absent`, `heavy-hammer absent`, `ashbrand-blade absent`), i.e.
+the canonical T1 route never owned the predecessor at all. No gate change can
+help those; only the "held at +3/+4" cases flip, such as Striker's
+`flash-rapier +4` now evolving into both `gale-needle` and `thorn-needle`.
+
+**This substantially weakens ledger hypothesis T2-H06** ("the +5 evolution gate,
+not Tier-2 costs, is what makes Tier-2 gear expensive"). The dominant cause is
+predecessor ABSENCE in the Tier-1 routes, which is a route-coverage question, not
+a gate question. Worth a designer look, but not tonight and not by me.
+
+Notably, this is also an argument that decision 1 was cheap rather than wrong:
+it removes a real tax on genuinely-invested items without moving the bulk of the
+economy.
+
+---
+
+## Incident — worktree relocated mid-session
+
+The worktree was originally created under
+`C:/Users/osaif/AppData/Local/Temp/claude/t2wt`. Partway through Phase A, every
+package's `node_modules/typescript` disappeared (root `node_modules` emptied to 0
+entries while `node_modules/.pnpm` survived with 26), breaking `pnpm typecheck`
+where it had passed minutes earlier. Source files and git commits were unharmed.
+
+Cause not conclusively established — most likely temp-directory cleanup. Rather
+than fight it during an unattended overnight run, the worktree was **relocated to
+`C:/Users/osaif/Documents/Claude/Projects/mmo-idle-t2wt`**, a sibling of the
+project directory. Deliberately a sibling and NOT inside it: the docker container
+bind-mounts `.../Projects/MMO idle` specifically, so a sibling is invisible to
+the running server and to the T1 launcher.
+
+Because the branch commits live in the shared `.git` object store, the move was a
+`git worktree remove` + `git worktree add` on the same branch, with zero work
+lost. Deps reinstalled (11.2s), and `shared`/`server`/`bot` all typecheck clean;
+`admin` deps are incomplete in the worktree and are irrelevant to this work, so
+`pnpm typecheck` (which includes admin) is not the right gate here -- per-package
+`tsc --noEmit` is.
+
+**Lesson for future unattended runs: do not put a worktree under `Temp`.**
+
+---
+
+## Phase B — executed 01:42
+
+Replicate 3's batch spawned at 01:42:19. Launcher PID 8568 verified by
+CommandLine (`run-t1-candidate-f.ps1 ... -Replicates 5`) and killed. All ten
+`replicate-03` processes confirmed alive and unchanged after the kill, so
+replicate 3 continues as an orphan and replicate 4 is never created — the
+intended race-free stop. Phase-C monitor armed for the tree exiting (~04:45).
+
+## Launch readiness
+
+Verified offline (no server contact, so the T1 cohort is undisturbed):
+
+- `controlledBatchSettings` accepts `isolated-parallel` / `maxConcurrency 6` /
+  `staggerMs 60000` for the cohort;
+- all 7 routes are controlled-admitted, `count=2` permitted for an all-T2 cohort;
+- **13 runs** = 6 classes x 2 replicates + 1 Conduit hammer probe;
+- every route reports `startsFromTierEntry=2`, `completion=globalMasteryAtLeast`,
+  `attemptBoss=0`;
+- 18/18 entry templates still validate under the new +3 gate.
