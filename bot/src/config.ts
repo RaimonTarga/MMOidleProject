@@ -34,6 +34,16 @@ export interface BotConfig {
   /** Optional Snapshot B JSON produced by a real canonical T1 run. */
   tierEntrySnapshotPath?: string;
   /**
+   * Optional directory of real Tier-1 runs, from which the per-route Snapshot B
+   * is resolved BY CLASS ROOT (median wallet where a class has several).
+   *
+   * A snapshot is class-specific, so a six-class batch cannot share one
+   * `--tierEntrySnapshot=<file>`. Any class with no usable snapshot in the
+   * directory falls back to its synthetic `--entryEconomy` template, and the
+   * substitution is visible in the run header's profile id.
+   */
+  tierEntrySnapshotDir?: string;
+  /**
    * Carryover-economy arm for a route that starts from a tier-entry template.
    *
    * A batch of eighteen Tier-2 routes spans six classes, and a tier-entry
@@ -201,6 +211,7 @@ export function buildConfig(args: Record<string, string>): BotConfig {
     policyId,
     tierEntryProfileId: args.tierEntry || args.entryProfile,
     tierEntrySnapshotPath: args.tierEntrySnapshot,
+    tierEntrySnapshotDir: args.tierEntrySnapshotDir,
     entryEconomy:
       args.entryEconomy === "natural" || args.entryEconomy === "catalyst-primed"
         ? args.entryEconomy

@@ -39,6 +39,7 @@ import {
 } from "./telemetry/t1Snapshots";
 import { botRegistry, type BotStatus, type WorldEntity, type WorldView } from "./ui/status";
 import { requireTierEntryProfile, t2EntryProfileId } from "./tierEntry/profiles";
+import { indexSnapshotDir } from "./tierEntry/snapshotDir";
 import { formatValidation, validateProfile, validateSpawn } from "./tierEntry/validate";
 
 const RECORDER_TICK_MS = 1_000;
@@ -98,8 +99,44 @@ export async function runBot(
   if (config.tierEntryProfileId && config.tierEntrySnapshotPath) {
     throw new Error("--tierEntry and --tierEntrySnapshot are mutually exclusive");
   }
-  const sourceSnapshot = config.tierEntrySnapshotPath
-    ? readT1CharacterSnapshot(config.tierEntrySnapshotPath)
+  if (config.tierEntrySnapshotPath && config.tierEntrySnapshotDir) {
+    throw new Error("--tierEntrySnapshot and --tierEntrySnapshotDir are mutually exclusive");
+  }
+
+  // Resolve a REAL Tier-1 handoff for this route's class, when a source
+  // directory was given. A class with no usable snapshot falls through to its
+  // synthetic template rather than failing the run: the cohort keeps all six
+  // classes (so the cross-class interpretation rules still have six to work
+  // with), and the substitution stays visible in the header's profile id, which
+  // is `snapshot-*` for a real handoff and `*-t2-entry-*` for a template.
+  let resolvedSnapshotPath = config.tierEntrySnapshotPath;
+  if (config.tierEntrySnapshotDir && authoredRoute.startsFromTierEntry) {
+    const index = indexSnapshotDir(config.tierEntrySnapshotDir);
+    const match = index.byClassRoot.get(authoredRoute.classRoot);
+    if (match) {
+      resolvedSnapshotPath = match.file;
+      console.log(
+        `[bot] ${config.routeId}: real T1 handoff for ${authoredRoute.classRoot} ` +
+          `(essence ${match.walletTotal}) -> ${match.file}`,
+      );
+    } else {
+      console.warn(
+        `[bot] ${config.routeId}: NO usable T1 handoff for ${authoredRoute.classRoot} in ` +
+          `${config.tierEntrySnapshotDir}; falling back to the synthetic ` +
+          `"${config.entryEconomy}" template. This run is NOT comparable to a ` +
+          `snapshot-entry run and must not be pooled with one.`,
+      );
+      if (index.rejected.length > 0) {
+        console.warn(`[bot] ${index.rejected.length} snapshot file(s) were rejected:`);
+        for (const reject of index.rejected.slice(0, 5)) {
+          console.warn(`[bot]   ${reject.file}: ${reject.reason}`);
+        }
+      }
+    }
+  }
+
+  const sourceSnapshot = resolvedSnapshotPath
+    ? readT1CharacterSnapshot(resolvedSnapshotPath)
     : undefined;
   if (sourceSnapshot && !authoredRoute.startsFromTierEntry) {
     throw new Error(
