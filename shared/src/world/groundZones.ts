@@ -84,4 +84,10 @@ export interface GroundZoneView {
    * differently so "it is still aiming at me" never looks like "it is committed".
    */
   lockedInMs?: number;
+  /**
+   * `charge-corridor` only: the monster the lane belongs to. Lets the client tie the
+   * lane to the body that is about to run down it — both for the dust it kicks up and
+   * so a lane in a busy room is never ambiguous about whose it is.
+   */
+  ownerId?: string;
 }

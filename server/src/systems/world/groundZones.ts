@@ -679,7 +679,11 @@ export function buildGroundZoneViews(
       durationMs,
       remainingMs,
       ...(zone.kind === 'charge-corridor'
-        ? { lockedInMs: Math.max(0, zone.lockedAtMs - now), ...(zone.fx ? { fx: zone.fx } : {}) }
+        ? {
+            lockedInMs: Math.max(0, zone.lockedAtMs - now),
+            ownerId: zone.ownerId,
+            ...(zone.fx ? { fx: zone.fx } : {}),
+          }
         : {}),
       ...(zone.kind === 'toxic-pool' && zone.flavor ? { flavor: zone.flavor } : {}),
       ...(zone.kind === 'slam-telegraph' && zone.fx ? { fx: zone.fx } : {}),
