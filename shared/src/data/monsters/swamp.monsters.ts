@@ -137,7 +137,7 @@ export const swampMonsterEntries = [
     // CONTAMINATES the surrounding area with a poison cloud/pool.
     // Progression: earlier Snapper shell = defense; later Snapper shell = defense +
     // space denial. Generic DR removed so HP + plating + shell carry the defense.
-    stats: { hp: 400, attack: 37, plating: 4, damageReduction: 0, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    stats: { hp: 580, attack: 37, plating: 4, damageReduction: 0, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },
@@ -161,7 +161,7 @@ export const swampMonsterEntries = [
     // player.
     // WARNING: it does NOT create extra poison stacks (its own dotEffect is removed,
     // locked). It SUPPORTS poison applied by the rest of the biome.
-    stats: { hp: 350, attack: 42, plating: 0, damageReduction: 0, speed: 36, attackRange: 200, attackCooldown: 2200, pullRange: 230 },
+    stats: { hp: 510, attack: 42, plating: 0, damageReduction: 0, speed: 36, attackRange: 200, attackCooldown: 2200, pullRange: 230 },
     behavior: 'kiter', attackStyle: 'hex', biome: 'swamp',
     rewards: { essence: 35, essenceType: 'purple', level: 2, biomeXp: 210 },
     // PLAGUE HEX - inherits Wither and adds the lineage's evolution: it EXTENDS
@@ -185,7 +185,7 @@ export const swampMonsterEntries = [
     // Signature opener: the first bite lands a larger multi-stack poison alpha strike
     // (~3 stacks). Ordinary combat afterwards — no pool retreat, no stealth reset.
     // Evasion is its defensive specialisation, so the DR bulk is removed.
-    stats: { hp: 340, attack: 43, plating: 0, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
+    stats: { hp: 490, attack: 43, plating: 0, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 57, essenceType: 'purple', level: 3, biomeXp: 345 },
     // It LIVES in the bog: `idleAnchor` keeps it idling inside the nearest pool

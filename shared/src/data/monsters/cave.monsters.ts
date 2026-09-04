@@ -152,7 +152,7 @@ export const caveMonsterEntries = [
     // The roaming line's ceiling: even more active roaming over a large wander
     // space, stronger venom, and high speed that catches kiters (anti-Far).
     // NO evasion (locked) and deliberately no DR added back in its place.
-    stats: { hp: 450, attack: 60, plating: 0, damageReduction: 0.08, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 220 },
+    stats: { hp: 610, attack: 60, plating: 0, damageReduction: 0.08, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave', elite: true,
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     // Roams harder and idles less than the Giant Spider - the T3 escalation of the
@@ -166,7 +166,7 @@ export const caveMonsterEntries = [
     // The elite ceiling: armored cap-tripping bruiser, charges to connect. Heavy
     // DR + plating means slow/piercing weapons earn their keep. Anti-Far.
     // pullRange 150→240 (placeholder): high-detection elite — overpull risk.
-    stats: { hp: 700, attack: 124, plating: 2, damageReduction: 0.10, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
+    stats: { hp: 945, attack: 124, plating: 2, damageReduction: 0.10, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 83, essenceType: 'red', level: 3, biomeXp: 500 },
     ai: { wanderRadius: 120, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -184,10 +184,11 @@ export const caveMonsterEntries = [
     },
     // GROUND SLAM — the elite ceiling's version: widest footprint, longest tell.
     // Still escapable on foot at player base speed; that is the contract.
-    // PLACEHOLDER numbers — balance pass owns them.
+    // The T3 numerical balance keeps the tell broad while reducing its compressed
+    // spike against the longer-lived Cave elite.
     chargedAttack: {
       name: 'Ground Slam', castMs: 2200, cooldownMs: 14000, initialCooldownMs: 0,
-      multiplier: 2.6, fx: 'strong-kick',
+      multiplier: 2.0, fx: 'strong-kick',
       aoe: { radius: 145 },
     },
     // T3 brute — patrols its territory (the elite ceiling holding the deep caverns).
@@ -198,7 +199,7 @@ export const caveMonsterEntries = [
     id: 'crystal-gargoyle', name: 'Crystal Gargoyle', color: 0x554455,
     // Armored ranged sentry — perched, patient, hurls shards. Stationary ranged
     // (NOT a kiter: it holds its perch), armored so it isn't trivially bursted.
-    stats: { hp: 520, attack: 85, plating: 1, damageReduction: 0.05, speed: 20, attackRange: 210, attackCooldown: 3200, pullRange: 185 },
+    stats: { hp: 700, attack: 70, plating: 1, damageReduction: 0.05, speed: 20, attackRange: 210, attackCooldown: 3200, pullRange: 185 },
     behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
     rewards: { essence: 60, essenceType: 'red', level: 3, biomeXp: 360 },
     // Same perch/static identity as the Cave Gargoyle. The evolution is a CHARGED

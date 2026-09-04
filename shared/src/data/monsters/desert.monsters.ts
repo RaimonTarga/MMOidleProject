@@ -178,7 +178,7 @@ export const desertMonsterEntries = [
     // NONSTACKING Sunder/Expose raising damage taken (~10-15%). The clean read is
     // "a successful Gaze roots you and leaves you Exposed for a few seconds".
     // Its own damage stays negligible: the threat is what it does to someone else's.
-    stats: { hp: 1350, attack: 113, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
+    stats: { hp: 1350, attack: 80, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 45, essenceType: 'yellow', level: 2, biomeXp: 270 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -197,7 +197,7 @@ export const desertMonsterEntries = [
     // DEALER T3. Squishy high-damage kiter, plus an occasional charged/high-damage
     // ranged shot. Readable combo: Controller roots/exposes -> Scarab winds up the
     // dangerous shot. NO slow on a dealer (locked).
-    stats: { hp: 510, attack: 224, plating: 0, damageReduction: 0, speed: 52, attackRange: 220, attackCooldown: 1900, pullRange: 250 },
+    stats: { hp: 510, attack: 120, plating: 0, damageReduction: 0, speed: 52, attackRange: 220, attackCooldown: 1900, pullRange: 250 },
     behavior: 'kiter', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 47, essenceType: 'yellow', level: 2, biomeXp: 285 },
     ai: { wanderRadius: 220, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -205,7 +205,7 @@ export const desertMonsterEntries = [
     // up its dangerous shot into a target that cannot walk out of it.
     chargedAttack: {
       name: 'Sunbeam', castMs: 1400, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 2.0, fx: 'power-shot',
+      multiplier: 1.6, fx: 'power-shot',
     },
     pack: { role: 'follower', callRange: 320 },
   }],

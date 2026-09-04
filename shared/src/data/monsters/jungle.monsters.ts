@@ -101,7 +101,7 @@ export const jungleMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
-    openingStrike: { multiplier: 2.2 },   // placeholder — user balance pass
+    openingStrike: { multiplier: 1.75 },  // deliberate engagement alpha; density and speed remain the threat
   }],
 
   ['silverback', {

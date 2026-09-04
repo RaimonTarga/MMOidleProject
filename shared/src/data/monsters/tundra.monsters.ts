@@ -56,7 +56,7 @@ export const tundraMonsterEntries = [
     // slow-to-moderate movement, meaningful direct hits, and NOTHING else — its giant
     // per-hit slow is gone. The synergy does the work: ambient Chill is what makes an
     // otherwise plain enemy hard to kite.
-    stats: { hp: 950, attack: 259, plating: 0, damageReduction: 0.10, speed: 26, attackRange: 12, attackCooldown: 2600, pullRange: 170 },
+    stats: { hp: 950, attack: 160, plating: 0, damageReduction: 0.10, speed: 26, attackRange: 12, attackCooldown: 2600, pullRange: 170 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 29, essenceType: 'blue', level: 2, biomeXp: 175 },
     ai: { wanderRadius: 150, leashRange: 510, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -67,14 +67,12 @@ export const tundraMonsterEntries = [
     // DEFENSIVE-WINDOW elite. ICE ARMOR (`enemyShield`) is the whole identity: chip
     // wastes itself against the shell, a burst POPS it and shatters for a damage
     // window. No per-hit slows, no ramping debuff (both removed, locked).
-    // Attack cut 415 -> 300 (T1-T4 numerical balance pass, 2026-08-24): unlike this
-    // tier's other flagged elites (Petrifying Gaze's root, Cave Troll's lockdown),
-    // this monster's danger comes from a plain, untelegraphed ORDINARY hit with no
-    // counterplay tool to answer it — mob-llm-packet-t3 read it at 114% of the
-    // arrival player's maxHP (a literal one-shot) and 2.48x the tier's average
-    // spike. 300 lands it in line with this tier's other flagged-but-accepted
-    // spikes (Mountain Colossus 72%, Cavern Troll 88%) rather than over 100%.
-    stats: { hp: 1500, attack: 300, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    // Attack cut 415 -> 300 (T1-T4 numerical balance pass, 2026-08-24), then
+    // 300 -> 185 in the T3 ordinary-damage pass: unlike this tier's other flagged
+    // elites (Petrifying Gaze's root, Cave Troll's lockdown), this monster's danger
+    // comes from its defensive window rather than a plain, untelegraphed ordinary
+    // hit. The lower ordinary swing leaves Ice Armor + Shatter as the real lesson.
+    stats: { hp: 1500, attack: 185, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 65, essenceType: 'blue', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 140, leashRange: 500, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -98,7 +96,7 @@ export const tundraMonsterEntries = [
     // RANGED CONTROL CASTER — the biome's root specialist. Normal frost projectiles
     // carry no slow (removed, locked); its weapon is FROSTBIND, gated on the node's
     // Chill (see the chargedAttack authored in the behavior pass).
-    stats: { hp: 880, attack: 297, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
+    stats: { hp: 880, attack: 170, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
     // Relatively STATIONARY ranged caster, not a kiter (locked).
     behavior: 'ranged', attackStyle: 'frost', biome: 'tundra',
     staticSentry: true,
