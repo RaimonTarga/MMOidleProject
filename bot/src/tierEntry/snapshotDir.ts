@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import type { T1CharacterSnapshot } from "@mmo-idle/shared";
 import { readT1CharacterSnapshot } from "../telemetry/t1Snapshots";
@@ -68,6 +68,23 @@ function walk(dir: string, out: string[], depth = 0): void {
   }
 }
 
+/**
+ * Accept a repo-root-relative path even though `pnpm --filter` runs this from
+ * `bot/`.
+ *
+ * The path a human has in hand is `bot/runs/<cohort>`, but the process cwd is
+ * `bot/`, so that resolves to `bot/bot/runs/<cohort>` and finds nothing. Left
+ * unhandled this fails SILENTLY -- `walk` simply returns no files, every class
+ * reports "no usable handoff", and the whole cohort quietly falls back to
+ * synthetic templates while looking like it ran correctly. That is exactly what
+ * the first smoke run did. `t2Report.ts` already does this dance; so does this.
+ */
+function resolveSnapshotDir(dir: string): string {
+  if (existsSync(dir)) return dir;
+  const up = join("..", dir);
+  return existsSync(up) ? up : dir;
+}
+
 function walletTotalOf(snapshot: T1CharacterSnapshot): number {
   return Object.values(snapshot.state.essences ?? {}).reduce(
     (sum, amount) => sum + (Number.isFinite(amount) ? amount : 0),
@@ -86,7 +103,7 @@ function walletTotalOf(snapshot: T1CharacterSnapshot): number {
  */
 export function indexSnapshotDir(dir: string): SnapshotDirIndex {
   const files: string[] = [];
-  walk(dir, files);
+  walk(resolveSnapshotDir(dir), files);
 
   const allByClassRoot = new Map<string, ResolvedSnapshot[]>();
   const rejected: Array<{ file: string; reason: string }> = [];

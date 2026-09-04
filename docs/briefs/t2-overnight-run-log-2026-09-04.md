@@ -188,3 +188,92 @@ Verified offline (no server contact, so the T1 cohort is undisturbed):
 - every route reports `startsFromTierEntry=2`, `completion=globalMasteryAtLeast`,
   `attemptBoss=0`;
 - 18/18 entry templates still validate under the new +3 gate.
+
+---
+
+## 2026-09-04 morning — merged, server restarted, smoke-tested
+
+### What the overnight automation actually did: nothing
+
+Reported in full because it is the most important failure of the session.
+
+1. **My Phase-C monitor matched itself.** It polled for processes whose command
+   line contained `replicate-03` — and the monitor's own bash process command
+   line contains that string. The count never reached zero, so the trigger never
+   fired and the loop never advanced past waiting. Nothing was merged, restarted
+   or launched overnight.
+2. **Independently, replicate 3 died at 02:40**, ~58 minutes into a 3-hour
+   budget. All six bots stopped writing `events.jsonl` at 02:40:32, held zero
+   sockets to `:4000`, never reconnected despite `reconnection: true`, and wrote
+   no `summary.json` (so: not a graceful timeout, no stall record). The server
+   was healthy throughout. No Windows sleep or reboot events; main-tree
+   `node_modules` intact, so the worktree install was not the cause. Six bots
+   losing sockets simultaneously and never recovering looks like a
+   disconnect/reconnect defect in the harness — handed to the stall
+   investigation rather than chased here.
+
+### Merge
+
+`feat/t2-bossless-campaign` merged to develop. The main tree's uncommitted WIP
+was checkpointed first (source paths only — `bot/runs/` and `server/runs/`
+artifacts deliberately excluded). Four files conflicted purely because the
+worktree checkout normalised line endings to CRLF; each was verified byte-identical
+to the branch baseline ignoring `` before taking the branch version, so nothing
+was lost.
+
+Server restarted; all dev boot invariants pass (`networked components OK`,
+`node modifiers OK`, `tier advancement OK`, `abilities OK`).
+
+### F4 — three tests pinned the +5 gate
+
+`t2/t3/t4ProgressionEconomy.test.ts` hardcoded `EVOLUTION_REQUIRED_PLUS === 5`
+plus a `+4`-fails/`+5`-passes spot check. Retuned to `+3` and `+2`/`+3`. The
+comments now state that the SHAPE is the invariant — one step below the gate
+must fail, the gate itself must pass — rather than restating a literal level, so
+the next gate change moves one constant instead of hunting literals.
+**132/132 tests pass.**
+
+### F5 — the smoke test caught a silent path bug
+
+A 3-minute 1x smoke run of `striker-t2-progression` reported
+*"NO usable T1 handoff for cadence-root"* and fell back to the clean template —
+despite two Striker snapshots existing.
+
+Cause: `pnpm --filter` runs the bot from `bot/`, so the repo-root-relative
+`bot/runs/<cohort>` a human passes resolves to `bot/bot/runs/<cohort>`. `walk()`
+then finds nothing and **every class silently falls back to a synthetic
+template while the run looks completely healthy.** `t2Report.ts` already handled
+this; the new resolver did not.
+
+Had this shipped, the entire 13-run cohort would have run on synthetic entry
+states and reported itself as fine — the single most expensive failure available
+to this campaign, and invisible in the output. Fixed with the same
+root-or-parent resolution, and the reason is written into the code.
+
+### Entry path proven end to end
+
+After the fix, re-run against real data:
+
+```
+real T1 handoff for cadence-root (essence 2813) -> .../snapshot-b.json
+T2_ENTRY_TEMPLATE_VALIDATION[profile]: PASS (profile=snapshot-...-b, 122 checks, 0 errors)
+T2_ENTRY_TEMPLATE_VALIDATION[spawn]:   PASS (profile=snapshot-...-b,  89 checks, 0 errors)
+```
+
+Snapshot resolution across the cohort, confirmed: **real handoffs for
+`cadence-root` (Striker), `cooldown-root` (Squire), `energy-root` (Spirit) and
+`dot-root` (Apprentice); `reload-root` (Slinger) and `summoner-root` (Conduit)
+fall back to clean templates**, exactly as F2 predicted. 0 snapshots rejected.
+
+### Ready to launch, not launched
+
+Per the designer: a boss rework session comes first. The cohort command is
+
+```
+pnpm bot:batch --controlled=true --executionMode=isolated-parallel   --maxConcurrency=6 --staggerMs=60000 --policies=intended --count=2   --rewardMultiplier=25 --fresh=true   --routes=striker-t2-progression,squire-t2-progression,apprentice-t2-progression,slinger-t2-progression,spirit-t2-progression,conduit-t2-progression   --tierEntrySnapshotDir=bot/runs/t1-candidate-f-final-2026-09-03   --out=bot/runs/t2-bossless-<date>
+```
+
+plus `conduit-hammer-t2-progression` as a separate single run. **Open question
+before launching: the T1 cohort's own bots hung at 02:40 with no reconnect. If
+that is a harness defect rather than a one-off, a 13-run T2 cohort will hit it
+too.** Worth waiting on the stall investigation's verdict.
