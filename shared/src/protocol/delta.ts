@@ -1,5 +1,6 @@
 import type { CombatEvent } from '../index';
 import type { DungeonView } from '../dungeons';
+import type { CorpseView } from '../world/corpses';
 import type { GroundZoneView } from '../world/groundZones';
 import type { Vec2 } from '../systems/spatial';
 import type {
@@ -47,4 +48,11 @@ export interface DeltaSnapshot {
    * entirely when the node has none, so quiet nodes pay nothing for it.
    */
   groundZones?: GroundZoneView[];
+  /**
+   * Raisable corpses on this node. Same contract as `groundZones`: runtime-only and
+   * omitted entirely when there are none, so a node with no necromancy in it pays
+   * nothing. Present so the Wasteland encounter is legible — which bodies are on the
+   * floor, and which the boss has claimed for the cast it is running right now.
+   */
+  corpses?: CorpseView[];
 }

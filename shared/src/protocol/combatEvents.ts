@@ -80,14 +80,20 @@ export type CombatEvent =
   // Server forced the player to a new position (e.g. blunderbuss recoil). The
   // client owns own-player prediction, so it must be told to accept the move
   // even mid-movement; `pos` is the authoritative destination to slide to.
-  | { kind: 'player-knockback'; playerId: string; pos: Vec2 }
+  // `reason` says WHY the player moved, so the client can distinguish being shoved
+  // from being dragged — two very different things to be on the receiving end of.
+  // Absent on legacy emitters, which are all knockback.
+  | { kind: 'player-knockback'; playerId: string; pos: Vec2; reason?: 'knockback' | 'pull' }
   // A boss scripted-action cue, shown to the whole node (purely cosmetic). `slam`
   // is a telegraphed AoE ground-slam (`radius` in world units, `element` from the
   // boss's attackStyle tints the shockwave); `summon` marks an add-spawn beat at
   // the spawned mob's position (so each arrival can materialize visibly);
   // `shield` a barrier coming up; `morph` a shape/range flip. The damage/spawn/
   // shield are all server-authoritative — this only drives the animation.
-  | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph' | 'roar' | 'frenzy'; radius?: number; element?: string }
+  // `stagger` is the authored recovery cue: the boss is visibly out of it and open
+  // to punishment. It is a distinct FX from the others because the player has to be
+  // able to tell "it is winding up again" from "hit it NOW".
+  | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph' | 'roar' | 'frenzy' | 'stagger'; radius?: number; element?: string }
   // A self-facing Guard ability fired (Brace / Cleanse / Second Wind). Drives the
   // in-world Guard FX on the player's sprite, shown to the whole node so allies see
   // each other react. `ability` is the ability id; the client picks the FX by id.

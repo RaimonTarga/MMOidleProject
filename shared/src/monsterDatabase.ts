@@ -1,7 +1,13 @@
 export { MONSTER_DATABASE, monsterIsRanged, monsterKites } from './data/monsters';
+export { BOSS_RECOVERY_EFFECT, initRunsBossPattern } from './data/monsters';
 export type {
   MonsterBehavior,
   BossAction,
+  BossPattern,
+  BossPatternStep,
+  PatternAnchor,
+  RecoversFromPattern,
+  RunsBossPattern,
   BossPhase,
   BossScript,
   EncounterStage,

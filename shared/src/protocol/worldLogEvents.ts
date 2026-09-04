@@ -4,6 +4,7 @@ import type { BuffCategory, BuffId } from '../components/combat/buffs';
 import type { DeathCause } from './death';
 import { formatDeathCauseLabel } from './death';
 import type { Vec2 } from '../systems/spatial';
+import type { GroundZoneGeometry } from '../world/groundZoneGeometry';
 
 export type WorldLogActorType = 'player' | 'monster' | 'minion';
 
@@ -212,7 +213,14 @@ export type WorldLogEvent =
       trackedTelegraphIds?: string[];
       acquiredAtMs?: number;
       startingPosition?: Vec2;
+      /**
+       * Circle decomposition, kept for existing consumers. For a corridor these
+       * are the broad-phase covering discs and are deliberately LARGER than the
+       * real lane — read `telegraphShape` when the exact footprint matters.
+       */
       telegraphGeometry?: Array<{ pos: Vec2; radius: number }>;
+      /** The authoritative shape the server resolved damage against. */
+      telegraphShape?: GroundZoneGeometry;
       escapePoint?: Vec2;
       firstSafeAtMs?: number;
       resolvedAtMs?: number;

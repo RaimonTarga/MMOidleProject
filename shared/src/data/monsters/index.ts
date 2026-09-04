@@ -62,3 +62,12 @@ export type {
   UltimateSavedBaseline,
   WaveDef,
 } from './types';
+
+export type {
+  BossPattern,
+  BossPatternStep,
+  PatternAnchor,
+  RecoversFromPattern,
+  RunsBossPattern,
+} from './bossPatterns';
+export { BOSS_RECOVERY_EFFECT, initRunsBossPattern } from './bossPatterns';
