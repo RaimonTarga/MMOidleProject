@@ -34,10 +34,10 @@ soft-discarded legacy and was **not** touched.
 | Swamp | Rot / attrition / hazardous arena | T1–T3 |
 | Mountain | Telegraphed catastrophic impacts | T1–T4 |
 | Cave | Endurance — your defensive shell erodes | T1–T3 |
-| Desert | Setup / control → punishment | T2–T4 |
-| Jungle | Hard to catch, then it commits | T2–T4 |
-| Tundra | Chill + Ice Armor / Shatter — tempo control | T3–T4 |
-| Volcanic | The shared Heat race | T3–T4 |
+| Desert | Mark and execution | T2–T4 |
+| Jungle | Pursuit and failed escape | T2–T4 |
+| Tundra | The Chill check — Deep Freeze then Shatter | T3–T4 |
+| Volcanic | Heat, Vent, and the choice to stand in it | T3–T4 |
 | Wasteland | The dead refuse to stay dead | T4 |
 | Trench | One enormous Devour-focused duel | T4 |
 
@@ -238,98 +238,311 @@ exception — it keeps a short duration because its payoff is the detonation on 
 ### Mountain — telegraphed catastrophic impact (T1–T4)
 The lineage arc the handoff asked for, intact:
 
-| Tier | Shape | Phases |
-|---|---|---|
-| T1 `crag-behemoth` | circle Slam | 50% slam harder + sooner |
-| T2 `stoneplate-juggernaut` | stronger Slam + defended position (archers, repeating dig-in) | 50% archers + slam wider/sooner |
-| T3 `crag-gorged-horn-behemoth` | charge → lock → Slam (`engageSequence`) | 50% harder/wider, 25% sooner + faster |
-| T4 `iron-crest-titan` | charge-lock-Earthshatter → delayed radial fault lines | 50% +3 rays & harder aftershock, 25% whole sequence sooner |
+**The whole lineage now runs ORDERED PATTERNS** (`MonsterDefinition.bossPattern`),
+converted 2026-09-04. Every tier is one committed sequence — tell, payoff, recovery —
+rather than a charged attack plus independent script beats firing over the top of it.
 
-`cadenceFinisher` is **kept on T4 only**: a deterministic every-4th heavy hit is the small
-version of the same reading skill the Earthshatter tests, and it is the only pressure
-between slams on a 4.2s swing timer.
+| Tier | Pattern | Phases |
+|---|---|---|
+| T1 `crag-behemoth` | lane → charge → recovery | 50% charge harder + sooner |
+| T2 `stoneplate-juggernaut` | plate up → **breakable barrier** → lane → charge → recovery | 50% charge harder + sooner |
+| T3 `crag-gorged-horn-behemoth` | lane → charge → **Cragbreaker on the captured endpoint** → recovery | 50% harder/wider, 25% sooner + faster |
+| T4 `iron-crest-titan` | lane → charge → Earthshatter → **delayed fault lines** → long reset | 50% +3 rays & harder aftershock, 25% whole sequence sooner |
+
+A running pattern OWNS its boss: it is rooted, its ordinary attacks are suppressed,
+and the AI skips it entirely, so nothing can land underneath the sequence. Every exit
+— completion, interrupt, target loss, leash, death, node teardown — goes through one
+`endPattern` teardown that releases the lane, the pattern's barriers, and both locks
+together.
+
+**`empower-charged` still drives these.** Patterns share `chargedOverride` with
+`chargedAttack` deliberately: `multiplierMult` scales pattern damage, `cooldownMult`
+its cooldown, `castMsMult` its wind-ups, `radiusMult` its impact circles, and the
+aftershock scalars its fault lines. Without that, converting a boss would have
+silently turned its authored 50% phase into a no-op.
+
+**Removed across the lineage:** `chargeOnAggro` at every tier (a speed burst on aggro
+is not a charge), the T3/T4 `engageSequence` charge-lock opener (a second, worse copy
+of the charge the pattern now owns), T2's pre-cast stun (it removed the player's
+answer and then asked the question — the breakable barrier replaced it), T2's
+repeating flat-DR shield and Stoneplate Lock, and T4's `cadenceFinisher`.
+
+`cadenceFinisher` was **kept on T4 only** under the 2026-08-23 rework, on the argument
+that a deterministic every-4th heavy hit was the small version of the same reading
+skill the Earthshatter tests. **That call was reversed on 2026-09-04**: once the
+Earthshatter became an ordered pattern the boss commits to, an independent cadence
+beat competing with it for the player's attention was the exact accumulation the
+redesign exists to undo. T4's pressure is now the sequence itself plus its long reset.
+
+**Why a lane at all.** The Behemoth's old circular Ground Slam asked the same question
+the Cave slam already asks — *leave the circle* — so Mountain had no question of its
+own at T1. The charge asks *read a direction, get off the line, then punish*: a
+corridor is painted from the boss along the bearing to its target, it tracks for the
+first part of the wind-up, then **commits** and never re-aims. Moving perpendicular
+after the lock always works, and the lock is a visible state change rather than a
+hidden timer. Damage, cast time and cooldown carried over untouched from the slam.
+
+**The boss really travels it.** The charge step moves the boss along the locked
+segment at an authored px/s, damaging each body it runs over at most once, stopping
+early on terrain, and bounded by a `maxTravelMs` guard. Speed is absolute rather than
+a multiple of base speed: base speeds FALL across the tiers (22 at T1 to 16 at T4), so
+a shared multiplier would have made each successive Mountain boss charge slower than
+the last — the opposite of the lineage's arc.
+
+**Recovery is a step, not cooldown residue.** It roots the boss, blocks its attacks,
+and publishes `pattern-recovery` onto the networked boss-effect slice so the punish
+window is visible. `server/test/bossGeometryPhase1.test.ts` pins a *dodgeability
+invariant*: the committed window plus travel time must exceed the distance to cross
+the lane at base player speed, so no retuning can quietly remove the answer.
 
 ### Cave — endurance / defensive erosion (T1–T3)
 Every phase is the corrosion going further:
-- **T1** `obsidian-broodmother`: 50% → `empower-shred maxStacksAdd: 3`.
-- **T2** `chitinous-dreadbore`: 50% → `platingPerStackAdd: 1` + the casted **Carapace Seal**
-  (see §4a — this replaced the Cave Troll add).
-- **T3** `deep-core-burrow-gorger`: threshold poison at 3 and 6; 50% → ceiling +4 with new
-  threshold rungs at 9 and 12; 25% → deeper bite + the casted **Deep Burrow** (replaced the
-  Cavern Troll add).
+- **T1** `obsidian-broodmother`: ordinary hits shave one stack of plating; the
+  telegraphed **Breach** (`monsterAbilities`, `plating-shred` action) shaves a larger
+  dose of the SAME corrosion. One resource at two rates, so the lesson is "read the
+  cast", not "learn a second keyword". 50% → `empower-shred maxStacksAdd: 3`.
+  **Converted 2026-09-04**; the circular Obsidian Slam it replaced was a generic
+  damage circle that taught nothing about erosion and duplicated the question
+  Mountain's lane asks better. `chargeOnAggro` removed with it.
+- **T2** `chitinous-dreadbore`: **erosion delivered from underneath**, as an ordered
+  pattern — burrow → surface near you → erupt. 50% → `platingPerStackAdd: 1`.
+- **T3** `deep-core-burrow-gorger`: the evolved burrow, bigger. Threshold poison at 3
+  and 6; 50% → ceiling +4 with new threshold rungs at 9 and 12; 25% → deeper bite.
 
-### Desert — setup / control → punishment (T2–T4)
-All three tiers now paint **and** cash their own Sun Mark (`appliesMark` + `markedStrike`),
-so the duel alternates setup / punishment without depending on adds, and all three
-telegraph the cash-out with a charged attack.
+**Burrow means UNTARGETABLE, not flat damage reduction (2026-09-04).** The old T2/T3
+"burrow" and Carapace Seal were `shield drAdd` casts wearing the burrow's name: the
+boss took less damage for a few seconds and the player could ignore it by continuing
+to swing. Now it is genuinely out of reach (`IsConcealed`) with a ground marker where
+it went, and the emergence circle is what the player reads. Step Back avoids it, Guard
+absorbs it, tanking stays legal.
 
-- **T2** `dune-stalker-emperor`: opening alpha strike, mark cycle, slow, and the new
-  **Scouring Sandburst**. Dust Djinn adds removed.
-- **T3** `dune-carapace-monarch`: melee CONTROLLER → at 50% ranged PUNISHER. The mark
-  carries through the morph; the Sandburst becomes the cash-out. 25% → cash-out ~twice as
-  often.
-- **T4** `dune-throne-sovereign`: three acts — Setup (melee, slow + mark) → Punishment
-  (50%, ranged kiter, Rupture empowered) → Execution (25%, drops the kite and commits).
+Removed across the lineage: the circular Obsidian/Chitin/Deep-Core slams,
+`chargeOnAggro` at every tier, Carapace Seal, and the DR-only Deep Burrow.
 
-### Jungle — hard to catch, then it commits (T2–T4)
-- **T2** `jungle-dread-gorger`: ambush only — opening pounce + one mid-fight pack wave.
-  The 50% enrage was dropped (it read as a Forest fight).
-- **T3** `apex-bramble-slasher`: gains the predator half — `evasion 0.15`, a strong opening
-  strike, and a **Bramble Pounce**. At 50% it melts into the undergrowth (evasion ×2 for
-  5s) and comes back with the pounce re-armed harder and far more frequent.
-- **T4** `verdant-crown-predator`: two formal states.
-  **HUNT** (100–50%): evasion 0.25, very fast, venom chip, rare huge **Killing Leap**.
-  **FRENZY** (<50%): evasion → 0 permanently, attack ×1.4, speed ×1.25, leap cooldown ×0.55.
-  25% is the frenzy **peaking** (cadence only), not a third idea.
+### Desert — mark and execution (T2–T4)
+**Rebuilt as ordered patterns, 2026-09-04.** All three tiers run the same visible
+sequence — **Death Sting** paints the mark, a real answer window, then **Execution** —
+with one mark source and one thing that consumes it.
 
-### Tundra — Chill + Ice Armor / Shatter (T3–T4)
-- **T3** `frost-plated-rime-mammoth`: moderate `rampDebuff`, periodic Ice Armor with a
-  `vulnerability` shatter payoff, big Permafrost Slam. 50% → slam grows; 25% → armour
-  thickens and returns sooner (`apply-shield` with a richer shatter).
-- **T4** `glacial-patriarch`: `rampDebuff` trimmed to 40%/30% so it leaves room for the
-  node Chill (up to 30% move / 24% attack) without compounding into an unauthored root.
-  **Glacial Collapse feeds on the Chill you are carrying** (`scalesWithAmbientRamp`,
-  `chargedOnly`) — the tell the handoff asked for. 50% → much thicker Ice Armor with a much
-  richer shatter (fewer windows, each worth far more); 25% → Collapse wider and sooner.
+The mark decides **how hard** the Execution lands, never **whether** it lands.
+Cleansing strips the amplification and the Execution still arrives at its unmarked
+value, to be answered with position, Guard or armour. That is the deliberate middle
+path between the two failure shapes: a cleanse that cancels the attack (so the
+sequence never resolves and the encounter has no teeth) and a cleanse that does
+nothing (so reading the setup is pointless).
 
-The T3 boss deliberately does **not** carry chill-scaling: T3 teaches the loop, T4 fuses
-the environment into the signature attack.
+**Removed at every tier:** the `appliesMark`/`markedStrike` pair on ordinary swings —
+an INVISIBLE second mark source competing with the visible one, appearing and
+vanishing on plain hits with no cast bar — plus the per-hit slow, `openingStrike`,
+`chargeOnAggro`, and the generic Sandburst/Rupture circles used as filler.
 
-### Volcanic — the shared Heat race (T3–T4)
-- **T3** `cinder-shell-magma-salamander`: the **shell cycle** its name always promised.
-  First shell at 85% HP, then every 16s while engaged; while shelled it cannot attack and
-  takes 30% direct damage (not the roster's 15% — it repeats, so it must never stall the
-  fight), and the shell closing **floods the ground with magma**. Counterplay is authored:
-  DoTs tick through at full strength and the cycle is on a clock.
-- **T4** `caldera-sovereign`: the Heat race.
-  - 100–50%: normal Heat rules, Eruption + Caldera Burn.
-  - ~50%: `stoke-ramp` — Heat accumulates ~35% faster and can no longer cool below 2 stacks.
-  - ~25%: Heat faster still, floors at 4, ceiling 6 → 9; the floor gives way (`spawn-pool`).
+- **T2** `dune-stalker-emperor`: the plain cycle. 50% → closes faster, cash-out sooner.
+- **T3** `dune-carapace-monarch`: the same sequence carried ACROSS a posture change —
+  melee at first, ranged kiter from 50%. The mark persists through the morph unless
+  cleansed, and that pairing is the point of the tier.
+- **T4** `dune-throne-sovereign`: three acts (melee hunter → ranged kiter → cornered
+  melee). The acts change the boss's posture; they do not change the question it asks.
+  By now the player knows the sequence, and the tier tests whether they can keep
+  answering it while the fight moves around them.
 
-  The Sovereign **feeds on the same ramp** (`scalesWithAmbientRamp`, all hits, not just
-  charged). Since the node's Heat payload gives the player *more damage dealt* as well as
-  *more damage taken*, the player's own bonus is what arms the boss. That is the race.
+### Jungle — pursuit and failed escape (T2–T4)
+**Rebuilt as ordered patterns, 2026-09-04.** One loop, run by all three tiers:
 
-### Wasteland — the dead refuse to stay dead (T4)
-`charnel-crown-sovereign`, rebuilt:
-- arrives with a **small controlled entourage** (3 bone-crawlers + 1 plague-hound,
-  `maxAlive: 5`) via a `hpPct: 1.0` phase that fires on engage;
-- `raisesDead` on an 8s cadence, `maxAlive: 4`, 520 reach, risen at 0.75 HP / 0.80 damage;
-- **50%** Mass Resurrection (`raise-dead count: 3`, ceiling +2) plus a small top-up so
-  there are bodies to raise later;
-- **25%** a final wave (`raise-dead count: 4`, ceiling +2) driven by a necrotic `roar`;
-- personal DoT cut from 9×6 to 5×4 — the entourage is the attrition now.
+> Escape Guard appears and the boss bolts for the far edge of its leash.
+> **Break the guard** → the retreat fails, it stumbles, and it banks one capped stack
+> of **Escape Instinct** so the next attempt is quicker.
+> **Let it finish** → it vanishes into cover, resets Instinct, picks a valid re-entry
+> point, and comes back with an ambush.
+
+**Barrier damage — not physical contact — is the test.** That is load-bearing: a boss
+whose whole idea is running away from you would otherwise be answerable only by melee,
+and ranged builds would have no counterplay at all. Instinct is capped, so repeated
+failures speed it to a ceiling and no further; a successful escape wipes it, because
+it records failure rather than progress.
+
+- **T2** `jungle-dread-gorger`: the plain cycle.
+- **T3** `apex-bramble-slasher`: a successful ambush adds a **venom burst** — letting
+  it get away costs you for several seconds, not only in the moment.
+- **T4** `verdant-crown-predator`: the full cycle **until it is cornered**. Below 50%
+  the pattern stops arming (`armAboveHpPct: 0.5`) and the wounded frenzy takes over.
+
+> **Passive `evasion` is GONE at all three tiers.** A flat miss chance is a texture,
+> not a decision: it made every build's damage read as unreliable rather than making
+> the boss hard to catch. Being hard to catch is now something the boss DOES, in a
+> sequence the player can answer. The T3 evasion surge and T4's permanent
+> evasion-to-zero went with the stat they modified.
+>
+> Also removed: `openingStrike` at every tier (an unanswerable alpha strike before the
+> fight has taught anything), Canopy Hunt, Bramble Pounce, Killing Leap, T4's always-on
+> `dotEffect` (venom now follows a successful ambush, so it means something), and
+> `chargeOnAggro`.
+
+**The capstone's low-health state is the ABSENCE of the lineage's mechanic**, not a
+fourth one. That is what `armAboveHpPct` is for.
+
+### Tundra — the Chill check (T3–T4)
+**Rebuilt as ordered patterns, 2026-09-04.** The ROOM builds Chill; the boss asks
+whether you let it get too deep.
+
+**Deep Freeze** is unavoidable and targeted, and it CHECKS your stacks. The gate is
+evaluated at cast start, so the question was decided *before* the cast — by whether
+you cleansed and kept moving. Below the threshold the step is skipped outright; above
+it you are Frozen, and a large dodgeable **Shatter** follows.
+
+A Frozen player still has answers: Frozen is hard control, so Break Free strips it and
+Step Back then clears the circle, and guarding or tanking stays legal. Cleanse
+*reduces* Chill rather than deleting it (`statusPolicy: 'partial'`) — the room
+re-applies it continuously, so a full strip would be true for a second and read as the
+button not working.
+
+- **T3** `frost-plated-rime-mammoth`: base Deep Freeze → Shatter.
+- **T4** `glacial-patriarch`: larger Glacial Collapse, same response chain. 25% →
+  Collapse wider and sooner.
+
+**Removed at both tiers:** `chargeOnAggro`, the per-hit `rampDebuff` (the boss adding
+its OWN chill on top of the room's made two sources of one resource), the Ice Armor /
+vulnerability shield pair, and the generic slam circles.
+
+> **REVERSAL of a 2026-08-23 call.** T4 used to carry `scalesWithAmbientRamp`
+> (`chargedOnly`), described above as "the tell the handoff asked for", so the Collapse
+> fed on how cold the room had made you. That is now **removed**: damage never
+> secretly scales with Chill. The stacks decide *if* you get frozen, never how hard
+> anything hits — a hidden multiplier on an already-unavoidable hit is the least
+> readable escalation available. The Collapse is fed by the freeze it follows, which
+> the player can see.
+
+### Volcanic — Heat, Vent, and the choice to stand in it (T3–T4)
+**Rebuilt 2026-09-04.** The shell closes and lays a visible **magma Vent**. Standing
+in it accelerates the room's Heat — which raises damage *dealt* and damage *taken*
+together — while you work on the shell; stepping out returns you to the node's
+baseline rate and lets the Heat shed. Neither is the correct answer: **that trade is
+the encounter.**
+
+- **T3** `cinder-shell-magma-salamander`: the plain cycle. First shell at 85% HP, then
+  every 16s while engaged; while shelled it cannot attack and takes 30% direct damage
+  (not the roster's 15% — it repeats, so it must never stall the fight). DoTs tick
+  through at full strength and the cycle is on a clock.
+- **T4** `caldera-sovereign`: the same cycle, plus **Simmering Burn** (low damage, high
+  cap, long duration — attrition you *can* cleanse, deliberately unlike Heat) and one
+  **Cataclysm**: near the final quarter it stops attacking entirely and begins a long,
+  obvious, explicitly **uninterruptible** room-wide cast. The primary answer is to kill
+  it before the cast completes; a very tanky or guarded build can survive the blast
+  through ordinary damage resolution and the fight simply continues. It fires
+  **once per life** — repeating it would turn a decisive race into a metronome.
+
+**A Vent is NOT auto-avoided** (`movementResponse: 'none'`). This is exactly why
+avoidance keys off zone *semantics* rather than texture: staying in the vent is a
+legal, rewarded choice, and a rune dragging the player out would be answering a
+question the encounter meant them to answer themselves.
+
+**The Vent ACCELERATES the room's Heat; it is not a second Heat source.** The biome's
+ecology already owns what Heat is and what it does. A hazard minting its own parallel
+stack counter would give the player two numbers to read where the design has one.
+
+> **REVERSAL of a 2026-08-23 call.** The Sovereign used to hit harder per Heat stack
+> (`scalesWithAmbientRamp`, defended above as "the ramp is the whole encounter"). That
+> is now **removed**: Heat already raises the damage the player takes, visibly, on
+> their own status bar — an invisible boss-side multiplier on top counted the same
+> escalation twice and made the difficulty curve unreadable.
+>
+> **The Heat FLOOR is also gone** with the `stoke-ramp` beats. Consequence stated
+> plainly: Heat now sheds *completely* when the player disengages, where it previously
+> could not cool below the stoked minimum. That is the point — leaving is a real answer
+> again — but it is a live difficulty reduction awaiting the balance pass, pulling
+> against the Phase 3 Heat non-cleanse nerf which pushes the other way.
+
+Also removed: the generic Eruption charged attacks at both tiers, the threshold Vent
+Rupture / Caldera Vent casts (a second pool arriving on a health gate made the arena
+unreadable rather than more dangerous), and `chargeOnAggro`.
+
+### Wasteland — authored necromancy (T4)
+**Rebuilt 2026-09-04.** `charnel-crown-sovereign`:
+- arrives with ONE **opening entourage** via a `hpPct: 1.0` phase — 3 bone-crawlers
+  (corpse fodder), 1 plague-hound (limited plague pressure and the fight's one
+  hazard), 1 carrion-vulture (ranged support through its existing undead haste). It
+  fires on engage and **never respawns**: these are the seed corpses;
+- `raisesDead` on an 8s cadence, `maxAlive: 4`, 520 reach, risen at 0.75 HP / 0.80
+  damage — **selective**, one at a time. A boss raising everything constantly is a
+  spawner, and Plains already owns spawning;
+- **50%** ONE Mass Resurrection (`raise-dead count: 3`, ceiling +2). There is no
+  second wave: a low-health repeat of the headline beat makes the first mean nothing;
+- risen deaths are **permanent** — a risen unit leaves no reusable corpse, so the
+  tide terminates.
+
+**THE CORPSES ARE NOW VISIBLE.** Necromancy used to be invisible bookkeeping: bodies
+existed only as a server list, so a player had no way to read which of the dead were
+about to get up, or that the boss was reaching for them at all. Every corpse now has a
+stable id and rides the node delta and spectator snapshot, and a Raise Dead **claims
+its bodies at cast start** — the claimed corpses are marked and tethered to the boss
+*while the wind-up runs*, so the answer is on the floor before the payoff.
+
+Claims are exclusive (two raisers can never tether the same body) and are released on
+cancel, reset and death. That last one matters most: a claimed corpse is off limits to
+everyone, so one stranded by a dead boss would be permanently marked and raisable by
+nobody.
+
+> **REVERSAL of a 2026-08-23 call.** The opening entourage was removed then under the
+> rule "reinforcements are a Plains identity". That rule is still right about *waves* —
+> but Wasteland's mechanic is raising the dead, and corpses come from kills. With no
+> seed bodies, a solo boss pull had nothing to raise until the player happened to clear
+> ambient monsters first, so the encounter could not express its own identity in the
+> fight it is the boss of. The invariant was **refined rather than exempted**: no
+> REPEATING add wave, with a one-shot opener at full health allowed as a starting
+> condition. `bossEncounterRework.test.ts` enforces exactly that.
+
+Also removed: the generic Charnel Burst circle, the always-on Crown Decay DoT (a
+personal poison package competing with the corpse tide for the same attrition role —
+it made this read as a second Swamp boss), the 25% Deathless Tide wave and its necrotic
+roar, and `chargeOnAggro`.
 
 ### Trench — one enormous duel (T4)
-`elder-trench-serpent`: slow, enormously durable, heavy ordinary pressure, periodic
-`enemyShield`, and one colossal **DEVOUR** — 2.6s cast, 12s cooldown, ×2.7, single-target,
-and it **heals the serpent 6% of maxHp** when it lands. Eating it hands the fight back.
+**Rebuilt as an ordered pattern, 2026-09-04.** `elder-trench-serpent` runs one
+sequence, and every step has its own answer:
+
+> **Wound bite** → **Undertow** drags a disengaged target back → a brief
+> **Constrict** if it needs one → a long, enormous **DEVOUR** that heals the serpent
+> 6% of max HP *when it lands*.
+
+Answers: Cleanse the Wound, Step Back out of the Devour, Break Free the Constrict then
+Step Back, Guard it, or simply tank it. Eating the Devour hands the fight back — which
+is what makes the long tell worth reading, and why the heal resolves *only* on a
+landed direct hit.
+
+**UNDERTOW IS A PULL**, not a speed buff and not a teleport. A boss that permanently
+outruns you deletes ranged builds; one that blinks to you cannot be read at all. It is
+a bounded, resisted, obstacle-respecting drag — clamped so it can never fling the
+player *through* the serpent and out the far side.
+
+It is resisted by the **same forced-movement stat as knockback**. Being shoved and
+being dragged are one concept to the player, and a stat that helped against one but
+not the other would be a lie in the item text.
 
 - 50% → the bite lands harder and comes sooner.
-- 25% → it **armours up** (`apply-shield` 0.34) rather than shedding: this fight ends by
-  out-damaging a wall, not by waiting for the wall to fall off.
+- 25% → **Blood in the Water**: the gaps tighten and it closes quicker. It adds no new
+  attacks and it no longer armours up — this fight should end by finally landing the
+  kill, not by out-damaging a wall that appeared at 25%.
 
-Removed: `cadenceFinisher`, the 50% enrage, the 25% `shed-defense`.
+Removed: `aoeAttack` (a boss AoE riding every ordinary swing, invisible and
+unanswerable), the periodic `enemyShield` and its 25% escalation, the whole
+Pressure / Crushing Tide / Undertow Current rotation, `cadenceFinisher`, and
+`chargeOnAggro`. The anti-heal now lives **only** on the Wound bite — the old version
+applied it from ordinary hits *and* an ability, which is how the Trench reached
+75-90% suppression.
+
+### Trench teaching monsters — one lesson each
+The three regular Trench slots exist to teach one piece of the Serpent before you meet
+it, so each was stripped to a single readable ability (2026-09-04):
+
+- **Abyssal Serpent** — one Wound bite. Teaches the anti-heal.
+- **Hadal Stalker** — one Pressure Lance, carrying a modest slow. Teaches standoff.
+  Its three former abilities were two slows and a self-haste, which together made a
+  monster that *must stay catchable* progressively harder to catch.
+- **Elder Leviathan** — one committed Devour, plus its carapace. §5.9 explicitly
+  permits "an uncomplicated visible carapace": a defensive window is a different
+  question from the bite, not a second copy of it.
+
+A monster with four abilities teaches nothing, because the player cannot tell which
+beat is the lesson.
 
 ---
 
