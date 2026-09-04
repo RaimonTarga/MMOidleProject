@@ -231,7 +231,12 @@ const T3_GEAR = [...RECIPE_DATABASE.values()].filter(
 );
 
 assert(T3_GEAR.length === 29, `29 T3 gear items expected, got ${T3_GEAR.length}`);
-assert(EVOLUTION_REQUIRED_PLUS === 5, "evolution still requires a +5 predecessor");
+// Designer decision 2026-09-04 returned the gate to +3 (see
+// shared/src/systems/evolution.ts and
+// docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12): the
+// canonical T1 routes were never updated for +5, so it taxed genuinely-invested
+// predecessors rather than rewarding commitment.
+assert(EVOLUTION_REQUIRED_PLUS === 3, "evolution requires a +3 predecessor (reverted from +5)");
 
 // 2a. Exactly the 22 approved lineages exist, by id.
 {
@@ -247,7 +252,7 @@ for (const { t2, t3 } of T3_LINEAGES) {
   assert(!!pred, `${t2}: predecessor must exist`);
   assert(!!recipe, `${t3}: recipe must exist`);
   assert(recipe!.evolvesFrom === t2, `${t3}: must evolve from ${t2}`);
-  assert(requiredPlusFor(recipe!) === 5, `${t3}: evolution must require +5`);
+  assert(requiredPlusFor(recipe!) === 3, `${t3}: evolution must require +3`);
   assert(pred!.tier === recipe!.tier - 1, `${t3}: predecessor must sit exactly one tier below`);
   assert(pred!.slot === recipe!.slot, `${t3}: predecessor must occupy the same slot`);
   assert(!!recipe!.reconstructCost, `${t3}: an evolved recipe needs a reconstruct path`);
@@ -281,8 +286,10 @@ for (const recipe of RECIPE_DATABASE.values()) {
   }
 }
 
-// 2e. +4 cannot evolve, +5 can — spot-checked on a continuing lineage AND on the
-//     cross-biome Plains→Volcanic handoff.
+// 2e. One step below the gate cannot evolve, the gate itself can — spot-checked
+//     on a continuing lineage AND on the cross-biome Plains→Volcanic handoff.
+//     (Was +4/+5; the gate returned to +3 on 2026-09-04, so this is +2/+3. The
+//     SHAPE is the invariant, not the literal levels.)
 for (const { t2, t3 } of [
   { t2: "quake-hammer", t3: "mountain-avalanche-maul" },
   { t2: "plains-vest-t2", t3: "volcanic-vest-t3" },
@@ -290,15 +297,15 @@ for (const { t2, t3 } of [
 ]) {
   const recipe = RECIPE_DATABASE.get(t3)!;
   const notReady = checkEvolve({
-    recipe, inventory: [t2], itemUpgrades: { [t2]: 4 },
+    recipe, inventory: [t2], itemUpgrades: { [t2]: 2 },
     essences: fullEssences(), catalysts: fullCatalysts(),
   });
-  assert(!notReady.ok, `${t3}: a +4 ${t2} must NOT evolve`);
+  assert(!notReady.ok, `${t3}: a +2 ${t2} must NOT evolve`);
   const ready = checkEvolve({
-    recipe, inventory: [t2], itemUpgrades: { [t2]: 5 },
+    recipe, inventory: [t2], itemUpgrades: { [t2]: 3 },
     essences: fullEssences(), catalysts: fullCatalysts(),
   });
-  assert(ready.ok, `${t3}: a +5 ${t2} must evolve (got: ${ready.reason})`);
+  assert(ready.ok, `${t3}: a +3 ${t2} must evolve (got: ${ready.reason})`);
 }
 
 // 2f. Reconstruction is 3.5x the evolve essence, per colour, plus 3 catalysts.

@@ -55,7 +55,12 @@ const JUNGLE_DESERT_T2_IDS = [
 
 // ── Evolution wiring ────────────────────────────────────────────────────────
 
-assert(EVOLUTION_REQUIRED_PLUS === 5, "evolution now requires a +5 predecessor (was +3)");
+// Designer decision 2026-09-04 returned the gate to +3 (see
+// shared/src/systems/evolution.ts and
+// docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12): the
+// canonical T1 routes were never updated for +5, so it taxed genuinely-invested
+// predecessors rather than rewarding commitment.
+assert(EVOLUTION_REQUIRED_PLUS === 3, "evolution requires a +3 predecessor (reverted from +5)");
 
 for (const { t1, t2 } of RETURNING_BIOME_LINEAGES) {
   const predecessor = RECIPE_DATABASE.get(t1);
@@ -63,7 +68,7 @@ for (const { t1, t2 } of RETURNING_BIOME_LINEAGES) {
   assert(!!predecessor, `${t1}: predecessor recipe must exist`);
   assert(!!recipe, `${t2}: recipe must exist`);
   assert(recipe!.evolvesFrom === t1, `${t2}: must evolve from ${t1} (got ${recipe!.evolvesFrom})`);
-  assert(requiredPlusFor(recipe!) === 5, `${t2}: evolution must require +5`);
+  assert(requiredPlusFor(recipe!) === 3, `${t2}: evolution must require +3`);
 }
 
 for (const id of JUNGLE_DESERT_T2_IDS) {
@@ -76,22 +81,24 @@ for (const id of JUNGLE_DESERT_T2_IDS) {
 assert(RECIPE_DATABASE.get("gale-needle")!.evolvesFrom === "flash-rapier", "gale-needle branches from flash-rapier");
 assert(RECIPE_DATABASE.get("thorn-needle")!.evolvesFrom === "flash-rapier", "thorn-needle branches from flash-rapier");
 
-// A +4 predecessor cannot evolve; a +5 predecessor can.
+// A +2 predecessor cannot evolve; a +3 predecessor can. (Under the old +5 gate
+// this pair was +4 / +5; the shape of the assertion is what matters -- one step
+// below the gate must fail and the gate itself must pass.)
 {
   const recipe = RECIPE_DATABASE.get("gale-needle")!;
   const notReady = checkEvolve({
     recipe,
     inventory: ["flash-rapier"],
-    itemUpgrades: { "flash-rapier": 4 },
+    itemUpgrades: { "flash-rapier": 2 },
     essences: fullEssences(),
     catalysts: {},
   });
-  assert(!notReady.ok, "gale-needle: a +4 flash-rapier must NOT be able to evolve");
+  assert(!notReady.ok, "gale-needle: a +2 flash-rapier must NOT be able to evolve");
 
   const ready = checkEvolve({
     recipe,
     inventory: ["flash-rapier"],
-    itemUpgrades: { "flash-rapier": 5 },
+    itemUpgrades: { "flash-rapier": 3 },
     essences: fullEssences(),
     catalysts: {},
   });

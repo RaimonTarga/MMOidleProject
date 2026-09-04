@@ -73,8 +73,13 @@ for (const child of withLineage) {
   );
 }
 
-// Evolution/reconstruction both require the predecessor at +5 (EVOLUTION_REQUIRED_PLUS).
-assert(EVOLUTION_REQUIRED_PLUS === 5, "evolution/reconstruction must require the predecessor at +5");
+// Evolution/reconstruction both require the predecessor at +EVOLUTION_REQUIRED_PLUS.
+// Designer decision 2026-09-04 returned the gate to +3 (see
+// shared/src/systems/evolution.ts and
+// docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12): the
+// canonical T1 routes were never updated for +5, so it taxed genuinely-invested
+// predecessors rather than rewarding commitment.
+assert(EVOLUTION_REQUIRED_PLUS === 3, "evolution/reconstruction require the predecessor at +3");
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 3. Branch groups: exactly 10 parents with 2+ children
