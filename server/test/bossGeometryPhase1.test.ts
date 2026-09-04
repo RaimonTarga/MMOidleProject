@@ -555,6 +555,121 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   );
 }
 
+// THE LANE IS A PROMISE: the boss travels EXACTLY as far as it painted.
+//
+// Regression, found in manual playtest 2026-09-04. Two faults compounded:
+//   - the lane was clamped to the node but NOT to the boss's leash (the plan's
+//     §4.4 says "clamp the endpoint to valid/leashed space"), so a boss that had
+//     chased away from its spawn painted a lane it could not legally cross; and
+//   - the Phase 4 leash guard then tore the pattern down MID-TRAVEL, stopping the
+//     body dead partway along a full-length marker.
+//
+// A player reads the far end of that lane as dangerous, steps somewhere that was
+// never going to be touched, and learns the marker cannot be trusted.
+{
+  // Drive the boss from progressively further out, so later runs would have
+  // breached the tether under the old behaviour.
+  for (const chasedPx of [0, 200, 400]) {
+    const world = new World();
+    world.attachPlayerEntity(playerSlices(`lane-leash-${chasedPx}`, 1_400, 1_000), `lane-leash-${chasedPx}`);
+    const monster = world.createMonster(NODE, 'crag-behemoth', { x: 1_000, y: 1_000 })!;
+    monster.controlsMonster.spawn = { x: 1_000 - chasedPx, y: 1_000 };
+    setAggroTarget(world, monster, { id: `lane-leash-${chasedPx}`, kind: 'player' }, 1_000);
+    monster.hasAwareness.state = 'attacking';
+    const armedAt = 1_000 + (CRAG_PATTERN.initialCooldownMs ?? CRAG_PATTERN.cooldownMs) + 1_000;
+
+    updateBossPatterns(world, 100, armedAt);
+    let now = armedAt;
+    let painted: RuntimeChargeCorridor | undefined;
+    for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+      now += 100;
+      updateBossPatterns(world, 100, now);
+      painted = (world.groundZones.get(NODE) ?? []).find(
+        (z): z is RuntimeChargeCorridor => z.kind === 'charge-corridor',
+      ) ?? painted;
+    }
+
+    assert(!!painted, `chased ${chasedPx}: a lane should have been painted`);
+    assert(
+      !!monster.recoversFromPattern,
+      `chased ${chasedPx}: the charge must COMPLETE, not be torn down mid-lane`,
+    );
+
+    const laneLen = Math.hypot(
+      painted.end.x - painted.start.x,
+      painted.end.y - painted.start.y,
+    );
+    const travelled = Math.hypot(
+      monster.hasPosition.current.x - painted.start.x,
+      monster.hasPosition.current.y - painted.start.y,
+    );
+    assert(
+      Math.abs(travelled - laneLen) < 2,
+      `chased ${chasedPx}: travelled ${travelled.toFixed(0)}px of a ${laneLen.toFixed(0)}px lane ` +
+        `— the marker must equal the charge`,
+    );
+
+    // And the clamp is what keeps it legal: it ends on or inside its tether.
+    const fromSpawn = Math.hypot(
+      monster.hasPosition.current.x - monster.controlsMonster.spawn.x,
+      monster.hasPosition.current.y - monster.controlsMonster.spawn.y,
+    );
+    assert(
+      fromSpawn <= monster.controlsMonster.leashRange + 2,
+      `chased ${chasedPx}: the charge should not carry the boss past its leash ` +
+        `(${fromSpawn.toFixed(0)} vs ${monster.controlsMonster.leashRange})`,
+    );
+  }
+}
+
+// The clamp SHORTENS the lane near the tether rather than refusing to draw one —
+// a short honest lane still reads; a zero-length one has no direction to read.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('lane-floor', 1_400, 1_000), 'lane-floor');
+  const monster = world.createMonster(NODE, 'crag-behemoth', { x: 1_000, y: 1_000 })!;
+  // Parked right on its tether, charging directly outward.
+  monster.controlsMonster.spawn = { x: 1_000 - monster.controlsMonster.leashRange, y: 1_000 };
+  setAggroTarget(world, monster, { id: 'lane-floor', kind: 'player' }, 1_000);
+  monster.hasAwareness.state = 'attacking';
+  const armedAt = 1_000 + (CRAG_PATTERN.initialCooldownMs ?? CRAG_PATTERN.cooldownMs) + 1_000;
+
+  updateBossPatterns(world, 100, armedAt);
+  updateBossPatterns(world, 100, armedAt + 100);
+  const painted = (world.groundZones.get(NODE) ?? []).find(
+    (z): z is RuntimeChargeCorridor => z.kind === 'charge-corridor',
+  );
+  assert(!!painted, 'a boss at its tether should still paint a lane');
+  const laneLen = Math.hypot(painted.end.x - painted.start.x, painted.end.y - painted.start.y);
+  assert(laneLen > 0, 'and that lane must have a readable length');
+  assert(
+    laneLen < CRAG_LANE.length,
+    'while still being visibly shorter than the authored reach',
+  );
+
+  // The floor deliberately lets that short lane cross the tether a little — which is
+  // exactly the case where the leash guard would tear the charge down mid-travel if
+  // committed travel were not exempt from it. Run it out and confirm it completes.
+  let now = armedAt + 100;
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+  }
+  assert(
+    !!monster.recoversFromPattern,
+    'a leash-floored charge must still finish — a committed charge is committed',
+  );
+  const travelled = Math.hypot(
+    monster.hasPosition.current.x - painted.start.x,
+    monster.hasPosition.current.y - painted.start.y,
+  );
+  assert(
+    Math.abs(travelled - laneLen) < 2,
+    `even at the tether the marker must equal the charge ` +
+      `(${travelled.toFixed(0)} vs ${laneLen.toFixed(0)})`,
+  );
+}
+
 // Hard control during the wind-up interrupts the whole sequence, and teardown
 // releases the lane and the movement lock together.
 {

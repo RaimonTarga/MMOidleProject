@@ -71,6 +71,8 @@ const PATTERN_CD_NEXT_KEY = 'bossPatternCdNextAt';
 /** Slack past a pattern's own lifetime before a stranded barrier self-expires. */
 const BARRIER_SAFETY_MS = 30_000;
 const LANE_NODE_MARGIN = 24;
+/** Floor on a leash-clamped lane, as a fraction of its authored length. */
+const LANE_MIN_LEASH_FRACTION = 0.35;
 
 /**
  * The boss's pattern, with any `empower-charged` escalation applied.
@@ -320,6 +322,54 @@ function clampToNode(nodeId: string, point: Vec2): Vec2 {
   };
 }
 
+/**
+ * Shorten a lane so it never carries the boss past its own leash.
+ *
+ * THE TELEGRAPH IS A PROMISE. A lane painted 620px long that the boss abandons at
+ * 380 because it hit its tether is worse than a short lane honestly drawn: the
+ * player reads the far end as dangerous, moves to somewhere that was never going to
+ * be touched, and learns that the marker cannot be trusted. So the leash is resolved
+ * HERE, when the lane is drawn, rather than discovered mid-charge.
+ *
+ * Ray/circle: walk from `start` toward `end` and stop at the leash boundary centred
+ * on the monster's spawn. A floor keeps the beat from collapsing into a no-op when
+ * the boss is already near its tether — it lunges a little rather than nothing, and
+ * the ordinary AI walks it home afterwards.
+ */
+function clampLaneToLeash(monster: MonsterEntity, start: Vec2, end: Vec2): Vec2 {
+  const ai = monster.controlsMonster;
+  const leash = ai.leashRange;
+  if (!leash || leash <= 0) return end;
+
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.hypot(dx, dy);
+  if (length <= 1e-6) return end;
+  const ux = dx / length;
+  const uy = dy / length;
+
+  const fx = start.x - ai.spawn.x;
+  const fy = start.y - ai.spawn.y;
+  const b = fx * ux + fy * uy;
+  const c = fx * fx + fy * fy - leash * leash;
+
+  // Already outside its own leash: it is being walked home anyway, so do not extend
+  // the lane further out. The floor below still leaves a readable beat.
+  let travel = length;
+  const disc = b * b - c;
+  if (disc >= 0) {
+    const boundary = -b + Math.sqrt(disc);
+    if (boundary < travel) travel = Math.max(0, boundary);
+  } else {
+    travel = 0;
+  }
+
+  // Never collapse to nothing: a zero-length lane has no direction to read.
+  travel = Math.max(travel, length * LANE_MIN_LEASH_FRACTION);
+  if (travel >= length) return end;
+  return { x: start.x + ux * travel, y: start.y + uy * travel };
+}
+
 function laneZone(world: World, monster: MonsterEntity): RuntimeChargeCorridor | undefined {
   return (world.groundZones.get(monster.hasPosition.nodeId) ?? []).find(
     (zone): zone is RuntimeChargeCorridor =>
@@ -467,9 +517,19 @@ function advancePattern(world: World, monster: MonsterEntity, dt: number, now: n
   // means the AI's own leash check never sees these bosses. A pattern that RELOCATES
   // (burrow, retreat) can therefore walk itself outside its leash and, with nothing
   // watching, never reset. So the pattern owns both checks for its own duration.
+  //
+  // EXCEPT during committed travel. A charge is on rails by definition, and tearing
+  // it down mid-lane is exactly the failure this guard was meant to prevent
+  // elsewhere: the boss stops dead partway along a lane it already promised to
+  // cross. The lane is leash-clamped when painted, so a committed charge cannot
+  // meaningfully breach the tether anyway; the ordinary AI walks it home once the
+  // sequence releases.
+  const activeStep = pattern.steps[state.stepIndex];
+  const committed = state.stepStarted && activeStep?.kind === 'charge';
   if (
+    !committed &&
     distanceSq(monster.hasPosition.current, monster.controlsMonster.spawn) >
-    monster.controlsMonster.leashRange * monster.controlsMonster.leashRange
+      monster.controlsMonster.leashRange * monster.controlsMonster.leashRange
   ) {
     endPattern(world, monster, 'reset', now);
     setAggroTarget(world, monster, null, now);
@@ -1020,6 +1080,12 @@ function tickCommittedTravel(
 
   let arrived = false;
   if (remaining <= stepDistance || remaining < 1) {
+    // SNAP to the end rather than stopping a partial step short. Otherwise the body
+    // halts up to one tick's travel (~47px) before the lane's tip, which reads as
+    // the charge falling short of its own marker — the exact thing the telegraph
+    // promised it would not do.
+    monster.hasPosition.current = { ...lane.end };
+    markSliceDirty(world, monster, 'hasPosition');
     arrived = true;
   } else {
     const next = clampToNode(
@@ -1281,9 +1347,16 @@ function paintLane(
   if (existing && now >= existing.lockedAtMs) return; // committed — never re-aim
 
   const start = { ...monster.hasPosition.current };
+  // Both clamps, in order: the leash decides how far it may go, the node decides
+  // where the map ends. Whatever survives is BOTH the lane drawn and the distance
+  // travelled -- the telegraph and the charge are the same segment by construction.
   const end = clampToNode(
     monster.hasPosition.nodeId,
-    extendSegment(start, target.hasPosition.current, lane.length),
+    clampLaneToLeash(
+      monster,
+      start,
+      extendSegment(start, target.hasPosition.current, lane.length),
+    ),
   );
 
   if (existing) {
