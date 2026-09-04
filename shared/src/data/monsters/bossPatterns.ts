@@ -332,6 +332,15 @@ export interface RunsBossPattern {
   /** Set true when a barrier break staggered the pattern. */
   staggered: boolean;
   /**
+   * The monster's authored movement speed, saved while a committed charge raises it.
+   *
+   * The charge writes position directly at its own px/s, but `hasPosition.speed` is
+   * ALSO what the client interpolates toward the broadcast target with. Leaving it at
+   * the boss's walking speed makes the client crawl after a body the server has
+   * already moved 600px — which reads in play as the charge stopping halfway.
+   */
+  savedSpeed?: number;
+  /**
    * Whether THIS pattern is the thing holding the root / attack lock.
    *
    * Mirrors the ownership flags `beginScriptedCast` already keeps, and for the same

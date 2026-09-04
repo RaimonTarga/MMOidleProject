@@ -198,6 +198,9 @@ export function endPattern(
   // cannot strand a circle for the sweeper to find after the boss has moved on.
   clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
 
+  // A charge interrupted mid-travel must not leave the boss walking at charge speed
+  // for the rest of the fight.
+  restoreChargeSpeed(world, monster, state);
   // Concealment ALWAYS clears on teardown, no ownership question: nothing else in
   // the game conceals a monster, and a boss left burrowed after a reset is
   // permanently unkillable — the worst failure this system can produce.
@@ -548,6 +551,14 @@ function beginStep(
       state.capturedEndpoint = { ...lane.end };
       state.chargeHitIds = [];
       state.stepEndsAtMs = now + step.maxTravelMs;
+      // PUBLISH THE REAL SPEED. Position is written directly below, but the client
+      // interpolates toward the broadcast target at `hasPosition.speed` — so leaving
+      // it at the boss's walking speed (22 px/s against a 470 px/s charge) makes the
+      // client crawl after a body the server has already moved the length of the
+      // lane. In play that reads as the charge stopping halfway and never landing.
+      state.savedSpeed = monster.hasPosition.speed;
+      monster.hasPosition.speed = step.speed;
+      markSliceDirty(world, monster, 'hasPosition');
       // Movement during travel is written directly, not requested through the
       // pathfinder: a committed charge is on rails and must not steer around
       // anything. Rooted stays ON so nothing else can move the boss meanwhile.
@@ -939,6 +950,18 @@ function finishStep(
   }
 }
 
+/** Put the boss's authored speed back. Idempotent, so every exit path may call it. */
+function restoreChargeSpeed(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+): void {
+  if (state.savedSpeed === undefined) return;
+  monster.hasPosition.speed = state.savedSpeed;
+  state.savedSpeed = undefined;
+  markSliceDirty(world, monster, 'hasPosition');
+}
+
 // ── Committed travel ─────────────────────────────────────────────────────────
 
 /**
@@ -991,6 +1014,7 @@ function tickCommittedTravel(
     // The lane has done its job; retire it before the payoff steps publish theirs.
     clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
     state.laneZoneId = undefined;
+    restoreChargeSpeed(world, monster, state);
     return 'done';
   }
   return 'running';

@@ -487,6 +487,72 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   );
 }
 
+// THE CHARGE PUBLISHES ITS REAL SPEED.
+//
+// Regression, found in manual playtest 2026-09-04: the boss appeared to stop halfway
+// down its lane and never connect. Server-side the travel was correct all along —
+// position is written directly — but `hasPosition.speed` is ALSO what the client
+// interpolates toward the broadcast target with, and it still read the boss's WALKING
+// speed. The client crawled at 22 px/s after a body the server had already moved
+// 600px at 470, so the charge visually stalled and the hit landed from nowhere.
+//
+// The speed slice has to tell the truth about how fast the thing is actually moving.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('charge-speed', 420, 400), 'charge-speed');
+  const { monster, startedAt } = windUpBehemoth(world, 'charge-speed', { x: 400, y: 400 });
+  const walking = monster.hasPosition.speed;
+  assert(walking > 0, 'setup: the boss has a walking speed');
+
+  // Run to the travel step.
+  let now = startedAt;
+  for (let i = 0; i < 120 && monster.runsBossPattern?.savedSpeed === undefined; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+  }
+  assert(
+    monster.runsBossPattern?.savedSpeed === walking,
+    'the travel should save the authored walking speed',
+  );
+  assert(
+    monster.hasPosition.speed === CRAG_TRAVEL.speed,
+    `the broadcast speed must be the CHARGE speed while charging ` +
+      `(got ${monster.hasPosition.speed}, expected ${CRAG_TRAVEL.speed})`,
+  );
+
+  // And it must be handed back when the sequence ends.
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+  }
+  assert(
+    monster.hasPosition.speed === walking,
+    'the boss must not keep charge speed after the charge',
+  );
+}
+
+// An INTERRUPT mid-travel also hands the speed back — otherwise a cancelled charge
+// leaves the boss sprinting for the rest of the fight.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('charge-speed-int', 420, 400), 'charge-speed-int');
+  const { monster, startedAt } = windUpBehemoth(world, 'charge-speed-int', { x: 400, y: 400 });
+  const walking = monster.hasPosition.speed;
+
+  let now = startedAt;
+  for (let i = 0; i < 120 && monster.runsBossPattern?.savedSpeed === undefined; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+  }
+  assert(monster.hasPosition.speed === CRAG_TRAVEL.speed, 'setup: charging');
+
+  endPattern(world, monster, 'reset', now);
+  assert(
+    monster.hasPosition.speed === walking,
+    'an interrupted charge must restore the walking speed',
+  );
+}
+
 // Hard control during the wind-up interrupts the whole sequence, and teardown
 // releases the lane and the movement lock together.
 {
