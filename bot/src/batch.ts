@@ -17,7 +17,9 @@ import { BotConnection } from "./net/connection";
 import { Intents } from "./net/intents";
 import {
   T1_CONTROLLED_ROUTE_IDS,
+  isControlledRouteId,
   isT1ControlledRouteId,
+  isT2ControlledRouteId,
 } from "./routes";
 import { startDashboardOrWarn } from "./ui/server";
 import {
@@ -222,18 +224,35 @@ async function main(): Promise<void> {
   const staggerMs = controlledSettings.staggerMs;
   assertFastRetryBatchSafety(args, controlled);
 
+  // A controlled batch is either an all-Tier-1 cohort or an all-Tier-2 one.
+  // Mixing them is rejected: they carry different entry mechanisms, different
+  // reward-multiplier conventions and different completion conditions, so one
+  // manifest could not describe both.
+  const allT2Controlled = routes.length > 0 && routes.every(isT2ControlledRouteId);
   if (controlled) {
-    const excluded = routes.filter((routeId) => !isT1ControlledRouteId(routeId));
+    const excluded = routes.filter((routeId) => !isControlledRouteId(routeId));
     if (excluded.length > 0) {
       throw new Error(
-        `controlled T1 batch rejects historical/experimental routes: ${excluded.join(", ")}; ` +
+        `controlled batch rejects historical/experimental routes: ${excluded.join(", ")}; ` +
           "use --controlled=false for an explicit exploratory batch",
       );
     }
-    if (policies.length !== 1 || policies[0] !== "intended") {
-      throw new Error("controlled T1 batch requires exactly --policies=intended");
+    const anyT1 = routes.some(isT1ControlledRouteId);
+    if (anyT1 && allT2Controlled === false && routes.some(isT2ControlledRouteId)) {
+      throw new Error(
+        "a controlled batch must be all Tier-1 or all Tier-2 routes, not a mix",
+      );
     }
-    if (count !== 1) throw new Error("controlled T1 batch requires --count=1");
+    if (policies.length !== 1 || policies[0] !== "intended") {
+      throw new Error("controlled batch requires exactly --policies=intended");
+    }
+    // Tier-1 cohorts are one-run-per-route by construction; the Tier-2
+    // progression cohort is explicitly replicated (2 per class in the first
+    // campaign), because a single run gives no within-class variance and makes
+    // the "isolated extreme replicate" interpretation rule unenforceable.
+    if (count !== 1 && !allT2Controlled) {
+      throw new Error("controlled T1 batch requires --count=1");
+    }
   }
 
   if (routes.length === 0) throw new Error("batch has no routes");

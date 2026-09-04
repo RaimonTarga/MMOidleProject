@@ -183,12 +183,20 @@ export function selectAutoCombatAction(
   // ENGAGED set. When nothing is engaged, there is no encounter to have a
   // preference within, and acquisition falls through to the ordinary path.
   //
-  // `focus-elites` is deliberately excluded and keeps its cross-node reach:
-  // reaching the necromancer before it raises the dead is the entire purpose of
-  // that rune, and `eliteTargeting.test.ts` pins that on purpose.
+  // `focus-elites` was ORIGINALLY excluded here and kept its cross-node reach, on
+  // the argument that reaching the necromancer before it raises the dead is the
+  // whole purpose of the rune. Designer decision 2026-09-04 reverses that: it is
+  // a target PREFERENCE like the other two, and the same reasoning applies to it
+  // unchanged -- a preference must not be able to start a fight the player never
+  // chose. An elite across the node is not "the enemy I should be hitting in this
+  // fight"; it is a different fight. With nothing engaged the rule still reaches
+  // normally, so the necromancer is still picked first out of a fresh pull -- what
+  // it can no longer do is pull the player OFF an active encounter.
+  // See docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12.
   const isHpPreference =
     ctx.cfg.priorityMode === "lowest-hp" || ctx.cfg.priorityMode === "highest-max-hp";
-  if (isHpPreference) {
+  const isEngagedScopedPreference = isHpPreference || ctx.focusElites;
+  if (isEngagedScopedPreference) {
     const engagedSet = eligible.filter((monster) => isAggroedOnPlayer(monster, player));
     if (engagedSet.length > 0) eligible = engagedSet;
   }

@@ -1,4 +1,9 @@
-import { RECIPE_DATABASE, SKILL_TREE, STANCE_RECIPE_DATABASE } from "@mmo-idle/shared";
+import {
+  RECIPE_DATABASE,
+  SKILL_TREE,
+  STANCE_RECIPE_DATABASE,
+  maxGlobalMasteryAtTier,
+} from "@mmo-idle/shared";
 import type { TierEntryProfile } from "@mmo-idle/shared";
 import type { Condition, Route, RouteStep } from "../route/types";
 import {
@@ -10,7 +15,11 @@ import {
   t2Runes,
   type T2BiomeGroup,
 } from "./t2Common";
-import { T2_CLASS_PLANS, type T2ClassPlan } from "./t2GearPlans";
+import {
+  CONDUIT_HAMMER_PROBE_PLAN,
+  T2_CLASS_PLANS,
+  type T2ClassPlan,
+} from "./t2GearPlans";
 import { obtainSteps, planAcquisition, type AcquisitionPlan } from "./t2Acquisition";
 import {
   BIOME_ENCOUNTER_SHAPE,
@@ -258,10 +267,33 @@ export interface T2RouteConfig {
   plan: T2ClassPlan;
   branch: T2Branch;
   version: string;
+  /**
+   * Drop every boss interaction from the route: no `attemptBoss`, no boss
+   * loadout swap, no branch step -- and complete on BIOME MASTERY instead of on
+   * seals. See `makeT2ProgressionRoute` for why this arm exists.
+   */
+  bossless?: boolean;
 }
+
+/**
+ * The bossless terminal condition: every one of the seven Tier-2 biomes at its
+ * playerTier-2 cap.
+ *
+ * Read from `maxGlobalMasteryAtTier(2)` rather than restated, so a retune of any
+ * biome's level band moves the finish line with it. Today it is 72 (five
+ * carryover biomes at 12, plus Jungle and Desert at 6 -- they FIRST APPEAR at
+ * Tier 2, so their own caps are half the others'). Entry is GM 30.
+ *
+ * It is also the threshold that governs the Tier-2 item upgrade ceiling: +0
+ * until GM 42, +5 only at GM 72. So "mastered the tier" and "can finally reach
+ * +5 on tier gear" are the same moment, which is what makes it the right place
+ * to stop a progression run.
+ */
+export const T2_BOSSLESS_MASTERY_TARGET = maxGlobalMasteryAtTier(2);
 
 export function makeT2Route(config: T2RouteConfig): Route {
   const { plan, branch } = config;
+  const bossless = config.bossless === true;
   // The class's own Tier-2 entry template decides how each Tier-2 item can be
   // obtained (see t2Acquisition.ts). `clean` and `natural` differ only in the
   // wallet, so either resolves the same acquisition paths.
@@ -284,6 +316,9 @@ export function makeT2Route(config: T2RouteConfig): Route {
   let bossesAttempted = 0;
   for (const group of T2_PROGRESSION_ORDER) {
     steps.push({ type: "travel", to: t2(group) });
+    // Brackets the leg for the per-biome response map: dwell time for `group` is
+    // the span between this milestone and `${group}-t2-leg-complete`.
+    steps.push({ type: "milestone", id: `${group}-t2-entered` });
     // Cores and stances first: they are cheap, they are worn for the whole leg,
     // and crafting them before the gear farm means the leg is fought in the kit
     // the leg is supposed to be measuring.
@@ -295,13 +330,54 @@ export function makeT2Route(config: T2RouteConfig): Route {
     steps.push(maxOutT2(group));
     steps.push({ type: "milestone", id: `${group}-t2-maxed` });
     steps.push(...opportunisticUpgrades(worn, group));
-    steps.push(...bossLoadoutSteps(group));
-    steps.push({ type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 4 });
-    steps.push({ type: "milestone", id: `${group}-t2-boss-attempted` });
-    bossesAttempted += 1;
-    // Three seals is the Tier-2 advancement requirement, so the earliest the
-    // branch can possibly be affordable is right after the third boss step.
-    if (bossesAttempted === 3) steps.push(branchStep(plan.classRoot, branch));
+    if (!bossless) {
+      steps.push(...bossLoadoutSteps(group));
+      steps.push({ type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 4 });
+      steps.push({ type: "milestone", id: `${group}-t2-boss-attempted` });
+      bossesAttempted += 1;
+      // Three seals is the Tier-2 advancement requirement, so the earliest the
+      // branch can possibly be affordable is right after the third boss step.
+      if (bossesAttempted === 3) steps.push(branchStep(plan.classRoot, branch));
+    }
+    steps.push({ type: "milestone", id: `${group}-t2-leg-complete` });
+  }
+
+  const masteryMilestones = [
+    { id: "gm-42-first-t2-upgrade", when: { type: "globalMasteryAtLeast" as const, value: 42 } },
+    { id: "gm-48", when: { type: "globalMasteryAtLeast" as const, value: 48 } },
+    { id: "gm-60", when: { type: "globalMasteryAtLeast" as const, value: 60 } },
+    {
+      id: `gm-${T2_BOSSLESS_MASTERY_TARGET}-all-t2-maxed`,
+      when: { type: "globalMasteryAtLeast" as const, value: T2_BOSSLESS_MASTERY_TARGET },
+    },
+  ];
+
+  if (bossless) {
+    return {
+      id: `${plan.slug}-t2-progression`,
+      version: config.version,
+      classRoot: plan.classRoot,
+      frameId: plan.frameId,
+      startsFromTierEntry: 2,
+      description:
+        `Tier-2 BOSSLESS progression route, ${plan.slug}. Common biome order ` +
+        `(${T2_PROGRESSION_ORDER.join(" -> ")}) held constant. No boss is fought and ` +
+        `no range branch is bought: Tier-2 boss balance is being reworked, so a boss ` +
+        `outcome is not admissible evidence about biome tuning. Nothing inside Tier 2 ` +
+        `gates on a boss clear (no recipe sets requiredBossClear, travel is ungated, ` +
+        `and biomeLevelCap reads playerTier only), so this arm loses no content ` +
+        `coverage -- only the branch, which is bought on the way OUT of the tier ` +
+        `anyway. Hypothesis: ${plan.hypothesis}`,
+      steps,
+      // Completion is BIOME MASTERY, not the tier. Three seals can never
+      // legitimately be earned by a route that fights no bosses, so keying
+      // completion on playerTier 3 would report every run as `stalled`.
+      completion: {
+        type: "globalMasteryAtLeast",
+        value: T2_BOSSLESS_MASTERY_TARGET,
+      },
+      milestones: masteryMilestones,
+    };
   }
 
   return {
@@ -321,10 +397,7 @@ export function makeT2Route(config: T2RouteConfig): Route {
     milestones: [
       { id: "t2-first-seal", when: anyT2BossCleared() },
       { id: "t2-third-seal-tier-3", when: { type: "playerTierAtLeast", tier: 3 } },
-      { id: "gm-42-first-t2-upgrade", when: { type: "globalMasteryAtLeast", value: 42 } },
-      { id: "gm-48", when: { type: "globalMasteryAtLeast", value: 48 } },
-      { id: "gm-60", when: { type: "globalMasteryAtLeast", value: 60 } },
-      { id: "gm-72-all-t2-maxed", when: { type: "globalMasteryAtLeast", value: 72 } },
+      ...masteryMilestones,
       ...T2_PROGRESSION_ORDER.map((group) => ({
         id: `${group}-t2-boss-cleared`,
         when: { type: "bossCleared" as const, biomeGroup: group, tier: 2 },
@@ -356,3 +429,38 @@ export const T2_CONTROL_ROUTE_IDS: readonly string[] = T2_CLASS_PLANS.map(
 );
 
 export const T2_ROUTE_IDS: readonly string[] = T2_ROUTES.map((r) => r.id);
+
+/**
+ * The bossless progression cohort: ONE route per class, no branch axis.
+ *
+ * There is no branch axis here because there is no branch: the range node is
+ * bought with the point minted by reaching playerTier 3, which needs three
+ * Tier-2 seals, which needs three Tier-2 boss kills. A bossless run never has
+ * one, so all three variants of a class would be byte-identical.
+ */
+export const T2_PROGRESSION_ROUTES: readonly Route[] = T2_CLASS_PLANS.map((plan) =>
+  makeT2Route({ plan, branch: "mid", version: "1.0.0", bossless: true }),
+);
+
+export const T2_PROGRESSION_ROUTE_IDS: readonly string[] = T2_PROGRESSION_ROUTES.map(
+  (r) => r.id,
+);
+
+/**
+ * Bossless PROBE arms: one variable each, read only against their own baseline.
+ *
+ * Kept out of `T2_PROGRESSION_ROUTES` deliberately. That export is the six-class
+ * comparative cohort, and the cross-class interpretation rules ("degraded for 4
+ * of 6 classes") are only meaningful over exactly one route per class. A probe
+ * is a within-class A/B and would corrupt those counts if pooled.
+ */
+export const T2_PROBE_ROUTES: readonly Route[] = [
+  makeT2Route({
+    plan: CONDUIT_HAMMER_PROBE_PLAN,
+    branch: "mid",
+    version: "1.0.0",
+    bossless: true,
+  }),
+];
+
+export const T2_PROBE_ROUTE_IDS: readonly string[] = T2_PROBE_ROUTES.map((r) => r.id);

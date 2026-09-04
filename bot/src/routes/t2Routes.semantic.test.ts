@@ -5,7 +5,14 @@ import {
   STANCE_RECIPE_DATABASE,
   biomeLevelCap,
 } from "@mmo-idle/shared";
-import { T2_BRANCHES, T2_CONTROL_ROUTE_IDS, T2_ROUTES, rangeSkillId } from "./t2RouteBuilder";
+import {
+  T2_BOSSLESS_MASTERY_TARGET,
+  T2_BRANCHES,
+  T2_CONTROL_ROUTE_IDS,
+  T2_PROGRESSION_ROUTES,
+  T2_ROUTES,
+  rangeSkillId,
+} from "./t2RouteBuilder";
 import { T2_CLASS_PLANS } from "./t2GearPlans";
 import { T2_PROGRESSION_ORDER, type T2BiomeGroup } from "./t2Common";
 import { BIOME_ENCOUNTER_SHAPE, guardFor, techniqueFor } from "./t2Loadouts";
@@ -335,6 +342,91 @@ for (const route of T2_ROUTES) {
         );
       }
     }
+  }
+}
+
+// ── The bossless Tier-2 progression cohort ─────────────────────────────────
+//
+// This family exists because Tier-2 boss balance is being reworked and is
+// therefore inadmissible as evidence. These assertions are what keep a future
+// edit from quietly reintroducing a boss dependency and voiding a whole cohort.
+
+assert(
+  T2_PROGRESSION_ROUTES.length === T2_CLASS_PLANS.length,
+  "one bossless progression route per class plan, and no branch axis",
+);
+assert(
+  new Set(T2_PROGRESSION_ROUTES.map((r) => r.id)).size === T2_PROGRESSION_ROUTES.length,
+  "bossless route ids are unique",
+);
+
+function walkSteps(steps: readonly RouteStep[]): RouteStep[] {
+  const out: RouteStep[] = [];
+  for (const step of steps) {
+    out.push(step);
+    if (step.type === "ifPossible" || step.type === "repeatUntil") {
+      out.push(...walkSteps(step.steps));
+    }
+  }
+  return out;
+}
+
+for (const route of T2_PROGRESSION_ROUTES) {
+  assert(route.startsFromTierEntry === 2, `${route.id}: declares Tier-2 entry`);
+
+  const all = walkSteps(route.steps);
+
+  // 1. No boss is fought, at any nesting depth.
+  assert(
+    all.every((step) => step.type !== "attemptBoss"),
+    `${route.id}: must contain no attemptBoss step -- boss outcomes are not evidence here`,
+  );
+
+  // 2. No range branch is bought. A bossless run earns no seals, so an
+  //    unlockSkill on a range node could never fire; asserting it is absent
+  //    keeps the route honest rather than relying on a skipped conditional.
+  assert(
+    all.every((step) => step.type !== "unlockSkill"),
+    `${route.id}: must buy no skill -- a bossless run never reaches playerTier 3`,
+  );
+
+  // 3. Completion is biome mastery, never the tier. Keying on playerTier 3
+  //    would report every single run of this family as `stalled`.
+  assert(
+    route.completion.type === "globalMasteryAtLeast" &&
+      route.completion.value === T2_BOSSLESS_MASTERY_TARGET,
+    `${route.id}: completes on global mastery ${T2_BOSSLESS_MASTERY_TARGET}, not on seals`,
+  );
+
+  // 4. No milestone depends on a boss clear or on the tier advancing, so the
+  //    summary cannot present boss-derived progress as campaign evidence.
+  for (const milestone of route.milestones) {
+    assert(
+      milestone.when.type !== "bossCleared" && milestone.when.type !== "playerTierAtLeast",
+      `${route.id}: milestone "${milestone.id}" depends on boss/tier progress`,
+    );
+  }
+
+  // 5. Every biome is still visited, in the controlled order, and bracketed by
+  //    an entered/leg-complete milestone pair so per-biome dwell time is
+  //    recoverable for the response map.
+  const visited = route.steps
+    .filter((step): step is Extract<RouteStep, { type: "travel" }> => step.type === "travel")
+    .map((step) => (step.to.kind === "biome" ? step.to.biomeGroup : null));
+  assert(
+    JSON.stringify(visited) === JSON.stringify([...T2_PROGRESSION_ORDER]),
+    `${route.id}: visits the controlled biome order exactly once each`,
+  );
+  const milestoneIds = new Set(
+    all
+      .filter((step): step is Extract<RouteStep, { type: "milestone" }> => step.type === "milestone")
+      .map((step) => step.id),
+  );
+  for (const group of T2_PROGRESSION_ORDER) {
+    assert(
+      milestoneIds.has(`${group}-t2-entered`) && milestoneIds.has(`${group}-t2-leg-complete`),
+      `${route.id}: ${group} leg is not bracketed for per-biome dwell time`,
+    );
   }
 }
 

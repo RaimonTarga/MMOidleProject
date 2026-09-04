@@ -132,7 +132,8 @@ export const forestRecipeEntries = [
   // T2 economy pass (2026-08-29): normalized off the old doubling-to-+5 curve
   // (was 1,920 total) into the normal T2 specialist-weapon band (~1,000 total).
   // Evolution costs no catalyst (§2/§7); catalysts moved to +4/+5 only (§8).
-  // Evolution now requires flash-rapier at +5 (EVOLUTION_REQUIRED_PLUS), not +3.
+  // Evolution requires flash-rapier at +EVOLUTION_REQUIRED_PLUS, which returned
+  // to +3 on 2026-09-04 (see shared/src/systems/evolution.ts for rationale).
   ['gale-needle', {
     id: 'gale-needle', name: 'Gale Needle',
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'weapon',

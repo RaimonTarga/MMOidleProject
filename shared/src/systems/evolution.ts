@@ -16,13 +16,25 @@ import type { Recipe } from '../data/recipes/types';
  */
 
 /**
- * Minimum predecessor upgrade level required to evolve. +5 = "fully invested" —
- * T2 progression/economy pass (2026-08-29): raised from +3 so a player who fully
- * committed to the T1 item (base->+5 is now the deliberate late-game investment,
- * see docs/briefs/T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md) gets real
- * credit, while a +4 (or lower) predecessor must reconstruct instead.
+ * Minimum predecessor upgrade level required to evolve.
+ *
+ * History: +3 originally; raised to +5 by the T2 progression/economy pass
+ * (2026-08-29, docs/briefs/T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md)
+ * so that fully committing to a T1 item earned real credit; LOWERED BACK TO +3
+ * on 2026-09-04 by designer decision.
+ *
+ * Why it came back down: the canonical Tier-1 routes were never updated for the
+ * +5 gate, and they take only SOME gear that far (Striker's flash-rapier ends at
+ * +4, its iron-broadsword at +1). Measured against the six Tier-2 class plans,
+ * that left **22 of 50 planned acquisitions paying ~3.5x reconstruction** for
+ * predecessors the character had genuinely invested in — the gate was not
+ * rewarding commitment, it was taxing a route/gate mismatch. See
+ * docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12.
+ *
+ * The gate is evaluated at Tier-2 time, not at Tier-1 snapshot-capture time, so
+ * this change does not invalidate already-captured T1 handoff snapshots.
  */
-export const EVOLUTION_REQUIRED_PLUS = 5;
+export const EVOLUTION_REQUIRED_PLUS = 3;
 
 /**
  * Predecessor +level required to evolve/rank-up into `recipe`. Gear evolves from a
