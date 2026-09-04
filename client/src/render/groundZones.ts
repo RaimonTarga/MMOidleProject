@@ -1,4 +1,4 @@
-import type { GroundZoneKind, GroundZoneView } from "@mmo-idle/shared";
+import type { GroundZoneGeometry, GroundZoneKind, GroundZoneView } from "@mmo-idle/shared";
 import type { GameScene } from "../scenes/GameScene";
 import { HAZARD_POOL_ART } from "../sprites";
 import { DEPTH } from "./depth";
@@ -24,6 +24,10 @@ const TRENCH_SWEEP_FILL = 0x245f86;
 const TRENCH_SWEEP_LINE = 0x72d8e8;
 const TRENCH_MINE_FILL = 0x5d3c86;
 const TRENCH_MINE_LINE = 0xe0a8ff;
+const CHARGE_FILL = 0xa8481f;
+const CHARGE_LINE = 0xffa04d;
+/** Committed lanes go white-hot at the lock so the two states never look alike. */
+const CHARGE_LOCKED_LINE = 0xfff0d0;
 
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
@@ -38,6 +42,10 @@ export interface GroundZoneSprite {
   x: number;
   y: number;
   fx?: string;
+  /** Authoritative shape — drawn verbatim, never re-derived from x/y/radius. */
+  geometry: GroundZoneGeometry;
+  /** Ms until a charge lane stops tracking; undefined for every other kind. */
+  lockedInMs?: number;
 }
 
 export function syncGroundZones(
@@ -76,6 +84,8 @@ export function syncGroundZones(
         x: zone.x,
         y: zone.y,
         fx: zone.fx,
+        geometry: zone.geometry,
+        lockedInMs: zone.lockedInMs,
       };
       scene.groundZones.set(zone.id, sprite);
     }
@@ -88,6 +98,8 @@ export function syncGroundZones(
     sprite.x = zone.x;
     sprite.y = zone.y;
     sprite.fx = zone.fx;
+    sprite.geometry = zone.geometry;
+    sprite.lockedInMs = zone.lockedInMs;
     sprite.image
       ?.setPosition(zone.x, zone.y)
       .setDisplaySize(zone.radius * 2.1, zone.radius * 2.1);
@@ -99,9 +111,86 @@ export function drawGroundZones(scene: GameScene): void {
   if (scene.groundZones.size === 0) return;
   const now = performance.now();
   for (const sprite of scene.groundZones.values()) {
-    const remaining = Math.max(0, sprite.remainingMs - (now - sprite.syncedAtMs));
+    const elapsed = now - sprite.syncedAtMs;
+    const remaining = Math.max(0, sprite.remainingMs - elapsed);
     const progress = Math.min(1, Math.max(0, 1 - remaining / sprite.durationMs));
+    if (sprite.kind === "charge-corridor" && sprite.geometry.kind === "corridor") {
+      // Advance the lock locally between the 5 Hz packets, same trick the fill uses.
+      const locked = Math.max(0, (sprite.lockedInMs ?? 0) - elapsed) <= 0;
+      drawChargeLane(sprite, sprite.geometry, progress, locked);
+      continue;
+    }
     drawZone(sprite, progress);
+  }
+}
+
+/**
+ * A committed charge lane: a capsule the player has to get OFF, not out of.
+ *
+ * Two visibly distinct states, because the encounter turns on the difference. While
+ * aiming, the lane is dim with a dashed-feeling thin rim and it swings to follow
+ * you. On lock it snaps to a hot solid rim and a full-length core bar starts filling
+ * toward the far end — the cue that it has stopped tracking and moving sideways now
+ * works. Colour alone never carries it: rim weight and the core bar do too.
+ */
+function drawChargeLane(
+  sprite: GroundZoneSprite,
+  geometry: Extract<GroundZoneGeometry, { kind: "corridor" }>,
+  progress: number,
+  locked: boolean,
+): void {
+  const { graphic } = sprite;
+  const { start, end, halfWidth } = geometry;
+  graphic.clear();
+
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.hypot(dx, dy);
+  if (length < 1) return;
+  const angle = Math.atan2(dy, dx);
+  const nx = (-dy / length) * halfWidth;
+  const ny = (dx / length) * halfWidth;
+
+  const line = locked ? CHARGE_LOCKED_LINE : CHARGE_LINE;
+
+  // Footprint: the rectangle plus a rounded cap at each end, which together are
+  // exactly the capsule the server tests containment against.
+  graphic.fillStyle(CHARGE_FILL, locked ? 0.26 : 0.15);
+  graphic.beginPath();
+  graphic.moveTo(start.x + nx, start.y + ny);
+  graphic.lineTo(end.x + nx, end.y + ny);
+  graphic.lineTo(end.x - nx, end.y - ny);
+  graphic.lineTo(start.x - nx, start.y - ny);
+  graphic.closePath();
+  graphic.fillPath();
+  graphic.fillCircle(start.x, start.y, halfWidth);
+  graphic.fillCircle(end.x, end.y, halfWidth);
+
+  graphic.lineStyle(locked ? 4 : 2, line, locked ? 0.95 : 0.55);
+  graphic.beginPath();
+  graphic.moveTo(start.x + nx, start.y + ny);
+  graphic.lineTo(end.x + nx, end.y + ny);
+  graphic.strokePath();
+  graphic.beginPath();
+  graphic.moveTo(start.x - nx, start.y - ny);
+  graphic.lineTo(end.x - nx, end.y - ny);
+  graphic.strokePath();
+  graphic.strokeCircle(end.x, end.y, halfWidth);
+
+  // Core bar: the countdown, only once committed. It races the length of the lane
+  // and reaches the far cap exactly on impact.
+  if (locked) {
+    const reach = length * progress;
+    graphic.lineStyle(Math.max(3, halfWidth * 0.35), line, 0.6);
+    graphic.beginPath();
+    graphic.moveTo(start.x, start.y);
+    graphic.lineTo(start.x + Math.cos(angle) * reach, start.y + Math.sin(angle) * reach);
+    graphic.strokePath();
+  }
+
+  if (progress > 0.88) {
+    graphic.lineStyle(3, 0xffffff, (progress - 0.88) / 0.12);
+    graphic.strokeCircle(end.x, end.y, halfWidth);
   }
 }
 

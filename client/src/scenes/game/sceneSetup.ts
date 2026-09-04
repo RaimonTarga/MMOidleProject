@@ -153,6 +153,7 @@ import {
   tickMapSlide,
 } from "./mapTransition";
 import { drawGroundZones } from "../../render/groundZones";
+import { drawCorpses } from "../../render/corpses";
 
 const CAMERA_HOLD_MARGIN = 80;
 const CAMERA_LERP = 0.1;
@@ -591,6 +592,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     drawCooldownBars(scene.state);
     drawCastBars(scene.state, scene);
     drawGroundZones(scene);
+    drawCorpses(scene);
     drawSkillCallouts(scene.state);
     updateEffectOverlays(scene.state, scene, dt);
     updateMovementEffects(scene.state, scene);
