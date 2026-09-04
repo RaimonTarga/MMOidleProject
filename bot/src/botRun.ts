@@ -213,6 +213,7 @@ export async function runBot(
   let rewardMultiplierBeforeRun: number | null = null;
   let aborted = false;
   let abortReason: string | undefined;
+  const runAbort = new AbortController();
   let deathCount = 0;
   let lastDeathAt = 0;
   const stalls: Array<{ reason: string; detail?: Record<string, unknown> }> = [];
@@ -226,9 +227,36 @@ export async function runBot(
 
   let executor: RouteExecutor | null = null;
 
+  /**
+   * The run supervisor has one fatal boundary.  A disconnect, deadline, or
+   * process signal must stop outbound combat/traversal intents before the
+   * route executor has a chance to begin another activity.
+   */
+  const abortRun = (
+    reason: string,
+    leaseReason: "abort" | "disconnect",
+  ): void => {
+    if (aborted) return;
+    aborted = true;
+    abortReason = reason;
+    runAbort.abort(reason);
+    leaseSession?.interrupt(leaseReason);
+    try {
+      intents.setAuto(false);
+      intents.setAutoTraverse(false);
+    } catch (err) {
+      // A kicked socket may reject these best-effort stop intents.  The
+      // controller and reservation interrupt still complete synchronously.
+      console.warn(`[bot] could not stop automation during abort: ${String(err)}`);
+    }
+  };
+
   const handleDeath = (payload: PlayerDeathPayload): void => {
     deathCount += 1;
     lastDeathAt = Date.now();
+    // Death is an ownership boundary, not merely an engagement-state change.
+    // Release synchronously before the respawn acknowledgement/recovery walk.
+    leaseSession?.interrupt("death");
     const self = obs.self;
     const info = NODE_BIOMES[payload.diedAtNodeId];
 
@@ -277,8 +305,7 @@ export async function runBot(
       devToolingSeen = true;
     },
     onKicked: (reason) => {
-      aborted = true;
-      abortReason = `session kicked: ${reason}`;
+      abortRun(`session kicked: ${reason}`, "disconnect");
     },
   });
 
@@ -287,7 +314,7 @@ export async function runBot(
   await conn.selectCharacter(characterId);
 
   // The world admits us asynchronously; the first snapshot names our entity.
-  await waitFor(() => obs.self !== null, 60_000, "own player to appear in the world");
+  await waitFor(() => obs.self !== null, 60_000, "own player to appear in the world", runAbort.signal);
 
   if (tierEntryProfile) {
     const result = await intents.applyTierEntryProfile(tierEntryProfile);
@@ -306,6 +333,7 @@ export async function runBot(
       },
       60_000,
       `tier-entry profile ${tierEntryProfile.id} to appear in the authoritative view`,
+      runAbort.signal,
     );
     if (!taints.includes("SYNTHETIC_TIER_ENTRY")) taints.push("SYNTHETIC_TIER_ENTRY");
 
@@ -375,9 +403,13 @@ export async function runBot(
         () => rewardMultiplier === config.rewardMultiplier,
         5_000,
         "reward multiplier",
+        runAbort.signal,
       )
         .then(() => true)
-        .catch(() => false);
+        .catch((err) => {
+          if (err instanceof AbortError) throw err;
+          return false;
+        });
     }
     if (!applied) {
       throw new Error(
@@ -465,14 +497,12 @@ export async function runBot(
   const runDeadline = startedAt + config.maxRunMs;
   const deadlineTimer = setInterval(() => {
     if (Date.now() > runDeadline && !aborted) {
-      aborted = true;
-      abortReason = `run exceeded maxRunMs (${config.maxRunMs}ms)`;
+      abortRun(`run exceeded maxRunMs (${config.maxRunMs}ms)`, "abort");
     }
   }, 5_000);
 
   const onSignal = (): void => {
-    aborted = true;
-    abortReason = "interrupted";
+    abortRun("interrupted", "abort");
   };
   process.once("SIGINT", onSignal);
   process.once("SIGTERM", onSignal);
@@ -485,6 +515,7 @@ export async function runBot(
     route,
     startedAt,
     aborted: () => aborted,
+    abortSignal: runAbort.signal,
     deathCount: () => deathCount,
     fastBossRetry: config.fastBossRetry,
     fastBossRetryIncludeGuardians: config.fastBossRetryIncludeGuardians,
@@ -495,11 +526,11 @@ export async function runBot(
     awaitAlive: async () => {
       while (obs.self?.isDead ?? false) {
         if (aborted) throw new AbortError("run aborted");
-        await sleep(500);
+        await sleepOrAbort(500, runAbort.signal);
       }
       // Respawn returns the character to the region hub with auto-combat off;
       // give the world a beat to settle before the next step acts on position.
-      if (Date.now() - lastDeathAt < 5_000) await sleep(2_000);
+      if (Date.now() - lastDeathAt < 5_000) await sleepOrAbort(2_000, runAbort.signal);
     },
   });
 
@@ -662,7 +693,7 @@ export async function runBot(
 
   try {
     await executor.run();
-    completion = "completed";
+    completion = executor.isPartial ? "partial" : "completed";
   } catch (err) {
     if (err instanceof StallError) {
       completion = "stalled";
@@ -735,6 +766,7 @@ export async function runBot(
     maximumSimultaneouslyProgressing: leaseSession?.maximumSimultaneouslyProgressing(),
     winCondition: config.completionMode,
     snapshotArtifacts: snapshotStore.manifest(),
+    concurrencyIntervals: leaseSession?.concurrencyIntervals(),
   });
 
   await sink.close();
@@ -802,12 +834,32 @@ async function waitFor(
   predicate: () => boolean,
   timeoutMs: number,
   what: string,
+  signal?: AbortSignal,
 ): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   while (!predicate()) {
+    if (signal?.aborted) throw new AbortError("run aborted");
     if (Date.now() > deadline) throw new Error(`timed out waiting for ${what}`);
-    await sleep(250);
+    await sleepOrAbort(250, signal);
   }
+}
+
+function sleepOrAbort(ms: number, signal?: AbortSignal): Promise<void> {
+  if (!signal) return sleep(ms);
+  if (signal.aborted) return Promise.reject(new AbortError("run aborted"));
+  return new Promise<void>((resolve, reject) => {
+    let timer!: ReturnType<typeof setTimeout>;
+    const onAbort = (): void => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", onAbort);
+      reject(new AbortError("run aborted"));
+    };
+    timer = setTimeout(() => {
+      signal.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+    signal.addEventListener("abort", onAbort, { once: true });
+  });
 }
 
 function buildTierEntryInitialState(

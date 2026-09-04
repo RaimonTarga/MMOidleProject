@@ -258,73 +258,46 @@ WorldMirror ──► Observation ──► RouteExecutor ──► Intents ─�
 
 ## Controlled concurrency (`--executionMode=isolated-parallel`)
 
-Controlled batches default to `sequential` — one bot at a time, unchanged.
-`isolated-parallel` runs several at once without letting them contaminate one
-another. The bots are **not** taught to avoid each other; a coordinator-owned
-lease manager decides who may proceed, and a blocked bot waits.
+Controlled batches default to `sequential`: one bot at a time remains the
+canonical control. `isolated-parallel` is an experimental concurrency cohort,
+not an economy baseline, until the staged live rollout succeeds.
 
-**The isolation boundary is one world node.** The server scopes monster
-allocation, auto-targeting, AoE and reward sharing by `hasPosition.nodeId` —
-`grantMonsterRewards` explicitly skips party members standing in a different
-node — so two bots in different nodes cannot reach each other's combat or
-progression evidence. A dungeon is its own node id, so boss/guardian state
-serializes under the same rule.
+The coordinator has three deliberately separate responsibilities:
 
-Consequences worth knowing:
+- `RunConcurrencyLimiter` controls launch/active-run capacity only.
+- `CombatReservationManager` grants exact-node, epoch-fenced permits for
+  farming, boss attempts, and hostile transit crossings.
+- `CohortEvidenceMonitor` passively records only the interaction intervals each
+  participant actually experienced.
 
-- **Transit is deliberately unleased**, and so is the **Clearing**. Every route
-  opens there for the tier-0 quest and starter set; leasing it would serialize
-  the whole batch behind one node before any bot reached the content under test,
-  and the tutorial is not a difficulty measurement anyone reads. Sharing it is
-  explicitly not contamination. Only the node a bot is *working* in is exclusive.
-- **Same biome, different nodes is legal and expected.** Every T1 farm step is
-  authored as a biome with `pick: "uncleared"`, so which node gets used was
-  always the executor's dynamic choice. `resolveNodeCandidates` returns that
-  choice as an ordered list; index 0 is exactly what a solo run picks, and the
-  coordinator only falls through to a later entry when the head is leased.
-- **Nodes are not equal.** Each carries a node modifier that rescales monster
-  HP/attack/plating at spawn, so node choice is a difficulty variable. Runs
-  record `coordination.nodeMix` (node, modifier, dwell time) so two runs can be
-  checked for comparability instead of assumed comparable.
-- **A node is released only when the bot is observed to have left it**, never
-  when the executor merely decides to travel. Walking out takes real seconds,
-  and releasing at the decision left the node free while the avatar was still
-  standing in it -- the next bot was granted it and farmed around a bot that had
-  not gone yet (live defect, 2026-08-28). A travel step also acquires its
-  destination, so a bot never *arrives* in a node it does not own.
-- **A waiter keeps the node it is parked in** until its next lease is granted,
-  so nobody farms around a stopped bot. If waiters ever form a ring, the
-  manager's parked-hold breaker drops the parked areas — never the pending
-  requests — so the batch cannot wedge.
-- **Lease waiting is not a stall.** It is its own `lease-wait` activity and is
-  reported separately from combat/economy stalls.
-- **Fall-through is biased toward nearby nodes.** When the preferred node is
-  leased, the coordinator holds out for another node within a couple of hops
-  rather than accepting whatever happens to be free -- a distant free node meant
-  a multi-biome walk (measured: ~66s of travel). The hold-out is bounded
-  (`NEAR_CANDIDATE_WIDEN_MS`), so a permanently busy cluster still widens instead
-  of wedging the run, and waiting is cheap because a bot that owns the node it is
-  standing in keeps farming while it waits.
-- **A bot never fights in a node another controlled bot holds.** The travel
-  loop's "fight back when attacked" rule is suppressed while crossing a leased
-  node -- it keeps walking instead. Without this, a long crossing parked bots
-  mid-transit and had them take real kills and catalyst gains inside someone
-  else's node (live defect at 8-bot scale, 2026-08-28). Fight-back is unchanged
-  in unleased ground, including the Clearing.
-- **Co-presence is classified, not blanket-tainting.** A bot merely passing
-  through a leased node is recorded as `transit-co-presence` and does not taint
-  the run; only another bot *engaged* in a node this one holds counts as
-  `controlled-player-observed` and marks it contaminated. Summaries report both
-  as `contaminatingOverlaps` / `transitCoPresences`.
-  "Engaged" is **derived**, never declared: `observe()` reads the server's own
-  `auto` combat flag each tick. It was briefly a hand-set flag, and the one
-  travel path nobody wired -- the walk home after dying mid-farm -- left it stuck
-  true, so a purely transiting bot poisoned every node it crossed. The executor
-  has eleven navigation call sites; deriving from authoritative state covers all
-  of them, and a source guard in `harness.test.ts` blocks hand-wiring it again.
-- Overlap detection stays on regardless. If two controlled bots are ever seen in
-  the same leased node, both runs are marked `CONTAMINATED_CONTROLLED_OVERLAP`
-  and the artifacts are kept, never silently accepted.
+The Clearing and safe hops are shared. Transit is planned on the world graph and
+executed one hop at a time; a hostile intermediate hop obtains a
+`protected-transit` permit before entry. Foreign exclusive nodes are avoided.
+One transit death permits one replan; a further failure becomes a bounded blocked
+step rather than a watchdog loop.
+
+Combat ownership is scoped. Farm, boss, and protected-transit permits release on
+activity completion, authoritative departure, death, step failure, abort,
+disconnect, or coordinator shutdown. A bot may probe an available next hop while
+holding a permit, but it never joins a wait queue until it holds none. There is no
+parked-hold or productive-wait recovery path.
+
+Contention is explicit. A batch uses one policy:
+
+- `strict-isolation` stops the affected activity at its local/total wait
+  budget and produces a partial route artifact.
+- `degrade-to-shared` converts the affected node to a recorded shared
+  admission after the exclusive budget expires.
+
+Every summary reports route completion separately from its isolation grade:
+`isolated`, `ambient-concurrency`, `shared-combat`,
+`outcome-interference`, or `harness-invalid`. Transit plans, permit identity
+and epoch, shared-admission fallbacks, and participant-scoped interaction
+intervals are written to the event stream. Only completed, isolated, untainted
+runs are solo economy baselines.
+
+A run that fails before its own telemetry can start still receives a
+coordinator-written `failed-harness` artifact and a terminal manifest entry.
 
 ## Adding a class route (Stage C)
 

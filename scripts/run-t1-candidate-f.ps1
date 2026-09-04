@@ -1,6 +1,10 @@
 param(
   [string]$Root = "bot/runs/t1-candidate-f-final-2026-09-03",
-  [int]$Replicates = 5
+  [int]$Replicates = 5,
+  [ValidateSet("sequential", "isolated-parallel")]
+  [string]$ExecutionMode = "sequential",
+  [int]$MaxConcurrency = 1,
+  [int]$StaggerMs = 0
 )
 
 $ErrorActionPreference = "Continue"
@@ -16,9 +20,9 @@ for ($replicate = 1; $replicate -le $Replicates; $replicate++) {
 
   & pnpm.cmd bot:batch `
     --controlled=true `
-    --executionMode=isolated-parallel `
-    --maxConcurrency=6 `
-    --staggerMs=60000 `
+    --executionMode=$ExecutionMode `
+    --maxConcurrency=$MaxConcurrency `
+    --staggerMs=$StaggerMs `
     --routes=$routes `
     --policies=intended `
     --count=1 `

@@ -2,7 +2,7 @@ import type { DeathCause, EssenceType } from "@mmo-idle/shared";
 import type { T1EconomyArm, TierEntryInitialState } from "@mmo-idle/shared";
 
 /** Bump when an event shape changes incompatibly. Mirrors the bench convention. */
-export const BOT_JSONL_SCHEMA_VERSION = 3;
+export const BOT_JSONL_SCHEMA_VERSION = 5;
 
 /** Tags that mark a run as unfit for canonical balance conclusions. */
 export type RunTaint =
@@ -99,10 +99,26 @@ export interface TemplateValidationSummary {
 
 export type CompletionState =
   | "completed"
+  | "partial"
   | "stalled"
   | "timed-out"
   | "error"
   | "aborted";
+
+/** A bounded coordination recovery, retained even when the route later settles. */
+export interface CoordinationFallback {
+  trigger:
+    | "exclusive-wait-budget"
+    | "unsafe-transit"
+    | "transit-death-budget"
+    | "reservation-expired"
+    | "step-deadline";
+  action: "alternate-node" | "replan" | "shared-admission" | "skip-dependent" | "partial-stop";
+  nodeId?: string;
+  startedAtMs: number;
+  endedAtMs: number;
+  affectedStepIndexes: number[];
+}
 
 /** Where a currency came from or went. */
 export interface EconomyContext {
@@ -206,7 +222,7 @@ export type BotEvent =
       label: string;
       stepType: string;
       durationMs: number;
-      outcome: "done" | "stalled";
+      outcome: "done" | "stalled" | "skipped" | "blocked";
       reason?: string;
     }
   | { kind: "node-enter"; atMs: number; nodeId: string; biomeGroup: string | null; nodeModifier: string | null }
@@ -353,7 +369,7 @@ export type BotEvent =
       biomeGroup: string;
       tier: number;
       attempts: number;
-      nextAction: "continue-route";
+      nextAction: "skip-dependent";
     }
   | {
       kind: "fast-boss-retry";
@@ -373,6 +389,24 @@ export type BotEvent =
       reason: string;
       waitDurationMs?: number;
       conflictingOwnerId?: string;
+      permitId?: string;
+      epoch?: number;
+      purpose?: "farm" | "boss" | "protected-transit";
+    }
+  | {
+      /** The exact graph path selected for one transit attempt. */
+      kind: "transit-plan";
+      atMs: number;
+      fromNodeId: string;
+      destinationNodeId: string;
+      totalCost: number;
+      hops: Array<{
+        fromNodeId: string;
+        toNodeId: string;
+        classification: "safe-pass" | "protected-crossing" | "temporarily-blocked" | "unsafe";
+        reasons: string[];
+      }>;
+      rejectedAlternatives: Array<{ destinationNodeId: string; reason: string }>;
     }
   | {
       kind: "controlled-overlap";
@@ -389,6 +423,7 @@ export type BotEvent =
        */
       contaminating: boolean;
     }
+  | { kind: "coordination-fallback"; atMs: number; fallback: CoordinationFallback }
   | {
       /** Authoritative Rune posture change carried by a DeltaSnapshot when available. */
       kind: "stance-switch";

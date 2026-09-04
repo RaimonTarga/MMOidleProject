@@ -6,6 +6,7 @@ import { basename, isAbsolute } from "node:path";
 import { isT1EconomyArm, type T1EconomyArm } from "@mmo-idle/shared";
 import type { HarnessExecutionMode } from "./telemetry/events";
 import type { EntryEconomyMode } from "./tierEntry/economy";
+import type { ContentionPolicy } from "./concurrency/areaLeaseManager";
 
 /** Prefix that marks an account as bot-owned. `cleanup.ts` deletes on this. */
 export const BOT_ACCOUNT_PREFIX = "bot-";
@@ -130,6 +131,7 @@ export function controlledBatchSettings(args: Record<string, string>): {
   executionMode: "sequential" | "isolated-parallel";
   maxConcurrency: number;
   staggerMs: number;
+  contentionPolicy: ContentionPolicy;
 } {
   const executionMode = args.executionMode ?? "sequential";
   if (executionMode !== "sequential" && executionMode !== "isolated-parallel") {
@@ -161,7 +163,15 @@ export function controlledBatchSettings(args: Record<string, string>): {
   if (executionMode === "sequential" && maxConcurrency !== 1) {
     throw new Error("sequential controlled mode requires --maxConcurrency=1");
   }
-  return { executionMode, maxConcurrency, staggerMs };
+  const contentionPolicy = (args.contentionPolicy ??
+    (executionMode === "isolated-parallel" ? "degrade-to-shared" : "strict-isolation")) as ContentionPolicy;
+  if (contentionPolicy !== "strict-isolation" && contentionPolicy !== "degrade-to-shared") {
+    throw new Error("--contentionPolicy must be strict-isolation or degrade-to-shared");
+  }
+  if (executionMode === "sequential" && contentionPolicy !== "strict-isolation") {
+    throw new Error("sequential controlled mode does not use shared-admission degradation");
+  }
+  return { executionMode, maxConcurrency, staggerMs, contentionPolicy };
 }
 
 /** Server-safe character name: strip anything the name validator rejects. */

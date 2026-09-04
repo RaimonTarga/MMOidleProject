@@ -23,7 +23,9 @@ import {
   type EquipmentSlot,
 } from "@mmo-idle/shared";
 import type { Intents } from "../net/intents";
-import type { RouteLeaseSession } from "../concurrency/routeLeaseSession";
+import { CoordinationExhaustedError, type RouteLeaseSession } from "../concurrency/routeLeaseSession";
+import { TransitExecutor } from "../concurrency/transitExecutor";
+import { planTransit } from "../concurrency/transitPlanner";
 import type { Policy } from "../policy/profiles";
 import type { Observation } from "../state/observation";
 import { dungeonNodeFor, normalNodesFor } from "../state/observation";
@@ -43,13 +45,13 @@ import {
   upgradeBlockReasons,
 } from "./conditions";
 import type { BlockReason } from "../telemetry/events";
-import type { Condition, NodeRef, Route, RouteStep } from "./types";
+import type { Condition, NodeRef, Route, RouteStep, StepOutcome } from "./types";
 
 const POLL_MS = 500;
 /** A farm with no kill and no wallet movement for this long is stuck, not slow. */
 const DEFAULT_NO_PROGRESS_MS = 12 * 60 * 1000;
-/** Ceiling on any single step, so one impossible goal cannot eat a whole run. */
-const DEFAULT_STEP_TIMEOUT_MS = 6 * 60 * 60 * 1000;
+/** Last-resort local guard; known step types must settle through their own policies first. */
+const DEFAULT_STEP_TIMEOUT_MS = 30 * 60 * 1000;
 /**
  * How much further than the closest candidate a node may be and still count as
  * "near". Two hops keeps a bot inside its target biome's local cluster; beyond
@@ -108,6 +110,8 @@ export interface ExecutorDeps {
   startedAt: number;
   /** True once the run should wind down (timeout, signal, fatal socket error). */
   aborted: () => boolean;
+  /** Wakes an in-flight route wait as soon as the run supervisor aborts. */
+  abortSignal?: AbortSignal;
   /** Resolves when the player is alive and back in the world after a death. */
   awaitAlive: () => Promise<void>;
   /** Deaths so far — used to detect a death during a boss attempt. */
@@ -125,6 +129,10 @@ export class RouteExecutor {
   /** Near cluster for the farm step being set up, consumed by `farmUntil`. */
   private nearCandidates: readonly string[] | undefined;
   private readonly firedMilestones = new Set<string>();
+  private readonly failedFacts = new Set<string>();
+  private readonly stepOutcomes: StepOutcome[] = [];
+  private activeStepOutcome: StepOutcome = { status: "completed" };
+  private partial = false;
   private stepIndex = 0;
   private stepLabel = "";
 
@@ -136,6 +144,10 @@ export class RouteExecutor {
 
   get currentStepLabel(): string {
     return this.stepLabel;
+  }
+
+  get outcomes(): readonly StepOutcome[] {
+    return this.stepOutcomes;
   }
 
   private elapsed(): number {
@@ -165,6 +177,7 @@ export class RouteExecutor {
       const index = this.stepIndex++;
       this.stepLabel = label;
       const startedAt = Date.now();
+      this.activeStepOutcome = { status: "completed" };
 
       this.deps.recorder.emit({
         kind: "route-step-start",
@@ -174,9 +187,52 @@ export class RouteExecutor {
         stepType: step.type,
       });
 
+      const failedRequirement = step.requires ? this.failedRequirement(step.requires) : null;
+      if (failedRequirement) {
+        this.stepOutcomes.push({
+          status: "skipped",
+          reason: `permanently failed prerequisite: ${failedRequirement}`,
+        });
+        this.deps.recorder.emit({
+          kind: "route-step-end",
+          atMs: this.deps.recorder.now(),
+          index,
+          label,
+          stepType: step.type,
+          durationMs: Date.now() - startedAt,
+          outcome: "skipped",
+          reason: `permanently failed prerequisite: ${failedRequirement}`,
+        });
+        continue;
+      }
+
       try {
         await this.runStep(step);
       } catch (err) {
+        if (err instanceof CoordinationExhaustedError) {
+          const failedFact = step.type === "attemptBoss"
+            ? `bossCleared:${step.biomeGroup}:${step.tier}`
+            : undefined;
+          if (failedFact) this.failedFacts.add(failedFact);
+          this.partial = true;
+          this.activeStepOutcome = { status: "blocked", reason: err.message, failedFact };
+          this.stepOutcomes.push(this.activeStepOutcome);
+          this.deps.recorder.emit({
+            kind: "route-step-end",
+            atMs: this.deps.recorder.now(),
+            index,
+            label,
+            stepType: step.type,
+            durationMs: Date.now() - startedAt,
+            outcome: "blocked",
+            reason: err.message,
+          });
+          continue;
+        }
+        // A failed route decision must not reserve combat until terminal
+        // cleanup. Scopes also release in their own finally blocks; this is the
+        // immediate, idempotent safety path for failures before a scope starts.
+        this.deps.leaseSession?.interrupt("step-failure");
         if (err instanceof StallError) {
           this.deps.recorder.emit({
             kind: "route-step-end",
@@ -192,6 +248,9 @@ export class RouteExecutor {
         throw err;
       }
 
+      const settledOutcome = this.activeStepOutcome as StepOutcome;
+      this.stepOutcomes.push(settledOutcome);
+
       this.deps.recorder.emit({
         kind: "route-step-end",
         atMs: this.deps.recorder.now(),
@@ -199,7 +258,8 @@ export class RouteExecutor {
         label,
         stepType: step.type,
         durationMs: Date.now() - startedAt,
-        outcome: "done",
+        outcome: settledOutcome.status === "blocked" ? "blocked" : "done",
+        reason: settledOutcome.status === "blocked" ? settledOutcome.reason : undefined,
       });
 
       this.checkMilestones();
@@ -288,26 +348,80 @@ export class RouteExecutor {
   private async doTravel(ref: NodeRef): Promise<void> {
     const candidates = resolveNodeCandidates(ref, this.deps.obs, this.rotation);
     if (candidates.length === 0) throw new StallError("cannot reach target area", { ref });
-    // A travel step ENDS with the bot standing still in the destination, so it
-    // must own it on arrival. Travelling unleased into a node another controlled
-    // bot is farming would park us in its fight -- the same overlap as walking
-    // out late, just at the other end of the journey.
-    const granted = await this.deps.leaseSession?.acquireActivity(
-      candidates,
-      this.deps.obs,
-      this.deps.intents,
-      `travel:${candidates[0]}`,
-      {
-        preferredNodeIds: resolveNearCandidates(
-          ref,
-          this.deps.obs,
-          this.rotation,
-          NEAR_CANDIDATE_SLACK_HOPS,
-        ),
-        widenAfterMs: NEAR_CANDIDATE_WIDEN_MS,
-      },
-    );
-    await this.ensureAt(granted ?? candidates[0]);
+    // Phase 2 scopes permits to combat only. Phase 3 replaces this direct
+    // navigation with a hop-by-hop planner that protects hostile crossings;
+    // do not retain a destination permit while waiting or walking.
+    await this.transitTo(candidates[0]);
+  }
+
+  get isPartial(): boolean {
+    return this.partial;
+  }
+
+  private async transitTo(destinationNodeId: string): Promise<void> {
+    const session = this.deps.leaseSession;
+    const fromNodeId = this.deps.obs.nodeId;
+    const snapshot = session?.reservationSnapshot();
+    if (!session || !fromNodeId || !snapshot) {
+      await this.ensureAt(destinationNodeId);
+      return;
+    }
+    // One replan is allowed after an exhausted per-leg death budget. This is a
+    // local circuit breaker: an unsafe route settles as blocked instead of
+    // letting `ensureAt` turn eleven deaths into a watchdog timeout.
+    for (let replan = 0; replan <= 1; replan += 1) {
+      const currentNodeId = this.deps.obs.nodeId;
+      const currentSnapshot = session.reservationSnapshot();
+      if (!currentNodeId || !currentSnapshot) break;
+      const plan = planTransit({
+        fromNodeId: currentNodeId,
+        destinationNodeId,
+        ownerId: session.ownerId,
+        reservations: currentSnapshot,
+      });
+
+      if (!plan) {
+        session.recordFallback("unsafe-transit", "partial-stop", destinationNodeId);
+        break;
+      }
+      this.deps.recorder.emit({
+        kind: "transit-plan",
+        atMs: this.deps.recorder.now(),
+        fromNodeId: plan.fromNodeId,
+        destinationNodeId: plan.destinationNodeId,
+        totalCost: plan.totalCost,
+        hops: plan.hops.map((hop) => ({ ...hop, reasons: [...hop.reasons] })),
+        rejectedAlternatives: plan.rejectedAlternatives.map((entry) => ({ ...entry })),
+      });
+      const deathsBeforePlan = this.deps.deathCount();
+      try {
+        await new TransitExecutor({
+          acquireProtectedCrossing: async (hop) => {
+            await session.acquireActivity(
+              [hop.toNodeId],
+              this.deps.obs,
+              this.deps.intents,
+              `protected-transit:${hop.fromNodeId}->${hop.toNodeId}`,
+            );
+          },
+          navigateAndConfirmArrival: async (hop) => this.ensureAt(hop.toNodeId, 1),
+        }).execute(plan);
+        return;
+      } catch (error) {
+        if (this.deps.deathCount() > deathsBeforePlan && replan === 0) {
+          session.recordFallback("transit-death-budget", "replan", destinationNodeId);
+          continue;
+        }
+        session.recordFallback("unsafe-transit", "partial-stop", destinationNodeId);
+        throw new StallError("reserved transit blocked", {
+          fromNodeId: currentNodeId,
+          destinationNodeId,
+          replan,
+          cause: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+    throw new StallError("no viable reserved transit path", { fromNodeId, destinationNodeId });
   }
 
   /**
@@ -315,7 +429,7 @@ export class RouteExecutor {
    * `startManualNavigation` clears it server-side anyway, and leaving it on
    * means the bot fights its way across the map instead of travelling.
    */
-  private async ensureAt(nodeId: string): Promise<void> {
+  private async ensureAt(nodeId: string, maxDeaths?: number): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     if (obs.nodeId === nodeId) return;
 
@@ -335,6 +449,7 @@ export class RouteExecutor {
     let lastProgressAt = Date.now();
     let fightingBack = false;
     let deathsAtStart = this.deps.deathCount();
+    const initialDeaths = deathsAtStart;
 
     await this.waitUntil(() => obs.nodeId === nodeId, {
       timeoutMs: TRAVEL_TIMEOUT_MS,
@@ -354,6 +469,9 @@ export class RouteExecutor {
         // bot ping-pongs: die in a transit node, respawn, wander back, die.
         const deaths = this.deps.deathCount();
         if (deaths > deathsAtStart) {
+          if (maxDeaths !== undefined && deaths - initialDeaths > maxDeaths) {
+            throw new StallError("transit death budget exhausted", { nodeId, deaths: deaths - initialDeaths });
+          }
           deathsAtStart = deaths;
           fightingBack = false;
           if (!self.isDead) {
@@ -496,7 +614,8 @@ export class RouteExecutor {
     );
     this.nearCandidates = undefined;
     const nodeId = granted ?? preference[0];
-    await this.ensureAt(nodeId);
+    try {
+    await this.transitTo(nodeId);
     recorder.setActivity(opts.activity ?? "farm");
     intents.setAutocombatConfig(this.deps.policy.autocombat);
     intents.setAutoTraverse(false);
@@ -550,6 +669,12 @@ export class RouteExecutor {
           }
           // A death respawns us at the region hub with auto-combat off; walk
           // back and switch it on again rather than idling out the step.
+          // Phase 2 releases immediately on death. Do not resume auto-combat
+          // after respawn under a permit that no longer exists; the later
+          // scoped-recovery phase will re-acquire and continue this activity.
+          if (this.deps.leaseSession && !this.deps.leaseSession.ownsNode(nodeId)) {
+            throw new StallError("farm combat reservation was interrupted", { nodeId, goal: opts.what });
+          }
           if (obs.nodeId !== nodeId && !(obs.self?.isDead ?? false)) {
             if (Date.now() - lastNudgeAt > 15_000) {
               lastNudgeAt = Date.now();
@@ -570,6 +695,11 @@ export class RouteExecutor {
       });
     } finally {
       recorder.setActivity("idle");
+    }
+    } finally {
+      // The farm scope ends on success, a stall, abort, or death interruption.
+      // Exact release is harmless after an earlier death/disconnect cleanup.
+      this.deps.leaseSession?.releaseNode(nodeId, "farm-settled");
     }
   }
 
@@ -1241,6 +1371,7 @@ export class RouteExecutor {
         intents,
         `dungeon-boss:${step.biomeGroup}:attempt-${attempt}`,
       );
+      try {
       // Re-check immediately after respawning, before paying for another full
       // guard-clear + travel + altar cycle. `bossCleared` can flip true while
       // we were dead: the killing blow that finally drops the boss can land in
@@ -1325,7 +1456,7 @@ export class RouteExecutor {
 
       let outcome: "victory" | "death" | "timeout" | "unreachable" = "timeout";
       try {
-        await this.ensureAt(nodeId);
+        await this.transitTo(nodeId);
         recorder.setActivity("boss");
 
         // PRE-CLEAR THE GUARD. Activating the altar turns every guardian still
@@ -1334,6 +1465,9 @@ export class RouteExecutor {
         // boss". Skipping this is how a fully geared character ends up facing a
         // boss plus 11 guardians and loses a damage race it would otherwise win.
         await this.clearDungeonGuard(nodeId, step, attempt);
+        if (this.deps.leaseSession && !this.deps.leaseSession.ownsNode(nodeId)) {
+          throw new StallError("boss combat reservation was interrupted", { nodeId, attempt });
+        }
 
         // The guard-clear itself can take a while and can die to or alongside
         // a party member (see the comment at the top of this loop) -- bail
@@ -1491,6 +1625,11 @@ export class RouteExecutor {
       });
 
       if (outcome === "victory") return;
+      } finally {
+        // Boss ownership is per attempt, never a route-lifetime dungeon hold.
+        // This also fences the fast-retry path when it throws or is aborted.
+        this.deps.leaseSession?.releaseNode(nodeId, "boss-attempt-settled");
+      }
     }
 
     // A boss can be an individual class/build failure without invalidating the
@@ -1505,8 +1644,26 @@ export class RouteExecutor {
       biomeGroup: step.biomeGroup,
       tier: step.tier,
       attempts: maxAttempts,
-      nextAction: "continue-route",
+      nextAction: "skip-dependent",
     });
+    this.failedFacts.add(`bossCleared:${step.biomeGroup}:${step.tier}`);
+    this.partial = true;
+    this.activeStepOutcome = {
+      status: "blocked",
+      reason: "boss attempts exhausted",
+      failedFact: `bossCleared:${step.biomeGroup}:${step.tier}`,
+    };
+  }
+
+  private failedRequirement(condition: Condition): string | null {
+    if (condition.type === "bossCleared") {
+      const key = `bossCleared:${condition.biomeGroup}:${condition.tier}`;
+      return this.failedFacts.has(key) ? key : null;
+    }
+    if (condition.type === "allOf") {
+      return condition.of.map((part) => this.failedRequirement(part)).find((key): key is string => key !== null) ?? null;
+    }
+    return null;
   }
 
   private async doEvolveItem(
@@ -1922,10 +2079,29 @@ export class RouteExecutor {
         if (opts.throwOnTimeout === false) return;
         throw new StallError(`timed out waiting for ${opts.what}`, opts.onStall?.() ?? {});
       }
-      await sleep(POLL_MS);
+      await this.waitForPoll();
       opts.onPoll?.();
       this.checkMilestones();
     }
+  }
+
+  private waitForPoll(): Promise<void> {
+    const signal = this.deps.abortSignal;
+    if (!signal) return sleep(POLL_MS);
+    if (signal.aborted) return Promise.reject(new AbortError("run aborted"));
+    return new Promise<void>((resolve, reject) => {
+      let timer!: ReturnType<typeof setTimeout>;
+      const onAbort = (): void => {
+        clearTimeout(timer);
+        signal.removeEventListener("abort", onAbort);
+        reject(new AbortError("run aborted"));
+      };
+      timer = setTimeout(() => {
+        signal.removeEventListener("abort", onAbort);
+        resolve();
+      }, POLL_MS);
+      signal.addEventListener("abort", onAbort, { once: true });
+    });
   }
 
   private checkMilestones(): void {

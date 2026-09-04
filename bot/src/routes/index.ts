@@ -102,7 +102,7 @@ export function isT1ControlledRouteId(id: string): boolean {
  * The Tier-2 bossless progression cohort, admitted to the CONTROLLED batch path.
  *
  * Admission is what unlocks `--executionMode=isolated-parallel` and its area
- * leases: `batch.ts` only builds an `AreaLeaseManager` for a controlled batch,
+ * reservations: `batch.ts` only builds a `CombatReservationManager` for a controlled batch,
  * and the controlled path previously rejected every non-T1 route id. Without
  * this, a six-class Tier-2 batch could only run sequentially or in legacy
  * uncontrolled parallel -- and uncontrolled parallel is what put all five bots

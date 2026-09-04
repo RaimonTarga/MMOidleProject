@@ -1,12 +1,17 @@
-import { CLEARING_NODE_ID, NODE_BIOMES, shortestWorldPath } from "@mmo-idle/shared";
+import { CLEARING_NODE_ID, NODE_BIOMES } from "@mmo-idle/shared";
 import type { Intents } from "../net/intents";
 import type { Observation } from "../state/observation";
-import type { BotEvent } from "../telemetry/events";
+import type { BotEvent, CoordinationFallback } from "../telemetry/events";
 import type { Activity, Recorder } from "../telemetry/recorder";
 import {
-  AreaLeaseManager,
+  CombatReservationManager,
+  type CombatPermit,
+  DEFAULT_ISOLATED_LIVENESS_POLICY,
+  type LivenessPolicy,
   type ControlledOverlapEvidence,
+  type ReservationSnapshot,
 } from "./areaLeaseManager";
+import type { CohortEvidenceMonitor, ConcurrencyInterval } from "./cohortEvidenceMonitor";
 
 export interface LeaseSessionEvidence {
   totalWaitMs: number;
@@ -15,16 +20,22 @@ export interface LeaseSessionEvidence {
   releases: number;
   contaminated: boolean;
   overlaps: ControlledOverlapEvidence[];
-  /**
-   * Waits the bot spent still fighting in a node it exclusively owned, and how
-   * long. This is safe for isolation but NOT free for evidence: the run banks
-   * essence/XP a sequential run would not have at that point, and can die doing
-   * it. Reported so a parallel run is never compared to a solo one blind.
-   */
-  productiveWaits: number;
-  productiveWaitMs: number;
+  sharedAdmissions: number;
+  fallbacks: CoordinationFallback[];
+  /** A forced expiry or failed release invalidates the harness, not gameplay. */
+  harnessInvalid: boolean;
 }
 
+/** Strict isolation exhausted a local coordination budget; gameplay may continue partially. */
+export class CoordinationExhaustedError extends Error {
+  constructor(
+    readonly reason: string,
+    readonly nodeId?: string,
+    readonly cause?: unknown,
+  ) {
+    super(`coordination exhausted: ${reason}`);
+  }
+}
 /**
  * One world node is one exclusive area.
  *
@@ -54,13 +65,7 @@ export function biomeGroupForNode(nodeId: string): string | null {
   return NODE_BIOMES[nodeId]?.biomeGroup ?? null;
 }
 
-/** All biome areas touched by the authoritative shared shortest path. */
-export function controlledAreasForTravel(fromNodeId: string, toNodeId: string): string[] {
-  const path = shortestWorldPath(fromNodeId, toNodeId);
-  if (!path) throw new Error(`no world path from ${fromNodeId} to ${toNodeId}`);
-  const areas = path.map(controlledAreaForNode).filter((area): area is string => area !== null);
-  return [...new Set(areas)].sort();
-}
+
 
 /**
  * Per-run facade over the central manager. The manager owns arbitration; this
@@ -76,14 +81,20 @@ export class RouteLeaseSession {
     releases: 0,
     contaminated: false,
     overlaps: [],
-    productiveWaits: 0,
-    productiveWaitMs: 0,
+    sharedAdmissions: 0,
+    fallbacks: [],
+    harnessInvalid: false,
   };
   private unregisterOverlap: (() => void) | null;
+  private readonly activePermits = new Map<string, CombatPermit>();
+  private readonly activeSharedAdmissions = new Map<string, string>();
+  private pendingAbort: AbortController | null = null;
 
   constructor(
     readonly ownerId: string,
-    private readonly manager: AreaLeaseManager,
+    private readonly manager: CombatReservationManager,
+    private readonly liveness: LivenessPolicy = DEFAULT_ISOLATED_LIVENESS_POLICY,
+    private readonly evidenceMonitor?: CohortEvidenceMonitor,
   ) {
     this.unregisterOverlap = manager.registerOverlapListener(ownerId, (evidence) => {
       if (evidence.contaminating) this.evidenceState.contaminated = true;
@@ -122,51 +133,10 @@ export class RouteLeaseSession {
     obs: Observation,
     intents: Intents,
     reason: string,
-    opts: {
-      /** Nodes worth holding out for (normally the nearest cluster). */
-      preferredNodeIds?: readonly string[];
-      /** How long to insist on `preferredNodeIds` before accepting any candidate. */
-      widenAfterMs?: number;
-    } = {},
+    opts: { preferredNodeIds?: readonly string[]; widenAfterMs?: number } = {},
   ): Promise<string> {
     if (candidateNodeIds.length === 0) throw new Error(`no candidate nodes for ${reason}`);
-
-    // An unleased node (the Clearing) needs no permission from anyone. Any node
-    // still held is released by `releaseNode` once we are observed to have left
-    // it, not here -- we may still be standing in it.
-    const head = candidateNodeIds[0];
-    if (controlledAreaForNode(head) === null) return head;
-
-    const areas = candidateNodeIds
-      .map(controlledAreaForNode)
-      .filter((area): area is string => area !== null);
-    if (areas.length === 0) return head;
-
-    const standingArea = controlledAreaForNode(obs.nodeId ?? "");
-    const canFarmWhileWaiting =
-      standingArea !== null &&
-      this.manager.owns(this.ownerId, standingArea) &&
-      !areas.includes(standingArea);
-    if (!canFarmWhileWaiting) this.pause(obs, intents);
-    else this.evidenceState.productiveWaits += 1;
-
-    const preferredAreas = (opts.preferredNodeIds ?? [])
-      .map(controlledAreaForNode)
-      .filter((area): area is string => area !== null && areas.includes(area));
-    const granted = await this.acquire(
-      areas,
-      reason,
-      areas.length > 1 ? "any" : "all",
-      canFarmWhileWaiting,
-      preferredAreas.length > 0 && preferredAreas.length < areas.length
-        ? { preferredAreaIds: preferredAreas, widenAfterMs: opts.widenAfterMs }
-        : undefined,
-    );
-    // The previously held node is NOT dropped here. We may still be standing in
-    // it; `releaseNode` gives it up once the walk out is actually observed.
-    const nodeId = nodeIdForArea(granted);
-    if (!nodeId) throw new Error(`granted area is not a node: ${granted}`);
-    return nodeId;
+    return this.acquireTypedActivity(candidateNodeIds, obs, intents, reason, opts);
   }
 
   /**
@@ -183,93 +153,89 @@ export class RouteLeaseSession {
    * retain-list built from its current position would drop the destination.
    */
   releaseNode(nodeId: string, reason = "departed-node"): void {
-    const areaId = controlledAreaForNode(nodeId);
-    if (!areaId) return;
-    const held = this.manager.heldAreas(this.ownerId);
-    if (!held.includes(areaId)) return;
-    const released = this.manager.releaseExcept(
-      this.ownerId,
-      held.filter((entry) => entry !== areaId),
-      reason,
-    );
-    if (released.length === 0) return;
-    this.evidenceState.releases += released.length;
+    const permit = this.activePermits.get(nodeId);
+    const admissionId = this.activeSharedAdmissions.get(nodeId);
+    const released = permit
+      ? this.manager.release(permit, reason)
+      : admissionId
+        ? (this.manager.leaveShared(admissionId, this.ownerId, reason), true)
+        : false;
+    if (!released) return;
+    this.activePermits.delete(nodeId);
+    this.activeSharedAdmissions.delete(nodeId);
+    this.evidenceState.releases += 1;
     this.emit({
       kind: "area-lease",
       atMs: this.recorder?.now() ?? 0,
       phase: "released",
-      areaIds: released,
+      areaIds: [`node:${nodeId}`],
       reason,
+      permitId: permit?.permitId,
+      epoch: permit?.epoch,
+      purpose: permit?.purpose,
     });
   }
 
 
   observe(obs: Observation, entityId: string): void {
     this.manager.noteEntity(this.ownerId, entityId);
-
-    // Engagement is DERIVED from the server's own auto-combat flag, every tick,
-    // rather than toggled by hand at each travel/farm site. A manual flag leaked:
-    // `farmUntil`'s death-recovery nudge issues its own `navigateTo` without
-    // going through `ensureAt`, so a bot that died mid-farm walked home still
-    // marked "engaged" and poisoned every node it crossed with a false
-    // contamination. `auto` cannot go stale -- the server clears it on
-    // `navigateTo` and on respawn -- so any present or future travel path is
-    // covered without needing to know it exists.
+    for (const [nodeId, permit] of this.activePermits) {
+      try {
+        const renewed = this.manager.renew(permit);
+        this.activePermits.set(nodeId, obs.nodeId === nodeId ? this.manager.confirmEntry(renewed) : renewed);
+      } catch {
+        this.activePermits.delete(nodeId);
+        this.evidenceState.harnessInvalid = true;
+        this.recordFallback("reservation-expired", "partial-stop", nodeId);
+      }
+    }
+    for (const [nodeId, admissionId] of this.activeSharedAdmissions) {
+      try {
+        this.manager.renewShared(admissionId, this.ownerId, this.liveness.sharedAdmissionTtlMs);
+      } catch {
+        this.activeSharedAdmissions.delete(nodeId);
+        this.evidenceState.harnessInvalid = true;
+        this.recordFallback("reservation-expired", "partial-stop", nodeId);
+      }
+    }
     const self = obs.self;
     this.manager.setEngaged(this.ownerId, (self?.auto ?? false) && !(self?.isDead ?? false));
-
-    const nodeId = obs.nodeId;
-    const areaId = controlledAreaForNode(nodeId);
-    if (!nodeId || !areaId) return;
-
-    // Pure transit and the shared Clearing are intentionally unleased. Only an
-    // owner claiming active progression in a node generates overlap evidence.
-    if (!this.manager.owns(this.ownerId, areaId)) return;
-
-    for (const other of obs.otherPlayers()) {
-      const otherOwner = this.manager.ownerForEntity(other.id);
-      if (!otherOwner || otherOwner === this.ownerId) continue;
-      // Walking through a node is allowed by design and cannot affect its
-      // owner's evidence -- a transiting bot does not fight here. Only a bot
-      // that is ENGAGED in a node it does not hold is a real overlap. Both are
-      // recorded; only the engaged case taints the run.
-      const contaminating = this.manager.isEngaged(otherOwner);
-      this.manager.reportOverlap({
-        areaId,
-        nodeId,
-        ownerIds: [this.ownerId, otherOwner],
-        entityIds: [entityId, other.id].filter(Boolean),
-        reason: contaminating ? "controlled-player-observed" : "transit-co-presence",
-        contaminating,
-      });
-    }
+    this.evidenceMonitor?.observe({
+      ownerId: this.ownerId,
+      entityId,
+      nodeId: obs.nodeId ?? null,
+      alive: !(self?.isDead ?? false),
+      autoCombat: self?.auto ?? false,
+    });
   }
 
   /** True when another controlled bot exclusively holds this node. */
   isForeignNode(nodeId: string): boolean {
-    const areaId = controlledAreaForNode(nodeId);
-    if (!areaId) return false;
-    const owner = this.manager.ownerOf(areaId);
+    if (controlledAreaForNode(nodeId) === null) return false;
+    const owner = this.manager.ownerOf(nodeId);
     return owner !== null && owner !== this.ownerId;
   }
 
   heartbeat(entityId = ""): void {
     if (entityId) this.manager.noteEntity(this.ownerId, entityId);
-    else this.manager.heartbeat(this.ownerId);
+  }
+
+  /** Release permits and cancel a waiter without unregistering this live session. */
+  interrupt(reason: string): void {
+    this.pendingAbort?.abort();
+    this.pendingAbort = null;
+    const report = this.manager.releaseOwner(this.ownerId, reason);
+    this.activePermits.clear();
+    this.activeSharedAdmissions.clear();
+    const released = [...report.releasedPermitIds, ...report.leftAdmissionIds];
+    if (released.length > 0) {
+      this.evidenceState.releases += released.length;
+      this.emit({ kind: "area-lease", atMs: this.recorder?.now() ?? 0, phase: "released", areaIds: released, reason });
+    }
   }
 
   releaseAll(reason: string): void {
-    const released = this.manager.releaseOwner(this.ownerId, reason);
-    if (released.length > 0) {
-      this.evidenceState.releases += released.length;
-      this.emit({
-        kind: "area-lease",
-        atMs: this.recorder?.now() ?? 0,
-        phase: "released",
-        areaIds: released,
-        reason,
-      });
-    }
+    this.interrupt(reason);
     this.unregisterOverlap?.();
     this.unregisterOverlap = null;
   }
@@ -286,67 +252,147 @@ export class RouteLeaseSession {
   }
 
   heldAreas(): string[] {
-    return this.manager.heldAreas(this.ownerId);
+    return this.manager.heldNodes(this.ownerId).map((nodeId) => `node:${nodeId}`);
   }
 
   ownsNode(nodeId: string): boolean {
-    const areaId = controlledAreaForNode(nodeId);
-    // An unleased node is nobody's to own -- callers gating on exclusivity
-    // (the fast-retry check) must read that as "not owned", never as a throw.
-    return areaId !== null && this.manager.owns(this.ownerId, areaId);
+    return controlledAreaForNode(nodeId) !== null &&
+      (this.manager.owns(this.ownerId, nodeId) || this.manager.isSharedParticipant(nodeId, this.ownerId));
   }
 
   maximumSimultaneouslyProgressing(): number {
-    return this.manager.snapshot().maximumSimultaneouslyProgressing;
+    return 0;
   }
 
-  private async acquire(
-    areaIds: string[],
+  reservationSnapshot(): ReservationSnapshot {
+    return this.manager.snapshot();
+  }
+
+  concurrencyIntervals(): ConcurrencyInterval[] {
+    return this.evidenceMonitor?.snapshotFor(this.ownerId) ?? [];
+  }
+
+  private async acquireTypedActivity(
+    candidateNodeIds: readonly string[],
+    obs: Observation,
+    intents: Intents,
     reason: string,
-    mode: "all" | "any" = "all",
-    /** The bot is still fighting in a node it owns; do not relabel it as idle. */
-    farmingWhileWaiting = false,
-    nearness?: { preferredAreaIds: readonly string[]; widenAfterMs?: number },
+    opts: { preferredNodeIds?: readonly string[]; widenAfterMs?: number },
   ): Promise<string> {
-    const conflictingOwnerId = areaIds
-      .map((areaId) => this.manager.ownerOf(areaId))
-      .find((owner): owner is string => !!owner && owner !== this.ownerId);
+    void opts;
+    const manager = this.manager;
+    const candidates = [...new Set(candidateNodeIds.filter((nodeId) => controlledAreaForNode(nodeId) !== null))];
+    if (candidates.length === 0) return candidateNodeIds[0];
+    const purpose = reason.startsWith("dungeon-boss:")
+      ? "boss" as const
+      : reason.startsWith("protected-transit")
+        ? "protected-transit" as const
+        : "farm" as const;
+    for (const nodeId of candidates) {
+      const permit = manager.tryAcquireExclusive({ ownerId: this.ownerId, nodeId, purpose });
+      if (!permit) continue;
+      this.rememberPermit(permit, reason, 0);
+      return nodeId;
+    }
+    if (this.activePermits.size > 0) {
+      throw new Error(`${this.ownerId} cannot wait for ${reason} while holding a combat permit`);
+    }
+    this.pause(obs, intents);
+    const controller = new AbortController();
     const waitStartedAt = Date.now();
-    this.emit({
-      kind: "area-lease",
-      atMs: this.recorder?.now() ?? 0,
-      phase: "wait-start",
-      areaIds,
-      reason,
-      conflictingOwnerId,
-    });
-    // A frozen bot is parked in "lease-wait" so the time is never mistaken for
-    // combat. A productively waiting one keeps its farm activity, because it IS
-    // still fighting -- its kills and damage must land in the normal buckets.
-    if (this.recorder && !farmingWhileWaiting) this.setActivity("lease-wait");
-    const grant = await this.manager.acquire({
-      ownerId: this.ownerId,
-      areaIds,
-      reason,
-      mode,
-      ...nearness,
-    });
-    if (this.recorder && !farmingWhileWaiting) this.setActivity("idle");
-    const waitDurationMs = Math.max(grant.waitDurationMs, Date.now() - waitStartedAt);
+    const nodeId = candidates[0];
+    const remainingCoordinationWaitMs = this.liveness.totalCoordinationWaitMs - this.evidenceState.totalWaitMs;
+    if (remainingCoordinationWaitMs <= 0 && this.liveness.contentionPolicy !== "degrade-to-shared") {
+      throw new CoordinationExhaustedError(`total wait budget before ${reason}`, nodeId);
+    }
+    this.pendingAbort = controller;
+    this.emit({ kind: "area-lease", atMs: this.recorder?.now() ?? 0, phase: "wait-start", areaIds: candidates.map((id) => `node:${id}`), reason });
+    if (this.recorder) this.setActivity("lease-wait");
+    try {
+      const permit = await manager.acquireExclusive(
+        { ownerId: this.ownerId, nodeId, purpose },
+        {
+          signal: controller.signal,
+          deadlineAt: Date.now() + Math.max(1, Math.min(this.liveness.exclusiveWaitMs, remainingCoordinationWaitMs)),
+        },
+      );
+      this.rememberPermit(permit, reason, Date.now() - waitStartedAt);
+      return nodeId;
+    } catch (error) {
+      if (controller.signal.aborted) throw error;
+      if (this.liveness.contentionPolicy !== "degrade-to-shared") {
+        throw new CoordinationExhaustedError(`exclusive wait budget for ${reason}`, nodeId, error);
+      }
+      const admission = manager.admitShared({
+        ownerId: this.ownerId,
+        nodeId,
+        trigger: "exclusive-wait-budget",
+        purpose,
+        ttlMs: this.liveness.sharedAdmissionTtlMs,
+      });
+      this.activeSharedAdmissions.set(nodeId, admission.admissionId);
+      const waitDurationMs = Date.now() - waitStartedAt;
+      this.evidenceState.acquisitions += 1;
+      this.evidenceState.sharedAdmissions += 1;
+      this.evidenceState.totalWaitMs += waitDurationMs;
+      this.evidenceState.maximumWaitMs = Math.max(this.evidenceState.maximumWaitMs, waitDurationMs);
+      this.emitFallback({
+        trigger: "exclusive-wait-budget",
+        action: "shared-admission",
+        nodeId,
+        startedAtMs: this.recorder?.now() ?? 0,
+        endedAtMs: this.recorder?.now() ?? 0,
+        affectedStepIndexes: [],
+      });
+      this.emit({
+        kind: "area-lease",
+        atMs: this.recorder?.now() ?? 0,
+        phase: "acquired",
+        areaIds: [`node:${nodeId}`],
+        reason: `${reason}:shared-admission`,
+        waitDurationMs,
+      });
+      return nodeId;
+    } finally {
+      if (this.pendingAbort === controller) this.pendingAbort = null;
+      if (this.recorder) this.setActivity("idle");
+    }
+  }
+
+  private rememberPermit(permit: CombatPermit, reason: string, waitDurationMs: number): void {
+    const previous = this.activePermits.get(permit.nodeId);
+    this.activePermits.set(permit.nodeId, permit);
+    if (!previous) this.evidenceState.acquisitions += 1;
     this.evidenceState.totalWaitMs += waitDurationMs;
-    if (farmingWhileWaiting) this.evidenceState.productiveWaitMs += waitDurationMs;
     this.evidenceState.maximumWaitMs = Math.max(this.evidenceState.maximumWaitMs, waitDurationMs);
-    this.evidenceState.acquisitions += grant.newlyAcquiredAreaIds.length;
     this.emit({
       kind: "area-lease",
       atMs: this.recorder?.now() ?? 0,
       phase: "acquired",
-      areaIds: grant.areaIds,
+      areaIds: [`node:${permit.nodeId}`],
       reason,
       waitDurationMs,
-      conflictingOwnerId: grant.conflictingOwnerIds[0] ?? conflictingOwnerId,
+      permitId: permit.permitId,
+      epoch: permit.epoch,
+      purpose: permit.purpose,
     });
-    return grant.areaIds[0];
+  }
+
+  recordFallback(
+    trigger: CoordinationFallback["trigger"],
+    action: CoordinationFallback["action"],
+    nodeId?: string,
+  ): void {
+    const now = this.recorder?.now() ?? 0;
+    this.emitFallback({ trigger, action, nodeId, startedAtMs: now, endedAtMs: now, affectedStepIndexes: [] });
+  }
+
+  private emitFallback(fallback: CoordinationFallback): void {
+    this.evidenceState.fallbacks.push({
+      ...fallback,
+      affectedStepIndexes: [...fallback.affectedStepIndexes],
+    });
+    this.emit({ kind: "coordination-fallback", atMs: fallback.endedAtMs, fallback });
   }
 
   private pause(obs: Observation, intents: Intents): void {
@@ -365,8 +411,4 @@ export class RouteLeaseSession {
     if (this.recorder) this.recorder.emit(event);
     else this.bufferedEvents.push(event);
   }
-}
-
-function nodeIdForArea(areaId: string): string | null {
-  return areaId.startsWith("node:") ? areaId.slice("node:".length) : null;
 }

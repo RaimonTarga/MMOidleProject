@@ -48,6 +48,7 @@ function assert(condition: unknown, message: string): asserts condition {
   });
   assert(isolated.executionMode === "isolated-parallel", "isolated parallel is explicit");
   assert(isolated.maxConcurrency === 4, "isolated parallel honors its progress cap");
+  assert(isolated.contentionPolicy === "degrade-to-shared", "isolated parallel defaults to bounded shared degradation");
   let legacyRejected = false;
   try {
     controlledBatchSettings({ parallel: "true" });

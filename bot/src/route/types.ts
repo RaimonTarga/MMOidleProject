@@ -138,7 +138,16 @@ export type RouteStep = StepBody & {
   optional?: boolean;
   /** Per-step override of the run-wide stall timeout. */
   stallAfterMs?: number;
+  /** A failed prerequisite skips this step instead of entering a passive wait. */
+  requires?: Condition;
 };
+
+/** Terminal result for one authored step, independent of run isolation quality. */
+export type StepOutcome =
+  | { status: "completed" }
+  | { status: "skipped"; reason: string }
+  | { status: "blocked"; reason: string; failedFact?: string }
+  | { status: "failed"; reason: string };
 
 export interface Route {
   id: string;

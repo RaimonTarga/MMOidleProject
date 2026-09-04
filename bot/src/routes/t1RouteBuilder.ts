@@ -277,7 +277,11 @@ function bossSteps(config: T1RouteConfig): RouteStep[] {
         label: `configure controlled ${loadout.guard} profile for ${biomeGroup}`,
       },
       { type: "attemptBoss", biomeGroup, tier: 1, maxAttempts: 6 },
-      { type: "milestone", id: `${biomeGroup}-boss-cleared` },
+      {
+        type: "milestone",
+        id: `${biomeGroup}-boss-cleared`,
+        requires: { type: "bossCleared", biomeGroup, tier: 1 },
+      },
     );
     // The second T1 seal advances the player to T2 and grants the point for
     // the frame. Keep this in the route data so an intended frame cannot be
@@ -287,6 +291,7 @@ function bossSteps(config: T1RouteConfig): RouteStep[] {
         type: "unlockSkill",
         skillId: config.frameId,
         label: `spend the T2 point on ${config.frameId}`,
+        requires: { type: "bossCleared", biomeGroup, tier: 1 },
       });
     }
   }

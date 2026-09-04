@@ -11,8 +11,14 @@ import {
   type BotConfig,
 } from "./config";
 import { runBot, type RunOutcome } from "./botRun";
-import { AreaLeaseManager, type ControlledExecutionMode } from "./concurrency/areaLeaseManager";
+import {
+  CombatReservationManager,
+  DEFAULT_ISOLATED_LIVENESS_POLICY,
+  RunConcurrencyLimiter,
+  type ControlledExecutionMode,
+} from "./concurrency/areaLeaseManager";
 import { RouteLeaseSession } from "./concurrency/routeLeaseSession";
+import { CohortEvidenceMonitor } from "./concurrency/cohortEvidenceMonitor";
 import { BotConnection } from "./net/connection";
 import { Intents } from "./net/intents";
 import {
@@ -69,6 +75,7 @@ type ManifestStatus =
   | "pending"
   | "running"
   | "completed"
+  | "partial"
   | "stalled"
   | "watchdog_timeout"
   | "failed_harness";
@@ -82,6 +89,10 @@ interface BatchManifestEntry {
   endTime: string | null;
   terminalReason: string | null;
   artifactDirectory: string | null;
+  routeCompletion: RunOutcome["summary"]["run"]["routeCompletion"] | null;
+  isolationGrade: RunOutcome["summary"]["run"]["isolationGrade"] | null;
+  soloBaselineEligible: boolean | null;
+  concurrencyCohortEligible: boolean | null;
 }
 
 interface BatchManifest {
@@ -103,6 +114,7 @@ function writeManifest(path: string, manifest: BatchManifest): void {
 
 function manifestStatusFor(summary: RunOutcome["summary"]): ManifestStatus {
   if (summary.run.completion === "completed") return "completed";
+  if (summary.run.completion === "partial") return "partial";
   if (summary.run.completion === "stalled") return "stalled";
   if (summary.run.completion === "timed-out") return "watchdog_timeout";
   return "failed_harness";
@@ -110,6 +122,45 @@ function manifestStatusFor(summary: RunOutcome["summary"]): ManifestStatus {
 
 function terminalArtifactExists(entry: BatchManifestEntry): boolean {
   return entry.artifactDirectory !== null && existsSync(join(entry.artifactDirectory, "summary.json"));
+}
+
+/**
+ * A connection/lobby failure can occur before `runBot` has enough authoritative
+ * state to construct its normal summary.  Preserve a terminal artifact anyway:
+ * a manifest must never point at a stranded `running` entry merely because the
+ * bot failed before run-start telemetry.
+ */
+function writeHarnessFailureArtifact(
+  batchDir: string,
+  config: BotConfig,
+  index: number,
+  reason: string,
+): string {
+  const dir = join(
+    batchDir,
+    "harness-failures",
+    `${String(index + 1).padStart(2, "0")}-${config.routeId}-${config.policyId}`,
+  );
+  mkdirSync(dir, { recursive: true });
+  const endedAt = Date.now();
+  const runId = `failed-harness-${config.routeId}-${config.policyId}-${endedAt}`;
+  writeFileSync(
+    join(dir, "summary.json"),
+    `${JSON.stringify({
+      artifactType: "failed-harness",
+      run: {
+        runId,
+        routeId: config.routeId,
+        policyId: config.policyId,
+        completion: "error",
+        stallReason: reason,
+        endedAt,
+      },
+      failure: { phase: "setup-or-supervisor", reason, endedAt },
+    }, null, 2)}\n`,
+    "utf8",
+  );
+  return resolve(dir);
 }
 
 function loadOrCreateManifest(
@@ -142,6 +193,10 @@ function loadOrCreateManifest(
           entry.status = manifestStatusFor(summary);
           entry.terminalReason = summary.run.stallReason ?? summary.run.completion;
           entry.endTime = summary.run.endedAt ? new Date(summary.run.endedAt).toISOString() : entry.endTime;
+          entry.routeCompletion = summary.run.routeCompletion ?? null;
+          entry.isolationGrade = summary.run.isolationGrade ?? null;
+          entry.soloBaselineEligible = summary.run.soloBaselineEligible ?? null;
+          entry.concurrencyCohortEligible = summary.run.concurrencyCohortEligible ?? null;
         } else {
           entry.status = "pending";
           entry.terminalReason = "previous session interrupted before a terminal artifact was written";
@@ -149,6 +204,10 @@ function loadOrCreateManifest(
           entry.startTime = null;
           entry.endTime = null;
           entry.artifactDirectory = null;
+          entry.routeCompletion = null;
+          entry.isolationGrade = null;
+          entry.soloBaselineEligible = null;
+          entry.concurrencyCohortEligible = null;
         }
       }
       if (entry.status !== "pending" && !terminalArtifactExists(entry)) {
@@ -182,6 +241,10 @@ function loadOrCreateManifest(
       endTime: null,
       terminalReason: null,
       artifactDirectory: null,
+      routeCompletion: null,
+      isolationGrade: null,
+      soloBaselineEligible: null,
+      concurrencyCohortEligible: null,
     })),
   };
   writeManifest(manifestPath, manifest);
@@ -218,10 +281,12 @@ async function main(): Promise<void> {
         executionMode: "sequential" as const,
         maxConcurrency: 1,
         staggerMs: Number(args.staggerMs ?? "0"),
+        contentionPolicy: "strict-isolation" as const,
       };
   const controlledExecutionMode = controlledSettings.executionMode;
   const maxConcurrency = controlledSettings.maxConcurrency;
   const staggerMs = controlledSettings.staggerMs;
+  const contentionPolicy = controlledSettings.contentionPolicy;
   assertFastRetryBatchSafety(args, controlled);
 
   // A controlled batch is either an all-Tier-1 cohort or an all-Tier-2 one.
@@ -434,13 +499,24 @@ async function main(): Promise<void> {
       (staggerMs > 0 ? `, starts staggered ${staggerMs}ms` : ""),
   );
 
-  const leaseManager = controlled && controlledExecutionMode === "isolated-parallel"
-    ? new AreaLeaseManager(maxConcurrency)
+  // Launch capacity and node admission are separate; the limiter is the sole
+  // batch-cap authority and permits only arbitrate exact world nodes.
+  const runLimiter = controlled && controlledExecutionMode === "isolated-parallel"
+    ? new RunConcurrencyLimiter(maxConcurrency)
     : null;
+  const leaseManager = controlled && controlledExecutionMode === "isolated-parallel"
+    ? new CombatReservationManager()
+    : null;
+  const evidenceMonitor = leaseManager ? new CohortEvidenceMonitor(leaseManager) : undefined;
   const sessions = new Map(
     configs.map((config) => [
       config.devAccountId,
-      leaseManager ? new RouteLeaseSession(config.devAccountId, leaseManager) : undefined,
+      leaseManager
+        ? new RouteLeaseSession(config.devAccountId, leaseManager, {
+            ...DEFAULT_ISOLATED_LIVENESS_POLICY,
+            contentionPolicy,
+          }, evidenceMonitor)
+        : undefined,
     ]),
   );
   const shutdownLeases = (): void => leaseManager?.shutdown("coordinator-signal");
@@ -469,14 +545,26 @@ async function main(): Promise<void> {
         manifestEntry.status = manifestStatusFor(outcome.summary);
         manifestEntry.terminalReason = outcome.summary.run.stallReason ?? outcome.summary.run.completion;
         manifestEntry.artifactDirectory = resolve(outcome.dir);
+        manifestEntry.routeCompletion = outcome.summary.run.routeCompletion;
+        manifestEntry.isolationGrade = outcome.summary.run.isolationGrade;
+        manifestEntry.soloBaselineEligible = outcome.summary.run.soloBaselineEligible;
+        manifestEntry.concurrencyCohortEligible = outcome.summary.run.concurrencyCohortEligible;
         writeManifest(manifestPath, manifest);
       }
       return outcome;
     } catch (error) {
       if (manifest && manifestEntry) {
+        const reason = String(error);
+        const artifactDirectory = writeHarnessFailureArtifact(batchDir, config, index, reason);
         manifestEntry.endTime = new Date().toISOString();
         manifestEntry.status = "failed_harness";
-        manifestEntry.terminalReason = String(error);
+        manifestEntry.terminalReason = reason;
+        manifestEntry.runId = `failed-harness-${config.routeId}-${config.policyId}`;
+        manifestEntry.artifactDirectory = artifactDirectory;
+        manifestEntry.routeCompletion = "failed";
+        manifestEntry.isolationGrade = "harness-invalid";
+        manifestEntry.soloBaselineEligible = false;
+        manifestEntry.concurrencyCohortEligible = false;
         writeManifest(manifestPath, manifest);
       }
       throw error;
@@ -489,7 +577,11 @@ async function main(): Promise<void> {
 
   let settled: PromiseSettledResult<RunOutcome>[];
   if (parallel || controlledExecutionMode === "isolated-parallel") {
-    settled = await Promise.allSettled(configs.map(runOne));
+    settled = await Promise.allSettled(
+      configs.map((config, index) =>
+        runLimiter ? runLimiter.run(() => runOne(config, index)) : runOne(config, index),
+      ),
+    );
   } else {
     settled = [];
     for (let index = 0; index < configs.length; index += 1) {
@@ -499,7 +591,6 @@ async function main(): Promise<void> {
   }
   process.off("SIGINT", shutdownLeases);
   process.off("SIGTERM", shutdownLeases);
-  const leaseSnapshot = leaseManager?.snapshot();
   leaseManager?.shutdown("batch-terminal");
 
   // The multiplier is server-global. Individual bots must not restore it while
@@ -559,7 +650,8 @@ async function main(): Promise<void> {
       executionMode,
       maxConcurrency,
       maximumSimultaneouslyProgressing:
-        leaseSnapshot?.maximumSimultaneouslyProgressing ?? (configs.length > 0 ? 1 : 0),
+        runLimiter?.snapshot().maximumActive ??
+        (configs.length > 0 ? 1 : 0),
       bots: outcomes,
     }, null, 2)}\n`,
     "utf8",

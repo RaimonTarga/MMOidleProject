@@ -193,7 +193,11 @@ export function bossFight(opts: {
       label: `arm the Guard-reactive rune for ${opts.guard}`,
     },
     { type: "attemptBoss", biomeGroup: opts.biomeGroup, tier: 1, maxAttempts: 6 },
-    { type: "milestone", id: `${opts.biomeGroup}-boss-cleared` },
+    {
+      type: "milestone",
+      id: `${opts.biomeGroup}-boss-cleared`,
+      requires: { type: "bossCleared", biomeGroup: opts.biomeGroup, tier: 1 },
+    },
   ];
 }
 

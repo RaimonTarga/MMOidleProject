@@ -7,6 +7,14 @@ import type { CompletionState, RunHeader } from "./events";
 import type { LeaseSessionEvidence } from "../concurrency/routeLeaseSession";
 import type { Recorder } from "./recorder";
 import type { T1SnapshotManifest } from "./t1Snapshots";
+import type { ConcurrencyInterval } from "../concurrency/cohortEvidenceMonitor";
+
+export type IsolationGrade =
+  | "isolated"
+  | "ambient-concurrency"
+  | "shared-combat"
+  | "outcome-interference"
+  | "harness-invalid";
 
 /**
  * The compact machine-readable digest.
@@ -23,6 +31,10 @@ export interface RunSummary {
     completion: CompletionState;
     stallReason?: string;
     canonical: boolean;
+    routeCompletion: "completed" | "partial" | "failed" | "aborted";
+    isolationGrade: IsolationGrade;
+    soloBaselineEligible: boolean;
+    concurrencyCohortEligible: boolean;
     /** Synthetic entry is acceptable for combat measurements when no other taint exists. */
     combatEvidenceEligible: boolean;
     /** Synthetic wallets are never a continuous economy baseline. */
@@ -290,13 +302,9 @@ export interface RunSummary {
     maximumLeaseWaitMs: number;
     contaminated: boolean;
     controlledOverlaps: LeaseSessionEvidence["overlaps"];
-    /**
-     * Waits the bot spent still fighting in a node it exclusively owned. Safe
-     * for isolation, but it banks essence/XP a solo run would not have yet --
-     * check this before comparing a parallel run against a sequential baseline.
-     */
-    productiveWaits: number;
-    productiveWaitMs: number;
+    sharedAdmissions: number;
+    fallbacks: LeaseSessionEvidence["fallbacks"];
+    concurrencyIntervals: ConcurrencyInterval[];
     /** Overlaps that actually taint the run (another bot engaged in our node). */
     contaminatingOverlaps: number;
     /** Benign pass-throughs: recorded so the mode stays auditable, not a taint. */
@@ -332,6 +340,7 @@ export function buildSummary(params: {
   maximumSimultaneouslyProgressing?: number;
   winCondition?: CompletionMode;
   snapshotArtifacts?: T1SnapshotManifest;
+  concurrencyIntervals?: ConcurrencyInterval[];
 }): RunSummary {
   const { header, recorder, route, self } = params;
   const durationMs = params.endedAt - header.startedAt;
@@ -479,6 +488,25 @@ export function buildSummary(params: {
 
   const totalOut = recorder.totalDamageDealtByPlayer + recorder.totalDamageDealtBySummons;
   const samples = recorder.totalSamples;
+  const leaseEvidence = params.leaseEvidence;
+  const intervals = params.concurrencyIntervals ?? [];
+  const isolationGrade: IsolationGrade = leaseEvidence?.harnessInvalid
+    ? "harness-invalid"
+    : leaseEvidence?.contaminated || intervals.some((interval) => interval.classification === "shared-boss-state")
+    ? "outcome-interference"
+    : (leaseEvidence?.sharedAdmissions ?? 0) > 0
+      ? "shared-combat"
+      : (leaseEvidence?.overlaps.length ?? 0) > 0
+        ? "ambient-concurrency"
+        : "isolated";
+  const routeCompletion = params.completion === "completed"
+    ? "completed"
+    : params.completion === "partial"
+      ? "partial"
+      : params.completion === "aborted" || params.completion === "timed-out"
+        ? "aborted"
+        : "failed";
+  const soloBaselineEligible = params.completion === "completed" && isolationGrade === "isolated" && header.taints.length === 0;
 
   return {
     snapshots: params.snapshotArtifacts ?? {
@@ -494,12 +522,19 @@ export function buildSummary(params: {
       stallReason: params.stallReason,
       // The one flag a downstream analysis must respect before mixing this run
       // into balance conclusions.
-      canonical: header.taints.length === 0,
-      combatEvidenceEligible: header.taints.every(
+      canonical: header.taints.length === 0 && params.completion === "completed",
+      routeCompletion,
+      isolationGrade,
+      soloBaselineEligible,
+      concurrencyCohortEligible:
+        params.completion !== "aborted" && isolationGrade !== "harness-invalid",
+      combatEvidenceEligible: isolationGrade !== "harness-invalid" && header.taints.every(
         (taint) => taint === "SYNTHETIC_TIER_ENTRY",
-      ),
+      ) && params.completion !== "partial",
       economyEvidenceEligible:
+        params.completion === "completed" &&
         header.taints.length === 0 &&
+        isolationGrade === "isolated" &&
         (!header.tierEntry ||
           header.tierEntry.economyPolicy === "authoritative-economy-continuation"),
     },
@@ -703,8 +738,9 @@ export function buildSummary(params: {
       maximumLeaseWaitMs: params.leaseEvidence?.maximumWaitMs ?? 0,
       contaminated: params.leaseEvidence?.contaminated ?? false,
       controlledOverlaps: params.leaseEvidence?.overlaps ?? [],
-      productiveWaits: params.leaseEvidence?.productiveWaits ?? 0,
-      productiveWaitMs: params.leaseEvidence?.productiveWaitMs ?? 0,
+      sharedAdmissions: params.leaseEvidence?.sharedAdmissions ?? 0,
+      fallbacks: params.leaseEvidence?.fallbacks ?? [],
+      concurrencyIntervals: intervals,
       contaminatingOverlaps:
         params.leaseEvidence?.overlaps.filter((entry) => entry.contaminating).length ?? 0,
       transitCoPresences:
