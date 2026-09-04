@@ -43,7 +43,7 @@ import {
   reaimChargeCorridor,
   type RuntimeChargeCorridor,
 } from '../../world/groundZones';
-import { navigationPadForEntity, stopEntity } from '../../world/movement';
+import { navigationPadForEntity, setEntityMotion, stopEntity } from '../../world/movement';
 import { setAggroTarget, setAttackTarget } from './targeting';
 import { distanceSq } from '@mmo-idle/shared';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
@@ -73,6 +73,12 @@ const BARRIER_SAFETY_MS = 30_000;
 const LANE_NODE_MARGIN = 24;
 /** Floor on a leash-clamped lane, as a fraction of its authored length. */
 const LANE_MIN_LEASH_FRACTION = 0.35;
+/**
+ * How close to the lane tip counts as arrived. Slightly over one tick of travel
+ * at the fastest authored charge, so the body never halts a visible step short of
+ * the marker it promised to cross.
+ */
+const ARRIVAL_EPSILON_PX = 60;
 
 /**
  * The boss's pattern, with any `empower-charged` escalation applied.
@@ -628,17 +634,24 @@ function beginStep(
       state.capturedEndpoint = { ...lane.end };
       state.chargeHitIds = [];
       state.stepEndsAtMs = now + step.maxTravelMs;
-      // PUBLISH THE REAL SPEED. Position is written directly below, but the client
-      // interpolates toward the broadcast target at `hasPosition.speed` — so leaving
-      // it at the boss's walking speed (22 px/s against a 470 px/s charge) makes the
-      // client crawl after a body the server has already moved the length of the
-      // lane. In play that reads as the charge stopping halfway and never landing.
+      // THE CHARGE MOVES THROUGH THE MOVEMENT SYSTEM, like everything else that
+      // moves. Writing coordinates directly worked on the server and looked broken
+      // in play: with no `isMoving` motion the client had nothing to interpolate
+      // TOWARD, so it saw a body teleport ~94px per 5 Hz packet and lurched after it
+      // in stop-start bursts, permanently behind. A real motion vector gives the
+      // client a destination far ahead of the body, which is exactly what its
+      // interpolator is built to render smoothly.
+      //
+      // The root is RELEASED for the travel — `setEntityMotion` refuses to move a
+      // rooted entity. Nothing competes for the movement channel meanwhile: the AI
+      // loop skips a patterning monster outright.
       state.savedSpeed = monster.hasPosition.speed;
       monster.hasPosition.speed = step.speed;
       markSliceDirty(world, monster, 'hasPosition');
-      // Movement during travel is written directly, not requested through the
-      // pathfinder: a committed charge is on rails and must not steer around
-      // anything. Rooted stays ON so nothing else can move the boss meanwhile.
+      if (state.ownsRoot) setRooted(world, monster, false);
+      // `direct` and hazard-blind on purpose: a committed charge travels the exact
+      // segment the player was shown, and must not route around anything.
+      setEntityMotion(world, monster, lane.end, { mode: 'direct', avoidHazards: false });
       return true;
     }
     case 'impact': {
@@ -1071,43 +1084,35 @@ function tickCommittedTravel(
   const lane = laneZone(world, monster);
   if (!lane) return 'done';
 
+  // The movement system owns the position; this tick only observes it and resolves
+  // what the body has run over. `updateMovement` runs later in the same tick, so the
+  // sweep below trails the render by one step — harmless, because consecutive sweeps
+  // overlap by more than a tick's travel and nothing can slip between them.
   const from = monster.hasPosition.current;
   const remaining = Math.hypot(lane.end.x - from.x, lane.end.y - from.y);
-  const speed = Math.max(1, step.speed);
-  // Integrated against the SIMULATION step the caller advanced by, not against
-  // wall-clock drift, so a slow tick cannot teleport the boss down its lane.
-  const stepDistance = (speed * dt) / 1000;
-
-  let arrived = false;
-  if (remaining <= stepDistance || remaining < 1) {
-    // SNAP to the end rather than stopping a partial step short. Otherwise the body
-    // halts up to one tick's travel (~47px) before the lane's tip, which reads as
-    // the charge falling short of its own marker — the exact thing the telegraph
-    // promised it would not do.
-    monster.hasPosition.current = { ...lane.end };
-    markSliceDirty(world, monster, 'hasPosition');
-    arrived = true;
-  } else {
-    const next = clampToNode(
-      monster.hasPosition.nodeId,
-      extendSegment(from, lane.end, stepDistance),
-    );
-    if (!standable(world, monster, next)) {
-      arrived = true; // ran into terrain — the charge ends where it was stopped
-    } else {
-      monster.hasPosition.current = next;
-      markSliceDirty(world, monster, 'hasPosition');
-    }
-  }
 
   resolveTravelContacts(world, monster, state, pattern, step, lane, now);
   if (!world.hasMonster(monster.isMonster.id)) return 'ended';
 
-  if (arrived || now >= state.stepEndsAtMs) {
+  // ARRIVAL. Either the body reached the tip, or the movement system gave up on it
+  // (blocked by terrain, so `isMoving` is gone) — in both cases the charge is over.
+  // `maxTravelMs` remains the outer guard against a motion that never resolves.
+  const stalled = monster.isMoving === undefined;
+  if (remaining < ARRIVAL_EPSILON_PX || stalled || now >= state.stepEndsAtMs) {
+    // Land exactly on the tip when the body is close enough that the last partial
+    // step would otherwise leave it short of its own marker. A body stopped early by
+    // TERRAIN keeps its real position — it genuinely could not get there.
+    if (remaining < ARRIVAL_EPSILON_PX) {
+      monster.hasPosition.current = { ...lane.end };
+      markSliceDirty(world, monster, 'hasPosition');
+    }
+    stopEntity(world, monster);
     // The lane has done its job; retire it before the payoff steps publish theirs.
     clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
     state.laneZoneId = undefined;
     restoreChargeSpeed(world, monster, state);
+    // Take the root back for whatever the sequence does next.
+    if (state.ownsRoot) setRooted(world, monster, true);
     return 'done';
   }
   return 'running';

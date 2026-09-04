@@ -36,6 +36,7 @@ import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { updateCombat } from '../src/systems/combat/engine/combat';
 import { endPattern, updateBossPatterns } from '../src/systems/combat/ai/bossPatterns';
+import { updateMovement } from '../src/systems/world/movement';
 import { setRooted } from '../src/systems/world/rooted';
 import { sourceBarrierRemaining } from '../src/systems/combat/engine/sourceBarriers';
 import { applyEnemyShield } from '../src/systems/combat/engine/monsterMechanics';
@@ -341,11 +342,24 @@ function lane(world: World): RuntimeChargeCorridor | undefined {
 }
 
 /** Arm the pattern and advance it one tick, so a lane is painted. */
+/**
+ * One simulation step in the REAL order: patterns advance, then movement executes.
+ *
+ * A committed charge asks the movement system to carry the boss (so the client has a
+ * destination to interpolate toward), which means a test that ticks only the pattern
+ * would watch a boss that never moves. Mirroring `World.tick` here is what keeps
+ * these assertions about the game rather than about the harness.
+ */
+function tick(world: World, now: number, dt = 100): void {
+  updateBossPatterns(world, dt, now);
+  updateMovement(world, dt, now);
+}
+
 function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   const { monster, armedAt } = armedBehemoth(world, primaryId, at);
-  updateBossPatterns(world, 100, armedAt);
+  tick(world, armedAt);
   assert(!!monster.runsBossPattern, 'the pattern should take ownership');
-  updateBossPatterns(world, 100, armedAt + 100);
+  tick(world, armedAt + 100);
   return { monster, startedAt: armedAt + 100 };
 }
 
@@ -400,7 +414,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
 
   // Still aiming: move the target and the lane follows.
   player.hasPosition.current = { x: 400, y: 800 };
-  updateBossPatterns(world, 100, startedAt + 100);
+  tick(world, startedAt + 100);
   const tracked = lane(world)!;
   assert(tracked.id === laneId, 're-aiming keeps the zone id, so Step Back keeps tracking it');
   assert(
@@ -410,10 +424,10 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
 
   // Past the lock: move again, and the lane must not budge.
   const lockedAt = tracked.lockedAtMs;
-  updateBossPatterns(world, 100, lockedAt + 1);
+  tick(world, lockedAt + 1);
   const committed = { ...lane(world)!.end };
   player.hasPosition.current = { x: 900, y: 100 };
-  updateBossPatterns(world, 100, lockedAt + 100);
+  tick(world, lockedAt + 100);
   const after = lane(world)!.end;
   assert(
     after.x === committed.x && after.y === committed.y,
@@ -448,7 +462,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   let now = startedAt;
   for (let i = 0; i < 120 && !monster.recoversFromPattern; i++) {
     now += 100;
-    updateBossPatterns(world, 100, now);
+    tick(world, now);
   }
 
   assert(
@@ -480,7 +494,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   assert(lane(world) === undefined, 'the lane is retired once the charge is done');
 
   // The window is finite and releases both locks.
-  updateBossPatterns(world, 100, monster.recoversFromPattern!.endsAtMs + 1);
+  tick(world, monster.recoversFromPattern!.endsAtMs + 1);
   assert(!monster.recoversFromPattern, 'recovery ends on its own');
   assert(!monster.isRooted && !monster.cannotAttack, 'and hands the boss back its actions');
   assert(
@@ -510,7 +524,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   let now = startedAt;
   for (let i = 0; i < 120 && monster.runsBossPattern?.savedSpeed === undefined; i++) {
     now += 100;
-    updateBossPatterns(world, 100, now);
+    tick(world, now);
   }
   assert(
     monster.runsBossPattern?.savedSpeed === walking,
@@ -525,7 +539,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   // And it must be handed back when the sequence ends.
   for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
     now += 100;
-    updateBossPatterns(world, 100, now);
+    tick(world, now);
   }
   assert(
     monster.hasPosition.speed === walking,
@@ -544,7 +558,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   let now = startedAt;
   for (let i = 0; i < 120 && monster.runsBossPattern?.savedSpeed === undefined; i++) {
     now += 100;
-    updateBossPatterns(world, 100, now);
+    tick(world, now);
   }
   assert(monster.hasPosition.speed === CRAG_TRAVEL.speed, 'setup: charging');
 
@@ -552,6 +566,55 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   assert(
     monster.hasPosition.speed === walking,
     'an interrupted charge must restore the walking speed',
+  );
+}
+
+// THE CHARGE MOVES THROUGH THE MOVEMENT SYSTEM, in even steps.
+//
+// Regression, found in manual playtest 2026-09-04: the charge looked choppy and
+// appeared to stop short. It was writing coordinates directly, which worked
+// server-side and rendered badly — with no `isMoving` motion the client had nothing
+// to interpolate TOWARD, so it saw a body jump ~94px per 5 Hz packet and lurched
+// after it in stop-start bursts, permanently behind.
+//
+// A real motion vector gives the client a destination far ahead of the body, which
+// is what its interpolator is built for. The two things this test pins are the ones
+// that make that true: the boss is genuinely MOVING, and it covers even ground each
+// tick rather than teleporting.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('lane-smooth', 420, 400), 'lane-smooth');
+  const { monster, startedAt } = windUpBehemoth(world, 'lane-smooth', { x: 400, y: 400 });
+
+  let now = startedAt;
+  let sawMotion = false;
+  const steps: number[] = [];
+  let previous = { ...monster.hasPosition.current };
+
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    now += 100;
+    tick(world, now);
+    if (monster.isMoving) sawMotion = true;
+    const moved = Math.hypot(
+      monster.hasPosition.current.x - previous.x,
+      monster.hasPosition.current.y - previous.y,
+    );
+    if (moved > 0.01) steps.push(moved);
+    previous = { ...monster.hasPosition.current };
+  }
+
+  assert(
+    sawMotion,
+    'the charge must carry a real motion vector — the client interpolates toward it',
+  );
+  assert(steps.length > 3, `the travel should span several ticks (got ${steps.length})`);
+
+  // Even steps. The final one is allowed to be short: it lands on the lane tip.
+  const body = steps.slice(0, -1);
+  const spread = Math.max(...body) - Math.min(...body);
+  assert(
+    spread < 2,
+    `travel should be uniform, not lurching (per-tick spread ${spread.toFixed(1)}px)`,
   );
 }
 
@@ -578,12 +641,12 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
     monster.hasAwareness.state = 'attacking';
     const armedAt = 1_000 + (CRAG_PATTERN.initialCooldownMs ?? CRAG_PATTERN.cooldownMs) + 1_000;
 
-    updateBossPatterns(world, 100, armedAt);
+    tick(world, armedAt);
     let now = armedAt;
     let painted: RuntimeChargeCorridor | undefined;
     for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
       now += 100;
-      updateBossPatterns(world, 100, now);
+      tick(world, now);
       painted = (world.groundZones.get(NODE) ?? []).find(
         (z): z is RuntimeChargeCorridor => z.kind === 'charge-corridor',
       ) ?? painted;
@@ -634,8 +697,8 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   monster.hasAwareness.state = 'attacking';
   const armedAt = 1_000 + (CRAG_PATTERN.initialCooldownMs ?? CRAG_PATTERN.cooldownMs) + 1_000;
 
-  updateBossPatterns(world, 100, armedAt);
-  updateBossPatterns(world, 100, armedAt + 100);
+  tick(world, armedAt);
+  tick(world, armedAt + 100);
   const painted = (world.groundZones.get(NODE) ?? []).find(
     (z): z is RuntimeChargeCorridor => z.kind === 'charge-corridor',
   );
@@ -653,7 +716,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   let now = armedAt + 100;
   for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
     now += 100;
-    updateBossPatterns(world, 100, now);
+    tick(world, now);
   }
   assert(
     !!monster.recoversFromPattern,
@@ -679,7 +742,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   assert(!!lane(world), 'setup: a lane is painted');
 
   applyStun(monster.tracksCombat, 1_000, 'test', 1);
-  updateBossPatterns(world, 100, startedAt + 100);
+  tick(world, startedAt + 100);
 
   assert(!monster.runsBossPattern, 'a stun during the wind-up cancels the pattern');
   assert(!monster.recoversFromPattern, 'an interrupt is not a reward — no recovery is granted');
@@ -704,7 +767,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   setRooted(world, monster, true);
   attachComponent(world, monster, 'cannotAttack', {});
 
-  updateBossPatterns(world, 100, armedAt);
+  tick(world, armedAt);
   assert(!!monster.runsBossPattern, 'the pattern should still start');
   assert(
     monster.runsBossPattern!.ownsRoot === false &&
@@ -786,13 +849,13 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   monster.hasAwareness.state = 'attacking';
   const armedAt = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
 
-  updateBossPatterns(world, 100, armedAt);
+  tick(world, armedAt);
   let now = armedAt;
   let sawBarrier = false;
   let reachedCharge = false;
   for (let i = 0; i < 200 && !reachedCharge; i++) {
     now += 100;
-    updateBossPatterns(world, 100, now);
+    tick(world, now);
     const state = monster.runsBossPattern;
     if (!state) break;
     if (state.watchedBarrier) sawBarrier = true;
@@ -819,11 +882,11 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   monster.hasAwareness.state = 'attacking';
   const armedAt = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
 
-  updateBossPatterns(world, 100, armedAt);
+  tick(world, armedAt);
   let now = armedAt;
   for (let i = 0; i < 200 && !monster.runsBossPattern?.watchedBarrier; i++) {
     now += 100;
-    updateBossPatterns(world, 100, now);
+    tick(world, now);
   }
   assert(!!monster.runsBossPattern?.watchedBarrier, 'setup: the plate is up and watched');
 
@@ -833,7 +896,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   applyEnemyShield(monster, MONSTER_DATABASE.get('stoneplate-juggernaut'), remaining, now);
 
   now += 100;
-  updateBossPatterns(world, 100, now);
+  tick(world, now);
   assert(!monster.runsBossPattern, 'breaking the plate cancels the rest of the sequence');
   assert(!!monster.recoversFromPattern, 'and staggers the boss');
   assert(monster.recoversFromPattern!.fromStagger, 'attributed to the break');
@@ -857,11 +920,11 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   monster.hasAwareness.state = 'attacking';
   const armedAt = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
 
-  updateBossPatterns(world, 100, armedAt);
+  tick(world, armedAt);
   let now = armedAt;
   for (let i = 0; i < 300 && !monster.recoversFromPattern; i++) {
     now += 100;
-    updateBossPatterns(world, 100, now);
+    tick(world, now);
   }
   assert(!!monster.recoversFromPattern, 'the sequence should reach its recovery');
   assert(
@@ -885,8 +948,8 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
     guardableThreatsFor(world, monster, armedAt).length === 0,
     'an idle boss is not a threat',
   );
-  updateBossPatterns(world, 100, armedAt);
-  updateBossPatterns(world, 100, armedAt + 100);
+  tick(world, armedAt);
+  tick(world, armedAt + 100);
 
   const threats = guardableThreatsFor(world, monster, armedAt + 150);
   assert(threats.length === 1, 'the wind-up is exactly one guardable threat');
@@ -915,8 +978,8 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   monster.hasAwareness.state = 'attacking';
   const pattern = juggernaut.bossPattern;
   const armedAt = t0 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
-  updateBossPatterns(world, 100, armedAt);
-  updateBossPatterns(world, 100, armedAt + 100);
+  tick(world, armedAt);
+  tick(world, armedAt + 100);
   assert(
     monster.runsBossPattern?.stepIndex === 0,
     'setup: the boss should be on its plate-up cast',
