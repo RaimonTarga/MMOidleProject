@@ -79,7 +79,7 @@ export const swampMonsterEntries = [
     // Signature SHELL UP (behavior pass): at a single authored HP threshold (~50%) it
     // retracts — it cannot meaningfully attack or move, and becomes extremely
     // resistant to DIRECT damage. DoTs keep ticking while shelled, which is the out.
-    stats: { hp: 260, attack: 24, plating: 6, damageReduction: 0, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    stats: { hp: 340, attack: 24, plating: 6, damageReduction: 0, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -97,7 +97,7 @@ export const swampMonsterEntries = [
     // (its dotEffect is REMOVED, locked). Its normal attacks are relatively weak;
     // the reason the Witch matters is WITHER — a periodic debuff suppressing the
     // player's Recovery effectiveness (~25-35%, exact value balance-owned).
-    stats: { hp: 170, attack: 41, plating: 0, damageReduction: 0, speed: 38, attackRange: 180, attackCooldown: 2200, pullRange: 215 },
+    stats: { hp: 220, attack: 41, plating: 0, damageReduction: 0, speed: 38, attackRange: 180, attackCooldown: 2200, pullRange: 215 },
     behavior: 'ranged', attackStyle: 'hex', biome: 'swamp',
     rewards: { essence: 11, essenceType: 'purple', level: 1, biomeXp: 62 },
     // WITHER - the reason the Witch matters. A periodic telegraphed hex that
@@ -119,7 +119,7 @@ export const swampMonsterEntries = [
     // Signature: the OPENING BITE after aggro lands MULTIPLE poison stacks at once
     // (normal bite 1, opener ~2); ordinary combat afterwards. It does NOT repeatedly
     // vanish and re-ambush.
-    stats: { hp: 210, attack: 46, plating: 0, damageReduction: 0, speed: 75, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
+    stats: { hp: 275, attack: 46, plating: 0, damageReduction: 0, speed: 75, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 13, essenceType: 'purple', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 500, leashRange: 540, idleMinMs: 450, idleMaxMs: 1200 },

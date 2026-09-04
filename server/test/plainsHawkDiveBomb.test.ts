@@ -51,7 +51,7 @@ initCombatSystems();
   assert(hawkDef.stats.speed === 110 && hawkDef.stats.pullRange === 440 && hawkDef.ai.leashRange === 1_200, 'Savanna Hawk should have its faster movement, wider pull radius, and extended leash');
   assert(hawkDef.engageSequence?.kind === 'cast-charge-root' && hawkDef.engageSequence.castMs === 1_000, 'Savanna Hawk should author a one-second Dive Bomb cast');
   assert(eagleDef?.stats.speed === 105 && eagleDef.ai.idleMinMs === 180 && eagleDef.ai.leashRange === 1_200, 'Stone Eagle should be significantly faster, change direction frequently while idle, and keep its target over a longer leash');
-  assert(eagleDef.engageSequence?.kind === 'cast-charge-strike' && eagleDef.engageSequence.damageMultiplier === 2, 'Stone Eagle should author Skyfall Rend as a doubled landing strike');
+  assert(eagleDef.engageSequence?.kind === 'cast-charge-strike' && eagleDef.engageSequence.damageMultiplier === 1.75, 'Stone Eagle should author Skyfall Rend as a 1.75x landing strike');
   assert(rocDef?.attackStyle === 'talons' && rocDef.behavior === 'melee', 'Cliffside Roc should reuse the shared talon melee attack');
   assert(rocDef.engageSequence?.kind === 'cast-charge-strike' && rocDef.engageSequence.damageMultiplier === 2.25 && rocDef.engageSequence.fx === 'dive-bomb', 'Cliffside Roc should inherit the telegraphed Skyfall Rend with an apex landing strike');
 }

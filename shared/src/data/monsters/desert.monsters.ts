@@ -76,12 +76,13 @@ export const desertMonsterEntries = [
     // SOFT CONTROLLER T2 (scorpion family). Reshaped from the old solo harasser:
     // HP up, movement down, direct damage well down, and a strong movement slow.
     // Pairs 1:1 with the Sun Scarab. Placeholder magnitudes.
-    // Attack cut 132 -> 75 (item/monster diagnostic, 2026-08-24): a death-trace
-    // found this pack-alpha's ordinary hit (136 raw, 52.5% of a T2 arrival
+    // Attack cut 132 -> 75 (item/monster diagnostic, 2026-08-24), then 75 -> 65
+    // in the T2 feel pass: a death-trace found this pack-alpha's ordinary hit
+    // (136 raw, 52.5% of a T2 arrival
     // player's maxHP) landing back-to-back with its called Sun Scarab follower,
     // killing the bot inside ~4-6s every respawn regardless of charm/recovery —
     // see the Sun Scarab and Stone Basilisk fixes in this same pass.
-    stats: { hp: 660, attack: 75, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
+    stats: { hp: 780, attack: 65, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -111,7 +112,7 @@ export const desertMonsterEntries = [
     // player's maxHP) as an ordinary hit, no less dangerous than the intended
     // Petrifying Gaze payload. 55 actually reads as a weak poke, letting the Gaze
     // stay "the entire weapon" as written.
-    stats: { hp: 660, attack: 55, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
+    stats: { hp: 780, attack: 55, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 46 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -130,7 +131,8 @@ export const desertMonsterEntries = [
     id: 'dust-djinn', name: 'Sun Scarab', color: 0xeecc66,
     // DEALER T2 (scarab line). Fragile, fast, ranged KITER, high direct damage.
     // Its slow is REMOVED (locked) — a dealer carries no CC.
-    // Attack cut 156 -> 85 (item/monster diagnostic, 2026-08-24): a death-trace on
+    // Attack cut 156 -> 85 (item/monster diagnostic, 2026-08-24), then 85 -> 60
+    // in the T2 feel pass: a death-trace on
     // the real runtime bench found this was the actual cause of Desert's death-loop
     // that four rounds of charm buffs failed to touch — a plain, untelegraphed
     // ordinary hit (no chargedAttack) reading 165 raw damage (63.7% of a T2 arrival
@@ -139,7 +141,7 @@ export const desertMonsterEntries = [
     // equal the whole health pool inside 2 seconds — before any recovery/barrier
     // charm can matter. This is the same "plain ordinary hit, no counterplay gate"
     // pattern as the T3 Glacier Bear fix, not a telegraphed/CC-gated spike.
-    stats: { hp: 320, attack: 85, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1900, pullRange: 230 },
+    stats: { hp: 390, attack: 60, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1900, pullRange: 230 },
     behavior: 'kiter', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 220, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },

@@ -47,8 +47,8 @@ initCombatSystems();
   const boulder = MONSTER_DATABASE.get('peak-archer')?.chargedAttack;
   const slam = MONSTER_DATABASE.get('granite-titan')?.chargedAttack;
   const ward = MONSTER_DATABASE.get('granite-titan')?.lowHealthWard;
-  assert(boulder?.name === 'Huge Boulder' && boulder.castMs === 1_500 && boulder.initialCooldownMs === 3_000 && boulder.multiplier === 2.25 && boulder.aoe?.radius === 83, 'Boulder Thrower should author a delayed, high-damage Huge Boulder with a tight impact zone');
-  assert(slam?.castMs === 2_400 && slam.initialCooldownMs === 0 && slam.cooldownMs === 6_000 && slam.multiplier === 1.9 && slam.aoe?.radius === 120, 'Granite Titan should open with a high-damage, smaller Ground Slam on its six-second cadence');
+  assert(boulder?.name === 'Huge Boulder' && boulder.castMs === 1_500 && boulder.initialCooldownMs === 3_000 && boulder.multiplier === 2.0 && boulder.aoe?.radius === 83, 'Boulder Thrower should author a delayed, high-damage Huge Boulder with a tight impact zone');
+  assert(slam?.castMs === 2_400 && slam.initialCooldownMs === 0 && slam.cooldownMs === 6_000 && slam.multiplier === 1.65 && slam.aoe?.radius === 120, 'Granite Titan should open with a heavy, smaller Ground Slam on its six-second cadence');
   assert(ward?.thresholdPct === 0.25 && ward.wardPct === 0.25 && ward.castMs === 1_000, 'Granite Titan should author its 25% HP Granite Barrier cast');
 }
 

@@ -41,7 +41,7 @@ export const jungleMonsterEntries = [
     // strong pounce, then fights as ordinary melee. Its LIGHT poison is early
     // Jungle's entire poison presence — the evolved ambushers below carry none.
     // No evasion needed.
-    stats: { hp: 400, attack: 20, plating: 0, damageReduction: 0, speed: 76, attackRange: 12, attackCooldown: 1100, pullRange: 270 },
+    stats: { hp: 480, attack: 20, plating: 0, damageReduction: 0, speed: 76, attackRange: 12, attackCooldown: 1100, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     // It LIVES in the thicket. Combined with the bush's doubled player detection,
@@ -58,7 +58,7 @@ export const jungleMonsterEntries = [
     // to hasten nearby monsters and call a small number of unengaged creatures
     // onto its target. The old invisible attack ramp is removed; the casted
     // window gives the player a clear moment to interrupt or focus the Ape.
-    stats: { hp: 500, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
+    stats: { hp: 600, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
@@ -77,7 +77,7 @@ export const jungleMonsterEntries = [
     // when it attacks, then behaves as an ordinary ranged mob. It does NOT
     // re-camouflage in combat. Light poison is optional flavor at this first stage,
     // not the identity.
-    stats: { hp: 375, attack: 20, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
+    stats: { hp: 450, attack: 20, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     concealedWhileIdle: true,

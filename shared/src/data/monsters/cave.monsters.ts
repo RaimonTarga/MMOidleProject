@@ -85,7 +85,7 @@ export const caveMonsterEntries = [
     id: 'giant-spider', name: 'Giant Spider', color: 0x992266,
     // Evolved Cave Lurker: fast chaotic roamer that can wander into an existing
     // fight. VENOM is the tier's escalation — not evasion (removed, locked).
-    stats: { hp: 260, attack: 39, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 12, attackCooldown: 1800, pullRange: 220 },
+    stats: { hp: 350, attack: 35, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 12, attackCooldown: 1800, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave', elite: true,
     rewards: { essence: 15, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
@@ -98,7 +98,7 @@ export const caveMonsterEntries = [
     // The elite where slow/piercing weapons pay off.
     // pullRange bumped 150→240 (placeholder): cave elites notice you from afar —
     // the "high detection / overpull risk" Cave identity (countered by stealth boots).
-    stats: { hp: 400, attack: 134, plating: 1, damageReduction: 0.08, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
+    stats: { hp: 550, attack: 115, plating: 1, damageReduction: 0.08, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 23, essenceType: 'red', level: 1, biomeXp: 145 },
     ai: { wanderRadius: 130, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -118,7 +118,7 @@ export const caveMonsterEntries = [
     // shrinks. PLACEHOLDER numbers — balance pass owns them.
     chargedAttack: {
       name: 'Ground Slam', castMs: 2000, cooldownMs: 13000, initialCooldownMs: 0,
-      multiplier: 2.4, fx: 'strong-kick',
+      multiplier: 2.1, fx: 'strong-kick',
       aoe: { radius: 130 },
     },
     // The "brute" that holds territory on a fixed patrol (lurkers/spiders roam solo).
@@ -128,7 +128,7 @@ export const caveMonsterEntries = [
   ['cave-gargoyle', {
     id: 'cave-gargoyle', name: 'Cave Gargoyle', color: 0x554455,
     // Ranged elite — hurls stalactites from its perch; armored and patient.
-    stats: { hp: 300, attack: 66, plating: 1, damageReduction: 0.05, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
+    stats: { hp: 415, attack: 58, plating: 1, damageReduction: 0.05, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
     behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
     rewards: { essence: 18, essenceType: 'red', level: 1, biomeXp: 100 },
     // STATIC RANGED SENTRY - it does not roam like a normal ranged mob. It stays
@@ -138,7 +138,7 @@ export const caveMonsterEntries = [
     // Occasional telegraphed heavy stalactite - the optional secondary.
     chargedAttack: {
       name: 'Stalactite Shot', castMs: 1600, cooldownMs: 11000, initialCooldownMs: 4500,
-      multiplier: 1.8, fx: 'power-shot',
+      multiplier: 1.55, fx: 'power-shot',
     },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],

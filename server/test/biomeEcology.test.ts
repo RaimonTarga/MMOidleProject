@@ -26,7 +26,7 @@ assert(
   "Mire Stalker should be a fast, erratic predator without a forced pool route",
 );
 assert(
-  snapper?.stats.hp === 260 && snapper.shellUp?.castMs === 500 && snapper.dotEffect?.durationMs === 4_500,
+  snapper?.stats.hp === 340 && snapper.shellUp?.castMs === 500 && snapper.dotEffect?.durationMs === 4_500,
   "Moss-Shell Snapper should have a deeper health pool, telegraph Shell Up, and maintain its venom long enough to matter",
 );
 
