@@ -3,6 +3,8 @@ import type { MonsterEntity } from "../ecs/entity";
 import type { HasKnockback } from "../systems/combat/damage/knockback";
 import { setAttackTarget } from "../systems/combat/ai/targeting";
 import { clearToxicPoolsByOwner } from "../systems/world/groundZones";
+import { clearBossPatternState } from "../systems/combat/ai/bossPatterns";
+import { releaseCorpseReservations } from "../systems/world/corpses";
 
 /** O(1) typed lookup. Backed by world.monsterById, populated via onEntityAdded. */
 export function getMonsterEntity(world: World, id: string): MonsterEntity | undefined {
@@ -57,6 +59,13 @@ export function removeMonsterEntity(world: World, id: string): void {
   // A hazard this monster planted dies with it. Boss pools now run for minutes,
   // so an uncleared arena would stay lethal long after the encounter ended.
   clearToxicPoolsByOwner(world, e.hasPosition.nodeId, e.isMonster.id);
+  // An ordered pattern dies with its boss: lane, barriers and movement locks are
+  // all released through the single teardown path before the entity goes away.
+  clearBossPatternState(world, e);
+  // So do its corpse claims. A reservation outliving its raiser would leave a body
+  // marked and tethered to a monster that no longer exists, and — because a claimed
+  // corpse is off limits to everyone else — permanently unraisable.
+  releaseCorpseReservations(world, e.isMonster.id, e.hasPosition.nodeId);
   world.adjustMonsterCount(e.hasPosition.nodeId, -1, e.isMonster.isBoss);
   world.ecs.remove(e);
 }

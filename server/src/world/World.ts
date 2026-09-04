@@ -68,6 +68,7 @@ import { syncEnemyBarrierState } from "../systems/combat/engine/enemyBarrierStat
 import { tickAllMechanics } from "../systems/classes/registry";
 import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
 import { updateBossScripts } from "../systems/combat/ai/bossScripts";
+import { updateBossPatterns } from "../systems/combat/ai/bossPatterns";
 import { updateUltimateEncounters } from "../systems/combat/ai/ultimateEncounter";
 import { updateWards, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
@@ -164,6 +165,12 @@ export class World {
 
   readonly knockbackedMonsters = this.monsterEntities.with("hasKnockback");
   readonly bossScriptedMonsters = this.monsterEntities.with("scriptsBoss");
+  /** Bosses currently committed to an ordered encounter pattern. */
+  readonly patternMonsters = this.monsterEntities.with("runsBossPattern");
+  /** Monsters hidden from targeting (burrowed, stealthed). */
+  readonly concealedMonsters = this.monsterEntities.with("isConcealed");
+  /** Bosses standing in an authored, punishable recovery window. */
+  readonly recoveringMonsters = this.monsterEntities.with("recoversFromPattern");
   readonly ultimateMonsters = this.monsterEntities.with("scriptsUltimate");
   readonly movingMonsters = this.monsterEntities.with("isMoving");
   readonly aggroedMonsters = this.monsterEntities.with("hasAggroTarget");
@@ -272,6 +279,8 @@ export class World {
   groundZones = new Map<string, RuntimeGroundZone[]>();
   /** Monotonic id source for ground zones. */
   groundZoneSeq = 0;
+  /** Monotonic corpse id source; runtime-only, like the corpses themselves. */
+  corpseSeq = 0;
   /**
    * Runtime-only raisable corpses keyed by node id, newest last (ring buffer).
    * Same lifetime rule as monsters: TTL-swept, cleared on node freeze, never
@@ -422,6 +431,10 @@ export class World {
     updateMonsterSlows(this);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
+    // AFTER the scripts, BEFORE anything that moves or swings a monster: a running
+    // pattern owns its boss outright, so it has to have advanced (and possibly
+    // released the boss) before AI, movement and combat get a look at it.
+    updateBossPatterns(this, dt, now);
     updateUltimateEncounters(this, dt);
     updatePartyFollow(this, now);
     updateAutoTraverse(this);

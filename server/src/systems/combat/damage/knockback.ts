@@ -6,6 +6,14 @@ import {
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
+import { ABILITY_GUARD_EFFECT_IDS, getStatusEffect } from '@mmo-idle/shared';
+
+/**
+ * Hard ceiling on forced-movement resistance. Never total immunity: a player who
+ * cannot be repositioned at all is immune to every mechanic built on repositioning,
+ * which is most of what makes a boss's space control matter.
+ */
+const PLAYER_FORCED_MOVEMENT_RESIST_CAP = 0.9;
 import { stopEntity } from '../../world/movement';
 import { resolveObstaclesForNode } from '../../world/nodeFeatures';
 import { setAttackTarget } from '../ai/targeting';
@@ -187,4 +195,24 @@ export function updateKnockback(world: World, dt: number): void {
       world.clearMonsterKnockback(entity.isMonster.id);
     }
   }
+}
+
+/**
+ * How much forced movement the player currently shrugs off, 0..cap.
+ *
+ * Named for FORCED MOVEMENT rather than knockback because it governs both
+ * directions: a stat that helped against being shoved but not against being dragged
+ * would be a lie in the item text. Any active Guard slot can carry it, and the BEST
+ * is taken rather than the sum — stacking two Guards must never make a player
+ * immovable outright, because immunity to a boss's repositioning is immunity to the
+ * mechanic it sets up.
+ */
+export function playerForcedMovementResistPct(player: PlayerEntity): number {
+  let best = 0;
+  for (const effectId of ABILITY_GUARD_EFFECT_IDS) {
+    const guard = getStatusEffect(player.tracksCombat, effectId);
+    if (!guard || guard.remainingMs <= 0) continue;
+    best = Math.max(best, guard.data['knockbackResistPct'] ?? 0);
+  }
+  return Math.max(0, Math.min(PLAYER_FORCED_MOVEMENT_RESIST_CAP, best));
 }

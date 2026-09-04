@@ -1,5 +1,6 @@
 import {
   distanceSq,
+  geometryContains,
   getCounter,
   getFlag,
   getString,
@@ -96,15 +97,11 @@ function safeFromAllPersistentHazards(
   pos: Vec2,
   hazards: readonly RuntimeToxicPool[],
 ): boolean {
-  return hazards.every((hazard) => {
-    const radius = hazard.radius + ESCAPE_CLEARANCE;
-    return distanceSq(pos, hazard.pos) > radius * radius;
-  });
+  return hazards.every((hazard) => !geometryContains(hazard.geometry, pos, ESCAPE_CLEARANCE));
 }
 
 function insideAvoidanceEnvelope(pos: Vec2, hazard: RuntimeToxicPool): boolean {
-  const radius = hazard.radius + ESCAPE_CLEARANCE;
-  return distanceSq(pos, hazard.pos) <= radius * radius;
+  return geometryContains(hazard.geometry, pos, ESCAPE_CLEARANCE);
 }
 
 function storedDestination(player: PlayerEntity): Vec2 | null {

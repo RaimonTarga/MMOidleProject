@@ -174,9 +174,12 @@ function closeShell(
       },
     });
 
-    // Evolved Snapper: the shell closing contaminates the ground around it.
+    // The shell closing contaminates the ground around it: rot for the Snapper,
+    // a MAGMA VENT for the Volcano lineage.
     const pool = spec.pool;
     if (pool) {
+      const flavor = pool.flavor ?? 'toxic';
+      const isVent = flavor === 'magma-vent';
       publishToxicPool(world, monster.hasPosition.nodeId, {
         kind: 'toxic-pool',
         pos: { ...monster.hasPosition.current },
@@ -186,14 +189,31 @@ function closeShell(
         damagePerTick: pool.damagePerTick,
         tickIntervalMs: pool.tickIntervalMs,
         slowSpeedMult: pool.slowSpeedMult,
-        sourceId: 'shell-pool',
-        sourceLabel: 'Shell Pool',
+        flavor,
+        rampAccelMult: pool.rampAccelMult,
+        // Owner-bound so the vent dies with the boss — a cleared arena must not stay
+        // lethal, and a minutes-long vent would outlive the encounter that authored it.
+        ownerId: monster.isMonster.id,
+        sourceId: isVent ? 'magma-vent' : 'shell-pool',
+        sourceLabel: isVent ? 'Magma Vent' : 'Shell Pool',
         killer: {
           monsterTypeId: monster.isMonster.monsterTypeId,
           monsterName: monster.isMonster.name,
           isBoss: monster.isMonster.isBoss,
           nodeId: monster.hasPosition.nodeId,
         },
+        // A VENT IS NOT AUTO-AVOIDED. This is the whole reason avoidance keys off the
+        // zone's semantics rather than its texture: standing in the vent is a legal,
+        // rewarded choice, so the avoidance rune must leave the decision to the player.
+        ...(isVent
+          ? {
+              semantics: {
+                disposition: 'hostile-to-player' as const,
+                persistence: 'persistent' as const,
+                movementResponse: 'none' as const,
+              },
+            }
+          : {}),
       });
     }
 

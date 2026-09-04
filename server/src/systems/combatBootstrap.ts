@@ -16,6 +16,7 @@ import { initCoreCombatEffects } from "./combat/cores";
 import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
 import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
 import { initStanceCombatEffects } from "./player/stances/stanceSwitch";
+import { initBossPatternCombat } from "./combat/engine/patternCombat";
 
 let initialized = false;
 
@@ -77,4 +78,8 @@ export function initCombatSystems(): void {
   // Mobility boots: on-kill / on-acquire / on-hit speed & tenacity hooks.
   // Order-independent — these listeners only apply status effects, never touch ctx.damage.
   initMobilityBoots();
+  // Ordered encounter patterns resolve their damage through the normal monster
+  // pipeline. Wired here rather than imported directly so `bossPatterns.ts` (which
+  // combat.ts reads for the suppression check) does not import combat.ts back.
+  initBossPatternCombat();
 }

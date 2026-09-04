@@ -37,6 +37,7 @@ import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { setAggroTarget, setAttackTarget } from "./targeting";
+import { clearBossPatternState, patternOwnsMonster } from "./bossPatterns";
 import {
   selectMonsterAggroCandidate,
   type MonsterAggroCandidate,
@@ -293,6 +294,13 @@ export function updateMonsters(world: World, dt: number, now: number) {
       }
     }
 
+    // An ordered encounter pattern OWNS its boss: it is rooted, its attacks are
+    // suppressed, and during committed travel it writes its own position. Ordinary
+    // chase/standoff/leash logic must not run underneath it, or the AI would fight
+    // the pattern for the same monster every tick. The pattern system does its own
+    // target-loss and reset teardown.
+    if (patternOwnsMonster(e)) continue;
+
     // Resolve and validate the current aggro target.
     // Drop it only if the target left the node, disconnected, or (for minions) died.
     const target = resolveAggroTarget(world, e);
@@ -310,6 +318,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
         ai.leashRange * ai.leashRange
       ) {
         abortEngageSequence(world, e);
+        clearBossPatternState(world, e);
         setAggroTarget(world, e, null, now);
         ai.kiteTimer = 0;
         resetCombatRamp(e);

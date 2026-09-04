@@ -22,6 +22,7 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import { attachComponent, detachComponent } from '../../ecs/markerHelpers';
 import { markSliceDirty } from '../../ecs/dirtyHelpers';
+import { hazardRampAcceleration } from './groundZones';
 import type { World } from '../../world/World';
 import { buildSimpleBreakdown, recordPlayerDamaged } from '../../world/worldLogCombat';
 import { isInvulnerableMonster, isInvulnerablePlayer } from '../combat/invulnerability';
@@ -248,7 +249,18 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
     effect.data.rampMs = ramp.rampMs;
     if (effect.stacks < floor) effect.stacks = floor;
 
-    effect.data.rampAccum = (effect.data.rampAccum ?? 0) + dt;
+    // A VENT ACCELERATES THE ROOM'S CLOCK. Standing in a magma vent makes Heat climb
+    // faster; stepping out returns the player to the node's baseline rate and lets it
+    // shed normally. Deliberately an accelerator rather than a second Heat source or
+    // a floor: the biome already owns what Heat is, and a hazard minting its own
+    // parallel counter would give the player two numbers where the design has one.
+    const accel = hazardRampAcceleration(
+      world,
+      nodeId,
+      player.hasPosition.current,
+      now,
+    );
+    effect.data.rampAccum = (effect.data.rampAccum ?? 0) + dt * accel;
     while (effect.data.rampAccum >= ramp.rampMs && effect.stacks < ramp.maxStacks) {
       effect.stacks++;
       effect.data.rampAccum -= ramp.rampMs;

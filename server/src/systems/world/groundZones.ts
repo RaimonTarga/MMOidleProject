@@ -1,8 +1,13 @@
 import {
   applyStatusEffect,
+  circleGeometry,
+  corridorGeometry,
   type DamageMitigationBreakdown,
   DAMAGE_TAKEN_PCT_KEY,
-  distanceSq,
+  geometryContains,
+  type GroundZoneGeometry,
+  type HazardFlavor,
+  linkedCirclesGeometry,
   SUNDERED_EFFECT_ID,
   type DeathKiller,
   type GroundZoneView,
@@ -23,6 +28,18 @@ export interface GroundZoneSemantics {
 
 interface RuntimeGroundZoneBase {
   id: string;
+  /**
+   * The authoritative shape. Damage resolution, Step Back, hazard avoidance,
+   * telemetry and the client all read THIS — never `pos`/`radius` — so the region
+   * that kills you is by construction the region you were shown.
+   */
+  geometry: GroundZoneGeometry;
+  /**
+   * Circle-equivalent anchor kept for the many callers that still reason in
+   * centre+radius (owner bookkeeping, pool ticking, `bodiesInCircle` broad phase).
+   * For a corridor this is the midpoint and the half-length, i.e. a bounding
+   * circle: correct as a coarse filter, never as containment.
+   */
   pos: Vec2;
   radius: number;
   startedAtMs: number;
@@ -38,12 +55,33 @@ export interface RuntimeSlamTelegraph extends RuntimeGroundZoneBase {
   fx?: string;
 }
 
+/**
+ * PERSISTENT HAZARD. Named `toxic-pool` for its original consumer, but generalized
+ * (redesign §4.5) into the one family every lingering ground effect uses: Swamp rot,
+ * the Plague Hound's death pool, and the Volcano's magma vents.
+ *
+ * Generalizing rather than adding a parallel hazard system is what keeps ONE answer
+ * to "am I standing in something", one cleanup path, and one avoidance rule.
+ */
 export interface RuntimeToxicPool extends RuntimeGroundZoneBase {
   kind: 'toxic-pool';
   expiresAtMs: number;
   damagePerTick: number;
   tickIntervalMs: number;
   slowSpeedMult?: number;
+  /** Texture selector only; never consulted for behaviour. Defaults to `toxic`. */
+  flavor?: HazardFlavor;
+  /**
+   * AMBIENT-RAMP MODIFIER. While a player stands inside, the node's ambient ramp
+   * (Volcano Heat, Tundra Chill) advances `rampAccelMult` times faster.
+   *
+   * Deliberately an ACCELERATOR on the existing room ramp rather than a second Heat
+   * source: the biome's ecology already owns what Heat is and what it does, and a
+   * hazard that minted its own parallel stack counter would give the player two
+   * numbers to read where the design has one. Leaving simply returns them to the
+   * room's baseline rate, so the vent speeds the clock up — it does not hold it.
+   */
+  rampAccelMult?: number;
   vulnerability?: { damageTakenPct: number; durationMs: number };
   ownerId?: string;
   detonationMultiplier?: number;
@@ -61,6 +99,29 @@ interface RuntimeHazardContact {
   harmfulEffects: Set<string>;
 }
 
+/**
+ * A committed charge lane. Published during the wind-up and resolved as a single
+ * corridor-shaped hit; the segment never moves once published, which is what makes
+ * stepping sideways a real answer rather than a guess about where the boss will go.
+ */
+export interface RuntimeChargeCorridor extends RuntimeGroundZoneBase {
+  kind: 'charge-corridor';
+  ownerId: string;
+  resolvesAtMs: number;
+  /** Endpoints of the lane, already clamped to valid/leashed space by the caller. */
+  start: Vec2;
+  end: Vec2;
+  halfWidth: number;
+  /**
+   * Wind-up milestone at which the direction stops tracking the target. Before it
+   * the lane is "aiming"; after it the lane is committed. The client reads this to
+   * paint two visibly different states, which the encounter design requires.
+   */
+  lockedAtMs: number;
+  damageMultiplier: number;
+  fx?: string;
+}
+
 export interface RuntimeFaultLineBurst extends RuntimeGroundZoneBase {
   kind: 'fault-line-telegraph';
   ownerId: string;
@@ -73,7 +134,8 @@ export interface RuntimeFaultLineBurst extends RuntimeGroundZoneBase {
 export type RuntimeGroundZone =
   | RuntimeSlamTelegraph
   | RuntimeToxicPool
-  | RuntimeFaultLineBurst;
+  | RuntimeFaultLineBurst
+  | RuntimeChargeCorridor;
 
 export type DelayedGroundZoneImpact =
   | RuntimeToxicPool
@@ -92,11 +154,12 @@ function zonesFor(world: World, nodeId: string): RuntimeGroundZone[] {
 export function publishGroundZone(
   world: World,
   nodeId: string,
-  zone: Omit<RuntimeSlamTelegraph, 'id' | 'semantics'>,
+  zone: Omit<RuntimeSlamTelegraph, 'id' | 'semantics' | 'geometry'>,
 ): RuntimeSlamTelegraph {
   clearGroundZonesByOwner(world, nodeId, zone.ownerId);
   const published: RuntimeSlamTelegraph = {
     ...zone,
+    geometry: circleGeometry(zone.pos, zone.radius),
     id: `gz-${nodeId}-${world.groundZoneSeq++}`,
     semantics: {
       disposition: 'hostile-to-player',
@@ -117,7 +180,7 @@ export function publishGroundZone(
 export function publishToxicPool(
   world: World,
   nodeId: string,
-  zone: Omit<RuntimeToxicPool, 'id' | 'tickTimersByPlayerId' | 'contactsByPlayerId' | 'semantics' | 'sourceId' | 'sourceLabel'> & {
+  zone: Omit<RuntimeToxicPool, 'id' | 'tickTimersByPlayerId' | 'contactsByPlayerId' | 'semantics' | 'sourceId' | 'sourceLabel' | 'geometry'> & {
     semantics?: GroundZoneSemantics;
     sourceId?: string;
     sourceLabel?: string;
@@ -126,6 +189,7 @@ export function publishToxicPool(
   const { semantics, sourceId, sourceLabel, ...rest } = zone;
   const published: RuntimeToxicPool = {
     ...rest,
+    geometry: circleGeometry(rest.pos, rest.radius),
     id: `gz-${nodeId}-${world.groundZoneSeq++}`,
     tickTimersByPlayerId: new Map(),
     contactsByPlayerId: new Map(),
@@ -145,10 +209,11 @@ export function publishToxicPool(
 export function publishFaultLineBurst(
   world: World,
   nodeId: string,
-  zone: Omit<RuntimeFaultLineBurst, 'id' | 'semantics'>,
+  zone: Omit<RuntimeFaultLineBurst, 'id' | 'semantics' | 'geometry'>,
 ): RuntimeFaultLineBurst {
   const published: RuntimeFaultLineBurst = {
     ...zone,
+    geometry: linkedCirclesGeometry(zone.points, zone.radius),
     id: `gz-${nodeId}-${world.groundZoneSeq++}`,
     semantics: {
       disposition: 'hostile-to-player',
@@ -158,6 +223,64 @@ export function publishFaultLineBurst(
   };
   zonesFor(world, nodeId).push(published);
   return published;
+}
+
+/**
+ * Publish a committed charge lane for the wind-up.
+ *
+ * Like `publishGroundZone` this clears the owner's previous telegraph, so a boss
+ * can never have two live lanes. The bounding-circle `pos`/`radius` are derived
+ * here rather than authored, so no caller can hand out a lane whose coarse filter
+ * disagrees with its real corridor.
+ */
+export function publishChargeCorridor(
+  world: World,
+  nodeId: string,
+  zone: Omit<RuntimeChargeCorridor, 'id' | 'semantics' | 'geometry' | 'pos' | 'radius'>,
+): RuntimeChargeCorridor {
+  clearGroundZonesByOwner(world, nodeId, zone.ownerId);
+  const midpoint = {
+    x: (zone.start.x + zone.end.x) / 2,
+    y: (zone.start.y + zone.end.y) / 2,
+  };
+  const published: RuntimeChargeCorridor = {
+    ...zone,
+    geometry: corridorGeometry(zone.start, zone.end, zone.halfWidth),
+    pos: midpoint,
+    radius: Math.hypot(zone.end.x - zone.start.x, zone.end.y - zone.start.y) / 2 + zone.halfWidth,
+    id: `gz-${nodeId}-${world.groundZoneSeq++}`,
+    semantics: {
+      disposition: 'hostile-to-player',
+      persistence: 'telegraph',
+      movementResponse: 'step-back',
+    },
+  };
+  zonesFor(world, nodeId).push(published);
+  return published;
+}
+
+/**
+ * Re-aim a lane IN PLACE while it is still tracking, keeping its id.
+ *
+ * Republishing instead would mint a fresh zone id every tick, and Step Back keys
+ * its tracked threats by zone id: the response would drop and re-acquire the same
+ * lane 10 times a second, spamming the dodge telemetry and resetting the escape
+ * point each time. The id is the identity of the threat, so it has to survive
+ * aiming — only the geometry moves.
+ *
+ * Callers must respect `lockedAtMs` themselves; this function does not enforce the
+ * commitment, it only performs the move.
+ */
+export function reaimChargeCorridor(
+  lane: RuntimeChargeCorridor,
+  start: Vec2,
+  end: Vec2,
+): void {
+  lane.start = { ...start };
+  lane.end = { ...end };
+  lane.geometry = corridorGeometry(start, end, lane.halfWidth);
+  lane.pos = { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 };
+  lane.radius = Math.hypot(end.x - start.x, end.y - start.y) / 2 + lane.halfWidth;
 }
 
 /** Drop telegraphs owned by a monster; persistent pools are unaffected (see
@@ -247,8 +370,35 @@ export function activeAvoidablePersistentGroundZones(
   );
 }
 
-export function pointInsideGroundZone(zone: RuntimeToxicPool, point: Vec2): boolean {
-  return distanceSq(point, zone.pos) <= zone.radius * zone.radius;
+/**
+ * Combined ambient-ramp acceleration from every hazard this position is inside.
+ *
+ * Multiplied rather than summed so overlapping vents compound the way standing
+ * deeper in the fire should, and returns 1 when the player is standing in nothing —
+ * which is the ordinary case and must cost nothing to compute.
+ */
+export function hazardRampAcceleration(
+  world: World,
+  nodeId: string,
+  point: Vec2,
+  now: number,
+): number {
+  const list = world.groundZones.get(nodeId);
+  if (!list || list.length === 0) return 1;
+  let accel = 1;
+  for (const zone of list) {
+    if (zone.kind !== 'toxic-pool') continue;
+    if (now >= zone.expiresAtMs) continue;
+    const mult = zone.rampAccelMult;
+    if (mult === undefined || mult === 1) continue;
+    if (!geometryContains(zone.geometry, point)) continue;
+    accel *= mult;
+  }
+  return accel;
+}
+
+export function pointInsideGroundZone(zone: RuntimeGroundZone, point: Vec2, clearance = 0): boolean {
+  return geometryContains(zone.geometry, point, clearance);
 }
 
 function recordHazardContact(
@@ -328,10 +478,9 @@ function tickToxicPool(
   pool: RuntimeToxicPool,
   now: number,
 ): void {
-  const radiusSq = pool.radius * pool.radius;
   const inside = new Set<string>();
   for (const player of world.livePlayersInNode(nodeId)) {
-    if (distanceSq(player.hasPosition.current, pool.pos) > radiusSq) continue;
+    if (!geometryContains(pool.geometry, player.hasPosition.current)) continue;
     inside.add(player.isPlayer.id);
 
     let contact = pool.contactsByPlayerId.get(player.isPlayer.id);
@@ -453,7 +602,7 @@ export function updateGroundZones(world: World, now: number): void {
       if (zone.kind === 'slam-telegraph') {
         return world.hasMonster(zone.ownerId) && now < zone.resolvesAtMs + RESOLVE_GRACE_MS;
       }
-      if (zone.kind === 'fault-line-telegraph') {
+      if (zone.kind === 'fault-line-telegraph' || zone.kind === 'charge-corridor') {
         return world.hasMonster(zone.ownerId) && now < zone.resolvesAtMs + RESOLVE_GRACE_MS;
       }
       return zone.detonationMultiplier !== undefined
@@ -502,25 +651,37 @@ export function buildGroundZoneViews(
   return list.flatMap<GroundZoneView>((zone) => {
     const endsAtMs =
       zone.kind === 'toxic-pool' ? zone.expiresAtMs : zone.resolvesAtMs;
+    const durationMs = Math.max(1, endsAtMs - zone.startedAtMs);
+    const remainingMs = Math.max(0, endsAtMs - now);
+    // Fault lines stay one view PER SEGMENT: the client draws a chain of filling
+    // rings, and collapsing them into a single linked-circles view would change
+    // shipped presentation for no gain. Each segment still carries the circle it
+    // is, so nothing downstream has to special-case the chain.
     if (zone.kind === 'fault-line-telegraph') {
       return zone.points.map((point, index) => ({
         id: `${zone.id}-${index}`,
         kind: zone.kind,
+        geometry: circleGeometry(point, zone.radius),
         x: point.x,
         y: point.y,
         radius: zone.radius,
-        durationMs: Math.max(1, endsAtMs - zone.startedAtMs),
-        remainingMs: Math.max(0, endsAtMs - now),
+        durationMs,
+        remainingMs,
       }));
     }
     return {
       id: zone.id,
       kind: zone.kind,
+      geometry: zone.geometry,
       x: zone.pos.x,
       y: zone.pos.y,
       radius: zone.radius,
-      durationMs: Math.max(1, endsAtMs - zone.startedAtMs),
-      remainingMs: Math.max(0, endsAtMs - now),
+      durationMs,
+      remainingMs,
+      ...(zone.kind === 'charge-corridor'
+        ? { lockedInMs: Math.max(0, zone.lockedAtMs - now), ...(zone.fx ? { fx: zone.fx } : {}) }
+        : {}),
+      ...(zone.kind === 'toxic-pool' && zone.flavor ? { flavor: zone.flavor } : {}),
       ...(zone.kind === 'slam-telegraph' && zone.fx ? { fx: zone.fx } : {}),
     };
   });

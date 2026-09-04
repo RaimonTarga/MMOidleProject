@@ -27,6 +27,8 @@ import {
   getCooldown,
   getFlag,
   guardEffectIdForSlot,
+  cleanseableStacks,
+  isCleanseable,
   isHarmfulPlayerStatusEffect,
   recoveryEffectIdForSlot,
   removeStatusEffect,
@@ -486,19 +488,32 @@ function applyGuardEffect(
  */
 function applyCleanse(player: PlayerEntity, stacks: number, debuffs: number): RemovedEffect[] {
   const cs = player.tracksCombat;
-  const byId = new Map<string, number>();
+  const byId = new Map<string, { stacks: number; data: Record<string, number> }>();
   for (const effect of cs.statusEffects) {
     if (effect.instanced) continue;
     if (effect.stacks <= 0) continue;
     if (!isHarmfulPlayerStatusEffect(effect.id, effect.data)) continue;
-    byId.set(effect.id, Math.max(byId.get(effect.id) ?? 0, effect.stacks));
+    // CLEANSE POLICY (redesign §4.7). Being harmful is no longer enough: Heat is
+    // genuinely hurting you and is still the wrong thing to answer with a button,
+    // because walking out of the vent is the mechanic. Immune effects are skipped
+    // ENTIRELY here rather than filtered later, so they cannot consume one of the
+    // `debuffs` slots and quietly make Cleanse do nothing.
+    if (!isCleanseable(effect.id, effect.data)) continue;
+    const existing = byId.get(effect.id);
+    if (!existing || effect.stacks > existing.stacks) {
+      byId.set(effect.id, { stacks: effect.stacks, data: effect.data });
+    }
   }
   const ordered = [...byId.entries()]
-    .sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]))
+    .sort((a, b) => (b[1].stacks - a[1].stacks) || a[0].localeCompare(b[0]))
     .slice(0, Math.max(1, debuffs));
   const removed: RemovedEffect[] = [];
-  for (const [id, before] of ordered) {
-    removeStatusEffectStacks(cs, id, Math.max(1, stacks));
+  for (const [id, { stacks: before, data }] of ordered) {
+    // A `partial` effect is REDUCED, never deleted: the room re-applies it, so a
+    // full strip would be true for a second and read as the button not working.
+    const allowed = cleanseableStacks(id, data, Math.max(1, stacks));
+    if (allowed <= 0) continue;
+    removeStatusEffectStacks(cs, id, allowed);
     const after = cs.statusEffects.find((effect) => effect.id === id)?.stacks ?? 0;
     const removedStacks = Math.max(0, before - after);
     if (removedStacks > 0) removed.push({ effectId: id, stacks: removedStacks });

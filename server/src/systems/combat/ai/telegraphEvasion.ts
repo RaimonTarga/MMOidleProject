@@ -1,7 +1,11 @@
+import type { GroundZoneGeometry } from "@mmo-idle/shared";
 import {
   RUNE_TELEGRAPH_ESCAPE_CLEARANCE,
   distanceSq,
+  geometryContains,
+  geometryCoveringCircles,
   moverOverlapsBlockShapes,
+  nearestGeometryExit,
   type Vec2,
 } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -11,6 +15,7 @@ import { actorFromPlayer } from "../../../world/worldLogActors";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import type {
+  RuntimeChargeCorridor,
   RuntimeFaultLineBurst,
   RuntimeSlamTelegraph,
 } from "../../world/groundZones";
@@ -22,7 +27,10 @@ import {
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { suppressedFeatureIdsForEntity } from "../../world/pathMotion";
 
-export type RuntimeAttackTelegraph = RuntimeSlamTelegraph | RuntimeFaultLineBurst;
+export type RuntimeAttackTelegraph =
+  | RuntimeSlamTelegraph
+  | RuntimeFaultLineBurst
+  | RuntimeChargeCorridor;
 
 export interface TelegraphCircleGeometry {
   pos: Vec2;
@@ -35,7 +43,10 @@ export interface TelegraphDodgeThreat {
   ownerId: string;
   acquiredAtMs: number;
   startingPosition: Vec2;
+  /** Circle decomposition, for consumers that only understand circles. */
   geometry: TelegraphCircleGeometry[];
+  /** The authoritative shape damage was resolved against. */
+  shape: GroundZoneGeometry;
   firstSafeAtMs?: number;
   reenteredAfterSafe: boolean;
   reentryRecorded: boolean;
@@ -68,17 +79,21 @@ const ESCAPE_SAMPLE_STEP = 8;
 const ESCAPE_SAMPLE_ANGLES = 48;
 const NODE_MARGIN = 40;
 
+/**
+ * Circle decomposition, for the escape sampler and the telemetry record only.
+ * Containment must NOT be re-derived from this — a corridor's covering circles are
+ * deliberately larger than the corridor, so asking them "am I inside?" would over-
+ * report. `positionInsideTelegraph` is the single containment answer.
+ */
 function telegraphCircles(zone: RuntimeAttackTelegraph): TelegraphCircleGeometry[] {
-  if (zone.kind === "fault-line-telegraph") {
-    return zone.points.map((pos) => ({ pos: { ...pos }, radius: zone.radius }));
-  }
-  return [{ pos: { ...zone.pos }, radius: zone.radius }];
+  return geometryCoveringCircles(zone.geometry).map((circle) => ({
+    pos: { ...circle.pos },
+    radius: circle.radius,
+  }));
 }
 
 export function positionInsideTelegraph(zone: RuntimeAttackTelegraph, pos: Vec2): boolean {
-  return telegraphCircles(zone).some(
-    (circle) => distanceSq(pos, circle.pos) <= circle.radius * circle.radius,
-  );
+  return geometryContains(zone.geometry, pos);
 }
 
 /** Pending hostile AoEs exposed by the same runtime state that resolves damage. */
@@ -169,6 +184,7 @@ function recordLifecycle(
     acquiredAtMs: threat?.acquiredAtMs ?? response?.acquiredAtMs,
     startingPosition: threat?.startingPosition,
     telegraphGeometry: threat?.geometry,
+    telegraphShape: threat?.shape,
     escapePoint: response?.escapePoint ?? undefined,
     firstSafeAtMs: threat?.firstSafeAtMs,
     resolvedAtMs: details.resolvedAtMs,
@@ -189,11 +205,8 @@ function safeFromAllTelegraphs(
   pos: Vec2,
   zones: readonly RuntimeAttackTelegraph[],
 ): boolean {
-  return zones.every((zone) =>
-    telegraphCircles(zone).every((circle) => {
-      const safeRadius = circle.radius + RUNE_TELEGRAPH_ESCAPE_CLEARANCE;
-      return distanceSq(pos, circle.pos) > safeRadius * safeRadius;
-    }),
+  return zones.every(
+    (zone) => !geometryContains(zone.geometry, pos, RUNE_TELEGRAPH_ESCAPE_CLEARANCE),
   );
 }
 
@@ -223,11 +236,12 @@ function findEscapeForThreats(
   const from = player.hasPosition.current;
   const angles: number[] = [];
   for (const zone of zones) {
-    for (const circle of telegraphCircles(zone)) {
-      if (distanceSq(from, circle.pos) <= circle.radius * circle.radius) {
-        angles.push(Math.atan2(from.y - circle.pos.y, from.x - circle.pos.x));
-      }
-    }
+    // Seed with the shape's own shortest way out. For a circle that is the radial
+    // push it always was; for a corridor it is the PERPENDICULAR, which is the
+    // authored answer to a committed charge and which a purely radial sampler
+    // would only stumble onto by luck.
+    const exit = nearestGeometryExit(zone.geometry, from, RUNE_TELEGRAPH_ESCAPE_CLEARANCE);
+    if (exit) angles.push(Math.atan2(exit.y - from.y, exit.x - from.x));
   }
   for (let i = 0; i < ESCAPE_SAMPLE_ANGLES; i++) {
     angles.push((i / ESCAPE_SAMPLE_ANGLES) * Math.PI * 2);
@@ -295,6 +309,7 @@ function addThreats(
       acquiredAtMs: now,
       startingPosition: { ...player.hasPosition.current },
       geometry: telegraphCircles(zone),
+      shape: zone.geometry,
       reenteredAfterSafe: false,
       reentryRecorded: false,
     };

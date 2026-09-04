@@ -11,6 +11,7 @@ import { componentsForEntity } from "../ecs/deltaEncoder";
 import type { DirtyDrain } from "../ecs/dirtyTracker";
 import type { BroadcastStats } from "../telemetry/nodeTelemetry";
 import { buildGroundZoneViews } from "../systems/world/groundZones";
+import { buildCorpseViews } from "../systems/world/corpses";
 
 export interface NodeDeltaResult {
   snapshot: DeltaSnapshot;
@@ -88,6 +89,9 @@ export function buildNodeDelta(
 
   const groundZones = buildGroundZoneViews(world, nodeId, Date.now());
   if (groundZones) snapshot.groundZones = groundZones;
+
+  const corpses = buildCorpseViews(world, nodeId, Date.now());
+  if (corpses) snapshot.corpses = corpses;
 
   let deltaBytes = 0;
   try {

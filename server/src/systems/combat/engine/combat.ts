@@ -7,6 +7,7 @@ import {
   MONSTER_DATABASE,
   TEST_ROOM_NODE_ID,
   distanceSq,
+  geometryContains,
   resolveSummonerProfile,
 } from "@mmo-idle/shared";
 import type {
@@ -86,11 +87,12 @@ import {
   type RuntimeSlamTelegraph,
 } from "../../world/groundZones";
 import { monsterDeathEmpowerMult } from "../damage/monsterDeathEffects";
-import { applyPlayerKnockback } from "../damage/knockback";
+import { pushPlayer } from "../damage/forcedMovement";
 import { canApplyPlayerDebuff } from "../status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
+import { applyPlatingShredStacks } from '../status/platingShred';
 import { shellDamageMult } from '../ai/shellUp';
 import { setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
@@ -131,7 +133,6 @@ import {
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
 
-const PLAYER_KNOCKBACK_RESIST_CAP = 0.9;
 
 /**
  * Tundra ICE-ARMOR shatter — fires when a player hit BREAKS the mob's frost barrier.
@@ -1015,42 +1016,11 @@ export function runMonsterAttack(
 
   // Tundra rampDebuff — stacking move-slow + attack-slow on the player, each
   // capped, decaying stackDurationMs after the last hit (refreshed every hit).
-  const platingShred = def?.appliesPlatingShred;
-  if (platingShred && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
-    // A Cave boss phase ('empower-shred') deepens the same corrosion instead of
-    // bolting on a second mechanic: more plating per stack, a higher ceiling, and
-    // further stack counts at which the threshold poison fires.
-    const deepen = monster.scriptsBoss?.shredOverride;
-    const maxStacks = platingShred.maxStacks + (deepen?.maxStacksAdd ?? 0);
-    const perStack =
-      platingShred.platingPerStack + (deepen?.platingPerStackAdd ?? 0);
-    // `applyStatusEffect` keeps an EXISTING effect's cap and data, so a deepening
-    // that lands mid-corrosion has to be written onto the live stack before the
-    // increment — otherwise the raised ceiling only takes effect on a fresh pull.
-    if (deepen) {
-      const live = getStatusEffect(target.tracksCombat, PLATING_SHRED_EFFECT_ID);
-      if (live) {
-        live.maxStacks = maxStacks;
-        live.data.platingPerStack = perStack;
-      }
-    }
-    const corrosion = applyStatusEffect(target.tracksCombat, {
-      id: PLATING_SHRED_EFFECT_ID,
-      maxStacks,
-      remainingMs: -1,
-      refreshable: false,
-      sourceId: monster.isMonster.id,
-      data: { platingPerStack: perStack },
-    });
-    const poison = platingShred.thresholdPoison;
-    if (
-      target.hasHealth.hp > 0 &&
-      poison &&
-      (poison.atStacks.includes(corrosion.stacks) ||
-        deepen?.extraThresholds.includes(corrosion.stacks))
-    ) {
-      applyMonsterDotToPlayer(world, monster, target, poison);
-    }
+  // A Cave boss phase ('empower-shred') deepens the same corrosion instead of
+  // bolting on a second mechanic. An ordinary hit erodes by ONE stack; the
+  // telegraphed Breach ability applies a larger dose through the same helper.
+  if (def?.appliesPlatingShred && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+    applyPlatingShredStacks(world, monster, target, def, 1);
   }
 
   const rampDebuff = def?.rampDebuff;
@@ -1348,7 +1318,7 @@ function resolveMonsterAbilityHit(
   if (outcome !== 'hit' || result.evadeBlocksDebuffs === true) return;
   if (action.effect) applyMonsterAbilityPlayerEffect(monster, target, action.effect);
   if (action.knockback) {
-    applyPlayerKnockback(world, target, monster.hasPosition.current, action.knockback.distance);
+    pushPlayer(world, target, monster.hasPosition.current, action.knockback.distance);
   }
   const refreshed = world.getPlayerEntity(target.isPlayer.id);
   if (refreshed) markEngaged(world, refreshed, now);
@@ -1383,7 +1353,7 @@ function resolveMonsterAbilityArea(
         );
       }
       if (action.knockback) {
-        applyPlayerKnockback(world, target, impact, action.knockback.distance);
+        pushPlayer(world, target, impact, action.knockback.distance);
       }
       const refreshed = world.getPlayerEntity(target.isPlayer.id);
       if (refreshed) markEngaged(world, refreshed, now);
@@ -1422,6 +1392,19 @@ function resolveMonsterAbility(
         impact ?? monster.hasPosition.current,
         now,
       );
+    } else if (action.type === 'plating-shred') {
+      // BREACH — a larger dose of the caster's own corrosion, through the same
+      // helper an ordinary hit uses. Guarded like any other applied debuff so an
+      // invulnerable or dead player is not eroded by a cast they cannot answer.
+      if (target && canApplyPlayerDebuff(target)) {
+        applyPlatingShredStacks(
+          world,
+          monster,
+          target,
+          MONSTER_DATABASE.get(monster.isMonster.monsterTypeId),
+          action.stacks,
+        );
+      }
     } else {
       applyMonsterAbilitySelfAction(monster, action);
     }
@@ -1696,18 +1679,6 @@ function updateLowHealthWard(
   return true;
 }
 
-function playerKnockbackResistPct(player: PlayerEntity): number {
-  // Any active Guard slot can carry knockback resist; take the best rather than
-  // stacking, so a second Guard never makes the player immovable outright.
-  let best = 0;
-  for (const effectId of ABILITY_GUARD_EFFECT_IDS) {
-    const guard = getStatusEffect(player.tracksCombat, effectId);
-    if (!guard || guard.remainingMs <= 0) continue;
-    best = Math.max(best, guard.data["knockbackResistPct"] ?? 0);
-  }
-  return Math.max(0, Math.min(PLAYER_KNOCKBACK_RESIST_CAP, best));
-}
-
 /**
  * Marked-prey tell: when a `marksTarget` charge BEGINS, paint the shared sun-mark
  * "MARKED" debuff on the target for the readable wind-up (the Forest Scent-of-Blood
@@ -1924,23 +1895,10 @@ function applyChargedAttackKnockback(
   target: PlayerEntity,
   charged: NonNullable<MonsterDefinition["chargedAttack"]>,
 ): void {
-  const baseDistance = charged.knockback?.distance ?? 0;
-  if (baseDistance <= 0) return;
-  const resist = playerKnockbackResistPct(target);
-  const distance = Math.max(0, Math.round(baseDistance * (1 - resist)));
-  if (distance <= 0) return;
-  const end = applyPlayerKnockback(
-    world,
-    target,
-    monster.hasPosition.current,
-    distance,
-  );
-  if (!end) return;
-  world.pushEvent(target.hasPosition.nodeId, {
-    kind: "player-knockback",
-    playerId: target.isPlayer.id,
-    pos: end,
-  });
+  // Through the shared forced-movement helper: resistance, clamping, obstacle
+  // resolution and the reason-tagged event are the same whichever direction a
+  // boss moves the player. No boss writes coordinates itself.
+  pushPlayer(world, target, monster.hasPosition.current, charged.knockback?.distance ?? 0);
 }
 
 /**
@@ -2142,6 +2100,14 @@ function resolveChargedSlam(
   });
 }
 
+/** Monsters a player may actually swing at: present, and not burrowed or hidden. */
+function* targetableMonstersInNode(world: World, nodeId: string): Generator<MonsterEntity> {
+  for (const monster of world.monsterEntitiesInNode(nodeId)) {
+    if (monster.isConcealed) continue;
+    yield monster;
+  }
+}
+
 /** Resolve expiry detonations and linked fault lines through real monster hits. */
 function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
   for (const impact of takeDueGroundZoneImpacts(world, now)) {
@@ -2236,9 +2202,13 @@ export function updateCombat(world: World, dt: number, now: number) {
 
     const attackRange = player.performsAttack.attackRange;
 
+    // Concealed monsters are filtered HERE as well as in the auto-target gates: a
+    // player already locked onto a boss that then burrows must lose the lock on the
+    // same tick, or they keep swinging at a hole. The generator is wrapped rather
+    // than materialised so the common path still allocates nothing.
     const target = world.collision.bestTargetInReach(
       player,
-      world.monsterEntitiesInNode(player.hasPosition.nodeId),
+      targetableMonstersInNode(world, player.hasPosition.nodeId),
       attackRange,
     );
 

@@ -9,7 +9,12 @@ import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { mutateSlice } from '../../../ecs/dirtyHelpers';
-import { takeNearestCorpse, type RuntimeCorpse } from '../../world/corpses';
+import {
+  releaseCorpseReservations,
+  reserveCorpses,
+  takeNearestCorpse,
+  type RuntimeCorpse,
+} from '../../world/corpses';
 import { setAggroTarget, setAttackTarget } from './targeting';
 import { setRooted } from '../../world/rooted';
 import { isMonsterStunned } from '../status/stun';
@@ -30,6 +35,9 @@ function hasCorpseInRange(world: World, raiser: MonsterEntity, range: number): b
 }
 
 function releaseRaiseCast(world: World, raiser: MonsterEntity): void {
+  // Claims die with the cast. A reservation that outlived its caster would mark a
+  // body no cast will ever take — permanently unraisable and permanently glowing.
+  releaseCorpseReservations(world, raiser.isMonster.id, raiser.hasPosition.nodeId);
   if (getCounter(raiser.tracksCombat, CAST_OWNS_ROOT_KEY) !== 0) {
     setRooted(world, raiser, false);
   }
@@ -51,12 +59,22 @@ function cancelRaiseCast(world: World, raiser: MonsterEntity): void {
   });
 }
 
+/**
+ * Open a Raise Dead wind-up, CLAIMING the bodies it intends to take.
+ *
+ * `count` is how many this cast will raise. Reserving up front is what makes the
+ * mechanic legible: the client marks the claimed corpses and draws the tether while
+ * the cast is still running, so the player can see which of the dead are coming back
+ * before they get up — rather than being told afterwards by their reappearance.
+ */
 function beginRaiseCast(
   world: World,
   raiser: MonsterEntity,
   spec: MonsterRaisesDead,
   now: number,
+  count = 1,
 ): void {
+  reserveCorpses(world, raiser, spec.corpseRange, count);
   const ownsRoot = !raiser.isRooted;
   const ownsAttackLock = !raiser.cannotAttack;
   if (ownsRoot) setRooted(world, raiser, true);
@@ -147,11 +165,15 @@ export function raiseCorpsesBurst(
   let raised = 0;
   for (let i = 0; i < count; i++) {
     if (countRaisedBy(world, raiser) >= maxAlive) break;
+    // Passes the raiser id so it takes its OWN claims (and any unclaimed body),
+    // never one another raiser has tethered. That is the claim-once invariant,
+    // enforced at cast start rather than discovered at resolution.
     const corpse = takeNearestCorpse(
       world,
       raiser.hasPosition.nodeId,
       raiser.hasPosition.current,
       spec.corpseRange,
+      raiser.isMonster.id,
     );
     if (!corpse) break;
     if (raiseCorpse(world, raiser, corpse, spec, now)) raised++;
@@ -202,7 +224,11 @@ export function updateRaisers(world: World, now: number): void {
       }
       if (now < castEndsAt) continue;
 
-      releaseRaiseCast(world, raiser);
+      // Consume the claim BEFORE releasing the cast. `releaseRaiseCast` drops every
+      // reservation this raiser holds, so releasing first would hand back the very
+      // body the wind-up spent its whole duration pointing at — the tether would
+      // have been a lie, and a corpse reserved at the last moment by nobody could
+      // be taken instead.
       const maxAlive = spec.maxAlive + (raiser.scriptsBoss?.raiseMaxAliveAdd ?? 0);
       const corpse = countRaisedBy(world, raiser) < maxAlive
         ? takeNearestCorpse(
@@ -210,8 +236,10 @@ export function updateRaisers(world: World, now: number): void {
             raiser.hasPosition.nodeId,
             raiser.hasPosition.current,
             spec.corpseRange,
+            raiser.isMonster.id,
           )
         : null;
+      releaseRaiseCast(world, raiser);
       const fired = corpse ? raiseCorpse(world, raiser, corpse, spec, now) : false;
       world.pushEvent(raiser.hasPosition.nodeId, {
         kind: 'monster-cast-end',

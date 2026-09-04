@@ -45,6 +45,7 @@ import type {
   IsNodeFeatureSpawn,
   IsRaised,
   IsInvulnerable,
+  IsConcealed,
   IsMinion,
   IsMonster,
   IsMoving,
@@ -53,6 +54,8 @@ import type {
   IsUltimateEngaged,
   MitigatesDamage,
   PerformsAttack,
+  RecoversFromPattern,
+  RunsBossPattern,
   ScriptsBoss,
   ScriptsUltimate,
   SummonsMinions,
@@ -285,12 +288,29 @@ export interface ServerEntity {
   hasEntropy?: HasEntropy;
   hasWeaponDot?: HasWeaponDot;
   scriptsBoss?: ScriptsBoss;
+  /**
+   * Server-only cursor for the ordered encounter pattern this boss is committed
+   * to. PRESENCE means the pattern owns movement and ordinary attacks are
+   * suppressed — nothing else may move or swing this monster while it is attached.
+   */
+  runsBossPattern?: RunsBossPattern;
+  /**
+   * Server-only authored recovery window. Presence means the boss is visibly out
+   * of it: rooted, not attacking, and open to punishment. Distinct from a plain
+   * cooldown, which is invisible and does not stop the boss doing other things.
+   */
+  recoversFromPattern?: RecoversFromPattern;
   scriptsUltimate?: ScriptsUltimate;
   isBossEngaged?: IsBossEngaged;
   isEncounterAdd?: IsEncounterAdd;
   isNodeFeatureSpawn?: IsNodeFeatureSpawn;
   isRaised?: IsRaised;
   isInvulnerable?: IsInvulnerable;
+  /**
+   * Burrowed or hidden: untargetable and unhittable until it re-emerges. Distinct
+   * from `isInvulnerable`, which stays targetable — see `IsConcealed`.
+   */
+  isConcealed?: IsConcealed;
   isUltimateEngaged?: IsUltimateEngaged;
   tracksDungeon?: TracksDungeon;
 

@@ -11,7 +11,7 @@ import {
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { isMonsterCharging } from "../engine/monsterMechanics";
+import { isMonsterThreatening } from "./guardableThreats";
 import { isPlayerActivelyInCombat, isPlayerInCombat } from "./engagement";
 import {
   telegraphsContainingPlayer,
@@ -46,7 +46,13 @@ export const RUNE_FIRE_GUARD_2_FLAG = "rune.fireGuard2";
 export const RUNE_SWITCH_STANCE_FLAG = "rune.switchStance";
 export const RUNE_STANCE_TARGET_KEY = "rune.stanceTarget";
 
-/** Count enemies aggroed onto this player and whether any is winding up a cast. */
+/**
+ * Count enemies aggroed onto this player and whether any is winding up a cast the
+ * player is meant to ANSWER. Deliberately the shared guardable-threat query rather
+ * than the charged-attack state alone: a boss mid `MonsterAbility` area-hit is
+ * every bit the threat a Power Shot is, and utility casts stay excluded so Guard
+ * is not spent on a self-buff.
+ */
 function aggroStats(
   world: World,
   player: PlayerEntity,
@@ -60,7 +66,7 @@ function aggroStats(
       monster.hasAggroTarget.targetId === player.isPlayer.id
     ) {
       count++;
-      if (!charging && isMonsterCharging(monster, now)) charging = true;
+      if (!charging && isMonsterThreatening(world, monster, now)) charging = true;
     }
   }
   return { count, charging };

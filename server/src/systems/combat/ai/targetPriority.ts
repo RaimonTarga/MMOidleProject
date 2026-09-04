@@ -310,6 +310,9 @@ function passesGates(
   // Mid-encounter invulnerability and dormant encounter shields are hard skips:
   // a cancelled swing is not "low damage"; it is no target at all.
   if (monster.isInvulnerable) return false;
+  // A burrowed or hidden boss is not there to be fought. Skipping it here is what
+  // stops the player standing over a burrow hole swinging at nothing.
+  if (monster.isConcealed) return false;
 
   // Do not wake ultimate encounters unless the player/bench explicitly asks to.
   if (
@@ -565,6 +568,7 @@ export function nearestEngageableMonster(
   for (const monster of world.monsterEntitiesInNode(nodeId)) {
     if (skipBosses && monster.isMonster.isBoss) continue;
     if (monster.isInvulnerable) continue;
+    if (monster.isConcealed) continue;
     if (
       monster.scriptsUltimate &&
       !monster.scriptsUltimate.engaged &&
