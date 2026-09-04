@@ -165,6 +165,16 @@ export interface HasStatus {
   ultimateStatus?: UltimateStatus;
   /** Encounter adds healing inside the void throne ring. */
   throneHealing?: boolean;
+  /**
+   * HARD CONTROL, as one broadcast bit for the renderer.
+   *
+   * The client draws the same orbiting stun tell over any entity carrying this, so
+   * "it cannot act right now" reads identically whether it is a stunned monster, a
+   * frozen one, or a boss spent from its own attack. Deriving it client-side would
+   * mean re-implementing the control ladder in the renderer and getting a different
+   * answer for monsters (whose status list is only broadcast while targeted).
+   */
+  hardControlled?: boolean;
 }
 
 // ─── Player-specific ─────────────────────────────────────────────────────────

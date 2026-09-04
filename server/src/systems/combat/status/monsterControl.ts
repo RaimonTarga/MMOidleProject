@@ -32,6 +32,8 @@ import type { MonsterEntity } from "../../../ecs/entity";
 import { attachMarker, detachMarker } from "../../../ecs/markerHelpers";
 import type { World } from "../../../world/World";
 import { setRooted } from "../../world/rooted";
+import { markSliceDirty } from "../../../ecs/dirtyHelpers";
+import { isMonsterStunned } from "./stun";
 import { CHILL_EFFECT, FROZEN_EFFECT } from "../../classes/archetypes/dot/t3/core/constants";
 import {
   CHILL_ATK_MULT,
@@ -188,6 +190,28 @@ export function updateMonsterSlows(world: World): void {
   }
 
   updateMonsterRoots(world);
+  publishHardControl(world);
+}
+
+/**
+ * Mirror "cannot act" onto the networked status slice, for the renderer.
+ *
+ * Written HERE because this pass is already the single reconciler for monster
+ * control — deriving it anywhere else would mean a second opinion about the same
+ * question. A boss in an authored pattern recovery counts: it is rooted and cannot
+ * attack, which is the same thing to the player as a stun, and it is the case they
+ * most need to see because it is their window.
+ */
+function publishHardControl(world: World): void {
+  for (const entity of world.monsterEntities) {
+    const held =
+      isMonsterStunned(world, entity.isMonster.id) ||
+      getStatusEffect(entity.tracksCombat, FROZEN_EFFECT) !== undefined ||
+      entity.recoversFromPattern !== undefined;
+    if ((entity.hasStatus.hardControlled ?? false) === held) continue;
+    entity.hasStatus.hardControlled = held;
+    markSliceDirty(world, entity, 'hasStatus');
+  }
 }
 
 function writeSlowedStats(

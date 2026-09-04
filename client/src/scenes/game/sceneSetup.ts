@@ -154,6 +154,7 @@ import {
 } from "./mapTransition";
 import { drawGroundZones } from "../../render/groundZones";
 import { drawCorpses } from "../../render/corpses";
+import { drawStunOrbits } from "../../render/stunOrbit";
 
 const CAMERA_HOLD_MARGIN = 80;
 const CAMERA_LERP = 0.1;
@@ -593,6 +594,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     drawCastBars(scene.state, scene);
     drawGroundZones(scene);
     drawCorpses(scene);
+    drawStunOrbits(scene);
     drawSkillCallouts(scene.state);
     updateEffectOverlays(scene.state, scene, dt);
     updateMovementEffects(scene.state, scene);

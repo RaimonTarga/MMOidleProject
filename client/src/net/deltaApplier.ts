@@ -29,6 +29,7 @@ import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
 import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
 import { syncGroundZones } from "../render/groundZones";
 import { syncCorpses } from "../render/corpses";
+import { syncStunOrbits } from "../render/stunOrbit";
 
 // Last frame's resolved target — lets us detect when a target dies (its id
 // vanishes from view) so the target frame can drain HP to 0 before fading.
@@ -161,6 +162,7 @@ export function applyDelta(
   setDungeon(snapshot.dungeon ?? null);
   syncGroundZones(scene, snapshot.groundZones);
   syncCorpses(scene, snapshot.corpses);
+  syncStunOrbits(scene, collectHardControlled(scene));
   refreshMonsterTints(state);
   if (snapshot.voidOverlordRespawn) {
     setVoidThroneHazardLifted(scene, true);
@@ -326,4 +328,30 @@ function upsertEntityView(
     if (!minion) return;
     upsertMinion(state, minion, scene);
   }
+}
+
+/**
+ * Everyone currently unable to act, read off the views the renderer already holds.
+ *
+ * Rebuilt from live state each packet rather than tracked incrementally: a stun that
+ * ends, an entity that dies, or a node change must drop the tell immediately, and a
+ * missed "it ended" signal would otherwise leave motes spinning over empty ground.
+ *
+ * Monsters carry an explicit `hardControlled` bit — their status list is only
+ * broadcast while targeted, so it cannot be derived here. Players carry their full
+ * buff list already, so the stun debuff is read straight off it.
+ */
+function collectHardControlled(scene: GameScene): Map<string, { player: boolean }> {
+  const held = new Map<string, { player: boolean }>();
+  for (const [id, view] of scene.state.view) {
+    const anyView = view as { hardControlled?: boolean; activeBuffs?: { id: string }[] };
+    if (anyView.hardControlled) {
+      held.set(id, { player: false });
+      continue;
+    }
+    if (anyView.activeBuffs?.some((buff) => buff.id === 'debuff-stunned')) {
+      held.set(id, { player: true });
+    }
+  }
+  return held;
 }

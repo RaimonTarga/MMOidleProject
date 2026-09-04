@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { createRenderState, type RenderState } from '../../render/state';
 import type { CorpseSprite } from '../../render/corpses';
+import type { StunOrbitSprite } from '../../render/stunOrbit';
 import type { NeighborLayer } from '../../render/neighborScenes';
 import type { AltarPromptHandle } from '../../render/altarPrompt';
 import type { GroundZoneSprite } from '../../render/groundZones';
@@ -55,6 +56,8 @@ export class GameScene extends Phaser.Scene {
   groundZones: Map<string, GroundZoneSprite> = new Map();
   /** Raisable corpses on the active node, keyed by server corpse id. */
   corpses: Map<string, CorpseSprite> = new Map();
+  /** Orbiting stun tells, keyed by entity id (players and monsters alike). */
+  stunOrbits: Map<string, StunOrbitSprite> = new Map();
   /** Biome trees in the active node, depth-sorted for walk-behind. */
   nodeTrees: Phaser.GameObjects.Image[] = [];
   debugGraphics!: Phaser.GameObjects.Graphics;
