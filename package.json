@@ -68,6 +68,7 @@
     "bot:t2-validate": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tierEntry/validate.test.ts",
     "bot:t2-routes": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2Routes.ts",
     "bot:t2-reachability": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2Reachability.ts",
+    "bot:t2-response-map": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2ResponseMap.ts",
     "bot:t2-report": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2Report.ts",
     "bot:t2-catalyst-demand": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2CatalystDemand.ts",
     "bot:t2-payable": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2Payable.ts",
