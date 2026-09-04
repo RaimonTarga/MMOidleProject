@@ -63,6 +63,12 @@ export function drawCastBars(state: RenderState, scene: GameScene): void {
         })
         .setOrigin(0.5, 1);
       state.castLabel.set(id, label);
+    } else if (label.text !== cast.label) {
+      // A monster can begin a SECOND cast without an intervening cast-end — an
+      // ordered boss pattern does it every run, casting one beat straight into the
+      // next. The Text object is reused across those, so without this the callout
+      // keeps announcing the first cast for the whole sequence.
+      label.setText(cast.label);
     }
     label.setDepth(DEPTH.UI + sprite.y + 1);
     label.setPosition(sprite.x, labelY);

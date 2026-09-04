@@ -632,8 +632,14 @@ function beginStep(
         return false;
       }
       state.capturedEndpoint = { ...lane.end };
+      state.chargeHalfWidth = lane.halfWidth;
       state.chargeHitIds = [];
       state.stepEndsAtMs = now + step.maxTravelMs;
+      // KEEP THE LANE ON THE GROUND FOR THE RUN. Its countdown was the wind-up, and
+      // the sweeper retires a telegraph shortly after that elapses — so without this
+      // the marker vanishes a quarter-second into the charge, while the body is still
+      // crossing it. The player must see the lane for as long as it is being run.
+      lane.resolvesAtMs = now + step.maxTravelMs;
       // THE CHARGE MOVES THROUGH THE MOVEMENT SYSTEM, like everything else that
       // moves. Writing coordinates directly worked on the server and looked broken
       // in play: with no `isMoving` motion the client had nothing to interpolate
@@ -1081,17 +1087,20 @@ function tickCommittedTravel(
   dt: number,
   now: number,
 ): StepOutcome {
-  const lane = laneZone(world, monster);
-  if (!lane) return 'done';
+  // Geometry comes from the CAPTURE, not the published zone. The zone is a rendering
+  // object with its own lifetime; the commitment is not.
+  const destination = state.capturedEndpoint;
+  const halfWidth = state.chargeHalfWidth;
+  if (!destination || halfWidth === undefined) return 'done';
 
   // The movement system owns the position; this tick only observes it and resolves
   // what the body has run over. `updateMovement` runs later in the same tick, so the
   // sweep below trails the render by one step — harmless, because consecutive sweeps
   // overlap by more than a tick's travel and nothing can slip between them.
   const from = monster.hasPosition.current;
-  const remaining = Math.hypot(lane.end.x - from.x, lane.end.y - from.y);
+  const remaining = Math.hypot(destination.x - from.x, destination.y - from.y);
 
-  resolveTravelContacts(world, monster, state, pattern, step, lane, now);
+  resolveTravelContacts(world, monster, state, pattern, step, halfWidth, now);
   if (!world.hasMonster(monster.isMonster.id)) return 'ended';
 
   // ARRIVAL. Either the body reached the tip, or the movement system gave up on it
@@ -1103,13 +1112,14 @@ function tickCommittedTravel(
     // step would otherwise leave it short of its own marker. A body stopped early by
     // TERRAIN keeps its real position — it genuinely could not get there.
     if (remaining < ARRIVAL_EPSILON_PX) {
-      monster.hasPosition.current = { ...lane.end };
+      monster.hasPosition.current = { ...destination };
       markSliceDirty(world, monster, 'hasPosition');
     }
     stopEntity(world, monster);
     // The lane has done its job; retire it before the payoff steps publish theirs.
     clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
     state.laneZoneId = undefined;
+    state.chargeHalfWidth = undefined;
     restoreChargeSpeed(world, monster, state);
     // Take the root back for whatever the sequence does next.
     if (state.ownsRoot) setRooted(world, monster, true);
@@ -1125,7 +1135,7 @@ function resolveTravelContacts(
   state: NonNullable<MonsterEntity['runsBossPattern']>,
   pattern: BossPattern,
   step: Extract<BossPatternStep, { kind: 'charge' }>,
-  lane: RuntimeChargeCorridor,
+  halfWidth: number,
   now: number,
 ): void {
   if (!hooks) return;
@@ -1137,7 +1147,7 @@ function resolveTravelContacts(
   const sweep = {
     kind: 'circle' as const,
     center: { ...monster.hasPosition.current },
-    radius: lane.halfWidth,
+    radius: halfWidth,
   };
 
   for (const circle of geometryCoveringCircles(sweep)) {

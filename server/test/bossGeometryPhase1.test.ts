@@ -569,6 +569,103 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   );
 }
 
+// THE CHARGE SURVIVES THE FULL TICK — including the ground-zone sweeper.
+//
+// Regression, found in manual playtest 2026-09-05: the T2 boss crossed only ~29% of
+// its lane. The lane's countdown is its WIND-UP, and the sweeper retires a telegraph
+// shortly after that elapses — so a quarter-second into the charge the zone was
+// garbage-collected, the travel found no lane, and it ended itself.
+//
+// Two lessons, both encoded here: the travel reads its geometry from the CAPTURE
+// rather than from a rendering object with its own lifetime, and this test drives
+// `World.tick` rather than hand-picking systems. Every earlier probe passed precisely
+// because it omitted the system that broke it.
+{
+  for (const [id, node] of [
+    ['crag-behemoth', NODE],
+    ['stoneplate-juggernaut', NODE],
+  ] as const) {
+    const world = new World();
+    const player = world.attachPlayerEntity(playerSlices(`fulltick-${id}`, 1_400, 1_200), `fulltick-${id}`);
+    player.hasPosition.nodeId = node;
+    const monster = world.createMonster(node, id, { x: 1_200, y: 1_200 })!;
+    const pattern = MONSTER_DATABASE.get(id)!.bossPattern!;
+    setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+    monster.hasAwareness.state = 'attacking';
+
+    let now = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
+    let lane: RuntimeChargeCorridor | undefined;
+    let sawLaneDuringTravel = true;
+    for (let i = 0; i < 300 && !monster.recoversFromPattern; i++) {
+      // THE REAL TICK, not a hand-picked subset.
+      world.tick(100, now);
+      const live = (world.groundZones.get(node) ?? []).find(
+        (z): z is RuntimeChargeCorridor => z.kind === 'charge-corridor',
+      );
+      lane = live ?? lane;
+      // While the body is actually travelling, the marker it is crossing must still
+      // be on the ground for the player to see.
+      const state = monster.runsBossPattern;
+      const travelling = state && pattern.steps[state.stepIndex]?.kind === 'charge';
+      if (travelling && monster.isMoving && !live) sawLaneDuringTravel = false;
+      now += 100;
+    }
+
+    assert(!!lane, `${id}: a lane should have been painted`);
+    assert(!!monster.recoversFromPattern, `${id}: the sequence should complete`);
+    assert(
+      sawLaneDuringTravel,
+      `${id}: the marker must stay on the ground WHILE the body crosses it — its ` +
+        `countdown is the wind-up, so the sweeper retires it mid-charge without help`,
+    );
+    const laneLen = Math.hypot(lane.end.x - lane.start.x, lane.end.y - lane.start.y);
+    const travelled = Math.hypot(
+      monster.hasPosition.current.x - lane.start.x,
+      monster.hasPosition.current.y - lane.start.y,
+    );
+    assert(
+      Math.abs(travelled - laneLen) < 2,
+      `${id}: crossed ${travelled.toFixed(0)}px of a ${laneLen.toFixed(0)}px lane under the full tick`,
+    );
+  }
+}
+
+// The travel must not DEPEND on the marker surviving. The zone is a rendering
+// object; the commitment is not. Destroy it mid-charge and the boss still finishes.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('lane-gone', 1_400, 1_200), 'lane-gone');
+  const monster = world.createMonster(NODE, 'crag-behemoth', { x: 1_200, y: 1_200 })!;
+  setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  monster.hasAwareness.state = 'attacking';
+
+  let now = 1_000 + (CRAG_PATTERN.initialCooldownMs ?? CRAG_PATTERN.cooldownMs) + 1_000;
+  let destination: Vec2 | undefined;
+  let wiped = false;
+  for (let i = 0; i < 300 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    const state = monster.runsBossPattern;
+    if (state && CRAG_PATTERN.steps[state.stepIndex]?.kind === 'charge') {
+      destination ??= state.capturedEndpoint ? { ...state.capturedEndpoint } : undefined;
+      // Rip the marker away part-way through.
+      if (!wiped && monster.isMoving) {
+        wiped = true;
+        world.groundZones.delete(NODE);
+      }
+    }
+    now += 100;
+  }
+
+  assert(wiped, 'setup: the marker should have been destroyed mid-charge');
+  assert(!!destination, 'the charge should have captured its destination');
+  assert(!!monster.recoversFromPattern, 'and the sequence should still complete');
+  const gap = Math.hypot(
+    monster.hasPosition.current.x - destination.x,
+    monster.hasPosition.current.y - destination.y,
+  );
+  assert(gap < 2, `it should still reach its captured endpoint (off by ${gap.toFixed(0)}px)`);
+}
+
 // THE CHARGE MOVES THROUGH THE MOVEMENT SYSTEM, in even steps.
 //
 // Regression, found in manual playtest 2026-09-04: the charge looked choppy and

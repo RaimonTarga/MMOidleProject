@@ -318,6 +318,15 @@ export interface RunsBossPattern {
   capturedEndpoint?: Vec2;
   /** Zone id of the lane this pattern owns, if any. */
   laneZoneId?: string;
+  /**
+   * Lane half-width, captured when the charge commits.
+   *
+   * The travel reads its geometry from HERE rather than from the published zone.
+   * The zone is a rendering object with its own lifetime — it is swept once its
+   * countdown elapses — and a charge that silently ends because its telegraph was
+   * garbage-collected mid-run is exactly the bug this captures away.
+   */
+  chargeHalfWidth?: number;
   /** Barrier sources this pattern raised, cleared on teardown. */
   barrierSourceIds: string[];
   /**
