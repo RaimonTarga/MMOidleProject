@@ -47,7 +47,9 @@ export const trenchMonsterEntries = [
     elite: true,
     rewards: { essence: 260, essenceType: 'green', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 320, leashRange: 760, idleMinMs: 5000, idleMaxMs: 14000 },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
+    // `chargeOnAggro` REMOVED 2026-09-04: a speed burst on aggro made the opening
+    // seconds unreadable, and the hunter's pursuit is already expressed by its
+    // movement speed and detection radius.
     // ABYSSAL BITE - a periodic TELEGRAPHED heavy bite that carries the Wound.
     // Normal attacks no longer stack anti-heal; this one ability owns it.
     chargedAttack: {
@@ -55,33 +57,13 @@ export const trenchMonsterEntries = [
       multiplier: 2.5, fx: 'savage-maul',
       appliesAntiheal: { reduction: 0.28, durationMs: 6000 },
     },
-    // The generic rotation gives the hunter three readable secondary beats:
-    // a repeatable chase hit, a committed body sweep, and a short self-frenzy.
-    monsterAbilities: [
-      {
-        id: 'undertow-lunge', name: 'Undertow Lunge', castMs: 850,
-        cooldownMs: 6500, initialCooldownMs: 2800, target: 'player', fx: 'trench-lunge',
-        actions: [{
-          type: 'hit', multiplier: 1.15,
-          effect: { kind: 'slow', speedMult: 0.65, durationMs: 2500 },
-        }],
-      },
-      {
-        id: 'tail-sweep', name: 'Tail Sweep', castMs: 1100,
-        cooldownMs: 9000, initialCooldownMs: 6000, target: 'self',
-        requiresRange: true, fx: 'trench-tail-sweep',
-        actions: [{ type: 'area-hit', radius: 145, multiplier: 0.75, knockback: { distance: 90 } }],
-      },
-      {
-        id: 'predatory-surge', name: 'Predatory Surge', castMs: 900,
-        cooldownMs: 13000, initialCooldownMs: 8000, target: 'self',
-        fx: 'trench-surge',
-        actions: [{
-          type: 'attack-speed-buff', effectId: 'abyssal-predatory-surge',
-          attackSpeedPct: 0.30, durationMs: 4000,
-        }],
-      },
-    ],
+    // ONE ABILITY, and it is the bite above (2026-09-04 redesign §5.9). The Undertow
+    // Lunge, Tail Sweep and Predatory Surge are REMOVED.
+    //
+    // These three are TEACHING monsters: each exists to teach one piece of the Elder
+    // Serpent before you meet it, and a monster with four abilities teaches nothing —
+    // the player cannot tell which beat is the lesson. The Serpent's lesson is the
+    // anti-heal Wound, so the Wound bite is all it does.
   }],
 
   ['hadal-stalker', {
@@ -113,37 +95,22 @@ export const trenchMonsterEntries = [
     chargedAttack: {
       name: 'Pressure Lance', castMs: 1900, cooldownMs: 9000, initialCooldownMs: 4500,
       multiplier: 2.4, fx: 'power-shot',
+      // The standoff lesson, on the one readable beat: landing it buys the Stalker
+      // a moment of distance. Bounded and telegraphed, unlike the three stacking
+      // slows it replaces.
+      appliesSlow: { speedMult: 0.70, durationMs: 2000 },
     },
-    // The kiter's kit is about making the approach costly: a quick bolt, a mine
-    // planted at the player's feet, and a short current shift to re-establish
-    // distance while the player is slowed.
-    monsterAbilities: [
-      {
-        id: 'depth-bolt', name: 'Depth Bolt', castMs: 850,
-        cooldownMs: 5500, initialCooldownMs: 2600, target: 'player', fx: 'trench-depth-bolt',
-        actions: [{
-          type: 'hit', multiplier: 1.15,
-          effect: { kind: 'slow', speedMult: 0.70, durationMs: 2800 },
-        }],
-      },
-      {
-        id: 'silt-mine', name: 'Silt Mine', castMs: 1100,
-        cooldownMs: 9500, initialCooldownMs: 6000, target: 'player', fx: 'trench-silt-mine',
-        actions: [{
-          type: 'area-hit', radius: 115, multiplier: 0.65,
-          effect: { kind: 'slow', speedMult: 0.55, durationMs: 2200 },
-        }],
-      },
-      {
-        id: 'current-shift', name: 'Current Shift', castMs: 850,
-        cooldownMs: 12000, initialCooldownMs: 7000, target: 'self',
-        fx: 'trench-current',
-        actions: [{
-          type: 'attack-speed-buff', effectId: 'hadal-current-shift',
-          attackSpeedPct: 0.35, durationMs: 3500,
-        }],
-      },
-    ],
+    // ONE ABILITY, and it is the Lance above (2026-09-04 redesign §5.9). Depth Bolt,
+    // Silt Mine and Current Shift are REMOVED.
+    //
+    // All three existed to "make the approach costly" — two slows and a haste — and
+    // together they made a monster that is supposed to be CATCHABLE progressively
+    // harder to catch, which is the one thing its own comment says it must never be.
+    // The Stalker teaches standoff, and standoff is expressed by its range and its
+    // speed, not by stacking slows on whoever tries to close.
+    //
+    // A modest slow rider stays on the Lance itself, so the lesson lands on the beat
+    // the player can see and answer rather than on three unrelated ones.
   }],
 
   ['elder-leviathan', {
@@ -176,23 +143,15 @@ export const trenchMonsterEntries = [
       multiplier: 2.4, fx: 'savage-maul',
       aoe: { radius: 170 },
     },
-    // The anchor's secondary beats are a lure pulse, a committed body sweep, and
-    // a casted shell. Devour remains the one enormous signature bite above.
+    // ONE committed attack (the Devour above) plus the carapace (2026-09-04 §5.9).
+    // Lantern Pulse and Body Sweep are REMOVED — a lure slow and a knockback sweep
+    // on the STAND-AND-FIGHT monster were pure clutter over the one enormous bite
+    // that is supposed to be its whole threat.
+    //
+    // The carapace survives because §5.9 explicitly permits "an uncomplicated visible
+    // carapace": it is a defensive window the player times damage around, which is a
+    // different question from the Devour rather than a second copy of it.
     monsterAbilities: [
-      {
-        id: 'lantern-pulse', name: 'Lantern Pulse', castMs: 1000,
-        cooldownMs: 6500, initialCooldownMs: 3500, target: 'player', fx: 'trench-lantern-pulse',
-        actions: [{
-          type: 'hit', multiplier: 1.15,
-          effect: { kind: 'slow', speedMult: 0.70, durationMs: 3000 },
-        }],
-      },
-      {
-        id: 'body-sweep', name: 'Body Sweep', castMs: 1200,
-        cooldownMs: 9500, initialCooldownMs: 6000, target: 'self',
-        requiresRange: true, fx: 'trench-body-sweep',
-        actions: [{ type: 'area-hit', radius: 155, multiplier: 0.65, knockback: { distance: 110 } }],
-      },
       {
         id: 'carapace-renewal', name: 'Carapace Renewal', castMs: 1300,
         cooldownMs: 16000, initialCooldownMs: 9000, target: 'self', fx: 'trench-carapace',

@@ -1,3 +1,5 @@
+import { SUN_MARK_EFFECT_ID, TUNDRA_CHILL_EFFECT_ID } from '../../systems/monsterDebuffs';
+import { FROZEN_STATUS_ID } from '../../systems/statusPolicy';
 import type { MonsterDefinition } from './types';
 
 // ════════════════════════════════════════════════════════════════════════
@@ -71,17 +73,33 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 620, essenceType: 'blue', level: 5, biomeXp: 930 },
     ai: { wanderRadius: 95, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
-    engageSequence: { kind: 'charge-lock-charged-attack', speedMult: 3.2, maxChargeMs: 1900, lockoutMs: 550 },
-    chargedAttack: {
-      name: 'Titan Earthshatter', castMs: 2600, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 2.2, fx: 'strong-kick', aoe: { radius: 240 },
-      aftershock: {
-        kind: 'radial-fault-lines', delayMs: 900, rayCount: 6,
-        length: 330, lineRadius: 24, innerRadius: 95, damageMultiplier: 1.35,
-      },
+    // T4 = the full Mountain sentence: committed impact → Earthshatter → delayed
+    // fault lines → a long reset. The cracks are the FINITE tail of the payoff, not
+    // persistent terrain — they resolve once and are gone, which is why the pattern
+    // does not wait on them before opening its recovery.
+    //
+    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the legacy
+    // `engageSequence` opener (a second, worse copy of the charge the pattern now
+    // owns), the standalone circular Earthshatter, and `cadenceFinisher` — an
+    // independent every-4th heavy hit competing with the sequence for the player's
+    // attention is precisely the accumulation this rework exists to undo.
+    bossPattern: {
+      id: 'titan-earthshatter', name: 'Titan Earthshatter',
+      damageMultiplier: 2.2, cooldownMs: 9000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'cast', name: 'Titan Charge', castMs: 2600, fx: 'strong-kick',
+          lane: { length: 820, halfWidth: 104, lockAtCastPct: 0.6 } },
+        // 820px at 540px/s ≈ 1.5s of travel.
+        { kind: 'charge', speed: 540, maxTravelMs: 2400 },
+        { kind: 'impact', name: 'Earthshatter', anchor: 'captured-endpoint',
+          radius: 240, damageMult: 0.8, telegraphMs: 950, fx: 'strong-kick' },
+        { kind: 'fault-lines', anchor: 'captured-endpoint', delayMs: 900, rayCount: 6,
+          length: 330, lineRadius: 24, innerRadius: 95, damageMult: 0.6 },
+        // The long reset the lineage builds toward: the whole sentence is answerable,
+        // and answering it buys real time on the boss.
+        { kind: 'recovery', label: 'Spent', durationMs: 3200 },
+      ],
     },
-    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 456 — deep cap trip
     bossScript: {
       phases: [
         // The fault lines multiply and bite harder: the safe gaps between rays close.
@@ -122,13 +140,28 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 595, essenceType: 'yellow', level: 5, biomeXp: 893 },
     ai: { wanderRadius: 140, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
-    slowEffect: { speedMult: 0.45, durationMs: 3000 },
-    appliesMark: { durationMs: 5000 },
-    markedStrike: { multiplier: 2.0 },
-    chargedAttack: {
-      name: 'Sandstorm Rupture', castMs: 1500, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 1.8, fx: 'strong-kick', aoe: { radius: 180 },
+    // T4 = the same Death Sting -> Execution throughline, running unchanged through
+    // all three acts. The ACTS change the boss's posture (melee hunter, ranged
+    // kiter, cornered melee); they do not change the question it asks. That is what
+    // makes it the capstone of the lineage rather than a third unrelated mechanic:
+    // by now the player knows the sequence, and the tier tests whether they can keep
+    // answering it while the fight moves around them.
+    //
+    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the per-hit slow, the
+    // invisible `appliesMark`/`markedStrike` pair, and the generic Sandstorm Rupture
+    // circle that competed with the Execution for the same beat.
+    bossPattern: {
+      id: 'sovereign-execution', name: 'Death Sting',
+      damageMultiplier: 1.8, cooldownMs: 9000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'apply-status', name: 'Death Sting', castMs: 1200, fx: 'strong-kick',
+          effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 7000 },
+        { kind: 'wait', durationMs: 1600 },
+        { kind: 'payoff', name: 'Execution', castMs: 1500, fx: 'strong-kick',
+          damageMult: 1.0, amplifiedMult: 2.0,
+          consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 180 },
+        { kind: 'recovery', label: 'Spent', durationMs: 2000 },
+      ],
     },
     bossScript: {
       phases: [
@@ -171,25 +204,47 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 605, essenceType: 'green', level: 5, biomeXp: 908 },
     ai: { wanderRadius: 150, leashRange: 960, idleMinMs: 2000, idleMaxMs: 6000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.8, durationMs: 900 },
-    evasion: 0.25,
-    openingStrike: { multiplier: 2.6 },
-    dotEffect: { debuffId: 'verdant-crown-venom', label: 'Crown Venom', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
-    // The committed leap the T3 Bramble-Slasher taught, grown up. Rare and huge in
-    // Hunt; in Frenzy it is the thing that actually kills you.
-    chargedAttack: {
-      name: 'Killing Leap', castMs: 850, cooldownMs: 12000, initialCooldownMs: 7000,
-      multiplier: 2.3, fx: 'savage-maul', aoe: { radius: 120 },
-      knockback: { distance: 150 },
+    // JUNGLE T4 = the full escape cycle, UNTIL IT IS CORNERED.
+    //
+    // Above 50% it runs the lineage's loop: Escape Guard, retreat, and either a
+    // stumble or a vanish-and-ambush with venom. Below 50% the wounded frenzy takes
+    // over and the pattern stops arming entirely (`armAboveHpPct`) — the boss has
+    // given up on running and commits to killing you.
+    //
+    // That is a GATE, not a fourth mechanic: the capstone's low-health state is the
+    // ABSENCE of the thing the lineage is about, which reads instantly in play and
+    // costs no new keywords.
+    //
+    // REMOVED with the 2026-09-04 redesign: passive `evasion` and the permanent
+    // evasion-to-zero phase that answered it, `openingStrike`, the always-on
+    // `dotEffect` (venom now follows a successful ambush only, so it MEANS
+    // something), Killing Leap, and `chargeOnAggro`.
+    bossPattern: {
+      id: 'bloodfang-escape', name: 'Escape',
+      damageMultiplier: 2.3, cooldownMs: 12000, initialCooldownMs: 7000,
+      armAboveHpPct: 0.5,
+      steps: [
+        { kind: 'escape-guard', name: 'Escape Guard', castMs: 2400, fx: 'shield',
+          sourceId: 'jungle-escape', shieldPct: 0.06,
+          onBreak: { staggerMs: 2400, label: 'Cornered' },
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15 },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1300,
+          relocate: 'leash-edge' },
+        { kind: 'payoff', name: 'Ambush', castMs: 750, fx: 'savage-maul',
+          damageMult: 1.0 },
+        { kind: 'apply-status', name: 'Venom Burst', castMs: 500, fx: 'savage-maul',
+          effectId: 'verdant-crown-venom', stacks: 4, durationMs: 8000,
+          data: { damagePerStack: 16, tickIntervalMs: 1000, isDot: 1 } },
+        { kind: 'recovery', label: 'Winded', durationMs: 1600 },
+      ],
     },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          // FRENZY. It stops dodging — permanently — and commits everything.
-          { type: 'stat-buff', stat: 'evasion', mult: 0 },
+          // FRENZY. Cornered: it stops trying to escape (the pattern's health gate
+          // closes here) and commits everything to the duel.
           { type: 'stat-buff', stat: 'attack', mult: 1.40 },
           { type: 'stat-buff', stat: 'speed', mult: 1.25 },
-          { type: 'empower-charged', cooldownMult: 0.55 },
         ] },
         // The frenzy peaks. Cadence only — the shape does not change again.
         { hpPct: 0.25, actions: [{ type: 'enrage', atkMult: 1.0, cdMult: 0.75 }] },
@@ -224,36 +279,32 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 640, essenceType: 'blue', level: 5, biomeXp: 960 },
     ai: { wanderRadius: 90, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1300 },
-    // Trimmed from 0.50/0.40: the node's Chill already contributes up to 30% move
-    // and 24% attack on top of this, and the two together have to leave the player
-    // able to reposition and trade.
-    rampDebuff: { moveSlowPerHit: 0.07, moveSlowMaxPct: 0.40, atkSlowPerHit: 0.05, atkSlowMaxPct: 0.30, stackDurationMs: 5000 },
-    scalesWithAmbientRamp: { perStackPct: 0.07, maxPct: 0.42, chargedOnly: true },
-    chargedAttack: {
-      name: 'Glacial Collapse', castMs: 2200, cooldownMs: 9500, initialCooldownMs: 5000,
-      multiplier: 1.9, fx: 'strong-kick', aoe: { radius: 250 },
-    },
-    enemyShield: {
-      shieldPct: 0.20, intervalMs: 13000, durationMs: 6500,
-      shatter: {
-        selfDamagePct: 0.08,
-        vulnerability: { damageTakenPct: 0.22, durationMs: 4500 },
-      },
+    // T4 = the same Chill check, with a much larger Collapse. Same response chain
+    // (Break Free then Step Back, or Guard, or tank); the tier changes the size of
+    // the payoff, not the question.
+    //
+    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the per-hit `rampDebuff`,
+    // the Ice Armor shield/vulnerability pair, the generic Glacial Collapse circle —
+    // and, importantly, `scalesWithAmbientRamp`. That last one made the boss's damage
+    // secretly climb with the room's Chill, which §5.6 forbids outright: the stacks
+    // decide IF you get frozen, never how hard anything hits. A hidden multiplier on
+    // an already-unavoidable hit is the least readable escalation available.
+    bossPattern: {
+      id: 'glacial-collapse', name: 'Deep Freeze',
+      damageMultiplier: 1.9, cooldownMs: 9500, initialCooldownMs: 5000,
+      steps: [
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1500, fx: 'strong-kick',
+          effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2400,
+          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 5 } },
+        { kind: 'impact', name: 'Glacial Collapse', anchor: 'self', radius: 250,
+          damageMult: 1.0, telegraphMs: 1500, fx: 'strong-kick' },
+        { kind: 'recovery', label: 'Thawing', durationMs: 2400 },
+      ],
     },
     bossScript: {
       phases: [
-        // The armour thickens and returns sooner — but breaking it now staggers the
-        // Patriarch far harder. Fewer windows, each worth much more.
-        { hpPct: 0.5, actions: [
-          { type: 'apply-shield', shieldPct: 0.28, intervalMs: 10000, durationMs: 7000,
-            shatter: {
-              selfDamagePct: 0.11,
-              vulnerability: { damageTakenPct: 0.30, durationMs: 5500 },
-            } },
-        ] },
-        // And the Collapse — already fed by however cold the room has made you —
-        // widens and lands more often.
+        // The Collapse widens and lands more often. One idea, tightened — no new
+        // defensive keyword bolted on for the tier.
         { hpPct: 0.25, actions: [
           { type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.75, radiusMult: 1.10 },
         ] },
@@ -291,29 +342,70 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 625, essenceType: 'red', level: 5, biomeXp: 938 },
     ai: { wanderRadius: 120, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
-    // Not `chargedOnly`: for the apex of the Heat biome the ramp is the whole
-    // encounter, not a rider on one telegraph (contrast the Tundra Patriarch).
-    scalesWithAmbientRamp: { perStackPct: 0.06, maxPct: 0.54 },
-    dotEffect: { debuffId: 'caldera-burn', label: 'Caldera Burn', damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
-    chargedAttack: {
-      name: 'Caldera Eruption', castMs: 1300, cooldownMs: 7000, initialCooldownMs: 3500,
-      multiplier: 1.8, fx: 'strong-kick', aoe: { radius: 200 },
+    // VOLCANO = HEAT, VENT, AND THE CHOICE TO STAND IN IT.
+    //
+    // The shell closes and lays a visible MAGMA VENT. Staying in it accelerates the
+    // room's Heat — which raises damage DEALT and damage TAKEN together — while you
+    // work on the shell; stepping out returns you to the node's baseline rate and
+    // lets the Heat shed. Neither is the correct answer: that trade IS the encounter.
+    //
+    // Heat owns all the escalation. There is no hidden boss multiplier beside it,
+    // because the same escalation counted twice — once visibly on the player, once
+    // invisibly on the boss — is unreadable. And ordinary Cleanse cannot strip Heat
+    // (statusPolicy: 'immune'), so leaving the vent is the answer rather than a button.
+    //
+    // T4 runs the same loop, then adds ONE catastrophe. Near the final quarter the
+    // Caldera Sovereign stops attacking entirely and begins a long, obvious,
+    // UNINTERRUPTIBLE room-wide Cataclysm. The primary answer is to kill it before
+    // the cast completes; a very tanky or guarded build can survive the blast through
+    // ordinary damage resolution, and the fight simply continues — surviving a failed
+    // race is a legitimate outcome, not a win condition and not a loss condition.
+    //
+    // It fires ONCE per life (`oncePerLife`): repeating it would turn a decisive race
+    // into a metronome, and surviving it would stop meaning anything.
+    //
+    // SIMMERING BURN is low-damage, high-cap and long — attrition you can cleanse,
+    // deliberately unlike Heat, which you answer with your feet.
+    //
+    // REMOVED with the 2026-09-04 redesign: `scalesWithAmbientRamp` (see below), the
+    // generic Caldera Eruption, both `stoke-ramp` floor/cap pushes, the threshold
+    // Caldera Vent cast, and `chargeOnAggro`.
+    //
+    // > REVERSAL of a 2026-08-23 call. The capstone used to hit harder per Heat stack,
+    // > defended then as "for the apex of the Heat biome the ramp is the whole
+    // > encounter". But Heat ALREADY raises the damage the player takes, visibly, on
+    // > their own status bar. Adding an invisible boss-side multiplier on top counted
+    // > the same escalation twice and made the fight's difficulty curve unreadable.
+    dotEffect: {
+      debuffId: 'caldera-burn', label: 'Simmering Burn',
+      damagePerStack: 4, maxStacks: 12, tickIntervalMs: 1000, durationMs: 12000,
+    },
+    shellUp: {
+      atHpPct: 0.85, durationMs: 4000, directDamageMult: 0.30, repeatIntervalMs: 15000,
+      pool: {
+        radius: 210, durationMs: 9000, damagePerTick: 16, tickIntervalMs: 1000,
+        flavor: 'magma-vent', rampAccelMult: 3,
+      },
+    },
+    bossPattern: {
+      id: 'cataclysm', name: 'Cataclysm',
+      damageMultiplier: 3.0, cooldownMs: 60000, initialCooldownMs: 0,
+      armBelowHpPct: 0.25,
+      oncePerLife: true,
+      steps: [
+        // Long, obvious, and explicitly UNINTERRUPTIBLE: the answer is the DPS race,
+        // not a stun. Marked guardable so Guard is still a legitimate way to eat it.
+        { kind: 'cast', name: 'Cataclysm', castMs: 8000, fx: 'frenzy', interruptible: false },
+        { kind: 'impact', name: 'Cataclysm', anchor: 'self', radius: 2000,
+          damageMult: 1.0, telegraphMs: 400, fx: 'strong-kick' },
+        { kind: 'recovery', label: 'Spent', durationMs: 3000 },
+      ],
     },
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'stoke-ramp', rampMsMult: 0.65, minStacks: 2 },
-          { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.85 },
-        ] },
-        { hpPct: 0.25, actions: [
-          { type: 'stoke-ramp', rampMsMult: 0.70, minStacks: 4, maxStacksAdd: 3 },
-          { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },
-          // The floor of the arena gives way after a visible rupture cast.
-          { type: 'cast', castMs: 1500, label: 'Caldera Vent', fx: 'frenzy', actions: [
-            { type: 'spawn-pool', radius: 260, durationMs: 20000, damagePerTick: 20, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
-          ] },
-        ] },
+        // The cycle tightens. No ramp stoking: the room's Heat is the player's own
+        // to manage, and a boss shoving a floor under it removes the choice.
+        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15 }] },
       ],
     },
   }],
@@ -349,36 +441,50 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 615, essenceType: 'purple', level: 5, biomeXp: 923 },
     ai: { wanderRadius: 105, leashRange: 960, idleMinMs: 3000, idleMaxMs: 8000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1100 },
-    // Cut from 9x6 to a light chip: the entourage is the attrition now, and stacking
-    // a heavy personal DoT on top made this read as a second Swamp boss.
-    dotEffect: { debuffId: 'charnel-crown-decay', label: 'Crown Decay', damagePerStack: 5, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
-    // The steady necromancy. Reaches wide (the arena is large and the corpses are
-    // wherever you killed them) but raises only one at a time on an 8s cadence —
-    // the phase bursts are the spikes. Placeholder numbers.
+    // WASTELAND = AUTHORED NECROMANCY. One opening entourage, visible corpses,
+    // selective Raise Dead, and ONE major Mass Resurrection. Risen deaths are
+    // permanent — the tide is finite, and killing a body twice is the last time.
+    //
+    // THE CORPSES ARE THE ENCOUNTER, so they are now VISIBLE (redesign §4.9): every
+    // body on the floor is broadcast with a stable id, and the ones a cast has
+    // claimed are marked and tethered to the boss WHILE THE CAST RUNS. Previously
+    // necromancy was invisible bookkeeping — things simply reappeared — and the
+    // player had no way to read which of the dead were coming back, or to answer it.
+    //
+    // REMOVED with the 2026-09-04 redesign: the generic Charnel Burst circle, the
+    // broad always-on Crown Decay DoT (a personal poison package competing with the
+    // corpse tide for the same attrition role — it made this read as a second Swamp
+    // boss), the 25% Deathless Tide wave and its cadence roar (§12.5: one major
+    // resurrection, no generic low-health nuke), and `chargeOnAggro`.
+    //
+    // The steady necromancy reaches wide (the arena is large and the corpses are
+    // wherever you killed them) but raises only ONE at a time on an 8s cadence. That
+    // selectivity is the point: a boss raising everything constantly is a spawner,
+    // and Plains already owns spawning. Placeholder numbers.
     raisesDead: {
       intervalMs: 8000, initialDelayMs: 5000, corpseRange: 520, maxAlive: 4,
       hpMult: 0.75, damageMult: 0.80,
       castMs: 1300, castName: 'Raise Dead', castFx: 'raise-dead',
     },
-    chargedAttack: {
-      name: 'Charnel Burst', castMs: 1500, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 1.7, fx: 'strong-kick', aoe: { radius: 210 },
-    },
     bossScript: {
       phases: [
-        // MASS RESURRECTION — everything you have put down in the last few seconds
-        // gets back up at once, and the tide is allowed to stand two deeper.
+        // The OPENING ENTOURAGE, on engage. Fires once and never respawns: these
+        // three are the seed corpses the whole encounter is fed from.
+        //   Bone Crawler   — corpse fodder, there to die and be raised.
+        //   Plague Hound   — limited plague pressure, and its death pool is the one
+        //                    hazard in the fight.
+        //   Carrion Vulture— ranged support through its existing undead haste.
+        { hpPct: 1.0, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 3, maxAlive: 5, offsetRange: 260 },
+          { type: 'spawn-adds', monsterTypeId: 'plague-hound', count: 1, maxAlive: 5, offsetRange: 260 },
+          { type: 'spawn-adds', monsterTypeId: 'carrion-vulture', count: 1, maxAlive: 5, offsetRange: 260 },
+        ] },
+        // ONE major Mass Resurrection: everything put down in the last few seconds
+        // gets up at once, and the tide is allowed to stand two deeper. There is no
+        // second wave — a low-health repeat would make the first one meaningless.
         { hpPct: 0.5, actions: [
           { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', actions: [
             { type: 'raise-dead', count: 3, maxAliveAdd: 2 },
-          ] },
-        ] },
-        // The last wave claws up, and a necrotic roar drives everything it owns.
-        { hpPct: 0.25, actions: [
-          { type: 'cast', castMs: 2000, label: 'Deathless Tide', fx: 'roar', actions: [
-            { type: 'raise-dead', count: 4, maxAliveAdd: 2 },
-            { type: 'roar', attackSpeedPct: 0.30, durationMs: 12000, radius: 420 },
           ] },
         ] },
       ],
@@ -422,57 +528,62 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 660, essenceType: 'green', level: 5, biomeXp: 990 },
     ai: { wanderRadius: 100, leashRange: 960, idleMinMs: 4500, idleMaxMs: 11000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.3, durationMs: 1200 },
-    aoeAttack: { radius: 130, damageMult: 0.5 },
-    enemyShield: { shieldPct: 0.28, intervalMs: 15000, durationMs: 6000 },
-    // The boss's secondary rotation turns the Trench into a sustained duel:
-    // Pressure applies a short recovery wound, Undertow accelerates its ordinary
-    // bites, and Crushing Tide is a committed slow zone around its body. Devour
-    // remains the rare, high-consequence signature; these three beats make the
-    // rest of the fight legible without adding another monster to the room.
-    monsterAbilities: [
-      {
-        id: 'abyssal-pressure', name: 'Abyssal Pressure', castMs: 1000,
-        cooldownMs: 7000, initialCooldownMs: 3500, target: 'player', fx: 'trench-depth-bolt',
-        actions: [{
-          type: 'hit', multiplier: 1.15,
-          effect: { kind: 'antiheal', reduction: 0.18, durationMs: 4500 },
-        }],
-      },
-      {
-        id: 'crushing-tide', name: 'Crushing Tide', castMs: 1200,
-        cooldownMs: 10000, initialCooldownMs: 6500, target: 'self',
-        requiresRange: true, fx: 'trench-body-sweep',
-        actions: [{
-          type: 'area-hit', radius: 175, multiplier: 0.60,
-          effect: { kind: 'slow', speedMult: 0.65, durationMs: 2500 },
-        }],
-      },
-      {
-        id: 'undertow-current', name: 'Undertow Current', castMs: 1100,
-        cooldownMs: 12000, initialCooldownMs: 7000, target: 'self', fx: 'trench-current',
-        actions: [{
-          type: 'attack-speed-buff', effectId: 'elder-undertow-current',
-          attackSpeedPct: 0.25, durationMs: 4500,
-        }],
-      },
-    ],
-    // DEVOUR. Single-target by design — no `aoe`, both because a bite is a bite and
-    // because the self-heal only resolves on the direct path. A very long tell, a
-    // very long cooldown, and a very large consequence.
-    chargedAttack: {
-      name: 'Devour', castMs: 2600, cooldownMs: 12000, initialCooldownMs: 6500,
-      multiplier: 2.7, fx: 'strong-kick', healsSelfPct: 0.06,
+    // TRENCH = ONE ENORMOUS DUEL, as a single readable sequence.
+    //
+    //   Wound bite  ->  Undertow drags a disengaged target back  ->  a brief
+    //   Constrict if it needs one  ->  a long, enormous Devour that HEALS it on hit.
+    //
+    // Every step has its own answer, and that is the point: Cleanse the Wound, Step
+    // Back out of the Devour, Break Free the Constrict then Step Back, Guard it, or
+    // simply tank it. Eating the Devour hands the fight back to the boss, which is
+    // what makes the long tell worth reading.
+    //
+    // UNDERTOW IS A PULL, not a speed buff and not a teleport (§5.10). A boss that
+    // permanently outruns you deletes ranged builds; one that blinks to you cannot be
+    // read at all. A bounded, resisted, obstacle-respecting drag can be seen coming
+    // and answered — and it is resisted by the same forced-movement stat that resists
+    // knockback, because being shoved and being dragged are one concept to the player.
+    //
+    // REMOVED with the 2026-09-04 redesign: `aoeAttack` (a boss AoE riding every
+    // ordinary swing, invisible and unanswerable), the periodic `enemyShield` and its
+    // 25% escalation, the whole Pressure / Crushing Tide / Undertow Current rotation
+    // (an anti-heal chip, a slow zone and a self-haste — three beats competing with
+    // the one bite that is supposed to BE the fight), and `chargeOnAggro`.
+    //
+    // The anti-heal now lives ONLY on the Wound bite: non-stacking, cleanseable, and
+    // attached to a beat the player can see. The old version applied it from ordinary
+    // hits AND an ability, which is how the Trench reached 75-90% suppression.
+    bossPattern: {
+      id: 'trench-devour', name: 'Devour',
+      damageMultiplier: 2.7, cooldownMs: 12000, initialCooldownMs: 6500,
+      steps: [
+        { kind: 'apply-status', name: 'Abyssal Bite', castMs: 1100, fx: 'savage-maul',
+          effectId: 'antiheal', stacks: 1, durationMs: 6000,
+          data: { antihealReduction: 0.35 } },
+        // The answer window for the Wound, and the moment a player who disengaged
+        // gets dragged back in.
+        { kind: 'wait', durationMs: 900 },
+        { kind: 'pull', name: 'Undertow', castMs: 1200, distance: 320, fx: 'trench-current' },
+        { kind: 'apply-status', name: 'Constrict', castMs: 700, fx: 'trench-current',
+          effectId: 'dot-frozen', stacks: 1, durationMs: 1200 },
+        // DEVOUR. Single-target by design — a bite is a bite, and the self-heal only
+        // resolves on a landed direct hit, so dodging it denies the heal outright.
+        { kind: 'payoff', name: 'Devour', castMs: 2600, fx: 'strong-kick',
+          damageMult: 1.0, healsSelfPct: 0.06 },
+        { kind: 'recovery', label: 'Gorged', durationMs: 2600 },
+      ],
     },
     bossScript: {
       phases: [
         // It gets hungrier: the bite lands harder and comes around sooner.
         { hpPct: 0.5,  actions: [{ type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.80 }] },
-        // And it armours up rather than shedding — this fight ends by out-damaging
-        // a wall, not by waiting for the wall to fall off.
+        // BLOOD IN THE WATER. The low-health beat TIGHTENS THE GAPS and adds no new
+        // attacks: the sequence comes around faster and it closes quicker. It does
+        // not armour up — this fight should end by finally landing the kill, not by
+        // out-damaging a wall that appeared at 25%.
         { hpPct: 0.25, actions: [
-          { type: 'apply-shield', shieldPct: 0.34, intervalMs: 11000, durationMs: 6500 },
           { type: 'empower-charged', cooldownMult: 0.75 },
+          { type: 'stat-buff', stat: 'speed', mult: 1.25, label: 'blood-in-the-water' },
         ] },
       ],
     },

@@ -1,3 +1,5 @@
+import { SUN_MARK_EFFECT_ID, TUNDRA_CHILL_EFFECT_ID } from '../../systems/monsterDebuffs';
+import { FROZEN_STATUS_ID } from '../../systems/statusPolicy';
 import type { MonsterDefinition } from './types';
 
 // ════════════════════════════════════════════════════════════════════════
@@ -49,11 +51,29 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 340, essenceType: 'blue', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 100, leashRange: 920, idleMinMs: 3500, idleMaxMs: 8500 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
-    engageSequence: { kind: 'charge-lock-charged-attack', speedMult: 3.0, maxChargeMs: 1800, lockoutMs: 500 },
-    chargedAttack: {
-      name: 'Cragbreaker Slam', castMs: 2400, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 2.0, fx: 'strong-kick', aoe: { radius: 205 },
+    // T3 = the lane PLUS a payoff where it lands. The Colossus charges, then
+    // Cragbreaker erupts on the point it CHARGED TO — the endpoint it captured, not
+    // wherever the player drifted to afterwards. Reading the lane therefore answers
+    // both halves at once, which is what makes the tier feel like one attack rather
+    // than two stapled together.
+    //
+    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro` and the legacy
+    // `engageSequence` charge-lock opener (the pattern IS the charge now, so the
+    // opener was a second, worse copy of it), plus the standalone circular slam.
+    bossPattern: {
+      id: 'cragbreaker', name: 'Cragbreaker',
+      damageMultiplier: 2.0, cooldownMs: 9000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'cast', name: 'Cragbreaker Charge', castMs: 2400, fx: 'strong-kick',
+          lane: { length: 760, halfWidth: 96, lockAtCastPct: 0.55 } },
+        // 760px at 520px/s ≈ 1.5s of travel.
+        { kind: 'charge', speed: 520, maxTravelMs: 2200 },
+        // Centred on the CAPTURED endpoint, so the circle is readable from the lane
+        // the moment it locked — not a fresh surprise aimed at the player again.
+        { kind: 'impact', name: 'Cragbreaker', anchor: 'captured-endpoint',
+          radius: 205, damageMult: 0.75, telegraphMs: 900, fx: 'strong-kick' },
+        { kind: 'recovery', label: 'Overextended', durationMs: 2600 },
+      ],
     },
     bossScript: {
       phases: [
@@ -87,7 +107,6 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 355, essenceType: 'red', level: 5, biomeXp: 530 },
     ai: { wanderRadius: 85, leashRange: 890, idleMinMs: 4000, idleMaxMs: 10000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     appliesPlatingShred: {
       platingPerStack: 2,
       maxStacks: 8,
@@ -102,9 +121,24 @@ export const bossMonsterEntriesT3 = [
         element: 'poison',
       },
     },
-    chargedAttack: {
-      name: 'Deep-Core Slam', castMs: 1500, cooldownMs: 8500, initialCooldownMs: 4000,
-      multiplier: 1.7, fx: 'strong-kick', aoe: { radius: 155 },
+    // T3 = the evolved burrow. Same shape as T2, bigger, and the corrosion's
+    // threshold poison is what makes it bite — that already begins only after the
+    // existing defence-breach rungs, so the eruption does not need its own poison
+    // bolted on to feel like Cave.
+    //
+    // REMOVED with the 2026-09-04 redesign: the circular Deep-Core Slam,
+    // `chargeOnAggro`, and the DR-only Deep Burrow cast.
+    bossPattern: {
+      id: 'deep-core-emergence', name: 'Deep-Core Burrow',
+      damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4000,
+      steps: [
+        { kind: 'cast', name: 'Deep Burrow', castMs: 1000, fx: 'shield', guardable: false },
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 1800,
+          relocate: 'near-target', emergeGap: 165 },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 155,
+          damageMult: 1.0, telegraphMs: 1100, fx: 'strong-kick' },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 2400 },
+      ],
     },
     bossScript: {
       phases: [
@@ -115,11 +149,11 @@ export const bossMonsterEntriesT3 = [
         ] },
         // Last quarter: each stack bites harder, and the boss burrows behind a
         // temporary shell so the corrosion has a defensive climax without another body.
+        // Last quarter: each stack bites harder. The old Deep Burrow cast that sat
+        // here was a flat-DR shell wearing the burrow's name; the real burrow is
+        // now the encounter's whole spine, so a second fake one is gone.
         { hpPct: 0.25, actions: [
           { type: 'empower-shred', platingPerStackAdd: 1 },
-          { type: 'cast', castMs: 1600, label: 'Deep Burrow', fx: 'shield', actions: [
-            { type: 'shield', drAdd: 0.18, durationMs: 6000 },
-          ] },
         ] },
       ],
     },
@@ -204,15 +238,26 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 345, essenceType: 'yellow', level: 5, biomeXp: 518 },
     ai: { wanderRadius: 140, leashRange: 900, idleMinMs: 2200, idleMaxMs: 6500 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
-    slowEffect: { speedMult: 0.6, durationMs: 2000 },
-    // Inherited from the T2 Emperor: it paints its own mark and cashes it itself, so
-    // the duel alternates setup / punishment without depending on adds.
-    appliesMark: { durationMs: 4500 },
-    markedStrike: { multiplier: 1.9 },
-    chargedAttack: {
-      name: 'Sandburst', castMs: 1300, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 1.6, fx: 'strong-kick', aoe: { radius: 155 },
+    // T3 = the T2 sequence, carried ACROSS A POSTURE CHANGE. The mark is painted in
+    // melee and cashed out from range once the Monarch backs off at 50% — the mark
+    // persists through the morph unless cleansed, and that pairing is the point of
+    // the tier. Chasing it eats the Execution; ignoring it eats the Execution.
+    //
+    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the per-hit slow, the
+    // invisible `appliesMark`/`markedStrike` alternation on ordinary swings, and the
+    // generic Sandburst circle it used as filler.
+    bossPattern: {
+      id: 'monarch-execution', name: 'Death Sting',
+      damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'apply-status', name: 'Death Sting', castMs: 1100, fx: 'strong-kick',
+          effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6500 },
+        { kind: 'wait', durationMs: 1500 },
+        { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'strong-kick',
+          damageMult: 1.0, amplifiedMult: 1.9,
+          consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 155 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1900 },
+      ],
     },
     bossScript: {
       phases: [
@@ -249,22 +294,54 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 340, essenceType: 'green', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 140, leashRange: 920, idleMinMs: 2000, idleMaxMs: 6000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.8, durationMs: 900 },
-    // Modest on purpose — a quarter of your hits missing is a texture, not a wall.
-    // The T4 boss is where evasion becomes a state you have to play around.
-    evasion: 0.15,
-    openingStrike: { multiplier: 2.5 },
-    chargedAttack: {
-      name: 'Bramble Pounce', castMs: 900, cooldownMs: 11000, initialCooldownMs: 6000,
-      multiplier: 2.2, fx: 'savage-maul', aoe: { radius: 110 },
-      knockback: { distance: 140 },
+    // JUNGLE = PURSUIT AND FAILED ESCAPE. The one loop the whole lineage runs:
+    //
+    //   Escape Guard appears and the boss bolts for the far edge of its leash.
+    //     BREAK the guard  -> the retreat fails, it stumbles, and it banks one
+    //                         capped stack of Escape Instinct so the NEXT attempt
+    //                         is quicker.
+    //     LET IT FINISH    -> it vanishes into cover, resets Instinct, picks a
+    //                         valid re-entry point, and comes back with an ambush.
+    //
+    // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
+    // load-bearing: a boss whose whole idea is running away from you would otherwise
+    // be answerable only by melee, and ranged builds would have no counterplay at
+    // all. Instinct is capped, so repeated failures speed it up to a ceiling and no
+    // further; a successful escape wipes it, because it records failure, not progress.
+    //
+    // T3 adds the AFTERMATH: a successful ambush lands venom on top of the hit, so
+    // letting it get away costs you for the next several seconds rather than only
+    // in the moment.
+    //
+    // REMOVED with the 2026-09-04 redesign: passive `evasion` (a flat miss chance is
+    // a texture, not a decision, and it made every build's damage read as unreliable
+    // rather than making the boss hard to pin down), `openingStrike`, Bramble Pounce,
+    // the 50% evasion surge, and `chargeOnAggro`.
+    bossPattern: {
+      id: 'timberclaw-escape', name: 'Escape',
+      damageMultiplier: 2.0, cooldownMs: 13000, initialCooldownMs: 7000,
+      steps: [
+        { kind: 'escape-guard', name: 'Escape Guard', castMs: 2500, fx: 'shield',
+          sourceId: 'jungle-escape', shieldPct: 0.07,
+          onBreak: { staggerMs: 2500, label: 'Cornered' },
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15 },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1400,
+          relocate: 'leash-edge' },
+        { kind: 'payoff', name: 'Ambush', castMs: 800, fx: 'savage-maul',
+          damageMult: 1.0 },
+        // Venom follows a SUCCESSFUL ambush only — break the guard and none of this
+        // happens, which is what makes breaking it worth doing.
+        { kind: 'apply-status', name: 'Venom Burst', castMs: 500, fx: 'savage-maul',
+          effectId: 'apex-bramble-venom', stacks: 3, durationMs: 8000,
+          data: { damagePerStack: 14, tickIntervalMs: 1000, isDot: 1 } },
+        { kind: 'recovery', label: 'Winded', durationMs: 1700 },
+      ],
     },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          // It breaks contact and is briefly very hard to hit …
-          { type: 'stat-buff', stat: 'evasion', mult: 2.0, durationMs: 5000 },
-          // … then the pounce is re-armed, harder and far more frequent.
+          // The escape cycle comes around harder and far more often. The old
+          // evasion surge is gone with the passive evasion it doubled.
           { type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.55 },
         ] },
       ],
@@ -295,28 +372,42 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 360, essenceType: 'red', level: 5, biomeXp: 540 },
     ai: { wanderRadius: 120, leashRange: 920, idleMinMs: 2500, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
+    // VOLCANO = HEAT, VENT, AND THE CHOICE TO STAND IN IT.
+    //
+    // The shell closes and lays a visible MAGMA VENT. Staying in it accelerates the
+    // room's Heat — which raises damage DEALT and damage TAKEN together — while you
+    // work on the shell; stepping out returns you to the node's baseline rate and
+    // lets the Heat shed. Neither is the correct answer: that trade IS the encounter.
+    //
+    // Heat owns all the escalation. There is no hidden boss multiplier beside it,
+    // because the same escalation counted twice — once visibly on the player, once
+    // invisibly on the boss — is unreadable. And ordinary Cleanse cannot strip Heat
+    // (statusPolicy: 'immune'), so leaving the vent is the answer rather than a button.
+    //
+    // T3 teaches the plain cycle: normal -> shell plus vent -> stay or leave while
+    // you work on the shell -> the shell opens -> normal.
+    //
+    // REMOVED with the 2026-09-04 redesign: the independent Eruption charged attack
+    // and the 25% threshold Vent Rupture. Both duplicated the cycle — the shell
+    // already floods the ground on its own schedule, and a second pool arriving on a
+    // health threshold made the arena unreadable rather than more dangerous.
+    // `chargeOnAggro` removed with them.
+    //
     // First shell at 85% so the cycle is taught early, then every 16s while engaged.
     // 0.30 (not the roster's 0.15) because this one repeats — it has to be a wall
     // you wait out or burn through, never a wall that stalls the fight.
     shellUp: {
       atHpPct: 0.85, durationMs: 3800, directDamageMult: 0.30, repeatIntervalMs: 16000,
-      pool: { radius: 190, durationMs: 8000, damagePerTick: 12, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
-    },
-    chargedAttack: {
-      name: 'Eruption', castMs: 1400, cooldownMs: 7000, initialCooldownMs: 3500,
-      multiplier: 1.6, fx: 'strong-kick', aoe: { radius: 175 },
+      pool: {
+        radius: 190, durationMs: 8000, damagePerTick: 12, tickIntervalMs: 1000,
+        flavor: 'magma-vent', rampAccelMult: 3,
+      },
     },
     bossScript: {
       phases: [
-        // Coming out of the shell is worth more to it each time.
-        { hpPct: 0.5,  actions: [{ type: 'empower-charged', multiplierMult: 1.20, radiusMult: 1.15 }] },
-        { hpPct: 0.25, actions: [
-          { type: 'empower-charged', cooldownMult: 0.60 },
-          { type: 'cast', castMs: 1300, label: 'Vent Rupture', fx: 'frenzy', actions: [
-            { type: 'spawn-pool', radius: 240, durationMs: 16000, damagePerTick: 16, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
-          ] },
-        ] },
+        // Each cycle is worth more to it: the shell holds longer and the vent that
+        // comes with it burns hotter. One idea, tightened.
+        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15 }] },
       ],
     },
   }],
@@ -346,18 +437,39 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 350, essenceType: 'blue', level: 5, biomeXp: 525 },
     ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
-    rampDebuff: { moveSlowPerHit: 0.06, moveSlowMaxPct: 0.40, atkSlowPerHit: 0.05, atkSlowMaxPct: 0.30, stackDurationMs: 4000 },
-    enemyShield: {
-      shieldPct: 0.18, intervalMs: 12000, durationMs: 6000,
-      shatter: {
-        selfDamagePct: 0.08,
-        vulnerability: { damageTakenPct: 0.20, durationMs: 4000 },
-      },
-    },
-    chargedAttack: {
-      name: 'Permafrost Slam', castMs: 1900, cooldownMs: 8500, initialCooldownMs: 4500,
-      multiplier: 1.7, fx: 'strong-kick', aoe: { radius: 195 },
+    // TUNDRA = THE CHILL CHECK. The ROOM builds Chill; the boss asks whether you let
+    // it get too deep.
+    //
+    //   Deep Freeze is unavoidable and targeted, and it CHECKS your stacks. Below the
+    //   threshold it simply does not land — the gate is checked at cast start, so the
+    //   question was decided before the cast, by whether you cleansed and kept moving.
+    //   Above it you are Frozen, and a large, dodgeable Shatter follows.
+    //
+    // A Frozen player is not out of answers: Frozen is hard control, so Break Free
+    // strips it and Step Back then clears the circle. Guarding or tanking the Shatter
+    // stays legal. What is NOT legal is damage that secretly scales with Chill — the
+    // stacks decide IF you get frozen, never how hard anything hits.
+    //
+    // Cleanse REDUCES Chill rather than deleting it (statusPolicy: 'partial'): the
+    // room re-applies it continuously, so a full strip would be true for a second and
+    // read as the button not working.
+    //
+    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the per-hit `rampDebuff`
+    // (the boss adding its OWN chill on top of the room's made two sources of one
+    // resource, and the encounter reads the room's), the Ice Armor / vulnerability
+    // shield pair (a generic anti-burst clip in the one lineage explicitly about
+    // rewarding burst), and the generic Permafrost Slam circle.
+    bossPattern: {
+      id: 'rime-shatter', name: 'Deep Freeze',
+      damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1400, fx: 'strong-kick',
+          effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2200,
+          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 } },
+        { kind: 'impact', name: 'Shatter', anchor: 'self', radius: 195,
+          damageMult: 1.0, telegraphMs: 1300, fx: 'strong-kick' },
+        { kind: 'recovery', label: 'Thawing', durationMs: 2000 },
+      ],
     },
     bossScript: {
       phases: [

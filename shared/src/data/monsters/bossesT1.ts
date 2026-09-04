@@ -155,14 +155,35 @@ export const bossMonsterEntriesT1 = [
     rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
+    // `chargeOnAggro` REMOVED with the 2026-09-04 encounter redesign: a speed burst
+    // on aggro is not a charge, it just made the opening seconds unreadable, and the
+    // lineage's actual committed charge is the cast below.
     // 56 x1.9 = 106 — the tier's biggest single hit, ~55-60% of an end-of-T1 pool.
     // Above the 40-50% anchor in boss-design.md on purpose: this is the one T1 fight
     // that is supposed to make the damage cap (mountain plate / Striker root) read as
-    // the difference between surviving the slam and not. Every 10s, three casts a fight.
-    chargedAttack: {
-      name: 'Ground Slam', castMs: 2400, cooldownMs: 10000, initialCooldownMs: 4500,
-      multiplier: 1.9, fx: 'strong-kick', aoe: { radius: 155 },
+    // the difference between surviving the impact and not. Every 10s, three a fight.
+    //
+    // MOUNTAIN'S LINEAGE PRIMITIVE, as an ORDERED PATTERN. The circular Ground Slam
+    // it replaces asked the same question the Cave slam already asks ("leave the
+    // circle"); Mountain's is "read a DIRECTION, get off the line, then punish".
+    // Damage, cast and cooldown are all carried over untouched — only the shape of
+    // the answer changed. halfWidth 78 keeps the lane the same width as the old
+    // circle was wide, so the ground it denies is unchanged.
+    //
+    // The sequence is the whole encounter: wind-up (tracking, then committed) →
+    // the boss actually RUNS the lane → a pronounced recovery it can be punished in.
+    // Every later Mountain tier deepens this same spine rather than adding a
+    // separate mechanic on top.
+    bossPattern: {
+      id: 'crag-charge', name: 'Crag Charge',
+      damageMultiplier: 1.9, cooldownMs: 10000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'cast', name: 'Crag Charge', castMs: 2400, fx: 'strong-kick',
+          lane: { length: 620, halfWidth: 78, lockAtCastPct: 0.5 } },
+        // 620px at 470px/s ≈ 1.3s of travel; maxTravelMs is the obstruction guard.
+        { kind: 'charge', speed: 470, maxTravelMs: 2000 },
+        { kind: 'recovery', label: 'Winded', durationMs: 2200 },
+      ],
     },
     // MOUNTAIN EXAM = "survive the slam". The 50% beat makes the SLAM worse rather
     // than making the boss briefly unkillable: it comes around sooner and lands
@@ -227,15 +248,26 @@ export const bossMonsterEntriesT1 = [
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     appliesPlatingShred: { platingPerStack: 1, maxStacks: 6 },
-    // 47 x1.8 = 85, ~47% of an end-of-T1 pool — squarely on the cap-exam anchor in
-    // boss-design.md, and deliberately a step below the Behemoth's 106: Caverns is the
-    // endurance exam, Mountain is the burst one.
-    chargedAttack: {
-      name: 'Obsidian Slam', castMs: 1700, cooldownMs: 9500, initialCooldownMs: 4500,
-      multiplier: 1.8, fx: 'strong-kick', aoe: { radius: 125 },
-    },
+    // CAVE T1 = "learn what erodes you". Ordinary hits shave one stack of plating;
+    // the telegraphed BREACH shaves a larger dose of the SAME corrosion. One
+    // resource at two rates, so the lesson is "read the cast", not "learn a second
+    // keyword" — and it is the legible version of the burrow-and-erupt the T2/T3
+    // Cave bosses evolve it into.
+    //
+    // REMOVED with the 2026-09-04 redesign: the circular Obsidian Slam (a generic
+    // damage circle that taught nothing about erosion, and duplicated the question
+    // Mountain's lane already asks better) and `chargeOnAggro`.
+    monsterAbilities: [{
+      id: 'obsidian-breach', name: 'Breach', castMs: 1700,
+      cooldownMs: 9500, initialCooldownMs: 4500, target: 'player', fx: 'strong-kick',
+      actions: [
+        // Damage is deliberately modest — the corrosion is the payload. The old
+        // slam's 1.8x is gone with it; this beat is a defensive event, not a spike.
+        { type: 'hit', multiplier: 1.1 },
+        { type: 'plating-shred', stacks: 3 },
+      ],
+    }],
     // CAVE EXAM = "your shell erodes". At 50% the corrosion deepens: three more
     // stacks of plating shred, so the back half of the fight is fought in measurably
     // worse armour than the front half. That is the lineage's whole idea, and it

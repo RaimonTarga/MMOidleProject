@@ -1,3 +1,4 @@
+import { SUN_MARK_EFFECT_ID } from '../../systems/monsterDebuffs';
 import type { MonsterDefinition } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -118,27 +119,44 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 160, essenceType: 'blue', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 120, leashRange: 850, idleMinMs: 3000, idleMaxMs: 7500 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
-    chargedAttack: {
-      name: 'Stunning Earthshatter', castMs: 2300, cooldownMs: 10000, initialCooldownMs: 4500,
-      multiplier: 2.0, fx: 'strong-kick', precastStunMs: 450, aoe: { radius: 180 },
+    // T2 = T1's lane PLUS a barrier you can answer. The Juggernaut armours up, then
+    // prepares its charge from behind that plate; break the plate during the
+    // preparation and the whole sequence collapses into an early stagger. Otherwise
+    // dodge or tank the charge and punish the recovery.
+    //
+    // Deliberately a CHASE/CONTACT test, not a burst check: the barrier is sized so
+    // sustained damage answers it, because gating a boss behind one mandatory
+    // one-shot build is exactly what the redesign removes.
+    //
+    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro` (a speed burst is not a
+    // charge), the circular Stunning Earthshatter and its pre-cast stun (stunning
+    // the player immediately before an unavoidable circle is not an answerable
+    // beat), Stoneplate Lock, and the repeating flat-DR shield — a timed damage
+    // reduction taught nothing and was not the same thing as an absorb barrier.
+    bossPattern: {
+      id: 'stoneplate-charge', name: 'Stoneplate Charge',
+      damageMultiplier: 2.0, cooldownMs: 11000, initialCooldownMs: 5000,
+      steps: [
+        // Plate up. Not guardable: the player answers this by HITTING it, not by
+        // spending a Guard charge on a beat that deals no damage.
+        { kind: 'cast', name: 'Stoneplate', castMs: 900, fx: 'shield', guardable: false },
+        { kind: 'barrier', sourceId: 'stoneplate', shieldPct: 0.06,
+          onBreak: { staggerMs: 3200, label: 'Plate Shattered' } },
+        { kind: 'cast', name: 'Stoneplate Charge', castMs: 2300, fx: 'strong-kick',
+          lane: { length: 700, halfWidth: 90, lockAtCastPct: 0.55 } },
+        // 700px at 500px/s ≈ 1.4s of travel.
+        { kind: 'charge', speed: 500, maxTravelMs: 2100 },
+        { kind: 'drop-barrier', sourceId: 'stoneplate' },
+        { kind: 'recovery', label: 'Overextended', durationMs: 2600 },
+      ],
     },
-    // MOUNTAIN EXAM = "break the guarded position". At 50% the Earthshatter
-    // escalates — the same slam, wider and sooner — and the Juggernaut visibly locks
-    // its plate in place for a short defensive window. The old generic enrage and
-    // archer adds are gone: the lineage escalates its ONE readable hit and position.
+    // MOUNTAIN EXAM = "break the guarded position". At 50% the charge comes around
+    // sooner and hits harder. No adds, no generic enrage: the lineage escalates the
+    // ONE readable sequence it owns.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.80, radiusMult: 1.15 },
-          { type: 'cast', castMs: 1400, label: 'Stoneplate Lock', fx: 'shield', actions: [
-            { type: 'stat-buff', stat: 'plating', mult: 1.5, durationMs: 5000, label: 'stoneplate-lock' },
-          ] },
-        ] },
-      ],
-      repeating: [
-        { intervalMs: 14000, initialDelayMs: 9000, actions: [
-          { type: 'shield', drAdd: 0.25, durationMs: 4000 },
+          { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.80 },
         ] },
       ],
     },
@@ -188,11 +206,30 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 160, essenceType: 'red', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     appliesPlatingShred: { platingPerStack: 2, maxStacks: 6 },
-    chargedAttack: {
-      name: 'Chitin Slam', castMs: 1600, cooldownMs: 9000, initialCooldownMs: 4000,
-      multiplier: 1.6, fx: 'strong-kick', aoe: { radius: 140 },
+    // T2 = T1's erosion, now delivered from UNDERNEATH. The Dreadbore erodes you,
+    // burrows out of reach, reserves a valid spot near you, shows the circle, and
+    // erupts for a heavy hit plus a dose of shred.
+    //
+    // BURROW MEANS UNTARGETABLE, not flat damage reduction. The old version simply
+    // gave the boss DR for a few seconds, which taught the player nothing and could
+    // be ignored by continuing to swing; being genuinely unable to reach it is what
+    // makes the emergence circle worth reading. Step Back avoids it, Guard absorbs
+    // it, and tanking stays legal.
+    //
+    // REMOVED with the 2026-09-04 redesign: the circular Chitin Slam, `chargeOnAggro`,
+    // Carapace Seal, and the DR-only burrow.
+    bossPattern: {
+      id: 'dreadbore-emergence', name: 'Dreadbore',
+      damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4000,
+      steps: [
+        { kind: 'cast', name: 'Burrow', castMs: 900, fx: 'shield', guardable: false },
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 1600,
+          relocate: 'near-target', emergeGap: 150 },
+        { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 140,
+          damageMult: 1.0, telegraphMs: 1000, fx: 'strong-kick' },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 2200 },
+      ],
     },
     // CAVE EXAM = "your shell erodes". At 50% the corrosion bites deeper (+1 plating
     // per stack), then the Dreadbore seals its own carapace for a short, readable
@@ -202,9 +239,7 @@ export const bossMonsterEntriesT2 = [
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'empower-shred', platingPerStackAdd: 1 },
-          { type: 'cast', castMs: 1400, label: 'Carapace Seal', fx: 'shield', actions: [
-            { type: 'shield', drAdd: 0.15, durationMs: 5500 },
-          ] },
+
         ] },
       ],
     },
@@ -233,15 +268,35 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
     targeting: { prefersPlayers: true },
-    slowEffect: { speedMult: 0.6, durationMs: 2000 }, // control half of the identity
-    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
-    appliesMark: { durationMs: 4000 },    // placeholder — user balance pass
-    markedStrike: { multiplier: 2.0 },    // placeholder — user balance pass
-    // The telegraphed cash-out. Landing it on a marked player stacks the charge
-    // multiplier with markedStrike — the punishment for ignoring the setup.
-    chargedAttack: {
-      name: 'Scouring Sandburst', castMs: 1300, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 1.5, fx: 'strong-kick', aoe: { radius: 150 },
+    // DESERT = MARK AND EXECUTION, as ONE visible sequence.
+    //
+    //   Death Sting paints the mark  ->  a real window to answer it  ->  Execution.
+    //
+    // The mark decides HOW HARD the Execution lands, never WHETHER it lands.
+    // Cleansing it strips the amplification and the Execution still arrives at its
+    // unmarked value, to be answered with position, Guard or armour. That is the
+    // deliberate middle path between the two failure shapes: a cleanse that cancels
+    // the attack (so the sequence never resolves and the encounter has no teeth) and
+    // a cleanse that does nothing (so reading the setup is pointless).
+    //
+    // REMOVED with the 2026-09-04 redesign: the basic per-hit slow, the
+    // `appliesMark`/`markedStrike` alternation on ordinary swings (an INVISIBLE
+    // second mark source competing with the visible one), `openingStrike`, and the
+    // generic Scouring Sandburst circle.
+    bossPattern: {
+      id: 'dune-execution', name: 'Death Sting',
+      damageMultiplier: 1.5, cooldownMs: 9000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'apply-status', name: 'Death Sting', castMs: 1100, fx: 'strong-kick',
+          effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6000 },
+        // The answer window. Long enough to actually reach a Cleanse, short enough
+        // that ignoring the tell is a choice rather than an accident.
+        { kind: 'wait', durationMs: 1400 },
+        { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'strong-kick',
+          damageMult: 1.0, amplifiedMult: 2.0,
+          consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 150 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1800 },
+      ],
     },
     bossScript: {
       phases: [
@@ -270,7 +325,41 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 145, essenceType: 'green', level: 5, biomeXp: 218 },
     ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },
     targeting: { prefersPlayers: true },
-    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
+    // JUNGLE = PURSUIT AND FAILED ESCAPE. The one loop the whole lineage runs:
+    //
+    //   Escape Guard appears and the boss bolts for the far edge of its leash.
+    //     BREAK the guard  -> the retreat fails, it stumbles, and it banks one
+    //                         capped stack of Escape Instinct so the NEXT attempt
+    //                         is quicker.
+    //     LET IT FINISH    -> it vanishes into cover, resets Instinct, picks a
+    //                         valid re-entry point, and comes back with an ambush.
+    //
+    // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
+    // load-bearing: a boss whose whole idea is running away from you would otherwise
+    // be answerable only by melee, and ranged builds would have no counterplay at
+    // all. Instinct is capped, so repeated failures speed it up to a ceiling and no
+    // further; a successful escape wipes it, because it records failure, not progress.
+    //
+    // T2 teaches the PLAIN cycle: no venom, no frenzy, just escape and ambush.
+    //
+    // REMOVED with the 2026-09-04 redesign: `openingStrike` (an unanswerable alpha
+    // strike before the fight has taught anything) and the one-shot Canopy Hunt
+    // speed phase, which was a substitute for the pursuit this loop now IS.
+    bossPattern: {
+      id: 'gorger-escape', name: 'Escape',
+      damageMultiplier: 1.6, cooldownMs: 14000, initialCooldownMs: 8000,
+      steps: [
+        { kind: 'escape-guard', name: 'Escape Guard', castMs: 2600, fx: 'shield',
+          sourceId: 'jungle-escape', shieldPct: 0.07,
+          onBreak: { staggerMs: 2600, label: 'Cornered' },
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15 },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1400,
+          relocate: 'leash-edge' },
+        { kind: 'payoff', name: 'Ambush', castMs: 800, fx: 'savage-maul',
+          damageMult: 1.0 },
+        { kind: 'recovery', label: 'Winded', durationMs: 1600 },
+      ],
+    },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [

@@ -1,5 +1,7 @@
 import type { EssenceType } from '../../items';
 import type { Vec2 } from '../../systems/spatial';
+import type { BossPattern } from './bossPatterns';
+import type { HazardFlavor } from '../../world/groundZones';
 import type { DamageElement } from '../../systems/dotElements';
 import type { MonsterBehavior } from './behavior';
 
@@ -412,6 +414,15 @@ export type MonsterAbilityAction =
       stunMs?: number;
       knockback?: { distance: number };
     }
+  /**
+   * BREACH — apply a larger dose of the caster's OWN `appliesPlatingShred`.
+   *
+   * Not a new mechanic: it moves the same corrosion resource the monster's ordinary
+   * hits move, just further in one telegraphed beat. A monster without
+   * `appliesPlatingShred` cannot author this, because there would be nothing for it
+   * to deepen.
+   */
+  | { type: 'plating-shred'; stacks: number }
   | {
       type: 'attack-speed-buff';
       effectId: string;
@@ -808,13 +819,29 @@ export interface MonsterDefinition {
     repeatIntervalMs?: number;
     /** Multiplier on incoming DIRECT damage while shelled (e.g. 0.15). */
     directDamageMult: number;
-    /** Evolved Snapper: a lingering toxic pool laid down when the shell closes. */
+    /**
+     * Ground the shell contaminates when it closes. The evolved Snapper lays a toxic
+     * pool; the Volcano lineage lays a MAGMA VENT.
+     */
     pool?: {
       radius: number;
       durationMs: number;
       damagePerTick: number;
       tickIntervalMs: number;
       slowSpeedMult?: number;
+      /**
+       * Texture and, for `magma-vent`, the semantics that make it a CHOICE: a vent
+       * is NOT auto-avoided, because staying in it trades damage taken for the Heat
+       * that raises damage dealt. A rune dragging the player out would be answering
+       * a question the encounter meant them to answer themselves.
+       */
+      flavor?: HazardFlavor;
+      /**
+       * While a player stands inside, the node's ambient ramp advances this many
+       * times faster. The Volcano's Vent is an ACCELERATOR on the room's Heat, never
+       * a second Heat source — see `RuntimeToxicPool.rampAccelMult`.
+       */
+      rampAccelMult?: number;
     };
   };
   /**
@@ -1097,6 +1124,18 @@ export interface MonsterDefinition {
    * — and the trigger the `target-casting` rune condition reacts to. `fx` selects the
    * client charged-shot animation (defaults to a generic power shot).
    */
+  /**
+   * ORDERED ENCOUNTER PATTERN — one authored sequence the boss commits to, from
+   * tell through payoff to recovery, owning its movement for the whole run.
+   *
+   * Distinct from `bossScript`, whose phases and repeating beats are INDEPENDENT
+   * and stack on top of whatever else is happening. A pattern is the encounter's
+   * spine; a script is escalation applied to it. A boss with a pattern should not
+   * ALSO carry a `chargedAttack` that duplicates the same payoff — the pattern
+   * suppresses ordinary attacks while it runs, and two competing big hits is the
+   * accumulation the redesign exists to undo.
+   */
+  bossPattern?: BossPattern;
   chargedAttack?: {
     name: string;
     castMs: number;

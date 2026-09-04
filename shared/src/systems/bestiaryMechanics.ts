@@ -56,6 +56,10 @@ function describeMonsterAbilityAction(action: MonsterAbilityAction): string {
   if (action.type === 'attack-speed-buff') {
     return `gains +${fmtPct(action.attackSpeedPct)} attack speed for ${fmtMs(action.durationMs)}`;
   }
+  if (action.type === 'plating-shred') {
+    const plural = action.stacks === 1 ? 'stack' : 'stacks';
+    return `strips ${action.stacks} ${plural} of your plating`;
+  }
   return `gains a ${fmtPct(action.shieldPct)} max-HP barrier for ${fmtMs(action.durationMs)}`;
 }
 
