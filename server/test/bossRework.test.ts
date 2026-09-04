@@ -13,6 +13,9 @@ import {
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
+import { updateBossPatterns } from '../src/systems/combat/ai/bossPatterns';
+import { sourceBarrierRemaining } from '../src/systems/combat/engine/sourceBarriers';
+import { applyEnemyShield } from '../src/systems/combat/engine/monsterMechanics';
 import { updateMonsters } from '../src/systems/combat/ai/ai';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import {
@@ -187,26 +190,99 @@ const mountainIds = [
 ];
 for (const id of mountainIds) {
   const mountain = def(id);
-  assert(!!mountain.chargedAttack?.aoe, `${id} should use the planted charged AoE system`);
-  assert(mountain.chargedAttack!.castMs >= 2_000, `${id} should have a readable slow wind-up`);
+  // The whole Mountain lineage now runs an ORDERED PATTERN whose spine is a
+  // committed lane. What must never come back is a target-following power shot with
+  // no footprint on the ground — that is the thing this lineage is not.
+  const pattern = mountain.bossPattern;
+  assert(!!pattern, `${id} should run an ordered encounter pattern`);
+  const windUp = pattern.steps.find(
+    (step): step is Extract<typeof step, { kind: 'cast' }> =>
+      step.kind === 'cast' && step.lane !== undefined,
+  );
+  assert(!!windUp, `${id} should paint a committed lane during a wind-up`);
+  assert(windUp.castMs >= 2_000, `${id} should have a readable slow wind-up`);
+  assert(
+    pattern.steps.some(step => step.kind === 'charge'),
+    `${id} should actually travel its lane`,
+  );
+  assert(
+    pattern.steps.some(step => step.kind === 'recovery'),
+    `${id} should end in a punishable recovery`,
+  );
+  assert(
+    mountain.chargedAttack === undefined,
+    `${id} must not keep a chargedAttack competing with its pattern`,
+  );
+  assert(
+    mountain.chargeOnAggro === undefined,
+    `${id} should not keep the legacy aggro speed burst`,
+  );
 }
-assert(
-  (def('stoneplate-juggernaut').chargedAttack?.precastStunMs ?? 0) > 0,
-  'T2 Mountain should stun immediately before its slam wind-up',
-);
+// T2 Mountain's pre-cast stun is GONE (2026-09-04 redesign). Stunning the player
+// immediately before an unavoidable circle was not an answerable beat — it removed
+// the answer and then asked the question. Its replacement is the Stoneplate barrier:
+// a thing the player acts ON, whose break cancels the charge into an early stagger.
+{
+  const juggernaut = def('stoneplate-juggernaut');
+  assert(
+    juggernaut.chargedAttack?.precastStunMs === undefined,
+    'T2 Mountain should no longer stun the player before its wind-up',
+  );
+  const barrier = juggernaut.bossPattern?.steps.find(
+    (step): step is Extract<typeof step, { kind: 'barrier' }> => step.kind === 'barrier',
+  );
+  assert(!!barrier, 'T2 Mountain should raise a breakable barrier instead');
+  assert(!!barrier.onBreak, 'breaking that barrier should be worth something');
+}
+// T3/T4 Mountain used a legacy `engageSequence` charge-lock opener to make the slam
+// arrive rather than sit still. The ordered pattern IS that charge now — a better
+// version of it, committed and answerable — so the opener was a second, worse copy
+// competing with it for the same beat, and it is gone.
 for (const id of mountainIds.slice(2)) {
-  assert(!!def(id).engageSequence, `${id} should charge, lock, then slam`);
+  const monster = def(id);
+  assert(
+    monster.engageSequence === undefined,
+    `${id} should not keep the legacy charge-lock opener alongside its pattern`,
+  );
+  const steps = monster.bossPattern?.steps ?? [];
+  const chargeIndex = steps.findIndex(step => step.kind === 'charge');
+  const impactIndex = steps.findIndex(step => step.kind === 'impact');
+  assert(chargeIndex >= 0 && impactIndex > chargeIndex, `${id} should charge, then slam`);
+  const impact = steps[impactIndex];
+  assert(
+    impact.kind === 'impact' && impact.anchor === 'captured-endpoint',
+    `${id} should erupt where it charged TO, not where the player later stood`,
+  );
 }
-assert(
-  def('iron-crest-titan').chargedAttack?.aftershock?.kind === 'radial-fault-lines',
-  'T4 Mountain should follow its slam with radial fault lines',
-);
+{
+  const steps = def('iron-crest-titan').bossPattern?.steps ?? [];
+  const impactIndex = steps.findIndex(step => step.kind === 'impact');
+  const faultIndex = steps.findIndex(step => step.kind === 'fault-lines');
+  assert(
+    impactIndex >= 0 && faultIndex > impactIndex,
+    'T4 Mountain should follow its slam with radial fault lines',
+  );
+  // The cracks are the finite TAIL of the payoff, so the recovery has to come after
+  // them — a recovery that opened before the last damage landed would be a punish
+  // window the player cannot actually use.
+  const recoveryIndex = steps.findIndex(step => step.kind === 'recovery');
+  assert(recoveryIndex > faultIndex, 'T4 Mountain should recover after its fault lines');
+}
 
-// Caverns corrosion stacks for the encounter and every tier keeps a medium slam.
+// Caverns corrosion stacks for the encounter, and every tier keeps ONE telegraphed
+// beat. T1's is now a Breach that applies a larger dose of the SAME corrosion rather
+// than a generic damage circle that taught nothing about erosion (2026-09-04); T2/T3
+// still run their planted slams until the Phase 4 burrow conversion.
 for (const id of ['obsidian-broodmother', 'chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   const cave = def(id);
   assert(!!cave.appliesPlatingShred, `${id} should corrode plating`);
-  assert(!!cave.chargedAttack?.aoe, `${id} should keep a medium planted slam`);
+  const breach = cave.monsterAbilities?.some((ability) =>
+    ability.actions.some((action) => action.type === 'plating-shred'),
+  );
+  assert(
+    !!cave.chargedAttack?.aoe || breach || !!cave.bossPattern,
+    `${id} should keep one telegraphed beat — a Breach, a planted slam, or a burrow sequence`,
+  );
 }
 assert(
   def('deep-core-burrow-gorger').appliesPlatingShred?.thresholdPoison?.atStacks.length === 2,
@@ -227,9 +303,49 @@ const migratedSlamIds = [
   // resolves on the direct-hit path). It is covered by bossEncounterRework.test.ts.
 ];
 for (const id of migratedSlamIds) {
-  const charged = def(id).chargedAttack;
-  assert(!!charged?.aoe, `${id} should have a charged AoE instead of an instant slam`);
-  assert(charged.aoe.radius <= 250, `${id} slam should be bounded rather than screen-wide`);
+  // The claim is "a telegraphed footprint on the ground, not an instant slam". A
+  // charged AoE satisfies it; so does an ordered pattern's lane and impact. Both
+  // are bounded, so neither can quietly become screen-wide.
+  const monster = def(id);
+  const charged = monster.chargedAttack;
+  const pattern = monster.bossPattern;
+  // A telegraphed BEAT, in any of the three shapes the roster now uses: a planted
+  // charged AoE, an ordered pattern, or a cast-time `monsterAbility`. What the list
+  // forbids is the thing it was written against — an instant slam with no tell.
+  const telegraphedAbility = (monster.monsterAbilities?.length ?? 0) > 0;
+  // A repeating SHELL CYCLE counts too: the Volcano lineage's telegraphed beat is
+  // the shell closing and laying its vent, not a slam.
+  const shellCycle = monster.shellUp?.repeatIntervalMs !== undefined;
+  // A cast-time RAISE DEAD counts too: the Wasteland lineage's telegraphed beat is
+  // the necromancy, complete with a cast bar and — since 2026-09-04 — visibly
+  // reserved corpses tethered to the boss while it channels.
+  const castRaise = (monster.raisesDead?.castMs ?? 0) > 0;
+  assert(
+    !!charged?.aoe || !!pattern || telegraphedAbility || shellCycle || castRaise,
+    `${id} should have a telegraphed beat instead of an instant slam`,
+  );
+  if (charged?.aoe) {
+    assert(charged.aoe.radius <= 250, `${id} slam should be bounded rather than screen-wide`);
+  }
+  for (const step of pattern?.steps ?? []) {
+    if (step.kind === 'cast' && step.lane) {
+      assert(
+        step.lane.length <= 900 && step.lane.halfWidth <= 250,
+        `${id} lane should be bounded rather than screen-wide`,
+      );
+    }
+    if (step.kind === 'impact') {
+      // A deliberately room-wide catastrophe is legal, but ONLY as a once-per-life
+      // beat. That is the real invariant behind this bound: nothing the boss does
+      // REPEATEDLY may be screen-wide, because a recurring unavoidable arena-filler
+      // is not an encounter, it is a timer.
+      const roomWideAllowed = pattern?.oncePerLife === true;
+      assert(
+        step.radius <= 250 || roomWideAllowed,
+        `${id} impact should be bounded rather than screen-wide`,
+      );
+    }
+  }
 }
 for (const monster of MONSTER_DATABASE.values()) {
   assert(
@@ -410,23 +526,62 @@ initCombatSystems();
   assert(monsterAttackCooldown(ally) < ally.performsAttack.attackCooldown, 'roar haste should shorten attack cadence');
 }
 
-// T2 Mountain's pre-slam stun is real hard control, and releases on expiry.
+// T2 Mountain's Stoneplate barrier is a REAL absorb pool on the shared damage path,
+// and breaking it during the preparation cancels the charge into an early stagger.
+// This is what replaced the pre-cast stun: a beat the player acts ON, rather than
+// one that removes their answer and then asks the question.
 {
   const world = new World();
-  const player = world.attachPlayerEntity(playerSlices('mountain-stun'), 'mountain-stun');
-  const boss = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 });
+  const player = world.attachPlayerEntity(playerSlices('stoneplate-break'), 'stoneplate-break');
+  const boss = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 })!;
   assert(!!boss, 'Mountain boss should spawn');
-  const charged = def('stoneplate-juggernaut').chargedAttack!;
-  const armedAt = 1_000 + (charged.initialCooldownMs ?? charged.cooldownMs) + 1;
+  const pattern = def('stoneplate-juggernaut').bossPattern!;
+  const barrierStep = pattern.steps.find(
+    (step): step is Extract<typeof step, { kind: 'barrier' }> => step.kind === 'barrier',
+  )!;
+
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
   boss.hasAwareness.state = 'attacking';
-  boss.performsAttack.lastAttackAt = armedAt - boss.performsAttack.attackCooldown;
-  updateCombat(world, 100, armedAt);
-  assert(!!getStatusEffect(player.tracksCombat, STUN_EFFECT), 'slam start should apply stun');
-  updateCombatState(world, 0);
-  assert(!!player.isRooted && !!player.cannotAttack, 'stun should lock movement and attacks');
-  updateCombatState(world, charged.precastStunMs!);
-  assert(!player.isRooted && !player.cannotAttack, 'stun expiry should release both controls');
+  const armedAt = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1;
+
+  // Arm and run the pattern until the barrier is up.
+  updateBossPatterns(world, 100, armedAt);
+  assert(!!boss.runsBossPattern, 'the pattern should take ownership of the boss');
+  let now = armedAt;
+  for (let i = 0; i < 60 && sourceBarrierRemaining(boss, barrierStep.sourceId) === 0; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+  }
+  const raised = sourceBarrierRemaining(boss, barrierStep.sourceId);
+  assert(raised > 0, 'the preparation should raise a Stoneplate barrier');
+  assert(
+    raised === Math.round(boss.hasHealth.maxHp * barrierStep.shieldPct),
+    'the barrier should be sized off the boss max HP',
+  );
+
+  // It absorbs through the SAME path every enemy barrier uses — not private HP.
+  const partial = applyEnemyShield(boss, def('stoneplate-juggernaut'), 100, now);
+  assert(partial.absorbed === 100 && partial.damage === 0, 'the barrier absorbs incoming damage');
+  assert(
+    sourceBarrierRemaining(boss, barrierStep.sourceId) === raised - 100,
+    'absorbing should drain the barrier',
+  );
+
+  // Break it.
+  applyEnemyShield(boss, def('stoneplate-juggernaut'), raised, now);
+  assert(sourceBarrierRemaining(boss, barrierStep.sourceId) === 0, 'the barrier should break');
+
+  now += 100;
+  updateBossPatterns(world, 100, now);
+  assert(!boss.runsBossPattern, 'breaking the plate should cancel the rest of the sequence');
+  assert(!!boss.recoversFromPattern, 'and stagger the boss into a recovery');
+  assert(boss.recoversFromPattern!.fromStagger, 'the recovery should be attributed to the break');
+  assert(!!boss.isRooted && !!boss.cannotAttack, 'a staggered boss cannot move or swing');
+
+  // The stagger is finite and releases both locks.
+  updateBossPatterns(world, 100, now + barrierStep.onBreak!.staggerMs + 1);
+  assert(!boss.recoversFromPattern, 'the stagger should end on its own');
+  assert(!boss.isRooted && !boss.cannotAttack, 'and release movement and attacks');
 }
 
 // Caverns corrosion stacks without timing out, then clears with the encounter.

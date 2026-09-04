@@ -7,6 +7,9 @@
 
 import {
   MONSTER_DATABASE,
+  SUN_MARK_EFFECT_ID,
+  TUNDRA_CHILL_EFFECT_ID,
+  FROZEN_STATUS_ID,
   GAME_CONFIG,
   PLATING_SHRED_EFFECT_ID,
   STARTER_RUNE_IDS,
@@ -17,6 +20,8 @@ import {
 import type { BossAction } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
+import { updateRaisers } from '../src/systems/combat/ai/raiseDead';
+import { bossPatternFor } from '../src/systems/combat/ai/bossPatterns';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { selectMonsterAggroCandidate } from '../src/systems/combat/ai/monsterTargeting';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
@@ -149,10 +154,37 @@ for (const monster of MONSTER_DATABASE.values()) {
   );
 }
 
-// Reinforcements are a Plains identity. Wasteland may resurrect player-made
-// corpses, but no active non-Plains boss may conjure a fresh add wave.
+// Reinforcements are a Plains identity: creatures keep ARRIVING there, and the
+// escalation is concurrency. Everywhere else a boss conjuring bodies is a weaker
+// Plains fight in a different palette.
+//
+// Refined 2026-09-04: the invariant is "no REPEATING add wave", not "no adds at
+// all". Wasteland's identity is that the dead you already made refuse to stay dead,
+// and that needs seed corpses — so it opens with ONE entourage, at full health, that
+// never comes back. A one-shot opener at `hpPct: 1.0` is a starting condition; a
+// wave on a repeating timer or a low-health threshold is the thing this rule forbids.
+const ONE_SHOT_ENTOURAGE_BOSSES = new Set(['charnel-crown-sovereign']);
 for (const id of ACTIVE_BOSS_IDS) {
   if (id === 'tusked-razorback' || id === 'gorging-razortusk') continue;
+  if (ONE_SHOT_ENTOURAGE_BOSSES.has(id)) {
+    const script = def(id).bossScript;
+    // Never on a repeating timer.
+    assert(
+      !(script?.repeating ?? []).some(entry =>
+        entry.actions.some(action => action.type === 'spawn-adds'),
+      ),
+      `${id} entourage must not be on a repeating timer`,
+    );
+    // And only at full health — an opener, never a mid-fight reinforcement.
+    for (const phase of script?.phases ?? []) {
+      if (!phase.actions.some(action => action.type === 'spawn-adds')) continue;
+      assert(
+        phase.hpPct === 1.0,
+        `${id} may only spawn its entourage on engage, not at ${phase.hpPct}`,
+      );
+    }
+    continue;
+  }
   assert(
     !scriptedActions(id).some(action => action.type === 'spawn-adds'),
     `${id} should not conjure fresh scripted adds`,
@@ -164,43 +196,161 @@ assert(
 );
 
 // ── Per-lineage identity is actually authored ─────────────────────────────────
-// Desert: setup -> punishment. Every tier paints and cashes its own Sun Mark.
+// Desert: setup -> punishment. Every tier paints and cashes its own Sun Mark — as of
+// 2026-09-04 through a VISIBLE ordered sequence rather than an invisible per-hit
+// mark/finisher pair. `desertPairs.test.ts` owns the detailed shape; this file only
+// asserts the lineage identity is authored at every tier.
 for (const id of ['dune-stalker-emperor', 'dune-carapace-monarch', 'dune-throne-sovereign']) {
-  assert(!!def(id).appliesMark && !!def(id).markedStrike, `${id} should run the Sun Mark cycle`);
-  assert(!!def(id).chargedAttack, `${id} should telegraph its cash-out`);
+  const steps = def(id).bossPattern?.steps ?? [];
+  assert(
+    steps.some(step => step.kind === 'apply-status' && step.effectId === SUN_MARK_EFFECT_ID) &&
+      steps.some(step => step.kind === 'payoff' && step.consumes.effectId === SUN_MARK_EFFECT_ID),
+    `${id} should run the Sun Mark cycle`,
+  );
+  // The cash-out is a named, cast-time step, so it is readable as it arrives.
+  assert(
+    steps.some(step => step.kind === 'payoff' && step.castMs > 0),
+    `${id} should telegraph its cash-out`,
+  );
 }
-// Jungle: hard to pin down, then it commits.
-assert((def('apex-bramble-slasher').evasion ?? 0) > 0, 'T3 Jungle should be evasive');
-assert((def('verdant-crown-predator').evasion ?? 0) > 0, 'T4 Jungle should hunt before it frenzies');
+// Jungle: PURSUIT AND FAILED ESCAPE (2026-09-04 redesign).
+//
+// This replaces the old "hard to pin down" identity, which was expressed as passive
+// `evasion` — a flat miss chance that made every build's damage read as unreliable
+// rather than making the boss hard to catch. Being hard to catch is now something the
+// boss DOES, in a sequence the player can answer by breaking its Escape Guard.
+for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-predator']) {
+  const jungle = def(id);
+  const steps = jungle.bossPattern?.steps ?? [];
+  const guard = steps.find(step => step.kind === 'escape-guard');
+  assert(!!guard, `${id} should run the escape cycle`);
+  assert(
+    guard.kind === 'escape-guard' && guard.maxInstinctStacks > 0,
+    `${id} escape should bank capped Instinct when broken`,
+  );
+  assert(
+    steps.some(step => step.kind === 'conceal' && step.relocate === 'leash-edge'),
+    `${id} should actually get away and re-enter, not teleport`,
+  );
+  assert(
+    (jungle.evasion ?? 0) === 0,
+    `${id} should not keep passive evasion alongside the escape cycle`,
+  );
+}
+// The capstone STOPS escaping when wounded — the low-health state is the ABSENCE of
+// the lineage's mechanic, not a fourth one.
+assert(
+  def('verdant-crown-predator').bossPattern?.armAboveHpPct === 0.5,
+  'T4 Jungle should stop escaping once its frenzy begins',
+);
 assert(
   !def('verdant-crown-predator').cadenceFinisher,
   'T4 Jungle should not carry the generic cadence finisher',
 );
-// Volcanic: Heat is the encounter, not a private ramp beside it.
+// Volcanic: HEAT, VENT, AND THE CHOICE TO STAND IN IT (2026-09-04 redesign).
 assert(!def('caldera-sovereign').rampOnCombat, 'T4 Volcanic must not run a parallel private ramp');
-assert(!!def('caldera-sovereign').scalesWithAmbientRamp, 'T4 Volcanic should feed on node Heat');
-assert(!!def('cinder-shell-magma-salamander').shellUp?.repeatIntervalMs, 'T3 Volcanic should cycle its shell');
-// Tundra: Ice Armor with a real shatter payoff at both tiers, and the Chill only
-// fuses into the signature slam at T4 — the lineage has to keep something in hand.
-for (const id of ['frost-plated-rime-mammoth', 'glacial-patriarch']) {
-  assert(!!def(id).enemyShield?.shatter, `${id} should have breakable Ice Armor`);
+for (const id of ['cinder-shell-magma-salamander', 'caldera-sovereign']) {
+  const volcanic = def(id);
+  assert(!!volcanic.shellUp?.repeatIntervalMs, `${id} should cycle its shell`);
+  const vent = volcanic.shellUp.pool;
+  assert(vent?.flavor === 'magma-vent', `${id} shell should lay a magma vent`);
+  assert(
+    (vent.rampAccelMult ?? 1) > 1,
+    `${id} vent should ACCELERATE the room's Heat, not mint its own`,
+  );
+  // Heat owns all the escalation. A boss-side multiplier on top counts the same
+  // escalation twice — once visibly on the player, once invisibly on the boss.
+  assert(
+    !volcanic.scalesWithAmbientRamp,
+    `${id} must not ALSO scale its own damage with Heat`,
+  );
 }
-assert(
-  !def('frost-plated-rime-mammoth').scalesWithAmbientRamp,
-  'T3 Tundra should not yet feed on Chill — that is the T4 escalation',
-);
-assert(
-  def('glacial-patriarch').scalesWithAmbientRamp?.chargedOnly === true,
-  "T4 Tundra's Collapse should feed on Chill, and only the Collapse",
-);
+// The capstone's catastrophe: long, uninterruptible, once per life.
+{
+  const cataclysm = def('caldera-sovereign').bossPattern;
+  assert(!!cataclysm, 'T4 Volcanic should build to a Cataclysm');
+  assert(cataclysm.oncePerLife === true, 'the Cataclysm should fire once, not repeat');
+  assert(
+    cataclysm.armBelowHpPct !== undefined && cataclysm.armBelowHpPct <= 0.25,
+    'and only near the final quarter',
+  );
+  const cast = cataclysm.steps[0];
+  assert(cast.kind === 'cast', 'it should open on a cast');
+  assert(cast.interruptible === false, 'the Cataclysm is explicitly uninterruptible');
+  assert(cast.castMs >= 5_000, 'and long enough that killing it first is a real race');
+}
+// Tundra: the CHILL CHECK at both tiers (2026-09-04 redesign).
+//
+// This replaces the old "Ice Armor with a shatter payoff" identity. Ice Armor was a
+// generic anti-burst clip in the one lineage explicitly about rewarding burst, and
+// it said nothing about cold; the room's Chill is what the biome is actually about,
+// so the encounter now reads it directly.
+for (const id of ['frost-plated-rime-mammoth', 'glacial-patriarch']) {
+  const steps = def(id).bossPattern?.steps ?? [];
+  const freeze = steps.find(
+    (step) => step.kind === 'apply-status' && step.effectId === FROZEN_STATUS_ID,
+  );
+  assert(!!freeze, `${id} should convert Chill into a Freeze`);
+  assert(
+    freeze.kind === 'apply-status' &&
+      freeze.requires?.effectId === TUNDRA_CHILL_EFFECT_ID &&
+      freeze.requires.minStacks > 0,
+    `${id} freeze should be GATED on how chilled the room made you`,
+  );
+  const shatterIndex = steps.findIndex(step => step.kind === 'impact');
+  assert(
+    shatterIndex > steps.indexOf(freeze),
+    `${id} should follow the freeze with a dodgeable Shatter`,
+  );
+  assert(
+    def(id).enemyShield === undefined,
+    `${id} should no longer carry the generic Ice Armor clip`,
+  );
+}
+// Damage NEVER secretly scales with Chill: the stacks decide IF you get frozen,
+// never how hard anything hits. Both tiers, not just T3.
+for (const id of ['frost-plated-rime-mammoth', 'glacial-patriarch']) {
+  assert(
+    !def(id).scalesWithAmbientRamp,
+    `${id} must not secretly scale its damage with Chill`,
+  );
+}
+// The T4 Collapse used to feed on Chill through `scalesWithAmbientRamp`. That was
+// REVERSED on 2026-09-04: a hidden multiplier on an already-unavoidable hit is the
+// least readable escalation available, and §5.6 forbids damage scaling with Chill
+// outright. The Collapse is now fed by the FREEZE it follows — you are hit hard
+// because you let yourself get frozen, which you can see, not because a number
+// climbed somewhere you cannot.
 // Wasteland: the dead do not stay dead.
 assert(!!def('charnel-crown-sovereign').raisesDead, 'Wasteland boss should raise corpses');
-// Trench: one enormous single-target bite that feeds it.
+// Trench: ONE ENORMOUS DUEL, as an ordered sequence (2026-09-04 redesign).
+// Wound bite -> Undertow -> Constrict -> Devour, each with its own answer.
 {
-  const devour = def('elder-trench-serpent').chargedAttack;
-  assert(!!devour && !devour.aoe, 'Trench Devour should be single-target');
-  assert((devour.healsSelfPct ?? 0) > 0, 'Trench Devour should restore the serpent');
-  assert(!def('elder-trench-serpent').cadenceFinisher, 'Trench should drop its generic cadence spike');
+  const serpent = def('elder-trench-serpent');
+  const steps = serpent.bossPattern?.steps ?? [];
+  const devour = steps.find(step => step.kind === 'payoff');
+  assert(devour?.kind === 'payoff', 'the Trench boss should build to a Devour payoff');
+  assert(devour.radius === undefined, 'Trench Devour should be single-target — a bite is a bite');
+  assert((devour.healsSelfPct ?? 0) > 0, 'Trench Devour should restore the serpent when it LANDS');
+
+  const pull = steps.find(step => step.kind === 'pull');
+  assert(pull?.kind === 'pull', 'Undertow should drag a disengaged target back');
+  assert(pull.distance > 0, 'and actually move them');
+  assert(
+    steps.indexOf(pull) < steps.indexOf(devour),
+    'it should catch them BEFORE the bite, not after',
+  );
+
+  // The anti-heal lives on ONE beat now. Applying it from ordinary hits as well is
+  // how the Trench previously reached 75-90% suppression.
+  assert(
+    serpent.appliesAntiheal === undefined,
+    'ordinary Trench hits must not also apply anti-heal',
+  );
+  assert(!serpent.aoeAttack, 'the boss AoE riding every swing should be gone');
+  assert(!serpent.enemyShield, 'and the periodic shield with it');
+  assert(!serpent.cadenceFinisher, 'Trench should drop its generic cadence spike');
+  assert(serpent.chargeOnAggro === undefined, 'and the aggro speed burst');
 }
 
 initCombatSystems();
@@ -239,11 +389,27 @@ initCombatSystems();
   assert(!!boss, 'T3 Mountain boss should spawn');
   setAggroTarget(world, boss, { id: 'charged-target', kind: 'player' }, 1_000);
 
-  const base = def('crag-gorged-horn-behemoth').chargedAttack!;
+  // T3 Mountain's signature is now an ordered PATTERN rather than a chargedAttack,
+  // and `empower-charged` deliberately still drives it: converting a boss must not
+  // silently turn its authored 50% phase into a no-op.
+  const base = def('crag-gorged-horn-behemoth').bossPattern!;
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
   updateBossScripts(world, 100);
   const after50 = boss.scriptsBoss!.chargedOverride;
-  assert(!!after50 && after50.multiplierMult > 1, '50% should empower the slam');
+  assert(!!after50 && after50.multiplierMult > 1, '50% should empower the signature attack');
+  const scaled50 = bossPatternFor(boss)!;
+  assert(
+    scaled50.damageMultiplier > base.damageMultiplier,
+    'the empowerment should actually reach the pattern',
+  );
+  const baseImpact = base.steps.find(step => step.kind === 'impact');
+  const scaledImpact = scaled50.steps.find(step => step.kind === 'impact');
+  assert(
+    baseImpact?.kind === 'impact' &&
+      scaledImpact?.kind === 'impact' &&
+      scaledImpact.radius > baseImpact.radius,
+    'radiusMult should widen the pattern impact circle',
+  );
 
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.24;
   updateBossScripts(world, 100);
@@ -252,7 +418,16 @@ initCombatSystems();
     after25.multiplierMult === after50.multiplierMult && after25.cooldownMult < 1,
     'phase empowerments should COMPOSE, not overwrite each other',
   );
-  assert(base.multiplier > 0, 'base definition should be untouched by the override');
+  assert(
+    bossPatternFor(boss)!.cooldownMs < base.cooldownMs,
+    'cooldownMult should bring the pattern around sooner',
+  );
+  // The authored definition is the single source of the base numbers; overrides are
+  // stored as multipliers and applied on read, never written back.
+  assert(
+    def('crag-gorged-horn-behemoth').bossPattern!.damageMultiplier === base.damageMultiplier,
+    'base definition should be untouched by the override',
+  );
 }
 
 // ── `empower-shred` deepens a corrosion that is ALREADY on the player ─────────
@@ -303,11 +478,31 @@ initCombatSystems();
   assert(!!boss, 'Wasteland boss should spawn');
   setAggroTarget(world, boss, { id: 'tide-target', kind: 'player' }, 1_000);
 
-  // Engaging no longer conjures an opening entourage: Wasteland's adds must come
-  // from corpses the player actually made.
+  // THE OPENING ENTOURAGE IS BACK (2026-09-04, redesign §5.8) — a reversal of the
+  // 2026-08-23 removal. The reasoning that removed it ("adds are Plains' identity")
+  // is still right about WAVES, but Wasteland's whole mechanic is raising the dead,
+  // and corpses come from kills. With no seed bodies a solo boss pull had nothing to
+  // raise until the player happened to clear ambient monsters first, so the encounter
+  // did not express its own identity in the fight it is the boss of.
+  //
+  // It fires ONCE, on engage, and never respawns — the distinction that keeps it a
+  // starting condition rather than a reinforcement wave.
   updateBossScripts(world, 100);
-  const openingAdds = [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss);
-  assert(openingAdds.length === 0, 'the Sovereign should not conjure opening adds');
+  const entourage = [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss);
+  assert(entourage.length > 0, 'the Sovereign should arrive with an entourage');
+  const entourageIds = new Set(entourage.map(m => m.isMonster.id));
+
+  // Run the script well past the opener: it must never top itself back up.
+  for (let i = 0; i < 20; i++) updateBossScripts(world, 5_000);
+  const after = [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss);
+  assert(
+    after.length === entourage.length && after.every(m => entourageIds.has(m.isMonster.id)),
+    'the opening entourage must never respawn',
+  );
+
+  // Clear the entourage WITHOUT leaving corpses, so the resurrection below still
+  // tests "raise-dead cannot conjure from nothing".
+  for (const add of after) world.removeMonsterEntity(add.isMonster.id);
 
   // With an empty corpse registry the Mass Resurrection must raise nothing at all.
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
@@ -337,21 +532,37 @@ initCombatSystems();
     return dead;
   });
   assert(corpses.length === 3, 'the corpse fixture should provide three bodies');
+  // ONE major resurrection, and no second one (§12.5). The 25% "Deathless Tide"
+  // wave is REMOVED: a low-health repeat of the encounter's headline beat makes the
+  // first one mean nothing, and its necrotic roar was generic cadence pressure
+  // competing with the necromancy for the same role.
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.24;
-  updateBossScripts(world, 100);
+  for (let i = 0; i < 10; i++) updateBossScripts(world, 2_000);
   assert(
-    world.takeNodeEvents(NODE).some(event =>
-      event.kind === 'monster-cast-start' && event.label === 'Deathless Tide',
+    !scriptedActions('charnel-crown-sovereign').some(
+      action => action.type === 'roar',
     ),
-    'the final resurrection wave should announce Deathless Tide',
+    'the Sovereign should not drive a necrotic roar on top of its necromancy',
   );
+  const massResurrections = (def('charnel-crown-sovereign').bossScript?.phases ?? [])
+    .filter(phase => phase.actions.some(action => action.type === 'cast'
+      && action.actions.some(nested => nested.type === 'raise-dead')));
   assert(
-    ![...world.monsterEntitiesInNode(NODE)].some(m => m.isRaised),
-    'the final wave should leave its corpses in place during the warning',
+    massResurrections.length === 1,
+    `there should be exactly ONE Mass Resurrection, found ${massResurrections.length}`,
   );
-  updateBossScripts(world, 2_000);
+
+  // The steady cadence still works: with corpses on the floor it claims them, one
+  // at a time, through the ordinary raiser tick rather than a phase burst. That
+  // cadence — not a threshold wave — is what the encounter runs on now.
+  let raiseNow = 2_000;
+  for (let i = 0; i < 60; i++) {
+    raiseNow += 500;
+    updateRaisers(world, raiseNow);
+    if ([...world.monsterEntitiesInNode(NODE)].some(m => m.isRaised)) break;
+  }
   const risen = [...world.monsterEntitiesInNode(NODE)].filter(m => m.isRaised);
-  assert(risen.length > 0, 'the final wave should claw the corpses back up');
+  assert(risen.length > 0, 'the necromancy should still claw corpses back up');
   assert(
     risen.every(m => m.isRaised!.raiserId === boss.isMonster.id),
     'risen units should be owned by the Sovereign so they crumble with it',
@@ -377,33 +588,27 @@ initCombatSystems();
   const baseCeiling = fresh.maxStacks;
   assert(baseCeiling > 0, 'the Heat ramp should have an authored ceiling');
 
-  // The 25% phase stokes it: the floor rises and so does the ceiling.
+  // THE SOVEREIGN NO LONGER STOKES ITS ROOM (2026-09-04 redesign, §5.7 "remove
+  // repeated floor/cap stokes"). A boss shoving a floor under the room's Heat takes
+  // the choice away: the whole encounter is whether the PLAYER accepts Heat for the
+  // damage it pays, and a floor means they are carrying it whether they chose to or
+  // not. Heat is now raised only by standing in the Vent, which they can leave.
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.20;
   updateBossScripts(world, 100);
-  const stoke = world.ambientRampOverrides.get(HEAT_NODE);
-  assert(!!stoke && (stoke.minStacks ?? 0) > 0, 'the Sovereign should stoke its own room');
-
-  engage();
-  updateNodeFeatures(world, 100);
-  const stoked = ambientRampStatus(player.tracksCombat)!;
-  assert(stoked.maxStacks > baseCeiling, 'a stoked ramp should raise the Heat ceiling');
   assert(
-    stoked.stacks >= (stoke.minStacks ?? 0),
-    'a stoked ramp should hold its minimum Heat floor',
+    !world.ambientRampOverrides.get(HEAT_NODE),
+    'the Sovereign must not stoke its own room any more',
   );
 
-  // Out of combat the floor still holds — disengaging stops being a full reset.
+  // With no floor holding it, Heat now FULLY COOLS once the player disengages. That
+  // is the point of removing the stoke: walking out of the vent, or out of the
+  // fight, is a real answer again rather than a partial one.
   player.tracksEngagement = undefined;
-  for (let i = 0; i < 20; i++) updateNodeFeatures(world, 5_000);
+  for (let i = 0; i < 60; i++) updateNodeFeatures(world, 5_000);
   assert(
-    (ambientRampStatus(player.tracksCombat)?.stacks ?? 0) >= (stoke.minStacks ?? 0),
-    'the Heat floor should survive walking away mid-fight',
+    !ambientRampStatus(player.tracksCombat),
+    'without a stoked floor the Heat should shed completely',
   );
-
-  // The room cools once the stoke is gone (the boss died, or the node froze).
-  world.ambientRampOverrides.delete(HEAT_NODE);
-  for (let i = 0; i < 40; i++) updateNodeFeatures(world, 5_000);
-  assert(!ambientRampStatus(player.tracksCombat), 'clearing the stoke should let the Heat fully cool');
 }
 
 console.log('bossEncounterRework: ok');

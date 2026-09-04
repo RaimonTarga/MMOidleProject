@@ -1,5 +1,6 @@
 import {
   GAME_CONFIG,
+  BOSS_RECOVERY_EFFECT,
   MONSTER_DATABASE,
   PLATING_SHRED_EFFECT_ID,
   STARTER_RUNE_IDS,
@@ -9,6 +10,7 @@ import {
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
+import { updateBossPatterns } from '../src/systems/combat/ai/bossPatterns';
 import { updateRaisers } from '../src/systems/combat/ai/raiseDead';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
@@ -51,17 +53,57 @@ function playerSlices(id: string): PersistedPlayerSlices {
 initCombatSystems();
 
 // Timed boss effects carry their actual clock instead of looking permanent.
+//
+// ANCHOR HISTORY: this began on the Stoneplate Juggernaut's repeating flat-DR shield,
+// moved to the Dreadbore's Carapace Seal when Mountain became patterns, and moved
+// again when Cave's burrow conversion deleted Carapace Seal. As of 2026-09-04 the
+// `shield` BossAction has NO users left anywhere in the roster — the encounter
+// redesign replaced every flat-DR window with either a real absorb barrier or a
+// genuine concealment. The CLAIM is generic, so it now stands on a timed `stat-buff`,
+// which publishes through the same `bossEffectDurations` path.
 {
   const world = new World();
-  const player = world.attachPlayerEntity(playerSlices('stoneguard-target'), 'stoneguard-target');
-  const boss = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 });
-  assert(boss, 'Stoneplate Juggernaut should spawn');
+  const player = world.attachPlayerEntity(playerSlices('canopy-target'), 'canopy-target');
+  const boss = world.createMonster(NODE, 'jungle-dread-gorger', { x: 400, y: 400 });
+  assert(boss, 'Jungle Dread-Gorger should spawn');
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
-  updateBossScripts(world, 9_000);
+  boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
+  updateBossScripts(world, 100);
+  // Canopy Hunt is a CAST: the buffs land when the wind-up completes.
+  updateBossScripts(world, 1_500);
+  const clock = boss.hasStatus.bossEffectDurations?.['canopy-hunt-pursuit'];
   assert(
-    boss.hasStatus.bossEffectDurations?.shield?.remainingMs === 4_000 &&
-      boss.hasStatus.bossEffectDurations.shield.totalMs === 4_000,
-    'Stoneplate shield should publish its real four-second target-frame clock',
+    clock?.remainingMs === 7_000 && clock.totalMs === 7_000,
+    'Canopy Hunt should publish its real target-frame clock',
+  );
+}
+
+// An authored pattern recovery is a PUNISH WINDOW, so it has to be legible on the
+// target frame for exactly as long as it lasts. An invisible recovery teaches the
+// player nothing about why the boss just stopped moving.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('recovery-target'), 'recovery-target');
+  const boss = world.createMonster(NODE, 'crag-behemoth', { x: 400, y: 400 });
+  assert(boss, 'Crag Behemoth should spawn');
+  const pattern = MONSTER_DATABASE.get('crag-behemoth')!.bossPattern!;
+  const recoveryStep = pattern.steps.find(
+    (step): step is Extract<typeof step, { kind: 'recovery' }> => step.kind === 'recovery',
+  )!;
+  setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  boss.hasAwareness.state = 'attacking';
+
+  let now = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
+  updateBossPatterns(world, 100, now);
+  for (let i = 0; i < 150 && !boss.recoversFromPattern; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+  }
+  assert(!!boss.recoversFromPattern, 'the pattern should reach its recovery');
+  const clock = boss.hasStatus.bossEffectDurations?.[BOSS_RECOVERY_EFFECT];
+  assert(
+    clock?.totalMs === recoveryStep.durationMs && clock.remainingMs === recoveryStep.durationMs,
+    'the recovery should publish its real target-frame clock the moment it opens',
   );
 }
 

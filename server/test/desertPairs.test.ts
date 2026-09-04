@@ -378,25 +378,43 @@ initCombatSystems();
   }
 }
 
-// ── The T2 Emperor now paints its own mark. It must ALTERNATE (paint, cash,
-//    paint, cash) rather than perma-amplify off a mark it refreshes every hit.
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(makePlayerSlices('emperor-duel'), 'emperor-duel');
-  isolate(player);
-  const emperor = world.createMonster(NODE, 'dune-stalker-emperor', { x: 410, y: 400 });
-  assert(!!emperor, 'the T2 desert boss should spawn');
-  const def = MONSTER_DATABASE.get('dune-stalker-emperor')!;
-  assert(!!def.appliesMark && !!def.markedStrike, 'the Emperor should both paint and cash');
+// ── The Desert bosses paint and cash their mark through a VISIBLE SEQUENCE ────
+//
+// Replaces the old "alternating self-mark on ordinary hits" test (2026-09-04). The
+// alternation was invisible: the mark appeared and vanished on plain swings with no
+// cast bar, so the player had a setup they could not see and a payoff they could not
+// anticipate. Desert now runs an ordered pattern — Death Sting, a window, Execution —
+// and the assertion that matters is that there is exactly ONE mark source and ONE
+// thing that consumes it.
+for (const id of ['dune-stalker-emperor', 'dune-carapace-monarch', 'dune-throne-sovereign']) {
+  const def = MONSTER_DATABASE.get(id)!;
+  assert(!!def.bossPattern, `${id} should run an ordered mark/execution pattern`);
+  const steps = def.bossPattern.steps;
 
-  const marked: boolean[] = [];
-  for (let i = 0; i < 4; i++) {
-    runMonsterAttack(world, emperor!, player, 10_000 + i * 5_000);
-    marked.push(getStatusEffect(player.tracksCombat, SUN_MARK_EFFECT_ID) !== undefined);
-  }
+  const marks = steps.filter(
+    (step) => step.kind === 'apply-status' && step.effectId === SUN_MARK_EFFECT_ID,
+  );
+  const payoffs = steps.filter(
+    (step) => step.kind === 'payoff' && step.consumes.effectId === SUN_MARK_EFFECT_ID,
+  );
+  assert(marks.length === 1, `${id} should have exactly ONE mark source`);
+  assert(payoffs.length === 1, `${id} should have exactly ONE payoff consuming it`);
   assert(
-    marked[0] === true && marked[1] === false && marked[2] === true && marked[3] === false,
-    `the self-mark should alternate, got ${JSON.stringify(marked)}`,
+    steps.indexOf(marks[0]) < steps.indexOf(payoffs[0]),
+    `${id} should paint before it cashes`,
+  );
+
+  // No hidden second source: the invisible per-hit mark/finisher pair is gone.
+  assert(
+    def.appliesMark === undefined && def.markedStrike === undefined,
+    `${id} must not also paint its mark invisibly on ordinary hits`,
+  );
+
+  // The mark AMPLIFIES; it does not gate. A cleansed player still eats the payoff.
+  const payoff = payoffs[0];
+  assert(
+    payoff.kind === 'payoff' && payoff.damageMult > 0 && payoff.amplifiedMult > 1,
+    `${id} Execution should land unmarked and hit harder marked`,
   );
 }
 
