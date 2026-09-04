@@ -50,6 +50,10 @@ const BOSS_META: Record<string, StatusMeta> = {
   'bestial-frenzy': { label: 'Bestial Frenzy', color: '#e85d45' },
   morph:       { label: 'Morph',     color: '#dd66cc' },
   slam:        { label: 'Slam',      color: '#ff7744' },
+  // The punish window at the end of an authored boss sequence. Yellow because it is
+  // the one boss effect that is GOOD for the player — every other entry here is a
+  // thing being done TO them.
+  'boss-stunned': { label: 'Stunned', color: '#ffdd44' },
 };
 
 function prettify(id: string): string {

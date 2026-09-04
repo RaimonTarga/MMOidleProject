@@ -475,6 +475,23 @@ function advancePattern(world: World, monster: MonsterEntity, dt: number, now: n
     setAggroTarget(world, monster, null, now);
     return;
   }
+  // BARRIER BREAK, watched across every step rather than inside the one that raised
+  // it. The absorb pool removes its own status effect when it empties, and the
+  // pattern knows it raised one, so an empty reading here can only mean broken —
+  // `drop-barrier` clears the watch when the plate comes down on the boss's terms.
+  //
+  // Polling rather than a pipeline hook keeps the damage path's return contract
+  // untouched; at 10 Hz the stagger still lands within a tick of the killing blow.
+  const watched = state.watchedBarrier;
+  if (watched && sourceBarrierRemaining(monster, watched.sourceId) <= 0) {
+    state.staggered = true;
+    state.watchedBarrier = undefined;
+    state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== watched.sourceId);
+    endPattern(world, monster, 'staggered', now);
+    beginRecovery(world, monster, watched.label, watched.staggerMs, true, now);
+    return;
+  }
+
   // Target loss is checked on EVERY step, not just the ones that read the target:
   // a boss part-way through a burrow whose player disconnected must come back up and
   // release, rather than finishing a sequence aimed at nobody.
@@ -604,12 +621,31 @@ function beginStep(
       if (raised > 0 && !state.barrierSourceIds.includes(step.sourceId)) {
         state.barrierSourceIds.push(step.sourceId);
       }
+      // Watch for the break from here on, and MOVE ON. The barrier is not a step the
+      // sequence waits inside — the boss raises it and then prepares its charge from
+      // behind it, and breaking the plate is meant to interrupt that preparation.
+      if (raised > 0 && step.onBreak) {
+        state.watchedBarrier = {
+          sourceId: step.sourceId,
+          staggerMs: step.onBreak.staggerMs,
+          label: step.onBreak.label,
+        };
+      }
       state.stepEndsAtMs = now;
       return true;
     }
     case 'drop-barrier': {
       clearSourceBarrier(monster, step.sourceId);
       state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== step.sourceId);
+      // The plate came down on the pattern's own terms, so a later empty reading is
+      // not a break and must not stagger anything.
+      //
+      // DEFENSIVE: in every shipped pattern `drop-barrier` is followed immediately by
+      // `recovery`, which detaches the cursor in the same pass, so the watch is never
+      // consulted again and this line cannot currently be observed. It exists for the
+      // pattern that puts a step between the two — without it, that pattern would
+      // stagger itself the tick after dropping its own plate.
+      if (state.watchedBarrier?.sourceId === step.sourceId) state.watchedBarrier = undefined;
       state.stepEndsAtMs = now;
       return true;
     }
@@ -805,19 +841,10 @@ function tickStep(
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
       return 'done';
     }
-    case 'barrier': {
-      // POLLED break detection. The absorb pool removes its own status effect when
-      // it empties, and this step knows it raised one, so "gone" here can only mean
-      // broken. Polling keeps the damage pipeline's return contract untouched;
-      // at 10 Hz the stagger still lands within a tick of the killing blow.
-      if (sourceBarrierRemaining(monster, step.sourceId) > 0) return 'running';
-      if (!step.onBreak) return 'done';
-      state.staggered = true;
-      state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== step.sourceId);
-      endPattern(world, monster, 'staggered', now);
-      beginRecovery(world, monster, step.onBreak.label, step.onBreak.staggerMs, true, now);
-      return 'ended';
-    }
+    // Raising a barrier takes no time of its own; the watch registered above is what
+    // does the work, and it runs across every step that follows.
+    case 'barrier':
+      return 'done';
     case 'apply-status': {
       if (
         (step.interruptible ?? true) &&

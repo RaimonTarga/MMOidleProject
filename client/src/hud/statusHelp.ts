@@ -199,6 +199,11 @@ const BOSS_HELP: Record<string, StatusHelp> = {
   'bestial-frenzy': { title: 'Bestial frenzy', kind: 'boss', help: 'The beast is frenzied — faster and more dangerous until it settles.' },
   morph: { title: 'Morphed', kind: 'boss', help: 'The boss has changed form, and with it which of its attacks are live.' },
   slam: { title: 'Slam', kind: 'boss', help: 'A heavy telegraphed blow is winding up. Distance is the answer.' },
+  'boss-stunned': {
+    title: 'Stunned',
+    kind: 'boss',
+    help: 'Spent from its own attack. It cannot move or strike until it recovers — this is your window to hit it for free.',
+  },
 };
 
 /** Fallback title for an id with no authored entry: `dot-frost-x` -> "Frost X". */

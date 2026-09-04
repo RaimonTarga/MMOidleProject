@@ -293,6 +293,10 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   'stat-buff-plating': 'defense-hardening',
   'stat-buff-damageReduction': 'defense-sustained-dr',
   'stat-buff-evasion': 'mob-sprint',
+  // `mob-suppress` is the roster's existing 'this thing is held down' glyph; there
+  // is no dedicated stun icon and inventing an alias to a missing asset would
+  // silently render nothing.
+  'boss-stunned': 'mob-suppress',
 };
 
 function aliasedStatusIconSource(alias: string | undefined): AssetIconSource | null {

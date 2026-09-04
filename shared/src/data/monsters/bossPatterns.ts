@@ -320,6 +320,13 @@ export interface RunsBossPattern {
   laneZoneId?: string;
   /** Barrier sources this pattern raised, cleared on teardown. */
   barrierSourceIds: string[];
+  /**
+   * A raised barrier whose BREAK the pattern is watching for, across whatever steps
+   * follow. Concurrent by necessity: the barrier goes up and the sequence CONTINUES
+   * behind it, and breaking it is meant to interrupt whatever the boss is doing at
+   * the time — so the watch cannot live inside the step that raised it.
+   */
+  watchedBarrier?: { sourceId: string; staggerMs: number; label: string };
   /** Bodies already damaged by the current committed travel. */
   chargeHitIds: string[];
   /**
@@ -370,8 +377,14 @@ export interface RecoversFromPattern {
   ownsCannotAttack: boolean;
 }
 
-/** Client-facing boss-effect key for an authored recovery window. */
-export const BOSS_RECOVERY_EFFECT = 'pattern-recovery';
+/**
+ * Client-facing boss-effect key for an authored recovery window.
+ *
+ * Named `boss-stunned` rather than `stunned`: the player-side stun uses that id, and
+ * a shared key would collide in the status help and icon maps, giving a stunned boss
+ * the player's tooltip. Same word to the player, distinct id in the data.
+ */
+export const BOSS_RECOVERY_EFFECT = 'boss-stunned';
 
 export function initRunsBossPattern(
   patternId: string,

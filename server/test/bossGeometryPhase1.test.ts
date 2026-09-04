@@ -37,6 +37,8 @@ import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { updateCombat } from '../src/systems/combat/engine/combat';
 import { endPattern, updateBossPatterns } from '../src/systems/combat/ai/bossPatterns';
 import { setRooted } from '../src/systems/world/rooted';
+import { sourceBarrierRemaining } from '../src/systems/combat/engine/sourceBarriers';
+import { applyEnemyShield } from '../src/systems/combat/engine/monsterMechanics';
 import { attachComponent } from '../src/ecs/markerHelpers';
 import { applyStun } from '../src/systems/combat/status/stun';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
@@ -648,6 +650,109 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
       (escape.y - player.hasPosition.current.y) * dx) / len,
   );
   assert(across > Math.abs(along), 'the exit is perpendicular, not along the lane');
+}
+
+// A BARRIER DOES NOT BLOCK THE SEQUENCE.
+//
+// Regression, found in manual playtest 2026-09-04: the Stoneplate Juggernaut raised
+// its plate and then just stood there holding it. The barrier step was WAITING for
+// the barrier to empty before advancing, so an unbroken plate stalled the pattern
+// forever and the charge never happened.
+//
+// The barrier goes up and the sequence CONTINUES behind it; breaking the plate is
+// meant to interrupt the preparation, which is why the break is watched across the
+// following steps rather than inside the step that raised it.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('barrier-flow', 420, 400), 'barrier-flow');
+  const monster = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 })!;
+  const pattern = MONSTER_DATABASE.get('stoneplate-juggernaut')!.bossPattern!;
+  setAggroTarget(world, monster, { id: 'barrier-flow', kind: 'player' }, 1_000);
+  monster.hasAwareness.state = 'attacking';
+  const armedAt = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
+
+  updateBossPatterns(world, 100, armedAt);
+  let now = armedAt;
+  let sawBarrier = false;
+  let reachedCharge = false;
+  for (let i = 0; i < 200 && !reachedCharge; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+    const state = monster.runsBossPattern;
+    if (!state) break;
+    if (state.watchedBarrier) sawBarrier = true;
+    if (pattern.steps[state.stepIndex]?.kind === 'charge') reachedCharge = true;
+  }
+
+  assert(sawBarrier, 'the sequence should raise a watched barrier');
+  assert(
+    reachedCharge,
+    'and then CONTINUE to the charge — an unbroken plate must not stall the pattern',
+  );
+}
+
+// Breaking the plate mid-preparation still cancels the charge into a stagger.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('barrier-break', 420, 400), 'barrier-break');
+  const monster = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 })!;
+  const pattern = MONSTER_DATABASE.get('stoneplate-juggernaut')!.bossPattern!;
+  const barrierStep = pattern.steps.find(
+    (step): step is Extract<typeof step, { kind: 'barrier' }> => step.kind === 'barrier',
+  )!;
+  setAggroTarget(world, monster, { id: 'barrier-break', kind: 'player' }, 1_000);
+  monster.hasAwareness.state = 'attacking';
+  const armedAt = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
+
+  updateBossPatterns(world, 100, armedAt);
+  let now = armedAt;
+  for (let i = 0; i < 200 && !monster.runsBossPattern?.watchedBarrier; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+  }
+  assert(!!monster.runsBossPattern?.watchedBarrier, 'setup: the plate is up and watched');
+
+  // Break it through the shared absorb path, mid-preparation.
+  const remaining = sourceBarrierRemaining(monster, barrierStep.sourceId);
+  assert(remaining > 0, 'setup: the barrier has absorb left');
+  applyEnemyShield(monster, MONSTER_DATABASE.get('stoneplate-juggernaut'), remaining, now);
+
+  now += 100;
+  updateBossPatterns(world, 100, now);
+  assert(!monster.runsBossPattern, 'breaking the plate cancels the rest of the sequence');
+  assert(!!monster.recoversFromPattern, 'and staggers the boss');
+  assert(monster.recoversFromPattern!.fromStagger, 'attributed to the break');
+}
+
+// Completing the charge ends in an ordinary recovery, NOT a stagger — the two are
+// distinguished by `fromStagger`, and only the break earns the early one.
+//
+// NOTE what this does NOT prove: `drop-barrier` also clears the break watch, but in
+// the Juggernaut's shape that step is immediately followed by `recovery`, which
+// detaches the pattern in the same pass — so the watch is never consulted again and
+// the clear is unreachable here. It is kept as a DEFENSIVE guard for any future
+// pattern that puts steps between dropping a plate and ending, and is deliberately
+// left untested rather than covered by a test that would pass either way.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('barrier-drop', 420, 400), 'barrier-drop');
+  const monster = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 })!;
+  const pattern = MONSTER_DATABASE.get('stoneplate-juggernaut')!.bossPattern!;
+  setAggroTarget(world, monster, { id: 'barrier-drop', kind: 'player' }, 1_000);
+  monster.hasAwareness.state = 'attacking';
+  const armedAt = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
+
+  updateBossPatterns(world, 100, armedAt);
+  let now = armedAt;
+  for (let i = 0; i < 300 && !monster.recoversFromPattern; i++) {
+    now += 100;
+    updateBossPatterns(world, 100, now);
+  }
+  assert(!!monster.recoversFromPattern, 'the sequence should reach its recovery');
+  assert(
+    !monster.recoversFromPattern!.fromStagger,
+    'completing the charge should not read as a stagger',
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
