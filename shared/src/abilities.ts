@@ -51,10 +51,11 @@ export type AbilityTag =
  * whose problem it solves; the shape says how the server runs it.
  * - `armed`: rides the next qualifying attack cycle (`hasArmedAbility`).
  * - `cast`: enters an explicit wind-up (`isCastingAbility`), then resolves.
+ * - `charge`: winds up, then rushes toward its target at an authored speed.
  * - `reposition`: resolves instantly by MOVING the player.
  * - `instant`: resolves immediately and self-facing.
  */
-export type AbilityShape = "armed" | "cast" | "reposition" | "instant";
+export type AbilityShape = "armed" | "cast" | "charge" | "reposition" | "instant";
 
 /**
  * Built-in auto-fire trigger (the default heuristic). Abilities fire on this with
@@ -152,8 +153,12 @@ export interface AbilityRank {
   effect: AbilityEffectSpec;
   /** Min ms between fires (per-ability cooldown, tracked on TracksCombat). */
   cooldownMs: number;
-  /** Wind-up duration. REQUIRED for `shape: "cast"`, meaningless otherwise. */
+  /** Wind-up duration. REQUIRED for `shape: "cast"` / `shape: "charge"`. */
   castMs?: number;
+  /** Charge speed relative to the player's normal movement speed. */
+  chargeSpeedMult?: number;
+  /** Maximum time a charge may pursue its original target before ending. */
+  chargeMaxMs?: number;
   /**
    * Extra ENGAGEMENT reach, in px, beyond the player's normal attack range.
    *
@@ -344,7 +349,7 @@ export function abilityCooldownMs(ability: AbilityDef, playerTier: number): numb
   return abilityRankAt(ability, playerTier).cooldownMs;
 }
 
-/** Authored wind-up at this player's rank, BEFORE cast speed. 0 when not a cast. */
+/** Authored wind-up at this player's rank, BEFORE cast speed. 0 when no wind-up applies. */
 export function abilityCastMs(ability: AbilityDef, playerTier: number): number {
   return abilityRankAt(ability, playerTier).castMs ?? 0;
 }
@@ -614,9 +619,9 @@ const abilities: AbilityDef[] = [
     id: "charge",
     name: "Charge",
     slot: "technique",
-    shape: "reposition",
+    shape: "charge",
     tags: ["mobility"],
-    blurb: "Close the gap in an instant, and land the next blow with the weight of the rush.",
+    blurb: "Wind up, then surge across the gap and land the next blow with the weight of the rush.",
     tier: 2,
     // The gap-closer only fires when there is a gap. Paired with `rangeBonus`,
     // this is what makes Charge a real tool: it engages a target it could not
@@ -628,19 +633,28 @@ const abilities: AbilityDef[] = [
     // frequency.
     ranks: [
       {
-        effect: { kind: "reposition", distance: 220, toward: true, empowerMult: 1.5 },
+        effect: { kind: "reposition", distance: 300, toward: true, empowerMult: 2.2 },
         cooldownMs: 9000,
-        rangeBonus: 220,
+        castMs: 400,
+        chargeSpeedMult: 4,
+        chargeMaxMs: 1500,
+        rangeBonus: 300,
       },
       {
-        effect: { kind: "reposition", distance: 220, toward: true, empowerMult: 1.7 },
+        effect: { kind: "reposition", distance: 300, toward: true, empowerMult: 2.5 },
         cooldownMs: 9000,
-        rangeBonus: 220,
+        castMs: 400,
+        chargeSpeedMult: 4,
+        chargeMaxMs: 1500,
+        rangeBonus: 300,
       },
       {
-        effect: { kind: "reposition", distance: 220, toward: true, empowerMult: 1.9 },
+        effect: { kind: "reposition", distance: 300, toward: true, empowerMult: 2.8 },
         cooldownMs: 8500,
-        rangeBonus: 220,
+        castMs: 400,
+        chargeSpeedMult: 4,
+        chargeMaxMs: 1500,
+        rangeBonus: 300,
       },
     ],
   },
@@ -974,11 +988,25 @@ export function validateAbilities(): string[] {
         errors.push(`${label} changes effect kind ${kind} -> ${rank.effect.kind}.`);
       }
       if (rank.cooldownMs <= 0) errors.push(`${label} has a non-positive cooldown.`);
-      if (ability.shape === "cast" && !(rank.castMs && rank.castMs > 0)) {
-        errors.push(`${label} is a cast with no castMs.`);
+      // Both wind-up shapes REQUIRE castMs; every other shape must not author it.
+      // `charge` is a wind-up followed by a rush, so it is bound by the same rule
+      // as `cast` — keep this list in step with `AbilityShape`.
+      const windsUp = ability.shape === "cast" || ability.shape === "charge";
+      if (windsUp && !(rank.castMs && rank.castMs > 0)) {
+        errors.push(`${label} is a ${ability.shape} with no castMs.`);
       }
-      if (ability.shape !== "cast" && rank.castMs !== undefined) {
-        errors.push(`${label} authors castMs but is not a cast.`);
+      if (!windsUp && rank.castMs !== undefined) {
+        errors.push(`${label} authors castMs but has no wind-up.`);
+      }
+      if (ability.shape === "charge") {
+        if (!(rank.chargeSpeedMult && rank.chargeSpeedMult > 0)) {
+          errors.push(`${label} is a charge with no chargeSpeedMult.`);
+        }
+        if (!(rank.chargeMaxMs && rank.chargeMaxMs > 0)) {
+          errors.push(`${label} is a charge with no chargeMaxMs.`);
+        }
+      } else if (rank.chargeSpeedMult !== undefined || rank.chargeMaxMs !== undefined) {
+        errors.push(`${label} authors charge fields but is not a charge.`);
       }
     }
   }

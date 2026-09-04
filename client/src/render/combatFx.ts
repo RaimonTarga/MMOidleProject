@@ -52,8 +52,13 @@ import {
   fxBossRoar,
   fxBestialFrenzy,
   fxDireHowl,
+  fxChestBeat,
   fxThornBarrage,
   fxShellUp,
+  fxTrenchSweep,
+  fxTrenchMine,
+  fxTrenchCurrent,
+  fxTrenchPulse,
 } from "../fx/bossCues";
 import { fxLightning } from "../fx/lightning";
 import { fxFireFlame } from "../fx/dotFire";
@@ -659,10 +664,39 @@ export function dispatchCombatEvent(
     if (ev.fired && shouldRunClientFx()) {
       const monster = state.sprite.get(ev.monsterId);
       const target = ev.targetId ? state.sprite.get(ev.targetId) : undefined;
+      const impact = ev.pos ? nodeToScene(ev.pos.x, ev.pos.y) : undefined;
       if (monster && ev.fx === "howl") {
         fxDireHowl(scene, monster.x, monster.y);
+      } else if (monster && ev.fx === "chest-beat") {
+        fxChestBeat(scene, monster.x, monster.y);
       } else if (monster && ev.fx === "barrage") {
         fxThornBarrage(scene, monster.x, monster.y);
+      } else if (monster && target && ev.fx === "trench-lunge") {
+        fxSavageMaul(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "trench-depth-bolt") {
+        fxPowerShot(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && (ev.fx === "frost-tusk-impact" || ev.fx === "volcanic-eruption")) {
+        fxStrongKick(scene, target.x, target.y);
+      } else if (ev.fx === "trench-lantern-pulse") {
+        // Anchor on the victim, else the caster, else the broadcast impact. Every
+        // branch must resolve a real anchor — a missing sprite must skip the cue,
+        // not draw it at the scene origin.
+        const at = target ?? monster ?? impact;
+        if (at) fxTrenchPulse(scene, at.x, at.y, 0xe0a8ff);
+      } else if (impact && ev.fx === "trench-tail-sweep") {
+        fxTrenchSweep(scene, impact.x, impact.y, ev.radius ?? 145);
+      } else if (impact && ev.fx === "trench-body-sweep") {
+        fxTrenchSweep(scene, impact.x, impact.y, ev.radius ?? 155);
+      } else if (impact && ev.fx === "trench-silt-mine") {
+        fxTrenchMine(scene, impact.x, impact.y, ev.radius ?? 115);
+      } else if (monster && ev.fx === "trench-current") {
+        fxTrenchCurrent(scene, monster.x, monster.y);
+      } else if (monster && ev.fx === "trench-surge") {
+        fxTrenchPulse(scene, monster.x, monster.y, 0x82c8ff);
+      } else if (monster && ev.fx === "trench-carapace") {
+        fxShieldUp(scene, monster.x, monster.y);
+      } else if (monster && (ev.fx === "volcanic-guard" || ev.fx === "volcanic-shell")) {
+        fxShieldUp(scene, monster.x, monster.y);
       } else if (monster && target && ev.fx === "dive-bomb") {
         fxDiveBomb(scene, monster.x, monster.y, target.x, target.y);
       } else if (monster && target) {

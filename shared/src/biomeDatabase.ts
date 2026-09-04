@@ -174,7 +174,9 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'jungle', name: 'Jungle',
     backgroundColor: 0x081508,
     monsterPoolByTier: {
-      2: ['jungle-snake', 'jungle-ape', 'jungle-blowdarter'],
+      // Pool entries are weighted. Keep Apes as a notable bruiser without making
+      // the limited Chestbeat rally a routine part of every T2 pull.
+      2: ['jungle-snake', 'jungle-snake', 'jungle-ape', 'jungle-blowdarter'],
       3: ['jungle-stalker', 'silverback', 'canopy-harrier'],
       4: ['hunting-panther', 'apex-silverback', 'thornback-lizard', 'emerald-constrictor'],
     },

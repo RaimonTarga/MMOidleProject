@@ -81,9 +81,13 @@ const weight = Math.round(4 * modifierRewardMult(farmModifier, 1));
 // node under test is tier 1, so it mints at T1's own (scarcer) rate.
 const per = catalystProgressPerUnit(1);
 // Enough kills to cross the T1 threshold at least once, so this still exercises
-// BOTH the mint and the carried remainder rather than only accumulation.
-const kills = 50;
+// BOTH the mint and the carried remainder rather than only accumulation. DERIVED
+// from the threshold rather than hardcoded: the T1 catalyst rate is a live balance
+// lever (150 -> 200 in candidate F), and a magic kill count silently stops testing
+// the mint the moment that number moves up.
+const kills = Math.ceil(per / weight) + 5;
 assert(weight * kills > per, "the fixture must actually mint at the tier's threshold");
+assert(weight * kills % per !== 0, "the fixture must leave a remainder to carry");
 for (let i = 0; i < kills; i++) grantMonsterRewards(world, "p-alac", wolf);
 const prog = alacP.tracksProgression;
 const total = weight * kills;

@@ -10,6 +10,7 @@
  * - `armed`   — arms the next attack (`hasArmedAbility`); the rider lands in
  *               `abilityEffects.ts`.
  * - `cast`    — starts a wind-up (`isCastingAbility`); see `abilityCasting.ts`.
+ * - `charge`  — starts a wind-up, then enters a fast target-bound rush.
  * - `reposition` — resolves immediately by moving the player.
  * - `instant` — an immediate self-facing effect.
  *
@@ -37,7 +38,6 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
-import { attachComponent } from "../../../ecs/markerHelpers";
 import {
   RUNE_FIRE_GUARD_2_FLAG,
   RUNE_FIRE_GUARD_FLAG,
@@ -55,7 +55,7 @@ import { abilityCooldownKey, guardCooldownMs, techniqueCooldownMs } from "./abil
 import { beginAbilityCast } from "./abilityCasting";
 import { applyBrambleGuard } from "./abilityBramble";
 import { abilityTarget, gapToTarget, nearestMonsterGap } from "./abilityTargeting";
-import { beginFormationTechnique } from "../../classes/archetypes/summoner/formationTechnique";
+import { armTechnique } from "./abilityArming";
 import { actorFromPlayer } from "../../../world/worldLogActors";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 
@@ -256,13 +256,18 @@ function maybeFireTechnique(
 
   // One offensive channel: an armed charge persists until a hit consumes it, and
   // a cast owns the channel until it resolves. Neither may be pre-empted.
-  if (player.hasArmedAbility || player.hasFormationTechnique || player.isCastingAbility) return true;
+  if (
+    player.hasArmedAbility ||
+    player.hasFormationTechnique ||
+    player.isCastingAbility ||
+    player.isChargingAbility
+  ) return true;
   if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
   if (!shouldFire(world, player, ability, slotIndex, fctx)) return false;
 
   // A cast pays its cooldown on RESOLVE, not on begin (see abilityCasting.ts),
   // so nothing is charged here.
-  if (ability.shape === "cast") {
+  if (ability.shape === "cast" || ability.shape === "charge") {
     const started = beginAbilityCast(world, player, ability, slotIndex, now);
     if (started) recordAbilityActivation(world, player, abilityId, 'technique');
     return started;
@@ -350,14 +355,6 @@ function recordAbilityActivation(
     relatedPlayerIds: [player.isPlayer.id],
     nodeId: player.hasPosition.nodeId,
   });
-}
-
-/** Conduit Techniques belong to its current summon formation, not one body. */
-function armTechnique(world: World, player: PlayerEntity, abilityId: string): void {
-  if (player.summonsMinions && beginFormationTechnique(world, player, abilityId)) return;
-  // A Conduit with no living summons keeps the legacy armed marker. The first
-  // reconstructed summon hit can convert it instead of silently wasting it.
-  attachComponent(world, player, "hasArmedAbility", { abilityId });
 }
 
 function resolveTechniqueEffect(player: PlayerEntity, ability: AbilityDef) {

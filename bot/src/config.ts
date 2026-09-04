@@ -31,6 +31,8 @@ export interface BotConfig {
   policyId: string;
   /** Optional dev-only synthetic tier-entry profile id. */
   tierEntryProfileId?: string;
+  /** Optional Snapshot B JSON produced by a real canonical T1 run. */
+  tierEntrySnapshotPath?: string;
   /**
    * Carryover-economy arm for a route that starts from a tier-entry template.
    *
@@ -198,6 +200,7 @@ export function buildConfig(args: Record<string, string>): BotConfig {
     economyArm: economyArm as T1EconomyArm | undefined,
     policyId,
     tierEntryProfileId: args.tierEntry || args.entryProfile,
+    tierEntrySnapshotPath: args.tierEntrySnapshot,
     entryEconomy:
       args.entryEconomy === "natural" || args.entryEconomy === "catalyst-primed"
         ? args.entryEconomy

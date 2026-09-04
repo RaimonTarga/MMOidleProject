@@ -40,6 +40,10 @@ export interface EconomyCandidate {
   catalystProgressPerUnitT1: number;
   /** Whether the dev reward multiplier also scales catalyst progress. */
   catalystsScaledByRewardMultiplier: boolean;
+  /** Canonical T1 biome XP rate at rewardMultiplier=1. */
+  t1BiomeXpRewardMultiplier: number;
+  /** Canonical T1 essence rate at rewardMultiplier=1. */
+  t1BiomeEssenceRewardMultiplier: number;
   /** Live `+5` essence costs for the T1 items a route can actually buy. */
   t1Plus5EssenceCosts: Record<string, number>;
 }

@@ -116,6 +116,8 @@ export interface ExecutorDeps {
   fastBossRetry: boolean;
   fastBossRetryIncludeGuardians: boolean;
   leaseSession?: RouteLeaseSession;
+  /** Boundary hook for exports that must be taken at a named route milestone. */
+  onMilestone?: (id: string) => void;
 }
 
 export class RouteExecutor {
@@ -1952,6 +1954,7 @@ export class RouteExecutor {
     // milestone set already names every instant that matters -- each biome max,
     // all-biomes-maxed, and gear-plus-5.
     this.deps.recorder.walletSnapshot(this.deps.obs, "milestone", id);
+    this.deps.onMilestone?.(id);
   }
 
   get milestonesFired(): string[] {

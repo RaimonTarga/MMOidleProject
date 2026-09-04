@@ -72,6 +72,7 @@ Every one is deterministic (session tokens / counters off the authoritative cloc
 | `flies` | Ignores mountain ledges for pathing **and** roams a wide, lazy aerial circuit while idle. Client draws it hovering. | [`pathMotion.ts`](../server/src/systems/world/pathMotion.ts), `aerialWanderTarget` in [`ai.ts`](../server/src/systems/combat/ai/ai.ts) |
 | `staticSentry` | Never roams: holds its spawn point, activates on pull range, returns after. The generalisation of `holdsChokepoints` past Mountain (needs no authored terrain). | `createMonster` in [`spawning/index.ts`](../server/src/systems/world/spawning/index.ts) |
 | `idleAnchor` | `'jungle-bush'` / `'swamp-pool'` — idles **inside** the terrain feature instead of roaming past it. | `bushIdleTarget` / `poolIdleTarget` in [`ai.ts`](../server/src/systems/combat/ai/ai.ts) |
+| `concealedWhileIdle` | Purely presentational camouflage for a monster with no terrain anchor: the client subdues it while idle and reveals it on engage. Deliberately separate from `idleAnchor` so camouflage never moves the monster. | `isConcealingType` in [`monsters.ts`](../client/src/render/monsters.ts) |
 
 `flies` and `vaultsMountainLedges` are deliberately separate despite sharing the pathing
 consequence: the caprine climbs the terrain, the flyer is above it, and only the flyer
@@ -84,7 +85,7 @@ to *every* swamp mob. It is now authored on the one monster whose identity is li
 
 | Field | Effect |
 |---|---|
-| `openingVolley: { hits }` | The first beat of each combat session fires N pipeline hits (reveal-and-fire). Re-arms on fresh aggro. |
+| `openingVolley: { hits }` | The first beat of each combat session fires N pipeline hits (reveal-and-fire). Re-arms on fresh aggro. **Supported but currently unauthored** — the Chameleon line moved to a recurring `castedAttackSpeedBuff` barrage, which is visible and repeatable rather than a one-time burst. |
 | `cadenceVolley: { everyNAttacks, hits }` | Every Nth beat fires N hits (periodic burst). |
 | `dotEffect.openerStacks` | The first landed hit of a session applies N stacks — the ambush as poison *alpha* rather than a damage spike. Consumed on the hit that actually lands, so an evaded opener is not burned. |
 | `cadenceFinisher.rootMs` | The boosted cadence beat also roots (Constrict). |
@@ -114,6 +115,60 @@ lockdown alone.
 **Plague Hex creates nothing.** It extends monster DoTs already on the player; no new stacks,
 no new effect. Against a lone Hexer it does nothing at all — correct, because it is a *support*
 creature.
+
+### `monsterAbilities` — the generic elite rotation
+
+An ordered list of independent cast-time abilities on `MonsterDefinition`, each owning its own
+cooldown, so an elite can have a readable rotation without another bespoke subsystem. The first
+*ready* ability in the list is selected. Scheduler:
+[`updateMonsterAbilities`](../server/src/systems/combat/engine/combat.ts); per-ability runtime
+state lives in `TracksCombat` counters keyed by ability id
+([`monsterMechanics.ts`](../server/src/systems/combat/engine/monsterMechanics.ts)).
+
+| Action | Effect |
+|---|---|
+| `hit` | One full-pipeline hit at `multiplier`, with an optional player rider and knockback. |
+| `area-hit` | A committed circle: planted at cast start, resolves at that point whether or not the target is still standing in it. Hits players **and** minions. |
+| `attack-speed-buff` | Self haste, either for a duration or as N primed attacks. |
+| `shield` | Self absorb ward as a fraction of max HP, with the optional `shatter` rider. Drained ahead of any periodic `enemyShield` by `applyCastedMonsterWard`. |
+
+This absorbed two older primitives that hid their beat from the player: `cadenceFinisher`
+(an every-Nth-attack spike with no tell) became a named cast on its own cooldown for the
+Tundra/Volcano anchors, and the periodic `enemyShield` on the Volcano anchors and
+`elder-leviathan` became a casted `shield` — the barrier now costs a visible wind-up instead
+of reforming on a hidden timer. `enemyShield` itself is unchanged and still used elsewhere.
+
+⚠ Like `enemyShield`, a casted ward is only drained by `runPlayerAttack`. **DoT ticks bypass
+it entirely** — that is the long-standing "shell rewards burst over chip" rule, not an
+oversight, but it means a `shield` action is worth nothing against a DoT build.
+
+`target` says where an `area-hit` **plants** — `'self'` at the caster's feet, `'player'` at the
+target's cast-start position. It does **not** say who the ability hurts: a `target: 'self'` body
+sweep still lands on the player. Presentation must read the *action*, not the ability target
+(`describeMonsterAbility` in [`bestiaryMechanics.ts`](../shared/src/systems/bestiaryMechanics.ts)
+is the one composer for both the bestiary and the map panel).
+
+Player riders (`slow` / `antiheal` / `vulnerability`) reuse the shared player statuses rather
+than new ids, and go through `applyStrongestPlayerRider`: `applyStatusEffect` keeps the
+**existing** `data` when the status is already on the target, so a rider that loses the race to
+another source would otherwise refresh a clock and apply no magnitude at all. The harsher of the
+two values wins. Every rider is skipped on an evaded hit, per the global evade rule.
+
+⚠ **ONE CAST PER MONSTER.** The scheduler yields while a `chargedAttack`, `castedAttackSpeedBuff`
+or `lowHealthWard` wind-up is pending. Two invariants depend on it: `publishGroundZone` clears
+telegraphs by `ownerId` (a second cast would **erase** the first one's committed circle) and the
+client's cast bar is keyed by monster id (a second cast-start steals the bar, and the first
+cast-end closes it early). Without the guard an ability could open mid-Devour and leave the slam
+to land unannounced. A cast also stamps `performsAttack.lastAttackAt`, so a self-only beat costs
+the swing it replaced instead of resolving and immediately swinging for free.
+
+### `castedAttackSpeedBuff.rallyNearby`
+
+A capped, visible alternative to passive pack membership: on cast completion, up to `maxTargets`
+**unaggroed, non-boss, un-leashed** monsters in `radius` are handed the caster's current target.
+One rally per aggro session by default, and a rallied monster is stamped so it cannot relay the
+call into a second wave. This is the Jungle Ape's Chestbeat, and the single sanctioned exception
+to Jungle's no-pack rule — the biome still groups fights through terrain, not coordination.
 
 ### Defensive states
 

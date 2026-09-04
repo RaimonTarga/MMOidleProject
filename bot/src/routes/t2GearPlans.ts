@@ -53,7 +53,11 @@ export interface T2ClassPlan {
   /** Short class name, used to build route ids. */
   slug: string;
   movementProfile: T2MovementProfile;
-  /** The T1 endgame pair this route carries into Tier 2. */
+  /**
+   * DEPRECATED as a route input. The ability pair is now owned by
+   * `t2Loadouts.ts`, which sets it per biome from the encounter-shape policy.
+   * Kept only as a record of what the class's Tier-1 template ends on.
+   */
   technique: string;
   guard: string;
   /** One-line statement of what this plan predicts, for the adoption report. */
@@ -234,7 +238,13 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       plains: { adopt: PLAINS_CORE_KIT, skip: SKIP_STEELSWORD },
       forest: {
         adopt: ["gale-needle", "forest-vest-t2"],
-        craftOnly: ["thorn-needle"],
+        skip: {
+          // Dropped from the baseline for an ORDERING reason, not a design one:
+          // reconstructing it costs 53 purple, and purple is not minted until
+          // Swamp -- one leg later. Asking for it here would farm green forever.
+          // `pnpm bot:t2-payable` lists this class of trap.
+          "thorn-needle": "unpayable on the Forest leg (needs purple, first minted in Swamp); a probe, not baseline",
+        },
       },
       swamp: {
         craftOnly: ["swamp-mirebrand"],

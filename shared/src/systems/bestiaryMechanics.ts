@@ -1,4 +1,4 @@
-import type { MonsterDefinition, BossAction } from '../data/monsters/types';
+import type { MonsterAbility, MonsterAbilityAction, MonsterDefinition, BossAction } from '../data/monsters/types';
 import { monsterIsRanged, monsterKites } from '../data/monsters/behavior';
 import type { DungeonMonsterModifiers } from '../dungeons/dungeonTypes';
 import { resolveMonsterDotDebuff } from './monsterDotFlavor';
@@ -33,6 +33,40 @@ function fmtPct(frac: number): string {
 
 function fmtMult(mult: number): string {
   return `${Number.isInteger(mult) ? mult : mult.toFixed(2)}×`;
+}
+
+/**
+ * One clause per authored ability action.
+ *
+ * Each clause names its OWN target. `MonsterAbility.target` only says where an
+ * area action plants ('self' = at the caster's feet), so it must never be read as
+ * who the ability hurts — a `target: 'self'` body sweep still lands on the player.
+ */
+function describeMonsterAbilityAction(action: MonsterAbilityAction): string {
+  const effect = action.type === 'hit' || action.type === 'area-hit' ? action.effect : undefined;
+  const effectText = effect
+    ? effect.kind === 'slow'
+      ? `, slowing you to ${fmtPct(effect.speedMult)} for ${fmtMs(effect.durationMs)}`
+      : effect.kind === 'antiheal'
+        ? `, reducing your healing by ${fmtPct(effect.reduction)} for ${fmtMs(effect.durationMs)}`
+        : `, increasing your damage taken by ${fmtPct(effect.damageTakenPct)} for ${fmtMs(effect.durationMs)}`
+    : '';
+  if (action.type === 'hit') return `hits you for ${fmtMult(action.multiplier)}${effectText}`;
+  if (action.type === 'area-hit') return `hits a ${action.radius}px circle for ${fmtMult(action.multiplier)}${effectText}`;
+  if (action.type === 'attack-speed-buff') {
+    return `gains +${fmtPct(action.attackSpeedPct)} attack speed for ${fmtMs(action.durationMs)}`;
+  }
+  return `gains a ${fmtPct(action.shieldPct)} max-HP barrier for ${fmtMs(action.durationMs)}`;
+}
+
+/**
+ * Full sentence for one generic monster ability. Exported so the map's monster
+ * panel renders the same wording as the bestiary instead of a second copy of this
+ * logic — presentation for a shared data field belongs next to the field.
+ */
+export function describeMonsterAbility(ability: MonsterAbility): string {
+  const actions = ability.actions.map(describeMonsterAbilityAction).join(' and ');
+  return `Casts for ${fmtMs(ability.castMs)}, then ${actions}; recurs every ${fmtMs(ability.cooldownMs)}.`;
 }
 
 function describeBossAction(a: BossAction): string {
@@ -186,6 +220,36 @@ export function describeMonsterMechanics(
         (aftershock ? `, then telegraphs ${aftershock.rayCount} radial fault lines` : '') +
         '.',
     });
+  }
+
+  if (def.castedAttackSpeedBuff) {
+    const buff = def.castedAttackSpeedBuff;
+    const target = buff.target === 'self'
+      ? 'itself'
+      : `nearby monsters within ${buff.radius ?? 'the node'}${typeof buff.radius === 'number' ? 'px' : ''}`;
+    const outcome = buff.attacks !== undefined
+      ? `primes its next ${Math.max(1, Math.round(buff.attacks))} attacks at +${fmtPct(buff.attackSpeedPct)} attack speed`
+      : `hastens ${target} by +${fmtPct(buff.attackSpeedPct)}${buff.durationMs ? ` for ${fmtMs(buff.durationMs)}` : ''}`;
+    const rally = buff.rallyNearby
+      ? `, rallying up to ${Math.max(0, Math.round(buff.rallyNearby.maxTargets))} unengaged nearby monsters`
+      : '';
+    lines.push({
+      id: 'casted-haste',
+      icon: '↯',
+      label: buff.name,
+      detail: `Casts for ${fmtMs(buff.castMs)}, then ${outcome}${rally}.`,
+    });
+  }
+
+  if (def.monsterAbilities) {
+    for (const ability of def.monsterAbilities) {
+      lines.push({
+        id: `ability-${ability.id}`,
+        icon: '⚡',
+        label: ability.name,
+        detail: describeMonsterAbility(ability),
+      });
+    }
   }
 
   if (def.cadenceFinisher) {

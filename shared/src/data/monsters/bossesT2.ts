@@ -123,15 +123,17 @@ export const bossMonsterEntriesT2 = [
       name: 'Stunning Earthshatter', castMs: 2300, cooldownMs: 10000, initialCooldownMs: 4500,
       multiplier: 2.0, fx: 'strong-kick', precastStunMs: 450, aoe: { radius: 180 },
     },
-    // MOUNTAIN EXAM = "break the guarded position". At 50% it calls a pair of Boulder
-    // Throwers AND the Earthshatter escalates — the same slam, wider and sooner. The
-    // old generic enrage is gone: this lineage escalates its ONE readable hit, and
-    // the repeating dig-in is the "position" half of the identity, not a stall.
+    // MOUNTAIN EXAM = "break the guarded position". At 50% the Earthshatter
+    // escalates — the same slam, wider and sooner — and the Juggernaut visibly locks
+    // its plate in place for a short defensive window. The old generic enrage and
+    // archer adds are gone: the lineage escalates its ONE readable hit and position.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.80, radiusMult: 1.15 },
-          { type: 'spawn-adds', monsterTypeId: 'peak-archer', count: 2, offsetRange: 240 },
+          { type: 'cast', castMs: 1400, label: 'Stoneplate Lock', fx: 'shield', actions: [
+            { type: 'stat-buff', stat: 'plating', mult: 1.5, durationMs: 5000, label: 'stoneplate-lock' },
+          ] },
         ] },
       ],
       repeating: [
@@ -193,14 +195,16 @@ export const bossMonsterEntriesT2 = [
       multiplier: 1.6, fx: 'strong-kick', aoe: { radius: 140 },
     },
     // CAVE EXAM = "your shell erodes". At 50% the corrosion bites deeper (+1 plating
-    // per stack) AND a Cave Troll joins — armoured support is the sanctioned Cave
-    // escalation, so the erosion now runs on two bodies. The old enrage + speed buff
-    // were generic and said nothing about this lineage.
+    // per stack), then the Dreadbore seals its own carapace for a short, readable
+    // defensive window. The old troll add, enrage, and speed buff were generic and
+    // said nothing about this lineage.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'empower-shred', platingPerStackAdd: 1 },
-          { type: 'spawn-adds', monsterTypeId: 'cave-troll', count: 1, offsetRange: 240 },
+          { type: 'cast', castMs: 1400, label: 'Carapace Seal', fx: 'shield', actions: [
+            { type: 'shield', drAdd: 0.15, durationMs: 5500 },
+          ] },
         ] },
       ],
     },
@@ -253,8 +257,8 @@ export const bossMonsterEntriesT2 = [
   // JUNGLE (debut T2) — AMBUSH. The start of the predator lineage, and deliberately
   // its simplest statement: an opening pounce (openingStrike → damage-cap answers),
   // and ONE mid-fight wave where the pack leaps from the thickets. Evasion, the hunt
-  // state, and the frenzy finale all arrive later; T2 only teaches "it jumps you, and
-  // then the jungle jumps you". Adds are lone mobs (createMonster), not packs.
+  // state, and the frenzy finale all arrive later; T2 teaches "it jumps you, then
+  // hunts you". The old add wave is replaced by one casted predator burst.
   //
   // ENCOUNTER REWORK: the 50% enrage was dropped. This boss is already fast; a
   // frequency storm on top of the ambush made it read as a Forest fight.
@@ -270,9 +274,10 @@ export const bossMonsterEntriesT2 = [
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'stat-buff', stat: 'speed', mult: 1.35 },
-          { type: 'spawn-adds', monsterTypeId: 'jungle-snake', count: 2, offsetRange: 260 },
-          { type: 'spawn-adds', monsterTypeId: 'jungle-ape', count: 1, offsetRange: 260 },
+          { type: 'cast', castMs: 1400, label: 'Canopy Hunt', fx: 'frenzy', actions: [
+            { type: 'stat-buff', stat: 'speed', mult: 1.25, durationMs: 7000, label: 'canopy-hunt-pursuit' },
+            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.25, durationMs: 7000, label: 'canopy-hunt-haste' },
+          ] },
         ] },
       ],
     },

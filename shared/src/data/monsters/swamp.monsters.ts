@@ -145,7 +145,7 @@ export const swampMonsterEntries = [
     // later Snapper's shell is defense AND space denial. Earlier Snapper: shell =
     // defense. Later Snapper: shell = defense + a circle you cannot stand in.
     shellUp: {
-      atHpPct: 0.5, durationMs: 4000, directDamageMult: 0.15,
+      atHpPct: 0.5, castMs: 500, durationMs: 4000, directDamageMult: 0.15,
       pool: { radius: 150, durationMs: 6000, damagePerTick: 12, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
     },
     dotEffect: { debuffId: 'plague-venom', label: 'Plague', damagePerStack: 5, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
@@ -169,9 +169,9 @@ export const swampMonsterEntries = [
     // WARNING: creates no stacks and no new DoT. Against a lone Hexer it does
     // nothing at all, which is correct - it is a SUPPORT creature.
     chargedAttack: {
-      name: 'Plague Hex', castMs: 1500, cooldownMs: 10000, initialCooldownMs: 4000,
+      name: 'Plague Hex', castMs: 1500, cooldownMs: 8000, initialCooldownMs: 0,
       multiplier: 1.0, fx: 'power-shot',
-      appliesAntiheal: { reduction: 0.30, durationMs: 6000 },
+      appliesAntiheal: { reduction: 0.30, durationMs: 9000 },
       refreshesPlayerDots: { extendMs: 3000, maxTotalMs: 12000 },
     },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },

@@ -89,7 +89,7 @@ export type BossAction =
       label: string;
       actions: BossAction[];
       /** Cast-start cue. Defaults to the rallying-roar treatment. */
-      fx?: 'roar' | 'frenzy';
+      fx?: 'roar' | 'frenzy' | 'shield';
     }
   /**
    * RAISE DEAD (Wasteland) — one burst resurrection. Claims up to `count` corpses
@@ -385,6 +385,72 @@ export interface MonsterRaisesDead {
   castFx?: string;
 }
 
+/** A player-facing rider on a generic monster ability hit. */
+export type MonsterAbilityPlayerEffect =
+  | { kind: 'slow'; speedMult: number; durationMs: number }
+  | { kind: 'antiheal'; reduction: number; durationMs: number }
+  | { kind: 'vulnerability'; damageTakenPct: number; durationMs: number };
+
+/**
+ * Effects resolved by a generic monster ability. The list is deliberately small:
+ * direct damage, committed area damage, player debuffs, and self-support cover
+ * the readable elite/boss beats without turning authoring into a second spell
+ * system.
+ */
+export type MonsterAbilityAction =
+  | {
+      type: 'hit';
+      multiplier: number;
+      effect?: MonsterAbilityPlayerEffect;
+      knockback?: { distance: number };
+    }
+  | {
+      type: 'area-hit';
+      radius: number;
+      multiplier: number;
+      effect?: MonsterAbilityPlayerEffect;
+      stunMs?: number;
+      knockback?: { distance: number };
+    }
+  | {
+      type: 'attack-speed-buff';
+      effectId: string;
+      attackSpeedPct: number;
+      durationMs: number;
+      attacks?: number;
+    }
+  | {
+      type: 'shield';
+      effectId: string;
+      shieldPct: number;
+      durationMs: number;
+      shatter?: {
+        selfDamagePct: number;
+        vulnerability?: { damageTakenPct: number; durationMs: number };
+        freezeRadius?: number;
+        freezeDurationMs?: number;
+      };
+    };
+
+/**
+ * Reusable cast-time monster ability. A player-targeted area hit plants at the
+ * target's cast-start position; self-targeted area hits plant at the caster.
+ */
+export interface MonsterAbility {
+  id: string;
+  name: string;
+  castMs: number;
+  cooldownMs: number;
+  initialCooldownMs?: number;
+  target: 'player' | 'self';
+  /** Defaults to true for player-targeted abilities and false for self abilities. */
+  requiresRange?: boolean;
+  /** Allows the cast to be armed while the target is outside basic attack range. */
+  castWhileOutOfRange?: boolean;
+  actions: MonsterAbilityAction[];
+  fx?: string;
+}
+
 export interface MonsterDefinition {
   id: string;
   name: string;
@@ -562,6 +628,13 @@ export interface MonsterDefinition {
    * Falls back to ordinary wander when the node has no such feature.
    */
   idleAnchor?: 'jungle-bush' | 'swamp-pool';
+  /**
+   * Presentational concealment for a monster that is visually subdued while
+   * idle, but does not need terrain-specific idle movement. The client reveals
+   * it automatically once the monster enters combat. Kept separate from
+   * `idleAnchor` so camouflage does not accidentally change AI positioning.
+   */
+  concealedWhileIdle?: boolean;
   /**
    * Defensive-post ecology tag. When true, this monster spawns ON a terrain
    * chokepoint and holds it (short leash + reduced wander) instead of roaming —
@@ -991,8 +1064,26 @@ export interface MonsterDefinition {
     radius?: number;
     /** Start and complete this self/ally boon without requiring attack range. */
     castWhileOutOfRange?: boolean;
+    /**
+     * Optional capped rally performed by the same cast. Unaggroed, non-boss
+     * monsters in `radius` receive the caster's current target. This is an
+     * explicit alternative to passive pack membership, so it remains readable
+     * and cannot recursively pull an unlimited group by default.
+     */
+    rallyNearby?: {
+      maxTargets: number;
+      /** Defaults to true: one rally per aggro session. */
+      oncePerCombat?: boolean;
+    };
     fx?: string;
   };
+  /**
+   * Ordered list of independent, cast-time monster abilities. Each ability owns
+   * its own cooldown and resolves one or more authored actions, so an elite can
+   * have a readable rotation without growing another bespoke combat subsystem.
+   * The first ready ability in the list is selected.
+   */
+  monsterAbilities?: MonsterAbility[];
   /**
    * Charged (cast-time) special attack — a TELEGRAPHED big hit. When the per-combat
    * `cooldownMs` is ready and the monster is in range, it begins a `castMs` wind-up

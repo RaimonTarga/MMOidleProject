@@ -20,6 +20,10 @@ const TOXIC_FILL = 0x63852c;
 const TOXIC_LINE = 0xb8dc56;
 const FAULT_FILL = 0x8a4d2a;
 const FAULT_LINE = 0xffc06a;
+const TRENCH_SWEEP_FILL = 0x245f86;
+const TRENCH_SWEEP_LINE = 0x72d8e8;
+const TRENCH_MINE_FILL = 0x5d3c86;
+const TRENCH_MINE_LINE = 0xe0a8ff;
 
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
@@ -33,6 +37,7 @@ export interface GroundZoneSprite {
   radius: number;
   x: number;
   y: number;
+  fx?: string;
 }
 
 export function syncGroundZones(
@@ -70,6 +75,7 @@ export function syncGroundZones(
         radius: zone.radius,
         x: zone.x,
         y: zone.y,
+        fx: zone.fx,
       };
       scene.groundZones.set(zone.id, sprite);
     }
@@ -81,6 +87,7 @@ export function syncGroundZones(
     sprite.radius = zone.radius;
     sprite.x = zone.x;
     sprite.y = zone.y;
+    sprite.fx = zone.fx;
     sprite.image
       ?.setPosition(zone.x, zone.y)
       .setDisplaySize(zone.radius * 2.1, zone.radius * 2.1);
@@ -136,15 +143,20 @@ function drawZone(sprite: GroundZoneSprite, progress: number): void {
     return;
   }
 
+  const trenchSweep = sprite.fx === 'trench-tail-sweep' || sprite.fx === 'trench-body-sweep';
+  const trenchMine = sprite.fx === 'trench-silt-mine';
+  const fill = trenchSweep ? TRENCH_SWEEP_FILL : trenchMine ? TRENCH_MINE_FILL : SLAM_FILL;
+  const line = trenchSweep ? TRENCH_SWEEP_LINE : trenchMine ? TRENCH_MINE_LINE : SLAM_LINE;
+
   // Outer rim: the committed footprint. Solid from the first frame so the player
   // can read where NOT to stand before the fill tells them how long they have.
-  graphic.fillStyle(SLAM_FILL, 0.18);
+  graphic.fillStyle(fill, 0.18);
   graphic.fillCircle(x, y, radius);
-  graphic.lineStyle(4, SLAM_LINE, 0.9);
+  graphic.lineStyle(4, line, 0.9);
   graphic.strokeCircle(x, y, radius);
 
   // Inner fill: the countdown. Reaches the rim exactly on impact.
-  graphic.fillStyle(SLAM_FILL, 0.4);
+  graphic.fillStyle(fill, 0.4);
   graphic.fillCircle(x, y, radius * progress);
 
   // Impact flash — the last sliver of the wind-up.

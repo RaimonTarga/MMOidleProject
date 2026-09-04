@@ -4,8 +4,10 @@ import type { PlayerDeathPayload } from "@mmo-idle/shared";
 import {
   GAME_CONFIG,
   NODE_BIOMES,
+  defaultT1EconomyConfig,
   t1EconomyConfigForArm,
   t1Plus5EssenceCosts,
+  tierEntryProfileFromT1Snapshot,
   type PlayerView,
   type TierEntryInitialState,
 } from "@mmo-idle/shared";
@@ -30,6 +32,11 @@ import { BOT_JSONL_SCHEMA_VERSION } from "./telemetry/events";
 import { Recorder } from "./telemetry/recorder";
 import { TelemetrySink } from "./telemetry/sink";
 import { buildSummary, writeSummary, type RunSummary } from "./telemetry/summary";
+import {
+  buildT1CharacterSnapshot,
+  readT1CharacterSnapshot,
+  T1SnapshotStore,
+} from "./telemetry/t1Snapshots";
 import { botRegistry, type BotStatus, type WorldEntity, type WorldView } from "./ui/status";
 import { requireTierEntryProfile, t2EntryProfileId } from "./tierEntry/profiles";
 import { formatValidation, validateProfile, validateSpawn } from "./tierEntry/validate";
@@ -88,14 +95,28 @@ export async function runBot(
   // eighteen-route batch spanning six classes needs one `--entryEconomy` flag
   // rather than eighteen `--tierEntry` ids. The resolved id is recorded in the
   // run header, so the arm stays explicit and reproducible either way.
-  const resolvedTierEntryId =
-    config.tierEntryProfileId ??
-    (authoredRoute.startsFromTierEntry
-      ? t2EntryProfileId(authoredRoute.classRoot, config.entryEconomy)
-      : undefined);
-  const tierEntryProfile = resolvedTierEntryId
-    ? requireTierEntryProfile(resolvedTierEntryId)
+  if (config.tierEntryProfileId && config.tierEntrySnapshotPath) {
+    throw new Error("--tierEntry and --tierEntrySnapshot are mutually exclusive");
+  }
+  const sourceSnapshot = config.tierEntrySnapshotPath
+    ? readT1CharacterSnapshot(config.tierEntrySnapshotPath)
     : undefined;
+  if (sourceSnapshot && !authoredRoute.startsFromTierEntry) {
+    throw new Error(
+      `route ${authoredRoute.id} does not declare a tier-entry start for --tierEntrySnapshot`,
+    );
+  }
+  const resolvedTierEntryId = sourceSnapshot
+    ? undefined
+    : config.tierEntryProfileId ??
+      (authoredRoute.startsFromTierEntry
+        ? t2EntryProfileId(authoredRoute.classRoot, config.entryEconomy)
+        : undefined);
+  const tierEntryProfile = sourceSnapshot
+    ? tierEntryProfileFromT1Snapshot(sourceSnapshot)
+    : resolvedTierEntryId
+      ? requireTierEntryProfile(resolvedTierEntryId)
+      : undefined;
   if (
     tierEntryProfile &&
     authoredRoute.startsFromTierEntry &&
@@ -125,9 +146,12 @@ export async function runBot(
     .replace(/[:.]/g, "-")}-${randomUUID().slice(0, 8)}`;
 
   const sink = new TelemetrySink(config.outDir, runId);
+  const snapshotStore = new T1SnapshotStore(sink.dir);
   const startedAt = Date.now();
   const conn = new BotConnection(config.serverUrl, config.devAccountId);
-  const economyConfig = t1EconomyConfigForArm(config.economyArm ?? "C");
+  const economyConfig = config.economyArm
+    ? t1EconomyConfigForArm(config.economyArm)
+    : defaultT1EconomyConfig();
   const obs = new Observation(conn.mirror, economyConfig);
   const intents = new Intents(conn);
 
@@ -365,6 +389,25 @@ export async function runBot(
       : undefined,
     templateValidation,
   };
+  const snapshotFrameId = tierEntryProfile?.frameId ?? route.frameId ?? null;
+  const captureSnapshot = (kind: "mastery-completion" | "tier2-handoff"): void => {
+    const self = obs.self;
+    if (!self) return;
+    const snapshot = buildT1CharacterSnapshot({
+      kind,
+      header,
+      self,
+      frameId: snapshotFrameId,
+      elapsedMs: recorder.now(),
+      rewardMultiplier,
+      canonicalAtCapture: taints.length === 0 && rewardMultiplier === 1,
+    });
+    const ref = snapshotStore.capture(snapshot);
+    console.log(
+      `[bot] ${runId} Snapshot ${kind === "mastery-completion" ? "A" : "B"}: ` +
+        `${ref.file} at ${ref.elapsedMs}ms (GM ${ref.globalMastery})`,
+    );
+  };
   recorder.emit({ kind: "run-start", atMs: 0, header });
   recorder.walletSnapshot(obs, "run-start", route.id);
   leaseSession?.attachRecorder(recorder);
@@ -409,6 +452,9 @@ export async function runBot(
     fastBossRetry: config.fastBossRetry,
     fastBossRetryIncludeGuardians: config.fastBossRetryIncludeGuardians,
     leaseSession,
+    onMilestone: (id) => {
+      if (id === "all-biomes-maxed") captureSnapshot("mastery-completion");
+    },
     awaitAlive: async () => {
       while (obs.self?.isDead ?? false) {
         if (aborted) throw new AbortError("run aborted");
@@ -616,6 +662,9 @@ export async function runBot(
     stallReason = stallReason ?? "route steps exhausted without satisfying completion";
     stalls.push({ reason: stallReason });
   }
+  if (completion === "completed" && routeComplete(route, obs)) {
+    captureSnapshot("tier2-handoff");
+  }
 
   leaseSession?.releaseAll(`run-${completion}`);
   const leaseEvidence = leaseSession?.evidence();
@@ -648,9 +697,11 @@ export async function runBot(
     leaseEvidence,
     maximumSimultaneouslyProgressing: leaseSession?.maximumSimultaneouslyProgressing(),
     winCondition: config.completionMode,
+    snapshotArtifacts: snapshotStore.manifest(),
   });
 
   await sink.close();
+  snapshotStore.writeManifest();
   writeSummary(sink.dir, summary);
 
   // The multiplier is server-GLOBAL and outlives the run, so a browser player
@@ -778,6 +829,8 @@ function resolveEconomyCandidate(
     t1Plus5EssenceCostMultiplier: economyConfig.t1Plus5EssenceCostMultiplier,
     catalystProgressPerUnitT1: economyConfig.catalystProgressPerUnitT1,
     catalystsScaledByRewardMultiplier: CATALYSTS_SCALED_BY_REWARD_MULTIPLIER,
+    t1BiomeXpRewardMultiplier: economyConfig.t1BiomeXpRewardMultiplier,
+    t1BiomeEssenceRewardMultiplier: economyConfig.t1BiomeEssenceRewardMultiplier,
     t1Plus5EssenceCosts: t1Plus5EssenceCosts(
       economyConfig.t1Plus5EssenceCostMultiplier,
     ),

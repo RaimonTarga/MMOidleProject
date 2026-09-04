@@ -76,7 +76,7 @@ export type CombatEvent =
   // false ⇒ the wind-up was interrupted/aborted (just clear the bar). Purely cosmetic —
   // the damage + interrupt are server-authoritative. `fx` selects the charged-shot art.
   | { kind: 'monster-cast-start'; monsterId: string; castMs: number; label: string; fx?: string }
-  | { kind: 'monster-cast-end'; monsterId: string; fired: boolean; targetId?: string; fx?: string }
+  | { kind: 'monster-cast-end'; monsterId: string; fired: boolean; targetId?: string; pos?: Vec2; radius?: number; fx?: string }
   // Server forced the player to a new position (e.g. blunderbuss recoil). The
   // client owns own-player prediction, so it must be told to accept the move
   // even mid-movement; `pos` is the authoritative destination to slide to.

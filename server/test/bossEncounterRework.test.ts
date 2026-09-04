@@ -14,6 +14,7 @@ import {
   emptyEquipment,
   getStatusEffect,
 } from '@mmo-idle/shared';
+import type { BossAction } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
@@ -90,6 +91,17 @@ function def(id: string) {
   return found;
 }
 
+function scriptedActions(id: string): BossAction[] {
+  const script = def(id).bossScript;
+  const actions = [
+    ...(script?.phases ?? []).flatMap(phase => phase.actions),
+    ...(script?.repeating ?? []).flatMap(repeating => repeating.actions),
+  ];
+  const flatten = (action: BossAction): BossAction[] =>
+    action.type === 'cast' ? [action, ...action.actions.flatMap(flatten)] : [action];
+  return actions.flatMap(flatten);
+}
+
 /** Every boss that a player can actually fight in a dungeon, by lineage. */
 const ACTIVE_BOSS_IDS = [
   'tusked-razorback', 'gorging-razortusk',
@@ -136,6 +148,20 @@ for (const monster of MONSTER_DATABASE.values()) {
     `${monster.id} still lifts its ramp-debuff caps — max suppression must stay playable`,
   );
 }
+
+// Reinforcements are a Plains identity. Wasteland may resurrect player-made
+// corpses, but no active non-Plains boss may conjure a fresh add wave.
+for (const id of ACTIVE_BOSS_IDS) {
+  if (id === 'tusked-razorback' || id === 'gorging-razortusk') continue;
+  assert(
+    !scriptedActions(id).some(action => action.type === 'spawn-adds'),
+    `${id} should not conjure fresh scripted adds`,
+  );
+}
+assert(
+  scriptedActions('charnel-crown-sovereign').some(action => action.type === 'raise-dead'),
+  'Wasteland should keep corpse resurrection as its add exception',
+);
 
 // ── Per-lineage identity is actually authored ─────────────────────────────────
 // Desert: setup -> punishment. Every tier paints and cashes its own Sun Mark.
@@ -277,10 +303,11 @@ initCombatSystems();
   assert(!!boss, 'Wasteland boss should spawn');
   setAggroTarget(world, boss, { id: 'tide-target', kind: 'player' }, 1_000);
 
-  // Engaging fires the hpPct 1.0 entourage phase.
+  // Engaging no longer conjures an opening entourage: Wasteland's adds must come
+  // from corpses the player actually made.
   updateBossScripts(world, 100);
-  const entourage = [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss);
-  assert(entourage.length > 0, 'the Sovereign should arrive with an entourage');
+  const openingAdds = [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss);
+  assert(openingAdds.length === 0, 'the Sovereign should not conjure opening adds');
 
   // With an empty corpse registry the Mass Resurrection must raise nothing at all.
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
@@ -302,7 +329,14 @@ initCombatSystems();
   );
 
   // Feed it three corpses; the next burst claims them.
-  for (const dead of entourage.slice(0, 3)) recordCorpse(world, dead);
+  const corpses = ['bone-crawler', 'plague-hound', 'bone-crawler'].map((monsterTypeId, index) => {
+    const dead = world.createMonster(NODE, monsterTypeId, { x: 405 + index * 12, y: 400 });
+    assert(!!dead, `corpse fixture ${monsterTypeId} should spawn`);
+    dead.hasHealth.hp = 0;
+    recordCorpse(world, dead);
+    return dead;
+  });
+  assert(corpses.length === 3, 'the corpse fixture should provide three bodies');
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.24;
   updateBossScripts(world, 100);
   assert(

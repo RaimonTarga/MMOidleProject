@@ -172,7 +172,9 @@ const header: RunHeader = {
   economyCandidate: {
     id: 'test', revision: 'test-revision', arm: 'C',
     t1Plus5EssenceCostMultiplier: 0.75, catalystProgressPerUnitT1: 150,
-    catalystsScaledByRewardMultiplier: false, t1Plus5EssenceCosts: {},
+    catalystsScaledByRewardMultiplier: false,
+    t1BiomeXpRewardMultiplier: 2, t1BiomeEssenceRewardMultiplier: 2,
+    t1Plus5EssenceCosts: {},
   },
   executionMode: 'single', maxConcurrency: 1,
 };

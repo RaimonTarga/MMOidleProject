@@ -93,7 +93,7 @@ export const desertMonsterEntries = [
     // every basic hit. Its short cast is frequent, but the longer slow gives the
     // paired Sun Scarab time to create a real kiting window.
     chargedAttack: {
-      name: 'Numbing Sting', castMs: 500, cooldownMs: 5000, initialCooldownMs: 2000,
+      name: 'Numbing Sting', castMs: 500, cooldownMs: 4000, initialCooldownMs: 500,
       multiplier: 1.0, fx: 'power-shot',
       appliesSlow: { speedMult: 0.5, durationMs: 4000 },
     },
@@ -120,7 +120,7 @@ export const desertMonsterEntries = [
     // swing was invisible and unanswerable; a cast bar is both readable and
     // interruptible. Multiplier stays near 1 - the root is the weapon.
     chargedAttack: {
-      name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 9000, initialCooldownMs: 3500,
+      name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 7000, initialCooldownMs: 500,
       multiplier: 1.0, fx: 'power-shot', rootMs: 1400,
     },
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'dust-djinn', count: 1 }] },
@@ -152,8 +152,9 @@ export const desertMonsterEntries = [
   // then debuff-resist + cleanse + last-stand armor.
   ['dune-stalker', {
     id: 'dune-stalker', name: 'Dune Stalker', color: 0xddbb44,
-    // SOFT CONTROLLER T3. Stronger/longer slow or Cripple; durable, slow, low direct
-    // offense. Paired 1:1 with the Gilded Scarab.
+    // SOFT CONTROLLER T3. Its stronger Numbing Sting is telegraphed like the Sand
+    // Scorpion's rather than hiding Cripple on every ordinary hit. Durable, slow,
+    // low direct offense. Paired 1:1 with the Gilded Scarab.
     stats: { hp: 1350, attack: 67, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
     rewards: { essence: 30, essenceType: 'yellow', level: 2, biomeXp: 180 },
@@ -162,7 +163,11 @@ export const desertMonsterEntries = [
     // pack fields are spawn + shared-aggro plumbing only - there is no alpha
     // fantasy here, and no scatter when either half dies.
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandweaver', count: 1 }] },
-    slowEffect: { speedMult: 0.5, durationMs: 2500 },
+    chargedAttack: {
+      name: 'Numbing Sting', castMs: 500, cooldownMs: 3500, initialCooldownMs: 500,
+      multiplier: 1.0, fx: 'power-shot',
+      appliesSlow: { speedMult: 0.45, durationMs: 4500 },
+    },
   }],
 
   ['desert-basilisk', {
@@ -178,7 +183,7 @@ export const desertMonsterEntries = [
     // The Gaze, inherited. The tier's addition is the Sunder below: a successful
     // Gaze roots you and leaves you EXPOSED for a few seconds.
     chargedAttack: {
-      name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 8500, initialCooldownMs: 3500,
+      name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 6500, initialCooldownMs: 500,
       multiplier: 1.0, fx: 'power-shot', rootMs: 1600,
     },
     appliesVulnerability: { damageTakenPct: 0.12, maxStacks: 1, durationMs: 4000 },
@@ -207,9 +212,9 @@ export const desertMonsterEntries = [
 
   ['sand-viper', {
     id: 'sand-viper', name: 'Sand Viper', color: 0xddaa33,
-    // SOFT CONTROLLER T4 — the mature soft controller: severe Cripple / high
-    // soft-control uptime, on a CONTROLLER stat shape rather than the old fast-DPS
-    // profile. Paired 1:1 with the Sunshield Scarab.
+    // SOFT CONTROLLER T4 — the mature soft controller: severe, high-uptime
+    // Numbing Sting on a CONTROLLER stat shape rather than an invisible slow on
+    // the old fast-DPS profile. Paired 1:1 with the Sunshield Scarab.
     stats: { hp: 1343, attack: 78, plating: 0, damageReduction: 0.08, speed: 28, attackRange: 12, attackCooldown: 2400, pullRange: 230 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
     rewards: { essence: 55, essenceType: 'yellow', level: 3, biomeXp: 330 },
@@ -218,7 +223,11 @@ export const desertMonsterEntries = [
     // pack fields are spawn + shared-aggro plumbing only - there is no alpha
     // fantasy here, and no scatter when either half dies.
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
-    slowEffect: { speedMult: 0.45, durationMs: 3000 },
+    chargedAttack: {
+      name: 'Numbing Sting', castMs: 500, cooldownMs: 3000, initialCooldownMs: 500,
+      multiplier: 1.0, fx: 'power-shot',
+      appliesSlow: { speedMult: 0.4, durationMs: 5000 },
+    },
   }],
 
   ['dune-basilisk', {
@@ -231,7 +240,7 @@ export const desertMonsterEntries = [
     rewards: { essence: 100, essenceType: 'yellow', level: 4, biomeXp: 600 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
     chargedAttack: {
-      name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 8000, initialCooldownMs: 3500,
+      name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 6000, initialCooldownMs: 500,
       multiplier: 1.0, fx: 'power-shot', rootMs: 1800,
     },
     appliesVulnerability: { damageTakenPct: 0.18, maxStacks: 1, durationMs: 4500 },

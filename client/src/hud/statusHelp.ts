@@ -176,6 +176,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'summoner-withering-chorus': d('Chorus', 'Each distinct summon voice on the target deepens the affliction.'),
   'enemy-barrier': { title: 'Barrier', kind: 'buff', help: 'A temporary absorb shell is protecting this monster. Damage drains the shell before health; when a reforming clock is shown, sustained pressure is what keeps it broken.' },
   'monster-howl-haste': { title: 'Howl', kind: 'buff', help: 'The Dire Wolf has rallied nearby monsters, including itself. Their attacks come 50% faster while this window lasts.' },
+  'monster-ape-chestbeat': { title: 'Chestbeat', kind: 'buff', help: 'The Jungle Ape has hastened nearby monsters, including itself. Their attacks come 30% faster while this window lasts.' },
   'carrion-screech-haste': { title: 'Necrotic Screech', kind: 'buff', help: 'A Carrion Vulture has hastened nearby allies. Their attacks come 25% faster until the screech fades.' },
   'thorn-spitter-barrage': { title: 'Barrage', kind: 'buff', help: 'The Thorn Spitter has primed its next three attacks to fire at triple speed.' },
   'granite-barrier': { title: 'Granite Barrier', kind: 'buff', help: 'The Granite Titan has raised a temporary ward that absorbs direct damage before its health.' },

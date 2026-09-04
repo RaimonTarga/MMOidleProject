@@ -113,11 +113,13 @@ export const bossMonsterEntriesT3 = [
         { hpPct: 0.5, actions: [
           { type: 'empower-shred', maxStacksAdd: 4, extraThresholds: [9, 12] },
         ] },
-        // Last quarter: each stack bites harder, and a Cavern Troll arrives so the
-        // erosion runs on a second body while you finish the first.
+        // Last quarter: each stack bites harder, and the boss burrows behind a
+        // temporary shell so the corrosion has a defensive climax without another body.
         { hpPct: 0.25, actions: [
           { type: 'empower-shred', platingPerStackAdd: 1 },
-          { type: 'spawn-adds', monsterTypeId: 'cavern-troll', count: 1, offsetRange: 240 },
+          { type: 'cast', castMs: 1600, label: 'Deep Burrow', fx: 'shield', actions: [
+            { type: 'shield', drAdd: 0.18, durationMs: 6000 },
+          ] },
         ] },
       ],
     },
@@ -311,7 +313,9 @@ export const bossMonsterEntriesT3 = [
         { hpPct: 0.5,  actions: [{ type: 'empower-charged', multiplierMult: 1.20, radiusMult: 1.15 }] },
         { hpPct: 0.25, actions: [
           { type: 'empower-charged', cooldownMult: 0.60 },
-          { type: 'spawn-pool', radius: 240, durationMs: 16000, damagePerTick: 16, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
+          { type: 'cast', castMs: 1300, label: 'Vent Rupture', fx: 'frenzy', actions: [
+            { type: 'spawn-pool', radius: 240, durationMs: 16000, damagePerTick: 16, tickIntervalMs: 1000, slowSpeedMult: 0.7 },
+          ] },
         ] },
       ],
     },

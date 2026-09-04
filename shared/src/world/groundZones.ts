@@ -38,4 +38,6 @@ export interface GroundZoneView {
   durationMs: number;
   /** Time left before the zone resolves/expires. */
   remainingMs: number;
+  /** Optional ability cue used to tint otherwise identical telegraphs. */
+  fx?: string;
 }
