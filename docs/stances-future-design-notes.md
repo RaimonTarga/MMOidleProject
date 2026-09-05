@@ -1,11 +1,9 @@
 # Stances — Future Design Notes
 
 Status: **design notes.** The four candidate postures below were IMPLEMENTED on
-2026-09-02 but are deliberately **unplaced** — no stance recipe teaches any of them, so
-no character can learn one and every listener behind them is inert. Placing them (writing
-recipes in `shared/src/stanceRecipes.ts`) is a separate decision, taken when there is a
-tier, biome and cost that make sense. `server/test/stancesUnplaced.test.ts` asserts they
-stay unplaced, so the day one is placed, that is a deliberate act and not a side effect.
+2026-09-02. Warding remains a Tier-3 reward; Time to Strike, Reaper, and Powering Up
+are now deliberate Tier-4 rewards under the locked 2026-09-04 redistribution.
+`server/test/stancesUnplaced.test.ts` confirms that none of the four remains unplaced.
 
 The rest of this document is the design intent as written, kept because the reasoning
 behind each posture is what should govern its placement and tuning.
@@ -30,9 +28,10 @@ Fixed Rune conditions remain preferable for now. Parameterized thresholds such a
 
 ---
 
-## Future Stance candidate: Time to Strike
+## Placed Tier 4 Stance: Time to Strike
 
-> **Implemented 2026-09-02 as `time-to-strike-stance` (unplaced).** `+1.0` to the
+> **Implemented 2026-09-02 as `time-to-strike-stance`; placed in Mountain T4 on
+> 2026-09-04.** `+1.0` to the
 > empowered multiplier via the shared `shared.empowered-mult-add` passive, `-40%` on every
 > non-empowered hit, `-35%` Attack Speed. `Empowered Ready` is now a legal Switch Stance
 > situation, so `Empowered Ready -> Time to Strike` is buildable.
@@ -51,15 +50,17 @@ Potential Rune interaction:
 
 `Empowered Ready -> Time to Strike`
 
-This may justify allowing `Empowered Ready` as a Stance-switch condition in the future.
+`Empowered Ready` is now a legal Stance-switch condition, so the intended
+`Empowered Ready -> Time to Strike` loop is buildable.
 
 The posture should remain unattractive as a permanent default and reward deliberate timing around empowered attacks.
 
 ---
 
-## Future Stance candidate: Reaper
+## Placed Tier 4 Stance: Reaper
 
-> **Implemented 2026-09-02 as `reaper-stance` (unplaced).** `-15%` Attack; a kill landed
+> **Implemented 2026-09-02 as `reaper-stance`; placed in Volcanic T4 on 2026-09-04.**
+> `-15%` Attack; a kill landed
 > while the stance is active arms a 6s window of `+35%` damage and `+25%` Attack Speed that
 > outlives the stance. Kills made *outside* Reaper do not refresh it — otherwise the window
 > never ends.
@@ -106,9 +107,10 @@ Do not let Reaper's normal posture already be excellent; entering it before the 
 
 ---
 
-## Future Stance candidate: Warding
+## Placed Tier 3 Stance: Warding
 
-> **Implemented 2026-09-02 as `warding-stance` (unplaced).** Incoming harmful statuses are
+> **Implemented 2026-09-02 as `warding-stance`; placed in Swamp T3 on 2026-09-04.**
+> Incoming harmful statuses are
 > applied with `-50%` duration and incoming DoTs with `-40%` per-stack damage, for `-50%`
 > Attack and `-25%` Attack Speed. It is expressed as two passives
 > (`shared.status-duration-resist` / `shared.status-potency-resist`) read by
@@ -149,13 +151,16 @@ Cleanse can remove part of the problem, but repeated or layered applications can
 * build relevant resistances;
 * temporarily enter Warding and endure the status barrage.
 
-Do not introduce Warding until encounter ecology gives it enough reason to exist.
+The locked 2026-09-04 pass places Warding in Swamp because the current Swamp
+harmful-status identity is enough to give the answer a home. Its encounter value
+remains a balance follow-up, not a reason to leave the recipe unplaced.
 
 ---
 
-## Future experimental concept: Powering Up
+## Placed Tier 4 Stance: Powering Up
 
-> **Implemented 2026-09-02 as `powering-up-stance` (unplaced),** in the charge-then-release
+> **Implemented 2026-09-02 as `powering-up-stance`; placed in Trench T4 on 2026-09-04,**
+> in the charge-then-release
 > shape below, not the naive one. `-50%` Attack and `-30%` Attack Speed while charging;
 > charge accrues only while the stance is active AND the player is in combat, caps at 8s,
 > and is DISCARDED when combat ends. Leaving the stance — however it is left — spends the
@@ -247,7 +252,7 @@ Strong examples:
 * Time to Strike — exploit an empowered attack window;
 * Brawler — respond to escalating enemy count;
 * Predator — exploit the transition into combat;
-* future Powering Up — prepare, then deliberately release stored power.
+* Powering Up — prepare, then deliberately release stored power.
 
 New Stances should preferably make existing Rune conditions more interesting rather than requiring a new condition for every new Stance.
 
@@ -255,17 +260,20 @@ The cast does not need regular additions simply because later tiers exist. Add a
 
 ---
 
-## Open questions before placing any of these
+## Open questions after placing Powering Up
 
 1. **Tier and biome.** Every stance recipe must satisfy the three reachability rules
    enforced by `shared/src/data/recipeGates.test.ts`: the biome has nodes at the recipe's
    tier, `requiredBiomeLevel` is within `biomeLevelCap(tier, group)`, and `catalystCost`
-   names a live node-modifier family the biome can roll.
+   names a live node-modifier family the biome can roll. The locked pass resolves
+   the current placements as Warding in Swamp T3, Time to Strike in Mountain T4,
+   Reaper in Volcanic T4, and Powering Up in Trench T4.
 2. **Destination RP.** Seeded at 3 / 3 / 3 / 4 (Time to Strike / Reaper / Warding /
    Powering Up). With `Switch Stance` at 0 RP these price as condition + destination, so
    `Empowered Ready -> Time to Strike` is 5 RP and `Target HP Below 25% -> Reaper` is 4 RP.
 3. **Every magnitude is a seed.** None of these has been benched. Reaper in particular is
    the one to watch: a momentum window that reliably outlasts the gap between kills in
    dense content is a permanent buff wearing a timer.
-4. **Warding needs its encounter.** As the notes above say, it should not be placed until
-   an enemy exists that layers debuffs faster than a cleanse can answer.
+4. **Warding's encounter value.** The placement is resolved; continue validating
+   whether Swamp's layered status pressure makes the severe offensive sacrifice
+   worth switching into.

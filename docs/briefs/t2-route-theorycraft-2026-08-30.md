@@ -9,6 +9,15 @@ These proposals are not approved and are not a source of truth. They are to be c
 against human playtesting, 1x economy validation, and real bot runs. Where this document
 and the code disagree, the code wins.
 
+> **Current-code supersession (2026-09-04):** the locked T2 reward redistribution
+> supersedes the placement and economy tables below. Current stances are Offensive /
+> Defensive in Plains L7 (60 yellow + 1 alacrity / 60 yellow + 1 fortified),
+> Perfection in Forest L8 (110 green + 1 alacrity), Fleeting in Swamp L8
+> (110 purple + 1 alacrity), Tanking in Mountain L8 (100 blue + 1 heavy), and
+> Enraged in Cave L8 (110 red + 1 dominion). Current cores are Tempered in Cave L12,
+> Survivalist in Jungle L6, and Force in Desert L6, each at 500 local essence + 4
+> catalysts. The dated tables remain historical theorycraft.
+
 ## Evidence tiers
 
 Conclusions are tagged and the tiers are not blurred:
@@ -510,8 +519,11 @@ and which three seals to take.
 
 ## 5. T3 direction
 
-A sketch, not a route. T3 is where the build space opens: a second Technique slot, the
-range choice, nine restricted cores, and the Rites layer all land at once.
+A sketch, not a route. This section predates the locked 2026-09-04 T3 Stance/Core
+ redistribution; its old placement figures remain historical theorycraft. The exact live
+ T3 reward map and economy are in `docs/stances-current-state.md` and
+ `docs/cores-current-state.md`. T3 is where the build space opens: a second Technique
+ slot, the range choice, nine restricted cores, and the Rites layer all land at once.
 
 | System | Change at T3 | Tier |
 |---|---|---|

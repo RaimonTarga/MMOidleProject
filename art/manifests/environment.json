@@ -695,7 +695,7 @@
       "negative": "ground rectangle, full tree, stump, wall, large obstacle, tangled root barrier, dead tree, creature, character, text, watermark, hard black outline, oversaturated, neon",
       "status": "regen",
       "candidates": 2,
-      "notes": "still doesn't fit the current artstyle of the trees. New query: redo the tree assets. But those are bigger, I reckon- do I need access to a higher tier sub to get a big sprite like the ones I have?",
+      "notes": "out of date something something",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
@@ -1652,91 +1652,146 @@
       "notes": "Replaced the four-station altar with a single reset shrine. Generated with ChatGPT image generation using the previous altar for camera/render density and the accepted Clearing paving Wang sheet for palette/material reference; magenta chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-forest", "out": "files/environment/dungeon-altars/forest.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-forest",
+      "out": "files/environment/dungeon-altars/forest.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "ancient forest challenge altar, dark stone stump-dais embraced by thick roots, emerald leaf-and-antler encounter rune, painterly pixel art, flat magenta background",
       "negative": "clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and forest Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-plains", "out": "files/environment/dungeon-altars/plains.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-plains",
+      "out": "files/environment/dungeon-altars/plains.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "windswept plains challenge altar, sun-bleached standing-stone ring, central capstone, straw grass and amber wind-knot encounter rune, painterly pixel art, flat magenta background",
       "negative": "clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and plains Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-mountain", "out": "files/environment/dungeon-altars/mountain.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-mountain",
+      "out": "files/environment/dungeon-altars/mountain.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "rugged mountain challenge altar, stepped blue-gray slate cairn with angular monolith and silver-blue summit encounter rune, painterly pixel art, flat magenta background",
       "negative": "clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and mountain Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-cave", "out": "files/environment/dungeon-altars/cave.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-cave",
+      "out": "files/environment/dungeon-altars/cave.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "subterranean cave challenge altar, dark slate pedestal fused from stalagmites, mineral basin with cyan crystal-eye encounter rune, painterly pixel art, flat magenta background",
       "negative": "clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and cave Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-swamp", "out": "files/environment/dungeon-altars/swamp.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-swamp",
+      "out": "files/environment/dungeon-altars/swamp.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "murky swamp challenge altar, water-darkened stones and bog roots, reeds, shelf fungus and chartreuse marsh encounter rune, painterly pixel art, flat magenta background",
       "negative": "water plane, clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and swamp Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-jungle", "out": "files/environment/dungeon-altars/jungle.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-jungle",
+      "out": "files/environment/dungeon-altars/jungle.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "overgrown jungle challenge altar, stepped dark temple stone wrapped in vines and broad leaves, jade disk with teal feline-mask encounter rune, painterly pixel art, flat magenta background",
       "negative": "clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and jungle Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-desert", "out": "files/environment/dungeon-altars/desert.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-desert",
+      "out": "files/environment/dungeon-altars/desert.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "austere desert challenge altar, worn ochre sandstone dais and offering block with amber scarab-and-sun encounter rune, painterly pixel art, flat magenta background",
       "negative": "dunes, clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and desert Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-tundra", "out": "files/environment/dungeon-altars/tundra.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-tundra",
+      "out": "files/environment/dungeon-altars/tundra.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "frozen tundra challenge altar, frost-cracked gray stones, snow and icebound pedestal with pale blue snowflake-and-horn encounter rune, painterly pixel art, flat magenta background",
       "negative": "snowfield, clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and tundra Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-volcanic", "out": "files/environment/dungeon-altars/volcanic.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-volcanic",
+      "out": "files/environment/dungeon-altars/volcanic.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "volcanic challenge altar, jagged black hexagonal basalt and obsidian around scoria block, red fissures and ember-orange broken-crown encounter rune, painterly pixel art, flat magenta background",
       "negative": "open lava pool, flame, smoke, clearing altar, four icons, tools, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and volcanic Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-wasteland", "out": "files/environment/dungeon-altars/graveyard.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-wasteland",
+      "out": "files/environment/dungeon-altars/graveyard.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "blighted wasteland challenge altar, cracked ash-gray funerary dais with dead roots and grave-like slab bearing muted violet hollow-sun encounter rune, painterly pixel art, flat magenta background",
       "negative": "bones, clearing altar, four icons, tools, multiple stations, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and wasteland Wang ground for palette; chroma key removed locally."
     },
     {
-      "id": "dungeon-altar-trench", "out": "files/environment/dungeon-altars/trench.png",
-      "size": { "w": 1254, "h": 1254 },
+      "id": "dungeon-altar-trench",
+      "out": "files/environment/dungeon-altars/trench.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "abyssal trench challenge altar, eroded midnight-navy stone with shale fins and mineral nodules, black basin with cyan angler-eye encounter rune, painterly pixel art, flat magenta background",
       "negative": "water plane, coral, fish, bubbles, clearing altar, four icons, tools, scenery, text, shadow, character, photograph, 3d render",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation; Clearing altar used for camera/scale and trench Wang ground for palette; chroma key removed locally."
     },
     {
@@ -1869,7 +1924,10 @@
     {
       "id": "swamp-tree-hollow-cypress-snag",
       "out": "files/environment/trees/swamp/hollow-cypress-snag.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "massive hollow bald-cypress snag with swollen fluted base, broad exposed roots, jagged broken crown, heavy broken side bough, deep hollows, rotted wet gray-brown bark and restrained hanging dead moss; exactly one isolated fully visible dead tree; painterly pixel art matching the forest tree sheet; murky desaturated swamp palette; transparent background",
       "negative": "water, pool, ground patch, shadow, scenery, multiple trees, living leafy canopy, bright green, cropped roots, cropped branches, text, watermark, blurry, 3d render, photograph, vector art, neon, oversaturated",
       "status": "accepted",
@@ -1879,7 +1937,10 @@
     {
       "id": "swamp-tree-twisted-mangrove",
       "out": "files/environment/trees/swamp/twisted-mangrove.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "twisted dead mangrove or willow with crooked braided trunk, arcing leafless limbs, hooked tips, tangled raised roots gathered into one footprint, dark cavities and sparse hanging moss; exactly one isolated fully visible dead tree; painterly pixel art matching the forest tree sheet; murky desaturated swamp palette; transparent background",
       "negative": "water, pool, ground patch, shadow, scenery, multiple trees, living leafy canopy, bright green, cropped roots, cropped branches, text, watermark, blurry, 3d render, photograph, vector art, neon, oversaturated",
       "status": "accepted",
@@ -1889,7 +1950,10 @@
     {
       "id": "swamp-tree-split-oak",
       "out": "files/environment/trees/swamp/split-swamp-oak.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "split lightning-struck swamp oak snag with thick trunk cracked into two unequal broken forks, pale exposed splinters, charred hollow seam, broad gnarled roots, shelf fungus and broken branch stubs; exactly one isolated fully visible dead tree; painterly pixel art matching the forest tree sheet; murky desaturated swamp palette; transparent background",
       "negative": "water, pool, ground patch, shadow, scenery, multiple trees, living leafy canopy, bright green, cropped roots, cropped branches, text, watermark, blurry, 3d render, photograph, vector art, neon, oversaturated",
       "status": "accepted",
@@ -1899,7 +1963,10 @@
     {
       "id": "swamp-tree-leaning-drowned-snag",
       "out": "files/environment/trees/swamp/leaning-drowned-snag.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "leaning drowned dead-tree snag rising diagonally from one centered broad root base, long skeletal hooked branches, peeled wet bark, lichen, bracket fungi and snapped crown; exactly one isolated fully visible dead tree; painterly pixel art matching the forest tree sheet; murky desaturated swamp palette; transparent background",
       "negative": "water, pool, ground patch, shadow, scenery, multiple trees, living leafy canopy, bright green, cropped roots, cropped branches, text, watermark, blurry, 3d render, photograph, vector art, neon, oversaturated",
       "status": "accepted",
@@ -1909,7 +1976,10 @@
     {
       "id": "plains-tree-windswept-elm",
       "out": "files/environment/trees/plains/windswept-elm.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "mature windswept field elm with a broad asymmetrical crown swept to one side, elegant forked trunk, sparse separated clusters of small muted sage and khaki leaves, visible fine branches and modest exposed roots; exactly one isolated fully visible tree; painterly pixel art matching the forest tree sheet; dusty tan and subdued plains palette; transparent background",
       "negative": "ground patch, cast shadow, scenery, multiple trees, dense forest canopy, vivid green, saturated green, fruit, flowers, acorns, cropped roots, cropped branches, text, watermark, blurry, 3d render, photograph, vector art, neon, oversaturated",
       "status": "accepted",
@@ -1919,7 +1989,10 @@
     {
       "id": "plains-tree-pasture-oak",
       "out": "files/environment/trees/plains/pasture-oak.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "old lone pasture oak with a short sturdy weathered trunk, low wide horizontal boughs, open rounded crown broken into separated dusty olive and straw-gold leaf clusters, visible branch gaps and broad restrained roots; exactly one isolated fully visible tree; painterly pixel art matching the forest tree sheet; dusty tan and subdued plains palette; transparent background",
       "negative": "ground patch, cast shadow, scenery, multiple trees, dense forest canopy, vivid green, saturated green, fruit, flowers, acorns, cropped roots, cropped branches, text, watermark, blurry, 3d render, photograph, vector art, neon, oversaturated",
       "status": "accepted",
@@ -1929,7 +2002,10 @@
     {
       "id": "plains-tree-twin-aspen",
       "out": "files/environment/trees/plains/twin-aspen.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "slender twin-trunk plains aspen growing from one shared base, two pale gray-tan trunks of unequal height, narrow upright branching, light airy crown of small khaki-sage leaves and fine roots gathered around the central base; exactly one isolated fully visible tree cluster; painterly pixel art matching the forest tree sheet; dusty tan and subdued plains palette; transparent background",
       "negative": "ground patch, cast shadow, scenery, separate trees, dense forest canopy, vivid green, saturated green, fruit, flowers, cropped roots, cropped branches, text, watermark, blurry, 3d render, photograph, vector art, neon, oversaturated",
       "status": "accepted",
@@ -1939,7 +2015,10 @@
     {
       "id": "plains-tree-field-hawthorn",
       "out": "files/environment/trees/plains/field-hawthorn.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "compact gnarled field hawthorn with a crooked multi-forked trunk from one clear base, irregular flattened crown, thorny tips visible between small muted olive leaf clusters and dry straw-colored edges, no flowers or berries; exactly one isolated fully visible tree; painterly pixel art matching the forest tree sheet; dusty tan and subdued plains palette; transparent background",
       "negative": "ground patch, cast shadow, scenery, multiple trees, dense forest canopy, vivid green, saturated green, fruit, flowers, berries, cropped roots, cropped branches, text, watermark, blurry, 3d render, photograph, vector art, neon, oversaturated",
       "status": "accepted",
@@ -1949,182 +2028,412 @@
     {
       "id": "cave-rock-stalagmite-needles",
       "out": "files/environment/tall-props/cave/stalagmite-needles.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall narrow cluster of sharp cave stalagmite needles with a tiny compact base, dark blue-gray slate painterly pixel art matching the project cave palette, fully visible and isolated",
       "negative": "ground, scenery, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and cave ground/rock palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "cave-rock-split-cathedral-spire",
       "out": "files/environment/tall-props/cave/split-cathedral-spire.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall split cathedral-like cave spire with a tiny compact base, dark blue-gray slate painterly pixel art matching the project cave palette, fully visible and isolated",
       "negative": "ground, scenery, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and cave ground/rock palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "cave-rock-crooked-mineral-column",
       "out": "files/environment/tall-props/cave/crooked-mineral-column.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall crooked mineral cave column with a tiny compact base, dark blue-gray slate painterly pixel art matching the project cave palette, fully visible and isolated",
       "negative": "ground, scenery, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and cave ground/rock palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "desert-rock-hoodoo-pillar",
       "out": "files/environment/tall-props/desert/hoodoo-pillar.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall narrow desert hoodoo pillar with a tiny compact base, pale sandstone and ochre painterly pixel art matching the project desert palette, fully visible and isolated",
       "negative": "ground, dunes, scenery, path, wide base, cactus, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and desert ground/stone palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "desert-rock-balancing-slab-spire",
       "out": "files/environment/tall-props/desert/balancing-slab-spire.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall stacked balancing slab desert spire with a tiny compact foot, pale sandstone and ochre painterly pixel art matching the project desert palette, fully visible and isolated",
       "negative": "ground, dunes, scenery, path, wide base, cactus, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and desert ground/stone palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "desert-rock-forked-sandstone-pinnacle",
       "out": "files/environment/tall-props/desert/forked-sandstone-pinnacle.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall forked sandstone pinnacle with a tiny compact base, pale sandstone and ochre painterly pixel art matching the project desert palette, fully visible and isolated",
       "negative": "ground, dunes, scenery, path, wide base, cactus, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and desert ground/stone palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "volcanic-rock-basalt-column-cluster",
       "out": "files/environment/tall-props/volcano/basalt-column-cluster.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall narrow basalt column cluster with a tiny compact base, near-black charcoal volcanic painterly pixel art with restrained ember accents, fully visible and isolated",
       "negative": "active lava, fire, smoke, ground, scenery, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and volcanic ground/basalt palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "volcanic-rock-obsidian-blade",
       "out": "files/environment/tall-props/volcano/obsidian-blade.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall narrow obsidian blade formation with a tiny compact base, near-black charcoal volcanic painterly pixel art with restrained ember accents, fully visible and isolated",
       "negative": "active lava, fire, smoke, ground, scenery, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and volcanic ground/basalt palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "volcanic-rock-scoria-chimney",
       "out": "files/environment/tall-props/volcano/scoria-chimney.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall porous scoria chimney formation with a tiny compact base, near-black charcoal volcanic painterly pixel art with restrained ember accents, fully visible and isolated",
       "negative": "active lava, fire, smoke, ground, scenery, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and volcanic ground/basalt palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "trench-rock-eroded-monolith",
       "out": "files/environment/tall-props/trench/eroded-monolith.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall narrow abyssal eroded monolith with a tiny compact base, midnight navy slate painterly pixel art with subtle cyan mineral flecks, fully visible and isolated",
       "negative": "water background, seabed, scenery, fish, coral, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and trench ground/stone palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "trench-rock-abyssal-needle-cluster",
       "out": "files/environment/tall-props/trench/abyssal-needle-cluster.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall narrow cluster of abyssal rock needles with a tiny compact base, midnight navy slate painterly pixel art with subtle cyan mineral flecks, fully visible and isolated",
       "negative": "water background, seabed, scenery, fish, coral, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and trench ground/stone palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "trench-rock-windowed-pinnacle",
       "out": "files/environment/tall-props/trench/windowed-pinnacle.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one tall narrow windowed abyssal pinnacle with a tiny compact base, midnight navy slate painterly pixel art with subtle cyan mineral flecks, fully visible and isolated",
       "negative": "water background, seabed, scenery, fish, coral, path, wide base, character, text, shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with forest rendering and trench ground/stone palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "tundra-tree-forked-birch-snag",
       "out": "files/environment/tall-props/tundra/forked-birch-snag.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one forked dead tundra birch snag with snow resting on upper branches, cold gray bark and pale blue-white snow, painterly pixel art, fully visible and isolated",
       "negative": "ground mound, snowfield, scenery, living canopy, multiple trees, character, text, cast shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with swamp dead-tree rendering and tundra ground palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "tundra-tree-dead-snow-pine",
       "out": "files/environment/tall-props/tundra/dead-snow-pine.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one skeletal dead tundra pine with snow resting on upper limbs, cold gray bark and pale blue-white snow, painterly pixel art, fully visible and isolated",
       "negative": "ground mound, snowfield, scenery, living canopy, multiple trees, character, text, cast shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with swamp dead-tree rendering and tundra ground palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "tundra-tree-wind-bent-willow",
       "out": "files/environment/tall-props/tundra/wind-bent-willow.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one wind-bent dead tundra willow with snow resting on upper branches, cold gray bark and pale blue-white snow, painterly pixel art, fully visible and isolated",
       "negative": "ground mound, snowfield, scenery, living canopy, multiple trees, character, text, cast shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with swamp dead-tree rendering and tundra ground palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "wasteland-tree-charred-hollow-snag",
       "out": "files/environment/tall-props/wasteland/charred-hollow-snag.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one charred hollow wasteland snag, ash gray charcoal taupe and muted violet painterly pixel art matching the blighted ground palette, fully visible and isolated",
       "negative": "ground patch, scenery, living leaves, multiple trees, fire, smoke, character, text, cast shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with swamp dead-tree rendering and wasteland ground/shrub palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "wasteland-tree-skeletal-dead-oak",
       "out": "files/environment/tall-props/wasteland/skeletal-dead-oak.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one skeletal dead wasteland oak, ash gray charcoal taupe and muted violet painterly pixel art matching the blighted ground palette, fully visible and isolated",
       "negative": "ground patch, scenery, living leaves, multiple trees, fire, smoke, character, text, cast shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with swamp dead-tree rendering and wasteland ground/shrub palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "wasteland-tree-twisted-blight",
       "out": "files/environment/tall-props/wasteland/twisted-blight-tree.png",
-      "size": { "w": 1254, "h": 1254 },
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
       "prompt": "one twisted blighted dead wasteland tree, ash gray charcoal taupe and muted violet painterly pixel art matching the blighted ground palette, fully visible and isolated",
       "negative": "ground patch, scenery, living leaves, multiple trees, fire, smoke, character, text, cast shadow, cropped, photograph, 3d render, neon",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "ChatGPT image generation with swamp dead-tree rendering and wasteland ground/shrub palette references; magenta chroma key removed and normalized to transparent 1254px."
     },
     {
       "id": "hazard-pool-poison",
       "out": "files/environment/hazards/poison-pool.png",
-      "size": { "w": 1024, "h": 1024 },
+      "size": {
+        "w": 1024,
+        "h": 1024
+      },
       "prompt": "one temporary swamp boss poison rot pool, flat irregular circular puddle of thick toxic bog liquid with dark olive center, sickly chartreuse highlights, small bubbles and spiral surface currents, polished painterly top-down game sprite matching the swamp ground and dungeon altar palette, isolated on flat magenta chroma key",
       "negative": "ground plane, cast shadow, tall objects, reeds, rocks, altar, container, character, text, border, watermark, neon slime, sci-fi, transparency, perfect geometric circle, side view",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation using swamp bog-pool Wang ground and swamp dungeon altar as palette/rendering references; magenta chroma key removed locally, alpha bounds normalized to a circular 1024px gameplay footprint. Replaces the toxic-pool circle placeholder."
     },
     {
       "id": "hazard-pool-magma",
       "out": "files/environment/hazards/magma-pool.png",
-      "size": { "w": 1024, "h": 1024 },
+      "size": {
+        "w": 1024,
+        "h": 1024
+      },
       "prompt": "one temporary volcano boss magma pool, flat irregular circular puddle of molten magma with black basalt cooling crust, glowing red-orange fissures, amber-hot seams and restrained molten bubbles, polished painterly top-down game sprite matching the volcanic ground and dungeon altar palette, isolated on flat green chroma key",
       "negative": "ground plane, cast shadow, tall rocks, altar, crater, container, character, text, border, smoke, sparks, watermark, sci-fi, transparency, perfect geometric circle, side view",
-      "status": "accepted", "candidates": 1,
+      "status": "accepted",
+      "candidates": 1,
       "notes": "Built-in ChatGPT image generation using basalt-lava Wang ground and volcanic dungeon altar as palette/rendering references; green chroma key removed locally, alpha bounds normalized to a circular 1024px gameplay footprint. Preloaded resource only; no volcano boss functionality added."
+    },
+    {
+      "id": "ruins-t5-paving-rubble-soil-wang",
+      "out": "files/environment/ruins/t5-paving-rubble-soil-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down dark abandoned ruined settlement ground, broken urban paving and fractured stonework as the lower material, charcoal gray and dirty dark stone with irregular slabs, worn cobbles, chipped joints and subtle muted teal mineral staining, built geometric oppressive decayed surface, readable at gameplay scale, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "seams, visible tiling grid, edge border, frame, freestanding architecture, wall, barricade, palisade, military road, castle, prop, rubble pile, vehicle, banner, weapon, character, monster, boss, water, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 1,
+      "notes": "Tier 5 Ruins Wang tileset baseline. Lower material = ruined paving/broken urban stonework; upper material = encroaching dirt/dead vegetation/rubble-soil. Source-art candidates only; do not pack or wire until reviewed.",
+      "params": {
+        "upperDescription": "seamless top-down encroaching dark brown dirt, dead vegetation and rubble-soil reclaiming broken paving, compacted earth with gray grit, buried stone fragments, sparse desiccated groundcover and restrained muted dead-green or muted-teal accents, organic irregular texture, clearly distinct from the lower paving, painterly pixel art, evenly tileable on all edges, no distinct plants or props",
+        "transitionDescription": "irregular ground-level boundary where dark rubble-soil and dead growth swallow fractured urban paving, broken bites and partial burial, readable but not a hard border, no wall, no curb, no elevation, no third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "iron-marches-t5-frontier-military-wang",
+      "out": "files/environment/iron-marches/t5-frontier-military-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down open militarized frontier ground, pale dust tan and muted olive-brown trampled borderland earth as the lower material, compacted soil, fine gravel, subtle patrol wear and sparse dry groundcover, open exposed disciplined outdoor terrain, painterly pixel art, evenly tileable on all edges, clear gameplay readability, no repeating motif",
+      "negative": "seams, visible tiling grid, edge border, frame, ruin, rubble heap, dead settlement, charcoal black palette, oppressive darkness, castle interior, urban street, building, wall, battlement, palisade, prop, camp equipment, vehicle, banner, weapon, character, monster, boss, water, third terrain material, neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 1,
+      "notes": "Tier 5 Iron Marches Wang tileset baseline. Lower material = frontier earth/trampled borderland; upper material = laid military surface/fortified road. Source-art candidates only; do not pack or wire until reviewed.",
+      "params": {
+        "upperDescription": "seamless top-down laid military surface and fortified road, pale stone gray and faded beige-gray slab or compacted aggregate courses, orderly seam spacing, broad structured approach lanes, durable disciplined infrastructure, outdoor and exposed rather than enclosed, painterly pixel art, evenly tileable on all edges, no walls, no buildings, no castle architecture",
+        "transitionDescription": "clean but slightly worn ground-level edge where open frontier earth meets the organized military road, disciplined lane geometry softened by dust and use, readable at a glance, no hard black line, no curb, no elevation, no third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "underworlds-t6-worked-floor-deep-earth-wang",
+      "out": "files/environment/underworlds/t6-worked-floor-deep-earth-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down ancient worked floor inside a vast buried artificial understructure, large charcoal and iron-gray stone slabs, worn geometric seams, ancient scoring grooves, shallow channels and sparse oxidized dark-metal inlays, monumental but abstract with its purpose unknowable, dark restrained painterly pixel art, broad reusable flat ground material, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, modern machinery, gears, pipes, steampunk, sci-fi technology, recognizable industrial machine, building, wall, stairs, door, rails, tracks, prop, setpiece, statue, pillar, machinery object, monster, character, boss, lava river, bright molten lava, glowing red ground, neon, excessive red, bright cyan, water, snow, swamp, generic cave, stalactite, stalagmite, cavern vignette, cliff, elevation, cast shadow, text, watermark, cinematic perspective, isometric diorama, third terrain material, one-off scene",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 5,
+      "notes": "Tier 6 Underworlds Wang exploration batch. Lower material = Ancient Worked Floor; upper material = Broken Deep Earth / Abyssal Rock. Base tileset only; no props, setpieces, collision objects, creatures, or gameplay wiring.",
+      "params": {
+        "upperDescription": "seamless high top-down broken deep earth and abyssal rock consuming the ancient worked floor, black basalt, ash gray, compact dark earth, fractured mineral surfaces, irregular broken texture and subtle cracks, restrained deep rust and barely perceptible ember-red mineral warmth, hostile subterranean ground, subdued enough for creatures and effects to remain readable, no lava field, no objects, evenly tileable on all edges",
+        "transitionDescription": "irregular ground-level collapse boundary where black abyssal rock and compact dark earth break through ancient slabs, partially buried fractured edges with subtle ash and mineral intermixing, readable and modular, no cliff face, no elevation, no machinery, no bright lava, no third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "stormlands-t6-heath-lightning-scar-wang",
+      "out": "files/environment/stormlands/t6-heath-lightning-scar-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down windswept storm heath, broad cool slate-gray rocky compact soil, gray-brown earth, fine gravel, short wind-beaten muted blue-green vegetation texture, shallow erosion and rain-darkened surface, exposed upland character, medium-light readable outdoor ground, painterly pixel art, broad reusable flat terrain, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, storm cloud, literal lightning bolt, electric symbol, lightning rod, structure, shrine, cult object, building, road, wall, prop, setpiece, monster, character, boss, swamp mud, standing water, snow, ice, tundra, dark cave, basalt cavern, lava, heavy cyan glow, neon blue, bright white glow, saturated violet, dense tall vegetation, forest, cliff, elevation, cast shadow, text, watermark, cinematic perspective, isometric diorama, third terrain material, one-off scene",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 5,
+      "notes": "Tier 6 Stormlands Wang exploration batch. Lower material = Windswept Storm Heath; upper material = Lightning-Scarred Ground. Base tileset only; reserve strong electric highlights and all structures for later passes.",
+      "params": {
+        "upperDescription": "seamless high top-down lightning-scarred ground transformed by repeated strikes, pale gray fractured stone, branching scorch patterns, fused soil, subtle glassy fulgurite-like mineral texture, restrained blue-gray and muted violet coloration with charcoal scorch marks, storm-damaged but not glowing, broad reusable ground state, no literal lightning bolts, no symbols, evenly tileable on all edges",
+        "transitionDescription": "branching irregular ground-level boundary where pale lightning-scarred fused ground breaks through windswept heath, eroded and scorched edge with shallow cracks and fused mineral fragments, readable but not a hard graphic symbol, no lightning bolts, no electric glow, no elevation, no third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "underworlds-t6-worked-floor-deep-earth-wang-refined",
+      "out": "files/environment/underworlds/t6-worked-floor-deep-earth-wang-refined.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down Tier 6 Underworlds ground, unmistakably dark ancient worked floor of charcoal and iron-gray slabs as the lower material, broad worn irregular paving with restrained geometric seams, shallow ancient scoring and a few subtle oxidized dark-metal inlays, no tan stone, no ornate emblem, no symmetrical central motif, no recognizable machinery, monumental artificial ground with unknowable purpose, painterly pixel art, subdued and readable, evenly tileable on all edges",
+      "negative": "bright beige, tan paving, sandstone, gold, decorative medallion, emblem, arrow symbol, repeated icon, ornate pattern, perfect concentric rings, modern machinery, gears, pipes, steampunk, sci-fi technology, recognizable machine, building, wall, stairs, door, rails, tracks, prop, setpiece, statue, pillar, monster, character, boss, lava, bright red, glowing red terrain, neon, cyan glow, water, snow, swamp, generic cave, stalactite, stalagmite, cavern vignette, cliff, elevation, cast shadow, text, watermark, cinematic perspective, isometric diorama, third terrain material, one-off scene",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 3,
+      "notes": "Tier 6 Underworlds refined bake-off. Compare against underworlds-t6-worked-floor-deep-earth-wang; tuned darker and less ornamental after first-batch inspection. Accept at most one Underworlds entry from the two rows. Base tileset only.",
+      "params": {
+        "upperDescription": "seamless high top-down Broken Deep Earth and Abyssal Rock consuming the dark worked floor, basalt black, ash gray and compact dark earth with irregular fractured mineral surfaces, broken low rubble texture and subtle cracks, restrained deep rust only as small mineral stains, no broad red glow and no lava field, hostile subterranean ground but subdued enough for creatures and effects to read, evenly tileable on all edges",
+        "transitionDescription": "irregular low ground-level boundary where black basalt and compact ash-dark earth break through charcoal slabs, partially buried broken paving with small angular chips and a restrained rust tint, no bright rim, no cliff, no elevation, no machinery, no emblem, no third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "stormlands-t6-heath-lightning-scar-wang-refined",
+      "out": "files/environment/stormlands/t6-heath-lightning-scar-wang-refined.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down Tier 6 Stormlands ground, medium-light windswept storm heath of cool slate-gray rocky soil and gray-brown earth as the lower material, short flattened blue-green vegetation and fine gravel, open exposed upland with shallow rain erosion, the lower ground must remain clearly earthy and not snowy, painterly pixel art, evenly tileable on all edges",
+      "negative": "snow, ice, tundra, white snowfield, bright white stone, marble, giant pale slabs, dense spiderweb cracks, crystal, frozen ground, swamp mud, standing water, forest, tall grass, storm cloud, literal lightning bolt, electric symbol, lightning rod, glowing rune, structure, shrine, cult object, building, road, wall, prop, setpiece, monster, character, boss, heavy cyan glow, neon blue, bright white glow, saturated violet, lava, dark cave, basalt cavern, cliff, elevation, cast shadow, text, watermark, cinematic perspective, isometric diorama, third terrain material, one-off scene",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 3,
+      "notes": "Tier 6 Stormlands refined bake-off. Compare against stormlands-t6-heath-lightning-scar-wang; tuned away from white cracked stone and snow-like reads after first-batch inspection. Accept at most one Stormlands entry from the two rows. Base tileset only.",
+      "params": {
+        "upperDescription": "seamless high top-down Lightning-Scarred Ground, medium-light pale blue-gray fused soil and fractured stone breaking through the heath, thin broken branching scorch marks, small glassy fulgurite-like mineral flecks and muted violet-gray discoloration, storm damage without snow, ice, literal lightning bolts or strong glow, charcoal scorch accents kept restrained, evenly tileable on all edges",
+        "transitionDescription": "irregular branching but broken ground-level edge where fused blue-gray lightning-scarred soil interrupts gray-brown heath, shallow erosion and scorched mineral fragments, readable as storm damage without a graphic lightning symbol, no white snow rim, no electric glow, no elevation, no third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
     }
   ]
 }

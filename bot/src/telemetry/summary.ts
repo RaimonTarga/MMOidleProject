@@ -499,6 +499,10 @@ export function buildSummary(params: {
       : (leaseEvidence?.overlaps.length ?? 0) > 0
         ? "ambient-concurrency"
         : "isolated";
+  // Transit co-presence is retained in the evidence, but it does not mean a
+  // second bot shared farming or boss combat. Only those outcome-affecting
+  // states should exclude a completed run from economy analysis.
+  const economyIsolationEligible = isolationGrade === "isolated" || isolationGrade === "ambient-concurrency";
   const routeCompletion = params.completion === "completed"
     ? "completed"
     : params.completion === "partial"
@@ -534,7 +538,7 @@ export function buildSummary(params: {
       economyEvidenceEligible:
         params.completion === "completed" &&
         header.taints.length === 0 &&
-        isolationGrade === "isolated" &&
+        economyIsolationEligible &&
         (!header.tierEntry ||
           header.tierEntry.economyPolicy === "authoritative-economy-continuation"),
     },

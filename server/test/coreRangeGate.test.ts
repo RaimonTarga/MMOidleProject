@@ -132,9 +132,9 @@ for (const build of builds) {
   if (!isRestrictedCore(recipe!.coreEligibility)) sawUnrestrictedCore = true;
 }
 
-// Cores are currently authored only in forest at the T2 band, so a T3 cave run
-// legitimately finds none. Assert the selector at least ran rather than silently
-// skipping — if this ever fires, cores stopped resolving, not stopped existing.
+// T3 Cores are authored in their live biome homes. A T3 cave run should therefore
+// find an eligible core; keep this assertion as a selector smoke test rather than
+// allowing a missing core to look like an intentional empty loadout.
 assert(
   sawCore || restrictedCores.every((c) => c.tier !== 3),
   "no bench build equipped a core despite T3 cores being authored",
@@ -144,10 +144,10 @@ assert(
   "build-aware bench selection must allow a relevant unrestricted specialist to beat restricted Cores",
 );
 
-const jungleBuilds = enumerateBuildsForContentTier(3, "jungle", undefined, true);
+const volcanicBuilds = enumerateBuildsForContentTier(4, "volcanic", undefined, true);
 assert(
-  jungleBuilds.some((build) => build.gearItemIds.core === "core-catalyst"),
-  "an on-hit Jungle build should select Catalyst; polarized Cores cannot be ranked by absolute budget",
+  volcanicBuilds.some((build) => build.gearItemIds.core === "core-catalyst"),
+  "an on-hit Volcanic build should select the T4 Catalyst Core; polarized Cores cannot be ranked by absolute budget",
 );
 
 // ── The canonical loadout is populated, not empty ────────────────────────────

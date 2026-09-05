@@ -134,7 +134,7 @@ export const trenchRecipeEntries = [
     id: 'relic-virulent-hourglass', name: 'Virulent Hourglass',
     recipeGroup: 'trench', requiredBiomeLevel: 5, slot: 'relic',
     lineageId: 'relic-virulent-hourglass',
-    cost: { green: 220 }, catalystCost: { dominion: 4 },
+    cost: { green: 3400 }, catalystCost: { dominion: 9 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.20,

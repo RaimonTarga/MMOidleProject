@@ -273,15 +273,33 @@ export const jungleRecipeEntries = [
 
   // ── Cores ───────────────────────────────────────────────────────────────────────
   // See the CORES header in plains.recipes.ts. Jungle owns MOMENTUM — dense packs
-  // and ambushes, so it is where the kill-chain core comes from.
+  // and ambushes, and it carries the T2 sustain capstone before its T3 momentum
+  // cores.
 
-  // T3 melee — Bruiser: offence, bulk and movement, paid off by chaining kills.
-  // Structurally weak against bosses, where there is no next kill to chain into.
+  // T2 premium capstone — Survivalist: save through Jungle's final mastery level
+  // for the recovery core.
+  ['core-survivalist', {
+    id: 'core-survivalist', name: 'Survivalist Core',
+    recipeGroup: 'jungle', requiredBiomeLevel: 6, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-survivalist',
+    cost: { green: 500 }, catalystCost: { fortified: 4 }, // family-tag: attrition survival → Fortified
+    stats: {}, tier: 2,
+    // recovery-mult scales the Recovery RATE, and every in-combat regen effect
+    // activates a fraction of that rate — so this lifts OOC regen and all active
+    // sustain at once, rather than the near-nothing a flat regen bump would give.
+    mechanicEffects: { 'core.recovery-mult': 0.30, 'core.maxhp-mult': 0.15 },
+    icon: 'items/cores/survivalist.png',
+    description: 'Wound-knit heartwood. It does not stop the blow — it shortens the time you spend regretting it.',
+  }],
+
+  // T3 premium melee — Bruiser: offence, bulk and movement, paid off by chaining
+  // kills. Structurally weak against bosses, where there is no next kill to chain
+  // into. L11 and 1,350 green / 6 Alacrity keep it late in Jungle's T3 band.
   ['core-bruiser', {
     id: 'core-bruiser', name: 'Bruiser Core',
-    recipeGroup: 'jungle', requiredBiomeLevel: 9, slot: 'core', coreEligibility: 'melee',
+    recipeGroup: 'jungle', requiredBiomeLevel: 11, slot: 'core', coreEligibility: 'melee',
     lineageId: 'core-bruiser',
-    cost: { green: 110 }, catalystCost: { alacrity: 3 }, // Heavy is BANNED in Jungle; its native family is Alacrity
+    cost: { green: 1350 }, catalystCost: { alacrity: 6 }, // Heavy is BANNED in Jungle; its native family is Alacrity
     stats: {}, tier: 3,
     // The refund is INERT without an ability tagged `mobility` (today: Charge). The
     // stat half is always on, so the slot is never dead — and the clause widens for
@@ -294,16 +312,16 @@ export const jungleRecipeEntries = [
     description: 'Kill, and the jungle opens. Stop, and it closes. The core only knows how to do the first one.',
   }],
 
-  // T3 unrestricted — Accelerant: tempo. Trades hit size for hit count, which is
+  // T3 premium unrestricted — Accelerant: tempo. Trades hit size for hit count, which is
   // why it reads so differently on an on-hit build than on a big-swing one.
   // Homed here because Alacrity is Jungle's native family and Jungle is the only
   // biome carrying it past T2 — Forest, where this used to live, stops at T2, so a
   // T3 character had to grind ~1,000 kills of outgrown content to reach forest 15.
   ['core-accelerant', {
     id: 'core-accelerant', name: 'Accelerant Core',
-    recipeGroup: 'jungle', requiredBiomeLevel: 11, slot: 'core', coreEligibility: 'unrestricted',
+    recipeGroup: 'jungle', requiredBiomeLevel: 12, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-accelerant',
-    cost: { green: 90 }, catalystCost: { alacrity: 2 }, // family-tag: attack-speed tempo → Alacrity
+    cost: { green: 1150 }, catalystCost: { alacrity: 5 }, // family-tag: attack-speed tempo → Alacrity
     stats: {}, tier: 3,
     mechanicEffects: { 'core.attack-speed-mult': 0.55, 'core.attack-mult': -0.18 },
     icon: 'items/cores/accelerant.png',
@@ -314,7 +332,7 @@ export const jungleRecipeEntries = [
     id: 'relic-verdant-flywheel', name: 'Verdant Flywheel',
     recipeGroup: 'jungle', requiredBiomeLevel: 18, slot: 'relic',
     lineageId: 'relic-verdant-flywheel',
-    cost: { green: 220 }, catalystCost: { alacrity: 4 },
+    cost: { green: 3000 }, catalystCost: { alacrity: 8 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.20,

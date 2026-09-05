@@ -155,11 +155,11 @@ export const EXECUTE_BONUS = 0.75;
 /** Recuperating: fraction of the player's Recovery rate that stays active in combat. */
 export const RECUPERATING_RECOVERY_ACTIVE = 0.8;
 
-// ── Postures added 2026-09-02 (unplaced: no recipes yet) ──────────────────────
-// These four exist in the catalog and are fully implemented server-side, but no
-// stance recipe names them, so no character can learn them yet. See
-// `docs/stances-future-design-notes.md` for the design rationale, and
-// `shared/src/stanceRecipes.ts` when placing them.
+// ── Postures added 2026-09-02 ─────────────────────────────────────────────────
+// Time to Strike, Reaper and Warding were placed by the locked T3 redistribution
+// and the follow-on T4 pass now moves Time to Strike and Reaper upward alongside
+// Powering Up. No mechanic definition here changes when a recipe teaches one of
+// these IDs.
 
 /** Time to Strike: added to the empowered-attack multiplier (1.0 → a 2x spec fires at 3x). */
 export const TIME_TO_STRIKE_EMPOWERED_ADD = 1;
@@ -395,9 +395,10 @@ const stances: StanceDef[] = [
     icon: "execute-stance",
   },
 
-  // ── Unplaced postures (2026-09-02) ─────────────────────────────────────────
-  // Implemented and legal as Rune destinations the moment a recipe teaches them;
-  // until one does, `knownStances` can never contain them, so they are inert.
+  // ── Recently added postures (2026-09-02) ───────────────────────────────────
+  // Time to Strike, Reaper, Warding and Powering Up are taught by authored
+  // Tier-3/Tier-4 recipes. Cataloguing a posture here does not itself grant it;
+  // the recipe database remains the learnability authority.
   // Magnitudes are seeds. Design rationale: docs/stances-future-design-notes.md.
   {
     id: "time-to-strike-stance",

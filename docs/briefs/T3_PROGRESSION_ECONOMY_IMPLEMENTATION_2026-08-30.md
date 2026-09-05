@@ -2,6 +2,9 @@
 
 **Date:** 2026-08-30
 **Status:** IMPLEMENTED. This is the "what actually shipped" record; treat it as authoritative over `T3_PROGRESSION_ECONOMY_PROPOSAL_2026-08-30.md` and `T3_PROGRESSION_ECONOMY_BASELINE_2026-08-29.md` on any figure the three disagree on.
+> **Superseded for Tier-3 Stance/Core placement and economy by the locked 2026-09-04 pass.**
+> This dated ledger remains the historical record of the 2026-08-30 pass; current
+> values live in `docs/stances-current-state.md` and `docs/cores-current-state.md`.
 **Implements:** the T3 progression/economy proposal *plus the designer's corrections layered on top of it* (see §17 for every point where the corrections overrode the proposal). Anchored on the shipped T1 (`T1_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-28.md`) and T2 (`T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md`) ledgers for curve shape, evolution architecture, and catalyst philosophy.
 
 Nothing here touches combat stats, `attacksPerSecond`, `mechanicEffects`, monster/boss numbers, biome XP curves, RP formulas, Core economy, Rune content, or quest advancement logic. Every number moved is an essence cost, a catalyst cost, or a mastery/GM gate — plus one genuinely structural change (`biomeLevelCap` becoming retirement-aware) and one data-integrity correction (dead quest monster IDs).

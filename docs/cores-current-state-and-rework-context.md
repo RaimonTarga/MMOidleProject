@@ -37,10 +37,14 @@ separate item type: it is an ordinary `Recipe`/`ItemDefinition` with
   not `statModifiers` — every current core has `stats: {}`.
 
 **When it unlocks (current code).** The slot opens at player tier 2 with three
-unrestricted "starter" cores (Tempered / Survivalist / Force), before the player
+unrestricted T2 capstone cores (Tempered / Survivalist / Force), before the player
 has chosen a combat range. Melee and ranged (restricted) cores are gated to be
-reachable only at player tier 3, after range selection — because eligibility is
-checked against `usesSkills.selectedRange`, which doesn't exist until tier 3.
+reachable only at player tier 3 or later, after range selection — because
+eligibility is checked against `usesSkills.selectedRange`, which doesn't exist
+until tier 3. The three T2 cores are deliberately late within their respective
+T2 mastery bands: Cave L12, Jungle L6, and Desert L6. Six T3 cores are separately
+gated late in their T3 bands; three mature T4 cores occupy the later Mountain,
+Volcanic, and Graveyard bands and use the premium T4 economy.
 This gating is deliberately enforced by `server/test/coreAuthoring.test.ts`,
 because the original placeholder cast shipped three restricted cores that were
 craftable at tier 2 and therefore **permanently inert** until the player reached
@@ -147,9 +151,10 @@ Enforced invariants (`server/test/coreAuthoring.test.ts`):
   track.** Core "progression" is entirely the (currently unbuilt) evolution
   chain, not the upgrade-step system every other item uses.
 - Every restricted (melee/ranged) core is reachable only at player tier 3+
-  (`biomeLevelCap(3, group)`), never at tier 2 — this is the fix for the
+  (`biomeLevelCap(core.tier, group)`), never before its authored tier — this is the fix for the
   historical "permanently inert core" bug described in §1.
-- Every tier-2 (starter) core is unrestricted and reachable at tier 2.
+- Every tier-2 core is unrestricted and reachable at tier 2, with the three
+  current rewards gated late in their respective T2 biome bands.
 - Every core carries a `lineageId`.
 
 ### The 12 cores
@@ -160,18 +165,22 @@ No core has `stats` (statModifiers) — every effect is a `mechanicEffects` key.
 
 | id | name | biome (req. level) | tier | eligibility | cost | catalyst | mechanicEffects (exact values) |
 |---|---|---|---|---|---|---|---|
-| `core-tempered` | Tempered Core | plains (7) | 2 | unrestricted | `{yellow:45}` | `{swarming:1}` | `core.attack-mult: 0.09`, `core.maxhp-mult: 0.09` |
-| `core-survivalist` | Survivalist Core | forest (7) | 2 | unrestricted | `{green:45}` | `{fortified:1}` | `core.recovery-mult: 0.20`, `core.maxhp-mult: 0.10` |
-| `core-force` | Force Core | cave (8) | 2 | unrestricted | `{red:45}` | `{dominion:1}` | `core.attack-mult: 0.13`, `core.maxhp-mult: -0.07` |
-| `core-duelist` | Duelist Core | cave (15) | 3 | melee | `{red:110}` | `{dominion:3}` | `core.attack-mult: 0.12`, `core.maxhp-mult: 0.10`, `core.elite-damage-mult: 0.15` |
-| `core-juggernaut` | Juggernaut Core | mountain (14) | 3 | melee | `{blue:110}` | `{heavy:3}` | `core.maxhp-mult: 0.25`, `core.plating-mult: 0.32`, `core.dr-layer-pct: 0.12`, `core.attack-speed-mult: -0.20`, `core.speed-mult: -0.07` |
-| `core-arcanist` | Arcanist Core | mountain (17) | 3 | unrestricted | `{blue:90}` | `{swarming:2}` | `technique.cooldown-reduction-pct: 0.18`, `technique.power-pct: 0.08` |
-| `core-controller` | Controller Core | swamp (15) | 3 | unrestricted | `{purple:90}` | `{fortified:2}` | `core.debuff-duration-mult: 0.25`, `core.debuff-potency-mult: 0.12` |
-| `core-scout` | Scout Core | tundra (3, T3 biome) | 3 | ranged | `{blue:110}` | `{heavy:3}` | `core.attack-mult: 0.14`, `core.speed-mult: 0.16`, `core.mobility-cooldown-reduction-pct: 0.20`, `core.maxhp-mult: -0.15` |
-| `core-sniper` | Sniper Core | desert (9) | 3 | ranged | `{yellow:110}` | `{dominion:3}` | `core.attack-mult: 0.26`, `core.maxhp-mult: -0.20`, `core.plating-mult: -0.15` |
-| `core-bruiser` | Bruiser Core | jungle (9) | 3 | melee | `{green:110}` | `{alacrity:3}` | `core.attack-mult: 0.20`, `core.maxhp-mult: 0.15`, `core.speed-mult: 0.12`, `core.mobility-refund-on-kill-pct: 0.40` |
-| `core-accelerant` | Accelerant Core | jungle (11) | 3 | unrestricted | `{green:90}` | `{alacrity:2}` | `core.attack-speed-mult: 0.25`, `core.attack-mult: -0.12` |
-| `core-catalyst` | Catalyst Core | volcanic (3, T3 biome) | 3 | unrestricted | `{red:90}` | `{swarming:2}` | `core.onhit-mult: 0.28`, `core.attack-mult: -0.12` |
+| `core-tempered` | Tempered Core | cave (12) | 2 | unrestricted | `{red:500}` | `{dominion:4}` | `core.attack-mult: 0.12`, `core.maxhp-mult: 0.12` |
+| `core-survivalist` | Survivalist Core | jungle (6) | 2 | unrestricted | `{green:500}` | `{fortified:4}` | `core.recovery-mult: 0.30`, `core.maxhp-mult: 0.15` |
+| `core-force` | Force Core | desert (6) | 2 | unrestricted | `{yellow:500}` | `{dominion:4}` | `core.attack-mult: 0.22`, `core.maxhp-mult: -0.12` |
+| `core-duelist` | Duelist Core | cave (18) | 3 | melee | `{red:1350}` | `{dominion:6}` | `core.attack-mult: 0.12`, `core.maxhp-mult: 0.10`, `core.elite-damage-mult: 0.15` |
+| `core-juggernaut` | Juggernaut Core | mountain (22) | 4 | melee | `{blue:2200}` | `{heavy:7}` | `core.maxhp-mult: 0.30`, `core.plating-mult: 0.40`, `core.dr-layer-pct: 0.14`, `core.attack-speed-mult: -0.25`, `core.speed-mult: -0.10` |
+| `core-arcanist` | Arcanist Core | mountain (18) | 3 | unrestricted | `{blue:1200}` | `{swarming:5}` | `technique.cooldown-reduction-pct: 0.18`, `technique.power-pct: 0.08` |
+| `core-controller` | Controller Core | graveyard (4) | 4 | unrestricted | `{purple:2100}` | `{fortified:7}` | `core.debuff-duration-mult: 0.35`, `core.debuff-potency-mult: 0.25` |
+| `core-scout` | Scout Core | tundra (6, T3 biome) | 3 | ranged | `{blue:1200}` | `{heavy:5}` | `core.attack-mult: 0.14`, `core.speed-mult: 0.16`, `core.mobility-cooldown-reduction-pct: 0.20`, `core.maxhp-mult: -0.15` |
+| `core-sniper` | Sniper Core | desert (12) | 3 | ranged | `{yellow:1300}` | `{dominion:6}` | `core.attack-mult: 0.26`, `core.maxhp-mult: -0.20`, `core.plating-mult: -0.15` |
+| `core-bruiser` | Bruiser Core | jungle (11) | 3 | melee | `{green:1350}` | `{alacrity:6}` | `core.attack-mult: 0.20`, `core.maxhp-mult: 0.15`, `core.speed-mult: 0.12`, `core.mobility-refund-on-kill-pct: 0.40` |
+| `core-accelerant` | Accelerant Core | jungle (12) | 3 | unrestricted | `{green:1150}` | `{alacrity:5}` | `core.attack-speed-mult: 0.25`, `core.attack-mult: -0.12` |
+| `core-catalyst` | Catalyst Core | volcanic (10) | 4 | unrestricted | `{red:2300}` | `{swarming:8}` | `core.onhit-mult: 1.15`, `core.attack-mult: -0.15` |
+
+The locked 2026-09-04 T3 → T4 pass changes only the affected recipe placement,
+essence, catalyst, and tier fields. All 12 Cores keep their IDs, eligibility and
+mechanic definitions; none gains a boss-clear requirement.
 
 Flavor text (`description` field) for each, verbatim:
 
@@ -190,11 +199,12 @@ Flavor text (`description` field) for each, verbatim:
 
 ### Roster/biome-home notes (current code + one historical relocation)
 
-Design roster comment in `plains.recipes.ts` maps: plains→Tempered,
-forest→Survivalist, cave→Force+Duelist, mountain→Juggernaut+Arcanist,
-swamp→Controller, tundra→Scout, jungle→Bruiser+Accelerant, desert→Sniper,
-volcanic→Catalyst. **The comment is stale in one place**: it labels Accelerant
-under "forest," but Accelerant is physically authored in `jungle.recipes.ts`.
+Design roster comment in `plains.recipes.ts` maps: plains→none, forest→none,
+cave→Tempered+Duelist, mountain→Arcanist+Juggernaut (T4), swamp→none,
+tundra→Scout, jungle→Survivalist+Bruiser+Accelerant, desert→Force+Sniper,
+volcanic→Catalyst (T4), graveyard→Controller (T4), trench→none. The T2 core
+homes were redistributed on 2026-09-04; the T3 Accelerant relocation and the
+T3 → T4 capstone moves are reflected in the live recipe files.
 The relocation is documented in-file: Accelerant moved off Forest on
 2026-08-22 because Forest has no biome nodes past tier 2, so a level-15 gate
 there would have cost a tier-3 character roughly 1,000 grind-kills of outgrown
@@ -237,11 +247,11 @@ Documented directly in code comments (`shared/src/passives.ts`) and in
   choice.
 - **No AoE, summon, or party-scoped core.** Explicitly deferred per philosophy
   §13, pending those underlying systems maturing.
-- **No tier-4 cores.** The design draft names four tier-4 candidates —
-  Amplifier, Heavy, Advanced Survivalist, and (folded into tier 3 in the draft
-  but effectively tier-4-adjacent) Affliction — **none exist in shipped data.**
-  Amplifier specifically needs a buff-potency passive layer that does not
-  exist in any form yet (see §6).
+- **No additional tier-4 cores.** The shipped T4 Core cast is the three mature
+  capstones Juggernaut, Controller, and Catalyst. The design draft's Amplifier,
+  Heavy, Advanced Survivalist, and Affliction remain unshipped; Amplifier
+  specifically needs a buff-potency passive layer that does not exist in any
+  form yet (see §6).
 - **`'party'` eligibility category** existed at some point and was removed —
   it gated nothing functionally.
 
@@ -293,9 +303,8 @@ evolution tree — 3-6 named branches per base core, e.g.:
 - A design-only tier-4 **Amplifier** core (buff potency) with branches Exalted
   / Sustained / Fortified / Resonant.
 - A design-only tier-4 **Catalyst** evolution set (note: the design draft's
-  "Catalyst" is filed under tier-4 candidates, distinct from — and describing
-  the same on-hit theme as — the already-shipped tier-3 `core-catalyst`; the
-  doc set does not reconcile this naming collision) with branches Resonant /
+  "Catalyst" describes the same on-hit theme as the now-shipped T4 base
+  `core-catalyst`; no evolution branches are authored) with branches Resonant /
   Shattering / Leeching / Charged.
 - A design-only tier-4 **Heavy** core with branches Crusher / Executioner /
   Titan / Siege.
@@ -741,8 +750,9 @@ through it.
 - **Slot unlock**: player tier 2 (skill-tree tier 1 in some internal
   numbering — see the philosophy doc's tier-terminology note: player-facing
   T2 = Frame selection, T3 = Range selection, T4 = Path selection). Three
-  unrestricted starter cores are reachable at this point (Tempered/plains-7,
-  Survivalist/forest-7, Force/cave-8).
+  unrestricted T2 capstone cores are reachable at this point, but only
+  late in their biome bands (Tempered/cave-12, Survivalist/jungle-6,
+  Force/desert-6).
 - **Recipe gates**: each core has a `requiredBiomeLevel` inside a specific
   biome, checked against `biomeLevelCap(playerTier, biomeGroup)` by
   `shared/src/data/recipeGates.test.ts`. No core requires a boss clear.
@@ -774,13 +784,18 @@ through it.
 
 | Band | Reachable at player tier |
 |---|---|
-| T1 biome (plains/forest/cave), level 7–12 | tier 2 — starters only |
+| T1 biome (plains/forest/cave), level 7–12 | tier 2 — late T2 capstones only |
 | T1 biome, level 13–18 | tier 3 |
+| T2 biome (jungle, desert), level 1–6 | tier 2 — late T2 capstones only |
 | T2 biome (jungle, desert), level 7–12 | tier 3 |
 | T3 biome (tundra, volcanic), level 1–6 | tier 3 |
+| T1 biome, level 19–24 | tier 4 |
+| T2 biome (jungle, desert), level 13–18 | tier 4 |
+| T3 biome (tundra, volcanic), level 7–12 | tier 4 |
+| T4 biome (graveyard, trench), level 1–6 | tier 4 |
 
-No core currently reaches into a tier-4 band — consistent with §2's finding
-that no tier-4 core content is shipped.
+The T4 Core cast uses Mountain L22, Volcanic L10, and Graveyard L4; no Core
+requires a boss clear, and all three gates are reachable inside their T4 bands.
 
 ---
 
@@ -909,7 +924,7 @@ funneling through one shared formatter: `client/src/ui/crafting/itemDisplay.ts`.
 - **`itemDisplay.ts`** — `MECHANIC_FMT` explicitly formats every `core.*` key
   as a signed percentage of the *raw authored fraction* (comment notes a
   "-mult" key is a fraction-on-a-stat, not a literal multiplier, e.g.
-  `core.attack-mult: 0.09` renders as `"+9% attack"`). `formatMechanicEffects()`
+  `core.attack-mult: 0.12` renders as `"+12% attack"`). `formatMechanicEffects()`
   always renders from the item's raw authored numbers — **there is no
   "effective/resolved" value shown anywhere**: no live combination with the
   player's current stats, no preview of what the post-multiplier stat will
@@ -957,7 +972,8 @@ real UX gap worth deciding on deliberately.
 
 | Test file | What it actually verifies |
 |---|---|
-| `coreAuthoring.test.ts` | Data-authoring invariants only: every core recipe declares `coreEligibility` (and no non-core recipe does); eligibility survives the recipe→item copy; `getMaxUpgrade === 0` for every core; restricted cores unreachable at tier 2 / reachable at tier 3 (the historical bug regression); tier-2 starters are unrestricted and reachable at tier 2; every core has a `lineageId`. |
+| `coreAuthoring.test.ts` | Data-authoring invariants only: every core recipe declares `coreEligibility` (and no non-core recipe does); eligibility survives the recipe→item copy; `getMaxUpgrade === 0` for every core; restricted cores unreachable at tier 2 / reachable at tier 3 (the historical bug regression); tier-2 cores are unrestricted and reachable at tier 2; every core has a `lineageId`. |
+| `t2ProgressionEconomy.test.ts` | Locks the current T2 stance/core placement, exact essence/catalyst costs, late-band gates, no boss requirements, and the intended economy bands. |
 | `cores.test.ts` | Equip/recalc wiring integration: an eligible restricted core folds its passives; a ranged core stays active across both mid AND far range (confirms "one shared pool" semantics); switching to an ineligible range zeroes both upside and downside with no lingering effect; an unrestricted core applies regardless of range. |
 | `coreCombat.test.ts` | Integration test against a real `World`: `core.recovery-mult` scales the Recovery stat exactly once and is *not* re-applied by the heal funnel (double-compounding guard); `core.elite-damage-mult` applies only vs. elite/boss monsters, not normal ones; `core.mobility-cooldown-reduction-pct` sums with `technique.cooldown-reduction-pct` under one 0.9 cap and only affects `mobility`-tagged abilities; `core.mobility-refund-on-kill-pct` refunds a fraction of *full* (not remaining) cooldown, mobility-tagged abilities only. |
 | `coreRangeGate.test.ts` | Regression test for the historical strict-equality eligibility bug; asserts melee/ranged/unrestricted gating semantics against `-range-close/-mid/-far` suffixes; asserts every restricted core is reachable by some real build; cross-checks that the bench's canonical loadout only equips *active* cores. |
@@ -1026,24 +1042,21 @@ given class/build, and (b) whether the core's bonus is conditional
 
 | Band | Design target | What actually shipped |
 |---|---|---|
-| Tier-2 unrestricted starter | ~8–15% on a major stat, ~10–15% total effective power | Tempered: 9%/9% (bottom of band). Survivalist: 20% recovery / 10% maxHp (recovery above band, maxHp at floor). Force: 13% attack / -7% maxHp (attack at floor, drawback below the draft's -5–10% floor). |
-| Tier-3 unrestricted specialist | ~15–25% on primary mechanic, ~15–25% effective power | Arcanist: 18% technique CDR / 8% power (below band on both axes vs. the draft's 15–20%/5–10%, though close). Controller: 25% debuff duration / 12% potency (duration at top of a *different* draft band — draft splits duration OR potency at 20–30%/10–20%; shipped uses both simultaneously at moderate values, not clearly following either single-axis draft). Accelerant: 25% attack speed / -12% attack (speed at top of the 20–30% draft band; penalty below the 10–20% ceiling). Catalyst: 28% on-hit / -12% attack (on-hit near top of the tier-4-draft 20–30% band — note Catalyst is filed as tier-4 in the design draft but shipped as tier-3; see §3 for the naming/tiering discrepancy). |
-| Tier-3 restricted specialist | ~20–30% primary axis, sometimes +10–20% secondary, ~20–35% effective power in scenario | Duelist: 12% attack (**below** the 20–30% band entirely) + 15% elite/boss bonus — reads as under-tuned relative to its own design band. Juggernaut: 25% maxHp / 32% plating / 12% DR-layer / -20% attack speed / -7% speed — plating and the DR layer both land inside or above band, but this is the one core stacking *four* simultaneous axes where the draft describes 20–30% primary + optional 10–20% secondary (two axes), so Juggernaut is structurally richer than its own design template. Scout: 14% attack / 16% speed / 20% mobility-CDR / -15% maxHp — attack is below the 10–18% draft band's midpoint but close; roughly on-template otherwise. Bruiser: 20% attack / 15% maxHp / 12% speed / 40% mobility-refund — attack and maxHp both land inside the 15–25%/10–20% draft bands; the 40% mobility-refund exceeds the draft's 30–50% band's midpoint but stays inside it. Sniper: 26% attack / -20% maxHp / -15% plating — attack lands mid-band (20–30%), penalties roughly match the draft's -15–25%/-10–20% bands. |
+| Tier-2 unrestricted capstone | ~8–15% on a major stat, ~10–15% total effective power | Tempered: 12%/12%. Survivalist: 30% recovery / 15% maxHp. Force: 22% attack / -12% maxHp. |
+| Tier-3 unrestricted specialist | ~15–25% on primary mechanic, ~15–25% effective power | Arcanist: 18% technique CDR / 8% power (below band on both axes vs. the draft's 15–20%/5–10%, though close). Accelerant: 25% attack speed / -12% attack (speed at top of the 20–30% draft band; penalty below the 10–20% ceiling). |
+| Tier-3 restricted specialist | ~20–30% primary axis, sometimes +10–20% secondary, ~20–35% effective power in scenario | Duelist: 12% attack (**below** the 20–30% band entirely) + 15% elite/boss bonus — reads as under-tuned relative to its own design band. Scout: 14% attack / 16% speed / 20% mobility-CDR / -15% maxHp — attack is below the 10–18% draft band's midpoint but close; roughly on-template otherwise. Bruiser: 20% attack / 15% maxHp / 12% speed / 40% mobility-refund — attack and maxHp both land inside the 15–25%/10–20% draft bands; the 40% mobility-refund exceeds the draft's 30–50% band's midpoint but stays inside it. Sniper: 26% attack / -20% maxHp / -15% plating — attack lands mid-band (20–30%), penalties roughly match the draft's -15–25%/-10–20% bands. |
+| Tier-4 mature unrestricted specialist | ~20–35% on primary mechanic, premium effective power | Controller: 35% debuff duration / 25% potency. Catalyst: 115% existing on-hit / -15% attack. |
+| Tier-4 mature restricted specialist | ~20–40% primary axis, premium effective power in scenario | Juggernaut: 30% maxHp / 40% plating / 14% DR-layer / -25% attack speed / -10% speed — a deliberately multi-axis survivability package with a meaningful tempo cost. |
 
-**Overall read**: roughly half the cast (Tempered, Force, Duelist, Arcanist)
-sits at or below the *floor* of its own design band, while a few (Juggernaut,
-Bruiser) land inside or slightly above band but by stacking more simultaneous
-axes than the design template describes for that tier. No single core in the
-current cast overshoots its band on a primary axis. This is consistent with
-the project's own placeholder-numbers disclaimer (`docs/cores-current-state.md`):
-the cast reads as internally consistent and reachable, but not yet tuned to
-read as a "capstone, build-defining" power spike per the philosophy doc's own
-targets — most cores currently feel like a strong item, not a signature choice.
+**Overall read**: the three T2 entries now use their live capstone values and
+late-band gates (Tempered 12%/12%, Survivalist 30% recovery/15% maxHp, Force
+22% attack/-12% maxHp). The remaining comparison is a historical design-band
+assessment of the T3/T4 cast, not a request to change any mechanics or placement.
 
 ### Representative marginal-value examples
 
-- **Tempered** (+9% attack, +9% maxHp, no conditions): marginal DPS gain is
-  close to a literal 9%, since it's the final multiplicative stage acting on
+- **Tempered** (+12% attack, +12% maxHp, no conditions): marginal DPS gain is
+  close to a literal 12%, since it's the final multiplicative stage acting on
   the fully-built `attack` stat — no dilution. This is the *cleanest* case in
   the cast precisely because it has no conditionality.
 - **Duelist** (+12% attack always, +15% only vs elite/boss): against a normal
@@ -1055,9 +1068,9 @@ targets — most cores currently feel like a strong item, not a signature choice
   kills, a large fraction of Duelist's authored power is inert — this matches
   its own flavor text ("nothing here helps against a crowd") but means its
   *average* effective bonus across mixed content is well below its peak.
-- **Catalyst** (+28% on-hit, -12% attack): because `onHitDamage` is currently
+- **Catalyst** (+115% on-hit, -15% attack): because `onHitDamage` is currently
   authored on very few weapon lineages (per §5/§11 research), most builds
-  equipping Catalyst pay the guaranteed -12% attack penalty for a +28%
+  equipping Catalyst pay the guaranteed -15% attack penalty for a +115%
   multiplier on a damage term that is zero or near-zero for them. For those
   builds the *net* effect is strictly negative — a real "trap" case for any
   build not specifically built around on-hit damage, and worth flagging for
@@ -1073,17 +1086,13 @@ targets — most cores currently feel like a strong item, not a signature choice
 
 ### Obvious under-tuned-for-capstone cases
 
-- **Force** (13% attack / -7% maxHp): the design draft explicitly frames Force
-  as possibly "primarily a starter core" that "may remain... rather than
-  developing a large family" — the current numbers read as consistent with
-  that modest ambition, not as under-tuned relative to its own (already
-  modest) intent.
+- **Force** (22% attack / -12% maxHp): the original design draft explicitly
+  framed Force as possibly "primarily a starter core"; the live recipe now
+  places it as a premium T2 capstone, so that draft note is historical only.
 - **Tempered / Survivalist**: both sit at or near the design floor for a
-  tier-2 starter, which is arguably correct for a first-taste item at the
-  slot's introduction — the more relevant question for a redesign is whether
-  the tier-3+ cast escalates enough from this floor to read as a capstone
-  jump, and per the table above, several tier-3 cores (Duelist, Arcanist) do
-  not clearly escalate past the starter band on their primary axis.
+  tier-2 capstone, which is a premium purchase at the end of the T2 band —
+  the more relevant question for a redesign is whether the tier-3+ cast
+  escalates enough from this stage to read as a capstone jump.
 
 ---
 

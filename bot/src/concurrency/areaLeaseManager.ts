@@ -15,11 +15,18 @@ export interface LivenessPolicy {
 }
 export const DEFAULT_ISOLATED_LIVENESS_POLICY: LivenessPolicy = {
   contentionPolicy: "degrade-to-shared",
-  exclusiveWaitMs: 120_000,
+  // A T1 dungeon is a single exclusive node and a legitimate boss attempt can
+  // last longer than the old two-minute queue window. Keep the fallback bounded
+  // for ordinary experiments, but long enough that clean validation can wait
+  // for the current owner instead of degrading into shared boss state.
+  exclusiveWaitMs: 15 * 60_000,
   transitReplans: 1,
-  transitDeathBudgetPerLeg: 1,
-  totalCoordinationWaitMs: 120_000,
-  sharedAdmissionTtlMs: 30_000,
+  // Hostile cross-tier transit can legitimately take several respawn/reissue
+  // attempts. Keep the circuit breaker bounded, but do not turn a recoverable
+  // combat death into an artificial route failure after the first retry.
+  transitDeathBudgetPerLeg: 3,
+  totalCoordinationWaitMs: 30 * 60_000,
+  sharedAdmissionTtlMs: 5 * 60_000,
   stepDeadlineMs: 30 * 60_000,
 };
 export type ReservationReleaseReason =
@@ -100,6 +107,7 @@ export interface CombatReservationManagerOptions {
 interface PendingReservation extends ReservationRequest {
   requestId: string;
   deadlineAt: number;
+  allowWaitWhileHoldingPermit: boolean;
   signal: AbortSignal;
   resolve: (permit: CombatPermit) => void;
   reject: (error: Error) => void;
@@ -147,9 +155,11 @@ export class RunConcurrencyLimiter {
 
 /**
  * Exact-node, epoch-fenced permits. An owner may use non-blocking acquisition
- * while holding a permit (the two-permit handoff), but may never enter a wait
- * queue until it holds none. This is intentionally independent of batch launch
- * capacity; use `RunConcurrencyLimiter` for that concern.
+ * while holding a permit (the two-permit handoff). A protected-transit caller
+ * may also explicitly queue while retaining its current-node permit; that
+ * keeps the source fenced until authoritative departure is observed. This is
+ * intentionally independent of batch launch capacity; use
+ * `RunConcurrencyLimiter` for that concern.
  */
 export class CombatReservationManager {
   private readonly permitsByNode = new Map<string, CombatPermit>();
@@ -191,7 +201,11 @@ export class CombatReservationManager {
 
   acquireExclusive(
     request: ReservationRequest,
-    options: { signal: AbortSignal; deadlineAt: number },
+    options: {
+      signal: AbortSignal;
+      deadlineAt: number;
+      allowWaitWhileHoldingPermit?: boolean;
+    },
   ): Promise<CombatPermit> {
     this.assertOpen();
     this.assertRequest(request);
@@ -200,7 +214,10 @@ export class CombatReservationManager {
     }
     const immediate = this.tryAcquireExclusive(request);
     if (immediate) return Promise.resolve(immediate);
-    if ((this.permitsByOwner.get(request.ownerId)?.size ?? 0) > 0) {
+    if (
+      (this.permitsByOwner.get(request.ownerId)?.size ?? 0) > 0 &&
+      !options.allowWaitWhileHoldingPermit
+    ) {
       return Promise.reject(new Error(`${request.ownerId} cannot queue while holding a combat permit`));
     }
     if (this.pending.some((pending) => pending.ownerId === request.ownerId)) {
@@ -208,20 +225,47 @@ export class CombatReservationManager {
     }
     return new Promise<CombatPermit>((resolve, reject) => {
       const requestId = `reservation-request-${++this.nextId}`;
-      const cancel = (): void => this.cancelPending(requestId, new Error("reservation request aborted"));
+      const cancel = (): void => this.cancelPending(
+        requestId,
+        options.signal.reason instanceof Error
+          ? options.signal.reason
+          : new Error("reservation request aborted"),
+      );
       if (options.signal.aborted) {
-        reject(new Error("reservation request aborted"));
+        reject(
+          options.signal.reason instanceof Error
+            ? options.signal.reason
+            : new Error("reservation request aborted"),
+        );
         return;
       }
       options.signal.addEventListener("abort", cancel, { once: true });
-      this.pending.push({ ...request, requestId, deadlineAt: options.deadlineAt, signal: options.signal, resolve, reject, abortListener: cancel });
+      this.pending.push({
+        ...request,
+        requestId,
+        deadlineAt: options.deadlineAt,
+        allowWaitWhileHoldingPermit: options.allowWaitWhileHoldingPermit === true,
+        signal: options.signal,
+        resolve,
+        reject,
+        abortListener: cancel,
+      });
       this.dispatch();
     });
   }
 
   renew(permit: CombatPermit): CombatPermit {
     const current = this.requireCurrent(permit);
-    const renewed = { ...current, expiresAt: this.now() + this.permitTtlMs };
+    // Heartbeats keep a granted permit alive even while the owner is still
+    // walking toward its destination. Extend the entry deadline as well: a
+    // multi-hop protected transit can legitimately exceed the initial window,
+    // and an active owner is still accountable because a dead process stops
+    // renewing both clocks.
+    const renewed = {
+      ...current,
+      enterBy: current.enterBy > 0 ? this.now() + this.entryTtlMs : 0,
+      expiresAt: this.now() + this.permitTtlMs,
+    };
     this.permitsByNode.set(renewed.nodeId, renewed);
     this.permitsByOwner.get(renewed.ownerId)?.set(renewed.permitId, renewed);
     return { ...renewed };
@@ -279,7 +323,13 @@ export class CombatReservationManager {
     for (const [nodeId, admission] of this.sharedByNode) {
       if (admission.admissionId !== admissionId) continue;
       admission.participantOwnerIds = admission.participantOwnerIds.filter((participant) => participant !== ownerId);
-      if (admission.participantOwnerIds.length === 0) this.sharedByNode.delete(nodeId);
+      if (admission.participantOwnerIds.length === 0) {
+        this.sharedByNode.delete(nodeId);
+        // A shared fallback can have a real exclusive waiter behind it. Wake
+        // that waiter as soon as the last shared participant leaves rather than
+        // waiting for the next periodic sweep.
+        this.dispatch();
+      }
       return;
     }
   }
@@ -420,7 +470,10 @@ export class CombatReservationManager {
     if (this.closed) return;
     for (const pending of [...this.pending]) {
       if (this.permitsByNode.has(pending.nodeId) || this.sharedByNode.has(pending.nodeId)) continue;
-      if ((this.permitsByOwner.get(pending.ownerId)?.size ?? 0) > 0) {
+      if (
+        (this.permitsByOwner.get(pending.ownerId)?.size ?? 0) > 0 &&
+        !pending.allowWaitWhileHoldingPermit
+      ) {
         this.cancelPending(pending.requestId, new Error(`${pending.ownerId} acquired a permit while queued`));
         continue;
       }

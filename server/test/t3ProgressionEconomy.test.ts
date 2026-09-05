@@ -1,9 +1,12 @@
 /**
- * T3 progression/economy pass (2026-08-30) — see
- * `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`.
+ * T3 progression/economy pass (2026-08-30) plus the locked Tier-3
+ * Stance/Core redistribution (2026-09-04) — see
+ * `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md` and the
+ * current-state docs.
  *
  * Covers the retirement-aware mastery architecture, the 22 T2→T3 lineages, the T3 gear
- * cost curves / hybrid splits / catalyst schedule, and the ability / stance / rite prices.
+ * cost curves / hybrid splits / catalyst schedule, and the ability / stance / rite / Core
+ * prices and reward placement.
  */
 import {
   RECIPE_DATABASE,
@@ -325,7 +328,7 @@ for (const recipe of T3_GEAR) {
 // 3. T3 gear economy
 // ═══════════════════════════════════════════════════════════════════════════
 
-const total = (c: Partial<Record<EssenceType, number>> | undefined) =>
+const total = (c: Partial<Record<string, number>> | undefined) =>
   Object.values(c ?? {}).reduce((a: number, b) => a + (b ?? 0), 0);
 
 /** Approved lifetime totals (base + all five steps). */
@@ -456,28 +459,99 @@ for (const recipe of T3_GEAR) {
 }
 
 {
-  const STANCES: Array<{ id: string; family: string; cost: Partial<Record<EssenceType, number>> }> = [
-    { id: "stance-recipe-berserker", family: "dominion", cost: { red: 140, purple: 40 } },
-    { id: "stance-recipe-predator", family: "alacrity", cost: { green: 130, red: 50 } },
-    { id: "stance-recipe-brawler", family: "swarming", cost: { yellow: 130, red: 50 } },
-    { id: "stance-recipe-execute", family: "fortified", cost: { purple: 130, red: 50 } },
+  // Locked 2026-09-04 map: T3 keeps the four conditional/specialized Stances.
+  // They sit early in their own T3 bands and use local essence plus two live
+  // catalysts; no Stance recipe has a boss-clear gate.
+  const STANCES: Array<{
+    id: string;
+    group: string;
+    level: number;
+    family: string;
+    cost: Partial<Record<EssenceType, number>>;
+  }> = [
+    { id: "stance-recipe-warding", group: "swamp", level: 13, family: "fortified", cost: { purple: 220 } },
+    { id: "stance-recipe-berserker", group: "cave", level: 13, family: "dominion", cost: { red: 230 } },
+    { id: "stance-recipe-predator", group: "tundra", level: 2, family: "dominion", cost: { blue: 210 } },
+    { id: "stance-recipe-execute", group: "desert", level: 7, family: "dominion", cost: { yellow: 230 } },
   ];
+  assert(STANCES.length === 4, "T3 must have exactly four placed Stances");
   for (const spec of STANCES) {
     const recipe = STANCE_RECIPE_DATABASE.get(spec.id);
     assert(!!recipe, `${spec.id}: recipe must exist`);
     assert(recipe!.tier === 3, `${spec.id}: must stay tier 3`);
+    assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
+    assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
     assert(
       JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: 2 }),
       `${spec.id}: must charge exactly 2 ${spec.family} (got ${JSON.stringify(recipe!.catalystCost)})`,
     );
-    assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be UNCHANGED`);
+    assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
+    assert(total(recipe!.cost) >= 180 && total(recipe!.cost) <= 250, `${spec.id}: T3 stance essence total is outside 180-250`);
+    assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   }
-  // T4's Recuperating Stance was explicitly out of scope for the T3 pass (catalyst
-  // 7, unchanged here). The T4 economy pass (2026-08-30) later moved it to 3 — see
-  // t4ProgressionEconomy.test.ts, which is now the authoritative pin for this value.
+  const t3StanceIds = [...STANCE_RECIPE_DATABASE.values()]
+    .filter((recipe) => recipe.tier === 3)
+    .map((recipe) => recipe.id)
+    .sort();
   assert(
-    JSON.stringify(STANCE_RECIPE_DATABASE.get("stance-recipe-recuperating")!.catalystCost) === JSON.stringify({ alacrity: 3 }),
-    "T4 Recuperating Stance catalyst must match the T4 economy pass's value (3)",
+    JSON.stringify(t3StanceIds) === JSON.stringify(STANCES.map((spec) => spec.id).sort()),
+    `T3 stance roster must be exactly the locked four (got ${t3StanceIds.join(", ")})`,
+  );
+  assert(
+    ![...STANCE_RECIPE_DATABASE.values()].some((recipe) => recipe.tier === 3 && recipe.stanceId === "powering-up-stance"),
+    "Powering Up must not be placed in T3",
+  );
+}
+
+{
+  // T3 keeps six final Core homes. The three mature capstones move to T4; the
+  // remaining six stay deliberate late-band purchases with their live mechanics.
+  const CORES: Array<{
+    id: string;
+    group: string;
+    level: number;
+    family: string;
+    catalysts: number;
+    cost: Partial<Record<EssenceType, number>>;
+  }> = [
+    { id: "core-arcanist", group: "mountain", level: 18, family: "swarming", catalysts: 5, cost: { blue: 1200 } },
+    { id: "core-duelist", group: "cave", level: 18, family: "dominion", catalysts: 6, cost: { red: 1350 } },
+    { id: "core-bruiser", group: "jungle", level: 11, family: "alacrity", catalysts: 6, cost: { green: 1350 } },
+    { id: "core-accelerant", group: "jungle", level: 12, family: "alacrity", catalysts: 5, cost: { green: 1150 } },
+    { id: "core-sniper", group: "desert", level: 12, family: "dominion", catalysts: 6, cost: { yellow: 1300 } },
+    { id: "core-scout", group: "tundra", level: 6, family: "heavy", catalysts: 5, cost: { blue: 1200 } },
+  ];
+  assert(CORES.length === 6, "T3 must have exactly six Cores");
+  for (const spec of CORES) {
+    const recipe = RECIPE_DATABASE.get(spec.id);
+    assert(!!recipe, `${spec.id}: Core recipe must exist`);
+    assert(recipe!.slot === "core" && recipe!.tier === 3, `${spec.id}: must stay a T3 Core`);
+    assert(recipe!.recipeGroup === spec.group, `${spec.id}: home must remain ${spec.group}`);
+    assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
+    assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
+    assert(
+      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
+      `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
+    );
+    assert(total(recipe!.cost) >= 1000 && total(recipe!.cost) <= 1500, `${spec.id}: Core essence total is outside 1000-1500`);
+    assert(total(recipe!.catalystCost) >= 5 && total(recipe!.catalystCost) <= 6, `${spec.id}: Core catalyst total is outside 5-6`);
+    assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
+  }
+  const t3CoreIds = [...RECIPE_DATABASE.values()]
+    .filter((recipe) => recipe.slot === "core" && recipe.tier === 3)
+    .map((recipe) => recipe.id)
+    .sort();
+  assert(
+    JSON.stringify(t3CoreIds) === JSON.stringify(CORES.map((spec) => spec.id).sort()),
+    `T3 Core roster must be exactly the six intended homes (got ${t3CoreIds.join(", ")})`,
+  );
+}
+
+{
+  const recuperating = STANCE_RECIPE_DATABASE.get("stance-recipe-recuperating")!;
+  assert(
+    recuperating.tier === 4 && recuperating.recipeGroup === "graveyard" && recuperating.requiredBiomeLevel === 2,
+    "Recuperating Stance must be a Graveyard T4 reward, not a T3 reward",
   );
 }
 

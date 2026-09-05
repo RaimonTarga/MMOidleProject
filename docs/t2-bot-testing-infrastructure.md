@@ -494,9 +494,10 @@ two arms with one variable each.
 - `bot:t2-report` reads `events.jsonl` directly rather than `summary.json`, so it
   works on in-flight and killed runs. It does not yet compute biome dwell time or
   travel-vs-combat time split — the Tier-2 response map (§11) needs those.
-- The T2 route carries no stance, core or Tier-2 ability adoption in the
-  baseline. Deliberate (single-variable control), but it means the Tier-2 content
-  in those three systems is currently untested by bots.
+- The generated T2 baseline now adopts the locked stance/core rewards at their
+  authored legs (Plains stances; Cave/Jungle/Desert cores). Tier-2 ability
+  adoption remains outside this route's acquisition plan, so that content is
+  still untested by bots.
 
 ### Route
 

@@ -73,18 +73,37 @@ const refused = fakeSocket("spectator-3");
 assert(manager.admit(first as never, "127.0.0.1", 0), "first spectator should be admitted");
 assert(manager.admit(second as never, "127.0.0.1", 0), "second spectator from an IP should be admitted");
 assert(!manager.admit(refused as never, "127.0.0.1", 0), "third spectator from one IP should be refused");
-assert(first.statuses.at(-1)?.mode === "clearing", "empty world should use the Clearing fallback");
-assert(!world.isNodeFrozen("node-clearing"), "active fallback viewers should thaw the Clearing");
+// No fallback view. An empty world means nothing worth watching, and the old
+// behaviour — pointing every idle viewer at the Clearing — showed an empty stone
+// circle, which is a worse first impression than the landing page's own backdrop.
+assert(first.statuses.at(-1)?.mode === "idle", "an empty world should report idle, not a fallback node");
+assert(
+  first.statuses.at(-1)?.nodeId === undefined,
+  "an idle viewer is not watching a node",
+);
+assert(
+  manager.recipientsByNode().size === 0,
+  "idle viewers should receive no snapshots at all",
+);
+assert(
+  world.isNodeFrozen("node-clearing"),
+  "the Clearing must NOT be thawed on a spectator's behalf any more",
+);
 
 manager.reconcile(101);
 assert(first.statuses.at(-1)?.paused === true, "idle spectators should be paused");
 assert(manager.recipientsByNode().size === 0, "paused spectators should receive no snapshots");
-assert(world.isNodeFrozen("node-clearing"), "the Clearing should freeze when every fallback viewer pauses");
 
 manager.resume(first.id, 102);
 assert(first.statuses.at(-1)?.paused === false, "explicit activity should resume the stream");
-assert(manager.recipientsByNode().size === 1, "resumed fallback should receive Clearing snapshots");
-assert(!world.isNodeFrozen("node-clearing"), "resuming a fallback viewer should thaw the Clearing again");
+assert(
+  manager.recipientsByNode().size === 0,
+  "a resumed viewer with nobody to watch still receives nothing",
+);
+assert(
+  world.isNodeFrozen("node-clearing"),
+  "resuming an idle viewer must not thaw the Clearing",
+);
 
 manager.remove(first.id);
 manager.remove(second.id);

@@ -2,10 +2,9 @@
  * The four postures added 2026-09-02: Time to Strike, Reaper, Warding, Powering Up.
  *
  * Two jobs. First, prove each one's mechanic actually does what its tooltip says —
- * these are unreachable in-game (no recipe teaches them), so nothing else in the
- * project will notice if one silently stops working. Second, hold the "unplaced"
- * invariant itself: the moment someone writes a recipe for one of these, THAT is a
- * deliberate placement decision, and this test failing is how it gets noticed.
+ * these mechanics are easy to regress because their normal loadout paths are small.
+ * Second, hold the placement invariant: all four are now taught by authored
+ * T3/T4 recipes, so none may remain unplaced.
  */
 import {
   ACTION_DATABASE,
@@ -63,6 +62,7 @@ const NEW_STANCES = [
   "warding-stance",
   "powering-up-stance",
 ];
+const UNPLACED_STANCES: string[] = [];
 
 function makePlayerSlices(): PersistedPlayerSlices {
   return {
@@ -86,16 +86,18 @@ function makePlayerSlices(): PersistedPlayerSlices {
   };
 }
 
-// ── Every new posture exists, and none of them is placed ───────────────────────
+// ── Every implemented posture exists and is now placed ───────────────────────
 
 for (const id of NEW_STANCES) {
   assert(!!stanceDef(id), `${id} should exist in the stance catalog`);
 }
-// The point of the pass: they are authored but unreachable. If this fails, someone
-// placed one — which is fine, but it is a design decision, not a side effect.
+for (const id of NEW_STANCES) {
+  const recipes = [...STANCE_RECIPE_DATABASE.values()].filter((recipe) => recipe.stanceId === id);
+  assert(recipes.length === 1, `${id} should have exactly one authored stance recipe`);
+}
 const placed = [...STANCE_RECIPE_DATABASE.values()]
   .map((recipe) => recipe.stanceId)
-  .filter((stanceId) => NEW_STANCES.includes(stanceId));
+  .filter((stanceId) => UNPLACED_STANCES.includes(stanceId));
 assert(
   placed.length === 0,
   `these stances are deliberately unplaced; a recipe now teaches: ${placed.join(", ")}`,

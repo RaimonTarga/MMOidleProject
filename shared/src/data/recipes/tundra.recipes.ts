@@ -250,13 +250,14 @@ export const tundraRecipeEntries = [
   // See the CORES header in plains.recipes.ts. Tundra owns MOVEMENT — its boot
   // ramps speed over sustained travel, so it is where the spacing core comes from.
 
-  // T3 ranged — Scout: reliable uptime instead of peak damage. Where Sniper wants
-  // the fight to never reach it, Scout assumes it will and keeps moving.
+  // T3 premium ranged — Scout: reliable uptime instead of peak damage. Where
+  // Sniper wants the fight to never reach it, Scout assumes it will and keeps
+  // moving. L6 and 1,200 blue / 5 Heavy make this a late debut-biome capstone.
   ['core-scout', {
     id: 'core-scout', name: 'Scout Core',
-    recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'core', coreEligibility: 'ranged',
+    recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'core', coreEligibility: 'ranged',
     lineageId: 'core-scout',
-    cost: { blue: 110 }, catalystCost: { heavy: 3 }, // Alacrity is BANNED in Tundra; its native family is Heavy
+    cost: { blue: 1200 }, catalystCost: { heavy: 5 }, // Alacrity is BANNED in Tundra; its native family is Heavy
     stats: {}, tier: 3,
     // The cooldown clause is INERT without an ability tagged `mobility` (today:
     // Charge); the damage and movement halves are always on.
@@ -272,7 +273,7 @@ export const tundraRecipeEntries = [
     id: 'relic-glacial-bell', name: 'Glacial Bell',
     recipeGroup: 'tundra', requiredBiomeLevel: 12, slot: 'relic',
     lineageId: 'relic-glacial-bell',
-    cost: { blue: 220 }, catalystCost: { heavy: 4 },
+    cost: { blue: 3200 }, catalystCost: { heavy: 9 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.20,

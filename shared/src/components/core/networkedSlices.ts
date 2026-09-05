@@ -166,6 +166,16 @@ export interface HasStatus {
   /** Encounter adds healing inside the void throne ring. */
   throneHealing?: boolean;
   /**
+   * CONCEALED — mirrors the server-only `IsConcealed` component for the renderer.
+   *
+   * Without this the client had no idea a boss had burrowed: it drew the body
+   * standing in the open, fully lit, then teleported it. The whole underground
+   * fiction lived on the server. The MARKER kind is broadcast rather than a plain
+   * bit because burrowing and slipping into cover want different presentation, and
+   * the renderer must not have to re-derive which one from the monster's type.
+   */
+  concealed?: 'burrow' | 'stealth';
+  /**
    * HARD CONTROL, as one broadcast bit for the renderer.
    *
    * The client draws the same orbiting stun tell over any entity carrying this, so

@@ -72,6 +72,29 @@
       "notes": "Round 3: T3 apex — wall-to-wall, cracked ancient armor, obsidian crown/jaw, horns + scars. | ACCEPTED (status restored 2026-07-18: user's gallery accepts were clobbered by concurrent generate runs; art/src holds the user's final 23:12 picks — do not regenerate)."
     },
     {
+      "id": "boss-cave-burrowed",
+      "out": "sprites/bosses/boss-cave-burrowed.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "a single isolated burrowed-state sprite for the Cave boss lineage, a huge armored cave crawler submerged just beneath the surface, a broad low elongated mound of compact charcoal earth rising around the buried body, a curved band of pale bone-grey chitinous carapace breaking through the crown of the mound, one wedge-shaped obsidian-black head ridge and two tiny colorless pale glints visible at the right-facing leading edge, a few angular pale plate shards and restrained soil clods around the break, no visible legs and no full body, the silhouette must still read as the same six-legged armored cave boss hiding underground, centered and filling roughly 75 percent of a 128 by 128 sprite, calm tense pre-emergence state, three-quarter view facing right, isolated on a transparent background, painterly pixel art, soft volumetric shading, minimal outline, charcoal brown and bone-grey body colors with sparse obsidian accents",
+      "status": "accepted",
+      "sources": [
+        "cave-boss-burrow-state"
+      ],
+      "negative": "generic rock, ordinary hill, landscape, cavern, cave walls, floor plane, surrounding terrain, scenery, background elements, environmental scene, pedestal, platform, base, cast shadow, drop shadow, bright white, neon, purple, violet, green, blue, red, colorful, magical glow, flames, water, plants, skulls, extra creatures, visible full legs, standing, walking, upright, bipedal, fully surfaced monster, many eyes, eye cluster, spider, worm, larva, maggot, robot, mechanical drill, cartoon, chibi, cute, rounded soft shapes, toy-like, plush, mascot, front view, facing camera, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "colorImage": "sprites/bosses/boss-cave-t2.png"
+      },
+      "notes": "Standalone shared Burrowed/Conceal state for the Cave boss emergence family. Palette-pinned to the accepted Cave boss lineage, but generated without initImage so the mound/breach silhouette is authored independently."
+    },
+    {
       "id": "boss-desert-t2",
       "out": "sprites/bosses/boss-desert-t2.png",
       "size": {

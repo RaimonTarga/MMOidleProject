@@ -111,6 +111,7 @@ export interface CoordinationFallback {
     | "exclusive-wait-budget"
     | "unsafe-transit"
     | "transit-death-budget"
+    | "death"
     | "reservation-expired"
     | "step-deadline";
   action: "alternate-node" | "replan" | "shared-admission" | "skip-dependent" | "partial-stop";

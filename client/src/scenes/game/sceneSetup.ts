@@ -2,6 +2,7 @@ import {
   EFFECT_DEFS,
   EMOTE_SPRITESHEETS,
   GAME_CONFIG,
+  NODE_BIOMES,
   TREE_CELL_PX,
   directionBetweenNodes,
   peekSceneBounds,
@@ -152,9 +153,22 @@ import {
   fastForwardMapSlide,
   tickMapSlide,
 } from "./mapTransition";
+import { tickSpectatorReadiness } from "./spectatorReady";
 import { drawGroundZones } from "../../render/groundZones";
 import { drawCorpses } from "../../render/corpses";
 import { drawStunOrbits } from "../../render/stunOrbit";
+import { createCinematicCamera, tickCinematicCamera } from "./cinematic/camera";
+import { initBeacon, setPhase } from "./cinematic/mode";
+import {
+  createCinematicStaging,
+  onCinematicEnteredWorld,
+  stagingSettled,
+  tickCinematicStaging,
+} from "./cinematic/staging";
+import {
+  suppressCinematicChrome,
+  suppressCinematicOverlays,
+} from "./cinematic/suppress";
 
 const CAMERA_HOLD_MARGIN = 80;
 const CAMERA_LERP = 0.1;
@@ -428,21 +442,54 @@ export function preloadGameAssets(scene: GameScene): void {
  * biome fill), and the completion hook re-skins the current node so late
  * textures replace their fallbacks.
  */
+/**
+ * Wire up art that arrived after `create()` ran, and re-skin the current node so
+ * late textures replace their fallbacks. All of it is idempotent and skips
+ * textures that are still missing, so a partial batch is safe and a later batch
+ * finishes the job.
+ */
+function adoptDeferredSpectatorAssets(scene: GameScene): void {
+  initEffectFrames(scene);
+  initEmoteAnimations(scene);
+  initVoidOverlordSheet(scene);
+  const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+  if (nodeId && !scene.transitioning) instantReskinNode(scene, nodeId);
+}
+
+/**
+ * Stream everything the slim spectator boot skipped, in TWO passes.
+ *
+ * Pass one carries only what the node on screen right now needs to stop looking
+ * unfinished: presentation art, trees, and the CURRENT biome's ground. Pass two
+ * fetches the other ten biomes so a later retarget has them.
+ *
+ * The split exists because of the landing handoff. One combined pass means the
+ * "spectator looks finished" gate is really "every biome in the game has
+ * downloaded" — tens of megabytes — so a first-time visitor would sit on the
+ * prerecorded loop forever and never see the live world. Splitting lets the
+ * handoff happen as soon as THIS node is genuinely done, which is the question
+ * the gate is actually asking. A retarget into a biome pass two has not reached
+ * yet still degrades gracefully to the flat biome fill, exactly as before.
+ */
 function startDeferredSpectatorAssets(scene: GameScene): void {
   queuePresentationAssets(scene);
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   queueTreeAssets(scene);
-  queueBiomeAssets(scene, null);
+  const firstNodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+  const firstBiome = NODE_BIOMES[firstNodeId]?.biomeGroup;
+  queueBiomeAssets(scene, firstBiome ? new Set([firstBiome]) : null);
+
   scene.load.once("complete", () => {
-    // Wire up the art that arrived after create() ran. All three are
-    // idempotent and skip textures that are still missing, so a partial batch
-    // is safe and a later batch finishes the job.
-    initEffectFrames(scene);
-    initEmoteAnimations(scene);
-    initVoidOverlordSheet(scene);
-    const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
-    if (nodeId && !scene.transitioning) instantReskinNode(scene, nodeId);
+    adoptDeferredSpectatorAssets(scene);
+    // Gate for the landing handoff: the node on screen now has its real ground
+    // and its effect/emote art, so revealing it will not pop underneath anyone.
+    scene.spectatorAssetsReady = true;
+
+    // Pass two: the remaining biomes, for retargets.
+    queueBiomeAssets(scene, null);
+    scene.load.once("complete", () => adoptDeferredSpectatorAssets(scene));
+    scene.load.start();
   });
   scene.load.start();
 }
@@ -457,13 +504,22 @@ export function createGameScene(scene: GameScene): void {
   // hook runs this init instead.
   if (!scene.spectatorMode) initVoidOverlordSheet(scene);
   initMistPostFx(scene);
-  if (scene.spectatorMode) {
+  if (scene.spectatorMode || scene.cinematic) {
     // The landing preview is intentionally silent. Muting Phaser itself is the
     // final backstop, while skipping initAudio also prevents music subscriptions
     // and synthesized fallback cues from ever starting for anonymous viewers.
+    // Capture runs are silent for the same reason: the shipped clip has no audio.
     scene.sound.mute = true;
   } else {
     initAudio(scene);
+  }
+
+  if (scene.cinematic) {
+    const beacon = initBeacon(scene.cinematic);
+    scene.cinematicCamera = createCinematicCamera(scene.cinematic, beacon);
+    scene.cinematicStaging = createCinematicStaging(scene.cinematic, beacon);
+    suppressCinematicChrome();
+    setPhase(beacon, "lobby", "scene created; waiting on a character");
   }
 
   const cam = scene.cameras.main;
@@ -496,11 +552,14 @@ export function createGameScene(scene: GameScene): void {
     .setDepth(DEPTH.MINIMAP)
     .setVisible(!scene.spectatorMode);
 
-  const detachHud = scene.spectatorMode ? () => {} : attachHudEvents(scene);
-  const detachClick = scene.spectatorMode ? () => {} : attachClickToMove(scene);
-  const detachKb = scene.spectatorMode ? () => {} : attachKeyboard(scene);
-  const detachPad = scene.spectatorMode ? () => {} : attachGamepad(scene);
-  const stopMove = scene.spectatorMode ? () => {} : startMovementTick(scene);
+  // A capture run is as inert as a spectator: no input reaches the world, so a
+  // stray pointer or keypress during recording cannot move the anchor player.
+  const inert = scene.spectatorMode || scene.cinematic !== null;
+  const detachHud = inert ? () => {} : attachHudEvents(scene);
+  const detachClick = inert ? () => {} : attachClickToMove(scene);
+  const detachKb = inert ? () => {} : attachKeyboard(scene);
+  const detachPad = inert ? () => {} : attachGamepad(scene);
+  const stopMove = inert ? () => {} : startMovementTick(scene);
   const detachSocket = connectSocket(scene);
 
   function onVisibilityChange(): void {
@@ -568,7 +627,9 @@ export function updateGameScene(scene: GameScene, delta: number): void {
       instantReskinNode(scene, scene.state.ownNodeId);
     }
   } else if (scene.state.ownNodeId !== scene.lastDrawnNodeId) {
-    if (scene.spectatorMode) {
+    if (scene.spectatorMode || scene.cinematic) {
+      // A capture teleports across the map; the Link's-Awakening slide is a
+      // gameplay continuity flourish and has no place in a scripted shot.
       instantReskinNode(scene, scene.state.ownNodeId);
     } else {
     const dir = directionBetweenNodes(scene.lastDrawnNodeId, scene.state.ownNodeId);
@@ -611,11 +672,24 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     if (!scene.spectatorMode) drawMinimap(scene);
   }
 
+  // Capture mode owns the camera outright: the authored path replaces the
+  // follow logic below rather than fighting it for the same scroll every frame.
+  if (scene.cinematic && scene.cinematicCamera && scene.cinematicStaging) {
+    suppressCinematicOverlays(scene);
+    const staging = scene.cinematicStaging;
+    const cam = scene.cinematicCamera;
+    tickCinematicStaging(scene, staging, cam.elapsedMs);
+    tickCinematicCamera(scene, cam, delta, stagingSettled(staging, cam.elapsedMs));
+    return;
+  }
+
   // The camera follows the own player every frame — including during a map
   // slide. The slide is a continuity camera jump followed by the same smooth
   // lerp used for normal world movement, so the camera tracks the player across
   // the transition instead of running a separate time-based tween that freezes
   // at the boundary and then snaps onto the moved player.
+  if (scene.spectatorMode) tickSpectatorReadiness(scene);
+
   const spectatorBase = scene.spectatorTargetId
     ? scene.state.interpolation.get(scene.spectatorTargetId)?.base
     : undefined;
@@ -714,6 +788,9 @@ function connectSocket(scene: GameScene): () => void {
     onStateSync: (snapshot) => {
       applyDelta(scene.state, snapshot, scene);
       handleInitialStateSync();
+      if (scene.cinematicStaging) {
+        onCinematicEnteredWorld(scene.cinematicStaging, socket);
+      }
     },
     onDelta: (snapshot) => applyDelta(scene.state, snapshot, scene),
     onSpectateSnapshot: (snapshot) => {

@@ -224,8 +224,21 @@ export const bossMonsterEntriesT2 = [
       damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4000,
       steps: [
         { kind: 'cast', name: 'Burrow', castMs: 900, fx: 'shield', guardable: false },
+        // emergeGap is deliberately INSIDE the eruption radius. At 150 against a
+        // 140 radius the circle resolved on point containment 10px clear of a
+        // player who never moved, so the payoff of the whole sequence could not
+        // land on a stationary target. 90 leaves a 50px overlap: standing still is
+        // punished, and the 1000ms telegraph is far more than the ~420ms of
+        // running it takes to clear the edge.
+        // travelSpeed is FAR above the Dreadbore's 20px/s walk, and deliberately
+        // so: the burrow is this boss's only closer. A kiting player moves at 120,
+        // so anything under ~250 leaves the boss surfacing wherever it already
+        // was — the sequence arrives, misses by four screens, and reads as broken.
+        // At 340 it closes 220px/s on someone running flat out, which is enough to
+        // arrive from kiting range inside one burrow. The eruption telegraph is
+        // still the fair dodge; being unable to REACH the player was never it.
         { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 1600,
-          relocate: 'near-target', emergeGap: 150 },
+          relocate: 'near-target', emergeGap: 90, travelSpeed: 500 },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 140,
           damageMult: 1.0, telegraphMs: 1000, fx: 'strong-kick' },
         { kind: 'recovery', label: 'Surfaced', durationMs: 2200 },

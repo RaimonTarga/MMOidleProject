@@ -241,15 +241,16 @@ export const volcanicRecipeEntries = [
   // See the CORES header in plains.recipes.ts. Volcanic owns THE STRIKE ITSELF —
   // burn weapons and heat, so it is where the on-hit amplifier comes from.
 
-  // T3 unrestricted — Catalyst: scales the flat on-hit term, which lands AFTER
-  // plating and DR. That unmitigated placement is what makes it a real axis rather
-  // than a second attack multiplier, and it is why it shines against armour.
+  // T4 premium unrestricted — Catalyst: scales the flat on-hit term, which lands
+  // AFTER plating and DR. That unmitigated placement is what makes it a real axis
+  // rather than a second attack multiplier, and it is why it shines against armour.
+  // L10 and 2,300 red / 8 Swarming make it Volcanic's late capstone.
   ['core-catalyst', {
     id: 'core-catalyst', name: 'Catalyst Core',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 3, slot: 'core', coreEligibility: 'unrestricted',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 10, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-catalyst',
-    cost: { red: 90 }, catalystCost: { swarming: 2 }, // family-tag: on-hit proc amplifier → Swarming
-    stats: {}, tier: 3,
+    cost: { red: 2300 }, catalystCost: { swarming: 8 }, // family-tag: on-hit proc amplifier → Swarming
+    stats: {}, tier: 4,
     // Trading attack (mitigated) for on-hit (unmitigated) is the actual shape here:
     // better against heavily armoured targets, worse against soft ones. Worth little
     // to a build carrying no on-hit damage — the specialisation is the cost.
@@ -266,7 +267,7 @@ export const volcanicRecipeEntries = [
     id: 'relic-hastebound-dial', name: 'Hastebound Dial',
     recipeGroup: 'volcanic', requiredBiomeLevel: 11, slot: 'relic',
     lineageId: 'relic-hastebound-dial',
-    cost: { red: 220 }, catalystCost: { swarming: 4 },
+    cost: { red: 3300 }, catalystCost: { swarming: 9 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.35,

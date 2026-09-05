@@ -506,6 +506,32 @@ export function updateBossPatterns(world: World, dt: number, now = Date.now()): 
     armPatternCooldown(monster, pattern, now);
     if (pattern.oncePerLife) setCounter(monster.tracksCombat, PATTERN_USED_KEY, 1);
   }
+
+  publishConcealment(world);
+}
+
+/**
+ * Mirror concealment onto the networked status slice, for the renderer.
+ *
+ * Derived from COMPONENT PRESENCE rather than written wherever `isConcealed` is
+ * attached and detached. Concealment is torn down from several paths (step end,
+ * interrupt, leash reset, target loss, death, node teardown) and a broadcast bit
+ * that had to be cleared alongside each of them would eventually miss one —
+ * leaving a boss that is fightable but still drawn as buried. Reconciling from
+ * presence cannot drift.
+ *
+ * Runs at the TAIL of this pass, not in the monster-control reconciler that owns
+ * `hardControlled`: that pass runs earlier in the tick than patterns do, so the
+ * bit would always describe the previous tick. A client that learns about the
+ * burrow late plays its dirt cloud over a body that has already gone.
+ */
+function publishConcealment(world: World): void {
+  for (const monster of world.monsterEntities) {
+    const marker = monster.isConcealed?.marker;
+    if (monster.hasStatus.concealed === marker) continue;
+    monster.hasStatus.concealed = marker;
+    markSliceDirty(world, monster, 'hasStatus');
+  }
 }
 
 function advancePattern(world: World, monster: MonsterEntity, dt: number, now: number): void {
@@ -814,9 +840,22 @@ function beginStep(
         // A null destination means "stay put" — emerging inside terrain would be
         // far worse than emerging where it went down.
         if (destination) {
-          monster.hasPosition.current = destination;
-          markSliceDirty(world, monster, 'hasPosition');
           state.capturedEndpoint = { ...destination };
+          if (step.travelSpeed !== undefined) {
+            // TRAVELLING. The root is released for the same reason the charge
+            // releases it — `setEntityMotion` refuses to move a rooted body — and
+            // `hasPosition.speed` is written because that is what the CLIENT
+            // interpolates with. Leaving it at the walking speed is what made the
+            // charge appear to stop halfway.
+            if (state.ownsRoot) setRooted(world, monster, false);
+            state.savedSpeed = monster.hasPosition.speed;
+            monster.hasPosition.speed = step.travelSpeed;
+            markSliceDirty(world, monster, 'hasPosition');
+            setEntityMotion(world, monster, destination);
+          } else {
+            monster.hasPosition.current = destination;
+            markSliceDirty(world, monster, 'hasPosition');
+          }
         }
       }
       return true;
@@ -973,7 +1012,20 @@ function tickStep(
       return 'done';
     }
     case 'conceal': {
-      if (now < state.stepEndsAtMs) return 'running';
+      if (now < state.stepEndsAtMs) {
+        if (step.travelSpeed !== undefined && step.relocate === 'near-target') {
+          steerConcealedTravel(world, monster, state, step);
+        }
+        return 'running';
+      }
+      if (step.travelSpeed !== undefined) {
+        stopEntity(world, monster);
+        restoreChargeSpeed(world, monster, state);
+        // Take the root back for whatever the sequence does next — the eruption
+        // resolves at `anchor: 'self'`, so a boss still drifting when it surfaces
+        // would resolve its own circle somewhere it never showed.
+        if (state.ownsRoot) setRooted(world, monster, true);
+      }
       detachComponent(world, monster, 'isConcealed');
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-end',
@@ -1192,6 +1244,51 @@ const RELOCATE_SAMPLE_STEP = 48;
  * move" rather than forcing it: a boss emerging inside terrain is worse than one
  * that came back where it started.
  */
+/** Don't re-path for jitter; only when the target has genuinely walked off. */
+const CONCEAL_RETARGET_EPSILON_PX = 16;
+
+/**
+ * Steer a TRAVELLING concealment: keep its emergence point on the target.
+ *
+ * It tracks for the WHOLE burrow. An earlier draft locked the point partway
+ * through, on the theory that a tracking emergence would be unanswerable — but the
+ * eruption telegraphs for a full second AFTER the boss surfaces, and that
+ * telegraph is the answer. Locking early bought the player nothing and cost the
+ * boss its only means of closing on a ranged character, so it was measured, found
+ * to change no outcome at the values actually shipped, and removed.
+ *
+ * Re-pathing is epsilon-gated. A nav request every tick against a target who has
+ * shifted three pixels is pure churn, and it makes the underground body stutter
+ * rather than track.
+ */
+function steerConcealedTravel(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+  step: Extract<BossPatternStep, { kind: 'conceal' }>,
+): void {
+  const destination = relocationPoint(
+    world,
+    monster,
+    'near-target',
+    patternTarget(world, monster),
+    step.emergeGap ?? 140,
+  );
+  // Nothing valid this tick (the target left, or every candidate is inside
+  // terrain): keep walking to the point already captured rather than stalling.
+  if (!destination) return;
+
+  const current = state.capturedEndpoint;
+  if (
+    current &&
+    distanceSq(destination, current) < CONCEAL_RETARGET_EPSILON_PX * CONCEAL_RETARGET_EPSILON_PX
+  ) {
+    return;
+  }
+  state.capturedEndpoint = { ...destination };
+  setEntityMotion(world, monster, destination);
+}
+
 function relocationPoint(
   world: World,
   monster: MonsterEntity,
@@ -1203,8 +1300,19 @@ function relocationPoint(
   const anchorPos = target?.hasPosition.current ?? monster.hasPosition.current;
 
   if (mode === 'near-target') {
+    // Sweep OUTWARD FROM THE SIDE THE BOSS IS ALREADY ON, alternating left/right,
+    // rather than from world-east. A fixed start angle is deterministic but it is
+    // not readable: in open ground the first candidate always wins, so the boss
+    // surfaced to the player's right every single time regardless of where it had
+    // burrowed from. Fanning from its own bearing keeps the choice deterministic
+    // AND makes it follow from what the player watched go under.
+    const bearing = Math.atan2(
+      monster.hasPosition.current.y - anchorPos.y,
+      monster.hasPosition.current.x - anchorPos.x,
+    );
     for (let i = 0; i < RELOCATE_SAMPLE_ANGLES; i++) {
-      const angle = (i / RELOCATE_SAMPLE_ANGLES) * Math.PI * 2;
+      const spread = Math.ceil(i / 2) / RELOCATE_SAMPLE_ANGLES;
+      const angle = bearing + (i % 2 === 0 ? 1 : -1) * spread * Math.PI * 2;
       const candidate = clampToNode(nodeId, {
         x: anchorPos.x + Math.cos(angle) * gap,
         y: anchorPos.y + Math.sin(angle) * gap,

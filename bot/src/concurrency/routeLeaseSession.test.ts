@@ -3,6 +3,7 @@ import { dungeonNodeFor, normalNodesFor } from "../state/observation";
 import { CombatReservationManager } from "./areaLeaseManager";
 import {
   CoordinationExhaustedError,
+  ReservationInterruptedError,
   RouteLeaseSession,
   biomeGroupForNode,
   controlledAreaForNode,
@@ -47,6 +48,7 @@ async function main(): Promise<void> {
     await owner.acquireActivity([CLEARING_NODE_ID], observation, intents, "tutorial") === CLEARING_NODE_ID,
     "the shared tutorial consumes no combat permit",
   );
+  assert(owner.ownsNode(CLEARING_NODE_ID), "a shared node remains admissible without a combat permit");
   assert(
     await owner.acquireActivity([farmNode], observation, intents, "farm") === farmNode,
     "farm activity receives a node-specific permit",
@@ -68,6 +70,30 @@ async function main(): Promise<void> {
   assert(manager.snapshot().pending.length === 0, "no hold-and-wait request is retained");
   assert(owner.ownsNode(farmNode), "the existing scope remains fenced until it settles");
 
+  const transitManager = new CombatReservationManager({ permitTtlMs: 60_000 });
+  const transitBlocker = new RouteLeaseSession("transit-blocker", transitManager);
+  const transitOwner = new RouteLeaseSession("transit-owner", transitManager);
+  const transitObservation = { ...observation, nodeId: neighbourNode } as Observation;
+  await transitBlocker.acquireActivity([dungeon], transitObservation, intents, "dungeon-boss:plains");
+  await transitOwner.acquireActivity([neighbourNode], transitObservation, intents, "farm");
+  let transitGranted = false;
+  const transitPending = transitOwner.acquireActivity(
+    [dungeon],
+    transitObservation,
+    intents,
+    "protected-transit:neighbour->dungeon",
+    { allowWaitWhileHoldingCurrentPermit: true },
+  ).then(() => { transitGranted = true; });
+  await flush();
+  assert(!transitGranted, `protected transit remains queued (granted=${transitGranted})`);
+  assert(transitOwner.ownsNode(neighbourNode), "protected transit queues without releasing the owned source");
+  transitBlocker.releaseNode(dungeon, "boss-settled");
+  await transitPending;
+  assert(transitOwner.ownsNode(dungeon), "protected transit acquires its destination after the source remains fenced");
+  transitOwner.releaseAll("terminal");
+  transitBlocker.releaseAll("terminal");
+  transitManager.shutdown();
+
   owner.releaseNode(farmNode, "farm-settled");
   let granted = false;
   const pending = owner.acquireActivity([dungeon], observation, intents, "dungeon-boss:plains").then(() => { granted = true; });
@@ -77,7 +103,10 @@ async function main(): Promise<void> {
   owner.interrupt("death");
   await pending.then(
     () => { throw new Error("death-cancelled waiter unexpectedly granted"); },
-    () => undefined,
+    (error) => assert(
+      error instanceof ReservationInterruptedError && error.releaseReason === "death",
+      "death cancellation preserves a retryable lease interruption",
+    ),
   );
   assert(manager.snapshot().pending.length === 0, "death cancels the pending request immediately");
 

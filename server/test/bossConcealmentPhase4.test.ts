@@ -412,4 +412,208 @@ function breakGuard(monster: MonsterEntity, id: string): void {
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// TRAVELLING BURROW (2026-09-05). The burrow used to TELEPORT the boss to its
+// emergence point the instant it went under, which broke the encounter twice:
+// the body jumped across the arena in one frame, and the whole sequence was
+// decided seconds before the telegraph the player is supposed to read.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// The geometry must be able to hit somebody who never moves. This is a DATA
+// invariant, and it is machine-checked rather than eyeballed because it failed
+// silently at both tiers: an emergeGap of 150 against a 140 radius resolved 10px
+// clear of a stationary player, so the payoff of the whole pattern could not land.
+for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
+  const steps = MONSTER_DATABASE.get(id)!.bossPattern!.steps;
+  const conceal = steps.find(step => step.kind === 'conceal');
+  const impact = steps.find(step => step.kind === 'impact');
+  assert(conceal?.kind === 'conceal' && impact?.kind === 'impact', `${id}: burrow then erupt`);
+  const gap = conceal.emergeGap ?? 140;
+  assert(
+    gap < impact.radius,
+    `${id}: emergeGap ${gap} must sit INSIDE the ${impact.radius} eruption radius, ` +
+      'or a stationary player can never be hit',
+  );
+  assert(
+    conceal.travelSpeed !== undefined,
+    `${id}: the burrow must travel rather than teleport`,
+  );
+}
+
+// It WALKS there. Driven through the real `world.tick` — the movement system is
+// what actually carries the body, and a probe that ran only `updateBossPatterns`
+// would show a boss that never moves and call that a pass.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('burrow-travel', 900, 400), 'burrow-travel');
+  const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', 'burrow-travel', {
+    x: 400,
+    y: 400,
+  });
+
+  const startedAt = { ...monster.hasPosition.current };
+  let now = armedAt;
+  let sawConcealed = false;
+  let biggestStep = 0;
+  let prev = { ...startedAt };
+  let concealedTravel = 0;
+
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    const here = monster.hasPosition.current;
+    const stepPx = Math.hypot(here.x - prev.x, here.y - prev.y);
+    if (monster.isConcealed) {
+      sawConcealed = true;
+      concealedTravel += stepPx;
+      // Speed is broadcast, and the client interpolates with it. A body moving
+      // faster than the speed it advertises is the bug that made the Mountain
+      // charge look like it stopped halfway.
+      assert(
+        stepPx <= monster.hasPosition.speed * 0.1 + 1,
+        `underground travel outran its broadcast speed (${stepPx}px in one tick)`,
+      );
+    }
+    biggestStep = Math.max(biggestStep, stepPx);
+    prev = { ...here };
+    now += 100;
+  }
+
+  assert(sawConcealed, 'setup: the boss should burrow');
+  assert(concealedTravel > 100, 'it should cover real ground while under, not teleport');
+  // No single tick may move it more than its speed allows — which is exactly what
+  // a teleport would do, and what this test exists to forbid.
+  assert(
+    biggestStep < 200,
+    `the burrow should never jump the body (largest single-tick move: ${biggestStep}px)`,
+  );
+  // And it should have closed on the player it was chasing.
+  assert(
+    monster.hasPosition.current.x > startedAt.x + 100,
+    'the burrow should end up near its target, not where it started',
+  );
+}
+
+// It CHASES, and it catches a kiting character. This is the claim the burrow
+// exists to make: both Cave burrowers walk at ~20px/s against a player who moves
+// at 120, so the burrow is their ONLY means of closing. A version that surfaces
+// wherever it already stood has a telegraph aimed at empty floor.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('burrow-kite', 1000, 400), 'burrow-kite');
+  const { monster, armedAt } = armPattern(world, 'deep-core-burrow-gorger', 'burrow-kite', {
+    x: 400,
+    y: 400,
+  });
+  const impact = MONSTER_DATABASE.get('deep-core-burrow-gorger')!.bossPattern!.steps.find(
+    step => step.kind === 'impact',
+  )!;
+  assert(impact.kind === 'impact', 'setup: the gorger erupts');
+
+  let now = armedAt;
+  let sawConcealed = false;
+  let endpointFollowed = false;
+  let firstEndpoint: { x: number; y: number } | undefined;
+  let gapAtSurface: number | null = null;
+
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    // Flee at a full sprint, every tick, for the whole encounter.
+    player.hasPosition.current = {
+      x: player.hasPosition.current.x + GAME_CONFIG.PLAYER_SPEED * 0.1,
+      y: player.hasPosition.current.y,
+    };
+    const endpoint = monster.runsBossPattern?.capturedEndpoint;
+    if (monster.isConcealed) {
+      sawConcealed = true;
+      if (endpoint) {
+        firstEndpoint ??= { ...endpoint };
+        if (Math.hypot(endpoint.x - firstEndpoint.x, endpoint.y - firstEndpoint.y) > 50) {
+          endpointFollowed = true;
+        }
+      }
+    }
+    if (sawConcealed && !monster.isConcealed && gapAtSurface === null) {
+      gapAtSurface = Math.hypot(
+        monster.hasPosition.current.x - player.hasPosition.current.x,
+        monster.hasPosition.current.y - player.hasPosition.current.y,
+      );
+    }
+    now += 100;
+  }
+
+  assert(sawConcealed, 'setup: the boss should burrow');
+  assert(endpointFollowed, 'the emergence point should track a target that keeps moving');
+  assert(gapAtSurface !== null, 'setup: the boss should surface');
+  // It must come up close enough that the eruption is a threat the player has to
+  // answer, rather than one they already walked out of. Measured at ~136px against
+  // a 155px radius; the bound is loose enough not to be a balance tripwire and
+  // tight enough to fail the moment the burrow stops closing.
+  assert(
+    gapAtSurface! < impact.radius + 60,
+    `the burrow must close on a kiting player (surfaced ${gapAtSurface!.toFixed(0)}px away, ` +
+      `eruption radius ${impact.radius})`,
+  );
+}
+
+// Surfacing hands the boss back intact: speed restored, rooted again, and not
+// still drifting when the eruption resolves at `anchor: 'self'`.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('burrow-restore', 800, 400), 'burrow-restore');
+  const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', 'burrow-restore', {
+    x: 400,
+    y: 400,
+  });
+  const walkSpeed = MONSTER_DATABASE.get('chitinous-dreadbore')!.stats.speed;
+
+  let now = armedAt;
+  let sawConcealed = false;
+  let checkedSurface = false;
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    if (monster.isConcealed) sawConcealed = true;
+    if (sawConcealed && !monster.isConcealed && monster.runsBossPattern && !checkedSurface) {
+      checkedSurface = true;
+      assert(
+        monster.hasPosition.speed === walkSpeed,
+        `surfacing must restore the walking speed (was ${monster.hasPosition.speed})`,
+      );
+      assert(!!monster.isRooted, 'and re-root the boss before it erupts');
+      assert(monster.isMoving === undefined, 'and stop it drifting');
+    }
+    now += 100;
+  }
+  assert(sawConcealed, 'setup: the boss should burrow');
+  assert(checkedSurface, 'setup: the boss should surface again');
+}
+
+// The renderer's copy of concealment is reconciled from component PRESENCE, so it
+// cannot drift from the server's answer about whether the boss can be hit.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('burrow-broadcast', 700, 400), 'burrow-broadcast');
+  const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', 'burrow-broadcast', {
+    x: 400,
+    y: 400,
+  });
+
+  let now = armedAt;
+  let sawBroadcast = false;
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    assert(
+      monster.hasStatus.concealed === monster.isConcealed?.marker,
+      'the broadcast marker must match the component on every tick',
+    );
+    if (monster.hasStatus.concealed === 'burrow') sawBroadcast = true;
+    now += 100;
+  }
+  assert(sawBroadcast, 'the burrow should reach the client as a burrow marker');
+  assert(
+    monster.hasStatus.concealed === undefined,
+    'and clear once it surfaces, or the client draws a fightable boss as buried',
+  );
+}
+
 console.log('bossConcealmentPhase4: ok');
+

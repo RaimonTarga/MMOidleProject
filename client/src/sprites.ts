@@ -4,6 +4,7 @@ import {
   MONSTER_FRAMES,
   PLAYER_FRAMES,
   resolveMonsterFrame,
+  resolveMonsterBurrowFrame,
   resolvePlayerFrame,
   resolvePlayerAccent,
   type PlayerAccent,
@@ -185,6 +186,11 @@ export function getPlayerFrame(player: PlayerView): string | null {
 /** Returns the atlas frame name for a monster type, or null if no sprite exists. */
 export function getMonsterFrame(monsterTypeId: string): string | null {
   return resolveMonsterFrame(monsterTypeId);
+}
+
+/** Burrowed body for a monster that is currently underground, or null if none. */
+export function getMonsterBurrowFrame(monsterTypeId: string): string | null {
+  return resolveMonsterBurrowFrame(monsterTypeId);
 }
 
 /**

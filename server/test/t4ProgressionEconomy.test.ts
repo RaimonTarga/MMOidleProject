@@ -1,12 +1,12 @@
 /**
- * T4 progression/economy pass (2026-08-30) — see
- * `docs/briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`.
+ * T3 → T4 progression/economy pass (2026-08-30 / 2026-09-04) — see the
+ * historical T4 brief and the current-state docs.
  *
  * Covers the 36 T3→T4 lineages (26 distinct predecessors, 10 branch groups), the T4
  * gear cost curves / lifetime ratios / hybrid splits / catalyst schedule+families, the
- * four T4 ability prices, the Recuperating Stance catalyst change, the Trench monster
- * essence-colour correction, and the no-regression pins on Relics/Runes/Rites/Cores
- * and the GM architecture.
+ * four T4 ability prices, the locked T3/T4 Stance/Core redistribution, the normalized
+ * T4 Relic economy, the Trench monster essence-colour correction, and the no-regression
+ * pins on Runes/Rites and the GM architecture.
  */
 import {
   RECIPE_DATABASE,
@@ -28,6 +28,8 @@ function assert(cond: boolean, msg: string): void {
 }
 
 const NODE_MODIFIER_FAMILIES = ["alacrity", "heavy", "swarming", "dominion", "fortified"] as const;
+const essenceTotal = (cost: Partial<Record<string, number>> | undefined): number =>
+  Object.values(cost ?? {}).reduce((sum, amount) => sum + (amount ?? 0), 0);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 1. Census: exactly 39 ordinary T4 gear items, 36 with evolvesFrom, 3 without
@@ -325,15 +327,48 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 10. Recuperating Stance: catalyst == 3, essence/gate unchanged
+// 10. Final T4 Stance placement and economy
 // ═══════════════════════════════════════════════════════════════════════════
 
 {
-  const stance = STANCE_RECIPE_DATABASE.get("stance-recipe-recuperating")!;
-  assert(!!stance, "stance-recipe-recuperating must exist");
-  assert(JSON.stringify(stance.catalystCost) === JSON.stringify({ alacrity: 3 }), `Recuperating Stance catalyst must be exactly alacrity:3, got ${JSON.stringify(stance.catalystCost)}`);
-  assert(JSON.stringify(stance.cost) === JSON.stringify({ green: 220, blue: 100 }), "Recuperating Stance essence must be unchanged");
-  assert(stance.recipeGroup === "jungle" && stance.requiredBiomeLevel === 17, "Recuperating Stance gate must be unchanged (jungle L17)");
+  const STANCES: Array<{
+    id: string;
+    group: string;
+    level: number;
+    family: string;
+    catalysts: number;
+    cost: Record<string, number>;
+  }> = [
+    { id: "stance-recipe-time-to-strike", group: "mountain", level: 20, family: "heavy", catalysts: 3, cost: { blue: 450 } },
+    { id: "stance-recipe-brawler", group: "jungle", level: 14, family: "swarming", catalysts: 3, cost: { green: 500 } },
+    { id: "stance-recipe-reaper", group: "volcanic", level: 8, family: "swarming", catalysts: 3, cost: { red: 500 } },
+    { id: "stance-recipe-recuperating", group: "graveyard", level: 2, family: "fortified", catalysts: 3, cost: { purple: 450 } },
+    { id: "stance-recipe-powering-up", group: "trench", level: 2, family: "dominion", catalysts: 4, cost: { green: 550 } },
+  ];
+  assert(STANCES.length === 5, "T4 must have exactly five placed Stances");
+  for (const spec of STANCES) {
+    const stance = STANCE_RECIPE_DATABASE.get(spec.id);
+    assert(!!stance, `${spec.id}: stance recipe must exist`);
+    assert(stance!.tier === 4, `${spec.id}: must be a T4 Stance`);
+    assert(stance!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
+    assert(stance!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
+    assert(JSON.stringify(stance!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
+    assert(
+      JSON.stringify(stance!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
+      `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
+    );
+    assert(essenceTotal(stance!.cost) >= 400 && essenceTotal(stance!.cost) <= 600, `${spec.id}: T4 stance essence must be in 400-600`);
+    assert(catTotal(stance!.catalystCost) >= 3 && catTotal(stance!.catalystCost) <= 4, `${spec.id}: T4 stance catalysts must be in 3-4`);
+    assert(!stance!.requiredBossClear, `${spec.id}: must not require a boss clear`);
+  }
+  const t4StanceIds = [...STANCE_RECIPE_DATABASE.values()]
+    .filter((recipe) => recipe.tier === 4)
+    .map((recipe) => recipe.id)
+    .sort();
+  assert(
+    JSON.stringify(t4StanceIds) === JSON.stringify(STANCES.map((spec) => spec.id).sort()),
+    `T4 Stance roster must be exactly the locked five (got ${t4StanceIds.join(", ")})`,
+  );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -373,34 +408,36 @@ for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 12. Relics: exactly 8, full pre-pass snapshot equality (no native-family assumption)
+// 12. Relics: exactly 8, unchanged placement/gates/mechanics, normalized economy
 // ═══════════════════════════════════════════════════════════════════════════
 
 const relics = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "relic");
 assert(relics.length === 8, `expected exactly 8 relics, got ${relics.length}`);
 
 const RELIC_SNAPSHOT: Record<string, { group: string; level: number; cost: Record<string, number>; catalyst: Record<string, number> }> = {
-  "relic-hastebound-dial": { group: "volcanic", level: 11, cost: { red: 220 }, catalyst: { swarming: 4 } },
-  "relic-verdant-flywheel": { group: "jungle", level: 18, cost: { green: 220 }, catalyst: { alacrity: 4 } },
-  "relic-glacial-bell": { group: "tundra", level: 12, cost: { blue: 220 }, catalyst: { heavy: 4 } },
-  "relic-haunted-prism": { group: "graveyard", level: 6, cost: { purple: 240 }, catalyst: { fortified: 4 } },
-  "relic-colossus-heart": { group: "mountain", level: 24, cost: { blue: 240 }, catalyst: { heavy: 4 } },
-  "relic-equilibrium-shard": { group: "mountain", level: 24, cost: { blue: 200 }, catalyst: { heavy: 4 } },
-  "relic-withering-lens": { group: "desert", level: 18, cost: { yellow: 220 }, catalyst: { dominion: 4 } },
-  "relic-virulent-hourglass": { group: "trench", level: 5, cost: { green: 220 }, catalyst: { dominion: 4 } },
+  "relic-hastebound-dial": { group: "volcanic", level: 11, cost: { red: 3300 }, catalyst: { swarming: 9 } },
+  "relic-verdant-flywheel": { group: "jungle", level: 18, cost: { green: 3000 }, catalyst: { alacrity: 8 } },
+  "relic-glacial-bell": { group: "tundra", level: 12, cost: { blue: 3200 }, catalyst: { heavy: 9 } },
+  "relic-haunted-prism": { group: "graveyard", level: 6, cost: { purple: 3500 }, catalyst: { fortified: 10 } },
+  "relic-colossus-heart": { group: "mountain", level: 24, cost: { blue: 3300 }, catalyst: { heavy: 10 } },
+  "relic-equilibrium-shard": { group: "mountain", level: 24, cost: { blue: 2500 }, catalyst: { heavy: 8 } },
+  "relic-withering-lens": { group: "desert", level: 18, cost: { yellow: 3300 }, catalyst: { dominion: 9 } },
+  "relic-virulent-hourglass": { group: "trench", level: 5, cost: { green: 3400 }, catalyst: { dominion: 9 } },
 };
 assert(Object.keys(RELIC_SNAPSHOT).length === 8, "relic snapshot must cover all 8 relics");
 for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
   const r = RECIPE_DATABASE.get(id);
   assert(!!r, `${id}: relic must exist`);
   assert(r!.recipeGroup === spec.group && r!.requiredBiomeLevel === spec.level, `${id}: gate must be unchanged (${spec.group} L${spec.level})`);
-  assert(JSON.stringify(r!.cost) === JSON.stringify(spec.cost), `${id}: essence cost must be unchanged`);
-  assert(JSON.stringify(r!.catalystCost) === JSON.stringify(spec.catalyst), `${id}: catalyst cost must be unchanged`);
+  assert(JSON.stringify(r!.cost) === JSON.stringify(spec.cost), `${id}: normalized essence cost must be exact`);
+  assert(JSON.stringify(r!.catalystCost) === JSON.stringify(spec.catalyst), `${id}: normalized catalyst cost must be exact`);
+  assert(essenceTotal(r!.cost) >= 2500 && essenceTotal(r!.cost) <= 3500, `${id}: relic essence must be in 2500-3500`);
+  assert(catTotal(r!.catalystCost) >= 8 && catTotal(r!.catalystCost) <= 10, `${id}: relic catalysts must be in 8-10`);
   assert(!r!.evolvesFrom && !r!.reconstructCost, `${id}: relics must not gain lineage/reconstruction`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 13. No-regression: Runes/Rites/Cores byte-for-byte unchanged; GM architecture pinned
+// 13. Final Core tier split and no-regression pins
 // ═══════════════════════════════════════════════════════════════════════════
 
 {
@@ -420,10 +457,43 @@ for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
 }
 
 {
-  // 12 Core recipes total, all tier <= 3 (no T4 Core exists) — untouched by the T4 pass.
+  const CORES: Array<{
+    id: string;
+    group: string;
+    level: number;
+    family: string;
+    catalysts: number;
+    cost: Record<string, number>;
+  }> = [
+    { id: "core-juggernaut", group: "mountain", level: 22, family: "heavy", catalysts: 7, cost: { blue: 2200 } },
+    { id: "core-controller", group: "graveyard", level: 4, family: "fortified", catalysts: 7, cost: { purple: 2100 } },
+    { id: "core-catalyst", group: "volcanic", level: 10, family: "swarming", catalysts: 8, cost: { red: 2300 } },
+  ];
   const cores = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "core");
   assert(cores.length === 12, `expected 12 Core recipes total, got ${cores.length}`);
-  assert(cores.every((c) => c.tier <= 3), "no Core recipe may be tier 4 — Cores cast at T3 and earlier");
+  assert(cores.filter((c) => c.tier === 2).length === 3, "final Core split must retain 3 T2 Cores");
+  assert(cores.filter((c) => c.tier === 3).length === 6, "final Core split must retain 6 T3 Cores");
+  assert(cores.filter((c) => c.tier === 4).length === 3, "final Core split must place 3 T4 Cores");
+  for (const spec of CORES) {
+    const core = RECIPE_DATABASE.get(spec.id);
+    assert(!!core, `${spec.id}: T4 Core recipe must exist`);
+    assert(core!.slot === "core" && core!.tier === 4, `${spec.id}: must be a T4 Core`);
+    assert(core!.recipeGroup === spec.group, `${spec.id}: home must be ${spec.group}`);
+    assert(core!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
+    assert(JSON.stringify(core!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
+    assert(
+      JSON.stringify(core!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
+      `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
+    );
+    assert(essenceTotal(core!.cost) >= 2000 && essenceTotal(core!.cost) <= 2500, `${spec.id}: T4 Core essence must be in 2000-2500`);
+    assert(catTotal(core!.catalystCost) >= 7 && catTotal(core!.catalystCost) <= 8, `${spec.id}: T4 Core catalysts must be in 7-8`);
+    assert(!core!.requiredBossClear, `${spec.id}: must not require a boss clear`);
+  }
+  const t4CoreIds = cores.filter((core) => core.tier === 4).map((core) => core.id).sort();
+  assert(
+    JSON.stringify(t4CoreIds) === JSON.stringify(CORES.map((spec) => spec.id).sort()),
+    `T4 Core roster must be exactly the locked three (got ${t4CoreIds.join(", ")})`,
+  );
 }
 
 // GM architecture: T4 gates untouched by this economy-only pass.
@@ -440,13 +510,21 @@ assert(maxGlobalMasteryAtTier(4) === 156, "max GM at tier 4 must remain 156");
 const T4_CAP: Record<string, number> = {
   mountain: 24, jungle: 18, desert: 18, tundra: 12, volcanic: 12, graveyard: 6, trench: 6,
 };
-for (const r of [...t4Gear, ...relics]) {
+const t4Cores = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "core" && r.tier === 4);
+const t4Stances = [...STANCE_RECIPE_DATABASE.values()].filter((r) => r.tier === 4);
+for (const r of [...t4Gear, ...t4Cores, ...relics]) {
   const cap = T4_CAP[r.recipeGroup];
   assert(cap !== undefined, `${r.id}: recipeGroup ${r.recipeGroup} must have a known T4 cap`);
   assert(r.requiredBiomeLevel <= cap, `${r.id}: requiredBiomeLevel ${r.requiredBiomeLevel} must not exceed T4 cap ${cap} for ${r.recipeGroup}`);
   for (const step of r.upgrades ?? []) {
     assert(step.requiredBiomeLevel <= cap, `${r.id}: an upgrade step's requiredBiomeLevel must not exceed T4 cap ${cap}`);
   }
+}
+for (const stance of t4Stances) {
+  const cap = T4_CAP[stance.recipeGroup!];
+  assert(cap !== undefined, `${stance.id}: recipeGroup ${stance.recipeGroup} must have a known T4 cap`);
+  assert(stance.requiredBiomeLevel! <= cap, `${stance.id}: requiredBiomeLevel ${stance.requiredBiomeLevel} must not exceed T4 cap ${cap}`);
+  assert(!stance.requiredBossClear, `${stance.id}: must not require a boss clear`);
 }
 
 // Sanity: every family referenced anywhere in this test is a real modifier family.

@@ -77,10 +77,31 @@ export function watchTargetFromUrl(): string | null {
 }
 
 /**
+ * The plain public landing page: no credential, and no explicit `?watch=` link.
+ *
+ * PARKED 2026-09-05. This session boots NO Phaser game and opens NO socket. The
+ * landing page is the prerecorded video backdrop, the poster and the login panel
+ * — nothing else. The live spectator pane it used to open is kept in the
+ * codebase but disabled; see docs/landing-cinematic-current-state.md, section
+ * "PARKED: the live spectator pane".
+ *
+ * The upside of the park is real and worth keeping in mind before re-enabling:
+ * a landing visitor now downloads a 4 MB video instead of the video AND the
+ * entire game asset set, which were measured competing for the same connection
+ * pool.
+ */
+export function isLandingOnlySession(): boolean {
+  return !hasPlayerCredential() && watchTargetFromUrl() === null;
+}
+
+/**
  * Spectate when there is no player credential — or when the URL explicitly asks
  * to watch someone. Without the second clause a signed-in developer clicking a
  * "watch this bot" link lands in their own character lobby instead, because the
  * session token wins and the whole spectator path never runs.
+ *
+ * Still true for a landing visitor, but on that path nothing consumes it: see
+ * {@link isLandingOnlySession}.
  */
 export function isSpectatorSession(): boolean {
   return !hasPlayerCredential() || watchTargetFromUrl() !== null;

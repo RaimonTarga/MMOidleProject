@@ -183,8 +183,8 @@ assert(player.tracksProgression.essences.yellow === 0, "reconstruction deducts i
 // Stance craft and default assignment are the player-facing build operations;
 // no bot-only active-stance mutation is involved.
 const stanceRecipe = STANCE_RECIPE_DATABASE.get("stance-recipe-offensive")!;
-player.tracksProgression.biomeLevel.forest = 7;
-player.tracksProgression.essences.green = stanceRecipe.cost.green ?? 0;
+player.tracksProgression.biomeLevel.plains = 7;
+player.tracksProgression.essences.yellow = stanceRecipe.cost.yellow ?? 0;
 player.tracksProgression.catalysts.alacrity = 1;
 const stance = craftStanceRecipe(world, player, stanceRecipe.id);
 assert(stance.success, stance.reason ?? "stance craft should succeed");

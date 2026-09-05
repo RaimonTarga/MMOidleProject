@@ -1,6 +1,6 @@
 # Tier-2 bossless progression campaign — audit & plan
 
-**Date:** 2026-09-03 (decisions taken 2026-09-04) · **Status:** PLAN, nothing implemented; all designer decisions resolved — see section 12 · **Type:** read-only audit + campaign design
+**Date:** 2026-09-03 (decisions taken 2026-09-04) · **Status:** PLAN for the campaign; the locked T2 reward redistribution is now implemented in source · **Type:** read-only audit + campaign design
 
 **Campaign question:** *can every class progress through ordinary Tier-2 content,
 and are any Tier-2 zones significantly over- or under-tuned?*
@@ -27,8 +27,8 @@ their "recommended next campaign" section, which assumed a boss-bearing route.
 | Upgrade behaviour | **ready** | all `opportunistic`, correct given the GM-driven ceiling (+0 until GM 42, +5 at GM 72) |
 | Abilities | **ready but deliberately thin** | biome encounter-shape policy (Sweep vs Expose Weakness, Cleanse in Swamp). Only one class learns a T2 ability |
 | Runes | **ready** | T1 endgame loadouts carried forward unchanged; targeting-preference regression fixed and covered |
-| Stances | **ready** (doc is stale) | `t2Loadouts.ts` **does** put offensive/defensive stances in the baseline. `t2-bot-testing-infrastructure.md` still says it doesn't — code wins |
-| Cores | **ready** (doc is stale, same file) | Tempered → Force farm, Survivalist for bosses. All three unrestricted, which is forced: a pre-branch character has `selectedRange: null`, so a directional core is inert |
+| Stances | **ready** | `t2Loadouts.ts` puts both introductory stances in the Plains L7 baseline; the specialized stances remain content rewards in their authored biomes |
+| Cores | **ready** | Tempered (Cave L12) → Force (Desert L6) farm, Survivalist (Jungle L6) for bosses. All three unrestricted, which is forced: a pre-branch character has `selectedRange: null`, so a directional core is inert |
 | Skill-tree progression / branch | **missing, and structurally blocked** | see section 7 |
 | Combat behaviour / policies | **ready** | policy profiles + autocombat config, shared with the proven T1 harness |
 | Resource farming | **ready** | catalyst-aware `t2FarmFor(group, family)`; the "farmed the wrong node forever" bug is fixed and pinned |
@@ -145,9 +145,9 @@ every route ends on, and skipped by 6/6 plans.
 Shared across all six (deliberate controls, not per-class choices): biome order;
 encounter-shape ability policy (Sweep on Plains/Forest/Jungle, Expose Weakness
 elsewhere; Cleanse in Swamp, Second Wind otherwise); stance policy (offensive on
-crowd biomes from Forest, defensive on single-target biomes and bosses from
-Mountain); core policy (Tempered from Plains, Force from Cave, Survivalist for
-bosses); T1 endgame rune loadout carried forward unchanged; Plains vest + charm +
+crowd biomes from Plains, defensive on single-target biomes and bosses from
+Plains); core policy (Tempered from Cave, Force from Desert, Survivalist for
+bosses from Jungle); T1 endgame rune loadout carried forward unchanged; Plains vest + charm +
 boots adopted 6/6; `knight-steelsword` skipped 6/6.
 
 | Class | T1 carryover | Weapon path (first T2 weapon) | Armour / charm / boots | Ability | Rune profile | Expected weakness | Deliberate skips |

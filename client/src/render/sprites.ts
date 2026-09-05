@@ -25,6 +25,19 @@ function getMonsterTypeIdFromSnapshot(snapshot: SpriteSnapshot): string {
   return "";
 }
 
+/**
+ * Whether the packed atlas actually carries a frame.
+ *
+ * Callers use this to decide between two presentations BEFORE building a sprite:
+ * `tryMakeImage` falls back to a flat coloured rectangle for a missing frame,
+ * which is a fine last resort for a body that should exist but a terrible one for
+ * an optional variant that simply has not been drawn yet.
+ */
+export function atlasHasFrame(scene: Phaser.Scene, frame: string): boolean {
+  if (!scene.textures.exists(ATLAS_KEY)) return false;
+  return scene.textures.get(ATLAS_KEY).has(frame);
+}
+
 export function tryMakeImage(
   scene: Phaser.Scene,
   pos: Vec2,
@@ -107,14 +120,22 @@ export function updateSpriteFrame(
     displayH: number;
     fallbackColor: number;
     isPlayer: boolean;
+    /**
+     * Draw this frame instead of the one the snapshot resolves to. For alternate
+     * BODIES a monster wears for part of an encounter (the burrowed form), which
+     * are a presentation state rather than a change of monster type. Callers are
+     * expected to have confirmed the frame exists — see `atlasHasFrame`.
+     */
+    frameOverride?: string | null;
   },
 ): void {
   const playerView = opts.isPlayer ? (snapshot as PlayerView) : null;
   const newFrame = playerView?.isDead
     ? String(playerView.graveFrame ?? 0)
-    : opts.isPlayer
-      ? getPlayerFrame(snapshot as PlayerView)
-      : getMonsterFrame(getMonsterTypeIdFromSnapshot(snapshot));
+    : (opts.frameOverride ??
+      (opts.isPlayer
+        ? getPlayerFrame(snapshot as PlayerView)
+        : getMonsterFrame(getMonsterTypeIdFromSnapshot(snapshot))));
 
   const textureKey = playerView?.isDead ? GRAVES_KEY : ATLAS_KEY;
   const displayW = playerView?.isDead ? GRAVE_DISPLAY_W : opts.displayW;

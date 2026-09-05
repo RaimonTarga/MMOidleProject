@@ -8,6 +8,8 @@ import {
   type CombatPermit,
   DEFAULT_ISOLATED_LIVENESS_POLICY,
   type LivenessPolicy,
+  type ReservationPurpose,
+  type ReservationReleaseReason,
   type ControlledOverlapEvidence,
   type ReservationSnapshot,
 } from "./areaLeaseManager";
@@ -34,6 +36,13 @@ export class CoordinationExhaustedError extends Error {
     readonly cause?: unknown,
   ) {
     super(`coordination exhausted: ${reason}`);
+  }
+}
+
+/** A death/disconnect cancelled a queued lease; the route may retry it safely. */
+export class ReservationInterruptedError extends Error {
+  constructor(readonly releaseReason: ReservationReleaseReason) {
+    super(`reservation request cancelled: ${releaseReason}`);
   }
 }
 /**
@@ -88,6 +97,8 @@ export class RouteLeaseSession {
   private unregisterOverlap: (() => void) | null;
   private readonly activePermits = new Map<string, CombatPermit>();
   private readonly activeSharedAdmissions = new Map<string, string>();
+  private readonly activeSharedPurposes = new Map<string, ReservationPurpose>();
+  private lastEntityId = "";
   private pendingAbort: AbortController | null = null;
 
   constructor(
@@ -133,7 +144,12 @@ export class RouteLeaseSession {
     obs: Observation,
     intents: Intents,
     reason: string,
-    opts: { preferredNodeIds?: readonly string[]; widenAfterMs?: number } = {},
+    opts: {
+      preferredNodeIds?: readonly string[];
+      widenAfterMs?: number;
+      /** Protected transit may queue while retaining the node it is leaving. */
+      allowWaitWhileHoldingCurrentPermit?: boolean;
+    } = {},
   ): Promise<string> {
     if (candidateNodeIds.length === 0) throw new Error(`no candidate nodes for ${reason}`);
     return this.acquireTypedActivity(candidateNodeIds, obs, intents, reason, opts);
@@ -152,7 +168,7 @@ export class RouteLeaseSession {
    * a multi-hop walk the bot stands in intermediate nodes it does not own, and a
    * retain-list built from its current position would drop the destination.
    */
-  releaseNode(nodeId: string, reason = "departed-node"): void {
+  releaseNode(nodeId: string, reason = "departed-node"): boolean {
     const permit = this.activePermits.get(nodeId);
     const admissionId = this.activeSharedAdmissions.get(nodeId);
     const released = permit
@@ -160,9 +176,10 @@ export class RouteLeaseSession {
       : admissionId
         ? (this.manager.leaveShared(admissionId, this.ownerId, reason), true)
         : false;
-    if (!released) return;
+    if (!released) return false;
     this.activePermits.delete(nodeId);
     this.activeSharedAdmissions.delete(nodeId);
+    this.activeSharedPurposes.delete(nodeId);
     this.evidenceState.releases += 1;
     this.emit({
       kind: "area-lease",
@@ -174,10 +191,12 @@ export class RouteLeaseSession {
       epoch: permit?.epoch,
       purpose: permit?.purpose,
     });
+    return true;
   }
 
 
   observe(obs: Observation, entityId: string): void {
+    this.lastEntityId = entityId;
     this.manager.noteEntity(this.ownerId, entityId);
     for (const [nodeId, permit] of this.activePermits) {
       try {
@@ -198,11 +217,16 @@ export class RouteLeaseSession {
         this.recordFallback("reservation-expired", "partial-stop", nodeId);
       }
     }
+    this.refreshEngagement(obs);
+  }
+
+  /** Refresh cached engagement without renewing permits or waiting for a tick. */
+  refreshEngagement(obs: Observation): void {
     const self = obs.self;
     this.manager.setEngaged(this.ownerId, (self?.auto ?? false) && !(self?.isDead ?? false));
     this.evidenceMonitor?.observe({
       ownerId: this.ownerId,
-      entityId,
+      entityId: this.lastEntityId,
       nodeId: obs.nodeId ?? null,
       alive: !(self?.isDead ?? false),
       autoCombat: self?.auto ?? false,
@@ -222,11 +246,12 @@ export class RouteLeaseSession {
 
   /** Release permits and cancel a waiter without unregistering this live session. */
   interrupt(reason: string): void {
-    this.pendingAbort?.abort();
+    this.pendingAbort?.abort(new ReservationInterruptedError(reason));
     this.pendingAbort = null;
     const report = this.manager.releaseOwner(this.ownerId, reason);
     this.activePermits.clear();
     this.activeSharedAdmissions.clear();
+    this.activeSharedPurposes.clear();
     const released = [...report.releasedPermitIds, ...report.leftAdmissionIds];
     if (released.length > 0) {
       this.evidenceState.releases += released.length;
@@ -256,12 +281,41 @@ export class RouteLeaseSession {
   }
 
   ownsNode(nodeId: string): boolean {
-    return controlledAreaForNode(nodeId) !== null &&
-      (this.manager.owns(this.ownerId, nodeId) || this.manager.isSharedParticipant(nodeId, this.ownerId));
+    // Shared nodes (the Clearing and non-hostile transit) deliberately have no
+    // combat permit. They are still valid places for the executor to continue
+    // farming, so the post-death/heartbeat guard must distinguish "no permit is
+    // required" from "our exclusive permit was lost".
+    return controlledAreaForNode(nodeId) === null ||
+      this.manager.owns(this.ownerId, nodeId) ||
+      this.manager.isSharedParticipant(nodeId, this.ownerId);
   }
 
   maximumSimultaneouslyProgressing(): number {
-    return 0;
+    return this.evidenceMonitor?.maximumSimultaneouslyProgressing() ?? 1;
+  }
+
+  transitReplanBudget(): number {
+    return this.liveness.transitReplans;
+  }
+
+  transitDeathBudget(): number {
+    return this.liveness.transitDeathBudgetPerLeg;
+  }
+
+  /**
+   * A protected crossing is a short, auto-combat-off transit scope. Release it
+   * before acquiring the next crossing so a late reservation cannot force a
+   * queue while this run still holds an obsolete transit permit. Farm and boss
+   * permits are deliberately untouched.
+   */
+  releaseProtectedTransit(nodeId: string, reason = "protected-transit-departure"): void {
+    if (this.activePermits.get(nodeId)?.purpose === "protected-transit") {
+      this.releaseNode(nodeId, reason);
+      return;
+    }
+    if (this.activeSharedPurposes.get(nodeId) === "protected-transit") {
+      this.releaseNode(nodeId, reason);
+    }
   }
 
   reservationSnapshot(): ReservationSnapshot {
@@ -277,7 +331,11 @@ export class RouteLeaseSession {
     obs: Observation,
     intents: Intents,
     reason: string,
-    opts: { preferredNodeIds?: readonly string[]; widenAfterMs?: number },
+    opts: {
+      preferredNodeIds?: readonly string[];
+      widenAfterMs?: number;
+      allowWaitWhileHoldingCurrentPermit?: boolean;
+    },
   ): Promise<string> {
     void opts;
     const manager = this.manager;
@@ -294,7 +352,10 @@ export class RouteLeaseSession {
       this.rememberPermit(permit, reason, 0);
       return nodeId;
     }
-    if (this.activePermits.size > 0) {
+    const canWaitWhileHoldingCurrentPermit = opts.allowWaitWhileHoldingCurrentPermit === true &&
+      !!obs.nodeId &&
+      this.activePermits.has(obs.nodeId);
+    if (this.activePermits.size > 0 && !canWaitWhileHoldingCurrentPermit) {
       throw new Error(`${this.ownerId} cannot wait for ${reason} while holding a combat permit`);
     }
     this.pause(obs, intents);
@@ -314,6 +375,7 @@ export class RouteLeaseSession {
         {
           signal: controller.signal,
           deadlineAt: Date.now() + Math.max(1, Math.min(this.liveness.exclusiveWaitMs, remainingCoordinationWaitMs)),
+          allowWaitWhileHoldingPermit: canWaitWhileHoldingCurrentPermit,
         },
       );
       this.rememberPermit(permit, reason, Date.now() - waitStartedAt);
@@ -331,6 +393,7 @@ export class RouteLeaseSession {
         ttlMs: this.liveness.sharedAdmissionTtlMs,
       });
       this.activeSharedAdmissions.set(nodeId, admission.admissionId);
+      this.activeSharedPurposes.set(nodeId, purpose);
       const waitDurationMs = Date.now() - waitStartedAt;
       this.evidenceState.acquisitions += 1;
       this.evidenceState.sharedAdmissions += 1;

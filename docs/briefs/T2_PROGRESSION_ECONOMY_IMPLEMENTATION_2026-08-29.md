@@ -3,9 +3,34 @@
 **Status:** IMPLEMENTED. This is the "what actually shipped" record; treat it as authoritative over `T2_PROGRESSION_ECONOMY_BASELINE_2026-08-29.md` on any figure the two disagree on.
 **Implements:** the T2 progression/economy spec handed off alongside the baseline audit, using the finalized T1 pass (`T1_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-28.md`) as the template for curve shape, evolution architecture, and catalyst-introduction philosophy.
 
-Nothing here touches combat stats, monster stats, boss mechanics, biome XP, GM thresholds, RP formulas, core stats/availability, or Rites. Only T2 recipe costs/catalysts, T1→T2 evolution wiring, four Rune gates, and Stance catalyst counts are in scope.
+For the original 2026-08-29 pass, nothing here touched combat stats, monster stats,
+boss mechanics, biome XP, GM thresholds, RP formulas, core stats/availability, or
+Rites. Only T2 recipe costs/catalysts, T1→T2 evolution wiring, four Rune gates, and
+Stance catalyst counts were in scope; the current redistribution is recorded below.
 
 ---
+
+## Current follow-up: locked T2 stance/core redistribution (2026-09-04)
+
+The original ledger remains a historical record of the first-pass economy work. The
+following current-code values supersede its old T2 placement/economy statements for
+these nine rewards; recipe IDs and stance/core mechanics are unchanged.
+
+| Reward | Old placement | New placement | New essence | New catalyst |
+|---|---|---|---|---|
+| Offensive Stance | Forest L7 | Plains L7 | 60 yellow | 1 alacrity |
+| Defensive Stance | Forest L7 | Plains L7 | 60 yellow | 1 fortified |
+| Perfection Stance | Plains L8 | Forest L8 | 110 green | 1 alacrity |
+| Fleeting Stance | Jungle L5 | Swamp L8 | 110 purple | 1 alacrity |
+| Tanking Stance | Forest L8 | Mountain L8 | 100 blue | 1 heavy |
+| Enraged Stance | Desert L5 | Cave L8 | 110 red | 1 dominion |
+| Tempered Core | Plains L7 | Cave L12 | 500 red | 4 dominion |
+| Survivalist Core | Forest L7 | Jungle L6 | 500 green | 4 fortified |
+| Force Core | Cave L8 | Desert L6 | 500 yellow | 4 dominion |
+
+No boss-clear requirement was added. The generated route retains the existing biome
+order and policy, with acquisition legs updated to Plains for both introductory
+stances and Cave/Jungle/Desert for the three cores; no route redesign is included.
 
 ## 1. Files Changed
 
@@ -163,7 +188,9 @@ Tier 3/4 stances (Berserker, Predator, Brawler, Execute, Recuperating) are untou
 
 ## 10. Deferred / Out of Scope
 
-- **Cores** (§14): completely untouched — no new T2 cores, no availability rebalance, no cost changes. Tempered/Survivalist/Force still charge catalyst on base craft, which is intentional (cores are explicitly excluded from §2's "no catalyst on base craft" rule).
+- **Cores** (§14): untouched in the original 2026-08-29 pass. The current
+  placement and cost changes for Tempered/Survivalist/Force are recorded in the
+  2026-09-04 follow-up above; the base-craft catalyst rule remains unchanged.
 - **Rites** (§15): untouched, T3+ only, confirmed unaffected.
 - **T2 boss catalyst bundles** (§9 of the spec): **not restored**, per instruction. While tracing the mechanism (`server/src/systems/player/progression/rewards.ts:229-238`) to check whether it was worth flagging as a pre-existing no-op: the bundle is granted only when `NODE_MODIFIERS[nodeId]?.modifier` resolves for the boss's own node — if a boss node carries no modifier, `bundleFamily` is `undefined` and the bundle silently grants nothing even though `catalystBundle` is set on the monster def. Whether every T1 boss node actually carries a modifier was **not exhaustively verified** in this pass (would require reading the full node-modifier assignment table against every T1 boss's spawn node) — flagged per the task's instruction to report this separately rather than chase it, since fixing/verifying it is out of scope here.
 - **T2 canonical bot route** (§16): not built, as instructed.

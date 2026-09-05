@@ -237,22 +237,8 @@ export const forestRecipeEntries = [
   // The 5th equipment slot. See the CORES header in plains.recipes.ts for how the
   // slot works and how eligibility/tier placement is decided.
   //
-  // Forest owns SUSTAIN — it is where Second Wind is learned, so it is also where
-  // the recovery core comes from.
-
-  // T2 starter — Survivalist: outlast rather than out-trade.
-  ['core-survivalist', {
-    id: 'core-survivalist', name: 'Survivalist Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'unrestricted',
-    lineageId: 'core-survivalist',
-    cost: { green: 45 }, catalystCost: { fortified: 1 }, // family-tag: attrition survival → Fortified
-    stats: {}, tier: 2,
-    // recovery-mult scales the Recovery RATE, and every in-combat regen effect
-    // activates a fraction of that rate — so this lifts OOC regen and all active
-    // sustain at once, rather than the near-nothing a flat regen bump would give.
-    mechanicEffects: { 'core.recovery-mult': 0.30, 'core.maxhp-mult': 0.15 },
-    icon: 'items/cores/survivalist.png',
-    description: 'Wound-knit heartwood. It does not stop the blow — it shortens the time you spend regretting it.',
-  }],
+  // Forest owns SUSTAIN — it is where Second Wind is learned. The T2 recovery
+  // capstone is intentionally delayed to Jungle; Forest's T2 reward is the
+  // Perfection Stance in stanceRecipes.ts.
 
 ] satisfies [string, Recipe][];

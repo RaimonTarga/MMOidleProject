@@ -2,6 +2,15 @@
 
 Last updated: 2026-08-04
 
+> **PARKED on the landing page, 2026-09-05.** A visitor with no credential now
+> boots no Phaser game and opens no spectator socket at all
+> (`isLandingOnlySession` in `client/src/net/session.ts`); the landing page is
+> the prerecorded video backdrop and the login panel. Everything below still
+> describes the spectator as built, and the dev `?watch=` path still uses it.
+> The live pane rendered black and the work was parked to focus on the video —
+> see `docs/landing-cinematic-current-state.md`, "PARKED: the live spectator
+> pane". The Clearing-fallback removal recorded below is NOT parked; it shipped.
+
 ## Player flow
 
 Visitors without a session token or explicit development identity connect with
@@ -29,9 +38,14 @@ selection fields. The wire payload never includes `tracksProgression`,
 `holdsInventory`, or `usesSkills`; the client creates empty presentation defaults only
 after receiving the safe payload.
 
-When no eligible player exists, active spectators watch the tier-0 Clearing. The
-manager holds a thaw lease while that fallback is watched and freezes it after the last
-fallback viewer leaves or pauses, provided no real player occupies it.
+**There is no fallback view (changed 2026-09-05).** When no eligible player
+exists the manager reports `mode: "idle"` with no `nodeId`, and the viewer
+receives no snapshots at all. The previous behaviour pointed idle viewers at the
+tier-0 Clearing and held a thaw lease on it; with nobody in it that is an empty
+stone circle, a worse first impression than the landing page's own prerecorded
+backdrop. The lease is gone with it — the Clearing is never thawed on a
+spectator's behalf. See
+[landing-cinematic-current-state.md](landing-cinematic-current-state.md).
 
 ## Dev-only target pinning (bot harness)
 
@@ -77,8 +91,7 @@ spectators.
 The spectator client does not attach keyboard, gamepad, click-to-move, movement-tick,
 HUD intent, or audio handlers; Phaser's sound manager is muted as a final backstop.
 Sidebar and React HUD roots are hidden. The camera follows the
-target interpolation base and moves with the target across nodes; Clearing mode centers
-the camera. The latest full spectator snapshot owns the rendered node without claiming
+target interpolation base and moves with the target across nodes. The latest full spectator snapshot owns the rendered node without claiming
 an `ownId`, so player-only HUD synchronization and gameplay settings intents remain inactive.
 Same-node entities missing from a later full spectator snapshot are converted into
 remove transitions so normal monster death dissolves still run. A watched player is

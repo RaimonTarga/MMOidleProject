@@ -473,14 +473,15 @@ export const mountainRecipeEntries = [
   // PREPARATION — Brace and Charged Strike are both learned here, so it carries
   // both the tank core and the ability core.
 
-  // T3 melee — Juggernaut: the dedicated tank, and melee-exclusive by design.
-  // Other ranges may buy survivability, but never this whole package.
+  // T4 premium melee — Juggernaut: the dedicated tank, and melee-exclusive by
+  // design. The L22 gate and 2,200 blue / 7 Heavy price make this a late-band
+  // capstone rather than an incidental early core.
   ['core-juggernaut', {
     id: 'core-juggernaut', name: 'Juggernaut Core',
-    recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'core', coreEligibility: 'melee',
+    recipeGroup: 'mountain', requiredBiomeLevel: 22, slot: 'core', coreEligibility: 'melee',
     lineageId: 'core-juggernaut',
-    cost: { blue: 110 }, catalystCost: { heavy: 3 }, // family-tag: durability wall → Heavy
-    stats: {}, tier: 3,
+    cost: { blue: 2200 }, catalystCost: { heavy: 7 }, // family-tag: durability wall → Heavy
+    stats: {}, tier: 4,
     // HP, plating and the separate DR layer COMPOUND, so this must be judged as a
     // whole survivability package rather than three numbers. It clears slowly —
     // that is the cost, and it is paid in attack speed and movement, not in eHP.
@@ -492,15 +493,16 @@ export const mountainRecipeEntries = [
     description: 'The mountain does not dodge. It simply outlasts whatever is thrown at it, and so will you.',
   }],
 
-  // T3 unrestricted — Arcanist: abilities come back faster and hit harder.
+  // T3 premium unrestricted — Arcanist: abilities come back faster and hit harder.
+  // It is the final Mountain reward at L18: 1,200 blue / 5 Swarming.
   // TECHNIQUE-ONLY on purpose: `technique.*` (offence) and `guard.*` (defence) are
   // separate budgets so one item can never buy both. A Guard-flavoured branch is
   // where the defensive half belongs.
   ['core-arcanist', {
     id: 'core-arcanist', name: 'Arcanist Core',
-    recipeGroup: 'mountain', requiredBiomeLevel: 17, slot: 'core', coreEligibility: 'unrestricted',
+    recipeGroup: 'mountain', requiredBiomeLevel: 18, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-arcanist',
-    cost: { blue: 90 }, catalystCost: { swarming: 2 }, // family-tag: ability tempo → Swarming
+    cost: { blue: 1200 }, catalystCost: { swarming: 5 }, // family-tag: ability tempo → Swarming
     stats: {}, tier: 3,
     // Worth little when abilities are a minor part of the build — the specialisation
     // IS the opportunity cost, so no explicit penalty is authored.
@@ -513,7 +515,7 @@ export const mountainRecipeEntries = [
     id: 'relic-colossus-heart', name: 'Colossus Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 24, slot: 'relic',
     lineageId: 'relic-colossus-heart',
-    cost: { blue: 240 }, catalystCost: { heavy: 4 },
+    cost: { blue: 3300 }, catalystCost: { heavy: 10 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.30,
@@ -533,7 +535,7 @@ export const mountainRecipeEntries = [
     id: 'relic-equilibrium-shard', name: 'Equilibrium Shard',
     recipeGroup: 'mountain', requiredBiomeLevel: 24, slot: 'relic',
     lineageId: 'relic-equilibrium-shard',
-    cost: { blue: 200 }, catalystCost: { heavy: 4 },
+    cost: { blue: 2500 }, catalystCost: { heavy: 8 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.10,

@@ -27,6 +27,13 @@ export interface TransitPlannerInput {
   destinationNodeId: string;
   ownerId: string;
   reservations: ReservationSnapshot;
+  /**
+   * The normal search avoids foreign-exclusive nodes. When every safe route is
+   * temporarily closed, the executor may request a second search that exposes
+   * those nodes as protected crossings so the lease session can wait (or use
+   * its explicit shared fallback) instead of failing before entering the queue.
+   */
+  allowForeignExclusive?: boolean;
   /** Edges where this bot already died during the current transit span. */
   deadEdges?: ReadonlySet<string>;
 }
@@ -82,7 +89,15 @@ function classifyHop(fromNodeId: string, toNodeId: string, input: TransitPlanner
   const reasons: string[] = [];
   const admission = input.reservations.admissionsByNode[toNodeId];
   if (admission?.kind === "exclusive" && admission.permit.ownerId !== input.ownerId) {
-    return { fromNodeId, toNodeId, classification: "temporarily-blocked", reasons: ["foreign-exclusive-reservation"] };
+    if (!input.allowForeignExclusive) {
+      return { fromNodeId, toNodeId, classification: "temporarily-blocked", reasons: ["foreign-exclusive-reservation"] };
+    }
+    return {
+      fromNodeId,
+      toNodeId,
+      classification: "protected-crossing",
+      reasons: ["foreign-exclusive-reservation", "lease-session-will-wait-or-degrade"],
+    };
   }
   if (input.deadEdges?.has(edgeKey(fromNodeId, toNodeId))) {
     return { fromNodeId, toNodeId, classification: "unsafe", reasons: ["prior-death-on-edge"] };

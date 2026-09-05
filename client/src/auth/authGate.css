@@ -726,3 +726,165 @@ html[data-spectator="true"] #game-wrapper > div {
   .auth-live-label::before,
   .auth-gate--landing .auth-login-panel { animation: none; }
 }
+
+/* ── Landing cinematic ────────────────────────────────────────────────────────
+   The prerecorded world flyover that covers the live spectator's cold start.
+   It sits above the Phaser canvas and below the landing gradient, so the gate's
+   own vignette still does the work of keeping the login panel readable.
+
+   Two children, video under poster. The poster is NOT the <video poster>
+   attribute: that swaps instantly the moment playback starts, which is both
+   abrupt and too early — the browser will happily start a video it cannot play
+   through. A separate layer can be held until the clip is fully buffered and
+   then dissolved. */
+.landing-cinematic {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: #0b1410;
+  opacity: 1;
+  transition: opacity 600ms ease-out;
+}
+
+/* `object-fit: cover` because the clip is a fixed 1280x720 and the viewport is
+   not: cropping is always better than letterboxing for a full-bleed backdrop. */
+.landing-cinematic__video,
+.landing-cinematic__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Two stacked players, one live. The rotation crossfades by moving this class
+   between them; whichever is not live sits at zero and is either buffering the
+   next clip or empty. */
+.landing-cinematic__video {
+  opacity: 0;
+  transition: opacity 900ms ease-in-out;
+}
+
+.landing-cinematic__video--live {
+  opacity: 1;
+}
+
+.landing-cinematic__poster {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 1;
+  transition: opacity 500ms ease-out;
+}
+
+/* The video is buffered, playing, and has presented a frame. */
+.landing-cinematic__poster--faded {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The poster still shows the world; only the motion goes away. The video is
+     never even requested (see shouldSkipVideo), and the handoff to the live
+     spectator becomes a cut rather than a dissolve. */
+  .landing-cinematic,
+  .landing-cinematic__video,
+  .landing-cinematic__poster {
+    transition: none;
+  }
+}
+
+/* ── Live spectator pane — PARKED 2026-09-05 ──────────────────────────────────
+   DEAD RULES. A landing visitor no longer boots the Phaser game at all, so
+   `#game-wrapper` is an empty element here and none of this has any effect.
+
+   Kept because the pane is a feature to finish, not to redo. It rendered BLACK:
+   the frame, border and label were all correct, but nothing of the world was
+   visible inside it. The leading hypothesis is that Phaser's RESIZE scale mode
+   only re-measures its parent on a WINDOW resize, so shrinking `#game-wrapper`
+   from CSS after boot leaves the canvas at its original full-window size while
+   the wrapper clips it — untested, because the work was parked before it could
+   be confirmed. A `ResizeObserver` on the wrapper calling `game.scale.refresh()`
+   is the first thing to try.
+
+   Also unresolved before re-enabling: the frame should be shaped to complement
+   the login panel (matching its height and proportions) rather than being a
+   16:9 box, and the camera can show unpainted peek space past a node edge.
+   See docs/landing-cinematic-current-state.md.
+
+   ---
+
+   The spectator is a WINDOW onto the live world, not a replacement for the
+   backdrop. It used to take the whole screen the moment it was ready, which in a
+   production build is five to ten seconds — long enough to throw the prerecorded
+   flyover away almost as soon as it appeared. As a framed pane the controlled,
+   always-attractive layer stays, and the live world is a bonus beside it.
+
+   The pane IS the Phaser canvas: `#game-wrapper` lives outside React, so it is
+   sized and revealed entirely from here. Phaser's RESIZE scale mode watches its
+   parent, so constraining the wrapper resizes the canvas and the camera with it.
+
+   Zoom stays at 1, so the pane is a crop of the world rather than a zoomed-out
+   view of it. That keeps the pixel art crisp — anything below 1 is linear-filtered
+   and soft — and a tight frame on the watched adventurer is the point. */
+:root {
+  --spectator-pane-width: min(44vw, 600px);
+  --spectator-pane-inset: clamp(20px, 5vw, 72px);
+  /* 16:9 of the width; also used to place the label above the pane. */
+  --spectator-pane-height: calc(var(--spectator-pane-width) * 9 / 16);
+}
+
+/* Capture runs (`data-cinematic`) reuse `data-spectator` purely for the chrome
+   hiding above. They must NOT get the pane box: it shrinks the wrapper and holds
+   it at opacity 0 until `data-spectator-ready`, which a capture never sets — the
+   whole recording comes out black. */
+html[data-spectator="true"]:not([data-cinematic]) #game-wrapper {
+  position: fixed;
+  z-index: 60001;
+  top: 50%;
+  right: var(--spectator-pane-inset);
+  left: auto;
+  width: var(--spectator-pane-width);
+  height: var(--spectator-pane-height);
+  min-width: 0;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid rgba(154, 126, 222, 0.34);
+  border-radius: 14px;
+  background: #07050f;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.06),
+    0 26px 70px rgba(0, 0, 0, 0.55);
+  /* Hidden until the world inside it is genuinely finished — see
+     client/src/scenes/game/spectatorReady.ts. A pane that opens onto a flat
+     biome fill is worse than no pane. */
+  opacity: 0;
+  transform: translateY(-50%) scale(0.985);
+  pointer-events: none;
+  transition: opacity 600ms ease-out, transform 600ms ease-out;
+}
+
+html[data-spectator="true"]:not([data-cinematic])[data-spectator-ready="true"] #game-wrapper {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+/* Sits just above the pane, sharing its right edge and derived height so the two
+   cannot drift apart at different viewport sizes. */
+html[data-spectator="true"]:not([data-cinematic]) .auth-live-label {
+  position: fixed;
+  z-index: 60002;
+  top: calc(50% - (var(--spectator-pane-height) / 2) - 30px);
+  right: var(--spectator-pane-inset);
+  bottom: auto;
+  left: auto;
+}
+
+/* Below the sidebar breakpoint the login panel is centred and a pane beside it
+   has nowhere to go. The backdrop alone is a complete landing page. */
+@media (max-width: 900px) {
+  html[data-spectator="true"]:not([data-cinematic]) #game-wrapper,
+  html[data-spectator="true"]:not([data-cinematic]) .auth-live-label {
+    display: none !important;
+  }
+}

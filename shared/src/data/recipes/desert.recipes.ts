@@ -254,15 +254,31 @@ export const desertRecipeEntries = [
 
   // ── Cores ───────────────────────────────────────────────────────────────────────
   // See the CORES header in plains.recipes.ts. Desert owns DISTANCE AND SIGHTLINES —
-  // it teaches Charge and the kiting boot, so it is where the ranged glass cannon lives.
+  // it teaches Charge and the kiting boot, and it carries the T2 offensive capstone
+  // before the ranged glass-cannon core.
 
-  // T3 ranged — Sniper: the largest raw damage number in the T3 cast, paid for in
-  // eHP twice over. Struggles the moment anything closes the gap.
+  // T2 premium capstone — Force: a deliberate save through Desert's final mastery
+  // level for the raw-offence tradeoff.
+  ['core-force', {
+    id: 'core-force', name: 'Force Core',
+    recipeGroup: 'desert', requiredBiomeLevel: 6, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-force',
+    cost: { yellow: 500 }, catalystCost: { dominion: 4 }, // family-tag: raw offence → Dominion
+    stats: {}, tier: 2,
+    mechanicEffects: { 'core.attack-mult': 0.22, 'core.maxhp-mult': -0.12 },
+    icon: 'items/cores/force.png',
+    description: 'It gives you the strike you wanted and takes the margin you were counting on.',
+  }],
+
+  // T3 premium ranged — Sniper: the largest raw damage number in the T3 cast,
+  // paid for in eHP twice over. Struggles the moment anything closes the gap.
+  // Its L12 gate and 1,300 yellow / 6 Dominion price make it Desert's late
+  // capstone.
   ['core-sniper', {
     id: 'core-sniper', name: 'Sniper Core',
-    recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'core', coreEligibility: 'ranged',
+    recipeGroup: 'desert', requiredBiomeLevel: 12, slot: 'core', coreEligibility: 'ranged',
     lineageId: 'core-sniper',
-    cost: { yellow: 110 }, catalystCost: { dominion: 3 }, // family-tag: ranged alpha-strike → Dominion
+    cost: { yellow: 1300 }, catalystCost: { dominion: 6 }, // family-tag: ranged alpha-strike → Dominion
     stats: {}, tier: 3,
     // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
     mechanicEffects: { 'core.attack-mult': 0.40, 'core.maxhp-mult': -0.30, 'core.plating-mult': -0.25 },
@@ -274,7 +290,7 @@ export const desertRecipeEntries = [
     id: 'relic-withering-lens', name: 'Withering Lens',
     recipeGroup: 'desert', requiredBiomeLevel: 18, slot: 'relic',
     lineageId: 'relic-withering-lens',
-    cost: { yellow: 220 }, catalystCost: { dominion: 4 },
+    cost: { yellow: 3300 }, catalystCost: { dominion: 9 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.20,

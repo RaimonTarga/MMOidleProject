@@ -226,6 +226,22 @@ assert(summary.coordination.maxConcurrency === 1, 'run artifact states its concu
 assert(summary.coordination.maximumSimultaneouslyProgressing >= 1, 'run artifact states peak progressing bots');
 assert(summary.coordination.contaminated === false, 'an uncontended run is not marked contaminated');
 assert(Array.isArray(summary.coordination.controlledOverlaps), 'run artifact carries an overlap list');
+
+const ambientTransitSummary = buildSummary({
+  header, recorder, route, self: null, completion: 'completed', stalls: [],
+  milestonesReached: [], routeStepsCompleted: 0, endedAt: startedAt + 100_000,
+  leaseEvidence: {
+    totalWaitMs: 0, maximumWaitMs: 0, acquisitions: 1, releases: 1,
+    contaminated: false,
+    overlaps: [{
+      areaId: 'node:transit', nodeId: 'transit', ownerIds: ['bot-a', 'bot-b'],
+      entityIds: [], reason: 'transit-co-presence', contaminating: false,
+    }],
+    sharedAdmissions: 0, fallbacks: [], harnessInvalid: false,
+  },
+});
+assert(ambientTransitSummary.run.isolationGrade === 'ambient-concurrency', 'transit co-presence remains auditable as ambient concurrency');
+assert(ambientTransitSummary.run.economyEvidenceEligible === true, 'benign transit co-presence does not taint economy evidence');
 // Node modifiers change monster stats, so the node mix is part of the evidence.
 {
   const mix = summary.coordination.nodeMix;

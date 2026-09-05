@@ -1,0 +1,578 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-02T11-30-52-087Z-53f56d7f",
+    "startedAt": 1788348652087,
+    "endedAt": 1788368188472,
+    "durationMs": 19536385,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "socket disconnected",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-02T11-30-52-087Z-53f56d7f",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 25,
+      "end": 25,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 25
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 4,
+    "finalGlobalMastery": 127,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "cave": 18,
+      "mountain": 24,
+      "jungle": 18,
+      "desert": 12,
+      "tundra": 6,
+      "volcanic": 6,
+      "graveyard": 1
+    }
+  },
+  "combat": {
+    "totalKills": 598,
+    "killsByMonster": {
+      "Jungle Snake": 15,
+      "Jungle Warden": 17,
+      "Vine Chameleon": 6,
+      "Dune Keeper": 3,
+      "Dune-Stalker Emperor": 1,
+      "Mire Hexer": 6,
+      "Plague-Shell Snapper": 5,
+      "Bog Lurker": 4,
+      "Canopy Chameleon": 9,
+      "Jungle Stalker": 10,
+      "Silverback": 10,
+      "Rime Caster": 3,
+      "Deep Spider": 3,
+      "Crystal Gargoyle": 3,
+      "Cavern Troll": 3,
+      "Mountain Colossus": 7,
+      "Crag Mortar": 6,
+      "Avalanche Ram": 8,
+      "Glacier Bear": 2,
+      "Frost Lurker": 1,
+      "Ember Scuttler": 2,
+      "Magma Tortoise": 6,
+      "Ash Salamander": 1,
+      "Gilded Scarab": 5,
+      "Desert Basilisk": 2,
+      "Dune Stalker": 3,
+      "Apex Bramble-Slasher": 1,
+      "Frost Warden": 3,
+      "Frost-Plated Rime-Mammoth": 1,
+      "Stone Warden": 4,
+      "Crag-Gorged Horn-Behemoth": 1,
+      "Cave Sentinel": 3,
+      "Deep-Core Burrow-Gorger": 1,
+      "Cliffside Roc": 105,
+      "Avalanche Tyrant": 103,
+      "Cragback Rhino": 99,
+      "Granite Mammoth": 99,
+      "Apex Silverback": 6,
+      "Hunting Panther": 11,
+      "Thornback Chameleon": 11,
+      "Emerald Constrictor": 7,
+      "Gravewright": 1,
+      "Bone Crawler": 1
+    },
+    "totalDamageTaken": 83725.20000000001,
+    "playerDamageDealt": 589897,
+    "totalHealed": 80540,
+    "deaths": 16,
+    "abilityActivations": {
+      "cleanse": 23,
+      "expose-weakness": 313,
+      "second-wind": 52,
+      "charge": 69,
+      "sweep": 45,
+      "frenzy": 311
+    }
+  },
+  "positioning": {
+    "samples": 22947,
+    "movementFraction": 0.14280733864993245,
+    "stationaryCombatFraction": 0.2087854621519153,
+    "nearBoundaryFraction": 0.011374035821676036,
+    "boss": {
+      "movementFraction": 0.04013157894736842,
+      "nearBoundaryFraction": 0,
+      "range": {
+        "samples": 1520,
+        "mean": 45.30234819731339,
+        "min": 17.60566218434451,
+        "max": 76.26217897017047,
+        "p50": 42.35154515743162,
+        "p90": 61.48192624031489
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8758518518518519,
+      "combatDurationMs": 3202,
+      "playerDamage": 210,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5934814814814815,
+      "combatDurationMs": 8111,
+      "playerDamage": 864,
+      "incomingDamage": 148
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5671111111111111,
+      "combatDurationMs": 1705,
+      "playerDamage": 89,
+      "incomingDamage": 58
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.488,
+      "combatDurationMs": 501,
+      "playerDamage": 0,
+      "incomingDamage": 24
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.28,
+      "combatDurationMs": 6905,
+      "playerDamage": 702,
+      "incomingDamage": 84
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.072,
+      "combatDurationMs": 5914,
+      "playerDamage": 702,
+      "incomingDamage": 227
+    },
+    {
+      "bossName": "Jungle Dread-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5202758620689655,
+      "combatDurationMs": 14019,
+      "playerDamage": 1689,
+      "incomingDamage": 287
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8458666666666667,
+      "combatDurationMs": 5406,
+      "playerDamage": 479,
+      "incomingDamage": 88
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5573333333333333,
+      "combatDurationMs": 10508,
+      "playerDamage": 998,
+      "incomingDamage": 232
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2464,
+      "combatDurationMs": 10715,
+      "playerDamage": 998,
+      "incomingDamage": 232
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.025066666666666668,
+      "combatDurationMs": 8217,
+      "playerDamage": 830,
+      "incomingDamage": 144
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 802,
+      "playerDamage": 84,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8603538159131698,
+      "combatDurationMs": 6311,
+      "playerDamage": 1376,
+      "incomingDamage": 171
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5296128536022562,
+      "combatDurationMs": 12511,
+      "playerDamage": 3440,
+      "incomingDamage": 399
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.29065891804119304,
+      "combatDurationMs": 11015,
+      "playerDamage": 2688,
+      "incomingDamage": 342
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1417827536108025,
+      "combatDurationMs": 6410,
+      "playerDamage": 1785,
+      "incomingDamage": 171
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 3607,
+      "playerDamage": 1183,
+      "incomingDamage": 114
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 1,
+      "combatDurationMs": 4704,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9290422644435827,
+      "combatDurationMs": 8715,
+      "playerDamage": 732,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8438929817758821,
+      "combatDurationMs": 9004,
+      "playerDamage": 915,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7587436991081815,
+      "combatDurationMs": 8711,
+      "playerDamage": 915,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6594028693291973,
+      "combatDurationMs": 8908,
+      "playerDamage": 1281,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5600620395502133,
+      "combatDurationMs": 9009,
+      "playerDamage": 1281,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4749127568825126,
+      "combatDurationMs": 8706,
+      "playerDamage": 1098,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3755719271035285,
+      "combatDurationMs": 9010,
+      "playerDamage": 1281,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2904226444358278,
+      "combatDurationMs": 8907,
+      "playerDamage": 1098,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.21946490887941061,
+      "combatDurationMs": 9007,
+      "playerDamage": 915,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.17689026754556028,
+      "combatDurationMs": 8806,
+      "playerDamage": 549,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.14563784412563008,
+      "combatDurationMs": 8709,
+      "playerDamage": 403,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.07747188832880962,
+      "combatDurationMs": 8811,
+      "playerDamage": 879,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.04908879410624273,
+      "combatDurationMs": 8910,
+      "playerDamage": 183,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.0065141527723924005,
+      "combatDurationMs": 9007,
+      "playerDamage": 549,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 4008,
+      "playerDamage": 220,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6712836205508134,
+      "combatDurationMs": 12714,
+      "playerDamage": 3844,
+      "incomingDamage": 232
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.36181349653728456,
+      "combatDurationMs": 12715,
+      "playerDamage": 3447,
+      "incomingDamage": 232
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1512320824609438,
+      "combatDurationMs": 9011,
+      "playerDamage": 2417,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 5809,
+      "playerDamage": 2021,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9032958511050795,
+      "combatDurationMs": 4808,
+      "playerDamage": 1039,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6992632803412175,
+      "combatDurationMs": 9313,
+      "playerDamage": 2285,
+      "incomingDamage": 184
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5140752229546336,
+      "combatDurationMs": 9210,
+      "playerDamage": 2215,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3342380767739434,
+      "combatDurationMs": 9208,
+      "playerDamage": 2146,
+      "incomingDamage": 201
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.22690965490500195,
+      "combatDurationMs": 5504,
+      "playerDamage": 1384,
+      "incomingDamage": 133
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1973633191159364,
+      "combatDurationMs": 501,
+      "playerDamage": 0,
+      "incomingDamage": 106
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1973633191159364,
+      "combatDurationMs": 700,
+      "playerDamage": 197,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.0632027917797596,
+      "combatDurationMs": 7706,
+      "playerDamage": 1557,
+      "incomingDamage": 123
+    },
+    {
+      "bossName": "Deep-Core Burrow-Gorger",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 1799,
+      "playerDamage": 623,
+      "incomingDamage": 14
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "cave-cataclysm-axe",
+      "armor": "cave-vest-t3",
+      "recovery": "swamp-charm-t3",
+      "mobility": "mountain-boots-t3",
+      "core": "core-bruiser",
+      "relic": "relic-equilibrium-shard"
+    },
+    "itemUpgrades": {
+      "flash-rapier": 5,
+      "plains-boots-t1": 5,
+      "plains-charm-t1": 3,
+      "plains-vest-t1": 5,
+      "swamp-charm-t1": 5,
+      "cave-vest-t1": 5,
+      "chaotic-axe": 5,
+      "iron-broadsword": 5,
+      "plains-vest-t2": 5,
+      "knight-steelsword": 1,
+      "plains-charm-t2": 5,
+      "gale-needle": 3,
+      "cave-vest-t2": 5,
+      "mountain-boots-t2": 5,
+      "ruinous-axe": 5,
+      "swamp-charm-t2": 5,
+      "desert-vest-t2": 5,
+      "desert-charm-t2": 5,
+      "swamp-vest-t2": 5,
+      "jungle-venomthorn-rapier": 1,
+      "swamp-charm-t3": 5,
+      "cave-cataclysm-axe": 5,
+      "cave-vest-t3": 5,
+      "mountain-boots-t3": 5
+    },
+    "classRoot": "cadence-root",
+    "frame": "balanced",
+    "range": "cadence-range-close",
+    "techniques": [
+      "expose-weakness",
+      "frenzy"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      }
+    ],
+    "stats": {
+      "attack": 201,
+      "attackRange": 12,
+      "attackCooldown": 718,
+      "maxHp": 396,
+      "plating": 28,
+      "damageReduction": 0.25
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

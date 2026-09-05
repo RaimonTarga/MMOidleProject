@@ -103,6 +103,21 @@
         pointer-events: none;
       }
 
+      /* ── Landing poster ───────────────────────────────────────────────
+         The first visual a first-time visitor gets, painted from static HTML
+         before a single line of application JavaScript has run. It is the same
+         still the landing <video> uses as its poster, so when React mounts and
+         the video takes over there is nothing to cross-fade — the image is
+         already decoded and the swap is invisible. AuthGate removes this node
+         on mount. */
+      #landing-poster {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        background: #0b1410 url('/landing/t1-forest.webp') center / cover no-repeat;
+        pointer-events: none;
+      }
+
       /* Mobile HUD mount — hidden on desktop, covers canvas on mobile */
       #mobile-hud {
         display: none;
@@ -155,6 +170,7 @@
       </div>
       <div id="right-sidebar"></div>
     </div>
+    <div id="landing-poster"></div>
     <div id="auth-gate"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

@@ -26982,6 +26982,248 @@
       "candidateFiles": [
         "candidate-4.png"
       ]
+    },
+    {
+      "at": "2026-09-04T23:34:53.560Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-burrowed",
+      "requestHash": "2154bf30b628be93135cc0d3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-04T23:35:12.830Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-burrowed",
+      "requestHash": "2154bf30b628be93135cc0d3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-04T23:35:50.634Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-burrowed",
+      "requestHash": "2154bf30b628be93135cc0d3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T16:24:59.778Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "forest-exposed-roots",
+      "requestHash": "d74e7d85ba391b5c9d468e85",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T16:27:55.140Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "ruins-t5-paving-rubble-soil-wang",
+      "requestHash": "7e7ed5d7e46edcfa6bb4afea",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T16:34:03.599Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "iron-marches-t5-frontier-military-wang",
+      "requestHash": "b7265c0fbaa6ae7ed89edbe5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T16:59:46.503Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "underworlds-t6-worked-floor-deep-earth-wang",
+      "requestHash": "83c5256a04206acca3b321f7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:01:48.086Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "underworlds-t6-worked-floor-deep-earth-wang",
+      "requestHash": "83c5256a04206acca3b321f7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:03:36.324Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "underworlds-t6-worked-floor-deep-earth-wang",
+      "requestHash": "83c5256a04206acca3b321f7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:06:16.936Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "underworlds-t6-worked-floor-deep-earth-wang",
+      "requestHash": "83c5256a04206acca3b321f7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:07:52.627Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "underworlds-t6-worked-floor-deep-earth-wang",
+      "requestHash": "83c5256a04206acca3b321f7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:10:14.015Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "stormlands-t6-heath-lightning-scar-wang",
+      "requestHash": "49a1229d973ff6712a79bb0a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:14:50.352Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "stormlands-t6-heath-lightning-scar-wang",
+      "requestHash": "49a1229d973ff6712a79bb0a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:17:33.734Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "stormlands-t6-heath-lightning-scar-wang",
+      "requestHash": "49a1229d973ff6712a79bb0a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:19:31.572Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "stormlands-t6-heath-lightning-scar-wang",
+      "requestHash": "49a1229d973ff6712a79bb0a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:21:11.843Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "stormlands-t6-heath-lightning-scar-wang",
+      "requestHash": "49a1229d973ff6712a79bb0a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:33:48.567Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "underworlds-t6-worked-floor-deep-earth-wang-refined",
+      "requestHash": "5fbf9c35c2b27a5e594ca07c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:35:20.376Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "underworlds-t6-worked-floor-deep-earth-wang-refined",
+      "requestHash": "5fbf9c35c2b27a5e594ca07c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:36:50.542Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "underworlds-t6-worked-floor-deep-earth-wang-refined",
+      "requestHash": "5fbf9c35c2b27a5e594ca07c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:43:01.056Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "stormlands-t6-heath-lightning-scar-wang-refined",
+      "requestHash": "bc44a8c103282ee15d32626f",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:44:44.473Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "stormlands-t6-heath-lightning-scar-wang-refined",
+      "requestHash": "bc44a8c103282ee15d32626f",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-05T17:46:38.860Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "stormlands-t6-heath-lightning-scar-wang-refined",
+      "requestHash": "bc44a8c103282ee15d32626f",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }

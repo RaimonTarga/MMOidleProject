@@ -132,6 +132,8 @@ export interface RenderState {
       isAnimated?: boolean;
       /** Client-only render nudge (negative Y = up). Logical pos unchanged. */
       visualOffsetY?: number;
+      /** Last broadcast concealment marker, for edge-triggering the dirt cloud. */
+      concealed?: 'burrow' | 'stealth';
     }
   >;
 

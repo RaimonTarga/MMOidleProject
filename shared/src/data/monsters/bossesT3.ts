@@ -133,8 +133,12 @@ export const bossMonsterEntriesT3 = [
       damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4000,
       steps: [
         { kind: 'cast', name: 'Deep Burrow', castMs: 1000, fx: 'shield', guardable: false },
+        // Same overlap correction as T2 (165 gap vs a 155 radius could not hit a
+        // stationary player), and the evolved burrow travels further and faster.
+        // The evolved burrow: longer, and faster still than T2's. See the T2
+        // comment for why underground speed is nothing like the walking speed.
         { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 1800,
-          relocate: 'near-target', emergeGap: 165 },
+          relocate: 'near-target', emergeGap: 100, travelSpeed: 520 },
         { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 155,
           damageMult: 1.0, telegraphMs: 1100, fx: 'strong-kick' },
         { kind: 'recovery', label: 'Surfaced', durationMs: 2400 },

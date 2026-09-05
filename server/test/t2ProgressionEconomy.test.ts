@@ -2,6 +2,7 @@ import {
   RECIPE_DATABASE,
   ABILITY_RECIPE_DATABASE,
   RUNE_RECIPE_DATABASE,
+  STANCE_RECIPE_DATABASE,
   isRuneRecipeUnlocked,
   checkEvolve,
   checkReconstruct,
@@ -172,6 +173,61 @@ for (const id of ALL_T2_GEAR_IDS) {
 
 function essenceSum(cost: Partial<Record<EssenceType, number>> | undefined): number {
   return Object.values(cost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
+}
+
+function normalizedCost(cost: Partial<Record<string, number>> | undefined): string {
+  return JSON.stringify(Object.entries(cost ?? {}).sort(([a], [b]) => a.localeCompare(b)));
+}
+
+type T2RewardSpec = {
+  id: string;
+  group: string;
+  level: number;
+  cost: Record<string, number>;
+  catalystCost: Record<string, number>;
+  essenceBand: readonly [number, number];
+};
+
+const T2_STANCE_REWARDS: T2RewardSpec[] = [
+  { id: "stance-recipe-offensive", group: "plains", level: 7, cost: { yellow: 60 }, catalystCost: { alacrity: 1 }, essenceBand: [50, 70] },
+  { id: "stance-recipe-defensive", group: "plains", level: 7, cost: { yellow: 60 }, catalystCost: { fortified: 1 }, essenceBand: [50, 70] },
+  { id: "stance-recipe-perfection", group: "forest", level: 8, cost: { green: 110 }, catalystCost: { alacrity: 1 }, essenceBand: [90, 120] },
+  { id: "stance-recipe-fleeting", group: "swamp", level: 8, cost: { purple: 110 }, catalystCost: { alacrity: 1 }, essenceBand: [90, 120] },
+  { id: "stance-recipe-tanking", group: "mountain", level: 8, cost: { blue: 100 }, catalystCost: { heavy: 1 }, essenceBand: [90, 120] },
+  { id: "stance-recipe-enraged", group: "cave", level: 8, cost: { red: 110 }, catalystCost: { dominion: 1 }, essenceBand: [90, 120] },
+];
+
+const T2_CORE_REWARDS: T2RewardSpec[] = [
+  { id: "core-tempered", group: "cave", level: 12, cost: { red: 500 }, catalystCost: { dominion: 4 }, essenceBand: [450, 600] },
+  { id: "core-survivalist", group: "jungle", level: 6, cost: { green: 500 }, catalystCost: { fortified: 4 }, essenceBand: [450, 600] },
+  { id: "core-force", group: "desert", level: 6, cost: { yellow: 500 }, catalystCost: { dominion: 4 }, essenceBand: [450, 600] },
+];
+
+for (const spec of T2_STANCE_REWARDS) {
+  const recipe = STANCE_RECIPE_DATABASE.get(spec.id);
+  assert(!!recipe, `${spec.id}: stance recipe must exist`);
+  assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
+  assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
+  assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
+  assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
+  assert(normalizedCost(recipe!.catalystCost) === normalizedCost(spec.catalystCost), `${spec.id}: catalyst cost changed unexpectedly`);
+  assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
+  const total = essenceSum(recipe!.cost);
+  assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: stance essence total is outside its band`);
+}
+
+for (const spec of T2_CORE_REWARDS) {
+  const recipe = RECIPE_DATABASE.get(spec.id);
+  assert(!!recipe, `${spec.id}: core recipe must exist`);
+  assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
+  assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
+  assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
+  assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
+  assert(normalizedCost(recipe!.catalystCost) === normalizedCost(spec.catalystCost), `${spec.id}: catalyst cost changed unexpectedly`);
+  assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
+  const total = essenceSum(recipe!.cost);
+  assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: core essence total is outside its band`);
+  assert(essenceSum(recipe!.catalystCost) >= 3 && essenceSum(recipe!.catalystCost) <= 4, `${spec.id}: core catalyst total is outside its band`);
 }
 
 for (const id of ALL_T2_GEAR_IDS) {

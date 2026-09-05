@@ -6,7 +6,7 @@ Living truth for the **Core** equipment slot. Design source is
 The structural rework that produced the slot is
 `docs/archive/cores-rework-implementation-plan.md`.
 
-The values below are the implemented first-pass capstone tuning. They remain subject
+The values below are the implemented T2/T3/T4 capstone tuning. They remain subject
 to bench and playtest iteration, but are no longer the conservative placeholder cast.
 
 ---
@@ -59,48 +59,60 @@ Two things that look like bugs and are not:
 A range is not chosen until **player tier 3** (skill-tree tier 2). A restricted core
 placed in a T2 biome-level band is therefore craftable, equippable, and permanently
 inert. The original placeholder cast shipped three such cores. `coreAuthoring.test.ts`
-now asserts every restricted core is unreachable at T2 and reachable at T3.
+now asserts every restricted core is unreachable before its authored tier and
+reachable at that tier.
 
 | Band | Reachable at |
 |---|---|
-| T1 biome, level 7–12 | player tier 2 — **starters only** |
+| T1 biome, level 7–12 | player tier 2 — late T2 capstones |
 | T1 biome, level 13–18 | player tier 3 |
+| T2 biome (jungle, desert), level 1–6 | player tier 2 — late T2 capstones |
 | T2 biome (jungle, desert), level 7–12 | player tier 3 |
 | T3 biome (tundra, volcanic), level 1–6 | player tier 3 |
+| T1 biome, level 19–24 | player tier 4 |
+| T2 biome (jungle, desert), level 13–18 | player tier 4 |
+| T3 biome (tundra, volcanic), level 7–12 | player tier 4 |
+| T4 biome (graveyard, trench), level 1–6 | player tier 4 |
 
-## The cast — 12 cores, one per biome (three biomes carry two)
+## The cast — 12 cores across eight reward biomes (Plains, Forest, and Trench carry none)
 
-**T2 unrestricted starters** — introduce the slot before a range exists.
+**T2 unrestricted capstones** — premium, late-band purchases that remain
+available before a range exists.
 
-| Core | Biome (level) | Shape |
-|---|---|---|
-| Tempered | plains (7) | The benchmark: even attack + HP, no drawback |
-| Survivalist | forest (7) | Recovery + HP |
-| Force | cave (8) | Damage bought with HP — the first real tradeoff |
+| Core | Biome (level) | Essence | Catalyst | Shape |
+|---|---|---|---|---|
+| Tempered | cave (12) | 500 red | 4 dominion | The benchmark: even attack + HP, no drawback |
+| Survivalist | jungle (6) | 500 green | 4 fortified | Recovery + HP |
+| Force | desert (6) | 500 yellow | 4 dominion | Damage bought with HP — the first real tradeoff |
 
-**T3 melee** — close-range only.
+**T3 melee** — close-range only; late-band premium rewards.
 
-| Core | Biome (level) | Shape |
-|---|---|---|
-| Juggernaut | mountain (14) | HP + plating + DR layer; slower attacks and movement |
-| Bruiser | jungle (9) | Damage, bulk, speed; kills refund mobility cooldown |
-| Duelist | cave (15) | All-round base + Focus ramp on consecutive direct hits to one target |
+| Core | Biome (level) | Essence | Catalyst | Shape |
+|---|---|---:|---:|---|
+| Bruiser | jungle (11) | 1,350 green | 6 alacrity | Damage, bulk, speed; kills refund mobility cooldown |
+| Duelist | cave (18) | 1,350 red | 6 dominion | All-round base + Focus ramp on consecutive direct hits to one target |
 
-**T3 ranged** — mid and far.
+**T3 ranged** — mid and far; late-band premium rewards.
 
-| Core | Biome (level) | Shape |
-|---|---|---|
-| Sniper | desert (9) | Biggest raw damage, paid in HP and plating |
-| Scout | tundra (3) | Damage + movement + mobility cooldown; less HP |
+| Core | Biome (level) | Essence | Catalyst | Shape |
+|---|---|---:|---:|---|
+| Sniper | desert (12) | 1,300 yellow | 6 dominion | Biggest raw damage, paid in HP and plating |
+| Scout | tundra (6) | 1,200 blue | 5 heavy | Damage + movement + mobility cooldown; less HP |
 
-**T3 unrestricted specialists.**
+**T3 unrestricted specialists** — late-band premium rewards.
 
-| Core | Biome (level) | Shape |
-|---|---|---|
-| Arcanist | mountain (17) | Technique cooldown + power |
-| Controller | swamp (15) | Debuff duration + potency |
-| Accelerant | jungle (11) | Attack speed for attack damage |
-| Catalyst | volcanic (3) | On-hit potency for attack damage |
+| Core | Biome (level) | Essence | Catalyst | Shape |
+|---|---|---:|---:|---|
+| Arcanist | mountain (18) | 1,200 blue | 5 swarming | Technique cooldown + power |
+| Accelerant | jungle (12) | 1,150 green | 5 alacrity | Attack speed for attack damage |
+
+**T4 mature cores** — premium capstones placed significantly later in their biome bands.
+
+| Core | Biome (level) | Essence | Catalyst | Shape |
+|---|---|---:|---:|---|
+| Juggernaut | mountain (22) | 2,200 blue | 7 heavy | HP + plating + DR layer; slower attacks and movement |
+| Controller | graveyard (4) | 2,100 purple | 7 fortified | Debuff duration + potency |
+| Catalyst | volcanic (10) | 2,300 red | 8 swarming | On-hit potency for attack damage |
 
 Accelerant moved off Forest on 2026-08-22: Forest has no nodes past T2, so its
 level-15 gate cost a T3 character roughly 1,000 extra kills of outgrown content.
@@ -199,8 +211,9 @@ undo the core one tick later.
 - **No taunt/threat core.** No taunt system exists beyond the `taunt-current-target`
   rune; the monster types call it a "future taunt hook". Blocked, not just deferred.
 - **No AoE, summon, or party cores**, per philosophy §13.
-- **No T4 cores** (Amplifier, Heavy, Advanced Survivalist). Amplifier needs a
-  buff-potency layer that does not exist in any form.
+- **No additional T4 cores** beyond the three mature capstones above. The design
+  draft's Amplifier, Heavy, and Advanced Survivalist remain unshipped; Amplifier
+  still needs a buff-potency layer that does not exist in any form.
 - **`party` eligibility was removed.** It gated nothing.
 
 ## Presentation

@@ -80,13 +80,11 @@ export function guardFor(biomeGroup: T2BiomeGroup): string {
  * the RP budget. Reactive stance switching is deliberately left out of the
  * baseline; it is a probe.
  *
- * ⚠ ACQUISITION ORDER. Both gate at Forest level 7, but `defensive-stance` costs
- * 20 BLUE essence, and blue is not minted until Mountain — leg 4. On a `clean`
- * entry a Forest-leg craft of it would farm green forever and never afford it.
- * So it is crafted on the Mountain leg instead, and the two legs before that
- * which want it (Swamp farm, and the Plains/Forest/Swamp bosses) run with NO
- * stance rather than with the wrong one. `pnpm bot:t2-payable` is the tool that
- * catches this class of mistake, and a semantic test enforces it.
+ * ACQUISITION ORDER. Both introductory stances are now Plains rewards at level
+ * 7 and use the local yellow essence, so a clean T2 entry can craft both on the
+ * first leg. The route still uses the encounter-
+ * shape policy below; this pass changes only where those existing stance
+ * choices become available.
  */
 export const OFFENSIVE_STANCE = "offensive-stance";
 export const DEFENSIVE_STANCE = "defensive-stance";
@@ -97,8 +95,8 @@ export const STANCE_RECIPES = {
 } as const;
 
 /** The leg each stance is crafted on, chosen for affordability, not for its gate. */
-export const OFFENSIVE_STANCE_LEG: T2BiomeGroup = "forest";
-export const DEFENSIVE_STANCE_LEG: T2BiomeGroup = "mountain";
+export const OFFENSIVE_STANCE_LEG: T2BiomeGroup = "plains";
+export const DEFENSIVE_STANCE_LEG: T2BiomeGroup = "plains";
 
 const LEG_INDEX: Record<T2BiomeGroup, number> = {
   plains: 1,
@@ -130,9 +128,9 @@ export function bossStanceFor(biomeGroup: T2BiomeGroup): string | null {
  * One core slot, three Tier-2 cores, and the designer's own stated hypothesis:
  * **Force for farming, Survivalist for bosses.**
  *
- *   core-tempered    Plains L7   +12% attack, +12% max HP        (yellow 45 + 1 swarming)
- *   core-survivalist Forest L7   +30% recovery, +15% max HP      (green 45 + 1 fortified)
- *   core-force       Cave  L8    +22% attack, -12% max HP        (red 45 + 1 dominion)
+ *   core-tempered    Cave   L12  +12% attack, +12% max HP        (red 500 + 4 dominion)
+ *   core-survivalist Jungle L6   +30% recovery, +15% max HP      (green 500 + 4 fortified)
+ *   core-force       Desert L6   +22% attack, -12% max HP        (yellow 500 + 4 dominion)
  *
  * All three are `unrestricted`, which matters: `coreIsActive` gates a `melee` or
  * `ranged` core on `selectedRange`, and a Tier-2 character has NO range node
@@ -141,11 +139,11 @@ export function bossStanceFor(biomeGroup: T2BiomeGroup): string | null {
  * therefore excluded from the baseline by necessity, not by preference.
  *
  * Policy:
- *   - Tempered is the farm core from Plains, because it is the only one that
- *     exists that early and it is pure upside.
- *   - Force replaces it as the farm core from Cave, once Tier-2 armour is on to
- *     absorb the -12% max HP it charges for the attack.
- *   - Survivalist goes on for every boss attempt and comes back off afterwards.
+ *   - Tempered is the first farm core, crafted at the Cave capstone gate.
+ *   - Force replaces it as the farm core from Desert, once Tier-2 armour is on
+ *     to absorb the -12% max HP it charges for the attack.
+ *   - Survivalist becomes available in Jungle and goes on for every boss
+ *     attempt, then comes back off afterwards.
  *
  * The swap is real automation cost (two equips per boss) and it is a HYPOTHESIS,
  * not a known-good play. A cores-off arm is the control if the swap turns out to
@@ -156,9 +154,9 @@ export const CORE_SURVIVALIST = "core-survivalist";
 export const CORE_FORCE = "core-force";
 
 export const CORE_CRAFT_LEG: Record<string, T2BiomeGroup> = {
-  [CORE_TEMPERED]: "plains",
-  [CORE_SURVIVALIST]: "forest",
-  [CORE_FORCE]: "cave",
+  [CORE_TEMPERED]: "cave",
+  [CORE_SURVIVALIST]: "jungle",
+  [CORE_FORCE]: "desert",
 };
 
 /** The core worn while FARMING `biomeGroup`, or null before any is owned. */

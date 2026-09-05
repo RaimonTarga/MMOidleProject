@@ -319,9 +319,9 @@ export function makeT2Route(config: T2RouteConfig): Route {
     // Brackets the leg for the per-biome response map: dwell time for `group` is
     // the span between this milestone and `${group}-t2-leg-complete`.
     steps.push({ type: "milestone", id: `${group}-t2-entered` });
-    // Cores and stances first: they are cheap, they are worn for the whole leg,
-    // and crafting them before the gear farm means the leg is fought in the kit
-    // the leg is supposed to be measuring.
+    // Cores and stances first: the fixed route policy acquires them at their
+    // designated legs, and crafting them before the gear farm means the leg is
+    // fought in the kit the leg is supposed to be measuring.
     steps.push(...buildAcquisitionSteps(group));
     steps.push(...farmLoadoutSteps(group));
     const adopted: string[] = [];

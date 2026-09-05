@@ -15,6 +15,7 @@ import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
 import { spawnDamageNumber } from '../fx/particles';
+import { concealedFrameOverride, syncConcealment } from './burrow';
 import {
   resolveMonsterDamageStyle,
   SHIELD_DAMAGE_COLOR,
@@ -191,6 +192,10 @@ function syncMonsterEcologyTells(state: RenderState, monster: MonsterView): void
   }
 
   if (!sprite) return;
+  // A monster the PATTERN layer has concealed is owned by render/burrow.ts, which
+  // fades it far harder than camouflage does. Writing alpha here as well would
+  // undo that on every patch.
+  if (monster.concealed !== undefined) return;
   sprite.setAlpha(isConcealedNow(monster) ? CAMOUFLAGE_ALPHA : 1);
 }
 
@@ -293,6 +298,7 @@ export function upsertMonster(
     ensureCdBar(state, monster.id, scene);
     syncMonsterThroneTint(state, monster);
     syncMonsterEcologyTells(state, monster);
+    syncConcealment(state, monster, scene);
     return;
   }
 
@@ -354,6 +360,7 @@ export function upsertMonster(
       displayH: spriteSize,
       fallbackColor: monster.color,
       isPlayer: false,
+      frameOverride: concealedFrameOverride(monster, scene),
     });
   }
 
@@ -409,4 +416,7 @@ export function upsertMonster(
 
   syncMonsterThroneTint(state, monster);
   syncMonsterEcologyTells(state, monster);
+  // AFTER the frame pipeline: it destroys and rebuilds the sprite whenever the
+  // frame changes, so the submerged look has to land on whatever object survived.
+  syncConcealment(state, monster, scene);
 }

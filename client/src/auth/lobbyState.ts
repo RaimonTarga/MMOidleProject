@@ -9,6 +9,7 @@ import type {
   SpectateStatus,
 } from '@mmo-idle/shared';
 import type { GameSocket } from '../net/socket';
+import { resolveCinematicSession } from '../scenes/game/cinematic/mode';
 import {
   clearSession,
   createGuestSession,
@@ -31,12 +32,26 @@ export const guestFirstRunPendingAtom = atom(hasGuestFirstRun());
 export const characterActionBusyAtom = atom(false);
 export const authMessageAtom = atom<string | null>(null);
 export const spectatorStatusAtom = atom<SpectateStatus | null>(null);
+/**
+ * True once the live spectator is visually finished enough to replace the
+ * prerecorded landing loop. Never resets: the handoff is one-way, and a later
+ * hiccup in the live layer is not a reason to fade a video back over it.
+ */
+export const spectatorVisualReadyAtom = atom(false);
 
 let socket: GameSocket | null = null;
 let guestCreationPending = false;
 let autoCreatePending = false;
 let pendingAutoSelectCharacterId: string | null = null;
 const store = getDefaultStore();
+
+/**
+ * Dev-only footage capture drives the lobby itself: it needs a character in the
+ * world (the anchor that holds the filmed node thawed) with no human to click
+ * "Enter World". Null in every normal session and every production build.
+ */
+const cinematicCapture = resolveCinematicSession() !== null;
+let cinematicCreatePending = false;
 
 export function bindLobbySocket(next: GameSocket): void {
   socket = next;
@@ -63,11 +78,25 @@ export function handleSocketUnauthorized(): void {
 }
 
 export function handleCharacterList(payload: AccountCharactersPayload): void {
-  delete document.documentElement.dataset.spectator;
+  // Capture mode keeps the spectator chrome suppression it set at scene create:
+  // a recording wants no sidebars, whatever the session is authenticated as.
+  if (!cinematicCapture) delete document.documentElement.dataset.spectator;
   const { account, characters } = payload;
   store.set(accountSummaryAtom, account);
   store.set(charactersAtom, characters);
   store.set(characterActionBusyAtom, false);
+
+  if (cinematicCapture) {
+    const anchor = characters[0];
+    if (anchor) {
+      selectLobbyCharacter(anchor.id);
+    } else if (!cinematicCreatePending) {
+      cinematicCreatePending = true;
+      createLobbyCharacter(generateGuestName());
+    }
+    return;
+  }
+
   const firstRun = takeGuestFirstRun();
 
   if (pendingAutoSelectCharacterId) {
@@ -86,6 +115,14 @@ export function handleCharacterList(payload: AccountCharactersPayload): void {
 
   store.set(guestFirstRunPendingAtom, false);
   store.set(authPhaseAtom, 'select');
+}
+
+export function setSpectatorVisualReady(): void {
+  store.set(spectatorVisualReadyAtom, true);
+  // The live pane is the Phaser canvas itself, which lives outside React in
+  // `#game-wrapper`. A root data attribute is how CSS gets told it may now be
+  // revealed — see `html[data-spectator-ready]` in authGate.css.
+  document.documentElement.dataset.spectatorReady = 'true';
 }
 
 export function handleSpectateStatus(status: SpectateStatus): void {
@@ -155,6 +192,17 @@ export function handleDeleteResult(result: CharacterActionResult): void {
 
 export function handleSelectResult(result: CharacterActionResult): void {
   if (result.success) return;
+  if (cinematicCapture) {
+    // The server emits `character:createResult` and the refreshed roster BEFORE
+    // clearing its own mutation guard, so a capture that selects the instant the
+    // roster lands can be refused for a few milliseconds. Retry rather than
+    // stranding the run in character select with nobody to click the button.
+    const anchor = store.get(charactersAtom)[0];
+    if (anchor) {
+      window.setTimeout(() => selectLobbyCharacter(anchor.id), 250);
+      return;
+    }
+  }
   store.set(characterActionBusyAtom, false);
   store.set(guestFirstRunPendingAtom, false);
   store.set(authMessageAtom, result.reason ?? 'Unable to enter the world.');

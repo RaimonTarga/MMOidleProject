@@ -316,20 +316,8 @@ export const swampRecipeEntries = [
   // See the CORES header in plains.recipes.ts. Swamp owns AFFLICTION AND CONTROL —
   // it teaches Cleanse, so it is where the debuff amplifier comes from.
 
-  // T3 unrestricted — Controller: your debuffs last longer and bite harder.
-  // Only scales debuffs on the SCALABLE_DEBUFFS registry (shared/src/systems/
-  // debuffScaling.ts); it is not a blanket multiplier over every status effect.
-  ['core-controller', {
-    id: 'core-controller', name: 'Controller Core',
-    recipeGroup: 'swamp', requiredBiomeLevel: 15, slot: 'core', coreEligibility: 'unrestricted',
-    lineageId: 'core-controller',
-    cost: { purple: 90 }, catalystCost: { fortified: 2 }, // family-tag: debuff/affliction → Fortified
-    stats: {}, tier: 3,
-    // Does nothing for a build that applies no debuffs. That is the intended
-    // opportunity cost, so no direct-damage penalty is authored on top of it.
-    mechanicEffects: { 'core.debuff-duration-mult': 0.35, 'core.debuff-potency-mult': 0.25 },
-    icon: 'items/cores/controller.png',
-    description: 'The swamp never kills quickly. It simply makes sure nothing leaves the way it came in.',
-  }],
+  // Controller's debuff specialisation is a T4 Graveyard capstone. Swamp keeps
+  // the foundational affliction equipment and Cleanse, while the premium Core
+  // moves with the later control identity.
 
 ] satisfies [string, Recipe][];

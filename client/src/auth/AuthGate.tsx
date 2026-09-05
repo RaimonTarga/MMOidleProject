@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   BIOME_DATABASE,
@@ -23,6 +23,7 @@ import {
 } from './lobbyState';
 import './authGate.css';
 import { CharacterPortrait } from './CharacterPortrait';
+import { LandingCinematic } from './LandingCinematic';
 
 const relativeTime = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
 
@@ -140,6 +141,13 @@ function CharacterCard({
 
 export function AuthGate() {
   const phase = useAtomValue(authPhaseAtom);
+  // The static landing poster in index.html exists only to cover the window
+  // between first paint and React mounting. Once this component is up, either
+  // LandingCinematic owns the backdrop (same image, already decoded) or the gate
+  // is drawing an opaque panel over it — either way the static node is done.
+  useEffect(() => {
+    document.getElementById('landing-poster')?.remove();
+  }, []);
   const account = useAtomValue(accountSummaryAtom);
   const characters = useAtomValue(charactersAtom);
   const busy = useAtomValue(characterActionBusyAtom);
@@ -158,15 +166,20 @@ export function AuthGate() {
   if (phase === 'in-world') return null;
 
   if (phase === 'login') {
+    // The label belongs to the live pane, so it says nothing until there IS a
+    // pane. `idle` means nobody is online to watch: there is no fallback view
+    // any more, so the landing page simply stays on its own backdrop.
     const liveLabel = spectatorStatus?.paused
       ? 'LIVE PAUSED — click to resume'
       : spectatorStatus?.mode === 'player'
-        ? `LIVE — watching ${spectatorStatus.targetName ?? 'an adventurer'}`
-        : spectatorStatus?.mode === 'clearing'
-          ? 'LIVE — the Clearing'
-          : 'LIVE — connecting…';
+        ? `LIVE — ${spectatorStatus.targetName ?? 'an adventurer'}`
+        : null;
     return (
-      <div className="auth-gate auth-gate--landing">
+      <>
+        {/* Sibling BEFORE the gate, so the gate's gradient vignette paints over
+            the footage and the live Phaser canvas stays underneath both. */}
+        <LandingCinematic />
+        <div className="auth-gate auth-gate--landing">
         <main className="auth-login-panel">
           <div className="auth-login-panel__crest" aria-hidden="true">◇</div>
           <div className="auth-gate__eyebrow">A persistent world awaits</div>
@@ -235,8 +248,11 @@ export function AuthGate() {
           </button>
           <div className="auth-login-panel__footnote">Your world continues between sessions.</div>
         </main>
-        <aside className="auth-live-label" aria-live="polite">{liveLabel}</aside>
-      </div>
+        {liveLabel && (
+          <aside className="auth-live-label" aria-live="polite">{liveLabel}</aside>
+        )}
+        </div>
+      </>
     );
   }
 

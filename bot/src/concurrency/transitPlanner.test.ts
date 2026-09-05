@@ -28,6 +28,17 @@ const avoided = planTransit({
   reservations: manager.snapshot(),
 });
 assert(avoided === null || avoided.hops.every((hop) => hop.toNodeId !== "node-t1-forest-04"), "foreign exclusive crossings are avoided when possible");
+const queued = planTransit({
+  fromNodeId: "node-clearing",
+  destinationNodeId: "node-t1-forest-03",
+  ownerId: "conduit",
+  reservations: manager.snapshot(),
+  allowForeignExclusive: true,
+});
+assert(
+  queued?.hops.some((hop) => hop.toNodeId === "node-t1-forest-04" && hop.classification === "protected-crossing"),
+  "when no clean route remains, a foreign-exclusive crossing is handed to the lease queue",
+);
 manager.shutdown();
 
 const calls: string[] = [];

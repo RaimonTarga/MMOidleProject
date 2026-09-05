@@ -249,6 +249,8 @@ export interface MonsterView {
   targetStatus?: TargetStatusView[];
   ultimateStatus?: UltimateStatus;
   throneHealing?: boolean;
+  /** Set while the monster is burrowed / in cover: untargetable, and drawn as such. */
+  concealed?: 'burrow' | 'stealth';
   hitboxRects: HitboxRect[];
 }
 
@@ -498,6 +500,7 @@ export function composeMonsterView(
     targetStatus: entity.hasStatus?.targetStatus,
     ultimateStatus: entity.hasStatus?.ultimateStatus,
     throneHealing: entity.hasStatus?.throneHealing,
+    concealed: entity.hasStatus?.concealed,
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],
   };
 }

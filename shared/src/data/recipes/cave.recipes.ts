@@ -277,28 +277,31 @@ export const caveRecipeEntries = [
 
   // ── Cores ───────────────────────────────────────────────────────────────────────
   // See the CORES header in plains.recipes.ts. Cave owns SINGLE-TARGET PRESSURE —
-  // it teaches Expose Weakness, so it is where the elite-killer core comes from.
+  // it teaches Expose Weakness, so it is where the T2 capstone and elite-killer
+  // core line live.
 
-  // T2 starter — Force: the first real tradeoff a player is offered. All upside is
-  // paid for in HP, which is the lesson the whole restricted tier is built on.
-  ['core-force', {
-    id: 'core-force', name: 'Force Core',
-    recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'core', coreEligibility: 'unrestricted',
-    lineageId: 'core-force',
-    cost: { red: 45 }, catalystCost: { dominion: 1 }, // family-tag: raw offence → Dominion
+  // T2 premium capstone — Tempered: the balanced core is deliberately delayed
+  // until the end of Cave's returning-biome T2 band.
+  ['core-tempered', {
+    id: 'core-tempered', name: 'Tempered Core',
+    recipeGroup: 'cave', requiredBiomeLevel: 12, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-tempered',
+    cost: { red: 500 }, catalystCost: { dominion: 4 }, // family-tag: cave capstone generalist → Dominion
     stats: {}, tier: 2,
-    mechanicEffects: { 'core.attack-mult': 0.22, 'core.maxhp-mult': -0.12 },
-    icon: 'items/cores/force.png',
-    description: 'It gives you the strike you wanted and takes the margin you were counting on.',
+    mechanicEffects: { 'core.attack-mult': 0.12, 'core.maxhp-mult': 0.12 },
+    icon: 'items/cores/tempered.png',
+    description: 'Balanced for any hand. It asks no commitment, and rewards none in particular.',
   }],
 
-  // T3 melee — Duelist: commitment to one big target. Its opportunity cost is
-  // structural rather than a stated penalty: it does very little against a crowd.
+  // T3 premium melee — Duelist: commitment to one big target. Its opportunity
+  // cost is structural rather than a stated penalty: it does very little against
+  // a crowd. The L18 gate and 1,350 red / 6 Dominion price make that commitment
+  // an aspirational Cave capstone.
   ['core-duelist', {
     id: 'core-duelist', name: 'Duelist Core',
-    recipeGroup: 'cave', requiredBiomeLevel: 15, slot: 'core', coreEligibility: 'melee',
+    recipeGroup: 'cave', requiredBiomeLevel: 18, slot: 'core', coreEligibility: 'melee',
     lineageId: 'core-duelist',
-    cost: { red: 110 }, catalystCost: { dominion: 3 }, // family-tag: single-target alpha → Dominion
+    cost: { red: 1350 }, catalystCost: { dominion: 6 }, // family-tag: single-target alpha → Dominion
     stats: {}, tier: 3,
     mechanicEffects: {
       'core.attack-mult': 0.18, 'core.maxhp-mult': 0.10,

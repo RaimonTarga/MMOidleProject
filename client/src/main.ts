@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { createElement } from 'react';
 import { ITEM_DATABASE, registerDevItems } from '@mmo-idle/shared';
 import { DEV_TOOLS_ENABLED } from './devTools';
+import { isLandingOnlySession } from './net/session';
+import { cinematicRenderFps } from './scenes/game/cinematic/mode';
 import { GameScene } from './scenes/GameScene';
 import { LeftSidebar } from './hud/HUD';
 import { RightSidebar } from './hud/MenuButtons';
@@ -57,9 +59,28 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   input: { gamepad: true },
   scene: [GameScene],
+  // A capture run renders at exactly the rate the recorder samples at. Left
+  // free-running, the browser paints on its own cadence and the recorder's fixed
+  // grid lands on whatever paint happened to be composited, which reads as
+  // stutter no encoder setting can remove. Dev-only: null in every real session.
+  ...(cinematicRenderFps() ? { fps: { limit: cinematicRenderFps()! } } : {}),
 };
 
-const game = new Phaser.Game(config);
+/**
+ * PARKED 2026-09-05 — the landing page runs no game at all.
+ *
+ * A visitor with no credential used to boot the full Phaser scene so the live
+ * spectator could open in a pane beside the login panel. That pane is disabled
+ * (it rendered black; see docs/landing-cinematic-current-state.md, "PARKED: the
+ * live spectator pane"), so booting the renderer for it is pure cost: it pulls
+ * the whole game asset set over the same connections the landing video needs,
+ * and takes a spectator slot to show nothing.
+ *
+ * Nothing on the landing page needs the game or the socket — "Play now" posts to
+ * `/auth/guest` and reloads, and Discord login navigates away. Re-enabling the
+ * pane means deleting this guard.
+ */
+const game = isLandingOnlySession() ? null : new Phaser.Game(config);
 
 // Phaser's default behavior pauses the entire game loop on `window.blur`. That
 // fires whenever the canvas loses keyboard focus — including when the user
@@ -70,7 +91,7 @@ const game = new Phaser.Game(config);
 // target, producing visible rubber-banding. We only want the loop to pause on
 // genuine tab visibility changes (handled separately in guard.ts), so detach
 // the BLUR/FOCUS handlers Phaser auto-wires during boot.
-game.events.once(Phaser.Core.Events.READY, () => {
+game?.events.once(Phaser.Core.Events.READY, () => {
   game.events.off(Phaser.Core.Events.BLUR);
   game.events.off(Phaser.Core.Events.FOCUS);
 });

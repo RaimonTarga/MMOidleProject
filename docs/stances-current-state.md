@@ -1,6 +1,6 @@
 # Stances — current state
 
-- **Code audit:** 2026-09-02 (Perfection gate + RP correction pass)
+- **Code audit:** 2026-09-04 (Tier 3 placement/economy redistribution)
 - **Authoring contract:** `docs/stances-authoring-guide.md`
 - **Candidate postures / design notes:** `docs/stances-future-design-notes.md`
 - **Archived design handoff:** `docs/archive/stances-rework-design-handoff.md`
@@ -66,16 +66,17 @@ First-pass magnitudes are balance seeds in `shared/src/stances.ts`; the structur
 | Predator | 3 | +15% Move Speed, -10% Attack | 50% reduced detection; +75% armed opening hit |
 | Brawler | 3 | -10% Attack | 8/16/24/31/40% damage reduction at 1/2/3/4/5+ aggressors |
 | Execute | 3 | -20% Attack | +75% damage to targets at or below 25% HP |
-| Time to Strike * | 3 | -35% Attack Speed | +100% empowered-attack damage; ordinary hits -40% |
-| Reaper * | 3 | -15% Attack | a kill while active arms 6s of +35% damage / +25% Attack Speed that outlives the stance |
-| Warding * | 3 | -50% Attack, -25% Attack Speed | incoming harmful statuses -50% duration; incoming DoTs -40% per-stack damage |
-| Powering Up * | 4 | -50% Attack, -30% Attack Speed | charges up to 8s in combat; leaving spends it for +50% damage / +30% Attack Speed for as long as it charged |
+| Time to Strike | 3 | -35% Attack Speed | +100% empowered-attack damage; ordinary hits -40% |
+| Reaper | 3 | -15% Attack | a kill while active arms 6s of +35% damage / +25% Attack Speed that outlives the stance |
+| Warding | 3 | -50% Attack, -25% Attack Speed | incoming harmful statuses -50% duration; incoming DoTs -40% per-stack damage |
+| Powering Up | 4 | -50% Attack, -30% Attack Speed | charges up to 8s in combat; leaving spends it for +50% damage / +30% Attack Speed for as long as it charged |
 
-`*` **Unplaced.** These four were implemented 2026-09-02 but no stance recipe teaches
-them, so `knownStances` can never contain one and their systems are inert. See
-`docs/stances-future-design-notes.md` for the design intent and the open questions that
-have to be answered before placing them; `server/test/stancesUnplaced.test.ts` asserts
-they stay unplaced, so placing one is a deliberate act rather than a side effect.
+All fifteen catalogued stances are now taught by recipes. Warding remains a T3
+reward; Time to Strike, Reaper, Recuperating, and Powering Up are T4 rewards in
+Mountain, Volcanic, Graveyard, and Trench respectively. See
+`docs/stances-future-design-notes.md` for the design intent; final placement is
+covered by `server/test/t3ProgressionEconomy.test.ts`,
+`server/test/t4ProgressionEconomy.test.ts`, and `server/test/stancesUnplaced.test.ts`.
 
 Every behavioral magnitude above is a named constant in `shared/src/stances.ts`
 (`BERSERKER_SELF_DAMAGE_PCT`, `PREDATOR_OPENER_BONUS`, `BRAWLER_REDUCTION_BY_AGGRESSORS`,
@@ -120,10 +121,11 @@ preserves HP percentage and no stance touches `maxHp`, so the reading is identic
 of the recalc and the gate cannot oscillate. Recalculating unconditionally every tick would
 discard cadence/rampage state ten times a second; the flag is what makes it edge-triggered.
 
-### The unplaced postures, mechanically
+### The recently added postures, mechanically
 
-None of the four needed a new subsystem; each was routed onto a seam that already existed,
-which is also why they cost nothing while unreachable.
+None of the four needed a new subsystem; each was routed onto a seam that already existed.
+Three are now reachable through their Tier-3 recipes, while Powering Up remains
+unreachable until its intentional Tier-4 placement.
 
 - **Time to Strike** rides `shared.empowered-mult-add`, the universal empowered bonus every
   archetype's empowered attack already reads, so the stance never touches cadence, cooldown,
@@ -193,7 +195,8 @@ only describes what Enraged does once active.
 - Loadout → Stances is a crest/sigil sanctum for choosing the free default.
 - Loadout → Runes opens a horizontal destination wheel when `Switch Stance` is selected; its first sigil is the zero-cost neutral `No Stance` posture, followed by learned stance crests. Once a situation is picked, each crest quotes the WHOLE rule price (condition + destination), not the surcharge — with the verb at 0 RP, the surcharge alone would understate what committing the rule spends.
 - Overview shows the default/active stance and the total shared RP pool.
-- Crafting contains recipes for all eleven stances across T2–T4 mastery bands.
+- Crafting contains recipes for all fifteen stances across T2–T4 mastery bands;
+  the four stateful postures use the later T4 placements described below.
 
 ## Progression
 
@@ -204,13 +207,54 @@ Recipes live in `shared/src/stanceRecipes.ts`. Three placement rules hold, all e
 2. `requiredBiomeLevel` must be within `biomeLevelCap(tier, group)`;
 3. `catalystCost` must name a live node-modifier family the biome is allowed to roll.
 
-The 2026-08-22 pass fixed all three. Fleeting moved off a Tundra that does not exist at T2
-(-> Jungle), Brawler off a Plains retired by T3 (-> Volcanic, whose native Swarming is the
-crowd the stance exists to survive), Recuperating off a Forest gone by T4 (-> Jungle);
-Enraged, Berserker and Predator had gates above their own tier's level cap; and eight
+The 2026-08-22 pass fixed all three. Historically, Fleeting moved off a Tundra that does
+not exist at T2, Brawler moved off a Plains retired by T3, and Recuperating moved off a
+Forest gone by T4. The locked 2026-09-04 redistribution now places Fleeting in Swamp T2,
+Time to Strike in Mountain T4, Brawler in Jungle T4, Reaper in Volcanic T4, Recuperating
+in Graveyard T4, and Powering Up in Trench T4, while retaining Warding/Berserker/Predator/
+Execute as the four T3 rewards. Enraged, Berserker and Predator had gates above their own tier's level cap; and eight
 recipes still charged the retired blight / volatility / predation / brutality catalyst
 families, which no player can hold, so those stances were uncraftable outside the test room.
-Essence costs and catalyst amounts were left alone.
+The 2026-09-04 locked redistribution then moved the six Tier-2 Stances into
+their intended reward sequence and re-authored each cost against the receiving
+biome's local essence and a live, role-appropriate catalyst family. IDs and
+stance mechanics remain unchanged:
+
+| Stance | Biome / gate | Essence | Catalyst |
+|---|---|---:|---|
+| Offensive | Plains L7 | 60 yellow | 1 alacrity |
+| Defensive | Plains L7 | 60 yellow | 1 fortified |
+| Perfection | Forest L8 | 110 green | 1 alacrity |
+| Fleeting | Swamp L8 | 110 purple | 1 alacrity |
+| Tanking | Mountain L8 | 100 blue | 1 heavy |
+| Enraged | Cave L8 | 110 red | 1 dominion |
+
+The locked Tier-3 redistribution retains four conditional/specialized Stances. They
+unlock early in their biome band and use local essence plus two obtainable catalysts:
+
+| Stance | Biome / gate | Essence | Catalyst |
+|---|---|---:|---|
+| Warding | Swamp L13 | 220 purple | 2 fortified |
+| Berserker | Cave L13 | 230 red | 2 dominion |
+| Predator | Tundra L2 | 210 blue | 2 dominion |
+| Execute | Desert L7 | 230 yellow | 2 dominion |
+
+No T3 Stance has a boss-clear requirement. The six T3 Cores remain in their
+final biome homes and are separately priced as late-band premium rewards.
+
+The locked Tier-4 redistribution places the advanced/stateful Stances in later
+biome bands:
+
+| Stance | Biome / gate | Essence | Catalyst |
+|---|---|---:|---|
+| Time to Strike | Mountain L20 | 450 blue | 3 heavy |
+| Brawler | Jungle L14 | 500 green | 3 swarming |
+| Reaper | Volcanic L8 | 500 red | 3 swarming |
+| Recuperating | Graveyard L2 | 450 purple | 3 fortified |
+| Powering Up | Trench L2 | 550 green | 4 dominion |
+
+No T4 Stance has a boss-clear requirement. The four T3 and five T4 rosters are
+exactly pinned by the progression economy tests.
 
 New stances currently reuse the closest existing stance crests until dedicated concept art is authored.
 
@@ -222,12 +266,16 @@ New stances currently reuse the closest existing stance crests until dedicated c
 
 `shared/src/data/recipeGates.test.ts` covers recipe reachability for stances, rites, runes, abilities and items.
 
-`server/test/stancesUnplaced.test.ts` covers the four unplaced postures end to end — Time
-to Strike's empowered/ordinary split, Reaper's arm-refresh-persist rules including that a
-kill outside the stance must NOT refresh, Warding's duration and potency reductions through
-the shared seam and at the live monster-DoT site, and Powering Up's in-combat-only charge,
-its cap, its release window and the discard on combat ending — plus the invariant that none
-of them is placed.
+`server/test/t2ProgressionEconomy.test.ts` locks the six current T2 stance homes,
+gates, exact essence/catalyst costs, and the introductory versus specialized
+economy bands.
+
+`server/test/stancesUnplaced.test.ts` covers all four implemented postures end to end —
+Time to Strike's empowered/ordinary split, Reaper's arm-refresh-persist rules including
+that a kill outside the stance must NOT refresh, Warding's duration and potency reductions
+through the shared seam and at the live monster-DoT site, and Powering Up's in-combat-only
+charge, its cap, its release window and the discard on combat ending — plus the invariant
+and asserts that all four now have exactly one authored recipe.
 
 Known balance follow-ups: tune all magnitudes/costs/gates; decide whether post-combat Berserker damage is desirable with Lingering Battle; add authored icons and a client switch animation for the emitted event.
 

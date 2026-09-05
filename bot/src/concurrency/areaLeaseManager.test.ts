@@ -52,9 +52,15 @@ async function main(): Promise<void> {
 
   const expiring = manager.tryAcquireExclusive({ ownerId: "d", nodeId: "node:d", purpose: "farm" });
   assert(expiring !== null, "expiry fixture acquires");
-  now += 101;
+  now += 40;
+  const renewed = manager.renew(expiring!);
+  assert(renewed.enterBy > now, "a live heartbeat extends an unentered permit deadline");
+  now += 40;
   await new Promise((resolve) => setTimeout(resolve, 120));
-  assert(manager.snapshot().admissionsByNode["node:d"].kind === "vacant", "TTL sweep releases expired permits");
+  assert(manager.snapshot().admissionsByNode["node:d"].kind === "exclusive", "renewed entry permit survives its original deadline");
+  now += 70;
+  await new Promise((resolve) => setTimeout(resolve, 120));
+  assert(manager.snapshot().admissionsByNode["node:d"].kind === "vacant", "TTL sweep releases permits after the renewed heartbeat expires");
   manager.shutdown();
 
   const limiter = new RunConcurrencyLimiter(1);

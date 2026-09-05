@@ -234,38 +234,32 @@ export const plainsRecipeEntries = [
   // TIER PLACEMENT IS LOad-BEARING. A range is not chosen until PLAYER TIER 3, so a
   // restricted core placed in a T2 biome-level band is craftable but permanently
   // inert — which is exactly the bug the original placeholder cast shipped with.
-  //   T2 starters   -> unrestricted only, T1 biomes at level 7-8
+  //   T2 cores      -> unrestricted only, late in their T2 biome band
   //   T3 cores      -> T1 biomes level 13-18 | T2 biomes level 7-12 | T3 biomes level 1-6
-  // Each T3 core sits MID-band so the biome's challenge is met before its answer is
-  // earned (same convention as ability placement).
+  // T3 cores are late-band premium answers: level 17-18 in returning T1 biomes,
+  // 11-12 in the Jungle/Desert continuation band, and 5-6 in Tundra/Volcanic.
+  // T4 cores use the later bands: Mountain L22, Volcanic L10, and Graveyard L4.
+  // Their Stance answers arrive earlier in each biome; the economy is authored in
+  // the owning recipe files without changing any Core mechanics.
   //
   // Cores are OFF the +N upgrade track. They grow by EVOLVING into one of several
   // named branches at the next tier — one evolve, one decision. Every core therefore
   // carries a `lineageId` for those future branches to hang from.
   //
-  // Values are the 2026-08-29 first-pass capstone tune; validate with benches/playtests.
+  // Core mechanics are unchanged by the 2026-09-04 reward-placement pass. The T2
+  // economy intentionally makes these late-biome capstones a deliberate save.
   //
-  // The cast, one core per biome (jungle/cave/mountain carry two):
-  //   plains   Tempered      swamp    Controller     tundra   Scout
-  //   forest   Survivalist   jungle   Bruiser        volcanic Catalyst
-  //                                   Accelerant
-  //   cave     Force         desert   Sniper
-  //            Duelist       mountain Juggernaut
-  //                                   Arcanist
-  // (Corrected 2026-08-30: Accelerant is homed in JUNGLE — `jungle.recipes.ts` — not
-  //  Forest; Forest carries only Survivalist.)
-
-  // T2 starter — Tempered: the benchmark. Deliberately simple and never a trap,
-  // so specialising stays a choice rather than a requirement.
-  ['core-tempered', {
-    id: 'core-tempered', name: 'Tempered Core',
-    recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'unrestricted',
-    lineageId: 'core-tempered',
-    cost: { yellow: 45 }, catalystCost: { swarming: 1 }, // family-tag: reliable always-on generalist → Swarming
-    stats: {}, tier: 2,
-    mechanicEffects: { 'core.attack-mult': 0.12, 'core.maxhp-mult': 0.12 },
-    icon: 'items/cores/tempered.png',
-    description: 'Balanced for any hand. It asks no commitment, and rewards none in particular.',
-  }],
+  // The current cast is distributed across the core-bearing biomes:
+  //   T2: plains —             swamp —             tundra —
+  //       forest —             jungle Survivalist  volcanic —
+  //       cave Tempered        desert Force         mountain —
+  //   T3: plains —             swamp —             tundra Scout
+  //       forest —             jungle Bruiser,      volcanic —
+  //       cave Duelist         desert Sniper        mountain Arcanist
+  //                             Accelerant
+  //   T4: plains —             swamp —             tundra —
+  //       forest —             jungle —            volcanic Catalyst
+  //       cave —               desert —            mountain Juggernaut
+  //       graveyard Controller
 
 ] satisfies [string, Recipe][];

@@ -7,6 +7,9 @@ import type { AltarPromptHandle } from '../../render/altarPrompt';
 import type { GroundZoneSprite } from '../../render/groundZones';
 import type { GameSocket } from '../../net/socket';
 import { isSpectatorSession } from '../../net/session';
+import type { CinematicCameraState } from './cinematic/camera';
+import { resolveCinematicSession } from './cinematic/mode';
+import type { CinematicStaging } from './cinematic/staging';
 import {
   createGameScene,
   preloadGameAssets,
@@ -25,6 +28,18 @@ export class GameScene extends Phaser.Scene {
   spectatorTargetId: string | null = null;
   spectatorPaused = false;
   spectatorSnapshotNodeId: string | null = null;
+  /** True once the deferred spectator asset pass has landed (see sceneSetup). */
+  spectatorAssetsReady = false;
+
+  /**
+   * Dev-only footage capture (`?cinematic=<clipId>`). Null in every normal
+   * session and in every production build. When set, the scene renders the real
+   * world with no HUD, no input and no visible player, and the camera follows an
+   * authored path instead of anyone.
+   */
+  readonly cinematic = resolveCinematicSession();
+  cinematicCamera: CinematicCameraState | null = null;
+  cinematicStaging: CinematicStaging | null = null;
 
   lastDrawnNodeId = '';
   /** True while a Link's-Awakening-style map slide is in progress. */

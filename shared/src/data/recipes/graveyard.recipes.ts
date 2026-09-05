@@ -1,7 +1,8 @@
 import type { Recipe } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────
-// Graveyard (T4). All five slots authored: weapon (Cave dead-swing-axe
+// Graveyard (T4). All five ordinary slots authored, plus the Controller Core:
+// weapon (Cave dead-swing-axe
 // inheritance), two armor branches and two recovery branches (Swamp
 // dot-resistance/recovery-pulse inheritance), one mobility item (genuinely
 // new kill-stack identity, no predecessor). Renamed from necropolis. Essence:
@@ -152,11 +153,29 @@ export const graveyardRecipeEntries = [
     ],
   }],
 
+  // T4 premium unrestricted — Controller: Graveyard's mature control capstone.
+  // The L4 gate and 2,100 purple / 7 Fortified price keep the debuff package
+  // premium without requiring a boss clear.
+  // Only scales debuffs on the SCALABLE_DEBUFFS registry (shared/src/systems/
+  // debuffScaling.ts); it is not a blanket multiplier over every status effect.
+  ['core-controller', {
+    id: 'core-controller', name: 'Controller Core',
+    recipeGroup: 'graveyard', requiredBiomeLevel: 4, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-controller',
+    cost: { purple: 2100 }, catalystCost: { fortified: 7 }, // family-tag: debuff/affliction → Fortified
+    stats: {}, tier: 4,
+    // Does nothing for a build that applies no debuffs. That is the intended
+    // opportunity cost, so no direct-damage penalty is authored on top of it.
+    mechanicEffects: { 'core.debuff-duration-mult': 0.35, 'core.debuff-potency-mult': 0.25 },
+    icon: 'items/cores/controller.png',
+    description: 'The swamp never kills quickly. It simply makes sure nothing leaves the way it came in.',
+  }],
+
   ['relic-haunted-prism', {
     id: 'relic-haunted-prism', name: 'Haunted Prism',
     recipeGroup: 'graveyard', requiredBiomeLevel: 6, slot: 'relic',
     lineageId: 'relic-haunted-prism',
-    cost: { purple: 240 }, catalystCost: { fortified: 4 },
+    cost: { purple: 3500 }, catalystCost: { fortified: 10 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.10,

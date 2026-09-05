@@ -1,5 +1,4 @@
 import {
-  CLEARING_NODE_ID,
   type ClientToServerEvents,
   type ServerToClientEvents,
   type SpectateStatus,
@@ -8,7 +7,6 @@ import {
 import type { Socket } from "socket.io";
 import type { PlayerEntity } from "../ecs/entity";
 import type { World } from "../world/World";
-import { freezeNode, thawNode } from "../world/nodeLifecycle";
 
 type GameSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 const TARGET_DEATH_HOLD_MS = 1_800;
@@ -17,7 +15,8 @@ interface SpectatorRecord {
   socket: GameSocket;
   ip: string;
   targetId: string | null;
-  nodeId: string;
+  /** Null while idle — there is no fallback node to fall back TO. */
+  nodeId: string | null;
   targetName?: string;
   paused: boolean;
   lastActivityAt: number;
@@ -56,7 +55,6 @@ export function pickSpectatorTarget(
 
 export class SpectatorManager {
   private readonly records = new Map<string, SpectatorRecord>();
-  private clearingLeased = false;
   private readonly maxGlobal: number;
   private readonly maxPerIp: number;
   private readonly idleMs: number;
@@ -88,7 +86,7 @@ export class SpectatorManager {
       socket,
       ip,
       targetId: null,
-      nodeId: CLEARING_NODE_ID,
+      nodeId: null,
       paused: false,
       lastActivityAt: now,
       lastStatusKey: "",
@@ -100,7 +98,6 @@ export class SpectatorManager {
 
   remove(socketId: string): void {
     this.records.delete(socketId);
-    this.reconcileClearingLease();
   }
 
   setActive(socketId: string, active: boolean, now = Date.now()): void {
@@ -172,7 +169,6 @@ export class SpectatorManager {
       }
       this.emitStatus(record);
     }
-    this.reconcileClearingLease();
   }
 
   /**
@@ -205,7 +201,7 @@ export class SpectatorManager {
   recipientsByNode(): Map<string, GameSocket[]> {
     const byNode = new Map<string, GameSocket[]>();
     for (const record of this.records.values()) {
-      if (record.paused || !record.socket.connected) continue;
+      if (record.paused || !record.socket.connected || !record.nodeId) continue;
       const list = byNode.get(record.nodeId) ?? [];
       list.push(record.socket);
       byNode.set(record.nodeId, list);
@@ -215,7 +211,6 @@ export class SpectatorManager {
 
   shutdown(): void {
     this.records.clear();
-    this.reconcileClearingLease();
   }
 
   private targetIsEligible(targetId: string | null, now: number): boolean {
@@ -241,14 +236,20 @@ export class SpectatorManager {
       record.targetName = target.isPlayer.name;
       record.nodeId = target.hasPosition.nodeId;
     } else {
+      // Nobody watchable. Deliberately no fallback node: the old behaviour
+      // pointed every idle viewer at the Clearing, which with no players in it
+      // is an empty stone circle — a worse first impression than the landing
+      // page's own backdrop. The client shows no live pane at all instead.
       record.targetId = null;
       record.targetName = undefined;
-      record.nodeId = CLEARING_NODE_ID;
+      record.nodeId = null;
     }
   }
 
   private emitStatus(record: SpectatorRecord): void {
-    const status: SpectateStatus = record.targetId
+    // A record with a target always has that target's node; the null case is
+    // exactly the idle branch below.
+    const status: SpectateStatus = record.targetId && record.nodeId
       ? {
           mode: "player",
           nodeId: record.nodeId,
@@ -257,25 +258,10 @@ export class SpectatorManager {
           paused: record.paused,
           pinned: record.pinnedTargetId === record.targetId,
         }
-      : { mode: "clearing", nodeId: CLEARING_NODE_ID, paused: record.paused };
+      : { mode: "idle", paused: record.paused };
     const key = JSON.stringify(status);
     if (key === record.lastStatusKey) return;
     record.lastStatusKey = key;
     record.socket.emit("spectate:status", status);
-  }
-
-  private reconcileClearingLease(): void {
-    const needsClearing = [...this.records.values()].some(
-      (record) => !record.paused && record.targetId === null,
-    );
-    if (needsClearing && !this.clearingLeased) {
-      thawNode(this.world, CLEARING_NODE_ID);
-      this.clearingLeased = true;
-    } else if (!needsClearing && this.clearingLeased) {
-      if (this.world.countPlayersInNode(CLEARING_NODE_ID) === 0) {
-        freezeNode(this.world, CLEARING_NODE_ID);
-      }
-      this.clearingLeased = false;
-    }
   }
 }

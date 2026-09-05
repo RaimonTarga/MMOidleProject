@@ -208,6 +208,32 @@ export type BossPatternStep =
       relocate: 'near-target' | 'leash-edge' | 'none';
       /** Distance from the target for `near-target`. Ignored otherwise. */
       emergeGap?: number;
+      /**
+       * UNDERGROUND TRAVEL, in px/s. Set it and the boss WALKS to its emergence
+       * point while concealed instead of being teleported there.
+       *
+       * A teleport is the wrong shape twice over. Visually the body jumps across
+       * the arena in one frame, which reads as the game glitching rather than as
+       * something burrowing. Mechanically it decides the whole encounter at the
+       * moment the boss goes under, so the telegraph that follows is decoration —
+       * the player has already had seconds to walk out of a circle whose position
+       * was fixed before they saw it.
+       *
+       * Travelling instead makes the marker a TELL the player tracks, and lets the
+       * destination keep updating until `commitAtPct`, so the sequence commits late
+       * and close. Speed is absolute px/s for the same reason `charge` is: a
+       * multiplier of a walking speed that falls across the tiers would make each
+       * successive burrower slower than the last.
+       *
+       * The destination TRACKS the target for the whole burrow — there is no
+       * partway lock, and an earlier draft's `commitAtPct` was removed once it was
+       * measured to change nothing. The dodge window is the telegraph that FOLLOWS
+       * the burrow, not the burrow itself, so freezing the emergence point early
+       * buys the player no reading time; it only lets a running character drift
+       * out of a circle aimed where they used to be, which is precisely how the
+       * sequence ended up unable to reach a kiting build at all.
+       */
+      travelSpeed?: number;
       fx?: string;
     }
   /**

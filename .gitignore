@@ -39,3 +39,8 @@ desktop.ini
 
 # Local agent/tool scratch output (generation logs, review renders, calibration files).
 tmp/
+
+# Landing cinematic capture scratch: raw Playwright recordings, scouting stills,
+# and the cached anchor session token. The ENCODED clip and poster are committed
+# under client/public/landing/ — only this working directory is throwaway.
+.landing/

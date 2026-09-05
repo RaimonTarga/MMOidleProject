@@ -312,9 +312,50 @@ Every phase is the corrosion going further:
 **Burrow means UNTARGETABLE, not flat damage reduction (2026-09-04).** The old T2/T3
 "burrow" and Carapace Seal were `shield drAdd` casts wearing the burrow's name: the
 boss took less damage for a few seconds and the player could ignore it by continuing
-to swing. Now it is genuinely out of reach (`IsConcealed`) with a ground marker where
-it went, and the emergence circle is what the player reads. Step Back avoids it, Guard
-absorbs it, tanking stays legal.
+to swing. Now it is genuinely out of reach (`IsConcealed`) and the emergence
+circle is what the player reads. Step Back avoids it, Guard absorbs it, tanking stays
+legal.
+
+**The burrow TRAVELS, and it is visible while it does (2026-09-05).** Three defects
+were fixed together after the first playtest of the T2 Dreadbore, because they were
+one design failure wearing three coats:
+
+- `IsConcealed` was **server-only** — not on `NETWORKED_MONSTER_KEYS`, no view field,
+  nothing. The client drew the body standing in the open and then jumped it across the
+  arena; the ground marker this document previously claimed had never been built. It
+  now rides `HasStatus.concealed` (the `hardControlled` precedent), reconciled from
+  component presence at the tail of `updateBossPatterns` so no teardown path can
+  strand it, and `client/src/render/burrow.ts` draws the underground state: a dirt
+  cloud over each transition, the body sunk and dimmed (or swapped to a burrowed
+  sprite where `MONSTER_BURROW_FRAMES` has one), and the nameplate and HP bar kept
+  but faded — "there, out of reach" rather than despawned.
+- The relocation **teleported** the boss the moment it went under, deciding the whole
+  sequence ~2.6s before the telegraph it was supposed to be read from. The conceal
+  step now takes `travelSpeed` and WALKS, with the destination tracking the target
+  for the whole burrow. The mound crossing the arena toward you is the tell.
+
+  **Underground speed is nothing like walking speed** (500 at T2, 520 at T3, against
+  walks of ~20), and it sits deliberately in the same family as the Mountain charges
+  (470–540). Both Cave burrowers are far slower than a player, so the burrow is their
+  ONLY means of closing: measured at the first-draft 190px/s, the T3 gorger surfaced
+  **606px** from a player kiting at full sprint, and telegraphed an eruption onto
+  empty floor. It now arrives ~136px away, inside its own 155px radius.
+
+  An earlier draft locked the emergence point partway through the burrow
+  (`commitAtPct`). It was **removed after measurement**: the dodge window is the
+  telegraph that FOLLOWS the burrow, so an early lock buys the player no reading
+  time — it only lets a running character drift out of a circle aimed where they
+  used to be. At every value actually shipped it changed no outcome at all, so it
+  was an untested knob rather than a design lever.
+- `emergeGap` sat OUTSIDE the eruption radius at both tiers (150 vs 140; 165 vs 155),
+  and circles resolve on point containment — so a player who never moved could not be
+  hit by the payoff of the entire pattern. Gaps are now inside the radius, and
+  `bossConcealmentPhase4.test.ts` machine-checks the invariant.
+
+The `near-target` angle sweep also fanned from world-east and took the first standable
+candidate, so in open ground the boss surfaced to the player's right every single time.
+It now fans from the boss's own bearing — still deterministic, but it follows from what
+the player watched go under.
 
 Removed across the lineage: the circular Obsidian/Chitin/Deep-Core slams,
 `chargeOnAggro` at every tier, Carapace Seal, and the DR-only Deep Burrow.

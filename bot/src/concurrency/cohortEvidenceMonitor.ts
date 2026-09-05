@@ -29,6 +29,7 @@ export class CohortEvidenceMonitor {
   private readonly observations = new Map<string, CohortObservation>();
   private readonly activeIntervals = new Map<string, ConcurrencyInterval>();
   private readonly intervals: ConcurrencyInterval[] = [];
+  private maximumProgressing = 0;
 
   constructor(
     private readonly manager: CombatReservationManager,
@@ -37,6 +38,10 @@ export class CohortEvidenceMonitor {
 
   observe(observation: CohortObservation): void {
     this.observations.set(observation.ownerId, { ...observation });
+    this.maximumProgressing = Math.max(
+      this.maximumProgressing,
+      [...this.observations.values()].filter((entry) => entry.alive && entry.autoCombat).length,
+    );
     this.reconcile();
   }
 
@@ -49,6 +54,10 @@ export class CohortEvidenceMonitor {
     return this.cloneIntervals(
       this.intervals.filter((interval) => interval.participantOwnerIds.includes(ownerId)),
     );
+  }
+
+  maximumSimultaneouslyProgressing(): number {
+    return this.maximumProgressing;
   }
 
   private cloneIntervals(intervals: readonly ConcurrencyInterval[]): ConcurrencyInterval[] {

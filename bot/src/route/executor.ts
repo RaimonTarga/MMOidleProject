@@ -23,7 +23,11 @@ import {
   type EquipmentSlot,
 } from "@mmo-idle/shared";
 import type { Intents } from "../net/intents";
-import { CoordinationExhaustedError, type RouteLeaseSession } from "../concurrency/routeLeaseSession";
+import {
+  CoordinationExhaustedError,
+  ReservationInterruptedError,
+  type RouteLeaseSession,
+} from "../concurrency/routeLeaseSession";
 import { TransitExecutor } from "../concurrency/transitExecutor";
 import { planTransit } from "../concurrency/transitPlanner";
 import type { Policy } from "../policy/profiles";
@@ -96,6 +100,13 @@ export class StallError extends Error {
     readonly detail: Record<string, unknown> = {},
   ) {
     super(message);
+  }
+}
+
+/** Internal control flow: death released the farm scope, so reacquire it. */
+class FarmLeaseLostError extends Error {
+  constructor(readonly nodeId: string, readonly goal: string) {
+    super(`farm combat reservation was interrupted at ${nodeId}`);
   }
 }
 
@@ -358,7 +369,7 @@ export class RouteExecutor {
     return this.partial;
   }
 
-  private async transitTo(destinationNodeId: string): Promise<void> {
+  private async transitTo(destinationNodeId: string, onLeaseHandoff?: () => boolean): Promise<void> {
     const session = this.deps.leaseSession;
     const fromNodeId = this.deps.obs.nodeId;
     const snapshot = session?.reservationSnapshot();
@@ -369,11 +380,11 @@ export class RouteExecutor {
     // One replan is allowed after an exhausted per-leg death budget. This is a
     // local circuit breaker: an unsafe route settles as blocked instead of
     // letting `ensureAt` turn eleven deaths into a watchdog timeout.
-    for (let replan = 0; replan <= 1; replan += 1) {
+    for (let replan = 0; replan <= session.transitReplanBudget(); replan += 1) {
       const currentNodeId = this.deps.obs.nodeId;
       const currentSnapshot = session.reservationSnapshot();
       if (!currentNodeId || !currentSnapshot) break;
-      const plan = planTransit({
+      let plan = planTransit({
         fromNodeId: currentNodeId,
         destinationNodeId,
         ownerId: session.ownerId,
@@ -381,8 +392,22 @@ export class RouteExecutor {
       });
 
       if (!plan) {
-        session.recordFallback("unsafe-transit", "partial-stop", destinationNodeId);
-        break;
+        // A clean route can disappear simply because another run acquired the
+        // last useful edge between planning and this tick. Expose the blocked
+        // edge as a protected crossing and let acquireActivity apply the
+        // configured bounded wait/shared-admission policy.
+        session.recordFallback("unsafe-transit", "replan", destinationNodeId);
+        plan = planTransit({
+          fromNodeId: currentNodeId,
+          destinationNodeId,
+          ownerId: session.ownerId,
+          reservations: currentSnapshot,
+          allowForeignExclusive: true,
+        });
+        if (!plan) {
+          session.recordFallback("unsafe-transit", "partial-stop", destinationNodeId);
+          break;
+        }
       }
       this.deps.recorder.emit({
         kind: "transit-plan",
@@ -397,19 +422,54 @@ export class RouteExecutor {
       try {
         await new TransitExecutor({
           acquireProtectedCrossing: async (hop) => {
-            await session.acquireActivity(
+            const acquire = (): Promise<string> => session.acquireActivity(
               [hop.toNodeId],
               this.deps.obs,
               this.deps.intents,
               `protected-transit:${hop.fromNodeId}->${hop.toNodeId}`,
+              {
+                // Keep the source permit until ensureAt observes authoritative
+                // departure. Waiting while parked in that owned node is safe;
+                // releasing it before movement creates a combat overlap race.
+                allowWaitWhileHoldingCurrentPermit: true,
+              },
             );
+            try {
+              await acquire();
+            } catch (error) {
+              // A farm/boss destination can be reserved before transit. If a
+              // protected intermediate becomes occupied after planning, hand
+              // that not-yet-entered destination back, then use the ordinary
+              // bounded wait/shared fallback for the crossing.
+              if (
+                error instanceof Error &&
+                error.message.includes("cannot wait for") &&
+                onLeaseHandoff?.()
+              ) {
+                await acquire();
+                return;
+              }
+              throw error;
+            }
           },
-          navigateAndConfirmArrival: async (hop) => this.ensureAt(hop.toNodeId, 1),
+          navigateAndConfirmArrival: async (hop) => this.ensureAt(
+            hop.toNodeId,
+            session.transitDeathBudget(),
+          ),
         }).execute(plan);
+        // A forced foreign crossing is protected only for the duration of the
+        // walk. A farm/boss destination acquired before transit has its own
+        // purpose and is intentionally retained by this guard.
+        await this.stopAutoAndConfirm(`transit arrival at ${destinationNodeId}`);
+        session.releaseProtectedTransit(destinationNodeId, "transit-arrived");
         return;
       } catch (error) {
         if (this.deps.deathCount() > deathsBeforePlan && replan === 0) {
           session.recordFallback("transit-death-budget", "replan", destinationNodeId);
+          continue;
+        }
+        if (error instanceof Error && error.message.includes("cannot wait for") && replan < session.transitReplanBudget()) {
+          session.recordFallback("unsafe-transit", "replan", destinationNodeId);
           continue;
         }
         session.recordFallback("unsafe-transit", "partial-stop", destinationNodeId);
@@ -497,8 +557,16 @@ export class RouteExecutor {
         // through is the correct behaviour: the crossing is short, and taking
         // the hits only risks THIS run, which is ours to lose.
         const inForeignNode = this.deps.leaseSession?.isForeignNode(obs.nodeId) ?? false;
+        // A transit bot may be standing in an unleased source/intermediate
+        // node. Fighting back there creates a one-tick race: another bot can
+        // acquire the node while this bot is still authoritative
+        // auto-combat=true. Only retaliate when this session owns the current
+        // node; an unowned crossing remains movement-only.
+        const mayFightBack = this.deps.leaseSession
+          ? this.deps.leaseSession.ownsNode(obs.nodeId)
+          : true;
         const attackers = obs.attackersOnSelf().length;
-        if (attackers > 0 && !inForeignNode) {
+        if (attackers > 0 && !inForeignNode && mayFightBack) {
           if (!fightingBack) {
             fightingBack = true;
             intents.setAutocombatConfig(this.deps.policy.autocombat);
@@ -508,7 +576,7 @@ export class RouteExecutor {
           lastProgressAt = Date.now();
           return;
         }
-        if (attackers > 0 && inForeignNode) {
+        if (attackers > 0 && (inForeignNode || !mayFightBack)) {
           // Keep the walk alive rather than trading blows in a leased node.
           if (fightingBack) {
             fightingBack = false;
@@ -602,20 +670,41 @@ export class RouteExecutor {
 
     const preference = typeof candidates === "string" ? [candidates] : [...candidates];
     if (preference.length === 0) throw new StallError("cannot reach target area", {});
-    const granted = await this.deps.leaseSession?.acquireActivity(
-      preference,
-      obs,
-      intents,
-      opts.activity === "blocked" ? `resource-farm:${opts.what}` : `farm:${opts.what}`,
-      {
-        preferredNodeIds: this.nearCandidates,
-        widenAfterMs: NEAR_CANDIDATE_WIDEN_MS,
-      },
-    );
-    this.nearCandidates = undefined;
-    const nodeId = granted ?? preference[0];
-    try {
-    await this.transitTo(nodeId);
+    const session = this.deps.leaseSession;
+    while (!done()) {
+      const deathsAtActivityStart = this.deps.deathCount();
+      let granted: string | undefined;
+      try {
+        granted = await session?.acquireActivity(
+          preference,
+          obs,
+          intents,
+          opts.activity === "blocked" ? `resource-farm:${opts.what}` : `farm:${opts.what}`,
+          {
+            preferredNodeIds: this.nearCandidates,
+            widenAfterMs: NEAR_CANDIDATE_WIDEN_MS,
+          },
+        );
+      } catch (error) {
+        if (!session || !(error instanceof ReservationInterruptedError) || error.releaseReason !== "death") {
+          throw error;
+        }
+        session.recordFallback("death", "replan", obs.nodeId ?? undefined);
+        await this.deps.awaitAlive();
+        continue;
+      }
+      this.nearCandidates = undefined;
+      const nodeId = granted ?? preference[0];
+      try {
+        await this.transitTo(nodeId, () => session?.releaseNode(nodeId, "transit-activity-handoff") ?? false);
+        if (session && !session.ownsNode(nodeId)) {
+          await session.acquireActivity(
+            [nodeId],
+            obs,
+            intents,
+            opts.activity === "blocked" ? `resource-farm:${opts.what}` : `farm:${opts.what}`,
+          );
+        }
     recorder.setActivity(opts.activity ?? "farm");
     intents.setAutocombatConfig(this.deps.policy.autocombat);
     intents.setAutoTraverse(false);
@@ -667,13 +756,11 @@ export class RouteExecutor {
               );
             }
           }
-          // A death respawns us at the region hub with auto-combat off; walk
-          // back and switch it on again rather than idling out the step.
-          // Phase 2 releases immediately on death. Do not resume auto-combat
-          // after respawn under a permit that no longer exists; the later
-          // scoped-recovery phase will re-acquire and continue this activity.
-          if (this.deps.leaseSession && !this.deps.leaseSession.ownsNode(nodeId)) {
-            throw new StallError("farm combat reservation was interrupted", { nodeId, goal: opts.what });
+          // Death releases all combat permits synchronously. Re-acquire the
+          // activity after respawn instead of turning that ownership boundary
+          // into a terminal route stall.
+          if (session && !session.ownsNode(nodeId)) {
+            throw new FarmLeaseLostError(nodeId, opts.what);
           }
           if (obs.nodeId !== nodeId && !(obs.self?.isDead ?? false)) {
             if (Date.now() - lastNudgeAt > 15_000) {
@@ -694,12 +781,27 @@ export class RouteExecutor {
         onStall: () => ({ nodeId, goal: opts.what, missing: opts.onStall() }),
       });
     } finally {
+      // End the authoritative combat activity before releasing the node. If
+      // the permit is released first, another controlled bot may enter while
+      // this player is still marked auto-combat=true, which is a real
+      // contamination window rather than harmless transit co-presence.
+      await this.stopAutoAndConfirm(`farm settled at ${nodeId}`);
       recorder.setActivity("idle");
     }
-    } finally {
-      // The farm scope ends on success, a stall, abort, or death interruption.
-      // Exact release is harmless after an earlier death/disconnect cleanup.
-      this.deps.leaseSession?.releaseNode(nodeId, "farm-settled");
+      } catch (error) {
+        if (!(error instanceof FarmLeaseLostError) || !session || this.deps.aborted()) {
+          throw error;
+        }
+        const trigger = this.deps.deathCount() > deathsAtActivityStart
+          ? "death"
+          : "reservation-expired";
+        session.recordFallback(trigger, "replan", nodeId);
+        await this.deps.awaitAlive();
+        continue;
+      } finally {
+        // Exact release is harmless after the death handler already released it.
+        session?.releaseNode(nodeId, "farm-settled");
+      }
     }
   }
 
@@ -1350,6 +1452,7 @@ export class RouteExecutor {
 
   private async doAttemptBoss(step: Extract<RouteStep, { type: "attemptBoss" }>): Promise<void> {
     const { obs, intents, recorder } = this.deps;
+    const leaseSession = this.deps.leaseSession;
     if (obs.bossCleared(step.biomeGroup, step.tier)) return;
 
     const nodeId = dungeonNodeFor(step.biomeGroup, step.tier);
@@ -1365,12 +1468,22 @@ export class RouteExecutor {
       // A dungeon has exactly one node, so this is a genuine exclusive queue:
       // no alternate candidate exists, and the boss/guardian runtime state it
       // protects is the reason fast retry is gated on owning it below.
-      await this.deps.leaseSession?.acquireActivity(
-        [nodeId],
-        obs,
-        intents,
-        `dungeon-boss:${step.biomeGroup}:attempt-${attempt}`,
-      );
+      try {
+        await this.deps.leaseSession?.acquireActivity(
+          [nodeId],
+          obs,
+          intents,
+          `dungeon-boss:${step.biomeGroup}:attempt-${attempt}`,
+        );
+      } catch (error) {
+        if (!(error instanceof ReservationInterruptedError) || error.releaseReason !== "death") {
+          throw error;
+        }
+        leaseSession?.recordFallback("death", "replan", nodeId);
+        await this.deps.awaitAlive();
+        attempt -= 1;
+        continue;
+      }
       try {
       // Re-check immediately after respawning, before paying for another full
       // guard-clear + travel + altar cycle. `bossCleared` can flip true while
@@ -1456,7 +1569,15 @@ export class RouteExecutor {
 
       let outcome: "victory" | "death" | "timeout" | "unreachable" = "timeout";
       try {
-        await this.transitTo(nodeId);
+        await this.transitTo(nodeId, () => leaseSession?.releaseNode(nodeId, "transit-activity-handoff") ?? false);
+        if (leaseSession && !leaseSession.ownsNode(nodeId)) {
+          await leaseSession.acquireActivity(
+            [nodeId],
+            obs,
+            intents,
+            `dungeon-boss:${step.biomeGroup}:attempt-${attempt}`,
+          );
+        }
         recorder.setActivity("boss");
 
         // PRE-CLEAR THE GUARD. Activating the altar turns every guardian still
@@ -1599,6 +1720,11 @@ export class RouteExecutor {
         sampleBoss();
         if (bossCombatStartedAt !== null) bossCombatEndedAt = Date.now();
       } finally {
+        // End the authoritative combat activity before releasing the node. If
+        // the permit is released first, another controlled bot may enter while
+        // this player is still marked auto-combat=true, which is a real
+        // contamination window rather than harmless transit co-presence.
+        await this.stopAutoAndConfirm(`boss attempt settled at ${nodeId}`);
         recorder.setActivity("idle");
       }
 
@@ -2060,6 +2186,22 @@ export class RouteExecutor {
         emit();
       },
     });
+  }
+
+  /** Stop combat and let the mirror observe that boundary before lease release. */
+  private async stopAutoAndConfirm(what: string): Promise<void> {
+    this.deps.intents.setAuto(false);
+    try {
+      await this.waitUntil(
+        () => !this.deps.obs.self || this.deps.obs.self.isDead || !this.deps.obs.self.auto,
+        { timeoutMs: 5_000, what: `${what} auto-combat off`, throwOnTimeout: false },
+      );
+      this.deps.leaseSession?.refreshEngagement(this.deps.obs);
+    } catch (error) {
+      // Abort/death already performs synchronous lease cleanup. Do not let a
+      // best-effort mirror confirmation replace the real terminal reason.
+      if (!(error instanceof AbortError)) throw error;
+    }
   }
 
   private async waitUntil(

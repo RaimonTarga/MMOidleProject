@@ -43,7 +43,7 @@ This is the important column, and it is mostly empty.
 | Mountain T1 (Crag Behemoth) | ✅ | Working after four fixes. Telegraph approved. |
 | Mountain T2 (Stoneplate Juggernaut) | ✅ | Working after two more fixes. |
 | Mountain T3 / T4 | ❌ | Same primitives as T1/T2 — expected fine, unverified. |
-| Cave T1 / T2 / T3 | ❌ | **Burrow concealment never seen in play.** |
+| Cave T2 (Chitinous Dreadbore) | ✅ | Mechanically worked; **presentation and geometry both broken.** Fixed 2026-09-05 — see below. T1/T3 still unplayed. |
 | Desert T2 / T3 / T4 | ❌ | Mark → Execution never seen. |
 | Tundra T3 / T4 | ❌ | Chill gate never seen. |
 | Jungle T2 / T3 / T4 | ❌ | Escape cycle never seen. |
@@ -53,6 +53,44 @@ This is the important column, and it is mostly empty.
 
 Every fix this session came from PLAY, not from tests. The tests were green
 throughout. Weight that accordingly.
+
+## 2b. Cave T2 playtest, 2026-09-05 — three fixes
+
+The mechanic worked and read as nonsense, which is the failure mode this project keeps
+producing. All three causes are now fixed and covered by `bossConcealmentPhase4`:
+
+1. **Concealment was never networked.** `IsConcealed` is server-only — it is not in
+   `NETWORKED_MONSTER_KEYS`, and `MonsterView` had no field for it. The client drew the
+   boss standing in the open, then teleported it. The "ground marker" the current-state
+   doc described **did not exist in any form**; nothing was ever built for it. Now on
+   `HasStatus.concealed`, with `client/src/render/burrow.ts` owning the presentation.
+2. **The eruption could not hit a stationary player.** `emergeGap` 150 against a
+   `radius` 140, resolved by point containment — a 10px miss, guaranteed, at both
+   tiers. The relocation also teleported at burrow START, so the aim was locked ~2.6s
+   before impact and the 1000ms telegraph was decoration. The burrow now travels
+   (`travelSpeed`), tracks until `commitAtPct`, and the gap sits inside the radius.
+3. **It always surfaced due east.** The `near-target` angle sweep started at world
+   angle 0 and took the first standable candidate. Deterministic, but not readable.
+   Now fanned from the boss's own bearing.
+
+Note the shape of #1 and #2: **both were invisible to a green test suite, and both were
+about geometry and presentation rather than logic.** The pattern from §3 below held
+exactly — the tests drove the systems that decide *what happens* and never the ones
+that decide *what the player sees*.
+
+4. **It could not catch a kiting build.** Found on the T3 retest. Underground travel
+   started at 170–190px/s against a player who moves at 120, so it closed 50–70px/s —
+   and both Cave burrowers WALK at ~20, meaning the burrow is their only closer. The
+   gorger surfaced **606px** from a sprinting player and telegraphed onto empty floor.
+   Underground speed is now 500/520, in the same family as the Mountain charges
+   (470–540), and it arrives ~136px away — inside its own eruption radius.
+
+`boss-cave-burrowed.png` is now **packed** (`pnpm art:pack`, one frame added, nothing
+else changed) and shared by both Cave burrowers. Per-tier mounds are a later option;
+the tiers are already separated by the sequence around them. Note the fallback path is
+what the first retest actually showed — a squashed, dimmed copy of the ordinary body —
+so "the burrowed sprite looks like a badly resized boss" is the tell that the atlas is
+stale, not that the art is bad.
 
 ## 3. The trap that produced every playtest bug
 

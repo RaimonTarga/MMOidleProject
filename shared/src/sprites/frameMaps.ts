@@ -373,6 +373,29 @@ export function resolveMonsterFrame(monsterTypeId: string): string | null {
 }
 
 /**
+ * BURROWED bodies — the form a monster wears while `concealed: 'burrow'`.
+ *
+ * A separate map rather than a suffix convention on MONSTER_FRAMES, so that a
+ * lineage can burrow without art existing yet: the renderer checks the atlas for
+ * the resolved frame and falls back to sinking and dimming the ordinary body when
+ * it is missing. That keeps the mechanic shippable ahead of the sprite, and makes
+ * dropping the sprite in later a one-line change here.
+ */
+export const MONSTER_BURROW_FRAMES: Record<string, string> = {
+  // ONE burrowed body shared by both Cave burrowers. A mound of disturbed rock
+  // reads as the same event at either tier, and the tiers are already separated by
+  // the sequence around it — the T3 burrow is longer, faster and wider. Bespoke
+  // mounds would be two assets spent distinguishing a silhouette the player sees
+  // for under two seconds.
+  'chitinous-dreadbore':     'sprites/bosses/boss-cave-burrowed.png',
+  'deep-core-burrow-gorger': 'sprites/bosses/boss-cave-burrowed.png',
+};
+
+export function resolveMonsterBurrowFrame(monsterTypeId: string): string | null {
+  return MONSTER_BURROW_FRAMES[monsterTypeId] ?? null;
+}
+
+/**
  * Identity accent — a persistent overlay rendered with the player body (halo,
  * glyph, hand glow) expressing range/path/tier identity WITHOUT swapping the
  * body sprite. Distinct from combat-state auras (PlayerView.aura, transient,

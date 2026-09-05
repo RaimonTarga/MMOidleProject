@@ -66,44 +66,48 @@ for (const core of cores) {
   );
 }
 
-// ── Tier placement: a restricted core must not be craftable before T3 ───────
+// ── Tier placement: a restricted core must not be craftable before its tier ─
 
 // THE BUG THIS REWORK STARTED FROM. A range is not selected until PLAYER TIER 3
-// (skill-tree tier 2), so a melee/ranged core placed in a T2 biome-level band is
-// craftable, equippable — and permanently inert. The original cast shipped three
-// such cores and nothing caught it, because every test only ever asked whether the
-// GATE worked, never whether the CONTENT was reachable at a tier that could use it.
+// (skill-tree tier 2), so a melee/ranged core placed in the band before its authored
+// player tier is craftable, equippable — and permanently inert. The original cast
+// shipped three such cores and nothing caught it, because every test only ever asked
+// whether the GATE worked, never whether the CONTENT was reachable at a tier that
+// could use it.
 for (const core of cores) {
   if (!isRestrictedCore(core.coreEligibility)) continue;
 
-  const capAtT2 = biomeLevelCap(2, core.recipeGroup);
+  const coreTier = core.tier;
+  assert(coreTier >= 3, `restricted core ${core.id} must be authored at T3 or later`);
+
+  const capBeforeCoreTier = biomeLevelCap(coreTier - 1, core.recipeGroup);
   assert(
-    core.requiredBiomeLevel > capAtT2,
-    `restricted core ${core.id} is reachable at player tier 2 ` +
-      `(${core.recipeGroup} level ${core.requiredBiomeLevel} <= T2 cap ${capAtT2}), ` +
-      `but no range is chosen until tier 3 — it would be craftable and inert`,
+    core.requiredBiomeLevel > capBeforeCoreTier,
+    `restricted core ${core.id} is reachable before its authored player tier ` +
+      `(${core.recipeGroup} level ${core.requiredBiomeLevel} <= T${coreTier - 1} cap ${capBeforeCoreTier}), ` +
+      `but no matching range is chosen yet — it would be craftable and inert`,
   );
 
-  const capAtT3 = biomeLevelCap(3, core.recipeGroup);
+  const capAtCoreTier = biomeLevelCap(coreTier, core.recipeGroup);
   assert(
-    core.requiredBiomeLevel <= capAtT3,
-    `restricted core ${core.id} is unreachable even at player tier 3 ` +
-      `(${core.recipeGroup} level ${core.requiredBiomeLevel} > T3 cap ${capAtT3})`,
+    core.requiredBiomeLevel <= capAtCoreTier,
+    `restricted core ${core.id} is unreachable at player tier ${coreTier} ` +
+      `(${core.recipeGroup} level ${core.requiredBiomeLevel} > T${coreTier} cap ${capAtCoreTier})`,
   );
 }
 
-// The starter cores exist to introduce the SLOT, so they must be reachable in T2 —
-// otherwise the slot sits empty for a whole tier.
-const starters = cores.filter((c) => c.tier === 2);
-assert(starters.length > 0, "expected T2 starter cores");
-for (const core of starters) {
+// T2 cores are unrestricted so they remain meaningful before range selection;
+// their individual late-band capstone gates are covered by the T2 reward spec.
+const t2Cores = cores.filter((c) => c.tier === 2);
+assert(t2Cores.length > 0, "expected T2 cores");
+for (const core of t2Cores) {
   assert(
     !isRestrictedCore(core.coreEligibility),
-    `T2 starter ${core.id} is restricted; no range exists yet at tier 2`,
+    `T2 core ${core.id} is restricted; no range exists yet at tier 2`,
   );
   assert(
     core.requiredBiomeLevel <= biomeLevelCap(2, core.recipeGroup),
-    `T2 starter ${core.id} is not reachable at player tier 2`,
+    `T2 core ${core.id} is not reachable at player tier 2`,
   );
 }
 

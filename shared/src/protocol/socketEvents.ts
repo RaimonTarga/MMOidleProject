@@ -57,8 +57,15 @@ export interface HumanPlaytestStatus {
 }
 
 export interface SpectateStatus {
-  mode: "player" | "clearing";
-  nodeId: string;
+  /**
+   * `idle` means there is nobody worth watching — no connected, foreground
+   * player anywhere in the world. There is deliberately no fallback view: an
+   * empty node is a worse first impression than showing nothing at all, so the
+   * client simply does not open its live pane.
+   */
+  mode: "player" | "idle";
+  /** Absent while idle: an idle viewer is not watching a node. */
+  nodeId?: string;
   targetId?: string;
   targetName?: string;
   paused: boolean;
