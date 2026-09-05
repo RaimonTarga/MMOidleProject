@@ -36,13 +36,10 @@ export const trenchMonsterEntries = [
     // Signature: a periodic telegraphed heavy bite carrying ABYSSAL WOUND, the only
     // anti-Recovery left in the biome. Answers: enough sustain to survive the Wound,
     // Brace for the bite, burst/execute, or stealth-route to avoid a second pull.
-    // Ordinary attack cut 420 -> 230 (item/monster diagnostic, 2026-08-24): a
-    // death-trace found the PLAIN ordinary hit alone landing 321-370 (up to 81% of
-    // a T4 arrival player's maxHP), on top of which Abyssal Bite still lands its
-    // full telegraphed multiplier untouched. Only the ordinary-attack base moved;
-    // the signature ability is left for manual playtest per the standing rule on
-    // CC/telegraph-gated spikes.
-    stats: { hp: 4200, attack: 230, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
+    // Approved T4 pressure pass: ordinary attack 230 -> 190 and Abyssal Bite
+    // multiplier 2.5 -> 2.0. The hunter keeps its meaningful telegraphed Wound
+    // bite, pursuit, and defensive identity without repeatable ordinary-hit burst.
+    stats: { hp: 4200, attack: 190, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     elite: true,
     rewards: { essence: 260, essenceType: 'green', level: 4, biomeXp: 1560 },
@@ -54,7 +51,7 @@ export const trenchMonsterEntries = [
     // Normal attacks no longer stack anti-heal; this one ability owns it.
     chargedAttack: {
       name: 'Abyssal Bite', castMs: 1700, cooldownMs: 10000, initialCooldownMs: 5000,
-      multiplier: 2.5, fx: 'savage-maul',
+      multiplier: 2.0, fx: 'savage-maul',
       appliesAntiheal: { reduction: 0.28, durationMs: 6000 },
     },
     // ONE ABILITY, and it is the bite above (2026-09-04 redesign §5.9). The Undertow
@@ -78,12 +75,10 @@ export const trenchMonsterEntries = [
     // Its ranged presentation + Pressure Lance land in the behavior pass.
     // HP down vs the other two elites, plating stays heavy: armor is this one's
     // defensive identity. attackRange lifted to a real standoff.
-    // Ordinary attack cut 401 -> 210 (item/monster diagnostic, 2026-08-24): a
-    // death-trace found the PLAIN ordinary hit alone landing 304-342 (up to 75% of
-    // a T4 arrival player's maxHP), before Pressure Lance's own telegraphed
-    // multiplier. Only the ordinary-attack base moved; Pressure Lance is left for
-    // manual playtest per the standing rule on CC/telegraph-gated spikes.
-    stats: { hp: 2800, attack: 210, plating: 20, damageReduction: 0.10, speed: 22, attackRange: 240, attackCooldown: 3400, pullRange: 400 },
+    // Approved T4 pressure pass: ordinary attack 210 -> 175 and Pressure Lance
+    // multiplier 2.4 -> 2.0. The ranged standoff, catchability, and telegraphed
+    // slow rider remain unchanged.
+    stats: { hp: 2800, attack: 175, plating: 20, damageReduction: 0.10, speed: 22, attackRange: 240, attackCooldown: 3400, pullRange: 400 },
     // `kiter`: it maintains standoff. Speed 22 is far below player base, so a
     // charging or mobile build always catches it - that contract is load-bearing.
     behavior: 'kiter', attackStyle: 'gunshot', biome: 'trench',
@@ -94,7 +89,7 @@ export const trenchMonsterEntries = [
     // cadence finisher it carried as a charger.
     chargedAttack: {
       name: 'Pressure Lance', castMs: 1900, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 2.4, fx: 'power-shot',
+      multiplier: 2.0, fx: 'power-shot',
       // The standoff lesson, on the one readable beat: landing it buys the Stalker
       // a moment of distance. Bounded and telegraphed, unlike the three stacking
       // slows it replaces.
@@ -124,12 +119,10 @@ export const trenchMonsterEntries = [
     // The fight should read: huge target, shell windows, survive Devour, finish it
     // before another elite wanders in.
     // WARNING: no low-HP enrage. That is saved for a later Leviathan evolution.
-    // Ordinary attack cut 483 -> 260 (item/monster diagnostic, 2026-08-24): a
-    // death-trace found the PLAIN ordinary hit alone landing 370-376 (up to 82% of
-    // a T4 arrival player's maxHP), before Devour's own telegraphed multiplier.
-    // Only the ordinary-attack base moved; Devour is left for manual playtest per
-    // the standing rule on CC/telegraph-gated spikes.
-    stats: { hp: 5880, attack: 260, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
+    // Approved T4 pressure pass: ordinary attack 260 -> 210 and Devour
+    // multiplier 2.4 -> 2.0. The anchor keeps its enormous HP, shell window,
+    // defenses, and clear stand-and-fight telegraph.
+    stats: { hp: 5880, attack: 210, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     elite: true,
     rewards: { essence: 400, essenceType: 'green', level: 4, biomeXp: 2400 },
@@ -140,7 +133,7 @@ export const trenchMonsterEntries = [
     // The central offensive threat; the Carapace below is only secondary.
     chargedAttack: {
       name: 'Devour', castMs: 2600, cooldownMs: 11000, initialCooldownMs: 7000,
-      multiplier: 2.4, fx: 'savage-maul',
+      multiplier: 2.0, fx: 'savage-maul',
       aoe: { radius: 170 },
     },
     // ONE committed attack (the Devour above) plus the carapace (2026-09-04 §5.9).

@@ -117,9 +117,9 @@ export const tundraMonsterEntries = [
   ['rime-tusk-mastodon', {
     id: 'rime-tusk-mastodon', name: 'Rime-Tusk Mastodon', color: 0xaaddff,
     // TELEGRAPHED HEAVY HITTER: a named Frost/Tusk Impact now replaces the invisible cadence beat
-    // (240, trips the cap). No giant slow rider — ambient Chill already makes walking
+    // (~368 at the retuned base attack). No giant slow rider — ambient Chill already makes walking
     // out of the telegraph hard enough. Heavy ICE PLATING (12) rewards a brittle weapon.
-    stats: { hp: 924, attack: 421, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
+    stats: { hp: 1100, attack: 230, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 110, essenceType: 'blue', level: 4, biomeXp: 660 },
     ai: { wanderRadius: 140, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9500 },
@@ -127,7 +127,7 @@ export const tundraMonsterEntries = [
     monsterAbilities: [{
       id: 'frost-tusk-impact', name: 'Frost-Tusk Impact', castMs: 1000,
       cooldownMs: 12000, initialCooldownMs: 5500, target: 'player', fx: 'frost-tusk-impact',
-      actions: [{ type: 'hit', multiplier: 2.0 }],
+      actions: [{ type: 'hit', multiplier: 1.6 }],
     }],
   }],
 
@@ -135,7 +135,7 @@ export const tundraMonsterEntries = [
     id: 'glacial-direbear', name: 'Glacial Dire-Bear', color: 0x5599cc,
     // Evolved defensive-window elite: bigger Ice Armor, bigger Shatter payoff.
     // No ramping per-hit slows (removed, locked).
-    stats: { hp: 1221, attack: 369, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    stats: { hp: 1221, attack: 220, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 150, essenceType: 'blue', level: 4, biomeXp: 900 },
     ai: { wanderRadius: 130, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9000 },
@@ -154,7 +154,7 @@ export const tundraMonsterEntries = [
     // Evolved ranged Chill-control caster: the Rime Caster's Frostbind grown into a
     // stronger/longer Deep Freeze at high Chill. NO generic slow stacks on every
     // projectile (removed, locked).
-    stats: { hp: 693, attack: 302, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
+    stats: { hp: 900, attack: 190, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
     behavior: 'ranged', attackStyle: 'frost', biome: 'tundra',
     staticSentry: true,
     rewards: { essence: 62, essenceType: 'blue', level: 3, biomeXp: 370 },
@@ -172,11 +172,12 @@ export const tundraMonsterEntries = [
     id: 'permafrost-behemoth', name: 'Permafrost Behemoth', color: 0x4477aa,
     // Colossal musk ox sheathed in glacier ice (the plating made visible).
     // Apex, deliberately SIMPLE: enormous HP, heavy plating (20), very slow, and one
-    // huge telegraphed GLACIAL SLAM every 9s (300). The enemy soft-cap is REMOVED
+    // huge telegraphed GLACIAL SLAM every 9s (~440 at the retuned base attack). The enemy soft-cap is REMOVED
     // (locked) — extreme plating is already enough defensive identity, and stacking a
     // second weapon-matchup layer on the apex was the kitchen sink.
-    // Base 100 ≈ H_med (survivable between slams).
-    stats: { hp: 1914, attack: 351, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
+    // Base 220 keeps ordinary hits meaningful while the reduced slam leaves room
+    // to react between telegraphed impacts.
+    stats: { hp: 1914, attack: 220, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra', elite: true,
     rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 70, leashRange: 380, idleMinMs: 6000, idleMaxMs: 15000 },
@@ -185,7 +186,7 @@ export const tundraMonsterEntries = [
     // spike, so the apex's whole offense is a thing the player can see and answer.
     chargedAttack: {
       name: 'Glacial Slam', castMs: 2200, cooldownMs: 9000, initialCooldownMs: 6000,
-      multiplier: 3.0, fx: 'strong-kick',
+      multiplier: 2.0, fx: 'strong-kick',
       aoe: { radius: 150 },
     },
     // ECOLOGY: the apex FEEDS ON THE COLD. Every stack of the node's ambient chill

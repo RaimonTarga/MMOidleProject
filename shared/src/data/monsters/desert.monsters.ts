@@ -237,7 +237,7 @@ export const desertMonsterEntries = [
     // HARD CONTROLLER T4. Root plus a stronger/longer NONSTACKING Sunder
     // (conceptual ceiling ~15-20% before balance). NO large stacking vulnerability
     // (locked). Its own damage stays negligible.
-    stats: { hp: 1501, attack: 104, plating: 10, damageReduction: 0.14, speed: 26, attackRange: 15, attackCooldown: 3000, pullRange: 190 },
+    stats: { hp: 1501, attack: 90, plating: 10, damageReduction: 0.14, speed: 26, attackRange: 15, attackCooldown: 3000, pullRange: 190 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 100, essenceType: 'yellow', level: 4, biomeXp: 600 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -256,16 +256,10 @@ export const desertMonsterEntries = [
     //   • catch it and keep pressure on -> it stays fragile;
     //   • fail to catch it -> the shield comes back.
     // Do NOT make it generically tanky. Recharge-on-clean lands in the behavior pass.
-    // Attack cut 292 -> 235 (item/monster diagnostic, 2026-08-24): a death-trace
-    // found this — not the analytically-flagged Dune Tyrant — as the actual
-    // dominant killer in T4 Desert: a plain ordinary hit landing 341 (62% of a T4
-    // arrival player's maxHP) every ~1.9s from a fast ranged kiter, dominating
-    // every recorded death. "Apex dealer" keeps a real bite (still this pairing's
-    // hardest hitter) without being a repeatable near-instant kill. Floor is 235,
-    // not the trace-verified 180: this monster is also Dune Tyrant's paired dealer
-    // (`desertPairs.test.ts` locks controller.attack(230) < dealer.attack), so it
-    // cannot drop below Dune Tyrant's own untouched ordinary attack.
-    stats: { hp: 569, attack: 235, plating: 0, damageReduction: 0, speed: 54, attackRange: 230, attackCooldown: 1900, pullRange: 280 },
+    // Approved T4 pressure pass: the ordinary attack is reduced while this stays
+    // the paired dealer's harder hit than the retuned Dune Tyrant controller
+    // (150 > 140). The kiter, Sunshield, and exact 1:1 pairing remain unchanged.
+    stats: { hp: 569, attack: 150, plating: 0, damageReduction: 0, speed: 54, attackRange: 230, attackCooldown: 1900, pullRange: 280 },
     behavior: 'kiter', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 58, essenceType: 'yellow', level: 3, biomeXp: 350 },
     ai: { wanderRadius: 240, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -285,7 +279,7 @@ export const desertMonsterEntries = [
     // strong slow or brief root) and one telegraphed heavy PINCER SMASH.
     // The stacked vulnerability is REMOVED — no huge slow + vulnerability + multiple
     // dealers + unrelated gimmicks all at once.
-    stats: { hp: 1738, attack: 230, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
+    stats: { hp: 1738, attack: 140, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert', elite: true,
     rewards: { essence: 170, essenceType: 'yellow', level: 4, biomeXp: 1020 },
     ai: { wanderRadius: 100, leashRange: 450, idleMinMs: 4500, idleMaxMs: 12000 },
@@ -295,7 +289,7 @@ export const desertMonsterEntries = [
     // heavy attack, nothing else.
     chargedAttack: {
       name: 'Pincer Smash', castMs: 1900, cooldownMs: 10000, initialCooldownMs: 5000,
-      multiplier: 2.8, fx: 'strong-kick',
+      multiplier: 2.2, fx: 'strong-kick',
     },
     slowEffect: { speedMult: 0.4, durationMs: 4000 },
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },

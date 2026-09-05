@@ -214,15 +214,15 @@ export const mountainMonsterEntries = [
 
   ['granite-mammoth', {
     id: 'granite-mammoth', name: 'Granite Mammoth', color: 0x8899aa,
-    // GROUND BRUISER T3 — evolved Slam expressed as a predictable CADENCE finisher:
+    // GROUND BRUISER T4 — evolved Slam expressed as a predictable CADENCE finisher:
     // large normal attacks, and every 4th is the major Slam. The Mountain teaching
     // unit: its NORMAL hit is scary, its finisher is lethal without the damage cap.
-    stats: { hp: 779, attack: 184, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
+    stats: { hp: 1150, attack: 184, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 95, essenceType: 'blue', level: 4, biomeXp: 570 },
     ai: { wanderRadius: 90, leashRange: 430, idleMinMs: 4000, idleMaxMs: 11000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
-    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 310 — deep cap trip
+    cadenceFinisher: { everyNAttacks: 4, multiplier: 1.6 },   // ~294 — deep cap trip
     // Keep the cadence finisher as the apex's damage evolution, but retain the
     // Titan line's visible low-health Granite Barrier.
     lowHealthWard: {
@@ -233,9 +233,9 @@ export const mountainMonsterEntries = [
 
   ['avalanche-tyrant', {
     id: 'avalanche-tyrant', name: 'Avalanche Tyrant', color: 0x99aabb,
-    // CAPRINE T3 — apex. Ledge traversal, extreme mobility/charge, and a brutal
+    // CAPRINE T4 — apex. Ledge traversal, extreme mobility/charge, and a brutal
     // knockback ram.
-    stats: { hp: 533, attack: 145, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
+    stats: { hp: 800, attack: 145, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 68, essenceType: 'blue', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2500 },
@@ -243,37 +243,37 @@ export const mountainMonsterEntries = [
     // APEX CAPRINE: extreme mobility plus a brutal knockback ram.
     chargedAttack: {
       name: 'Avalanche Ram', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
-      multiplier: 1.8, fx: 'strong-kick', knockback: { distance: 280 },
+      multiplier: 1.5, fx: 'strong-kick', knockback: { distance: 280 },
     },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
   }],
 
   ['cliffside-roc', {
     id: 'cliffside-roc', name: 'Cliffside Roc', color: 0x778899,
-    // FLYER T2 — the Stone Eagle's apex. It keeps the close-range talon rake and
+    // FLYER T4 — the Stone Eagle's apex. It keeps the close-range talon rake and
     // telegraphed Skyfall opener instead of becoming a generic ranged artillery mob.
-    stats: { hp: 574, attack: 179, plating: 0, damageReduction: 0, speed: 105, attackRange: 12, attackCooldown: 3500, pullRange: 410 },
+    stats: { hp: 850, attack: 179, plating: 0, damageReduction: 0, speed: 105, attackRange: 12, attackCooldown: 3500, pullRange: 410 },
     behavior: 'melee', attackStyle: 'talons', biome: 'mountain',
     flies: true,
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 450 },
     ai: { wanderRadius: 460, leashRange: 1200, idleMinMs: 180, idleMaxMs: 720 },
     engageSequence: {
       kind: 'cast-charge-strike', name: 'Skyfall Rend', castMs: 1000,
-      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 2.25, fx: 'dive-bomb',
+      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 1.7, fx: 'dive-bomb',
     },
   }],
 
   ['cragback-rhino', {
     id: 'cragback-rhino', name: 'Cragback Rhino', color: 0x6677aa,
-    // STANDALONE LATE ELITE — the weapon-matchup exam, kept exactly as it is:
+    // STANDALONE LATE ELITE — the weapon-matchup exam:
     // heavy plating, some DR, the enemy soft-cap, and one large periodic empowered
     // hit. Do NOT add another mechanic (locked).
-    stats: { hp: 923, attack: 113, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
+    stats: { hp: 1100, attack: 113, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain', elite: true,
     rewards: { essence: 185, essenceType: 'blue', level: 4, biomeXp: 1110 },
     ai: { wanderRadius: 80, leashRange: 400, idleMinMs: 5000, idleMaxMs: 13000 },
     chargeOnAggro: { speedMult: 2.2, durationMs: 1300 },
-    empoweredCooldown: { cooldownMs: 10000, multiplier: 3.2 },  // 304
+    empoweredCooldown: { cooldownMs: 10000, multiplier: 2.5 },  // ~283
     enemySoftCap: { capPct: 0.25, capMult: 0.5 },
   }],
 

@@ -26,7 +26,7 @@ export const graveyardMonsterEntries = [
     id: 'bone-crawler', name: 'Bone Crawler', color: 0x886688,
     // Basic undead body / CORPSE FODDER. Simple melee, no plague (removed, locked).
     // Its contribution to the biome is that it dies and leaves a valid corpse.
-    stats: { hp: 2059, attack: 159, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
+    stats: { hp: 2059, attack: 85, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 30, essenceType: 'purple', level: 3, biomeXp: 180 },
     ai: { wanderRadius: 330, leashRange: 820, idleMinMs: 600, idleMaxMs: 2500 },
@@ -37,7 +37,7 @@ export const graveyardMonsterEntries = [
     // THE dedicated plague creature — the one mob that keeps the DoT identity.
     // Aggressive charge, modest plague, and a contaminated pool on death that
     // matters for POSITIONING (short-lived; it must not dominate encounter damage).
-    stats: { hp: 3168, attack: 224, plating: 0, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 270 },
+    stats: { hp: 3168, attack: 105, plating: 0, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 50, essenceType: 'purple', level: 3, biomeXp: 300 },
     ai: { wanderRadius: 290, leashRange: 750, idleMinMs: 700, idleMaxMs: 3000 },
@@ -58,7 +58,7 @@ export const graveyardMonsterEntries = [
     // RANGED UNDEAD SUPPORT. Generic plague DoT removed (locked); its job is now
     // NECROTIC SCREECH — periodically empowering nearby undead (attack speed).
     // See the behavior pass for the screech itself.
-    stats: { hp: 2693, attack: 189, plating: 0, damageReduction: 0, speed: 46, attackRange: 200, attackCooldown: 1700, pullRange: 260 },
+    stats: { hp: 2693, attack: 95, plating: 0, damageReduction: 0, speed: 46, attackRange: 200, attackCooldown: 1700, pullRange: 260 },
     behavior: 'ranged', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 40, essenceType: 'purple', level: 3, biomeXp: 240 },
     // NECROTIC SCREECH - periodically hastens nearby undead. It does not hurt you
@@ -109,7 +109,7 @@ export const graveyardMonsterEntries = [
     // the `focus-elites` rune (taught by the graveyard recipe) is the intended counter.
     // Its personal Grave Curse DoT is REMOVED (locked): the power budget is
     // RESURRECTION ALONE — a weak ranged attacker whose only real weapon is the tide.
-    stats: { hp: 2851, attack: 118, plating: 0, damageReduction: 0, speed: 40, attackRange: 200, attackCooldown: 1900, pullRange: 300 },
+    stats: { hp: 2851, attack: 90, plating: 0, damageReduction: 0, speed: 40, attackRange: 200, attackCooldown: 1900, pullRange: 300 },
     behavior: 'ranged', attackStyle: 'magic', biome: 'graveyard',
     elite: true,
     rewards: { essence: 70, essenceType: 'purple', level: 3, biomeXp: 420 },
@@ -128,7 +128,7 @@ export const graveyardMonsterEntries = [
     id: 'plague-rat', name: 'Bone Rat', color: 0xaa88aa,
     // Fast nuisance filler / corpse fodder. Individually nothing. No plague
     // (removed, locked) — it is simple on purpose, and it leaves a valid corpse.
-    stats: { hp: 1584, attack: 136, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 950, pullRange: 310 },
+    stats: { hp: 1584, attack: 65, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 950, pullRange: 310 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 22, essenceType: 'purple', level: 3, biomeXp: 130 },
     ai: { wanderRadius: 360, leashRange: 860, idleMinMs: 400, idleMaxMs: 2000 },

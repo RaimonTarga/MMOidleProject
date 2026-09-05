@@ -122,7 +122,7 @@ export const volcanoMonsterEntries = [
   ['ember-skink', {
     id: 'ember-skink', name: 'Ember Skink', color: 0xff6622,
     // Evolved swarm filler: the T3 Scuttler plus a light Burn on hit. No ramp.
-    stats: { hp: 1043, attack: 168, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
+    stats: { hp: 1350, attack: 90, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 47, essenceType: 'red', level: 3, biomeXp: 280 },
     // Loose cohesion/separation so the high-density biome READS as a swarm.
@@ -136,7 +136,7 @@ export const volcanoMonsterEntries = [
   ['infernal-direhound', {
     id: 'infernal-direhound', name: 'Infernal Direhound', color: 0xff8800,
     // Evolved catcher: high speed + charge on engagement. No ramp.
-    stats: { hp: 1386, attack: 210, plating: 4, damageReduction: 0, speed: 72, attackRange: 12, attackCooldown: 1400, pullRange: 280 },
+    stats: { hp: 1750, attack: 110, plating: 4, damageReduction: 0, speed: 72, attackRange: 12, attackCooldown: 1400, pullRange: 280 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 68, essenceType: 'red', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 700, idleMaxMs: 3000 },
@@ -170,7 +170,7 @@ export const volcanoMonsterEntries = [
     id: 'ashspitter-salamander', name: 'Ashspitter Salamander', color: 0xff4422,
     // Evolved ranged Burn pressure: stationary (not a kiter), stronger and more
     // persistent Burn than the Ash Salamander. Ignoring it lets the fire stack.
-    stats: { hp: 1188, attack: 183, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
+    stats: { hp: 1550, attack: 110, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
     // Fires from the background and does NOT kite (locked).
@@ -185,7 +185,7 @@ export const volcanoMonsterEntries = [
     // rewarding BURST over DoT/chip. The exam is to break through its shell windows
     // BEFORE the node's global Heat turns dangerous — the shell is what makes the
     // fight run long, Heat is the cost.
-    stats: { hp: 2904, attack: 246, plating: 6, damageReduction: 0.06, speed: 22, attackRange: 15, attackCooldown: 2600, pullRange: 160 },
+    stats: { hp: 2904, attack: 150, plating: 6, damageReduction: 0.06, speed: 22, attackRange: 15, attackCooldown: 2600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic', elite: true,
     rewards: { essence: 190, essenceType: 'red', level: 4, biomeXp: 1140 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 4000, idleMaxMs: 11000 },
