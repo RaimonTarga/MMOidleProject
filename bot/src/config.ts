@@ -44,6 +44,8 @@ export interface BotConfig {
    * substitution is visible in the run header's profile id.
    */
   tierEntrySnapshotDir?: string;
+  /** Fail instead of substituting a synthetic template when a requested real handoff is absent. */
+  requireTierEntrySnapshot?: boolean;
   /**
    * Carryover-economy arm for a route that starts from a tier-entry template.
    *
@@ -222,6 +224,7 @@ export function buildConfig(args: Record<string, string>): BotConfig {
     tierEntryProfileId: args.tierEntry || args.entryProfile,
     tierEntrySnapshotPath: args.tierEntrySnapshot,
     tierEntrySnapshotDir: args.tierEntrySnapshotDir,
+    requireTierEntrySnapshot: args.requireTierEntrySnapshot === "true",
     entryEconomy:
       args.entryEconomy === "natural" || args.entryEconomy === "catalyst-primed"
         ? args.entryEconomy

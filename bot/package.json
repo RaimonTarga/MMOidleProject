@@ -3,6 +3,7 @@
   "version": "0.4",
   "private": true,
   "scripts": {
+    "build": "tsc",
     "run": "tsx --conditions=development src/run.ts",
     "batch": "tsx --conditions=development src/batch.ts",
     "cleanup": "tsx --conditions=development src/cleanup.ts"

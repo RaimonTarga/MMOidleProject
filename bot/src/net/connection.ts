@@ -20,6 +20,8 @@ export interface ConnectionHooks {
   onAscended(tier: number): void;
   onKicked(reason: string): void;
   onRewardMultiplier(multiplier: number): void;
+  /** Unexpected transport loss is terminal for frozen isolated experiments. */
+  onDisconnect?(reason: string): void;
 }
 
 export class ConnectionError extends Error {}
@@ -39,6 +41,7 @@ export class BotConnection {
   private hooks: ConnectionHooks | null = null;
   private characters: AccountCharactersPayload | null = null;
   private charactersWaiters: Array<(p: AccountCharactersPayload) => void> = [];
+  private closedByClient = false;
   /** Bumped on every `account:characters` push — the lobby's sequencing signal. */
   private rosterVersion = 0;
 
@@ -58,6 +61,7 @@ export class BotConnection {
 
   async connect(hooks: ConnectionHooks, timeoutMs = 20_000): Promise<void> {
     this.hooks = hooks;
+    this.closedByClient = false;
     const socket: BotSocket = io(this.serverUrl, {
       auth: { devAccountId: this.devAccountId },
       transports: ["websocket"],
@@ -93,9 +97,10 @@ export class BotConnection {
 
     // A reconnect re-attaches a NEW socket id, so the old own-entity key is
     // stale and every mirrored entity belongs to a previous session.
-    socket.on("disconnect", () => {
+    socket.on("disconnect", (reason) => {
       this.mirror.ownId = null;
       this.mirror.reset();
+      if (!this.closedByClient) hooks.onDisconnect?.(reason);
     });
 
     await new Promise<void>((resolve, reject) => {
@@ -237,6 +242,7 @@ export class BotConnection {
   }
 
   disconnect(): void {
+    this.closedByClient = true;
     this.socket?.disconnect();
     this.socket = null;
     this.hooks = null;

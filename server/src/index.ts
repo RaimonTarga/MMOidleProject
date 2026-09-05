@@ -31,6 +31,7 @@ import type {
   ServerToClientEvents,
   ClientToServerEvents,
   DeltaSnapshot,
+  ProcessTelemetry,
 } from "@mmo-idle/shared";
 import { db, runMigrations } from "./db/index";
 import {
@@ -103,6 +104,15 @@ if (IS_DEV) registerDevItems(ITEM_DATABASE);
 // ── Setup ─────────────────────────────────────────────
 
 const app = express();
+let latestProcessTelemetry: (ProcessTelemetry & { tick: number; capturedAt: number }) | null = null;
+
+function runtimeBuildInfo() {
+  return {
+    gitRevision: process.env.EXPERIMENT_GIT_REVISION ?? null,
+    sourceTree: process.env.EXPERIMENT_SOURCE_TREE ?? null,
+    buildId: process.env.EXPERIMENT_BUILD_ID ?? null,
+  };
+}
 // Allow all origins — this is a private LAN/friends game, no auth tokens in cookies.
 if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 app.use(cors({ origin: true }));
@@ -113,7 +123,11 @@ app.use(express.json());
 // starts listening after migrations + hitbox bake complete in boot()). It does
 // not touch the DB so a transient Postgres blip won't trigger restart loops.
 app.get("/healthz", (_req, res) => {
-  res.status(200).json({ status: "ok" });
+  res.status(200).json({
+    status: "ok",
+    build: runtimeBuildInfo(),
+    process: latestProcessTelemetry,
+  });
 });
 
 // Serve built client/admin only in production so dev doesn't expose a stale
@@ -563,6 +577,11 @@ async function boot(): Promise<void> {
   setInterval(() => {
     world.syncTelemetryOccupancy();
     const telemetry = world.telemetry.flush(world.tickCounter);
+    latestProcessTelemetry = {
+      ...telemetry.process,
+      tick: world.tickCounter,
+      capturedAt: telemetry.capturedAt,
+    };
     queueAnalyticsEvent({
       kind: "server-sample",
       value: world.playerCount(),

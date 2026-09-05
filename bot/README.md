@@ -13,6 +13,12 @@ Plan and audit: [`docs/headless-bot-harness-plan.md`](../docs/headless-bot-harne
 
 ## Running
 
+For canonical multi-run evidence, use the frozen isolated runner documented in
+[`docs/bot-experiment-runner-current-state.md`](../docs/bot-experiment-runner-current-state.md).
+It runs one private compiled server/world per bot at an exact commit, with 2
+workers by default. The direct commands below remain useful for interactive
+development and legacy shared-world experiments.
+
 The dev server must be up with `AUTH_DEV_BYPASS=1` (it is in `.env`).
 
 ```bash
@@ -28,7 +34,7 @@ pnpm bot:run --route=striker-t1 --policy=intended --ui --rewardMultiplier=25
 # clean T1 controlled batch: eight routes, 25x, sequential, one bot at a time
 pnpm bot:batch
 
-# same eight routes, run concurrently under exclusive world-area leases
+# LEGACY/DEPRECATED for canonical evidence: shared-world lease experiment
 pnpm bot:batch --executionMode=isolated-parallel --maxConcurrency=6
 
 # ...spreading the launches so the Clearing opening is not a thundering herd
@@ -257,6 +263,11 @@ WorldMirror ──► Observation ──► RouteExecutor ──► Intents ─�
   a `blocked-on-resource` span, not shortcut.
 
 ## Controlled concurrency (`--executionMode=isolated-parallel`)
+
+> **Deprecated for canonical evidence.** The preferred canonical path is the
+> frozen per-run server architecture in
+> [`docs/bot-experiment-runner-current-state.md`](../docs/bot-experiment-runner-current-state.md).
+> This code remains temporarily for migration and incident reproduction.
 
 Controlled batches default to `sequential`: one bot at a time remains the
 canonical control. `isolated-parallel` is an experimental concurrency cohort,

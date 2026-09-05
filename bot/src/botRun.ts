@@ -67,8 +67,10 @@ export function initialRunTaints(
 }
 
 function gitRevision(): string {
+  const frozenRevision = process.env.EXPERIMENT_GIT_REVISION?.trim();
+  if (frozenRevision) return frozenRevision;
   try {
-    return execSync("git rev-parse --short HEAD", { encoding: "utf8" }).trim();
+    return execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
   } catch {
     return "unknown";
   }
@@ -120,6 +122,16 @@ export async function runBot(
           `(essence ${match.walletTotal}) -> ${match.file}`,
       );
     } else {
+      if (config.requireTierEntrySnapshot) {
+        const rejected = index.rejected.length > 0
+          ? ` ${index.rejected.length} snapshot file(s) were rejected.`
+          : "";
+        throw new Error(
+          `no usable real T1 handoff for ${authoredRoute.classRoot} in ` +
+            `${config.tierEntrySnapshotDir}; canonical snapshot entry cannot fall back.` +
+            rejected,
+        );
+      }
       console.warn(
         `[bot] ${config.routeId}: NO usable T1 handoff for ${authoredRoute.classRoot} in ` +
           `${config.tierEntrySnapshotDir}; falling back to the synthetic ` +
@@ -138,6 +150,16 @@ export async function runBot(
   const sourceSnapshot = resolvedSnapshotPath
     ? readT1CharacterSnapshot(resolvedSnapshotPath)
     : undefined;
+  if (
+    sourceSnapshot &&
+    config.requireTierEntrySnapshot &&
+    (!sourceSnapshot.canonicalAtCapture || sourceSnapshot.economy.rewardMultiplier !== 1)
+  ) {
+    throw new Error(
+      `canonical snapshot entry requires a canonical 1x Snapshot B; ` +
+        `${sourceSnapshot.snapshotId} is not eligible`,
+    );
+  }
   if (sourceSnapshot && !authoredRoute.startsFromTierEntry) {
     throw new Error(
       `route ${authoredRoute.id} does not declare a tier-entry start for --tierEntrySnapshot`,
@@ -307,6 +329,9 @@ export async function runBot(
     onKicked: (reason) => {
       abortRun(`session kicked: ${reason}`, "disconnect");
     },
+    onDisconnect: (reason) => {
+      abortRun(`socket disconnected: ${reason}`, "disconnect");
+    },
   });
 
   let templateValidation: TemplateValidationSummary | undefined;
@@ -335,7 +360,9 @@ export async function runBot(
       `tier-entry profile ${tierEntryProfile.id} to appear in the authoritative view`,
       runAbort.signal,
     );
-    if (!taints.includes("SYNTHETIC_TIER_ENTRY")) taints.push("SYNTHETIC_TIER_ENTRY");
+    if (!sourceSnapshot && !taints.includes("SYNTHETIC_TIER_ENTRY")) {
+      taints.push("SYNTHETIC_TIER_ENTRY");
+    }
 
     // Prove the template is legal BEFORE a single route step runs. The offline
     // pass asks whether the template is a character today's game data allows;

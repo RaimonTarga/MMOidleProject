@@ -4,8 +4,13 @@ import { log } from "../log";
 
 const DEV_DEFAULT_REDIS_URL = "redis://localhost:6379";
 
+/**
+ * Experiment workers share one Redis service while running independent worlds.
+ * Prefix Pub/Sub channels because Redis database numbers do not isolate them.
+ */
+const CHANNEL_PREFIX = process.env.REDIS_CHANNEL_PREFIX?.trim();
 const CHANNELS = {
-  telemetry: "ops:telemetry",
+  telemetry: CHANNEL_PREFIX ? `${CHANNEL_PREFIX}:ops:telemetry` : "ops:telemetry",
 } as const;
 
 type TelemetryListener = (snapshot: NodeTelemetrySnapshot) => void;
