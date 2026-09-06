@@ -1,0 +1,613 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-06T10-43-39-408Z-83d6b178",
+    "startedAt": 1788691419408,
+    "endedAt": 1788693279661,
+    "durationMs": 1860253,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "server shutdown (SIGTERM)",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-06T10-43-39-408Z-83d6b178",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 100,
+      "end": 100,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 100
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 3,
+    "finalGlobalMastery": 88,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 12,
+      "mountain": 17,
+      "forest": 12,
+      "swamp": 17,
+      "cave": 12,
+      "jungle": 12,
+      "desert": 6
+    }
+  },
+  "combat": {
+    "totalKills": 104,
+    "killsByMonster": {
+      "Cave Gargoyle": 1,
+      "Sand Scorpion": 3,
+      "Sun Scarab": 1,
+      "Stone Basilisk": 2,
+      "Jungle Snake": 9,
+      "Jungle Ape": 1,
+      "Vine Chameleon": 4,
+      "Dire Whelp": 18,
+      "Dire Wolf": 1,
+      "Ironclaw Badger": 2,
+      "Forest Sentinel": 3,
+      "Apex Timberclaw": 1,
+      "Prairie Yearling": 9,
+      "Prairie Defender": 3,
+      "Field Hare": 24,
+      "Boar": 3,
+      "Gorging Razortusk": 1,
+      "Cave Sentinel": 3,
+      "Chitinous Dreadbore": 1,
+      "Jungle Warden": 3,
+      "Jungle Dread-Gorger": 1,
+      "Moss-Shell Snapper": 1,
+      "Mire Keeper": 3,
+      "Bog Witch": 2,
+      "Stone Warden": 4
+    },
+    "totalDamageTaken": 10116.92,
+    "playerDamageDealt": 55528,
+    "totalHealed": 9299,
+    "deaths": 3,
+    "abilityActivations": {
+      "second-wind": 37,
+      "contagion": 22,
+      "hamstring": 19,
+      "expose-weakness": 37
+    }
+  },
+  "positioning": {
+    "samples": 3381,
+    "movementFraction": 0.2688553682342502,
+    "stationaryCombatFraction": 0.5034013605442177,
+    "nearBoundaryFraction": 0.036083998816918074,
+    "boss": {
+      "movementFraction": 0.14579439252336449,
+      "nearBoundaryFraction": 0.056074766355140186,
+      "range": {
+        "samples": 1070,
+        "mean": 87.42563838934569,
+        "min": 4.843811701965581,
+        "max": 129.5389142943605,
+        "p50": 91.74451055052603,
+        "p90": 114.77719160089538
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8474666666666667,
+      "combatDurationMs": 9220,
+      "playerDamage": 597,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6370666666666667,
+      "combatDurationMs": 9120,
+      "playerDamage": 747,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.38533333333333336,
+      "combatDurationMs": 9637,
+      "playerDamage": 797,
+      "incomingDamage": 188.4
+    },
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 15228,
+      "playerDamage": 1371,
+      "incomingDamage": 195.4
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.49925,
+      "combatDurationMs": 28249,
+      "playerDamage": 2263,
+      "incomingDamage": 412.9999999999999
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.41025,
+      "combatDurationMs": 2807,
+      "playerDamage": 266,
+      "incomingDamage": 69.80000000000001
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.36525,
+      "combatDurationMs": 1101,
+      "playerDamage": 0,
+      "incomingDamage": 6.4
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.34275,
+      "combatDurationMs": 701,
+      "playerDamage": 140,
+      "incomingDamage": 1
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.34275,
+      "combatDurationMs": 703,
+      "playerDamage": 90,
+      "incomingDamage": 63.9
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3095,
+      "combatDurationMs": 2600,
+      "playerDamage": 43,
+      "incomingDamage": 69.60000000000002
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2765,
+      "combatDurationMs": 1401,
+      "playerDamage": 169,
+      "incomingDamage": 67.80000000000001
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.25275,
+      "combatDurationMs": 701,
+      "playerDamage": 95,
+      "incomingDamage": 2
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.25275,
+      "combatDurationMs": 902,
+      "playerDamage": 114,
+      "incomingDamage": 69.60000000000002
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.22075,
+      "combatDurationMs": 500,
+      "playerDamage": 0,
+      "incomingDamage": 0.9
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.20475,
+      "combatDurationMs": 1300,
+      "playerDamage": 0,
+      "incomingDamage": 66.80000000000001
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.20475,
+      "combatDurationMs": 502,
+      "playerDamage": 0,
+      "incomingDamage": 1
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.20475,
+      "combatDurationMs": 501,
+      "playerDamage": 0,
+      "incomingDamage": 1.9
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.194,
+      "combatDurationMs": 1504,
+      "playerDamage": 111,
+      "incomingDamage": 73.4
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.16625,
+      "combatDurationMs": 501,
+      "playerDamage": 43,
+      "incomingDamage": 3.6999999999999997
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1555,
+      "combatDurationMs": 700,
+      "playerDamage": 37,
+      "incomingDamage": 1.9
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1355,
+      "combatDurationMs": 802,
+      "playerDamage": 0,
+      "incomingDamage": 1
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.0965,
+      "combatDurationMs": 702,
+      "playerDamage": 0,
+      "incomingDamage": 64.8
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.0765,
+      "combatDurationMs": 2004,
+      "playerDamage": 111,
+      "incomingDamage": 3.8
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.03425,
+      "combatDurationMs": 3204,
+      "playerDamage": 154,
+      "incomingDamage": 66.80000000000001
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 1003,
+      "playerDamage": 107,
+      "incomingDamage": 64.9
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9515428571428571,
+      "combatDurationMs": 4503,
+      "playerDamage": 231,
+      "incomingDamage": 5
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8656,
+      "combatDurationMs": 2702,
+      "playerDamage": 194,
+      "incomingDamage": 106.4
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8070857142857143,
+      "combatDurationMs": 2707,
+      "playerDamage": 225,
+      "incomingDamage": 3
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.776,
+      "combatDurationMs": 500,
+      "playerDamage": 106,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6322285714285715,
+      "combatDurationMs": 5608,
+      "playerDamage": 461,
+      "incomingDamage": 113.2
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6027428571428571,
+      "combatDurationMs": 599,
+      "playerDamage": 90,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4521142857142857,
+      "combatDurationMs": 6409,
+      "playerDamage": 569,
+      "incomingDamage": 115
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2861714285714286,
+      "combatDurationMs": 5806,
+      "playerDamage": 417,
+      "incomingDamage": 117.8
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.14925714285714287,
+      "combatDurationMs": 4206,
+      "playerDamage": 348,
+      "incomingDamage": 123.1
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 3204,
+      "playerDamage": 364,
+      "incomingDamage": 123.8
+    },
+    {
+      "bossName": "Jungle Dread-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.849103448275862,
+      "combatDurationMs": 9114,
+      "playerDamage": 571,
+      "incomingDamage": 115
+    },
+    {
+      "bossName": "Jungle Dread-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7023448275862069,
+      "combatDurationMs": 5309,
+      "playerDamage": 228,
+      "incomingDamage": 58
+    },
+    {
+      "bossName": "Jungle Dread-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5031724137931034,
+      "combatDurationMs": 8011,
+      "playerDamage": 472,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Jungle Dread-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.35310344827586204,
+      "combatDurationMs": 6113,
+      "playerDamage": 307,
+      "incomingDamage": 115
+    },
+    {
+      "bossName": "Jungle Dread-Gorger",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.15862068965517243,
+      "combatDurationMs": 7706,
+      "playerDamage": 447,
+      "incomingDamage": 117
+    },
+    {
+      "bossName": "Jungle Dread-Gorger",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 3509,
+      "playerDamage": 222,
+      "incomingDamage": 58
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9357037037037037,
+      "combatDurationMs": 3606,
+      "playerDamage": 165,
+      "incomingDamage": 31.8
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6968888888888889,
+      "combatDurationMs": 8917,
+      "playerDamage": 705,
+      "incomingDamage": 237.6
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.424,
+      "combatDurationMs": 8012,
+      "playerDamage": 674,
+      "incomingDamage": 261.6
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.31881481481481483,
+      "combatDurationMs": 1104,
+      "playerDamage": 0,
+      "incomingDamage": 45.7
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.23644444444444446,
+      "combatDurationMs": 3208,
+      "playerDamage": 278,
+      "incomingDamage": 100.8
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9306,
+      "combatDurationMs": 5508,
+      "playerDamage": 288,
+      "incomingDamage": 5
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7936,
+      "combatDurationMs": 8117,
+      "playerDamage": 508,
+      "incomingDamage": 286.52
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6882,
+      "combatDurationMs": 5110,
+      "playerDamage": 504,
+      "incomingDamage": 101.84
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.627,
+      "combatDurationMs": 500,
+      "playerDamage": 0,
+      "incomingDamage": 4
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4852,
+      "combatDurationMs": 8313,
+      "playerDamage": 623,
+      "incomingDamage": 321.4
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3108,
+      "combatDurationMs": 9017,
+      "playerDamage": 733,
+      "incomingDamage": 322.4
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1734,
+      "combatDurationMs": 6908,
+      "playerDamage": 458,
+      "incomingDamage": 323.4
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.122,
+      "combatDurationMs": 2604,
+      "playerDamage": 275,
+      "incomingDamage": 93.84
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "quake-hammer",
+      "armor": "swamp-vest-t3",
+      "recovery": "swamp-charm-t2",
+      "mobility": "desert-boots-t2",
+      "core": "core-survivalist",
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 5,
+      "iron-broadsword": 5,
+      "plains-charm-t1": 5,
+      "plains-vest-t1": 5,
+      "mountain-vest-t1": 5,
+      "mountain-charm-t1": 5,
+      "heavy-hammer": 5,
+      "mountain-boots-t1": 3,
+      "swamp-charm-t1": 5,
+      "cave-vest-t1": 5,
+      "swamp-vest-t1": 5,
+      "plains-vest-t2": 5,
+      "plains-charm-t2": 4,
+      "quake-hammer": 5,
+      "desert-boots-t2": 5,
+      "swamp-charm-t2": 5,
+      "cave-vest-t2": 5,
+      "swamp-vest-t2": 5,
+      "swamp-vest-t3": 1
+    },
+    "classRoot": "dot-root",
+    "frame": "balanced",
+    "range": "dot-range-close",
+    "techniques": [
+      "expose-weakness"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "focus-highest-max-hp"
+      }
+    ],
+    "stats": {
+      "attack": 103,
+      "attackRange": 12,
+      "attackCooldown": 1638,
+      "maxHp": 327,
+      "plating": 20,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

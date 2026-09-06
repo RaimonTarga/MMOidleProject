@@ -35,6 +35,7 @@ import {
 } from "../src/systems/player/abilities/abilityAffliction";
 import { applyImbueWindow } from "../src/systems/player/abilities/abilityImbue";
 import { emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
+import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
 import type { MonsterEntity, PlayerEntity } from "../src/ecs/entity";
 
@@ -514,5 +515,72 @@ console.log("affliction: situational casts decline rather than burning a cooldow
   );
 }
 console.log("affliction: Imbue Lightning spends one charge per hit and then closes");
+
+// ── 8. Imbue Lightning gets its own buff tile, and the count is the mechanic ──
+
+{
+  const { world, player } = setup(["imbue-lightning"]);
+  player.tracksProgression.playerTier = 4;
+  const imbue = ABILITY_DATABASE.get("imbue-lightning")!;
+  const target = spawn(world, 405, 400);
+
+  const noTile = () =>
+    (syncPlayerBuffs(world, Date.now()),
+    player.hasStatus.activeBuffs?.find((b) => b.id === ABILITY_IMBUE_EFFECT_ID));
+
+  assert(!noTile(), "no tile before the window is opened");
+
+  applyImbueWindow(world, player, imbue);
+  const tile = noTile();
+  assert(!!tile, "Imbue must project its own buff tile");
+  const total = tile!.stacks;
+  assert(total > 1, "the tile must open with its full charge count");
+  assert(
+    tile!.showSingleStack === true,
+    "a countdown must keep showing its badge at one — going blank a hit early " +
+      "tells the player the resource is already gone",
+  );
+  assert(
+    tile!.durationPct === -1,
+    "Imbue has NO timer; a clock would misrepresent a charge-based window",
+  );
+  assert(
+    (tile!.values ?? []).some((v) => v.label === "Attacks remaining"),
+    "the tooltip must state how many attacks are left",
+  );
+
+  // Spend down to exactly one and confirm the tile still reports it.
+  for (let i = 0; i < total - 1; i++) {
+    const ctx = {
+      attacker: player,
+      defender: target,
+      attackerType: "player" as const,
+      defenderType: "monster" as const,
+      damage: 10,
+      cancelled: false,
+      metadata: {} as Record<string, unknown>,
+    };
+    emitCombatEvent("onHit", ctx as never, world);
+  }
+  const lastTile = noTile();
+  assert(
+    lastTile?.stacks === 1,
+    `the tile must still report the final charge (got ${lastTile?.stacks})`,
+  );
+
+  // And disappear once spent, rather than lingering at zero.
+  const finalCtx = {
+    attacker: player,
+    defender: target,
+    attackerType: "player" as const,
+    defenderType: "monster" as const,
+    damage: 10,
+    cancelled: false,
+    metadata: {} as Record<string, unknown>,
+  };
+  emitCombatEvent("onHit", finalCtx as never, world);
+  assert(!noTile(), "the tile must clear once the last charge is spent");
+}
+console.log("affliction: Imbue Lightning projects a charge-counting buff tile");
 
 console.log("abilityAffliction: ok");

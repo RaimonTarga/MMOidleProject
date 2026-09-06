@@ -589,7 +589,7 @@ html[data-spectator="true"] #game-wrapper > div {
 
 .auth-character-card__details {
   display: grid;
-  grid-template-columns: minmax(140px, 0.7fr) minmax(200px, 1.3fr);
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 0.45fr) minmax(0, 1.3fr);
   border-block: 1px solid rgba(255, 255, 255, 0.065);
 }
 
@@ -697,6 +697,7 @@ html[data-spectator="true"] #game-wrapper > div {
   .auth-character-card__class strong { font-size: 15px; }
   .auth-character-card__details { grid-template-columns: 1fr; }
   .auth-character-card__stat { padding: 9px 8px; }
+  .auth-character-card__stat--tier,
   .auth-character-card__stat--location { padding-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.065); border-left: 0; }
   .auth-character-card__actions { flex-wrap: wrap; }
   .auth-character-card__last-played { flex-basis: 100%; }

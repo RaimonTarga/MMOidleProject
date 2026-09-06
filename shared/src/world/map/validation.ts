@@ -13,6 +13,7 @@ import {
   worldNodeExits,
 } from './registry';
 import { WORLD_REGIONS } from './regions';
+import { validateNodeDisplayNames } from './displayNames';
 import type { WorldNodeAuthoring } from './types';
 
 const EXPECTED_ACTIVE_BIOMES: Record<number, readonly string[]> = {
@@ -390,6 +391,7 @@ export function validateWorldMap(): string[] {
   const violations: string[] = [];
   validateIdentity(violations);
   validateKindsAndContent(violations);
+  violations.push(...validateNodeDisplayNames(WORLD_NODE_LIST));
   validateBiomeCoverage(violations);
   validateTopology(violations);
   validateBiomeShape(violations);

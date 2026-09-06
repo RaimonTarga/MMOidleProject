@@ -259,39 +259,60 @@ export type BossPatternStep =
        */
       travelSpeed?: number;
       /**
-       * FEINT. Spend the first `untilPct` of the burrow travelling AWAY from the
-       * target — roughly `awayPx` further out than wherever it went under — before
-       * turning and coming for them.
+       * FEINT. Spend the first `untilPct` of the burrow backing AWAY from the target
+       * before turning and coming for them.
        *
-       * A concealed body that beelines at you from the moment it disappears reads
-       * as a homing missile: there is one thing it can be doing and nowhere it can
-       * be but between its start and you. Backing off first makes the marker
-       * genuinely worth tracking, because for the first stretch it is going the
-       * wrong way and you do not yet know from which side it will come back.
+       * A concealed body that beelines at you from the moment it disappears reads as
+       * a homing missile: there is one thing it can be doing and nowhere it can be
+       * but between its start and you. Backing off first makes the marker genuinely
+       * worth tracking, because for the opening stretch it is going the wrong way.
        *
-       * Costs closing power: the feint distance is paid twice, out and back. Size
-       * the burrow's travel budget accordingly (`durationMs * travelSpeed`).
+       * `retreatToPx` is a DISTANCE FROM THE TARGET, not a distance to travel. The
+       * boss falls back until it is this far from you and no further, so the retreat
+       * is dramatic when it is standing in your face and barely happens when you have
+       * already run — which is the right shape twice over: the beat lands hardest
+       * exactly when you are closest, and the burrow can never spend its whole travel
+       * allowance retreating from someone who was already at the far end of the
+       * arena. An authored travel distance did both of those backwards.
        *
-       * `arcDeg` bends the detour around the target instead of retracing one line:
-       * the boss takes a couple of WAYPOINTS spaced across that bearing sweep before
-       * it turns and comes in, so it returns from a side you did not watch it leave
-       * on. The sweep direction is fixed, not random — "where does it come back up"
-       * has to stay answerable.
+       * ⚠ IT IS A STRAIGHT LINE, AND THAT IS THE DESIGN. Two attempts were made on
+       * 2026-09-06 to bend it around the target — a true spiral, then a two-waypoint
+       * triangle — and both read as TELEPORTING in play. The cause is not the path
+       * planning; it is that node deltas broadcast at 5 Hz and the client hard-snaps
+       * its interpolation whenever the rendered body falls more than 80px behind the
+       * newly broadcast position. In a straight line the renderer keeps up at any
+       * speed, because it chases at the same speed the body moves. At a CORNER it is
+       * still heading the old way, so the divergence is roughly one packet of travel
+       * (`speed * 0.2`), and anything above ~400px/s snaps, visibly.
        *
-       * WAYPOINTS, NOT A CURVE, and deliberately so. A true spiral was tried first
-       * (2026-09-06) and moved badly: its target point slides continuously and
-       * faster than the body chasing it, so the steering re-pathed every single tick
-       * and the boss visibly stuttered — and every time the curve clipped terrain it
-       * fell back to a completely different point and lurched. Two fixed points and
-       * a tracking final approach give three straight legs, each with a stable
-       * destination the navigation can actually commit to. The path reads as a
-       * triangle rather than an arc, which at this speed looks the same and moves
-       * far better.
-       *
-       * ⚠ The detour is paid out of the same travel budget as the approach, and its
-       * length grows with the radius it is swept at.
+       * A curving burrow is therefore only possible below ~400px/s, which is slow
+       * enough that the detour stops fitting inside a burrow of sane length. Out and
+       * back on one axis has a single 180-degree reversal and is the shape that
+       * survives. If this is revisited, fix the interpolator first — not the path.
        */
-      feint?: { awayPx: number; untilPct: number; arcDeg?: number };
+      feint?: { retreatToPx: number; untilPct: number };
+      /**
+       * End the concealment the moment the boss reaches its target, rather than
+       * waiting out `durationMs`.
+       *
+       * That turns the duration into a CEILING instead of a fixed cost. Without it
+       * an arriving burrower sits invisible on top of the player for whatever time is
+       * left over — dead air before the payoff — and the duration has to be tuned as
+       * a compromise between "long enough to catch a runner" and "not so long that
+       * catching someone standing still is followed by a pause". With it, the burrow
+       * simply takes as long as the chase actually takes.
+       */
+      surfacesOnContact?: boolean;
+      /**
+       * Slow the target at the moment the burrow reaches them, so the circle it is
+       * about to plant cannot simply be walked out of.
+       *
+       * Applies ONLY on a contact surface, never on a burrow that timed out short:
+       * catching you is what earns the control. Goes through the shared `slow`
+       * status, so mobility resistance, Cleanse and the buff clock all read it like
+       * any other slow.
+       */
+      contactSlow?: { speedMult: number; durationMs: number };
       /**
        * Hard control (stun/freeze) breaks the concealment, defaulting to true like
        * every other wind-up in this file. A boss that is stunned but still
@@ -463,13 +484,13 @@ export interface RunsBossPattern {
   /** Set once this pattern's charge has run into a player. */
   chargeConnected?: boolean;
   /**
-   * Detour waypoints for a feinting burrow, computed ONCE when it goes under and
-   * consumed in order. Fixed points are the whole reason the movement is smooth:
-   * a destination that stops moving is one the navigation can commit to.
+   * The point a feinting burrow backs off to, computed ONCE when it goes under.
+   * A destination that stops moving is one the navigation can commit to, which is
+   * what keeps the body travelling at a constant rate on a single heading.
    */
-  feintWaypoints?: Vec2[];
-  /** Wall-clock the current detour leg gives up at, so a blocked waypoint cannot stall the burrow. */
-  feintLegEndsAtMs?: number;
+  feintPoint?: Vec2;
+  /** Wall-clock the outbound leg gives up at, so an unreachable point cannot stall the burrow. */
+  feintEndsAtMs?: number;
   /** Set true when a barrier break staggered the pattern. */
   staggered: boolean;
   /**

@@ -92,7 +92,28 @@
         "direction": "east",
         "colorImage": "sprites/bosses/boss-cave-t2.png"
       },
-      "notes": "Standalone shared Burrowed/Conceal state for the Cave boss emergence family. Palette-pinned to the accepted Cave boss lineage, but generated without initImage so the mound/breach silhouette is authored independently."
+      "notes": "Legacy shared Cave burrowed frame. Replaced on 2026-09-06 with candidate 2 from boss-burrowed-mound; both Cave bosses retain this frame mapping, while regular Cave boss sprites remain unchanged."
+    },
+    {
+      "id": "boss-burrowed-mound",
+      "out": "sprites/bosses/boss-burrowed-mound.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "candidates": 5,
+      "prompt": "a generic boss-sized burrow mound in motion, the entire subject is one huge low oblong swell of freshly displaced compact earth traveling beneath the surface, a broad asymmetric dirt mound with a blunt raised back and a tapered wedge-like leading edge pointing right, shallow ridges and compressed folds across the soil, a few angular soil clods lifting from the trailing edge to make the underground movement unmistakable, strong readable silhouette filling roughly 80 percent of a 128 by 128 sprite, no creature anatomy and no visible body, three-quarter low top-down view facing right, isolated as a clean sprite cutout on a transparent background, painterly pixel art, soft volumetric shading, minimal outline, deep umber and baked-clay earth with muted rust planes, dusty tan highlights, and charcoal soil shadows",
+      "negative": "creature, animal, monster, boss body, shell, carapace, armor, head, face, eyes, mouth, legs, claws, horns, tentacles, tail, exposed anatomy, ordinary hill, landscape, terrain tile, flat ground plane, surrounding ground, field, cave, cavern, scenery, background elements, environment, grass, plants, flowers, rocks, stone, boulder, mountain, platform, pedestal, base, perch, cast shadow, drop shadow, shadow beneath the mound, dust cloud hiding the silhouette, smoke, fire, water, magic glow, neon, bright saturated colors, purple, violet, green, blue, cartoon, chibi, cute, rounded soft shapes, toy-like, plush, mascot, front view, facing camera, bipedal, upright, humanoid, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "styleRef": null,
+      "status": "accepted",
+      "notes": "Candidate 2 accepted as the generic shared burrowed/moving boss body. Candidate 5 is retained in the finished candidate archive as a possible future variant; source art is not packed or otherwise canonized as a separate variant.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
     },
     {
       "id": "boss-desert-t2",
@@ -2483,6 +2504,97 @@
         "direction": "east"
       },
       "notes": "The centerpiece elite (raises the dead) — FIRST-EVER sprite (was unmapped). Skeletal shaman-elk: a beast caster, no zombies, no humanoids. frameMaps entry added."
+    },
+    {
+      "id": "iron-marches-siege-war-knight",
+      "out": "sprites/bosses/iron-marches-siege-war-knight.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "candidates": 5,
+      "prompt": "a boss-sized giant arcane war automaton called the Siege War Knight, an immense armored knight-like construct with a broad fortress body, layered slab armor overlapping across the chest shoulders hips and legs, a fully sealed featureless great helm with a blank faceplate, thick arcane joints and recessed rune channels, a massive tower shield and crushing war maul integrated into the arms, heavy plating extending like bastion walls, short muted crimson battle-cloth panels, a braced planted stance, slow oppressive immovable presence filling roughly 85 percent of a 128 by 128 sprite, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, blackened steel and dark iron with gunmetal planes, weathered pale stone-metal inset plates, dull brass fittings, muted crimson cloth accents, restrained pale arcane glow in seams and runes",
+      "negative": "human face, face, eyes, eye slit, glowing eyes, mouth, skin, flesh, human body, exposed human parts, living person, pilot, cockpit, rider, sci-fi mech, modern robot, clean futuristic machine, sleek armor, exosuit, automobile, tank, firearm, gun, rifle, obvious cannon, missile launcher, ranged weapon, bright neon, colorful, glowing body, cartoon, chibi, cute, toy-like, plush, mascot, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "notes": "Iron Marches visual-identity pass only. Boss-sized War Knight; preserve the broad fortress silhouette and make it the heaviest of the three. Do not pack, wire, or add gameplay sources until the cast is reviewed."
+    },
+    {
+      "id": "iron-marches-arsenal-war-knight",
+      "out": "sprites/bosses/iron-marches-arsenal-war-knight.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "candidates": 5,
+      "prompt": "a boss-sized giant arcane war automaton called the Arsenal War Knight, an ancient magical artillery engine shaped like a knight, a tall slightly slimmer silhouette than a siege colossus with layered armor around a narrow central core, a fully sealed featureless helm with no faceplate details, recessed arcane joints and carved rune channels, broad shoulder frames carrying suspended spectral spear racks and restrained beam emitters, brass focusing rings and long lance-like magical launch structures integrated into the armor, a braced battlefield-suppression stance, imposing presence filling roughly 85 percent of a 128 by 128 sprite, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark steel and gunmetal armor with weathered pale stone-metal plates, dull brass weapon structures, muted crimson cloth accents, restrained pale arcane glow in seams runes and projectiles",
+      "negative": "human face, face, eyes, eye slit, glowing eyes, mouth, skin, flesh, human body, exposed human parts, living person, pilot, cockpit, rider, sci-fi mech, modern robot, clean futuristic machine, sleek missile mech, firearm, gun, rifle, bullet, modern rocket, military vehicle, tank turret, obvious gun barrel, cute, cartoon, chibi, toy-like, plush, mascot, bright neon, colorful, glowing body, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "notes": "Iron Marches visual-identity pass only. Boss-sized ranged War Knight; keep it visibly slimmer and more weapon-platform oriented than Siege without reading as a modern missile mech. Do not pack, wire, or add gameplay sources until the cast is reviewed."
+    },
+    {
+      "id": "iron-marches-assault-war-knight",
+      "out": "sprites/bosses/iron-marches-assault-war-knight.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "candidates": 5,
+      "prompt": "a boss-sized giant arcane war automaton called the Assault War Knight, a medium-armored knight construct built for a brutal first charge, a forward-leaning silhouette with a compact reinforced torso, swept shoulder plates, heavy braced forearms, exposed-looking but protected arcane joints, a fully sealed featureless helm with no face or eyes, one oversized cleaving greatblade or glaive held ready to strike, disciplined attack posture aimed toward the right, aggressive close-combat presence filling roughly 85 percent of a 128 by 128 sprite, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark iron and blackened steel armor with gunmetal planes, dull brass fittings, muted crimson cloth accents, restrained pale arcane glow in seams and runes",
+      "negative": "human face, face, eyes, eye slit, glowing eyes, mouth, skin, flesh, human body, exposed human parts, living person, pilot, cockpit, rider, sci-fi mech, modern robot, clean futuristic machine, sleek armor, animal, beast, monster, wild creature, tower shield, fortress armor, artillery rack, missile launcher, gun, firearm, rifle, ranged platform, bright neon, colorful, glowing body, cute, cartoon, chibi, toy-like, plush, mascot, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "notes": "Iron Marches visual-identity pass only. Boss-sized aggressive melee War Knight; preserve a clear forward rush silhouette between the broad Siege and ranged Arsenal. Do not pack, wire, or add gameplay sources until the cast is reviewed."
+    },
+    {
+      "id": "iron-marches-mending-servitor",
+      "out": "sprites/monsters/iron-marches-mending-servitor.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "candidates": 5,
+      "prompt": "a smaller Iron Marches support construct called the Mending Servitor, a hovering reliquary-like battlefield maintenance engine with a compact pale stone-metal housing, three short articulated repair arms, small brass service tools, visible runic braces and restorative channels feeding into the arms, a faceless headless apparatus with no creature anatomy, a clear repair-and-restoration silhouette, gently hovering in a stable three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale weathered stone-metal and iron gray body panels with dull brass fittings, small muted crimson details, restrained pale arcane glow in repair channels",
+      "negative": "human, face, eyes, mouth, skin, flesh, creature, animal, soldier, knight, little robot, modern robot, drone, cute drone, toy, mascot, comedy, sci-fi gadget, sleek plastic, cockpit, pilot, weapon, gun, blade, bright neon, colorful, glowing body, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "notes": "Iron Marches visual-identity pass only. Smaller support sprite; the read must be maintenance and restoration, never a miniature War Knight or cute drone. Do not pack, wire, or add gameplay sources until the cast is reviewed."
+    },
+    {
+      "id": "iron-marches-amplifying-servitor",
+      "out": "sprites/monsters/iron-marches-amplifying-servitor.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "candidates": 5,
+      "prompt": "a smaller Iron Marches support construct called the Amplifying Servitor, a hovering arcane force amplifier built as a compact reliquary engine, a pale stone-metal core surrounded by two staggered resonant rings, three short focusing spires and carved power channels, small brass vents and signal-like rune projections suggesting strength being fed into a larger war construct, a faceless headless apparatus with a clean readable support silhouette, gently hovering in a stable three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale weathered stone-metal and iron gray body panels with dull brass rings, small muted crimson details, restrained pale arcane glow in the focusing channels",
+      "negative": "human, face, eyes, mouth, skin, flesh, creature, animal, soldier, knight, little robot, modern robot, drone, cute drone, toy, mascot, comedy, sci-fi gadget, sleek plastic, cockpit, pilot, weapon, gun, blade, repair arms, wrench, bright neon, colorful, glowing body, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "notes": "Iron Marches visual-identity pass only. Smaller support sprite; emphasize amplification, resonance, and empowerment rather than repair or weaponry. Do not pack, wire, or add gameplay sources until the cast is reviewed."
+    },
+    {
+      "id": "iron-marches-binding-servitor",
+      "out": "sprites/monsters/iron-marches-binding-servitor.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "candidates": 5,
+      "prompt": "a smaller Iron Marches support construct called the Binding Servitor, a hovering arcane restraint engine with a narrow obelisk-like pale stone-metal body held inside angular orbiting rune loops, two projecting tether emitters and a controlled lattice of linked force geometry, brass anchor hooks and suppression channels visibly directed outward, a faceless headless apparatus with a clear containment silhouette, gently hovering in a stable three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale weathered stone-metal and iron gray body panels with dull brass restraint rings, small muted crimson details, restrained pale arcane glow in the tether geometry",
+      "negative": "human, face, eyes, mouth, skin, flesh, creature, animal, soldier, knight, little robot, modern robot, drone, cute drone, toy, mascot, comedy, sci-fi gadget, sleek plastic, cockpit, pilot, wings, feathers, weapon, gun, blade, repair arms, healing symbols, bright neon, colorful, glowing body, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "notes": "Iron Marches visual-identity pass only. Smaller support sprite; the silhouette should communicate restraint, suppression, and tethering at a glance. Do not pack, wire, or add gameplay sources until the cast is reviewed."
+    },
+    {
+      "id": "iron-marches-warding-servitor",
+      "out": "sprites/monsters/iron-marches-warding-servitor.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "candidates": 5,
+      "prompt": "a smaller Iron Marches support construct called the Warding Servitor, a hovering defensive ward engine shaped like a compact shrine-tool, layered pale stone-metal shield plates enclosing a central ward core, four broad protective shield petals and a halo-like brass ward ring, carved defensive sigils and short bastion-like braces reinforcing the shell, a faceless headless apparatus with a clear protection silhouette, gently hovering in a stable three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale weathered stone-metal and iron gray body panels with dull brass protective geometry, small muted crimson details, restrained pale arcane glow in the ward sigils",
+      "negative": "human, face, eyes, mouth, skin, flesh, creature, animal, soldier, knight, little robot, modern robot, drone, cute drone, toy, mascot, comedy, sci-fi gadget, sleek plastic, cockpit, pilot, weapon, gun, blade, repair arms, tether loops, chains, binding lattice, bright neon, colorful, glowing body, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "notes": "Iron Marches visual-identity pass only. Smaller support sprite; emphasize shielding, warding, and defensive reinforcement rather than repair or restraint. Do not pack, wire, or add gameplay sources until the cast is reviewed."
     }
   ]
 }

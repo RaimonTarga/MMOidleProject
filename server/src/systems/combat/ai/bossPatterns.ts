@@ -56,6 +56,7 @@ import {
   setCounter,
 } from '@mmo-idle/shared';
 import { canApplyPlayerDebuff } from '../status/debuffGuard';
+import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { syncPlayerControlLockout } from '../status/playerControlLockout';
 import {
   clearSourceBarrier,
@@ -846,14 +847,14 @@ function beginStep(
         const concealTarget = patternTarget(world, monster);
         // Plan the detour ONCE, from where the boss actually went under. Fixed
         // points are what make the movement smooth — see `planFeintWaypoints`.
-        state.feintWaypoints = undefined;
-        state.feintLegEndsAtMs = undefined;
+        state.feintPoint = undefined;
+        state.feintEndsAtMs = undefined;
         if (step.feint && concealTarget && step.travelSpeed !== undefined) {
-          state.feintWaypoints = planFeintWaypoints(world, monster, step, concealTarget);
-          state.feintLegEndsAtMs = now + feintLegMs(step);
+          state.feintPoint = planFeintPoint(world, monster, step, concealTarget) ?? undefined;
+          state.feintEndsAtMs = now + step.durationMs * step.feint.untilPct;
         }
         const destination =
-          state.feintWaypoints?.[0] ??
+          state.feintPoint ??
           relocationPoint(
             world,
             monster,
@@ -1071,7 +1072,16 @@ function tickStep(
         endPattern(world, monster, 'interrupted', now);
         return 'ended';
       }
-      if (now < state.stepEndsAtMs) {
+      // ARRIVED. Once the retreat is spent and the boss is on its target, the
+      // concealment has done its job — waiting out the rest of `durationMs` is dead
+      // air with the boss sitting invisible on top of the player. See
+      // `surfacesOnContact`: the duration is a ceiling, not a fixed cost.
+      const arrived =
+        step.surfacesOnContact === true &&
+        state.feintPoint === undefined &&
+        concealArrivedOnTarget(world, monster, step);
+      if (arrived) applyContactSlow(world, monster, step);
+      if (now < state.stepEndsAtMs && !arrived) {
         if (step.travelSpeed !== undefined && step.relocate === 'near-target') {
           steerConcealedTravel(world, monster, state, step, now);
         }
@@ -1365,53 +1375,107 @@ function feintLegMs(step: Extract<BossPatternStep, { kind: 'conceal' }>): number
   return Math.max(100, Math.round((step.durationMs * feint.untilPct) / 2));
 }
 
-/** Fixed sweep direction: a burrow that detoured at random would be unreadable. */
-const FEINT_SWEEP_SIGN = 1;
-/** Close enough to a waypoint to call it reached and move to the next leg. */
+/** Close enough to the feint point to call it reached and turn for the target. */
 const FEINT_ARRIVE_PX = 56;
 
 /**
- * Plan the detour ONCE, when the boss goes under.
+ * Is the burrowing boss ON its target — close enough that surfacing now puts the
+ * eruption underneath them?
  *
- * Two points spaced across the authored bearing sweep, at the feint radius and then
- * partway back in — so the body runs out, around, and is already turning inward when
- * the tracking approach takes over. Each is pulled inward until it is somewhere the
- * boss can actually stand, and dropped entirely if nowhere on that bearing works;
- * a detour is a flourish, and it must never be able to strand the burrow.
+ * Deliberately BODY CONTACT rather than the combat reach test. `canReach` folds in
+ * the boss's attack range and both hitboxes, which for a 128px body resolves at
+ * 110-155px of centre distance — that would end the burrow with the player sitting
+ * near the LIP of the circle it is about to plant, needing a few pixels of movement
+ * to leave it. The whole point of emerging underneath someone is that they are in
+ * the middle of it.
  */
-function planFeintWaypoints(
+/**
+ * Pin the target as the burrow reaches them. Only ever called on the contact path,
+ * so a burrow that timed out short of the player grants nothing — catching you is
+ * what earns the control.
+ *
+ * Uses the shared `slow` status and the same tenacity scaling as every other monster
+ * debuff, so mobility gear shortens it and Cleanse strips it. `totalMs` is written
+ * for the buff-bar clock, per the status conventions.
+ */
+function applyContactSlow(
+  world: World,
+  monster: MonsterEntity,
+  step: Extract<BossPatternStep, { kind: 'conceal' }>,
+): void {
+  const slow = step.contactSlow;
+  if (!slow) return;
+  const target = patternTarget(world, monster);
+  if (!target || !canApplyPlayerDebuff(target)) return;
+  const durationMs = Math.round(slow.durationMs * harmfulStatusDurationMult(target));
+  applyStatusEffect(target.tracksCombat, {
+    id: 'slow',
+    maxStacks: 1,
+    remainingMs: durationMs,
+    refreshable: true,
+    sourceId: monster.isMonster.id,
+    data: { speedMult: slow.speedMult, totalMs: durationMs },
+  });
+}
+
+function concealArrivedOnTarget(
+  world: World,
+  monster: MonsterEntity,
+  step: Extract<BossPatternStep, { kind: 'conceal' }>,
+): boolean {
+  const target = patternTarget(world, monster);
+  if (!target) return false;
+  const gap = Math.hypot(
+    monster.hasPosition.current.x - target.hasPosition.current.x,
+    monster.hasPosition.current.y - target.hasPosition.current.y,
+  );
+  return gap <= (step.emergeGap ?? 0) + FEINT_ARRIVE_PX;
+}
+
+/**
+ * The single point the burrow backs off to, planned ONCE when the boss goes under:
+ * straight out from the target, back to `retreatToPx` away from it.
+ *
+ * One fixed destination is why this moves well. The steering hands it to the
+ * navigation and then leaves it alone, so the body holds one heading at a constant
+ * rate instead of being re-aimed every tick, and the apex reversal is the only
+ * direction change the client's interpolator has to absorb.
+ *
+ * Pulled inward until it is somewhere the boss can actually stand, and null when
+ * nowhere on that bearing works: a feint is a flourish, and it must never be able
+ * to strand the burrow.
+ */
+function planFeintPoint(
   world: World,
   monster: MonsterEntity,
   step: Extract<BossPatternStep, { kind: 'conceal' }>,
   target: PlayerEntity,
-): Vec2[] {
+): Vec2 | null {
   const feint = step.feint;
-  if (!feint) return [];
+  if (!feint) return null;
   const anchor = target.hasPosition.current;
   const dx = monster.hasPosition.current.x - anchor.x;
   const dy = monster.hasPosition.current.y - anchor.y;
-  const startAngle = Math.atan2(dy, dx);
+  const angle = Math.atan2(dy, dx);
   const startRadius = Math.hypot(dx, dy);
-  const outer = startRadius + feint.awayPx;
-  const arc = ((feint.arcDeg ?? 0) * Math.PI) / 180 * FEINT_SWEEP_SIGN;
-
+  // Already further out than the retreat wants? Then there is nothing to feint away
+  // from — turn and come straight in rather than backing off from the back of the
+  // arena and spending the whole burrow returning.
+  //
+  // Belt and braces: the sweep below already yields nothing in this case, because it
+  // starts at `retreatToPx` and only runs while that exceeds `startRadius`. Stated
+  // explicitly anyway, so that changing the sweep's bounds later cannot quietly
+  // reintroduce a retreat from the far side of the arena.
+  if (startRadius >= feint.retreatToPx) return null;
   const nodeId = monster.hasPosition.nodeId;
-  const points: Vec2[] = [];
-  for (const [turn, radius] of [[0.45, outer], [0.9, outer * 0.7]] as const) {
-    const angle = startAngle + arc * turn;
-    // Walk inward until the point is standable rather than abandoning the bearing.
-    for (let r = radius; r >= startRadius * 0.5; r -= RELOCATE_SAMPLE_STEP) {
-      const candidate = clampToNode(nodeId, {
-        x: anchor.x + Math.cos(angle) * r,
-        y: anchor.y + Math.sin(angle) * r,
-      });
-      if (standable(world, monster, candidate)) {
-        points.push(candidate);
-        break;
-      }
-    }
+  for (let r = feint.retreatToPx; r > startRadius; r -= RELOCATE_SAMPLE_STEP) {
+    const candidate = clampToNode(nodeId, {
+      x: anchor.x + Math.cos(angle) * r,
+      y: anchor.y + Math.sin(angle) * r,
+    });
+    if (standable(world, monster, candidate)) return candidate;
   }
-  return points;
+  return null;
 }
 
 /**
@@ -1437,38 +1501,30 @@ function steerConcealedTravel(
 ): void {
   const target = patternTarget(world, monster);
 
-  // LEG 1-2: the planned detour. A waypoint is retired when the body reaches it or
-  // when its slice of the feint window runs out — the timeout is what stops a
-  // waypoint the navigation cannot actually reach from eating the whole burrow.
-  const waypoint = state.feintWaypoints?.[0];
-  if (waypoint) {
+  // OUTBOUND LEG. Retired on arrival, or when the feint window elapses so a point
+  // the navigation cannot reach can never eat the whole burrow.
+  const away = state.feintPoint;
+  if (away) {
     const reached =
       Math.hypot(
-        monster.hasPosition.current.x - waypoint.x,
-        monster.hasPosition.current.y - waypoint.y,
+        monster.hasPosition.current.x - away.x,
+        monster.hasPosition.current.y - away.y,
       ) <= FEINT_ARRIVE_PX;
-    if (reached || now >= (state.feintLegEndsAtMs ?? 0)) {
-      state.feintWaypoints = state.feintWaypoints!.slice(1);
-      state.feintLegEndsAtMs = now + feintLegMs(step);
-      // Fall through: the next destination is issued below, this tick.
+    if (reached || now >= (state.feintEndsAtMs ?? 0)) {
+      state.feintPoint = undefined;
+      // Fall through and turn for the target on this same tick.
     } else {
-      // Already travelling to a FIXED point — leave the motion alone. Re-issuing it
-      // every tick is what made the spiral stutter.
+      // Already travelling to a FIXED point — leave the motion alone unless the body
+      // has stalled. Re-issuing it every tick is what made the curved versions
+      // stutter.
       if (monster.isMoving !== undefined) return;
-      state.capturedEndpoint = { ...waypoint };
-      setEntityMotion(world, monster, waypoint);
+      state.capturedEndpoint = { ...away };
+      setEntityMotion(world, monster, away);
       return;
     }
   }
 
-  const next = state.feintWaypoints?.[0];
-  if (next) {
-    state.capturedEndpoint = { ...next };
-    setEntityMotion(world, monster, next);
-    return;
-  }
-
-  // FINAL LEG: track the target, so the emergence lands on them and not on where
+  // INBOUND LEG: track the target, so the emergence lands on them and not on where
   // they were when the boss went under.
   const destination = relocationPoint(
     world,

@@ -16,6 +16,7 @@ import {
   STARTER_RUNE_IDS,
   blockShapesForMover,
   emptyEquipment,
+  getStatusEffect,
   navigationBodyHalfExtents,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -851,12 +852,16 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   );
 }
 
-// THE SPIRAL. A concealed body that beelines at you from the moment it disappears
+// THE FEINT. A concealed body that beelines at you from the moment it disappears
 // has exactly one thing it can be doing and nowhere to be but between its start and
-// you. The Dreadbore digs AWAY first and sweeps around while it does it, so the
-// mound is worth tracking and it returns from a bearing you did not watch it leave
-// on. Guarded as SHAPE — out, around, then in past where it started — never as
-// distances or degrees.
+// you. The Dreadbore digs AWAY first, so the mound is worth tracking: for the first
+// stretch it is going the wrong way.
+//
+// Deliberately a STRAIGHT out-and-back. Two curved versions were built and both read
+// as teleporting, because the client snaps its interpolation on any turn that costs
+// more than 80px of prediction error and a 5 Hz packet at burrow speed is right at
+// that budget. Guarded as SHAPE — out, then in past where it started — never as
+// distances.
 {
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('burrow-feint', 2_400, 2_400), 'burrow-feint');
@@ -869,21 +874,22 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
       monster.hasPosition.current.x - player.hasPosition.current.x,
       monster.hasPosition.current.y - player.hasPosition.current.y,
     );
-  const bearingTo = () =>
-    Math.atan2(
-      monster.hasPosition.current.y - player.hasPosition.current.y,
-      monster.hasPosition.current.x - player.hasPosition.current.x,
-    );
 
   let now = armedAt;
   const gaps: number[] = [];
-  const bearings: number[] = [];
+  const steps: number[] = [];
+  let previous = { ...monster.hasPosition.current };
   for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
     world.tick(100, now);
     if (monster.isConcealed) {
       gaps.push(gapTo());
-      bearings.push(bearingTo());
+      const moved = Math.hypot(
+        monster.hasPosition.current.x - previous.x,
+        monster.hasPosition.current.y - previous.y,
+      );
+      if (moved > 0.5) steps.push(moved);
     } else if (gaps.length > 0) break;
+    previous = { ...monster.hasPosition.current };
     now += 100;
   }
   assert(gaps.length > 4, 'setup: the boss should burrow for several ticks');
@@ -908,22 +914,200 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
     `and end CLOSER than it started (${gaps[gaps.length - 1].toFixed(0)}px vs ${opening.toFixed(0)}px)`,
   );
 
-  // 3. AROUND. Without this the feint is satisfied by a straight there-and-back
-  //    along one line, which is exactly the shape the arc replaced. Measured as the
-  //    total sweep of the bearing from the player, unwrapped so a crossing of PI
-  //    does not read as a reversal.
-  let swept = 0;
-  for (let i = 1; i < bearings.length; i++) {
-    let step = bearings[i] - bearings[i - 1];
-    while (step > Math.PI) step -= Math.PI * 2;
-    while (step < -Math.PI) step += Math.PI * 2;
-    swept += step;
-  }
-  const sweptDeg = Math.abs(swept) * 180 / Math.PI;
+  // 3. AT A STEADY RATE. The stutter that killed both curved versions shows up here
+  //    as per-tick travel that varies: the body was being re-aimed every tick and
+  //    kept changing how far it got. A destination it can commit to holds this flat.
+  const spread = Math.max(...steps) - Math.min(...steps);
   assert(
-    sweptDeg > 60,
-    `the burrow should circle its target, not retrace its own line ` +
-      `(swept only ${sweptDeg.toFixed(0)} degrees of bearing)`,
+    spread < steps[0],
+    `the burrow should travel at a steady rate, not stutter ` +
+      `(per-tick travel varied by ${spread.toFixed(1)}px against a ${steps[0].toFixed(1)}px step)`,
+  );
+}
+
+// THE RETREAT SCALES WITH DISTANCE, and the burrow ENDS ON CONTACT.
+//
+// `retreatToPx` is a distance from the target, not a distance to travel: standing in
+// the boss's face buys the biggest retreat, and a player who has already run gets
+// none at all — the burrow spends its whole allowance closing instead. And because
+// the duration is a ceiling rather than a cost, the burrow is exactly as long as the
+// chase takes, with no dead air spent sitting invisible on top of the player.
+{
+  const CEILING = (() => {
+    const step = MONSTER_DATABASE.get('chitinous-dreadbore')!.bossPattern!.steps.find(
+      s => s.kind === 'conceal',
+    );
+    assert(step?.kind === 'conceal' && step.feint !== undefined, 'setup: the Dreadbore feints');
+    assert(step.surfacesOnContact === true, 'and surfaces on contact');
+    return { durationMs: step.durationMs, retreatTo: step.feint.retreatToPx };
+  })();
+
+  /** Burrow from `startGap`, fleeing at a sprint. Returns what the burrow did. */
+  function burrowFrom(startGap: number, label: string) {
+    const world = new World();
+    const player = world.attachPlayerEntity(
+      playerSlices(`burrow-scale-${label}`, 2_400, 2_400),
+      `burrow-scale-${label}`,
+    );
+    const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', `burrow-scale-${label}`, {
+      x: 2_400 - startGap,
+      y: 2_400,
+    });
+    const gapTo = () =>
+      Math.hypot(
+        monster.hasPosition.current.x - player.hasPosition.current.x,
+        monster.hasPosition.current.y - player.hasPosition.current.y,
+      );
+    let now = armedAt;
+    let startedAt: number | null = null;
+    let endedAt: number | null = null;
+    const gaps: number[] = [];
+    for (let i = 0; i < 260 && !monster.recoversFromPattern; i++) {
+      world.tick(100, now);
+      player.hasPosition.current = {
+        x: player.hasPosition.current.x + GAME_CONFIG.PLAYER_SPEED * 0.1,
+        y: player.hasPosition.current.y,
+      };
+      if (monster.isConcealed) {
+        startedAt ??= now;
+        gaps.push(gapTo());
+      } else if (startedAt !== null) {
+        endedAt = now;
+        break;
+      }
+      now += 100;
+    }
+    assert(startedAt !== null && endedAt !== null, `${label}: setup — it should burrow and surface`);
+    return {
+      opened: gaps[0],
+      peak: Math.max(...gaps),
+      surfaced: gapTo(),
+      lastedMs: endedAt! - startedAt!,
+    };
+  }
+
+  // CLOSE: a big retreat, well past where it went under.
+  const near = burrowFrom(72, 'near');
+  assert(
+    near.peak > near.opened + 150,
+    `from melee it should fall a long way back (opened ${near.opened.toFixed(0)}px, ` +
+      `peaked ${near.peak.toFixed(0)}px)`,
+  );
+  assert(
+    near.peak <= CEILING.retreatTo + 80,
+    `but no further than its authored standoff (peaked ${near.peak.toFixed(0)}px ` +
+      `against ${CEILING.retreatTo}px)`,
+  );
+
+  // FAR: nothing to retreat from — it turns and closes immediately.
+  const far = burrowFrom(560, 'far');
+  assert(
+    far.peak < far.opened + 40,
+    `already beyond the standoff, it should not back off at all ` +
+      `(opened ${far.opened.toFixed(0)}px, peaked ${far.peak.toFixed(0)}px)`,
+  );
+  // ...which is what lets it run down someone who had already opened real distance —
+  // no earlier version of this burrow could.
+  assert(
+    far.surfaced < 120,
+    `and it should still arrive on them (surfaced ${far.surfaced.toFixed(0)}px away)`,
+  );
+
+  // CONTACT ENDS IT. Both cases finish inside the ceiling, and the longer chase
+  // takes longer — the duration tracks the chase rather than being spent.
+  for (const [label, run] of [['near', near], ['far', far]] as const) {
+    assert(
+      run.lastedMs < CEILING.durationMs,
+      `${label}: the burrow should end on contact, not run out its ` +
+        `${CEILING.durationMs}ms ceiling (lasted ${run.lastedMs}ms)`,
+    );
+  }
+  assert(
+    near.lastedMs > far.lastedMs,
+    `the retreat should cost time: from melee the burrow ran ${near.lastedMs}ms ` +
+      `against ${far.lastedMs}ms from range`,
+  );
+}
+
+// THE CONTACT SLOW. Arriving pins you, so the circle the boss is about to plant
+// cannot simply be walked out of — and it is granted ONLY by arriving, never by a
+// burrow that ran out of time short of its target.
+for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
+  const def = MONSTER_DATABASE.get(id)!;
+  const steps = def.bossPattern!.steps;
+  const conceal = steps.find(step => step.kind === 'conceal');
+  const impact = steps.find(step => step.kind === 'impact');
+  assert(conceal?.kind === 'conceal' && impact?.kind === 'impact', `${id}: burrow then erupt`);
+  assert(conceal.surfacesOnContact === true, `${id}: the burrow should end on contact`);
+  const slow = conceal.contactSlow;
+  assert(slow !== undefined, `${id}: arriving should pin the target`);
+  assert(slow.speedMult > 0 && slow.speedMult < 1, `${id}: a real slow, not a root or a no-op`);
+  // It has to outlast the tell it exists to cover, or it answers nothing.
+  assert(
+    slow.durationMs > impact.telegraphMs,
+    `${id}: the pin (${slow.durationMs}ms) must outlast the eruption tell ` +
+      `(${impact.telegraphMs}ms) it exists to make unanswerable`,
+  );
+
+  /** Burrow at `startGap` against a sprinting player; report the slow at surface. */
+  function burrow(startGap: number, label: string) {
+    const world = new World();
+    const player = world.attachPlayerEntity(
+      playerSlices(`pin-${id}-${label}`, 2_400, 2_400),
+      `pin-${id}-${label}`,
+    );
+    const { monster, armedAt } = armPattern(world, id, `pin-${id}-${label}`, {
+      x: 2_400 - startGap,
+      y: 2_400,
+    });
+    let now = armedAt;
+    let sawConcealed = false;
+    let pinned: ReturnType<typeof getStatusEffect> | undefined;
+    let arrivedGap = Infinity;
+    for (let i = 0; i < 260 && !monster.recoversFromPattern; i++) {
+      world.tick(100, now);
+      player.hasPosition.current = {
+        x: player.hasPosition.current.x + GAME_CONFIG.PLAYER_SPEED * 0.1,
+        y: player.hasPosition.current.y,
+      };
+      if (monster.isConcealed) sawConcealed = true;
+      else if (sawConcealed) {
+        pinned ??= getStatusEffect(player.tracksCombat, 'slow');
+        arrivedGap = Math.min(
+          arrivedGap,
+          Math.hypot(
+            monster.hasPosition.current.x - player.hasPosition.current.x,
+            monster.hasPosition.current.y - player.hasPosition.current.y,
+          ),
+        );
+      }
+      now += 100;
+    }
+    assert(sawConcealed, `${id}/${label}: setup — it should burrow`);
+    return { pinned, arrivedGap };
+  }
+
+  // CAUGHT: the pin lands, and it lands hard enough to matter.
+  const caught = burrow(def.stats.attackRange, 'caught');
+  assert(caught.pinned !== undefined, `${id}: reaching the player should pin them`);
+  assert(
+    caught.pinned!.data['speedMult'] === slow.speedMult,
+    `${id}: at the authored strength`,
+  );
+  // The claim, as arithmetic: pinned, the circle cannot be cleared inside its tell.
+  const toClear = Math.max(0, impact.radius - caught.arrivedGap);
+  const pinnedEscapeMs = (toClear / (GAME_CONFIG.PLAYER_SPEED * slow.speedMult)) * 1_000;
+  assert(
+    pinnedEscapeMs > impact.telegraphMs,
+    `${id}: pinned, leaving the eruption should be impossible ` +
+      `(${pinnedEscapeMs.toFixed(0)}ms of walking against a ${impact.telegraphMs}ms tell)`,
+  );
+
+  // MISSED: too far to reach, the burrow times out — and grants nothing.
+  const missed = burrow(1_600, 'missed');
+  assert(
+    missed.pinned === undefined,
+    `${id}: a burrow that never reached its target must not pin it anyway`,
   );
 }
 

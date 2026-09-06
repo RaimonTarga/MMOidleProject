@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import {
-  BIOME_DATABASE,
   NODE_BIOMES,
   validateCharacterName,
   type CharacterSummary,
@@ -38,10 +37,8 @@ function lastPlayedLabel(timestamp: number): string {
   return relativeTime.format(Math.round(seconds / 2_592_000), 'month');
 }
 
-function biomeLabel(nodeId: string): string {
-  const node = NODE_BIOMES[nodeId];
-  if (!node) return 'Unknown reaches';
-  return BIOME_DATABASE.get(node.biomeGroup)?.name ?? node.displayName;
+function nodeLabel(nodeId: string): string {
+  return NODE_BIOMES[nodeId]?.displayName ?? 'Unknown reaches';
 }
 
 function CharacterCard({
@@ -75,9 +72,13 @@ function CharacterCard({
             <span>Global Mastery</span>
             <strong>{character.globalMastery}</strong>
           </div>
+          <div className="auth-character-card__stat auth-character-card__stat--tier">
+            <span>Tier</span>
+            <strong>T{character.playerTier}</strong>
+          </div>
           <div className="auth-character-card__stat auth-character-card__stat--location">
             <span>Last known location</span>
-            <strong>{biomeLabel(character.nodeId)}</strong>
+            <strong>{nodeLabel(character.nodeId)}</strong>
           </div>
         </div>
         {confirmingDelete ? (
@@ -182,13 +183,13 @@ export function AuthGate() {
         <div className="auth-gate auth-gate--landing">
         <main className="auth-login-panel">
           <div className="auth-login-panel__crest" aria-hidden="true">◇</div>
-          <div className="auth-gate__eyebrow">A persistent world awaits</div>
+          <div className="auth-gate__eyebrow">AN ONLINE IDLE RPG BUILT AROUND CHOICES</div>
           <h1>MMO Idle</h1>
           <div className="auth-gate__conduit" />
-          <p>Build a hero, master a class, and leave your mark on a world that keeps moving.</p>
+          <p>Build your character, make the choices, and automate the combat. Progress through a shared online world solo or alongside other players.</p>
           <div className="auth-login-panel__traits" aria-hidden="true">
-            <span>Persistent world</span>
-            <span>Always moving</span>
+            <span>DEEP PROGRESSION</span>
+            <span>SOLO OR CO-OP</span>
           </div>
           {message && <div className="auth-message auth-message--error">{message}</div>}
           {guestNamePromptOpen ? (
@@ -201,7 +202,7 @@ export function AuthGate() {
               }}
             >
               <label htmlFor="guest-character-name">Name your first character</label>
-              <p>Leave it blank and fate will choose an adjective and spirit name for you.</p>
+              <p>Leave it blank to generate an adjective-and-spirit name.</p>
               <input
                 id="guest-character-name"
                 value={guestName}
@@ -246,7 +247,7 @@ export function AuthGate() {
             <img className="auth-button__discord-logo" src="/discord-symbol.svg" alt="" width="24" height="18" />
             <span>Sign in with Discord</span>
           </button>
-          <div className="auth-login-panel__footnote">Your world continues between sessions.</div>
+          <div className="auth-login-panel__footnote">Build the strategy. Let your character execute it.</div>
         </main>
         {liveLabel && (
           <aside className="auth-live-label" aria-live="polite">{liveLabel}</aside>

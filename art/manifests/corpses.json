@@ -1,0 +1,99 @@
+{
+  "category": "corpses",
+  "endpoint": "pixflux",
+  "styleRef": "style/terrain.png",
+  "noBackground": true,
+  "candidates": 5,
+  "entries": [
+    {
+      "id": "small-beast-remains",
+      "out": "files/corpses/small-beast-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact pile of small mammal skeletal remains, a tiny non-human animal skull with a short muzzle, a short curved rib and spine section, and only a few separated small paw and leg bones, collapsed sideways into a low floor-object heap, clear readable silhouette with small gaps between parts, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, pale ivory and dusty grey bone, charcoal recesses, muted ash-brown and bruised grey-violet shading, slightly charred and old, low gore",
+      "negative": "intact animal, living creature, full body, dead animal pose, posed corpse, standing skeleton, humanoid, human skull, human skeleton, character, face, flesh, skin, fur, blood, gore, meat, tissue, splatter, puddle, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, giant ribcage, boss, huge, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Batch corpse-remains-prototype-2026-09-06. Small mammal read: tiny skull, short rib/spine section, a few scattered bones; keep the footprint compact and non-humanoid.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "beast-remains",
+      "out": "files/corpses/beast-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact collapsed pile of medium quadruped skeletal remains, a clear medium animal skull, a short visible spine joined to a modest ribcage, and a few separated long leg bones, lying sideways as a low floor-object heap, broader than small mammal remains but still within the same compact footprint and framing, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, pale ivory and dusty grey bone, charcoal recesses, muted ash-brown and bruised grey-violet shading, slightly charred and old, low gore",
+      "negative": "intact animal, living creature, full body, dead animal pose, posed corpse, standing skeleton, humanoid, human skull, human skeleton, character, face, flesh, skin, fur, blood, gore, meat, tissue, splatter, puddle, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, giant beast skeleton, boss, huge, tiny rodent pile, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Batch corpse-remains-prototype-2026-09-06. Medium quadruped read: skull plus modest ribcage and separated limb bones; do not drift into the large-beast scale.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "large-beast-remains",
+      "out": "files/corpses/large-beast-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact collapsed pile of large quadruped skeletal remains, a heavy broad animal skull, a broad low ribcage, several chunky limb bones, and a restrained broken horn or tusk suggestion, lying sideways as a low floor-object heap, visibly heavier than medium beast remains but not a scene or boss object, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, pale ivory and dusty grey bone, charcoal recesses, muted ash-brown and bruised grey-violet shading, slightly charred and old, low gore",
+      "negative": "intact animal, living creature, full body, dead animal pose, posed corpse, standing skeleton, humanoid, human skull, human skeleton, character, face, flesh, skin, fur, blood, gore, meat, tissue, splatter, puddle, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, tiny delicate bones, small-beast remains, medium-beast remains, giant ribcage, boss, boss arena, huge scene, dramatic horns, giant tusks, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Batch corpse-remains-prototype-2026-09-06. Large quadruped read: heavy skull, broad ribcage, chunky bones; horn/tusk hints may vary but must not make a boss-sized scene.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "avian-remains",
+      "out": "files/corpses/avian-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact collapsed pile of bird skeletal remains, a small bird skull with a clear beak-like head, a narrow ribcage and body spine, and broken folded wing bones tucked into the low silhouette, wings collapsed against the floor rather than spread, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, pale ivory and dusty grey bone, charcoal recesses, muted ash-brown and bruised grey-violet shading, slightly charred and old, low gore",
+      "negative": "intact bird, living bird, feathered bird, full body, dead bird pose, posed corpse, standing skeleton, airborne, flying, spread wings, theatrical wings, perched, humanoid, human skull, human skeleton, character, face, flesh, skin, feathers, blood, gore, meat, tissue, splatter, puddle, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, mammal skull, giant ribcage, boss, huge, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Batch corpse-remains-prototype-2026-09-06. Avian read: beaked skull, narrow body, and folded broken wing bones; avoid live-bird or spread-wing poses.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "arthropod-remains",
+      "out": "files/corpses/arthropod-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact broken pile of dead arthropod remains, cracked carapace plates and shell fragments, snapped jointed legs and a few short segmented pieces, low messy collapsed silhouette that reads as a dead crawler rather than a live insect, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, pale ivory shell fragments, dusty grey and charcoal chitin, muted ash-brown and bruised grey-violet shading, slightly charred and old, low gore",
+      "negative": "intact insect, live spider, live scorpion, live beetle, live crawler, full creature, posed corpse, standing skeleton, humanoid, human skull, human skeleton, character, face, flesh, skin, fur, feathers, mammal skull, mammal ribcage, spine, vertebrate skeleton, blood, gore, meat, tissue, goo, slime, splatter, puddle, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, giant bug, boss, huge, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Batch corpse-remains-prototype-2026-09-06. Arthropod read: broken carapace, snapped segmented legs, and shell fragments; keep it distinct from mammal bones and live crawler poses.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    }
+  ]
+}

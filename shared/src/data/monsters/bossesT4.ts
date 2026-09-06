@@ -173,7 +173,12 @@ export const bossMonsterEntriesT4 = [
       steps: [
         { kind: 'apply-status', name: 'Death Sting', castMs: 1200, fx: 'strong-kick',
           effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 7000 },
-        { kind: 'wait', durationMs: 1600 },
+        { kind: 'wait', durationMs: 900 },
+        // NUMBING STING (2026-09-06) — see the T2 Emperor. The capstone's version is
+        // the hardest pin in the lineage, against its widest circle.
+        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'power-shot',
+          effectId: 'slow', stacks: 1, durationMs: 5000, data: { speedMult: 0.28 } },
+        { kind: 'wait', durationMs: 650 },
         { kind: 'payoff', name: 'Execution', castMs: 1500, fx: 'strong-kick',
           damageMult: 1.0, amplifiedMult: 2.0,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 180 },
@@ -241,18 +246,22 @@ export const bossMonsterEntriesT4 = [
       damageMultiplier: 2.3, cooldownMs: 12000, initialCooldownMs: 7000,
       armAboveHpPct: 0.5,
       steps: [
-        { kind: 'escape-guard', name: 'Flee', castMs: 2400, fx: 'shield',
+        // THE CORRECTED LOOP (2026-09-06) — see the T2 gorger. The capstone runs the
+        // lineage's fastest version of it: the shortest window to break the plate,
+        // the quickest flee, and the quickest return.
+        { kind: 'escape-guard', name: 'Flee', castMs: 2600, fx: 'shield',
           sourceId: 'jungle-escape', shieldPct: 0.06,
           onBreak: { staggerMs: 2400, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15 },
-        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1300,
-          relocate: 'leash-edge' },
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15,
+          flee: { speed: 280 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1500,
+          relocate: 'near-target', emergeGap: 40, travelSpeed: 720 },
         { kind: 'payoff', name: 'Ambush', castMs: 750, fx: 'savage-maul',
           damageMult: 1.0 },
         { kind: 'apply-status', name: 'Venom Burst', castMs: 500, fx: 'savage-maul',
           effectId: 'verdant-crown-venom', stacks: 4, durationMs: 8000,
           data: { damagePerStack: 16, tickIntervalMs: 1000, isDot: 1 } },
-        { kind: 'recovery', label: 'Winded', durationMs: 1600 },
+        // NO RECOVERY AFTER A LANDED AMBUSH — the window belongs to the break. T2.
       ],
     },
     bossScript: {

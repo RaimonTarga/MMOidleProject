@@ -27224,6 +27224,721 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-09-06T11:39:44.961Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-siege-war-knight",
+      "requestHash": "ee34cfa3c439d7507695f4c3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:40:09.220Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-siege-war-knight",
+      "requestHash": "ee34cfa3c439d7507695f4c3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:40:39.578Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-siege-war-knight",
+      "requestHash": "ee34cfa3c439d7507695f4c3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:41:07.607Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-siege-war-knight",
+      "requestHash": "ee34cfa3c439d7507695f4c3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:41:33.376Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-siege-war-knight",
+      "requestHash": "ee34cfa3c439d7507695f4c3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:41:57.809Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-arsenal-war-knight",
+      "requestHash": "52387ca7142ff8e3ae4eb521",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:42:18.345Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-arsenal-war-knight",
+      "requestHash": "52387ca7142ff8e3ae4eb521",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:43:21.817Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-arsenal-war-knight",
+      "requestHash": "52387ca7142ff8e3ae4eb521",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:44:00.145Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-arsenal-war-knight",
+      "requestHash": "52387ca7142ff8e3ae4eb521",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:44:18.942Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-arsenal-war-knight",
+      "requestHash": "52387ca7142ff8e3ae4eb521",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:45:22.215Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-assault-war-knight",
+      "requestHash": "05b15da98c7c964418283296",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:46:10.196Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-assault-war-knight",
+      "requestHash": "05b15da98c7c964418283296",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:46:28.714Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-assault-war-knight",
+      "requestHash": "05b15da98c7c964418283296",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:46:58.593Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-assault-war-knight",
+      "requestHash": "05b15da98c7c964418283296",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:47:17.996Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-assault-war-knight",
+      "requestHash": "05b15da98c7c964418283296",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:47:44.402Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-mending-servitor",
+      "requestHash": "c2fee3900fb087620222382c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:48:02.620Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-mending-servitor",
+      "requestHash": "c2fee3900fb087620222382c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:48:21.352Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-mending-servitor",
+      "requestHash": "c2fee3900fb087620222382c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:48:59.916Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-mending-servitor",
+      "requestHash": "c2fee3900fb087620222382c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:49:17.052Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-mending-servitor",
+      "requestHash": "c2fee3900fb087620222382c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:49:34.629Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-amplifying-servitor",
+      "requestHash": "6455d552ab7ffa49ef8f41db",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:49:52.261Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-amplifying-servitor",
+      "requestHash": "6455d552ab7ffa49ef8f41db",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:50:12.693Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-amplifying-servitor",
+      "requestHash": "6455d552ab7ffa49ef8f41db",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:50:30.271Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-amplifying-servitor",
+      "requestHash": "6455d552ab7ffa49ef8f41db",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:50:49.643Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-amplifying-servitor",
+      "requestHash": "6455d552ab7ffa49ef8f41db",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:51:11.024Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-binding-servitor",
+      "requestHash": "f9017e9632f13007b9ff71c4",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:51:45.407Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-binding-servitor",
+      "requestHash": "f9017e9632f13007b9ff71c4",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:52:04.170Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-binding-servitor",
+      "requestHash": "f9017e9632f13007b9ff71c4",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:52:27.318Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-binding-servitor",
+      "requestHash": "f9017e9632f13007b9ff71c4",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:52:40.637Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-binding-servitor",
+      "requestHash": "f9017e9632f13007b9ff71c4",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:53:18.801Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-warding-servitor",
+      "requestHash": "b841bffd9468948df4894efa",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:53:34.772Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-warding-servitor",
+      "requestHash": "b841bffd9468948df4894efa",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:54:00.277Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-warding-servitor",
+      "requestHash": "b841bffd9468948df4894efa",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:54:25.007Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-warding-servitor",
+      "requestHash": "b841bffd9468948df4894efa",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T11:54:43.640Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "iron-marches-warding-servitor",
+      "requestHash": "b841bffd9468948df4894efa",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T17:13:07.243Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-burrowed-mound",
+      "requestHash": "f7be74e5b0eeb85475f83795",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T17:13:37.535Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-burrowed-mound",
+      "requestHash": "f7be74e5b0eeb85475f83795",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T17:13:59.270Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-burrowed-mound",
+      "requestHash": "f7be74e5b0eeb85475f83795",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T17:14:29.968Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-burrowed-mound",
+      "requestHash": "f7be74e5b0eeb85475f83795",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T17:14:58.384Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-burrowed-mound",
+      "requestHash": "f7be74e5b0eeb85475f83795",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:45:31.078Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "small-beast-remains",
+      "requestHash": "ff3bf6a4b3d8fadf52b5ec71",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:45:51.890Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "small-beast-remains",
+      "requestHash": "ff3bf6a4b3d8fadf52b5ec71",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:46:06.189Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "small-beast-remains",
+      "requestHash": "ff3bf6a4b3d8fadf52b5ec71",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:46:18.985Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "small-beast-remains",
+      "requestHash": "ff3bf6a4b3d8fadf52b5ec71",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:46:45.419Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "small-beast-remains",
+      "requestHash": "ff3bf6a4b3d8fadf52b5ec71",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:47:17.335Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "beast-remains",
+      "requestHash": "032b3c6c0377307e7222e3a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:47:35.624Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "beast-remains",
+      "requestHash": "032b3c6c0377307e7222e3a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:47:55.427Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "beast-remains",
+      "requestHash": "032b3c6c0377307e7222e3a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:48:18.478Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "beast-remains",
+      "requestHash": "032b3c6c0377307e7222e3a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:48:37.656Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "beast-remains",
+      "requestHash": "032b3c6c0377307e7222e3a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:48:51.505Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "large-beast-remains",
+      "requestHash": "84fb0493fe20bb91d8c8de37",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:49:16.844Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "large-beast-remains",
+      "requestHash": "84fb0493fe20bb91d8c8de37",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:49:34.401Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "large-beast-remains",
+      "requestHash": "84fb0493fe20bb91d8c8de37",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:50:06.090Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "large-beast-remains",
+      "requestHash": "84fb0493fe20bb91d8c8de37",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:50:25.494Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "large-beast-remains",
+      "requestHash": "84fb0493fe20bb91d8c8de37",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:50:48.586Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "avian-remains",
+      "requestHash": "b582a3256cb3fc122346adbe",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:51:10.041Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "avian-remains",
+      "requestHash": "b582a3256cb3fc122346adbe",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:51:24.690Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "avian-remains",
+      "requestHash": "b582a3256cb3fc122346adbe",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:51:43.813Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "avian-remains",
+      "requestHash": "b582a3256cb3fc122346adbe",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:52:07.890Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "avian-remains",
+      "requestHash": "b582a3256cb3fc122346adbe",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:53:10.234Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "arthropod-remains",
+      "requestHash": "737ad854a8430cc61d8dffdb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:53:28.825Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "arthropod-remains",
+      "requestHash": "737ad854a8430cc61d8dffdb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:53:57.533Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "arthropod-remains",
+      "requestHash": "737ad854a8430cc61d8dffdb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:54:18.649Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "arthropod-remains",
+      "requestHash": "737ad854a8430cc61d8dffdb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T18:54:32.549Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "arthropod-remains",
+      "requestHash": "737ad854a8430cc61d8dffdb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
     }
   ]
 }

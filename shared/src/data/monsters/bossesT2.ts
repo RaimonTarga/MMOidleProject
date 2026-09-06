@@ -267,38 +267,45 @@ export const bossMonsterEntriesT2 = [
       damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4000,
       steps: [
         { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'shield', guardable: false },
-        // IT GOES ROUND YOU (2026-09-06). The burrow has been through four shapes: a
-        // 1600ms straight walk (a long boring approach), a 500ms sprint at 1300px/s
-        // (nothing to read), a true spiral (read well, MOVED badly), and now three
-        // straight legs — out, around, and in. It goes under, runs to a point off to
-        // one side at +260px, cuts across to a second nearer point ~150 degrees
-        // round, then turns and tracks you home. Half the speed of the sprint
-        // version, and the mound is worth watching because for the first two legs it
-        // is not coming at you.
+        // OUT, THEN BACK, ON ONE LINE (2026-09-06, settled). This burrow went
+        // through four shapes before landing here: a 1600ms straight walk (a long
+        // boring approach), a 500ms sprint at 1300px/s (nothing to read), a true
+        // spiral, and a two-waypoint triangle. Both curved versions read as the boss
+        // TELEPORTING, and the reason is not the path — it is the wire.
         //
-        // ⚠ WHY WAYPOINTS AND NOT A CURVE. The spiral aimed at a point that slid
-        // continuously and faster than the body chasing it, so the steering re-pathed
-        // on ~23 of the burrow's 24 ticks and the per-tick travel varied by ~18px —
-        // visible stutter. Fixed points cut that to 3 re-paths and 0px of variation:
-        // the boss holds a constant heading down each leg and turns at the corners.
-        // The path is a triangle rather than an arc, which at this size looks the
-        // same and moves properly.
+        // ⚠ WHY IT CANNOT CURVE. Node deltas broadcast at 5 Hz, and the client snaps
+        // its interpolation whenever the drawn body falls more than 80px behind the
+        // position it just received. Down a straight line the renderer keeps pace at
+        // any speed, because it chases at the speed the body is actually moving. At
+        // a CORNER it is still heading the old way, so the error is about one packet
+        // of travel — speed * 0.2 — and anything past ~400px/s snaps. A curve is
+        // therefore only available below 400px/s, which is too slow for the detour
+        // to fit in a burrow of sane length. One reversal is the shape that survives.
         //
-        // ⚠ The detour is paid out of the same travel budget as the approach, so
-        // reach is not something to reason about on paper here — it is SIMULATED in
-        // `bossConcealmentPhase4`. From its own reach against a sprinting player it
-        // surfaces inside the eruption; against someone who has already opened
-        // ~500px it does not, which is a deliberate trade for the shape.
+        // 380px/s keeps even the apex reversal under the snap threshold (76px of
+        // divergence against the 80px budget), and it is well under a third of the
+        // 1300 this started at.
         //
-        // emergeGap 0: it comes up UNDERNEATH the target rather than beside it.
-        // The old 90 against a 140 radius left a 50px overlap, so a stationary
-        // player was caught but a drifting one fell out of the circle for free.
-        // ⚠ Centred + a 165 radius means running is NO LONGER the answer on its own:
-        // clearing 165px at 120px/s takes ~1.4s against a 750ms telegraph. Step
-        // Back, Guard and armour are the answers; tanking it stays legal.
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 2400,
-          relocate: 'near-target', emergeGap: 0, travelSpeed: 420,
-          feint: { awayPx: 260, untilPct: 0.3, arcDeg: 150 } },
+        // RETREAT IS A DISTANCE FROM YOU, NOT A DISTANCE TRAVELLED. It falls back
+        // until it is 460px away and no further, so standing in its face buys the
+        // biggest retreat and there is nothing to gain by giving chase. An authored
+        // travel distance did this backwards: from melee it barely left, and from
+        // range it retreated so far it could not get back.
+        //
+        // `surfacesOnContact` makes the 3000ms a CEILING rather than a cost — the
+        // burrow ends the moment it reaches you, so a chase that resolves in two
+        // seconds is two seconds long instead of two seconds and a pause. That is
+        // also what lets the ceiling be generous enough to run down a kiting player
+        // without punishing everyone else with dead air.
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 380,
+          feint: { retreatToPx: 460, untilPct: 0.35 }, surfacesOnContact: true,
+          // Pins you as it arrives. At T2 the eruption is ALREADY inescapable on
+          // foot from where the burrow surfaces (~110px to clear against a 750ms
+          // tell), so this is not what makes the circle land — it is what makes the
+          // dash-out answers and the recovery afterwards cost something. T3 is where
+          // the same rider actually decides the hit.
+          contactSlow: { speedMult: 0.5, durationMs: 2000 } },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
           damageMult: 1.0, telegraphMs: 750, fx: 'strong-kick' },
         { kind: 'recovery', label: 'Surfaced', durationMs: 2200 },

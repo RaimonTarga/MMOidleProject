@@ -88,6 +88,9 @@ export const BUFF_IDS = [
   'ability-second-wind',
   'ability-second-wind-2',
   'ability-frenzy',
+  // Imbue Lightning's charge window. Not timed — the badge IS the state, so it
+  // is one of the few buffs that must show its count even at one.
+  'ability-imbue',
   'ability-control-resist',
   // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
   'mob-sprint',   // Forest — out-of-combat sprint
@@ -155,8 +158,17 @@ export interface PlayerBuff {
   id: BuffId;
   /** Short label shown beneath the icon (3–6 chars). */
   label: string;
-  /** Stack count; 1 = single instance (no badge shown). */
+  /** Stack count; 1 = single instance (no badge shown, unless {@link showSingleStack}). */
   stacks: number;
+  /**
+   * Force the count badge to render even at a single stack.
+   *
+   * For a STACKING buff, "1" is the default state and a badge would be noise.
+   * For a COUNTDOWN — a pool of charges being spent — one left is the most
+   * important state it ever has, and hiding it tells the player the resource is
+   * gone a hit before it is. Set by effects whose number counts DOWN.
+   */
+  showSingleStack?: boolean;
   /** 0–100 remaining duration percentage; -1 = no timer. */
   durationPct: number;
   /**

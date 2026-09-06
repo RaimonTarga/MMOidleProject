@@ -1,4 +1,5 @@
 import { buildRegionNodes } from './authoring';
+import { resolveSanctuaryNodeDisplayName } from './displayNames';
 
 export const REGION_T3_NODES = buildRegionNodes({
   regionId: 't3',
@@ -27,7 +28,7 @@ export const REGION_T3_NODES = buildRegionNodes({
   specials: [
     {
       id: 'node-t3-sanctuary',
-      displayName: 'T3 Sanctuary',
+      displayName: resolveSanctuaryNodeDisplayName(3),
       map: { row: 11, col: 10 },
       kind: 'sanctuary',
       biomeGroup: 'sanctuary',

@@ -219,7 +219,8 @@ for (const id of ['dune-stalker-emperor', 'dune-carapace-monarch', 'dune-throne-
 // `evasion` — a flat miss chance that made every build's damage read as unreliable
 // rather than making the boss hard to catch. Being hard to catch is now something the
 // boss DOES, in a sequence the player can answer by breaking its Escape Guard.
-for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-predator']) {
+const JUNGLE_IDS = ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-predator'] as const;
+for (const id of JUNGLE_IDS) {
   const jungle = def(id);
   const steps = jungle.bossPattern?.steps ?? [];
   const guard = steps.find(step => step.kind === 'escape-guard');
@@ -244,27 +245,31 @@ for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-
     `${id} should not keep passive evasion alongside the escape cycle`,
   );
 }
-// T2 runs the CORRECTED loop (2026-09-06): it bolts in the open behind a breakable
-// plate, hides only once away, then stalks back and bites on contact.
+// EVERY TIER runs the corrected loop (2026-09-06): it bolts in the open behind a
+// breakable plate, hides only once away, then stalks back and bites on contact.
 //
-// ⚠ T3 (`apex-bramble-slasher`) and T4 (`verdant-crown-predator`) have NOT had this
-// pass yet: their conceal is still a `leash-edge` relocation with no `travelSpeed`,
-// so the boss teleports to the arena edge and its Ambush — a payoff with no radius,
-// and therefore no range check — resolves on the player from there. Same fix as
-// below when they are reviewed.
-{
-  const steps = def('jungle-dread-gorger').bossPattern!.steps;
+// Checked across the whole lineage on purpose. The rework landed on T2 first and T3
+// and T4 sat broken for a while afterwards — stationary "escapes", a `leash-edge`
+// teleport, and an Ambush (a payoff with no radius, and so no range check at all)
+// resolving from across the arena. A per-tier loop is what stops that recurring.
+for (const id of JUNGLE_IDS) {
+  const steps = def(id).bossPattern!.steps;
   const guard = steps.find(step => step.kind === 'escape-guard');
   const hide = steps.find(step => step.kind === 'conceal');
   assert(guard?.kind === 'escape-guard' && guard.flee !== undefined,
-    'the T2 gorger should bolt in the open while its guard can still be broken');
+    `${id} should bolt in the open while its guard can still be broken`);
   assert(hide?.kind === 'conceal' && hide.relocate === 'near-target',
-    'and hide only to come BACK for you, not to leave');
+    `${id} should hide only to come BACK for you, not to leave`);
   assert(hide.kind === 'conceal' && hide.travelSpeed !== undefined,
-    'closing the distance must be travel the player can watch, never a teleport');
+    `${id}: closing the distance must be travel the player can watch, never a teleport`);
   const hideIdx = steps.findIndex(step => step.kind === 'conceal');
   const biteIdx = steps.findIndex(step => step.kind === 'payoff');
-  assert(hideIdx >= 0 && biteIdx > hideIdx, 'and the bite is what happens when it arrives');
+  assert(hideIdx >= 0 && biteIdx > hideIdx, `${id}: the bite is what happens when it arrives`);
+  // A LANDED ambush grants no punish window — that belongs to breaking the plate.
+  assert(
+    !steps.some(step => step.kind === 'recovery'),
+    `${id}: a predator that just landed its ambush must not stun itself`,
+  );
 }
 
 // The capstone STOPS escaping when wounded — the low-health state is the ABSENCE of

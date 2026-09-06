@@ -59,6 +59,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'ability-second-wind': b('Recovery skill', 'A Recovery window is open — a share of your Recovery rate is switched on, healing you over the duration. What that converts to in HP depends on your Recovery stat.'),
   'ability-second-wind-2': b('Recovery skill', 'Your second Recovery window is open. Second Wind (strong and short) and Recuperate (weak and long) can be held together and run independently.'),
   'ability-frenzy': b('Frenzy', 'Your attack speed is raised for the window.'),
+  'ability-imbue': b('Imbued', 'Lightning is stored in your hands. Each attack that lands spends one charge and carries bonus damage with it. There is no timer — the charges wait as long as you need them to, and the number on the tile is how many attacks are left.'),
   'ability-control-resist': b('Unbound', 'You broke free, and incoming control is shortened for a moment afterward so you are not immediately re-caught.'),
 
   // -- Defense ---------------------------------------------------------------

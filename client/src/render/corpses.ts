@@ -1,44 +1,38 @@
 import type { CorpseView } from "@mmo-idle/shared";
 import type { GameScene } from "../scenes/GameScene";
-import { ATLAS_KEY, getMonsterFrame } from "../sprites";
-import { tryMakeImage } from "./sprites";
+import { resolveCorpseRemains } from "./corpseRemains";
 import { nodeToScene, sceneDepthY } from "./sceneCoords";
 import { DEPTH } from "./depth";
 
 /**
- * CORPSES — the dead, drawn from the sprite of whatever died there.
+ * CORPSES — the dead, drawn from a small set of reusable remains sprites.
  *
- * PROCEDURAL BY DESIGN, not by budget. A corpse has to be identifiable as the
- * specific monster it came from, because the Wasteland boss raises those bodies
- * back as those monsters — "which of these is about to get up" is a real question
- * the player has to answer. Bespoke corpse art would mean one asset per monster
- * type (~90 of them, plus a permanent tax on every monster added later), and a
- * single generic corpse sprite would throw that identity away entirely.
+ * Each supported monster type maps (via corpseRemains.ts) to a corpse FAMILY
+ * and SIZE class; the family owns the art, the monster only points at one.
+ * This first pass covers the five active Wasteland/Graveyard monsters —
+ * everything else is unmapped and draws the plain fallback lozenge below.
  *
- * Reusing the monster's own frame, laid flat and drained of colour, keeps the
- * identity for free and stays correct for monsters that do not exist yet.
- *
- * The RESERVED state is the other half. While a raiser is casting, the bodies it
- * has claimed are marked and tethered to it, so the answer is on the floor before
- * the cast lands rather than after. Both cues are drawn here rather than baked into
- * an asset so they can pulse with the cast.
+ * The RESERVED state is drawn here as a pulsing ring + tether to the raiser,
+ * never baked into the remains art, so it can pulse with the cast and the
+ * remains sprite never needs recoloring.
  */
 
-const CORPSE_TINT = 0x5a5a66;
-const RESERVED_TINT = 0x9a7fbf;
 const RESERVED_RING = 0xc9a6ff;
 const TETHER = 0xb489ff;
 
-/** Corpses lie flat and read as debris, so they are drawn small and squashed. */
-const CORPSE_W = 46;
-const CORPSE_H = 30;
+/** Fallback lozenge for monsters without a configured remains presentation. */
+const FALLBACK_TINT = 0x5a5a66;
+const RESERVED_FALLBACK_TINT = 0x9a7fbf;
+const FALLBACK_W = 46;
+const FALLBACK_H = 30;
 
 /** Below this remaining lifetime the corpse fades out rather than popping. */
 const FADE_MS = 2_500;
 
 export interface CorpseSprite {
+  /** Remains sprite for a monster type with a configured presentation. */
   image?: Phaser.GameObjects.Image;
-  /** Fallback lozenge when the monster has no sprite in the atlas. */
+  /** Fallback lozenge when the monster has no configured presentation. */
   shape?: Phaser.GameObjects.Ellipse;
   /** Reservation glow and tether. Cleared and redrawn each frame while claimed. */
   marker: Phaser.GameObjects.Graphics;
@@ -47,6 +41,24 @@ export interface CorpseSprite {
   remainingMs: number;
   syncedAtMs: number;
   reservedBy?: string;
+}
+
+function createCorpseVisual(
+  scene: GameScene,
+  scenePos: { x: number; y: number },
+  corpse: CorpseView,
+): Pick<CorpseSprite, "image" | "shape"> {
+  const remains = resolveCorpseRemains(corpse.monsterTypeId, corpse.id);
+  if (remains && scene.textures.exists(remains.key)) {
+    const image = scene.add
+      .image(scenePos.x, scenePos.y, remains.key)
+      .setDisplaySize(remains.sizePx, remains.sizePx);
+    return { image };
+  }
+
+  return {
+    shape: scene.add.ellipse(scenePos.x, scenePos.y, FALLBACK_W, FALLBACK_H, FALLBACK_TINT, 0.7),
+  };
 }
 
 export function syncCorpses(scene: GameScene, corpses: CorpseView[] | undefined): void {
@@ -66,18 +78,8 @@ export function syncCorpses(scene: GameScene, corpses: CorpseView[] | undefined)
     let sprite = scene.corpses.get(corpse.id);
     if (!sprite) {
       const scenePos = nodeToScene(corpse.x, corpse.y);
-      const frame = getMonsterFrame(corpse.monsterTypeId);
-      const image = tryMakeImage(scene, scenePos, frame, CORPSE_W, CORPSE_H, ATLAS_KEY);
-      if (image) {
-        // Laid flat and drained: the silhouette still names the monster, but nothing
-        // about it reads as alive.
-        image.setTint(CORPSE_TINT).setAngle(90).setAlpha(0.85);
-      }
       sprite = {
-        image: image ?? undefined,
-        shape: image
-          ? undefined
-          : scene.add.ellipse(scenePos.x, scenePos.y, CORPSE_W, CORPSE_H, CORPSE_TINT, 0.7),
+        ...createCorpseVisual(scene, scenePos, corpse),
         marker: scene.add.graphics(),
         x: scenePos.x,
         y: scenePos.y,
@@ -118,8 +120,13 @@ export function drawCorpses(scene: GameScene): void {
 
     const reserved = sprite.reservedBy !== undefined;
     const alpha = (reserved ? 1 : 0.85) * fade;
-    sprite.image?.setAlpha(alpha).setTint(reserved ? RESERVED_TINT : CORPSE_TINT);
-    sprite.shape?.setAlpha(alpha * 0.8).setFillStyle(reserved ? RESERVED_TINT : CORPSE_TINT);
+    // The remains sprite keeps its authored colors even while reserved — the
+    // ring + tether below are the reservation tell. The fallback lozenge has
+    // no real art to protect, so it keeps the old tint swap.
+    sprite.image?.setAlpha(alpha);
+    sprite.shape
+      ?.setAlpha(alpha * 0.8)
+      .setFillStyle(reserved ? RESERVED_FALLBACK_TINT : FALLBACK_TINT);
 
     sprite.marker.clear();
     if (!reserved) continue;
@@ -129,9 +136,9 @@ export function drawCorpses(scene: GameScene): void {
     // the cast is still running.
     const pulse = 0.55 + Math.sin(now / 220) * 0.25;
     sprite.marker.fillStyle(RESERVED_RING, 0.18 * pulse * fade);
-    sprite.marker.fillEllipse(sprite.x, sprite.y, CORPSE_W * 1.9, CORPSE_H * 1.9);
+    sprite.marker.fillEllipse(sprite.x, sprite.y, FALLBACK_W * 1.9, FALLBACK_H * 1.9);
     sprite.marker.lineStyle(2, RESERVED_RING, 0.9 * pulse * fade);
-    sprite.marker.strokeEllipse(sprite.x, sprite.y, CORPSE_W * 1.9, CORPSE_H * 1.9);
+    sprite.marker.strokeEllipse(sprite.x, sprite.y, FALLBACK_W * 1.9, FALLBACK_H * 1.9);
 
     const raiser = scene.state.sprite.get(sprite.reservedBy!);
     if (!raiser) continue;

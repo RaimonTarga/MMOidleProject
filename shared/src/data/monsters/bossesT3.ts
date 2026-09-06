@@ -137,13 +137,24 @@ export const bossMonsterEntriesT3 = [
       id: 'deep-core-emergence', name: 'Deep-Core Burrow',
       damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4000,
       steps: [
-        { kind: 'cast', name: 'Deep Burrow', castMs: 1000, fx: 'shield', guardable: false },
-        // Same overlap correction as T2 (165 gap vs a 155 radius could not hit a
-        // stationary player), and the evolved burrow travels further and faster.
-        // The evolved burrow: longer, and faster still than T2's. See the T2
-        // comment for why underground speed is nothing like the walking speed.
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 1800,
-          relocate: 'near-target', emergeGap: 100, travelSpeed: 520 },
+        { kind: 'cast', name: 'Deep Burrow', castMs: 700, fx: 'shield', guardable: false },
+        // THE EVOLVED BURROW (2026-09-06) — the same shape T2 now runs, deepened.
+        // Read the T2 Dreadbore's comment first; everything there applies, including
+        // why the path is a straight line and cannot be a curve.
+        //
+        // It was left behind by the T2 rework and it showed: at `emergeGap: 100` on
+        // a 155px eruption it surfaced ~136px from a running player — on the LIP of
+        // its own circle, which one step cleared for free against a 1100ms tell.
+        // The T3 burrow was the easier of the two to walk out of, which is backwards.
+        //
+        // Deepened rather than copied: it falls back further than T2 (520 vs 460),
+        // and its contact slow bites harder and lasts longer. That slow is doing
+        // real work here, unlike at T2 where the circle already could not be walked
+        // out of — this is the tier where being pinned is what lands the hit.
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 420,
+          feint: { retreatToPx: 520, untilPct: 0.35 }, surfacesOnContact: true,
+          contactSlow: { speedMult: 0.45, durationMs: 2500 } },
         { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 155,
           damageMult: 1.0, telegraphMs: 1100, fx: 'strong-kick' },
         { kind: 'recovery', label: 'Surfaced', durationMs: 2400 },
@@ -261,7 +272,15 @@ export const bossMonsterEntriesT3 = [
       steps: [
         { kind: 'apply-status', name: 'Death Sting', castMs: 1100, fx: 'strong-kick',
           effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6500 },
-        { kind: 'wait', durationMs: 1500 },
+        { kind: 'wait', durationMs: 850 },
+        // NUMBING STING (2026-09-06) — see the T2 Emperor for the shape. One Cleanse,
+        // two things worth spending it on, and the pacing denies you both: answer the
+        // mark and you eat an unamplified hit you could have walked out of; answer
+        // the slow and you walk out of an Execution that would have hit for 1.9x.
+        // Deeper than T2's 0.35 because the circle it locks you into is bigger.
+        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'power-shot',
+          effectId: 'slow', stacks: 1, durationMs: 4500, data: { speedMult: 0.3 } },
+        { kind: 'wait', durationMs: 600 },
         { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'strong-kick',
           damageMult: 1.0, amplifiedMult: 1.9,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 155 },
@@ -330,12 +349,21 @@ export const bossMonsterEntriesT3 = [
       id: 'timberclaw-escape', name: 'Escape',
       damageMultiplier: 2.0, cooldownMs: 13000, initialCooldownMs: 7000,
       steps: [
-        { kind: 'escape-guard', name: 'Flee', castMs: 2500, fx: 'shield',
+        // THE CORRECTED LOOP (2026-09-06) — read the T2 gorger's comment first;
+        // everything there applies. This tier was left behind by that pass and had
+        // all of its faults: a stationary "escape" that went nowhere, a vanish that
+        // TELEPORTED the boss to its leash edge, and an Ambush (a payoff with no
+        // radius, and therefore no range check) firing from across the arena.
+        //
+        // Deepened rather than copied: it flees faster than T2 and stalks back
+        // faster still, so the same loop is harder to break and harder to survive.
+        { kind: 'escape-guard', name: 'Flee', castMs: 2800, fx: 'shield',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2500, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15 },
-        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1400,
-          relocate: 'leash-edge' },
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15,
+          flee: { speed: 250 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1600,
+          relocate: 'near-target', emergeGap: 40, travelSpeed: 660 },
         { kind: 'payoff', name: 'Ambush', castMs: 800, fx: 'savage-maul',
           damageMult: 1.0 },
         // Venom follows a SUCCESSFUL ambush only — break the guard and none of this
@@ -343,7 +371,9 @@ export const bossMonsterEntriesT3 = [
         { kind: 'apply-status', name: 'Venom Burst', castMs: 500, fx: 'savage-maul',
           effectId: 'apex-bramble-venom', stacks: 3, durationMs: 8000,
           data: { damagePerStack: 14, tickIntervalMs: 1000, isDot: 1 } },
-        { kind: 'recovery', label: 'Winded', durationMs: 1700 },
+        // NO RECOVERY AFTER A LANDED AMBUSH. The punish window is what BREAKING the
+        // plate buys, and nothing else — a predator that just bit you does not stun
+        // itself. Same call as T2.
       ],
     },
     bossScript: {

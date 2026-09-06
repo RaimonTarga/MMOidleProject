@@ -1,5 +1,5 @@
 {
-  "atlasHash": "d719acb480e14a959541edd3e67a446299c558a876e6a0a98c7941dedd6d3e98",
+  "atlasHash": "9877abd209f5deed4c59ecabc25d03a30afb5c86f1d255127eb7ded13ca2e558",
   "frames": {
     "sprites/accents/crest-close-cadence.png": {
       "sourceW": 32,
@@ -109,11 +109,17 @@
       "footY": 15,
       "halfWAtFoot": 10.5
     },
+    "sprites/bosses/boss-burrowed-mound.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 45,
+      "halfWAtFoot": 25
+    },
     "sprites/bosses/boss-cave-burrowed.png": {
       "sourceW": 128,
       "sourceH": 128,
-      "footY": 49,
-      "halfWAtFoot": 27.5
+      "footY": 45,
+      "halfWAtFoot": 25
     },
     "sprites/bosses/boss-cave-t1.png": {
       "sourceW": 128,
@@ -1386,6 +1392,108 @@
       "sourceH": 64,
       "footY": 27,
       "halfWAtFoot": 19
+    },
+    "sprites/monsters/iron-marches-amplifying-servitor-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 19,
+      "halfWAtFoot": 8.5
+    },
+    "sprites/monsters/iron-marches-amplifying-servitor.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 3
+    },
+    "sprites/monsters/iron-marches-arsenal-war-knight-variant-2.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 61,
+      "halfWAtFoot": 32.5
+    },
+    "sprites/monsters/iron-marches-arsenal-war-knight.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 58,
+      "halfWAtFoot": 36
+    },
+    "sprites/monsters/iron-marches-assault-war-knight-variant-2.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 57,
+      "halfWAtFoot": 35
+    },
+    "sprites/monsters/iron-marches-assault-war-knight.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 58,
+      "halfWAtFoot": 32.5
+    },
+    "sprites/monsters/iron-marches-binding-servitor-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 3.5
+    },
+    "sprites/monsters/iron-marches-binding-servitor-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 2
+    },
+    "sprites/monsters/iron-marches-binding-servitor.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 1
+    },
+    "sprites/monsters/iron-marches-mending-servitor-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 2.5
+    },
+    "sprites/monsters/iron-marches-mending-servitor-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 4
+    },
+    "sprites/monsters/iron-marches-mending-servitor.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/monsters/iron-marches-siege-war-knight-variant-2.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 59,
+      "halfWAtFoot": 34
+    },
+    "sprites/monsters/iron-marches-siege-war-knight.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 59,
+      "halfWAtFoot": 40
+    },
+    "sprites/monsters/iron-marches-warding-servitor-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 4
+    },
+    "sprites/monsters/iron-marches-warding-servitor-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 7
+    },
+    "sprites/monsters/iron-marches-warding-servitor.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 3
     },
     "sprites/monsters/ironclaw-badger.png": {
       "sourceW": 64,

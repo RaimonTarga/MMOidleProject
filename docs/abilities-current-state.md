@@ -368,6 +368,13 @@ plating/DR like any other damage rather than being unmitigated true damage. It r
 `TracksCombat`, which is never persisted, so it evaporates on death and logout with no
 teardown.
 
+**Its buff tile is a COUNTDOWN, not a clock.** `ability-imbue` projects
+`durationPct: -1` (no timer — a clock would misrepresent a window spent in hits) and puts
+the remaining attack count in `stacks`. Because that number counts DOWN, it needs
+`PlayerBuff.showSingleStack`: the buff bar otherwise hides the badge at one stack, which
+would blank the counter exactly one hit before the resource is actually gone. That flag is
+generic rather than an id check, so the next charge-based effect gets it for free.
+
 ### Bramble Guard — `abilityBramble.ts`
 Plating folds into `mitigatesDamage.plating` per tick from the status effect (same pattern as
 reactive plating) and unwinds exactly once. Reflect is **flat, never a fraction of damage

@@ -9,6 +9,10 @@ import type {
   WorldNodeAuthoring,
   WorldRegionId,
 } from './types';
+import {
+  resolveDungeonNodeDisplayName,
+  resolveNormalNodeDisplayName,
+} from './displayNames';
 
 interface RegionSpecialNode
   extends Omit<WorldNodeAuthoring, 'regionId' | 'biomeTier'> {
@@ -404,6 +408,7 @@ export function buildRegionNodes(
     const native = NATIVE_MODIFIER[biomeGroup];
     const modifiers = native ? [...allowedModifiers, native] : allowedModifiers;
     const biomeCells = normalCellsByBiome.get(biomeGroup) ?? [];
+    const normalNameOccurrences = new Map<NodeModifierFamily, number>();
 
     modifiers.forEach((modifier, normalIndex) => {
       const map = biomeCells[normalIndex];
@@ -412,9 +417,16 @@ export function buildRegionNodes(
           `${input.regionId}: missing clustered cell for ${biomeGroup}`,
         );
       }
+      const nameOccurrence = normalNameOccurrences.get(modifier) ?? 0;
+      normalNameOccurrences.set(modifier, nameOccurrence + 1);
       nodes.push({
         id: `node-${input.regionId}-${biomeGroup}-${String(normalIndex + 1).padStart(2, '0')}`,
-        displayName: `T${input.tier} ${biomeGroup === 'graveyard' ? 'Wasteland' : biomeGroup.charAt(0).toUpperCase() + biomeGroup.slice(1)} ${String(normalIndex + 1).padStart(2, '0')}`,
+        displayName: resolveNormalNodeDisplayName(
+          input.tier,
+          biomeGroup,
+          modifier,
+          nameOccurrence,
+        ),
         regionId: input.regionId,
         map,
         kind: 'normal',
@@ -429,7 +441,7 @@ export function buildRegionNodes(
     const dungeonMap = input.dungeonCells[biomeIndex];
     nodes.push({
       id: `node-${input.regionId}-${biomeGroup}-dungeon`,
-      displayName: `T${input.tier} ${biomeGroup === 'graveyard' ? 'Wasteland' : biomeGroup.charAt(0).toUpperCase() + biomeGroup.slice(1)} Dungeon`,
+      displayName: resolveDungeonNodeDisplayName(input.tier, biomeGroup),
       regionId: input.regionId,
       map: dungeonMap,
       kind: 'dungeon',

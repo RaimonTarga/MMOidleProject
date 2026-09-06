@@ -11,6 +11,7 @@
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
   ABILITY_FRENZY_EFFECT_ID,
+  ABILITY_IMBUE_EFFECT_ID,
   ABILITY_GUARD_EFFECT_IDS,
   ABILITY_RECOVERY_EFFECT_IDS,
   abilityDef,
@@ -144,6 +145,41 @@ export const ABILITY_BUFFS = [
       };
     },
     { category: "neutral", shape: "circle", color: "#ff8a3d", label: "Frenzy" },
+  ),
+  defineBuff(
+    ABILITY_IMBUE_EFFECT_ID,
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const eff = getStatusEffect(playerCs, ABILITY_IMBUE_EFFECT_ID);
+      if (!eff) return null;
+      const charges = Math.max(0, Math.floor(eff.data["charges"] ?? 0));
+      if (charges <= 0) return null;
+      const bonus = Math.round(eff.data["onHitDamage"] ?? 0);
+      const total = Math.max(charges, Math.round(eff.data["totalCharges"] ?? charges));
+      return {
+        id: ABILITY_IMBUE_EFFECT_ID,
+        label: "Imbued",
+        // The badge IS the mechanic: this is a countdown of attacks, not a
+        // stacking magnitude. Each buffed hit spends one.
+        stacks: charges,
+        showSingleStack: true,
+        // -1 = no timer. Imbue is spent in HITS, and a clock would be an outright
+        // lie about how long it lasts — it waits as long as it takes.
+        durationPct: -1,
+        color: "#c77dff",
+        logSourceName: "Imbue Lightning",
+        logSourceSide: "ally",
+        logDetail: `+${bonus} on-hit damage, ${charges} of ${total} attacks left`,
+        values: [
+          { label: "Bonus damage per hit", value: `+${bonus}`, good: true },
+          { label: "Attacks remaining", value: `${charges} of ${total}`, good: true },
+        ],
+      };
+    },
+    // Circle, matching the other self-facing offensive windows (Frenzy, Unbound)
+    // rather than the square defensive Guards. Violet matches the lightning
+    // element colour in ELEMENT_STYLE and the in-world FX.
+    { category: "neutral", shape: "circle", color: "#c77dff", label: "Imbued" },
   ),
   defineBuff(
     ABILITY_CONTROL_RESIST_EFFECT_ID,

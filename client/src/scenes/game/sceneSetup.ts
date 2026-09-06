@@ -88,6 +88,7 @@ import {
   VOID_TOMB_TEXTURE_KEY,
 } from "../../sprites";
 import { stepInterpolation, getOwnBase } from "../../render/interpolation";
+import { CORPSE_REMAINS_ART } from "../../render/corpseRemains";
 import { drawShadows } from "../../render/shadows";
 import { drawTargetIndicator } from "../../render/targetIndicator";
 import { setShadowDefs } from "../../render/shadowDefs";
@@ -360,6 +361,9 @@ function queuePresentationAssets(scene: GameScene): void {
   });
   scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
   for (const art of Object.values(HAZARD_POOL_ART)) {
+    scene.load.image(art.key, art.file);
+  }
+  for (const art of CORPSE_REMAINS_ART) {
     scene.load.image(art.key, art.file);
   }
   for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {

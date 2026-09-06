@@ -7,6 +7,11 @@ import {
 import { NODE_MODIFIER_FAMILIES } from '../nodeModifiers';
 import { NODE_MODIFIERS } from '../nodeModifierMap';
 import { NODE_FEATURES, RUNE_ALTAR_FEATURE_ID } from '../nodeFeatures';
+import {
+  resolveDungeonNodeDisplayName,
+  resolveNormalNodeDisplayName,
+  resolveSanctuaryNodeDisplayName,
+} from './displayNames';
 import { validateWorldMap } from './validation';
 
 function assert(condition: boolean, message: string): void {
@@ -19,6 +24,26 @@ assert(
   `canonical world is invalid:\n- ${violations.join('\n- ')}`,
 );
 assert(WORLD_NODE_LIST.length === 170, 'world count snapshot');
+assert(
+  new Set(WORLD_NODE_LIST.map(node => node.displayName)).size === WORLD_NODE_LIST.length,
+  'canonical node display names are unique',
+);
+assert(
+  WORLD_NODE_LIST.find(node => node.id === 'node-clearing')?.displayName === 'Clearing',
+  'Clearing keeps its authored name',
+);
+assert(
+  resolveNormalNodeDisplayName(8, 'forest', 'heavy') === 'T8 Forest Heavy',
+  'future normal nodes keep a readable fallback name',
+);
+assert(
+  resolveDungeonNodeDisplayName(8, 'forest') === 'T8 Forest Dungeon',
+  'future dungeons keep a readable fallback name',
+);
+assert(
+  resolveSanctuaryNodeDisplayName(8) === 'T8 Sanctuary',
+  'future sanctuaries keep a readable fallback name',
+);
 // Node count is derived from the modifier list: one node per non-banned modifier,
 // plus a second for each biome's native. Changing the list or the ban table shifts
 // this snapshot and will break the hand-cut region masks.

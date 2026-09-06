@@ -247,32 +247,58 @@ let markedDamage = 0;
 // The DILEMMA, as arithmetic rather than as a feeling: the Execution circle is
 // escapable on foot at full speed and is NOT escapable while numbed. If either half
 // of that stops being true the beat collapses into "always dodge" or "never dodge".
-{
-  const steps = EMPEROR_PATTERN.steps;
+// Across EVERY Desert tier, not just the one it was designed on: the sting landed
+// on T2 first and T3/T4 ran without it for a while, which left the deeper tiers with
+// the SHALLOWER beat — mark and execute, no dilemma.
+for (const id of ['dune-stalker-emperor', 'dune-carapace-monarch', 'dune-throne-sovereign']) {
+  const steps = MONSTER_DATABASE.get(id)!.bossPattern!.steps;
   const sting = steps.find(
     step => step.kind === 'apply-status' && step.effectId === 'slow',
   );
   const execution = steps.find(step => step.kind === 'payoff');
-  assert(sting?.kind === 'apply-status', 'the Emperor should carry a slow step');
-  assert(execution?.kind === 'payoff' && execution.radius !== undefined, 'and an area Execution');
+  assert(sting?.kind === 'apply-status', `${id} should carry a slow step`);
+  assert(execution?.kind === 'payoff' && execution.radius !== undefined, `${id}: an area Execution`);
+
+  // Order is the sentence: mark, THEN numb, THEN execute.
+  const markIdx = steps.findIndex(
+    step => step.kind === 'apply-status' && step.effectId === SUN_MARK_EFFECT_ID,
+  );
+  const stingIdx = steps.indexOf(sting);
+  const execIdx = steps.indexOf(execution);
+  assert(markIdx >= 0 && markIdx < stingIdx && stingIdx < execIdx,
+    `${id}: mark, then the slow, then the Execution`);
 
   const slowMult = sting.data?.['speedMult'];
-  assert(typeof slowMult === 'number' && slowMult > 0 && slowMult < 1, 'the sting should be a real slow');
+  assert(typeof slowMult === 'number' && slowMult > 0 && slowMult < 1, `${id}: a real slow`);
 
   const escapeMs = (execution.radius! / GAME_CONFIG.PLAYER_SPEED) * 1_000;
   const numbedEscapeMs = escapeMs / slowMult;
-  assert(
-    escapeMs < execution.castMs,
-    `an unslowed player must be able to leave the circle ` +
-      `(${escapeMs.toFixed(0)}ms of running vs a ${execution.castMs}ms tell)`,
-  );
+
+  // THE UNSLOWED DODGE WINDOW is what makes the sting a choice rather than a tax:
+  // cleanse the slow and you can still walk out; cleanse the mark instead and you
+  // cannot. It exists at T2 (1250ms of running against a 1300ms tell) and at T3
+  // (1292 vs 1300) — both deliberately tight.
+  //
+  // ⚠ IT DOES NOT EXIST AT T4, and did not before the sting was added either: a
+  // 180px circle on a 1500ms tell is exactly 1500ms of running, so the capstone's
+  // Execution was already unavoidable on foot. The sting there buys the dash-out
+  // answers and the recovery, not the circle. Flagged rather than silently
+  // "corrected" — retuning the capstone's radius or tell is a balance call, not a
+  // propagation one. Assert only where the window is claimed to exist.
+  if (id !== 'dune-throne-sovereign') {
+    assert(
+      escapeMs < execution.castMs,
+      `${id}: an unslowed player must be able to leave the circle ` +
+        `(${escapeMs.toFixed(0)}ms of running vs a ${execution.castMs}ms tell)`,
+    );
+  }
   // With MARGIN, not by a hair. A slow that only just fails to let you out is
   // indistinguishable in play from lag, and it makes the Cleanse decision a
   // coin-flip rather than a read: a 0.9 "slow" would clear a bare `>` comparison
   // here while changing nothing anyone could feel.
   assert(
     numbedEscapeMs > execution.castMs * 1.5,
-    `and a numbed one must not, with room to spare ` +
+    `${id}: and a numbed one must not, with room to spare ` +
       `(${numbedEscapeMs.toFixed(0)}ms against a ${execution.castMs}ms tell)`,
   );
 }

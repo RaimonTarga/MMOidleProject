@@ -61,7 +61,12 @@ function BuffIcon({ buff, interactive }: { buff: PlayerBuff; interactive: boolea
       ? "buff-icon"
       : `buff-icon buff-cat-${buff.category}`;
   const hasDuration = buff.durationPct >= 0;
-  const showStacks = buff.stacks > 1 || (buff.id === "debuff-dot" && buff.stacks > 0);
+  // A countdown's last unit is its most important state, so a buff that spends
+  // charges opts in to showing "1" rather than going blank a hit early.
+  const showStacks =
+    buff.stacks > 1 ||
+    (buff.showSingleStack === true && buff.stacks > 0) ||
+    (buff.id === "debuff-dot" && buff.stacks > 0);
 
   // Sweep overlay: darkened area sweeps clockwise from the top as the buff elapses.
   // At 100% remaining → 0% dark (fully visible); at 0% remaining → 100% dark.
@@ -83,7 +88,7 @@ function BuffIcon({ buff, interactive }: { buff: PlayerBuff; interactive: boolea
       }}
       tabIndex={interactive ? 0 : undefined}
       role="img"
-      aria-label={`${buff.label}${buff.stacks > 1 ? `, ${buff.stacks} stacks` : ""}`}
+      aria-label={`${buff.label}${showStacks ? `, ${buff.stacks} stacks` : ""}`}
       {...handlers}
     >
       {/* Icon with optional clock-sweep overlay */}
