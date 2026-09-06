@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../combat/damage/damageEvent';
 import {
   applyStatusEffect,
   computeScaledDotDamage,
@@ -602,6 +603,8 @@ function tickEntityNodeFeatureDamage(
           pushPlayerDotTickEvent(world, player, 'poison', damage, {
             sourceType: 'special',
           });
+        } else {
+          pushDamageEvent(world, player, damage, { category: 'dot' });
         }
 
         player.hasHealth.hp -= damage;
@@ -628,6 +631,7 @@ function tickEntityNodeFeatureDamage(
           Math.round(base * (1 - monster.mitigatesDamage.damageReduction)),
         );
         monster.hasHealth.hp -= damage;
+        pushDamageEvent(world, monster, damage, { category: 'dot' });
         markSliceDirty(world, monster, 'hasHealth');
         if (monster.hasHealth.hp <= 0) {
           world.removeMonsterEntity(monster.isMonster.id);

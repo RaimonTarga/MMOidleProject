@@ -41,6 +41,23 @@ const DIRT_TINTS = [0x6b5236, 0x8a6b46, 0x4a3a28, 0x9c8158];
 /**
  * A burst of soil. Thrown outward and pulled back down, so it reads as earth
  * rather than as the generic radial puff every other effect in the game uses.
+ *
+ * Three layers, and the ORDER of their jobs matters. The body swap underneath is a
+ * hard cut — sprites here are destroyed and rebuilt on a frame change, so nothing
+ * can tween across it — which means the cloud is not decoration, it is the thing
+ * that hides the cut. Sized up substantially on 2026-09-06: the old version threw
+ * 28 small particles that had largely cleared before the swap happened, so the
+ * player watched a 128px boss pop into a mound through a thin haze.
+ *
+ *   1. CORE — a dense, opaque, short-lived puff sitting right on the body. This is
+ *      the one doing the obscuring; it is deliberately slow and big rather than
+ *      fast and sparse, because a fast particle is somewhere else by the time the
+ *      frame changes.
+ *   2. THROWN SOIL — the readable earth, arced up and pulled back down.
+ *   3. SKIRT — a low, wide, lingering wall of dust that covers the settle.
+ *
+ * Everything draws at `DEPTH.FX`, which sits above every y-sorted sprite band, so
+ * the cloud is genuinely in front of the boss rather than around it.
  */
 export function spawnDirtCloud(
   scene: GameScene,
@@ -48,23 +65,32 @@ export function spawnDirtCloud(
   y: number,
   scale: number,
 ): void {
-  burstFx(scene, 'ptx-dot', x, y, 18, 520, {
-    speed: { min: 40 * scale, max: 150 * scale },
-    angle: { min: 200, max: 340 },
-    gravityY: 420,
-    scale: { start: 0.5 * scale, end: 0.08 },
+  // 1. CORE. Big, slow, opaque — the actual curtain over the sprite swap.
+  burstFx(scene, 'ptx-dot', x, y, 16, 620, {
+    speed: { min: 5 * scale, max: 40 * scale },
+    angle: { min: 0, max: 360 },
+    gravityY: 0,
+    scale: { start: 2.6 * scale, end: 3.4 * scale },
+    alpha: { start: 0.92, end: 0 },
+    tint: DIRT_TINTS,
+  });
+  // 2. THROWN SOIL.
+  burstFx(scene, 'ptx-dot', x, y, 34, 620, {
+    speed: { min: 60 * scale, max: 230 * scale },
+    angle: { min: 190, max: 350 },
+    gravityY: 460,
+    scale: { start: 0.85 * scale, end: 0.1 },
     alpha: { start: 0.95, end: 0 },
     tint: DIRT_TINTS,
     rotate: { min: 0, max: 360 },
   });
-  // A low, flat skirt of dust that lingers after the thrown soil has fallen —
-  // the part that actually obscures the body during the swap.
-  burstFx(scene, 'ptx-dot', x, y, 10, 700, {
-    speed: { min: 10 * scale, max: 55 * scale },
+  // 3. SKIRT — spreads outward and lingers past the settle.
+  burstFx(scene, 'ptx-dot', x, y, 24, 1_050, {
+    speed: { min: 20 * scale, max: 95 * scale },
     angle: { min: 0, max: 360 },
     gravityY: 0,
-    scale: { start: 0.75 * scale, end: 1.4 * scale },
-    alpha: { start: 0.5, end: 0 },
+    scale: { start: 1.4 * scale, end: 3.0 * scale },
+    alpha: { start: 0.7, end: 0 },
     tint: 0x7a6244,
   });
 }
@@ -171,7 +197,9 @@ export function syncConcealment(
   const drawn = state.sprite.get(monster.id);
   const fallback = nodeToScene(monster.pos.x, monster.pos.y);
   const scenePos = drawn ? { x: drawn.x, y: drawn.y } : fallback;
-  const cloudScale = monster.isBoss ? 1.5 : 1;
+  // A boss body is 128px against a monster's 64, so its curtain has to be wider
+  // than proportional to actually cover the swap.
+  const cloudScale = monster.isBoss ? 2 : 1;
 
   if (now !== undefined) {
     // GOING UNDER. Dirt first, so the body change happens behind it.

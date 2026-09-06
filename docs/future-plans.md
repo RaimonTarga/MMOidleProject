@@ -185,3 +185,24 @@ proxy for fun, emotion, representative human behavior, or interface usability.
 Before trusting accelerated dungeon journeys, replace or inject the remaining
 wall-clock `Date.now()` reads in dungeon runtime code so fast-forwarded ticks and
 dungeon timers use one clock authority.
+
+## Resume auto-combat on respawn (opt-in)
+
+Death now cancels every standing order — auto-combat, auto-traverse, the
+traverse path, movement, and the client's destination mark and route overlay
+(`killPlayer` in `server/src/systems/world/playerIncapacitation.ts`,
+`clearMovementIntent` in `client/src/input/moveCancel.ts`). A respawn comes up
+genuinely idle.
+
+That idle respawn is the floor a resume option can stand on. The wanted shape is
+a player setting — "return to where I was farming" — that, on respawn, re-arms
+auto-combat and installs a traverse path back toward the biome the character
+died in, rather than restoring whatever half-executed order killed them. It
+belongs with the autocombat config (`player:setAutocombatConfig`) so it
+persists, and it must remain opt-in: coming back alive and immediately walking
+into the thing that just killed you is the failure mode the cleanup pass
+existed to remove.
+
+Open question: whether the return trip should stop one node short of the death
+node, or at the biome hub, so a player who died to a spike is not fed straight
+back into it.

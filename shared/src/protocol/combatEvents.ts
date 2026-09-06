@@ -13,6 +13,9 @@ export type DotTickSourceType = 'class' | 'weapon' | 'monster' | 'special';
  * entries reliably even when logic ticks outrun broadcast ticks.
  */
 export type CombatEvent =
+  // Damage-only presentation for paths without an attack/tick animation event.
+  // Amount is finalized HP damage (including overkill), never a health authority.
+  | { kind: 'damage'; targetId: string; targetKind: 'player' | 'monster' | 'minion'; targetPos: Vec2; amount: number; category: 'direct' | 'dot'; element?: DamageElement; sourceId?: string }
   // `absorbed`/`evadedPartial`/`capped` are per-hit mitigation hints the
   // client uses to style the damage number: shield-absorbed amount renders a
   // separate blue shielded number (even when no HP was lost), a partial evade /
@@ -21,22 +24,22 @@ export type CombatEvent =
   | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string; damage: number; biomeXpGained: number; essenceGained: number; essenceType: EssenceType; empowered?: boolean; execution?: boolean }
   // A monster→player hit. Drives the player's incoming damage-number styling:
   // `empowered` enlarges it (a future monster "crit"), and the mitigation hints
-  // (`absorbed`/`evadedPartial`/`capped`) mirror `player-hit`. Marks the
-  // player as having taken a direct hit this snapshot (DoT element yields to it).
-  // `damage` is the HP damage dealt (the number's amount still tracks the HP delta).
-  | { kind: 'monster-hit'; targetId: string; empowered?: boolean; execution?: boolean; damage?: number; absorbed?: number; evadedPartial?: boolean; capped?: boolean }
+  // (`absorbed`/`evadedPartial`/`capped`) mirror `player-hit`.
+  // `damage` drives the individual HP-damage number; amounts are never inferred
+  // from snapshot HP changes.
+  | { kind: 'monster-hit'; targetId: string; targetPos?: Vec2; empowered?: boolean; execution?: boolean; damage: number; absorbed?: number; evadedPartial?: boolean; capped?: boolean }
   // A monster attack the player fully evaded (mitigation ≥ 1, zero damage). Renders
   // a "DODGE" floater over the player, mirroring `monster-dodge` for the reverse
   // direction. Partial evades stay on the damage number via `monster-hit.evadedPartial`.
   | { kind: 'player-evade'; playerId: string; targetPos?: Vec2 }
-  // A damage-over-time tick on a monster. Used by the client only as a style hint
-  // (color/glyph by element) for the HP-delta damage number — the amount shown is
-  // still driven by the HP delta. `element` flavor only; non-elemental DoTs omit this event.
+  // A damage-over-time tick on a monster or player. Amount and element drive
+  // an individual number, independently of direct hits in the same snapshot.
+  // Non-elemental DoTs use the damage-only event with category `dot`.
   // `fx` optionally requests a dedicated per-tick animation (beyond the element's
   // damage-number styling) — e.g. Cinder Lord's Conflagration burns. Omitted for
   // plain DoT ticks, which only style the number by element. `sourceId` attributes
   // owned ticks so a player's mechanic HUD never reacts to another player's DoT.
-  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string; fx?: DotTickFx }
+  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; absorbed?: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string; fx?: DotTickFx }
   | { kind: 'monster-dodge'; monsterId: string; targetPos?: Vec2 }
   // Player attack whiffed (chaotic weapon family's every-Nth-hit miss). Direct
   // damage was zeroed but on-hit effects (DoT) still applied; renders a "MISS"
@@ -142,7 +145,7 @@ export type CombatEvent =
     }
   // Detonate consumed afflictions for a burst. `element` is whichever element was
   // owed the most damage, so the explosion is tinted by what actually did the
-  // work. The damage number still rides the normal HP delta — this only drives
+  // work. The damage number comes from the AoE damage event — this only drives
   // the animation.
   | { kind: 'dot-detonate'; playerId: string; pos: Vec2; element: DamageElement }
   // A Rune changed the player's active posture. The authoritative progression

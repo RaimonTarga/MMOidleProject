@@ -152,6 +152,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
     : undefined;
   world.pushEvent(player.hasPosition.nodeId, {
     kind: 'player-hit',
+    targetPos: { ...target.hasPosition.current },
     playerId: player.isPlayer.id,
     targetId: target.isMonster.id,
     targetName: target.isMonster.name,

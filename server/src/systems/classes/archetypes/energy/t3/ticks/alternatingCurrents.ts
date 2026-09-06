@@ -1,4 +1,5 @@
 import type { World } from '../../../../../../world/World';
+import { pushDamageEvent } from '../../../../../combat/damage/damageEvent';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
 import { hasPassive, endACDischarge } from '../core/helpers';
 import {
@@ -72,6 +73,7 @@ export function updateAlternatingCurrents(world: World, dt: number): void {
             buildSimpleBreakdown(tickDmg, tickDmg),
           );
           monster.hasHealth.hp -= tickDmg;
+          pushDamageEvent(world, monster, tickDmg, { element: 'lightning', sourceId: player.isPlayer.id });
           if (monster.hasHealth.hp <= 0) {
             toKill.push({ monsterId: targetId, sourceId: player.isPlayer.id, damage: tickDmg });
           }

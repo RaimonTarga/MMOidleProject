@@ -1,3 +1,4 @@
+import { pushDamageEvent } from './damageEvent';
 import { platingAfterShred, type Vec2 } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
@@ -80,6 +81,7 @@ export function applyPlayerAoe(
     );
 
     monster.hasHealth.hp -= effectiveDmg;
+    pushDamageEvent(world, monster, effectiveDmg, { sourceId: attackerId });
 
     if (monster.hasHealth.hp <= 0) toKill.push({ monster, damage: effectiveDmg });
   }
@@ -160,6 +162,7 @@ export function applyMonsterAoe(
     );
 
     player.hasHealth.hp -= effectiveDmg;
+    pushDamageEvent(world, player, effectiveDmg, { sourceId: attacker.isMonster.id });
 
     if (player.hasHealth.hp <= 0) {
       world.killPlayer(player.isPlayer.id, {
@@ -190,5 +193,6 @@ export function applyMonsterAoe(
     }).hpDamage;
 
     minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - effectiveDmg);
+    pushDamageEvent(world, minion, effectiveDmg, { sourceId: attacker.isMonster.id });
   }
 }

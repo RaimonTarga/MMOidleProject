@@ -8,7 +8,7 @@ export function setAutoMode(scene: GameScene, enabled: boolean): void {
   scene.autoMode = enabled;
   sendSetAuto(scene.socket, enabled);
   if (enabled) {
-    scene.targetMarker.setVisible(false);
+    scene.targetMarker.hide();
     // Auto-combat is server-driven: drop any post-keyboard stop latch so the
     // server can steer immediately instead of waiting out the grace window.
     clearPendingStop();

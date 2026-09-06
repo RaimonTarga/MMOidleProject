@@ -124,21 +124,26 @@ for (const id of ['gnarled-greatbear', 'apex-timberclaw']) {
     frenzyCasts.length === 1 && frenzyCasts[0].castMs === 1500 && frenzyCasts[0].fx === 'frenzy',
     `${id} should telegraph Bestial Frenzy with a 1.5-second cast`,
   );
+  // SHAPE, not magnitude. This used to pin `mult === 1.20` and `intervalMs`, which
+  // made an ordinary balance edit look like a broken encounter — and it is the two
+  // Forest bosses' whole job to be tuned against each other (the T2 multiplier came
+  // down to 1.12 on 2026-09-06 so its ramp would stop out-running T1's). What must
+  // not change is that the stack is permanent, uncapped, and compounds: that is the
+  // fight's time limit, and `forestT2BossSwipe.test.ts` guards the relationship.
   const frenzyStack = frenzyCasts[0]?.actions[0];
   assert(
     frenzyStack?.type === 'stat-buff' &&
       frenzyStack.stat === 'attackSpeed' &&
-      frenzyStack.mult === 1.20 &&
-      frenzyStack.moveSpeedMult === 1.10 &&
+      frenzyStack.mult > 1 &&
+      frenzyStack.moveSpeedMult !== undefined &&
       frenzyStack.maxStacks === undefined &&
       frenzyStack.label === 'bestial-frenzy' &&
       frenzyStack.durationMs === undefined,
     `${id} should gain a permanent Bestial Frenzy attack- and movement-speed stack per cast with no cap`,
   );
-  const expectedIntervalMs = id === 'gnarled-greatbear' ? 6000 : 5000;
   assert(
-    forest.bossScript?.repeating?.some(repeating => repeating.intervalMs === expectedIntervalMs),
-    `${id} should recast Bestial Frenzy on its authored cadence`,
+    forest.bossScript?.repeating?.some(repeating => repeating.intervalMs > 0),
+    `${id} should recast Bestial Frenzy on a repeating cadence`,
   );
   assert(!hasAction(id, 'spawn-adds') && !hasAction(id, 'summon'), `${id} must not spawn adds`);
 }

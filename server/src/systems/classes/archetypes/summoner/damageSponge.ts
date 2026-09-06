@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../../../combat/damage/damageEvent';
 /**
  * Summoner damage sponge: a fraction of incoming damage to the player is
  * redirected to a random living minion. Implemented as an `onDamageTaken`
@@ -34,12 +35,13 @@ export function pickLivingMinion(world: World, owner: PlayerEntity): MinionEntit
 }
 
 /** Raw HP subtraction on a minion; death is handled by the summoner tick. */
-export function redirectDamageToMinion(minion: MinionEntity, amount: number, world?: World): void {
+export function redirectDamageToMinion(minion: MinionEntity, amount: number, world: World): void {
   minion.hasHealth.hp -= amount;
   if (minion.hasHealth.hp <= 0) {
     minion.hasHealth.hp = 0;
   }
-  if (world) markSliceDirty(world, minion, 'hasHealth');
+  markSliceDirty(world, minion, 'hasHealth');
+  pushDamageEvent(world, minion, amount);
 }
 
 export function registerSummonerDamageSponge(): void {

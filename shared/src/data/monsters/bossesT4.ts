@@ -89,12 +89,29 @@ export const bossMonsterEntriesT4 = [
       steps: [
         { kind: 'cast', name: 'Titan Charge', castMs: 2600, fx: 'strong-kick',
           lane: { length: 820, halfWidth: 104, lockAtCastPct: 0.6 } },
-        // 820px at 540px/s ≈ 1.5s of travel.
-        { kind: 'charge', speed: 540, maxTravelMs: 2400 },
+        // 820px at 540px/s ≈ 1.5s of travel, or less — it STOPS on the body it hits.
+        //
+        // THE CHARGE IS THE SETUP, NOT THE PAYOFF (2026-09-06). damageMult 1.0 -> 0.3:
+        // the tackle is a shove that announces the sentence, and Earthshatter is
+        // where the damage lives. The whole sequence is now one decision — read the
+        // lane and get off it, or eat all of it.
+        { kind: 'charge', speed: 540, damageMult: 0.3, maxTravelMs: 2400 },
+        // `requiresChargeHit`: a dodged charge draws no circle at all. It used to
+        // erupt at the far lane tip regardless, which taught nothing on a miss and
+        // occasionally clipped a player who had dodged correctly. And because the
+        // charge now stops where it connects, `captured-endpoint` IS the collision —
+        // the shatter lands on the player it just ran down.
+        //
+        // Deliberately not escapable from dead centre (240px is ~2s of running
+        // against a 950ms tell): eating the tackle is the mistake, and this is what
+        // the mistake costs. The fault lines below are still a real positional test,
+        // so the capstone keeps its second beat.
         { kind: 'impact', name: 'Earthshatter', anchor: 'captured-endpoint',
-          radius: 240, damageMult: 0.8, telegraphMs: 950, fx: 'strong-kick' },
+          radius: 240, damageMult: 1.35, telegraphMs: 950, fx: 'strong-kick',
+          requiresChargeHit: true },
         { kind: 'fault-lines', anchor: 'captured-endpoint', delayMs: 900, rayCount: 6,
-          length: 330, lineRadius: 24, innerRadius: 95, damageMult: 0.6 },
+          length: 330, lineRadius: 24, innerRadius: 95, damageMult: 0.6,
+          requiresChargeHit: true },
         // The long reset the lineage builds toward: the whole sentence is answerable,
         // and answering it buys real time on the boss.
         { kind: 'recovery', label: 'Spent', durationMs: 3200 },

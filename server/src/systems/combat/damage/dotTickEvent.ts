@@ -14,6 +14,7 @@ import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import { effectiveMonsterDot } from "../engine/monsterMechanics";
 
 interface DotTickEventOptions {
+  absorbed?: number;
   sourceType?: DotTickSourceType;
   /** Owning player/monster when the tick can be attributed to one source. */
   sourceId?: string;
@@ -22,8 +23,7 @@ interface DotTickEventOptions {
 
 /**
  * Queue a `dot-tick` combat event for a DoT tick landing on a monster. The client
- * uses it purely as a color/glyph style hint for the HP-delta damage number — the
- * amount displayed is still the HP delta, so non-elemental DoTs simply omit this.
+ * renders its amount and color/glyph independently of other damage in the batch.
  */
 export function pushDotTickEvent(
   world: World,
@@ -55,7 +55,7 @@ export function dotElementForSource(world: World, sourceId: string): DamageEleme
   );
 }
 
-/** Queue a `dot-tick` style hint for a DoT tick landing on a player. */
+/** Queue an explicit `dot-tick` amount for a DoT tick landing on a player. */
 export function pushPlayerDotTickEvent(
   world: World,
   player: PlayerEntity,
@@ -63,7 +63,7 @@ export function pushPlayerDotTickEvent(
   amount: number,
   options: DotTickEventOptions = {},
 ): void {
-  if (amount <= 0) return;
+  if (amount <= 0 && !(options.absorbed && options.absorbed > 0)) return;
   world.pushEvent(player.hasPosition.nodeId, {
     kind: "dot-tick",
     targetId: player.isPlayer.id,
@@ -71,6 +71,7 @@ export function pushPlayerDotTickEvent(
     amount: Math.round(amount),
     element,
     sourceType: options.sourceType ?? "monster",
+    ...(options.absorbed && options.absorbed > 0 ? { absorbed: options.absorbed } : {}),
     ...(options.sourceId ? { sourceId: options.sourceId } : {}),
   });
 }

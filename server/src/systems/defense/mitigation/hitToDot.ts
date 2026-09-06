@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../../combat/damage/damageEvent';
 import {
   addResource,
   getResource,
@@ -137,6 +138,7 @@ export function runDebtDrain(world: World, player: PlayerEntity): boolean {
   );
 
   player.hasHealth.hp = Math.max(0, player.hasHealth.hp - debtDamage);
+  pushDamageEvent(world, player, debtDamage, { category: 'dot' });
   if (player.hasHealth.hp <= 0) {
     if (tryCheatDeath(world, player)) return false;
     setResource(cs, DEBT_POOL_KEY, 0);

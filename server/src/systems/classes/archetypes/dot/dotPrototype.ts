@@ -324,7 +324,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     );
 
     entity.hasHealth.hp -= hpDamage;
-    pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId, effect), hpDamage, { sourceType: "monster" });
+    pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId, effect), hpDamage, { sourceType: "monster", absorbed });
 
     if (entity.hasHealth.hp <= 0) {
       if (tryCheatDeath(world, entity)) {

@@ -16,8 +16,7 @@ const emitterPools = new WeakMap<GameScene, PooledEmitter[]>();
 let emitterUseCounter = 0;
 
 /** Shared empowered/"critical" damage-number styling (gold, enlarged, '!'). */
-export const EMPOWERED_DAMAGE_COLOR = '#ffd23f';
-export const EMPOWERED_DAMAGE_SIZE_PX = 22;
+export { EMPOWERED_DAMAGE_COLOR, EMPOWERED_DAMAGE_SIZE_PX } from '../render/damageNumberConstants';
 
 export function initParticleTextures(scene: GameScene): void {
   const dotG = scene.make.graphics({ x: 0, y: 0 }, false);

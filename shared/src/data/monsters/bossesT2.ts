@@ -76,7 +76,14 @@ export const bossMonsterEntriesT2 = [
   ['apex-timberclaw', {
     id: 'apex-timberclaw', name: 'Apex Timberclaw', color: 0x226622,
     isBoss: true,
-    stats: { hp: 3750, attack: 64, plating: 0, damageReduction: 0, speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310 },
+    // ATTACK 64 -> 44 (2026-09-06 playtest nerf). At 64 with `consecutiveHits: 2` on
+    // a 1500ms swing this boss opened at 85 raw dps BEFORE its ramp had done
+    // anything: 2.0x the tier's next-hardest (Plains 44) and 2.2x-6.3x the rest
+    // (Cave 39, Jungle 35, Desert 33, Mountain 31, Swamp 14). "Fastest cadence and
+    // highest sustained damage of the tier" is the Forest identity and it should
+    // still be the highest — being double the runner-up before the ramp starts is
+    // a different boss, not a faster one. 44 opens at 59 dps, 1.35x Plains.
+    stats: { hp: 3750, attack: 44, plating: 0, damageReduction: 0, speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310 },
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 155, essenceType: 'green', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -112,10 +119,31 @@ export const bossMonsterEntriesT2 = [
           { type: 'enrage', atkMult: 1.15, cdMult: 0.70 }, // frequency surge
         ] },
       ],
+      // BESTIAL FRENZY IS THE FIGHT'S CLOCK, and it is meant to be: no stack cap, so
+      // the ramp compounds until the boss is simply unsurvivable. Kill it before
+      // then. What is tuned here is HOW LONG that takes.
+      //
+      // 1.20 -> 1.12 per stack (2026-09-06 playtest nerf). Each stack divides the
+      // CURRENT cooldown, so this is exponential and every value ends at the
+      // engine's 200ms swing floor eventually — the multiplier only decides when.
+      // At 1.20 the floor arrived ~65s in and dps was already 4x base by 50s. At
+      // 1.12 it arrives ~95s in, which puts this fight's wall just past T1's (the
+      // Greatbear's 1.20 on a 1900ms base and a 6s interval reaches its floor at
+      // ~83s) — right, because this is the bigger boss and the longer fight.
+      //
+      // ⚠ `moveSpeedMult` DOES NOTHING and never has: `applyAction` writes
+      // `hasPosition.speed`, and the monster AI reassigns `ai.baseSpeed` over it on
+      // essentially every state transition. Left authored so the intent is not lost;
+      // it needs a fix in ai.ts, not here.
+      // Interval 5000 -> 6500 (2026-09-06, +30%): the second half of the same nerf.
+      // The multiplier decides how steep each step is; the interval decides how
+      // often you take one, and the two multiply into the wall-clock. The opening
+      // delay is left at 5000 so the first Frenzy still arrives on the same beat —
+      // it is the RAMP that should be slower, not the introduction to it.
       repeating: [
-        { intervalMs: 5000, initialDelayMs: 5000, actions: [
+        { intervalMs: 6500, initialDelayMs: 5000, actions: [
           { type: 'cast', castMs: 1500, label: 'Bestial Frenzy', fx: 'frenzy', actions: [
-            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.20, moveSpeedMult: 1.10, label: 'bestial-frenzy' },
+            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.12, moveSpeedMult: 1.10, label: 'bestial-frenzy' },
           ] },
         ] },
       ],
@@ -238,30 +266,41 @@ export const bossMonsterEntriesT2 = [
       id: 'dreadbore-emergence', name: 'Dreadbore',
       damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4000,
       steps: [
-        { kind: 'cast', name: 'Burrow', castMs: 900, fx: 'shield', guardable: false },
-        // A SHORT, FAST BURROW (2026-09-06). It used to spend 1600ms underground,
-        // which is most of two seconds in which the only thing happening is a mound
-        // walking towards you. Cut to 500ms: the boss goes under and is on top of
-        // you almost immediately, and the beat the player actually reads is the
-        // eruption telegraph that follows, not the approach.
+        { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'shield', guardable: false },
+        // IT GOES ROUND YOU (2026-09-06). The burrow has been through four shapes: a
+        // 1600ms straight walk (a long boring approach), a 500ms sprint at 1300px/s
+        // (nothing to read), a true spiral (read well, MOVED badly), and now three
+        // straight legs — out, around, and in. It goes under, runs to a point off to
+        // one side at +260px, cuts across to a second nearer point ~150 degrees
+        // round, then turns and tracks you home. Half the speed of the sprint
+        // version, and the mound is worth watching because for the first two legs it
+        // is not coming at you.
         //
-        // travelSpeed had to rise with it or the change would quietly REMOVE the
-        // burrow's whole job. This is the Dreadbore's only closer — it walks at 20
-        // against a player who kites at 120 — and closing power is the travel
-        // BUDGET, not the speed: 1600ms at 500 netted ~608px against a full sprint,
-        // and 500ms at 1300 nets ~590. Same reach, a third of the time. Under ~250
-        // it would surface wherever it already stood and telegraph at empty floor.
+        // ⚠ WHY WAYPOINTS AND NOT A CURVE. The spiral aimed at a point that slid
+        // continuously and faster than the body chasing it, so the steering re-pathed
+        // on ~23 of the burrow's 24 ticks and the per-tick travel varied by ~18px —
+        // visible stutter. Fixed points cut that to 3 re-paths and 0px of variation:
+        // the boss holds a constant heading down each leg and turns at the corners.
+        // The path is a triangle rather than an arc, which at this size looks the
+        // same and moves properly.
+        //
+        // ⚠ The detour is paid out of the same travel budget as the approach, so
+        // reach is not something to reason about on paper here — it is SIMULATED in
+        // `bossConcealmentPhase4`. From its own reach against a sprinting player it
+        // surfaces inside the eruption; against someone who has already opened
+        // ~500px it does not, which is a deliberate trade for the shape.
         //
         // emergeGap 0: it comes up UNDERNEATH the target rather than beside it.
         // The old 90 against a 140 radius left a 50px overlap, so a stationary
         // player was caught but a drifting one fell out of the circle for free.
         // ⚠ Centred + a 165 radius means running is NO LONGER the answer on its own:
-        // clearing 165px at 120px/s takes ~1.4s against a 1000ms telegraph. Step
+        // clearing 165px at 120px/s takes ~1.4s against a 750ms telegraph. Step
         // Back, Guard and armour are the answers; tanking it stays legal.
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 500,
-          relocate: 'near-target', emergeGap: 0, travelSpeed: 1300 },
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 2400,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 420,
+          feint: { awayPx: 260, untilPct: 0.3, arcDeg: 150 } },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
-          damageMult: 1.0, telegraphMs: 1000, fx: 'strong-kick' },
+          damageMult: 1.0, telegraphMs: 750, fx: 'strong-kick' },
         { kind: 'recovery', label: 'Surfaced', durationMs: 2200 },
       ],
     },
@@ -302,9 +341,15 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
     targeting: { prefersPlayers: true },
-    // DESERT = MARK AND EXECUTION, as ONE visible sequence.
+    // DESERT = MARK, NUMB, EXECUTE, as ONE visible sequence.
     //
-    //   Death Sting paints the mark  ->  a real window to answer it  ->  Execution.
+    //   Death Sting paints the mark -> a window -> Numbing Sting slows you -> a
+    //   shorter window -> Execution.
+    //
+    // The slow in the middle is what turns two beats into a CHOICE (added
+    // 2026-09-06). The mark controls how hard the Execution lands; the slow
+    // controls whether you can leave its circle at all. One Cleanse, two things
+    // worth cleansing, and the sequence is paced so you genuinely cannot do both.
     //
     // The mark decides HOW HARD the Execution lands, never WHETHER it lands.
     // Cleansing it strips the amplification and the Execution still arrives at its
@@ -325,7 +370,31 @@ export const bossMonsterEntriesT2 = [
           effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6000 },
         // The answer window. Long enough to actually reach a Cleanse, short enough
         // that ignoring the tell is a choice rather than an accident.
-        { kind: 'wait', durationMs: 1400 },
+        { kind: 'wait', durationMs: 800 },
+        // NUMBING STING (2026-09-06) — the biome's own soft control, borrowed from
+        // the Sand Scorpion that teaches it (`appliesSlow: 0.5 / 4000ms`, identical
+        // magnitudes) and folded into the middle of the Emperor's sentence.
+        //
+        // This is what makes the sequence a DILEMMA instead of two independent
+        // beats. The Execution is a 150px circle on a 1300ms tell: at full speed
+        // that is ~1250ms of running, so it is escapable by a hair. At half speed
+        // it is ~2500ms and there is no escape at all. So the mark is not the only
+        // thing worth cleansing, and you cannot cleanse both — answer the mark and
+        // you eat an unamplified hit you could have walked out of; answer the slow
+        // and you walk out of an Execution that would have hit twice as hard.
+        //
+        // The slow outlasts the Execution on purpose (4000ms from ~2.6s in, against
+        // a payoff at ~4.5s): its job is not only the circle, it is that the
+        // punish window afterwards is one you have to limp out of.
+        // speedMult 0.35, DEEPER than the Sand Scorpion's 0.5 that teaches it. The
+        // scorpion's slow is chip pressure you fight through; the Emperor's exists
+        // to make one specific circle inescapable, and at 0.5 a player who reacts
+        // on the first frame of the tell is only ~1.2x short of clearing it. 0.35
+        // puts it comfortably out of reach so the beat asks a question with one
+        // answer rather than a near-miss. The scorpion is untouched.
+        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'power-shot',
+          effectId: 'slow', stacks: 1, durationMs: 4000, data: { speedMult: 0.35 } },
+        { kind: 'wait', durationMs: 600 },
         { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'strong-kick',
           damageMult: 1.0, amplifiedMult: 2.0,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 150 },

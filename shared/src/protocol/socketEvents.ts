@@ -272,6 +272,11 @@ export interface ClientToServerEvents {
   "debug:renameCharacter": (name: string) => void;
   /** Dev-only: remove and regenerate all monsters in the player's current node. */
   "debug:respawnNode": () => void;
+  /**
+   * Dev-only: despawn every non-boss monster in the player's current node
+   * (dungeon guard, trash, boss adds). Grants nothing; bosses are left standing.
+   */
+  "debug:killNodeMonsters": () => void;
   /** Dev-only: grant and equip the Phase Tester weapon + Godmode armor. */
   "debug:equipPhaseTester": () => void;
   /**

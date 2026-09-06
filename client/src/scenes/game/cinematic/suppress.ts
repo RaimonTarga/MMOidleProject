@@ -44,7 +44,7 @@ export function suppressCinematicOverlays(scene: GameScene): void {
     state.identityAccents.get(state.ownId)?.setVisible(false);
   }
 
-  scene.targetMarker.setVisible(false);
+  scene.targetMarker.hide();
   scene.minimap.setVisible(false);
   scene.exitMarkers.setVisible(false);
   scene.nodeBoundaryFrame.setVisible(false);

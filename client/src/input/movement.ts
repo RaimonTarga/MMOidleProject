@@ -159,12 +159,18 @@ function tickMovement(scene: GameScene): void {
     return;
   }
 
+  // Steering under your own power retires the click destination, EVERY tick and
+  // not just on the edge into manual movement. A click does not take the manual
+  // latch back off the keyboard, so a marker planted while a key is already held
+  // would never see the transition below and would hang around for the whole
+  // hold. `hide()` is idempotent and early-returns when nothing is shown.
+  scene.targetMarker.hide();
+
   if (!isManualActive()) {
     if (scene.autoMode) setAutoMode(scene, false);
     cancelAutoPath();
     scene.flashCameraHold = false;
     scene.flashCameraHoldTargetId = null;
-    scene.targetMarker.setVisible(false);
     clearOwnMovePath(scene.state);
     setManualActive(true);
   }

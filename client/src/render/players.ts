@@ -30,12 +30,6 @@ import {
 } from "../input/pathPrediction";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
-import { spawnDamageNumber } from "../fx/particles";
-import {
-  resolvePlayerDamageStyle,
-  SHIELD_DAMAGE_COLOR,
-  SHIELD_DAMAGE_SYMBOL,
-} from "./damageNumberStyle";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 import { auraTint } from "../fx/aura";
 
@@ -143,7 +137,6 @@ export function upsertPlayer(
   const prev = state.view.get(player.id) as PlayerView | undefined;
   const wasDead = prev?.isDead ?? false;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
-  const prevHp = prev?.hp ?? player.hp;
 
   if (player.isDead) {
     const meta = state.spriteMeta.get(player.id);
@@ -180,6 +173,9 @@ export function upsertPlayer(
 
   if (isOwn && player.nodeId !== state.ownNodeId) {
     clearPendingStop();
+    // Destination coordinates are node-local, so a mark carried through a gate
+    // would point at an unrelated patch of the node we just walked into.
+    scene.targetMarker.hide();
     const store = getDefaultStore();
     const navPathBefore = store.get(autoPathAtom);
     if (!scene.transitioning && !isServerOwnedNavigation(scene, navPathBefore)) {
@@ -299,43 +295,6 @@ export function upsertPlayer(
 
   updateLabelForLivePlayer(state, player.id, player, scene);
 
-  const damageHint = state.damageStyleHints.get(player.id);
-  if (player.hp < prevHp) {
-    const sprite = state.sprite.get(player.id);
-    const meta = state.spriteMeta.get(player.id);
-    if (sprite && meta) {
-      const { color, style } = resolvePlayerDamageStyle(
-        damageHint,
-        isOwn ? "#ff4444" : "#ff8844",
-      );
-      spawnDamageNumber(
-        scene,
-        { x: sprite.x, y: sprite.y },
-        meta.barOffsetY,
-        Math.round(prevHp - player.hp),
-        color,
-        style,
-      );
-    }
-  }
-
-  // Shield-absorbed damage renders as a separate blue number, independent of the
-  // HP delta — so a fully absorbed incoming hit (no HP loss) still shows feedback.
-  if (damageHint?.absorbed && damageHint.absorbed > 0) {
-    const sprite = state.sprite.get(player.id);
-    const meta = state.spriteMeta.get(player.id);
-    if (sprite && meta) {
-      spawnDamageNumber(
-        scene,
-        { x: sprite.x, y: sprite.y },
-        meta.barOffsetY,
-        Math.round(damageHint.absorbed),
-        SHIELD_DAMAGE_COLOR,
-        { symbol: SHIELD_DAMAGE_SYMBOL },
-      );
-    }
-  }
-
   if (
     !isOwn &&
     !(scene.spectatorMode && player.id === scene.spectatorTargetId) &&
@@ -380,6 +339,12 @@ export function upsertPlayer(
         scene.flashCameraHoldTargetId = null;
     }
     state.ownNodeId = player.nodeId;
+    // `player.auto` is the single authoritative writer for auto-combat, so this
+    // is also the only place that sees auto turn on when the SERVER did it (a
+    // rune, an admin action, a resume-on-respawn). `setAutoMode` covers the
+    // locally-initiated case; this covers the rest, so the destination mark can
+    // never outlive the manual control it belonged to.
+    if (player.auto && !scene.autoMode) scene.targetMarker.hide();
     scene.autoMode = player.auto;
   }
 }

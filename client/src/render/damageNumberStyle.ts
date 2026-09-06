@@ -3,13 +3,11 @@ import type { DamageNumberHint } from './state';
 import {
   EMPOWERED_DAMAGE_COLOR,
   EMPOWERED_DAMAGE_SIZE_PX,
-  type DamageNumberStyle,
-} from '../fx/particles';
+} from './damageNumberConstants';
+import type { DamageNumberStyle } from '../fx/particles';
 
 /**
- * Per-element damage-number flavor (color + glyph). `lightning` and `bleed` have no
- * DoT source wired yet — scaffolding so a future DoT of that element renders with no
- * further changes to the damage-number system.
+ * Per-element damage-number flavor (color + glyph), resolved per damage instance.
  */
 export const ELEMENT_STYLE: Record<DamageElement, { color: string; symbol: string }> = {
   poison: { color: '#5fd35f', symbol: '☠' },
@@ -28,7 +26,7 @@ export interface ResolvedDamageStyle {
 /**
  * Shield-absorbed damage flavor — a separate blue number with a shield glyph,
  * matching the shield segment color on the HP bar (healthBars.ts, 0x44ccdd).
- * Spawned alongside (not instead of) the HP-delta number, so a fully absorbed
+ * Spawned alongside (not instead of) the HP-damage number, so a fully absorbed
  * hit still produces a visible number.
  */
 export const SHIELD_DAMAGE_COLOR = '#44ccdd';
@@ -41,7 +39,7 @@ const CAPPED_DAMAGE_COLOR = '#9aa6bf';
 export const PARTIAL_EVADE_COLOR = '#bcd2ff';
 
 /**
- * Shared mitigation styling applied to the HP-delta number, ahead of the
+ * Shared mitigation styling applied to the HP-damage number, ahead of the
  * empowered/element/base tiers. Capped beats partial-evade (a clamp is the more
  * notable read, and capped hits are usually the big empowered ones). Returns
  * undefined when neither mitigation fired.
@@ -58,7 +56,7 @@ function resolveMitigationStyle(
   return undefined;
 }
 
-/** Monster-facing: capped/glancing > empowered crit > direct hit (white) > elemental DoT > white. */
+/** Monster-facing: capped/glancing > empowered crit > element > unflavored DoT > white. */
 export function resolveMonsterDamageStyle(
   hint: DamageNumberHint | undefined,
 ): ResolvedDamageStyle {
@@ -70,21 +68,17 @@ export function resolveMonsterDamageStyle(
       style: { sizePx: EMPOWERED_DAMAGE_SIZE_PX, suffix: '!' },
     };
   }
-  // Element tint only when the damage wasn't a direct hit this snapshot (a direct
-  // hit landing in the same window takes precedence and stays white).
-  if (!hint?.hasDirectHit && hint?.dotElement) {
+  // An explicit DoT entry carries its own hint, so adjacent direct hits cannot
+  // overwrite its element. Unflavored direct hits retain their base color.
+  if (hint?.dotElement) {
     const e = ELEMENT_STYLE[hint.dotElement];
     return { color: e.color, style: { symbol: e.symbol } };
   }
+  if (hint?.isDot) return { color: '#c9a7eb', style: { symbol: '•' } };
   return { color: '#ffffff' };
 }
 
-/**
- * Player-facing: elemental DoT tint+glyph, else the base damage-taken color
- * (red for self / orange for others). Incoming damage has no empowered tier, and
- * there's no direct-hit event for monster→player attacks, so DoT element wins when
- * a tick lands this snapshot.
- */
+/** Player-facing: mitigation/empowerment, then elemental DoT or incoming base color. */
 export function resolvePlayerDamageStyle(
   hint: DamageNumberHint | undefined,
   baseColor: string,
@@ -97,10 +91,11 @@ export function resolvePlayerDamageStyle(
   if (hint?.empowered || hint?.execution) {
     return { color: baseColor, style: { sizePx: EMPOWERED_DAMAGE_SIZE_PX, suffix: '!' } };
   }
-  // Element tint only when not a direct hit this snapshot (direct takes precedence).
-  if (!hint?.hasDirectHit && hint?.dotElement) {
+  // Each event retains its own element, independently of adjacent direct hits.
+  if (hint?.dotElement) {
     const e = ELEMENT_STYLE[hint.dotElement];
     return { color: e.color, style: { symbol: e.symbol } };
   }
+  if (hint?.isDot) return { color: '#c9a7eb', style: { symbol: '•' } };
   return { color: baseColor };
 }

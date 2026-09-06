@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../../combat/damage/damageEvent';
 import {
   BERSERKER_SELF_DAMAGE_INTERVAL_MS,
   BERSERKER_SELF_DAMAGE_PCT,
@@ -115,6 +116,7 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
       accumulator -= BERSERKER_SELF_DAMAGE_INTERVAL_MS;
       const damage = Math.max(1, Math.round(player.hasHealth.maxHp * BERSERKER_SELF_DAMAGE_PCT));
       player.hasHealth.hp -= damage;
+      pushDamageEvent(world, player, damage);
       markSliceDirty(world, player, "hasHealth");
       if (player.hasHealth.hp <= 0) {
         world.killPlayer(player.isPlayer.id, {

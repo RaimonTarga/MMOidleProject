@@ -26,9 +26,6 @@ import { fxConflagrationTick } from "../fx/conflagrationTick";
 import { fxDoomTick, fxDoomCloud } from "../fx/doom";
 import {
   playOneShotEffect,
-  spawnDamageNumber,
-  EMPOWERED_DAMAGE_COLOR,
-  EMPOWERED_DAMAGE_SIZE_PX,
 } from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
 import { fxApprenticeCast, fxApprenticeCloseCast } from "../fx/apprenticeCast";
@@ -571,8 +568,9 @@ export function dispatchCombatEvent(
   ev: CombatEvent,
   scene: GameScene,
 ): void {
-  // dot-tick / monster-hit events are consumed as damage-number style hints in
-  // deltaApplier. The lightning element (Tempest storm) also cracks a bolt down onto
+  if (ev.kind === 'damage') return; // Amount-only events render in deltaApplier.
+  // dot-tick / monster-hit amounts render separately in deltaApplier.
+  // The lightning element (Tempest storm) also cracks a bolt down onto
   // the target on each tick for a "storm" read.
   if (ev.kind === "dot-tick") {
     if (shouldRunClientFx()) {
@@ -987,21 +985,6 @@ export function dispatchCombatEvent(
       // don't also fire the generic enemy-death cue for them.
       const killedBoss = state.entity.get(ev.targetId)?.isMonster?.isBoss ?? false;
       if (!killedBoss) playSfx("kill");
-      const target = scene.state.sprite.get(ev.targetId);
-      if (target && ev.damage > 0) {
-        const meta = scene.state.spriteMeta.get(ev.targetId);
-        const empowered = ev.empowered || ev.execution;
-        spawnDamageNumber(
-          scene,
-          { x: target.x, y: target.y },
-          meta?.barOffsetY ?? 40,
-          Math.round(ev.damage),
-          empowered ? EMPOWERED_DAMAGE_COLOR : "#ffffff",
-          empowered
-            ? { sizePx: EMPOWERED_DAMAGE_SIZE_PX, suffix: "!" }
-            : undefined,
-        );
-      }
       spawnRewardFloaters(scene, ev);
     }
   }

@@ -5,6 +5,7 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
 import { attachComponent, detachComponent } from "../../ecs/markerHelpers";
+import { mutateSlice } from "../../ecs/dirtyHelpers";
 import { stopEntity } from "./movement";
 import { clearAutoTraversePath } from "./autoTraverse";
 import { setAggroTarget, setAttackTarget } from "../combat/ai/targeting";
@@ -49,9 +50,18 @@ export function killPlayer(
   setAttackTarget(world, entity, null);
   clearAutoTraversePath(world, entity);
   detachComponent(world, entity, "fightsWhileTraveling");
-  // Preserve auto-combat intent across death/respawn; dead players are excluded
-  // from livePlayers so auto targeting won't run while incapacitated.
-  entity.usesAutocombat.autoTraverse = false;
+  // Death cancels every standing order, auto-combat included. Preserving `auto`
+  // across the respawn meant a character came back already fighting or walking,
+  // with no click from the player between dying and moving again. Resuming auto
+  // on respawn is a future opt-in setting, and it can only be built on top of a
+  // respawn that starts genuinely idle.
+  //
+  // `mutateSlice` because `usesAutocombat` is networked: assigning in place
+  // leaves the AUTO button lit on a client that never gets the patch.
+  mutateSlice(world, entity, "usesAutocombat", (s) => {
+    s.auto = false;
+    s.autoTraverse = false;
+  });
   despawnMinionsForOwner(world, entity);
   clearEngagement(world, entity);
   resetTracksCombat(entity.tracksCombat);

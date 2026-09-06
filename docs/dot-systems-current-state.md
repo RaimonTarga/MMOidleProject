@@ -463,8 +463,7 @@ events in `deltaApplier.ts` and applies element-specific styling.
 `dot-tick` events include:
 
 - `element`: visual damage flavor.
-- `amount`: server tick amount, used for event context while HP deltas still
-  drive the visible damage number.
+- `amount`: server tick amount, used directly for the visible damage number.
 - `sourceType`: `class`, `weapon`, `monster`, or `special`.
 - optional `fx`: dedicated per-tick animation such as `conflagration`.
 
@@ -475,6 +474,45 @@ Current source-type mapping:
 - Monster DoTs ticking on players: `monster`.
 - Weapon reservoir ticks, including Edge corruption: `weapon`.
 - Hemorrhage and Energy Storm: `special`.
+
+Combat text uses the existing snapshot event batch: each `player-hit`,
+`monster-hit`, `dot-tick`, or damage-only `damage` event produces its own amount
+and style. Simultaneous hits use separate vertical positions; direct damage cannot
+overwrite DoT color/glyph. Shield absorption is a separate per-instance number,
+including fully absorbed incoming DoTs. Text is bounded to 12 numbers per target
+and 120 per batch, with no deferred backlog.
+
+Phase two completes gameplay HP-loss coverage. Damage-only events cover paths
+that do not already emit an amount-bearing hit/tick event:
+
+| Path | Event coverage |
+| --- | --- |
+| Player AoE, including Detonate and volatile explosions | One direct event per damaged monster |
+| Monster AoE | One direct event per damaged player/minion |
+| Monster hits on minions and redirected damage | One direct event on the minion |
+| Debt drain | DoT event with a neutral DoT glyph |
+| Bramble reflection and barrier shatter bonus | Separate direct events on the monster |
+| Berserker self-damage, reconstruction payment, volatile sacrifice | Direct event on the paying entity |
+| Node-feature and ultimate environmental DoTs | DoT event; existing swamp-rot ticks retained without duplication |
+| Alternating Currents discharge | Direct lightning event |
+
+The HP-mutation audit also checked existing combat, proc, beam/laser, cadence,
+class/weapon/special DoT, and ground-zone paths. These retain their existing
+amount-bearing events. Beam/laser and incoming hits now carry target positions
+for targets absent from the render state. The audit included aliased HP writes
+and whole health-component initialization/replacement.
+
+No HP-loss or kill-number fallback remains. HP changes still update health bars;
+healing, stat clamps/rescaling, creation, revival/respawn, administrative health
+changes, and death-state cleanup are intentionally silent. Cleanup must not emit
+a second number after lethal damage. Numbers use finalized damage amounts,
+including overkill, rather than reconstructing net HP loss after healing.
+
+State syncs suppress historical damage text and leave the shared broadcast event
+queue and entity baseline untouched. Live spectator full snapshots still render
+events after their initial node baseline. Focused tests exercise real damage
+paths through the world event batch and client adapter, including mixed hits,
+DoTs/healing, absorption, lethal removal, and resync delivery.
 
 ## Evasion And Miss Semantics
 

@@ -14,7 +14,6 @@ import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
-import { spawnDamageNumber } from '../fx/particles';
 
 function minionScale(minion: MinionView): number {
   return Math.max(0.1, minion.sizeMult ?? 1.0);
@@ -103,7 +102,6 @@ export function upsertMinion(
 
   const prev = state.view.get(minion.id) as MinionView | undefined;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
-  const prevHp = prev?.hp ?? minion.hp;
 
   const interp = state.interpolation.get(minion.id);
   if (interp) {
@@ -132,19 +130,6 @@ export function upsertMinion(
 
   const meta = state.spriteMeta.get(minion.id);
   if (meta) meta.monsterIsRanged = isRangedSummonStyle(minion.attackStyle);
-  if (minion.hp < prevHp) {
-    const sprite = state.sprite.get(minion.id);
-    if (sprite && meta) {
-      spawnDamageNumber(
-        scene,
-        { x: sprite.x, y: sprite.y },
-        meta.barOffsetY,
-        Math.round(prevHp - minion.hp),
-        '#ffd1d1',
-      );
-    }
-  }
-
   if (minion.lastAttackAt > prevAttackAt && minion.attackTargetId) {
     const vmSprite = state.sprite.get(minion.id);
     const targetInterp = state.interpolation.get(minion.attackTargetId);

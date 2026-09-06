@@ -687,6 +687,14 @@ function beginStep(
       return true;
     }
     case 'impact': {
+      // NO CONNECTION, NO PAYOFF. Skipped BEFORE the telegraph is published, so a
+      // dodged charge draws no circle at all — a marker the player is told to fear
+      // and then watch land on empty ground is worse than no marker.
+      if (step.requiresChargeHit && !state.chargeConnected) {
+        state.skippedStepIndexes.push(state.stepIndex);
+        state.stepEndsAtMs = now;
+        return true;
+      }
       const at = anchorPoint(monster, state, step.anchor);
       state.stepEndsAtMs = now + step.telegraphMs;
       publishGroundZone(world, monster.hasPosition.nodeId, {
@@ -708,6 +716,11 @@ function beginStep(
       return true;
     }
     case 'fault-lines': {
+      if (step.requiresChargeHit && !state.chargeConnected) {
+        state.skippedStepIndexes.push(state.stepIndex);
+        state.stepEndsAtMs = now;
+        return true;
+      }
       const at = anchorPoint(monster, state, step.anchor);
       publishFaultLines(world, monster, step, at, pattern, now);
       // The cracks resolve on the shared delayed-impact path, so the pattern does
@@ -830,13 +843,24 @@ function beginStep(
         fx: step.fx,
       });
       if (step.relocate !== 'none') {
-        const destination = relocationPoint(
-          world,
-          monster,
-          step.relocate,
-          patternTarget(world, monster),
-          step.emergeGap ?? 140,
-        );
+        const concealTarget = patternTarget(world, monster);
+        // Plan the detour ONCE, from where the boss actually went under. Fixed
+        // points are what make the movement smooth — see `planFeintWaypoints`.
+        state.feintWaypoints = undefined;
+        state.feintLegEndsAtMs = undefined;
+        if (step.feint && concealTarget && step.travelSpeed !== undefined) {
+          state.feintWaypoints = planFeintWaypoints(world, monster, step, concealTarget);
+          state.feintLegEndsAtMs = now + feintLegMs(step);
+        }
+        const destination =
+          state.feintWaypoints?.[0] ??
+          relocationPoint(
+            world,
+            monster,
+            step.relocate,
+            concealTarget,
+            step.emergeGap ?? 140,
+          );
         // A null destination means "stay put" — emerging inside terrain would be
         // far worse than emerging where it went down.
         if (destination) {
@@ -968,6 +992,8 @@ function tickStep(
       return tickCommittedTravel(world, monster, state, pattern, step, dt, now);
     case 'impact': {
       if (now < state.stepEndsAtMs) return 'running';
+      // A gated-out impact published no telegraph and must resolve no damage.
+      if (state.skippedStepIndexes.includes(state.stepIndex)) return 'done';
       const at = anchorPoint(monster, state, step.anchor);
       hooks?.resolveCircle(
         world,
@@ -1047,7 +1073,7 @@ function tickStep(
       }
       if (now < state.stepEndsAtMs) {
         if (step.travelSpeed !== undefined && step.relocate === 'near-target') {
-          steerConcealedTravel(world, monster, state, step);
+          steerConcealedTravel(world, monster, state, step, now);
         }
         return 'running';
       }
@@ -1220,18 +1246,27 @@ function tickCommittedTravel(
   resolveTravelContacts(world, monster, state, pattern, step, halfWidth, now);
   if (!world.hasMonster(monster.isMonster.id)) return 'ended';
 
+  // TACKLE. Hitting a player ENDS the charge where the bodies met. A charge that
+  // ploughs on through reads as the boss not noticing what it just ran over, and it
+  // leaves the follow-up circle anchored at a lane tip the fight never reached.
+  const tackled = (step.stopsOnContact ?? true) && state.chargeConnected === true;
+
   // ARRIVAL. Either the body reached the tip, or the movement system gave up on it
   // (blocked by terrain, so `isMoving` is gone) — in both cases the charge is over.
   // `maxTravelMs` remains the outer guard against a motion that never resolves.
   const stalled = monster.isMoving === undefined;
-  if (remaining < ARRIVAL_EPSILON_PX || stalled || now >= state.stepEndsAtMs) {
+  if (tackled || remaining < ARRIVAL_EPSILON_PX || stalled || now >= state.stepEndsAtMs) {
     // Land exactly on the tip when the body is close enough that the last partial
     // step would otherwise leave it short of its own marker. A body stopped early by
     // TERRAIN keeps its real position — it genuinely could not get there.
-    if (remaining < ARRIVAL_EPSILON_PX) {
+    if (!tackled && remaining < ARRIVAL_EPSILON_PX) {
       monster.hasPosition.current = { ...destination };
       markSliceDirty(world, monster, 'hasPosition');
     }
+    // `capturedEndpoint` means "where the charge finished", and after a tackle that
+    // is the collision, not the tip it was aiming at. Rewriting it here is what
+    // keeps every `anchor: 'captured-endpoint'` step downstream honest.
+    if (tackled) state.capturedEndpoint = { ...monster.hasPosition.current };
     stopEntity(world, monster);
     // The lane has done its job; retire it before the payoff steps publish theirs.
     clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
@@ -1276,6 +1311,9 @@ function resolveTravelContacts(
       if (state.chargeHitIds.includes(player.isPlayer.id)) continue;
       if (!geometryContains(sweep, player.hasPosition.current)) continue;
       state.chargeHitIds.push(player.isPlayer.id);
+      // The connection is what the rest of the sequence hangs off: it stops the
+      // travel, and it gates every `requiresChargeHit` step after it.
+      state.chargeConnected = true;
       hooks.hitPlayer(world, monster, player, now, multiplier);
       if (!world.hasMonster(monster.isMonster.id)) return;
     }
@@ -1315,6 +1353,68 @@ const RELOCATE_RING_RETRIES = 4;
 const CONCEAL_RETARGET_EPSILON_PX = 16;
 
 /**
+ * While the feint is running, the distance from the TARGET the boss should be
+ * heading for: where it is now, plus the authored back-off. Returns null once the
+ * feint window has elapsed (or when the step declares none), which puts the steering
+ * back on the ordinary emergence gap.
+ */
+/** How long one detour leg may take before the burrow gives up on it and turns in. */
+function feintLegMs(step: Extract<BossPatternStep, { kind: 'conceal' }>): number {
+  const feint = step.feint;
+  if (!feint) return 0;
+  return Math.max(100, Math.round((step.durationMs * feint.untilPct) / 2));
+}
+
+/** Fixed sweep direction: a burrow that detoured at random would be unreadable. */
+const FEINT_SWEEP_SIGN = 1;
+/** Close enough to a waypoint to call it reached and move to the next leg. */
+const FEINT_ARRIVE_PX = 56;
+
+/**
+ * Plan the detour ONCE, when the boss goes under.
+ *
+ * Two points spaced across the authored bearing sweep, at the feint radius and then
+ * partway back in — so the body runs out, around, and is already turning inward when
+ * the tracking approach takes over. Each is pulled inward until it is somewhere the
+ * boss can actually stand, and dropped entirely if nowhere on that bearing works;
+ * a detour is a flourish, and it must never be able to strand the burrow.
+ */
+function planFeintWaypoints(
+  world: World,
+  monster: MonsterEntity,
+  step: Extract<BossPatternStep, { kind: 'conceal' }>,
+  target: PlayerEntity,
+): Vec2[] {
+  const feint = step.feint;
+  if (!feint) return [];
+  const anchor = target.hasPosition.current;
+  const dx = monster.hasPosition.current.x - anchor.x;
+  const dy = monster.hasPosition.current.y - anchor.y;
+  const startAngle = Math.atan2(dy, dx);
+  const startRadius = Math.hypot(dx, dy);
+  const outer = startRadius + feint.awayPx;
+  const arc = ((feint.arcDeg ?? 0) * Math.PI) / 180 * FEINT_SWEEP_SIGN;
+
+  const nodeId = monster.hasPosition.nodeId;
+  const points: Vec2[] = [];
+  for (const [turn, radius] of [[0.45, outer], [0.9, outer * 0.7]] as const) {
+    const angle = startAngle + arc * turn;
+    // Walk inward until the point is standable rather than abandoning the bearing.
+    for (let r = radius; r >= startRadius * 0.5; r -= RELOCATE_SAMPLE_STEP) {
+      const candidate = clampToNode(nodeId, {
+        x: anchor.x + Math.cos(angle) * r,
+        y: anchor.y + Math.sin(angle) * r,
+      });
+      if (standable(world, monster, candidate)) {
+        points.push(candidate);
+        break;
+      }
+    }
+  }
+  return points;
+}
+
+/**
  * Steer a TRAVELLING concealment: keep its emergence point on the target.
  *
  * It tracks for the WHOLE burrow. An earlier draft locked the point partway
@@ -1333,20 +1433,64 @@ function steerConcealedTravel(
   monster: MonsterEntity,
   state: NonNullable<MonsterEntity['runsBossPattern']>,
   step: Extract<BossPatternStep, { kind: 'conceal' }>,
+  now: number,
 ): void {
+  const target = patternTarget(world, monster);
+
+  // LEG 1-2: the planned detour. A waypoint is retired when the body reaches it or
+  // when its slice of the feint window runs out — the timeout is what stops a
+  // waypoint the navigation cannot actually reach from eating the whole burrow.
+  const waypoint = state.feintWaypoints?.[0];
+  if (waypoint) {
+    const reached =
+      Math.hypot(
+        monster.hasPosition.current.x - waypoint.x,
+        monster.hasPosition.current.y - waypoint.y,
+      ) <= FEINT_ARRIVE_PX;
+    if (reached || now >= (state.feintLegEndsAtMs ?? 0)) {
+      state.feintWaypoints = state.feintWaypoints!.slice(1);
+      state.feintLegEndsAtMs = now + feintLegMs(step);
+      // Fall through: the next destination is issued below, this tick.
+    } else {
+      // Already travelling to a FIXED point — leave the motion alone. Re-issuing it
+      // every tick is what made the spiral stutter.
+      if (monster.isMoving !== undefined) return;
+      state.capturedEndpoint = { ...waypoint };
+      setEntityMotion(world, monster, waypoint);
+      return;
+    }
+  }
+
+  const next = state.feintWaypoints?.[0];
+  if (next) {
+    state.capturedEndpoint = { ...next };
+    setEntityMotion(world, monster, next);
+    return;
+  }
+
+  // FINAL LEG: track the target, so the emergence lands on them and not on where
+  // they were when the boss went under.
   const destination = relocationPoint(
     world,
     monster,
     'near-target',
-    patternTarget(world, monster),
+    target,
     step.emergeGap ?? 140,
   );
   // Nothing valid this tick (the target left, or every candidate is inside
   // terrain): keep walking to the point already captured rather than stalling.
   if (!destination) return;
 
+  // A STALLED BODY ALWAYS RE-ISSUES. The epsilon gate exists to stop per-tick nav
+  // churn against a target who has shifted three pixels, but it also meant that a
+  // burrow whose motion had ended — blocked by terrain, or arrived at a point that
+  // then moved — could never restart: the destination was unchanged, so the gate
+  // returned, so no motion was ever set again, so the boss sat underground until it
+  // surfaced. Reachable as soon as a spiral steers into a wall.
+  const stalled = monster.isMoving === undefined;
   const current = state.capturedEndpoint;
   if (
+    !stalled &&
     current &&
     distanceSq(destination, current) < CONCEAL_RETARGET_EPSILON_PX * CONCEAL_RETARGET_EPSILON_PX
   ) {

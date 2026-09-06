@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../damage/damageEvent';
 import {
   applyStatusEffect,
   computeScaledDotDamage,
@@ -707,6 +708,7 @@ function tickPlayerEnvironmentalDot(
   );
 
   player.hasHealth.hp -= damage;
+  pushDamageEvent(world, player, damage, { category: 'dot', sourceId: boss.isMonster.id });
   if (player.hasHealth.hp <= 0) {
     detachComponent(world, player, "hasEnvironmentalDot");
     world.killPlayer(player.isPlayer.id, {

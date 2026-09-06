@@ -312,6 +312,20 @@ function DebugPanelContent() {
         </div>
       )}
 
+      {DEV_TOOLS_ENABLED && (
+        <div className="debug-section">
+          <button
+            className="debug-btn"
+            onClick={() => hudBus.requestKillNodeMonsters()}
+          >
+            CLEAR NODE (KILL NON-BOSS MOBS)
+          </button>
+          <div className="debug-div">
+            despawns trash, dungeon guard &amp; boss adds &middot; no rewards &middot; boss survives
+          </div>
+        </div>
+      )}
+
       {DEV_TOOLS_ENABLED && <RewardMultiplierSection />}
       {DEV_TOOLS_ENABLED && <PlaytestLoggingSection />}
 

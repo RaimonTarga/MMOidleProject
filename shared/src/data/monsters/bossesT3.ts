@@ -66,12 +66,17 @@ export const bossMonsterEntriesT3 = [
       steps: [
         { kind: 'cast', name: 'Cragbreaker Charge', castMs: 2400, fx: 'strong-kick',
           lane: { length: 760, halfWidth: 96, lockAtCastPct: 0.55 } },
-        // 760px at 520px/s ≈ 1.5s of travel.
-        { kind: 'charge', speed: 520, maxTravelMs: 2200 },
-        // Centred on the CAPTURED endpoint, so the circle is readable from the lane
-        // the moment it locked — not a fresh surprise aimed at the player again.
+        // 760px at 520px/s ≈ 1.5s of travel, or less — it STOPS on the body it hits.
+        // The tackle is the setup (damageMult 1.0 -> 0.3); Cragbreaker is the payoff.
+        { kind: 'charge', speed: 520, damageMult: 0.3, maxTravelMs: 2200 },
+        // Centred on the CAPTURED endpoint — which, now that the charge stops where
+        // it connects, is the collision itself rather than a tip it never reached.
+        // Reading the lane still answers both halves at once, and answering it now
+        // answers ALL of it: `requiresChargeHit` means a dodged charge draws no
+        // circle. Getting run down is the mistake; this is what it costs.
         { kind: 'impact', name: 'Cragbreaker', anchor: 'captured-endpoint',
-          radius: 205, damageMult: 0.75, telegraphMs: 900, fx: 'strong-kick' },
+          radius: 205, damageMult: 1.45, telegraphMs: 900, fx: 'strong-kick',
+          requiresChargeHit: true },
         { kind: 'recovery', label: 'Overextended', durationMs: 2600 },
       ],
     },

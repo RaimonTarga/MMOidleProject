@@ -513,9 +513,15 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
 // 600px at 470, so the charge visually stalled and the hit landed from nowhere.
 //
 // The speed slice has to tell the truth about how fast the thing is actually moving.
+// NOTE (2026-09-06): the charge now STOPS on the first player it runs into, so a
+// test about lane geometry has to keep its player OFF the end of the lane or the
+// travel ends on tick one and there is nothing to measure. Distances below are
+// "just past the lane tip, still inside the leash". Contact itself is covered by
+// its own cases at the end of this file.
 {
   const world = new World();
-  world.attachPlayerEntity(playerSlices('charge-speed', 420, 400), 'charge-speed');
+  // 720px out: past the 620px lane, inside the 800px leash.
+  world.attachPlayerEntity(playerSlices('charge-speed', 1_120, 400), 'charge-speed');
   const { monster, startedAt } = windUpBehemoth(world, 'charge-speed', { x: 400, y: 400 });
   const walking = monster.hasPosition.speed;
   assert(walking > 0, 'setup: the boss has a walking speed');
@@ -551,7 +557,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
 // leaves the boss sprinting for the rest of the fight.
 {
   const world = new World();
-  world.attachPlayerEntity(playerSlices('charge-speed-int', 420, 400), 'charge-speed-int');
+  world.attachPlayerEntity(playerSlices('charge-speed-int', 1_120, 400), 'charge-speed-int');
   const { monster, startedAt } = windUpBehemoth(world, 'charge-speed-int', { x: 400, y: 400 });
   const walking = monster.hasPosition.speed;
 
@@ -581,12 +587,15 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
 // `World.tick` rather than hand-picking systems. Every earlier probe passed precisely
 // because it omitted the system that broke it.
 {
-  for (const [id, node] of [
-    ['crag-behemoth', NODE],
-    ['stoneplate-juggernaut', NODE],
+  for (const [id, node, standOff] of [
+    ['crag-behemoth', NODE, 720],
+    ['stoneplate-juggernaut', NODE, 810],
   ] as const) {
     const world = new World();
-    const player = world.attachPlayerEntity(playerSlices(`fulltick-${id}`, 1_400, 1_200), `fulltick-${id}`);
+    const player = world.attachPlayerEntity(
+      playerSlices(`fulltick-${id}`, 1_200 + standOff, 1_200),
+      `fulltick-${id}`,
+    );
     player.hasPosition.nodeId = node;
     const monster = world.createMonster(node, id, { x: 1_200, y: 1_200 })!;
     const pattern = MONSTER_DATABASE.get(id)!.bossPattern!;
@@ -634,7 +643,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
 // object; the commitment is not. Destroy it mid-charge and the boss still finishes.
 {
   const world = new World();
-  const player = world.attachPlayerEntity(playerSlices('lane-gone', 1_400, 1_200), 'lane-gone');
+  const player = world.attachPlayerEntity(playerSlices('lane-gone', 1_920, 1_200), 'lane-gone');
   const monster = world.createMonster(NODE, 'crag-behemoth', { x: 1_200, y: 1_200 })!;
   setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, 1_000);
   monster.hasAwareness.state = 'attacking';
@@ -680,7 +689,7 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
 // tick rather than teleporting.
 {
   const world = new World();
-  world.attachPlayerEntity(playerSlices('lane-smooth', 420, 400), 'lane-smooth');
+  world.attachPlayerEntity(playerSlices('lane-smooth', 1_120, 400), 'lane-smooth');
   const { monster, startedAt } = windUpBehemoth(world, 'lane-smooth', { x: 400, y: 400 });
 
   let now = startedAt;
@@ -731,7 +740,9 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   // breached the tether under the old behaviour.
   for (const chasedPx of [0, 200, 400]) {
     const world = new World();
-    world.attachPlayerEntity(playerSlices(`lane-leash-${chasedPx}`, 1_400, 1_000), `lane-leash-${chasedPx}`);
+    // 720px out: past the 620px lane, so the charge runs its full length instead of
+    // tackling the player part-way down it.
+    world.attachPlayerEntity(playerSlices(`lane-leash-${chasedPx}`, 1_720, 1_000), `lane-leash-${chasedPx}`);
     const monster = world.createMonster(NODE, 'crag-behemoth', { x: 1_000, y: 1_000 })!;
     monster.controlsMonster.spawn = { x: 1_000 - chasedPx, y: 1_000 };
     setAggroTarget(world, monster, { id: `lane-leash-${chasedPx}`, kind: 'player' }, 1_000);
@@ -939,7 +950,9 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
 // following steps rather than inside the step that raised it.
 {
   const world = new World();
-  world.attachPlayerEntity(playerSlices('barrier-flow', 420, 400), 'barrier-flow');
+  // Past the 700px lane so the charge step is observable rather than resolving on
+  // contact the same tick it begins.
+  world.attachPlayerEntity(playerSlices('barrier-flow', 1_210, 400), 'barrier-flow');
   const monster = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 })!;
   const pattern = MONSTER_DATABASE.get('stoneplate-juggernaut')!.bossPattern!;
   setAggroTarget(world, monster, { id: 'barrier-flow', kind: 'player' }, 1_000);
@@ -1167,6 +1180,123 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   assert(
     guardableThreatsAgainstPlayer(world, player.isPlayer.id, armedAt + ability.castMs).length === 0,
     'a resolved cast is no longer a pending threat',
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THE TACKLE (2026-09-06). The charge used to plough straight through the body it
+// hit and carry on to its lane tip, which read as the boss not noticing what it
+// just ran over — and left the follow-up circle anchored at a point the fight had
+// never reached. It now STOPS on the first player it touches, and that stopping
+// point becomes the sequence's captured endpoint.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Run one full pattern through the REAL tick. Returns what the charge did. */
+function runCharge(id: string, standOffPx: number) {
+  const world = new World();
+  const player = world.attachPlayerEntity(
+    playerSlices(`tackle-${id}-${standOffPx}`, 1_200 + standOffPx, 1_200),
+    `tackle-${id}-${standOffPx}`,
+  );
+  const monster = world.createMonster(NODE, id, { x: 1_200, y: 1_200 })!;
+  const pattern = MONSTER_DATABASE.get(id)!.bossPattern!;
+  setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  monster.hasAwareness.state = 'attacking';
+
+  let now = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
+  const hpBefore = player.hasHealth.hp;
+  let travelled = 0;
+  let sawTelegraph = false;
+  let laneLen = 0;
+  // Latched inside the loop: the pattern state is detached once the sequence ends.
+  let connected = false;
+  const start = { ...monster.hasPosition.current };
+  for (let i = 0; i < 260 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    const state = monster.runsBossPattern;
+    if (state?.chargeConnected) connected = true;
+    const lane = (world.groundZones.get(NODE) ?? []).find(
+      (z): z is RuntimeChargeCorridor => z.kind === 'charge-corridor',
+    );
+    if (lane) laneLen = Math.hypot(lane.end.x - lane.start.x, lane.end.y - lane.start.y);
+    if (state && pattern.steps[state.stepIndex]?.kind === 'charge') {
+      travelled = Math.hypot(
+        monster.hasPosition.current.x - start.x,
+        monster.hasPosition.current.y - start.y,
+      );
+    }
+    // A slam telegraph belonging to this boss = the follow-up circle was published.
+    if ((world.groundZones.get(NODE) ?? []).some(
+      z => z.kind === 'slam-telegraph' && z.ownerId === monster.isMonster.id,
+    )) sawTelegraph = true;
+    now += 100;
+  }
+  return {
+    connected,
+    travelled,
+    laneLen,
+    sawTelegraph,
+    damage: hpBefore - player.hasHealth.hp,
+    endedAt: { ...monster.hasPosition.current },
+    player: { ...player.hasPosition.current },
+  };
+}
+
+// It stops on the body, well short of the lane it was aiming down.
+for (const id of ['crag-behemoth', 'stoneplate-juggernaut', 'crag-gorged-horn-behemoth', 'iron-crest-titan']) {
+  const hit = runCharge(id, 300);
+  assert(
+    hit.travelled < hit.laneLen - 100,
+    `${id}: the charge should stop on the player, not run its whole lane ` +
+      `(travelled ${hit.travelled.toFixed(0)} of ${hit.laneLen.toFixed(0)})`,
+  );
+  const gap = Math.hypot(hit.endedAt.x - hit.player.x, hit.endedAt.y - hit.player.y);
+  assert(gap < 120, `${id}: it should come to rest ON its target (stopped ${gap.toFixed(0)}px away)`);
+  assert(hit.damage > 0, `${id}: and the tackle should land`);
+}
+
+// NO CONNECTION, NO PAYOFF. The two bosses that follow their charge with a circle
+// must publish NOTHING when the charge misses — the old version erupted at the lane
+// tip regardless, teaching nothing and occasionally clipping a correct dodge.
+for (const [id, standOff] of [
+  ['crag-gorged-horn-behemoth', 900],
+  ['iron-crest-titan', 960],
+] as const) {
+  const steps = MONSTER_DATABASE.get(id)!.bossPattern!.steps;
+  const impact = steps.find(step => step.kind === 'impact');
+  assert(impact?.kind === 'impact' && impact.requiresChargeHit === true,
+    `${id}: its circle should be gated on the charge connecting`);
+
+  const missed = runCharge(id, standOff);
+  assert(!missed.connected, `${id}: setup — the charge should miss from ${standOff}px`);
+  assert(
+    !missed.sawTelegraph,
+    `${id}: a missed charge must draw no circle at all`,
+  );
+  assert(missed.damage === 0, `${id}: and deal nothing`);
+
+  // ...and everything still fires when it DOES connect.
+  const landed = runCharge(id, 300);
+  assert(landed.connected, `${id}: setup — the charge should connect from 300px`);
+  assert(landed.sawTelegraph, `${id}: a landed charge should publish its circle`);
+  assert(
+    landed.damage > missed.damage,
+    `${id}: connecting must cost the player more than dodging`,
+  );
+}
+
+// THE CHARGE IS THE SETUP, THE CIRCLE IS THE PAYOFF. Magnitudes belong to balance,
+// but the ORDERING is a design claim: a tackle that hits harder than the shatter it
+// sets up would invert the sequence the player is being asked to read.
+for (const id of ['crag-gorged-horn-behemoth', 'iron-crest-titan']) {
+  const steps = MONSTER_DATABASE.get(id)!.bossPattern!.steps;
+  const charge = steps.find(step => step.kind === 'charge');
+  const impact = steps.find(step => step.kind === 'impact');
+  assert(charge?.kind === 'charge' && impact?.kind === 'impact', `${id}: charge then circle`);
+  assert(
+    (charge.damageMult ?? 1) < impact.damageMult,
+    `${id}: the tackle (${charge.damageMult ?? 1}) must set up the circle ` +
+      `(${impact.damageMult}), not out-hit it`,
   );
 }
 

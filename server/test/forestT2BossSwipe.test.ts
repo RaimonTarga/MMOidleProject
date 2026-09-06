@@ -11,6 +11,7 @@
  */
 import {
   GAME_CONFIG,
+  MONSTER_DATABASE,
   STARTER_RUNE_IDS,
   emptyEquipment,
 } from '@mmo-idle/shared';
@@ -161,6 +162,79 @@ initCombatSystems();
     'the frenzy cast bar must survive the combat tick that sees `cannotAttack`',
   );
   assert(!!boss.scriptsBoss?.scriptedCast, 'the frenzy cast should still be running');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BESTIAL FRENZY IS THE FIGHT'S CLOCK.
+//
+// It has no stack cap ON PURPOSE: each stack divides the CURRENT swing cooldown, so
+// the ramp compounds until the boss out-damages anything you can survive, and the
+// fight is "kill it before that". What is tunable is WHEN the wall arrives — every
+// multiplier above 1.0 reaches the engine's 200ms swing floor eventually.
+//
+// The relationship, not the magnitudes, is what this guards: T2's wall must not
+// arrive SOONER than T1's. It did (~65s against T1's ~78s) until the 2026-09-06
+// nerf, which is backwards for the bigger boss with twice the health.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Seconds until the ramp bottoms out on the engine's 200ms swing floor. */
+function secondsToSwingFloor(id: string): number {
+  const def = MONSTER_DATABASE.get(id)!;
+  const beat = def.bossScript?.repeating?.[0];
+  assert(!!beat, `${id}: should ramp on a repeating beat`);
+  const cast = beat.actions.find(action => action.type === 'cast');
+  assert(cast?.type === 'cast', `${id}: the ramp should be a visible cast`);
+  const buff = cast.actions.find(
+    action => action.type === 'stat-buff' && action.stat === 'attackSpeed',
+  );
+  assert(buff?.type === 'stat-buff', `${id}: the cast should grant attack speed`);
+  assert(
+    buff.maxStacks === undefined,
+    `${id}: the ramp is the fight's time limit and must stay uncapped`,
+  );
+
+  let cooldown = def.stats.attackCooldown;
+  let stacks = 0;
+  while (cooldown > 200 && stacks < 500) {
+    cooldown = Math.max(200, Math.round(cooldown / buff.mult));
+    stacks++;
+  }
+  return ((beat.initialDelayMs ?? beat.intervalMs) + (stacks - 1) * beat.intervalMs) / 1_000;
+}
+
+{
+  const t1 = secondsToSwingFloor('gnarled-greatbear');
+  const t2 = secondsToSwingFloor('apex-timberclaw');
+  assert(
+    t2 >= t1,
+    `the T2 Timberclaw's ramp must not out-run the T1 Greatbear's — it is the ` +
+      `bigger boss and the longer fight (T2 walls at ${t2.toFixed(0)}s, T1 at ${t1.toFixed(0)}s)`,
+  );
+}
+
+// Forest is the tier's damage-per-second boss and should stay so — but "highest"
+// is a rank, not a licence. It opened at 2.2x-2.8x every other T2 boss before the
+// 2026-09-06 nerf, which is a different claim entirely.
+{
+  const dps = (id: string) => {
+    const def = MONSTER_DATABASE.get(id)!;
+    return (def.stats.attack * (def.consecutiveHits ?? 1)) / (def.stats.attackCooldown / 1_000);
+  };
+  const forest = dps('apex-timberclaw');
+  const others = [
+    'gorging-razortusk', 'stoneplate-juggernaut', 'mire-gorged-behemoth',
+    'chitinous-dreadbore', 'dune-stalker-emperor', 'jungle-dread-gorger',
+  ].map(dps);
+  const hardest = Math.max(...others);
+  assert(forest > hardest, `Forest should still open hardest (${forest.toFixed(0)} vs ${hardest.toFixed(0)})`);
+  // 1.75x of the tier's next-hardest. The pre-nerf 85 dps against Plains' 44 sat at
+  // 1.96x and would slip under a 2x bound, which is exactly the value this is here
+  // to reject; 1.75 still leaves plenty of room above today's 1.35x.
+  assert(
+    forest < hardest * 1.75,
+    `but not by multiples — ${forest.toFixed(0)} dps against a tier best of ${hardest.toFixed(0)} ` +
+      `is a different boss, not a faster one`,
+  );
 }
 
 console.log('forestT2BossSwipe.test.ts: ok');

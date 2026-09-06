@@ -475,6 +475,48 @@ export function equipPhaseTester(world: World, player: PlayerEntity): GameAction
   return { ok: true, message: 'Phase tester loadout equipped.' };
 }
 
+/**
+ * Dev-only room clear: remove every non-boss monster standing in `nodeId`.
+ *
+ * This is a despawn, not a kill — no rewards, no quest/catalyst credit, no kill
+ * log — so using it to skip a fight cannot contaminate an economy or playtest
+ * run. Bosses are deliberately spared: the whole point is to strip the dungeon
+ * guard (or an overworld node's trash) and then fight the boss on its own.
+ */
+export function killNodeMonsters(world: World, nodeId: string): GameActionResult {
+  if (!NODE_BIOMES[nodeId]) return { ok: false, message: `Unknown node: ${nodeId}` };
+
+  let removed = 0;
+  for (const monster of [...world.monsterEntitiesInNode(nodeId)]) {
+    if (monster.isMonster.isBoss) continue;
+    world.removeMonsterEntity(monster.isMonster.id);
+    removed += 1;
+  }
+
+  // A surviving boss must not keep pointing at adds that no longer exist: the
+  // script reads this list to despawn its own summons when it dies.
+  for (const monster of world.monsterEntitiesInNode(nodeId)) {
+    const spawnedAddIds = monster.scriptsBoss?.spawnedAddIds;
+    if (!spawnedAddIds?.length) continue;
+    monster.scriptsBoss!.spawnedAddIds = spawnedAddIds.filter((id) => world.hasMonster(id));
+  }
+
+  // Mirror the real guardian-death bookkeeping so a dev-cleared dungeon still
+  // obeys `idlePreclearResetMs` and reforms its guard instead of staying
+  // permanently stripped for whoever walks in next.
+  const dungeon = world.dungeons.get(nodeId);
+  if (dungeon) {
+    const stillAlive = dungeon.guardianIds.filter((id) => world.hasMonster(id));
+    if (stillAlive.length !== dungeon.guardianIds.length) {
+      dungeon.guardianIds = stillAlive;
+      if (!dungeon.guardiansEngaged) dungeon.lastGuardianKillAtMs = Date.now();
+    }
+  }
+
+  world.reconcileMonsterCounts();
+  return { ok: true, message: `Cleared ${removed} monster(s) in ${nodeId}.` };
+}
+
 export function respawnNode(world: World, nodeId: string): GameActionResult {
   if (!NODE_BIOMES[nodeId]) return { ok: false, message: `Unknown node: ${nodeId}` };
   if (world.isNodeFrozen(nodeId)) thawNode(world, nodeId);

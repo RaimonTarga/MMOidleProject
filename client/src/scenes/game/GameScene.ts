@@ -5,6 +5,7 @@ import type { StunOrbitSprite } from '../../render/stunOrbit';
 import type { NeighborLayer } from '../../render/neighborScenes';
 import type { AltarPromptHandle } from '../../render/altarPrompt';
 import type { GroundZoneSprite } from '../../render/groundZones';
+import type { MoveMarker } from '../../render/moveMarker';
 import type { GameSocket } from '../../net/socket';
 import { isSpectatorSession } from '../../net/session';
 import type { CinematicCameraState } from './cinematic/camera';
@@ -46,7 +47,8 @@ export class GameScene extends Phaser.Scene {
   transitioning = false;
   neighborLayer: NeighborLayer = new Map();
   mapTransition: MapTransition = createMapTransition();
-  targetMarker!: Phaser.GameObjects.Arc;
+  /** Click-to-move destination mark. Owned by `render/moveMarker`. */
+  targetMarker!: MoveMarker;
   minimap!: Phaser.GameObjects.Graphics;
   exitMarkers!: Phaser.GameObjects.Graphics;
   bgRect!: Phaser.GameObjects.Rectangle;

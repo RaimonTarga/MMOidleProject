@@ -12,7 +12,7 @@ import { hudBus } from "../hudBus";
 import { notifyTargetDotTick, syncPlayerAtoms, nodeLoadingAtom, setDungeon, setSummonHealth, setTargetFrame, setZoneBoss, setZonePlayers, type SummonHealthView, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
-import type { RenderState, DamageNumberHint } from "../render/state";
+import type { RenderState } from "../render/state";
 import { upsertPlayer } from "../render/players";
 import { refreshMonsterTints, upsertMonster } from "../render/monsters";
 import { upsertThoughtBubble } from "../render/thoughtBubbles";
@@ -20,6 +20,8 @@ import { upsertMinion } from "../render/minions";
 import { destroyEntity } from "../render/destroy";
 import { getOwnView } from "../render/state";
 import { dispatchCombatEvent } from "../render/combatFx";
+import { prepareCombatText, renderCombatText } from '../render/combatText';
+import { spawnDamageNumber } from '../fx/particles';
 import { fxBossDeath, fxMobDeath } from "../fx/monsterDeath";
 import { playSfx } from "../audio/audioEngine";
 import { notePlayerStatusCues } from "../audio/statusCues";
@@ -35,50 +37,16 @@ import { syncStunOrbits } from "../render/stunOrbit";
 // vanishes from view) so the target frame can drain HP to 0 before fading.
 let lastTargetRef: { id: string; data: TargetFrameData } | null = null;
 
-function ensureDamageHint(state: RenderState, id: string): DamageNumberHint {
-  let hint = state.damageStyleHints.get(id);
-  if (!hint) {
-    hint = { hasDirectHit: false, empowered: false, execution: false };
-    state.damageStyleHints.set(id, hint);
-  }
-  return hint;
-}
-
 export function applyDelta(
   state: RenderState,
   snapshot: DeltaSnapshot,
   scene: GameScene,
+  options: { stateSync?: boolean } = {},
 ): void {
+  const combatText = prepareCombatText(snapshot.events, options);
   const liveIds = new Set<string>();
   const pendingRemoves: string[] = [];
   state.dungeonGuardianIds = new Set(snapshot.dungeon?.guardianMonsterIds ?? []);
-
-  // Derive per-monster damage-number style hints from this snapshot's events
-  // before the delta loop spawns HP-delta numbers (which run before events fire).
-  state.damageStyleHints.clear();
-  for (const ev of snapshot.events) {
-    if (ev.kind === "player-hit") {
-      const hint = ensureDamageHint(state, ev.targetId);
-      hint.hasDirectHit = true;
-      if (ev.empowered) hint.empowered = true;
-      if (ev.execution) hint.execution = true;
-      if (ev.absorbed)
-        hint.absorbed = (hint.absorbed ?? 0) + ev.absorbed;
-      if (ev.evadedPartial) hint.evadedPartial = true;
-      if (ev.capped) hint.capped = true;
-    } else if (ev.kind === "monster-hit") {
-      const hint = ensureDamageHint(state, ev.targetId);
-      hint.hasDirectHit = true;
-      if (ev.empowered) hint.empowered = true;
-      if (ev.execution) hint.execution = true;
-      if (ev.absorbed)
-        hint.absorbed = (hint.absorbed ?? 0) + ev.absorbed;
-      if (ev.evadedPartial) hint.evadedPartial = true;
-      if (ev.capped) hint.capped = true;
-    } else if (ev.kind === "dot-tick") {
-      ensureDamageHint(state, ev.targetId).dotElement = ev.element;
-    }
-  }
 
   for (const delta of snapshot.deltas) {
     if (delta.kind === "remove") {
@@ -119,6 +87,11 @@ export function applyDelta(
     }
 
     upsertEntityView(state, delta.netId, entity, scene);
+  }
+
+  if (shouldRunClientFx()) {
+    renderCombatText(combatText, state, (pos, offset, amount, color, style) =>
+      spawnDamageNumber(scene, pos, offset, amount, color, style));
   }
 
   // Events fire before removes: sprites still exist so reward/hit FX can read positions.

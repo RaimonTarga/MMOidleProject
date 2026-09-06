@@ -24,7 +24,8 @@ export function buildNodeDelta(
   dirty: DirtyDrain,
   opts: { resync?: boolean } = {},
 ): NodeDeltaResult {
-  const events = world.takeNodeEvents(nodeId);
+  // A private state sync must not consume the next broadcast's shared events.
+  const events = opts.resync ? [] : world.takeNodeEvents(nodeId);
 
   const deltas: EntityDelta[] = [];
   const liveIds = new Set<string>();
@@ -32,8 +33,10 @@ export function buildNodeDelta(
   let adds = 0;
   let patches = 0;
 
-  if (opts.resync) world.resetNodeDeltaState(nodeId);
-  const members = world.getOrCreateNodeMembership(nodeId);
+  // Nor may it advance/reset the baseline used by other viewers' deltas.
+  const members: NodeDeltaState = opts.resync
+    ? new Map()
+    : world.getOrCreateNodeMembership(nodeId);
   const full = opts.resync || members.size === 0;
 
   for (const e of world.monsterEntities) {

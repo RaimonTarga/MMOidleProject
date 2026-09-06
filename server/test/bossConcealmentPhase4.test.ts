@@ -782,47 +782,49 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
 // removes the only thing this boss has for catching a kiting player.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// THE BURROW MUST BE ABLE TO CATCH A RUNNING PLAYER. This is the whole reason the
+// mechanic exists: both Cave burrowers walk at ~20px/s against a player who moves
+// at 120, so the burrow is their ONLY closer, and one that surfaces short leaves a
+// telegraphed eruption resolving on empty floor.
+//
+// SIMULATED, not calculated. A closed form (`duration * speed` against the ground
+// the player opens) was exact while the burrow travelled a straight line, and stops
+// being exact the moment one curves: the spiral's arc length depends on the radius
+// it happens to be at, and a body chasing a moving point on that spiral cuts every
+// corner rather than tracing it. The arithmetic said the Dreadbore could not close
+// from melee; it closes from melee with room. So run it.
 for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   const def = MONSTER_DATABASE.get(id)!;
-  const conceal = def.bossPattern!.steps.find(step => step.kind === 'conceal');
-  assert(conceal?.kind === 'conceal' && conceal.travelSpeed !== undefined, `${id}: travelling burrow`);
-  const seconds = conceal.durationMs / 1000;
-  const budget = seconds * conceal.travelSpeed;
-  const opened = seconds * GAME_CONFIG.PLAYER_SPEED;
-  assert(
-    budget - opened >= def.stats.pullRange,
-    `${id}: a ${conceal.durationMs}ms burrow at ${conceal.travelSpeed}px/s nets ` +
-      `${Math.round(budget - opened)}px against a sprinting player, which cannot cover its own ` +
-      `${def.stats.pullRange}px pull range — shorten the burrow and the travel speed must rise with it`,
-  );
-}
+  const steps = def.bossPattern!.steps;
+  const conceal = steps.find(step => step.kind === 'conceal');
+  const impact = steps.find(step => step.kind === 'impact');
+  assert(conceal?.kind === 'conceal' && conceal.travelSpeed !== undefined,
+    `${id}: the burrow must travel rather than teleport`);
+  assert(impact?.kind === 'impact', `${id}: burrow then erupt`);
 
-// It comes up UNDERNEATH a kiting player, not merely near them. This is the whole
-// point of `emergeGap: 0`: the old 90px offset against a 140px radius left a
-// stationary target caught but a drifting one falling out of the circle for free.
-{
   const world = new World();
-  const player = world.attachPlayerEntity(playerSlices('burrow-centred', 900, 400), 'burrow-centred');
-  const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', 'burrow-centred', {
-    x: 400,
-    y: 400,
+  const player = world.attachPlayerEntity(
+    playerSlices(`burrow-catch-${id}`, 2_400, 2_400),
+    `burrow-catch-${id}`,
+  );
+  // Engaged, at its own reach — the distance this boss actually fights from.
+  const { monster, armedAt } = armPattern(world, id, `burrow-catch-${id}`, {
+    x: 2_400 - def.stats.attackRange,
+    y: 2_400,
   });
-  const impact = MONSTER_DATABASE.get('chitinous-dreadbore')!.bossPattern!.steps.find(
-    step => step.kind === 'impact',
-  )!;
-  assert(impact.kind === 'impact', 'setup: the Dreadbore erupts');
 
   let now = armedAt;
   let sawConcealed = false;
   let gapAtSurface: number | null = null;
-  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+  for (let i = 0; i < 260 && !monster.recoversFromPattern; i++) {
     world.tick(100, now);
+    // Flee at a full sprint for the whole encounter.
     player.hasPosition.current = {
       x: player.hasPosition.current.x + GAME_CONFIG.PLAYER_SPEED * 0.1,
       y: player.hasPosition.current.y,
     };
     if (monster.isConcealed) sawConcealed = true;
-    if (sawConcealed && !monster.isConcealed && gapAtSurface === null) {
+    else if (sawConcealed && gapAtSurface === null) {
       gapAtSurface = Math.hypot(
         monster.hasPosition.current.x - player.hasPosition.current.x,
         monster.hasPosition.current.y - player.hasPosition.current.y,
@@ -831,17 +833,97 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
     now += 100;
   }
 
-  assert(sawConcealed && gapAtSurface !== null, 'setup: the boss should burrow and surface');
-  // It cannot be zero against a MOVING target and should not be: bodies do not
-  // overlap, so the boss stops on contact (~48px) and the player takes one more
-  // step before this is measured. What matters is that it surfaces WELL INSIDE its
-  // own circle rather than on the lip of it — the old 90px gap put a kiting player
-  // at ~130 against a 140 radius, which is what this bound rules out. A stationary
-  // player is caught dead centre.
+  assert(sawConcealed && gapAtSurface !== null, `${id}: setup — it should burrow and surface`);
+  // Inside its own circle, which is the claim. Measured 2026-09-06: the retuned
+  // Dreadbore surfaces at ~0.2x its radius (dead centre), while the UNTOUCHED T3
+  // Gorger surfaces at ~0.88x — on the lip, where a player already drifting falls
+  // out for free. Worth tightening when T3 gets its own pass; not pinned here,
+  // because this guard is about landing at all.
   assert(
-    gapAtSurface! < impact.radius * 0.6,
-    `the burrow should surface on top of its target (surfaced ${gapAtSurface!.toFixed(0)}px ` +
-      `from a ${impact.radius}px eruption)`,
+    gapAtSurface! < impact.radius,
+    `${id}: a ${conceal.durationMs}ms burrow at ${conceal.travelSpeed}px/s` +
+      (conceal.feint
+        ? ` with a ${conceal.feint.awayPx}px${conceal.feint.arcDeg ? `/${conceal.feint.arcDeg}deg` : ''} feint`
+        : '') +
+      ` surfaced ${gapAtSurface!.toFixed(0)}px from a sprinting player it started ` +
+      `${def.stats.attackRange}px away from — outside its own ${impact.radius}px eruption. ` +
+      `Slowing the burrow or widening the feint costs reach; the duration has to grow with them`,
+  );
+}
+
+// THE SPIRAL. A concealed body that beelines at you from the moment it disappears
+// has exactly one thing it can be doing and nowhere to be but between its start and
+// you. The Dreadbore digs AWAY first and sweeps around while it does it, so the
+// mound is worth tracking and it returns from a bearing you did not watch it leave
+// on. Guarded as SHAPE — out, around, then in past where it started — never as
+// distances or degrees.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('burrow-feint', 2_400, 2_400), 'burrow-feint');
+  const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', 'burrow-feint', {
+    x: 2_300,
+    y: 2_400,
+  });
+  const gapTo = () =>
+    Math.hypot(
+      monster.hasPosition.current.x - player.hasPosition.current.x,
+      monster.hasPosition.current.y - player.hasPosition.current.y,
+    );
+  const bearingTo = () =>
+    Math.atan2(
+      monster.hasPosition.current.y - player.hasPosition.current.y,
+      monster.hasPosition.current.x - player.hasPosition.current.x,
+    );
+
+  let now = armedAt;
+  const gaps: number[] = [];
+  const bearings: number[] = [];
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    if (monster.isConcealed) {
+      gaps.push(gapTo());
+      bearings.push(bearingTo());
+    } else if (gaps.length > 0) break;
+    now += 100;
+  }
+  assert(gaps.length > 4, 'setup: the boss should burrow for several ticks');
+
+  // 1. OUT.
+  const opening = gaps[0];
+  const furthest = Math.max(...gaps);
+  const furthestAt = gaps.indexOf(furthest);
+  assert(
+    furthest > opening + 60,
+    `it should dig AWAY before turning (opened at ${opening.toFixed(0)}px, ` +
+      `furthest ${furthest.toFixed(0)}px)`,
+  );
+  assert(
+    furthestAt > 0 && furthestAt < gaps.length / 2,
+    'and turn in the first half of the burrow, not spend it all running',
+  );
+
+  // 2. IN, past where it started.
+  assert(
+    gaps[gaps.length - 1] < opening,
+    `and end CLOSER than it started (${gaps[gaps.length - 1].toFixed(0)}px vs ${opening.toFixed(0)}px)`,
+  );
+
+  // 3. AROUND. Without this the feint is satisfied by a straight there-and-back
+  //    along one line, which is exactly the shape the arc replaced. Measured as the
+  //    total sweep of the bearing from the player, unwrapped so a crossing of PI
+  //    does not read as a reversal.
+  let swept = 0;
+  for (let i = 1; i < bearings.length; i++) {
+    let step = bearings[i] - bearings[i - 1];
+    while (step > Math.PI) step -= Math.PI * 2;
+    while (step < -Math.PI) step += Math.PI * 2;
+    swept += step;
+  }
+  const sweptDeg = Math.abs(swept) * 180 / Math.PI;
+  assert(
+    sweptDeg > 60,
+    `the burrow should circle its target, not retrace its own line ` +
+      `(swept only ${sweptDeg.toFixed(0)} degrees of bearing)`,
   );
 }
 

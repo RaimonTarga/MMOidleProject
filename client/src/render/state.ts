@@ -13,20 +13,19 @@ import type {
 export type NetworkId = string;
 
 /**
- * Per-snapshot styling hint for a monster's HP-delta damage number, derived from
- * that snapshot's combat events (empowered/execution from player-hit, element from
- * dot-tick). The amount shown is still the HP delta; this only picks color/size/glyph.
+ * Style for one explicit damage instance.
  */
 export interface DamageNumberHint {
   hasDirectHit: boolean;
   empowered: boolean;
   execution: boolean;
   dotElement?: DamageElement;
-  /** Total shield HP absorbed this snapshot — rendered as a separate blue number. */
+  isDot?: boolean;
+  /** Shield HP absorbed by this damage instance — rendered as a separate blue number. */
   absorbed?: number;
-  /** A hit was partially evaded (glancing) — restyles the HP-delta number. */
+  /** A hit was partially evaded (glancing) — restyles the HP-damage number. */
   evadedPartial?: boolean;
-  /** A hit tripped the damage cap — restyles the HP-delta number. */
+  /** A hit tripped the damage cap — restyles the HP-damage number. */
   capped?: boolean;
 }
 
@@ -204,8 +203,6 @@ export interface RenderState {
   nodeGateEntities: NodeGateEntity[];
   lastSpawnedGateNodeId: string;
 
-  /** Transient per-snapshot damage-number style hints (built in applyDelta). */
-  damageStyleHints: Map<NetworkId, DamageNumberHint>;
   /** Monster ids currently presented as dungeon guardians. */
   dungeonGuardianIds: Set<NetworkId>;
 }
@@ -270,7 +267,6 @@ export function createRenderState(): RenderState {
     ownPathGoal: null,
     nodeGateEntities: [],
     lastSpawnedGateNodeId: "",
-    damageStyleHints: new Map(),
     dungeonGuardianIds: new Set(),
   };
 }

@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../../../../combat/damage/damageEvent';
 import {
   SUMMONER_CHORUS_EFFECT_ID,
   SUMMONER_HARRIER_EFFECT_ID,
@@ -291,6 +292,7 @@ function tickVolatile(world: World, owner: SummonerOwner, now: number): void {
       ? minion.hasPosition.current
       : target.hasPosition.current;
     detonate(world, owner, minion, tuning.explosionDamageMult, center);
+    pushDamageEvent(world, minion, minion.hasHealth.hp);
     minion.hasHealth.hp = 0;
     markSliceDirty(world, minion, 'hasHealth');
   }

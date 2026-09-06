@@ -27,6 +27,7 @@ export interface IntentMap {
   resetProgress: undefined;
   renameCharacter: string;
   equipPhaseTester: undefined;
+  killNodeMonsters: undefined;
   setRewardMultiplier: number;
   startPlaytestLogging: undefined;
   stopPlaytestLogging: undefined;

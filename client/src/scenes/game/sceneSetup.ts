@@ -9,6 +9,8 @@ import {
   nodeToSceneCoords,
 } from "@mmo-idle/shared";
 import { DEPTH } from "../../render/depth";
+import { createMoveMarker } from "../../render/moveMarker";
+import { clearMovementIntent } from "../../input/moveCancel";
 import { getDefaultStore } from "jotai";
 import {
   statusAtom,
@@ -402,6 +404,11 @@ function queuePresentationAssets(scene: GameScene): void {
 
 }
 
+/**
+ * How close the own sprite must get before the destination mark is pulled.
+ */
+const ARRIVAL_RADIUS = 24;
+
 export function preloadGameAssets(scene: GameScene): void {
   queueFirstPaintAssets(scene);
 
@@ -540,9 +547,7 @@ export function createGameScene(scene: GameScene): void {
   scene.nodeBoundaryFrame = scene.add.graphics().setDepth(-9.5);
   updateNodeBoundaryFrame(scene);
 
-  scene.targetMarker = scene.add
-    .circle(0, 0, 5, 0xffff44, 0.8)
-    .setVisible(false);
+  scene.targetMarker = createMoveMarker(scene);
   scene.exitMarkers = scene.add.graphics().setDepth(DEPTH.FX - 1);
   scene.debugGraphics = scene.add.graphics().setDepth(DEPTH.FX + 1000);
   scene.cameraTarget = scene.add.arc(0, 0, 1).setAlpha(0);
@@ -735,8 +740,12 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   if (ownSprite && scene.targetMarker.visible) {
     const dx = ownSprite.x - scene.targetMarker.x;
     const dy = ownSprite.y - scene.targetMarker.y;
-    if (dx * dx + dy * dy < 16) scene.targetMarker.setVisible(false);
+    // Arrival is "standing on it", not "dead centre": the server stops the
+    // player on the clamped target, which pathfinding may leave a body's width
+    // short of the raw click.
+    if (dx * dx + dy * dy < ARRIVAL_RADIUS * ARRIVAL_RADIUS) scene.targetMarker.hide();
   }
+  scene.targetMarker.draw(Date.now());
 
   drawTacticalMode(scene);
 }
@@ -786,7 +795,7 @@ function connectSocket(scene: GameScene): () => void {
     onCharacterDeleteResult: handleDeleteResult,
     onCharacterSelectResult: handleSelectResult,
     onStateSync: (snapshot) => {
-      applyDelta(scene.state, snapshot, scene);
+      applyDelta(scene.state, snapshot, scene, { stateSync: true });
       handleInitialStateSync();
       if (scene.cinematicStaging) {
         onCinematicEnteredWorld(scene.cinematicStaging, socket);
@@ -802,8 +811,9 @@ function connectSocket(scene: GameScene): () => void {
         scene.spectatorSnapshotNodeId,
         scene.state.ids,
       );
+      const stateSync = scene.spectatorSnapshotNodeId !== snapshot.nodeId;
       scene.spectatorSnapshotNodeId = snapshot.nodeId;
-      applyDelta(scene.state, hydrated, scene);
+      applyDelta(scene.state, hydrated, scene, { stateSync });
     },
     onSpectateStatus: (status) => {
       scene.spectatorTargetId = status.targetId ?? null;
@@ -854,6 +864,12 @@ function connectSocket(scene: GameScene): () => void {
       );
     },
     onPlayerDied: (payload) => {
+      // Death cancels every outstanding order. The server has already stopped
+      // the entity and dropped auto-combat; this drops the client half so the
+      // respawned character is not still showing (or predicting) the walk that
+      // got it killed.
+      clearMovementIntent(scene);
+      scene.autoMode = false;
       triggerDeathOverlay(payload);
       playSfx("death");
       maybeNotifyDeath();

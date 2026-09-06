@@ -6,14 +6,19 @@ import { cancelAutoPath, setAutoMode } from './autoPath';
 import { isHoldStill, sendClampedMove } from './movement';
 import { clearPendingStop } from './moveOwnership';
 import { nodeToScene, sceneToNode } from '../render/sceneCoords';
+import type { MoveMarkerKind } from '../render/moveMarker';
 
 function isSummoner(player: PlayerView | undefined): boolean {
   return player?.combatArchetype === 'summoner' && (player.summonsMinions ?? 0) > 0;
 }
 
-function showTargetMarker(scene: GameScene, nodeDest: Vec2): void {
+function showTargetMarker(
+  scene: GameScene,
+  nodeDest: Vec2,
+  kind: MoveMarkerKind = 'move',
+): void {
   const scenePos = nodeToScene(nodeDest.x, nodeDest.y);
-  scene.targetMarker.setPosition(scenePos.x, scenePos.y).setVisible(true);
+  scene.targetMarker.show(scenePos.x, scenePos.y, kind);
 }
 
 export function attachClickToMove(scene: GameScene): () => void {
@@ -29,7 +34,9 @@ export function attachClickToMove(scene: GameScene): () => void {
     if (isHoldStill()) {
       if (scene.autoMode) setAutoMode(scene, false);
       cancelAutoPath();
-      showTargetMarker(scene, dest);
+      // Hold-still turns the click into a summon order rather than a move, so
+      // the mark wears the summon palette — the player is not going there.
+      showTargetMarker(scene, dest, isSummoner(player) ? 'summon' : 'move');
       if (isSummoner(player)) {
         sendCommandSummons(scene.socket, dest);
       }

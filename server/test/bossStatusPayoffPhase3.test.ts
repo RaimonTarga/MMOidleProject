@@ -211,6 +211,72 @@ let markedDamage = 0;
   );
 }
 
+// NUMBING STING (2026-09-06). The Emperor now slows you BETWEEN the mark and the
+// Execution, which is what turns the sequence into a dilemma: one Cleanse, two
+// things worth spending it on, and the pacing denies you both.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('numbing-order'), 'numbing-order');
+  const { monster, armedAt } = armedEmperor(world, 'numbing-order');
+
+  let markAt: number | null = null;
+  let slowAt: number | null = null;
+  let slowWhenExecuted: number | null = null;
+  runPattern(world, monster, player, armedAt, now => {
+    if (markAt === null && getStatusEffect(player.tracksCombat, SUN_MARK_EFFECT_ID)) markAt = now;
+    const slow = getStatusEffect(player.tracksCombat, 'slow');
+    if (slowAt === null && slow) slowAt = now;
+    // The payoff plants its circle as a slam telegraph; capture the slow that is
+    // live at the moment it is showing.
+    const circle = (world.groundZones.get(NODE) ?? []).some(
+      z => z.kind === 'slam-telegraph' && z.ownerId === monster.isMonster.id,
+    );
+    if (circle && slow) slowWhenExecuted = slow.remainingMs;
+  });
+
+  assert(markAt !== null, 'the sequence should still paint the mark');
+  assert(slowAt !== null, 'and should now also apply the Numbing Sting slow');
+  assert(markAt! < slowAt!, 'mark FIRST, then the slow — the order is the sentence');
+  assert(
+    slowWhenExecuted !== null && slowWhenExecuted! > 0,
+    'and the slow must still be running while the Execution circle is on the ground — ' +
+      'a slow that lapses first answers nothing',
+  );
+}
+
+// The DILEMMA, as arithmetic rather than as a feeling: the Execution circle is
+// escapable on foot at full speed and is NOT escapable while numbed. If either half
+// of that stops being true the beat collapses into "always dodge" or "never dodge".
+{
+  const steps = EMPEROR_PATTERN.steps;
+  const sting = steps.find(
+    step => step.kind === 'apply-status' && step.effectId === 'slow',
+  );
+  const execution = steps.find(step => step.kind === 'payoff');
+  assert(sting?.kind === 'apply-status', 'the Emperor should carry a slow step');
+  assert(execution?.kind === 'payoff' && execution.radius !== undefined, 'and an area Execution');
+
+  const slowMult = sting.data?.['speedMult'];
+  assert(typeof slowMult === 'number' && slowMult > 0 && slowMult < 1, 'the sting should be a real slow');
+
+  const escapeMs = (execution.radius! / GAME_CONFIG.PLAYER_SPEED) * 1_000;
+  const numbedEscapeMs = escapeMs / slowMult;
+  assert(
+    escapeMs < execution.castMs,
+    `an unslowed player must be able to leave the circle ` +
+      `(${escapeMs.toFixed(0)}ms of running vs a ${execution.castMs}ms tell)`,
+  );
+  // With MARGIN, not by a hair. A slow that only just fails to let you out is
+  // indistinguishable in play from lag, and it makes the Cleanse decision a
+  // coin-flip rather than a read: a 0.9 "slow" would clear a bare `>` comparison
+  // here while changing nothing anyone could feel.
+  assert(
+    numbedEscapeMs > execution.castMs * 1.5,
+    `and a numbed one must not, with room to spare ` +
+      `(${numbedEscapeMs.toFixed(0)}ms against a ${execution.castMs}ms tell)`,
+  );
+}
+
 // Every Desert tier has exactly one mark source and one thing consuming it, and the
 // amplification is a multiplier on a payoff that lands regardless.
 {

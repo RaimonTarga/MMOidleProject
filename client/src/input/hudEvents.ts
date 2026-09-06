@@ -19,6 +19,7 @@ import {
   sendNavigateTo,
   sendRenameCharacter,
   sendEquipPhaseTester,
+  sendKillNodeMonsters,
   sendSetRewardMultiplier,
   sendStartPlaytestLogging,
   sendStopPlaytestLogging,
@@ -146,6 +147,9 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("navigateTo", ({ path }) => {
     if (path.length === 0) return;
     const destNodeId = path[path.length - 1];
+    // A map route supersedes any in-node click destination: leaving the mark up
+    // would advertise a waypoint the player is no longer walking to.
+    scene.targetMarker.hide();
     // Display the planned route; the server owns the actual movement and turns
     // off auto-combat for the trip (state flows back via deltas).
     setAutoPath([...path]);
@@ -179,6 +183,11 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("equipPhaseTester", () => {
     if (isDeathOverlayActive()) return;
     sendEquipPhaseTester(scene.socket);
+  });
+
+  intents.on("killNodeMonsters", () => {
+    if (isDeathOverlayActive()) return;
+    sendKillNodeMonsters(scene.socket);
   });
 
   intents.on("setRewardMultiplier", (multiplier) => {

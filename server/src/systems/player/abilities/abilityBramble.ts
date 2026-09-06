@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../../combat/damage/damageEvent';
 /**
  * Bramble Guard — temporary hardening + flat retaliation (abilities evolution §9, T2).
  *
@@ -125,6 +126,7 @@ export function registerBrambleReflect(): void {
       buildSimpleBreakdown(reflect, reflect),
     );
     monster.hasHealth.hp -= reflect;
+    pushDamageEvent(world, monster, reflect, { sourceId: player.isPlayer.id });
 
     // Killing blow is handled by the normal monster-death sweep on the next
     // tick; deliberately not calling removeMonsterEntity mid-pipeline.

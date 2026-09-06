@@ -164,6 +164,10 @@ export function sendEquipPhaseTester(socket: GameSocket): void {
   socket.emit('debug:equipPhaseTester');
 }
 
+export function sendKillNodeMonsters(socket: GameSocket): void {
+  socket.emit('debug:killNodeMonsters');
+}
+
 export function sendSetRewardMultiplier(socket: GameSocket, multiplier: number): void {
   socket.emit('debug:setRewardMultiplier', multiplier);
 }

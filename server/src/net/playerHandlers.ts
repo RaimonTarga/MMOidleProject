@@ -81,6 +81,7 @@ import {
   resetPlayerClass,
   resetPlayerProgress,
   applyTierEntryProfile,
+  killNodeMonsters,
   respawnNode,
   teleportPlayerToNode,
 } from "../admin/gameActions";
@@ -620,6 +621,14 @@ export function registerPlayerHandlers(
       const p = world.getPlayerEntity(socket.id);
       if (!p) return;
       respawnNode(world, p.hasPosition.nodeId);
+    });
+
+    socket.on("debug:killNodeMonsters", () => {
+      const p = world.getPlayerEntity(socket.id);
+      if (!p) return;
+      const nodeId = p.hasPosition.nodeId;
+      const result = killNodeMonsters(world, nodeId);
+      log.warn({ playerId: socket.id, nodeId, result }, "debug node clear requested");
     });
 
     socket.on("debug:equipPhaseTester", () => {

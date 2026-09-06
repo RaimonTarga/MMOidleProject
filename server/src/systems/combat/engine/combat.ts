@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../damage/damageEvent';
 import type { World } from "../../../world/World";
 import {
   ABILITY_FRENZY_EFFECT_ID,
@@ -168,6 +169,7 @@ function applyIceShatter(
     Math.round(target.hasHealth.maxHp * shatter.selfDamagePct),
   );
   target.hasHealth.hp -= bonus;
+  pushDamageEvent(world, target, bonus, { element: 'frost' });
 
   const nodeId = target.hasPosition.nodeId;
 
@@ -883,6 +885,7 @@ export function runMonsterAttack(
   } else {
     world.pushEvent(target.hasPosition.nodeId, {
       kind: "monster-hit",
+      targetPos: { ...target.hasPosition.current },
       targetId: target.isPlayer.id,
       empowered: empoweredMult > 1 ? true : undefined,
       damage: ctx.damage,
@@ -1953,10 +1956,10 @@ export function runMonsterAttackOnMinion(
     ),
   );
   minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - damage);
+  pushDamageEvent(world, minion, damage, { sourceId: monster.isMonster.id });
   monster.performsAttack.lastAttackAt = now;
   // Death is observed by the summoner tick on its next pass — it will detach
-  // the minion entity and start a respawn timer. We deliberately do not push
-  // a client event here in v1; the slime's HP bar drop is enough feedback.
+  // the minion entity and start a respawn timer.
 }
 
 /**

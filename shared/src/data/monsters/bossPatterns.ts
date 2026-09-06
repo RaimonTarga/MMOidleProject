@@ -60,10 +60,13 @@ export type BossPatternStep =
       fx?: string;
     }
   /**
-   * COMMITTED TRAVEL. The boss runs its locked lane at `speedMult` of its base
-   * speed, damaging each eligible target AT MOST ONCE as it passes. It does not
-   * track, cannot be re-aimed, and is not stopped by losing its target — the lane
-   * was painted on the ground and the boss is now on rails.
+   * COMMITTED TRAVEL. The boss runs its locked lane, damaging each eligible target
+   * AT MOST ONCE as it passes. It does not track, cannot be re-aimed, and is not
+   * stopped by losing its target — the lane was painted on the ground and the boss
+   * is now on rails.
+   *
+   * It DOES stop when it runs into a player (see `stopsOnContact`), which is what
+   * makes it read as a tackle rather than as a body that walks through you.
    */
   | {
       kind: 'charge';
@@ -78,6 +81,16 @@ export type BossPatternStep =
       speed: number;
       /** Stacks on the pattern's damage multiplier for bodies caught in the lane. */
       damageMult?: number;
+      /**
+       * Stop the travel dead on the first PLAYER it runs into. Defaults to true.
+       *
+       * A charge that ploughs on through the body it just hit reads as the boss
+       * failing to notice, and it leaves the sequence's payoff anchored at a lane
+       * tip the fight never reached. Stopping also makes `capturedEndpoint` mean
+       * "where the charge actually finished", which is what the follow-up steps
+       * anchor on. Minions do not stop it — they are in the way, not the target.
+       */
+      stopsOnContact?: boolean;
       /** Safety deadline; the travel ends here even if the boss is obstructed. */
       maxTravelMs: number;
     }
@@ -90,6 +103,15 @@ export type BossPatternStep =
       damageMult: number;
       telegraphMs: number;
       stunMs?: number;
+      /**
+       * Only resolve when this pattern's charge actually connected with a player.
+       *
+       * A circle that erupts wherever a MISSED charge happened to stop is pure
+       * noise: it lands on empty ground, teaches nothing, and occasionally clips a
+       * player who dodged correctly. Gating it turns the sequence into one honest
+       * decision — read the lane and get off it, or eat the whole sentence.
+       */
+      requiresChargeHit?: boolean;
       fx?: string;
     }
   /** Delayed radial cracks from the anchor — the finite payoff, not terrain. */
@@ -102,6 +124,8 @@ export type BossPatternStep =
       lineRadius: number;
       innerRadius?: number;
       damageMult: number;
+      /** As `impact.requiresChargeHit`: no connection, no cracks. */
+      requiresChargeHit?: boolean;
     }
   /**
    * Raise a source-owned absorb barrier. Breaking it during the pattern is a real
@@ -234,6 +258,40 @@ export type BossPatternStep =
        * sequence ended up unable to reach a kiting build at all.
        */
       travelSpeed?: number;
+      /**
+       * FEINT. Spend the first `untilPct` of the burrow travelling AWAY from the
+       * target — roughly `awayPx` further out than wherever it went under — before
+       * turning and coming for them.
+       *
+       * A concealed body that beelines at you from the moment it disappears reads
+       * as a homing missile: there is one thing it can be doing and nowhere it can
+       * be but between its start and you. Backing off first makes the marker
+       * genuinely worth tracking, because for the first stretch it is going the
+       * wrong way and you do not yet know from which side it will come back.
+       *
+       * Costs closing power: the feint distance is paid twice, out and back. Size
+       * the burrow's travel budget accordingly (`durationMs * travelSpeed`).
+       *
+       * `arcDeg` bends the detour around the target instead of retracing one line:
+       * the boss takes a couple of WAYPOINTS spaced across that bearing sweep before
+       * it turns and comes in, so it returns from a side you did not watch it leave
+       * on. The sweep direction is fixed, not random — "where does it come back up"
+       * has to stay answerable.
+       *
+       * WAYPOINTS, NOT A CURVE, and deliberately so. A true spiral was tried first
+       * (2026-09-06) and moved badly: its target point slides continuously and
+       * faster than the body chasing it, so the steering re-pathed every single tick
+       * and the boss visibly stuttered — and every time the curve clipped terrain it
+       * fell back to a completely different point and lurched. Two fixed points and
+       * a tracking final approach give three straight legs, each with a stable
+       * destination the navigation can actually commit to. The path reads as a
+       * triangle rather than an arc, which at this speed looks the same and moves
+       * far better.
+       *
+       * ⚠ The detour is paid out of the same travel budget as the approach, and its
+       * length grows with the radius it is swept at.
+       */
+      feint?: { awayPx: number; untilPct: number; arcDeg?: number };
       /**
        * Hard control (stun/freeze) breaks the concealment, defaulting to true like
        * every other wind-up in this file. A boss that is stunned but still
@@ -402,6 +460,16 @@ export interface RunsBossPattern {
    * measurable rather than a mystery.
    */
   skippedStepIndexes: number[];
+  /** Set once this pattern's charge has run into a player. */
+  chargeConnected?: boolean;
+  /**
+   * Detour waypoints for a feinting burrow, computed ONCE when it goes under and
+   * consumed in order. Fixed points are the whole reason the movement is smooth:
+   * a destination that stops moving is one the navigation can commit to.
+   */
+  feintWaypoints?: Vec2[];
+  /** Wall-clock the current detour leg gives up at, so a blocked waypoint cannot stall the burrow. */
+  feintLegEndsAtMs?: number;
   /** Set true when a barrier break staggered the pattern. */
   staggered: boolean;
   /**

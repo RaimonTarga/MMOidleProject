@@ -1,3 +1,4 @@
+import { pushDamageEvent } from '../../../combat/damage/damageEvent';
 import type { World } from '../../../../world/World';
 import type { PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
@@ -100,6 +101,7 @@ export function tickSummonReconstruction(
   const minion = spawnMinionForOwner(world, owner, index);
   if (!minion) return;
   owner.hasHealth.hp = Math.max(floor, owner.hasHealth.hp - cost);
+  pushDamageEvent(world, owner, cost);
   if (owner.controlsSummons) {
     owner.controlsSummons.pendingDeadSlotIds = owner.controlsSummons.pendingDeadSlotIds
       .filter((slotId) => slotId !== active.slotId);
