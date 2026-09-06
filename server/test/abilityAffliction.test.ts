@@ -273,12 +273,14 @@ console.log("affliction: target-max-stacks counts stacking DoTs and ignores rese
 
   resolveContagion(world, player, contagion, primary);
 
+  // The fixture player is T3 and Contagion is homed at T2, so this is rank II —
+  // radius 150, cap 3. The cap, not the radius, is what bounds the spread.
   const infected = victims.filter(
     (v) => getStatusEffect(v.tracksCombat, "dot") !== undefined,
   );
   assert(
     infected.length === 3,
-    `rank I must cap at 3 infected targets, got ${infected.length}`,
+    `rank II must cap at 3 infected targets, got ${infected.length}`,
   );
   assert(
     getStatusEffect(bystander.tracksCombat, "dot") === undefined,
@@ -320,6 +322,40 @@ console.log("affliction: target-max-stacks counts stacking DoTs and ignores rese
   }
 }
 console.log("affliction: Contagion copies at full strength, capped, original retained");
+
+// ── 3b. The cap is per RANK, and rank I (its home tier) is tighter ──────────
+
+{
+  const { world, player } = setup(["contagion"]);
+  // Contagion's home tier. A T2 player reads rank I: cap 2, not 3.
+  player.tracksProgression.playerTier = 2;
+  const contagion = ABILITY_DATABASE.get("contagion")!;
+  const primary = spawn(world, 400, 400);
+  const victims = [
+    spawn(world, 415, 400),
+    spawn(world, 430, 400),
+    spawn(world, 445, 400),
+    spawn(world, 400, 460),
+  ];
+  paintClassDot(primary, "afflictor", 4, { maxStacks: 6 });
+
+  resolveContagion(world, player, contagion, primary);
+
+  const infected = victims.filter(
+    (v) => getStatusEffect(v.tracksCombat, "dot") !== undefined,
+  );
+  assert(
+    infected.length === 2,
+    `rank I must cap at 2 infected targets, got ${infected.length}`,
+  );
+  // Nearest-first, so the cap takes the two closest rather than an arbitrary two.
+  assert(
+    getStatusEffect(victims[0]!.tracksCombat, "dot") !== undefined &&
+      getStatusEffect(victims[1]!.tracksCombat, "dot") !== undefined,
+    "the cap must select the NEAREST candidates, so the cast is aimable by positioning",
+  );
+}
+console.log("affliction: Contagion's target cap follows the authored rank");
 
 // ── 4. A Contagion copy never WEAKENS an existing affliction ────────────────
 

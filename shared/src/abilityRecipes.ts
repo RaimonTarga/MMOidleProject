@@ -183,6 +183,33 @@ const recipes: AbilityRecipe[] = [
     cost: { yellow: 90 },
   },
 
+  {
+    id: "ability-recipe-contagion",
+    name: "Contagion",
+    description:
+      "Learn Contagion: cast a target's afflictions outward onto the enemies around it.",
+    abilityId: "contagion",
+    tier: 2,
+    // The swamp is the game's attrition-by-DoT biome and where the brand weapons
+    // live, so it is the one place a player has BOTH the damage-over-time to
+    // spread and a reason to want it spread.
+    //
+    // DELIBERATE DEVIATION from the "an ability lives in a biome its own tier
+    // introduces" pattern: every other T2 ability sits in jungle or desert. The
+    // affliction pair is homed by THEME instead — the swamp owns damage over time,
+    // and putting its answer tools anywhere else would be arbitrary. Detonate does
+    // the same at T3.
+    //
+    // Swamp's T2 band is biome levels 7–12, so the band's own level 3 is 9.
+    recipeGroup: "swamp",
+    requiredBiomeLevel: 9,
+    // T2 ability band is 70–90 (Hamstring/Charge 70 as mandatory counterplay,
+    // Bramble Guard/Endure 90). Contagion sits at the top of it: strong and
+    // broadly useful, but worth nothing to a build carrying no damage over time,
+    // so it is priced as an optional power tool rather than as required counterplay.
+    cost: { purple: 90 },
+  },
+
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
   {
     id: "ability-recipe-binding-strike",
@@ -236,32 +263,17 @@ const recipes: AbilityRecipe[] = [
     cost: { red: 210 },
   },
   {
-    id: "ability-recipe-contagion",
-    name: "Contagion",
-    description:
-      "Learn Contagion: cast a target's afflictions outward onto the enemies around it.",
-    abilityId: "contagion",
-    tier: 3,
-    // The swamp is the game's attrition-by-DoT biome, and it is where the brand
-    // weapons live — so it is the one place a player has BOTH the damage-over-time
-    // to spread and the density to spread it into. Its T3 band is biome levels
-    // 13–18, so the band's own level 3 is 15.
-    recipeGroup: "swamp",
-    requiredBiomeLevel: 15,
-    // Priced at the T3 "broadly useful but optional" tier, alongside Frenzy: a
-    // real damage tool, but useless to a build carrying no DoT at all.
-    cost: { purple: 175 },
-  },
-  {
     id: "ability-recipe-detonate",
     name: "Detonate",
     description:
       "Learn Detonate: tear every affliction off a target at once for all the damage they had left.",
     abilityId: "detonate",
     tier: 3,
-    // Swamp again, at the band's level 5 — the stagger that makes the second
-    // reward a real second unlock moment rather than a duplicate one. Contagion
-    // teaches you to spread; Detonate teaches you to cash in.
+    // Swamp again, a whole TIER later rather than a level later: Contagion (T2,
+    // level 9) teaches you to spread, Detonate (T3, level 17) teaches you to cash
+    // in. Splitting the pair across bands is deliberate — a player meets the
+    // second Technique slot at T3 and can finally hold both at once right as the
+    // second half unlocks.
     recipeGroup: "swamp",
     requiredBiomeLevel: 17,
     // The priciest T3 ability: the most build-warping of the pair, and the one

@@ -284,6 +284,7 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 |---|---|---|---|
 | **Hamstring** | Technique / armed | Jungle (3) | Slow — rung one of the ladder |
 | **Charge** | Technique / charge | Desert (3) | Gap-closer with real extended reach |
+| **Contagion** | Technique / **cast** | Swamp (9) | Copy afflictions outward — the DoT breadth answer |
 | **Bramble Guard** | Guard / instant | Jungle (5) | Temporary plating + flat thorns |
 | **Endure** | Guard / instant | Desert (5) | Sustained mitigation (Brace's opposite) |
 
@@ -294,7 +295,6 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 | **Binding Strike** | Technique / armed | Tundra (3) | Root — rung two |
 | **Frenzy** | Technique / **instant** | Volcanic (3) | Attack speed, and nothing else |
 | **Quick Strike** | Technique / armed | Volcanic (5) | The spam-technique archetype |
-| **Contagion** | Technique / **cast** | Swamp (15) | Copy afflictions outward — the DoT breadth answer |
 | **Detonate** | Technique / **cast** | Swamp (17) | Cash afflictions in now, with a cut |
 | **Break Free** | Guard / instant | Tundra (5) | Hard-CC counter, fires while held |
 
@@ -308,6 +308,22 @@ Only rank I is authored: these debut at the end of the supplied biome map.
 | **Stunning Strike** | Technique / **cast** | Graveyard (5) | Stun — rung three |
 | **Imbue Lightning** | Technique / **self-cast** | Jungle (15) | A window spent in HITS, not seconds |
 | **Recuperate** | Guard / instant | Trench (5) | Weak/long Recovery access |
+
+### Where the affliction pair lives — and why it breaks the biome pattern
+
+Every other ability sits in a biome its OWN tier introduces (T2 abilities in jungle/desert,
+T3 in tundra/volcanic, T4 in trench/graveyard). **Contagion (T2) and Detonate (T3) are
+deliberate exceptions, homed in the swamp by THEME**: the swamp is the game's
+attrition-by-damage-over-time biome and where the brand weapons live, so it is the one
+place a player has both the afflictions to manipulate and a reason to want them
+manipulated. Homing them in the tier's "correct" biome would be arbitrary. Imbue Lightning
+(T4, jungle) is the same kind of deliberate exception. **Designer's call.**
+
+The pair is split across TIERS rather than staggered inside one band: Contagion at swamp
+level 9 (its T2 band), Detonate at level 17 (its T3 band). That is load-bearing — T2 grants
+only ONE Technique slot, so at its home tier Contagion is a whole-loadout commitment
+competing with Sweep and Charge. The second slot arrives at T3, exactly when Detonate does,
+so the pair becomes holdable at the moment the second half unlocks.
 
 ### The affliction toolkit — `abilityAffliction.ts`
 Contagion and Detonate act on damage-over-time the player **already owns**. Neither knows
@@ -437,8 +453,17 @@ Ability coverage: `abilities`, `abilityRanks`, `abilityControl`, `abilityGuardsA
 `abilityTechniqueRune`, `abilityTelegraphEvents`, **`abilityAffliction`**, `describeText`.
 
 `abilityAffliction.test.ts` was mutation-checked: reverting the stack-merge fix, the target
-cap, Detonate's consume step, the situational guard, the reservoir `stackCap: 0` rule, and
-Imbue's charge decrement each fail the suite.
+cap, Detonate's consume step, the situational guard, the reservoir `stackCap: 0` rule,
+Imbue's charge decrement, and Contagion's T2 rank rung each fail the suite. The Frenzy
+assertions were mutation-checked the same way (dropping `durationMs` from the event, and
+pinning the cadence mirror to 1).
+
+### Tier numbering — 1-based, and it bites
+`regionT1..T4` author `tier: 1..4`, and internal tier N introduces: **1** plains / forest /
+cave / mountain / swamp · **2** jungle + desert · **3** volcanic + tundra · **4** graveyard
+(wasteland) + trench. There is no 0-based internal numbering anywhere; `playerTier`,
+`biomeTier`, `AbilityDef.tier` and `AbilityRecipe.tier` all use this scale. Identify a tier
+by the biomes it introduces before moving anything between tiers.
 
 ---
 

@@ -743,6 +743,41 @@ const abilities: AbilityDef[] = [
     ],
   },
 
+  {
+    id: "contagion",
+    name: "Contagion",
+    slot: "technique",
+    shape: "cast",
+    tags: [],
+    blurb:
+      "Cast the target's afflictions outward — every burn, poison and frost you put on it takes hold in the enemies around it.",
+    tier: 2,
+    lineageId: "affliction",
+    trigger: { kind: "in-combat" },
+    icon: "contagion",
+    // NOT called "Spread": the rune catalog already ships an action displayed as
+    // "Spread DoTs" (the Multidot targeting behavior), and two unrelated things
+    // wearing one name in the same build UI is a support ticket waiting to happen.
+    //
+    // Copies at FULL strength — full stacks, full reservoir pool — so the only
+    // thing bounding the damage multiplication is `maxTargets`. That makes the
+    // target count the real balance dial and the radius a pure convenience:
+    // widening the radius without raising the cap can never increase output, it
+    // only makes the cap easier to fill.
+    //
+    // Homed at T2, which is where its half of the affliction pair belongs: T2 is
+    // the first tier with real pack density (jungle), and spreading is the answer
+    // to breadth. Detonate stays at T3 as the later, more build-warping half —
+    // learn to spread first, learn to cash in second. Note that T2 grants only ONE
+    // Technique slot, so at its home tier Contagion is a whole-loadout commitment
+    // competing with Sweep and Charge; the pair only sit together from T3.
+    ranks: [
+      { effect: { kind: "spread-dots", radius: 120, maxTargets: 2 }, cooldownMs: 14000, castMs: 1000 },
+      { effect: { kind: "spread-dots", radius: 150, maxTargets: 3 }, cooldownMs: 12000, castMs: 1000 },
+      { effect: { kind: "spread-dots", radius: 180, maxTargets: 5 }, cooldownMs: 9000, castMs: 1000 },
+    ],
+  },
+
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
   {
     id: "binding-strike",
@@ -816,32 +851,6 @@ const abilities: AbilityDef[] = [
     ranks: [
       { effect: { kind: "empower", damageMult: 1.25 }, cooldownMs: 3000 },
       { effect: { kind: "empower", damageMult: 1.3 }, cooldownMs: 2500 },
-    ],
-  },
-  {
-    id: "contagion",
-    name: "Contagion",
-    slot: "technique",
-    shape: "cast",
-    tags: [],
-    blurb:
-      "Cast the target's afflictions outward — every burn, poison and frost you put on it takes hold in the enemies around it.",
-    tier: 3,
-    lineageId: "affliction",
-    trigger: { kind: "in-combat" },
-    icon: "contagion",
-    // NOT called "Spread": the rune catalog already ships an action displayed as
-    // "Spread DoTs" (the Multidot targeting behavior), and two unrelated things
-    // wearing one name in the same build UI is a support ticket waiting to happen.
-    //
-    // Copies at FULL strength — full stacks, full reservoir pool — so the only
-    // thing bounding the damage multiplication is `maxTargets`. That makes the
-    // target count the real balance dial and the radius a pure convenience:
-    // widening the radius without raising the cap can never increase output, it
-    // only makes the cap easier to fill.
-    ranks: [
-      { effect: { kind: "spread-dots", radius: 140, maxTargets: 3 }, cooldownMs: 12000, castMs: 1000 },
-      { effect: { kind: "spread-dots", radius: 180, maxTargets: 5 }, cooldownMs: 9000, castMs: 1000 },
     ],
   },
   {
