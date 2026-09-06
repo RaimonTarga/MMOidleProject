@@ -128,6 +128,12 @@ export const platingAtom = atom<number>(0);
 export const damageReductionAtom = atom<number>(0);
 export const attackRangeAtom = atom<number>(0);
 export const attackCooldownAtom = atom<number>(0);
+/**
+ * Live multiplier on the BASE attack cooldown from temporary haste/slow. 1 means
+ * nothing is modifying the cadence. Separate from `attackCooldownAtom` because
+ * the server deliberately never folds these effects into the stat itself.
+ */
+export const attackCadenceMultAtom = atom<number>(1);
 export const speedAtom = atom<number>(0);
 export const dodgeRateAtom = atom<number>(0);
 export const evadeMitigationAtom = atom<number>(0);
@@ -731,6 +737,7 @@ function resetPlayerAtoms(): void {
   store.set(damageReductionAtom, 0);
   store.set(attackRangeAtom, 0);
   store.set(attackCooldownAtom, 0);
+  store.set(attackCadenceMultAtom, 1);
   store.set(speedAtom, 0);
   store.set(dodgeRateAtom, 0);
   store.set(evadeMitigationAtom, 0);
@@ -847,6 +854,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(damageReductionAtom, player.damageReduction);
   setIfChanged(attackRangeAtom, player.attackRange);
   setIfChanged(attackCooldownAtom, player.attackCooldown);
+  setIfChanged(attackCadenceMultAtom, player.attackCadenceMult);
   setIfChanged(speedAtom, player.speed);
   setIfChanged(dodgeRateAtom, player.dodgeRate);
   setIfChanged(evadeMitigationAtom, player.evadeMitigation);

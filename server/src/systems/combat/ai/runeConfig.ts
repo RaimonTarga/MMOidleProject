@@ -10,6 +10,7 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
+import { playerDotAtMaxStacks } from "../damage/dotInventory";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { isMonsterThreatening } from "./guardableThreats";
 import { isPlayerActivelyInCombat, isPlayerInCombat } from "./engagement";
@@ -127,6 +128,13 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       // Elite-ness is a property of the monster DEFINITION, same source the
       // `focus-elites` targeting bonus reads.
       targetIsElite: isEliteTarget(world, attackTargetId),
+      // Measured through the DoT inventory rather than by reading any one
+      // effect id, so a future T4 damage-over-time path drives `target-max-stacks`
+      // the moment it registers a family. Weapon reservoirs are excluded there,
+      // not here.
+      targetAtMaxDotStacks: attackTarget
+        ? playerDotAtMaxStacks(world, player, attackTarget)
+        : false,
       traveling:
         player.hasAutoTraversePath !== undefined &&
         player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId &&

@@ -1,4 +1,5 @@
 import { initAllMechanics } from "./classes/registry";
+import { initDotInventory } from "./combat/damage/dotInventory";
 import { initWeaponEffects } from "./combat/damage/weaponEffects";
 import { initDefenseSystems } from "./defense";
 import { initDebuffMechanics } from "./classes/shared/debuffs";
@@ -45,6 +46,12 @@ export function initCombatSystems(): void {
   if (initialized) return;
   initialized = true;
 
+  // The DoT inventory: every damage-over-time family registers its descriptor so
+  // Contagion, Detonate and the `target-max-stacks` rune condition can enumerate
+  // afflictions without knowing any effect ids. Registered FIRST because those
+  // consumers read it, and a future T4 path may register its own family from a
+  // class init below.
+  initDotInventory();
   // Class mechanics: each module's `init` registers its combat listeners once.
   initAllMechanics();
   // Weapon-specific hooks (first-strike, brittle, flurry, reservoir DoTs, ...).

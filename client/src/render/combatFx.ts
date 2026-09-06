@@ -2,6 +2,7 @@ import {
   ABILITY_BINDING_STRIKE_FX,
   ABILITY_EXPOSE_WEAKNESS_FX,
   ABILITY_HAMSTRING_FX,
+  ABILITY_IMBUE_FX,
   ABILITY_QUICK_STRIKE_FX,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
@@ -82,6 +83,9 @@ import { fxBreakFree } from "../fx/breakFree";
 import { fxRecuperate } from "../fx/recuperate";
 import { fxBramble } from "../fx/bramble";
 import { fxFrenzy } from "../fx/frenzy";
+import { fxContagion } from "../fx/contagion";
+import { fxDetonate } from "../fx/detonate";
+import { fxImbueCast, fxImbueCrackle } from "../fx/imbueLightning";
 import { fxHamstring } from "../fx/hamstring";
 import { fxBindingStrike } from "../fx/bindingStrike";
 import { fxQuickStrike } from "../fx/quickStrike";
@@ -441,7 +445,15 @@ const GUARD_FX_BY_ABILITY: Record<
  */
 const TECHNIQUE_SELF_FX_BY_ABILITY: Record<
   string,
-  (scene: GameScene, x: number, y: number) => void
+  (
+    scene: GameScene,
+    x: number,
+    y: number,
+    options?: {
+      durationMs?: number;
+      follow?: () => { x: number; y: number } | null;
+    },
+  ) => void
 > = {
   frenzy: fxFrenzy,
 };
@@ -460,6 +472,8 @@ const CAST_FX_BY_ABILITY: Record<
   // Snipe is the one cast whose FX needs BOTH points: the distance crossed is
   // the ability, and an impact alone would not show it.
   snipe: (scene, from, to) => fxSnipe(scene, from.x, from.y, to.x, to.y),
+  // A self-cast resolves on the caster, so both endpoints are the player.
+  "imbue-lightning": (scene, from) => fxImbueCast(scene, from.x, from.y),
 };
 
 /** Reposition FX, keyed by ability id. Both endpoints come from the event. */
@@ -491,6 +505,7 @@ const TECHNIQUE_CONSUMED_TAGS = [
   ABILITY_HAMSTRING_FX,
   ABILITY_BINDING_STRIKE_FX,
   ABILITY_QUICK_STRIKE_FX,
+  ABILITY_IMBUE_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
 ];
 
@@ -788,7 +803,17 @@ export function dispatchCombatEvent(
         // above would otherwise sit there until some unrelated hit cleared it.
         const selfFx = TECHNIQUE_SELF_FX_BY_ABILITY[ev.ability];
         if (selfFx) {
-          selfFx(scene, sprite.x, sprite.y);
+          // `durationMs` lets a window-opening Technique (Frenzy) sustain an
+          // in-world cue for as long as the buff actually lasts, and `follow`
+          // keeps that cue on the sprite while the player moves — a one-shot
+          // burst at the fire position would be left behind immediately.
+          selfFx(scene, sprite.x, sprite.y, {
+            durationMs: ev.durationMs,
+            follow: () => {
+              const live = state.sprite.get(ev.playerId);
+              return live ? { x: live.x, y: live.y } : null;
+            },
+          });
           state.techniqueArmed.delete(ev.playerId);
           if (ev.playerId === scene.myId) notifyAbilityFired(ev.ability);
         }
@@ -844,15 +869,39 @@ export function dispatchCombatEvent(
     return;
   }
 
+  if (ev.kind === "dot-spread") {
+    // Contagion. One tendril per (victim × element), tinted by that element, so
+    // the player can see WHICH afflictions took hold where. Node-wide: an ally
+    // watching a swamp build work should see the infection travel.
+    if (shouldRunClientFx() && ev.links.length > 0) {
+      fxContagion(scene, ev.from, ev.links);
+    }
+    return;
+  }
+
+  if (ev.kind === "dot-detonate") {
+    // Detonate. The element is resolved server-side from whichever affliction
+    // was owed the most damage, so the explosion is coloured by what actually
+    // did the work rather than by whatever landed first.
+    if (shouldRunClientFx()) {
+      fxDetonate(scene, ev.pos.x, ev.pos.y, ev.element);
+    }
+    return;
+  }
+
   if (ev.kind === "player-cast-end") {
     endCastBar(state, ev.playerId);
     // A cast resolves on its own target rather than riding an attack, so its
     // impact FX hangs off this event and its carried impact point — there is no
     // `player-hit` for it. Node-wide, so allies see each other's casts land.
-    if (ev.fired && ev.targetPos && shouldRunClientFx()) {
+    if (ev.fired && shouldRunClientFx()) {
       const fx = CAST_FX_BY_ABILITY[ev.ability];
       const origin = state.sprite.get(ev.playerId);
-      if (fx && origin) fx(scene, { x: origin.x, y: origin.y }, ev.targetPos);
+      // A SELF-cast carries no `targetPos` — it never had a target. Both
+      // endpoints collapse onto the caster rather than the FX being skipped,
+      // which is what would happen if this still required an impact point.
+      const impact = ev.targetPos ?? (origin ? { x: origin.x, y: origin.y } : undefined);
+      if (fx && origin && impact) fx(scene, { x: origin.x, y: origin.y }, impact);
     }
     if (ev.playerId === scene.myId) {
       notifyAbilityCastEnded();
@@ -1092,6 +1141,13 @@ function runFxForAttackStyle(
     }
     if (effectId === ABILITY_QUICK_STRIKE_FX) {
       fxQuickStrike(scene, to.x, to.y, ev.empowered);
+      continue;
+    }
+    if (effectId === ABILITY_IMBUE_FX) {
+      // A charge being spent. Drawn on the ATTACKER, not the victim: the storm
+      // is in the player's hands, and putting it on the target would read as a
+      // debuff rather than as a self-buff being consumed.
+      fxImbueCrackle(scene, from.x, from.y);
       continue;
     }
     if (effectId === ABILITY_TECHNIQUE_FIRED_FX) {

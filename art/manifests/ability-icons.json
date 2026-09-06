@@ -420,6 +420,75 @@
         "noBackground": false
       },
       "notes": "R1 DRAFT - not generated. T4 Wasteland hard control. Plays HIGH with circling stars where Binding Strike plays at the ground - that placement is the only fast read distinguishing stun from root."
+    },
+    {
+      "id": "contagion",
+      "out": "UI_icons/abilities/contagion.png",
+      "prompt": "full-square fantasy game ability icon for an affliction spreading from one host to several others, one larger sickly-green blot at the lower left with three thin wavering tendrils crawling outward to three much smaller blots at the upper right, the tendrils are visibly wavy and organic rather than straight lines, the whole arrangement reads as something creeping outward from a single source, it occupies about 85 percent of the frame, pure black background, bold flat pixel-art icon readable instantly at 32x32, 64x64 pixel art, limited palette of black deep-green and sickly bright-green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "straight beam, laser, lightning bolt, arrow, arrows, chain, rope, web, spiderweb, spider, tree, branches, roots, plant, leaf, vine with leaves, network diagram, constellation, molecule, atom, nodes and edges, flowchart, character, humanoid figure, person, hand, face, logo, clipart, transparent background, empty background, gradient, glow, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "notes": "DRAFT — Contagion (T3 Swamp). Must read as SPREADING, not as a projectile: the tendrils are wavy and connect one big source to several small receivers. Sibling of detonate.",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "status": "draft",
+      "sources": [
+        "ability:contagion"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      }
+    },
+    {
+      "id": "detonate",
+      "out": "UI_icons/abilities/detonate.png",
+      "prompt": "full-square fantasy game ability icon for afflictions violently bursting all at once, one bright sickly-green starburst centered in the frame with six or seven thick straight shards flung outward from the middle, a single bold broken ring fragment around it to show the shockwave, the very center is the brightest point, the burst fills about 85 percent of the frame, pure black background, bold flat pixel-art icon readable instantly at 32x32, 64x64 pixel art, limited palette of black deep-green and sickly bright-green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "mushroom cloud, fire, flames, orange, red explosion, bomb, grenade, dynamite, fuse, barrel, skull, sun, sunburst rays, star, sparkle, snowflake, asterisk, flower, complete unbroken ring, character, humanoid figure, person, hand, face, logo, clipart, transparent background, empty background, gradient, glow, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "notes": "DRAFT — Detonate (T3 Swamp). Green not orange: this is afflictions rupturing, not a fire bomb. Deliberately the LOUD sibling of contagion's quiet crawl.",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "status": "draft",
+      "sources": [
+        "ability:detonate"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      }
+    },
+    {
+      "id": "imbue-lightning",
+      "out": "UI_icons/abilities/imbue-lightning.png",
+      "prompt": "full-square fantasy game ability icon for charging your strikes with stored lightning, two or three hard-angled violet lightning arcs crackling in a tight vertical cluster in the middle of the frame, the arcs have sharp zigzag corners and no curves at all, a few small bright sparks scattered close around them, the cluster occupies about 85 percent of the frame, pure black background, bold flat pixel-art icon readable instantly at 32x32, 64x64 pixel art, limited palette of black deep-violet and bright pale-violet, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "smooth curve, wavy line, ribbon, snake, cloud, storm cloud, rain, weather icon, single classic lightning bolt symbol, power symbol, battery, plug, socket, wire, sword, weapon, blade, hand, fist, gauntlet, orb, sphere, yellow, gold, character, humanoid figure, person, hand, face, logo, clipart, transparent background, empty background, gradient, glow, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "notes": "DRAFT — Imbue Lightning (T4 Jungle). Violet to match ELEMENT_STYLE.lightning (#c77dff) and the in-world FX; hard angles are the whole read, a curve stops looking like voltage.",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "status": "draft",
+      "sources": [
+        "ability:imbue-lightning"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      }
     }
   ]
 }

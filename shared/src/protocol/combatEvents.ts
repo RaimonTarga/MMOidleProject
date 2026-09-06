@@ -104,7 +104,17 @@ export type CombatEvent =
   // tinted red until the charge is consumed (the consuming `player-hit` carries an
   // ability client-effect tag which clears it). Purely cosmetic — the rider itself
   // is server-authoritative. Shown to the whole node, mirroring `player-guard`.
-  | { kind: 'player-technique-armed'; playerId: string; ability: string }
+  // `durationMs` is present only for a self-facing INSTANT Technique that opens a
+  // timed window (Frenzy). The client uses it to run a sustained in-world cue for
+  // exactly as long as the buff really lasts. Without it the only cue was a
+  // ~300 ms burst standing in for a four-second window, which read as the
+  // ability doing nothing at all.
+  | {
+      kind: 'player-technique-armed';
+      playerId: string;
+      ability: string;
+      durationMs?: number;
+    }
   // A reposition Technique moved the player (Charge / Disengage). Both endpoints
   // are carried because a dash reads as a TRAIL: the client cannot reconstruct
   // where the player came from once the authoritative position has already
@@ -119,6 +129,22 @@ export type CombatEvent =
   // a cast resolves on its own target rather than riding an attack, so there is
   // no `player-hit` to hang its FX on.
   | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean; targetPos?: Vec2 }
+  // Contagion copied afflictions outward. Carries the SOURCE point and one link
+  // per (victim × distinct element), so a target carrying both a burn and a
+  // poison draws two differently-coloured tendrils to each new host rather than
+  // one averaged line. The client cannot reconstruct any of this: the copies are
+  // status effects, which are server-only state and never networked.
+  | {
+      kind: 'dot-spread';
+      playerId: string;
+      from: Vec2;
+      links: Array<{ to: Vec2; element: DamageElement }>;
+    }
+  // Detonate consumed afflictions for a burst. `element` is whichever element was
+  // owed the most damage, so the explosion is tinted by what actually did the
+  // work. The damage number still rides the normal HP delta — this only drives
+  // the animation.
+  | { kind: 'dot-detonate'; playerId: string; pos: Vec2; element: DamageElement }
   // A Rune changed the player's active posture. The authoritative progression
   // delta carries the state; this event exists for immediate visual feedback.
   | { kind: 'stance-switch'; playerId: string; stanceId: string | null };

@@ -27,6 +27,8 @@ import {
   type AbilityEffectSpec,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
+import { resolveContagion, resolveDetonate } from "./abilityAffliction";
+import { applyImbueWindow, initImbueSystem } from "./abilityImbue";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { applyPlayerDebuff } from "../../classes/shared/applyPlayerDebuff";
 import {
@@ -104,6 +106,9 @@ const GUARD_DR_CAP = 0.9;
 export const SLINGER_SWEEP_CLIP_BUDGET_MULT = 1.5;
 
 export function initAbilitySystems(): void {
+  // Imbue's on-hit charge consumer. Registered here so live server and bench
+  // share one registration point (see combatBootstrap.ts).
+  initImbueSystem();
   // A Sweep clip is exactly one ammo lifecycle. Partial tactical reloads and
   // ordinary empty-clip reloads share these hooks, so both end it identically.
   registerReloadLifecycleHook({
@@ -232,6 +237,19 @@ export function resolveCastPayload(
   target: MonsterEntity,
 ): void {
   const effect = techniqueEffect(player, ability);
+
+  // The affliction Techniques act on damage-over-time the player already owns
+  // rather than on the player's attack, so they own their own resolution. They
+  // still arrive here because they are ordinary casts in every other respect.
+  if (effect.kind === "spread-dots") {
+    resolveContagion(world, player, ability, target);
+    return;
+  }
+  if (effect.kind === "detonate-dots") {
+    resolveDetonate(world, player, ability, target);
+    return;
+  }
+
   if (effect.kind !== "cast-strike") return;
 
   // The payload is authored as a multiple of the player's attack, so the wind-up
@@ -250,6 +268,26 @@ export function resolveCastPayload(
   // the shared post-stun immunity keeps chain-locking off the table.
   if (effect.stunMs && effect.stunMs > 0 && target.hasHealth.hp > 0) {
     applyStun(target.tracksCombat, effect.stunMs, player.isPlayer.id);
+  }
+}
+
+/**
+ * Resolve a completed `self-cast`. The counterpart to {@link resolveCastPayload}
+ * for wind-ups that land on the player: no target, no reach check, no AoE.
+ *
+ * Kept as its own dispatcher rather than folded into `resolveCastPayload` so the
+ * two can never be confused at a call site — a targeted payload reaching a
+ * self-cast (or the reverse) would be a silent no-op rather than a type error.
+ */
+export function resolveSelfCastPayload(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+): void {
+  const effect = techniqueEffect(player, ability);
+  if (effect.kind === "imbue") {
+    applyImbueWindow(world, player, ability);
+    return;
   }
 }
 

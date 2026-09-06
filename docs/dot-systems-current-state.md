@@ -16,8 +16,36 @@ There are also special DoT-like mechanics, such as Hemorrhage and Energy Storm.
 Those are not part of the core class or weapon formulas, but player-owned lethal
 ticks now participate in the same on-kill hook flow.
 
+## The DoT Inventory (enumeration seam)
+
+`server/src/systems/combat/damage/dotInventory.ts` is the single place that can answer
+*"what damage-over-time is on this target, whose is it, what element is it, and how much
+does it still owe?"*. Before it, the four DoT families below shared no vocabulary, and any
+tool that wanted to act on "all DoTs" had to hardcode effect ids.
+
+Consumers: **Contagion**, **Detonate** and the **`target-max-stacks`** rune condition. A
+new DoT path calls `registerDotFamily(...)` from its own `init` (run once by
+`initCombatSystems()`) and picks up all three with no change to any consumer.
+
+A family DESCRIBES; it never mutates. Each entry reports `element`, `remainingDamage`,
+`spreadable`, `detonatable`, `stackCap` and the ECS `marker` a receiving monster needs.
+
+Two rules worth knowing:
+- **`stackCap` is 0 for weapon reservoirs.** They are `maxStacks: 1` internally, so
+  treating them as stacking would make `target-max-stacks` true from the first hit and it
+  would never turn off again.
+- **A permanent DoT (Permafrost) projects a bounded window** rather than an infinite one,
+  so "never ending" cannot out-earn a timed DoT when Detonate cashes it in.
+
+`remainingDamage` includes the target's CURRENT vulnerability multipliers (Smoulder,
+Frozen, Frostbite, shared damage-taken debuffs), applied exactly as the real tick drivers
+apply them. It is an estimate by nature — a refresh, a new stack or an expiring Smoulder
+all move it afterwards.
+
 ## Main Files
 
+- `server/src/systems/combat/damage/dotInventory.ts`
+- `server/src/systems/player/abilities/abilityAffliction.ts`
 - `shared/src/systems/damage.ts`
 - `shared/src/systems/dotClassProfile.ts`
 - `shared/src/systems/dotElements.ts`
@@ -88,8 +116,9 @@ stronger than linear, preserving class DoT pressure in short fights.
 Status effects live in `tracksCombat`, while markers gate efficient queries:
 
 - `hasDot`: core `dot` effect on monsters or players.
-- `hasAshbrandBurn`: generic burn/reservoir weapon effects.
-- `hasVoidCorruption`: Edge of Oblivion corruption.
+- `hasWeaponDot`: **every** weapon reservoir, the brands and Edge of Oblivion alike.
+  (This doc previously named `hasAshbrandBurn` and `hasVoidCorruption`; **no such markers
+  exist** in `server/src/ecs/entity.ts` — corrected 2026-09-06.)
 - `hasConflagration`, `hasChill`, `hasFrozen`, `hasSmolder`: T3 DoT path effects.
 - `hasHemorrhage`: Cadence Hemorrhage.
 
@@ -99,8 +128,8 @@ Relevant world queries:
 - `world.chillingPlayers`
 - `world.dottedMonsters`
 - `world.dottedPlayers`
-- `world.ashbrandMonsters`
-- `world.voidCorruptionMonsters`
+- `world.weaponDotMonsters` (the doc previously listed `ashbrandMonsters` /
+  `voidCorruptionMonsters`; neither query exists)
 - T3-specific marker queries such as `world.conflagrationMonsters`
 
 ## Tick Order
@@ -455,6 +484,15 @@ debuffs.
 
 Chaotic weapon misses are different from evades. Chaotic misses can still apply
 on-hit effects unless blocked by evade logic.
+
+## Ownership Is Last-Applier, Not Per-Player
+
+The core class `dot` is ONE non-instanced effect per monster, and `applyStatusEffect`
+reassigns `sourceId` to the most recent applier ("latest attacker gets kill credit"). Two
+DoT players on one target therefore **contest a single effect** rather than each carrying
+their own. This is long-standing behaviour, not something the inventory introduced, but it
+is the reason `playerDotsOnMonster` filters by `sourceId`: in a party you act on whatever
+the shared effect currently says is yours.
 
 ## Current Friction Points
 

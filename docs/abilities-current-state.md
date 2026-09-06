@@ -5,9 +5,11 @@ Living truth for the active **Ability** system (Technique / Guard). Design autho
 `docs/archive/abilities-plan.md`, `docs/archive/abilities-evolution-implementation-plan.md`
 and `design_docs/archive/abilities-evolution-plan-updated.md`.
 
-**Shipped:** the full **T1–T4 roster of 18 abilities** on authored per-tier ranks, the
-control ladder (slow / root / stun), ability **engagement range**, and bespoke in-world FX
-for every ability.
+**Shipped:** the full **T1–T4 roster of 21 abilities** on authored per-tier ranks, the
+control ladder (slow / root / stun), ability **engagement range**, the **affliction
+toolkit** (Contagion / Detonate, reading the shared DoT inventory), the **charge-based
+window** (Imbue Lightning, on the new `self-cast` shape), and bespoke in-world FX for
+every ability.
 
 > **Name collision (kept distinct).** The passive talent tree (`UsesSkills`, `skillTree/`) is
 > class progression and is **untouched**. "Abilities" is the active system (Technique / Guard).
@@ -151,6 +153,7 @@ the one trigger that must work while the player cannot act) · **`target-beyond-
 | `cast` | attaches `isCastingAbility`; see below | Power Strike, Snipe, Stunning Strike |
 | `charge` | winds up as a `cast`, then attaches `isChargingAbility` and **rushes** the target at `chargeSpeedMult` until contact, interruption or `chargeMaxMs`; hands the armed-hit rider back to the pipeline on arrival | Charge |
 | `reposition` | resolves immediately by moving the player; optionally also arms | Disengage |
+| `self-cast` | winds up like a `cast` but resolves on the PLAYER — no target to acquire and none to lose | Imbue Lightning |
 | `instant` | immediate self-facing effect | Brace, Cleanse, Second Wind, Bramble Guard, Endure, Break Free, Recuperate, **Frenzy (a Technique)** |
 
 ### Cast lifecycle — `abilityCasting.ts`
@@ -238,7 +241,20 @@ deliberately not interchangeable.
 
 ---
 
-## Roster — 18 abilities, 11 Techniques + 7 Guards
+### Why `self-cast` exists
+`cast` and `instant` each get a self-buff wind-up half wrong. A `cast` resolves against a
+monster and **aborts when that monster dies or drifts out of reach** — correct for a
+strike, absurd for buffing your own hands. An `instant` has no wind-up at all, and
+`validateAbilities()` rightly refuses `castMs` on one. `self-cast` is the third thing: a
+real, hard-CC-interruptible telegraph with nothing to lose. It shares `isCastingAbility`
+(and therefore the single offensive channel, the cast bar, and the pay-on-resolve
+cooldown rule) with an **empty `targetId`** standing for "no target". The lifecycle
+branches on shape rather than on `targetId` being blank, so a future targeted shape that
+forgets to set it cannot silently skip target validation.
+
+---
+
+## Roster — 21 abilities, 14 Techniques + 7 Guards
 
 The count imbalance is deliberate: later progression grants the second Technique slot before
 the second Guard slot, and the Technique space naturally has more positional/control/offensive
@@ -278,6 +294,8 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 | **Binding Strike** | Technique / armed | Tundra (3) | Root — rung two |
 | **Frenzy** | Technique / **instant** | Volcanic (3) | Attack speed, and nothing else |
 | **Quick Strike** | Technique / armed | Volcanic (5) | The spam-technique archetype |
+| **Contagion** | Technique / **cast** | Swamp (15) | Copy afflictions outward — the DoT breadth answer |
+| **Detonate** | Technique / **cast** | Swamp (17) | Cash afflictions in now, with a cut |
 | **Break Free** | Guard / instant | Tundra (5) | Hard-CC counter, fires while held |
 
 ### T4 — advanced range, escape, hard CC, long sustain
@@ -288,7 +306,51 @@ Only rank I is authored: these debut at the end of the supplied biome map.
 | **Disengage** | Technique / reposition | Trench (3) | Create distance |
 | **Snipe** | Technique / **cast** | Graveyard (3) | Long-range deliberate strike (+300px) |
 | **Stunning Strike** | Technique / **cast** | Graveyard (5) | Stun — rung three |
+| **Imbue Lightning** | Technique / **self-cast** | Jungle (15) | A window spent in HITS, not seconds |
 | **Recuperate** | Guard / instant | Trench (5) | Weak/long Recovery access |
+
+### The affliction toolkit — `abilityAffliction.ts`
+Contagion and Detonate act on damage-over-time the player **already owns**. Neither knows
+what a "poison" or a "reservoir" is: both read the **DoT inventory**
+(`server/src/systems/combat/damage/dotInventory.ts`, see
+`dot-systems-current-state.md`), which is the single seam that enumerates every DoT family.
+A future T4 DoT path registers one family and picks up both abilities — and the rune
+condition — for free.
+
+- **Contagion COPIES** at full strength: full stacks, full reservoir pool, original target
+  keeps its own. `maxTargets` is therefore the only bound on the multiplication and is the
+  number to tune; the radius only makes the cap easier to fill. Victims are chosen
+  **nearest-first**, so the same cast is repeatable and can be aimed by positioning.
+- A copy **can never weaken** what the receiver already had: each axis takes the better of
+  the two. `applyStatusEffect` INCREMENTS an existing stack as a side effect of returning
+  it, so the merge reads the stack count captured **before** the call — reading
+  `applied.stacks` instead hands out a free stack to everything Contagion touches (caught
+  by `abilityAffliction.test.ts`).
+- **Detonate CONSUMES** every detonatable DoT and pays out what they still owed ×
+  `detonateMult`, single-target. Effects are stripped **before** the damage lands: if the
+  burst kills, the monster is removed inside `applyPlayerAoe`, and spent effects left on a
+  corpse could be billed twice on the way out.
+- Both are **ownership-scoped by `sourceId`** — you act on your own damage over time and
+  nobody else's.
+- Both **decline before the wind-up** when there is nothing to act on
+  (`afflictionTechniqueHasWork`), the same rule that stops Break Free firing while
+  uncontrolled. Detonate's 15 s cooldown is what makes this the difference between an
+  ability and a trap.
+- A **permanent** DoT (Permafrost) owes unbounded damage, so "the rest of its duration" is
+  not a number. The inventory projects a bounded window for it instead — long enough that
+  detonating a ramped Permafrost is worth doing, short enough that never ending cannot
+  out-earn a timed DoT.
+
+### Imbue Lightning — `abilityImbue.ts`
+A window spent in **charges, not seconds** (`remainingMs: -1`; `data.charges` counts down
+on each landed hit). Every other offensive window in the game races a clock, which quietly
+pays the most to whoever was already attacking fastest; a charge window pays every build
+the same. **One charge per landed hit**, which for a Reload magazine means one per bullet —
+consistent with how the `onHitDamage` stat already behaves per shot. A chaotic-weapon whiff
+does not spend a charge. The bonus is added on `onHit`, so it passes through the target's
+plating/DR like any other damage rather than being unmitigated true damage. It rides
+`TracksCombat`, which is never persisted, so it evaporates on death and logout with no
+teardown.
 
 ### Bramble Guard — `abilityBramble.ts`
 Plating folds into `mitigatesDamage.plating` per tick from the status effect (same pattern as
@@ -344,19 +406,110 @@ differently at a glance:
 - **Snipe** draws the whole distance it crossed — the length of that tracer *is* the ability.
 - **Quick Strike** is deliberately the quietest FX in the set; at a 2.5 s cooldown a Sweep-
   sized flourish would bury every other cue on screen.
+- **Contagion** draws one *sinuous* tendril per (victim × element), tinted from the shared
+  `ELEMENT_STYLE` palette — spread a burn and a poison and you see an orange line and a
+  green line reach each new host. Curved, not straight: a straight line reads as a
+  projectile (something fired), a wavering one reads as something spreading.
+- **Detonate** is the loud sibling — white core flash, element-tinted body, shock ring and
+  radial shards, with no lingering field, because the afflictions are GONE and the visual
+  has to say so. Its tint is the element that was owed the most damage, resolved
+  server-side, so it tells the player which DoT source actually mattered.
+- **Imbue Lightning** has two separate cues, because it has two moments: a loud arrival on
+  the cast, and a much quieter per-hit crackle on the ATTACKER as each charge is spent (up
+  to five in quick succession — at cast volume it would bury everything else). There is
+  deliberately **no timed aura**: the window is spent in hits, so a fading ring would lie
+  about how long it lasts.
+
+### Two new node events
+`dot-spread` (source point + one link per victim × element) and `dot-detonate` (impact
+point + dominant element). Both are needed because the copies and the consumed effects are
+**status effects — server-only state that is never networked**, so the client cannot
+reconstruct any of it from the delta. `player-technique-armed` also gained an optional
+`durationMs`, carried only by a window-opening instant Technique (Frenzy).
 
 ---
 
 ## Verified
 
-`pnpm typecheck` clean (4 packages + bench); `pnpm test` **89/89**. Ability coverage:
-`abilities`, `abilityRanks`, `abilityControl`, `abilityGuardsAndReach`, `abilityMultiSlot`,
-`abilityCast`, `abilityCharge`, `abilityBramble`, `abilitySecondWind`, `abilityTechniqueRune`,
-`abilityTelegraphEvents`, `describeText`.
+`pnpm typecheck` clean (4 packages + bench); `pnpm build` clean; `pnpm test` **141/141**.
+Ability coverage: `abilities`, `abilityRanks`, `abilityControl`, `abilityGuardsAndReach`,
+`abilityMultiSlot`, `abilityCast`, `abilityCharge`, `abilityBramble`, `abilitySecondWind`,
+`abilityTechniqueRune`, `abilityTelegraphEvents`, **`abilityAffliction`**, `describeText`.
+
+`abilityAffliction.test.ts` was mutation-checked: reverting the stack-merge fix, the target
+cap, Detonate's consume step, the situational guard, the reservoir `stackCap: 0` rule, and
+Imbue's charge decrement each fail the suite.
+
+---
+
+## Frenzy — measured, and the finding is an AUTHORING one
+
+Reported as "does not grant attack speed, and has no animation". Both halves were
+investigated by ticking a real `World` rather than by reading the code.
+
+**The attack-speed mechanism is correct.** Forcing a +100% window took the player from 8 to
+14 swings over the same 20 s — the buff applies, the cadence gate at `combat.ts` reads it,
+and `updateAbilityFiring` fires it unprompted in the real tick loop.
+
+**But at the authored numbers it is close to a no-op for slow builds.** Attack speed is a
+RATE multiplier, and a 4-second window rounds a rate increase down to zero whole swings
+unless you already attack fast:
+
+| Frenzy rank | base swing 3000 ms | 2000 ms | 1500 ms | 1000 ms | 600 ms |
+|---|---|---|---|---|---|
+| **I (T3)** — +30%, 4 s | **+0 attacks** | **+0** | +1 | +1 | +2 |
+| **II (T4)** — +35%, 5 s | +1 | +1 | +1 | +1 | +3 |
+
+End-to-end with the authored rank I, a 3000 ms swing timer measured **20 attacks without
+Frenzy and 22 with** over 60 s — about +10%, which is 40% uptime × 30% haste, exactly as
+authored and essentially imperceptible in play.
+
+**This is a balance number, which is the designer's to set, so it has NOT been changed.**
+The structural observation is that Frenzy I's window is shorter than the thing it
+accelerates; lengthening the window buys far more than raising the percentage does
+(rank II already gets to +1 at every swing speed purely by being 5 s instead of 4 s).
+
+### The stat sheet never moved — fixed
+
+The other half of "it doesn't grant attack speed" was that **nothing on screen said it
+did**. The Attack Speed row computed APS straight from `attackCooldown`, the stat every
+temporary modifier deliberately avoids writing — so it displayed base cadence forever.
+
+This was never Frenzy-specific. The same cadence gate applies **frost ramp**, the
+**ambient node ramp (Tundra Chill)**, **Reaper momentum** and **Powering Up's released
+charge**, and none of them showed either. Being chilled looked identical to not being
+chilled.
+
+The maths now lives in one place, `server/src/systems/combat/engine/attackCadence.ts`, read
+by BOTH the gate and a per-tick HUD mirror, so a modifier cannot reach one without reaching
+the other:
+- `attackCadenceMult(cs)` — slow multiplier × haste multiplier. Below 1 is faster.
+- Mirrored onto `HasStatus.attackCadenceMult` in `mirrorHpForecast` (the established
+  precedent for a derived display value), projected on `PlayerView`, and shown as
+  `2.10 APS (0.48s) +30% · base 1.61`.
+- Base is shown alongside so a buffed number reads as *temporary* rather than as a
+  permanently changed stat, and the percentage tag only appears when something is actually
+  active.
+
+**The animation half is fixed too.** `fxFrenzy` was firing correctly and was simply too small
+and too brief to notice — a ~320 ms burst standing in for a four-second buff. It now lands
+harder (12 streaks reaching 58 px, a shock ring, three flares) **and** sustains an aura that
+rides the sprite for the buff's real duration and fades over its last third, so "am I still
+frenzied?" is answerable in-world instead of only from the buff bar. The duration reaches
+the client on `player-technique-armed.durationMs`, since the client cannot resolve an
+authored rank itself.
 
 ## Known gaps
 
-- **Icons for ten abilities are drafted but not generated.** `art/manifests/ability-icons.json`
+- **Frenzy's window length is an open balance call** — see the measurement above. The
+  ability works, is now visible both in-world and on the stat sheet, and is still authored
+  too small to feel at slow attack speeds. That last part is a number, not a bug.
+- **Icons for thirteen abilities are drafted but not generated.** Contagion, Detonate and
+  Imbue Lightning were added to `art/manifests/ability-icons.json` as `status: "draft"`
+  prompts (nothing generated, no credits spent) and render the placeholder glyph until
+  generated and accepted in the gallery. The new `target-max-stacks` rune condition
+  temporarily aliases to the `has-debuff` crest.
+- **Icons for ten earlier abilities are drafted but not generated.** `art/manifests/ability-icons.json`
   carries `status: "draft"` prompts for power-strike, hamstring, endure, binding-strike,
   break-free, frenzy, quick-strike, disengage, recuperate, snipe and stunning-strike; they are
   not in the approved allowlist, so those abilities render the placeholder glyph until art is

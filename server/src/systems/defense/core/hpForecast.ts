@@ -1,5 +1,6 @@
 import { computeLinearDotDamage, isMonsterDotStatusEffectId } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
+import { attackCadenceMult } from "../../combat/engine/attackCadence";
 import type { World } from '../../../world/World';
 import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseDebtPool } from './pools';
 
@@ -46,5 +47,10 @@ export function mirrorHpForecast(world: World): void {
     if (!player.hasStatus) continue;
     player.hasStatus.incomingDot = forecastIncomingDot(player);
     player.hasStatus.pendingHeal = forecastPendingHeal(player);
+    // Temporary attack haste/slow is applied as a multiplier at the cadence gate
+    // and never written into `attackCooldown`, so it has to be mirrored
+    // explicitly or nothing that displays the stat can ever see it. Same
+    // function the gate itself uses — see `combat/engine/attackCadence.ts`.
+    player.hasStatus.attackCadenceMult = attackCadenceMult(player.tracksCombat);
   }
 }

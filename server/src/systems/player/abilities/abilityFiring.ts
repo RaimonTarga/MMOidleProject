@@ -244,10 +244,16 @@ function maybeFireTechnique(
     applyInstantTechnique(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
     setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
+    // Carry the window length so the client can sustain an in-world cue for the
+    // ability's REAL duration. Resolved here rather than looked up client-side
+    // because the authored rank is the server's to interpret.
+    const windowEffect = resolveTechniqueEffect(player, ability);
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-technique-armed",
       playerId: player.isPlayer.id,
       ability: abilityId,
+      durationMs:
+        windowEffect.kind === "attack-speed" ? windowEffect.durationMs : undefined,
     });
     return false;
   }
@@ -269,7 +275,11 @@ function maybeFireTechnique(
 
   // A cast pays its cooldown on RESOLVE, not on begin (see abilityCasting.ts),
   // so nothing is charged here.
-  if (ability.shape === "cast" || ability.shape === "charge") {
+  if (
+    ability.shape === "cast" ||
+    ability.shape === "charge" ||
+    ability.shape === "self-cast"
+  ) {
     const started = beginAbilityCast(world, player, ability, slotIndex, now);
     if (started) recordAbilityActivation(world, player, abilityId, 'technique');
     return started;

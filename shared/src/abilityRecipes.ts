@@ -235,6 +235,39 @@ const recipes: AbilityRecipe[] = [
     // priciest of the four.
     cost: { red: 210 },
   },
+  {
+    id: "ability-recipe-contagion",
+    name: "Contagion",
+    description:
+      "Learn Contagion: cast a target's afflictions outward onto the enemies around it.",
+    abilityId: "contagion",
+    tier: 3,
+    // The swamp is the game's attrition-by-DoT biome, and it is where the brand
+    // weapons live — so it is the one place a player has BOTH the damage-over-time
+    // to spread and the density to spread it into. Its T3 band is biome levels
+    // 13–18, so the band's own level 3 is 15.
+    recipeGroup: "swamp",
+    requiredBiomeLevel: 15,
+    // Priced at the T3 "broadly useful but optional" tier, alongside Frenzy: a
+    // real damage tool, but useless to a build carrying no DoT at all.
+    cost: { purple: 175 },
+  },
+  {
+    id: "ability-recipe-detonate",
+    name: "Detonate",
+    description:
+      "Learn Detonate: tear every affliction off a target at once for all the damage they had left.",
+    abilityId: "detonate",
+    tier: 3,
+    // Swamp again, at the band's level 5 — the stagger that makes the second
+    // reward a real second unlock moment rather than a duplicate one. Contagion
+    // teaches you to spread; Detonate teaches you to cash in.
+    recipeGroup: "swamp",
+    requiredBiomeLevel: 17,
+    // The priciest T3 ability: the most build-warping of the pair, and the one
+    // that rewrites how a DoT build sequences a whole fight.
+    cost: { purple: 210 },
+  },
 
   // ── T4: advanced range, escape, hard CC, long sustain ──────────────────────
   {
@@ -278,6 +311,23 @@ const recipes: AbilityRecipe[] = [
     recipeGroup: "graveyard",
     requiredBiomeLevel: 5,
     cost: { purple: 420 },
+  },
+  {
+    id: "ability-recipe-imbue-lightning",
+    name: "Imbue Lightning",
+    description:
+      "Learn Imbue Lightning: charge your hands so your next few strikes land with the storm.",
+    abilityId: "imbue-lightning",
+    tier: 4,
+    // The jungle's T4 band is biome levels 13–18 (it debuts at T2), so the band's
+    // own level 3 is 15. Homed here because the jungle is the density-and-tempo
+    // biome: a charge window that does not expire is worth most where fights are
+    // fast, frequent, and interrupted by the next pack.
+    recipeGroup: "jungle",
+    requiredBiomeLevel: 15,
+    // Mid-band T4 pricing, between Disengage (300) and Snipe (320): a strong
+    // generic damage window, but one that asks you to spend a slot on setup.
+    cost: { green: 320 },
   },
 ];
 

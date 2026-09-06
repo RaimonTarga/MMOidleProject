@@ -19,7 +19,7 @@ export const STAT_HELP: Record<string, string> = {
   dps:
     'Estimated damage per second, worked out from your class mechanic — a Striker’s finisher, a Slinger’s reload downtime, a DoT build’s converted stacks, a Summoner’s minions. A planning number, not a measurement: it is before enemy plating and damage reduction, and it cannot see positioning, procs, abilities, or the spec behaviours that only exist mid-fight. Hover the figure in the character panel for its full working.',
   atkSpeed:
-    'How often you attack, shown as attacks-per-second and the cooldown between swings. Attack-speed bonuses add up, then set cooldown = base ÷ (1 + total).',
+    'How often you actually attack right now, as attacks-per-second and the cooldown between swings. Permanent attack-speed bonuses add up and set cooldown = base / (1 + total). TEMPORARY haste and slows — Frenzy, stance windows, frost and chill — are applied on top and shown as a percentage next to the base value.',
   plating:
     'Flat damage removed from every incoming hit, subtracted BEFORE damage reduction. Best against many small hits, weak against a few big ones. Does not reduce damage-over-time at all.',
   damageReduction:

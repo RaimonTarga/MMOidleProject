@@ -516,7 +516,12 @@ export type BotEvent =
   | {
       kind: "technique-adapter";
       atMs: number;
-      adapter: "apprentice-sweep" | "slinger-sweep" | "conduit-formation";
+      adapter:
+        | "apprentice-sweep"
+        | "slinger-sweep"
+        | "conduit-formation"
+        | "affliction-contagion"
+        | "affliction-detonate";
       event:
         | "apprentice-secondary-target"
         | "slinger-clip-created"
@@ -525,10 +530,16 @@ export type BotEvent =
         | "conduit-arm"
         | "conduit-delivery"
         | "conduit-share-lost"
-        | "conduit-secondary-damage";
+        | "conduit-secondary-damage"
+        | "contagion-spread"
+        | "detonate-consumed";
       targetName?: string;
       stacksApplied?: number;
       clipSize?: number;
       splashDamage?: number;
       eligibleSummons?: number;
+      spreadTargets?: number;
+      spreadEffects?: number;
+      detonatedEffects?: number;
+      detonatedDamage?: number;
     };

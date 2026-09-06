@@ -262,6 +262,14 @@ export class Recorder {
     sharesLost: 0,
     secondaryDamage: 0,
   };
+  /**
+   * Affliction Techniques (Contagion / Detonate). `spreadTargetsSum` over
+   * `casts` is the number that matters for Contagion: it says whether the
+   * authored target cap is actually being filled in real fights, or whether the
+   * radius is the thing failing.
+   */
+  afflictionContagion = { casts: 0, spreadTargetsSum: 0, spreadEffectsSum: 0 };
+  afflictionDetonate = { casts: 0, effectsConsumed: 0, damage: 0 };
 
   /**
    * Part 5 diagnostics. Sampled read-only from the same `PlayerView` the real
@@ -914,6 +922,16 @@ export class Recorder {
             case "conduit-secondary-damage":
               this.conduitFormation.secondaryDamage += event.splashDamage ?? 0;
               break;
+            case "contagion-spread":
+              this.afflictionContagion.casts += 1;
+              this.afflictionContagion.spreadTargetsSum += event.spreadTargets ?? 0;
+              this.afflictionContagion.spreadEffectsSum += event.spreadEffects ?? 0;
+              break;
+            case "detonate-consumed":
+              this.afflictionDetonate.casts += 1;
+              this.afflictionDetonate.effectsConsumed += event.detonatedEffects ?? 0;
+              this.afflictionDetonate.damage += event.detonatedDamage ?? 0;
+              break;
           }
           this.emit({
             kind: "technique-adapter",
@@ -925,6 +943,10 @@ export class Recorder {
             clipSize: event.clipSize,
             splashDamage: event.splashDamage,
             eligibleSummons: event.eligibleSummons,
+            spreadTargets: event.spreadTargets,
+            spreadEffects: event.spreadEffects,
+            detonatedEffects: event.detonatedEffects,
+            detonatedDamage: event.detonatedDamage,
           });
           break;
         }

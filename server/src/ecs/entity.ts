@@ -157,7 +157,15 @@ export interface IsCastingAbility {
   endsAt: number;
   /** Full wind-up length, for the client cast bar's progress fraction. */
   castMs: number;
-  /** Monster the cast was started against; losing it aborts the cast. */
+  /**
+   * Monster the cast was started against; losing it aborts the cast.
+   *
+   * EMPTY for a `self-cast`, which resolves on the player and therefore has no
+   * target to lose. Keeping the field required (rather than optional) means the
+   * lifecycle has to decide explicitly, per shape, whether target validation
+   * applies — an optional field would silently skip the check for any future
+   * targeted shape that forgot to set it.
+   */
   targetId: string;
 }
 

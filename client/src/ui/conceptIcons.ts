@@ -208,6 +208,10 @@ export function runeConditionIconSource(id: string): AssetIconSource | null {
   // "Stance Charged" has no crest yet; the empowered-window icon is the closest
   // existing idea — a thing that has finished building and is waiting to be spent.
   if (id === 'stance-charged') return source('runes/conditions', 'before-empowered');
+  // "Fully Afflicted" has no crest yet. `has-debuff` is the closest existing
+  // idea — a target saturated with damage over time — even though this one reads
+  // the ENEMY's afflictions rather than the player's own.
+  if (id === 'target-max-stacks') return source('runes/conditions', 'has-debuff');
   return CONDITION_IDS.has(id) ? source('runes/conditions', id) : null;
 }
 

@@ -36,7 +36,8 @@ import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { isHardControlled } from "../../combat/status/playerHardControl";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { abilityCooldownKey, techniqueCooldownMs } from "./abilityCooldowns";
-import { resolveCastPayload } from "./abilityEffects";
+import { resolveCastPayload, resolveSelfCastPayload } from "./abilityEffects";
+import { afflictionTechniqueHasWork } from "./abilityAffliction";
 import { abilityEngagementRange, abilityTarget } from "./abilityTargeting";
 import { armTechnique } from "./abilityArming";
 
@@ -55,11 +56,26 @@ export function beginAbilityCast(
   if (castMs <= 0) return false;
   if (isHardControlled(player.tracksCombat)) return false;
 
+  // A `self-cast` resolves on the player. It needs no target, cannot lose one,
+  // and must not be blocked by having none — but it is still a real telegraph
+  // that hard control breaks, which is why it lives here rather than as an
+  // `instant`.
+  if (ability.shape === "self-cast") {
+    return beginSelfCast(world, player, ability, slotIndex, castMs, now);
+  }
+
   // A cast needs something to resolve INTO. Resolved through the ability's own
   // reach, not the player's, so a `rangeBonus` cast can open on something the
   // player could not otherwise touch.
   const target = abilityTarget(world, player, ability);
   if (!target) return false;
+
+  // Situational payloads decline rather than wind up on nothing. Contagion with
+  // no afflictions to copy and Detonate with nothing to consume would otherwise
+  // spend a full cast and (for Detonate) a 15 s cooldown to do literally nothing
+  // — the same rule that stops Break Free firing while uncontrolled and a dash
+  // firing with nowhere to go.
+  if (!afflictionTechniqueHasWork(world, player, ability, target)) return false;
 
   const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
   attachComponent(world, player, "isCastingAbility", {
@@ -70,6 +86,37 @@ export function beginAbilityCast(
     targetId: target.isMonster.id,
   });
 
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: "player-cast-start",
+    playerId: player.isPlayer.id,
+    ability: ability.id,
+    castMs: effectiveMs,
+  });
+  return true;
+}
+
+/**
+ * Start a self-facing wind-up. Shares `isCastingAbility` with targeted casts —
+ * and therefore shares the single offensive channel, the cast bar, the hard-CC
+ * abort and the "cooldown is paid on resolve" rule — with an empty `targetId`
+ * standing for "nothing to lose".
+ */
+function beginSelfCast(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+  slotIndex: number,
+  castMs: number,
+  now: number,
+): boolean {
+  const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
+  attachComponent(world, player, "isCastingAbility", {
+    abilityId: ability.id,
+    slotIndex,
+    endsAt: now + effectiveMs,
+    castMs: effectiveMs,
+    targetId: "",
+  });
   world.pushEvent(player.hasPosition.nodeId, {
     kind: "player-cast-start",
     playerId: player.isPlayer.id,
@@ -126,6 +173,27 @@ export function updateAbilityCasts(world: World, now: number): void {
     // exactly the counterplay a monster has against theirs.
     if (isHardControlled(player.tracksCombat)) {
       abortCast(world, player, casting.abilityId);
+      continue;
+    }
+
+    // A self-cast has no target to validate. It still finishes its wind-up, is
+    // still broken by the hard-control check above, and still pays its cooldown
+    // only on resolve.
+    if (ability.shape === "self-cast") {
+      if (now < casting.endsAt) continue;
+      detachComponent(world, player, "isCastingAbility");
+      resolveSelfCastPayload(world, player, ability);
+      setCooldown(
+        player.tracksCombat,
+        abilityCooldownKey(ability.id),
+        techniqueCooldownMs(player, ability),
+      );
+      world.pushEvent(player.hasPosition.nodeId, {
+        kind: "player-cast-end",
+        playerId: player.isPlayer.id,
+        ability: ability.id,
+        fired: true,
+      });
       continue;
     }
 

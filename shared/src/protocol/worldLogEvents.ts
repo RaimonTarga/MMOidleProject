@@ -266,7 +266,12 @@ export type WorldLogEvent =
       serverTime: number;
       nodeId: string;
       player: WorldLogActor;
-      adapter: 'apprentice-sweep' | 'slinger-sweep' | 'conduit-formation';
+      adapter:
+        | 'apprentice-sweep'
+        | 'slinger-sweep'
+        | 'conduit-formation'
+        | 'affliction-contagion'
+        | 'affliction-detonate';
       event:
         | 'apprentice-secondary-target'
         | 'slinger-clip-created'
@@ -275,13 +280,21 @@ export type WorldLogEvent =
         | 'conduit-arm'
         | 'conduit-delivery'
         | 'conduit-share-lost'
-        | 'conduit-secondary-damage';
+        | 'conduit-secondary-damage'
+        | 'contagion-spread'
+        | 'detonate-consumed';
       target?: WorldLogActor;
       stacksApplied?: number;
       clipSize?: number;
       splashDamage?: number;
       eligibleSummons?: number;
       formationRoot?: string;
+      /** Contagion: how many enemies received copies, and how many effects each got. */
+      spreadTargets?: number;
+      spreadEffects?: number;
+      /** Detonate: how many effects were consumed, and the burst that resulted. */
+      detonatedEffects?: number;
+      detonatedDamage?: number;
     };
 
 type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;

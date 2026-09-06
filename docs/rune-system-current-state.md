@@ -57,6 +57,15 @@ Conditions:
 - `in-party` (shown as "In A Party")
 - `n-aggro-3` (shown as "Surrounded")
 - `target-casting` (shown as "Enemy Charging")
+- `target-max-stacks` (shown as "Fully Afflicted") — Technique channel only. Active while a
+  STACKING damage-over-time you own on your current target is at its own ceiling: the
+  moment Contagion has the most to copy and Detonate the most to cash in. Measured
+  server-side through the DoT inventory, so a future T4 DoT path drives it with no change
+  here. **Weapon reservoirs deliberately do not count** — they are `maxStacks: 1`
+  internally and would make the condition permanently true. Starter vocabulary; inert
+  rather than hidden for a build with no stacking DoT, exactly like `before-empowered` for
+  a class with no empowered attack (rune CONDITIONS carry no `requiredArchetype`; only
+  actions do).
 - `inside-telegraph` (shown as "Inside Telegraph")
 - `while-traveling` (shown as "While Traveling")
 

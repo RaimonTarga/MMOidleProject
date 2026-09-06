@@ -120,6 +120,14 @@ const EFFECT_FIELDS: Record<string, EffectFieldMeta> = {
   attackSpeedPct: { label: 'Attack speed', format: 'pct' },
   controlResistPct: { label: 'Control resistance', format: 'pct' },
   controlResistMs: { label: 'Resistance duration', format: 'ms' },
+  maxTargets: { label: 'Enemies infected', format: 'count' },
+  // Its own field name rather than the shared `damageMult`, because it multiplies
+  // the damage the target's afflictions still OWED — not the player's attack. On
+  // `damageMult` it would inherit `damageFromAttack` and print a confidently
+  // wrong absolute number beside it.
+  detonateMult: { label: 'Affliction damage', format: 'mult' },
+  onHitDamage: { label: 'Bonus damage per hit', format: 'flat' },
+  charges: { label: 'Attacks empowered', format: 'count' },
 };
 
 /** Field order per effect kind — magnitude first, then the shape of the effect. */
@@ -137,6 +145,11 @@ const EFFECT_FIELD_ORDER: Record<AbilityEffectSpec['kind'], string[]> = {
   heal: ['recoveryPct', 'durationMs'],
   'attack-speed': ['attackSpeedPct', 'durationMs'],
   'break-free': ['controlResistPct', 'controlResistMs'],
+  'spread-dots': ['maxTargets', 'radius'],
+  'detonate-dots': ['detonateMult'],
+  // `element` is a DamageElement string, not a number, so it is deliberately
+  // absent — the field formatter only speaks numbers.
+  imbue: ['onHitDamage', 'charges'],
 };
 
 function formatField(
@@ -247,6 +260,7 @@ const SHAPE_SENTENCES: Record<AbilityDef['shape'], string> = {
   armed: 'Arms your next qualifying attack — the payload lands when that attack hits.',
   cast: 'Winds up on the spot. You stop attacking while it charges, and hard control breaks it.',
   charge: 'Winds up, then rushes to its target. You cannot attack during the approach, and hard control breaks it.',
+  'self-cast': 'Winds up on yourself. Nothing needs to be in range, but hard control still breaks it.',
   reposition: 'Resolves instantly by moving you relative to your current target.',
   instant: 'Resolves immediately on yourself the moment it fires.',
 };

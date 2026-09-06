@@ -14,6 +14,7 @@ import { runeActionIconSource, runeConditionIconSource } from '../../ui/conceptI
 import {
   attackAtom,
   attackCooldownAtom,
+  attackCadenceMultAtom,
   attackRangeAtom,
   activeStanceAtom,
   autoIntentAtom,
@@ -154,6 +155,7 @@ export function StatPanel() {
   const plating = useAtomValue(platingAtom);
   const damageReduction = useAtomValue(damageReductionAtom);
   const attackCooldown = useAtomValue(attackCooldownAtom);
+  const attackCadenceMult = useAtomValue(attackCadenceMultAtom);
   const attackRange = useAtomValue(attackRangeAtom);
   const speed = useAtomValue(speedAtom);
   const recovery = useAtomValue(recoveryAtom);
@@ -190,6 +192,7 @@ export function StatPanel() {
       plating,
       damageReduction,
       attackCooldown,
+      attackCadenceMult,
       attackRange,
       speed,
       recovery,
@@ -212,8 +215,23 @@ export function StatPanel() {
   const dotPct      = player && maxHpVal > 0 ? Math.min(hpPct, (player.incomingDot / maxHpVal) * 100) : 0;
   const safePct     = Math.max(0, hpPct - dotPct);
   const healPct     = player && maxHpVal > 0 ? Math.min(100 - hpPct, (player.pendingHeal / maxHpVal) * 100) : 0;
-  const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
-  const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
+  // EFFECTIVE cadence, not base. Temporary haste/slow (Frenzy, the stance
+  // windows, frost/ambient ramps) is applied as a multiplier at the server's
+  // cadence gate and never written into `attackCooldown` — so reading the raw
+  // stat here showed a number that never moved, and every one of those effects
+  // looked like it did nothing at all.
+  const cadenceMult = player ? (player.attackCadenceMult || 1) : 1;
+  const effectiveCd = player ? player.attackCooldown * cadenceMult : 0;
+  const cdSec       = player ? (effectiveCd / 1000).toFixed(2) : '—';
+  const aps         = player ? (1000 / effectiveCd).toFixed(2) : '—';
+  // Only worth calling out when something is actually modifying it. A tiny
+  // epsilon rather than `!== 1` so float noise never renders a "+0%" tag.
+  const hasted      = cadenceMult < 0.999;
+  const slowed      = cadenceMult > 1.001;
+  const cadenceTag  = hasted || slowed
+    ? `${hasted ? '+' : '−'}${Math.round(Math.abs(1 / cadenceMult - 1) * 100)}%`
+    : null;
+  const baseAps     = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
   // Archetype-aware, because `(attack + on-hit) x APS` is the damage of a
   // character who only auto-attacks — which describes none of the six classes,
   // and actively misreports two of them. See shared/src/systems/dpsEstimate.ts.
@@ -425,7 +443,19 @@ export function StatPanel() {
           <div className="stat-section">
             <StatRow label="Attack" value={player?.attack ?? '—'} help={STAT_HELP.attack} />
             <StatRow label="DPS" value={dps} help={STAT_HELP.dps} />
-            <StatRow label="Attack Speed" value={player ? `${aps} APS (${cdSec}s)` : '—'} help={STAT_HELP.atkSpeed} />
+            <StatRow
+              label="Attack Speed"
+              value={
+                player
+                  ? cadenceTag
+                    // Show the base too, so a buffed number is legible as "this
+                    // is temporary" rather than as a permanently changed stat.
+                    ? `${aps} APS (${cdSec}s) ${cadenceTag} · base ${baseAps}`
+                    : `${aps} APS (${cdSec}s)`
+                  : '—'
+              }
+              help={STAT_HELP.atkSpeed}
+            />
             {player && player.onHitDamage > 0 && (
               <StatRow label="On-Hit Dmg" value={`+${player.onHitDamage}`} help={STAT_HELP.onHitDamage} />
             )}

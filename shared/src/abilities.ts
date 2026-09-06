@@ -18,6 +18,7 @@
  * natural ceiling (Sweep at 100% splash) the next rank deepens a different axis
  * (cooldown) instead of inflating the first one forever.
  */
+import type { DamageElement } from "./systems/dotElements";
 
 export type AbilitySlot = "technique" | "guard";
 
@@ -52,10 +53,24 @@ export type AbilityTag =
  * - `armed`: rides the next qualifying attack cycle (`hasArmedAbility`).
  * - `cast`: enters an explicit wind-up (`isCastingAbility`), then resolves.
  * - `charge`: winds up, then rushes toward its target at an authored speed.
+ * - `self-cast`: a wind-up that resolves on the PLAYER, needing no target.
  * - `reposition`: resolves instantly by MOVING the player.
  * - `instant`: resolves immediately and self-facing.
+ *
+ * `self-cast` exists because `cast` and `instant` each get a self-buff wind-up
+ * half-wrong. A `cast` resolves against a monster and ABORTS when that monster
+ * dies or drifts out of reach — correct for a strike, absurd for buffing your
+ * own hands. An `instant` has no wind-up at all, and the validator rightly
+ * refuses `castMs` on one. `self-cast` is the third thing: a real, hard-CC
+ * -interruptible telegraph with no target to lose.
  */
-export type AbilityShape = "armed" | "cast" | "charge" | "reposition" | "instant";
+export type AbilityShape =
+  | "armed"
+  | "cast"
+  | "charge"
+  | "self-cast"
+  | "reposition"
+  | "instant";
 
 /**
  * Built-in auto-fire trigger (the default heuristic). Abilities fire on this with
@@ -124,6 +139,21 @@ export type AbilityTrigger =
  *   Deliberately grants attack speed and NOTHING else.
  * - `break-free`: Guard immediate — removes the current hard control, optionally
  *   followed by `controlResistPct` control resistance for `controlResistMs`.
+ * - `spread-dots`: casted Technique payload (Contagion) — COPIES every
+ *   damage-over-time the player owns on the target onto up to `maxTargets`
+ *   other enemies within `radius`. The original keeps its own; copies carry full
+ *   stacks and the full reservoir pool, so `maxTargets` is the only thing
+ *   bounding the multiplication and is therefore the balance lever. Neither
+ *   field is a Technique Power field: breadth and reach are not damage stats.
+ * - `detonate-dots`: casted Technique payload (Detonate) — CONSUMES every
+ *   damage-over-time the player owns on the target and deals what they still
+ *   owed, times `detonateMult`. Single-target on purpose: the multiplier is the
+ *   payoff, and splashing it would make Contagion→Detonate one AoE nuke rather
+ *   than a two-cast combo.
+ * - `imbue`: self-cast Technique payload (Imbue Lightning) — a charge-based
+ *   on-hit window. Adds `onHitDamage` to each landed hit and spends one of
+ *   `charges` per hit. NO duration: it waits as long as it takes, which is what
+ *   makes it a deliberate pre-load rather than a race against a timer.
  */
 export type AbilityEffectSpec =
   | { kind: "cleave"; splashPct: number; radius: number }
@@ -138,7 +168,10 @@ export type AbilityEffectSpec =
   | { kind: "cleanse"; stacks: number; debuffs: number }
   | { kind: "heal"; recoveryPct: number; durationMs: number }
   | { kind: "attack-speed"; attackSpeedPct: number; durationMs: number }
-  | { kind: "break-free"; controlResistPct?: number; controlResistMs?: number };
+  | { kind: "break-free"; controlResistPct?: number; controlResistMs?: number }
+  | { kind: "spread-dots"; radius: number; maxTargets: number }
+  | { kind: "detonate-dots"; detonateMult: number }
+  | { kind: "imbue"; onHitDamage: number; charges: number; element: DamageElement };
 
 /**
  * One authored rank. Index 0 in {@link AbilityDef.ranks} is the ability's HOME
@@ -274,6 +307,20 @@ export const ABILITY_TECHNIQUE_FIRED_FX = "ability-technique-fired";
 export const EXPOSE_WEAKNESS_EFFECT_ID = "expose-weakness";
 
 /**
+ * Imbue Lightning's charge-based on-hit window.
+ *
+ * Stored as a status effect with `remainingMs: -1` (permanent) and spent by
+ * CHARGES rather than by time — `data.charges` counts down on each landed hit
+ * and the effect is removed at zero. It lives on `TracksCombat`, which is
+ * server-only scratch state and is never persisted, so the window is correctly
+ * transient across death and logout without any explicit cleanup.
+ */
+export const ABILITY_IMBUE_EFFECT_ID = "ability-imbue";
+
+/** Client-effect tag for a hit that spent an Imbue charge. */
+export const ABILITY_IMBUE_FX = "ability-imbue";
+
+/**
  * Equipped abilities, as ORDERED lists.
  *
  * List order IS arbitration priority: index 0 is considered first when several
@@ -394,6 +441,17 @@ export const TECHNIQUE_POWER_FIELDS: Partial<
   "root-strike": ["damageMult"], // NOT rootMs
   // Only the strike rider — Technique Power must never lengthen a dash.
   reposition: ["empowerMult"],
+  // Detonate's multiplier is a pure offensive payload, so it scales. The
+  // remaining DoT damage it multiplies is NOT touched here — that already
+  // reflects whatever the player's DoT investment earned.
+  "detonate-dots": ["detonateMult"],
+  // Imbue's on-hit value is authored FLAT, which makes Technique Power the thing
+  // keeping it relevant past its home tier. `charges` is deliberately absent: a
+  // damage stat must not buy duration, and a charge count is duration.
+  imbue: ["onHitDamage"],
+  // `spread-dots` is absent on purpose — `radius` is reach and `maxTargets` is
+  // breadth, and Technique Power buys neither (same rule that keeps it off
+  // Snipe's range and every control duration).
   // `bramble`, `attack-speed`, `expose-weakness` are absent on purpose.
 };
 
@@ -425,6 +483,13 @@ export const ABILITY_MULTIHIT_MODE: Record<
   heal: "first-hit",
   "attack-speed": "first-hit",
   "break-free": "first-hit",
+  // A cast is one deliberate action. Spreading or detonating once per bullet
+  // would let a magazine copy the same DoTs five times over.
+  "spread-dots": "first-hit",
+  "detonate-dots": "first-hit",
+  // Imbue is a window, not a payload — it is never armed onto an attack cycle,
+  // so this entry only exists to keep the record exhaustive.
+  imbue: "first-hit",
 };
 
 // ── The roster ───────────────────────────────────────────────────────────────
@@ -753,6 +818,57 @@ const abilities: AbilityDef[] = [
       { effect: { kind: "empower", damageMult: 1.3 }, cooldownMs: 2500 },
     ],
   },
+  {
+    id: "contagion",
+    name: "Contagion",
+    slot: "technique",
+    shape: "cast",
+    tags: [],
+    blurb:
+      "Cast the target's afflictions outward — every burn, poison and frost you put on it takes hold in the enemies around it.",
+    tier: 3,
+    lineageId: "affliction",
+    trigger: { kind: "in-combat" },
+    icon: "contagion",
+    // NOT called "Spread": the rune catalog already ships an action displayed as
+    // "Spread DoTs" (the Multidot targeting behavior), and two unrelated things
+    // wearing one name in the same build UI is a support ticket waiting to happen.
+    //
+    // Copies at FULL strength — full stacks, full reservoir pool — so the only
+    // thing bounding the damage multiplication is `maxTargets`. That makes the
+    // target count the real balance dial and the radius a pure convenience:
+    // widening the radius without raising the cap can never increase output, it
+    // only makes the cap easier to fill.
+    ranks: [
+      { effect: { kind: "spread-dots", radius: 140, maxTargets: 3 }, cooldownMs: 12000, castMs: 1000 },
+      { effect: { kind: "spread-dots", radius: 180, maxTargets: 5 }, cooldownMs: 9000, castMs: 1000 },
+    ],
+  },
+  {
+    id: "detonate",
+    name: "Detonate",
+    slot: "technique",
+    shape: "cast",
+    tags: [],
+    blurb:
+      "Rip every affliction off the target at once, dealing all the damage they had left to give — and then some.",
+    tier: 3,
+    lineageId: "affliction",
+    trigger: { kind: "in-combat" },
+    icon: "detonate",
+    // The long cooldown is the whole design. Detonate converts patience into a
+    // burst, so it must not be available for every ramp — otherwise a DoT build
+    // stops being a DoT build and becomes a nuke on a short timer.
+    //
+    // The multiplier sits above 1.0 at rank I on purpose. Front-loading damage
+    // you were owed anyway is genuinely valuable (it beats the target's healing,
+    // its phase changes, and its escape), but a 1.0x rank I would read as "this
+    // technique does nothing" to anyone not already thinking in DPS-vs-burst.
+    ranks: [
+      { effect: { kind: "detonate-dots", detonateMult: 1.2 }, cooldownMs: 15000, castMs: 2000 },
+      { effect: { kind: "detonate-dots", detonateMult: 1.4 }, cooldownMs: 12000, castMs: 2000 },
+    ],
+  },
 
   // ── T4: advanced range, escape, hard CC, long sustain ──────────────────────
   // Only rank I is authored — these debut at the end of the supplied biome map.
@@ -830,6 +946,39 @@ const abilities: AbilityDef[] = [
         effect: { kind: "cast-strike", damageMult: 2.3, stunMs: 1500 },
         cooldownMs: 14000,
         castMs: 1500,
+      },
+    ],
+  },
+  {
+    id: "imbue-lightning",
+    name: "Imbue Lightning",
+    slot: "technique",
+    shape: "self-cast",
+    tags: ["offensive-buff"],
+    blurb:
+      "Call the storm into your hands. Your next few strikes land with it — however long they take to land.",
+    tier: 4,
+    lineageId: "imbue",
+    trigger: { kind: "in-combat" },
+    icon: "imbue-lightning",
+    // The first `self-cast`, and the first CHARGE-based window in the roster.
+    //
+    // Charges rather than seconds is the whole identity. Every other offensive
+    // window in the game (Frenzy, the stance windows, Overdrive) races a clock,
+    // which punishes exactly the builds that attack slowly and rewards the ones
+    // that were already fastest. A charge window pays the same to everyone: five
+    // hits are five hits whether they take three seconds or ten. The cost of
+    // that fairness is the half-second tell and a cooldown you cannot shorten by
+    // fighting faster.
+    //
+    // `onHitDamage` is authored FLAT (the designer's call), which means it is
+    // Technique Power — not tiering — that keeps it alive past T4. Revisit the
+    // seed alongside T5 on-hit gear.
+    ranks: [
+      {
+        effect: { kind: "imbue", onHitDamage: 45, charges: 5, element: "lightning" },
+        cooldownMs: 9000,
+        castMs: 500,
       },
     ],
   },
@@ -988,10 +1137,14 @@ export function validateAbilities(): string[] {
         errors.push(`${label} changes effect kind ${kind} -> ${rank.effect.kind}.`);
       }
       if (rank.cooldownMs <= 0) errors.push(`${label} has a non-positive cooldown.`);
-      // Both wind-up shapes REQUIRE castMs; every other shape must not author it.
-      // `charge` is a wind-up followed by a rush, so it is bound by the same rule
-      // as `cast` — keep this list in step with `AbilityShape`.
-      const windsUp = ability.shape === "cast" || ability.shape === "charge";
+      // Every wind-up shape REQUIRES castMs; every other shape must not author
+      // it. `charge` is a wind-up followed by a rush and `self-cast` a wind-up
+      // that lands on the player, so both are bound by the same rule as `cast` —
+      // keep this list in step with `AbilityShape`.
+      const windsUp =
+        ability.shape === "cast" ||
+        ability.shape === "charge" ||
+        ability.shape === "self-cast";
       if (windsUp && !(rank.castMs && rank.castMs > 0)) {
         errors.push(`${label} is a ${ability.shape} with no castMs.`);
       }

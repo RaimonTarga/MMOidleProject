@@ -69,7 +69,14 @@ export interface PlayerView {
   /** Pending heal-over-time from regen/absorb pools (HP-bar regen layer). */
   pendingHeal: number;
   attackRange: number;
+  /** BASE cadence, from stat recalc. Temporary haste/slow never touches it. */
   attackCooldown: number;
+  /**
+   * Multiplier the server actually applies to `attackCooldown` at the cadence
+   * gate. 1 = nothing temporary is active; below 1 = faster. Multiply the two to
+   * get the interval the player is really swinging at.
+   */
+  attackCadenceMult: number;
   lastAttackAt: number;
   attackTargetId: string | null;
   auto: boolean;
@@ -318,6 +325,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     wards: entity.holdsWards?.wards ?? [],
     incomingDot: entity.hasStatus?.incomingDot ?? 0,
     pendingHeal: entity.hasStatus?.pendingHeal ?? 0,
+    attackCadenceMult: entity.hasStatus?.attackCadenceMult ?? 1,
     attackRange: attack.attackRange,
     attackCooldown: attack.attackCooldown,
     lastAttackAt: attack.lastAttackAt,

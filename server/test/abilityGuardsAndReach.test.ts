@@ -42,6 +42,7 @@ import { syncPlayerControlLockout } from "../src/systems/combat/status/playerCon
 import { ABILITY_DATABASE } from "@mmo-idle/shared";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
+import { mirrorHpForecast } from "../src/systems/defense/core/hpForecast";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -257,6 +258,42 @@ initCombatSystems();
   assert(
     player.hasArmedAbility === undefined,
     "an instant Technique must not arm the next attack",
+  );
+
+  // The window's LENGTH must reach the client. Frenzy's mechanics were always
+  // correct, but its only in-world cue was a ~300 ms burst standing in for a
+  // four-second buff, so the ability read as doing nothing at all. The client
+  // cannot resolve an authored rank, so the duration rides the event.
+  // The STAT SHEET must move too. Temporary haste is deliberately never written
+  // into `attackCooldown`, so the HUD reads a mirrored multiplier instead — and
+  // when that mirror did not exist, the Attack Speed row showed base cadence
+  // forever and Frenzy looked like it did nothing at all. This is the assertion
+  // that keeps the gate and the display reading the same number.
+  assert(
+    player.performsAttack.attackCooldown === baseCd,
+    "the base cadence stat must still be untouched",
+  );
+  mirrorHpForecast(world);
+  const cadence = player.hasStatus?.attackCadenceMult ?? 1;
+  assert(
+    cadence < 1,
+    `Frenzy must show up in the mirrored cadence multiplier (got ${cadence})`,
+  );
+  const expected = 1 / (1 + buff!.data["attackSpeedPct"]!);
+  assert(
+    Math.abs(cadence - expected) < 0.0001,
+    `the mirror must match the gate's own maths (got ${cadence}, expected ${expected})`,
+  );
+
+  const events = world.takeNodeEvents("node-5-5");
+  const armed = events.find(
+    (e) => e.kind === "player-technique-armed" && e.ability === "frenzy",
+  );
+  assert(!!armed, "firing Frenzy must announce itself to the node");
+  assert(
+    armed!.kind === "player-technique-armed" &&
+      armed!.durationMs === buff!.data["totalMs"],
+    "the armed event must carry the real window length for the sustained FX",
   );
 }
 

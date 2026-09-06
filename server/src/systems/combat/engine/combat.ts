@@ -105,6 +105,7 @@ import {
 } from '../ai/engageSequence';
 import { harmfulStatusDurationMult } from "../status/harmfulStatus";
 import { stanceAttackSpeedBonus } from "../../player/stances/stanceBehaviors";
+import { attackCadenceMult } from "./attackCadence";
 import type {
   MinionEntity,
   MonsterEntity,
@@ -2215,40 +2216,20 @@ export function updateCombat(world: World, dt: number, now: number) {
     setAttackTarget(world, player, target?.isMonster.id ?? null);
 
     if (target) {
-      // Tundra rampDebuff slows the player's attack speed (capped). Applied as a
-      // multiplier on the cooldown gate so the base attackCooldown (stat-recalc
-      // owned) is never mutated. The cap is the death-spiral guard.
-      const frostRamp = getStatusEffect(
-        player.tracksCombat,
-        FROST_RAMP_EFFECT_ID,
-      );
-      // P4 ambient node ramp, when its payload carries an attack slow. This is
-      // TUNDRA CHILL: the environment, not the roster, owns combat-tempo
-      // suppression now (the T1-T4 rework stripped `rampDebuff` off every mob).
-      // Additive with frost-ramp rather than multiplicative so the two cannot
-      // compound into an unauthored stun.
-      const ambientRamp = ambientRampStatus(player.tracksCombat);
-      const atkSlowMult =
-        1 +
-        (frostRamp ? frostRampAtkSlowPct(frostRamp) : 0) +
-        (ambientRamp ? ambientRampAttackSlowPct(ambientRamp) : 0);
-      // Frenzy (Technique) speeds the cadence the same way, from the other
-      // direction. It is applied HERE rather than written into attackCooldown
-      // because the Zealot's own Frenzy already mutates that stat from a cached
-      // base — two mutators each treating the other's output as "the clean base"
-      // ratchet the cooldown toward zero over a few ticks.
-      // Stance-owned timed windows (Reaper momentum, Powering Up's released charge)
-      // ride this same gate for the same reason, and sum with Frenzy rather than
-      // multiplying: they are all "+X% attack speed" promises, and the shared
-      // accumulator semantics say those add.
-      const frenzy = getStatusEffect(player.tracksCombat, ABILITY_FRENZY_EFFECT_ID);
-      const hasteBonus =
-        (frenzy && frenzy.remainingMs > 0 ? Math.max(0, frenzy.data["attackSpeedPct"] ?? 0) : 0) +
-        Math.max(0, stanceAttackSpeedBonus(player.tracksCombat));
-      const atkHasteMult = hasteBonus > 0 ? 1 / (1 + hasteBonus) : 1;
+      // Every temporary haste and slow — Tundra's frost ramp, the ambient node
+      // ramp, Frenzy, and the stance-owned windows — is applied as a MULTIPLIER
+      // here rather than written into `attackCooldown`, so the stat-recalc-owned
+      // base is never mutated (two mutators each treating the other's output as
+      // "the clean base" ratchet the cooldown toward zero).
+      //
+      // The maths lives in `attackCadence.ts` because the HUD mirror has to use
+      // the exact same function. When it was inline here, the stat sheet read
+      // the untouched `attackCooldown` and showed no change at all — Frenzy,
+      // both stance windows and both slows worked but looked inert.
+      const cadenceMult = attackCadenceMult(player.tracksCombat);
       if (
         now - player.performsAttack.lastAttackAt >=
-        player.performsAttack.attackCooldown * atkSlowMult * atkHasteMult
+        player.performsAttack.attackCooldown * cadenceMult
       ) {
         const outcome = runPlayerAttack(world, player, target, now, {
           attackOrigin: player.hasPosition.current,

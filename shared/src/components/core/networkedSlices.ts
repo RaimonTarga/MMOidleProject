@@ -161,6 +161,16 @@ export interface HasStatus {
   incomingDot?: number;
   /** Players only — pending heal-over-time (regen/absorb pools) for the HP bar. */
   pendingHeal?: number;
+  /**
+   * Players only — the live attack-cadence multiplier from TEMPORARY haste and
+   * slow effects (Frenzy, the stance windows, frost/ambient ramps).
+   *
+   * Below 1 is faster, above 1 is slower, exactly 1 (or absent) means nothing is
+   * modifying the cadence. Mirrored because those effects are deliberately never
+   * written into `performsAttack.attackCooldown` — so without this the stat sheet
+   * showed base cadence forever and every one of them looked like it did nothing.
+   */
+  attackCadenceMult?: number;
   /** Ultimate bosses only — populated by ultimateEncounter sync. */
   ultimateStatus?: UltimateStatus;
   /** Encounter adds healing inside the void throne ring. */

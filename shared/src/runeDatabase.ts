@@ -67,6 +67,20 @@ export type RuneConditionId =
   // Techniques specialise against the same enemy — e.g. Expose Weakness to kill
   // the elite faster vs. Stun Strike to control it (abilities evolution §9).
   | "target-elite"
+  // Active while a STACKING damage-over-time you own on your current target sits
+  // at its own ceiling. The affliction toolkit's timing condition: it is the
+  // moment Contagion has the most to copy and Detonate the most to cash in, and
+  // for a DoT class it is also the moment further stacking is wasted.
+  //
+  // Weapon reservoirs deliberately do NOT satisfy it. They are `maxStacks: 1`
+  // internally, so counting them would make the condition true from the first
+  // hit and it would never turn off again — a rule that fires constantly is not
+  // a timing rule. See `stackCap` in the server's dot inventory.
+  //
+  // Inert rather than hidden for a build with no stacking DoT, exactly like
+  // `before-empowered` for a class with no empowered attack: rune CONDITIONS
+  // carry no archetype restriction (only actions do).
+  | "target-max-stacks"
   /** Active only while a server-owned map navigation path has remaining hops. */
   | "while-traveling"
   // Active while the active stance's own charge is full. Currently only Powering Up
@@ -205,6 +219,7 @@ const TECHNIQUE_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "before-empowered",
   "target-elite",
+  "target-max-stacks",
   "n-aggro-3",
 ];
 
@@ -397,6 +412,19 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
         "Works while the enemy you are attacking is an elite — the high-value target worth spending a specialised ability on.",
       cost: 2,
       tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "target-max-stacks",
+    {
+      id: "target-max-stacks",
+      name: "Fully Afflicted",
+      // Numbers (cost/tier) are PLACEHOLDERS — user balance pass.
+      blurb:
+        "Works while your damage over time on the target has stacked as high as it goes — the moment there is most to spread, and most to detonate.",
+      cost: 2,
+      tier: 3,
       kind: "state",
     },
   ],
@@ -790,6 +818,12 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // "Elite Target" condition — the situation that makes a specialised second
     // Technique worth equipping. Same TEMPORARY-starter caveat as above.
     "target-elite",
+    // "Fully Afflicted" condition. Starter vocabulary (DESIGNER CALL) rather than
+    // a swamp rune recipe: it is the timing half of the Contagion/Detonate pair,
+    // and gating the timing behind a THIRD swamp unlock would mean buying two
+    // techniques that then sit on a naive `in-combat` trigger. Inert until the
+    // player actually has a stacking DoT, so granting it early costs nothing.
+    "target-max-stacks",
     // DESIGNER CALL, 2026-08-25: default-unlocked so every character can
     // answer danger the way a human does without waiting on a Cave-gated
     // recipe first -- recover before pulling again, and retreat when a fight
@@ -1287,6 +1321,13 @@ export interface RuneContext {
    * condition that makes a specialised second Technique worth equipping.
    */
   targetIsElite?: boolean;
+  /**
+   * A STACKING damage-over-time this player owns on their current attack target
+   * is at its own ceiling. Drives `target-max-stacks`. Measured server-side
+   * through the DoT inventory, so a future T4 DoT path drives it with no change
+   * here. Weapon reservoirs are excluded by that inventory, not by this flag.
+   */
+  targetAtMaxDotStacks?: boolean;
   /** An intentional server-owned map navigation path still has work to do. */
   traveling?: boolean;
   /**
@@ -1402,6 +1443,8 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.empoweredImminent ?? false;
     case "target-elite":
       return ctx.targetIsElite ?? false;
+    case "target-max-stacks":
+      return ctx.targetAtMaxDotStacks ?? false;
     case "while-traveling":
       return ctx.traveling ?? false;
     case "stance-charged":
