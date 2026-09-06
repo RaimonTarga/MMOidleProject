@@ -325,7 +325,7 @@ export const bossMonsterEntriesT3 = [
       id: 'timberclaw-escape', name: 'Escape',
       damageMultiplier: 2.0, cooldownMs: 13000, initialCooldownMs: 7000,
       steps: [
-        { kind: 'escape-guard', name: 'Escape Guard', castMs: 2500, fx: 'shield',
+        { kind: 'escape-guard', name: 'Flee', castMs: 2500, fx: 'shield',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2500, label: 'Cornered' },
           maxInstinctStacks: 3, instinctCastReductionPct: 0.15 },

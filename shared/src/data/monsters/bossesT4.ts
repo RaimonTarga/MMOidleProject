@@ -224,7 +224,7 @@ export const bossMonsterEntriesT4 = [
       damageMultiplier: 2.3, cooldownMs: 12000, initialCooldownMs: 7000,
       armAboveHpPct: 0.5,
       steps: [
-        { kind: 'escape-guard', name: 'Escape Guard', castMs: 2400, fx: 'shield',
+        { kind: 'escape-guard', name: 'Flee', castMs: 2400, fx: 'shield',
           sourceId: 'jungle-escape', shieldPct: 0.06,
           onBreak: { staggerMs: 2400, label: 'Cornered' },
           maxInstinctStacks: 3, instinctCastReductionPct: 0.15 },

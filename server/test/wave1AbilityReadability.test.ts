@@ -52,31 +52,20 @@ function playerSlices(id: string): PersistedPlayerSlices {
 
 initCombatSystems();
 
-// Timed boss effects carry their actual clock instead of looking permanent.
+// ANCHOR HISTORY — "a timed boss effect carries its actual clock, not a permanent
+// look". The claim began on the Stoneplate Juggernaut's repeating flat-DR shield,
+// moved to the Dreadbore's Carapace Seal when Mountain became patterns, moved again
+// when Cave's burrow conversion deleted Carapace Seal, and stood on the Jungle
+// gorger's Canopy Hunt until 2026-09-06, when that phase was deleted too (it had
+// already been removed from its own design comment two days earlier, and only the
+// data survived).
 //
-// ANCHOR HISTORY: this began on the Stoneplate Juggernaut's repeating flat-DR shield,
-// moved to the Dreadbore's Carapace Seal when Mountain became patterns, and moved
-// again when Cave's burrow conversion deleted Carapace Seal. As of 2026-09-04 the
-// `shield` BossAction has NO users left anywhere in the roster — the encounter
-// redesign replaced every flat-DR window with either a real absorb barrier or a
-// genuine concealment. The CLAIM is generic, so it now stands on a timed `stat-buff`,
-// which publishes through the same `bossEffectDurations` path.
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(playerSlices('canopy-target'), 'canopy-target');
-  const boss = world.createMonster(NODE, 'jungle-dread-gorger', { x: 400, y: 400 });
-  assert(boss, 'Jungle Dread-Gorger should spawn');
-  setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
-  boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
-  updateBossScripts(world, 100);
-  // Canopy Hunt is a CAST: the buffs land when the wind-up completes.
-  updateBossScripts(world, 1_500);
-  const clock = boss.hasStatus.bossEffectDurations?.['canopy-hunt-pursuit'];
-  assert(
-    clock?.remainingMs === 7_000 && clock.totalMs === 7_000,
-    'Canopy Hunt should publish its real target-frame clock',
-  );
-}
+// The roster now has NO timed `stat-buff` left at all: every one of them was a
+// generic escalation the encounter redesign replaced with a real mechanic, and the
+// permanent phase buffs that remain deliberately omit `durationMs`. Rather than
+// re-anchor on a fifth soon-to-be-deleted buff, the claim now stands where the
+// game's only remaining timed boss effect actually lives — the pattern recovery
+// window below, which publishes through the same `bossEffectDurations` channel.
 
 // An authored pattern recovery is a PUNISH WINDOW, so it has to be legible on the
 // target frame for exactly as long as it lasts. An invisible recovery teaches the

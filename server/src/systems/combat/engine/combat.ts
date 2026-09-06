@@ -1069,9 +1069,10 @@ export function runMonsterAttack(
 /**
  * Abort an in-progress charged-attack wind-up and tell the node to clear the cast
  * bar. No-op when the monster isn't casting. Used on every bail path (interrupt,
- * target lost, out of range, can't-attack) so a cast never lingers silently.
+ * target lost, out of range, can't-attack) so a cast never lingers silently, and
+ * by `bossScripts` to retire a wind-up a higher-priority scripted cast preempts.
  */
-function abortMonsterCast(world: World, monster: MonsterEntity): void {
+export function abortMonsterCast(world: World, monster: MonsterEntity): void {
   if (
     chargedCastEndsAt(monster) <= 0 &&
     castedBuffCastEndsAt(monster) <= 0 &&
@@ -1799,6 +1800,33 @@ function applyChargedAttackRiders(
 }
 
 /**
+ * ACCELERATING TELL — shrink the wind-up by however many stacks of the named
+ * boss-script effect the caster is carrying (see `chargedAttack.hastenedBy`).
+ *
+ * Applied BEFORE 'empower-charged' scaling so a phase's `castMsMult` still reads
+ * as a multiplier on the tell the player is currently seeing. Returns the authored
+ * definition untouched when the boss declares no haste or holds no stacks, so the
+ * common path allocates nothing.
+ */
+function hastenedChargedAttack(
+  monster: MonsterEntity,
+  charged: MonsterDefinition["chargedAttack"],
+): MonsterDefinition["chargedAttack"] {
+  const haste = charged?.hastenedBy;
+  if (!charged || !haste) return charged;
+  const stacks = (monster.scriptsBoss?.activeEffects ?? []).filter(
+    effect => effect.type === haste.bossEffect,
+  ).length;
+  if (stacks <= 0) return charged;
+  const castMs = Math.max(
+    haste.minCastMs,
+    Math.round(charged.castMs * Math.pow(haste.castMsMultPerStack, stacks)),
+  );
+  if (castMs === charged.castMs) return charged;
+  return { ...charged, castMs };
+}
+
+/**
  * The boss's signature attack AFTER any 'empower-charged' phases have scaled it.
  * Returns the authored definition untouched when no override is present, so the
  * common path allocates nothing.
@@ -1811,9 +1839,10 @@ function applyChargedAttackRiders(
 function effectiveChargedAttack(
   monster: MonsterEntity,
 ): MonsterDefinition["chargedAttack"] {
-  const charged = MONSTER_DATABASE.get(
+  const authored = MONSTER_DATABASE.get(
     monster.isMonster.monsterTypeId,
   )?.chargedAttack;
+  const charged = hastenedChargedAttack(monster, authored);
   const scale = monster.scriptsBoss?.chargedOverride;
   if (!charged || !scale) return charged;
   return {
@@ -2079,17 +2108,26 @@ function resolveChargedSlam(
     });
   }
 
+  // The impact point and radius ride along so a bespoke `aoe.impactFx` can be
+  // anchored where the circle actually was, not on the caster (the two have
+  // diverged by now) and not on a target that may have walked out or died.
   world.pushEvent(nodeId, {
     kind: "monster-cast-end",
     monsterId: monster.isMonster.id,
     fired: true,
-    fx: charged.fx,
+    pos: { ...impact },
+    radius: aoe.radius,
+    fx: aoe.impactFx ?? charged.fx,
   });
 
   // The slam ALWAYS erupts where it was planted, hit or miss. A telegraphed
   // circle that resolves silently on empty ground reads as a bug; the shockwave
   // is what pays off the wind-up and teaches that stepping out was the answer.
   // Anchored to `impact`, never the caster — the two have diverged by now.
+  //
+  // A slam that declares its own `impactFx` pays the wind-up off with THAT instead:
+  // the generic shockwave on top would just bury the signature cue.
+  if (aoe.impactFx) return;
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
   world.pushEvent(nodeId, {
     kind: "boss-fx",

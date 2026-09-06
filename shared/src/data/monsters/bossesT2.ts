@@ -84,13 +84,28 @@ export const bossMonsterEntriesT2 = [
     consecutiveHits: 2,
     chargedAttack: {
       name: 'Stunning Swipe', castMs: 700, cooldownMs: 8000, initialCooldownMs: 3500,
-      multiplier: 1.25, fx: 'savage-maul', stunMs: 900, aoe: { radius: 90 },
+      multiplier: 1.25, stunMs: 900,
+      // Its own cue, not the generic shockwave every other AoE charge draws: the
+      // ordinary claw rhythm stays `bear-claws` (the T1 Greatbear's look, which is
+      // the lineage's identity) and the swipe is the thing that reads as different.
+      aoe: { radius: 90, impactFx: 'timberclaw-swipe' },
+      // The tell tightens with the frenzy. At 0 stacks it is the authored 700ms
+      // read; each Bestial Frenzy stack cuts it ~12%, floored at 300ms, so the
+      // fight's acceleration shows up in the telegraph and not only in the cadence.
+      hastenedBy: { bossEffect: 'bestial-frenzy', castMsMultPerStack: 0.88, minCastMs: 300 },
     },
     // FOREST EXAM = an accelerating claw duel — LOCKED by the encounter rework: the
     // Forest lineage retires after T2, and its cadence identity was already right.
     // T2 adds a quick, compact charged swipe that stuns anyone caught in the tell.
     // The 50% phase is a FREQUENCY surge, which is this boss's whole idea, so it
     // survives the generic-enrage cull that emptied the other lineages' phases.
+    //
+    // BESTIAL FRENZY OUTRANKS THE SWIPE. Both are casts, and the two must never be
+    // on screen together: a scripted cast preempts an in-progress charged wind-up
+    // (bossScripts.beginScriptedCast), and `cannotAttack` keeps the swipe from
+    // opening while the frenzy is casting. So the fight always reads as one bar at
+    // a time — the boss stops to roar, THEN goes back to hunting you. The swipe's
+    // cooldown survives the preemption, so it comes straight back afterwards.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
@@ -224,22 +239,28 @@ export const bossMonsterEntriesT2 = [
       damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4000,
       steps: [
         { kind: 'cast', name: 'Burrow', castMs: 900, fx: 'shield', guardable: false },
-        // emergeGap is deliberately INSIDE the eruption radius. At 150 against a
-        // 140 radius the circle resolved on point containment 10px clear of a
-        // player who never moved, so the payoff of the whole sequence could not
-        // land on a stationary target. 90 leaves a 50px overlap: standing still is
-        // punished, and the 1000ms telegraph is far more than the ~420ms of
-        // running it takes to clear the edge.
-        // travelSpeed is FAR above the Dreadbore's 20px/s walk, and deliberately
-        // so: the burrow is this boss's only closer. A kiting player moves at 120,
-        // so anything under ~250 leaves the boss surfacing wherever it already
-        // was — the sequence arrives, misses by four screens, and reads as broken.
-        // At 340 it closes 220px/s on someone running flat out, which is enough to
-        // arrive from kiting range inside one burrow. The eruption telegraph is
-        // still the fair dodge; being unable to REACH the player was never it.
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 1600,
-          relocate: 'near-target', emergeGap: 90, travelSpeed: 500 },
-        { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 140,
+        // A SHORT, FAST BURROW (2026-09-06). It used to spend 1600ms underground,
+        // which is most of two seconds in which the only thing happening is a mound
+        // walking towards you. Cut to 500ms: the boss goes under and is on top of
+        // you almost immediately, and the beat the player actually reads is the
+        // eruption telegraph that follows, not the approach.
+        //
+        // travelSpeed had to rise with it or the change would quietly REMOVE the
+        // burrow's whole job. This is the Dreadbore's only closer — it walks at 20
+        // against a player who kites at 120 — and closing power is the travel
+        // BUDGET, not the speed: 1600ms at 500 netted ~608px against a full sprint,
+        // and 500ms at 1300 nets ~590. Same reach, a third of the time. Under ~250
+        // it would surface wherever it already stood and telegraph at empty floor.
+        //
+        // emergeGap 0: it comes up UNDERNEATH the target rather than beside it.
+        // The old 90 against a 140 radius left a 50px overlap, so a stationary
+        // player was caught but a drifting one fell out of the circle for free.
+        // ⚠ Centred + a 165 radius means running is NO LONGER the answer on its own:
+        // clearing 165px at 120px/s takes ~1.4s against a 1000ms telegraph. Step
+        // Back, Guard and armour are the answers; tanking it stays legal.
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 500,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 1300 },
+        { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
           damageMult: 1.0, telegraphMs: 1000, fx: 'strong-kick' },
         { kind: 'recovery', label: 'Surfaced', durationMs: 2200 },
       ],
@@ -340,12 +361,25 @@ export const bossMonsterEntriesT2 = [
     targeting: { prefersPlayers: true },
     // JUNGLE = PURSUIT AND FAILED ESCAPE. The one loop the whole lineage runs:
     //
-    //   Escape Guard appears and the boss bolts for the far edge of its leash.
-    //     BREAK the guard  -> the retreat fails, it stumbles, and it banks one
+    //   FLEE: the boss bolts for the far edge of its leash behind a plate.
+    //     BREAK the plate  -> the retreat fails, it stumbles, and it banks one
     //                         capped stack of Escape Instinct so the NEXT attempt
     //                         is quicker.
-    //     LET IT FINISH    -> it vanishes into cover, resets Instinct, picks a
-    //                         valid re-entry point, and comes back with an ambush.
+    //     STUN IT          -> the attempt simply stops. No stumble and no Instinct
+    //                         — a plainer answer than the plate, and it has to be
+    //                         one, or a boss that "escapes" while hard-controlled
+    //                         cashes in on the far side of the control you spent.
+    //     LET IT FINISH    -> it slips into cover, resets Instinct, STALKS BACK
+    //                         unseen, and bites the moment it reaches you.
+    //
+    // THE 2026-09-06 CORRECTION. Every beat above was already written down and none
+    // of it was what the fight did. The guard was a stationary cast (the boss never
+    // bolted anywhere), the vanish TELEPORTED it to the leash edge the instant it
+    // succeeded, and the Ambush then fired from across the arena at a player it had
+    // never come near — a bite landing at 800px, out of nowhere, unanswerable and
+    // unreadable. The sequence now runs the shape the design always described: it
+    // runs (visible, breakable), it disappears, it comes back for you, and the bite
+    // is what happens when it arrives.
     //
     // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
     // load-bearing: a boss whose whole idea is running away from you would otherwise
@@ -358,29 +392,65 @@ export const bossMonsterEntriesT2 = [
     // REMOVED with the 2026-09-04 redesign: `openingStrike` (an unanswerable alpha
     // strike before the fight has taught anything) and the one-shot Canopy Hunt
     // speed phase, which was a substitute for the pursuit this loop now IS.
+    //
+    // Canopy Hunt was only removed from the COMMENT in 2026-09-04; the phase itself
+    // survived in the data until 2026-09-06. It is gone now, and with it the whole
+    // `bossScript` — T2 has no 50% escalation at all, which is the point: this tier
+    // teaches the plain cycle, and the escalation belongs to T3 (the escape comes
+    // around harder and far more often) and T4 (it stops escaping altogether).
     bossPattern: {
       id: 'gorger-escape', name: 'Escape',
       damageMultiplier: 1.6, cooldownMs: 14000, initialCooldownMs: 8000,
       steps: [
-        { kind: 'escape-guard', name: 'Escape Guard', castMs: 2600, fx: 'shield',
+        // THE ESCAPE IS TIMED, AND THE TIME IS THE POINT. 3000ms of the boss visibly
+        // running with a breakable plate up — long enough to read as a chase you
+        // are losing, and long enough for the break to be a real decision rather
+        // than a reflex. (First pass tried 1500ms at 420px/s: the boss crossed
+        // ~630px in a second and a half, which at the 5 Hz broadcast is ~84px a
+        // packet, and the whole beat read as "cast, blink, gone".)
+        //
+        // ⚠ NOT distance-from-the-player, which was the tempting alternative: that
+        // condition is already satisfied the moment a ranged or kiting player opens
+        // up, so the escape would complete instantly exactly when the player is
+        // furthest from being able to answer it — the same "it triggers immediately"
+        // failure in a new costume. It also has no natural end when the boss is
+        // walled in or pinned against its own leash. Time is stable wherever
+        // everyone happens to be standing; distance is what the flee ACHIEVES.
+        //
+        // 220px/s is the visible pace: clearly faster than the player's 120, slow
+        // enough to watch. Over the window that is ~660px, which is what the stalk
+        // below is sized to take back.
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'shield',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2600, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15 },
-        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1400,
-          relocate: 'leash-edge' },
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15,
+          flee: { speed: 220 } },
+        // THE STALK, not a relocation. It goes invisible only once the escape has
+        // actually succeeded, then closes on you while unseen — `near-target` with
+        // real travel, exactly like the Cave burrow, so the marker is a tell the
+        // player tracks rather than a body that blinks across the map.
+        // 1600ms at 620 is ~992px of travel, ~800 of it net against a player
+        // sprinting away: enough to take back the ~660px flee and then some.
+        // emergeGap 40 lands it BESIDE you rather than inside your sprite: monsters
+        // and players do not push each other apart, so 0 puts two bodies on the
+        // same pixel. 40 is well inside a body width — this is still contact.
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1600,
+          relocate: 'near-target', emergeGap: 40, travelSpeed: 620 },
+        // Which makes the Ambush a CONTACT bite: it lands because the thing that
+        // vanished is now standing on top of you, and the 800ms is the tell.
         { kind: 'payoff', name: 'Ambush', castMs: 800, fx: 'savage-maul',
           damageMult: 1.0 },
-        { kind: 'recovery', label: 'Winded', durationMs: 1600 },
-      ],
-    },
-    bossScript: {
-      phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'cast', castMs: 1400, label: 'Canopy Hunt', fx: 'frenzy', actions: [
-            { type: 'stat-buff', stat: 'speed', mult: 1.25, durationMs: 7000, label: 'canopy-hunt-pursuit' },
-            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.25, durationMs: 7000, label: 'canopy-hunt-haste' },
-          ] },
-        ] },
+        // NO RECOVERY AFTER A SUCCESSFUL AMBUSH (2026-09-06). It used to end on a
+        // 1600ms `Winded` window, which meant both branches of the loop finished
+        // with the boss lying down — and since the recovery's networked id is
+        // literally `boss-stunned`, the authored label never reached the player and
+        // the two read as the same outcome. A predator that just landed its ambush
+        // being stunned by it makes no sense, and it flattened the choice the whole
+        // pattern exists to pose.
+        //
+        // The punish window is now what BREAKING THE PLATE buys you, and nothing
+        // else: stop the escape and you get 2.6s of a helpless boss; let it go and
+        // you eat the bite and it goes straight back to fighting.
       ],
     },
   }],

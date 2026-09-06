@@ -228,15 +228,45 @@ for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-
     guard.kind === 'escape-guard' && guard.maxInstinctStacks > 0,
     `${id} escape should bank capped Instinct when broken`,
   );
+  // "Gets away" is the claim; `relocate: 'leash-edge'` was only ever one way to
+  // spell it, and spelling it that way with no `travelSpeed` IS the teleport this
+  // line says it forbids — which is how the T2 gorger shipped standing still behind
+  // its plate and then blinking to the far edge. The claim, checked honestly: the
+  // escape has to move the boss, either by fleeing under the guard or by relocating
+  // when it hides.
   assert(
-    steps.some(step => step.kind === 'conceal' && step.relocate === 'leash-edge'),
-    `${id} should actually get away and re-enter, not teleport`,
+    (guard.kind === 'escape-guard' && guard.flee !== undefined) ||
+      steps.some(step => step.kind === 'conceal' && step.relocate !== 'none'),
+    `${id} should actually get away, not just stand behind a shield`,
   );
   assert(
     (jungle.evasion ?? 0) === 0,
     `${id} should not keep passive evasion alongside the escape cycle`,
   );
 }
+// T2 runs the CORRECTED loop (2026-09-06): it bolts in the open behind a breakable
+// plate, hides only once away, then stalks back and bites on contact.
+//
+// ⚠ T3 (`apex-bramble-slasher`) and T4 (`verdant-crown-predator`) have NOT had this
+// pass yet: their conceal is still a `leash-edge` relocation with no `travelSpeed`,
+// so the boss teleports to the arena edge and its Ambush — a payoff with no radius,
+// and therefore no range check — resolves on the player from there. Same fix as
+// below when they are reviewed.
+{
+  const steps = def('jungle-dread-gorger').bossPattern!.steps;
+  const guard = steps.find(step => step.kind === 'escape-guard');
+  const hide = steps.find(step => step.kind === 'conceal');
+  assert(guard?.kind === 'escape-guard' && guard.flee !== undefined,
+    'the T2 gorger should bolt in the open while its guard can still be broken');
+  assert(hide?.kind === 'conceal' && hide.relocate === 'near-target',
+    'and hide only to come BACK for you, not to leave');
+  assert(hide.kind === 'conceal' && hide.travelSpeed !== undefined,
+    'closing the distance must be travel the player can watch, never a teleport');
+  const hideIdx = steps.findIndex(step => step.kind === 'conceal');
+  const biteIdx = steps.findIndex(step => step.kind === 'payoff');
+  assert(hideIdx >= 0 && biteIdx > hideIdx, 'and the bite is what happens when it arrives');
+}
+
 // The capstone STOPS escaping when wounded — the low-health state is the ABSENCE of
 // the lineage's mechanic, not a fourth one.
 assert(

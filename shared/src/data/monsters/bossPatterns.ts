@@ -234,6 +234,15 @@ export type BossPatternStep =
        * sequence ended up unable to reach a kiting build at all.
        */
       travelSpeed?: number;
+      /**
+       * Hard control (stun/freeze) breaks the concealment, defaulting to true like
+       * every other wind-up in this file. A boss that is stunned but still
+       * untargetable, still travelling, and still going to resolve its payoff the
+       * moment the stun lapses hands the player nothing at all for landing the
+       * control — not even something to hit. Set false only for a vanish the
+       * encounter genuinely means to be committed.
+       */
+      interruptible?: boolean;
       fx?: string;
     }
   /**
@@ -267,6 +276,28 @@ export type BossPatternStep =
        */
       maxInstinctStacks: number;
       instinctCastReductionPct: number;
+      /**
+       * BOLT FOR COVER. While the guard is up the boss RUNS for the far edge of its
+       * leash at `speed` px/s instead of standing behind its plate.
+       *
+       * The escape has to be a thing the player WATCHES happen, or the barrier is
+       * just a shield with a story attached: without it the boss stood still for the
+       * whole cast and then relocated instantly the moment it succeeded, which read
+       * as a teleport and gave the pursuit no visible middle. Fleeing is also what
+       * makes the distance the sequence later has to close REAL — and it inherits
+       * Escape Instinct for free, because a rushed cast covers less ground.
+       *
+       * Travel goes through the movement system (like `charge`), so it paths, it
+       * clamps to the leash, and it stops the moment the guard resolves either way.
+       */
+      flee?: { speed: number };
+      /**
+       * Hard control (stun/freeze) cancels the escape outright, defaulting to true.
+       * Breaking the plate is the answer that BANKS Instinct; stunning the boss is
+       * a plainer one that simply stops it — it does not stumble and it learns
+       * nothing, but it does not get away either.
+       */
+      interruptible?: boolean;
       fx?: string;
     }
   /**

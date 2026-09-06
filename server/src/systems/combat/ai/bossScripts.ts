@@ -48,6 +48,7 @@ import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { setAggroTarget, setAttackTarget } from './targeting';
 import { BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
+import { abortMonsterCast } from '../engine/combat';
 import { publishToxicPool } from '../../world/groundZones';
 import { stokeAmbientRamp } from '../../world/nodeFeatures';
 import { raiseCorpsesBurst } from './raiseDead';
@@ -173,6 +174,14 @@ function beginScriptedCast(
     (state.scriptedCastQueue ??= []).push(action);
     return;
   }
+
+  // A scripted cast OUTRANKS any telegraphed attack the boss already had running.
+  // The `cannotAttack` marker below makes the combat tick drop that wind-up anyway,
+  // but it would do so AFTER this cast-start — and its `monster-cast-end` would
+  // then wipe the bar we just opened, because the client keys cast bars by monster.
+  // Retiring it here means the node sees end-then-start and the two telegraphs
+  // never share the screen. (No-op when nothing is casting.)
+  abortMonsterCast(world, monster);
 
   const ownsRoot = !monster.isRooted;
   const ownsCannotAttack = !monster.cannotAttack;

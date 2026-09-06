@@ -1149,6 +1149,23 @@ export interface MonsterDefinition {
     initialCooldownMs?: number;
     fx?: string;
     /**
+     * ACCELERATING TELL — shorten the wind-up as the caster accumulates stacks of a
+     * named boss-script effect (the `label` on a `stat-buff` action). Applied
+     * multiplicatively per stack and floored at `minCastMs`.
+     *
+     * For a boss whose whole identity is "it gets faster", a fixed telegraph stops
+     * meaning anything once its cadence has doubled. Forest T2: every Bestial Frenzy
+     * stack tightens the Stunning Swipe's tell along with the claw rhythm.
+     */
+    hastenedBy?: {
+      /** `stat-buff` label to count on `scriptsBoss.activeEffects`. */
+      bossEffect: string;
+      /** Multiplier applied once per stack (< 1 = shorter tell). */
+      castMsMultPerStack: number;
+      /** Floor, so the tell never becomes unreadable. */
+      minCastMs: number;
+    };
+    /**
      * Optional rider applied when the charged hit actually lands. Distance is in
      * pixels and can be reduced by player knockback resistance effects.
      */
@@ -1246,7 +1263,16 @@ export interface MonsterDefinition {
      * actually answer, because eating it hands the fight back to the boss.
      */
     healsSelfPct?: number;
-    aoe?: { radius: number; damageMult?: number };
+    aoe?: {
+      radius: number;
+      damageMult?: number;
+      /**
+       * Bespoke impact FX id for this slam. When set, the resolution broadcasts it
+       * (anchored on the planted point) INSTEAD of the generic shockwave cue, so a
+       * signature ability can read as itself rather than as every other AoE charge.
+       */
+      impactFx?: string;
+    };
     /** Lingering toxic pool left at the planted impact point after resolution. */
     pool?: {
       durationMs: number;

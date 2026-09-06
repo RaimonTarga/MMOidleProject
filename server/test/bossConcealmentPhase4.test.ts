@@ -14,7 +14,9 @@ import {
   GAME_CONFIG,
   MONSTER_DATABASE,
   STARTER_RUNE_IDS,
+  blockShapesForMover,
   emptyEquipment,
+  navigationBodyHalfExtents,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -38,10 +40,10 @@ function assert(condition: boolean, message: string): asserts condition {
 
 const NODE = 'node-5-5';
 
-function playerSlices(id: string, x = 405, y = 400): PersistedPlayerSlices {
+function playerSlices(id: string, x = 405, y = 400, nodeId = NODE): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: id },
-    hasPosition: { current: { x, y }, nodeId: NODE, speed: GAME_CONFIG.PLAYER_SPEED },
+    hasPosition: { current: { x, y }, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },
     hasHealth: { hp: 100_000, maxHp: 100_000, recovery: 0 },
     tracksProgression: {
       level: 0, skillPoints: 0,
@@ -65,8 +67,14 @@ function playerSlices(id: string, x = 405, y = 400): PersistedPlayerSlices {
 initCombatSystems();
 
 /** Arm a pattern boss and advance one tick so its first step has begun. */
-function armPattern(world: World, monsterId: string, playerId: string, at = { x: 400, y: 400 }) {
-  const monster = world.createMonster(NODE, monsterId, at)!;
+function armPattern(
+  world: World,
+  monsterId: string,
+  playerId: string,
+  at = { x: 400, y: 400 },
+  nodeId = NODE,
+) {
+  const monster = world.createMonster(nodeId, monsterId, at)!;
   assert(!!monster, `${monsterId} should spawn`);
   const pattern = MONSTER_DATABASE.get(monsterId)!.bossPattern!;
   setAggroTarget(world, monster, { id: playerId, kind: 'player' }, 1_000);
@@ -287,6 +295,69 @@ function breakGuard(monster: MonsterEntity, id: string): void {
   assert(escapeInstinct(monster) === 1, 'and banks one stack of Instinct');
 }
 
+// HARD CONTROL CANCELS THE ESCAPE, at every stage of it.
+//
+// The escape-guard and conceal steps were the only timed wind-ups in the pattern
+// system that did NOT check for stun/freeze, so a stunned boss ran the whole
+// sequence out on top of the control: it "got away" while standing there stunned,
+// vanished, and ambushed once the stun lapsed. A stun is a plainer answer than
+// breaking the plate — no stumble and no Instinct — but it has to stop the attempt.
+for (const stage of ['flee', 'stalk'] as const) {
+  const id = 'jungle-dread-gorger';
+  const world = new World();
+  world.attachPlayerEntity(playerSlices(`escape-stun-${stage}`, 2_400, 2_400), `escape-stun-${stage}`);
+  const { monster, armedAt } = armPattern(world, id, `escape-stun-${stage}`, { x: 2_440, y: 2_400 });
+
+  // Run to the stage under test, then land the stun.
+  let now = armedAt;
+  for (let i = 0; i < 200; i++) {
+    world.tick(100, now);
+    now += 100;
+    const reached = stage === 'flee'
+      ? !!monster.runsBossPattern && monster.isConcealed === undefined
+      : monster.isConcealed !== undefined;
+    if (reached) break;
+  }
+  assert(!!monster.runsBossPattern, `${stage}: setup — the pattern should be running`);
+  if (stage === 'stalk') assert(!!monster.isConcealed, 'stalk: setup — it should have vanished');
+
+  const instinctBefore = escapeInstinct(monster);
+  applyStun(monster.tracksCombat, 3_000, 'stunner', 1);
+  world.tick(100, now);
+  now += 100;
+
+  assert(!monster.runsBossPattern, `${stage}: a stunned boss must not keep escaping`);
+  assert(monster.isConcealed === undefined, `${stage}: and must not be left hidden`);
+  assert(
+    sourceBarrierRemaining(monster, 'jungle-escape') === 0,
+    `${stage}: the plate comes down with the attempt`,
+  );
+  assert(
+    escapeInstinct(monster) === instinctBefore,
+    `${stage}: a stun banks no Instinct — only breaking the plate teaches it anything`,
+  );
+  assert(
+    !monster.recoversFromPattern?.fromStagger,
+    `${stage}: a stun is not the stumble that breaking the plate causes`,
+  );
+
+  // And it STAYS cancelled for the rest of the stun: no late vanish, no sequence
+  // quietly resuming underneath the control. (Ordinary melee coming back once the
+  // stun lapses is correct and deliberately not asserted against here.)
+  for (let i = 0; i < 30; i++) {
+    world.tick(100, now);
+    assert(
+      monster.isConcealed === undefined,
+      `${stage}: a cancelled escape must never resume into stealth`,
+    );
+    assert(
+      !monster.runsBossPattern,
+      `${stage}: and the sequence must not pick up where the stun stopped it`,
+    );
+    now += 100;
+  }
+}
+
 // Instinct is CAPPED, and a SUCCESSFUL escape resets it. It records failure, not
 // progress — an uncapped or un-reset counter would make the boss permanently faster.
 {
@@ -326,40 +397,129 @@ function breakGuard(monster: MonsterEntity, id: string): void {
   assert(escapeInstinct(monster) === 0, 'a successful escape resets Instinct');
 }
 
-// A SUCCESSFUL escape hides the boss, moves it away, and returns it for the ambush —
-// and never leaves it invisible and untargetable at the end.
+// A SUCCESSFUL escape runs the WHOLE loop, in order: it bolts (visible, breakable),
+// it vanishes only once it has got away, it stalks back unseen, and the Ambush is
+// what happens when it arrives.
+//
+// This is driven through the real `world.tick` because the movement system is what
+// carries the body — a probe that ran only `updateBossPatterns` would show a boss
+// that never moves and call that a pass. It is also the regression guard for the
+// 2026-09-06 correction: the guard used to be a stationary cast, the vanish used to
+// TELEPORT the boss to its leash edge, and the bite then fired from across the arena
+// at a player it had never come near.
 {
   const id = 'jungle-dread-gorger';
   const world = new World();
-  const player = world.attachPlayerEntity(playerSlices('escape-success'), 'escape-success');
-  const { monster, armedAt } = armJungle(world, id, 'escape-success');
-  const origin = { ...monster.hasPosition.current };
-
-  const hidden = advanceUntil(world, armedAt, () => monster.isConcealed !== undefined, 400);
-  assert(!!monster.isConcealed, 'an unanswered guard lets the boss vanish');
-  assert(monster.isConcealed!.marker === 'stealth', 'into cover, not underground');
-
-  const moved = Math.hypot(
-    monster.hasPosition.current.x - origin.x,
-    monster.hasPosition.current.y - origin.y,
+  const player = world.attachPlayerEntity(
+    playerSlices('escape-success', 2_400, 2_400),
+    'escape-success',
   );
-  assert(moved > 0, 'it should actually relocate, not vanish on the spot');
-  // It ran AWAY from the player rather than teleporting on top of them.
-  const before = Math.hypot(origin.x - player.hasPosition.current.x, origin.y - player.hasPosition.current.y);
-  const after = Math.hypot(
-    monster.hasPosition.current.x - player.hasPosition.current.x,
-    monster.hasPosition.current.y - player.hasPosition.current.y,
-  );
-  assert(after > before, 'a retreat should open distance');
+  const { monster, armedAt } = armPattern(world, id, 'escape-success', { x: 2_440, y: 2_400 });
+  const gapTo = () =>
+    Math.hypot(
+      monster.hasPosition.current.x - player.hasPosition.current.x,
+      monster.hasPosition.current.y - player.hasPosition.current.y,
+    );
+  const startGap = gapTo();
 
-  const back = advanceUntil(world, hidden, () => monster.isConcealed === undefined, 400);
+  let now = armedAt;
+  let sawConceal = false;
+  let fledTo = startGap;
+  let gapAtConceal: number | null = null;
+  let gapAtSurface: number | null = null;
+  let hpAtSurface = player.hasHealth.hp;
+  let concealedAt: number | null = null;
+
+  // Stops the moment the SEQUENCE ends, not on a recovery: a completed ambush
+  // deliberately leaves none, and a loop that waited for one would run on into the
+  // boss's ordinary melee and credit that damage to the ambush.
+  for (let i = 0; i < 200; i++) {
+    world.tick(100, now);
+    const gap = gapTo();
+    if (monster.isConcealed) {
+      if (!sawConceal) {
+        gapAtConceal = gap;
+        concealedAt = now;
+      }
+      sawConceal = true;
+    } else if (!sawConceal) {
+      fledTo = Math.max(fledTo, gap);
+    } else if (gapAtSurface === null) {
+      gapAtSurface = gap;
+      hpAtSurface = player.hasHealth.hp;
+    }
+    now += 100;
+    if (sawConceal && !monster.runsBossPattern) break;
+  }
+
+  assert(sawConceal, 'an unanswered guard lets the boss vanish');
   assert(monster.isConcealed === undefined, 'and it must come back');
+  assert(gapAtConceal !== null && gapAtSurface !== null, 'setup: it should vanish and resurface');
+
+  // 1. IT BOLTS, IN THE OPEN, WHILE THE GUARD IS BREAKABLE. The retreat has to be a
+  //    thing the player watches happen — otherwise the barrier is a shield with a
+  //    story attached and the distance the ambush closes is fictional.
+  assert(
+    fledTo > startGap + 200,
+    `the escape guard should carry the boss away in the open (got ${fledTo.toFixed(0)}px ` +
+      `from ${startGap.toFixed(0)})`,
+  );
+  // ...and it has to LAST. The first pass was a 1500ms guard at 420px/s, which the
+  // player read as "cast, blink, gone": the run was over before it registered and
+  // the break window with it. The escape is timed, so this is the guarantee that
+  // the chase is something you get to watch and answer, not a state change.
+  // (Escape Instinct can shorten it, but only to 55% of the authored window.)
+  const fleeMs = concealedAt! - armedAt;
+  assert(
+    fleeMs >= 2_500,
+    `the flee should be long enough to read and answer (lasted ${fleeMs}ms)`,
+  );
+  // Slower than the player cannot get away; far faster than the player cannot be
+  // watched. Breaking the plate is the answer, not outrunning it.
+  const guardStep = MONSTER_DATABASE.get(id)!.bossPattern!.steps.find(
+    step => step.kind === 'escape-guard',
+  )!;
+  assert(guardStep.kind === 'escape-guard' && guardStep.flee !== undefined, 'setup: it flees');
+  assert(
+    guardStep.flee.speed > GAME_CONFIG.PLAYER_SPEED &&
+      guardStep.flee.speed < GAME_CONFIG.PLAYER_SPEED * 2.5,
+    `the flee should outpace the player without blurring (${guardStep.flee.speed}px/s ` +
+      `vs ${GAME_CONFIG.PLAYER_SPEED})`,
+  );
+
+  // 2. IT HIDES ONLY ONCE IT HAS GOT AWAY, never on the spot at the head of the cast.
+  assert(
+    gapAtConceal! > startGap + 200,
+    `it should already be away when it vanishes (vanished ${gapAtConceal!.toFixed(0)}px out)`,
+  );
+
+  // 3. IT STALKS BACK. Concealment is the approach, not the departure.
+  assert(
+    gapAtSurface! < gapAtConceal! * 0.25,
+    `it should close on the player while unseen (vanished at ${gapAtConceal!.toFixed(0)}px, ` +
+      `surfaced at ${gapAtSurface!.toFixed(0)}px)`,
+  );
+
+  // 4. THE BITE IS CONTACT. A payoff with no radius hits at any range, so "it landed"
+  //    is not the claim — "it landed from on top of the player" is.
+  assert(
+    gapAtSurface! < 120,
+    `the ambush must resolve in contact, not from across the arena ` +
+      `(surfaced ${gapAtSurface!.toFixed(0)}px away)`,
+  );
+  assert(player.hasHealth.hp < hpAtSurface, 'and the ambush should actually land');
+  // A SUCCESSFUL ambush leaves no punish window. The stagger is what breaking the
+  // plate buys; a predator that just landed its bite does not stun itself, and
+  // giving both branches the same ending flattened the choice the loop poses.
+  assert(
+    !monster.recoversFromPattern,
+    'a landed ambush must not stun the boss — that window belongs to the break',
+  );
+  assert(concealedAt !== null && now > concealedAt, 'setup: time should have passed');
+
   // Targetability is proven at the seam concealment actually changed — the player
-  // attack-target scan — rather than through the acquisition policy. The boss has
-  // just retreated to its leash edge, so it is legitimately OUT OF RANGE; "not in
-  // range" and "not targetable" are different failures and only the second is a bug.
-  player.hasPosition.current = { ...monster.hasPosition.current };
-  updateCombat(world, 100, back);
+  // attack-target scan — rather than through the acquisition policy.
+  updateCombat(world, 100, now);
   assert(
     player.hasAttackTarget?.targetId === monster.isMonster.id,
     'reset cannot leave an invisible untargetable boss',
@@ -612,6 +772,141 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   assert(
     monster.hasStatus.concealed === undefined,
     'and clear once it surfaces, or the client draws a fightable boss as buried',
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SHORT BURROW (2026-09-06). The Dreadbore's burrow was cut from 1600ms to 500ms
+// to make it threatening rather than a long walk. Closing power is the travel
+// BUDGET, not the speed, so shortening one without raising the other silently
+// removes the only thing this boss has for catching a kiting player.
+// ─────────────────────────────────────────────────────────────────────────────
+
+for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
+  const def = MONSTER_DATABASE.get(id)!;
+  const conceal = def.bossPattern!.steps.find(step => step.kind === 'conceal');
+  assert(conceal?.kind === 'conceal' && conceal.travelSpeed !== undefined, `${id}: travelling burrow`);
+  const seconds = conceal.durationMs / 1000;
+  const budget = seconds * conceal.travelSpeed;
+  const opened = seconds * GAME_CONFIG.PLAYER_SPEED;
+  assert(
+    budget - opened >= def.stats.pullRange,
+    `${id}: a ${conceal.durationMs}ms burrow at ${conceal.travelSpeed}px/s nets ` +
+      `${Math.round(budget - opened)}px against a sprinting player, which cannot cover its own ` +
+      `${def.stats.pullRange}px pull range — shorten the burrow and the travel speed must rise with it`,
+  );
+}
+
+// It comes up UNDERNEATH a kiting player, not merely near them. This is the whole
+// point of `emergeGap: 0`: the old 90px offset against a 140px radius left a
+// stationary target caught but a drifting one falling out of the circle for free.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('burrow-centred', 900, 400), 'burrow-centred');
+  const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', 'burrow-centred', {
+    x: 400,
+    y: 400,
+  });
+  const impact = MONSTER_DATABASE.get('chitinous-dreadbore')!.bossPattern!.steps.find(
+    step => step.kind === 'impact',
+  )!;
+  assert(impact.kind === 'impact', 'setup: the Dreadbore erupts');
+
+  let now = armedAt;
+  let sawConcealed = false;
+  let gapAtSurface: number | null = null;
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    player.hasPosition.current = {
+      x: player.hasPosition.current.x + GAME_CONFIG.PLAYER_SPEED * 0.1,
+      y: player.hasPosition.current.y,
+    };
+    if (monster.isConcealed) sawConcealed = true;
+    if (sawConcealed && !monster.isConcealed && gapAtSurface === null) {
+      gapAtSurface = Math.hypot(
+        monster.hasPosition.current.x - player.hasPosition.current.x,
+        monster.hasPosition.current.y - player.hasPosition.current.y,
+      );
+    }
+    now += 100;
+  }
+
+  assert(sawConcealed && gapAtSurface !== null, 'setup: the boss should burrow and surface');
+  // It cannot be zero against a MOVING target and should not be: bodies do not
+  // overlap, so the boss stops on contact (~48px) and the player takes one more
+  // step before this is measured. What matters is that it surfaces WELL INSIDE its
+  // own circle rather than on the lip of it — the old 90px gap put a kiting player
+  // at ~130 against a 140 radius, which is what this bound rules out. A stationary
+  // player is caught dead centre.
+  assert(
+    gapAtSurface! < impact.radius * 0.6,
+    `the burrow should surface on top of its target (surfaced ${gapAtSurface!.toFixed(0)}px ` +
+      `from a ${impact.radius}px eruption)`,
+  );
+}
+
+// BLOCKED GROUND. With `emergeGap: 0` every angle at the authored radius names the
+// SAME point, so a target standing somewhere the boss cannot fit used to collapse
+// the whole search to one failed sample — and a failed search means "stay put",
+// which telegraphs the eruption back where the boss burrowed from. The emergence
+// search expands outward in rings instead.
+//
+// The setup exploits the fact that a boss body is fatter than a player body: the
+// player stands in the band beside a wall that fits them and not the Dreadbore, so
+// the emergence point the boss WANTS is genuinely unstandable for it.
+{
+  const BLOCKED_NODE = 'node-t1-mountain-01';
+  const wall = blockShapesForMover(BLOCKED_NODE, 'monster').find(
+    shape => shape.kind === 'rect' && shape.halfW >= 96 && shape.halfH >= 32,
+  );
+  assert(wall?.kind === 'rect', 'setup: the probe node should carry a monster-blocking rect');
+  const playerBody = navigationBodyHalfExtents('player');
+  const bossBody = navigationBodyHalfExtents('monster', true);
+  assert(bossBody.y > playerBody.y, 'setup: a boss body must be fatter than a player body');
+  // Halfway through the band the player fits and the boss does not.
+  const standY = wall.y + wall.halfH + (playerBody.y + bossBody.y) / 2;
+
+  const world = new World();
+  const player = world.attachPlayerEntity(
+    playerSlices('burrow-blocked', wall.x, standY, BLOCKED_NODE),
+    'burrow-blocked',
+  );
+  const { monster, armedAt } = armPattern(
+    world,
+    'chitinous-dreadbore',
+    'burrow-blocked',
+    { x: wall.x, y: standY + 220 },
+    BLOCKED_NODE,
+  );
+  const burrowedFrom = { ...monster.hasPosition.current };
+
+  let now = armedAt;
+  let sawConcealed = false;
+  let surfacedAt: { x: number; y: number } | null = null;
+  for (let i = 0; i < 200 && !monster.recoversFromPattern; i++) {
+    world.tick(100, now);
+    if (monster.isConcealed) sawConcealed = true;
+    if (sawConcealed && !monster.isConcealed && surfacedAt === null) {
+      surfacedAt = { ...monster.hasPosition.current };
+    }
+    now += 100;
+  }
+
+  assert(sawConcealed && surfacedAt !== null, 'setup: the boss should burrow and surface');
+  const anchor = player.hasPosition.current;
+  assert(
+    Math.abs(anchor.y - standY) < 1,
+    'setup: the player should still be standing in the band beside the wall',
+  );
+  const gap = Math.hypot(surfacedAt!.x - anchor.x, surfacedAt!.y - anchor.y);
+  assert(
+    Math.hypot(surfacedAt!.x - burrowedFrom.x, surfacedAt!.y - burrowedFrom.y) > 100,
+    'a blocked emergence point must not collapse into "stay where you burrowed"',
+  );
+  assert(
+    gap < 120,
+    'a blocked emergence should fall back to the nearest standable ring, not give up ' +
+      `(surfaced ${gap.toFixed(0)}px from the target)`,
   );
 }
 

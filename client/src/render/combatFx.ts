@@ -41,6 +41,7 @@ import { fxArrow } from "../fx/arrow";
 import { fxBite } from "../fx/bite";
 import { fxSlam } from "../fx/bossSlam";
 import { fxSavageMaul } from "../fx/savageMaul";
+import { fxTimberclawSwipe } from "../fx/timberclawSwipe";
 import { fxStrongKick } from "../fx/strongKick";
 import { fxSandblast } from "../fx/sandblast";
 import { fxQuake } from "../fx/quake";
@@ -698,6 +699,11 @@ export function dispatchCombatEvent(
         // not draw it at the scene origin.
         const at = target ?? monster ?? impact;
         if (at) fxTrenchPulse(scene, at.x, at.y, 0xe0a8ff);
+      } else if (impact && ev.fx === "timberclaw-swipe") {
+        // Anchored on the planted circle, never the caster: the boss has already
+        // moved on by the time its sweep resolves.
+        playSfx("attack-blunt");
+        fxTimberclawSwipe(scene, impact.x, impact.y, ev.radius ?? 90);
       } else if (impact && ev.fx === "trench-tail-sweep") {
         fxTrenchSweep(scene, impact.x, impact.y, ev.radius ?? 145);
       } else if (impact && ev.fx === "trench-body-sweep") {

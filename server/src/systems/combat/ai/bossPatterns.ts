@@ -879,6 +879,28 @@ function beginStep(
       if (raised > 0 && !state.barrierSourceIds.includes(step.sourceId)) {
         state.barrierSourceIds.push(step.sourceId);
       }
+      // BOLT. The escape is something the player watches the boss DO, behind a plate
+      // they can break — not a stationary cast that ends in a relocation. Same
+      // mechanism the charge uses: release the root, raise the speed, and hand the
+      // destination to the movement system so the client has something to
+      // interpolate toward. `stopFleeing` puts all three back on either exit.
+      if (step.flee) {
+        const away = relocationPoint(
+          world,
+          monster,
+          'leash-edge',
+          patternTarget(world, monster),
+          0,
+        );
+        if (away) {
+          state.capturedEndpoint = { ...away };
+          if (state.ownsRoot) setRooted(world, monster, false);
+          state.savedSpeed = monster.hasPosition.speed;
+          monster.hasPosition.speed = step.flee.speed;
+          markSliceDirty(world, monster, 'hasPosition');
+          setEntityMotion(world, monster, away);
+        }
+      }
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-start',
         monsterId: monster.isMonster.id,
@@ -1012,6 +1034,17 @@ function tickStep(
       return 'done';
     }
     case 'conceal': {
+      // Same rule as every other wind-up: a hard-controlled boss does not get to
+      // keep travelling while untargetable and then cash in its payoff. `endPattern`
+      // detaches the concealment, stops the body and puts its speed back.
+      if (
+        (step.interruptible ?? true) &&
+        (isMonsterStunned(world, monster.isMonster.id) ||
+          isMonsterFrozen(world, monster.isMonster.id))
+      ) {
+        endPattern(world, monster, 'interrupted', now);
+        return 'ended';
+      }
       if (now < state.stepEndsAtMs) {
         if (step.travelSpeed !== undefined && step.relocate === 'near-target') {
           steerConcealedTravel(world, monster, state, step);
@@ -1035,6 +1068,19 @@ function tickStep(
       return 'done';
     }
     case 'escape-guard': {
+      // HARD CONTROL CANCELS THE ESCAPE. Without this the guard's timer ran
+      // straight through a stun: the boss "got away" while it was standing there
+      // stunned, then vanished and ambushed on the far side of the control the
+      // player had just spent. Distinct from breaking the plate — a stun banks no
+      // Instinct and causes no stumble, it simply stops the attempt.
+      if (
+        (step.interruptible ?? true) &&
+        (isMonsterStunned(world, monster.isMonster.id) ||
+          isMonsterFrozen(world, monster.isMonster.id))
+      ) {
+        endPattern(world, monster, 'interrupted', now);
+        return 'ended';
+      }
       // BROKEN IN TIME: the retreat fails. The boss stumbles, and banks one capped
       // stack of Instinct so its next attempt is quicker.
       if (sourceBarrierRemaining(monster, step.sourceId) <= 0) {
@@ -1048,6 +1094,10 @@ function tickStep(
       if (now < state.stepEndsAtMs) return 'running';
       // SURVIVED: the escape succeeds. Instinct is a record of failure, so a
       // successful getaway wipes it.
+      // Whatever ground the bolt covered is the ground it got. Hand the body back
+      // rooted and at its own speed before the next step takes it. (The BROKEN path
+      // above needs none of this — `endPattern` already unwinds all three.)
+      if (step.flee) stopFleeing(world, monster, state);
       resetEscapeInstinct(monster);
       clearSourceBarrier(monster, step.sourceId);
       state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== step.sourceId);
@@ -1118,6 +1168,21 @@ function restoreChargeSpeed(
   monster.hasPosition.speed = state.savedSpeed;
   state.savedSpeed = undefined;
   markSliceDirty(world, monster, 'hasPosition');
+}
+
+/**
+ * End a fleeing escape-guard: stop the body where it got to, restore the authored
+ * speed, and take the root back for whatever the sequence does next. Mirrors the
+ * travelling burrow's hand-back, and is safe to call when the flee never started.
+ */
+function stopFleeing(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+): void {
+  stopEntity(world, monster);
+  restoreChargeSpeed(world, monster, state);
+  if (state.ownsRoot) setRooted(world, monster, true);
 }
 
 // ── Committed travel ─────────────────────────────────────────────────────────
@@ -1231,6 +1296,8 @@ function resolveTravelContacts(
 
 const RELOCATE_SAMPLE_ANGLES = 24;
 const RELOCATE_SAMPLE_STEP = 48;
+/** Rings tried outward from the authored gap before `near-target` gives up. */
+const RELOCATE_RING_RETRIES = 4;
 
 /**
  * Pick a DETERMINISTIC, standable point for the boss to reappear at.
@@ -1310,14 +1377,29 @@ function relocationPoint(
       monster.hasPosition.current.y - anchorPos.y,
       monster.hasPosition.current.x - anchorPos.x,
     );
-    for (let i = 0; i < RELOCATE_SAMPLE_ANGLES; i++) {
-      const spread = Math.ceil(i / 2) / RELOCATE_SAMPLE_ANGLES;
-      const angle = bearing + (i % 2 === 0 ? 1 : -1) * spread * Math.PI * 2;
-      const candidate = clampToNode(nodeId, {
-        x: anchorPos.x + Math.cos(angle) * gap,
-        y: anchorPos.y + Math.sin(angle) * gap,
-      });
-      if (standable(world, monster, candidate)) return candidate;
+    // Rings, innermost first: the authored gap, then outward in fixed steps.
+    //
+    // The old search swept angles at ONE radius and then gave up, which failed in
+    // both directions. A boss whose authored ring happened to be blocked the whole
+    // way round did not relocate at all — so the sequence telegraphed its circle
+    // back where the boss had burrowed from, which is the worst available answer
+    // rather than the nearest one. And `emergeGap: 0` was unusable, because every
+    // angle at radius 0 names the same point, so one blocked sample was the whole
+    // search. Expanding outward keeps the emergence as close to the authored intent
+    // as the ground allows.
+    for (let ring = 0; ring <= RELOCATE_RING_RETRIES; ring++) {
+      const radius = gap + ring * RELOCATE_SAMPLE_STEP;
+      // At radius 0 the fan is 24 copies of one point; take it once.
+      const samples = radius <= 0 ? 1 : RELOCATE_SAMPLE_ANGLES;
+      for (let i = 0; i < samples; i++) {
+        const spread = Math.ceil(i / 2) / RELOCATE_SAMPLE_ANGLES;
+        const angle = bearing + (i % 2 === 0 ? 1 : -1) * spread * Math.PI * 2;
+        const candidate = clampToNode(nodeId, {
+          x: anchorPos.x + Math.cos(angle) * radius,
+          y: anchorPos.y + Math.sin(angle) * radius,
+        });
+        if (standable(world, monster, candidate)) return candidate;
+      }
     }
     return null;
   }
