@@ -7,14 +7,14 @@
  * `monsterTypeId`, so no server/network change is needed to resolve this.
  *
  * Covers every biome's regular (non-boss) roster whose sprite plausibly reads
- * as one of the 5 approved skeletal-animal families. A LOT of monsters are
- * deliberately left UNMAPPED — reptiles/amphibians (snakes, chameleons,
- * basilisks, toads, salamanders, tortoises), oozes, plant-like things, and
- * humanoid/construct enemies (golems, trolls, gargoyles, witches, archers,
- * casters) have no matching family in this 8-asset set, and forcing one of
- * them into e.g. 'beast' would look like a wronger mismatch than the plain
- * fallback lozenge. Bosses never need remains art (server-side: they never
- * leave a reusable corpse at all — see server/src/systems/world/corpses.ts).
+ * as one of the 13 approved families (5 skeletal-animal families from wave 1,
+ * plus reptile-lizard/serpent/humanoid/shelled-carapace/amphibian/
+ * construct-rubble/ooze-residue/aquatic-fish from wave 2, added once Swamp
+ * turned out to have ZERO coverage under wave 1 alone). The T0 tutorial Tiny
+ * Wisp (`tiny-slime`) is intentionally left unmapped — an ethereal wisp with
+ * no corpse at all is fine (user call, 2026-09-07). Bosses never need remains
+ * art (server-side: they never leave a reusable corpse at all — see
+ * server/src/systems/world/corpses.ts).
  *
  * Several ids here turned out to visually mismatch their name/lore once the
  * actual sprite was checked (the same trap `bone-crawler` hit): `dust-djinn`
@@ -30,7 +30,15 @@ export type CorpseFamily =
   | 'beast'
   | 'large-beast'
   | 'avian'
-  | 'arthropod';
+  | 'arthropod'
+  | 'reptile-lizard'
+  | 'serpent'
+  | 'humanoid'
+  | 'shelled-carapace'
+  | 'amphibian'
+  | 'construct-rubble'
+  | 'ooze-residue'
+  | 'aquatic-fish';
 
 export type CorpseSize = 'small' | 'medium' | 'large';
 
@@ -56,6 +64,9 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'dire-whelp':     { family: 'beast',       size: 'small' },
   // Its sprite is a badger, not a construct — display name "Ironclaw Badger".
   'ironwood-golem': { family: 'beast',       size: 'medium' },
+  // Not clearly plant or reptile — generic quadruped skeleton is the closest
+  // fit until a dedicated family exists (user call, 2026-09-07).
+  'canopy-sprite':  { family: 'beast',       size: 'medium' },  // display "Thorn Spitter"
 
   // ── Mountain ─────────────────────────────────────────────────────────────
   'cliff-hopper':      { family: 'beast',       size: 'medium' },  // mountain goat
@@ -66,16 +77,21 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'avalanche-tyrant':  { family: 'beast',       size: 'large' },
   'cliffside-roc':     { family: 'avian',       size: 'large' },
   'cragback-rhino':    { family: 'large-beast', size: 'large' },
-  // ridge-archer/peak-archer (humanoid archers) and granite-titan/
-  // mountain-colossus/crag-mortar (stone golems/artillery) are unmapped —
-  // none of the 5 families read as a humanoid or a construct.
+  'ridge-archer':      { family: 'humanoid',        size: 'medium' },  // display "Ridge Ambusher"
+  'peak-archer':       { family: 'humanoid',        size: 'medium' },  // display "Boulder Thrower"
+  'granite-titan':     { family: 'construct-rubble', size: 'medium' },
+  'mountain-colossus': { family: 'construct-rubble', size: 'large' },
+  'crag-mortar':       { family: 'construct-rubble', size: 'medium' },
 
   // ── Cave ─────────────────────────────────────────────────────────────────
   'cave-lurker': { family: 'arthropod', size: 'medium' },  // sprite is an isopod/woodlouse
   'giant-spider': { family: 'arthropod', size: 'medium' },
   'deep-spider':  { family: 'arthropod', size: 'large' },
-  // cave-brute/cave-troll/cavern-troll (humanoid brutes) and cave-gargoyle/
-  // crystal-gargoyle (stone dragons) are unmapped for the same reason.
+  'cave-brute':      { family: 'humanoid',         size: 'medium' },
+  'cave-troll':      { family: 'humanoid',         size: 'large' },
+  'cavern-troll':    { family: 'humanoid',         size: 'large' },
+  'cave-gargoyle':   { family: 'construct-rubble', size: 'medium' },
+  'crystal-gargoyle':{ family: 'construct-rubble', size: 'medium' },
 
   // ── Jungle ───────────────────────────────────────────────────────────────
   'jungle-ape':       { family: 'beast', size: 'medium' },
@@ -83,8 +99,11 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'silverback':       { family: 'beast', size: 'large' },
   'hunting-panther':  { family: 'beast', size: 'large' },
   'apex-silverback':  { family: 'beast', size: 'large' },
-  // jungle-snake/emerald-constrictor (snakes) and jungle-blowdarter/
-  // canopy-harrier/thornback-lizard (chameleons) are reptiles — unmapped.
+  'jungle-snake':        { family: 'serpent',        size: 'small' },
+  'emerald-constrictor': { family: 'serpent',        size: 'medium' },
+  'jungle-blowdarter':   { family: 'reptile-lizard', size: 'small' },   // display "Vine Chameleon"
+  'canopy-harrier':      { family: 'reptile-lizard', size: 'medium' },  // display "Canopy Chameleon"
+  'thornback-lizard':    { family: 'reptile-lizard', size: 'medium' },  // display "Thornback Chameleon"
 
   // ── Desert ───────────────────────────────────────────────────────────────
   'sand-scorpion':      { family: 'arthropod', size: 'medium' },
@@ -93,8 +112,10 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'sandweaver':         { family: 'arthropod', size: 'small' },  // display "Gilded Scarab"
   'dune-tyrant':        { family: 'arthropod', size: 'large' },  // sprite is a giant scorpion, not a brute
   'sandspitter-cobra':  { family: 'arthropod', size: 'small' },  // display "Sunshield Scarab", sprite is a beetle
-  // stone-basilisk/desert-basilisk/dune-basilisk and sand-viper are reptiles
-  // (basilisks/a literal cobra) — unmapped.
+  'stone-basilisk':  { family: 'reptile-lizard', size: 'medium' },
+  'desert-basilisk': { family: 'reptile-lizard', size: 'medium' },
+  'dune-basilisk':   { family: 'reptile-lizard', size: 'large' },
+  'sand-viper':      { family: 'serpent',        size: 'medium' },
 
   // ── Tundra ───────────────────────────────────────────────────────────────
   'frost-lurker':        { family: 'beast',       size: 'medium' },  // tundra wolverine
@@ -102,19 +123,37 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'rime-tusk-mastodon':  { family: 'large-beast', size: 'large' },
   'glacial-direbear':    { family: 'beast',       size: 'large' },
   'permafrost-behemoth': { family: 'large-beast', size: 'large' },  // musk ox
-  // rime-caster/hoarfrost-yeti (ape-shaped spellcasters, not plain beasts)
-  // are unmapped.
+  // Ape-shaped spellcasters — closer to a bipedal humanoid than a plain beast.
+  'rime-caster':     { family: 'humanoid', size: 'medium' },
+  'hoarfrost-yeti':  { family: 'humanoid', size: 'large' },
 
   // ── Volcano ──────────────────────────────────────────────────────────────
   'cinder-hound':        { family: 'beast', size: 'medium' },
   'infernal-direhound':  { family: 'beast', size: 'large' },
-  // Everything else here (skinks, salamanders, the magma/obsidian tortoises)
-  // is reptile/amphibian — unmapped.
+  'ember-scuttler':        { family: 'reptile-lizard',  size: 'small' },   // young fire skink
+  'ember-skink':           { family: 'reptile-lizard',  size: 'medium' },
+  'ash-slinger':           { family: 'amphibian',       size: 'medium' },  // display "Ash Salamander"
+  'ashspitter-salamander': { family: 'amphibian',       size: 'medium' },
+  'magma-salamander':      { family: 'amphibian',       size: 'large' },
+  'magma-brute':           { family: 'shelled-carapace', size: 'medium' }, // display "Magma Tortoise"
+  'obsidian-tortoise':     { family: 'shelled-carapace', size: 'large' },
 
   // ── Trench ───────────────────────────────────────────────────────────────
   'hadal-stalker': { family: 'arthropod', size: 'large' },  // sprite is a giant spider crab
-  // abyssal-serpent (a serpent) and elder-leviathan (a colossal anglerfish)
-  // are unmapped.
+  'abyssal-serpent':  { family: 'serpent',      size: 'large' },
+  'elder-leviathan':  { family: 'aquatic-fish', size: 'large' },  // colossal anglerfish
+
+  // ── Swamp ────────────────────────────────────────────────────────────────
+  // Previously ZERO coverage (the whole roster is reptile/amphibian/witch/
+  // ooze) — the wave-2 families fill it in almost completely.
+  'bog-slime':       { family: 'ooze-residue',     size: 'small' },   // display "Mire Ooze"
+  'mud-toad':        { family: 'amphibian',        size: 'small' },
+  'swamp-hydra':     { family: 'shelled-carapace', size: 'medium' },  // display "Moss-Shell Snapper"
+  'plague-hydra':    { family: 'shelled-carapace', size: 'large' },   // display "Plague-Shell Snapper"
+  'bog-witch':       { family: 'humanoid',         size: 'medium' },
+  'mire-hex-spitter':{ family: 'humanoid',         size: 'medium' },  // display "Mire Hexer"
+  'mire-stalker':    { family: 'serpent',          size: 'small' },
+  'bog-lurker':      { family: 'reptile-lizard',   size: 'medium' },  // swamp crocodile
 
   // ── Wasteland / Graveyard ───────────────────────────────────────────────
   // Its sprite (art/src/sprites/monsters/bone-crawler.png) is a skeletal
@@ -146,6 +185,14 @@ const FAMILY_VARIANT_COUNT: Record<CorpseFamily, number> = {
   'large-beast': 2,
   avian: 1,
   'small-beast': 1,
+  'reptile-lizard': 1,
+  serpent: 2,
+  humanoid: 4,
+  'shelled-carapace': 2,
+  amphibian: 3,
+  'construct-rubble': 4,
+  'ooze-residue': 3,
+  'aquatic-fish': 3,
 };
 
 function remainsFileName(family: CorpseFamily, variant: number): string {

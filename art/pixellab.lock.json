@@ -27939,6 +27939,446 @@
       "candidateFiles": [
         "candidate-5.png"
       ]
+    },
+    {
+      "at": "2026-09-06T22:19:41.527Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "reptile-lizard-remains",
+      "requestHash": "8169a3099d4a3af39585e52d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:19:59.558Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "reptile-lizard-remains",
+      "requestHash": "8169a3099d4a3af39585e52d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:20:17.099Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "reptile-lizard-remains",
+      "requestHash": "8169a3099d4a3af39585e52d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:20:34.061Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "reptile-lizard-remains",
+      "requestHash": "8169a3099d4a3af39585e52d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:20:59.727Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "reptile-lizard-remains",
+      "requestHash": "8169a3099d4a3af39585e52d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:21:17.236Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "serpent-remains",
+      "requestHash": "553514d60235191f0a82aa91",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:21:32.952Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "serpent-remains",
+      "requestHash": "553514d60235191f0a82aa91",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:21:46.997Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "serpent-remains",
+      "requestHash": "553514d60235191f0a82aa91",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:22:13.531Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "serpent-remains",
+      "requestHash": "553514d60235191f0a82aa91",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:22:32.303Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "serpent-remains",
+      "requestHash": "553514d60235191f0a82aa91",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:22:53.285Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "humanoid-remains",
+      "requestHash": "103b2babb5feb02ca6179871",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:23:10.213Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "humanoid-remains",
+      "requestHash": "103b2babb5feb02ca6179871",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:23:35.643Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "humanoid-remains",
+      "requestHash": "103b2babb5feb02ca6179871",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:23:57.524Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "humanoid-remains",
+      "requestHash": "103b2babb5feb02ca6179871",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:24:15.249Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "humanoid-remains",
+      "requestHash": "103b2babb5feb02ca6179871",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:24:29.169Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "shelled-carapace-remains",
+      "requestHash": "10ed1b99f069777a8eef2f65",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:25:01.938Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "shelled-carapace-remains",
+      "requestHash": "10ed1b99f069777a8eef2f65",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:25:24.496Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "shelled-carapace-remains",
+      "requestHash": "10ed1b99f069777a8eef2f65",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:25:40.125Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "shelled-carapace-remains",
+      "requestHash": "10ed1b99f069777a8eef2f65",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:26:05.627Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "shelled-carapace-remains",
+      "requestHash": "10ed1b99f069777a8eef2f65",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:26:19.123Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "amphibian-remains",
+      "requestHash": "40bad561f88ea8c9e8c5e14d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:26:38.075Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "amphibian-remains",
+      "requestHash": "40bad561f88ea8c9e8c5e14d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:27:04.049Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "amphibian-remains",
+      "requestHash": "40bad561f88ea8c9e8c5e14d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:27:21.850Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "amphibian-remains",
+      "requestHash": "40bad561f88ea8c9e8c5e14d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:27:42.765Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "amphibian-remains",
+      "requestHash": "40bad561f88ea8c9e8c5e14d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:27:56.313Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "construct-rubble-remains",
+      "requestHash": "bc2bee287df7df53c2173ebb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:28:13.777Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "construct-rubble-remains",
+      "requestHash": "bc2bee287df7df53c2173ebb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:28:27.399Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "construct-rubble-remains",
+      "requestHash": "bc2bee287df7df53c2173ebb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:28:52.593Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "construct-rubble-remains",
+      "requestHash": "bc2bee287df7df53c2173ebb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:29:12.187Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "construct-rubble-remains",
+      "requestHash": "bc2bee287df7df53c2173ebb",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:29:34.296Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "ooze-residue-remains",
+      "requestHash": "bcc6cecf9fc6c11cb4b9278e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:29:49.549Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "ooze-residue-remains",
+      "requestHash": "bcc6cecf9fc6c11cb4b9278e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:30:26.135Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "ooze-residue-remains",
+      "requestHash": "bcc6cecf9fc6c11cb4b9278e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:30:44.159Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "ooze-residue-remains",
+      "requestHash": "bcc6cecf9fc6c11cb4b9278e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:31:01.181Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "ooze-residue-remains",
+      "requestHash": "bcc6cecf9fc6c11cb4b9278e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:31:22.863Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "aquatic-fish-remains",
+      "requestHash": "4099928e42713be8ecbcf419",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:31:37.296Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "aquatic-fish-remains",
+      "requestHash": "4099928e42713be8ecbcf419",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:31:54.331Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "aquatic-fish-remains",
+      "requestHash": "4099928e42713be8ecbcf419",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:32:12.386Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "aquatic-fish-remains",
+      "requestHash": "4099928e42713be8ecbcf419",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-06T22:32:35.072Z",
+      "endpoint": "pixflux",
+      "category": "corpses",
+      "assetId": "aquatic-fish-remains",
+      "requestHash": "4099928e42713be8ecbcf419",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
     }
   ]
 }

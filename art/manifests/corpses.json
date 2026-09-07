@@ -94,6 +94,150 @@
         "detail": "highly detailed",
         "view": "high top-down"
       }
+    },
+    {
+      "id": "reptile-lizard-remains",
+      "out": "files/corpses/reptile-lizard-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact collapsed pile of small reptile-lizard remains, an elongated lizard skull and narrow jaw, a short segmented spine with a compact rib section, and four small separated limb bones with splayed toes, low sprawled lizard body plan broken into a few readable pieces, no intact torso, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, dirty ivory bone, pale dusty grey, charcoal recesses, muted ash-brown and bruised grey-violet shadows, lightly soot-stained, low gore",
+      "negative": "intact lizard, living reptile, full intact body, dead animal pose, posed corpse, standing skeleton, legless snake, coiled serpent, amphibian, frog, toad, mammal skull, mammal ribcage, giant dinosaur, humanoid, human skull, human skeleton, character, face, flesh, skin, fur, feathers, blood, gore, meat, tissue, splatter, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, boss, huge, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Corpse-remains wave 2, 2026-09-07. Reptile/lizard family for skinks, chameleons, and basilisks; keep the four-limbed lizard body plan distinct from serpents and amphibians.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "serpent-remains",
+      "out": "files/corpses/serpent-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact broken chain of legless serpent remains, a long curved spine with several broken rib arcs, a small snake skull and jaw at one end, and a few separated vertebra segments, elongated but tightly contained as a low floor-object silhouette, clearly serpentine and legless, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, dirty ivory bone, pale dusty grey, charcoal recesses, muted ash-brown and bruised grey-violet shadows, lightly soot-stained, low gore",
+      "negative": "intact snake, living serpent, coiled living body, limbs, legs, paws, quadruped, lizard, skink, turtle shell, tortoise, amphibian, mammal skeleton, bird skeleton, wings, humanoid, human skull, human skeleton, character, face, flesh, skin, fur, feathers, blood, gore, meat, tissue, splatter, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, dragon, giant wyrm, boss, huge, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Corpse-remains wave 2, 2026-09-07. Serpent family for snakes and constrictors; long broken spine/rib chain, no limbs, and no oversized dragon-like scene.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "humanoid-remains",
+      "out": "files/corpses/humanoid-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact collapsed humanoid skeleton remains pile, a tilted generic skull, a broken ribcage and short spine fragments, separated upper and lower limb bones, limbs crossed or scattered in a low heap rather than an intact body, reusable bipedal remains with no clothing or weapon, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, dirty ivory bone, pale dusty grey, charcoal recesses, muted ash-brown and bruised grey-violet shadows, lightly soot-stained, low gore",
+      "negative": "living person, intact humanoid, full intact body, dead character pose, posed corpse, standing skeleton, walking skeleton, zombie, armor, clothing, robe, weapon, shield, human portrait, human face, eyes, mouth, elegant complete skeleton, animal skull, quadruped, beast, bird, insect, character, flesh, skin, fur, feathers, blood, gore, meat, tissue, splatter, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, boss, huge, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Corpse-remains wave 2, 2026-09-07. Generic humanoid family for witches, casters, archers, trolls, and yeti-like bipeds; keep it collapsed and reusable rather than species-specific.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "shelled-carapace-remains",
+      "out": "files/corpses/shelled-carapace-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact collapsed pile of shelled creature remains, a cracked turtle or tortoise-like carapace dome split into a few large plates, pale internal ribs and limb bones visible beneath and inside the broken shell, heavy low silhouette with a clear shell read, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, dirty ivory bone, dusty grey shell, charcoal cracks, muted ash-brown and bruised grey-violet shadows, lightly soot-stained, low gore",
+      "negative": "intact turtle, living tortoise, live shellback, intact animal, insect, beetle, spider, segmented arthropod legs, serpent, snake, mammal ribcage without shell, humanoid, human skull, human skeleton, character, face, flesh, skin, fur, feathers, blood, gore, meat, tissue, splatter, giant shell, architectural dome, building, ruin, platform, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, boss, huge scene, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Corpse-remains wave 2, 2026-09-07. Classification check: swamp-hydra and plague-hydra use Moss/Plague-Shell Snapper sprites, while magma-brute and obsidian-tortoise are literal tortoise silhouettes; one shelled family is appropriate.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "amphibian-remains",
+      "out": "files/corpses/amphibian-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact collapsed pile of amphibian remains, a squat broad frog or toad-like skull and jaw, a short compact spine and rib structure, thick bent limb bones with splayed toes, low flattened amphibian body plan broken into a few readable pieces, clearly distinct from a lizard, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, dirty ivory bone, pale dusty grey, charcoal recesses, muted ash-brown and bruised grey-violet shadows, lightly soot-stained, low gore",
+      "negative": "intact frog, living toad, intact salamander, living amphibian, reptile, lizard, skink, snake, serpent, turtle shell, tortoise, mammal, bird, insect, slime, goo, humanoid, human skull, human skeleton, character, face, flesh, skin, fur, feathers, blood, gore, meat, tissue, splatter, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, long elegant body, boss, huge, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Corpse-remains wave 2, 2026-09-07. Amphibian family for toads and salamanders; squat broad head and thick splayed limbs should separate it from lizards.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "construct-rubble-remains",
+      "out": "files/corpses/construct-rubble-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact pile of destroyed living-stone construct remains, irregular cracked stone chunks with a broken carved face fragment and one blunt hand or arm shard, a collapsed asymmetrical rubble heap that reads as a destroyed golem or gargoyle, low and object-like with no building around it, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, weathered ash-grey stone, charcoal cracks, muted slate-violet shadows, small warm-grey chips, dusty and old, low gore",
+      "negative": "bones, skull, skeleton, flesh, skin, fur, feathers, blood, gore, meat, tissue, animal, humanoid corpse, living golem, standing construct, intact statue, robot, metal machine, weapon, building, wall, tower, temple, ruins, architecture, monument, pedestal, platform, clean symmetrical pile, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, boss, huge scene, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Corpse-remains wave 2, 2026-09-07. Construct family for golems, gargoyles, titans, and living stone; rubble and cracked fragments only, not bones or architecture.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "ooze-residue-remains",
+      "out": "files/corpses/ooze-residue-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact patch of dried ooze residue, an irregular low sludge smear with a few separated translucent gel clumps and a faint dissolved core fragment, broken edge and contained residue flecks within the footprint, clearly the remains left after a slime died rather than a live blob, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, muted sickly grey-green and dusty olive residue, charcoal-violet shadow, dull translucent highlights, old and dried, low gore",
+      "negative": "intact slime, living blob, cute slime, smiling blob, full rounded creature, bones, skull, skeleton, flesh, skin, blood, gore, meat, tissue, gooey monster pose, water pool, wave, splash, reflective liquid, puddle filling the canvas, bubbles, shell, stone rubble, humanoid, animal, character, face, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, boss, huge, neon green, bright green, saturated green, front view, facing camera, cartoon, chibi, cute mascot, blurry, 3d render, photograph, hard black outline, text, watermark, oversaturated",
+      "status": "accepted",
+      "notes": "Corpse-remains wave 2, 2026-09-07. Ooze family for slimes and amorphous blobs; keep the residue compact, dry, and distinct from bone or water.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "aquatic-fish-remains",
+      "out": "files/corpses/aquatic-fish-remains.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "one compact pile of fish-like aquatic remains, a clear fish skull with a pointed jaw, short curved ribs and spine, a few separated fin rays and vertebrae, a small carcass-like silhouette with the head and rib structure readable, slightly broader than a tiny fishbone icon but still a compact floor object, centered with transparent padding, isolated high top-down game prop, painterly pixel art, soft volumetric shading, minimal outline, dirty ivory bone, pale dusty grey, charcoal recesses, muted blue-grey and bruised grey-violet shadows, lightly soot-stained, low gore",
+      "negative": "intact fish, living fish, full aquatic creature, mammal, quadruped, reptile, lizard, snake, serpent, bird, shell, turtle, tortoise, whale-sized, colossal leviathan, boss, underwater scene, water, bubbles, coral, seaweed, blood, gore, meat, tissue, flesh, skin, scales covering an intact body, fins spread theatrically, humanoid, human skull, human skeleton, character, face, ground rectangle, soil patch, dirt patch, ash mound, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, scenery, environment, graveyard scene, tombstones, coffin, unrelated props, clutter, huge scene, front view, facing camera, cartoon, chibi, cute, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark, bright white, neon, oversaturated",
+      "status": "accepted",
+      "notes": "Corpse-remains wave 2, 2026-09-07. Aquatic/fish family for fish-like and leviathan-like monsters; keep it generic, compact, and clearly fish-derived rather than serpentine.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
     }
   ]
 }

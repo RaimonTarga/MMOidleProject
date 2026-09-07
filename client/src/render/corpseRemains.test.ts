@@ -34,6 +34,17 @@ const expectedPresentation: Record<string, { family: string; size: string }> = {
   "granite-mammoth": { family: "large-beast", size: "large" }, // literal mammoth despite "granite"
   "sandspitter-cobra": { family: "arthropod", size: "small" }, // display "Sunshield Scarab", sprite is a beetle
   "hadal-stalker": { family: "arthropod", size: "large" }, // sprite is a giant spider crab
+
+  // Wave 2 (reptile/serpent/humanoid/shelled/amphibian/construct/ooze/fish),
+  // added once Swamp turned out to have zero coverage under wave 1 alone.
+  "sand-viper": { family: "serpent", size: "medium" }, // scorpion-lineage role, but the sprite is a literal cobra
+  "cave-troll": { family: "humanoid", size: "large" },
+  "granite-titan": { family: "construct-rubble", size: "medium" },
+  "bog-slime": { family: "ooze-residue", size: "small" }, // display "Mire Ooze"
+  "elder-leviathan": { family: "aquatic-fish", size: "large" }, // colossal anglerfish
+
+  // Not clearly plant or reptile — generic beast skeleton per user call.
+  "canopy-sprite": { family: "beast", size: "medium" }, // display "Thorn Spitter"
 };
 
 for (const [monsterTypeId, expected] of Object.entries(expectedPresentation)) {
@@ -60,11 +71,21 @@ assert(
 assert(ratRemains!.sizePx === CORPSE_SIZE_PX.small, "Bone Rat should use the 'small' size class");
 assert(wrightRemains!.sizePx === CORPSE_SIZE_PX.large, "Gravewright should use the 'large' size class");
 
+// Same size contrast within a wave-2 family: Mud Toad (small amphibian) vs
+// Magma Salamander (large amphibian) must share a family but differ in size.
+const toadRemains = resolveCorpseRemains("mud-toad", "corpse-3");
+const salamanderRemains = resolveCorpseRemains("magma-salamander", "corpse-4");
+assert(toadRemains !== null && salamanderRemains !== null, "both should resolve remains art");
+assert(
+  toadRemains!.sizePx < salamanderRemains!.sizePx,
+  "Mud Toad remains must be smaller than Magma Salamander remains",
+);
+
 // Unsupported / deferred monster types safely fall back to `null` rather than
 // throwing or guessing — deferred (charnel-brute), a boss (void-overlord), a
-// reptile with no matching family (sand-viper, a literal cobra despite its
-// "scorpion-lineage" role), a humanoid construct (cave-troll), and an empty id.
-for (const unmapped of ["charnel-brute", "sand-viper", "cave-troll", "void-overlord", ""]) {
+// T0 tutorial ethereal with no corpse at all by design (tiny-slime, the Tiny
+// Wisp), and an empty id.
+for (const unmapped of ["charnel-brute", "tiny-slime", "void-overlord", ""]) {
   assert(
     resolveCorpsePresentation(unmapped) === null,
     `${unmapped || "(empty id)"} should have no configured presentation`,
@@ -96,10 +117,10 @@ assert(
   `expected both beast variants to appear across a spread of corpse ids, saw: ${[...seenBeastKeys].join(", ")}`,
 );
 
-// All 8 approved assets are registered exactly once, with unique keys and a
-// served path under /assets/corpses/ (actual on-disk presence is checked
-// separately — see the validation pass in the corpse-remains summary).
-assert(CORPSE_REMAINS_ART.length === 8, `expected 8 remains art entries, got ${CORPSE_REMAINS_ART.length}`);
+// All 30 approved assets (8 wave-1 + 22 wave-2) are registered exactly once,
+// with unique keys and a served path under /assets/corpses/ (actual on-disk
+// presence is checked separately — see the validation pass in the summary).
+assert(CORPSE_REMAINS_ART.length === 30, `expected 30 remains art entries, got ${CORPSE_REMAINS_ART.length}`);
 const seenKeys = new Set<string>();
 for (const art of CORPSE_REMAINS_ART) {
   assert(!seenKeys.has(art.key), `duplicate remains texture key: ${art.key}`);
