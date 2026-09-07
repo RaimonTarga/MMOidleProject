@@ -181,11 +181,10 @@ function opportunisticUpgrades(worn: readonly string[], group: T2BiomeGroup): Ro
  * telemetry states the loadout it ran under, so a reader of the artifact never
  * has to reconstruct it by scanning backwards.
  */
-function farmLoadoutSteps(group: T2BiomeGroup): RouteStep[] {
+function farmAbilityKitSteps(group: T2BiomeGroup): RouteStep[] {
   const shape = BIOME_ENCOUNTER_SHAPE[group];
   const stance = farmStanceFor(group);
-  const core = farmCoreFor(group);
-  const steps: RouteStep[] = [
+  return [
     {
       type: "setAbilities",
       techniques: [techniqueFor(shape)],
@@ -198,8 +197,23 @@ function farmLoadoutSteps(group: T2BiomeGroup): RouteStep[] {
       label: stance ? `${shape} stance: ${stance}` : `no stance owned yet for the ${group} leg`,
     },
   ];
-  if (core) steps.push({ type: "equip", definitionIds: [core], label: `farm core: ${core}` });
-  return steps;
+}
+
+/**
+ * Equip this leg's farm core.
+ *
+ * Separated from `farmAbilityKitSteps` because on the exact leg that CRAFTS
+ * this core (Cave for core-tempered, Desert for core-force -- see
+ * `farmCoreFor`/`CORE_CRAFT_LEG`), the core is not ownable yet until
+ * `buildCoreAcquisitionSteps` has run, so this step must come after it; the
+ * ability/stance kit has no such dependency and must come before it (see
+ * `buildCoreAcquisitionSteps`'s own doc comment). Every other leg simply
+ * re-equips a core it already owns from an earlier leg, so this ordering
+ * costs nothing there.
+ */
+function farmCoreEquipSteps(group: T2BiomeGroup): RouteStep[] {
+  const core = farmCoreFor(group);
+  return core ? [{ type: "equip", definitionIds: [core], label: `farm core: ${core}` }] : [];
 }
 
 /**
@@ -227,8 +241,46 @@ function bossLoadoutSteps(group: T2BiomeGroup): RouteStep[] {
   return steps;
 }
 
-/** Craft the cores and stances whose craft leg is this one. */
-function buildAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
+/**
+ * Craft the stance whose craft leg is this one.
+ *
+ * Stance crafting never requires combat farming to unlock (unlike a core's
+ * `recipeUnlocked` gate below), so it is safe to run before `farmLoadoutSteps`
+ * sets this leg's ability kit -- there is nothing here that would be fought
+ * under the wrong kit.
+ */
+function buildStanceAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
+  const steps: RouteStep[] = [];
+  for (const [stanceId, craftLeg] of [
+    [OFFENSIVE_STANCE, OFFENSIVE_STANCE_LEG],
+    [DEFENSIVE_STANCE, DEFENSIVE_STANCE_LEG],
+  ] as const) {
+    if (craftLeg !== group) continue;
+    const recipeId = STANCE_RECIPES[stanceId];
+    steps.push({
+      type: "craftStance",
+      recipeId,
+      farmAt: t2FarmFor(group, soleCatalystFamily(STANCE_RECIPE_DATABASE.get(recipeId)?.catalystCost)),
+      label: `learn ${stanceId}`,
+    });
+  }
+  return steps;
+}
+
+/**
+ * Craft the core whose craft leg is this one.
+ *
+ * Unlike a stance, a core's `recipeUnlocked` gate is farmed for in real
+ * combat at this biome (`farm ... until recipeUnlocked`), so it MUST run
+ * after `farmLoadoutSteps` has already set this leg's own ability/stance kit
+ * -- otherwise that farm is fought under the previous leg's leftover kit,
+ * which is silent everywhere except Jungle (the one crowd biome that also
+ * gates a core), where it meant every class ground out its Jungle
+ * level-0-to-6 climb under Swamp/Mountain/Cave's single-target
+ * expose-weakness instead of Jungle's own sweep. See
+ * docs/briefs/t2-overnight-experiment-2026-09-07.md Finding A.
+ */
+function buildCoreAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
   const steps: RouteStep[] = [];
   for (const [coreId, leg] of Object.entries(CORE_CRAFT_LEG)) {
     if (leg !== group) continue;
@@ -246,19 +298,6 @@ function buildAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
         farmAt: t2FarmFor(group, soleCatalystFamily(recipe.catalystCost)),
       },
     );
-  }
-  for (const [stanceId, craftLeg] of [
-    [OFFENSIVE_STANCE, OFFENSIVE_STANCE_LEG],
-    [DEFENSIVE_STANCE, DEFENSIVE_STANCE_LEG],
-  ] as const) {
-    if (craftLeg !== group) continue;
-    const recipeId = STANCE_RECIPES[stanceId];
-    steps.push({
-      type: "craftStance",
-      recipeId,
-      farmAt: t2FarmFor(group, soleCatalystFamily(STANCE_RECIPE_DATABASE.get(recipeId)?.catalystCost)),
-      label: `learn ${stanceId}`,
-    });
   }
   return steps;
 }
@@ -319,11 +358,21 @@ export function makeT2Route(config: T2RouteConfig): Route {
     // Brackets the leg for the per-biome response map: dwell time for `group` is
     // the span between this milestone and `${group}-t2-leg-complete`.
     steps.push({ type: "milestone", id: `${group}-t2-entered` });
-    // Cores and stances first: the fixed route policy acquires them at their
-    // designated legs, and crafting them before the gear farm means the leg is
-    // fought in the kit the leg is supposed to be measuring.
-    steps.push(...buildAcquisitionSteps(group));
-    steps.push(...farmLoadoutSteps(group));
+    // Order matters here and each step earns its place:
+    // 1. Stances never require combat farming to unlock, so crafting them
+    //    first is free.
+    // 2. This leg's own ability/stance kit must be set BEFORE the core-gate
+    //    farm below, because that farm IS fought in combat -- setting the
+    //    kit after it would fight this leg's unlock grind in the previous
+    //    leg's stale kit (Finding A).
+    // 3. The core craft's `recipeUnlocked` gate needs that correct kit, so it
+    //    runs after step 2.
+    // 4. Only THEN can this leg's farm core be equipped, because on the leg
+    //    that crafts it (Cave/Desert), it does not exist until step 3 ran.
+    steps.push(...buildStanceAcquisitionSteps(group));
+    steps.push(...farmAbilityKitSteps(group));
+    steps.push(...buildCoreAcquisitionSteps(group));
+    steps.push(...farmCoreEquipSteps(group));
     const adopted: string[] = [];
     steps.push(...biomeLegSteps(plan, group, profile, adopted));
     for (const id of adopted) if (!worn.includes(id)) worn.push(id);

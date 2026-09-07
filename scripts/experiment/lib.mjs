@@ -170,6 +170,7 @@ export function normalizeCreateOptions(args) {
   const rewardMultiplier = Number(args.rewardMultiplier ?? "1");
   const mode = args.mode ?? "canonical-isolated";
   const completionMode = args.completion ?? "full-gauntlet";
+  const entryEconomy = args.entryEconomy ?? "clean";
 
   if (!Number.isInteger(count) || count < 1) throw new Error("--count must be a positive integer");
   if (!Number.isInteger(workerConcurrency) || workerConcurrency < 1 || workerConcurrency > 4) {
@@ -184,6 +185,9 @@ export function normalizeCreateOptions(args) {
   }
   if (completionMode !== "full-gauntlet" && completionMode !== "next-tier") {
     throw new Error("--completion must be full-gauntlet or next-tier");
+  }
+  if (entryEconomy !== "clean" && entryEconomy !== "natural" && entryEconomy !== "catalyst-primed") {
+    throw new Error("--entryEconomy must be clean, natural, or catalyst-primed");
   }
   if (mode === "canonical-isolated") {
     if (rewardMultiplier !== 1) throw new Error("canonical-isolated requires --rewardMultiplier=1");
@@ -206,6 +210,7 @@ export function normalizeCreateOptions(args) {
     rewardMultiplier,
     mode,
     completionMode,
+    entryEconomy,
     fastBossRetry: args.fastBossRetry === "true",
     tierEntrySnapshot: args.tierEntrySnapshot,
     tierEntrySnapshotDir: args.tierEntrySnapshotDir,

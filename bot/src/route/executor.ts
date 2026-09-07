@@ -300,7 +300,7 @@ export class RouteExecutor {
       case "equip":
         return this.doEquip(step.definitionIds);
       case "unequip":
-        return this.doUnequip(step.slot);
+        return this.doUnequip(step.slot, step.expectedDefinitionId);
       case "upgrade":
         return this.doUpgrade(step);
       case "configureRunes":
@@ -929,10 +929,26 @@ export class RouteExecutor {
     }
   }
 
-  private async doUnequip(slot: EquipmentSlot): Promise<void> {
+  private async doUnequip(slot: EquipmentSlot, expectedDefinitionId?: string): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     const definitionId = obs.self?.equipment[slot] ?? null;
     if (!definitionId) return;
+
+    // The plan was resolved against a static snapshot at route-build time; if
+    // a different item has since been equipped into this slot (e.g. a later
+    // leg's weapon arrived before this leg's own evolve-after-unequip step
+    // ran), evicting it unconditionally would strip the wrong, currently
+    // correct item and can leave the class disarmed for the rest of the run.
+    // Skip rather than guess. See t2Acquisition.ts's `evolve-after-unequip`.
+    if (expectedDefinitionId && definitionId !== expectedDefinitionId) {
+      recorder.emit({
+        kind: "build-change",
+        atMs: recorder.now(),
+        system: "unequip-mismatch",
+        detail: { slot, expectedDefinitionId, actualDefinitionId: definitionId },
+      });
+      return;
+    }
 
     await this.emitUntil(
       () => intents.unequip(slot),
@@ -2323,7 +2339,9 @@ function defaultLabel(step: RouteStep): string {
     case "setDefaultStance":
       return `set default stance ${step.stanceId ?? NO_STANCE_ID}`;
     case "unequip":
-      return `unequip ${step.slot}`;
+      return step.expectedDefinitionId
+        ? `unequip ${step.slot} (expecting ${step.expectedDefinitionId})`
+        : `unequip ${step.slot}`;
     case "equip":
       return `equip ${step.definitionIds.join(", ")}`;
     case "upgrade":

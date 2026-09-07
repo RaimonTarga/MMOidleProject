@@ -177,6 +177,9 @@ function botArguments() {
     `--completion=${config.completionMode}`,
   ];
   if (config.rewardMultiplier !== 1) args.push(`--rewardMultiplier=${config.rewardMultiplier}`);
+  if (config.entryEconomy && config.entryEconomy !== "clean") {
+    args.push(`--entryEconomy=${config.entryEconomy}`);
+  }
   if (config.fastBossRetry) args.push("--fastBossRetry=true");
   if (config.tierEntrySnapshotPath) {
     args.push(`--tierEntrySnapshot=${config.tierEntrySnapshotPath}`);

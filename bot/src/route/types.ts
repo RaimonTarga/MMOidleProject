@@ -66,7 +66,20 @@ export type StepBody =
    * exactly what a player does at the forge, and exactly the step a route needs
    * in order to reach the cheap evolve path instead of paying reconstruction.
    */
-  | { type: "unequip"; slot: EquipmentSlot }
+  | {
+      type: "unequip";
+      slot: EquipmentSlot;
+      /**
+       * The item this step was planned against. `t2Acquisition.ts` resolves
+       * `unequipSlot` once, at route-build time, from a static profile
+       * snapshot; if the slot goes on to hold a DIFFERENT item by the time
+       * this step actually runs (e.g. a later leg equipped a new weapon into
+       * the same slot before this step's own leg arrived), evicting
+       * unconditionally would strip the wrong, currently-correct item. When
+       * set, the executor skips the unequip instead of evicting a mismatch.
+       */
+      expectedDefinitionId?: string;
+    }
   /**
    * Take one item to `toPlus`, farming `farmAt` for the essence it needs.
    *

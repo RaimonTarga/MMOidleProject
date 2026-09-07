@@ -65,6 +65,10 @@ Create options:
   --maxRunMs=N
   --rewardMultiplier=N       canonical mode requires 1
   --completion=full-gauntlet|next-tier
+  --entryEconomy=clean|natural|catalyst-primed   defaults to clean; only used
+                                                  when a route declares
+                                                  startsFromTierEntry and no
+                                                  --tierEntrySnapshot(Dir) is given
   --tierEntrySnapshot=<file> or --tierEntrySnapshotDir=<dir>
   --root=<artifact-root>     defaults outside the Git checkout
 `);
@@ -178,6 +182,7 @@ async function createExperiment() {
         maxRunMs: config.maxRunMs,
         rewardMultiplier: config.rewardMultiplier,
         completionMode: config.completionMode,
+        entryEconomy: config.entryEconomy,
         fastBossRetry: config.fastBossRetry,
         routes: config.routes,
         policies: config.policies,

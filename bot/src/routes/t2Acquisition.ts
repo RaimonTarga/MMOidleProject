@@ -158,6 +158,14 @@ export function obtainSteps(group: T2BiomeGroup, plan: AcquisitionPlan): RouteSt
         {
           type: "unequip",
           slot: plan.unequipSlot!,
+          // Guards against a later leg having already re-equipped a different
+          // weapon into this slot by the time this step runs (the plan was
+          // resolved once, at route-build time, from a static snapshot). If
+          // so, the predecessor is presumably already sitting in the bag from
+          // that earlier swap, and the evolve step below can consume it
+          // directly -- so skipping this unequip rather than evicting the
+          // wrong item is the correct behavior, not a fallback.
+          expectedDefinitionId: plan.predecessorId,
           label: `unequip ${plan.predecessorId} so the evolve path can consume it`,
         },
         {
