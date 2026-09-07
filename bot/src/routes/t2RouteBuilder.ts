@@ -121,17 +121,6 @@ function biomeLegSteps(
     steps.push(...obtainSteps(group, planAcquisition(profile, recipeId)));
   }
 
-  if (biomePlan.learn) {
-    steps.push({
-      type: "learnAbility",
-      recipeId: biomePlan.learn.recipeId,
-      abilityId: biomePlan.learn.abilityId,
-      slot: biomePlan.learn.slot,
-      farmAt: t2(group),
-      label: `learn ${biomePlan.learn.abilityId} (replaces the single ${biomePlan.learn.slot} slot)`,
-    });
-  }
-
   // A skip is authored as a telemetry milestone rather than as nothing at all.
   // "0/18 adoption" and "nobody could afford it" are different findings, and
   // only a recorded intent can tell them apart.
@@ -140,6 +129,21 @@ function biomeLegSteps(
   }
 
   return steps;
+}
+
+function learnAbilitySteps(group: T2BiomeGroup, plan: T2ClassPlan): RouteStep[] {
+  const learn = plan.biomes[group]?.learn;
+  if (!learn) return [];
+  return [
+    {
+      type: "learnAbility",
+      recipeId: learn.recipeId,
+      abilityId: learn.abilityId,
+      slot: learn.slot,
+      farmAt: t2(group),
+      label: `learn ${learn.abilityId} (replaces the single ${learn.slot} slot)`,
+    },
+  ];
 }
 
 /**
@@ -181,15 +185,25 @@ function opportunisticUpgrades(worn: readonly string[], group: T2BiomeGroup): Ro
  * telemetry states the loadout it ran under, so a reader of the artifact never
  * has to reconstruct it by scanning backwards.
  */
-function farmAbilityKitSteps(group: T2BiomeGroup): RouteStep[] {
+function farmAbilityKitSteps(
+  group: T2BiomeGroup,
+  plan: T2ClassPlan,
+  useOverrides = true,
+): RouteStep[] {
   const shape = BIOME_ENCOUNTER_SHAPE[group];
-  const stance = farmStanceFor(group);
+  const technique = useOverrides
+    ? plan.techniqueOverrides?.[group] ?? techniqueFor(shape)
+    : techniqueFor(shape);
+  const guard = useOverrides ? plan.guardOverrides?.[group] ?? guardFor(group) : guardFor(group);
+  const stance = useOverrides && Object.prototype.hasOwnProperty.call(plan.stanceOverrides ?? {}, group)
+    ? plan.stanceOverrides?.[group] ?? null
+    : farmStanceFor(group);
   return [
     {
       type: "setAbilities",
-      techniques: [techniqueFor(shape)],
-      guards: [guardFor(group)],
-      label: `${group} farm kit: ${shape} (${techniqueFor(shape)} / ${guardFor(group)})`,
+      techniques: [technique],
+      guards: [guard],
+      label: `${group} farm kit: ${shape} (${technique} / ${guard})`,
     },
     {
       type: "setDefaultStance",
@@ -211,8 +225,10 @@ function farmAbilityKitSteps(group: T2BiomeGroup): RouteStep[] {
  * re-equips a core it already owns from an earlier leg, so this ordering
  * costs nothing there.
  */
-function farmCoreEquipSteps(group: T2BiomeGroup): RouteStep[] {
-  const core = farmCoreFor(group);
+function farmCoreEquipSteps(group: T2BiomeGroup, plan: T2ClassPlan): RouteStep[] {
+  const core = Object.prototype.hasOwnProperty.call(plan.farmCoreOverrides ?? {}, group)
+    ? plan.farmCoreOverrides?.[group] ?? null
+    : farmCoreFor(group);
   return core ? [{ type: "equip", definitionIds: [core], label: `farm core: ${core}` }] : [];
 }
 
@@ -306,6 +322,8 @@ export interface T2RouteConfig {
   plan: T2ClassPlan;
   branch: T2Branch;
   version: string;
+  /** Explicit id for an exploratory arm; control ids keep their historical form. */
+  routeId?: string;
   /**
    * Drop every boss interaction from the route: no `attemptBoss`, no boss
    * loadout swap, no branch step -- and complete on BIOME MASTERY instead of on
@@ -370,9 +388,18 @@ export function makeT2Route(config: T2RouteConfig): Route {
     // 4. Only THEN can this leg's farm core be equipped, because on the leg
     //    that crafts it (Cave/Desert), it does not exist until step 3 ran.
     steps.push(...buildStanceAcquisitionSteps(group));
-    steps.push(...farmAbilityKitSteps(group));
+    const learnsAbility = plan.biomes[group]?.learn !== undefined;
+    // A newly learned Technique/Guard cannot be slotted before its own craft.
+    // Start the leg with the ordinary encounter kit, learn the optional ability
+    // at its live biome gate, then re-emit the final policy before any core gate
+    // farm. This keeps both ability ownership and Jungle's ordering invariant.
+    steps.push(...farmAbilityKitSteps(group, plan, !learnsAbility));
+    if (learnsAbility) {
+      steps.push(...learnAbilitySteps(group, plan));
+      steps.push(...farmAbilityKitSteps(group, plan));
+    }
     steps.push(...buildCoreAcquisitionSteps(group));
-    steps.push(...farmCoreEquipSteps(group));
+    steps.push(...farmCoreEquipSteps(group, plan));
     const adopted: string[] = [];
     steps.push(...biomeLegSteps(plan, group, profile, adopted));
     for (const id of adopted) if (!worn.includes(id)) worn.push(id);
@@ -403,7 +430,7 @@ export function makeT2Route(config: T2RouteConfig): Route {
 
   if (bossless) {
     return {
-      id: `${plan.slug}-t2-progression`,
+      id: config.routeId ?? `${plan.slug}-t2-progression`,
       version: config.version,
       classRoot: plan.classRoot,
       frameId: plan.frameId,
@@ -430,7 +457,7 @@ export function makeT2Route(config: T2RouteConfig): Route {
   }
 
   return {
-    id: `${plan.slug}-t2-${branch}`,
+    id: config.routeId ?? `${plan.slug}-t2-${branch}`,
     version: config.version,
     classRoot: plan.classRoot,
     frameId: plan.frameId,

@@ -26,6 +26,10 @@ import {
   T2_ROUTES,
   T2_ROUTE_IDS,
 } from "./t2RouteBuilder";
+import {
+  T2_NIGHT2_ROUTES,
+  T2_NIGHT2_ROUTE_IDS,
+} from "./t2Night2Routes";
 
 /** Canonical class baselines, excluding the two deliberate Brace A/B arms. */
 export { T1_BASELINE_ROUTE_IDS, T1_BASELINE_ROUTES } from "./t1Baselines";
@@ -75,10 +79,17 @@ export const ROUTES = new Map<string, Route>(
     ...T2_ROUTES,
     ...T2_PROGRESSION_ROUTES,
     ...T2_PROBE_ROUTES,
+    ...T2_NIGHT2_ROUTES,
   ].map((route) => [route.id, route]),
 );
 
-export { T2_CONTROL_ROUTE_IDS, T2_ROUTE_IDS, T2_PROGRESSION_ROUTE_IDS, T2_PROBE_ROUTE_IDS };
+export {
+  T2_CONTROL_ROUTE_IDS,
+  T2_ROUTE_IDS,
+  T2_PROGRESSION_ROUTE_IDS,
+  T2_PROBE_ROUTE_IDS,
+  T2_NIGHT2_ROUTE_IDS,
+};
 
 /** The eighteen Tier-2 branch routes: 6 class plans x 3 range nodes. */
 export const T2_BRANCH_ROUTES: readonly Route[] = T2_ROUTES;

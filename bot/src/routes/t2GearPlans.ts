@@ -63,6 +63,15 @@ export interface T2ClassPlan {
   /** One-line statement of what this plan predicts, for the adoption report. */
   hypothesis: string;
   biomes: Partial<Record<T2BiomeGroup, T2BiomePlan>>;
+  /**
+   * Route-only policies for the Night 2 exploratory arms. The six controls do
+   * not set these fields; when absent, the shared encounter-shape policy in
+   * `t2Loadouts.ts` remains authoritative.
+   */
+  techniqueOverrides?: Partial<Record<T2BiomeGroup, string>>;
+  guardOverrides?: Partial<Record<T2BiomeGroup, string>>;
+  stanceOverrides?: Partial<Record<T2BiomeGroup, string | null>>;
+  farmCoreOverrides?: Partial<Record<T2BiomeGroup, string | null>>;
 }
 
 /**

@@ -171,11 +171,36 @@ export async function runBot(
       (authoredRoute.startsFromTierEntry
         ? t2EntryProfileId(authoredRoute.classRoot, config.entryEconomy)
         : undefined);
-  const tierEntryProfile = sourceSnapshot
+  const resolvedTierEntryProfile = sourceSnapshot
     ? tierEntryProfileFromT1Snapshot(sourceSnapshot)
     : resolvedTierEntryId
       ? requireTierEntryProfile(resolvedTierEntryId)
       : undefined;
+  if (
+    sourceSnapshot &&
+    resolvedTierEntryProfile &&
+    authoredRoute.frameId &&
+    authoredRoute.frameId !== resolvedTierEntryProfile.frameId
+  ) {
+    throw new Error(
+      `route ${authoredRoute.id} requests frame ${authoredRoute.frameId}, but the real ` +
+        `T1 handoff is ${resolvedTierEntryProfile.frameId}; frame variants require synthetic entry`,
+    );
+  }
+  // Synthetic T2 entry is a clean progression template, so an exploratory
+  // route may change only the declared frame while retaining the same class,
+  // T1 gear, mastery and wallet. Real T1 handoffs are never rewritten above.
+  const tierEntryProfile =
+    resolvedTierEntryProfile &&
+    !sourceSnapshot &&
+    authoredRoute.frameId &&
+    authoredRoute.frameId !== resolvedTierEntryProfile.frameId
+      ? {
+          ...resolvedTierEntryProfile,
+          id: `${resolvedTierEntryProfile.id}-frame-${authoredRoute.frameId}`,
+          frameId: authoredRoute.frameId,
+        }
+      : resolvedTierEntryProfile;
   if (
     tierEntryProfile &&
     authoredRoute.startsFromTierEntry &&
