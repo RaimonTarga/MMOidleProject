@@ -193,6 +193,8 @@ export interface Route {
   /** Named checkpoints recorded with their own timestamps when first satisfied. */
   milestones: Array<{ id: string; when: Condition }>;
   checkpointKind?: TierCheckpointKind;
+  /** Expected checkpoint kind when this route consumes a sealed experiment state. */
+  entryCheckpointKind?: TierCheckpointKind;
   captureTier2Handoff?: boolean;
   /** Static ordering-test seed for a route that begins from a sealed checkpoint. */
   entryItems?: readonly string[];

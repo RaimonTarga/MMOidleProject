@@ -106,6 +106,7 @@ function writeRunConfig(runState, runDirectory) {
     rewardMultiplier: manifest.config.rewardMultiplier,
     completionMode: manifest.config.completionMode,
     entryEconomy: manifest.config.entryEconomy ?? "clean",
+    requireTierEntrySnapshot: manifest.config.requireTierEntrySnapshot === true,
     fastBossRetry: manifest.config.fastBossRetry,
     accountId: `bot-exp-${shortHash(`${manifest.experimentId}:${runState.runKey}`)}`,
     characterName: makeCharacterName(runState),

@@ -70,6 +70,7 @@ Create options:
                                                   startsFromTierEntry and no
                                                   --tierEntrySnapshot(Dir) is given
   --tierEntrySnapshot=<file> or --tierEntrySnapshotDir=<dir>
+  --requireTierEntrySnapshot=true  fail if a class has no matching checkpoint
   --root=<artifact-root>     defaults outside the Git checkout
 `);
 }
@@ -183,6 +184,7 @@ async function createExperiment() {
         rewardMultiplier: config.rewardMultiplier,
         completionMode: config.completionMode,
         entryEconomy: config.entryEconomy,
+        requireTierEntrySnapshot: config.requireTierEntrySnapshot,
         fastBossRetry: config.fastBossRetry,
         routes: config.routes,
         policies: config.policies,

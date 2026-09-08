@@ -181,13 +181,12 @@ function botArguments() {
     args.push(`--entryEconomy=${config.entryEconomy}`);
   }
   if (config.fastBossRetry) args.push("--fastBossRetry=true");
+  if (config.requireTierEntrySnapshot) args.push("--requireTierEntrySnapshot=true");
   if (config.tierEntrySnapshotPath) {
     args.push(`--tierEntrySnapshot=${config.tierEntrySnapshotPath}`);
-    if (config.mode === "canonical-isolated") args.push("--requireTierEntrySnapshot=true");
   }
   if (config.tierEntrySnapshotDir) {
     args.push(`--tierEntrySnapshotDir=${config.tierEntrySnapshotDir}`);
-    if (config.mode === "canonical-isolated") args.push("--requireTierEntrySnapshot=true");
   }
   return args;
 }

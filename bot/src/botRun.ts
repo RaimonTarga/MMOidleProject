@@ -179,6 +179,20 @@ export async function runBot(
     : resolvedTierEntryId
       ? requireTierEntryProfile(resolvedTierEntryId)
       : undefined;
+  if (authoredRoute.entryCheckpointKind) {
+    if (!sourceSnapshot || sourceSnapshot.snapshotKind !== "experiment-checkpoint") {
+      throw new Error(
+        `route ${authoredRoute.id} requires the ${authoredRoute.entryCheckpointKind} ` +
+          `experiment checkpoint; no checkpoint snapshot was supplied`,
+      );
+    }
+    if (sourceSnapshot.checkpointKind !== authoredRoute.entryCheckpointKind) {
+      throw new Error(
+        `route ${authoredRoute.id} requires the ${authoredRoute.entryCheckpointKind} ` +
+          `experiment checkpoint, but received ${sourceSnapshot.checkpointKind ?? "unknown"}`,
+      );
+    }
+  }
   const canOverrideCheckpointFrame = sourceSnapshot?.snapshotKind === "experiment-checkpoint";
   if (
     sourceSnapshot &&

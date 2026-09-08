@@ -341,6 +341,8 @@ export interface T2RouteConfig {
   stopAfter?: T2BiomeGroup;
   /** Capture a named intermediate state at the route completion boundary. */
   checkpointKind?: TierCheckpointKind;
+  /** Require a matching sealed checkpoint kind when this route consumes an entry. */
+  entryCheckpointKind?: TierCheckpointKind;
   /** Override the normal cap for a checkpoint such as Jungle level 5 (J3). */
   checkpointLevel?: number;
   /** Equip a known item before the first farm in a tail route. */
@@ -542,6 +544,7 @@ export function makeT2Route(config: T2RouteConfig): Route {
       },
       milestones: [...masteryMilestones, ...checkpointMilestone],
       checkpointKind: config.checkpointKind,
+      entryCheckpointKind: config.entryCheckpointKind,
       captureTier2Handoff: config.captureTier2Handoff ?? (!config.startAfter && !config.stopAfter && !config.checkpointKind),
       entryItems: config.entryItems,
       entryKnownAbilities: config.entryKnownAbilities,
@@ -571,6 +574,7 @@ export function makeT2Route(config: T2RouteConfig): Route {
         when: { type: "bossCleared" as const, biomeGroup: group, tier: 2 },
       })),
     ],
+    entryCheckpointKind: config.entryCheckpointKind,
   };
 }
 

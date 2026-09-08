@@ -38,6 +38,23 @@ const smoke = normalizeCreateOptions({
   completion: "next-tier",
   count: "2",
 });
+assert.equal(smoke.requireTierEntrySnapshot, false);
+const checkpointSmoke = normalizeCreateOptions({
+  revision: "HEAD",
+  routes: "striker-t2-day-jungle-frame-light",
+  mode: "smoke-isolated",
+  rewardMultiplier: "25",
+  tierEntrySnapshotDir: "inputs",
+  requireTierEntrySnapshot: "true",
+});
+assert.equal(checkpointSmoke.requireTierEntrySnapshot, true);
+throws("requires --tierEntrySnapshot", () => normalizeCreateOptions({
+  revision: "HEAD",
+  routes: "striker-t2-day-jungle-frame-light",
+  mode: "smoke-isolated",
+  rewardMultiplier: "25",
+  requireTierEntrySnapshot: "true",
+}));
 const plan = buildRunPlan(smoke, "experiment-id");
 assert.equal(plan.length, 4);
 assert.deepEqual(plan.map((run) => run.routeId), ["striker-t1", "squire-t1", "striker-t1", "squire-t1"]);

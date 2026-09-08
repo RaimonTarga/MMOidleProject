@@ -39,9 +39,18 @@ for (const route of T2_DAY_EXPERIMENT_ROUTES) {
   assert(flatten(route.steps).some((step) => step.type === "assert"), `${route.id}: treatment assertions present`);
 }
 
-for (const route of T2_DAY_J0_CHECKPOINT_ROUTES) assert(route.checkpointKind === "j0", `${route.id}: J0 checkpoint`);
-for (const route of T2_DAY_J3_CHECKPOINT_ROUTES) assert(route.checkpointKind === "j3", `${route.id}: J3 checkpoint`);
-for (const route of T2_DAY_D0_CHECKPOINT_ROUTES) assert(route.checkpointKind === "d0", `${route.id}: D0 checkpoint`);
+for (const route of T2_DAY_J0_CHECKPOINT_ROUTES) {
+  assert(route.checkpointKind === "j0", `${route.id}: J0 checkpoint`);
+  assert(!route.entryCheckpointKind, `${route.id}: source route has no entry checkpoint`);
+}
+for (const route of T2_DAY_J3_CHECKPOINT_ROUTES) {
+  assert(route.checkpointKind === "j3", `${route.id}: J3 checkpoint`);
+  assert(route.entryCheckpointKind === "j0", `${route.id}: J3 consumes J0`);
+}
+for (const route of T2_DAY_D0_CHECKPOINT_ROUTES) {
+  assert(route.checkpointKind === "d0", `${route.id}: D0 checkpoint`);
+  assert(route.entryCheckpointKind === "j0", `${route.id}: D0 consumes J0`);
+}
 
 for (const route of [
   ...T2_DAY_FRAME_ROUTES,
@@ -50,6 +59,10 @@ for (const route of [
   ...T2_DAY_SURVIVALIST_ROUTES,
 ]) {
   assert(route.captureTier2Handoff === false, `${route.id}: tail must not emit Snapshot B`);
+  assert(
+    route.entryCheckpointKind === (T2_DAY_SURVIVALIST_ROUTES.includes(route) ? "d0" : "j0"),
+    `${route.id}: expected source checkpoint kind`,
+  );
   assert(
     flatten(route.steps).some((step) => step.type === "assert" && step.condition.type === "frameSelected"),
     `${route.id}: live frame assertion`,
