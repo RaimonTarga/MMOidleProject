@@ -198,6 +198,17 @@ try {
   const validation = validateProfile(profile);
   assert(validation.pass, `reconstructed profile must validate: ${validation.findings.map((f) => f.message).join("; ")}`);
 
+  const withHistoricalUpgrade = {
+    ...loaded,
+    state: {
+      ...loaded.state,
+      itemUpgrades: { ...loaded.state.itemUpgrades, "gale-needle": 1 },
+    },
+  };
+  const projected = tierEntryProfileFromT1Snapshot(withHistoricalUpgrade);
+  assert(!Object.hasOwn(projected.itemUpgrades, "gale-needle"), "historical upgrades for unowned gear must stay out of the entry payload");
+  assert(validateProfile(projected).pass, "projected snapshot profile must remain valid");
+
   assert(JSON.stringify(profile.equipment) === JSON.stringify(sourceProfile.equipment), "equipment must round-trip exactly");
   assert(JSON.stringify(profile.itemUpgrades) === JSON.stringify(sourceProfile.itemUpgrades), "item upgrades must round-trip exactly");
   assert(JSON.stringify(profile.inventory) === JSON.stringify(sourceProfile.inventory), "inventory must round-trip exactly");

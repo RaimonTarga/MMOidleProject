@@ -230,6 +230,20 @@ export function tierEntryProfileFromT1Snapshot(
   assertUnique("clearedNodes", state.clearedNodes);
   assertUnique("visitedNodes", state.visitedNodes);
 
+  // A live save can retain upgrade levels for gear that was previously owned
+  // but has since been replaced. The snapshot keeps that raw map for forensic
+  // fidelity, while the tier-entry API accepts upgrade entries only for items
+  // currently in the bag or equipment. Project just that importable subset so
+  // a valid checkpoint is not rejected before the downstream route starts.
+  const ownedItemIds = new Set(
+    [...state.inventory, ...Object.values(state.equipment)].filter(
+      (id): id is string => typeof id === "string",
+    ),
+  );
+  const importableItemUpgrades = Object.fromEntries(
+    Object.entries(state.itemUpgrades).filter(([id]) => ownedItemIds.has(id)),
+  );
+
   return {
     id: `snapshot-${snapshot.snapshotId}`,
     targetTier: state.playerTier,
@@ -262,7 +276,7 @@ export function tierEntryProfileFromT1Snapshot(
     questProgress: cloneRecord(state.questProgress),
     inventory: [...state.inventory],
     equipment: { ...state.equipment },
-    itemUpgrades: cloneRecord(state.itemUpgrades),
+    itemUpgrades: importableItemUpgrades,
     knownAbilities: [...state.knownAbilities],
     equippedAbilities: {
       techniques: [...state.equippedAbilities.techniques],
