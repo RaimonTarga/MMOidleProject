@@ -44,6 +44,17 @@ for (const route of T2_DAY_J0_CHECKPOINT_ROUTES) {
   assert(!route.entryCheckpointKind, `${route.id}: source route has no entry checkpoint`);
   assert(route.suppressTransitCombat === true, `${route.id}: pre-Jungle transit is movement-only`);
 }
+
+for (const route of T2_DAY_FRAME_ROUTES) {
+  const frameAssertion = flatten(route.steps).find(
+    (step) => step.type === "assert" && step.condition.type === "frameSelected",
+  );
+  assert(
+    frameAssertion?.condition.type === "frameSelected" && frameAssertion.condition.frameId === route.frameId,
+    `${route.id}: entry frame assertion matches the frame arm`,
+  );
+}
+
 for (const route of T2_DAY_J3_CHECKPOINT_ROUTES) {
   assert(route.checkpointKind === "j3", `${route.id}: J3 checkpoint`);
   assert(route.entryCheckpointKind === "j0", `${route.id}: J3 consumes J0`);

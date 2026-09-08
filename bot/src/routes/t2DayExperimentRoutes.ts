@@ -256,6 +256,7 @@ function jungleTailRoute(
   plan: T2ClassPlan,
   initialEquip: readonly string[],
   terminalAssertions: readonly T2TreatmentAssertion[],
+  entryAssertions: readonly T2TreatmentAssertion[] = j0PreparationChecks(base, j0Weapon(base.slug)),
 ): Route {
   return route({
     plan,
@@ -264,7 +265,7 @@ function jungleTailRoute(
     stopAfter: "jungle",
     initialEquip,
     entryCheckpointKind: "j0",
-    entryAssertions: j0PreparationChecks(base, j0Weapon(base.slug)),
+    entryAssertions,
     terminalAssertions,
     captureTier2Handoff: false,
     entryItems: [...new Set([j0Weapon(base.slug), "core-tempered", ...initialEquip])],
@@ -282,6 +283,7 @@ export const T2_DAY_FRAME_ROUTES: readonly Route[] = FRAME_VARIANTS.flatMap(([sl
       plan,
       [j0Weapon(slug)],
       treatmentChecks(plan, j0Weapon(slug), "core-tempered", "sweep"),
+      j0PreparationChecks(plan, j0Weapon(slug)),
     );
   });
 });
