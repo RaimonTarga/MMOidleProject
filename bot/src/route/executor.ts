@@ -15,6 +15,7 @@ import {
   globalMasteryRequiredForUpgrade,
   runeBudgetForGlobalMastery,
   runicPointLoadoutCost,
+  SKILL_TREE,
   upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
@@ -103,6 +104,16 @@ export class StallError extends Error {
   }
 }
 
+/** A declared experiment treatment was not live at its assertion point. */
+export class InvalidTreatmentError extends Error {
+  constructor(
+    message: string,
+    readonly detail: Record<string, unknown> = {},
+  ) {
+    super(message);
+  }
+}
+
 /** Internal control flow: death released the farm scope, so reacquire it. */
 class FarmLeaseLostError extends Error {
   constructor(readonly nodeId: string, readonly goal: string) {
@@ -159,6 +170,12 @@ export class RouteExecutor {
 
   get outcomes(): readonly StepOutcome[] {
     return this.stepOutcomes;
+  }
+
+  private treatmentAssertionCount = 0;
+
+  get treatmentAssertions(): number {
+    return this.treatmentAssertionCount;
   }
 
   private elapsed(): number {
@@ -317,7 +334,45 @@ export class RouteExecutor {
         return this.doRepeatUntil(step);
       case "ifPossible":
         return this.doIfPossible(step);
+      case "assert":
+        return this.doAssert(step);
     }
+  }
+
+  private doAssert(step: Extract<RouteStep, { type: "assert" }>): void {
+    const passed = this.test(step.condition);
+    this.treatmentAssertionCount += 1;
+    const condition = describe(step.condition);
+    const self = this.deps.obs.self;
+    const frameId = self?.unlockedSkills.find((id) => {
+      const node = SKILL_TREE.get(id);
+      return node?.tier === 1 && node.parent === self.selectedClass;
+    }) ?? null;
+    const code = step.code ?? "INVALID_TREATMENT";
+    const detail = {
+      code,
+      condition,
+      message: step.message,
+      nodeId: this.deps.obs.nodeId,
+      equipment: self ? { ...self.equipment } : {},
+      techniques: self ? [...self.equippedAbilities.techniques] : [],
+      guards: self ? [...self.equippedAbilities.guards] : [],
+      frameId,
+    };
+    this.deps.recorder.emit({
+      kind: "treatment-assertion",
+      atMs: this.deps.recorder.now(),
+      passed,
+      condition,
+      code,
+      message: step.message,
+      nodeId: this.deps.obs.nodeId,
+      equipment: detail.equipment,
+      techniques: detail.techniques,
+      guards: detail.guards,
+      frameId,
+    });
+    if (!passed) throw new InvalidTreatmentError(`${code}: ${step.message ?? condition}`, detail);
   }
 
   // ── Step handlers ───────────────────────────────────────────────────────
@@ -2360,6 +2415,8 @@ function defaultLabel(step: RouteStep): string {
       return `if ${describe(step.when)} then ${step.steps.length} step(s)`;
     case "repeatUntil":
       return `repeat until ${describe(step.until)}`;
+    case "assert":
+      return `assert ${describe(step.condition)}`;
   }
 }
 

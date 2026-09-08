@@ -1,12 +1,12 @@
 import type { PlayerView } from "./views";
-import type { TierEntryProfile } from "./tierEntry";
+import type { TierCheckpointKind, TierEntryProfile } from "./tierEntry";
 import type { T1EconomyArm } from "../systems/t1EconomyExperiment";
 import { runeIdsFromCraftedRecipes } from "../runeRecipes";
 
 /** Versioned JSON contract written by a canonical T1 route at A/B boundaries. */
 export const T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION = 1 as const;
 
-export type T1CharacterSnapshotKind = "mastery-completion" | "tier2-handoff";
+export type T1CharacterSnapshotKind = "mastery-completion" | "tier2-handoff" | "experiment-checkpoint";
 
 /** Economy identity needed to reproduce the rates that produced a snapshot. */
 export interface T1SnapshotEconomyCandidate {
@@ -157,6 +157,8 @@ export interface T1CharacterSnapshot {
   policyId: string;
   classRoot: string;
   frameId: string | null;
+  checkpointKind?: TierCheckpointKind;
+  checkpointSourceNodeId?: string;
   gitRevision: string;
   serverUrl: string;
   canonicalAtCapture: boolean;
@@ -187,8 +189,11 @@ export function tierEntryProfileFromT1Snapshot(
   if (snapshot.schemaVersion !== T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION) {
     throw new Error(`unsupported T1 snapshot schema ${String(snapshot.schemaVersion)}`);
   }
-  if (snapshot.snapshotKind !== "tier2-handoff") {
-    throw new Error("only Snapshot B (tier2-handoff) can be used as a T2 entry");
+  if (snapshot.snapshotKind !== "tier2-handoff" && snapshot.snapshotKind !== "experiment-checkpoint") {
+    throw new Error("only Snapshot B or an experiment checkpoint can be used as a T2 entry");
+  }
+  if (snapshot.snapshotKind === "experiment-checkpoint" && !snapshot.checkpointKind) {
+    throw new Error("experiment checkpoint has no checkpoint kind");
   }
 
   const state = snapshot.state;
@@ -231,7 +236,16 @@ export function tierEntryProfileFromT1Snapshot(
     classRoot,
     frameId,
     spawnNodeId,
-    economyPolicy: "authoritative-economy-continuation",
+    economyPolicy:
+      snapshot.snapshotKind === "experiment-checkpoint"
+        ? "synthetic-combat-progression"
+        : "authoritative-economy-continuation",
+    ...(snapshot.snapshotKind === "experiment-checkpoint"
+      ? {
+          checkpointKind: snapshot.checkpointKind,
+          checkpointSourceNodeId: snapshot.checkpointSourceNodeId ?? state.runtime.nodeId,
+        }
+      : {}),
     wallet: {
       essences: cloneRecord(state.essences),
       catalysts: cloneRecord(state.catalysts),

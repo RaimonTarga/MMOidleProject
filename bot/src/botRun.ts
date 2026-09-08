@@ -4,12 +4,14 @@ import type { PlayerDeathPayload } from "@mmo-idle/shared";
 import {
   GAME_CONFIG,
   NODE_BIOMES,
+  SKILL_TREE,
   defaultT1EconomyConfig,
   t1EconomyConfigForArm,
   t1Plus5EssenceCosts,
   tierEntryProfileFromT1Snapshot,
   type PlayerView,
   type TierEntryInitialState,
+  type TierEntryProfile,
 } from "@mmo-idle/shared";
 import type { RouteLeaseSession } from "./concurrency/routeLeaseSession";
 import type { BotConfig } from "./config";
@@ -17,7 +19,7 @@ import { BotConnection } from "./net/connection";
 import { Intents } from "./net/intents";
 import { requirePolicy } from "./policy/profiles";
 import { evaluate } from "./route/conditions";
-import { AbortError, RouteExecutor, sleep, StallError } from "./route/executor";
+import { AbortError, InvalidTreatmentError, RouteExecutor, sleep, StallError } from "./route/executor";
 import type { Route } from "./route/types";
 import { requireRoute } from "./routes";
 import { Observation } from "./state/observation";
@@ -26,6 +28,7 @@ import type {
   EconomyCandidate,
   RunHeader,
   RunTaint,
+  TreatmentValidity,
   TemplateValidationSummary,
 } from "./telemetry/events";
 import { BOT_JSONL_SCHEMA_VERSION } from "./telemetry/events";
@@ -176,11 +179,13 @@ export async function runBot(
     : resolvedTierEntryId
       ? requireTierEntryProfile(resolvedTierEntryId)
       : undefined;
+  const canOverrideCheckpointFrame = sourceSnapshot?.snapshotKind === "experiment-checkpoint";
   if (
     sourceSnapshot &&
     resolvedTierEntryProfile &&
     authoredRoute.frameId &&
-    authoredRoute.frameId !== resolvedTierEntryProfile.frameId
+    authoredRoute.frameId !== resolvedTierEntryProfile.frameId &&
+    !canOverrideCheckpointFrame
   ) {
     throw new Error(
       `route ${authoredRoute.id} requests frame ${authoredRoute.frameId}, but the real ` +
@@ -192,7 +197,7 @@ export async function runBot(
   // T1 gear, mastery and wallet. Real T1 handoffs are never rewritten above.
   const tierEntryProfile =
     resolvedTierEntryProfile &&
-    !sourceSnapshot &&
+    (!sourceSnapshot || canOverrideCheckpointFrame) &&
     authoredRoute.frameId &&
     authoredRoute.frameId !== resolvedTierEntryProfile.frameId
       ? {
@@ -385,7 +390,10 @@ export async function runBot(
       `tier-entry profile ${tierEntryProfile.id} to appear in the authoritative view`,
       runAbort.signal,
     );
-    if (!sourceSnapshot && !taints.includes("SYNTHETIC_TIER_ENTRY")) {
+    if (
+      (!sourceSnapshot || tierEntryProfile.economyPolicy === "synthetic-combat-progression") &&
+      !taints.includes("SYNTHETIC_TIER_ENTRY")
+    ) {
       taints.push("SYNTHETIC_TIER_ENTRY");
     }
 
@@ -484,6 +492,11 @@ export async function runBot(
   const initialSelf = obs.self;
   if (!initialSelf) throw new Error("own player disappeared before run-start telemetry");
 
+  const liveFrameId = initialSelf.unlockedSkills.find((id) => {
+    const node = SKILL_TREE.get(id);
+    return node?.tier === 1 && node.parent === initialSelf.selectedClass;
+  }) ?? null;
+
   const header: RunHeader = {
     schemaVersion: BOT_JSONL_SCHEMA_VERSION,
     runId,
@@ -495,6 +508,7 @@ export async function runBot(
     routeVersion: route.version,
     policyId: policy.id,
     classRoot: tierEntryProfile?.classRoot ?? route.classRoot,
+    frameId: liveFrameId,
     gitRevision: gitRevision(),
     serverUrl: config.serverUrl,
     startedAt,
@@ -506,11 +520,11 @@ export async function runBot(
     initialEssences: { ...initialSelf.essences },
     initialCatalysts: { ...initialSelf.catalysts },
     tierEntry: tierEntryProfile
-      ? buildTierEntryInitialState(tierEntryProfile.id, tierEntryProfile.targetTier, tierEntryProfile.economyPolicy, tierEntryProfile.frameId, initialSelf)
+      ? buildTierEntryInitialState(tierEntryProfile, initialSelf)
       : undefined,
     templateValidation,
   };
-  const snapshotFrameId = tierEntryProfile?.frameId ?? route.frameId ?? null;
+  const snapshotFrameId = liveFrameId;
   const captureSnapshot = (kind: "mastery-completion" | "tier2-handoff"): void => {
     const self = obs.self;
     if (!self) return;
@@ -527,6 +541,26 @@ export async function runBot(
     console.log(
       `[bot] ${runId} Snapshot ${kind === "mastery-completion" ? "A" : "B"}: ` +
         `${ref.file} at ${ref.elapsedMs}ms (GM ${ref.globalMastery})`,
+    );
+  };
+  const captureCheckpoint = (checkpointKind: NonNullable<Route["checkpointKind"]>): void => {
+    const self = obs.self;
+    if (!self) return;
+    const snapshot = buildT1CharacterSnapshot({
+      kind: "experiment-checkpoint",
+      checkpointKind,
+      checkpointSourceNodeId: self.nodeId,
+      header,
+      self,
+      frameId: liveFrameId,
+      elapsedMs: recorder.now(),
+      rewardMultiplier,
+      canonicalAtCapture: false,
+    });
+    const ref = snapshotStore.capture(snapshot);
+    console.log(
+      `[bot] ${runId} checkpoint ${checkpointKind}: ${ref.file} at ` +
+        `${ref.elapsedMs}ms (GM ${ref.globalMastery}, node ${ref.nodeId})`,
     );
   };
   recorder.emit({ kind: "run-start", atMs: 0, header });
@@ -574,6 +608,9 @@ export async function runBot(
     leaseSession,
     onMilestone: (id) => {
       if (id === "all-biomes-maxed") captureSnapshot("mastery-completion");
+      if (route.checkpointKind && id === `checkpoint:${route.checkpointKind}`) {
+        captureCheckpoint(route.checkpointKind);
+      }
     },
     awaitAlive: async () => {
       while (obs.self?.isDead ?? false) {
@@ -742,12 +779,24 @@ export async function runBot(
 
   let completion: CompletionState = "error";
   let stallReason: string | undefined;
+  let treatmentValidity: TreatmentValidity = "not-asserted";
 
   try {
     await executor.run();
     completion = executor.isPartial ? "partial" : "completed";
   } catch (err) {
-    if (err instanceof StallError) {
+    if (err instanceof InvalidTreatmentError) {
+      completion = "error";
+      stallReason = err.message;
+      treatmentValidity = "invalid";
+      stalls.push({ reason: err.message, detail: err.detail });
+      recorder.emit({
+        kind: "stall",
+        atMs: recorder.now(),
+        reason: err.message,
+        detail: err.detail,
+      });
+    } else if (err instanceof StallError) {
       completion = "stalled";
       stallReason = err.message;
       stalls.push({ reason: err.message, detail: err.detail });
@@ -772,6 +821,10 @@ export async function runBot(
     process.off("SIGTERM", onSignal);
   }
 
+  if (treatmentValidity !== "invalid" && executor.treatmentAssertions > 0) {
+    treatmentValidity = "valid";
+  }
+
   liveCompletion = completion;
   liveStallReason = stallReason;
 
@@ -783,7 +836,8 @@ export async function runBot(
     stalls.push({ reason: stallReason });
   }
   if (completion === "completed" && routeComplete(route, obs)) {
-    captureSnapshot("tier2-handoff");
+    if (route.checkpointKind) captureCheckpoint(route.checkpointKind);
+    else if (route.captureTier2Handoff !== false) captureSnapshot("tier2-handoff");
   }
 
   leaseSession?.releaseAll(`run-${completion}`);
@@ -819,6 +873,7 @@ export async function runBot(
     winCondition: config.completionMode,
     snapshotArtifacts: snapshotStore.manifest(),
     concurrencyIntervals: leaseSession?.concurrencyIntervals(),
+    treatmentValidity,
   });
 
   await sink.close();
@@ -915,19 +970,18 @@ function sleepOrAbort(ms: number, signal?: AbortSignal): Promise<void> {
 }
 
 function buildTierEntryInitialState(
-  profileId: string,
-  targetTier: number,
-  economyPolicy: TierEntryInitialState["economyPolicy"],
-  frameId: string,
+  profile: TierEntryProfile,
   self: PlayerView,
 ): TierEntryInitialState {
   return {
-    profileId,
-    targetTier,
-    economyPolicy,
+    profileId: profile.id,
+    targetTier: profile.targetTier,
+    economyPolicy: profile.economyPolicy,
     classRoot: self.selectedClass ?? "unknown",
-    frameId,
+    frameId: profile.frameId,
     spawnNodeId: self.nodeId,
+    checkpointKind: profile.checkpointKind,
+    checkpointSourceNodeId: profile.checkpointSourceNodeId,
     biomeLevels: { ...self.biomeLevel },
     globalMastery: self.globalMastery,
     bossesCleared: [...self.bossesCleared],

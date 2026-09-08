@@ -3,7 +3,7 @@ import { join } from "node:path";
 import type { PlayerView } from "@mmo-idle/shared";
 import type { CompletionMode } from "../config";
 import type { Route } from "../route/types";
-import type { CompletionState, RunHeader } from "./events";
+import type { CompletionState, RunHeader, TreatmentValidity } from "./events";
 import type { LeaseSessionEvidence } from "../concurrency/routeLeaseSession";
 import type { Recorder } from "./recorder";
 import type { T1SnapshotManifest } from "./t1Snapshots";
@@ -39,6 +39,7 @@ export interface RunSummary {
     combatEvidenceEligible: boolean;
     /** Synthetic wallets are never a continuous economy baseline. */
     economyEvidenceEligible: boolean;
+    treatmentValidity: TreatmentValidity;
   };
   progression: {
     finalPlayerTier: number;
@@ -341,6 +342,7 @@ export function buildSummary(params: {
   winCondition?: CompletionMode;
   snapshotArtifacts?: T1SnapshotManifest;
   concurrencyIntervals?: ConcurrencyInterval[];
+  treatmentValidity?: TreatmentValidity;
 }): RunSummary {
   const { header, recorder, route, self } = params;
   const durationMs = params.endedAt - header.startedAt;
@@ -517,6 +519,7 @@ export function buildSummary(params: {
       schemaVersion: 1,
       snapshotA: null,
       snapshotB: null,
+      checkpoint: null,
     },
     run: {
       ...header,
@@ -541,6 +544,7 @@ export function buildSummary(params: {
         economyIsolationEligible &&
         (!header.tierEntry ||
           header.tierEntry.economyPolicy === "authoritative-economy-continuation"),
+      treatmentValidity: params.treatmentValidity ?? "not-asserted",
     },
     progression: {
       finalPlayerTier: self?.playerTier ?? 0,

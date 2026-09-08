@@ -64,7 +64,7 @@ function walk(dir: string, out: string[], depth = 0): void {
       continue;
     }
     if (isDir) walk(full, out, depth + 1);
-    else if (entry === "snapshot-b.json") out.push(full);
+    else if (entry === "snapshot-b.json" || /^checkpoint-(j0|j3|d0)\.json$/.test(entry)) out.push(full);
   }
 }
 
@@ -93,7 +93,7 @@ function walletTotalOf(snapshot: T1CharacterSnapshot): number {
 }
 
 /**
- * Index every `snapshot-b.json` under `dir`.
+ * Index every usable Snapshot B or experiment checkpoint under `dir`.
  *
  * A file that fails the converter's preconditions is RECORDED AND SKIPPED, never
  * thrown on: a batch must not die because one Tier-1 run in the source cohort
@@ -116,8 +116,12 @@ export function indexSnapshotDir(dir: string): SnapshotDirIndex {
       rejected.push({ file, reason: error instanceof Error ? error.message : String(error) });
       continue;
     }
-    if (snapshot.snapshotKind !== "tier2-handoff") {
-      rejected.push({ file, reason: `snapshotKind is ${snapshot.snapshotKind}, not tier2-handoff` });
+    if (snapshot.snapshotKind !== "tier2-handoff" && snapshot.snapshotKind !== "experiment-checkpoint") {
+      rejected.push({ file, reason: `snapshotKind is ${snapshot.snapshotKind}, not a T2 entry snapshot` });
+      continue;
+    }
+    if (snapshot.snapshotKind === "experiment-checkpoint" && !snapshot.checkpointKind) {
+      rejected.push({ file, reason: "experiment checkpoint has no checkpoint kind" });
       continue;
     }
     const classRoot = snapshot.state.classRoot ?? snapshot.classRoot;

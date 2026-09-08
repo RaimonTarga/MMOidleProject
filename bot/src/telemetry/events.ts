@@ -1,4 +1,4 @@
-import type { DeathCause, EssenceType } from "@mmo-idle/shared";
+import type { DeathCause, EssenceType, EquipmentMap } from "@mmo-idle/shared";
 import type { T1EconomyArm, TierEntryInitialState } from "@mmo-idle/shared";
 
 /** Bump when an event shape changes incompatibly. Mirrors the bench convention. */
@@ -14,6 +14,8 @@ export type RunTaint =
   /** Synthetic entry state is auditable but does not invalidate combat evidence. */
   | "SYNTHETIC_TIER_ENTRY"
   | "CONTAMINATED_CONTROLLED_OVERLAP";
+
+export type TreatmentValidity = "not-asserted" | "valid" | "invalid";
 
 export type HarnessExecutionMode =
   | "single"
@@ -59,6 +61,8 @@ export interface RunHeader {
   routeVersion: string;
   policyId: string;
   classRoot: string;
+  /** Frame observed in the live PlayerView at run start. */
+  frameId?: string | null;
   gitRevision: string;
   serverUrl: string;
   startedAt: number;
@@ -225,6 +229,19 @@ export type BotEvent =
       durationMs: number;
       outcome: "done" | "stalled" | "skipped" | "blocked";
       reason?: string;
+    }
+  | {
+      kind: "treatment-assertion";
+      atMs: number;
+      passed: boolean;
+      condition: string;
+      code: "INVALID_TREATMENT";
+      message?: string;
+      nodeId: string;
+      frameId: string | null;
+      equipment: Partial<EquipmentMap>;
+      techniques: string[];
+      guards: string[];
     }
   | { kind: "node-enter"; atMs: number; nodeId: string; biomeGroup: string | null; nodeModifier: string | null }
   | { kind: "milestone"; atMs: number; id: string; detail?: Record<string, unknown> }

@@ -6,6 +6,7 @@ import {
   type T1CharacterSnapshot,
   type T1CharacterSnapshotKind,
   type T1SnapshotState,
+  type TierCheckpointKind,
   tierEntryProfileFromT1Snapshot,
 } from "@mmo-idle/shared";
 import type { RunHeader } from "./events";
@@ -26,6 +27,7 @@ export interface T1SnapshotManifest {
   schemaVersion: typeof T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION;
   snapshotA: T1SnapshotArtifactRef | null;
   snapshotB: T1SnapshotArtifactRef | null;
+  checkpoint?: T1SnapshotArtifactRef | null;
 }
 
 export interface BuildT1SnapshotParams {
@@ -37,6 +39,8 @@ export interface BuildT1SnapshotParams {
   capturedAtMs?: number;
   rewardMultiplier: number;
   canonicalAtCapture: boolean;
+  checkpointKind?: TierCheckpointKind;
+  checkpointSourceNodeId?: string;
 }
 
 function cloneRecord<T extends object>(value: T): T {
@@ -167,7 +171,11 @@ export function buildT1CharacterSnapshot(
   return {
     schemaVersion: T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION,
     snapshotKind: params.kind,
-    snapshotId: `${header.runId}-${params.kind === "mastery-completion" ? "a" : "b"}`,
+    snapshotId: `${header.runId}-${params.kind === "mastery-completion"
+      ? "a"
+      : params.kind === "tier2-handoff"
+        ? "b"
+        : `checkpoint-${params.checkpointKind ?? "unknown"}`}`,
     capturedAtMs,
     capturedAtIso: new Date(capturedAtMs).toISOString(),
     elapsedMs: params.elapsedMs,
@@ -179,6 +187,12 @@ export function buildT1CharacterSnapshot(
     policyId: header.policyId,
     classRoot,
     frameId: params.frameId,
+    ...(params.kind === "experiment-checkpoint"
+      ? {
+          checkpointKind: params.checkpointKind,
+          checkpointSourceNodeId: params.checkpointSourceNodeId ?? self.nodeId,
+        }
+      : {}),
     gitRevision: header.gitRevision,
     serverUrl: header.serverUrl,
     canonicalAtCapture: params.canonicalAtCapture,
@@ -206,9 +220,14 @@ function refFor(snapshot: T1CharacterSnapshot, file: string): T1SnapshotArtifact
 
 /** Synchronously writes A/B files so the boundary state cannot be lost on exit. */
 export class T1SnapshotStore {
-  private readonly refs: { a: T1SnapshotArtifactRef | null; b: T1SnapshotArtifactRef | null } = {
+  private readonly refs: {
+    a: T1SnapshotArtifactRef | null;
+    b: T1SnapshotArtifactRef | null;
+    checkpoint: T1SnapshotArtifactRef | null;
+  } = {
     a: null,
     b: null,
+    checkpoint: null,
   };
 
   constructor(private readonly dir: string) {
@@ -217,13 +236,23 @@ export class T1SnapshotStore {
 
   capture(snapshot: T1CharacterSnapshot): T1SnapshotArtifactRef {
     const isA = snapshot.snapshotKind === "mastery-completion";
-    const existing = isA ? this.refs.a : this.refs.b;
+    const isB = snapshot.snapshotKind === "tier2-handoff";
+    const isCheckpoint = snapshot.snapshotKind === "experiment-checkpoint";
+    if (isCheckpoint && !snapshot.checkpointKind) {
+      throw new Error("experiment checkpoint capture requires checkpointKind");
+    }
+    const existing = isA ? this.refs.a : isB ? this.refs.b : this.refs.checkpoint;
     if (existing) return existing;
-    const file = isA ? "snapshot-a.json" : "snapshot-b.json";
+    const file = isA
+      ? "snapshot-a.json"
+      : isB
+        ? "snapshot-b.json"
+        : `checkpoint-${snapshot.checkpointKind}.json`;
     writeFileSync(join(this.dir, file), `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
     const ref = refFor(snapshot, file);
     if (isA) this.refs.a = ref;
-    else this.refs.b = ref;
+    else if (isB) this.refs.b = ref;
+    else this.refs.checkpoint = ref;
     this.writeManifest();
     return ref;
   }
@@ -233,6 +262,7 @@ export class T1SnapshotStore {
       schemaVersion: T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION,
       snapshotA: this.refs.a,
       snapshotB: this.refs.b,
+      checkpoint: this.refs.checkpoint,
     };
   }
 
@@ -259,7 +289,9 @@ export function readT1CharacterSnapshot(path: string): T1CharacterSnapshot {
   const snapshot = parsed as Partial<T1CharacterSnapshot>;
   if (
     snapshot.schemaVersion !== T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION ||
-    (snapshot.snapshotKind !== "mastery-completion" && snapshot.snapshotKind !== "tier2-handoff") ||
+    (snapshot.snapshotKind !== "mastery-completion" &&
+      snapshot.snapshotKind !== "tier2-handoff" &&
+      snapshot.snapshotKind !== "experiment-checkpoint") ||
     !snapshot.state ||
     !snapshot.economy
   ) {

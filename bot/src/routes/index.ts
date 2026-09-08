@@ -30,6 +30,17 @@ import {
   T2_NIGHT2_ROUTES,
   T2_NIGHT2_ROUTE_IDS,
 } from "./t2Night2Routes";
+import {
+  T2_DAY_EXPERIMENT_ROUTES,
+  T2_DAY_EXPERIMENT_ROUTE_IDS,
+  T2_DAY_J0_CHECKPOINT_ROUTES,
+  T2_DAY_J3_CHECKPOINT_ROUTES,
+  T2_DAY_D0_CHECKPOINT_ROUTES,
+  T2_DAY_FRAME_ROUTES,
+  T2_DAY_WEAPON_ROUTES,
+  T2_DAY_CONTAGION_ROUTES,
+  T2_DAY_SURVIVALIST_ROUTES,
+} from "./t2DayExperimentRoutes";
 
 /** Canonical class baselines, excluding the two deliberate Brace A/B arms. */
 export { T1_BASELINE_ROUTE_IDS, T1_BASELINE_ROUTES } from "./t1Baselines";
@@ -80,6 +91,7 @@ export const ROUTES = new Map<string, Route>(
     ...T2_PROGRESSION_ROUTES,
     ...T2_PROBE_ROUTES,
     ...T2_NIGHT2_ROUTES,
+    ...T2_DAY_EXPERIMENT_ROUTES,
   ].map((route) => [route.id, route]),
 );
 
@@ -89,6 +101,14 @@ export {
   T2_PROGRESSION_ROUTE_IDS,
   T2_PROBE_ROUTE_IDS,
   T2_NIGHT2_ROUTE_IDS,
+  T2_DAY_EXPERIMENT_ROUTE_IDS,
+  T2_DAY_J0_CHECKPOINT_ROUTES,
+  T2_DAY_J3_CHECKPOINT_ROUTES,
+  T2_DAY_D0_CHECKPOINT_ROUTES,
+  T2_DAY_FRAME_ROUTES,
+  T2_DAY_WEAPON_ROUTES,
+  T2_DAY_CONTAGION_ROUTES,
+  T2_DAY_SURVIVALIST_ROUTES,
 };
 
 /** The eighteen Tier-2 branch routes: 6 class plans x 3 range nodes. */

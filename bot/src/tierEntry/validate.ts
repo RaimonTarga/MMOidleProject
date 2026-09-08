@@ -93,6 +93,7 @@ export function expectedUnlockedRecipes(profile: TierEntryProfile): Set<string> 
 export function validateProfile(profile: TierEntryProfile): ValidationReport {
   const c = new Checks();
   const gm = globalMastery(profile.biomeLevels);
+  const isCheckpoint = profile.checkpointKind !== undefined;
 
   // Identity and branch state.
   const root = SKILL_TREE.get(profile.classRoot);
@@ -130,11 +131,13 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
   // Mastery: no biome may exceed what the PREVIOUS tier's cap allowed, because
   // every level was earned before the tier advance.
   for (const [group, level] of Object.entries(profile.biomeLevels)) {
-    const cap = biomeLevelCap(profile.targetTier - 1, group);
+    const cap = isCheckpoint
+      ? biomeLevelCap(profile.targetTier, group)
+      : biomeLevelCap(profile.targetTier - 1, group);
     c.ok(
-      "mastery-within-previous-tier-cap",
+      isCheckpoint ? "mastery-within-checkpoint-tier-cap" : "mastery-within-previous-tier-cap",
       level <= cap,
-      `${group} level ${level} exceeds the tier-${profile.targetTier - 1} cap of ${cap}`,
+      `${group} level ${level} exceeds the ${isCheckpoint ? "checkpoint tier" : `tier-${profile.targetTier - 1}`} cap of ${cap}`,
     );
   }
 
@@ -159,8 +162,8 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
     if (!c.ok("item-exists", item, `unknown item "${id}"`)) continue;
     c.ok(
       "no-future-tier-items",
-      item!.tier < profile.targetTier,
-      `item "${id}" is tier ${item!.tier}; a tier-${profile.targetTier} entrant cannot own it yet`,
+      isCheckpoint ? item!.tier <= profile.targetTier : item!.tier < profile.targetTier,
+      `item "${id}" is tier ${item!.tier}; a ${isCheckpoint ? "checkpoint" : "tier-entry"} character cannot own it`,
     );
     const plus = profile.itemUpgrades[id] ?? 0;
     c.ok("upgrade-within-item", plus <= getMaxUpgrade(item!), `"${id}" +${plus} exceeds its authored steps`);
@@ -268,8 +271,10 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
 
   // Speculative content: every stance and rite gates above the T1 ceiling, so an
   // entry template must not carry one.
-  c.ok("no-stances-at-entry", profile.knownStances.length === 0, "template knows a stance");
-  c.ok("no-rites-at-entry", profile.knownRites.length === 0, "template knows a rite");
+  if (!isCheckpoint) {
+    c.ok("no-stances-at-entry", profile.knownStances.length === 0, "template knows a stance");
+    c.ok("no-rites-at-entry", profile.knownRites.length === 0, "template knows a rite");
+  }
 
   return report(profile.id, c);
 }

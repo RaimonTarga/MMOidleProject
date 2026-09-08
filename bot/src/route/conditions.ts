@@ -1,6 +1,7 @@
 import {
   ITEM_DATABASE,
   RECIPE_DATABASE,
+  SKILL_TREE,
   globalMasteryRequiredForUpgrade,
   requiredBiomeLevelForUpgrade,
   upgradeCatalystCostFor,
@@ -38,6 +39,26 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
       const self = obs.self;
       if (!self) return false;
       return Object.values(self.equipment).includes(condition.definitionId);
+    }
+    case "abilityKnown":
+      return obs.self?.knownAbilities.includes(condition.abilityId) ?? false;
+    case "abilityEquipped": {
+      const self = obs.self;
+      return !!self && [
+        ...self.equippedAbilities.techniques,
+        ...self.equippedAbilities.guards,
+      ].includes(condition.abilityId);
+    }
+    case "frameSelected": {
+      const self = obs.self;
+      const frame = SKILL_TREE.get(condition.frameId);
+      return !!self && !!frame && frame.tier === 1 && frame.parent === self.selectedClass && self.unlockedSkills.includes(condition.frameId);
+    }
+    case "equippedWeaponWithDot": {
+      const self = obs.self;
+      return !!self && Object.values(self.equipment).some((definitionId) =>
+        typeof definitionId === "string" && RECIPE_DATABASE.get(definitionId)?.weaponDot !== undefined,
+      );
     }
     case "bossCleared":
       return obs.bossCleared(condition.biomeGroup, condition.tier);
@@ -81,6 +102,14 @@ export function describe(condition: Condition): string {
       return `${condition.definitionId} at +${condition.plus}`;
     case "equipped":
       return `${condition.definitionId} equipped`;
+    case "abilityKnown":
+      return `ability ${condition.abilityId} unlocked`;
+    case "abilityEquipped":
+      return `ability ${condition.abilityId} equipped`;
+    case "frameSelected":
+      return `frame ${condition.frameId} selected`;
+    case "equippedWeaponWithDot":
+      return "a DoT weapon equipped";
     case "bossCleared":
       return `${condition.biomeGroup} T${condition.tier} boss cleared`;
     case "playerTierAtLeast":

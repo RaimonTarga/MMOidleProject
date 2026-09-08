@@ -1,4 +1,4 @@
-import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode } from "@mmo-idle/shared";
+import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, TierCheckpointKind } from "@mmo-idle/shared";
 
 /**
  * A place a step happens. Routes name content, not node ids, so a map edit that
@@ -25,6 +25,10 @@ export type Condition =
   | { type: "hasItem"; definitionId: string }
   | { type: "itemAtLeastPlus"; definitionId: string; plus: number }
   | { type: "equipped"; definitionId: string }
+  | { type: "abilityKnown"; abilityId: string }
+  | { type: "abilityEquipped"; abilityId: string }
+  | { type: "frameSelected"; frameId: string }
+  | { type: "equippedWeaponWithDot" }
   | { type: "bossCleared"; biomeGroup: string; tier: number }
   | { type: "playerTierAtLeast"; tier: number }
   | { type: "canCraft"; recipeId: string }
@@ -138,6 +142,7 @@ export type StepBody =
    * route that silently substitutes a different build is no longer a control.
    */
   | { type: "ifPossible"; when: Condition; steps: RouteStep[] }
+  | { type: "assert"; condition: Condition; code?: "INVALID_TREATMENT"; message?: string }
   /** Pure telemetry marker — records that the run reached a named point. */
   | { type: "milestone"; id: string };
 
@@ -187,6 +192,11 @@ export interface Route {
   completion: Condition;
   /** Named checkpoints recorded with their own timestamps when first satisfied. */
   milestones: Array<{ id: string; when: Condition }>;
+  checkpointKind?: TierCheckpointKind;
+  captureTier2Handoff?: boolean;
+  /** Static ordering-test seed for a route that begins from a sealed checkpoint. */
+  entryItems?: readonly string[];
+  entryKnownAbilities?: readonly string[];
 }
 
 export function allOf(...of: Condition[]): Condition {

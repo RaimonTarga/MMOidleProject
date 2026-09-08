@@ -23,6 +23,9 @@ export type TierEntryEconomyPolicy =
   | "synthetic-combat-progression"
   | "authoritative-economy-continuation";
 
+/** Named intermediate states used by the controlled T2 replication lab. */
+export type TierCheckpointKind = "j0" | "j3" | "d0";
+
 export interface TierEntryProfile {
   id: string;
   targetTier: number;
@@ -32,6 +35,10 @@ export interface TierEntryProfile {
   /** T2 profiles spawn at the T2 Sanctuary; later tiers may use their own hub. */
   spawnNodeId: string;
   economyPolicy: TierEntryEconomyPolicy;
+  /** Present only when this profile is an experiment checkpoint, not a tier handoff. */
+  checkpointKind?: TierCheckpointKind;
+  /** Node at which the checkpoint was captured; entry still spawns at Sanctuary. */
+  checkpointSourceNodeId?: string;
   /** Exact wallet used at entry. Synthetic wallets are labeled in telemetry. */
   wallet: TierEntryWallet;
 
@@ -67,6 +74,8 @@ export interface TierEntryInitialState {
   classRoot: string;
   frameId: string;
   spawnNodeId: string;
+  checkpointKind?: TierCheckpointKind;
+  checkpointSourceNodeId?: string;
   biomeLevels: Record<string, number>;
   globalMastery: number;
   bossesCleared: string[];

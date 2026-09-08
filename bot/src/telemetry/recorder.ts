@@ -65,6 +65,8 @@ function describeEvent(event: BotEvent): string | null {
       return event.outcome === "stalled"
         ? `STALLED: ${event.reason ?? event.label}`
         : null;
+    case "treatment-assertion":
+      return `${event.passed ? "treatment OK" : "INVALID_TREATMENT"}: ${event.message ?? event.condition}`;
     case "milestone":
       return `milestone: ${event.id}`;
     case "node-enter":

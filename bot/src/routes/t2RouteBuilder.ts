@@ -4,15 +4,15 @@ import {
   STANCE_RECIPE_DATABASE,
   maxGlobalMasteryAtTier,
 } from "@mmo-idle/shared";
-import type { TierEntryProfile } from "@mmo-idle/shared";
+import type { TierCheckpointKind, TierEntryProfile } from "@mmo-idle/shared";
 import type { Condition, Route, RouteStep } from "../route/types";
 import {
   T2_PROGRESSION_ORDER,
-  maxOutT2,
   soleCatalystFamily,
   t2,
   t2FarmFor,
   t2Runes,
+  t2MaxLevel,
   type T2BiomeGroup,
 } from "./t2Common";
 import {
@@ -296,10 +296,10 @@ function buildStanceAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
  * expose-weakness instead of Jungle's own sweep. See
  * docs/briefs/t2-overnight-experiment-2026-09-07.md Finding A.
  */
-function buildCoreAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
+function buildCoreAcquisitionSteps(group: T2BiomeGroup, skipCoreIds: readonly string[] = []): RouteStep[] {
   const steps: RouteStep[] = [];
   for (const [coreId, leg] of Object.entries(CORE_CRAFT_LEG)) {
-    if (leg !== group) continue;
+    if (leg !== group || skipCoreIds.includes(coreId)) continue;
     const recipe = RECIPE_DATABASE.get(coreId)!;
     steps.push(
       {
@@ -318,6 +318,11 @@ function buildCoreAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
   return steps;
 }
 
+export interface T2TreatmentAssertion {
+  condition: Condition;
+  message?: string;
+}
+
 export interface T2RouteConfig {
   plan: T2ClassPlan;
   branch: T2Branch;
@@ -330,6 +335,28 @@ export interface T2RouteConfig {
    * seals. See `makeT2ProgressionRoute` for why this arm exists.
    */
   bossless?: boolean;
+  /** Start after this biome, retaining the same route policies for the tail. */
+  startAfter?: T2BiomeGroup;
+  /** Stop after this biome instead of running the full progression order. */
+  stopAfter?: T2BiomeGroup;
+  /** Capture a named intermediate state at the route completion boundary. */
+  checkpointKind?: TierCheckpointKind;
+  /** Override the normal cap for a checkpoint such as Jungle level 5 (J3). */
+  checkpointLevel?: number;
+  /** Equip a known item before the first farm in a tail route. */
+  initialEquip?: readonly string[];
+  /** Assertions evaluated after the entry profile is live. */
+  entryAssertions?: readonly T2TreatmentAssertion[];
+  /** Assertions evaluated after the first leg's treatment is fully applied. */
+  treatmentAssertions?: readonly T2TreatmentAssertion[];
+  /** Assertions evaluated after the terminal leg's treatment is fully applied. */
+  terminalAssertions?: readonly T2TreatmentAssertion[];
+  /** Omit named core acquisitions from a focused tail route. */
+  skipCoreIds?: readonly string[];
+  /** Explicitly suppress Snapshot B on a partial/tail route. */
+  captureTier2Handoff?: boolean;
+  entryItems?: readonly string[];
+  entryKnownAbilities?: readonly string[];
 }
 
 /**
@@ -356,6 +383,18 @@ export function makeT2Route(config: T2RouteConfig): Route {
   // wallet, so either resolves the same acquisition paths.
   const profile = TIER_ENTRY_PROFILES.get(t2EntryProfileId(plan.classRoot, "clean"))!;
   const steps: RouteStep[] = [];
+  const startIndex = config.startAfter
+    ? T2_PROGRESSION_ORDER.indexOf(config.startAfter) + 1
+    : 0;
+  const stopIndex = config.stopAfter
+    ? T2_PROGRESSION_ORDER.indexOf(config.stopAfter)
+    : T2_PROGRESSION_ORDER.length - 1;
+  if (startIndex < 0 || stopIndex < 0 || startIndex > stopIndex) {
+    throw new Error(`invalid T2 route slice ${config.startAfter ?? "entry"} -> ${config.stopAfter ?? "end"}`);
+  }
+  const progressionOrder = T2_PROGRESSION_ORDER.slice(startIndex, stopIndex + 1);
+  const terminalGroup = progressionOrder[progressionOrder.length - 1];
+  if (!terminalGroup) throw new Error("T2 route has no biome legs");
   // Everything the class is currently wearing, so upgrade steps target the live
   // kit rather than a guess. Seeded empty: the Tier-1 kit arrives with the
   // template and is upgraded no further (its ceiling is already +5 at GM 30).
@@ -369,9 +408,17 @@ export function makeT2Route(config: T2RouteConfig): Route {
     },
     { type: "milestone", id: "t2-entry" },
   );
+  for (const assertion of config.entryAssertions ?? []) {
+    steps.push({
+      type: "assert",
+      condition: assertion.condition,
+      message: assertion.message,
+      label: assertion.message ?? `assert entry treatment: ${assertion.condition.type}`,
+    });
+  }
 
   let bossesAttempted = 0;
-  for (const group of T2_PROGRESSION_ORDER) {
+  for (const group of progressionOrder) {
     steps.push({ type: "travel", to: t2(group) });
     // Brackets the leg for the per-biome response map: dwell time for `group` is
     // the span between this milestone and `${group}-t2-leg-complete`.
@@ -387,6 +434,9 @@ export function makeT2Route(config: T2RouteConfig): Route {
     //    runs after step 2.
     // 4. Only THEN can this leg's farm core be equipped, because on the leg
     //    that crafts it (Cave/Desert), it does not exist until step 3 ran.
+    if (group === progressionOrder[0] && config.initialEquip && config.initialEquip.length > 0) {
+      steps.push({ type: "equip", definitionIds: [...config.initialEquip], label: "equip declared treatment weapon" });
+    }
     steps.push(...buildStanceAcquisitionSteps(group));
     const learnsAbility = plan.biomes[group]?.learn !== undefined;
     // A newly learned Technique/Guard cannot be slotted before its own craft.
@@ -398,12 +448,40 @@ export function makeT2Route(config: T2RouteConfig): Route {
       steps.push(...learnAbilitySteps(group, plan));
       steps.push(...farmAbilityKitSteps(group, plan));
     }
-    steps.push(...buildCoreAcquisitionSteps(group));
+    steps.push(...buildCoreAcquisitionSteps(group, config.skipCoreIds));
     steps.push(...farmCoreEquipSteps(group, plan));
     const adopted: string[] = [];
     steps.push(...biomeLegSteps(plan, group, profile, adopted));
     for (const id of adopted) if (!worn.includes(id)) worn.push(id);
-    steps.push(maxOutT2(group));
+    if (group === progressionOrder[0]) {
+      for (const assertion of config.treatmentAssertions ?? []) {
+        steps.push({
+          type: "assert",
+          condition: assertion.condition,
+          message: assertion.message,
+          label: assertion.message ?? `assert live treatment: ${assertion.condition.type}`,
+        });
+      }
+    }
+    if (group === terminalGroup) {
+      for (const assertion of config.terminalAssertions ?? []) {
+        steps.push({
+          type: "assert",
+          condition: assertion.condition,
+          message: assertion.message,
+          label: assertion.message ?? `assert terminal treatment: ${assertion.condition.type}`,
+        });
+      }
+    }
+    const maxLevel = config.checkpointKind && group === terminalGroup && config.checkpointLevel !== undefined
+      ? config.checkpointLevel
+      : t2MaxLevel(group);
+    steps.push({
+      type: "farm",
+      at: t2(group),
+      until: { type: "biomeLevelAtLeast", biomeGroup: group, level: maxLevel },
+      label: `farm ${group} T2 to level ${maxLevel}`,
+    });
     steps.push({ type: "milestone", id: `${group}-t2-maxed` });
     steps.push(...opportunisticUpgrades(worn, group));
     if (!bossless) {
@@ -428,6 +506,16 @@ export function makeT2Route(config: T2RouteConfig): Route {
     },
   ];
 
+  const checkpointMilestone = config.checkpointKind
+    ? [{
+        id: `checkpoint:${config.checkpointKind}`,
+        when: { type: "biomeLevelAtLeast" as const, biomeGroup: terminalGroup, level: config.checkpointLevel ?? t2MaxLevel(terminalGroup) },
+      }]
+    : [];
+  const slicedCompletion = config.checkpointKind || config.startAfter || config.stopAfter
+    ? { type: "biomeLevelAtLeast" as const, biomeGroup: terminalGroup, level: config.checkpointLevel ?? t2MaxLevel(terminalGroup) }
+    : undefined;
+
   if (bossless) {
     return {
       id: config.routeId ?? `${plan.slug}-t2-progression`,
@@ -448,11 +536,15 @@ export function makeT2Route(config: T2RouteConfig): Route {
       // Completion is BIOME MASTERY, not the tier. Three seals can never
       // legitimately be earned by a route that fights no bosses, so keying
       // completion on playerTier 3 would report every run as `stalled`.
-      completion: {
+      completion: slicedCompletion ?? {
         type: "globalMasteryAtLeast",
         value: T2_BOSSLESS_MASTERY_TARGET,
       },
-      milestones: masteryMilestones,
+      milestones: [...masteryMilestones, ...checkpointMilestone],
+      checkpointKind: config.checkpointKind,
+      captureTier2Handoff: config.captureTier2Handoff ?? (!config.startAfter && !config.stopAfter && !config.checkpointKind),
+      entryItems: config.entryItems,
+      entryKnownAbilities: config.entryKnownAbilities,
     };
   }
 

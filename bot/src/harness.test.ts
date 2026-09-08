@@ -687,10 +687,14 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
         )
       : undefined;
     const craftedItems = new Set<string>([
+      ...(route.entryItems ?? []),
       ...(entry?.inventory ?? []),
       ...Object.values(entry?.equipment ?? {}).filter((id): id is string => !!id),
     ]);
-    const learnedAbilities = new Set<string>(entry?.knownAbilities ?? []);
+    const learnedAbilities = new Set<string>([
+      ...(entry?.knownAbilities ?? []),
+      ...(route.entryKnownAbilities ?? []),
+    ]);
     const ownedRunes = new Set(STARTER_RUNE_IDS);
     for (const recipeId of entry?.runeRecipesCrafted ?? []) {
       const runeId = RUNE_RECIPE_DATABASE.get(recipeId)?.runeId;
