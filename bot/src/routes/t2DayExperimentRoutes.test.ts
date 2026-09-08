@@ -46,10 +46,12 @@ for (const route of T2_DAY_J0_CHECKPOINT_ROUTES) {
 for (const route of T2_DAY_J3_CHECKPOINT_ROUTES) {
   assert(route.checkpointKind === "j3", `${route.id}: J3 checkpoint`);
   assert(route.entryCheckpointKind === "j0", `${route.id}: J3 consumes J0`);
+  assert(flatten(route.steps).some((step) => step.type === "milestone" && step.id === "checkpoint:j3"), `${route.id}: explicit J3 boundary`);
 }
 for (const route of T2_DAY_D0_CHECKPOINT_ROUTES) {
   assert(route.checkpointKind === "d0", `${route.id}: D0 checkpoint`);
   assert(route.entryCheckpointKind === "j0", `${route.id}: D0 consumes J0`);
+  assert(flatten(route.steps).some((step) => step.type === "milestone" && step.id === "checkpoint:d0"), `${route.id}: explicit D0 boundary`);
 }
 
 for (const route of [

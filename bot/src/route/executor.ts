@@ -157,6 +157,7 @@ export class RouteExecutor {
   private partial = false;
   private stepIndex = 0;
   private stepLabel = "";
+  private checkpointBoundaryReached = false;
 
   constructor(private readonly deps: ExecutorDeps) {}
 
@@ -192,14 +193,26 @@ export class RouteExecutor {
   }
 
   private async runSteps(steps: RouteStep[]): Promise<void> {
-    for (const step of steps) {
+    for (const [remainingIndex, step] of steps.entries()) {
       if (this.deps.aborted()) throw new AbortError("run aborted");
 
       if (step.optional && !this.deps.policy.performsOptional(step)) continue;
 
       // The route may already be satisfied by an earlier detour (revisit routes
-      // are explicitly supported), so completion short-circuits the remainder.
-      if (this.test(this.deps.route.completion)) return;
+      // are explicitly supported), so completion normally short-circuits the
+      // remainder. Keep walking while a treatment assertion is still pending,
+      // though: an acquisition farm can satisfy the completion condition before
+      // the route reaches its declared treatment boundary. Checkpoint routes
+      // additionally wait for their explicit capture milestone, so the saved
+      // state is taken after terminal assertions rather than at the first time
+      // the biome happens to cross its level threshold.
+      const checkpointComplete = !this.deps.route.checkpointKind ||
+        this.firedMilestones.has(`checkpoint:${this.deps.route.checkpointKind}`);
+      if (
+        this.test(this.deps.route.completion) &&
+        checkpointComplete &&
+        !this.hasPendingAssertions(steps.slice(remainingIndex))
+      ) return;
 
       const label = step.label ?? defaultLabel(step);
       const index = this.stepIndex++;
@@ -294,9 +307,22 @@ export class RouteExecutor {
     }
   }
 
+  private hasPendingAssertions(steps: readonly RouteStep[]): boolean {
+    return steps.some((step) => {
+      if (step.type === "assert") return true;
+      if (step.type === "ifPossible" || step.type === "repeatUntil") {
+        return this.hasPendingAssertions(step.steps);
+      }
+      return false;
+    });
+  }
+
   private async runStep(step: RouteStep): Promise<void> {
     switch (step.type) {
       case "milestone":
+        if (this.deps.route.checkpointKind && step.id === `checkpoint:${this.deps.route.checkpointKind}`) {
+          this.checkpointBoundaryReached = true;
+        }
         this.fireMilestone(step.id);
         return;
       case "chooseClass":
@@ -2320,6 +2346,11 @@ export class RouteExecutor {
   private checkMilestones(): void {
     for (const milestone of this.deps.route.milestones) {
       if (this.firedMilestones.has(milestone.id)) continue;
+      if (
+        this.deps.route.checkpointKind &&
+        milestone.id === `checkpoint:${this.deps.route.checkpointKind}` &&
+        !this.checkpointBoundaryReached
+      ) continue;
       if (this.test(milestone.when)) this.fireMilestone(milestone.id);
     }
   }

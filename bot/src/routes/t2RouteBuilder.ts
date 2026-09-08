@@ -474,6 +474,13 @@ export function makeT2Route(config: T2RouteConfig): Route {
           label: assertion.message ?? `assert terminal treatment: ${assertion.condition.type}`,
         });
       }
+      if (config.checkpointKind) {
+        steps.push({
+          type: "milestone",
+          id: `checkpoint:${config.checkpointKind}`,
+          label: `capture ${config.checkpointKind} checkpoint after terminal assertions`,
+        });
+      }
     }
     const maxLevel = config.checkpointKind && group === terminalGroup && config.checkpointLevel !== undefined
       ? config.checkpointLevel
