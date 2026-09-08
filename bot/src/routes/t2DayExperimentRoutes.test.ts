@@ -97,4 +97,18 @@ for (const route of T2_DAY_WEAPON_ROUTES) {
   assert(!equipped.includes("jungle-stinger-rapier"), `${route.id}: no invalid fast on-hit arm`);
 }
 
+for (const route of [
+  ...T2_DAY_FRAME_ROUTES,
+  ...T2_DAY_WEAPON_ROUTES,
+  ...T2_DAY_CONTAGION_ROUTES,
+]) {
+  const survivalistGate = flatten(route.steps).some(
+    (step): step is Extract<RouteStep, { type: "farm" }> =>
+      step.type === "farm" &&
+      step.until.type === "recipeUnlocked" &&
+      step.until.recipeId === "core-survivalist",
+  );
+  assert(!survivalistGate, `${route.id}: Jungle tail does not acquire Survivalist`);
+}
+
 console.log("t2DayExperimentRoutes.test.ts: ok");

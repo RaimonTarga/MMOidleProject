@@ -267,6 +267,10 @@ function jungleTailRoute(
     entryCheckpointKind: "j0",
     entryAssertions,
     terminalAssertions,
+    // J0->J6 tails measure Jungle; Survivalist is a Jungle-unlocked core but
+    // belongs to the D0/Desert entry boundary, so do not spend the tail waiting
+    // for or crafting it. D0 routes intentionally keep the acquisition step.
+    skipCoreIds: ["core-survivalist"],
     captureTier2Handoff: false,
     entryItems: [...new Set([j0Weapon(base.slug), "core-tempered", ...initialEquip])],
     entryKnownAbilities: entryKnownAbilities(base.slug),
