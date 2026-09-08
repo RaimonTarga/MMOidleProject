@@ -47,7 +47,8 @@ for (const route of T2_DAY_J0_CHECKPOINT_ROUTES) {
 
 for (const route of T2_DAY_FRAME_ROUTES) {
   const frameAssertion = flatten(route.steps).find(
-    (step) => step.type === "assert" && step.condition.type === "frameSelected",
+    (step): step is Extract<RouteStep, { type: "assert" }> =>
+      step.type === "assert" && step.condition.type === "frameSelected",
   );
   assert(
     frameAssertion?.condition.type === "frameSelected" && frameAssertion.condition.frameId === route.frameId,
