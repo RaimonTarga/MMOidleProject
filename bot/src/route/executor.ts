@@ -643,7 +643,9 @@ export class RouteExecutor {
         // acquire the node while this bot is still authoritative
         // auto-combat=true. Only retaliate when this session owns the current
         // node; an unowned crossing remains movement-only.
-        const mayFightBack = this.deps.leaseSession
+        const mayFightBack = this.deps.route.suppressTransitCombat
+          ? false
+          : this.deps.leaseSession
           ? this.deps.leaseSession.ownsNode(obs.nodeId)
           : true;
         const attackers = obs.attackersOnSelf().length;

@@ -42,6 +42,7 @@ for (const route of T2_DAY_EXPERIMENT_ROUTES) {
 for (const route of T2_DAY_J0_CHECKPOINT_ROUTES) {
   assert(route.checkpointKind === "j0", `${route.id}: J0 checkpoint`);
   assert(!route.entryCheckpointKind, `${route.id}: source route has no entry checkpoint`);
+  assert(route.suppressTransitCombat === true, `${route.id}: pre-Jungle transit is movement-only`);
 }
 for (const route of T2_DAY_J3_CHECKPOINT_ROUTES) {
   assert(route.checkpointKind === "j3", `${route.id}: J3 checkpoint`);

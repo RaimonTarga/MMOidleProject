@@ -195,6 +195,8 @@ export interface Route {
   checkpointKind?: TierCheckpointKind;
   /** Expected checkpoint kind when this route consumes a sealed experiment state. */
   entryCheckpointKind?: TierCheckpointKind;
+  /** Keep transit through future biomes movement-only for a pre-progression checkpoint. */
+  suppressTransitCombat?: boolean;
   captureTier2Handoff?: boolean;
   /** Static ordering-test seed for a route that begins from a sealed checkpoint. */
   entryItems?: readonly string[];

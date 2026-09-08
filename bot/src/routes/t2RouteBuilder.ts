@@ -343,6 +343,8 @@ export interface T2RouteConfig {
   checkpointKind?: TierCheckpointKind;
   /** Require a matching sealed checkpoint kind when this route consumes an entry. */
   entryCheckpointKind?: TierCheckpointKind;
+  /** Keep transit movement-only while preparing a pre-progression checkpoint. */
+  suppressTransitCombat?: boolean;
   /** Override the normal cap for a checkpoint such as Jungle level 5 (J3). */
   checkpointLevel?: number;
   /** Equip a known item before the first farm in a tail route. */
@@ -552,6 +554,7 @@ export function makeT2Route(config: T2RouteConfig): Route {
       milestones: [...masteryMilestones, ...checkpointMilestone],
       checkpointKind: config.checkpointKind,
       entryCheckpointKind: config.entryCheckpointKind,
+      suppressTransitCombat: config.suppressTransitCombat,
       captureTier2Handoff: config.captureTier2Handoff ?? (!config.startAfter && !config.stopAfter && !config.checkpointKind),
       entryItems: config.entryItems,
       entryKnownAbilities: config.entryKnownAbilities,
@@ -582,6 +585,7 @@ export function makeT2Route(config: T2RouteConfig): Route {
       })),
     ],
     entryCheckpointKind: config.entryCheckpointKind,
+    suppressTransitCombat: config.suppressTransitCombat,
   };
 }
 

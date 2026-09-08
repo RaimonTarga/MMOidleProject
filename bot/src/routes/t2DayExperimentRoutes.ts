@@ -163,6 +163,7 @@ function j0CheckpointRoute(
     routeId,
     stopAfter: "cave",
     checkpointKind: "j0",
+    suppressTransitCombat: true,
     terminalAssertions: j0PreparationChecks(plan, j0Weapon(base.slug)),
   });
 }
