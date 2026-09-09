@@ -21,6 +21,7 @@ import {
 } from "../player/abilities/abilityBramble";
 import { COMBAT_ELAPSED_KEY } from "./core/pools";
 import { isPlayerInCombat } from "../combat/ai/engagement";
+import { isPlayerInHazardousNodeFeature } from "../world/nodeFeatures";
 
 /**
  * Register all defense-layer combat pipeline listeners.
@@ -94,7 +95,7 @@ export function updateDefensiveSystems(
     // One Recovery pass covers OOC regen AND every in-combat regen effect: they
     // all activate a fraction of the same rate, so they must not be applied
     // separately (that is what made them independent %-maxHp heals before).
-    runRecovery(world, player, dt, inCombat, player.hasNodeFeatureEffect !== undefined);
+    runRecovery(world, player, dt, inCombat, isPlayerInHazardousNodeFeature(world, player));
     runHardening(world, player, dt);
     runHardeningMaxDr(world, player);
     runStationaryDr(world, player, dt);

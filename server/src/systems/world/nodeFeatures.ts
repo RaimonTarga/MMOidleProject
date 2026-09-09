@@ -364,6 +364,36 @@ function playerInFeatureContact(
   return inside || pointNearNodeFeatureShapeEdge(pos, feature.shape, band);
 }
 
+/**
+ * Whether `player` currently stands in a node feature that actually deals
+ * damage (a real hazard: a swamp rot pool, a lava vent, the void throne) —
+ * as opposed to `hasNodeFeatureEffect`, which is also set by purely cosmetic
+ * contact like a jungle thicket (slow + detection only, no `damage` field).
+ *
+ * Out-of-combat Recovery suppression means "standing in lava does not heal
+ * you" (see `runRecovery`'s `oocSuppressed`), which only makes sense for an
+ * actual hazard. Using the broader `hasNodeFeatureEffect` marker there
+ * suppressed regen for a player resting in a harmless jungle bush too — and
+ * combined with the Recover First rune (which holds movement until HP is
+ * full), that was a permanent softlock: can't move until healed, can't heal
+ * while standing in the very bush the player stopped in.
+ */
+export function isPlayerInHazardousNodeFeature(
+  world: World,
+  player: PlayerEntity,
+): boolean {
+  const nodeId = player.hasPosition.nodeId;
+  const features = RESOLVED_NODE_FEATURES[nodeId];
+  if (!features || features.length === 0) return false;
+  const pos = player.hasPosition.current;
+  for (const feature of features) {
+    if (!feature.damage?.targets.includes('player')) continue;
+    if (!isFeatureDamageActive(world, nodeId, feature)) continue;
+    if (playerInFeatureContact(pos, feature)) return true;
+  }
+  return false;
+}
+
 function applyAndTickPlayerNodeFeatures(
   world: World,
   player: PlayerEntity,
