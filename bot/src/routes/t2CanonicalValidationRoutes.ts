@@ -24,6 +24,23 @@ const VALIDATION_FRAMES = [
   ["striker", "cadence-heavy", "ruinous-axe"],
 ] as const;
 
+// Normal 1x T2 mastery farming can legitimately exceed the generic 30-minute
+// route-step watchdog. Keep the ordinary 12-minute no-progress guard intact
+// (so an actual softlock still resolves), but give this diagnostic's active
+// farms enough wall-clock budget to finish a slow biome leg.
+const VALIDATION_FARM_TIMEOUT_MS = 2 * 60 * 60 * 1000;
+
+function allowLongValidationFarms(route: Route): Route {
+  return {
+    ...route,
+    steps: route.steps.map((step) =>
+      step.type === "farm"
+        ? { ...step, stepTimeoutMs: VALIDATION_FARM_TIMEOUT_MS }
+        : step,
+    ),
+  };
+}
+
 function basePlan(slug: string): T2ClassPlan {
   const plan = T2_CLASS_PLANS.find((candidate) => candidate.slug === slug);
   if (!plan) throw new Error(`T2 canonical validation base plan missing: ${slug}`);
@@ -78,7 +95,7 @@ export const T2_CANONICAL_VALIDATION_ROUTES: readonly Route[] = VALIDATION_FRAME
         `${base.hypothesis} Final validation arm: hold the normal gear, ability, ` +
         `stance, Core and biome policy while testing ${frameId}.`,
     };
-    return makeT2Route({
+    return allowLongValidationFarms(makeT2Route({
       plan,
       branch: "mid",
       version: "canonical-validation-2026-09-10-1.0.0",
@@ -86,7 +103,7 @@ export const T2_CANONICAL_VALIDATION_ROUTES: readonly Route[] = VALIDATION_FRAME
       routeId: `${slug}-t2-canonical-${frameId.split("-").at(-1)}`,
       entryAssertions: entryAssertions(frameId),
       terminalAssertions: terminalAssertions(frameId, terminalWeapon),
-    });
+    }));
   },
 );
 

@@ -714,6 +714,7 @@ export class RouteExecutor {
     );
     await this.farmUntil(nodes, () => this.test(condition), {
       what: describe(condition),
+      timeoutMs: step.stepTimeoutMs ?? DEFAULT_STEP_TIMEOUT_MS,
       noProgressMs: stallAfterMs ?? DEFAULT_NO_PROGRESS_MS,
       onStall: () => shortfall(condition, this.deps.obs),
     });
@@ -736,6 +737,7 @@ export class RouteExecutor {
     done: () => boolean,
     opts: {
       what: string;
+      timeoutMs: number;
       noProgressMs: number;
       onStall: () => Record<string, number>;
       /** Set when the goal genuinely is essence-only, so a capped biome is fine. */
@@ -800,7 +802,7 @@ export class RouteExecutor {
 
     try {
       await this.waitUntil(done, {
-        timeoutMs: DEFAULT_STEP_TIMEOUT_MS,
+        timeoutMs: opts.timeoutMs,
         what: opts.what,
         onPoll: () => {
           const signal = progressSignal(obs);
@@ -2160,6 +2162,7 @@ export class RouteExecutor {
     try {
       await this.farmUntil(nodeId, done, {
         what: forWhat,
+        timeoutMs: DEFAULT_STEP_TIMEOUT_MS,
         noProgressMs: DEFAULT_NO_PROGRESS_MS,
         onStall: missing,
         ignoreBiomeCap,

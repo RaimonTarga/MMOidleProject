@@ -149,6 +149,8 @@ export type StepBody =
 export type RouteStep = StepBody & {
   /** Overrides the generated label in telemetry. */
   label?: string;
+  /** Per-step wall-clock timeout for a long-running farm or other wait. */
+  stepTimeoutMs?: number;
   /**
    * Preparation the *intended* player does but a hurried or careless one skips.
    * Policies drop these rather than the route being forked per policy.

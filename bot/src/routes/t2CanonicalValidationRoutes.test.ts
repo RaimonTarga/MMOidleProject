@@ -24,6 +24,14 @@ for (const route of T2_CANONICAL_VALIDATION_ROUTES) {
   assert(route.startsFromTierEntry === 2, `${route.id}: T2 entry declared`);
   assert(route.frameId, `${route.id}: frame declared`);
   assert(!flatten(route.steps).some((step) => step.type === "attemptBoss"), `${route.id}: bossless validation route`);
+  const farms = flatten(route.steps).filter(
+    (step): step is Extract<RouteStep, { type: "farm" }> => step.type === "farm",
+  );
+  assert(farms.length > 0, `${route.id}: progression farms present`);
+  assert(
+    farms.every((step) => (step.stepTimeoutMs ?? 0) > 30 * 60 * 1000),
+    `${route.id}: 1x progression farms exceed the generic 30-minute watchdog`,
+  );
   const assertions = flatten(route.steps).filter(
     (step): step is Extract<RouteStep, { type: "assert" }> => step.type === "assert",
   );
