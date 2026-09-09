@@ -22,12 +22,15 @@ import {
   ensureInfrastructure,
   experimentDir,
   git,
+  globalActiveRunCount,
   hashTree,
   isTerminal,
   loadExperiment,
+  loadQueueRegistry,
   makeExperimentId,
   normalizeCreateOptions,
   parseArgs,
+  queueRegistryPath,
   randomSecret,
   readJson,
   removeBuildDirectory,
@@ -56,6 +59,13 @@ Commands:
   pnpm experiment:stop --id=<id>
   pnpm experiment:report --id=<id>
   pnpm experiment:clean --id=<id>
+
+Cross-cohort queue (shared worker budget across multiple manifests):
+  pnpm experiment:queue-add --id=<id> [--id=<id> ...] | --ids=<id,id,...>
+  pnpm experiment:queue-run [--maxWorkers=1..4]   defaults to 4, launches a
+                                                   detached controller
+  pnpm experiment:queue-status
+  pnpm experiment:queue-stop
 
 Create options:
   --mode=canonical-isolated|smoke-isolated
@@ -384,6 +394,94 @@ function cleanExperiment() {
   console.log(`[experiment] artifacts and frozen image remain recoverable at ${experiment.dir}`);
 }
 
+function queueIds() {
+  const ids = [];
+  if (args.id) ids.push(args.id);
+  if (args.ids) ids.push(...String(args.ids).split(",").map((value) => value.trim()).filter(Boolean));
+  return ids;
+}
+
+async function queueAddCommand() {
+  const ids = queueIds();
+  if (ids.length === 0) throw new Error("--id=<experimentId> or --ids=<a,b,c> is required");
+  const queueScript = join(scriptDirectory, "queue.mjs");
+  const forwarded = ["add", `--root=${root}`, `--ids=${ids.join(",")}`];
+  run(process.execPath, [queueScript, ...forwarded], { inherit: true });
+}
+
+async function queueRunCommand() {
+  const pidPath = join(root, "queue.pid");
+  if (existsSync(pidPath) && processAlive(Number(readFileSync(pidPath, "utf8").trim()))) {
+    throw new Error("a queue controller is already running for this --root; use experiment:queue-stop first");
+  }
+  const stopPath = join(root, "queue-stop.request");
+  if (existsSync(stopPath)) rmSync(stopPath, { force: true });
+  const queueScript = join(scriptDirectory, "queue.mjs");
+  const maxWorkers = args.maxWorkers ?? "4";
+  const logFd = openSync(join(root, "queue.log"), "a");
+  const child = spawn(process.execPath, [queueScript, `--root=${root}`, `--maxWorkers=${maxWorkers}`], {
+    cwd: root,
+    detached: true,
+    windowsHide: true,
+    stdio: ["ignore", logFd, logFd],
+  });
+  child.unref();
+  closeSync(logFd);
+  console.log(`[queue] launched controller pid ${child.pid} (maxWorkers=${maxWorkers}, root=${root})`);
+  console.log(`[queue] status: pnpm experiment:queue-status --root=${root}`);
+}
+
+function queueStatusCommand() {
+  const registry = loadQueueRegistry(root);
+  const pidPath = join(root, "queue.pid");
+  const alive = existsSync(pidPath) && processAlive(Number(readFileSync(pidPath, "utf8").trim()));
+  console.log(`registry ${queueRegistryPath(root)} (controller ${alive ? "running" : "not running"})`);
+  console.log(`maxWorkers=${registry.maxWorkers ?? 4}`);
+  const loaded = registry.entries.map((entry) => {
+    const state = readJson(join(experimentDir(root, entry.experimentId), "state.json"));
+    return { experimentId: entry.experimentId, entry, state };
+  });
+  const globalActive = globalActiveRunCount(loaded);
+  console.log(`global active runs: ${globalActive}`);
+  console.table(loaded.map(({ experimentId, entry, state }) => {
+    const counts = stateCounts(state);
+    const notStarted = entry.status === "queued" && (counts.queued ?? 0) === state.runs.length;
+    return {
+      experimentId,
+      queueStatus: notStarted ? "not-started" : entry.status,
+      totalRuns: state.runs.length,
+      queued: counts.queued ?? 0,
+      starting: counts.starting ?? 0,
+      running: counts.running ?? 0,
+      completed: counts.completed ?? 0,
+      failed: counts.failed ?? 0,
+      timed_out: counts.timed_out ?? 0,
+      cancelled: counts.cancelled ?? 0,
+    };
+  }));
+}
+
+async function queueStopCommand() {
+  const pidPath = join(root, "queue.pid");
+  if (!existsSync(pidPath) || !processAlive(Number(readFileSync(pidPath, "utf8").trim()))) {
+    console.log("[queue] no running controller found for this --root");
+    return;
+  }
+  writeFileSync(join(root, "queue-stop.request"), `${new Date().toISOString()}\n`, "utf8");
+  console.log("[queue] stop requested");
+  const deadline = Date.now() + 60_000;
+  while (Date.now() < deadline) {
+    await sleep(1_000);
+    const registry = loadQueueRegistry(root);
+    const allDone = registry.entries.every((entry) => entry.status === "done");
+    if (allDone) {
+      console.log("[queue] all managed experiments are terminal; artifacts were preserved");
+      return;
+    }
+  }
+  console.log("[queue] stop remains in progress; inspect with experiment:queue-status");
+}
+
 try {
   mkdirSync(root, { recursive: true });
   if (command === "create") await createExperiment();
@@ -392,6 +490,10 @@ try {
   else if (command === "stop") await stopExperiment();
   else if (command === "report") reportExperiment();
   else if (command === "clean") cleanExperiment();
+  else if (command === "queue-add") await queueAddCommand();
+  else if (command === "queue-run") await queueRunCommand();
+  else if (command === "queue-status") queueStatusCommand();
+  else if (command === "queue-stop") await queueStopCommand();
   else usage();
 } catch (error) {
   console.error(`[experiment] ${error instanceof Error ? error.message : String(error)}`);
