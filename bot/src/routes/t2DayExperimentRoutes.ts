@@ -343,6 +343,13 @@ export const T2_DAY_FRAME_WEAPON_ROUTES: readonly Route[] = FRAME_WEAPON_COMBOS.
     plan,
     [weaponId],
     treatmentChecks(plan, weaponId, "core-tempered", "sweep"),
+    // The entry checkpoint is always captured at the class's base frame; the
+    // frame override only takes effect once applyTierEntryProfile runs, so the
+    // entry assertion must check the OVERRIDDEN plan, not the base checkpoint
+    // frame -- exactly like T2_DAY_FRAME_ROUTES does. Omitting this arg (the
+    // jungleTailRoute default) checks the base frame instead, which then
+    // fails instantly because the live frame has already moved on.
+    j0PreparationChecks(plan, j0Weapon(base.slug)),
   );
 });
 
