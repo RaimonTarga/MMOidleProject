@@ -17,6 +17,7 @@ import { SQUIRE_V2_T1 } from "./squireV2T1";
 import { STRIKER_T1 } from "./strikerT1";
 import { STRIKER_BRACE_TANK_T1 } from "./strikerBraceTankT1";
 import { STRIKER_V2_T1 } from "./strikerV2T1";
+import { T1_CANONICAL_FRAME_HANDOFF_ROUTES } from "./t1CanonicalFrameHandoffRoutes";
 import {
   T2_CONTROL_ROUTE_IDS,
   T2_PROBE_ROUTES,
@@ -75,6 +76,7 @@ export const ROUTES = new Map<string, Route>(
   [
     STRIKER_T1,
     SQUIRE_T1,
+    ...T1_CANONICAL_FRAME_HANDOFF_ROUTES,
     SLINGER_T1,
     SPIRIT_T1,
     APPRENTICE_T1,
