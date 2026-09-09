@@ -538,7 +538,11 @@ export async function runBot(
       : undefined,
     templateValidation,
   };
-  const snapshotFrameId = liveFrameId;
+  // Fresh T1 routes do not have a tier-1 frame at run start: the route buys
+  // the intended frame after the Forest seal.  Persist that declared frame in
+  // the final handoff rather than the start-of-run observation (which is
+  // legitimately null for a fresh character).
+  const snapshotFrameId = tierEntryProfile?.frameId ?? route.frameId ?? liveFrameId;
   const captureSnapshot = (kind: "mastery-completion" | "tier2-handoff"): void => {
     const self = obs.self;
     if (!self) return;
