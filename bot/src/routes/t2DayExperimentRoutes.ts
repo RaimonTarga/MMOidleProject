@@ -318,6 +318,34 @@ export const T2_DAY_WEAPON_ROUTES: readonly Route[] = WEAPON_ARMS.map(([slug, we
   );
 });
 
+/**
+ * Squire's Jungle wall diagnostic needs frame x weapon combinations that
+ * T2_DAY_FRAME_ROUTES and T2_DAY_WEAPON_ROUTES don't cover individually: those
+ * vary exactly one of frame/weapon while holding the other at its J0 default
+ * (frame "cooldown-heavy", weapon "quake-hammer"). This adds the specific
+ * off-default pairings the diagnostic asked for.
+ */
+const FRAME_WEAPON_COMBOS: readonly [string, string, string][] = [
+  ["squire", "cooldown-balanced", "ruinous-axe"],
+  ["squire", "cooldown-light", "ruinous-axe"],
+];
+
+export const T2_DAY_FRAME_WEAPON_ROUTES: readonly Route[] = FRAME_WEAPON_COMBOS.map(([slug, frameId, weaponId]) => {
+  const base = basePlan(slug);
+  const plan = variantPlan(base, {
+    frameId,
+    biomes: { jungle: weaponPolicy(base, "jungle", { adopt: weaponId }) },
+    hypothesis: `Jungle frame ${frameId} x weapon ${weaponId} diagnostic arm`,
+  });
+  return jungleTailRoute(
+    base,
+    `${slug}-t2-jungle-frame-${frameId.split("-").at(-1)}-weapon-${weaponId}`,
+    plan,
+    [weaponId],
+    treatmentChecks(plan, weaponId, "core-tempered", "sweep"),
+  );
+});
+
 function contagionPlan(base: T2ClassPlan, techniqueId: "sweep" | "contagion"): T2ClassPlan {
   let jungle = weaponPolicy(base, "jungle", { adopt: "swamp-mirebrand" });
   jungle = { ...jungle, learn: undefined };
@@ -386,6 +414,7 @@ export const T2_DAY_EXPERIMENT_ROUTES: readonly Route[] = [
   ...T2_DAY_J3_CHECKPOINT_ROUTES,
   ...T2_DAY_D0_CHECKPOINT_ROUTES,
   ...T2_DAY_FRAME_ROUTES,
+  ...T2_DAY_FRAME_WEAPON_ROUTES,
   ...T2_DAY_WEAPON_ROUTES,
   ...T2_DAY_CONTAGION_ROUTES,
   ...T2_DAY_SURVIVALIST_ROUTES,

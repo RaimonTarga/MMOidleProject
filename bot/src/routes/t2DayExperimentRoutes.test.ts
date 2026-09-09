@@ -3,6 +3,7 @@ import {
   T2_DAY_D0_CHECKPOINT_ROUTES,
   T2_DAY_EXPERIMENT_ROUTES,
   T2_DAY_FRAME_ROUTES,
+  T2_DAY_FRAME_WEAPON_ROUTES,
   T2_DAY_J0_CHECKPOINT_ROUTES,
   T2_DAY_J3_CHECKPOINT_ROUTES,
   T2_DAY_SURVIVALIST_ROUTES,
@@ -27,11 +28,12 @@ assert(T2_DAY_J0_CHECKPOINT_ROUTES.length === 6, "six class J0 checkpoint routes
 assert(T2_DAY_J3_CHECKPOINT_ROUTES.length === 1, "one practical J3 checkpoint route");
 assert(T2_DAY_D0_CHECKPOINT_ROUTES.length === 4, "four D0 checkpoint routes");
 assert(T2_DAY_FRAME_ROUTES.length === 9, "three classes x Light/Balanced/Heavy frame arms");
+assert(T2_DAY_FRAME_WEAPON_ROUTES.length === 2, "Squire off-default frame x weapon diagnostic pairings");
 assert(T2_DAY_WEAPON_ROUTES.length === 8, "four classes x two paired weapon arms");
 assert(T2_DAY_CONTAGION_ROUTES.length === 4, "two classes x Sweep/Contagion arms");
 assert(T2_DAY_SURVIVALIST_ROUTES.length === 8, "four classes x Tempered/Survivalist arms");
-assert(T2_DAY_EXPERIMENT_ROUTES.length === 40, "checkpoint and primary route matrix totals 40 authored routes");
-assert(new Set(T2_DAY_EXPERIMENT_ROUTES.map((route) => route.id)).size === 40, "day route ids are unique");
+assert(T2_DAY_EXPERIMENT_ROUTES.length === 42, "checkpoint and primary route matrix totals 42 authored routes");
+assert(new Set(T2_DAY_EXPERIMENT_ROUTES.map((route) => route.id)).size === 42, "day route ids are unique");
 
 for (const route of T2_DAY_EXPERIMENT_ROUTES) {
   assert(route.startsFromTierEntry === 2, `${route.id}: T2 entry declared`);
@@ -69,6 +71,7 @@ for (const route of T2_DAY_D0_CHECKPOINT_ROUTES) {
 
 for (const route of [
   ...T2_DAY_FRAME_ROUTES,
+  ...T2_DAY_FRAME_WEAPON_ROUTES,
   ...T2_DAY_WEAPON_ROUTES,
   ...T2_DAY_CONTAGION_ROUTES,
   ...T2_DAY_SURVIVALIST_ROUTES,
@@ -99,6 +102,7 @@ for (const route of T2_DAY_WEAPON_ROUTES) {
 
 for (const route of [
   ...T2_DAY_FRAME_ROUTES,
+  ...T2_DAY_FRAME_WEAPON_ROUTES,
   ...T2_DAY_WEAPON_ROUTES,
   ...T2_DAY_CONTAGION_ROUTES,
 ]) {
