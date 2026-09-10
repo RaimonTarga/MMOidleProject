@@ -46,6 +46,10 @@ import {
   T2_CANONICAL_VALIDATION_ROUTES,
   T2_CANONICAL_VALIDATION_ROUTE_IDS,
 } from "./t2CanonicalValidationRoutes";
+import {
+  T2_ECONOMY_PACING_ROUTES,
+  T2_ECONOMY_PACING_ROUTE_IDS,
+} from "./t2EconomyPacingRoutes";
 
 /** Canonical class baselines, excluding the two deliberate Brace A/B arms. */
 export { T1_BASELINE_ROUTE_IDS, T1_BASELINE_ROUTES } from "./t1Baselines";
@@ -99,6 +103,7 @@ export const ROUTES = new Map<string, Route>(
     ...T2_NIGHT2_ROUTES,
     ...T2_DAY_EXPERIMENT_ROUTES,
     ...T2_CANONICAL_VALIDATION_ROUTES,
+    ...T2_ECONOMY_PACING_ROUTES,
   ].map((route) => [route.id, route]),
 );
 
@@ -118,6 +123,8 @@ export {
   T2_DAY_SURVIVALIST_ROUTES,
   T2_CANONICAL_VALIDATION_ROUTES,
   T2_CANONICAL_VALIDATION_ROUTE_IDS,
+  T2_ECONOMY_PACING_ROUTES,
+  T2_ECONOMY_PACING_ROUTE_IDS,
 };
 
 /** The eighteen Tier-2 branch routes: 6 class plans x 3 range nodes. */
