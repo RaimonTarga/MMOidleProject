@@ -1,0 +1,78 @@
+import {
+  STARTER_RUNE_IDS,
+  runeIdsFromCraftedRecipes,
+  tierEntryProfileFromT1Snapshot,
+  type T1CharacterSnapshot,
+} from "..";
+
+function assert(condition: boolean, message: string): void {
+  if (!condition) throw new Error(message);
+}
+
+function makeSnapshot(runesOwned: string[], runeRecipesCrafted: string[] = []): T1CharacterSnapshot {
+  return {
+    schemaVersion: 1,
+    snapshotKind: "tier2-handoff",
+    snapshotId: "snapshot-test",
+    capturedAtMs: 1,
+    capturedAtIso: "1970-01-01T00:00:00.001Z",
+    elapsedMs: 1,
+    runId: "run-test",
+    characterId: "character-test",
+    characterName: "Test",
+    routeId: "route-test",
+    routeVersion: "1.0.0",
+    policyId: "intended",
+    classRoot: "cooldown-root",
+    frameId: "cooldown-heavy",
+    gitRevision: "revision-test",
+    serverUrl: "http://server.test",
+    canonicalAtCapture: true,
+    economy: {} as T1CharacterSnapshot["economy"],
+    state: {
+      classRoot: "cooldown-root",
+      frameId: "cooldown-heavy",
+      playerTier: 2,
+      currentSkillTier: 2,
+      skillPoints: 0,
+      unlockedSkills: ["cooldown-root", "cooldown-heavy"],
+      activeStance: null,
+      equippedStances: { default: null },
+      equipment: {},
+      runesOwned,
+      runeRecipesCrafted,
+      runesEquipped: [],
+      equippedAbilities: { techniques: [], guards: [] },
+      itemUpgrades: {},
+      inventory: [],
+      knownAbilities: [],
+      knownStances: [],
+      knownRites: [],
+      equippedRites: [],
+      bossesCleared: [],
+      clearedNodes: [],
+      visitedNodes: [],
+    } as unknown as T1CharacterSnapshot["state"],
+  };
+}
+
+const crafted = ["rune-recipe-avoid-hazards", "rune-recipe-step-back"];
+const derived = runeIdsFromCraftedRecipes(crafted);
+const historicalStarterSubset = derived.filter((id) => id !== "target-max-stacks");
+const imported = tierEntryProfileFromT1Snapshot(makeSnapshot(historicalStarterSubset, crafted));
+assert(imported.frameId === "cooldown-heavy", "historical starter additions should remain importable");
+assert(
+  JSON.stringify(imported.runeRecipesCrafted) === JSON.stringify(crafted),
+  "import should preserve the crafted recipe list",
+);
+
+const missingCraftedRune = STARTER_RUNE_IDS;
+let rejected = false;
+try {
+  tierEntryProfileFromT1Snapshot(makeSnapshot(missingCraftedRune, ["rune-recipe-avoid-hazards"]));
+} catch {
+  rejected = true;
+}
+assert(rejected, "a missing non-starter crafted rune must still reject the handoff");
+
+console.log("tier1Snapshot: ok");

@@ -1,6 +1,7 @@
 import type { PlayerView } from "./views";
 import type { TierCheckpointKind, TierEntryProfile } from "./tierEntry";
 import type { T1EconomyArm } from "../systems/t1EconomyExperiment";
+import { STARTER_RUNE_IDS } from "../runeDatabase";
 import { runeIdsFromCraftedRecipes } from "../runeRecipes";
 
 /** Versioned JSON contract written by a canonical T1 route at A/B boundaries. */
@@ -216,13 +217,25 @@ export function tierEntryProfileFromT1Snapshot(
   if (state.activeStance !== state.equippedStances.default) {
     throw new Error("T1 handoff snapshot active stance differs from its preserved default stance");
   }
-  const derivedRunes = runeIdsFromCraftedRecipes(state.runeRecipesCrafted);
-  if (JSON.stringify([...state.runesOwned].sort()) !== JSON.stringify([...derivedRunes].sort())) {
+  const derivedRunes = new Set(runeIdsFromCraftedRecipes(state.runeRecipesCrafted));
+  const capturedRunes = new Set(state.runesOwned);
+  const unexpectedCapturedRunes = [...capturedRunes].filter((id) => !derivedRunes.has(id));
+  const missingCapturedRunes = [...derivedRunes].filter((id) => !capturedRunes.has(id));
+  // Starter vocabulary can grow after a real Snapshot B was captured.  The
+  // authoritative T2 entry path derives ownership from current starter runes
+  // plus the preserved crafted recipes, so accepting only those newly-added
+  // starter IDs is lossless.  Any crafted/non-starter mismatch still rejects
+  // the handoff instead of silently changing its loadout.
+  if (
+    unexpectedCapturedRunes.length > 0 ||
+    missingCapturedRunes.some((id) => !STARTER_RUNE_IDS.includes(id))
+  ) {
     throw new Error("T1 handoff snapshot rune ownership does not match crafted Rune recipes");
   }
 
   assertUnique("inventory", state.inventory);
   assertUnique("knownAbilities", state.knownAbilities);
+  assertUnique("runesOwned", state.runesOwned);
   assertUnique("runeRecipesCrafted", state.runeRecipesCrafted);
   assertUnique("knownStances", state.knownStances);
   assertUnique("knownRites", state.knownRites);
