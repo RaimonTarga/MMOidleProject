@@ -375,6 +375,7 @@ export function StatPanel() {
               the explained reference: what a stat means, and the detail a
               plate has no room for. */}
           <div className="stat-section">
+            <div className="stat-section-title">Offense</div>
             <StatRow label="Attack" value={player?.attack ?? '—'} help={STAT_HELP.attack} />
             <StatRow label="DPS" value={dps} help={STAT_HELP.dps} />
             <StatRow
@@ -396,14 +397,16 @@ export function StatPanel() {
             {empMult && (
               <StatRow label="Empowered" value={`×${empMult.effective.toFixed(2)}`} help={empMultTip} />
             )}
+            <StatRow label="Range" value={player ? `${player.attackRange}` : '—'} help={STAT_HELP.attackRange} />
+          </div>
+          <div className="stat-section">
+            <div className="stat-section-title">Defense & Recovery</div>
             <StatRow label="Plating" value={player?.plating ?? '—'} help={STAT_HELP.plating} />
             <StatRow
               label="Damage Reduction"
               value={player ? `${Math.round(player.damageReduction * 100)}%` : '—'}
               help={STAT_HELP.damageReduction}
             />
-            <StatRow label="Range" value={player ? `${player.attackRange}` : '—'} help={STAT_HELP.attackRange} />
-            <StatRow label="Move Speed" value={player ? `${player.speed}` : '—'} help={STAT_HELP.speed} />
             <StatRow label="Recovery" value={player ? `${player.recovery}` : '—'} help={STAT_HELP.recovery} />
           </div>
 
@@ -414,6 +417,10 @@ export function StatPanel() {
               <StatRow label="Damage avoided" value={`${Math.round(player.evadeMitigation * 100)}% per dodge`} help={STAT_HELP.evadeMitigation} />
             </div>
           )}
+          <div className="stat-section">
+            <div className="stat-section-title">Movement</div>
+            <StatRow label="Move Speed" value={player ? `${player.speed}` : '—'} help={STAT_HELP.speed} />
+          </div>
           <div className="stat-section">
             <div className="stat-section-title">Rites</div>
             {equippedRiteDefs.length > 0 ? equippedRiteDefs.map((rite) => (

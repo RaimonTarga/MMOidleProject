@@ -107,7 +107,7 @@ const CATEGORY_OF: Record<LogKind, LogCategory> = {
 const CATEGORY_OPTIONS: { value: LogCategory; label: string; title: string }[] = [
   { value: 'outcomes', label: 'Outcomes', title: 'Kills, deaths, progression and world events' },
   { value: 'combat', label: 'Combat', title: 'Hits taken and dealt, dodges' },
-  { value: 'effects', label: 'Effects', title: 'Buffs, debuffs, heals and shields' },
+  { value: 'effects', label: 'Recovery', title: 'Heals and shields' },
 ];
 
 const DEFAULT_CATEGORIES: LogCategory[] = ['outcomes', 'combat'];

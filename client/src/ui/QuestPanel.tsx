@@ -216,8 +216,8 @@ export function QuestPanel({ onOpenMastery, showMastery = true }: Props) {
   const summaryProgress = usesSeals
     ? `${sealProgress.held} / ${sealProgress.required} seals`
     : activeQuest
-      ? `${progress} / ${required} quest`
-      : 'Content ceiling reached';
+      ? `${progress} / ${required} completed`
+      : 'Maximum tier reached';
   return (
     <>
       <HudPanel
@@ -232,7 +232,7 @@ export function QuestPanel({ onOpenMastery, showMastery = true }: Props) {
         >
           <span className="progression-summary__heading">
             <span className="panel-title">Progression</span>
-            <span className="progression-summary__chevron" aria-hidden="true">⌄</span>
+            <span className="disclosure-header__chevron" aria-hidden="true">{detailsOpen ? '▼' : '▶'}</span>
           </span>
           <span className="progression-summary__body">
             <span className="progression-summary__tier" aria-label={`Tier ${playerTier}`}>
@@ -293,7 +293,7 @@ export function QuestPanel({ onOpenMastery, showMastery = true }: Props) {
 
             <div className="seal-ledger-trigger">
               <ActionChip
-                label="Open the boss seal ledger for every tier"
+                label="Boss seals"
                 showLabel
                 icon={menuIconSource('mastery')}
                 tone="primary"

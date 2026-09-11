@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
   resolveZoneBestiary,
-  describeMonsterMechanics,
   type BestiaryEntry,
 } from '@mmo-idle/shared';
 import { bestiaryZoneNodeIdAtom, bestiaryOpenAtom, bestiaryDetailIdAtom } from '../atoms';
@@ -16,8 +15,6 @@ const ROLE_TAG: Record<BestiaryEntry['role'], string | null> = {
 };
 
 function BestiaryRow({ entry, onOpen }: { entry: BestiaryEntry; onOpen: () => void }) {
-  // Only the compact, icon-bearing mechanics are worth showing inline.
-  const mechs = describeMonsterMechanics(entry.def, entry.modifiers);
   const tag = ROLE_TAG[entry.role];
 
   return (
@@ -40,15 +37,6 @@ function BestiaryRow({ entry, onOpen }: { entry: BestiaryEntry; onOpen: () => vo
         <div className="bestiary__row-stats">
           <span>HP <b>{entry.stats.hp.toLocaleString()}</b></span>
           <span>DPS <b>{entry.stats.dps}</b></span>
-          {mechs.length > 0 && (
-            <span className="bestiary__mech-icons">
-              {mechs.slice(0, 6).map((m) => (
-                <span key={m.id} title={m.label} style={m.color ? { color: m.color } : undefined}>
-                  {m.icon}
-                </span>
-              ))}
-            </span>
-          )}
         </div>
       </div>
     </button>
@@ -77,7 +65,7 @@ export function BestiaryPanel() {
         {zone && (
           <span className="bestiary__zone">
             {zone.biomeName}{zone.biomeTier > 0 ? ` T${zone.biomeTier}` : ''}
-            {zone.isDungeon ? ' ⚑' : ''}
+            {zone.isDungeon ? ' · Dungeon' : ''}
           </span>
         )}
         <span className="combat-log__chevron">{expanded ? '▼' : '▶'}</span>

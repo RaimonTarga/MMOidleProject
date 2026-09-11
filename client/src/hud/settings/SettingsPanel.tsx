@@ -57,9 +57,10 @@ type SettingsTab = 'controls' | 'gameplay' | 'audio';
 
 interface Props {
   onClose: () => void;
+  onSwitchCharacter?: () => void;
 }
 
-export function SettingsPanel({ onClose }: Props) {
+export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
   const [tab, setTab] = useState<SettingsTab>('controls');
   const account = useAtomValue(accountSummaryAtom);
   const [linkingDiscord, setLinkingDiscord] = useState(false);
@@ -253,6 +254,15 @@ export function SettingsPanel({ onClose }: Props) {
   return (
     <GameDialog size="standard" className="settings-dialog" onClose={handleClose} onEscape={handleEscape}>
       <DialogHeader title="Settings" closeLabel="Close settings" />
+      {onSwitchCharacter && (
+        <div className="settings-session">
+          <span>Character</span>
+          <button type="button" className="auto-btn" onClick={() => {
+            handleClose();
+            onSwitchCharacter();
+          }}>Switch character</button>
+        </div>
+      )}
 
       {account?.isGuest && (
         <div className="settings-guest-account">

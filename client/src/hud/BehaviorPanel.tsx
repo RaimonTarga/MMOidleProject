@@ -20,6 +20,7 @@ import {
   stanceIconSource,
 } from "../ui/conceptIcons";
 import { runeResponse } from "../ui/RuneClause";
+import { DisclosureHeader } from './primitives';
 import "./behaviorPanel.css";
 
 const expandedAtom = atomWithStorage("hud.behavior.expanded", true);
@@ -65,19 +66,14 @@ export function BehaviorPanel() {
       className="hud-panel behavior-panel"
       aria-label="Character behavior"
     >
-      <button
-        type="button"
+      <DisclosureHeader
+        title="Behavior"
+        summary={auto ? 'Auto' : 'Manual'}
         className="behavior-panel__heading"
-        aria-expanded={expanded}
-        aria-controls={detailsId}
-        onClick={() => setExpanded((value) => !value)}
-      >
-        <span>Behavior</span>
-        <span>
-          {auto ? "Auto" : "Manual"}{" "}
-          <span aria-hidden="true">{expanded ? "▾" : "▸"}</span>
-        </span>
-      </button>
+        expanded={expanded}
+        controls={detailsId}
+        onToggle={() => setExpanded((value) => !value)}
+      />
       {known.length > 0 && (
         <div className="behavior-panel__stance" title={activeStance?.blurb}>
           <GameIcon

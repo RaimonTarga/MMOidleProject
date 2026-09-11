@@ -1,7 +1,7 @@
 import { BehaviorPanel } from './BehaviorPanel';
 import { useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
-import { GameIcon, nodeIcon, type IconSource } from "../ui/GameIcon";
+import { GameIcon, type IconSource } from "../ui/GameIcon";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { BuildPanel } from "../ui/BuildPanel";
@@ -310,15 +310,6 @@ export function RightSidebar() {
           selected={settingsOpen}
           onClick={() => togglePrimaryOverlay("settings")}
         />
-        {/* A session action, not a destination: it leaves the world entirely,
-            so it sits below the rule under every panel the world contains. */}
-        <RightNavButton
-          label="Character Select"
-          icon={nodeIcon("↩")}
-          selected={charSelectPrompt}
-          standalone
-          onClick={() => setCharSelectPrompt(true)}
-        />
       </nav>
 
       {visibility.materials && <MaterialsPanel />}
@@ -343,7 +334,7 @@ export function RightSidebar() {
           }}
         />
       )}
-      {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
+      {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} onSwitchCharacter={() => setCharSelectPrompt(true)} />}
       {charSelectPrompt && <CharacterSelectPrompt onCancel={() => setCharSelectPrompt(false)} />}
       <QuestOverlay />
     </div>

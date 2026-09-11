@@ -47,9 +47,6 @@ function AbilityCard({ ability }: { ability: BestiaryAbilityLine }) {
   return (
     <article className={`bestiary-detail__ability bestiary-detail__ability--${ability.kind}`}>
       <div className="bestiary-detail__ability-header">
-        <span className="bestiary-detail__ability-icon" style={ability.color ? { color: ability.color } : undefined}>
-          {ability.icon}
-        </span>
         <span className="bestiary-detail__ability-name">{ability.name}</span>
         <span className={`bestiary-detail__ability-kind bestiary-detail__ability-kind--${ability.kind}`}>
           {ABILITY_KIND_LABEL[ability.kind]}
@@ -178,9 +175,6 @@ function MonsterDetail({ entry }: { entry: BestiaryEntry }) {
           <div className="bestiary-detail__section-title">Other mechanics</div>
           {mechs.map((m) => (
             <div key={m.id} className="bestiary-detail__mech">
-              <span className="bestiary-detail__mech-icon" style={m.color ? { color: m.color } : undefined}>
-                {m.icon}
-              </span>
               <span className="bestiary-detail__mech-text">
                 <b style={m.color ? { color: m.color } : undefined}>{m.label}</b> — {m.detail}
               </span>
