@@ -435,7 +435,7 @@ export function randomPointOnShapeEdge(shape: NodeFeatureShape): Vec2 {
  * into `shape`, assuming `from` is outside the shape. Returns null if the segment
  * never enters the shape (or starts inside).
  */
-function segmentEntryT(from: Vec2, to: Vec2, shape: NodeFeatureShape): number | null {
+export function segmentEntryT(from: Vec2, to: Vec2, shape: NodeFeatureShape): number | null {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   if (dx === 0 && dy === 0) return null;
@@ -513,7 +513,7 @@ export function aabbHalfExtents(rects: HitboxRect[]): Vec2 {
  * mover's body then never intersects the shape instead of its center slipping to
  * the edge. Circles widen by the larger half-extent to stay fully enclosing.
  */
-function inflateShape(shape: NodeFeatureShape, pad: Vec2): NodeFeatureShape {
+export function inflateShape(shape: NodeFeatureShape, pad: Vec2): NodeFeatureShape {
   switch (shape.kind) {
     case 'circle':
       return {

@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { GAME_CONFIG, type NodeFeatureShape } from '@mmo-idle/shared';
 
+export type MountainCornerPainter = (lipX: number, lipY: number, dirX: number, dirY: number) => void;
+
 type Ring = 'outer' | 'inner';
 type Side = 'north' | 'south' | 'west' | 'east';
 
@@ -244,6 +246,7 @@ function drawCornerJoin(
   bounds: NonNullable<ReturnType<typeof ringBounds>>,
   offsetX: number,
   offsetY: number,
+  paintCorner?: MountainCornerPainter,
 ): void {
   if (!hasCornerJoin(features, ring, horizontalSide, verticalSide, bounds)) return;
   const xEnd = verticalSide === 'west' ? 'min' : 'max';
@@ -255,6 +258,18 @@ function drawCornerJoin(
   const lipY = offsetY + horizontal.y + (horizontalSide === 'north' ? horizontal.halfH : -horizontal.halfH);
   const dirX = verticalSide === 'west' ? -1 : 1;
   const dirY = horizontalSide === 'north' ? -1 : 1;
+  if (paintCorner) paintCorner(lipX, lipY, dirX, dirY);
+  else drawMountainCornerPatch(graphics, lipX, lipY, dirX, dirY);
+}
+
+/** Same authored corner geometry, also used to bake the reusable textures. */
+export function drawMountainCornerPatch(
+  graphics: Phaser.GameObjects.Graphics,
+  lipX: number,
+  lipY: number,
+  dirX: number,
+  dirY: number,
+): void {
   const faceX = dirX < 0 ? lipX - FACE_DEPTH : lipX;
   const faceY = dirY < 0 ? lipY - FACE_DEPTH : lipY;
   const shadowX = dirX < 0 ? faceX - SHADOW_DEPTH : faceX + FACE_DEPTH;
@@ -289,11 +304,12 @@ function drawRingCorners(
   bounds: NonNullable<ReturnType<typeof ringBounds>>,
   offsetX: number,
   offsetY: number,
+  paintCorner?: MountainCornerPainter,
 ): void {
-  drawCornerJoin(graphics, features, ring, 'north', 'west', bounds, offsetX, offsetY);
-  drawCornerJoin(graphics, features, ring, 'north', 'east', bounds, offsetX, offsetY);
-  drawCornerJoin(graphics, features, ring, 'south', 'west', bounds, offsetX, offsetY);
-  drawCornerJoin(graphics, features, ring, 'south', 'east', bounds, offsetX, offsetY);
+  drawCornerJoin(graphics, features, ring, 'north', 'west', bounds, offsetX, offsetY, paintCorner);
+  drawCornerJoin(graphics, features, ring, 'north', 'east', bounds, offsetX, offsetY, paintCorner);
+  drawCornerJoin(graphics, features, ring, 'south', 'west', bounds, offsetX, offsetY, paintCorner);
+  drawCornerJoin(graphics, features, ring, 'south', 'east', bounds, offsetX, offsetY, paintCorner);
 }
 
 /**
@@ -392,6 +408,7 @@ export function drawMountainElevation(
   features: MountainLedgeFeature[],
   offsetX: number,
   offsetY: number,
+  paintCorner?: MountainCornerPainter,
 ): boolean {
   // A dungeon is one broken circle rather than two broken squares, so it has its own
   // parser and its own renderer. Checked first: its ids never match segmentInfo.
@@ -473,7 +490,7 @@ export function drawMountainElevation(
       );
     }
   }
-  if (outer) drawRingCorners(graphics, ledges, 'outer', outer, offsetX, offsetY);
-  if (inner) drawRingCorners(graphics, ledges, 'inner', inner, offsetX, offsetY);
+  if (outer) drawRingCorners(graphics, ledges, 'outer', outer, offsetX, offsetY, paintCorner);
+  if (inner) drawRingCorners(graphics, ledges, 'inner', inner, offsetX, offsetY, paintCorner);
   return true;
 }

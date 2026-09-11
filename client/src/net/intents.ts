@@ -5,13 +5,15 @@ import type {
   EquippedRule,
   EvolveMode,
   PlayerMoveOptions,
+  PlayerMoveResult,
   StanceSlot,
   Vec2,
 } from '@mmo-idle/shared';
 import type { GameSocket } from './socket';
 
-export function sendMove(socket: GameSocket, pos: Vec2, opts?: PlayerMoveOptions): void {
-  socket.emit('player:move', pos, opts);
+export function sendMove(socket: GameSocket, pos: Vec2, opts?: PlayerMoveOptions, ack?: (result: PlayerMoveResult) => void): void {
+  if (ack) socket.emit('player:move', pos, opts, ack);
+  else socket.emit('player:move', pos, opts);
 }
 
 export function sendCommandSummons(socket: GameSocket, pos: Vec2): void {

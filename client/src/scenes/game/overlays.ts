@@ -48,6 +48,7 @@ import {
 } from "../../sprites";
 import { computeGroundLayout } from "../../render/groundLayout";
 import { drawMountainElevation } from "../../render/mountainLedges";
+import { mountainCornerImage } from "../../render/mountainCornerTextures";
 import {
   buildWangGroundLayer,
   wangFunctionalFeatureIds,
@@ -92,7 +93,7 @@ export interface NodeStaticGroup {
   biomeDecor: Phaser.GameObjects.Image[];
   decor: Phaser.GameObjects.Image[];
   /** Placeholder fills for blocking features that have no decor sprite yet. */
-  placeholders: Phaser.GameObjects.Graphics[];
+  placeholders: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Image)[];
   trees: Phaser.GameObjects.Image[];
   boundary: Phaser.GameObjects.Graphics;
 }
@@ -586,24 +587,29 @@ function buildNodePlaceholderFeatures(
   offsetX: number,
   offsetY: number,
   depthBias: number,
-): Phaser.GameObjects.Graphics[] {
+): (Phaser.GameObjects.Graphics | Phaser.GameObjects.Image)[] {
   const features = NODE_FEATURES[nodeId];
   if (!features) return [];
   const arts = NODE_DECOR[nodeId];
   // Features painted by a functional Wang ground sheet (currently swamp rot
   // pools) need no placeholder. Mountain ledges use their dedicated overlay.
   const groundPainted = wangFunctionalFeatureIds(scene, nodeId);
-  const out: Phaser.GameObjects.Graphics[] = [];
+  const out: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Image)[] = [];
   const isMountain = NODE_BIOMES[nodeId]?.biomeGroup === "mountain";
   if (isMountain) {
     const ledges = features
       .filter((feature) => feature.id.startsWith("mountain_"))
       .map((feature) => ({ id: feature.id, shape: resolveFeatureShape(feature) }));
     const elevation = scene.add.graphics().setDepth(DEPTH.BG_DECOR + depthBias);
-    if (drawMountainElevation(elevation, ledges, offsetX, offsetY)) {
+    const corners: Phaser.GameObjects.Image[] = [];
+    if (drawMountainElevation(elevation, ledges, offsetX, offsetY, (x, y, dx, dy) => {
+      corners.push(mountainCornerImage(scene, x, y, dx, dy, DEPTH.BG_DECOR + depthBias));
+    })) {
       out.push(elevation);
+      out.push(...corners);
     } else {
       elevation.destroy();
+      for (const corner of corners) corner.destroy();
     }
   }
 

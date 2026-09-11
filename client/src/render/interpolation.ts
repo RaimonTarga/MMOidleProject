@@ -1,15 +1,17 @@
-import type { Vec2 } from '@mmo-idle/shared';
-import { slideMoveAgainstBlocks } from '@mmo-idle/shared';
+import type { PlayerView, Vec2 } from '@mmo-idle/shared';
+import { slideMoveAgainstBlocks, resolveMoveAgainstBlocks } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
 import { nodeToSceneX, nodeToSceneY, sceneDepthY } from './sceneCoords';
 import { getPendingStop, isStopPending } from '../input/moveOwnership';
 import {
-  advanceOwnPathWaypoint,
-  ownPathSteeringTarget,
+  reconcileOwnPathFromServer,
 } from '../input/pathPrediction';
 import { getOwnBlockShapes, getOwnMovePad } from '../input/obstacleResolve';
+import { predictManualMove, predictClickMove } from '../input/movement';
+import { correctPlayerPosition } from './movementCorrection';
+import { predictAutoPath } from './autoPathPrediction';
 
 function spriteDrawY(baseY: number, visualOffsetY?: number): number {
   return baseY + (visualOffsetY ?? 0);
@@ -37,15 +39,23 @@ export function stepInterpolation(scene: GameScene, dt: number): void {
     const meta = state.spriteMeta.get(id);
     if (!transform || !interp || !sprite) continue;
 
-    if (id === state.ownId && state.ownPathWaypoints.length > 0) {
-      advanceOwnPathWaypoint(state, interp.base);
-      transform.target = ownPathSteeringTarget(state, transform.target);
-    }
-
+    const own = id === state.ownId;
+    const player = own ? state.view.get(id) as PlayerView | undefined : undefined;
+    const controlled = player?.isDead || player?.isChanneling || player?.activeBuffs.some(buff => buff.speedMult === 0);
+    const preview = own && !isStopPending() ? state.entity.get(id)?.isMoving?.pathPreview : undefined;
+    const predicted = own && !scene.transitioning
+      ? controlled ? { ...interp.base } : predictManualMove(scene, interp.base, dt) ?? predictClickMove(scene, interp.base, dt)
+        ?? (preview ? predictAutoPath(interp.base, preview, transform.speed * dt,
+          ownBlockShapes, ownMovePad ?? { x: 0, y: 0 }) : null)
+      : null;
     const dx = transform.target.x - interp.base.x;
     const dy = transform.target.y - interp.base.y;
     const distSq = dx * dx + dy * dy;
-    if (distSq > 1) {
+    if (predicted) {
+      interp.base.x = predicted.x;
+      interp.base.y = predicted.y;
+      if (state.ownClickActive) transform.target = state.ownPathWaypoints[0] ?? state.ownPathGoal ?? predicted;
+    } else if (distSq > 1) {
       const dist = Math.sqrt(distSq);
       const step = Math.min(transform.speed * dt, dist);
       let nextX = interp.base.x + (dx / dist) * step;
@@ -63,8 +73,11 @@ export function stepInterpolation(scene: GameScene, dt: number): void {
       interp.base.x = nextX;
       interp.base.y = nextY;
     } else {
-      interp.base.x = transform.target.x;
-      interp.base.y = transform.target.y;
+      const destination = own && ownMovePad
+        ? resolveMoveAgainstBlocks(interp.base, transform.target, ownBlockShapes, ownMovePad)
+        : transform.target;
+      interp.base.x = destination.x;
+      interp.base.y = destination.y;
     }
 
     if (id === state.ownId) {
@@ -106,8 +119,14 @@ export function stepInterpolation(scene: GameScene, dt: number): void {
           ey = 0;
         }
         const t = 1 - Math.exp(-RECONCILE_RATE * dt);
-        interp.base.x += ex * t;
-        interp.base.y += ey * t;
+        const correction = correctPlayerPosition(interp.base, transform.pos, {
+          x: interp.base.x + ex * t, y: interp.base.y + ey * t,
+        }, ownBlockShapes, ownMovePad ?? { x: 0, y: 0 });
+        interp.base.x = correction.position.x;
+        interp.base.y = correction.position.y;
+        if (correction.snapped && state.ownClickActive && state.ownPathGoal) {
+          transform.target = reconcileOwnPathFromServer(scene, interp.base, state.ownPathGoal);
+        }
       }
     }
 

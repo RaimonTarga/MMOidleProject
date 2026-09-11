@@ -8,3 +8,4 @@ export * from './navGrid';
 export * from './pathfind';
 export * from './navigationBody';
 export * from './slide';
+export * from './playerMotion';

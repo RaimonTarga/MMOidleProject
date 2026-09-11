@@ -21,7 +21,7 @@ import { ensureCdBar, destroyCdBar } from "./cooldownBars";
 import { GRAVE_DISPLAY_H, GRAVE_LABEL_OFFSET_Y } from "../sprites";
 import { applyLunge } from "./interpolation";
 import { nodeToScene } from "./sceneCoords";
-import { getPendingStop, isOwnHeadingClientOwned, clearPendingStop } from "../input/moveOwnership";
+import { getPendingStop, isOwnHeadingClientOwned, clearPendingStop, setManualActive } from "../input/moveOwnership";
 import { cancelActiveMove } from "../input/movement";
 import { isServerOwnedNavigation } from "../scenes/game/mapTransition";
 import {
@@ -139,6 +139,11 @@ export function upsertPlayer(
   const prevAttackAt = prev?.lastAttackAt ?? 0;
 
   if (player.isDead) {
+    if (isOwn) {
+      clearOwnMovePath(state);
+      setManualActive(false);
+      clearPendingStop();
+    }
     const meta = state.spriteMeta.get(player.id);
     if (meta) meta.barOffsetY = GRAVE_LABEL_OFFSET_Y;
     updateSpriteFrame(state, player.id, player, scene, {
@@ -235,6 +240,20 @@ export function upsertPlayer(
   if (transform) {
     transform.pos = { ...player.pos };
     transform.speed = player.speed * moveSpeedMult(player);
+    if (isOwn && (player.isChanneling || player.activeBuffs.some(buff => buff.speedMult === 0))) {
+      clearOwnMovePath(state);
+      setManualActive(false);
+      clearPendingStop();
+      transform.speed = 0;
+      scene.targetMarker.hide();
+    }
+    if (isOwn && state.ownClickActive && state.ownClickConfirmed &&
+      Math.hypot(player.target.x - player.pos.x, player.target.y - player.pos.y) <= 0.01) {
+      // This update follows the click acknowledgement on the ordered socket.
+      // Arrival, root, or the server watchdog can end the order.
+      clearOwnMovePath(state);
+      scene.targetMarker.hide();
+    }
     // Fix #1: while the client owns the own player's heading — active
     // keyboard/gamepad movement OR a sent-but-unconfirmed stop — the server's
     // `player.target` is ~1 RTT stale, so overwriting it here would yank the
@@ -254,14 +273,9 @@ export function upsertPlayer(
       // `player.target` — replanning a full A* to that point every 5 Hz delta
       // clears waypoints and often fails against trees, freezing the sprite while
       // the server keeps moving.
-      if (isOwn && state.ownPathGoal) {
-        transform.target = reconcileOwnPathFromServer(
-          scene,
-          from,
-          state.ownPathGoal,
-        );
+      if (isOwn && state.ownClickActive) {
+        transform.target = state.ownPathWaypoints[0] ?? state.ownPathGoal ?? from;
       } else {
-        if (isOwn) clearOwnMovePath(state);
         transform.target = { x: player.target.x, y: player.target.y };
       }
     }
@@ -288,6 +302,9 @@ export function upsertPlayer(
         if (!backwardStopSnap) {
           interp.base.x = player.pos.x;
           interp.base.y = player.pos.y;
+          if (state.ownClickActive && state.ownPathGoal && transform) {
+            transform.target = reconcileOwnPathFromServer(scene, player.pos, state.ownPathGoal);
+          }
         }
       }
     }

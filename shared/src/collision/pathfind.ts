@@ -109,7 +109,13 @@ export function findPathOnGrid(grid: NavGrid, from: Vec2, to: Vec2): Vec2[] | nu
   const { cols, rows } = grid;
   const startIdx = startCell.row * cols + startCell.col;
   const endIdx = endCell.row * cols + endCell.col;
-  if (startIdx === endIdx) return [to];
+  if (startIdx === endIdx) {
+    // A walkable cell center does not make every point in that cell walkable.
+    // Resolve an obstructed click to the center, and validate the approach too.
+    const center = cellToWorld(grid, endCell.col, endCell.row);
+    const goal = isPaddedSegmentClear(grid, from, to) ? to : center;
+    return isPaddedSegmentClear(grid, from, goal) ? [goal] : null;
+  }
 
   const total = cols * rows;
   const cameFrom = new Int32Array(total);

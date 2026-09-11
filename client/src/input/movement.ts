@@ -1,5 +1,5 @@
-import type { Vec2 } from '@mmo-idle/shared';
-import { slideMoveAgainstBlocks } from '@mmo-idle/shared';
+import type { PlayerView, Vec2 } from '@mmo-idle/shared';
+import { movePlayerWithCollisions } from '@mmo-idle/shared';
 import { sendMove } from '../net/intents';
 import { getOwnBase } from '../render/interpolation';
 import { cancelAutoPath, setAutoMode } from './autoPath';
@@ -10,7 +10,10 @@ import {
   setManualActive,
 } from './moveOwnership';
 import {
+  advanceOwnClickPath,
   clearOwnMovePath,
+  applyOwnMoveAck,
+  beginOwnClick,
   planOwnClickPath,
 } from './pathPrediction';
 import {
@@ -19,11 +22,14 @@ import {
   resolveOwnMoveAgainstBlocks,
 } from './obstacleResolve';
 import type { GameScene } from '../scenes/GameScene';
+import { nodeToScene } from '../render/sceneCoords';
 
 export interface SendClampedMoveOptions {
   /** Click-to-move: plan an A* path for client prediction. */
   pathfind?: boolean;
 }
+
+let activeMovementScene: GameScene | null = null;
 
 /**
  * Clamp an own-player move target so the body never overlaps block shapes. Uses
@@ -60,8 +66,35 @@ export function sendClampedMove(
   if (!from) return dest;
 
   if (opts?.pathfind) {
+    const generation = beginOwnClick(scene.state);
     const steering = planOwnClickPath(scene, from, dest);
-    sendMove(scene.socket, dest, { mode: 'path' });
+    const ownId = scene.state.ownId;
+    const nodeId = scene.state.ownNodeId;
+    sendMove(scene.socket, dest, { mode: 'path' }, (result) => {
+      if (scene.state.ownMoveGeneration !== generation || scene.state.ownId !== ownId || scene.state.ownNodeId !== nodeId || result.nodeId !== nodeId) return;
+      const resolved = ownId
+        ? applyOwnMoveAck(scene, generation, ownId, nodeId, result)
+        : null;
+      if (resolved) {
+        const marker = scene.targetMarker;
+        const scenePos = nodeToScene(resolved.x, resolved.y);
+        marker.show(scenePos.x, scenePos.y, 'move');
+        const transform = ownId ? scene.state.transform.get(ownId) : undefined;
+        if (transform && scene.state.ownPathWaypoints.length > 0) {
+          transform.target = scene.state.ownPathWaypoints[0];
+        } else if (transform) {
+          transform.target = resolved;
+        }
+      } else {
+        scene.targetMarker.hide();
+        const transform = ownId ? scene.state.transform.get(ownId) : undefined;
+        const base = getOwnBase(scene.state);
+        if (transform && base) {
+          transform.target = base;
+          beginPendingStop(base, performance.now());
+        }
+      }
+    });
     return steering;
   }
 
@@ -115,16 +148,28 @@ export function cancelActiveMove(scene: GameScene): void {
 }
 
 export function setKeyboardVector(dx: number, dy: number): void {
+  if (kbVec.dx === dx && kbVec.dy === dy) return;
   kbVec = { dx, dy };
+  activeMovementScene && tickMovement(activeMovementScene);
 }
 
 export function setGamepadVector(dx: number, dy: number): void {
+  const threshold = 0.035;
+  const wasZero = Math.hypot(padVec.dx, padVec.dy) < 0.0001;
+  const isZero = Math.hypot(dx, dy) < 0.0001;
+  const changed = wasZero !== isZero || Math.hypot(padVec.dx - dx, padVec.dy - dy) >= threshold;
   padVec = { dx, dy };
+  if (changed && activeMovementScene) tickMovement(activeMovementScene);
 }
 
 export function startMovementTick(scene: GameScene): () => void {
+  activeMovementScene = scene;
   const id = window.setInterval(() => tickMovement(scene), MOVE_TICK_MS);
-  return () => window.clearInterval(id);
+  return () => {
+    window.clearInterval(id);
+    if (activeMovementScene === scene) activeMovementScene = null;
+    clearOwnMovePath(scene.state);
+  };
 }
 
 function tickMovement(scene: GameScene): void {
@@ -134,12 +179,15 @@ function tickMovement(scene: GameScene): void {
   const transform = scene.state.transform.get(ownId);
   if (!transform) return;
 
+  const player = scene.state.view.get(ownId) as PlayerView | undefined;
+  if (player?.isDead) return;
+
   maintainPendingStop(transform.pos, performance.now());
 
   let dx = holdStill ? 0 : kbVec.dx + padVec.dx;
   let dy = holdStill ? 0 : kbVec.dy + padVec.dy;
   const mag = Math.hypot(dx, dy);
-  if (mag > 1) {
+  if (mag >= 0.0001) {
     dx /= mag;
     dy /= mag;
   }
@@ -181,11 +229,70 @@ function tickMovement(scene: GameScene): void {
   };
 
   clearOwnMovePath(scene.state);
-  const shapes = getOwnBlockShapes(scene);
-  const pad = getOwnMovePad(scene.state);
-  const predicted = shapes.length > 0
-    ? slideMoveAgainstBlocks(origin, dest, shapes, pad)
-    : dest;
-  sendMove(scene.socket, dest, { mode: 'direct' });
-  transform.target = predicted;
+  sendMove(scene.socket, dest, {
+    mode: 'direct',
+    direction: { x: dx, y: dy },
+  });
+  // The wire horizon remains 600 px for compatibility. Actual prediction is
+  // advanced from the current base every render frame below.
+  transform.target = dest;
+}
+
+/** Current full-speed manual heading, or null while manual prediction is gated. */
+export function manualMoveDirection(scene: GameScene): Vec2 | null {
+  if (scene.transitioning || holdStill || !isManualActive()) return null;
+  const ownId = scene.state.ownId;
+  if (!ownId) return null;
+  const player = scene.state.view.get(ownId) as PlayerView | undefined;
+  if (
+    player?.isDead ||
+    player?.isChanneling ||
+    player?.activeBuffs?.some((buff) => buff.speedMult === 0)
+  ) return null;
+  let dx = kbVec.dx + padVec.dx;
+  let dy = kbVec.dy + padVec.dy;
+  const mag = Math.hypot(dx, dy);
+  if (mag < 0.0001) return null;
+  dx /= mag;
+  dy /= mag;
+  return { x: dx, y: dy };
+}
+
+/** One frame of collision-safe direct keyboard/gamepad prediction. */
+export function predictManualMove(
+  scene: GameScene,
+  from: Vec2,
+  dt: number,
+): Vec2 | null {
+  const direction = manualMoveDirection(scene);
+  if (!direction) return isManualActive() && !scene.transitioning ? from : null;
+  const ownId = scene.state.ownId;
+  const transform = ownId ? scene.state.transform.get(ownId) : undefined;
+  if (!transform || !Number.isFinite(transform.speed) || transform.speed <= 0) {
+    return from;
+  }
+  const to = {
+    x: from.x + direction.x * transform.speed * dt,
+    y: from.y + direction.y * transform.speed * dt,
+  };
+  return movePlayerWithCollisions(
+    from,
+    to,
+    getOwnBlockShapes(scene),
+    getOwnMovePad(scene.state),
+  );
+}
+
+/** One frame of retained click-path prediction. */
+export function predictClickMove(
+  scene: GameScene,
+  from: Vec2,
+  dt: number,
+): Vec2 | null {
+  const ownId = scene.state.ownId;
+  const transform = ownId ? scene.state.transform.get(ownId) : undefined;
+  if (!transform || !Number.isFinite(transform.speed) || transform.speed <= 0) {
+    return from;
+  }
+  return advanceOwnClickPath(scene, from, transform.speed * dt)?.position ?? null;
 }

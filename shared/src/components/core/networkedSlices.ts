@@ -33,6 +33,8 @@ export interface HasPosition {
 /** Remaining motion vector. Absent means stationary. */
 export interface IsMoving {
   motion: MotionVector;
+  /** Bounded authoritative player route preview, including its current origin. */
+  pathPreview?: Vec2[];
 }
 
 /** Hit points and the player-only Recovery rate (points = % of maxHp per second). */

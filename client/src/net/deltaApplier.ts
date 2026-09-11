@@ -32,6 +32,7 @@ import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
 import { syncGroundZones } from "../render/groundZones";
 import { syncCorpses } from "../render/corpses";
 import { syncStunOrbits } from "../render/stunOrbit";
+import { clearOwnMovePath } from '../input/pathPrediction';
 
 // Last frame's resolved target — lets us detect when a target dies (its id
 // vanishes from view) so the target frame can drain HP to 0 before fading.
@@ -43,6 +44,10 @@ export function applyDelta(
   scene: GameScene,
   options: { stateSync?: boolean } = {},
 ): void {
+  if (snapshot.full) {
+    clearOwnMovePath(state);
+    scene.targetMarker.hide();
+  }
   const combatText = prepareCombatText(snapshot.events, options);
   const liveIds = new Set<string>();
   const pendingRemoves: string[] = [];

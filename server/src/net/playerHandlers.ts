@@ -54,7 +54,8 @@ import {
   leaveParty,
 } from "../systems/player/party/partySystem";
 import { handlePlayerEmoteIntent } from "../systems/player/emotes";
-import { setEntityMotion, stopEntity } from "../systems/world/movement";
+import { stopEntity } from "../systems/world/movement";
+import { applyManualMoveIntent } from "../systems/world/manualMove";
 import { setAggroTarget, setAttackTarget } from "../systems/combat/ai/targeting";
 import { clearEngagement } from "../systems/combat/ai/engagement";
 import { attachComponent, detachComponent } from "../ecs/markerHelpers";
@@ -68,7 +69,6 @@ import {
   clearAutoTraversePath,
   startManualNavigation,
 } from "../systems/world/autoTraverse";
-import { clampMoveTargetToNode } from "../systems/world/transitions";
 import { thawNode } from "../world/nodeLifecycle";
 import { rightmostEntranceTarget } from "../world/nodePath";
 import { activateDungeonAltar } from "../systems/world/dungeons/dungeon";
@@ -244,24 +244,11 @@ export function registerPlayerHandlers(
     world.respawnPlayer(socket.id);
   });
 
-  socket.on("player:move", (pos, opts) => {
-    const p = liveSelf();
-    if (!p) return;
-    if (p.isChanneling) return;
-    clearSummonerCommand(world, p);
-    const clamped = clampMoveTargetToNode(p.hasPosition.nodeId, pos);
-    setEntityMotion(world, p, clamped, {
-      mode: opts?.mode === "direct" ? "direct" : "path",
-      // A player-issued move owns the movement channel. In particular, do not
-      // let the Avoid Hazards rune replace or reject a committed click/keyboard
-      // path when its origin is already inside a runtime ground zone.
-      avoidHazards: false,
-    });
-    if (p.isMoving) {
-      attachComponent(world, p, "hasManualMoveIntent", {});
-    } else {
-      detachComponent(world, p, "hasManualMoveIntent");
-    }
+  socket.on("player:move", (pos, opts, ack) => {
+    const p = world.getPlayerEntity(socket.id);
+    if (p && !p.isDead && !p.isChanneling) clearSummonerCommand(world, p);
+    const result = applyManualMoveIntent(world, p, pos, opts);
+    if (typeof ack === "function") ack(result);
   });
 
   socket.on("player:commandSummons", (pos) => {

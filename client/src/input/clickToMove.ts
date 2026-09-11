@@ -3,7 +3,7 @@ import { isDeathOverlayActive } from '../hud/atoms';
 import { sendCommandSummons } from '../net/intents';
 import type { GameScene } from '../scenes/GameScene';
 import { cancelAutoPath, setAutoMode } from './autoPath';
-import { isHoldStill, sendClampedMove } from './movement';
+import { hasKeyboardMoveIntent, isHoldStill, sendClampedMove } from './movement';
 import { clearPendingStop } from './moveOwnership';
 import { nodeToScene, sceneToNode } from '../render/sceneCoords';
 import type { MoveMarkerKind } from '../render/moveMarker';
@@ -43,6 +43,8 @@ export function attachClickToMove(scene: GameScene): () => void {
       return;
     }
 
+    // Held directional controls own movement until released.
+    if (hasKeyboardMoveIntent()) return;
     if (scene.autoMode) setAutoMode(scene, false);
     cancelAutoPath();
     scene.flashCameraHold = false;
@@ -57,7 +59,7 @@ export function attachClickToMove(scene: GameScene): () => void {
       transform.target = clamped;
     }
 
-    showTargetMarker(scene, clamped);
+    showTargetMarker(scene, scene.state.ownPathGoal ?? clamped);
   };
   scene.input.on('pointerdown', onPointerDown);
   return () => scene.input.off('pointerdown', onPointerDown);

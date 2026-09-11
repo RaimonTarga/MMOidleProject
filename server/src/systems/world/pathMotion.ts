@@ -6,7 +6,6 @@ import {
   goalsNearEnough,
   MONSTER_DATABASE,
   mountainLedgeFeatureIdsForNode,
-  PATH_ARRIVAL_THRESHOLD,
   moverOverlapsBlockShapes,
   vectorTo,
   type FeatureTarget,
@@ -134,6 +133,16 @@ export function clearMovePath(world: World, entity: ServerEntity): void {
   replanCooldown.delete(entity.entityId);
 }
 
+/** Recompute the motion marker from the current path head. */
+export function refreshMovePathMotion(world: World, entity: PathEntity): void {
+  const path = entity.hasMovePath;
+  if (!path || path.waypoints.length === 0) {
+    detachComponent(world, entity, 'isMoving');
+    return;
+  }
+  attachMotionToward(world, entity, path.waypoints[0]);
+}
+
 function attachMotionToward(
   world: World,
   entity: PathEntity,
@@ -141,7 +150,13 @@ function attachMotionToward(
 ): void {
   const motion = vectorTo(entity.hasPosition.current, target);
   if (motion.magnitude > 0) {
-    attachComponent(world, entity, 'isMoving', { motion });
+    attachComponent(world, entity, 'isMoving', {
+      motion,
+      ...(entity.isPlayer && entity.hasMovePath ? {
+        pathPreview: [entity.hasPosition.current, ...entity.hasMovePath.waypoints.slice(0, 8)]
+          .map(point => ({ ...point })),
+      } : {}),
+    });
   } else {
     detachComponent(world, entity, 'isMoving');
   }
@@ -190,7 +205,7 @@ export function setMovePath(
     avoidHazards,
     dynamicHazardSignature: hazardSignature,
   });
-  attachMotionToward(world, entity, waypoints[0]);
+  advanceMovePath(world, entity);
 }
 
 /**
@@ -201,19 +216,20 @@ export function advanceMovePath(world: World, entity: PathEntity): void {
   if (!path || path.waypoints.length === 0) return;
 
   const pos = entity.hasPosition.current;
-  const current = path.waypoints[0];
-  if (distanceSq(pos, current) > PATH_ARRIVAL_THRESHOLD * PATH_ARRIVAL_THRESHOLD) {
-    return;
+  // The planner's broad same-cell tolerance is not safe for execution: it can
+  // skip a corner while the body is still on the incoming segment.
+  while (
+    path.waypoints.length > 0 &&
+    distanceSq(pos, path.waypoints[0]) <= 0.01 * 0.01
+  ) {
+    path.waypoints.shift();
   }
 
-  path.waypoints.shift();
   if (path.waypoints.length === 0) {
-    if (goalsNearEnough(pos, path.goal)) {
-      clearMovePath(world, entity);
-      detachComponent(world, entity, 'isMoving');
-      return;
-    }
-    attachMotionToward(world, entity, path.goal);
+    // The final planned waypoint is authoritative. Never steer back toward the
+    // original click goal after a planner-resolved endpoint.
+    clearMovePath(world, entity);
+    detachComponent(world, entity, 'isMoving');
     return;
   }
 
@@ -305,15 +321,7 @@ export function requestNavMotion(
     // forever without moving: full HP, valid target, planned path, motionless.
     // (The auto-combat wedge — implementation plan §5.8 cause 2.)
     advanceMovePath(world, entity);
-    const advanced = entity.hasMovePath;
-    if (advanced) {
-      if (advanced.waypoints.length > 0) {
-        attachMotionToward(world, entity, advanced.waypoints[0]);
-      }
-      // else: advanceMovePath already steered at the final goal.
-      return;
-    }
-    // Path completed and cleared — fall through and plan a fresh one.
+    return;
   }
 
   const waypoints = planPath(world, entity, goal, mover, pad, avoidHazards);

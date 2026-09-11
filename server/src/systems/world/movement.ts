@@ -14,6 +14,8 @@ import {
   ambientRampMoveMult,
   ambientRampStatus,
   playerMoveSpeedMult,
+  movePlayerWithCollisions,
+  advancePlayerPath,
   slideMoveAgainstBlocks,
   type FeatureTarget,
   type Vec2,
@@ -31,6 +33,7 @@ import {
   inferMoverTarget,
   replanIfBlocked,
   requestNavMotion,
+  refreshMovePathMotion,
   suppressedFeatureIdsForEntity,
 } from './pathMotion';
 
@@ -47,6 +50,15 @@ interface StuckState {
 
 const stuckByEntity = new Map<string, StuckState>();
 
+interface PlayerPathStuckState {
+  blockedMs: number;
+  replanned: boolean;
+}
+
+// Entity identity keeps recovery state isolated between Worlds even when two
+// test worlds reuse the same socket/entity id.
+const playerPathStuckByEntity = new WeakMap<ServerEntity, PlayerPathStuckState>();
+
 type MovableEntity = ServerEntity & {
   hasPosition: NonNullable<ServerEntity['hasPosition']>;
 };
@@ -55,6 +67,29 @@ export interface SetEntityMotionOptions {
   mover?: FeatureTarget;
   mode?: 'path' | 'direct';
   avoidHazards?: boolean;
+}
+
+/** Validate and normalize a direct-input heading at the authority boundary. */
+export function normalizedMoveDirection(direction: Vec2 | undefined): Vec2 | null {
+  if (
+    !direction ||
+    !Number.isFinite(direction.x) ||
+    !Number.isFinite(direction.y)
+  ) return null;
+  const magnitude = Math.hypot(direction.x, direction.y);
+  if (!(magnitude > 0) || !Number.isFinite(magnitude)) return null;
+  return { x: direction.x / magnitude, y: direction.y / magnitude };
+}
+
+export function directMoveTarget(
+  from: Vec2,
+  compatibilityTarget: Vec2,
+  direction?: Vec2,
+): Vec2 {
+  const normalized = normalizedMoveDirection(direction);
+  return normalized
+    ? { x: from.x + normalized.x * 600, y: from.y + normalized.y * 600 }
+    : compatibilityTarget;
 }
 
 export function setEntityMotion(
@@ -84,6 +119,8 @@ export function stopEntity(world: World, entity: ServerEntity): void {
   clearMovePath(world, entity);
   detachComponent(world, entity, 'isMoving');
   detachComponent(world, entity, 'hasManualMoveIntent');
+  playerPathStuckByEntity.delete(entity);
+  stuckByEntity.delete(entity.entityId);
 }
 
 /** Mover half-extents so obstacle collision keeps the body — not just the center
@@ -92,6 +129,126 @@ export function navigationPadForEntity(entity: ServerEntity): Vec2 {
   if (entity.isPlayer) return navigationBodyHalfExtents('player');
   if (entity.isMinion) return navigationBodyHalfExtents('minion');
   return navigationBodyHalfExtents('monster', entity.isMonster?.isBoss === true);
+}
+
+function blockShapesFor(
+  world: World,
+  entity: MovableEntity,
+  mover: FeatureTarget,
+): ReturnType<World['collision']['blockShapes']> {
+  const suppressed = suppressedFeatureIdsForEntity(world, entity);
+  if (suppressed.size === 0) return world.collision.blockShapes(entity.hasPosition.nodeId, mover);
+  return world.collision
+    .staticRegions(entity.hasPosition.nodeId)
+    .filter(region => {
+      if (region.kind !== 'block' || region.data?.blockTarget !== mover) return false;
+      const id = region.data?.featureId;
+      return typeof id !== 'string' || !suppressed.has(id);
+    })
+    .map(region => region.shape);
+}
+
+function pathRemainingDistance(pos: Vec2, waypoints: Vec2[]): number {
+  if (waypoints.length === 0) return 0;
+  let total = Math.hypot(pos.x - waypoints[0].x, pos.y - waypoints[0].y);
+  for (let i = 1; i < waypoints.length; i++) {
+    total += Math.hypot(
+      waypoints[i - 1].x - waypoints[i].x,
+      waypoints[i - 1].y - waypoints[i].y,
+    );
+  }
+  return total;
+}
+
+function processManualDirectStep(
+  world: World,
+  entity: MovableEntity,
+  dt: number,
+  speedMult: number,
+): void {
+  if (!entity.isMoving) return;
+  const from = entity.hasPosition.current;
+  const pad = navigationPadForEntity(entity);
+  const next = advanceMotion(
+    from,
+    entity.isMoving.motion,
+    entity.hasPosition.speed * speedMult * (dt / 1000),
+  );
+  const resolved = movePlayerWithCollisions(
+    from,
+    next.position,
+    blockShapesFor(world, entity, 'player'),
+    pad,
+  );
+  entity.hasPosition.current = resolved;
+  markSliceDirty(world, entity, 'hasPosition');
+
+  // Consume the requested budget even when the wall prevented displacement.
+  // This bounds a stale held intent, while the marker remains attached so a
+  // refreshed/changed input can immediately move away from the contact.
+  if (next.motion.magnitude > 0) {
+    entity.isMoving.motion = next.motion;
+    markSliceDirty(world, entity, 'isMoving');
+  } else {
+    stopEntity(world, entity);
+  }
+}
+
+function processPlayerPathStep(
+  world: World,
+  entity: MovableEntity,
+  dt: number,
+  speedMult: number,
+  now: number,
+): void {
+  const path = entity.hasMovePath;
+  if (!path) {
+    stopEntity(world, entity);
+    return;
+  }
+
+  const from = entity.hasPosition.current;
+  const beforeRemaining = pathRemainingDistance(from, path.waypoints);
+  const budget = entity.hasPosition.speed * speedMult * (dt / 1000);
+  const result = advancePlayerPath(
+    from,
+    path.waypoints,
+    budget,
+    blockShapesFor(world, entity, 'player'),
+    navigationPadForEntity(entity),
+  );
+  const afterRemaining = pathRemainingDistance(result.position, result.waypoints);
+  const forwardProgress = beforeRemaining - afterRemaining;
+  entity.hasPosition.current = result.position;
+  markSliceDirty(world, entity, 'hasPosition');
+
+  path.waypoints = result.waypoints;
+  if (path.waypoints.length === 0) {
+    stopEntity(world, entity);
+    return;
+  }
+  refreshMovePathMotion(world, entity);
+
+  const state = playerPathStuckByEntity.get(entity) ?? { blockedMs: 0, replanned: false };
+  if (forwardProgress > PROGRESS_EPS_SQ || !result.blocked) {
+    playerPathStuckByEntity.delete(entity);
+    return;
+  }
+
+  state.blockedMs += dt;
+  if (!state.replanned && state.blockedMs >= STUCK_REPLAN_MS) {
+    state.replanned = true;
+    playerPathStuckByEntity.set(entity, state);
+    replanIfBlocked(world, entity, navigationPadForEntity(entity), now, true);
+    refreshMovePathMotion(world, entity);
+    if (!entity.hasMovePath || !entity.isMoving) stopEntity(world, entity);
+    return;
+  }
+  if (state.blockedMs >= STUCK_RECOVER_MS) {
+    stopEntity(world, entity);
+    return;
+  }
+  playerPathStuckByEntity.set(entity, state);
 }
 
 function depenetrateIfWedged(
@@ -212,6 +369,15 @@ function processMoverStep(
   mover: FeatureTarget,
   now: number,
 ): void {
+  if (entity.isPlayer && (entity.hasManualMoveIntent || entity.hasMovePath)) {
+    if (entity.hasMovePath) {
+      processPlayerPathStep(world, entity, dt, speedMult, now);
+    } else {
+      processManualDirectStep(world, entity, dt, speedMult);
+    }
+    return;
+  }
+
   advanceMovePath(world, entity);
 
   if (!entity.isMoving) return;

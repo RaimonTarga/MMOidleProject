@@ -20,6 +20,15 @@ import type {
 export type PlayerMoveMode = "path" | "direct";
 export interface PlayerMoveOptions {
   mode?: PlayerMoveMode;
+  /** Direct controls supply a heading independent of the client's predicted position. */
+  direction?: Vec2;
+}
+
+/** Confirms a click's resolved endpoint; authoritative positions still arrive in deltas. */
+export interface PlayerMoveResult {
+  accepted: boolean;
+  nodeId: string;
+  goal: Vec2;
 }
 
 export interface ReleaseAnnouncementPayload {
@@ -187,7 +196,7 @@ export interface ClientToServerEvents {
   /** Soft-delete one owned character while idling in the lobby. */
   "character:delete": (payload: { characterId: string }) => void;
   /** Set the player's movement destination. Clicks pathfind; keyboard/gamepad slides directly. */
-  "player:move": (pos: Vec2, opts?: PlayerMoveOptions) => void;
+  "player:move": (pos: Vec2, opts?: PlayerMoveOptions, ack?: (result: PlayerMoveResult) => void) => void;
   /** Summoner: shift+click command — focus a clicked enemy or move minions to a point. */
   "player:commandSummons": (pos: Vec2) => void;
   /** Enable or disable server-side auto-targeting for this player. */

@@ -199,6 +199,11 @@ export interface RenderState {
   /** Client-only A* waypoints for own-player click-to-move prediction. */
   ownPathWaypoints: Vec2[];
   ownPathGoal: Vec2 | null;
+  /** True while the latest click remains the active movement owner. */
+  ownClickActive: boolean;
+  ownClickConfirmed: boolean;
+  /** Monotonic generation used to reject stale click acknowledgements. */
+  ownMoveGeneration: number;
   /** Gate entities for the current node; collision + world markers derive from these. */
   nodeGateEntities: NodeGateEntity[];
   lastSpawnedGateNodeId: string;
@@ -265,6 +270,9 @@ export function createRenderState(): RenderState {
     ownNodeId: "",
     ownPathWaypoints: [],
     ownPathGoal: null,
+    ownClickActive: false,
+    ownClickConfirmed: false,
+    ownMoveGeneration: 0,
     nodeGateEntities: [],
     lastSpawnedGateNodeId: "",
     dungeonGuardianIds: new Set(),

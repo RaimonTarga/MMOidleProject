@@ -475,7 +475,7 @@ The client may import pure formulas from `shared/`:
 - `composePlayerView` / `composeMonsterView` to assemble HUD view models from networked components.
 - Effect descriptors (`EFFECT_DEFS`) so the client knows how to render a server-emitted effect ID.
 
-The client must never compute authoritative values: HP changes, damage, rewards, buffs, progression all come from the wire. There is no client-side prediction.
+The client must never compute authoritative values: HP changes, damage, rewards, buffs, progression all come from the wire. Own-player movement has visual prediction using shared collision geometry; the server remains authoritative for position and movement acceptance.
 
 ---
 
