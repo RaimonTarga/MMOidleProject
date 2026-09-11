@@ -249,6 +249,24 @@
   white-space: nowrap;
 }
 
+@media (min-width: 1101px) {
+  .action-chip--labelled {
+    max-width: 100%;
+    min-height: var(--chip-size);
+    height: auto;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    box-sizing: border-box;
+  }
+
+  .action-chip__label {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+  }
+}
+
 .action-chip:hover:not(:disabled) {
   border-color: var(--hud-edge-strong);
   color: var(--hud-primary-strong);

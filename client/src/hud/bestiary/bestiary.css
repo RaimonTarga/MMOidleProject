@@ -95,6 +95,18 @@
     white-space: normal;
     overflow-wrap: break-word;
   }
+
+  .bestiary-detail__list-name {
+    min-width: 0;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+  }
+
+  .bestiary__row-stats {
+    flex-wrap: wrap;
+  }
 }
 
 /* ── Bestiary detail overlay (master-detail) ──────────────────────────────── */

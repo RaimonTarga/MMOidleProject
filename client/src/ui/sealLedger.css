@@ -196,12 +196,12 @@
 }
 
 .seal-ledger-source__copy strong {
-  overflow: hidden;
   color: var(--hud-text-muted);
   font-size: 10px;
   font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
 }
 
 .seal-ledger-source--obtained {

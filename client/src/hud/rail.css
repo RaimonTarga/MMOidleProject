@@ -1,6 +1,55 @@
 /* Desktop rail presentation. This file deliberately only owns the two React
    rails; mobile HUD and modal components keep their existing visual language. */
 @media (min-width: 1101px) {
+  .desktop-hud .character-panel__details {
+    display: grid;
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .desktop-hud .character-panel__details .stat-section {
+    margin: 0;
+    padding: 8px;
+    background: var(--hud-material-inset);
+    border: 1px solid var(--hud-edge-divider);
+  }
+
+  .desktop-hud .character-panel__details .stat-section-title {
+    color: var(--hud-primary-strong);
+    font-size: 9px;
+    line-height: 1.5;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+  }
+
+  .desktop-hud .character-panel__details .stat-row {
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 3px 0;
+    margin: 0;
+    gap: 8px;
+  }
+
+  .desktop-hud .character-panel__details .stat-label {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .desktop-hud .character-panel__details .stat-value {
+    flex: 0 1 auto;
+    max-width: 52%;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .desktop-hud .combat-ability-slot__name {
+    overflow: visible;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+  }
+}
+
+@media (min-width: 1101px) {
   .desktop-hud.sidebar {
     position: relative;
     gap: 7px;
