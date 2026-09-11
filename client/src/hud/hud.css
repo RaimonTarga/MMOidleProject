@@ -1182,7 +1182,7 @@
 /* ── Quest / Tier panel ──────────────────────────────────────────────────── */
 
 .quest-panel {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .progression-summary {
@@ -1278,12 +1278,12 @@
 }
 
 .progression-summary__copy strong {
-  overflow: hidden;
   color: var(--hud-text);
   font-size: 10px;
   font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
 }
 
 .progression-summary__copy span {

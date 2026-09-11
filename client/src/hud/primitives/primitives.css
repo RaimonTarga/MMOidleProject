@@ -36,6 +36,9 @@
 
 .disclosure-header__chevron {
   font-size: 9px;
+  color: var(--hud-text-muted);
+  flex: 0 0 auto;
+  line-height: 1.5;
 }
 
 /* Desktop frame changes require an explicit owner and the breakpoint. Shared

@@ -306,3 +306,15 @@
   color: var(--hud-warning);
   margin-top: 8px;
 }
+.settings-session {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--hud-edge-divider);
+  color: var(--hud-text-muted);
+  font-size: 12px;
+}
