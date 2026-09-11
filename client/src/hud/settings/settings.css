@@ -318,3 +318,11 @@
   color: var(--hud-text-muted);
   font-size: 12px;
 }
+
+.settings-session .auto-btn {
+  width: auto;
+  margin: 0;
+  padding: 8px 14px;
+  white-space: normal;
+  line-height: 1.4;
+}

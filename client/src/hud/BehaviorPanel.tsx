@@ -69,7 +69,7 @@ export function BehaviorPanel() {
       <DisclosureHeader
         title="Behavior"
         summary={auto ? 'Auto' : 'Manual'}
-        className="behavior-panel__heading"
+        className="behavior-panel__heading panel-title panel-title--collapsible"
         expanded={expanded}
         controls={detailsId}
         onToggle={() => setExpanded((value) => !value)}

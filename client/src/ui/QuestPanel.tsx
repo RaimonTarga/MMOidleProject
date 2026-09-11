@@ -287,13 +287,14 @@ export function QuestPanel({ onOpenMastery, showMastery = true }: Props) {
         </>
       ) : (
         <div className="quest-complete">
-          No quest for this tier — max tier reached!
+          You have reached the highest available tier.
         </div>
       )}
 
             <div className="seal-ledger-trigger">
               <ActionChip
                 label="Boss seals"
+                title="View boss seals for every tier"
                 showLabel
                 icon={menuIconSource('mastery')}
                 tone="primary"

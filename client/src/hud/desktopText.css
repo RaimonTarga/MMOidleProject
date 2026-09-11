@@ -1,0 +1,53 @@
+/* Desktop text must remain readable at every supported UI font scale.
+   Scope this to text-bearing controls; artwork and meter masks still clip. */
+@media (min-width: 1101px) {
+  .loadout-row__filled,
+  .rule-card__target-name,
+  .rule-card__conflict,
+  .craft-recipe__name,
+  .craft-unlock-row__name,
+  .craft-forge-reveal__copy strong,
+  .craft-upgrade__diff-label,
+  .craft-upgrade-reveal__copy span,
+  .make-row__name,
+  .inv-item-slot__name,
+  .map-recipe .map-recipe-name {
+    min-width: 0;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+  }
+
+  .dialog-tabs {
+    flex-wrap: wrap;
+  }
+
+  .dialog-tab {
+    min-width: 0;
+    line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .inv-item-slot--filled {
+    aspect-ratio: auto;
+  }
+
+  .inv-item-slot__icon {
+    min-height: 44px;
+  }
+
+  .combat-log__filter {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+  }
+
+  .combat-log__chevron {
+    color: var(--hud-text-muted);
+    flex: 0 0 auto;
+    line-height: 1.5;
+  }
+}

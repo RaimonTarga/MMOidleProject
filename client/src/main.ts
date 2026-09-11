@@ -27,6 +27,7 @@ import { applyUiFontScale } from './settings/gameplaySettings';
 import { installUiTierSync } from './hud/uiTier';
 import { installUiUnlockSync } from './hud/uiUnlocks';
 import './hud/tierApparatus.css';
+import './hud/desktopText.css';
 
 if (DEV_TOOLS_ENABLED) {
   registerDevItems(ITEM_DATABASE);

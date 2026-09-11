@@ -31,7 +31,7 @@
   }
 
   .desktop-hud .character-panel__details .stat-label {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     max-width: none;
   }
 
@@ -46,6 +46,10 @@
     white-space: normal;
     overflow-wrap: anywhere;
     line-height: 1.4;
+  }
+
+  .desktop-hud .right-system-nav {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 82px), 1fr));
   }
 }
 
