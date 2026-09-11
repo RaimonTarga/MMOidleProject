@@ -7,7 +7,6 @@ import {
   STANCE_DATABASE,
   STANCE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
-  abilitySlotCount,
   emptyEquipment,
   biomeLevelCap,
   getMaxUpgrade,
@@ -18,7 +17,7 @@ import {
   isRiteRecipeUnlocked,
   isStanceRecipeUnlocked,
   ITEM_DATABASE,
-  type EquippedAbilities,
+  type AttunedAbilities,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../../src/db/playerRepo';
@@ -100,14 +99,14 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
  */
 export function canonicalLoadout(playerTier: number): {
   knownAbilities: string[];
-  equippedAbilities: EquippedAbilities;
+  attunedAbilities: AttunedAbilities;
   knownStances: string[];
+  attunedStances: string[];
   equippedStances: { default: string | null };
   activeStance: string | null;
   knownRites: string[];
   equippedRites: string[];
 } {
-  const slots = abilitySlotCount(playerTier);
   // Deepest-authored first, so a T4 bot fills its slots with T4 content, not T1.
   const forSlot = (kind: 'technique' | 'guard'): string[] =>
     [...ABILITY_DATABASE.values()]
@@ -139,15 +138,22 @@ export function canonicalLoadout(playerTier: number): {
   const equippedRites: string[] = [];
   for (const riteId of CANONICAL_RITE_PRIORITY) {
     if (!knownRites.has(riteId)) continue;
-    if (runicPointLoadoutCost({ rules: [], rites: [...equippedRites, riteId] }) <= runeBudget) equippedRites.push(riteId);
+    if (runicPointLoadoutCost({ rules: [], abilities: { techniques: [], guards: [] }, stances: activeStance ? [activeStance] : [], rites: [...equippedRites, riteId] }) <= runeBudget) equippedRites.push(riteId);
   }
 
+  const abilities: AttunedAbilities = { techniques: [], guards: [] };
+  // Bench selection policy: round-robin families, deepest authored first, within RP.
+  for (let i = 0; i < Math.max(techniques.length, guards.length); i++) {
+    for (const [family, id] of [["techniques", techniques[i]], ["guards", guards[i]]] as const) {
+      if (!id) continue;
+      const proposed = { ...abilities, [family]: [...abilities[family], id] };
+      if (runicPointLoadoutCost({ rules: [], abilities: proposed, stances: activeStance ? [activeStance] : [], rites: equippedRites }) <= runeBudget) abilities[family].push(id);
+    }
+  }
   return {
     knownAbilities: [...techniques, ...guards],
-    equippedAbilities: {
-      techniques: techniques.slice(0, slots.technique),
-      guards: guards.slice(0, slots.guard),
-    },
+    attunedAbilities: abilities,
+    attunedStances: activeStance ? [activeStance] : [],
     knownStances: stances,
     equippedStances: {
       default: activeStance,
@@ -196,7 +202,7 @@ function buildBotSlices(
       // gap for the layered-sweep work rather than guessed at here.
       runesEquipped: [],
       knownAbilities: loadout.knownAbilities,
-      equippedAbilities: loadout.equippedAbilities,
+      attunedAbilities: loadout.attunedAbilities,
       knownStances: loadout.knownStances,
       equippedStances: loadout.equippedStances,
       activeStance: loadout.activeStance,

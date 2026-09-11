@@ -9,8 +9,7 @@ import { DEPTH } from "./depth";
  *
  * Each supported monster type maps (via corpseRemains.ts) to a corpse FAMILY
  * and SIZE class; the family owns the art, the monster only points at one.
- * This first pass covers the five active Wasteland/Graveyard monsters —
- * everything else is unmapped and draws the plain fallback lozenge below.
+ * Unmapped monsters draw the plain fallback lozenge below.
  *
  * The RESERVED state is drawn here as a pulsing ring + tether to the raiser,
  * never baked into the remains art, so it can pulse with the cast and the

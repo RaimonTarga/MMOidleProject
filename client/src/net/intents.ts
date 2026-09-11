@@ -1,7 +1,7 @@
 import type {
   AutocombatConfig,
   EquipmentSlot,
-  EquippedAbilities,
+  AttunedAbilities,
   EquippedRule,
   EvolveMode,
   PlayerMoveOptions,
@@ -76,7 +76,7 @@ export function sendCraftAbilityRecipe(socket: GameSocket, recipeId: string): vo
 
 export function sendSetAbilityLoadout(
   socket: GameSocket,
-  payload: { equipped: EquippedAbilities },
+  payload: { equipped: AttunedAbilities },
 ): void {
   socket.emit('ability:setLoadout', payload);
 }

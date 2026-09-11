@@ -7,7 +7,7 @@ import type {
 } from "@mmo-idle/shared";
 import {
   ATLAS_KEY,
-  GRAVES_KEY,
+  tombTextureKey,
   GRAVE_DISPLAY_W,
   GRAVE_DISPLAY_H,
   getPlayerFrame,
@@ -54,20 +54,21 @@ export function tryMakeImage(
     .setDisplaySize(displayW, displayH);
 }
 
+/**
+ * Grave/tomb image for a `graveFrame` index. Each tomb variant is its own texture
+ * (one loose PNG per design) rather than a frame inside a sheet, so the whole
+ * sprite is the image and there is no frame name to look up.
+ */
 export function tryMakeGraveImage(
   scene: Phaser.Scene,
   pos: Vec2,
   frameIndex: number,
 ): Phaser.GameObjects.Image | null {
-  const frame = String(frameIndex);
-  return tryMakeImage(
-    scene,
-    pos,
-    frame,
-    GRAVE_DISPLAY_W,
-    GRAVE_DISPLAY_H,
-    GRAVES_KEY,
-  );
+  const key = tombTextureKey(frameIndex);
+  if (!scene.textures.exists(key)) return null;
+  return scene.add
+    .image(pos.x, pos.y, key)
+    .setDisplaySize(GRAVE_DISPLAY_W, GRAVE_DISPLAY_H);
 }
 
 export function ensureSprite(
@@ -137,7 +138,9 @@ export function updateSpriteFrame(
         ? getPlayerFrame(snapshot as PlayerView)
         : getMonsterFrame(getMonsterTypeIdFromSnapshot(snapshot))));
 
-  const textureKey = playerView?.isDead ? GRAVES_KEY : ATLAS_KEY;
+  const textureKey = playerView?.isDead
+    ? tombTextureKey(playerView.graveFrame ?? 0)
+    : ATLAS_KEY;
   const displayW = playerView?.isDead ? GRAVE_DISPLAY_W : opts.displayW;
   const displayH = playerView?.isDead ? GRAVE_DISPLAY_H : opts.displayH;
 

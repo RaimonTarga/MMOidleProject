@@ -76,7 +76,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       playerTier: 0, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [],
       runesEquipped: [],
-      knownAbilities: [], equippedAbilities: { techniques: [], guards: [] },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [...NEW_STANCES],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
@@ -121,14 +121,15 @@ assert(
 assert(!!CONDITION_DATABASE.get("stance-charged"), "Stance Charged must be an authored condition");
 assert(
   runeRuleCost({ conditionId: "before-empowered", actionId: "switch-stance", targetStanceId: "time-to-strike-stance" }) ===
-    CONDITION_DATABASE.get("before-empowered")!.cost + stanceDef("time-to-strike-stance")!.runeCost,
-  "a new stance rule must price as condition + destination like every other",
+    CONDITION_DATABASE.get("before-empowered")!.cost,
+  "stance rules pay only for timing",
 );
 
 // ── Setup ─────────────────────────────────────────────────────────────────────
 
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "unplaced-player");
+player.tracksProgression.attunedStances = [...player.tracksProgression.knownStances];
 recalculatePlayerEntityStats(world, player);
 initStanceCombatEffects();
 let now = 1_000;

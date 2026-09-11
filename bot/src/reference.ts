@@ -19,7 +19,6 @@ import {
   STANCE_DATABASE,
   STARTER_RUNE_IDS,
   WORLD_NODE_LIST,
-  abilitySlotCount,
   biomeLevelCap,
   biomeXpForLevel,
   biomeXpSegmentBudget,
@@ -100,12 +99,9 @@ w();
 w(`One T1 biome maxes at ${biomeLevelCap(1, "plains")} GM, so a single-biome character can only ever reach **+1**.`);
 w(`All five maxed = GM ${T1_BIOMES.length * biomeLevelCap(1, "plains")}, which is exactly what **+5** needs.`);
 w();
-const slots = abilitySlotCount(1);
-w(`**Ability slots at player tier 1: ${slots.technique} Technique, ${slots.guard} Guard.**`);
-w("Every mid-run ability change is therefore a REPLACEMENT, not an addition.");
-w("(Tier 3 grants a 2nd Technique; tier 4 a 2nd Guard.)");
+w("Abilities and stances reserve Runic Points; there is no tier capacity cap.");
 w();
-w(`**Runic Points**: budget is \`8 + floor(GM / 10)\` — ${runeBudgetForGlobalMastery(0)} at GM 0,`);
+w(`**Runic Points**: budget is \`16 + floor(GM / 5)\` — ${runeBudgetForGlobalMastery(0)} at GM 0,`);
 w(`${runeBudgetForGlobalMastery(30)} at GM 30. Each equipped rune rule costs condition + action.`);
 w();
 w("**Biome XP curve** (local six-level segments, cumulative per biome):");

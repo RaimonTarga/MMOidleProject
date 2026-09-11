@@ -26,6 +26,7 @@
 
 .detail-line {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: 6px;
   padding: 2px 4px;
@@ -71,8 +72,16 @@
   color: var(--hud-danger);
 }
 
+/* A qualifier can be a whole clause ("while at or above 60% HP — INACTIVE") and
+   the surfaces that carry one include a ~240px stance card. Fixed at its content
+   width it ran straight out through the card border, so it shrinks, wraps within
+   itself, and drops to its own line when the row cannot hold it. */
 .detail-line__detail {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
   color: var(--hud-text-dim);
   font-size: 10px;
+  overflow-wrap: break-word;
 }
+
+.detail-line--behavior .detail-line__value { flex:1 1 100%; min-width:0; overflow-wrap:anywhere; font-weight:normal; }

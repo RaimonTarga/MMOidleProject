@@ -1,4 +1,4 @@
-import type { EquippedAbilities } from "../abilities";
+import type { AttunedAbilities } from "../abilities";
 import type { EquipmentMap, EssenceType } from "../items";
 import type { EquippedRule } from "../runeDatabase";
 import type { EquippedRites } from "../rites";
@@ -57,10 +57,11 @@ export interface TierEntryProfile {
   itemUpgrades: Record<string, number>;
 
   knownAbilities: string[];
-  equippedAbilities: EquippedAbilities;
+  attunedAbilities: AttunedAbilities;
   runeRecipesCrafted: string[];
   runesEquipped: EquippedRule[];
   knownStances: string[];
+  attunedStances?: string[];
   equippedStances: EquippedStances;
   knownRites: string[];
   equippedRites: EquippedRites;
@@ -83,10 +84,11 @@ export interface TierEntryInitialState {
   inventory: string[];
   itemUpgrades: Record<string, number>;
   knownAbilities: string[];
-  equippedAbilities: EquippedAbilities;
+  attunedAbilities: AttunedAbilities;
   runeRecipesCrafted: string[];
   runesEquipped: EquippedRule[];
   knownStances: string[];
+  attunedStances?: string[];
   equippedStances: EquippedStances;
   activeStance: string | null;
   knownRites: string[];

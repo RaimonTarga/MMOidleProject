@@ -1,5 +1,5 @@
 import type { EquipmentSlot } from "../items";
-import type { EquippedAbilities } from "../abilities";
+import type { AttunedAbilities } from "../abilities";
 import type { StanceSlot } from "../stances";
 import type { EvolveMode } from "../systems/evolution";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
@@ -130,7 +130,7 @@ export interface ServerToClientEvents {
   "stance:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
   /** Immediate result of learning a rite (crafting a rite recipe). */
   "rite:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
-  "build:loadoutResult": (result: { system: "runes" | "stances" | "rites"; success: boolean; reason?: string }) => void;
+  "build:loadoutResult": (result: { system: "abilities" | "runes" | "stances" | "rites"; success: boolean; reason?: string }) => void;
   /** Immediate result of an item upgrade attempt. */
   "inventory:upgradeResult": (result: {
     success: boolean;
@@ -231,11 +231,11 @@ export interface ClientToServerEvents {
    * fire priority — so equipping, clearing and RE-PRIORITISING are one intent.
    * Server validates learned / slot-type / slot-count / duplicates.
    */
-  "ability:setLoadout": (payload: { equipped: EquippedAbilities }) => void;
+  "ability:setLoadout": (payload: { equipped: AttunedAbilities }) => void;
   /** Learn a stance by crafting its recipe. Server validates gate + cost. */
   "stance:craftRecipe": (recipeId: string) => void;
   /** Equip/clear a stance in a slot. `stanceId: null` clears the slot. */
-  "stance:setLoadout": (payload: { slot: StanceSlot; stanceId: string | null }) => void;
+  "stance:setLoadout": (payload: { slot: StanceSlot; stanceId: string | null; attunedStances?: string[] }) => void;
   /** Learn a rite by crafting its recipe. Server validates gate + cost. */
   "rite:craftRecipe": (recipeId: string) => void;
   /** Set the full equipped-rite list (interchangeable slots; length ≤ slot count). */

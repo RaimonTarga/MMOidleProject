@@ -11,10 +11,48 @@ import {
 } from "@mmo-idle/shared";
 
 export const ATLAS_KEY = "game-atlas";
-export const GRAVES_KEY = "graves";
-export const GRAVE_FRAME_SIZE = 250;
-export const GRAVE_DISPLAY_W = 80;
-export const GRAVE_DISPLAY_H = 96;
+
+/**
+ * TOMB ART — one file per variant, `graveFrame` indexes into it.
+ *
+ * Replaces the retired 25-frame `graves.png` sheet (asset-store mossy churchyard
+ * stones that never matched the painterly look). Drawn by BOTH the grave a dead
+ * player lies under and the tombstone left behind after they respawn, so the
+ * handoff at respawn is the same art in the same place.
+ *
+ * Indexing is modulo, so `GRAVE_FRAME_COUNT` drifting from this list's length is
+ * harmless rather than a blank sprite.
+ */
+export const TOMB_ART = [
+  { key: "tomb_cracked_slab", file: "/assets/environment/tombs/cracked-slab.png" },
+  { key: "tomb_leaning_headstone", file: "/assets/environment/tombs/leaning-headstone.png" },
+  { key: "tomb_stacked_cairn", file: "/assets/environment/tombs/stacked-cairn.png" },
+  { key: "tomb_broken_obelisk", file: "/assets/environment/tombs/broken-obelisk.png" },
+  { key: "tomb_arched_marker", file: "/assets/environment/tombs/arched-marker.png" },
+] as const;
+
+export function tombTextureKey(graveFrame: number): string {
+  const i = ((graveFrame % TOMB_ART.length) + TOMB_ART.length) % TOMB_ART.length;
+  return TOMB_ART[i]!.key;
+}
+
+/**
+ * Square, because the tomb art is square. The retired graves sheet was 250px square
+ * drawn at 80x96, i.e. stretched 1.2x vertically; the art carried enough padding to
+ * hide it. The new tombs fill more of their canvas, so the stretch would show —
+ * a square display size keeps the source aspect and lets the art be the tall thing.
+ *
+ * Sized to read at PLAYER HEIGHT, which is not the same as sharing the player's
+ * display box. A class body fills ~92% of its 64px frame (~59px of visible sprite);
+ * a tomb fills only ~86% of its 128px canvas. Matching the boxes would draw the
+ * tombs visibly SHORTER than the character standing next to them, so the box is
+ * scaled by the fill ratio instead: 59 / 0.86 ~= 69, rounded to 70. Visible stone
+ * then lands at 57-64px across the five designs against a ~59px player — the spread
+ * is the designs' own proportions (the cairn is squat, the obelisk is tall), which
+ * is variety rather than error.
+ */
+export const GRAVE_DISPLAY_W = 70;
+export const GRAVE_DISPLAY_H = 70;
 /** Label offset above grave crown (used by drawLabels). */
 export const GRAVE_LABEL_OFFSET_Y = GRAVE_DISPLAY_H * 0.55 + 8;
 export const VOID_TOMB_TEXTURE_KEY = "void_tomb";

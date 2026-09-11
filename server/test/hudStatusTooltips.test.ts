@@ -302,7 +302,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null },
+      attunedAbilities: { technique: null, guard: null },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

@@ -91,10 +91,12 @@ assert(
 // end of the table — the T5+ story until bespoke ranks are written.
 for (const ability of ABILITY_DATABASE.values()) {
   const beyond = describeAbility(ability, { ...context, playerTier: ability.tier + 12 });
+  const later = describeAbility(ability, { ...context, playerTier: ability.tier + 20 });
   assert(
-    beyond.rankLabel.includes("fully deepened"),
+    beyond.rank === later.rank && JSON.stringify(beyond.lines) === JSON.stringify(later.lines),
     `${ability.id}: rank should clamp past its last authored rank`,
   );
+  assert(beyond.rankLabel === `Rank ${beyond.rank}`, `${ability.id}: rank label must not imply a final tier`);
 }
 
 // An ability with extra reach must SAY so — that reach is the whole reason it is

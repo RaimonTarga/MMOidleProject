@@ -1,5 +1,5 @@
 {
-  "atlasHash": "9877abd209f5deed4c59ecabc25d03a30afb5c86f1d255127eb7ded13ca2e558",
+  "atlasHash": "85820391a21add76e4f8e56afa94577fae78ccfbd4fce46ef1fc4abaace5d6cf",
   "frames": {
     "sprites/accents/crest-close-cadence.png": {
       "sourceW": 32,
@@ -282,6 +282,18 @@
       "sourceH": 128,
       "footY": 59,
       "halfWAtFoot": 12
+    },
+    "sprites/bosses/ruins-champion-variant-2.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 57,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/bosses/ruins-champion.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 62,
+      "halfWAtFoot": 8.5
     },
     "sprites/classes/breacher.png": {
       "sourceW": 64,
@@ -1255,6 +1267,96 @@
       "footY": 22,
       "halfWAtFoot": 25
     },
+    "sprites/monsters/desolate-moon-dust-revenant.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 9.5
+    },
+    "sprites/monsters/desolate-moon-lunar-watcher-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 17,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/desolate-moon-lunar-watcher.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 14,
+      "halfWAtFoot": 13
+    },
+    "sprites/monsters/desolate-moon-moon-warden.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 6
+    },
+    "sprites/monsters/desolate-moon-pale-leech.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 9.5
+    },
+    "sprites/monsters/desolate-moon-pale-monolith-spawn-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 19
+    },
+    "sprites/monsters/desolate-moon-pale-monolith-spawn-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 24
+    },
+    "sprites/monsters/desolate-moon-pale-monolith-spawn-variant-4.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 28.5
+    },
+    "sprites/monsters/desolate-moon-pale-monolith-spawn.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 27.5
+    },
+    "sprites/monsters/desolate-moon-ring-eyed-sentinel-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/monsters/desolate-moon-ring-eyed-sentinel.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 7
+    },
+    "sprites/monsters/desolate-moon-silver-halo-horror-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/monsters/desolate-moon-silver-halo-horror.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/monsters/desolate-moon-vacuum-stalker.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 16.5
+    },
+    "sprites/monsters/desolate-moon-void-touched-eyeless-beast.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 23
+    },
     "sprites/monsters/dune-basilisk.png": {
       "sourceW": 64,
       "sourceH": 64,
@@ -1627,6 +1729,114 @@
       "footY": 24,
       "halfWAtFoot": 17.5
     },
+    "sprites/monsters/ruins-archer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 11
+    },
+    "sprites/monsters/ruins-banner-bearer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 8.5
+    },
+    "sprites/monsters/ruins-beastmaster.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 21
+    },
+    "sprites/monsters/ruins-bulwark.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 16.5
+    },
+    "sprites/monsters/ruins-captain.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15
+    },
+    "sprites/monsters/ruins-hexer-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/monsters/ruins-hexer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/ruins-mage.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 24
+    },
+    "sprites/monsters/ruins-mender.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 8
+    },
+    "sprites/monsters/ruins-pike-veteran-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 11
+    },
+    "sprites/monsters/ruins-pike-veteran.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/ruins-rogue-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 18
+    },
+    "sprites/monsters/ruins-rogue.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 17.5
+    },
+    "sprites/monsters/ruins-spellblade-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 25.5
+    },
+    "sprites/monsters/ruins-spellblade.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/monsters/ruins-summoner.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 9
+    },
+    "sprites/monsters/ruins-vanguard.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/ruins-war-priest.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13.5
+    },
     "sprites/monsters/sand-scorpion.png": {
       "sourceW": 64,
       "sourceH": 64,
@@ -1669,6 +1879,96 @@
       "footY": 21,
       "halfWAtFoot": 5
     },
+    "sprites/monsters/stormlands-arc-hound.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/stormlands-bolt-drinker-colossus-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 20
+    },
+    "sprites/monsters/stormlands-bolt-drinker-colossus.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 20
+    },
+    "sprites/monsters/stormlands-fulgurite-stalker-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 6.5
+    },
+    "sprites/monsters/stormlands-fulgurite-stalker-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/monsters/stormlands-fulgurite-stalker.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/stormlands-lightning-wisp-beast.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 19,
+      "halfWAtFoot": 16
+    },
+    "sprites/monsters/stormlands-static-idol-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 21
+    },
+    "sprites/monsters/stormlands-static-idol.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/monsters/stormlands-storm-acolyte.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 12
+    },
+    "sprites/monsters/stormlands-storm-herald.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13
+    },
+    "sprites/monsters/stormlands-tempest-knight.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 21
+    },
+    "sprites/monsters/stormlands-tempest-serpent-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/stormlands-tempest-serpent.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 22
+    },
+    "sprites/monsters/stormlands-thunder-bishop.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 18.5
+    },
     "sprites/monsters/sun-scarab.png": {
       "sourceW": 64,
       "sourceH": 64,
@@ -1704,6 +2004,180 @@
       "sourceH": 64,
       "footY": 18,
       "halfWAtFoot": 14
+    },
+    "sprites/monsters/underworlds-ashen-excavator-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 19
+    },
+    "sprites/monsters/underworlds-ashen-excavator-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/underworlds-ashen-excavator.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 15
+    },
+    "sprites/monsters/underworlds-blind-burrower-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/monsters/underworlds-blind-burrower-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 24.5
+    },
+    "sprites/monsters/underworlds-blind-burrower.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 15
+    },
+    "sprites/monsters/underworlds-chain-crawler-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 19,
+      "halfWAtFoot": 28.5
+    },
+    "sprites/monsters/underworlds-chain-crawler-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/underworlds-chain-crawler.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/monsters/underworlds-crucible-hound.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 22
+    },
+    "sprites/monsters/underworlds-ember-parasite-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 11
+    },
+    "sprites/monsters/underworlds-ember-parasite-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 18.5
+    },
+    "sprites/monsters/underworlds-ember-parasite.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 11.5
+    },
+    "sprites/monsters/underworlds-furnace-beetle-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/underworlds-furnace-beetle-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 20,
+      "halfWAtFoot": 20
+    },
+    "sprites/monsters/underworlds-furnace-beetle.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 11.5
+    },
+    "sprites/monsters/underworlds-gloom-spider-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 2.5
+    },
+    "sprites/monsters/underworlds-gloom-spider.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 8.5
+    },
+    "sprites/monsters/underworlds-hellshaft-watcher-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 16
+    },
+    "sprites/monsters/underworlds-hellshaft-watcher.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15
+    },
+    "sprites/monsters/underworlds-iron-locust-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/monsters/underworlds-iron-locust.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 2.5
+    },
+    "sprites/monsters/underworlds-mineral-mite-colossus-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 25.5
+    },
+    "sprites/monsters/underworlds-mineral-mite-colossus-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 21
+    },
+    "sprites/monsters/underworlds-mineral-mite-colossus-variant-4.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/underworlds-mineral-mite-colossus.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/monsters/underworlds-underworks-sentinel.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 19.5
+    },
+    "sprites/monsters/underworlds-walking-crucible-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 17
+    },
+    "sprites/monsters/underworlds-walking-crucible.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 18
     },
     "sprites/monsters/vine-chameleon.png": {
       "sourceW": 64,

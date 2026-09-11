@@ -2434,6 +2434,381 @@
         "tileable": true,
         "mode": "pro"
       }
+    },
+    {
+      "id": "ruins-t5-ruined-masonry-broken-paving-wang",
+      "out": "files/environment/ruins/ruins-t5-ruined-masonry-broken-paving-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down dark worn ruined masonry and broken paving, charcoal stone slabs, chipped joints, buried rubble grit and faded bronze mineral stains, broad reusable lower ground material with irregular readable texture, encroaching ash-dark soil and broken rubble reclaiming the paving, sparse dead cloth-like debris texture without distinct props as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , modern city street, clean cobblestone, bright purple sludge, water, plants",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down encroaching ash-dark soil and broken rubble reclaiming the paving, sparse dead cloth-like debris texture without distinct props, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "irregular bites where ash soil and rubble swallow fractured masonry and broken paving, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "ruins-t5-shallow-channels-drowned-urban-wang",
+      "out": "files/environment/ruins/ruins-t5-shallow-channels-drowned-urban-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down drowned urban stonework, dark cracked paving with shallow silt seams and worn masonry blocks, old water-cut depressions kept low and reusable, broad reusable lower ground material with irregular readable texture, muted shallow water channels and damp silt flowing through broken urban paving, subdued reflections and no deep pool as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , deep water, ocean, river scene, building facades, modern city, bright blue water, reeds, boats",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down muted shallow water channels and damp silt flowing through broken urban paving, subdued reflections and no deep pool, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "soft broken channels where damp water-cut silt interrupts old urban stone, ground-level and modular, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "ruins-t5-courtyard-reinforced-flagstone-wang",
+      "out": "files/environment/ruins/ruins-t5-courtyard-reinforced-flagstone-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down weathered courtyard stone, broad irregular flagstones, worn central paths, cracked bronze pins and old masonry grit, broad reusable lower ground material with irregular readable texture, reinforced adventurer-laid flagstones and compacted dark route stone, subtly more orderly but still ancient and broken as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , garden, fountain, statue, clean castle courtyard, bright marble, modern pavement",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down reinforced adventurer-laid flagstones and compacted dark route stone, subtly more orderly but still ancient and broken, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "worn courtyard edges where repaired flagstones meet older fractured masonry, no raised curb, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "iron-marches-t5-militarized-stronghold-wang",
+      "out": "files/environment/iron-marches/iron-marches-t5-militarized-stronghold-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down dark disciplined stronghold ground, pale iron-grey flagstones, compacted ash, orderly broad seams and restrained brass-metal inlays, broad reusable lower ground material with irregular readable texture, worked fortress plates and machine-laid causeway blocks, ancient engineered paving with muted gunmetal and pale iron planes as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , modern factory, sci-fi floor, gears, pipes, vehicles, castle interior, glowing red lava, bright cyan",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down worked fortress plates and machine-laid causeway blocks, ancient engineered paving with muted gunmetal and pale iron planes, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "organized but worn boundary where rough stronghold earth meets engineered military plates and causeway stone, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "stormlands-t6-charged-heath-wang",
+      "out": "files/environment/stormlands/stormlands-t6-charged-heath-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down storm-scoured dark earth and rock, slate-grey blasted heath, compacted wind-cut soil, fine gravel and sparse low ground texture, broad reusable lower ground material with irregular readable texture, lightning-burnt fulgurite ground and charged stone, pale grey fused patches, branching scorch marks and restrained muted blue-grey mineral flecks as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , literal lightning bolts, electric symbols, neon blue, bright white glow, snow, ice, swamp, standing water, tall grass",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down lightning-burnt fulgurite ground and charged stone, pale grey fused patches, branching scorch marks and restrained muted blue-grey mineral flecks, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "broken branching low boundary where fused fulgurite ground interrupts wind-scoured dark heath, storm damage without symbols, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "stormlands-t6-ritual-flooring-wang",
+      "out": "files/environment/stormlands/stormlands-t6-ritual-flooring-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down old storm-order masonry, dark slate courtyard stone with worn ritual scoring, cracked blocks and windblown grit, broad reusable lower ground material with irregular readable texture, charged ceremonial flooring, lightning-burnt paving slabs with restrained fulgurite seams and old dangerous ritual geometry as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , modern temple, clean holy site, neon runes, literal lightning, bright cyan glow, statues, altar, building",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down charged ceremonial flooring, lightning-burnt paving slabs with restrained fulgurite seams and old dangerous ritual geometry, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "cracked ceremonial ground where charged paving breaks through old storm masonry, built and sacred but visibly hazardous, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "ruins-t5-old-masonry-watercut-route-wang",
+      "out": "files/environment/ruins/ruins-t5-old-masonry-watercut-route-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down old drowned-civilization masonry, rough grey-brown blocks, worn stone route and shallow water-cut channels with compact silt, broad reusable lower ground material with irregular readable texture, decayed engineered stone route, faded fitted plates and broken path courses overgrown by ash grit but still reusable as a route material as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , modern road, asphalt, deep water, lush plants, bright blue, city skyline, wall",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down decayed engineered stone route, faded fitted plates and broken path courses overgrown by ash grit but still reusable as a route material, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "low water-cut and decayed stone edge where old masonry gives way to fitted route plates, no elevation, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "stormlands-t6-cracked-ceremonial-paving-wang",
+      "out": "files/environment/stormlands/stormlands-t6-cracked-ceremonial-paving-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down cracked ceremonial paving of dark storm stone, broad irregular slabs, wind-scoured joints and faded ritual scoring, broad reusable lower ground material with irregular readable texture, collapsed holy-arcane site stone, broken pale slate plates and muted fulgurite seams suggesting a dangerous abandoned sanctuary without structures as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , church, shrine, altar, statue, building, bright neon sigils, literal lightning, gold temple, wall",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down collapsed holy-arcane site stone, broken pale slate plates and muted fulgurite seams suggesting a dangerous abandoned sanctuary without structures, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "fractured ceremonial paving collapsing into older storm stone, reusable and abstract rather than a literal ruin scene, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "desolate-moon-t7-monument-regolith-wang",
+      "out": "files/environment/desolate-moon/desolate-moon-t7-monument-regolith-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down pale lunar regolith and cratered powdery rock, sparse silver dust, shallow impact dimples and airless granular variation, broad reusable lower ground material with irregular readable texture, black glass and pale monolith paving, austere geometric plates emerging through moon dust with restrained silver edges as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , atmosphere, sky, stars, astronaut, spaceship, lush vegetation, bright neon, colorful planet, mountains",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down black glass and pale monolith paving, austere geometric plates emerging through moon dust with restrained silver edges, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "clean sparse low boundary where pale regolith drifts against black glass and pale lunar stone plates, no cliffs, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "desolate-moon-t7-crater-dungeon-paving-wang",
+      "out": "files/environment/desolate-moon/desolate-moon-t7-crater-dungeon-paving-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down austere moon monument-site ground, pale dust over broad cratered stone plates with sparse geometric scoring, broad reusable lower ground material with irregular readable texture, specific dungeon-like lunar flooring of black monolith paving, dark glass seams and strange pale engineered stone slabs, built but silent as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , sci-fi facility, spaceship, modern corridor, wall, stairs, glowing neon, star field, furniture, machinery",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down specific dungeon-like lunar flooring of black monolith paving, dark glass seams and strange pale engineered stone slabs, built but silent, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "angular broken boundary where pale crater dust interrupts black monolith flooring and sparse lunar plates, ground-level only, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "underworlds-t6-furnace-ritual-industrial-wang",
+      "out": "files/environment/underworlds/underworlds-t6-furnace-ritual-industrial-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless high top-down deep furnace stone, dark ash rock, buried industrial depth and broad charcoal slabs with worn pressure seams, broad reusable lower ground material with irregular readable texture, ritual-industrial flooring of furnace brick, dark metal seams and ancient engineered plates, infernal depth without modern factory machinery as the contrasting ground family, painterly pixel art, evenly tileable on all edges, no repeating motif",
+      "negative": "visible seams between tiles, tiling grid, edge border, frame, freestanding architecture, wall, building, prop, setpiece, statue, pillar, stairs, character, monster, boss, third terrain material, bright neon, saturated colors, full grayscale, cinematic perspective, isometric diorama, text, watermark, hard black outline, cast shadow, elevation, cliff, one-off scene, , modern factory, steampunk, gears, pipes, conveyor belt, machinery objects, bright lava field, neon red, generic cave, stalactites",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Exploratory overnight terrain pass 2026-09-10. Two-ground-family Wang concept only; retain candidates for review. Do not pack, wire, or add props, collision objects, or gameplay in this pass.",
+      "params": {
+        "upperDescription": "seamless high top-down ritual-industrial flooring of furnace brick, dark metal seams and ancient engineered plates, infernal depth without modern factory machinery, clearly distinct from the lower material but subdued enough for creatures and effects to read, broad reusable ground texture, no objects, evenly tileable on all edges",
+        "transitionDescription": "irregular ground-level collapse where ash stone breaks into furnace brick and dark metal seams, oppressive and modular, low ground-level boundary, readable and modular, no wall, curb, cliff, elevation, hard graphic border, or third material, seamless Wang transition",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "tomb-cracked-slab",
+      "out": "files/environment/tombs/cracked-slab.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "a single thick upright grave slab of weathered stone, flat-topped and squared off, a deep crack running down one side and a chipped corner, one clear upright silhouette standing tall in the frame, isolated decorative prop, three-quarter view facing right, transparent background, painterly pixel art, soft volumetric shading, minimal outline, plain weathered grey stone with a faint warm sand-grey undertone and fine age-worn surface grain, sombre and neutral, not bright",
+      "negative": "ground rectangle, soil patch, dirt patch, grass, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, moss, lichen, ivy, vines, creeping plants, flowers, foliage, skull, bones, skeleton, ghost, spirit, candle, lantern, flame, cross, crucifix, religious symbol, angel statue, praying figure, mausoleum, crypt door, coffin, casket, fence, railing, graveyard scene, multiple stones, row of graves, cemetery, scenery, environment, background elements, character, creature, figure, weapon, text, letters, numbers, engraved words, inscription, epitaph, runes, glyphs, watermark, hard black outline, bright white, oversaturated, neon, vivid green, vivid blue, front view, facing camera, cartoon, chibi, cute, blurry, 3d render, photograph",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Player tombstone set (2026-09-11). Replaces the retired 25-frame graves.png (asset-store mossy churchyard stones, off-style). Drawn by BOTH the grave a dead player lies under and the 15-minute tombstone left behind, so it must read at 88px and sit on all 11 biome grounds: NEUTRAL grey stone, no moss, no religious iconography, no baked ground patch or shadow. 5 designs x 2 candidates; user picks 3-4 in the gallery and the rest are rejected.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "tomb-leaning-headstone",
+      "out": "files/environment/tombs/leaning-headstone.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "a single round-topped grave headstone of weathered stone, leaning over at a tilt as if the ground beneath it settled, edges softened by age, one clear upright silhouette standing tall in the frame, isolated decorative prop, three-quarter view facing right, transparent background, painterly pixel art, soft volumetric shading, minimal outline, plain weathered grey stone with a faint warm sand-grey undertone and fine age-worn surface grain, sombre and neutral, not bright",
+      "negative": "ground rectangle, soil patch, dirt patch, grass, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, moss, lichen, ivy, vines, creeping plants, flowers, foliage, skull, bones, skeleton, ghost, spirit, candle, lantern, flame, cross, crucifix, religious symbol, angel statue, praying figure, mausoleum, crypt door, coffin, casket, fence, railing, graveyard scene, multiple stones, row of graves, cemetery, scenery, environment, background elements, character, creature, figure, weapon, text, letters, numbers, engraved words, inscription, epitaph, runes, glyphs, watermark, hard black outline, bright white, oversaturated, neon, vivid green, vivid blue, front view, facing camera, cartoon, chibi, cute, blurry, 3d render, photograph",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Player tombstone set (2026-09-11). Replaces the retired 25-frame graves.png (asset-store mossy churchyard stones, off-style). Drawn by BOTH the grave a dead player lies under and the 15-minute tombstone left behind, so it must read at 88px and sit on all 11 biome grounds: NEUTRAL grey stone, no moss, no religious iconography, no baked ground patch or shadow. 5 designs x 2 candidates; user picks 3-4 in the gallery and the rest are rejected.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "tomb-stacked-cairn",
+      "out": "files/environment/tombs/stacked-cairn.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "a single tall cairn of flat weathered stones stacked carefully one on another into a narrow tapering marker, the topmost stone smallest, one clear upright silhouette standing tall in the frame, isolated decorative prop, three-quarter view facing right, transparent background, painterly pixel art, soft volumetric shading, minimal outline, plain weathered grey stone with a faint warm sand-grey undertone and fine age-worn surface grain, sombre and neutral, not bright",
+      "negative": "ground rectangle, soil patch, dirt patch, grass, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, moss, lichen, ivy, vines, creeping plants, flowers, foliage, skull, bones, skeleton, ghost, spirit, candle, lantern, flame, cross, crucifix, religious symbol, angel statue, praying figure, mausoleum, crypt door, coffin, casket, fence, railing, graveyard scene, multiple stones, row of graves, cemetery, scenery, environment, background elements, character, creature, figure, weapon, text, letters, numbers, engraved words, inscription, epitaph, runes, glyphs, watermark, hard black outline, bright white, oversaturated, neon, vivid green, vivid blue, front view, facing camera, cartoon, chibi, cute, blurry, 3d render, photograph",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Player tombstone set (2026-09-11). Replaces the retired 25-frame graves.png (asset-store mossy churchyard stones, off-style). Drawn by BOTH the grave a dead player lies under and the 15-minute tombstone left behind, so it must read at 88px and sit on all 11 biome grounds: NEUTRAL grey stone, no moss, no religious iconography, no baked ground patch or shadow. 5 designs x 2 candidates; user picks 3-4 in the gallery and the rest are rejected.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "tomb-broken-obelisk",
+      "out": "files/environment/tombs/broken-obelisk.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "a single tapering stone obelisk grave marker snapped off partway up, the break jagged and the standing stump still upright, one clear upright silhouette standing tall in the frame, isolated decorative prop, three-quarter view facing right, transparent background, painterly pixel art, soft volumetric shading, minimal outline, plain weathered grey stone with a faint warm sand-grey undertone and fine age-worn surface grain, sombre and neutral, not bright",
+      "negative": "ground rectangle, soil patch, dirt patch, grass, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, moss, lichen, ivy, vines, creeping plants, flowers, foliage, skull, bones, skeleton, ghost, spirit, candle, lantern, flame, cross, crucifix, religious symbol, angel statue, praying figure, mausoleum, crypt door, coffin, casket, fence, railing, graveyard scene, multiple stones, row of graves, cemetery, scenery, environment, background elements, character, creature, figure, weapon, text, letters, numbers, engraved words, inscription, epitaph, runes, glyphs, watermark, hard black outline, bright white, oversaturated, neon, vivid green, vivid blue, front view, facing camera, cartoon, chibi, cute, blurry, 3d render, photograph",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Player tombstone set (2026-09-11). Replaces the retired 25-frame graves.png (asset-store mossy churchyard stones, off-style). Drawn by BOTH the grave a dead player lies under and the 15-minute tombstone left behind, so it must read at 88px and sit on all 11 biome grounds: NEUTRAL grey stone, no moss, no religious iconography, no baked ground patch or shadow. 5 designs x 2 candidates; user picks 3-4 in the gallery and the rest are rejected.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "tomb-arched-marker",
+      "out": "files/environment/tombs/arched-marker.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "a single upright grave marker of weathered stone with a wide shouldered arch at the top and a plain worn carved groove down its face, no writing, one clear upright silhouette standing tall in the frame, isolated decorative prop, three-quarter view facing right, transparent background, painterly pixel art, soft volumetric shading, minimal outline, plain weathered grey stone with a faint warm sand-grey undertone and fine age-worn surface grain, sombre and neutral, not bright",
+      "negative": "ground rectangle, soil patch, dirt patch, grass, terrain, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, large shadow, moss, lichen, ivy, vines, creeping plants, flowers, foliage, skull, bones, skeleton, ghost, spirit, candle, lantern, flame, cross, crucifix, religious symbol, angel statue, praying figure, mausoleum, crypt door, coffin, casket, fence, railing, graveyard scene, multiple stones, row of graves, cemetery, scenery, environment, background elements, character, creature, figure, weapon, text, letters, numbers, engraved words, inscription, epitaph, runes, glyphs, watermark, hard black outline, bright white, oversaturated, neon, vivid green, vivid blue, front view, facing camera, cartoon, chibi, cute, blurry, 3d render, photograph",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Player tombstone set (2026-09-11). Replaces the retired 25-frame graves.png (asset-store mossy churchyard stones, off-style). Drawn by BOTH the grave a dead player lies under and the 15-minute tombstone left behind, so it must read at 88px and sit on all 11 biome grounds: NEUTRAL grey stone, no moss, no religious iconography, no baked ground patch or shadow. 5 designs x 2 candidates; user picks 3-4 in the gallery and the rest are rejected.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
     }
   ]
 }

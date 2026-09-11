@@ -1,8 +1,9 @@
-import { NODE_BIOMES } from '../world/nodeBiomes';
+import { NODE_BIOMES, respawnNodeIdForNodeId } from '../world/nodeBiomes';
 import { BIOME_DATABASE } from '../biomeDatabase';
 import { MONSTER_DATABASE, monsterIsRanged, monsterKites } from '../data/monsters';
 import type { MonsterDefinition } from '../data/monsters/types';
 import type { MonsterBehavior } from '../data/monsters/behavior';
+import { BESTIARY_TEXT } from '../data/monsters/bestiaryText';
 import { getDungeonDef } from '../dungeons/dungeonDatabase';
 import type { DungeonDef, DungeonMonsterModifiers } from '../dungeons/dungeonTypes';
 import { GAME_CONFIG } from '../config/gameConfig';
@@ -54,6 +55,8 @@ export interface BestiaryEntry {
   guardLabel?: string;
   /** Short combat-profile hint (authored or derived). */
   profile: string;
+  /** Authored field description for this monster's combat identity. */
+  description: string;
   /** Raw definition, for the detail view and mechanic descriptor. */
   def: MonsterDefinition;
 }
@@ -78,6 +81,8 @@ export interface ZoneBestiary {
  */
 export function resolveMonsterProfile(def: MonsterDefinition): string {
   if (def.profile) return def.profile;
+  const authored = BESTIARY_TEXT[def.id];
+  if (authored) return authored.profile;
 
   const cd = def.stats.attackCooldown;
   const fast = cd <= 1300;
@@ -118,6 +123,16 @@ export function resolveMonsterProfile(def: MonsterDefinition): string {
 
   const phrase = [...adjs.slice(0, 2), noun].join(' ');
   return phrase.charAt(0).toUpperCase() + phrase.slice(1);
+}
+
+/**
+ * Resolve the longer field note independently from the short combat profile.
+ * The fallback keeps throwaway/test definitions renderable without forcing lore
+ * copy into data that is never shown to players.
+ */
+export function resolveMonsterDescription(def: MonsterDefinition): string {
+  return BESTIARY_TEXT[def.id]?.description ??
+    `${resolveMonsterProfile(def)}. Its threat is defined by its current combat statistics and authored mechanics.`;
 }
 
 function computeStats(
@@ -188,6 +203,7 @@ function makeEntry(
     modifiers: modified ? mods : undefined,
     guardLabel,
     profile: resolveMonsterProfile(def),
+    description: resolveMonsterDescription(def),
     def,
   };
 }
@@ -223,36 +239,47 @@ export function resolveZoneBestiary(nodeId: string): ZoneBestiary | null {
   const biomeName = biome?.name ?? info.biomeGroup;
   const tier = info.biomeTier;
   const entries: BestiaryEntry[] = [];
+  const seen = new Set<string>();
+  const addEntry = (
+    id: string,
+    role: BestiaryRole,
+    mods?: DungeonMonsterModifiers,
+    guardLabel?: string,
+  ) => {
+    // Spawn pools may intentionally repeat ids to weight their random selector;
+    // a bestiary is a roster, so it should show each species once.
+    const key = `${role}:${id}`;
+    if (seen.has(key)) return;
+    const entry = makeEntry(id, role, mods, guardLabel);
+    if (!entry) return;
+    seen.add(key);
+    entries.push(entry);
+  };
 
   const dungeon = getDungeonDef(nodeId);
   if (dungeon) {
     const guardianMods = dungeon.guard.modifiers;
     for (const id of guardianMonsterIds(dungeon)) {
-      const e = makeEntry(id, 'guardian', guardianMods, dungeon.guard.label);
-      if (e) entries.push(e);
+      addEntry(id, 'guardian', guardianMods, dungeon.guard.label);
     }
-    const bossEntry = makeEntry(dungeon.boss.bossId, 'boss');
-    if (bossEntry) entries.push(bossEntry);
+    addEntry(dungeon.boss.bossId, 'boss');
   } else if (info.isDungeon) {
     const dungeonMods: DungeonMonsterModifiers = {
       hpMult: GAME_CONFIG.DUNGEON_HP_MULT,
       atkMult: GAME_CONFIG.DUNGEON_ATK_MULT,
     };
     for (const id of biome?.monsterPoolByTier[tier] ?? []) {
-      const e = makeEntry(id, 'trash', dungeonMods);
-      if (e) entries.push(e);
+      addEntry(id, 'trash', dungeonMods);
     }
     const bossIds = info.bossTypeId
       ? [info.bossTypeId]
       : biome?.bossPoolByTier?.[tier] ?? [];
     for (const id of bossIds) {
-      const e = makeEntry(id, 'boss');
-      if (e) entries.push(e);
+      addEntry(id, 'boss');
     }
   } else {
     for (const id of biome?.monsterPoolByTier[tier] ?? []) {
-      const e = makeEntry(id, 'trash');
-      if (e) entries.push(e);
+      addEntry(id, 'trash');
     }
   }
 
@@ -265,4 +292,29 @@ export function resolveZoneBestiary(nodeId: string): ZoneBestiary | null {
     hasGuardedAltar: dungeon !== undefined,
     entries,
   };
+}
+
+/**
+ * Which node the bestiary should describe.
+ *
+ * Normally the node the player is standing in. The exception is a respawn in
+ * flight: the client dismisses the death card the moment RESPAWN is pressed,
+ * but the server only relocates the character on its next tick, so for one
+ * round trip `playerNodeId` still names the node the player just died in — and
+ * a roster of the monsters that killed you is exactly the wrong thing to leave
+ * on screen after you have asked to leave. `respawnFromNodeId` is that node,
+ * remembered when the acknowledgement was sent and dropped again as soon as the
+ * server confirms the move, so this only ever bridges the gap.
+ *
+ * The destination comes from the same `respawnNodeIdForNodeId` the server
+ * respawns with, so the two cannot disagree about where the player is going.
+ */
+export function bestiaryNodeId(
+  currentNodeId: string | null,
+  respawnFromNodeId: string | null,
+): string | null {
+  if (respawnFromNodeId && currentNodeId === respawnFromNodeId) {
+    return respawnNodeIdForNodeId(respawnFromNodeId);
+  }
+  return currentNodeId;
 }

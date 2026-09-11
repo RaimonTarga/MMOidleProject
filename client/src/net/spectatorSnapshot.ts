@@ -1,6 +1,6 @@
 import {
   emptyEquipment,
-  emptyEquippedAbilities,
+  emptyAttunedAbilities,
   emptyEquippedRites,
   emptyEquippedStances,
   type DeltaSnapshot,
@@ -29,7 +29,7 @@ function presentationDefaults(projection: SpectatorPlayer): Partial<NetworkedEnt
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      equippedAbilities: emptyEquippedAbilities(),
+      attunedAbilities: emptyAttunedAbilities(),
       knownStances: [],
       equippedStances: emptyEquippedStances(),
       activeStance: null,

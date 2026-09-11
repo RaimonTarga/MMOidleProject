@@ -1,12 +1,11 @@
 import { atom, getDefaultStore, type PrimitiveAtom } from 'jotai';
 import { intents } from '../intents';
-import { globalMastery } from '@mmo-idle/shared';
+import { bestiaryNodeId, globalMastery } from '@mmo-idle/shared';
 import type {
-  AbilitySlot,
   CombatArchetype,
   HasAutoIntent,
   EquipmentMap,
-  EquippedAbilities,
+  AttunedAbilities,
   EquippedStances,
   EquippedRule,
   EssenceType,
@@ -326,19 +325,15 @@ export const runesEquippedAtom = atom<EquippedRule[]>([]);
 /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
 export const knownAbilitiesAtom = atom<string[]>([]);
 /** Equipped abilities per slot kind, ordered — list order is fire priority. */
-export const equippedAbilitiesAtom = atom<EquippedAbilities>({
+export const attunedAbilitiesAtom = atom<AttunedAbilities>({
   techniques: [],
   guards: [],
 });
-/** Ability slots unlocked at the player's tier: `{ technique, guard }`. */
-export const abilitySlotsAtom = atom<Record<AbilitySlot, number>>({
-  technique: 1,
-  guard: 1,
-});
 
 /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
+export const attunedStancesAtom = atom<string[]>([]);
 export const knownStancesAtom = atom<string[]>([]);
-/** Free default posture. Automated destinations live on individual Rune rules. */
+/** Attuned default posture. Automated destinations live on individual Rune rules. */
 export const equippedStancesAtom = atom<EquippedStances>({
   default: null,
 });
@@ -353,19 +348,15 @@ export const equippedRitesAtom = atom<string[]>([]);
 export const riteSlotsAtom = atom<number>(0);
 
 export const skillTreeOpenAtom = atom<boolean>(false);
-export type BuildPanelTab = 'overview' | 'abilities' | 'stances' | 'rites';
+export type BuildPanelTab = 'abilities' | 'stances' | 'rites' | 'runes';
 export const buildOpenAtom = atom<boolean>(false);
 /**
- * The dialog these drive is called **Loadout** in the UI (renamed in V5, when
- * making moved to Crafting and arranging stayed here). The identifiers keep the
- * `build*` prefix: renaming them reaches a dozen files and every persisted key
- * for no player-visible gain.
+ * The four arrangement surfaces share one dialog, and the rail gives each its
+ * own entry: opening Stances is opening this dialog on the stances tab. The
+ * identifiers keep the `build*` prefix from the old combined Loadout dialog:
+ * renaming them reaches a dozen files for no player-visible gain.
  */
-export const buildPanelTabAtom = atom<BuildPanelTab>('overview');
-export const runesOpenAtom = atom<boolean>(false);
-export const abilitiesOpenAtom = atom<boolean>(false);
-export const stancesOpenAtom = atom<boolean>(false);
-export const ritesOpenAtom = atom<boolean>(false);
+export const buildPanelTabAtom = atom<BuildPanelTab>('abilities');
 export const masteryOpenAtom = atom<boolean>(false);
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);
@@ -385,6 +376,21 @@ export const humanPlaytestStatusAtom = atom<HumanPlaytestStatus>({ active: false
 export const bestiaryOpenAtom = atom<boolean>(false);
 /** Which monster the bestiary detail overlay has selected (null = first/none). */
 export const bestiaryDetailIdAtom = atom<string | null>(null);
+/**
+ * The node the player died in, held from the moment RESPAWN is acknowledged
+ * until the server confirms the move. Nothing but the bestiary reads it: see
+ * {@link bestiaryZoneNodeIdAtom}.
+ */
+export const respawnFromNodeAtom = atom<string | null>(null);
+/**
+ * The zone the bestiary describes. The player's node, except across a respawn
+ * the server has not applied yet, where it is already the destination — so the
+ * panel never sits on the roster of the monsters that just killed you after the
+ * death card is gone.
+ */
+export const bestiaryZoneNodeIdAtom = atom((get) =>
+  bestiaryNodeId(get(playerNodeIdAtom), get(respawnFromNodeAtom)),
+);
 export const mapHighlightNodesAtom = atom<string[]>([]);
 
 export interface GamepadStatus {
@@ -659,23 +665,17 @@ function setRunesEquipped(next: EquippedRule[]): void {
   store.set(runesEquippedAtom, next);
 }
 
-function setAbilitySlots(next: Record<AbilitySlot, number>): void {
-  const store = getDefaultStore();
-  const prev = store.get(abilitySlotsAtom);
-  if (prev.technique === next.technique && prev.guard === next.guard) return;
-  store.set(abilitySlotsAtom, next);
-}
 
-function setEquippedAbilities(next: EquippedAbilities): void {
+function setAttunedAbilities(next: AttunedAbilities): void {
   const store = getDefaultStore();
-  const prev = store.get(equippedAbilitiesAtom);
+  const prev = store.get(attunedAbilitiesAtom);
   if (
     shallowArrayEqual(prev.techniques, next.techniques) &&
     shallowArrayEqual(prev.guards, next.guards)
   ) {
     return;
   }
-  store.set(equippedAbilitiesAtom, next);
+  store.set(attunedAbilitiesAtom, next);
 }
 
 function setEquippedStances(next: EquippedStances): void {
@@ -718,6 +718,7 @@ function resetPlayerAtoms(): void {
   store.set(playerIdAtom, null);
   store.set(playerNameAtom, null);
   store.set(playerNodeIdAtom, null);
+  store.set(respawnFromNodeAtom, null);
   store.set(playerPosAtom, null);
   store.set(selectedClassAtom, null);
   store.set(selectedSubVariantAtom, null);
@@ -789,8 +790,8 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(runeRecipesCraftedAtom, []);
   setRunesEquipped([]);
   setIfShallowArrayEqual(knownAbilitiesAtom, []);
-  setEquippedAbilities({ techniques: [], guards: [] });
-  setAbilitySlots({ technique: 1, guard: 1 });
+  setAttunedAbilities({ techniques: [], guards: [] });
+  setIfShallowArrayEqual(attunedStancesAtom, []);
   setIfShallowArrayEqual(knownStancesAtom, []);
   setEquippedStances({ default: null });
   setIfChanged(activeStanceAtom, null);
@@ -835,6 +836,11 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(playerIdAtom, player.id);
   setIfChanged(playerNameAtom, player.name);
   setIfChanged(playerNodeIdAtom, player.nodeId);
+  // The respawn landed: drop the bridge so walking back into that node later
+  // shows its own bestiary again.
+  if (getDefaultStore().get(respawnFromNodeAtom) !== null && !player.isDead) {
+    setIfChanged(respawnFromNodeAtom, null);
+  }
   getDefaultStore().set(playerPosAtom, player.pos);
   setIfChanged(selectedClassAtom, player.selectedClass);
   setIfChanged(selectedSubVariantAtom, player.selectedSubVariant);
@@ -905,8 +911,8 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(runeRecipesCraftedAtom, player.runeRecipesCrafted);
   setRunesEquipped(player.runesEquipped);
   setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
-  setEquippedAbilities(player.equippedAbilities);
-  setAbilitySlots(player.abilitySlots);
+  setAttunedAbilities(player.attunedAbilities);
+  setIfShallowArrayEqual(attunedStancesAtom, player.attunedStances);
   setIfShallowArrayEqual(knownStancesAtom, player.knownStances);
   setEquippedStances(player.equippedStances);
   setIfChanged(activeStanceAtom, player.activeStance);
@@ -948,6 +954,12 @@ export function closeEconomyPanels(): void {
 
 export function triggerDeathOverlay(payload: PlayerDeathPayload): void {
   closeEconomyPanels();
+  // Death ends the inspection that was in progress: the detail overlay is a
+  // modal about a zone the player is being taken out of.
+  const store = getDefaultStore();
+  store.set(bestiaryOpenAtom, false);
+  store.set(bestiaryDetailIdAtom, null);
+  store.set(respawnFromNodeAtom, null);
   getDefaultStore().set(deathOverlayAtom, {
     active: true,
     payload,
@@ -956,6 +968,14 @@ export function triggerDeathOverlay(payload: PlayerDeathPayload): void {
 }
 
 export function clearDeathOverlay(): void {
+  // The card goes the moment it is dismissed, but the server only relocates the
+  // character on its next tick. Remember where the death happened so the
+  // bestiary can describe the destination for that one round trip instead of
+  // the node being left behind.
+  const store = getDefaultStore();
+  if (store.get(deathOverlayAtom).active) {
+    store.set(respawnFromNodeAtom, store.get(playerNodeIdAtom));
+  }
   getDefaultStore().set(deathOverlayAtom, {
     active: false,
     payload: null,

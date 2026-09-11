@@ -1,3 +1,4 @@
+import { runicPointLoadoutCost, runicLoadoutFromProgression } from "@mmo-idle/shared";
 import {
   ABILITY_RECIPE_DATABASE,
   ESSENCE_TYPES,
@@ -7,7 +8,6 @@ import {
   RUNE_RECIPE_DATABASE,
   SKILL_TREE,
   biomeLevelCap,
-  clampEquippedAbilities,
   getMaxUpgrade,
   globalMastery,
   isAbilityRecipeUnlocked,
@@ -212,15 +212,7 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
       `ability "${abilityId}" is not unlocked at this template's mastery`,
     );
   }
-  const clamped = clampEquippedAbilities(profile.equippedAbilities, profile.targetTier);
-  c.ok(
-    "ability-slots-fit-tier",
-    clamped.techniques.length === profile.equippedAbilities.techniques.length &&
-      clamped.guards.length === profile.equippedAbilities.guards.length,
-    `equipped abilities exceed the tier-${profile.targetTier} slot count ` +
-      `(${clamped.techniques.length} technique / ${clamped.guards.length} guard)`,
-  );
-  for (const id of [...profile.equippedAbilities.techniques, ...profile.equippedAbilities.guards]) {
+  for (const id of [...profile.attunedAbilities.techniques, ...profile.attunedAbilities.guards]) {
     c.ok("equipped-ability-known", profile.knownAbilities.includes(id), `equips unlearned ability "${id}"`);
   }
 
@@ -244,9 +236,8 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
     );
   }
   const ownedRunes = new Set(runeIdsFromCraftedRecipes(profile.runeRecipesCrafted));
-  let spent = 0;
+  const spent = runicPointLoadoutCost(runicLoadoutFromProgression(profile));
   for (const rule of profile.runesEquipped) {
-    spent += runeRuleCost(rule);
     c.ok(
       "equipped-rune-owned",
       ownedRunes.has(rule.conditionId) && ownedRunes.has(rule.actionId),
@@ -340,7 +331,7 @@ export function validateSpawn(profile: TierEntryProfile, self: PlayerView): Vali
       "(the server drops rules it considers unowned or over budget)",
   );
   const budget = runeBudgetForGlobalMastery(self.globalMastery);
-  const spent = self.runesEquipped.reduce((sum, rule) => sum + runeRuleCost(rule), 0);
+  const spent = runicPointLoadoutCost(runicLoadoutFromProgression(self));
   c.ok("live-rune-budget", spent <= budget, `live loadout costs ${spent} RP against a ${budget} RP budget`);
 
   for (const type of ESSENCE_TYPES) {

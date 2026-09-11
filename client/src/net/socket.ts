@@ -51,7 +51,7 @@ export interface SocketHandlers {
   onAbilityCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onStanceCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onRiteCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
-  onBuildLoadoutResult(result: { system: "runes" | "stances" | "rites"; success: boolean; reason?: string }): void;
+  onBuildLoadoutResult(result: { system: "abilities" | "runes" | "stances" | "rites"; success: boolean; reason?: string }): void;
   onUpgradeResult(result: { success: boolean; reason?: string; itemId: string; newLevel: number }): void;
   onPlayerDied(payload: PlayerDeathPayload): void;
   onPlayerAscended(tier: number): void;

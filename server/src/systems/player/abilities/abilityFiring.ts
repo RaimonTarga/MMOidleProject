@@ -2,9 +2,8 @@
  * Ability auto-fire — the per-tick driver for equipped abilities.
  *
  * Each ability fires on its built-in trigger with ZERO runes equipped; a
- * `fire-technique*` / `fire-guard*` rune OVERRIDES the built-in timing for ITS
- * SLOT INDEX (when such a rune is equipped, the built-in trigger is suppressed
- * and that slot fires on the rune's condition).
+ * `use-ability` Rune overrides the named ability's default timing. Custom rules
+ * arbitrate in Rune order; remaining defaults follow attunement order.
  *
  * Execution shapes:
  * - `armed`   — arms the next attack (`hasArmedAbility`); the rider lands in
@@ -25,12 +24,11 @@ import {
   abilityRankAt,
   applyStatusEffect,
   getCooldown,
-  getFlag,
-  guardEffectIdForSlot,
+  guardEffectIdForAbility,
   cleanseableStacks,
   isCleanseable,
   isHarmfulPlayerStatusEffect,
-  recoveryEffectIdForSlot,
+  recoveryEffectIdForAbility,
   removeStatusEffect,
   removeStatusEffectStacks,
   resolveAbilityEffect,
@@ -40,12 +38,7 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
-import {
-  RUNE_FIRE_GUARD_2_FLAG,
-  RUNE_FIRE_GUARD_FLAG,
-  RUNE_FIRE_TECHNIQUE_2_FLAG,
-  RUNE_FIRE_TECHNIQUE_FLAG,
-} from "../../combat/ai/runeConfig";
+import { getAbilityRuneTargets } from "../../combat/ai/runeConfig";
 import {
   isHardControlled,
   worstHardControl,
@@ -68,21 +61,6 @@ const GUARD_DR_CAP = 0.9;
 const CONTROL_RESIST_CAP = 0.9;
 
 /**
- * Rune override per SLOT INDEX. Slot 0 keeps the shipped `fire-technique` /
- * `fire-guard` actions; slot 1 gets its own channel so two equipped abilities of
- * the same kind can carry genuinely independent narrow triggers.
- */
-const TECHNIQUE_RUNE_OVERRIDES = [
-  { actionId: "fire-technique", flag: RUNE_FIRE_TECHNIQUE_FLAG },
-  { actionId: "fire-technique-2", flag: RUNE_FIRE_TECHNIQUE_2_FLAG },
-] as const;
-
-const GUARD_RUNE_OVERRIDES = [
-  { actionId: "fire-guard", flag: RUNE_FIRE_GUARD_FLAG },
-  { actionId: "fire-guard-2", flag: RUNE_FIRE_GUARD_2_FLAG },
-] as const;
-
-/**
  * Shared one-tick gate so at most ONE Guard ACTIVATION resolves per decision
  * window. Already-active Guard buffs are untouched and may overlap — this only
  * stops instant defensive combo-dumping.
@@ -100,10 +78,12 @@ interface FireContext {
 
 export function updateAbilityFiring(world: World, now: number): void {
   for (const player of world.livePlayers) {
-    const equipped = player.tracksProgression.equippedAbilities;
+    const equipped = player.tracksProgression.attunedAbilities;
     if (!equipped) continue;
-    const techniques = equipped.techniques ?? [];
-    const guards = equipped.guards ?? [];
+    const priority = getAbilityRuneTargets(player);
+    const ordered = (ids: string[]) => [...priority.filter(id => ids.includes(id)), ...ids.filter(id => !priority.includes(id))];
+    const techniques = ordered(equipped.techniques ?? []);
+    const guards = ordered(equipped.guards ?? []);
     if (techniques.length === 0 && guards.length === 0) continue;
 
     const fctx = buildFireContext(world, player);
@@ -115,13 +95,15 @@ export function updateAbilityFiring(world: World, now: number): void {
     //
     // An `instant` Technique (Frenzy) is self-facing and claims nothing, so it
     // neither blocks nor is blocked by an armed charge sitting on the channel.
-    for (const [index, abilityId] of techniques.entries()) {
-      if (maybeFireTechnique(world, player, abilityId, index, fctx, now)) break;
+    let offensiveClaimed = false;
+    for (const abilityId of techniques) {
+      if (offensiveClaimed && ABILITY_DATABASE.get(abilityId)?.shape !== "instant") continue;
+      offensiveClaimed = maybeFireTechnique(world, player, abilityId, fctx, now) || offensiveClaimed;
     }
 
     // Guards are independent, but only one ACTIVATION resolves per window.
-    for (const [index, abilityId] of guards.entries()) {
-      if (maybeFireGuard(world, player, abilityId, index, fctx)) break;
+    for (const abilityId of guards) {
+      if (maybeFireGuard(world, player, abilityId, fctx)) break;
     }
   }
 }
@@ -191,33 +173,15 @@ function triggerActive(
   }
 }
 
-function hasRuneAction(player: PlayerEntity, actionId: string): boolean {
-  return player.tracksProgression.runesEquipped.some(
-    (rule) => rule.actionId === actionId,
-  );
-}
-
-/**
- * Resolve whether a slot should fire this tick: a rune override (when equipped)
- * wins and suppresses the built-in trigger; otherwise the built-in trigger drives.
- *
- * Each slot INDEX has its own rune channel (`fire-technique` drives slot 0,
- * `fire-technique-2` drives slot 1), so two equipped Techniques can carry
- * genuinely independent narrow triggers.
- */
+/** Custom rules replace the authored default only for their named ability. */
 function shouldFire(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  slotIndex: number,
   fctx: FireContext,
 ): boolean {
-  const override =
-    ability.slot === "technique"
-      ? TECHNIQUE_RUNE_OVERRIDES[slotIndex]
-      : GUARD_RUNE_OVERRIDES[slotIndex];
-  if (override && hasRuneAction(player, override.actionId)) {
-    return getFlag(player.tracksCombat, override.flag);
+  if (player.tracksProgression.runesEquipped.some(rule => rule.actionId === "use-ability" && rule.targetAbilityId === ability.id)) {
+    return getAbilityRuneTargets(player).includes(ability.id);
   }
   return triggerActive(ability.trigger, fctx, world, player, ability);
 }
@@ -227,7 +191,6 @@ function maybeFireTechnique(
   world: World,
   player: PlayerEntity,
   abilityId: string,
-  slotIndex: number,
   fctx: FireContext,
   now: number,
 ): boolean {
@@ -240,7 +203,7 @@ function maybeFireTechnique(
   // is still waiting for a hit to consume it.
   if (ability.shape === "instant") {
     if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
-    if (!shouldFire(world, player, ability, slotIndex, fctx)) return false;
+    if (!shouldFire(world, player, ability, fctx)) return false;
     applyInstantTechnique(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
     setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
@@ -271,7 +234,7 @@ function maybeFireTechnique(
     player.isChargingAbility
   ) return true;
   if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
-  if (!shouldFire(world, player, ability, slotIndex, fctx)) return false;
+  if (!shouldFire(world, player, ability, fctx)) return false;
 
   // A cast pays its cooldown on RESOLVE, not on begin (see abilityCasting.ts),
   // so nothing is charged here.
@@ -280,7 +243,7 @@ function maybeFireTechnique(
     ability.shape === "charge" ||
     ability.shape === "self-cast"
   ) {
-    const started = beginAbilityCast(world, player, ability, slotIndex, now);
+    const started = beginAbilityCast(world, player, ability, now);
     if (started) recordAbilityActivation(world, player, abilityId, 'technique');
     return started;
   }
@@ -407,7 +370,6 @@ function maybeFireGuard(
   world: World,
   player: PlayerEntity,
   abilityId: string,
-  slotIndex: number,
   fctx: FireContext,
 ): boolean {
   const ability = ABILITY_DATABASE.get(abilityId);
@@ -417,13 +379,13 @@ function maybeFireGuard(
   // One activation per decision window — ongoing buffs still overlap freely.
   if (getCooldown(player.tracksCombat, GUARD_WINDOW_KEY) > 0) return false;
   if (!guardEffectCanFire(player, ability, fctx)) return false;
-  if (!shouldFire(world, player, ability, slotIndex, fctx)) return false;
+  if (!shouldFire(world, player, ability, fctx)) return false;
 
   // Charm Guard-ability amplifiers. Only present while an amplifying charm is
   // equipped; they merge into passives via the equipment loop in stats.ts.
   const passives = player.usesSkills.passives;
 
-  const removedEffects = applyGuardEffect(world, player, ability, slotIndex, passives);
+  const removedEffects = applyGuardEffect(world, player, ability, passives);
 
   // guard.recovery-on-fire-pct: firing any Guard switches on a slice of Recovery.
   // A charm rider, NOT a Recovery skill — recovery-skill-potency does not touch it.
@@ -455,7 +417,6 @@ function applyGuardEffect(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  slotIndex: number,
   passives: Record<string, number>,
 ): RemovedEffect[] | undefined {
   // Guards resolve their magnitudes through the shared seam so the authored rank
@@ -467,7 +428,7 @@ function applyGuardEffect(
   if (effect.kind === "damage-reduction") {
     applyGuardDrBuff(
       player,
-      slotIndex,
+      ability.id,
       effect.drPct,
       effect.durationMs,
       passives,
@@ -478,7 +439,7 @@ function applyGuardEffect(
   } else if (effect.kind === "break-free") {
     applyBreakFree(world, player, effect.controlResistPct, effect.controlResistMs);
   } else if (effect.kind === "heal") {
-    applyGuardHeal(player, ability, slotIndex, effect.recoveryPct, effect.durationMs, passives);
+    applyGuardHeal(player, ability, effect.recoveryPct, effect.durationMs, passives);
   } else if (effect.kind === "bramble") {
     applyBrambleGuard(player, effect.platingBonus, effect.reflectFlat, effect.durationMs);
   }
@@ -591,7 +552,7 @@ function guardEffectCanFire(
  * `defense.recovery-skill-potency` scales the fraction, and ONLY for abilities
  * carrying the `recovery` tag — that is the whole point of the tag.
  *
- * The Recovery SOURCE is keyed per GUARD SLOT. Second Wind and Recuperate are
+ * The Recovery source is keyed by ability identity. Second Wind and Recuperate are
  * deliberate opposites (strong/short vs weak/long) and a player may hold both;
  * sharing one source would let the stronger fraction ride the longer window, which
  * is strictly better than either ability as authored.
@@ -599,7 +560,6 @@ function guardEffectCanFire(
 function applyGuardHeal(
   player: PlayerEntity,
   ability: AbilityDef,
-  slotIndex: number,
   recoveryPct: number,
   durationMs: number,
   passives: Record<string, number>,
@@ -609,9 +569,9 @@ function applyGuardHeal(
     ? Math.max(0, passives["defense.recovery-skill-potency"] ?? 0)
     : 0;
   const fraction = recoveryPct * (1 + potency);
-  activateRecovery(player.tracksCombat, slotIndex === 1 ? "skill-2" : "skill", fraction, ms);
+  activateRecovery(player.tracksCombat, ability.id === "recuperate" ? "skill-2" : "skill", fraction, ms);
   applyStatusEffect(player.tracksCombat, {
-    id: recoveryEffectIdForSlot(slotIndex),
+    id: recoveryEffectIdForAbility(ability.id)!,
     remainingMs: ms,
     refreshable: true,
     sourceId: player.isPlayer.id,
@@ -629,14 +589,12 @@ function applyGuardHeal(
  * the buff bar. `totalMs` drives the clock. guard.potency-pct scales magnitude;
  * guard.duration-pct extends it. Shared by Brace and Endure.
  *
- * The effect id is keyed PER GUARD SLOT (`ability-guard`, `ability-guard-2`).
- * Two Guard slots means two independent DR buffs that must not overwrite each
- * other or mislabel in the buff bar; status-effect `data` is numbers-only, so
- * the owning ability's identity has to live in the id.
+ * Each authored DR ability owns a stable effect ID. Reordering attunements
+ * cannot overwrite or relabel a running effect.
  */
 function applyGuardDrBuff(
   player: PlayerEntity,
-  slotIndex: number,
+  abilityId: string,
   baseDrPct: number,
   baseDurationMs: number,
   passives: Record<string, number>,
@@ -651,7 +609,7 @@ function applyGuardDrBuff(
       : undefined;
   const durationMs = Math.round(baseDurationMs * (1 + Math.max(0, durationBonus)));
   applyStatusEffect(player.tracksCombat, {
-    id: guardEffectIdForSlot(slotIndex),
+    id: guardEffectIdForAbility(abilityId)!,
     remainingMs: durationMs,
     refreshable: true,
     sourceId: player.isPlayer.id,

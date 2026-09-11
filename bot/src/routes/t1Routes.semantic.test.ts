@@ -182,7 +182,7 @@ function analyze(route: Route): RouteSemantics {
         );
       }
       const gm = globalMastery(levels);
-      const used = runicPointLoadoutCost({ rules: step.rules, rites: [] });
+      const used = runicPointLoadoutCost({ abilities: { techniques: currentTechnique ? [currentTechnique] : [], guards: currentGuard ? [currentGuard] : [] }, stances: [], rules: step.rules, rites: [] });
       const available = runeBudgetForGlobalMastery(gm);
       assert(used <= available, `${route.id}: ${used}/${available} RP at GM${gm}`);
       currentRules = step.rules.map((rule) => ({ ...rule }));
@@ -310,7 +310,7 @@ for (const route of T1_CONTROLLED_ROUTES) {
     assert(boss.gm === 30, `${route.id}: ${boss.biomeGroup} boss starts at GM30`);
     const expectedTechnique = boss.biomeGroup === "plains" ? "sweep" : "expose-weakness";
     assert(boss.technique === expectedTechnique, `${route.id}: ${boss.biomeGroup} Technique`);
-    const fireGuard = hasRule(boss.rules, "target-casting", "fire-guard");
+    const fireGuard = hasRule(boss.rules, "target-casting", "use-ability");
     assert(fireGuard === (boss.guard === "brace"), `${route.id}: fire-guard iff Brace at ${boss.biomeGroup}`);
     assert(hasRule(boss.rules, "always", "avoid-hazards"), `${route.id}: Avoid Hazards at ${boss.biomeGroup}`);
     assert(hasRule(boss.rules, "always", "wait-for-regen"), `${route.id}: Wait for Regen at ${boss.biomeGroup}`);
@@ -350,7 +350,7 @@ for (const route of T1_CONTROLLED_ROUTES) {
     const afterOrbit = result.runeTransitions.find((transition) => transition.index > route.steps.findIndex((step) => step.type === "craftRune" && step.recipeId === "rune-recipe-keep-distance"));
     // Step Back is now a Cave unlock, so Mountain's pre-Cave ranged profile
     // carries Orbit and recovery/pathing rules but not the telegraph response.
-    assert(afterOrbit?.used === 6 && afterOrbit.available === 10, `${route.id}: ranged standing profile is 6/10 RP at GM21`);
+    assert(afterOrbit !== undefined && runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: afterOrbit.rules, rites: [] }) === 6 && afterOrbit.available === runeBudgetForGlobalMastery(21), `${route.id}: ranged standing profile has 6 RP of logic at GM21`);
   }
 }
 

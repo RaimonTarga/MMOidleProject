@@ -1,14 +1,11 @@
+import { migrateAttunement, attunedAbilityIds, validRiteIds } from "@mmo-idle/shared";
 import {
-  DEFAULT_RUNE_LOADOUT,
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
   makeTracksCombat,
   normalizeRuneLoadout,
   runeIdsFromCraftedRecipes,
-  runeBudgetForGlobalMastery,
-  globalMastery,
   sanitizeRuneLoadout,
-  runicPointLoadoutCost,
 } from "@mmo-idle/shared";
 import type { World } from "./World";
 import type { PlayerEntity } from "../ecs/entity";
@@ -26,33 +23,25 @@ export function attachPlayerEntity(
   player: PersistedPlayerSlices,
   socketId: string,
 ): PlayerEntity {
+  Object.assign(player.tracksProgression, migrateAttunement(player.tracksProgression));
+  delete (player.tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
   const craftedRuneRecipes = player.tracksProgression.runeRecipesCrafted ?? [];
   player.tracksProgression.runeRecipesCrafted = craftedRuneRecipes;
   player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes(craftedRuneRecipes);
   const owned = new Set(player.tracksProgression.runesOwned);
-  const budget = runeBudgetForGlobalMastery(
-    globalMastery(player.tracksProgression.biomeLevel),
-  );
   const persistedRules = Array.isArray(player.tracksProgression.runesEquipped)
     ? normalizeRuneLoadout(player.tracksProgression.runesEquipped)
     : [];
   const sanitizedRules = sanitizeRuneLoadout(
     persistedRules,
     owned,
-    budget,
+    Number.POSITIVE_INFINITY,
     player.usesSkills.combatArchetype,
-    new Set(player.tracksProgression.knownStances ?? []),
+    new Set(player.tracksProgression.attunedStances ?? []),
+    new Set(attunedAbilityIds(player.tracksProgression.attunedAbilities)),
   );
-  player.tracksProgression.runesEquipped =
-    sanitizedRules.length > 0 ? sanitizedRules : [...DEFAULT_RUNE_LOADOUT];
-  const legalRites: string[] = [];
-  for (const riteId of player.tracksProgression.equippedRites ?? []) {
-    const proposed = [...legalRites, riteId];
-    if (runicPointLoadoutCost({ rules: player.tracksProgression.runesEquipped, rites: proposed }) <= budget) {
-      legalRites.push(riteId);
-    }
-  }
-  player.tracksProgression.equippedRites = legalRites;
+  player.tracksProgression.runesEquipped = sanitizedRules;
+  player.tracksProgression.equippedRites = validRiteIds(player.tracksProgression.equippedRites ?? []).filter(id => (player.tracksProgression.knownRites ?? []).includes(id));
   player.tracksProgression.activeStance = player.tracksProgression.equippedStances?.default ?? null;
 
   const entity: PlayerEntity = {

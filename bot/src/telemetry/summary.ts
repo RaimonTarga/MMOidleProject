@@ -642,7 +642,7 @@ export function buildSummary(params: {
       finalLoadout: { ...(self?.equipment ?? {}) },
       finalUpgrades: { ...(self?.itemUpgrades ?? {}) },
       runesEquipped: self?.runesEquipped ?? [],
-      abilitiesEquipped: self?.equippedAbilities ?? null,
+      abilitiesEquipped: self?.attunedAbilities ?? null,
     },
     economy: {
       winCondition: params.winCondition ?? "full-gauntlet",

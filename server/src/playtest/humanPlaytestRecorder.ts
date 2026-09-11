@@ -280,7 +280,7 @@ function buildSnapshot(player: PlayerEntity): Record<string, unknown> {
   return {
     equipment: { ...player.holdsInventory.equipment }, itemUpgrades: { ...player.holdsInventory.itemUpgrades },
     classRoot: player.usesSkills.selectedClass, frame: player.usesSkills.selectedSubVariant, range: player.usesSkills.selectedRange,
-    techniques: [...player.tracksProgression.equippedAbilities.techniques], guards: [...player.tracksProgression.equippedAbilities.guards],
+    techniques: [...player.tracksProgression.attunedAbilities.techniques], guards: [...player.tracksProgression.attunedAbilities.guards],
     runes: player.tracksProgression.runesEquipped.map(rule => ({ conditionId: rule.conditionId, actionId: rule.actionId })),
     stats: { attack: player.dealsDamage.attack, attackRange: player.performsAttack.attackRange, attackCooldown: player.performsAttack.attackCooldown, maxHp: player.hasHealth.maxHp, plating: player.mitigatesDamage.plating, damageReduction: player.mitigatesDamage.damageReduction },
   };

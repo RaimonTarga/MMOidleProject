@@ -73,3 +73,15 @@ export function formatDeathLogMessage(payload: PlayerDeathPayload): string {
   const label = formatDeathCauseLabel(cause);
   return `Slain by ${killer.monsterName} (${label})`;
 }
+
+/**
+ * Display name of whatever killed the player, or undefined when nothing nameable
+ * did. Used for the tombstone epitaph, so it names the ACTOR ("Gnarled Greatbear",
+ * "Berserker Stance") rather than the mechanism — `formatDeathCauseLabel` already
+ * owns the mechanism half.
+ */
+export function deathKillerName(cause: DeathCause): string | undefined {
+  if (cause.kind === "stance") return cause.stanceName;
+  if (cause.kind === "debt") return cause.killer?.monsterName;
+  return cause.killer.monsterName;
+}

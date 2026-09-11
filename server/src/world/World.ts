@@ -54,6 +54,10 @@ import {
   updateCorpses,
   type RuntimeCorpse,
 } from "../systems/world/corpses";
+import {
+  updateTombstones,
+  type RuntimeTombstone,
+} from "../systems/world/tombstones";
 import type { AmbientRampOverride } from "../systems/world/nodeFeatures";
 import { updateMonsters } from "../systems/combat/ai/ai";
 import { updatePacks } from "../systems/combat/ai/packs";
@@ -287,6 +291,20 @@ export class World {
    * persisted. Read by `raisesDead` necromancers.
    */
   corpses = new Map<string, RuntimeCorpse[]>();
+  /** Monotonic tombstone id source; runtime-only, like the tombstones themselves. */
+  tombstoneSeq = 0;
+  /**
+   * Player death markers keyed by node id, newest last (ring buffer).
+   *
+   * Runtime-only and never persisted, like corpses — but DELIBERATELY EXEMPT from
+   * node freeze, which is the whole point of the slice. A player who dies alone
+   * empties the node the moment they respawn, so a tombstone swept by `freezeNode`
+   * would stand for one tick instead of fifteen minutes. It rides the same exemption
+   * `bossRespawnAt`/`bossRespawnMarkers` already have, and `updateTombstones` sweeps
+   * the registry itself rather than the occupied nodes so frozen nodes still expire
+   * their tombs on schedule.
+   */
+  tombstones = new Map<string, RuntimeTombstone[]>();
   /**
    * Per-node overrides on the ambient node ramp, written by a boss's 'stoke-ramp'
    * action (Volcano). Node-scoped so a player arriving mid-fight walks into the same
@@ -451,6 +469,7 @@ export class World {
     updateNodeFeatures(this, dt);
     updateGroundZones(this, now);
     updateCorpses(this, now);
+    updateTombstones(this, now);
     updateTransitions(this);
     if (IS_DEV) updateTestRoomInteract(this, now);
     updatePacks(this, now);

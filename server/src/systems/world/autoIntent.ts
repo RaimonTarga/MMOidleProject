@@ -25,6 +25,7 @@ import {
   RUNE_KEEP_DISTANCE_FLAG,
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
+  getRuneDecisions,
 } from "../combat/ai/runeConfig";
 
 /**
@@ -47,6 +48,9 @@ import {
 export function updateAutoIntent(world: World): void {
   for (const player of world.livePlayers) {
     const desired = resolveIntent(world, player);
+    if (desired && (player.usesAutocombat.auto || player.fightsWhileTraveling)) {
+      desired.matchedRunes = getRuneDecisions(player);
+    }
     applyIntent(world, player, desired);
   }
 }
@@ -296,7 +300,7 @@ function ruleLabel(
   player: PlayerEntity,
   actionId: RuneActionId,
 ): string {
-  const rule = player.tracksProgression.runesEquipped.find(
+  const rule = getRuneDecisions(player).find(
     (entry) => entry.actionId === actionId,
   );
   if (!rule) return "";
@@ -311,11 +315,11 @@ function runeTrace(
   player: PlayerEntity,
   actionId: RuneActionId,
 ) {
-  const rule = player.tracksProgression.runesEquipped.find(
+  const rule = getRuneDecisions(player).find(
     (entry) => entry.actionId === actionId,
   );
   return rule
-    ? { conditionId: rule.conditionId, actionId: rule.actionId }
+    ? { ...rule }
     : undefined;
 }
 
@@ -346,10 +350,14 @@ function sameIntent(
     a.destBiomeGroup === b.destBiomeGroup
     && a.activeRune?.conditionId === b.activeRune?.conditionId
     && a.activeRune?.actionId === b.activeRune?.actionId
+    && a.activeRune?.targetStanceId === b.activeRune?.targetStanceId
+    && JSON.stringify(a.matchedRunes) === JSON.stringify(b.matchedRunes)
     && a.overrideRune?.conditionId === b.overrideRune?.conditionId
     && a.overrideRune?.actionId === b.overrideRune?.actionId
+    && a.overrideRune?.targetStanceId === b.overrideRune?.targetStanceId
     && a.overriddenRune?.conditionId === b.overriddenRune?.conditionId
     && a.overriddenRune?.actionId === b.overriddenRune?.actionId
+    && a.overriddenRune?.targetStanceId === b.overriddenRune?.targetStanceId
     && a.travelPaused === b.travelPaused
   );
 }

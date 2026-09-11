@@ -30,6 +30,7 @@ import {
   lowHealthWardCastEndsAt,
   lowHealthWardReady,
   isChargeAoePlanted,
+  hasMobileMonsterCast,
   monsterAttackCooldown,
 } from "../engine/monsterMechanics";
 import { isMonsterKnockedBack } from "../damage/knockback";
@@ -344,10 +345,13 @@ export function updateMonsters(world: World, dt: number, now: number) {
         continue;
       }
 
-      // Generic elite abilities have the same movement contract as a committed
-      // charged cast: once the cast bar is up, hold position until resolution or
-      // interruption. The combat loop owns the actual cast/debuff work.
-      if (activeMonsterAbilityId(e)) {
+      // Generic elite abilities inherit the committed charged cast's movement
+      // contract ONLY when they are planted: an `area-hit` circle or a self-facing
+      // beat holds position until resolution or interruption. A targeted, non-area
+      // ability is a MOBILE CAST — it keeps chasing with the bar up, so a kiting
+      // player cannot deny it simply by walking. The combat loop owns the actual
+      // cast/debuff work either way.
+      if (activeMonsterAbilityId(e) && !hasMobileMonsterCast(e)) {
         e.hasAwareness.state = 'attacking';
         stopMonster(world, e);
         continue;

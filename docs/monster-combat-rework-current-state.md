@@ -162,6 +162,53 @@ cast-end closes it early). Without the guard an ability could open mid-Devour an
 to land unannounced. A cast also stamps `performsAttack.lastAttackAt`, so a self-only beat costs
 the swing it replaced instead of resolving and immediately swinging for free.
 
+### Mobile casts — a targeted wind-up CHASES (2026-09-11)
+
+A cast whose payload **follows a player** (`chargedAttack` without `aoe`, a
+`monsterAbilities` entry with `target: 'player'` and no `area-hit`) no longer plants its
+caster. `hasMobileMonsterCast` in `monsterMechanics.ts` is the single predicate; the combat
+loop and `updateMonsters` both read it.
+
+Why: holding position for those made them **unusable against a moving player**. The caster
+stopped, lost contact, the range check broke the wind-up — and because an abort pays no
+cooldown it re-armed the moment it touched again. A kited Sand Scorpion could run that loop
+indefinitely and land neither its Numbing Sting nor a single ordinary attack.
+
+What changed, precisely:
+
+- `state !== "attacking"` (the chase flip) and the out-of-range bail no longer abort a mobile
+  cast. The monster chases with the bar up, exactly as it chases to land a basic attack.
+- **Reach gates the START of the cast and is never re-tested.** A mobile cast is COMMITTED TO
+  ITS VICTIM, the exact mirror of a planted slam being committed to its point: it resolves on
+  the player it captured, wherever the chase has taken the pair.
+- Stun/freeze interrupt, target death, and target leaving the node still abort as before
+  (no cooldown consumed). **The interrupt is the counterplay** — the step away is not.
+
+⚠ **The reach re-test was tried first and is a dead end — do not reintroduce it.** Resolving
+only when still in reach reproduces the original bug one-for-one: every melee mobile caster has
+an attackRange of 12–18px and is by definition *behind* the player it is chasing, so the gate
+essentially never opened. In play it read as "the mob casts while moving, but nothing ever
+happens." Even the ranged casters (180–240px reach, 1400–2000ms casts) lose the race against a
+player covering 120px/s. `monsterMobileCast.test.ts` §1b walks a target away at real player
+speed for the whole wind-up and pins the landing, so the regression cannot come back quietly.
+
+⚠ What deliberately still stands still:
+- a planted `aoe` charge or `area-hit` ability — the circle is the counterplay, and walking
+  out of it must stay the answer;
+- every self-facing cast: `castedAttackSpeedBuff` (Dire Howl, Chestbeat), `lowHealthWard`, a
+  `target: 'self'` ability (Obsidian Shell), and boss-script beats like **Rallying Cry** and
+  **Bestial Frenzy**, which plant via their own `isRooted` and never reach this predicate.
+
+**22 monsters** carry a mobile cast today: the Desert scorpion/basilisk lines (Numbing Sting,
+Petrifying Gaze), Mountain (Power Shot, Strong Kick, Avalanche Ram), Swamp (Wither, Plague Hex),
+Cave (Stalactite Shot), Tundra (Frostbind, Deep Freeze, Frost-Tusk Impact), Volcano (Molten
+Eruption) and Trench (Abyssal Bite, Pressure Lance, Breach).
+
+⚠ **BALANCE:** every one of these now lands against a moving player for the first time, and the
+magnitudes were authored while they were whiffing. Numbing Sting is the sharpest case — a 50%
+slow for 4000ms on a 4000ms cooldown is close to permanent uptime once it actually connects.
+Treat the whole list as un-tuned for a world where these beats resolve.
+
 ### `castedAttackSpeedBuff.rallyNearby`
 
 A capped, visible alternative to passive pack membership: on cast completion, up to `maxTargets`
@@ -257,6 +304,13 @@ is the wiring smoke test: it registers throwaway monster types, ticks the real w
 asserts observable invariants for volley precedence + session re-arm, opener stacks, Shell Up
 (open/close/once-per-life), Necrotic Screech radius, clean-recharge barrier under pressure vs
 in a lull, and the Chill attack-slow math. Deliberately **not** a balance test.
+
+[`server/test/monsterMobileCast.test.ts`](../server/test/monsterMobileCast.test.ts) pins the
+mobile-cast contract on both engines: the wind-up survives the target walking out of reach, the
+monster flips to `chasing` with the bar up, the cast LANDS on the victim it captured (§1b does
+it against a target running at full player speed for the entire wind-up), a stun mid-wind-up
+still interrupts it — and the Cave Brute's planted slam plus the Magma Salamander's self-cast
+still hold position.
 
 Three existing tests encoded behavior this pass deliberately changed and were updated:
 `biomeEcology` and `monsterDeathEffects` (scatter removed), `desertPairs` (1:1 duo), and

@@ -1,7 +1,7 @@
 import type {
   AutocombatConfig,
   EquipmentSlot,
-  EquippedAbilities,
+  AttunedAbilities,
   EquippedRule,
   EvolveMode,
   FastBossRetryResult,
@@ -146,9 +146,9 @@ export class Intents {
     this.conn.raw.emit("rune:setLoadout", rules);
   }
 
-  setDefaultStance(stanceId: string | null): Promise<{ system: "stances"; success: boolean; reason?: string }> {
+  setDefaultStance(stanceId: string | null, attunedStances?: string[]): Promise<{ system: "stances"; success: boolean; reason?: string }> {
     return this.conn.request("build:loadoutResult", () =>
-      this.conn.raw.emit("stance:setLoadout", { slot: "default" as StanceSlot, stanceId }),
+      this.conn.raw.emit("stance:setLoadout", { slot: "default" as StanceSlot, stanceId, attunedStances }),
     );
   }
 
@@ -171,7 +171,7 @@ export class Intents {
     );
   }
 
-  setAbilityLoadout(equipped: EquippedAbilities): void {
+  setAbilityLoadout(equipped: AttunedAbilities): void {
     this.conn.raw.emit("ability:setLoadout", { equipped });
   }
 

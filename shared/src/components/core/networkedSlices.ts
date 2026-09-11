@@ -15,7 +15,7 @@ import type { CombatArchetype, MonsterAIState } from '../../types/combat';
 import type { MonsterBehavior } from '../../data/monsters/behavior';
 import type { HasHitbox } from '../../hitbox/types';
 import type { EquippedRule } from '../../runeDatabase';
-import type { EquippedAbilities } from '../../abilities';
+import type { AttunedAbilities } from '../../abilities';
 import type { EquippedStances } from '../../stances';
 import type { EquippedRites } from '../../rites';
 
@@ -244,6 +244,8 @@ export type AutoIntentKind = 'attack' | 'follow' | 'travel' | 'flee' | 'idle';
 export interface RuneTraceRule {
   conditionId: string;
   actionId: string;
+  targetStanceId?: string;
+  targetAbilityId?: string;
 }
 
 /**
@@ -260,6 +262,8 @@ export interface HasAutoIntent {
   source: string;
   /** Rune rule presently responsible for this visible action, if one exists. */
   activeRune?: RuneTraceRule;
+  /** First matching rule in each channel; selection is not proof of execution. */
+  matchedRunes?: RuneTraceRule[];
   /** A temporary higher-authority Rune rule and the normal rule it interrupted. */
   overrideRune?: RuneTraceRule;
   overriddenRune?: RuneTraceRule;
@@ -341,16 +345,17 @@ export interface TracksProgression {
    */
   knownAbilities: string[];
   /**
-   * Equipped abilities as ordered lists per slot kind — Technique (offensive)
-   * and Guard (defensive). List order is arbitration priority; each list's
-   * length is bounded by `abilitySlotCount(playerTier)`.
+   * Attuned abilities as ordered lists per semantic family — Technique (offensive)
+   * and Guard (defensive). List order is default arbitration priority.
+   * RP is the only capacity limit.
    */
-  equippedAbilities: EquippedAbilities;
+  attunedAbilities: AttunedAbilities;
   /**
    * Stances the player has learned (crafted) — the slottable pool
    * (system rework Step 10). Stored here like runes/abilities (build/loadout data).
    */
   knownStances: string[];
+  attunedStances?: string[];
   /** Free default stance; automated destinations are stored on Rune rules. */
   equippedStances: EquippedStances;
   /**

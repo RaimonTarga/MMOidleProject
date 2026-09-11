@@ -4848,6 +4848,754 @@
       ],
       "status": "accepted",
       "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
+    },
+    {
+      "id": "iron-marches-arcane-arbalest",
+      "out": "items/weapons/iron-marches-arcane-arbalest.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches Arcane Arbalest inventory icon, a heavy fantasy-magitech arbalest with a reinforced steel stock, brass tension arms, a thick bolt channel and one restrained arcane focusing rail, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, modern gun, firearm, rifle, pistol, sleek sci-fi crossbow, laser gun",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "regen",
+      "notes": "too techy"
+    },
+    {
+      "id": "iron-marches-repeater-arbalest",
+      "out": "items/weapons/iron-marches-repeater-arbalest.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches Repeater Arbalest inventory icon, an intricate repeating crossbow with stacked bolt guides, a compact brass crank, pale iron limbs and a small disciplined rune chamber, still clearly a fantasy crossbow, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, modern gun, firearm, rifle, pistol, machine gun, ammunition belt, sci-fi magazine",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-war-plate",
+      "out": "items/armor/iron-marches-war-plate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches War Plate inventory icon, a compact chestplate icon with overlapping knight-construct breastplates, riveted shoulder edge, recessed arcane joint channels and one small ward mark, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full character, mannequin, helmet, boots, loose armor pile, modern tactical vest",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-siege-plate",
+      "out": "items/armor/iron-marches-siege-plate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches Siege Plate inventory icon, a broad fortified chestplate with slab-thick front armor, squared reinforcement ribs, heavy brass fasteners and a small restrained defensive core inset, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full character, mannequin, helmet, boots, modern tactical vest, sleek exosuit",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-servo-boots",
+      "out": "items/boots/iron-marches-servo-boots.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated Iron Marches Servo Boots inventory icon, a pair of engineered military greaves and boots with articulated ankle braces, pale iron toe guards, tiny brass pistons and one short motion mark, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, single shoe, sneaker, modern motor boot, roller skate, full character, leg",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-marcher-treads",
+      "out": "items/boots/iron-marches-marcher-treads.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated Iron Marches Marcher Treads inventory icon, a pair of broad industrial-martial marching boots with segmented tread soles, reinforced shin plates, compact hinge housings and a restrained forward-motion accent, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, single shoe, sneaker, modern tire, tank tread, roller skate, full character, leg",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-amplifier-core",
+      "out": "items/cores/iron-marches-amplifier-core.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches Amplifier Core inventory icon, a compact arcane engine core inside a brass focusing cage, two staggered rings and three small resonance fins visibly suggest power amplification, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, chestplate, armor, weapon, gem cluster, gemstone, jewel, modern battery, glowing neon orb",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-command-core",
+      "out": "items/cores/iron-marches-command-core.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches Command Core inventory icon, a disciplined targeting core built from a square iron housing, a central pale lens, small alignment ticks and one restrained command chevron, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, chestplate, armor, weapon, gemstone, jewel, computer screen, modern radar, neon hologram",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-repair-sigil",
+      "out": "items/charms/iron-marches-repair-sigil.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches Repair Sigil inventory icon, a small metal maintenance charm made from a broken circular plate, a hooked repair glyph and two tiny brass tool shapes arranged as one icon, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, weapon, armor, gear pile, full machine, modern logo, medical cross",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-shield-emitter",
+      "out": "items/charms/iron-marches-shield-emitter.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches Shield Emitter inventory icon, a compact ward device with a hexagonal iron frame, a small pale arcane plate suspended inside and two short emitter prongs suggesting protection, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, weapon, armor, full shield, modern forcefield, sci-fi gadget, neon hologram",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-war-dial",
+      "out": "items/relics/iron-marches-war-dial.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Iron Marches War Dial inventory icon, a thick relic dial with a square brass-and-iron housing, one offset pointer, heavy timing teeth and a restrained battle-order mark, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, coin, clock, wristwatch, modern gauge, circular jewelry, weapon, armor",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-ordinance-seal",
+      "out": "items/relics/iron-marches-ordinance-seal.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Iron Marches Ordinance Seal inventory icon, a heavy stamped war-protocol seal with a squared iron body, clipped brass corners, an inset targeting mark and one broken locking tab, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, coin, wax seal, letter, paper, logo, heraldic crest, weapon, armor",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-pike",
+      "out": "items/weapons/ruins-pike.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated a Ruins Pike inventory icon, a long chipped pike with a dark worn shaft, tarnished bronze socket, broad relic-metal head and a small faded cloth tie, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, sword, dagger, axe, hammer, mace, bow, crossbow, modern spear gun",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "regen",
+      "notes": "too slim"
+    },
+    {
+      "id": "ruins-war-spear",
+      "out": "items/weapons/ruins-war-spear.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated a Ruins War Spear inventory icon, a heavier broken war spear with a broad leaf-shaped head, cracked wood haft, bronze binding rings and a small old expedition tassel, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, sword, dagger, axe, hammer, mace, bow, crossbow, javelin bundle",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-relic-blade",
+      "out": "items/weapons/ruins-relic-blade.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated a Ruins Relic Blade inventory icon, a worn straight relic sword with chipped dark metal, a simple broken guard, faded cloth grip and one dim old inscription-like notch with no readable text, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, spear, pike, dagger, axe, hammer, mace, bow, readable letters, text",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-spellblade",
+      "out": "items/weapons/ruins-spellblade.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated a Ruins Spellblade inventory icon, a narrow weathered sword with a cracked bronze guard, a broken relic ring around the hilt and one restrained muted teal arcane seam along the blade, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, spear, pike, axe, hammer, modern lightsaber, neon magic, large gemstone",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-arbalest",
+      "out": "items/weapons/ruins-arbalest.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated a Ruins Arbalest inventory icon, a compact adventurer-made arbalest with cracked wood, tarnished bronze limbs, a heavy dark bolt rail and faded expedition cord, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, sword, dagger, axe, hammer, bow, modern gun, rifle, pistol, sci-fi crossbow",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-adventurer-plate",
+      "out": "items/armor/ruins-adventurer-plate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated Ruins Adventurer Plate inventory icon, a battered practical chestplate assembled from mismatched relic-metal plates, cracked leather ties, a faded tabard strip and one repaired bronze buckle, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full character, mannequin, helmet, boots, modern tactical vest, pristine knight armor",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-warden-vest",
+      "out": "items/armor/ruins-warden-vest.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Warden Vest inventory icon, a layered warden vest of worn cloth, small stone-metal scales, cracked wood toggles and one old protective plate at the chest, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full character, mannequin, helmet, boots, modern tactical vest, clean leather fashion",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-grave-mantle",
+      "out": "items/armor/ruins-grave-mantle.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Grave Mantle inventory icon, a heavy faded mantle with torn layered cloth, tarnished bronze shoulder clasp, dark relic lining and a small broken ward tag, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full character, mannequin, cape on person, bright purple cloak, modern coat",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-wanderer-boots",
+      "out": "items/boots/ruins-wanderer-boots.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated Ruins Wanderer Boots inventory icon, a pair of worn expedition boots with cracked leather, stone-dusted soles, bronze lace hooks and a faded route tag, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, single shoe, sneaker, modern hiking boot, full character, leg, clean fashion boot",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-gravepath-boots",
+      "out": "items/boots/ruins-gravepath-boots.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated Ruins Gravepath Boots inventory icon, a pair of dark reinforced boots with uneven relic-metal toe plates, wrapped ankles, worn bronze studs and a thin dim path-mark charm, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, single shoe, sneaker, modern combat boot, full character, leg, bright magic trail",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-lantern-charm",
+      "out": "items/charms/ruins-lantern-charm.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Lantern Charm inventory icon, a tiny tarnished lantern charm with a cracked wooden frame, dim enclosed relic light and a short broken chain, readable as a recovery token, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full lantern, torch, lamp post, fireball, neon glow, modern flashlight",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-reliquary-charm",
+      "out": "items/charms/ruins-reliquary-charm.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Reliquary Charm inventory icon, a small sealed reliquary case with worn stone sides, bronze clasp, faded cloth wrap and a restrained pulse mark suggesting stored recovery, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, coffin, skull, full chest, treasure box, gemstone cluster, neon glow",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-cohort-core",
+      "out": "items/cores/ruins-cohort-core.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Cohort Core inventory icon, a compact relic core made from a cracked circular stone-metal housing, a dim central shard and two offset binding bands suggesting shared resolve, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, armor, weapon, gemstone cluster, modern battery, neon orb, heart symbol",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-hex-core",
+      "out": "items/cores/ruins-hex-core.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Hex Core inventory icon, a dark relic core with a broken bronze frame, one muted teal-black shard, three small hanging seals and a restrained curse-mark geometry, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, armor, weapon, bright purple crystal, gemstone cluster, skull, neon magic, readable text",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-broken-standard",
+      "out": "items/relics/ruins-broken-standard.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Broken Standard inventory icon, a small relic banner fragment attached to a snapped wooden staff, tarnished bronze cap, faded cloth and one worn cohort mark with no readable writing, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full flag, modern flag, readable text, letters, heraldic logo, weapon, armor",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-oath-fragment",
+      "out": "items/relics/ruins-oath-fragment.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Oath Fragment inventory icon, a broken stone-and-bronze oath tablet shard bound with one faded cloth strip, a simple notched symbol and a cracked edge make the relic readable, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, book, scroll, readable writing, full tablet, logo, gemstone, weapon, armor",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "iron-marches-halberd",
+      "out": "items/weapons/iron-marches-halberd.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Iron Marches Halberd inventory icon, a disciplined fantasy halberd with a broad pale iron axe head, rear hook, long dark haft, brass socket and one restrained arcane notch, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, blackened steel, gunmetal, pale iron, tarnished brass, muted gold, restrained pale blue arcane light",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, modern polearm, firearm, gun, rifle, sword-only, spear-only, neon energy blade",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-polearm",
+      "out": "items/weapons/ruins-polearm.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated a Ruins Polearm inventory icon, a patched adventurer polearm combining a chipped hooked blade, cracked wood shaft, bronze binding and a faded expedition cloth strip, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, modern polearm, gun, rifle, sword-only, spear-only, ornate pristine weapon",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-ritual-lantern",
+      "out": "items/charms/ruins-ritual-lantern.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Ruins Ritual Lantern inventory icon, a small battered ritual lantern with a cracked bronze cage, dark wick chamber, hanging relic tag and a dim contained light suggesting support, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, worn stone, tarnished bronze, faded cloth, cracked wood, dim relic-metal, muted ash-grey with restrained teal-grey accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full lantern, torch, lamp post, fireball, neon glow, modern flashlight",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-lightning-staff",
+      "out": "items/weapons/stormlands-lightning-staff.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated a Stormlands Lightning Staff inventory icon, a weathered storm staff with a dark iron ferrule, forked fulgurite head, torn ritual cord and one restrained pale charge line held close to the shaft, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, storm slate, dark iron, weathered silver, muted violet-grey, restrained pale lightning-blue accents",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, modern electrical pole, plug, cable bundle, firearm, neon lightning, rainbow electricity, fluorescent glow",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-furnace-hammer",
+      "out": "items/weapons/underworlds-furnace-hammer.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated an Underworlds Furnace Hammer inventory icon, a heavy dark hammer with a broad furnace-black head, mineral-crusted haft, small ember seams and a blunt impact notch, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, charcoal iron, furnace-black metal, dark mineral brown, worn bronze, restrained ember-orange seams",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, modern sledgehammer, weapon pile, bright lava, neon flame, glowing fireball, clean factory tool",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-moon-sigil-relic",
+      "out": "items/relics/desolate-moon-moon-sigil-relic.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "prompt": "one isolated the Desolate Moon Moon-Sigil Relic inventory icon, a thin pale stone relic plate with a black glass crescent, sparse geometric cuts and one small silver lunar mark, austere and readable at icon scale, centered with a clean readable silhouette and filling most of a 32x32 frame, transparent background, painterly pixel art, soft detailed shading, minimal outline, readable at small size, pale regolith, black glass, silver-grey stone, muted blue-violet, restrained lunar pearl",
+      "negative": "photograph, 3d render, realistic product shot, smooth vector art, text, letters, numbers, watermark, hand, arm, character, humanoid, face, scenery, ground, floor, sky, cast shadow, drop shadow, multiple objects, duplicate, clutter, unreadable tiny detail, thick hard black outline, cartoon, chibi, neon rainbow, modern plastic, sci-fi gadget, full moon landscape, planet, star field, sci-fi device, ornate gemstone, neon galaxy, readable text",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
     }
   ]
 }

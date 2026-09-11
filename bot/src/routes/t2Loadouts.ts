@@ -31,7 +31,7 @@ export const BIOME_ENCOUNTER_SHAPE: Record<T2BiomeGroup, EncounterShape> = {
 
 /**
  * Tier 2 grants exactly ONE Technique and ONE Guard slot
- * (`clampEquippedAbilities` returns a second Technique only at tier 3), so the
+ * (`clampAttunedAbilities` returns a second Technique only at tier 3), so the
  * encounter-shape switch IS the ability pair. There is no room for both.
  *
  *   AoE            -> Sweep, which arms the next attack to cleave.

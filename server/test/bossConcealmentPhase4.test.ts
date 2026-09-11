@@ -53,7 +53,7 @@ function playerSlices(id: string, x = 405, y = 400, nodeId = NODE): PersistedPla
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { technique: null, guard: null }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
-import { GameIcon, atlasIcon } from '../../ui/GameIcon';
+import { GameIcon, type IconSource } from '../../ui/GameIcon';
 import { useHoverTooltip } from '../primitives/HelpTooltip';
 import { useChangeFlash } from '../primitives/useChangeFlash';
 import { GradientConduit, type ConduitRamp } from '../primitives/GradientConduit';
@@ -12,8 +12,6 @@ import './statPlate.css';
  */
 export interface PlateCrown {
   name: string;
-  /** Current combat posture, kept visible even while details are collapsed. */
-  stance: string;
   /** Connection status, rendered as the dot beside the name. */
   status: string;
   hp: number;
@@ -65,78 +63,76 @@ function Crown({ crown }: { crown: PlateCrown }) {
 
   return (
     <div className="stat-crown">
-      <div className="stat-crown__identity">
-        <span className="stat-crown__name">{crown.name}</span>
-        <span className="stat-crown__state">
-          <span className="stat-crown__stance" title={`Active stance: ${crown.stance}`}>
-            {crown.stance}
-          </span>
+
+      <div className="stat-crown__body">
+        <div className="stat-crown__identity">
+          <span className="stat-crown__name">{crown.name}</span>
           <span className={`status-dot ${crown.status}`} title={crown.status} />
-        </span>
-      </div>
+        </div>
 
-      <div className="stat-crown__readout" {...(crown.hpTip?.handlers ?? {})}>
-        <span className="stat-crown__hp">
-          {Math.ceil(crown.hp)}<span className="stat-crown__max"> / {crown.maxHp}</span>
-        </span>
-        {crown.barrierMax > 0 && (
-          <span className="stat-crown__barrier-read" title="Barrier — absorbed before health">
-            {Math.ceil(crown.barrier)}<span className="stat-crown__max"> / {crown.barrierMax}</span>
+        <div className="stat-crown__readout" {...(crown.hpTip?.handlers ?? {})}>
+          <span className="stat-crown__hp">
+            {Math.ceil(crown.hp)}<span className="stat-crown__max"> / {crown.maxHp}</span>
           </span>
-        )}
-        {crown.ward > 0 && (
-          <span className="stat-crown__shield" title="Ward — absorbed before health">
-            +{Math.ceil(crown.ward)}
-          </span>
-        )}
-        {crown.hpTip?.node}
-      </div>
+          {crown.barrierMax > 0 && (
+            <span className="stat-crown__barrier-read" title="Barrier — absorbed before health">
+              {Math.ceil(crown.barrier)}<span className="stat-crown__max"> / {crown.barrierMax}</span>
+            </span>
+          )}
+          {crown.ward > 0 && (
+            <span className="stat-crown__shield" title="Ward — absorbed before health">
+              +{Math.ceil(crown.ward)}
+            </span>
+          )}
+          {crown.hpTip?.node}
+        </div>
 
-      <GradientConduit
-        className="stat-crown__track"
-        fraction={safePct / 100}
-        ramp={hpRamp(hpPct / 100)}
-        height={9}
-        label={`Health ${Math.ceil(crown.hp)} of ${crown.maxHp}`}
-        valueText={crown.ward > 0
-          ? `${Math.ceil(crown.hp)} of ${crown.maxHp}, plus ${Math.ceil(crown.ward)} warded`
-          : `${Math.ceil(crown.hp)} of ${crown.maxHp}`}
-        layers={
-          <>
-            {healPct > 0 && (
-              <span
-                className="stat-crown__layer stat-crown__layer--regen"
-                style={{ left: `${hpPct}%`, width: `${healPct}%` }}
-              />
-            )}
-            {dotPct > 0 && (
-              <span
-                className="stat-crown__layer stat-crown__layer--dot"
-                style={{ left: `${safePct}%`, width: `${dotPct}%` }}
-              />
-            )}
-            {wardPct > 0 && (
-              <span
-                className="stat-crown__layer stat-crown__layer--shield"
-                style={{ width: `${wardPct}%` }}
-              />
-            )}
-          </>
-        }
-      />
-
-      {crown.barrierMax > 0 && (
         <GradientConduit
-          className={`stat-crown__barrier${crown.barrierRecharging ? ' is-recharging' : ''}`}
-          fraction={barrierFill}
-          ramp="arcane"
-          height={5}
-          label="Barrier"
-          valueText={crown.barrierRecharging
-            ? `Barrier ${Math.ceil(crown.barrier)} of ${crown.barrierMax}, recharging`
-            : `Barrier ${Math.ceil(crown.barrier)} of ${crown.barrierMax}`}
+          className="stat-crown__track"
+          fraction={safePct / 100}
+          ramp={hpRamp(hpPct / 100)}
+          height={9}
+          label={`Health ${Math.ceil(crown.hp)} of ${crown.maxHp}`}
+          valueText={crown.ward > 0
+            ? `${Math.ceil(crown.hp)} of ${crown.maxHp}, plus ${Math.ceil(crown.ward)} warded`
+            : `${Math.ceil(crown.hp)} of ${crown.maxHp}`}
+          layers={
+            <>
+              {healPct > 0 && (
+                <span
+                  className="stat-crown__layer stat-crown__layer--regen"
+                  style={{ left: `${hpPct}%`, width: `${healPct}%` }}
+                />
+              )}
+              {dotPct > 0 && (
+                <span
+                  className="stat-crown__layer stat-crown__layer--dot"
+                  style={{ left: `${safePct}%`, width: `${dotPct}%` }}
+                />
+              )}
+              {wardPct > 0 && (
+                <span
+                  className="stat-crown__layer stat-crown__layer--shield"
+                  style={{ width: `${wardPct}%` }}
+                />
+              )}
+            </>
+          }
         />
-      )}
+
+        {crown.barrierMax > 0 && (
+          <GradientConduit
+            className={`stat-crown__barrier${crown.barrierRecharging ? ' is-recharging' : ''}`}
+            fraction={barrierFill}
+            ramp="arcane"
+            height={5}
+            label="Barrier"
+            valueText={crown.barrierRecharging
+              ? `Barrier ${Math.ceil(crown.barrier)} of ${crown.barrierMax}, recharging`
+              : `Barrier ${Math.ceil(crown.barrier)} of ${crown.barrierMax}`}
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -152,8 +148,8 @@ function Crown({ crown }: { crown: PlateCrown }) {
  */
 export interface PlateReading {
   id: string;
-  /** Frame in the UI atlas. */
-  glyph: string;
+  /** Authored stat icon source. */
+  glyph: IconSource;
   value: string;
   /** Spelled-out stat name — hover title and screen-reader text. */
   name: string;
@@ -210,7 +206,7 @@ function Reading({ reading }: { reading: PlateReading }) {
           name beside it; here there is no name to fall back on. */}
       <GameIcon
         as="span"
-        source={atlasIcon(reading.glyph)}
+        source={reading.glyph}
         size={16}
         fallback={null}
         className="stat-reading__glyph"
@@ -247,7 +243,7 @@ export function StatPlate({ crown, headline, rails }: StatPlateProps) {
       <div className="stat-headline" {...headlineTip.handlers}>
         <GameIcon
           as="span"
-          source={atlasIcon(headline.glyph)}
+          source={headline.glyph}
           size={16}
           fallback={null}
           className="stat-headline__glyph"

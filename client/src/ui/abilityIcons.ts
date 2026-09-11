@@ -1,5 +1,5 @@
 import type { AbilityDef } from "@mmo-idle/shared";
-import { atlasIcon, type IconSource } from "./GameIcon";
+import { atlasIcon, type IconSource } from "./iconSource";
 import { conceptAbilityIconSource } from "./conceptIcons";
 
 /**

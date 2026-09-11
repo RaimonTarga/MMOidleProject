@@ -15,6 +15,7 @@ import {
   buildPlayerDeathPayload,
 } from "./deathCause";
 import { respawnPlayer } from "./spawning";
+import { recordTombstone } from "./tombstones";
 import { recordWorldLogEvent } from "../../world/worldLog";
 import { actorFromPlayer } from "../../world/worldLogActors";
 import { resetDungeonIfNodeWiped } from "./dungeons/dungeon";
@@ -92,6 +93,10 @@ export function killPlayer(
     graveFrame,
     diedAtMs: Date.now(),
   });
+  // Planted here rather than on respawn so the cause is read while it is still in
+  // hand. It stays withheld from the node view until this player leaves, so the
+  // grave they are lying under IS the tombstone until the moment they get up.
+  recordTombstone(world, entity, cause, graveFrame);
   resetDungeonIfNodeWiped(world, entity.hasPosition.nodeId);
 
   recordWorldLogEvent(

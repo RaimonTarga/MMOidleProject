@@ -53,7 +53,7 @@ function slices(
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [abilityId],
-      equippedAbilities: { techniques: [abilityId], guards: [] },
+      attunedAbilities: { techniques: [abilityId], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

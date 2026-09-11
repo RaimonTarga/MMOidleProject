@@ -5,7 +5,7 @@ import {
   describeMonsterMechanics,
   type BestiaryEntry,
 } from '@mmo-idle/shared';
-import { playerNodeIdAtom, bestiaryOpenAtom, bestiaryDetailIdAtom } from '../atoms';
+import { bestiaryZoneNodeIdAtom, bestiaryOpenAtom, bestiaryDetailIdAtom } from '../atoms';
 import { MonsterSprite } from './MonsterSprite';
 import './bestiary.css';
 
@@ -57,7 +57,7 @@ function BestiaryRow({ entry, onOpen }: { entry: BestiaryEntry; onOpen: () => vo
 
 export function BestiaryPanel() {
   const [expanded, setExpanded] = useState(true);
-  const nodeId = useAtomValue(playerNodeIdAtom);
+  const nodeId = useAtomValue(bestiaryZoneNodeIdAtom);
   const setOpen = useSetAtom(bestiaryOpenAtom);
   const setDetailId = useSetAtom(bestiaryDetailIdAtom);
 

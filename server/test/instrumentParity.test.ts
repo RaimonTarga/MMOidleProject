@@ -78,7 +78,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      equippedAbilities: { techniques: [], guards: [] },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

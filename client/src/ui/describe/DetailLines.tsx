@@ -1,5 +1,5 @@
 import { useHoverTooltip } from '../../hud/primitives';
-import { atlasIcon, GameIcon } from '../GameIcon';
+import { GameIcon } from '../GameIcon';
 import type { DetailLine } from './index';
 import './detailLines.css';
 
@@ -16,6 +16,7 @@ function DetailRow({ line }: { line: DetailLine }) {
   const { handlers, node } = useHoverTooltip(line.help);
   const classes = [
     'detail-line',
+    line.key === 'ability:default-trigger' ? 'detail-line--behavior' : '',
     line.help ? 'detail-line--help' : '',
     line.good === false ? 'detail-line--down' : '',
   ].filter(Boolean).join(' ');
@@ -24,7 +25,7 @@ function DetailRow({ line }: { line: DetailLine }) {
     <div className={classes} {...handlers}>
       {line.glyph && (
         <GameIcon
-          source={atlasIcon(line.glyph)}
+          source={line.glyph}
           size={14}
           fallback={null}
           className="detail-line__glyph"

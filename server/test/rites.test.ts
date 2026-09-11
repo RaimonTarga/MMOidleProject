@@ -27,7 +27,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }, catalysts: {}, catalystProgress: {},
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: ["brace"], equippedAbilities: { techniques: [], guards: ["brace"] },
+      knownAbilities: ["brace"], attunedAbilities: { techniques: [], guards: ["brace"] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [...validRiteIds(["lingering-battle", "swift-repose", "purification", "mechanic-renewal", "ability-reprieve", "blood-offering"])],
       equippedRites: [],
@@ -80,7 +80,7 @@ emitCombatEvent("onKill", kill, world);
 assert(player.hasHealth.hp === beforeOffering + player.hasHealth.maxHp * 0.05, "Blood Offering should heal through credited onKill events");
 
 const budget = runeBudgetForGlobalMastery(0);
-assert(runicPointLoadoutCost({ rules: [], rites: ["mechanic-renewal", "ability-reprieve"] }) > budget, "expensive rites should compete in the shared RP pool");
+assert(runicPointLoadoutCost({ abilities: { techniques: [], guards: ["brace", "second-wind"] }, stances: [], rules: [], rites: ["mechanic-renewal", "ability-reprieve"] }) > budget, "expensive rites should compete in the shared RP pool");
 assert(JSON.stringify(validRiteIds(["purification", "retired"])) === JSON.stringify(["purification"]), "unknown rites should be filtered");
 
 console.log("rites.test.ts: ok");

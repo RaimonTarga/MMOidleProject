@@ -1,5 +1,7 @@
 import type { StanceModifiers, StatEffects } from '@mmo-idle/shared';
 import { STAT_HELP } from '../../hud/stat/statHelp';
+import type { IconSource } from '../GameIcon';
+import { statIconSource } from '../systemIcons';
 
 /**
  * `StatEffects` as player-facing rows: full label, formatted value, and the same
@@ -14,8 +16,8 @@ export interface StatEffectLine {
   label: string;
   /** Signed, unit-carrying value, e.g. "+10%" or "-50 range". */
   value: string;
-  /** Packed glyph frame for the stat, when one is authored. */
-  glyph: string | null;
+  /** Icon source for the stat, when one is authored. */
+  glyph: IconSource | null;
   help: string | undefined;
   /** False when the delta makes the character worse (drives the down styling). */
   good: boolean;
@@ -30,7 +32,7 @@ const signedPct = (n: number): string =>
 interface StatEffectMeta {
   label: string;
   format: (value: number) => string;
-  glyph: string | null;
+  glyph: IconSource | null;
   helpKey: string;
   /** Set for stats where a negative delta is the improvement. */
   lowerIsBetter?: boolean;
@@ -40,43 +42,43 @@ const STAT_EFFECT_META: Record<keyof StatEffects, StatEffectMeta> = {
   attack: {
     label: 'Attack',
     format: (v) => signed(v),
-    glyph: 'UI_icons/stats/attack.png',
+    glyph: statIconSource('attack'),
     helpKey: 'attack',
   },
   plating: {
     label: 'Plating',
     format: (v) => signed(v),
-    glyph: 'UI_icons/stats/plating.png',
+    glyph: statIconSource('plating'),
     helpKey: 'plating',
   },
   damageReduction: {
     label: 'Damage Reduction',
     format: signedPct,
-    glyph: 'UI_icons/stats/reduction.png',
+    glyph: statIconSource('reduction'),
     helpKey: 'damageReduction',
   },
   evasion: {
     label: 'Evasion',
     format: signedPct,
-    glyph: 'UI_icons/stats/evasion.png',
+    glyph: statIconSource('evasion'),
     helpKey: 'dodgeRate',
   },
   attackRange: {
     label: 'Attack Range',
     format: (v) => signed(v),
-    glyph: 'UI_icons/stats/range.png',
+    glyph: statIconSource('range'),
     helpKey: 'attackRange',
   },
   attackSpeedPct: {
     label: 'Attack Speed',
     format: signedPct,
-    glyph: 'UI_icons/stats/speed.png',
+    glyph: statIconSource('speed'),
     helpKey: 'atkSpeed',
   },
   maxHp: {
     label: 'Max HP',
     format: (v) => signed(v),
-    glyph: 'UI_icons/stats/shield.png',
+    glyph: statIconSource('shield'),
     helpKey: 'hp',
   },
   recovery: {
@@ -84,13 +86,13 @@ const STAT_EFFECT_META: Record<keyof StatEffects, StatEffectMeta> = {
     // A Recovery point is 1% of max HP per second at 100% active Recovery, so the
     // bare number is the unit — not an HP-per-second figure.
     format: (v) => signed(v, 1),
-    glyph: 'UI_icons/stats/regen.png',
+    glyph: statIconSource('regen'),
     helpKey: 'recovery',
   },
   speed: {
     label: 'Move Speed',
     format: (v) => signed(v),
-    glyph: 'UI_icons/stats/speed.png',
+    glyph: statIconSource('speed'),
     helpKey: 'speed',
   },
 
@@ -100,25 +102,25 @@ const STAT_EFFECT_META: Record<keyof StatEffects, StatEffectMeta> = {
   attackPct: {
     label: 'Attack',
     format: signedPct,
-    glyph: 'UI_icons/stats/attack.png',
+    glyph: statIconSource('attack'),
     helpKey: 'classAffinity',
   },
   maxHpPct: {
     label: 'Max HP',
     format: signedPct,
-    glyph: 'UI_icons/stats/shield.png',
+    glyph: statIconSource('shield'),
     helpKey: 'classAffinity',
   },
   platingPct: {
     label: 'Plating',
     format: signedPct,
-    glyph: 'UI_icons/stats/plating.png',
+    glyph: statIconSource('plating'),
     helpKey: 'classAffinity',
   },
   moveSpeedPct: {
     label: 'Move Speed',
     format: signedPct,
-    glyph: 'UI_icons/stats/speed.png',
+    glyph: statIconSource('speed'),
     helpKey: 'classAffinity',
   },
 };
@@ -170,7 +172,7 @@ export function statEffectChipValue(key: keyof StatEffects, value: number): stri
   return STAT_EFFECT_META[key].format(value);
 }
 
-export function statEffectGlyph(key: keyof StatEffects): string | null {
+export function statEffectGlyph(key: keyof StatEffects): IconSource | null {
   return STAT_EFFECT_META[key]?.glyph ?? null;
 }
 

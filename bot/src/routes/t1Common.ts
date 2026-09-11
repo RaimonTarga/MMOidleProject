@@ -162,7 +162,7 @@ export function learnExposeWeakness(): RouteStep {
  *
  * The fix is this rune ONLY when Brace is the currently-equipped Guard.
  */
-const FIRE_GUARD_ON_CAST: EquippedRule = { conditionId: "target-casting", actionId: "fire-guard" };
+const FIRE_GUARD_ON_CAST: EquippedRule = { conditionId: "target-casting", actionId: "use-ability", targetAbilityId: "brace" };
 
 /** `guard` is the currently-equipped Guard ability id, or "none" before one is learned. */
 export function reactiveGuardRune(guard: string): EquippedRule[] {

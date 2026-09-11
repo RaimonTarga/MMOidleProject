@@ -1,3 +1,4 @@
+import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -6,7 +7,7 @@ import {
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
   globalMastery,
-  normalizeEquippedAbilities,
+  normalizeAttunedAbilities,
   runeBudgetForGlobalMastery,
   sanitizeRuneLoadout,
   runicPointLoadoutCost,
@@ -355,14 +356,15 @@ export function registerPlayerHandlers(
       owned,
       Number.POSITIVE_INFINITY,
       p.usesSkills.combatArchetype,
-      new Set(p.tracksProgression.knownStances ?? []),
+      new Set(p.tracksProgression.attunedStances ?? []),
+      new Set(attunedAbilityIds(p.tracksProgression.attunedAbilities)),
     );
     if (valid.length !== rules.length) {
       socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unlearned stance." });
       return;
     }
-    const total = runicPointLoadoutCost({ rules: valid, rites: p.tracksProgression.equippedRites ?? [] });
-    if (total > budget) {
+    const total = runicPointLoadoutCost({ ...runicLoadoutFromProgression(p.tracksProgression), rules: valid });
+    if (!runicPointEditAllowed(runicLoadoutFromProgression(p.tracksProgression), { ...runicLoadoutFromProgression(p.tracksProgression), rules: valid }, budget)) {
       socket.emit("build:loadoutResult", { system: "runes", success: false, reason: `This build costs ${total} RP, but only ${budget} RP is available.` });
       return;
     }
@@ -432,7 +434,8 @@ export function registerPlayerHandlers(
     if (!p || !payload?.equipped) return;
     // normalize drops non-strings, unknown ids and slot mismatches; the setter
     // then enforces the learned/slot-count/duplicate rules authoritatively.
-    setAbilityLoadout(world, p, normalizeEquippedAbilities(payload.equipped));
+    const result = setAbilityLoadout(world, p, normalizeAttunedAbilities(payload.equipped));
+    socket.emit("build:loadoutResult", { system: "abilities", ...result });
   });
 
   socket.on("stance:craftRecipe", (recipeId: string) => {
@@ -446,9 +449,10 @@ export function registerPlayerHandlers(
     const p = liveSelf();
     if (!p || !payload) return;
     if (payload.slot !== "default") return;
+    if (payload.attunedStances !== undefined && (!Array.isArray(payload.attunedStances) || payload.attunedStances.some(id => typeof id !== "string"))) return;
     const stanceId =
       typeof payload.stanceId === "string" ? payload.stanceId : null;
-    const result = setStanceLoadout(world, p, payload.slot, stanceId);
+    const result = setStanceLoadout(world, p, payload.slot, stanceId, payload.attunedStances);
     socket.emit("build:loadoutResult", { system: "stances", ...result });
   });
 

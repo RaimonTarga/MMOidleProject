@@ -11,7 +11,7 @@ const FRESH: SystemVisibilityInput = {
   playerTier: 0,
   globalMastery: 0,
   knownAbilities: [],
-  equippedAbilities: { techniques: [], guards: [] },
+  attunedAbilities: { techniques: [], guards: [] },
   knownStances: [],
   equippedStances: { default: null },
   activeStance: null,
@@ -125,7 +125,7 @@ assert(tierThree.rites, "rites should retain their tier 3 gate");
 const ownershipCases: Array<
   [string, Partial<SystemVisibilityInput>, keyof typeof fresh]
 > = [
-  ["has an ability equipped", { equippedAbilities: { techniques: ["sweep"], guards: [] } }, "abilities"],
+  ["has an ability equipped", { attunedAbilities: { techniques: ["sweep"], guards: [] } }, "abilities"],
   ["knows a stance", { knownStances: ["offensive-stance"] }, "stances"],
   ["knows a rite", { knownRites: ["rite-a"] }, "rites"],
   ["has unlocked recipes", { unlockedRecipes: ["crude-dagger"] }, "materials"],

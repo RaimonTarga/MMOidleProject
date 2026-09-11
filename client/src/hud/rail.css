@@ -245,61 +245,19 @@
   }
 }
 
-/* ── Nav section shortcuts ───────────────────────────────────────────────────
-   A destination's sections appear in the rail while it is open, so jumping to
-   one is a single action. Flat destinations render no chevron and no list. */
-@media (min-width: 1101px) {
-  .desktop-hud .right-nav-entry {
-    display: flex;
-    flex-direction: column;
-  }
+/* ── Session actions in the rail ─────────────────────────────────────────────
+   Every entry is a flat destination now that Abilities, Stances, Rites and
+   Runes each own one. A standalone entry is the exception: it leaves the world
+   rather than opening a panel inside it, so a rule sets it apart and it takes
+   the full width instead of pairing off with a destination. */
+.desktop-hud .right-nav-entry {
+  display: flex;
+  flex-direction: column;
+}
 
-  .desktop-hud .right-nav-button__chevron {
-    flex: 0 0 auto;
-    margin-left: auto;
-    color: var(--hud-text-dim);
-    font-size: 9px;
-  }
-
-  .desktop-hud .right-nav-button--selected .right-nav-button__chevron {
-    color: var(--hud-primary);
-  }
-
-  .desktop-hud .right-nav-sections {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 2px 0 3px;
-    list-style: none;
-  }
-
-  .desktop-hud .right-nav-section {
-    display: block;
-    width: 100%;
-    padding: 4px 8px 4px 30px;
-    background: transparent;
-    border: 0;
-    border-left: 2px solid var(--hud-edge-light);
-    color: var(--hud-text-muted);
-    font: 10px/1.3 monospace;
-    letter-spacing: 0.4px;
-    text-align: left;
-    cursor: pointer;
-    transition: color var(--hud-motion-fast) ease, border-color var(--hud-motion-fast) ease;
-  }
-
-  .desktop-hud .right-nav-section:hover {
-    color: var(--hud-text);
-    border-left-color: var(--hud-edge-medium);
-  }
-
-  .desktop-hud .right-nav-section--selected {
-    color: var(--hud-primary-strong);
-    border-left-color: var(--hud-primary);
-  }
-
-  .desktop-hud .right-nav-section:focus-visible {
-    outline: var(--hud-focus-width) solid var(--hud-focus-color);
-    outline-offset: calc(var(--hud-focus-offset) * -1);
-  }
+.desktop-hud .right-nav-entry--standalone {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--hud-edge-divider);
 }

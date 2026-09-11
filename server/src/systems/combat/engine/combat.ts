@@ -46,6 +46,7 @@ import {
   cancelMonsterAbility,
   completeMonsterAbility,
   monsterAbilityCastEndsAt,
+  hasMobileMonsterCast,
   monsterAbilityImpactPoint,
   monsterAbilityReady,
   monsterAbilityTargetId,
@@ -1454,16 +1455,6 @@ function updateMonsterAbilities(
         abortMonsterCast(world, monster);
         return true;
       }
-      const requiresRange = ability.requiresRange ?? true;
-      if (
-        !area &&
-        requiresRange &&
-        !ability.castWhileOutOfRange &&
-        !world.collision.canReach(monster, target, monster.performsAttack.attackRange)
-      ) {
-        abortMonsterCast(world, monster);
-        return true;
-      }
     }
 
     if (
@@ -1475,6 +1466,10 @@ function updateMonsterAbilities(
     }
     if (now < monsterAbilityCastEndsAt(monster)) return true;
 
+    // A MOBILE CAST resolves on the victim it captured, wherever the chase has taken
+    // the pair — reach gated the START of the cast and is deliberately not re-tested
+    // here. Re-testing it made the beat unlandable: a melee caster's reach is ~15px
+    // and the player it is chasing is, by definition, ahead of it.
     const impact = monsterAbilityImpactPoint(monster);
     clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
     completeMonsterAbility(monster, ability, now);
@@ -2327,7 +2322,11 @@ export function updateCombat(world: World, dt: number, now: number) {
       // The lockdown beat deliberately suppresses the troll's basic attack.
       continue;
     }
-    if (e.hasAwareness.state !== "attacking") {
+    // A MOBILE CAST survives the chase. A targeted, non-area wind-up follows its
+    // victim, so flipping to "chasing" must not cancel it — otherwise a kiting
+    // player breaks the cast on the very first step away and the caster re-arms
+    // forever without ever resolving. See `hasMobileMonsterCast`.
+    if (e.hasAwareness.state !== "attacking" && !hasMobileMonsterCast(e)) {
       abortMonsterCast(world, e);
       continue;
     }
@@ -2347,8 +2346,13 @@ export function updateCombat(world: World, dt: number, now: number) {
       if (updateMonsterAbilities(world, e, target, now)) continue;
       // A planted ground slam is COMMITTED: the circle was drawn on the ground,
       // so the swing lands whether or not the target is still standing in it.
-      // Every other charge still breaks when the target slips out of reach.
       const slamCommitted = chargedCastEndsAt(e) > 0 && isChargeAoePlanted(e);
+      // A MOBILE CAST is committed to its VICTIM exactly as a planted slam is
+      // committed to its point: neither breaks because the target moved, so both
+      // skip the ordinary range bail. The difference is only what they aim at, and
+      // that is what splits the counterplay — you walk out of a circle, and you
+      // INTERRUPT (stun / freeze) a cast that is following you.
+      const mobileCast = hasMobileMonsterCast(e);
       const lowHealthWard = monsterDef?.lowHealthWard;
       const castsOutsideAttackRange =
         monsterDef?.castedAttackSpeedBuff?.castWhileOutOfRange === true ||
@@ -2356,6 +2360,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         (lowHealthWard !== undefined && lowHealthWardReady(e, lowHealthWard));
       if (
         !slamCommitted &&
+        !mobileCast &&
         !world.collision.canReach(e, target, e.performsAttack.attackRange)
       ) {
         if (castsOutsideAttackRange && (updateLowHealthWard(world, e, now) || updateCastedAttackSpeedBuff(world, e, now))) continue;
@@ -2365,8 +2370,12 @@ export function updateCombat(world: World, dt: number, now: number) {
         continue;
       }
       setAttackTarget(world, e, target.isPlayer.id);
-      if (updateLowHealthWard(world, e, now)) continue;
-      if (updateCastedAttackSpeedBuff(world, e, now)) continue;
+      // ONE CAST PER MONSTER: a pending mobile wind-up yields to nothing, so the
+      // self-cast engines must not open a second bar underneath it.
+      if (!mobileCast) {
+        if (updateLowHealthWard(world, e, now)) continue;
+        if (updateCastedAttackSpeedBuff(world, e, now)) continue;
+      }
 
       // Charged (cast-time) attack state machine — telegraphed big hit (e.g. the
       // Ridge Archer's Power Shot). Takes priority over the normal attack while

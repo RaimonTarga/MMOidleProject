@@ -53,7 +53,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], equippedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -273,7 +273,7 @@ const PLAIN_CD = abilityCooldownMs(plainAbility!, FIXTURE_TIER);
 {
   const player = world.attachPlayerEntity(makePlayerSlices("kill-player"), "kill-player");
   player.usesSkills.passives["core.mobility-refund-on-kill-pct"] = 0.4;
-  player.tracksProgression.equippedAbilities.techniques = [mobilityAbility!.id, plainAbility!.id];
+  player.tracksProgression.attunedAbilities.techniques = [mobilityAbility!.id, plainAbility!.id];
 
   const victim = world.createMonster("node-5-5", "plains-slime", { x: 700, y: 400 });
   if (!victim) throw new Error("failed to create victim");

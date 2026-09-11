@@ -128,12 +128,12 @@ export interface T1SnapshotState {
   equipment: PlayerView["equipment"];
   itemUpgrades: Record<string, number>;
   knownAbilities: string[];
-  equippedAbilities: PlayerView["equippedAbilities"];
-  abilitySlots: PlayerView["abilitySlots"];
+  attunedAbilities: PlayerView["attunedAbilities"];
   runesOwned: string[];
   runeRecipesCrafted: string[];
   runesEquipped: PlayerView["runesEquipped"];
   knownStances: string[];
+  attunedStances?: string[];
   equippedStances: PlayerView["equippedStances"];
   activeStance: string | null;
   knownRites: string[];
@@ -291,13 +291,14 @@ export function tierEntryProfileFromT1Snapshot(
     equipment: { ...state.equipment },
     itemUpgrades: importableItemUpgrades,
     knownAbilities: [...state.knownAbilities],
-    equippedAbilities: {
-      techniques: [...state.equippedAbilities.techniques],
-      guards: [...state.equippedAbilities.guards],
+    attunedAbilities: {
+      techniques: [...state.attunedAbilities.techniques],
+      guards: [...state.attunedAbilities.guards],
     },
     runeRecipesCrafted: [...state.runeRecipesCrafted],
     runesEquipped: state.runesEquipped.map((rule) => ({ ...rule })),
     knownStances: [...state.knownStances],
+    attunedStances: [...(state.attunedStances ?? [])],
     equippedStances: { ...state.equippedStances },
     knownRites: [...state.knownRites],
     equippedRites: [...state.equippedRites],

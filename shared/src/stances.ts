@@ -1,7 +1,7 @@
 /**
- * Stances are mutually-exclusive combat postures. A player chooses one free
- * default stance; Rune rules may name any learned stance as an automated
- * destination. The destination's runeCost is paid by each rule that targets it.
+ * Stances are mutually-exclusive combat postures. Learned stances can be attuned
+ * by reserving runeCost once. Default selection and Rune switching require
+ * attunement; neutral is free. Switching never repays the stance reservation.
  *
  * AUTHORING CONTRACT (corrective pass 2026-08-22)
  *
@@ -113,7 +113,7 @@ export interface StanceDef {
    * nothing else, so it states real mechanics rather than flavour.
    */
   blurb: string;
-  /** RP added to a switch rule that names this stance. The free default pays none. */
+  /** RP reserved once while attuned, including when selected as default. */
   runeCost: number;
   modifiers?: StanceModifiers;
   /**
@@ -431,7 +431,7 @@ const stances: StanceDef[] = [
         good: false,
       },
     ],
-    icon: "enraged-stance",
+    icon: "time-to-strike-stance",
   },
   {
     id: "reaper-stance",
@@ -453,7 +453,7 @@ const stances: StanceDef[] = [
         help: "Armed by any kill you land while Reaper is active. It PERSISTS after you leave the stance, so the intended loop is: enter Reaper for the finish, kill, revert to your default posture, and spend the momentum on the next enemy. Further kills refresh the window only while Reaper is active again — the duration resets, it never stacks higher.",
       },
     ],
-    icon: "execute-stance",
+    icon: "reaper-stance",
   },
   {
     id: "warding-stance",
@@ -476,7 +476,7 @@ const stances: StanceDef[] = [
         help: "Warding scales what lands rather than deleting it, so it answers layered pressure a single cleanse cannot keep up with. Effects already on you when you enter keep the duration they were given — this applies at the moment a new one is applied.",
       },
     ],
-    icon: "tanking-stance",
+    icon: "warding-stance",
   },
   {
     id: "powering-up-stance",
@@ -510,7 +510,7 @@ const stances: StanceDef[] = [
         ).toFixed(0)}s is discarded rather than paid out. Pair it with the "Stance Charged" Rune situation to leave at full charge on its own.`,
       },
     ],
-    icon: "berserker-stance",
+    icon: "powering-up-stance",
   },
 ];
 

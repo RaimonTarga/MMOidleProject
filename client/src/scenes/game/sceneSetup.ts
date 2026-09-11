@@ -57,8 +57,7 @@ import {
   DESERT_ROCK_KEYS,
   DUNGEON_ALTAR_ART,
   HAZARD_POOL_ART,
-  GRAVES_KEY,
-  GRAVE_FRAME_SIZE,
+  TOMB_ART,
   FEATURE_SCATTER,
   JUNGLE_TREE_FILES,
   JUNGLE_TREE_KEYS,
@@ -159,6 +158,7 @@ import {
 import { tickSpectatorReadiness } from "./spectatorReady";
 import { drawGroundZones } from "../../render/groundZones";
 import { drawCorpses } from "../../render/corpses";
+import { drawTombstones } from "../../render/tombstones";
 import { drawStunOrbits } from "../../render/stunOrbit";
 import { createCinematicCamera, tickCinematicCamera } from "./cinematic/camera";
 import { initBeacon, setPhase } from "./cinematic/mode";
@@ -349,16 +349,15 @@ function queueFirstPaintAssets(scene: GameScene): void {
 }
 
 /**
- * Presentation art — graves, emotes, effect sheets, hazard pools, node decor.
+ * Presentation art — tombs, emotes, effect sheets, hazard pools, node decor.
  * All of it degrades gracefully behind `textures.exists` guards, and the two
  * frame/animation builders that consume it are idempotent, so it can arrive
  * after first paint and be wired up then.
  */
 function queuePresentationAssets(scene: GameScene): void {
-  scene.load.spritesheet(GRAVES_KEY, "/assets/environment/graves.png", {
-    frameWidth: GRAVE_FRAME_SIZE,
-    frameHeight: GRAVE_FRAME_SIZE,
-  });
+  for (const art of TOMB_ART) {
+    scene.load.image(art.key, art.file);
+  }
   scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
   for (const art of Object.values(HAZARD_POOL_ART)) {
     scene.load.image(art.key, art.file);
@@ -664,6 +663,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     drawCastBars(scene.state, scene);
     drawGroundZones(scene);
     drawCorpses(scene);
+    drawTombstones(scene);
     drawStunOrbits(scene);
     drawSkillCallouts(scene.state);
     updateEffectOverlays(scene.state, scene, dt);

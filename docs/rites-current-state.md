@@ -70,9 +70,9 @@ No SQL migration is required. `PlayerView.riteSlots` remains temporarily as a co
 
 ## Player interface
 
-- Loadout → Rites is a ritual-circle card grid; cards bind/unbind directly and become dormant when shared RP is insufficient.
+- Rites is its own rail entry, opening the shared arrangement dialog (Abilities / Stances / Rites / Runes) on the Rites tab: a ritual-circle card grid where cards bind/unbind directly and become dormant when shared RP is insufficient.
 - The panel states there are no slots and displays total shared RP.
-- Rune and overview meters include Rite and stance-destination costs.
+- The Rune meter includes Rite and stance-destination costs.
 - Crafting contains all six Rite recipes in the T3 mastery band.
 
 ## Progression

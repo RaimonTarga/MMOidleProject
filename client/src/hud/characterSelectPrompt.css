@@ -1,0 +1,26 @@
+.charsel-prompt__body {
+  padding: 14px 18px 16px;
+}
+
+.charsel-prompt__body p {
+  margin: 0;
+  color: var(--hud-text-muted);
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.charsel-prompt__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* `.auto-btn` is a full-width sidebar control by default; here the pair shares
+   a row. */
+.charsel-prompt__actions .auto-btn {
+  width: auto;
+  margin-top: 0;
+  padding: 7px 16px;
+}

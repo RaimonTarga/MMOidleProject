@@ -13,6 +13,8 @@ A rune rule is one condition wired to one action:
 export interface EquippedRule {
   conditionId: string;
   actionId: string;
+  targetAbilityId?: string;
+  targetStanceId?: string;
 }
 ```
 
@@ -36,6 +38,8 @@ Current channels:
 - `TRAVEL_PATHING`
 - `TRAVEL_RESPONSE`
 - `CONTROL`
+- `ABILITY` (per-ability timing, runtime execution arbitration)
+- `STANCE`
 
 `GLOBAL_STRATEGY` is suppressed while the player is in combat, except for
 `lead-the-way`, which remains active as a party role marker.
@@ -103,17 +107,9 @@ Budget is simple per-rule cost for now:
 ruleCost = condition.cost + action.cost
 ```
 
-The budget helper is **GM-driven** as of the system rework. **Step 4** replaced the tier term with
-Global Mastery; **Step 5** retired the crafted rune-capacity recipes, so RP now comes *solely* from GM:
+The shared RP budget covers attuned abilities, attuned stances, Rune rules and Rites. `runicPointLoadoutCost` is authoritative for all four. Capacity is seeded at `16 + floor(Global Mastery / 5)`; both constants and authored prices are easy to tune. See [Runic attunement](runic-attunement-current-state.md) for migration, over-budget preservation and editing rules.
 
-```ts
-// was: runeBudgetForTier(playerTier, runePointBonus) = 8 + playerTier * 2 + runePointBonus
-runeBudgetForGlobalMastery(globalMastery) = 8 + floor(globalMastery / 10)
-```
-
-The `/ 10` divisor is a non-regressive placeholder (≈ old `tier*2` at typical per-tier GM); it is the
-user's balance lever. The old `runePointBonus` slice/view field and `runePointBonusFromCraftedRecipes`
-helper were **deleted** (clean cutover, pre-release).
+`use-ability` carries an attuned `targetAbilityId`; custom timing replaces only that ability's authored default. Active targets retain Rune priority, with combat arbitration deciding which can execute. Stance switching targets attuned postures and pays only logic, never the stance reservation again.
 
 ## Rune Forge
 
@@ -332,34 +328,55 @@ every cooldown branch can use cooldown-only responses across tiers.
 
 ## Client UI
 
-`client/src/ui/RunesPanel.tsx` is the current rune panel. It has two tabs:
-Loadout and Forge.
+`client/src/ui/BuildRunesTab.tsx` is the current rune panel. It is one tab of the
+shared arrangement dialog (`client/src/ui/BuildPanel.tsx`), alongside Abilities,
+Stances and Rites; each of the four has its own rail entry. Rune *recipes* live
+in Crafting, not here.
 
-The Loadout tab:
+The rune board groups rules by their actual behavior channel. Within each group,
+connected numbered rows run top to bottom; the first matching rule wins. Different
+groups can act together. Reorder controls only move rules within their group.
+Each row and the pinned draft show the same condition -> response sentence.
 
-- reads `runesOwnedAtom`, `runesEquippedAtom`, `combatArchetypeAtom`, and
-  `playerTierAtom`,
-- shows a chunked rune point meter with spent and leftover points,
-- lists equipped priority rules before the rule builder,
-- replaces an existing rule automatically when the new rule has the same
-  condition and channel, and annotates suppressed, duplicate, and overlapping
-  channel conflicts,
-- lets players move equipped rules up or down to change priority,
-- asks for confirmation before resetting to the default loadout,
-- lists owned condition fragments and action fragments,
-- uses player-facing "Situation" and "Response" wording,
-- shows condition/action costs in visible RP badges,
-- shows action channels with color-coded side bars,
-- only shows response choices that fit the selected situation,
-- hides class-specific responses unless the current combat archetype matches,
-- shows rune points as visual chunks,
-- previews named rule text when available,
-- blocks adding a rule that would exceed budget locally,
-- sends changes through `hudBus.requestSetRuneLoadout()`.
+- The Runic Point meter uses colored segments and a numeric legend for Abilities,
+  Stances, Logic, Rites, and available budget.
+- Add/edit opens a focused When/Do editor with compatible, owned responses.
+- Picking When or Do collapses its choices into a compact summary with a Change
+  button. Changing When clears dependent draft choices; changing Do clears its
+  target. Ability and stance pickers receive focus and appear directly below
+  the summaries. Saved rules remain unchanged until the draft is submitted.
+- Ability responses display the named attuned ability and authored default; their ability binding
+  remains visible in the selected description. Empty bindings cannot be saved.
+- Stance destinations wrap in a grid, show total rule cost, and explain the return
+  to the default stance. Selecting a step scrolls its next choices into view.
+- Saving preserves priority; same-condition/channel collisions explicitly replace
+  the existing rule. Only suppressed/redundant rules get conflict warnings.
+- Attunement lives in the Abilities and Stances tabs. Redundant inline attunement
+  sections and illustrative preview controls have been removed.
+- Budget validation, authoritative request/result handling, and an inline reset
+  confirmation remain in place.
 
-The compact HUD Intent panel always shows the active condition â†’ response chain;
-its expanded details add any higher-priority override and whether travel is
-temporarily paused for combat.
+The Behavior panel now lives on the right desktop rail, with stance information
+removed from the health crown. On narrow screens it is available in the character
+sheet. It keeps the stance and current action visible; its header toggles the
+trigger and recent ability feedback, remembering that preference locally. It
+omits secondary matching rules, Always triggers, and default/temporary labels.
+Ability activation feedback comes from actual combat events, not cooldown guesses.
+
+Ability details and crafting comparisons expose authored default firing behavior.
+Equipped ability details and HUD tooltips distinguish that default from configured
+Rune timing, including that the ability waits when no overriding condition matches.
+Rune action descriptions show the actual ability and retain the current position
+binding: replacing an equipped ability changes which ability that rule controls.
+The build dialog offers an optional, reversible wider desktop view. The current
+The board now includes unified RP attunement; Rite mechanics are unchanged;
+ability/stance attunement remains a future systems change.
+
+The server exposes an optional `matchedRunes` snapshot from the authoritative rune
+fold, including stance destinations. Active-rune attribution uses that snapshot
+instead of finding the first equipped rule with the same action. A matching rule
+is a selected instruction, not proof that an ability fired. This is presentation
+telemetry only; it observes the authoritative Rune and attunement runtime.
 
 The Forge tab:
 
@@ -398,7 +415,8 @@ Still not implemented:
 - `server/src/world/playerLifecycle.ts`
 - `server/src/db/playerRepo.ts`
 - `server/src/index.ts`
-- `client/src/ui/RunesPanel.tsx`
+- `client/src/ui/BuildRunesTab.tsx`
+- `client/src/ui/BuildPanel.tsx`
 - `client/src/hud/atoms.ts`
 - `client/src/hudBus.ts`
 - `client/src/input/hudEvents.ts`

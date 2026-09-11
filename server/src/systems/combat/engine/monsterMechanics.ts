@@ -425,6 +425,38 @@ export function isMonsterAbilityAoePlanted(monster: MonsterEntity): boolean {
     getCounter(monster.tracksCombat, MONSTER_ABILITY_AREA_ACTIVE_KEY) === 1;
 }
 
+/**
+ * MOBILE CAST — a wind-up the caster can CHASE through instead of planting for.
+ *
+ * True only for a TARGETED, NON-AREA beat (Numbing Sting, Petrifying Gaze, a plain
+ * Power Shot): the cast follows its victim, so there is nothing for the monster to
+ * stand still and aim at. Holding position for those made them unusable against a
+ * moving player — the caster stopped, lost contact, the wind-up broke on the range
+ * check, and (because an abort pays no cooldown) it immediately re-armed, so the
+ * ability spammed cast bars forever and never landed.
+ *
+ * A mobile cast is COMMITTED TO ITS VICTIM, the mirror of a planted slam being
+ * committed to its point. Reach gates the START of the cast and is never re-tested:
+ * a melee caster's reach is ~15px and the player it chases is by definition ahead
+ * of it, so re-testing left the beat unlandable in exactly the case it exists for.
+ * The counterplay is the INTERRUPT (stun / freeze), not the step away.
+ *
+ * Everything else keeps the stand-still contract, deliberately:
+ *   - a planted `aoe` charge / `area-hit` ability is COMMITTED to its circle, and
+ *     walking out of that circle is the counterplay the telegraph exists to offer;
+ *   - a self-facing cast (`castedAttackSpeedBuff`, `lowHealthWard`, a boss script's
+ *     Rallying Cry / Bestial Frenzy) plants the caster by design — the scripted ones
+ *     via their own `isRooted`, which this predicate never sees.
+ */
+export function hasMobileMonsterCast(monster: MonsterEntity): boolean {
+  if (chargedCastEndsAt(monster) > 0) return !isChargeAoePlanted(monster);
+  const abilityId = activeMonsterAbilityId(monster);
+  if (!abilityId || isMonsterAbilityAoePlanted(monster)) return false;
+  const ability = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)
+    ?.monsterAbilities?.find(candidate => candidate.id === abilityId);
+  return ability?.target === 'player';
+}
+
 /** The committed impact point, or null for a direct/self-only ability. */
 export function monsterAbilityImpactPoint(monster: MonsterEntity): Vec2 | null {
   if (!isMonsterAbilityAoePlanted(monster)) return null;

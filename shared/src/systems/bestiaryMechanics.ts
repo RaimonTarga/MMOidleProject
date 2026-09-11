@@ -1,5 +1,12 @@
-import type { MonsterAbility, MonsterAbilityAction, MonsterDefinition, BossAction } from '../data/monsters/types';
-import { monsterIsRanged, monsterKites } from '../data/monsters/behavior';
+import type {
+  BossAction,
+  MonsterAbility,
+  MonsterAbilityAction,
+  MonsterDefinition,
+  StageAction,
+} from '../data/monsters/types';
+import type { BossPattern, BossPatternStep } from '../data/monsters/bossPatterns';
+import { MONSTER_DATABASE, monsterIsRanged, monsterKites } from '../data/monsters';
 import type { DungeonMonsterModifiers } from '../dungeons/dungeonTypes';
 import { resolveMonsterDotDebuff } from './monsterDotFlavor';
 
@@ -20,6 +27,36 @@ export interface MechanicLine {
   detail: string;
   /** Accent color (hex string) when one is meaningful (e.g. DoT element). */
   color?: string;
+  /** Ability lines are separated into the detailed cast/encounter panel. */
+  category?: 'trait' | 'ability';
+}
+
+export type BestiaryAbilityKind = 'cast' | 'sequence' | 'passive' | 'encounter';
+
+/** One authored ability or encounter beat shown in the bestiary ability panel. */
+export interface BestiaryAbilityLine {
+  /** Stable key for React lists. */
+  id: string;
+  /** Display name. */
+  name: string;
+  /** Short glyph for the card header. */
+  icon: string;
+  /** Whether this is a cast, an ordered sequence, a passive beat, or an encounter. */
+  kind: BestiaryAbilityKind;
+  /** Single wind-up duration, when the ability has one. */
+  castMs?: number;
+  /** Repeat interval, when the ability has one. */
+  cooldownMs?: number;
+  /** First-use delay on a fresh combat session, when it differs from cooldown. */
+  initialCooldownMs?: number;
+  /** Human-readable trigger such as "At 50% HP" or "On first aggro". */
+  trigger?: string;
+  /** Short explanation of the ability's purpose. */
+  detail: string;
+  /** Ordered sub-steps for a boss pattern or staged encounter. */
+  steps?: string[];
+  /** Accent color when the ability has a strong theme. */
+  color?: string;
 }
 
 function fmtMs(ms: number): string {
@@ -35,6 +72,48 @@ function fmtMult(mult: number): string {
   return `${Number.isInteger(mult) ? mult : mult.toFixed(2)}×`;
 }
 
+function fmtNumber(value: number): string {
+  return Number.isInteger(value)
+    ? String(value)
+    : value.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+}
+
+function readableId(id: string): string {
+  return id
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
+function monsterLabel(id: string): string {
+  return MONSTER_DATABASE.get(id)?.name ?? readableId(id);
+}
+
+function statusLabel(id: string, abilityName?: string): string {
+  if (abilityName === 'Constrict') return 'Constrict root';
+  const known: Record<string, string> = {
+    'sun-mark': 'Sun Mark',
+    slow: 'Slow',
+    'dot-frozen': 'Frozen',
+    antiheal: 'Wither',
+    'tundra-chill': 'Chill',
+  };
+  return known[id] ?? readableId(id);
+}
+
+function describePlayerEffect(
+  effect: { kind: 'slow'; speedMult: number; durationMs: number } |
+    { kind: 'antiheal'; reduction: number; durationMs: number } |
+    { kind: 'vulnerability'; damageTakenPct: number; durationMs: number } |
+    undefined,
+): string {
+  if (!effect) return '';
+  if (effect.kind === 'slow') return `, slowing you to ${fmtPct(effect.speedMult)} for ${fmtMs(effect.durationMs)}`;
+  if (effect.kind === 'antiheal') return `, reducing your healing by ${fmtPct(effect.reduction)} for ${fmtMs(effect.durationMs)}`;
+  return `, increasing your damage taken by ${fmtPct(effect.damageTakenPct)} for ${fmtMs(effect.durationMs)}`;
+}
+
 /**
  * One clause per authored ability action.
  *
@@ -44,23 +123,35 @@ function fmtMult(mult: number): string {
  */
 function describeMonsterAbilityAction(action: MonsterAbilityAction): string {
   const effect = action.type === 'hit' || action.type === 'area-hit' ? action.effect : undefined;
-  const effectText = effect
-    ? effect.kind === 'slow'
-      ? `, slowing you to ${fmtPct(effect.speedMult)} for ${fmtMs(effect.durationMs)}`
-      : effect.kind === 'antiheal'
-        ? `, reducing your healing by ${fmtPct(effect.reduction)} for ${fmtMs(effect.durationMs)}`
-        : `, increasing your damage taken by ${fmtPct(effect.damageTakenPct)} for ${fmtMs(effect.durationMs)}`
+  const effectText = describePlayerEffect(effect);
+  const knockback = action.type === 'hit' || action.type === 'area-hit'
+    ? action.knockback ? `, knocking you back ${action.knockback.distance}px` : ''
     : '';
-  if (action.type === 'hit') return `hits you for ${fmtMult(action.multiplier)}${effectText}`;
-  if (action.type === 'area-hit') return `hits a ${action.radius}px circle for ${fmtMult(action.multiplier)}${effectText}`;
+  const stun = action.type === 'area-hit' && action.stunMs
+    ? `, stunning for ${fmtMs(action.stunMs)}`
+    : '';
+  if (action.type === 'hit') return `hits you for ${fmtMult(action.multiplier)}${effectText}${knockback}`;
+  if (action.type === 'area-hit') return `hits a ${action.radius}px circle for ${fmtMult(action.multiplier)}${effectText}${stun}${knockback}`;
   if (action.type === 'attack-speed-buff') {
-    return `gains +${fmtPct(action.attackSpeedPct)} attack speed for ${fmtMs(action.durationMs)}`;
+    const count = action.attacks !== undefined
+      ? ` for its next ${Math.max(1, Math.round(action.attacks))} attacks`
+      : ` for ${fmtMs(action.durationMs)}`;
+    return `gains +${fmtPct(action.attackSpeedPct)} attack speed${count}`;
   }
   if (action.type === 'plating-shred') {
     const plural = action.stacks === 1 ? 'stack' : 'stacks';
     return `strips ${action.stacks} ${plural} of your plating`;
   }
-  return `gains a ${fmtPct(action.shieldPct)} max-HP barrier for ${fmtMs(action.durationMs)}`;
+  const shatter = action.shatter
+    ? `; breaking it deals ${fmtPct(action.shatter.selfDamagePct)} max-HP damage to the caster` +
+      (action.shatter.vulnerability
+        ? ` and leaves it taking ${fmtPct(action.shatter.vulnerability.damageTakenPct)} more damage for ${fmtMs(action.shatter.vulnerability.durationMs)}`
+        : '') +
+      (action.shatter.freezeRadius !== undefined && action.shatter.freezeDurationMs !== undefined
+        ? ` and freezes enemy monsters within ${action.shatter.freezeRadius}px for ${fmtMs(action.shatter.freezeDurationMs)}`
+        : '')
+    : '';
+  return `gains a ${fmtPct(action.shieldPct)} max-HP barrier for ${fmtMs(action.durationMs)}${shatter}`;
 }
 
 /**
@@ -70,40 +161,634 @@ function describeMonsterAbilityAction(action: MonsterAbilityAction): string {
  */
 export function describeMonsterAbility(ability: MonsterAbility): string {
   const actions = ability.actions.map(describeMonsterAbilityAction).join(' and ');
-  return `Casts for ${fmtMs(ability.castMs)}, then ${actions}; recurs every ${fmtMs(ability.cooldownMs)}.`;
+  const target = ability.target === 'self' ? 'itself' : 'the captured target';
+  const first = ability.initialCooldownMs !== undefined && ability.initialCooldownMs !== ability.cooldownMs
+    ? ` The first cast is ready after ${fmtMs(ability.initialCooldownMs)} on a fresh combat session.`
+    : '';
+  const range = ability.castWhileOutOfRange
+    ? ' It can begin while outside basic attack range.'
+    : ability.requiresRange === false
+      ? ' It does not require basic attack range.'
+      : '';
+  return `Casts for ${fmtMs(ability.castMs)} on ${target}, then ${actions}; recurs every ${fmtMs(ability.cooldownMs)}.${first}${range}`;
 }
 
 function describeBossAction(a: BossAction): string {
   switch (a.type) {
     case 'enrage':
-      return `enrage (${fmtMult(a.atkMult)} atk, ${fmtMult(a.cdMult)} attack speed${a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ''})`;
+      return `Enrage: ${fmtMult(a.atkMult)} attack and ${fmtMult(a.cdMult)} attack cooldown` +
+        (a.cdMult < 1 ? ` (${fmtPct(1 - a.cdMult)} faster)` : '') +
+        (a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ' until death');
     case 'regen':
-      return `regenerate ${fmtPct(a.hpPctPerSec)} HP/s${a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ''}`;
+      return `Regenerates ${fmtPct(a.hpPctPerSec)} max HP per second${a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ' until death'}`;
     case 'shield':
-      return `+${fmtPct(a.drAdd)} damage reduction for ${fmtMs(a.durationMs)}`;
+      return `Gains +${fmtPct(a.drAdd)} damage reduction for ${fmtMs(a.durationMs)}`;
     case 'summon':
-      return `summon ${a.count}× ${a.monsterTypeId}`;
+      return `Summons ${a.count} × ${monsterLabel(a.monsterTypeId)}` +
+        (a.offsetRange !== undefined ? ` within ${a.offsetRange}px` : '');
     case 'spawn-adds':
-      return `spawn ${a.count}× ${a.monsterTypeId}`;
+      return `Spawns ${a.count} × ${monsterLabel(a.monsterTypeId)}` +
+        (a.offsetRange !== undefined ? ` within ${a.offsetRange}px` : '') +
+        (a.maxAlive !== undefined ? ` (up to ${a.maxAlive} alive)` : '');
     case 'cast':
-      return `cast ${a.label} for ${fmtMs(a.castMs)}: ${a.actions.map(describeBossAction).join(', ')}`;
+      return `Casts ${a.label} for ${fmtMs(a.castMs)}: ${a.actions.map(describeBossAction).join('; ')}`;
     case 'stat-buff':
-      return `${a.label ?? `${fmtMult(a.mult)} ${a.stat}`}${a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ''}`;
+      return `${a.label ? `${a.label}: ` : ''}${fmtMult(a.mult)} ${a.stat === 'attackSpeed' ? 'attack speed' : a.stat === 'damageReduction' ? 'damage reduction' : a.stat}` +
+        (a.moveSpeedMult !== undefined ? ` and ${fmtMult(a.moveSpeedMult)} move speed` : '') +
+        (a.maxStacks !== undefined ? `, up to ${a.maxStacks} stacks` : '') +
+        (a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ' until death');
     case 'roar':
-      return `roar: +${fmtPct(a.attackSpeedPct)} ally attack speed for ${fmtMs(a.durationMs)}`;
+      return `Roars: the boss and nearby allies within ${a.radius ?? 'the node'}${typeof a.radius === 'number' ? 'px' : ''} gain +${fmtPct(a.attackSpeedPct)} attack speed for ${fmtMs(a.durationMs)}`;
     case 'apply-shield':
-      return `gains a ${fmtPct(a.shieldPct)} max-HP barrier every ${fmtMs(a.intervalMs)}`;
+      return `Gains a ${fmtPct(a.shieldPct)} max-HP barrier every ${fmtMs(a.intervalMs)} for ${fmtMs(a.durationMs)}` +
+        (a.shatter ? `; breaking it deals ${fmtPct(a.shatter.selfDamagePct)} max-HP damage` +
+          (a.shatter.vulnerability ? ` and opens a ${fmtPct(a.shatter.vulnerability.damageTakenPct)} damage window for ${fmtMs(a.shatter.vulnerability.durationMs)}` : '') +
+          (a.shatter.freezeRadius !== undefined && a.shatter.freezeDurationMs !== undefined
+            ? ` and freezes enemy monsters within ${a.shatter.freezeRadius}px for ${fmtMs(a.shatter.freezeDurationMs)}` : '') : '');
     case 'apply-soft-cap':
-      return `gains a damage soft-cap (hits over ${fmtPct(a.capPct)} HP scaled ${fmtMult(a.capMult)})`;
+      return `Gains a damage soft-cap: hit damage above ${fmtPct(a.capPct)} of max HP is scaled to ${fmtMult(a.capMult)}`;
     case 'shed-defense':
-      return `sheds all defenses`;
+      return `Sheds all defenses and reduces current plating to 20%`;
     case 'modify-ramp-debuff':
-      return `raises slow-debuff caps`;
+      return `Raises slow caps to ${fmtPct(a.moveSlowMaxPct)} movement and ${fmtPct(a.atkSlowMaxPct)} attack speed`;
+    case 'raise-dead':
+      return `Raises up to ${a.count} nearby corpse${a.count === 1 ? '' : 's'}${a.corpseRange !== undefined ? ` within ${a.corpseRange}px` : ''}` +
+        (a.maxAliveAdd !== undefined ? ` and increases the living cap by ${a.maxAliveAdd}` : '') +
+        (a.hpMult !== undefined || a.damageMult !== undefined ? ` (${fmtMult(a.hpMult ?? 1)} HP, ${fmtMult(a.damageMult ?? 1)} damage)` : '');
+    case 'stoke-ramp':
+      return `Stokes the node's ambient ramp` +
+        (a.rampMsMult !== undefined ? ` to ${fmtMult(a.rampMsMult)} of its normal timing` : '') +
+        (a.minStacks !== undefined ? ` with a ${a.minStacks}-stack floor` : '') +
+        (a.maxStacksAdd !== undefined ? ` and +${a.maxStacksAdd} maximum stacks` : '');
+    case 'spawn-pool':
+      return `Leaves a ${a.radius}px pool for ${fmtMs(a.durationMs)} dealing ${a.damagePerTick} damage every ${fmtMs(a.tickIntervalMs)}` +
+        (a.slowSpeedMult !== undefined ? ` and slowing movement to ${fmtPct(a.slowSpeedMult)}` : '');
+    case 'empower-charged': {
+      const parts = [
+        a.multiplierMult !== undefined ? `${fmtMult(a.multiplierMult)} charged damage` : '',
+        a.cooldownMult !== undefined ? `${fmtMult(a.cooldownMult)} charged cooldown` : '',
+        a.radiusMult !== undefined ? `${fmtMult(a.radiusMult)} charged radius` : '',
+        a.castMsMult !== undefined ? `${fmtMult(a.castMsMult)} charged cast time` : '',
+        a.aftershockRayCountAdd !== undefined ? `+${a.aftershockRayCountAdd} aftershock rays` : '',
+        a.aftershockDamageMult !== undefined ? `${fmtMult(a.aftershockDamageMult)} aftershock damage` : '',
+      ].filter(Boolean);
+      return `Empowers its signature telegraphed attack: ${parts.join(', ')}`;
+    }
+    case 'empower-shred':
+      return `Deepens corrosion` +
+        (a.platingPerStackAdd !== undefined ? ` by +${a.platingPerStackAdd} plating per stack` : '') +
+        (a.maxStacksAdd !== undefined ? ` and +${a.maxStacksAdd} maximum stacks` : '') +
+        (a.extraThresholds?.length ? `; new venom thresholds at ${a.extraThresholds.join(' and ')}` : '');
     case 'morph':
-      return `changes stance${a.isRanged !== undefined ? a.isRanged ? ' → ranged' : ' → melee' : ''}`;
+      return `Changes stance` +
+        (a.isRanged !== undefined ? a.isRanged ? ' to ranged' : ' to melee' : '') +
+        (a.attackRange !== undefined ? ` at ${a.attackRange}px range` : '') +
+        (a.attackStyle !== undefined ? ` with ${a.attackStyle} attacks` : '') +
+        (a.kite ? ' and begins kiting' : '') +
+        (a.dotEffect === null ? '; clears its DoT' : a.dotEffect ? `; applies ${a.dotEffect.label ?? readableId(a.dotEffect.debuffId ?? 'morph-dot')} for ${fmtNumber(a.dotEffect.damagePerStack)} per stack every ${fmtMs(a.dotEffect.tickIntervalMs)}, up to ${a.dotEffect.maxStacks} stacks` : '') +
+        (a.durationMs ? ` for ${fmtMs(a.durationMs)}` : ' permanently');
     default:
       return (a as { type: string }).type;
   }
+}
+
+type PatternStatusStep = Extract<BossPatternStep, { kind: 'apply-status' }>;
+
+function describePatternStatus(step: PatternStatusStep): string {
+  const data = step.data ?? {};
+  const details: string[] = [];
+  if (data.speedMult !== undefined) {
+    details.push(data.speedMult === 0 ? 'roots the target' : `slows movement to ${fmtPct(data.speedMult)}`);
+  }
+  if (data.damageTakenPct !== undefined) {
+    details.push(`increases damage taken by ${fmtPct(data.damageTakenPct)}`);
+  }
+  if (data.antihealReduction !== undefined) {
+    details.push(`reduces healing by ${fmtPct(data.antihealReduction)}`);
+  }
+  if (data.damagePerStack !== undefined) {
+    details.push(`${fmtNumber(data.damagePerStack)} damage per stack`);
+  }
+  if (data.tickIntervalMs !== undefined) {
+    details.push(`every ${fmtMs(data.tickIntervalMs)}`);
+  }
+  return details.length > 0 ? `; ${details.join(', ')}` : '';
+}
+
+function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): string {
+  switch (step.kind) {
+    case 'cast':
+      return `Casts ${step.name} for ${fmtMs(step.castMs)}` +
+        (step.lane ? `, painting a ${step.lane.length}px lane ${step.lane.halfWidth}px half-wide` +
+          (step.lane.lockAtCastPct !== undefined ? ` that commits at ${fmtPct(step.lane.lockAtCastPct)} of the cast` : '') : '') +
+        (step.interruptible === false ? '; cannot be interrupted' : '') +
+        (step.guardable === false ? '; Guard does not answer this beat' : '');
+    case 'charge':
+      return `Charges at ${fmtNumber(step.speed)}px/s for up to ${fmtMs(step.maxTravelMs)}` +
+        (step.stopsOnContact === false ? ', passing through players' : ', stopping on player contact') +
+        ` for ${fmtMult(pattern.damageMultiplier * (step.damageMult ?? 1))} damage`;
+    case 'impact':
+      return `${step.name}: ${fmtMult(pattern.damageMultiplier * step.damageMult)} damage in a ${step.radius}px circle` +
+        ` after a ${fmtMs(step.telegraphMs)} telegraph` +
+        (step.stunMs ? `, stunning for ${fmtMs(step.stunMs)}` : '') +
+        (step.requiresChargeHit ? '; only if the charge connected' : '');
+    case 'fault-lines':
+      return `After ${fmtMs(step.delayMs)}, ${step.rayCount} fault lines reach ${step.length}px` +
+        ` (line radius ${step.lineRadius}px) for ${fmtMult(pattern.damageMultiplier * step.damageMult)} damage` +
+        (step.innerRadius ? `; inner ring ${step.innerRadius}px` : '') +
+        (step.requiresChargeHit ? '; only if the charge connected' : '');
+    case 'barrier':
+      return `Raises a ${fmtPct(step.shieldPct)} max-HP barrier` +
+        (step.onBreak ? `; breaking it causes ${step.onBreak.label} for ${fmtMs(step.onBreak.staggerMs)}` : '');
+    case 'drop-barrier':
+      return `Drops the ${readableId(step.sourceId)} barrier`;
+    case 'apply-status':
+      return `Casts ${step.name} for ${fmtMs(step.castMs)}: ${statusLabel(step.effectId, step.name)}` +
+        ` ×${step.stacks} for ${fmtMs(step.durationMs)}${describePatternStatus(step)}` +
+        (step.requires ? `; requires ${step.requires.minStacks}+ ${statusLabel(step.requires.effectId)}` : '') +
+        (step.interruptible === false ? '; cannot be interrupted' : '');
+    case 'payoff': {
+      const base = pattern.damageMultiplier * step.damageMult;
+      const amplified = step.amplifiedMult !== undefined
+        ? pattern.damageMultiplier * step.damageMult * step.amplifiedMult
+        : undefined;
+      return `Casts ${step.name} for ${fmtMs(step.castMs)}: ${fmtMult(base)} damage` +
+        (step.radius ? ` in a ${step.radius}px circle` : '') +
+        (amplified !== undefined && step.consumes
+          ? `, amplified to ${fmtMult(amplified)} while ${statusLabel(step.consumes.effectId)} is present` : '') +
+        (step.consumes ? `; consumes ${statusLabel(step.consumes.effectId)}` : '') +
+        (step.healsSelfPct ? `; restores ${fmtPct(step.healsSelfPct)} max HP on hit` : '') +
+        (step.interruptible === false ? '; cannot be interrupted' : '');
+    }
+    case 'conceal':
+      return `${step.name}: leaves a ${step.marker} marker and becomes untargetable for up to ${fmtMs(step.durationMs)}` +
+        (step.travelSpeed ? ` and travels at ${fmtNumber(step.travelSpeed)}px/s` : '') +
+        (step.relocate === 'near-target' ? ` to ${step.emergeGap ?? 0}px from the target` : '') +
+        (step.relocate === 'leash-edge' ? ' toward the far edge of its leash' : '') +
+        (step.feint ? `, feinting away until ${fmtPct(step.feint.untilPct)} of the travel` : '') +
+        (step.surfacesOnContact ? '; surfaces on contact' : '') +
+        (step.contactSlow ? ` and slows contact to ${fmtPct(step.contactSlow.speedMult)} for ${fmtMs(step.contactSlow.durationMs)}` : '') +
+        (step.interruptible === false ? '; cannot be interrupted' : '');
+    case 'escape-guard':
+      return `Casts ${step.name} for ${fmtMs(step.castMs)} behind a ${fmtPct(step.shieldPct)} barrier` +
+        (step.flee ? `, fleeing at ${fmtNumber(step.flee.speed)}px/s` : '') +
+        `; breaking it causes ${step.onBreak.label} for ${fmtMs(step.onBreak.staggerMs)}` +
+        ` and builds up to ${step.maxInstinctStacks} Escape Instinct stacks` +
+        ` (each shortens the next cast by ${fmtPct(step.instinctCastReductionPct)})`;
+    case 'pull':
+      return `Casts ${step.name} for ${fmtMs(step.castMs)} and pulls the target ${step.distance}px` +
+        (step.interruptible === false ? '; cannot be interrupted' : '');
+    case 'wait':
+      return `Waits ${fmtMs(step.durationMs)} while the sequence remains committed`;
+    case 'recovery':
+      return `${step.label}: rooted and unable to attack for ${fmtMs(step.durationMs)}`;
+  }
+}
+
+function describeStageAction(action: StageAction): string {
+  switch (action.type) {
+    case 'spawn-waves':
+      return action.waves.map((wave, index) =>
+        `Wave ${index + 1}: ${wave.adds.map((add) => `${add.count} × ${monsterLabel(add.monsterTypeId)}`).join(', ')}`,
+      ).join('; ');
+    case 'spawn-elites':
+      if (action.offsetRange !== undefined) {
+        return `Spawns ${action.count} \u00d7 ${monsterLabel(action.monsterTypeId)} elite${action.count === 1 ? '' : 's'} within ${action.offsetRange}px`;
+      }
+      return `Spawns ${action.count} × ${monsterLabel(action.monsterTypeId)} elite${action.count === 1 ? '' : 's'}`;
+    case 'environmental-dot': {
+      const stackCap = action.stackCap ?? action.maxStacks;
+      return `Activates ${statusLabel(action.effectId)}: ${fmtNumber(action.damagePerStack)} damage per stack every ${fmtMs(action.tickIntervalMs)}` +
+        `, refreshing every ${fmtMs(action.refreshMs)}, up to ${stackCap > 0 ? stackCap : 'an uncapped'} stacks` +
+        (action.hazardHint ? ` (${action.hazardHint})` : '');
+    }
+    case 'set-invulnerable':
+      return action.value ? 'Boss becomes invulnerable' : 'Boss becomes vulnerable';
+    case 'set-rooted':
+      return action.value ? 'Boss is rooted' : 'Boss can move again';
+    case 'set-cannot-attack':
+      return action.value ? 'Boss stops attacking' : 'Boss resumes attacking';
+    case 'set-feature-block':
+      return `${action.value ? 'Activates' : 'Opens'} ${readableId(action.featureId)}`;
+  }
+}
+
+function describeStageCondition(kind: string): string {
+  if (kind === 'adds-cleared') return 'after all adds are defeated';
+  if (kind === 'elites-cleared') return 'after all elites are defeated';
+  return 'after all waves are defeated';
+}
+
+function describeChargedAttack(def: MonsterDefinition): BestiaryAbilityLine | null {
+  const charged = def.chargedAttack;
+  if (!charged) return null;
+  const details: string[] = [`Hits for ${fmtMult(charged.multiplier)} attack damage`];
+  if (charged.aoe) {
+    details.push(`in a ${charged.aoe.radius}px planted circle` +
+      (charged.aoe.damageMult !== undefined ? ` at ${fmtMult(charged.multiplier * charged.aoe.damageMult)} total damage` : ''));
+  }
+  if (charged.precastStunMs) details.push(`stuns the target during the first ${fmtMs(charged.precastStunMs)}`);
+  if (charged.marksTarget) details.push(`marks the target for ${fmtMs(charged.marksTarget.durationMs)}`);
+  if (charged.rootMs) details.push(`roots on impact for ${fmtMs(charged.rootMs)}`);
+  if (charged.appliesSlow) details.push(`slows on impact to ${fmtPct(charged.appliesSlow.speedMult)} for ${fmtMs(charged.appliesSlow.durationMs)}`);
+  if (charged.appliesAntiheal) details.push(`reduces healing by ${fmtPct(charged.appliesAntiheal.reduction)} for ${fmtMs(charged.appliesAntiheal.durationMs)}`);
+  if (charged.refreshesPlayerDots) details.push(`extends existing DoTs by ${fmtMs(charged.refreshesPlayerDots.extendMs)} up to ${fmtMs(charged.refreshesPlayerDots.maxTotalMs)}`);
+  if (charged.requiresAmbientStacks) details.push(`only arms at ${charged.requiresAmbientStacks}+ ambient-ramp stacks`);
+  if (charged.stunMs) details.push(`stuns every victim for ${fmtMs(charged.stunMs)}`);
+  if (charged.knockback) details.push(`knocks victims back ${charged.knockback.distance}px`);
+  if (charged.healsSelfPct) details.push(`restores ${fmtPct(charged.healsSelfPct)} max HP on a landed hit`);
+  if (charged.pool) {
+    details.push(`leaves a ${charged.pool.durationMs >= 600000 ? 'lingering' : fmtMs(charged.pool.durationMs)} pool` +
+      ` dealing ${fmtNumber(charged.pool.damagePerTick)} every ${fmtMs(charged.pool.tickIntervalMs)}` +
+      (charged.pool.slowSpeedMult !== undefined ? ` and slowing to ${fmtPct(charged.pool.slowSpeedMult)}` : '') +
+      (charged.pool.vulnerability ? `, with +${fmtPct(charged.pool.vulnerability.damageTakenPct)} damage taken for ${fmtMs(charged.pool.vulnerability.durationMs)}` : '') +
+      (charged.pool.detonationMultiplier ? `, detonating for ${fmtMult(charged.pool.detonationMultiplier)}` : ''));
+  }
+  if (charged.aftershock) {
+    details.push(`after ${fmtMs(charged.aftershock.delayMs)}, ${charged.aftershock.rayCount} fault lines deal ${fmtMult(charged.aftershock.damageMultiplier)} damage`);
+  }
+  if (charged.hastenedBy) {
+    details.push(`its cast shortens by ${fmtPct(1 - charged.hastenedBy.castMsMultPerStack)} per ${charged.hastenedBy.bossEffect} stack, to a ${fmtMs(charged.hastenedBy.minCastMs)} floor`);
+  }
+  return {
+    id: 'charged-attack',
+    name: charged.name,
+    icon: '!',
+    kind: 'cast',
+    castMs: charged.castMs,
+    cooldownMs: charged.cooldownMs,
+    initialCooldownMs: charged.initialCooldownMs,
+    detail: `${details.join('; ')}. The impact is committed when the cast begins, so walking out of the telegraph is the answer.`,
+  };
+}
+
+function describeEngageSequence(def: MonsterDefinition): BestiaryAbilityLine | null {
+  const sequence = def.engageSequence;
+  if (!sequence) return null;
+  if (sequence.kind === 'charge-lock-charged-attack') {
+    return {
+      id: 'engage-sequence',
+      name: 'Opening charge',
+      icon: '»',
+      kind: 'sequence',
+      trigger: 'On first aggro',
+      detail: `Locks onto a target, then charges at ${fmtMult(sequence.speedMult)} move speed for up to ${fmtMs(sequence.maxChargeMs)} before beginning its signature attack.`,
+    };
+  }
+  if (sequence.kind === 'cast-charge-root') {
+    return {
+      id: 'engage-sequence',
+      name: sequence.name,
+      icon: '»',
+      kind: 'sequence',
+      castMs: sequence.castMs,
+      trigger: 'On first aggro',
+      detail: `Casts, then charges at ${fmtMult(sequence.speedMult)} move speed for up to ${fmtMs(sequence.maxChargeMs)}; contact roots the target for ${fmtMs(sequence.rootMs)}${sequence.followWithChargedAttack ? ' and immediately arms its signature attack' : ''}.`,
+    };
+  }
+  return {
+    id: 'engage-sequence',
+    name: sequence.name,
+    icon: '»',
+    kind: 'sequence',
+    castMs: sequence.castMs,
+    trigger: 'On first aggro',
+    detail: `Casts, then dives at ${fmtMult(sequence.speedMult)} move speed for up to ${fmtMs(sequence.maxChargeMs)}; the landing hits for ${fmtMult(sequence.damageMultiplier)} attack damage.`,
+  };
+}
+
+function describeBossPattern(def: MonsterDefinition): BestiaryAbilityLine | null {
+  const pattern = def.bossPattern;
+  if (!pattern) return null;
+  const triggerParts: string[] = [];
+  if (pattern.armAboveHpPct !== undefined) triggerParts.push(`at or above ${fmtPct(pattern.armAboveHpPct)} HP`);
+  if (pattern.armBelowHpPct !== undefined) triggerParts.push(`at or below ${fmtPct(pattern.armBelowHpPct)} HP`);
+  return {
+    id: `boss-pattern-${pattern.id}`,
+    name: pattern.name,
+    icon: '★',
+    kind: 'sequence',
+    cooldownMs: pattern.cooldownMs,
+    initialCooldownMs: pattern.initialCooldownMs,
+    trigger: triggerParts.length > 0 ? triggerParts.join(' and ') : 'While engaged',
+    detail: `Commits to one ordered sequence for ${fmtMult(pattern.damageMultiplier)} base damage, suppressing ordinary attacks until recovery` +
+      (pattern.oncePerLife ? '; runs once per life.' : '.'),
+    steps: pattern.steps.map((step) => describeBossPatternStep(step, pattern)),
+  };
+}
+
+function describeUltimateEncounter(def: MonsterDefinition): BestiaryAbilityLine | null {
+  const encounter = def.ultimateEncounter;
+  if (!encounter) return null;
+  return {
+    id: 'ultimate-encounter',
+    name: 'Ultimate encounter',
+    icon: '☠',
+    kind: 'encounter',
+    trigger: 'On boss engagement',
+    detail: `${encounter.stages.length}-stage objective fight` +
+      (encounter.reset.onWipe ? '; resets on a party wipe' : '') +
+      (encounter.spawnFromFeatureId ? `; waves emerge from ${readableId(encounter.spawnFromFeatureId)}` : '') + '.',
+    steps: encounter.stages.map((stage, index) => {
+      const label = stage.displayName ?? stage.id.toUpperCase();
+      const actions = stage.onEnter.map(describeStageAction).join('; ');
+      const completion = stage.completeWhen ? `, then advances ${describeStageCondition(stage.completeWhen.kind)}` : ', then ends when the boss dies';
+      return `Stage ${index + 1} — ${label}: ${actions}${completion}`;
+    }),
+  };
+}
+
+/**
+ * Build the explicit cast and encounter panel for one monster. Unlike the compact
+ * mechanic list, this keeps wind-ups, cooldowns, first-use delays, thresholds and
+ * ordered boss steps visible as separate pieces of information.
+ */
+export function describeMonsterAbilities(
+  def: MonsterDefinition,
+  mods?: DungeonMonsterModifiers,
+): BestiaryAbilityLine[] {
+  const abilities: BestiaryAbilityLine[] = [];
+  const push = (line: BestiaryAbilityLine | null) => {
+    if (line) abilities.push(line);
+  };
+
+  push(describeEngageSequence(def));
+  push(describeChargedAttack(def));
+
+  if (def.castedAttackSpeedBuff) {
+    const buff = def.castedAttackSpeedBuff;
+    const target = buff.target === 'self'
+      ? 'itself'
+      : `nearby monsters within ${buff.radius ?? 'the node'}${typeof buff.radius === 'number' ? 'px' : ''}`;
+    const outcome = buff.attacks !== undefined
+      ? `its next ${Math.max(1, Math.round(buff.attacks))} attacks gain +${fmtPct(buff.attackSpeedPct)} attack speed`
+      : `${target} gains +${fmtPct(buff.attackSpeedPct)} attack speed${buff.durationMs ? ` for ${fmtMs(buff.durationMs)}` : ''}`;
+    push({
+      id: 'casted-haste',
+      name: buff.name,
+      icon: '↯',
+      kind: 'cast',
+      castMs: buff.castMs,
+      cooldownMs: buff.cooldownMs,
+      initialCooldownMs: buff.initialCooldownMs,
+      detail: `After the cast, ${outcome}` +
+        (buff.rallyNearby ? `; rallies up to ${Math.max(0, Math.round(buff.rallyNearby.maxTargets))} unengaged monsters${buff.rallyNearby.oncePerCombat === false ? '' : ' once per combat'}` : '') +
+        (buff.castWhileOutOfRange ? ' It can begin outside basic attack range.' : '.'),
+    });
+  }
+
+  for (const ability of def.monsterAbilities ?? []) {
+    push({
+      id: `ability-${ability.id}`,
+      name: ability.name,
+      icon: '⚡',
+      kind: 'cast',
+      castMs: ability.castMs,
+      cooldownMs: ability.cooldownMs,
+      initialCooldownMs: ability.initialCooldownMs,
+      detail: `${describeMonsterAbility(ability)}${ability.fx ? ` Visual cue: ${readableId(ability.fx)}.` : ''}`,
+    });
+  }
+
+  if (def.lowHealthWard) {
+    const ward = def.lowHealthWard;
+    push({
+      id: 'low-health-ward',
+      name: ward.name,
+      icon: '◈',
+      kind: 'cast',
+      castMs: ward.castMs,
+      trigger: `At or below ${fmtPct(ward.thresholdPct)} HP`,
+      detail: `Stops to raise a ${fmtPct(ward.wardPct)} max-HP ward for ${fmtMs(ward.durationMs)}. It is a one-time cast.`,
+    });
+  }
+
+  if (def.shellUp) {
+    const shell = def.shellUp;
+    push({
+      id: 'shell-up',
+      name: 'Shell up',
+      icon: '⬢',
+      kind: shell.castMs ? 'cast' : 'passive',
+      castMs: shell.castMs,
+      cooldownMs: shell.repeatIntervalMs,
+      trigger: `At or below ${fmtPct(shell.atHpPct)} HP`,
+      detail: `Retracts for ${fmtMs(shell.durationMs)}; direct damage is multiplied by ${fmtMult(shell.directDamageMult)} while shelled` +
+        (shell.pool ? ` and leaves a ${shell.pool.radius}px pool dealing ${fmtNumber(shell.pool.damagePerTick)} every ${fmtMs(shell.pool.tickIntervalMs)}` : '') +
+        (shell.pool?.rampAccelMult !== undefined ? `; standing in it accelerates the ambient ramp by ${fmtMult(shell.pool.rampAccelMult)}` : '') +
+        (shell.repeatIntervalMs ? `, repeating every ${fmtMs(shell.repeatIntervalMs)} after the first shell` : ', once per life') + '.',
+    });
+  }
+
+  if (def.enemyShield) {
+    const shield = def.enemyShield;
+    const shatter = shield.shatter
+      ? ` Breaking it deals ${fmtPct(shield.shatter.selfDamagePct)} max-HP damage` +
+        (shield.shatter.vulnerability ? ` and opens a +${fmtPct(shield.shatter.vulnerability.damageTakenPct)} damage window for ${fmtMs(shield.shatter.vulnerability.durationMs)}` : '') +
+        (shield.shatter.freezeRadius !== undefined && shield.shatter.freezeDurationMs !== undefined
+          ? ` and freezes enemy monsters within ${shield.shatter.freezeRadius}px for ${fmtMs(shield.shatter.freezeDurationMs)}` : '') + '.'
+      : '';
+    push({
+      id: 'enemy-shield',
+      name: 'Periodic shield',
+      icon: '◈',
+      kind: 'passive',
+      cooldownMs: shield.rechargeAfterCleanMs ?? shield.intervalMs,
+      detail: shield.rechargeAfterCleanMs
+        ? `Gains a ${fmtPct(shield.shieldPct)} max-HP barrier for ${fmtMs(shield.durationMs)} after ${fmtMs(shield.rechargeAfterCleanMs)} without taking a hit; every hit restarts that timer.` + shatter
+        : `Gains a ${fmtPct(shield.shieldPct)} max-HP barrier for ${fmtMs(shield.durationMs)} every ${fmtMs(shield.intervalMs)}.` + shatter,
+    });
+  }
+
+  if (def.empowersAllies) {
+    const support = def.empowersAllies;
+    push({
+      id: 'ally-haste',
+      name: 'Ally haste',
+      icon: '↯',
+      kind: 'passive',
+      cooldownMs: support.intervalMs,
+      detail: `Every ${fmtMs(support.intervalMs)}, nearby allies within ${support.radius}px gain +${fmtPct(support.attackSpeedPct)} attack speed for ${fmtMs(support.durationMs)}.`,
+    });
+  }
+
+  if (def.appliesAntiheal) {
+    const antiheal = def.appliesAntiheal;
+    push({
+      id: 'antiheal',
+      name: 'Healing suppression',
+      icon: '✚',
+      kind: 'passive',
+      trigger: 'On landed hit',
+      detail: `Each hit reduces your healing by ${fmtPct(antiheal.reductionPerStack)}, up to ${antiheal.maxStacks} stacks, for ${fmtMs(antiheal.durationMs)} after the last hit.`,
+    });
+  }
+
+  if (def.raisesDead) {
+    const raise = def.raisesDead;
+    push({
+      id: 'raises-dead',
+      name: raise.castName ?? 'Raises the dead',
+      icon: '☠',
+      kind: raise.castMs ? 'cast' : 'passive',
+      castMs: raise.castMs,
+      cooldownMs: raise.intervalMs,
+      initialCooldownMs: raise.initialDelayMs,
+      detail: `Re-animates one nearby corpse within ${raise.corpseRange}px every ${fmtMs(raise.intervalMs)}` +
+        `, capped at ${raise.maxAlive} risen at once` +
+        (raise.hpMult !== undefined || raise.damageMult !== undefined ? ` (${fmtMult(raise.hpMult ?? 1)} HP, ${fmtMult(raise.damageMult ?? 1)} damage)` : '') +
+        '. Risen dead grant no rewards and crumble when their raiser dies.',
+    });
+  }
+
+  if (def.onDeath?.spawnHazard) {
+    const hazard = def.onDeath.spawnHazard;
+    push({
+      id: 'death-hazard',
+      name: 'Toxic remains',
+      icon: '☣',
+      kind: 'passive',
+      trigger: 'On death',
+      detail: `Leaves a ${hazard.radius}px pool for ${fmtMs(hazard.durationMs)} dealing ${fmtNumber(hazard.damagePerTick)} damage every ${fmtMs(hazard.tickIntervalMs)}` +
+        (hazard.slowSpeedMult !== undefined ? ` and slowing movement to ${fmtPct(hazard.slowSpeedMult)}` : '') + '.',
+    });
+  }
+
+  if (def.onDeath?.empowerAllies) {
+    const empower = def.onDeath.empowerAllies;
+    push({
+      id: 'death-empower',
+      name: 'Death surge',
+      icon: '↟',
+      kind: 'passive',
+      trigger: 'On death',
+      detail: `Nearby monsters within ${empower.radius}px gain +${fmtPct(empower.damagePct)} damage for ${fmtMs(empower.durationMs)}` +
+        `, up to ${empower.maxStacks ?? 3} stacks.`,
+    });
+  }
+
+  if (def.chargeOnAggro) {
+    const charge = def.chargeOnAggro;
+    push({
+      id: 'charge',
+      name: 'Charge',
+      icon: '»',
+      kind: 'passive',
+      trigger: 'On first aggro',
+      detail: `Bursts to ${fmtMult(charge.speedMult)} move speed for ${fmtMs(charge.durationMs)}.`,
+    });
+  }
+
+  const openingStrikeMult = mods?.openingStrikeMult ?? def.openingStrike?.multiplier;
+  if (openingStrikeMult !== undefined) {
+    push({
+      id: 'opening-strike',
+      name: 'Opening strike',
+      icon: '⚔',
+      kind: 'passive',
+      trigger: 'First landed attack each combat session',
+      detail: `That first hit deals ${fmtMult(openingStrikeMult)} damage, then the effect disarms until re-aggro.`,
+    });
+  }
+
+  if (def.openingVolley) {
+    push({
+      id: 'opening-volley',
+      name: 'Opening volley',
+      icon: '⚔',
+      kind: 'passive',
+      trigger: 'First attack each combat session',
+      detail: `The opening beat delivers ${def.openingVolley.hits} separate full-pipeline hits.`,
+    });
+  }
+
+  if (def.cadenceVolley) {
+    push({
+      id: 'cadence-volley',
+      name: 'Cadence volley',
+      icon: '⚔',
+      kind: 'passive',
+      trigger: `Every ${def.cadenceVolley.everyNAttacks} attacks`,
+      detail: `That attack beat delivers ${def.cadenceVolley.hits} separate full-pipeline hits.`,
+    });
+  }
+
+  if (def.cadenceFinisher) {
+    push({
+      id: 'cadence-finisher',
+      name: 'Cadence finisher',
+      icon: '⚔',
+      kind: 'passive',
+      trigger: `Every ${def.cadenceFinisher.everyNAttacks} attacks`,
+      detail: `The finisher lands for ${fmtMult(def.cadenceFinisher.multiplier)} damage` +
+        (def.cadenceFinisher.rootMs ? ` and roots for ${fmtMs(def.cadenceFinisher.rootMs)}` : '') + '.',
+    });
+  }
+
+  if (def.empoweredCooldown) {
+    push({
+      id: 'empowered-cooldown',
+      name: 'Empowered strike',
+      icon: '⏱',
+      kind: 'passive',
+      cooldownMs: def.empoweredCooldown.cooldownMs,
+      detail: `Every ${fmtMs(def.empoweredCooldown.cooldownMs)}, its next landed attack deals ${fmtMult(def.empoweredCooldown.multiplier)} damage.`,
+    });
+  }
+
+  if (def.appliesMark) {
+    push({
+      id: 'sun-mark',
+      name: 'Sun Mark',
+      icon: '✦',
+      kind: 'passive',
+      trigger: 'On landed hit',
+      detail: `Marks you for ${fmtMs(def.appliesMark.durationMs)}; a marked strike can consume the mark for amplified damage.`,
+    });
+  }
+
+  if (def.markedStrike) {
+    push({
+      id: 'marked-strike',
+      name: 'Marked strike',
+      icon: '✦',
+      kind: 'passive',
+      trigger: 'When hitting a Sun-Marked target',
+      detail: `Consumes Sun Mark and multiplies that hit by ${fmtMult(def.markedStrike.multiplier)}.`,
+    });
+  }
+
+  push(describeBossPattern(def));
+
+  if (def.bossScript) {
+    for (const [index, phase] of (def.bossScript.phases ?? []).entries()) {
+      push({
+        id: `boss-phase-${index}-${phase.hpPct}`,
+        name: `Phase at ${fmtPct(phase.hpPct)} HP`,
+        icon: '★',
+        kind: 'sequence',
+        trigger: `When HP falls to ${fmtPct(phase.hpPct)}`,
+        detail: 'One-time phase actions:',
+        steps: phase.actions.map(describeBossAction),
+      });
+    }
+    for (const [index, repeating] of (def.bossScript.repeating ?? []).entries()) {
+      push({
+        id: `boss-repeat-${index}`,
+        name: 'Recurring boss beat',
+        icon: '↻',
+        kind: 'sequence',
+        cooldownMs: repeating.intervalMs,
+        initialCooldownMs: repeating.initialDelayMs,
+        trigger: 'While engaged',
+        detail: 'Repeats until the boss disengages:',
+        steps: repeating.actions.map(describeBossAction),
+      });
+    }
+  }
+
+  push(describeUltimateEncounter(def));
+  return abilities;
 }
 
 /**
@@ -147,6 +832,7 @@ export function describeMonsterMechanics(
         `Applies ${flavor.label} on hit: ${perStack}/tick every ${fmtMs(def.dotEffect.tickIntervalMs)} ` +
         `(${perStackPerSec}/s per stack), up to ${def.dotEffect.maxStacks} stacks ` +
         `(${maxPerSec}/s at max)` +
+        (def.dotEffect.openerStacks ? `; the first landed hit applies ${Math.min(def.dotEffect.openerStacks, def.dotEffect.maxStacks)} stacks` : '') +
         (def.dotEffect.durationMs ? `, lasts ${fmtMs(def.dotEffect.durationMs)}.` : '.') +
         (def.dotEffect.bypassBarrier ? ' Bypasses the barrier.' : ''),
     });
@@ -216,6 +902,7 @@ export function describeMonsterMechanics(
       id: 'charged-attack',
       icon: '!',
       label: charged.name,
+      category: 'ability',
       detail:
         `Charges for ${fmtMs(charged.castMs)} before a ${fmtMult(charged.multiplier)} hit` +
         (charged.aoe ? ` in a ${charged.aoe.radius}px planted circle` : '') +
@@ -241,6 +928,7 @@ export function describeMonsterMechanics(
       id: 'casted-haste',
       icon: '↯',
       label: buff.name,
+      category: 'ability',
       detail: `Casts for ${fmtMs(buff.castMs)}, then ${outcome}${rally}.`,
     });
   }
@@ -251,6 +939,7 @@ export function describeMonsterMechanics(
         id: `ability-${ability.id}`,
         icon: '⚡',
         label: ability.name,
+        category: 'ability',
         detail: describeMonsterAbility(ability),
       });
     }
@@ -261,6 +950,7 @@ export function describeMonsterMechanics(
       id: 'cadence',
       icon: '⚔',
       label: 'Cadence finisher',
+      category: 'ability',
       detail: `Every ${def.cadenceFinisher.everyNAttacks}th attack hits for ${fmtMult(def.cadenceFinisher.multiplier)} damage.`,
     });
   }
@@ -270,6 +960,7 @@ export function describeMonsterMechanics(
       id: 'empowered-cd',
       icon: '⏱',
       label: 'Empowered strike',
+      category: 'ability',
       detail: `Every ${fmtMs(def.empoweredCooldown.cooldownMs)}, its next attack hits for ${fmtMult(def.empoweredCooldown.multiplier)} damage.`,
     });
   }
@@ -279,6 +970,7 @@ export function describeMonsterMechanics(
       id: 'shield',
       icon: '◈',
       label: 'Periodic shield',
+      category: 'ability',
       detail: `Gains a ${fmtPct(def.enemyShield.shieldPct)} max-HP barrier every ${fmtMs(def.enemyShield.intervalMs)} (lasts ${fmtMs(def.enemyShield.durationMs)}). Rewards burst; punishes chip.`,
     });
   }
@@ -341,6 +1033,7 @@ export function describeMonsterMechanics(
       id: 'charge',
       icon: '»',
       label: 'Charge',
+      category: 'ability',
       detail: `Bursts to ${fmtMult(def.chargeOnAggro.speedMult)} move speed for ${fmtMs(def.chargeOnAggro.durationMs)} when it first aggros.`,
     });
   }
@@ -361,6 +1054,7 @@ export function describeMonsterMechanics(
       id: 'raises-dead',
       icon: '☠',
       label: 'Raises the dead',
+      category: 'ability',
       detail:
         `Every ${fmtMs(raise.intervalMs)} while fighting, it re-animates a corpse within ` +
         `${raise.corpseRange}px (up to ${raise.maxAlive} at once). Its risen dead grant ` +
@@ -393,6 +1087,7 @@ export function describeMonsterMechanics(
         id: `phase-${phase.hpPct}`,
         icon: '★',
         label: `Phase at ${fmtPct(phase.hpPct)} HP`,
+        category: 'ability',
         detail: phase.actions.map(describeBossAction).join('; ') + '.',
       });
     }
@@ -401,6 +1096,7 @@ export function describeMonsterMechanics(
         id: `repeat-${i}`,
         icon: '↻',
         label: `Every ${fmtMs(r.intervalMs)}`,
+        category: 'ability',
         detail: r.actions.map(describeBossAction).join('; ') + '.',
       });
     });
@@ -411,6 +1107,7 @@ export function describeMonsterMechanics(
       id: 'ultimate',
       icon: '☠',
       label: 'Multi-stage encounter',
+      category: 'ability',
       detail: `A staged boss fight (${def.ultimateEncounter.stages.length} stages) with objectives between phases.`,
     });
   }

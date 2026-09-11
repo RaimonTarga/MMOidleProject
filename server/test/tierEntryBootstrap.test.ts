@@ -4,7 +4,7 @@ import {
   SKILL_TREE,
   STANCE_RECIPE_DATABASE,
   emptyEquipment,
-  emptyEquippedAbilities,
+  emptyAttunedAbilities,
   emptyEquippedRites,
   emptyEquippedStances,
   type TierEntryProfile,
@@ -46,7 +46,7 @@ const profile: TierEntryProfile = {
   equipment: emptyEquipment(),
   itemUpgrades: {},
   knownAbilities: [],
-  equippedAbilities: emptyEquippedAbilities(),
+  attunedAbilities: emptyAttunedAbilities(),
   runeRecipesCrafted: [],
   runesEquipped: [],
   knownStances: [],
@@ -87,7 +87,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      equippedAbilities: emptyEquippedAbilities(),
+      attunedAbilities: emptyAttunedAbilities(),
       knownStances: [],
       equippedStances: emptyEquippedStances(),
       activeStance: null,
@@ -189,7 +189,7 @@ player.tracksProgression.catalysts.alacrity = 1;
 const stance = craftStanceRecipe(world, player, stanceRecipe.id);
 assert(stance.success, stance.reason ?? "stance craft should succeed");
 assert(player.tracksProgression.knownStances.includes("offensive-stance"), "stance craft learns the stance");
-const stanceLoadout = setStanceLoadout(world, player, "default", "offensive-stance");
+const stanceLoadout = setStanceLoadout(world, player, "default", "offensive-stance", ["offensive-stance"]);
 assert(stanceLoadout.success, stanceLoadout.reason ?? "known stance should equip");
 assert(player.tracksProgression.equippedStances.default === "offensive-stance", "default stance is assigned");
 assert(player.tracksProgression.activeStance === "offensive-stance", "active stance follows the default");

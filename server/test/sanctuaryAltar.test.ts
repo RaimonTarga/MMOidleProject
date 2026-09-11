@@ -45,7 +45,7 @@ function playerSlices(id: string, nodeId: string, x: number, y: number): Persist
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null },
+      attunedAbilities: { technique: null, guard: null },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

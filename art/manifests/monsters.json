@@ -2595,6 +2595,1026 @@
       "negative": "human, face, eyes, mouth, skin, flesh, creature, animal, soldier, knight, little robot, modern robot, drone, cute drone, toy, mascot, comedy, sci-fi gadget, sleek plastic, cockpit, pilot, weapon, gun, blade, repair arms, tether loops, chains, binding lattice, bright neon, colorful, glowing body, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, blurry, 3d render, photograph, hard black outline, text, watermark",
       "status": "accepted",
       "notes": "Iron Marches visual-identity pass only. Smaller support sprite; emphasize shielding, warding, and defensive reinforcement rather than repair or restraint. Do not pack, wire, or add gameplay sources until the cast is reviewed."
+    },
+    {
+      "id": "ruins-vanguard",
+      "out": "sprites/monsters/ruins-vanguard.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a fallen adventurer called the Ruins Vanguard, a shield-bearing frontline humanoid vessel in ruined layered armor, a heavy round shield and broken ancient tabard defining a broad protector silhouette, the helmet is sealed with a blank shadowed face and small relic straps hang from the shoulders, braced shield-forward stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-bulwark",
+      "out": "sprites/monsters/ruins-bulwark.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a fallen adventurer called the Ruins Bulwark, an immense slow tank vessel in fortress-like ceremonial plate, a tall tower shield hiding most of the torso, overlapping slab armor and broken stone-bronze heraldry making a wide immovable silhouette, sealed helm with a blank visage, planted wall-like stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-pike-veteran",
+      "out": "sprites/monsters/ruins-pike-veteran.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a fallen soldier-adventurer called the Ruins Pike Veteran, a disciplined hollowed humanoid in worn scale and plate carrying a long pike with a chipped metal head, faded unit cloth and orderly armor bands communicate an old formation soldier, hood and mask fully obscure the face, upright but grounded braced thrust stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-arbalist",
+      "out": "sprites/monsters/ruins-arbalist.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a hollowed adventurer called the Ruins Arbalist, a lighter ruined humanoid hunter built around a compact heavy crossbow, strapped quiver, shoulder guard and a broken siege-hunter frame give a clear ranged silhouette, hood and iron mask conceal the face, crouched braced firing stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "regen",
+      "notes": "too techy"
+    },
+    {
+      "id": "ruins-archer",
+      "out": "sprites/monsters/ruins-archer.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a hollowed ranger called the Ruins Archer, a lean ruined adventurer wrapped in a tattered mantle, carrying a simple recurved bow with a worn quiver and relic cord, the hood falls into a blank shadow with no human features, low crouched ambush-ready stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-rogue",
+      "out": "sprites/monsters/ruins-rogue.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a hollowed skulker called the Ruins Rogue, a lightly armored hunched adventurer wrapped in torn dark cloth, narrow shoulder plates and two short chipped daggers create a compact predatory silhouette, a deep hood and featureless mask hide the face, low sideways stalking stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-spellblade",
+      "out": "sprites/monsters/ruins-spellblade.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a hollowed duelist called the Ruins Spellblade, a lean ruined adventurer in fractured armor with one chipped sword wrapped in restrained arcane bands, broken relic rings and a faded half-tabard show martial skill touched by old magic, blank helm and obscured face, poised low guard stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-mage",
+      "out": "sprites/monsters/ruins-mage.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a fallen caster called the Ruins Mage, a robed adventurer vessel beneath a ruined mantle, a crooked staff and a small suspended relic orb shape the caster silhouette, cloth folds conceal the body and a blank hood contains only shadow, restrained casting-ready stance with the staff planted beside the body, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-hexer",
+      "out": "sprites/monsters/ruins-hexer.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a cursed adventurer called the Ruins Hexer, a narrow robed humanoid vessel carrying a crooked curse staff, hanging bone-free charms, knotted cords and small cracked sigil plates cluster around the arms, the face is hidden behind a layered veil and mask, hunched deliberate curse-weaving stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-mender",
+      "out": "sprites/monsters/ruins-mender.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a hollowed support adventurer called the Ruins Mender, a worn support vessel in layered cloth and light relic armor, a staff-mounted censer and small lantern-reliquary make a readable healer silhouette, the hood and veil conceal any face, eerie restorative smoke implied only by a few restrained wisps, careful planted support stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-summoner",
+      "out": "sprites/monsters/ruins-summoner.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a relic-bound caster called the Ruins Summoner, a robed adventurer vessel with a broken summoning frame strapped to the back, one crooked staff, a few overt but limited skeletal relic pieces and a small orbiting sigil shard, the hood is empty shadow with no face, controlled ritual stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-captain",
+      "out": "sprites/monsters/ruins-captain.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "an elite fallen leader called the Ruins Captain, a commanding ruined adventurer in layered ceremonial armor, a broken banner fragment attached to a long pole and a chipped command blade create a strong leader silhouette, a closed helm and torn veil obscure the face, rigid forward-facing command stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-war-priest",
+      "out": "sprites/monsters/ruins-war-priest.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a ritualist adventurer called the Ruins War Priest, a broad hybrid support-frontliner in worn plate and faded ritual cloth, carrying a blunt mace, old book and small censers arranged as one readable loadout, a blank mask sits beneath a heavy hood, solemn planted stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-seer",
+      "out": "sprites/monsters/ruins-seer.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "an uncanny oracle called the Ruins Seer, a slim veiled adventurer vessel with a blindfold-like layered face covering, a short staff and two small floating relic shards held close to the body, the silhouette is strange but grounded and readable, still contemplative stance with one hand extended, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "regen",
+      "notes": "artstyle too different"
+    },
+    {
+      "id": "ruins-champion",
+      "out": "sprites/bosses/ruins-champion.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "an oversized fallen hero called the Ruins Champion, a large near-boss humanoid vessel in shattered ceremonial armor, an oversized relic greatblade, torn standard and broken shoulder regalia make an impressive fallen-hero silhouette, a sealed featureless helm contains only darkness, heavy planted champion stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-chain-crawler",
+      "out": "sprites/monsters/underworlds-chain-crawler.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Chain Crawler, a low insectoid machine-organism hybrid with a compact plated body, linked chain-like limb segments, hooked forelimbs and a buried pressure-core ridge, its anatomy is strange rather than a normal bug, low crawling stance with the front hooks raised, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-furnace-beetle",
+      "out": "sprites/monsters/underworlds-furnace-beetle.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Furnace Beetle, a broad armored deep beetle with thick heat-darkened shell plates, a blunt furnace vent along the back, short digging legs and small ember seams under the carapace, heavy low stance with the shell angled toward the viewer, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-crucible-hound",
+      "out": "sprites/monsters/underworlds-crucible-hound.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Crucible Hound, a powerful four-legged beast fused with forged plate, a blocky furnace throat, iron jaw braces and dark mineral paws create a brutal hound silhouette, ember heat is confined to narrow seams, low prowling stance on all four legs, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-underworks-sentinel",
+      "out": "sprites/monsters/underworlds-underworks-sentinel.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworks Sentinel, an ancient guardian construct with a tall asymmetrical body, column-like lower limbs, anchor arms and a recessed central aperture, worn stone-metal plates and buried industrial joints make it distinct from a knight, motionless guarding stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-blind-burrower",
+      "out": "sprites/monsters/underworlds-blind-burrower.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Blind Burrower, an eyeless subterranean terror with a thick segmented-but-not-wormlike body, shovel-shaped forelimbs, a wedge muzzle and folded sensory frills instead of eyes, organic hide fused with dark mineral crust, low forward digging stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-ember-parasite",
+      "out": "sprites/monsters/underworlds-ember-parasite.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Ember Parasite, a small strange infernal lifeform with a compact asymmetrical body, gripping tendrils, a sealed ember sac and a tiny biting aperture, unsettling but not gooey or cute, clinging low in a tense ready-to-leap stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-mineral-mite-colossus",
+      "out": "sprites/monsters/underworlds-mineral-mite-colossus.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Mineral Mite Colossus, a dense rocky insectoid with a squat ore-encrusted shell, broad crushing mandibles, six sturdy legs and angular mineral growths that read as armor rather than crystals, heavy low stance with the front body lifted slightly, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-hellshaft-watcher",
+      "out": "sprites/monsters/underworlds-hellshaft-watcher.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Hellshaft Watcher, a demon-adjacent shaft creature with a tall hooded body, one deep furnace-like aperture, folded hook limbs and a crown of worn mineral fins, uncanny and infernal without religious costume, still crouched in a patient watching stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-walking-crucible",
+      "out": "sprites/monsters/underworlds-walking-crucible.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Walking Crucible, a heavy construct-organism hybrid with a bowl-like armored torso, thick jointed legs, a dark recessed furnace cavity and short organic gripping arms, ancient pressure scars and mineral crust break up the engineered shell, ponderous planted stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-ashen-excavator",
+      "out": "sprites/monsters/underworlds-ashen-excavator.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Ashen Excavator, a brutal ancient tunneling creature with a broad wedge snout, reinforced digging forelimbs, ash-caked armor plates and a long low body, its forms suggest excavation without becoming a modern drill machine, forward-burrowing stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-storm-acolyte",
+      "out": "sprites/monsters/stormlands-storm-acolyte.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Storm Acolyte, a faceless robed storm-order humanoid with a narrow staff, layered wind-torn mantle and a small restrained charge coil at the chest, hood and mask fully hide the face, feet planted before a sudden attack, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-thunder-bishop",
+      "out": "sprites/monsters/stormlands-thunder-bishop.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Thunder Bishop, a tall ritual storm humanoid in heavy layered vestments, a blunt lightning staff and squared shoulder mantle create a commanding silhouette, the hooded head is a blank dark vessel beneath a restrained pale arc, solemn braced stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-tempest-knight",
+      "out": "sprites/monsters/stormlands-tempest-knight.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Tempest Knight, a sealed storm-order warrior in weathered plate, a long storm lance, torn cloak and narrow charged seams distinguish it from an Iron Marches construct, the helm has no face or eye slit, forward-leaning charge-ready stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-fulgurite-stalker",
+      "out": "sprites/monsters/stormlands-fulgurite-stalker.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Fulgurite Stalker, a low predatory storm creature with a lean body, glassy fulgurite spines along the back, long gripping forelimbs and a narrow head, charge is held in small pale scars rather than broad lightning, crouched stalking stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-storm-hound",
+      "out": "sprites/monsters/stormlands-storm-hound.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Storm Hound, a lean four-legged hound with wind-swept fur or hide, blunt storm-worn horns, a narrow muzzle and tiny charged cracks at the neck, restrained static clings to the silhouette, low prowling stance on all four legs, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "regen",
+      "notes": "model added shadows under the sprite"
+    },
+    {
+      "id": "stormlands-lightning-wisp-beast",
+      "out": "sprites/monsters/stormlands-lightning-wisp-beast.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Lightning Wisp Beast, a small floating beast-like storm spirit with a compact angular body, two swept fins, a dim inner charge and a readable tail curl, mystical rather than cute or chaotic, hovering with nothing beneath it in a stable sideward pose, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-tempest-serpent",
+      "out": "sprites/monsters/stormlands-tempest-serpent.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Tempest Serpent, a long coiled serpent with swept storm fins, a blunt horned head and branching fulgurite scars along the body, narrow pale arcs remain close to the skin, coiled strike-ready stance with no ground, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-storm-herald",
+      "out": "sprites/monsters/stormlands-storm-herald.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Storm Herald, a faceless mantle-wrapped herald vessel carrying a torn storm standard and a short conducting rod, layered cloth and rigid shoulder pieces create a strong messenger silhouette, hidden face beneath a hood, planted proclamation stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-static-idol",
+      "out": "sprites/monsters/stormlands-static-idol.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Static Idol, an animated carved stone idol with a squat monolithic body, cracked ritual crown, four short grounding limbs and a recessed static core, old storm-order workmanship rather than a modern machine, rigid charging stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-bolt-drinker-colossus",
+      "out": "sprites/monsters/stormlands-bolt-drinker-colossus.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Bolt-Drinker Colossus, a large storm-eating creature with a massive stone-and-hide torso, broad grounded limbs, a dark mouth-like charge basin and a few pale lightning channels drawing inward, heavy silhouette without chaotic effects, immovable braced stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-lunar-watcher",
+      "out": "sprites/monsters/desolate-moon-lunar-watcher.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Lunar Watcher, a floating austere observer entity built around one almond-shaped luminous eye inside several uneven geometric stone arcs, sparse relic fragments orbit close to the body, strange and mystical rather than a cartoon eyeball, suspended motionless with nothing beneath it, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-moon-warden",
+      "out": "sprites/monsters/desolate-moon-moon-warden.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Moon Warden, a tall ancient guardian being with a narrow monolithic torso, long jointed limbs, a smooth faceless head and pale stone mantle plates, restrained lunar geometry marks the chest, upright silent stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-vacuum-stalker",
+      "out": "sprites/monsters/desolate-moon-vacuum-stalker.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Vacuum Stalker, a sparse elegant predatory creature with elongated jointed limbs, a narrow head without eyes, folded crescent fins and a taut dust-shedding hide, unnatural anatomy but no slime, low silent stalking stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-crater-oracle",
+      "out": "sprites/monsters/desolate-moon-crater-oracle.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Crater Oracle, a veiled lunar mystic vessel with a hollow faceless hood, a thin staff and a suspended crater-disc relic close to the hands, layered dust-cloth and stone charms make the silhouette readable, still unsettling divination stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "regen",
+      "notes": "doesn't match artstyle"
+    },
+    {
+      "id": "desolate-moon-pale-monolith-spawn",
+      "out": "sprites/monsters/desolate-moon-pale-monolith-spawn.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Pale Monolith Spawn, a low creature grown from pale lunar stone with an asymmetrical slab body, narrow jointed limbs and black glass seams, its shape echoes a broken monolith without becoming scenery, crouched emerging stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-void-touched-eyeless-beast",
+      "out": "sprites/monsters/desolate-moon-void-touched-eyeless-beast.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Void-Touched Eyeless Beast, a sleek mystical beast with a smooth eyeless head, long folded limbs, a narrow ribbed body and a dark void seam along the spine, elegant horror with no fleshy excess, low poised stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-silver-halo-horror",
+      "out": "sprites/monsters/desolate-moon-silver-halo-horror.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Silver Halo Horror, a floating uncanny entity with a small faceless core suspended inside one broken silver ring and two offset stone crescents, sparse geometric anatomy keeps the silhouette austere, silent hovering pose with nothing beneath it, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-dust-revenant",
+      "out": "sprites/monsters/desolate-moon-dust-revenant.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Dust Revenant, a humanoid shell assembled from compact moon dust, pale cloth strips and smooth relic plates, the head is a blank eroded vessel with no face, a few particles cling to the outline without becoming fog, slow upright stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-banner-bearer",
+      "out": "sprites/monsters/ruins-banner-bearer.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a fallen standard-bearer called the Ruins Banner-Bearer, a hollowed adventurer in worn armor carrying a tall broken banner pole, the collapsed cloth and heavy relic finial create a clear vertical silhouette, a sealed hood hides the face, braced forward standard-bearing stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "ruins-beastmaster",
+      "out": "sprites/monsters/ruins-beastmaster.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a ruined handler called the Ruins Beastmaster, a hunched faceless adventurer with layered leather-like relic straps, a broken whistle, hook-chain and short control staff, the tools imply beast handling without adding another creature, predatory crouched stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey, ash-grey, tarnished bronze, faded umber cloth, dim relic-metal, restrained muted teal glints",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic skeleton, full skeleton, transparent ghost, cartoon ghost, normal human adventurer, exposed anatomy, clean holy armor, necromantic purple sludge, bright neon, modern weapon, sci-fi, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-iron-locust",
+      "out": "sprites/monsters/underworlds-iron-locust.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Iron Locust, a compact locust-like machine-organism with a ribbed dark shell, folded metal wings, blunt cutting forelimbs and a deep pressure sac, ancient and industrial rather than a normal insect, low poised stance with wings folded, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "underworlds-gloom-spider",
+      "out": "sprites/monsters/underworlds-gloom-spider.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Underworlds Gloom Spider, a broad shadowed arachnid fused with black mineral plates, thick articulated legs, a single heavy abdomen aperture and short chain-like spinnerets, not a generic cave spider, low grounded crouch with no web scenery, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal black, iron-grey, ash-grey, dark mineral brown, worn oxidized metal, restrained ember-orange seams",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, generic cave bug, ordinary beetle, ordinary spider, generic worm, many thin legs, compound eye cluster, sleek sci-fi machine, modern factory, steampunk, bright neon, glowing lava field, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "stormlands-thunder-crow",
+      "out": "sprites/monsters/stormlands-thunder-crow.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Thunder Crow, a sharp storm bird with a compact dark body, angular feather mantle, hooked beak and a restrained fulgurite crest, pale charge lines remain small at the throat, perched in midair with wings slightly spread and nothing beneath it, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "regen",
+      "notes": "doesnt match artstyle"
+    },
+    {
+      "id": "stormlands-arc-hound",
+      "out": "sprites/monsters/stormlands-arc-hound.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Stormlands Arc Hound, a lean canine storm beast with swept ears, reinforced shoulder fur, a narrow charged collar of scars and small pale arcs between the paws, four-legged anatomy and low predatory body, braced pounce-ready stance, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, storm slate, dark blue-grey, ashen brown, muted violet-grey, weathered iron, restrained pale lightning-blue accents",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy lightning, chaotic electric scribbles, neon electricity, bright white body, rainbow colors, sci-fi armor, modern storm suit, cartoon storm cloud, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-ring-eyed-sentinel",
+      "out": "sprites/monsters/desolate-moon-ring-eyed-sentinel.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Ring-Eyed Sentinel, a floating sentinel shell with one small ringed eye aperture inside a tall pale stone frame, two thin articulated arms and offset halo fragments create an austere guardian shape, silent hovering stance with nothing beneath it, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "desolate-moon-pale-leech",
+      "out": "sprites/monsters/desolate-moon-pale-leech.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the Desolate Moon Pale Leech, a small elegant lunar parasite with a flattened pale body, a dark circular feeding mouth, sparse fin-like folds and a faint silver seam, uncanny and dry rather than fleshy or slimy, suspended in a slight curling pose with nothing beneath it, three-quarter view facing right, full body, low top-down view, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale stone-grey, silver lunar dust, black glass, muted blue-violet, austere pearl highlights, restrained lunar sheen",
+      "negative": "front view, facing camera, cartoon, chibi, anthropomorphic, human face, exposed face, visible human eyes, skin, flesh tone, living person, blurry, 3d render, photograph, hard black outline, text, watermark, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, goofy alien, fleshy lovecraft sludge, wet tentacles, eye of cthulhu, cartoon eyeball, sci-fi space suit, modern astronaut, neon rainbow, cute",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "status": "accepted",
+      "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
     }
   ]
 }

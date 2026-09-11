@@ -7,6 +7,7 @@ import {
   setFlag,
   setString,
   type RuneContext,
+  type RuneTraceRule,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -37,15 +38,20 @@ export const RUNE_CAREFUL_PULLING_FLAG = "rune.carefulPulling";
 export const RUNE_AVOID_ENEMIES_FLAG = "rune.avoidEnemies";
 export const RUNE_FIGHT_BACK_WHILE_TRAVELING_FLAG = "rune.fightBackWhileTraveling";
 export const RUNE_EVADE_TELEGRAPH_FLAG = "rune.evadeTelegraph";
-/** System rework Step 7: a fire-technique / fire-guard rule is active this tick. */
-export const RUNE_FIRE_TECHNIQUE_FLAG = "rune.fireTechnique";
-export const RUNE_FIRE_GUARD_FLAG = "rune.fireGuard";
 /** Abilities evolution §7: the same, for the SECOND slot of each kind. */
-export const RUNE_FIRE_TECHNIQUE_2_FLAG = "rune.fireTechnique2";
-export const RUNE_FIRE_GUARD_2_FLAG = "rune.fireGuard2";
 /** System rework Step 10: a switch-stance rule's condition is active this tick. */
 export const RUNE_SWITCH_STANCE_FLAG = "rune.switchStance";
 export const RUNE_STANCE_TARGET_KEY = "rune.stanceTarget";
+
+// Presentation consumes the exact fold result, never a second evaluation after combat.
+// Weak ownership keeps this tick-local data out of persistence and releases departed players.
+const abilityDecisions = new WeakMap<PlayerEntity, string[]>();
+export function getAbilityRuneTargets(player: PlayerEntity): readonly string[] { return abilityDecisions.get(player) ?? []; }
+
+const runeDecisions = new WeakMap<PlayerEntity, RuneTraceRule[]>();
+export function getRuneDecisions(player: PlayerEntity): RuneTraceRule[] {
+  return runeDecisions.get(player) ?? [];
+}
 
 /**
  * Count enemies aggroed onto this player and whether any is winding up a cast the
@@ -147,6 +153,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
     );
 
     const ac = player.usesAutocombat;
+    runeDecisions.set(player, [...Object.values(d.claimed).flatMap(claim => claim ? [{ ...claim.rule }] : []), ...d.abilityRules]);
     const acquireRadius = d.autoPathEnemy
       ? RUNE_NODE_ACQUIRE_RADIUS
       : d.config.acquireRadius;
@@ -230,10 +237,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       },
     );
     setFlag(player.tracksCombat, RUNE_EVADE_TELEGRAPH_FLAG, stepBackOwnsMovement);
-    setFlag(player.tracksCombat, RUNE_FIRE_TECHNIQUE_FLAG, d.fireTechnique);
-    setFlag(player.tracksCombat, RUNE_FIRE_TECHNIQUE_2_FLAG, d.fireTechnique2);
-    setFlag(player.tracksCombat, RUNE_FIRE_GUARD_FLAG, d.fireGuard);
-    setFlag(player.tracksCombat, RUNE_FIRE_GUARD_2_FLAG, d.fireGuard2);
+    abilityDecisions.set(player, d.abilityTargets);
     setFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG, d.switchStance);
     setString(player.tracksCombat, RUNE_STANCE_TARGET_KEY, d.stanceTargetId ?? "");
   }

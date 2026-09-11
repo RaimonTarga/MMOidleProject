@@ -19,31 +19,11 @@ relative roles; changing them is expected, and should preserve each ability's ro
 
 ---
 
-## Data model — state rides `TracksProgression` (like runes)
+## Active build state
 
-Ability state lives on `TracksProgression`, NOT a separate component: it is build/loadout
-data exactly like runes, which avoids a DB migration, a new networked slice, a new
-`ServerEntity` key, and fixture churn. Two fields
-(`shared/src/components/core/networkedSlices.ts`):
-- `knownAbilities: string[]` — abilities learned (crafted); the slottable pool.
-- `equippedAbilities: EquippedAbilities` — **ordered lists per slot kind**:
-  `{ techniques: string[]; guards: string[] }`. **List order is fire priority.**
+See [Runic attunement](runic-attunement-current-state.md) for the current budget, migration, validation and UI contract. `knownAbilities` records permanent learning. `attunedAbilities: AttunedAbilities` holds ordered Technique and Guard lists. There is no tier or family count cap; each ability reserves its authored RP cost independently of rank. Global Mastery controls capacity.
 
-### Slots are tier-gated
-`abilitySlotCount(playerTier)` (`shared/src/abilities.ts`) independently defines Ability slots:
-T1–T2 → 1 Technique / 1 Guard, **T3 → 2/1**, **T4+ → 2/2**. Keyed on **player tier**, not
-Global Mastery — Biome Mastery owns ability *unlocks*, tier owns *slots*. Projected on
-`PlayerView` as `abilitySlots`.
-
-### Migration (no SQL)
-`normalizeEquippedAbilities` accepts the legacy Step 7 `{technique, guard}` shape and coerces
-it to lists, dropping unknown ids, slot mismatches and duplicates. Applied in `playerRepo`
-hydrate — the column is whole-slice JSON, so no schema migration was needed.
-`RENAMED_ABILITY_IDS` maps ids that changed after shipping (`heavy-strike` →
-`expose-weakness`, **`charged-strike` → `power-strike`**); it is **additive-only**, since
-removing an entry silently strips the ability from affected saves.
-
----
+Legacy singular/array loadouts and slot-indexed Rune rules migrate through `attunementMigration.ts`, preserving real targets and learned progression. Over-budget saves remain active and visible until the player reduces their reservation.
 
 ## Progression is AUTHORED, not scaled
 
@@ -137,8 +117,7 @@ before combat resolves.
 - **Situational Guards hold their cooldown**: Break Free will not fire with nothing holding
   the player, Cleanse will not fire with nothing to strip, a Recovery Guard will not fire at
   full HP, and a reposition with nowhere to go declines rather than dashing into space.
-- **Rune overrides are per slot INDEX**: `fire-technique`/`fire-guard` drive slot 0,
-  `fire-technique-2`/`fire-guard-2` drive slot 1.
+- **Rune overrides name abilities** with `use-ability` / `targetAbilityId`. Custom targets use Rune priority; defaults use attunement order.
 
 ### Triggers
 `in-combat` · `hp-below` · `n-aggro` · `has-debuff` · **`has-hard-control`** (Break Free —
@@ -199,22 +178,22 @@ deliberately does **not** answer it.
 
 ---
 
-## Guard buffs are EXPLICIT buffs, one id per slot
+## Guard buffs are explicit, with stable ability identities
 
 Guard boons go through the buff system (icon + timer in the buff bar), not raw shields.
-Because two Guards can be equipped, per-slot ids exist for both the DR buff (`ability-guard`,
-`ability-guard-2`) and the Recovery window (`ability-second-wind`, `ability-second-wind-2`).
-This shape is forced: `BUFF_IDS` is a fixed const list and status-effect `data` is
-numbers-only, so the owning slot cannot live in effect data.
+Brace and Endure retain the DR effect IDs `ability-guard` and `ability-guard-2`.
+Second Wind and Recuperate retain `ability-second-wind` and `ability-second-wind-2`.
+These IDs belong to the authored abilities, independent of attunement order.
 
-**Simultaneous Guard mitigation** (the global rule the T4 double-Guard loadout depends on):
-the `onDamageTaken` reader sums active slots **multiplicatively** — each is a separate
+**Simultaneous Guard mitigation**:
+the `onDamageTaken` reader combines active effects **multiplicatively** — each is a separate
 reduction of what got through — capped at `GUARD_DR_CAP` 0.9. Additive stacking would hit the
 cap far too easily and make a second Guard strictly the best defensive pairing. Knockback
-resist takes the **best** active slot rather than stacking.
+resist takes the **best** active effect rather than stacking.
 
-**Recovery sources are per slot too** (`skill` / `skill-2` in the Recovery engine). Second
-Wind (strong/short) and Recuperate (weak/long) are deliberate opposites and may be held
+**Recovery sources also follow ability identity** (`skill` for Second Wind and `skill-2`
+for Recuperate in the Recovery engine). Second Wind (strong/short) and Recuperate
+(weak/long) are deliberate opposites and may be attuned
 together; sharing one source would let the stronger fraction ride the longer window — strictly
 better than either ability as authored.
 
@@ -256,10 +235,7 @@ forgets to set it cannot silently skip target validation.
 
 ## Roster — 21 abilities, 14 Techniques + 7 Guards
 
-The count imbalance is deliberate: later progression grants the second Technique slot before
-the second Guard slot, and the Technique space naturally has more positional/control/offensive
-variants. **The Clearing deliberately teaches basic combat and equipment only** — the ability
-system begins in Tier 1.
+The roster offers different offensive, positional, control and defensive roles. RP prices express opportunity cost.
 
 Each ability is its biome's "answer tool", placed **mid-band** so the player meets the
 challenge before earning the response. A biome owning two abilities staggers them at level 3
@@ -321,9 +297,7 @@ manipulated. Homing them in the tier's "correct" biome would be arbitrary. Imbue
 
 The pair is split across TIERS rather than staggered inside one band: Contagion at swamp
 level 9 (its T2 band), Detonate at level 17 (its T3 band). That is load-bearing — T2 grants
-only ONE Technique slot, so at its home tier Contagion is a whole-loadout commitment
-competing with Sweep and Charge. The second slot arrives at T3, exactly when Detonate does,
-so the pair becomes holdable at the moment the second half unlocks.
+RP-based attunement; Contagion and Detonate compete with the rest of the active build for that budget.
 
 ### The affliction toolkit — `abilityAffliction.ts`
 Contagion and Detonate act on damage-over-time the player **already owns**. Neither knows
@@ -384,32 +358,11 @@ resolved hit), skips DoT ticks, and is unmitigated.
 
 ---
 
-## Rune layer
+## Rune timing and client
 
-Each ability slot index has its own single-claim channel: `TECHNIQUE`, `TECHNIQUE_2`,
-`GUARD`, `GUARD_2` (+ `STANCE`, `CONTROL`). Actions `fire-technique[-2]` / `fire-guard[-2]`,
-all in `STARTER_RUNE_IDS` — the override is a timing preference for an ability you already had
-to unlock. The `-2` actions are inert until the tier grants that slot.
+The Rune board targets named attuned abilities. Rules cost only their logic; ability reservation is paid once. Any custom rule suppresses that ability's default timing, including while its condition is false. Ordinary Techniques retain a shared offensive opportunity; instant Techniques remain non-blocking. Guards retain their one-activation decision window.
 
-Conditions available to ability channels: `in-combat`, `hp-below-25`, `has-debuff`,
-`n-aggro-3`, `target-casting`, `before-empowered`, and `target-elite`.
-
-## Protocol + client
-
-- `ability:craftRecipe`, `ability:setLoadout`, `ability:craftResult`.
-  **`ability:setLoadout` carries the WHOLE loadout** — equip, clear and re-prioritise are one
-  intent, and the server validates learned / slot-type / slot-count / duplicates, rejecting
-  the whole request rather than silently dropping entries.
-- Node events: `player-guard`, `player-technique-armed`, **`player-reposition`** (carries both
-  endpoints — a dash is an instant server-side move, and without the old position the sprite
-  just blinks), `player-cast-start`, `player-cast-end` (carries `targetPos` when it fired).
-- **Abilities panel** renders one row per unlocked slot, shows each ability's rank numeral,
-  says when it next deepens, labels slot 2+ with its priority meaning, and explains rather
-  than hides an ability already used in another slot.
-- **Ability bar** renders every equipped ability with its rank numeral. Fired/cooldown
-  timestamps are keyed by **ability id** so the right tile pulses; a casting tile shows a
-  *filling* sweep.
-- Admin `CharactersTab` lists both loadout lists.
+The ability panel shows learned tools, RP prices, authored defaults and custom overrides, with attune/unattune and default-priority controls. The ability bar renders every attuned ability with its rank and cooldown. Server edits validate the complete RP budget and return an acknowledgement; unattuning removes dependent rules.
 
 ### FX — one bespoke module per ability
 `client/src/fx/`, dispatched from `render/combatFx.ts` through four tables:

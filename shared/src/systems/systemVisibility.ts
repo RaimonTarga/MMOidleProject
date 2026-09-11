@@ -1,4 +1,4 @@
-import type { EquippedAbilities } from "../abilities";
+import type { AttunedAbilities } from "../abilities";
 import type { EquippedStances } from "../stances";
 import type { EssenceType } from "../items";
 
@@ -10,7 +10,7 @@ export interface SystemVisibilityInput {
   playerTier: number;
   globalMastery: number;
   knownAbilities: readonly string[];
-  equippedAbilities: EquippedAbilities;
+  attunedAbilities: AttunedAbilities;
   knownStances: readonly string[];
   equippedStances: EquippedStances;
   activeStance: string | null;
@@ -95,8 +95,8 @@ export function resolveSystemVisibility(
 
   const abilities =
     input.knownAbilities.length > 0 ||
-    input.equippedAbilities.techniques.length > 0 ||
-    input.equippedAbilities.guards.length > 0;
+    input.attunedAbilities.techniques.length > 0 ||
+    input.attunedAbilities.guards.length > 0;
 
   const hasCraftingEssence = Object.values(input.essences ?? {})
     .some((amount) => amount >= 4);

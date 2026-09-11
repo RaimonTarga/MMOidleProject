@@ -13,10 +13,8 @@ import type {
 import type { HitboxRect } from "../hitbox/types";
 import type { EquippedRule } from "../runeDatabase";
 import {
-  abilitySlotCount,
-  normalizeEquippedAbilities,
-  type AbilitySlot,
-  type EquippedAbilities,
+  normalizeAttunedAbilities,
+  type AttunedAbilities,
 } from "../abilities";
 import { emptyEquippedStances, type EquippedStances } from "../stances";
 import { emptyEquippedRites, type EquippedRites } from "../rites";
@@ -157,13 +155,12 @@ export interface PlayerView {
   runesEquipped: EquippedRule[];
   /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
   knownAbilities: string[];
-  /** Equipped abilities per slot kind, ordered — list order is fire priority. */
-  equippedAbilities: EquippedAbilities;
-  /** Ability slots available at this player tier: `{ technique, guard }`. */
-  abilitySlots: Record<AbilitySlot, number>;
+  /** Attuned abilities by semantic family; ordered for default arbitration. */
+  attunedAbilities: AttunedAbilities;
   /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
   knownStances: string[];
-  /** Free default posture; Rune rules carry automated destinations. */
+  attunedStances: string[];
+  /** Attuned default posture; Rune rules carry automated destinations. */
   equippedStances: EquippedStances;
   /** Which posture is currently active (folded into stats). */
   activeStance: string | null;
@@ -436,9 +433,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     runeRecipesCrafted: progression.runeRecipesCrafted ?? [],
     runesEquipped: progression.runesEquipped ?? [],
     knownAbilities: progression.knownAbilities ?? [],
-    equippedAbilities: normalizeEquippedAbilities(progression.equippedAbilities),
-    abilitySlots: abilitySlotCount(progression.playerTier),
+    attunedAbilities: normalizeAttunedAbilities(progression.attunedAbilities),
     knownStances: progression.knownStances ?? [],
+    attunedStances: progression.attunedStances ?? [],
     equippedStances: progression.equippedStances ?? emptyEquippedStances(),
     activeStance: progression.activeStance ?? null,
     knownRites: progression.knownRites ?? [],

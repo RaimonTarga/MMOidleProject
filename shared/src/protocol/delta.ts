@@ -1,6 +1,7 @@
 import type { CombatEvent } from '../index';
 import type { DungeonView } from '../dungeons';
 import type { CorpseView } from '../world/corpses';
+import type { TombstoneView } from '../world/tombstones';
 import type { GroundZoneView } from '../world/groundZones';
 import type { Vec2 } from '../systems/spatial';
 import type {
@@ -55,4 +56,12 @@ export interface DeltaSnapshot {
    * floor, and which the boss has claimed for the cast it is running right now.
    */
   corpses?: CorpseView[];
+  /**
+   * Tombstones standing on this node. Same omit-when-empty contract as `corpses`,
+   * but a DIFFERENT lifetime: tombstones survive node freeze, so a node that was
+   * empty for ten minutes still ships its tombs on the full delta that follows the
+   * thaw. A tombstone whose owner is still lying dead here is withheld — their own
+   * entity is already drawing that grave.
+   */
+  tombstones?: TombstoneView[];
 }

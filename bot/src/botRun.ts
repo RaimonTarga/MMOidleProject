@@ -695,8 +695,8 @@ export async function runBot(
             catalysts: { ...self.catalysts },
             biomeLevels: { ...self.biomeLevel },
             bossesCleared: [...self.bossesCleared],
-            techniques: [...self.equippedAbilities.techniques],
-            guards: [...self.equippedAbilities.guards],
+            techniques: [...self.attunedAbilities.techniques],
+            guards: [...self.attunedAbilities.guards],
             runes: self.runesEquipped.map((r) => ({
               conditionId: r.conditionId,
               actionId: r.actionId,
@@ -1007,9 +1007,9 @@ function buildTierEntryInitialState(
     inventory: [...self.inventory],
     itemUpgrades: { ...self.itemUpgrades },
     knownAbilities: [...self.knownAbilities],
-    equippedAbilities: {
-      techniques: [...self.equippedAbilities.techniques],
-      guards: [...self.equippedAbilities.guards],
+    attunedAbilities: {
+      techniques: [...self.attunedAbilities.techniques],
+      guards: [...self.attunedAbilities.guards],
     },
     runeRecipesCrafted: [...self.runeRecipesCrafted],
     runesEquipped: self.runesEquipped.map((rule) => ({ ...rule })),

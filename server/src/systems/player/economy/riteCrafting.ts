@@ -1,3 +1,4 @@
+import { runicLoadoutFromProgression, runicPointEditAllowed } from "@mmo-idle/shared";
 /**
  * Rite crafting + loadout (system rework Step 11).
  *
@@ -130,8 +131,8 @@ export function setRiteLoadout(
     return { success: false, reason: "One or more Rites are invalid." };
   }
   const budget = runeBudgetForGlobalMastery(globalMastery(prog.biomeLevel));
-  const total = runicPointLoadoutCost({ rules: prog.runesEquipped ?? [], rites: cleaned });
-  if (total > budget) {
+  const total = runicPointLoadoutCost({ ...runicLoadoutFromProgression(prog), rites: cleaned });
+  if (!runicPointEditAllowed(runicLoadoutFromProgression(prog), { ...runicLoadoutFromProgression(prog), rites: cleaned }, budget)) {
     return { success: false, reason: `This build costs ${total} RP, but only ${budget} RP is available.` };
   }
   prog.equippedRites = cleaned;

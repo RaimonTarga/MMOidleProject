@@ -1,11 +1,12 @@
+import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, runeBudgetForGlobalMastery, globalMastery } from "@mmo-idle/shared";
 /**
  * Stance crafting + loadout (system rework Step 10).
  *
  * Crafting a stance recipe LEARNS the stance (adds it to
  * `TracksProgression.knownStances`), spending essence + catalysts and gating on
- * Biome Mastery — mirroring rune / ability crafting. Equipping is free slotting from
- * the learned pool as a free default; Rune rules name their own destinations.
- * resets the active posture to the (new) default and recalcs stats.
+ * Biome Mastery — mirroring rune / ability crafting. Attuning learned stances
+ * reserves RP once; the default and Rune destinations use that attuned pool.
+ * Updating the default resets the active posture and recalculates stats.
  */
 import type { EssenceType } from "@mmo-idle/shared";
 import {
@@ -110,6 +111,7 @@ export function setStanceLoadout(
   entity: PlayerEntity,
   slot: StanceSlot,
   stanceId: string | null,
+  attunedStances: string[] = entity.tracksProgression.attunedStances ?? [],
 ): StanceLoadoutResult {
   const prog = entity.tracksProgression;
   if (stanceId !== null) {
@@ -121,8 +123,16 @@ export function setStanceLoadout(
     }
   }
 
+  const stances = [...new Set(attunedStances)];
+  if (stances.some(id => !STANCE_DATABASE.has(id) || !(prog.knownStances ?? []).includes(id))) return { success: false, reason: "Stances must be valid and learned." };
+  if (stanceId && !stances.includes(stanceId)) return { success: false, reason: "Attune this stance before choosing it as default." };
+  const previous = runicLoadoutFromProgression(prog);
+  const rules = prog.runesEquipped.filter(rule => rule.actionId !== "switch-stance" || rule.targetStanceId === "no-stance" || stances.includes(rule.targetStanceId ?? ""));
+  if (!runicPointEditAllowed(previous, { ...previous, stances, rules }, runeBudgetForGlobalMastery(globalMastery(prog.biomeLevel)))) return { success: false, reason: "Not enough Runic Points to attune these stances." };
+  prog.attunedStances = stances;
+  prog.runesEquipped = rules;
   prog.equippedStances = { default: stanceId };
-  // Reset immediately to the new free default. Rune arbitration may move away later.
+  // Reset immediately to the new attuned default. Rune arbitration may move away later.
   prog.activeStance = prog.equippedStances.default;
   markSliceDirty(world, entity, "tracksProgression");
   recalculatePlayerStanceStats(world, entity);

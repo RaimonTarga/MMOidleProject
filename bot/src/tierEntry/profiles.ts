@@ -3,7 +3,7 @@ import {
   RECIPE_DATABASE,
   biomeXpForBiomeLevel,
   emptyEquipment,
-  emptyEquippedAbilities,
+  emptyAttunedAbilities,
   emptyEquippedRites,
   emptyEquippedStances,
   type EquipmentMap,
@@ -138,9 +138,9 @@ function buildProfile(route: Route, economy: EntryEconomyMode): TierEntryProfile
     equipment,
     itemUpgrades,
     knownAbilities: learnedAbilities,
-    equippedAbilities: lastAbilities
+    attunedAbilities: lastAbilities
       ? { techniques: [...lastAbilities.techniques], guards: [...lastAbilities.guards] }
-      : emptyEquippedAbilities(),
+      : emptyAttunedAbilities(),
     runeRecipesCrafted: [
       ...new Set(
         steps

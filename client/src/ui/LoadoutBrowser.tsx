@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
 import { BrowserPane } from '../hud/primitives';
 import { playerIdAtom } from '../hud/atoms';
@@ -38,6 +38,7 @@ export interface LoadoutBrowserProps {
   blurbOf: (id: string) => string;
   iconOf?: (id: string) => IconSource | null | undefined;
   onEquip: (slotKey: string, id: string | null) => void;
+  equippedBehavior?: (id: string) => ReactNode;
   /** Shown when a slot has nothing eligible — usually "learn some first". */
   emptyCandidates: string;
 }
@@ -61,6 +62,7 @@ export function LoadoutBrowser({
   iconOf,
   onEquip,
   emptyCandidates,
+  equippedBehavior,
 }: LoadoutBrowserProps) {
   const [selectedKey, setSelectedKey] = useState<string | null>(slots[0]?.key ?? null);
   const selected = slots.find((slot) => slot.key === selectedKey) ?? slots[0] ?? null;
@@ -133,9 +135,10 @@ export function LoadoutBrowser({
                 <>
                   <div className="loadout-detail__current-name">{currentName}</div>
                   <p className="make-detail__blurb">{blurbOf(slot.currentId!)}</p>
+                  {equippedBehavior?.(slot.currentId!)}
                   <DetailLines
                     className="loadout-detail__lines"
-                    lines={loadoutLinesFor(slot.currentId!, abilityContext)}
+                    lines={loadoutLinesFor(slot.currentId!, abilityContext).filter(line => !equippedBehavior || line.key !== 'ability:default-trigger')}
                   />
                   <button
                     type="button"

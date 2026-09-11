@@ -439,3 +439,86 @@ html[data-ui-hidden] .gradient-conduit__fill::after {
     animation: none;
   }
 }
+
+/* ── Crest diamond ────────────────────────────────────────────────────────────
+   A rhomboid frame around square art: stance crests in the sanctum and in the
+   character plate.
+
+   The art is authored full-bleed on a 64px SQUARE canvas over a flat near-black
+   ground — measured across all fifteen stances it runs #16161a..#202124 and
+   never varies by more than 1 within a single icon. A square only fits INSIDE a
+   45° diamond at half that diamond's width, so inscribing one whole marooned it
+   in the middle of a frame twice its size with four empty corners: it read as a
+   square sticker on a diamond plate rather than as one object.
+
+   So the frame is FILLED with that same ground and the art is CLIPPED to the
+   diamond. The clip then takes nothing but background, and what is left reads
+   as a single gem. It also buys a larger `--crest-art` than inscription allows:
+   up to 0.59 x `--crest-size`, the ceiling set by the one stance whose subject
+   reaches furthest into its own corners (Fleeting, at 53 of a possible 64). And
+   it is what keeps the outline unbroken — without it the art's four corners
+   would cross the frame's edge and cut the line.
+
+   The fill has to match EXACTLY. It meets the art around the whole perimeter of
+   the clip, not just at the corners, so any mismatch draws a faint square ring —
+   a quieter version of the artefact this is here to remove. No single colour is
+   close enough: the fifteen grounds span L* 7.5 to 12.8, and the best possible
+   flat fill still sits 2.6 from Reaper, above the ~2.3 threshold where a step
+   becomes visible.
+
+   So the fill is sampled from the art itself. `--crest-ground-src` is the icon,
+   drawn at 32x the frame and anchored to its top-left corner, which means the
+   whole frame is painted from under two source pixels of the icon's own corner —
+   flat, exact, and still correct if the art is ever regenerated. `--crest-ground`
+   is the fallback for atlas frames and for the moment before the image lands. */
+
+.crest-diamond {
+  --crest-ground: #1d1d20;
+  --crest-edge: rgba(224, 193, 92, 0.45);
+  --crest-glow: none;
+  /* How far one corner of the art falls outside the diamond. */
+  --crest-cut: calc(var(--crest-art) - var(--crest-size) / 2);
+  position: relative;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: var(--crest-size);
+  height: var(--crest-size);
+}
+
+/* A rotated square rather than a clipped box: a clip-path would halve the 1px
+   edge. Side = width / root 2, so the four points land exactly on the box —
+   and the box is the full diamond width, because a rotated element still claims
+   only its PRE-rotation size for layout and would otherwise under-reserve. */
+.crest-diamond::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--crest-size) * 0.707);
+  height: calc(var(--crest-size) * 0.707);
+  transform: translate(-50%, -50%) rotate(45deg);
+  border: 1px solid var(--crest-edge);
+  background-color: var(--crest-ground);
+  background-image: var(--crest-ground-src, none);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 3200%;
+  box-shadow: var(--crest-glow);
+}
+
+/* The square clipped to the frame's diamond, which is an octagon whose corner
+   cut is the overhang above. `.game-icon` is already positioned and comes after
+   `::before` in tree order, so it paints on top without a z-index. */
+.crest-diamond__art {
+  clip-path: polygon(
+    var(--crest-cut) 0,
+    calc(100% - var(--crest-cut)) 0,
+    100% var(--crest-cut),
+    100% calc(100% - var(--crest-cut)),
+    calc(100% - var(--crest-cut)) 100%,
+    var(--crest-cut) 100%,
+    0 calc(100% - var(--crest-cut)),
+    0 var(--crest-cut)
+  );
+}

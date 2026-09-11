@@ -10,6 +10,7 @@ import { componentsForEntity, pickComponents } from "../ecs/deltaEncoder";
 import type { World } from "./World";
 import { buildGroundZoneViews } from "../systems/world/groundZones";
 import { buildCorpseViews } from "../systems/world/corpses";
+import { buildTombstoneViews } from "../systems/world/tombstones";
 
 /**
  * Build a full, privacy-filtered node projection for anonymous viewers.
@@ -80,6 +81,9 @@ export function buildSpectatorNodeSnapshot(
 
   const corpses = buildCorpseViews(world, nodeId, Date.now());
   if (corpses) snapshot.corpses = corpses;
+
+  const tombstones = buildTombstoneViews(world, nodeId, Date.now());
+  if (tombstones) snapshot.tombstones = tombstones;
 
   return snapshot;
 }

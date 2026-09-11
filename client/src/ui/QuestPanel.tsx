@@ -20,7 +20,7 @@ import {
   MilestonePips,
   type PipState,
 } from '../hud/primitives';
-import { atlasIcon } from './GameIcon';
+import { menuIconSource } from './systemIcons';
 import { SealLedgerPanel } from './SealLedgerPanel';
 import { sealSourceViewsAtTier, type SealSourceView } from './sealPresentation';
 
@@ -295,7 +295,7 @@ export function QuestPanel({ onOpenMastery, showMastery = true }: Props) {
               <ActionChip
                 label="Open the boss seal ledger for every tier"
                 showLabel
-                icon={atlasIcon('UI_icons/progress-icon.png')}
+                icon={menuIconSource('mastery')}
                 tone="primary"
                 size="sm"
                 onClick={() => setSealLedgerOpen(true)}

@@ -3,7 +3,7 @@ import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   emptyEquipment,
-  emptyEquippedAbilities,
+  emptyAttunedAbilities,
   emptyEquippedRites,
   emptyEquippedStances,
 } from "@mmo-idle/shared";
@@ -49,7 +49,7 @@ const slices: PersistedPlayerSlices = {
     runeRecipesCrafted: ["rune-recipe-focus-elites"],
     runesEquipped: [{ conditionId: "target-is-elite", actionId: "focus-elites" }],
     knownAbilities: ["whirlwind"],
-    equippedAbilities: { techniques: ["whirlwind"], guards: [] },
+    attunedAbilities: { techniques: ["whirlwind"], guards: [] },
     knownStances: ["offensive-stance"],
     equippedStances: { default: "offensive-stance" },
     activeStance: "offensive-stance",
@@ -110,8 +110,8 @@ assert(
 );
 assert(progression.knownAbilities.length === 0, "known abilities should reset");
 assert(
-  JSON.stringify(progression.equippedAbilities) ===
-    JSON.stringify(emptyEquippedAbilities()),
+  JSON.stringify(progression.attunedAbilities) ===
+    JSON.stringify(emptyAttunedAbilities()),
   "equipped abilities should reset",
 );
 assert(progression.knownStances.length === 0, "known stances should reset");

@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, EquippedAbilities, EquippedRule, EvolveMode, StanceSlot } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, StanceSlot } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -42,7 +42,7 @@ export const hudBus = {
    * Set the whole equipped-ability loadout. Ordered per slot kind — list order
    * is fire priority — so equip, clear and reorder all go through here.
    */
-  requestSetAbilityLoadout(equipped: EquippedAbilities): void {
+  requestSetAbilityLoadout(equipped: AttunedAbilities): void {
     intents.emit('setAbilityLoadout', { equipped });
   },
 
@@ -52,8 +52,8 @@ export const hudBus = {
   },
 
   /** Equip/clear a stance in a slot (`stanceId: null` clears it). */
-  requestSetStanceLoadout(slot: StanceSlot, stanceId: string | null): void {
-    intents.emit('setStanceLoadout', { slot, stanceId });
+  requestSetStanceLoadout(slot: StanceSlot, stanceId: string | null, attunedStances?: string[]): void {
+    intents.emit('setStanceLoadout', { slot, stanceId, attunedStances });
   },
 
   /** Learn a rite (craft its recipe); server validates gate + cost. */

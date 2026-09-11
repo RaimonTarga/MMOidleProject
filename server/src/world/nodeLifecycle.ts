@@ -21,6 +21,11 @@ export function freezeNode(world: World, nodeId: string): void {
   clearDungeonRuntime(world, nodeId);
   clearGroundZonesForNode(world, nodeId);
   clearCorpsesForNode(world, nodeId);
+  // NOTE: `world.tombstones` is deliberately NOT cleared here. A player who dies
+  // alone empties the node the instant they respawn, so sweeping tombs on freeze
+  // would give them a one-tick lifetime instead of fifteen minutes. They expire on
+  // their own clock in `updateTombstones`, frozen node or not.
+
   clearAmbientRampOverride(world, nodeId);
   world.nextMonsterIdByNode.delete(nodeId);
   world.reconcileMonsterCounts();

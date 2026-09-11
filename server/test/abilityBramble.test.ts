@@ -66,7 +66,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: ["bramble-guard"],
-      equippedAbilities: { techniques: [], guards: ["bramble-guard"] },
+      attunedAbilities: { techniques: [], guards: ["bramble-guard"] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

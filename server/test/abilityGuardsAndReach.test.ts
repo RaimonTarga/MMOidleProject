@@ -23,10 +23,10 @@ import {
   emptyEquipment,
   getResource,
   getStatusEffect,
-  guardEffectIdForSlot,
+  guardEffectIdForAbility,
   hasStatusEffect,
-  recoveryEffectIdForSlot,
-  emptyEquippedAbilities,
+  recoveryEffectIdForAbility,
+  emptyAttunedAbilities,
   type TracksCombat,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -84,8 +84,8 @@ function makePlayerSlices(
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [...techniques, ...guards],
-      equippedAbilities: {
-        ...emptyEquippedAbilities(),
+      attunedAbilities: {
+        ...emptyAttunedAbilities(),
         techniques: [...techniques],
         guards: [...guards],
       },
@@ -148,7 +148,7 @@ initCombatSystems();
   // The accidental post-cleanse damage reduction is gone: mitigation belongs to
   // Brace and Endure, and a Guard that quietly did both would make them redundant.
   assert(
-    getStatusEffect(player.tracksCombat, guardEffectIdForSlot(0)) === undefined,
+    getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace")) === undefined,
     "Cleanse must not grant a damage-reduction buff",
   );
   const activation = takeWorldLogEvents(world, player.isPlayer.id).find(
@@ -313,11 +313,11 @@ initCombatSystems();
   updateAbilityFiring(world, Date.now());
 
   assert(
-    !!getStatusEffect(player.tracksCombat, recoveryEffectIdForSlot(0)),
+    !!getStatusEffect(player.tracksCombat, recoveryEffectIdForAbility("second-wind")),
     "the first Recovery Guard should have its own buff",
   );
   assert(
-    !!getStatusEffect(player.tracksCombat, recoveryEffectIdForSlot(1)),
+    !!getStatusEffect(player.tracksCombat, recoveryEffectIdForAbility("recuperate")),
     "the second Recovery Guard should have an INDEPENDENT buff, not overwrite the first",
   );
   // Sharing one engine source would let Second Wind's 70% ride Recuperate's 10s
@@ -352,7 +352,7 @@ initCombatSystems();
   );
 
   const snipe = ABILITY_DATABASE.get("snipe")!;
-  const started = beginAbilityCast(world, player, snipe, 0, 1_000);
+  const started = beginAbilityCast(world, player, snipe, 1_000);
   assert(started, "Snipe must be able to open on a target the player cannot reach");
   assert(
     player.isCastingAbility?.targetId === target.isMonster.id,
@@ -375,7 +375,7 @@ initCombatSystems();
   const near = world2.createMonster("node-5-5", "plains-slime", { x: 410, y: 400 });
   if (!near) throw new Error("failed to create target");
   assert(
-    beginAbilityCast(world2, player2, ABILITY_DATABASE.get("power-strike")!, 0, 1_000),
+    beginAbilityCast(world2, player2, ABILITY_DATABASE.get("power-strike")!, 1_000),
     "Power Strike should open on an adjacent target",
   );
   assert(

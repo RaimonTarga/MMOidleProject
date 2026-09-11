@@ -6,7 +6,7 @@
  *      Loadout order is the arbitration priority.
  *   2. Guards layer independently (own effect id per slot) but only ONE
  *      activation resolves per decision window.
- *   3. `normalizeEquippedAbilities` migrates the legacy `{technique, guard}`
+ *   3. `normalizeAttunedAbilities` migrates the legacy `{technique, guard}`
  *      shape and drops ids that no longer fit.
  *
  * Behaviour, not balance: no magnitude is asserted.
@@ -15,12 +15,11 @@ import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   emptyEquipment,
-  abilitySlotCount,
   applyStatusEffect,
   getCooldown,
   getStatusEffect,
-  guardEffectIdForSlot,
-  normalizeEquippedAbilities,
+  guardEffectIdForAbility,
+  normalizeAttunedAbilities,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
@@ -66,8 +65,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
       runesEquipped: [],
-      knownAbilities: ["sweep", "expose-weakness", "brace", "cleanse"],
-      equippedAbilities: {
+      knownAbilities: ["sweep", "expose-weakness", "brace", "cleanse", "endure"],
+      attunedAbilities: {
         techniques: ["sweep", "expose-weakness"],
         guards: ["brace", "endure"],
       },
@@ -94,21 +93,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
 }
 
 // ── 1. Slot counts are tier-gated ────────────────────────────────────────────
-assert(
-  abilitySlotCount(1).technique === 1 && abilitySlotCount(1).guard === 1,
-  "T1 should grant one Technique and one Guard slot",
-);
-assert(
-  abilitySlotCount(3).technique === 2 && abilitySlotCount(3).guard === 1,
-  "T3 should grant the second Technique slot but not the second Guard slot",
-);
-assert(
-  abilitySlotCount(4).technique === 2 && abilitySlotCount(4).guard === 2,
-  "T4 should grant both second slots",
-);
-
-// ── 2. Legacy shape migrates; bad entries are dropped ────────────────────────
-const migrated = normalizeEquippedAbilities({ technique: "sweep", guard: "brace" });
+const migrated = normalizeAttunedAbilities({ technique: "sweep", guard: "brace" });
 assert(
   migrated.techniques.length === 1 && migrated.techniques[0] === "sweep",
   "the legacy `technique` field should migrate into the techniques list",
@@ -118,13 +103,13 @@ assert(
   "the legacy `guard` field should migrate into the guards list",
 );
 
-const renamed = normalizeEquippedAbilities({ technique: "heavy-strike", guard: null });
+const renamed = normalizeAttunedAbilities({ technique: "heavy-strike", guard: null });
 assert(
   renamed.techniques[0] === "expose-weakness",
   "a renamed ability id should map forward on migration, not be dropped",
 );
 
-const dirty = normalizeEquippedAbilities({
+const dirty = normalizeAttunedAbilities({
   // brace is a GUARD — it must not survive in the techniques list; `sweep`
   // appears twice and must collapse; `nonsense` does not resolve at all.
   techniques: ["sweep", "brace", "sweep", "nonsense"],
@@ -184,8 +169,8 @@ assert(
 );
 
 // ── 4. Guard slots: independent effects, one activation per window ───────────
-const guard0 = getStatusEffect(player.tracksCombat, guardEffectIdForSlot(0));
-const guard1 = getStatusEffect(player.tracksCombat, guardEffectIdForSlot(1));
+const guard0 = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace"));
+const guard1 = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure"));
 assert(!!guard0, "the first Guard should have activated on its own effect id");
 assert(
   !guard1,
@@ -195,13 +180,13 @@ assert(
 // Next window: the second Guard is free to activate, and both layer.
 updateCombatState(world, 100);
 updateAbilityFiring(world, Date.now());
-const guard1After = getStatusEffect(player.tracksCombat, guardEffectIdForSlot(1));
+const guard1After = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure"));
 assert(
   !!guard1After,
   "the second Guard should activate on a later window",
 );
 assert(
-  !!getStatusEffect(player.tracksCombat, guardEffectIdForSlot(0)),
+  !!getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace")),
   "already-active Guard buffs should keep running while a second one layers on",
 );
 

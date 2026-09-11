@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 // Custom hover tooltip. Rendered via a portal to <body> (not inside the row) so
@@ -16,7 +16,7 @@ import { createPortal } from 'react-dom';
 // Lives in primitives because it is the explanation grammar for the whole HUD,
 // not just the character sheet: stat rows, skill nodes, ability effect lines,
 // class mechanics and the evasion instrument all explain themselves this way.
-export function useHoverTooltip(tip: ReactNode | undefined) {
+export function useHoverTooltip(tip: ReactNode | undefined, placement: 'right' | 'above' = 'right') {
   const [anchor, setAnchor] = useState<DOMRect | null>(null);
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
   const tipRef = useRef<HTMLDivElement>(null);
@@ -26,14 +26,29 @@ export function useHoverTooltip(tip: ReactNode | undefined) {
     const t = tipRef.current.getBoundingClientRect();
     const gap = 8;
     // Prefer to the right of the row; flip left if it would overflow.
-    let left = anchor.right + gap;
-    if (left + t.width > window.innerWidth - 6) left = anchor.left - t.width - gap;
+    let left = placement === 'above' ? anchor.left : anchor.right + gap;
+    if (left + t.width > window.innerWidth - 6) left = placement === 'above' ? window.innerWidth - t.width - 6 : anchor.left - t.width - gap;
     left = Math.max(6, left);
     // Align to the row top, clamped into the viewport.
-    let top = anchor.top;
+    let top = placement === 'above' ? anchor.top - t.height - gap : anchor.top;
+    if (top < 6 && placement === 'above') top = anchor.bottom + gap;
     if (top + t.height > window.innerHeight - 6) top = window.innerHeight - t.height - 6;
     top = Math.max(6, top);
-    setPos({ left, top });
+    // DOM rects are viewport pixels; the portalled tooltip itself is CSS-zoomed.
+    // Convert back to its coordinate space so UI scaling cannot move the anchor.
+    const zoom = parseFloat(getComputedStyle(tipRef.current).zoom) || 1;
+    setPos({ left: left / zoom, top: top / zoom });
+  }, [anchor, placement]);
+
+  useEffect(() => {
+    if (!anchor) return;
+    const dismiss = () => { setAnchor(null); setPos(null); };
+    window.addEventListener('scroll', dismiss, true);
+    window.addEventListener('resize', dismiss);
+    return () => {
+      window.removeEventListener('scroll', dismiss, true);
+      window.removeEventListener('resize', dismiss);
+    };
   }, [anchor]);
 
   // No help text → inert: no handlers attached, nothing portalled.

@@ -1,17 +1,30 @@
 import type { SkillNode } from '@mmo-idle/shared';
-import { assetIcon, type AssetIconSource } from './GameIcon';
+import { assetIcon, type AssetIconSource } from './iconSource';
 
 const ROOT = '/assets/concept-icons';
 
 const ABILITY_IDS = new Set([
+  'binding-strike',
   'brace',
   'bramble-guard',
+  'break-free',
   'charge',
   'charged-strike',
   'cleanse',
+  'contagion',
+  'detonate',
+  'disengage',
+  'endure',
   'expose-weakness',
+  'frenzy',
+  'hamstring',
+  'imbue-lightning',
+  'quick-strike',
+  'recuperate',
   'second-wind',
+  'snipe',
   'sweep',
+  'stunning-strike',
 ]);
 
 /**
@@ -26,88 +39,85 @@ const ABILITY_ICON_ALIASES: Record<string, string> = {
 
 const CONDITION_IDS = new Set([
   'always',
-  'before-empowered',
-  'has-debuff',
-  'hp-below-25',
   'in-combat',
-  'in-party',
-  'n-aggro-3',
-  'target-casting',
-  'target-elite',
   'when-idle',
+  'hp-below-25',
+  'hp-above-90',
+  'target-hp-below-25',
+  'has-debuff',
+  'in-party',
+  'inside-telegraph',
+  'target-casting',
+  'before-empowered',
+  'target-elite',
+  'target-max-stacks',
+  'while-traveling',
+  'stance-charged',
+  'n-aggro-3',
 ]);
 
 const ACTION_IDS = new Set([
+  'chase-enemy',
+  'flee',
+  'orbit',
+  'step-back',
+  'follow-and-assist',
+  'focus-closest',
+  'focus-lowest-hp',
+  'focus-highest-max-hp',
+  'let-dots-finish',
+  'spread-dots',
+  'focus-elites',
+  'tactical-reload',
+  'wait-for-execution',
+  'wait-for-regen',
   'auto-path-enemy',
   'avoid-hazards',
   'careful-pulling',
-  'chase-enemy',
-  'fire-guard',
-  'fire-guard-2',
-  'fire-technique',
-  'fire-technique-2',
-  'flee',
-  'focus-closest',
-  'focus-elites',
-  'focus-highest-max-hp',
-  'focus-lowest-hp',
-  'follow-and-assist',
+  'avoid-enemies',
+  'fight-back',
   'lead-the-way',
-  'let-dots-finish',
-  'orbit',
-  'spread-dots',
-  'step-back',
-  'switch-stance',
-  'tactical-reload',
   'taunt-current-target',
-  'wait-for-execution',
-  'wait-for-regen',
+  'use-ability',
+  'switch-stance',
 ]);
 
 const STANCE_IDS = new Set([
   'defensive-stance',
   'offensive-stance',
   'tanking-stance',
+  'enraged-stance',
+  'perfection-stance',
+  'fleeting-stance',
+  'berserker-stance',
+  'recuperating-stance',
+  'predator-stance',
+  'brawler-stance',
+  'execute-stance',
+  'time-to-strike-stance',
+  'reaper-stance',
+  'warding-stance',
+  'powering-up-stance',
 ]);
 
 const RITE_IDS = new Set([
-  'cleansing-breath',
-  'hunters-instinct',
-  'lingering-momentum',
-  'quickened-breath',
+  'lingering-battle',
+  'swift-repose',
+  'purification',
+  'mechanic-renewal',
+  'ability-reprieve',
+  'blood-offering',
 ]);
-
-const STANCE_ICON_ALIASES: Record<string, string> = {
-  'enraged-stance': 'offensive-stance',
-  'perfection-stance': 'offensive-stance',
-  'berserker-stance': 'offensive-stance',
-  'execute-stance': 'offensive-stance',
-  'fleeting-stance': 'defensive-stance',
-  'predator-stance': 'defensive-stance',
-  'brawler-stance': 'tanking-stance',
-  'recuperating-stance': 'tanking-stance',
-  // Unplaced postures (2026-09-02). Borrowed crests until dedicated art exists,
-  // matched to the closest posture in feel: two offensive gambles, one bulwark,
-  // one charging burst.
-  'time-to-strike-stance': 'offensive-stance',
-  'reaper-stance': 'offensive-stance',
-  'warding-stance': 'tanking-stance',
-  'powering-up-stance': 'offensive-stance',
-};
-
-const RITE_ICON_ALIASES: Record<string, string> = {
-  'swift-repose': 'quickened-breath',
-  purification: 'cleansing-breath',
-  'lingering-battle': 'lingering-momentum',
-  'blood-offering': 'hunters-instinct',
-  'mechanic-renewal': 'lingering-momentum',
-  'ability-reprieve': 'quickened-breath',
-};
 
 const BUFF_IDS = new Set([
   'ability-bramble',
+  'ability-control-resist',
+  'ability-frenzy',
   'ability-guard',
   'ability-guard-2',
+  'ability-imbue',
+  'ability-second-wind',
+  'ability-second-wind-2',
   'boss-regen',
   'cadence-accelerando',
   'cadence-aftershock',
@@ -135,6 +145,7 @@ const BUFF_IDS = new Set([
   'defense-revive-heal',
   'defense-stationary-dr',
   'defense-sustained-dr',
+  'defense-ward',
   'dot-chill',
   'dot-conflag',
   'dot-frenzy',
@@ -178,6 +189,9 @@ const BUFF_IDS = new Set([
   'summoner-twin-covenant',
   'summoner-volatile-brood',
   'summoner-withering-chorus',
+  'stance-charge',
+  'stance-reaper',
+  'stance-release',
 ]);
 
 const DEBUFF_IDS = new Set([
@@ -185,10 +199,14 @@ const DEBUFF_IDS = new Set([
   'debuff-dot',
   'debuff-poison',
   'debuff-frost-ramp',
+  'debuff-plating-shred',
   'debuff-root',
   'debuff-slow',
   'debuff-sun-mark',
   'debuff-swamp-rot',
+  'debuff-stunned',
+  'debuff-sundered',
+  'debuff-tundra-chill',
   'debuff-volcanic-heat',
 ]);
 
@@ -203,20 +221,11 @@ export function conceptAbilityIconSource(id: string): AssetIconSource | null {
 }
 
 export function runeConditionIconSource(id: string): AssetIconSource | null {
-  if (id === 'hp-above-90' || id === 'target-hp-below-25') return source('runes/conditions', 'hp-below-25');
-  if (id === 'inside-telegraph') return source('runes/conditions', 'target-casting');
-  // "Stance Charged" has no crest yet; the empowered-window icon is the closest
-  // existing idea — a thing that has finished building and is waiting to be spent.
-  if (id === 'stance-charged') return source('runes/conditions', 'before-empowered');
-  // "Fully Afflicted" has no crest yet. `has-debuff` is the closest existing
-  // idea — a target saturated with damage over time — even though this one reads
-  // the ENEMY's afflictions rather than the player's own.
-  if (id === 'target-max-stacks') return source('runes/conditions', 'has-debuff');
-  return CONDITION_IDS.has(id) ? source('runes/conditions', id) : null;
+  return CONDITION_IDS.has(id) ? source('runes/conditions', id, 'rune-set-v2') : null;
 }
 
 export function runeActionIconSource(id: string): AssetIconSource | null {
-  return ACTION_IDS.has(id) ? source('runes/actions', id) : null;
+  return ACTION_IDS.has(id) ? source('runes/actions', id, 'rune-set-v2') : null;
 }
 
 export function runeFragmentConceptIconSource(id: string): AssetIconSource | null {
@@ -224,13 +233,11 @@ export function runeFragmentConceptIconSource(id: string): AssetIconSource | nul
 }
 
 export function stanceIconSource(id: string): AssetIconSource | null {
-  const iconId = STANCE_ICON_ALIASES[id] ?? id;
-  return STANCE_IDS.has(iconId) ? source('stances', iconId) : null;
+  return STANCE_IDS.has(id) ? source('stances', id, 'specific-v3') : null;
 }
 
 export function riteIconSource(id: string): AssetIconSource | null {
-  const iconId = RITE_ICON_ALIASES[id] ?? id;
-  return RITE_IDS.has(iconId) ? source('rites', iconId) : null;
+  return RITE_IDS.has(id) ? source('rites', id, 'rites-v2') : null;
 }
 
 /**
@@ -242,15 +249,27 @@ const BUFF_ICON_ALIASES: Record<string, string> = {
   'defense-recovery': 'defense-burst',
 };
 
+const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {
+  'ability-control-resist': 'break-free',
+  'ability-frenzy': 'frenzy',
+  'ability-imbue': 'imbue-lightning',
+  'ability-second-wind': 'second-wind',
+  'ability-second-wind-2': 'second-wind',
+};
+
 export function statusIconSource(id: string): AssetIconSource | null {
   if (BUFF_IDS.has(id)) {
+    const abilityIconId = BUFF_ABILITY_ICON_ALIASES[id];
+    if (abilityIconId) return conceptAbilityIconSource(abilityIconId);
     // The player-facing Recovery tile is its own art, not the boss `regen`
     // effect. Version its replaced art so a long-running client cannot retain
     // the old blue/gold shield from the browser image cache.
     const iconId = BUFF_ICON_ALIASES[id] ?? id;
     return source('statuses/buffs', iconId, iconId === 'defense-burst' ? 'green-regen-v2' : undefined);
   }
-  if (DEBUFF_IDS.has(id)) return source('statuses/debuffs', id);
+  if (DEBUFF_IDS.has(id)) {
+    return source('statuses/debuffs', id, id === 'debuff-root' ? 'snare-root-v2' : undefined);
+  }
   if (id === 'second-wind') return source('abilities', id);
   return null;
 }
@@ -263,7 +282,7 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'dot-conf': 'dot-conflag',
   slow: 'debuff-slow',
   root: 'debuff-root',
-  'plating-shred': 'expose-weakness',
+  'plating-shred': 'debuff-plating-shred',
   'cadence-hemorrhage': 'debuff-dot',
   'energy-storm': 'energy-storm',
   brittle: 'dot-frostbite',
@@ -297,10 +316,7 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   'stat-buff-plating': 'defense-hardening',
   'stat-buff-damageReduction': 'defense-sustained-dr',
   'stat-buff-evasion': 'mob-sprint',
-  // `mob-suppress` is the roster's existing 'this thing is held down' glyph; there
-  // is no dedicated stun icon and inventing an alias to a missing asset would
-  // silently render nothing.
-  'boss-stunned': 'mob-suppress',
+  'boss-stunned': 'debuff-stunned',
 };
 
 function aliasedStatusIconSource(alias: string | undefined): AssetIconSource | null {
@@ -318,10 +334,18 @@ export function bossEffectIconSource(id: string): AssetIconSource | null {
 
 /** Concept vocabulary exists only for the first three tiers of the tree. */
 export function skillVocabularyIconSource(
-  node: Pick<SkillNode, 'id' | 'tier' | 'subVariantId'>,
+  node: Pick<SkillNode, 'id' | 'tier' | 'classId' | 'subVariantId'>,
 ): AssetIconSource | null {
-  if (node.tier === 0) return source('classes', node.id.replace(/-root$/, ''));
-  if (node.tier === 1 && node.subVariantId) return source('frames', node.subVariantId);
+  if (node.tier === 0) {
+    return source('classes', node.id.replace(/-root$/, ''), 'class-crests-v2');
+  }
+  if (node.tier === 1 && node.subVariantId) {
+    const classId = node.classId?.replace(/-root$/, '');
+    if (classId) {
+      return source('frames', `${classId}-${node.subVariantId}`, 'class-crests-v2');
+    }
+    return source('frames', node.subVariantId);
+  }
   if (node.tier !== 2) return null;
   if (node.id.endsWith('-range-close')) return source('ranges', 'close');
   if (node.id.endsWith('-range-mid')) return source('ranges', 'medium');

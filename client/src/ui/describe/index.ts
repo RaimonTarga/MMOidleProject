@@ -6,6 +6,7 @@ import {
   type RiteDef,
   type StanceDef,
 } from '@mmo-idle/shared';
+import type { IconSource } from '../GameIcon';
 import { describeAbility, type AbilityContext } from './abilityText';
 import { passiveLines } from './passiveText';
 import { stanceModifierLines, statEffectLines } from './statEffectText';
@@ -35,8 +36,8 @@ export interface DetailLine {
   help?: string;
   /** False when the line is a downside (drives the down styling). */
   good?: boolean;
-  /** Packed glyph frame, when the line has authored art. */
-  glyph?: string | null;
+  /** Authored icon source, when the line has art. */
+  glyph?: IconSource | null;
 }
 
 function fromStatEffects(effects: StatEffectsInput): DetailLine[] {
@@ -137,9 +138,9 @@ export function stanceLines(
     ...fromMechanicEffects(stance.mechanicEffects),
     {
       key: `stance:${stance.id}:rp`,
-      label: "Rune destination cost",
+      label: "Attunement cost",
       value: `${stance.runeCost} RP`,
-      help: "Every Rune rule that switches to this stance pays this on top of its own cost. Your free default stance pays nothing.",
+      help: "Paid once while this stance is attuned. Choosing it as default or switching to it adds no stance cost.",
     },
   ];
 }
@@ -167,6 +168,7 @@ export function abilityLines(
       value: described.rank,
       help: described.rankLabel,
     },
+    { key: "ability:default-trigger", label: "Default behavior", value: described.trigger },
     ...described.lines.map((line) => ({
       key: `ability:${line.key}`,
       label: line.label,

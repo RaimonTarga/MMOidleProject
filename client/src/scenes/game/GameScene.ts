@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { createRenderState, type RenderState } from '../../render/state';
 import type { CorpseSprite } from '../../render/corpses';
+import type { TombstoneSprite } from '../../render/tombstones';
 import type { StunOrbitSprite } from '../../render/stunOrbit';
 import type { NeighborLayer } from '../../render/neighborScenes';
 import type { AltarPromptHandle } from '../../render/altarPrompt';
@@ -67,12 +68,14 @@ export class GameScene extends Phaser.Scene {
   nodeDecor: Phaser.GameObjects.Image[] = [];
   /** Deterministically scattered, non-gameplay decoration for the active biome. */
   nodeBiomeDecor: Phaser.GameObjects.Image[] = [];
-  nodePlaceholders: Phaser.GameObjects.Graphics[] = [];
+  nodePlaceholders: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Image)[] = [];
   dungeonHazards: Map<string, Phaser.GameObjects.Image> = new Map();
   /** Telegraphed combat circles (slam wind-ups), keyed by server zone id. */
   groundZones: Map<string, GroundZoneSprite> = new Map();
   /** Raisable corpses on the active node, keyed by server corpse id. */
   corpses: Map<string, CorpseSprite> = new Map();
+  /** Player death markers on the active node, keyed by server tombstone id. */
+  tombstones: Map<string, TombstoneSprite> = new Map();
   /** Orbiting stun tells, keyed by entity id (players and monsters alike). */
   stunOrbits: Map<string, StunOrbitSprite> = new Map();
   /** Biome trees in the active node, depth-sorted for walk-behind. */

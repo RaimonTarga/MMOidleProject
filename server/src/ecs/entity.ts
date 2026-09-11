@@ -152,7 +152,6 @@ export interface HasFormationTechnique {
 export interface IsCastingAbility {
   abilityId: string;
   /** Loadout index that started the cast, so the resolve credits the right slot. */
-  slotIndex: number;
   /** Wall-clock ms when the wind-up completes. */
   endsAt: number;
   /** Full wind-up length, for the client cast bar's progress fraction. */

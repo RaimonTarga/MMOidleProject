@@ -1,3 +1,6 @@
+import type { IconSource, AtlasIconSource, AssetIconSource } from "./iconSource";
+export { atlasIcon, assetIcon, nodeIcon } from "./iconSource";
+export type { IconSource, AtlasIconSource, AssetIconSource, NodeIconSource } from "./iconSource";
 import {
   useEffect,
   useState,
@@ -11,25 +14,6 @@ import {
   UI_ICON_ATLAS,
 } from './iconAtlas';
 import './gameIcon.css';
-
-export interface AtlasIconSource {
-  kind: 'atlas';
-  atlas: IconAtlasRef;
-  frameName: string;
-}
-
-export interface AssetIconSource {
-  kind: 'asset';
-  src: string;
-}
-
-export interface NodeIconSource {
-  kind: 'node';
-  node: ReactNode;
-}
-
-/** Every icon consumer uses the same source contract, regardless of art origin. */
-export type IconSource = AtlasIconSource | AssetIconSource | NodeIconSource;
 
 export type IconAccessibility =
   | { decorative: true; label?: never }
@@ -50,21 +34,6 @@ interface GameIconCommonProps {
 }
 
 export type GameIconProps = GameIconCommonProps & IconAccessibility;
-
-export function atlasIcon(
-  frameName: string,
-  atlas: IconAtlasRef = UI_ICON_ATLAS,
-): AtlasIconSource {
-  return { kind: 'atlas', atlas, frameName };
-}
-
-export function assetIcon(src: string): AssetIconSource {
-  return { kind: 'asset', src };
-}
-
-export function nodeIcon(node: ReactNode): NodeIconSource {
-  return { kind: 'node', node };
-}
 
 function dimensions(size: IconSize): { width: number; height: number } {
   if (typeof size === 'number') {

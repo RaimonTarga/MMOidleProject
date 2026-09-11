@@ -1,3 +1,4 @@
+import { migrateAttunement } from "@mmo-idle/shared";
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -19,14 +20,11 @@ import {
   ITEM_DATABASE,
   normalizeEquipment,
   emptyEquipment,
-  emptyEquippedAbilities,
+  emptyAttunedAbilities,
   emptyEquippedStances,
   emptyEquippedRites,
   globalMastery,
-  normalizeEquippedAbilities,
   runeIdsFromCraftedRecipes,
-  validAbilityIds,
-  validStanceIds,
   validRiteIds,
   NODE_MODIFIER_FAMILIES,
   CLEARING_NODE_ID,
@@ -425,7 +423,8 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
       inventoryCount: slices.holdsInventory.inventory.length,
       equipmentCount,
       knownAbilities: slices.tracksProgression.knownAbilities,
-      equippedAbilities: slices.tracksProgression.equippedAbilities,
+      attunedAbilities: slices.tracksProgression.attunedAbilities,
+      attunedStances: slices.tracksProgression.attunedStances,
       knownStances: slices.tracksProgression.knownStances,
       equippedStances: slices.tracksProgression.equippedStances,
       activeStance: slices.tracksProgression.activeStance,
@@ -508,22 +507,8 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
     hasPosition.nodeId = CLEARING_NODE_ID;
   }
   const runeRecipesCrafted = tracksProgression.runeRecipesCrafted ?? [];
-  const rawStances = (tracksProgression.equippedStances ?? {}) as {
-    default?: string | null;
-    reactive?: string | null;
-  };
-  const knownStances = validStanceIds(tracksProgression.knownStances ?? []);
-  const defaultStance = rawStances.default && knownStances.includes(rawStances.default)
-    ? rawStances.default
-    : null;
-  const legacyReactive = rawStances.reactive && knownStances.includes(rawStances.reactive)
-    ? rawStances.reactive
-    : undefined;
-  const migratedRules = (tracksProgression.runesEquipped ?? []).map((rule) => (
-    rule.actionId === "switch-stance" && !rule.targetStanceId && legacyReactive
-      ? { ...rule, targetStanceId: legacyReactive }
-      : rule
-  ));
+  const attunement = migrateAttunement(tracksProgression);
+  delete (tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
   const knownRites = migrateRiteIds(tracksProgression.knownRites);
   const equippedRites = migrateRiteIds(tracksProgression.equippedRites)
     .filter((id) => knownRites.includes(id));
@@ -551,16 +536,9 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
           : tracksProgression.clearedNodes ?? []),
       runeRecipesCrafted,
       runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
-      runesEquipped:  migratedRules,
-      knownAbilities: validAbilityIds(tracksProgression.knownAbilities ?? []),
-      // Migrates the Step 7 `{technique, guard}` shape to ordered lists and maps
-      // renamed ability ids forward. No SQL migration needed — whole-slice JSON.
-      equippedAbilities: normalizeEquippedAbilities(tracksProgression.equippedAbilities),
-      knownStances,
-      equippedStances: { default: defaultStance },
-      activeStance: defaultStance,
       knownRites,
       equippedRites,
+      ...attunement,
     },
     holdsInventory,
     usesSkills:        {
@@ -644,7 +622,8 @@ function buildFreshSlices(
       runeRecipesCrafted: [],
       runesEquipped:    [...DEFAULT_RUNE_LOADOUT],
       knownAbilities:   [],
-      equippedAbilities: emptyEquippedAbilities(),
+      attunedAbilities: emptyAttunedAbilities(),
+      attunedStances:   [],
       knownStances:     [],
       equippedStances:  emptyEquippedStances(),
       activeStance:     null,

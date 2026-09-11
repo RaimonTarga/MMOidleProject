@@ -1,3 +1,4 @@
+import { BehaviorPanel } from './BehaviorPanel';
 import { useEffect, useMemo, useState, useRef, type ReactNode } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { hudBus } from '../hudBus';
@@ -6,7 +7,6 @@ import { BuildPanel } from '../ui/BuildPanel';
 import { MasteryPanel } from '../ui/MasteryPanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
-import { RunesPanel } from '../ui/RunesPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { QuestPanel } from '../ui/QuestPanel';
 import { StatPanel } from './StatPanel';
@@ -14,8 +14,10 @@ import { BiomeXpBar } from './BiomeXpBar';
 import { ArchetypeMechanics } from './stat/mechanics';
 import { NODE_BIOMES, BIOME_DATABASE, stanceDef } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
+import { CharacterSelectPrompt } from './CharacterSelectPrompt';
 import { useIsMobile } from './useIsMobile';
-import { atlasIcon, GameIcon, nodeIcon, type IconSource } from '../ui/GameIcon';
+import { GameIcon, nodeIcon, type IconSource } from '../ui/GameIcon';
+import { buildSectionIconSource, menuIconSource } from '../ui/systemIcons';
 import { DialogHeader, GameDialog } from './primitives';
 import { useSystemVisibility } from './useSystemVisibility';
 import { useNewEntries } from '../ui/crafting/useNewEntries';
@@ -24,6 +26,7 @@ import type { UiUnlockSystem } from './uiUnlocks';
 import {
   activeStanceAtom,
   autoAtom,
+  buildPanelTabAtom,
   bestiaryOpenAtom,
   deathOverlayAtom,
   hpAtom,
@@ -40,6 +43,7 @@ import {
   wardsAtom,
   skillPointsAtom,
   statusAtom,
+  type BuildPanelTab,
 } from './atoms';
 import './hud.css';
 
@@ -60,7 +64,6 @@ type MobileView =
   | 'map'
   | 'quests'
   | 'build'
-  | 'runes'
   | 'mastery'
   | 'more'
   | null;
@@ -80,6 +83,8 @@ interface MoreEntry {
 function MobileHUDContent() {
   const [view, setView] = useState<MobileView>(null);
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
+  const [charSelectPrompt, setCharSelectPrompt] = useState(false);
+  const setBuildTab = useSetAtom(buildPanelTabAtom);
   const setBestiaryOpen = useSetAtom(bestiaryOpenAtom);
 
   const status = useAtomValue(statusAtom);
@@ -141,7 +146,7 @@ function MobileHUDContent() {
     if (!visibility.passiveTree && view === 'skills') setView(null);
     if (!visibility.inventory && view === 'bag') setView(null);
     if (!visibility.crafting && (view === 'craft' || view === 'upgrade')) setView(null);
-    if (!visibility.loadout && (view === 'build' || view === 'runes')) setView(null);
+    if (!visibility.loadout && view === 'build') setView(null);
     if (!visibility.map && view === 'map') setView(null);
   }, [
     view,
@@ -179,7 +184,7 @@ function MobileHUDContent() {
     ...(visibility.passiveTree
       ? [{
         key: 'skills' as const,
-        icon: atlasIcon('UI_icons/passives-icon.png'),
+        icon: menuIconSource('passive-tree'),
         fallback: '🌳',
         label: 'Skills',
         badge: skillPoints > 0,
@@ -190,7 +195,7 @@ function MobileHUDContent() {
     ...(visibility.inventory
       ? [{
         key: 'bag' as const,
-        icon: atlasIcon('UI_icons/inventory-icon.png'),
+        icon: menuIconSource('inventory'),
         fallback: '🎒',
         label: 'Bag',
         disabled: dead,
@@ -200,7 +205,7 @@ function MobileHUDContent() {
     ...(visibility.crafting
       ? [{
         key: 'craft' as const,
-        icon: atlasIcon('UI_icons/forge-icon.png'),
+        icon: menuIconSource('crafting'),
         fallback: '⚒',
         label: 'Craft',
         badge: newRecipes.count > 0,
@@ -211,7 +216,7 @@ function MobileHUDContent() {
     ...(visibility.map
       ? [{
         key: 'map' as const,
-        icon: atlasIcon('UI_icons/map-icon.png'),
+        icon: menuIconSource('map'),
         fallback: '🗺',
         label: 'Map',
         unlockSystems: ['map'] as const,
@@ -235,32 +240,31 @@ function MobileHUDContent() {
     },
   ];
 
+  // Abilities, Stances, Rites and Runes each get their own row; they share one
+  // dialog, so a row is "open the dialog on this tab".
+  const buildRows: { tab: BuildPanelTab; label: string; gate: UiUnlockSystem; fallback: string }[] = [
+    { tab: 'abilities', label: 'Abilities', gate: 'abilities', fallback: 'A' },
+    { tab: 'stances', label: 'Stances', gate: 'stances', fallback: 'S' },
+    { tab: 'rites', label: 'Rites', gate: 'rites', fallback: 'R' },
+    { tab: 'runes', label: 'Runes', gate: 'loadout', fallback: 'U' },
+  ];
+
   const moreEntries: MoreEntry[] = [
-    ...(visibility.loadout
-      ? [{
-        key: 'overview' as const,
-        label: 'Loadout',
-        icon: atlasIcon('UI_icons/abilities/sweep.png'),
-        fallback: 'B',
-        unlockSystem: 'loadout' as const,
-        onSelect: () => setView('build'),
-      }]
-      : []),
-    ...(visibility.loadout
-      ? [{
-        key: 'runes' as const,
-        label: 'Runes',
-        icon: atlasIcon('UI_icons/runes-icon.png'),
-        fallback: 'R',
-        unlockSystem: 'loadout' as const,
-        onSelect: () => setView('runes'),
-      }]
-      : []),
+    ...buildRows
+      .filter((row) => visibility[row.gate])
+      .map((row) => ({
+        key: row.tab,
+        label: row.label,
+        icon: buildSectionIconSource(row.tab),
+        fallback: row.fallback,
+        unlockSystem: row.gate,
+        onSelect: () => { setBuildTab(row.tab); setView('build'); },
+      })),
     ...(visibility.crafting
       ? [{
         key: 'upgrade' as const,
         label: 'Upgrade',
-        icon: atlasIcon('UI_icons/craft-upgrade-icon.png'),
+        icon: menuIconSource('upgrade'),
         fallback: 'U',
         unlockSystem: 'crafting' as const,
         disabled: dead,
@@ -271,7 +275,7 @@ function MobileHUDContent() {
       ? [{
         key: 'mastery',
         label: 'Mastery',
-        icon: atlasIcon('UI_icons/progress-icon.png'),
+        icon: menuIconSource('mastery'),
         fallback: 'M',
         unlockSystem: 'mastery' as const,
         onSelect: () => setView('mastery'),
@@ -290,16 +294,23 @@ function MobileHUDContent() {
     {
       key: 'settings',
       label: 'Settings',
-      icon: atlasIcon('UI_icons/settings-icon.png'),
+      icon: menuIconSource('settings'),
       fallback: '⚙',
       onSelect: () => { setSettingsOpen(true); setView(null); },
     },
     {
       key: 'tactical',
       label: 'Tactical Mode',
-      icon: atlasIcon('UI_icons/map-icon.png'),
+      icon: menuIconSource('map'),
       fallback: 'T',
       onSelect: () => hudBus.toggleTacticalView(),
+    },
+    {
+      key: 'character-select',
+      label: 'Character Select',
+      icon: nodeIcon('↩'),
+      fallback: '↩',
+      onSelect: () => { setCharSelectPrompt(true); setView(null); },
     },
   ];
 
@@ -394,6 +405,7 @@ function MobileHUDContent() {
       {view === 'character' && (
         <MobileSheet title="Character" onClose={close}>
           <StatPanel />
+          <BehaviorPanel />
         </MobileSheet>
       )}
       {view === 'quests' && (
@@ -433,10 +445,10 @@ function MobileHUDContent() {
       {view === 'craft' && <CraftingPanel tab="make" onClose={close} />}
       {view === 'upgrade' && <CraftingPanel tab="upgrade" onClose={close} />}
       {view === 'map'    && <MapPanel onClose={close} />}
-      {view === 'build' && <BuildPanel progressiveDisclosure onClose={close} />}
-      {view === 'runes' && <RunesPanel onClose={close} />}
+      {view === 'build' && <BuildPanel onClose={close} />}
       {view === 'mastery' && <MasteryPanel onClose={close} />}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
+      {charSelectPrompt && <CharacterSelectPrompt onCancel={() => setCharSelectPrompt(false)} />}
     </>
   );
 }

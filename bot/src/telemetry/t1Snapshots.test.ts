@@ -112,11 +112,10 @@ const self = {
   runeRecipesCrafted: [...sourceProfile.runeRecipesCrafted],
   runesEquipped: sourceProfile.runesEquipped.map((rule) => ({ ...rule })),
   knownAbilities: [...sourceProfile.knownAbilities],
-  equippedAbilities: {
-    techniques: [...sourceProfile.equippedAbilities.techniques],
-    guards: [...sourceProfile.equippedAbilities.guards],
+  attunedAbilities: {
+    techniques: [...sourceProfile.attunedAbilities.techniques],
+    guards: [...sourceProfile.attunedAbilities.guards],
   },
-  abilitySlots: { technique: 1, guard: 1 },
   knownStances: [...sourceProfile.knownStances],
   equippedStances: { ...sourceProfile.equippedStances },
   activeStance: sourceProfile.equippedStances.default,

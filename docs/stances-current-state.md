@@ -6,7 +6,7 @@
 - **Archived design handoff:** `docs/archive/stances-rework-design-handoff.md`
 - **Historical implementation plan:** `docs/archive/stances-plan.md`
 
-Stances are mutually exclusive modal postures. A character learns stances through recipes, chooses one free default posture, and can automate transitions to any learned stance through Rune rules. There is no reactive slot and no manual real-time combat switch.
+Stances are mutually exclusive modal postures. A character learns stances through recipes, attunes learned postures with RP, chooses one attuned default, and can automate transitions among attuned stances through Rune rules. There is no reactive slot and no manual real-time combat switch.
 
 ## State and Runic Points
 
@@ -19,7 +19,7 @@ interface EquippedRule {
 }
 ```
 
-`activeStance` remains authoritative/networked on `TracksProgression`. A `switch-stance` rule requires `targetStanceId`; its full RP cost is **condition + destination `runeCost`**. The `Switch Stance` action itself costs **0 RP** as of 2026-09-02 — the verb has no power of its own, and charging for it on top of the destination taxed the axis twice: the cheapest possible tactical transition (`In Combat -> Offensive`) cost 4 RP, as much as a premium Rite, and two transitions did not fit inside a T2 budget alongside basic autoplay. The destination surcharge remains the sole measure of how transformative a posture is. Existing saved loadouts stay legal — every stance rule got strictly cheaper. The reserved `no-stance` destination costs 0 RP and explicitly clears the active stance, providing no bonuses or penalties. The default stance is free. Every rule pays its own destination cost, even when multiple rules target the same stance.
+`activeStance` remains authoritative/networked. `attunedStances` reserves each stance's `runeCost` once. The default must be attuned. A `switch-stance` rule requires an attuned target and pays only its condition; the action costs 0 RP. Neutral is free. See [Runic attunement](runic-attunement-current-state.md) for combined costs and migration.
 
 The single `STANCE` Rune channel remains priority ordered. The first active Stance rule supplies its destination. If no Stance rule is active, the player returns to the default.
 
@@ -192,9 +192,9 @@ What is deliberately absent: the Rune condition a stance is usually reached thro
 Rune rule UI already shows `HP Below 25% -> Switch Stance -> Enraged`; the stance tooltip
 only describes what Enraged does once active.
 
-- Loadout → Stances is a crest/sigil sanctum for choosing the free default.
-- Loadout → Runes opens a horizontal destination wheel when `Switch Stance` is selected; its first sigil is the zero-cost neutral `No Stance` posture, followed by learned stance crests. Once a situation is picked, each crest quotes the WHOLE rule price (condition + destination), not the surcharge — with the verb at 0 RP, the surcharge alone would understate what committing the rule spends.
-- Overview shows the default/active stance and the total shared RP pool.
+- Stances is its own rail entry, opening the shared arrangement dialog (Abilities / Stances / Rites / Runes) on the Stances tab: a crest/sigil sanctum for attuning postures and choosing an attuned default.
+- The Runes tab opens a horizontal destination wheel when `Switch Stance` is selected; its first sigil is the zero-cost neutral `No Stance` posture, followed by learned stance crests. Once a situation is picked, each crest quotes the WHOLE rule price (condition + destination), not the surcharge — with the verb at 0 RP, the surcharge alone would understate what committing the rule spends.
+- The sanctum's own header names the default posture and the total shared RP pool.
 - Crafting contains recipes for all fifteen stances across T2–T4 mastery bands;
   the four stateful postures use the later T4 placements described below.
 

@@ -31,6 +31,7 @@ import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
 import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
 import { syncGroundZones } from "../render/groundZones";
 import { syncCorpses } from "../render/corpses";
+import { syncTombstones } from "../render/tombstones";
 import { syncStunOrbits } from "../render/stunOrbit";
 import { clearOwnMovePath } from '../input/pathPrediction';
 
@@ -140,6 +141,7 @@ export function applyDelta(
   setDungeon(snapshot.dungeon ?? null);
   syncGroundZones(scene, snapshot.groundZones);
   syncCorpses(scene, snapshot.corpses);
+  syncTombstones(scene, snapshot.tombstones);
   syncStunOrbits(scene, collectHardControlled(scene));
   refreshMonsterTints(state);
   if (snapshot.voidOverlordRespawn) {

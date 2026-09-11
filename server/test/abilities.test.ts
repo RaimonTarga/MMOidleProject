@@ -57,7 +57,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       // No fire-guard rune equipped: Brace must fire on its own built-in trigger.
       runesEquipped: [],
       knownAbilities: ["brace"],
-      equippedAbilities: { techniques: [], guards: ["brace"] },
+      attunedAbilities: { techniques: [], guards: ["brace"] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

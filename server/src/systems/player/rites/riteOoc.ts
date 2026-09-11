@@ -83,7 +83,7 @@ function renewClassMechanic(world: World, player: PlayerEntity): void {
 }
 
 function reprieveAbilities(player: PlayerEntity): void {
-  const equipped = player.tracksProgression.equippedAbilities;
+  const equipped = player.tracksProgression.attunedAbilities;
   for (const abilityId of [...(equipped?.techniques ?? []), ...(equipped?.guards ?? [])]) {
     const key = abilityCooldownKey(abilityId);
     if ((player.tracksCombat.cooldowns[key] ?? 0) > 0) {

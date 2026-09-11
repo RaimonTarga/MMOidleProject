@@ -138,6 +138,8 @@ export interface AbilityRuntime {
   cooldownRemainingMs?: number;
   /** Wind-up left, when casting. */
   castRemainingMs?: number;
+  /** Equipped Rune timing, even while its condition is false. */
+  runeTiming?: string;
 }
 
 const ABILITY_STATE_LABEL: Record<AbilityRuntime['state'], string> = {
@@ -169,7 +171,7 @@ export function abilityTooltipContent(
   // `abilityLines` leads with a Rank row; the title already carries the numeral,
   // so it is dropped rather than said twice.
   const rows: TooltipRow[] = abilityLines(ability, context)
-    .filter((line) => line.key !== 'ability:rank')
+    .filter((line) => line.key !== 'ability:rank' && line.key !== 'ability:default-trigger')
     .map((line) => ({
       key: line.key,
       label: line.label,
@@ -205,7 +207,7 @@ export function abilityTooltipContent(
     current,
     // Trigger and shape are the two sentences a player needs to predict WHEN it
     // goes off — abilities are automatic, so that is the only control they have.
-    footnote: `${described.trigger} ${described.shape}`,
+    footnote: `Default behavior: ${described.trigger} ${runtime.runeTiming ? `${runtime.runeTiming} ` : ''}${described.shape}`,
   };
 }
 

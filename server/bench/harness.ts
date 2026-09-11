@@ -102,7 +102,7 @@ function buildBenchPlayer(
       // Multi-slot shape (`techniques`/`guards` arrays). This was still the old
       // single-slot `{ technique, guard }` until the benches were typechecked
       // (2026-08-02) — a malformed slice that no type ever saw.
-      equippedAbilities: { techniques: [], guards: [] },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

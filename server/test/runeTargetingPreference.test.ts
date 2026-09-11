@@ -79,7 +79,7 @@ function makePlayerSlices(id: string, runesEquipped: EquippedRule[]): PersistedP
       runeRecipesCrafted: ["rune-recipe-focus-highest-hp", "rune-recipe-focus-lowest-hp"],
       runesEquipped,
       knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null },
+      attunedAbilities: { technique: null, guard: null },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

@@ -48,12 +48,12 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
       setCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY, STANCE_SWITCH_COOLDOWN_MS);
     }
     const ruleTarget = getString(player.tracksCombat, RUNE_STANCE_TARGET_KEY);
-    const legalTarget = ruleTarget && (ruleTarget === NO_STANCE_ID || (prog.knownStances ?? []).includes(ruleTarget))
+    const legalTarget = ruleTarget && (ruleTarget === NO_STANCE_ID || (prog.attunedStances ?? []).includes(ruleTarget))
       ? ruleTarget
       : null;
     const desired = getFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG) && legalTarget
       ? (legalTarget === NO_STANCE_ID ? null : legalTarget)
-      : (prog.equippedStances?.default ?? null);
+      : (prog.attunedStances?.includes(prog.equippedStances?.default ?? "") ? prog.equippedStances.default : null);
 
     let switched = false;
     if (desired !== prog.activeStance && getCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY) <= 0) {

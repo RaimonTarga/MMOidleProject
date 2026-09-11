@@ -1,770 +1,501 @@
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
-import { useAtom, useAtomValue } from "jotai";
-import { ActionChip, EngravedMeter } from "../hud/primitives";
+import { triggerSentence } from "./describe/abilityText";
+import { ABILITY_DATABASE } from "@mmo-idle/shared";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAtomValue } from "jotai";
 import {
   ACTION_DATABASE,
-  addRuneRuleWithReplacement,
-  analyzeRuneLoadoutConflicts,
   CONDITION_DATABASE,
   DEFAULT_RUNE_LOADOUT,
   NO_STANCE_ID,
-  RUNE_RECIPE_DATABASE,
-  STANCE_DATABASE,
-  TEST_ROOM_NODE_ID,
-  abilityDef,
-  equippedForSlot,
-  getRuleName,
+  analyzeRuneLoadoutConflicts,
   isRuneRuleCompatibleForArchetype,
   runeBudgetForGlobalMastery,
   runeChannelLabel,
-  runicPointLoadoutCost,
   runeRuleCost,
+  runicPointLoadoutCost,
   stanceDef,
-  type AbilitySlot,
-  type ActionDef,
-  type ConditionDef,
-  type EquippedAbilities,
   type EquippedRule,
-  type EssenceType,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
 import {
-  biomeLevelAtom,
-  bossesClearedAtom,
   combatArchetypeAtom,
-  equippedAbilitiesAtom,
+  attunedAbilitiesAtom,
   equippedRitesAtom,
-  essencesAtom,
+  equippedStancesAtom,
   globalMasteryAtom,
-  knownStancesAtom,
-  playerNodeIdAtom,
+  attunedStancesAtom,
   runesEquippedAtom,
   runesOwnedAtom,
 } from "../hud/atoms";
-import { BuildIcon, type BuildIconKind } from "./BuildIcon";
-import { GameIcon, type IconSource } from "./GameIcon";
-import { runeActionIconSource, runeConditionIconSource, stanceIconSource } from "./conceptIcons";
-import { DetailLines } from "./describe/DetailLines";
-import { actionLines, conditionLines } from "./describe";
-import {
-  runeFragmentIconSource,
-} from "./systemIcons";
-import { DialogTab, DialogTabs } from "../hud/primitives";
-import "./crafting.css";
+import { AttunementBudget } from "./AttunementBudget";
+import { GameIcon } from "./GameIcon";
+import { runeConditionIconSource, stanceIconSource } from "./conceptIcons";
+import { RuneClause, runeResponse } from "./RuneClause";
+import { composeRuneEdit } from "@mmo-idle/shared";
 import "./buildPanel.css";
+import "./runeBoard.css";
 
-const CHANNEL_COLOR: Record<string, string> = {
-  MOVEMENT: "#ffb36b",
-  TARGETING: "#d6a8ff",
-  OOC_MAINTENANCE: "#7ab8ff",
-  RESOURCE_MAINTENANCE: "#73d7ff",
-  GLOBAL_STRATEGY: "#7affc0",
-  PATH_SAFETY: "#8fd48b",
-  APPROACH_STYLE: "#8fd48b",
-  TRAVEL_PATHING: "#7ad7ff",
-  TRAVEL_RESPONSE: "#7ad7ff",
-  CONTROL: "#ff7a9a",
-  TECHNIQUE: "#ffd76b",
-  TECHNIQUE_2: "#ffd76b",
-  GUARD: "#9ad0ff",
-  GUARD_2: "#9ad0ff",
-  STANCE: "#c0ff9a",
-};
-
-interface RuneTarget {
-  kind: BuildIconKind;
-  label: string;
-  title: string;
-  text: string;
-  missing: boolean;
-}
-
-/** Which ability slot each `fire-*` rune action drives. */
-const ABILITY_FIRE_ACTIONS: Record<string, { slot: AbilitySlot; index: number }> = {
-  "fire-technique": { slot: "technique", index: 0 },
-  "fire-technique-2": { slot: "technique", index: 1 },
-  "fire-guard": { slot: "guard", index: 0 },
-  "fire-guard-2": { slot: "guard", index: 1 },
-};
-
-function resolveRuneTarget(
-  actionId: string,
-  equippedAbilities: EquippedAbilities,
-  targetStanceId?: string,
-): RuneTarget | null {
-  // Each ability-fire action drives ONE slot index, so the preview has to name
-  // the ability in that exact slot — otherwise a player wiring `fire-guard-2`
-  // could not tell which of two equipped Guards they were actually triggering.
-  const fireTarget = ABILITY_FIRE_ACTIONS[actionId];
-  if (fireTarget) {
-    const { slot, index } = fireTarget;
-    const ability = abilityDef(equippedForSlot(equippedAbilities, slot)[index]);
-    const slotName = slot === "technique" ? "Technique" : "Guard";
-    const ordinal = index === 0 ? slotName : `${slotName} ${index + 1}`;
-    return {
-      kind: "ability",
-      label: ability?.name ?? ordinal,
-      title: ability ? `Triggers ${ordinal}: ${ability.name}` : `No ${ordinal} equipped`,
-      text:
-        ability?.blurb ??
-        `Equip an ability in your ${ordinal.toLowerCase()} slot to make this rune do something.`,
-      missing: !ability,
-    };
-  }
-  if (actionId === "switch-stance") {
-    if (targetStanceId === NO_STANCE_ID) {
-      return {
-        kind: "stance",
-        label: "No Stance",
-        title: "Switches to: No Stance",
-        text: "Drop the current stance and fight without stance bonuses or penalties.",
-        missing: false,
-      };
-    }
-    const stance = stanceDef(targetStanceId);
-    return {
-      kind: "stance",
-      label: stance?.name ?? "Choose a stance",
-      title: stance ? `Switches to: ${stance.name}` : "No destination chosen",
-      text: stance?.blurb ?? "Choose a learned stance from the destination wheel.",
-      missing: !stance,
-    };
-  }
-  return null;
-}
-
-function ruleLabel(
-  rule: EquippedRule,
-  equippedAbilities: EquippedAbilities,
-): { title: string; subtitle: string; target: RuneTarget | null } {
-  const target = resolveRuneTarget(rule.actionId, equippedAbilities, rule.targetStanceId);
-  const named = getRuleName(rule.conditionId, rule.actionId);
-  const cond = CONDITION_DATABASE.get(rule.conditionId);
-  const action = ACTION_DATABASE.get(rule.actionId);
-  const fallback = `${cond?.name ?? rule.conditionId} -> ${action?.name ?? rule.actionId}`;
-  if (target) {
-    return {
-      title: `${cond?.name ?? rule.conditionId} -> ${target.label}`,
-      subtitle: target.missing ? target.text : `${action?.name ?? "Trigger"}: ${target.text}`,
-      target,
-    };
-  }
-  return {
-    title: named?.name ?? fallback,
-    subtitle: named?.blurb ?? fallback,
-    target,
-  };
-}
-
-function rpBadge(cost: number, tone: "normal" | "danger" = "normal") {
-  return (
-    <span
-      style={{
-        minWidth: 34,
-        height: 28,
-        padding: "0 6px",
-        border: `1px solid ${tone === "danger" ? "#ff7a7a" : "#e0c15c"}`,
-        borderRadius: 3,
-        background: tone === "danger" ? "rgba(90, 20, 30, 0.75)" : "rgba(65, 47, 12, 0.85)",
-        color: tone === "danger" ? "#ffc0c0" : "#ffe084",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 11,
-        fontWeight: "bold",
-        flexShrink: 0,
-      }}
-    >
-      {cost} RP
-    </span>
-  );
-}
-
-/**
- * The rune budget: a bounded meter, so it takes the engraved grammar rather than
- * the conduit's motion. Over-spending turns the trough itself danger-red, which
- * is why the caller no longer needs a sentence of warning text beside it.
- *
- * V5 rebuilds this into the sticky header of the rule board; the grammar chosen
- * here is what it will inherit.
- */
-function RunePointMeter({ spent, budget }: { spent: number; budget: number }) {
-  const over = Math.max(0, spent - budget);
-  const fraction = budget > 0 ? Math.min(1, spent / budget) : 0;
-  return (
-    <div className="rune-budget">
-      <div className="rune-budget__row">
-        <span className="build-section-title">Rune Points</span>
-        <span className={`rune-budget__value${over > 0 ? ' rune-budget__value--over' : ''}`}>
-          {spent} / {budget}
-        </span>
-      </div>
-      <EngravedMeter
-        className="rune-budget__meter"
-        fraction={fraction}
-        over={over > 0}
-        label={over > 0
-          ? `Rune points: ${spent} spent of ${budget}, ${over} over budget`
-          : `Rune points: ${spent} spent of ${budget}`}
-      />
-    </div>
-  );
-}
-
+type Draft = EquippedRule & { index: number | null };
 export function BuildRunesTab() {
   const owned = useAtomValue(runesOwnedAtom);
   const equipped = useAtomValue(runesEquippedAtom);
+  const abilities = useAtomValue(attunedAbilitiesAtom);
+  const stances = useAtomValue(attunedStancesAtom);
+  const defaultStance = useAtomValue(equippedStancesAtom).default;
+  const rites = useAtomValue(equippedRitesAtom);
+  const archetype = useAtomValue(combatArchetypeAtom);
   const gm = useAtomValue(globalMasteryAtom);
-  const combatArchetype = useAtomValue(combatArchetypeAtom);
-  const equippedAbilities = useAtomValue(equippedAbilitiesAtom);
-  const knownStances = useAtomValue(knownStancesAtom);
-  const equippedRites = useAtomValue(equippedRitesAtom);
-
-  const [loadout, setLoadout] = useState<EquippedRule[]>(equipped);
-  const [selCond, setSelCond] = useState<string | null>(null);
-  const [selAction, setSelAction] = useState<string | null>(null);
-  const [selStance, setSelStance] = useState<string | null>(null);
-  const [confirmReset, setConfirmReset] = useState(false);
-
+  const [rules, setRules] = useState(equipped);
+  const [draft, setDraft] = useState<Draft | null>(null);
+  const editorScroll = useRef<HTMLDivElement>(null);
+  const conditionSection = useRef<HTMLElement>(null);
+  const responseSection = useRef<HTMLElement>(null);
+  const destinationSection = useRef<HTMLElement>(null);
   useEffect(() => {
-    setLoadout(equipped);
+    if (!draft) return;
+    editorScroll.current?.scrollTo({ top: 0 });
+    const step = !draft.conditionId ? conditionSection.current
+      : !draft.actionId ? responseSection.current
+      : destinationSection.current;
+    step?.focus({ preventScroll: true });
+    step?.scrollIntoView({ block: "nearest" });
+  }, [draft?.conditionId, draft?.actionId]);
+  const [reset, setReset] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    setRules(equipped);
+    setDraft(null);
   }, [equipped]);
-
   useEffect(() => {
     const handler = (event: Event) => {
-      const result = (event as CustomEvent<{ system: string; success: boolean }>).detail;
-      if (result.system === "runes" && !result.success) setLoadout(equipped);
+      const result = (
+        event as CustomEvent<{ system: string; success: boolean }>
+      ).detail;
+      if (result.system === "runes" && !result.success) {
+        setRules(equipped);
+        setError(
+          "The setup could not be applied. Your saved rules have been restored.",
+        );
+      }
     };
     window.addEventListener("hud:loadoutResult", handler);
     return () => window.removeEventListener("hud:loadoutResult", handler);
   }, [equipped]);
-
-  const ownedSet = new Set(owned);
-  const conditions: ConditionDef[] = [...CONDITION_DATABASE.values()].filter((c) =>
-    ownedSet.has(c.id),
-  );
-  const actions: ActionDef[] = [...ACTION_DATABASE.values()].filter((a) =>
-    ownedSet.has(a.id),
-  );
-  const viableActions = selCond
-    ? actions.filter((a) =>
-        isRuneRuleCompatibleForArchetype(
-          { conditionId: selCond, actionId: a.id },
-          combatArchetype,
-        ),
-      )
-    : [];
-
-  const pendingRule: EquippedRule | null = selCond && selAction
-    ? {
-        conditionId: selCond,
-        actionId: selAction,
-        ...(selAction === "switch-stance" && selStance ? { targetStanceId: selStance } : {}),
-      }
-    : null;
-  const pendingCompatible = pendingRule
-    ? isRuneRuleCompatibleForArchetype(pendingRule, combatArchetype)
-      && (pendingRule.actionId !== "switch-stance" || !!pendingRule.targetStanceId)
-    : false;
-  const pendingCost = pendingRule ? runeRuleCost(pendingRule) : 0;
-  /** What adding a rule to THIS destination actually spends, once a situation is chosen. */
-  const stanceTokenCost = (stanceId: string): string =>
-    selCond
-      ? `${runeRuleCost({ conditionId: selCond, actionId: "switch-stance", targetStanceId: stanceId })} RP`
-      : `+${STANCE_DATABASE.get(stanceId)?.runeCost ?? 0} RP`;
   const budget = runeBudgetForGlobalMastery(gm);
-  const spent = runicPointLoadoutCost({ rules: loadout, rites: equippedRites });
-  const pendingOverBudget = pendingRule
-    ? runicPointLoadoutCost({ rules: addRuneRuleWithReplacement(loadout, pendingRule), rites: equippedRites }) > budget
-    : false;
-  const pendingTarget = selAction
-    ? resolveRuneTarget(selAction, equippedAbilities, selStance ?? undefined)
-    : null;
-  const conflictsByRule = useMemo(() => {
-    const byRule = new Map<number, ReturnType<typeof analyzeRuneLoadoutConflicts>[number]>();
-    for (const conflict of analyzeRuneLoadoutConflicts(loadout)) byRule.set(conflict.ruleIndex, conflict);
-    return byRule;
-  }, [loadout]);
-
-  function commit(next: EquippedRule[]): void {
-    setLoadout(next);
-    hudBus.requestSetRuneLoadout(next);
+  const spent = runicPointLoadoutCost({ rules, rites, abilities, stances });
+  const groups = useMemo(() => {
+    const result = new Map<Parameters<typeof runeChannelLabel>[0], number[]>();
+    rules.forEach((r, i) => {
+      const c = ACTION_DATABASE.get(r.actionId)?.channel;
+      if (c) result.set(c, [...(result.get(c) ?? []), i]);
+    });
+    return [...result.entries()];
+  }, [rules]);
+  const conflicts = analyzeRuneLoadoutConflicts(rules);
+  const conditions = [...CONDITION_DATABASE.values()].filter((c) =>
+    owned.includes(c.id),
+  );
+  const actions = [...ACTION_DATABASE.values()].filter((a) => {
+    if (
+      !owned.includes(a.id) ||
+      !draft?.conditionId ||
+      !isRuneRuleCompatibleForArchetype(
+        { conditionId: draft.conditionId, actionId: a.id },
+        archetype,
+      )
+    )
+      return false;
+    return (a.id !== "use-ability" || abilities.techniques.length + abilities.guards.length > 0) && (a.id !== "switch-stance" || stances.length > 0);
+  });
+  const pending: EquippedRule | null =
+    draft?.conditionId && draft.actionId
+      ? {
+          conditionId: draft.conditionId,
+          actionId: draft.actionId,
+          ...(draft.targetAbilityId ? { targetAbilityId: draft.targetAbilityId } : {}),
+          ...(draft.targetStanceId
+            ? { targetStanceId: draft.targetStanceId }
+            : {}),
+        }
+      : null;
+  const response = pending ? runeResponse(pending, abilities) : null;
+  const next = pending ? composeRuneEdit(rules, pending, draft!.index) : rules;
+  const nextSpent = runicPointLoadoutCost({ rules: next, rites, abilities, stances });
+  const valid =
+    pending &&
+    !response?.missing &&
+    isRuneRuleCompatibleForArchetype(pending, archetype) &&
+    (pending.actionId !== "switch-stance" ||
+      pending.targetStanceId === NO_STANCE_ID ||
+      stances.includes(pending.targetStanceId ?? ""));
+  const replaces =
+    pending &&
+    rules.some(
+      (r, i) =>
+        i !== draft?.index &&
+        r.conditionId === pending.conditionId &&
+        (pending.actionId !== "use-ability" || r.targetAbilityId === pending.targetAbilityId) &&
+        ACTION_DATABASE.get(r.actionId)?.channel ===
+          ACTION_DATABASE.get(pending.actionId)?.channel,
+    );
+  function commit(value: EquippedRule[]) {
+    setError("");
+    setRules(value);
+    setDraft(null);
+    hudBus.requestSetRuneLoadout(value);
   }
-
-  function addRule(): void {
-    if (!pendingRule || !pendingCompatible || pendingOverBudget) return;
-    commit(addRuneRuleWithReplacement(loadout, pendingRule));
+  function move(index: number, other: number) {
+    const value = [...rules];
+    [value[index], value[other]] = [value[other], value[index]];
+    commit(value);
   }
-
-  function removeRule(index: number): void {
-    commit(loadout.filter((_, i) => i !== index));
-  }
-
-  function moveRule(index: number, offset: -1 | 1): void {
-    const nextIndex = index + offset;
-    if (nextIndex < 0 || nextIndex >= loadout.length) return;
-    const next = [...loadout];
-    const [rule] = next.splice(index, 1);
-    next.splice(nextIndex, 0, rule);
-    commit(next);
-  }
-
-  function resetDefaultLoadout(): void {
-    commit(DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule })));
-    setSelCond(null);
-    setSelAction(null);
-    setSelStance(null);
-    setConfirmReset(false);
-  }
-
-  const preview = selCond && selAction ? getRuleName(selCond, selAction) : null;
-  const previewCond = selCond ? CONDITION_DATABASE.get(selCond) : null;
-  const previewAction = selAction ? ACTION_DATABASE.get(selAction) : null;
-
   return (
-    // Three bands: the budget you are spending against, a scrolling board, and a
-    // composer pinned to the bottom. The whole tab used to scroll as one column
-    // with ADD RULE at the very end, so building a rule meant scrolling past the
-    // fragment lists to commit it and back up to see what you had made.
-    <div className="build-tab-body build-rune-board" style={{ position: "relative" }}>
-      <div className="build-rune-board__header">
-        <RunePointMeter spent={spent} budget={budget} />
-      </div>
-
-      <div className="build-rune-board__scroll">
-        <div id="build-rune-loadout">
-          <div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
-                marginBottom: 8,
-              }}
-            >
-              <span className="build-section-title">
-                Priority rules {loadout.length > 0 ? `(${loadout.length})` : ""}
-              </span>
-              <button
-                type="button"
-                className="auto-btn"
-                onClick={() => setConfirmReset(true)}
-                style={{ width: "auto", minHeight: 24, padding: "4px 10px", fontSize: 10 }}
-              >
-                RESET DEFAULT
-              </button>
-            </div>
-
-            {loadout.length === 0 ? (
-              <div style={{ color: "#6868a8", fontSize: 12, fontStyle: "italic" }}>
-                No rules equipped. Your character will only use fallback combat behavior.
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {loadout.map((rule, i) => {
-                  const { title, subtitle, target } = ruleLabel(rule, equippedAbilities);
-                  const action = ACTION_DATABASE.get(rule.actionId);
-                  const accent = action ? CHANNEL_COLOR[action.channel] : "#7a7ad0";
-                  const compatible = isRuneRuleCompatibleForArchetype(rule, combatArchetype)
-                    && (rule.actionId !== "switch-stance"
-                      || rule.targetStanceId === NO_STANCE_ID
-                      || knownStances.includes(rule.targetStanceId ?? ""));
-                  const conflict = conflictsByRule.get(i);
-                  const earlier = conflict ? loadout[conflict.earlierRuleIndex] : null;
-                  const earlierLabel = earlier
-                    ? `${CONDITION_DATABASE.get(earlier.conditionId)?.name ?? earlier.conditionId} → ${ACTION_DATABASE.get(earlier.actionId)?.name ?? earlier.actionId}`
-                    : "";
-                  return (
-                    <div
-                      key={`${rule.conditionId}:${rule.actionId}:${rule.targetStanceId ?? ""}:${i}`}
-                      className={`rule-card${compatible ? '' : ' rule-card--invalid'}`}
-                      style={{ '--rule-accent': compatible ? accent : 'var(--hud-danger)' } as CSSProperties}
-                    >
-                      <span className="rule-card__order">{i + 1}</span>
-
-                      {/* WHEN this holds → DO that. The arrow is the rule, so it
-                          is drawn rather than implied by two stacked lines. */}
-                      <div className="rule-card__clause">
-                        <span className="rule-card__when">
-                          <span className="rule-card__tag">When</span>
-                          <span className="rule-card__text">{title}</span>
-                        </span>
-                        <span className="rule-card__arrow" aria-hidden="true">→</span>
-                        <span className="rule-card__do">
-                          <span className="rule-card__tag">Do</span>
-                          <span className="rule-card__text">
-                            {compatible ? subtitle : 'Invalid pairing — remove or replace'}
-                          </span>
-                        </span>
-                      </div>
-
-                      {/* The rule's target, when it names one. Muted means the
-                          thing it points at is not equipped. */}
-                      {target && (
-                        <span
-                          className={`rule-card__target${target.missing ? ' rule-card__target--missing' : ''}`}
-                          title={target.missing
-                            ? `${target.label} is not equipped — this rule cannot fire`
-                            : target.label}
-                        >
-                          <BuildIcon kind={target.kind} label={target.label} muted={target.missing} size={20} />
-                          <span className="rule-card__target-name">{target.label}</span>
-                        </span>
-                      )}
-
-                      {conflict && (
-                        <span
-                          className="rule-card__conflict"
-                          title={conflict.kind === "suppressed"
-                            ? `This rule can never fire while ${earlierLabel} is higher priority.`
-                            : conflict.kind === "redundant"
-                              ? `This repeats ${earlierLabel}.`
-                              : `This can overlap ${earlierLabel}; priority decides when both apply.`}
-                        >
-                          {conflict.kind === "suppressed"
-                            ? `SUPPRESSED BY #${conflict.earlierRuleIndex + 1}`
-                            : conflict.kind === "redundant"
-                              ? `DUPLICATES #${conflict.earlierRuleIndex + 1}`
-                              : `PRIORITY WITH #${conflict.earlierRuleIndex + 1}`}
-                        </span>
-                      )}
-
-                      {rpBadge(runeRuleCost(rule), compatible ? "normal" : "danger")}
-
-                      <span className="rule-card__controls">
-                        <ActionChip
-                          label="Move rule higher"
-                          fallback="▲"
-                          size="sm"
-                          disabled={i === 0}
-                          onClick={() => moveRule(i, -1)}
-                        />
-                        <ActionChip
-                          label="Move rule lower"
-                          fallback="▼"
-                          size="sm"
-                          disabled={i === loadout.length - 1}
-                          onClick={() => moveRule(i, 1)}
-                        />
-                        <ActionChip
-                          label="Remove rule"
-                          fallback="−"
-                          size="sm"
-                          tone="danger"
-                          onClick={() => removeRule(i)}
-                        />
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+    <div className="build-tab-body rune-workspace">
+      <AttunementBudget loadout={{ rules, rites, abilities, stances }} budget={budget} />
+      {error && (
+        <p className="rune-error" role="alert">
+          {error}
+        </p>
+      )}
+      {draft ? (
+        <>
+          <div className="rune-toolbar">
+            <strong>{draft.index === null ? "New rule" : "Edit rule"}</strong>
+            <button type="button" onClick={() => setDraft(null)}>
+              Cancel
+            </button>
           </div>
-
-          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-            <Column<ConditionDef>
-              heading={
-                <>
-                  <GameIcon
-                    source={runeFragmentIconSource("condition")}
-                    size={18}
-                    fallback={null}
-                    decorative
-                  />
-                  Situation
-                </>
-              }
-              items={conditions}
-              selectedId={selCond}
-              onSelect={(id) => {
-                setSelCond(id);
-                if (
-                  selAction &&
-                  !isRuneRuleCompatibleForArchetype(
-                    { conditionId: id, actionId: selAction },
-                    combatArchetype,
-                  )
-                ) {
-                  setSelAction(null);
-                }
-              }}
-              costFor={(c) => c.cost}
-              iconFor={(c) => runeConditionIconSource(c.id)}
-              renderMeta={(c) => c.blurb}
-              renderExtra={(c) => (
-                <DetailLines className="build-rune-lines" lines={conditionLines(c.id)} />
-              )}
-            />
-            <Column<ActionDef>
-              heading={
-                <>
-                  <GameIcon
-                    source={runeFragmentIconSource("action")}
-                    size={18}
-                    fallback={null}
-                    decorative
-                  />
-                  Response
-                </>
-              }
-              items={viableActions}
-              selectedId={selAction}
-              onSelect={(id) => {
-                setSelAction(id);
-                if (id !== "switch-stance") setSelStance(null);
-              }}
-              costFor={(a) => a.cost}
-              iconFor={(a) => runeActionIconSource(a.id)}
-              accentFor={(a) => CHANNEL_COLOR[a.channel]}
-              emptyText={selCond ? "No responses fit this situation." : "Pick a situation first."}
-              renderMeta={(a) => `${runeChannelLabel(a.channel)} - ${a.blurb}`}
-              renderExtra={(a) => {
-                const target = resolveRuneTarget(a.id, equippedAbilities, selStance ?? undefined);
-                return (
-                  <>
-                    {target && (
-                      <div className="build-rune-target">
-                        <BuildIcon kind={target.kind} label={target.label} muted={target.missing} size={28} />
-                        <div>
-                          <div className="build-rune-target__label">{target.title}</div>
-                          <div className="build-rune-target__text">{target.text}</div>
-                        </div>
-                      </div>
-                    )}
-                    {/* The distances the response actually moves you — authored
-                        in shared/data/runeTuning so they are the same numbers
-                        the auto-combat systems steer by. */}
-                    <DetailLines className="build-rune-lines" lines={actionLines(a.id)} />
-                  </>
-                );
-              }}
-            />
-          </div>
-
-          {selAction === "switch-stance" && (
-            <div className="stance-destination-wheel">
-              {/* `Switch Stance` itself costs 0 RP, so each token quotes the WHOLE rule
-                  price (condition + destination) once a situation is picked — the
-                  surcharge alone would understate what pressing ADD RULE spends. */}
-              <div className="stance-destination-wheel__title">
-                {selCond ? "Choose destination sigil — cost shown is the whole rule" : "Choose destination sigil"}
-              </div>
-              <div className="stance-destination-wheel__track">
-                <button
-                  type="button"
-                  className={`stance-destination-token${selStance === NO_STANCE_ID ? " stance-destination-token--selected" : ""}`}
-                  onClick={() => setSelStance(NO_STANCE_ID)}
-                  title="Drop the current stance and fight without stance bonuses or penalties."
-                >
-                  <GameIcon source={null} size={32} fallback="Ø" decorative />
-                  <span>No Stance<small>{stanceTokenCost(NO_STANCE_ID)}</small></span>
-                </button>
-                {knownStances.map((id) => STANCE_DATABASE.get(id)).filter(Boolean).map((stance) => (
+          <div ref={editorScroll} className="rune-workspace__scroll rune-editor">
+            <section ref={conditionSection} tabIndex={-1} aria-label="When">
+              <h3>When</h3>
+              {draft.conditionId ? <div className="rune-step-summary">
+                <GameIcon source={runeConditionIconSource(draft.conditionId)} size={28} decorative fallback="◇" />
+                <span title={CONDITION_DATABASE.get(draft.conditionId)?.blurb}><strong>{CONDITION_DATABASE.get(draft.conditionId)?.name ?? draft.conditionId}</strong><small>{CONDITION_DATABASE.get(draft.conditionId)?.cost} RP</small></span>
+                <button type="button" aria-label="Change When condition" onClick={() => setDraft({ index: draft.index, conditionId: "", actionId: "" })}>↶ Change</button>
+              </div> : <div className="rune-choice-grid">
+                {conditions.map((c) => (
                   <button
-                    key={stance!.id}
                     type="button"
-                    className={`stance-destination-token${selStance === stance!.id ? " stance-destination-token--selected" : ""}`}
-                    onClick={() => setSelStance(stance!.id)}
-                    title={stance!.blurb}
+                    key={c.id}
+                    aria-pressed={draft.conditionId === c.id}
+                    onClick={() => {
+                      const fits =
+                        draft.actionId &&
+                        isRuneRuleCompatibleForArchetype(
+                          { conditionId: c.id, actionId: draft.actionId },
+                          archetype,
+                        );
+                      setDraft({
+                        ...draft,
+                        conditionId: c.id,
+                        actionId: fits ? draft.actionId : "",
+                        targetStanceId: fits ? draft.targetStanceId : undefined,
+                      });
+                    }}
                   >
-                    <GameIcon source={stanceIconSource(stance!.id)} size={32} fallback={stance!.name.slice(0, 1)} decorative />
-                    <span>{stance!.name}<small>{stanceTokenCost(stance!.id)}</small></span>
+                    <GameIcon
+                      source={runeConditionIconSource(c.id)}
+                      size={28}
+                      decorative
+                      fallback="◇"
+                    />
+                    <span>{c.name}</span>
+                    <small>{c.cost} RP</small>
                   </button>
                 ))}
-              </div>
-            </div>
-          )}
-
-        </div>
-      </div>
-
-      {/* Pinned: the thing you are building and the button that commits it stay
-          on screen while you scroll the fragments you are building it from. */}
-      <div className="rune-composer">
-        {selCond && selAction ? (
-          <div className="rune-composer__row">
-            {pendingTarget ? (
-              <BuildIcon kind={pendingTarget.kind} label={pendingTarget.label} muted={pendingTarget.missing} />
-            ) : (
-              rpBadge(pendingCost, pendingOverBudget ? "danger" : "normal")
-            )}
-            <div className="rune-composer__text">
-              <div className="rune-composer__title">
-                {pendingTarget?.title ??
-                  preview?.name ??
-                  `${previewCond?.name ?? selCond} -> ${previewAction?.name ?? selAction}`}
-              </div>
-              <div className={`rune-composer__blurb${pendingCompatible ? '' : ' rune-composer__blurb--bad'}`}>
-                {!pendingCompatible
-                  ? "That response does not make sense for this situation."
-                  : pendingOverBudget
-                    ? "This rule exceeds your current rune point budget."
-                    : loadout.some((rule) => {
-                      const action = ACTION_DATABASE.get(rule.actionId);
-                      const pendingAction = ACTION_DATABASE.get(pendingRule?.actionId ?? "");
-                      return rule.conditionId === pendingRule?.conditionId && action?.channel === pendingAction?.channel;
-                    })
-                      ? "This replaces the existing rule with the same situation and behavior channel."
-                    : pendingTarget?.text ??
-                      preview?.blurb ??
-                      `${previewCond?.name ?? selCond} -> ${previewAction?.name ?? selAction}`}
-              </div>
-            </div>
-            {rpBadge(pendingCost, pendingOverBudget ? "danger" : "normal")}
-            <button
-              className="auto-btn rune-composer__commit"
-              onClick={addRule}
-              disabled={!pendingCompatible || pendingOverBudget}
-            >
-              ADD RULE
-            </button>
-          </div>
-        ) : (
-          <div className="rune-composer__hint">Pick a situation and a response.</div>
-        )}
-      </div>
-
-      {confirmReset && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(4, 3, 12, 0.72)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 16,
-            zIndex: 3,
-          }}
-        >
-          <div
-            style={{
-              width: "min(420px, 100%)",
-              border: "1px solid rgba(224, 193, 92, 0.42)",
-              borderRadius: 6,
-              background: "rgba(13, 11, 34, 0.96)",
-              boxShadow: "0 16px 60px rgba(0, 0, 0, 0.55)",
-              padding: 16,
-            }}
-          >
-            <div style={{ color: "#ffe084", fontWeight: "bold", fontSize: 15 }}>
-              Reset Rune Loadout
-            </div>
-            <div style={{ color: "#b8a8e0", fontSize: 12, lineHeight: 1.5, marginTop: 8 }}>
-              Restore the basic enemy-seeking setup? This replaces your current priority rules.
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
-              <button
-                type="button"
-                className="auto-btn"
-                onClick={() => setConfirmReset(false)}
-                style={{ width: "auto", padding: "6px 12px" }}
-              >
-                CANCEL
-              </button>
-              <button
-                type="button"
-                className="auto-btn active"
-                onClick={resetDefaultLoadout}
-                style={{ width: "auto", padding: "6px 12px" }}
-              >
-                RESET
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Column<T extends { id: string; name: string }>({
-  heading,
-  items,
-  selectedId,
-  onSelect,
-  accentFor,
-  costFor,
-  iconFor,
-  emptyText,
-  renderMeta,
-  renderExtra,
-}: {
-  heading: ReactNode;
-  items: T[];
-  selectedId: string | null;
-  onSelect: (id: string) => void;
-  accentFor?: (item: T) => string | undefined;
-  costFor: (item: T) => number;
-  iconFor?: (item: T) => IconSource | null;
-  emptyText?: string;
-  renderMeta?: (item: T) => string;
-  renderExtra?: (item: T) => ReactNode;
-}) {
-  return (
-    <div style={{ flex: "1 1 280px" }}>
-      <div
-        className="build-section-title"
-        style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}
-      >
-        {heading}
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        {items.length === 0 && (
-          <div style={{ color: "#6868a8", fontSize: 12, padding: "8px 2px" }}>
-            {emptyText ?? "Nothing available."}
-          </div>
-        )}
-        {items.map((item) => {
-          const selected = item.id === selectedId;
-          const accent = accentFor?.(item) ?? "#7a7ad0";
-          return (
-            <button
-              key={item.id}
-              onClick={() => onSelect(item.id)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                textAlign: "left",
-                border: `1px solid ${selected ? accent : "rgba(100, 85, 200, 0.22)"}`,
-                borderLeft: `4px solid ${accent}`,
-                borderRadius: 5,
-                padding: "8px 10px",
-                background: selected ? "rgba(40, 30, 80, 0.8)" : "rgba(13, 11, 34, 0.7)",
-                color: selected ? "#fff" : "#b8a8e0",
-                cursor: "pointer",
-                fontFamily: "monospace",
-                boxShadow: selected ? `0 0 0 1px ${accent}` : "none",
-              }}
-            >
-              {iconFor && (
-                <GameIcon
-                  source={iconFor(item)}
-                  size={32}
-                  fit="cover"
-                  fallback={null}
-                  style={{ borderRadius: 4 }}
-                  decorative
-                />
+              </div>}
+            </section>
+            <section ref={responseSection} tabIndex={-1} aria-label="Do">
+              <h3>Do</h3>
+              {!draft.conditionId && (
+                <p className="rune-detail">
+                  Choose a situation to see the responses that fit.
+                </p>
               )}
-              {rpBadge(costFor(item))}
-              <span style={{ flex: 1, minWidth: 0 }}>
-                <span style={{ display: "block", fontWeight: "bold", fontSize: 13 }}>{item.name}</span>
-                {renderMeta && (
-                  <span style={{ display: "block", color: "#8888b0", fontSize: 10, marginTop: 2 }}>
-                    {renderMeta(item)}
-                  </span>
-                )}
-                {renderExtra?.(item)}
+              {draft.actionId ? <div className="rune-step-summary">
+                <GameIcon source={runeResponse({ conditionId: draft.conditionId, actionId: draft.actionId }, abilities).icon} size={28} decorative fallback="◇" />
+                <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong><small>{ACTION_DATABASE.get(draft.actionId)?.cost} RP</small></span>
+                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", targetAbilityId: undefined, targetStanceId: undefined })}>↶ Change</button>
+              </div> : <div className="rune-choice-grid">
+                {actions.map((a) => {
+                  const view = runeResponse(
+                    { conditionId: draft.conditionId, actionId: a.id },
+                    abilities,
+                  );
+                  return (
+                    <button
+                      type="button"
+                      key={a.id}
+                      aria-pressed={draft.actionId === a.id}
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          actionId: a.id,
+                          targetStanceId:
+                            a.id === "switch-stance"
+                              ? draft.targetStanceId
+                              : undefined,
+                        })
+                      }
+                    >
+                      <GameIcon
+                        source={view.icon}
+                        size={28}
+                        decorative
+                        fallback="◇"
+                      />
+                      <span>
+                        {a.id === "switch-stance" ? "Switch stance" : view.name}
+                      </span>
+                      <small>{a.cost} RP</small>
+                    </button>
+                  );
+                })}
+              </div>}
+              {response && draft.actionId !== "use-ability" && draft.actionId !== "switch-stance" && <p className="rune-detail">{response.detail}</p>}
+            </section>
+            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}<small>Default: {triggerSentence(ABILITY_DATABASE.get(id)!.trigger)}</small></button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
+            {draft.actionId === "switch-stance" && (
+              <section
+                ref={destinationSection}
+                tabIndex={-1}
+                aria-label="Choose stance"
+                className="rune-editor__destinations"
+              >
+                <h3>Choose stance</h3>
+                <div className="rune-choice-grid">
+                  {[NO_STANCE_ID, ...stances].map((id) => (
+                    <button
+                      type="button"
+                      key={id}
+                      aria-pressed={draft.targetStanceId === id}
+                      onClick={() => setDraft({ ...draft, targetStanceId: id })}
+                    >
+                      <GameIcon
+                        source={
+                          id === NO_STANCE_ID ? null : stanceIconSource(id)
+                        }
+                        size={28}
+                        decorative
+                        fallback="◇"
+                      />
+                      <span>{stanceDef(id)?.name ?? "No stance"}</span>
+                      <small>
+                        {runeRuleCost({
+                          conditionId: draft.conditionId,
+                          actionId: "switch-stance",
+                          targetStanceId: id,
+                        })}{" "}
+                        RP total
+                      </small>
+                    </button>
+                  ))}
+                </div>
+                <p className="rune-detail">
+                  ↩ Otherwise return to{" "}
+                  {stanceDef(defaultStance)?.name ?? "No stance"}.
+                </p>
+              </section>
+            )}
+          </div>
+          <footer className="rune-draft" aria-live="polite">
+            {pending ? (
+              <RuneClause rule={pending} abilities={abilities} />
+            ) : (
+              <span>
+                {draft.conditionId
+                  ? `${CONDITION_DATABASE.get(draft.conditionId)?.name} → Choose a response`
+                  : "Choose a situation → Choose a response"}
               </span>
+            )}
+            <div className="rune-toolbar">
+              <span>
+                {pending
+                  ? `${runeRuleCost(pending)} RP · Setup ${nextSpent} / ${budget}`
+                  : "Your saved setup stays active while you edit."}
+              </span>
+              <button
+                type="button"
+                disabled={!valid || (nextSpent > budget && nextSpent >= spent)}
+                onClick={() => commit(next)}
+              >
+                {replaces
+                  ? "Replace rule"
+                  : draft.index === null
+                    ? "Add rule"
+                    : "Save rule"}
+              </button>
+            </div>
+            {pending && !valid && (
+              <span className="rune-detail">
+                {pending.actionId === "switch-stance" && !pending.targetStanceId
+                  ? "Choose the stance to switch to."
+                  : response?.missing
+                    ? "Attune the target ability before adding this rule."
+                    : "Choose a compatible response."}
+              </span>
+            )}
+            {nextSpent > budget && pending && (
+              <span className="rune-error">
+                Free {nextSpent - budget} RP to use this setup.
+              </span>
+            )}
+            {replaces && (
+              <span className="rune-detail">
+                Replaces the existing{" "}
+                {CONDITION_DATABASE.get(pending!.conditionId)?.name} rule in{" "}
+                {runeChannelLabel(
+                  ACTION_DATABASE.get(pending!.actionId)!.channel,
+                )}
+                .
+              </span>
+            )}
+          </footer>
+        </>
+      ) : (
+        <>
+          <div className="rune-toolbar">
+            <strong>Rune priorities</strong>
+            <button
+              type="button"
+              className="rune-add-rule"
+              onClick={() =>
+                setDraft({ index: null, conditionId: "", actionId: "" })
+              }
+            >
+              + Add rule
             </button>
-          );
-        })}
-      </div>
+          </div>
+          <div className="rune-workspace__scroll">
+            {rules.length === 0 && (
+              <p className="rune-detail">
+                No custom rules. Your character uses its default combat
+                behavior.
+              </p>
+            )}
+            {groups.map(([channel, indices]) => (
+              <section
+                className="rune-group"
+                key={channel}
+                aria-label={`${runeChannelLabel(channel)} priority`}
+              >
+                <h3>
+                  {runeChannelLabel(channel)}
+                  <span>{indices.length > 1 ? (channel === "ABILITY" ? "Execution priority ↓" : "First match ↓") : ""}</span>
+                </h3>
+                <ol className="rune-priority-track">
+                  {indices.map((index, rank) => {
+                    const rule = rules[index];
+                    const warning = conflicts.find(
+                      (c) =>
+                        c.ruleIndex === index &&
+                        (c.kind === "suppressed" || c.kind === "redundant"),
+                    );
+                    const missing = runeResponse(rule, abilities).missing;
+                    return (
+                      <li
+                        key={`${index}:${rule.conditionId}:${rule.actionId}`}
+                        className="rune-rule"
+                      >
+                        <span
+                          className="rune-rule__rank"
+                          aria-label={`Priority ${rank + 1}`}
+                        >
+                          {rank + 1}
+                        </span>
+                        <button
+                          type="button"
+                          className="rune-rule__edit"
+                          onClick={() => setDraft({ index, ...rule })}
+                          aria-label={`Edit ${CONDITION_DATABASE.get(rule.conditionId)?.name} to ${runeResponse(rule, abilities).name}`}
+                        >
+                          <RuneClause rule={rule} abilities={abilities} />
+                          {rule.actionId === "use-ability" && <small>{runeResponse(rule, abilities).detail}</small>}
+                          {rule.actionId === "switch-stance" && (
+                            <small>
+                              ↩ Default:{" "}
+                              {stanceDef(defaultStance)?.name ?? "No stance"}
+                            </small>
+                          )}
+                          {missing && (
+                            <small className="rune-error">
+                              Target unavailable · edit this rule
+                            </small>
+                          )}
+                          {warning && (
+                            <small className="rune-error">
+                              {warning.kind === "redundant"
+                                ? "Duplicates an earlier rule"
+                                : "Blocked by an earlier rule"}{" "}
+                              in this group
+                            </small>
+                          )}
+                        </button>
+                        <span className="rune-rule__cost">
+                          {runeRuleCost(rule)} RP
+                        </span>
+                        <div className="rune-rule__controls">
+                          <button
+                            type="button"
+                            aria-label="Move rule higher"
+                            disabled={rank === 0}
+                            onClick={() => move(index, indices[rank - 1])}
+                          >
+                            ↑
+                          </button>
+                          <button
+                            type="button"
+                            aria-label="Move rule lower"
+                            disabled={rank === indices.length - 1}
+                            onClick={() => move(index, indices[rank + 1])}
+                          >
+                            ↓
+                          </button>
+                          <button
+                            type="button"
+                            aria-label="Remove rule"
+                            onClick={() =>
+                              commit(rules.filter((_, i) => i !== index))
+                            }
+                          >
+                            ×
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </section>
+            ))}
+          </div>
+          <footer className="rune-toolbar rune-workspace__footer">
+            <span className="rune-detail">
+              Rules are tried in priority order. Ability cooldowns and combat execution limits still apply.
+            </span>
+            {reset ? (
+              <span className="rune-reset">
+                <span>Restore the basic rules?</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    commit(DEFAULT_RUNE_LOADOUT.map((r) => ({ ...r })));
+                    setReset(false);
+                  }}
+                >
+                  Restore
+                </button>
+                <button type="button" onClick={() => setReset(false)}>
+                  Cancel
+                </button>
+              </span>
+            ) : (
+              <button type="button" onClick={() => setReset(true)}>
+                Reset defaults
+              </button>
+            )}
+          </footer>
+        </>
+      )}
     </div>
   );
 }

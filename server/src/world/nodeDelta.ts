@@ -12,6 +12,7 @@ import type { DirtyDrain } from "../ecs/dirtyTracker";
 import type { BroadcastStats } from "../telemetry/nodeTelemetry";
 import { buildGroundZoneViews } from "../systems/world/groundZones";
 import { buildCorpseViews } from "../systems/world/corpses";
+import { buildTombstoneViews } from "../systems/world/tombstones";
 
 export interface NodeDeltaResult {
   snapshot: DeltaSnapshot;
@@ -95,6 +96,12 @@ export function buildNodeDelta(
 
   const corpses = buildCorpseViews(world, nodeId, Date.now());
   if (corpses) snapshot.corpses = corpses;
+
+  // Survives node freeze, so this is also the line that re-hydrates a thawed node:
+  // the delta right after a thaw is `full`, and it carries whatever tombs were
+  // still standing while nobody was here.
+  const tombstones = buildTombstoneViews(world, nodeId, Date.now());
+  if (tombstones) snapshot.tombstones = tombstones;
 
   let deltaBytes = 0;
   try {

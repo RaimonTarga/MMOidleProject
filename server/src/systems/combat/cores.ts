@@ -95,7 +95,7 @@ function registerMobilityRefundOnKill(): void {
     // Inert unless the build actually carries a mobility ability — the magnifier
     // rule. Today only Charge is tagged `mobility`, so this is a narrow but
     // deliberate dependency, and it widens for free as more are authored.
-    for (const abilityId of player.tracksProgression.equippedAbilities.techniques) {
+    for (const abilityId of player.tracksProgression.attunedAbilities.techniques) {
       const ability = ABILITY_DATABASE.get(abilityId);
       if (!ability?.tags?.includes("mobility")) continue;
 

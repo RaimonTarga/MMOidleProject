@@ -8,6 +8,7 @@
  */
 import type { AutocombatConfig } from "./components/core/networkedSlices";
 import type { CombatArchetype } from "./types/combat";
+import { ABILITY_DATABASE } from "./abilities";
 import { NO_STANCE_ID, stanceDef } from "./stances";
 
 export type RuneChannel =
@@ -25,19 +26,7 @@ export type RuneChannel =
   /** Whether a travel objective may yield to combat and resume afterwards. */
   | "TRAVEL_RESPONSE"
   | "CONTROL"
-  // System rework Step 7: each ability slot gets its own channel so a Technique
-  // override and a Guard override (and taunt in CONTROL) can be equipped at once.
-  //
-  // Abilities evolution §7: one channel per SLOT INDEX, not per slot kind —
-  // channels are single-claim, so a second Technique slot needs its own channel
-  // to carry an independent trigger. The `_2` channels are inert until the
-  // player's tier actually grants that slot.
-  | "TECHNIQUE"
-  | "TECHNIQUE_2"
-  | "GUARD"
-  | "GUARD_2"
-  // System rework Step 10: the stance-switch action gets its own single-claim
-  // channel so it coexists with technique/guard overrides and a control taunt.
+  | "ABILITY"
   | "STANCE";
 
 export type RuneConditionId =
@@ -110,12 +99,7 @@ export type RuneActionId =
   | "fight-back"
   | "lead-the-way"
   | "taunt-current-target"
-  // System rework Step 7: override the built-in auto-fire timing of an ability.
-  // Abilities evolution §7: `-2` variants drive the SECOND slot of each kind.
-  | "fire-technique"
-  | "fire-technique-2"
-  | "fire-guard"
-  | "fire-guard-2"
+  | "use-ability"
   // Switch to a destination stance authored on the assembled rule.
   | "switch-stance";
 
@@ -145,6 +129,7 @@ export interface EquippedRule {
   actionId: string;
   /** Required destination for switch-stance; invalid and ignored on other actions. */
   targetStanceId?: string;
+  targetAbilityId?: string;
 }
 
 export const RUNE_CHANNELS: RuneChannel[] = [
@@ -158,10 +143,7 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "TRAVEL_PATHING",
   "TRAVEL_RESPONSE",
   "CONTROL",
-  "TECHNIQUE",
-  "TECHNIQUE_2",
-  "GUARD",
-  "GUARD_2",
+  "ABILITY",
   "STANCE",
 ];
 
@@ -215,22 +197,7 @@ const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
 ];
 
 // System rework Step 7: conditions a player can wire to an ability-fire override.
-const TECHNIQUE_CONDITIONS: readonly RuneConditionId[] = [
-  "in-combat",
-  "before-empowered",
-  "target-elite",
-  "target-max-stacks",
-  "n-aggro-3",
-];
 
-const GUARD_CONDITIONS: readonly RuneConditionId[] = [
-  "in-combat",
-  "hp-below-25",
-  "has-debuff",
-  "target-casting",
-  "target-elite",
-  "n-aggro-3",
-];
 
 // System rework Step 10: situations a player can wire to a stance auto-switch.
 const STANCE_CONDITIONS: readonly RuneConditionId[] = [
@@ -700,58 +667,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       allowedConditionIds: CONTROL_CONDITIONS,
     },
   ],
-  [
-    "fire-technique",
-    {
-      id: "fire-technique",
-      name: "Fire Technique",
-      blurb:
-        "Override your Technique's auto-timing: arm it when this situation holds instead of the default.",
-      cost: 1,
-      tier: 1,
-      channel: "TECHNIQUE",
-      allowedConditionIds: TECHNIQUE_CONDITIONS,
-    },
-  ],
-  [
-    "fire-technique-2",
-    {
-      id: "fire-technique-2",
-      name: "Fire Technique II",
-      blurb:
-        "Override the auto-timing of your SECOND Technique. Inert until a second Technique slot is unlocked.",
-      cost: 1,
-      tier: 3,
-      channel: "TECHNIQUE_2",
-      allowedConditionIds: TECHNIQUE_CONDITIONS,
-    },
-  ],
-  [
-    "fire-guard",
-    {
-      id: "fire-guard",
-      name: "Fire Guard",
-      blurb:
-        "Override your Guard's auto-timing: trigger it when this situation holds instead of the default.",
-      cost: 1,
-      tier: 1,
-      channel: "GUARD",
-      allowedConditionIds: GUARD_CONDITIONS,
-    },
-  ],
-  [
-    "fire-guard-2",
-    {
-      id: "fire-guard-2",
-      name: "Fire Guard II",
-      blurb:
-        "Override the auto-timing of your SECOND Guard. Inert until a second Guard slot is unlocked.",
-      cost: 1,
-      tier: 4,
-      channel: "GUARD_2",
-      allowedConditionIds: GUARD_CONDITIONS,
-    },
-  ],
+  ["use-ability", { id: "use-ability", name: "Use Ability", blurb: "Override an attuned ability's default timing.", cost: 1, tier: 1, channel: "ABILITY" }],
   [
     "switch-stance",
     {
@@ -759,12 +675,8 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       name: "Switch Stance",
       blurb:
         "Switch to a chosen learned stance while this situation holds, reverting to your default otherwise.",
-      // Deliberately 0. The action is a verb with no power of its own — every gram of
-      // what a stance rule buys you is the destination, which already carries a 1-4 RP
-      // surcharge. Charging for the verb as well taxed the whole axis twice and made the
-      // cheapest possible tactical transition (1 + 2 + 1) cost as much as a premium Rite,
-      // so Stance micro stopped being a luxury optimization and became unaffordable.
-      // A stance rule now costs condition + destination; see `runeRuleCost`.
+      // The destination reserves RP through stance attunement. Switching adds only
+      // the condition cost; repeated rules do not repay the destination reservation.
       cost: 0,
       tier: 2,
       channel: "STANCE",
@@ -798,15 +710,7 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     "follow-and-assist",
     "taunt-current-target",
     "focus-closest",
-    // Step 7: ability-fire overrides are available from the start (a timing
-    // preference for an ability you already had to unlock). Equipping still
-    // costs RP. The user can move these onto recipes in a later balance pass.
-    "fire-technique",
-    "fire-guard",
-    // Abilities evolution §7: the slot-2 overrides ride the same reasoning, and
-    // are inert until the player's tier grants a second slot of that kind.
-    "fire-technique-2",
-    "fire-guard-2",
+    "use-ability",
     // Stance auto-switch is a timing preference for a learned destination.
     "switch-stance",
     // Reactive "enemy is charging a cast" condition — available from the start so
@@ -857,6 +761,7 @@ export function normalizeRuneRule(rule: EquippedRule): EquippedRule {
   return {
     conditionId: LEGACY_CONDITION_IDS[rule.conditionId] ?? rule.conditionId,
     actionId: LEGACY_ACTION_IDS[rule.actionId] ?? rule.actionId,
+    ...(rule.actionId === "use-ability" && typeof rule.targetAbilityId === "string" ? { targetAbilityId: rule.targetAbilityId } : {}),
     ...(rule.actionId === "switch-stance" && typeof rule.targetStanceId === "string"
       ? { targetStanceId: rule.targetStanceId }
       : {}),
@@ -874,35 +779,19 @@ export function normalizeRuneLoadout(rules: EquippedRule[]): EquippedRule[] {
     .map(normalizeRuneRule);
 }
 
-/**
- * Rune-point budget. System rework Step 4: Global Mastery replaces the tier term —
- * RP now scales with farmed breadth, not raw tier, so a high-tier/low-GM rusher is
- * under-budgeted until they farm (the brainstorm's catch-up mechanism).
- *
- * PLACEHOLDER (non-regressive): the `/ 10` divisor is anchored so RP at equivalent
- * progression is ≥ the old `8 + tier*2`. A tier-complete player levels ~5 biomes to
- * ~level 4 (where content currently stops — auto-traverse skips the empty levels 5–6),
- * so GM ≈ 20 per cleared tier → +2 RP/tier, matching the retired tier term. base 8 =
- * old tier-0. The divisor is the user's balance lever. (Step 5 retired the crafted
- * rune-capacity recipes; RP now comes solely from GM.)
- */
-export const RUNE_POINT_GLOBAL_MASTERY_STEP = 10;
+/** Provisional economy seeds; Global Mastery is the sole capacity progression. */
+export const RUNE_POINT_BASE = 16;
+export const RUNE_POINT_GLOBAL_MASTERY_STEP = 5;
 
 export function runeBudgetForGlobalMastery(globalMastery: number): number {
-  return 8 + Math.floor(Math.max(0, globalMastery) / RUNE_POINT_GLOBAL_MASTERY_STEP);
+  return RUNE_POINT_BASE + Math.floor(Math.max(0, Number.isFinite(globalMastery) ? globalMastery : 0) / RUNE_POINT_GLOBAL_MASTERY_STEP);
 }
 
 export function runeRuleCost(rule: EquippedRule): number {
   const condition = CONDITION_DATABASE.get(rule.conditionId);
   const action = ACTION_DATABASE.get(rule.actionId);
   if (!condition || !action) return 0;
-  // `switch-stance` prices its destination, not itself (its own cost is 0), so the sum
-  // below is the whole and only truth about what a stance rule costs. Every surface that
-  // shows a stance rule's price must call THIS, never `action.cost` plus a guess.
-  const destinationCost = action.id === "switch-stance"
-    ? (stanceDef(rule.targetStanceId)?.runeCost ?? 0)
-    : 0;
-  return condition.cost + action.cost + destinationCost;
+  return condition.cost + action.cost;
 }
 
 export function runeLoadoutCost(rules: EquippedRule[]): number {
@@ -931,14 +820,8 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Travel Response";
     case "CONTROL":
       return "Control";
-    case "TECHNIQUE":
-      return "Technique";
-    case "TECHNIQUE_2":
-      return "Technique II";
-    case "GUARD":
-      return "Guard";
-    case "GUARD_2":
-      return "Guard II";
+    case "ABILITY":
+      return "Abilities";
     case "STANCE":
       return "Stance";
   }
@@ -986,7 +869,8 @@ export function sanitizeRuneLoadout(
   owned: ReadonlySet<string>,
   budget: number,
   combatArchetype?: CombatArchetype,
-  knownStances?: ReadonlySet<string>,
+  knownStances: ReadonlySet<string> = new Set(),
+  attunedAbilities: ReadonlySet<string> = new Set(),
 ): EquippedRule[] {
   const sanitized: EquippedRule[] = [];
   let spent = 0;
@@ -1008,11 +892,13 @@ export function sanitizeRuneLoadout(
           (!stanceDef(raw.targetStanceId) ||
             (knownStances !== undefined && !knownStances.has(raw.targetStanceId)))))
     ) continue;
+    if (raw.actionId === "use-ability" && (!raw.targetAbilityId || !ABILITY_DATABASE.has(raw.targetAbilityId) || !attunedAbilities.has(raw.targetAbilityId))) continue;
     const cost = runeRuleCost(raw);
     if (spent + cost > budget) continue;
     sanitized.push({
       conditionId: raw.conditionId,
       actionId: raw.actionId,
+      ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
       ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     });
     spent += cost;
@@ -1070,6 +956,7 @@ export function analyzeRuneLoadoutConflicts(
       const earlier = rules[earlierIndex];
       const earlierAction = ACTION_DATABASE.get(earlier.actionId);
       if (!earlierAction || earlierAction.channel !== action.channel) continue;
+      if (action.id === "use-ability" && earlier.targetAbilityId !== rule.targetAbilityId) continue;
       if (earlier.conditionId === rule.conditionId && earlier.actionId === rule.actionId) {
         conflicts.push({ ruleIndex: index, earlierRuleIndex: earlierIndex, channel: action.channel, kind: "redundant" });
         break;
@@ -1094,7 +981,7 @@ export function addRuneRuleWithReplacement(
   if (!action) return [...rules, added];
   const replacementIndex = rules.findIndex((rule) => {
     const existing = ACTION_DATABASE.get(rule.actionId);
-    return existing?.channel === action.channel && rule.conditionId === added.conditionId;
+    return existing?.channel === action.channel && rule.conditionId === added.conditionId && (added.actionId !== "use-ability" || rule.targetAbilityId === added.targetAbilityId);
   });
   if (replacementIndex < 0) return [...rules, added];
   const next = [...rules];
@@ -1247,7 +1134,7 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     },
   ],
   [
-    ruleKey("before-empowered", "fire-technique"),
+    ruleKey("before-empowered", "use-ability"),
     {
       name: "Finishing Technique",
       blurb:
@@ -1347,6 +1234,9 @@ export interface ClaimedRuneAction {
 export type ClaimedRuneChannels = Record<RuneChannel, ClaimedRuneAction | null>;
 
 export interface DerivedRuneConfig {
+  /** Active ability targets in Rune priority order; runtime arbitrates executable candidates. */
+  abilityTargets: string[];
+  abilityRules: EquippedRule[];
   config: AutocombatConfig;
   claimed: ClaimedRuneChannels;
   movementAction: RuneActionId | null;
@@ -1359,10 +1249,6 @@ export interface DerivedRuneConfig {
   travelPathingAction: RuneActionId | null;
   travelResponseAction: RuneActionId | null;
   controlAction: RuneActionId | null;
-  techniqueAction: RuneActionId | null;
-  technique2Action: RuneActionId | null;
-  guardAction: RuneActionId | null;
-  guard2Action: RuneActionId | null;
   stanceAction: RuneActionId | null;
   stanceTargetId: string | null;
   fleeRequested: boolean;
@@ -1383,14 +1269,6 @@ export interface DerivedRuneConfig {
   spreadDots: boolean;
   /** A `focus-elites` rule is active this tick — prioritize elite-tagged enemies. */
   focusElites: boolean;
-  /** A `fire-technique` rule's condition is active this tick (override Technique slot 0). */
-  fireTechnique: boolean;
-  /** A `fire-technique-2` rule's condition is active this tick (Technique slot 1). */
-  fireTechnique2: boolean;
-  /** A `fire-guard` rule's condition is active this tick (override Guard slot 0). */
-  fireGuard: boolean;
-  /** A `fire-guard-2` rule's condition is active this tick (Guard slot 1). */
-  fireGuard2: boolean;
   /** A valid `switch-stance` rule claims the Stance channel this tick. */
   switchStance: boolean;
 }
@@ -1407,10 +1285,7 @@ function emptyClaims(): ClaimedRuneChannels {
     TRAVEL_PATHING: null,
     TRAVEL_RESPONSE: null,
     CONTROL: null,
-    TECHNIQUE: null,
-    TECHNIQUE_2: null,
-    GUARD: null,
-    GUARD_2: null,
+    ABILITY: null,
     STANCE: null,
   };
 }
@@ -1460,6 +1335,8 @@ export function deriveAutoConfigFromRunes(
 ): DerivedRuneConfig {
   const claimed = emptyClaims();
   const derived: DerivedRuneConfig = {
+    abilityTargets: [],
+    abilityRules: [],
     config: { ...BASELINE_RUNE_CONFIG },
     claimed,
     movementAction: null,
@@ -1472,10 +1349,6 @@ export function deriveAutoConfigFromRunes(
     travelPathingAction: null,
     travelResponseAction: null,
     controlAction: null,
-    techniqueAction: null,
-    technique2Action: null,
-    guardAction: null,
-    guard2Action: null,
     stanceAction: null,
     stanceTargetId: null,
     fleeRequested: false,
@@ -1495,10 +1368,6 @@ export function deriveAutoConfigFromRunes(
     letDotsFinish: false,
     spreadDots: false,
     focusElites: false,
-    fireTechnique: false,
-    fireTechnique2: false,
-    fireGuard: false,
-    fireGuard2: false,
     switchStance: false,
   };
 
@@ -1531,12 +1400,17 @@ export function deriveAutoConfigFromRunes(
     ) {
       continue;
     }
+    if (action.id === "use-ability") {
+      if (raw.targetAbilityId && ABILITY_DATABASE.has(raw.targetAbilityId) && isConditionActive(condition.id, ctx) && !derived.abilityTargets.includes(raw.targetAbilityId)) { derived.abilityTargets.push(raw.targetAbilityId); derived.abilityRules.push(raw); }
+      continue;
+    }
     if (claimed[action.channel]) continue;
     if (!isConditionActive(condition.id, ctx)) continue;
 
     const rule: EquippedRule = {
       conditionId: condition.id,
       actionId: action.id,
+      ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
       ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     };
     claimed[action.channel] = { rule, action, condition };
@@ -1553,10 +1427,6 @@ export function deriveAutoConfigFromRunes(
   derived.travelPathingAction = claimed.TRAVEL_PATHING?.action.id ?? null;
   derived.travelResponseAction = claimed.TRAVEL_RESPONSE?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
-  derived.techniqueAction = claimed.TECHNIQUE?.action.id ?? null;
-  derived.technique2Action = claimed.TECHNIQUE_2?.action.id ?? null;
-  derived.guardAction = claimed.GUARD?.action.id ?? null;
-  derived.guard2Action = claimed.GUARD_2?.action.id ?? null;
   derived.stanceAction = claimed.STANCE?.action.id ?? null;
   derived.stanceTargetId = claimed.STANCE?.rule.targetStanceId ?? null;
 
@@ -1639,21 +1509,21 @@ export function deriveAutoConfigFromRunes(
   if (derived.controlAction === "taunt-current-target") {
     derived.tauntCurrentTarget = true;
   }
-  if (derived.techniqueAction === "fire-technique") {
-    derived.fireTechnique = true;
-  }
-  if (derived.technique2Action === "fire-technique-2") {
-    derived.fireTechnique2 = true;
-  }
-  if (derived.guardAction === "fire-guard") {
-    derived.fireGuard = true;
-  }
-  if (derived.guard2Action === "fire-guard-2") {
-    derived.fireGuard2 = true;
-  }
   if (derived.stanceAction === "switch-stance") {
     derived.switchStance = true;
   }
 
   return derived;
+}
+
+
+/** Preserve priority when editing; same-condition/channel collisions replace explicitly. */
+export function composeRuneEdit(rules: readonly EquippedRule[], rule: EquippedRule, index: number | null): EquippedRule[] {
+  const channel = ACTION_DATABASE.get(rule.actionId)?.channel;
+  const collision = rules.findIndex((r, i) => i !== index && (rule.actionId !== "use-ability" || r.targetAbilityId === rule.targetAbilityId) && r.conditionId === rule.conditionId && ACTION_DATABASE.get(r.actionId)?.channel === channel);
+  const anchor = collision >= 0 ? collision : index ?? rules.length;
+  const result: EquippedRule[] = [];
+  rules.forEach((r, i) => { if (i === anchor) result.push(rule); if (i !== index && i !== collision) result.push(r); });
+  if (anchor === rules.length) result.push(rule);
+  return result;
 }

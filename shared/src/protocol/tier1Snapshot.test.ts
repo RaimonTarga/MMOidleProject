@@ -42,7 +42,7 @@ function makeSnapshot(runesOwned: string[], runeRecipesCrafted: string[] = []): 
       runesOwned,
       runeRecipesCrafted,
       runesEquipped: [],
-      equippedAbilities: { techniques: [], guards: [] },
+      attunedAbilities: { techniques: [], guards: [] },
       itemUpgrades: {},
       inventory: [],
       knownAbilities: [],

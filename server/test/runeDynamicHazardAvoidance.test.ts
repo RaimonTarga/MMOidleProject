@@ -62,7 +62,7 @@ function playerSlices(
       runesOwned: [...STARTER_RUNE_IDS, 'avoid-hazards', 'step-back'],
       runeRecipesCrafted: ['rune-recipe-avoid-hazards', 'rune-recipe-step-back'],
       runesEquipped: rules,
-      knownAbilities: [], equippedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

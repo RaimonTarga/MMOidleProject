@@ -16,7 +16,6 @@ import {
   type DeltaSnapshot,
 } from "@mmo-idle/shared";
 import { evaluate, resolveNearCandidates, resolveNode, resolveNodeCandidates } from "./route/conditions";
-import { abilitySlotCount } from "@mmo-idle/shared";
 import { POLICIES, requirePolicy } from "./policy/profiles";
 import { TIER_ENTRY_PROFILES } from "./tierEntry/profiles";
 import { ROUTES, T1_BASELINE_ROUTE_IDS, T1_BASELINE_ROUTES, requireRoute } from "./routes";
@@ -251,7 +250,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
               runeRecipesCrafted: [],
               runesEquipped: [],
               knownAbilities: [],
-              equippedAbilities: { techniques: [], guards: [] },
+              attunedAbilities: { techniques: [], guards: [] },
               knownStances: [],
               equippedStances: { default: null },
               activeStance: null,
@@ -603,7 +602,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
             }
             {
               const { gm, budget } = currentRuneBudget();
-              const used = runicPointLoadoutCost({ rules: step.rules, rites: [] });
+              const used = runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: step.rules, rites: [] });
               assert(
                 used <= budget,
                 `${route.id}: rune loadout costs ${used} RP against ${budget} RP at GM ${gm}`,
@@ -836,7 +835,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
       `${routeId}: canonical melee arm stays on the dodge strategy`,
     );
     assert(
-      !route.steps.some((step) => hasRule(step, "target-casting", "fire-guard")),
+      !route.steps.some((step) => hasRule(step, "target-casting", "use-ability")),
       `${routeId}: Second Wind is not driven by the Brace rune rule`,
     );
   }
@@ -865,7 +864,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
         `${routeId}: ${attempt.biomeGroup} boss equips Brace`,
       );
       assert(
-        runes !== undefined && hasRule(runes, "target-casting", "fire-guard"),
+        runes !== undefined && hasRule(runes, "target-casting", "use-ability"),
         `${routeId}: ${attempt.biomeGroup} boss arms Brace's cast-reactive rule`,
       );
     }
@@ -890,18 +889,17 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
   // ability a boss loadout equips must be learned earlier in the SAME route,
   // and every item a boss loadout equips must be crafted earlier too -- a
   // route cannot silently equip something it never earned.
-  const slots = abilitySlotCount(1);
   for (const routeId of Object.keys(EXPECTED_T1_ROUTES)) {
     const route = requireRoute(routeId);
 
     for (const step of route.steps) {
       if (step.type !== "setAbilities") continue;
       assert(
-        step.techniques.length <= slots.technique,
+        new Set(step.techniques).size === step.techniques.length,
         `${routeId}: ${step.techniques.length} techniques exceeds the tier-1 slot count`,
       );
       assert(
-        step.guards.length <= slots.guard,
+        new Set(step.guards).size === step.guards.length,
         `${routeId}: ${step.guards.length} guards exceeds the tier-1 slot count`,
       );
     }

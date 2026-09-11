@@ -18,7 +18,7 @@ import {
   STARTER_RUNE_IDS,
   applyStatusEffect,
   emptyEquipment,
-  emptyEquippedAbilities,
+  emptyAttunedAbilities,
   getStatusEffect,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -76,8 +76,8 @@ function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlic
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [...techniques],
-      equippedAbilities: {
-        ...emptyEquippedAbilities(),
+      attunedAbilities: {
+        ...emptyAttunedAbilities(),
         techniques: [...techniques],
       },
       knownStances: [],

@@ -45,8 +45,8 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
     case "abilityEquipped": {
       const self = obs.self;
       return !!self && [
-        ...self.equippedAbilities.techniques,
-        ...self.equippedAbilities.guards,
+        ...self.attunedAbilities.techniques,
+        ...self.attunedAbilities.guards,
       ].includes(condition.abilityId);
     }
     case "frameSelected": {

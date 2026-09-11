@@ -44,7 +44,7 @@ function setup(summoner = false, volatile = false) {
       catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { technique: null, guard: null }, knownStances: [],
       equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },

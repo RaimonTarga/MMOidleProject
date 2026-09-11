@@ -1,7 +1,7 @@
 import type { NodeTelemetrySnapshot } from './nodeTelemetry';
 import type { WorldLogEvent } from './worldLogEvents';
 import type { EssenceType } from '../items';
-import type { EquippedAbilities } from '../abilities';
+import type { AttunedAbilities } from '../abilities';
 import type { EquippedStances } from '../stances';
 import type { BalanceLabSnapshot } from '../systems/balanceLab';
 
@@ -71,9 +71,10 @@ export interface AdminCharacterRecord {
   equipmentCount: number;
   /** Abilities learned + equipped (system rework Step 7). */
   knownAbilities: string[];
-  equippedAbilities: EquippedAbilities;
+  attunedAbilities: AttunedAbilities;
   /** Stances learned + equipped + active posture (system rework Step 10). */
   knownStances: string[];
+  attunedStances?: string[];
   equippedStances: EquippedStances;
   activeStance: string | null;
   /** Rites learned + equipped (system rework Step 11). */

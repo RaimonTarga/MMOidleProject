@@ -168,7 +168,7 @@ export function t2Runes(profile: T2MovementProfile, braceEquipped = false): Equi
     // `shouldFire()` suppresses a Guard's own built-in trigger the moment ANY
     // fire-guard rule is equipped, so this rule is only ever correct while Brace
     // -- whose intended trigger really is an enemy cast -- is the equipped Guard.
-    rules.push({ conditionId: "target-casting", actionId: "fire-guard" });
+    rules.push({ conditionId: "target-casting", actionId: "use-ability", targetAbilityId: "brace" });
   }
   return rules;
 }

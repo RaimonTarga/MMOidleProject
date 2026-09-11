@@ -23,6 +23,8 @@ export { ActionChip } from "./ActionChip";
 export type { ActionChipProps, ActionChipTone } from "./ActionChip";
 export { MilestonePips } from "./MilestonePips";
 export type { MilestonePipsProps, PipState } from "./MilestonePips";
+export { CrestDiamond } from "./CrestDiamond";
+export type { CrestDiamondProps } from "./CrestDiamond";
 export { GlyphTile } from "./GlyphTile";
 export type { GlyphTileProps } from "./GlyphTile";
 export { useChangeFlash } from "./useChangeFlash";

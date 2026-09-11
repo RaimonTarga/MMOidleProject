@@ -56,7 +56,7 @@ function makeReloadPlayerSlices(id: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null },
+      attunedAbilities: { technique: null, guard: null },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

@@ -2,12 +2,12 @@
  * Abilities catalog — the active-ability system, distinct from the passive
  * talent tree (`UsesSkills`).
  *
- * Two slot families: a **Technique** (the offensive/tactical active) and a
+ * Two semantic families: a **Technique** (the offensive/tactical active) and a
  * **Guard** (the defensive/recovery/status active). Mobility is a TAG, never a
- * slot. A Technique does NOT have to be enemy-facing: Frenzy is an instant
+ * family. A Technique does NOT have to be enemy-facing: Frenzy is an instant
  * self-buff and is still a Technique, because its job is offense.
  *
- * State (the learned pool + equipped slots) lives on `TracksProgression`, exactly
+ * State (the learned pool + ordered attunements) lives on `TracksProgression`, exactly
  * like runes — abilities are build/loadout data, not a recalculated component.
  * Firing behavior lives in `server/src/systems/player/abilities/`.
  *
@@ -20,10 +20,10 @@
  */
 import type { DamageElement } from "./systems/dotElements";
 
-export type AbilitySlot = "technique" | "guard";
+export type AbilityFamily = "technique" | "guard";
 
-/** Every slot kind, for iteration. */
-export const ABILITY_SLOTS: readonly AbilitySlot[] = ["technique", "guard"];
+/** Semantic families, for categorization and combat arbitration. */
+export const ABILITY_FAMILIES: readonly AbilityFamily[] = ["technique", "guard"];
 
 /**
  * Behavioral tags. Tags exist because SYSTEMS need them, not for taxonomy.
@@ -48,7 +48,7 @@ export type AbilityTag =
   | "offensive-buff";
 
 /**
- * How an ability EXECUTES, independent of which slot it occupies. The slot says
+ * How an ability EXECUTES, independent of its family. The family says
  * whose problem it solves; the shape says how the server runs it.
  * - `armed`: rides the next qualifying attack cycle (`hasArmedAbility`).
  * - `cast`: enters an explicit wind-up (`isCastingAbility`), then resolves.
@@ -74,8 +74,8 @@ export type AbilityShape =
 
 /**
  * Built-in auto-fire trigger (the default heuristic). Abilities fire on this with
- * zero runes equipped. A `fire-technique` / `fire-guard` rune action overrides the
- * timing for its slot — when a rune drives the slot, this trigger is ignored.
+ * zero runes equipped. A `use-ability` rule overrides the named ability's timing;
+ * its default trigger is suppressed while any custom rule targets it.
  */
 export type AbilityTrigger =
   /** Technique: arm whenever in combat with a live target (and off cooldown). */
@@ -211,7 +211,9 @@ export interface AbilityRank {
 export interface AbilityDef {
   id: string;
   name: string;
-  slot: AbilitySlot;
+  /** Fixed RP reservation, independent of rank and tier. */
+  attunementCost: number;
+  slot: AbilityFamily;
   /** How the server executes it. */
   shape: AbilityShape;
   tags: AbilityTag[];
@@ -223,7 +225,7 @@ export interface AbilityDef {
    * predecessor, so unlike gear lineages there is no consume/reconstruct here.
    */
   lineageId?: string;
-  /** Built-in auto-fire heuristic (runes can override per slot). */
+  /** Built-in auto-fire heuristic (runes can override by ability ID). */
   trigger: AbilityTrigger;
   /**
    * Authored ranks, `ranks[0]` = home tier. Never empty. Ranks past the last
@@ -233,33 +235,20 @@ export interface AbilityDef {
   icon?: string;
 }
 
-/**
- * Status-effect id for the active Guard-ability buff. The server applies it
- * (with `totalMs`/`drPct` in data), an onDamageTaken listener reads it, and a
- * buff descriptor projects it to the buff bar (label/color from the ability in
- * that slot). Doubles as the buff id.
- *
- * This is GUARD SLOT 0. Slot 1 uses {@link ABILITY_GUARD_EFFECT_IDS}[1] — two
- * equipped Guards need independent effects, and since status `data` is
- * numbers-only the owning slot has to be encoded in the id itself.
- */
+/** Stable runtime effect ID for Brace; independent of attunement priority. */
 export const ABILITY_GUARD_EFFECT_ID = "ability-guard";
 
-/** Guard DR buff effect id per slot index. Length tracks {@link MAX_ABILITY_SLOTS}. */
+/** Authored Brace and Endure effect IDs, independent of ability capacity. */
 export const ABILITY_GUARD_EFFECT_IDS = ["ability-guard", "ability-guard-2"] as const;
 
 export type AbilityGuardEffectId = (typeof ABILITY_GUARD_EFFECT_IDS)[number];
 
-/** The Guard DR effect id owned by a slot (clamped, so a bad index can't collide). */
-export function guardEffectIdForSlot(slotIndex: number): AbilityGuardEffectId {
-  return ABILITY_GUARD_EFFECT_IDS[slotIndex] ?? ABILITY_GUARD_EFFECT_IDS[0];
+/** Resolve the authored DR effect identity. */
+export function guardEffectIdForAbility(abilityId: string): AbilityGuardEffectId | undefined {
+  return abilityId === "brace" ? ABILITY_GUARD_EFFECT_IDS[0] : abilityId === "endure" ? ABILITY_GUARD_EFFECT_IDS[1] : undefined;
 }
 
-/**
- * Recovery-skill buff ids, one per GUARD SLOT. Second Wind and Recuperate are
- * deliberately different shapes of the same access (strong/short vs weak/long),
- * so a player may equip both — and they must not overwrite each other's window.
- */
+/** Independent Second Wind and Recuperate effect identities. */
 export const ABILITY_RECOVERY_EFFECT_IDS = [
   "ability-second-wind",
   "ability-second-wind-2",
@@ -267,11 +256,11 @@ export const ABILITY_RECOVERY_EFFECT_IDS = [
 
 export type AbilityRecoveryEffectId = (typeof ABILITY_RECOVERY_EFFECT_IDS)[number];
 
-export function recoveryEffectIdForSlot(slotIndex: number): AbilityRecoveryEffectId {
-  return ABILITY_RECOVERY_EFFECT_IDS[slotIndex] ?? ABILITY_RECOVERY_EFFECT_IDS[0];
+export function recoveryEffectIdForAbility(abilityId: string): AbilityRecoveryEffectId | undefined {
+  return abilityId === "second-wind" ? ABILITY_RECOVERY_EFFECT_IDS[0] : abilityId === "recuperate" ? ABILITY_RECOVERY_EFFECT_IDS[1] : undefined;
 }
 
-/** Back-compat alias — slot 0's Recovery buff id. */
+/** Second Wind effect identity. */
 export const ABILITY_SECOND_WIND_EFFECT_ID = ABILITY_RECOVERY_EFFECT_IDS[0];
 
 /** Frenzy's attack-speed window (read at the attack-cadence gate, never a stat write). */
@@ -324,35 +313,17 @@ export const ABILITY_IMBUE_FX = "ability-imbue";
  * Equipped abilities, as ORDERED lists.
  *
  * List order IS arbitration priority: index 0 is considered first when several
- * rune conditions go valid on the same tick. Each list's length is bounded by
- * {@link abilitySlotCount}; an unused slot is simply a shorter list.
+ * rune conditions go valid on the same tick. There is no capacity cap. Custom Rune priority precedes default attunement order.
  */
-export interface EquippedAbilities {
+export interface AttunedAbilities {
   techniques: string[];
   guards: string[];
 }
 
-export function emptyEquippedAbilities(): EquippedAbilities {
+export function emptyAttunedAbilities(): AttunedAbilities {
   return { techniques: [], guards: [] };
 }
 
-/**
- * Number of ability slots at a given player tier.
- *
- * Deliberately keyed on PLAYER TIER, not Global Mastery — Biome Mastery owns
- * ability unlocks; tier owns ability slots. T1–T2 → 1/1 (learn the
- * fundamentals), T3 → 2/1 (offensive repertoire), T4+ → 2/2 (full tactical
- * loadout). A third slot is deliberately NOT assumed.
- */
-export function abilitySlotCount(playerTier: number): Record<AbilitySlot, number> {
-  return {
-    technique: playerTier >= 3 ? 2 : 1,
-    guard: playerTier >= 4 ? 2 : 1,
-  };
-}
-
-/** Highest slot count any tier grants — sizes the per-slot buff-id tables. */
-export const MAX_ABILITY_SLOTS = 2;
 
 // ── Rank resolution ──────────────────────────────────────────────────────────
 
@@ -494,10 +465,8 @@ export const ABILITY_MULTIHIT_MODE: Record<
 
 // ── The roster ───────────────────────────────────────────────────────────────
 //
-// 18 abilities across T1–T4: 11 Techniques, 7 Guards. The count imbalance is
-// deliberate — later progression grants the second Technique slot before the
-// second Guard slot, and the Technique space naturally has more
-// positional/control/offensive variants.
+// 21 authored abilities across T1-T4. Technique and Guard are semantic families;
+// all attuned tools reserve RP, without family capacity caps.
 //
 // ALL NUMBERS ARE FIRST-PASS SEEDS. They express relative roles and give the
 // simulation a coherent starting point; the balance pass owns the values.
@@ -509,6 +478,7 @@ const abilities: AbilityDef[] = [
   // decision space before adding a single new verb.
   {
     id: "sweep",
+    attunementCost: 6,
     name: "Sweep",
     slot: "technique",
     shape: "armed",
@@ -530,6 +500,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "second-wind",
+    attunementCost: 6,
     name: "Second Wind",
     slot: "guard",
     shape: "instant",
@@ -550,6 +521,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "cleanse",
+    attunementCost: 3,
     name: "Cleanse",
     slot: "guard",
     shape: "instant",
@@ -570,6 +542,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "brace",
+    attunementCost: 5,
     name: "Brace",
     slot: "guard",
     shape: "instant",
@@ -602,6 +575,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "power-strike",
+    attunementCost: 6,
     name: "Power Strike",
     slot: "technique",
     shape: "cast",
@@ -623,6 +597,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "expose-weakness",
+    attunementCost: 7,
     name: "Expose Weakness",
     slot: "technique",
     shape: "armed",
@@ -645,6 +620,7 @@ const abilities: AbilityDef[] = [
   // ── T2: positioning, soft control, sustained mitigation ────────────────────
   {
     id: "hamstring",
+    attunementCost: 4,
     name: "Hamstring",
     slot: "technique",
     shape: "armed",
@@ -664,6 +640,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "bramble-guard",
+    attunementCost: 5,
     name: "Bramble Guard",
     slot: "guard",
     shape: "instant",
@@ -682,6 +659,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "charge",
+    attunementCost: 4,
     name: "Charge",
     slot: "technique",
     shape: "charge",
@@ -725,6 +703,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "endure",
+    attunementCost: 6,
     name: "Endure",
     slot: "guard",
     shape: "instant",
@@ -745,6 +724,7 @@ const abilities: AbilityDef[] = [
 
   {
     id: "contagion",
+    attunementCost: 7,
     name: "Contagion",
     slot: "technique",
     shape: "cast",
@@ -768,9 +748,8 @@ const abilities: AbilityDef[] = [
     // Homed at T2, which is where its half of the affliction pair belongs: T2 is
     // the first tier with real pack density (jungle), and spreading is the answer
     // to breadth. Detonate stays at T3 as the later, more build-warping half —
-    // learn to spread first, learn to cash in second. Note that T2 grants only ONE
-    // Technique slot, so at its home tier Contagion is a whole-loadout commitment
-    // competing with Sweep and Charge; the pair only sit together from T3.
+    // Learn to spread first, learn to cash in second. Each tool then competes
+    // with the rest of the attuned build for RP.
     ranks: [
       { effect: { kind: "spread-dots", radius: 120, maxTargets: 2 }, cooldownMs: 14000, castMs: 1000 },
       { effect: { kind: "spread-dots", radius: 150, maxTargets: 3 }, cooldownMs: 12000, castMs: 1000 },
@@ -781,6 +760,7 @@ const abilities: AbilityDef[] = [
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
   {
     id: "binding-strike",
+    attunementCost: 4,
     name: "Binding Strike",
     slot: "technique",
     shape: "armed",
@@ -799,6 +779,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "break-free",
+    attunementCost: 3,
     name: "Break Free",
     slot: "guard",
     shape: "instant",
@@ -819,6 +800,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "frenzy",
+    attunementCost: 6,
     name: "Frenzy",
     slot: "technique",
     shape: "instant",
@@ -837,6 +819,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "quick-strike",
+    attunementCost: 5,
     name: "Quick Strike",
     slot: "technique",
     shape: "armed",
@@ -855,6 +838,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "detonate",
+    attunementCost: 6,
     name: "Detonate",
     slot: "technique",
     shape: "cast",
@@ -884,6 +868,7 @@ const abilities: AbilityDef[] = [
   // T5+ must give each of them a bespoke upgrade, not resume percentage growth.
   {
     id: "disengage",
+    attunementCost: 3,
     name: "Disengage",
     slot: "technique",
     shape: "reposition",
@@ -901,6 +886,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "recuperate",
+    attunementCost: 6,
     name: "Recuperate",
     slot: "guard",
     shape: "instant",
@@ -917,6 +903,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "snipe",
+    attunementCost: 5,
     name: "Snipe",
     slot: "technique",
     shape: "cast",
@@ -939,6 +926,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "stunning-strike",
+    attunementCost: 6,
     name: "Stunning Strike",
     slot: "technique",
     shape: "cast",
@@ -960,6 +948,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "imbue-lightning",
+    attunementCost: 6,
     name: "Imbue Lightning",
     slot: "technique",
     shape: "self-cast",
@@ -1070,7 +1059,7 @@ export function resolveAbilityEffect(
  * Kept only so `playerRepo` can migrate old rows on hydrate — nothing new should
  * produce this shape.
  */
-export interface LegacyEquippedAbilities {
+export interface LegacyAttunedAbilities {
   technique?: string | null;
   guard?: string | null;
 }
@@ -1079,20 +1068,19 @@ export interface LegacyEquippedAbilities {
  * Coerce whatever is in a persisted row into the current list shape, dropping
  * ids that no longer resolve, duplicates, and entries that don't fit their slot.
  * Accepts the legacy `{technique, guard}` shape so old saves migrate silently.
- * Does NOT enforce the tier slot cap — that's a live check (see
- * {@link clampEquippedAbilities}) so a de-levelled row never loses data on load.
+ * There is no tier or family capacity limit. RP validation belongs to loadout edits.
  */
-export function normalizeEquippedAbilities(raw: unknown): EquippedAbilities {
-  if (!raw || typeof raw !== "object") return emptyEquippedAbilities();
+export function normalizeAttunedAbilities(raw: unknown): AttunedAbilities {
+  if (!raw || typeof raw !== "object") return emptyAttunedAbilities();
 
-  const source = raw as Partial<EquippedAbilities> & LegacyEquippedAbilities;
+  const source = raw as Partial<AttunedAbilities> & LegacyAttunedAbilities;
   const fromLegacy = (id: string | null | undefined): string[] =>
     typeof id === "string" ? [id] : [];
 
   const pick = (list: unknown, legacy: string | null | undefined): string[] =>
     Array.isArray(list) ? list.filter((id): id is string => typeof id === "string") : fromLegacy(legacy);
 
-  const forSlot = (ids: string[], slot: AbilitySlot): string[] => {
+  const forSlot = (ids: string[], slot: AbilityFamily): string[] => {
     const seen = new Set<string>();
     for (const raw of ids) {
       const id = currentAbilityId(raw);
@@ -1109,22 +1097,11 @@ export function normalizeEquippedAbilities(raw: unknown): EquippedAbilities {
   };
 }
 
-/** Trim each list to the slot count the player's tier currently grants. */
-export function clampEquippedAbilities(
-  equipped: EquippedAbilities,
-  playerTier: number,
-): EquippedAbilities {
-  const slots = abilitySlotCount(playerTier);
-  return {
-    techniques: equipped.techniques.slice(0, slots.technique),
-    guards: equipped.guards.slice(0, slots.guard),
-  };
-}
 
-/** The equipped list for a slot kind. */
-export function equippedForSlot(
-  equipped: EquippedAbilities,
-  slot: AbilitySlot,
+/** Ordered attunements in a semantic family. */
+export function attunedForFamily(
+  equipped: AttunedAbilities,
+  slot: AbilityFamily,
 ): string[] {
   return slot === "technique" ? equipped.techniques : equipped.guards;
 }
@@ -1138,6 +1115,8 @@ export function validateAbilities(): string[] {
       continue;
     }
     const kind = ability.ranks[0]!.effect.kind;
+    if (kind === "damage-reduction" && !guardEffectIdForAbility(ability.id)) errors.push(`${ability.id} needs an authored DR buff identity.`);
+    if (kind === "heal" && !recoveryEffectIdForAbility(ability.id)) errors.push(`${ability.id} needs an authored Recovery buff identity.`);
     for (const [index, rank] of ability.ranks.entries()) {
       const label = `${ability.id} rank ${index + 1}`;
       // A rank that changes effect KIND is a different ability wearing the same

@@ -49,7 +49,6 @@ export function beginAbilityCast(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  slotIndex: number,
   now: number,
 ): boolean {
   const castMs = abilityCastMs(ability, player.tracksProgression.playerTier);
@@ -61,7 +60,7 @@ export function beginAbilityCast(
   // that hard control breaks, which is why it lives here rather than as an
   // `instant`.
   if (ability.shape === "self-cast") {
-    return beginSelfCast(world, player, ability, slotIndex, castMs, now);
+    return beginSelfCast(world, player, ability, castMs, now);
   }
 
   // A cast needs something to resolve INTO. Resolved through the ability's own
@@ -80,7 +79,6 @@ export function beginAbilityCast(
   const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
   attachComponent(world, player, "isCastingAbility", {
     abilityId: ability.id,
-    slotIndex,
     endsAt: now + effectiveMs,
     castMs: effectiveMs,
     targetId: target.isMonster.id,
@@ -105,14 +103,12 @@ function beginSelfCast(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  slotIndex: number,
   castMs: number,
   now: number,
 ): boolean {
   const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
   attachComponent(world, player, "isCastingAbility", {
     abilityId: ability.id,
-    slotIndex,
     endsAt: now + effectiveMs,
     castMs: effectiveMs,
     targetId: "",

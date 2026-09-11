@@ -7,14 +7,13 @@
  * `monsterTypeId`, so no server/network change is needed to resolve this.
  *
  * Covers every biome's regular (non-boss) roster whose sprite plausibly reads
- * as one of the 13 approved families (5 skeletal-animal families from wave 1,
+ * as one of the 14 approved families (5 skeletal-animal families from wave 1,
  * plus reptile-lizard/serpent/humanoid/shelled-carapace/amphibian/
  * construct-rubble/ooze-residue/aquatic-fish from wave 2, added once Swamp
  * turned out to have ZERO coverage under wave 1 alone). The T0 tutorial Tiny
- * Wisp (`tiny-slime`) is intentionally left unmapped — an ethereal wisp with
- * no corpse at all is fine (user call, 2026-09-07). Bosses never need remains
- * art (server-side: they never leave a reusable corpse at all — see
- * server/src/systems/world/corpses.ts).
+ * Wisp uses its dedicated dust-residue family under the original internal
+ * monster id (`tiny-slime`). Bosses never need remains art (server-side: they
+ * never leave a reusable corpse at all — see server/src/systems/world/corpses.ts).
  *
  * Several ids here turned out to visually mismatch their name/lore once the
  * actual sprite was checked (the same trap `bone-crawler` hit): `dust-djinn`
@@ -38,7 +37,8 @@ export type CorpseFamily =
   | 'amphibian'
   | 'construct-rubble'
   | 'ooze-residue'
-  | 'aquatic-fish';
+  | 'aquatic-fish'
+  | 'tiny-wisp';
 
 export type CorpseSize = 'small' | 'medium' | 'large';
 
@@ -164,6 +164,9 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'carrion-vulture': { family: 'avian',       size: 'medium' },
   'plague-rat':      { family: 'small-beast', size: 'small' },  // display name "Bone Rat"
   'gravewright':     { family: 'large-beast', size: 'large' },
+  // The tutorial's display name is Tiny Wisp, but the authoritative monster id
+  // remains tiny-slime from the original tutorial roster.
+  'tiny-slime':      { family: 'tiny-wisp',   size: 'small' },
   // charnel-brute is deferred to T5 and not in any active spawn pool — unmapped.
 };
 
@@ -193,6 +196,7 @@ const FAMILY_VARIANT_COUNT: Record<CorpseFamily, number> = {
   'construct-rubble': 4,
   'ooze-residue': 3,
   'aquatic-fish': 3,
+  'tiny-wisp': 5,
 };
 
 function remainsFileName(family: CorpseFamily, variant: number): string {

@@ -1,13 +1,4 @@
-/**
- * Ability buff descriptors.
- *
- * Ability boons that last are EXPLICIT buffs — they show in the buff bar with an
- * icon + timer, like every other buff, rather than hiding as raw state. Where an
- * effect can belong to either Guard slot there is one descriptor PER SLOT: two
- * equipped Guards layer independently, and each tile labels itself from the
- * ability occupying its own slot. Status-effect `data` is numbers-only, so the
- * owning slot cannot live in effect data — it has to be in the id.
- */
+/** Timed ability effects own stable identities and labels across attunement edits. */
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
   ABILITY_FRENZY_EFFECT_ID,
@@ -25,8 +16,8 @@ function durationPct(remainingMs: number, totalMs: number): number {
   return totalMs > 0 && remainingMs > 0 ? (remainingMs / totalMs) * 100 : -1;
 }
 
-/** One DR-buff descriptor per Guard slot, reading that slot's effect id. */
-const GUARD_SLOT_BUFFS = ABILITY_GUARD_EFFECT_IDS.map((effectId, slotIndex) =>
+/** One descriptor per authored DR ability. */
+const GUARD_ABILITY_BUFFS = ABILITY_GUARD_EFFECT_IDS.map((effectId, abilityIndex) =>
   defineBuff(
     effectId,
     ({ player, playerCs }) => {
@@ -35,7 +26,7 @@ const GUARD_SLOT_BUFFS = ABILITY_GUARD_EFFECT_IDS.map((effectId, slotIndex) =>
       if (!eff || eff.remainingMs <= 0) return null;
       const drPct = Math.round((eff.data["drPct"] ?? 0) * 100);
       const def = abilityDef(
-        player.tracksProgression.equippedAbilities?.guards?.[slotIndex],
+        ["brace", "endure"][abilityIndex],
       );
       return {
         id: effectId,
@@ -55,11 +46,11 @@ const GUARD_SLOT_BUFFS = ABILITY_GUARD_EFFECT_IDS.map((effectId, slotIndex) =>
 );
 
 /**
- * One Recovery-skill descriptor per Guard slot. Second Wind (strong/short) and
+ * One descriptor per Recovery ability. Second Wind (strong/short) and
  * Recuperate (weak/long) are opposite shapes of the same access and may be held
  * together, so they need independent windows and independent tiles.
  */
-const RECOVERY_SLOT_BUFFS = ABILITY_RECOVERY_EFFECT_IDS.map((effectId, slotIndex) =>
+const RECOVERY_ABILITY_BUFFS = ABILITY_RECOVERY_EFFECT_IDS.map((effectId, abilityIndex) =>
   defineBuff(
     effectId,
     ({ player, playerCs }) => {
@@ -70,7 +61,7 @@ const RECOVERY_SLOT_BUFFS = ABILITY_RECOVERY_EFFECT_IDS.map((effectId, slotIndex
       // what this converts to in HP depends on their Recovery stat.
       const recoveryPct = Math.round((eff.data["recoveryPct"] ?? 0) * 100);
       const def = abilityDef(
-        player.tracksProgression.equippedAbilities?.guards?.[slotIndex],
+        ["second-wind", "recuperate"][abilityIndex],
       );
       return {
         id: effectId,
@@ -96,8 +87,8 @@ const RECOVERY_SLOT_BUFFS = ABILITY_RECOVERY_EFFECT_IDS.map((effectId, slotIndex
 );
 
 export const ABILITY_BUFFS = [
-  ...GUARD_SLOT_BUFFS,
-  ...RECOVERY_SLOT_BUFFS,
+  ...GUARD_ABILITY_BUFFS,
+  ...RECOVERY_ABILITY_BUFFS,
   defineBuff(
     "ability-bramble",
     ({ playerCs }) => {

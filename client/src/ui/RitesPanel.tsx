@@ -1,3 +1,5 @@
+import { LoadoutFeedback } from "./LoadoutFeedback";
+import { attunedAbilitiesAtom, attunedStancesAtom } from "../hud/atoms";
 import { useAtomValue } from "jotai";
 import {
   RITE_DATABASE,
@@ -14,14 +16,16 @@ import {
 } from "../hud/atoms";
 import { GameIcon } from "./GameIcon";
 import { riteIconSource } from "./conceptIcons";
+import { AttunementBudget } from "./AttunementBudget";
 import "./buildPanel.css";
 
 export function RitesPanelContent() {
+  const abilities = useAtomValue(attunedAbilitiesAtom);
+  const stances = useAtomValue(attunedStancesAtom);
   const known = useAtomValue(knownRitesAtom);
   const equipped = useAtomValue(equippedRitesAtom);
   const rules = useAtomValue(runesEquippedAtom);
   const budget = runeBudgetForGlobalMastery(useAtomValue(globalMasteryAtom));
-  const spent = runicPointLoadoutCost({ rules, rites: equipped });
 
   const candidates = known
     .map((id) => RITE_DATABASE.get(id))
@@ -31,19 +35,20 @@ export function RitesPanelContent() {
     const next = equipped.includes(riteId)
       ? equipped.filter((id) => id !== riteId)
       : [...equipped, riteId];
-    if (runicPointLoadoutCost({ rules, rites: next }) <= budget) {
+    if (equipped.includes(riteId) || runicPointLoadoutCost({ rules, abilities, stances, rites: next }) <= budget) {
       hudBus.requestSetRiteLoadout(next);
     }
   }
 
   return (
     <div className="build-tab-body rite-circle">
+      <LoadoutFeedback system="rites" />
+      <AttunementBudget loadout={{ rules, abilities, stances, rites: equipped }} budget={budget} />
       <div className="rite-circle__header">
         <div>
           <span className="build-section-title">Ritual Circle</span>
-          <p>Bind any learned rites the shared Runic Point pool can sustain. There are no slots.</p>
+          <p>Bind any learned rites the shared Runic Point pool can sustain.</p>
         </div>
-        <strong className={spent > budget ? "rite-circle__budget rite-circle__budget--over" : "rite-circle__budget"}>{spent} / {budget} RP</strong>
       </div>
 
       {candidates.length === 0 ? (
@@ -53,7 +58,7 @@ export function RitesPanelContent() {
           {candidates.map((rite) => {
             const selected = equipped.includes(rite.id);
             const proposed = selected ? equipped : [...equipped, rite.id];
-            const unaffordable = !selected && runicPointLoadoutCost({ rules, rites: proposed }) > budget;
+            const unaffordable = !selected && runicPointLoadoutCost({ rules, abilities, stances, rites: proposed }) > budget;
             return (
               <button
                 key={rite.id}

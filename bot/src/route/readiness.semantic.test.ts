@@ -26,12 +26,12 @@ const withoutDestination = { conditionId: "in-combat", actionId: "switch-stance"
 const stanceCost = stanceDef("offensive-stance")!.runeCost;
 assert(STANCE_DATABASE.has("offensive-stance"), "stance catalog contains the RP destination");
 assert(
-  runeRuleCost(offensiveRule) === runeRuleCost(withoutDestination) + stanceCost,
-  "stance destination cost is included exactly once",
+  runeRuleCost(offensiveRule) === runeRuleCost(withoutDestination),
+  "stance switch pays only for logic",
 );
-const exactCost = runicPointLoadoutCost({ rules: [offensiveRule], rites: [] });
-assert(runicPointLoadoutFits({ rules: [offensiveRule], rites: [] }, exactCost), "exact RP budget fits");
-assert(!runicPointLoadoutFits({ rules: [offensiveRule], rites: [] }, exactCost - 1), "one point over RP budget fails");
+const exactCost = runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: [offensiveRule], rites: [] });
+assert(runicPointLoadoutFits({ abilities: { techniques: [], guards: [] }, stances: [], rules: [offensiveRule], rites: [] }, exactCost), "exact RP budget fits");
+assert(!runicPointLoadoutFits({ abilities: { techniques: [], guards: [] }, stances: [], rules: [offensiveRule], rites: [] }, exactCost - 1), "one point over RP budget fails");
 const defensiveRule = {
   conditionId: "low-health",
   actionId: "switch-stance",
@@ -39,16 +39,16 @@ const defensiveRule = {
 } as const;
 const repeatedDestinationRules = [offensiveRule, { ...offensiveRule, conditionId: "boss" }, defensiveRule];
 assert(
-  runicPointLoadoutCost({ rules: repeatedDestinationRules, rites: [] }) ===
+  runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: repeatedDestinationRules, rites: [] }) ===
     runeRuleCost(offensiveRule) + runeRuleCost({ ...offensiveRule, conditionId: "boss" }) + runeRuleCost(defensiveRule),
-  "multiple rules pay each destination stance surcharge independently",
+  "multiple rules pay only their own logic",
 );
 assert(
-  runicPointLoadoutFits({ rules: repeatedDestinationRules, rites: [] }, runicPointLoadoutCost({ rules: repeatedDestinationRules, rites: [] })),
+  runicPointLoadoutFits({ abilities: { techniques: [], guards: [] }, stances: [], rules: repeatedDestinationRules, rites: [] }, runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: repeatedDestinationRules, rites: [] })),
   "multiple destinations fit at their exact combined RP budget",
 );
 assert(
-  runicPointLoadoutCost({ rules: [{ ...offensiveRule, targetStanceId: NO_STANCE_ID }], rites: [] }) ===
+  runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: [{ ...offensiveRule, targetStanceId: NO_STANCE_ID }], rites: [] }) ===
     runeRuleCost({ ...offensiveRule, targetStanceId: NO_STANCE_ID }),
   "no-stance destination remains a legal zero-surcharge destination",
 );

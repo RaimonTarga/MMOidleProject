@@ -105,7 +105,7 @@ export function controlledT1Runes(
     if (defenseProfile !== "brace-tank") {
       throw new Error("Brace's fire-guard Rune is only valid in the Brace-tank profile.");
     }
-    rules.push({ conditionId: "target-casting", actionId: "fire-guard" });
+    rules.push({ conditionId: "target-casting", actionId: "use-ability", targetAbilityId: "brace" });
   }
 
   return rules;

@@ -4,12 +4,14 @@ import { useAtom, useAtomValue } from 'jotai';
 import {
   essenceLabel,
   resolveZoneBestiary,
+  describeMonsterAbilities,
   describeMonsterMechanics,
   type BestiaryEntry,
+  type BestiaryAbilityLine,
   type BestiaryStats,
   type EssenceType,
 } from '@mmo-idle/shared';
-import { playerNodeIdAtom, bestiaryOpenAtom, bestiaryDetailIdAtom } from '../atoms';
+import { bestiaryZoneNodeIdAtom, bestiaryOpenAtom, bestiaryDetailIdAtom } from '../atoms';
 import { MonsterSprite } from './MonsterSprite';
 import './bestiary.css';
 
@@ -21,6 +23,52 @@ const ROLE_LABEL: Record<BestiaryEntry['role'], string> = {
 
 function fmtCooldown(ms: number): string {
   return `${(ms / 1000).toFixed(2)}s`;
+}
+
+function fmtAbilityTime(ms: number): string {
+  if (ms % 1000 === 0) return `${ms / 1000}s`;
+  return `${(ms / 1000).toFixed(1)}s`;
+}
+
+const ABILITY_KIND_LABEL: Record<BestiaryAbilityLine['kind'], string> = {
+  cast: 'CAST',
+  sequence: 'SEQUENCE',
+  passive: 'PASSIVE',
+  encounter: 'ENCOUNTER',
+};
+
+function AbilityCard({ ability }: { ability: BestiaryAbilityLine }) {
+  const timing = [
+    ability.castMs !== undefined ? `CAST ${fmtAbilityTime(ability.castMs)}` : null,
+    ability.cooldownMs !== undefined ? `EVERY ${fmtAbilityTime(ability.cooldownMs)}` : null,
+    ability.initialCooldownMs !== undefined ? `FIRST ${fmtAbilityTime(ability.initialCooldownMs)}` : null,
+  ].filter((value): value is string => value !== null);
+
+  return (
+    <article className={`bestiary-detail__ability bestiary-detail__ability--${ability.kind}`}>
+      <div className="bestiary-detail__ability-header">
+        <span className="bestiary-detail__ability-icon" style={ability.color ? { color: ability.color } : undefined}>
+          {ability.icon}
+        </span>
+        <span className="bestiary-detail__ability-name">{ability.name}</span>
+        <span className={`bestiary-detail__ability-kind bestiary-detail__ability-kind--${ability.kind}`}>
+          {ABILITY_KIND_LABEL[ability.kind]}
+        </span>
+      </div>
+      {timing.length > 0 && (
+        <div className="bestiary-detail__ability-timing">
+          {timing.map((value) => <span key={value}>{value}</span>)}
+        </div>
+      )}
+      {ability.trigger && <div className="bestiary-detail__ability-trigger">Trigger: {ability.trigger}</div>}
+      <div className="bestiary-detail__ability-detail">{ability.detail}</div>
+      {ability.steps && ability.steps.length > 0 && (
+        <ol className="bestiary-detail__ability-steps">
+          {ability.steps.map((step, index) => <li key={`${index}-${step}`}>{step}</li>)}
+        </ol>
+      )}
+    </article>
+  );
 }
 
 /** A stat cell, showing the base value in parens when the zone modified it. */
@@ -85,7 +133,9 @@ function StatGrid({ entry }: { entry: BestiaryEntry }) {
 }
 
 function MonsterDetail({ entry }: { entry: BestiaryEntry }) {
-  const mechs = describeMonsterMechanics(entry.def, entry.modifiers);
+  const abilities = describeMonsterAbilities(entry.def, entry.modifiers);
+  const mechs = describeMonsterMechanics(entry.def, entry.modifiers)
+    .filter((mechanic) => mechanic.category !== 'ability');
   return (
     <div className="bestiary-detail__pane">
       <div className="bestiary-detail__hero">
@@ -103,14 +153,29 @@ function MonsterDetail({ entry }: { entry: BestiaryEntry }) {
             {entry.modified ? ' · scaled for this dungeon' : ''}
           </div>
           <div className="bestiary-detail__hero-profile">{entry.profile}</div>
+          <div className="bestiary-detail__hero-description">{entry.description}</div>
         </div>
       </div>
 
       <StatGrid entry={entry} />
 
+      <div className="bestiary-detail__abilities">
+        <div className="bestiary-detail__section-title">Abilities &amp; encounter beats</div>
+        <div className="bestiary-detail__section-help">
+          Wind-ups, first-use delays, cooldowns, thresholds, and ordered steps are shown here.
+        </div>
+        {abilities.length > 0 ? (
+          abilities.map((ability) => <AbilityCard key={ability.id} ability={ability} />)
+        ) : (
+          <div className="bestiary-detail__ability-empty">
+            No authored cast ability. This creature relies on basic attacks and the passive traits listed below.
+          </div>
+        )}
+      </div>
+
       {mechs.length > 0 && (
         <div className="bestiary-detail__mechs">
-          <div className="bestiary-detail__section-title">Mechanics</div>
+          <div className="bestiary-detail__section-title">Other mechanics</div>
           {mechs.map((m) => (
             <div key={m.id} className="bestiary-detail__mech">
               <span className="bestiary-detail__mech-icon" style={m.color ? { color: m.color } : undefined}>
@@ -130,7 +195,7 @@ function MonsterDetail({ entry }: { entry: BestiaryEntry }) {
 export function BestiaryDetailOverlay() {
   const [open, setOpen] = useAtom(bestiaryOpenAtom);
   const [detailId, setDetailId] = useAtom(bestiaryDetailIdAtom);
-  const nodeId = useAtomValue(playerNodeIdAtom);
+  const nodeId = useAtomValue(bestiaryZoneNodeIdAtom);
 
   const zone = useMemo(() => (nodeId ? resolveZoneBestiary(nodeId) : null), [nodeId]);
 

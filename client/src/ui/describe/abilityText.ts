@@ -1,7 +1,6 @@
 import {
   abilityCastMs,
   abilityCooldownMs,
-  abilityMaxRank,
   abilityRangeBonus,
   abilityRankAt,
   abilityRankNumber,
@@ -65,7 +64,7 @@ export interface AbilityLine {
 export interface AbilityDescription {
   /** Rank numeral for this character, e.g. "III". */
   rank: string;
-  /** "Rank III of IV" — how much of the lineage is still ahead. */
+  /** Current authored rank, without implying a final progression ceiling. */
   rankLabel: string;
   /** When it fires, in a sentence. */
   trigger: string;
@@ -313,13 +312,9 @@ export function describeAbility(
   lines.push(...timingLines(ability, context));
 
   const rankNumber = abilityRankNumber(ability, context.playerTier);
-  const maxRank = abilityMaxRank(ability);
   return {
     rank: abilityRankNumeral(rankNumber),
-    rankLabel:
-      rankNumber >= maxRank
-        ? `Rank ${abilityRankNumeral(rankNumber)} — fully deepened`
-        : `Rank ${abilityRankNumeral(rankNumber)} of ${abilityRankNumeral(maxRank)}`,
+    rankLabel: `Rank ${abilityRankNumeral(rankNumber)}`,
     trigger: triggerSentence(ability.trigger),
     shape: SHAPE_SENTENCES[ability.shape],
     lines,

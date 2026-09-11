@@ -5,7 +5,6 @@ import {
   STANCE_RECIPE_DATABASE,
   isStanceRecipeUnlocked,
   NO_STANCE_ID,
-  abilitySlotCount,
   ITEM_DATABASE,
   NODE_BIOMES,
   NODE_MODIFIERS,
@@ -381,8 +380,8 @@ export class RouteExecutor {
       message: step.message,
       nodeId: this.deps.obs.nodeId,
       equipment: self ? { ...self.equipment } : {},
-      techniques: self ? [...self.equippedAbilities.techniques] : [],
-      guards: self ? [...self.equippedAbilities.guards] : [],
+      techniques: self ? [...self.attunedAbilities.techniques] : [],
+      guards: self ? [...self.attunedAbilities.guards] : [],
       frameId,
     };
     this.deps.recorder.emit({
@@ -1204,7 +1203,7 @@ export class RouteExecutor {
     const usable = [...affordable];
     while (
       usable.length > 0 &&
-      runicPointLoadoutCost({ rules: usable, rites: obs.self?.equippedRites ?? [] }) > budget
+      runicPointLoadoutCost({ abilities: obs.self?.attunedAbilities ?? { techniques: [], guards: [] }, stances: obs.self?.attunedStances ?? [], rules: usable, rites: obs.self?.equippedRites ?? [] }) > budget
     ) {
       usable.pop();
     }
@@ -1290,24 +1289,19 @@ export class RouteExecutor {
       });
     }
 
-    const current = obs.self?.equippedAbilities ?? { techniques: [], guards: [] };
+    const current = obs.self?.attunedAbilities ?? { techniques: [], guards: [] };
     const key = step.slot === "guard" ? "guards" : "techniques";
     if (current[key].includes(step.abilityId)) return;
 
-    // Tier 1 grants ONE slot per kind, so slotting a newly learned ability
-    // REPLACES the incumbent. Appending would exceed `abilitySlotCount` and the
-    // server would silently truncate — leaving the run using an ability the
-    // route thought it had swapped away.
-    const slots = abilitySlotCount(obs.self?.playerTier ?? 0);
-    const capacity = Math.max(1, slots[step.slot]);
+    // This route step replaces its family; setAbilities declares arbitrary repertoires.
     const next = {
       techniques: [...current.techniques],
       guards: [...current.guards],
     };
-    next[key] = [step.abilityId, ...next[key]].slice(0, capacity);
+    next[key] = [step.abilityId];
     await this.emitUntil(
       () => intents.setAbilityLoadout(next),
-      () => obs.self?.equippedAbilities[key].includes(step.abilityId) ?? false,
+      () => obs.self?.attunedAbilities[key].includes(step.abilityId) ?? false,
       { timeoutMs: 3 * 60 * 1000, what: `${step.abilityId} slotted` },
     );
 
@@ -1318,7 +1312,7 @@ export class RouteExecutor {
       detail: {
         abilityId: step.abilityId,
         slot: step.slot,
-        equipped: obs.self?.equippedAbilities ?? null,
+        equipped: obs.self?.attunedAbilities ?? null,
       },
     });
   }
@@ -1338,15 +1332,14 @@ export class RouteExecutor {
       }
     }
 
-    const slots = abilitySlotCount(obs.self?.playerTier ?? 0);
     const equipped = {
-      techniques: step.techniques.slice(0, Math.max(1, slots.technique)),
-      guards: step.guards.slice(0, Math.max(1, slots.guard)),
+      techniques: [...step.techniques],
+      guards: [...step.guards],
     };
     await this.emitUntil(
       () => intents.setAbilityLoadout(equipped),
       () => {
-        const live = obs.self?.equippedAbilities;
+        const live = obs.self?.attunedAbilities;
         if (!live) return false;
         return (
           equipped.techniques.every((a) => live.techniques.includes(a)) &&
@@ -1360,7 +1353,7 @@ export class RouteExecutor {
       kind: "build-change",
       atMs: recorder.now(),
       system: "abilities",
-      detail: { requested: equipped, live: obs.self?.equippedAbilities ?? null },
+      detail: { requested: equipped, live: obs.self?.attunedAbilities ?? null },
     });
   }
 
@@ -2085,7 +2078,7 @@ export class RouteExecutor {
       throw new StallError("cannot equip an unlearned stance", { stanceId });
     }
     if ((obs.self?.equippedStances.default ?? null) === stanceId) return;
-    const result = await this.mutate(() => this.deps.intents.setDefaultStance(stanceId));
+    const result = await this.mutate(() => this.deps.intents.setDefaultStance(stanceId, [...new Set([...(obs.self?.attunedStances ?? []), ...(stanceId ? [stanceId] : [])])]));
     if (!result.success) {
       throw new StallError(`stance loadout rejected: ${result.reason ?? "unknown"}`, { stanceId });
     }

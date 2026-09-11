@@ -1,0 +1,98 @@
+<div id="rune-exploration">
+  <style>
+    #rune-exploration { --r-bg:light-dark(#eee8dc,#211f1a); --r-inset:light-dark(#faf6ed,#171713); --r-text:light-dark(#302b20,#eee7d5); --r-muted:light-dark(#645b49,#b9af97); --r-edge:light-dark(#b3a78d,#63583f); --r-active:light-dark(#276140,#8acba1); color:var(--r-text); font-family:monospace; }
+    #rune-exploration * { box-sizing:border-box; }
+    #rune-exploration .r-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
+    #rune-exploration select, #rune-exploration button { font:inherit; color:var(--r-text); background:var(--r-inset); border:1px solid var(--r-edge); border-radius:3px; padding:8px; cursor:pointer; max-width:100%; }
+    #rune-exploration .r-layout { display:grid; grid-template-columns:minmax(0,1fr); gap:18px; }
+    #rune-exploration .r-hud { max-width:310px; padding:16px; background:var(--r-bg); border:1px solid var(--r-edge); }
+    #rune-exploration .r-label { color:var(--r-muted); margin-bottom:10px; }
+    #rune-exploration .r-stance { display:flex; align-items:center; gap:10px; padding-bottom:12px; border-bottom:1px solid var(--r-edge); }
+    #rune-exploration .r-sigil { border:1px solid var(--r-edge); padding:8px; }
+    #rune-exploration .r-current { margin:14px 0 6px; color:var(--r-active); }
+    #rune-exploration .r-reason { color:var(--r-muted); overflow-wrap:anywhere; }
+    #rune-exploration details { margin-top:14px; }
+    #rune-exploration summary { cursor:pointer; }
+    #rune-exploration .r-detail { margin-top:10px; color:var(--r-muted); }
+    #rune-exploration .r-board { padding:16px; background:var(--r-bg); border:1px solid var(--r-edge); }
+    #rune-exploration .r-group { margin-top:16px; }
+    #rune-exploration .r-chain { margin:10px 0 0 8px; padding-left:13px; border-left:1px solid var(--r-edge); display:grid; gap:8px; }
+    #rune-exploration .r-rule { display:grid; grid-template-columns:22px minmax(0,1fr); gap:9px; padding:10px; background:var(--r-inset); border:1px solid transparent; overflow-wrap:anywhere; }
+    #rune-exploration .r-rule[data-winning="true"] { border-color:var(--r-active); }
+    #rune-exploration .r-symbol { color:var(--r-muted); }
+    #rune-exploration .r-rule[data-winning="true"] .r-symbol { color:var(--r-active); }
+    #rune-exploration .r-clause { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+    #rune-exploration .r-state { color:var(--r-muted); margin-top:6px; }
+    #rune-exploration .r-reorder { margin-top:12px; }
+    #rune-exploration .r-legend { margin-top:14px; color:var(--r-muted); }
+    @media (pointer:coarse) { #rune-exploration button, #rune-exploration select, #rune-exploration summary { min-height:44px; } }
+  </style>
+  <div class="r-toolbar">
+    <label for="r-scenario">Preview situation</label>
+    <select id="r-scenario">
+      <option value="combat">Fighting · HP 80%</option>
+      <option value="low">Fighting · HP 20%</option>
+      <option value="danger" selected>In telegraph · HP 20%</option>
+    </select>
+  </div>
+  <div class="r-layout">
+    <section class="r-hud" aria-label="Proposed behavior HUD">
+      <div class="r-label">Behavior · HUD sketch</div>
+      <div class="r-stance"><span class="r-sigil" aria-hidden="true">◇</span><span>Defensive Stance</span></div>
+      <div aria-live="polite">
+        <div class="r-current" id="r-action">↗ Step Back</div>
+        <div class="r-reason" id="r-reason">Inside an attack telegraph</div>
+      </div>
+      <details>
+        <summary>Why this rule?</summary>
+        <div class="r-detail" id="r-explanation">First matching movement rule. Flee and Chase Enemy yield.</div>
+      </details>
+    </section>
+    <section class="r-board" aria-label="Proposed rune priority editor excerpt">
+      <div class="r-label">Runes · priority preview</div>
+      <div class="r-group">Movement ↓</div>
+      <div class="r-chain" id="r-movement">
+        <div class="r-rule" data-winning="true"><span class="r-symbol">●</span><div><div class="r-clause">Inside Telegraph <span>→</span> Step Back</div><div class="r-state">Selected</div></div></div>
+        <div class="r-rule"><span class="r-symbol">↳</span><div><div class="r-clause">HP below 25% <span>→</span> Flee</div><div class="r-state">Yields to Step Back</div></div></div>
+        <div class="r-rule"><span class="r-symbol">↳</span><div><div class="r-clause">In Combat <span>→</span> Chase Enemy</div><div class="r-state">Yields to Step Back</div></div></div>
+      </div>
+      <button type="button" class="r-reorder" id="r-reorder">Move Flee above Step Back ↑</button>
+      <div class="r-group">Targeting ↓</div>
+      <div class="r-chain"><div class="r-rule" data-winning="true"><span class="r-symbol">●</span><div><div class="r-clause">In Combat <span>→</span> Focus Closest</div><div class="r-state">Selected independently · does not force an attack</div></div></div></div>
+      <div class="r-legend">● Selected &nbsp; ○ Not matching &nbsp; ↳ Yields</div>
+    </section>
+  </div>
+  <script>
+    (() => {
+      const root = document.getElementById('rune-exploration');
+      const scenario = root.querySelector('#r-scenario');
+      const reorder = root.querySelector('#r-reorder');
+      let fleeFirst = false;
+      const rules = {
+        dodge: { condition:'Inside Telegraph', action:'Step Back', reason:'Inside an attack telegraph', icon:'↗' },
+        flee: { condition:'HP below 25%', action:'Flee', reason:'Health is below 25%', icon:'↶' },
+        chase: { condition:'In Combat', action:'Chase Enemy', reason:'Moving into weapon range', icon:'→' }
+      };
+      function render() {
+        const order = fleeFirst ? ['flee','dodge','chase'] : ['dodge','flee','chase'];
+        const matches = { dodge:scenario.value === 'danger', flee:scenario.value !== 'combat', chase:true };
+        const winner = order.find(id => matches[id]);
+        const selected = rules[winner];
+        root.querySelector('#r-movement').innerHTML = order.map(id => {
+          const rule = rules[id];
+          const winning = id === winner;
+          const symbol = winning ? '●' : matches[id] ? '↳' : '○';
+          const state = winning ? 'Selected' : matches[id] ? 'Yields to ' + selected.action : 'Condition not met';
+          return '<div class="r-rule" data-winning="' + winning + '"><span class="r-symbol">' + symbol + '</span><div><div class="r-clause">' + rule.condition + ' <span>→</span> ' + rule.action + '</div><div class="r-state">' + state + '</div></div></div>';
+        }).join('');
+        root.querySelector('#r-action').textContent = selected.icon + ' ' + selected.action;
+        root.querySelector('#r-reason').textContent = selected.reason;
+        root.querySelector('#r-explanation').textContent = 'First matching movement rule: ' + selected.condition + ' → ' + selected.action + '.';
+        reorder.textContent = fleeFirst ? 'Move Step Back above Flee ↑' : 'Move Flee above Step Back ↑';
+      }
+      scenario.addEventListener('change', render);
+      reorder.addEventListener('click', () => { fleeFirst = !fleeFirst; render(); });
+      render();
+    })();
+  </script>
+</div>

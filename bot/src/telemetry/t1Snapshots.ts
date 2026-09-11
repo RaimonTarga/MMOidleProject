@@ -47,10 +47,10 @@ function cloneRecord<T extends object>(value: T): T {
   return { ...value } as T;
 }
 
-function cloneAbilities(self: PlayerView): PlayerView["equippedAbilities"] {
+function cloneAbilities(self: PlayerView): PlayerView["attunedAbilities"] {
   return {
-    techniques: [...self.equippedAbilities.techniques],
-    guards: [...self.equippedAbilities.guards],
+    techniques: [...self.attunedAbilities.techniques],
+    guards: [...self.attunedAbilities.guards],
   };
 }
 
@@ -87,12 +87,12 @@ export function buildT1CharacterSnapshot(
     equipment: { ...self.equipment },
     itemUpgrades: cloneRecord(self.itemUpgrades),
     knownAbilities: [...self.knownAbilities],
-    equippedAbilities: cloneAbilities(self),
-    abilitySlots: cloneRecord(self.abilitySlots),
+    attunedAbilities: cloneAbilities(self),
     runesOwned: [...self.runesOwned],
     runeRecipesCrafted: [...self.runeRecipesCrafted],
     runesEquipped: self.runesEquipped.map((rule) => ({ ...rule })),
     knownStances: [...self.knownStances],
+    attunedStances: [...(self.attunedStances ?? [])],
     equippedStances: { ...self.equippedStances },
     activeStance: self.activeStance,
     knownRites: [...self.knownRites],

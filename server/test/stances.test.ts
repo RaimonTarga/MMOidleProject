@@ -41,7 +41,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       playerTier: 0, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [],
       runesEquipped: [{ conditionId: "hp-below-25", actionId: "switch-stance", targetStanceId: "defensive-stance" }],
-      knownAbilities: [], equippedAbilities: { techniques: [], guards: [] },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: ["offensive-stance", "defensive-stance", "tanking-stance", "berserker-stance"],
       equippedStances: { default: "offensive-stance" }, activeStance: "offensive-stance",
       knownRites: [], equippedRites: [],
@@ -53,6 +53,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
 
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "stance-player");
+player.tracksProgression.attunedStances = [...player.tracksProgression.knownStances];
 recalculatePlayerEntityStats(world, player);
 const neutralRule = sanitizeRuneLoadout(
   [{ conditionId: "hp-below-25", actionId: "switch-stance", targetStanceId: NO_STANCE_ID }],
@@ -215,6 +216,7 @@ assert(
 );
 
 player.tracksProgression.knownStances.push("perfection-stance");
+player.tracksProgression.attunedStances!.push("perfection-stance");
 player.tracksProgression.equippedStances.default = "perfection-stance";
 player.tracksProgression.runesEquipped.length = 0;
 player.hasHealth.hp = player.hasHealth.maxHp;
@@ -278,12 +280,12 @@ assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK, "setup: gate clo
 // premium Rite and pushed Stance micro out of reach of ordinary budgets.
 assert(ACTION_DATABASE.get("switch-stance")!.cost === 0, "Switch Stance itself must contribute 0 RP");
 assert(
-  runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance", targetStanceId: "offensive-stance" }) === 2,
-  "a stance rule must cost exactly condition + destination",
+  runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance", targetStanceId: "offensive-stance" }) === 1,
+  "a stance rule costs only its condition",
 );
 assert(
-  runeRuleCost({ conditionId: "hp-above-90", actionId: "switch-stance", targetStanceId: "perfection-stance" }) === 3,
-  "Perfection's destination surcharge must still be authoritative",
+  runeRuleCost({ conditionId: "hp-above-90", actionId: "switch-stance", targetStanceId: "perfection-stance" }) === 1,
+  "Perfection switching must not repay its attunement",
 );
 assert(
   runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance", targetStanceId: NO_STANCE_ID }) ===

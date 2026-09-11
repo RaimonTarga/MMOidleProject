@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { BehaviorPanel } from './BehaviorPanel';
+import { useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
-import { atlasIcon, GameIcon, type IconSource } from "../ui/GameIcon";
+import { GameIcon, nodeIcon, type IconSource } from "../ui/GameIcon";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { BuildPanel } from "../ui/BuildPanel";
-import { RunesPanel } from "../ui/RunesPanel";
+import { buildSectionIconSource, menuIconSource } from "../ui/systemIcons";
 import { MasteryPanel } from "../ui/MasteryPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
 import { CraftingPanel } from "../ui/CraftingPanel";
@@ -12,6 +13,7 @@ import { MapPanel } from "../ui/MapPanel";
 import { MaterialsPanel } from "./MaterialsPanel";
 import { QuestPanel } from "../ui/QuestPanel";
 import { SettingsPanel } from "./settings/SettingsPanel";
+import { CharacterSelectPrompt } from "./CharacterSelectPrompt";
 import { QuestOverlay } from "./quest/QuestOverlay";
 import { HudPanel } from "./primitives";
 import { useIsMobile } from "./useIsMobile";
@@ -23,6 +25,7 @@ import { eligibleMakeKeys, useMakeEntries } from "../ui/crafting/useMakeEntries"
 import type { UiUnlockSystem } from "./uiUnlocks";
 import {
   closePrimaryOverlays,
+  toggleBuildTab,
   togglePrimaryOverlay,
 } from "../input/overlayStack";
 import {
@@ -40,7 +43,7 @@ import {
   questProgressAtom,
   runesOwnedAtom,
   craftTabAtom,
-  equippedAbilitiesAtom,
+  attunedAbilitiesAtom,
   equippedRitesAtom,
   equippedStancesAtom,
   knownAbilitiesAtom,
@@ -48,7 +51,6 @@ import {
   knownStancesAtom,
   deathOverlayAtom,
   buildOpenAtom,
-  runesOpenAtom,
   globalMasteryAtom,
   inventoryOpenAtom,
   mapHighlightNodesAtom,
@@ -58,17 +60,9 @@ import {
   settingsOpenAtom,
   skillPointsAtom,
   skillTreeOpenAtom,
+  type BuildPanelTab,
 } from "./atoms";
 import "./hud.css";
-
-/** A destination's sections, surfaced in the rail while that dialog is open. */
-interface NavSection {
-  key: string;
-  label: string;
-  selected: boolean;
-  unlockSystems?: readonly UiUnlockSystem[];
-  onSelect: () => void;
-}
 
 interface RightNavButtonProps {
   label: string;
@@ -85,16 +79,15 @@ interface RightNavButtonProps {
    */
   badgeCount?: number;
   unlockSystems?: readonly UiUnlockSystem[];
-  /** Rendered beneath the entry while it is open. Omit for flat destinations. */
-  sections?: NavSection[];
+  /** Sets the entry apart from the destinations above it, e.g. a session action. */
+  standalone?: boolean;
   onClick: () => void;
 }
 
 /**
- * Icon-led navigation entry. Destinations that have sections reveal them here
- * while open, so related loadout choices stay one action away.
- * The entry itself still opens on its default section in a single click, so
- * flat destinations cost no extra step.
+ * Icon-led navigation entry. Every destination is flat: Abilities, Stances,
+ * Rites and Runes each get their own entry rather than hiding behind a wrapper
+ * that expands into them.
  */
 function RightNavButton({
   label,
@@ -105,18 +98,15 @@ function RightNavButton({
   badgeTone = "action",
   badgeCount,
   unlockSystems,
-  sections,
+  standalone,
   onClick,
 }: RightNavButtonProps) {
-  const showSections = selected && !!sections && sections.length > 0;
-
   return (
-    <div className={`right-nav-entry${showSections ? " right-nav-entry--expanded" : ""}`}>
+    <div className={`right-nav-entry${standalone ? " right-nav-entry--standalone" : ""}`}>
       <button
         type="button"
         className={`right-nav-button${selected ? " right-nav-button--selected" : ""}`}
         aria-pressed={selected}
-        aria-expanded={sections && sections.length > 0 ? selected : undefined}
         data-ui-unlock-system={unlockSystems?.join(" ") || undefined}
         disabled={disabled}
         onClick={onClick}
@@ -130,9 +120,6 @@ function RightNavButton({
           />
         </span>
         <span className="right-nav-button__label">{label}</span>
-        {sections && sections.length > 0 && (
-          <span className="right-nav-button__chevron" aria-hidden>{selected ? "▾" : "▸"}</span>
-        )}
         {badge && (
           badgeCount && badgeCount > 0 ? (
             <span
@@ -149,24 +136,6 @@ function RightNavButton({
           )
         )}
       </button>
-
-      {showSections && (
-        <ul className="right-nav-sections">
-          {sections.map((section) => (
-            <li key={section.key}>
-              <button
-                type="button"
-                className={`right-nav-section${section.selected ? " right-nav-section--selected" : ""}`}
-                aria-current={section.selected ? "true" : undefined}
-                data-ui-unlock-system={section.unlockSystems?.join(" ") || undefined}
-                onClick={section.onSelect}
-              >
-                {section.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
@@ -175,11 +144,10 @@ export function RightSidebar() {
   const isMobile = useIsMobile();
   const [treeOpen, setTreeOpen] = useAtom(skillTreeOpenAtom);
   const [buildOpen, setBuildOpen] = useAtom(buildOpenAtom);
-  const [runesOpen, setRunesOpen] = useAtom(runesOpenAtom);
   const [masteryOpen, setMasteryOpen] = useAtom(masteryOpenAtom);
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
-  const [buildTab, setBuildTab] = useAtom(buildPanelTabAtom);
+  const buildTab = useAtomValue(buildPanelTabAtom);
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
   const [mapHighlightNodes, setMapHighlightNodes] = useAtom(mapHighlightNodesAtom);
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
@@ -200,6 +168,7 @@ export function RightSidebar() {
   const newRecipes = useNewEntries("craft", playerId, eligibleKeys);
 
   const dead = useAtomValue(deathOverlayAtom).active;
+  const [charSelectPrompt, setCharSelectPrompt] = useState(false);
 
   useEffect(() => {
     if (!showMastery && masteryOpen) setMasteryOpen(false);
@@ -212,18 +181,17 @@ export function RightSidebar() {
     if (isMobile) closePrimaryOverlays();
   }, [isMobile]);
 
-  // Loadout keeps the choices changed together; Runes is now its own destination.
-  const buildSections: NavSection[] = [
-    { key: "overview", label: "Overview", selected: buildTab === "overview", onSelect: () => setBuildTab("overview") },
-    ...(visibility.abilities
-      ? [{ key: "abilities", label: "Abilities", selected: buildTab === "abilities", unlockSystems: ["abilities"] as const, onSelect: () => setBuildTab("abilities") }]
-      : []),
-    ...(visibility.stances
-      ? [{ key: "stances", label: "Stances", selected: buildTab === "stances", unlockSystems: ["stances"] as const, onSelect: () => setBuildTab("stances") }]
-      : []),
-    ...(visibility.rites
-      ? [{ key: "rites", label: "Rites", selected: buildTab === "rites", unlockSystems: ["rites"] as const, onSelect: () => setBuildTab("rites") }]
-      : []),
+  // Abilities, Stances, Rites and Runes share one dialog but each owns a rail
+  // entry: an entry is selected when that dialog is open on its tab.
+  const buildEntries: {
+    tab: BuildPanelTab;
+    label: string;
+    gate: UiUnlockSystem;
+  }[] = [
+    { tab: "abilities", label: "Abilities", gate: "abilities" },
+    { tab: "stances", label: "Stances", gate: "stances" },
+    { tab: "rites", label: "Rites", gate: "rites" },
+    { tab: "runes", label: "Runes", gate: "loadout" },
   ];
 
   const toggleCraftDestination = (tab: 'make' | 'upgrade') => {
@@ -250,11 +218,13 @@ export function RightSidebar() {
       />
       )}
 
+      <BehaviorPanel />
+
       <nav className="right-system-nav" aria-label="Character systems">
         {visibility.passiveTree && (
           <RightNavButton
             label="Passive Tree"
-            icon={atlasIcon("UI_icons/passives-icon.png")}
+            icon={menuIconSource("passive-tree")}
             selected={treeOpen}
             badge={badges.has("passiveTree") || (!treeOpen && skillPoints > 0)}
             unlockSystems={["passiveTree"]}
@@ -264,34 +234,25 @@ export function RightSidebar() {
             }}
           />
         )}
-        {visibility.loadout && (
+        {buildEntries.map((entry) => visibility[entry.gate] && (
           <RightNavButton
-            label="Loadout"
-            icon={atlasIcon("UI_icons/abilities/sweep.png")}
-            selected={buildOpen}
-            badge={badges.has("loadout")}
+            key={entry.tab}
+            label={entry.label}
+            icon={buildSectionIconSource(entry.tab)}
+            selected={buildOpen && buildTab === entry.tab}
+            badge={badges.has(entry.gate)}
             badgeTone="unlock"
-            unlockSystems={["loadout", "abilities", "stances", "rites", "abilityDock"]}
-            sections={buildSections}
+            unlockSystems={[entry.gate]}
             onClick={() => {
-              badges.clear("loadout");
-              togglePrimaryOverlay("build");
+              badges.clear(entry.gate);
+              toggleBuildTab(entry.tab);
             }}
           />
-        )}
-        {visibility.loadout && (
-          <RightNavButton
-            label="Runes"
-            icon={atlasIcon("UI_icons/runes-icon.png")}
-            selected={runesOpen}
-            unlockSystems={["loadout"]}
-            onClick={() => togglePrimaryOverlay("runes")}
-          />
-        )}
+        ))}
         {visibility.inventory && (
           <RightNavButton
             label="Inventory"
-            icon={atlasIcon("UI_icons/inventory-icon.png")}
+            icon={menuIconSource("inventory")}
             selected={invOpen}
             disabled={dead}
             badge={badges.has("inventory")}
@@ -306,7 +267,7 @@ export function RightSidebar() {
         {visibility.crafting && (
           <RightNavButton
             label="Crafting"
-            icon={atlasIcon("UI_icons/forge-icon.png")}
+            icon={menuIconSource("crafting")}
             selected={craftTab === "make"}
             disabled={dead}
             badge={badges.has("crafting") || newRecipes.count > 0}
@@ -321,7 +282,7 @@ export function RightSidebar() {
         {visibility.crafting && (
           <RightNavButton
             label="Upgrade"
-            icon={atlasIcon("UI_icons/craft-upgrade-icon.png")}
+            icon={menuIconSource("upgrade")}
             selected={craftTab === "upgrade"}
             disabled={dead}
             unlockSystems={["crafting"]}
@@ -331,7 +292,7 @@ export function RightSidebar() {
         {visibility.map && (
           <RightNavButton
             label="Map"
-            icon={atlasIcon("UI_icons/map-icon.png")}
+            icon={menuIconSource("map")}
             selected={mapOpen}
             badge={badges.has("map")}
             badgeTone="unlock"
@@ -345,22 +306,25 @@ export function RightSidebar() {
         {/* Settings never gates: it holds accessibility controls (§16). */}
         <RightNavButton
           label="Settings"
-          icon={atlasIcon("UI_icons/settings-icon.png")}
+          icon={menuIconSource("settings")}
           selected={settingsOpen}
           onClick={() => togglePrimaryOverlay("settings")}
+        />
+        {/* A session action, not a destination: it leaves the world entirely,
+            so it sits below the rule under every panel the world contains. */}
+        <RightNavButton
+          label="Character Select"
+          icon={nodeIcon("↩")}
+          selected={charSelectPrompt}
+          standalone
+          onClick={() => setCharSelectPrompt(true)}
         />
       </nav>
 
       {visibility.materials && <MaterialsPanel />}
 
       {treeOpen && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
-      {buildOpen && (
-        <BuildPanel
-          progressiveDisclosure
-          onClose={() => setBuildOpen(false)}
-        />
-      )}
-      {runesOpen && <RunesPanel onClose={() => setRunesOpen(false)} />}
+      {buildOpen && <BuildPanel onClose={() => setBuildOpen(false)} />}
       {masteryOpen && <MasteryPanel onClose={() => setMasteryOpen(false)} />}
       {invOpen && <InventoryPanel onClose={() => setInvOpen(false)} />}
       {craftTab !== null && (
@@ -380,6 +344,7 @@ export function RightSidebar() {
         />
       )}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
+      {charSelectPrompt && <CharacterSelectPrompt onCancel={() => setCharSelectPrompt(false)} />}
       <QuestOverlay />
     </div>
   );

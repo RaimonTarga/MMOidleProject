@@ -1,3 +1,4 @@
+import { DEFAULT_RUNE_LOADOUT } from "@mmo-idle/shared";
 import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
@@ -47,9 +48,9 @@ function playerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
-      runesEquipped: [],
+      runesEquipped: [...DEFAULT_RUNE_LOADOUT],
       knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null },
+      attunedAbilities: { technique: null, guard: null },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -103,6 +104,7 @@ attachComponent(world, player, "hasAutoTraversePath", {
   targetNodeId: "node-t1-forest-01",
   remainingPath: manualTravelPath.slice(1),
 });
+updateRuneDerivedConfig(world, 500);
 updateAutoIntent(world);
 assert(player.hasAutoIntent?.kind === "travel", "manual map travel should publish travel intent");
 assert(
@@ -140,6 +142,8 @@ player.tracksProgression.runesEquipped = [
   { conditionId: "in-combat", actionId: "focus-closest" },
 ];
 setAttackTarget(world, player, target.isMonster.id);
+setAggroTarget(world, target, { id: player.isPlayer.id, kind: 'player' }, 3000);
+updateRuneDerivedConfig(world, 3000);
 updateAutoIntent(world);
 assert(player.hasAutoIntent?.kind === "attack", "auto combat should publish attack intent");
 assert(
@@ -159,11 +163,13 @@ assert(
 );
 
 setAttackTarget(world, player, null);
+setAggroTarget(world, target, null, 4000);
 player.hasHealth.hp = player.hasHealth.maxHp / 2;
 player.tracksProgression.runesEquipped = [
   { conditionId: "when-idle", actionId: "wait-for-regen" },
 ];
 setFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG, true);
+updateRuneDerivedConfig(world, 100000);
 updateAutoIntent(world);
 assert(player.hasAutoIntent?.kind === "idle", "maintenance should publish a hold intent");
 assert(
@@ -179,5 +185,28 @@ player.usesAutocombat.auto = false;
 setFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG, false);
 updateAutoIntent(world);
 assert(player.hasAutoIntent === undefined, "returning to manual idle should clear intent");
+
+// Two conditions may target the same action. Attribution must use the winning
+// fold entry rather than the first matching action ID in the equipped list.
+player.usesAutocombat.auto = true;
+player.tracksProgression.runesEquipped = [
+  { conditionId: 'hp-below-25', actionId: 'orbit' },
+  { conditionId: 'in-combat', actionId: 'orbit' },
+  { conditionId: 'in-combat', actionId: 'focus-closest' },
+];
+player.hasHealth.hp = player.hasHealth.maxHp;
+setAttackTarget(world, player, target.isMonster.id);
+setAggroTarget(world, target, { id: player.isPlayer.id, kind: 'player' }, 101000);
+updateRuneDerivedConfig(world, 101000);
+updateAutoIntent(world);
+assert(player.hasAutoIntent?.activeRune?.conditionId === 'in-combat', 'trace identifies the matching condition, not an earlier inactive rule');
+assert(player.hasAutoIntent?.matchedRunes?.length === 2, 'independent movement and targeting decisions are reported together');
+player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
+updateRuneDerivedConfig(world, 101100);
+updateAutoIntent(world);
+assert(player.hasAutoIntent?.activeRune?.conditionId === 'hp-below-25', 'trace changes when the higher priority condition becomes true');
+player.usesAutocombat.auto = false;
+updateAutoIntent(world);
+assert(!player.hasAutoIntent?.matchedRunes, 'manual combat never advertises matching automation');
 
 console.log("autoIntent.test.ts: ok");

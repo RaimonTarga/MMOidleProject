@@ -1,24 +1,23 @@
+import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, runeBudgetForGlobalMastery, globalMastery } from "@mmo-idle/shared";
 /**
  * Ability crafting + loadout (system rework Step 7).
  *
  * Crafting an ability recipe LEARNS the ability (adds it to
  * `TracksProgression.knownAbilities`), spending essence + catalysts and gating on
- * Biome Mastery — mirroring rune crafting. Equipping is free slotting from the
- * learned pool into the Technique / Guard slot.
+ * Biome Mastery — mirroring rune crafting. Attunement reserves authored RP from the same pool as Rune logic, stances and Rites.
  */
 import type { EssenceType } from "@mmo-idle/shared";
 import {
   ABILITY_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  ABILITY_SLOTS,
+  ABILITY_FAMILIES,
   ESSENCE_TYPES,
   ESSENCE_LABELS,
   TEST_ROOM_NODE_ID,
-  abilitySlotCount,
   catalystLabel,
-  equippedForSlot,
+  attunedForFamily,
   isAbilityRecipeUnlocked,
-  type EquippedAbilities,
+  type AttunedAbilities,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -107,7 +106,7 @@ export interface AbilityLoadoutResult {
 /**
  * Replace the whole equipped-ability loadout.
  *
- * Ordered lists per slot kind — index 0 is highest fire priority — so equipping,
+ * Ordered lists per semantic family — index 0 is highest fire priority — so equipping,
  * clearing and re-prioritising are all the same operation. Rejects the WHOLE
  * request rather than silently dropping entries, so the client never ends up
  * showing a loadout the server didn't accept.
@@ -115,25 +114,21 @@ export interface AbilityLoadoutResult {
 export function setAbilityLoadout(
   world: World,
   entity: PlayerEntity,
-  equipped: EquippedAbilities,
+  equipped: AttunedAbilities,
 ): AbilityLoadoutResult {
   const prog = entity.tracksProgression;
   const known = new Set(prog.knownAbilities ?? []);
-  const slots = abilitySlotCount(prog.playerTier);
 
-  for (const slot of ABILITY_SLOTS) {
-    const ids = equippedForSlot(equipped, slot);
-    if (ids.length > slots[slot]) {
-      return { success: false, reason: `Only ${slots[slot]} ${slot} slot(s) unlocked.` };
-    }
+  for (const slot of ABILITY_FAMILIES) {
+    const ids = attunedForFamily(equipped, slot);
     if (new Set(ids).size !== ids.length) {
-      return { success: false, reason: "The same ability cannot fill two slots." };
+      return { success: false, reason: "An ability can be attuned only once." };
     }
     for (const id of ids) {
       const ability = ABILITY_DATABASE.get(id);
       if (!ability) return { success: false, reason: "Unknown ability." };
       if (ability.slot !== slot) {
-        return { success: false, reason: `${ability.name} does not fit a ${slot} slot.` };
+        return { success: false, reason: `${ability.name} is not in the ${slot} family.` };
       }
       if (!known.has(id)) {
         return { success: false, reason: `${ability.name} is not learned yet.` };
@@ -141,7 +136,13 @@ export function setAbilityLoadout(
     }
   }
 
-  prog.equippedAbilities = {
+  const previous = runicLoadoutFromProgression(prog);
+  const ids = new Set(attunedAbilityIds(equipped));
+  const rules = prog.runesEquipped.filter(rule => rule.actionId !== "use-ability" || ids.has(rule.targetAbilityId ?? ""));
+  const next = { ...previous, abilities: equipped, rules };
+  if (!runicPointEditAllowed(previous, next, runeBudgetForGlobalMastery(globalMastery(prog.biomeLevel)))) return { success: false, reason: "Not enough Runic Points to attune these abilities." };
+  prog.runesEquipped = rules;
+  prog.attunedAbilities = {
     techniques: [...equipped.techniques],
     guards: [...equipped.guards],
   };

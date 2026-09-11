@@ -6,19 +6,20 @@ import {
   abilityDef,
   abilityRankNumber,
   abilityRankNumeral,
-  equippedForSlot,
-  guardEffectIdForSlot,
-  recoveryEffectIdForSlot,
+  attunedForFamily,
+  guardEffectIdForAbility,
+  recoveryEffectIdForAbility,
   type AbilityDef,
-  type AbilitySlot,
+  type AbilityFamily,
 } from "@mmo-idle/shared";
 import {
   abilityCastAtom,
   abilityFiredAtAtom,
   abilityCooldownStartedAtAtom,
   activeBuffsAtom,
-  equippedAbilitiesAtom,
+  attunedAbilitiesAtom,
   playerTierAtom,
+  runesEquippedAtom,
 } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
 import { abilityIconSource } from "../ui/abilityIcons";
@@ -32,6 +33,7 @@ import {
   type AbilityRuntime,
 } from "./statusTooltips";
 import "./hud.css";
+import { abilityTiming } from "../ui/describe/abilityTiming";
 
 const ICON_SIZE = 46;
 const SLOT_GAP = 10;
@@ -40,13 +42,13 @@ const PULSE_MS = 650;
 
 /** Placeholder slot styling — colored shapes + a glyph, in the spirit of BuffBar.
  *  Swap `glyph` for real icon textures later without touching the layout. */
-const SLOT_META: Record<AbilitySlot, { color: string; accent: string; glyph: string; label: string }> = {
+const SLOT_META: Record<AbilityFamily, { color: string; accent: string; glyph: string; label: string }> = {
   technique: { color: "#c9532f", accent: "#ff9a5a", glyph: "⚔", label: "Technique" },
   guard: { color: "#3866b0", accent: "#7fb2ff", glyph: "🛡", label: "Guard" },
 };
 
 /** Order slots so Technique sits left of Guard. */
-const SLOT_ORDER: AbilitySlot[] = ["technique", "guard"];
+const SLOT_ORDER: AbilityFamily[] = ["technique", "guard"];
 
 interface SlotStatus {
   /** Fraction of the cooldown still REMAINING (0 = ready), drives the dark sweep. */
@@ -95,6 +97,15 @@ function castStatus(startedAt: number, castMs: number, now: number): SlotStatus 
 }
 
 function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotStatus }) {
+  const context = useAbilityContext();
+  const timing = abilityTiming(ability, useAtomValue(attunedAbilitiesAtom), useAtomValue(runesEquippedAtom));
+  const runtime: AbilityRuntime = {
+    state: status.castRemainingMs !== undefined ? 'casting' : status.active ? 'active' : status.remainingFrac > 0 ? 'cooling' : 'ready',
+    cooldownRemainingMs: cooldownRemainingMs(ability, context.playerTier, status.remainingFrac),
+    castRemainingMs: status.castRemainingMs,
+    runeTiming: timing.overrideText,
+  };
+  const { handlers, node } = useHoverTooltip(<TooltipCard content={abilityTooltipContent(ability, context, runtime)} />);
   const meta = SLOT_META[ability.slot];
   const icon = abilityIconSource(ability);
   // The rank numeral rides the tile because it is the same learned ability the
@@ -111,7 +122,11 @@ function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotSta
 
   return (
     <div
+      tabIndex={0}
+      aria-label={abilityAccessibleLabel(ability, context, runtime)}
+      {...handlers}
       style={{
+        pointerEvents: 'auto',
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -197,22 +212,23 @@ function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotSta
       >
         {ability.name} {rank}
       </span>
+      {node}
     </div>
   );
 }
 
-interface DesktopAbilitySlotProps {
+interface DesktopAbilityFamilyProps {
   ability: AbilityDef;
   status: SlotStatus;
   /** Reserved for real activation bindings; omitted while abilities remain automatic. */
   keyHint?: string;
 }
 
-function DesktopAbilitySlot({
+function DesktopAbilityFamily({
   ability,
   status,
   keyHint,
-}: DesktopAbilitySlotProps) {
+}: DesktopAbilityFamilyProps) {
   const meta = SLOT_META[ability.slot];
   const icon = abilityIconSource(ability);
   const playerTier = useAtomValue(playerTierAtom);
@@ -245,6 +261,8 @@ function DesktopAbilitySlot({
     castRemainingMs: status.castRemainingMs,
   };
   const abilityContext = useAbilityContext();
+  const timing = abilityTiming(ability, useAtomValue(attunedAbilitiesAtom), useAtomValue(runesEquippedAtom));
+  runtime.runeTiming = timing.overrideText;
   const label = abilityAccessibleLabel(ability, abilityContext, runtime);
   // No `title` alongside this: a native browser tooltip would race the custom
   // one and show the same thing twice, in two different visual languages.
@@ -293,7 +311,7 @@ function DesktopAbilitySlot({
 
 export function AbilityBar() {
   const isMobile = useIsMobile();
-  const equipped = useAtomValue(equippedAbilitiesAtom);
+  const equipped = useAtomValue(attunedAbilitiesAtom);
   const firedAt = useAtomValue(abilityFiredAtAtom);
   const cooldownStartedAt = useAtomValue(abilityCooldownStartedAtAtom);
   const buffs = useAtomValue(activeBuffsAtom);
@@ -307,16 +325,16 @@ export function AbilityBar() {
   // Guard buffs are per-slot ids, so the tile for guard slot N lights up only
   // when THAT slot's buff is up. A Recovery guard has no DR buff of its own, so
   // it keys off its own per-slot Recovery effect id.
-  const activeBuffIds = new Set(buffs.map((b) => b.id));
+  const activeBuffIds = new Set<string>(buffs.map((b) => b.id));
 
   // Ordered so every Technique sits left of every Guard.
   const equippedDefs = SLOT_ORDER.flatMap((slot) =>
-    equippedForSlot(equipped, slot).map((id, index) => ({
+    attunedForFamily(equipped, slot).map((id, index) => ({
       ability: abilityDef(id),
       slot,
       index,
     })),
-  ).filter((e): e is { ability: AbilityDef; slot: AbilitySlot; index: number } => !!e.ability);
+  ).filter((e): e is { ability: AbilityDef; slot: AbilityFamily; index: number } => !!e.ability);
 
   const hasAny = equippedDefs.length > 0;
 
@@ -335,9 +353,9 @@ export function AbilityBar() {
       }
       const active =
         slot === "guard"
-          ? activeBuffIds.has(guardEffectIdForSlot(index)) ||
-            activeBuffIds.has(recoveryEffectIdForSlot(index)) ||
-            activeBuffIds.has("ability-bramble")
+          ? activeBuffIds.has(guardEffectIdForAbility(ability.id) ?? "") ||
+            activeBuffIds.has(recoveryEffectIdForAbility(ability.id) ?? "") ||
+            (ability.id === "bramble-guard" && activeBuffIds.has("ability-bramble"))
           : activeBuffIds.has(ABILITY_FRENZY_EFFECT_ID) &&
             ability.shape === "instant";
       return {
@@ -384,7 +402,7 @@ export function AbilityBar() {
     >
       <div className="desktop-combat-abilities__layout" role="list">
         {slots.map(({ ability, status }) => (
-          <DesktopAbilitySlot key={ability.id} ability={ability} status={status} />
+          <DesktopAbilityFamily key={ability.id} ability={ability} status={status} />
         ))}
       </div>
     </HudDock>

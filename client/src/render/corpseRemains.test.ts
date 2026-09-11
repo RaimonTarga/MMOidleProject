@@ -42,6 +42,7 @@ const expectedPresentation: Record<string, { family: string; size: string }> = {
   "granite-titan": { family: "construct-rubble", size: "medium" },
   "bog-slime": { family: "ooze-residue", size: "small" }, // display "Mire Ooze"
   "elder-leviathan": { family: "aquatic-fish", size: "large" }, // colossal anglerfish
+  "tiny-slime": { family: "tiny-wisp", size: "small" }, // display "Tiny Wisp"
 
   // Not clearly plant or reptile — generic beast skeleton per user call.
   "canopy-sprite": { family: "beast", size: "medium" }, // display "Thorn Spitter"
@@ -82,10 +83,9 @@ assert(
 );
 
 // Unsupported / deferred monster types safely fall back to `null` rather than
-// throwing or guessing — deferred (charnel-brute), a boss (void-overlord), a
-// T0 tutorial ethereal with no corpse at all by design (tiny-slime, the Tiny
-// Wisp), and an empty id.
-for (const unmapped of ["charnel-brute", "tiny-slime", "void-overlord", ""]) {
+// throwing or guessing — deferred (charnel-brute), a boss (void-overlord),
+// and an empty id.
+for (const unmapped of ["charnel-brute", "void-overlord", ""]) {
   assert(
     resolveCorpsePresentation(unmapped) === null,
     `${unmapped || "(empty id)"} should have no configured presentation`,
@@ -117,10 +117,25 @@ assert(
   `expected both beast variants to appear across a spread of corpse ids, saw: ${[...seenBeastKeys].join(", ")}`,
 );
 
-// All 30 approved assets (8 wave-1 + 22 wave-2) are registered exactly once,
+// The tutorial Tiny Wisp resolves through the original tiny-slime id and uses
+// all five dedicated dust-residue variants.
+const wispRemains = resolveCorpseRemains("tiny-slime", "corpse-wisp");
+assert(wispRemains !== null, "Tiny Wisp should resolve dedicated remains art");
+assert(wispRemains!.sizePx === CORPSE_SIZE_PX.small, "Tiny Wisp should use the small size class");
+const seenWispKeys = new Set<string>();
+for (let i = 0; i < 100; i++) {
+  const remains = resolveCorpseRemains("tiny-slime", `wisp-corpse-${i}`);
+  if (remains) seenWispKeys.add(remains.key);
+}
+assert(
+  seenWispKeys.size === 5,
+  `expected all five Tiny Wisp variants to be selectable, saw: ${[...seenWispKeys].join(", ")}`,
+);
+
+// All 35 approved assets (8 wave-1 + 22 wave-2 + 5 Tiny Wisp) are registered exactly once,
 // with unique keys and a served path under /assets/corpses/ (actual on-disk
 // presence is checked separately — see the validation pass in the summary).
-assert(CORPSE_REMAINS_ART.length === 30, `expected 30 remains art entries, got ${CORPSE_REMAINS_ART.length}`);
+assert(CORPSE_REMAINS_ART.length === 35, `expected 35 remains art entries, got ${CORPSE_REMAINS_ART.length}`);
 const seenKeys = new Set<string>();
 for (const art of CORPSE_REMAINS_ART) {
   assert(!seenKeys.has(art.key), `duplicate remains texture key: ${art.key}`);
@@ -130,5 +145,7 @@ for (const art of CORPSE_REMAINS_ART) {
     `unexpected remains asset path: ${art.file}`,
   );
 }
+const wispArt = CORPSE_REMAINS_ART.filter((art) => art.file.includes("tiny-wisp-remains"));
+assert(wispArt.length === 5, `expected five Tiny Wisp remains files, got ${wispArt.length}`);
 
 console.log("corpseRemains: ok");

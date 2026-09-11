@@ -1,0 +1,113 @@
+/* Attunement uses the Rune board's inset materials, type hierarchy and controls. */
+.attunement-panel {
+  color: var(--hud-text);
+  gap: 14px;
+}
+.attunement-budget {
+  flex-shrink: 0;
+  border: 1px solid var(--hud-edge-medium);
+  background: var(--hud-material-inset);
+  padding: 12px;
+  color: var(--hud-text);
+  font-size: 12px;
+}
+.attunement-budget__heading { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+.attunement-budget__meter { display: flex; height: 10px; overflow: hidden; border-radius: 2px; background: var(--hud-material-panel); box-shadow: 0 0 0 1px var(--hud-edge-light); }
+.attunement-budget__segment { flex: 0 0 auto; box-sizing: border-box; min-width: 0; }
+.attunement-budget__segment + .attunement-budget__segment { border-left: 2px solid var(--hud-material-inset); }
+.rp-abilities { background: #86b7e5; }
+.rp-stances { background: #d9ba78; }
+.rp-logic { background: #b69adf; }
+.rp-rites { background: #72c4ae; }
+.rp-available { background: #354558; background-image: repeating-linear-gradient(135deg, transparent 0 4px, #435569 4px 5px); }
+.attunement-budget__parts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 10px; color: var(--hud-text-muted); font-size: 11px; }
+.attunement-budget__legend { display: inline-flex; align-items: center; gap: 6px; }
+.attunement-budget__legend i { width: 8px; height: 8px; border-radius: 1px; flex: 0 0 auto; }
+.attunement-budget__legend b { color: var(--hud-text); font-variant-numeric: tabular-nums; }
+.attunement-budget > p { margin: 9px 0 0; font-size: 11px; line-height: 1.5; }
+.attunement-muted { color: var(--hud-text-muted); }
+.attunement-over { color: var(--hud-danger, #ff8f9b); }
+.attunement-intro { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+.attunement-intro h3 { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0; font-size: 12px; color: var(--hud-primary-strong); }
+.attunement-intro h3 span { color: var(--hud-text-muted); font-size: 11px; font-weight: normal; }
+.attunement-intro p { margin: 5px 0 0; font-size: 11px; line-height: 1.5; color: var(--hud-text-muted); }
+.attunement-intro p strong { color: var(--hud-text); font-weight: normal; }
+.attunement-tier { white-space: nowrap; font-size: 11px; color: var(--hud-text-muted); }
+.ability-collection { display: flex; flex-direction: column; gap: 7px; }
+.ability-entry, .stance-entry { min-width: 0; border: 1px solid var(--hud-edge-light); border-radius: 3px; background: var(--hud-material-inset); }
+.ability-entry.is-attuned { border-color: #72c49a; box-shadow: inset 0 0 0 1px rgba(114, 196, 154, .22); }
+.ability-entry.is-selected { border-color: var(--hud-primary-strong); box-shadow: inset 3px 0 var(--hud-primary-strong); background: var(--hud-material-panel); }
+.ability-entry.is-attuned.is-selected { border-color: #72c49a; box-shadow: inset 3px 0 var(--hud-primary-strong), inset 0 0 0 1px rgba(114, 196, 154, .22); }
+.ability-entry__top { display: flex; align-items: center; gap: 14px; padding: 10px 12px 5px; }
+.attunement-panel button { font: inherit; color: inherit; }
+.attunement-panel .ability-entry__select { display: flex; flex: 1; align-items: center; gap: 12px; min-width: 0; text-align: left; background: transparent; border: 0; padding: 0; border-radius: 2px; cursor: pointer; }
+.ability-entry__icon { display: grid; place-items: center; flex: 0 0 44px; height: 44px; background: var(--hud-material-inset); border: 1px solid var(--hud-edge-light); border-radius: 3px; }
+.is-selected .ability-entry__icon { border-color: var(--hud-primary-strong); }
+.ability-entry__copy { flex: 1; min-width: 0; }
+.ability-entry__name { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 12px; font-size: 13px; font-weight: bold; line-height: 1.4; }
+.ability-entry__blurb { display: block; margin-top: 3px; font-size: 11px; line-height: 1.5; color: var(--hud-text-muted); }
+.ability-entry__disclosure { flex-shrink: 0; font-size: 10px; color: var(--hud-primary-strong); white-space: nowrap; }
+.ability-entry__disclosure > span { margin-left: 4px; font-size: 14px; }
+.attunement-seal, .attunement-default-seal, .attunement-active-seal, .attunement-rune-seal { font-size: 10px; font-weight: normal; white-space: nowrap; }
+.attunement-seal { color: #96c8b8; }
+.attunement-default-seal { color: #d9ba78; }
+.attunement-active-seal { color: #96c8b8; }
+.attunement-rune-seal { color: #b69adf; }
+.attunement-control { display: flex; flex-shrink: 0; align-items: center; gap: 12px; }
+.attunement-price { font-size: 11px; color: var(--hud-primary-strong); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.attunement-panel .attunement-button { display: inline-flex; justify-content: center; align-items: center; min-height: 32px; padding: 6px 10px; border: 1px solid var(--hud-edge-medium); border-radius: 3px; font-size: 11px; line-height: 1.4; background: var(--hud-material-inset); cursor: pointer; white-space: normal; }
+.attunement-panel .attunement-button:hover:not(:disabled) { border-color: var(--hud-primary-strong); background: var(--hud-material-panel); }
+.attunement-panel .attunement-button[aria-pressed="true"] { color: #96c8b8; border-color: #587b75; background: rgba(114, 196, 174, .06); }
+.attunement-panel .attunement-button:disabled { opacity: .4; cursor: default; }
+.attunement-panel button:focus-visible { outline: var(--hud-focus-width, 2px) solid var(--hud-focus-color, #86b7e5); outline-offset: 3px; }
+.ability-entry__behavior { margin: 0 12px 10px 68px; color: var(--hud-text-muted); font-size: 10px; line-height: 1.5; }
+.ability-entry__behavior > span:first-child { color: var(--hud-primary-strong); margin-right: 5px; }
+.ability-entry__behavior .attunement-rune-seal { display: inline-block; margin-left: 10px; }
+.ability-entry__shortfall { margin: 0 12px 9px 68px; color: var(--hud-text-muted); font-size: 10px; }
+.ability-entry__details { margin: 0 12px 12px 68px; padding-top: 12px; border-top: 1px solid var(--hud-edge-divider); }
+.ability-entry__detail-heading { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 12px; margin-bottom: 10px; font-size: 11px; color: var(--hud-text-muted); }
+.ability-entry__detail-heading strong { font-weight: normal; color: var(--hud-primary-strong); }
+.ability-numbers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 3px; }
+.ability-number { min-width: 0; }
+.attunement-panel .ability-number button { width: 100%; text-align: left; cursor: help; border: 0; border-bottom: 1px solid var(--hud-edge-divider); border-radius: 0; background: transparent; padding: 6px 0; }
+.ability-number .detail-line__label > span { color: var(--hud-text-dim); font-size: 10px; }
+.ability-number .detail-line__value { flex-shrink: 1; overflow-wrap: anywhere; }
+.ability-entry__shape, .ability-entry__override { margin: 10px 0 0; font-size: 11px; line-height: 1.6; color: var(--hud-text-muted); }
+.ability-entry__override { border-left: 2px solid #b69adf; padding-left: 10px; color: var(--hud-text); }
+.ability-entry__footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 12px; font-size: 10px; color: var(--hud-text-muted); }
+.ability-entry__footer b { font-weight: normal; color: var(--hud-text); }
+.attunement-note { margin: 7px 0 0; font-size: 10px; line-height: 1.5; color: var(--hud-text-muted); }
+.stance-collection { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 10px; }
+.stance-entry { display: flex; flex-direction: column; box-sizing: border-box; width: 100%; padding: 12px; }
+.stance-entry.is-attuned { border-color: var(--hud-edge-medium); }
+.stance-entry.is-default { border-color: #a78e58; box-shadow: inset 3px 0 #d9ba78; }
+.stance-entry__heading { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.stance-entry__copy { flex: 1; min-width: 0; }
+.stance-entry h4 { margin: 0; font-size: 13px; line-height: 1.4; }
+.stance-entry__states { display: flex; flex-wrap: wrap; gap: 5px 10px; margin-top: 5px; font-size: 10px; color: var(--hud-text-muted); }
+.stance-entry__crest { flex-shrink: 0; }
+.stance-entry.is-default .stance-entry__crest { --crest-edge: #d9ba78; }
+.stance-entry.is-active .stance-entry__crest { --crest-edge: #96c8b8; }
+.stance-entry__blurb { margin: 8px 0 10px; font-size: 11px; line-height: 1.5; color: var(--hud-text-muted); }
+.stance-entry__effects .detail-line { padding: 4px 0; border-bottom: 1px solid var(--hud-edge-divider); }
+.stance-entry__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: auto; padding-top: 12px; }
+.stance-entry__controls > span { margin-left: auto; font-size: 10px; }
+.attunement-panel .attunement-button--default[aria-pressed="true"] { color: #d9ba78; border-color: #a78e58; background: rgba(217, 186, 120, .08); }
+.attunement-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 720px) {
+  .stance-collection { grid-template-columns: minmax(0, 1fr); }
+  .ability-entry__top { position: relative; flex-wrap: wrap; gap: 8px; }
+  .attunement-panel .ability-entry__select { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px 12px; flex-basis: 100%; }
+  .ability-entry__copy { display: contents; }
+  .ability-entry__icon { grid-column: 1; grid-row: 1; }
+  .ability-entry__name { grid-column: 2; grid-row: 1; }
+  .ability-entry__blurb { grid-column: 1 / -1; margin: 0; }
+  .ability-entry__disclosure { grid-column: 1 / -1; display: flex; align-items: center; min-height: 36px; }
+  .attunement-control { position: absolute; bottom: 5px; right: 12px; margin: 0; }
+  .ability-entry__details { margin-left: 12px; }
+  .ability-entry__behavior, .ability-entry__shortfall { margin-left: 12px; }
+  .ability-numbers { grid-template-columns: minmax(0, 1fr); }
+  .attunement-budget__parts { gap: 8px 14px; }
+  .attunement-panel .attunement-button { min-height: 36px; }
+  .attunement-intro { align-items: flex-start; }
+}

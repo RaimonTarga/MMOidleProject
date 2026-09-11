@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { ACTION_DATABASE, CONDITION_DATABASE, estimatePlayerDps, resolveEmpoweredMultiplier, riteDef, stanceDef } from '@mmo-idle/shared';
+import { estimatePlayerDps, resolveEmpoweredMultiplier, riteDef } from '@mmo-idle/shared';
 import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
@@ -8,16 +8,12 @@ import { STAT_HELP } from './statHelp';
 import { StatPlate } from './StatPlate';
 import { DisclosureHeader, HudPanel } from '../primitives';
 import { useIsMobile } from '../useIsMobile';
-import { composeIntentPresentation } from '../intentPresentation';
-import { GameIcon } from '../../ui/GameIcon';
-import { runeActionIconSource, runeConditionIconSource } from '../../ui/conceptIcons';
+import { statIconSource } from '../../ui/systemIcons';
 import {
   attackAtom,
   attackCooldownAtom,
   attackCadenceMultAtom,
   attackRangeAtom,
-  activeStanceAtom,
-  autoIntentAtom,
   combatArchetypeAtom,
   damageReductionAtom,
   equipmentAtom,
@@ -31,7 +27,6 @@ import {
   onHitDamageAtom,
   passivesAtom,
   pendingHealAtom,
-  partyAtom,
   platingAtom,
   playerIdAtom,
   playerNameAtom,
@@ -57,15 +52,15 @@ const CHARACTER_EXPANDED_STORAGE_KEY = 'mmo_idle.desktop.character_expanded';
  * the move-speed glyph and putting two identical icons in one panel.
  */
 const STAT_GLYPH = {
-  dps: 'UI_icons/stats/dps.png',
-  attack: 'UI_icons/stats/attack.png',
-  range: 'UI_icons/stats/range.png',
-  empowered: 'UI_icons/stats/empowered.png',
-  plating: 'UI_icons/stats/plating.png',
-  reduction: 'UI_icons/stats/reduction.png',
-  regen: 'UI_icons/stats/regen.png',
-  speed: 'UI_icons/stats/speed.png',
-} as const;
+  dps: statIconSource('dps'),
+  attack: statIconSource('attack'),
+  range: statIconSource('range'),
+  empowered: statIconSource('empowered'),
+  plating: statIconSource('plating'),
+  reduction: statIconSource('reduction'),
+  regen: statIconSource('regen'),
+  speed: statIconSource('speed'),
+};
 
 function readCharacterExpandedPreference(): boolean {
   try {
@@ -74,64 +69,6 @@ function readCharacterExpandedPreference(): boolean {
   } catch {
     return false;
   }
-}
-
-function IntentPanel() {
-  const [expanded, setExpanded] = useState(false);
-  const detailsId = useId();
-  const playerId = useAtomValue(playerIdAtom);
-  const intent = useAtomValue(autoIntentAtom);
-  const party = useAtomValue(partyAtom);
-  const presentation = composeIntentPresentation(
-    playerId !== null,
-    intent,
-    party?.members ?? [],
-  );
-  const active = intent?.activeRune;
-  const overridden = intent?.overriddenRune;
-
-  return (
-    <section className="intent-panel">
-      <button
-        type="button"
-        className="intent-panel__header"
-        aria-expanded={expanded}
-        aria-controls={detailsId}
-        onClick={() => setExpanded((value) => !value)}
-      >
-        <span className="intent-panel__title">Intent</span>
-        <span className="intent-panel__action">{presentation.action}</span>
-        <span className="intent-panel__chevron" aria-hidden>{expanded ? '▼' : '▶'}</span>
-      </button>
-
-      {active && (
-        <div className="intent-panel__trace" title={intent?.reason}>
-          <GameIcon source={runeConditionIconSource(active.conditionId)} size={24} fallback="?" decorative />
-          <span>{CONDITION_DATABASE.get(active.conditionId)?.name ?? active.conditionId}</span>
-          <span aria-hidden>→</span>
-          <GameIcon source={runeActionIconSource(active.actionId)} size={24} fallback="?" decorative />
-          <strong>{ACTION_DATABASE.get(active.actionId)?.name ?? active.actionId}</strong>
-          <em>ACTIVE</em>
-        </div>
-      )}
-
-      {expanded && (
-        <div id={detailsId} className="intent-panel__details">
-          {overridden && (
-            <div className="intent-panel__trace-note">
-              Overrides {CONDITION_DATABASE.get(overridden.conditionId)?.name ?? overridden.conditionId}
-              {' → '}
-              {ACTION_DATABASE.get(overridden.actionId)?.name ?? overridden.actionId}
-            </div>
-          )}
-          {intent?.travelPaused && <div className="intent-panel__trace-note">Travel route paused; it will resume when safe.</div>}
-          <StatRow label="Action" value={presentation.action} />
-          <StatRow label="Purpose" value={presentation.reason} />
-          <StatRow label="Triggered rune" value={presentation.source} />
-        </div>
-      )}
-    </section>
-  );
 }
 
 export function StatPanel() {
@@ -169,9 +106,7 @@ export function StatPanel() {
   const selectedRange = useAtomValue(selectedRangeAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const summonActiveCount = useAtomValue(summonActiveCountAtom);
-  const activeStance = useAtomValue(activeStanceAtom);
   const equippedRites = useAtomValue(equippedRitesAtom);
-  const activeStanceName = stanceDef(activeStance)?.name ?? 'No stance';
   const equippedRiteDefs = equippedRites.flatMap((id) => {
     const def = riteDef(id);
     return def ? [def] : [];
@@ -321,7 +256,6 @@ export function StatPanel() {
         <StatPlate
           crown={{
             name: player.name ?? '—',
-            stance: activeStanceName,
             status,
             hp: player.hp,
             maxHp: player.maxHp,
@@ -501,7 +435,7 @@ export function StatPanel() {
       {/* Per-archetype mechanic bars (shared with the mobile HUD) */}
       {player && <ArchetypeMechanics compact={isMobile} />}
 
-      <IntentPanel />
+
     </HudPanel>
   );
 }

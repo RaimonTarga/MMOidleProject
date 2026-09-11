@@ -173,9 +173,35 @@
    Name, connection, and health folded into the top of the plate (§14.1). They
    used to be two stacked sections above it; one apparatus reads as one thing. */
 .stat-crown {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   margin: -1px 0 7px;
   padding-bottom: 7px;
   border-bottom: 1px solid var(--hud-edge-divider);
+}
+
+/* The crest sits beside the whole block rather than inside the name row: at a
+   size worth drawing it would have eaten the name, and the row it was in is
+   already the tightest in the rail. */
+.stat-crown__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Geometry lives in the shared `.crest-diamond` primitive. 32 is a clean 2:1
+   downscale of the 64px source and stays under the 0.59 ceiling. */
+/* Qualified with `.crest-diamond` so the override beats the primitive's own
+   default whichever order the two stylesheets end up bundled in. */
+.crest-diamond.stat-crown__portrait {
+  --crest-edge: var(--hud-edge-medium);
+  cursor: help;
+}
+
+/* Lives inside the portalled `.hud-tooltip`, not the plate. */
+.stat-crown__portrait-blurb {
+  margin: 3px 0 6px;
+  color: var(--hud-text-muted);
 }
 
 .stat-crown__identity {
@@ -189,34 +215,11 @@
 .stat-crown__name {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
   color: var(--hud-text);
   font-size: 12px;
   font-weight: bold;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.stat-crown__state {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  gap: 5px;
-}
-
-.stat-crown__stance {
-  max-width: 88px;
-  min-width: 0;
-  overflow: hidden;
-  padding: 1px 4px;
-  border: 1px solid var(--hud-edge-divider);
-  border-radius: 2px;
-  color: var(--hud-text-dim);
-  font-size: 8px;
-  font-weight: bold;
-  letter-spacing: 0.2px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 /* Numerals right-engraved, so the eye lands on the bar first and the exact
