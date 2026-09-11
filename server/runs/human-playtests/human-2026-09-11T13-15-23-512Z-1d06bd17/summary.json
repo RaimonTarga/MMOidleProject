@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-11T13-15-23-512Z-1d06bd17",
+    "startedAt": 1789132523512,
+    "endedAt": 1789132527333,
+    "durationMs": 3821,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "server shutdown (SIGTERM)",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-11T13-15-23-512Z-1d06bd17",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 0,
+    "finalGlobalMastery": 0,
+    "biomeLevels": {
+      "clearing": 1
+    }
+  },
+  "combat": {
+    "totalKills": 0,
+    "killsByMonster": {},
+    "totalDamageTaken": 1,
+    "playerDamageDealt": 15,
+    "totalHealed": 0,
+    "deaths": 0,
+    "abilityActivations": {}
+  },
+  "positioning": {
+    "samples": 7,
+    "movementFraction": 0.42857142857142855,
+    "stationaryCombatFraction": 0.5714285714285714,
+    "nearBoundaryFraction": 0,
+    "boss": {
+      "movementFraction": null,
+      "nearBoundaryFraction": null,
+      "range": {
+        "samples": 0,
+        "mean": null,
+        "min": null,
+        "max": null,
+        "p50": null,
+        "p90": null
+      }
+    }
+  },
+  "bosses": [],
+  "build": {
+    "equipment": {
+      "weapon": null,
+      "armor": null,
+      "recovery": null,
+      "mobility": null,
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {},
+    "classRoot": null,
+    "frame": null,
+    "range": null,
+    "techniques": [],
+    "guards": [],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "hp-below-25",
+        "actionId": "flee"
+      },
+      {
+        "conditionId": "while-traveling",
+        "actionId": "fight-back"
+      }
+    ],
+    "stats": {
+      "attack": 15,
+      "attackRange": 12,
+      "attackCooldown": 3000,
+      "maxHp": 100,
+      "plating": 2,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

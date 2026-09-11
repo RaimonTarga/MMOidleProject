@@ -141,11 +141,11 @@ Notes:
 
 ## 5. Numbers discipline
 
-- The existing XP curve (`25 × n^2.8`, +4 levels/tier) extrapolates fine: each
-  T5–T8 phase is ~1.5–1.6× the previous phase's XP. The real decision is
-  **wall-clock targets per tier** (T2 is ~15–20 min; what is T6 — days? a week?).
-  Set those targets explicitly before tuning T5 mob XP; everything else follows
-  from `BIOME_XP_BASE` as designed.
+- The live XP model uses local six-level segments with explicit T1–T4 budgets
+  (1,750 / 5,000 / 7,000 / 9,000 XP) and a 1.20× continuation factor beyond
+  T4. The real decision for T5–T8 is **wall-clock targets per tier** (what is
+  T6 — days? a week?). Set those targets explicitly before tuning T5 mob XP;
+  the segment budget is the intended tuning point.
 - The treadmill rule holds: ~1.9–2× stats/tier, eHP/H ≈ constant, TTK ≈ constant.
   "Bigger numbers, same feel" is *correct* — texture variety (packs, layered
   defenses, compositions) is what changes, per §2.

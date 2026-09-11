@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-11T14-17-20-024Z-51e23cc3",
+    "startedAt": 1789136240024,
+    "endedAt": 1789136544644,
+    "durationMs": 304620,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-11T14-17-20-024Z-51e23cc3",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 1,
+    "finalGlobalMastery": 25,
+    "biomeLevels": {
+      "clearing": 3,
+      "plains": 6,
+      "forest": 6,
+      "swamp": 6,
+      "mountain": 6,
+      "cave": 1
+    }
+  },
+  "combat": {
+    "totalKills": 24,
+    "killsByMonster": {
+      "Cliff Hopper": 14,
+      "Ridge Ambusher": 5,
+      "Tiny Wisp": 2,
+      "Cave Lurker": 3
+    },
+    "totalDamageTaken": 1820,
+    "playerDamageDealt": 5411,
+    "totalHealed": 1209,
+    "deaths": 3,
+    "abilityActivations": {
+      "sweep": 34,
+      "second-wind": 9
+    }
+  },
+  "positioning": {
+    "samples": 488,
+    "movementFraction": 0.5942622950819673,
+    "stationaryCombatFraction": 0.32581967213114754,
+    "nearBoundaryFraction": 0.06762295081967214,
+    "boss": {
+      "movementFraction": null,
+      "nearBoundaryFraction": null,
+      "range": {
+        "samples": 0,
+        "mean": null,
+        "min": null,
+        "max": null,
+        "p50": null,
+        "p90": null
+      }
+    }
+  },
+  "bosses": [],
+  "build": {
+    "equipment": {
+      "weapon": "flash-rapier",
+      "armor": "plains-vest-t1",
+      "recovery": "swamp-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 4,
+      "iron-broadsword": 1,
+      "plains-charm-t1": 3,
+      "plains-vest-t1": 3,
+      "flash-rapier": 4,
+      "swamp-charm-t1": 4
+    },
+    "classRoot": "reload-root",
+    "frame": null,
+    "range": null,
+    "techniques": [
+      "sweep"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "while-traveling",
+        "actionId": "fight-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      }
+    ],
+    "stats": {
+      "attack": 16,
+      "attackRange": 132,
+      "attackCooldown": 288,
+      "maxHp": 142,
+      "plating": 12,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

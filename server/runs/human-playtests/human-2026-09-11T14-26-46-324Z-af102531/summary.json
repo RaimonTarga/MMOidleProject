@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-11T14-26-46-324Z-af102531",
+    "startedAt": 1789136806324,
+    "endedAt": 1789136938086,
+    "durationMs": 131762,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-11T14-26-46-324Z-af102531",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 1,
+    "finalGlobalMastery": 30,
+    "biomeLevels": {
+      "clearing": 3,
+      "plains": 6,
+      "forest": 6,
+      "swamp": 6,
+      "mountain": 6,
+      "cave": 6
+    }
+  },
+  "combat": {
+    "totalKills": 31,
+    "killsByMonster": {
+      "Field Hare": 27,
+      "Prairie Defender": 3,
+      "Tusked Razorback": 1
+    },
+    "totalDamageTaken": 470,
+    "playerDamageDealt": 3614,
+    "totalHealed": 607,
+    "deaths": 0,
+    "abilityActivations": {
+      "sweep": 18,
+      "second-wind": 2
+    }
+  },
+  "positioning": {
+    "samples": 375,
+    "movementFraction": 0.7226666666666667,
+    "stationaryCombatFraction": 0.24533333333333332,
+    "nearBoundaryFraction": 0.18666666666666668,
+    "boss": {
+      "movementFraction": 0.7408906882591093,
+      "nearBoundaryFraction": 0.2631578947368421,
+      "range": {
+        "samples": 247,
+        "mean": 99.29033022292417,
+        "min": 53.930249314371714,
+        "max": 165.32538868369068,
+        "p50": 87.9940574779111,
+        "p90": 145.86755922111462
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9011764705882352,
+      "combatDurationMs": 5404,
+      "playerDamage": 154,
+      "incomingDamage": 23
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8352941176470589,
+      "combatDurationMs": 3106,
+      "playerDamage": 155,
+      "incomingDamage": 30
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8341176470588235,
+      "combatDurationMs": 802,
+      "playerDamage": 0,
+      "incomingDamage": 1
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7847058823529411,
+      "combatDurationMs": 3606,
+      "playerDamage": 116,
+      "incomingDamage": 22
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7188235294117648,
+      "combatDurationMs": 4306,
+      "playerDamage": 148,
+      "incomingDamage": 44
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5688235294117647,
+      "combatDurationMs": 8606,
+      "playerDamage": 278,
+      "incomingDamage": 52
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5441176470588235,
+      "combatDurationMs": 1600,
+      "playerDamage": 61,
+      "incomingDamage": 8
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.49470588235294116,
+      "combatDurationMs": 2604,
+      "playerDamage": 102,
+      "incomingDamage": 23
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.44529411764705884,
+      "combatDurationMs": 3605,
+      "playerDamage": 102,
+      "incomingDamage": 32
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.38588235294117645,
+      "combatDurationMs": 3702,
+      "playerDamage": 124,
+      "incomingDamage": 31
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.24235294117647058,
+      "combatDurationMs": 8603,
+      "playerDamage": 290,
+      "incomingDamage": 68
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.22470588235294117,
+      "combatDurationMs": 1502,
+      "playerDamage": 30,
+      "incomingDamage": 22
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.19176470588235295,
+      "combatDurationMs": 1402,
+      "playerDamage": 58,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.12529411764705883,
+      "combatDurationMs": 3408,
+      "playerDamage": 157,
+      "incomingDamage": 44
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 6012,
+      "playerDamage": 224,
+      "incomingDamage": 22
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "flash-rapier",
+      "armor": "plains-vest-t1",
+      "recovery": "plains-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 4,
+      "iron-broadsword": 1,
+      "plains-charm-t1": 3,
+      "plains-vest-t1": 3,
+      "flash-rapier": 4,
+      "swamp-charm-t1": 4
+    },
+    "classRoot": "reload-root",
+    "frame": null,
+    "range": null,
+    "techniques": [
+      "sweep"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "while-traveling",
+        "actionId": "fight-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      }
+    ],
+    "stats": {
+      "attack": 16,
+      "attackRange": 132,
+      "attackCooldown": 288,
+      "maxHp": 142,
+      "plating": 12,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

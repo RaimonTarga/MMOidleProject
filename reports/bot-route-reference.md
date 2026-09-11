@@ -41,14 +41,17 @@ Every mid-run ability change is therefore a REPLACEMENT, not an addition.
 **Runic Points**: budget is `8 + floor(GM / 10)` — 8 at GM 0,
 11 at GM 30. Each equipped rune rule costs condition + action.
 
-**Biome XP curve** (cumulative, per biome):
+**Biome XP curve** (local six-level segments, cumulative per biome):
 
-| level | L1 | L2 | L3 | L4 | L5 | L6 |
-|---|---|---|---|---|---|---|
-| cumulative XP | 25 | 174 | 542 | 1213 | 2265 | 3774 |
-| this level costs | 25 | 149 | 368 | 671 | 1052 | 1509 |
+Each segment uses the same local shares — 12/14/16/18/19/21% — with a tier-specific budget.
+| segment | budget | L1 | L2 | L3 | L4 | L5 | L6 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| T1 | 1750 | 210 | 455 | 735 | 1050 | 1383 | 1750 |
+| T2 | 5000 | 600 | 1300 | 2100 | 3000 | 3950 | 5000 |
+| T3 | 7000 | 840 | 1820 | 2940 | 4200 | 5530 | 7000 |
+| T4 | 9000 | 1080 | 2340 | 3780 | 5400 | 7110 | 9000 |
 
-Note the shape: reaching L6 costs roughly **twice** everything spent up to L4.
+Segments after T4 grow by 1.2x per tier until explicitly retuned.
 
 ## 2. Classes (tier-0 roots)
 
@@ -188,7 +191,7 @@ Essence type per biome: plains = yellow · forest = green · cave = red · mount
 |---|---|---|---|---|---|---|---|---|---|
 | Moss Rat `forest-slime` | normal | 160 | 17 | 0 | 0 | 12 | 1400 | melee | 3 |
 | Wolf `wolf` | normal | 130 | 20 | 0 | 0 | 12 | 1100 | melee | 4 |
-| Gnarled Greatbear `gnarled-greatbear` | **BOSS** | 2000 | 24 | 0 | 0 | 15 | 1900 | melee | 100 |
+| Gnarled Greatbear `gnarled-greatbear` | **BOSS** | 1800 | 24 | 0 | 0 | 15 | 1900 | melee | 100 |
 
 ### Caverns (`cave`, red essence)
 
@@ -255,26 +258,26 @@ upgraded at all, and is meant to be replaced wholesale by T1 gear.
 
 | item | total |
 |---|---|
-| `chaotic-axe` | 475 red |
-| `cave-vest-t1` | 600 red |
-| `cave-charm-t1` | 235 red |
-| `cave-boots-t1` | 160 red |
-| `flash-rapier` | 480 green |
-| `forest-vest-t1` | 450 green |
-| `forest-charm-t1` | 225 green |
-| `forest-boots-t1` | 150 green |
-| `heavy-hammer` | 475 blue |
-| `mountain-vest-t1` | 475 blue |
-| `mountain-charm-t1` | 235 blue |
-| `mountain-boots-t1` | 160 blue |
-| `iron-broadsword` | 230 yellow |
-| `plains-vest-t1` | 450 yellow |
-| `plains-charm-t1` | 180 yellow |
-| `plains-boots-t1` | 150 yellow |
-| `ashbrand-blade` | 450 purple |
-| `swamp-vest-t1` | 450 purple |
-| `swamp-charm-t1` | 235 purple |
-| `swamp-boots-t1` | 160 purple |
+| `chaotic-axe` | 425 red |
+| `cave-vest-t1` | 535 red |
+| `cave-charm-t1` | 210 red |
+| `cave-boots-t1` | 145 red |
+| `flash-rapier` | 430 green |
+| `forest-vest-t1` | 400 green |
+| `forest-charm-t1` | 200 green |
+| `forest-boots-t1` | 135 green |
+| `heavy-hammer` | 425 blue |
+| `mountain-vest-t1` | 425 blue |
+| `mountain-charm-t1` | 210 blue |
+| `mountain-boots-t1` | 145 blue |
+| `iron-broadsword` | 205 yellow |
+| `plains-vest-t1` | 400 yellow |
+| `plains-charm-t1` | 160 yellow |
+| `plains-boots-t1` | 135 yellow |
+| `ashbrand-blade` | 400 purple |
+| `swamp-vest-t1` | 400 purple |
+| `swamp-charm-t1` | 210 purple |
+| `swamp-boots-t1` | 145 purple |
 
 ## 6. Abilities
 
@@ -311,8 +314,11 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | `n-aggro-3` | 2 | yes | Works when three or more enemies are chasing you. |
 | `inside-telegraph` | 1 | yes | Works while you are standing inside an unresolved hostile attack telegraph. |
 | `target-casting` | 2 | yes | Works while an enemy attacking you is winding up a cast-time attack. |
+| `stance-charged` | 1 | yes | Works while your active stance has finished charging and is holding a full charge, waiting to be spent. |
 | `before-empowered` | 2 | yes | Works the instant your next attack becomes empowered — a finisher, execution, or full-energy discharge that is armed and waiting to land. |
 | `target-elite` | 2 | yes | Works while the enemy you are attacking is an elite — the high-value target worth spending a specialised ability on. |
+| `target-max-stacks` | 2 | yes | Works while your damage over time on the target has stacked as high as it goes — the moment there is most to spread, and most to detonate. |
+| `while-traveling` | 0 | yes | Works while you are following an intentional map travel route. |
 
 ### Actions
 
@@ -333,28 +339,28 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | `wait-for-execution` | 1 | OOC_MAINTENANCE | **no** | Out of combat, wait until your cooldown-class execution is ready. |
 | `wait-for-regen` | 1 | OOC_MAINTENANCE | yes | Hold position until HP is full instead of moving on. With Always, it holds as soon as nothing is attacking you, without waiting for combat to time out. |
 | `auto-path-enemy` | 0 | GLOBAL_STRATEGY | yes | When idle, path to the nearest valid enemy in this node. |
-| `avoid-hazards` | 2 | PATHING | **no** | Route around damaging and slowing terrain when pathing. |
-| `careful-pulling` | 2 | PATHING | **no** | While approaching a target, bias movement away from nearby non-target elites. |
+| `avoid-hazards` | 2 | PATH_SAFETY | **no** | Route around damaging and slowing terrain when pathing. |
+| `careful-pulling` | 2 | APPROACH_STYLE | **no** | While approaching a target, bias movement away from nearby non-target elites. |
+| `avoid-enemies` | 1 | TRAVEL_PATHING | yes | While traveling, take reasonable local detours around unengaged hostiles. |
+| `fight-back` | 0 | TRAVEL_RESPONSE | yes | Pause travel when attacked, use your normal combat rules, then resume the route. |
 | `lead-the-way` | 0 | GLOBAL_STRATEGY | yes | As party leader, look for enemies in this zone so followers can trail you. |
 | `taunt-current-target` | 1 | CONTROL | yes | On hit, force your current enemy to attack you. Has a 4 second cooldown. |
 | `fire-technique` | 1 | TECHNIQUE | yes | Override your Technique's auto-timing: arm it when this situation holds instead of the default. |
 | `fire-technique-2` | 1 | TECHNIQUE_2 | yes | Override the auto-timing of your SECOND Technique. Inert until a second Technique slot is unlocked. |
 | `fire-guard` | 1 | GUARD | yes | Override your Guard's auto-timing: trigger it when this situation holds instead of the default. |
 | `fire-guard-2` | 1 | GUARD_2 | yes | Override the auto-timing of your SECOND Guard. Inert until a second Guard slot is unlocked. |
-| `switch-stance` | 2 | STANCE | yes | Switch to a chosen learned stance while this situation holds, reverting to your default otherwise. |
+| `switch-stance` | 0 | STANCE | yes | Switch to a chosen learned stance while this situation holds, reverting to your default otherwise. |
 
 ### Rune forge recipes (how non-starter fragments are unlocked)
 
 | recipe | unlocks | kind | gate | cost |
 |---|---|---|---|---|
-| `rune-recipe-out-of-combat` | `when-idle` | condition | forest L2 | 180 green |
 | `rune-recipe-reload-safely` | `tactical-reload` | action | forest L2 | 140 green + 60 blue |
 | `rune-recipe-ready-execution` | `wait-for-execution` | action | forest L3 | 140 green + 60 red |
 | `rune-recipe-focus-highest-hp` | `focus-highest-max-hp` | action | forest L4 | 220 green |
-| `rune-recipe-low-hp` | `hp-below-25` | condition | cave L2 | 90 red |
 | `rune-recipe-avoid-hazards` | `avoid-hazards` | action | swamp L2 | 25 purple |
 | `rune-recipe-careful-pulling` | `careful-pulling` | action | cave L3 | 115 red |
-| `rune-recipe-step-back` | `step-back` | action | mountain L2 | 35 blue |
+| `rune-recipe-step-back` | `step-back` | action | cave L2 | 35 red |
 | `rune-recipe-keep-distance` | `orbit` | action | mountain L3 | 45 blue |
 
 ## 8. Stances and Rites
@@ -362,7 +368,7 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 Both are build layers the harness can set but the baseline routes do not yet
 use. Listed so a route author knows they exist.
 
-- **Stances** (11 authored): postures folded into stats; one free default slot,
+- **Stances** (15 authored): postures folded into stats; one free default slot,
   with automated destinations carried on Rune `switch-stance` rules.
 - **Rites** (6 authored): always-on out-of-combat effects sharing the Runic Point
   budget with rune rules.
@@ -434,7 +440,7 @@ Clearing   full tutorial set, tier 0->1, pick Striker
 Plains     Sweep at L2 + whole set,          max out -> +1
 Forest     flash-rapier + Second Wind,       max out -> +2
 Swamp      Cleanse + Avoid Hazards + charm,  max out -> +3
-Mountain   Step Back L2 + plate,             max out -> +4
+Mountain   plate,                          max out -> +4
 Cave       Chaotic Axe + Expose Weakness,   max out -> GM 30, everything -> +5
 Bosses     Plains, Forest, Mountain, Swamp, Cave
 ```
@@ -443,7 +449,7 @@ Bosses     Plains, Forest, Mountain, Swamp, Cave
   five biomes maxed. The gear ladder and the boss tuning agree on this.
 - **Each biome maxed adds exactly one upgrade level** (6 GM per biome, gates every 6).
 - **Swamp precedes Mountain.** Cleanse and Avoid Hazards answer Swamp; Mountain
-  then unlocks Step Back at GM20 to answer planted Slam telegraphs.
+  then unlocks Step Back at Cave L2 / GM26 to answer planted Slam telegraphs.
 - **Only one piece is taken from Mountain and Swamp.** Breadth exists to raise GM,
   not to collect a full set from every biome.
 

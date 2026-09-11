@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-11T14-09-00-263Z-a8f17d8b",
+    "startedAt": 1789135740263,
+    "endedAt": 1789136011911,
+    "durationMs": 271648,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-11T14-09-00-263Z-a8f17d8b",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 1,
+    "finalGlobalMastery": 12,
+    "biomeLevels": {
+      "clearing": 3,
+      "plains": 6,
+      "forest": 6
+    }
+  },
+  "combat": {
+    "totalKills": 49,
+    "killsByMonster": {
+      "Moss Rat": 16,
+      "Wolf": 11,
+      "Young Wolf": 22
+    },
+    "totalDamageTaken": 1109,
+    "playerDamageDealt": 5908,
+    "totalHealed": 1695,
+    "deaths": 0,
+    "abilityActivations": {
+      "sweep": 35,
+      "second-wind": 1
+    }
+  },
+  "positioning": {
+    "samples": 524,
+    "movementFraction": 0.3473282442748092,
+    "stationaryCombatFraction": 0.6526717557251909,
+    "nearBoundaryFraction": 0,
+    "boss": {
+      "movementFraction": null,
+      "nearBoundaryFraction": null,
+      "range": {
+        "samples": 0,
+        "mean": null,
+        "min": null,
+        "max": null,
+        "p50": null,
+        "p90": null
+      }
+    }
+  },
+  "bosses": [],
+  "build": {
+    "equipment": {
+      "weapon": "flash-rapier",
+      "armor": "plains-vest-t1",
+      "recovery": "plains-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 1,
+      "iron-broadsword": 1,
+      "plains-charm-t1": 1,
+      "plains-vest-t1": 1,
+      "flash-rapier": 1
+    },
+    "classRoot": "reload-root",
+    "frame": null,
+    "range": null,
+    "techniques": [
+      "sweep"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "hp-below-25",
+        "actionId": "flee"
+      },
+      {
+        "conditionId": "while-traveling",
+        "actionId": "fight-back"
+      }
+    ],
+    "stats": {
+      "attack": 15,
+      "attackRange": 132,
+      "attackCooldown": 299,
+      "maxHp": 136,
+      "plating": 10,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

@@ -810,9 +810,12 @@ output, not the config object (that is what lets the semantic test catch a stale
 
 ### Known-stale or contradictory documentation found during this pass
 
-- `gameConfig.ts`'s `biomeLevelCap` doc comment says four levels per tier;
-  `BIOME_LEVELS_PER_TIER` is 6. Its worked examples are wrong throughout.
-- `biomeXpForLevel`'s worked example says level 6 costs 1,800 XP; the formula gives ~3,774.
+- Older baseline briefs in this audit retain the pre-redesign four-level/absolute
+  curve assumptions; live caps remain six levels per tier and the current XP
+  source is `docs/briefs/biome-mastery-progression-redesign-2026-09-11.md`.
+- The old `biomeXpForLevel` worked example (1,800 XP at level 6) belongs to the
+  pre-redesign curve; the live 2026-09-11 model uses the segment tables in the
+  biome mastery redesign brief.
 - `t1Common.ts` says one T1 boss advances the tier; two seals are required.
 - The T2 economy ledger describes a boss `catalystBundle`; no such field exists.
 - `T1_FINAL_VALIDATION_HANDOFF_2026-08-30.md` says Cave has no relevant debuff; it has a

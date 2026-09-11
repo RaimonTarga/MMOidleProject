@@ -16,12 +16,28 @@ Terse on purpose.
 
 ## 1. XP curve
 
-- `biomeXpForLevel(n) = round(BIOME_XP_BASE × n^2.8)` — cumulative threshold.
-- **BIOME_XP_BASE = 25**, exponent **2.8**.
-- **Caps: T1→L4, T2→L8, T3→L12, T4→L16** (each tier = +4 levels). Biomes debuting at T2+ use the same *absolute* thresholds — a T2-debut biome's "level 1" is global level 5.
-- Phase XP (base 25): **T1 1,213 · T2 +7,232 · T3 +17,836 · T4 +32,532**. Ratio ≈ **1 : 6 : 21 : 48** — each tier is deliberately longer than the last.
-- Timing targets (time to a full gear set): **T1 5-10 min, T2 15-20 min**, growing every tier.
-- **Tune the whole curve via BIOME_XP_BASE, never by editing per-mob XP.** Lowering the base speeds up every tier uniformly; per-mob edits cause drift.
+- The live model is tier-segment-local: `biomeXpForLevel(n)` is the cumulative
+  reference threshold for a T1-starting biome, while
+  `biomeXpForBiomeLevel(group, n)` subtracts the group's start-tier offset.
+- Every tier segment has six levels. Their incremental shares are
+  **12% / 14% / 16% / 18% / 19% / 21%**. The final two levels are slower, but
+  they do not consume an extreme share of the segment.
+- Segment budgets are explicit designer values: **T1 1,750 · T2 5,000 · T3
+  7,000 · T4 9,000 XP**. Segments beyond T4 currently grow by **1.20× per tier**
+  until they receive explicit tuning.
+- **Caps: T1→L6, T2→L12, T3→L18, T4→L24** for a biome that starts in T1;
+  biomes debuting later keep their existing start-tier offsets and final-tier
+  caps. Clearing remains fixed at level 4 and is excluded from Global Mastery.
+- Clearing is a tutorial exception rather than a normal T1 segment: its explicit
+  thresholds are **0 / 43 / 172 / 430 / 860 XP**, aligned to approximately
+  **1 / 4 / 10 / 20 Tiny Wisp kills** using the unchanged 43-XP reward. The
+  10-kill First Blood quest lands at Clearing level 3, leaving a short tail to
+  the level-4 cap.
+- The per-tier XP reward multipliers remain unchanged. Tune required XP through
+  the segment budget and local-share tables, not by editing per-mob rewards.
+- Initial pacing targets are **T1 ~5 minutes**, **T2 ~10–12**, **T3 ~13–16**,
+  and **T4 ~16–20 minutes** of pure mastery per biome. Bosses, gear farming,
+  crafting, travel, deaths, and build experimentation add completion time.
 
 ---
 

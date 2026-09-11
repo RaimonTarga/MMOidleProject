@@ -8,6 +8,7 @@ import {
   BIOME_LEVELS_PER_TIER,
   BIOME_PRIMARY_ESSENCE,
   CONDITION_DATABASE,
+  GAME_CONFIG,
   ITEM_DATABASE,
   MONSTER_DATABASE,
   NODE_BIOMES,
@@ -21,6 +22,7 @@ import {
   abilitySlotCount,
   biomeLevelCap,
   biomeXpForLevel,
+  biomeXpSegmentBudget,
   globalMasteryRequiredForUpgrade,
   runeBudgetForGlobalMastery,
   upgradeCostFor,
@@ -106,18 +108,20 @@ w();
 w(`**Runic Points**: budget is \`8 + floor(GM / 10)\` — ${runeBudgetForGlobalMastery(0)} at GM 0,`);
 w(`${runeBudgetForGlobalMastery(30)} at GM 30. Each equipped rune rule costs condition + action.`);
 w();
-w("**Biome XP curve** (cumulative, per biome):");
+w("**Biome XP curve** (local six-level segments, cumulative per biome):");
 w();
-w("| level | " + [1, 2, 3, 4, 5, 6].map((n) => `L${n}`).join(" | ") + " |");
-w("|---|" + "---|".repeat(6));
-w("| cumulative XP | " + [1, 2, 3, 4, 5, 6].map((n) => biomeXpForLevel(n)).join(" | ") + " |");
-w(
-  "| this level costs | " +
-    [1, 2, 3, 4, 5, 6].map((n) => biomeXpForLevel(n) - biomeXpForLevel(n - 1)).join(" | ") +
-    " |",
-);
+w("Each segment uses the same local shares — 12/14/16/18/19/21% — with a tier-specific budget.");
+w("| segment | budget | " + [1, 2, 3, 4, 5, 6].map((n) => `L${n}`).join(" | ") + " |");
+w("|---|---:|" + "---:|".repeat(6));
+for (let tier = 1; tier <= 4; tier++) {
+  const offset = (tier - 1) * BIOME_LEVELS_PER_TIER;
+  const cumulative = [1, 2, 3, 4, 5, 6].map(
+    (n) => biomeXpForLevel(offset + n) - biomeXpForLevel(offset),
+  );
+  w(`| T${tier} | ${biomeXpSegmentBudget(tier)} | ${cumulative.join(" | ")} |`);
+}
 w();
-w("Note the shape: reaching L6 costs roughly **twice** everything spent up to L4.");
+w(`Segments after T4 grow by ${GAME_CONFIG.BIOME_XP_FUTURE_TIER_BUDGET_GROWTH}x per tier until explicitly retuned.`);
 w();
 
 // ── Classes ──────────────────────────────────────────────────────────────────

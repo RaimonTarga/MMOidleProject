@@ -136,12 +136,15 @@ export const GAME_CONFIG = {
   EMPOWERED_AOE_RADIUS: 80,
 
   // ── Biome progression ─────────────────────────────────────────────────────────
-  // Was 40 before, now tuned to be about 25 
-  // The change's intention is to make biome XP less grindy, while shifting the balance towards essence being more scarce
-  // power is unlocked, but needs to be paid for in essence, which will take more time to farm
+  // Required XP is tuned here; monster reward values and reward multipliers are
+  // separate supply-side knobs and remain unchanged by the mastery curve.
 
-  BIOME_XP_BASE: 25,
-  BIOME_XP_EXPONENT: 2.8,
+  /** Incremental XP shares for the six levels in one tier segment. */
+  BIOME_XP_LOCAL_STEP_SHARES: [12, 14, 16, 18, 19, 21] as const,
+  /** Total XP for one six-level segment, indexed by tier; index 0 is unused. */
+  BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 5_000, 7_000, 9_000] as const,
+  /** Growth applied to segments beyond the explicitly tuned T4 budget. */
+  BIOME_XP_FUTURE_TIER_BUDGET_GROWTH: 1.2,
   /**
    * Per-tier multiplier on biomeXp granted to the player. T1's validated 2x
    * progression rate is real data, so canonical runs do not need the debug
@@ -212,21 +215,61 @@ export function clampRewardMultiplier(value: unknown): number {
   return Math.round(clamped * 100) / 100;
 }
 
+/** Total XP budget for one six-level segment at `tier`. */
+export function biomeXpSegmentBudget(tier: number): number {
+  const normalizedTier = Math.floor(tier);
+  if (!Number.isFinite(normalizedTier) || normalizedTier <= 0) return 0;
+
+  const authored = GAME_CONFIG.BIOME_XP_SEGMENT_BUDGET_BY_TIER[normalizedTier];
+  if (authored !== undefined) return authored;
+
+  const lastAuthoredTier = GAME_CONFIG.BIOME_XP_SEGMENT_BUDGET_BY_TIER.length - 1;
+  const lastBudget = GAME_CONFIG.BIOME_XP_SEGMENT_BUDGET_BY_TIER[lastAuthoredTier];
+  return Math.round(
+    lastBudget * Math.pow(
+      GAME_CONFIG.BIOME_XP_FUTURE_TIER_BUDGET_GROWTH,
+      normalizedTier - lastAuthoredTier,
+    ),
+  );
+}
+
+function biomeXpShareThroughLocalLevel(localLevel: number): number {
+  const clampedLevel = Math.max(
+    0,
+    Math.min(BIOME_LEVELS_PER_TIER, Math.floor(localLevel)),
+  );
+  let share = 0;
+  for (let index = 0; index < clampedLevel; index++) {
+    share += GAME_CONFIG.BIOME_XP_LOCAL_STEP_SHARES[index] ?? 0;
+  }
+  return share;
+}
+
 /**
- * Total XP required to reach biome level `n` (from 0).
- * Formula: round(BASE × n ^ EXPONENT)
- * Example with defaults (BASE=25, EXP=2.8):
- *   Lv 1 →   25 XP   (25 T1 kills)
- *   Lv 2 →  250 XP   (25 T1 kills total)
- *   Lv 3 →  500 XP   (50 T1 kills total)
- *   Lv 4 →  800 XP   (80 T1 kills total)
- *   Lv 6 → 1800 XP   (90 T2 kills total)
- *   Lv 9 → 3800 XP   (190 T2 kills total)
+ * Total XP required to reach absolute reference level `n` (from 0).
+ *
+ * This is the cumulative reference curve for a biome that starts in T1. Each
+ * six-level segment resets to the local six-step shape and uses that segment's
+ * explicit tier budget. Biomes that start later use `biomeXpForBiomeLevel`,
+ * which subtracts the preceding reference segments while preserving the same
+ * start-tier offset semantics.
  */
 export function biomeXpForLevel(n: number): number {
-  if (n <= 0) return 0;
-  return Math.round(
-    GAME_CONFIG.BIOME_XP_BASE * Math.pow(n, GAME_CONFIG.BIOME_XP_EXPONENT),
+  const level = Math.floor(n);
+  if (!Number.isFinite(level) || level <= 0) return 0;
+
+  const completedSegments = Math.floor((level - 1) / BIOME_LEVELS_PER_TIER);
+  const localLevel = ((level - 1) % BIOME_LEVELS_PER_TIER) + 1;
+  let total = 0;
+  for (let segment = 0; segment < completedSegments; segment++) {
+    total += biomeXpSegmentBudget(segment + 1);
+  }
+
+  const currentTier = completedSegments + 1;
+  return total + Math.round(
+    biomeXpSegmentBudget(currentTier) *
+      biomeXpShareThroughLocalLevel(localLevel) /
+      100,
   );
 }
 
@@ -278,19 +321,29 @@ export const BIOME_FINAL_TIER_BY_GROUP: Record<string, number> = (() => {
 })();
 
 /**
- * Each tier spans this many biome levels. Expanded 4 → 6 (system rework Step 3) to
- * make reward space for skills/runes/cores. Levels 1–4 of each segment hold the
- * existing item recipes; levels 5–6 are reward space filled by later steps. Drives
+ * Each tier spans this many biome levels. Levels 5–6 of each segment are the
+ * slower reward space after the early recipe cadence. Drives
  * {@link biomeLevelCap}, {@link biomeLevelOffset}, the XP-curve mapping, and the
  * generic upgrade-requirement fallback in itemUpgrades.ts.
  */
 export const BIOME_LEVELS_PER_TIER = 6;
 
 /**
+ * Clearing is T0 tutorial content, not a normal T1 biome. Its four explicit
+ * thresholds are authored against the live Tiny Wisp reward of 43 biome XP:
+ * levels 1/2/3/4 arrive at approximately 1/4/10/20 kills. The 10-kill First
+ * Blood quest therefore lands at level 3, with a short post-quest tutorial tail
+ * before Clearing mastery caps. Keep this table independent from the normal
+ * six-level tier curve below.
+ */
+export const CLEARING_MASTERY_XP_THRESHOLDS = [0, 43, 172, 430, 860] as const;
+
+/**
  * Level offset for a biome whose start tier is above T1. A biome starting at
- * tier T behaves, level-for-level, like the top `(T-1)*4` levels of a T1 biome:
- * its level 1 lines up with a T1 biome's level `(T-1)*4 + 1`. Returns 0 for T1
- * biomes and the clearing, so they keep the unshifted curve.
+ * tier T behaves, level-for-level, like the top `(T-1)*6` levels of a T1 biome:
+ * its level 1 lines up with a T1 biome's level `(T-1)*6 + 1`. Returns 0 for T1
+ * biomes; Clearing also returns 0 for compatibility, but its XP lookup uses
+ * {@link clearingMasteryXpForLevel} instead of this normal curve.
  */
 export function biomeLevelOffset(biomeGroup: string): number {
   if (biomeGroup === 'clearing') return 0;
@@ -299,11 +352,26 @@ export function biomeLevelOffset(biomeGroup: string): number {
 }
 
 /**
+ * Explicit tutorial-only mastery thresholds for the four-level Clearing cap.
+ * Levels above the cap reuse the final threshold so UI lookups remain stable
+ * for legacy saves without growing a normal biome curve for the Clearing.
+ */
+export function clearingMasteryXpForLevel(n: number): number {
+  const level = Math.floor(n);
+  if (!Number.isFinite(level) || level <= 0) return 0;
+  const cappedLevel = Math.min(
+    level,
+    CLEARING_MASTERY_XP_THRESHOLDS.length - 1,
+  );
+  return CLEARING_MASTERY_XP_THRESHOLDS[cappedLevel] ?? 0;
+}
+
+/**
  * Returns the maximum biome level a player of `playerTier` can reach in a given
  * biome. A biome only has `BIOME_LEVELS_PER_TIER` levels of content per tier it
  * spans, so the cap grows with the player's tier: cap =
- * (playerTier - startTier + 1) * 4. A player at exactly the biome's start tier
- * gets the native 4 levels; a player below it gets 0 (they can't bank levels in
+ * (playerTier - startTier + 1) * 6. A player at exactly the biome's start tier
+ * gets the native 6 levels; a player below it gets 0 (they can't bank levels in
  * a biome they haven't unlocked — this is the case that matters for biomes that
  * first appear above T1, e.g. a T1 player must not gain levels in the T2 jungle).
  * Clearing is always capped at 4.
@@ -327,14 +395,16 @@ export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
 }
 
 /**
- * Cumulative XP required to reach biome level `n` *within a specific biome*,
- * accounting for its start-tier offset. For a T1 biome this equals
- * {@link biomeXpForLevel}. For a biome starting at tier T, level `n` costs what
- * the equivalent same-tier level costs in a T1 biome — the offset levels are
- * subtracted out so the biome's own curve still starts at 0 XP for level 0
- * (i.e. level 1 costs the increment, not the whole cumulative wall below it).
+ * Cumulative XP required to reach biome level `n` *within a specific biome*.
+ * Clearing uses its explicit four-level tutorial table. For a normal T1 biome
+ * this equals {@link biomeXpForLevel}. For a biome starting at tier T, the
+ * offset maps its local level 1 to the first step of the T segment; preceding
+ * reference segments are subtracted so the biome's own curve starts at 0 XP
+ * for level 0.
  */
 export function biomeXpForBiomeLevel(biomeGroup: string, n: number): number {
+  if (biomeGroup === 'clearing') return clearingMasteryXpForLevel(n);
+  if (!Number.isFinite(n) || n <= 0) return 0;
   const offset = biomeLevelOffset(biomeGroup);
   if (offset === 0) return biomeXpForLevel(n);
   return biomeXpForLevel(n + offset) - biomeXpForLevel(offset);

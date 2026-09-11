@@ -126,7 +126,9 @@ assert(
 
 // ── The scalar reaches the farmable currencies, and only those ────────────────
 
-const KILLS = 20;
+// Keep the comparison below the current tier-4 forest cap even at 10x. The
+// separate cap case later in this file covers the intentional saturation path.
+const KILLS = 5;
 const MULT = 10;
 const base = farm("p-base", 1, KILLS);
 const boosted = farm("p-boost", MULT, KILLS);

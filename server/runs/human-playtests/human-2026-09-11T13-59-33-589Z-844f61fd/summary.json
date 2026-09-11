@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-11T13-59-33-589Z-844f61fd",
+    "startedAt": 1789135173589,
+    "endedAt": 1789135617306,
+    "durationMs": 443717,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-11T13-59-33-589Z-844f61fd",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 1,
+    "finalGlobalMastery": 6,
+    "biomeLevels": {
+      "clearing": 3,
+      "plains": 6
+    }
+  },
+  "combat": {
+    "totalKills": 67,
+    "killsByMonster": {
+      "Tiny Wisp": 9,
+      "Field Hare": 26,
+      "Boar": 32
+    },
+    "totalDamageTaken": 757,
+    "playerDamageDealt": 5102,
+    "totalHealed": 585,
+    "deaths": 0,
+    "abilityActivations": {
+      "sweep": 21
+    }
+  },
+  "positioning": {
+    "samples": 760,
+    "movementFraction": 0.25921052631578945,
+    "stationaryCombatFraction": 0.7118421052631579,
+    "nearBoundaryFraction": 0.006578947368421052,
+    "boss": {
+      "movementFraction": null,
+      "nearBoundaryFraction": null,
+      "range": {
+        "samples": 0,
+        "mean": null,
+        "min": null,
+        "max": null,
+        "p50": null,
+        "p90": null
+      }
+    }
+  },
+  "bosses": [],
+  "build": {
+    "equipment": {
+      "weapon": "iron-broadsword",
+      "armor": "plains-vest-t1",
+      "recovery": "plains-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {},
+    "classRoot": "reload-root",
+    "frame": null,
+    "range": null,
+    "techniques": [
+      "sweep"
+    ],
+    "guards": [],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "hp-below-25",
+        "actionId": "flee"
+      },
+      {
+        "conditionId": "while-traveling",
+        "actionId": "fight-back"
+      }
+    ],
+    "stats": {
+      "attack": 19,
+      "attackRange": 132,
+      "attackCooldown": 568,
+      "maxHp": 133,
+      "plating": 9,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}
