@@ -4,6 +4,7 @@ import {
   ACTION_DATABASE,
   BRAWLER_MAX_REDUCTION,
   BERSERKER_SELF_DAMAGE_PCT,
+  ENRAGED_HP_THRESHOLD,
   GAME_CONFIG,
   PERFECTION_HP_THRESHOLD,
   NO_STANCE_ID,
@@ -121,6 +122,10 @@ for (const stance of STANCE_DATABASE.values()) {
   // to be paid on both sides of the threshold, or falling out of it is free.
   const gated = stance.gatedModifiers?.modifiers;
   if (gated) {
+    assert(
+      stance.gatedModifiers?.minHpPct !== undefined || stance.gatedModifiers?.maxHpPct !== undefined,
+      `${stance.id} must give its HP gate at least one bound`,
+    );
     for (const [key, value] of Object.entries(gated)) {
       const isDrawback = key === "damageTakenPct" ? value > 0 : value < 0;
       assert(!isDrawback, `${stance.id} put a drawback (${key}) behind its HP gate`);
@@ -197,6 +202,27 @@ const braced = makeCombatContext(target, "monster", player, "player");
 braced.damage = 100;
 emitCombatEvent("onDamageTaken", braced, world);
 assert(braced.damage < 100, "a defensive posture should reduce incoming damage multiplicatively");
+
+// Enraged is a premium low-HP payoff, not an always-on posture with a defensive tax.
+const enraged = stanceDef("enraged-stance");
+assert(enraged?.modifiers === undefined, "Enraged must have no unconditional modifiers or drawbacks");
+assert(
+  enraged?.gatedModifiers?.maxHpPct === ENRAGED_HP_THRESHOLD,
+  "Enraged's gate must be the published low-HP threshold",
+);
+assert(
+  (enraged?.gatedModifiers?.modifiers.damageTakenPct ?? 0) === 0,
+  "Enraged must not increase damage taken",
+);
+assert(
+  (activeStanceModifiers("enraged-stance", ENRAGED_HP_THRESHOLD + 0.01)?.damageDealtPct ?? 0) === 0,
+  "Enraged must provide no payoff above 25% HP",
+);
+assert(
+  (activeStanceModifiers("enraged-stance", ENRAGED_HP_THRESHOLD)?.damageDealtPct ?? 0) === 0.3
+    && (activeStanceModifiers("enraged-stance", ENRAGED_HP_THRESHOLD - 0.01)?.attackSpeedPct ?? 0) === 0.15,
+  "Enraged's full payoff must apply at and below 25% HP",
+);
 
 // ── Perfection: the one HP-gated posture ──────────────────────────────────────
 // Runes own conditions, but a Rune can only decide when you ENTER a stance; it cannot

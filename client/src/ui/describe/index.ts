@@ -86,13 +86,13 @@ export function skillNodeLines(node: {
  * decide whether a posture is survivable (Berserker's lethal self-damage, Predator's
  * opener, Brawler's cap) live in combat listeners and cannot describe themselves.
  * What is deliberately NOT here: the Rune CONDITION a stance is usually reached by.
- * "Activates below 25% HP" is a property of the rule, not of Enraged.
+ * Intrinsic payoff gates, such as Enraged's low-HP requirement, do belong here.
  */
 export function stanceLines(
   stance: StanceDef | undefined,
   /**
    * The reader's current HP fraction, when a surface has one. A gated posture
-   * (Perfection) then marks its conditional rows ACTIVE or INACTIVE instead of only
+   * then marks its conditional rows ACTIVE or INACTIVE instead of only
    * naming the threshold — the difference between "I could have this" and "I have
    * this right now" is the entire point of the gate.
    */
@@ -100,10 +100,16 @@ export function stanceLines(
 ): DetailLine[] {
   if (!stance) return [];
   const gate = stance.gatedModifiers;
-  const gateMet = gate !== undefined && hpFraction !== undefined && hpFraction >= gate.minHpPct;
-  const gateQualifier = gate
-    ? `while at or above ${Math.round(gate.minHpPct * 100)}% HP`
-    : '';
+  const gateMet = gate !== undefined && hpFraction !== undefined
+    && (gate.minHpPct === undefined || hpFraction >= gate.minHpPct)
+    && (gate.maxHpPct === undefined || hpFraction <= gate.maxHpPct);
+  const gateQualifier = gate?.minHpPct !== undefined && gate.maxHpPct !== undefined
+    ? `while between ${Math.round(gate.minHpPct * 100)}% and ${Math.round(gate.maxHpPct * 100)}% HP`
+    : gate?.minHpPct !== undefined
+      ? `while at or above ${Math.round(gate.minHpPct * 100)}% HP`
+      : gate?.maxHpPct !== undefined
+        ? `while at or below ${Math.round(gate.maxHpPct * 100)}% HP`
+        : '';
   return [
     ...stanceModifierLines(stance.modifiers).map((line) => ({
       key: `stat:${line.key}`,
@@ -123,7 +129,7 @@ export function stanceLines(
       detail: hpFraction === undefined
         ? gateQualifier
         : `${gateQualifier} — ${gateMet ? 'ACTIVE' : 'INACTIVE'}`,
-      help: `${line.help} Granted only ${gateQualifier}; the stance's drawback is paid either way.`,
+      help: `${line.help} Granted only ${gateQualifier}. Any unconditional modifiers remain active outside this window.`,
       good: line.good,
       glyph: line.glyph,
     })),

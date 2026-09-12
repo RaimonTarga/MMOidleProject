@@ -369,7 +369,7 @@ execution order):
    the stance's percentage stat mods (`attackPct`/`platingPct`/`moveSpeedPct`)
    are deliberately deferred to stage 8. Stance `mechanicEffects` merge into
    passives here.
-5. **Attack-speed resolution**: `attackCooldown = round(attackCooldown / max(0.1, 1 + attackSpeedPct))`, floored at 200ms.
+5. **Attack-speed resolution**: `attackCooldown = round(attackCooldown / max(0.1, 1 + attackSpeedPct))`, with a 1ms positive-duration safeguard. General, Slinger/Gatling, and Core speed scaling no longer impose 5/10 APS stat caps. Actual ordinary attacks remain limited to one per 10Hz server tick; there is no overflow compensation.
 6. **Equipment loop** (weapon/armor/recovery/mobility/**core**/relic, in
    `EQUIPMENT_SLOTS` order): each equipped item's flat `statModifiers` add
    directly to the running totals (same additive bucket as the skill tree —

@@ -18,22 +18,23 @@ A good Stance:
 - creates useful transitions with existing Rune conditions;
 - remains distinct from Abilities, Cores, gear, and Rites.
 
-Runes own conditions wherever practical. Prefer `HP Below 25% -> Enraged` over placing
-the HP threshold inside Enraged itself. A Stance should describe the mode; the Rune should
-describe when that mode is wanted.
+Runes own entry conditions wherever practical. Intrinsic payoff requirements remain part of
+the stance: Enraged's bonuses only function at or below 25% HP regardless of how the player
+entered it. A Rune still describes when the player wants to change mode.
 
-**The one sanctioned exception: `gatedModifiers`.** A Rune decides when you ENTER a posture;
+**Intrinsic payoff gates: `gatedModifiers`.** A Rune decides when you ENTER a posture;
 it cannot switch the posture's bonuses off underneath you once you are in it. Where a Stance's
 identity is a state the player must MAINTAIN, that is a different question and the Stance owns
-it. Perfection is the only current user (`+12% Attack/Attack Speed/Move Speed` while at or
-above 90% HP, `-20% Plating` always), alongside the behavioral equivalents Execute, Brawler and
-Predator already carry.
+it. Enraged uses the low-HP form (bonuses at or below 25% HP, no downside), while Perfection
+uses the high-HP form (`+12% Attack/Attack Speed/Move Speed` at or above 90% HP, `-20% Plating`
+always), alongside the behavioral equivalents Execute, Brawler and Predator already carry.
 
 Two hard rules if you reach for it:
 
-- a gate holds the PAYOFF only. Whatever the posture costs stays in `modifiers` and is paid on
-  both sides of the line, or falling out of the gate is free. `server/test/stances.test.ts`
-  enforces this;
+- a gate holds the PAYOFF only. Any separate posture cost stays in `modifiers` and is paid on
+  both sides of the line. Enraged deliberately has no separate cost: functioning only at or
+  below 25% HP is its entire downside. `server/test/stances.test.ts` enforces that gates do not
+  hide drawbacks;
 - do not use it to spare a player from authoring a Rune rule. If `HP Above 90% -> X` would
   express the whole intent, write the Rune rule.
 
@@ -172,9 +173,9 @@ Every learnable Stance needs:
   and the destination RP cost. A `gatedModifiers` half renders as its own rows carrying the
   threshold, and — where the surface knows the reader's HP — whether it is ACTIVE right now.
 
-Effect text describes what the posture does once ACTIVE. It must never present a Rune-owned
-condition as a Stance property: Enraged does not "activate below 25% HP" — a rule the player
-built does that, and the Rune UI already says so.
+Effect text describes what the posture does once ACTIVE. It distinguishes Rune-owned entry
+conditions from intrinsic payoff gates: a Rune may activate Enraged, but the stance text must
+still say that its bonuses function only at or below 25% HP.
 
 The generic introductory pair should teach the system cheaply. More trajectory-defining or
 sustain-heavy Stances should appear later, when enemies can provide meaningful counterplay.

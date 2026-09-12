@@ -226,4 +226,40 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
   );
 }
 
+// Synthetic future haste exercises thresholds current gear need not reach yet.
+// Stat scaling must remain continuous through 5 and 10 APS, independently of
+// the server's one-attack-per-tick execution limit.
+{
+  const id = 'test-uncapped-attack-speed';
+  const fixture = {
+    ...SKILL_TREE.get('reload-root')!,
+    id,
+    statEffects: { attackSpeedPct: 19 },
+    mechanicEffects: {} as Record<string, number>,
+  };
+  SKILL_TREE.set(id, fixture);
+  try {
+    const ordinary = build([id]);
+    const slinger = build([id], undefined, 0, { combatArchetype: 'reload' });
+    assert(ordinary.performsAttack.attackCooldown < 200, 'generic haste must exceed 5 APS');
+    assert(slinger.performsAttack.attackCooldown < 100, 'Slinger haste must exceed 10 nominal APS');
+    assert(
+      slinger.performsAttack.attackCooldown === Math.round(ordinary.performsAttack.attackCooldown / 2),
+      'Slinger must retain its double-speed multiplier above the former cap',
+    );
+    const core = build([id], undefined, 0, { combatArchetype: 'reload', core: 'core-accelerant' });
+    assert(core.performsAttack.attackCooldown < slinger.performsAttack.attackCooldown,
+      'Core haste must not clamp or slow an already fast Slinger');
+    fixture.mechanicEffects['reload.gatling'] = 1;
+    const gatling = build([id], undefined, 0, { combatArchetype: 'reload' });
+    assert(gatling.performsAttack.attackCooldown < slinger.performsAttack.attackCooldown,
+      'Gatling must retain its additional speed multiplier above 10 nominal APS');
+    fixture.statEffects.attackSpeedPct = 1e9;
+    const extreme = build([id], undefined, 0, { combatArchetype: 'reload', core: 'core-accelerant' });
+    assert(extreme.performsAttack.attackCooldown === 1, 'rounding must never produce a zero cooldown');
+  } finally {
+    SKILL_TREE.delete(id);
+  }
+}
+
 console.log("classAffinity: ok");

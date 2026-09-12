@@ -15,10 +15,9 @@
  *   - NO stance changes max HP. Repeatedly resizing the pool means repeatedly
  *     preserving HP percentage across a switch the player did not ask for. Tanking
  *     buys survival with mitigation and an offensive sacrifice instead.
- *   - Runes own CONDITIONS, the stance owns the POSTURE. Enraged has no internal
- *     HP threshold; `HP Below 25% -> Enraged` is a Rune rule. Only behavior that is
- *     intrinsic to the posture (Berserker's self-damage, Predator's opener, Brawler's
- *     aggressor count, Execute's low-HP window) lives on the stance.
+ *   - Runes normally own CONDITIONS, while the stance owns the POSTURE. A stance may
+ *     still gate its payoff when that maintained state is intrinsic to its identity:
+ *     Enraged only functions at low HP, just as Perfection only functions near full HP.
  */
 import type { MechanicEffects } from "./passives";
 
@@ -62,7 +61,7 @@ export interface StanceModifiers {
 }
 
 /**
- * An HP gate on the UPSIDE half of a posture, and the ONE sanctioned exception to
+ * An HP gate on the UPSIDE half of a posture, and a sanctioned exception to
  * "Runes own conditions, the stance owns the posture".
  *
  * A Rune condition decides WHEN you enter a stance. This decides whether the stance's
@@ -75,13 +74,15 @@ export interface StanceModifiers {
  * Execute's target-HP window, Brawler's aggressor count and Predator's out-of-combat
  * arming. Do NOT use it to spare a player from authoring a Rune rule.
  *
- * The gated half is the payoff only. Whatever the posture pays for it lives in
- * {@link StanceDef.modifiers} and stays active on both sides of the threshold — falling
- * out of the gate must be a real loss, not a free return to neutral.
+ * The gated half is the payoff only. Any unconditional costs live in
+ * {@link StanceDef.modifiers} and stay active on both sides of the threshold. A gate
+ * may itself be the entire opportunity cost, as it is for Enraged.
  */
 export interface StanceHpGate {
-  /** Player HP fraction at or above which {@link modifiers} applies. 0.9 → 90%. */
-  minHpPct: number;
+  /** Optional inclusive lower bound. 0.9 → at or above 90% HP. */
+  minHpPct?: number;
+  /** Optional inclusive upper bound. 0.25 → at or below 25% HP. */
+  maxHpPct?: number;
   modifiers: StanceModifiers;
 }
 
@@ -150,6 +151,8 @@ export const PREDATOR_DETECTION_REDUCTION = 0.5;
 export const PREDATOR_OPENER_BONUS = 0.75;
 /** Perfection: player HP fraction at or above which its upside half functions. */
 export const PERFECTION_HP_THRESHOLD = 0.9;
+/** Enraged: player HP fraction at or below which its payoff functions. */
+export const ENRAGED_HP_THRESHOLD = 0.25;
 /** Execute: target HP fraction at or below which the finisher bonus applies. */
 export const EXECUTE_HP_THRESHOLD = 0.25;
 export const EXECUTE_BONUS = 0.75;
@@ -243,17 +246,18 @@ const stances: StanceDef[] = [
   {
     id: "enraged-stance",
     name: "Enraged Stance",
-    // No HP threshold lives in this stance. Pair it with an `HP Below 25%` Rune rule
-    // if that is the moment you want it — but it works whenever it is active.
-    blurb: "+30% Damage and +15% Attack Speed. You take 15% more damage.",
+    blurb: `While at or below ${pct(ENRAGED_HP_THRESHOLD)} HP: +30% Damage and +15% Attack Speed.`,
     runeCost: 3,
-    modifiers: { damageDealtPct: 0.3, attackSpeedPct: 0.15, damageTakenPct: 0.15 },
+    gatedModifiers: {
+      maxHpPct: ENRAGED_HP_THRESHOLD,
+      modifiers: { damageDealtPct: 0.3, attackSpeedPct: 0.15 },
+    },
     icon: "enraged-stance",
   },
   {
     id: "perfection-stance",
     name: "Perfection Stance",
-    // The one gated posture. The -20% Plating is the price of holding it and is paid
+    // The -20% Plating is the price of holding it and is paid
     // at every HP; the bonuses are the reward for not being hit. Dropping below the
     // threshold is therefore meant to be actively bad, so leaving is a real decision
     // rather than a formality. See {@link StanceHpGate}.
@@ -528,7 +532,8 @@ export function stanceGateMet(
 ): boolean {
   const gate = def?.gatedModifiers;
   if (!gate) return false;
-  return hpFraction >= gate.minHpPct;
+  return (gate.minHpPct === undefined || hpFraction >= gate.minHpPct)
+    && (gate.maxHpPct === undefined || hpFraction <= gate.maxHpPct);
 }
 
 /**

@@ -246,7 +246,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
   );
-  p.performsAttack.attackCooldown = Math.max(200, p.performsAttack.attackCooldown);
+  // Keep rounded cooldowns positive, without capping the attack-speed stat.
+  // The combat loop independently limits actual attacks to its logic ticks.
+  p.performsAttack.attackCooldown = Math.max(1, p.performsAttack.attackCooldown);
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 
   // NOTE: the old step 2b granted a hardcoded per-class flat plating/recovery bonus
@@ -379,9 +381,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         Math.round(p.usesSkills.passives['reload.snipe-cadence-ms'] ?? 2000),
       );
     } else {
-      p.performsAttack.attackCooldown = Math.max(200, Math.round(p.performsAttack.attackCooldown * 0.5));
+      p.performsAttack.attackCooldown = Math.max(1, Math.round(p.performsAttack.attackCooldown * 0.5));
       if ((p.usesSkills.passives['reload.gatling'] ?? 0) > 0) {
-        p.performsAttack.attackCooldown = Math.max(100, Math.round(p.performsAttack.attackCooldown * 0.5));
+        p.performsAttack.attackCooldown = Math.max(1, Math.round(p.performsAttack.attackCooldown * 0.5));
       }
     }
   }
@@ -415,7 +417,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.hasHealth.recovery = Math.max(0, Math.round((p.hasHealth.recovery ?? 0) * (1 + recoveryMult)));
   if (atkSpeedMult !== 0)
     p.performsAttack.attackCooldown = Math.max(
-      100,
+      1,
       Math.round(p.performsAttack.attackCooldown / Math.max(0.1, 1 + atkSpeedMult)),
     );
 

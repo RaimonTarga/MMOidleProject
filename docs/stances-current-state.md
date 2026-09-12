@@ -61,7 +61,7 @@ First-pass magnitudes are balance seeds in `shared/src/stances.ts`; the structur
 | Offensive | 1 | +15% Damage, +10% Attack Speed, +10% damage taken | — |
 | Defensive | 1 | +20% Plating, -10% damage taken, -15% Damage | — |
 | Tanking | 3 | +40% Plating, -25% damage taken, -40% Damage, -20% Attack Speed | — |
-| Enraged | 3 | +30% Damage, +15% Attack Speed, +15% damage taken | — |
+| Enraged | 3 | +30% Damage and +15% Attack Speed **only at <=25% HP**; no defensive penalty | HP gate, see below |
 | Perfection | 2 | -20% Plating always; +12% Damage / Attack Speed / Move Speed **only at >=90% HP** | HP gate, see below |
 | Fleeting | 2 | +35% Move Speed, +15pp Evasion, -35% Damage, -20% Attack Speed | — |
 | Berserker | 4 | +35% Damage, +20% Attack Speed, +15% damage taken | 2% max HP self-damage per second while in combat; can kill |
@@ -88,32 +88,32 @@ constants, so a stance cannot advertise a number it does not apply.
 
 Predator's opener is armed only while the posture is active out of combat and is consumed by the first hit. Berserker damage is deterministic, bypasses ordinary mitigation/shields/cheat-death/on-damage listeners, and can kill with the dedicated stance death cause. Brawler's crowd table and the shared damage-taken multiplier compose in one listener, so a Brawler carrying a `damageTakenPct` would multiply both.
 
-Runes own CONDITIONS; the stance owns the POSTURE. No stance carries an internal HP or
-target-HP ENTRY threshold — `HP Below 25% -> Enraged` is a rule the player builds. The only
-intrinsic thresholds are ones the posture cannot exist without: Execute's target-HP window,
-Brawler's aggressor count, Predator's out-of-combat arming, Berserker's in-combat tick, and
-Perfection's HP gate.
+Runes normally own CONDITIONS; the stance owns the POSTURE. Intrinsic payoff requirements
+still live on the stance: Enraged's bonuses function only at or below 25% player HP, while
+Perfection's function only at or above 90% player HP. A Rune rule can choose when to enter
+either stance, but cannot bypass its payoff gate.
 
-### Perfection's HP gate — the one modifier-level exception
+### Intrinsic HP payoff gates
 
 `StanceDef.gatedModifiers` (`StanceHpGate`) holds the UPSIDE half of a posture whose identity
-IS a maintained state. Perfection is the only user: `+12% Damage / Attack Speed / Move Speed`
-apply only while HP is at or above `PERFECTION_HP_THRESHOLD` (0.9); the `-20% Plating` sits in
-the ordinary `modifiers` and is paid at every HP.
+IS a maintained state. Enraged uses an inclusive upper bound: `+30% Damage / +15% Attack
+Speed` apply only at or below `ENRAGED_HP_THRESHOLD` (0.25), with no unconditional downside.
+Perfection uses an inclusive lower bound: its bonuses apply at or above
+`PERFECTION_HP_THRESHOLD` (0.9), while its `-20% Plating` remains unconditional.
 
-This is a deliberate exception to "Runes own conditions", and the reason it is not one is that
-a Rune cannot express it. `HP Above 90% -> Perfection` decides when you *enter* the posture; it
-cannot switch the bonuses off underneath you. Enter at 91%, drop to 40%, and the rule merely
-stops holding — the player reverts to their default on the next reconciliation, with Perfection's
-full payoff live the whole way down. The gate is intrinsic in the same sense as Execute's
-target-HP window and Brawler's aggressor count.
+These are deliberate exceptions to "Runes own conditions": a Rune decides when the player
+*enters* a posture, but cannot make a payoff work outside its intrinsic window. Enraged remains
+inactive above 25% even if selected manually or as the default; Perfection becomes inactive
+below 90% even before a Rune reconciliation switches away. The gates are intrinsic in the same
+sense as Execute's target-HP window and Brawler's aggressor count.
 
 Below the threshold Perfection is deliberately **worse than no stance at all**: the drawback
 persists, the payoff does not. That asymmetry is the reason to leave, and the tooltip says so.
 The threshold is not configurable and is not a Rune condition.
 
-Authoring rule, enforced by `server/test/stances.test.ts`: a gate may only hold upsides. Whatever
-a posture pays has to be paid on both sides of the line, or falling out of the gate is free.
+Authoring rule, enforced by `server/test/stances.test.ts`: a gate may only hold upsides.
+Unconditional drawbacks, when a stance has them, remain active on both sides of the line;
+Enraged intentionally has none because its <=25% availability is the downside.
 
 Mechanically: `activeStanceModifiers(stanceId, hpFraction)` in `shared/src/stances.ts` is the
 ONLY resolver stat code may use — reading `def.modifiers` directly silently drops the conditional
@@ -191,9 +191,9 @@ Effect text is generated from the stance definition by `stanceLines` in
 (crafting, the Rune destination wheel, the map's unlock list) render `blurb`, which is
 therefore written as a mechanics sentence rather than flavour.
 
-What is deliberately absent: the Rune condition a stance is usually reached through. The
-Rune rule UI already shows `HP Below 25% -> Switch Stance -> Enraged`; the stance tooltip
-only describes what Enraged does once active.
+What is deliberately absent: the Rune condition a stance is reached through. The stance
+tooltip still describes intrinsic payoff gates, so Enraged explicitly says its bonuses work
+only at or below 25% HP even if another Rune condition or a manual selection activates it.
 
 - Stances is its own rail entry, opening the shared arrangement dialog (Abilities / Stances / Rites / Runes) on the Stances tab: a crest/sigil sanctum for attuning postures and choosing an attuned default.
 - The compact live combat dock shows an icon-only neutral posture followed by each currently attuned stance icon. The neutral control reuses the hollow-diamond `No Stance` grammar from the Rune editor; no standalone art asset is required. A shared dark radial sweep covers the stance controls during the 1500 ms switch cooldown. With Auto Combat off, clicks hold a manual stance choice. With Auto Combat on, clicks can request an immediate legal switch but do not block subsequent Rune/default decisions. Manual selection and the actually active stance are separately visible. The default keyboard chords are `Shift+1` for Neutral and `Shift+2` onward for attuned stances in displayed order; compact badges expose them on the rail, and every chord is rebindable without colliding with the unmodified ability-number keys. `Shift+0` is deliberately unused.

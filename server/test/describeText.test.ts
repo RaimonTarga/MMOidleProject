@@ -14,6 +14,7 @@ import {
   STANCE_DATABASE,
 } from "@mmo-idle/shared";
 import { describeAbility } from "../../client/src/ui/describe/abilityText";
+import { stanceLines } from "../../client/src/ui/describe";
 import { formatPassiveValue, passiveLines } from "../../client/src/ui/describe/passiveText";
 import { statEffectLines } from "../../client/src/ui/describe/statEffectText";
 
@@ -22,6 +23,18 @@ function assert(condition: unknown, message: string): asserts condition {
 }
 
 const BAD = /NaN|undefined|\[object/;
+
+const enraged = STANCE_DATABASE.get("enraged-stance")!;
+const enragedAtThreshold = stanceLines(enraged, 0.25);
+const enragedAboveThreshold = stanceLines(enraged, 0.26);
+assert(
+  enragedAtThreshold.some((line) => line.key === "gated:attack" && line.detail?.includes("at or below 25% HP — ACTIVE")),
+  "Enraged tooltip must show its payoff active at exactly 25% HP",
+);
+assert(
+  enragedAboveThreshold.some((line) => line.key === "gated:attack" && line.detail?.includes("at or below 25% HP — INACTIVE")),
+  "Enraged tooltip must show its payoff inactive above 25% HP",
+);
 
 // ── Every authored ability describes itself ──────────────────────────────────
 

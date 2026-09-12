@@ -128,8 +128,8 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
       applyStanceSwitch(world, player, desired);
     }
 
-    // A gated posture (Perfection) turns its upside half on and off as the player crosses
-    // an HP threshold, and those modifiers live in the stat rebuild — so the crossing has
+    // A gated posture turns its upside half on and off as the player crosses an HP
+    // threshold, and those modifiers live in the stat rebuild — so the crossing has
     // to trigger one. Edge-triggered off a stored flag: recalculating every tick would
     // throw away rampage/cadence state ten times a second for no reason.
     //
