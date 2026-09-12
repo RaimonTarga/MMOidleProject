@@ -2,6 +2,8 @@ import { validateBuild } from "./loadout/loadout";
 import fs from "node:fs";
 import path from "node:path";
 import {
+  tierEntryProfileFromT1Snapshot,
+  type T1CharacterSnapshot,
   ABILITY_RECIPE_DATABASE, ABILITY_DATABASE, STANCE_DATABASE, RITE_DATABASE, STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
   type PlayerView,
   CLEARING_NODE_ID,
@@ -17,6 +19,10 @@ import {
   type CombatArchetype,
   type DeltaSnapshot,
 } from "@mmo-idle/shared";
+import { readFileSync } from "node:fs";
+const earnedT1State = JSON.parse(readFileSync(new URL("../../server/test/fixtures/v1d-earned-t1-state.json", import.meta.url), "utf8")).state;
+const earnedT1Profile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1, snapshotKind: "tier2-handoff",
+  snapshotId: "v1d-regression", frameId: null, state: earnedT1State } as T1CharacterSnapshot, "node-clearing", 1);
 import { evaluate, resolveNearCandidates, resolveNode, resolveNodeCandidates } from "./route/conditions";
 import { POLICIES, requirePolicy } from "./policy/profiles";
 import { TIER_ENTRY_PROFILES } from "./tierEntry/profiles";
@@ -486,7 +492,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     // Tier-2 route as a fresh character equipping runes it never crafted and a
     // Global Mastery of zero -- both false, and both would block correct routes.
     const entryProfile = route.startsFromTierEntry
-      ? [...TIER_ENTRY_PROFILES.values()].find(
+      ? [earnedT1Profile, ...TIER_ENTRY_PROFILES.values()].find(
           (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
         )
       : undefined;
@@ -705,7 +711,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     // ("equipped only after crafting", "slotted only after learning") mean the
     // same thing for a Tier-2 route as they do for a Tier-1 one.
     const entry = route.startsFromTierEntry
-      ? [...TIER_ENTRY_PROFILES.values()].find(
+      ? [earnedT1Profile, ...TIER_ENTRY_PROFILES.values()].find(
           (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
         )
       : undefined;
