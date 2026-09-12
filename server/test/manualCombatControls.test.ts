@@ -47,7 +47,10 @@ import {
   matchesKey,
   stanceSlotForKey,
 } from "../../client/src/settings/keybinds";
-import { requestManualReload } from "../src/systems/classes/archetypes/reload/reloadLifecycle";
+import {
+  completeReload,
+  requestManualReload,
+} from "../src/systems/classes/archetypes/reload/reloadLifecycle";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -174,11 +177,34 @@ initCombatSystems();
   assert(slinger.usesReload.reloadingMs > 0, "manual reload should use the authoritative reload timer");
   const activeReloadMs = slinger.usesReload.reloadingMs;
   assert(
+    slinger.usesReload.reloadDurationMs === activeReloadMs,
+    "reload start should retain the full duration for presentation progress",
+  );
+  const reloadView = composePlayerView(slinger);
+  assert(
+    reloadView?.reloadRemainingMs === activeReloadMs &&
+      reloadView.reloadDurationMs === activeReloadMs,
+    "the player view should expose authoritative reload progress timing",
+  );
+  const reloadStartEvent = world
+    .takeNodeEvents(slinger.hasPosition.nodeId)
+    .find((event) => event.kind === 'player-reload-start');
+  assert(
+    reloadStartEvent?.kind === 'player-reload-start' &&
+      reloadStartEvent.playerId === slinger.isPlayer.id &&
+      reloadStartEvent.reloadMs === activeReloadMs,
+    "reload start should emit the node-wide presentation event used by ability callouts",
+  );
+  assert(
     requestManualReload(world, slinger).success && slinger.usesReload.reloadingMs === activeReloadMs,
     "pressing reload again during an active reload should not restart its timer",
   );
 
-  slinger.usesReload.reloadingMs = 0;
+  completeReload(world, slinger);
+  assert(
+    slinger.usesReload.reloadingMs === 0 && slinger.usesReload.reloadDurationMs === 0,
+    "reload completion should clear presentation timing",
+  );
   slinger.usesReload.ammo = 3;
   slinger.usesSkills.passives["reload.laser"] = 1;
   assert(requestManualReload(world, slinger).success, "Laser Slinger reload input should be a harmless no-op");

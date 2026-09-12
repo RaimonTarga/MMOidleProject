@@ -7,6 +7,11 @@ import {
 } from '../systems/spatial';
 import type { NodeFeatureShape } from '../world/nodeFeatures';
 
+/** Bound direct movement to the current node until authority confirms a crossing. */
+export function clampPlayerStepToNode(to: Vec2, width: number, height: number): Vec2 {
+  return { x: Math.max(0, Math.min(width, to.x)), y: Math.max(0, Math.min(height, to.y)) };
+}
+
 const WAYPOINT_TOLERANCE = 0.01;
 const CONTACT_EPSILON = 1e-7;
 const CONTACT_DOT_EPSILON = 1e-9;

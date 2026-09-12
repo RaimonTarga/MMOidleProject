@@ -134,7 +134,8 @@ export function resolveExit(
 
 /**
  * True when the player's motion actually carries them outward through `direction`
- * — the dominant motion axis points across that border. A player merely grazing a
+ * — held direct input has an outward component; path movement must have its
+ * dominant axis across that border. A player merely grazing a
  * gate band while travelling parallel to it (e.g. hugging an edge toward a
  * perpendicular gate) is not crossing and must not trigger a transition. Pairs
  * with the nav grid keeping waypoints out of the bands: this is the invariant that
@@ -143,18 +144,19 @@ export function resolveExit(
 function motionExitsThroughBorder(
   motion: MotionVector | undefined,
   direction: NodeDirection,
+  directInput = false,
 ): boolean {
   if (!motion || motion.magnitude <= 0) return false;
   const { x: dx, y: dy } = motion.direction;
   switch (direction) {
     case "west":
-      return dx < 0 && Math.abs(dx) >= Math.abs(dy);
+      return dx < 0 && (directInput || Math.abs(dx) + 1e-9 >= Math.abs(dy));
     case "east":
-      return dx > 0 && Math.abs(dx) >= Math.abs(dy);
+      return dx > 0 && (directInput || Math.abs(dx) + 1e-9 >= Math.abs(dy));
     case "north":
-      return dy < 0 && Math.abs(dy) >= Math.abs(dx);
+      return dy < 0 && (directInput || Math.abs(dy) + 1e-9 >= Math.abs(dx));
     case "south":
-      return dy > 0 && Math.abs(dy) >= Math.abs(dx);
+      return dy > 0 && (directInput || Math.abs(dy) + 1e-9 >= Math.abs(dx));
   }
 }
 
@@ -291,14 +293,31 @@ export function updateTransitions(world: World): void {
     const H = node.height;
     const current = position.current;
 
-    const direction = world.collision.gateDirectionAt(current, position.nodeId);
+    // Consider every contacted border: at a corner a sealed or cooling-down
+    // horizontal edge must not mask an open vertical exit. Inequalities also
+    // catch overshoot instead of requiring a point inside a finite gate strip.
+    const borders: NodeDirection[] = [];
+    if (current.x <= EXIT_TRIGGER) borders.push('west');
+    if (current.x >= W - EXIT_TRIGGER) borders.push('east');
+    if (current.y <= EXIT_TRIGGER) borders.push('north');
+    if (current.y >= H - EXIT_TRIGGER) borders.push('south');
+    const directInput = !!entity.hasManualMoveIntent && !entity.hasMovePath;
+    const crossing = borders.find(dir =>
+      resolveExit(position.nodeId, dir) &&
+      !isOnReentryCooldown(world, entity, position.nodeId, dir) &&
+      motionExitsThroughBorder(entity.isMoving?.motion, dir, directInput));
+    if (crossing) {
+      performCrossing(world, entity, crossing, resolveExit(position.nodeId, crossing)!);
+      continue;
+    }
+    const direction = borders[0];
     if (!direction) continue;
 
     if (isOnReentryCooldown(world, entity, position.nodeId, direction)) continue;
 
     const targetNodeId = resolveExit(position.nodeId, direction);
 
-    if (!targetNodeId || !motionExitsThroughBorder(entity.isMoving?.motion, direction)) {
+    if (!targetNodeId || !motionExitsThroughBorder(entity.isMoving?.motion, direction, directInput)) {
       // Sealed border, or the player is only grazing the band while moving along
       // it (not crossing) — clamp them back inside so the transition can't misfire.
       const target = entity.isMoving

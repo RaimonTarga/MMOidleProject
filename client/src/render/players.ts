@@ -1,5 +1,5 @@
 import type { PlayerView } from "@mmo-idle/shared";
-import { isRangedPlayerView, playerMoveSpeedMult } from "@mmo-idle/shared";
+import { playerMoveSpeedMult } from "@mmo-idle/shared";
 import { getDefaultStore } from "jotai";
 import { autoPathAtom, setAutoPath } from "../hud/atoms";
 import type { RenderState } from "./state";
@@ -24,18 +24,12 @@ import {
 import { ensureHpBar, destroyHpBar } from "./healthBars";
 import { ensureCdBar, destroyCdBar } from "./cooldownBars";
 import { GRAVE_DISPLAY_H, GRAVE_LABEL_OFFSET_Y } from "../sprites";
-import { applyLunge } from "./interpolation";
 import { nodeToScene } from "./sceneCoords";
 import { getPendingStop, isOwnHeadingClientOwned, clearPendingStop, setManualActive } from "../input/moveOwnership";
-import { cancelActiveMove } from "../input/movement";
-import { isServerOwnedNavigation } from "../scenes/game/mapTransition";
 import {
   clearOwnMovePath,
   reconcileOwnPathFromServer,
 } from "../input/pathPrediction";
-import { spawnAttackEffect } from "./combatFx";
-import { getDotPath } from "../fx/dot";
-import { resolveAttackTint } from "../fx/elementTint";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 import { auraTint } from "../fx/aura";
 
@@ -43,6 +37,27 @@ import { auraTint } from "../fx/aura";
 // motion target between 5 Hz snapshots. Beyond this error the prediction has
 // diverged (rejected move, dropped packet) — snap rather than glide-correct.
 const RECONCILE_SNAP_SQ = 220 * 220;
+
+function syncReloadTiming(state: RenderState, player: PlayerView): void {
+  if (player.reloadRemainingMs <= 0 || player.reloadDurationMs <= 0) {
+    state.reloadTiming.delete(player.id);
+    return;
+  }
+
+  const previous = state.reloadTiming.get(player.id);
+  if (
+    previous?.remainingMs === player.reloadRemainingMs &&
+    previous.durationMs === player.reloadDurationMs
+  ) {
+    return;
+  }
+
+  state.reloadTiming.set(player.id, {
+    remainingMs: player.reloadRemainingMs,
+    durationMs: player.reloadDurationMs,
+    observedAt: Date.now(),
+  });
+}
 
 /**
  * Combined movement-speed multiplier from any movement-affecting buffs the player
@@ -89,6 +104,7 @@ export function upsertPlayer(
 ): void {
   const isOwn = player.id === scene.myId;
   const isNew = !state.sprite.has(player.id);
+  syncReloadTiming(state, player);
 
   if (isNew) {
     state.ids.add(player.id);
@@ -203,12 +219,13 @@ export function upsertPlayer(
     clearPendingStop();
     // Destination coordinates are node-local, so a mark carried through a gate
     // would point at an unrelated patch of the node we just walked into.
-    scene.targetMarker.hide();
+    if (scene.targetMarker.destination?.nodeId !== player.nodeId) scene.targetMarker.hide();
     const store = getDefaultStore();
     const navPathBefore = store.get(autoPathAtom);
-    if (!scene.transitioning && !isServerOwnedNavigation(scene, navPathBefore)) {
-      cancelActiveMove(scene);
-    }
+    // Retire old-node prediction without sending an old-coordinate stop into
+    // the destination. Held input is resumed after the snapshot is applied.
+    clearOwnMovePath(state);
+    setManualActive(false);
     state.ownNodeId = player.nodeId;
     const interp = state.interpolation.get(player.id);
     if (interp) {
@@ -285,10 +302,9 @@ export function upsertPlayer(
     // authoritative state drive then snap it back (the "backtrack on stop").
     // Other players, and the own player under server-driven movement
     // (auto/traverse/follow/knockback) or click-to-move, take the server target.
-    // During a map slide the heading is server-driven, so the own player tracks
-    // the authoritative target and stays in sync across the transition.
+    // The node reveal does not change movement ownership.
     const clientOwnsHeading =
-      isOwn && isOwnHeadingClientOwned() && !scene.transitioning;
+      isOwn && isOwnHeadingClientOwned();
     if (!clientOwnsHeading) {
       const interp = state.interpolation.get(player.id);
       const from = interp ? { x: interp.base.x, y: interp.base.y } : player.pos;
@@ -336,45 +352,8 @@ export function upsertPlayer(
 
   updateLabelForLivePlayer(state, player.id, player, scene);
 
-  if (
-    !isOwn &&
-    !(scene.spectatorMode && player.id === scene.spectatorTargetId) &&
-    (player.summonsMinions ?? 0) === 0 &&
-    player.lastAttackAt > prevAttackAt &&
-    player.attackTargetId
-  ) {
-    const ownSprite = state.sprite.get(player.id);
-    const targetInterp = state.interpolation.get(player.attackTargetId);
-    const targetSprite = state.sprite.get(player.attackTargetId);
-    if (ownSprite && targetInterp && targetSprite) {
-      spawnAttackEffect(
-        scene,
-        player.attackStyle,
-        { x: ownSprite.x, y: ownSprite.y },
-        { x: targetSprite.x, y: targetSprite.y },
-        {
-          empowered: false,
-          execution: false,
-          archetype: player.combatArchetype ?? undefined,
-          dotPath:
-            player.combatArchetype === "dot" ? getDotPath(player) : undefined,
-          selectedRange: player.selectedRange,
-          // Weapon/class element tint. Computed here because this is where the
-          // full PlayerView lives; transient per-hit effects are not on the
-          // snapshot path, so remote attacks tint from gear and class only.
-          tint:
-            resolveAttackTint(
-              player,
-              player.combatArchetype === "dot" ? getDotPath(player) : null,
-              null,
-            ) ?? undefined,
-        },
-      );
-      if (!isRangedPlayerView(player)) {
-        applyLunge(state, player.id, { ...targetInterp.base }, scene);
-      }
-    }
-  }
+  // Direct attacks (including remote players) are rendered from confirmed events.
+  // lastAttackAt is still authoritative for cooldown bars and Flash movement.
 
   if (isOwn) {
     const moving =

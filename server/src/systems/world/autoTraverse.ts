@@ -9,6 +9,9 @@ import {
   NODE_BIOMES,
   pickNextIncompleteBiome,
   getFlag,
+  directionBetweenNodes,
+  type Vec2,
+  type PlayerMoveResult,
   type BiomeProgressInput,
 } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
@@ -36,6 +39,8 @@ import {
 } from "../combat/ai/runeConfig";
 import { isPlayerActivelyInCombat } from "../combat/ai/engagement";
 import { clearAutoTarget } from "../combat/ai/targetPriority";
+import { applyManualMoveIntent } from './manualMove';
+import { clampMoveTargetToNode } from './transitions';
 
 type TraversePhase = "mob" | "boss" | "advance";
 
@@ -85,6 +90,25 @@ export function startManualNavigation(
     targetNodeId: destNodeId,
     remainingPath: path.slice(1),
   });
+}
+
+/** A neighbor click is one server-owned route followed by ordinary path movement. */
+export function startNeighborNavigation(world: World, player: PlayerEntity, nodeId: string, pos: Vec2): PlayerMoveResult {
+  const rejected = { accepted: false, nodeId: player.hasPosition.nodeId, goal: { ...player.hasPosition.current } };
+  const node = NODE_REGISTRY.get(nodeId);
+  if (!node || player.isDead || player.isRooted || player.isChanneling ||
+    !directionBetweenNodes(player.hasPosition.nodeId, nodeId) ||
+    !pos || !Number.isFinite(pos.x) || !Number.isFinite(pos.y) ||
+    pos.x < 0 || pos.y < 0 || pos.x > node.width || pos.y > node.height) return rejected;
+  const goal = clampMoveTargetToNode(nodeId, {
+    x: Math.max(30, Math.min(node.width - 30, pos.x)),
+    y: Math.max(30, Math.min(node.height - 30, pos.y)),
+  });
+  stopEntity(world, player);
+  startManualNavigation(world, player, nodeId);
+  if (!player.hasAutoTraversePath) return rejected;
+  player.hasAutoTraversePath.destination = goal;
+  return { accepted: true, nodeId, goal };
 }
 
 function resolveTraversePhase(
@@ -158,8 +182,10 @@ function advancePathIfArrived(world: World, player: PlayerEntity): void {
 
   pathState.remainingPath.shift();
   if (pathState.remainingPath.length === 0) {
+    const destination = pathState.destination;
     clearAutoTraversePath(world, player);
     stopEntity(world, player);
+    if (destination) applyManualMoveIntent(world, player, destination, { mode: 'path' });
   }
 }
 

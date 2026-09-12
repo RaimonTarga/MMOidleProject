@@ -4,6 +4,7 @@ import { attachComponent } from '../../ecs/markerHelpers';
 import type { World } from '../../world/World';
 import { directMoveTarget, normalizedMoveDirection, setEntityMotion, stopEntity } from './movement';
 import { clampMoveTargetToNode } from './transitions';
+import { clearAutoTraversePath } from './autoTraverse';
 
 /** The testable authority boundary for a single user movement order. */
 export function applyManualMoveIntent(
@@ -24,11 +25,18 @@ export function applyManualMoveIntent(
   }
 
   const nodeId = player.hasPosition.nodeId;
-  const target = clampMoveTargetToNode(nodeId, options?.mode === 'direct'
+  const requested = options?.mode === 'direct'
     ? directMoveTarget(player.hasPosition.current, position, options.direction)
-    : position);
+    : position;
+  // Held input describes a heading, not a destination. Clipping its axes here
+  // rotates diagonals along the border and makes the exit check reject them.
+  // Execution bounds each step; click destinations retain their interior margin.
+  const target = options?.mode === 'direct' && options.direction
+    ? requested
+    : clampMoveTargetToNode(nodeId, requested);
   // New user orders are exact. The AI's nearby-goal reuse tolerance is not
   // appropriate when the user clicks a different point a few pixels away.
+  clearAutoTraversePath(world, player);
   stopEntity(world, player);
   setEntityMotion(world, player, target, {
     mode: options?.mode === 'direct' ? 'direct' : 'path',

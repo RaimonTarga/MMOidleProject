@@ -81,6 +81,8 @@ export type EntityId = string;
 
 /** Server-only marker: player is walking a planned auto-traverse path. */
 export interface HasAutoTraversePath {
+  /** Optional final click destination, consumed after the last gate crossing. */
+  destination?: { x: number; y: number };
   targetNodeId: string;
   remainingPath: string[];
 }

@@ -22,9 +22,12 @@ export function drawCooldownBars(state: RenderState): void {
     if (!sprite || !cdBar || !meta || !snap) continue;
 
     // Charged-attack wind-up reuses this same bar, tinted red, showing cast
-    // progress (the telegraph). Otherwise it shows the normal attack cooldown.
+    // progress (the telegraph). A Slinger reload temporarily owns it instead,
+    // filling amber from empty to full. Otherwise it shows attack cooldown.
     const cast = state.castState.get(id);
     const casting = !!cast;
+    const reload = state.reloadTiming.get(id);
+    const reloading = !!reload;
     // A player with a Technique armed keeps the normal cooldown fill but wears
     // the danger-red tint until the consuming hit clears it (see combatFx.ts).
     const armed = state.techniqueArmed.has(id);
@@ -35,6 +38,16 @@ export function drawCooldownBars(state: RenderState): void {
       // Wind-up DEPLETES: starts full and drains to empty; the shot fires when it
       // empties. Reads as an incoming-danger countdown rather than a second cooldown.
       pct = Math.max(0, 1 - (now - cast.startedAt) / Math.max(1, cast.castMs));
+      show = true;
+    } else if (reload) {
+      const remainingMs = Math.max(
+        0,
+        reload.remainingMs - (now - reload.observedAt),
+      );
+      pct = Math.max(
+        0,
+        Math.min(1, 1 - remainingMs / reload.durationMs),
+      );
       show = true;
     } else {
       show = snap.attackTargetId !== null;
@@ -52,18 +65,34 @@ export function drawCooldownBars(state: RenderState): void {
       prev.bucket === bucket &&
       prev.show === show &&
       prev.casting === casting &&
+      prev.reloading === reloading &&
       prev.armed === armed
     ) {
       continue;
     }
-    state.cdBarCache.set(id, { x: sprite.x, y: barY, bucket, show, casting, armed });
+    state.cdBarCache.set(id, {
+      x: sprite.x,
+      y: barY,
+      bucket,
+      show,
+      casting,
+      reloading,
+      armed,
+    });
 
     cdBar.setDepth(DEPTH.UI + sprite.y);
     cdBar.clear();
     if (!show) continue;
 
-    const color =
-      casting || armed ? 0xff3322 : pct >= 1 ? 0xffdd22 : 0x4466cc;
+    const color = casting
+      ? 0xff3322
+      : reloading
+        ? 0xe6a43c
+        : armed
+          ? 0xff3322
+          : pct >= 1
+            ? 0xffdd22
+            : 0x4466cc;
 
     cdBar.fillStyle(0x1a1a1a);
     cdBar.fillRect(sprite.x - 16, barY, 32, 3);

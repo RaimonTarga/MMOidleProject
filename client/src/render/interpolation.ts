@@ -43,7 +43,7 @@ export function stepInterpolation(scene: GameScene, dt: number): void {
     const player = own ? state.view.get(id) as PlayerView | undefined : undefined;
     const controlled = player?.isDead || player?.isChanneling || player?.activeBuffs.some(buff => buff.speedMult === 0);
     const preview = own && !isStopPending() ? state.entity.get(id)?.isMoving?.pathPreview : undefined;
-    const predicted = own && !scene.transitioning
+    const predicted = own
       ? controlled ? { ...interp.base } : predictManualMove(scene, interp.base, dt) ?? predictClickMove(scene, interp.base, dt)
         ?? (preview ? predictAutoPath(interp.base, preview, transform.speed * dt,
           ownBlockShapes, ownMovePad ?? { x: 0, y: 0 }) : null)

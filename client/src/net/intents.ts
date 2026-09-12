@@ -82,6 +82,10 @@ export function sendSetAbilityLoadout(
   socket.emit('ability:setLoadout', payload);
 }
 
+export function sendMoveToNeighbor(socket: GameSocket, nodeId: string, pos: Vec2, ack: (result: PlayerMoveResult) => void): void {
+  socket.emit('player:moveToNeighbor', nodeId, pos, ack);
+}
+
 export function sendUseAbility(
   socket: GameSocket,
   abilityId: string,

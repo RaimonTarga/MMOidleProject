@@ -15,6 +15,7 @@ import {
   ambientRampStatus,
   playerMoveSpeedMult,
   movePlayerWithCollisions,
+  clampPlayerStepToNode,
   advancePlayerPath,
   slideMoveAgainstBlocks,
   type FeatureTarget,
@@ -174,9 +175,11 @@ function processManualDirectStep(
     entity.isMoving.motion,
     entity.hasPosition.speed * speedMult * (dt / 1000),
   );
+  const node = NODE_REGISTRY.get(entity.hasPosition.nodeId);
+  const bounded = node ? clampPlayerStepToNode(next.position, node.width, node.height) : next.position;
   const resolved = movePlayerWithCollisions(
     from,
-    next.position,
+    bounded,
     blockShapesFor(world, entity, 'player'),
     pad,
   );

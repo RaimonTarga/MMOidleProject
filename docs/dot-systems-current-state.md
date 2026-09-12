@@ -480,7 +480,11 @@ Combat text uses the existing snapshot event batch: each `player-hit`,
 and style. Simultaneous hits use separate vertical positions; direct damage cannot
 overwrite DoT color/glyph. Shield absorption is a separate per-instance number,
 including fully absorbed incoming DoTs. Text is bounded to 12 numbers per target
-and 120 per batch, with no deferred backlog.
+and 120 per rendered batch. Ordinary confirmed player attacks now share a bounded
+250 ms presentation clock with their hit text and death effects, preserving server
+event spacing across network batches. The queue holds at most 512 entries and
+drops stale cosmetics after stalls; gameplay state still updates immediately.
+DoT ticks and continuous beam/teleport presentation retain their existing paths.
 
 Phase two completes gameplay HP-loss coverage. Damage-only events cover paths
 that do not already emit an amount-bearing hit/tick event:

@@ -38,6 +38,8 @@ export interface VoidOverlordRespawnState {
 
 export interface DeltaSnapshot {
   tick: number;
+  /** Server clock sampled when this snapshot is built. */
+  serverTime?: number;
   nodeId: string;
   full: boolean;
   deltas: EntityDelta[];

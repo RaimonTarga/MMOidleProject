@@ -1,4 +1,6 @@
 import type Phaser from "phaser";
+import { CombatPlaybackClock } from './combatPlaybackClock';
+import type { CombatPlaybackItem } from './combatPlayback';
 import type {
   NetworkedEntity,
   NodeGateEntity,
@@ -30,6 +32,7 @@ export interface DamageNumberHint {
 }
 
 export interface RenderState {
+  combatPlayback: CombatPlaybackClock<CombatPlaybackItem>;
   ids: Set<NetworkId>;
   kind: Map<NetworkId, "player" | "monster" | "minion">;
   entity: Map<NetworkId, NetworkedEntity>;
@@ -75,6 +78,12 @@ export interface RenderState {
   /** Players with a Technique armed for their next attack — tints their cooldown
    *  bar red until the consuming hit's ability client-effect tag clears it. */
   techniqueArmed: Map<NetworkId, { abilityId: string; armedAt: number }>;
+  /** Latest authoritative reload sample plus its client receipt time. The bar
+   *  extrapolates between 5 Hz snapshots and re-anchors on every new sample. */
+  reloadTiming: Map<
+    NetworkId,
+    { remainingMs: number; durationMs: number; observedAt: number }
+  >;
   hpBarCache: Map<
     NetworkId,
     {
@@ -93,6 +102,7 @@ export interface RenderState {
       bucket: number;
       show: boolean;
       casting: boolean;
+      reloading: boolean;
       armed: boolean;
     }
   >;
@@ -213,6 +223,7 @@ export interface RenderState {
 
 export function createRenderState(): RenderState {
   return {
+    combatPlayback: new CombatPlaybackClock(),
     ids: new Set(),
     kind: new Map(),
     entity: new Map(),
@@ -228,6 +239,7 @@ export function createRenderState(): RenderState {
     castState: new Map(),
     skillCallout: new Map(),
     techniqueArmed: new Map(),
+    reloadTiming: new Map(),
     hpBarCache: new Map(),
     cdBarCache: new Map(),
     effectOverlays: new Map(),

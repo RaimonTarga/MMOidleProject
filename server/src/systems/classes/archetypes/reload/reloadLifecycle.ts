@@ -66,6 +66,7 @@ export function startReloadTimer(
   const reload = player.usesReload;
   reload.ammo = 0;
   reload.reloadingMs = reloadMs;
+  reload.reloadDurationMs = reloadMs;
   _reloadStartEmitted.delete(player);
   markSliceDirty(world, player, 'usesReload');
 }
@@ -76,6 +77,11 @@ export function emitReloadStart(world: World, player: PlayerEntity): void {
   if (player.usesReload.reloadingMs <= 0) return;
   if (_reloadStartEmitted.has(player)) return;
   _reloadStartEmitted.add(player);
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: 'player-reload-start',
+    playerId: player.isPlayer.id,
+    reloadMs: player.usesReload.reloadDurationMs,
+  });
   for (const hook of _hooks) {
     hook.onStart?.(world, player);
   }
@@ -119,6 +125,7 @@ export function completeReload(world: World, player: PlayerEntity): void {
   const reload = player.usesReload;
   reload.ammo = reload.ammoMax;
   reload.reloadingMs = 0;
+  reload.reloadDurationMs = 0;
   _reloadStartEmitted.delete(player);
   markSliceDirty(world, player, 'usesReload');
   for (const hook of _hooks) {

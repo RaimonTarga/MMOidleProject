@@ -71,6 +71,7 @@ import { markSliceDirty, mutateSlice } from "../ecs/dirtyHelpers";
 import {
   clearAutoTraversePath,
   startManualNavigation,
+  startNeighborNavigation,
 } from "../systems/world/autoTraverse";
 import { thawNode } from "../world/nodeLifecycle";
 import { rightmostEntranceTarget } from "../world/nodePath";
@@ -310,6 +311,17 @@ export function registerPlayerHandlers(
     if (typeof nodeId !== "string") return;
     clearSummonerCommand(world, p);
     startManualNavigation(world, p, nodeId);
+  });
+
+  socket.on("player:moveToNeighbor", (nodeId, pos, ack) => {
+    const p = liveSelf();
+    if (!p || typeof nodeId !== 'string') {
+      if (typeof ack === 'function') ack({ accepted: false, nodeId: '', goal: { x: 0, y: 0 } });
+      return;
+    }
+    const result = startNeighborNavigation(world, p, nodeId, pos);
+    if (result.accepted) clearSummonerCommand(world, p);
+    if (typeof ack === 'function') ack(result);
   });
 
   socket.on("player:requestSync", () => {

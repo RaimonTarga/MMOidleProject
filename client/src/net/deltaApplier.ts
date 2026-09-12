@@ -20,6 +20,7 @@ import { upsertMinion } from "../render/minions";
 import { destroyEntity } from "../render/destroy";
 import { getOwnView } from "../render/state";
 import { dispatchCombatEvent } from "../render/combatFx";
+import { beginCombatPlayback, queuePlayerAttack, queueCombatDeath } from '../render/combatPlayback';
 import { prepareCombatText, renderCombatText } from '../render/combatText';
 import { spawnDamageNumber } from '../fx/particles';
 import { fxBossDeath, fxMobDeath } from "../fx/monsterDeath";
@@ -47,9 +48,12 @@ export function applyDelta(
 ): void {
   if (snapshot.full) {
     clearOwnMovePath(state);
-    scene.targetMarker.hide();
+    const destination = scene.targetMarker.destination;
+    if (options.stateSync || !destination ||
+      (snapshot.nodeId !== state.ownNodeId && snapshot.nodeId !== destination.nodeId)) scene.targetMarker.hide();
   }
-  const combatText = prepareCombatText(snapshot.events, options);
+  const buffered = beginCombatPlayback(state, snapshot, options.stateSync === true);
+  const immediateEvents: typeof snapshot.events = [];
   const liveIds = new Set<string>();
   const pendingRemoves: string[] = [];
   state.dungeonGuardianIds = new Set(snapshot.dungeon?.guardianMonsterIds ?? []);
@@ -95,6 +99,14 @@ export function applyDelta(
     upsertEntityView(state, delta.netId, entity, scene);
   }
 
+  // Observe authoritative state immediately; schedule only confirmed attack cosmetics.
+  for (const ev of snapshot.events) {
+    if (options.stateSync) continue;
+    if (buffered && ev.seq !== undefined && !state.combatPlayback.acceptSequence(ev.seq)) continue;
+    if (buffered && queuePlayerAttack(state, ev)) continue;
+    immediateEvents.push(ev);
+  }
+  const combatText = prepareCombatText(immediateEvents, options);
   if (shouldRunClientFx()) {
     renderCombatText(combatText, state, (pos, offset, amount, color, style) =>
       spawnDamageNumber(scene, pos, offset, amount, color, style));
@@ -103,7 +115,7 @@ export function applyDelta(
   // Events fire before removes: sprites still exist so reward/hit FX can read positions.
   // Only the local player's confirmed primary DoT tick drives their mechanic HUD.
   const ownBeforeRemoves = getOwnView(state);
-  for (const ev of snapshot.events) {
+  for (const ev of immediateEvents) {
     if (
       ev.kind === "dot-tick" &&
       ev.sourceType === "class" &&
@@ -124,7 +136,7 @@ export function applyDelta(
     // changes come through the full-sync path below, not here). Play the retro
     // bar-fade dissolve off its still-present sprite before it is destroyed —
     // the full boss version (with sting) for bosses, a lighter one for mobs.
-    if (entity?.isMonster && shouldRunClientFx()) {
+    if (entity?.isMonster && shouldRunClientFx() && !queueCombatDeath(state, scene, netId)) {
       const sprite = state.sprite.get(netId);
       if (sprite) {
         if (entity.isMonster.isBoss) {

@@ -9,6 +9,7 @@ import {
   nodeToSceneCoords,
 } from "@mmo-idle/shared";
 import { DEPTH } from "../../render/depth";
+import { cameraFollowAlpha, edgeCameraPosition } from "../../render/cameraMotion";
 import { createMoveMarker } from "../../render/moveMarker";
 import { clearMovementIntent } from "../../input/moveCancel";
 import { getDefaultStore } from "jotai";
@@ -87,6 +88,7 @@ import {
   VOID_TOMB_TEXTURE_KEY,
 } from "../../sprites";
 import { stepInterpolation, getOwnBase } from "../../render/interpolation";
+import { stepCombatPlayback } from '../../render/combatPlayback';
 import { CORPSE_REMAINS_ART } from "../../render/corpseRemains";
 import { drawShadows } from "../../render/shadows";
 import { drawTargetIndicator } from "../../render/targetIndicator";
@@ -174,8 +176,6 @@ import {
 } from "./cinematic/suppress";
 
 const CAMERA_HOLD_MARGIN = 80;
-const CAMERA_LERP = 0.1;
-const CAMERA_EDGE_PIN_DIST = 80;
 const SHADOW_DEFS_KEY = "shadowDefs";
 
 function clamp(n: number, min: number, max: number): number {
@@ -209,21 +209,8 @@ function computeCameraScroll(
   const maxY = Math.max(minY, bounds.y + bounds.height - view.height - offY);
   // Centering is zoom-independent: the view's center is always
   // `scroll + camSize / 2`, whatever the zoom.
-  let x = clamp(scenePos.x - cam.width / 2, minX, maxX);
-  let y = clamp(scenePos.y - cam.height / 2, minY, maxY);
-
-  const W = GAME_CONFIG.NODE_WIDTH;
-  const H = GAME_CONFIG.NODE_HEIGHT;
-  if (nodePos.x <= CAMERA_EDGE_PIN_DIST) {
-    x = minX;
-  } else if (nodePos.x >= W - CAMERA_EDGE_PIN_DIST) {
-    x = maxX;
-  }
-  if (nodePos.y <= CAMERA_EDGE_PIN_DIST) {
-    y = minY;
-  } else if (nodePos.y >= H - CAMERA_EDGE_PIN_DIST) {
-    y = maxY;
-  }
+  const x = clamp(scenePos.x - nodePos.x + edgeCameraPosition(nodePos.x, GAME_CONFIG.NODE_WIDTH) - cam.width / 2, minX, maxX);
+  const y = clamp(scenePos.y - nodePos.y + edgeCameraPosition(nodePos.y, GAME_CONFIG.NODE_HEIGHT) - cam.height / 2, minY, maxY);
 
   return { x, y, maxX, maxY };
 }
@@ -579,6 +566,7 @@ export function createGameScene(scene: GameScene): void {
 
   function onVisibilityChange(): void {
     if (document.hidden) {
+      scene.state.combatPlayback.reset();
       abortMapSlide(scene);
       if (scene.socket.connected) {
         if (scene.spectatorMode) scene.socket.emit("spectate:setActive", false);
@@ -607,6 +595,7 @@ export function createGameScene(scene: GameScene): void {
   document.addEventListener("keydown", resumeSpectator);
 
   scene.events.once("shutdown", () => {
+    scene.state.combatPlayback.reset();
     document.removeEventListener("visibilitychange", onVisibilityChange);
     document.removeEventListener("pointerdown", resumeSpectator);
     document.removeEventListener("keydown", resumeSpectator);
@@ -677,6 +666,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   // The own player tracks the server-authoritative position even during a map
   // slide; the slide is purely a camera pan, so client and server never diverge.
   stepInterpolation(scene, dt);
+  stepCombatPlayback(scene.state, scene);
   drawShadows(scene.state);
   drawLabels(scene.state);
   drawThoughtBubbles(scene.state);
@@ -747,14 +737,8 @@ export function updateGameScene(scene: GameScene, delta: number): void {
         cam.setScroll(targetScroll.x, targetScroll.y);
         scene.cameraScrollReady = true;
       } else {
-        const scrollDx = targetScroll.x - cam.scrollX;
-        const scrollDy = targetScroll.y - cam.scrollY;
-        const lagSq = scrollDx * scrollDx + scrollDy * scrollDy;
-        // During auto-combat the player can outrun the default camera lerp and
-        // appear frozen off-screen while still pathing on the server.
-        const followT = scene.autoMode
-          ? (lagSq > 140 * 140 ? 1 : 0.3)
-          : CAMERA_LERP;
+        // Auto retains its faster response without a distance-triggered snap.
+        const followT = cameraFollowAlpha(dt, scene.autoMode);
         cam.setScroll(
           lerp(cam.scrollX, targetScroll.x, followT),
           lerp(cam.scrollY, targetScroll.y, followT),
@@ -763,16 +747,22 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     }
   }
 
+  scene.targetMarker.rebaseDestination(scene.lastDrawnNodeId);
   const ownSprite = scene.state.ownId
     ? scene.state.sprite.get(scene.state.ownId)
     : undefined;
-  if (ownSprite && scene.targetMarker.visible) {
+  if (ownSprite && scene.targetMarker.visible &&
+    (!scene.targetMarker.destination || scene.targetMarker.destination.nodeId === scene.state.ownNodeId)) {
     const dx = ownSprite.x - scene.targetMarker.x;
     const dy = ownSprite.y - scene.targetMarker.y;
     // Arrival is "standing on it", not "dead centre": the server stops the
     // player on the clamped target, which pathfinding may leave a body's width
     // short of the raw click.
     if (dx * dx + dy * dy < ARRIVAL_RADIUS * ARRIVAL_RADIUS) scene.targetMarker.hide();
+    // A blocked click can finish at a reachable substitute, as normal path
+    // movement does. Retire its marker when authority reports that final stop.
+    const own = scene.state.ownId ? scene.state.entity.get(scene.state.ownId) : undefined;
+    if (scene.targetMarker.destination && !scene.transitioning && own && !own.isMoving) scene.targetMarker.hide();
   }
   scene.targetMarker.draw(Date.now());
 
@@ -809,6 +799,7 @@ function connectSocket(scene: GameScene): () => void {
     },
     onUnauthorized: handleSocketUnauthorized,
     onDisconnect: () => {
+      scene.state.combatPlayback.reset();
       atomStore.set(statusAtom, "disconnected");
       syncPlayerAtoms(null);
       scene.state.gameplaySettingsSynced = false;
@@ -893,6 +884,7 @@ function connectSocket(scene: GameScene): () => void {
       );
     },
     onPlayerDied: (payload) => {
+      scene.state.combatPlayback.reset();
       // Death cancels every outstanding order. The server has already stopped
       // the entity and dropped auto-combat; this drops the client half so the
       // respawned character is not still showing (or predicting) the walk that

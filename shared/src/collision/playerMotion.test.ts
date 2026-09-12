@@ -1,4 +1,4 @@
-import { advancePlayerPath, movePlayerWithCollisions } from './playerMotion';
+import { advancePlayerPath, clampPlayerStepToNode, movePlayerWithCollisions } from './playerMotion';
 import { moverOverlapsBlockShapes } from '../systems/spatial';
 import type { NodeFeatureShape } from '../world/nodeFeatures';
 
@@ -16,6 +16,15 @@ function assertVec(actual: { x: number; y: number }, expected: { x: number; y: n
 
 const wall: NodeFeatureShape = { kind: 'rect', x: 100, y: 100, halfW: 10, halfH: 40 };
 const pad = { x: 4, y: 4 };
+
+for (const x of [-100, 2500, 4900]) {
+  for (const y of [-100, 2500, 4900]) {
+    const bounded = clampPlayerStepToNode({ x, y }, 4800, 4800);
+    const predicted = movePlayerWithCollisions({ x: 2400, y: 2400 }, bounded, []);
+    assert(predicted.x >= 0 && predicted.x <= 4800 && predicted.y >= 0 && predicted.y <= 4800,
+      'prediction waits inside the current node for authoritative crossing');
+  }
+}
 
 const free = movePlayerWithCollisions({ x: 0, y: 0 }, { x: 30, y: 20 }, [wall]);
 assertVec(free, { x: 30, y: 20 }, 'free movement reaches destination');

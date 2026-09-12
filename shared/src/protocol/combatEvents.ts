@@ -12,7 +12,16 @@ export type DotTickSourceType = 'class' | 'weapon' | 'monster' | 'special';
  * Bundled with each DeltaSnapshot so the client can fire animations and log
  * entries reliably even when logic ticks outrun broadcast ticks.
  */
-export type CombatEvent =
+export interface CombatEventTiming {
+  /** Server occurrence time, not packet arrival time. Optional for older clients/fixtures. */
+  at?: number;
+  /** World-session ordering; shared by every viewer of the same event. */
+  seq?: number;
+}
+
+export type CombatEvent = CombatEventTiming & CombatEventPayload;
+
+type CombatEventPayload =
   // Damage-only presentation for paths without an attack/tick animation event.
   // Amount is finalized HP damage (including overkill), never a health authority.
   | { kind: 'damage'; targetId: string; targetKind: 'player' | 'monster' | 'minion'; targetPos: Vec2; amount: number; category: 'direct' | 'dot'; element?: DamageElement; sourceId?: string }
@@ -102,6 +111,10 @@ export type CombatEvent =
   // each other react. `ability` is the ability id; the client picks the FX by id.
   // Purely cosmetic — the buff/heal/cleanse is server-authoritative.
   | { kind: 'player-guard'; playerId: string; ability: string }
+  // A Slinger entered the authoritative reload lifecycle. Drives the same
+  // node-wide overhead callout used by player abilities; reload timing itself
+  // remains authoritative state and is rendered separately on the overhead bar.
+  | { kind: 'player-reload-start'; playerId: string; reloadMs: number }
   // A Technique armed the player's next attack (`hasArmedAbility` attached). Drives
   // the armed telegraph over the player: a skill-name callout plus the cooldown bar
   // tinted red until the charge is consumed (the consuming `player-hit` carries an

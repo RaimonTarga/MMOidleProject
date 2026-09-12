@@ -1,5 +1,5 @@
 import type { PlayerView, Vec2 } from '@mmo-idle/shared';
-import { movePlayerWithCollisions } from '@mmo-idle/shared';
+import { GAME_CONFIG, clampPlayerStepToNode, movePlayerWithCollisions } from '@mmo-idle/shared';
 import { sendMove } from '../net/intents';
 import { getOwnBase } from '../render/interpolation';
 import { cancelAutoPath, setAutoMode } from './autoPath';
@@ -129,6 +129,7 @@ export function hasKeyboardMoveIntent(): boolean {
 
 /** Stop click-to-move / keyboard motion and tell the server to hold position. */
 export function cancelActiveMove(scene: GameScene): void {
+  scene.targetMarker.hide();
   if (!scene.myId) return;
   const ownId = scene.state.ownId;
   if (!ownId) return;
@@ -172,8 +173,8 @@ export function startMovementTick(scene: GameScene): () => void {
   };
 }
 
-function tickMovement(scene: GameScene): void {
-  if (!scene.myId || scene.transitioning) return;
+export function tickMovement(scene: GameScene): void {
+  if (!scene.myId || scene.lastDrawnNodeId !== scene.state.ownNodeId) return;
   const ownId = scene.state.ownId;
   if (!ownId) return;
   const transform = scene.state.transform.get(ownId);
@@ -240,7 +241,7 @@ function tickMovement(scene: GameScene): void {
 
 /** Current full-speed manual heading, or null while manual prediction is gated. */
 export function manualMoveDirection(scene: GameScene): Vec2 | null {
-  if (scene.transitioning || holdStill || !isManualActive()) return null;
+  if (holdStill || !isManualActive()) return null;
   const ownId = scene.state.ownId;
   if (!ownId) return null;
   const player = scene.state.view.get(ownId) as PlayerView | undefined;
@@ -265,7 +266,7 @@ export function predictManualMove(
   dt: number,
 ): Vec2 | null {
   const direction = manualMoveDirection(scene);
-  if (!direction) return isManualActive() && !scene.transitioning ? from : null;
+  if (!direction) return isManualActive() ? from : null;
   const ownId = scene.state.ownId;
   const transform = ownId ? scene.state.transform.get(ownId) : undefined;
   if (!transform || !Number.isFinite(transform.speed) || transform.speed <= 0) {
@@ -277,7 +278,7 @@ export function predictManualMove(
   };
   return movePlayerWithCollisions(
     from,
-    to,
+    clampPlayerStepToNode(to, GAME_CONFIG.NODE_WIDTH, GAME_CONFIG.NODE_HEIGHT),
     getOwnBlockShapes(scene),
     getOwnMovePad(scene.state),
   );

@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
+import { destinationScenePoint, type NeighborDestination } from '../input/neighborDestination';
 
 /**
  * The click-to-move destination marker.
@@ -69,6 +70,7 @@ export class MoveMarker {
   x = 0;
   y = 0;
   visible = false;
+  destination: NeighborDestination | null = null;
 
   private kind: MoveMarkerKind = 'move';
   private shownAt = 0;
@@ -85,6 +87,7 @@ export class MoveMarker {
 
   /** Plant the marker at a scene-space point and replay the ping. */
   show(x: number, y: number, kind: MoveMarkerKind = 'move'): void {
+    this.destination = null;
     this.x = x;
     this.y = y;
     this.kind = kind;
@@ -95,11 +98,27 @@ export class MoveMarker {
 
   /** Pull the marker. Idempotent — every cancel path may call it blind. */
   hide(): void {
+    this.destination = null;
     if (!this.visible) return;
     this.visible = false;
     this.g.clear();
     this.g.setAlpha(1);
     this.g.setVisible(false);
+  }
+
+  showDestination(currentNodeId: string, destination: NeighborDestination): void {
+    const point = destinationScenePoint(currentNodeId, destination);
+    if (!point) return;
+    this.show(point.x, point.y);
+    this.destination = destination;
+  }
+
+  rebaseDestination(currentNodeId: string): void {
+    if (!this.destination) return;
+    const point = destinationScenePoint(currentNodeId, this.destination);
+    if (!point) { this.hide(); return; }
+    this.x = point.x;
+    this.y = point.y;
   }
 
   /** One frame. Cheap: a handful of strokes into a single Graphics. */

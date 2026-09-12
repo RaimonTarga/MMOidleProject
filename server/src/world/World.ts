@@ -353,6 +353,7 @@ export class World {
   suppressedFeatureBlocks = new Set<string>();
   /** Queued combat events per node, flushed into each broadcast snapshot. */
   private nodeEvents = new Map<string, CombatEvent[]>();
+  private combatEventSequence = 0;
   /** Runtime journal of all world log events (dev/debug). */
   worldLogJournal: WorldLogEvent[] = [];
   /** When set, caps journal length instead of {@link WORLD_LOG_JOURNAL_MAX} (bench fight logs). */
@@ -689,7 +690,7 @@ export class World {
       arr = [];
       this.nodeEvents.set(nodeId, arr);
     }
-    arr.push(event);
+    arr.push({ ...event, at: Date.now(), seq: ++this.combatEventSequence });
   }
 
   /** Drain and return queued events for `nodeId`. Used by buildNodeDelta. */

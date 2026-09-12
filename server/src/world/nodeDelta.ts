@@ -72,6 +72,7 @@ export function buildNodeDelta(
 
   const snapshot: DeltaSnapshot = {
     tick: world.tickCounter,
+    serverTime: Date.now(),
     nodeId,
     full,
     deltas,

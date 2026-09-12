@@ -60,6 +60,7 @@ export function buildSpectatorNodeSnapshot(
 
   const snapshot: DeltaSnapshot = {
     tick: world.tickCounter,
+    serverTime: Date.now(),
     nodeId,
     full: true,
     deltas,

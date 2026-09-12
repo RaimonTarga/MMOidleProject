@@ -1,16 +1,11 @@
 import { GAME_CONFIG, type NodeDirection } from "@mmo-idle/shared";
 import { getDefaultStore } from "jotai";
-import { autoPathAtom, nodeLoadingAtom } from "../../hud/atoms";
+import { nodeLoadingAtom } from "../../hud/atoms";
 import {
-  cancelActiveMove,
   hasKeyboardMoveIntent,
+  tickMovement,
 } from "../../input/movement";
-import {
-  clearPendingStop,
-  setManualActive,
-} from "../../input/moveOwnership";
 import { clearOwnMovePath } from "../../input/pathPrediction";
-import { loadGameplaySettings } from "../../settings/gameplaySettings";
 import {
   directionOffset,
   rebuildNeighborLayer,
@@ -24,8 +19,6 @@ export interface MapTransition {
   toNodeId: string;
   dir: NodeDirection;
   elapsedMs: number;
-  /** Resting scroll the camera snaps to if the slide is fast-forwarded. */
-  endScroll: { x: number; y: number };
   /** Destination fog — full at slide start, fades out. */
   incomingFog: Phaser.GameObjects.Rectangle | null;
   /** Exiting neighbor fog — transparent at slide start, fades in. */
@@ -76,7 +69,6 @@ export function createMapTransition(): MapTransition {
     toNodeId: "",
     dir: "east",
     elapsedMs: 0,
-    endScroll: { x: 0, y: 0 },
     incomingFog: null,
     outgoingShade: null,
   };
@@ -128,10 +120,12 @@ export function beginMapSlide(
   t.toNodeId = toNodeId;
   t.dir = dir;
   t.elapsedMs = 0;
-  t.endScroll = preScroll;
   scene.transitioning = true;
   clearOwnMovePath(scene.state);
   getDefaultStore().set(nodeLoadingAtom, { active: false, nodeId: null });
+  // The authoritative destination snapshot is installed before this frame.
+  // Resume current held input immediately; old click targets were discarded.
+  if (hasKeyboardMoveIntent() && !document.hidden) tickMovement(scene);
 }
 
 export function tickMapSlide(scene: GameScene, dt: number): void {
@@ -146,33 +140,6 @@ export function tickMapSlide(scene: GameScene, dt: number): void {
   if (t.elapsedMs >= GAME_CONFIG.MAP_SLIDE_MS) finishMapSlide(scene);
 }
 
-/** True while the server owns movement (map auto-path or auto-traverse). */
-export function isServerOwnedNavigation(
-  scene: GameScene,
-  navPath?: string[] | null,
-): boolean {
-  const path = navPath ?? getDefaultStore().get(autoPathAtom);
-  if (path && path.length > 0) return true;
-  if (!scene.autoMode) return false;
-  return loadGameplaySettings().autoTraverseEnabled;
-}
-
-/** Release stale client heading unless auto pathing or keyboard is still active. */
-function resolvePostTransitionMovement(scene: GameScene): void {
-  if (hasKeyboardMoveIntent()) {
-    setManualActive(true);
-    return;
-  }
-  if (isServerOwnedNavigation(scene)) {
-    setManualActive(false);
-    clearPendingStop();
-    return;
-  }
-  setManualActive(false);
-  clearPendingStop();
-  cancelActiveMove(scene);
-}
-
 export function finishMapSlide(scene: GameScene): void {
   const t = scene.mapTransition;
   if (!t.active) return;
@@ -182,13 +149,14 @@ export function finishMapSlide(scene: GameScene): void {
   applySceneBounds(scene);
   t.active = false;
   scene.transitioning = false;
-  resolvePostTransitionMovement(scene);
 }
 
 export function fastForwardMapSlide(scene: GameScene): void {
   const t = scene.mapTransition;
   if (!t.active) return;
-  scene.cameras.main.setScroll(t.endScroll.x, t.endScroll.y);
+  // The next camera update resolves the current destination/player framing.
+  // Old-node scroll values are invalid after the coordinate rebase.
+  scene.cameraScrollReady = false;
   finishMapSlide(scene);
 }
 

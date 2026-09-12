@@ -216,6 +216,8 @@ export interface ClientToServerEvents {
   "player:setAutocombatConfig": (config: AutocombatConfig) => void;
   /** Walk to a destination node via the shortest gate path (map click-to-navigate). */
   "player:navigateTo": (nodeId: string) => void;
+  /** Click a point in a directly adjacent node; server owns both travel legs. */
+  "player:moveToNeighbor": (nodeId: string, pos: Vec2, ack: (result: PlayerMoveResult) => void) => void;
   /** Request a fresh authoritative full snapshot for the player's current node. */
   "player:requestSync": () => void;
   /** Activate the current dungeon node's altar if the player is close enough. */

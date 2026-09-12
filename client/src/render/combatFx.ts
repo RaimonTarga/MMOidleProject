@@ -189,10 +189,38 @@ function listenerGain(scene: GameScene, sourceX: number, sourceY: number): numbe
 type PlayerHitEvent = CombatEvent & { kind: "player-hit" };
 type PlayerKillEvent = CombatEvent & { kind: "player-kill" };
 
-function spawnRewardFloaters(scene: GameScene, ev: PlayerKillEvent): void {
+/** Small captured render context; never retains a removed entity or Phaser sprite. */
+export interface PlayerAttackPresentation {
+  player: PlayerView;
+  from: Vec2;
+  to: Vec2;
+  targetSize: number;
+  killedBoss: boolean;
+}
+
+export function capturePlayerAttack(
+  state: RenderState,
+  ev: PlayerHitEvent | PlayerKillEvent,
+): PlayerAttackPresentation | undefined {
+  const player = state.view.get(ev.playerId) as PlayerView | undefined;
+  const actor = state.sprite.get(ev.playerId);
+  const target = state.sprite.get(ev.targetId);
+  if (!player || !actor || !target) return undefined;
+  return {
+    player,
+    from: { x: actor.x, y: actor.y },
+    to: ev.kind === 'player-hit' && ev.targetPos
+      ? nodeToScene(ev.targetPos.x, ev.targetPos.y)
+      : { x: target.x, y: target.y },
+    targetSize: Math.max(target.displayWidth, target.displayHeight),
+    killedBoss: state.entity.get(ev.targetId)?.isMonster?.isBoss ?? false,
+  };
+}
+
+function spawnRewardFloaters(scene: GameScene, ev: PlayerKillEvent, pos?: Vec2): void {
   const target = scene.state.sprite.get(ev.targetId);
-  const x = target?.x ?? scene.cameras.main.worldView.centerX;
-  const y = target?.y ?? scene.cameras.main.worldView.centerY;
+  const x = pos?.x ?? target?.x ?? scene.cameras.main.worldView.centerX;
+  const y = pos?.y ?? target?.y ?? scene.cameras.main.worldView.centerY;
   const lines: { text: string; color: string }[] = [];
   if (ev.biomeXpGained > 0)
     lines.push({ text: `+${ev.biomeXpGained} XP`, color: "#88ddff" });
@@ -631,6 +659,7 @@ const GUARD_CALLOUT_COLORS: Record<string, string> = {
 };
 const GUARD_CALLOUT_FALLBACK = "#9cd2ff";
 const TECHNIQUE_CALLOUT_COLOR = "#ffd24a";
+const RELOAD_CALLOUT_COLOR = "#f0b04f";
 
 const TECHNIQUE_CONSUMED_TAGS = [
   ABILITY_SWEEP_FX,
@@ -702,6 +731,7 @@ export function dispatchCombatEvent(
   state: RenderState,
   ev: CombatEvent,
   scene: GameScene,
+  presentation?: PlayerAttackPresentation,
 ): void {
   if (ev.kind === 'damage') return; // Amount-only events render in deltaApplier.
   if (ev.kind === "stance-switch") {
@@ -942,6 +972,19 @@ export function dispatchCombatEvent(
     return;
   }
 
+  if (ev.kind === 'player-reload-start') {
+    if (shouldRunClientFx() && state.sprite.has(ev.playerId)) {
+      spawnSkillCallout(
+        state,
+        scene,
+        ev.playerId,
+        'Reloading',
+        RELOAD_CALLOUT_COLOR,
+      );
+    }
+    return;
+  }
+
   if (ev.kind === "player-technique-armed") {
     // A Technique armed the player's next attack. Track the armed state (drives
     // the red cooldown-bar tint until the consuming hit clears it) and pop a
@@ -1095,8 +1138,26 @@ export function dispatchCombatEvent(
   const isOwnPlayerEvent = ev.playerId === scene.myId;
   const isWatchedPlayerEvent =
     scene.spectatorMode && ev.playerId === scene.spectatorTargetId;
-  if (!isOwnPlayerEvent && !isWatchedPlayerEvent) return;
+  // Direct player hits use this event path for every viewer. Snapshot-driven
+  // remote-player attacks used to collapse multiple shots into one animation.
+  if (!isOwnPlayerEvent && !isWatchedPlayerEvent && ev.kind !== 'player-hit') return;
   const actorId = isOwnPlayerEvent ? state.ownId : ev.playerId;
+
+  // Remote continuous beams/teleports retain their lightweight style renderer;
+  // they must never activate the local player's beam or movement controllers.
+  if (!isOwnPlayerEvent && !isWatchedPlayerEvent && ev.kind === 'player-hit') {
+    const player = presentation?.player ?? state.view.get(ev.playerId) as PlayerView | undefined;
+    const from = state.sprite.get(ev.playerId) ?? presentation?.from;
+    const to = presentation?.to ?? state.sprite.get(ev.targetId);
+    if (shouldRunClientFx() && player && from && to && (player.summonsMinions ?? 0) === 0) {
+      spawnAttackEffect(scene, player.attackStyle, { x: from.x, y: from.y }, { x: to.x, y: to.y }, {
+        archetype: player.combatArchetype ?? undefined,
+        selectedRange: player.selectedRange,
+        dotPath: player.combatArchetype === 'dot' ? getDotPath(player) : undefined,
+      });
+    }
+    return;
+  }
 
   if (ev.kind === "player-knockback") {
     if (!actorId) return;
@@ -1117,17 +1178,17 @@ export function dispatchCombatEvent(
   }
 
   if (ev.kind === "player-hit") {
-    const player = actorId
+    const player = presentation?.player ?? (actorId
       ? (state.view.get(actorId) as PlayerView | undefined)
-      : undefined;
-    if (shouldRunClientFx()) {
+      : undefined);
+    if (shouldRunClientFx() && (isOwnPlayerEvent || isWatchedPlayerEvent)) {
       // Throttled in the engine, so pellet bursts collapse to one cue.
       if (ev.empowered || ev.execution) playSfx("empowered");
       else playSfx(attackSfxFor(player?.combatArchetype ?? null, player?.attackStyle ?? ""));
     }
     // Minion hits already play FX from minions.ts (lastAttackAt); skip body lunge/FX.
     if (shouldRunClientFx() && (player?.summonsMinions ?? 0) === 0) {
-      runFxForAttackStyle(state, ev, scene);
+      runFxForAttackStyle(state, ev, scene, presentation);
     }
     // The mirror of the player's own graze: the target rolled with the blow.
     if (ev.evadedPartial) spawnGrazeLabel(state, scene, ev.targetId);
@@ -1137,9 +1198,9 @@ export function dispatchCombatEvent(
     if (shouldRunClientFx()) {
       // Bosses get their own death sting from the removal path (deltaApplier);
       // don't also fire the generic enemy-death cue for them.
-      const killedBoss = state.entity.get(ev.targetId)?.isMonster?.isBoss ?? false;
+      const killedBoss = presentation?.killedBoss ?? state.entity.get(ev.targetId)?.isMonster?.isBoss ?? false;
       if (!killedBoss) playSfx("kill");
-      spawnRewardFloaters(scene, ev);
+      spawnRewardFloaters(scene, ev, presentation?.to);
     }
   }
 }
@@ -1148,11 +1209,12 @@ function runFxForAttackStyle(
   state: RenderState,
   ev: PlayerHitEvent,
   scene: GameScene,
+  presentation?: PlayerAttackPresentation,
 ): void {
   const actorId = ev.playerId;
   const actorSprite = state.sprite.get(actorId);
   const targetSprite = state.sprite.get(ev.targetId);
-  const player = state.view.get(actorId) as PlayerView | undefined;
+  const player = presentation?.player ?? state.view.get(actorId) as PlayerView | undefined;
   const targetInterp = state.interpolation.get(ev.targetId);
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
   const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
@@ -1164,19 +1226,19 @@ function runFxForAttackStyle(
   const isCannonBlast = ev.effects?.includes(CANNON_BLAST_CLIENT_EFFECT) ?? false;
   const isVoidDischarge = ev.effects?.includes(VOID_DISCHARGE_CLIENT_EFFECT) ?? false;
 
-  if (!targetSprite) {
+  if (!targetSprite && !presentation) {
     if (isFlashTeleport) {
       snapPlayerToServerTarget(state, scene, actorId, ev.targetId, ev.playerPos);
     }
     return;
   }
 
-  if (!actorSprite || !player) return;
+  if ((!actorSprite && !presentation) || !player) return;
 
   const dotPath =
     player.combatArchetype === "dot" ? getDotPath(player) : undefined;
   const bossScale =
-    Math.max(targetSprite.displayWidth, targetSprite.displayHeight) > 64
+    (presentation?.targetSize ?? Math.max(targetSprite!.displayWidth, targetSprite!.displayHeight)) > 64
       ? 1.33
       : 1;
   const targetEffectScale = 1.5 * bossScale;
@@ -1205,10 +1267,10 @@ function runFxForAttackStyle(
     player.combatArchetype === "energy" &&
     (player.passives["energy.binary-cycle"] ?? 0) > 0;
 
-  const from = { x: actorSprite.x, y: actorSprite.y };
-  const to = ev.targetPos
+  const from = actorSprite ? { x: actorSprite.x, y: actorSprite.y } : presentation!.from;
+  const to = presentation?.to ?? (ev.targetPos
     ? nodeToScene(ev.targetPos.x, ev.targetPos.y)
-    : { x: targetSprite.x, y: targetSprite.y };
+    : { x: targetSprite!.x, y: targetSprite!.y });
   // Cosmetic elemental recolor. The class DoT path (Apprentice only) takes the
   // wash; the weapon and any transient effect take the lighter layers.
   const tint =

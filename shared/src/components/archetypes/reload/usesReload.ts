@@ -5,6 +5,8 @@ export interface UsesReload {
   laserHeat: number;
   laserOverheated: boolean;
   reloadingMs: number;
+  /** Full duration captured when the current reload began; 0 while idle. */
+  reloadDurationMs: number;
   /** Hair Trigger / Chain Gun: attack-speed stacks built during current clip. */
   clipSpeedStacks: number;
   /** Hair Trigger / Chain Gun: attack cooldown captured on first shot of clip (0 = not yet set). */
@@ -37,6 +39,7 @@ export function initUsesReload(args: { ammoMax: number }): UsesReload {
     laserHeat:       0,
     laserOverheated: false,
     reloadingMs:     0,
+    reloadDurationMs: 0,
     clipSpeedStacks: 0,
     clipBaseAttackCooldownMs: 0,
     momentumStacks:  0,

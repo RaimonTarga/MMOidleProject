@@ -5,6 +5,8 @@ import { stopEntity, updateMovement } from '../src/systems/world/movement';
 import { setMovePath } from '../src/systems/world/pathMotion';
 import { attachComponent } from '../src/ecs/markerHelpers';
 import { World } from '../src/world/World';
+import { NODE_REGISTRY } from '../src/world/nodeRegistry';
+import { updateTransitions, resolveExit } from '../src/systems/world/transitions';
 function assert(value: unknown, message: string): asserts value { if (!value) throw new Error(message); }
 function playerSlices(id: string, nodeId: string): PersistedPlayerSlices {
   return {
@@ -119,4 +121,73 @@ assert(!applyManualMoveIntent(isolated, p, { x: 350, y: 400 }, { mode: 'direct',
 attachComponent(isolated, p, 'isRooted', {});
 assert(!applyManualMoveIntent(isolated, p, { x: 350, y: 400 }).accepted, 'rooted move rejected');
 assert(!applyManualMoveIntent(isolated, undefined, { x: 0, y: 0 }).accepted, 'missing player rejected');
+// A diagonal near a border must retain its heading and cross, rather than
+// having its outward axis shortened until the crossing looks like edge grazing.
+for (const edge of ['west', 'east', 'north', 'south'] as const) {
+  for (const lateral of [-1, 1]) {
+    const w = new World();
+    const id = `diagonal-${edge}-${lateral}`;
+    const p = w.attachPlayerEntity(playerSlices(id, 'node-clearing'), id);
+    w.collision.blockShapes = () => []; // isolate gate behavior from scenery
+    const horizontal = edge === 'west' || edge === 'east';
+    const outward = edge === 'west' || edge === 'north' ? -1 : 1;
+    const direction = horizontal ? { x: outward, y: lateral } : { x: lateral, y: outward };
+    p.hasPosition.current = horizontal
+      ? { x: outward < 0 ? 25 : GAME_CONFIG.NODE_WIDTH - 25, y: 2400 }
+      : { x: 2400, y: outward < 0 ? 25 : GAME_CONFIG.NODE_HEIGHT - 25 };
+    const result = applyManualMoveIntent(w, p, { x: 0, y: 0 }, { mode: 'direct', direction });
+    assert(result.accepted, `${id}: held input accepted`);
+    const motion = p.isMoving!.motion.direction;
+    assert(Math.abs(Math.abs(motion.x) - Math.abs(motion.y)) < 1e-8, `${id}: diagonal heading preserved near edge`);
+    for (let tick = 0; tick < 10 && p.hasPosition.nodeId === 'node-clearing'; tick++) {
+      updateMovement(w, 100, tick * 100);
+      updateTransitions(w);
+    }
+    const destination = resolveExit('node-clearing', edge);
+    assert(destination && p.hasPosition.nodeId === destination, `${id}: crosses the intended open edge`);
+  }
+}
+// Corner priority must not let a sealed west border hide an open south exit.
+const cornerNode = [...NODE_REGISTRY.keys()].find(id => !resolveExit(id, 'west') && resolveExit(id, 'south'));
+assert(cornerNode, 'map contains a sealed/open corner');
+const cornerWorld = new World();
+cornerWorld.collision.blockShapes = () => [];
+const cornerPlayer = cornerWorld.attachPlayerEntity(playerSlices('diagonal-corner', cornerNode), 'diagonal-corner');
+cornerPlayer.hasPosition.current = { x: 10, y: GAME_CONFIG.NODE_HEIGHT - 10 };
+applyManualMoveIntent(cornerWorld, cornerPlayer, { x: 0, y: 0 }, { mode: 'direct', direction: { x: -1, y: 1 } });
+updateTransitions(cornerWorld);
+assert(cornerPlayer.hasPosition.nodeId === resolveExit(cornerNode, 'south'), 'open south exit wins over sealed west border');
+const sealedPlayer = cornerWorld.attachPlayerEntity(playerSlices('diagonal-sealed', cornerNode), 'diagonal-sealed');
+sealedPlayer.hasPosition.current = { x: 25, y: 2400 };
+for (let tick = 0; tick < 12; tick++) {
+  applyManualMoveIntent(cornerWorld, sealedPlayer, { x: 0, y: 0 }, { mode: 'direct', direction: { x: -1, y: 1 } });
+  updateMovement(cornerWorld, 100, tick * 100);
+  updateTransitions(cornerWorld);
+  assert(sealedPlayer.hasPosition.nodeId === cornerNode && sealedPlayer.hasPosition.current.x >= 0,
+    'held diagonal cannot cross a sealed edge or leave its bounds');
+}
+
+// Parallel movement is not a crossing, and fast direct steps cannot skip the
+// finite gate strip or leave the authoritative node rectangle.
+const boundsWorld = new World();
+boundsWorld.collision.blockShapes = () => [];
+const boundsPlayer = boundsWorld.attachPlayerEntity(playerSlices('diagonal-bounds', 'node-clearing'), 'diagonal-bounds');
+boundsPlayer.hasPosition.current = { x: 10, y: 2400 };
+applyManualMoveIntent(boundsWorld, boundsPlayer, { x: 0, y: 0 }, { mode: 'direct', direction: { x: 0, y: 1 } });
+updateTransitions(boundsWorld);
+assert(boundsPlayer.hasPosition.nodeId === 'node-clearing', 'parallel movement stays in node');
+boundsPlayer.hasPosition.current = { x: 25, y: 2400 };
+boundsPlayer.hasPosition.speed = 4000;
+applyManualMoveIntent(boundsWorld, boundsPlayer, { x: 0, y: 0 }, { mode: 'direct', direction: { x: -1, y: 1 } });
+updateMovement(boundsWorld, 100, 0);
+assert(boundsPlayer.hasPosition.current.x >= 0, 'fast step is bounded before transition detection');
+updateTransitions(boundsWorld);
+assert(boundsPlayer.hasPosition.nodeId === resolveExit('node-clearing', 'west'), 'fast diagonal cannot skip exit');
+// Immediately reverse while the reentry cooldown is active.
+applyManualMoveIntent(boundsWorld, boundsPlayer, { x: 0, y: 0 }, { mode: 'direct', direction: { x: 1, y: -1 } });
+const arrivedNode = boundsPlayer.hasPosition.nodeId;
+updateMovement(boundsWorld, 100, 100);
+updateTransitions(boundsWorld);
+assert(boundsPlayer.hasPosition.nodeId === arrivedNode, 'reentry cooldown still prevents bounce');
+assert(boundsPlayer.hasPosition.current.x <= GAME_CONFIG.NODE_WIDTH, 'cooldown cannot allow out-of-bounds direct movement');
 console.log('manualPlayerMovement: ok');
