@@ -29,7 +29,10 @@ top-level doc.
 | [briefs/bot-balance-v1a-assessment.md](briefs/bot-balance-v1a-assessment.md) | Preparation timeout, supervisor rename failure and scoped preparation/infrastructure repairs. |
 | [briefs/bot-balance-v1b-assessment.md](briefs/bot-balance-v1b-assessment.md) | Valid finalization, acquisition timeout and decision to separate preparation. |
 | [briefs/bot-balance-v1c-assessment.md](briefs/bot-balance-v1c-assessment.md) | Post-death travel stall diagnosis and scoped executor recovery repair. |
+| [briefs/bot-balance-v1d-assessment.md](briefs/bot-balance-v1d-assessment.md) | Preparation success, inherited failure review and earned T1 encounter entry. |
+| [briefs/bot-balance-v1e-operator-packet.md](briefs/bot-balance-v1e-operator-packet.md) | Exact V1d snapshot entry and one Plains boss probe with Plains Charm/Sweep. |
 | [briefs/bot-balance-v1d-operator-packet.md](briefs/bot-balance-v1d-operator-packet.md) | One preparation-only validation of repaired transit recovery. |
+| [briefs/bot-balance-v1d-report.md](briefs/bot-balance-v1d-report.md) | V1d execution result; one natural transit death recovered to the Plains supplier and the full GM30/+5 preparation completed. |
 | [briefs/bot-balance-v1c-operator-packet.md](briefs/bot-balance-v1c-operator-packet.md) | One fresh 30-minute preparation-only qualification, with no boss attempt. |
 | [briefs/bot-balance-v1c-report.md](briefs/bot-balance-v1c-report.md) | V1c execution result; GM30 and Chaotic Axe +5 reached, then travel to the Plains Vest supplier stalled before final readiness. |
 | [briefs/bot-balance-v1b-operator-packet.md](briefs/bot-balance-v1b-operator-packet.md) | Revised one-run Plains boss probe with unchanged required kit and bounded worker-stop contingency. |

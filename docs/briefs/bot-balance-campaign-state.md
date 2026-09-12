@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
-Updated: 2026-09-12. Owner: Astra (planning and interpretation); operators: Luna.
-Status: six-profile local readiness passed; V1c exposed post-death travel recovery defects before final preparation. V1d repair validation prepared; campaign bosses remain untested.
+Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
+Status: V1d completed earned T1 preparation and recovered a natural transit death. V1e imports that final state for the first Plains encounter with Plains Charm +5; no campaign boss result yet.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -30,7 +30,7 @@ execution instructions. Current source and explicit user direction take preceden
 | Q0, prepared | Qualify existing templates and their first build transitions; prepare exact local readiness routes | Six source-derived profile records, legal acquisition/build sequences, concrete runtime packet |
 | Q1, complete | Can each selected profile acquire and reconcile its build? | Six configuration successes; combat under the post-prep builds was untested |
 | Q2, initial slice complete | Do the two configured builds actually fight and activate abilities? | Six profiles, twelve completed T2 Plains windows on `755b2a36`; broader conditions/routes remain untested |
-| V1, in progress | Can prepared builds farm and solve bosses? | V1c reached GM30/Axe +5, then stalled after a transit death; V1d validates repaired travel recovery with unchanged preparation |
+| V1, in progress | Can prepared builds farm and solve bosses? | V1d completed earned preparation; V1e validates restored entry and attempts Plains using an encounter-specific charm |
 | V2 | What resolves a particular failing matchup? | Small local alternatives selected from failure diagnosis, initially 2–3 replicates |
 | E1 | Is shipped progression pacing appropriate? | One-tier 1× economy studies using current credible carryover, after functional routes/builds |
 | A1 | Does the assembled progression work? | Late broader acceptance runs only |
@@ -142,12 +142,13 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 
 - Validated: shared-cost projection and source-ordered build/acquisition tests; see Q0 report for executed checks.
 - Current runtime qualification: Q1 six profiles passed configuration on `1d3c710f`; Q2b/Q2c/Q2d all six completed both local behavior windows on `755b2a36`. Slinger and Apprentice supplied death/return evidence; no campaign boss coverage yet.
-- New confirmed balance signals: none. Bot executor defects: death notification consumed before live respawn; suppressed-combat attackers postponed navigation recovery. Repaired for V1d; runtime validation pending.
+- New confirmed balance signals: none. Bot executor defects: death notification consumed before live respawn; suppressed-combat attackers postponed navigation recovery. Repaired for V1d; one natural death recovered and preparation completed.
 - Approved gameplay changes: none.
 - Historical operation: V1a `20260912t194203z-striker-campaign-plains-boss-t` reached GM30, timed out while upgrading Plains Vest +5, and made zero boss attempts. Supervisor EPERM left stale running state; worker timeout is durable. [Assessment](bot-balance-v1a-assessment.md).
 - Latest result: V1b finalized normally with a preparation timeout, Axe +5 and zero boss attempts. [Assessment](bot-balance-v1b-assessment.md). The earlier V1a lifecycle remains invalid.
 - Latest result: V1c failed its supplier arrival wait after a transit death. Two ordinary deaths overall, no final kit or boss encounter. [Assessment and executor repair](bot-balance-v1c-assessment.md).
-- Next action: Luna executes [V1d](bot-balance-v1d-operator-packet.md) on `028e8933`: same fresh preparation route and 30-minute cap, repaired death/navigation recovery, no dungeon step.
+- Latest result: V1d completed 105/105 steps in 18m42s with one natural transit death recovered. [Assessment and inherited-lessons review](bot-balance-v1d-assessment.md).
+- Next action: Luna executes [V1e](bot-balance-v1e-operator-packet.md) on `40f0ebb7`: exact earned T1 snapshot, ordinary Plains Charm upgrade/swap, one Plains dungeon cycle, 15-minute ceiling. No fresh acquisition repeat.
 - Historical Q2d Spirit, Apprentice and Squire passed. Apprentice died once and returned; Spirit's Q2c pre-worker failure remains separate. [Overall readiness state](bot-balance-q2d-assessment.md).
 - Historical Q2c Conduit/Slinger passed and Spirit stopped before startup due to Docker address exhaustion. [Assessment and infrastructure repair](bot-balance-q2c-assessment.md).
 - Historical Q2b `20260912t170727z-striker-campaign-local-behavio`: Striker completed, no deaths or unwanted transit; Sweep 8 kills/8 activations, Expose 5 kills/6 activations. Readiness only.
