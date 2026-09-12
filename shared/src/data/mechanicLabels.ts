@@ -174,6 +174,8 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
 
   // ── Cores. Every `-mult` here is a FRACTION on the final summed stat
   //    (0.15 = +15%), not a multiplier — see the formatter table. ─────────────
+  'core.damage-dealt-pct': { label: 'Final damage dealt' },
+  'core.damage-taken-pct': { label: 'Final damage taken' },
   'core.attack-mult':                     { label: 'Attack' },
   'core.maxhp-mult':                      { label: 'Max HP' },
   'core.plating-mult':                    { label: 'Plating' },

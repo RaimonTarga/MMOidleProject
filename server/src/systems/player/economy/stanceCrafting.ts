@@ -24,6 +24,7 @@ import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { recalculatePlayerStanceStats } from "../../../ecs/playerEntityFormulas";
+import { detachComponent } from "../../../ecs/markerHelpers";
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -132,6 +133,8 @@ export function setStanceLoadout(
   prog.attunedStances = stances;
   prog.runesEquipped = rules;
   prog.equippedStances = { default: stanceId };
+  // Build edits return live stance ownership to its ordinary AUTO baseline.
+  detachComponent(world, entity, "overridesStance");
   // Reset immediately to the new attuned default. Rune arbitration may move away later.
   prog.activeStance = prog.equippedStances.default;
   markSliceDirty(world, entity, "tracksProgression");

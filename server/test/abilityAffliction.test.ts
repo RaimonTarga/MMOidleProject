@@ -34,6 +34,7 @@ import {
   resolveDetonate,
 } from "../src/systems/player/abilities/abilityAffliction";
 import { applyImbueWindow } from "../src/systems/player/abilities/abilityImbue";
+import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
 import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
@@ -453,12 +454,28 @@ console.log("affliction: Detonate consumes every owned DoT and pays out what was
 console.log("affliction: situational casts decline rather than burning a cooldown");
 
 // ── 7. Imbue Lightning: a window spent in HITS, not seconds ─────────────────
+//
+// Driven through `runPlayerAttack` (the real pipeline), not a bare
+// `emitCombatEvent("onHit", ...)` — the bonus is handed off via
+// `ctx.metadata["imbueOnHitBonus"]` and folded into the SAME onHitDamage term
+// combat.ts applies for gear, so a test that only fires the onHit listeners
+// in isolation would pass even if that composition seam were broken.
 
 {
   const { world, player } = setup(["imbue-lightning"]);
   player.tracksProgression.playerTier = 4;
   const imbue = ABILITY_DATABASE.get("imbue-lightning")!;
   const target = spawn(world, 405, 400);
+
+  const attackOpts = {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: "player" as const },
+  };
+
+  // Baseline: an ordinary hit with no window open, for a same-state comparison.
+  target.hasHealth.hp = target.hasHealth.maxHp;
+  runPlayerAttack(world, player, target, 0, attackOpts);
+  const baselineDamage = target.hasHealth.maxHp - target.hasHealth.hp;
 
   applyImbueWindow(world, player, imbue);
   const window = getStatusEffect(player.tracksCombat, ABILITY_IMBUE_EFFECT_ID);
@@ -472,23 +489,17 @@ console.log("affliction: situational casts decline rather than burning a cooldow
   const bonus = window!.data["onHitDamage"]!;
   assert(bonus > 0, "the window must carry an on-hit magnitude");
 
-  // Drive real onHit events through the pipeline; each must add the bonus and
-  // spend exactly one charge.
+  // Each of the charges must add exactly the bonus on top of the baseline —
+  // proof the bonus is composed as part of the real onHitDamage term rather
+  // than a separately-added number.
   let spent = 0;
   for (let i = 0; i < charges; i++) {
-    const ctx = {
-      attacker: player,
-      defender: target,
-      attackerType: "player" as const,
-      defenderType: "monster" as const,
-      damage: 100,
-      cancelled: false,
-      metadata: {} as Record<string, unknown>,
-    };
-    emitCombatEvent("onHit", ctx as never, world);
+    target.hasHealth.hp = target.hasHealth.maxHp;
+    runPlayerAttack(world, player, target, 1_000 + i, attackOpts);
+    const damage = target.hasHealth.maxHp - target.hasHealth.hp;
     assert(
-      ctx.damage === 100 + bonus,
-      `hit ${i + 1} must carry the imbue bonus; damage was ${ctx.damage}`,
+      damage === baselineDamage + bonus,
+      `hit ${i + 1} must carry the imbue bonus composed onto the base hit; damage was ${damage}, expected ${baselineDamage + bonus}`,
     );
     spent++;
   }
@@ -498,20 +509,13 @@ console.log("affliction: situational casts decline rather than burning a cooldow
     "the window must be removed once its last charge is spent",
   );
 
-  // One hit past the end must be an ordinary hit.
-  const after = {
-    attacker: player,
-    defender: target,
-    attackerType: "player" as const,
-    defenderType: "monster" as const,
-    damage: 100,
-    cancelled: false,
-    metadata: {} as Record<string, unknown>,
-  };
-  emitCombatEvent("onHit", after as never, world);
+  // One hit past the end must be an ordinary hit again.
+  target.hasHealth.hp = target.hasHealth.maxHp;
+  runPlayerAttack(world, player, target, 9_999, attackOpts);
+  const afterDamage = target.hasHealth.maxHp - target.hasHealth.hp;
   assert(
-    after.damage === 100,
-    "a hit after the window closes must not carry the bonus",
+    afterDamage === baselineDamage,
+    `a hit after the window closes must not carry the bonus; damage was ${afterDamage}, expected ${baselineDamage}`,
   );
 }
 console.log("affliction: Imbue Lightning spends one charge per hit and then closes");

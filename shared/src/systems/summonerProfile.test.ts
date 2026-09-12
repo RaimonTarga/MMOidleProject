@@ -43,10 +43,34 @@ for (const [frame, expected] of [
   close(totals.proc, 1, `${frame ?? 'root'} proc weights`);
 }
 
+for (const [frame, expectedSecondary] of [
+  [null, 1],
+  ['light', 1.2],
+  ['balanced', 1],
+  ['heavy', 1],
+] as const) {
+  const resolved = profile(frame);
+  close(
+    summonerProfileWeightTotals(resolved).proc * resolved.secondaryEffectMult,
+    expectedSecondary,
+    `${frame ?? 'root'} formation secondary-effect budget`,
+  );
+  close(
+    summonerProfileWeightTotals(resolved).offense * resolved.formationOffenseMult,
+    resolved.formationOffenseMult,
+    `${frame ?? 'root'} direct offense budget stays independent`,
+  );
+}
+
 {
   const swarm = profile('light', null, 'summoner-light-t3-b');
   assert(swarm.specialization === 'endless-swarm', 'persisted light-b maps to Endless Swarm');
   assert(swarm.slots.length === 8, 'Endless Swarm stays under exceptional cap');
+  close(
+    summonerProfileWeightTotals(swarm).proc * swarm.secondaryEffectMult,
+    1.3,
+    'Kilnmaster formation secondary-effect budget',
+  );
 }
 
 {

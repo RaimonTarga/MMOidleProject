@@ -6,7 +6,7 @@
 - **Archived design handoff:** `docs/archive/stances-rework-design-handoff.md`
 - **Historical implementation plan:** `docs/archive/stances-plan.md`
 
-Stances are mutually exclusive modal postures. A character learns stances through recipes, attunes learned postures with RP, chooses one attuned default, and can automate transitions among attuned stances through Rune rules. There is no reactive slot and no manual real-time combat switch.
+Stances are mutually exclusive modal postures. A character learns stances through recipes, attunes learned postures with RP, chooses one attuned default, can automate transitions among attuned stances through Rune rules, and can temporarily take direct control from the live combat HUD. There is no reactive build slot.
 
 ## State and Runic Points
 
@@ -20,6 +20,8 @@ interface EquippedRule {
 ```
 
 `activeStance` remains authoritative/networked. `attunedStances` reserves each stance's `runeCost` once. The default must be attuned. A `switch-stance` rule requires an attuned target and pays only its condition; the action costs 0 RP. Neutral is free. See [Runic attunement](runic-attunement-current-state.md) for combined costs and migration.
+
+`OverridesStance` is a separate networked runtime component. With Auto Combat off, presence means the player owns the live stance choice and Rune/default automation yields to its attuned `stanceId`, or to the reserved free `no-stance` neutral destination. Enabling Auto Combat—or entering its temporary Fight Back travel-combat equivalent—releases that override and hands stance ownership back to Rune/default automation. It is never part of persisted build data, disappears on logout/reconnect, resets on death or a stance-loadout edit, and never rewrites `equippedStances.default` or Rune rules.
 
 The single `STANCE` Rune channel remains priority ordered. The first active Stance rule supplies its destination. If no Stance rule is active, the player returns to the default.
 
@@ -39,10 +41,11 @@ Where each field lands in `recalculatePlayerStats`:
 |---|---|
 | `attackSpeedPct` | step 2a, into the shared attack-speed accumulator (must precede the reload cadence layers) |
 | `evasion` | step 2a, into the shared evasion rating (already a 0-1 fraction) |
-| `attackPct` / `platingPct` / `moveSpeedPct` | step 3e, a stance-owned multiplicative layer applied *after* `applyClassAffinities` |
-| `damageTakenPct` | not a stat — read at hit time by the stance `onDamageTaken` listener, which passes the player's live HP fraction so a gated posture resolves correctly |
+| `platingPct` / `moveSpeedPct` | step 3e, a stance-owned stat layer after class affinities |
+| `damageDealtPct` | final damage resolution for direct, on-hit, DoT, proc and summon output |
+| `damageTakenPct` | not a stat — read at hit time by the shared final-damage `onDamageTaken` listener, which passes the player's live HP fraction so a gated posture resolves correctly |
 
-`attackPct` and friends multiply rather than joining the class-affinity bucket on purpose:
+`damageDealtPct` and friends multiply rather than joining the class-affinity bucket on purpose:
 a posture the player toggles and reads off a tooltip must mean exactly what it says for
 every class. `damageTakenPct` is a multiplicative layer rather than an additive
 `damageReduction` contribution because that pool clamps to [0, 0.9] — before the corrective
@@ -55,21 +58,21 @@ First-pass magnitudes are balance seeds in `shared/src/stances.ts`; the structur
 
 | Stance | RP | Static posture | Behavioral |
 |---|---:|---|---|
-| Offensive | 1 | +15% Attack, +10% Attack Speed, +10% damage taken | — |
-| Defensive | 1 | +20% Plating, -10% damage taken, -15% Attack | — |
-| Tanking | 3 | +40% Plating, -25% damage taken, -40% Attack, -20% Attack Speed | — |
-| Enraged | 3 | +30% Attack, +15% Attack Speed, +15% damage taken | — |
-| Perfection | 2 | -20% Plating always; +12% Attack / Attack Speed / Move Speed **only at >=90% HP** | HP gate, see below |
-| Fleeting | 2 | +35% Move Speed, +15pp Evasion, -35% Attack, -20% Attack Speed | — |
-| Berserker | 4 | +35% Attack, +20% Attack Speed, +15% damage taken | 2% max HP self-damage per second while in combat; can kill |
-| Recuperating | 4 | -50% Attack, -30% Attack Speed | 80% of Recovery stays active in combat |
-| Predator | 3 | +15% Move Speed, -10% Attack | 50% reduced detection; +75% armed opening hit |
-| Brawler | 3 | -10% Attack | 8/16/24/31/40% damage reduction at 1/2/3/4/5+ aggressors |
-| Execute | 3 | -20% Attack | +75% damage to targets at or below 25% HP |
+| Offensive | 1 | +15% Damage, +10% Attack Speed, +10% damage taken | — |
+| Defensive | 1 | +20% Plating, -10% damage taken, -15% Damage | — |
+| Tanking | 3 | +40% Plating, -25% damage taken, -40% Damage, -20% Attack Speed | — |
+| Enraged | 3 | +30% Damage, +15% Attack Speed, +15% damage taken | — |
+| Perfection | 2 | -20% Plating always; +12% Damage / Attack Speed / Move Speed **only at >=90% HP** | HP gate, see below |
+| Fleeting | 2 | +35% Move Speed, +15pp Evasion, -35% Damage, -20% Attack Speed | — |
+| Berserker | 4 | +35% Damage, +20% Attack Speed, +15% damage taken | 2% max HP self-damage per second while in combat; can kill |
+| Recuperating | 4 | -50% Damage, -30% Attack Speed | 80% of Recovery stays active in combat |
+| Predator | 3 | +15% Move Speed, -10% Damage | 50% reduced detection; +75% armed opening hit |
+| Brawler | 3 | -10% Damage | 8/16/24/31/40% damage reduction at 1/2/3/4/5+ aggressors |
+| Execute | 3 | -20% Damage | +75% damage to targets at or below 25% HP |
 | Time to Strike | 3 | -35% Attack Speed | +100% empowered-attack damage; ordinary hits -40% |
-| Reaper | 3 | -15% Attack | a kill while active arms 6s of +35% damage / +25% Attack Speed that outlives the stance |
-| Warding | 3 | -50% Attack, -25% Attack Speed | incoming harmful statuses -50% duration; incoming DoTs -40% per-stack damage |
-| Powering Up | 4 | -50% Attack, -30% Attack Speed | charges up to 8s in combat; leaving spends it for +50% damage / +30% Attack Speed for as long as it charged |
+| Reaper | 3 | -15% Damage | a kill while active arms 6s of +35% damage / +25% Attack Speed that outlives the stance |
+| Warding | 3 | -50% Damage, -25% Attack Speed | incoming harmful statuses -50% duration; incoming DoTs -40% per-stack damage |
+| Powering Up | 4 | -50% Damage, -30% Attack Speed | charges up to 8s in combat; leaving spends it for +50% damage / +30% Attack Speed for as long as it charged |
 
 All fifteen catalogued stances are now taught by recipes. Warding remains a T3
 reward; Time to Strike, Reaper, Recuperating, and Powering Up are T4 rewards in
@@ -94,7 +97,7 @@ Perfection's HP gate.
 ### Perfection's HP gate — the one modifier-level exception
 
 `StanceDef.gatedModifiers` (`StanceHpGate`) holds the UPSIDE half of a posture whose identity
-IS a maintained state. Perfection is the only user: `+12% Attack / Attack Speed / Move Speed`
+IS a maintained state. Perfection is the only user: `+12% Damage / Attack Speed / Move Speed`
 apply only while HP is at or above `PERFECTION_HP_THRESHOLD` (0.9); the `-20% Plating` sits in
 the ordinary `modifiers` and is paid at every HP.
 
@@ -130,7 +133,7 @@ unreachable until its intentional Tier-4 placement.
 - **Time to Strike** rides `shared.empowered-mult-add`, the universal empowered bonus every
   archetype's empowered attack already reads, so the stance never touches cadence, cooldown,
   energy or reload code. Only the ordinary-hit penalty is a listener, and it keys off the
-  `empoweredAttack` metadata the archetype multipliers set — they register first
+  `empoweredDamage` metadata the archetype multipliers set — they register first
   (`initAllMechanics` precedes `initStanceCombatEffects`), so the flag is truthful by then.
   The Attack Speed penalty is load-bearing, not flavour: it is the whole reason this is not
   a free upgrade for builds that empower every few seconds.
@@ -156,14 +159,14 @@ unreachable until its intentional Tier-4 placement.
   leave at full charge on purpose.
 
 Reaper's and Powering Up's attack-speed windows are read at the ATTACK-CADENCE GATE in
-`combat.ts`, never written into `performsAttack.attackCooldown`. The Zealot's Frenzy
+`combat.ts`, never written into `performsDamage.attackCooldown`. The Zealot's Frenzy
 already mutates that stat from a cached base, and a second mutator treating Frenzy's output
 as "the clean base" ratchets the cooldown toward zero over a few ticks. Frenzy's own haste
 already rides the gate for exactly this reason; these sum with it.
 
 ## Switching semantics
 
-`updateRuneDerivedConfig` writes the winning destination into server-only `TracksCombat`; `updateStanceSwitch` reconciles it once per tick. Switches have a 1500 ms minimum dwell and at most one transition per tick.
+`updateRuneDerivedConfig` writes the winning destination into server-only `TracksCombat`; `updateStanceSwitch` reconciles it once per tick. With Auto Combat off, a validated attuned or neutral `OverridesStance` destination takes precedence. Auto Combat and active Fight Back clear stale manual ownership so Rune/default decisions remain effective. Both automatic and manual changes use the same authoritative switch helper, stat rebuild, Powering Up release, event and 1500 ms minimum dwell. Neutral remains a held manual choice only while Auto Combat is off.
 
 `recalculatePlayerStanceStats` performs the derived rebuild while preserving unrelated live state:
 
@@ -193,6 +196,7 @@ Rune rule UI already shows `HP Below 25% -> Switch Stance -> Enraged`; the stanc
 only describes what Enraged does once active.
 
 - Stances is its own rail entry, opening the shared arrangement dialog (Abilities / Stances / Rites / Runes) on the Stances tab: a crest/sigil sanctum for attuning postures and choosing an attuned default.
+- The compact live combat dock shows an icon-only neutral posture followed by each currently attuned stance icon. The neutral control reuses the hollow-diamond `No Stance` grammar from the Rune editor; no standalone art asset is required. A shared dark radial sweep covers the stance controls during the 1500 ms switch cooldown. With Auto Combat off, clicks hold a manual stance choice. With Auto Combat on, clicks can request an immediate legal switch but do not block subsequent Rune/default decisions. Manual selection and the actually active stance are separately visible. The default keyboard chords are `Shift+1` for Neutral and `Shift+2` onward for attuned stances in displayed order; compact badges expose them on the rail, and every chord is rebindable without colliding with the unmodified ability-number keys. `Shift+0` is deliberately unused.
 - The Runes tab opens a horizontal destination wheel when `Switch Stance` is selected; its first sigil is the zero-cost neutral `No Stance` posture, followed by learned stance crests. Once a situation is picked, each crest quotes the WHOLE rule price (condition + destination), not the surcharge — with the verb at 0 RP, the surcharge alone would understate what committing the rule spends.
 - The sanctum's own header names the default posture and the total shared RP pool.
 - Crafting contains recipes for all fifteen stances across T2–T4 mastery bands;
@@ -283,3 +287,19 @@ Known scope limit: the stance damage-taken multiplier and Brawler's crowd mitiga
 ride the `onDamageTaken` listener, which direct monster attacks emit but node AoE and DoT
 ticks do not. That was already true of Brawler before this pass; widening it is a combat-
 pipeline change, not a stance change.
+
+
+## Final damage follow-up — 2026-09-12
+
+Static offense now uses `damageDealtPct` at final damage resolution, rather than
+resizing Attack. Core and stance factors multiply independently. Reaper momentum
+and Powering Up release also amplify all owned damage, including on-hit and DoT,
+and remain active after leaving their stance. Predator/Execute/Time to Strike
+retain their explicitly hit-specific behavior. Plating, movement, evasion and
+attack-speed modifiers retain their existing axes. Self-damage remains an HP cost.
+
+Core/stance incoming factors now share the early `onDamageTaken` seam and cover
+non-pipeline AoE/DoT/hazard damage through the same resolver. They never add to
+normal DR. Brawler's live aggressor reduction is included in the authoritative
+final-damage-taken value mirrored to the character sheet. HP-gated stance bonuses
+are evaluated from the same HP fraction on both equipment comparison sides.

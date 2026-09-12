@@ -288,7 +288,7 @@ export const caveRecipeEntries = [
     lineageId: 'core-tempered',
     cost: { red: 500 }, catalystCost: { dominion: 4 }, // family-tag: cave capstone generalist → Dominion
     stats: {}, tier: 2,
-    mechanicEffects: { 'core.attack-mult': 0.12, 'core.maxhp-mult': 0.12 },
+    mechanicEffects: { 'core.damage-dealt-pct': 0.12, 'core.maxhp-mult': 0.12 },
     icon: 'items/cores/tempered.png',
     description: 'Balanced for any hand. It asks no commitment, and rewards none in particular.',
   }],
@@ -304,7 +304,7 @@ export const caveRecipeEntries = [
     cost: { red: 1350 }, catalystCost: { dominion: 6 }, // family-tag: single-target alpha → Dominion
     stats: {}, tier: 3,
     mechanicEffects: {
-      'core.attack-mult': 0.18, 'core.maxhp-mult': 0.10,
+      'core.damage-dealt-pct': 0.18, 'core.maxhp-mult': 0.10,
       'core.focus-damage-per-hit-mult': 0.05, 'core.focus-max-stacks': 5,
     },
     icon: 'items/cores/duelist.png',

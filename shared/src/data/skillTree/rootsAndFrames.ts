@@ -127,7 +127,7 @@ export const rootsAndFramesEntries = [
     id: 'reload-root', name: 'Slinger', tier: 0,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — a light, evasive frame that fights from range and weaves around incoming blows.',
+    description: 'Unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness.',
     cost: 1, statEffects: {
       attackPct: 0.20, maxHpPct: 0.07,
       attackSpeedPct: 0.10, moveSpeedPct: 0.10,
@@ -173,7 +173,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-root', name: 'Conduit', tier: 0,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: ['summoner-light', 'summoner-balanced', 'summoner-heavy'],
-    description: 'Four persistent summons fight in your place. Your weapon sets their damage and cadence while the formation shares one offense and proc budget. Fallen slots rebuild one at a time, costing HP without crossing your safety floor.',
+    description: 'Four persistent summons fight in your place. Your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time, costing HP without crossing your safety floor.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.08,
       attackSpeedPct: 0.04, moveSpeedPct: 0.05,
@@ -199,7 +199,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-light', name: 'Splinter', tier: 1,
     classId: 'summoner-root', subVariantId: 'light',
     parent: 'summoner-root', children: ['summoner-light-t3-a', 'summoner-light-t3-b', 'summoner-light-t3-c'],
-    description: 'Your presence splinters across six small, fast summons. The formation budget spreads over many bodies, so each loss costs little offense and little reconstruction HP — but the swarm is vulnerable to plating and area damage.',
+    description: 'Your presence splinters across six small, fast summons. They divide the formation budget rather than multiplying it, but the whole formation carries 20% stronger on-hit and secondary weapon effects. Each loss costs little offense and reconstruction HP; plating and area damage punish the swarm.',
     cost: 1, statEffects: {
       maxHpPct: 0.04, attackSpeedPct: 0.06, moveSpeedPct: 0.08,
     },

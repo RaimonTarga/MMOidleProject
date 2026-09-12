@@ -29,6 +29,7 @@ export const volcanicRecipeEntries = [
     cost: { red: 140 }, stats: { attack: 34 }, attacksPerSecond: 1.65, tier: 3, // family-tag: new Volcanic item → Swarming (native)
     mechanicEffects: { 'weapon.flurry-pct': 0.03, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/cinderlash.png',
+    element: 'fire',   // cosmetic attack tint only
     description: 'A whip of braided ember that strikes faster the longer it burns.',
     upgrades: [
       { stats: { attack: 6 }, cost: { red: 96 },  requiredBiomeLevel: 2 },
@@ -118,6 +119,7 @@ export const volcanicRecipeEntries = [
     reconstructCost: { red: 1078 }, reconstructCatalystCost: { swarming: 4 },
     mechanicEffects: { 'weapon.flurry-pct': 0.04, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/eruption-lash.png',
+    element: 'fire',   // cosmetic attack tint only
     description: 'A braided whip of ember that strikes faster the longer it is allowed to burn.',
     upgrades: [
       { stats: { attack: 11 }, cost: { red: 191 }, requiredBiomeLevel: 8 },
@@ -254,7 +256,7 @@ export const volcanicRecipeEntries = [
     // Trading attack (mitigated) for on-hit (unmitigated) is the actual shape here:
     // better against heavily armoured targets, worse against soft ones. Worth little
     // to a build carrying no on-hit damage — the specialisation is the cost.
-    mechanicEffects: { 'core.onhit-mult': 1.15, 'core.attack-mult': -0.15 },
+    mechanicEffects: { 'core.onhit-mult': 1.15, 'core.damage-dealt-pct': -0.15 },
     icon: 'items/cores/catalyst.png',
     description: 'Amplifies on-hit damage you already have; it grants none by itself. Armour is no comfort against something already inside it.',
   }],

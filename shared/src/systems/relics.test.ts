@@ -42,7 +42,7 @@ eq(resolveRelicCount(10, 1, 1, 1, 12), 12, 'count respects cap');
 
 {
   const p = resolveCadenceRelicProfile(5, 2, positive);
-  eq(p.threshold.after, 3, 'cadence frequency resolves integer threshold');
+  eq(p.threshold.after, 4, 'cadence frequency resolves integer threshold');
   eq(p.empoweredMultiplier.after, 2.4, 'cadence potency resolves multiplier');
   const n = resolveCadenceRelicProfile(5, 2, negative);
   assert(n.threshold.after > n.threshold.before, 'negative cadence frequency lengthens cycle');

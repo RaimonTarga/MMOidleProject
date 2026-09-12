@@ -417,3 +417,5 @@
   .bestiary-detail__ability-trigger,
   .bestiary-detail__ability-detail { margin-left: 23px; }
 }
+
+.game-dialog__panel.bestiary-detail__panel .bestiary-detail__body { padding: 16px; }

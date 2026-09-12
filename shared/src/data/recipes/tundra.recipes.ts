@@ -22,6 +22,7 @@ export const tundraRecipeEntries = [
     cost: { blue: 124 }, stats: { attack: 120 }, attacksPerSecond: 0.50, tier: 3, // family-tag: slow heavy maul → Heavy
     mechanicEffects: { 'weapon.brittle-plating': 2, 'weapon.brittle-dr': 0.01, 'weapon.brittle-stacks': 8 },
     icon: 'items/weapons/permafrost-maul.png',
+    element: 'frost',   // cosmetic attack tint only
     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
     upgrades: [
       { stats: { attack: 30 }, cost: { blue: 93 },  requiredBiomeLevel: 2 },
@@ -128,6 +129,7 @@ export const tundraRecipeEntries = [
       'weapon.brittle-shatter-threshold': 8, 'weapon.brittle-shatter-dr-strip-ms': 2000,
     },
     icon: 'items/weapons/glacial-tyrant-maul.png',
+    element: 'frost',   // cosmetic attack tint only
     description: 'Every blow leaves a deeper frost-crack; the eighth simply ends the argument about whether armor holds.',
     upgrades: [
       { stats: { attack: 50 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
@@ -262,7 +264,7 @@ export const tundraRecipeEntries = [
     // The cooldown clause is INERT without an ability tagged `mobility` (today:
     // Charge); the damage and movement halves are always on.
     mechanicEffects: {
-      'core.attack-mult': 0.24, 'core.speed-mult': 0.25,
+      'core.damage-dealt-pct': 0.24, 'core.speed-mult': 0.25,
       'core.mobility-cooldown-reduction-pct': 0.25, 'core.maxhp-mult': -0.20,
     },
     icon: 'items/cores/scout.png',

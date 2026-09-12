@@ -28,7 +28,7 @@ export function tryPoisonExplosion(pc: DotT3PathContext): boolean {
   if (!hasPassive(pc.player, 'dot.poison-explosion')) return false;
   const { ctx, world, player, monster, monsterState, dmgPerStack, durationMs, tickIntervalMs } = pc;
   const passives = player.usesSkills.passives;
-  const maxStacks = Math.max(1, Math.round(passives['dot.poison-explosion-max-stacks'] ?? PE_MAX_STACKS));
+  const maxStacks = pc.maxStacks;
   const burstTicks = Math.max(0, passives['dot.poison-explosion-burst-ticks'] ?? PE_BURST_TICKS);
 
   const pe = applyStatusEffect(monsterState, {
@@ -65,7 +65,7 @@ export function tryEternalDoom(pc: DotT3PathContext): boolean {
   if (!hasPassive(pc.player, 'dot.eternal-doom')) return false;
   const { ctx, world, player, monster, monsterState, dmgPerStack, durationMs, tickIntervalMs } = pc;
   const passives = player.usesSkills.passives;
-  const maxStacks = Math.max(1, Math.round(passives['dot.eternal-doom-max-stacks'] ?? ED_MAX_STACKS));
+  const maxStacks = pc.maxStacks;
   const fullStacks = Math.max(0, Math.round(passives['dot.eternal-doom-full-stacks'] ?? ED_BASE_STACKS));
   const diminishRate = Math.max(0, passives['dot.eternal-doom-diminish-rate'] ?? ED_DIMINISH_RATE);
 

@@ -250,20 +250,31 @@ function castEvents(world: World) {
 }
 
 // ── 3. The generic ability path follows the same contract ────────────────────
+//
+// Exemplar moved off the Rime-Tusk Mastodon (Tundra ecology polish, 2026-09-11):
+// its Frost-Tusk Impact is now a PLANTED `area-hit` circle, which is the committed
+// half of this contract and is covered in §4 / biomeEcologyPolish. The Obsidian
+// Tortoise's Molten Eruption is the same shape the Mastodon used to be — a
+// player-targeted, non-area ability — so the mobile-cast contract keeps a live
+// subject.
 {
-  const ABILITY = MONSTER_DATABASE.get("rime-tusk-mastodon")?.monsterAbilities?.[0];
-  assert(!!ABILITY, "rime-tusk-mastodon should define a monster ability");
-  assert(ABILITY!.target === "player", "Frost-Tusk Impact should be player-targeted");
+  const ABILITY = MONSTER_DATABASE.get("obsidian-tortoise")?.monsterAbilities?.[0];
+  assert(!!ABILITY, "obsidian-tortoise should define a monster ability");
+  assert(ABILITY!.target === "player", "Molten Eruption should be player-targeted");
+  assert(
+    ABILITY!.actions.every(a => a.type !== "area-hit"),
+    "the mobile-cast exemplar must be a NON-area ability",
+  );
 
   const { world, player, monster, armedAt } = armedCaster(
-    "rime-tusk-mastodon",
+    "obsidian-tortoise",
     ABILITY!.initialCooldownMs ?? ABILITY!.cooldownMs,
   );
 
   updateCombat(world, 100, armedAt);
   assert(
     castEvents(world).some(e => e.kind === "monster-cast-start"),
-    "the mastodon should open its Frost-Tusk Impact",
+    "the tortoise should open its Molten Eruption",
   );
   assert(hasMobileMonsterCast(monster), "a targeted, non-area ability is a mobile cast");
 

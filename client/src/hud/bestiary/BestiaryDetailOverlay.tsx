@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom';
+import { DialogHeader, GameDialog } from '../primitives';
 import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import {
@@ -198,22 +198,9 @@ export function BestiaryDetailOverlay() {
   const selected =
     zone.entries.find((e) => e.id === detailId) ?? zone.entries[0];
 
-  return createPortal(
-    <div className="inv-overlay" onClick={() => setOpen(false)}>
-      <div
-        className="inv-panel bestiary-detail__panel"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="inv-header">
-          <span className="inv-title">
-            Bestiary — {zone.biomeName}
-            {zone.biomeTier > 0 ? ` T${zone.biomeTier}` : ''}
-          </span>
-          <button type="button" className="inv-close" onClick={() => setOpen(false)}>
-            ✕
-          </button>
-        </div>
-
+  return (
+    <GameDialog size="wide" className="bestiary-detail__panel" onClose={() => setOpen(false)}>
+      <DialogHeader title={`Bestiary — ${zone.biomeName}${zone.biomeTier > 0 ? ` T${zone.biomeTier}` : ''}`} closeLabel="Close bestiary" />
         <div className="bestiary-detail__body">
           <div className="bestiary-detail__list">
             {zone.entries.map((e) => (
@@ -235,8 +222,6 @@ export function BestiaryDetailOverlay() {
 
           <MonsterDetail entry={selected} />
         </div>
-      </div>
-    </div>,
-    document.body,
+    </GameDialog>
   );
 }

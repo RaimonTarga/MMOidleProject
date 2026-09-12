@@ -152,23 +152,6 @@ export function initNewStanceBehaviors(): void {
     );
   });
 
-  // Reaper's momentum DAMAGE, applied wherever the window is live — including after
-  // the player has left Reaper, which is the entire point of the posture.
-  registerCombatListener("onHit", (ctx) => {
-    if (ctx.attackerType !== "player") return;
-    const momentum = getStatusEffect(ctx.attacker.tracksCombat, REAPER_MOMENTUM_EFFECT);
-    if (!momentum || momentum.remainingMs <= 0) return;
-    ctx.damage = Math.round(ctx.damage * (1 + (momentum.data["attackPct"] ?? 0)));
-  });
-
-  // Powering Up's release DAMAGE. Same seam, same reason.
-  registerCombatListener("onHit", (ctx) => {
-    if (ctx.attackerType !== "player") return;
-    const release = getStatusEffect(ctx.attacker.tracksCombat, POWER_RELEASE_EFFECT);
-    if (!release || release.remainingMs <= 0) return;
-    ctx.damage = Math.round(ctx.damage * (1 + (release.data["attackPct"] ?? 0)));
-  });
-
   // Reaper arms the momentum. Only kills landed WHILE the stance is active count, so
   // the window refreshes on a killing spree held in Reaper but decays normally once
   // the player has reverted — momentum you keep spending has to be re-earned.

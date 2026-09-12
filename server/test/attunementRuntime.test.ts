@@ -78,6 +78,7 @@ slices.tracksProgression.knownAbilities = [...ABILITY_DATABASE.keys()];
 slices.tracksProgression.biomeLevel = { plains: 1000 };
 slices.tracksProgression.knownStances = ["offensive-stance", "tanking-stance"];
 const player = world.attachPlayerEntity(slices, "attunement-test");
+player.usesAutocombat.auto = true;
 const many = { techniques: ["sweep", "power-strike", "frenzy", "snipe"], guards: ["brace", "endure", "cleanse", "break-free"] };
 assert(setAbilityLoadout(world, player, many).success, "T1 must allow arbitrary ability count within RP");
 assert(player.tracksProgression.attunedAbilities.techniques.length === 4, "hidden family cap");

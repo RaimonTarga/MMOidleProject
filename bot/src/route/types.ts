@@ -1,4 +1,5 @@
 import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, TierCheckpointKind } from "@mmo-idle/shared";
+import type { DesiredBuild } from "../loadout/loadout";
 
 /**
  * A place a step happens. Routes name content, not node ids, so a map edit that
@@ -101,9 +102,11 @@ export type StepBody =
       opportunistic?: boolean;
     }
   | { type: "configureRunes"; rules: EquippedRule[] }
+  | { type: "configureBuild"; build: DesiredBuild }
+  | { type: "craftRite"; recipeId: string; farmAt?: NodeRef }
   /**
    * Learn an ability by crafting its recipe, then slot it. This is what makes a
-   * reactive Rune rule (e.g. `target-casting` -> `fire-guard`) actually do
+   * reactive Rune rule (e.g. `target-casting` -> `use-ability` targeting Brace) actually do
    * something: the rune fragment ships with the character, the Guard it fires
    * has to be earned.
    */
@@ -112,13 +115,13 @@ export type StepBody =
       recipeId: string;
       abilityId: string;
       slot: "technique" | "guard";
+      /** false learns only; configureBuild can attune the final repertoire later. */
+      attune?: boolean;
       farmAt?: NodeRef;
     }
   /**
-   * Set the equipped abilities outright. Tier 1 grants ONE Technique and ONE
-   * Guard slot, so every mid-run change is a REPLACEMENT — this is how a
-   * boss-prep swap (Sweep -> Expose Weakness, Second Wind -> Brace) is authored.
-   * Abilities must already be learned.
+   * Replace the ordered Technique and Guard repertoires. These are semantic
+   * families, not fixed slots; all entries reserve RP and must be learned.
    */
   | { type: "setAbilities"; techniques: string[]; guards: string[] }
   /** Craft a Rune forge recipe, which is how new rune FRAGMENTS are unlocked. */
@@ -147,6 +150,8 @@ export type StepBody =
   | { type: "milestone"; id: string };
 
 export type RouteStep = StepBody & {
+  /** Explicit authored alternatives; resolved once before the run. */
+  choice?: { id: string; option: string; defaultOption: string };
   /** Overrides the generated label in telemetry. */
   label?: string;
   /** Per-step wall-clock timeout for a long-running farm or other wait. */

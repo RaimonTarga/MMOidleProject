@@ -6,6 +6,7 @@ import {
   EXECUTE_HP_THRESHOLD,
   NO_STANCE_ID,
   PREDATOR_OPENER_BONUS,
+  STANCE_SWITCH_COOLDOWN_MS as SHARED_STANCE_SWITCH_COOLDOWN_MS,
   brawlerDamageReduction,
   getCooldown,
   getCounter,
@@ -20,8 +21,10 @@ import {
   stanceGateMet,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
+import type { PlayerEntity } from "../../../ecs/entity";
 import { recalculatePlayerStanceStats } from "../../../ecs/playerEntityFormulas";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
+import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { RUNE_STANCE_TARGET_KEY, RUNE_SWITCH_STANCE_FLAG } from "../../combat/ai/runeConfig";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { playerCombatPhase } from "../../combat/ai/engagement";
@@ -38,11 +41,70 @@ const BERSERKER_TICK_ACC = "stance.berserker.tick";
 /** Last observed state of the active stance's HP gate, so a crossing recalcs once. */
 const STANCE_GATE_MET_FLAG = "stance.gate.met";
 const STANCE_LAST_ACTIVE_KEY = "stance.lastActive";
-export const STANCE_SWITCH_COOLDOWN_MS = 1500;
+/** Kept re-exported here for existing server-side consumers and tests. */
+export const STANCE_SWITCH_COOLDOWN_MS = SHARED_STANCE_SWITCH_COOLDOWN_MS;
+
+export interface ManualStanceResult {
+  success: boolean;
+  reason?: string;
+}
+
+/**
+ * Runtime-only player ownership of stance selection. `NO_STANCE_ID` deliberately
+ * holds the neutral posture; null remains the internal escape hatch that hands
+ * ownership back to Rune/default automation.
+ */
+export function requestManualStance(
+  world: World,
+  player: PlayerEntity,
+  stanceId: string | null,
+): ManualStanceResult {
+  if (stanceId === null) {
+    detachComponent(world, player, "overridesStance");
+    return { success: true };
+  }
+  const neutral = stanceId === NO_STANCE_ID;
+  if (!neutral && !stanceDef(stanceId)) return { success: false, reason: "Unknown stance." };
+  if (!neutral && !(player.tracksProgression.attunedStances ?? []).includes(stanceId)) {
+    return { success: false, reason: "Stance is not attuned." };
+  }
+  const desired = neutral ? null : stanceId;
+  if (
+    desired !== player.tracksProgression.activeStance
+    && getCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY) > 0
+  ) {
+    return { success: false, reason: "Stance switch is not ready." };
+  }
+
+  // Global Auto Combat (and its temporary Fight Back equivalent) owns Rune /
+  // default stance decisions. A click still requests this switch immediately,
+  // but only manual combat mode retains it as a durable runtime override.
+  const automationOwnsStance =
+    player.usesAutocombat.auto || player.fightsWhileTraveling !== undefined;
+  if (automationOwnsStance) {
+    detachComponent(world, player, "overridesStance");
+  } else {
+    attachComponent(world, player, "overridesStance", { stanceId });
+  }
+  if (desired !== player.tracksProgression.activeStance) {
+    applyStanceSwitch(world, player, desired);
+  }
+  return { success: true };
+}
 
 export function updateStanceSwitch(world: World, dt: number, now: number): void {
   for (const player of world.livePlayers) {
     const prog = player.tracksProgression;
+    const automationOwnsStance =
+      player.usesAutocombat.auto || player.fightsWhileTraveling !== undefined;
+    if (
+      player.overridesStance
+      && (automationOwnsStance
+        || (player.overridesStance.stanceId !== NO_STANCE_ID
+          && !(prog.attunedStances ?? []).includes(player.overridesStance.stanceId)))
+    ) {
+      detachComponent(world, player, "overridesStance");
+    }
     if (getString(player.tracksCombat, STANCE_LAST_ACTIVE_KEY) === undefined) {
       setString(player.tracksCombat, STANCE_LAST_ACTIVE_KEY, prog.activeStance ?? "none");
       setCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY, STANCE_SWITCH_COOLDOWN_MS);
@@ -51,27 +113,19 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
     const legalTarget = ruleTarget && (ruleTarget === NO_STANCE_ID || (prog.attunedStances ?? []).includes(ruleTarget))
       ? ruleTarget
       : null;
-    const desired = getFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG) && legalTarget
-      ? (legalTarget === NO_STANCE_ID ? null : legalTarget)
-      : (prog.attunedStances?.includes(prog.equippedStances?.default ?? "") ? prog.equippedStances.default : null);
+    const automatedDesired = getFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG) && legalTarget
+        ? (legalTarget === NO_STANCE_ID ? null : legalTarget)
+        : (prog.attunedStances?.includes(prog.equippedStances?.default ?? "") ? prog.equippedStances.default : null);
+    const desired = !automationOwnsStance && player.overridesStance
+      ? (player.overridesStance.stanceId === NO_STANCE_ID
+        ? null
+        : player.overridesStance.stanceId)
+      : automatedDesired;
 
     let switched = false;
     if (desired !== prog.activeStance && getCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY) <= 0) {
       switched = true;
-      // Leaving Powering Up ALWAYS spends its charge, however it was left. Done
-      // before `activeStance` moves, because the release reads the stance we are
-      // leaving, not the one we are entering.
-      if (prog.activeStance === POWERING_UP_ID) releasePoweringUpCharge(player);
-      prog.activeStance = desired;
-      recalculatePlayerStanceStats(world, player);
-      setCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY, STANCE_SWITCH_COOLDOWN_MS);
-      setString(player.tracksCombat, STANCE_LAST_ACTIVE_KEY, desired ?? "none");
-      markSliceDirty(world, player, "tracksProgression");
-      world.pushEvent(player.hasPosition.nodeId, {
-        kind: "stance-switch",
-        playerId: player.isPlayer.id,
-        stanceId: desired,
-      });
+      applyStanceSwitch(world, player, desired);
     }
 
     // A gated posture (Perfection) turns its upside half on and off as the player crosses
@@ -130,6 +184,29 @@ export function updateStanceSwitch(world: World, dt: number, now: number): void 
   }
 }
 
+/** The single authoritative stance-change implementation used by AUTO and manual input. */
+function applyStanceSwitch(
+  world: World,
+  player: PlayerEntity,
+  desired: string | null,
+): void {
+  const prog = player.tracksProgression;
+  // Leaving Powering Up ALWAYS spends its charge, however it was left. Done
+  // before `activeStance` moves, because the release reads the stance we are
+  // leaving, not the one we are entering.
+  if (prog.activeStance === POWERING_UP_ID) releasePoweringUpCharge(player);
+  prog.activeStance = desired;
+  recalculatePlayerStanceStats(world, player);
+  setCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY, STANCE_SWITCH_COOLDOWN_MS);
+  setString(player.tracksCombat, STANCE_LAST_ACTIVE_KEY, desired ?? "none");
+  markSliceDirty(world, player, "tracksProgression");
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: "stance-switch",
+    playerId: player.isPlayer.id,
+    stanceId: desired,
+  });
+}
+
 export function initStanceCombatEffects(): void {
   initNewStanceBehaviors();
 
@@ -149,36 +226,4 @@ export function initStanceCombatEffects(): void {
     }
   });
 
-  // Incoming-damage posture. Both clauses are MULTIPLICATIVE layers on the already
-  // mitigated hit rather than contributions to `mitigatesDamage.damageReduction`:
-  // that pool clamps to [0, 0.9], which silently swallowed every stance's "you take
-  // more damage" drawback for any character without gear DR, and let the "less
-  // damage" side compound into the shared cap alongside gear and class DR.
-  registerCombatListener("onDamageTaken", (ctx, world) => {
-    if (ctx.defenderType !== "player") return;
-    const player = ctx.defender;
-    const stanceId = player.tracksProgression.activeStance;
-    if (!stanceId) return;
-
-    let mult = stanceDamageTakenMult(
-      stanceId,
-      player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp),
-    );
-
-    if (stanceId === "brawler-stance") {
-      let attackers = 0;
-      for (const monster of world.aggroedMonsters) {
-        if (
-          monster.hasAggroTarget.targetKind === "player" &&
-          monster.hasAggroTarget.targetId === player.isPlayer.id
-        ) attackers++;
-      }
-      mult *= 1 - brawlerDamageReduction(attackers);
-    }
-
-    if (mult === 1) return;
-    // Floored at 1 while the hit was doing anything at all, so a heavy defensive
-    // posture reads as a glancing hit rather than as immunity.
-    ctx.damage = Math.max(ctx.damage > 0 ? 1 : 0, Math.round(ctx.damage * mult));
-  });
 }

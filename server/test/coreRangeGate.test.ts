@@ -20,7 +20,7 @@ import {
   globalMastery,
   isRestrictedCore,
 } from "@mmo-idle/shared";
-import { enumerateBuildsForContentTier } from "../bench/balance/progression";
+import { enumerateBuildsForContentTier, coreScore } from "../bench/balance/progression";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -144,10 +144,16 @@ assert(
 );
 
 const volcanicBuilds = enumerateBuildsForContentTier(4, "volcanic", undefined, true);
-assert(
-  volcanicBuilds.some((build) => build.gearItemIds.core === "core-catalyst"),
-  "an on-hit Volcanic build should select the T4 Catalyst Core; polarized Cores cannot be ranked by absolute budget",
-);
+assert(volcanicBuilds.every(build => !!build.gearItemIds.core), "T4 builds must select a Core");
+// A particular class need not keep the same winning Core after balance changes.
+// Check the semantic scoring contract directly: reward an invested channel and
+// charge its final-damage drawback, rather than counting both as absolute budget.
+const onHitWeapon = [...RECIPE_DATABASE.values()].find(recipe => recipe.slot === 'weapon' && (recipe.stats.onHitDamage ?? 0) > 0)!;
+assert(!!onHitWeapon, 'on-hit weapon fixture exists');
+const catalyst = RECIPE_DATABASE.get('core-catalyst')!;
+const score = (effects: typeof catalyst.mechanicEffects) => coreScore({ ...catalyst, mechanicEffects: effects }, 'reload-root', ['reload-root'], [onHitWeapon.id]);
+assert(score(catalyst.mechanicEffects) > score({ ...catalyst.mechanicEffects, 'core.onhit-mult': 0 }), 'Catalyst on-hit investment improves throughput');
+assert(score(catalyst.mechanicEffects) < score({ ...catalyst.mechanicEffects, 'core.damage-dealt-pct': 0 }), 'Catalyst final-damage penalty reduces throughput');
 
 // ── The canonical loadout is populated, not empty ────────────────────────────
 

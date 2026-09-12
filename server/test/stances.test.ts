@@ -1,3 +1,5 @@
+import { playerFinalDamageMultipliers } from '../src/systems/combat/damage/finalDamage';
+import { initPlayerAmplifiers } from '../src/systems/combat/damage/playerAmplifiers';
 import {
   ACTION_DATABASE,
   BRAWLER_MAX_REDUCTION,
@@ -72,7 +74,7 @@ assert(player.tracksProgression.activeStance === "offensive-stance", "default st
 // Percentage posture, not a flat grant: the promise is a multiple of the stat line
 // underneath, which is what makes a stance read the same at T1 and at T5.
 assert(
-  player.dealsDamage.attack === Math.round(GAME_CONFIG.PLAYER_ATTACK * 1.15),
+  player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK && playerFinalDamageMultipliers(player).dealt === 1.15,
   "offensive stance should multiply attack by its authored percentage",
 );
 
@@ -90,7 +92,7 @@ updateRuneDerivedConfig(world, now);
 updateStanceSwitch(world, STANCE_SWITCH_COOLDOWN_MS, now);
 assert(player.tracksProgression.activeStance === "defensive-stance", "rule should switch to its own destination");
 assert(
-  player.dealsDamage.attack === Math.round(GAME_CONFIG.PLAYER_ATTACK * 0.85),
+  player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK && playerFinalDamageMultipliers(player).dealt === 0.85,
   "destination should replace, not compound with, the old stance's posture",
 );
 assert(player.tracksCombat.cooldowns["ability.cd.test"] === 9_000, "unrelated cooldown should survive a stance recalc unchanged");
@@ -135,6 +137,7 @@ assert(player.tracksProgression.activeStance === null, "a rule should be able to
 assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK, "no stance should have no bonuses or penalties");
 
 initStanceCombatEffects();
+initPlayerAmplifiers();
 const target = world.createMonster("node-5-5", "plains-slime", { x: 450, y: 400 });
 if (!target) throw new Error("setup: target monster missing");
 
@@ -210,8 +213,8 @@ assert(
   "Perfection's Plating drawback must live in the UNGATED half",
 );
 assert(
-  (activeStanceModifiers("perfection-stance", 1)?.attackPct ?? 0) > 0
-    && (activeStanceModifiers("perfection-stance", 0.5)?.attackPct ?? 0) === 0,
+  (activeStanceModifiers("perfection-stance", 1)?.damageDealtPct ?? 0) > 0
+    && (activeStanceModifiers("perfection-stance", 0.5)?.damageDealtPct ?? 0) === 0,
   "the resolver must be the only thing that knows about the gate",
 );
 
@@ -229,7 +232,7 @@ const perfectAttack = Math.round(GAME_CONFIG.PLAYER_ATTACK * 1.12);
 const perfectSpeed = Math.round(GAME_CONFIG.PLAYER_SPEED * 1.12);
 const perfectPlating = Math.round(GAME_CONFIG.PLAYER_PLATING * 0.8);
 const gatedCooldown = player.performsAttack.attackCooldown;
-assert(player.dealsDamage.attack === perfectAttack, "Perfection should grant Attack at full HP");
+assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK && playerFinalDamageMultipliers(player).dealt === 1.12, "Perfection should grant Attack at full HP");
 assert(player.hasPosition.speed === perfectSpeed, "Perfection should grant Move Speed at full HP");
 assert(gatedCooldown < GAME_CONFIG.PLAYER_ATTACK_COOLDOWN, "Perfection should grant Attack Speed at full HP");
 assert(player.mitigatesDamage.plating === perfectPlating, "Perfection's Plating drawback should apply at full HP");
@@ -266,7 +269,7 @@ assert(
 // flag, so it has to rearm in both directions rather than latching once.
 player.hasHealth.hp = player.hasHealth.maxHp * 0.95;
 updateStanceSwitch(world, 100, now);
-assert(player.dealsDamage.attack === perfectAttack, "Perfection must reactivate on the way back up");
+assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK && playerFinalDamageMultipliers(player).dealt === 1.12, "Perfection must reactivate on the way back up");
 assert(player.performsAttack.attackCooldown === gatedCooldown, "Perfection's cadence must reactivate too");
 
 // Leave the gate closed so the Berserker section below starts from a settled flag.

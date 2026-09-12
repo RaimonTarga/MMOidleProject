@@ -1,3 +1,5 @@
+import { resolveFinalDamageMultipliers } from '../systems/finalDamage';
+import { resolveLaserProfile } from '../systems/laserProfile';
 import type { EquipmentMap, EssenceType } from "../items";
 import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, TargetStatusView, UltimateStatus } from "../components";
 import type { PassiveMap } from "../passives";
@@ -75,6 +77,10 @@ export interface PlayerView {
    * get the interval the player is really swinging at.
    */
   attackCadenceMult: number;
+  finalDamageDealtMult: number;
+  finalDamageTakenMult: number;
+  /** Live bonus on-hit damage from an active Imbue Lightning window; 0 when none is up. */
+  onHitDamageBonus: number;
   lastAttackAt: number;
   attackTargetId: string | null;
   auto: boolean;
@@ -164,6 +170,10 @@ export interface PlayerView {
   equippedStances: EquippedStances;
   /** Which posture is currently active (folded into stats). */
   activeStance: string | null;
+  /** Runtime manual stance owner (including `no-stance`); null means no override. */
+  manualStanceOverride: string | null;
+  /** Server-authoritative manual ability requests waiting for legal activation. */
+  queuedAbilityIds: string[];
   /** Rites learned (crafted) — the slottable pool (system rework Step 11). */
   knownRites: string[];
   /** Equipped rites — interchangeable list (length ≤ `riteSlots`), always-on OOC. */
@@ -268,6 +278,7 @@ const EMPTY_EQUIPMENT = {
 
 export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
   if (!entity.isPlayer || !entity.hasPosition || !entity.hasHealth) return null;
+  const finalDamage = resolveFinalDamageMultipliers(entity.usesSkills?.passives ?? {}, entity.tracksProgression?.activeStance, entity.hasHealth.hp / Math.max(1, entity.hasHealth.maxHp));
   const target = entity.isMoving
     ? pointFromMotion(entity.hasPosition.current, entity.isMoving.motion)
     : entity.hasPosition.current;
@@ -323,6 +334,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     incomingDot: entity.hasStatus?.incomingDot ?? 0,
     pendingHeal: entity.hasStatus?.pendingHeal ?? 0,
     attackCadenceMult: entity.hasStatus?.attackCadenceMult ?? 1,
+    finalDamageDealtMult: entity.hasStatus?.finalDamageDealtMult ?? finalDamage.dealt,
+    finalDamageTakenMult: entity.hasStatus?.finalDamageTakenMult ?? finalDamage.taken,
+    onHitDamageBonus: entity.hasStatus?.onHitDamageBonus ?? 0,
     attackRange: attack.attackRange,
     attackCooldown: attack.attackCooldown,
     lastAttackAt: attack.lastAttackAt,
@@ -364,7 +378,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     cadenceEmpoweredArmed: entity.hasEmpoweredAttack !== undefined,
     ammoCount: entity.usesReload?.ammo ?? 0,
     ammoMax: entity.usesReload?.ammoMax ?? 0,
-    heatPct: entity.usesReload ? Math.round(entity.usesReload.laserHeat) : 0,
+    heatPct: entity.usesReload ? Math.min(100, Math.round(entity.usesReload.laserHeat / resolveLaserProfile(entity.usesSkills?.passives ?? {}).heatMax * 100)) : 0,
     laserOverheated: entity.usesReload?.laserOverheated ?? false,
     executionReady: entity.hasEmpoweredAttack !== undefined,
     executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
@@ -438,6 +452,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     attunedStances: progression.attunedStances ?? [],
     equippedStances: progression.equippedStances ?? emptyEquippedStances(),
     activeStance: progression.activeStance ?? null,
+    manualStanceOverride: entity.overridesStance?.stanceId ?? null,
+    queuedAbilityIds: entity.queuesAbilities?.abilityIds ?? [],
     knownRites: progression.knownRites ?? [],
     equippedRites: progression.equippedRites ?? emptyEquippedRites(),
     // Compatibility field for older clients; Rites are RP-capped, not slot-capped.

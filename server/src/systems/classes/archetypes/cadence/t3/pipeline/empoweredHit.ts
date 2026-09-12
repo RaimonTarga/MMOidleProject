@@ -15,6 +15,8 @@ import {
 } from '../core/constants';
 import { recomputeRampageStats } from '../core/rampage';
 import { crescendoMultiplier } from '../core/crescendo';
+import { CADENCE_OVERLOAD_FX, CADENCE_CURSED_FINALE_FX } from '@mmo-idle/shared';
+import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
 
 export function registerCadenceEmpoweredHit(): void {
   registerCombatListener('onHit', (ctx, world) => {
@@ -65,6 +67,8 @@ export function registerCadenceEmpoweredHit(): void {
     if ((passives['cadence.rampage'] ?? 0) > 0) {
       if (cadence.rampageStacks >= (passives['cadence.rampage-max-stacks'] ?? RAMPAGE_MAX_STACKS)) {
         cadence.rampageStacks = 0; // overload — rampage crashes
+        // The aura ramps the climb; this is only the crash.
+        pushClientEffect(ctx, CADENCE_OVERLOAD_FX);
       } else {
         cadence.rampageStacks++;
         cadence.rampageDecayMs = 0;
@@ -120,6 +124,8 @@ export function registerCadenceEmpoweredHit(): void {
     const shredCap     = passives['cadence.debuff-shred-cap']     ?? CURSED_FINALE_SHRED_CAP;
     if ((vulnPct > 0 || platingShred > 0) && ctx.defenderType === 'monster' && !evadeBlocksDebuffs(ctx)) {
       const monsterState = ctx.defender.tracksCombat;
+      // A brand pressed INTO the target; the plating strip is permanent.
+      pushClientEffect(ctx, CADENCE_CURSED_FINALE_FX);
       if (vulnPct > 0) {
         applyPlayerDebuff(player, monsterState, {
           id: 'vulnerability',

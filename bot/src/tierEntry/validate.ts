@@ -1,6 +1,8 @@
+import { buildKey, observedBuild, validateBuild } from "../loadout/loadout";
 import { runicPointLoadoutCost, runicLoadoutFromProgression } from "@mmo-idle/shared";
 import {
   ABILITY_RECIPE_DATABASE,
+  STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE, isStanceRecipeUnlocked, isRiteRecipeUnlocked,
   ESSENCE_TYPES,
   ITEM_DATABASE,
   NODE_BIOMES,
@@ -15,7 +17,6 @@ import {
   requiredBiomeLevelForUpgrade,
   runeBudgetForGlobalMastery,
   runeIdsFromCraftedRecipes,
-  runeRuleCost,
   upgradeCeilingFromGlobalMastery,
   type PlayerView,
   type TierEntryProfile,
@@ -260,12 +261,20 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
     c.ok("wallet-catalyst-legal", Number.isFinite(amount) && amount >= 0, `${family} catalysts is ${amount}`);
   }
 
-  // Speculative content: every stance and rite gates above the T1 ceiling, so an
-  // entry template must not carry one.
-  if (!isCheckpoint) {
-    c.ok("no-stances-at-entry", profile.knownStances.length === 0, "template knows a stance");
-    c.ok("no-rites-at-entry", profile.knownRites.length === 0, "template knows a rite");
+  for (const [known, recipes, unlocked, label] of [
+    [profile.knownStances, STANCE_RECIPE_DATABASE, isStanceRecipeUnlocked, "stance"],
+    [profile.knownRites, RITE_RECIPE_DATABASE, isRiteRecipeUnlocked, "rite"],
+  ] as const) {
+    for (const id of known) {
+      const recipe = [...recipes.values()].find(r => ("stanceId" in r ? r.stanceId : r.riteId) === id);
+      c.ok(label + "-reachable", recipe && ("stanceId" in recipe ? isStanceRecipeUnlocked(recipe, { biomeLevel: profile.biomeLevels, bossesCleared: profile.bossesCleared }) : isRiteRecipeUnlocked(recipe, { biomeLevel: profile.biomeLevels, bossesCleared: profile.bossesCleared })), id + " is not reachable");
+    }
   }
+  const build = { abilities: profile.attunedAbilities, runeRules: profile.runesEquipped,
+    stances: { attuned: profile.attunedStances ?? [], default: profile.equippedStances.default }, rites: profile.equippedRites };
+  const view = { knownAbilities: profile.knownAbilities, knownStances: profile.knownStances, knownRites: profile.knownRites,
+    runesOwned: [...ownedRunes], globalMastery: gm, combatArchetype: profile.classRoot.replace(/-root$/, "") } as unknown as PlayerView;
+  for (const issue of validateBuild(build, view)) c.ok("build-" + issue.code, false, issue.reason);
 
   return report(profile.id, c);
 }
@@ -313,9 +322,12 @@ export function validateSpawn(profile: TierEntryProfile, self: PlayerView): Vali
   for (const id of actual) c.ok("live-no-extra-recipes", expected.has(id), `unexpected unlocked recipe "${id}"`);
 
   for (const [slot, id] of Object.entries(profile.equipment)) {
-    if (!id) continue;
     const live = self.equipment[slot as keyof typeof self.equipment];
     c.ok("live-equipment", live === id, `${slot} is ${live}, expected ${id}`);
+  }
+  c.ok("live-inventory", JSON.stringify([...self.inventory].sort()) === JSON.stringify([...profile.inventory].sort()), "Inventory differs from template");
+  for (const family of new Set([...Object.keys(profile.wallet.catalysts), ...Object.keys(self.catalysts)])) {
+    c.ok("live-wallet-catalyst", (self.catalysts[family] ?? 0) === (profile.wallet.catalysts[family] ?? 0), `${family} catalyst wallet differs`);
   }
   for (const [id, plus] of Object.entries(profile.itemUpgrades)) {
     c.ok("live-upgrade-level", (self.itemUpgrades[id] ?? 0) === plus, `${id} is +${self.itemUpgrades[id] ?? 0}, expected +${plus}`);
@@ -330,6 +342,12 @@ export function validateSpawn(profile: TierEntryProfile, self: PlayerView): Vali
     `${self.runesEquipped.length} rune rules equipped, template declared ${profile.runesEquipped.length} ` +
       "(the server drops rules it considers unowned or over budget)",
   );
+  c.ok("live-exact-build", buildKey(observedBuild(self)) === buildKey({ abilities: profile.attunedAbilities,
+    runeRules: profile.runesEquipped, stances: { attuned: profile.attunedStances ?? [], default: profile.equippedStances.default }, rites: profile.equippedRites }), "Server build differs from requested template");
+  for (const key of ["knownAbilities", "knownStances", "knownRites", "runeRecipesCrafted"] as const) {
+    c.ok("live-exact-" + key, JSON.stringify([...self[key]].sort()) === JSON.stringify([...profile[key]].sort()), key + " differs from template");
+  }
+  c.ok("live-rune-ownership", JSON.stringify([...self.runesOwned].sort()) === JSON.stringify(runeIdsFromCraftedRecipes(profile.runeRecipesCrafted).sort()), "Rune ownership differs");
   const budget = runeBudgetForGlobalMastery(self.globalMastery);
   const spent = runicPointLoadoutCost(runicLoadoutFromProgression(self));
   c.ok("live-rune-budget", spent <= budget, `live loadout costs ${spent} RP against a ${budget} RP budget`);

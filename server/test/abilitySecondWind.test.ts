@@ -79,6 +79,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
 
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "second-wind-player");
+player.usesAutocombat.auto = true;
 const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
 if (!target) throw new Error("failed to create target");
 setAttackTarget(world, player, target.isMonster.id);

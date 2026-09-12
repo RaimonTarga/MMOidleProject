@@ -11,6 +11,8 @@ import {
   ETERNAL_CHARGE_DURATION_MS,
   EC_CHARGE_FX, BAT_CHARGE_FX,
 } from '../core/constants';
+import { COOLDOWN_HOLLOW_FX } from '@mmo-idle/shared';
+import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
 
 /**
  * onHit listener for cooldown T3 normal (non-empowered) attacks. All paths are
@@ -66,6 +68,9 @@ export function registerNormalHit(): void {
 
     if (hasPassive(player, 'cooldown.singular-extraction')) {
       ctx.damage = 0;
+      // On-hit gear still fires on these swings, so the client must draw
+      // SOMETHING — just not the full slam it was drawing for zero damage.
+      pushClientEffect(ctx, COOLDOWN_HOLLOW_FX);
     }
   });
 }

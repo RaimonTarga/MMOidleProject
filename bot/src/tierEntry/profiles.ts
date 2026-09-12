@@ -1,11 +1,11 @@
+import type { DesiredBuild } from "../loadout/loadout";
 import {
   NODE_BIOMES,
+  STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
   RECIPE_DATABASE,
   biomeXpForBiomeLevel,
   emptyEquipment,
   emptyAttunedAbilities,
-  emptyEquippedRites,
-  emptyEquippedStances,
   type EquipmentMap,
   type TierEntryProfile,
 } from "@mmo-idle/shared";
@@ -69,12 +69,27 @@ function buildProfile(route: Route, economy: EntryEconomyMode): TierEntryProfile
         .map((step) => step.abilityId),
     ),
   ];
-  const lastAbilities = [...steps]
-    .reverse()
-    .find((step): step is Extract<RouteStep, { type: "setAbilities" }> => step.type === "setAbilities");
-  const lastRunes = [...steps]
-    .reverse()
-    .find((step): step is Extract<RouteStep, { type: "configureRunes" }> => step.type === "configureRunes");
+  let build: DesiredBuild = { abilities: emptyAttunedAbilities(), runeRules: [], stances: { attuned: [], default: null }, rites: [] };
+  const knownStances: string[] = [];
+  const knownRites: string[] = [];
+  for (const step of steps) {
+    if (step.type === "configureBuild") build = structuredClone(step.build);
+    if (step.type === "learnAbility" && step.attune !== false) build.abilities[step.slot === "guard" ? "guards" : "techniques"] = [step.abilityId];
+    if (step.type === "setAbilities") build.abilities = { techniques: [...step.techniques], guards: [...step.guards] };
+    if (step.type === "configureRunes") build.runeRules = structuredClone(step.rules);
+    if (step.type === "setDefaultStance") {
+      build.stances.default = step.stanceId;
+      if (step.stanceId && !build.stances.attuned.includes(step.stanceId)) build.stances.attuned.push(step.stanceId);
+    }
+    if (step.type === "craftStance") {
+      const recipe = STANCE_RECIPE_DATABASE.get(step.recipeId);
+      if (recipe && !knownStances.includes(recipe.stanceId)) knownStances.push(recipe.stanceId);
+    }
+    if (step.type === "craftRite") {
+      const recipe = RITE_RECIPE_DATABASE.get(step.recipeId);
+      if (recipe && !knownRites.includes(recipe.riteId)) knownRites.push(recipe.riteId);
+    }
+  }
   const itemUpgrades: Record<string, number> = {};
   for (const step of steps) {
     if (step.type !== "upgrade") continue;
@@ -138,9 +153,7 @@ function buildProfile(route: Route, economy: EntryEconomyMode): TierEntryProfile
     equipment,
     itemUpgrades,
     knownAbilities: learnedAbilities,
-    attunedAbilities: lastAbilities
-      ? { techniques: [...lastAbilities.techniques], guards: [...lastAbilities.guards] }
-      : emptyAttunedAbilities(),
+    attunedAbilities: build.abilities,
     runeRecipesCrafted: [
       ...new Set(
         steps
@@ -148,11 +161,12 @@ function buildProfile(route: Route, economy: EntryEconomyMode): TierEntryProfile
           .map((step) => step.recipeId),
       ),
     ],
-    runesEquipped: lastRunes?.rules.map((rule) => ({ ...rule })) ?? [],
-    knownStances: [],
-    equippedStances: emptyEquippedStances(),
-    knownRites: [],
-    equippedRites: emptyEquippedRites(),
+    runesEquipped: build.runeRules,
+    knownStances,
+    attunedStances: build.stances.attuned,
+    equippedStances: { default: build.stances.default },
+    knownRites,
+    equippedRites: build.rites,
   };
 }
 

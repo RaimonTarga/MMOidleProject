@@ -123,22 +123,22 @@ the family tag agree (Jungle also drops green).
 
 | Core | Effects |
 |---|---|
-| Tempered | +12% attack, +12% max HP |
+| Tempered | +12% final damage, +12% max HP |
 | Survivalist | +30% Recovery, +15% max HP |
-| Force | +22% attack, −12% max HP |
-| Duelist | +18% attack, +10% max HP; direct same-target hits gain +5% direct attack damage each, max 5 Focus |
+| Force | +22% final damage, −12% max HP |
+| Duelist | +18% final damage, +10% max HP; direct same-target hits gain +5% direct attack damage each, max 5 Focus |
 | Juggernaut | +30% max HP, +40% plating, 14% independent DR; −25% attack speed, −10% movement |
 | Arcanist | 20% Technique cooldown reduction, +20% Technique power |
 | Controller | +35% debuff duration, +25% debuff potency |
-| Scout | +24% attack, +25% movement, 25% mobility cooldown reduction; −20% max HP |
-| Sniper | +40% attack; −30% max HP, −25% plating |
-| Bruiser | +28% attack, +20% max HP, +18% movement; kills refund 50% of a mobility cooldown |
-| Accelerant | +55% attack speed, −18% attack |
-| Catalyst | +115% existing on-hit damage, −15% attack; provides no on-hit damage itself |
+| Scout | +24% final damage, +25% movement, 25% mobility cooldown reduction; −20% max HP |
+| Sniper | +40% final damage; −30% max HP, −25% plating |
+| Bruiser | +28% final damage, +20% max HP, +18% movement; kills refund 50% of a mobility cooldown |
+| Accelerant | +55% attack speed, −18% final damage |
+| Catalyst | +115% existing on-hit damage, −15% final damage; provides no on-hit damage itself |
 
 ## Passive keys and their consumers
 
-Stat-rebuild multipliers (`shared/src/systems/stats.ts`): `core.attack-mult`,
+Stat-rebuild multipliers (`shared/src/systems/stats.ts`):
 `core.maxhp-mult`, `core.plating-mult`, `core.speed-mult`, `core.attack-speed-mult`.
 
 Everything else has its own consumer:
@@ -204,7 +204,7 @@ undo the core one tick later.
 ## Deliberately absent
 
 - **No DoT core.** DoT damage per stack derives from `dealsDamage.attack`, which
-  `core.attack-mult` already multiplies, so a DoT-potency core is a second multiplier
+  `core.damage-dealt-pct` now multiplies, so a DoT-potency core is a second multiplier
   on the same number — either a trap or mandatory. `dot.max-stacks` is in the
   denominator and is a ramp-shape lever, not a damage lever. Full reasoning in the
   plan doc; revisit only on the duration or conversion axis.
@@ -245,3 +245,54 @@ loadout), `coreAuthoring` (authoring invariants + tier placement), `coreMechanic
 (debuff scaler, pure), `coreCombat` (recovery funnel, Duelist Focus, summon event
 ownership, Core-swap preservation, layered DR, and both mobility clauses against a
 real `World`).
+
+## Validation corrections — 2026-09-12
+
+Catalyst now shares one designated on-hit calculation across regular attacks,
+Melter laser ticks, Zealot Frenzy, Channeler Flow and Binary Cycle's flat bonus.
+The calculation preserves shot/formation weights. On-hit respects target plating
+and damage reduction, sharing one plating payment with the attack. Empowered and
+ability attack multipliers do not multiply the flat bonus; final Core/stance damage
+multipliers do. It grants no damage at zero on-hit investment. Character-sheet on-hit
+values and DPS include the Core multiplier; the stored raw on-hit stat remains
+unscaled, preventing double application.
+
+Inventory comparisons rebuild hypothetical equipment through the same shared
+stat formulas as the server, including Core eligibility, multiplicative stat
+layers, and tradeoffs. They no longer compare only the empty ordinary stat maps
+on Core items. The approved follow-up below moves broad offense to final damage.
+
+
+## Final damage and equipment comparisons — 2026-09-12
+
+Broad Core offense and its tradeoffs use `core.damage-dealt-pct`, applied once to
+final direct plus on-hit damage, and at resolution for owned DoTs, procs, beams,
+AoE and summon damage. Authored percentages are preserved. Catalyst's on-hit,
+Duelist's direct-hit Focus, technique bonuses, HP, plating, recovery and speed
+remain specialist axes. Juggernaut uses signed `core.damage-taken-pct: -0.14`.
+Legacy raw-attack/DR passive keys remain supported but are not authored by the
+current Core catalog.
+
+`shared/src/systems/finalDamage.ts` composes Core and stance factors separately.
+`server/src/systems/combat/damage/finalDamage.ts` resolves ownership and Brawler's
+live aggressors. Existing effects use their owner's current posture at tick time;
+they do not snapshot a boosted attack stat. Copied finalized hits (Swiftblade)
+already contain the multiplier and are not multiplied again. Environmental damage,
+explicit self-damage costs and deferred debt are not player-generated offense.
+
+Incoming Core/stance modifiers cover regular hits before caps/shields, monster
+AoE, monster DoTs and damaging ground/node hazards. Deferred debt and Berserker's
+explicit HP cost do not receive them a second time. Summons inherit outgoing
+owner multipliers; their incoming mitigation remains their own stat profile.
+
+The detailed character panel exposes final dealt/taken multipliers and DPS uses
+the authoritative live dealt value. Inventory rebuilds both choices through
+`compareEquipmentStats`, at the same HP fraction and stance, excluding temporary
+combat buffs. Only rows affected by the selected slot (both old and new item) are
+shown; without a selection, rows reflect equipped gear's contributions. Equal
+swaps retain relevant unchanged values. Specialist and weapon/relic effects stay
+in the item effect list. Final damage taken is a separate row from normal DR.
+
+Validation: `finalDamageIntegration.test.ts` exercises direct/on-hit, proc, AoE,
+DoT and laser scaling, incoming layered mitigation, live sheet output, every-root
+DPS scaling, and inventory relevance/equal-swap/unequip/HP-gate semantics.

@@ -99,6 +99,7 @@ initCombatSystems();
 
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "bramble-player");
+player.usesAutocombat.auto = true;
 
 // Bramble triggers on n-aggro 3, so give it three attackers.
 const monsters = [0, 1, 2].map((i) => {

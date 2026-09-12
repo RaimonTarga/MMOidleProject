@@ -30,9 +30,8 @@ export const BIOME_ENCOUNTER_SHAPE: Record<T2BiomeGroup, EncounterShape> = {
 };
 
 /**
- * Tier 2 grants exactly ONE Technique and ONE Guard slot
- * (`clampAttunedAbilities` returns a second Technique only at tier 3), so the
- * encounter-shape switch IS the ability pair. There is no room for both.
+ * The baseline deliberately selects one Technique for each encounter shape.
+ * The live game permits ordered repertoires constrained by shared RP.
  *
  *   AoE            -> Sweep, which arms the next attack to cleave.
  *   Single target  -> Expose Weakness, which makes one target take more damage.
@@ -75,10 +74,9 @@ export function guardFor(biomeGroup: T2BiomeGroup): string {
  *     (`max(1, H - plating)`), so it is worth most exactly where hits are few
  *     and large.
  *
- * A DEFAULT stance costs no Runic Points — a stance's `runeCost` is paid only by
- * a `switch-stance` rule that targets it — so this whole policy is free against
- * the RP budget. Reactive stance switching is deliberately left out of the
- * baseline; it is a probe.
+ * Every attuned stance reserves its runeCost once, including the default.
+ * Switching rules pay their logic cost separately. Reactive switching is a
+ * separate probe; baseline posture choices remain authored here.
  *
  * ACQUISITION ORDER. Both introductory stances are now Plains rewards at level
  * 7 and use the local yellow essence, so a clean T2 entry can craft both on the

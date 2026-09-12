@@ -2,6 +2,7 @@ import type { PlayerView } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import type { RenderState } from '../render/state';
 import { DEPTH } from '../render/depth';
+import { fxOverheatVent } from './overheatVent';
 
 export function activateLaserBeam(state: RenderState, scene: GameScene, targetId: string): void {
   state.laserBeam.targetId = targetId;
@@ -12,6 +13,14 @@ export function activateLaserBeam(state: RenderState, scene: GameScene, targetId
     state.laserBeam.graphics = scene.add.graphics().setDepth(DEPTH.FX);
   }
 }
+
+/**
+ * Latch for the overheat EDGE. Only the local player ever has a laser beam
+ * (`state.laserBeam` is singular), so one module-level flag is enough — and it
+ * is reset below whenever the player stops being a Melter, so swapping character
+ * or respeccing cannot leave it armed.
+ */
+let wasOverheated = false;
 
 export function updateLaserBeam(state: RenderState, scene: GameScene): void {
   const beam = state.laserBeam;
@@ -24,13 +33,26 @@ export function updateLaserBeam(state: RenderState, scene: GameScene): void {
     ? (state.view.get(state.ownId) as PlayerView | undefined)
     : undefined;
 
+  const isMelter =
+    !!player &&
+    player.combatArchetype === 'reload' &&
+    (player.passives['reload.laser'] ?? 0) > 0;
+
+  // The beam just stopping was the only sign the weapon had locked itself out.
+  // Fire the vent on the rising edge, wherever the player is standing — this
+  // runs every frame, so it must not re-fire while heat stays pinned at 100%.
+  if (isMelter && player.laserOverheated) {
+    if (!wasOverheated && ownSprite) fxOverheatVent(scene, ownSprite.x, ownSprite.y);
+    wasOverheated = true;
+  } else if (!isMelter || !player.laserOverheated) {
+    wasOverheated = false;
+  }
+
   if (
     now > beam.until ||
     !ownSprite ||
     !targetSprite ||
-    !player ||
-    player.combatArchetype !== 'reload' ||
-    (player.passives['reload.laser'] ?? 0) <= 0 ||
+    !isMelter ||
     player.laserOverheated
   ) {
     beam.graphics.clear();

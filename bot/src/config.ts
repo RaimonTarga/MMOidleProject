@@ -2,6 +2,7 @@
  * Run configuration for one headless bot. Everything here is either a CLI flag
  * or an environment variable — nothing is read from the server.
  */
+import { parseChoices } from "./policy/choices";
 import { basename, isAbsolute } from "node:path";
 import { isT1EconomyArm, type T1EconomyArm } from "@mmo-idle/shared";
 import type { HarnessExecutionMode } from "./telemetry/events";
@@ -30,6 +31,7 @@ export interface BotConfig {
   economyArm?: T1EconomyArm;
   /** Policy profile id. */
   policyId: string;
+  choices?: Record<string, string>;
   /** Optional dev-only synthetic tier-entry profile id. */
   tierEntryProfileId?: string;
   /** Optional Snapshot B JSON produced by a real canonical T1 run. */
@@ -221,6 +223,7 @@ export function buildConfig(args: Record<string, string>): BotConfig {
     routeId,
     economyArm: economyArm as T1EconomyArm | undefined,
     policyId,
+    choices: parseChoices(args.choices),
     tierEntryProfileId: args.tierEntry || args.entryProfile,
     tierEntrySnapshotPath: args.tierEntrySnapshot,
     tierEntrySnapshotDir: args.tierEntrySnapshotDir,

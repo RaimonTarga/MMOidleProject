@@ -13,6 +13,8 @@ import {
   RUPTURE_WINDOW_MS,
   BAT_CHARGE_FX, EC_CHARGE_FX,
 } from '../core/constants';
+import { COOLDOWN_SUNDER_FX } from '@mmo-idle/shared';
+import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
 
 /**
  * Second onHit listener for empowered (execution) attacks — runs after
@@ -79,6 +81,7 @@ export function registerPostEmpoweredHit(): void {
 
     if (hasPassive(player, 'cooldown.rupture')) {
       cd.ruptureWindowMs = player.usesSkills.passives['cooldown.rupture-window-ms'] ?? RUPTURE_WINDOW_MS;
+      pushClientEffect(ctx, COOLDOWN_SUNDER_FX);
     }
   });
 }

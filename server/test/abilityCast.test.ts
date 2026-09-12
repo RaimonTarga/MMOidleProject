@@ -97,6 +97,7 @@ initCombatSystems();
 // ── 1. Firing starts a wind-up, not an armed charge ──────────────────────────
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices("cast-player"), "cast-player");
+player.usesAutocombat.auto = true;
 const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
 if (!target) throw new Error("failed to create target");
 setAttackTarget(world, player, target.isMonster.id);
@@ -158,6 +159,7 @@ assert(
 // ── 3. Hard CC interrupts, costs nothing ─────────────────────────────────────
 const world2 = new World();
 const player2 = world2.attachPlayerEntity(makePlayerSlices("cast-player-2"), "cast-player-2");
+player2.usesAutocombat.auto = true;
 const target2 = world2.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
 if (!target2) throw new Error("failed to create second target");
 setAttackTarget(world2, player2, target2.isMonster.id);
@@ -202,6 +204,7 @@ assert(
 // ── 4. Cast speed shortens the wind-up ───────────────────────────────────────
 const world3 = new World();
 const player3 = world3.attachPlayerEntity(makePlayerSlices("cast-player-3"), "cast-player-3");
+player3.usesAutocombat.auto = true;
 const target3 = world3.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
 if (!target3) throw new Error("failed to create third target");
 setAttackTarget(world3, player3, target3.isMonster.id);

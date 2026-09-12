@@ -60,6 +60,8 @@ export interface RunHeader {
   routeId: string;
   routeVersion: string;
   policyId: string;
+  startState?: Record<string, unknown>;
+  behavior?: { reachedChoices?: Record<string, string>; choices: Record<string, string>; upgrades: string; description: string };
   classRoot: string;
   /** Frame observed in the live PlayerView at run start. */
   frameId?: string | null;
@@ -193,6 +195,7 @@ export type BlockReason =
   | { kind: "prerequisite"; detail: string };
 
 export type BotEvent =
+  | { kind: "experience-sample"; atMs: number; durationMs: number; nodeId: string; purpose: string; activity: "unavailable" | "dead" | "combat" | "travel" | "waiting" | "idle" }
   | { kind: "run-start"; atMs: number; header: RunHeader }
   | {
       kind: "run-end";

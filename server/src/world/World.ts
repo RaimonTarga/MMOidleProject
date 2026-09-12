@@ -455,7 +455,7 @@ export class World {
     updateBossPatterns(this, dt, now);
     updateUltimateEncounters(this, dt);
     updatePartyFollow(this, now);
-    updateAutoTraverse(this);
+    updateAutoTraverse(this, now);
     updateAutoTargets(this, now);
     updateAbilityFiring(this, now);
     // Advances wind-ups started above, so a cast that completes this tick lands

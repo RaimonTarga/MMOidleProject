@@ -80,7 +80,7 @@ const baseAttack = GAME_CONFIG.PLAYER_ATTACK;
 // Values are read from the recipe rather than hardcoded — this file tests the GATE,
 // and hardcoding the cast's numbers here would make every balance edit a test failure.
 const sniper = RECIPE_DATABASE.get("core-sniper")!;
-const sniperAttack = sniper.mechanicEffects!["core.attack-mult"]!;
+const sniperAttack = sniper.mechanicEffects!["core.damage-dealt-pct"]!;
 const sniperMaxHp = sniper.mechanicEffects!["core.maxhp-mult"]!;
 assert(
   sniper.coreEligibility === "ranged" && sniperAttack > 0 && sniperMaxHp < 0,
@@ -89,8 +89,8 @@ assert(
 
 recalculatePlayerEntityStats(world, player);
 assert(
-  player.usesSkills.passives["core.attack-mult"] === sniperAttack,
-  "eligible core should fold its core.attack-mult passive",
+  player.usesSkills.passives["core.damage-dealt-pct"] === sniperAttack,
+  "eligible core should fold its core.damage-dealt-pct passive",
 );
 assert(
   player.usesSkills.passives["core.maxhp-mult"] === sniperMaxHp,
@@ -103,7 +103,7 @@ assert(
 player.usesSkills.selectedRange = "dot-range-mid";
 recalculatePlayerEntityStats(world, player);
 assert(
-  player.usesSkills.passives["core.attack-mult"] === sniperAttack,
+  player.usesSkills.passives["core.damage-dealt-pct"] === sniperAttack,
   "a ranged core must stay active across both mid and far builds",
 );
 
@@ -112,7 +112,7 @@ assert(
 player.usesSkills.selectedRange = "reload-range-close";
 recalculatePlayerEntityStats(world, player);
 assert(
-  player.usesSkills.passives["core.attack-mult"] === undefined,
+  player.usesSkills.passives["core.damage-dealt-pct"] === undefined,
   "a ranged core should be inactive for a close build",
 );
 assert(
@@ -133,7 +133,7 @@ assert(
 player.holdsInventory.equipment.core = "core-tempered";
 recalculatePlayerEntityStats(world, player);
 assert(
-  player.usesSkills.passives["core.attack-mult"] === tempered.mechanicEffects!["core.attack-mult"],
+  player.usesSkills.passives["core.damage-dealt-pct"] === tempered.mechanicEffects!["core.damage-dealt-pct"],
   "an unrestricted core should apply while the build is close-range",
 );
 assert(

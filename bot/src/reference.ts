@@ -471,7 +471,7 @@ w("Standing kit into the gauntlet: `chaotic-axe`, `swamp-charm-t1`, `plains-boot
 w("with `plains-vest-t1` (plating 7) for Plains/Forest and `mountain-vest-t1`");
 w("(guard potency 15%) for Mountain/Swamp/Cave.");
 w();
-w("Per-boss loadout — one Technique + one Guard is all tier 1 allows:");
+w("Per-boss baseline choices — the live game supports ordered repertoires within shared RP:");
 w();
 w("| boss | armor | technique | guard |");
 w("|---|---|---|---|");
@@ -493,7 +493,7 @@ w("```");
 w();
 w("Step Back must precede Chase because both claim MOVEMENT. Avoid Hazards is a separate");
 w("PATHING channel. Second Wind and Cleanse use built-in triggers, so neither carries");
-w("`fire-guard`. The Brace-tank A/B omits Step Back and equips that rule only with Brace.");
+w('`use-ability` targeting Brace. The Brace-tank A/B omits Step Back and equips that rule only with Brace.');
 w();
 
 // ── Write ────────────────────────────────────────────────────────────────────

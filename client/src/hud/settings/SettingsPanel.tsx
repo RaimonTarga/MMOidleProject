@@ -17,8 +17,8 @@ import {
 } from '../../audio/audioEngine';
 import {
   ACTION_LABELS,
+  bindingToLabel,
   cloneBindings,
-  codeToLabel,
   captureModeAtom,
   DEFAULT_BINDINGS,
   keybindsAtom,
@@ -106,13 +106,24 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
         setCapture(null);
         return;
       }
+      if (
+        (event.code === 'ShiftLeft' || event.code === 'ShiftRight')
+        && action !== 'hold.still'
+      ) {
+        return;
+      }
+      const shift = event.shiftKey && event.code !== 'ShiftLeft' && event.code !== 'ShiftRight';
       const next = cloneBindings(bindings);
       for (const a of REBINDABLE_ACTIONS) {
-        if (next[a].key === event.code && a !== action) {
-          next[a] = { ...next[a], key: '' };
+        if (
+          next[a].key === event.code
+          && !!next[a].shift === shift
+          && a !== action
+        ) {
+          next[a] = { ...next[a], key: '', shift: false };
         }
       }
-      next[action] = { ...next[action], key: event.code };
+      next[action] = { ...next[action], key: event.code, shift };
       setBindings(next);
       saveBindings(next);
       setCapture(null);
@@ -176,7 +187,7 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
 
   function clearKey(action: ActionId): void {
     const next = cloneBindings(bindings);
-    next[action] = { ...next[action], key: '' };
+    next[action] = { ...next[action], key: '', shift: false };
     setBindings(next);
     saveBindings(next);
   }
@@ -309,7 +320,7 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
             {capture && (
               <div className="settings-capture-hint">
                 {capture.device === 'keyboard'
-                  ? 'Press a key (Esc to cancel)…'
+                  ? 'Press a key or Shift+key (Esc to cancel)…'
                   : 'Press a button or pull a trigger (Esc to cancel)…'}
               </div>
             )}
@@ -522,7 +533,7 @@ function BindingRow({
           <span
             className={`settings-chip${capturingKb ? ' settings-chip--capturing' : ''}`}
           >
-            {capturingKb ? '…' : codeToLabel(b.key)}
+            {capturingKb ? '…' : bindingToLabel(b)}
           </span>
           <button
             type="button"

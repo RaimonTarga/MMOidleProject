@@ -10,8 +10,17 @@ import {
   ESSENCE_COLORS,
   GAME_CONFIG,
   isRangedPlayerView,
+  CADENCE_CURSED_FINALE_FX,
+  COOLDOWN_HOLLOW_FX,
+  CADENCE_OVERLOAD_FX,
+  CADENCE_VERDICT_EXECUTE_FX,
+  COOLDOWN_SUNDER_FX,
+  DOT_FROZEN_FX,
+  DOT_MAXSTACK_BURST_FX,
+  DOT_RIMESHATTER_FX,
   type CombatArchetype,
   type CombatEvent,
+  type DamageElement,
   type PlayerView,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -28,9 +37,33 @@ import {
   playOneShotEffect,
 } from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
+import { fxDotTick } from "../fx/dotTick";
+import { fxHollowStrike } from "../fx/hollowStrike";
+import { fxHeavyShell } from "../fx/heavyShell";
+import { fxLightningDagger } from "../fx/lightningDagger";
+import { fxBleedOpen } from "../fx/bleedOpen";
+import { fxEquinoxArc } from "../fx/equinoxArc";
+import {
+  fxVerdictExecute,
+  fxRampageOverload,
+  fxCursedFinale,
+  fxSunderShatter,
+  fxMaxStackBurst,
+  fxRimeshatter,
+  fxFrozenShatter,
+} from "../fx/t4Triggers";
 import { fxApprenticeCast, fxApprenticeCloseCast } from "../fx/apprenticeCast";
 import { PARTIAL_EVADE_COLOR } from "./damageNumberStyle";
 import { fxSlash } from "../fx/slash";
+import { fxStrikerSlash } from "../fx/strikerSlash";
+import { resolveAttackTint, type AttackTint } from "../fx/elementTint";
+import { fxSpearThrust } from "../fx/spearThrust";
+import { fxPointBlankShot } from "../fx/pointBlankShot";
+import { fxArcDischarge } from "../fx/arcDischarge";
+import { fxBladeWave } from "../fx/bladeWave";
+import { fxSiegeBlow } from "../fx/siegeBlow";
+import { fxPikeBrace } from "../fx/pikeBrace";
+import { fxSquireSlam } from "../fx/squireSlam";
 import { fxImpact } from "../fx/impact";
 import { fxGunshot, fxDuelistShot, fxAltShot, fxDeathMarkBlast } from "../fx/gunshot";
 import { fxBoulder } from "../fx/boulder";
@@ -104,6 +137,7 @@ import {
   notifyAbilityCastStarted,
   notifyAbilityCooldownStarted,
   notifyAbilityFired,
+  notifyStanceCooldownStarted,
 } from "../hud/atoms";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
@@ -197,6 +231,12 @@ interface AttackFxArgs {
   from: Vec2;
   to: Vec2;
   dotPath?: DotPath;
+  /**
+   * Cosmetic elemental recolor for this attack, from the equipped weapon's
+   * element / the class DoT path / an active transient effect. Undefined means
+   * "keep your own palette" — every FX treats it as optional.
+   */
+  tint?: AttackTint;
 }
 
 type AttackFxFn = (args: AttackFxArgs) => void;
@@ -320,6 +360,29 @@ function fxPackCall(scene: GameScene, pos: Vec2): void {
   });
 }
 
+/**
+ * Elements contributed by a TRANSIENT effect on this specific hit, keyed by the
+ * client-effect tag the server already puts on the event. Imbue Lightning
+ * needed no new protocol: `ABILITY_IMBUE_FX` is pushed onto every
+ * charge-consuming hit (see abilityImbue.ts) and was already read below to
+ * crack lightning over the attacker.
+ *
+ * Snapshot-driven attacks by OTHER players carry no effect list, so their
+ * transient tints are simply absent — the same graceful degradation the imbue
+ * crackle itself already has.
+ */
+const TRANSIENT_ELEMENT_BY_EFFECT: Record<string, DamageElement> = {
+  [ABILITY_IMBUE_FX]: "lightning",
+};
+
+function transientElement(effects: string[] | undefined): DamageElement | null {
+  for (const id of effects ?? []) {
+    const element = TRANSIENT_ELEMENT_BY_EFFECT[id];
+    if (element) return element;
+  }
+  return null;
+}
+
 function playEmpoweredRing(args: AttackFxArgs): void {
   const { scene, ev, player, to } = args;
   if (!ev.empowered && !ev.execution) return;
@@ -336,50 +399,119 @@ function playEmpoweredRing(args: AttackFxArgs): void {
   fxAoeRing(scene, to, GAME_CONFIG.EMPOWERED_AOE_RADIUS, ringColor);
 }
 
+/** The Apprentice attack, with the caller choosing the projectile or close cast. */
+function dotAttackFx(args: AttackFxArgs, cast: typeof fxApprenticeCast): void {
+  const { scene, ev, from, to, dotPath, tint } = args;
+  const element = dotPath ?? "poison";
+  cast(scene, from.x, from.y, to.x, to.y, element, ev.empowered, () => {
+    switch (element) {
+      case "fire":
+        fxFireFlame(scene, to.x, to.y, ev.empowered);
+        break;
+      case "frost":
+        fxFrostSnowflake(scene, to.x, to.y, ev.empowered);
+        break;
+      case "doom":
+        fxDoomCloud(scene, to.x, to.y, ev.empowered);
+        break;
+      default:
+        fxPoisonSmog(scene, to.x, to.y, ev.empowered);
+    }
+  }, tint);
+}
+
 const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
-  cadence: ({ scene, ev, from, to }) =>
-    fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered, true),
-  cooldown: ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
-  reload: ({ scene, ev, from, to }) =>
-    fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered),
-  energy: ({ scene, ev, from, to }) =>
-    fxLightning(scene, from.x, from.y, to.x, to.y, ev.empowered),
-  dot: ({ scene, ev, player, from, to, dotPath }) => {
-    const element = dotPath ?? "poison";
-    const cast = player.selectedRange?.endsWith("-range-close")
-      ? fxApprenticeCloseCast
-      : fxApprenticeCast;
-    cast(
-      scene,
-      from.x,
-      from.y,
-      to.x,
-      to.y,
-      element,
-      ev.empowered,
-      () => {
-        switch (element) {
-          case "fire":
-            fxFireFlame(scene, to.x, to.y, ev.empowered);
-            break;
-          case "frost":
-            fxFrostSnowflake(scene, to.x, to.y, ev.empowered);
-            break;
-          case "doom":
-            fxDoomCloud(scene, to.x, to.y, ev.empowered);
-            break;
-          default:
-            fxPoisonSmog(scene, to.x, to.y, ev.empowered);
-        }
-      },
-    );
-  },
+  cadence: ({ scene, ev, from, to, tint }) =>
+    fxStrikerSlash(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  // NOT fxImpact: that is the generic fallback style, authored on 41 monsters.
+  // The heaviest chassis in the game gets its own weight.
+  cooldown: ({ scene, ev, to, tint }) =>
+    fxSquireSlam(scene, to.x, to.y, ev.execution, tint),
+  reload: ({ scene, ev, from, to, tint }) =>
+    fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered, 1, tint),
+  energy: ({ scene, ev, from, to, tint }) =>
+    fxLightning(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  dot: (args) => dotAttackFx(args, fxApprenticeCast),
   // Summoner uses a plain melee impact from the slime — the slime sprite is
   // the FX, and the empowered ring is handled separately via the player's
   // existing empoweredRing pass.
-  summoner: ({ scene, ev, from, to }) =>
-    fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered),
+  summoner: ({ scene, ev, from, to, tint }) =>
+    fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered, false, tint),
 };
+
+/**
+ * Attack FX for a specific tier-2 RANGE choice, keyed by the full skill id the
+ * `selectedRange` slice carries (e.g. `cadence-range-mid`). A range pick is a
+ * change to how the character fights, so it gets to replace the archetype's
+ * baseline animation outright; anything absent here falls through to
+ * {@link ATTACK_FX_BY_ARCHETYPE}.
+ */
+const ATTACK_FX_BY_RANGE: Record<string, AttackFxFn> = {
+  // ── cadence ──
+  // Lancer traded the In-Fighter's crescent for reach — so it thrusts.
+  "cadence-range-mid": ({ scene, ev, from, to, tint }) =>
+    fxSpearThrust(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  // Phantom-Blade fights at 132px with a sword, so the cut is thrown.
+  "cadence-range-far": ({ scene, ev, from, to, tint }) =>
+    fxBladeWave(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+
+  // ── cooldown ──
+  // Phalanx sets the pike and punches; Sentinel sends it through the ground.
+  "cooldown-range-mid": ({ scene, ev, from, to, tint }) =>
+    fxPikeBrace(scene, from.x, from.y, to.x, to.y, ev.execution, tint),
+  "cooldown-range-far": ({ scene, ev, from, to, tint }) =>
+    fxSiegeBlow(scene, from.x, from.y, to.x, to.y, ev.execution, tint),
+
+  // ── reload / energy / dot ──
+  // The three CLOSE picks all floor to 12px (stats.ts clamps negative range at
+  // PLAYER_ATTACK_RANGE), so their parent classes' travel-based FX had no
+  // distance left to draw. Each gets a contact animation instead.
+  "reload-range-close": ({ scene, ev, from, to, tint }) =>
+    fxPointBlankShot(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  "energy-range-close": ({ scene, ev, from, to, tint }) =>
+    fxArcDischarge(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  // Hexblade drags the spell into the enemy instead of throwing it.
+  "dot-range-close": (args) => dotAttackFx(args, fxApprenticeCloseCast),
+};
+
+/**
+ * Tier-4 path THRESHOLD cues, keyed by the client-effect tag the server pushes.
+ *
+ * A table rather than seven more branches on the effects chain below, which was
+ * already a dozen `if (effectId === …) continue` clauses long. These all draw on
+ * the TARGET — every one of them is a threshold crossed on the thing you hit.
+ */
+const TRIGGER_FX_BY_EFFECT: Record<
+  string,
+  (scene: GameScene, at: Vec2, args: AttackFxArgs) => void
+> = {
+  [CADENCE_VERDICT_EXECUTE_FX]: (scene, at) => fxVerdictExecute(scene, at.x, at.y),
+  [CADENCE_OVERLOAD_FX]: (scene, at) => fxRampageOverload(scene, at.x, at.y),
+  [CADENCE_CURSED_FINALE_FX]: (scene, at) => fxCursedFinale(scene, at.x, at.y),
+  [COOLDOWN_SUNDER_FX]: (scene, at) => fxSunderShatter(scene, at.x, at.y),
+  [DOT_RIMESHATTER_FX]: (scene, at) => fxRimeshatter(scene, at.x, at.y),
+  [DOT_FROZEN_FX]: (scene, at) => fxFrozenShatter(scene, at.x, at.y),
+  // Element-driven so the burst matches the path that filled the bar.
+  [DOT_MAXSTACK_BURST_FX]: (scene, at, args) =>
+    fxMaxStackBurst(scene, at.x, at.y, args.dotPath ?? "poison"),
+};
+
+/**
+ * Single resolution order for a basic-attack animation: range pick, then
+ * archetype, then the raw attack style. Both the own-player event path and the
+ * snapshot path for other entities go through this so they never diverge.
+ */
+function resolveAttackFx(
+  archetype: CombatArchetype,
+  selectedRange: string | null,
+  style: string,
+): AttackFxFn {
+  const byRange = selectedRange ? ATTACK_FX_BY_RANGE[selectedRange] : undefined;
+  if (byRange) return byRange;
+  if (archetype && ATTACK_FX_BY_ARCHETYPE[archetype])
+    return ATTACK_FX_BY_ARCHETYPE[archetype];
+  return ATTACK_FX_BY_STYLE[style] ?? ATTACK_FX_BY_STYLE.impact;
+}
 
 const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   slash: ({ scene, ev, from, to }) =>
@@ -390,15 +522,18 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
     fxTalonStrike(scene, from.x, from.y, to.x, to.y),
   poison: ({ scene, to }) => fxPoison(scene, to.x, to.y),
   magic: ({ scene, from, to }) => fxMagic(scene, from.x, from.y, to.x, to.y),
-  // Conduit summons — range picks which of these their attacks use.
-  'conduit-beam': ({ scene, from, to }) =>
-    fxConduitBeam(scene, from.x, from.y, to.x, to.y),
-  'conduit-bolt': ({ scene, from, to }) =>
-    fxConduitBolt(scene, from.x, from.y, to.x, to.y),
+  // Conduit summons — range picks which of these their attacks use. They carry
+  // the OWNER's weapon element (resolved in minions.ts), which is why these
+  // three styles read `tint` while the purely monster-facing ones do not.
+  'conduit-beam': ({ scene, from, to, tint }) =>
+    fxConduitBeam(scene, from.x, from.y, to.x, to.y, tint),
+  'conduit-bolt': ({ scene, from, to, tint }) =>
+    fxConduitBolt(scene, from.x, from.y, to.x, to.y, tint),
   frost: ({ scene, to }) => fxFrost(scene, to.x, to.y),
   fire: ({ scene, to }) => fxFire(scene, to.x, to.y),
   void: ({ scene, to }) => fxVoid(scene, to.x, to.y),
-  impact: ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
+  impact: ({ scene, ev, to, tint }) =>
+    fxImpact(scene, to.x, to.y, ev.execution, tint),
   gunshot: ({ scene, ev, from, to }) =>
     fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered),
   boulder: ({ scene, from, to }) =>
@@ -569,6 +704,10 @@ export function dispatchCombatEvent(
   scene: GameScene,
 ): void {
   if (ev.kind === 'damage') return; // Amount-only events render in deltaApplier.
+  if (ev.kind === "stance-switch") {
+    if (ev.playerId === scene.myId) notifyStanceCooldownStarted();
+    return;
+  }
   // dot-tick / monster-hit amounts render separately in deltaApplier.
   // The lightning element (Tempest storm) also cracks a bolt down onto
   // the target on each tick for a "storm" read.
@@ -580,6 +719,10 @@ export function dispatchCombatEvent(
       if (ev.fx === "conflagration") fxConflagrationTick(scene, tx, ty);
       else if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
       else if (ev.element === "doom") fxDoomTick(scene, tx, ty);
+      // Everything else — bleed, poison, frost, fire — used to render as a bare
+      // damage number. Hemomancer in particular converts its whole finisher into
+      // a bleed, so it had no in-world presence at all.
+      else if (ev.element) fxDotTick(scene, tx, ty, ev.element);
     }
     return;
   }
@@ -689,8 +832,14 @@ export function dispatchCombatEvent(
         fxSavageMaul(scene, monster.x, monster.y, target.x, target.y);
       } else if (monster && target && ev.fx === "trench-depth-bolt") {
         fxPowerShot(scene, monster.x, monster.y, target.x, target.y);
-      } else if (monster && target && (ev.fx === "frost-tusk-impact" || ev.fx === "volcanic-eruption")) {
-        fxStrongKick(scene, target.x, target.y);
+      } else if (ev.fx === "frost-tusk-impact" || ev.fx === "volcanic-eruption") {
+        // Anchor on the PLANTED circle when the ability broadcast one (the
+        // Mastodon's Frost-Tusk Impact is a committed area now), and fall back to
+        // the victim for the target-following version (Molten Eruption). Drawing a
+        // committed slam on the player who successfully walked out of it would
+        // contradict the counterplay the telegraph exists to offer.
+        const at = impact ?? target;
+        if (at) fxStrongKick(scene, at.x, at.y);
       } else if (ev.fx === "trench-lantern-pulse") {
         // Anchor on the victim, else the caster, else the broadcast impact. Every
         // branch must resolve a real anchor — a missing sprite must skip the cue,
@@ -718,6 +867,11 @@ export function dispatchCombatEvent(
         fxShieldUp(scene, monster.x, monster.y);
       } else if (monster && target && ev.fx === "dive-bomb") {
         fxDiveBomb(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "rime-pounce") {
+        // Same committed rush line as Dive Bomb, in frost: the Frost Lurker is a
+        // ground predator, so it reuses the motion primitive rather than the
+        // raptor palette.
+        fxDiveBomb(scene, monster.x, monster.y, target.x, target.y, 0x6699bb, 0xccffff);
       } else if (monster && target) {
         if (ev.fx === "strong-kick") {
           fxStrongKick(scene, target.x, target.y);
@@ -1029,12 +1183,38 @@ function runFxForAttackStyle(
   const isLaser =
     player.combatArchetype === "reload" &&
     (player.passives["reload.laser"] ?? 0) > 0;
+  // Three paths whose ATTACK is wrong, all detectable from passives the client
+  // already has — the same shape as isLaser above, so no new protocol.
+  const isHeavyShell =
+    player.combatArchetype === "reload" &&
+    (player.passives["reload.snipe"] ?? 0) > 0;
+  const isLightningDagger =
+    player.combatArchetype === "energy" &&
+    (player.passives["energy.flash"] ?? 0) > 0;
+  // Hemomancer's finisher converts entirely into a bleed and lands no direct
+  // damage, so only the EMPOWERED hit gets the wound treatment; its regular
+  // attacks are ordinary and keep the normal crescent.
+  const isBleedOpen =
+    ev.empowered &&
+    player.combatArchetype === "cadence" &&
+    (player.passives["cadence.hemorrhage"] ?? 0) > 0;
+  const isHollowStrike = ev.effects?.includes(COOLDOWN_HOLLOW_FX) ?? false;
+  // Equinox: the phase is already on the wire as the aura id, so the attack can
+  // match the glow without a protocol change of its own.
+  const isEquinox =
+    player.combatArchetype === "energy" &&
+    (player.passives["energy.binary-cycle"] ?? 0) > 0;
 
   const from = { x: actorSprite.x, y: actorSprite.y };
   const to = ev.targetPos
     ? nodeToScene(ev.targetPos.x, ev.targetPos.y)
     : { x: targetSprite.x, y: targetSprite.y };
-  const args: AttackFxArgs = { scene, ev, player, from, to, dotPath };
+  // Cosmetic elemental recolor. The class DoT path (Apprentice only) takes the
+  // wash; the weapon and any transient effect take the lighter layers.
+  const tint =
+    resolveAttackTint(player, dotPath ?? null, transientElement(ev.effects)) ??
+    undefined;
+  const args: AttackFxArgs = { scene, ev, player, from, to, dotPath, tint };
 
   // Blunderbuss volley: each pellet is its own bullet, all fired at once from a
   // shared muzzle to its own scattered endpoint (angle + distance randomized
@@ -1076,6 +1256,38 @@ function runFxForAttackStyle(
   } else if (isVoidDischarge) {
     // Voidwalker singularity discharge: void implosion → detonation on the target.
     fxVoidDischarge(scene, to.x, to.y);
+  } else if (isHollowStrike) {
+    // No empowered ring, no lunge FX, nothing but a dead tap.
+    fxHollowStrike(scene, to.x, to.y);
+  } else if (isBleedOpen) {
+    fxBleedOpen(scene, from.x, from.y, to.x, to.y, ev.empowered);
+  } else if (isHeavyShell) {
+    playEmpoweredRing(args);
+    fxHeavyShell(scene, from.x, from.y, to.x, to.y, ev.empowered, tint);
+  } else if (isLightningDagger) {
+    playEmpoweredRing(args);
+    fxLightningDagger(
+      scene,
+      from.x,
+      from.y,
+      to.x,
+      to.y,
+      player.flashShiftPct ?? 0,
+      ev.empowered,
+      tint,
+    );
+  } else if (isEquinox) {
+    playEmpoweredRing(args);
+    fxEquinoxArc(
+      scene,
+      from.x,
+      from.y,
+      to.x,
+      to.y,
+      player.aura === "equinox-discharge",
+      ev.empowered,
+      tint,
+    );
   } else if (isSwiftblade) {
     // Swiftblade replaces the default cadence slash with its dual diagonal slash;
     // both the primary and the extra strikes carry this effect.
@@ -1083,14 +1295,11 @@ function runFxForAttackStyle(
     fxDualSlash(scene, to.x, to.y, ev.empowered);
   } else {
     playEmpoweredRing(args);
-    const archetype = player.combatArchetype;
-    if (archetype && ATTACK_FX_BY_ARCHETYPE[archetype]) {
-      ATTACK_FX_BY_ARCHETYPE[archetype](args);
-    } else {
-      const styleFn =
-        ATTACK_FX_BY_STYLE[player.attackStyle] ?? ATTACK_FX_BY_STYLE.impact;
-      styleFn(args);
-    }
+    resolveAttackFx(
+      player.combatArchetype,
+      player.selectedRange,
+      player.attackStyle,
+    )(args);
   }
 
   if (isFlashTeleport) {
@@ -1100,6 +1309,7 @@ function runFxForAttackStyle(
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
     if (effectId === SWIFTBLADE_CLIENT_EFFECT) continue; // handled above
+    if (effectId === COOLDOWN_HOLLOW_FX) continue; // handled above
     if (effectId === CHANNEL_BEAM_CLIENT_EFFECT) continue; // handled above
     if (effectId === HOLY_FLASH_CLIENT_EFFECT) continue; // handled above
     if (effectId === EXPLODING_CLIP_CLIENT_EFFECT) continue; // handled above
@@ -1107,6 +1317,11 @@ function runFxForAttackStyle(
     if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === VOID_DISCHARGE_CLIENT_EFFECT) continue; // handled above
+    const triggerFx = TRIGGER_FX_BY_EFFECT[effectId];
+    if (triggerFx) {
+      triggerFx(scene, to, args);
+      continue;
+    }
     if (effectId === ABILITY_SWEEP_FX) {
       // Sweep Technique: a bold horizontal cleave ON TOP of the normal attack FX,
       // plus a Technique HUD-icon pulse so the fire is visible both in-world and
@@ -1185,6 +1400,8 @@ export function spawnAttackEffect(
     archetype?: CombatArchetype;
     dotPath?: DotPath;
     selectedRange?: string | null;
+    /** Precomputed by the caller, which has the full PlayerView to read gear from. */
+    tint?: AttackTint;
   },
 ): void {
   if (!shouldRunClientFx()) return;
@@ -1209,16 +1426,11 @@ export function spawnAttackEffect(
     from,
     to,
     dotPath: flags?.dotPath,
+    tint: flags?.tint,
   };
 
   playEmpoweredRing(args);
-  const archetype = flags?.archetype;
-  if (archetype && ATTACK_FX_BY_ARCHETYPE[archetype]) {
-    ATTACK_FX_BY_ARCHETYPE[archetype](args);
-  } else {
-    const styleFn = ATTACK_FX_BY_STYLE[style] ?? ATTACK_FX_BY_STYLE.impact;
-    styleFn(args);
-  }
+  resolveAttackFx(flags?.archetype ?? null, flags?.selectedRange ?? null, style)(args);
 
   // Spatialized attack SFX for other players / monsters / minions: attenuate by
   // distance from the local player so off-screen sources are faint. (Own-player

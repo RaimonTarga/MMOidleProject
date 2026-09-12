@@ -25,6 +25,7 @@ export class WorldMirror {
   /** Node the last snapshot described. */
   nodeId = "";
   tick = 0;
+  needsResync = false;
 
   /** Runtime dungeon projection for the current node, when the server sends one. */
   dungeon: DeltaSnapshot["dungeon"] = undefined;
@@ -35,6 +36,7 @@ export class WorldMirror {
     this.dungeon = undefined;
     this.nodeId = "";
     this.tick = 0;
+    this.needsResync = false;
   }
 
   apply(snapshot: DeltaSnapshot): void {
@@ -42,6 +44,7 @@ export class WorldMirror {
     // did not re-send is gone. Patching onto stale entities across a node change
     // would leave phantom monsters in the mirror.
     if (snapshot.full) {
+      this.needsResync = false;
       this.entities.clear();
       this.kinds.clear();
     }
@@ -59,6 +62,7 @@ export class WorldMirror {
         }
         case "patch": {
           const existing = this.entities.get(delta.netId);
+          if (!existing) this.needsResync = true;
           // A patch for an entity we never saw added means our mirror is behind.
           // Adopt the components rather than dropping them; `player:requestSync`
           // repairs the rest.

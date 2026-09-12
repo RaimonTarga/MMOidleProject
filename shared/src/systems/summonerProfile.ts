@@ -1,6 +1,6 @@
 import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../data/skillTree';
-import { relicRatingsFromPassives, resolveSummonerRelicProfile } from './relics';
+import { relicRatingsFromPassives, resolveSummonerRelicProfile, resolveRelicMagnitudeMultiplier, type RelicRatings } from './relics';
 import {
   SUMMON_SIZE_MULT_MAX,
   SUMMON_SIZE_MULT_MIN,
@@ -23,6 +23,7 @@ export interface SummonerProfileInput {
   selectedRange: string | null;
   unlockedSkills: readonly string[];
   passives?: PassiveMap;
+  relicRatings?: RelicRatings;
 }
 
 export interface SummonerSlotProfile {
@@ -40,6 +41,10 @@ export interface SummonerProfile {
   specialization: SummonerSpecialization | null;
   slots: SummonerSlotProfile[];
   formationOffenseMult: number;
+  /** Formation-wide budget for flat on-hit magnitude and generic proc triggers. */
+  secondaryEffectMult: number;
+  /** Magnitude only for fixed formations; does not increase proc frequency. */
+  relicPotencyMult: number;
   totalSummonHpPct: number;
   summonMoveSpeedMult: number;
   summonAttackCooldownMult: number;
@@ -142,7 +147,14 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
   // Range scales the body it never swaps (see SummonerRangeTuning.sizeMult).
   // Clamped so the extremes stay readable: Kilnmaster at Harrier range would
   // otherwise compound to 0.389, and Idolwright at Vigil range to 3.28.
-  const slots = resolveSlots(frame, specialization).map((slot) => ({
+  const baseSlots = resolveSlots(frame, specialization);
+  const ratings = input.relicRatings ?? relicRatingsFromPassives(passives);
+  const fixedFormation = baseSlots.some(slot => slot.role !== 'normal');
+  const potencyMult = fixedFormation ? resolveRelicMagnitudeMultiplier(ratings.potency) : 1;
+  const count = fixedFormation ? baseSlots.length : resolveSummonerRelicProfile(5000, baseSlots.length, ratings, SUMMONER_CORE_TUNING.hardEntityCap).summonCount.after;
+  // Keep each ordinary body's original budget: a larger army must not dilute its members.
+  const resolvedSlots = fixedFormation ? baseSlots : equalSlots(count, baseSlots[0].sizeMult).map(slot => ({ ...slot, offenseWeight: 1 / baseSlots.length, defenseWeight: 1 / baseSlots.length, procWeight: 1 / baseSlots.length }));
+  const slots = resolvedSlots.map((slot) => ({
     ...slot,
     sizeMult: Math.min(
       SUMMON_SIZE_MULT_MAX,
@@ -161,7 +173,7 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
   const relicReconstructionMs = resolveSummonerRelicProfile(
     reconstructionBaseMs,
     slots.length,
-    relicRatingsFromPassives(passives),
+    ratings,
   ).respawnMs.after;
 
   return {
@@ -169,9 +181,13 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
     range,
     specialization,
     slots,
+    relicPotencyMult: potencyMult,
     formationOffenseMult:
-      SUMMONER_CORE_TUNING.formationOffenseMult * frameTuning.offenseMult,
-    totalSummonHpPct: frameTuning.totalSummonHpPct * rangeTuning.summonHpMult,
+      SUMMONER_CORE_TUNING.formationOffenseMult * frameTuning.offenseMult * potencyMult,
+    secondaryEffectMult: specialization === 'endless-swarm'
+      ? SUMMONER_SPECIALIZATION_TUNING.endlessSwarm.secondaryEffectMult
+      : frameTuning.secondaryEffectMult,
+    totalSummonHpPct: frameTuning.totalSummonHpPct * rangeTuning.summonHpMult * potencyMult,
     summonMoveSpeedMult: frameTuning.moveSpeedMult * rangeTuning.moveSpeedMult,
     summonAttackCooldownMult: 1 / SUMMONER_CORE_TUNING.apsInheritanceMult,
     attackMode: selectedRange ? rangeTuning.attackMode : SUMMONER_BASELINE_ATTACK_MODE,

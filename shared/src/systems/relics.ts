@@ -1,6 +1,5 @@
+import type { LaserRelicProfile } from './laserProfile';
 import type { PassiveMap } from '../passives';
-import type { SubVariant } from '../data/skillTree';
-import { resolveDotClassProfile } from './dotClassProfile';
 
 /** T4 in the live progression domain (playerTier 0 is the Clearing tutorial). */
 export const RELIC_UNLOCK_PLAYER_TIER = 4;
@@ -70,16 +69,15 @@ export interface RelicCoefficients {
 }
 
 /**
- * V1 cross-class balance knobs. Discrete roots use a stronger coefficient where
- * a +10% rating would otherwise round away on their baseline frame.
+ * Ratings describe rates; discrete results may remain unchanged between breakpoints.
  */
 export const RELIC_COEFFICIENTS: Readonly<Record<RelicArchetype, RelicCoefficients>> = {
-  cadence:  { frequency: 2, potency: 1 },
+  cadence:  { frequency: 1, potency: 1 },
   cooldown: { frequency: 1, potency: 1 },
   reload:   { frequency: 1, potency: 1 },
   dot:      { frequency: 1, potency: 1 },
   energy:   { frequency: 1, potency: 1 },
-  summoner: { frequency: 1, potency: 2 },
+  summoner: { frequency: 1, potency: 1 },
 };
 
 export const RELIC_INTERVAL_FLOORS_MS = {
@@ -258,8 +256,10 @@ export function resolveDotRelicDeliveryProfile(
 export interface EnergyRelicProfile {
   archetype: 'energy';
   gainPerHit: RelicValue<number>;
+  gainPerHitLabel?: string;
   maxEnergy: RelicValue<number>;
   dischargeMultiplier: RelicValue<number>;
+  dischargeSuppressed?: boolean;
 }
 
 export function resolveEnergyRelicProfile(
@@ -289,6 +289,8 @@ export interface SummonerRelicProfile {
   archetype: 'summoner';
   respawnMs: RelicValue<number>;
   summonCount: RelicValue<number>;
+  /** Fixed companion formations scale their existing bodies instead of adding copies. */
+  summonPower?: RelicValue<number>;
 }
 
 export function resolveSummonerRelicProfile(
@@ -313,70 +315,11 @@ export function resolveSummonerRelicProfile(
   };
 }
 
-export type ResolvedRelicProfile =
+export type ResolvedRelicProfile = (
+  | LaserRelicProfile
   | CadenceRelicProfile
   | CooldownRelicProfile
   | ReloadRelicProfile
   | DotRelicProfile
   | EnergyRelicProfile
-  | SummonerRelicProfile;
-
-/** Character-specific preview authority used by inventory and Forge. */
-export function resolveRelicPreview(
-  archetype: string | null | undefined,
-  passives: PassiveMap,
-  ratings: RelicRatings,
-  options: { subVariant?: SubVariant | null; playerTier?: number } = {},
-): ResolvedRelicProfile | null {
-  switch (archetype) {
-    case 'cadence': {
-      const threshold = Math.max(2, Math.round(
-        (passives['cadence.empowered-threshold'] ?? 5)
-          + (passives['cadence.threshold-mod'] ?? 0),
-      ));
-      const mult = (passives['cadence.empowered-mult'] ?? 2)
-        + (passives['cadence.damage-mult-add'] ?? 0)
-        + (passives['shared.empowered-mult-add'] ?? 0);
-      const finalMult = mult * (1 + (passives['weapon.empowered-mult-bonus'] ?? 0));
-      return resolveCadenceRelicProfile(threshold, finalMult, ratings);
-    }
-    case 'cooldown': {
-      const ms = Math.max(100, Math.round(passives['cooldown.empowered-cd-ms'] ?? 7000));
-      const mult = ((passives['cooldown.empowered-mult'] ?? 2)
-        + (passives['shared.empowered-mult-add'] ?? 0))
-        * (1 + (passives['weapon.empowered-mult-bonus'] ?? 0));
-      return resolveCooldownRelicProfile(ms, mult, ratings);
-    }
-    case 'reload': {
-      const ammo = Math.max(1, Math.round(passives['reload.max-ammo'] ?? 10));
-      const base = Math.round(passives['reload.reload-time-ms'] ?? 1600);
-      const ms = Math.max(100, Math.round(base * (passives['reload.reload-time-mult'] ?? 1)));
-      return resolveReloadRelicProfile(ms, ammo, ratings);
-    }
-    case 'dot': {
-      const profile = resolveDotClassProfile(passives, options.subVariant);
-      return resolveDotRelicDeliveryProfile(profile.tickIntervalMs, profile.maxStacks, ratings);
-    }
-    case 'energy': {
-      const perHit = Math.max(1, Math.round(passives['energy.per-hit'] ?? 14));
-      const perTier = passives['energy.max-bonus'] ?? 0;
-      const tierMult = Math.max(1, (options.playerTier ?? 0) - 4 + 1);
-      const max = 100 + (perTier > 0 ? Math.round(perTier * tierMult) : 0);
-      const mult = ((passives['energy.empowered-mult'] ?? 2)
-        + (passives['shared.empowered-mult-add'] ?? 0))
-        * (1 + (passives['weapon.empowered-mult-bonus'] ?? 0));
-      return resolveEnergyRelicProfile(perHit, max, mult, ratings);
-    }
-    case 'summoner': {
-      const base = passives['summoner.minion-count'] ?? 3;
-      const mult = passives['summoner.minion-count-mult'] ?? 1;
-      const count = Math.max(1, Math.floor(base * mult));
-      const cap = passives['summoner.minion-count-cap'];
-      const capped = cap && cap > 0 ? Math.min(count, Math.floor(cap)) : count;
-      const respawn = Math.max(0, Math.round(passives['summoner.minion-respawn-ms'] ?? 5000));
-      return resolveSummonerRelicProfile(respawn, capped, ratings, cap);
-    }
-    default:
-      return null;
-  }
-}
+  | SummonerRelicProfile) & { secondaryEffects?: import('./relicEffectPreview').RelicEffectPreview[]; secondaryNotes?: string[] };

@@ -1,3 +1,4 @@
+import { BuildError } from "./loadout/loadout";
 import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import type { PlayerDeathPayload } from "@mmo-idle/shared";
@@ -17,6 +18,7 @@ import type { RouteLeaseSession } from "./concurrency/routeLeaseSession";
 import type { BotConfig } from "./config";
 import { BotConnection } from "./net/connection";
 import { Intents } from "./net/intents";
+import { resolveChoices } from "./policy/choices";
 import { requirePolicy } from "./policy/profiles";
 import { evaluate } from "./route/conditions";
 import { AbortError, InvalidTreatmentError, RouteExecutor, sleep, StallError } from "./route/executor";
@@ -236,7 +238,7 @@ export async function runBot(
         `but route ${authoredRoute.id} is for ${authoredRoute.classRoot}`,
     );
   }
-  const route = config.completionMode === "next-tier"
+  const unresolvedRoute = config.completionMode === "next-tier"
     ? {
         ...authoredRoute,
         completion: { type: "playerTierAtLeast" as const, tier: 2 },
@@ -244,6 +246,7 @@ export async function runBot(
       }
     : authoredRoute;
   const policy = requirePolicy(config.policyId);
+  const { route, selected: selectedChoices } = resolveChoices(unresolvedRoute, config.choices ?? {}, policy.choices);
   const runId = `${config.routeId}-${config.policyId}-${new Date()
     .toISOString()
     .replace(/[:.]/g, "-")}-${randomUUID().slice(0, 8)}`;
@@ -252,6 +255,8 @@ export async function runBot(
   const snapshotStore = new T1SnapshotStore(sink.dir);
   const startedAt = Date.now();
   const conn = new BotConnection(config.serverUrl, config.devAccountId);
+  // Preparation failures occur before the route's own finally block.
+  try {
   const economyConfig = config.economyArm
     ? t1EconomyConfigForArm(config.economyArm)
     : defaultT1EconomyConfig();
@@ -521,6 +526,7 @@ export async function runBot(
     routeId: route.id,
     routeVersion: route.version,
     policyId: policy.id,
+    behavior: { choices: selectedChoices, upgrades: policy.upgrades ?? "authored", description: policy.description },
     classRoot: tierEntryProfile?.classRoot ?? route.classRoot,
     frameId: liveFrameId,
     gitRevision: gitRevision(),
@@ -531,6 +537,12 @@ export async function runBot(
     taints,
     executionMode: config.executionMode,
     maxConcurrency: config.maxConcurrency,
+    startState: Object.fromEntries([
+      "nodeId", "hp", "maxHp", "activeStance", "runesOwned", "unlockedRecipes", "level",
+      "playerTier", "selectedClass", "selectedSubVariant", "selectedRange", "unlockedSkills", "skillPoints",
+      "biomeLevel", "biomeXP", "bossesCleared", "inventory", "equipment", "itemUpgrades", "essences", "catalysts", "catalystProgress",
+      "knownAbilities", "attunedAbilities", "knownStances", "attunedStances", "equippedStances", "knownRites", "equippedRites", "runesEquipped",
+    ].map(key => [key, structuredClone(initialSelf[key as keyof typeof initialSelf])])),
     initialEssences: { ...initialSelf.essences },
     initialCatalysts: { ...initialSelf.catalysts },
     tierEntry: tierEntryProfile
@@ -803,7 +815,10 @@ export async function runBot(
     await executor.run();
     completion = executor.isPartial ? "partial" : "completed";
   } catch (err) {
-    if (err instanceof InvalidTreatmentError) {
+    if (aborted) {
+      completion = abortReason?.includes("maxRunMs") ? "timed-out" : "aborted";
+      stallReason = abortReason;
+    } else if (err instanceof InvalidTreatmentError || err instanceof BuildError) {
       completion = "error";
       stallReason = err.message;
       treatmentValidity = "invalid";
@@ -926,6 +941,10 @@ export async function runBot(
   setTimeout(unregister, 60_000).unref?.();
 
   return { summary, dir: sink.dir };
+  } finally {
+    conn.disconnect();
+    await sink.close();
+  }
 }
 
 /** Re-checked through the same predicate the executor uses, never a second rule. */

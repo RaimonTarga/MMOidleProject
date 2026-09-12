@@ -1170,9 +1170,14 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   assert(threats.length === 1, 'the ability wind-up is visible as a guardable threat');
   assert(threats[0].source === 'monster-ability', 'attributed to the generic ability machine');
   assert(threats[0].castName === ability.name, 'named as the cast bar names it');
+  // Frost-Tusk Impact became a PLANTED `area-hit` circle in the 2026-09-11 Tundra
+  // ecology polish, so Step Back is now the right answer and must be offered. This
+  // was the inverse assertion while the impact followed its target; the negative
+  // case it used to cover is now proven on the Obsidian Tortoise below, so both
+  // branches of the response derivation stay pinned.
   assert(
-    !threats[0].responses.includes('step-back'),
-    'a target-following hit cannot be stepped out of, so Step Back is not offered',
+    threats[0].responses.includes('step-back'),
+    'a planted circle CAN be stepped out of, so Step Back must be offered',
   );
 
   // And it stops being a threat the moment the cast resolves.
@@ -1180,6 +1185,39 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   assert(
     guardableThreatsAgainstPlayer(world, player.isPlayer.id, armedAt + ability.castMs).length === 0,
     'a resolved cast is no longer a pending threat',
+  );
+}
+
+// THE OTHER BRANCH: a generic ability that FOLLOWS its target offers no Step Back,
+// because there is nothing on the ground to step out of. The Obsidian Tortoise's
+// Molten Eruption is the roster's target-following ability hit; it inherited this
+// case from the Mastodon when the Mastodon's impact became a planted circle.
+{
+  const TORTOISE = MONSTER_DATABASE.get('obsidian-tortoise')!;
+  const ability = TORTOISE.monsterAbilities?.[0];
+  assert(!!ability, 'the Obsidian Tortoise should cast Molten Eruption');
+  assert(
+    ability.actions.every(action => action.type !== 'area-hit'),
+    'this case only proves anything while Molten Eruption follows its target',
+  );
+
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('follow-threat', 415, 400), 'follow-threat');
+  const monster = world.createMonster(NODE, 'obsidian-tortoise', { x: 400, y: 400 });
+  assert(!!monster, 'the Obsidian Tortoise should spawn');
+
+  const t0 = 1_000;
+  setAggroTarget(world, monster, { id: 'follow-threat', kind: 'player' }, t0);
+  monster.hasAwareness.state = 'attacking';
+  const armedAt = t0 + (ability.initialCooldownMs ?? ability.cooldownMs) + 1_000;
+  monster.performsAttack.lastAttackAt = armedAt - monster.performsAttack.attackCooldown;
+  updateCombat(world, 100, armedAt);
+
+  const threats = guardableThreatsAgainstPlayer(world, player.isPlayer.id, armedAt + 10);
+  assert(threats.length === 1, 'the eruption wind-up is visible as a guardable threat');
+  assert(
+    !threats[0].responses.includes('step-back'),
+    'a target-following hit cannot be stepped out of, so Step Back is not offered',
   );
 }
 

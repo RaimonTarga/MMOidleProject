@@ -134,6 +134,7 @@ initCombatSystems();
     makePlayerSlices("cleanse-player", [], ["cleanse"]),
     "cleanse-player",
   );
+  player.usesAutocombat.auto = true;
   // Two afflictions at different depths. Cleanse IV strips 3 stacks off up to 2,
   // deepest first — that ordering is authored, not map order.
   paintDebuff(player.tracksCombat, "swamp-rot", 5);
@@ -168,6 +169,7 @@ initCombatSystems();
     makePlayerSlices("cleanse-idle", [], ["cleanse"]),
     "cleanse-idle",
   );
+  player.usesAutocombat.auto = true;
   updateAbilityFiring(world, Date.now());
   assert(
     !player.tracksCombat.cooldowns["ability.cd.cleanse"],
@@ -183,6 +185,7 @@ initCombatSystems();
     makePlayerSlices("breakfree-player", [], ["break-free"]),
     "breakfree-player",
   );
+  player.usesAutocombat.auto = true;
 
   applyStun(player.tracksCombat, 4000, "tester");
   syncPlayerControlLockout(world, player);
@@ -222,6 +225,7 @@ initCombatSystems();
     makePlayerSlices("breakfree-idle", [], ["break-free"]),
     "breakfree-idle",
   );
+  player.usesAutocombat.auto = true;
   updateAbilityFiring(world, Date.now());
   assert(
     player.tracksCombat.cooldowns["ability.cd.break-free"] === undefined,
@@ -237,6 +241,7 @@ initCombatSystems();
     makePlayerSlices("frenzy-player", ["frenzy"], []),
     "frenzy-player",
   );
+  player.usesAutocombat.auto = true;
   const target = world.createMonster("node-5-5", "plains-slime", { x: 410, y: 400 });
   if (!target) throw new Error("failed to create target");
   setAttackTarget(world, player, target.isMonster.id);
@@ -305,6 +310,7 @@ initCombatSystems();
     makePlayerSlices("recovery-player", [], ["second-wind", "recuperate"]),
     "recovery-player",
   );
+  player.usesAutocombat.auto = true;
   player.hasHealth.hp = player.hasHealth.maxHp * 0.5;
 
   // One activation per decision window, so drive two windows.

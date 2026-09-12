@@ -1,3 +1,4 @@
+import { incomingFinalDamage } from '../damage/finalDamage';
 import { pushDamageEvent } from '../damage/damageEvent';
 import {
   applyStatusEffect,
@@ -692,11 +693,12 @@ function tickPlayerEnvironmentalDot(
 
   const base = computeScaledDotDamage(effect);
   const dotResist = Math.min(0.9, player.usesSkills.passives["defense.dot-resistance"] ?? 0);
-  const damage = Math.max(
+  let damage = Math.max(
     1,
     Math.round(base * (1 - player.mitigatesDamage.damageReduction) * (1 - dotResist)),
   );
 
+  damage = incomingFinalDamage(world, player, damage);
   recordPlayerDamaged(
     world,
     player,

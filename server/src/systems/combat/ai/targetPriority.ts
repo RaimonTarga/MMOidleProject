@@ -82,6 +82,11 @@ export function getAutoTargetId(player: PlayerEntity): string | null {
   return id ? id : null;
 }
 
+/** Release the selector's immediate target without changing combat or travel intent. */
+export function clearAutoTarget(player: PlayerEntity): void {
+  setString(player.tracksCombat, AUTO_TARGET_ID, "");
+}
+
 /**
  * The selector keeps the current target unless a replacement is meaningfully
  * better. This is the guardrail that prevents score noise from causing
@@ -142,9 +147,10 @@ export function selectAutoCombatAction(
   player: PlayerEntity,
   cfg: UsesAutocombat,
   now: number,
+  options?: { aggressorsOnly?: boolean },
 ): AutoCombatAction {
   if (getFlag(player.tracksCombat, RUNE_FLEE_FLAG)) {
-    setString(player.tracksCombat, AUTO_TARGET_ID, "");
+    clearAutoTarget(player);
     return { kind: "flee" };
   }
 
@@ -166,7 +172,9 @@ export function selectAutoCombatAction(
   const currentTargetId = getString(player.tracksCombat, AUTO_TARGET_ID);
 
   let eligible = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)].filter(
-    (monster) => passesGates(world, player, monster, ctx),
+    (monster) =>
+      (!options?.aggressorsOnly || isAggroedOnPlayer(monster, player)) &&
+      passesGates(world, player, monster, ctx),
   );
 
   // ── Target PREFERENCE is not target ACQUISITION ─────────────────────────
@@ -219,7 +227,7 @@ export function selectAutoCombatAction(
   }));
 
   if (candidates.length === 0) {
-    setString(player.tracksCombat, AUTO_TARGET_ID, "");
+    clearAutoTarget(player);
     return { kind: "idle" };
   }
 
@@ -277,7 +285,7 @@ export function selectAutoCombatAction(
     chosen = pickPathReachableTarget(world, player, preferred, candidates);
   }
   if (!chosen) {
-    setString(player.tracksCombat, AUTO_TARGET_ID, "");
+    clearAutoTarget(player);
     return { kind: "idle" };
   }
 

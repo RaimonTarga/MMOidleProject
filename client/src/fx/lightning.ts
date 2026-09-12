@@ -2,8 +2,14 @@ import type { Vec2 } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
 import { DEPTH } from '../render/depth';
+import type { AttackTint } from './elementTint';
 
-function zigzagPoints(
+/**
+ * Jagged polyline between two points. Shared with `equinoxArc`, which varies the
+ * segment count and spread to tell its two phases apart rather than duplicating
+ * the geometry.
+ */
+export function zigzagPoints(
   fromX: number,
   fromY: number,
   toX: number,
@@ -26,9 +32,13 @@ function zigzagPoints(
   return pts;
 }
 
-export function fxLightning(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, discharge: boolean): void {
+/**
+ * The Spirit's arc. An optional elemental `tint` recolors the wide glow and the
+ * sparks; the thin bright bolt keeps its own color so a discharge still reads.
+ */
+export function fxLightning(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, discharge: boolean, tint?: AttackTint): void {
   const color = discharge ? 0xffffff : 0x88aaff;
-  const glowCol = discharge ? 0xaaccff : 0x3355cc;
+  const glowCol = tint?.glow ?? (discharge ? 0xaaccff : 0x3355cc);
   const segs = discharge ? 9 : 6;
   const spread = discharge ? 28 : 14;
   const pts = zigzagPoints(fromX, fromY, toX, toY, segs, spread);
@@ -42,7 +52,7 @@ export function fxLightning(scene: GameScene, fromX: number, fromY: number, toX:
 
   if (!discharge) {
     burstFx(scene, 'ptx-spark', toX, toY, 5, 180, {
-      tint: 0x88aaff, speed: { min: 60, max: 160 }, angle: { min: 0, max: 360 },
+      tint: tint?.particles ?? 0x88aaff, speed: { min: 60, max: 160 }, angle: { min: 0, max: 360 },
       scale: { start: 0.7, end: 0 }, alpha: { start: 1, end: 0 }, rotate: { min: 0, max: 360 },
     });
     return;

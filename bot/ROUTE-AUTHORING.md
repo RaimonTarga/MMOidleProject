@@ -21,6 +21,11 @@ ability logic in a new route file. The clean batch admits only
 
 ---
 
+## Exact build controls
+
+Use `configureBuild` for full Abilities + Runes + Stances + Rites requests.
+See [the supported schema, acquisition steps and next-experiment example](../docs/bot-harness-capability-audit.md#route-author-interface). Run `pnpm bot:preflight` before long experiments. Invalid builds fail explicitly; no unowned or over-budget Rune rules are trimmed.
+
 ## Steps
 
 ```ts
@@ -43,9 +48,10 @@ ability logic in a new route file. The clean batch admits only
 // one biome cannot do (see the GM table below).
 { type: "upgrade", definitionId: "iron-broadsword", toPlus: 3, farmAt: <NodeRef>, opportunistic: true }
 
-{ type: "configureRunes", rules: [{ conditionId: "target-casting", actionId: "fire-guard" }] }
+{ type: "configureRunes", rules: [{ conditionId: "target-casting", actionId: "use-ability", targetAbilityId: "brace" }] }
 
-// Crafts the ability recipe, then slots it.
+// Crafts the ability recipe, then replaces its semantic family.
+// attune: false learns only, for a later configureBuild step.
 { type: "learnAbility", recipeId: "ability-recipe-brace", abilityId: "brace", slot: "guard", farmAt: <NodeRef> }
 
 { type: "attemptBoss", biomeGroup: "plains", tier: 1, maxAttempts: 6 }
@@ -124,10 +130,9 @@ bought with **breadth**: one T1 biome caps at 6, which only ever reaches `+1`.
 altar, activates it, and turns on auto-combat. The guardians engage first — a
 measured run saw **11–12 simultaneous attackers** in the Plains dungeon.
 
-**Runes fire abilities you must have learned.** `target-casting -> fire-guard` is
-equippable from minute one (both fragments are starter runes), but does nothing
-until a Guard ability is slotted. The harness drops rules whose fragments are
-unowned rather than pretending they applied.
+**Rune ability targets must be attuned.** `target-casting -> use-ability` with
+`targetAbilityId: "brace"` requires learned and attuned Brace. The harness validates
+exact targets and the total RP reservation across all four build categories.
 
 ---
 
@@ -189,3 +194,7 @@ pnpm bot:cleanup --routes=<id> --policies=intended    # reset characters between
 
 Output lands in `bot/runs/<runId>/` — read `summary.json` first, drill into
 `events.jsonl` / `deaths.jsonl`. See [README.md](README.md).
+
+## Explicit progression choices
+
+Route steps may carry `choice: { id, option, defaultOption }`. The selected option is resolved before execution; unselected steps are removed, while completion/milestones remain shared. All defaults and requested options must exist. Profile preferences require an authored matching decision. Test each branch and its normal crafting/build prerequisites. See [the command-center guide](../docs/bot-experience-command-center.md) for schema, shipped examples, treatment evidence and report limitations.

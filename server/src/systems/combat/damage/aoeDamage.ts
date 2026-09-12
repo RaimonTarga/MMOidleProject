@@ -1,3 +1,4 @@
+import { outgoingFinalDamage, incomingFinalDamage } from './finalDamage';
 import { pushDamageEvent } from './damageEvent';
 import { platingAfterShred, type Vec2 } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
@@ -67,7 +68,7 @@ export function applyPlayerAoe(
       platingMult: 1,
       damageReduction: monster.mitigatesDamage.damageReduction,
     });
-    const effectiveDmg = applyMonsterDamageTakenDebuffs(monster.tracksCombat, mitigation.hpDamage);
+    const effectiveDmg = outgoingFinalDamage(world, attackerId, applyMonsterDamageTakenDebuffs(monster.tracksCombat, mitigation.hpDamage));
     mitigation.hpDamage = effectiveDmg;
 
     recordMonsterDamagedByPlayer(
@@ -149,7 +150,8 @@ export function applyMonsterAoe(
       platingMult: 1,
       damageReduction: player.mitigatesDamage.damageReduction,
     });
-    const effectiveDmg = mitigation.hpDamage;
+    const effectiveDmg = incomingFinalDamage(world, player, mitigation.hpDamage);
+    mitigation.hpDamage = effectiveDmg;
 
     recordPlayerDamaged(
       world,

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "question": "How does buying only currently affordable upgrades affect Striker progression, deaths and wallet pressure?",
+  "factor": "policy",
+  "arms": [
+    { "id": "control", "route": "striker-t1", "policy": "intended" },
+    { "id": "affordable", "route": "striker-t1", "policy": "affordable-upgrades" }
+  ]
+}

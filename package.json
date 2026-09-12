@@ -86,7 +86,13 @@
     "bot:t2-report": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2Report.ts",
     "bot:t2-catalyst-demand": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2CatalystDemand.ts",
     "bot:t2-payable": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2Payable.ts",
-    "bot:t2-plan": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2Plan.ts"
+    "bot:t2-plan": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/tools/t2Plan.ts",
+    "bot:preflight": "node scripts/bot-preflight.mjs",
+    "experiment:plan": "node scripts/experiment/experience-cli.mjs plan",
+    "experiment:compare": "node scripts/experiment/experience-cli.mjs compare",
+    "bot:timeline": "node scripts/experiment/experience-cli.mjs timeline",
+    "bot:calibrate": "node scripts/experiment/experience-cli.mjs calibrate",
+    "experiment:experience-test": "node scripts/experiment/experience.test.mjs"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "question": "What happens when Striker postpones pre-boss upgrades until after the first boss step?",
+  "factor": "choice",
+  "choiceId": "boss-preparation",
+  "arms": [
+    { "id": "prepared", "route": "striker-decisions-t1", "policy": "intended", "choices": { "boss-preparation": "prepared" } },
+    { "id": "early", "route": "striker-decisions-t1", "policy": "intended", "choices": { "boss-preparation": "early" } }
+  ]
+}

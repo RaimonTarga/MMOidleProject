@@ -1,4 +1,4 @@
-import { resolveUpkeepConfig, upkeepStacks, upkeepOnHitBonus, UPKEEP_UNLOCK_TIER } from '@mmo-idle/shared';
+import { resolveOnHitDamage, resolveUpkeepConfig, upkeepStacks, upkeepOnHitBonus, UPKEEP_UNLOCK_TIER } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../../../../combat/buffs/descriptor';
 import {
   getOverchargeStacks,
@@ -67,8 +67,8 @@ export const ENERGY_T3_BUFFS = [
       stacks,
       durationPct: -1,
       color: '#66ccff',
-      logDetail: `+${upkeepOnHitBonus(stacks, tier, upkeep)} on-hit damage (${stacks} stacks)`,
-      values: [{ label: 'On-hit damage', value: `+${upkeepOnHitBonus(stacks, tier, upkeep)}`, good: true }],
+      logDetail: `+${resolveOnHitDamage(upkeepOnHitBonus(stacks, tier, upkeep), player.usesSkills.passives)} on-hit damage (${stacks} stacks)`,
+      values: [{ label: 'On-hit damage', value: `+${resolveOnHitDamage(upkeepOnHitBonus(stacks, tier, upkeep), player.usesSkills.passives)}`, good: true }],
     };
   }, ENERGY_OPTS),
   defineBuff('energy-binary-charge', ({ player }) => {

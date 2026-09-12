@@ -128,7 +128,7 @@ export function registerNormalHit(): void {
       const stacks = upkeepStacks(energy, upkeep.stackIntervalMs);
       if (stacks > 0) {
         const tier = player.tracksProgression?.playerTier ?? UPKEEP_UNLOCK_TIER;
-        ctx.damage += upkeepOnHitBonus(stacks, tier, upkeep);
+        ctx.metadata['onHitDamageBonus'] = (typeof ctx.metadata['onHitDamageBonus'] === 'number' ? ctx.metadata['onHitDamageBonus'] : 0) + upkeepOnHitBonus(stacks, tier, upkeep);
       }
     }
 
@@ -145,7 +145,7 @@ export function registerNormalHit(): void {
         const onHitPerTier = Math.max(0, passives['energy.binary-charge-onhit-per-tier'] ?? BINARY_CHARGE_ONHIT_PER_TIER);
         ctx.metadata['onHitDamageMult'] = 1 + onHitBonus;
         const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? BINARY_UNLOCK_TIER) - BINARY_UNLOCK_TIER + 1);
-        ctx.damage += onHitPerTier * tierMult;
+        ctx.metadata['onHitDamageBonusAfterShot'] = onHitPerTier * tierMult;
       }
     }
 

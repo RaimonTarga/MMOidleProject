@@ -591,6 +591,152 @@
 
 /* Desktop combat dock: one horizontally scalable surface anchored to the
    game area's bottom-left, independent from centered Auto Combat. */
+.combat-control-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--hud-space-2, 6px);
+}
+
+.combat-stance-control {
+  display: flex;
+  max-width: min(540px, 70vw);
+  gap: 3px;
+  overflow-x: auto;
+  pointer-events: auto;
+}
+
+.combat-stance-control__button {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 3px;
+  color: var(--hud-text-dim, #b9aa8d);
+  background: var(--hud-material-inset, #211c15);
+  border: 1px solid var(--hud-edge-divider, #514634);
+  border-radius: 2px;
+  overflow: hidden;
+  font: 700 17px/1 monospace;
+  cursor: pointer;
+}
+
+.combat-stance-control__icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+.combat-stance-control__cooldown-sweep {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.combat-stance-control__key-hint {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  z-index: 3;
+  min-width: 12px;
+  padding: 1px 2px;
+  color: #f6ead0;
+  background: rgba(12, 10, 8, 0.88);
+  border: 1px solid rgba(210, 168, 95, 0.65);
+  border-radius: 2px;
+  font: 700 7px/9px monospace;
+  text-align: center;
+  pointer-events: none;
+}
+
+.combat-stance-control__button--neutral {
+  color: #c8bda8;
+}
+
+.combat-stance-control__button.is-current {
+  color: #f0e4ca;
+  border-color: #a28259;
+}
+
+.combat-stance-control__button.is-selected {
+  color: #fff2bf;
+  background: #4d3b28;
+  border-color: #d2a85f;
+  box-shadow: inset 0 0 0 1px #755b36;
+}
+
+.combat-control-feedback {
+  max-width: min(520px, 88vw);
+  padding: 8px 14px;
+  color: #ffd7dc;
+  background: rgba(35, 12, 22, 0.96);
+  border: 1px solid #ef7668;
+  border-radius: 7px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.7);
+  font: 12px/16px monospace;
+  pointer-events: none;
+}
+
+.combat-control-feedback > span {
+  margin-right: 8px;
+  color: #ef7668;
+}
+
+.mobile-combat-abilities {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.mobile-combat-ability {
+  appearance: none;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  box-sizing: border-box;
+  flex: 0 0 72px;
+  width: 72px;
+  min-width: 72px;
+  height: 72px;
+}
+
+.mobile-combat-ability__name {
+  display: -webkit-box;
+  width: 100%;
+  height: 20px;
+  overflow: hidden;
+  font: 10px/10px monospace;
+  text-shadow: 1px 1px 0 #000;
+  white-space: normal;
+  overflow-wrap: break-word;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.mobile-combat-ability--unavailable,
+.combat-ability-slot--unavailable {
+  opacity: 0.58;
+}
+
+.combat-ability-slot--queued {
+  outline: 2px solid #f2c866;
+  outline-offset: 2px;
+  box-shadow: 0 0 9px rgba(242, 200, 102, 0.72), inset 0 0 0 1px rgba(255, 239, 174, 0.42);
+}
+
+.mobile-combat-ability--queued > div:first-child {
+  outline: 2px solid #f2c866;
+  outline-offset: 2px;
+  box-shadow: 0 0 9px rgba(242, 200, 102, 0.72);
+}
+
 @media (min-width: 1101px) {
   .desktop-combat-abilities {
     position: absolute;
@@ -614,13 +760,21 @@
   }
 
   .combat-ability-slot {
+    appearance: none;
     position: relative;
-    flex: 0 0 56px;
-    width: 56px;
-    min-width: 56px;
+    flex: 0 0 68px;
+    width: 68px;
+    min-width: 68px;
+    height: 78px;
+    box-sizing: border-box;
     color: #f0e4ca;
     text-align: center;
     pointer-events: auto;
+    padding: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
   }
 
   .combat-ability-slot__icon {
@@ -660,7 +814,8 @@
   }
 
   .combat-ability-slot__name {
-    width: 56px;
+    width: 68px;
+    height: 25px;
     margin-top: var(--hud-space-1);
     overflow: hidden;
     color: #f3e7cd;
@@ -866,6 +1021,20 @@
     left: 6px !important;
     transform: scale(0.72);
     transform-origin: bottom left;
+  }
+
+  .mobile-combat-ability .combat-ability-slot__key-hint {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    z-index: 4;
+    min-width: 14px;
+    padding: 1px 3px;
+    color: #f0e4ca;
+    background: rgba(5, 4, 3, 0.86);
+    border: 1px solid rgba(240, 228, 202, 0.48);
+    border-radius: 7px;
+    font: 700 9px/11px monospace;
   }
 }
 

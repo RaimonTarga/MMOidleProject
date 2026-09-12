@@ -7,7 +7,6 @@ import {
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
   globalMastery,
-  normalizeAttunedAbilities,
   runeBudgetForGlobalMastery,
   sanitizeRuneLoadout,
   runicPointLoadoutCost,
@@ -40,10 +39,13 @@ import {
   craftAbilityRecipe,
   setAbilityLoadout,
 } from "../systems/player/economy/abilityCrafting";
+import { requestManualAbilityUse } from "../systems/player/abilities/abilityFiring";
 import {
   craftStanceRecipe,
   setStanceLoadout,
 } from "../systems/player/economy/stanceCrafting";
+import { requestManualStance } from "../systems/player/stances/stanceSwitch";
+import { requestManualReload } from "../systems/classes/archetypes/reload/reloadLifecycle";
 import {
   craftRiteRecipe,
   setRiteLoadout,
@@ -266,11 +268,21 @@ export function registerPlayerHandlers(
       detachComponent(world, p, "isFleeing");
       return;
     }
+    // The global Auto toggle is also the visible way to return live stance
+    // ownership to Rune/default automation now that the stance rail uses a
+    // Neutral posture button instead of a second, ambiguous AUTO button.
+    detachComponent(world, p, "overridesStance");
     // Click/keyboard moves latch hasManualMoveIntent until the server stops.
     // Toggling auto on must release that latch or updateAutoTargets skips every
     // tick ("auto combat does nothing").
     detachComponent(world, p, "hasManualMoveIntent");
     stopEntity(world, p);
+  });
+
+  socket.on("player:manualReload", (ack) => {
+    const p = liveSelf();
+    if (!p) return ack?.({ success: false, reason: NOT_LIVE_REASON });
+    ack?.(requestManualReload(world, p));
   });
 
   socket.on("player:setAutoTraverse", (enabled) => {
@@ -345,8 +357,9 @@ export function registerPlayerHandlers(
 
   socket.on("rune:setLoadout", (rules) => {
     const p = liveSelf();
-    if (!p) return;
-    if (!Array.isArray(rules)) return;
+    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "runes", success: false, reason }); };
+    if (!p) return reject(NOT_LIVE_REASON);
+    if (!Array.isArray(rules)) return reject("Malformed Rune loadout.");
     const owned = new Set(p.tracksProgression.runesOwned);
     const budget = runeBudgetForGlobalMastery(
       globalMastery(p.tracksProgression.biomeLevel),
@@ -431,44 +444,73 @@ export function registerPlayerHandlers(
 
   socket.on("ability:setLoadout", (payload) => {
     const p = liveSelf();
-    if (!p || !payload?.equipped) return;
-    // normalize drops non-strings, unknown ids and slot mismatches; the setter
-    // then enforces the learned/slot-count/duplicate rules authoritatively.
-    const result = setAbilityLoadout(world, p, normalizeAttunedAbilities(payload.equipped));
+    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "abilities", success: false, reason }); };
+    if (!p) return reject(NOT_LIVE_REASON);
+    const equipped = payload?.equipped;
+    if (!equipped || !Array.isArray(equipped.techniques) || !Array.isArray(equipped.guards) || [...equipped.techniques, ...equipped.guards].some(id => typeof id !== "string")) return reject("Malformed ability loadout.");
+    const result = setAbilityLoadout(world, p, equipped);
     socket.emit("build:loadoutResult", { system: "abilities", ...result });
+  });
+
+  socket.on("ability:use", (abilityId, ack) => {
+    const p = liveSelf();
+    if (!p) return ack?.({ success: false, reason: NOT_LIVE_REASON });
+    if (typeof abilityId !== "string") {
+      return ack?.({ success: false, reason: "Malformed ability id." });
+    }
+    const result = requestManualAbilityUse(world, p, abilityId);
+    ack?.(result);
   });
 
   socket.on("stance:craftRecipe", (recipeId: string) => {
     const p = liveSelf();
-    if (!p || typeof recipeId !== "string") return;
+    if (!p || typeof recipeId !== "string") {
+      socket.emit("stance:craftResult", { recipeId, success: false, reason: !p ? NOT_LIVE_REASON : "Malformed recipe id." });
+      return;
+    }
     const result = craftStanceRecipe(world, p, recipeId);
     socket.emit("stance:craftResult", result);
   });
 
   socket.on("stance:setLoadout", (payload) => {
     const p = liveSelf();
-    if (!p || !payload) return;
-    if (payload.slot !== "default") return;
-    if (payload.attunedStances !== undefined && (!Array.isArray(payload.attunedStances) || payload.attunedStances.some(id => typeof id !== "string"))) return;
-    const stanceId =
-      typeof payload.stanceId === "string" ? payload.stanceId : null;
+    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "stances", success: false, reason }); };
+    if (!p) return reject(NOT_LIVE_REASON);
+    if (!payload) return reject("Malformed stance loadout.");
+    if (payload.slot !== "default") return reject("Unknown stance slot.");
+    if (payload.attunedStances !== undefined && (!Array.isArray(payload.attunedStances) || payload.attunedStances.some(id => typeof id !== "string"))) return reject("Malformed stance attunement.");
+    if (payload.stanceId !== null && typeof payload.stanceId !== "string") return reject("Malformed default stance.");
+    const stanceId = payload.stanceId;
     const result = setStanceLoadout(world, p, payload.slot, stanceId, payload.attunedStances);
     socket.emit("build:loadoutResult", { system: "stances", ...result });
   });
 
+  socket.on("stance:setControl", (payload, ack) => {
+    const p = liveSelf();
+    if (!p) return ack?.({ success: false, reason: NOT_LIVE_REASON });
+    if (!payload || (payload.stanceId !== null && typeof payload.stanceId !== "string")) {
+      return ack?.({ success: false, reason: "Malformed stance selection." });
+    }
+    const result = requestManualStance(world, p, payload.stanceId);
+    ack?.(result);
+  });
+
   socket.on("rite:craftRecipe", (recipeId: string) => {
     const p = liveSelf();
-    if (!p || typeof recipeId !== "string") return;
+    if (!p || typeof recipeId !== "string") {
+      socket.emit("rite:craftResult", { recipeId, success: false, reason: !p ? NOT_LIVE_REASON : "Malformed recipe id." });
+      return;
+    }
     const result = craftRiteRecipe(world, p, recipeId);
     socket.emit("rite:craftResult", result);
   });
 
   socket.on("rite:setLoadout", (payload) => {
     const p = liveSelf();
-    if (!p || !payload || !Array.isArray(payload.riteIds)) return;
-    const riteIds = payload.riteIds.filter(
-      (id): id is string => typeof id === "string",
-    );
+    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "rites", success: false, reason }); };
+    if (!p) return reject(NOT_LIVE_REASON);
+    if (!payload || !Array.isArray(payload.riteIds) || payload.riteIds.some(id => typeof id !== "string")) return reject("Malformed Rite loadout.");
+    const riteIds = payload.riteIds;
     const result = setRiteLoadout(world, p, riteIds);
     socket.emit("build:loadoutResult", { system: "rites", ...result });
   });

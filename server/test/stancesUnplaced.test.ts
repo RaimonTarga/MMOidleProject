@@ -1,3 +1,4 @@
+import { outgoingFinalDamage } from '../src/systems/combat/damage/finalDamage';
 /**
  * The four postures added 2026-09-02: Time to Strike, Reaper, Warding, Powering Up.
  *
@@ -194,7 +195,7 @@ const carried = makeCombatContext(player, "player", target, "monster");
 carried.damage = 100;
 emitCombatEvent("onHit", carried, world);
 assert(
-  carried.damage === Math.round(100 * (1 + REAPER_MOMENTUM_ATTACK_PCT)),
+  outgoingFinalDamage(world, player.isPlayer.id, carried.damage) === Math.round(100 * (1 + REAPER_MOMENTUM_ATTACK_PCT)),
   "Reaper momentum must keep paying out after leaving the stance",
 );
 assert(
@@ -300,7 +301,7 @@ const burst = makeCombatContext(player, "player", target, "monster");
 burst.damage = 100;
 emitCombatEvent("onHit", burst, world);
 assert(
-  burst.damage === Math.round(100 * (1 + POWERING_UP_RELEASE_ATTACK_PCT)),
+  outgoingFinalDamage(world, player.isPlayer.id, burst.damage) === Math.round(100 * (1 + POWERING_UP_RELEASE_ATTACK_PCT)),
   "the release window must amplify damage",
 );
 assert(stanceAttackSpeedBonus(player.tracksCombat) > 0, "the release window must feed the cadence gate");

@@ -19,6 +19,10 @@ for (const recipe of RECIPE_DATABASE.values()) {
     description: recipe.description,
     upgrades: recipe.upgrades,
     icon: recipe.icon,
+    // Cosmetic attack tint. Falls back to the reservoir DoT's element so a DoT
+    // weapon never has to author the same element twice (and cannot disagree
+    // with itself); `weaponDot` itself is deliberately not projected here.
+    element: recipe.element ?? recipe.weaponDot?.element,
     lineageId: recipe.lineageId,
     evolvesFrom: recipe.evolvesFrom,
     coreEligibility: recipe.coreEligibility,

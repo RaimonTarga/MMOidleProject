@@ -164,6 +164,7 @@ function botArguments() {
     "bot/dist/run.js",
     `--route=${config.routeId}`,
     `--policy=${config.policyId}`,
+    `--choices=${JSON.stringify(config.choices ?? {})}`,
     `--index=${String(config.replica).padStart(2, "0")}`,
     "--server=http://127.0.0.1:4000",
     "--out=/experiment/artifacts",

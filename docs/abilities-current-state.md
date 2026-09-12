@@ -362,7 +362,7 @@ resolved hit), skips DoT ticks, and is unmitigated.
 
 The Rune board targets named attuned abilities. Rules cost only their logic; ability reservation is paid once. Any custom rule suppresses that ability's default timing, including while its condition is false. Ordinary Techniques retain a shared offensive opportunity; instant Techniques remain non-blocking. Guards retain their one-activation decision window.
 
-The ability panel shows learned tools, RP prices, authored defaults and custom overrides, with attune/unattune and default-priority controls. The ability bar renders every attuned ability with its rank and cooldown. Server edits validate the complete RP budget and return an acknowledgement; unattuning removes dependent rules.
+The ability panel shows learned tools, RP prices, authored defaults and custom overrides, with attune/unattune and default-priority controls. The combat hotbar renders every attuned ability in a fixed-size tile with its rank, configurable number-key binding, cooldown/cast state, and click activation. `ability:use` carries only the requested ability id; `requestManualAbilityUse` validates the id and attunement, then enters the same cooldown, Technique/Guard arbitration, cast, targeting and effect path used by automatic/Rune firing. Manual enemy-facing abilities require the player's current combat target and never use automatic firing's nearest-target fallback. If a valid manual request is temporarily blocked (including by cooldown, missing target, control, channel ownership, or authored trigger conditions), the server keeps that ability in a networked one-shot queue and the hotbar shows a lit border. Pressing the queued ability again cancels it. Its first legal activation consumes the entry, so the resulting cooldown does not re-queue it; death clears the queue and loadout edits prune newly unattuned entries. Rejected combat-control messages render in the global toast layer rather than changing the hotbar stack's geometry. Default/Rune ability activation runs only while Auto Combat is enabled or while Fight Back temporarily owns travel combat; manual hotbar requests and their queued intents remain available in either state and do not cancel an already-started cast/charge/armed Technique. `R` is a rebindable Slinger-only manual reload: the client ignores it for every other archetype, and the server revalidates that ownership before a partial magazine enters the existing reload timer and lifecycle hooks. Full magazines, active reloads and Laser heat are harmless no-ops. Server loadout edits validate the complete RP budget and return an acknowledgement; unattuning removes dependent rules.
 
 ### FX — one bespoke module per ability
 `client/src/fx/`, dispatched from `render/combatFx.ts` through four tables:
@@ -407,10 +407,10 @@ reconstruct any of it from the delta. `player-technique-armed` also gained an op
 
 ## Verified
 
-`pnpm typecheck` clean (4 packages + bench); `pnpm build` clean; `pnpm test` **141/141**.
+`pnpm typecheck` clean (4 packages + bench); `pnpm build` clean; `pnpm test` **179/179**.
 Ability coverage: `abilities`, `abilityRanks`, `abilityControl`, `abilityGuardsAndReach`,
 `abilityMultiSlot`, `abilityCast`, `abilityCharge`, `abilityBramble`, `abilitySecondWind`,
-`abilityTechniqueRune`, `abilityTelegraphEvents`, **`abilityAffliction`**, `describeText`.
+`abilityTechniqueRune`, `abilityTelegraphEvents`, **`abilityAffliction`**, `manualCombatControls`, `describeText`.
 
 `abilityAffliction.test.ts` was mutation-checked: reverting the stack-merge fix, the target
 cap, Detonate's consume step, the situational guard, the reservoir `stackCap: 0` rule,

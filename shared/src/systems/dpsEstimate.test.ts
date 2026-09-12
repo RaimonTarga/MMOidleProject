@@ -186,6 +186,84 @@ function testOptionalTargetMitigation(): void {
   );
 }
 
+function part(estimate: ReturnType<typeof estimatePlayerDps>, label: string): number {
+  const found = estimate.parts.find((entry) => entry.label === label);
+  if (!found) throw new Error(`missing DPS part: ${label}`);
+  return found.dps;
+}
+
+function testSlingerSecondaryDamageBreakdown(): void {
+  const estimate = estimatePlayerDps({
+    attack: 65,
+    onHitDamage: 20,
+    attackCooldownMs: 1_000,
+    weaponId: 'ashbrand-blade',
+    archetype: 'reload',
+    passives: {},
+  });
+  const cycleSec = 10 + 1.6;
+  const expectedDirect = Math.round(65 * 0.5) * 10 / cycleSec;
+  const expectedOnHit = 20 * 10 / cycleSec;
+  const expectedDot = (65 / 0.65 * 0.85) * 0.5 * 1.5 * 10 / cycleSec;
+  assert(Math.abs(part(estimate, 'Direct attacks') - Math.round(expectedDirect * 10) / 10) < 1e-9,
+    'Slinger direct estimate retains the resolved 65% Attack basis');
+  assert(Math.abs(part(estimate, 'Flat on-hit') - Math.round(expectedOnHit * 10) / 10) < 1e-9,
+    'Slinger flat on-hit estimate remains unpenalized');
+  assert(Math.abs(part(estimate, 'Weapon damage over time') - Math.round(expectedDot * 10) / 10) < 1e-9,
+    'Slinger weapon reservoir estimate replaces 65% with 85% exactly once');
+}
+
+function testLaserSecondaryDamageBreakdown(): void {
+  const estimate = estimatePlayerDps({
+    attack: 100,
+    onHitDamage: 20,
+    attackCooldownMs: 1_000,
+    weaponId: 'ashbrand-blade',
+    archetype: 'reload',
+    passives: {
+      'reload.laser': 1,
+      'reload.laser-damage-per-tick-pct': 0.18,
+      'reload.laser-heat-per-tick': 2,
+      'reload.laser-cool-per-tick': 2.5,
+    },
+  });
+  const tickRate = 50 / ((50 + 40) * 0.1);
+  assert(Math.abs(part(estimate, 'Laser direct (including cooling)') - 9 * tickRate) < 0.051,
+    'Laser direct estimate retains its existing full Attack basis before weapon conversion');
+  assert(Math.abs(part(estimate, 'Flat on-hit') - 20 * tickRate) < 0.051,
+    'Laser flat on-hit estimate remains unpenalized');
+  assert(Math.abs(part(estimate, 'Weapon damage over time') - (18 * 0.85 * 0.5 * 1.5 * tickRate)) < 0.051,
+    'Laser weapon reservoir estimate uses the explicit 85% Slinger basis');
+}
+
+function testConduitFormationSecondaryBudgets(): void {
+  const estimate = (frame: 'light' | 'balanced' | 'heavy', skill?: string) => estimatePlayerDps({
+    attack: 100,
+    onHitDamage: 10,
+    attackCooldownMs: 1_000,
+    archetype: 'summoner',
+    passives: {},
+    summoner: {
+      activeCount: frame === 'light' ? (skill ? 8 : 6) : frame === 'balanced' ? 5 : 2,
+      profileInput: {
+        selectedSubVariant: frame,
+        selectedRange: null,
+        unlockedSkills: skill ? [skill] : [],
+      },
+    },
+  });
+  assert(part(estimate('light'), 'Formation flat on-hit') === 12,
+    'Splinter estimator uses one 1.20x formation on-hit budget');
+  assert(part(estimate('light', 'summoner-light-t3-b'), 'Formation flat on-hit') === 13,
+    'Kilnmaster estimator uses one 1.30x formation on-hit budget');
+  assert(part(estimate('balanced'), 'Formation flat on-hit') === 10,
+    'Consort estimator keeps the baseline formation on-hit budget');
+  assert(part(estimate('heavy'), 'Formation flat on-hit') === 10,
+    'Effigy estimator keeps the baseline formation on-hit budget');
+  assert(part(estimate('light'), '6 summons direct') === 105,
+    'Splinter secondary efficiency does not change direct formation Attack');
+}
+
 testEveryArchetypeReportsDamage();
 testPartsSumToTotal();
 testUnknownArchetypeStillReports();
@@ -194,5 +272,8 @@ testDotCountsConvertedDamage();
 testSummonerWithoutAttackingStillReports();
 testScalesWithAttack();
 testOptionalTargetMitigation();
+testSlingerSecondaryDamageBreakdown();
+testLaserSecondaryDamageBreakdown();
+testConduitFormationSecondaryBudgets();
 
 console.log('dpsEstimate: ok');

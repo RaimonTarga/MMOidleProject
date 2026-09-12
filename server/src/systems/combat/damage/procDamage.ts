@@ -1,3 +1,4 @@
+import { outgoingFinalDamage } from './finalDamage';
 import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -45,7 +46,7 @@ export function applyPlayerProcDamage(
 
   const hpDamage = Math.max(
     1,
-    applyMonsterDamageTakenDebuffs(target.tracksCombat, Math.round(damage)),
+    applyMonsterDamageTakenDebuffs(target.tracksCombat, outgoingFinalDamage(world, player.isPlayer.id, damage)),
   );
   const nodeId = player.hasPosition.nodeId;
   const playerId = player.isPlayer.id;

@@ -552,12 +552,14 @@ export const GUARD_KEYS = [
 // in the combat pipeline (final = base × (1 − DR) × (1 − dr-layer)), clamped 0.9.
 //
 // NOTE there is deliberately no `core.dot-mult`. DoT damage per stack derives from
-// `dealsDamage.attack`, which `core.attack-mult` already multiplies — so a DoT
+// its own base budget, then receives `core.damage-dealt-pct` at damage resolution — so a DoT
 // potency core is a second multiplier on the same number and lands as either a trap
 // or a mandatory pick. See "Why there is no DoT core" in
 // docs/archive/cores-rework-implementation-plan.md before proposing one.
 export const CORE_KEYS = [
   'core.attack-mult',
+  'core.damage-dealt-pct',
+  'core.damage-taken-pct',
   'core.maxhp-mult',
   'core.plating-mult',
   'core.speed-mult',
@@ -573,7 +575,7 @@ export const CORE_KEYS = [
   // hit uses the newly-earned stack; switching targets resets the ramp.
   'core.focus-damage-per-hit-mult',
   'core.focus-max-stacks',
-  // Catalyst: scales the flat on-hit term, which is added AFTER plating and DR.
+  // Catalyst: scales the flat on-hit term before target plating and DR.
   // That unmitigated placement is exactly why this is a real axis and not a
   // re-skin of core.attack-mult.
   'core.onhit-mult',

@@ -523,6 +523,7 @@ export function buildSummary(params: {
     },
     run: {
       ...header,
+      behavior: header.behavior ? { ...header.behavior, reachedChoices: { ...recorder.reachedChoices } } : undefined,
       endedAt: params.endedAt,
       durationMs,
       completion: params.completion,

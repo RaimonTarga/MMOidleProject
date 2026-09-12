@@ -1,5 +1,32 @@
 import { atom, getDefaultStore, type PrimitiveAtom } from 'jotai';
 
+export const ABILITY_HOTKEY_ACTIONS = [
+  'ability.slot1',
+  'ability.slot2',
+  'ability.slot3',
+  'ability.slot4',
+  'ability.slot5',
+  'ability.slot6',
+  'ability.slot7',
+  'ability.slot8',
+  'ability.slot9',
+] as const;
+
+export type AbilityHotkeyAction = (typeof ABILITY_HOTKEY_ACTIONS)[number];
+
+export const STANCE_HOTKEY_ACTIONS = [
+  'stance.slot1',
+  'stance.slot2',
+  'stance.slot3',
+  'stance.slot4',
+  'stance.slot5',
+  'stance.slot6',
+  'stance.slot7',
+  'stance.slot8',
+] as const;
+
+export type StanceHotkeyAction = (typeof STANCE_HOTKEY_ACTIONS)[number];
+
 export type ActionId =
   | 'move.up'
   | 'move.down'
@@ -15,11 +42,17 @@ export type ActionId =
   | 'toggle.quest'
   | 'toggle.debug'
   | 'toggle.settings'
+  | 'stance.neutral'
+  | StanceHotkeyAction
+  | 'class.reload'
+  | AbilityHotkeyAction
   | 'close.overlay';
 
 export interface BindingSet {
   key: string;
   pad: number | null;
+  /** Whether the keyboard binding requires Shift in addition to `key`. */
+  shift?: boolean;
 }
 
 export type Bindings = Record<ActionId, BindingSet>;
@@ -51,6 +84,10 @@ export const REBINDABLE_ACTIONS: readonly ActionId[] = [
   'toggle.quest',
   'toggle.debug',
   'toggle.settings',
+  'stance.neutral',
+  ...STANCE_HOTKEY_ACTIONS,
+  'class.reload',
+  ...ABILITY_HOTKEY_ACTIONS,
 ];
 
 export const TRIGGER_LEFT_INDEX = 6;
@@ -72,11 +109,30 @@ export const DEFAULT_BINDINGS: Bindings = {
   'toggle.quest': { key: 'KeyQ', pad: TRIGGER_LEFT_INDEX },
   'toggle.debug': { key: 'Backquote', pad: 8 },
   'toggle.settings': { key: '', pad: 9 },
+  'stance.neutral': { key: 'Digit1', pad: null, shift: true },
+  'stance.slot1': { key: 'Digit2', pad: null, shift: true },
+  'stance.slot2': { key: 'Digit3', pad: null, shift: true },
+  'stance.slot3': { key: 'Digit4', pad: null, shift: true },
+  'stance.slot4': { key: 'Digit5', pad: null, shift: true },
+  'stance.slot5': { key: 'Digit6', pad: null, shift: true },
+  'stance.slot6': { key: 'Digit7', pad: null, shift: true },
+  'stance.slot7': { key: 'Digit8', pad: null, shift: true },
+  'stance.slot8': { key: 'Digit9', pad: null, shift: true },
+  'class.reload': { key: 'KeyR', pad: null },
+  'ability.slot1': { key: 'Digit1', pad: null },
+  'ability.slot2': { key: 'Digit2', pad: null },
+  'ability.slot3': { key: 'Digit3', pad: null },
+  'ability.slot4': { key: 'Digit4', pad: null },
+  'ability.slot5': { key: 'Digit5', pad: null },
+  'ability.slot6': { key: 'Digit6', pad: null },
+  'ability.slot7': { key: 'Digit7', pad: null },
+  'ability.slot8': { key: 'Digit8', pad: null },
+  'ability.slot9': { key: 'Digit9', pad: null },
   'close.overlay': { key: 'Escape', pad: 1 },
 };
 
 const STORAGE_KEY = 'mmo_keybinds';
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 const ALL_ACTION_IDS = Object.keys(DEFAULT_BINDINGS) as ActionId[];
 
@@ -96,7 +152,7 @@ export function loadBindings(): Bindings {
       version?: number;
       bindings?: Partial<Bindings>;
     };
-    if (parsed.version !== SCHEMA_VERSION || !parsed.bindings) {
+    if ((parsed.version !== 2 && parsed.version !== SCHEMA_VERSION) || !parsed.bindings) {
       return cloneDefaults();
     }
     const merged = cloneDefaults();
@@ -106,6 +162,7 @@ export function loadBindings(): Bindings {
         merged[id] = {
           key: typeof b.key === 'string' ? b.key : '',
           pad: typeof b.pad === 'number' ? b.pad : null,
+          shift: typeof b.shift === 'boolean' ? b.shift : false,
         };
       }
     }
@@ -114,6 +171,7 @@ export function loadBindings(): Bindings {
       merged['toggle.tacticalView'] = {
         key: typeof legacyRanges.key === 'string' ? legacyRanges.key : '',
         pad: typeof legacyRanges.pad === 'number' ? legacyRanges.pad : null,
+        shift: typeof legacyRanges.shift === 'boolean' ? legacyRanges.shift : false,
       };
     }
     return merged;
@@ -138,12 +196,28 @@ export const captureModeAtom: PrimitiveAtom<CaptureRequest | null> =
   atom<CaptureRequest | null>(null);
 
 export function matchesKey(
-  event: KeyboardEvent,
+  event: KeyboardChordInput,
   action: ActionId,
   bindings: Bindings,
 ): boolean {
-  const key = bindings[action].key;
-  return key !== '' && event.code === key;
+  return matchesKeyboardBinding(event, bindings[action]);
+}
+
+export interface KeyboardChordInput {
+  code: string;
+  shiftKey?: boolean;
+  ctrlKey?: boolean;
+  altKey?: boolean;
+  metaKey?: boolean;
+}
+
+export function matchesKeyboardBinding(
+  event: KeyboardChordInput,
+  binding: BindingSet,
+): boolean {
+  if (!binding.key || event.code !== binding.key) return false;
+  if (!!event.shiftKey !== !!binding.shift) return false;
+  return !event.ctrlKey && !event.altKey && !event.metaKey;
 }
 
 /** Both Shift keys match when the binding is either Shift (default stand-still). */
@@ -170,6 +244,40 @@ export function matchesPad(
 ): boolean {
   const pad = bindings[action].pad;
   return pad !== null && buttonIndex === pad;
+}
+
+/** Resolve a configured keyboard event code to its zero-based combat-hotbar slot. */
+export function abilitySlotForKey(eventOrCode: KeyboardChordInput | string, bindings: Bindings): number | null {
+  const event = typeof eventOrCode === 'string' ? { code: eventOrCode } : eventOrCode;
+  const slot = ABILITY_HOTKEY_ACTIONS.findIndex(
+    (action) => matchesKeyboardBinding(event, bindings[action]),
+  );
+  return slot >= 0 ? slot : null;
+}
+
+/** Resolve a keyboard chord to its zero-based displayed attuned-stance slot. */
+export function stanceSlotForKey(eventOrCode: KeyboardChordInput | string, bindings: Bindings): number | null {
+  const event = typeof eventOrCode === 'string' ? { code: eventOrCode } : eventOrCode;
+  const slot = STANCE_HOTKEY_ACTIONS.findIndex(
+    (action) => matchesKeyboardBinding(event, bindings[action]),
+  );
+  return slot >= 0 ? slot : null;
+}
+
+/** Resolve a configured gamepad button to its zero-based combat-hotbar slot. */
+export function abilitySlotForPad(buttonIndex: number, bindings: Bindings): number | null {
+  const slot = ABILITY_HOTKEY_ACTIONS.findIndex(
+    (action) => bindings[action].pad !== null && bindings[action].pad === buttonIndex,
+  );
+  return slot >= 0 ? slot : null;
+}
+
+/** Resolve a configured gamepad button to its zero-based displayed stance slot. */
+export function stanceSlotForPad(buttonIndex: number, bindings: Bindings): number | null {
+  const slot = STANCE_HOTKEY_ACTIONS.findIndex(
+    (action) => bindings[action].pad !== null && bindings[action].pad === buttonIndex,
+  );
+  return slot >= 0 ? slot : null;
 }
 
 const PAD_LABELS: Record<number, string> = {
@@ -208,6 +316,11 @@ export function codeToLabel(code: string): string {
   return code;
 }
 
+export function bindingToLabel(binding: BindingSet): string {
+  const key = codeToLabel(binding.key);
+  return binding.shift && binding.key ? `Shift+${key}` : key;
+}
+
 export function getBindings(): Bindings {
   return getDefaultStore().get(keybindsAtom);
 }
@@ -227,6 +340,25 @@ export const ACTION_LABELS: Record<ActionId, string> = {
   'toggle.quest': 'Open Quests',
   'toggle.debug': 'Toggle Debug',
   'toggle.settings': 'Open Settings',
+  'stance.neutral': 'Use Neutral Stance',
+  'stance.slot1': 'Use Stance 1',
+  'stance.slot2': 'Use Stance 2',
+  'stance.slot3': 'Use Stance 3',
+  'stance.slot4': 'Use Stance 4',
+  'stance.slot5': 'Use Stance 5',
+  'stance.slot6': 'Use Stance 6',
+  'stance.slot7': 'Use Stance 7',
+  'stance.slot8': 'Use Stance 8',
+  'class.reload': 'Slinger: Reload',
+  'ability.slot1': 'Use Ability 1',
+  'ability.slot2': 'Use Ability 2',
+  'ability.slot3': 'Use Ability 3',
+  'ability.slot4': 'Use Ability 4',
+  'ability.slot5': 'Use Ability 5',
+  'ability.slot6': 'Use Ability 6',
+  'ability.slot7': 'Use Ability 7',
+  'ability.slot8': 'Use Ability 8',
+  'ability.slot9': 'Use Ability 9',
   'close.overlay': 'Close Overlay',
 };
 

@@ -1,3 +1,4 @@
+import { resolveOnHitDamage } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../../../../combat/buffs/descriptor';
 import {
   getTargetChillStacks,
@@ -43,11 +44,11 @@ export const DOT_T3_BUFFS = [
     ));
     return {
       id: 'dot-frenzy', label: 'Frenzy', stacks: 1, durationPct: pct, color: '#ff3355',
-      logDetail: `+${Math.round(attackSpeedPct * 100)}% attack speed, +${Math.round(onHitPerTier * tierMult)} on-hit damage`,
+      logDetail: `+${Math.round(attackSpeedPct * 100)}% attack speed, +${resolveOnHitDamage(onHitPerTier * tierMult, passives)} on-hit damage`,
       remainingMs: fx.remainingMs,
       values: [
         { label: 'Attack speed', value: `+${Math.round(attackSpeedPct * 100)}%`, good: true },
-        { label: 'On-hit damage', value: `+${Math.round(onHitPerTier * tierMult)}`, good: true },
+        { label: 'On-hit damage', value: `+${resolveOnHitDamage(onHitPerTier * tierMult, passives)}`, good: true },
       ],
     };
   }, { category: 'dot-poison', shape: 'square' }),

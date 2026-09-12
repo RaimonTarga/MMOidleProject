@@ -1,5 +1,10 @@
+import { applyBuild } from "../loadout/apply";
+import { BuildError, buildKey, buildRP, validateBuild, observedBuild, type DesiredBuild } from "../loadout/loadout";
 import {
   ABILITY_RECIPE_DATABASE,
+  RITE_RECIPE_DATABASE,
+  isRiteRecipeUnlocked,
+  isAbilityRecipeUnlocked,
   BIOME_START_TIER_BY_GROUP,
   RUNE_RECIPE_DATABASE,
   STANCE_RECIPE_DATABASE,
@@ -12,8 +17,6 @@ import {
   RECIPE_DATABASE,
   canUnlockSkillFromView,
   globalMasteryRequiredForUpgrade,
-  runeBudgetForGlobalMastery,
-  runicPointLoadoutCost,
   SKILL_TREE,
   upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
@@ -147,6 +150,7 @@ export interface ExecutorDeps {
 
 export class RouteExecutor {
   private rotation = 0;
+  private expectedBuild: DesiredBuild | null = null;
   /** Near cluster for the farm step being set up, consumed by `farmUntil`. */
   private nearCandidates: readonly string[] | undefined;
   private readonly firedMilestones = new Set<string>();
@@ -248,6 +252,9 @@ export class RouteExecutor {
 
       try {
         await this.runStep(step);
+        if (step.choice && this.activeStepOutcome.status === "completed") {
+          this.deps.recorder.emit({ kind: "build-change", atMs: this.deps.recorder.now(), system: "policy-choice", detail: { ...step.choice } });
+        }
       } catch (err) {
         if (err instanceof CoordinationExhaustedError) {
           const failedFact = step.type === "attemptBoss"
@@ -345,6 +352,10 @@ export class RouteExecutor {
         return this.doUnequip(step.slot, step.expectedDefinitionId);
       case "upgrade":
         return this.doUpgrade(step);
+      case "configureBuild":
+        return this.doConfigureBuild(step.build);
+      case "craftRite":
+        return this.doCraftRite(step);
       case "configureRunes":
         return this.doConfigureRunes(step.rules);
       case "learnAbility":
@@ -1084,6 +1095,11 @@ export class RouteExecutor {
       if (this.deps.aborted()) throw new AbortError("run aborted");
 
       const check = obs.canUpgrade(step.definitionId);
+      if (!check.ok && this.deps.policy.upgrades === "affordable-only") {
+        recorder.emit({ kind: "build-change", atMs: recorder.now(), system: "policy-decision",
+          detail: { decision: "defer-upgrade", definitionId: step.definitionId, target, reason: check.reason } });
+        return;
+      }
       if (!check.ok) {
         const nextPlus = obs.itemPlus(step.definitionId) + 1;
         const farmNode = this.upgradeFarmNode(step, recipe, nextPlus);
@@ -1172,67 +1188,26 @@ export class RouteExecutor {
   }
 
   private async doConfigureRunes(rules: EquippedRule[]): Promise<void> {
-    const { obs, intents, recorder } = this.deps;
+    const { obs } = this.deps;
     const wanted = this.deps.policy.runeLoadout(rules);
 
-    // A rule the player has not actually unlocked is not theirs to use; the
-    // server sanitises it away, and the run would silently differ from the
-    // route. Drop those here so telemetry records what was really equipped.
-    const owned = new Set(obs.self?.runesOwned ?? []);
-    const knownStances = new Set(obs.self?.knownStances ?? []);
-    for (const rule of wanted) {
-      if (rule.actionId !== "switch-stance") continue;
-      if (!rule.targetStanceId) {
-        throw new StallError("stance Rune rule is missing its target stance", { rule });
-      }
-      if (rule.targetStanceId !== NO_STANCE_ID && !knownStances.has(rule.targetStanceId)) {
-        throw new StallError("stance Rune rule targets an unlearned stance", {
-          rule,
-          knownStances: [...knownStances],
-        });
-      }
-    }
-    const affordable = wanted.filter(
-      (rule) => owned.has(rule.conditionId) && owned.has(rule.actionId),
-    );
+    await this.doConfigureBuild({ ...observedBuild(obs.requireSelf()), runeRules: wanted });
+  }
 
-    // Runic Points are a real budget the player has to earn. Trim from the tail
-    // (lowest authored priority) rather than letting the server silently drop
-    // rules we then report as equipped.
-    const budget = runeBudgetForGlobalMastery(obs.self?.globalMastery ?? 0);
-    const usable = [...affordable];
-    while (
-      usable.length > 0 &&
-      runicPointLoadoutCost({ abilities: obs.self?.attunedAbilities ?? { techniques: [], guards: [] }, stances: obs.self?.attunedStances ?? [], rules: usable, rites: obs.self?.equippedRites ?? [] }) > budget
-    ) {
-      usable.pop();
-    }
-
-    await this.emitUntil(
-      () => intents.setRuneLoadout(usable),
-      () => runeLoadoutsEqual(obs.self?.runesEquipped ?? [], usable),
-      {
-        timeoutMs: 2 * 60 * 1000,
-        what: "exact ordered rune loadout applied",
-        onStall: () => ({
-          wanted: usable,
-          live: obs.self?.runesEquipped ?? [],
-        }),
-      },
-    );
-
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "runes",
-      detail: {
-        requested: wanted.length,
-        equipped: obs.self?.runesEquipped ?? [],
-        droppedUnowned: wanted.length - affordable.length,
-        droppedOverBudget: affordable.length - usable.length,
-        budget,
-      },
+  private async doConfigureBuild(build: DesiredBuild): Promise<void> {
+    const { obs, intents, recorder } = this.deps;
+    const issues = obs.self ? validateBuild(build, obs.self) : [];
+    if (issues.length) throw new BuildError(issues[0].code, issues.map(i => i.reason).join("; "), { issues, requested: build });
+    const auto = (obs.self?.auto ?? false) && (!obs.self || buildKey(observedBuild(obs.self)) !== buildKey(build));
+    this.expectedBuild = null;
+    if (auto) await this.emitUntil(() => intents.setAuto(false), () => obs.self?.auto === false, { timeoutMs: 5000, what: "pause combat for build mutation" });
+    await applyBuild(build, { obs, intents,
+      mutate: send => this.mutate(send),
+      wait: (predicate, what) => this.waitUntil(predicate, { timeoutMs: 15_000, what }),
+      report: detail => recorder.emit({ kind: "build-change", atMs: recorder.now(), system: "loadout", detail }),
     });
+    this.expectedBuild = structuredClone(build);
+    if (auto) await this.emitUntil(() => intents.setAuto(true), () => obs.self?.auto === true, { timeoutMs: 5000, what: "resume combat after verified build" });
   }
 
   private async doLearnAbility(
@@ -1242,19 +1217,20 @@ export class RouteExecutor {
 
     if (!obs.self?.knownAbilities.includes(step.abilityId)) {
       const recipe = ABILITY_RECIPE_DATABASE.get(step.recipeId);
-      if (!recipe) throw new StallError("unknown ability recipe in route", { step });
+      if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown ability recipe in route", { step });
 
       const farmNode = recipe.recipeGroup
-        ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
+        ? this.resourceFarmNode(step.farmAt, recipe.recipeGroup, recipe.catalystCost)
         : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
 
       const affordable = (): boolean => {
         for (const [type, amount] of Object.entries(recipe.cost)) {
           if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
         }
-        const group = recipe.recipeGroup;
-        const level = recipe.requiredBiomeLevel ?? 0;
-        return !group || obs.biomeLevel(group) >= level;
+        for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
+          if (obs.catalyst(family) < (amount ?? 0)) return false;
+        }
+        return isAbilityRecipeUnlocked(recipe, obs.requireSelf());
       };
 
       if (!affordable()) {
@@ -1266,6 +1242,10 @@ export class RouteExecutor {
           for (const [type, amount] of Object.entries(recipe.cost)) {
             const short = (amount ?? 0) - obs.essence(type as EssenceType);
             if (short > 0) missing[`essence.${type}`] = short;
+          }
+          for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
+            const short = (amount ?? 0) - obs.catalyst(family);
+            if (short > 0) missing[`catalyst.${family}`] = short;
           }
           if (recipe.recipeGroup) {
             const short =
@@ -1289,6 +1269,7 @@ export class RouteExecutor {
       });
     }
 
+    if (step.attune === false) return;
     const current = obs.self?.attunedAbilities ?? { techniques: [], guards: [] };
     const key = step.slot === "guard" ? "guards" : "techniques";
     if (current[key].includes(step.abilityId)) return;
@@ -1299,62 +1280,16 @@ export class RouteExecutor {
       guards: [...current.guards],
     };
     next[key] = [step.abilityId];
-    await this.emitUntil(
-      () => intents.setAbilityLoadout(next),
-      () => obs.self?.attunedAbilities[key].includes(step.abilityId) ?? false,
-      { timeoutMs: 3 * 60 * 1000, what: `${step.abilityId} slotted` },
-    );
-
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "abilities",
-      detail: {
-        abilityId: step.abilityId,
-        slot: step.slot,
-        equipped: obs.self?.attunedAbilities ?? null,
-      },
-    });
+    await this.doSetAbilities({ type: "setAbilities", ...next });
   }
 
-  private async doSetAbilities(
-    step: Extract<RouteStep, { type: "setAbilities" }>,
-  ): Promise<void> {
-    const { obs, intents, recorder } = this.deps;
-    const known = new Set(obs.self?.knownAbilities ?? []);
-
-    for (const abilityId of [...step.techniques, ...step.guards]) {
-      if (!known.has(abilityId)) {
-        throw new StallError(
-          `cannot equip ${abilityId}: the run never learned it`,
-          { abilityId, known: [...known] },
-        );
-      }
-    }
-
-    const equipped = {
-      techniques: [...step.techniques],
-      guards: [...step.guards],
-    };
-    await this.emitUntil(
-      () => intents.setAbilityLoadout(equipped),
-      () => {
-        const live = obs.self?.attunedAbilities;
-        if (!live) return false;
-        return (
-          equipped.techniques.every((a) => live.techniques.includes(a)) &&
-          equipped.guards.every((a) => live.guards.includes(a))
-        );
-      },
-      { timeoutMs: 3 * 60 * 1000, what: `abilities ${JSON.stringify(equipped)} slotted` },
-    );
-
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "abilities",
-      detail: { requested: equipped, live: obs.self?.attunedAbilities ?? null },
-    });
+  private async doSetAbilities(step: Extract<RouteStep, { type: "setAbilities" }>): Promise<void> {
+    const current = observedBuild(this.deps.obs.requireSelf());
+    const abilities = { techniques: [...step.techniques], guards: [...step.guards] };
+    const ids = new Set([...step.techniques, ...step.guards]);
+    // Match the ordinary server removal semantics for legacy family replacements.
+    const runeRules = current.runeRules.filter(r => r.actionId !== "use-ability" || ids.has(r.targetAbilityId ?? ""));
+    await this.doConfigureBuild({ ...current, abilities, runeRules });
   }
 
   private async doCraftRune(
@@ -1362,7 +1297,7 @@ export class RouteExecutor {
   ): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     const recipe = RUNE_RECIPE_DATABASE.get(step.recipeId);
-    if (!recipe) throw new StallError("unknown rune recipe in route", { step });
+    if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown rune recipe in route", { step });
     if (obs.self?.runeRecipesCrafted.includes(step.recipeId)) return;
 
     const farmNode = recipe.recipeGroup
@@ -2002,7 +1937,7 @@ export class RouteExecutor {
   ): Promise<void> {
     const { obs, recorder } = this.deps;
     const recipe = STANCE_RECIPE_DATABASE.get(step.recipeId);
-    if (!recipe) throw new StallError("unknown stance recipe in route", { step });
+    if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown stance recipe in route", { step });
     if (obs.self?.knownStances.includes(recipe.stanceId)) return;
 
     const unlocked = (): boolean => isStanceRecipeUnlocked(recipe, {
@@ -2072,26 +2007,75 @@ export class RouteExecutor {
     );
   }
 
-  private async doSetDefaultStance(stanceId: string | null): Promise<void> {
+  private async doCraftRite(
+    step: Extract<RouteStep, { type: "craftRite" }>,
+  ): Promise<void> {
     const { obs, recorder } = this.deps;
-    if (stanceId !== null && !(obs.self?.knownStances ?? []).includes(stanceId)) {
-      throw new StallError("cannot equip an unlearned stance", { stanceId });
-    }
-    if ((obs.self?.equippedStances.default ?? null) === stanceId) return;
-    const result = await this.mutate(() => this.deps.intents.setDefaultStance(stanceId, [...new Set([...(obs.self?.attunedStances ?? []), ...(stanceId ? [stanceId] : [])])]));
-    if (!result.success) {
-      throw new StallError(`stance loadout rejected: ${result.reason ?? "unknown"}`, { stanceId });
-    }
-    await this.waitUntil(
-      () => (obs.self?.equippedStances.default ?? null) === stanceId,
-      { timeoutMs: 30_000, what: `default stance ${stanceId ?? NO_STANCE_ID}` },
-    );
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "stances",
-      detail: { defaultStanceId: stanceId, activeStance: obs.self?.activeStance ?? null },
+    const recipe = RITE_RECIPE_DATABASE.get(step.recipeId);
+    if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown rite recipe in route", { step });
+    if (obs.self?.knownRites.includes(recipe.riteId)) return;
+
+    const unlocked = (): boolean => isRiteRecipeUnlocked(recipe, {
+      biomeLevel: obs.self?.biomeLevel ?? {},
+      bossesCleared: obs.self?.bossesCleared ?? [],
     });
+    const affordable = (): boolean => {
+      if (!unlocked()) return false;
+      for (const [type, amount] of Object.entries(recipe.cost)) {
+        if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
+      }
+      for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
+        if (obs.catalyst(family) < (amount ?? 0)) return false;
+      }
+      return true;
+    };
+    const missing = (): Record<string, number> => {
+      const out: Record<string, number> = {};
+      for (const [type, amount] of Object.entries(recipe.cost)) {
+        const short = (amount ?? 0) - obs.essence(type as EssenceType);
+        if (short > 0) out[`essence.${type}`] = short;
+      }
+      for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
+        const short = (amount ?? 0) - obs.catalyst(family);
+        if (short > 0) out[`catalyst.${family}`] = short;
+      }
+      if (!unlocked() && recipe.recipeGroup) {
+        out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
+          1,
+          (recipe.requiredBiomeLevel ?? 0) - obs.biomeLevel(recipe.recipeGroup),
+        );
+      }
+      return out;
+    };
+    if (!affordable()) {
+      const farmNode = recipe.recipeGroup
+        ? this.resourceFarmNode(step.farmAt, recipe.recipeGroup, recipe.catalystCost)
+        : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
+      if (!farmNode) throw new StallError("cannot satisfy rite requirement", { step, missing: missing() });
+      await this.farmBlocked(
+        farmNode,
+        `rite:${recipe.riteId}`,
+        affordable,
+        () => missingToReasons(missing(), obs),
+        true,
+      );
+    }
+
+    const result = await this.mutate(() => this.deps.intents.craftRiteRecipe(step.recipeId));
+    if (!result.success) {
+      throw new StallError(`rite craft rejected: ${result.reason ?? "unknown"}`, { step });
+    }
+    recorder.emit({ kind: "build-change", atMs: recorder.now(), system: "rite-craft", detail: { recipeId: step.recipeId, ...result } });
+    await this.waitUntil(
+      () => obs.self?.knownRites.includes(recipe.riteId) ?? false,
+      { timeoutMs: 30_000, what: `${recipe.riteId} learned` },
+    );
+  }
+
+  private async doSetDefaultStance(stanceId: string | null): Promise<void> {
+    const current = observedBuild(this.deps.obs.requireSelf());
+    await this.doConfigureBuild({ ...current, stances: { default: stanceId,
+      attuned: [...new Set([...current.stances.attuned, ...(stanceId ? [stanceId] : [])])] } });
   }
 
   private async doIfPossible(step: Extract<RouteStep, { type: "ifPossible" }>): Promise<void> {
@@ -2342,6 +2326,12 @@ export class RouteExecutor {
   }
 
   private checkMilestones(): void {
+    const self = this.deps.obs.self;
+    if (self && this.expectedBuild && buildKey(observedBuild(self)) !== buildKey(this.expectedBuild)) {
+      const detail = { requested: this.expectedBuild, observed: observedBuild(self), observedRP: buildRP(observedBuild(self)) };
+      this.deps.recorder.emit({ kind: "build-change", atMs: this.deps.recorder.now(), system: "loadout", detail: { phase: "drift", code: "STATE_SYNC_FAILURE", ...detail } });
+      throw new BuildError("STATE_SYNC_FAILURE", "Verified build changed outside an authored loadout step", detail);
+    }
     for (const milestone of this.deps.route.milestones) {
       if (this.firedMilestones.has(milestone.id)) continue;
       if (
@@ -2430,6 +2420,10 @@ function defaultLabel(step: RouteStep): string {
       return `equip ${step.definitionIds.join(", ")}`;
     case "upgrade":
       return `upgrade ${step.definitionId} to +${step.toPlus}${step.opportunistic ? " (as GM allows)" : ""}`;
+    case "configureBuild":
+      return "configure exact build";
+    case "craftRite":
+      return `craft Rite ${step.recipeId}`;
     case "configureRunes":
       return `configure runes (${step.rules.length})`;
     case "learnAbility":
@@ -2476,6 +2470,7 @@ export function runeLoadoutsEqual(
         expected !== undefined &&
         rule.conditionId === expected.conditionId &&
         rule.actionId === expected.actionId &&
+        (rule.targetAbilityId ?? null) === (expected.targetAbilityId ?? null) &&
         (rule.targetStanceId ?? null) === (expected.targetStanceId ?? null)
       );
     })

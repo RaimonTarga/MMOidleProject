@@ -32,6 +32,93 @@ export const AURA_REGISTRY: Record<string, { color: number; tint: number; intens
 
 interface AuraColors { color: number; tint: number; intensity: number }
 
+/**
+ * Auras derived from a player's BUFF CHIPS rather than from a server-set aura id.
+ *
+ * An aura is a visual representation of a buff, so reading it straight off
+ * `activeBuffs` makes that relationship structural: an aura cannot exist unless
+ * its chip does, and the chip stays the authoritative readout. Nothing here ever
+ * removes or replaces a chip.
+ *
+ * Two shapes, matching the two jobs an aura does:
+ *
+ *   'stacks'  PROGRESSION — the character visibly gains power as stacks climb.
+ *             Staged in thirds, the same shape as `rampage-1..3` / `channel-1..3`.
+ *   'timed'   STATE — a window is open or it is not. One look, no stages.
+ *
+ * Colours echo each chip's own colour so the glow and the chip agree on sight.
+ * Cross-class collisions are fine (Assassin's orange vs Berserker's) because a
+ * character only ever has one class.
+ */
+interface BuffAuraDef {
+  kind: 'stacks' | 'timed';
+  /** Stacks at which the ramp is considered full. Ignored for 'timed'. */
+  fullAt?: number;
+  color: number;
+  tint: number;
+  /** Intensity at the bottom of the ramp (or the flat value for 'timed'). */
+  minIntensity: number;
+  maxIntensity: number;
+}
+
+const BUFF_AURA_BY_ID: Record<string, BuffAuraDef> = {
+  // Assassin — a 2.5s attack-speed burst. Pure state: on or off.
+  'cooldown-overdrive': {
+    kind: 'timed', color: 0xff6622, tint: 0xffb08a,
+    minIntensity: 1.2, maxIntensity: 1.2,
+  },
+  // Stalwart — the Patience ramp filling over ~7s. Progression, and the only one
+  // of these whose chip this pass had to add.
+  'cooldown-patience': {
+    kind: 'timed', color: 0xc8d8f0, tint: 0xe4eefb,
+    minIntensity: 0.6, maxIntensity: 1.4,
+  },
+  // Invoker — 3 consecutive-discharge stacks.
+  'energy-critical-mass': {
+    kind: 'stacks', fullAt: 3, color: 0xff5577, tint: 0xffaabb,
+    minIntensity: 0.7, maxIntensity: 1.6,
+  },
+  // Warmonger — attack speed ramping with every shot in the clip.
+  'reload-hair-trigger': {
+    kind: 'stacks', fullAt: 10, color: 0xffaa44, tint: 0xffd8a8,
+    minIntensity: 0.6, maxIntensity: 1.5,
+  },
+  // Desperado — 5 momentum stacks that persist through a fight.
+  'reload-momentum': {
+    kind: 'stacks', fullAt: 5, color: 0xffcc44, tint: 0xffe9a8,
+    minIntensity: 0.7, maxIntensity: 1.6,
+  },
+};
+
+/**
+ * Highest-priority buff-derived aura for this player.
+ *
+ * Table order is the tiebreak when a build somehow carries two, which keeps the
+ * glow stable instead of flickering between them frame to frame.
+ */
+function buffAura(player: PlayerView): AuraColors | null {
+  for (const buff of player.activeBuffs ?? []) {
+    const def = BUFF_AURA_BY_ID[buff.id];
+    if (!def) continue;
+    let t = 1;
+    if (def.kind === 'stacks') {
+      const full = Math.max(1, def.fullAt ?? 1);
+      t = Math.max(0, Math.min(1, (buff.stacks ?? 0) / full));
+    } else if (buff.durationPct >= 0) {
+      // A ramp reports its FILL here, so a rising bar brightens the glow; a
+      // countdown reports what is left, so it dims as the window closes. Both
+      // read correctly from the same number.
+      t = Math.max(0, Math.min(1, buff.durationPct / 100));
+    }
+    return {
+      color: def.color,
+      tint: def.tint,
+      intensity: def.minIntensity + (def.maxIntensity - def.minIntensity) * t,
+    };
+  }
+  return null;
+}
+
 function lerpColor(a: number, b: number, t: number): number {
   const k = Math.max(0, Math.min(1, t));
   const ar = (a >> 16) & 0xff, ag = (a >> 8) & 0xff, ab = a & 0xff;
@@ -49,7 +136,10 @@ function lerpColor(a: number, b: number, t: number): number {
  */
 export function resolveAuraColors(player: PlayerView): AuraColors | null {
   const id = player.aura;
-  if (!id) return null;
+  // Server-set aura ids stay authoritative — they cover the states that are not
+  // expressible as a single chip (Equinox's two phases, Aetherist's continuous
+  // wave). Only when there is none do we derive one from the buff chips.
+  if (!id) return buffAura(player);
   if (id === 'aether') {
     // Energy resets to 0 the tick it fills (the discharge arms), so treat
     // empowered-ready as full — otherwise the aura snaps to red at peak charge.

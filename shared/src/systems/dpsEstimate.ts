@@ -1,3 +1,4 @@
+import { resolveFinalDamageMultipliers } from './finalDamage';
 /**
  * A planning DPS number for the character panel.
  *
@@ -32,7 +33,7 @@
  *   may supply a target when they need a matchup estimate);
  * - the T4 spec behaviours (rampage stacks, crescendo ramps, storm DoTs, ...),
  *   which depend on combat state that does not exist outside a fight;
- * - abilities, relic delivery changes, and anything with an uptime that depends
+ * - abilities and anything with an uptime that depends
  *   on how the player actually moves.
  *
  * Every one of those is listed in `caveats` for the surface that shows it, so
@@ -43,11 +44,16 @@ import { GAME_CONFIG } from '../config/gameConfig';
 import type { SubVariant } from '../data/skillTree/types';
 import type { PassiveMap } from '../passives';
 import { resolveEmpoweredMultiplier } from './empoweredMult';
-import { resolveEnergyMax } from './energyMax';
+import { resolveRelicPreview } from './relicPreview';
+import { relicRatingsFromPassives, resolveRelicMagnitudeMultiplier } from './relics';
+import { resolveLaserProfile } from './laserProfile';
+import { resolveOnHitDamage, mitigateOnHitDamage } from './onHitDamage';
 import { resolveDotClassProfile } from './dotClassProfile';
 import { resolveSummonerProfile, type SummonerProfileInput } from './summonerProfile';
 import { summonerSpecializationFor, type SummonerFrame } from '../data/summoner';
 import { estimatePlayerHitDamage } from './combatEstimates';
+import { weaponDotProfileForWeapon } from './weaponFamilies';
+import { weaponDotBasisFromResolvedDirectDamage } from './classSecondaryDamage';
 
 export interface DpsEstimateTarget {
   plating: number;
@@ -60,6 +66,8 @@ export interface DpsEstimateInput {
   /** Flat per-hit damage applied after the target's defences. */
   onHitDamage: number;
   attackCooldownMs: number;
+  /** Equipped weapon id, when the caller can identify weapon reservoir effects. */
+  weaponId?: string | null;
   /** Root class mechanic, or null before a class is chosen. */
   archetype: string | null | undefined;
   passives: PassiveMap;
@@ -84,6 +92,10 @@ export interface DpsEstimateInput {
    * holding a weapon they are allowed to use.
    */
   cannotAttack?: boolean;
+  activeStance?: string | null;
+  hpFraction?: number;
+  /** Authoritative live multiplier; overrides the static build calculation. */
+  finalDamageDealtMult?: number;
   /**
    * Optional target for report/tooling callers. The character panel leaves this
    * unset and receives the familiar pre-mitigation planning number; balance
@@ -131,8 +143,13 @@ function hitDamage(
   attack: number,
   onHitDamage: number,
   platingMult = 1,
+  baseAttack = input.attack,
 ): number {
-  return attackDamage(input, attack, platingMult) + Math.max(0, onHitDamage);
+  return attackDamage(input, attack, platingMult) + onHitContribution(input, onHitDamage, baseAttack, platingMult);
+}
+
+function onHitContribution(input: DpsEstimateInput, onHit: number, baseAttack = input.attack, platingMult = 1): number {
+  return input.target ? mitigateOnHitDamage(onHit, baseAttack, input.target.plating * platingMult, input.target.damageReduction) : Math.max(0, onHit);
 }
 
 /** Shared by every archetype: what a plain swing is worth, per second. */
@@ -157,6 +174,8 @@ function genericCaveats(input: DpsEstimateInput): string[] {
  * the auto-attack number and says so in `caveats`, rather than reporting zero.
  */
 export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
+  input = { ...input, onHitDamage: resolveOnHitDamage(input.onHitDamage, input.passives) };
+  const relic = resolveRelicPreview(input.archetype, input.passives, relicRatingsFromPassives(input.passives), { subVariant: input.selectedSubVariant, playerTier: input.playerTier });
   const cdSec = Math.max(1, input.attackCooldownMs) / 1000;
   const auto = autoAttackDps(input);
   const parts: DpsEstimatePart[] = [];
@@ -173,11 +192,7 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
     // the cycle rather than shown as a spike: the panel is reporting sustained
     // output, and a finisher is not a separate action you can choose to take.
     case 'cadence': {
-      const threshold = Math.max(
-        1,
-        Math.round(input.passives['cadence.empowered-threshold'] ?? 5)
-          + Math.round(input.passives['cadence.threshold-mod'] ?? 0),
-      );
+      const threshold = relic?.archetype === 'cadence' ? relic.threshold.after : 5;
       const mult = empowered?.effective ?? 1;
       const regularHits = Math.max(0, threshold - 1);
       const cycleSec = threshold * cdSec;
@@ -195,12 +210,12 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
     // Regular attacks continue while the execution is on cooldown, so the two
     // are genuinely additive rather than a cycle average.
     case 'cooldown': {
-      const executionCdMs = Math.max(100, input.passives['cooldown.empowered-cd-ms'] ?? 8_000);
+      const executionCdMs = relic?.archetype === 'cooldown' ? relic.cooldownMs.after : 7000;
       const mult = empowered?.effective ?? 1;
       parts.push({ label: 'Regular attacks', dps: auto });
       parts.push({
         label: `Execution (every ${round1(executionCdMs / 1000)}s)`,
-        dps: attackDamage(input, input.attack * mult) / (executionCdMs / 1000),
+        dps: attackDamage(input, input.attack * Math.max(0, mult - 1)) / (Math.ceil(executionCdMs / input.attackCooldownMs) * cdSec),
       });
       break;
     }
@@ -208,20 +223,78 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
     // A magazine fires at full rate, then the reload is dead time. Damage is the
     // clip spread over the whole cycle including that downtime.
     case 'reload': {
-      const magazine = Math.max(1, Math.round(input.passives['reload.max-ammo'] ?? 6));
-      const reloadMs = Math.max(0, input.passives['reload.reload-time-ms'] ?? 2_000);
+      if (relic?.archetype === 'laser') {
+        const laser = resolveLaserProfile(input.passives);
+        const firingTicks = Math.ceil(laser.heatMax / laser.heatPerTick);
+        const coolingTicks = Math.ceil(laser.heatMax / laser.coolPerTick);
+        const tickRate = firingTicks / ((firingTicks + coolingTicks) * 0.1);
+        const direct = attackDamage(input, input.attack * laser.damagePerTickPct);
+        const weaponDot = input.weaponId
+          ? weaponDotProfileForWeapon(input.weaponId)
+          : undefined;
+        parts.push({
+          label: 'Laser direct (including cooling)',
+          dps: (weaponDot
+            ? Math.max(1, Math.round(direct * (1 - weaponDot.convPct)))
+            : direct) * tickRate,
+        });
+        if (input.onHitDamage > 0) {
+          parts.push({ label: 'Flat on-hit', dps: onHitContribution(input, input.onHitDamage, input.attack * laser.damagePerTickPct) * tickRate });
+        }
+        if (weaponDot) {
+          parts.push({
+            label: 'Weapon damage over time',
+            dps: weaponDotBasisFromResolvedDirectDamage(
+              direct,
+              input.archetype,
+              input.passives,
+            ) * weaponDot.convPct * weaponDot.dotMultiplier * tickRate,
+          });
+          caveats.push('Weapon damage over time uses the post-mitigation laser tick as its reservoir basis, then drains without further plating or damage reduction.');
+        }
+        break;
+      }
+      const magazine = relic?.archetype === 'reload' ? relic.ammoMax.after : 10;
+      const reloadMs = relic?.archetype === 'reload' ? relic.reloadMs.after : 1600;
       const cycleSec = magazine * cdSec + reloadMs / 1000;
       const lastShotMult = empowered?.effective ?? 1;
       const normalShots = Math.max(0, magazine - (empowered ? 1 : 0));
+      const baseDirect = attackDamage(input, input.attack, 0.5);
+      const lastDirect = attackDamage(input, input.attack * lastShotMult, 0.5);
+      const weaponDot = input.weaponId
+        ? weaponDotProfileForWeapon(input.weaponId)
+        : undefined;
+      const directAfterConversion = (damage: number): number => weaponDot
+        ? Math.max(1, Math.round(damage * (1 - weaponDot.convPct)))
+        : damage;
       parts.push({
-        label: `Clip of ${magazine}`,
-        dps: (normalShots * hitDamage(input, input.attack, input.onHitDamage, 0.5)) / cycleSec,
+        label: 'Direct attacks',
+        dps: (
+          normalShots * directAfterConversion(baseDirect)
+          + (empowered ? directAfterConversion(lastDirect) : 0)
+        ) / cycleSec,
       });
-      if (empowered) {
+      if (input.onHitDamage > 0) {
         parts.push({
-          label: 'Last bullet',
-          dps: hitDamage(input, input.attack * lastShotMult, input.onHitDamage, 0.5) / cycleSec,
+          label: 'Flat on-hit',
+          dps: onHitContribution(input, input.onHitDamage, input.attack, 0.5) * magazine / cycleSec,
         });
+      }
+      if (weaponDot) {
+        const reservoirBasis = weaponDotBasisFromResolvedDirectDamage(
+          baseDirect,
+          input.archetype,
+          input.passives,
+        );
+        parts.push({
+          label: 'Weapon damage over time',
+          dps: reservoirBasis
+            * weaponDot.convPct
+            * weaponDot.dotMultiplier
+            * magazine
+            / cycleSec,
+        });
+        caveats.push('Weapon damage over time uses the post-mitigation hit as its reservoir basis, then drains without further plating or damage reduction.');
       }
       caveats.push(`Averaged across the ${round1(reloadMs / 1000)}s reload, so burst output is higher.`);
       break;
@@ -237,11 +310,13 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       const conv = Math.min(1, Math.max(0, profile.conversionPct));
       parts.push({
         label: 'Direct hits',
-        dps: (attackDamage(input, input.attack) * (1 - conv) + input.onHitDamage) / cdSec,
+        dps: (attackDamage(input, input.attack) * (1 - conv) + onHitContribution(input, input.onHitDamage)) / cdSec,
       });
       parts.push({
         label: 'Damage over time',
-        dps: input.attack * conv * profile.dotMechanicMultiplier,
+        dps: input.attack * conv * profile.dotMechanicMultiplier
+          * (relic?.archetype === 'dot' ? relic.maxStacks.after / relic.maxStacks.before * profile.tickIntervalMs / relic.tickIntervalMs.after : 1)
+          * resolveRelicMagnitudeMultiplier(relicRatingsFromPassives(input.passives).debuffEffect),
       });
       caveats.push('Damage over time is counted at full stacks, which takes a few hits to reach.');
       break;
@@ -250,9 +325,14 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
     // Hits charge the reservoir; a discharge fires at the empowered multiplier
     // once it fills. Averaged over the charge cycle.
     case 'energy': {
-      const perHit = Math.max(1, input.passives['energy.per-hit'] ?? 14);
-      const maxEnergy = Math.max(perHit, resolveEnergyMax(input.passives, input.playerTier ?? 0));
-      const hitsPerDischarge = Math.max(1, Math.ceil(maxEnergy / perHit));
+      if (relic?.archetype === 'energy' && relic.dischargeSuppressed) {
+        parts.push({ label: 'Regular attacks (current bonuses)', dps: hitDamage(input, input.attack, input.onHitDamage) / cdSec });
+        break;
+      }
+      const perHit = relic?.archetype === 'energy' ? relic.gainPerHit.after : 14;
+      const maxEnergy = relic?.archetype === 'energy' ? relic.maxEnergy.after : 100;
+      // Charging hits arm the NEXT attack; the discharge itself grants no energy.
+      const hitsPerDischarge = Math.ceil(maxEnergy / perHit) + 1;
       const mult = empowered?.effective ?? 1;
       const cycleSec = hitsPerDischarge * cdSec;
       parts.push({
@@ -281,19 +361,40 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
         // Mirrors spawn.ts: a summon's attack is the owner's, scaled by the
         // damage passive, the formation multiplier, and ITS OWN slot weight.
         // Sum the live slots rather than multiplying one weight by the count.
-        const volley = profile.slots
-          .slice(0, active)
-          .reduce(
-            (sum, slot) => sum + attackDamage(
-              input,
-              input.attack * damagePct * profile.formationOffenseMult * slot.offenseWeight,
-            ),
-            0,
+        const weaponDot = input.weaponId
+          ? weaponDotProfileForWeapon(input.weaponId)
+          : undefined;
+        let directVolley = 0;
+        let onHitVolley = 0;
+        let weaponDotVolley = 0;
+        for (const slot of profile.slots.slice(0, active)) {
+          const direct = attackDamage(
+            input,
+            input.attack * damagePct * profile.formationOffenseMult * slot.offenseWeight,
           );
+          directVolley += weaponDot
+            ? Math.max(1, Math.round(direct * (1 - weaponDot.convPct)))
+            : direct;
+          onHitVolley += onHitContribution(input, input.onHitDamage
+            * slot.procWeight * profile.secondaryEffectMult * profile.relicPotencyMult,
+            input.attack * damagePct * profile.formationOffenseMult * slot.offenseWeight);
+          if (weaponDot) {
+            weaponDotVolley += direct
+              * weaponDot.convPct
+              * weaponDot.dotMultiplier
+              * profile.secondaryEffectMult;
+          }
+        }
         parts.push({
-          label: `${active} summon${active === 1 ? '' : 's'}`,
-          dps: (volley * 1000) / minionCdMs,
+          label: `${active} summon${active === 1 ? '' : 's'} direct`,
+          dps: (directVolley * 1000) / minionCdMs,
         });
+        if (onHitVolley > 0) {
+          parts.push({ label: 'Formation flat on-hit', dps: (onHitVolley * 1000) / minionCdMs });
+        }
+        if (weaponDotVolley > 0) {
+          parts.push({ label: 'Formation weapon damage over time', dps: (weaponDotVolley * 1000) / minionCdMs });
+        }
       }
       // Conduits fight only through their summons; Battle Bond is the single
       // specialization that hands the weapon back. Same condition, same inputs,
@@ -303,8 +404,13 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
         ? summonerSpecializationFor(frame, summoner.profileInput.unlockedSkills) === 'battle-bond'
         : false;
       const cannotAttack = input.cannotAttack ?? !battleBond;
-      if (!cannotAttack) parts.push({ label: 'Your attacks', dps: auto });
+      if (!cannotAttack) {
+        const profile = summoner ? resolveSummonerProfile(summoner.profileInput) : null;
+        const weight = profile ? profile.battleBondConduitOffenseWeight * profile.relicPotencyMult : 1;
+        parts.push({ label: 'Your attacks', dps: hitDamage(input, input.attack * weight, input.onHitDamage * weight, 1, input.attack * weight) / cdSec });
+      }
       caveats.push('Assumes every summon is alive and in range of the target.');
+      caveats.push('Generic weapon proc frequency follows the shared formation budget; proc-specific damage is excluded.');
       break;
     }
 
@@ -316,6 +422,8 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       break;
   }
 
+  const finalMult = input.finalDamageDealtMult ?? resolveFinalDamageMultipliers(input.passives, input.activeStance, input.hpFraction).dealt;
+  for (const part of parts) part.dps *= finalMult;
   const kept = parts.filter((part) => part.dps > 0).map((part) => ({ ...part, dps: round1(part.dps) }));
   return {
     total: round1(kept.reduce((sum, part) => sum + part.dps, 0)),

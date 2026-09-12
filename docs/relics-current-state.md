@@ -151,3 +151,30 @@ Still deferred:
 - T5/T6 named evolutions and branches;
 - future lines for currently unrepresented biomes;
 - balance-bench Relic axis sweeps.
+
+## Validation corrections — 2026-09-12
+
+Relic item presentation now leads with concrete class effects, not universal
+rating labels. Inventory, Forge and map unlock details compare the equipped
+relic to the candidate; unequip reverses that comparison. Signed ratings remain
+internal recipe data. Cadence and summon-count coefficients are 1; unchanged
+integer results between breakpoints are intentional. Rampage resolves before
+relic frequency.
+
+The shared preview composes current formation profiles and Melter's heat profile.
+Melter potency changes heat capacity; frequency changes full cooling duration.
+Conduit ordinary formations change count without diluting per-body stats; unique
+single/pair formations change damage and summon health instead. Proc frequency
+is preserved for these fixed formations. Poison Explosion/Eternal Doom caps and
+the DoT HUD now use relic-adjusted path caps.
+
+DPS estimates include relic delivery, Catalyst on-hit amplification, and Melter
+firing/cooling downtime. They remain estimates of baseline/sustained behavior,
+not predictions of every temporary specialization proc. Summon comparisons assume
+both current and proposed formations are fully reconstructed. Energy previews use
+Flash’s own gain and omit discharges for specializations that suppress them. Buff/debuff previews identify registered
+class effects; missing eligible effects are stated rather than silently omitted.
+
+Regression coverage: `server/test/coreRelicIntegration.test.ts` verifies the
+48 root/relic combinations and replacement-mechanic/on-hit regressions with real
+Worlds. The earlier audit report records pre-fix evidence, not current behavior.

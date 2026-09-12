@@ -453,7 +453,7 @@ function describeEngageSequence(def: MonsterDefinition): BestiaryAbilityLine | n
     kind: 'sequence',
     castMs: sequence.castMs,
     trigger: 'On first aggro',
-    detail: `Casts, then dives at ${fmtMult(sequence.speedMult)} move speed for up to ${fmtMs(sequence.maxChargeMs)}; the landing hits for ${fmtMult(sequence.damageMultiplier)} attack damage.`,
+    detail: `Casts, then ${def.flies ? 'dives' : 'lunges'} at ${fmtMult(sequence.speedMult)} move speed for up to ${fmtMs(sequence.maxChargeMs)}; the landing hits for ${fmtMult(sequence.damageMultiplier)} attack damage.`,
   };
 }
 
@@ -795,6 +795,45 @@ export function describeMonsterAbilities(
  * Build the full ordered list of secondary-mechanic lines for a monster, applying
  * the same dungeon guardian modifiers used for its stats (so DoT scaling matches).
  */
+/**
+ * "Arrives with N companions", for a pack alpha. Returns null for followers and
+ * lone monsters: a follower's own line would just restate its alpha's.
+ */
+function describePack(def: MonsterDefinition): MechanicLine | null {
+  const pack = def.pack;
+  if (pack?.role !== 'alpha') return null;
+
+  const core = (pack.followers ?? []).reduce((n, g) => n + g.count, 0);
+  const variants = pack.followerVariants ?? [];
+  const extras = variants.map(v => v.reduce((n, g) => n + g.count, 0));
+  const low = core + (extras.length > 0 ? Math.min(...extras) : 0);
+  const high = core + (extras.length > 0 ? Math.max(...extras) : 0);
+  if (high <= 0) return null;
+
+  const names = new Set<string>();
+  for (const g of pack.followers ?? []) names.add(g.typeId);
+  for (const v of variants) for (const g of v) names.add(g.typeId);
+  const labels = [...names]
+    .map(monsterLabel)
+    .sort();
+
+  const count = low === high ? `${high}` : `${low}\u2013${high}`;
+  const noun = high === 1 ? 'companion' : 'companions';
+  const alerted = (pack.callRange ?? 0) > 0
+    ? ` It calls them onto whatever it engages from up to ${pack.callRange}px.`
+    : '';
+
+  return {
+    id: 'pack-alpha',
+    icon: '\u2691',
+    label: 'Leads a pack',
+    category: 'ability',
+    detail:
+      `Spawns with ${count} ${noun} \u2014 ${labels.join(', ')} \u2014 clustered around it.` +
+      alerted,
+  };
+}
+
 export function describeMonsterMechanics(
   def: MonsterDefinition,
   mods?: DungeonMonsterModifiers,
@@ -1037,6 +1076,16 @@ export function describeMonsterMechanics(
       detail: `Bursts to ${fmtMult(def.chargeOnAggro.speedMult)} move speed for ${fmtMs(def.chargeOnAggro.durationMs)} when it first aggros.`,
     });
   }
+
+  // PACK COMPOSITION. Which creatures arrive TOGETHER is a mechanic the player
+  // plans around — it is the whole of the Gravewright's "kill the necromancer or
+  // the escort?" question and of Volcano's mixed-pack read — and until this line
+  // existed nothing on any player-facing surface said so.
+  //
+  // Counts are given as a RANGE because `followerVariants` rolls one add-on group
+  // per spawn, so a promised exact number would be wrong most of the time.
+  const packLine = describePack(def);
+  if (packLine) lines.push(packLine);
 
   if (def.onDeath?.spawnHazard) {
     const hazard = def.onDeath.spawnHazard;

@@ -22,6 +22,8 @@ import {
   type T1EconomyExperimentConfig,
 } from "@mmo-idle/shared";
 import type { WorldMirror } from "./reducer";
+import { observedBuild, buildRP } from "../loadout/loadout";
+import { runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 
 /**
  * Everything the policy layer is allowed to know, and nothing else.
@@ -32,6 +34,15 @@ import type { WorldMirror } from "./reducer";
  * `checkUpgrade` rather than restated in route files.
  */
 export class Observation {
+  /** Shared game formulas over normal networked player state; no hidden input. */
+  get build() {
+    const self = this.self;
+    if (!self) return null;
+    const loadout = observedBuild(self);
+    return { loadout, rp: buildRP(loadout), budget: runeBudgetForGlobalMastery(self.globalMastery),
+      knownAbilities: [...self.knownAbilities], knownStances: [...self.knownStances],
+      knownRites: [...self.knownRites], runesOwned: [...self.runesOwned], activeStance: self.activeStance };
+  }
   constructor(
     private readonly mirror: WorldMirror,
     readonly economyConfig?: T1EconomyExperimentConfig,

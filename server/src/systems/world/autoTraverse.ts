@@ -34,7 +34,8 @@ import {
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
 } from "../combat/ai/runeConfig";
-import { isPlayerActivelyInCombat, isPlayerInCombat } from "../combat/ai/engagement";
+import { isPlayerActivelyInCombat } from "../combat/ai/engagement";
+import { clearAutoTarget } from "../combat/ai/targetPriority";
 
 type TraversePhase = "mob" | "boss" | "advance";
 
@@ -42,7 +43,12 @@ export function clearAutoTraversePath(
   world: World,
   player: PlayerEntity,
 ): void {
+  const wasResolvingInterruption = player.fightsWhileTraveling !== undefined;
   detachComponent(world, player, "hasAutoTraversePath");
+  // The interruption marker has no independent intent: without a retained
+  // route there is nothing to resume and no authority for temporary targeting.
+  detachComponent(world, player, "fightsWhileTraveling");
+  if (wasResolvingInterruption) clearAutoTarget(player);
 }
 
 /**
@@ -252,8 +258,9 @@ function updateTravelCombatPause(world: World, player: PlayerEntity, now: number
   }
   if (!player.fightsWhileTraveling) return false;
 
-  if (active || isPlayerInCombat(player, now) || travelMaintenanceOwns(player)) return true;
+  if (active || travelMaintenanceOwns(player)) return true;
   detachComponent(world, player, "fightsWhileTraveling");
+  clearAutoTarget(player);
   return false;
 }
 
@@ -275,11 +282,9 @@ function markCurrentNodeClearedIfUnlocksDone(
   markSliceDirty(world, player, "tracksProgression");
 }
 
-export function updateAutoTraverse(world: World): void {
-  const now = Date.now();
+export function updateAutoTraverse(world: World, now = Date.now()): void {
   for (const player of world.livePlayers) {
     if (isFleeing(player)) continue;
-    if (updateTravelCombatPause(world, player, now)) continue;
     // Rune-following party members mirror the effective leader
     // (updatePartyFollow owns them) instead of running their own traverse.
     if (
@@ -295,6 +300,7 @@ export function updateAutoTraverse(world: World): void {
       if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
       continue;
     }
+    if (updateTravelCombatPause(world, player, now)) continue;
 
     const autoTraverseActive =
       player.usesAutocombat.auto && player.usesAutocombat.autoTraverse;

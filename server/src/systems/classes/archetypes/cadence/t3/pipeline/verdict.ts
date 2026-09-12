@@ -5,6 +5,7 @@ import {
 } from '../../../../../../world/worldLogCombat';
 import { actorFromPlayer } from '../../../../../../world/worldLogActors';
 import { VERDICT_BANK_PCT } from '../core/constants';
+import { CADENCE_VERDICT_EXECUTE_FX } from '@mmo-idle/shared';
 
 /**
  * Verdict (cadence-balanced-t3-c): each finisher banks a fraction of its damage
@@ -58,6 +59,10 @@ export function registerCadenceVerdict(): void {
         execution: true,
         playerPos: { ...player.hasPosition.current },
         targetPos: { ...target.hasPosition.current },
+        // The `['verdict-execute']` above goes to the damage LOG, not here — so
+        // the tag never reached the client and the execute drew nothing. The
+        // event needs its own `effects` list.
+        effects: [CADENCE_VERDICT_EXECUTE_FX],
       });
       cadence.verdictStored = 0;
     }

@@ -1,10 +1,11 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
 import { DEPTH } from '../render/depth';
+import type { AttackTint } from './elementTint';
 
-export function fxSlash(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, empowered: boolean, blueEmpowered = false): void {
+export function fxSlash(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, empowered: boolean, blueEmpowered = false, tint?: AttackTint): void {
   const empColor   = blueEmpowered ? 0x4499ff : 0xffdd22;
-  const trailColor = blueEmpowered ? 0xaaccff : 0xffffcc;
+  const trailColor = tint?.glow ?? (blueEmpowered ? 0xaaccff : 0xffffcc);
   const mainColor  = empowered ? empColor : 0xffffff;
   const lineW = empowered ? 3.5 : 2.5;
   const len   = empowered ? 72 : 56;

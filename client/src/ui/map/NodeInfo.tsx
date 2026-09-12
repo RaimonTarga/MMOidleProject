@@ -10,7 +10,7 @@ import {
   essenceLabel,
   catalystLabel, catalystFamilyLabel,
   coreEligibilityLabel, isRestrictedCore,
-  relicRatingsFromEffects, resolveRelicPreview,
+  relicRatingsFromPassives, relicRatingsFromEffects, resolveRelicComparison,
   NODE_MODIFIERS, MODIFIER_COLORS, MODIFIER_LABELS, MODIFIER_SUMMARIES,
   modifierDetails,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
@@ -22,7 +22,7 @@ import {
   bossFelledByNodeAtom,
   combatArchetypeAtom,
   playerTierAtom,
-  selectedSubVariantAtom,
+  selectedSubVariantAtom, selectedRangeAtom, unlockedSkillsAtom,
 } from '../../hud/atoms';
 import { hudBus } from '../../hudBus';
 import { DEV_TOOLS_ENABLED } from '../../devTools';
@@ -216,6 +216,8 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const bossFelledByNode  = useAtomValue(bossFelledByNodeAtom);
   const combatArchetype   = useAtomValue(combatArchetypeAtom);
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const selectedRange = useAtomValue(selectedRangeAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const abilityContext    = useAbilityContext();
   const mapNow = useMapClock();
 
@@ -238,13 +240,14 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   // A relic's authored ratings mean nothing on their own; what they do depends
   // on the reader's class mechanic, exactly as in the Craft browser.
   const relicPreview = useCallback(
-    (unlock: BiomeUnlock) => formatResolvedRelicProfile(resolveRelicPreview(
+    (unlock: BiomeUnlock) => formatResolvedRelicProfile(resolveRelicComparison(
       combatArchetype,
       abilityContext.passives,
+      relicRatingsFromPassives(abilityContext.passives),
       relicRatingsFromEffects(unlock.gear?.mechanicEffects),
-      { subVariant: selectedSubVariant, playerTier: abilityContext.playerTier },
+      { subVariant: selectedSubVariant, playerTier: abilityContext.playerTier, unlockedSkills, selectedRange },
     )),
-    [combatArchetype, abilityContext.passives, abilityContext.playerTier, selectedSubVariant],
+    [combatArchetype, abilityContext.passives, abilityContext.playerTier, selectedSubVariant, unlockedSkills, selectedRange],
   );
 
   // Travel path (computed regardless of biome resolution so the button always works).

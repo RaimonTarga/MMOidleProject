@@ -163,6 +163,7 @@ export const forestRecipeEntries = [
     reconstructCost: { green: 157, purple: 53 }, reconstructCatalystCost: { alacrity: 2 },
     stats: { attack: 5, onHitDamage: 4 }, attacksPerSecond: 1.50, tier: 2,
     icon: 'items/weapons/thorn-needle.png',
+    element: 'bleed',   // cosmetic attack tint only
     description: 'The same blade, barbed — it bites and lets the wound do the rest.',
     upgrades: [
       { stats: { onHitDamage: 1 }, cost: { green: 31, purple: 11 }, requiredBiomeLevel: 8 },

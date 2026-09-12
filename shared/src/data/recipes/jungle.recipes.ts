@@ -15,6 +15,7 @@ export const jungleRecipeEntries = [
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { green: 55}, stats: { attack: 10, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
     icon: 'items/weapons/stinger-rapier.png',
+    element: 'poison',   // cosmetic attack tint only
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
     upgrades: [
       { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 40 }, requiredBiomeLevel: 2 },
@@ -92,6 +93,7 @@ export const jungleRecipeEntries = [
     cost: { green: 120 }, stats: { attack: 22, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
     reconstructCost: { green: 420 }, reconstructCatalystCost: { alacrity: 3 },
     icon: 'items/weapons/venomthorn-rapier.png',
+    element: 'poison',   // cosmetic attack tint only
     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
     upgrades: [
       { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 79 },  requiredBiomeLevel: 8 },
@@ -177,6 +179,7 @@ export const jungleRecipeEntries = [
     cost: { green: 264 }, stats: { attack: 34, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
     reconstructCost: { green: 924 }, reconstructCatalystCost: { alacrity: 4 },
     icon: 'items/weapons/deathfang-rapier.png',
+    element: 'poison',   // cosmetic attack tint only
     description: 'Quick past seeing, and slick with something the deep jungle spent a long time perfecting.',
     upgrades: [
       { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 157 }, requiredBiomeLevel: 14 },
@@ -305,7 +308,7 @@ export const jungleRecipeEntries = [
     // stat half is always on, so the slot is never dead — and the clause widens for
     // free as more mobility abilities are authored.
     mechanicEffects: {
-      'core.attack-mult': 0.28, 'core.maxhp-mult': 0.20, 'core.speed-mult': 0.18,
+      'core.damage-dealt-pct': 0.28, 'core.maxhp-mult': 0.20, 'core.speed-mult': 0.18,
       'core.mobility-refund-on-kill-pct': 0.50,
     },
     icon: 'items/cores/bruiser.png',
@@ -323,7 +326,7 @@ export const jungleRecipeEntries = [
     lineageId: 'core-accelerant',
     cost: { green: 1150 }, catalystCost: { alacrity: 5 }, // family-tag: attack-speed tempo → Alacrity
     stats: {}, tier: 3,
-    mechanicEffects: { 'core.attack-speed-mult': 0.55, 'core.attack-mult': -0.18 },
+    mechanicEffects: { 'core.attack-speed-mult': 0.55, 'core.damage-dealt-pct': -0.18 },
     icon: 'items/cores/accelerant.png',
     description: 'The canopy keeps a fast rhythm. Match it, and you will find you are swinging before you decide to.',
   }],

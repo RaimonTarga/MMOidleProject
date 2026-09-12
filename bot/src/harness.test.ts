@@ -1,7 +1,9 @@
+import { validateBuild } from "./loadout/loadout";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  ABILITY_RECIPE_DATABASE,
+  ABILITY_RECIPE_DATABASE, ABILITY_DATABASE, STANCE_DATABASE, RITE_DATABASE, STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
+  type PlayerView,
   CLEARING_NODE_ID,
   RECIPE_DATABASE,
   RUNE_RECIPE_DATABASE,
@@ -536,6 +538,9 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
           if (recipe?.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
             setMinimumBiomeLevel(recipe.recipeGroup, recipe.requiredBiomeLevel);
           }
+        } else if (step.type === "craftStance" || step.type === "craftRite") {
+          const recipe = step.type === "craftStance" ? STANCE_RECIPE_DATABASE.get(step.recipeId) : RITE_RECIPE_DATABASE.get(step.recipeId);
+          if (recipe?.recipeGroup && recipe.requiredBiomeLevel !== undefined) setMinimumBiomeLevel(recipe.recipeGroup, recipe.requiredBiomeLevel);
         } else if (step.type === "learnAbility") {
           const recipe = ABILITY_RECIPE_DATABASE.get(step.recipeId);
           if (recipe?.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
@@ -574,6 +579,18 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
             );
             break;
           }
+          case "configureBuild": {
+            const issues = validateBuild(step.build, { knownAbilities: [...ABILITY_DATABASE.keys()], knownStances: [...STANCE_DATABASE.keys()], knownRites: [...RITE_DATABASE.keys()],
+              runesOwned: [...STARTER_RUNE_IDS, ...craftedRuneIds], combatArchetype: ARCHETYPE_FOR_ROOT[route.classRoot], globalMastery: currentRuneBudget().gm } as PlayerView);
+            assert(issues.length === 0, route.id + ": invalid build: " + JSON.stringify(issues));
+            break;
+          }
+          case "craftStance":
+            assert(STANCE_RECIPE_DATABASE.has(step.recipeId), route.id + ": unknown stance recipe");
+            break;
+          case "craftRite":
+            assert(RITE_RECIPE_DATABASE.has(step.recipeId), route.id + ": unknown Rite recipe");
+            break;
           case "setAbilities":
             // Nothing to verify statically beyond the ids being real; the
             // executor refuses to slot an ability the run never learned.
@@ -694,6 +711,8 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
       ...(entry?.knownAbilities ?? []),
       ...(route.entryKnownAbilities ?? []),
     ]);
+    const knownStances = new Set(entry?.knownStances ?? []);
+    const knownRites = new Set(entry?.knownRites ?? []);
     const ownedRunes = new Set(STARTER_RUNE_IDS);
     for (const recipeId of entry?.runeRecipesCrafted ?? []) {
       const runeId = RUNE_RECIPE_DATABASE.get(recipeId)?.runeId;
@@ -742,6 +761,14 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
           }
         } else if (step.type === "learnAbility") {
           learnedAbilities.add(step.abilityId);
+        } else if (step.type === "craftStance") {
+          const recipe = STANCE_RECIPE_DATABASE.get(step.recipeId); if (recipe) knownStances.add(recipe.stanceId);
+        } else if (step.type === "craftRite") {
+          const recipe = RITE_RECIPE_DATABASE.get(step.recipeId); if (recipe) knownRites.add(recipe.riteId);
+        } else if (step.type === "configureBuild") {
+          const issues = validateBuild(step.build, { knownAbilities: [...learnedAbilities], knownStances: [...knownStances], knownRites: [...knownRites],
+            runesOwned: [...ownedRunes], combatArchetype: archetype, globalMastery: 1000000 } as PlayerView);
+          assert(issues.length === 0, route.id + ": build precedes acquisition: " + JSON.stringify(issues));
         } else if (step.type === "setAbilities") {
           for (const abilityId of [...step.techniques, ...step.guards]) {
             assert(
@@ -929,7 +956,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
 // ── Policies are parameters over one executor, not forked behavior ───────────
 
 {
-  assert(POLICIES.size === 3, "three policy profiles are registered");
+  assert(POLICIES.size === 6, "six policy profiles are registered");
 
   const intended = requirePolicy("intended");
   const rusher = requirePolicy("rusher");

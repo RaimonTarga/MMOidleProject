@@ -12,7 +12,7 @@ import './detailLines.css';
  * the player learns one reading grammar for the whole information layer.
  */
 
-function DetailRow({ line }: { line: DetailLine }) {
+function DetailRow({ line, explain }: { line: DetailLine; explain?: boolean }) {
   const { handlers, node } = useHoverTooltip(line.help);
   const classes = [
     'detail-line',
@@ -35,6 +35,7 @@ function DetailRow({ line }: { line: DetailLine }) {
       <span className="detail-line__label">{line.label}</span>
       <span className="detail-line__value">{line.value}</span>
       {line.detail && <span className="detail-line__detail">{line.detail}</span>}
+      {explain && line.help && <span className="detail-line__explanation">{line.help}</span>}
       {node}
     </div>
   );
@@ -45,6 +46,7 @@ export function DetailLines({
   title,
   className,
   empty,
+  explain,
 }: {
   lines: readonly DetailLine[];
   /** Section heading, e.g. "Effects". Omit for an unlabelled block. */
@@ -52,6 +54,7 @@ export function DetailLines({
   className?: string;
   /** Shown instead of the list when there is nothing to report. */
   empty?: string;
+  explain?: boolean;
 }) {
   if (lines.length === 0) {
     return empty ? <div className="detail-lines__empty">{empty}</div> : null;
@@ -60,7 +63,7 @@ export function DetailLines({
   return (
     <div className={['detail-lines', className].filter(Boolean).join(' ')}>
       {title && <div className="detail-lines__title">{title}</div>}
-      {lines.map((line) => <DetailRow key={line.key} line={line} />)}
+      {lines.map((line) => <DetailRow key={line.key} line={line} explain={explain} />)}
     </div>
   );
 }

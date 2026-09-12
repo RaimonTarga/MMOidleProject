@@ -53,6 +53,7 @@ import { abilityTarget, gapToTarget, nearestMonsterGap } from "./abilityTargetin
 import { armTechnique } from "./abilityArming";
 import { actorFromPlayer } from "../../../world/worldLogActors";
 import { recordWorldLogEvent } from "../../../world/worldLog";
+import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 
 /** Hard cap on amplified Guard damage reduction (mirrors abilityEffects' GUARD_DR_CAP). */
 const GUARD_DR_CAP = 0.9;
@@ -76,8 +77,33 @@ interface FireContext {
   hardControlled: boolean;
 }
 
+interface TechniqueAttempt {
+  activated: boolean;
+  claimed: boolean;
+}
+
+const DECLINED_TECHNIQUE: TechniqueAttempt = { activated: false, claimed: false };
+const CLAIMED_TECHNIQUE: TechniqueAttempt = { activated: false, claimed: true };
+
+export interface ManualAbilityResult {
+  success: boolean;
+  reason?: string;
+  state?: "activated" | "queued" | "cancelled" | "rejected";
+}
+
+interface ManualAbilityAttempt extends ManualAbilityResult {
+  retryable: boolean;
+}
+
 export function updateAbilityFiring(world: World, now: number): void {
   for (const player of world.livePlayers) {
+    updateQueuedAbilityUses(world, player, now);
+
+    // The Auto Combat toggle owns default/Rune ability activation. Fight Back is
+    // the deliberate exception: while it temporarily owns travel combat, the
+    // player behaves exactly as though Auto Combat were enabled. Manual hotbar
+    // requests do not enter this driver and remain available in either state.
+    if (!player.usesAutocombat.auto && !player.fightsWhileTraveling) continue;
     const equipped = player.tracksProgression.attunedAbilities;
     if (!equipped) continue;
     const priority = getAbilityRuneTargets(player);
@@ -98,13 +124,147 @@ export function updateAbilityFiring(world: World, now: number): void {
     let offensiveClaimed = false;
     for (const abilityId of techniques) {
       if (offensiveClaimed && ABILITY_DATABASE.get(abilityId)?.shape !== "instant") continue;
-      offensiveClaimed = maybeFireTechnique(world, player, abilityId, fctx, now) || offensiveClaimed;
+      const attempt = maybeFireTechnique(world, player, abilityId, fctx, now);
+      offensiveClaimed = attempt.claimed || offensiveClaimed;
     }
 
     // Guards are independent, but only one ACTIVATION resolves per window.
     for (const abilityId of guards) {
       if (maybeFireGuard(world, player, abilityId, fctx)) break;
     }
+  }
+}
+
+/**
+ * Authoritative toggle boundary for a player pressing an attuned ability hotkey.
+ * A legal request activates immediately. A temporarily illegal request is held
+ * in the runtime queue and retried; pressing its hotkey again cancels it.
+ */
+export function requestManualAbilityUse(
+  world: World,
+  player: PlayerEntity,
+  abilityId: string,
+  now = Date.now(),
+): ManualAbilityResult {
+  // Validate before treating the press as a cancel. Loadout edits normally prune
+  // stale queue entries immediately, but this keeps the untrusted request
+  // boundary correct even if a stale runtime component is ever observed.
+  const ability = ABILITY_DATABASE.get(abilityId);
+  if (!ability) {
+    removeQueuedAbility(world, player, abilityId);
+    return { success: false, reason: "Unknown ability.", state: "rejected" };
+  }
+  const attuned = ability.slot === "technique"
+    ? player.tracksProgression.attunedAbilities.techniques
+    : player.tracksProgression.attunedAbilities.guards;
+  if (!attuned.includes(abilityId)) {
+    removeQueuedAbility(world, player, abilityId);
+    return { success: false, reason: "Ability is not attuned.", state: "rejected" };
+  }
+
+  const queued = player.queuesAbilities?.abilityIds.includes(abilityId) ?? false;
+  if (queued) {
+    removeQueuedAbility(world, player, abilityId);
+    return { success: true, state: "cancelled" };
+  }
+
+  const attempt = attemptManualAbilityUse(world, player, abilityId, now);
+  if (attempt.success) return { success: true, state: "activated" };
+  if (!attempt.retryable) {
+    return { success: false, reason: attempt.reason, state: "rejected" };
+  }
+
+  const abilityIds = [...(player.queuesAbilities?.abilityIds ?? []), abilityId];
+  attachComponent(world, player, "queuesAbilities", { abilityIds });
+  return { success: true, state: "queued" };
+}
+
+/** One authoritative activation attempt, shared by direct presses and queue ticks. */
+function attemptManualAbilityUse(
+  world: World,
+  player: PlayerEntity,
+  abilityId: string,
+  now: number,
+): ManualAbilityAttempt {
+  const ability = ABILITY_DATABASE.get(abilityId);
+  if (!ability) return { success: false, reason: "Unknown ability.", retryable: false };
+  const attuned = ability.slot === "technique"
+    ? player.tracksProgression.attunedAbilities.techniques
+    : player.tracksProgression.attunedAbilities.guards;
+  if (!attuned.includes(abilityId)) {
+    return { success: false, reason: "Ability is not attuned.", retryable: false };
+  }
+
+  const fctx = buildFireContext(world, player);
+  if (fctx.hardControlled && ability.trigger.kind !== "has-hard-control") {
+    return { success: false, reason: "Cannot use that ability while controlled.", retryable: true };
+  }
+
+  // Enemy-facing manual actions use exactly the current combat target. The
+  // automatic driver retains its extended-range nearest-target fallback.
+  const requiresTarget = ability.slot === "technique"
+    && ability.shape !== "instant"
+    && ability.shape !== "self-cast";
+  if (requiresTarget && !abilityTarget(world, player, ability, true)) {
+    return { success: false, reason: "No valid current target.", retryable: true };
+  }
+
+  if (ability.slot === "technique") {
+    const attempt = maybeFireTechnique(
+      world,
+      player,
+      abilityId,
+      fctx,
+      now,
+      { manual: true, currentTargetOnly: true },
+    );
+    if (!attempt.activated) {
+      return {
+        success: false,
+        reason: attempt.claimed
+          ? "Another Technique is already active."
+          : "Ability is not ready.",
+        retryable: true,
+      };
+    }
+    return { success: true, retryable: false };
+  }
+
+  if (!maybeFireGuard(world, player, abilityId, fctx, true)) {
+    return {
+      success: false,
+      reason: "Ability is not ready or its requirements are not met.",
+      retryable: true,
+    };
+  }
+  return { success: true, retryable: false };
+}
+
+function updateQueuedAbilityUses(
+  world: World,
+  player: PlayerEntity,
+  now: number,
+): void {
+  for (const abilityId of [...(player.queuesAbilities?.abilityIds ?? [])]) {
+    const attempt = attemptManualAbilityUse(world, player, abilityId, now);
+    if (attempt.success || !attempt.retryable) {
+      removeQueuedAbility(world, player, abilityId);
+    }
+  }
+}
+
+function removeQueuedAbility(
+  world: World,
+  player: PlayerEntity,
+  abilityId: string,
+): void {
+  const current = player.queuesAbilities?.abilityIds;
+  if (!current?.includes(abilityId)) return;
+  const abilityIds = current.filter((id) => id !== abilityId);
+  if (abilityIds.length === 0) {
+    detachComponent(world, player, "queuesAbilities");
+  } else {
+    attachComponent(world, player, "queuesAbilities", { abilityIds });
   }
 }
 
@@ -193,17 +353,25 @@ function maybeFireTechnique(
   abilityId: string,
   fctx: FireContext,
   now: number,
-): boolean {
+  options: { manual?: boolean; currentTargetOnly?: boolean } = {},
+): TechniqueAttempt {
   const ability = ABILITY_DATABASE.get(abilityId);
-  if (!ability || ability.slot !== "technique") return false;
+  if (!ability || ability.slot !== "technique") return DECLINED_TECHNIQUE;
   const cdKey = abilityCooldownKey(abilityId);
+
+  if (fctx.hardControlled) return DECLINED_TECHNIQUE;
+  if (player.isChanneling) return DECLINED_TECHNIQUE;
+  if (
+    player.isRooted
+    && (ability.shape === "reposition" || ability.shape === "charge")
+  ) return DECLINED_TECHNIQUE;
 
   // A self-facing offensive buff is not an attack: it neither waits for the
   // armed/cast channel nor occupies it, so Frenzy can go up while Quick Strike
   // is still waiting for a hit to consume it.
   if (ability.shape === "instant") {
-    if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
-    if (!shouldFire(world, player, ability, fctx)) return false;
+    if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
+    if (!options.manual && !shouldFire(world, player, ability, fctx)) return DECLINED_TECHNIQUE;
     applyInstantTechnique(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
     setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
@@ -218,12 +386,12 @@ function maybeFireTechnique(
       durationMs:
         windowEffect.kind === "attack-speed" ? windowEffect.durationMs : undefined,
     });
-    return false;
+    return { activated: true, claimed: false };
   }
 
   // The previous Sweep charge is already being paid out across this ammo clip.
   // Do not spend another Sweep cooldown into it; later slots remain eligible.
-  if (ability.id === "sweep" && player.hasSweepClip) return false;
+  if (ability.id === "sweep" && player.hasSweepClip) return DECLINED_TECHNIQUE;
 
   // One offensive channel: an armed charge persists until a hit consumes it, and
   // a cast owns the channel until it resolves. Neither may be pre-empted.
@@ -232,9 +400,9 @@ function maybeFireTechnique(
     player.hasFormationTechnique ||
     player.isCastingAbility ||
     player.isChargingAbility
-  ) return true;
-  if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
-  if (!shouldFire(world, player, ability, fctx)) return false;
+  ) return CLAIMED_TECHNIQUE;
+  if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
+  if (!options.manual && !shouldFire(world, player, ability, fctx)) return DECLINED_TECHNIQUE;
 
   // A cast pays its cooldown on RESOLVE, not on begin (see abilityCasting.ts),
   // so nothing is charged here.
@@ -243,9 +411,9 @@ function maybeFireTechnique(
     ability.shape === "charge" ||
     ability.shape === "self-cast"
   ) {
-    const started = beginAbilityCast(world, player, ability, now);
+    const started = beginAbilityCast(world, player, ability, now, options.currentTargetOnly);
     if (started) recordAbilityActivation(world, player, abilityId, 'technique');
-    return started;
+    return { activated: started, claimed: started };
   }
 
   // Reposition (Charge / Disengage): the movement resolves NOW. If it carries a
@@ -253,9 +421,9 @@ function maybeFireTechnique(
   // strike. A dash with nowhere to go declines to fire so the cooldown isn't wasted.
   if (ability.shape === "reposition") {
     const effect = resolveTechniqueEffect(player, ability);
-    if (effect.kind !== "reposition") return false;
-    const target = abilityTarget(world, player, ability);
-    if (!target) return false;
+    if (effect.kind !== "reposition") return DECLINED_TECHNIQUE;
+    const target = abilityTarget(world, player, ability, options.currentTargetOnly);
+    if (!target) return DECLINED_TECHNIQUE;
     const from = { ...player.hasPosition.current };
     // A gap-CLOSER stops when the gap is closed. Moving the full authored
     // distance regardless would sail the player straight through anything that
@@ -268,7 +436,7 @@ function maybeFireTechnique(
         Math.max(0, gapToTarget(player, target) - player.performsAttack.attackRange * 0.7),
       )
       : effect.distance;
-    if (distance <= 0) return false;
+    if (distance <= 0) return DECLINED_TECHNIQUE;
     if (
       repositionPlayer(
         world,
@@ -278,7 +446,7 @@ function maybeFireTechnique(
         effect.toward,
       ) === null
     ) {
-      return false;
+      return DECLINED_TECHNIQUE;
     }
     setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
     world.pushEvent(player.hasPosition.nodeId, {
@@ -292,7 +460,7 @@ function maybeFireTechnique(
     if (effect.empowerMult !== undefined) {
       armTechnique(world, player, abilityId);
     }
-    return true;
+    return { activated: true, claimed: true };
   }
 
   armTechnique(world, player, abilityId);
@@ -306,7 +474,7 @@ function maybeFireTechnique(
     ability: abilityId,
   });
   recordAbilityActivation(world, player, abilityId, 'technique');
-  return true;
+  return { activated: true, claimed: true };
 }
 
 type RemovedEffect = { effectId: string; stacks: number };
@@ -371,6 +539,7 @@ function maybeFireGuard(
   player: PlayerEntity,
   abilityId: string,
   fctx: FireContext,
+  manual = false,
 ): boolean {
   const ability = ABILITY_DATABASE.get(abilityId);
   if (!ability || ability.slot !== "guard") return false;
@@ -378,8 +547,9 @@ function maybeFireGuard(
   if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
   // One activation per decision window — ongoing buffs still overlap freely.
   if (getCooldown(player.tracksCombat, GUARD_WINDOW_KEY) > 0) return false;
+  if (fctx.hardControlled && ability.trigger.kind !== "has-hard-control") return false;
   if (!guardEffectCanFire(player, ability, fctx)) return false;
-  if (!shouldFire(world, player, ability, fctx)) return false;
+  if (!manual && !shouldFire(world, player, ability, fctx)) return false;
 
   // Charm Guard-ability amplifiers. Only present while an amplifying charm is
   // equipped; they merge into passives via the equipment loop in stats.ts.

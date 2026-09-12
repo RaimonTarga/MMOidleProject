@@ -490,6 +490,7 @@ function dpsInputForStats(stats: PlayerStatsTarget): DpsEstimateInput {
     attack: stats.dealsDamage.attack,
     onHitDamage: stats.dealsDamage.onHitDamage,
     attackCooldownMs: stats.performsAttack.attackCooldown,
+    weaponId: stats.holdsInventory.equipment.weapon,
     archetype: stats.usesSkills.combatArchetype,
     passives: stats.usesSkills.passives,
     selectedSubVariant: stats.usesSkills.selectedSubVariant,

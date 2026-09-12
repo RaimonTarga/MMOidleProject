@@ -96,6 +96,7 @@ function createDurableMonster(world: World, x: number) {
 function armSweep(world: World, playerId: string, targetId: string): void {
   const player = world.getPlayerEntity(playerId);
   if (!player) throw new Error("missing Sweep player");
+  player.usesAutocombat.auto = true;
   setAttackTarget(world, player, targetId);
   updateAbilityFiring(world, 1_000);
   assert(

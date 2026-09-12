@@ -232,6 +232,7 @@ export const mountainRecipeEntries = [
     cost: { blue: 116 }, stats: { attack: 84 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Heavy
     reconstructCost: { blue: 406 }, reconstructCatalystCost: { heavy: 3 },
     icon: 'items/weapons/avalanche-maul.png',
+    element: 'frost',   // cosmetic attack tint only
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.37 },
     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
     upgrades: [
@@ -486,7 +487,7 @@ export const mountainRecipeEntries = [
     // whole survivability package rather than three numbers. It clears slowly —
     // that is the cost, and it is paid in attack speed and movement, not in eHP.
     mechanicEffects: {
-      'core.maxhp-mult': 0.30, 'core.plating-mult': 0.40, 'core.dr-layer-pct': 0.14,
+      'core.maxhp-mult': 0.30, 'core.plating-mult': 0.40, 'core.damage-taken-pct': -0.14,
       'core.attack-speed-mult': -0.25, 'core.speed-mult': -0.10,
     },
     icon: 'items/cores/juggernaut.png',

@@ -1,4 +1,4 @@
-import { isDeathOverlayActive, setAutoPath } from "../hud/atoms";
+import { isDeathOverlayActive, notifyCombatControlResult, setAutoPath } from "../hud/atoms";
 import { hudBus } from "../hudBus";
 import { intents as intentBus, type IntentMap } from "../intents";
 import {
@@ -7,8 +7,11 @@ import {
   sendCraftRuneRecipe,
   sendCraftAbilityRecipe,
   sendSetAbilityLoadout,
+  sendUseAbility,
+  sendManualReload,
   sendCraftStanceRecipe,
   sendSetStanceLoadout,
+  sendSetStanceControl,
   sendCraftRiteRecipe,
   sendSetRiteLoadout,
   sendEquipItem,
@@ -105,6 +108,16 @@ export function attachHudEvents(scene: GameScene): () => void {
     sendSetAbilityLoadout(scene.socket, payload);
   });
 
+  intents.on("useAbility", (abilityId) => {
+    if (isDeathOverlayActive()) return;
+    sendUseAbility(scene.socket, abilityId, notifyCombatControlResult);
+  });
+
+  intents.on("manualReload", () => {
+    if (isDeathOverlayActive()) return;
+    sendManualReload(scene.socket, notifyCombatControlResult);
+  });
+
   intents.on("craftStanceRecipe", (recipeId) => {
     if (isDeathOverlayActive()) return;
     sendCraftStanceRecipe(scene.socket, recipeId);
@@ -113,6 +126,11 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("setStanceLoadout", (payload) => {
     if (isDeathOverlayActive()) return;
     sendSetStanceLoadout(scene.socket, payload);
+  });
+
+  intents.on("setStanceControl", (stanceId) => {
+    if (isDeathOverlayActive()) return;
+    sendSetStanceControl(scene.socket, stanceId, notifyCombatControlResult);
   });
 
   intents.on("craftRiteRecipe", (recipeId) => {

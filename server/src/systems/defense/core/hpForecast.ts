@@ -1,6 +1,8 @@
+import { playerFinalDamageMultipliers } from '../../combat/damage/finalDamage';
 import { computeLinearDotDamage, isMonsterDotStatusEffectId } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { attackCadenceMult } from "../../combat/engine/attackCadence";
+import { imbueOnHitBonus } from "../../player/abilities/abilityImbue";
 import type { World } from '../../../world/World';
 import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseDebtPool } from './pools';
 
@@ -13,7 +15,7 @@ import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseDebtPool } from 
 // finite amount owed to draw past current HP. The Recovery buff tile surfaces it.
 // Read-only — never feeds back into combat math.
 
-function forecastIncomingDot(player: PlayerEntity): number {
+function forecastIncomingDot(player: PlayerEntity, world: World): number {
   const cs = player.tracksCombat;
 
   // Ticking monster-applied DoT: linear base, DR at half value, dot-resist.
@@ -28,7 +30,7 @@ function forecastIncomingDot(player: PlayerEntity): number {
     const mitigatedPerTick = perTick * (1 - drForDot) * (1 - dotResist);
     const tickMs = dot.data['tickIntervalMs'] || 1000;
     const ticksLeft = Math.ceil(dot.remainingMs / tickMs);
-    total += mitigatedPerTick * ticksLeft;
+    total += mitigatedPerTick * ticksLeft * playerFinalDamageMultipliers(player, world).taken;
   }
 
   // Deferred hit-to-DoT debt — the whole pool will drain onto the player as HP loss.
@@ -45,12 +47,19 @@ function forecastPendingHeal(player: PlayerEntity): number {
 export function mirrorHpForecast(world: World): void {
   for (const player of world.livePlayers) {
     if (!player.hasStatus) continue;
-    player.hasStatus.incomingDot = forecastIncomingDot(player);
+    player.hasStatus.incomingDot = forecastIncomingDot(player, world);
     player.hasStatus.pendingHeal = forecastPendingHeal(player);
     // Temporary attack haste/slow is applied as a multiplier at the cadence gate
     // and never written into `attackCooldown`, so it has to be mirrored
     // explicitly or nothing that displays the stat can ever see it. Same
     // function the gate itself uses — see `combat/engine/attackCadence.ts`.
+    const finalDamage = playerFinalDamageMultipliers(player, world);
+    player.hasStatus.finalDamageDealtMult = finalDamage.dealt;
+    player.hasStatus.finalDamageTakenMult = finalDamage.taken;
     player.hasStatus.attackCadenceMult = attackCadenceMult(player.tracksCombat);
+    // Same reasoning for Imbue Lightning's charge bonus: it folds into the
+    // onHitDamage term in combat.ts but never touches `dealsDamage.onHitDamage`
+    // itself, so the stat panel needs this mirror to show the boosted number.
+    player.hasStatus.onHitDamageBonus = imbueOnHitBonus(player.tracksCombat);
   }
 }

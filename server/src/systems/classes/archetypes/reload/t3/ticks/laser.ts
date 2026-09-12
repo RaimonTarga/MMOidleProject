@@ -1,3 +1,7 @@
+import { mitigateOnHitDamage } from '@mmo-idle/shared';
+import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
+import { resolveLaserProfile } from '@mmo-idle/shared';
+import { playerOnHitDamage } from '../../../../../combat/engine/onHitDamage';
 import { TEST_ROOM_NODE_ID, hitboxGap, inAttackRange, posHitboxFromEntity, type UsesReload } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
@@ -9,9 +13,7 @@ import { setAggroTarget, setAttackTarget } from '../../../../../combat/ai/target
 import { markEngaged } from '../../../../../combat/ai/engagement';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
 import {
-  DEFAULT_LASER_COOL_PER_TICK,
   DEFAULT_LASER_DAMAGE_PER_TICK_PCT,
-  DEFAULT_LASER_HEAT_PER_TICK,
   SERVER_TICK_MS,
 } from '../core/constants';
 import {
@@ -45,17 +47,18 @@ function updateLaserPlayer(
   now: number,
 ): void {
   const tickScale = Math.max(0, dt / SERVER_TICK_MS);
-  const heatPerTick = player.usesSkills.passives['reload.laser-heat-per-tick'] ?? DEFAULT_LASER_HEAT_PER_TICK;
-  const coolPerTick = player.usesSkills.passives['reload.laser-cool-per-tick'] ?? DEFAULT_LASER_COOL_PER_TICK;
+  const { heatMax, heatPerTick, coolPerTick } = resolveLaserProfile(player.usesSkills.passives);
+  reload.laserHeat = Math.min(heatMax, reload.laserHeat);
+  if (reload.laserHeat >= heatMax) reload.laserOverheated = true;
 
   const target = findNearestTarget(world, player);
   setAttackTarget(world, player, target?.isMonster.id ?? null);
 
   if (target && !reload.laserOverheated) {
     applyLaserTick(world, player, target, now);
-    reload.laserHeat = Math.min(100, reload.laserHeat + heatPerTick * tickScale);
-    if (reload.laserHeat >= 100) {
-      reload.laserHeat       = 100;
+    reload.laserHeat = Math.min(heatMax, reload.laserHeat + heatPerTick * tickScale);
+    if (reload.laserHeat >= heatMax) {
+      reload.laserHeat       = heatMax;
       reload.laserOverheated = true;
     }
   } else if (reload.laserHeat > 0) {
@@ -107,10 +110,12 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
 
   emitCombatEvent('onHit', ctx, world);
 
-  // Apply flat on-hit damage on EVERY tick (post-mitigation), mirroring the channeled
+  // Apply flat on-hit damage on EVERY tick (with target mitigation), mirroring the channeled
   // beam — the laser's on-hit triggers already fire via the pipeline above, and this
   // adds the on-hit DAMAGE stat too, rewarding on-hit builds on a continuous weapon.
-  if (player.dealsDamage.onHitDamage > 0) ctx.damage += player.dealsDamage.onHitDamage;
+  const onHitDamage = playerOnHitDamage(ctx);
+  ctx.damage += mitigateOnHitDamage(onHitDamage, rawLaserDamage, effectivePlating, target.mitigatesDamage.damageReduction);
+  ctx.damage = outgoingFinalDamage(world, player.isPlayer.id, ctx.damage);
 
   // Empowered attacks no longer carry an inherent AoE splash (AoE is opt-in, e.g.
   // the Sweep ability). `isEmpowered`/`isExecution` only drive FX tagging below.
@@ -124,7 +129,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
     effectivePlating,
     platingMult: ctx.platingMult,
     damageReduction: target.mitigatesDamage.damageReduction,
-    onHitBonus: player.dealsDamage.onHitDamage,
+    onHitBonus: onHitDamage,
   });
   mitigation.hpDamage = ctx.damage;
 

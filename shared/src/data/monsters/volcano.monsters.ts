@@ -47,6 +47,41 @@ export const volcanoMonsterEntries = [
   // one job, and made every volcano mob the same monster. Each mob's job now is to
   // give the fight a reason NOT to end quickly, and Heat does the rest.
   // Density + speed catch Far. Answer: hardening + active/on-kill Recovery.
+  //
+  // ══ MIXED PACKS (ecology polish, 2026-09-11) — OVERTURNS the earlier locked
+  // "density is the swarm, monster coordination is not" call ══
+  //
+  // That call left Volcano as a uniform field of independent mobs at density 36.
+  // A high mob COUNT is not the same read as "several weak creatures plus a couple
+  // of dangerous ones came at me together", and Volcano was supposed to be the
+  // second one. Plains keeps the straightforward volume swarm; Volcano is now
+  // AUTHORED MIXED PACKS.
+  //
+  // The shape, per tier:
+  //   • the heavy anchor and the fast catcher are pack ALPHAS (plus the T4 elite),
+  //   • the weak filler and the stationary gunner are FOLLOWERS — and both stay in
+  //     the spawn pool, so a node is packs PLUS scattered bodies, not only formations,
+  //   • `followerVariants` rolls ONE add-on group per spawn, so a tortoise herd is
+  //     not the same five monsters every time.
+  //
+  // ⚠ DENSITY IS UNCHANGED (36). `ensurePopulation` re-reads the node count each
+  // iteration, so packs REPLACE loose spawns rather than adding to them — the same
+  // bodies, arriving clumped. Do not "fix" a sparse-looking node by raising density
+  // on top of the packs.
+  //
+  // ⚠ KNOWN CONSEQUENCE, measured over 60 populations and left for the bot/balance
+  // pass to judge: because a 5-body pack eats 5 density slots, the per-node MIX shifts
+  // toward fodder. T3 anchors/catchers go 9.0 → ~3.0 each and node HP falls ~8%; T4
+  // goes 7.2 → ~2.3 each (the elite included) and node HP falls ~17%. That is
+  // arithmetic — filling N slots with packs of size K caps anchors at N/K however the
+  // roles are assigned — so it is NOT fixable by moving the elite out of the alpha
+  // role (checked: −17% → −15%) nor by pulling the fodder out of the pool. Total node
+  // HP and essence are down; SIMULTANEOUS engagement is sharply up, which is the axis
+  // the tier ladder actually measures.
+  //
+  // ⚠ THE FODDER STAYS SIMPLE (locked). Scuttlers/Skinks get no abilities and no
+  // telegraphs: with six mobs on screen, the player has to be able to tell which one
+  // demands attention, and that is the tortoise/salamander casting — not the swarm.
   ['ember-scuttler', {
     id: 'ember-scuttler', name: 'Ember Scuttler', color: 0xff6622,
     // Young fire skink (role-name kept; grows into the T4 Ember Skink).
@@ -59,9 +94,12 @@ export const volcanoMonsterEntries = [
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 25, essenceType: 'red', level: 2, biomeXp: 150 },
     // Loose cohesion/separation so the high-density biome READS as a swarm.
-    // WARNING: no alpha, no followers, no call-allies (locked) - density is the
-    // swarm, monster coordination is not.
     swarm: { cohesion: 0.1, separation: 44 },
+    // THE PACK BODY. Rolls loose from the pool too, so a node is packs PLUS
+    // scattered scuttlers rather than only formations. `callRange` only matters
+    // while it is actually in a pack — a loose scuttler has no `inPack` link and
+    // is never alerted by one.
+    pack: { role: 'follower', callRange: 260 },
     ai: { wanderRadius: 230, leashRange: 620, idleMinMs: 1000, idleMaxMs: 3600 },
   }],
 
@@ -79,6 +117,19 @@ export const volcanoMonsterEntries = [
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 700, idleMaxMs: 3000 },
     swarm: { cohesion: 0.08, separation: 56 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
+    // PACK ALPHA — the CATCHER pack: a fast hound that brings bodies with it and
+    // charges the lot of them onto whoever it engages. The small pack (3-5 total)
+    // is the light half of the biome's mixed-pack read; the tortoise herd below is
+    // the heavy half.
+    pack: {
+      role: 'alpha', callRange: 320,
+      followers: [{ typeId: 'ember-scuttler', count: 2 }],
+      followerVariants: [
+        [{ typeId: 'ember-scuttler', count: 2 }],   // 5: a straight rush
+        [{ typeId: 'ember-scuttler', count: 1 }],   // 4: the lean version
+        [{ typeId: 'ash-slinger', count: 1 }],      // 4: rush + planted gunner
+      ],
+    },
   }],
 
   ['magma-brute', {
@@ -96,6 +147,20 @@ export const volcanoMonsterEntries = [
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
+    // PACK ALPHA — the ANCHOR herd, the biome's headline encounter: a slow armored
+    // shell the scuttlers swarm around. It is also the pack whose alpha is worth
+    // killing LAST rather than first, which is the read the mixed pack exists to
+    // create. No `swarm` on the tortoise itself (locked): the anchor holds ground,
+    // the fodder flocks.
+    pack: {
+      role: 'alpha', callRange: 300,
+      followers: [{ typeId: 'ember-scuttler', count: 3 }],
+      followerVariants: [
+        [{ typeId: 'ember-scuttler', count: 2 }],                                   // 6: pure swarm
+        [{ typeId: 'ash-slinger', count: 1 }],                                      // 5: swarm + gunner
+        [{ typeId: 'ash-slinger', count: 1 }, { typeId: 'ember-scuttler', count: 1 }], // 6: both
+      ],
+    },
     monsterAbilities: [{
       id: 'molten-guard', name: 'Molten Guard', castMs: 1000,
       cooldownMs: 14000, initialCooldownMs: 6000, target: 'self', fx: 'volcanic-guard',
@@ -114,6 +179,10 @@ export const volcanoMonsterEntries = [
     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
     // Fires from the background and does NOT kite (locked).
     staticSentry: true,
+    // THE PACK GUNNER. As a follower it plants on the pack's ring and shoots past
+    // the bodies — which is exactly what `staticSentry` already does, so the pack
+    // gets a backline for free. Still rolls loose from the pool as a lone sentry.
+    pack: { role: 'follower', callRange: 280 },
     ai: { wanderRadius: 220, leashRange: 600, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
 
@@ -126,9 +195,10 @@ export const volcanoMonsterEntries = [
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 47, essenceType: 'red', level: 3, biomeXp: 280 },
     // Loose cohesion/separation so the high-density biome READS as a swarm.
-    // WARNING: no alpha, no followers, no call-allies (locked) - density is the
-    // swarm, monster coordination is not.
     swarm: { cohesion: 0.1, separation: 44 },
+    // THE T4 PACK BODY (successor to ember-scuttler's role). Still deliberately
+    // ability-free apart from its light Burn: the fodder must stay visually quiet.
+    pack: { role: 'follower', callRange: 280 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 13, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
   }],
@@ -142,6 +212,17 @@ export const volcanoMonsterEntries = [
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 700, idleMaxMs: 3000 },
     swarm: { cohesion: 0.08, separation: 56 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
+    // PACK ALPHA — the evolved catcher pack. Same shape as the Cinder Hound's,
+    // one tier up; the deepening is the tier, not a bigger formation.
+    pack: {
+      role: 'alpha', callRange: 340,
+      followers: [{ typeId: 'ember-skink', count: 2 }],
+      followerVariants: [
+        [{ typeId: 'ember-skink', count: 2 }],
+        [{ typeId: 'ember-skink', count: 1 }],
+        [{ typeId: 'ashspitter-salamander', count: 1 }],
+      ],
+    },
   }],
 
   ['obsidian-tortoise', {
@@ -159,6 +240,17 @@ export const volcanoMonsterEntries = [
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 140, essenceType: 'red', level: 4, biomeXp: 840 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9500 },
+    // PACK ALPHA — the evolved anchor herd. Its Molten Eruption stays the one
+    // telegraphed beat inside a pack of otherwise-quiet bodies.
+    pack: {
+      role: 'alpha', callRange: 300,
+      followers: [{ typeId: 'ember-skink', count: 3 }],
+      followerVariants: [
+        [{ typeId: 'ember-skink', count: 2 }],
+        [{ typeId: 'ashspitter-salamander', count: 1 }],
+        [{ typeId: 'ashspitter-salamander', count: 1 }, { typeId: 'ember-skink', count: 1 }],
+      ],
+    },
     monsterAbilities: [{
       id: 'molten-eruption', name: 'Molten Eruption', castMs: 1100,
       cooldownMs: 12000, initialCooldownMs: 5500, target: 'player', fx: 'volcanic-eruption',
@@ -175,6 +267,8 @@ export const volcanoMonsterEntries = [
     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
     // Fires from the background and does NOT kite (locked).
     staticSentry: true,
+    // THE T4 PACK GUNNER. Same role as the Ash Salamander a tier below.
+    pack: { role: 'follower', callRange: 300 },
     ai: { wanderRadius: 230, leashRange: 630, idleMinMs: 1200, idleMaxMs: 4000 },
     dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 16, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
   }],
@@ -189,6 +283,20 @@ export const volcanoMonsterEntries = [
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic', elite: true,
     rewards: { essence: 190, essenceType: 'red', level: 4, biomeXp: 1140 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 4000, idleMaxMs: 11000 },
+    // PACK ALPHA — the ELITE anchor, and deliberately the SMALLEST pack in the
+    // biome (4 total, vs the tortoise herd's 5-6). The elite is meant to be the
+    // thing you notice and answer; burying it in bodies would hide the one fight
+    // in the biome that is genuinely about its own mechanic. The entourage exists
+    // so the yellow outline reads as "that one, in the middle of those" rather
+    // than as a lone statue in an otherwise packed node.
+    pack: {
+      role: 'alpha', callRange: 300,
+      followers: [{ typeId: 'ember-skink', count: 2 }],
+      followerVariants: [
+        [{ typeId: 'ember-skink', count: 1 }],
+        [{ typeId: 'ashspitter-salamander', count: 1 }],
+      ],
+    },
     monsterAbilities: [{
       id: 'obsidian-shell', name: 'Obsidian Shell', castMs: 1200,
       cooldownMs: 14000, initialCooldownMs: 6000, target: 'self', fx: 'volcanic-shell',

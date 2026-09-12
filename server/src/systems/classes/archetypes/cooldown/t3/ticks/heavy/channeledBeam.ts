@@ -1,3 +1,6 @@
+import { mitigateOnHitDamage } from '@mmo-idle/shared';
+import { playerOnHitDamage } from '../../../../../../combat/engine/onHitDamage';
+import { outgoingFinalDamage } from '../../../../../../combat/damage/finalDamage';
 import type { World } from '../../../../../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../../../../../ecs/entity';
 import { hitboxGap, inAttackRange, posHitboxFromEntity } from '@mmo-idle/shared';
@@ -99,8 +102,10 @@ function applyBeamTick(world: World, player: PlayerEntity, target: MonsterEntity
 
   emitCombatEvent('onHit', ctx, world);
 
-  // Flat on-hit damage applies on EVERY beam tick (post-mitigation) — the build payoff.
-  if (player.dealsDamage.onHitDamage > 0) ctx.damage += player.dealsDamage.onHitDamage;
+  // Flat on-hit damage applies on EVERY beam tick (with target mitigation) — the build payoff.
+  const onHitDamage = playerOnHitDamage(ctx);
+  ctx.damage += mitigateOnHitDamage(onHitDamage, gross, effectivePlating, target.mitigatesDamage.damageReduction);
+  ctx.damage = outgoingFinalDamage(world, player.isPlayer.id, ctx.damage);
 
   emitCombatEvent('onDamageTaken', ctx, world);
 
@@ -109,7 +114,7 @@ function applyBeamTick(world: World, player: PlayerEntity, target: MonsterEntity
     effectivePlating,
     platingMult: ctx.platingMult,
     damageReduction: target.mitigatesDamage.damageReduction,
-    onHitBonus: player.dealsDamage.onHitDamage,
+    onHitBonus: onHitDamage,
   });
   mitigation.hpDamage = ctx.damage;
 

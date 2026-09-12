@@ -71,6 +71,7 @@ Create options:
   --mode=canonical-isolated|smoke-isolated
   --workers=1..4             defaults to 2
   --count=N                  replicas per route/policy
+  --study=<json>             explicit paired arms instead of --routes/--policies
   --policies=intended
   --maxRunMs=N
   --rewardMultiplier=N       canonical mode requires 1
@@ -96,7 +97,7 @@ function processAlive(pid) {
 }
 
 function toolingFiles() {
-  return ["lib.mjs", "supervisor.mjs", "worker.mjs", "Dockerfile"]
+  return ["lib.mjs", "study.mjs", "supervisor.mjs", "worker.mjs", "Dockerfile"]
     .map((name) => join(scriptDirectory, name));
 }
 
@@ -104,6 +105,7 @@ async function createExperiment() {
   const config = normalizeCreateOptions(args);
   const repoRoot = git(process.cwd(), ["rev-parse", "--show-toplevel"]);
   const gitRevision = git(repoRoot, ["rev-parse", `${config.requestedRevision}^{commit}`]);
+  if (config.study) git(repoRoot, ["cat-file", "-e", `${gitRevision}:bot/src/policy/choices.ts`]);
   const sourceTree = git(repoRoot, ["rev-parse", `${gitRevision}^{tree}`]);
   const invocationBranch = git(repoRoot, ["branch", "--show-current"]);
   const invocationStatus = git(repoRoot, ["status", "--porcelain=v1", "--untracked-files=all"]);
@@ -199,6 +201,7 @@ async function createExperiment() {
         routes: config.routes,
         policies: config.policies,
         count: config.count,
+        study: config.study,
         automaticRetries: 0,
       },
       inputs: { tierEntrySnapshot: input },

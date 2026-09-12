@@ -2,6 +2,7 @@ import type { GameScene } from '../scenes/GameScene';
 import type { DotPath } from './dot';
 import { burstFx } from './particles';
 import { DEPTH } from '../render/depth';
+import type { AttackTint } from './elementTint';
 
 interface CastPalette {
   core: number;
@@ -19,6 +20,10 @@ const PALETTE_BY_ELEMENT: Record<DotPath, CastPalette> = {
  * Apprentice basic attack: a compact, element-tinted rune forms at the caster,
  * then releases a slow spell mote. The impact is supplied by the selected DoT
  * path, keeping each frame's poison/fire/frost/doom hit treatment intact.
+ *
+ * The class path owns the rune and mote outright — a frost weapon must never
+ * paint a Pyromancer's fire DoT blue. A weapon or transient element therefore
+ * reaches only the trailing particles, via `tint.particles`.
  */
 export function fxApprenticeCast(
   scene: GameScene,
@@ -29,8 +34,10 @@ export function fxApprenticeCast(
   element: DotPath,
   empowered: boolean,
   onImpact: () => void,
+  tint?: AttackTint,
 ): void {
   const { core, glow } = PALETTE_BY_ELEMENT[element];
+  const spark = tint?.particles ?? core;
   const size = empowered ? 15 : 11;
 
   const rune = scene.add.graphics({ x: fromX, y: fromY - 10 }).setDepth(DEPTH.FX);
@@ -78,7 +85,7 @@ export function fxApprenticeCast(
     onUpdate: () => {
       if (Math.random() < 0.45) {
         burstFx(scene, 'ptx-dot', mote.x, mote.y, 1, 220, {
-          tint: core,
+          tint: spark,
           speed: { min: 8, max: 28 },
           angle: { min: 0, max: 360 },
           scale: { start: 0.45, end: 0 },
@@ -108,8 +115,10 @@ export function fxApprenticeCloseCast(
   element: DotPath,
   empowered: boolean,
   onImpact: () => void,
+  tint?: AttackTint,
 ): void {
   const { core, glow } = PALETTE_BY_ELEMENT[element];
+  const spark = tint?.particles ?? core;
   const angle = Math.atan2(toY - fromY, toX - fromX);
   const radius = empowered ? 31 : 23;
 
@@ -157,7 +166,7 @@ export function fxApprenticeCloseCast(
   });
 
   burstFx(scene, 'ptx-spark', toX, toY, empowered ? 10 : 6, 260, {
-    tint: core,
+    tint: spark,
     speed: { min: 45, max: empowered ? 180 : 120 },
     angle: { min: (angle * 180) / Math.PI - 80, max: (angle * 180) / Math.PI + 80 },
     scale: { start: empowered ? 0.85 : 0.6, end: 0 },

@@ -22,6 +22,7 @@ export const desertRecipeEntries = [
       'technique.power-pct': 0.20,
     },
     icon: 'items/weapons/sunsteel-falchion.png',
+    element: 'fire',   // cosmetic attack tint only
     description: 'Sun-forged and ward-etched, it strikes the first blow as if it waited years for it.',
     upgrades: [
       { stats: { attack: 9 }, cost: { yellow: 48 }, requiredBiomeLevel: 2 },
@@ -93,6 +94,7 @@ export const desertRecipeEntries = [
     reconstructCost: { yellow: 406 }, reconstructCatalystCost: { dominion: 3 },
     mechanicEffects: { 'weapon.first-strike-mult': 2.5 },
     icon: 'items/weapons/solar-falchion.png',
+    element: 'fire',   // cosmetic attack tint only
     description: 'It saves its fury for the opening blow, and spends it all at once.',
     upgrades: [
       { stats: { attack: 12 }, cost: { yellow: 97 },  requiredBiomeLevel: 8 },
@@ -176,6 +178,7 @@ export const desertRecipeEntries = [
     // first-strike-mult progressed: T2 2.0 → T3 2.5 → T4 3.0 (doc said 2.5, = T3)
     mechanicEffects: { 'weapon.first-strike-mult': 3.0 },
     icon: 'items/weapons/zenith-falchion.png',
+    element: 'fire',   // cosmetic attack tint only
     description: 'At the sun\'s height it draws all that light into a single, opening cut.',
     upgrades: [
       { stats: { attack: 20 }, cost: { yellow: 193 }, requiredBiomeLevel: 14 },
@@ -265,7 +268,7 @@ export const desertRecipeEntries = [
     lineageId: 'core-force',
     cost: { yellow: 500 }, catalystCost: { dominion: 4 }, // family-tag: raw offence → Dominion
     stats: {}, tier: 2,
-    mechanicEffects: { 'core.attack-mult': 0.22, 'core.maxhp-mult': -0.12 },
+    mechanicEffects: { 'core.damage-dealt-pct': 0.22, 'core.maxhp-mult': -0.12 },
     icon: 'items/cores/force.png',
     description: 'It gives you the strike you wanted and takes the margin you were counting on.',
   }],
@@ -281,7 +284,7 @@ export const desertRecipeEntries = [
     cost: { yellow: 1300 }, catalystCost: { dominion: 6 }, // family-tag: ranged alpha-strike → Dominion
     stats: {}, tier: 3,
     // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
-    mechanicEffects: { 'core.attack-mult': 0.40, 'core.maxhp-mult': -0.30, 'core.plating-mult': -0.25 },
+    mechanicEffects: { 'core.damage-dealt-pct': 0.40, 'core.maxhp-mult': -0.30, 'core.plating-mult': -0.25 },
     icon: 'items/cores/sniper.png',
     description: 'Focuses the eye to a needlepoint, and leaves the body that much more exposed.',
   }],

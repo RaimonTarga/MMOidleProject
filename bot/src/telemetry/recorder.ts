@@ -311,6 +311,8 @@ export class Recorder {
   /** Human-readable tail of interesting events, for the live dashboard. */
   private readonly recent: Array<{ atMs: number; kind: string; text: string }> = [];
 
+  readonly reachedChoices: Record<string, string> = {};
+  private sampledExperience = false;
   private lastTargetId: string | null = null;
   private lastHp = 0;
   private lastConcurrencySampleAt = 0;
@@ -332,6 +334,9 @@ export class Recorder {
 
   emit(event: BotEvent): void {
     this.sink.write(event);
+    if (event.kind === "build-change" && event.system === "policy-choice" && typeof event.detail.id === "string" && typeof event.detail.option === "string") {
+      this.reachedChoices[event.detail.id] = event.detail.option;
+    }
     switch (event.kind) {
       case "node-enter": this.economyTimeline.nodeEntries.push(event); break;
       case "biome-level-up": this.economyTimeline.biomeLevelUps.push(event); break;
@@ -473,6 +478,11 @@ export class Recorder {
 
     const attackers = self ? obs.attackersOnSelf().length : 0;
     const dead = self?.isDead ?? false;
+    this.emit({ kind: "experience-sample", atMs: now - this.startedAt, durationMs: dt, nodeId,
+      purpose: this.activity, activity: !self || !this.sampledExperience || dt > 3000 ? "unavailable" : dead ? "dead" :
+        attackers > 0 || self.attackTargetId !== null ? "combat" :
+        this.activity === "travel" ? "travel" : this.activity === "lease-wait" ? "waiting" : "idle" });
+    this.sampledExperience = true;
 
     if (dead) stats.deadMs += dt;
     else if (this.activity === "travel") stats.travelMs += dt;

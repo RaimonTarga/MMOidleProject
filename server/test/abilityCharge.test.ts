@@ -96,6 +96,7 @@ assert(CAST_MS > 0, "Charge should now declare a short wind-up");
 // ── 1–3. Cast, rush, then arm the landing strike ─────────────────────────────
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices("charge-player"), "charge-player");
+player.usesAutocombat.auto = true;
 // Inside Charge's increased engagement range but well outside the player's own
 // reach — the exact gap-closing case this Technique exists for.
 const target = world.createMonster("node-5-5", "plains-slime", { x: 360, y: 400 });
@@ -156,6 +157,7 @@ const wiredPlayer = wiredWorld.attachPlayerEntity(
   makePlayerSlices("charge-wired-player"),
   "charge-wired-player",
 );
+wiredPlayer.usesAutocombat.auto = true;
 const wiredTarget = wiredWorld.createMonster("node-5-5", "plains-slime", { x: 360, y: 400 });
 if (!wiredTarget) throw new Error("failed to create wired Charge target");
 setAttackTarget(wiredWorld, wiredPlayer, wiredTarget.isMonster.id);
@@ -177,6 +179,7 @@ const player2 = world2.attachPlayerEntity(
   makePlayerSlices("charge-player-2"),
   "charge-player-2",
 );
+player2.usesAutocombat.auto = true;
 // A monster far outside even the ability's extended reach: nothing to anchor the
 // dash to, so the trigger never goes valid.
 const bystander = world2.createMonster("node-5-5", "plains-slime", { x: 1400, y: 400 });
@@ -205,6 +208,7 @@ const player3 = world3.attachPlayerEntity(
   makePlayerSlices("charge-player-3"),
   "charge-player-3",
 );
+player3.usesAutocombat.auto = true;
 const adjacent = world3.createMonster("node-5-5", "plains-slime", { x: 215, y: 400 });
 if (!adjacent) throw new Error("failed to create adjacent monster");
 setAttackTarget(world3, player3, adjacent.isMonster.id);

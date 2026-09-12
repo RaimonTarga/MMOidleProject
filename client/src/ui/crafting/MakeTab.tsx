@@ -10,9 +10,9 @@ import {
   coreEligibilityLabel,
   isEvolvedRecipe,
   isRestrictedCore,
-  relicRatingsFromEffects,
+  relicRatingsFromPassives, relicRatingsFromEffects,
   requiredPlusFor,
-  resolveRelicPreview,
+  resolveRelicComparison,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
@@ -23,7 +23,7 @@ import {
   playerIdAtom,
   playerNodeIdAtom,
   combatArchetypeAtom,
-  selectedSubVariantAtom,
+  selectedSubVariantAtom, selectedRangeAtom, unlockedSkillsAtom,
 } from '../../hud/atoms';
 import { BrowserPane } from '../../hud/primitives';
 import { SLOT_ABBR, biomeName, tierColor } from './common';
@@ -659,6 +659,8 @@ function MakeDetail({
 }: MakeDetailProps) {
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const selectedRange = useAtomValue(selectedRangeAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const affordable = entryAffordable(entry, essences, catalysts);
   const recipe = entry.gear;
   const evolved = recipe ? isEvolvedRecipe(recipe) : false;
@@ -682,11 +684,12 @@ function MakeDetail({
         : []),
       ...formatMechanicEffects(recipe.mechanicEffects),
       ...(recipe.slot === 'relic'
-        ? formatResolvedRelicProfile(resolveRelicPreview(
+        ? formatResolvedRelicProfile(resolveRelicComparison(
             combatArchetype,
             abilityContext.passives,
+            relicRatingsFromPassives(abilityContext.passives),
             relicRatingsFromEffects(recipe.mechanicEffects),
-            { subVariant: selectedSubVariant, playerTier: abilityContext.playerTier },
+            { subVariant: selectedSubVariant, playerTier: abilityContext.playerTier, unlockedSkills, selectedRange },
           ))
         : []),
       ...(recipe.slot === 'weapon' ? formatWeaponEffects(recipe.id) : []),

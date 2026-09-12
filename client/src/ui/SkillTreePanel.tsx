@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
-import type { CSSProperties } from 'react';
-import type { SkillNode, StatEffects, SubVariant } from '@mmo-idle/shared';
+import type { SkillNode, SubVariant } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
-import { CONDUIT_ENABLED } from '../featureFlags';
+import { CONDUIT_BLOCKED_DESC, isBlockedConduit, isPlaceholder, nodeName, nodeDescription } from './skillNodePresentation';
 import { MilestonePips, type PipState } from '../hud/primitives';
 import { DetailLines } from './describe/DetailLines';
-import { skillNodeLines, statEffectLines } from './describe';
+import { skillNodeLines } from './describe';
 import {
   currentSkillTierAtom,
   selectedClassAtom,
@@ -17,8 +16,11 @@ import {
   unlockedSkillsAtom,
 } from '../hud/atoms';
 import { DialogHeader, GameDialog } from '../hud/primitives';
-import { GameIcon } from './GameIcon';
-import { skillVocabularyIconSource } from './conceptIcons';
+import { SkillCharacterPreview } from './SkillCharacterPreview';
+import { SkillEmblem } from './SkillEmblem';
+import { SkillBuildView } from './SkillBuildView';
+import { SkillComparison } from './SkillComparison';
+import { ClassIdentity } from './ClassIdentity';
 import './skillTree.css';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -32,17 +34,6 @@ const CLASS_ROOTS = [
   'summoner-root',
 ];
 
-/**
- * The one-line form, for the class orbit's centre — the only place in the tree
- * too small for the full table. Same labels and units as the detail panel below
- * it, so the summary and the table never disagree.
- */
-function effectSummary(effects: StatEffects): string {
-  return statEffectLines(effects)
-    .map((line) => `${line.value} ${line.label}`)
-    .join(' · ');
-}
-
 function tierLabel(tier: number): string {
   if (tier === 0) return 'Class';
   if (tier === 1) return 'Style';
@@ -53,18 +44,6 @@ function tierLabel(tier: number): string {
 
 function costLabel(cost: number): string {
   return `${cost} pt${cost !== 1 ? 's' : ''}`;
-}
-
-// Conduit (summoner) is hidden from players this playtest: its orb stays visible
-// but reads as unavailable, with the description below replacing its flavor text.
-const CONDUIT_BLOCKED_DESC = 'In development — not available this playtest.';
-
-function isBlockedConduit(node: SkillNode): boolean {
-  return node.id === 'summoner-root' && !CONDUIT_ENABLED;
-}
-
-function nodeDescription(node: SkillNode): string {
-  return isBlockedConduit(node) ? CONDUIT_BLOCKED_DESC : node.description;
 }
 
 type NodeStatus = 'unlocked' | 'available' | 'locked';
@@ -156,7 +135,6 @@ function SkillNodeCard({
   onSelect: (node: SkillNode) => void;
 }) {
   const status = getNodeStatus(node, player);
-  const icon = skillVocabularyIconSource(node);
 
   return (
     <button
@@ -172,26 +150,15 @@ function SkillNodeCard({
       aria-pressed={selected}
       onClick={() => onSelect(node)}
     >
-      {icon && (
-        <>
-          <GameIcon
-            source={icon}
-            size={compact ? 54 : 80}
-            fit="cover"
-            fallback={null}
-            className="skill-node__art"
-            decorative
-          />
-          <span className="skill-node__art-shade" aria-hidden="true" />
-        </>
-      )}
+      {!compact && <SkillCharacterPreview node={node} owned={player?.unlockedSkills ?? []} />}
       <MilestonePips
         className="skill-node__cost"
         states={Array.from({ length: Math.max(1, node.cost) }, () => 'pending' as PipState)}
         label={`Costs ${node.cost} skill point${node.cost === 1 ? '' : 's'}`}
         size="sm"
       />
-      <div className="skill-node__name">{node.name}</div>
+      <div className="skill-node__name">{compact && <SkillEmblem node={node} size={24} />}<span>{nodeName(node)}</span></div>
+      {!compact && <span className="skill-node__status">{isBlockedConduit(node) || isPlaceholder(node) ? 'In development' : status === 'available' ? 'Available to unlock' : status === 'unlocked' ? 'Unlocked' : 'Preview'}</span>}
       {status === 'unlocked' && !compact && (
         <div className="skill-node__check">✓</div>
       )}
@@ -231,20 +198,23 @@ function NodeDesc({
   return (
     <div className={`skill-desc skill-desc--${status}`}>
       <div className="skill-desc__header">
-        <span className="skill-desc__name">{node.name}</span>
+        <span className="skill-desc__name">{nodeName(node)}</span>
         <span className="skill-desc__tier">{tierLabel(node.tier)}</span>
         <span className="skill-desc__cost">{costLabel(node.cost)}</span>
       </div>
 
       <div className="skill-desc__body">
+        <div className="skill-desc__preview"><SkillCharacterPreview node={node} owned={player?.unlockedSkills ?? []} /></div>
         {node.description && <div className="skill-desc__text">{nodeDescription(node)}</div>}
+        <ClassIdentity key={node.id} classId={node.classId ?? node.id} expanded={node.tier === 0} />
+        {node.tier === 2 && <p className="skill-desc__text">Range changes your fighting distance and head crest. The body keeps your chosen style.</p>}
         <div className="skill-desc__effects">
           <DetailLines
             title="Stats"
             lines={stats}
             empty={mechanics.length === 0 ? 'No direct stat changes.' : undefined}
           />
-          <DetailLines title="Mechanics" lines={mechanics} />
+          <DetailLines title="Mechanics" lines={mechanics} explain />
         </div>
       </div>
 
@@ -254,7 +224,7 @@ function NodeDesc({
         )}
         {status === 'available' && (
           <button type="button" className="skill-confirm-btn" onClick={() => onUnlock(node)}>
-            Unlock {node.name} — {costLabel(node.cost)}
+            Unlock {nodeName(node)} — {costLabel(node.cost)}
           </button>
         )}
         {status === 'locked' && blocked && (
@@ -277,67 +247,11 @@ function ClassSelectionView({
   onSelect: (node: SkillNode) => void;
 }) {
   const pts = player?.skillPoints ?? 0;
-  // The orbit's centre is a summary; the full table lives in the detail panel
-  // below, which has room for it and is where the class is actually committed.
-  const displayClass = selectedNode;
-  const displayStatus = displayClass ? getNodeStatus(displayClass, player) : null;
-  const displayEffects = displayClass ? effectSummary(displayClass.statEffects) : '';
-
   return (
     <div className="skill-class-view">
-      <p className="skill-tree-instruction">
-        Choose a class to begin.
-        {pts > 0
-          ? ` You have ${pts} skill point${pts !== 1 ? 's' : ''}.`
-          : ' Earn skill points by fulfilling your destiny.'}
-      </p>
-      <div className="skill-class-orbit" aria-label="Class selection">
-        <div className={[
-          'skill-class-orbit__info',
-          displayClass ? 'skill-class-orbit__info--active' : '',
-          displayStatus ? `skill-class-orbit__info--${displayStatus}` : '',
-        ].filter(Boolean).join(' ')}>
-          {displayClass ? (
-            <>
-              <span className="skill-class-orbit__info-title">{displayClass.name}</span>
-              <span className="skill-class-orbit__info-meta">
-                {tierLabel(displayClass.tier)} · {costLabel(displayClass.cost)}
-              </span>
-              {displayEffects && (
-                <span className="skill-class-orbit__info-effects">{displayEffects}</span>
-              )}
-              <span className="skill-class-orbit__info-text">{nodeDescription(displayClass)}</span>
-            </>
-          ) : (
-            <>
-              <span className="skill-class-orbit__info-title">Choose a Class</span>
-              <span className="skill-class-orbit__info-text">
-                Select an orb to see everything it grants, then confirm below.
-              </span>
-            </>
-          )}
-        </div>
-        {CLASS_ROOTS.map((rootId, index) => {
-          const root = SKILL_TREE.get(rootId)!;
-          const angle = -90 + index * (360 / CLASS_ROOTS.length);
-          return (
-            <div
-              key={rootId}
-              className="skill-class-orbit__slot"
-              style={{
-                '--class-angle': `${angle}deg`,
-              } as CSSProperties}
-            >
-              <SkillNodeCard
-                node={root}
-                player={player}
-                selected={selectedNode?.id === root.id}
-                onSelect={onSelect}
-              />
-              <span className="skill-class-orbit__sigil">{root.name}</span>
-            </div>
-          );
-        })}
+      <p className="skill-tree-instruction">Choose your class. Select a card to compare its mechanics, defense and recovery, then confirm with Unlock. {pts} skill point{pts === 1 ? '' : 's'} available.</p>
+      <div className="skill-class-grid" aria-label="Class selection">
+        {CLASS_ROOTS.map(id => <SkillNodeCard key={id} node={SKILL_TREE.get(id)!} player={player} selected={selectedNode?.id === id} onSelect={onSelect} />)}
       </div>
     </div>
   );
@@ -358,7 +272,7 @@ function ProgressionView({
   const className   = SKILL_TREE.get(classId)?.name ?? classId;
   const pts         = player.skillPoints;
   const tierMap     = getVisibleNodes(player);
-  const tiers       = Array.from(tierMap.entries()).sort(([a], [b]) => a - b);
+  const tiers       = Array.from(tierMap.entries()).sort(([a], [b]) => (a === player.currentSkillTier ? -1 : b === player.currentSkillTier ? 1 : a - b));
   const currentTier = player.currentSkillTier;
 
   const subVariantLabel = player.selectedSubVariant
@@ -395,7 +309,7 @@ function ProgressionView({
                 isCurrent ? 'skill-tier-section--current' : '',
                 isPast    ? 'skill-tier-section--past'    : '',
               ].filter(Boolean).join(' ')}>
-                <div className="skill-tier-badge">{tierLabel(tier)}</div>
+                <div className="skill-tier-badge">{isCurrent ? `${nodes.every(isPlaceholder) ? 'In development' : 'Next choice'} · ${tierLabel(tier)}` : tierLabel(tier)}</div>
                 <div className="skill-tier-nodes">
                   {nodes.map(node => (
                     <SkillNodeCard
@@ -414,20 +328,8 @@ function ProgressionView({
           );
         })}
 
-        {/* Next-tier teaser: placeholder circles, not plain text */}
-        {tierMap.has(currentTier + 1) && (
-          <div className="skill-tier-block">
-            <div className="skill-connector" />
-            <div className="skill-tier-section skill-tier-section--upcoming">
-              <div className="skill-tier-badge">{tierLabel(currentTier + 1)}</div>
-              <div className="skill-tier-nodes">
-                {[0, 1, 2].map(i => (
-                  <div key={i} className="skill-node skill-node--placeholder" />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        {tierMap.has(currentTier + 1) && <p className="skill-tier-upcoming-hint">Next: {tierLabel(currentTier + 1)}. Complete this tier to continue your path.</p>}
+
       </div>
     </>
   );
@@ -452,8 +354,16 @@ export function SkillTreePanel({ onClose }: Props) {
     skillPoints,
     currentSkillTier,
   };
+  const [view, setView] = useState<'choices' | 'build' | 'compare'>('choices');
   const [selectedNode, setSelectedNode] = useState<SkillNode | null>(null);
   const classChosen = player.selectedClass !== null;
+  const inspectedNode = selectedNode ?? Array.from(SKILL_TREE.values()).find(node => !isPlaceholder(node) && getNodeStatus(node, player) === 'available')
+    ?? [...unlockedSkills].reverse().map(id => SKILL_TREE.get(id)).find(node => node && !isPlaceholder(node))
+    ?? SKILL_TREE.get(CLASS_ROOTS[0]) ?? null;
+
+  const compareNodes = inspectedNode
+    ? (classChosen ? getVisibleNodes(player).get(inspectedNode.tier) ?? [] : CLASS_ROOTS.map(id => SKILL_TREE.get(id)!))
+    : [];
 
   function handleUnlock(node: SkillNode) {
     if (getNodeStatus(node, player) !== 'available') return;
@@ -475,16 +385,24 @@ export function SkillTreePanel({ onClose }: Props) {
         }
       />
 
+      <nav className="skill-tree-views" aria-label="Passive tree views">
+        <button type="button" aria-pressed={view === 'choices'} onClick={() => setView('choices')}>Choices</button>
+        <button type="button" aria-pressed={view === 'build'} onClick={() => setView('build')}>Your build</button>
+        <button type="button" aria-pressed={view === 'compare'} disabled={compareNodes.length < 2} onClick={() => setView('compare')}>Compare choices</button>
+      </nav>
+      {view === 'build' ? <SkillBuildView owned={unlockedSkills} />
+        : view === 'compare' && inspectedNode ? <SkillComparison key={inspectedNode.id} primary={inspectedNode} nodes={compareNodes} owned={unlockedSkills} onInspect={node => { setSelectedNode(node); setView('choices'); }} />
+        : <div className="skill-tree-workspace">
         <div className="skill-tree-body">
           {classChosen
             ? <ProgressionView
                 player={player}
-                selectedNode={selectedNode}
+                selectedNode={inspectedNode}
                 onSelect={setSelectedNode}
               />
             : <ClassSelectionView
                 player={player}
-                selectedNode={selectedNode}
+                selectedNode={inspectedNode}
                 onSelect={setSelectedNode}
               />}
         </div>
@@ -492,7 +410,8 @@ export function SkillTreePanel({ onClose }: Props) {
       {/* Rendered in both views: choosing a class is the most irreversible
           decision in the tree, so it gets the same full readout and the same
           confirm step as every node after it. */}
-      <NodeDesc node={selectedNode} player={player} onUnlock={handleUnlock} />
+      <NodeDesc node={inspectedNode} player={player} onUnlock={handleUnlock} />
+      </div>}
     </GameDialog>
   );
 }

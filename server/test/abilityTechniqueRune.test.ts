@@ -77,6 +77,7 @@ initCombatSystems();
 
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "technique-rune-player");
+player.usesAutocombat.auto = true;
 const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
 if (!target) throw new Error("failed to create target");
 

@@ -52,6 +52,7 @@ Removals are the load-bearing half of this pass. Do not reintroduce any of these
 | `openingStrike` on the Ape line | jungle-ape, silverback, apex-silverback | Charge + ramp was already the whole idea. |
 | Sentinel `patrol` | cliff-hopper | Wrong fantasy: a caprine traverses terrain, it does not guard a post. |
 | Mixed wolf + ranged pack | ancient-wolf | Pure wolves now, baseline 3 Young Wolves. |
+| ~~No Volcano packs~~ | volcano | **OVERTURNED 2026-09-11** — Volcano is authored mixed packs. See §8. |
 | **`onPackAlphaDead` (the whole function)** | `server/src/systems/combat/ai/packs.ts` | See §5. |
 
 **`charnel-brute` is deferred to T5**: removed from graveyard's T4 `monsterPoolByTier`, its
@@ -266,11 +267,14 @@ Both are node features, not monster fields.
   Constrictor is Constrict (cadence + root).
 - **Desert** — see §5.
 - **Volcano** — no per-mob ramps; swarm cohesion on the small mobs; salamanders `staticSentry`.
+  ⚠ **This pass's "no packs, no call-allies" call was OVERTURNED on 2026-09-11** — see the
+  ecology polish note below.
 - **Tundra** — Bear line shatter → damage window; caster line `staticSentry` + Chill-gated
   Frostbind; Behemoth simplified to plating + one telegraphed Glacial Slam that alone scales
-  with Chill.
+  with Chill. (Frost Lurker / Mastodon / Yeti extended 2026-09-11 — see below.)
 - **Wasteland** — plague only on the Plague Hound; Vulture screeches instead of poisoning;
-  Gravewright's budget is resurrection alone; density 40 → 28.
+  Gravewright's budget is resurrection alone; density 40 → 28. (The Gravewright became a
+  pack alpha on 2026-09-11; its own power budget is still resurrection alone.)
 - **Trench** — three separate problems: Serpent (hunter, telegraphed Bite carrying the only
   anti-Recovery left), Hadal Stalker (armored ranged kiter, no charge, HP down / plating up),
   Leviathan (anchor: Carapace + Devour, no anti-heal, no soft-cap, no enrage yet).
@@ -330,3 +334,33 @@ Three existing tests encoded behavior this pass deliberately changed and were up
   alpha fade + reveal for camouflage, distinct pulse rings for shell/screech. No bespoke art,
   no fly-in animation, no shelled sprite state.
 - **Bosses are untouched.** The handoff's scope is trash and elites.
+
+
+---
+
+## 8. Superseded by the 2026-09-11 ecology polish
+
+Two calls locked by this rework were deliberately reversed, and one Tundra roster gap it
+left open was filled. Living detail is in
+[`docs/biome-ecology-current-state.md` §21](biome-ecology-current-state.md); the summary:
+
+**❌ "Volcano: density is the swarm, monster coordination is not."** This produced a uniform
+field of 36 independent mobs, which reads as volume — the same read Plains already owns —
+rather than as "a pack came at me". Volcano now authors mixed packs: two heavy/fast alphas
+per tier (plus the T4 elite) leading the weak filler and the stationary gunner, with
+`pack.followerVariants` rolling one add-on group per spawn so a herd is not the same five
+monsters forever. **Density is unchanged at 36** — packs replace loose spawns.
+
+The half of the original call that was right is preserved and restated in the file: the
+fodder still has no abilities and no telegraphs, because with six bodies on screen the
+player must be able to tell which one demands attention.
+
+**⚠ "Frost-Tusk Impact" as a plain named hit.** The rework gave the Mastodon an ability but
+its action was a generic `hit`, which is a number rather than an identity. It is now a
+planted `area-hit` circle with knockback at the **same 1.6 multiplier** — made avoidable and
+given a consequence, not made bigger. Its T3 ancestor (Frost Lurker), which this rework left
+with no mechanic at all, now opens with a committed lunge so the two share a vocabulary.
+
+**✓ Preserved deliberately**: the Bear line's shatter window, the Rime Caster's Chill-gated
+Frostbind, the Behemoth's charged-only ramp scaling, and the whole Tundra "no per-hit slow,
+no `rampDebuff`" rule — which is now pinned by a test rather than only by a comment.

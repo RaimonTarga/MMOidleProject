@@ -154,6 +154,9 @@ function relicProfileFactor(profile: ResolvedRelicProfile): number {
     case 'reload':
       return lowerIsBetter(profile.reloadMs.before, profile.reloadMs.after)
         * higherIsBetter(profile.ammoMax.before, profile.ammoMax.after);
+    case 'laser':
+      return lowerIsBetter(profile.coolingMs.before, profile.coolingMs.after)
+        * higherIsBetter(profile.heatMax.before, profile.heatMax.after);
     case 'dot':
       return lowerIsBetter(profile.tickIntervalMs.before, profile.tickIntervalMs.after)
         * higherIsBetter(profile.maxStacks.before, profile.maxStacks.after);
@@ -162,7 +165,7 @@ function relicProfileFactor(profile: ResolvedRelicProfile): number {
         * higherIsBetter(profile.dischargeMultiplier.before, profile.dischargeMultiplier.after);
     case 'summoner':
       return lowerIsBetter(profile.respawnMs.before, profile.respawnMs.after)
-        * higherIsBetter(profile.summonCount.before, profile.summonCount.after);
+        * (profile.summonPower ? higherIsBetter(profile.summonPower.before, profile.summonPower.after) : higherIsBetter(profile.summonCount.before, profile.summonCount.after));
   }
 }
 
@@ -180,7 +183,7 @@ function fullyUpgradedStat(recipe: Recipe | undefined, stat: string): number {
 }
 
 /** Score the Core's signed, build-relevant effect instead of its absolute budget. */
-function coreScore(
+export function coreScore(
   recipe: Recipe,
   classRoot: string,
   skillPath: string[],
@@ -206,7 +209,8 @@ function coreScore(
     : 0;
   const directFactor = attack * attackSpeed * focus;
   const onHitFactor = onHit * attackSpeed;
-  let score = directFactor * (1 - onHitShare) + onHitFactor * onHitShare;
+  let score = (directFactor * (1 - onHitShare) + onHitFactor * onHitShare)
+    * Math.max(0.1, 1 + (effects['core.damage-dealt-pct'] ?? 0));
 
   const techniqueCdr = Math.min(0.9, Math.max(0, effects['technique.cooldown-reduction-pct'] ?? 0));
   const techniquePower = Math.max(0.1, 1 + (effects['technique.power-pct'] ?? 0));
@@ -225,7 +229,7 @@ function coreScore(
   const survivability =
     Math.max(0.1, 1 + (effects['core.maxhp-mult'] ?? 0)) *
     Math.max(0.1, 1 + (effects['core.plating-mult'] ?? 0) * 0.35) /
-    Math.max(0.1, 1 - (effects['core.dr-layer-pct'] ?? 0));
+    (Math.max(0.1, 1 - (effects['core.dr-layer-pct'] ?? 0)) * Math.max(0.1, 1 + (effects['core.damage-taken-pct'] ?? 0)));
   score *= Math.pow(survivability, defensiveWeight);
   score *= Math.pow(Math.max(0.1, 1 + (effects['core.recovery-mult'] ?? 0)), defensiveWeight * 0.4);
   score *= Math.pow(Math.max(0.1, 1 + (effects['core.speed-mult'] ?? 0)), 0.15);
@@ -248,7 +252,7 @@ function relicScore(
     classPrefixFromRoot(classRoot),
     passives,
     ratings,
-    { subVariant, playerTier },
+    { subVariant, playerTier, unlockedSkills: skillPath },
   );
   if (!profile) return Number.NEGATIVE_INFINITY;
 

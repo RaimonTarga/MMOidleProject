@@ -67,6 +67,17 @@ export interface Recipe {
    */
   weaponDot?: WeaponDotProfile;
   /**
+   * Weapon slots only. PURELY COSMETIC elemental flavor: tints the wielder's
+   * basic-attack animation toward this element. Affects nothing about damage,
+   * DoT application, or resistances — a weapon that actually deals elemental
+   * damage says so through `weaponDot` / `mechanicEffects`, not through this.
+   *
+   * Omit on weapons with no elemental theme (plain steel), which then render
+   * with their class's own palette. DoT weapons may omit it too: the tint
+   * resolver falls back to `weaponDot.element`, so the two can never disagree.
+   */
+  element?: DamageElement;
+  /**
    * Weapon slots only. Sets the player's base attack cooldown to round(1000 / aps) ms.
    * See ItemDefinition.attacksPerSecond for full semantics.
    */

@@ -7,7 +7,11 @@ import {
   DEFAULT_MOMENTUM_RELOAD_REDUCTION,
   MOMENTUM_RELOAD_REDUCTION_FLOOR,
 } from './t3/core/constants';
-import { relicRatingsFromPassives, resolveReloadRelicProfile } from '@mmo-idle/shared';
+import {
+  relicRatingsFromPassives,
+  resolveReloadRelicProfile,
+  type CombatControlResult,
+} from '@mmo-idle/shared';
 
 const RELOAD_TIME_MS = 1600;
 
@@ -75,6 +79,39 @@ export function emitReloadStart(world: World, player: PlayerEntity): void {
   for (const hook of _hooks) {
     hook.onStart?.(world, player);
   }
+}
+
+/**
+ * Slinger-only manual reload. The request deliberately enters the same timer
+ * and lifecycle hooks as an empty clip, so every clip/reload passive keeps one
+ * authoritative execution path.
+ */
+export function requestManualReload(
+  world: World,
+  player: PlayerEntity,
+): CombatControlResult {
+  if (player.usesSkills.combatArchetype !== 'reload' || !player.usesReload) {
+    return {
+      success: false,
+      state: 'rejected',
+      reason: 'Manual reload is only available to Slingers.',
+    };
+  }
+
+  const reload = player.usesReload;
+  // The Laser path replaces magazines with heat. A full magazine or an active
+  // reload likewise has nothing for another manual request to change.
+  if (
+    (player.usesSkills.passives['reload.laser'] ?? 0) > 0
+    || reload.reloadingMs > 0
+    || reload.ammo >= reload.ammoMax
+  ) {
+    return { success: true };
+  }
+
+  startReloadTimer(world, player, resolveReloadTimeMs(player));
+  emitReloadStart(world, player);
+  return { success: true, state: 'activated' };
 }
 
 export function completeReload(world: World, player: PlayerEntity): void {

@@ -201,16 +201,26 @@ export function resetSpriteTint(
 }
 
 const OUTLINE_DATA_KEY = "spriteOutlineFx";
-// Kept subtle: a low outer strength and tight glow distance read as a thin rim
-// rather than a heavy halo that washes out the sprite.
-const OUTLINE_OUTER_STRENGTH = 2;
-const OUTLINE_DISTANCE = 6;
+// Elite / dungeon guardian threat marker. A tight glow distance and a modest
+// outer strength read as a crisp rim rather than a bloomed halo — tune these
+// two to dial the intensity.
+const THREAT_OUTLINE_OUTER_STRENGTH = 1;
+const THREAT_OUTLINE_DISTANCE = 3;
+const THREAT_OUTLINE_QUALITY = 0.1;
+
+// Player tier rim: the same glow mechanism as the threat outline above, dialed
+// far below it so a player's tier always reads quieter than an elite/guardian
+// callout (see render/players.ts for where this gets applied). Tune these two
+// to dial the intensity independently of the threat outline.
+export const TIER_OUTLINE_OUTER_STRENGTH = 0.3;
+export const TIER_OUTLINE_DISTANCE = 1.5;
 
 /**
  * Draw a colored outline/glow around a sprite, leaving its own colors intact —
- * used to mark dangerous mobs (elites, dungeon guardians) without tinting them.
- * Uses Phaser's per-object preFX glow (WebGL only); falls back to a stroke for
- * the rectangle placeholder. Idempotent: safe to call every frame.
+ * used to mark dangerous mobs (elites, dungeon guardians) and, at a much lower
+ * strength/distance (pass `opts`), a player's tier. Uses Phaser's per-object
+ * preFX glow (WebGL only); falls back to a stroke for the rectangle
+ * placeholder. Idempotent: safe to call every frame.
  */
 export function applySpriteOutline(
   sprite:
@@ -218,26 +228,28 @@ export function applySpriteOutline(
     | Phaser.GameObjects.Sprite
     | Phaser.GameObjects.Rectangle,
   color: number,
+  opts?: { outerStrength?: number; distance?: number; quality?: number },
 ): void {
+  const outerStrength = opts?.outerStrength ?? THREAT_OUTLINE_OUTER_STRENGTH;
+  const distance = opts?.distance ?? THREAT_OUTLINE_DISTANCE;
+  const quality = opts?.quality ?? THREAT_OUTLINE_QUALITY;
+
   if (sprite instanceof Phaser.GameObjects.Rectangle) {
-    sprite.setStrokeStyle(3, color, 1);
+    sprite.setStrokeStyle(3, color, Math.min(1, outerStrength));
     return;
   }
   // preFX is WebGL-only; bail cleanly under the Canvas renderer.
   if (!sprite.preFX) return;
   let glow = sprite.getData(OUTLINE_DATA_KEY) as Phaser.FX.Glow | undefined;
   if (!glow) {
-    glow = sprite.preFX.addGlow(
-      color,
-      OUTLINE_OUTER_STRENGTH,
-      0,
-      false,
-      0.1,
-      OUTLINE_DISTANCE,
-    );
+    glow = sprite.preFX.addGlow(color, outerStrength, 0, false, quality, distance);
     sprite.setData(OUTLINE_DATA_KEY, glow);
   }
+  // `distance`/`quality` are baked into the shader at creation time (not
+  // mutable properties on Glow), so only color/outerStrength can be re-synced
+  // on an already-created glow.
   glow.color = color;
+  glow.outerStrength = outerStrength;
 }
 
 export function clearSpriteOutline(

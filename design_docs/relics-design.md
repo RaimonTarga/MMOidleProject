@@ -49,15 +49,16 @@ The equipped character's archetype resolves those ratings into concrete mechanic
 changes. This is the reason relics can remain universal without becoming generic
 stat sticks.
 
-The item card always shows its universal ratings. When a character can resolve
-the item, the tooltip also shows the concrete before/after mechanic values for
-that character.
+The item card shows concrete before/after values for the current class and build,
+including replacement mechanics. Universal ratings remain internal authoring data,
+not the player-facing stat vocabulary. Replacement and unequip previews compare
+the currently equipped choice with the proposed choice.
 
 Example:
 
 ```text
-Mechanic Frequency: +35%
-For Striker: Finisher every 4 hits (normally 5)
+Finisher: every 4 → 3 attacks
+Finisher damage: ×2 → ×1.75
 ```
 
 ### Frequency and potency are ratings
@@ -266,8 +267,8 @@ one-slot constraint is permanent across later tiers.
 - Inventory and forge surfaces label the sixth slot `Relic`.
 - Before the unlock tier, the UI may show a locked Relic socket; it must not
   imply that a second slot will unlock later.
-- Relic tooltips show signed universal ratings and a character-specific resolved
-  preview with before/after values.
+- Relic tooltips show character-specific resolved effects and exact before/after
+  values. Generic frequency/potency percentages are not the primary or fallback item text.
 - Discrete previews use exact integers; interval previews use seconds or
   milliseconds consistently with the existing mechanic UI.
 - A relic remains equippable after a class reset and immediately resolves for
@@ -304,3 +305,23 @@ The first balance pass should include, at minimum:
 - Reload small-clip and large-clip specializations;
 - Cadence ramping thresholds;
 - mechanic buff/debuff relics against every registered scalable effect.
+
+## Replacement mechanics — clarified 2026-09-12
+
+Melter treats heat as a magazine. Potency changes maximum heat from its base of
+100. Frequency changes the time to cool a full heat bar. Cooling rate derives
+from the effective capacity and that duration, so capacity alone changes firing
+uptime without increasing full reload time. The gauge remains normalized 0–100%.
+
+Conduit resolves its actual frame/specialization. Ordinary formations gain or
+lose bodies at rounded count breakpoints (coefficient 1, existing entity cap).
+Each body's original damage/health/proc weight is preserved, so more summons do
+not dilute each other. Fixed Colossus, Bonded and Twin formations retain their
+unique bodies; potency multiplies their damage, on-hit magnitude and summon HP.
+It does not multiply proc frequency. Frequency modifies reconstruction time,
+subject to its existing safety floor. The item names the actual changed values.
+
+Poison Explosion and Eternal Doom apply potency to their path-specific stack
+caps without changing the pre-relic per-stack damage reference. Secondary effects
+remain explicit registry opt-ins; cards name eligible effects and show their
+magnitudes, or explicitly state that the current build has no eligible effect.

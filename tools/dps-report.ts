@@ -25,6 +25,7 @@ import {
   upgradeStatBonusTotal,
   upkeepOnHitBonus,
   weaponDotProfileForWeapon,
+  weaponDotBasisFromResolvedDirectDamage,
   type CombatArchetype,
   type ItemDefinition,
   type MonsterDefinition,
@@ -662,6 +663,9 @@ function estimateClassDamage(
   let dotPerSec = 0;
   let weaponProcPerSec = 0;
   let effectiveHitRate = hitRate;
+  let formationWeaponBasisPerSec: number | null = null;
+  let formationSecondaryEffectMult = 1;
+  let formationOnHitPerSec = 0;
 
   if (archetype === 'cadence') {
     if ((p['cadence.rampage'] ?? 0) > 0) {
@@ -1088,9 +1092,12 @@ function estimateClassDamage(
       const heatPerTick = p['reload.laser-heat-per-tick'] ?? 2;
       const coolPerTick = p['reload.laser-cool-per-tick'] ?? 2.5;
       const duty = (100 / heatPerTick) / ((100 / heatPerTick) + (100 / coolPerTick));
-      directPerHit = 0;
-      effectiveHitRate = 0;
-      classMechanicPerSec += directNoOnHit(stats.dealsDamage.attack * (p['reload.laser-damage-per-tick-pct'] ?? 0.18), targetWithDebuffs, platingMult) * 10 * duty;
+      directPerHit = directNoOnHit(
+        stats.dealsDamage.attack * (p['reload.laser-damage-per-tick-pct'] ?? 0.18),
+        targetWithDebuffs,
+        platingMult,
+      ) + stats.dealsDamage.onHitDamage;
+      effectiveHitRate = 10 * duty;
       notes.push('laser heat/cool duty cycle estimated');
     } else if ((p['reload.alternating-cadence'] ?? 0) > 0) {
       const attackShot = directNoOnHit(stats.dealsDamage.attack * 2, targetWithDebuffs, platingMult);
@@ -1168,14 +1175,26 @@ function estimateClassDamage(
     }
     if (profile.battleBondConduitOffenseWeight > 0) {
       formationDirect += directNoOnHit(
-        stats.dealsDamage.attack * profile.battleBondConduitOffenseWeight,
+        stats.dealsDamage.attack
+          * profile.battleBondConduitOffenseWeight
+          * profile.relicPotencyMult,
         targetWithDebuffs,
         platingMult,
       ) * slotAps;
     }
     directPerHit = 0;
     effectiveHitRate = slotAps;
-    classMechanicPerSec += formationDirect + stats.dealsDamage.onHitDamage * slotAps;
+    formationOnHitPerSec = stats.dealsDamage.onHitDamage
+      * (
+        profile.slots.reduce((sum, slot) => sum + slot.procWeight, 0)
+        + profile.battleBondConduitOffenseWeight
+      )
+      * profile.secondaryEffectMult
+      * profile.relicPotencyMult
+      * slotAps;
+    classMechanicPerSec += formationDirect + formationOnHitPerSec;
+    formationWeaponBasisPerSec = formationDirect;
+    formationSecondaryEffectMult = profile.secondaryEffectMult;
     if (profile.specialization === 'volatile-brood') {
       const slot = profile.slots[0]!;
       classMechanicPerSec += stats.dealsDamage.attack * profile.formationOffenseMult
@@ -1203,6 +1222,9 @@ function estimateClassDamage(
   weaponProcPerSec += encounter.weaponProcPerHit * effectiveHitRate;
 
   let directDps = directPerHit * effectiveHitRate;
+  const flatOnHitPerSec = formationWeaponBasisPerSec !== null
+    ? formationOnHitPerSec
+    : stats.dealsDamage.onHitDamage * effectiveHitRate;
 
   // shared.damage-mult is applied to ctx.damage in the live pipeline (combat.ts) before
   // the onHit event, so it boosts both the direct hit and any class mechanic that scales
@@ -1211,20 +1233,37 @@ function estimateClassDamage(
   // separate live damage path and is intentionally left untouched.
   const sharedDamageMult = Math.max(0, p['shared.damage-mult'] ?? 0);
   if (sharedDamageMult > 0) {
-    directDps *= 1 + sharedDamageMult;
-    classMechanicPerSec *= 1 + sharedDamageMult;
-    notes.push(`shared.damage-mult +${Math.round(sharedDamageMult * 100)}% applied to direct + class`);
+    directDps = Math.max(0, directDps - flatOnHitPerSec) * (1 + sharedDamageMult)
+      + flatOnHitPerSec;
+    classMechanicPerSec = Math.max(0, classMechanicPerSec - formationOnHitPerSec)
+      * (1 + sharedDamageMult)
+      + formationOnHitPerSec;
+    if (formationWeaponBasisPerSec !== null) {
+      formationWeaponBasisPerSec *= 1 + sharedDamageMult;
+    }
+    notes.push(`shared.damage-mult +${Math.round(sharedDamageMult * 100)}% applied to attack-derived direct + class damage; flat on-hit excluded`);
   }
 
-  const profile = weaponDotProfileForWeapon(weapon.id);
-  if (profile) {
-    const convertedDirect = directDps * profile.convPct;
-    const convertedClass = Math.max(0, classMechanicPerSec) * profile.convPct;
-    directDps -= convertedDirect;
-    classMechanicPerSec -= convertedClass;
-    const converted = convertedDirect + convertedClass;
-    weaponProcPerSec += converted * profile.dotMultiplier;
-    notes.push(`${profile.effectId} reservoir DoT from weapon profile`);
+  const weaponDot = weaponDotProfileForWeapon(weapon.id);
+  if (weaponDot) {
+    if (formationWeaponBasisPerSec !== null) {
+      const converted = formationWeaponBasisPerSec * weaponDot.convPct;
+      classMechanicPerSec -= converted;
+      weaponProcPerSec += converted
+        * weaponDot.dotMultiplier
+        * formationSecondaryEffectMult;
+    } else {
+      // Flat on-hit lands after the reservoir listener and is never converted.
+      const resolvedDirectBasis = Math.max(0, directDps - flatOnHitPerSec);
+      const converted = resolvedDirectBasis * weaponDot.convPct;
+      directDps -= converted;
+      weaponProcPerSec += weaponDotBasisFromResolvedDirectDamage(
+        resolvedDirectBasis,
+        archetype,
+        p,
+      ) * weaponDot.convPct * weaponDot.dotMultiplier;
+    }
+    notes.push(`${weaponDot.effectId} post-mitigation reservoir DoT from weapon profile; flat on-hit excluded`);
   }
 
   return {

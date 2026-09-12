@@ -96,6 +96,7 @@ function setup(
 ) {
   const world = new World();
   const player = world.attachPlayerEntity(slices(id, abilityId, tier, frame), id);
+  player.usesAutocombat.auto = true;
   syncArchetypeSlices(world, player);
   player.dealsDamage.attack = 100;
   updateSummonerArchetype(world, 0, 1_000);

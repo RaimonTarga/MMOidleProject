@@ -1,3 +1,4 @@
+import { STRIKER_DECISIONS_T1 } from "./strikerDecisionsT1";
 import type { Route } from "../route/types";
 import { APPRENTICE_LETDOTSFINISH_T1 } from "./apprenticeLetDotsFinishT1";
 import { APPRENTICE_T1 } from "./apprenticeT1";
@@ -79,6 +80,7 @@ export const T1_CONTROLLED_ROUTE_IDS = [
 export const ROUTES = new Map<string, Route>(
   [
     STRIKER_T1,
+    STRIKER_DECISIONS_T1,
     SQUIRE_T1,
     ...T1_CANONICAL_FRAME_HANDOFF_ROUTES,
     SLINGER_T1,

@@ -31,6 +31,13 @@ export interface PlayerMoveResult {
   goal: Vec2;
 }
 
+/** Immediate acknowledgement for an untrusted live combat-control intent. */
+export interface CombatControlResult {
+  success: boolean;
+  reason?: string;
+  state?: "activated" | "queued" | "cancelled" | "rejected";
+}
+
 export interface ReleaseAnnouncementPayload {
   version: string;
   title: string;
@@ -201,6 +208,8 @@ export interface ClientToServerEvents {
   "player:commandSummons": (pos: Vec2) => void;
   /** Enable or disable server-side auto-targeting for this player. */
   "player:setAuto": (enabled: boolean) => void;
+  /** Slinger only: discard the current clip and start the authoritative reload lifecycle. */
+  "player:manualReload": (ack?: (result: CombatControlResult) => void) => void;
   /** Enable or disable server-side auto-traverse when auto-combat is on. */
   "player:setAutoTraverse": (enabled: boolean) => void;
   /** Update server-side auto-combat targeting preferences. */
@@ -232,10 +241,14 @@ export interface ClientToServerEvents {
    * Server validates learned / slot-type / slot-count / duplicates.
    */
   "ability:setLoadout": (payload: { equipped: AttunedAbilities }) => void;
+  /** Attempt to activate one currently attuned ability through normal authority. */
+  "ability:use": (abilityId: string, ack?: (result: CombatControlResult) => void) => void;
   /** Learn a stance by crafting its recipe. Server validates gate + cost. */
   "stance:craftRecipe": (recipeId: string) => void;
   /** Equip/clear a stance in a slot. `stanceId: null` clears the slot. */
   "stance:setLoadout": (payload: { slot: StanceSlot; stanceId: string | null; attunedStances?: string[] }) => void;
+  /** Select a live attuned/neutral stance; null is the internal automation release. */
+  "stance:setControl": (payload: { stanceId: string | null }, ack?: (result: CombatControlResult) => void) => void;
   /** Learn a rite by crafting its recipe. Server validates gate + cost. */
   "rite:craftRecipe": (recipeId: string) => void;
   /** Set the full equipped-rite list (interchangeable slots; length ≤ slot count). */

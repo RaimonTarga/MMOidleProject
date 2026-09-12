@@ -1,3 +1,4 @@
+import { incomingFinalDamage } from './finalDamage';
 import { playerIncomingDamageMult } from '@mmo-idle/shared';
 import { registerCombatListener } from '../engine/combatPipeline';
 
@@ -24,6 +25,7 @@ export function initPlayerAmplifiers(): void {
   registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'player') return;
     if (ctx.damage <= 0) return;
+    ctx.damage = incomingFinalDamage(_world, ctx.defender, ctx.damage);
     const mult = playerIncomingDamageMult(ctx.defender.tracksCombat);
     if (mult <= 1) return;
     ctx.damage = Math.max(1, Math.round(ctx.damage * mult));

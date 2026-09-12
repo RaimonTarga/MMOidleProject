@@ -1,6 +1,4 @@
-import type Phaser from 'phaser';
-import type { PlayerView, Vec2 } from '@mmo-idle/shared';
-import { getPlayerShadowColor } from '../sprites';
+import type { Vec2 } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
@@ -14,26 +12,16 @@ const SHADOW_FALLBACK_H_RATIO = 0.18;
 const PLAYER_MIN_SHADOW_W = 52;
 const PLAYER_MIN_SHADOW_H = 14;
 
-/** Level 0 → black filled ellipse. Level 1+ → bright ring with a faint ground fill. */
-export function applyPlayerShadowStyle(
-  shadow: Phaser.GameObjects.Ellipse,
-  level: number,
-): void {
-  if (level === 0) {
-    shadow.setFillStyle(0x000000, 0.45);
-    shadow.setStrokeStyle();
-  } else {
-    shadow.setFillStyle(0x000000, 0.18);
-    shadow.setStrokeStyle(3, getPlayerShadowColor(level), 1);
-  }
-}
-
+// Player tier used to be shown as a bright colored ring on this ground shadow.
+// That read as an obvious targeting/debug circle, so tier now shows as a quiet
+// rim on the sprite itself instead — see TIER_OUTLINE_* in render/sprites.ts
+// and its use in render/players.ts. The shadow stays a plain ground fill.
 export function ensureShadow(
   state: RenderState,
   id: string,
   pos: Vec2,
   scene: GameScene,
-  opts: { fillColor?: number; fillAlpha?: number; playerTier?: number },
+  opts?: { fillColor?: number; fillAlpha?: number },
 ): void {
   if (state.shadow.has(id)) return;
 
@@ -41,34 +29,13 @@ export function ensureShadow(
     .ellipse(nodeToSceneX(pos.x), nodeToSceneY(pos.y), 1, 1)
     .setDepth(DEPTH.SHADOW);
 
-  if (opts.playerTier !== undefined) {
-    applyPlayerShadowStyle(shadow, opts.playerTier);
-  } else {
-    shadow.setFillStyle(opts.fillColor ?? 0x000000, opts.fillAlpha ?? 0.45);
-  }
+  shadow.setFillStyle(opts?.fillColor ?? 0x000000, opts?.fillAlpha ?? 0.45);
 
   state.shadow.set(id, shadow);
 }
 
-export function updateShadowStyle(state: RenderState, id: string): void {
-  const kind = state.kind.get(id);
-  if (kind !== 'player') return;
-
-  const snap = state.view.get(id) as PlayerView | undefined;
-  const shadow = state.shadow.get(id);
-  const meta = state.spriteMeta.get(id);
-  if (!snap || !shadow || !meta) return;
-
-  const lvl = snap.playerTier;
-  if (lvl !== meta.shadowLevel) {
-    applyPlayerShadowStyle(shadow, lvl);
-    meta.shadowLevel = lvl;
-  }
-}
-
 export function drawShadows(state: RenderState): void {
   for (const id of state.ids) {
-    if (state.kind.get(id) === 'player') updateShadowStyle(state, id);
     const sprite = state.sprite.get(id);
     const shadow = state.shadow.get(id);
     const interp = state.interpolation.get(id);

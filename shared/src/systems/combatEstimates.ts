@@ -54,7 +54,7 @@ export function estimatePlayerHitDamage(input: PlayerHitEstimateInput): number {
       1,
       Math.round(
         directDamageAfterMitigation(
-          input.attack,
+          input.attack + Math.max(0, input.onHitDamage),
           input.targetPlating,
           input.targetDamageReduction,
           input.platingMult,
@@ -63,7 +63,7 @@ export function estimatePlayerHitDamage(input: PlayerHitEstimateInput): number {
           input.platingShredPerStack,
         ),
       ),
-    ) + Math.max(0, input.onHitDamage)
+    )
   );
 }
 

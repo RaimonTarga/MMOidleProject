@@ -44,6 +44,7 @@ export class BotConnection {
   private closedByClient = false;
   /** Bumped on every `account:characters` push — the lobby's sequencing signal. */
   private rosterVersion = 0;
+  private pendingEvents = new Set<keyof ServerToClientEvents>();
 
   constructor(
     private readonly serverUrl: string,
@@ -60,12 +61,16 @@ export class BotConnection {
   }
 
   async connect(hooks: ConnectionHooks, timeoutMs = 20_000): Promise<void> {
+    if (this.socket) throw new ConnectionError("disconnect the previous session before connecting again");
+    this.mirror.reset();
+    this.mirror.ownId = null;
+    this.characters = null;
     this.hooks = hooks;
     this.closedByClient = false;
     const socket: BotSocket = io(this.serverUrl, {
       auth: { devAccountId: this.devAccountId },
       transports: ["websocket"],
-      reconnection: true,
+      reconnection: false,
       reconnectionDelay: 1_000,
       reconnectionDelayMax: 10_000,
     }) as BotSocket;
@@ -83,7 +88,9 @@ export class BotConnection {
     // socketId)`), which is what the browser client keys `ownId` on too.
     const ingest = (snapshot: DeltaSnapshot): void => {
       if (!this.mirror.ownId) this.mirror.ownId = socket.id ?? null;
+      const neededResync = this.mirror.needsResync;
       this.mirror.apply(snapshot);
+      if (!neededResync && this.mirror.needsResync) socket.emit("player:requestSync");
       hooks.onDelta(snapshot);
     };
     socket.on("state:sync", ingest);
@@ -98,6 +105,7 @@ export class BotConnection {
     // A reconnect re-attaches a NEW socket id, so the old own-entity key is
     // stale and every mirrored entity belongs to a previous session.
     socket.on("disconnect", (reason) => {
+      this.characters = null;
       this.mirror.ownId = null;
       this.mirror.reset();
       if (!this.closedByClient) hooks.onDisconnect?.(reason);
@@ -105,7 +113,7 @@ export class BotConnection {
 
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(
-        () => reject(new ConnectionError(`connect timed out after ${timeoutMs}ms`)),
+        () => { this.disconnect(); reject(new ConnectionError(`connect timed out after ${timeoutMs}ms`)); },
         timeoutMs,
       );
       socket.once("connect", () => {
@@ -114,6 +122,7 @@ export class BotConnection {
       });
       socket.once("connect_error", (err) => {
         clearTimeout(timer);
+        this.disconnect();
         reject(
           new ConnectionError(
             `connect failed: ${err.message}. Is the dev server running with AUTH_DEV_BYPASS=1?`,
@@ -127,14 +136,18 @@ export class BotConnection {
   async awaitCharacters(timeoutMs = 15_000): Promise<AccountCharactersPayload> {
     if (this.characters) return this.characters;
     return new Promise((resolve, reject) => {
-      const timer = setTimeout(
-        () => reject(new ConnectionError("character list never arrived")),
-        timeoutMs,
-      );
-      this.charactersWaiters.push((payload) => {
+      const waiter = (payload: AccountCharactersPayload): void => {
         clearTimeout(timer);
         resolve(payload);
-      });
+      };
+      const timer = setTimeout(
+        () => {
+          this.charactersWaiters = this.charactersWaiters.filter(w => w !== waiter);
+          reject(new ConnectionError("character list never arrived"));
+        },
+        timeoutMs,
+      );
+      this.charactersWaiters.push(waiter);
     });
   }
 
@@ -150,12 +163,16 @@ export class BotConnection {
    */
   private async awaitRosterAfter(version: number, timeoutMs = 15_000): Promise<void> {
     if (this.rosterVersion > version) return;
-    await new Promise<void>((resolve) => {
-      const timer = setTimeout(resolve, timeoutMs);
-      this.charactersWaiters.push(() => {
+    await new Promise<void>((resolve, reject) => {
+      const waiter = () => {
         clearTimeout(timer);
         resolve();
-      });
+      };
+      const timer = setTimeout(() => {
+        this.charactersWaiters = this.charactersWaiters.filter(w => w !== waiter);
+        reject(new ConnectionError("authoritative roster update timed out"));
+      }, timeoutMs);
+      this.charactersWaiters.push(waiter);
     });
   }
 
@@ -224,20 +241,35 @@ export class BotConnection {
     event: keyof ServerToClientEvents,
     send: () => void,
     timeoutMs = 15_000,
+    matches: (payload: any) => boolean = () => true,
   ): Promise<T> {
+    if (this.pendingEvents.has(event)) return Promise.reject(new ConnectionError(`concurrent request on ${event} is not correlated by the protocol`));
     return new Promise<T>((resolve, reject) => {
       const socket = this.raw;
-      const timer = setTimeout(() => {
-        socket.off(event as never, handler as never);
-        reject(new ConnectionError(`${String(event)} timed out after ${timeoutMs}ms`));
-      }, timeoutMs);
-      const handler = (payload: T): void => {
+      if (!socket.connected) { reject(new ConnectionError("socket disconnected")); return; }
+      this.pendingEvents.add(event);
+      const cleanup = (): void => {
         clearTimeout(timer);
         socket.off(event as never, handler as never);
+        socket.off("disconnect", disconnected);
+        this.pendingEvents.delete(event);
+      };
+      const disconnected = (): void => { cleanup(); reject(new ConnectionError(`${event}: disconnected before acknowledgement`)); };
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(new ConnectionError(`${String(event)} timed out after ${timeoutMs}ms`));
+        // No request ids exist on these events. A late result must never be
+        // mistaken for a subsequent request's result on the same connection.
+        socket.disconnect();
+      }, timeoutMs);
+      const handler = (payload: T): void => {
+        if (!matches(payload)) return;
+        cleanup();
         resolve(payload);
       };
       socket.on(event as never, handler as never);
-      send();
+      socket.on("disconnect", disconnected);
+      try { send(); } catch (error) { cleanup(); reject(error); }
     });
   }
 

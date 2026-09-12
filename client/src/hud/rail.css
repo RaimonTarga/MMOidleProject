@@ -42,10 +42,13 @@
   }
 
   .desktop-hud .combat-ability-slot__name {
-    overflow: visible;
+    display: -webkit-box;
+    overflow: hidden;
     white-space: normal;
-    overflow-wrap: anywhere;
-    line-height: 1.4;
+    overflow-wrap: break-word;
+    line-height: 12px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .desktop-hud .right-system-nav {

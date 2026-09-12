@@ -173,6 +173,17 @@ export interface HasStatus {
    * showed base cadence forever and every one of them looked like it did nothing.
    */
   attackCadenceMult?: number;
+  finalDamageDealtMult?: number;
+  finalDamageTakenMult?: number;
+  /**
+   * Players only — the live bonus on-hit damage from an active Imbue Lightning
+   * window (0 when none is up). Mirrored for the same reason as
+   * `attackCadenceMult`: the bonus folds into the onHitDamage term in
+   * combat.ts but never touches `dealsDamage.onHitDamage` itself, so without
+   * this the stat panel would show a number that never moves while the
+   * window is open.
+   */
+  onHitDamageBonus?: number;
   /** Ultimate bosses only — populated by ultimateEncounter sync. */
   ultimateStatus?: UltimateStatus;
   /** Encounter adds healing inside the void throne ring. */
@@ -235,6 +246,20 @@ export interface AutocombatConfig {
 export interface UsesAutocombat extends AutocombatConfig {
   auto: boolean;
   autoTraverse: boolean;
+}
+
+/**
+ * Runtime ownership marker for the live stance selector. Presence means Rune
+ * and default-stance automation yield to the named attuned stance or reserved
+ * neutral posture until runtime ownership is released. Never persisted.
+ */
+export interface OverridesStance {
+  stanceId: string;
+}
+
+/** Runtime, server-owned manual ability requests waiting for legal activation. */
+export interface QueuesAbilities {
+  abilityIds: string[];
 }
 
 /** What a server-directed player is about to do — telegraphed via HUD/bubbles. */

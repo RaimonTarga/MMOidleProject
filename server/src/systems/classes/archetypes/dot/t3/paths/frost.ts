@@ -19,6 +19,8 @@ import {
   RIMESHATTER_DR_DEBUFF, RIMESHATTER_DR_MS,
   FROSTBITE_MAX_STACKS,
 } from './_constants';
+import { DOT_RIMESHATTER_FX, DOT_FROZEN_FX } from '@mmo-idle/shared';
+import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
 
 /**
  * Rimeshatter (Heavy).
@@ -39,6 +41,8 @@ export function tryRimeshatter(pc: DotT3PathContext): boolean {
   if (stacks >= maxStacks) {
     // Full-power phase: restore the direct damage the dispatcher converted to DoT.
     if (convPct < 1) ctx.damage = Math.round(ctx.damage / (1 - convPct));
+    // The frost shell breaking — shards OUTWARD (see t4Triggers' grammar note).
+    pushClientEffect(ctx, DOT_RIMESHATTER_FX);
     // Keep the existing stacks alive (refresh duration only, no new stack).
     const existing = getStatusEffect(monsterState, DOT_EFFECT_ID);
     if (existing) existing.remainingMs = durationMs;
@@ -182,6 +186,9 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
         },
       });
       attachMarker(world, monster, 'hasFrozen');
+      // Something CLOSING on the target — shards INWARD, the inverse of
+      // rimeshatter above. Both fire on this class; they must not look alike.
+      pushClientEffect(ctx, DOT_FROZEN_FX);
     }
   }
   markMonsterDot(world, monster);

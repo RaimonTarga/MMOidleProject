@@ -1,3 +1,4 @@
+import { outgoingFinalDamage } from '../../combat/damage/finalDamage';
 import { pushDamageEvent } from '../../combat/damage/damageEvent';
 /**
  * Bramble Guard — temporary hardening + flat retaliation (abilities evolution §9, T2).
@@ -106,7 +107,7 @@ export function registerBrambleReflect(): void {
     const player = ctx.defender;
     const effect = getStatusEffect(player.tracksCombat, BRAMBLE_EFFECT_ID);
     if (!effect || effect.remainingMs <= 0) return;
-    const reflect = Math.round(effect.data["reflectFlat"] ?? 0);
+    const reflect = outgoingFinalDamage(world, player.isPlayer.id, Math.round(effect.data["reflectFlat"] ?? 0));
     if (reflect <= 0) return;
 
     const monster = ctx.attacker;

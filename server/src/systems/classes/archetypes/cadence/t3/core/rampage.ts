@@ -27,7 +27,7 @@ export function recomputeRampageStats(player: PlayerEntity): void {
     thresholdFloor,
     Math.round(
       (passives['cadence.empowered-threshold'] ?? CADENCE_THRESHOLD_DEFAULT) +
-        (passives['cadence.threshold-mod'] ?? 0),
+        (passives['cadence.threshold-mod'] ?? 0) - cadence.rampageStacks,
     ),
   );
   const baseThreshold = resolveCadenceRelicProfile(
@@ -44,5 +44,5 @@ export function recomputeRampageStats(player: PlayerEntity): void {
   );
   player.performsAttack.attackCooldown -= cadence.rampageCdReduction;
 
-  cadence.threshold = Math.max(thresholdFloor, baseThreshold - cadence.rampageStacks);
+  cadence.threshold = Math.max(thresholdFloor, baseThreshold);
 }

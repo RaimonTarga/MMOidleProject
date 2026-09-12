@@ -224,6 +224,13 @@ raising it changes rewards for every bot in the world. The taint is therefore
 sticky and sampled continuously, not just at connect — a run that started at 1x
 and was raised to 40x underneath it is still reported non-canonical.
 
+## Build controls and preflight
+
+Run `pnpm bot:preflight` before launching a long batch. The [capability audit and
+authoring guide](../docs/bot-harness-capability-audit.md) describes exact full-build
+configuration, RP validation, rejection diagnostics, template checks and remaining
+experiment risks. These tests are harness evidence, not balance evidence.
+
 ## Architecture
 
 ```text
@@ -255,10 +262,10 @@ WorldMirror ──► Observation ──► RouteExecutor ──► Intents ─�
   physically cannot see monster AI, exact DPS, private cooldowns, or drop rolls.
 - **No bot-only tactics.** No manual boss dodging, no hazard avoidance, no
   superhuman movement. Tactical reaction comes from equipped **Runes** only —
-  and a rune whose ability has not actually been learned is dropped rather than
-  silently used.
-- **Nothing is seeded.** Fresh character, tier 0, no gear, no currency, no
-  unlocks. Every craft, upgrade and boss clear is earned.
+  and requested unowned, invalid or over-budget Rune configurations fail explicitly.
+- **Entry provenance is explicit.** Fresh-character routes earn progression.
+  Tier-entry routes use validated, labeled profiles or sealed snapshots; dev
+  fixtures are never reported as fresh canonical progression.
 - **Waiting is data.** When the economy makes the bot wait, that is recorded as
   a `blocked-on-resource` span, not shortcut.
 
@@ -331,3 +338,7 @@ hours and never finish.
 
 Note: `summoner-root` (Conduit) is gated behind the server's `CONDUIT_ENABLED`
 flag, so a Conduit route needs that enabled to run at all.
+
+## Practical experience studies
+
+See [the command-center handoff](../docs/bot-experience-command-center.md) for paired frozen studies, affordable-upgrade and authored decision profiles, run timelines, and native human-playtest calibration. Start with `pnpm experiment:plan --revision=HEAD --study=scripts/experiment/examples/affordable-upgrades.json --count=3` from the repository root.

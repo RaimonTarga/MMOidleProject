@@ -15,9 +15,9 @@ export const STAT_HELP: Record<string, string> = {
   attack:
     'Base damage per hit before the target’s defenses. Final hit = (Attack − their Plating) × (1 − their Damage Reduction), floored at 1.',
   onHitDamage:
-    'Flat bonus damage added to every hit AFTER the target’s defenses — it ignores Plating and Damage Reduction entirely, so each hit deals at least this much. Comes from certain weapons and passives (e.g. Shockblade).',
+    'Flat bonus damage on each hit, reduced by enemy Plating and Damage Reduction. The hit pays plating once across attack and on-hit damage. Empowered attacks and abilities such as Power Strike do not multiply this bonus; final damage multipliers do. Rewards frequent hits.',
   dps:
-    'Estimated damage per second, worked out from your class mechanic — a Striker’s finisher, a Slinger’s reload downtime, a DoT build’s converted stacks, a Summoner’s minions. A planning number, not a measurement: it is before enemy plating and damage reduction, and it cannot see positioning, procs, abilities, or the spec behaviours that only exist mid-fight. Hover the figure in the character panel for its full working.',
+    'Estimated sustained damage per second, worked out from your class mechanic — including a Slinger’s direct, flat on-hit, and weapon-reservoir damage or a Conduit formation’s weighted offense. A planning number, not a measurement: it is before enemy plating and damage reduction, and it cannot see positioning, conditional proc damage, abilities, or spec behaviours that only exist mid-fight. Hover the figure in the character panel for its full working.',
   atkSpeed:
     'How often you actually attack right now, as attacks-per-second and the cooldown between swings. Permanent attack-speed bonuses add up and set cooldown = base / (1 + total). TEMPORARY haste and slows — Frenzy, stance windows, frost and chill — are applied on top and shown as a percentage next to the base value.',
   plating:
@@ -60,7 +60,7 @@ export const STAT_HELP: Record<string, string> = {
   'defense.debuff-resistance': 'Shortens and weakens non-DoT debuffs such as slows and roots.',
   'defense.cleanse-stacks': 'Periodically strips debuff stacks off you on a timer.',
   'defense.max-hit-pct':
-    'Caps a single hit relative to your max HP, shaving the excess off very large hits.',
+    'The portion of a hit above this share of max HP is multiplied by the excess multiplier. This softens large hits; it is not a hard limit on the damage you can take.',
   'defense.recovery-on-kill':
     'A kill switches on this share of your Recovery rate for a few seconds.',
   'defense.evade-mitigation':
@@ -236,6 +236,8 @@ export const STAT_HELP: Record<string, string> = {
   'guard.recovery-on-fire-pct': 'Firing your Guard also switches on this share of your Recovery rate for a few seconds.',
 
   // ── Core amplifiers ────────────────────────────────────────────────────────
+  'core.damage-dealt-pct': 'Multiplies final damage, including direct, on-hit, damage over time and summons. Included in DPS.',
+  'core.damage-taken-pct': 'Multiplies damage remaining after ordinary mitigation. Negative values reduce damage taken; positive values increase it.',
   'core.attack-mult': 'Percentage multiplier on your final attack, applied after everything else adds up.',
   'core.maxhp-mult': 'Percentage multiplier on your final max HP.',
   'core.plating-mult': 'Percentage multiplier on your final plating.',
@@ -248,7 +250,7 @@ export const STAT_HELP: Record<string, string> = {
   'core.focus-damage-per-hit-mult':
     'Each consecutive direct hit against the same enemy deals more direct attack damage, up to the Core\u2019s Focus cap. Switching targets resets Focus; summon hits do not build it.',
   'core.onhit-mult':
-    'Percentage multiplier on flat on-hit damage you already have. It grants no on-hit damage by itself. On-hit ignores enemy plating and damage reduction, so this is separate from your attack.',
+    'Percentage multiplier on flat on-hit damage you already have. It grants no on-hit damage by itself. Target plating and damage reduction still apply. Empowered and attack-boosting ability multipliers do not amplify this bonus.',
   'core.debuff-duration-mult': 'Debuffs you apply to enemies last longer.',
   'core.debuff-potency-mult': 'Debuffs you apply to enemies hit harder.',
   'core.mobility-cooldown-reduction-pct':

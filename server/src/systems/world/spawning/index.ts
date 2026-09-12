@@ -857,12 +857,37 @@ function localSwarmCount(
 }
 
 /**
- * Spawn a coordinated pack: the alpha at `anchor`, plus its `followers` clustered
+ * The follower groups one spawn of this alpha actually fields: the fixed
+ * `followers` core plus, when the def authors `followerVariants`, exactly ONE
+ * rolled add-on group.
+ *
+ * Exported so tests and tooling can reason about the SET of compositions an alpha
+ * can produce without having to spawn it repeatedly and hope the roll cooperates.
+ */
+export function packFollowerGroups(
+  packDef: NonNullable<NonNullable<ReturnType<typeof MONSTER_DATABASE.get>>["pack"]>,
+  pickVariant: (variantCount: number) => number = (n) => Math.floor(Math.random() * n),
+): { typeId: string; count: number }[] {
+  const core = packDef.followers ?? [];
+  const variants = packDef.followerVariants ?? [];
+  if (variants.length === 0) return [...core];
+  const index = Math.min(variants.length - 1, Math.max(0, pickVariant(variants.length)));
+  return [...core, ...(variants[index] ?? [])];
+}
+
+/**
+ * Spawn a coordinated pack: the alpha at `anchor`, plus its followers clustered
  * in a ring around it. Every member gets a shared server-only `inPack` link
  * (`packId`) the pack system reads to propagate aggro. Falls back to a single
  * spawn if the type is not a pack alpha. Returns the spawned members (alpha first)
  * so callers can post-process them (e.g. tag bush ambushers dormant), or null on
  * failure.
+ *
+ * ⚠ NON-RECURSIVE BY CONSTRUCTION. Followers are created with `createMonster`,
+ * never with another `spawnPack`, so naming an alpha type as somebody's follower
+ * yields exactly one extra monster and no nested pack. That is the invariant the
+ * whole density budget rests on, and it must not be "improved" into a recursive
+ * expansion.
  */
 export function spawnPack(
   world: World,
@@ -882,8 +907,8 @@ export function spawnPack(
   world.ecs.addComponent(alpha, "inPack", { packId, role: "alpha" });
   const members: MonsterEntity[] = [alpha];
 
-  const groups = packDef.followers;
-  if (groups && groups.length > 0) {
+  const groups = packFollowerGroups(packDef);
+  if (groups.length > 0) {
     const node = NODE_REGISTRY.get(nodeId);
     const total = groups.reduce((n, g) => n + g.count, 0);
     let idx = 0;
@@ -905,6 +930,13 @@ export function spawnPack(
 let packSeq = 0;
 
 const FOLLOWER_RING_RADIUS = 64;
+/**
+ * Ring growth per follower past the second. A duo reads fine on the bare 64px
+ * ring, but the Volcano/Wasteland packs field five or six bodies — at a fixed
+ * radius those arrive stacked on one point and the "pack surrounds you" read
+ * becomes "one blob depenetrates outward". Keeps the pack a pack, not a pile.
+ */
+const FOLLOWER_RING_GROWTH = 20;
 
 function followerSpawnPos(
   anchor: Vec2,
@@ -914,8 +946,10 @@ function followerSpawnPos(
 ): Vec2 {
   const angle = (i / Math.max(1, count)) * Math.PI * 2;
   const margin = 48;
-  const x = anchor.x + Math.cos(angle) * FOLLOWER_RING_RADIUS;
-  const y = anchor.y + Math.sin(angle) * FOLLOWER_RING_RADIUS;
+  const radius =
+    FOLLOWER_RING_RADIUS + Math.max(0, count - 2) * FOLLOWER_RING_GROWTH;
+  const x = anchor.x + Math.cos(angle) * radius;
+  const y = anchor.y + Math.sin(angle) * radius;
   return {
     x: node ? Math.max(margin, Math.min(node.width - margin, x)) : x,
     y: node ? Math.max(margin, Math.min(node.height - margin, y)) : y,

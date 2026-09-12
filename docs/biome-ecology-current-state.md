@@ -74,9 +74,21 @@ or are folded into it.
 - Uses `Math.random()` freely — **the world/spawn layer is NOT deterministic** (only combat
   *outcomes* are deterministic: evasion accumulator, cadence counters, etc.). So group spawning
   and patrol-anchor placement may use RNG like the rest of spawning.
-- `spawnPack(world, nodeId, alphaTypeId, pos)` (spawning/index.ts:892) — clustered alpha +
-  typed followers sharing a `packId` via the `inPack` component. Survivors scatter (are
-  removed) when the alpha dies (`onPackAlphaDead`).
+- `spawnPack(world, nodeId, alphaTypeId, pos)` — clustered alpha + typed followers sharing
+  a `packId` via the `inPack` component. **No scatter**: `onPackAlphaDead` was deleted in
+  the T1–T4 monster rework, so every follower survives its alpha and is killable for full
+  rewards. Followers ring the alpha at a radius that GROWS with pack size, so five- and
+  six-body packs read as a ring rather than a pile.
+- `packFollowerGroups(packDef, pickVariant?)` — the composition one spawn actually fields:
+  the fixed `pack.followers` core plus, when `pack.followerVariants` is authored, exactly
+  ONE rolled add-on group. This is what keeps a biome's packs from being the same formation
+  forever. **Non-recursive by construction**: every member is built with `createMonster`,
+  never with a nested `spawnPack`, so naming an alpha as somebody's follower yields one
+  monster and no cascade.
+- Packs REPLACE loose spawns rather than adding to them, because `ensurePopulation`
+  re-reads the node count each iteration instead of assuming +1 per roll. The only legal
+  overshoot is the last roll being the biggest authored pack, minus one. `biomeEcologyPolish`
+  pins this bound; a naive `+1` accounting tripled Volcano's population in a mutation check.
 - Fixed patrol routes SHIPPED — `patrol: { waypoints, mode, holdMinMs, holdMaxMs }` on the
   monster def replaces random wander while un-aggroed. Waypoints are relative to spawn.
 - Swarm convergence SHIPPED — `ai/swarm.ts` `updateSwarm`.
@@ -555,3 +567,136 @@ reaches real movement and meets the floor, the apex hits a fully chilled target 
 through the real attack path while an ordinary tundra mob does not, and the carrier count
 is exactly one) and `server/test/jungleBushDetection.test.ts` (the broadcast, the cap, the
 absent spawner, no jungle packs, and hazard-avoidance routing).
+
+
+---
+
+## 21. Ecology polish: Volcano packs, Wasteland packs, Tundra identity (SHIPPED 2026-09-11)
+
+A small, targeted pass over three biomes ahead of T3/T4 bot testing. Not a rebalance — no
+monster's HP, attack, rewards or a biome's `mobDensity` changed anywhere in it.
+
+### Volcano — authored mixed packs (OVERTURNS a previous locked call)
+
+The T1–T4 rework locked "density is the swarm, monster coordination is not" and left
+Volcano a uniform field of 36 independent mobs. A high mob COUNT is not the same read as
+"several weak creatures and a couple of dangerous ones came at me together", and the second
+one is what the biome was supposed to be. **Plains keeps the straightforward volume swarm;
+Volcano is now authored mixed packs.** The old warning comments in
+`volcano.monsters.ts` are replaced, not merely contradicted.
+
+Per tier the shape is identical, which is the point — the T4 deepening is the tier, not a
+bigger formation:
+
+| role | T3 | T4 |
+|---|---|---|
+| anchor alpha (5–6) | Magma Tortoise | Obsidian Tortoise |
+| catcher alpha (3–5) | Cinder Hound | Infernal Direhound |
+| elite alpha (3–4) | — | Magma Salamander |
+| body follower | Ember Scuttler | Ember Skink |
+| gunner follower | Ash Salamander | Ashspitter Salamander |
+
+Followers stay in `monsterPoolByTier` (unlike Desert's dealers), so a node is packs **plus**
+scattered bodies rather than only formations. The gunners are already `staticSentry`, so as
+followers they plant on the pack ring and shoot past the bodies for free.
+
+Deliberate restraint: **the fodder gained nothing.** Scuttlers and Skinks still have no
+ability and no telegraph. With six bodies converging, the player has to be able to tell
+which thing demands attention, and that is the tortoise's cast or the elite's shell — the
+existing focal mechanical events, unchanged.
+
+The elite gets the **smallest** pack in the biome for the same reason: burying the one fight
+that is genuinely about its own mechanic in bodies would hide it.
+
+### Wasteland — the Gravewright is the pack nucleus
+
+The resurrection mechanic was already built; what was missing was an encounter that STARTS
+in a state where it can fire. A lone necromancer has to wait for an unrelated kill to
+wander inside its 280px `corpseRange` before its signature beat can happen at all.
+
+The Gravewright is now a pack alpha whose entourage is ordinary Wasteland creatures — i.e.
+**valid corpse material**. Core: 2× Bone Crawler. Variants add rats (cheap corpses, teaches
+the loop fastest), another crawler, a Plague Hound (the one you want dead first, which is
+the trap), or a Vulture + rat. Pack of 4–5.
+
+The tactical question this creates is the whole point: *kill the necromancer, or clear the
+things pressuring you and hand it the ammunition?*
+
+Wasteland did **not** become a second swarm biome. Density stays 28 and its packs are
+capped below Volcano's — Volcano's pressure is initial pack volume, Wasteland's is a
+structured pack that refuses to stay dead. Both non-recursion layers still hold: `spawnPack`
+never nests, and `recordCorpse` refuses risen mobs, so an entourage is a one-time meal
+rather than a generator.
+
+### Tundra — identity pass
+
+Audited all seven normal mobs. Five already had a signature worth keeping and were left
+alone; the pass was not a mechanics quota.
+
+| monster | outcome |
+|---|---|
+| Glacier Bear / Glacial Dire-Bear | **preserved** — Ice Armor → Shatter window |
+| Rime Caster | **preserved** — Frostbind, Chill-gated single-target root |
+| Permafrost Behemoth | **preserved** — Glacial Slam + charged-only Chill scaling |
+| Frost Lurker | **new** — RIME POUNCE |
+| Rime-Tusk Mastodon | **deepened** — the same commitment, now a committed circle |
+| Hoarfrost Yeti | **deepened** — Deep Freeze planted instead of following you |
+
+**Frost Lurker — Rime Pounce.** The line had literally nothing ("meaningful direct hits, and
+NOTHING else"), and its stat line asked a question it never answered: how does a speed-26
+ambush predator reach anybody? It now opens with a `cast-charge-strike` — a short planted
+wind-up, then a burst at ~156px/s into an amplified bite, once per aggro session. Chosen
+over a debuff because the biome's slow is the room's job; a committed lunge is spatial, and
+it fuses with the environment in the right direction (at full Chill the player is near
+84px/s, so the colder the room has made you the more surely the pounce lands). Multiplier
+is a modest 1.35 and fires once per engagement, so sustained pressure — the axis the tier
+ladder is measured on — barely moves.
+
+**Rime-Tusk Mastodon.** Same colour slot and role as the Frost Lurker, so it inherits the
+commitment vocabulary rather than getting an unrelated gimmick. Frost-Tusk Impact keeps its
+1.6 multiplier exactly and becomes a planted `area-hit` circle with knockback: bigger
+(a circle, not a shot that follows you), harder (a ram should displace), and more demanding
+of positioning. Cast 1000 → 1300ms so the 110px radius is genuinely walkable at base speed
+and marginal at full Chill. **Knockback, never a stun** — displacement the player's
+knockback resistance answers, not removed agency.
+
+**Hoarfrost Yeti.** Deep Freeze is now a planted circle too. This deliberately makes the T4
+root MORE avoidable than the T3's: it is the only root in the entire Tundra roster, and two
+yetis chaining 2.2s of unavoidable root in one pull was exactly the composition failure the
+biome's own rule is written against. Now two yetis plant two circles, and circles compose.
+
+Control budget after the pass: one root (caster line only), zero stuns, zero per-hit slows,
+zero ramping debuffs. All pinned.
+
+### Engine / primitive changes
+
+- `MonsterDefinition.pack.followerVariants` — alternative add-on groups, one rolled per
+  spawn. Small data field, no new subsystem.
+- `packFollowerGroups` + a follower ring radius that scales with pack size.
+- **`resolveChargedSlam` now applies charged-attack riders.** `aoe` used to swallow every
+  rider (`rootMs`, `appliesSlow`, `appliesAntiheal`, `refreshesPlayerDots`) — the planted
+  path returned before `applyChargedAttackRiders` ran, so authoring `aoe` + `rootMs` produced
+  a circle that rooted nobody and said nothing about it. No monster or boss in the game had
+  hit the combination, so this closes a capability gap rather than changing an existing
+  encounter — and it is what lets a root become a circle you can step out of. **This was a
+  known authoring trap; it is now covered by a mutation-checked test.**
+- `MonsterAbilityAction`'s `area-hit` gets its first author (the Mastodon). The engine path,
+  its ground telegraph and its bestiary text already existed and were unused.
+- Client: `fxDiveBomb` takes an optional palette so a ground lunge can reuse the rush line
+  without reading as talons (`rime-pounce`, frost); the committed tusk circle anchors its
+  impact FX on the **planted point** rather than the victim, so walking out is not visually
+  contradicted.
+
+### Tests
+
+[`server/test/biomeEcologyPolish.test.ts`](../server/test/biomeEcologyPolish.test.ts) —
+pack composition and weak/strong mixture at both Volcano tiers, tier containment, variant
+distinctness and reachability, a roster-wide "no alpha is anybody's follower" check,
+`ensurePopulation` staying inside the density bound over repeated samples, Gravewright
+entourage validity, the live corpse→raise loop fed by the pack's own dead, the `maxAlive`
+cap under a flood, the risen-leave-no-corpse invariant, the Tundra control budget, and every
+new beat firing live (Rime Pounce arms/lands/does-not-re-arm; Deep Freeze roots inside its
+circle and **does not** root a player who stepped out).
+
+`server/test/monsterMobileCast.test.ts` moved its mobile-cast exemplar from the Rime-Tusk
+Mastodon to the Obsidian Tortoise — the Mastodon is now the committed half of that contract.

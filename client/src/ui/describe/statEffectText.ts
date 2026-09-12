@@ -185,6 +185,7 @@ export function statEffectGlyph(key: keyof StatEffects): IconSource | null {
 
 interface StanceModifierMeta {
   label: string;
+  help?: string;
   /** Reuses a STAT_EFFECT_META entry for glyph + help, so one stat looks one way. */
   like: keyof StatEffects;
   format: (value: number) => string;
@@ -193,13 +194,14 @@ interface StanceModifierMeta {
 }
 
 const STANCE_MODIFIER_META: Record<keyof StanceModifiers, StanceModifierMeta> = {
-  attackPct:      { label: 'Attack',        like: 'attack',          format: signedPct },
+  damageDealtPct: { label: 'Final damage dealt', like: 'attack', format: signedPct, help: 'Multiplies final direct, on-hit, damage-over-time and summon damage. Included in estimated DPS.' },
   attackSpeedPct: { label: 'Attack Speed',  like: 'attackSpeedPct',  format: signedPct },
   platingPct:     { label: 'Plating',       like: 'plating',         format: signedPct },
   moveSpeedPct:   { label: 'Move Speed',    like: 'speed',           format: signedPct },
   evasion:        { label: 'Evasion',       like: 'evasion',         format: signedPct },
   damageTakenPct: {
-    label: 'Damage Taken',
+    label: 'Final damage taken',
+    help: 'Multiplies damage remaining after normal mitigation. This is independent of normal damage reduction; negative values mean less damage taken.',
     like: 'damageReduction',
     format: signedPct,
     lowerIsBetter: true,
@@ -208,7 +210,7 @@ const STANCE_MODIFIER_META: Record<keyof StanceModifiers, StanceModifierMeta> = 
 
 /** Upsides before drawbacks within each half — offense, then defense, then utility. */
 const STANCE_MODIFIER_ORDER: (keyof StanceModifiers)[] = [
-  'attackPct',
+  'damageDealtPct',
   'attackSpeedPct',
   'platingPct',
   'damageTakenPct',
@@ -229,7 +231,7 @@ export function stanceModifierLines(mods: StanceModifiers | undefined): StatEffe
       label: meta.label,
       value: meta.format(value),
       glyph: base.glyph,
-      help: STAT_HELP[base.helpKey],
+      help: meta.help ?? STAT_HELP[base.helpKey],
       good: meta.lowerIsBetter ? value < 0 : value > 0,
     });
   }

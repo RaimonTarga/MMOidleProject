@@ -27,22 +27,23 @@ export type StanceSlot = "default";
 /** Reserved Rune destination for deliberately dropping every active stance. */
 export const NO_STANCE_ID = "no-stance";
 
+/** Shared anti-thrash window used by authority and the live stance cooldown cue. */
+export const STANCE_SWITCH_COOLDOWN_MS = 1_500;
+
 /**
  * A stance's static posture, entirely in percentages.
  *
- * `attackPct` / `platingPct` / `moveSpeedPct` are a STANCE-OWNED multiplicative
- * layer applied after the class-affinity fold, NOT contributions into the affinity
- * bucket. That is deliberate: a stance is a mode the player toggles and reads off a
- * tooltip, so "+15% Attack" has to mean ×1.15 for every class at every gear level.
- * Summing into the affinity bucket would make the promise depend on the class tree.
+ * `damageDealtPct` is a final damage layer, including direct, on-hit, DoT and
+ * summon output. `platingPct` and `moveSpeedPct` remain separate stat layers
+ * after class affinities. Incoming damage is an independent multiplicative layer.
  *
  * `attackSpeedPct` is the exception — it rides the pre-existing shared attack-speed
  * accumulator, which already has sum-then-apply-once semantics and must stay ahead
  * of the reload archetype's cadence layers.
  */
 export interface StanceModifiers {
-  /** 0.15 → ×1.15 Attack. Applied after class affinities. */
-  attackPct?: number;
+  /** 0.15 → ×1.15 final damage, including on-hit and damage over time. */
+  damageDealtPct?: number;
   /** 0.10 → +10 percentage points into the shared attack-speed accumulator. */
   attackSpeedPct?: number;
   /** 0.20 → ×1.20 Plating. Applied after class affinities. */
@@ -213,28 +214,28 @@ const stances: StanceDef[] = [
   {
     id: "offensive-stance",
     name: "Offensive Stance",
-    blurb: "+15% Attack and +10% Attack Speed. You take 10% more damage.",
+    blurb: "+15% Damage and +10% Attack Speed. You take 10% more damage.",
     runeCost: 1,
-    modifiers: { attackPct: 0.15, attackSpeedPct: 0.1, damageTakenPct: 0.1 },
+    modifiers: { damageDealtPct: 0.15, attackSpeedPct: 0.1, damageTakenPct: 0.1 },
     icon: "offensive-stance",
   },
   {
     id: "defensive-stance",
     name: "Defensive Stance",
-    blurb: "+20% Plating and 10% less damage taken. -15% Attack.",
+    blurb: "+20% Plating and 10% less damage taken. -15% Damage.",
     runeCost: 1,
-    modifiers: { platingPct: 0.2, damageTakenPct: -0.1, attackPct: -0.15 },
+    modifiers: { platingPct: 0.2, damageTakenPct: -0.1, damageDealtPct: -0.15 },
     icon: "defensive-stance",
   },
   {
     id: "tanking-stance",
     name: "Tanking Stance",
-    blurb: "+40% Plating and 25% less damage taken. -40% Attack and -20% Attack Speed.",
+    blurb: "+40% Plating and 25% less damage taken. -40% Damage and -20% Attack Speed.",
     runeCost: 3,
     modifiers: {
       platingPct: 0.4,
       damageTakenPct: -0.25,
-      attackPct: -0.4,
+      damageDealtPct: -0.4,
       attackSpeedPct: -0.2,
     },
     icon: "tanking-stance",
@@ -244,9 +245,9 @@ const stances: StanceDef[] = [
     name: "Enraged Stance",
     // No HP threshold lives in this stance. Pair it with an `HP Below 25%` Rune rule
     // if that is the moment you want it — but it works whenever it is active.
-    blurb: "+30% Attack and +15% Attack Speed. You take 15% more damage.",
+    blurb: "+30% Damage and +15% Attack Speed. You take 15% more damage.",
     runeCost: 3,
-    modifiers: { attackPct: 0.3, attackSpeedPct: 0.15, damageTakenPct: 0.15 },
+    modifiers: { damageDealtPct: 0.3, attackSpeedPct: 0.15, damageTakenPct: 0.15 },
     icon: "enraged-stance",
   },
   {
@@ -256,21 +257,21 @@ const stances: StanceDef[] = [
     // at every HP; the bonuses are the reward for not being hit. Dropping below the
     // threshold is therefore meant to be actively bad, so leaving is a real decision
     // rather than a formality. See {@link StanceHpGate}.
-    blurb: `+12% Attack, Attack Speed, and Movement Speed while at or above ${pct(
+    blurb: `+12% Damage, Attack Speed, and Movement Speed while at or above ${pct(
       PERFECTION_HP_THRESHOLD,
     )} HP. -20% Plating at all times.`,
     runeCost: 2,
     modifiers: { platingPct: -0.2 },
     gatedModifiers: {
       minHpPct: PERFECTION_HP_THRESHOLD,
-      modifiers: { attackPct: 0.12, attackSpeedPct: 0.12, moveSpeedPct: 0.12 },
+      modifiers: { damageDealtPct: 0.12, attackSpeedPct: 0.12, moveSpeedPct: 0.12 },
     },
     behaviors: [
       {
         key: "perfection-gate",
         label: "Bonuses require",
         value: `${pct(PERFECTION_HP_THRESHOLD)} HP or above`,
-        help: `Attack, Attack Speed and Movement Speed are granted only while your HP is at or above ${pct(
+        help: `Damage, Attack Speed and Movement Speed are granted only while your HP is at or above ${pct(
           PERFECTION_HP_THRESHOLD,
         )} of maximum. Cross the line in either direction and they turn off or back on within a tick.`,
       },
@@ -289,12 +290,12 @@ const stances: StanceDef[] = [
   {
     id: "fleeting-stance",
     name: "Fleeting Stance",
-    blurb: "+35% Movement Speed and +15% Evasion. -35% Attack and -20% Attack Speed.",
+    blurb: "+35% Movement Speed and +15% Evasion. -35% Damage and -20% Attack Speed.",
     runeCost: 2,
     modifiers: {
       moveSpeedPct: 0.35,
       evasion: 0.15,
-      attackPct: -0.35,
+      damageDealtPct: -0.35,
       attackSpeedPct: -0.2,
     },
     icon: "fleeting-stance",
@@ -303,9 +304,9 @@ const stances: StanceDef[] = [
     id: "berserker-stance",
     name: "Berserker Stance",
     blurb:
-      "+35% Attack and +20% Attack Speed. You take 15% more damage and lose 2% of max HP each second while in combat — this can kill you.",
+      "+35% Damage and +20% Attack Speed. You take 15% more damage and lose 2% of max HP each second while in combat — this can kill you.",
     runeCost: 4,
-    modifiers: { attackPct: 0.35, attackSpeedPct: 0.2, damageTakenPct: 0.15 },
+    modifiers: { damageDealtPct: 0.35, attackSpeedPct: 0.2, damageTakenPct: 0.15 },
     behaviors: [
       {
         key: "berserker-self-damage",
@@ -322,9 +323,9 @@ const stances: StanceDef[] = [
   {
     id: "recuperating-stance",
     name: "Recuperating Stance",
-    blurb: "80% of your Recovery stays active in combat. -50% Attack and -30% Attack Speed.",
+    blurb: "80% of your Recovery stays active in combat. -50% Damage and -30% Attack Speed.",
     runeCost: 4,
-    modifiers: { attackPct: -0.5, attackSpeedPct: -0.3 },
+    modifiers: { damageDealtPct: -0.5, attackSpeedPct: -0.3 },
     // Recovery is one rate; effects activate a FRACTION of it rather than granting
     // their own healing. Flat `recovery: +4` was removed in the corrective pass —
     // the identity is the in-combat access, not a bigger pool.
@@ -335,9 +336,9 @@ const stances: StanceDef[] = [
     id: "predator-stance",
     name: "Predator Stance",
     blurb:
-      "50% reduced enemy detection and +15% Movement Speed. Your first hit after approaching out of combat deals 75% more damage. -10% Attack.",
+      "50% reduced enemy detection and +15% Movement Speed. Your first hit after approaching out of combat deals 75% more damage. -10% Damage.",
     runeCost: 3,
-    modifiers: { moveSpeedPct: 0.15, attackPct: -0.1 },
+    modifiers: { moveSpeedPct: 0.15, damageDealtPct: -0.1 },
     behaviors: [
       {
         key: "predator-detection",
@@ -359,9 +360,9 @@ const stances: StanceDef[] = [
     id: "brawler-stance",
     name: "Brawler Stance",
     blurb:
-      "-10% Attack. Gain damage reduction for each enemy actively engaging you, from 8% against one attacker up to 40% against five or more.",
+      "-10% Damage. Gain damage reduction for each enemy actively engaging you, from 8% against one attacker up to 40% against five or more.",
     runeCost: 3,
-    modifiers: { attackPct: -0.1 },
+    modifiers: { damageDealtPct: -0.1 },
     behaviors: [
       {
         key: "brawler-crowd",
@@ -380,9 +381,9 @@ const stances: StanceDef[] = [
   {
     id: "execute-stance",
     name: "Execute Stance",
-    blurb: "-20% Attack. Deal 75% more damage to targets at or below 25% HP.",
+    blurb: "-20% Damage. Deal 75% more damage to targets at or below 25% HP.",
     runeCost: 3,
-    modifiers: { attackPct: -0.2 },
+    modifiers: { damageDealtPct: -0.2 },
     behaviors: [
       {
         key: "execute-finisher",
@@ -439,16 +440,16 @@ const stances: StanceDef[] = [
     // The alternative to Execute at the same Rune condition: Execute optimises
     // finishing THIS target (and so, bosses); Reaper converts the kill into
     // momentum against the NEXT one (and so, dense farming).
-    blurb: `-15% Attack. Killing an enemy grants +${pct(REAPER_MOMENTUM_ATTACK_PCT)} Attack and +${pct(
+    blurb: `-15% Damage. Killing an enemy grants +${pct(REAPER_MOMENTUM_ATTACK_PCT)} Damage and +${pct(
       REAPER_MOMENTUM_ATTACK_SPEED_PCT,
     )} Attack Speed for ${(REAPER_MOMENTUM_MS / 1000).toFixed(0)}s, and the momentum keeps running after you leave the stance.`,
     runeCost: 3,
-    modifiers: { attackPct: -0.15 },
+    modifiers: { damageDealtPct: -0.15 },
     behaviors: [
       {
         key: "reaper-momentum",
         label: "Kill momentum",
-        value: `+${pct(REAPER_MOMENTUM_ATTACK_PCT)} Attack, +${pct(REAPER_MOMENTUM_ATTACK_SPEED_PCT)} Attack Speed`,
+        value: `+${pct(REAPER_MOMENTUM_ATTACK_PCT)} Damage, +${pct(REAPER_MOMENTUM_ATTACK_SPEED_PCT)} Attack Speed`,
         detail: `${(REAPER_MOMENTUM_MS / 1000).toFixed(0)}s`,
         help: "Armed by any kill you land while Reaper is active. It PERSISTS after you leave the stance, so the intended loop is: enter Reaper for the finish, kill, revert to your default posture, and spend the momentum on the next enemy. Further kills refresh the window only while Reaper is active again — the duration resets, it never stacks higher.",
       },
@@ -461,9 +462,9 @@ const stances: StanceDef[] = [
     // Endure, don't cleanse. Cleansing answers one debuff; this answers a barrage.
     blurb: `Incoming harmful effects last ${pct(WARDING_DURATION_RESIST)} less and enemy damage-over-time hits ${pct(
       WARDING_POTENCY_RESIST,
-    )} weaker. -50% Attack and -25% Attack Speed.`,
+    )} weaker. -50% Damage and -25% Attack Speed.`,
     runeCost: 3,
-    modifiers: { attackPct: -0.5, attackSpeedPct: -0.25 },
+    modifiers: { damageDealtPct: -0.5, attackSpeedPct: -0.25 },
     mechanicEffects: {
       "shared.status-duration-resist": WARDING_DURATION_RESIST,
       "shared.status-potency-resist": WARDING_POTENCY_RESIST,
@@ -486,11 +487,11 @@ const stances: StanceDef[] = [
     // combat so it can never become free pre-pull preparation.
     blurb: `A weak posture that charges while you fight, up to ${(POWERING_UP_MAX_CHARGE_MS / 1000).toFixed(
       0,
-    )}s. Leaving it spends the charge for +${pct(POWERING_UP_RELEASE_ATTACK_PCT)} Attack and +${pct(
+    )}s. Leaving it spends the charge for +${pct(POWERING_UP_RELEASE_ATTACK_PCT)} Damage and +${pct(
       POWERING_UP_RELEASE_ATTACK_SPEED_PCT,
-    )} Attack Speed, lasting as long as you charged. -50% Attack and -30% Attack Speed while charging.`,
+    )} Attack Speed, lasting as long as you charged. -50% Damage and -30% Attack Speed while charging.`,
     runeCost: 4,
-    modifiers: { attackPct: -0.5, attackSpeedPct: -0.3 },
+    modifiers: { damageDealtPct: -0.5, attackSpeedPct: -0.3 },
     behaviors: [
       {
         key: "powering-up-charge",
@@ -503,7 +504,7 @@ const stances: StanceDef[] = [
       {
         key: "powering-up-release",
         label: "Release",
-        value: `+${pct(POWERING_UP_RELEASE_ATTACK_PCT)} Attack, +${pct(POWERING_UP_RELEASE_ATTACK_SPEED_PCT)} Attack Speed`,
+        value: `+${pct(POWERING_UP_RELEASE_ATTACK_PCT)} Damage, +${pct(POWERING_UP_RELEASE_ATTACK_SPEED_PCT)} Attack Speed`,
         detail: "for as long as you charged",
         help: `Spent automatically the moment you leave the stance, however you leave it. Charge below ${(
           POWERING_UP_MIN_RELEASE_MS / 1000

@@ -675,8 +675,27 @@ export interface MonsterDefinition {
     /**
      * ALPHA ONLY: follower groups spawned alongside this alpha as one pack. An
      * array so a pack can mix types (e.g. melee wolves + a ranged support).
+     *
+     * This is the pack's FIXED CORE — every spawn of this alpha gets all of it.
      */
     followers?: { typeId: string; count: number }[];
+    /**
+     * ALPHA ONLY: alternative ADD-ON groups. Exactly ONE entry is chosen per pack
+     * spawn and appended to the fixed `followers` core, so one alpha can field a
+     * few different compositions instead of the same formation forever.
+     *
+     * The Volcano mixed-pack model: a Magma Tortoise always brings its scuttler
+     * bodies, but whether the pack also has a hound, a gunner, or simply more
+     * bodies is rolled per spawn. Wasteland uses it so Gravewright entourages vary
+     * in which corpses they will leave behind.
+     *
+     * ⚠ NOT RECURSIVE, and it cannot be: `spawnPack` creates every member with
+     * `createMonster`, never with another `spawnPack`, so a follower entry naming
+     * an alpha type spawns exactly one monster and no nested pack. Keep the worst
+     * case (`followers` + the largest variant) small enough that a node's density
+     * target is not blown past by one roll.
+     */
+    followerVariants?: { typeId: string; count: number }[][];
   };
   /**
    * Swarm flocking. Presence makes the mob steer as part of a group while chasing a

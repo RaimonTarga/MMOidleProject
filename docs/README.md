@@ -46,6 +46,8 @@ top-level doc.
 | Audio | [audio-current-state.md](audio-current-state.md) | — |
 | Auth + characters | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) | — |
 | Balance Lab | [balance-lab-current-state.md](balance-lab-current-state.md) | [player-power-curve.md](../design_docs/player-power-curve.md) |
+| Solo bot build controls and preflight | [bot-harness-capability-audit.md](bot-harness-capability-audit.md) | — |
+| Practical bot experience studies and command-center handoff | [bot-experience-command-center.md](bot-experience-command-center.md) | — |
 | Bot experiment runner | [bot-experiment-runner-current-state.md](bot-experiment-runner-current-state.md) | — |
 | T1 numerical balance packet | [balance/t1-numerical-balance-packet-2026-08-27.md](balance/t1-numerical-balance-packet-2026-08-27.md) | — |
 | Barrier & Ward | [barrier-ward-current-state.md](barrier-ward-current-state.md) | — |

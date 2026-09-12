@@ -133,6 +133,10 @@ export const attackCooldownAtom = atom<number>(0);
  * the server deliberately never folds these effects into the stat itself.
  */
 export const attackCadenceMultAtom = atom<number>(1);
+export const finalDamageDealtMultAtom = atom<number>(1);
+export const finalDamageTakenMultAtom = atom<number>(1);
+/** Live bonus on-hit damage from an active Imbue Lightning window; 0 when none is up. */
+export const onHitDamageBonusAtom = atom<number>(0);
 export const speedAtom = atom<number>(0);
 export const dodgeRateAtom = atom<number>(0);
 export const evadeMitigationAtom = atom<number>(0);
@@ -250,6 +254,13 @@ export function notifyAbilityCooldownStarted(abilityId: string): void {
   store.set(abilityCooldownStartedAtAtom, { ...prev, [abilityId]: Date.now() });
 }
 
+/** Client receipt time for the authoritative shared stance-switch cooldown. */
+export const stanceCooldownStartedAtAtom = atom<number>(0);
+
+export function notifyStanceCooldownStarted(): void {
+  getDefaultStore().set(stanceCooldownStartedAtAtom, Date.now());
+}
+
 /**
  * Live cast progress for the local player's casted Technique, or null when not
  * casting. Driven by the `player-cast-start` / `player-cast-end` node events.
@@ -339,6 +350,19 @@ export const equippedStancesAtom = atom<EquippedStances>({
 });
 /** Which posture is currently active (folded into stats). */
 export const activeStanceAtom = atom<string | null>(null);
+/** Runtime manual owner; null means default/Rune AUTO stance control. */
+export const manualStanceOverrideAtom = atom<string | null>(null);
+/** Server-authoritative manual ability requests waiting to become legal. */
+export const queuedAbilityIdsAtom = atom<string[]>([]);
+
+export const combatControlFeedbackAtom = atom<{ reason: string; at: number } | null>(null);
+
+export function notifyCombatControlResult(result: { success: boolean; reason?: string }): void {
+  getDefaultStore().set(
+    combatControlFeedbackAtom,
+    result.success || !result.reason ? null : { reason: result.reason, at: Date.now() },
+  );
+}
 
 /** Rites learned (crafted) — the slottable pool (system rework Step 11). */
 export const knownRitesAtom = atom<string[]>([]);
@@ -739,6 +763,9 @@ function resetPlayerAtoms(): void {
   store.set(attackRangeAtom, 0);
   store.set(attackCooldownAtom, 0);
   store.set(attackCadenceMultAtom, 1);
+  store.set(finalDamageDealtMultAtom, 1);
+  store.set(finalDamageTakenMultAtom, 1);
+  store.set(onHitDamageBonusAtom, 0);
   store.set(speedAtom, 0);
   store.set(dodgeRateAtom, 0);
   store.set(evadeMitigationAtom, 0);
@@ -795,6 +822,9 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(knownStancesAtom, []);
   setEquippedStances({ default: null });
   setIfChanged(activeStanceAtom, null);
+  setIfChanged(manualStanceOverrideAtom, null);
+  setIfChanged(queuedAbilityIdsAtom, []);
+  store.set(combatControlFeedbackAtom, null);
   setIfShallowArrayEqual(knownRitesAtom, []);
   setIfShallowArrayEqual(equippedRitesAtom, []);
   setIfChanged(riteSlotsAtom, 0);
@@ -805,6 +835,7 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(activeBuffsAtom, []);
   store.set(abilityFiredAtAtom, {});
   store.set(abilityCooldownStartedAtAtom, {});
+  store.set(stanceCooldownStartedAtAtom, 0);
   store.set(abilityCastAtom, null);
   setIfShallowObjectEqual(passivesAtom, {});
   setIfShallowObjectEqual(equipmentAtom, { ...DEFAULT_EQUIPMENT });
@@ -861,6 +892,9 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(attackRangeAtom, player.attackRange);
   setIfChanged(attackCooldownAtom, player.attackCooldown);
   setIfChanged(attackCadenceMultAtom, player.attackCadenceMult);
+  setIfChanged(finalDamageDealtMultAtom, player.finalDamageDealtMult);
+  setIfChanged(finalDamageTakenMultAtom, player.finalDamageTakenMult);
+  setIfChanged(onHitDamageBonusAtom, player.onHitDamageBonus);
   setIfChanged(speedAtom, player.speed);
   setIfChanged(dodgeRateAtom, player.dodgeRate);
   setIfChanged(evadeMitigationAtom, player.evadeMitigation);
@@ -916,6 +950,8 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(knownStancesAtom, player.knownStances);
   setEquippedStances(player.equippedStances);
   setIfChanged(activeStanceAtom, player.activeStance);
+  setIfChanged(manualStanceOverrideAtom, player.manualStanceOverride);
+  setIfChanged(queuedAbilityIdsAtom, player.queuedAbilityIds);
   setIfShallowArrayEqual(knownRitesAtom, player.knownRites);
   setIfShallowArrayEqual(equippedRitesAtom, player.equippedRites);
   setIfChanged(riteSlotsAtom, player.riteSlots);

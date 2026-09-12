@@ -50,6 +50,27 @@ export const tundraMonsterEntries = [
   // monster and stacked an unauthored root on top of the environment's own slow.
   // The environment owns baseline slow; each mob exploits that slowing clock
   // DIFFERENTLY (defensive windows, roots, telegraphed slams).
+  //
+  // ══ IDENTITY PASS (ecology polish, 2026-09-11) ══
+  //
+  // Audit outcome — five of seven normal mobs already had a signature worth keeping
+  // and were left alone; the point was not to hit a mechanics quota:
+  //
+  //   PRESERVED  Glacier Bear / Glacial Dire-Bear  Ice Armor → Shatter window
+  //   PRESERVED  Rime Caster                       Frostbind (Chill-gated root)
+  //   PRESERVED  Permafrost Behemoth               Glacial Slam + Chill scaling
+  //
+  //   NEW        Frost Lurker        RIME POUNCE — the line had NOTHING
+  //   DEEPENED   Rime-Tusk Mastodon  the same commitment, now a committed CIRCLE
+  //   DEEPENED   Hoarfrost Yeti      Deep Freeze planted as a telegraph rather
+  //                                  than a cast that follows you
+  //
+  // ⚠ CONTROL BUDGET. The roster still has exactly ONE root (the caster line), and
+  // this pass made the T4 version MORE avoidable rather than less. Nothing added here
+  // stuns and nothing added here slows: the ambient Chill already owns the player's
+  // movement number, and two Tundra mobs able to chain hard control at once is the
+  // failure mode the biome is explicitly written against. Every new beat is a visible
+  // wind-up whose answer is a step in some direction.
   ['frost-lurker', {
     id: 'frost-lurker', name: 'Frost Lurker', color: 0xaaddff,
     // Tundra wolverine (role-name kept). The biome's straightforward melee baseline:
@@ -60,6 +81,31 @@ export const tundraMonsterEntries = [
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 29, essenceType: 'blue', level: 2, biomeXp: 175 },
     ai: { wanderRadius: 150, leashRange: 510, idleMinMs: 2500, idleMaxMs: 7000 },
+    // RIME POUNCE — the one thing you remember this creature doing, and the answer
+    // to the question its own stat line asked and never answered: how does a
+    // speed-26 ambush predator ever reach anybody?
+    //
+    // It does not walk. Once per engagement it plants, telegraphs a short wind-up,
+    // and bursts out of the snow at ~156px/s into an amplified bite. The rest of the
+    // fight is the plain slow wolverine it already was.
+    //
+    // WHY THIS AND NOT A DEBUFF: the biome's slow is the room's job, not the
+    // roster's, and a wolverine that applies a status is the generic Tundra mob this
+    // pass exists to stop authoring. A committed lunge is spatial — run and it
+    // whiffs, stand still and it lands — which is the counterplay shape the biome
+    // wants. It also fuses with the environment for free and in the right direction:
+    // at full Chill the player is down near 84px/s, so the colder the room has made
+    // you, the more surely the pounce arrives. Arriving cold is the mistake, exactly
+    // as it is against the Behemoth's slam.
+    //
+    // `damageMultiplier` is deliberately modest (1.35 ≈ 216 vs its ordinary 160) and
+    // it fires ONCE per aggro session, so it barely moves sustained DPS — the tier
+    // ladder in docs/tier-balance-current-state.md is measured off sustained pressure
+    // and base stats are untouched here on purpose.
+    engageSequence: {
+      kind: 'cast-charge-strike', name: 'Rime Pounce', castMs: 900,
+      speedMult: 6, maxChargeMs: 1800, damageMultiplier: 1.35, fx: 'rime-pounce',
+    },
   }],
 
   ['glacier-bear', {
@@ -119,15 +165,46 @@ export const tundraMonsterEntries = [
     // TELEGRAPHED HEAVY HITTER: a named Frost/Tusk Impact now replaces the invisible cadence beat
     // (~368 at the retuned base attack). No giant slow rider — ambient Chill already makes walking
     // out of the telegraph hard enough. Heavy ICE PLATING (12) rewards a brittle weapon.
+    //
+    // T4 OF THE FROST LURKER LINE (same colour slot, same role: the biome's melee
+    // baseline). It inherits the Lurker's COMMITMENT vocabulary — commit to a spot,
+    // then one heavy readable impact — and deepens it in the three ways the line has
+    // room for, all on the SAME attack rather than by bolting on new spells:
+    //   • bigger  — the impact is a planted CIRCLE, not a shot that follows you
+    //   • harder  — it shoves you out of it (a ram should displace)
+    //   • tighter — the answer is leaving ground, on a clock the room can shorten
     stats: { hp: 1100, attack: 230, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 110, essenceType: 'blue', level: 4, biomeXp: 660 },
     ai: { wanderRadius: 140, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9500 },
+    // ⚠ PRE-EXISTING, NOT TOUCHED BY THE 2026-09-11 ecology pass, but worth knowing
+    // before reading this monster as a charger: 18 base × 2.3 = 41px/s, against a
+    // player who WALKS at 120. This burst is decorative — it cannot close a gap on
+    // anyone who is moving. (The Permafrost Behemoth's is worse at 24px/s.) The
+    // Mastodon's real pressure is the planted circle below, which does not care how
+    // fast it moves. Left alone deliberately: base speeds feed the measured tier
+    // ladder, so this is a balance-pass call, not an ecology one.
     chargeOnAggro: { speedMult: 2.3, durationMs: 1200 },
+    // FROST-TUSK IMPACT — planted where you stood when the cast began. The
+    // multiplier is UNCHANGED (1.6): this is the same hit it always dealt, made
+    // avoidable and given a consequence, not made bigger.
+    //
+    // Cast lengthened 1000 -> 1300ms because the radius now has to be walkable out
+    // of: at base 120px/s you clear 110px with room to spare, and at max Chill
+    // (~84px/s) you clear it by a hair. That margin IS the design — the room
+    // deciding whether a telegraph is generous or brutal is the Tundra's whole
+    // fusion, and failing it costs a shove and a heavy hit rather than a lockout.
     monsterAbilities: [{
-      id: 'frost-tusk-impact', name: 'Frost-Tusk Impact', castMs: 1000,
+      id: 'frost-tusk-impact', name: 'Frost-Tusk Impact', castMs: 1300,
       cooldownMs: 12000, initialCooldownMs: 5500, target: 'player', fx: 'frost-tusk-impact',
-      actions: [{ type: 'hit', multiplier: 1.6 }],
+      actions: [{
+        type: 'area-hit', radius: 110, multiplier: 1.6,
+        // Displacement, NOT control: a knockback is one shove that the player's
+        // knockback resistance already answers, and it resets a melee player's
+        // positioning without ever taking their inputs away. No `stunMs` here
+        // (locked with the rest of this pass) — the Tundra does not remove agency.
+        knockback: { distance: 150 },
+      }],
     }],
   }],
 
@@ -158,12 +235,34 @@ export const tundraMonsterEntries = [
     behavior: 'ranged', attackStyle: 'frost', biome: 'tundra',
     staticSentry: true,
     rewards: { essence: 62, essenceType: 'blue', level: 3, biomeXp: 370 },
-    // DEEP FREEZE - the evolved Frostbind: a longer root, and it comes online at a
-    // LOWER chill threshold, so the late-tier caster starts landing it sooner.
+    // DEEP FREEZE - the evolved Frostbind, deepened as the SAME mechanic made larger
+    // and readable rather than as a second spell.
+    //
+    // The Rime Caster's Frostbind is a mobile single-target cast: it follows you, and
+    // short of a stun there is nothing to do about it. Deep Freeze is PLANTED — the
+    // circle is drawn on the ground where you stood at cast start, and everyone still
+    // inside it when the wind-up ends is rooted. Bigger, visible, and for the first
+    // time in the line answerable by moving.
+    //
+    // That is deliberately the T4 being MORE avoidable than the T3, not less. The
+    // biome's stated rule is to be conservative with hard control and to prefer
+    // spatial counterplay, and this is the only root in the entire Tundra roster —
+    // two yetis in one pull chaining 2.2s of unavoidable root was exactly the
+    // composition failure that rule exists to prevent. Now two yetis plant two
+    // circles, and circles compose.
+    //
+    // Cast 1500 -> 1600ms, radius 120: clearable at base speed with margin and still
+    // clearable at max Chill. The `requiresAmbientStacks: 2` gate is kept, so the
+    // ability still only comes online once the room has chilled you.
+    //
+    // ⚠ `aoe` + `rootMs` only works because the planted resolution path now applies
+    // charged-attack riders (server/src/systems/combat/engine/combat.ts). Before that
+    // fix the combination silently dropped the root.
     chargedAttack: {
-      name: 'Deep Freeze', castMs: 1500, cooldownMs: 9000, initialCooldownMs: 4000,
+      name: 'Deep Freeze', castMs: 1600, cooldownMs: 9000, initialCooldownMs: 4000,
       multiplier: 1.2, fx: 'power-shot',
       rootMs: 2200, requiresAmbientStacks: 2,
+      aoe: { radius: 120 },
     },
     ai: { wanderRadius: 210, leashRange: 620, idleMinMs: 1500, idleMaxMs: 4500 },
   }],

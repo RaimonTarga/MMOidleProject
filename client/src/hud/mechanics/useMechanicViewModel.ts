@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { dotElementForPlayer, resolveDotClassProfile, summonerSpecializationFor } from '@mmo-idle/shared';
+import { dotElementForPlayer, resolveDotClassProfile, resolveDotStackCap, resolveDotRelicDeliveryProfile, relicRatingsFromPassives, summonerSpecializationFor } from '@mmo-idle/shared';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -132,13 +132,7 @@ export function useMechanicViewModel(): MechanicViewModel | null {
     case 'dot': {
       const profile = resolveDotClassProfile(passives, selectedSubVariant);
       const element = dotElementForPlayer(passives, selectedSubVariant);
-      const maxStacks = (passives['dot.poison-explosion'] ?? 0) > 0
-        ? 10
-        : (passives['dot.eternal-doom'] ?? 0) > 0
-          ? 50
-          : (passives['dot.permafrost'] ?? 0) > 0
-            ? 1
-            : profile.maxStacks;
+      const maxStacks = resolveDotRelicDeliveryProfile(profile.tickIntervalMs, resolveDotStackCap(passives, profile.maxStacks), relicRatingsFromPassives(passives)).maxStacks.after;
       const showsChill = element === 'frost' && (passives['dot.freezing-cold'] ?? 0) > 0;
       return {
         kind: 'dot',

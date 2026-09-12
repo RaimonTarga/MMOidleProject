@@ -1,3 +1,4 @@
+import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
 import type { World } from '../../../../../../world/World';
 import { pushDamageEvent } from '../../../../../combat/damage/damageEvent';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
@@ -62,7 +63,7 @@ export function updateAlternatingCurrents(world: World, dt: number): void {
           !isInvulnerableMonster(monster)
         ) {
           const baseTickDmg = Math.max(1, Math.round(player.dealsDamage.attack * AC_TICK_DAMAGE_MULT));
-          const tickDmg = Math.max(1, applyMonsterDamageTakenDebuffs(monster.tracksCombat, baseTickDmg));
+          const tickDmg = outgoingFinalDamage(world, player.isPlayer.id, Math.max(1, applyMonsterDamageTakenDebuffs(monster.tracksCombat, baseTickDmg)));
           recordMonsterDamagedByPlayer(
             world,
             player.isPlayer.id,

@@ -100,6 +100,7 @@ initCombatSystems();
     makePlayerSlices("hamstring-player", ["hamstring"]),
     "hamstring-player",
   );
+  player.usesAutocombat.auto = true;
   const target = world.createMonster("node-5-5", "plains-slime", { x: 410, y: 400 });
   if (!target) throw new Error("failed to create target");
   setAttackTarget(world, player, target.isMonster.id);
@@ -158,6 +159,7 @@ initCombatSystems();
     makePlayerSlices("binding-player", ["binding-strike"]),
     "binding-player",
   );
+  player.usesAutocombat.auto = true;
   const target = world.createMonster("node-5-5", "plains-slime", { x: 410, y: 400 });
   if (!target) throw new Error("failed to create target");
   setAttackTarget(world, player, target.isMonster.id);

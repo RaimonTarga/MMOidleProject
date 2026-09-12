@@ -18,6 +18,7 @@ import { GAME_CONFIG } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
+import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -126,8 +127,6 @@ function applyClassAffinities(p: PlayerStatsTarget, a: ClassAffinities): void {
 function applyStanceModifiers(p: PlayerStatsTarget, mods: StanceModifiers | undefined): void {
   if (!mods) return;
   const mult = (pct: number): number => Math.max(0.05, 1 + pct);
-  if (mods.attackPct)
-    p.dealsDamage.attack = Math.max(1, Math.round(p.dealsDamage.attack * mult(mods.attackPct)));
   if (mods.platingPct)
     p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * mult(mods.platingPct)));
   if (mods.moveSpeedPct)
@@ -295,7 +294,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // a separate layer stacked on the finished class chassis).
   applyClassAffinities(p, affinities);
 
-  // 3e. Active-stance percentages. A stance is a MODE with a printed tooltip, so its
+  // 3e. Active-stance plating/movement percentages. Damage is resolved at hit time. A stance is a MODE with a printed tooltip, so its
   // multipliers sit on top of the finished class chassis instead of summing into the
   // affinity bucket: "+40% Plating" is x1.40 for a Squire and for an Apprentice alike.
   // Placed immediately after the affinity fold and before the reload/core layers, which
@@ -366,7 +365,10 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     // and Melter (continuous laser with its own per-tick scaling) don't get that
     // double-speed, so both are exempt and keep full attack damage.
     if (!isSnipe && !isLaser) {
-      p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.65));
+      p.dealsDamage.attack = Math.max(
+        1,
+        Math.floor(p.dealsDamage.attack * SLINGER_DIRECT_ATTACK_EFFECTIVENESS),
+      );
     }
 
     if (isSnipe) {

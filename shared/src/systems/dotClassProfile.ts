@@ -102,3 +102,10 @@ export function computeDotClassDamagePerStack(
     ),
   );
 }
+
+/** Delivery caps may be replaced by a path; keep the damage reference independent. */
+export function resolveDotStackCap(passives: PassiveMap, frameCap: number): number {
+  if ((passives['dot.poison-explosion'] ?? 0) > 0) return Math.max(1, Math.round(passives['dot.poison-explosion-max-stacks'] ?? 10));
+  if ((passives['dot.eternal-doom'] ?? 0) > 0) return Math.max(1, Math.round(passives['dot.eternal-doom-max-stacks'] ?? 50));
+  return frameCap;
+}

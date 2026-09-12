@@ -1,3 +1,4 @@
+import { incomingFinalDamage } from '../combat/damage/finalDamage';
 import {
   applyStatusEffect,
   circleGeometry,
@@ -533,7 +534,7 @@ function tickToxicPool(
       0.9,
       Math.max(0, player.usesSkills.passives['defense.dot-resistance'] ?? 0),
     );
-    const damage = Math.max(
+    let damage = Math.max(
       1,
       Math.round(
         pool.damagePerTick *
@@ -541,6 +542,7 @@ function tickToxicPool(
           (1 - dotResist),
       ),
     );
+    damage = incomingFinalDamage(world, player, damage);
     const mitigation: DamageMitigationBreakdown = buildSimpleBreakdown(pool.damagePerTick, damage);
     recordPlayerDamaged(
       world,

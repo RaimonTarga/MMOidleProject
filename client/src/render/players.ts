@@ -5,11 +5,16 @@ import { autoPathAtom, setAutoPath } from "../hud/atoms";
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
 import {
+  applySpriteOutline,
   applySpriteTint,
+  clearSpriteOutline,
   ensureSprite,
   resetSpriteTint,
+  TIER_OUTLINE_DISTANCE,
+  TIER_OUTLINE_OUTER_STRENGTH,
   updateSpriteFrame,
 } from "./sprites";
+import { getPlayerShadowColor } from "../sprites";
 import { ensureShadow } from "./shadows";
 import {
   ensureLabel,
@@ -30,6 +35,7 @@ import {
 } from "../input/pathPrediction";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
+import { resolveAttackTint } from "../fx/elementTint";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 import { auraTint } from "../fx/aura";
 
@@ -57,6 +63,25 @@ function moveSpeedMult(player: PlayerView): number {
   return playerMoveSpeedMult(mults);
 }
 
+/**
+ * Player tier as a quiet rim on the sprite itself — reuses the same glow
+ * mechanism as the elite/guardian threat outline (render/sprites.ts), but at
+ * TIER_OUTLINE_* strength/distance so it always reads subtler than a threat
+ * callout. Tier 0 shows no rim, matching the old ring's behavior.
+ */
+function syncTierOutline(state: RenderState, player: PlayerView): void {
+  const sprite = state.sprite.get(player.id);
+  if (!sprite) return;
+  if (player.playerTier > 0) {
+    applySpriteOutline(sprite, getPlayerShadowColor(player.playerTier), {
+      outerStrength: TIER_OUTLINE_OUTER_STRENGTH,
+      distance: TIER_OUTLINE_DISTANCE,
+    });
+  } else {
+    clearSpriteOutline(sprite);
+  }
+}
+
 export function upsertPlayer(
   state: RenderState,
   player: PlayerView,
@@ -72,7 +97,6 @@ export function upsertPlayer(
 
     state.spriteMeta.set(player.id, {
       currentFrame: null,
-      shadowLevel: player.playerTier,
       barOffsetY: player.isDead ? GRAVE_LABEL_OFFSET_Y : 40,
       isOwn,
     });
@@ -89,9 +113,7 @@ export function upsertPlayer(
 
     const color = isOwn ? 0x44ff88 : 0x4488ff;
     if (!player.isDead) {
-      ensureShadow(state, player.id, player.pos, scene, {
-        playerTier: player.playerTier,
-      });
+      ensureShadow(state, player.id, player.pos, scene);
     }
     ensureSprite(state, player.id, player, scene, {
       displayW: 64,
@@ -111,6 +133,7 @@ export function upsertPlayer(
     if (!player.isDead) {
       const tint = flashShiftTint(player) ?? auraTint(player);
       if (sprite && tint !== null) applySpriteTint(sprite, tint);
+      syncTierOutline(state, player);
     }
     ensureLabel(state, player.id, player, scene);
     if (player.isDead) {
@@ -152,6 +175,8 @@ export function upsertPlayer(
       fallbackColor: isOwn ? 0x44ff88 : 0x4488ff,
       isPlayer: true,
     });
+    const deadSprite = state.sprite.get(player.id);
+    if (deadSprite) clearSpriteOutline(deadSprite);
     ensureLabel(state, player.id, player, scene);
     updateLabelForGrave(state, player.id, player, scene);
     destroyHpBar(state, player.id);
@@ -168,9 +193,7 @@ export function upsertPlayer(
   if (wasDead) {
     const meta = state.spriteMeta.get(player.id);
     if (meta) meta.barOffsetY = 40;
-    ensureShadow(state, player.id, player.pos, scene, {
-      playerTier: player.playerTier,
-    });
+    ensureShadow(state, player.id, player.pos, scene);
     ensureHpBar(state, player.id, scene);
     ensureCdBar(state, player.id, scene);
     updateLabelForLivePlayer(state, player.id, player, scene);
@@ -225,6 +248,7 @@ export function upsertPlayer(
     } else {
       resetSpriteTint(sprite, color);
     }
+    syncTierOutline(state, player);
     if (
       isOwn &&
       tint !== null &&
@@ -335,6 +359,15 @@ export function upsertPlayer(
           dotPath:
             player.combatArchetype === "dot" ? getDotPath(player) : undefined,
           selectedRange: player.selectedRange,
+          // Weapon/class element tint. Computed here because this is where the
+          // full PlayerView lives; transient per-hit effects are not on the
+          // snapshot path, so remote attacks tint from gear and class only.
+          tint:
+            resolveAttackTint(
+              player,
+              player.combatArchetype === "dot" ? getDotPath(player) : null,
+              null,
+            ) ?? undefined,
         },
       );
       if (!isRangedPlayerView(player)) {

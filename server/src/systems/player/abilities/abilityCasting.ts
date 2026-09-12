@@ -50,6 +50,7 @@ export function beginAbilityCast(
   player: PlayerEntity,
   ability: AbilityDef,
   now: number,
+  currentTargetOnly = false,
 ): boolean {
   const castMs = abilityCastMs(ability, player.tracksProgression.playerTier);
   if (castMs <= 0) return false;
@@ -66,7 +67,7 @@ export function beginAbilityCast(
   // A cast needs something to resolve INTO. Resolved through the ability's own
   // reach, not the player's, so a `rangeBonus` cast can open on something the
   // player could not otherwise touch.
-  const target = abilityTarget(world, player, ability);
+  const target = abilityTarget(world, player, ability, currentTargetOnly);
   if (!target) return false;
 
   // Situational payloads decline rather than wind up on nothing. Contagion with

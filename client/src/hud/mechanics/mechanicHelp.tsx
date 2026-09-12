@@ -99,8 +99,9 @@ export function useMechanicHelp(model: MechanicViewModel): ReactNode {
             {model.ammo} of {model.ammoMax} rounds loaded.
           </div>
           <div style={{ marginTop: 6 }}>
-            While reloading, damage is halved and attack speed doubled as a final
-            layer — the same total, delivered differently.
+            At this extreme cadence, weapon Attack damage retains 65% effectiveness.
+            Flat on-hit damage stays at full strength, and weapon damage converted
+            into damage over time retains 85% effectiveness.
           </div>
         </>
       ) : (

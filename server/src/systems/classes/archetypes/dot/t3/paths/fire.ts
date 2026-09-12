@@ -11,6 +11,8 @@ import {
   IGNITION_VALUE_MULT,
 } from './_constants';
 import { CONF_TICKS } from '../core/constants';
+import { DOT_MAXSTACK_BURST_FX } from '@mmo-idle/shared';
+import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
 
 /**
  * Ignition (Balanced).
@@ -85,6 +87,8 @@ export function tryFanTheFlames(pc: DotT3PathContext): boolean {
     ctx.damage += Math.floor(maxStacks * dmgPerStack * maxStackBonusMult);
     // Aesthetic-only crit on the full-stack bonus hit (yellow "!").
     ctx.metadata['empoweredAttack'] = true;
+    // The bar being full is the whole mechanic; give it a tell.
+    pushClientEffect(ctx, DOT_MAXSTACK_BURST_FX);
   } else {
     const toApply = Math.min(stacksPerHit, maxStacks - currentStacks);
     let ftfEff = applyStatusEffect(monsterState, {

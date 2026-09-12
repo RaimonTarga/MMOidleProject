@@ -769,3 +769,86 @@
    node's stat deltas but had nowhere to put the mechanic keys, the units, or the
    explanation. The detail panel renders `DetailLines` instead — one shared row
    grammar across the tree, the loadout and crafting. */
+
+/* Desktop choice cards: artwork and copy never compete for the same space. */
+.skill-tree-workspace { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+.skill-character-preview { display: block; position: relative; width: 64px; height: 96px; flex: none; }
+.skill-character-preview__body { position: absolute; top: 32px; left: 0; }
+.skill-character-preview__accent { position: absolute; }
+.skill-class-guide { margin: 14px 0; font-size: 11px; line-height: 1.6; color: var(--hud-text); }
+.skill-class-guide summary { cursor: pointer; font-size: 12px; color: var(--hud-primary-strong); }
+.skill-class-guide p { margin: 10px 0; }
+.skill-class-guide strong { display: block; color: var(--hud-primary-strong); }
+.skill-class-guide small { color: var(--hud-text-muted); line-height: 1.5; display: block; }
+.detail-line__explanation { flex: 1 1 100%; min-width: 0; overflow-wrap: anywhere; font-size: 10px; color: var(--hud-text-muted); line-height: 1.55; white-space: normal; }
+.skill-class-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.skill-node__status { font-size: 9px; line-height: 1.4; color: var(--hud-text-muted); }
+@media (min-width: 1101px) {
+  .game-dialog__panel.skill-tree-dialog { width: 1120px; max-width: calc((100vw - 32px) / var(--ui-font-scale, 1)); height: calc((100vh - 64px) / var(--ui-font-scale, 1)); }
+  .skill-tree-workspace { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+  .skill-tree-body { padding: 20px; }
+  .skill-tree-workspace > .skill-desc { min-height: 0; max-height: none; border-top: 0; border-left: 1px solid var(--bevel-dark); padding: 18px; }
+  .skill-desc__effects { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .skill-desc__header, .skill-progress-meta { flex-wrap: wrap; }
+  .skill-desc__name { flex-basis: 100%; }
+  .skill-tier-nodes { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 12px; }
+  .skill-node { width: 100%; height: auto; min-height: 174px; border-radius: 6px; padding: 16px 10px 12px; gap: 8px; overflow: visible; }
+  .skill-node__name, .skill-node--compact .skill-node__name { max-width: none; width: 100%; font-size: 11px; overflow-wrap: anywhere; hyphens: none; }
+  .skill-node--compact { min-height: 58px; padding: 16px 10px 10px; }
+  .skill-node--selected, .skill-node--available:hover { transform: none; }
+  .skill-node--faded { opacity: .72; }
+  .skill-node__check { display: none; }
+  .skill-connector { height: 22px; }
+  .skill-tier-badge { font-size: 10px; white-space: normal; text-align: center; }
+  .skill-tree-instruction { line-height: 1.6; }
+}
+
+.skill-desc__preview { display: flex; justify-content: center; margin: 0 0 12px; }
+
+@media (max-width: 1100px) {
+  .skill-node > .skill-choice-art, .skill-node__status { display: none; }
+}
+
+.skill-tree-workspace > .skill-desc { background: var(--hud-material-panel); }
+
+.skill-tree-views { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px; border-bottom: 1px solid var(--hud-edge-dark); flex: none; }
+.skill-tree-views button, .skill-compare-inspect { font: inherit; color: var(--hud-text); background: var(--btn-bg); border: 1px solid var(--hud-edge-medium); border-radius: 3px; padding: 9px 12px; white-space: normal; overflow-wrap: anywhere; cursor: pointer; }
+.skill-tree-views button[aria-pressed="true"] { border-color: var(--hud-primary-strong); color: var(--hud-primary-strong); }
+.skill-tree-views button:disabled { opacity: .45; cursor: default; }
+.skill-build-view, .skill-comparison { overflow: auto; min-height: 0; padding: 18px 24px; font-size: 11px; line-height: 1.6; color: var(--hud-text); }
+.skill-build-view h3 { color: var(--hud-primary-strong); font-size: 13px; margin: 10px 0; }
+.skill-build-intro { display: flex; align-items: center; gap: 20px; }
+.skill-build-intro p { margin: 8px 0; }
+.skill-build-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 24px; margin: 18px 0; }
+.skill-build-columns .detail-lines { margin-bottom: 18px; }
+.skill-build-choice { border-top: 1px solid var(--hud-edge-dark); padding: 10px 0; }
+.skill-build-choice summary { cursor: pointer; color: var(--hud-primary-strong); }
+.skill-build-choice p { margin: 8px 0; }
+.skill-compare-selectors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.skill-compare-selectors label { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.skill-compare-selectors select { width: 100%; min-width: 0; font: inherit; padding: 10px; background: var(--hud-material-panel); color: var(--hud-text); border: 1px solid var(--hud-edge-medium); }
+.skill-comparison table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.skill-comparison caption { text-align: left; color: var(--hud-primary-strong); padding: 8px 0; }
+.skill-comparison th, .skill-comparison td { padding: 12px; border: 1px solid var(--hud-edge-medium); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.skill-comparison th:first-child { width: 23%; }
+.skill-comparison thead th .skill-character-preview { margin: 0 auto 10px; }
+.skill-comparison thead button { display: block; width: 100%; margin-bottom: 8px; }
+.skill-comparison tbody th { font-weight: normal; color: var(--hud-primary-strong); }
+.skill-comparison tbody td strong { color: var(--hud-text); }
+.skill-comparison details { margin-top: 8px; font-weight: normal; }
+.skill-comparison details p { color: var(--hud-text-muted); }
+.skill-comparison summary { cursor: pointer; }
+@media (max-width: 1100px) { .skill-build-columns { grid-template-columns: minmax(0, 1fr); } }
+
+.skill-comparison__different { background: color-mix(in srgb, var(--hud-primary) 7%, transparent); }
+
+/* Keep authored identity emblems separate from the sprite and its range crest. */
+.skill-choice-art { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none; max-width: 100%; }
+.skill-choice-art > .skill-emblem { margin-top: 18px; flex-shrink: 0; }
+.skill-node__name { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.skill-node__name > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.skill-node__name > .skill-emblem { flex-shrink: 0; }
+.skill-build-choice summary > .skill-emblem { vertical-align: middle; margin-right: 8px; }
+.skill-comparison thead th .skill-choice-art { display: flex; margin: 0 auto 10px; }
+.skill-comparison thead th .skill-character-preview { margin: 0; }
+@media (min-width: 1101px) { .skill-class-grid { width: 100%; } }

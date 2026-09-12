@@ -25,6 +25,9 @@ export interface Policy {
   /** The rune loadout this profile actually equips. */
   runeLoadout(authored: EquippedRule[]): EquippedRule[];
   autocombat: AutocombatConfig;
+  /** Only buy currently payable upgrades; never farm for them. */
+  upgrades?: "authored" | "affordable-only";
+  choices?: Record<string, string>;
 }
 
 /** Lower every biome-level threshold in a condition tree by `delta` (floored at 1). */
@@ -82,8 +85,18 @@ const GENERIC: Policy = {
   },
 };
 
+const AFFORDABLE: Policy = { ...INTENDED, id: "affordable-upgrades", upgrades: "affordable-only",
+  description: "Follows the route, but upgrades only while currently payable and never farms solely for upgrades." };
+const FAMILIAR: Policy = { ...INTENDED, id: "familiar-gear", choices: { "gear-adoption": "keep" },
+  description: "Chooses the authored keep branch at gear-adoption decisions; other preparation stays intended." };
+const EARLY: Policy = { ...INTENDED, id: "early-boss", choices: { "boss-preparation": "early" },
+  description: "Chooses authored early preparation branches; boss combat still uses real Runes." };
+
 export const POLICIES = new Map<string, Policy>([
   [INTENDED.id, INTENDED],
+  [AFFORDABLE.id, AFFORDABLE],
+  [FAMILIAR.id, FAMILIAR],
+  [EARLY.id, EARLY],
   [RUSHER.id, RUSHER],
   [GENERIC.id, GENERIC],
 ]);

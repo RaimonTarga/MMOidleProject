@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
   ABILITY_FRENZY_EFFECT_ID,
+  NO_STANCE_ID,
+  STANCE_SWITCH_COOLDOWN_MS,
   abilityCooldownMs,
   abilityDef,
   abilityRankNumber,
@@ -9,6 +11,7 @@ import {
   attunedForFamily,
   guardEffectIdForAbility,
   recoveryEffectIdForAbility,
+  stanceDef,
   type AbilityDef,
   type AbilityFamily,
 } from "@mmo-idle/shared";
@@ -17,9 +20,16 @@ import {
   abilityFiredAtAtom,
   abilityCooldownStartedAtAtom,
   activeBuffsAtom,
+  activeStanceAtom,
+  attackTargetIdAtom,
   attunedAbilitiesAtom,
+  attunedStancesAtom,
+  autoAtom,
+  manualStanceOverrideAtom,
   playerTierAtom,
+  queuedAbilityIdsAtom,
   runesEquippedAtom,
+  stanceCooldownStartedAtAtom,
 } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
 import { abilityIconSource } from "../ui/abilityIcons";
@@ -34,6 +44,14 @@ import {
 } from "./statusTooltips";
 import "./hud.css";
 import { abilityTiming } from "../ui/describe/abilityTiming";
+import { stanceIconSource } from "../ui/conceptIcons";
+import { hudBus } from "../hudBus";
+import {
+  ABILITY_HOTKEY_ACTIONS,
+  STANCE_HOTKEY_ACTIONS,
+  bindingToLabel,
+  keybindsAtom,
+} from "../settings/keybinds";
 
 const ICON_SIZE = 46;
 const SLOT_GAP = 10;
@@ -96,7 +114,19 @@ function castStatus(startedAt: number, castMs: number, now: number): SlotStatus 
   };
 }
 
-function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotStatus }) {
+function AbilityIcon({
+  ability,
+  status,
+  keyHint,
+  queued,
+  unavailable,
+}: {
+  ability: AbilityDef;
+  status: SlotStatus;
+  keyHint: string;
+  queued: boolean;
+  unavailable: boolean;
+}) {
   const context = useAbilityContext();
   const timing = abilityTiming(ability, useAtomValue(attunedAbilitiesAtom), useAtomValue(runesEquippedAtom));
   const runtime: AbilityRuntime = {
@@ -121,10 +151,12 @@ function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotSta
       : "";
 
   return (
-    <div
-      tabIndex={0}
-      aria-label={abilityAccessibleLabel(ability, context, runtime)}
+    <button
+      type="button"
+      aria-label={`${abilityAccessibleLabel(ability, context, runtime)}. Hotkey ${keyHint}${queued ? ". Queued; press again to cancel" : ""}`}
+      onClick={() => hudBus.requestUseAbility(ability.id)}
       {...handlers}
+      className={`mobile-combat-ability${queued ? " mobile-combat-ability--queued" : ""}${unavailable ? " mobile-combat-ability--unavailable" : ""}`}
       style={{
         pointerEvents: 'auto',
         display: "flex",
@@ -198,36 +230,31 @@ function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotSta
         >
           {ability.slot === "technique" ? "T" : "G"}
         </span>
+        <span className="combat-ability-slot__key-hint" aria-hidden="true">{keyHint}</span>
       </div>
 
-      <span
-        style={{
-          fontSize: 10,
-          fontFamily: "monospace",
-          color: meta.accent,
-          textShadow: "1px 1px 0 #000",
-          lineHeight: 1,
-          whiteSpace: "nowrap",
-        }}
-      >
+      <span className="mobile-combat-ability__name" style={{ color: meta.accent }}>
         {ability.name} {rank}
       </span>
       {node}
-    </div>
+    </button>
   );
 }
 
 interface DesktopAbilityFamilyProps {
   ability: AbilityDef;
   status: SlotStatus;
-  /** Reserved for real activation bindings; omitted while abilities remain automatic. */
   keyHint?: string;
+  queued: boolean;
+  unavailable: boolean;
 }
 
 function DesktopAbilityFamily({
   ability,
   status,
   keyHint,
+  queued,
+  unavailable,
 }: DesktopAbilityFamilyProps) {
   const meta = SLOT_META[ability.slot];
   const icon = abilityIconSource(ability);
@@ -270,13 +297,14 @@ function DesktopAbilityFamily({
     <TooltipCard content={abilityTooltipContent(ability, abilityContext, runtime)} />,
   );
   return (
-    <div
-      className={`combat-ability-slot combat-ability-slot--${ability.slot} combat-ability-slot--${state}`}
+    <button
+      type="button"
+      className={`combat-ability-slot combat-ability-slot--${ability.slot} combat-ability-slot--${state}${queued ? " combat-ability-slot--queued" : ""}${unavailable ? " combat-ability-slot--unavailable" : ""}`}
       data-ability-icon={ability.icon ?? ability.id}
       data-ability-state={state}
       role="listitem"
-      tabIndex={0}
-      aria-label={label}
+      aria-label={`${label}${keyHint ? `. Hotkey ${keyHint}` : ""}${queued ? ". Queued; press again to cancel" : ""}`}
+      onClick={() => hudBus.requestUseAbility(ability.id)}
       {...handlers}
     >
       <div className="combat-ability-slot__icon">
@@ -305,6 +333,91 @@ function DesktopAbilityFamily({
 
       <div className="combat-ability-slot__name">{ability.name} {rank}</div>
       {node}
+    </button>
+  );
+}
+
+function StanceCooldownSweep({ remainingPct }: { remainingPct: number }) {
+  if (remainingPct <= 0) return null;
+  return (
+    <span
+      className="combat-stance-control__cooldown-sweep"
+      style={{
+        background: `conic-gradient(from -90deg, rgba(0,0,0,0.7) ${remainingPct}%, transparent ${remainingPct}%)`,
+      }}
+      aria-hidden="true"
+    />
+  );
+}
+
+function StanceControl({ now }: { now: number }) {
+  const attuned = useAtomValue(attunedStancesAtom);
+  const active = useAtomValue(activeStanceAtom);
+  const manual = useAtomValue(manualStanceOverrideAtom);
+  const auto = useAtomValue(autoAtom);
+  const cooldownStartedAt = useAtomValue(stanceCooldownStartedAtAtom);
+  const bindings = useAtomValue(keybindsAtom);
+  if (attuned.length === 0) return null;
+
+  const cooldownElapsedMs = Math.max(0, now - cooldownStartedAt);
+  const cooldownRemainingMs = cooldownStartedAt > 0
+    ? Math.max(0, STANCE_SWITCH_COOLDOWN_MS - cooldownElapsedMs)
+    : 0;
+  const cooldownRemainingPct = (cooldownRemainingMs / STANCE_SWITCH_COOLDOWN_MS) * 100;
+  const cooldownLabel = cooldownRemainingMs > 0
+    ? `; stance switch ready in ${(cooldownRemainingMs / 1_000).toFixed(1)} seconds`
+    : "";
+  const neutralHotkey = bindingToLabel(bindings['stance.neutral']);
+
+  return (
+    <div className="combat-stance-control" role="group" aria-label="Live stance control">
+      <button
+        type="button"
+        className={`combat-stance-control__button combat-stance-control__button--neutral${manual === NO_STANCE_ID ? " is-selected" : ""}${active === null ? " is-current" : ""}`}
+        aria-label={`Neutral stance; hotkey ${neutralHotkey}${cooldownLabel}`}
+        aria-pressed={manual === NO_STANCE_ID}
+        title={`${auto
+          ? `Neutral stance${active === null ? " — currently active" : ""}; Auto Combat retains Rune/default control`
+          : `Neutral stance${active === null ? " — currently active" : ""}; hold no stance manually`}${cooldownLabel}`}
+        onClick={() => hudBus.requestSetStanceControl(NO_STANCE_ID)}
+      >
+        <span className="combat-stance-control__icon"><GameIcon source={null} size={25} decorative fallback="◇" /></span>
+        <StanceCooldownSweep remainingPct={cooldownRemainingPct} />
+        <span className="combat-stance-control__key-hint" aria-hidden="true">{neutralHotkey.replace('Shift+', '⇧')}</span>
+      </button>
+      {attuned.map((stanceId, index) => {
+        const stance = stanceDef(stanceId);
+        if (!stance) return null;
+        const selected = manual === stanceId;
+        const current = active === stanceId;
+        const hotkey = STANCE_HOTKEY_ACTIONS[index]
+          ? bindingToLabel(bindings[STANCE_HOTKEY_ACTIONS[index]])
+          : "—";
+        return (
+          <button
+            key={stanceId}
+            type="button"
+            className={`combat-stance-control__button${selected ? " is-selected" : ""}${current ? " is-current" : ""}`}
+            aria-pressed={selected}
+            aria-label={`${stance.name}; hotkey ${hotkey}${cooldownLabel}`}
+            title={`${auto
+              ? `${stance.name}${current ? " — currently active" : ""}; Auto Combat retains Rune/default control`
+              : `${stance.name}${current ? " — currently active" : ""}; select manually`}${cooldownLabel}`}
+            onClick={() => hudBus.requestSetStanceControl(stanceId)}
+          >
+            <span className="combat-stance-control__icon">
+              <GameIcon
+                source={stanceIconSource(stance.id)}
+                size={25}
+                decorative
+                fallback={stance.name.slice(0, 1)}
+              />
+            </span>
+            <StanceCooldownSweep remainingPct={cooldownRemainingPct} />
+            <span className="combat-stance-control__key-hint" aria-hidden="true">{hotkey.replace('Shift+', '⇧')}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -317,9 +430,13 @@ export function AbilityBar() {
   const buffs = useAtomValue(activeBuffsAtom);
   const cast = useAtomValue(abilityCastAtom);
   const playerTier = useAtomValue(playerTierAtom);
+  const queuedAbilityIds = useAtomValue(queuedAbilityIdsAtom);
+  const targetId = useAtomValue(attackTargetIdAtom);
+  const bindings = useAtomValue(keybindsAtom);
+  const attunedStances = useAtomValue(attunedStancesAtom);
 
-  // Tick a wall clock so cooldown sweeps / flashes animate. The bar only mounts
-  // content when an ability is equipped, so this stays cheap.
+  // Tick a wall clock so ability and stance cooldown sweeps / flashes animate.
+  // The bar only mounts while at least one combat control exists, so this stays cheap.
   const [now, setNow] = useState(() => Date.now());
 
   // Guard buffs are per-slot ids, so the tile for guard slot N lights up only
@@ -339,12 +456,13 @@ export function AbilityBar() {
   const hasAny = equippedDefs.length > 0;
 
   useEffect(() => {
-    if (!hasAny) return;
+    if (!hasAny && attunedStances.length === 0) return;
     const id = window.setInterval(() => setNow(Date.now()), 120);
     return () => window.clearInterval(id);
-  }, [hasAny]);
+  }, [hasAny, attunedStances.length]);
 
-  if (!hasAny) return null;
+  const keyHints = ABILITY_HOTKEY_ACTIONS.map((action) => bindingToLabel(bindings[action]));
+  if (!hasAny && attunedStances.length === 0) return null;
 
   const slots: { ability: AbilityDef; status: SlotStatus }[] = equippedDefs.map(
     ({ ability, slot, index }) => {
@@ -373,23 +491,33 @@ export function AbilityBar() {
 
   if (isMobile) return (
     <div
-      className="ability-bar-root"
+      className="ability-bar-root combat-control-stack"
       data-ui-unlock-system="abilityDock"
       style={{
         position: "absolute",
         bottom: 16,
         left: 14,
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
         gap: SLOT_GAP,
         alignItems: "flex-end",
         pointerEvents: "none",
         zIndex: 12,
       }}
     >
-      {slots.map(({ ability, status }) => (
-        <AbilityIcon key={ability.id} ability={ability} status={status} />
-      ))}
+      <StanceControl now={now} />
+      {hasAny && <div className="mobile-combat-abilities">
+        {slots.map(({ ability, status }, index) => (
+          <AbilityIcon
+            key={ability.id}
+            ability={ability}
+            status={status}
+            keyHint={keyHints[index] ?? "—"}
+            queued={queuedAbilityIds.includes(ability.id)}
+            unavailable={ability.slot === "technique" && ability.shape !== "instant" && ability.shape !== "self-cast" && !targetId}
+          />
+        ))}
+      </div>}
     </div>
   );
 
@@ -398,12 +526,22 @@ export function AbilityBar() {
       className="desktop-hud desktop-combat-abilities"
       data-ui-unlock-system="abilityDock"
       role="group"
-      aria-label="Automatic abilities"
+      aria-label="Combat controls"
     >
-      <div className="desktop-combat-abilities__layout" role="list">
-        {slots.map(({ ability, status }) => (
-          <DesktopAbilityFamily key={ability.id} ability={ability} status={status} />
-        ))}
+      <div className="combat-control-stack">
+        <StanceControl now={now} />
+        {hasAny && <div className="desktop-combat-abilities__layout" role="list">
+          {slots.map(({ ability, status }, index) => (
+            <DesktopAbilityFamily
+              key={ability.id}
+              ability={ability}
+              status={status}
+              keyHint={keyHints[index] ?? "—"}
+              queued={queuedAbilityIds.includes(ability.id)}
+              unavailable={ability.slot === "technique" && ability.shape !== "instant" && ability.shape !== "self-cast" && !targetId}
+            />
+          ))}
+        </div>}
       </div>
     </HudDock>
   );

@@ -1,3 +1,4 @@
+import { outgoingFinalDamage } from './finalDamage';
 import { registerCombatListener } from "../engine/combatPipeline";
 import {
   applyStatusEffect,
@@ -13,6 +14,7 @@ import {
   BRITTLE_EFFECT_ID,
   BRITTLE_DURATION_MS,
   DR_SHATTER_EFFECT_ID,
+  weaponDotBasisFromResolvedDirectDamage,
   type DamageElement,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
@@ -210,8 +212,15 @@ export function initWeaponEffects(): void {
       typeof ctx.metadata["empoweredBonus"] === "number"
         ? ctx.metadata["empoweredBonus"]
         : 0;
-    const reservoirBasis = Math.max(0, ctx.damage - empoweredBonus);
-    const poolGain = reservoirBasis * profile.convPct * profile.dotMultiplier;
+    const reservoirBasis = weaponDotBasisFromResolvedDirectDamage(
+      Math.max(0, ctx.damage - empoweredBonus),
+      player.usesSkills.combatArchetype,
+      player.usesSkills.passives,
+    );
+    const poolGain = reservoirBasis
+      * profile.convPct
+      * profile.dotMultiplier
+      * (ctx.formation?.secondaryEffectMult ?? 1);
 
     const effect = applyStatusEffect(ctx.defender.tracksCombat, {
       id: profile.effectId,
@@ -317,7 +326,7 @@ function updateBurnEffects(world: World, dt: number): void {
           if (effect.remainingMs <= 0) removeStatusEffect(state, effectId);
           continue;
         }
-        const damage = applyMonsterDamageTakenDebuffs(state, baseDamage);
+        const damage = outgoingFinalDamage(world, effect.sourceId, applyMonsterDamageTakenDebuffs(state, baseDamage));
         effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - baseDamage);
         recordMonsterDamagedByPlayer(
           world,

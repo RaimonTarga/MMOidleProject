@@ -277,6 +277,7 @@ function instantReskinNode(scene: GameScene, nodeId: string): void {
 function queueBiomeAssets(
   scene: GameScene,
   biomes: ReadonlySet<string> | null,
+  includeDecor = true,
 ): void {
   const biomeTextureKeysSeen = new Set<string>();
   for (const [biomeGroup, key] of Object.entries(BIOME_TEXTURES)) {
@@ -292,6 +293,11 @@ function queueBiomeAssets(
     if (scene.textures.exists(altar.key)) continue;
     scene.load.image(altar.key, altar.file);
   }
+  if (includeDecor) queueBiomeDecorAssets(scene, biomes);
+}
+
+/** Decorative props have no gameplay collision; stream them after player boot. */
+function queueBiomeDecorAssets(scene: GameScene, biomes: ReadonlySet<string> | null): void {
   const biomeDecorKeysSeen = new Set<string>();
   for (const [biomeGroup, specs] of Object.entries(BIOME_DECOR)) {
     if (!specs) continue;
@@ -432,7 +438,8 @@ export function preloadGameAssets(scene: GameScene): void {
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   queueTreeAssets(scene);
-  queueBiomeAssets(scene, null);
+  // Ground, functional hazards, altar and obstacle art remain boot essentials.
+  queueBiomeAssets(scene, null, false);
   // Audio: only entries with a real file are registered (manifest files are
   // undefined until assets land, so the engine synthesizes fallbacks meanwhile).
   for (const id of Object.keys(SFX_MANIFEST) as SfxId[]) {
@@ -611,6 +618,24 @@ export function createGameScene(scene: GameScene): void {
     detachSocket();
   });
   if (scene.spectatorMode) startDeferredSpectatorAssets(scene);
+  else {
+    queueBiomeDecorAssets(scene, null);
+    scene.load.once('complete', () => {
+      const adoptDecor = () => {
+        // A transition may already have painted its destination before the
+        // download finishes. Repaint after it settles so props are not missing
+        // until the next node change. Scene timers are cancelled on shutdown.
+        if (scene.transitioning) {
+          scene.time.delayedCall(100, adoptDecor);
+          return;
+        }
+        const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+        if (nodeId) instantReskinNode(scene, nodeId);
+      };
+      adoptDecor();
+    });
+    scene.load.start();
+  }
 
   const applyPeekBoundsOnResize = (): void => {
     const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;

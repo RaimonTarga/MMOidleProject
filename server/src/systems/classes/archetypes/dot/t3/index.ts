@@ -1,3 +1,4 @@
+import { resolveDotStackCap } from '@mmo-idle/shared';
 import {
   computeDotClassDamagePerStack,
   getStatusEffect,
@@ -72,7 +73,7 @@ export function initDotT3(): void {
     const profile = resolveDotClassProfile(passives, player.usesSkills.selectedSubVariant);
     const delivery = resolveDotRelicDeliveryProfile(
       profile.tickIntervalMs,
-      profile.maxStacks,
+      resolveDotStackCap(passives, profile.maxStacks),
       relicRatingsFromPassives(passives),
     );
     const maxStacks = delivery.maxStacks.after;
@@ -126,7 +127,7 @@ export function initDotT3(): void {
     const profile = resolveDotClassProfile(passives, player.usesSkills.selectedSubVariant);
     const maxStacks = resolveDotRelicDeliveryProfile(
       profile.tickIntervalMs,
-      profile.maxStacks,
+      resolveDotStackCap(passives, profile.maxStacks),
       relicRatingsFromPassives(passives),
     ).maxStacks.after;
     const frenzyDurationMs = Math.max(100, Math.round(
@@ -148,7 +149,7 @@ export function initDotT3(): void {
         'onHitPerTier',
         passives['dot.frenzy-onhit-per-tier'] ?? FRENZY_ONHIT_PER_TIER,
       ));
-      ctx.damage += Math.round(onHitPerTier * tierMult);
+      ctx.metadata['onHitDamageBonus'] = (typeof ctx.metadata['onHitDamageBonus'] === 'number' ? ctx.metadata['onHitDamageBonus'] : 0) + Math.round(onHitPerTier * tierMult);
     }
   });
 

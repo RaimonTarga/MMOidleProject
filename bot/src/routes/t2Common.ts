@@ -145,7 +145,7 @@ export function craftT2Piece(biomeGroup: T2BiomeGroup, recipeId: string): RouteS
  * moving alongside biome difficulty. Rune adoption is its own experiment axis --
  * see the Rune regression suite and the experiment ledger.
  *
- * Cost against the 11 RP budget Global Mastery 30 buys:
+ * Rune logic costs (shared budget at GM30 is currently 22 RP; abilities and stances reserve from it too):
  *   melee-chase  : auto-path 0 + step-back 3 + chase 1 + hazards 2 + regen 1 = 7
  *   ranged-orbit : auto-path 0 + step-back 3 + orbit 3 + hazards 2 + regen 1 = 9
  */
@@ -166,7 +166,7 @@ export function t2Runes(profile: T2MovementProfile, braceEquipped = false): Equi
   ];
   if (braceEquipped) {
     // `shouldFire()` suppresses a Guard's own built-in trigger the moment ANY
-    // fire-guard rule is equipped, so this rule is only ever correct while Brace
+    // use-ability rule targeting it is equipped, so this rule is only ever correct while Brace
     // -- whose intended trigger really is an enemy cast -- is the equipped Guard.
     rules.push({ conditionId: "target-casting", actionId: "use-ability", targetAbilityId: "brace" });
   }

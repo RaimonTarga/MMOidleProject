@@ -121,6 +121,8 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   // Core `-mult` keys are fractions ON a stat, not multipliers OF it: 0.15 means
   // +15%, and `mult` would print a meaningless "0.2×". Negative values are real
   // (a core that trades one stat for another), so they read signed.
+  'core.damage-dealt-pct': signedPct,
+  'core.damage-taken-pct': signedPct,
   'core.attack-mult':                 signedPct,
   'core.maxhp-mult':                  signedPct,
   'core.plating-mult':                signedPct,
@@ -267,18 +269,8 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   const secK  = (k: string) => `${Math.round((fx[k] ?? 0) / 1000)}s`;
   const mark  = (...keys: string[]) => keys.forEach(k => seen.add(k));
 
-  const relicRatings: [string, string][] = [
-    ['relic.mechanic-frequency', 'Mechanic Frequency'],
-    ['relic.mechanic-potency', 'Mechanic Potency'],
-    ['relic.mechanic-buff-effect', 'Mechanic Buff Effect'],
-    ['relic.mechanic-debuff-effect', 'Mechanic Debuff Effect'],
-  ];
-  for (const [key, label] of relicRatings) {
-    if (!has(key)) continue;
-    const value = Math.round((fx[key] ?? 0) * 100);
-    lines.push(`${label}: ${value >= 0 ? '+' : ''}${value}%`);
-    mark(key);
-  }
+  // Relics use their character-resolved profile instead of raw ratings.
+  mark('relic.mechanic-frequency', 'relic.mechanic-potency', 'relic.mechanic-buff-effect', 'relic.mechanic-debuff-effect');
 
   if (has('defense.barrier-pct')) {
     const delay = fx['defense.barrier-delay-ms'];
@@ -551,6 +543,9 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     );
     mark('core.focus-damage-per-hit-mult', 'core.focus-max-stacks');
   }
+  for (const [key, label] of [['core.damage-dealt-pct', 'final damage dealt'], ['core.damage-taken-pct', 'final damage taken']] as const) {
+    if (has(key)) { lines.push(`${signedPct(fx[key] ?? 0)} ${label}`); mark(key); }
+  }
   if (has('core.dr-layer-pct')) {
     lines.push(`${pctK('core.dr-layer-pct')} damage reduction (separate multiplicative layer)`);
     mark('core.dr-layer-pct');
@@ -652,44 +647,54 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
 }
 
 const seconds = (ms: number): string => `${round1(ms / 1000)}s`;
-const beforeAfter = (before: string | number, after: string | number): string => `${before} → ${after}`;
+const beforeAfter = (before: string | number, after: string | number): string => before === after ? `${after} (unchanged)` : `${before} → ${after}`;
+const precise = (v: number) => String(Math.round(v * 100) / 100);
 
-/** Human-readable rendering of the shared character-specific Relic preview. */
+/** Concrete class effects are the primary item description. */
 export function formatResolvedRelicProfile(profile: ResolvedRelicProfile | null): string[] {
-  if (!profile) return ['Current class: effect preview unavailable'];
+  if (!profile) return ['Choose a class to see this relic’s effects'];
+  const lines: string[] = [];
+  const pair = (label: string, value: { before: number; after: number }, fmt: (n: number) => string = precise) =>
+    lines.push(`${label}: ${beforeAfter(fmt(value.before), fmt(value.after))}`);
+  const mult = (v: number) => `×${precise(v)}`;
   switch (profile.archetype) {
     case 'cadence':
-      return [
-        `For Striker: finisher every ${beforeAfter(profile.threshold.before, profile.threshold.after)} hits`,
-        `Finisher damage ${beforeAfter(`${round1(profile.empoweredMultiplier.before)}×`, `${round1(profile.empoweredMultiplier.after)}×`)}`,
-      ];
+      pair('Finisher', profile.threshold, n => `every ${n} attacks`);
+      pair('Finisher damage', profile.empoweredMultiplier, mult);
+      break;
     case 'cooldown':
-      return [
-        `For Squire: execution cooldown ${beforeAfter(seconds(profile.cooldownMs.before), seconds(profile.cooldownMs.after))}`,
-        `Execution damage ${beforeAfter(`${round1(profile.empoweredMultiplier.before)}×`, `${round1(profile.empoweredMultiplier.after)}×`)}`,
-      ];
+      pair('Execution cooldown', profile.cooldownMs, seconds);
+      pair('Execution damage', profile.empoweredMultiplier, mult);
+      break;
     case 'reload':
-      return [
-        `For Slinger: reload ${beforeAfter(seconds(profile.reloadMs.before), seconds(profile.reloadMs.after))}`,
-        `Magazine ${beforeAfter(profile.ammoMax.before, profile.ammoMax.after)} rounds`,
-      ];
+      pair('Reload time', profile.reloadMs, seconds);
+      pair('Maximum ammo', profile.ammoMax);
+      break;
+    case 'laser':
+      pair('Maximum heat', profile.heatMax);
+      pair('Full cooling time', profile.coolingMs, seconds);
+      break;
     case 'dot':
-      return [
-        `For DoT: tick interval ${beforeAfter(seconds(profile.tickIntervalMs.before), seconds(profile.tickIntervalMs.after))}`,
-        `Stack cap ${beforeAfter(profile.maxStacks.before, profile.maxStacks.after)}`,
-      ];
+      pair('DoT tick interval', profile.tickIntervalMs, seconds);
+      pair('Maximum DoT stacks', profile.maxStacks);
+      break;
     case 'energy':
-      return [
-        `For Energy: gain ${beforeAfter(profile.gainPerHit.before, profile.gainPerHit.after)} per hit`,
-        `Capacity ${beforeAfter(profile.maxEnergy.before, profile.maxEnergy.after)}`,
-        `Discharge ${beforeAfter(`${round1(profile.dischargeMultiplier.before)}×`, `${round1(profile.dischargeMultiplier.after)}×`)}`,
-      ];
+      pair(profile.gainPerHitLabel ?? 'Energy gained per hit', profile.gainPerHit);
+      pair('Maximum energy', profile.maxEnergy);
+      if (!profile.dischargeSuppressed) pair('Discharge damage', profile.dischargeMultiplier, mult);
+      break;
     case 'summoner':
-      return [
-        `For Summoner: resummon ${beforeAfter(seconds(profile.respawnMs.before), seconds(profile.respawnMs.after))}`,
-        `Summon cap ${beforeAfter(profile.summonCount.before, profile.summonCount.after)}`,
-      ];
+      pair('Reconstruction time', profile.respawnMs, seconds);
+      if (profile.summonPower) pair('Companion damage and health', profile.summonPower, mult);
+      else pair('Maximum summons', profile.summonCount);
+      break;
   }
+  lines.push(...(profile.secondaryNotes ?? []));
+  for (const effect of profile.secondaryEffects ?? []) {
+    if (effect.before === effect.after) continue;
+    pair(effect.label, effect, effect.unit === 'percent' ? n => `${precise(n * 100)}%` : effect.unit === 'multiplier' ? mult : precise);
+  }
+  return lines;
 }
 
 // Generates human-readable effect lines for weapon families (Chaotic / Burn).

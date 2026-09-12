@@ -53,6 +53,8 @@ import type {
   IsRooted,
   IsUltimateEngaged,
   MitigatesDamage,
+  OverridesStance,
+  QueuesAbilities,
   PerformsAttack,
   RecoversFromPattern,
   RunsBossPattern,
@@ -241,6 +243,8 @@ export interface ServerEntity {
   hasBarrier?: HasBarrier;
   holdsWards?: HoldsWards;
   usesAutocombat?: UsesAutocombat;
+  overridesStance?: OverridesStance;
+  queuesAbilities?: QueuesAbilities;
   hasAutoIntent?: HasAutoIntent;
   hasEmote?: HasEmote;
   tracksProgression?: TracksProgression;

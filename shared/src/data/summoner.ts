@@ -25,6 +25,8 @@ export type SummonerSpecialization =
 export interface SummonerFrameTuning {
   count: number;
   offenseMult: number;
+  /** Formation-wide flat on-hit and generic proc budget multiplier. */
+  secondaryEffectMult: number;
   totalSummonHpPct: number;
   moveSpeedMult: number;
   sizeMult: number;
@@ -82,6 +84,7 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
   root: {
     count: 4,
     offenseMult: 1,
+    secondaryEffectMult: 1,
     totalSummonHpPct: 0.8,
     moveSpeedMult: 1,
     sizeMult: 1,
@@ -90,6 +93,7 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
   light: {
     count: 6,
     offenseMult: 1.05,
+    secondaryEffectMult: 1.2,
     totalSummonHpPct: 0.66,
     moveSpeedMult: 1.18,
     sizeMult: 0.72,
@@ -98,6 +102,7 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
   balanced: {
     count: 5,
     offenseMult: 1,
+    secondaryEffectMult: 1,
     totalSummonHpPct: 1,
     moveSpeedMult: 1,
     sizeMult: 1,
@@ -106,6 +111,7 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
   heavy: {
     count: 2,
     offenseMult: 0.98,
+    secondaryEffectMult: 1,
     totalSummonHpPct: 1.4,
     moveSpeedMult: 0.78,
     sizeMult: 1.75,
@@ -241,7 +247,7 @@ export const SUMMONER_SPECIALIZATION_TUNING = {
     naturalDeathExplosionMult: 0.45,
     explosionRadius: 78,
   },
-  endlessSwarm: { count: 8 },
+  endlessSwarm: { count: 8, secondaryEffectMult: 1.3 },
   harrierBrood: { damageTakenPctPerSlot: 0.035, durationMs: 5_000 },
   coordinatedHunt: {
     openingDamageMult: 1.45,

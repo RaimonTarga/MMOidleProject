@@ -1,3 +1,4 @@
+import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
 import { getStatusEffect, removeStatusEffect } from '@mmo-idle/shared';
 import { detachMarker, detachMarkerIfNoEffect } from '../../../../../../ecs/markerHelpers';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
@@ -40,7 +41,7 @@ export function updateConflagration(world: World, dt: number): void {
     effect.data.ticksLeft--;
 
     const baseDamage = Math.max(1, Math.round(effect.data.damagePerTick * getFrostbiteDotTakenMult(monsterState)));
-    const damage = Math.max(1, applyMonsterDamageTakenDebuffs(monsterState, baseDamage));
+    const damage = outgoingFinalDamage(world, effect.sourceId, Math.max(1, applyMonsterDamageTakenDebuffs(monsterState, baseDamage)));
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(
       world,

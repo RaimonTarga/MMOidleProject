@@ -142,13 +142,13 @@ export class Intents {
     this.conn.raw.emit("inventory:unequip", slot);
   }
 
-  setRuneLoadout(rules: EquippedRule[]): void {
-    this.conn.raw.emit("rune:setLoadout", rules);
+  setRuneLoadout(rules: EquippedRule[]): Promise<CraftOutcome> {
+    return this.conn.request("build:loadoutResult", () => this.conn.raw.emit("rune:setLoadout", rules), 15_000, p => p.system === "runes");
   }
 
   setDefaultStance(stanceId: string | null, attunedStances?: string[]): Promise<{ system: "stances"; success: boolean; reason?: string }> {
     return this.conn.request("build:loadoutResult", () =>
-      this.conn.raw.emit("stance:setLoadout", { slot: "default" as StanceSlot, stanceId, attunedStances }),
+      this.conn.raw.emit("stance:setLoadout", { slot: "default" as StanceSlot, stanceId, attunedStances }), 15_000, p => p.system === "stances",
     );
   }
 
@@ -171,8 +171,16 @@ export class Intents {
     );
   }
 
-  setAbilityLoadout(equipped: AttunedAbilities): void {
-    this.conn.raw.emit("ability:setLoadout", { equipped });
+  setAbilityLoadout(equipped: AttunedAbilities): Promise<CraftOutcome> {
+    return this.conn.request("build:loadoutResult", () => this.conn.raw.emit("ability:setLoadout", { equipped }), 15_000, p => p.system === "abilities");
+  }
+
+  craftRiteRecipe(recipeId: string): Promise<CraftOutcome> {
+    return this.conn.request("rite:craftResult", () => this.conn.raw.emit("rite:craftRecipe", recipeId));
+  }
+
+  setRiteLoadout(riteIds: string[]): Promise<CraftOutcome> {
+    return this.conn.request("build:loadoutResult", () => this.conn.raw.emit("rite:setLoadout", { riteIds }), 15_000, p => p.system === "rites");
   }
 
   /**

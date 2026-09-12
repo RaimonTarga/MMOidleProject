@@ -8,8 +8,11 @@ export interface IntentMap {
   craftRuneRecipe: string;
   craftAbilityRecipe: string;
   setAbilityLoadout: { equipped: AttunedAbilities };
+  useAbility: string;
+  manualReload: undefined;
   craftStanceRecipe: string;
   setStanceLoadout: { slot: StanceSlot; stanceId: string | null; attunedStances?: string[] };
+  setStanceControl: string | null;
   craftRiteRecipe: string;
   setRiteLoadout: { riteIds: string[] };
   activateDungeonAltar: undefined;

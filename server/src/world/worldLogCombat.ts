@@ -30,17 +30,17 @@ export function buildPlatingDrBreakdown(params: {
   damageReduction: number;
   onHitBonus?: number;
 }): DamageMitigationBreakdown {
+  const grossDamage = params.grossDamage + (params.onHitBonus ?? 0);
   const afterPlating = Math.max(
     0,
-    params.grossDamage - params.effectivePlating * params.platingMult,
+    grossDamage - params.effectivePlating * params.platingMult,
   );
-  const platingBlocked = params.grossDamage - afterPlating;
+  const platingBlocked = grossDamage - afterPlating;
   const afterDr = afterPlating * (1 - params.damageReduction);
   const drBlocked = afterPlating - afterDr;
-  const onHit = params.onHitBonus ?? 0;
-  const { hpDamage, glancing } = applyDamageFloor(afterDr + onHit);
+  const { hpDamage, glancing } = applyDamageFloor(afterDr);
   return {
-    grossDamage: params.grossDamage + onHit,
+    grossDamage,
     platingBlocked,
     drBlocked,
     mitigatedTotal: platingBlocked + drBlocked,

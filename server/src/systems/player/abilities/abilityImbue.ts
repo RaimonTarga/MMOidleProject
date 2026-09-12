@@ -24,6 +24,7 @@ import {
   removeStatusEffect,
   resolveAbilityEffect,
   type AbilityDef,
+  type TracksCombat,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import type { CombatContext } from "../../combat/engine/combatPipeline";
@@ -80,11 +81,35 @@ export function imbueChargesRemaining(player: PlayerEntity): number {
 }
 
 /**
+ * Live on-hit-damage bonus from an active Imbue window, or 0 when none is up
+ * (or its charges are spent).
+ *
+ * ONE DEFINITION, TWO CONSUMERS — combat.ts folds this straight into the same
+ * `dealsDamage.onHitDamage` term used by gear (so it rides the same
+ * core.onhit-mult / formation-weight / per-shot multipliers), and the
+ * `hasStatus` mirror (see `hpForecast.ts`) reads this exact function so the
+ * stat panel shows the boosted number instead of a value that visibly never
+ * moves while the window is open — the same trap `attackCadenceMult` was
+ * written to close for temporary haste/slow.
+ */
+export function imbueOnHitBonus(cs: TracksCombat): number {
+  const effect = getStatusEffect(cs, ABILITY_IMBUE_EFFECT_ID);
+  if (!effect) return 0;
+  const charges = Math.floor(effect.data["charges"] ?? 0);
+  if (charges <= 0) return 0;
+  return Math.max(0, Math.round(effect.data["onHitDamage"] ?? 0));
+}
+
+/**
  * Register the on-hit consumer.
  *
- * Registered on `onHit` so the bonus is a normal part of the outgoing hit and
- * passes through the target's plating/DR like any other damage — this is a
- * bigger, slower on-hit hit, not an unmitigated true-damage rider.
+ * Registered on `onHit` so the charge is spent as a normal part of the
+ * outgoing hit. The bonus itself is NOT added to `ctx.damage` here — it is
+ * handed off via `ctx.metadata["imbueOnHitBonus"]` and folded into
+ * `dealsDamage.onHitDamage`'s own term further down the pipeline (combat.ts),
+ * so it passes through the SAME plating/DR placement, core.onhit-mult,
+ * formation weight, and per-shot multipliers as the real on-hit stat instead
+ * of being a parallel, differently-composed number.
  *
  * ONE CHARGE PER LANDED HIT, which for a Reload magazine means one charge per
  * bullet (the designer's call). That is consistent with how the `onHitDamage`
@@ -109,8 +134,11 @@ export function initImbueSystem(): void {
       return;
     }
 
+    // Captured BEFORE the decrement below, which may remove the effect
+    // outright on the last charge — combat.ts reads this handoff value
+    // rather than re-querying `tracksCombat` after this listener returns.
     const bonus = Math.max(0, Math.round(effect.data["onHitDamage"] ?? 0));
-    if (bonus > 0) ctx.damage += bonus;
+    if (bonus > 0) ctx.metadata["imbueOnHitBonus"] = bonus;
 
     effect.data["charges"] = charges - 1;
     if (effect.data["charges"] <= 0) {

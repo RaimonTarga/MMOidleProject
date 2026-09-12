@@ -119,7 +119,6 @@ export interface RenderState {
     {
       currentFrame: string | null;
       textureKey?: string;
-      shadowLevel?: number;
       barOffsetY: number;
       entityName?: string;
       monsterBehavior?: string;

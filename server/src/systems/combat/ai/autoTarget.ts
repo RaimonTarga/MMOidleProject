@@ -663,11 +663,13 @@ export function updateAutoTargets(world: World, now: number) {
       }
     }
 
+    const resolvingTravelInterruption = player.fightsWhileTraveling !== undefined;
     const action = selectAutoCombatAction(
       world,
       player,
       player.usesAutocombat,
       now,
+      resolvingTravelInterruption ? { aggressorsOnly: true } : undefined,
     );
     if (action.kind === "flee") {
       beginFlee(world, player);
@@ -675,6 +677,13 @@ export function updateAutoTargets(world: World, now: number) {
     } else if (action.kind === "attack") {
       steerTowardTarget(world, player, action.target, now);
     } else {
+      if (resolvingTravelInterruption) {
+        // Fight Back answers the encounter that interrupted travel; it is not
+        // permission to turn a retained route into ordinary node farming.
+        setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+        stopEntity(world, player);
+        continue;
+      }
       // idle — nothing within acquire range. Head for the nearest clearable mob
       // on this node (baseline with no runes, and explore rune alike). Hold
       // still only when the node is empty; leaving the node/biome stays owned

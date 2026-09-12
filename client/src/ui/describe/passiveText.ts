@@ -202,6 +202,10 @@ export function formatPassiveValue(
   const withSign = options.signed ?? false;
 
   // Keys whose unit the naming convention does not carry.
+  // This authored value uses whole percentage points (25 means 25%).
+  if (key === 'cadence.debuff-vuln-pct') return formatPercent(value / 100, withSign);
+  // This is an additive bonus: combat multiplies by (1 + value).
+  if (key === 'shared.damage-mult') return formatPercent(value, true);
   if (PERCENT_KEYS.has(key)) return formatPercent(value, withSign);
   if (MULTIPLIER_KEYS.has(key) || key.endsWith('-factor') || key.endsWith('-scale')) {
     return `×${round(value)}`;

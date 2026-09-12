@@ -89,8 +89,10 @@ export function runFormationAttack(
     directDamageWeight: profile.formationOffenseMult * (
       slot.offenseWeight * specialization.damageMult + specialization.directDamageBonusWeight
     ),
-    onHitMagnitudeWeight: slot.procWeight,
-    procWeight: slot.procWeight,
+    onHitMagnitudeWeight:
+      slot.procWeight * profile.secondaryEffectMult * profile.relicPotencyMult,
+    secondaryEffectMult: profile.secondaryEffectMult,
+    procWeight: slot.procWeight * profile.secondaryEffectMult,
     targetId: target.isMonster.id,
     cycleSerial: cycle.serial,
     cycleCompleted: cycle.completed,

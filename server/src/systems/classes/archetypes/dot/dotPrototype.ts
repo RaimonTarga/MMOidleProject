@@ -1,3 +1,5 @@
+import { outgoingFinalDamage, incomingFinalDamage } from '../../../combat/damage/finalDamage';
+import { resolveDotStackCap } from '@mmo-idle/shared';
 import {
   MONSTER_DATABASE,
   computeDotClassDamagePerStack,
@@ -82,7 +84,7 @@ function resolveClassDotStackApplication(
   );
   const delivery = resolveDotRelicDeliveryProfile(
     profile.tickIntervalMs,
-    profile.maxStacks,
+    resolveDotStackCap(attacker.usesSkills.passives, profile.maxStacks),
     relicRatingsFromPassives(attacker.usesSkills.passives),
   );
   // Class DoT stack value is generated from base attack, not final hit damage.
@@ -185,6 +187,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     damage = Math.max(1, Math.round(damage * getSmolderMult(state) * getFrozenMult(state) * getFrostbiteDotTakenMult(state)));
     damage = Math.max(1, applyMonsterDamageTakenDebuffs(state, damage));
 
+    damage = outgoingFinalDamage(world, effect.sourceId, damage);
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(
       world,
@@ -295,7 +298,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     // DoT drains wards then the barrier before HP, mirroring direct hits. A DoT
     // may opt out of the pools (the exception) via dotEffect.bypassBarrier,
     // stored as data.bypassBarrier = 1 — the delay stamp above still applies.
-    let hpDamage = damage;
+    let hpDamage = incomingFinalDamage(world, entity, damage);
     let absorbed = 0;
     if (effect.data.bypassBarrier !== 1) {
       const ward = drainWards(entity, hpDamage);

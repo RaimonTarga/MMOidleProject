@@ -1,3 +1,4 @@
+import { incomingFinalDamage } from '../combat/damage/finalDamage';
 import { pushDamageEvent } from '../combat/damage/damageEvent';
 import {
   applyStatusEffect,
@@ -610,7 +611,7 @@ function tickEntityNodeFeatureDamage(
           0.9,
           player.usesSkills.passives['defense.dot-resistance'] ?? 0,
         );
-        const damage = Math.max(
+        let damage = Math.max(
           1,
           Math.round(
             base *
@@ -619,6 +620,7 @@ function tickEntityNodeFeatureDamage(
           ),
         );
 
+        damage = incomingFinalDamage(world, player, damage);
         recordPlayerDamaged(
           world,
           player,

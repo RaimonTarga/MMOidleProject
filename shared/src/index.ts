@@ -66,6 +66,7 @@ export * from './components';
 export * from './protocol/networkedEntity';
 export * from './protocol/delta';
 export * from './protocol/bossFelled';
+export * from './protocol/clientEffects';
 export * from './protocol/views';
 export * from './protocol/combatEvents';
 export * from './protocol/worldLogEvents';
@@ -106,3 +107,11 @@ export * from './ultimate/hazardDisplay';
 export * from './systems/systemVisibility';
 export * from './ultimate/gear';
 export * from "./attunementMigration";
+
+export * from './systems/onHitDamage';
+export * from './systems/relicPreview';
+export * from './systems/laserProfile';
+export * from './systems/equipmentPreview';
+export * from './systems/classSecondaryDamage';
+
+export * from './systems/finalDamage';

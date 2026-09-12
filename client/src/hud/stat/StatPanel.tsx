@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { estimatePlayerDps, resolveEmpoweredMultiplier, riteDef } from '@mmo-idle/shared';
+import { estimatePlayerDps, resolveEmpoweredMultiplier, resolveOnHitDamage, riteDef } from '@mmo-idle/shared';
 import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
@@ -13,6 +13,8 @@ import {
   attackAtom,
   attackCooldownAtom,
   attackCadenceMultAtom,
+  finalDamageDealtMultAtom,
+  finalDamageTakenMultAtom,
   attackRangeAtom,
   combatArchetypeAtom,
   damageReductionAtom,
@@ -25,6 +27,7 @@ import {
   incomingDotAtom,
   maxHpAtom,
   onHitDamageAtom,
+  onHitDamageBonusAtom,
   passivesAtom,
   pendingHealAtom,
   platingAtom,
@@ -89,10 +92,13 @@ export function StatPanel() {
   const pendingHeal = useAtomValue(pendingHealAtom);
   const attack = useAtomValue(attackAtom);
   const onHitDamage = useAtomValue(onHitDamageAtom);
+  const onHitDamageBonus = useAtomValue(onHitDamageBonusAtom);
   const plating = useAtomValue(platingAtom);
   const damageReduction = useAtomValue(damageReductionAtom);
   const attackCooldown = useAtomValue(attackCooldownAtom);
   const attackCadenceMult = useAtomValue(attackCadenceMultAtom);
+  const finalDamageDealtMult = useAtomValue(finalDamageDealtMultAtom);
+  const finalDamageTakenMult = useAtomValue(finalDamageTakenMultAtom);
   const attackRange = useAtomValue(attackRangeAtom);
   const speed = useAtomValue(speedAtom);
   const recovery = useAtomValue(recoveryAtom);
@@ -124,6 +130,7 @@ export function StatPanel() {
       pendingHeal,
       attack,
       onHitDamage,
+      onHitDamageBonus,
       plating,
       damageReduction,
       attackCooldown,
@@ -167,14 +174,21 @@ export function StatPanel() {
     ? `${hasted ? '+' : '−'}${Math.round(Math.abs(1 / cadenceMult - 1) * 100)}%`
     : null;
   const baseAps     = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
+  // Imbue Lightning's charge bonus folds into the same onHitDamage term as gear
+  // (combat.ts) but never touches `dealsDamage.onHitDamage` itself, so it needs
+  // the same "show the boosted number, tag it as temporary" treatment as the
+  // cadence multiplier above or it looks inert while the window is open.
+  const effectiveOnHit = player ? resolveOnHitDamage(player.onHitDamage + player.onHitDamageBonus, passives) : 0;
+  const onHitBonusTag  = player && player.onHitDamageBonus > 0 ? `+${resolveOnHitDamage(player.onHitDamageBonus, passives)} imbued` : null;
   // Archetype-aware, because `(attack + on-hit) x APS` is the damage of a
   // character who only auto-attacks — which describes none of the six classes,
   // and actively misreports two of them. See shared/src/systems/dpsEstimate.ts.
   const dpsEstimate = player
-    ? estimatePlayerDps({
+    ? estimatePlayerDps({ finalDamageDealtMult,
       attack: player.attack,
       onHitDamage: player.onHitDamage,
       attackCooldownMs: player.attackCooldown,
+      weaponId: player.equipment.weapon,
       archetype: player.combatArchetype,
       passives: player.passives,
       selectedSubVariant,
@@ -196,7 +210,7 @@ export function StatPanel() {
   const dps         = player ? (dpsValue >= 100 ? String(Math.round(dpsValue)) : dpsValue.toFixed(1)) : '—';
   const dpsTip      = dpsEstimate ? (
     <>
-      <div><strong>Estimated</strong> damage per second, worked out from your class mechanic.</div>
+      <div><strong>Estimated sustained</strong> damage per second, worked out from your class mechanic.</div>
       <div style={{ marginTop: 6 }}>
         {dpsEstimate.parts.map((part) => (
           <div key={part.label}>{part.label}: {part.dps}</div>
@@ -296,13 +310,13 @@ export function StatPanel() {
                 // On-hit is flat damage added after mitigation, so it belongs to
                 // the attack figure rather than to a cell of its own — which also
                 // spares it a glyph the commissioned set does not contain.
-                rider: player.onHitDamage > 0 ? `+${player.onHitDamage}` : undefined,
-                name: player.onHitDamage > 0 ? 'Attack (plus on-hit damage)' : 'Attack',
-                help: player.onHitDamage > 0 ? (
+                rider: effectiveOnHit > 0 ? `+${effectiveOnHit}` : undefined,
+                name: effectiveOnHit > 0 ? 'Attack (plus on-hit damage)' : 'Attack',
+                help: effectiveOnHit > 0 ? (
                   <>
                     <div>{STAT_HELP.attack}</div>
                     <div style={{ marginTop: 6 }}>
-                      <strong>+{player.onHitDamage} on-hit.</strong> {STAT_HELP.onHitDamage}
+                      <strong>+{effectiveOnHit} on-hit{onHitBonusTag ? ` (${onHitBonusTag})` : ''}.</strong> {STAT_HELP.onHitDamage}
                     </div>
                   </>
                 ) : STAT_HELP.attack,
@@ -378,6 +392,8 @@ export function StatPanel() {
             <div className="stat-section-title">Offense</div>
             <StatRow label="Attack" value={player?.attack ?? '—'} help={STAT_HELP.attack} />
             <StatRow label="DPS" value={dps} help={STAT_HELP.dps} />
+            <StatRow label="Final damage dealt" value={`×${finalDamageDealtMult.toFixed(2)}`} help="Core and stance multiplier on direct, on-hit, summon and damage-over-time output. Included in DPS." />
+
             <StatRow
               label="Attack Speed"
               value={
@@ -391,8 +407,14 @@ export function StatPanel() {
               }
               help={STAT_HELP.atkSpeed}
             />
-            {player && player.onHitDamage > 0 && (
-              <StatRow label="On-Hit Dmg" value={`+${player.onHitDamage}`} help={STAT_HELP.onHitDamage} />
+            {player && effectiveOnHit > 0 && (
+              <StatRow
+                label="On-Hit Dmg"
+                // Same "show the boosted number, base kept legible" convention
+                // as Attack Speed above.
+                value={onHitBonusTag ? `+${effectiveOnHit} (${onHitBonusTag}) · base +${player.onHitDamage}` : `+${effectiveOnHit}`}
+                help={STAT_HELP.onHitDamage}
+              />
             )}
             {empMult && (
               <StatRow label="Empowered" value={`×${empMult.effective.toFixed(2)}`} help={empMultTip} />
@@ -401,7 +423,8 @@ export function StatPanel() {
           </div>
           <div className="stat-section">
             <div className="stat-section-title">Defense & Recovery</div>
-            <StatRow label="Plating" value={player?.plating ?? '—'} help={STAT_HELP.plating} />
+            <StatRow label="Final damage taken" value={`×${finalDamageTakenMult.toFixed(2)}`} help="Core and stance multiplier after normal mitigation. Below ×1 means less damage taken; above ×1 means more. Does not reduce self-damage costs or deferred damage twice." />
+        <StatRow label="Plating" value={player?.plating ?? '—'} help={STAT_HELP.plating} />
             <StatRow
               label="Damage Reduction"
               value={player ? `${Math.round(player.damageReduction * 100)}%` : '—'}

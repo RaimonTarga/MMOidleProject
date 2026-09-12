@@ -46,6 +46,7 @@ export function abilityTarget(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
+  currentOnly = false,
 ): MonsterEntity | null {
   const range = abilityEngagementRange(player, ability);
   const currentId = player.hasAttackTarget?.targetId;
@@ -58,6 +59,7 @@ export function abilityTarget(
   ) {
     return current;
   }
+  if (currentOnly) return null;
   return world.collision.bestTargetInReach(
     player,
     world.monsterEntitiesInNode(player.hasPosition.nodeId),

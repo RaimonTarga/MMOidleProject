@@ -63,6 +63,8 @@ export interface FormationAttackContribution {
   slotId: string;
   directDamageWeight: number;
   onHitMagnitudeWeight: number;
+  /** Formation-wide multiplier for secondary weapon effects; never direct Attack. */
+  secondaryEffectMult: number;
   procWeight: number;
   targetId: string;
   cycleSerial: number;
@@ -84,6 +86,21 @@ export type CombatContext =
 // ── Handler type ──────────────────────────────────────────────────────────────
 
 export type CombatEventHandler = (ctx: CombatContext, world: World) => void;
+
+/**
+ * Tag this exchange with a one-shot client FX id.
+ *
+ * `metadata.clientEffects` rides the outgoing `player-hit` event as `ev.effects`
+ * and is dispatched by the effects loop in the client's combatFx. Handlers used
+ * to append to it by hand, and the
+ * `Array.isArray(existing) ? [...existing, id] : [id]` incantation had been
+ * copy-pasted into a dozen files — one of which is why a tag can silently
+ * overwrite an earlier one if written as a bare assignment.
+ */
+export function pushClientEffect(ctx: CombatContext, id: string): void {
+  const existing = ctx.metadata['clientEffects'];
+  ctx.metadata['clientEffects'] = Array.isArray(existing) ? [...existing, id] : [id];
+}
 
 // ── Registry (module-level singleton, server-only) ────────────────────────────
 

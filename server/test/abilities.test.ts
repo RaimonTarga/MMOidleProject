@@ -82,6 +82,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
 
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "abilities-player");
+player.usesAutocombat.auto = true;
 // Cooldowns are keyed PER ABILITY (two Guard slots can be equipped), not per slot.
 const GUARD_CD_KEY = abilityCooldownKey("brace");
 // Rank I (a T0/T1 character sits at Brace I): 35% DR on a 10s cooldown.

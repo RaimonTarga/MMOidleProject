@@ -1,0 +1,754 @@
+
+> mmo-idle@0.4 test C:\Users\osaif\Documents\Claude\Projects\MMO idle
+> node scripts/run-tests.mjs
+
+
+=== server/test/abilities.test.ts ===
+abilities.test.ts: ok
+
+=== server/test/abilityAffliction.test.ts ===
+affliction: inventory enumerates families and respects ownership
+affliction: target-max-stacks counts stacking DoTs and ignores reservoirs
+affliction: Contagion copies at full strength, capped, original retained
+affliction: Contagion's target cap follows the authored rank
+affliction: a Contagion copy never reduces an existing affliction
+affliction: Detonate consumes every owned DoT and pays out what was owed
+affliction: situational casts decline rather than burning a cooldown
+affliction: Imbue Lightning spends one charge per hit and then closes
+affliction: Imbue Lightning projects a charge-counting buff tile
+abilityAffliction: ok
+
+=== server/test/abilityBramble.test.ts ===
+abilityBramble.test.ts: ok
+
+=== server/test/abilityCast.test.ts ===
+abilityCast.test.ts: ok
+
+=== server/test/abilityCharge.test.ts ===
+abilityCharge.test.ts: ok
+
+=== server/test/abilityConduitTechniqueAdapter.test.ts ===
+abilityConduitTechniqueAdapter.test.ts: ok
+
+=== server/test/abilityControl.test.ts ===
+abilityControl: ok
+
+=== server/test/abilityGuardsAndReach.test.ts ===
+abilityGuardsAndReach: ok
+
+=== server/test/abilityMultiSlot.test.ts ===
+abilityMultiSlot.test.ts: ok
+
+=== server/test/abilityRanks.test.ts ===
+abilityRanks: ok
+
+=== server/test/abilitySecondWind.test.ts ===
+abilitySecondWind.test.ts: ok
+
+=== server/test/abilitySweepAdapters.test.ts ===
+abilitySweepAdapters.test.ts: ok
+
+=== server/test/abilityTechniqueRune.test.ts ===
+abilityTechniqueRune.test.ts: ok
+
+=== server/test/abilityTelegraphEvents.test.ts ===
+abilityTelegraphEvents.test.ts: ok
+
+=== server/test/abilityTimingPresentation.test.ts ===
+abilityTimingPresentation: ok
+
+=== server/test/adminPlayerSummaries.test.ts ===
+adminPlayerSummaries.test.ts: ok
+
+=== server/test/ambientRamp.test.ts ===
+ambientRamp.test.ts: ok
+
+=== server/test/approachGoalStandable.test.ts ===
+approachGoalStandable.test.ts: ok (33 trunk approaches checked)
+
+=== server/test/attunementRuntime.test.ts ===
+attunementRuntime: ok
+
+=== server/test/autoCollisionRecovery.test.ts ===
+autoCollisionRecovery.test.ts: ok
+
+=== server/test/autoIntent.test.ts ===
+autoIntent.test.ts: ok
+
+=== server/test/autoMovementSmoothness.test.ts ===
+autoMovementSmoothness: ok
+
+=== server/test/balanceInstruments.test.ts ===
+balance instruments: ok
+
+=== server/test/barrier.test.ts ===
+barrier: ok
+
+=== server/test/biomeEcology.test.ts ===
+biomeEcology.test.ts: ok
+
+=== server/test/biomeEcologyPolish.test.ts ===
+biomeEcologyPolish: ok
+
+=== server/test/bossConcealmentPhase4.test.ts ===
+bossConcealmentPhase4: ok
+
+=== server/test/bossCorpsesPhase6.test.ts ===
+bossCorpsesPhase6: ok
+
+=== server/test/bossEncounterRework.test.ts ===
+bossEncounterRework: ok
+
+=== server/test/bossGeometryPhase1.test.ts ===
+bossGeometryPhase1: ok
+
+=== server/test/bossRework.test.ts ===
+boss rework tests passed
+
+=== server/test/bossStatusPayoffPhase3.test.ts ===
+bossStatusPayoffPhase3: ok
+
+=== server/test/bossTrenchPhase7.test.ts ===
+bossTrenchPhase7: ok
+
+=== server/test/bossVolcanoPhase5.test.ts ===
+bossVolcanoPhase5: ok
+
+=== server/test/botBuildPreflight.test.ts ===
+botBuildPreflight: ok (NONCANONICAL harness validation; no balance evidence)
+
+=== server/test/cadenceClassSelection.test.ts ===
+cadenceClassSelection.test.ts: ok
+
+=== server/test/catalystRekey.test.ts ===
+catalystRekey.test: ok
+
+=== server/test/caveBruteOpener.test.ts ===
+cave brute opener tests passed
+
+=== server/test/caveEngageSequence.test.ts ===
+cave engage sequence tests passed
+
+=== server/test/caveGroundSlam.test.ts ===
+caveGroundSlam: ok
+
+=== server/test/characterIsolation.test.ts ===
+characterIsolation.test.ts: ok
+
+=== server/test/classAffinity.test.ts ===
+classAffinity: ok
+
+=== server/test/clearingMastery.test.ts ===
+clearingMastery.test.ts: all passed
+
+=== server/test/clientMovementState.test.ts ===
+clientMovementState: ok
+
+=== server/test/combatText.test.ts ===
+combatText.test.ts: ok
+
+=== server/test/combatTextCoverage.test.ts ===
+combatTextCoverage.test.ts: ok
+
+=== server/test/combatTextResync.test.ts ===
+combatTextResync.test.ts: ok
+
+=== server/test/concurrencySampler.test.ts ===
+concurrencySampler.test: ok
+
+=== server/test/conduitPlayerBodies.test.ts ===
+conduitPlayerBodies: ok
+
+=== server/test/coreAuthoring.test.ts ===
+coreAuthoring: ok
+
+=== server/test/coreCombat.test.ts ===
+coreCombat: ok
+
+=== server/test/coreMechanics.test.ts ===
+coreMechanics: ok
+
+=== server/test/coreRangeGate.test.ts ===
+coreRangeGate: ok
+
+=== server/test/coreRelicIntegration.test.ts ===
+coreRelicIntegration: ok
+
+=== server/test/cores.test.ts ===
+cores.test.ts: ok
+
+=== server/test/corpseRaise.test.ts ===
+corpseRaise: ok
+
+=== server/test/deathCancelsOrders.test.ts ===
+deathCancelsOrders: ok
+
+=== server/test/debugKillNodeMonsters.test.ts ===
+debugKillNodeMonsters.test.ts: ok
+
+=== server/test/describeText.test.ts ===
+describeText: ok
+
+=== server/test/desertPairs.test.ts ===
+desertPairs: ok
+
+=== server/test/desertTracks.test.ts ===
+desertTracks.test.ts: ok (11/15 open nodes tracked, 3 dungeons with an arrival road)
+
+=== server/test/dungeons.test.ts ===
+dungeons.test.ts: ok
+
+=== server/test/eliteTargeting.test.ts ===
+eliteTargeting.test.ts: ok
+
+=== server/test/evasion.test.ts ===
+evasion: ok
+
+=== server/test/farmLoop.test.ts ===
+farmLoop: ok
+
+=== server/test/fastBossRetry.test.ts ===
+fastBossRetry.test.ts: ok
+
+=== server/test/forestT2BossSwipe.test.ts ===
+forestT2BossSwipe.test.ts: ok
+
+=== server/test/forestT2CastedAbilities.test.ts ===
+forestT2CastedAbilities.test.ts: ok
+
+=== server/test/guestAuth.test.ts ===
+guestAuth.test.ts: ok
+
+=== server/test/hudStatusTooltips.test.ts ===
+hudStatusTooltips: ok
+
+=== server/test/humanPlaytestRecorder.test.ts ===
+humanPlaytestRecorder.test.ts: ok
+
+=== server/test/instrumentParity.test.ts ===
+instrument parity: ok
+
+=== server/test/jungleBushDetection.test.ts ===
+jungleBushDetection: ok
+
+=== server/test/jungleBushes.test.ts ===
+jungleBushes.test.ts: ok (15 distinct layouts, cluster 4, scatter 3, ring 4, gauntlet 4)
+
+=== server/test/jungleCastedAbilities.test.ts ===
+jungleCastedAbilities.test.ts: ok
+
+=== server/test/keepDistanceRing.test.ts ===
+keepDistanceRing.test.ts: ok
+
+=== server/test/lavaAndIceLakes.test.ts ===
+lavaAndIceLakes.test.ts: ok (14 volcanic + 12 tundra nodes, all distinct)
+
+=== server/test/linkDecision.test.ts ===
+linkDecision.test.ts: ok
+
+=== server/test/manualCombatControls.test.ts ===
+manualCombatControls: ok
+
+=== server/test/manualPlayerMovement.test.ts ===
+mountain route completed in 671 ticks
+manualPlayerMovement: ok
+
+=== server/test/mobilityBoots.test.ts ===
+mobilityBoots: ok
+
+=== server/test/monsterDeathEffects.test.ts ===
+monsterDeathEffects: ok
+
+=== server/test/monsterDotBuffIcons.test.ts ===
+monsterDotBuffIcons.test.ts: ok
+
+=== server/test/monsterMobileCast.test.ts ===
+monsterMobileCast: ok
+
+=== server/test/monsterReworkPrimitives.test.ts ===
+monsterReworkPrimitives: ok
+
+=== server/test/monsterSpawnTerrain.test.ts ===
+monsterSpawnTerrain.test.ts: ok
+
+=== server/test/mountainCornerTextures.test.ts ===
+mountainCornerTextures: ok
+
+=== server/test/mountainT2ChargedDefenses.test.ts ===
+mountainT2ChargedDefenses.test.ts: ok
+
+=== server/test/navWaypointWedge.test.ts ===
+navWaypointWedge: ok
+
+=== server/test/nodeFeatureRegenSuppression.test.ts ===
+nodeFeatureRegenSuppression: ok
+
+=== server/test/nodeModifiers.wiring.test.ts ===
+nodeModifiers.wiring.test: ok
+
+=== server/test/plainsHawkDiveBomb.test.ts ===
+plainsHawkDiveBomb.test.ts: ok
+
+=== server/test/playerCombatLog.test.ts ===
+playerCombatLog: ok
+
+=== server/test/questMonsterIds.test.ts ===
+questMonsterIds: ok
+
+=== server/test/rangedCombatant.test.ts ===
+rangedCombatant: ok
+
+=== server/test/recovery.test.ts ===
+recovery.test.ts: ok
+
+=== server/test/regionalRespawn.test.ts ===
+regionalRespawn.test.ts: ok
+
+=== server/test/relics.test.ts ===
+relics.test.ts: ok
+
+=== server/test/resetProgress.test.ts ===
+resetProgress: ok
+
+=== server/test/rewardMultiplier.test.ts ===
+rewardMultiplier.test: ok
+
+=== server/test/rites.test.ts ===
+rites.test.ts: ok
+
+=== server/test/runeDynamicHazardAvoidance.test.ts ===
+runeDynamicHazardAvoidance.test.ts: ok
+
+=== server/test/runeMaintenance.test.ts ===
+runeMaintenance.test.ts: ok
+
+=== server/test/runeRecipeDeprecation.test.ts ===
+runeRecipeDeprecation.test.ts: ok
+
+=== server/test/runeTargetingPreference.test.ts ===
+runeTargetingPreference.test.ts: ok
+
+=== server/test/runeTelegraphEvasion.test.ts ===
+runeTelegraphEvasion.test.ts: ok
+
+=== server/test/sanctuaryAltar.test.ts ===
+sanctuaryAltar.test.ts: ok
+
+=== server/test/sessionTokens.test.ts ===
+sessionTokens.test.ts: ok
+
+=== server/test/skillBuildSummary.test.ts ===
+skillBuildSummary: ok
+
+=== server/test/skillPreview.test.ts ===
+Skill previews: all classes, styles, range accents and path frames passed.
+
+=== server/test/socketAuth.test.ts ===
+socketAuth.test.ts: ok
+
+=== server/test/spectatorManager.test.ts ===
+spectatorManager.test.ts: ok
+
+=== server/test/spectatorSnapshot.test.ts ===
+spectatorSnapshot.test.ts: ok
+
+=== server/test/stances.test.ts ===
+stances.test.ts: ok
+
+=== server/test/stancesUnplaced.test.ts ===
+stancesUnplaced.test.ts: ok
+
+=== server/test/summonerOverhaul.test.ts ===
+summonerOverhaul.test.ts: ok
+
+=== server/test/summonerSpecializations.test.ts ===
+summonerSpecializations.test.ts: ok
+
+=== server/test/summonerSprites.test.ts ===
+summonerSprites: ok
+
+=== server/test/t2ProgressionEconomy.test.ts ===
+t2ProgressionEconomy: ok
+
+=== server/test/t3ProgressionEconomy.test.ts ===
+t3ProgressionEconomy: ok
+
+=== server/test/t4ProgressionEconomy.test.ts ===
+t4ProgressionEconomy: ok
+
+=== server/test/targetPriority.test.ts ===
+targetPriority.test.ts: ok
+
+=== server/test/tier2SkillPropagation.test.ts ===
+tier2SkillPropagation.test.ts: ok
+
+=== server/test/tierEntryBootstrap.test.ts ===
+tierEntryBootstrap.test.ts: ok
+
+=== server/test/tierSeals.test.ts ===
+tierSeals: ok
+
+=== server/test/tombstones.test.ts ===
+tombstones: ok
+
+=== server/test/travelDiscovery.test.ts ===
+travelDiscovery: ok
+
+=== server/test/travelFightBack.test.ts ===
+travelFightBack: ok
+
+=== server/test/trenchMonsterAbilities.test.ts ===
+trenchMonsterAbilities.test.ts: ok
+
+=== server/test/tundraChill.test.ts ===
+tundraChill.test.ts: ok
+
+=== server/test/wastelandTrenchDungeons.test.ts ===
+wastelandTrenchDungeons.test.ts: ok (43 grave markers, 12 vertebrae)
+
+=== server/test/wave1AbilityReadability.test.ts ===
+wave1AbilityReadability.test.ts: ok
+
+=== shared/src/attunement.test.ts ===
+attunement: ok
+
+=== shared/src/collision/collision.test.ts ===
+collision tests ok
+
+=== shared/src/collision/pathEndpoint.test.ts ===
+pathEndpoint: ok
+
+=== shared/src/collision/playerMotion.test.ts ===
+player motion tests ok
+player motion temporal tests ok; curved-contact endpoint spread 4.765 px
+
+=== shared/src/collision/playerMotionProperties.test.ts ===
+playerMotionProperties: ok (1161 deterministic clear-start cases)
+
+=== shared/src/config/gameConfig.test.ts ===
+gameConfig.test.ts: all passed
+
+=== shared/src/data/mechanicLabels.test.ts ===
+mechanicLabels: ok
+
+=== shared/src/data/recipeGates.test.ts ===
+recipeGates.test.ts: ok
+
+=== shared/src/protocol/characters.test.ts ===
+characters: ok
+
+=== shared/src/protocol/guestNames.test.ts ===
+guestNames.test.ts: ok
+
+=== shared/src/protocol/tier1Snapshot.test.ts ===
+tier1Snapshot: ok
+
+=== shared/src/runeConflicts.test.ts ===
+runeConflicts.test.ts: ok
+
+=== shared/src/runeEditing.test.ts ===
+runeEditing.test.ts: ok
+
+=== shared/src/systems/balanceLab.test.ts ===
+balanceLab.test.ts: ok
+
+=== shared/src/systems/bestiaryMechanics.test.ts ===
+bestiary mechanics: 117 entries, 154 ability lines: ok
+
+=== shared/src/systems/bestiaryZone.test.ts ===
+bestiaryZone.test.ts: ok
+
+=== shared/src/systems/dotClassProfile.test.ts ===
+dotClassProfile.test.ts: ok
+
+=== shared/src/systems/dpsEstimate.test.ts ===
+dpsEstimate: ok
+
+=== shared/src/systems/itemUpgrades.test.ts ===
+itemUpgrades: ok
+
+=== shared/src/systems/mechanicEffectScaling.test.ts ===
+mechanicEffectScaling: ok
+
+=== shared/src/systems/relicEquipment.test.ts ===
+relicEquipment: ok
+
+=== shared/src/systems/relics.test.ts ===
+relics: ok
+
+=== shared/src/systems/spatialHitbox.test.ts ===
+spatialHitbox.test.ts: ok
+
+=== shared/src/systems/summonerProfile.test.ts ===
+summonerProfile.test.ts: ok
+
+=== shared/src/systems/systemVisibility.test.ts ===
+systemVisibility: ok
+
+=== shared/src/world/map/validation.test.ts ===
+map/validation.test.ts: ok
+
+=== shared/src/world/nodeModifiers.test.ts ===
+nodeModifiers: ok
+
+=== bot/src/concurrency/areaLeaseManager.test.ts ===
+areaLeaseManager.test.ts: ok
+
+=== bot/src/concurrency/cohortEvidenceMonitor.test.ts ===
+cohortEvidenceMonitor.test.ts: ok
+
+=== bot/src/concurrency/routeLeaseSession.test.ts ===
+routeLeaseSession.test.ts: ok
+
+=== bot/src/concurrency/transitPlanner.test.ts ===
+transitPlanner.test.ts: ok
+
+=== bot/src/harness.test.ts ===
+controlled batch modes: ok
+mirror: ok
+observation: ok
+node resolution: ok
+routes: ok
+policies: ok
+out dir: ok
+fast boss retry config: ok
+boss attempt death classification: ok
+mutation retry: ok
+harness: ok
+
+=== bot/src/loadout/loadout.test.ts ===
+loadout.test.ts: ok
+
+=== bot/src/policy/choices.test.ts ===
+player choices and affordable upgrades: ok
+
+=== bot/src/route/readiness.semantic.test.ts ===
+readiness.semantic.test.ts: ok
+
+=== bot/src/routes/t1CanonicalFrameHandoffRoutes.test.ts ===
+t1CanonicalFrameHandoffRoutes.test.ts: ok
+
+=== bot/src/routes/t1EconomyCompatibility.test.ts ===
+t1EconomyCompatibility.test.ts: ok
+
+=== bot/src/routes/t1Routes.semantic.test.ts ===
+t1Routes.semantic.test.ts: ok
+
+=== bot/src/routes/t2CanonicalValidationRoutes.test.ts ===
+t2CanonicalValidationRoutes.test.ts: ok
+
+=== bot/src/routes/t2DayExperimentRoutes.test.ts ===
+t2DayExperimentRoutes.test.ts: ok
+
+=== bot/src/routes/t2Night2Routes.test.ts ===
+t2Night2Routes.test.ts: ok
+
+=== bot/src/routes/t2Routes.semantic.test.ts ===
+t2Routes.semantic.test.ts: ok
+
+=== bot/src/telemetry/economyInstrumentation.test.ts ===
+t1 +5 essence costs: ok
+t1 catalyst rate: ok
+explicit block reasons: ok
+wallet snapshots: ok
+economyInstrumentation: ok
+
+=== bot/src/telemetry/experience.test.ts ===
+experience recorder: ok
+
+=== bot/src/telemetry/requiredTelemetry.test.ts ===
+requiredTelemetry.test.ts: ok
+
+=== bot/src/telemetry/t1Snapshots.test.ts ===
+t1Snapshots.test: ok
+
+=== bot/src/tierEntry/profiles.test.ts ===
+profiles.test.ts: ok
+
+=== bot/src/tierEntry/validate.test.ts ===
+T2_ENTRY_TEMPLATE_VALIDATION: PASS (18 templates)
+validate.test.ts: ok
+
+=== Test Summary ===
+PASS  server/test/abilities.test.ts
+PASS  server/test/abilityAffliction.test.ts
+PASS  server/test/abilityBramble.test.ts
+PASS  server/test/abilityCast.test.ts
+PASS  server/test/abilityCharge.test.ts
+PASS  server/test/abilityConduitTechniqueAdapter.test.ts
+PASS  server/test/abilityControl.test.ts
+PASS  server/test/abilityGuardsAndReach.test.ts
+PASS  server/test/abilityMultiSlot.test.ts
+PASS  server/test/abilityRanks.test.ts
+PASS  server/test/abilitySecondWind.test.ts
+PASS  server/test/abilitySweepAdapters.test.ts
+PASS  server/test/abilityTechniqueRune.test.ts
+PASS  server/test/abilityTelegraphEvents.test.ts
+PASS  server/test/abilityTimingPresentation.test.ts
+PASS  server/test/adminPlayerSummaries.test.ts
+PASS  server/test/ambientRamp.test.ts
+PASS  server/test/approachGoalStandable.test.ts
+PASS  server/test/attunementRuntime.test.ts
+PASS  server/test/autoCollisionRecovery.test.ts
+PASS  server/test/autoIntent.test.ts
+PASS  server/test/autoMovementSmoothness.test.ts
+PASS  server/test/balanceInstruments.test.ts
+PASS  server/test/barrier.test.ts
+PASS  server/test/biomeEcology.test.ts
+PASS  server/test/biomeEcologyPolish.test.ts
+PASS  server/test/bossConcealmentPhase4.test.ts
+PASS  server/test/bossCorpsesPhase6.test.ts
+PASS  server/test/bossEncounterRework.test.ts
+PASS  server/test/bossGeometryPhase1.test.ts
+PASS  server/test/bossRework.test.ts
+PASS  server/test/bossStatusPayoffPhase3.test.ts
+PASS  server/test/bossTrenchPhase7.test.ts
+PASS  server/test/bossVolcanoPhase5.test.ts
+PASS  server/test/botBuildPreflight.test.ts
+PASS  server/test/cadenceClassSelection.test.ts
+PASS  server/test/catalystRekey.test.ts
+PASS  server/test/caveBruteOpener.test.ts
+PASS  server/test/caveEngageSequence.test.ts
+PASS  server/test/caveGroundSlam.test.ts
+PASS  server/test/characterIsolation.test.ts
+PASS  server/test/classAffinity.test.ts
+PASS  server/test/clearingMastery.test.ts
+PASS  server/test/clientMovementState.test.ts
+PASS  server/test/combatText.test.ts
+PASS  server/test/combatTextCoverage.test.ts
+PASS  server/test/combatTextResync.test.ts
+PASS  server/test/concurrencySampler.test.ts
+PASS  server/test/conduitPlayerBodies.test.ts
+PASS  server/test/coreAuthoring.test.ts
+PASS  server/test/coreCombat.test.ts
+PASS  server/test/coreMechanics.test.ts
+PASS  server/test/coreRangeGate.test.ts
+PASS  server/test/coreRelicIntegration.test.ts
+PASS  server/test/cores.test.ts
+PASS  server/test/corpseRaise.test.ts
+PASS  server/test/deathCancelsOrders.test.ts
+PASS  server/test/debugKillNodeMonsters.test.ts
+PASS  server/test/describeText.test.ts
+PASS  server/test/desertPairs.test.ts
+PASS  server/test/desertTracks.test.ts
+PASS  server/test/dungeons.test.ts
+PASS  server/test/eliteTargeting.test.ts
+PASS  server/test/evasion.test.ts
+PASS  server/test/farmLoop.test.ts
+PASS  server/test/fastBossRetry.test.ts
+PASS  server/test/forestT2BossSwipe.test.ts
+PASS  server/test/forestT2CastedAbilities.test.ts
+PASS  server/test/guestAuth.test.ts
+PASS  server/test/hudStatusTooltips.test.ts
+PASS  server/test/humanPlaytestRecorder.test.ts
+PASS  server/test/instrumentParity.test.ts
+PASS  server/test/jungleBushDetection.test.ts
+PASS  server/test/jungleBushes.test.ts
+PASS  server/test/jungleCastedAbilities.test.ts
+PASS  server/test/keepDistanceRing.test.ts
+PASS  server/test/lavaAndIceLakes.test.ts
+PASS  server/test/linkDecision.test.ts
+PASS  server/test/manualCombatControls.test.ts
+PASS  server/test/manualPlayerMovement.test.ts
+PASS  server/test/mobilityBoots.test.ts
+PASS  server/test/monsterDeathEffects.test.ts
+PASS  server/test/monsterDotBuffIcons.test.ts
+PASS  server/test/monsterMobileCast.test.ts
+PASS  server/test/monsterReworkPrimitives.test.ts
+PASS  server/test/monsterSpawnTerrain.test.ts
+PASS  server/test/mountainCornerTextures.test.ts
+PASS  server/test/mountainT2ChargedDefenses.test.ts
+PASS  server/test/navWaypointWedge.test.ts
+PASS  server/test/nodeFeatureRegenSuppression.test.ts
+PASS  server/test/nodeModifiers.wiring.test.ts
+PASS  server/test/plainsHawkDiveBomb.test.ts
+PASS  server/test/playerCombatLog.test.ts
+PASS  server/test/questMonsterIds.test.ts
+PASS  server/test/rangedCombatant.test.ts
+PASS  server/test/recovery.test.ts
+PASS  server/test/regionalRespawn.test.ts
+PASS  server/test/relics.test.ts
+PASS  server/test/resetProgress.test.ts
+PASS  server/test/rewardMultiplier.test.ts
+PASS  server/test/rites.test.ts
+PASS  server/test/runeDynamicHazardAvoidance.test.ts
+PASS  server/test/runeMaintenance.test.ts
+PASS  server/test/runeRecipeDeprecation.test.ts
+PASS  server/test/runeTargetingPreference.test.ts
+PASS  server/test/runeTelegraphEvasion.test.ts
+PASS  server/test/sanctuaryAltar.test.ts
+PASS  server/test/sessionTokens.test.ts
+PASS  server/test/skillBuildSummary.test.ts
+PASS  server/test/skillPreview.test.ts
+PASS  server/test/socketAuth.test.ts
+PASS  server/test/spectatorManager.test.ts
+PASS  server/test/spectatorSnapshot.test.ts
+PASS  server/test/stances.test.ts
+PASS  server/test/stancesUnplaced.test.ts
+PASS  server/test/summonerOverhaul.test.ts
+PASS  server/test/summonerSpecializations.test.ts
+PASS  server/test/summonerSprites.test.ts
+PASS  server/test/t2ProgressionEconomy.test.ts
+PASS  server/test/t3ProgressionEconomy.test.ts
+PASS  server/test/t4ProgressionEconomy.test.ts
+PASS  server/test/targetPriority.test.ts
+PASS  server/test/tier2SkillPropagation.test.ts
+PASS  server/test/tierEntryBootstrap.test.ts
+PASS  server/test/tierSeals.test.ts
+PASS  server/test/tombstones.test.ts
+PASS  server/test/travelDiscovery.test.ts
+PASS  server/test/travelFightBack.test.ts
+PASS  server/test/trenchMonsterAbilities.test.ts
+PASS  server/test/tundraChill.test.ts
+PASS  server/test/wastelandTrenchDungeons.test.ts
+PASS  server/test/wave1AbilityReadability.test.ts
+PASS  shared/src/attunement.test.ts
+PASS  shared/src/collision/collision.test.ts
+PASS  shared/src/collision/pathEndpoint.test.ts
+PASS  shared/src/collision/playerMotion.test.ts
+PASS  shared/src/collision/playerMotionProperties.test.ts
+PASS  shared/src/config/gameConfig.test.ts
+PASS  shared/src/data/mechanicLabels.test.ts
+PASS  shared/src/data/recipeGates.test.ts
+PASS  shared/src/protocol/characters.test.ts
+PASS  shared/src/protocol/guestNames.test.ts
+PASS  shared/src/protocol/tier1Snapshot.test.ts
+PASS  shared/src/runeConflicts.test.ts
+PASS  shared/src/runeEditing.test.ts
+PASS  shared/src/systems/balanceLab.test.ts
+PASS  shared/src/systems/bestiaryMechanics.test.ts
+PASS  shared/src/systems/bestiaryZone.test.ts
+PASS  shared/src/systems/dotClassProfile.test.ts
+PASS  shared/src/systems/dpsEstimate.test.ts
+PASS  shared/src/systems/itemUpgrades.test.ts
+PASS  shared/src/systems/mechanicEffectScaling.test.ts
+PASS  shared/src/systems/relicEquipment.test.ts
+PASS  shared/src/systems/relics.test.ts
+PASS  shared/src/systems/spatialHitbox.test.ts
+PASS  shared/src/systems/summonerProfile.test.ts
+PASS  shared/src/systems/systemVisibility.test.ts
+PASS  shared/src/world/map/validation.test.ts
+PASS  shared/src/world/nodeModifiers.test.ts
+PASS  bot/src/concurrency/areaLeaseManager.test.ts
+PASS  bot/src/concurrency/cohortEvidenceMonitor.test.ts
+PASS  bot/src/concurrency/routeLeaseSession.test.ts
+PASS  bot/src/concurrency/transitPlanner.test.ts
+PASS  bot/src/harness.test.ts
+PASS  bot/src/loadout/loadout.test.ts
+PASS  bot/src/policy/choices.test.ts
+PASS  bot/src/route/readiness.semantic.test.ts
+PASS  bot/src/routes/t1CanonicalFrameHandoffRoutes.test.ts
+PASS  bot/src/routes/t1EconomyCompatibility.test.ts
+PASS  bot/src/routes/t1Routes.semantic.test.ts
+PASS  bot/src/routes/t2CanonicalValidationRoutes.test.ts
+PASS  bot/src/routes/t2DayExperimentRoutes.test.ts
+PASS  bot/src/routes/t2Night2Routes.test.ts
+PASS  bot/src/routes/t2Routes.semantic.test.ts
+PASS  bot/src/telemetry/economyInstrumentation.test.ts
+PASS  bot/src/telemetry/experience.test.ts
+PASS  bot/src/telemetry/requiredTelemetry.test.ts
+PASS  bot/src/telemetry/t1Snapshots.test.ts
+PASS  bot/src/tierEntry/profiles.test.ts
+PASS  bot/src/tierEntry/validate.test.ts
+
+180/180 passed

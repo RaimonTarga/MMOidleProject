@@ -14,6 +14,7 @@ import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
+import { resolveAttackTint, type AttackTint } from '../fx/elementTint';
 
 function minionScale(minion: MinionView): number {
   return Math.max(0.1, minion.sizeMult ?? 1.0);
@@ -29,6 +30,25 @@ function summonTint(state: RenderState, minion: MinionView): number {
   if (state.kind.get(minion.ownerPlayerId) !== 'player') return 0xffffff;
   const owner = state.view.get(minion.ownerPlayerId) as PlayerView | undefined;
   return owner ? resolveSummonTint(owner.unlockedSkills) : 0xffffff;
+}
+
+/**
+ * The OWNER's cosmetic weapon element, applied to what the summons throw. The
+ * Conduit's weapon already sets its summons' damage and cadence, so an elemental
+ * blade belongs in their output too.
+ *
+ * Resolved from the owner's view exactly like {@link summonTint} above, and
+ * absent for the same reason — a summon whose owner is not projected into this
+ * node simply keeps the stock Conduit red. Minions carry no per-hit effect list,
+ * so there is no transient contribution here.
+ */
+function summonAttackTint(
+  state: RenderState,
+  minion: MinionView,
+): AttackTint | undefined {
+  if (state.kind.get(minion.ownerPlayerId) !== 'player') return undefined;
+  const owner = state.view.get(minion.ownerPlayerId) as PlayerView | undefined;
+  return owner ? (resolveAttackTint(owner, null, null) ?? undefined) : undefined;
 }
 
 /** Phaser Images take a tint; the coloured-rectangle fallback does not. */
@@ -140,6 +160,7 @@ export function upsertMinion(
         minion.attackStyle,
         { x: vmSprite.x, y: vmSprite.y },
         { x: targetSprite.x, y: targetSprite.y },
+        { tint: summonAttackTint(state, minion) },
       );
       // Only Vigil's melee summons lunge; Procession bolts and Harrier beams
       // fire from where they stand, exactly like ranged monsters.

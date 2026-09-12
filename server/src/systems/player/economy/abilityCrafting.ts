@@ -22,6 +22,7 @@ import {
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
+import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -146,6 +147,12 @@ export function setAbilityLoadout(
     techniques: [...equipped.techniques],
     guards: [...equipped.guards],
   };
+  const queuedAbilityIds = (entity.queuesAbilities?.abilityIds ?? []).filter((id) => ids.has(id));
+  if (queuedAbilityIds.length > 0) {
+    attachComponent(world, entity, "queuesAbilities", { abilityIds: queuedAbilityIds });
+  } else {
+    detachComponent(world, entity, "queuesAbilities");
+  }
   markSliceDirty(world, entity, "tracksProgression");
   return { success: true };
 }

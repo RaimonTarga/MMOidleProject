@@ -6,6 +6,7 @@ import type {
   EvolveMode,
   PlayerMoveOptions,
   PlayerMoveResult,
+  CombatControlResult,
   StanceSlot,
   Vec2,
 } from '@mmo-idle/shared';
@@ -81,6 +82,21 @@ export function sendSetAbilityLoadout(
   socket.emit('ability:setLoadout', payload);
 }
 
+export function sendUseAbility(
+  socket: GameSocket,
+  abilityId: string,
+  ack?: (result: CombatControlResult) => void,
+): void {
+  socket.emit('ability:use', abilityId, ack);
+}
+
+export function sendManualReload(
+  socket: GameSocket,
+  ack?: (result: CombatControlResult) => void,
+): void {
+  socket.emit('player:manualReload', ack);
+}
+
 export function sendCraftStanceRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('stance:craftRecipe', recipeId);
 }
@@ -90,6 +106,14 @@ export function sendSetStanceLoadout(
   payload: { slot: StanceSlot; stanceId: string | null },
 ): void {
   socket.emit('stance:setLoadout', payload);
+}
+
+export function sendSetStanceControl(
+  socket: GameSocket,
+  stanceId: string | null,
+  ack?: (result: CombatControlResult) => void,
+): void {
+  socket.emit('stance:setControl', { stanceId }, ack);
 }
 
 export function sendCraftRiteRecipe(socket: GameSocket, recipeId: string): void {

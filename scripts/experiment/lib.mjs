@@ -1,3 +1,4 @@
+import { validateStudy } from "./study.mjs";
 import {
   cpSync,
   existsSync,
@@ -160,6 +161,9 @@ export function resolveExperimentId(root, requested) {
 }
 
 export function normalizeCreateOptions(args) {
+  const study = args.study ? validateStudy(readJson(resolve(args.study))) : undefined;
+  if (study && (args.routes || args.policies)) throw new Error("--study cannot be combined with --routes or --policies");
+  if (study) args = { ...args, routes: [...new Set(study.arms.map(a => a.route))].join(","), policies: [...new Set(study.arms.map(a => a.policy))].join(",") };
   if (!args.revision) throw new Error("--revision=<commit-or-HEAD> is required");
   const routes = String(args.routes ?? "").split(",").map((value) => value.trim()).filter(Boolean);
   if (routes.length === 0) throw new Error("--routes=<route-a,route-b> is required");
@@ -204,6 +208,7 @@ export function normalizeCreateOptions(args) {
   }
 
   return {
+    study,
     requestedRevision: args.revision,
     name: args.name ?? routes.join("-").slice(0, 30),
     routes,
@@ -223,6 +228,21 @@ export function normalizeCreateOptions(args) {
 }
 
 export function buildRunPlan(config, experimentId) {
+  if (config.study) {
+    const study = validateStudy(config.study);
+    const runs = [];
+    for (let replica = 1; replica <= config.count; replica++) {
+      const offset = (replica - 1) % study.arms.length;
+      const arms = [...study.arms.slice(offset), ...study.arms.slice(0, offset)];
+      for (const arm of arms) {
+        const [runState] = buildRunPlan({ ...config, study: undefined, count: 1, routes: [arm.route], policies: [arm.policy] }, experimentId);
+        const order = runs.length + 1;
+        runs.push({ ...runState, order, replica, armId: arm.id, pairId: 'r' + replica, choices: arm.choices,
+          runKey: String(order).padStart(3, '0') + '-' + arm.id + '-r' + replica });
+      }
+    }
+    return runs;
+  }
   const runs = [];
   let order = 0;
   for (let replica = 1; replica <= config.count; replica += 1) {
@@ -396,6 +416,7 @@ export function writeRunConfig(manifest, secrets, runState, runDirectory) {
     runKey: runState.runKey,
     routeId: runState.routeId,
     policyId: runState.policyId,
+    choices: runState.choices ?? {},
     replica: runState.replica,
     maxRunMs: manifest.config.maxRunMs,
     mode: manifest.config.mode,

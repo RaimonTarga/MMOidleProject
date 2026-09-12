@@ -10,6 +10,7 @@
 
 import {
   GAME_CONFIG,
+  resolveFinalDamageMultipliers,
   RECIPE_DATABASE,
   SKILL_TREE,
   emptyEquipment,
@@ -198,12 +199,13 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
   });
 
   let expected = Math.round(GAME_CONFIG.PLAYER_ATTACK * (1 + affinity));
-  expected = Math.round(expected * 1.15); // stance
   expected = Math.max(1, Math.floor(expected * 0.65)); // reload archetype
   expected = Math.max(1, Math.round(expected * (1 + coreAttack))); // Core
+  const finalDamage = resolveFinalDamageMultipliers(result.usesSkills.passives, 'offensive-stance');
+  assert(Math.abs(finalDamage.dealt - 1.12 * 1.15) < 1e-9, 'Core and stance compose as independent final damage factors');
   assert(
     result.dealsDamage.attack === expected,
-    `attack ordering must be class x stance x archetype x Core (${expected}), got ${result.dealsDamage.attack}`,
+    `attack retains class/archetype stat layers (${expected}), got ${result.dealsDamage.attack}`,
   );
 }
 

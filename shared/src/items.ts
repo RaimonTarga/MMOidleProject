@@ -1,3 +1,5 @@
+import type { DamageElement } from './systems/dotElements';
+
 // ─── Essence types ────────────────────────────────────────────────────────────
 
 export type EssenceType = 'red' | 'blue' | 'green' | 'yellow' | 'purple';
@@ -200,6 +202,12 @@ export interface ItemDefinition {
   upgrades?: UpgradeStep[];
   /** Frame name in the /assets/icons.png atlas for the item's inventory icon. */
   icon?: string;
+  /**
+   * Weapons only. PURELY COSMETIC elemental flavor — tints the wielder's
+   * basic-attack animation. No gameplay effect whatsoever. Mirrors
+   * Recipe.element; see that field for the full contract.
+   */
+  element?: DamageElement;
   /** Lineage this item belongs to (system rework Step 6). Mirrors Recipe.lineageId. */
   lineageId?: string;
   /** Predecessor recipe/item id this evolved from. Mirrors Recipe.evolvesFrom. */

@@ -1,3 +1,6 @@
+import { mitigateOnHitDamage } from '@mmo-idle/shared';
+import { outgoingFinalDamage } from '../damage/finalDamage';
+import { playerOnHitDamage } from './onHitDamage';
 import { pushDamageEvent } from '../damage/damageEvent';
 import type { World } from "../../../world/World";
 import {
@@ -275,9 +278,15 @@ export function runPlayerAttack(
     ownerId: player.isPlayer.id,
     physicalEntityId: player.isPlayer.id,
     slotId: 'conduit:0',
-    directDamageWeight: battleBondProfile.battleBondConduitOffenseWeight,
-    onHitMagnitudeWeight: battleBondProfile.battleBondConduitOffenseWeight,
-    procWeight: battleBondProfile.battleBondConduitOffenseWeight,
+    directDamageWeight: battleBondProfile.battleBondConduitOffenseWeight * battleBondProfile.relicPotencyMult,
+    onHitMagnitudeWeight:
+      battleBondProfile.battleBondConduitOffenseWeight
+      * battleBondProfile.secondaryEffectMult
+      * battleBondProfile.relicPotencyMult,
+    secondaryEffectMult: battleBondProfile.secondaryEffectMult,
+    procWeight:
+      battleBondProfile.battleBondConduitOffenseWeight
+      * battleBondProfile.secondaryEffectMult,
     targetId: target.isMonster.id,
     cycleSerial: 0,
     cycleCompleted: false,
@@ -434,24 +443,9 @@ export function runPlayerAttack(
 
   emitCombatEvent("onHit", ctx, world);
 
-  if (player.dealsDamage.onHitDamage > 0) {
-    // Per-shot on-hit scaling (e.g. reload Alternating Cadence zeroes/doubles the
-    // on-hit DAMAGE while leaving on-hit TRIGGERS — set by an onHit listener).
-    const onHitMult = typeof ctx.metadata['onHitDamageMult'] === 'number'
-      ? (ctx.metadata['onHitDamageMult'] as number)
-      : 1;
-    // Catalyst core. Multiplied in rather than added to onHitMult so the two
-    // COMPOSE: a shot that Alternating Cadence zeroed stays zero, and one it
-    // doubled gets the core bonus on top instead of overwriting it.
-    const coreOnHit = 1 + (player.usesSkills.passives['core.onhit-mult'] ?? 0);
-    // NOTE this term lands AFTER plating and DR above — that unmitigated placement
-    // is what makes core.onhit-mult a distinct axis from core.attack-mult and not a
-    // re-skin of it. Keep it on this side of the formula.
-    const formationOnHitWeight = ctx.formation?.onHitMagnitudeWeight ?? 1;
-    ctx.damage += Math.round(
-      player.dealsDamage.onHitDamage * onHitMult * coreOnHit * formationOnHitWeight,
-    );
-  }
+  const onHitDamage = playerOnHitDamage(ctx);
+  ctx.damage += mitigateOnHitDamage(onHitDamage, player.dealsDamage.attack * minionDamageMult, effectivePlating * ctx.platingMult, effectiveDr);
+  ctx.damage = outgoingFinalDamage(world, player.isPlayer.id, ctx.damage);
 
   const isEmpowered = !!ctx.metadata["empoweredAttack"];
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
@@ -506,12 +500,12 @@ export function runPlayerAttack(
     effectivePlating,
     platingMult: ctx.platingMult,
     damageReduction: effectiveDr,
-    onHitBonus: player.dealsDamage.onHitDamage,
+    onHitBonus: onHitDamage,
   });
   mitigation.hpDamage = ctx.damage;
   mitigation.glancing =
     mitigation.hpDamage === 1 &&
-    gross + player.dealsDamage.onHitDamage - mitigation.mitigatedTotal < 1;
+    gross + onHitDamage - mitigation.mitigatedTotal < 1;
 
   const sourceActor =
     opts.aggroSource.kind === "minion"
@@ -737,7 +731,7 @@ export function runMonsterAttack(
   // reduction layer stacked with base DR — final = base × (1 − DR) × (1 − drLayer2).
   // So 50% base + 50% layer ⇒ 25% taken, not immunity. Read from the player's core
   // passive (mirrors how shared.damage-mult is read in the pipeline); clamped to 0.9.
-  const drLayer2 = Math.min(0.9, Math.max(0, target.usesSkills.passives['core.dr-layer-pct'] ?? 0));
+  // Core/stance final mitigation is applied by onDamageTaken on every pipeline path.
   ctx.damage = Math.max(
     1,
     Math.round(
@@ -746,8 +740,7 @@ export function runMonsterAttack(
         monster.dealsDamage.attack -
           platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
       ) *
-        (1 - target.mitigatesDamage.damageReduction) *
-        (1 - drLayer2),
+        (1 - target.mitigatesDamage.damageReduction),
     ),
   );
 
@@ -2039,6 +2032,19 @@ function resolveChargedSlam(
         );
       }
       applyChargedAttackKnockback(world, monster, victim, charged);
+      // The charge's authored RIDERS (root / slow / wither / plague hex) apply to
+      // everyone the circle caught, exactly as they apply to the victim of a
+      // single-target charge.
+      //
+      // ⚠ This used to be missing, which made `aoe` silently SWALLOW every rider:
+      // the planted path returned before `applyChargedAttackRiders` ever ran, so
+      // authoring `rootMs` alongside `aoe` produced a charge that rooted nobody and
+      // said nothing about it. Nothing in the roster had hit the combination yet
+      // (checked across every monster and boss def), so this is a capability gap
+      // being closed, not a behavior change to an existing encounter — and it is
+      // what lets a root become a telegraphed circle you can step out of instead of
+      // an unavoidable cast that follows you.
+      applyChargedAttackRiders(world, monster, victim, charged);
       const refreshed = world.getPlayerEntity(victim.isPlayer.id);
       if (refreshed) markEngaged(world, refreshed, now);
     }
@@ -2138,9 +2144,21 @@ function resolveChargedSlam(
 }
 
 /** Monsters a player may actually swing at: present, and not burrowed or hidden. */
-function* targetableMonstersInNode(world: World, nodeId: string): Generator<MonsterEntity> {
-  for (const monster of world.monsterEntitiesInNode(nodeId)) {
+function* targetableMonstersForPlayer(world: World, player: PlayerEntity): Generator<MonsterEntity> {
+  const travelIsActive =
+    player.hasAutoTraversePath !== undefined &&
+    player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId;
+  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
     if (monster.isConcealed) continue;
+    if (
+      travelIsActive &&
+      !(
+        monster.hasAggroTarget?.targetKind === "player" &&
+        monster.hasAggroTarget.targetId === player.isPlayer.id
+      )
+    ) {
+      continue;
+    }
     yield monster;
   }
 }
@@ -2245,7 +2263,7 @@ export function updateCombat(world: World, dt: number, now: number) {
     // than materialised so the common path still allocates nothing.
     const target = world.collision.bestTargetInReach(
       player,
-      targetableMonstersInNode(world, player.hasPosition.nodeId),
+      targetableMonstersForPlayer(world, player),
       attackRange,
     );
 

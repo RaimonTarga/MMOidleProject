@@ -16,7 +16,7 @@ export const t3SummonerEntries = [
     id: 'summoner-light-t3-b', name: 'Kilnmaster', tier: 3,
     classId: 'summoner-root', subVariantId: 'light',
     parent: 'summoner-light', children: [],
-    description: 'Fire the formation in one larger batch: eight smaller summons. The same total offense and proc budget is spread across more bodies for coverage, at greater vulnerability to plating and area damage.',
+    description: 'Fire the formation in one larger batch: eight smaller summons. They still divide one direct-offense budget, while the whole formation carries 30% stronger on-hit and secondary weapon effects. Coverage rises, as does vulnerability to plating and area damage.',
     cost: 1, statEffects: {}, mechanicEffects: {},
   }],
   ['summoner-light-t3-c', {

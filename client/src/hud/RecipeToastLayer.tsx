@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useAtomValue } from 'jotai';
 import { hudBus } from '../hudBus';
 import { takeSessionNotice } from '../net/session';
+import { combatControlFeedbackAtom } from './atoms';
 
 interface Toast {
   id: number;
@@ -11,6 +13,7 @@ interface Toast {
 
 const DISPLAY_MS  = 5000;
 const FADEOUT_MS  = 600;
+const COMBAT_ERROR_MS = 2500;
 
 let nextId = 0;
 
@@ -18,6 +21,18 @@ export function RecipeToastLayer() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sessionNotice, setSessionNotice] = useState(takeSessionNotice);
   const [loadoutError, setLoadoutError] = useState<string | null>(null);
+  const combatFeedback = useAtomValue(combatControlFeedbackAtom);
+  const [combatError, setCombatError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!combatFeedback) {
+      setCombatError(null);
+      return;
+    }
+    setCombatError(combatFeedback.reason);
+    const timeout = window.setTimeout(() => setCombatError(null), COMBAT_ERROR_MS);
+    return () => window.clearTimeout(timeout);
+  }, [combatFeedback]);
 
   useEffect(() => {
     if (!sessionNotice) return;
@@ -49,7 +64,7 @@ export function RecipeToastLayer() {
     return () => window.removeEventListener("hud:loadoutResult", handler);
   }, []);
 
-  if (toasts.length === 0 && !sessionNotice && !loadoutError) return null;
+  if (toasts.length === 0 && !sessionNotice && !loadoutError && !combatError) return null;
 
   return (
     <div style={{
@@ -90,6 +105,11 @@ export function RecipeToastLayer() {
           maxWidth: 'min(520px, 88vw)', boxShadow: '0 2px 16px rgba(0,0,0,0.7)',
         }}>
           <span style={{ color: '#ef7668', marginRight: 8 }}>!</span>{loadoutError}
+        </div>
+      )}
+      {combatError && (
+        <div className="combat-control-feedback" role="status">
+          <span aria-hidden="true">!</span>{combatError}
         </div>
       )}
       {toasts.map(t => (

@@ -1,182 +1,72 @@
-import { Fragment, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
-import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
-  GAME_CONFIG,
-  ITEM_DATABASE, RECIPE_DATABASE, upgradeStatBonusTotal, effectiveAttacksPerSecond,
-  resolveEmpoweredMultiplier,
-  relicRatingsFromEffects,
-  resolveRelicPreview,
-  coreEligibilityLabel, coreIsActive, isRestrictedCore,
+  compareEquipmentStats, ITEM_DATABASE, RECIPE_DATABASE, resolveRelicComparison,
+  relicRatingsFromPassives, coreEligibilityLabel, coreIsActive, isRestrictedCore,
+  type EquipmentSlot, type EquipmentPreviewStat,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
-  attackAtom,
-  attackCooldownAtom,
-  attackRangeAtom,
-  combatArchetypeAtom,
-  damageReductionAtom,
-  equipmentAtom,
-  dodgeRateAtom,
-  evadeMitigationAtom,
-  recoveryAtom,
-  itemUpgradesAtom,
-  maxHpAtom,
-  onHitDamageAtom,
-  passivesAtom,
-  platingAtom,
-  selectedRangeAtom,
-  selectedSubVariantAtom,
-  speedAtom,
-  playerTierAtom,
+  activeStanceAtom, equippedRitesAtom, equipmentAtom, itemUpgradesAtom, passivesAtom,
+  combatArchetypeAtom, selectedRangeAtom, selectedSubVariantAtom, playerTierAtom,
+  unlockedSkillsAtom, hpAtom, maxHpAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
 import { STAT_META, formatMechanicEffects, formatResolvedRelicProfile, formatWeaponEffects } from '../crafting/itemDisplay';
 import type { FocusedItem } from './useFocus';
 
-// Player-stat rows, in display order. Labels/formatters come from the shared
-// STAT_META so crafting + inventory read identically. onHitDamage/attackRange
-// are appended so weapons with those secondaries are fully represented.
-const STAT_ROWS = (
-  ['attack', 'maxHp', 'recovery', 'plating', 'damageReduction', 'speed', 'onHitDamage', 'attackRange'] as const
-).map(key => ({ key, ...STAT_META[key] }));
-
-function getItemContribs(defId: string | null | undefined, upgrades: Record<string, number>): Record<string, number> {
-  if (!defId) return {};
-  const def = ITEM_DATABASE.get(defId);
-  if (!def) return {};
-  const result: Record<string, number> = { ...def.statModifiers };
-  const plus = upgrades[defId] ?? 0;
-  if (plus > 0) {
-    for (const [k, v] of Object.entries(upgradeStatBonusTotal(def, plus))) {
-      result[k] = (result[k] ?? 0) + v;
-    }
-  }
-  return result;
-}
-
-interface Props {
-  focused:  FocusedItem | null;
-  onFocus:  (item: FocusedItem | null) => void;
-}
-
-// Returns the base cooldown (ms) a weapon dictates, before skill multipliers.
-// Upgrade level matters: a lineage may buy cadence with its upgrade budget, so
-// the swap preview has to price the weapon AT ITS CURRENT +N, not at +0.
-function weaponBaseMs(
-  defId: string | null | undefined,
-  itemUpgrades: Record<string, number>,
-): number {
-  const def = defId ? ITEM_DATABASE.get(defId) : undefined;
-  const aps = def ? effectiveAttacksPerSecond(def, itemUpgrades[def.id] ?? 0) : undefined;
-  return aps != null ? Math.round(1000 / aps) : GAME_CONFIG.PLAYER_ATTACK_COOLDOWN;
-}
+const num = (v: number) => String(Math.round(v * 100) / 100);
+const pct = (v: number) => `${num(v * 100)}%`;
+const mult = (v: number) => `×${num(v)}`;
+const ROWS: { key: EquipmentPreviewStat; label: string; fmt: (v: number) => string; lowerIsBetter?: boolean }[] = [
+  { key: 'dps', label: 'Estimated sustained DPS', fmt: num },
+  ...(['attack', 'onHitDamage'] as const).map(key => ({ key, ...STAT_META[key] })),
+  { key: 'attacksPerSecond', label: 'Attacks / sec', fmt: num },
+  { key: 'damageDealtMult', label: 'Final damage dealt', fmt: mult },
+  { key: 'damageTakenMult', label: 'Final damage taken', fmt: mult, lowerIsBetter: true },
+  ...(['maxHp', 'recovery', 'plating', 'damageReduction', 'speed', 'attackRange'] as const).map(key => ({ key, ...STAT_META[key] })),
+  { key: 'dodgeRate', label: 'Dodge rate', fmt: pct },
+  { key: 'evadeMitigation', label: 'Damage avoided per dodge', fmt: pct },
+];
+interface Props { focused: FocusedItem | null; onFocus: (item: FocusedItem | null) => void }
 
 export function StatSheet({ focused, onFocus }: Props) {
-  const attack          = useAtomValue(attackAtom);
-  const maxHp           = useAtomValue(maxHpAtom);
-  const recovery         = useAtomValue(recoveryAtom);
-  const plating         = useAtomValue(platingAtom);
-  const damageReduction = useAtomValue(damageReductionAtom);
-  const speed           = useAtomValue(speedAtom);
-  const onHitDamage     = useAtomValue(onHitDamageAtom);
-  const attackRange     = useAtomValue(attackRangeAtom);
-  const attackCooldown  = useAtomValue(attackCooldownAtom);
-  const dodgeRate       = useAtomValue(dodgeRateAtom);
-  const evadeMitigation = useAtomValue(evadeMitigationAtom);
-  const equipment       = useAtomValue(equipmentAtom);
-  const itemUpgrades    = useAtomValue(itemUpgradesAtom);
-  const passives        = useAtomValue(passivesAtom);
+  const equipment = useAtomValue(equipmentAtom);
+  const itemUpgrades = useAtomValue(itemUpgradesAtom);
+  const passives = useAtomValue(passivesAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
-  const selectedRange   = useAtomValue(selectedRangeAtom);
+  const selectedRange = useAtomValue(selectedRangeAtom);
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const playerTier = useAtomValue(playerTierAtom);
-
-  const empMult = resolveEmpoweredMultiplier(passives, combatArchetype, playerTier);
-
-  const playerStats: Record<string, number> = {
-    attack, maxHp, recovery, plating, damageReduction, speed, onHitDamage, attackRange,
-  };
-
-  // Derived combat stats. On-hit damage is flat per hit (ignores enemy defenses),
-  // so it factors into the planning DPS alongside attack.
-  const currentAps = 1000 / attackCooldown;
-  const currentHit = attack + onHitDamage;
-  const currentDps = currentHit * currentAps;
-
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
+  const activeStance = useAtomValue(activeStanceAtom);
+  const equippedRites = useAtomValue(equippedRitesAtom);
+  const hp = useAtomValue(hpAtom);
+  const maxHp = useAtomValue(maxHpAtom);
+  const hpFraction = hp / Math.max(1, maxHp);
   const info = useMemo(() => {
-    if (!focused) return null;
-    const itemDef = ITEM_DATABASE.get(focused.defId);
-    if (!itemDef) return null;
-
-    const plus       = itemUpgrades[focused.defId] ?? 0;
+    const itemDef = focused ? ITEM_DATABASE.get(focused.defId) : undefined;
+    if (!itemDef || !focused) return null;
+    const slot = itemDef.slot as EquipmentSlot;
     const isEquipped = focused.source === 'equipped';
-    const slot       = itemDef.slot as EquipmentSlot;
-    const recipe     = RECIPE_DATABASE.get(focused.defId) ?? null;
-    const color      = tierColor(itemDef.tier);
-    const slotFilled = !!equipment[slot];
-
-    // Unequip preview: you'd lose this item's stats
-    // Equip preview:   you'd swap current-in-slot for this item
-    const newContribs = isEquipped ? {} : getItemContribs(focused.defId, itemUpgrades);
-    const oldContribs = isEquipped
-      ? getItemContribs(focused.defId, itemUpgrades)
-      : getItemContribs(equipment[slot], itemUpgrades);
-
-    const delta: Record<string, number> = {};
-    for (const key of new Set([...Object.keys(newContribs), ...Object.keys(oldContribs)])) {
-      const d = (newContribs[key] ?? 0) - (oldContribs[key] ?? 0);
-      if (d !== 0) delta[key] = d;
-    }
-
-    // APS comparison for weapon swaps: scale the live authoritative cooldown by the ratio
-    // of the two weapons' base cooldowns (preserves skill speed multipliers exactly).
-    let apsProposed: number | null = null;
-    if (slot === 'weapon') {
-      const currentBase  = weaponBaseMs(isEquipped ? focused.defId : equipment.weapon, itemUpgrades);
-      const proposedBase = weaponBaseMs(isEquipped ? null          : focused.defId, itemUpgrades);
-      if (currentBase !== proposedBase) {
-        // Capture attackCooldown from outer scope — it's a dep of this memo.
-        apsProposed = null; // resolved below after memo (requires attackCooldown closure)
-      }
-      // Store bases so the outer scope can compute proposed APS
-    }
-
-    const actionLabel = isEquipped ? 'Unequip' : slotFilled ? 'Replace' : 'Equip';
-
-    return { itemDef, plus, isEquipped, slot, recipe, color, delta, actionLabel,
-             weaponSwap: slot === 'weapon' ? {
-               currentBase:  weaponBaseMs(isEquipped ? focused.defId : equipment.weapon, itemUpgrades),
-               proposedBase: weaponBaseMs(isEquipped ? null          : focused.defId, itemUpgrades),
-             } : null };
+    return { itemDef, slot, isEquipped, plus: itemUpgrades[focused.defId] ?? 0,
+      recipe: RECIPE_DATABASE.get(focused.defId) ?? null, color: tierColor(itemDef.tier),
+      actionLabel: isEquipped ? 'Unequip' : equipment[slot] ? 'Replace' : 'Equip' };
   }, [focused, equipment, itemUpgrades]);
-
-  // Proposed APS/DPS — computed outside the memo so attackCooldown is a live dep.
-  const proposedAps = info?.weaponSwap && info.weaponSwap.currentBase !== info.weaponSwap.proposedBase
-    ? currentAps * (info.weaponSwap.currentBase / info.weaponSwap.proposedBase)
-    : null;
-  const proposedAttack = info ? attack + (info.delta.attack ?? 0) : null;
-  const proposedOnHit  = info ? onHitDamage + (info.delta.onHitDamage ?? 0) : null;
-  const proposedHit    = proposedAttack != null && proposedOnHit != null ? proposedAttack + proposedOnHit : null;
-  const proposedDps    = proposedAps  != null && proposedHit != null ? proposedHit * proposedAps
-                       : proposedHit != null && proposedHit !== currentHit  ? proposedHit * currentAps
-                       : null;
+  const comparison = useMemo(() => compareEquipmentStats({
+    usesSkills: { unlockedSkills, passives, selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
+      selectedSubVariant, selectedRange, combatArchetype },
+    equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction,
+  }, info?.slot, info?.isEquipped ? null : info?.itemDef.id),
+  [unlockedSkills, passives, combatArchetype, selectedSubVariant, selectedRange, equipment, itemUpgrades,
+    playerTier, activeStance, equippedRites, hpFraction, info]);
 
   function handleAction() {
     if (!focused || !info) return;
-    if (info.isEquipped && focused.equipSlot) {
-      hudBus.requestUnequipItem(focused.equipSlot);
-    } else {
-      hudBus.requestEquipItem(focused.defId);
-    }
+    if (info.isEquipped && focused.equipSlot) hudBus.requestUnequipItem(focused.equipSlot);
+    else hudBus.requestEquipItem(focused.defId);
   }
-
-  return (
-    <div
-      className="inv-stat-sheet"
-      onMouseEnter={() => focused && onFocus(focused)}
-      onMouseLeave={() => onFocus(null)}
-    >
+  return <div className="inv-stat-sheet" onMouseEnter={() => focused && onFocus(focused)} onMouseLeave={() => onFocus(null)}>
       {/* ── Item context header ─────────────────────────── */}
       {info ? (
         <div className="inv-stat-sheet__item-header" style={{ borderColor: `${info.color}44` }}>
@@ -206,114 +96,40 @@ export function StatSheet({ focused, onFocus }: Props) {
       ) : (
         // The rail plate is the at-a-glance read; this sheet is the reference
         // you consult while comparing gear, so it stays an exact table.
-        <div className="inv-stat-sheet__heading">STAT REFERENCE</div>
+        <div className="inv-stat-sheet__heading">EQUIPMENT STATS</div>
       )}
 
-      {/* ── Stat rows ───────────────────────────────────── */}
+
       <div className="inv-stat-sheet__rows">
-        {STAT_ROWS.map(cfg => {
-          const current = playerStats[cfg.key] ?? 0;
-          const d       = info?.delta[cfg.key];
-          const changed = d !== undefined && d !== 0;
-          const up      = (d ?? 0) > 0;
-
-          // Secondary stats (no value, no change) stay hidden to avoid clutter.
-          if ((cfg.key === 'onHitDamage' || cfg.key === 'attackRange') && current === 0 && !changed) {
-            return null;
-          }
-
-          const mainRow = (
-            <div
-              key={cfg.key}
-              className={['inv-stat-row', changed ? (up ? 'inv-stat-row--up' : 'inv-stat-row--down') : ''].filter(Boolean).join(' ')}
-            >
-              <span className="inv-stat-row__label">{cfg.label}</span>
-              <span className="inv-stat-row__value">{cfg.fmt(current)}</span>
-              {changed && (
-                <>
-                  <span className="inv-stat-row__arrow">→</span>
-                  <span className="inv-stat-row__proposed">{cfg.fmt(current + (d ?? 0))}</span>
-                  <span className={`inv-stat-row__delta inv-stat-row__delta--${up ? 'up' : 'down'}`}>
-                    {cfg.fmtDelta(d!)}
-                  </span>
-                </>
-              )}
-            </div>
-          );
-
-          if (cfg.key !== 'attack') return mainRow;
-
-          // Inject APS + DPS immediately after ATK
-          const fmtAps     = (v: number) => (Math.round(v * 100) / 100).toFixed(2);
-          const fmtDps     = (v: number) => (Math.round(v * 10)  / 10).toFixed(1);
-          const apsChanged = proposedAps !== null;
-          const apsUp      = (proposedAps ?? currentAps) > currentAps;
-          const dpsChanged = proposedDps !== null;
-          const dpsUp      = (proposedDps ?? currentDps) > currentDps;
-
-          return (
-            <Fragment key={cfg.key}>
-              {mainRow}
-              <div key="aps" className={['inv-stat-row inv-stat-row--derived', apsChanged ? (apsUp ? 'inv-stat-row--up' : 'inv-stat-row--down') : ''].filter(Boolean).join(' ')}>
-                <span className="inv-stat-row__label">APS</span>
-                <span className="inv-stat-row__value">{fmtAps(currentAps)}</span>
-                {apsChanged && proposedAps !== null && (
-                  <>
-                    <span className="inv-stat-row__arrow">→</span>
-                    <span className="inv-stat-row__proposed">{fmtAps(proposedAps)}</span>
-                    <span className={`inv-stat-row__delta inv-stat-row__delta--${apsUp ? 'up' : 'down'}`}>
-                      {apsUp ? '+' : ''}{(Math.round((proposedAps - currentAps) * 100) / 100).toFixed(2)}
-                    </span>
-                  </>
-                )}
-              </div>
-              <div key="dps" className={['inv-stat-row inv-stat-row--derived', dpsChanged ? (dpsUp ? 'inv-stat-row--up' : 'inv-stat-row--down') : ''].filter(Boolean).join(' ')}>
-                <span className="inv-stat-row__label">DPS</span>
-                <span className="inv-stat-row__value">{fmtDps(currentDps)}</span>
-                {dpsChanged && proposedDps !== null && (
-                  <>
-                    <span className="inv-stat-row__arrow">→</span>
-                    <span className="inv-stat-row__proposed">{fmtDps(proposedDps)}</span>
-                    <span className={`inv-stat-row__delta inv-stat-row__delta--${dpsUp ? 'up' : 'down'}`}>
-                      {dpsUp ? '+' : ''}{(Math.round((proposedDps - currentDps) * 10) / 10).toFixed(1)}
-                    </span>
-                  </>
-                )}
-              </div>
-            </Fragment>
-          );
+        {ROWS.filter(row => comparison.relevant.includes(row.key)).map(row => {
+          const before = comparison.before.stats[row.key];
+          const after = comparison.after.stats[row.key];
+          const changed = Math.abs(after - before) > 1e-6;
+          const better = row.lowerIsBetter ? after < before : after > before;
+          return <div key={row.key} className={`inv-stat-row ${changed ? better ? 'inv-stat-row--up' : 'inv-stat-row--down' : ''}`}>
+            <span className="inv-stat-row__label">{row.label}</span>
+            <span className="inv-stat-row__value">{row.fmt(before)}</span>
+            {info && <>
+              <span className="inv-stat-row__arrow">→</span>
+              <span className="inv-stat-row__proposed">{row.fmt(after)}</span>
+              {!changed && <span className="inv-stat-row__delta">unchanged</span>}
+            </>}
+          </div>;
         })}
-
-        {/* Empowered attack multiplier — cadence/cooldown/energy only */}
-        {empMult && (
-          <div className="inv-stat-row">
-            <span className="inv-stat-row__label">EMP</span>
-            <span className="inv-stat-row__value">×{empMult.effective.toFixed(2)}</span>
-          </div>
-        )}
-
-        {/* Evasion — deterministic dodge rate + damage avoided per dodge */}
-        {dodgeRate > 0 && (
-          <div className="inv-stat-row">
-            <span className="inv-stat-row__label">EVS</span>
-            <span className="inv-stat-row__value">
-              {Math.round(dodgeRate * 100)}% · −{Math.round(evadeMitigation * 100)}%
-            </span>
-          </div>
-        )}
+        {comparison.relevant.length === 0 && <p className="inv-stat-sheet__hint">{info ? 'No equipment stat changes. See item effects below.' : 'Equip an item to see its effects on your stats.'}</p>}
       </div>
-
       {/* ── Mechanic + weapon effects ────────────────────────────────── */}
       {(() => {
         if (!info) return null;
         const lines = [
           ...formatMechanicEffects(info.itemDef.mechanicEffects),
           ...(info.itemDef.slot === 'relic'
-            ? formatResolvedRelicProfile(resolveRelicPreview(
+            ? formatResolvedRelicProfile(resolveRelicComparison(
                 combatArchetype,
-                passives,
-                relicRatingsFromEffects(info.itemDef.mechanicEffects),
-                { subVariant: selectedSubVariant, playerTier },
+                comparison.before.passives,
+                relicRatingsFromPassives(comparison.before.passives),
+                relicRatingsFromPassives(comparison.after.passives),
+                { subVariant: selectedSubVariant, playerTier, unlockedSkills, selectedRange },
               ))
             : []),
           ...(info.itemDef.slot === 'weapon' ? formatWeaponEffects(info.itemDef.id) : []),
@@ -331,26 +147,12 @@ export function StatSheet({ focused, onFocus }: Props) {
         );
       })()}
 
-      {/* ── Flavor text (item description lore) ─────────── */}
-      {info?.itemDef.description && (
-        <p className="inv-stat-sheet__flavor">{info.itemDef.description}</p>
-      )}
 
-      {/* ── Footer ──────────────────────────────────────── */}
+      {info?.itemDef.description && <p className="inv-stat-sheet__flavor">{info.itemDef.description}</p>}
+      <p className="inv-stat-sheet__hint">Equipment build values in your current stance. Temporary combat buffs are excluded; DPS assumes a full summon formation.</p>
       <div className="inv-stat-sheet__footer">
-        {!info && (
-          <span className="inv-stat-sheet__hint">Hover an item to compare</span>
-        )}
-        {info && (
-          <button
-            type="button"
-            className={`inv-stat-sheet__btn${info.isEquipped ? ' inv-stat-sheet__btn--unequip' : ''}`}
-            onClick={handleAction}
-          >
-            {info.actionLabel}
-          </button>
-        )}
+        {!info && <span className="inv-stat-sheet__hint">Hover an item to compare</span>}
+        {info && <button type="button" className={`inv-stat-sheet__btn${info.isEquipped ? ' inv-stat-sheet__btn--unequip' : ''}`} onClick={handleAction}>{info.actionLabel}</button>}
       </div>
-    </div>
-  );
+    </div>;
 }

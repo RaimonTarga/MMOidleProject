@@ -11,6 +11,9 @@ import {
   getVengeanceBonus,
   getAlignmentPct,
   getChannelingRemainingPct,
+  rampFactorFor,
+  patienceAttackMax,
+  patienceExecutionMax,
 } from './selectors';
 import {
   ALIGNMENT_SPEED_FACTOR,
@@ -25,6 +28,31 @@ import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMecha
 const COOLDOWN_OPTS = { category: 'cooldown' as const, shape: 'square' as const };
 
 export const COOLDOWN_T3_BUFFS = [
+  // Stalwart's Patience ramp was the ONE tier-4 path buff with no chip of its
+  // own, so the only readout was the damage it silently produced. `durationPct`
+  // carries the 0-100 ramp fill rather than a countdown: this is a bar filling
+  // up, not a timer running out.
+  defineBuff('cooldown-patience', ({ player }) => {
+    if ((player.usesSkills.passives['cooldown.patience-paid'] ?? 0) <= 0) return null;
+    const cd = player.usesCooldown;
+    if (!cd) return null;
+    const ramp = rampFactorFor(cd, player);
+    if (ramp <= 0) return null;
+    const atkPct = Math.round(ramp * patienceAttackMax(player) * 100);
+    const exePct = Math.round(ramp * patienceExecutionMax(player) * 100);
+    return {
+      id: 'cooldown-patience',
+      label: 'Patnce',
+      stacks: 1,
+      durationPct: Math.round(ramp * 100),
+      color: '#c8d8f0',
+      logDetail: `+${atkPct}% attack damage, +${exePct}% execution damage`,
+      values: [
+        { label: 'Attack damage', value: `+${atkPct}%`, good: true },
+        { label: 'Execution damage', value: `+${exePct}%`, good: true },
+      ],
+    };
+  }, COOLDOWN_OPTS),
   defineBuff('cooldown-overdrive', ({ player }) => {
     const pct = getOverdrivePct(player);
     const attackSpeedPct = Math.round(Math.max(0, playerMechanicBuffMagnitude(

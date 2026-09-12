@@ -46,6 +46,16 @@ export const hudBus = {
     intents.emit('setAbilityLoadout', { equipped });
   },
 
+  /** Attempt immediate use; the server revalidates attunement and combat state. */
+  requestUseAbility(abilityId: string): void {
+    intents.emit('useAbility', abilityId);
+  },
+
+  /** Ask the authoritative Slinger reload lifecycle to discard the clip and reload. */
+  requestManualReload(): void {
+    intents.emit('manualReload', undefined);
+  },
+
   /** Learn a stance (craft its recipe); server validates gate + cost. */
   requestCraftStanceRecipe(recipeId: string): void {
     intents.emit('craftStanceRecipe', recipeId);
@@ -54,6 +64,11 @@ export const hudBus = {
   /** Equip/clear a stance in a slot (`stanceId: null` clears it). */
   requestSetStanceLoadout(slot: StanceSlot, stanceId: string | null, attunedStances?: string[]): void {
     intents.emit('setStanceLoadout', { slot, stanceId, attunedStances });
+  },
+
+  /** Select a live attuned/neutral stance; null releases runtime ownership. */
+  requestSetStanceControl(stanceId: string | null): void {
+    intents.emit('setStanceControl', stanceId);
   },
 
   /** Learn a rite (craft its recipe); server validates gate + cost. */

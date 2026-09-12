@@ -1,3 +1,4 @@
+import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
 import { getStatusEffect } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
@@ -98,7 +99,7 @@ export function updateEnergyState(world: World, dt: number): void {
     storm.data.nextTickIn = tickMs;
 
     const baseDmg = Math.max(1, Math.round(storm.data.damagePerTick ?? ((storm.data.dps ?? ENDLESS_STORM_DPS) * tickMs / 1000)));
-    const dmg = Math.max(1, applyMonsterDamageTakenDebuffs(monster.tracksCombat, baseDmg));
+    const dmg = outgoingFinalDamage(world, storm.sourceId, Math.max(1, applyMonsterDamageTakenDebuffs(monster.tracksCombat, baseDmg)));
     // Apply as a DoT so the number renders stormy (purple ⚡), not a white direct hit.
     recordMonsterDamagedByPlayer(
       world, storm.sourceId, actorFromSourceId(world, storm.sourceId), monster, dmg,

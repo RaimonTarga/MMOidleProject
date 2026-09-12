@@ -18,6 +18,7 @@ export const BUFF_IDS = [
   'cooldown-reverb',
   'cooldown-alignment',
   'cooldown-rupture',
+  'cooldown-patience',
   'cooldown-vengeance',
   'cooldown-channel',
   'energy-overcharge',

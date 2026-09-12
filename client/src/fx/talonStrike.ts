@@ -50,18 +50,27 @@ export function fxTalonStrike(
   });
 }
 
-/** The short golden flight streak that releases when Dive Bomb's cast completes. */
+/**
+ * The short streak that releases when a committed rush cast completes.
+ *
+ * Golden by default (the raptor Dive Bomb it was written for); the palette is
+ * overridable so a GROUND lunge — the Tundra's Rime Pounce — can reuse the same
+ * motion line without reading as talons. The shape is the point: a straight
+ * commit from where the creature was to where its target was.
+ */
 export function fxDiveBomb(
   scene: GameScene,
   fromX: number,
   fromY: number,
   toX: number,
   toY: number,
+  edge: number = TALON_EDGE,
+  bright: number = TALON_BRIGHT,
 ): void {
   const trail = scene.add.graphics().setDepth(DEPTH.FX);
-  trail.lineStyle(8, TALON_EDGE, 0.25);
+  trail.lineStyle(8, edge, 0.25);
   trail.lineBetween(fromX, fromY, toX, toY);
-  trail.lineStyle(2.5, TALON_BRIGHT, 0.85);
+  trail.lineStyle(2.5, bright, 0.85);
   trail.lineBetween(fromX, fromY, toX, toY);
   scene.tweens.add({
     targets: trail, alpha: 0, duration: 230, ease: 'Quad.easeIn',
