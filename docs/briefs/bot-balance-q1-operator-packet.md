@@ -1,6 +1,6 @@
 # Q1 — Plains build-transition readiness (Luna operator packet)
 
-Status: prepared; execution requires a committed revision containing these routes.
+Status: ready for Luna operation. Frozen execution revision: `1d3c710feacb530b731af33d33af63616a49dd25`.
 Astra owns route/profile/assertion changes. Luna launches, observes, preserves
 artifacts and reports. Stop and return unexpected problems; do not improvise fixes.
 
@@ -47,16 +47,12 @@ the next case if a shared defect is suspected. No retries or replica expansion.
 
 ## Execution
 
-Before creating the experiment, resolve a full committed SHA containing
-`campaignReadiness.ts`, `campaignProfiles.ts`, their test and route registration.
-The audited old HEAD does not contain these uncommitted additions. Do not execute
-against it or create a dirty-tree workaround. Source freezing is Astra's delivery
-prerequisite; Luna must report a missing frozen revision instead of editing code.
-
-After that prerequisite, replace `FULL_PREPARED_SHA` with that exact SHA:
+Run the following command using the frozen prepared revision. Do not substitute HEAD,
+which may contain unrelated later work. The working copy need not be clean because
+the runner exports only this commit.
 
 ```powershell
-pnpm experiment:create --revision=FULL_PREPARED_SHA --routes="striker-campaign-readiness-t2,squire-campaign-readiness-t2,apprentice-campaign-readiness-t2,slinger-campaign-readiness-t2,spirit-campaign-readiness-t2,conduit-campaign-readiness-t2" --mode=smoke-isolated --entryEconomy=catalyst-primed --rewardMultiplier=25 --workers=1 --count=1 --policies=intended --maxRunMs=300000
+pnpm experiment:create --revision=1d3c710feacb530b731af33d33af63616a49dd25 --routes="striker-campaign-readiness-t2,squire-campaign-readiness-t2,apprentice-campaign-readiness-t2,slinger-campaign-readiness-t2,spirit-campaign-readiness-t2,conduit-campaign-readiness-t2" --mode=smoke-isolated --entryEconomy=catalyst-primed --rewardMultiplier=25 --workers=1 --count=1 --policies=intended --maxRunMs=300000
 ```
 
 Use the returned exact ID with `experiment:launch`, `experiment:status`,
