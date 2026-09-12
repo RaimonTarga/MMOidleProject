@@ -26,6 +26,8 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-q2b-assessment.md](briefs/bot-balance-q2b-assessment.md) | Verified Striker local behavior success, report corrections, and remaining-class decision. |
+| [briefs/bot-balance-q2c-operator-packet.md](briefs/bot-balance-q2c-operator-packet.md) | Five remaining class checks, created individually after each preceding pass. |
 | [briefs/bot-balance-q2-assessment.md](briefs/bot-balance-q2-assessment.md) | Q2 transit confound and local observation repair decision. |
 | [briefs/bot-balance-q2b-operator-packet.md](briefs/bot-balance-q2b-operator-packet.md) | Single Striker repair check before further class or boss tests. |
 | [briefs/bot-balance-q1-assessment.md](briefs/bot-balance-q1-assessment.md) | Astra's evidence review: configuration success and the post-build observation gap. |
@@ -34,6 +36,7 @@ top-level doc.
 | [briefs/bot-balance-q1-operator-packet.md](briefs/bot-balance-q1-operator-packet.md) | Luna's prepared six-case Plains readiness operation and factual report contract. |
 | [briefs/bot-balance-q1-report.md](briefs/bot-balance-q1-report.md) | Luna's completed six-case Plains readiness execution report; configuration qualification only. |
 | [briefs/bot-balance-q2-report.md](briefs/bot-balance-q2-report.md) | Luna's Q2 post-configuration behavior observation report; timed out before a completed 60-second window. |
+| [briefs/bot-balance-q2b-report.md](briefs/bot-balance-q2b-report.md) | Luna's single Striker Q2b local observation repair report; both post-build windows completed on the current Plains node. |
 | [briefs/bot-balance-campaign-state.md](briefs/bot-balance-campaign-state.md) | Expert-prepared solo viability campaign: decisions, template shortlist, validity rules and current evidence ledger. |
 | [briefs/bot-balance-q0-template-qualification.md](briefs/bot-balance-q0-template-qualification.md) | Astra preparation specification: qualify current templates and propose bounded readiness cases before runtime experiments. |
 | [runic-attunement-current-state.md](runic-attunement-current-state.md) | Unified RP reservations, named ability rules, arbitration and save migration. |
