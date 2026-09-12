@@ -31,6 +31,10 @@ top-level doc.
 | [briefs/bot-balance-v1c-assessment.md](briefs/bot-balance-v1c-assessment.md) | Post-death travel stall diagnosis and scoped executor recovery repair. |
 | [briefs/bot-balance-v1d-assessment.md](briefs/bot-balance-v1d-assessment.md) | Preparation success, inherited failure review and earned T1 encounter entry. |
 | [briefs/bot-balance-v1e-operator-packet.md](briefs/bot-balance-v1e-operator-packet.md) | Exact V1d snapshot entry and one Plains boss probe with Plains Charm/Sweep. |
+| [briefs/bot-balance-v1e-report.md](briefs/bot-balance-v1e-report.md) | V1e execution result; imported earned T1 Striker swapped to Plains Charm and cleared the Plains dungeon/Tusked Razorback in one bounded attempt. |
+| [briefs/bot-balance-v1e-assessment.md](briefs/bot-balance-v1e-assessment.md) | Current T1/T2 confidence, accepted Plains result and overnight preparation validation. |
+| [briefs/bot-balance-night1-operator-packet.md](briefs/bot-balance-night1-operator-packet.md) | Bounded 25-run overnight program: T1 bosses, dual-Guard Swamp comparison and six T2 progression screens. |
+| [briefs/bot-balance-night1-swamp-study.json](briefs/bot-balance-night1-swamp-study.json) | Frozen Swamp comparison arms for the overnight operator packet. |
 | [briefs/bot-balance-v1d-operator-packet.md](briefs/bot-balance-v1d-operator-packet.md) | One preparation-only validation of repaired transit recovery. |
 | [briefs/bot-balance-v1d-report.md](briefs/bot-balance-v1d-report.md) | V1d execution result; one natural transit death recovered to the Plains supplier and the full GM30/+5 preparation completed. |
 | [briefs/bot-balance-v1c-operator-packet.md](briefs/bot-balance-v1c-operator-packet.md) | One fresh 30-minute preparation-only qualification, with no boss attempt. |

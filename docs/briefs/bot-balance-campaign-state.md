@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: V1d completed earned T1 preparation and recovered a natural transit death. V1e imports that final state for the first Plains encounter with Plains Charm +5; no campaign boss result yet.
+Status: V1e cleared Plains with the prepared Striker, with no deaths. Night 1 is prepared for broader T1 boss coverage, a dual-Guard Swamp comparison and six T2 progression screens; it has not been launched.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -30,14 +30,14 @@ execution instructions. Current source and explicit user direction take preceden
 | Q0, prepared | Qualify existing templates and their first build transitions; prepare exact local readiness routes | Six source-derived profile records, legal acquisition/build sequences, concrete runtime packet |
 | Q1, complete | Can each selected profile acquire and reconcile its build? | Six configuration successes; combat under the post-prep builds was untested |
 | Q2, initial slice complete | Do the two configured builds actually fight and activate abilities? | Six profiles, twelve completed T2 Plains windows on `755b2a36`; broader conditions/routes remain untested |
-| V1, in progress | Can prepared builds farm and solve bosses? | V1d completed earned preparation; V1e validates restored entry and attempts Plains using an encounter-specific charm |
+| V1, in progress | Can prepared builds farm and solve bosses? | V1e validated restored entry and cleared Plains; Night 1 expands T1 boss coverage and screens T2 progression |
 | V2 | What resolves a particular failing matchup? | Small local alternatives selected from failure diagnosis, initially 2–3 replicates |
 | E1 | Is shipped progression pacing appropriate? | One-tier 1× economy studies using current credible carryover, after functional routes/builds |
 | A1 | Does the assembled progression work? | Late broader acceptance runs only |
 
 Q0 is specified in [the qualification packet](bot-balance-q0-template-qualification.md).
 Q1 is specified in [the operator packet](bot-balance-q1-operator-packet.md); no large matrix or automatic downstream queue.
-T3/T4 templates are built when those tiers become the next question.
+T3/T4 are excluded from Night 1: the user reports pending ordinary-mob eHP tuning and unfinished boss mechanics. Templates are built when those tiers become the next question.
 
 ## Template shortlist and current RP audit
 
@@ -148,7 +148,8 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 - Latest result: V1b finalized normally with a preparation timeout, Axe +5 and zero boss attempts. [Assessment](bot-balance-v1b-assessment.md). The earlier V1a lifecycle remains invalid.
 - Latest result: V1c failed its supplier arrival wait after a transit death. Two ordinary deaths overall, no final kit or boss encounter. [Assessment and executor repair](bot-balance-v1c-assessment.md).
 - Latest result: V1d completed 105/105 steps in 18m42s with one natural transit death recovered. [Assessment and inherited-lessons review](bot-balance-v1d-assessment.md).
-- Next action: Luna executes [V1e](bot-balance-v1e-operator-packet.md) on `40f0ebb7`: exact earned T1 snapshot, ordinary Plains Charm upgrade/swap, one Plains dungeon cycle, 15-minute ceiling. No fresh acquisition repeat.
+- Latest result: V1e completed in 213.919 seconds with one authoritative Plains clear, zero deaths and 46.548 seconds of boss combat. This demonstrates prepared Striker possibility, not reliability, other-class viability or canonical pacing. [Assessment](bot-balance-v1e-assessment.md).
+- Next action: Luna executes [Night 1](bot-balance-night1-operator-packet.md) on `0514ad0139b7c4d6a48b3512ae496857de8f4164`: 25 planned runs, one active worker, nine-hour overall ceiling. One earned armor upgrade feeds independent T1 probes, including three replicas per Swamp build; six independent T2 progression screens follow. Prepared, not launched.
 - Historical Q2d Spirit, Apprentice and Squire passed. Apprentice died once and returned; Spirit's Q2c pre-worker failure remains separate. [Overall readiness state](bot-balance-q2d-assessment.md).
 - Historical Q2c Conduit/Slinger passed and Spirit stopped before startup due to Docker address exhaustion. [Assessment and infrastructure repair](bot-balance-q2c-assessment.md).
 - Historical Q2b `20260912t170727z-striker-campaign-local-behavio`: Striker completed, no deaths or unwanted transit; Sweep 8 kills/8 activations, Expose 5 kills/6 activations. Readiness only.
