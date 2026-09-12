@@ -28,7 +28,10 @@ top-level doc.
 |---|---|
 | [briefs/bot-balance-v1a-assessment.md](briefs/bot-balance-v1a-assessment.md) | Preparation timeout, supervisor rename failure and scoped preparation/infrastructure repairs. |
 | [briefs/bot-balance-v1b-assessment.md](briefs/bot-balance-v1b-assessment.md) | Valid finalization, acquisition timeout and decision to separate preparation. |
+| [briefs/bot-balance-v1c-assessment.md](briefs/bot-balance-v1c-assessment.md) | Post-death travel stall diagnosis and scoped executor recovery repair. |
+| [briefs/bot-balance-v1d-operator-packet.md](briefs/bot-balance-v1d-operator-packet.md) | One preparation-only validation of repaired transit recovery. |
 | [briefs/bot-balance-v1c-operator-packet.md](briefs/bot-balance-v1c-operator-packet.md) | One fresh 30-minute preparation-only qualification, with no boss attempt. |
+| [briefs/bot-balance-v1c-report.md](briefs/bot-balance-v1c-report.md) | V1c execution result; GM30 and Chaotic Axe +5 reached, then travel to the Plains Vest supplier stalled before final readiness. |
 | [briefs/bot-balance-v1b-operator-packet.md](briefs/bot-balance-v1b-operator-packet.md) | Revised one-run Plains boss probe with unchanged required kit and bounded worker-stop contingency. |
 | [briefs/bot-balance-v1b-report.md](briefs/bot-balance-v1b-report.md) | V1b execution result; repaired supervisor finalized a fresh run that timed out during full-kit preparation before the boss probe. |
 | [briefs/bot-balance-q2d-assessment.md](briefs/bot-balance-q2d-assessment.md) | All six initial readiness profiles accepted; campaign state and first boss preparation rationale. |
