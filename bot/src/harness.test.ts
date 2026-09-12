@@ -33,6 +33,15 @@ import {
 } from "./config";
 import { BOT_AUTO_PARTY_ENABLED, initialRunTaints } from "./botRun";
 
+const ARCHETYPE_FOR_ROOT: Record<string, CombatArchetype> = {
+  "cadence-root": "cadence",
+  "cooldown-root": "cooldown",
+  "reload-root": "reload",
+  "energy-root": "energy",
+  "dot-root": "dot",
+  "summoner-root": "summoner",
+};
+
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(`assertion failed: ${message}`);
 }
@@ -663,14 +672,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
 
   // Check in execution order: content exists is not enough if a route uses it
   // before earning it.
-  const ARCHETYPE_FOR_ROOT: Record<string, CombatArchetype> = {
-    "cadence-root": "cadence",
-    "cooldown-root": "cooldown",
-    "reload-root": "reload",
-    "energy-root": "energy",
-    "dot-root": "dot",
-    "summoner-root": "summoner",
-  };
+
   const checkRecipeConditions = (routeId: string, condition: Condition): void => {
     switch (condition.type) {
       case "recipeUnlocked":
