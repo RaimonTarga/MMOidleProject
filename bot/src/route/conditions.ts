@@ -452,6 +452,9 @@ export function resolveNodeCandidates(
   if (nodes.length === 0) return [];
 
   const pick = ref.pick ?? "first";
+  // Local observation must not silently turn into a trip across the biome.
+  // Reject sanctuary/wrong-tier/wrong-biome state rather than falling back.
+  if (pick === "current") return obs.nodeId && nodes.includes(obs.nodeId) ? [obs.nodeId] : [];
   // "first" and "rotate" name one specific node on purpose; widening them would
   // change what those routes were authored to measure.
   if (pick === "first") return [nodes[0]];

@@ -1,8 +1,20 @@
 import assert from "node:assert/strict";
 import { ObservationWindow } from "../route/observationWindow";
-import { CAMPAIGN_BEHAVIOR_ROUTES } from "./campaignBehavior";
+import { CAMPAIGN_BEHAVIOR_ROUTES, CAMPAIGN_LOCAL_BEHAVIOR_ROUTES } from "./campaignBehavior";
+import { resolveNodeCandidates } from "../route/conditions";
+import type { Observation } from "../state/observation";
 import { RouteExecutor } from "../route/executor";
 const window = new ObservationWindow(1000);
+const local = { kind: "biome", biomeGroup: "plains", tier: 2, pick: "current" } as const;
+assert.deepEqual(resolveNodeCandidates(local, { nodeId: "node-t2-plains-04" } as Observation, 0), ["node-t2-plains-04"]);
+assert.deepEqual(resolveNodeCandidates(local, { nodeId: "node-t2-sanctuary" } as Observation, 0), []);
+assert.deepEqual(resolveNodeCandidates(local, { nodeId: "node-t2-forest-05" } as Observation, 0), []);
+assert.deepEqual(resolveNodeCandidates(local, { nodeId: null } as unknown as Observation, 0), []);
+for (const route of CAMPAIGN_LOCAL_BEHAVIOR_ROUTES) {
+  const windows = route.steps.filter(s => s.type === "farm" && s.observeForMs);
+  assert.equal(windows.length, 2);
+  assert(windows.every(s => s.type === "farm" && s.at.kind === "biome" && s.at.pick === "current"));
+}
 assert.equal(window.sample(10000, true), false, "prep time cannot satisfy a new window");
 assert.equal(window.sample(10500, true), false);
 window.sample(11000, false);
@@ -31,12 +43,13 @@ async function executorWindowRegression(): Promise<void> {
   let now = 100000;
   Date.now = () => now;
   try {
-    const obs = { self: { auto: false, isDead: false }, nodeId: "node-t2-plains-01" };
+    const obs = { self: { auto: false, isDead: false }, nodeId: "node-t2-plains-04" };
     const executor = new RouteExecutor({ obs, startedAt: 0,
       policy: { farmCondition: (condition: unknown) => condition } } as never);
     let invoked = false;
-    Object.assign(executor, { farmUntil: async (_nodes: string[], done: () => boolean, opts: { ignoreBiomeCap: boolean }) => {
+    Object.assign(executor, { farmUntil: async (nodes: string[], done: () => boolean, opts: { ignoreBiomeCap: boolean }) => {
       invoked = true;
+      assert.deepEqual(nodes, ["node-t2-plains-04"], "farm receives the preparation node, not catalogue first");
       assert.equal(opts.ignoreBiomeCap, true);
       assert.equal(done(), false);
       now += 5000; assert.equal(done(), false, "auto-off prep does not count");
@@ -44,10 +57,12 @@ async function executorWindowRegression(): Promise<void> {
       now += 500; assert.equal(done(), false);
       obs.self.isDead = true; now += 500; assert.equal(done(), false);
       obs.self.isDead = false; now += 500; assert.equal(done(), false);
+      obs.nodeId = "node-t2-plains-01"; now += 500; assert.equal(done(), false, "another Plains node cannot count toward the fixed window");
+      obs.nodeId = "node-t2-plains-04"; now += 500; assert.equal(done(), false);
       now += 500; assert.equal(done(), true);
     } });
     await (executor as unknown as { doFarm: (step: unknown) => Promise<void> }).doFarm({
-      type: "farm", at: { kind: "node", nodeId: obs.nodeId }, until: { type: "elapsedMs", ms: 0 }, observeForMs: 1000,
+      type: "farm", at: local, until: { type: "elapsedMs", ms: 0 }, observeForMs: 1000,
     });
     assert.equal(invoked, true);
   } finally { Date.now = originalNow; }

@@ -11,7 +11,7 @@ export type NodeRef =
       kind: "biome";
       biomeGroup: string;
       tier: number;
-      pick?: "first" | "rotate" | "uncleared";
+      pick?: "first" | "rotate" | "uncleared" | "current";
       /** Prefer nodes whose live modifier mints this catalyst family. */
       modifier?: string;
     }

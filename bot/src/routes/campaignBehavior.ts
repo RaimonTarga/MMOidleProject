@@ -20,3 +20,13 @@ export const CAMPAIGN_BEHAVIOR_ROUTES: Route[] = CAMPAIGN_READINESS_ROUTES.map(s
     // bypassing either window; no preparation mastery can finish a window.
     completion: { type: "elapsedMs", ms: 0 } };
 });
+
+/** Q2b pins each observation to its actual preparation node; Q2 stays reproducible. */
+export const CAMPAIGN_LOCAL_BEHAVIOR_ROUTES: Route[] = CAMPAIGN_BEHAVIOR_ROUTES.map(route => ({
+  ...structuredClone(route), id: route.id.replace("-behavior-", "-local-behavior-"),
+  version: "1.0.0", description: "Q2b local post-preparation observation; no cross-biome-node transit.",
+  steps: route.steps.map(step => step.type === "farm" && step.observeForMs ? {
+    ...structuredClone(step), at: { kind: "biome" as const, biomeGroup: "plains", tier: 2, pick: "current" as const },
+    label: step.label?.replace("q2:", "q2b:"),
+  } : structuredClone(step)),
+}));

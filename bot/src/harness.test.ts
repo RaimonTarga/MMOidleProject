@@ -529,8 +529,13 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
       return { gm, budget: runeBudgetForGlobalMastery(gm) };
     };
     const checkRef = (ref: NodeRef, where: string): void => {
+      // Authoring validation has no live location. A current-node selector
+      // requires a real biome; runtime separately checks the observed node.
+      const resolvable = ref.kind === "biome" && ref.pick === "current"
+        ? normalNodesFor(ref.biomeGroup, ref.tier, ref.modifier).length > 0
+        : resolveNode(ref, emptyObs, 0) !== null;
       assert(
-        resolveNode(ref, emptyObs, 0) !== null,
+        resolvable,
         `${route.id}: ${where} names a resolvable node (${JSON.stringify(ref)})`,
       );
     };
