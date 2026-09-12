@@ -422,6 +422,7 @@ html[data-spectator="true"] #game-wrapper > div {
 
 .auth-character-card {
   --capsule-rgb: 139, 116, 213;
+  --tier-color: #444444;
   position: relative;
   isolation: isolate;
   display: grid;
@@ -430,6 +431,7 @@ html[data-spectator="true"] #game-wrapper > div {
   overflow: hidden;
   background:
     linear-gradient(105deg, rgba(var(--capsule-rgb), 0.09), transparent 35%),
+    linear-gradient(285deg, color-mix(in srgb, var(--tier-color) 11%, transparent), transparent 62%),
     linear-gradient(135deg, rgba(38, 35, 43, 0.98), rgba(17, 15, 25, 0.98));
   border: 1px solid rgba(var(--capsule-rgb), 0.38);
   border-radius: 14px;
@@ -447,7 +449,13 @@ html[data-spectator="true"] #game-wrapper > div {
   inset: 0 12% auto 0;
   height: 2px;
   pointer-events: none;
-  background: linear-gradient(90deg, rgb(var(--capsule-rgb)), rgba(var(--capsule-rgb), 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--capsule-rgb)),
+    rgb(var(--capsule-rgb)) 42%,
+    var(--tier-color) 78%,
+    transparent
+  );
   box-shadow: 0 0 14px rgba(var(--capsule-rgb), 0.45);
 }
 
@@ -462,17 +470,19 @@ html[data-spectator="true"] #game-wrapper > div {
   pointer-events: none;
   border: 1px solid rgba(var(--capsule-rgb), 0.08);
   border-radius: 50%;
-  box-shadow: inset 0 0 80px rgba(var(--capsule-rgb), 0.04);
+  border-color: color-mix(in srgb, rgb(var(--capsule-rgb)) 42%, var(--tier-color));
+  box-shadow: inset 0 0 80px color-mix(in srgb, var(--tier-color) 8%, transparent);
 }
 
 .auth-character-card:hover,
 .auth-character-card:focus-within {
   border-color: rgba(var(--capsule-rgb), 0.68);
+  border-color: color-mix(in srgb, rgb(var(--capsule-rgb)) 58%, var(--tier-color));
   box-shadow:
     inset 0 1px rgba(255, 255, 255, 0.07),
     inset 0 0 45px rgba(var(--capsule-rgb), 0.055),
     0 16px 38px rgba(0, 0, 0, 0.38),
-    0 0 22px rgba(var(--capsule-rgb), 0.08);
+    0 0 22px color-mix(in srgb, var(--tier-color) 12%, transparent);
   transform: translateY(-2px);
 }
 
@@ -486,6 +496,7 @@ html[data-spectator="true"] #game-wrapper > div {
 .auth-character-card > * { position: relative; z-index: 1; }
 
 .auth-character-card__portrait {
+  --portrait-circle-size: 112px;
   position: relative;
   display: grid;
   place-items: center;
@@ -493,8 +504,9 @@ html[data-spectator="true"] #game-wrapper > div {
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 51%, rgba(var(--capsule-rgb), 0.36), transparent 46%),
+    radial-gradient(circle at 82% 42%, color-mix(in srgb, var(--tier-color) 26%, transparent), transparent 52%),
     linear-gradient(160deg, rgba(var(--capsule-rgb), 0.16), rgba(7, 6, 13, 0.74));
-  border-right: 1px solid rgba(var(--capsule-rgb), 0.23);
+  border-right: 1px solid color-mix(in srgb, rgb(var(--capsule-rgb)) 54%, var(--tier-color));
   font: 32px var(--hud-font-display);
 }
 
@@ -503,8 +515,8 @@ html[data-spectator="true"] #game-wrapper > div {
   position: absolute;
   left: 50%;
   top: 45%;
-  width: 112px;
-  height: 112px;
+  width: var(--portrait-circle-size);
+  height: var(--portrait-circle-size);
   border: 1px solid rgba(var(--capsule-rgb), 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%);
@@ -531,9 +543,34 @@ html[data-spectator="true"] #game-wrapper > div {
   filter: drop-shadow(0 5px 7px rgba(0, 0, 0, 0.48));
 }
 
-.auth-character-card__portrait > span {
+.auth-character-card__emblem {
+  position: absolute;
+  z-index: 0;
+  top: 45%;
+  left: 50%;
+  width: var(--portrait-circle-size) !important;
+  height: var(--portrait-circle-size) !important;
+  opacity: 0.38;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  clip-path: circle(50% at 50% 50%);
+  /* Restore a shared matte behind the alpha-cut class crests. The circle crop
+     makes this safe for both the restored and still-opaque source artwork. */
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      color-mix(in srgb, rgb(var(--capsule-rgb)) 34%, transparent),
+      transparent 70%
+    ),
+    color-mix(in srgb, rgb(var(--capsule-rgb)) 18%, #0b0910);
+  filter: saturate(0.8) drop-shadow(0 0 12px color-mix(in srgb, var(--tier-color) 38%, transparent));
+  pointer-events: none;
+}
+
+.auth-character-card__portrait-fallback {
   position: absolute;
   inset: 0;
+  z-index: 3;
   display: grid;
   place-items: center;
 }
@@ -611,6 +648,10 @@ html[data-spectator="true"] #game-wrapper > div {
   white-space: nowrap;
 }
 .auth-character-card__stat--mastery strong { color: #e0c070; font-size: 20px; }
+.auth-character-card__stat--tier strong {
+  color: var(--tier-color);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--tier-color) 30%, transparent);
+}
 
 .auth-character-card__actions {
   display: flex;
@@ -689,7 +730,7 @@ html[data-spectator="true"] #game-wrapper > div {
   .auth-character-card:hover,
   .auth-character-card:focus-within { transform: none; }
   .auth-character-card__portrait canvas { width: 106px; height: 136px; }
-  .auth-character-card__portrait::before { width: 84px; height: 84px; }
+  .auth-character-card__portrait { --portrait-circle-size: 84px; }
   .auth-character-card__body { gap: 11px; padding: 16px 13px 13px; }
   .auth-character-card__heading { align-items: start; flex-direction: column; gap: 8px; }
   .auth-character-card__heading h2 { font-size: 19px; }

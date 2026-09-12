@@ -215,6 +215,19 @@ function source(directory: string, id: string, revision?: string): AssetIconSour
   return assetIcon(`${ROOT}/${directory}/${id}.png${cacheBuster}`);
 }
 
+/** The authored class crest used by the passive tree's class-root nodes. */
+export function classEmblemIconSource(archetype: string): AssetIconSource {
+  return source('classes', archetype, 'class-crests-v2');
+}
+
+/** The authored crest for a class's light / balanced / heavy branch. */
+export function classFrameEmblemIconSource(
+  archetype: string,
+  subVariant: 'light' | 'balanced' | 'heavy',
+): AssetIconSource {
+  return source('frames', `${archetype}-${subVariant}`, 'class-crests-v2');
+}
+
 export function conceptAbilityIconSource(id: string): AssetIconSource | null {
   const iconId = ABILITY_ICON_ALIASES[id] ?? id;
   return ABILITY_IDS.has(iconId) ? source('abilities', iconId) : null;
@@ -337,12 +350,12 @@ export function skillVocabularyIconSource(
   node: Pick<SkillNode, 'id' | 'tier' | 'classId' | 'subVariantId'>,
 ): AssetIconSource | null {
   if (node.tier === 0) {
-    return source('classes', node.id.replace(/-root$/, ''), 'class-crests-v2');
+    return classEmblemIconSource(node.id.replace(/-root$/, ''));
   }
   if (node.tier === 1 && node.subVariantId) {
     const classId = node.classId?.replace(/-root$/, '');
     if (classId) {
-      return source('frames', `${classId}-${node.subVariantId}`, 'class-crests-v2');
+      return classFrameEmblemIconSource(classId, node.subVariantId);
     }
     return source('frames', node.subVariantId);
   }

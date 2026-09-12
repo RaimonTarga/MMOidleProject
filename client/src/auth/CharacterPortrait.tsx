@@ -1,5 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { resolvePlayerFrame, type CharacterSummary } from '@mmo-idle/shared';
+import {
+  headAnchorFor,
+  resolvePlayerAccent,
+  resolvePlayerFrame,
+  SKILL_TREE,
+  type CharacterSummary,
+  type SubVariant,
+} from '@mmo-idle/shared';
+import { GameIcon } from '../ui/GameIcon';
+import {
+  classEmblemIconSource,
+  classFrameEmblemIconSource,
+} from '../ui/conceptIcons';
 
 interface AtlasFrame {
   filename: string;
@@ -35,6 +47,46 @@ function loadAtlasImage(): Promise<HTMLImageElement> {
   return atlasImagePromise;
 }
 
+const CLASS_BRANCHES: readonly SubVariant[] = ['light', 'balanced', 'heavy'];
+
+/**
+ * Follow the newest named node in the character's class path. The passive-tree
+ * art currently has root and branch crests; a T3 node carries its branch key,
+ * so it should still resolve to that branch's newest authored crest rather
+ * than falling back to the root emblem.
+ */
+function classEmblemFor(character: CharacterSummary) {
+  const archetype = character.combatArchetype;
+  if (!archetype) return null;
+
+  const rootId = character.selectedClass ?? `${archetype}-root`;
+  let latestVariantTier = -1;
+  let latestVariant: SubVariant | null = null;
+
+  for (const skillId of character.unlockedSkills) {
+    const node = SKILL_TREE.get(skillId);
+    if (!node || node.tier > 3) continue;
+    const belongsToClass = node.tier === 0
+      ? node.id === rootId
+      : node.classId === rootId;
+    if (!belongsToClass || !node.subVariantId) continue;
+    if (node.tier >= latestVariantTier) {
+      latestVariantTier = node.tier;
+      latestVariant = node.subVariantId;
+    }
+  }
+
+  const variant = latestVariant
+    ?? CLASS_BRANCHES.find((candidate) => character.unlockedSkills.includes(`${archetype}-${candidate}`))
+    ?? null;
+
+  return {
+    source: variant
+      ? classFrameEmblemIconSource(archetype, variant)
+      : classEmblemIconSource(archetype),
+  };
+}
+
 export function CharacterPortrait({ character }: { character: CharacterSummary }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
@@ -42,6 +94,13 @@ export function CharacterPortrait({ character }: { character: CharacterSummary }
     combatArchetype: character.combatArchetype,
     unlockedSkills: character.unlockedSkills,
   });
+  const accent = resolvePlayerAccent({
+    combatArchetype: character.combatArchetype,
+    unlockedSkills: character.unlockedSkills,
+  });
+  const accentFrameName = accent?.frame ?? null;
+  const accentColor = accent?.color;
+  const classEmblem = classEmblemFor(character);
 
   useEffect(() => {
     let cancelled = false;
@@ -61,27 +120,100 @@ export function CharacterPortrait({ character }: { character: CharacterSummary }
         context.beginPath();
         context.ellipse(60, 128, 34, 10, 0, 0, Math.PI * 2);
         context.fill();
+        const bodyX = 16;
+        const bodyY = 40;
+        const bodyWidth = 88;
+        const bodyHeight = 88;
+        const bodyScaleX = bodyWidth / frame.frame.w;
+        const bodyScaleY = bodyHeight / frame.frame.h;
         context.drawImage(
           image,
           frame.frame.x,
           frame.frame.y,
           frame.frame.w,
           frame.frame.h,
-          16,
-          40,
-          88,
-          88,
+          bodyX,
+          bodyY,
+          bodyWidth,
+          bodyHeight,
         );
+
+        const accentFrame = accentFrameName ? frames.get(accentFrameName) : undefined;
+        if (accentFrame) {
+          const anchor = headAnchorFor(frameName);
+          const accentWidth = accentFrame.frame.w * bodyScaleX;
+          const accentHeight = accentFrame.frame.h * bodyScaleY;
+          const accentCenterX = bodyX + bodyWidth / 2
+            + (anchor.x - frame.frame.w / 2) * bodyScaleX;
+          const accentCenterY = bodyY + bodyHeight / 2
+            + (anchor.y - frame.frame.h / 2) * bodyScaleY
+            - accentHeight / 2
+            + 2 * bodyScaleY;
+          const accentCanvas = document.createElement('canvas');
+          accentCanvas.width = Math.max(1, Math.round(accentWidth));
+          accentCanvas.height = Math.max(1, Math.round(accentHeight));
+          const accentContext = accentCanvas.getContext('2d');
+          if (accentContext) {
+            accentContext.imageSmoothingEnabled = false;
+            accentContext.drawImage(
+              image,
+              accentFrame.frame.x,
+              accentFrame.frame.y,
+              accentFrame.frame.w,
+              accentFrame.frame.h,
+              0,
+              0,
+              accentCanvas.width,
+              accentCanvas.height,
+            );
+            if (accentColor !== undefined) {
+              const pixels = accentContext.getImageData(
+                0,
+                0,
+                accentCanvas.width,
+                accentCanvas.height,
+              );
+              const tintR = (accentColor >> 16) & 0xff;
+              const tintG = (accentColor >> 8) & 0xff;
+              const tintB = accentColor & 0xff;
+              for (let i = 0; i < pixels.data.length; i += 4) {
+                pixels.data[i] = Math.round(pixels.data[i]! * tintR / 255);
+                pixels.data[i + 1] = Math.round(pixels.data[i + 1]! * tintG / 255);
+                pixels.data[i + 2] = Math.round(pixels.data[i + 2]! * tintB / 255);
+              }
+              accentContext.putImageData(pixels, 0, 0);
+            }
+            context.drawImage(
+              accentCanvas,
+              accentCenterX - accentCanvas.width / 2,
+              accentCenterY - accentCanvas.height / 2,
+            );
+          }
+        }
         setReady(true);
       })
       .catch(() => setReady(false));
     return () => { cancelled = true; };
-  }, [frameName]);
+  }, [accentColor, accentFrameName, frameName]);
 
   return (
     <div className="auth-character-card__portrait" aria-hidden="true">
+      {classEmblem && (
+        <GameIcon
+          source={classEmblem.source}
+          size={112}
+          fit="contain"
+          fallback={null}
+          className="auth-character-card__emblem"
+          decorative
+        />
+      )}
       <canvas ref={canvasRef} width={120} height={154} />
-      {!ready && <span>{character.selectedClass?.slice(0, 1).toUpperCase() ?? '◇'}</span>}
+      {!ready && (
+        <span className="auth-character-card__portrait-fallback">
+          {character.selectedClass?.slice(0, 1).toUpperCase() ?? '◇'}
+        </span>
+      )}
     </div>
   );
 }

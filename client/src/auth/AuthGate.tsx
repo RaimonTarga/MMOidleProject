@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   NODE_BIOMES,
@@ -23,6 +23,7 @@ import {
 import './authGate.css';
 import { CharacterPortrait } from './CharacterPortrait';
 import { LandingCinematic } from './LandingCinematic';
+import { tierColor } from '../ui/inventory/constants';
 
 const relativeTime = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
 
@@ -52,9 +53,15 @@ function CharacterCard({
   const [confirmName, setConfirmName] = useState('');
   const canDelete = confirmName.trim() === character.name;
   const archetype = character.combatArchetype ?? 'classless';
+  const cardStyle = {
+    '--tier-color': tierColor(character.playerTier),
+  } as CSSProperties;
 
   return (
-    <article className={`auth-character-card auth-character-card--${archetype}`}>
+    <article
+      className={`auth-character-card auth-character-card--${archetype}`}
+      style={cardStyle}
+    >
       <CharacterPortrait character={character} />
       <div className="auth-character-card__body">
         <div className="auth-character-card__heading">
