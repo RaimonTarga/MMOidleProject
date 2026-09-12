@@ -26,8 +26,11 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-q1-assessment.md](briefs/bot-balance-q1-assessment.md) | Astra's evidence review: configuration success and the post-build observation gap. |
+| [briefs/bot-balance-q2-operator-packet.md](briefs/bot-balance-q2-operator-packet.md) | Frozen six-case post-build behavior observation experiment for Luna. |
 | [briefs/bot-balance-q0-report.md](briefs/bot-balance-q0-report.md) | Astra's implemented profiles, readiness routes and qualification limits. |
 | [briefs/bot-balance-q1-operator-packet.md](briefs/bot-balance-q1-operator-packet.md) | Luna's prepared six-case Plains readiness operation and factual report contract. |
+| [briefs/bot-balance-q1-report.md](briefs/bot-balance-q1-report.md) | Luna's completed six-case Plains readiness execution report; configuration qualification only. |
 | [briefs/bot-balance-campaign-state.md](briefs/bot-balance-campaign-state.md) | Expert-prepared solo viability campaign: decisions, template shortlist, validity rules and current evidence ledger. |
 | [briefs/bot-balance-q0-template-qualification.md](briefs/bot-balance-q0-template-qualification.md) | Astra preparation specification: qualify current templates and propose bounded readiness cases before runtime experiments. |
 | [runic-attunement-current-state.md](runic-attunement-current-state.md) | Unified RP reservations, named ability rules, arbitration and save migration. |

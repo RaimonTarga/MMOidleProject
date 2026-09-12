@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-12. Owner: Astra (planning and interpretation); operators: Luna.
-Status: Astra prepared six local readiness routes; runtime qualification pending; no campaign runs launched.
+Status: Q1 configuration readiness accepted, 6/6; Q2 observed behavior routes prepared for Luna.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -28,7 +28,8 @@ execution instructions. Current source and explicit user direction take preceden
 | Stage | Question / work | Exit evidence |
 |---|---|---|
 | Q0, prepared | Qualify existing templates and their first build transitions; prepare exact local readiness routes | Six source-derived profile records, legal acquisition/build sequences, concrete runtime packet |
-| Q1 | Does each selected profile actually behave as declared? | Bounded runtime evidence for exact loadouts, movement, ability firing and relevant stance/recovery behavior |
+| Q1, complete | Can each selected profile acquire and reconcile its build? | Six configuration successes; combat under the post-prep builds was untested |
+| Q2, next | Do the two configured builds actually fight and activate abilities? | Two 60-second observed windows per class; opportunity/activation evidence reported separately |
 | V1 | Can prepared builds farm and solve bosses? | Local encounter records; begin T1 coverage, reuse qualified T2 starts without replaying T1 for each T2 question |
 | V2 | What resolves a particular failing matchup? | Small local alternatives selected from failure diagnosis, initially 2–3 replicates |
 | E1 | Is shipped progression pacing appropriate? | One-tier 1× economy studies using current credible carryover, after functional routes/builds |
@@ -140,11 +141,12 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 ## Campaign ledger
 
 - Validated: shared-cost projection and source-ordered build/acquisition tests; see Q0 report for executed checks.
-- Current runtime-qualified profiles/checkpoints: none claimed by this campaign.
+- Current runtime qualification: Q1 six profiles passed acquisition and three-stage build verification on `1d3c710f`; post-configuration combat remained untested.
 - New confirmed balance signals / bugs: none.
 - Approved gameplay changes: none.
-- Latest experiment: none launched.
-- Next action: freeze the prepared source, then Luna executes Q1 exactly and returns evidence to Astra.
+- Latest experiment: `20260912t154251z-striker-campaign-readiness-t2`, six completions, no deaths/failures; configuration evidence only.
+- Next action: Luna executes [Q2](bot-balance-q2-operator-packet.md) on `06c0818a`; two observed 60-second windows per case, no boss attempts or balance comparison.
+- [Astra Q1 assessment](bot-balance-q1-assessment.md): raw event verification and reason for Q2. Uncommitted gameplay changes are excluded from the Q2 source.
 - On return: record exact revisions/artifacts, classify evidence, update affected
   profile/checkpoint status, then choose one next question. Historical passing
   preflight reports must not be presented as fresh verification.
