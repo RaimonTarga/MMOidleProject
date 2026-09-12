@@ -1,4 +1,5 @@
 import { applyBuild } from "../loadout/apply";
+import { ObservationWindow } from "./observationWindow";
 import { BuildError, buildKey, buildRP, validateBuild, observedBuild, type DesiredBuild } from "../loadout/loadout";
 import {
   ABILITY_RECIPE_DATABASE,
@@ -722,11 +723,21 @@ export class RouteExecutor {
       this.rotation,
       NEAR_CANDIDATE_SLACK_HOPS,
     );
-    await this.farmUntil(nodes, () => this.test(condition), {
+    const window = step.observeForMs === undefined ? null : new ObservationWindow(step.observeForMs);
+    const done = (): boolean => {
+      const self = this.deps.obs.self;
+      const observed = window?.sample(Date.now(), !!self && !self.isDead && self.auto &&
+        nodes.includes(this.deps.obs.nodeId ?? "")) ?? true;
+      return this.test(condition) && observed;
+    };
+    await this.farmUntil(nodes, done, {
       what: describe(condition),
       timeoutMs: step.stepTimeoutMs ?? DEFAULT_STEP_TIMEOUT_MS,
       noProgressMs: stallAfterMs ?? DEFAULT_NO_PROGRESS_MS,
       onStall: () => shortfall(condition, this.deps.obs),
+      // A capped biome can still provide the explicitly requested behavior window.
+      // Do not bypass cap protection for an unmet progression objective.
+      ignoreBiomeCap: !!window && this.test(condition),
     });
   }
 

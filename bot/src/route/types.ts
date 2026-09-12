@@ -48,7 +48,9 @@ export type StepBody =
   | { type: "unlockSkill"; skillId: string }
   | { type: "travel"; to: NodeRef }
   /** Auto-combat in place until `until` holds. The workhorse step. */
-  | { type: "farm"; at: NodeRef; until: Condition }
+  | { type: "farm"; at: NodeRef; until: Condition;
+      /** Additionally observe this much alive, auto-enabled time in the target area. */
+      observeForMs?: number }
   /**
    * Craft each recipe, farming `farmAt` whenever the wallet falls short. Costs
    * are read from `RECIPE_DATABASE` at runtime, never restated here.

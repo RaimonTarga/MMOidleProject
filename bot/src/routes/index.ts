@@ -1,5 +1,6 @@
 import { STRIKER_DECISIONS_T1 } from "./strikerDecisionsT1";
 import { CAMPAIGN_READINESS_ROUTES } from "./campaignReadiness";
+import { CAMPAIGN_BEHAVIOR_ROUTES } from "./campaignBehavior";
 import type { Route } from "../route/types";
 import { APPRENTICE_LETDOTSFINISH_T1 } from "./apprenticeLetDotsFinishT1";
 import { APPRENTICE_T1 } from "./apprenticeT1";
@@ -108,6 +109,7 @@ export const ROUTES = new Map<string, Route>(
     ...T2_CANONICAL_VALIDATION_ROUTES,
     ...T2_ECONOMY_PACING_ROUTES,
     ...CAMPAIGN_READINESS_ROUTES,
+    ...CAMPAIGN_BEHAVIOR_ROUTES,
   ].map((route) => [route.id, route]),
 );
 

@@ -16,6 +16,7 @@ const tests = [
   ["bot", "src/routes/t1Routes.semantic.test.ts"],
   ["bot", "src/routes/t2Routes.semantic.test.ts"],
   ["bot", "src/routes/campaignReadiness.test.ts"],
+  ["bot", "src/routes/campaignBehavior.test.ts"],
 ];
 console.log("Bot preflight: NONCANONICAL infrastructure validation, no balance evidence.");
 for (const pkg of ["bot", "server"]) {
