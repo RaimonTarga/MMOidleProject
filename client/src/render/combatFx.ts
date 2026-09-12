@@ -121,7 +121,15 @@ import {
   fxDeathSting,
   fxExecution,
 } from "../fx/desertCues";
-import { fxWither, fxPlagueHex, fxPoolSpawn } from "../fx/swampCues";
+import {
+  fxWither,
+  fxPlagueHex,
+  fxPoolSpawn,
+  fxDeathrollCoil,
+  fxDeathrollLunge,
+  fxDragWake,
+  fxDragDestination,
+} from "../fx/swampCues";
 import { fxDeepFreeze, fxShatter, fxGlacialSlam } from "../fx/tundraCues";
 import { fxStalactiteShot, fxBurrow, fxEmerge } from "../fx/caveCues";
 import { fxGroundSlam, fxChargeLane, fxBombardment } from "../fx/mountainCues";
@@ -925,6 +933,19 @@ export function dispatchCombatEvent(
     return;
   }
 
+  if (ev.kind === "monster-drag") {
+    // Node-wide, like every other ecology tell: watching someone else get hauled into
+    // a bog is information about the bog. The victim's actual motion arrives as
+    // ordinary `player-knockback` steps — this only draws the furrow they leave.
+    if (shouldRunClientFx()) {
+      const at = nodeToScene(ev.pos.x, ev.pos.y);
+      // `start` carries the DESTINATION, `wake` the victim's current position.
+      if (ev.phase === "wake") fxDragWake(scene, at.x, at.y);
+      else if (ev.phase === "start") fxDragDestination(scene, at.x, at.y, ev.durationMs);
+    }
+    return;
+  }
+
   if (ev.kind === "monster-cast-start") {
     // Node-wide telegraph: open the cast bar over the charging monster.
     startCastBar(state, ev.monsterId, ev.castMs, ev.label);
@@ -939,6 +960,10 @@ export function dispatchCombatEvent(
         else if (ev.fx === "burrow") fxBurrow(scene, caster.x, caster.y);
         else if (ev.fx === "predator-flee") fxPredatorFlee(scene, caster.x, caster.y);
         else if (ev.fx === "cataclysm-cast") fxCataclysmCast(scene, caster.x, caster.y);
+        // The Bog Lurker gathering itself at the water's edge. This is the beat the
+        // whole ability is solvable from, so it has to be drawn on the wind-up and
+        // not only on what lands.
+        else if (ev.fx === "deathroll") fxDeathrollCoil(scene, caster.x, caster.y);
       }
     }
     return;
@@ -1040,6 +1065,8 @@ export function dispatchCombatEvent(
             fxGroundSlam(scene, land.x, land.y, ev.radius ?? 83);
           });
         }
+      } else if (monster && target && ev.fx === "deathroll") {
+        fxDeathrollLunge(scene, monster.x, monster.y, target.x, target.y);
       } else if (monster && target && ev.fx === "trench-lunge") {
         fxSavageMaul(scene, monster.x, monster.y, target.x, target.y);
       } else if (monster && target && ev.fx === "trench-depth-bolt") {

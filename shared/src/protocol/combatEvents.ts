@@ -89,6 +89,21 @@ type CombatEventPayload =
   // the damage + interrupt are server-authoritative. `fx` selects the charged-shot art.
   | { kind: 'monster-cast-start'; monsterId: string; castMs: number; label: string; fx?: string }
   | { kind: 'monster-cast-end'; monsterId: string; fired: boolean; targetId?: string; pos?: Vec2; radius?: number; fx?: string }
+  // DEATHROLL DRAG telegraph, shown to the whole node. A monster has a player in its
+  // jaws and is hauling them back to its lair. `start` fires once with `pos` at the
+  // DESTINATION and `durationMs` the length of the haul, so the client can draw where
+  // the victim is being taken; `wake` repeats on a fixed cadence with `pos` at the
+  // VICTIM, drawing the furrow they are being pulled through; `end` clears the cue.
+  // Purely cosmetic — the root, the haul and the release are server-authoritative,
+  // and the victim's every step also arrives as a `player-knockback`.
+  | {
+      kind: 'monster-drag';
+      monsterId: string;
+      playerId: string;
+      pos: Vec2;
+      durationMs: number;
+      phase: 'start' | 'wake' | 'end';
+    }
   // Server forced the player to a new position (e.g. blunderbuss recoil). The
   // client owns own-player prediction, so it must be told to accept the move
   // even mid-movement; `pos` is the authoritative destination to slide to.

@@ -179,22 +179,57 @@ export const swampMonsterEntries = [
 
   ['bog-lurker', {
     id: 'bog-lurker', name: 'Bog Lurker', color: 0x445533,
-    // EVOLVED ENVIRONMENTAL AMBUSHER. Lives and idles INSIDE bog/poison pools,
-    // semi-hidden while idle, and does not roam like a normal crocodile — it ERUPTS
-    // when the player comes near.
-    // Signature opener: the first bite lands a larger multi-stack poison alpha strike
-    // (~3 stacks). Ordinary combat afterwards — no pool retreat, no stealth reset.
-    // Evasion is its defensive specialisation, so the DR bulk is removed.
-    stats: { hp: 490, attack: 43, plating: 0, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
+    // EVOLVED ENVIRONMENTAL AMBUSHER — the swamp's crocodile, and the one mob in the
+    // biome whose mechanic is the TERRAIN rather than the poison on top of it.
+    //
+    // It waits at the RIM of a rot pool (`idleAnchor`), half-submerged where the
+    // water meets the mud, and does not roam. When a player comes within reach it
+    // coils — a visible, interruptible wind-up from a distance you can still walk out
+    // of — then LUNGES the whole gap in one leap, clamps on, and HAULS the victim
+    // back into its bog while they are rooted.
+    //
+    // The damage is not the point. The pool is already a standing hazard; the Lurker's
+    // job is to put you in one, which is what makes a swamp node's water a thing you
+    // route around rather than scenery you cross. Its poison opener is unchanged.
+    // Evasion stays its defensive specialisation, so no DR bulk on top.
+    //
+    // WARNING: `pullRange` and `lunge.range` are a pair. Notice range under leap range
+    // makes the pounce open the instant it aggros with no approach to read; notice
+    // range far over it makes it walk most of the way in before it may coil, which is
+    // the ambush the lunge exists to replace.
+    stats: { hp: 490, attack: 43, plating: 0, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 240 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 57, essenceType: 'purple', level: 3, biomeXp: 345 },
-    // It LIVES in the bog: `idleAnchor` keeps it idling inside the nearest pool
-    // instead of roaming past it, so the player meets it by approaching the water.
+    // It LIVES in the bog: `idleAnchor` keeps it idling in the shallows of the nearest
+    // pool instead of roaming past it, so the player meets it by approaching the water.
     idleAnchor: 'swamp-pool',
     ai: { wanderRadius: 160, leashRange: 540, idleMinMs: 2200, idleMaxMs: 6500 },
     evasion: 0.25,
     // Erupting from the pool is a poison ALPHA STRIKE: 3 stacks on the first bite.
     dotEffect: { debuffId: 'lurker-venom', label: 'Lurker Venom', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500, openerStacks: 3 },
+    // DEATHROLL — coil, leap the gap, and drag the catch home.
+    //
+    // The multiplier is deliberately modest: what this ability costs you is being
+    // relocated into a poison pool with your legs locked, not the bite itself. Making
+    // it hit hard as well would double-charge for one mistake.
+    //
+    // Counterplay, in the order a player finds it: walk out of the leap during the
+    // coil; stun or freeze the coil to deny it outright; stun or freeze the Lurker
+    // mid-haul to make it let go early; failing all three, keep fighting — the root
+    // stops your legs and not your weapon.
+    //
+    // Numbers are seeds for the balance pass. `durationMs` is the one to watch: it is
+    // both the haul ceiling and the root, so raising it lengthens the lockdown even on
+    // nodes where the water is close enough that the drag finishes early.
+    chargedAttack: {
+      // `initialCooldownMs: 0` — the pounce is the OPENER, not a beat the fight
+      // works up to. An ambusher that trades two ordinary bites first has already
+      // closed the distance the leap exists to cross.
+      name: 'Deathroll', castMs: 1100, cooldownMs: 11000, initialCooldownMs: 0,
+      multiplier: 1.4, fx: 'deathroll',
+      lunge: { range: 300 },
+      dragsToLair: { lair: 'swamp-pool', durationMs: 2600, speed: 210, maxLairRange: 1400 },
+    },
   }],
 
 

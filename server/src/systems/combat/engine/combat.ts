@@ -93,6 +93,12 @@ import {
 } from "../../world/groundZones";
 import { monsterDeathEmpowerMult } from "../damage/monsterDeathEffects";
 import { pushPlayer } from "../damage/forcedMovement";
+import { beginLairDrag, isDraggingPrey } from "../damage/lairDrag";
+import {
+  lungeInRange,
+  lungeSpecFor,
+  performAmbushLunge,
+} from "../ai/ambushLunge";
 import { canApplyPlayerDebuff } from "../status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
@@ -2336,6 +2342,12 @@ export function updateCombat(world: World, dt: number, now: number) {
       setAttackTarget(world, e, null);
       continue;
     }
+    // A DEATHROLL DRAG owns its monster exactly as a knockback slide does: the jaws
+    // are full, so it neither swings nor winds anything up until the haul releases.
+    if (isDraggingPrey(e)) {
+      abortMonsterCast(world, e);
+      continue;
+    }
     if (engageSequenceHoldsAttack(e)) {
       if (
         isMonsterStunned(world, e.isMonster.id) ||
@@ -2377,16 +2389,24 @@ export function updateCombat(world: World, dt: number, now: number) {
       // that is what splits the counterplay — you walk out of a circle, and you
       // INTERRUPT (stun / freeze) a cast that is following you.
       const mobileCast = hasMobileMonsterCast(e);
+      // AMBUSH LUNGE: the pounce is the gap-closer, so its wind-up has to be allowed
+      // to OPEN from outside the jaws — otherwise the predator arrives first and the
+      // telegraph teaches the player nothing. It widens this one ability's gate only;
+      // the ordinary-attack path below re-checks real reach.
+      const lungeSpec = lungeSpecFor(monsterDef);
+      const lungeReach =
+        lungeSpec !== undefined && lungeInRange(e, target, lungeSpec.range);
       const lowHealthWard = monsterDef?.lowHealthWard;
       const castsOutsideAttackRange =
         monsterDef?.castedAttackSpeedBuff?.castWhileOutOfRange === true ||
         lowHealthWardCastEndsAt(e) > 0 ||
         (lowHealthWard !== undefined && lowHealthWardReady(e, lowHealthWard));
-      if (
-        !slamCommitted &&
-        !mobileCast &&
-        !world.collision.canReach(e, target, e.performsAttack.attackRange)
-      ) {
+      const inAttackRange = world.collision.canReach(
+        e,
+        target,
+        e.performsAttack.attackRange,
+      );
+      if (!slamCommitted && !mobileCast && !lungeReach && !inAttackRange) {
         if (castsOutsideAttackRange && (updateLowHealthWard(world, e, now) || updateCastedAttackSpeedBuff(world, e, now))) continue;
         // Target slipped out of range — drop any wind-up (the telegraph is broken).
         abortMonsterCast(world, e);
@@ -2419,6 +2439,15 @@ export function updateCombat(world: World, dt: number, now: number) {
             abortMonsterCast(world, e);
             continue;
           }
+          // WALK OUT OF IT. A lunge is a mobile cast, so the generic range bail
+          // above deliberately does not break it — but a leap has a reach, and
+          // leaving that reach during the wind-up has to deny it. Without this the
+          // pounce would follow its victim across the whole node and land anyway,
+          // which is a teleport wearing a telegraph.
+          if (lungeSpec && !lungeReach) {
+            abortMonsterCast(world, e);
+            continue;
+          }
           if (now < chargedCastEndsAt(e)) continue; // still winding up — hold
           // Wind-up complete → resolve the shot and put it on cooldown. Read the
           // planted point BEFORE completeCharge clears it.
@@ -2434,6 +2463,10 @@ export function updateCombat(world: World, dt: number, now: number) {
           if (charged.marksTarget) {
             removeStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
           }
+          // THE LEAP. Crossing the gap is part of resolving the pounce, not part of
+          // chasing, so it happens here — after the tell has run its full length and
+          // immediately before the bite is rolled from contact.
+          if (lungeSpec) performAmbushLunge(world, e, target);
           const outcome = runMonsterAttack(world, e, target, now, charged.multiplier);
           if (outcome === "hit" || outcome === "killed") {
             // DEVOUR — landing the bite feeds the caster. Deliberately gated on a
@@ -2450,6 +2483,12 @@ export function updateCombat(world: World, dt: number, now: number) {
           if (outcome === "hit") {
             applyChargedAttackKnockback(world, e, target, charged);
             applyChargedAttackRiders(world, e, target, charged);
+            // DEATHROLL DRAG. Last, because it takes ownership of the monster for the
+            // whole haul: nothing else on this charge gets to run afterwards, and the
+            // splash/kite bookkeeping below must see the grab already in place.
+            if (charged.dragsToLair) {
+              beginLairDrag(world, e, target, charged.dragsToLair, now);
+            }
           }
           world.pushEvent(e.hasPosition.nodeId, {
             kind: "monster-cast-end",
@@ -2530,6 +2569,12 @@ export function updateCombat(world: World, dt: number, now: number) {
           continue;
         }
       }
+
+      // The lunge's wider gate belongs to the POUNCE alone. Reaching here with the
+      // victim outside real attack range means the wind-up did not (or could not)
+      // start this tick — so fall out rather than let an ordinary bite land from
+      // across the bog.
+      if (lungeReach && !inAttackRange) continue;
 
       // Frozen no longer blocks attacks (it's a severe slow, not full CC); the
       // lengthened attack cooldown applied in updateChillAndFreeze paces them.

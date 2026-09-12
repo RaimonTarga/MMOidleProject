@@ -1217,6 +1217,66 @@ export interface MonsterDefinition {
      */
     rootMs?: number;
     /**
+     * AMBUSH LUNGE — this charge opens its wind-up from beyond the jaws' reach, and
+     * the leap that resolves it carries the caster onto its victim.
+     *
+     * Without it a charged attack can only ever be armed at contact, because the
+     * combat loop gates every monster beat on `attackRange`. For a pounce that is
+     * backwards: the leap IS the gap-closer, so an ambusher that must first walk up
+     * and touch you before it may wind up has no pounce at all.
+     *
+     * `range` is the centre-to-centre distance inside which the wind-up may begin
+     * and inside which the committed leap still resolves. The caster holds position
+     * for the whole tell — the telegraph is the ambusher visibly coiling at the
+     * water's edge — and crosses the gap only when the cast completes. Interrupting
+     * it (stun / freeze) denies the leap outright.
+     *
+     * ⚠ It does NOT widen ordinary attacks. Basic hits stay gated on `attackRange`,
+     * so a lunger whose window closes has to cover the ground on foot.
+     *
+     * ⚠ Incompatible with `aoe`. A planted circle resolves down a separate branch
+     * that never reaches the direct-hit path, so a charge carrying both would leap
+     * nowhere — the same trap `rootMs` already has next to `aoe`. Guarded by
+     * `bogLurkerDeathroll.test.ts`.
+     */
+    lunge?: {
+      /** Centre-to-centre distance the pounce can cross. */
+      range: number;
+    };
+    /**
+     * DEATHROLL DRAG — the landed hit clamps on and HAULS the victim into the
+     * caster's home terrain, rooted the whole way.
+     *
+     * The Bog Lurker's identity made mechanical: it does not chase you out of its
+     * bog, it takes you back into it. The root reuses the shared `slow` status at
+     * `speedMult: 0` exactly as `rootMs` does (movement stops, attacks do not), and
+     * the haul itself goes through the shared forced-movement helper, so knockback
+     * resistance shortens every step of it and the path respects obstacles. The
+     * payoff is the DESTINATION, not the damage: a rot pool is already a standing
+     * hazard, so arriving in one is what eating the tell actually costs.
+     *
+     * ⚠ Authoring this REPLACES `rootMs` on the same charge — the drag applies its
+     * own root for exactly as long as the haul can run, so the victim is never
+     * released mid-drag and never held after it.
+     *
+     * ⚠ Incompatible with `aoe`, for the same reason `lunge` is: the planted-circle
+     * branch resolves and returns before any direct-hit rider runs, so a charge
+     * carrying both would drag nobody. Guarded by `bogLurkerDeathroll.test.ts`.
+     *
+     * Counterplay matches the lunge's: stun or freeze the caster and the jaws let
+     * go. Cleanse frees the legs but not the grip.
+     */
+    dragsToLair?: {
+      /** Terrain the prey is hauled into. */
+      lair: 'swamp-pool';
+      /** Ceiling on the haul; it also ends on arrival. Owns the root duration. */
+      durationMs: number;
+      /** How fast the prey is hauled, px/s. */
+      speed: number;
+      /** Ignore lairs further than this from the caster, so a drag stays local. */
+      maxLairRange: number;
+    };
+    /**
      * SLOW the primary target when the charged hit lands. Unlike `rootMs`, this
      * retains movement at the authored fraction. Used for the Sand Scorpion's
      * telegraphed Numbing Sting rather than applying a slow on every basic hit.

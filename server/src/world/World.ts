@@ -76,6 +76,7 @@ import { updateBossPatterns } from "../systems/combat/ai/bossPatterns";
 import { updateUltimateEncounters } from "../systems/combat/ai/ultimateEncounter";
 import { updateWards, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
+import { updateLairDrags } from "../systems/combat/damage/lairDrag";
 import { updateMonsterSlows } from "../systems/combat/status/monsterControl";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
@@ -168,6 +169,8 @@ export class World {
   );
 
   readonly knockbackedMonsters = this.monsterEntities.with("hasKnockback");
+  /** Monsters currently hauling a player back to their lair. */
+  readonly draggingMonsters = this.monsterEntities.with("dragsPrey");
   readonly bossScriptedMonsters = this.monsterEntities.with("scriptsBoss");
   /** Bosses currently committed to an ordered encounter pattern. */
   readonly patternMonsters = this.monsterEntities.with("runsBossPattern");
@@ -465,6 +468,9 @@ export class World {
     updateAbilityCharges(this, now);
     updateStanceSwitch(this, dt, now);
     updateKnockback(this, dt);
+    // With knockback, and for the same reason: a component that owns one monster's
+    // position for a bounded window has to write it before movement and AI look at it.
+    updateLairDrags(this, dt, now);
     updateMobilityState(this, dt);
     updateMovement(this, dt, now);
     updateNodeFeatures(this, dt);

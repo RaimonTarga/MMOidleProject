@@ -17,6 +17,7 @@ export * from "./targeting/controlsMonster";
 export * from "./targeting/hasAggroTarget";
 export * from "./targeting/hasAttackTarget";
 export * from "./targeting/hasKnockback";
+export * from "./targeting/dragsPrey";
 export * from "./targeting/isBossEngaged";
 export * from "./targeting/isEncounterAdd";
 export * from "./targeting/isNodeFeatureSpawn";

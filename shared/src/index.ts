@@ -89,6 +89,7 @@ export * from './world/groundZoneGeometry';
 export * from './world/groundZones';
 export * from './world/forestPaths';
 export * from './world/swampPools';
+export * from './world/rotPools';
 export * from './world/mountainPasses';
 export * from './world/cavePatrols';
 export * from './world/desertTracks';

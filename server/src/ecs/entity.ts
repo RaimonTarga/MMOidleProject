@@ -10,6 +10,7 @@ import type {
   HasHealth,
   HasHitbox,
   HasKnockback,
+  DragsPrey,
   HasDetonation,
   HasHemorrhage,
   HasDot,
@@ -289,6 +290,7 @@ export interface ServerEntity {
   controlsMonster?: ControlsMonster;
   inPack?: InPack;
   hasKnockback?: HasKnockback;
+  dragsPrey?: DragsPrey;
   hasDetonation?: HasDetonation;
   hasHemorrhage?: HasHemorrhage;
   hasDot?: HasDot;

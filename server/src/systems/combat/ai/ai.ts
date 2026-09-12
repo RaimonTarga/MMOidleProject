@@ -11,7 +11,7 @@ import {
   getJungleBushes,
   MONSTER_DATABASE,
   monsterKites,
-  RESOLVED_NODE_FEATURES,
+  nearestSwampRotPool,
   setString,
   pointFromMotion,
   type AggroTargetKind,
@@ -34,6 +34,8 @@ import {
   monsterAttackCooldown,
 } from "../engine/monsterMechanics";
 import { isMonsterKnockedBack } from "../damage/knockback";
+import { isDraggingPrey } from "../damage/lairDrag";
+import { lungeWantsPosition } from "./ambushLunge";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
@@ -259,6 +261,16 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // Knockback owns position, target, speed, and state for the duration of the
     // slide. AI resumes naturally once the component clears.
     if (isMonsterKnockedBack(world, id)) {
+      abortEngageSequence(world, e);
+      e.performsAttack.lastAttackAt = now;
+      ai.kiteTimer = 0;
+      continue;
+    }
+
+    // A DEATHROLL DRAG owns the same things for the duration of the haul: the drag
+    // system writes the monster's position, so chase/standoff/leash must not argue
+    // with it. AI resumes naturally once the component clears.
+    if (isDraggingPrey(e)) {
       abortEngageSequence(world, e);
       e.performsAttack.lastAttackAt = now;
       ai.kiteTimer = 0;
@@ -520,6 +532,20 @@ export function updateMonsters(world: World, dt: number, now: number) {
           continue;
         }
         abortEngageSequence(world, e);
+      }
+
+      // AMBUSH LUNGE: plant the predator at pounce distance instead of walking it
+      // into melee. The coil IS the telegraph, and a chase that closes the gap first
+      // would resolve the pounce from contact, where it says nothing.
+      if (
+        target.kind === 'player' &&
+        lungeWantsPosition(e, monsterDef, target.entity, now)
+      ) {
+        e.hasPosition.speed = ai.baseSpeed;
+        e.hasAwareness.state = 'attacking';
+        setAttackTarget(world, e, target.entity.isPlayer.id);
+        stopMonster(world, e);
+        continue;
       }
 
       if (hasLine) {
@@ -929,48 +955,41 @@ function bushIdleTarget(
 }
 
 /**
- * IDLE ANCHOR: 'swamp-pool'. Pick a point inside (or on the lip of) the nearest bog
- * pool, so the Lurker sits half-submerged in its ambush spot rather than roaming
- * like an ordinary crocodile. Null when the node has no pool, in which case the
- * caller falls back to a plain wander.
+ * IDLE ANCHOR: 'swamp-pool'. Park the mob in the shallows of the nearest bog pool —
+ * in the water, but at its EDGE, which is where a crocodile actually waits. Null when
+ * the node has no pool, in which case the caller falls back to a plain wander.
  */
 function poolIdleTarget(
   monster: MonsterEntity,
   node: { width: number; height: number } | undefined,
 ): Vec2 | null {
-  const pools = RESOLVED_NODE_FEATURES[monster.hasPosition.nodeId]?.filter(
-    (feature) =>
-      feature.shape.kind === "circle" &&
-      feature.damage?.targets.includes("player"),
-  );
-  if (!pools || pools.length === 0) return null;
-
   const origin = monster.controlsMonster.spawn;
-  let best = pools[0];
-  let bestDistSq = distanceSq(origin, best.shape);
-  for (const pool of pools.slice(1)) {
-    const d2 = distanceSq(origin, pool.shape);
-    if (d2 < bestDistSq) {
-      best = pool;
-      bestDistSq = d2;
-    }
-  }
+  const best = nearestSwampRotPool(monster.hasPosition.nodeId, origin);
+  if (!best) return null;
 
-  const shape = best.shape;
-  if (shape.kind !== "circle") return null;
   const angle = Math.random() * 2 * Math.PI;
-  // INSIDE the pool (up to 85% of its radius), not orbiting outside it — the
-  // difference between "lives in the bog" and "walks past the bog".
-  const radius = Math.random() * shape.radius * 0.85;
+  // THE RIM, not the middle. Deep water hid the ambusher behind its own hazard: the
+  // player could neither see what was waiting nor be threatened by it without first
+  // walking into a DoT zone, and the lunge that is now its whole identity would open
+  // from a point nobody was ever near. The band keeps it submerged (inside the pool,
+  // so the water still reads as its home) while leaving it on the shoreline where the
+  // approach happens.
+  const radius = poolEdgeOffset(best.radius);
   const margin = 40;
   const minX = node ? margin : 0;
   const maxX = node ? node.width - margin : Infinity;
   const minY = node ? margin : 0;
   const maxY = node ? node.height - margin : Infinity;
   return {
-    x: Math.max(minX, Math.min(maxX, shape.x + Math.cos(angle) * radius)),
-    y: Math.max(minY, Math.min(maxY, shape.y + Math.sin(angle) * radius)),
+    x: Math.max(minX, Math.min(maxX, best.x + Math.cos(angle) * radius)),
+    y: Math.max(minY, Math.min(maxY, best.y + Math.sin(angle) * radius)),
   };
+}
+
+/** Distance from a pool's centre for an edge-dweller: the outer fifth of the water. */
+function poolEdgeOffset(poolRadius: number): number {
+  const inner = poolRadius * 0.78;
+  return inner + Math.random() * (poolRadius * 0.97 - inner);
 }
 
 type PatrolSpec = NonNullable<MonsterDefinition["patrol"]> & {

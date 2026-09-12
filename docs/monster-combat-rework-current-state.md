@@ -106,6 +106,8 @@ can see and a `target-casting` rune condition that can react to it.
 | `appliesAntiheal: { reduction, durationMs }` | Wither (Bog Witch / Mire Hexer), Abyssal Bite |
 | `refreshesPlayerDots: { extendMs, maxTotalMs }` | Plague Hex (Mire Hexer) |
 | `requiresAmbientStacks` | Frostbind — gated on the node's Chill |
+| `lunge: { range }` | Deathroll (Bog Lurker) — 2026-09-12 |
+| `dragsToLair: { lair, durationMs, speed, maxLairRange }` | Deathroll (Bog Lurker) — 2026-09-12 |
 
 **Root is movement-only.** It reuses the shared `slow` status at `speedMult: 0`, so the buff
 HUD renders ROOT, Cleanse strips it, and mobility tenacity shortens it — but the player can
@@ -116,6 +118,29 @@ lockdown alone.
 **Plague Hex creates nothing.** It extends monster DoTs already on the player; no new stacks,
 no new effect. Against a lone Hexer it does nothing at all — correct, because it is a *support*
 creature.
+
+**`lunge` widens the gate for ONE ability.** Every monster beat in `updateCombat` is gated on
+`attackRange`, which is backwards for a pounce — the leap *is* the gap-closer, so a predator
+that must touch you before it may wind up has no pounce at all. A charge carrying `lunge` may
+open its wind-up anywhere inside `lunge.range`, holds position for the whole tell (the AI plants
+it — [`lungeWantsPosition`](../server/src/systems/combat/ai/ambushLunge.ts)), and crosses the gap
+in one leap as the cast resolves, landing the hit from contact through the ordinary
+`runMonsterAttack` pipeline. Ordinary attacks are untouched. Two counterplays, both real:
+**leave `lunge.range` during the wind-up** (the cast aborts) or **interrupt it**.
+
+**`dragsToLair` is the one rider that owns its monster.** Landing the hit attaches a `dragsPrey`
+component; while it is present the AI does not chase, the combat loop does not swing, and
+[`updateLairDrags`](../server/src/systems/combat/damage/lairDrag.ts) is the sole writer of the
+monster's position — the same contract `HasKnockback` already has for a slide. The victim is
+hauled through `pullPlayer`, so forced-movement resistance, node bounds and obstacle resolution
+apply to every step. The rider applies its **own** root for exactly the haul's length (so never
+author `rootMs` beside it), and stunning or freezing the caster mid-haul releases both the grip
+and the root. The payoff is the *destination*: a rot pool is already a standing hazard, so
+arriving in one is what eating the tell costs — the multiplier stays modest on purpose.
+
+⚠ **Neither rider survives `aoe`.** A planted circle resolves down `resolveChargedSlam` and
+returns before any direct-hit rider runs — the same trap `rootMs` has. Guarded database-wide by
+`bogLurkerDeathroll.test.ts`.
 
 ### `monsterAbilities` — the generic elite rotation
 
@@ -254,8 +279,11 @@ Both are node features, not monster fields.
 - **Plains** — unchanged except Savanna Hawk `flies`. Done.
 - **Forest** — Dire Wolf pack is pure wolves (3); Thorn Spitter `cadenceVolley` every 3rd beat.
 - **Swamp** — Snapper line `shellUp` (evolved adds a pool); Witch line Wither + Plague Hex;
-  Stalker/Lurker `openerStacks` 2/3; Bog Lurker `idleAnchor: 'swamp-pool'`. DR removed where a
-  mob already owns shell or evasion.
+  Stalker/Lurker `openerStacks` 2/3. DR removed where a mob already owns shell or evasion.
+  Bog Lurker `idleAnchor: 'swamp-pool'` — since 2026-09-12 it idles at the pool's RIM rather
+  than mid-water, and carries **Deathroll**, the first `chargedAttack.lunge` +
+  `chargedAttack.dragsToLair` pair: it coils at the shoreline, leaps the gap, and hauls the
+  rooted victim into the bog.
 - **Mountain** — Titan line gets the reusable Ground Slam (**no** ledge vault); caprines vault +
   knockback ram; Crag Mortar and Cliffside Roc are no longer `kiter` (stationary artillery /
   aerial artillery); Boulder Thrower gets a lobbed planted circle.
@@ -315,6 +343,11 @@ monster flips to `chasing` with the bar up, the cast LANDS on the victim it capt
 it against a target running at full player speed for the entire wind-up), a stun mid-wind-up
 still interrupts it — and the Cave Brute's planted slam plus the Magma Salamander's self-cast
 still hold position.
+
+[`server/test/bogLurkerDeathroll.test.ts`](../server/test/bogLurkerDeathroll.test.ts) covers the
+2026-09-12 Deathroll end to end: the rim idle, the wind-up opening from outside melee, the hold
+during the tell, the leap, the haul (root, both bodies closing on the water, wake events, its own
+release), both counterplays, the no-water degradation, and the database-wide `aoe` guard.
 
 Three existing tests encoded behavior this pass deliberately changed and were updated:
 `biomeEcology` and `monsterDeathEffects` (scatter removed), `desertPairs` (1:1 duo), and

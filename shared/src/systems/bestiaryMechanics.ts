@@ -390,6 +390,13 @@ function describeChargedAttack(def: MonsterDefinition): BestiaryAbilityLine | nu
   if (charged.precastStunMs) details.push(`stuns the target during the first ${fmtMs(charged.precastStunMs)}`);
   if (charged.marksTarget) details.push(`marks the target for ${fmtMs(charged.marksTarget.durationMs)}`);
   if (charged.rootMs) details.push(`roots on impact for ${fmtMs(charged.rootMs)}`);
+  if (charged.lunge) details.push(`leaps up to ${charged.lunge.range}px onto its target`);
+  if (charged.dragsToLair) {
+    details.push(
+      `roots the victim for ${fmtMs(charged.dragsToLair.durationMs)} and drags them` +
+      ` into the nearest ${readableId(charged.dragsToLair.lair)} at ${charged.dragsToLair.speed}px/s`,
+    );
+  }
   if (charged.appliesSlow) details.push(`slows on impact to ${fmtPct(charged.appliesSlow.speedMult)} for ${fmtMs(charged.appliesSlow.durationMs)}`);
   if (charged.appliesAntiheal) details.push(`reduces healing by ${fmtPct(charged.appliesAntiheal.reduction)} for ${fmtMs(charged.appliesAntiheal.durationMs)}`);
   if (charged.refreshesPlayerDots) details.push(`extends existing DoTs by ${fmtMs(charged.refreshesPlayerDots.extendMs)} up to ${fmtMs(charged.refreshesPlayerDots.maxTotalMs)}`);
@@ -418,8 +425,27 @@ function describeChargedAttack(def: MonsterDefinition): BestiaryAbilityLine | nu
     castMs: charged.castMs,
     cooldownMs: charged.cooldownMs,
     initialCooldownMs: charged.initialCooldownMs,
-    detail: `${details.join('; ')}. The impact is committed when the cast begins, so walking out of the telegraph is the answer.`,
+    detail: `${details.join('; ')}. ${chargedCounterplay(charged)}`,
   };
+}
+
+/**
+ * The one sentence that tells a player how to ANSWER a charged attack. It has to
+ * match the ability's actual shape: this line used to claim every charge planted its
+ * impact at cast start, which is only true of an `aoe` charge — for the two dozen
+ * target-following ones (every hex, every bite) it advised counterplay that does not
+ * exist, and for a lunge it named the wrong distance to walk out of.
+ */
+function chargedCounterplay(
+  charged: NonNullable<MonsterDefinition['chargedAttack']>,
+): string {
+  if (charged.aoe) {
+    return 'The impact is committed when the cast begins, so walking out of the telegraph is the answer.';
+  }
+  if (charged.lunge) {
+    return `The leap follows its target, so break the ${charged.lunge.range}px range during the wind-up — or interrupt it.`;
+  }
+  return 'The cast follows its target, so interrupting it is the answer.';
 }
 
 function describeEngageSequence(def: MonsterDefinition): BestiaryAbilityLine | null {
@@ -944,6 +970,10 @@ export function describeMonsterMechanics(
       category: 'ability',
       detail:
         `Charges for ${fmtMs(charged.castMs)} before a ${fmtMult(charged.multiplier)} hit` +
+        (charged.lunge ? `, leaping up to ${charged.lunge.range}px onto its target` : '') +
+        (charged.dragsToLair
+          ? `, then dragging them rooted into the nearest ${readableId(charged.dragsToLair.lair)} for ${fmtMs(charged.dragsToLair.durationMs)}`
+          : '') +
         (charged.aoe ? ` in a ${charged.aoe.radius}px planted circle` : '') +
         (pool ? `, leaving a ${fmtMs(pool.durationMs)} pool` : '') +
         (pool?.detonationMultiplier ? ` that detonates for ${fmtMult(pool.detonationMultiplier)} damage` : '') +

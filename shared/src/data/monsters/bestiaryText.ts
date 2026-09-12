@@ -168,7 +168,7 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
   },
   'bog-lurker': {
     profile: 'Pool-dwelling ambusher',
-    description: 'Bog Lurkers wait inside the water instead of wandering past it. Their first venomous bite is the worst one, and their evasive body makes the pool edge a poor place to stand and trade.',
+    description: 'Bog Lurkers wait at the rim of the rot pools instead of wandering past them. Come close and one coils, leaps the whole gap, and hauls you back into the water with your legs locked — the bite is the cheap part. Their first venomous strike is still the worst one, and their evasive body makes the shoreline a poor place to stand and trade.',
   },
   'grave-toadeater': {
     profile: 'Persistent bile-pool boss',
