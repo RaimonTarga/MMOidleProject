@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-12. Owner: Astra (planning and interpretation); operators: Luna.
-Status: six-profile local readiness passed; V1a timed out in preparation with an invalid supervisor lifecycle; V1b repair probe prepared.
+Status: six-profile local readiness passed; V1b finalized normally but timed out before the complete kit. V1c isolates acquisition; campaign bosses remain untested.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -30,7 +30,7 @@ execution instructions. Current source and explicit user direction take preceden
 | Q0, prepared | Qualify existing templates and their first build transitions; prepare exact local readiness routes | Six source-derived profile records, legal acquisition/build sequences, concrete runtime packet |
 | Q1, complete | Can each selected profile acquire and reconcile its build? | Six configuration successes; combat under the post-prep builds was untested |
 | Q2, initial slice complete | Do the two configured builds actually fight and activate abilities? | Six profiles, twelve completed T2 Plains windows on `755b2a36`; broader conditions/routes remain untested |
-| V1, in progress | Can prepared builds farm and solve bosses? | V1a reached GM30 but not the boss; V1b revises preparation and hardens host state writes before another single probe |
+| V1, in progress | Can prepared builds farm and solve bosses? | V1b reached GM30 and Axe +5 but not the complete kit; V1c qualifies preparation separately before an encounter entry is designed |
 | V2 | What resolves a particular failing matchup? | Small local alternatives selected from failure diagnosis, initially 2–3 replicates |
 | E1 | Is shipped progression pacing appropriate? | One-tier 1× economy studies using current credible carryover, after functional routes/builds |
 | A1 | Does the assembled progression work? | Late broader acceptance runs only |
@@ -144,8 +144,9 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 - Current runtime qualification: Q1 six profiles passed configuration on `1d3c710f`; Q2b/Q2c/Q2d all six completed both local behavior windows on `755b2a36`. Slinger and Apprentice supplied death/return evidence; no campaign boss coverage yet.
 - New confirmed balance signals / bugs: none.
 - Approved gameplay changes: none.
-- Latest operation: V1a `20260912t194203z-striker-campaign-plains-boss-t` reached GM30, timed out while upgrading Plains Vest +5, and made zero boss attempts. Supervisor EPERM left stale running state; worker timeout is durable. [Assessment](bot-balance-v1a-assessment.md).
-- Next action: Luna executes [V1b](bot-balance-v1b-operator-packet.md) on `cf562ece`: revised late farming/transit, same required +5 kit and 15-minute ceiling, hardened atomic state writes. One new run, no expansion before review.
+- Historical operation: V1a `20260912t194203z-striker-campaign-plains-boss-t` reached GM30, timed out while upgrading Plains Vest +5, and made zero boss attempts. Supervisor EPERM left stale running state; worker timeout is durable. [Assessment](bot-balance-v1a-assessment.md).
+- Latest result: V1b finalized normally with a preparation timeout, Axe +5 and zero boss attempts. [Assessment](bot-balance-v1b-assessment.md). The earlier V1a lifecycle remains invalid.
+- Next action: Luna executes [V1c](bot-balance-v1c-operator-packet.md) on `3ad6dbda`: one fresh preparation-only run, same full kit, fixed 30-minute acquisition ceiling, no dungeon step. Review the final state before designing a separate encounter entry.
 - Historical Q2d Spirit, Apprentice and Squire passed. Apprentice died once and returned; Spirit's Q2c pre-worker failure remains separate. [Overall readiness state](bot-balance-q2d-assessment.md).
 - Historical Q2c Conduit/Slinger passed and Spirit stopped before startup due to Docker address exhaustion. [Assessment and infrastructure repair](bot-balance-q2c-assessment.md).
 - Historical Q2b `20260912t170727z-striker-campaign-local-behavio`: Striker completed, no deaths or unwanted transit; Sweep 8 kills/8 activations, Expose 5 kills/6 activations. Readiness only.

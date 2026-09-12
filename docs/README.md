@@ -27,7 +27,10 @@ top-level doc.
 | Doc | Why |
 |---|---|
 | [briefs/bot-balance-v1a-assessment.md](briefs/bot-balance-v1a-assessment.md) | Preparation timeout, supervisor rename failure and scoped preparation/infrastructure repairs. |
+| [briefs/bot-balance-v1b-assessment.md](briefs/bot-balance-v1b-assessment.md) | Valid finalization, acquisition timeout and decision to separate preparation. |
+| [briefs/bot-balance-v1c-operator-packet.md](briefs/bot-balance-v1c-operator-packet.md) | One fresh 30-minute preparation-only qualification, with no boss attempt. |
 | [briefs/bot-balance-v1b-operator-packet.md](briefs/bot-balance-v1b-operator-packet.md) | Revised one-run Plains boss probe with unchanged required kit and bounded worker-stop contingency. |
+| [briefs/bot-balance-v1b-report.md](briefs/bot-balance-v1b-report.md) | V1b execution result; repaired supervisor finalized a fresh run that timed out during full-kit preparation before the boss probe. |
 | [briefs/bot-balance-q2d-assessment.md](briefs/bot-balance-q2d-assessment.md) | All six initial readiness profiles accepted; campaign state and first boss preparation rationale. |
 | [briefs/bot-balance-v1a-operator-packet.md](briefs/bot-balance-v1a-operator-packet.md) | Frozen fresh-start Striker T1 Plains boss probe, earned GM30/+5 preparation and one dungeon attempt. |
 | [briefs/bot-balance-v1a-report.md](briefs/bot-balance-v1a-report.md) | V1a Striker Plains boss probe timed out during preparation; supervisor state write failed, so no boss result. |
