@@ -20,7 +20,7 @@ import {
   type DeltaSnapshot,
 } from "@mmo-idle/shared";
 import { readFileSync } from "node:fs";
-const earnedT1State = JSON.parse(readFileSync(new URL("../../server/test/fixtures/v1d-earned-t1-state.json", import.meta.url), "utf8")).state;
+const earnedT1State = JSON.parse(readFileSync(path.resolve(__dirname, "../../server/test/fixtures/v1d-earned-t1-state.json"), "utf8")).state;
 const earnedT1Profile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1, snapshotKind: "tier2-handoff",
   snapshotId: "v1d-regression", frameId: null, state: earnedT1State } as T1CharacterSnapshot, "node-clearing", 1);
 import { evaluate, resolveNearCandidates, resolveNode, resolveNodeCandidates } from "./route/conditions";
