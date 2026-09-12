@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-12. Owner: Astra (planning and interpretation); operators: Luna.
-Status: Q1 configuration readiness accepted, 6/6; Q2 observed behavior routes prepared for Luna.
+Status: Q1 configuration passed; Q2 incomplete due to transit; Q2b single-case local repair prepared.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -144,8 +144,9 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 - Current runtime qualification: Q1 six profiles passed acquisition and three-stage build verification on `1d3c710f`; post-configuration combat remained untested.
 - New confirmed balance signals / bugs: none.
 - Approved gameplay changes: none.
-- Latest experiment: `20260912t154251z-striker-campaign-readiness-t2`, six completions, no deaths/failures; configuration evidence only.
-- Next action: Luna executes [Q2](bot-balance-q2-operator-packet.md) on `06c0818a`; two observed 60-second windows per case, no boss attempts or balance comparison.
+- Latest experiment: Q2 `20260912t162628z-striker-campaign-behavior-t2-s`: Striker timeout, Squire cancelled after start, four cancelled before start. Two partial Striker Sweep activations, no complete observation window.
+- Next action: Luna executes [Q2b](bot-balance-q2b-operator-packet.md), one Striker case after current-node selection repair. No expansion before Astra review.
+- [Q2 assessment](bot-balance-q2-assessment.md): unnecessary catalogue-first node transit consumed 278 seconds. This is route/observation evidence, not a build weakness verdict.
 - [Astra Q1 assessment](bot-balance-q1-assessment.md): raw event verification and reason for Q2. Uncommitted gameplay changes are excluded from the Q2 source.
 - On return: record exact revisions/artifacts, classify evidence, update affected
   profile/checkpoint status, then choose one next question. Historical passing
