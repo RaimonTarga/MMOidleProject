@@ -155,6 +155,9 @@ export async function runBot(
   const sourceSnapshot = resolvedSnapshotPath
     ? readT1CharacterSnapshot(resolvedSnapshotPath)
     : undefined;
+  if (authoredRoute.startsFromTierEntry === 1 && !sourceSnapshot) {
+    throw new Error("T1 encounter entry requires an earned final snapshot; no synthetic fallback");
+  }
   if (
     sourceSnapshot &&
     config.requireTierEntrySnapshot &&
@@ -177,7 +180,7 @@ export async function runBot(
         ? t2EntryProfileId(authoredRoute.classRoot, config.entryEconomy)
         : undefined);
   const resolvedTierEntryProfile = sourceSnapshot
-    ? tierEntryProfileFromT1Snapshot(sourceSnapshot)
+    ? tierEntryProfileFromT1Snapshot(sourceSnapshot, authoredRoute.startsFromTierEntry === 1 ? "node-clearing" : "node-t2-sanctuary", authoredRoute.startsFromTierEntry === 1 ? 1 : 2)
     : resolvedTierEntryId
       ? requireTierEntryProfile(resolvedTierEntryId)
       : undefined;
@@ -402,7 +405,7 @@ export async function runBot(
           self.nodeId === tierEntryProfile.spawnNodeId &&
           self.playerTier === tierEntryProfile.targetTier &&
           self.selectedClass === tierEntryProfile.classRoot &&
-          self.unlockedSkills.includes(tierEntryProfile.frameId) &&
+          (tierEntryProfile.frameId ? self.unlockedSkills.includes(tierEntryProfile.frameId) : self.unlockedSkills.length === 1) &&
           !self.isDead;
       },
       60_000,

@@ -31,6 +31,24 @@ const gates: RouteStep[] = [
   ]),
 ];
 
+/** Import the earned T1 final state; qualify it before any encounter action. */
+export const STRIKER_CAMPAIGN_PLAINS_ENTRY_T1: Route = {
+  id: "striker-campaign-plains-entry-t1", version: "1.0.0",
+  classRoot: "cadence-root", startsFromTierEntry: 1, suppressTransitCombat: true,
+  description: "V1e: earned snapshot entry, verified T1 Plains kit, one ordinary dungeon cycle.",
+  steps: [
+    ...structuredClone(gates),
+    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 5 },
+    { type: "equip", definitionIds: ["plains-charm-t1"] },
+    { type: "assert", condition: { type: "equipped", definitionId: "plains-charm-t1" } },
+    { type: "assert", condition: { type: "itemAtLeastPlus", definitionId: "plains-charm-t1", plus: 5 } },
+    { type: "configureBuild", build: structuredClone(CAMPAIGN_PLAINS_T1_BUILD), label: "v1e:verified-plains-build" },
+    { type: "milestone", id: "v1e:encounter-entry-ready" },
+    { type: "attemptBoss", biomeGroup: "plains", tier: 1, maxAttempts: 1, label: "v1e:plains-attempt" },
+  ],
+  completion: { type: "bossCleared", biomeGroup: "plains", tier: 1 }, milestones: [],
+};
+
 /** Fresh-character T1 preparation, then one ordinary dungeon attempt only. */
 export const STRIKER_CAMPAIGN_PLAINS_BOSS_T1: Route = {
   id: "striker-campaign-plains-boss-t1", version: "1.0.0",

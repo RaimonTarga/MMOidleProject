@@ -30,8 +30,8 @@ export interface TierEntryProfile {
   id: string;
   targetTier: number;
   classRoot: string;
-  /** The selected tier-1 frame; the server also validates its parent root. */
-  frameId: string;
+  /** Null for root-only T1 encounter entry; otherwise the selected tier-1 frame. */
+  frameId: string | null;
   /** T2 profiles spawn at the T2 Sanctuary; later tiers may use their own hub. */
   spawnNodeId: string;
   economyPolicy: TierEntryEconomyPolicy;
@@ -73,7 +73,7 @@ export interface TierEntryInitialState {
   targetTier: number;
   economyPolicy: TierEntryEconomyPolicy;
   classRoot: string;
-  frameId: string;
+  frameId: string | null;
   spawnNodeId: string;
   checkpointKind?: TierCheckpointKind;
   checkpointSourceNodeId?: string;

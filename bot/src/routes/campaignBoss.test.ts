@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { buildRP } from "../loadout/loadout";
 import { runeBudgetForGlobalMastery } from "@mmo-idle/shared";
-import { STRIKER_CAMPAIGN_PLAINS_BOSS_T1 as route, STRIKER_CAMPAIGN_PLAINS_BOSS_V1B as repair, STRIKER_CAMPAIGN_PREPARATION_T1 as preparation, CAMPAIGN_PLAINS_T1_BUILD as build } from "./campaignBoss";
+import { STRIKER_CAMPAIGN_PLAINS_ENTRY_T1 as entry, STRIKER_CAMPAIGN_PLAINS_BOSS_T1 as route, STRIKER_CAMPAIGN_PLAINS_BOSS_V1B as repair, STRIKER_CAMPAIGN_PREPARATION_T1 as preparation, CAMPAIGN_PLAINS_T1_BUILD as build } from "./campaignBoss";
+
+assert.equal(entry.startsFromTierEntry, 1);
+assert.equal(entry.steps.some(s => s.type === "farm"), false, "encounter entry never repeats the acquisition route");
+assert.equal(entry.steps.filter(s => s.type === "attemptBoss").length, 1);
+assert.deepEqual(entry.steps.at(-1), { type: "attemptBoss", biomeGroup: "plains", tier: 1, maxAttempts: 1, label: "v1e:plains-attempt" });
+assert(entry.steps.some(s => s.type === "assert" && s.condition.type === "equipped" && s.condition.definitionId === "plains-charm-t1"));
+assert(entry.steps.some(s => s.type === "assert" && s.condition.type === "itemAtLeastPlus" && s.condition.definitionId === "plains-charm-t1" && s.condition.plus === 5));
 
 // Keep an inherited full-gauntlet route from expanding this experiment or
 // importing its post-second-seal frame into a pre-seal character.

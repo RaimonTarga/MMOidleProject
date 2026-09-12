@@ -1,4 +1,6 @@
 import {
+  tierEntryProfileFromT1Snapshot,
+  type T1CharacterSnapshot,
   CLEARING_NODE_ID,
   GAME_CONFIG,
   SKILL_TREE,
@@ -9,6 +11,7 @@ import {
   emptyEquippedStances,
   type TierEntryProfile,
 } from "@mmo-idle/shared";
+import { readFileSync } from "node:fs";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { applyTierEntryProfile } from "../src/admin/gameActions";
 import { World } from "../src/world/World";
@@ -202,3 +205,27 @@ const rejected = applyTierEntryProfile(world, player, {
 assert(!rejected.success && rejected.reason?.includes("Sanctuary"), "non-Sanctuary entry is rejected");
 
 console.log("tierEntryBootstrap.test.ts: ok");
+
+const t1Profile: TierEntryProfile = { ...structuredClone(profile), id: "earned-t1-entry",
+  targetTier: 1, currentSkillTier: 1, frameId: null, spawnNodeId: CLEARING_NODE_ID,
+  bossesCleared: [], level: 127 };
+const t1Result = applyTierEntryProfile(world, player, t1Profile);
+assert(t1Result.success, t1Result.reason ?? "root-only T1 entry applies");
+assert(player.usesSkills.unlockedSkills.join() === "cadence-root", "T1 import does not add a frame");
+assert(player.tracksProgression.playerTier === 1 && player.tracksProgression.currentSkillTier === 1, "T1 progression stays T1");
+assert(player.tracksProgression.level === 127, "earned level is retained");
+assert(player.hasHealth.hp === player.hasHealth.maxHp && !player.usesAutocombat.auto, "entry resets HP and auto");
+assert(!applyTierEntryProfile(world, player, { ...t1Profile, frameId: "cadence-balanced" }).success, "T1 rejects frame injection");
+assert(!applyTierEntryProfile(world, player, { ...t1Profile, spawnNodeId: "node-t1-plains-01" }).success, "T1 entry cannot bypass travel");
+
+// V1d's earned state is a permanent regression fixture, not a synthetic kit.
+const earned = JSON.parse(readFileSync(new URL("./fixtures/v1d-earned-t1-state.json", import.meta.url), "utf8"));
+const earnedProfile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1,
+  snapshotKind: "tier2-handoff", snapshotId: "v1d-regression", frameId: null, state: earned.state,
+} as T1CharacterSnapshot, CLEARING_NODE_ID, 1);
+const earnedResult = applyTierEntryProfile(world, player, earnedProfile);
+assert(earnedResult.success, earnedResult.reason ?? "actual V1d state imports");
+assert(player.hasHealth.maxHp === 164, "actual prepared defensive stats reconstruct without a frame");
+assert(JSON.stringify(player.holdsInventory.equipment) === JSON.stringify(earnedProfile.equipment), "earned equipment survives import");
+assert(JSON.stringify(player.tracksProgression.runesEquipped) === JSON.stringify(earnedProfile.runesEquipped), "earned ordered rules survive import");
+assert(JSON.stringify(player.tracksProgression.essences) === JSON.stringify(earnedProfile.wallet.essences), "earned wallet survives import");

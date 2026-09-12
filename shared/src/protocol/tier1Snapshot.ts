@@ -178,14 +178,18 @@ function assertUnique(label: string, values: readonly string[]): void {
 }
 
 /**
- * Convert an actual post-T1 handoff into the existing authoritative T2 entry
- * payload. The conversion is deliberately strict: any state the current entry
+ * Convert an actual final snapshot into an authoritative entry payload.
+ * T1 encounter callers must explicitly request entryTier=1; this preserves
+ * root-only progression and never promotes a pre-boss character to T2.
+ * The default remains the existing T2 handoff path.
+ * The conversion is deliberately strict: any state the current entry
  * API would normalize or discard is rejected instead of silently changing the
  * character between the saved snapshot and the spawned bot.
  */
 export function tierEntryProfileFromT1Snapshot(
   snapshot: T1CharacterSnapshot,
   spawnNodeId = "node-t2-sanctuary",
+  entryTier: 1 | 2 = 2,
 ): TierEntryProfile {
   if (snapshot.schemaVersion !== T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION) {
     throw new Error(`unsupported T1 snapshot schema ${String(snapshot.schemaVersion)}`);
@@ -200,8 +204,12 @@ export function tierEntryProfileFromT1Snapshot(
   const state = snapshot.state;
   const classRoot = state.classRoot ?? snapshot.classRoot;
   const frameId = state.frameId ?? snapshot.frameId;
-  if (!classRoot || !frameId) throw new Error("T1 handoff snapshot has no root/frame selection");
-  if (state.playerTier < 2 || state.currentSkillTier !== state.playerTier) {
+  const rootOnly = entryTier === 1;
+  if (!classRoot || (!rootOnly && !frameId)) throw new Error("T1 handoff snapshot has no root/frame selection");
+  if (rootOnly && (frameId !== null || state.playerTier !== 1 || snapshot.snapshotKind !== "tier2-handoff" || state.bossesCleared.length !== 0 || state.selectedSubVariant !== null || state.selectedRange !== null)) {
+    throw new Error("T1 encounter entry requires a root-only pre-boss final snapshot");
+  }
+  if ((!rootOnly && state.playerTier < 2) || state.currentSkillTier !== state.playerTier) {
     throw new Error("T1 handoff snapshot is not at a valid T2 skill tier");
   }
   if (state.skillPoints !== 0) {
@@ -210,7 +218,7 @@ export function tierEntryProfileFromT1Snapshot(
   // Passive nodes are derived from persistent skill, stance, equipment, and
   // item-upgrade state. Keep them in the snapshot for auditability, but let the
   // authoritative tier-entry path rebuild them from that persistent state.
-  const expectedSkills = [classRoot, frameId];
+  const expectedSkills = rootOnly ? [classRoot] : [classRoot, frameId];
   if (JSON.stringify(state.unlockedSkills) !== JSON.stringify(expectedSkills)) {
     throw new Error("T1 handoff snapshot has an unsupported skill-tree unlock set");
   }

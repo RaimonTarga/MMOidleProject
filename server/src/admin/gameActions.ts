@@ -313,16 +313,17 @@ export function applyTierEntryProfile(
     return fail('Profile economy policy is invalid.');
   }
   const root = SKILL_TREE.get(profile.classRoot);
-  const frame = SKILL_TREE.get(profile.frameId);
+  const rootOnly = profile.targetTier === 1;
+  const frame = profile.frameId ? SKILL_TREE.get(profile.frameId) : undefined;
   if (!root || root.tier !== 0 || root.classId !== profile.classRoot) {
     return fail('Profile class root is invalid.');
   }
-  if (!frame || frame.tier !== 1 || frame.classId !== profile.classRoot || frame.parent !== root.id) {
+  if (rootOnly ? profile.frameId !== null : (!frame || frame.tier !== 1 || frame.classId !== profile.classRoot || frame.parent !== root.id)) {
     return fail('Profile frame is not a child of its class root.');
   }
-  if (profile.targetTier < 2) return fail('Tier-entry profiles must target tier 2 or later.');
+  if (rootOnly && (profile.currentSkillTier !== 1 || profile.skillPoints !== 0 || profile.bossesCleared.length !== 0)) return fail('T1 entry must be a root-only pre-boss state.');
   const spawn = NODE_BIOMES[profile.spawnNodeId];
-  if (!spawn || spawn.kind !== 'sanctuary' || spawn.biomeTier !== profile.targetTier) {
+  if (rootOnly ? profile.spawnNodeId !== 'node-clearing' : (!spawn || spawn.kind !== 'sanctuary' || spawn.biomeTier !== profile.targetTier)) {
     return fail(`Profile spawn ${profile.spawnNodeId} is not the target-tier Sanctuary.`);
   }
   const archetype = TIER_ENTRY_ARCHETYPES[profile.classRoot as keyof typeof TIER_ENTRY_ARCHETYPES];
@@ -423,7 +424,7 @@ export function applyTierEntryProfile(
   player.tracksProgression.biomeLevel = { ...(profile.biomeLevels ?? {}) };
   player.tracksProgression.biomeXP = { ...(profile.biomeXP ?? {}) };
   player.tracksProgression.playerTier = profile.targetTier;
-  player.tracksProgression.currentSkillTier = Math.max(2, Math.floor(profile.currentSkillTier));
+  player.tracksProgression.currentSkillTier = Math.max(rootOnly ? 1 : 2, Math.floor(profile.currentSkillTier));
   player.tracksProgression.bossesCleared = [...new Set(profile.bossesCleared ?? [])];
   player.tracksProgression.clearedNodes = [...new Set(profile.clearedNodes ?? [])];
   player.tracksProgression.visitedNodes = [...new Set(profile.visitedNodes ?? [])];
@@ -443,10 +444,10 @@ export function applyTierEntryProfile(
   player.holdsInventory.inventory = [...new Set(profile.inventory)];
   player.holdsInventory.equipment = equipment;
   player.holdsInventory.itemUpgrades = itemUpgrades;
-  player.usesSkills.unlockedSkills = [root.id, frame.id];
+  player.usesSkills.unlockedSkills = frame ? [root.id, frame.id] : [root.id];
   player.usesSkills.passives = {};
   player.usesSkills.selectedClass = root.id;
-  player.usesSkills.selectedSubVariant = frame.subVariantId ?? null;
+  player.usesSkills.selectedSubVariant = frame?.subVariantId ?? null;
   player.usesSkills.selectedRange = null;
   player.usesSkills.combatArchetype = archetype;
   player.usesAutocombat.auto = false;

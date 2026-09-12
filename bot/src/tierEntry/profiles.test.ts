@@ -23,7 +23,8 @@ const archetypeByRoot: Record<string, "cadence" | "cooldown" | "reload" | "energ
 };
 for (const profile of TIER_ENTRY_PROFILES.values()) {
   const root = SKILL_TREE.get(profile.classRoot);
-  const frame = SKILL_TREE.get(profile.frameId);
+  assert(profile.frameId !== null, "T2 catalogue profile has a frame");
+  const frame = SKILL_TREE.get(profile.frameId!);
   assert(profile.targetTier === 2, `${profile.id}: targets T2`);
   assert(profile.spawnNodeId === "node-t2-sanctuary", `${profile.id}: spawns at T2 Sanctuary`);
   assert(NODE_BIOMES[profile.spawnNodeId]?.kind === "sanctuary", `${profile.id}: sanctuary is a live node`);

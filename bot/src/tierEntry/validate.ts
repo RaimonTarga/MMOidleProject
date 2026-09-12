@@ -94,15 +94,15 @@ export function expectedUnlockedRecipes(profile: TierEntryProfile): Set<string> 
 export function validateProfile(profile: TierEntryProfile): ValidationReport {
   const c = new Checks();
   const gm = globalMastery(profile.biomeLevels);
-  const isCheckpoint = profile.checkpointKind !== undefined;
+  const isCheckpoint = profile.checkpointKind !== undefined || profile.targetTier === 1;
 
   // Identity and branch state.
   const root = SKILL_TREE.get(profile.classRoot);
-  const frame = SKILL_TREE.get(profile.frameId);
+  const frame = profile.frameId ? SKILL_TREE.get(profile.frameId) : undefined;
   c.ok("class-root", root && root.tier === 0, `class root "${profile.classRoot}" is not a tier-0 node`);
   c.ok(
     "frame-parent",
-    frame && frame.tier === 1 && frame.parent === profile.classRoot,
+    profile.targetTier === 1 ? profile.frameId === null : frame && frame.tier === 1 && frame.parent === profile.classRoot,
     `frame "${profile.frameId}" is not a tier-1 child of ${profile.classRoot}`,
   );
 
@@ -125,7 +125,7 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
   const spawn = NODE_BIOMES[profile.spawnNodeId];
   c.ok(
     "spawn-sanctuary",
-    spawn && spawn.kind === "sanctuary" && spawn.biomeTier === profile.targetTier,
+    profile.targetTier === 1 ? profile.spawnNodeId === "node-clearing" : spawn && spawn.kind === "sanctuary" && spawn.biomeTier === profile.targetTier,
     `spawn "${profile.spawnNodeId}" is not the tier-${profile.targetTier} Sanctuary`,
   );
 
@@ -287,7 +287,7 @@ export function validateSpawn(profile: TierEntryProfile, self: PlayerView): Vali
   c.ok("live-class", self.selectedClass === profile.classRoot, `class is ${self.selectedClass}`);
   c.ok(
     "live-frame",
-    self.unlockedSkills.includes(profile.frameId),
+    profile.frameId ? self.unlockedSkills.includes(profile.frameId) : self.unlockedSkills.length === 1 && self.unlockedSkills[0] === profile.classRoot,
     `frame ${profile.frameId} not in unlockedSkills [${self.unlockedSkills.join(", ")}]`,
   );
   c.ok(
@@ -296,6 +296,7 @@ export function validateSpawn(profile: TierEntryProfile, self: PlayerView): Vali
     `selectedRange is "${self.selectedRange}" -- a tier-entry character has no range node yet`,
   );
   c.ok("live-tier", self.playerTier === profile.targetTier, `playerTier is ${self.playerTier}`);
+  c.ok("live-level", self.level === profile.level, `level is ${self.level}, expected ${profile.level}`);
   c.ok(
     "live-skill-tier",
     self.currentSkillTier === profile.currentSkillTier,

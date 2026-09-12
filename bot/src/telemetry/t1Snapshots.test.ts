@@ -22,6 +22,7 @@ function assert(condition: unknown, message: string): asserts condition {
 }
 
 const sourceProfile = requireTierEntryProfile(t2EntryProfileId("cadence-root", "clean"));
+assert(sourceProfile.frameId, "T2 fixture has a frame");
 const sourceFrame = SKILL_TREE.get(sourceProfile.frameId);
 const self = {
   id: "real-t1-player",
