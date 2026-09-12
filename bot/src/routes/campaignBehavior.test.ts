@@ -67,4 +67,39 @@ async function executorWindowRegression(): Promise<void> {
     assert.equal(invoked, true);
   } finally { Date.now = originalNow; }
 }
-executorWindowRegression().then(() => console.log("campaign executor observation regression: ok"));
+async function transitRecoveryRegression(): Promise<void> {
+  const originalNow = Date.now;
+  let now = 100000;
+  Date.now = () => now;
+  try {
+    for (const foreign of [false, true]) {
+      let deaths = 0;
+      let navigations = 0;
+      let combatEnables = 0;
+      const obs = { self: { isDead: false }, nodeId: "source", attackersOnSelf: () => [{}] };
+      const executor = new RouteExecutor({ obs,
+        route: { suppressTransitCombat: !foreign },
+        deathCount: () => deaths,
+        leaseSession: foreign ? { isForeignNode: () => true, ownsNode: () => false, releaseNode: () => {} } : undefined,
+        recorder: { setActivity: () => {} },
+        intents: { setAuto: (on: boolean) => { if (on) combatEnables++; }, navigateTo: () => { navigations++; } },
+      } as never);
+      Object.assign(executor, { waitUntil: async (done: () => boolean, opts: { onPoll: () => void }) => {
+        assert.equal(navigations, 1);
+        deaths++; obs.self.isDead = true; opts.onPoll(); opts.onPoll();
+        assert.equal(navigations, 1, "do not navigate a corpse");
+        obs.self.isDead = false; obs.nodeId = "hub"; opts.onPoll();
+        assert.equal(navigations, 2, "death remains pending until live respawn");
+        opts.onPoll();
+        assert.equal(navigations, 2, "do not repeatedly replay the same death");
+        for (let i = 0; i < 62; i++) { now += 1000; opts.onPoll(); }
+        assert.equal(navigations, 3, "attackers cannot suppress the bounded navigation retry");
+        assert.equal(combatEnables, 0, "suppressed or foreign transit never enables farming");
+        obs.nodeId = "destination";
+        assert.equal(done(), true);
+      } });
+      await (executor as unknown as { ensureAt: (nodeId: string) => Promise<void> }).ensureAt("destination");
+    }
+  } finally { Date.now = originalNow; }
+}
+executorWindowRegression().then(transitRecoveryRegression).then(() => console.log("campaign executor observation and transit regressions: ok"));

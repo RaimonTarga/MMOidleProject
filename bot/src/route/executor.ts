@@ -624,9 +624,9 @@ export class RouteExecutor {
           if (maxDeaths !== undefined && deaths - initialDeaths > maxDeaths) {
             throw new StallError("transit death budget exhausted", { nodeId, deaths: deaths - initialDeaths });
           }
-          deathsAtStart = deaths;
           fightingBack = false;
           if (!self.isDead) {
+            deathsAtStart = deaths;
             intents.setAuto(false);
             intents.navigateTo(nodeId);
             lastProgressAt = Date.now();
@@ -677,8 +677,8 @@ export class RouteExecutor {
             intents.setAuto(false);
             intents.navigateTo(nodeId);
           }
-          lastProgressAt = Date.now();
-          return;
+          // Attackers are not movement progress when combat is suppressed.
+          // Continue to the node-progress/retry check even under attack.
         }
         if (fightingBack) {
           fightingBack = false;
