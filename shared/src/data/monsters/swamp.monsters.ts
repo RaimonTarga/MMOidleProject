@@ -106,7 +106,7 @@ export const swampMonsterEntries = [
     // Multiplier is deliberately ~1: Wither is a debuff, not a damage spike.
     chargedAttack: {
       name: 'Wither', castMs: 1400, cooldownMs: 8000, initialCooldownMs: 0,
-      multiplier: 1.0, fx: 'power-shot',
+      multiplier: 1.0, fx: 'wither',
       appliesAntiheal: { reduction: 0.30, durationMs: 9000 },
     },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -170,7 +170,7 @@ export const swampMonsterEntries = [
     // nothing at all, which is correct - it is a SUPPORT creature.
     chargedAttack: {
       name: 'Plague Hex', castMs: 1500, cooldownMs: 8000, initialCooldownMs: 0,
-      multiplier: 1.0, fx: 'power-shot',
+      multiplier: 1.0, fx: 'plague-hex',
       appliesAntiheal: { reduction: 0.30, durationMs: 9000 },
       refreshesPlayerDots: { extendMs: 3000, maxTotalMs: 12000 },
     },

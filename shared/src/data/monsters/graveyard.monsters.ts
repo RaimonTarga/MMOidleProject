@@ -51,7 +51,7 @@ export const graveyardMonsterEntries = [
     // Basic undead body / CORPSE FODDER. Simple melee, no plague (removed, locked).
     // Its contribution to the biome is that it dies and leaves a valid corpse.
     stats: { hp: 2059, attack: 85, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
+    behavior: 'melee', attackStyle: 'bone', biome: 'graveyard',
     rewards: { essence: 30, essenceType: 'purple', level: 3, biomeXp: 180 },
     // THE GRAVEWRIGHT'S CORE ESCORT — and, once you kill it, the corpse the
     // Gravewright reaches for. Still rolls loose from the pool on its own.
@@ -90,7 +90,7 @@ export const graveyardMonsterEntries = [
     // NECROTIC SCREECH — periodically empowering nearby undead (attack speed).
     // See the behavior pass for the screech itself.
     stats: { hp: 2693, attack: 95, plating: 0, damageReduction: 0, speed: 46, attackRange: 200, attackCooldown: 1700, pullRange: 260 },
-    behavior: 'ranged', attackStyle: 'poison', biome: 'graveyard',
+    behavior: 'ranged', attackStyle: 'peck', biome: 'graveyard',
     rewards: { essence: 40, essenceType: 'purple', level: 3, biomeXp: 240 },
     // NECROTIC SCREECH - periodically hastens nearby undead. It does not hurt you
     // directly; it makes everything ELSE hurt you faster, which is a different job
@@ -189,7 +189,7 @@ export const graveyardMonsterEntries = [
     // Fast nuisance filler / corpse fodder. Individually nothing. No plague
     // (removed, locked) — it is simple on purpose, and it leaves a valid corpse.
     stats: { hp: 1584, attack: 65, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 950, pullRange: 310 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
+    behavior: 'melee', attackStyle: 'bone', biome: 'graveyard',
     rewards: { essence: 22, essenceType: 'purple', level: 3, biomeXp: 130 },
     // The cheapest corpse in the biome. A rat-heavy escort dies fast and feeds the
     // raiser fast, which is the entourage variant that teaches the loop quickest.

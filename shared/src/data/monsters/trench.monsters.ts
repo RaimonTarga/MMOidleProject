@@ -40,7 +40,7 @@ export const trenchMonsterEntries = [
     // multiplier 2.5 -> 2.0. The hunter keeps its meaningful telegraphed Wound
     // bite, pursuit, and defensive identity without repeatable ordinary-hit burst.
     stats: { hp: 4200, attack: 190, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
+    behavior: 'melee', attackStyle: 'bite-trench', biome: 'trench',
     elite: true,
     rewards: { essence: 260, essenceType: 'green', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 320, leashRange: 760, idleMinMs: 5000, idleMaxMs: 14000 },
@@ -89,7 +89,7 @@ export const trenchMonsterEntries = [
     // cadence finisher it carried as a charger.
     chargedAttack: {
       name: 'Pressure Lance', castMs: 1900, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 2.0, fx: 'power-shot',
+      multiplier: 2.0, fx: 'pressure-lance',
       // The standoff lesson, on the one readable beat: landing it buys the Stalker
       // a moment of distance. Bounded and telegraphed, unlike the three stacking
       // slows it replaces.
@@ -123,7 +123,7 @@ export const trenchMonsterEntries = [
     // multiplier 2.4 -> 2.0. The anchor keeps its enormous HP, shell window,
     // defenses, and clear stand-and-fight telegraph.
     stats: { hp: 5880, attack: 210, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
+    behavior: 'melee', attackStyle: 'bite-trench', biome: 'trench',
     elite: true,
     rewards: { essence: 400, essenceType: 'green', level: 4, biomeXp: 2400 },
     ai: { wanderRadius: 280, leashRange: 700, idleMinMs: 8000, idleMaxMs: 20000 },
@@ -134,7 +134,7 @@ export const trenchMonsterEntries = [
     chargedAttack: {
       name: 'Devour', castMs: 2600, cooldownMs: 11000, initialCooldownMs: 7000,
       multiplier: 2.0, fx: 'savage-maul',
-      aoe: { radius: 170 },
+      aoe: { radius: 170, impactFx: 'devour' },
     },
     // ONE committed attack (the Devour above) plus the carapace (2026-09-04 §5.9).
     // Lantern Pulse and Body Sweep are REMOVED — a lure slow and a knockback sweep

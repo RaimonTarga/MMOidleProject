@@ -95,7 +95,7 @@ export const desertMonsterEntries = [
     // paired Sun Scarab time to create a real kiting window.
     chargedAttack: {
       name: 'Numbing Sting', castMs: 500, cooldownMs: 4000, initialCooldownMs: 500,
-      multiplier: 1.0, fx: 'power-shot',
+      multiplier: 1.0, fx: 'numbing-sting',
       appliesSlow: { speedMult: 0.5, durationMs: 4000 },
     },
   }],
@@ -113,7 +113,7 @@ export const desertMonsterEntries = [
     // Petrifying Gaze payload. 55 actually reads as a weak poke, letting the Gaze
     // stay "the entire weapon" as written.
     stats: { hp: 780, attack: 55, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'desert',
+    behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 46 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
     // PETRIFYING GAZE - a periodic telegraphed wind-up that briefly ROOTS. This
@@ -122,7 +122,7 @@ export const desertMonsterEntries = [
     // interruptible. Multiplier stays near 1 - the root is the weapon.
     chargedAttack: {
       name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 7000, initialCooldownMs: 500,
-      multiplier: 1.0, fx: 'power-shot', rootMs: 1400,
+      multiplier: 1.0, fx: 'petrifying-gaze', rootMs: 1400,
     },
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'dust-djinn', count: 1 }] },
   }],
@@ -167,7 +167,7 @@ export const desertMonsterEntries = [
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandweaver', count: 1 }] },
     chargedAttack: {
       name: 'Numbing Sting', castMs: 500, cooldownMs: 3500, initialCooldownMs: 500,
-      multiplier: 1.0, fx: 'power-shot',
+      multiplier: 1.0, fx: 'numbing-sting',
       appliesSlow: { speedMult: 0.45, durationMs: 4500 },
     },
   }],
@@ -179,14 +179,14 @@ export const desertMonsterEntries = [
     // "a successful Gaze roots you and leaves you Exposed for a few seconds".
     // Its own damage stays negligible: the threat is what it does to someone else's.
     stats: { hp: 1350, attack: 80, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'desert',
+    behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert',
     rewards: { essence: 45, essenceType: 'yellow', level: 2, biomeXp: 270 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
     // The Gaze, inherited. The tier's addition is the Sunder below: a successful
     // Gaze roots you and leaves you EXPOSED for a few seconds.
     chargedAttack: {
       name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 6500, initialCooldownMs: 500,
-      multiplier: 1.0, fx: 'power-shot', rootMs: 1600,
+      multiplier: 1.0, fx: 'petrifying-gaze', rootMs: 1600,
     },
     appliesVulnerability: { damageTakenPct: 0.12, maxStacks: 1, durationMs: 4000 },
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandweaver', count: 1 }] },
@@ -205,7 +205,7 @@ export const desertMonsterEntries = [
     // up its dangerous shot into a target that cannot walk out of it.
     chargedAttack: {
       name: 'Sunbeam', castMs: 1400, cooldownMs: 9000, initialCooldownMs: 4500,
-      multiplier: 1.6, fx: 'power-shot',
+      multiplier: 1.6, fx: 'sunbeam',
     },
     pack: { role: 'follower', callRange: 320 },
   }],
@@ -218,7 +218,7 @@ export const desertMonsterEntries = [
     // Numbing Sting on a CONTROLLER stat shape rather than an invisible slow on
     // the old fast-DPS profile. Paired 1:1 with the Sunshield Scarab.
     stats: { hp: 1343, attack: 78, plating: 0, damageReduction: 0.08, speed: 28, attackRange: 12, attackCooldown: 2400, pullRange: 230 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'desert',
+    behavior: 'melee', attackStyle: 'bite-venom', biome: 'desert',
     rewards: { essence: 55, essenceType: 'yellow', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1500, idleMaxMs: 4500 },
     // Paired 1:1 with its tier's scarab, exactly like the basilisk family. The
@@ -227,7 +227,7 @@ export const desertMonsterEntries = [
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
     chargedAttack: {
       name: 'Numbing Sting', castMs: 500, cooldownMs: 3000, initialCooldownMs: 500,
-      multiplier: 1.0, fx: 'power-shot',
+      multiplier: 1.0, fx: 'numbing-sting',
       appliesSlow: { speedMult: 0.4, durationMs: 5000 },
     },
   }],
@@ -238,12 +238,12 @@ export const desertMonsterEntries = [
     // (conceptual ceiling ~15-20% before balance). NO large stacking vulnerability
     // (locked). Its own damage stays negligible.
     stats: { hp: 1501, attack: 90, plating: 10, damageReduction: 0.14, speed: 26, attackRange: 15, attackCooldown: 3000, pullRange: 190 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'desert',
+    behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert',
     rewards: { essence: 100, essenceType: 'yellow', level: 4, biomeXp: 600 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
     chargedAttack: {
       name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 6000, initialCooldownMs: 500,
-      multiplier: 1.0, fx: 'power-shot', rootMs: 1800,
+      multiplier: 1.0, fx: 'petrifying-gaze', rootMs: 1800,
     },
     appliesVulnerability: { damageTakenPct: 0.18, maxStacks: 1, durationMs: 4500 },
     pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
@@ -280,7 +280,7 @@ export const desertMonsterEntries = [
     // The stacked vulnerability is REMOVED — no huge slow + vulnerability + multiple
     // dealers + unrelated gimmicks all at once.
     stats: { hp: 1738, attack: 140, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'desert', elite: true,
+    behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert', elite: true,
     rewards: { essence: 170, essenceType: 'yellow', level: 4, biomeXp: 1020 },
     ai: { wanderRadius: 100, leashRange: 450, idleMinMs: 4500, idleMaxMs: 12000 },
     // PINCER SMASH - a telegraphed heavy hit rather than an invisible cooldown

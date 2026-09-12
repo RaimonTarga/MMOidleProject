@@ -98,7 +98,7 @@ export const mountainMonsterEntries = [
     chargedAttack: {
       name: 'Ground Slam', castMs: 2400, cooldownMs: 6000, initialCooldownMs: 0,
       multiplier: 1.65, fx: 'strong-kick',
-      aoe: { radius: 120 },
+      aoe: { radius: 120, impactFx: 'ground-slam' },
     },
     // One readable desperation defense: once at 25% HP, the Titan plants itself
     // for a second and raises a ward worth a quarter of its maximum health.
@@ -140,7 +140,7 @@ export const mountainMonsterEntries = [
     chargedAttack: {
       name: 'Huge Boulder', castMs: 1500, cooldownMs: 12000, initialCooldownMs: 3000,
       multiplier: 2.0, fx: 'huge-boulder',
-      aoe: { radius: 83 },
+      aoe: { radius: 83, impactFx: 'huge-boulder' },
     },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
@@ -159,7 +159,7 @@ export const mountainMonsterEntries = [
     chargedAttack: {
       name: 'Ground Slam', castMs: 2000, cooldownMs: 12000, initialCooldownMs: 0,
       multiplier: 1.4, fx: 'strong-kick',
-      aoe: { radius: 145 },
+      aoe: { radius: 145, impactFx: 'ground-slam' },
     },
     // The Titan line keeps Granite Barrier at higher tiers: the larger Slam is
     // still its offense, while the planted ward is its readable desperation beat.
@@ -175,14 +175,14 @@ export const mountainMonsterEntries = [
     // CAPRINE T3 — the Hopper lineage returns. Ledge traversal, an aggressive charge,
     // and a heavy knockback ram/kick.
     stats: { hp: 610, attack: 87, plating: 0, damageReduction: 0, speed: 38, attackRange: 12, attackCooldown: 2600, pullRange: 245 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'gore', biome: 'mountain',
     rewards: { essence: 47, essenceType: 'blue', level: 2, biomeXp: 280 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 500, idleMaxMs: 2200 },
     vaultsMountainLedges: true,
     // RAM - the caprine lineage's knockback beat, heavier than the Hopper's kick.
     chargedAttack: {
       name: 'Avalanche Ram', castMs: 1100, cooldownMs: 9000, initialCooldownMs: 3500,
-      multiplier: 1.3, fx: 'strong-kick', knockback: { distance: 220 },
+      multiplier: 1.3, fx: 'avalanche-ram', knockback: { distance: 220 },
     },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
   }],
@@ -205,7 +205,7 @@ export const mountainMonsterEntries = [
     chargedAttack: {
       name: 'Bombardment', castMs: 1800, cooldownMs: 9000, initialCooldownMs: 4000,
       multiplier: 1.3, fx: 'power-shot',
-      aoe: { radius: 130 },
+      aoe: { radius: 130, impactFx: 'bombardment' },
     },
     ai: { wanderRadius: 200, leashRange: 620, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
@@ -218,7 +218,7 @@ export const mountainMonsterEntries = [
     // large normal attacks, and every 4th is the major Slam. The Mountain teaching
     // unit: its NORMAL hit is scary, its finisher is lethal without the damage cap.
     stats: { hp: 1150, attack: 184, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'gore', biome: 'mountain',
     rewards: { essence: 95, essenceType: 'blue', level: 4, biomeXp: 570 },
     ai: { wanderRadius: 90, leashRange: 430, idleMinMs: 4000, idleMaxMs: 11000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
@@ -236,14 +236,14 @@ export const mountainMonsterEntries = [
     // CAPRINE T4 — apex. Ledge traversal, extreme mobility/charge, and a brutal
     // knockback ram.
     stats: { hp: 800, attack: 145, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'gore', biome: 'mountain',
     rewards: { essence: 68, essenceType: 'blue', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2500 },
     vaultsMountainLedges: true,
     // APEX CAPRINE: extreme mobility plus a brutal knockback ram.
     chargedAttack: {
       name: 'Avalanche Ram', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
-      multiplier: 1.5, fx: 'strong-kick', knockback: { distance: 280 },
+      multiplier: 1.5, fx: 'avalanche-ram', knockback: { distance: 280 },
     },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
   }],
@@ -269,7 +269,7 @@ export const mountainMonsterEntries = [
     // heavy plating, some DR, the enemy soft-cap, and one large periodic empowered
     // hit. Do NOT add another mechanic (locked).
     stats: { hp: 1100, attack: 113, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain', elite: true,
+    behavior: 'melee', attackStyle: 'gore', biome: 'mountain', elite: true,
     rewards: { essence: 185, essenceType: 'blue', level: 4, biomeXp: 1110 },
     ai: { wanderRadius: 80, leashRange: 400, idleMinMs: 5000, idleMaxMs: 13000 },
     chargeOnAggro: { speedMult: 2.2, durationMs: 1300 },

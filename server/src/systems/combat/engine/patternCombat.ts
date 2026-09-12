@@ -42,8 +42,8 @@ export function initBossPatternCombat(): void {
     pullPlayer(world, player, anchor, distance) {
       pullPlayer(world, player, anchor, distance);
     },
-    resolveCircle(world, monster, at, radius, multiplier, stunMs, now) {
-      resolvePatternCircle(world, monster, at, radius, multiplier, stunMs, now);
+    resolveCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx) {
+      resolvePatternCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx);
     },
   });
 }
@@ -63,6 +63,7 @@ function resolvePatternCircle(
   multiplier: number,
   stunMs: number | undefined,
   now: number,
+  impactFx?: string,
 ): void {
   const nodeId = monster.hasPosition.nodeId;
   const telegraph = (world.groundZones.get(nodeId) ?? []).find(
@@ -122,6 +123,22 @@ function resolvePatternCircle(
   // The circle ALWAYS erupts, hit or miss: a telegraph that resolves silently on
   // empty ground reads as a bug, and the eruption is what teaches that moving was
   // the answer. Anchored to the captured point, never the caster.
+  // A step that names its own cue pays the wind-up off with THAT instead of the
+  // generic shockwave, which would otherwise bury the signature. Exactly the rule
+  // `aoe.impactFx` already follows on charged attacks, and it reuses that path's
+  // event so both go through one client dispatch.
+  if (impactFx) {
+    world.pushEvent(nodeId, {
+      kind: 'monster-cast-end',
+      monsterId: monster.isMonster.id,
+      fired: true,
+      pos: { ...at },
+      radius,
+      fx: impactFx,
+    });
+    return;
+  }
+
   world.pushEvent(nodeId, {
     kind: 'boss-fx',
     monsterId: monster.isMonster.id,

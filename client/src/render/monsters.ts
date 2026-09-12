@@ -367,6 +367,11 @@ export function upsertMonster(
         monster.attackStyle,
         { x: vmSprite.x, y: vmSprite.y },
         { x: targetSprite.x, y: targetSprite.y },
+        // An amplified beat (cadence finisher, timed empower, opening strike) draws
+        // the heavier variant the style FX already defines. This call passed no
+        // flags at all until 2026-09-12, which made those variants unreachable for
+        // every monster and left armed beats looking exactly like ordinary swings.
+        { empowered: monster.lastAttackEmpowered === true },
       );
 
       if (!meta?.monsterIsRanged) {

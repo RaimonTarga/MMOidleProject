@@ -57,6 +57,21 @@ export interface PerformsAttack {
   attackRange: number;
   attackCooldown: number;
   lastAttackAt: number;
+  /**
+   * Whether the beat stamped by `lastAttackAt` was an amplified one (a monster's
+   * cadence finisher, timed empower, or opening strike).
+   *
+   * The client draws a monster's attack animation off `lastAttackAt` changing, and
+   * passed NO flags when it did — so the heavier `empowered` variants that
+   * `fxBearClaws`, `fxBite`, `fxSlash`, `fxArrow` and `fxGunshot` already draw were
+   * unreachable for every monster in the game, and an armed beat looked exactly like
+   * an ordinary swing. The `monster-hit` event already carried this bit but has no
+   * `monsterId`, so the snapshot path could not use it.
+   *
+   * MUST be written on every path that stamps `lastAttackAt`, not just the amplified
+   * ones: left stale, one finisher would make every later swing read as empowered.
+   */
+  lastAttackEmpowered?: boolean;
 }
 
 /** Flat plating + percentage damage reduction. */

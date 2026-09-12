@@ -35,7 +35,7 @@ export const bossMonsterEntriesT2 = [
     id: 'gorging-razortusk', name: 'Gorging Razortusk', color: 0xcc9922,
     isBoss: true,
     stats: { hp: 4000, attack: 96, plating: 8, damageReduction: 0.05, speed: 46, attackRange: 15, attackCooldown: 2200, pullRange: 320 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
+    behavior: 'melee', attackStyle: 'gore', biome: 'plains',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
     targeting: { prefersPlayers: true },
@@ -185,7 +185,7 @@ export const bossMonsterEntriesT2 = [
         { kind: 'cast', name: 'Stoneplate', castMs: 900, fx: 'shield', guardable: false },
         { kind: 'barrier', sourceId: 'stoneplate', shieldPct: 0.06,
           onBreak: { staggerMs: 3200, label: 'Plate Shattered' } },
-        { kind: 'cast', name: 'Stoneplate Charge', castMs: 2300, fx: 'strong-kick',
+        { kind: 'cast', name: 'Stoneplate Charge', castMs: 2300, fx: 'charge-lane',
           lane: { length: 700, halfWidth: 90, lockAtCastPct: 0.55 } },
         // 700px at 500px/s ≈ 1.4s of travel.
         { kind: 'charge', speed: 500, maxTravelMs: 2100 },
@@ -218,7 +218,7 @@ export const bossMonsterEntriesT2 = [
     dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 9, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
     chargedAttack: {
       name: 'Corrosive Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
-      multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115 },
+      multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115, impactFx: 'pool-spawn' },
       // Effectively permanent (10 min) — retired with the boss, like T1's Bile Pool.
       pool: {
         durationMs: 600000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.60,
@@ -266,7 +266,7 @@ export const bossMonsterEntriesT2 = [
       id: 'dreadbore-emergence', name: 'Dreadbore',
       damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4000,
       steps: [
-        { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'shield', guardable: false },
+        { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'burrow', guardable: false },
         // OUT, THEN BACK, ON ONE LINE (2026-09-06, settled). This burrow went
         // through four shapes before landing here: a 1600ms straight walk (a long
         // boring approach), a 500ms sprint at 1300px/s (nothing to read), a true
@@ -307,7 +307,7 @@ export const bossMonsterEntriesT2 = [
           // the same rider actually decides the hit.
           contactSlow: { speedMult: 0.5, durationMs: 2000 } },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
-          damageMult: 1.0, telegraphMs: 750, fx: 'strong-kick' },
+          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption' },
         { kind: 'recovery', label: 'Surfaced', durationMs: 2200 },
       ],
     },
@@ -373,7 +373,7 @@ export const bossMonsterEntriesT2 = [
       id: 'dune-execution', name: 'Death Sting',
       damageMultiplier: 1.5, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
-        { kind: 'apply-status', name: 'Death Sting', castMs: 1100, fx: 'strong-kick',
+        { kind: 'apply-status', name: 'Death Sting', castMs: 1100, fx: 'death-sting',
           effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6000 },
         // The answer window. Long enough to actually reach a Cleanse, short enough
         // that ignoring the tell is a choice rather than an accident.
@@ -399,10 +399,10 @@ export const bossMonsterEntriesT2 = [
         // on the first frame of the tell is only ~1.2x short of clearing it. 0.35
         // puts it comfortably out of reach so the beat asks a question with one
         // answer rather than a near-miss. The scorpion is untouched.
-        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'power-shot',
+        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'numbing-sting',
           effectId: 'slow', stacks: 1, durationMs: 4000, data: { speedMult: 0.35 } },
         { kind: 'wait', durationMs: 600 },
-        { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'strong-kick',
+        { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'execution',
           damageMult: 1.0, amplifiedMult: 2.0,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 150 },
         { kind: 'recovery', label: 'Spent', durationMs: 1800 },
@@ -496,7 +496,7 @@ export const bossMonsterEntriesT2 = [
         // 220px/s is the visible pace: clearly faster than the player's 120, slow
         // enough to watch. Over the window that is ~660px, which is what the stalk
         // below is sized to take back.
-        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'shield',
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2600, label: 'Cornered' },
           maxInstinctStacks: 3, instinctCastReductionPct: 0.15,

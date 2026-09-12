@@ -428,7 +428,14 @@ export interface PatternCombatHooks {
     anchor: Vec2,
     distance: number,
   ) => void;
-  /** Resolve a telegraphed circle at `at`, through the full player pipeline. */
+  /**
+   * Resolve a telegraphed circle at `at`, through the full player pipeline.
+   *
+   * `impactFx` is the step's own cue id. The eruption used to be a hardcoded generic
+   * `slam` regardless of what the step declared, so every named pattern payoff in the
+   * game — Earthshatter, Shatter, Glacial Collapse, Deep-Core Eruption, Cataclysm —
+   * paid off identically. Mirrors `aoe.impactFx` on charged attacks.
+   */
   resolveCircle: (
     world: World,
     monster: MonsterEntity,
@@ -437,6 +444,7 @@ export interface PatternCombatHooks {
     multiplier: number,
     stunMs: number | undefined,
     now: number,
+    impactFx?: string,
   ) => void;
 }
 
@@ -1004,6 +1012,7 @@ function tickStep(
         pattern.damageMultiplier * step.damageMult,
         step.stunMs,
         now,
+        step.fx,
       );
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
       return 'done';

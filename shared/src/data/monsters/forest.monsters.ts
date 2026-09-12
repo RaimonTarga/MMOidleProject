@@ -113,7 +113,7 @@ export const forestMonsterEntries = [
     // moving but VERY fast-ATTACKING territorial beast — frequency is the threat
     // evasion answers; squishy (no DR) so it still dies to burst.
     stats: { hp: 315, attack: 31, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'forest',
+    behavior: 'melee', attackStyle: 'claws-light', biome: 'forest',
     rewards: { essence: 10, essenceType: 'green', level: 1, biomeXp: 58 },
     ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 2500, idleMaxMs: 7000 },
   }],

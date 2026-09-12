@@ -64,7 +64,7 @@ export const bossMonsterEntriesT3 = [
       id: 'cragbreaker', name: 'Cragbreaker',
       damageMultiplier: 2.0, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
-        { kind: 'cast', name: 'Cragbreaker Charge', castMs: 2400, fx: 'strong-kick',
+        { kind: 'cast', name: 'Cragbreaker Charge', castMs: 2400, fx: 'charge-lane',
           lane: { length: 760, halfWidth: 96, lockAtCastPct: 0.55 } },
         // 760px at 520px/s ≈ 1.5s of travel, or less — it STOPS on the body it hits.
         // The tackle is the setup (damageMult 1.0 -> 0.3); Cragbreaker is the payoff.
@@ -75,7 +75,7 @@ export const bossMonsterEntriesT3 = [
         // answers ALL of it: `requiresChargeHit` means a dodged charge draws no
         // circle. Getting run down is the mistake; this is what it costs.
         { kind: 'impact', name: 'Cragbreaker', anchor: 'captured-endpoint',
-          radius: 205, damageMult: 1.45, telegraphMs: 900, fx: 'strong-kick',
+          radius: 205, damageMult: 1.45, telegraphMs: 900, fx: 'ground-slam',
           requiresChargeHit: true },
         { kind: 'recovery', label: 'Overextended', durationMs: 2600 },
       ],
@@ -137,7 +137,7 @@ export const bossMonsterEntriesT3 = [
       id: 'deep-core-emergence', name: 'Deep-Core Burrow',
       damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4000,
       steps: [
-        { kind: 'cast', name: 'Deep Burrow', castMs: 700, fx: 'shield', guardable: false },
+        { kind: 'cast', name: 'Deep Burrow', castMs: 700, fx: 'burrow', guardable: false },
         // THE EVOLVED BURROW (2026-09-06) — the same shape T2 now runs, deepened.
         // Read the T2 Dreadbore's comment first; everything there applies, including
         // why the path is a straight line and cannot be a curve.
@@ -156,7 +156,7 @@ export const bossMonsterEntriesT3 = [
           feint: { retreatToPx: 520, untilPct: 0.35 }, surfacesOnContact: true,
           contactSlow: { speedMult: 0.45, durationMs: 2500 } },
         { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 155,
-          damageMult: 1.0, telegraphMs: 1100, fx: 'strong-kick' },
+          damageMult: 1.0, telegraphMs: 1100, fx: 'deep-core-eruption' },
         { kind: 'recovery', label: 'Surfaced', durationMs: 2400 },
       ],
     },
@@ -205,7 +205,7 @@ export const bossMonsterEntriesT3 = [
     dotEffect: { debuffId: 'rot-spore-plague', label: 'Rot Spores', damagePerStack: 13, maxStacks: 6, tickIntervalMs: 1000, durationMs: 9000 },
     chargedAttack: {
       name: 'Spore Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
-      multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 130 },
+      multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 130, impactFx: 'pool-spawn' },
       // Deliberately NOT extended to the swamp lineage's 10-minute pools: this one
       // detonates on expiry, so a fight-length duration would delete the payoff.
       pool: {
@@ -270,7 +270,7 @@ export const bossMonsterEntriesT3 = [
       id: 'monarch-execution', name: 'Death Sting',
       damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
-        { kind: 'apply-status', name: 'Death Sting', castMs: 1100, fx: 'strong-kick',
+        { kind: 'apply-status', name: 'Death Sting', castMs: 1100, fx: 'death-sting',
           effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6500 },
         { kind: 'wait', durationMs: 850 },
         // NUMBING STING (2026-09-06) — see the T2 Emperor for the shape. One Cleanse,
@@ -278,10 +278,10 @@ export const bossMonsterEntriesT3 = [
         // mark and you eat an unamplified hit you could have walked out of; answer
         // the slow and you walk out of an Execution that would have hit for 1.9x.
         // Deeper than T2's 0.35 because the circle it locks you into is bigger.
-        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'power-shot',
+        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'numbing-sting',
           effectId: 'slow', stacks: 1, durationMs: 4500, data: { speedMult: 0.3 } },
         { kind: 'wait', durationMs: 600 },
-        { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'strong-kick',
+        { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'execution',
           damageMult: 1.0, amplifiedMult: 1.9,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 155 },
         { kind: 'recovery', label: 'Spent', durationMs: 1900 },
@@ -357,7 +357,7 @@ export const bossMonsterEntriesT3 = [
         //
         // Deepened rather than copied: it flees faster than T2 and stalks back
         // faster still, so the same loop is harder to break and harder to survive.
-        { kind: 'escape-guard', name: 'Flee', castMs: 2800, fx: 'shield',
+        { kind: 'escape-guard', name: 'Flee', castMs: 2800, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2500, label: 'Cornered' },
           maxInstinctStacks: 3, instinctCastReductionPct: 0.15,
@@ -502,11 +502,11 @@ export const bossMonsterEntriesT3 = [
       id: 'rime-shatter', name: 'Deep Freeze',
       damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4500,
       steps: [
-        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1400, fx: 'strong-kick',
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1400, fx: 'frostbind',
           effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2200,
           requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 } },
         { kind: 'impact', name: 'Shatter', anchor: 'self', radius: 195,
-          damageMult: 1.0, telegraphMs: 1300, fx: 'strong-kick' },
+          damageMult: 1.0, telegraphMs: 1300, fx: 'shatter' },
         { kind: 'recovery', label: 'Thawing', durationMs: 2000 },
       ],
     },

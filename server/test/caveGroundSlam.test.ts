@@ -38,6 +38,10 @@ const SLAM = MONSTER_DATABASE.get("cave-brute")?.chargedAttack;
 assert(!!SLAM, "cave-brute should define a chargedAttack");
 assert(!!SLAM!.aoe, "the cave-brute charge should carry the ground-slam aoe rider");
 const RADIUS = SLAM!.aoe!.radius;
+// Read from the definition rather than hardcoded: if the cue is renamed or dropped,
+// this test should follow the data instead of silently asserting a dead id.
+const SLAM_FX = SLAM!.aoe!.impactFx;
+assert(!!SLAM_FX, "the cave Ground Slam should still declare its own impactFx");
 
 function makePlayerSlices(id: string, x: number, y: number): PersistedPlayerSlices {
   return {
@@ -185,12 +189,18 @@ function castEvents(world: World) {
   // ...and the shockwave still erupts on the empty ground it was planted on.
   // A telegraph that resolves with nobody inside used to be silent, which read
   // as a missing animation rather than as a dodge.
-  const burst = resolved.find((e) => e.kind === "boss-fx" && e.fx === "slam");
+  //
+  // The Ground Slam family declares `aoe.impactFx` since 2026-09-12, and a slam
+  // that names its own cue pays the wind-up off with THAT instead of the generic
+  // `boss-fx` shockwave (the server has always suppressed one when the other is
+  // set, so the two never stack). The guarantee this asserts is unchanged — an
+  // impact FX exists, planted, sized to the aoe — only the event carrying it moved.
+  const burst = resolved.find((e) => e.kind === "monster-cast-end" && e.fx === SLAM_FX);
   assert(!!burst, "a slam that catches nobody must still emit its impact FX");
   assert(
-    burst!.kind === "boss-fx" &&
-      burst!.pos.x === 405 &&
-      burst!.pos.y === 400 &&
+    burst!.kind === "monster-cast-end" &&
+      burst!.pos?.x === 405 &&
+      burst!.pos?.y === 400 &&
       burst!.radius === RADIUS,
     "the impact FX must be centred on the planted point and sized to the aoe radius",
   );

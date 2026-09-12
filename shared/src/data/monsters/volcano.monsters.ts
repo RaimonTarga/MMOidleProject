@@ -112,7 +112,7 @@ export const volcanoMonsterEntries = [
     // 150-165 (up to 57% of a T3 arrival player's maxHP) as a plain ordinary hit,
     // stacked on top of the other fire mobs in the same pull.
     stats: { hp: 1440, attack: 80, plating: 3, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 260 },
-    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
+    behavior: 'melee', attackStyle: 'bite-fire', biome: 'volcanic',
     rewards: { essence: 29, essenceType: 'red', level: 2, biomeXp: 175 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 700, idleMaxMs: 3000 },
     swarm: { cohesion: 0.08, separation: 56 },
@@ -175,7 +175,7 @@ export const volcanoMonsterEntries = [
     // Salamander line T3: STATIONARY ranged pressure that fires from the background
     // while the swarm closes. Does not kite. No personal ramp.
     stats: { hp: 1330, attack: 105, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
-    behavior: 'ranged', attackStyle: 'fire', biome: 'volcanic',
+    behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
     // Fires from the background and does NOT kite (locked).
     staticSentry: true,
@@ -207,7 +207,7 @@ export const volcanoMonsterEntries = [
     id: 'infernal-direhound', name: 'Infernal Direhound', color: 0xff8800,
     // Evolved catcher: high speed + charge on engagement. No ramp.
     stats: { hp: 1750, attack: 110, plating: 4, damageReduction: 0, speed: 72, attackRange: 12, attackCooldown: 1400, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
+    behavior: 'melee', attackStyle: 'bite-fire', biome: 'volcanic',
     rewards: { essence: 68, essenceType: 'red', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 700, idleMaxMs: 3000 },
     swarm: { cohesion: 0.08, separation: 56 },
@@ -263,7 +263,7 @@ export const volcanoMonsterEntries = [
     // Evolved ranged Burn pressure: stationary (not a kiter), stronger and more
     // persistent Burn than the Ash Salamander. Ignoring it lets the fire stack.
     stats: { hp: 1550, attack: 110, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
-    behavior: 'ranged', attackStyle: 'fire', biome: 'volcanic',
+    behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
     // Fires from the background and does NOT kite (locked).
     staticSentry: true,

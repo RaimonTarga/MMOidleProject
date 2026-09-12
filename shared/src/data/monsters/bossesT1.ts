@@ -62,7 +62,7 @@ export const bossMonsterEntriesT1 = [
     // comes out of the swarm, so the razorback itself is priced as the smaller half
     // of its own encounter. 34 is still under 2x the Boar, the biome's biggest trash hit.
     stats: { hp: 1700, attack: 34, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
+    behavior: 'melee', attackStyle: 'gore', biome: 'plains',
     rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
     targeting: { prefersPlayers: true },
@@ -178,7 +178,7 @@ export const bossMonsterEntriesT1 = [
       id: 'crag-charge', name: 'Crag Charge',
       damageMultiplier: 1.9, cooldownMs: 10000, initialCooldownMs: 4500,
       steps: [
-        { kind: 'cast', name: 'Crag Charge', castMs: 2400, fx: 'strong-kick',
+        { kind: 'cast', name: 'Crag Charge', castMs: 2400, fx: 'charge-lane',
           lane: { length: 620, halfWidth: 78, lockAtCastPct: 0.5 } },
         // 620px at 470px/s ≈ 1.3s of travel; maxTravelMs is the obstruction guard.
         { kind: 'charge', speed: 470, maxTravelMs: 2000 },
@@ -218,7 +218,7 @@ export const bossMonsterEntriesT1 = [
     dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 7000 },
     chargedAttack: {
       name: 'Bile Pool', castMs: 1200, cooldownMs: 8500, initialCooldownMs: 4000,
-      multiplier: 1.0, fx: 'strong-kick', aoe: { radius: 105 },
+      multiplier: 1.0, fx: 'strong-kick', aoe: { radius: 105, impactFx: 'pool-spawn' },
       // Effectively permanent (10 min): the rot stays until the Toadeater dies or
       // despawns, so the arena only ever shrinks. No fight is meant to run that long.
       pool: { durationMs: 600000, damagePerTick: 3, tickIntervalMs: 1000, slowSpeedMult: 0.65 },

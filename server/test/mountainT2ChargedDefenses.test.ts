@@ -72,7 +72,12 @@ initCombatSystems();
   player.performsAttack.lastAttackAt = 5_500;
   updateCombat(world, 0, 5_500);
   assert(
-    world.takeNodeEvents(NODE).some(event => event.kind === 'boss-fx' && event.fx === 'slam' && event.radius === 83),
+    // Huge Boulder declares `aoe.impactFx: 'huge-boulder'` since 2026-09-12 — the id
+    // its data had always emitted but which no client branch handled, so it used to
+    // fall through and render as a generic arrow. A charged attack that names its own
+    // impact cue pays off with that instead of the generic `boss-fx` shockwave; the
+    // planted point and the radius are the part that must not change.
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-end' && event.fx === 'huge-boulder' && event.radius === 83),
     'Huge Boulder should resolve as the tight planted AoE impact',
   );
 }

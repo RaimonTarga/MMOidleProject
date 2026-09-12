@@ -41,7 +41,7 @@ export const caveMonsterEntries = [
     // (at 4 it did enormous effective-HP work against light hits, which is what made
     // Caverns a slog).
     stats: { hp: 225, attack: 31, plating: 1, damageReduction: 0.05, speed: 68, attackRange: 12, attackCooldown: 1400, pullRange: 200 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: false,
+    behavior: 'melee', attackStyle: 'claws-light', biome: 'cave', elite: false,
     rewards: { essence: 10, essenceType: 'red', level: 1, biomeXp: 70 },
     ai: { wanderRadius: 380, leashRange: 620, idleMinMs: 450, idleMaxMs: 1500 },
     // NO evasion (T1-T4 rework, locked): random misses are not an identity, roaming
@@ -53,7 +53,7 @@ export const caveMonsterEntries = [
     // The bruiser elite — a cap-tripping slam, slow, charges to connect, and
     // armored enough that fast weapons don't trivially shred it.
     stats: { hp: 250, attack: 80, plating: 1, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 2800, pullRange: 240 }, // pullRange 145→240: high-detection patrolling elite (overpull risk)
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
+    behavior: 'melee', attackStyle: 'troll-fist', biome: 'cave', elite: true,
     rewards: { essence: 13, essenceType: 'red', level: 1, biomeXp: 90 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
@@ -67,7 +67,7 @@ export const caveMonsterEntries = [
       // meant to be dodged, not tanked, so its job is a hard punish for standing in the
       // circle rather than an unsurvivable number regardless of footwork.
       multiplier: 2.0, fx: 'strong-kick',
-      aoe: { radius: 110 },
+      aoe: { radius: 110, impactFx: 'ground-slam' },
     },
     // Cave elite: patrols a fixed loop around its territory (predictable route the
     // player can time fights against / avoid overpulling). Waypoints relative to
@@ -99,7 +99,7 @@ export const caveMonsterEntries = [
     // pullRange bumped 150→240 (placeholder): cave elites notice you from afar —
     // the "high detection / overpull risk" Cave identity (countered by stealth boots).
     stats: { hp: 550, attack: 115, plating: 1, damageReduction: 0.08, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
+    behavior: 'melee', attackStyle: 'troll-fist', biome: 'cave', elite: true,
     rewards: { essence: 23, essenceType: 'red', level: 1, biomeXp: 145 },
     ai: { wanderRadius: 130, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
     // Opener: briefly telegraph, lunge to contact, root the player, then commit
@@ -119,7 +119,7 @@ export const caveMonsterEntries = [
     chargedAttack: {
       name: 'Ground Slam', castMs: 2000, cooldownMs: 13000, initialCooldownMs: 0,
       multiplier: 2.1, fx: 'strong-kick',
-      aoe: { radius: 130 },
+      aoe: { radius: 130, impactFx: 'ground-slam' },
     },
     // The "brute" that holds territory on a fixed patrol (lurkers/spiders roam solo).
     patrol: { waypoints: [ { x: 140, y: -70 }, { x: 140, y: 130 }, { x: -130, y: 90 } ], mode: 'loop', holdMinMs: 1800, holdMaxMs: 4000 },
@@ -138,7 +138,7 @@ export const caveMonsterEntries = [
     // Occasional telegraphed heavy stalactite - the optional secondary.
     chargedAttack: {
       name: 'Stalactite Shot', castMs: 1600, cooldownMs: 11000, initialCooldownMs: 4500,
-      multiplier: 1.55, fx: 'power-shot',
+      multiplier: 1.55, fx: 'stalactite-shot',
     },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
@@ -167,7 +167,7 @@ export const caveMonsterEntries = [
     // DR + plating means slow/piercing weapons earn their keep. Anti-Far.
     // pullRange 150→240 (placeholder): high-detection elite — overpull risk.
     stats: { hp: 945, attack: 124, plating: 2, damageReduction: 0.10, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
+    behavior: 'melee', attackStyle: 'troll-fist', biome: 'cave', elite: true,
     rewards: { essence: 83, essenceType: 'red', level: 3, biomeXp: 500 },
     ai: { wanderRadius: 120, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8500 },
     // The T3 continuation keeps the Cave Troll's readable Savage Rush opener:
@@ -189,7 +189,7 @@ export const caveMonsterEntries = [
     chargedAttack: {
       name: 'Ground Slam', castMs: 2200, cooldownMs: 14000, initialCooldownMs: 0,
       multiplier: 2.0, fx: 'strong-kick',
-      aoe: { radius: 145 },
+      aoe: { radius: 145, impactFx: 'ground-slam' },
     },
     // T3 brute — patrols its territory (the elite ceiling holding the deep caverns).
     patrol: { waypoints: [ { x: 130, y: -60 }, { x: 130, y: 120 }, { x: -120, y: 80 } ], mode: 'loop', holdMinMs: 2000, holdMaxMs: 4500 },

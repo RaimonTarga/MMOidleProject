@@ -4,20 +4,44 @@ import { DEPTH } from '../render/depth';
 
 let mirrorNextRake = false;
 
+/**
+ * Palette and weight for one claw variant.
+ *
+ * The rake is the Forest lineage's identity (the T2 Timberclaw source comment says
+ * so outright), so it is shared onto other clawed mobs by SIZE and COLOUR rather than
+ * by copying the animation — the same approach the class pass used for T1 frames.
+ * `weight` scales reach and stroke together: a badger and a cave lurker are not
+ * swinging a greatbear's paw.
+ */
+export interface ClawVariant {
+  /** Multiplies rake reach and line weight. 1 = the Forest bear baseline. */
+  weight?: number;
+  main?: number;
+  glow?: number;
+}
+
 /** A heavy four-claw rake for Forest bears; distinct from Swiftblade's clean X. */
-export function fxBearClaws(scene: GameScene, toX: number, toY: number, empowered: boolean): void {
-  const mainColor = empowered ? 0x8fc5ff : 0xffd166;
-  const glowColor = empowered ? 0xd9eeff : 0xff7148;
+export function fxBearClaws(
+  scene: GameScene,
+  toX: number,
+  toY: number,
+  empowered: boolean,
+  variant?: ClawVariant,
+): void {
+  const weight = variant?.weight ?? 1;
+  const mainColor = variant?.main ?? (empowered ? 0x8fc5ff : 0xffd166);
+  const glowColor = variant?.glow ?? (empowered ? 0xd9eeff : 0xff7148);
   const angle = -Math.PI / 4 + (Math.random() - 0.5) * 0.18;
   const perpendicular = angle + Math.PI / 2;
-  const lineLength = empowered ? 92 : 78;
+  const lineLength = (empowered ? 92 : 78) * weight;
   const mirrorX = mirrorNextRake ? -1 : 1;
   mirrorNextRake = !mirrorNextRake;
 
   // One enormous paw print: all four talons rake together. Each mark writes from
   // its base to its tip, then the trailing edge follows it so the cut dissolves
   // in the same direction instead of alternately blinking into place.
-  const claws = [-24, -8, 8, 24].map(offset => {
+  const claws = [-24, -8, 8, 24].map(base => {
+    const offset = base * weight;
     const length = lineLength * (0.9 + Math.random() * 0.16);
     return {
       startX: (-Math.cos(angle) * length + Math.cos(perpendicular) * offset) * mirrorX,
@@ -37,9 +61,9 @@ export function fxBearClaws(scene: GameScene, toX: number, toY: number, empowere
       const fromY = claw.startY + (claw.endY - claw.startY) * tail;
       const toX = claw.startX + (claw.endX - claw.startX) * head;
       const toY = claw.startY + (claw.endY - claw.startY) * head;
-      rake.lineStyle(empowered ? 7 : 6, glowColor, 0.58);
+      rake.lineStyle((empowered ? 7 : 6) * weight, glowColor, 0.58);
       rake.lineBetween(fromX, fromY, toX, toY);
-      rake.lineStyle(empowered ? 4 : 3.5, mainColor, 1);
+      rake.lineStyle((empowered ? 4 : 3.5) * weight, mainColor, 1);
       rake.lineBetween(fromX, fromY, toX, toY);
     }
   };
@@ -54,7 +78,7 @@ export function fxBearClaws(scene: GameScene, toX: number, toY: number, empowere
 
   const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   flash.fillStyle(glowColor, empowered ? 0.75 : 0.62);
-  flash.fillCircle(0, 0, empowered ? 34 : 29);
+  flash.fillCircle(0, 0, (empowered ? 34 : 29) * weight);
   scene.tweens.add({
     targets: flash,
     alpha: 0,
@@ -65,7 +89,7 @@ export function fxBearClaws(scene: GameScene, toX: number, toY: number, empowere
     onComplete: () => flash.destroy(),
   });
 
-  burstFx(scene, 'ptx-spark', toX, toY, empowered ? 34 : 28, 520, {
+  burstFx(scene, 'ptx-spark', toX, toY, Math.round((empowered ? 34 : 28) * weight), 520, {
     tint: mainColor,
     speed: { min: 90, max: 270 },
     angle: { min: 0, max: 360 },

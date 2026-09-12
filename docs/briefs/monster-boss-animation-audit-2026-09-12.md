@@ -1,6 +1,9 @@
 # Monster & boss attack-animation audit — candidate list
 
-**Date:** 2026-09-12 · **Status:** AUDIT ONLY, nothing implemented · **Scope:**
+**Date:** 2026-09-12 · **Status: IMPLEMENTED** — see §7 for what shipped, what
+changed versus this plan, and what was deliberately left. The candidate list below is
+kept as authored, because the reasoning behind each pick is still the reference.
+**Zero visual verification: none of it has been seen in motion.** · **Scope:**
 (A) mobs whose basic attack is a distinct enough *verb* to deserve its own
 `attackStyle`, and (B) named abilities that still have no animation. Follows
 [class-animation-pass-handoff-2026-09-12.md](class-animation-pass-handoff-2026-09-12.md).
@@ -343,3 +346,93 @@ grep -o 'ev.fx === "[a-z-]*"' client/src/render/combatFx.ts | sort -u
 
 **Nothing in this document has been seen in motion**, and the class-side pass it follows
 is also visually unverified.
+
+
+---
+
+## 7. What shipped (2026-09-12)
+
+**69 monsters touched, 21 of them bosses** — 39 basic attacks and 56 ability cues.
+15 new FX modules in `client/src/fx/`, 26 new exports. Full typecheck clean;
+`monsterStyleCoverage` and `monsterEmpoweredBeat` added and both mutation-verified.
+The per-mob playtest list is in the session hand-off, and regenerable from the data.
+
+### Deviations from the plan above
+
+1. **Palette variants, not `AttackTint` plumbing.** §1 suggested plumbing the class
+   pass's `AttackTint` into the monster path. On implementation that turned out to be
+   the wrong seam: `resolveAttackTint()` derives its tint from the *player's equipped
+   weapon*, and monster definitions carry no element field at all, so "plumbing the
+   tint" would have meant inventing a style→tint map client-side — which is just a
+   worse spelling of a distinct style key. Instead `fxBearClaws` and `fxBite` gained
+   optional `ClawVariant` / `BiteVariant` params (weight + palette + debris gravity)
+   and the new keys pass them. This is how `conduit-beam`/`conduit-bolt` already
+   work, and it keeps the choice explicit in data rather than inferred.
+
+2. **`resolveCircle` now honours a pattern step's own `fx`.** Not in the plan, and
+   required: boss-pattern `impact` steps resolved through a **hardcoded** generic
+   `slam`, so Earthshatter, Shatter, Glacial Collapse, Deep-Core Eruption and
+   Cataclysm's detonation were all literally unable to differ no matter what their
+   step declared. The hook gained an optional `impactFx` that mirrors the rule
+   `aoe.impactFx` already follows on charged attacks — a step that names a cue pays
+   off with it, everything else keeps the generic shockwave byte-for-byte.
+
+3. **Wind-up cues draw on `monster-cast-start`.** A pattern `cast` step emits no
+   cast-end of its own, so a beat whose whole point IS the wind-up (a committed
+   charge, a burrow, an escape) could only be drawn there. `monster-cast-start`
+   already carried an optional `fx`, so this needed no protocol change.
+
+4. **`empowered` needed a slice field after all.** §4 hoped the existing
+   `monster-hit` event would carry it — it does, but that event has **no
+   `monsterId`**, so the snapshot path that actually draws the attack cannot tell
+   which monster it belongs to. `PerformsAttack.lastAttackEmpowered` was added and is
+   written on **all three** paths that stamp `lastAttackAt`; writing it only on the
+   amplified path would latch it and make every later swing read as empowered.
+
+### Tests this pass had to update (and why that was correct)
+
+Three suites encoded the OLD presentation and failed. In each case the behavioural
+guarantee they exist to protect was preserved — only the event or id carrying it moved
+— so they were updated rather than worked around:
+
+- `caveGroundSlam` and `mountainT2ChargedDefenses` asserted a `boss-fx` `slam`. Setting
+  `aoe.impactFx` suppresses that generic shockwave by a **pre-existing** server rule
+  (`if (aoe.impactFx) return;`) which Apex Timberclaw already relied on; the tests had
+  simply never covered a monster with `impactFx` set. Both still assert an impact FX
+  exists, on the planted point, sized to the aoe radius — now on the `monster-cast-end`
+  that carries the bespoke cue. The cave one now reads the cue id from the definition
+  instead of hardcoding it.
+- `tier2SkillPropagation` pinned `sting.fx === 'power-shot'` inside an assertion about
+  Numbing Sting being "early and telegraphed". The telegraph guarantee comes from
+  `castMs`/`cooldownMs`; the `fx` clause was pinning the *fallback* id the ability
+  happened to carry. Repointed at the bespoke cue. (The Petrifying Gaze block directly
+  below pins no `fx` at all, so the clause was already inconsistent within that file.)
+
+**Unrelated pre-existing failure:** `hudStatusTooltips` fails on
+`missing: cooldown-patience`. Both `shared/src/components/combat/buffs.ts` (which
+declares the BuffId) and `client/src/hud/statusHelp.ts` (which lacks the copy) are
+unmodified at HEAD, so this fails independently of this pass. It belongs to the
+Cooldown-archetype work in flight and was deliberately left alone.
+
+### Verified not to have changed
+
+- **DoT flavours.** `attackStyle` doubles as a fallback element in
+  `resolveMonsterDotFlavor`, so every monster's resolved DoT element was snapshotted
+  before and after the style changes and diffed: **no flavour changed.** The three
+  reassigned mobs that carry a DoT (Ashspitter Salamander, Vine Chameleon, Jungle
+  Snake) all resolve by *biome*, which is checked before the attackStyle fallback.
+- **The generic slam.** Un-cued pattern impacts still emit the identical `boss-fx`
+  `slam` event they always did.
+- No stat, damage, radius, cadence or duration was touched anywhere in this pass.
+
+### Left undone, deliberately
+
+- **Dune Tyrant's "Pincer Smash"** still uses `strong-kick`. It is a crushing blow
+  with no AoE, so it fits none of the new cues without inventing a sixteenth module
+  for one ability; the mob's *basic* attack did move to `reptile-tail`.
+- **B4's schema gaps** — `cadenceVolley`, `openingStrike`, `rampOnCombat`,
+  `lowHealthWard`, `enemyShield` and the on-death effects still have nowhere to put
+  an animation. The `empowered` flag in (4) covers the cadence-finisher and
+  timed-empower rows of that table, which was the largest part of it.
+- **A4's smaller collisions** (ooze/sting texture, the scarab-vs-necromancer `magic`
+  split) and the dead `void` style.

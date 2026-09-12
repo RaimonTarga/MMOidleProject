@@ -40,8 +40,14 @@ function monster(id: string) {
   for (const [id, cooldownMs, speedMult, durationMs] of expectedStings) {
     const sting = monster(id).chargedAttack;
     assert(
+      // `fx` is the cue id, not part of the "telegraphed" guarantee this asserts — that
+      // comes from castMs/cooldown. It was pinned to `power-shot` only because that is
+      // what the ability happened to carry, and `power-shot` is the fallback at the
+      // BOTTOM of the client's cast-end chain, so the sting had no cue of its own.
+      // Now pinned to the bespoke one (the Petrifying Gaze block below pins no fx at
+      // all, so this clause was already inconsistent within this test).
       sting?.name === 'Numbing Sting' && sting.castMs === 500 && sting.cooldownMs === cooldownMs && sting.initialCooldownMs === 500 &&
-        sting.fx === 'power-shot' && sting.appliesSlow?.speedMult === speedMult && sting.appliesSlow.durationMs === durationMs,
+        sting.fx === 'numbing-sting' && sting.appliesSlow?.speedMult === speedMult && sting.appliesSlow.durationMs === durationMs,
       `${id} should use an early, telegraphed Numbing Sting rather than an invisible on-hit slow`,
     );
     assert(monster(id).slowEffect === undefined, `${id} should not retain an invisible on-hit slow`);

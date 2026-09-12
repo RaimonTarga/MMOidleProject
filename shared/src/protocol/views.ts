@@ -251,6 +251,8 @@ export interface MonsterView {
   attackRange: number;
   attackCooldown: number;
   lastAttackAt: number;
+  /** Was the beat at `lastAttackAt` amplified? Drives the heavier attack-FX variant. */
+  lastAttackEmpowered?: boolean;
   attackTargetId: string | null;
   nodeId: string;
   attackStyle: string;
@@ -511,6 +513,7 @@ export function composeMonsterView(
     attackRange: entity.performsAttack.attackRange,
     attackCooldown: entity.performsAttack.attackCooldown,
     lastAttackAt: entity.performsAttack.lastAttackAt,
+    lastAttackEmpowered: entity.performsAttack.lastAttackEmpowered,
     attackTargetId: entity.hasAttackTarget?.targetId ?? null,
     nodeId: entity.hasPosition.nodeId,
     attackStyle: entity.dealsDamage.attackStyle,

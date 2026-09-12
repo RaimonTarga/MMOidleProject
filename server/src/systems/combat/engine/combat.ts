@@ -891,6 +891,9 @@ export function runMonsterAttack(
 
   target.hasHealth.hp -= ctx.damage;
   monster.performsAttack.lastAttackAt = now;
+  // Drives the heavier attack-FX variant on the client. Always assigned, never
+  // conditionally set — see the field's note on staleness.
+  monster.performsAttack.lastAttackEmpowered = empoweredMult > 1;
 
   // Sun Mark setup (Desert): the marker paints a cleansable mark the finisher cashes
   // in. Edge-triggered telegraph — a one-shot pulse only when the mark is freshly
@@ -1473,6 +1476,8 @@ function updateMonsterAbilities(
     // nothing — without this it would resolve and then immediately swing for free.
     // The casted-buff path pays the same cost by waiting on the attack timer.
     monster.performsAttack.lastAttackAt = now;
+    // A cast is not an amplified basic attack, and it draws its own cue.
+    monster.performsAttack.lastAttackEmpowered = false;
     world.pushEvent(monster.hasPosition.nodeId, {
       kind: 'monster-cast-end',
       monsterId: monster.isMonster.id,
@@ -1946,6 +1951,7 @@ export function runMonsterAttackOnMinion(
   minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - damage);
   pushDamageEvent(world, minion, damage, { sourceId: monster.isMonster.id });
   monster.performsAttack.lastAttackAt = now;
+  monster.performsAttack.lastAttackEmpowered = damageMultiplier > 1;
   // Death is observed by the summoner tick on its next pass — it will detach
   // the minion entity and start a respawn timer.
 }

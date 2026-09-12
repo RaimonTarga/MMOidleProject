@@ -105,6 +105,28 @@ import { fxFirstStrike } from "../fx/firstStrike";
 import { fxAftershock } from "../fx/aftershock";
 import { fxDualSlash } from "../fx/dualSlash";
 import { fxBearClaws } from "../fx/bearClaws";
+// MONSTER/BOSS animation pass — see docs/briefs/monster-boss-animation-audit-2026-09-12.md.
+import { fxBoneStrike } from "../fx/boneStrike";
+import { fxPeck } from "../fx/peck";
+import { fxDart, fxFireSpit, fxFrostBolt } from "../fx/rangedSpit";
+import { fxGore } from "../fx/gore";
+import { fxTrollFist } from "../fx/trollFist";
+import { fxApeFist } from "../fx/apeFist";
+import { fxReptileTail } from "../fx/reptileTail";
+import { fxStagger } from "../fx/stagger";
+import {
+  fxPetrifyingGaze,
+  fxSunbeam,
+  fxNumbingSting,
+  fxDeathSting,
+  fxExecution,
+} from "../fx/desertCues";
+import { fxWither, fxPlagueHex, fxPoolSpawn } from "../fx/swampCues";
+import { fxDeepFreeze, fxShatter, fxGlacialSlam } from "../fx/tundraCues";
+import { fxStalactiteShot, fxBurrow, fxEmerge } from "../fx/caveCues";
+import { fxGroundSlam, fxChargeLane, fxBombardment } from "../fx/mountainCues";
+import { fxPredatorFlee, fxPressureLance } from "../fx/predatorCues";
+import { fxCataclysmCast, fxCataclysmImpact } from "../fx/cataclysm";
 import { fxSweep } from "../fx/sweep";
 import { fxExposeWeakness } from "../fx/heavyStrike";
 import { fxBrace } from "../fx/brace";
@@ -581,6 +603,70 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   // Cave gargoyles spit flung stone.
   stonespit: ({ scene, from, to }) =>
     fxStoneSpit(scene, from.x, from.y, to.x, to.y),
+
+  // ─── MONSTER ATTACK-STYLE SPLIT (2026-09-12) ────────────────────────────────
+  // A monster's `attackStyle` is its ENTIRE basic-attack animation (monsters.ts
+  // calls `spawnAttackEffect` with nothing but the style), so a style shared across
+  // unrelated creature families means those families have no attack identity at all.
+  // These keys split the two biggest shared channels by creature VERB.
+  //
+  // ⚠ This table is a `Record<string, …>`: a typo in a key silently falls through to
+  // the `impact` fallback and TypeScript cannot see it. Every key added here must
+  // match an `attackStyle` in `shared/src/data/monsters/`; `monsterStyleCoverage`
+  // in server/test guards that both ways.
+
+  // Clawed mobs join the Forest bears' rake by WEIGHT and palette rather than by
+  // getting their own animation — the rake is the Forest lineage's identity.
+  "claws-light": ({ scene, ev, to }) =>
+    fxBearClaws(scene, to.x, to.y, ev.empowered, { weight: 0.55 }),
+  "claws-frost": ({ scene, ev, to }) =>
+    fxBearClaws(scene, to.x, to.y, ev.empowered, {
+      weight: 1.05,
+      main: 0xeaf7ff,
+      glow: 0x5aa8d8,
+    }),
+
+  // Biters likewise share one jaw with a biome palette. `weight` keeps a leviathan
+  // from snapping with a wolf's mouth; `gravityY` is the tell — embers rise, blood
+  // and meltwater fall.
+  "bite-trench": ({ scene, ev, to }) =>
+    fxBite(scene, to.x, to.y, ev.empowered, {
+      weight: 1.5,
+      fang: 0xdff3ff,
+      gore: 0x2f7f9e,
+      gravityY: 120,
+    }),
+  "bite-fire": ({ scene, ev, to }) =>
+    fxBite(scene, to.x, to.y, ev.empowered, {
+      weight: 1.05,
+      fang: 0xffe2a8,
+      gore: 0xe04a1a,
+      gravityY: -90,
+    }),
+  "bite-venom": ({ scene, ev, to }) =>
+    fxBite(scene, to.x, to.y, ev.empowered, {
+      weight: 0.85,
+      fang: 0xe8f0c8,
+      gore: 0x6f9c3a,
+      gravityY: 140,
+    }),
+
+  // The `impact` split, by verb.
+  gore: ({ scene, ev, to }) => fxGore(scene, to.x, to.y, ev.empowered),
+  "troll-fist": ({ scene, ev, to }) => fxTrollFist(scene, to.x, to.y, ev.empowered),
+  "ape-fist": ({ scene, ev, to }) => fxApeFist(scene, to.x, to.y, ev.empowered),
+  "reptile-tail": ({ scene, ev, to }) => fxReptileTail(scene, to.x, to.y, ev.empowered),
+
+  // Graveyard skeletons: both were authored on `poison` while carrying no DoT at all.
+  bone: ({ scene, ev, to }) => fxBoneStrike(scene, to.x, to.y, ev.empowered),
+
+  // Ranged mobs that previously drew NO projectile, because `fxPoison`/`fxFire`/
+  // `fxFrost` take only a target position.
+  peck: ({ scene, ev, from, to }) =>
+    fxPeck(scene, from.x, from.y, to.x, to.y, ev.empowered),
+  dart: ({ scene, from, to }) => fxDart(scene, from.x, from.y, to.x, to.y),
+  "fire-spit": ({ scene, from, to }) => fxFireSpit(scene, from.x, from.y, to.x, to.y),
+  "frost-bolt": ({ scene, from, to }) => fxFrostBolt(scene, from.x, from.y, to.x, to.y),
 };
 
 // Self-facing Guard FX, keyed by ability id. Drawn on the firing player's sprite
@@ -842,6 +928,19 @@ export function dispatchCombatEvent(
   if (ev.kind === "monster-cast-start") {
     // Node-wide telegraph: open the cast bar over the charging monster.
     startCastBar(state, ev.monsterId, ev.castMs, ev.label);
+    // WIND-UP cues. A boss-pattern `cast` step emits only this event — it has no
+    // cast-end of its own — so a step whose whole point is the wind-up (a committed
+    // charge, a burrow, an escape) can only be drawn here. Anchored on the caster,
+    // which is where all three of these happen.
+    if (shouldRunClientFx() && ev.fx) {
+      const caster = state.sprite.get(ev.monsterId);
+      if (caster) {
+        if (ev.fx === "charge-lane") fxChargeLane(scene, caster.x, caster.y);
+        else if (ev.fx === "burrow") fxBurrow(scene, caster.x, caster.y);
+        else if (ev.fx === "predator-flee") fxPredatorFlee(scene, caster.x, caster.y);
+        else if (ev.fx === "cataclysm-cast") fxCataclysmCast(scene, caster.x, caster.y);
+      }
+    }
     return;
   }
 
@@ -858,6 +957,89 @@ export function dispatchCombatEvent(
         fxChestBeat(scene, monster.x, monster.y);
       } else if (monster && ev.fx === "barrage") {
         fxThornBarrage(scene, monster.x, monster.y);
+      // ─── MONSTER/BOSS ABILITY CUES (2026-09-12) ───────────────────────────
+      // Named abilities that were drawing a borrowed cue. `power-shot` in
+      // particular is the `else` fallback at the bottom of this chain, so 15
+      // named abilities were rendering as the Ridge Ambusher's ARROW without ever
+      // having been assigned it.
+      //
+      // Impact-anchored cues use `impact` (the PLANTED point) and never the caster
+      // or victim: by resolution time the boss has moved and the victim may have
+      // walked out, and drawing a committed slam on someone who successfully left
+      // contradicts the counterplay the telegraph exists to offer.
+      } else if (monster && target && ev.fx === "petrifying-gaze") {
+        fxPetrifyingGaze(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "sunbeam") {
+        fxSunbeam(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "numbing-sting") {
+        fxNumbingSting(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "wither") {
+        fxWither(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "plague-hex") {
+        fxPlagueHex(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "pressure-lance") {
+        fxPressureLance(scene, monster.x, monster.y, target.x, target.y);
+      } else if (ev.fx === "stalactite-shot") {
+        // Falls from the cave roof onto the victim, so it anchors on the target
+        // rather than flying from the gargoyle's perch.
+        const at = target ?? impact;
+        if (at) fxStalactiteShot(scene, at.x, at.y);
+      } else if (ev.fx === "death-sting") {
+        const at = target ?? impact ?? monster;
+        if (at) fxDeathSting(scene, at.x, at.y);
+      } else if (ev.fx === "frostbind") {
+        const at = target ?? impact;
+        if (at) fxDeepFreeze(scene, at.x, at.y);
+      } else if (ev.fx === "avalanche-ram") {
+        const at = target ?? impact;
+        if (at) fxGore(scene, at.x, at.y, true);
+      } else if (ev.fx === "execution") {
+        // The payoff step publishes no radius, so the mark's own footprint is the
+        // default. Anchored on the victim: this cue CONSUMES a mark on them.
+        const at = target ?? impact ?? monster;
+        if (at) fxExecution(scene, at.x, at.y, ev.radius ?? 150);
+      } else if (impact && ev.fx === "pool-spawn") {
+        playSfx("attack-blunt");
+        fxPoolSpawn(scene, impact.x, impact.y, ev.radius ?? 110);
+      } else if (impact && ev.fx === "ground-slam") {
+        playSfx("attack-blunt");
+        fxGroundSlam(scene, impact.x, impact.y, ev.radius ?? 120);
+      } else if (impact && ev.fx === "glacial-slam") {
+        playSfx("attack-blunt");
+        fxGlacialSlam(scene, impact.x, impact.y, ev.radius ?? 150);
+      } else if (impact && ev.fx === "deep-core-eruption") {
+        playSfx("attack-blunt");
+        fxEmerge(scene, impact.x, impact.y, ev.radius ?? 160);
+      } else if (impact && ev.fx === "shatter") {
+        fxShatter(scene, impact.x, impact.y, ev.radius ?? 195);
+      } else if (impact && ev.fx === "cataclysm-impact") {
+        playSfx("attack-blunt");
+        fxCataclysmImpact(scene, impact.x, impact.y, ev.radius ?? 2000);
+      } else if (impact && ev.fx === "bombardment") {
+        fxBombardment(scene, impact.x, impact.y, ev.radius ?? 130);
+      } else if (impact && ev.fx === "deep-freeze-area") {
+        fxDeepFreeze(scene, impact.x, impact.y);
+      } else if (impact && ev.fx === "devour") {
+        // The trench maw at full size, on the planted circle.
+        fxBite(scene, impact.x, impact.y, true, {
+          weight: 2.4,
+          fang: 0xdff3ff,
+          gore: 0x2f7f9e,
+          gravityY: 120,
+        });
+      } else if (ev.fx === "huge-boulder") {
+        // Boulder Thrower's named throw. This id was EMITTED by the data and
+        // handled nowhere, so it fell through to `fxPowerShot` and rendered as a
+        // glowing arrow — while `fxBoulder` was already drawing this same mob's
+        // ordinary attack. Its big version looked less like a boulder than its small one.
+        const land = impact ?? target;
+        if (monster && land) {
+          fxBoulder(scene, monster.x, monster.y, land.x, land.y);
+          scene.time.delayedCall(260, () => {
+            playSfx("attack-blunt");
+            fxGroundSlam(scene, land.x, land.y, ev.radius ?? 83);
+          });
+        }
       } else if (monster && target && ev.fx === "trench-lunge") {
         fxSavageMaul(scene, monster.x, monster.y, target.x, target.y);
       } else if (monster && target && ev.fx === "trench-depth-bolt") {
@@ -940,6 +1122,11 @@ export function dispatchCombatEvent(
         fxBossRoar(scene, at.x, at.y, ev.radius ?? 260);
       } else if (ev.fx === "frenzy") {
         fxBestialFrenzy(scene, at.x, at.y);
+      } else if (ev.fx === "stagger") {
+        // The punish window. `bossPatterns.ts` has always published this and the
+        // client never drew it, so breaking a plate or an escape-guard — the only
+        // counterplay these encounters offer — was rewarded with silence.
+        fxStagger(scene, at.x, at.y);
       }
     }
     return;

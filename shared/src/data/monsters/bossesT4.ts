@@ -87,7 +87,7 @@ export const bossMonsterEntriesT4 = [
       id: 'titan-earthshatter', name: 'Titan Earthshatter',
       damageMultiplier: 2.2, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
-        { kind: 'cast', name: 'Titan Charge', castMs: 2600, fx: 'strong-kick',
+        { kind: 'cast', name: 'Titan Charge', castMs: 2600, fx: 'charge-lane',
           lane: { length: 820, halfWidth: 104, lockAtCastPct: 0.6 } },
         // 820px at 540px/s ≈ 1.5s of travel, or less — it STOPS on the body it hits.
         //
@@ -107,7 +107,7 @@ export const bossMonsterEntriesT4 = [
         // the mistake costs. The fault lines below are still a real positional test,
         // so the capstone keeps its second beat.
         { kind: 'impact', name: 'Earthshatter', anchor: 'captured-endpoint',
-          radius: 240, damageMult: 1.35, telegraphMs: 950, fx: 'strong-kick',
+          radius: 240, damageMult: 1.35, telegraphMs: 950, fx: 'ground-slam',
           requiresChargeHit: true },
         { kind: 'fault-lines', anchor: 'captured-endpoint', delayMs: 900, rayCount: 6,
           length: 330, lineRadius: 24, innerRadius: 95, damageMult: 0.6,
@@ -171,15 +171,15 @@ export const bossMonsterEntriesT4 = [
       id: 'sovereign-execution', name: 'Death Sting',
       damageMultiplier: 1.8, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
-        { kind: 'apply-status', name: 'Death Sting', castMs: 1200, fx: 'strong-kick',
+        { kind: 'apply-status', name: 'Death Sting', castMs: 1200, fx: 'death-sting',
           effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 7000 },
         { kind: 'wait', durationMs: 900 },
         // NUMBING STING (2026-09-06) — see the T2 Emperor. The capstone's version is
         // the hardest pin in the lineage, against its widest circle.
-        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'power-shot',
+        { kind: 'apply-status', name: 'Numbing Sting', castMs: 700, fx: 'numbing-sting',
           effectId: 'slow', stacks: 1, durationMs: 5000, data: { speedMult: 0.28 } },
         { kind: 'wait', durationMs: 650 },
-        { kind: 'payoff', name: 'Execution', castMs: 1500, fx: 'strong-kick',
+        { kind: 'payoff', name: 'Execution', castMs: 1500, fx: 'execution',
           damageMult: 1.0, amplifiedMult: 2.0,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 180 },
         { kind: 'recovery', label: 'Spent', durationMs: 2000 },
@@ -249,7 +249,7 @@ export const bossMonsterEntriesT4 = [
         // THE CORRECTED LOOP (2026-09-06) — see the T2 gorger. The capstone runs the
         // lineage's fastest version of it: the shortest window to break the plate,
         // the quickest flee, and the quickest return.
-        { kind: 'escape-guard', name: 'Flee', castMs: 2600, fx: 'shield',
+        { kind: 'escape-guard', name: 'Flee', castMs: 2600, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.06,
           onBreak: { staggerMs: 2400, label: 'Cornered' },
           maxInstinctStacks: 3, instinctCastReductionPct: 0.15,
@@ -319,11 +319,11 @@ export const bossMonsterEntriesT4 = [
       id: 'glacial-collapse', name: 'Deep Freeze',
       damageMultiplier: 1.9, cooldownMs: 9500, initialCooldownMs: 5000,
       steps: [
-        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1500, fx: 'strong-kick',
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1500, fx: 'frostbind',
           effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2400,
           requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 5 } },
         { kind: 'impact', name: 'Glacial Collapse', anchor: 'self', radius: 250,
-          damageMult: 1.0, telegraphMs: 1500, fx: 'strong-kick' },
+          damageMult: 1.0, telegraphMs: 1500, fx: 'shatter' },
         { kind: 'recovery', label: 'Thawing', durationMs: 2400 },
       ],
     },
@@ -421,9 +421,9 @@ export const bossMonsterEntriesT4 = [
       steps: [
         // Long, obvious, and explicitly UNINTERRUPTIBLE: the answer is the DPS race,
         // not a stun. Marked guardable so Guard is still a legitimate way to eat it.
-        { kind: 'cast', name: 'Cataclysm', castMs: 8000, fx: 'frenzy', interruptible: false },
+        { kind: 'cast', name: 'Cataclysm', castMs: 8000, fx: 'cataclysm-cast', interruptible: false },
         { kind: 'impact', name: 'Cataclysm', anchor: 'self', radius: 2000,
-          damageMult: 1.0, telegraphMs: 400, fx: 'strong-kick' },
+          damageMult: 1.0, telegraphMs: 400, fx: 'cataclysm-impact' },
         { kind: 'recovery', label: 'Spent', durationMs: 3000 },
       ],
     },
@@ -547,7 +547,7 @@ export const bossMonsterEntriesT4 = [
     id: 'elder-trench-serpent', name: 'Elder Trench Serpent', color: 0x335577,
     isBoss: true,
     stats: { hp: 21793, attack: 143, plating: 20, damageReduction: 0.22, speed: 22, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
+    behavior: 'melee', attackStyle: 'bite-trench', biome: 'trench',
     // T4 economy pass (2026-08-30): essenceType purple → green, matching Trench's
     // own gear home colour and its trash-mob essence correction. Quantity/level/
     // biomeXp untouched.
@@ -629,7 +629,7 @@ export const bossMonsterEntriesT4 = [
     // Elite encounter unit; spawned in Stage 2 of the Void Overlord encounter.
     // Not a dungeon boss — no biomeXp, no essence reward of its own.
     stats: { hp: 7341, attack: 137, plating: 18, damageReduction: 0.18, speed: 20, attackRange: 22, attackCooldown: 3400, pullRange: 350 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
+    behavior: 'melee', attackStyle: 'bite-trench', biome: 'trench',
     rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
     ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.2, durationMs: 1100 },

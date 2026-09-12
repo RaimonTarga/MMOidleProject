@@ -119,7 +119,7 @@ export const tundraMonsterEntries = [
     // comes from its defensive window rather than a plain, untelegraphed ordinary
     // hit. The lower ordinary swing leaves Ice Armor + Shatter as the real lesson.
     stats: { hp: 1500, attack: 185, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
-    behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
+    behavior: 'melee', attackStyle: 'claws-frost', biome: 'tundra',
     rewards: { essence: 65, essenceType: 'blue', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 140, leashRange: 500, idleMinMs: 3000, idleMaxMs: 8500 },
     // ECOLOGY: ICE ARMOR — periodic frost barrier; chip wastes against it, a BURST
@@ -144,7 +144,7 @@ export const tundraMonsterEntries = [
     // Chill (see the chargedAttack authored in the behavior pass).
     stats: { hp: 880, attack: 170, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
     // Relatively STATIONARY ranged caster, not a kiter (locked).
-    behavior: 'ranged', attackStyle: 'frost', biome: 'tundra',
+    behavior: 'ranged', attackStyle: 'frost-bolt', biome: 'tundra',
     staticSentry: true,
     rewards: { essence: 45, essenceType: 'blue', level: 2, biomeXp: 270 },
     // FROSTBIND - the caster's real weapon, and the biome's cleanest fusion of
@@ -153,7 +153,7 @@ export const tundraMonsterEntries = [
     // the threshold it just fires ordinary frost projectiles.
     chargedAttack: {
       name: 'Frostbind', castMs: 1400, cooldownMs: 10000, initialCooldownMs: 4000,
-      multiplier: 1.2, fx: 'power-shot',
+      multiplier: 1.2, fx: 'frostbind',
       rootMs: 1500, requiresAmbientStacks: 3,
     },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -213,7 +213,7 @@ export const tundraMonsterEntries = [
     // Evolved defensive-window elite: bigger Ice Armor, bigger Shatter payoff.
     // No ramping per-hit slows (removed, locked).
     stats: { hp: 1221, attack: 220, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
-    behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
+    behavior: 'melee', attackStyle: 'claws-frost', biome: 'tundra',
     rewards: { essence: 150, essenceType: 'blue', level: 4, biomeXp: 900 },
     ai: { wanderRadius: 130, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9000 },
     // ECOLOGY: ICE ARMOR + SHATTER (T4 successor of glacier-bear). Bigger shell, bigger
@@ -232,7 +232,7 @@ export const tundraMonsterEntries = [
     // stronger/longer Deep Freeze at high Chill. NO generic slow stacks on every
     // projectile (removed, locked).
     stats: { hp: 900, attack: 190, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
-    behavior: 'ranged', attackStyle: 'frost', biome: 'tundra',
+    behavior: 'ranged', attackStyle: 'frost-bolt', biome: 'tundra',
     staticSentry: true,
     rewards: { essence: 62, essenceType: 'blue', level: 3, biomeXp: 370 },
     // DEEP FREEZE - the evolved Frostbind, deepened as the SAME mechanic made larger
@@ -262,7 +262,7 @@ export const tundraMonsterEntries = [
       name: 'Deep Freeze', castMs: 1600, cooldownMs: 9000, initialCooldownMs: 4000,
       multiplier: 1.2, fx: 'power-shot',
       rootMs: 2200, requiresAmbientStacks: 2,
-      aoe: { radius: 120 },
+      aoe: { radius: 120, impactFx: 'deep-freeze-area' },
     },
     ai: { wanderRadius: 210, leashRange: 620, idleMinMs: 1500, idleMaxMs: 4500 },
   }],
@@ -286,7 +286,7 @@ export const tundraMonsterEntries = [
     chargedAttack: {
       name: 'Glacial Slam', castMs: 2200, cooldownMs: 9000, initialCooldownMs: 6000,
       multiplier: 2.0, fx: 'strong-kick',
-      aoe: { radius: 150 },
+      aoe: { radius: 150, impactFx: 'glacial-slam' },
     },
     // ECOLOGY: the apex FEEDS ON THE COLD. Every stack of the node's ambient chill
     // (which is already taking your movement) also makes this thing hit harder, so

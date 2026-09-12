@@ -42,7 +42,7 @@ export const jungleMonsterEntries = [
     // Jungle's entire poison presence — the evolved ambushers below carry none.
     // No evasion needed.
     stats: { hp: 480, attack: 20, plating: 0, damageReduction: 0, speed: 76, attackRange: 12, attackCooldown: 1100, pullRange: 270 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
+    behavior: 'melee', attackStyle: 'bite-venom', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     // It LIVES in the thicket. Combined with the bush's doubled player detection,
     // this is how Jungle gathers a fight: you walked into the undergrowth.
@@ -59,7 +59,7 @@ export const jungleMonsterEntries = [
     // onto its target. The old invisible attack ramp is removed; the casted
     // window gives the player a clear moment to interrupt or focus the Ape.
     stats: { hp: 600, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
+    behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
@@ -78,7 +78,7 @@ export const jungleMonsterEntries = [
     // re-camouflage in combat. Light poison is optional flavor at this first stage,
     // not the identity.
     stats: { hp: 450, attack: 20, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
-    behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
+    behavior: 'ranged', attackStyle: 'dart', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     concealedWhileIdle: true,
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -109,7 +109,7 @@ export const jungleMonsterEntries = [
     // Evolved Ape: charge + a STRONGER combat ramp. Unrelated pack/evasion/opening
     // clutter removed (locked).
     stats: { hp: 1045, attack: 83, plating: 0, damageReduction: 0, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
+    behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 35, essenceType: 'green', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1100 },
@@ -152,7 +152,7 @@ export const jungleMonsterEntries = [
     // the separate opening strike and the DR layering are all REMOVED (locked).
     // A visual Rage state at high ramp is optional presentation, not a mechanic.
     stats: { hp: 1450, attack: 77, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1800, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
+    behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 88, essenceType: 'green', level: 4, biomeXp: 528 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3600 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
@@ -168,7 +168,7 @@ export const jungleMonsterEntries = [
     // ranged combat. Its stacking venom is REMOVED (locked) — late tier is not a
     // reason to add another invisible damage layer.
     stats: { hp: 1000, attack: 52, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },
-    behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
+    behavior: 'ranged', attackStyle: 'arrow', biome: 'jungle',
     rewards: { essence: 50, essenceType: 'green', level: 3, biomeXp: 300 },
     concealedWhileIdle: true,
     castedAttackSpeedBuff: {
