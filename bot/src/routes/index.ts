@@ -1,5 +1,5 @@
 import { STRIKER_DECISIONS_T1 } from "./strikerDecisionsT1";
-import { STRIKER_CAMPAIGN_PLAINS_BOSS_T1 } from "./campaignBoss";
+import { STRIKER_CAMPAIGN_PLAINS_BOSS_T1, STRIKER_CAMPAIGN_PLAINS_BOSS_V1B } from "./campaignBoss";
 import { CAMPAIGN_READINESS_ROUTES } from "./campaignReadiness";
 import { CAMPAIGN_BEHAVIOR_ROUTES, CAMPAIGN_LOCAL_BEHAVIOR_ROUTES } from "./campaignBehavior";
 import type { Route } from "../route/types";
@@ -113,6 +113,7 @@ export const ROUTES = new Map<string, Route>(
     ...CAMPAIGN_BEHAVIOR_ROUTES,
     ...CAMPAIGN_LOCAL_BEHAVIOR_ROUTES,
     STRIKER_CAMPAIGN_PLAINS_BOSS_T1,
+    STRIKER_CAMPAIGN_PLAINS_BOSS_V1B,
   ].map((route) => [route.id, route]),
 );
 

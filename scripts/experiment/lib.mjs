@@ -62,11 +62,27 @@ export function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
-export function writeJsonAtomic(path, value) {
+export function writeJsonAtomic(path, value, {
+  rename = renameSync,
+  wait = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms),
+} = {}) {
   mkdirSync(dirname(path), { recursive: true });
-  const temp = `${path}.tmp-${process.pid}`;
-  writeFileSync(temp, `${JSON.stringify(value, null, 2)}\n`, "utf8");
-  renameSync(temp, path);
+  const temp = `${path}.tmp-${process.pid}-${randomBytes(6).toString("hex")}`;
+  try {
+    writeFileSync(temp, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+    // Windows readers/antivirus may briefly deny replacement. Keep the previous
+    // complete file visible and retry only the rename, never unlink the target.
+    for (let attempt = 0; ; attempt++) {
+      try { rename(temp, path); break; }
+      catch (error) {
+        if (!["EPERM", "EACCES", "EBUSY"].includes(error?.code) || attempt >= 20) throw error;
+        wait(100);
+      }
+    }
+  } finally {
+    // A permanent failure must preserve the target and must still reach callers.
+    try { rmSync(temp, { force: true }); } catch { /* preserve the original error */ }
+  }
 }
 
 export function appendJsonl(path, value) {

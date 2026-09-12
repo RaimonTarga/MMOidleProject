@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, readFileSync, readdirSync, renameSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
   addQueueEntries,
   allExperimentsTerminal,
@@ -14,7 +17,36 @@ import {
   parseArgs,
   sanitizeId,
   selectNextQueuedRunAcross,
+  writeJsonAtomic,
 } from "./lib.mjs";
+
+// Exercise real file publication while deterministically injecting Windows
+// sharing failures. Readers must see the old whole state until rename succeeds.
+const atomicDir = mkdtempSync(join(tmpdir(), "mmo-atomic-test-"));
+try {
+  const statePath = join(atomicDir, "state.json");
+  writeJsonAtomic(statePath, { version: 1 });
+  let calls = 0;
+  let waits = 0;
+  writeJsonAtomic(statePath, { version: 2 }, {
+    rename: (from, to) => {
+      assert.equal(JSON.parse(readFileSync(to, "utf8")).version, 1);
+      if (++calls < 3) throw Object.assign(new Error("busy"), { code: "EPERM" });
+      renameSync(from, to);
+    }, wait: () => { waits++; },
+  });
+  assert.equal(waits, 2);
+  assert.equal(JSON.parse(readFileSync(statePath, "utf8")).version, 2);
+  for (const code of ["EPERM", "EIO"]) {
+    calls = 0;
+    assert.throws(() => writeJsonAtomic(statePath, { version: 3 }, {
+      rename: () => { calls++; throw Object.assign(new Error(code), { code }); }, wait: () => {},
+    }), new RegExp(code));
+    assert.equal(calls, code === "EPERM" ? 21 : 1);
+    assert.equal(JSON.parse(readFileSync(statePath, "utf8")).version, 2);
+    assert.deepEqual(readdirSync(atomicDir), ["state.json"]);
+  }
+} finally { rmSync(atomicDir, { recursive: true, force: true }); }
 
 function throws(message, fn) {
   assert.throws(fn, (error) => error instanceof Error && error.message.includes(message));

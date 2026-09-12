@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { buildRP } from "../loadout/loadout";
 import { runeBudgetForGlobalMastery } from "@mmo-idle/shared";
-import { STRIKER_CAMPAIGN_PLAINS_BOSS_T1 as route, CAMPAIGN_PLAINS_T1_BUILD as build } from "./campaignBoss";
+import { STRIKER_CAMPAIGN_PLAINS_BOSS_T1 as route, STRIKER_CAMPAIGN_PLAINS_BOSS_V1B as repair, CAMPAIGN_PLAINS_T1_BUILD as build } from "./campaignBoss";
 
 // Keep an inherited full-gauntlet route from expanding this experiment or
 // importing its post-second-seal frame into a pre-seal character.
@@ -20,3 +20,10 @@ for (const group of ["plains", "forest", "swamp", "mountain", "cave"]) {
     s.until.biomeGroup === group && s.until.level === 6), `${group} preparation is earned`);
 }
 console.log(`campaignBoss: ok (T1 preparation, one encounter, build RP=${buildRP(build).total})`);
+assert.equal(repair.steps.filter(s => s.type === "attemptBoss").length, 1);
+assert.deepEqual(repair.steps.filter(s => s.type === "assert"), route.steps.filter(s => s.type === "assert"));
+assert.deepEqual(repair.steps.filter(s => s.type === "configureBuild").map(s => s.build), [build]);
+assert.equal(repair.steps.some(s => s.type === "learnAbility" && s.abilityId === "expose-weakness" && s.attune !== false), false);
+for (const item of ["chaotic-axe", "plains-vest-t1", "swamp-charm-t1", "plains-boots-t1"]) {
+  assert(repair.steps.some(s => s.type === "upgrade" && s.definitionId === item && s.toPlus === 5));
+}
