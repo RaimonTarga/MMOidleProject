@@ -26,6 +26,8 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-q2d-assessment.md](briefs/bot-balance-q2d-assessment.md) | All six initial readiness profiles accepted; campaign state and first boss preparation rationale. |
+| [briefs/bot-balance-v1a-operator-packet.md](briefs/bot-balance-v1a-operator-packet.md) | Frozen fresh-start Striker T1 Plains boss probe, earned GM30/+5 preparation and one dungeon attempt. |
 | [briefs/bot-balance-q2c-assessment.md](briefs/bot-balance-q2c-assessment.md) | Conduit/Slinger passes, Spirit infrastructure stop and bounded network capacity repair. |
 | [briefs/bot-balance-q2d-operator-packet.md](briefs/bot-balance-q2d-operator-packet.md) | Resume never-started Spirit, then Apprentice and Squire through sequential pass gates. |
 | [briefs/bot-balance-q2b-assessment.md](briefs/bot-balance-q2b-assessment.md) | Verified Striker local behavior success, report corrections, and remaining-class decision. |
@@ -40,6 +42,7 @@ top-level doc.
 | [briefs/bot-balance-q2-report.md](briefs/bot-balance-q2-report.md) | Luna's Q2 post-configuration behavior observation report; timed out before a completed 60-second window. |
 | [briefs/bot-balance-q2b-report.md](briefs/bot-balance-q2b-report.md) | Luna's single Striker Q2b local observation repair report; both post-build windows completed on the current Plains node. |
 | [briefs/bot-balance-q2c-report.md](briefs/bot-balance-q2c-report.md) | Q2c Conduit and Slinger local behavior qualification; stopped before Spirit after a Docker network allocation failure. |
+| [briefs/bot-balance-q2d-report.md](briefs/bot-balance-q2d-report.md) | Q2d resumed Spirit after network repair and qualified Spirit, Apprentice, and Squire local behavior. |
 | [briefs/bot-balance-campaign-state.md](briefs/bot-balance-campaign-state.md) | Expert-prepared solo viability campaign: decisions, template shortlist, validity rules and current evidence ledger. |
 | [briefs/bot-balance-q0-template-qualification.md](briefs/bot-balance-q0-template-qualification.md) | Astra preparation specification: qualify current templates and propose bounded readiness cases before runtime experiments. |
 | [runic-attunement-current-state.md](runic-attunement-current-state.md) | Unified RP reservations, named ability rules, arbitration and save migration. |
