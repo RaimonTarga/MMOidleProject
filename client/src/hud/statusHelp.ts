@@ -85,6 +85,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'cadence-crescendo': m('Crescendo', 'The rhythm you have built raises finisher damage by a percentage.'),
 
   // -- Cooldown --------------------------------------------------------------
+  'cooldown-patience': m('Patience', 'The longer you let your execution cooldown run its natural course, the more it pays out: attack and execution damage both climb toward a cap as the cooldown fills. Triggering your execution early cuts the ramp short.'),
   'cooldown-overdrive': m('Overdrive', 'A burst window: your attack speed is raised sharply while it lasts.'),
   'cooldown-eternal-charge': m('Eternal charge', 'Damage banked into your next execution, growing with each stack.'),
   'cooldown-temporal-ext': m('Temporal extension', 'Flat bonus damage added to every on-hit for the window.'),
@@ -169,6 +170,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'cadence-hemorrhage': d('Bleed', 'The target is bleeding: damage over time applied by your rhythm, past its plating.'),
   'energy-storm': d('Storm', 'Storm charge is grounding through this target.'),
   brittle: d('Brittle', 'The target’s damage reduction is broken down, so the percentage it removes from your hits is smaller.'),
+  'dr-shatter': d('Shattered', 'Brittle has been stacked to its shatter threshold: the target’s damage reduction is stripped to nothing for the window. Every hit that lands during it goes through at full force.'),
   vuln: d('Vulnerable', 'The target takes amplified damage from every source while this holds.'),
   vulnerability: d('Vulnerable', 'The target takes amplified damage from every source while this holds.'),
   'expose-weakness': d('Exposed', 'Your Technique has opened the target up: it takes increased damage from everything, your party included, for the duration.'),

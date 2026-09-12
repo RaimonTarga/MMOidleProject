@@ -88,7 +88,7 @@ initCombatSystems();
   assert(!getStatusEffect(player.tracksCombat, 'stunned'), 'Dive Bomb should not stun the player');
   syncPlayerBuffs(world, 2_100);
   const rootTile = player.hasStatus.activeBuffs.find(buff => buff.id === 'debuff-root');
-  assert(rootTile?.label === 'ROOT' && rootTile.remainingMs === 2_000, 'Dive Bomb root should appear as a timed ROOT debuff on the player buff bar');
+  assert(rootTile?.label === 'Root' && rootTile.remainingMs === 2_000, 'Dive Bomb root should appear as a timed Root debuff on the player buff bar');
   updateCombat(world, 0, 2_100);
   assert(player.hasHealth.hp < hpBeforeCast, 'the hawk should immediately follow its landing with its melee talon strike');
 }

@@ -16,9 +16,11 @@ const STATUS_META: Record<string, StatusMeta> = {
   slow:            { label: 'Slow',    color: '#88aaff' },
   root:            { label: 'Root',    color: '#aa77ee' },
   'plating-shred': { label: 'Shred',   color: '#d8b24a' },
+  'reload-suppress-shred': { label: 'Suppressed', color: '#d8b24a' },
   'cadence-hemorrhage': { label: 'Bleed', color: '#c41e1e' },
   'energy-storm':       { label: 'Storm', color: '#c77dff' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
+  'dr-shatter':    { label: 'Shattered', color: '#f0c04a' },
   // Weapon reservoir-DoT effects (poison → Poison, fire → Burn, frost → Chill).
   // Swamp owns poison, Volcanic owns fire, Tundra owns frost.
   'poison-dagger-burn':     { label: 'Poison', color: '#7ac74f' },
@@ -38,6 +40,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   'thorn-spitter-barrage': { label: 'Barrage', color: '#89dd59' },
   'granite-barrier': { label: 'Granite Barrier', color: '#8faed0' },
   shelled: { label: 'Shelled', color: '#9fca68' },
+  'carrion-screech-haste': { label: 'Necrotic Screech', color: '#b18cff' },
   // Pre-encounter aura SOURCE (pack caller / den alpha) — "this one buffs its allies".
 };
 

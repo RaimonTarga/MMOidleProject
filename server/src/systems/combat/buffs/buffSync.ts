@@ -63,7 +63,7 @@ const DEBUFF_BUFFS = [
       const speedPct = Math.round(mult * 100);
       return {
         id: "debuff-slow",
-        label: "SLOW",
+        label: "Slow",
         stacks: slow.stacks,
         durationPct:
           totalMs > 0 && slow.remainingMs > 0
@@ -83,7 +83,7 @@ const DEBUFF_BUFFS = [
         ],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#55aaff", label: "SLOW" },
+    { category: "neutral", shape: "diamond", color: "#55aaff", label: "Slow" },
   ),
   defineBuff(
     "debuff-root",
@@ -99,7 +99,7 @@ const DEBUFF_BUFFS = [
       const source = world.getMonsterEntity(root.sourceId);
       return {
         id: "debuff-root",
-        label: caveLock ? "PINNED" : "ROOT",
+        label: caveLock ? "Pinned" : "Root",
         stacks: getStatusEffects(playerCs, CAVE_LOCKDOWN_EFFECT_ID).length || root.stacks,
         durationPct:
           totalMs > 0 && root.remainingMs > 0
@@ -118,7 +118,7 @@ const DEBUFF_BUFFS = [
           : [{ label: "Movement speed", value: "0%", good: false }],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#aa66ff", label: "ROOT" },
+    { category: "neutral", shape: "diamond", color: "#aa66ff", label: "Root" },
   ),
   defineBuff(
     "debuff-frost-ramp",
@@ -133,7 +133,7 @@ const DEBUFF_BUFFS = [
       const atkPct = Math.round(frostRampAtkSlowPct(ramp) * 100);
       return {
         id: "debuff-frost-ramp",
-        label: "FROST",
+        label: "Frost",
         stacks: ramp.stacks,
         durationPct:
           totalMs > 0 && ramp.remainingMs > 0
@@ -153,7 +153,7 @@ const DEBUFF_BUFFS = [
         ],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#aaddff", label: "FROST" },
+    { category: "neutral", shape: "diamond", color: "#aaddff", label: "Frost" },
   ),
   defineBuff(
     "debuff-dot",
@@ -198,7 +198,7 @@ const DEBUFF_BUFFS = [
       const perStack = Math.round(rot.data["damagePerStack"] ?? 0);
       return {
         id: "debuff-swamp-rot",
-        label: "ROT",
+        label: "Rot",
         stacks: rot.stacks,
         durationPct:
           rot.remainingMs > 0
@@ -216,7 +216,7 @@ const DEBUFF_BUFFS = [
         ],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#88bb44", label: "ROT" },
+    { category: "neutral", shape: "diamond", color: "#88bb44", label: "Rot" },
   ),
   defineBuff(
     "debuff-sun-mark",
@@ -228,7 +228,7 @@ const DEBUFF_BUFFS = [
       const source = world.getMonsterEntity(mark.sourceId);
       return {
         id: "debuff-sun-mark",
-        label: "MARKED",
+        label: "Marked",
         stacks: mark.stacks,
         durationPct:
           totalMs > 0 && mark.remainingMs > 0
@@ -242,7 +242,7 @@ const DEBUFF_BUFFS = [
         values: [{ label: "Next heavy hit", value: "amplified", good: false }],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#ffaa33", label: "MARKED" },
+    { category: "neutral", shape: "diamond", color: "#ffaa33", label: "Marked" },
   ),
   defineBuff(
     "debuff-volcanic-heat",
@@ -264,7 +264,7 @@ const DEBUFF_BUFFS = [
       );
       return {
         id: "debuff-volcanic-heat",
-        label: "HEAT",
+        label: "Heat",
         stacks: heat.stacks,
         // Fill toward max stacks (the soft-timer read), not a fixed duration.
         durationPct: ambientRampFillPct(heat) * 100,
@@ -282,7 +282,7 @@ const DEBUFF_BUFFS = [
         ],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#ff5522", label: "HEAT" },
+    { category: "neutral", shape: "diamond", color: "#ff5522", label: "Heat" },
   ),
   defineBuff(
     "debuff-tundra-chill",
@@ -294,7 +294,7 @@ const DEBUFF_BUFFS = [
       const atkPct = Math.round(ambientRampAttackSlowPct(chill) * 100);
       return {
         id: "debuff-tundra-chill",
-        label: "CHILL",
+        label: "Chill",
         stacks: chill.stacks,
         // A ramp fills rather than expires: the tile reads progress to full stacks.
         durationPct: ambientRampFillPct(chill) * 100,
@@ -314,7 +314,7 @@ const DEBUFF_BUFFS = [
         ],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#88ccff", label: "CHILL" },
+    { category: "neutral", shape: "diamond", color: "#88ccff", label: "Chill" },
   ),
   defineBuff(
     "debuff-sundered",
@@ -332,7 +332,7 @@ const DEBUFF_BUFFS = [
       );
       return {
         id: "debuff-sundered",
-        label: "SUNDERED",
+        label: "Sundered",
         stacks: sundered.stacks,
         durationPct:
           totalMs > 0 && sundered.remainingMs > 0
@@ -349,7 +349,7 @@ const DEBUFF_BUFFS = [
         ],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#dd7744", label: "SUNDERED" },
+    { category: "neutral", shape: "diamond", color: "#dd7744", label: "Sundered" },
   ),
   defineBuff(
     "debuff-plating-shred",
@@ -364,7 +364,7 @@ const DEBUFF_BUFFS = [
       );
       return {
         id: "debuff-plating-shred",
-        label: "CORRODED",
+        label: "Corroded",
         stacks: corrosion.stacks,
         durationPct: -1,
         color: "#9c7456",
@@ -381,7 +381,7 @@ const DEBUFF_BUFFS = [
       category: "neutral",
       shape: "diamond",
       color: "#9c7456",
-      label: "CORRODED",
+      label: "Corroded",
       iconKey: "debuff-sundered",
     },
   ),
@@ -398,7 +398,7 @@ const DEBUFF_BUFFS = [
       );
       return {
         id: "debuff-antiheal",
-        label: "ANTIHEAL",
+        label: "Antiheal",
         stacks: ah.stacks,
         durationPct:
           totalMs > 0 && ah.remainingMs > 0
@@ -415,7 +415,7 @@ const DEBUFF_BUFFS = [
         ],
       };
     },
-    { category: "neutral", shape: "diamond", color: "#7755aa", label: "ANTIHEAL" },
+    { category: "neutral", shape: "diamond", color: "#7755aa", label: "Antiheal" },
   ),
   // Note: Expose Weakness (the ability technique) is a debuff on the MONSTER, so
   // it is shown only on the enemy target frame (client targetStatusMeta keys off

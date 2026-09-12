@@ -169,7 +169,7 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
       unlocked,
       unlockHint: unlocked || !recipe.recipeGroup
         ? ''
-        : `Reach ${recipe.recipeGroup} level ${recipe.requiredBiomeLevel ?? 0}`,
+        : `Reach ${biomeName(recipe.recipeGroup)} level ${recipe.requiredBiomeLevel ?? 0}`,
       learnedId,
     });
   }

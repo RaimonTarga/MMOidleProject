@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
+import { BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { takeSessionNotice } from '../net/session';
 import { combatControlFeedbackAtom } from './atoms';
@@ -131,8 +132,8 @@ export function RecipeToastLayer() {
           }}
         >
           <span style={{ color: '#44ff88', marginRight: 8 }}>✦</span>
-          <span style={{ color: '#aaaacc', marginRight: 6, textTransform: 'capitalize' }}>
-            {t.biomeGroup}
+          <span style={{ color: '#aaaacc', marginRight: 6 }}>
+            {BIOME_DATABASE.get(t.biomeGroup)?.name ?? t.biomeGroup}
           </span>
           <span>{t.name} unlocked</span>
         </div>

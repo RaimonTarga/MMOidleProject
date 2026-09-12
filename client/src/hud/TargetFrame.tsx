@@ -165,7 +165,7 @@ export function TargetFrame() {
           key: 'enemy-barrier',
           id: 'enemy-barrier',
           ...statusMeta('enemy-barrier'),
-          label: shown.enemyBarrier.amount > 0 ? 'BARRIER' : 'REFORMING',
+          label: shown.enemyBarrier.amount > 0 ? 'Barrier' : 'Reforming',
           stacks: 1,
           remainingMs: shown.enemyBarrier.amount > 0
             ? shown.enemyBarrier.remainingMs
