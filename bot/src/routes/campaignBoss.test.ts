@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { CAMPAIGN_NIGHT_KIT, CAMPAIGN_NIGHT_BOSSES } from "./campaignOvernight";
+import { CAMPAIGN_NIGHT_KIT, CAMPAIGN_NIGHT_BOSSES, CAMPAIGN_NIGHT_SWAMP_DUAL_GUARD } from "./campaignOvernight";
 import { buildRP } from "../loadout/loadout";
 import { runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 import { STRIKER_CAMPAIGN_PLAINS_ENTRY_T1 as entry, STRIKER_CAMPAIGN_PLAINS_BOSS_T1 as route, STRIKER_CAMPAIGN_PLAINS_BOSS_V1B as repair, STRIKER_CAMPAIGN_PREPARATION_T1 as preparation, CAMPAIGN_PLAINS_T1_BUILD as build } from "./campaignBoss";
@@ -8,6 +8,13 @@ assert.equal(entry.startsFromTierEntry, 1);
 assert.equal(CAMPAIGN_NIGHT_KIT.steps.some(s => s.type === "attemptBoss"), false);
 assert.equal(CAMPAIGN_NIGHT_KIT.steps.at(-1)?.type, "assert", "kit completion cannot bypass final verified build");
 assert.equal(CAMPAIGN_NIGHT_BOSSES.length, 5);
+const swampBuild = CAMPAIGN_NIGHT_BOSSES.find(r => r.id === "striker-campaign-night-swamp-t1")!.steps.find(s => s.type === "configureBuild")!;
+const dualBuild = CAMPAIGN_NIGHT_SWAMP_DUAL_GUARD.steps.find(s => s.type === "configureBuild")!;
+assert.equal(swampBuild.type, "configureBuild");
+assert.equal(dualBuild.type, "configureBuild");
+assert.deepEqual(dualBuild.build.abilities, { techniques: [], guards: ["second-wind", "cleanse"] });
+assert.deepEqual(dualBuild.build.runeRules, swampBuild.build.runeRules);
+assert.equal(buildRP(dualBuild.build).total, 16);
 for (const night of CAMPAIGN_NIGHT_BOSSES) {
   assert.equal(night.startsFromTierEntry, 1);
   const attempts = night.steps.filter(s => s.type === "attemptBoss");

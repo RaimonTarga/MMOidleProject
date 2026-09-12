@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "question": "Does replacing Expose Weakness with Second Wind alongside Cleanse improve this earned Striker's T1 Swamp outcome?",
+  "factor": "route",
+  "arms": [
+    { "id": "expose-cleanse", "route": "striker-campaign-night-swamp-t1", "policy": "intended" },
+    { "id": "dual-guard", "route": "striker-campaign-night-swamp-dual-guard-t1", "policy": "intended" }
+  ]
+}

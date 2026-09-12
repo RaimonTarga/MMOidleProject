@@ -48,3 +48,17 @@ export const CAMPAIGN_NIGHT_BOSSES: Route[] = ["plains", "forest", "swamp", "mou
     completion: { type: "bossCleared", biomeGroup: group, tier: 1 }, milestones: [],
   };
 });
+
+/** User's manual-play hypothesis: trade Expose for a second Guard against rot. */
+export const CAMPAIGN_NIGHT_SWAMP_DUAL_GUARD: Route = {
+  ...structuredClone(CAMPAIGN_NIGHT_BOSSES.find(route => route.id === "striker-campaign-night-swamp-t1")!),
+  id: "striker-campaign-night-swamp-dual-guard-t1",
+  description: "Swamp comparison: no Technique, Second Wind plus Cleanse; same gear and ordered Rune rules.",
+  steps: CAMPAIGN_NIGHT_BOSSES.find(route => route.id === "striker-campaign-night-swamp-t1")!.steps.map(step => {
+    const copy = structuredClone(step);
+    if (copy.type === "configureBuild") copy.build.abilities = { techniques: [], guards: ["second-wind", "cleanse"] };
+    if (copy.label) copy.label = copy.label.replace("night:swamp:", "night:swamp-dual:");
+    if (copy.type === "milestone") copy.id = copy.id.replace("night:swamp:", "night:swamp-dual:");
+    return copy;
+  }),
+};
