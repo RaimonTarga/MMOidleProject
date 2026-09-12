@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-12. Owner: Astra (planning and interpretation); operators: Luna.
-Status: Q1 configuration passed; Q2b Striker local behavior passed; Q2c remaining-class checks prepared.
+Status: Striker, Conduit and Slinger local behavior passed; Spirit launch infrastructure repaired; Q2d continuation prepared.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -29,7 +29,7 @@ execution instructions. Current source and explicit user direction take preceden
 |---|---|---|
 | Q0, prepared | Qualify existing templates and their first build transitions; prepare exact local readiness routes | Six source-derived profile records, legal acquisition/build sequences, concrete runtime packet |
 | Q1, complete | Can each selected profile acquire and reconcile its build? | Six configuration successes; combat under the post-prep builds was untested |
-| Q2, in progress | Do the two configured builds actually fight and activate abilities? | Q2b Striker passed; Q2c checks the five remaining roots, stopping at the first failure or unresolved case |
+| Q2, in progress | Do the two configured builds actually fight and activate abilities? | Striker, Conduit, Slinger passed; Q2d resumes Spirit, then Apprentice and Squire after a Docker capacity repair |
 | V1 | Can prepared builds farm and solve bosses? | Local encounter records; begin T1 coverage, reuse qualified T2 starts without replaying T1 for each T2 question |
 | V2 | What resolves a particular failing matchup? | Small local alternatives selected from failure diagnosis, initially 2–3 replicates |
 | E1 | Is shipped progression pacing appropriate? | One-tier 1× economy studies using current credible carryover, after functional routes/builds |
@@ -141,11 +141,12 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 ## Campaign ledger
 
 - Validated: shared-cost projection and source-ordered build/acquisition tests; see Q0 report for executed checks.
-- Current runtime qualification: Q1 six profiles passed configuration on `1d3c710f`; Q2b Striker completed both local behavior windows on `755b2a36`. The five other roots still need post-build behavior evidence.
+- Current runtime qualification: Q1 six profiles passed configuration on `1d3c710f`; Q2b Striker and Q2c Conduit/Slinger completed both local behavior windows on `755b2a36`. Spirit, Apprentice and Squire still need post-build behavior evidence.
 - New confirmed balance signals / bugs: none.
 - Approved gameplay changes: none.
-- Latest experiment: Q2b `20260912t170727z-striker-campaign-local-behavio`: Striker completed, no deaths or unwanted transit; Sweep window 8 kills/8 activations, Expose window 5 kills/6 activations. Readiness only.
-- Next action: Luna executes [Q2c](bot-balance-q2c-operator-packet.md), up to five separate single-case experiments on `755b2a36`, Conduit first. Create the next case only after the previous passes; stop for Astra on failure or unresolved evidence.
+- Latest operation: Q2c Conduit and Slinger passed; Slinger had one death and returned successfully. Spirit was created but Docker address-pool exhaustion prevented worker startup; Apprentice/Squire were not created. [Assessment and infrastructure repair](bot-balance-q2c-assessment.md).
+- Next action: Luna executes [Q2d](bot-balance-q2d-operator-packet.md): one renewed launch of existing never-started Spirit, then Apprentice and Squire only after each pass, on unchanged `755b2a36`. Stop for Astra on failure or unresolved evidence.
+- Historical Q2b `20260912t170727z-striker-campaign-local-behavio`: Striker completed, no deaths or unwanted transit; Sweep 8 kills/8 activations, Expose 5 kills/6 activations. Readiness only.
 - [Q2b assessment](bot-balance-q2b-assessment.md) accepts the repair and corrects the report's truncated manifest hash and Defensive Rune count. No template or gameplay edits needed.
 - Historical Q2 `20260912t162628z-striker-campaign-behavior-t2-s`: Striker timeout, Squire cancelled after start, four cancelled before start. Keep its partial evidence separate.
 - [Q2 assessment](bot-balance-q2-assessment.md): unnecessary catalogue-first node transit consumed 278 seconds. This is route/observation evidence, not a build weakness verdict.
