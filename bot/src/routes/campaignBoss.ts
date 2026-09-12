@@ -64,3 +64,21 @@ export const STRIKER_CAMPAIGN_PLAINS_BOSS_V1B: Route = {
       return copy;
     }),
 };
+
+/** V1c measures acquisition separately; it cannot enter a dungeon. */
+export const STRIKER_CAMPAIGN_PREPARATION_T1: Route = {
+  ...structuredClone(STRIKER_CAMPAIGN_PLAINS_BOSS_V1B),
+  id: "striker-campaign-preparation-t1",
+  description: "V1c: earn and verify the full GM30/+5 Plains kit, then stop before any dungeon attempt.",
+  steps: [
+    ...STRIKER_CAMPAIGN_PLAINS_BOSS_V1B.steps.filter(step => step.type !== "attemptBoss").map(step => {
+      const copy = structuredClone(step);
+      if (copy.type === "milestone" && copy.id.startsWith("v1b:")) copy.id = copy.id.replace("v1b:", "v1c:");
+      if (copy.label?.startsWith("v1b:")) copy.label = copy.label.replace("v1b:", "v1c:");
+      return copy;
+    }),
+    { type: "assert", condition: { type: "abilityEquipped", abilityId: "sweep" },
+      label: "v1c:final-readiness", message: "Preparation ends after the exact build verification" },
+  ],
+  completion: { type: "allOf", of: gates.filter(step => step.type === "assert").map(step => step.condition) },
+};
