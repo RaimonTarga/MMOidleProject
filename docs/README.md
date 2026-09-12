@@ -26,8 +26,11 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-v1a-assessment.md](briefs/bot-balance-v1a-assessment.md) | Preparation timeout, supervisor rename failure and scoped preparation/infrastructure repairs. |
+| [briefs/bot-balance-v1b-operator-packet.md](briefs/bot-balance-v1b-operator-packet.md) | Revised one-run Plains boss probe with unchanged required kit and bounded worker-stop contingency. |
 | [briefs/bot-balance-q2d-assessment.md](briefs/bot-balance-q2d-assessment.md) | All six initial readiness profiles accepted; campaign state and first boss preparation rationale. |
 | [briefs/bot-balance-v1a-operator-packet.md](briefs/bot-balance-v1a-operator-packet.md) | Frozen fresh-start Striker T1 Plains boss probe, earned GM30/+5 preparation and one dungeon attempt. |
+| [briefs/bot-balance-v1a-report.md](briefs/bot-balance-v1a-report.md) | V1a Striker Plains boss probe timed out during preparation; supervisor state write failed, so no boss result. |
 | [briefs/bot-balance-q2c-assessment.md](briefs/bot-balance-q2c-assessment.md) | Conduit/Slinger passes, Spirit infrastructure stop and bounded network capacity repair. |
 | [briefs/bot-balance-q2d-operator-packet.md](briefs/bot-balance-q2d-operator-packet.md) | Resume never-started Spirit, then Apprentice and Squire through sequential pass gates. |
 | [briefs/bot-balance-q2b-assessment.md](briefs/bot-balance-q2b-assessment.md) | Verified Striker local behavior success, report corrections, and remaining-class decision. |
