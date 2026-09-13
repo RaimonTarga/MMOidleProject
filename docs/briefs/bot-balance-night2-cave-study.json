@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "question": "Does Inside Telegraph timing make Brace protect the Cave eruption and improve survival?",
+  "factor": "route",
+  "arms": [
+    { "id": "default-brace", "route": "spirit-cave-control-t2-night2", "policy": "intended" },
+    { "id": "telegraph-brace", "route": "spirit-cave-telegraph-brace-t2-night2", "policy": "intended" }
+  ]
+}

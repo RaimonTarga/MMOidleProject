@@ -1,6 +1,6 @@
 # Proposed autonomous overnight session
 
-Prepared 2026-09-13 for a standalone Astra session. **Planning only; not started.** Creating this document is not permission to launch experiments, create a task, spawn Luna or schedule an automation. Begin only on the user's explicit start instruction. This plan supersedes the old assumption that the current experiment is still running: V1k has finished.
+Prepared 2026-09-13; **activated by the user's explicit green light** at 2026-09-13 21:04:42 UTC. Hard deadline 2026-09-14 05:04:42 UTC; finalization begins no later than 04:34:42 UTC. Luna operator `/root/luna_operator` spawned. See [Night 2 ledger](bot-balance-night2-ledger.md). V1k has finished.
 
 ## Objective and proposed limits
 

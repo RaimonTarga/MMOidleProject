@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: V1k report received: Swamp boss defeats4/4, safe tails Bog Wrappings2/2 versus Cave Vest1/2; Cave losses0/2 wins; Desert2/2 with safe tails. Next: proposed standalone overnight plan, not started.
+Status: V1k reviewed; autonomous Night 2 activated on explicit user approval. [Active ledger](bot-balance-night2-ledger.md): Cave timing/Jungle first, then continuous T3 entry if qualified. Luna operator spawned; no gameplay balance edits authorized overnight.
 V1j's original capacity stop is historical; both rerun manifests completed and released their networks automatically. [Lifecycle](bot-experiment-resource-lifecycle.md).
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
@@ -30,9 +30,9 @@ execution instructions. Current source and explicit user direction take preceden
 
 ## Sequential plan
 
-### Next operating mode: autonomous Astra–Luna overnight loop (pending start)
+### Active operating mode: autonomous Astra–Luna overnight loop
 
-Recorded at the user's request on 2026-09-13. This is the next planned workflow, **not authorization to start now**. V1k has now finished; the [standalone overnight plan](bot-balance-autonomous-night-plan.md) proposes an eight-hour,20-case,four-packet ceiling and conditional experiment sequence. Wait for the user's explicit overnight start instruction. Do not spawn an operator, create a task, schedule a wake-up or launch another experiment merely because this plan exists.
+Activated by the user's explicit start instruction on 2026-09-13 at21:04:42 UTC. The [overnight plan](bot-balance-autonomous-night-plan.md) has an eight-hour,20-case,four-packet ceiling and conditional experiment sequence. Deadline2026-09-14 05:04:42 UTC. Follow the active ledger for packet state; this authorization does not include gameplay balance edits.
 
 Once activated, the purpose is to remove the user's messenger role while keeping expensive Astra work focused on decisions:
 

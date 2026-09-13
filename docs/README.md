@@ -26,7 +26,9 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
-| [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Pending standalone Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
+| [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Activated Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
+| [briefs/bot-balance-night2-ledger.md](briefs/bot-balance-night2-ledger.md) | Active overnight deadline, packet accounting, source audit and strategy evidence. |
+| [briefs/bot-balance-night2-a-operator-packet.md](briefs/bot-balance-night2-a-operator-packet.md) | Night 2 packet A: Cave Brace timing and Jungle Hamstring feasibility. |
 | [briefs/bot-balance-v1j-assessment.md](briefs/bot-balance-v1j-assessment.md) | Mountain feasibility, fragile Swamp outcomes and damage-type mitigation hypotheses. |
 | [briefs/bot-balance-v1k-operator-packet.md](briefs/bot-balance-v1k-operator-packet.md) | Eight runs: Swamp armor comparison, Cave/Desert coverage and bounded post-clear observation. |
 | [briefs/bot-balance-v1k-swamp-study.json](briefs/bot-balance-v1k-swamp-study.json) | Cave armor versus Bog Wrappings under fixed Bog Eye and ability rules. |

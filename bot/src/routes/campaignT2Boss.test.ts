@@ -1,10 +1,32 @@
 import assert from "node:assert/strict";
-import { BIOME_PRIMARY_ESSENCE, NODE_BIOMES, NODE_MODIFIERS, RECIPE_DATABASE, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
+import { BIOME_PRIMARY_ESSENCE, NODE_BIOMES, NODE_MODIFIERS, RECIPE_DATABASE, runeBudgetForGlobalMastery, deriveAutoConfigFromRunes } from "@mmo-idle/shared";
 import { RouteExecutor } from "../route/executor";
 import { buildRP } from "../loadout/loadout";
 import { CAMPAIGN_T2_BOSS_ROUTES } from "./campaignT2Boss";
 import { CAMPAIGN_T2_EXPANSION_ROUTES } from "./campaignT2Expansion";
 import { CAMPAIGN_T2_V1K_ROUTES } from "./campaignT2V1k";
+import { CAMPAIGN_NIGHT2_ROUTES } from "./campaignNight2";
+
+for (const [i, route] of CAMPAIGN_NIGHT2_ROUTES.entries()) {
+  const final = route.steps.filter(s => s.type === "configureBuild").at(-1)!;
+  assert.equal(buildRP(final.build).total, [24, 26, 25][i]);
+  assert.equal(route.steps.filter(s => s.type === "attemptBoss").length, 1);
+  assert(route.steps.filter(s => s.type === "attemptBoss").every(s => s.maxAttempts === 1));
+  assert.deepEqual(route.steps.at(-2)?.requires, route.completion);
+  if (i === 2) assert(route.steps.findIndex(s => s.type === "learnAbility" && s.abilityId === "hamstring") < route.steps.indexOf(final));
+}
+const [nightControl, nightReactive] = CAMPAIGN_NIGHT2_ROUTES;
+const preparationOnly = (route: typeof nightControl) => route.steps.slice(0, -5);
+assert.deepEqual(preparationOnly(nightControl), preparationOnly(nightReactive));
+const reactiveBuild = nightReactive.steps.filter(s => s.type === "configureBuild").at(-1)!.build;
+for (const insideDangerousTelegraph of [false, true]) {
+  const derived = deriveAutoConfigFromRunes(reactiveBuild.runeRules, {
+    hpPct: 1, inCombat: true, inParty: false, aggroCount: 1,
+    insideDangerousTelegraph, enemyCharging: false,
+  });
+  assert.deepEqual(derived.abilityTargets, insideDangerousTelegraph ? ["brace"] : []);
+  assert.equal(derived.evadeTelegraph, insideDangerousTelegraph, "movement and named Guard can answer the same cue");
+}
 
 for (const route of [...CAMPAIGN_T2_BOSS_ROUTES, ...CAMPAIGN_T2_EXPANSION_ROUTES]) {
   assert(route.resumePreparedT2 && route.startsFromTierEntry === 2);
