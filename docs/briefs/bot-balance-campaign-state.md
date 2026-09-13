@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: V1f qualified atomic entry, produced 3/3 dual-Guard Swamp victories versus 0/3 Expose/Cleanse, and cleared Forest/Mountain. Cave lost validly; an unnecessary operator stop interrupted Plains. V1g restores Plains coverage, tests Cave corrosion counterplay and screens T2 progression.
+Status: V1g completed all13 slots: Plains victory, both old-source Cave arms0/3, six T2 screens capped with catalyst bottlenecks. V1h prepares current Cave build experiments, changed-Mountain confirmation and three T2 anchors after the catalyst fix. Human Cave victory is recorded; current bot confirmation remains open.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -32,7 +32,7 @@ execution instructions. Current source and explicit user direction take preceden
 | Q0, prepared | Qualify existing templates and their first build transitions; prepare exact local readiness routes | Six source-derived profile records, legal acquisition/build sequences, concrete runtime packet |
 | Q1, complete | Can each selected profile acquire and reconcile its build? | Six configuration successes; combat under the post-prep builds was untested |
 | Q2, initial slice complete | Do the two configured builds actually fight and activate abilities? | Six profiles, twelve completed T2 Plains windows on `755b2a36`; broader conditions/routes remain untested |
-| V1, in progress | Can prepared builds farm and solve bosses? | Four of five T1 bosses have Striker candidate successes across the campaign; Cave open, Plains current-source confirmation pending; V1g adds T2 progression screening |
+| V1, in progress | Can prepared builds farm and solve bosses? | Four of five T1 bosses have historical Striker candidate wins; human Cave success recorded. Current Cave/Mountain checks and targeted T2 progression are prepared in V1h |
 | V2 | What resolves a particular failing matchup? | Small local alternatives selected from failure diagnosis, initially 2–3 replicates |
 | E1 | Is shipped progression pacing appropriate? | One-tier 1× economy studies using current credible carryover, after functional routes/builds |
 | A1 | Does the assembled progression work? | Late broader acceptance runs only |
@@ -164,3 +164,7 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 - On return: record exact revisions/artifacts, classify evidence, update affected
   profile/checkpoint status, then choose one next question. Historical passing
   preflight reports must not be presented as fresh verification.
+
+## V1g review / V1h prepared
+
+See [V1g assessment](bot-balance-v1g-assessment.md) and [V1h operator packet](bot-balance-v1h-operator-packet.md). Source 3145246a includes current Cave/Mountain mechanics and corrected catalyst acceleration. Thirteen bounded runs; no experiment launched by Astra. T2 legacy screens remain not-asserted diagnostics. Next direction: isolate build improvements, acquire credible current T2 checkpoints, then qualify separate boss encounters. T3/T4 low TTK remains deferred.
