@@ -241,3 +241,13 @@ invalidView.hp -= 0.0406;
 invalidView.activeBuffs.push({ id: "invalid-entry" } as any);
 const invalidReport = validateSpawn(earnedProfile, invalidView);
 assert(!invalidReport.pass && invalidReport.findings.some(f => f.check === "live-full-hp") && invalidReport.findings.some(f => f.check === "live-no-buffs"), "actual contaminated reset still fails both strict checks");
+
+// Harness-only T3 handoff preserves the legitimately earned, unspent branch point.
+const t3Profile: TierEntryProfile = { ...structuredClone(profile), id: "earned-t3-handoff-test",
+  targetTier: 3, currentSkillTier: 3, skillPoints: 1, spawnNodeId: "node-t3-sanctuary",
+  bossesCleared: [...profile.bossesCleared, "plains:2", "forest:2", "desert:2"] };
+const t3Result = applyTierEntryProfile(world, player, t3Profile);
+assert(t3Result.success && t3Result.spawnView, t3Result.reason ?? "T3 entry applies");
+assert(t3Result.spawnView.playerTier === 3 && t3Result.spawnView.skillPoints === 1, "T3 tier and point retained");
+assert(t3Result.spawnView.selectedRange === null && t3Result.spawnView.unlockedSkills.length === 2, "no branch granted");
+assert(validateSpawn(t3Profile, t3Result.spawnView).pass, "T3 handoff strict live comparison passes");

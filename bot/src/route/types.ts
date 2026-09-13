@@ -32,6 +32,7 @@ export type Condition =
   | { type: "equippedWeaponWithDot" }
   | { type: "bossCleared"; biomeGroup: string; tier: number }
   | { type: "playerTierAtLeast"; tier: number }
+  | { type: "fullyRecovered" }
   | { type: "canCraft"; recipeId: string }
   | { type: "canEvolve"; recipeId: string; mode: EvolveMode }
   | { type: "canReconstruct"; recipeId: string }
@@ -211,6 +212,8 @@ export interface Route {
   /** Keep transit through future biomes movement-only for a pre-progression checkpoint. */
   suppressTransitCombat?: boolean;
   captureTier2Handoff?: boolean;
+  /** Bounded exploration: record the first death, then stop without respawning. */
+  stopOnFirstDeath?: boolean;
   /** Static ordering-test seed for a route that begins from a sealed checkpoint. */
   entryItems?: readonly string[];
   entryKnownAbilities?: readonly string[];

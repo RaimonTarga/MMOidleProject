@@ -214,11 +214,24 @@ try {
 
   const withHistoricalUpgrade = {
     ...loaded,
-    state: {
-      ...loaded.state,
-      itemUpgrades: { ...loaded.state.itemUpgrades, "gale-needle": 1 },
-    },
+    state: { ...loaded.state, itemUpgrades: { ...loaded.state.itemUpgrades, "gale-needle": 1 } },
   };
+  const t3 = structuredClone(prepared);
+  Object.assign(t3.state, { playerTier: 3, currentSkillTier: 3, skillPoints: 1, selectedRange: null,
+    bossesCleared: [...prepared.state.bossesCleared, "plains:2", "forest:2", "desert:2"] });
+  t3.canonicalAtCapture = false;
+  const t3Before = JSON.stringify(t3);
+  const t3Profile = tierEntryProfileFromT1Snapshot(t3, "node-t3-sanctuary", 3);
+  assert(validateProfile(t3Profile).pass, "earned T3 point and previous-tier mastery validate");
+  assert(t3Profile.skillPoints === 1 && t3Profile.economyPolicy === "synthetic-combat-progression", "T3 import preserves point and synthetic provenance");
+  assert(JSON.stringify(t3) === t3Before, "T3 import never rewrites the source");
+  for (const patch of [{ skillPoints: 0 }, { skillPoints: 2 }, { playerTier: 2 }, { selectedRange: "ranged" },
+    { bossesCleared: [...prepared.state.bossesCleared, "plains:2", "forest:2"] }]) {
+    const bad = { ...t3, state: { ...t3.state, ...patch } };
+    let refused = false;
+    try { tierEntryProfileFromT1Snapshot(bad, "node-t3-sanctuary", 3); } catch { refused = true; }
+    assert(refused, "T3 importer refuses invented points, missing seals, wrong tier or unsupported branch");
+  }
   const projected = tierEntryProfileFromT1Snapshot(withHistoricalUpgrade);
   assert(!Object.hasOwn(projected.itemUpgrades, "gale-needle"), "historical upgrades for unowned gear must stay out of the entry payload");
   assert(validateProfile(projected).pass, "projected snapshot profile must remain valid");

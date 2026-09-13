@@ -17,6 +17,7 @@ import {
   requiredBiomeLevelForUpgrade,
   runeBudgetForGlobalMastery,
   runeIdsFromCraftedRecipes,
+  sealsHeldAtTier, sealsRequiredForTier,
   upgradeCeilingFromGlobalMastery,
   type PlayerView,
   type TierEntryProfile,
@@ -116,10 +117,13 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
   );
   c.ok(
     "no-unearned-skill-points",
-    profile.skillPoints === 0,
-    `${profile.skillPoints} unspent skill point(s): a tier-entry character has already ` +
-      "spent the point its tier advance minted",
+    profile.skillPoints === (profile.targetTier === 3 ? 1 : 0),
+    `${profile.skillPoints} unspent skill point(s): expected one for an unbranched T3 handoff, zero for earlier entries`,
   );
+
+  if (profile.targetTier === 3) c.ok("earned-t3-entry",
+    sealsHeldAtTier(profile.bossesCleared, 2) >= sealsRequiredForTier(2),
+    "T3 entry requires the observed T2 seals; the single branch point remains unspent");
 
   // Spawn.
   const spawn = NODE_BIOMES[profile.spawnNodeId];

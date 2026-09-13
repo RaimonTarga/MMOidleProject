@@ -64,6 +64,10 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
       return obs.bossCleared(condition.biomeGroup, condition.tier);
     case "playerTierAtLeast":
       return (obs.self?.playerTier ?? 0) >= condition.tier;
+    case "fullyRecovered": {
+      const self = obs.self;
+      return !!self && !self.isDead && self.hp >= self.maxHp && self.incomingDot <= 0;
+    }
     case "canCraft":
       return obs.canCraft(condition.recipeId);
     case "canEvolve":
@@ -114,6 +118,8 @@ export function describe(condition: Condition): string {
       return `${condition.biomeGroup} T${condition.tier} boss cleared`;
     case "playerTierAtLeast":
       return `player tier >= ${condition.tier}`;
+    case "fullyRecovered":
+      return "alive at full HP with no incoming DoT";
     case "canCraft":
       return `can craft ${condition.recipeId}`;
     case "canEvolve":

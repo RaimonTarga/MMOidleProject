@@ -181,8 +181,11 @@ export async function runBot(
         ? t2EntryProfileId(authoredRoute.classRoot, config.entryEconomy)
         : undefined);
   if (authoredRoute.resumePreparedT2 && !sourceSnapshot) throw new Error("Prepared T2 route requires its source snapshot");
+  if (authoredRoute.startsFromTierEntry === 3 && !sourceSnapshot) throw new Error("T3 route requires an earned source snapshot");
   const resolvedTierEntryProfile = sourceSnapshot
-    ? tierEntryProfileFromT1Snapshot(sourceSnapshot, authoredRoute.startsFromTierEntry === 1 ? "node-clearing" : "node-t2-sanctuary", authoredRoute.startsFromTierEntry === 1 ? 1 : 2, authoredRoute.resumePreparedT2)
+    ? tierEntryProfileFromT1Snapshot(sourceSnapshot,
+      authoredRoute.startsFromTierEntry === 1 ? "node-clearing" : authoredRoute.startsFromTierEntry === 3 ? "node-t3-sanctuary" : "node-t2-sanctuary",
+      authoredRoute.startsFromTierEntry === 1 ? 1 : authoredRoute.startsFromTierEntry === 3 ? 3 : 2, authoredRoute.resumePreparedT2)
     : resolvedTierEntryId
       ? requireTierEntryProfile(resolvedTierEntryId)
       : undefined;
@@ -350,6 +353,11 @@ export async function runBot(
       plating: self?.plating ?? 0,
       damageReduction: self?.damageReduction ?? 0,
     });
+
+    if (route.stopOnFirstDeath) {
+      abortRun("declared first-death stop", "abort");
+      return;
+    }
 
     // Acknowledging is the normal player action that triggers respawn. Bots die
     // and respawn like anyone else; there is no revive shortcut.

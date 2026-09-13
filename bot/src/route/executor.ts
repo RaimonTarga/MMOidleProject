@@ -738,7 +738,7 @@ export class RouteExecutor {
       onStall: () => shortfall(condition, this.deps.obs),
       // A capped biome can still provide the explicitly requested behavior window.
       // Do not bypass cap protection for an unmet progression objective.
-      ignoreBiomeCap: !!window && this.test(condition),
+      ignoreBiomeCap: condition.type === "fullyRecovered" || (!!window && this.test(condition)),
     });
   }
 

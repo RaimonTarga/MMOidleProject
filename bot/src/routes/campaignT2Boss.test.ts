@@ -6,6 +6,8 @@ import { CAMPAIGN_T2_BOSS_ROUTES } from "./campaignT2Boss";
 import { CAMPAIGN_T2_EXPANSION_ROUTES } from "./campaignT2Expansion";
 import { CAMPAIGN_T2_V1K_ROUTES } from "./campaignT2V1k";
 import { CAMPAIGN_NIGHT2_ROUTES } from "./campaignNight2";
+import { CAMPAIGN_NIGHT2_BRIDGE } from "./campaignNight2Bridge";
+import { evaluate } from "../route/conditions";
 
 for (const [i, route] of CAMPAIGN_NIGHT2_ROUTES.entries()) {
   const final = route.steps.filter(s => s.type === "configureBuild").at(-1)!;
@@ -94,6 +96,24 @@ async function postClearRegression() {
   }
 }
 
+async function bridgeRegression() {
+  const route = CAMPAIGN_NIGHT2_BRIDGE;
+  assert.deepEqual(route.steps.filter(s => s.type === "attemptBoss").map(s => [s.biomeGroup, s.maxAttempts]),
+    [["plains", 1], ["forest", 1], ["desert", 1]]);
+  for (const step of route.steps) if (step.type === "configureBuild") assert(buildRP(step.build).total <= 30);
+  const firstBoss = route.steps.findIndex(s => s.type === "attemptBoss");
+  const executed: string[] = [];
+  const executor = new RouteExecutor({ route: { ...route, steps: route.steps.slice(firstBoss + 1) }, aborted: () => false,
+    recorder: { emit: () => {}, now: () => 0 } } as never);
+  Object.assign(executor, { test: () => false, checkMilestones: () => {}, failedFacts: new Set(["bossCleared:plains:2"]),
+    runStep: async (step: { type: string }) => { executed.push(step.type); } });
+  await executor.run();
+  assert.deepEqual(executed, [], "a lost first seal skips all later fights and T3 travel");
+  for (const [hp, incomingDot, isDead, expected] of [[100, 0, false, true], [99, 0, false, false], [100, 2, false, false], [100, 0, true, false]] as const) {
+    assert.equal(evaluate({ type: "fullyRecovered" }, { elapsedMs: 0, obs: { self: { hp, maxHp: 100, incomingDot, isDead } } } as never), expected);
+  }
+}
+
 // Exercise the real upgrade loop, including a resource change while blocked.
 async function resourceRegression() {
   let red = 0, blue = 0, catalysts = 0;
@@ -137,4 +157,4 @@ async function resourceRegression() {
   await assert.rejects(api.doUpgrade(step), error => error === complete);
   assert.equal(spans, 2);
 }
-resourceRegression().then(postClearRegression).then(() => console.log("campaignT2Boss: ok (resource selection, routes and post-clear observation)"));
+resourceRegression().then(postClearRegression).then(bridgeRegression).then(() => console.log("campaignT2Boss: ok (resource selection, routes, recovery and failed-seal dependencies)"));

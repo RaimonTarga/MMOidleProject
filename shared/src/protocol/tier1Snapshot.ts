@@ -4,6 +4,7 @@ import type { T1EconomyArm } from "../systems/t1EconomyExperiment";
 import { STARTER_RUNE_IDS } from "../runeDatabase";
 import { runeIdsFromCraftedRecipes } from "../runeRecipes";
 import { globalMastery, maxGlobalMasteryAtTier } from "../config/gameConfig";
+import { sealsHeldAtTier, sealsRequiredForTier } from "../systems/tierAdvancement";
 
 /** Versioned JSON contract written by a canonical T1 route at A/B boundaries. */
 export const T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION = 1 as const;
@@ -192,7 +193,7 @@ function assertUnique(label: string, values: readonly string[]): void {
 export function tierEntryProfileFromT1Snapshot(
   snapshot: T1CharacterSnapshot,
   spawnNodeId = "node-t2-sanctuary",
-  entryTier: 1 | 2 = 2,
+  entryTier: 1 | 2 | 3 = 2,
   resumePreparedT2 = false,
 ): TierEntryProfile {
   if (snapshot.schemaVersion !== T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION) {
@@ -206,6 +207,11 @@ export function tierEntryProfileFromT1Snapshot(
   }
 
   const state = snapshot.state;
+  if (state.playerTier !== entryTier) throw new Error("Snapshot player tier does not match the requested entry tier");
+  if (entryTier === 3 && (snapshot.snapshotKind !== "tier2-handoff" || state.selectedRange !== null ||
+      sealsHeldAtTier(state.bossesCleared, 2) < sealsRequiredForTier(2))) {
+    throw new Error("T3 entry requires an earned T2 seal handoff with its range branch unspent");
+  }
   if (resumePreparedT2 && (entryTier !== 2 || snapshot.snapshotKind !== "tier2-handoff" ||
       state.playerTier !== 2 || globalMastery(state.biomeLevel) !== maxGlobalMasteryAtTier(2) ||
       state.bossesCleared.some(key => Number(key.split(":")[1]) >= 2))) {
@@ -221,8 +227,8 @@ export function tierEntryProfileFromT1Snapshot(
   if ((!rootOnly && state.playerTier < 2) || state.currentSkillTier !== state.playerTier) {
     throw new Error("T1 handoff snapshot is not at a valid T2 skill tier");
   }
-  if (state.skillPoints !== 0) {
-    throw new Error("T1 handoff snapshot has an unspent skill point the T2 entry API cannot preserve");
+  if (state.skillPoints !== (entryTier === 3 ? 1 : 0)) {
+    throw new Error("Snapshot skill points do not match the requested unbranched tier entry");
   }
   // Passive nodes are derived from persistent skill, stance, equipment, and
   // item-upgrade state. Keep them in the snapshot for auditability, but let the
@@ -281,7 +287,7 @@ export function tierEntryProfileFromT1Snapshot(
     frameId,
     spawnNodeId,
     economyPolicy:
-      resumePreparedT2 || snapshot.snapshotKind === "experiment-checkpoint"
+      resumePreparedT2 || snapshot.snapshotKind === "experiment-checkpoint" || (entryTier === 3 && !snapshot.canonicalAtCapture)
         ? "synthetic-combat-progression"
         : "authoritative-economy-continuation",
     ...(resumePreparedT2 || snapshot.snapshotKind === "experiment-checkpoint"
