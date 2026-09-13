@@ -3,6 +3,7 @@ import {
   ITEM_DATABASE,
   RECIPE_DATABASE,
   catalystProgressPerUnit,
+  catalystProgressRewardMult,
 } from "@mmo-idle/shared";
 import type { Observation } from "../state/observation";
 import {
@@ -81,14 +82,9 @@ function assert(condition: unknown, message: string): asserts condition {
 
 // ── T1 catalyst rate ─────────────────────────────────────────────────────────
 {
-  // Candidate F (2026-09-03) raised this from candidate C's 150. See the rationale
-  // on CATALYST_PROGRESS_PER_UNIT_BY_TIER in shared/src/config/gameConfig.ts.
-  assert(catalystProgressPerUnit(1) === 200, "T1 must mint one catalyst per 200 kill-weight");
-  assert(
-    catalystProgressPerUnit(2) === GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT,
-    "T2+ must fall back to the base threshold",
-  );
-  assert(GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT === 100, "base threshold unchanged");
+  assert(catalystProgressPerUnit() === 100, "every tier must mint at 100 catalyst progress");
+  assert(catalystProgressRewardMult(1) === 0.5, "T1 kill-weight must be halved");
+  assert(catalystProgressRewardMult(2) === 1, "later tiers must retain full catalyst kill-weight");
   console.log("t1 catalyst rate: ok");
 }
 

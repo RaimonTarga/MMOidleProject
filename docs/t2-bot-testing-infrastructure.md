@@ -290,15 +290,15 @@ Across the six class plans (50 planned acquisitions):
 
 `pnpm bot:t2-reachability` prints this per template.
 
-### 6.5 You cannot accelerate past catalysts
+### 6.5 Accelerated catalyst progress
 
-The dev reward multiplier **deliberately does not scale catalyst progress**
-(`rewards.ts`: *"a catalyst is a discovery, not a currency pile"*). That is right
-for the game and it has a sharp consequence for the harness: **an accelerated run
-is not accelerated at all with respect to catalysts.**
-
-Measured live at 100× rewards: a Striker minted **2 alacrity catalysts in 298
-seconds** while banking **46,044 spare yellow essence** in the same window.
+The dev reward multiplier scales catalyst progress alongside essence and biome
+XP. Accelerated playtests therefore skip the catalyst grind at the same rate as
+the rest of the kill economy. This is a tooling-only multiplier: production and
+canonical economy runs remain at 1×. The mint threshold is universally 100;
+Tier-1 monsters contribute exactly half of the rounded kill-weight. Fractional
+half-points remain authoritative but the player HUD displays only completed whole
+progress points.
 
 Total Tier-2 catalyst demand, derived live (`pnpm bot:t2-catalyst-demand`):
 
@@ -311,16 +311,10 @@ Total Tier-2 catalyst demand, derived live (`pnpm bot:t2-catalyst-demand`):
 | dominion | 9 |
 | **total** | **99** |
 
-At the measured rate that is on the order of **four hours of irreducible waiting
-per full-tier run**, none of which measures combat or progression. An accelerated
-Tier-2 smoke run is therefore **catalyst-bound, not combat-bound** — the exact
-opposite of what an accelerated run is for.
-
-Hence the `catalyst-primed` arm. It carries the whole tier's catalyst demand and
-no essence, so a progression-integrity run measures recipes, gates, gear, bosses
-and combat rather than catalyst discovery time. Measured effect: the Plains leg
-went from ~300 s to **~35 s**, and the same run then reached the Plains Tier-2
-boss inside its nine-minute budget.
+The `catalyst-primed` arm remains available when a test needs the entire tier's
+catalyst demand in its starting wallet and must remove kill-count variance. It
+carries no essence, so it is still a synthetic progression-integrity input rather
+than economy evidence.
 
 **Never read economy conclusions from a `catalyst-primed` run.** Catalyst supply
 is one of the things a Tier-2 balance pass most needs to measure, and this arm

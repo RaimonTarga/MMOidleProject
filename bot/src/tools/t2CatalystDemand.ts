@@ -4,10 +4,9 @@ import { NODE_MODIFIER_FAMILIES, RECIPE_DATABASE } from "@mmo-idle/shared";
  * Total Tier-2 catalyst demand, per family, if every Tier-2 item were obtained
  * and taken to +5 by its most expensive path.
  *
- * This is the number that sizes the `catalyst-primed` entry wallet, and the one
- * that explains why an accelerated Tier-2 run is catalyst-bound rather than
- * combat-bound: the dev reward multiplier deliberately does NOT scale catalyst
- * progress (`rewards.ts`), so catalysts mint at 1x in every run no matter what.
+ * This is the number that sizes the `catalyst-primed` entry wallet. Accelerated
+ * runs can now earn this supply naturally because the dev reward multiplier
+ * scales catalyst progress alongside the rest of each kill payout.
  *
  * `pnpm bot:t2-catalyst-demand`
  */
@@ -44,6 +43,6 @@ console.log(rows.sort().join("\n"));
 console.log("\nTotal Tier-2 catalyst demand by family:");
 console.log(JSON.stringify(demand, null, 1));
 console.log(
-  "\nNote: the dev reward multiplier does NOT scale catalyst progress " +
-    "(deliberate -- see rewards.ts). These are the same numbers at 1x and at 100x.",
+  "\nNote: the dev reward multiplier scales catalyst progress; this table is demand, " +
+    "not the number of kills required at a particular multiplier.",
 );

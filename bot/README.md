@@ -189,11 +189,11 @@ Three things about Tier 2 that are easy to get wrong:
   predecessor at **+5**, so a worn item must be `unequip`ped first, and anything
   below +5 pays ~3.5× reconstruction instead. `t2Acquisition.ts` resolves the
   path per item from the class's own template.
-- **You cannot accelerate past catalysts.** The reward multiplier deliberately
-  does not scale catalyst progress, so catalysts mint at 1x in every run.
-  Measured: 2 alacrity in 298 s at 100x, against a tier-wide demand of 99. Use
-  `--entryEconomy=catalyst-primed` for progression-integrity runs, and never read
-  economy conclusions from one.
+- **Accelerated rewards include catalysts.** The reward multiplier scales
+  catalyst progress alongside essence and biome XP, so accelerated playtests do
+  not stop on an unscaled catalyst grind. `--entryEconomy=catalyst-primed` remains
+  available for exact synthetic starting-wallet tests; never read economy
+  conclusions from one.
 
 ## Canonical vs non-canonical
 

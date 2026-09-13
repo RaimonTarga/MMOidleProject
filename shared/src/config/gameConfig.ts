@@ -164,41 +164,32 @@ export const GAME_CONFIG = {
   // ── Biome catalysts ─────────────────────────────────────────────────────────
   /**
    * Accumulated kill-weight (Σ monster `catalystWeight`) required to mint one
-   * biome catalyst. Placeholder — tuned in the balance pass (Step 15).
+   * biome catalyst in every tier.
    */
   CATALYST_PROGRESS_PER_UNIT: 100,
   /**
-   * Per-tier override of {@link GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT}, indexed
-   * by BIOME tier. Absent tiers fall back to the base value.
-   *
-   * T1 economy candidate F (2026-09-03): T1 sits at 200 kill-weight, with
-   * catalyst progress decoupled from the dev reward multiplier. T1 asks for
-   * exactly one catalyst on the important +5 step; the higher threshold keeps
-   * the discovery currency from becoming a pile while the 2x essence/XP rate
-   * remains a real canonical baseline. Later tiers keep 100.
+   * Per-tier multiplier on catalyst kill-weight. T1 grants half progress while
+   * retaining the universal 100-point mint threshold, keeping the player-facing
+   * meter consistent without changing its intended catalyst pace.
    */
-  CATALYST_PROGRESS_PER_UNIT_BY_TIER: { 1: 200 } as Readonly<Record<number, number>>,
+  CATALYST_PROGRESS_REWARD_MULT_BY_TIER: { 1: 0.5 } as Readonly<Record<number, number>>,
 } as const;
 
-/**
- * Kill-weight required to mint one catalyst in a tier-`biomeTier` node. The
- * single place both the reward path and any analysis tooling should ask.
- */
-export function catalystProgressPerUnit(biomeTier: number): number {
-  return (
-    GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT_BY_TIER[biomeTier] ??
-    GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT
-  );
+/** Universal kill-weight required to mint one catalyst. */
+export function catalystProgressPerUnit(): number {
+  return GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
+}
+
+/** Tier-specific scalar applied to a monster's catalyst kill-weight. */
+export function catalystProgressRewardMult(biomeTier: number): number {
+  return GAME_CONFIG.CATALYST_PROGRESS_REWARD_MULT_BY_TIER[biomeTier] ?? 1;
 }
 
 // ── Dev reward multiplier ─────────────────────────────────────────────────────
-// A dev-only, server-global scalar on the FARMABLE half of what a kill is worth
-// (essence and biome XP) so a balance/playtest cycle can reach late content
-// without farming it. It deliberately does NOT scale catalyst progress: a
-// catalyst is a discovery gated on node-modifier exposure, and multiplying it
-// turns the whole system into a currency pile (see rewards.ts). 1 = shipped rates; it is the only
-// value production ever runs at, because the debug handler that changes it is
-// registered under IS_DEV.
+// A dev-only, server-global scalar on everything a kill is worth (essence, biome
+// XP, and catalyst progress) so a balance/playtest cycle can reach late content
+// without farming it. 1 = shipped rates; it is the only value production ever
+// runs at, because the debug handler that changes it is registered under IS_DEV.
 export const DEBUG_REWARD_MULT_DEFAULT = 1;
 export const DEBUG_REWARD_MULT_MIN = 1;
 export const DEBUG_REWARD_MULT_MAX = 1000;

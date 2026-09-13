@@ -40,6 +40,8 @@ export interface EconomyCandidate {
   t1Plus5EssenceCostMultiplier: number;
   /** Kill-weight per catalyst unit at biome tier 1, read from GAME_CONFIG. */
   catalystProgressPerUnitT1: number;
+  /** T1's scalar on each monster's catalyst kill-weight. Absent in older artifacts. */
+  t1CatalystProgressRewardMultiplier?: number;
   /** Whether the dev reward multiplier also scales catalyst progress. */
   catalystsScaledByRewardMultiplier: boolean;
   /** Canonical T1 biome XP rate at rewardMultiplier=1. */

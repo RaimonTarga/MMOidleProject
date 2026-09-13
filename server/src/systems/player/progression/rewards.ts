@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG, catalystProgressPerUnit } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -48,14 +48,10 @@ function grantCatalystProgress(
   entity: PlayerEntity,
   familyKey: string | undefined,
   weight: number,
-  biomeTier: number,
-  t1Threshold: number | undefined,
 ): void {
   if (!familyKey || weight <= 0) return;
   const prog = entity.tracksProgression;
-  const per = biomeTier === 1 && t1Threshold !== undefined
-    ? t1Threshold
-    : catalystProgressPerUnit(biomeTier);
+  const per = catalystProgressPerUnit();
   const total = (prog.catalystProgress[familyKey] ?? 0) + weight;
   const minted = Math.floor(total / per);
   prog.catalystProgress[familyKey] = total - minted * per;
@@ -214,23 +210,19 @@ function applyKillRewardsToPlayer(
   // defaults to the monster's base essence reward (a tuned per-mob toughness
   // number) unless it sets an explicit `catalystWeight`. No modifier
   // (clearing / test room / throne) → no grant.
-  // DELIBERATELY NOT scaled by `debugMult`. The dev multiplier exists to skip
-  // essence/mastery FARMING, but catalysts are a discovery, not a currency pile:
-  // doubling their rate turns "I found a catalyst" into "I have another stack"
-  // and destroys the very thing a playtest is trying to observe. Scaling here
-  // was what produced the 15-fortified-per-run stockpiles in the 2026-08-31 2x
-  // cohort. Node-modifier premium (`rewardMult`) still applies -- that is the
-  // real economy, not a debug knob.
-  const catalystWeight = Math.round(
-    (def?.rewards.catalystWeight ?? rewards.essence) * rewardMult,
-  );
+  // The dev multiplier scales the complete kill payout. This keeps accelerated
+  // playtests from becoming catalyst-bound after essence and mastery have already
+  // advanced. Round the ordinary scaled kill-weight first, then apply T1's
+  // half-rate exactly; the HUD hides any resulting half-point without changing
+  // the authoritative accumulator.
+  const catalystWeight =
+    Math.round((def?.rewards.catalystWeight ?? rewards.essence) * rewardMult * debugMult) *
+    catalystProgressRewardMult(biomeTier);
   if (catalystWeight > 0 && nodeModifier) {
     grantCatalystProgress(
       recipient,
       nodeModifier,
       catalystWeight,
-      biomeTier,
-      world.t1EconomyConfigForPlayer(recipient.isPlayer.id).catalystProgressPerUnitT1,
     );
     markSliceDirty(world, recipient, 'tracksProgression');
   }

@@ -6,7 +6,7 @@ export type T1EconomyArm = 'C' | 'D' | 'E' | 'F';
 
 /** Fixed identity for the final Candidate F validation; changing it requires a new experiment. */
 export const T1_ECONOMY_EXPERIMENT_ID = 't1-economy-candidate-f-2026-09-03';
-export const T1_ECONOMY_EXPERIMENT_REVISION = 't1-economy-candidate-f-2026-09-03-r1';
+export const T1_ECONOMY_EXPERIMENT_REVISION = 't1-economy-candidate-f-2026-09-03-r2';
 export const T1_ECONOMY_ARMS: readonly T1EconomyArm[] = ['C', 'D', 'E', 'F'];
 
 /** Configuration that is allowed to vary between factorial arms. */
@@ -15,7 +15,7 @@ export interface T1EconomyExperimentConfig {
   experimentId: typeof T1_ECONOMY_EXPERIMENT_ID;
   revision: typeof T1_ECONOMY_EXPERIMENT_REVISION;
   t1Plus5EssenceCostMultiplier: 0.6 | 0.75;
-  catalystProgressPerUnitT1: 150 | 200;
+  catalystProgressPerUnitT1: 100;
   /** Canonical T1 farm rates; these are real at rewardMultiplier=1. */
   t1BiomeXpRewardMultiplier: 2;
   t1BiomeEssenceRewardMultiplier: 2;
@@ -51,7 +51,7 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     experimentId: T1_ECONOMY_EXPERIMENT_ID,
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.75,
-    catalystProgressPerUnitT1: 150,
+    catalystProgressPerUnitT1: 100,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
   },
@@ -60,7 +60,7 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     experimentId: T1_ECONOMY_EXPERIMENT_ID,
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.6,
-    catalystProgressPerUnitT1: 150,
+    catalystProgressPerUnitT1: 100,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
   },
@@ -69,7 +69,7 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     experimentId: T1_ECONOMY_EXPERIMENT_ID,
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.75,
-    catalystProgressPerUnitT1: 200,
+    catalystProgressPerUnitT1: 100,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
   },
@@ -78,7 +78,7 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     experimentId: T1_ECONOMY_EXPERIMENT_ID,
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.6,
-    catalystProgressPerUnitT1: 200,
+    catalystProgressPerUnitT1: 100,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
   },

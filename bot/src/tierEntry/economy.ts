@@ -163,16 +163,10 @@ export function totalT2CatalystDemand(): Record<string, number> {
  *
  * ── Why this arm has to exist ──────────────────────────────────────────────
  *
- * The dev reward multiplier deliberately does NOT scale catalyst progress
- * (`server/src/systems/player/progression/rewards.ts`: "a catalyst is a
- * discovery, not a currency pile"). That is right for the game and it has a
- * sharp consequence for the harness: an ACCELERATED run is not accelerated at
- * all with respect to catalysts. Measured live at 100x rewards, a Striker run
- * minted 2 alacrity catalysts in 298 seconds while banking 46,044 spare yellow.
- * Tier 2 as a whole demands roughly 99 catalysts across five families, so an
- * accelerated smoke run is CATALYST-BOUND -- the exact opposite of what an
- * accelerated run is supposed to isolate, and it would spend hours proving
- * nothing about combat or progression.
+ * The dev reward multiplier now scales catalyst progress with the rest of a
+ * kill's payout, so accelerated runs can earn catalysts naturally. This arm is
+ * still useful when a test needs an exact, immediately available catalyst wallet
+ * and must remove kill-count variance from the setup.
  *
  * This arm carries the whole tier's catalyst demand and no essence at all, so a
  * progression-integrity run measures recipes, gates, gear, bosses and combat

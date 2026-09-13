@@ -3,15 +3,9 @@
 // WHY THIS EXISTS: the multiplier is a single scalar threaded through the ONE
 // reward seam (`applyKillRewardsToPlayer`). The invariants worth pinning are
 // structural: the default must be a true no-op (production runs at 1x), the
-// scalar must reach the FARMABLE currencies (essence and biome XP), it must NOT
-// reach catalyst progress, and garbage input must not poison later kills with
-// NaN.
-//
-// The catalyst exclusion is deliberate and load-bearing (T1 economy candidate C,
-// 2026-08-31): a catalyst is a discovery gated on node-modifier exposure, and
-// multiplying its rate turned the 2x bot cohort's wallets into 15-unit stockpiles
-// against a demand of one. Skipping essence/mastery FARMING is the multiplier's
-// job; minting catalysts is not.
+// scalar must reach every kill reward (essence, biome XP, and catalyst progress),
+// catalyst threshold crossings must mint and carry their remainder, and garbage
+// input must not poison later kills with NaN.
 //
 // Deliberately NOT asserted: any balance number. Kill payouts change with every
 // tuning pass — this compares boosted-vs-baseline on the same fixture instead.
@@ -30,6 +24,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { grantMonsterRewards } from "../src/systems/player/progression/rewards";
 import { World } from "../src/world/World";
+import { displayedCatalystProgress } from "../../client/src/hud/catalystProgress";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -107,7 +102,7 @@ function farm(id: string, multiplier: number, kills: number, playerTier = 4): Pa
   const wolf = world.createMonster(FARM_NODE, "wolf", { x: 800, y: 800 })!;
   for (let i = 0; i < kills; i++) grantMonsterRewards(world, id, wolf);
   const prog = player.tracksProgression;
-  const per = catalystProgressPerUnit(1);
+  const per = catalystProgressPerUnit();
   return {
     essence: Object.values(prog.essences).reduce((a, b) => a + b, 0),
     biomeXp: prog.biomeXP[BIOME_GROUP] ?? 0,
@@ -124,7 +119,7 @@ assert(
   "a world with no DEBUG_REWARD_MULT env must default to shipped rates",
 );
 
-// ── The scalar reaches the farmable currencies, and only those ────────────────
+// ── The scalar reaches the complete kill payout ───────────────────────────────
 
 // Keep the comparison below the current tier-4 forest cap even at 10x. The
 // separate cap case later in this file covers the intentional saturation path.
@@ -151,14 +146,7 @@ function assertScales(label: string, boostedValue: number, baseValue: number): v
 
 assertScales("essence", boosted.essence, base.essence);
 assertScales("biome XP", boosted.biomeXp, base.biomeXp);
-
-// Catalyst progress is EXACTLY equal, not merely "smaller than 10x": the reward
-// path must not apply the debug scalar to it at all. Same fixture, same kills,
-// same node modifier — only the multiplier differs.
-assert(
-  boosted.catalystProgress === base.catalystProgress,
-  `catalyst progress must ignore the debug multiplier entirely (got ${boosted.catalystProgress} at ${MULT}x vs ${base.catalystProgress} at 1x)`,
-);
+assertScales("catalyst progress", boosted.catalystProgress, base.catalystProgress);
 
 // ── A boss kill's catalyst grant is on the same rule ──────────────────────────
 
@@ -170,21 +158,35 @@ function bossCatalystProgress(id: string, multiplier: number): number {
   assert(boss.isMonster.isBoss, "greatbear is a boss");
   grantMonsterRewards(world, id, boss);
   const prog = player.tracksProgression;
-  const per = catalystProgressPerUnit(1);
+  const per = catalystProgressPerUnit();
   return (prog.catalysts[FAMILY] ?? 0) * per + (prog.catalystProgress[FAMILY] ?? 0);
 }
 
 const baseBossProgress = bossCatalystProgress("p-boss-base", 1);
 assert(baseBossProgress > 0, "baseline boss clear must grant catalyst progress");
-assert(
-  bossCatalystProgress("p-boss-boost", MULT) === baseBossProgress,
-  "a boss kill's catalyst grant must ignore the debug multiplier too",
-);
+assertScales("boss catalyst progress", bossCatalystProgress("p-boss-boost", MULT), baseBossProgress);
+
+// A single accelerated kill may cross the threshold multiple times. Every whole
+// unit must mint and the stored progress must remain a true remainder.
+{
+  const world = new World();
+  world.rewardMultiplier = 100;
+  const player = world.attachPlayerEntity(makePlayer("p-multi-mint"), "p-multi-mint");
+  const wolf = world.createMonster(FARM_NODE, "wolf", { x: 800, y: 800 })!;
+  grantMonsterRewards(world, "p-multi-mint", wolf);
+  const prog = player.tracksProgression;
+  const per = catalystProgressPerUnit();
+  assert((prog.catalysts[FAMILY] ?? 0) >= 2, "an accelerated kill must mint every crossed catalyst unit");
+  assert(Number.isInteger((prog.catalystProgress[FAMILY] ?? 0) * 2), "T1 catalyst progress must use exact half-points");
+  assert((prog.catalystProgress[FAMILY] ?? 0) < per, "accelerated catalyst progress must reset to a remainder below the threshold");
+}
+
+assert(displayedCatalystProgress(2.5) === 2, "the HUD must hide fractional half-progress");
+assert(displayedCatalystProgress(99.5) === 99, "the HUD must not display 100 before a catalyst actually mints");
 
 // ── The node modifier premium still applies to catalysts ──────────────────────
-// The exclusion above is about the DEBUG knob only. `modifierRewardMult` is real
-// economy: a harder node still pays a catalyst premium, and removing that would
-// be a silent second change riding along with this one.
+// `modifierRewardMult` is real economy: a harder node still pays a catalyst
+// premium underneath the debug scalar.
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayer("p-modifier"), "p-modifier");
@@ -192,16 +194,16 @@ assert(
   grantMonsterRewards(world, "p-modifier", wolf);
   const prog = player.tracksProgression;
   const granted =
-    (prog.catalysts[FAMILY] ?? 0) * catalystProgressPerUnit(1) +
+    (prog.catalysts[FAMILY] ?? 0) * catalystProgressPerUnit() +
     (prog.catalystProgress[FAMILY] ?? 0);
   assert(granted > 0, "an Alacrity node must grant Alacrity progress on an ordinary kill");
 }
 
-// ── T1 mints at its own, scarcer threshold ────────────────────────────────────
+// ── Every tier mints at the same player-facing threshold ──────────────────────
 
 assert(
-  catalystProgressPerUnit(1) === 200 && catalystProgressPerUnit(2) === 100,
-  "T1 must carry its own catalyst threshold while later tiers keep the base one",
+  catalystProgressPerUnit() === 100,
+  "every tier must mint a catalyst at 100 progress",
 );
 
 // ── The biome level cap still binds: the multiplier is not a cap bypass ───────

@@ -303,7 +303,7 @@ function markdown(report: AnyRecord): string {
     "## Live configuration",
     "",
     `Configuration consistent across run headers: **${report.configurationClean ? "yes" : "no"}**. Reward multiplier values: ${report.rewardMultipliers.join(", ") || "none"}.`,
-    `Candidate: \`${report.candidate?.id ?? "missing"}\` / \`${report.candidate?.revision ?? "missing"}\`, arm **${report.candidate?.arm ?? "?"}**, T1 XP **${report.candidate?.t1BiomeXpRewardMultiplier ?? "?"}×**, essence **${report.candidate?.t1BiomeEssenceRewardMultiplier ?? "?"}×**, +5 **${report.candidate?.t1Plus5EssenceCostMultiplier ?? "?"}×**, catalyst threshold **${report.candidate?.catalystProgressPerUnitT1 ?? "?"}**, catalyst debug scaling **${report.candidate?.catalystsScaledByRewardMultiplier ? "on" : "off"}**.`,
+    `Candidate: \`${report.candidate?.id ?? "missing"}\` / \`${report.candidate?.revision ?? "missing"}\`, arm **${report.candidate?.arm ?? "?"}**, T1 XP **${report.candidate?.t1BiomeXpRewardMultiplier ?? "?"}×**, essence **${report.candidate?.t1BiomeEssenceRewardMultiplier ?? "?"}×**, +5 **${report.candidate?.t1Plus5EssenceCostMultiplier ?? "?"}×**, catalyst threshold **${report.candidate?.catalystProgressPerUnitT1 ?? "?"}**, T1 catalyst weight **${report.candidate?.t1CatalystProgressRewardMultiplier ?? "?"}×**, catalyst debug scaling **${report.candidate?.catalystsScaledByRewardMultiplier ? "on" : "off"}**.`,
     "",
     "## Time to all T1 mastery",
     "",

@@ -1,6 +1,7 @@
 import {
   GAME_CONFIG,
   catalystProgressPerUnit,
+  catalystProgressRewardMult,
   NODE_MODIFIERS,
   RECIPE_DATABASE,
   checkReconstruct,
@@ -76,15 +77,14 @@ assert(farmModifier === "alacrity", "the farm node under test is an alacrity nod
 const wolf = world.createMonster(FARM_NODE, "wolf", { x: 800, y: 800 })!;
 // Wolf's essence reward (no explicit catalystWeight), scaled by the node modifier's
 // reward premium — modifiers are net difficulty increases and pay for themselves.
-const weight = Math.round(4 * modifierRewardMult(farmModifier, 1));
-// The threshold is per BIOME tier since the T1 catalyst-scarcity pass; the farm
-// node under test is tier 1, so it mints at T1's own (scarcer) rate.
-const per = catalystProgressPerUnit(1);
+const weight = Math.round(
+  4 * modifierRewardMult(farmModifier, 1),
+) * catalystProgressRewardMult(1);
+const per = catalystProgressPerUnit();
 // Enough kills to cross the T1 threshold at least once, so this still exercises
 // BOTH the mint and the carried remainder rather than only accumulation. DERIVED
-// from the threshold rather than hardcoded: the T1 catalyst rate is a live balance
-// lever (150 -> 200 in candidate F), and a magic kill count silently stops testing
-// the mint the moment that number moves up.
+// from the threshold rather than hardcoded so changing the universal threshold
+// cannot silently stop exercising the mint path.
 const kills = Math.ceil(per / weight) + 5;
 assert(weight * kills > per, "the fixture must actually mint at the tier's threshold");
 assert(weight * kills % per !== 0, "the fixture must leave a remainder to carry");

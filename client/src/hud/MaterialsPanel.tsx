@@ -5,9 +5,9 @@ import {
   ESSENCE_COLORS,
   ESSENCE_LABELS,
   ESSENCE_TYPES,
-  GAME_CONFIG,
   NODE_MODIFIER_FAMILIES,
   MODIFIER_COLORS,
+  catalystProgressPerUnit,
   type EssenceType,
 } from "@mmo-idle/shared";
 import { GameIcon } from "../ui/GameIcon";
@@ -19,6 +19,7 @@ import {
 } from "../ui/MaterialChip";
 import { catalystProgressAtom, catalystsAtom, essencesAtom } from "./atoms";
 import { DisclosureHeader, EngravedMeter, HudPanel } from "./primitives";
+import { displayedCatalystProgress } from "./catalystProgress";
 import "./essence.css";
 
 const MATERIALS_EXPANDED_STORAGE_KEY = "mmo_idle.desktop.materials_expanded";
@@ -82,7 +83,7 @@ export function MaterialsPanel() {
   const families = NODE_MODIFIER_FAMILIES.filter(
     (family) => (catalysts[family] ?? 0) > 0 || (progress[family] ?? 0) > 0,
   );
-  const perUnit = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
+  const perUnit = catalystProgressPerUnit();
 
   const toggleExpanded = () => {
     setExpanded((value) => {
@@ -176,7 +177,7 @@ export function MaterialsPanel() {
               <span className="essence-value">{catalysts[family] ?? 0}</span>
               <span className="essence-progress">
                 <span className="essence-progress__value">
-                  {progress[family] ?? 0}/{perUnit}
+                  {displayedCatalystProgress(progress[family])}/{perUnit}
                 </span>
                 {/* Bounded and static between kills, so engraved rather than
                     conduit — the count above says how many, this says how close
@@ -184,7 +185,7 @@ export function MaterialsPanel() {
                 <EngravedMeter
                   className="essence-progress__meter"
                   fraction={perUnit > 0 ? (progress[family] ?? 0) / perUnit : 0}
-                  label={`${catalystLabel(family)}: ${progress[family] ?? 0} of ${perUnit} toward the next`}
+                  label={`${catalystLabel(family)}: ${displayedCatalystProgress(progress[family])} of ${perUnit} toward the next`}
                 />
               </span>
             </div>

@@ -16,6 +16,8 @@ export interface T1SnapshotEconomyCandidate {
   arm: T1EconomyArm;
   t1Plus5EssenceCostMultiplier: number;
   catalystProgressPerUnitT1: number;
+  /** T1's scalar on each monster's catalyst kill-weight. Absent in older snapshots. */
+  t1CatalystProgressRewardMultiplier?: number;
   catalystsScaledByRewardMultiplier: boolean;
   t1BiomeXpRewardMultiplier: number;
   t1BiomeEssenceRewardMultiplier: number;

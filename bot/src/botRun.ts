@@ -6,6 +6,7 @@ import {
   GAME_CONFIG,
   NODE_BIOMES,
   SKILL_TREE,
+  catalystProgressRewardMult,
   defaultT1EconomyConfig,
   t1EconomyConfigForArm,
   t1Plus5EssenceCosts,
@@ -1058,7 +1059,7 @@ function buildTierEntryInitialState(
  * mirror of the reward path's decision in
  * `server/src/systems/player/progression/rewards.ts`; flip both together.
  */
-const CATALYSTS_SCALED_BY_REWARD_MULTIPLIER = false;
+const CATALYSTS_SCALED_BY_REWARD_MULTIPLIER = true;
 
 function resolveEconomyCandidate(
   economyConfig: ReturnType<typeof t1EconomyConfigForArm>,
@@ -1069,6 +1070,7 @@ function resolveEconomyCandidate(
     arm: economyConfig.arm,
     t1Plus5EssenceCostMultiplier: economyConfig.t1Plus5EssenceCostMultiplier,
     catalystProgressPerUnitT1: economyConfig.catalystProgressPerUnitT1,
+    t1CatalystProgressRewardMultiplier: catalystProgressRewardMult(1),
     catalystsScaledByRewardMultiplier: CATALYSTS_SCALED_BY_REWARD_MULTIPLIER,
     t1BiomeXpRewardMultiplier: economyConfig.t1BiomeXpRewardMultiplier,
     t1BiomeEssenceRewardMultiplier: economyConfig.t1BiomeEssenceRewardMultiplier,
