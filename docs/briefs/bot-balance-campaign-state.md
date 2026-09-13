@@ -30,6 +30,27 @@ execution instructions. Current source and explicit user direction take preceden
 
 ## Sequential plan
 
+### Next operating mode: autonomous Astra–Luna overnight loop (pending start)
+
+Recorded at the user's request on 2026-09-13. This is the next planned workflow, **not authorization to start now**. The user reports the current experiment is still running. Leave it under its existing operator/packet, review its completed results, and wait for the user's explicit overnight start instruction. Do not spawn an operator, schedule a wake-up or launch another experiment merely because this plan exists.
+
+Once activated, the purpose is to remove the user's messenger role while keeping expensive Astra work focused on decisions:
+
+1. **Astra plans and prepares:** inspect current source and completed evidence; choose a useful bounded question; implement/test bot templates, routes and necessary harness work; freeze a concrete operator packet with inputs, revision, run limits, evidence requirements and stopping rules.
+2. **Luna operates:** delegate the packet to a Luna subagent with minimal essential context and explicit document paths. Luna runs the frozen cases, supervises execution, preserves artifacts, verifies terminal resource release and returns a concise report. Luna does not redesign builds, tune gameplay, improvise retries or expand the experiment.
+3. **Astra waits:** use completion-driven agent waiting while Luna operates. Renew bounded waits only as required by the available tools; a wait timeout is not a reason for a fresh gameplay analysis or repeated log inspection. Avoid routine five-/ten-minute supervisory polling by Astra. Waits/messages still have some overhead; exact limits depend on the current runtime. Give Luna responsibility for packet deadlines and runtime health.
+4. **Astra reviews and iterates:** verify the returned evidence, update this campaign state and the reusable theorycrafting reference, select the next experiment and repeat within the activated session's scope and deadline. The user should not need to relay completion messages between agents. Keep each packet bounded; autonomy does not permit extra attempts inside a frozen packet.
+
+The overnight work continues **validation, analysis and experimentation** toward expert-prepared solo viability and credible progression. Improve general understanding of class delivery, gear/ability/rune/stance synergies and encounter counters; do not just copy the last successful build. Continue the existing tier roadmap, including a credible continuous T2-to-T3 path before limited T3 exploration; preserve the T3/T4 low-eHP balance caveat.
+
+**Balance proposals are allowed; balance changes are not.** Astra may record what it would rebalance, the evidence, proposed direction/values, expected tradeoffs, confidence and the test that would validate the proposal. Do not implement those changes, even in a new experimental image, without separate user approval. Distinguish weak bot preparation, behavior defects, instrumentation gaps and actual balance pressure. Scoped bot/harness fixes remain within preparation authority; a proposed gameplay-mechanics change needing user judgment must be surfaced rather than disguised as a bot fix.
+
+At activation, record a finite session deadline and scope in the first packet. No token budget or exact overnight duration has been specified yet. Retain one active operator/manifest unless separately authorized. Use normal terminal network release and preserve artifacts/volumes; do not revive or alter old runs to create new evidence.
+
+If progress is blocked, evidence is insufficient for a responsible next step, the session deadline is reached, or a decision requires the user, stop safely and leave a concise handoff. The user explicitly accepts waiting until they return, including an overnight stall; there is no requirement to keep producing runs or spend tokens repeatedly checking an unresolved blocker. Preserve the current facts, failed/unstarted slots, candidate balance proposals and the exact input needed to continue. Do not automatically schedule reminders or restart after a stop.
+
+End-of-session handoff: completed experiments and artifact/report links; conclusions versus hypotheses; template/harness changes and validation; proposed balance changes (unapplied); remaining blockers; recommended next experiment.
+
 | Stage | Question / work | Exit evidence |
 |---|---|---|
 | Q0, prepared | Qualify existing templates and their first build transitions; prepare exact local readiness routes | Six source-derived profile records, legal acquisition/build sequences, concrete runtime packet |
