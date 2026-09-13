@@ -11,6 +11,7 @@ import type { World } from '../../../world/World';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { setRooted } from '../../world/rooted';
 import { stopEntity } from '../../world/movement';
+import { pullPlayer } from '../damage/forcedMovement';
 import { publishToxicPool } from '../../world/groundZones';
 
 /**
@@ -180,9 +181,10 @@ function closeShell(
     if (pool) {
       const flavor = pool.flavor ?? 'toxic';
       const isVent = flavor === 'magma-vent';
+      const ventPosition = { ...monster.hasPosition.current };
       publishToxicPool(world, monster.hasPosition.nodeId, {
         kind: 'toxic-pool',
-        pos: { ...monster.hasPosition.current },
+        pos: ventPosition,
         radius: pool.radius,
         startedAtMs: now,
         expiresAtMs: now + pool.durationMs,
@@ -215,6 +217,25 @@ function closeShell(
             }
           : {}),
       });
+
+      // The vent does something immediately as it appears: a single resisted,
+      // obstacle-aware pull toward its center. It is intentionally not a sustained
+      // drag, so the player still owns the decision to leave or remain in the Heat.
+      const aggro = monster.hasAggroTarget;
+      if (
+        isVent &&
+        (pool.pullDistance ?? 0) > 0 &&
+        aggro?.targetKind === 'player'
+      ) {
+        const target = world.getPlayerEntity(aggro.targetId);
+        if (
+          target &&
+          !target.isDead &&
+          target.hasPosition.nodeId === monster.hasPosition.nodeId
+        ) {
+          pullPlayer(world, target, ventPosition, pool.pullDistance!);
+        }
+      }
     }
 
     world.pushEvent(monster.hasPosition.nodeId, {

@@ -33,6 +33,60 @@ const CHARGE_FILL = 0xa8481f;
 const CHARGE_LINE = 0xffa04d;
 const CHARGE_LOCKED_LINE = 0xffd9a0;
 
+// The vent is a static decal, so heat is communicated through an occasional
+// colour pass rather than any movement, particles, or extra art. The long
+// quiet portion keeps the signal intermittent instead of turning the decal
+// into a continuously pulsing effect.
+const STEAM_VENT_GLOW_PERIOD_MS = 3_600;
+const STEAM_VENT_GLOW_RISE_MS = 180;
+const STEAM_VENT_GLOW_HOLD_MS = 420;
+const STEAM_VENT_GLOW_FALL_MS = 360;
+const STEAM_VENT_WARM_COLOR = 0xff9a3a;
+const STEAM_VENT_GLOW_MAX = 0.72;
+
+function steamVentGlowOffset(zoneId: string): number {
+  // A stable offset keeps nearby vents from looking mechanically synchronized
+  // without introducing any random state or server-visible behavior.
+  let hash = 2166136261;
+  for (let index = 0; index < zoneId.length; index += 1) {
+    hash ^= zoneId.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0) % STEAM_VENT_GLOW_PERIOD_MS;
+}
+
+function smoothstep(value: number): number {
+  const clamped = Math.min(1, Math.max(0, value));
+  return clamped * clamped * (3 - 2 * clamped);
+}
+
+function steamVentGlowStrength(nowMs: number, offsetMs: number): number {
+  const phase = (nowMs + offsetMs) % STEAM_VENT_GLOW_PERIOD_MS;
+  if (phase < STEAM_VENT_GLOW_RISE_MS) {
+    return smoothstep(phase / STEAM_VENT_GLOW_RISE_MS);
+  }
+
+  const fallStart = STEAM_VENT_GLOW_RISE_MS + STEAM_VENT_GLOW_HOLD_MS;
+  if (phase < fallStart) return 1;
+  if (phase < fallStart + STEAM_VENT_GLOW_FALL_MS) {
+    return 1 - smoothstep((phase - fallStart) / STEAM_VENT_GLOW_FALL_MS);
+  }
+  return 0;
+}
+
+function mixRgb(from: number, to: number, amount: number): number {
+  const t = Math.min(1, Math.max(0, amount));
+  const channel = (shift: number): number =>
+    Math.round(
+      (((from >> shift) & 0xff) * (1 - t)) + (((to >> shift) & 0xff) * t),
+    );
+  return (channel(16) << 16) | (channel(8) << 8) | channel(0);
+}
+
+function steamVentTint(glowStrength: number): number {
+  return mixRgb(0xffffff, STEAM_VENT_WARM_COLOR, glowStrength * STEAM_VENT_GLOW_MAX);
+}
+
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
   /** Textured pool decal; telegraphs continue using `graphic` only. */
@@ -40,6 +94,8 @@ export interface GroundZoneSprite {
   kind: GroundZoneKind;
   /** Persistent-hazard flavor used only to choose the matching presentation. */
   flavor?: GroundZoneView["flavor"];
+  /** Stable phase offset so multiple vents do not glow in lockstep. */
+  steamGlowOffsetMs: number;
   /** Client timestamp the current `remainingMs` was received at. */
   syncedAtMs: number;
   remainingMs: number;
@@ -106,6 +162,7 @@ export function syncGroundZones(
         lockedInMs: zone.lockedInMs,
         ownerId: zone.ownerId,
         dustAccum: 0,
+        steamGlowOffsetMs: steamVentGlowOffset(zone.id),
       };
       scene.groundZones.set(zone.id, sprite);
     }
@@ -146,7 +203,7 @@ export function drawGroundZones(scene: GameScene): void {
       if (progress >= 1) chargeImpact(scene, sprite);
       continue;
     }
-    drawZone(sprite, progress);
+    drawZone(sprite, progress, now);
   }
 }
 
@@ -286,7 +343,7 @@ function chargeImpact(scene: GameScene, sprite: GroundZoneSprite): void {
   });
 }
 
-function drawZone(sprite: GroundZoneSprite, progress: number): void {
+function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): void {
   const { graphic, x, y, radius } = sprite;
   graphic.clear();
 
@@ -308,9 +365,20 @@ function drawZone(sprite: GroundZoneSprite, progress: number): void {
 
   if (sprite.kind === 'toxic-pool') {
     const remainingAlpha = Math.min(1, Math.max(0, (1 - progress) * 4));
+    const steamGlow = sprite.flavor === "magma-vent"
+      ? steamVentGlowStrength(nowMs, sprite.steamGlowOffsetMs)
+      : 0;
     if (sprite.image) {
-      // Steam vents are deliberately static: only the normal end-of-life fade is
-      // allowed to change their appearance. Swamp pools keep their subtle pulse.
+      // Steam vents stay fixed in place. Their only active animation is a gated
+      // warm tint, returning to the source art during the long quiet interval.
+      if (sprite.flavor === "magma-vent") {
+        if (steamGlow > 0) sprite.image.setTint(steamVentTint(steamGlow));
+        else sprite.image.clearTint();
+      } else {
+        sprite.image.clearTint();
+      }
+      // Swamp pools keep their existing subtle pulse; the vent only receives the
+      // normal end-of-life fade in alpha.
       const pulse = sprite.flavor === "magma-vent"
         ? 1
         : 0.94 + Math.sin(performance.now() / 260) * 0.06;
@@ -319,8 +387,12 @@ function drawZone(sprite: GroundZoneSprite, progress: number): void {
     }
 
     // Texture loading failure fallback: keep the hazard readable.
-    const fill = sprite.flavor === "magma-vent" ? 0x6b3d29 : TOXIC_FILL;
-    const line = sprite.flavor === "magma-vent" ? 0xffa044 : TOXIC_LINE;
+    const fill = sprite.flavor === "magma-vent"
+      ? mixRgb(0x6b3d29, 0xa94d1d, steamGlow)
+      : TOXIC_FILL;
+    const line = sprite.flavor === "magma-vent"
+      ? mixRgb(0xffa044, 0xffffa0, steamGlow)
+      : TOXIC_LINE;
     graphic.fillStyle(fill, 0.3 * remainingAlpha);
     graphic.fillCircle(x, y, radius);
     graphic.lineStyle(3, line, 0.8 * remainingAlpha);

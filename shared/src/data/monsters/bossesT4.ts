@@ -409,7 +409,7 @@ export const bossMonsterEntriesT4 = [
       atHpPct: 0.85, durationMs: 4000, directDamageMult: 0.30, repeatIntervalMs: 15000,
       pool: {
         radius: 210, durationMs: 9000, damagePerTick: 16, tickIntervalMs: 1000,
-        flavor: 'magma-vent', rampAccelMult: 3,
+        flavor: 'magma-vent', rampAccelMult: 3, pullDistance: 200,
       },
     },
     bossPattern: {

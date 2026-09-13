@@ -605,6 +605,7 @@ export function describeMonsterAbilities(
       detail: `Retracts for ${fmtMs(shell.durationMs)}; direct damage is multiplied by ${fmtMult(shell.directDamageMult)} while shelled` +
         (shell.pool ? ` and leaves a ${shell.pool.radius}px pool dealing ${fmtNumber(shell.pool.damagePerTick)} every ${fmtMs(shell.pool.tickIntervalMs)}` : '') +
         (shell.pool?.rampAccelMult !== undefined ? `; standing in it accelerates the ambient ramp by ${fmtMult(shell.pool.rampAccelMult)}` : '') +
+        (shell.pool?.pullDistance !== undefined ? `; when it appears, it pulls you ${fmtNumber(shell.pool.pullDistance)}px toward its center` : '') +
         (shell.repeatIntervalMs ? `, repeating every ${fmtMs(shell.repeatIntervalMs)} after the first shell` : ', once per life') + '.',
     });
   }

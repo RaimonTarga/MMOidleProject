@@ -844,12 +844,15 @@ export interface MonsterDefinition {
       tickIntervalMs: number;
       slowSpeedMult?: number;
       /**
-       * Texture and, for `magma-vent`, the semantics that make it a CHOICE: a vent
-       * is NOT auto-avoided, because staying in it trades damage taken for the Heat
-       * that raises damage dealt. A rune dragging the player out would be answering
-       * a question the encounter meant them to answer themselves.
+       * Texture and, for `magma-vent`, the semantics that make it a CHOICE: the
+       * vent may pull the engaged player toward its center once when it appears,
+       * but it is NOT auto-avoided afterward. Staying in it trades damage taken
+       * for the Heat that raises damage dealt; a rune dragging the player out would
+       * be answering a question the encounter meant them to answer themselves.
        */
       flavor?: HazardFlavor;
+      /** One resisted pull toward a newly spawned magma vent, in pixels. */
+      pullDistance?: number;
       /**
        * While a player stands inside, the node's ambient ramp advances this many
        * times faster. The Volcano's Vent is an ACCELERATOR on the room's Heat, never
