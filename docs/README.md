@@ -45,6 +45,10 @@ top-level doc.
 | [briefs/bot-balance-v1g-assessment.md](briefs/bot-balance-v1g-assessment.md) | V1g interpretation, current source changes, human Cave evidence and next decisions. |
 | [briefs/bot-balance-v1h-operator-packet.md](briefs/bot-balance-v1h-operator-packet.md) | Current Cave builds, Mountain check and targeted T2 catalyst follow-up;13 bounded runs. |
 | [briefs/bot-balance-v1h-cave-study.json](briefs/bot-balance-v1h-cave-study.json) | Four Cave packages separating ability, recovery and Brace hypotheses. |
+| [briefs/bot-balance-v1h-report.md](briefs/bot-balance-v1h-report.md) | V1h execution ledger for current Cave counterplay, the Mountain check, and targeted T2 progression screens. |
+| [briefs/bot-balance-v1h-assessment.md](briefs/bot-balance-v1h-assessment.md) | V1h conclusions, wrong-resource diagnosis and prepared T2 boss direction. |
+| [briefs/bot-balance-v1i-operator-packet.md](briefs/bot-balance-v1i-operator-packet.md) | Eight runs: resource-farming repair checks and independent Spirit Plains/Forest boss tests. |
+| [briefs/bot-balance-v1i-plains-study.json](briefs/bot-balance-v1i-plains-study.json) | Spirit Axe versus Gale Needle under the same prepared Plains package. |
 | [briefs/bot-balance-night1-swamp-study.json](briefs/bot-balance-night1-swamp-study.json) | Frozen Swamp comparison arms for the overnight operator packet. |
 | [briefs/bot-balance-v1d-operator-packet.md](briefs/bot-balance-v1d-operator-packet.md) | One preparation-only validation of repaired transit recovery. |
 | [briefs/bot-balance-v1d-report.md](briefs/bot-balance-v1d-report.md) | V1d execution result; one natural transit death recovered to the Plains supplier and the full GM30/+5 preparation completed. |
