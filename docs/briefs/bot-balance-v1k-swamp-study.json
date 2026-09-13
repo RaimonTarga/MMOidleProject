@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "question": "Does Bog Wrappings DoT resistance improve prepared Heavy Spirit T2 Swamp survival compared with Cave Vest, with Bog Eye and Expose/Second Wind/Cleanse fixed?",
+  "factor": "route",
+  "arms": [
+    { "id": "cave-armor", "route": "spirit-campaign-swamp-cave-vest-t2-v1k", "policy": "intended" },
+    { "id": "swamp-armor", "route": "spirit-campaign-swamp-swamp-vest-t2-v1k", "policy": "intended" }
+  ]
+}
