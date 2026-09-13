@@ -343,6 +343,8 @@ Every phase is the corrosion going further:
   T2/T3 on-hit corrosion is unchanged. This follows human feedback and six failed
   V1g Cave attempts; post-change beatability remains to be tested.
   A second human check prompted reducing the initial three-stack nerf to two.
+  Follow-up approval reduces base attack from 47 to 40; Breach remains 1.1x.
+  HP remains 1750 pending discussion of its effective durability.
   The bestiary now explicitly displays the initial six-stack cap and nine-stack
   cap at half HP, derived from the authored phase data.
   **Converted 2026-09-04**; the circular Obsidian Slam it replaced was a generic

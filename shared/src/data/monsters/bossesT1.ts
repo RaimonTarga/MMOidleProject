@@ -244,7 +244,7 @@ export const bossMonsterEntriesT1 = [
     // Lowest raw HP of the five and still the hardest to chew through: plating 6 + 10%
     // DR give it by far the tier's widest armour spread, so a fast chip build meets
     // several times the effective HP a heavy hitter does. That is the endurance exam.
-    stats: { hp: 1750, attack: 47, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
+    stats: { hp: 1750, attack: 40, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'quake', biome: 'cave',
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
