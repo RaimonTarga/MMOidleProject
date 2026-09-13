@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: V1k reviewed; autonomous Night 2 activated on explicit user approval. [Active ledger](bot-balance-night2-ledger.md): Cave timing/Jungle first, then continuous T3 entry if qualified. Luna operator spawned; no gameplay balance edits authorized overnight.
+Status: Night2-A completed6/6 boss wins with safe tails (Cave control2/2, reactive2/2, Jungle2/2). Spirit now has independent candidate wins on all seven T2 bosses; this does not prove consistent or continuous progression. [Active ledger](bot-balance-night2-ledger.md): Luna dispatched one continuous Plains→Forest→Desert→T3 bridge. No gameplay balance edits authorized overnight.
 V1j's original capacity stop is historical; both rerun manifests completed and released their networks automatically. [Lifecycle](bot-experiment-resource-lifecycle.md).
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.

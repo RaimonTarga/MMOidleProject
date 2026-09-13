@@ -29,6 +29,7 @@ top-level doc.
 | [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Activated Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
 | [briefs/bot-balance-night2-ledger.md](briefs/bot-balance-night2-ledger.md) | Active overnight deadline, packet accounting, source audit and strategy evidence. |
 | [briefs/bot-balance-night2-a-operator-packet.md](briefs/bot-balance-night2-a-operator-packet.md) | Night 2 packet A: Cave Brace timing and Jungle Hamstring feasibility. |
+| [briefs/bot-balance-night2-a-report.md](briefs/bot-balance-night2-a-report.md) | Night 2 packet A execution: four Cave timing cases and two Jungle Hamstring cases, with terminal evidence and release hashes. |
 | [briefs/bot-balance-night2-b-operator-packet.md](briefs/bot-balance-night2-b-operator-packet.md) | Night 2 conditional continuous three-seal bridge and strict earned T3 handoff. |
 | [briefs/bot-balance-v1j-assessment.md](briefs/bot-balance-v1j-assessment.md) | Mountain feasibility, fragile Swamp outcomes and damage-type mitigation hypotheses. |
 | [briefs/bot-balance-v1k-operator-packet.md](briefs/bot-balance-v1k-operator-packet.md) | Eight runs: Swamp armor comparison, Cave/Desert coverage and bounded post-clear observation. |

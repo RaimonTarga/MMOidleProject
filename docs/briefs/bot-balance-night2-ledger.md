@@ -2,7 +2,7 @@
 
 Activated 2026-09-13 21:04:42 UTC on explicit user approval. Deadline 2026-09-14 05:04:42 UTC; reserve final30 minutes. Ceilings: eight hours,20 gameplay cases,four frozen packets,one Luna operator and one active manifest. No gameplay balance edits. Astra prepares/interprets; Luna operates.
 
-Status: preparing packet A, six cases (Cave4, Jungle2). No new manifest launched yet. Luna read-only audit passed: all24 V1k summary/events/deaths hashes, three manifests/cohort summaries/receipts match; all three supervisors completed and released networks absent. Docker services healthy; host drive about27 GB free. Retain volumes/artifacts. Initial source `dc41eb93f3c920aad1c5681c0b52c87b873a5417`.
+Status: Luna operating packet A, six declared cases (Cave4, Jungle2), frozen revision `14bda8be14f067654f305e8a10a7179ccf4eab22`, tree `81f7064241dc7797fe550ec569b7897e04133d57`. Cave manifest `20260913t211850z-spirit-cave-control-t2-night2`; Jungle manifest `20260913t214400z-spirit-jungle-hamstring-t2-nig`. Await terminal report before judging results. Luna read-only audit passed: all24 V1k summary/events/deaths hashes, three manifests/cohort summaries/receipts match; all three supervisors completed and released networks absent. Docker services healthy; host drive about27 GB free at setup. Retain volumes/artifacts. Initial source `dc41eb93f3c920aad1c5681c0b52c87b873a5417`.
 
 ## Source and evidence audit
 
@@ -20,6 +20,15 @@ Jungle: escape barrier7% of3625HP =253.75,3s flee,210 base speed,0.30 speed per 
 
 | Packet | Planned cases | Started | Terminal | State |
 |---|---:|---:|---:|---|
-| A Cave timing + Jungle | 6 | 0 | 0 | Preparation |
+| A Cave timing + Jungle | 6 | 6 | 6 | Completed; all boss wins and safe tails, both networks released |
+| B continuous bridge | 1 | Await report | Await report | Dispatched to Luna22:02 UTC |
+
+Bridge preparation source `8ebfbbada901b65bde5e65834c7a7961c4cc1d4f`, tree `e19354beaeb761591748c37166bd4b8b067b5222`: ordinary full-HP/no-DoT recovery, first-death stop before respawn, cumulative failed-seal prerequisites, strict T3 import preserving the earned unspent branch point. Shared converter/validator changes are dev harness support, not gameplay balance. Full typecheck, bot preflight, focused T3 server bootstrap and final bot typecheck passed. Packet B remains conditional on review; no independent T2 snapshots are merged.
 
 Next decision after A: continuous Plains→Forest→Desert→T3 bridge using one original checkpoint, without granting or merging seals. T3 Volcano/Tundra high outgoing damage and low mob eHP remain separate concerns. No gameplay proposal applied.
+
+## A review / B dispatch
+
+[A report](bot-balance-night2-a-report.md) verified: all24 run artifact hashes plus both manifests/cohorts/release receipts match. Cave control2/2 and reactive2/2, Jungle2/2; every final snapshot231/231HP and incomingDoT0. Corrected whole-run versus boss-window telemetry counts. Candidate Brace is599–602ms before three of six eruptions per case; all24 Cave boss slams still land. Controls also succeed, so no causal survival ranking or claim that Rune timing solved Cave. This closes narrow Spirit candidate coverage of all seven T2 bosses across independent runs; consistency and class-wide progression are not established.
+
+Dispatch B at22:02 UTC against exact8ebfbbad/treee19354be above. One first-death-bounded continuous bridge. Next useful question is composed progression; no further Cave comparison tonight. If B earns entry, prepare small range/access reference before Volcano/Tundra probes. Counters: two packets dispatched, seven cases allocated; six terminal. Five-plus hours remain within the original hard deadline.
