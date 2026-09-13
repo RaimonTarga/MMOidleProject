@@ -5,6 +5,8 @@ Status: V1h completed: Cave8/8 and current Mountain2/2; Spirit reached GM72, whi
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
+Reusable strategy reasoning: [theorycrafting reference](bot-balance-theorycrafting-reference.md), reviewed September 13 against `99391c5` with a concurrent control-change caveat. It corrects the human Plains loadout timeline and records encounter-specific gear, ability and RP hypotheses for selection after V1i; it does not amend the frozen packet.
+
 ## Objective and authority
 
 Establish expert-prepared solo viability. Cover every boss and establish a viable
