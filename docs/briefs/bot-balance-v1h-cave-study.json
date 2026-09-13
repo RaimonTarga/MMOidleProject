@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "question": "On the current Cave boss, does absorb recovery improve dual-Guard survival, and does adding Brace improve that candidate further?",
+  "factor": "route",
+  "arms": [
+    { "id": "expose-wind", "route": "striker-campaign-night-cave-t1", "policy": "intended" },
+    { "id": "dual-swamp", "route": "striker-campaign-cave-dual-guard-t1", "policy": "intended" },
+    { "id": "dual-cave", "route": "striker-campaign-cave-dual-cave-charm-t1", "policy": "intended" },
+    { "id": "triple-cave", "route": "striker-campaign-cave-triple-cave-charm-t1", "policy": "intended" }
+  ]
+}

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { CAMPAIGN_CAVE_RECOVERY_ROUTES } from "./campaignOvernight";
 import { CAMPAIGN_NIGHT_KIT, CAMPAIGN_NIGHT_BOSSES, CAMPAIGN_NIGHT_SWAMP_DUAL_GUARD, CAMPAIGN_CAVE_DUAL_GUARD } from "./campaignOvernight";
 import { buildRP } from "../loadout/loadout";
 import { runeBudgetForGlobalMastery } from "@mmo-idle/shared";
@@ -20,6 +21,19 @@ assert(caveDualBuild.type === "configureBuild");
 assert.equal(buildRP(caveDualBuild.build).total, 16);
 assert.deepEqual(caveDualBuild.build.runeRules, dualBuild.build.runeRules);
 assert.equal(CAMPAIGN_CAVE_DUAL_GUARD.steps.filter(s => s.type === "attemptBoss").length, 1);
+for (const [index, candidate] of CAMPAIGN_CAVE_RECOVERY_ROUTES.entries()) {
+  const configs = candidate.steps.filter(s => s.type === "configureBuild");
+  const final = configs.at(-1)!;
+  assert.equal(buildRP(final.build).total, index === 0 ? 16 : 21);
+  assert.deepEqual(final.build.runeRules, caveDualBuild.build.runeRules);
+  assert.deepEqual(final.build.abilities.guards, index === 0 ? ["second-wind", "cleanse"] : ["second-wind", "brace", "cleanse"]);
+  const craftIndex = candidate.steps.findIndex(s => s.type === "craft" && s.recipeIds.includes("cave-charm-t1"));
+  const upgradeIndex = candidate.steps.findIndex(s => s.type === "upgrade" && s.definitionId === "cave-charm-t1");
+  assert(craftIndex >= 0 && upgradeIndex > craftIndex, "new recovery is earned before upgrading");
+  assert(candidate.steps.some(s => s.type === "assert" && s.condition.type === "itemAtLeastPlus" && s.condition.definitionId === "cave-charm-t1" && s.condition.plus === 5));
+  if (index === 1) assert(candidate.steps.some(s => s.type === "learnAbility" && s.abilityId === "brace" && s.attune === false));
+  assert.deepEqual(candidate.steps.at(-1), { type: "attemptBoss", biomeGroup: "cave", tier: 1, maxAttempts: 1, label: `v1h:${index === 0 ? "dual" : "triple"}-cave-charm:attempt` });
+}
 for (const night of CAMPAIGN_NIGHT_BOSSES) {
   assert.equal(night.startsFromTierEntry, 1);
   const attempts = night.steps.filter(s => s.type === "attemptBoss");

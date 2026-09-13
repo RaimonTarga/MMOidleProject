@@ -1,6 +1,33 @@
 import type { Route, RouteStep } from "../route/types";
 import { CAMPAIGN_PLAINS_T1_BUILD } from "./campaignBoss";
 
+/** V1h isolates absorb recovery, then adds burst mitigation without dropping movement rules. */
+export function caveRecoveryRoute(tripleGuard: boolean): Route {
+  const tag = tripleGuard ? "triple-cave-charm" : "dual-cave-charm";
+  const build = structuredClone(CAMPAIGN_PLAINS_T1_BUILD);
+  build.abilities = { techniques: [], guards: tripleGuard
+    ? ["second-wind", "brace", "cleanse"] : ["second-wind", "cleanse"] };
+  return {
+    id: `striker-campaign-cave-${tag}-t1`, version: "1.0.0", classRoot: "cadence-root",
+    startsFromTierEntry: 1, suppressTransitCombat: true,
+    description: `Cave ${tag}: earn Pulse Stone +5, verify the kit, then one ordinary dungeon cycle.`,
+    steps: [
+      ...structuredClone(entryGates), ...checkItem("mountain-vest-t1", false),
+      { type: "configureBuild", build: structuredClone(CAMPAIGN_PLAINS_T1_BUILD), label: `v1h:${tag}:preparation` },
+      { type: "craft", recipeIds: ["cave-charm-t1"], farmAt: { kind: "biome", biomeGroup: "cave", tier: 1 } },
+      { type: "upgrade", definitionId: "cave-charm-t1", toPlus: 5, farmAt: { kind: "biome", biomeGroup: "cave", tier: 1 } },
+      ...(tripleGuard ? [{ type: "learnAbility" as const, recipeId: "ability-recipe-brace", abilityId: "brace", slot: "guard" as const, attune: false,
+        farmAt: { kind: "biome" as const, biomeGroup: "mountain", tier: 1 } }] : []),
+      { type: "equip", definitionIds: ["mountain-vest-t1", "cave-charm-t1"] },
+      ...checkItem("mountain-vest-t1"), ...checkItem("cave-charm-t1"),
+      { type: "configureBuild", build, label: `v1h:${tag}:build` },
+      { type: "milestone", id: `v1h:${tag}:ready` },
+      { type: "attemptBoss", biomeGroup: "cave", tier: 1, maxAttempts: 1, label: `v1h:${tag}:attempt` },
+    ],
+    completion: { type: "bossCleared", biomeGroup: "cave", tier: 1 }, milestones: [],
+  };
+}
+
 const importedKit = ["chaotic-axe", "plains-vest-t1", "swamp-charm-t1", "plains-boots-t1"];
 const checkItem = (definitionId: string, equipped = true): RouteStep[] => [
   ...(equipped ? [{ type: "assert" as const, condition: { type: "equipped" as const, definitionId } }] : []),
@@ -11,6 +38,8 @@ const entryGates: RouteStep[] = [
   { type: "assert", condition: { type: "globalMasteryAtLeast", value: 30 } },
   ...importedKit.flatMap(id => checkItem(id)),
 ];
+
+export const CAMPAIGN_CAVE_RECOVERY_ROUTES = [caveRecoveryRoute(false), caveRecoveryRoute(true)];
 
 /** Earn the one missing endgame armor upgrade once, before independent probes. */
 export const CAMPAIGN_NIGHT_KIT: Route = {
