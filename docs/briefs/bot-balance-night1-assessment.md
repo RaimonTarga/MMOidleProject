@@ -58,20 +58,45 @@ Cave still lack current campaign results; broader class coverage remains open.
 T2's local readiness evidence survives, but Night 1 added no T2 progression or
 boss evidence. Neither tier has comprehensive balance acceptance.
 
-The user reports the formerly nonfunctional bosses are now repaired. Current
-working-tree changes corroborate new Mountain/Jungle/Volcano mechanic wiring,
-including T1/T2 changes, but are not part of Night 1's frozen source. Do not
+The user reports the formerly nonfunctional bosses are now repaired. The other
+agent committed the changes during preparation as `3426063e55954c162c92aaa499903c356fa3b96d`,
+including Mountain/Jungle/Volcano mechanic wiring and T1/T2 changes. They are not
+part of Night 1's frozen source. Do not
 continue treating those mechanics as known broken, or claim their live balance
 is validated by old runs. **Low TTK / insufficient ordinary-mob eHP in T3 and T4
 remains an open balance issue**, deferred for a later balance pass. No values are
 changed here.
 
-[V1f](bot-balance-v1f-operator-packet.md) deliberately uses Night 1's combat
-baseline plus the entry-observation repair, excluding concurrent uncommitted
-mechanics/evolution/UI work. This isolates the repair and completes interrupted
-T1 questions. Results must be labeled historical-baseline diagnostics. Afterward,
-freeze and qualify the integrated mechanic changes before current-version T2
-progression/boss coverage; T3/T4 low TTK remains separately flagged.
+[V1f](bot-balance-v1f-operator-packet.md) now freezes that integrated commit,
+which also contains the entry-observation repair. Three runtime entry checks
+precede the six Swamp comparisons and four T1 boss probes. The two Swamp arms
+share the same current source; Night 1 remains historical context, not pooled
+replication or a single-variable before/after experiment. This supersedes the
+initial draft's old-source plan now that the fixes have a stable commit. T2
+progression/boss coverage follows interpretation; T3/T4 low TTK remains flagged.
 
-Docker's Linux engine was unavailable during preparation. No experiment was
-created or launched; runtime entry and network capacity remain operator gates.
+Docker's Linux engine was initially unavailable; the user started it during
+preparation. The first capacity check admitted two bridges and exhausted the
+default pools on the third. Both temporary probes were removed. Astra verified
+Night 1 A was completed, its exact network empty and its two storage containers
+already stopped, then removed only `mmoexp-8b4337476994-network`. Containers,
+PostgreSQL/Redis volumes and original artifacts were retained. The experiment
+root contains `v1f-network-preparation.json`, with retained container/mount/network
+metadata. Recreate its isolated network and original aliases before any future
+historical-service restoration; that is outside V1f.
+
+A second check created three simultaneous temporary bridge networks successfully
+and removed all three. Capacity is verified at preparation time; the operator
+must recheck against drift. No experiment was created or launched.
+
+## Final validation
+
+On the exact integrated frozen revision `3426063e55954c162c92aaa499903c356fa3b96d`,
+a clean detached checkout at
+`C:\Users\osaif\AppData\Local\mmo-idle\validation\v1f-integrated` passed
+`pnpm bot:preflight`, full `pnpm typecheck` including bench types, and
+`pnpm test` (**194/194 files**). This includes the other agent's new boss and
+equipped-evolution regression suites. Pure plan construction checked the 3/6/4
+phase counts, alternating Swamp order and 156-minute total worker ceilings.
+These are code/harness checks; V1f's isolated runtime entries and encounters
+remain unexecuted by Astra.

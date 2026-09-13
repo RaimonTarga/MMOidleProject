@@ -37,7 +37,7 @@ execution instructions. Current source and explicit user direction take preceden
 
 Q0 is specified in [the qualification packet](bot-balance-q0-template-qualification.md).
 Q1 is specified in [the operator packet](bot-balance-q1-operator-packet.md); no large matrix or automatic downstream queue.
-T3/T4 remain outside V1f. Update from the user on September 13: formerly nonfunctional boss mechanics are repaired; do not keep that as an active known defect. Low TTK / insufficient ordinary-mob eHP remains an open T3/T4 balance issue for a later pass. Concurrent mechanic changes require a new frozen-source qualification before current-version conclusions.
+T3/T4 remain outside V1f. Update from the user on September 13: formerly nonfunctional boss mechanics are repaired; do not keep that as an active known defect. Low TTK / insufficient ordinary-mob eHP remains an open T3/T4 balance issue for a later pass. V1f qualifies the integrated mechanic source committed as `3426063e`.
 
 ## Template shortlist and current RP audit
 
@@ -150,7 +150,7 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 - Latest result: V1d completed 105/105 steps in 18m42s with one natural transit death recovered. [Assessment and inherited-lessons review](bot-balance-v1d-assessment.md).
 - Latest result: V1e completed in 213.919 seconds with one authoritative Plains clear, zero deaths and 46.548 seconds of boss combat. This demonstrates prepared Striker possibility, not reliability, other-class viability or canonical pacing. [Assessment](bot-balance-v1e-assessment.md).
 - Latest result: [Night 1](bot-balance-night1-report.md) earned Mountain armor +5, then produced one valid Swamp Expose/Cleanse loss and one dual-Guard victory. Third entry failed HP/buff checks; fourth case interrupted, all remaining slots unstarted. [Assessment and count clarification](bot-balance-night1-assessment.md). No new T2 results.
-- Next action: Luna executes [V1f](bot-balance-v1f-operator-packet.md) on `9488d2715f1f5cd65f09a69e7c9ec6f6070884c0`: three entry repetitions, six Swamp comparisons, four T1 coverage probes; 13 runs, one worker, 3h30 total cap. Reuse Night 1's earned kit. This is prior combat source plus atomic reset-view validation; concurrent mechanic repairs are excluded. Prepared, not launched; Docker and capacity are runtime prerequisites.
+- Next action: Luna executes [V1f](bot-balance-v1f-operator-packet.md) on `3426063e55954c162c92aaa499903c356fa3b96d`: three entry repetitions, six Swamp comparisons, four T1 coverage probes; 13 runs, one worker, 3h30 total cap. Reuse Night 1's earned kit. This integrated source includes the other agent's committed mechanic fixes and atomic reset-view validation. Prepared, not launched; Docker and capacity are runtime prerequisites.
 - Historical Q2d Spirit, Apprentice and Squire passed. Apprentice died once and returned; Spirit's Q2c pre-worker failure remains separate. [Overall readiness state](bot-balance-q2d-assessment.md).
 - Historical Q2c Conduit/Slinger passed and Spirit stopped before startup due to Docker address exhaustion. [Assessment and infrastructure repair](bot-balance-q2c-assessment.md).
 - Historical Q2b `20260912t170727z-striker-campaign-local-behavio`: Striker completed, no deaths or unwanted transit; Sweep 8 kills/8 activations, Expose 5 kills/6 activations. Readiness only.

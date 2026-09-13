@@ -2,10 +2,18 @@
 
 2026-09-13. Astra prepares and interprets; Luna operates. See the
 [Night 1 assessment](bot-balance-night1-assessment.md) for evidence and scope.
-Frozen revision: `9488d2715f1f5cd65f09a69e7c9ec6f6070884c0`.
-This is the old combat baseline plus entry instrumentation repair. Concurrent
-boss mechanic/evolution changes are excluded. Do not claim current-version
-balance acceptance from these runs.
+Frozen revision: `3426063e55954c162c92aaa499903c356fa3b96d`.
+Use this revised packet from the campaign docs checkout; the earlier packet
+embedded in that source commit references `9488d271` and is superseded.
+This includes the committed boss mechanic/evolution fixes and entry observation
+repair. All phases use this same integrated revision. Night 1 ran older combat
+source: preserve its results separately, not as additional replicas or a clean
+before/after measurement of only the entry repair. No broad balance acceptance
+claim follows from this small candidate study.
+
+Astra validation on this exact source: bot preflight, full typecheck and
+194/194 tests passed in a clean detached checkout. Three-network capacity was
+verified; no experiment was created or launched by Astra.
 
 ## Limits and prerequisites
 
@@ -17,7 +25,8 @@ At the deadline stop this exact active experiment and report interrupted and
 unstarted slots separately from gameplay failures.
 
 Run `pnpm bot:preflight` on the exact clean frozen revision first. Docker's Linux
-engine must be running; it was unavailable during Astra's preparation. Confirm
+engine must be running. Astra verified three simultaneous bridge slots after
+releasing one completed experiment's empty network, with storage retained. Confirm
 capacity for three isolated bridge networks before creating experiments. Luna
 may create three uniquely named temporary empty bridge networks simultaneously
 and remove only those exact probe networks afterward. Record IDs and outcome.
@@ -43,7 +52,7 @@ All original canonical/eligibility taints remain.
 ## A — repeat the exact earned entry (3 runs, 2 minutes each)
 
 ```powershell
-pnpm experiment:create --revision=9488d2715f1f5cd65f09a69e7c9ec6f6070884c0 --routes="striker-campaign-night-kit-t1" --tierEntrySnapshot="$kitSnapshot" --mode=smoke-isolated --rewardMultiplier=25 --workers=1 --count=3 --policies=intended --maxRunMs=120000
+pnpm experiment:create --revision=3426063e55954c162c92aaa499903c356fa3b96d --routes="striker-campaign-night-kit-t1" --tierEntrySnapshot="$kitSnapshot" --mode=smoke-isolated --rewardMultiplier=25 --workers=1 --count=3 --policies=intended --maxRunMs=120000
 ```
 
 The input already owns Mountain Vest +5; the existing upgrade step should be
@@ -58,7 +67,7 @@ stops the program for diagnosis. These are entry checks, not balance evidence.
 Only after all A cases pass:
 
 ```powershell
-pnpm experiment:create --revision=9488d2715f1f5cd65f09a69e7c9ec6f6070884c0 --study="docs/briefs/bot-balance-night1-swamp-study.json" --tierEntrySnapshot="$kitSnapshot" --mode=smoke-isolated --rewardMultiplier=25 --workers=1 --count=3 --maxRunMs=900000
+pnpm experiment:create --revision=3426063e55954c162c92aaa499903c356fa3b96d --study="docs/briefs/bot-balance-night1-swamp-study.json" --tierEntrySnapshot="$kitSnapshot" --mode=smoke-isolated --rewardMultiplier=25 --workers=1 --count=3 --maxRunMs=900000
 ```
 
 Require order expose, dual, dual, expose, expose, dual. Same Axe +5, Mountain
@@ -76,7 +85,7 @@ After B terminates without infrastructure/treatment failure, including valid
 gameplay losses:
 
 ```powershell
-pnpm experiment:create --revision=9488d2715f1f5cd65f09a69e7c9ec6f6070884c0 --routes="striker-campaign-night-forest-t1,striker-campaign-night-mountain-t1,striker-campaign-night-cave-t1,striker-campaign-night-plains-t1" --tierEntrySnapshot="$kitSnapshot" --mode=smoke-isolated --rewardMultiplier=25 --workers=1 --count=1 --policies=intended --maxRunMs=900000
+pnpm experiment:create --revision=3426063e55954c162c92aaa499903c356fa3b96d --routes="striker-campaign-night-forest-t1,striker-campaign-night-mountain-t1,striker-campaign-night-cave-t1,striker-campaign-night-plains-t1" --tierEntrySnapshot="$kitSnapshot" --mode=smoke-isolated --rewardMultiplier=25 --workers=1 --count=1 --policies=intended --maxRunMs=900000
 ```
 
 One independent probe per boss, each from the same original kit. Existing routes
@@ -112,5 +121,6 @@ Do not invent missing buff/source/phase or healing attribution.
 Compare all six Swamp slots, including invalid/interrupted/unstarted outcomes.
 Report per-arm successes among valid attempts and the complete dispositions;
 do not rank only survivors by time. No balance edits, T2/T3/T4 work or extra runs.
-Next current-version work must first freeze the concurrent mechanic repairs.
+Next work can expand current-version T2 progression and boss coverage after
+interpreting these entry and T1 results.
 T3/T4 low TTK remains an open balance issue, not a known broken-mechanics claim.
