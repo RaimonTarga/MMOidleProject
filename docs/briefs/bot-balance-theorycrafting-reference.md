@@ -6,6 +6,8 @@ Source anchor: `99391c589fe7828e90de780ec95be6d1beb70100`. Concurrent uncommitte
 
 ## Decision and evidence boundaries
 
+V1j follow-up: [assessment](bot-balance-v1j-assessment.md) records Mountain2/2 and fragile Swamp kills. The important new hypothesis is damage-type mitigation before additional recovery tuning: Bog Wrappings' DoT resistance versus Cave armor, with the charm fixed. Post-kill poison/debt survival is a separate outcome. V1k also opens Cave/Desert; it does not rank the V1j charms or claim class-wide optimal builds.
+
 V1i follow-up: [assessment](bot-balance-v1i-assessment.md) accepts the narrow Axe Plains/Forest feasibility results, closes two resource blocks and selects Mountain plus a Swamp charm comparison. The next step tests principles on different encounters rather than repeatedly optimizing the human Plains example. No energy/delivery telemetry supports a causal explanation for the Needle losses. Monster-control changes are now committed in `bab111f9`; V1j uses a new frozen source.
 
 Build around the encounter's damage distribution, target behavior and recovery opportunities. A generic defensive package is a useful control, but should not remain the presumed best build. The user's Plains playtest demonstrates why: flat plating, recovery on kill, speed on kill and automatic kiting form a coherent solution to an add encounter.

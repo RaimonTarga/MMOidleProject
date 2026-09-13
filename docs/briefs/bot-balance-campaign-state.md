@@ -1,8 +1,8 @@
 # Bot balance campaign state
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: V1i complete: Striker/Squire resource blocks resolved; Spirit T2 Plains Axe2/2, Needle0/2, Forest Axe2/2. V1j prepared: Mountain coverage and Swamp barrier-versus-Recovery comparison, six runs.
-V1j's first session stopped before create due to Docker subnet exhaustion. Capacity is now recovered; six slots remain unstarted. [Lifecycle fix](bot-experiment-resource-lifecycle.md): terminal supervisors release networks while retaining evidence and volumes. Restart with a fresh clock and updated host tooling per the packet.
+Status: V1j complete: Spirit Mountain2/2; Swamp each charm1/2 with post-kill survival concerns. Earlier Plains Axe2/2 and Forest2/2 remain supported candidates. V1k prepared: Swamp armor comparison, Cave/Desert coverage and post-clear observation, eight runs.
+V1j's original capacity stop is historical; both rerun manifests completed and released their networks automatically. [Lifecycle](bot-experiment-resource-lifecycle.md).
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -179,3 +179,7 @@ See [V1g assessment](bot-balance-v1g-assessment.md) and [V1h operator packet](bo
 ## V1i reviewed / V1j prepared
 
 [Assessment](bot-balance-v1i-assessment.md), [V1j packet](bot-balance-v1j-operator-packet.md). Frozen source `6365651b` includes the monster-control correction. Expand encounter coverage while testing a transferable defensive distinction: burst buffering versus sustained Recovery access. Two Mountain and four Swamp cases independently reuse the original Spirit prepared input. No class-wide weapon ranking, canonical evidence promotion, gameplay changes or launched manifest. Remaining T2 bosses and broader class paths follow after these results; T3/T4 balance stays deferred.
+
+## V1j reviewed / V1k prepared
+
+[Assessment](bot-balance-v1j-assessment.md), [V1k packet](bot-balance-v1k-operator-packet.md). Frozen source `a419a7ff`. Swamp losses identify poison as the lethal pressure; test Bog Wrappings against Cave armor with recovery/abilities fixed. Add Cave triple-Guard and Desert Cleanse candidates. A boss kill and surviving its remaining effects are now separate reported outcomes. Eight independent cases reuse original Spirit input; no manifest launched. Jungle remains after this coverage pass, then one continuous three-seal/ascent route can open limited T3 exploration without requiring every class/boss combination. T3/T4 low mob eHP remains deferred.
