@@ -473,8 +473,10 @@ export function applyTierEntryProfile(
   // The next simulation tick may damage a player in Clearing before its 5 Hz
   // broadcast. Validate the reset at its actual boundary, not a later tick.
   // Clone because view composers may retain arrays/maps from the live entity.
+  const spawnView = composePlayerView(player);
+  if (!spawnView) return fail('Applied tier entry has no observable player view.');
   return { success: true, profileId: profile.id, targetTier: profile.targetTier,
-    spawnView: structuredClone(composePlayerView(player)) };
+    spawnView: structuredClone(spawnView) };
 }
 
 export function equipPhaseTester(world: World, player: PlayerEntity): GameActionResult {
