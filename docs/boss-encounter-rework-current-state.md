@@ -334,10 +334,17 @@ the lane at base player speed, so no retuning can quietly remove the answer.
 
 ### Cave — endurance / defensive erosion (T1–T3)
 Every phase is the corrosion going further:
-- **T1** `obsidian-broodmother`: ordinary hits shave one stack of plating; the
-  telegraphed **Breach** (`monsterAbilities`, `plating-shred` action) shaves a larger
-  dose of the SAME corrosion. One resource at two rates, so the lesson is "read the
-  cast", not "learn a second keyword". 50% → `empower-shred maxStacksAdd: 3`.
+- **T1** `obsidian-broodmother`: corrosion is applied only by the telegraphed
+  **Breach** (`monsterAbilities`, `plating-shred` action), two stacks per resolved
+  cast. Ordinary hits deal damage without applying corrosion. Each stack removes
+  one plating; base cap six, rising to nine at 50% HP. Cleanse remains supported.
+  **User-approved nerf 2026-09-13:** move the package from `appliesPlatingShred`
+  to `castsPlatingShred`; retain Breach's damage, cast time, cooldown and phase.
+  T2/T3 on-hit corrosion is unchanged. This follows human feedback and six failed
+  V1g Cave attempts; post-change beatability remains to be tested.
+  A second human check prompted reducing the initial three-stack nerf to two.
+  The bestiary now explicitly displays the initial six-stack cap and nine-stack
+  cap at half HP, derived from the authored phase data.
   **Converted 2026-09-04**; the circular Obsidian Slam it replaced was a generic
   damage circle that taught nothing about erosion and duplicated the question
   Mountain's lane asks better. `chargeOnAggro` removed with it.

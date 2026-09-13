@@ -16,7 +16,9 @@ Best justified candidate does not mean proven global optimum.
 Astra selects questions, treatments, checkpoints, replication and stopping rules,
 interprets reports, and proposes design changes. Astra implements templates, profiles, routes and assertions. Luna operates
 approved work, preserves artifacts and reports facts. Gameplay balance changes
-require explicit user approval. No balance changes are approved in this campaign.
+require explicit user approval. On September 13 the user approved removing T1
+Cave corrosion from ordinary hits and retaining two or three stacks on Breach;
+the follow-up human playtest requested two stacks, now implemented. Other balance changes still require approval.
 Technical defects and design changes must be reported separately.
 
 User-supplied Class Route & Build Baselines and Runic Point Allocation Reference
@@ -143,7 +145,7 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 - Validated: shared-cost projection and source-ordered build/acquisition tests; see Q0 report for executed checks.
 - Current runtime qualification: Q1 six profiles passed configuration on `1d3c710f`; Q2b/Q2c/Q2d all six completed both local behavior windows on `755b2a36`. Slinger and Apprentice supplied death/return evidence. Later T1 Striker boss results are recorded below; T2 boss coverage remains open.
 - New confirmed balance signals: none. Bot executor defects: death notification consumed before live respawn; suppressed-combat attackers postponed navigation recovery. Repaired for V1d; one natural death recovered and preparation completed.
-- Approved gameplay changes: none.
+- Approved gameplay change, 2026-09-13: T1 Cave corrosion only on Breach, two stacks per cast after a follow-up human test found three still too strong; ordinary attacks apply none. Base cap six and half-HP cap nine retained and displayed explicitly in the bestiary. No T2/T3 change. Await the user's playtest before preparing the next Cave experiment; beatability remains unvalidated.
 - Historical operation: V1a `20260912t194203z-striker-campaign-plains-boss-t` reached GM30, timed out while upgrading Plains Vest +5, and made zero boss attempts. Supervisor EPERM left stale running state; worker timeout is durable. [Assessment](bot-balance-v1a-assessment.md).
 - Latest result: V1b finalized normally with a preparation timeout, Axe +5 and zero boss attempts. [Assessment](bot-balance-v1b-assessment.md). The earlier V1a lifecycle remains invalid.
 - Latest result: V1c failed its supplier arrival wait after a transit death. Two ordinary deaths overall, no final kit or boss encounter. [Assessment and executor repair](bot-balance-v1c-assessment.md).
@@ -151,7 +153,7 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 - Latest result: V1e completed in 213.919 seconds with one authoritative Plains clear, zero deaths and 46.548 seconds of boss combat. This demonstrates prepared Striker possibility, not reliability, other-class viability or canonical pacing. [Assessment](bot-balance-v1e-assessment.md).
 - Latest result: [Night 1](bot-balance-night1-report.md) earned Mountain armor +5, then produced one valid Swamp Expose/Cleanse loss and one dual-Guard victory. Third entry failed HP/buff checks; fourth case interrupted, all remaining slots unstarted. [Assessment and count clarification](bot-balance-night1-assessment.md). No new T2 results.
 - Latest result: [V1f assessment](bot-balance-v1f-assessment.md): atomic entry qualified; dual Guard is the preferred prepared Striker Swamp candidate (3/3 versus 0/3). Gnarled Greatbear and Crag Behemoth killed; Cave retained 30.63% HP after a valid death. Cave's `bot_partial` did not justify stopping Plains. Guardian/boss identity and range-metric corrections are recorded in the assessment. No T2 execution evidence added.
-- Next action: Luna executes [V1g](bot-balance-v1g-operator-packet.md) on `d836321279ef3fa4927f293326a5483928f54378`: one Plains probe, six Cave comparisons, six independent T2 progression screens; 13 runs, one worker, 5h30 total cap. Reuse the earned T1 kit for A/B; synthetic clean T2 entry for C. No repeated preparation cohort or gameplay tuning. Prepared, not launched.
+- Active operation: V1g is frozen on `d836321279ef3fa4927f293326a5483928f54378`. Cave phase `20260913t090242z-striker-campaign-night-cave-t1` is terminal with six `bot_partial` losses. T2 phase `20260913t093354z-striker-t2-progression-squire` was running when the user approved the Cave nerf. Leave this independent T2 screen running; do not alter images/manifests or mix pre-nerf Cave evidence with later results. After its final report, qualify the patched source and repeat the bounded Cave comparison with the same earned input.
 - Historical Q2d Spirit, Apprentice and Squire passed. Apprentice died once and returned; Spirit's Q2c pre-worker failure remains separate. [Overall readiness state](bot-balance-q2d-assessment.md).
 - Historical Q2c Conduit/Slinger passed and Spirit stopped before startup due to Docker address exhaustion. [Assessment and infrastructure repair](bot-balance-q2c-assessment.md).
 - Historical Q2b `20260912t170727z-striker-campaign-local-behavio`: Striker completed, no deaths or unwanted transit; Sweep 8 kills/8 activations, Expose 5 kills/6 activations. Readiness only.

@@ -249,12 +249,9 @@ export const bossMonsterEntriesT1 = [
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
     targeting: { prefersPlayers: true },
-    appliesPlatingShred: { platingPerStack: 1, maxStacks: 6 },
-    // CAVE T1 = "learn what erodes you". Ordinary hits shave one stack of plating;
-    // the telegraphed BREACH shaves a larger dose of the SAME corrosion. One
-    // resource at two rates, so the lesson is "read the cast", not "learn a second
-    // keyword" — and it is the legible version of the burrow-and-erupt the T2/T3
-    // Cave bosses evolve it into.
+    castsPlatingShred: { platingPerStack: 1, maxStacks: 6 },
+    // T1 corrosion is carried only by the visible Breach cast. Ordinary attacks
+    // deal damage without eroding plating; a completed Breach adds two stacks.
     //
     // REMOVED with the 2026-09-04 redesign: the circular Obsidian Slam (a generic
     // damage circle that taught nothing about erosion, and duplicated the question
@@ -266,7 +263,7 @@ export const bossMonsterEntriesT1 = [
         // Damage is deliberately modest — the corrosion is the payload. The old
         // slam's 1.8x is gone with it; this beat is a defensive event, not a spike.
         { type: 'hit', multiplier: 1.1 },
-        { type: 'plating-shred', stacks: 3 },
+        { type: 'plating-shred', stacks: 2 },
       ],
     }],
     // CAVE EXAM = "your shell erodes". At 50% the corrosion deepens: three more

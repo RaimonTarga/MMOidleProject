@@ -1029,7 +1029,7 @@ export function runMonsterAttack(
   // capped, decaying stackDurationMs after the last hit (refreshed every hit).
   // A Cave boss phase ('empower-shred') deepens the same corrosion instead of
   // bolting on a second mechanic. An ordinary hit erodes by ONE stack; the
-  // telegraphed Breach ability applies a larger dose through the same helper.
+  // cast-only corrosion is configured separately and never enters this rider.
   if (def?.appliesPlatingShred && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     applyPlatingShredStacks(world, monster, target, def, 1);
   }

@@ -949,16 +949,26 @@ export function describeMonsterMechanics(
     });
   }
 
-  if (def.appliesPlatingShred) {
+  const corrosion = def.castsPlatingShred ?? def.appliesPlatingShred;
+  if (corrosion) {
+    let cap = corrosion.maxStacks;
+    const capChanges = (def.bossScript?.phases ?? []).flatMap(phase => {
+      const added = phase.actions.reduce((sum, action) =>
+        sum + (action.type === 'empower-shred' ? action.maxStacksAdd ?? 0 : 0), 0);
+      if (!added) return [];
+      cap += added;
+      return [`${cap} at ${fmtPct(phase.hpPct)} boss HP`];
+    });
     lines.push({
       id: 'plating-shred',
       icon: '◫',
       label: 'Corrosion',
       detail:
-        `Each hit permanently removes ${def.appliesPlatingShred.platingPerStack} plating for this encounter, ` +
-        `up to ${def.appliesPlatingShred.maxStacks} stacks. Cleansable.` +
-        (def.appliesPlatingShred.thresholdPoison
-          ? ` Reaching ${def.appliesPlatingShred.thresholdPoison.atStacks.join(' or ')} stacks applies ${def.appliesPlatingShred.thresholdPoison.label}.`
+        (def.castsPlatingShred ? 'Breach applies corrosion. Each stack removes ' : 'Each hit permanently removes ') +
+        `${corrosion.platingPerStack} plating for this encounter, ` +
+        `up to ${corrosion.maxStacks} stacks${capChanges.length ? ` initially, then ${capChanges.join(', then ')}` : ''}. Cleansable.` +
+        (corrosion.thresholdPoison
+          ? ` Reaching ${corrosion.thresholdPoison.atStacks.join(' or ')} stacks applies ${corrosion.thresholdPoison.label}.`
           : ''),
     });
   }

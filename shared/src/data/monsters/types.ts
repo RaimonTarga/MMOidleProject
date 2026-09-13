@@ -415,12 +415,7 @@ export type MonsterAbilityAction =
       knockback?: { distance: number };
     }
   /**
-   * BREACH — apply a larger dose of the caster's OWN `appliesPlatingShred`.
-   *
-   * Not a new mechanic: it moves the same corrosion resource the monster's ordinary
-   * hits move, just further in one telegraphed beat. A monster without
-   * `appliesPlatingShred` cannot author this, because there would be nothing for it
-   * to deepen.
+   * Apply corrosion using castsPlatingShred, or the on-hit package when present.
    */
   | { type: 'plating-shred'; stacks: number }
   | {
@@ -907,6 +902,8 @@ export interface MonsterDefinition {
       bypassBarrier?: boolean;
     };
   };
+  /** Corrosion available to cast actions only; does not add an ordinary-hit rider. */
+  castsPlatingShred?: MonsterDefinition['appliesPlatingShred'];
   /**
    * Tundra capstone — this monster's outgoing damage scales with the AMBIENT NODE RAMP
    * its target is carrying (`NodeFeatureSpec.ambientRamp`): +`perStackPct` per stack,

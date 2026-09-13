@@ -7,6 +7,10 @@ function assert(condition: boolean, message: string): void {
 }
 
 const playable = [...MONSTER_DATABASE.values()].filter((def) => def.biome !== 'testroom');
+const caveCorrosion = describeMonsterMechanics(MONSTER_DATABASE.get('obsidian-broodmother')!)
+  .find(line => line.id === 'plating-shred');
+assert(!!caveCorrosion?.detail.includes('6 stacks initially, then 9 at 50% boss HP'),
+  'Cave corrosion description must expose its phase-dependent cap');
 assert(Object.keys(BESTIARY_TEXT).length === playable.length, 'every playable monster should have authored bestiary text');
 
 const missingAbilityCoverage: string[] = [];

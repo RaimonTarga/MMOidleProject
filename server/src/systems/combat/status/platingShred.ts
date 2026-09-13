@@ -1,11 +1,8 @@
 /**
  * PLATING SHRED — the Cave lineage's corrosion, as one reusable application.
  *
- * Lifted out of `runMonsterAttack` so a telegraphed ability can apply a LARGER DOSE
- * of the same corrosion rather than a second, parallel mechanic. That is the whole
- * §5.3 Cave T1 shape: ordinary hits erode you a little, and a visible Breach erodes
- * you a lot — one resource, two rates, so the player learns to read the cast rather
- * than learning a new keyword.
+ * Cast-only and on-hit packages share stacking, caps and cleansing semantics.
+ * Ordinary-hit delivery is separately gated by appliesPlatingShred in combat.ts.
  *
  * Everything the inline version did is preserved: the `empower-shred` deepening is
  * written onto the LIVE stack before the increment (otherwise a raised ceiling only
@@ -38,7 +35,7 @@ export function applyPlatingShredStacks(
   def: MonsterDefinition | undefined,
   stacks: number,
 ): void {
-  const platingShred = def?.appliesPlatingShred;
+  const platingShred = def?.castsPlatingShred ?? def?.appliesPlatingShred;
   if (!platingShred) return;
 
   const deepen = monster.scriptsBoss?.shredOverride;

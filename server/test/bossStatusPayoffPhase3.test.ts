@@ -32,6 +32,7 @@ import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { updateBossPatterns } from '../src/systems/combat/ai/bossPatterns';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
+import { runMonsterAttack, updateCombat } from '../src/systems/combat/engine/combat';
 import { PLAYER_HARD_CONTROL_EFFECTS } from '../src/systems/combat/status/playerHardControl';
 import { FROZEN_EFFECT } from '../src/systems/classes/archetypes/dot/t3/core/constants';
 import { STUN_EFFECT } from '../src/systems/combat/status/stun';
@@ -412,14 +413,14 @@ function chill(player: PlayerEntity, stacks: number): void {
 
 {
   const broodmother = MONSTER_DATABASE.get('obsidian-broodmother');
-  assert(!!broodmother?.appliesPlatingShred, 'Cave T1 should corrode plating');
+  assert(!!broodmother?.castsPlatingShred && !broodmother.appliesPlatingShred, 'Cave T1 corrosion belongs only to casts');
   const breach = broodmother.monsterAbilities?.[0];
   assert(!!breach, 'Cave T1 should telegraph a Breach');
   const shred = breach.actions.find(action => action.type === 'plating-shred');
   assert(shred?.type === 'plating-shred', 'the Breach should apply plating shred');
   assert(
-    shred.stacks > 1,
-    'the Breach is a LARGER dose than an ordinary hit, or it teaches nothing',
+    shred.stacks === 2,
+    'the approved T1 Breach applies two stacks',
   );
   assert(
     broodmother.chargedAttack === undefined,
@@ -460,7 +461,7 @@ function chill(player: PlayerEntity, stacks: number): void {
   const player = world.attachPlayerEntity(playerSlices('shred-cap'), 'shred-cap');
   const monster = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 })!;
   const def = MONSTER_DATABASE.get('obsidian-broodmother')!;
-  const ceiling = def.appliesPlatingShred!.maxStacks;
+  const ceiling = def.castsPlatingShred!.maxStacks;
   setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, 1_000);
 
   applyPlatingShredStacks(world, monster, player, def, ceiling + 5);
@@ -470,4 +471,23 @@ function chill(player: PlayerEntity, stacks: number): void {
   );
 }
 
+// Actual attack/cast delivery: the Breach hit must not sneak in an extra stack.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('breach-only'), 'breach-only');
+  const monster = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 })!;
+  player.usesSkills.passives = {};
+  setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, 1000);
+  monster.hasAwareness.state = 'attacking';
+  const hp = player.hasHealth.hp;
+  runMonsterAttack(world, monster, player, 2000);
+  assert(player.hasHealth.hp < hp, 'ordinary attack still deals damage');
+  assert(!getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID), 'ordinary attack applies no corrosion');
+  updateCombat(world, 0, 6000);
+  assert(world.takeNodeEvents(NODE).some(e => e.kind === 'monster-cast-start' && e.label === 'Breach'), 'Breach starts visibly');
+  updateCombat(world, 0, 7700);
+  assert(getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID)?.stacks === 2, 'completed Breach applies exactly two stacks');
+  runMonsterAttack(world, monster, player, 8000);
+  assert(getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID)?.stacks === 2, 'later ordinary attack leaves corrosion unchanged');
+}
 console.log('bossStatusPayoffPhase3: ok');
