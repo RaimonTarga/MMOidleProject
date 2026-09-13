@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: V1h completed: Cave8/8 and current Mountain2/2; Spirit reached GM72, while Striker/Squire exposed wrong-resource upgrade farming. V1i is prepared: two repaired progression checks and six independent Spirit T2 boss attempts.
+Status: V1i complete: Striker/Squire resource blocks resolved; Spirit T2 Plains Axe2/2, Needle0/2, Forest Axe2/2. V1j prepared: Mountain coverage and Swamp barrier-versus-Recovery comparison, six runs.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -174,3 +174,7 @@ See [V1g assessment](bot-balance-v1g-assessment.md) and [V1h operator packet](bo
 ## V1h reviewed / V1i prepared
 
 [Assessment](bot-balance-v1h-assessment.md) and [operator packet](bot-balance-v1i-operator-packet.md). Frozen source61080e54. Resource-aware upgrades and strict explicit prepared-T2 resume are tested. The original Spirit snapshot stays unchanged and retains synthetic/25x provenance. Plains compares two weapons with dual Techniques; Forest tests a prepared burst-defense candidate. Eight runs; three hours of worker ceilings, four hours total. No manifest created or launched by Astra. T2 boss coverage begins here; T3/T4 low TTK and normal-speed economy remain deferred.
+
+## V1i reviewed / V1j prepared
+
+[Assessment](bot-balance-v1i-assessment.md), [V1j packet](bot-balance-v1j-operator-packet.md). Frozen source `6365651b` includes the monster-control correction. Expand encounter coverage while testing a transferable defensive distinction: burst buffering versus sustained Recovery access. Two Mountain and four Swamp cases independently reuse the original Spirit prepared input. No class-wide weapon ranking, canonical evidence promotion, gameplay changes or launched manifest. Remaining T2 bosses and broader class paths follow after these results; T3/T4 balance stays deferred.

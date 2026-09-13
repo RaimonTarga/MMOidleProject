@@ -27,6 +27,9 @@ top-level doc.
 | Doc | Why |
 |---|---|
 | [briefs/bot-balance-theorycrafting-reference.md](briefs/bot-balance-theorycrafting-reference.md) | Source-grounded encounter/build reasoning, corrected human Plains evidence, legal T2 RP alternatives and prioritized future comparisons. |
+| [briefs/bot-balance-v1i-assessment.md](briefs/bot-balance-v1i-assessment.md) | Accepted preparation and Spirit T2 results, inference limits and next encounter hypotheses. |
+| [briefs/bot-balance-v1j-operator-packet.md](briefs/bot-balance-v1j-operator-packet.md) | Six bounded Spirit runs: Mountain coverage and Swamp barrier versus periodic Recovery. |
+| [briefs/bot-balance-v1j-swamp-study.json](briefs/bot-balance-v1j-swamp-study.json) | Frozen Swamp charm comparison with identical preparation and abilities. |
 | [briefs/bot-balance-v1a-assessment.md](briefs/bot-balance-v1a-assessment.md) | Preparation timeout, supervisor rename failure and scoped preparation/infrastructure repairs. |
 | [briefs/bot-balance-v1b-assessment.md](briefs/bot-balance-v1b-assessment.md) | Valid finalization, acquisition timeout and decision to separate preparation. |
 | [briefs/bot-balance-v1c-assessment.md](briefs/bot-balance-v1c-assessment.md) | Post-death travel stall diagnosis and scoped executor recovery repair. |
@@ -50,6 +53,7 @@ top-level doc.
 | [briefs/bot-balance-v1h-assessment.md](briefs/bot-balance-v1h-assessment.md) | V1h conclusions, wrong-resource diagnosis and prepared T2 boss direction. |
 | [briefs/bot-balance-v1i-operator-packet.md](briefs/bot-balance-v1i-operator-packet.md) | Eight runs: resource-farming repair checks and independent Spirit Plains/Forest boss tests. |
 | [briefs/bot-balance-v1i-plains-study.json](briefs/bot-balance-v1i-plains-study.json) | Spirit Axe versus Gale Needle under the same prepared Plains package. |
+| [briefs/bot-balance-v1i-report.md](briefs/bot-balance-v1i-report.md) | V1i execution ledger for corrected T2 resource reselection and prepared Spirit Plains/Forest boss coverage. |
 | [briefs/bot-balance-night1-swamp-study.json](briefs/bot-balance-night1-swamp-study.json) | Frozen Swamp comparison arms for the overnight operator packet. |
 | [briefs/bot-balance-v1d-operator-packet.md](briefs/bot-balance-v1d-operator-packet.md) | One preparation-only validation of repaired transit recovery. |
 | [briefs/bot-balance-v1d-report.md](briefs/bot-balance-v1d-report.md) | V1d execution result; one natural transit death recovered to the Plains supplier and the full GM30/+5 preparation completed. |

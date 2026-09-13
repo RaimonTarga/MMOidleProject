@@ -6,6 +6,8 @@ Source anchor: `99391c589fe7828e90de780ec95be6d1beb70100`. Concurrent uncommitte
 
 ## Decision and evidence boundaries
 
+V1i follow-up: [assessment](bot-balance-v1i-assessment.md) accepts the narrow Axe Plains/Forest feasibility results, closes two resource blocks and selects Mountain plus a Swamp charm comparison. The next step tests principles on different encounters rather than repeatedly optimizing the human Plains example. No energy/delivery telemetry supports a causal explanation for the Needle losses. Monster-control changes are now committed in `bab111f9`; V1j uses a new frozen source.
+
 Build around the encounter's damage distribution, target behavior and recovery opportunities. A generic defensive package is a useful control, but should not remain the presumed best build. The user's Plains playtest demonstrates why: flat plating, recovery on kill, speed on kill and automatic kiting form a coherent solution to an add encounter.
 
 The campaign asks whether an expert-prepared character can succeed using ordinary player tools. It does not require every class to beat every boss, predict average-player preparation, or establish a global optimum. User strategy documents are pointers; current code and observed behavior take precedence.
