@@ -1,4 +1,5 @@
 import {
+  LAIR_DRAG_ROOT_EFFECT_ID,
   formatLogNumber,
   getStatusEffect,
   getStatusEffects,
@@ -92,7 +93,7 @@ const DEBUFF_BUFFS = [
       const caveLock = getStatusEffects(playerCs, CAVE_LOCKDOWN_EFFECT_ID)
         .sort((a, b) => b.remainingMs - a.remainingMs)[0];
       const slow = getStatusEffect(playerCs, "slow");
-      const root = caveLock ??
+      const root = caveLock ?? getStatusEffect(playerCs, LAIR_DRAG_ROOT_EFFECT_ID) ??
         (slow && (slow.data["speedMult"] ?? 1) <= 0 ? slow : undefined);
       if (!root) return null;
       const totalMs = root.data["totalMs"] ?? root.remainingMs;

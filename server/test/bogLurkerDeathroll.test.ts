@@ -23,6 +23,8 @@
 
 import {
   GAME_CONFIG,
+  LAIR_DRAG_ROOT_EFFECT_ID,
+  applyStatusEffect,
   MONSTER_DATABASE,
   STARTER_RUNE_IDS,
   describeMonsterAbilities,
@@ -39,9 +41,11 @@ import type { MonsterEntity, PlayerEntity } from "../src/ecs/entity";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { updateCombat } from "../src/systems/combat/engine/combat";
 import { updateMonsters } from "../src/systems/combat/ai/ai";
-import { updateLairDrags } from "../src/systems/combat/damage/lairDrag";
+import { beginLairDrag, updateLairDrags } from "../src/systems/combat/damage/lairDrag";
 import { setAggroTarget } from "../src/systems/combat/ai/targeting";
 import { applyStun } from "../src/systems/combat/status/stun";
+import { setEntityMotion, updateMovement } from "../src/systems/world/movement";
+import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
 
 function assert(condition: boolean, message: string): void {
@@ -248,17 +252,21 @@ for (const d of MONSTER_DATABASE.values()) {
     "the haul should hold the victim it bit",
   );
   assert(
-    dist(mob.dragsPrey!.destination, pool) < 1,
+    dist(mob.dragsPrey!.destination, pool) > pool.radius * 0.5 &&
+      dist(mob.dragsPrey!.destination, pool) < pool.radius,
     "the haul should be bound for the pool the lurker lives in",
   );
 
   // 7a. ROOTED WHILE DRAGGED — the player's legs stop, their weapon does not.
-  const root = getStatusEffect(player.tracksCombat, "slow");
+  const root = getStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID);
   assert(
     root !== undefined && root.data["speedMult"] === 0,
     "the victim should be rooted for the haul",
   );
   assert(!player.cannotAttack, "a rooted victim must still be able to fight back");
+  syncPlayerBuffs(world, now);
+  assert(player.hasStatus.activeBuffs.some(b => b.id === "debuff-root" && b.speedMult === 0),
+    "the grab root must reach client movement prediction and the buff HUD");
 
   // 7b. BOTH BODIES CLOSE ON THE WATER, and the haul telegraphs itself.
   const playerStart = dist(player.hasPosition.current, pool);
@@ -280,16 +288,24 @@ for (const d of MONSTER_DATABASE.values()) {
     "the haul should leave a visible wake",
   );
 
+  applyStatusEffect(player.tracksCombat, {
+    id: "slow", maxStacks: 1, remainingMs: 1000, refreshable: true,
+    sourceId: "pool", data: { speedMult: 0.7, totalMs: 1000 },
+  });
+
   // 7c. IT RELEASES ON ITS OWN — nothing here is a permanent state.
   for (let i = 0; i < 60 && mob.dragsPrey; i++) step();
   assert(!mob.dragsPrey, "the haul must end on its own");
   assert(
-    dist(player.hasPosition.current, pool) < pool.radius + 120,
+    dist(player.hasPosition.current, pool) < pool.radius &&
+      dist(player.hasPosition.current, pool) > pool.radius - 80,
     "the victim should be delivered to the water",
   );
   // THE ROOT GOES WITH THE GRIP. Arriving early (close water) must not leave the
   // player pinned in a poison pool by a crocodile that already let go.
-  const afterRoot = getStatusEffect(player.tracksCombat, "slow");
+  assert(getStatusEffect(player.tracksCombat, "slow")?.data["speedMult"] === 0.7,
+    "pool slow remains independent of the released grip");
+  const afterRoot = getStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID);
   assert(
     afterRoot === undefined || (afterRoot.data["speedMult"] ?? 1) > 0,
     "releasing the haul should release the root",
@@ -375,7 +391,7 @@ for (const d of MONSTER_DATABASE.values()) {
   applyStun(mob.tracksCombat, 1_500, player.isPlayer.id, 1);
   step();
   assert(!mob.dragsPrey, "stunning the lurker should make it let go");
-  const root = getStatusEffect(player.tracksCombat, "slow");
+  const root = getStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID);
   assert(
     root === undefined || (root.data["speedMult"] ?? 1) > 0,
     "an interrupted haul should free the victim's legs with it",
@@ -480,4 +496,31 @@ function makePlayer(world: World, nodeId: string, x: number, y: number): PlayerE
   return world.attachPlayerEntity(makePlayerSlices(id, nodeId, x, y), id);
 }
 
+{
+  const world = new World();
+  const pool = swampRotPools(SWAMP_NODE)[0];
+  const player = makePlayer(world, SWAMP_NODE, pool.x + pool.radius + 100, pool.y);
+  const mob = world.createMonster(SWAMP_NODE, "bog-lurker", { x: pool.x + pool.radius, y: pool.y })!;
+  const now = Date.now();
+  applyStatusEffect(player.tracksCombat, {
+    id: "slow", maxStacks: 1, remainingMs: 1000, refreshable: true,
+    sourceId: "pool", data: { speedMult: 0.7, totalMs: 1000 },
+  });
+  assert(beginLairDrag(world, mob, player, lurker.chargedAttack!.dragsToLair!, now), "grab starts");
+  const start = { ...player.hasPosition.current };
+  const walkTo = { x: start.x + 100, y: start.y };
+  setEntityMotion(world, player, walkTo);
+  updateMovement(world, 100, now);
+  assert(dist(start, player.hasPosition.current) < 0.01,
+    "a grab must root even a player already slowed by a pool");
+  world.removeMonsterEntity(mob.isMonster.id);
+  updateLairDrags(world, 100, now + 100);
+  assert(!getStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID), "removed owner releases root");
+  setEntityMotion(world, player, walkTo);
+  updateMovement(world, 100, now + 100);
+  assert(dist(start, player.hasPosition.current) > 1, "the released player can actually walk again");
+  syncPlayerBuffs(world, now + 100);
+  assert(!player.hasStatus.activeBuffs.some(b => b.id === "debuff-root"),
+    "the root must also disappear from the client buff state");
+}
 console.log("bogLurkerDeathroll: ok");

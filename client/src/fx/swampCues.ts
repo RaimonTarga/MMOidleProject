@@ -1,6 +1,5 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
-import { fxBite } from './bite';
 import { DEPTH } from '../render/depth';
 
 /**
@@ -15,11 +14,7 @@ import { DEPTH } from '../render/depth';
  * Shared grammar: sickly green, and everything SETTLES rather than detonating. The
  * swamp accumulates; it does not spike.
  *
- * THE ONE EXCEPTION is the Bog Lurker's Deathroll (2026-09-12), whose cues converge
- * and commit instead — a coil that pulls inward, a leap, a furrow. That contrast is
- * deliberate: it is the single Swamp ability that happens to you all at once, and
- * drawing it in the biome's settling grammar would bury the only beat in the whole
- * roster a player has to react to rather than plan around.
+ * Deathroll uses small ripples and a narrow wake to keep the crocodile visible.
  */
 
 const ROT = 0x6f9e3c;
@@ -205,153 +200,51 @@ export function fxPoolSpawn(scene: GameScene, x: number, y: number, radius: numb
   });
 }
 
-/**
- * DEATHROLL, part one — the COIL. Played on the Bog Lurker's cast-start, anchored on
- * the lurker itself.
- *
- * This is the only beat the player gets to act on, so it has to read as "something in
- * the water is about to come out of it" from across the gap: the surface draws inward
- * (a body gathering, not an impact spreading), bubbles break where the jaws are, and
- * one taut ring marks the reach. Everything converges — the opposite grammar to the
- * settling, spreading cues the rest of the biome uses, because this is the one swamp
- * ability that spikes.
- */
+/** Quiet surface tension during the ambush wind-up. */
 export function fxDeathrollCoil(scene: GameScene, x: number, y: number): void {
-  // Water pulled INWARD onto the lurker: the tell is a gathering, not a splash.
-  for (let i = 0; i < 3; i++) {
-    const ring = scene.add.graphics({ x, y }).setDepth(DEPTH.FX);
-    ring.lineStyle(3, i === 0 ? BILE : ROT, 0.75);
-    ring.strokeEllipse(0, 0, 150, 74);
-    scene.tweens.add({
-      targets: ring,
-      scaleX: 0.28,
-      scaleY: 0.28,
-      alpha: 0,
-      delay: i * 220,
-      duration: 620,
-      ease: 'Cubic.easeIn',
-      onComplete: () => ring.destroy(),
-    });
-  }
-
-  // Breath breaking the surface where the head is.
-  burstFx(scene, 'ptx-dot', x, y, 16, 900, {
-    tint: ROT_DARK,
-    speed: { min: 10, max: 46 },
-    angle: { min: 245, max: 295 },
-    scale: { start: 0.85, end: 0 },
-    alpha: { start: 0.9, end: 0 },
-    gravityY: -80,
+  const ring = scene.add.graphics({ x, y }).setDepth(DEPTH.FX);
+  ring.lineStyle(2, ROT, 0.5);
+  ring.strokeEllipse(0, 0, 76, 34);
+  scene.tweens.add({
+    targets: ring, scaleX: 0.45, scaleY: 0.45, alpha: 0, duration: 900,
+    ease: 'Sine.easeIn', onComplete: () => ring.destroy(),
   });
 }
 
-/**
- * DEATHROLL, part two — the LEAP. Played on cast-end, from the lurker to its victim.
- *
- * One committed line, not a projectile arc: the lunge is a body crossing a gap, so the
- * streak is thick, short-lived and travels at the speed the server moved the monster.
- * It ends on a bite rather than an impact flash, because what lands is jaws.
- */
+/** A narrow water trail follows the pounce; no impact burst or oversized jaws. */
 export function fxDeathrollLunge(
-  scene: GameScene,
-  fromX: number,
-  fromY: number,
-  toX: number,
-  toY: number,
+  scene: GameScene, fromX: number, fromY: number, toX: number, toY: number,
 ): void {
-  const angle = Math.atan2(toY - fromY, toX - fromX);
-  const length = Math.hypot(toX - fromX, toY - fromY);
-
-  // The wake of the launch: a wedge of displaced water torn open behind the leap.
   const wake = scene.add.graphics({ x: fromX, y: fromY }).setDepth(DEPTH.FX);
-  wake.fillStyle(ROT, 0.6);
-  wake.fillTriangle(0, -17, 0, 17, length, 0);
-  wake.setRotation(angle);
+  wake.lineStyle(3, ROT_DARK, 0.35);
+  wake.lineBetween(0, 0, toX - fromX, toY - fromY);
   scene.tweens.add({
-    targets: wake,
-    alpha: 0,
-    duration: 300,
-    ease: 'Quad.easeOut',
+    targets: wake, alpha: 0, duration: 220,
     onComplete: () => wake.destroy(),
   });
-
-  // Muck thrown off the launch point — it came OUT of somewhere.
-  burstFx(scene, 'ptx-dot', fromX, fromY, 18, 620, {
-    tint: ROT_DARK,
-    speed: { min: 70, max: 210 },
-    angle: { min: 0, max: 360 },
-    scale: { start: 1, end: 0 },
-    alpha: { start: 0.95, end: 0 },
-    gravityY: 200,
-  });
-
-  // The jaws arriving. Heavy and swamp-coloured rather than the canine baseline.
-  fxBite(scene, toX, toY, true, {
-    weight: 1.9,
-    fang: 0xe8e2c6,
-    gore: ROT,
-    gravityY: 150,
-  });
+  fxDragWake(scene, toX, toY);
 }
 
-/**
- * DEATHROLL, part three — the WAKE. Repeated at the victim's feet for as long as the
- * haul runs, so being dragged looks like being dragged rather than like sliding.
- *
- * Deliberately at the VICTIM and not between the two bodies: a tether line would imply
- * a leash the player could break, and the grip is not breakable — the crocodile is.
- * A furrow says "you are being moved through this" and nothing more.
- */
+/** Small ripples at the victim's feet during the haul. */
 export function fxDragWake(scene: GameScene, x: number, y: number): void {
-  const furrow = scene.add.graphics({ x, y }).setDepth(DEPTH.FX);
-  furrow.fillStyle(ROT_DARK, 0.55);
-  furrow.fillEllipse(0, 6, 66, 22);
+  const ripple = scene.add.graphics({ x, y }).setDepth(DEPTH.FX);
+  ripple.lineStyle(2, ROT_DARK, 0.35);
+  ripple.strokeEllipse(0, 6, 32, 12);
   scene.tweens.add({
-    targets: furrow,
-    scaleX: 1.5,
-    alpha: 0,
-    duration: 520,
-    ease: 'Sine.easeOut',
-    onComplete: () => furrow.destroy(),
-  });
-
-  burstFx(scene, 'ptx-dot', x, y, 7, 520, {
-    tint: ROT,
-    speed: { min: 25, max: 85 },
-    angle: { min: 0, max: 360 },
-    scale: { start: 0.7, end: 0 },
-    alpha: { start: 0.85, end: 0 },
-    gravityY: 140,
+    targets: ripple, scaleX: 1.2, alpha: 0, duration: 350,
+    onComplete: () => ripple.destroy(),
   });
 }
 
-/**
- * DEATHROLL — where you are being TAKEN. One marker at the destination pool, drawn
- * the moment the jaws close.
- *
- * The haul itself is legible (you are moving and you did not ask to), but not its
- * endpoint, and the endpoint is the entire cost of the ability: a player who cannot
- * see which water they are bound for cannot judge whether to spend an interrupt on it.
- * Sized to the pool so the cue teaches the hazard's real footprint.
- */
+/** A modest marker at the shallow-water stopping point. */
 export function fxDragDestination(
-  scene: GameScene,
-  x: number,
-  y: number,
-  durationMs: number,
+  scene: GameScene, x: number, y: number, durationMs: number,
 ): void {
   const ring = scene.add.graphics({ x, y }).setDepth(DEPTH.FX);
-  ring.lineStyle(4, BILE, 0.85);
-  ring.strokeEllipse(0, 0, 210, 105);
-  ring.setScale(1.35);
+  ring.lineStyle(2, ROT, 0.4);
+  ring.strokeEllipse(0, 0, 48, 22);
   scene.tweens.add({
-    targets: ring,
-    scaleX: 0.85,
-    scaleY: 0.85,
-    alpha: 0,
-    // Contracts over the whole haul, so the cue expires as the victim arrives.
-    duration: Math.max(400, durationMs),
-    ease: 'Sine.easeInOut',
+    targets: ring, alpha: 0, duration: Math.min(700, Math.max(200, durationMs)),
     onComplete: () => ring.destroy(),
   });
 }

@@ -1248,8 +1248,8 @@ export interface MonsterDefinition {
      * caster's home terrain, rooted the whole way.
      *
      * The Bog Lurker's identity made mechanical: it does not chase you out of its
-     * bog, it takes you back into it. The root reuses the shared `slow` status at
-     * `speedMult: 0` exactly as `rootMs` does (movement stops, attacks do not), and
+     * bog, it takes you just inside its shoreline. A dedicated timed root
+     * stops movement but permits attacks without sharing the pool slow, and
      * the haul itself goes through the shared forced-movement helper, so knockback
      * resistance shortens every step of it and the path respects obstacles. The
      * payoff is the DESTINATION, not the damage: a rot pool is already a standing
@@ -1264,7 +1264,7 @@ export interface MonsterDefinition {
      * carrying both would drag nobody. Guarded by `bogLurkerDeathroll.test.ts`.
      *
      * Counterplay matches the lunge's: stun or freeze the caster and the jaws let
-     * go. Cleanse frees the legs but not the grip.
+     * go. Cleansing the root also breaks the grip.
      */
     dragsToLair?: {
       /** Terrain the prey is hauled into. */

@@ -19,6 +19,7 @@
 
 import {
   applyStatusEffect,
+  LAIR_DRAG_ROOT_EFFECT_ID,
   getStatusEffect,
   nearestSwampRotPool,
   removeStatusEffect,
@@ -37,16 +38,13 @@ import { stopEntity } from "../../world/movement";
 import { isMonsterKnockedBack } from "./knockback";
 import { pullPlayer } from "./forcedMovement";
 
-/**
- * How close to the lair's centre counts as arrived. The pools are large, so this is
- * deliberately not the rim — the drag ends when the victim is properly IN the water
- * rather than the moment they touch it, which is the difference between a hazard
- * they clipped and a hazard they are standing in.
- */
-const ARRIVAL_MARGIN = 90;
+/** Arrival tolerance at the shallow-water stopping point. */
+const ARRIVAL_MARGIN = 2;
+// Leave room for the prey's 40px trailing gap, landing it about 30px inside.
+const SHORE_INSET = 72;
 
 /** Cadence of the muck-wake cue, so the trail is drag-time and not tick-rate. */
-const WAKE_INTERVAL_MS = 320;
+const WAKE_INTERVAL_MS = 500;
 
 type DragSpec = NonNullable<
   NonNullable<MonsterDefinition["chargedAttack"]>["dragsToLair"]
@@ -60,7 +58,7 @@ export function isDraggingPrey(monster: MonsterEntity): boolean {
 /**
  * Start a haul. Returns false — changing nothing — when there is no lair to drag to,
  * which is the honest outcome on a node with no water: the bite simply lands and the
- * ability degrades to its root, rather than the player being hauled to a made-up
+ * ability remains a bite, rather than the player being hauled to a made-up
  * point.
  */
 export function beginLairDrag(
@@ -83,6 +81,13 @@ export function beginLairDrag(
     spec.maxLairRange,
   );
   if (!lair) return false;
+  const prey = player.hasPosition.current;
+  const gap = dist(prey, lair);
+  const radius = Math.max(0, lair.radius - SHORE_INSET);
+  const destination = gap > radius && gap > 0
+    ? { x: lair.x + (prey.x - lair.x) / gap * radius,
+        y: lair.y + (prey.y - lair.y) / gap * radius }
+    : { ...monster.hasPosition.current };
 
   // The haul owns the root for its full length, so the victim is never freed
   // mid-drag and never held after the jaws open. Tenacity shortens the root the way
@@ -90,7 +95,7 @@ export function beginLairDrag(
   // root would have, it shortens the drag with it.
   const rootMs = Math.round(spec.durationMs * harmfulStatusDurationMult(player));
   applyStatusEffect(player.tracksCombat, {
-    id: "slow",
+    id: LAIR_DRAG_ROOT_EFFECT_ID,
     maxStacks: 1,
     remainingMs: rootMs,
     refreshable: true,
@@ -100,7 +105,7 @@ export function beginLairDrag(
 
   attachComponent(world, monster, "dragsPrey", {
     targetId: player.isPlayer.id,
-    destination: { x: lair.x, y: lair.y },
+    destination,
     speed: spec.speed,
     endsAt: now + rootMs,
     lastWakeAt: now,
@@ -110,7 +115,7 @@ export function beginLairDrag(
     kind: "monster-drag",
     monsterId: monster.isMonster.id,
     playerId: player.isPlayer.id,
-    pos: { x: lair.x, y: lair.y },
+    pos: { ...destination },
     durationMs: rootMs,
     phase: "start",
   });
@@ -131,13 +136,13 @@ function endDrag(world: World, monster: MonsterEntity): void {
   if (!drag) return;
   const player = world.getPlayerEntity(drag.targetId);
   if (player) {
-    const root = getStatusEffect(player.tracksCombat, "slow");
+    const root = getStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID);
     // Only OUR root. A separate slow from another mob has to survive the release.
     if (
       root?.sourceId === monster.isMonster.id &&
       (root.data["speedMult"] ?? 1) === 0
     ) {
-      removeStatusEffect(player.tracksCombat, "slow");
+      removeStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID);
     }
   }
   world.pushEvent(monster.hasPosition.nodeId, {
@@ -161,12 +166,23 @@ function dist(a: Vec2, b: Vec2): number {
  * movement and AI, so the position it writes is the one the tick broadcasts.
  */
 export function updateLairDrags(world: World, dt: number, now: number): void {
+  // Removed/dead monsters no longer appear in the drag query. Release their grip
+  // too, rather than leaving a victim waiting for a stale status timer.
+  for (const player of world.playerEntities) {
+    const root = getStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID);
+    if (!root) continue;
+    const owner = world.getMonsterEntity(root.sourceId);
+    if (owner?.dragsPrey?.targetId !== player.isPlayer.id || owner.hasHealth.hp <= 0) {
+      removeStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID);
+    }
+  }
   for (const monster of [...world.draggingMonsters]) {
     const drag = monster.dragsPrey;
 
     // The counterplay: break the crocodile and it lets go. Freeze counts here even
     // though it is only a severe slow elsewhere — a frozen jaw cannot haul.
     if (
+      monster.hasHealth.hp <= 0 ||
       isMonsterStunned(world, monster.isMonster.id) ||
       isMonsterFrozen(world, monster.isMonster.id) ||
       isMonsterKnockedBack(world, monster.isMonster.id) ||
@@ -180,6 +196,7 @@ export function updateLairDrags(world: World, dt: number, now: number): void {
     if (
       !player ||
       player.isDead ||
+      !getStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID) ||
       player.hasPosition.nodeId !== monster.hasPosition.nodeId
     ) {
       endDrag(world, monster);

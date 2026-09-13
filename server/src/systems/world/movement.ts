@@ -1,4 +1,5 @@
 import {
+  LAIR_DRAG_ROOT_EFFECT_ID,
   advanceMotion,
   buildNavGrid,
   cellToWorld,
@@ -473,6 +474,7 @@ function playerSpeedMults(
   // Shared 'slow' id — monster slowEffects, hazard/ground-zone pools, dungeon
   // hazards. speedMult 0 is a ROOT and short-circuits the whole product.
   const slow = getStatusEffect(cs, 'slow');
+  if (getStatusEffect(cs, LAIR_DRAG_ROOT_EFFECT_ID)) mults.push(0);
   if (slow) mults.push(slowResistedMult(player, Math.max(0, slow.data['speedMult'] ?? 1)));
 
   // Tundra rampDebuff — stacking, self-capped.

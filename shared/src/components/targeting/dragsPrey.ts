@@ -13,10 +13,12 @@
  */
 import type { Vec2 } from '../../systems/spatial';
 
+export const LAIR_DRAG_ROOT_EFFECT_ID = 'lair-drag-root';
+
 export interface DragsPrey {
   /** Player being hauled. */
   targetId: string;
-  /** Where the prey is being taken — the lair's centre. */
+  /** Where the crocodile stops, just inside the nearest shoreline. */
   destination: Vec2;
   /** How fast the prey is hauled, px/s. */
   speed: number;

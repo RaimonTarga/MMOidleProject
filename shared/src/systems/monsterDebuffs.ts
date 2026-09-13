@@ -1,3 +1,4 @@
+import { LAIR_DRAG_ROOT_EFFECT_ID } from '../components/targeting/dragsPrey';
 import type { StatusEffect } from '../components/combat/effects';
 import type { TracksCombat } from '../components/combat/tracksCombat';
 import { AMBIENT_RAMP_KEY } from './ambientRamp';
@@ -125,7 +126,7 @@ export function isHarmfulPlayerStatusEffect(
   id: string,
   data: Record<string, number>,
 ): boolean {
-  if (id === 'slow' || id === FROST_RAMP_EFFECT_ID) return true;
+  if (id === 'slow' || id === LAIR_DRAG_ROOT_EFFECT_ID || id === FROST_RAMP_EFFECT_ID) return true;
   if (id === SUN_MARK_EFFECT_ID || id === VOLCANIC_HEAT_EFFECT_ID) return true;
   if (id === CAVE_LOCKDOWN_EFFECT_ID || id === SUNDERED_EFFECT_ID) return true;
   if (id === PLATING_SHRED_EFFECT_ID) return true;
