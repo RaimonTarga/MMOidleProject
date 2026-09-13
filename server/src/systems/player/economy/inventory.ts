@@ -9,7 +9,7 @@ import {
 } from '../../../ecs/playerEntityFormulas';
 import { resetCoreCombatState } from '../../combat/cores';
 
-function recalculateAfterEquipmentChange(
+export function recalculateAfterEquipmentChange(
   world: World,
   entity: PlayerEntity,
   slot: EquipmentSlot,

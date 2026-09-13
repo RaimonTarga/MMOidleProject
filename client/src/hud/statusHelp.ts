@@ -202,6 +202,8 @@ const BOSS_HELP: Record<string, StatusHelp> = {
   'bestial-frenzy': { title: 'Bestial frenzy', kind: 'boss', help: 'The beast is frenzied — faster and more dangerous until it settles.' },
   morph: { title: 'Morphed', kind: 'boss', help: 'The boss has changed form, and with it which of its attacks are live.' },
   slam: { title: 'Slam', kind: 'boss', help: 'A heavy telegraphed blow is winding up. Distance is the answer.' },
+  'charge-instinct': { title: 'Instinct', kind: 'boss', help: 'Each charge builds Instinct: future charges move faster and wind up sooner, up to a tier-dependent cap. Landing a charge clears all stacks.' },
+  'escape-instinct': { title: 'Escape Instinct', kind: 'boss', help: 'Breaking the escape shield adds a stack, up to three. Each stack increases fleeing speed by 15% and shortens the next escape cast by 15%. A successful escape clears all stacks.' },
   'boss-stunned': {
     title: 'Stunned',
     kind: 'boss',

@@ -9,6 +9,43 @@ not re-pitched.
 
 If this doc and the code disagree, the code wins.
 
+## Personal playtest corrections — 2026-09-13
+
+These changes supersede the older tuning below:
+
+- Mountain T1–T4 charges bank visible **Instinct** on execution. Existing stacks
+  shorten the next charge wind-up by 10% each and increase charge speed by
+  10% / 12% / 14% / 16% per stack across the four tiers. Caps are 3 / 3 / 4 / 4.
+  A landed charge clears all stacks; the first charge uses baseline speed and timing.
+- Jungle T2–T4 shield breaks bank visible **Escape Instinct**, even if the breaking
+  hit also stuns. Breaking stops the flight and starts the authored Cornered recovery.
+  Each stack shortens the next escape by 15% and raises fleeing speed by 15%, capped
+  at three. A successful escape clears the ramp. Ordinary stun alone still cancels
+  without awarding a stack.
+- Jungle T3/T4 prowl at 240 / 270 px/s for at most six seconds, surfacing on contact.
+  **Venomous Bite** has a 90px edge-to-edge reach and applies 3 / 4 poison stacks only
+  on a landed, non-evaded hit. Poison uses the normal monster DoT path, including
+  Warding/tenacity, shields, ticking, cleansing, and HUD status. Each stack deals
+  14 / 16 damage each second for eight seconds before status resistance.
+  The T4 wounded-frenzy gate remains at 50% HP.
+- Volcano T3 **Final Eruption** and T4 **Cataclysm** arm at <=25% HP, once per life:
+  eight-second casts, then a 400ms impact telegraph. Incoming raw damage is 650 / 1000;
+  plating, DR, evasion, Guard, damage caps and other normal defenses still apply.
+  These are fixed raw attacks, so the boss's basic-attack phase buff does not change them.
+- Mountain dungeons use one square enclosure with one or two broad entrances and
+  at most six long wall hitboxes. Collision, pathfinding and the existing square
+  ledge renderer share that geometry; the old circular wall generator is removed.
+
+Regression coverage: `server/test/personalPlaytestPolish.test.ts`, the tier economy
+suites, and `shared/src/collision/collision.test.ts`. Live feel and frame-rate gains
+still need player/browser acceptance; the hitbox reduction alone is not an FPS claim.
+
+Validation on 2026-09-13: `pnpm typecheck` and `pnpm build` passed; the full
+`pnpm test` run passed 192/192 existing files, and the new playtest regression
+file passed separately (it was added after full-suite discovery). The focused
+collision suite and `git diff --check` also passed.
+
+
 ---
 
 ## 1. What changed, in one sentence
@@ -462,7 +499,8 @@ the encounter.**
 - **T3** `cinder-shell-magma-salamander`: the plain cycle. First shell at 85% HP, then
   every 16s while engaged; while shelled it cannot attack and takes 30% direct damage
   (not the roster's 15% — it repeats, so it must never stall the fight). DoTs tick
-  through at full strength and the cycle is on a clock.
+  through at full strength and the cycle is on a clock. At <=25% HP it also arms
+  the once-per-life Final Eruption described in the playtest corrections above.
 - **T4** `caldera-sovereign`: the same cycle, plus **Simmering Burn** (low damage, high
   cap, long duration — attrition you *can* cleanse, deliberately unlike Heat) and one
   **Cataclysm**: near the final quarter it stops attacking entirely and begins a long,

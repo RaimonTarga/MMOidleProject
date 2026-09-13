@@ -718,10 +718,13 @@ export function runMonsterAttack(
   now: number,
   chargeMult = 1,
   resultMetadata?: Record<string, unknown>,
+  rawDamage?: number,
+  uninterruptible = false,
 ): MonsterAttackOutcome {
+  const baseAttack = rawDamage ?? monster.dealsDamage.attack;
   const ctx = makeCombatContext(monster, "monster", target, "player");
 
-  if (isMonsterStunned(world, monster.isMonster.id)) {
+  if (!uninterruptible && isMonsterStunned(world, monster.isMonster.id)) {
     ctx.cancelled = true;
   }
 
@@ -743,7 +746,7 @@ export function runMonsterAttack(
     Math.round(
       Math.max(
         0,
-        monster.dealsDamage.attack -
+        baseAttack -
           platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
       ) *
         (1 - target.mitigatesDamage.damageReduction),
@@ -810,18 +813,19 @@ export function runMonsterAttack(
   // off the raw hit rather than the mitigated HP loss (e.g. Avenger/Vengeance), so
   // building defenses doesn't shrink the payoff.
   ctx.metadata["incomingGross"] = Math.round(
-    monster.dealsDamage.attack *
+    baseAttack *
       deathEmpowerMult *
       ambientFedMult *
       (empoweredMult > 1 ? empoweredMult : 1),
   );
 
+  if (rawDamage !== undefined) ctx.metadata["empoweredAttack"] = true;
   emitCombatEvent("onHit", ctx, world);
   emitCombatEvent("onDamageTaken", ctx, world);
 
   const absorbed = Number(ctx.metadata["absorbed"] ?? 0);
   const mitigation = buildPlatingDrBreakdown({
-    grossDamage: monster.dealsDamage.attack,
+    grossDamage: baseAttack,
     effectivePlating: platingAfterShred(
       target.mitigatesDamage.plating,
       target.tracksCombat,
@@ -832,7 +836,7 @@ export function runMonsterAttack(
   mitigation.hpDamage = ctx.damage;
   mitigation.glancing =
     mitigation.hpDamage === 1 &&
-    monster.dealsDamage.attack - mitigation.mitigatedTotal < 1;
+    baseAttack - mitigation.mitigatedTotal < 1;
 
   recordWorldLogEvent(
     world,
@@ -887,7 +891,7 @@ export function runMonsterAttack(
       kind: "monster-hit",
       targetPos: { ...target.hasPosition.current },
       targetId: target.isPlayer.id,
-      empowered: empoweredMult > 1 ? true : undefined,
+      empowered: ctx.metadata["empoweredAttack"] === true ? true : undefined,
       damage: ctx.damage,
       absorbed: absorbed > 0 ? absorbed : undefined,
       evadedPartial: playerEvaded ? true : undefined,
@@ -899,7 +903,7 @@ export function runMonsterAttack(
   monster.performsAttack.lastAttackAt = now;
   // Drives the heavier attack-FX variant on the client. Always assigned, never
   // conditionally set — see the field's note on staleness.
-  monster.performsAttack.lastAttackEmpowered = empoweredMult > 1;
+  monster.performsAttack.lastAttackEmpowered = ctx.metadata["empoweredAttack"] === true;
 
   // Sun Mark setup (Desert): the marker paints a cleansable mark the finisher cashes
   // in. Edge-triggered telegraph — a one-shot pulse only when the mark is freshly
@@ -1945,11 +1949,12 @@ export function runMonsterAttackOnMinion(
   minion: MinionEntity,
   now: number,
   damageMultiplier = 1,
+  rawDamage?: number,
 ): void {
   const damage = Math.max(
     1,
     Math.round(
-      Math.max(0, monster.dealsDamage.attack - minion.mitigatesDamage.plating) *
+      Math.max(0, (rawDamage ?? monster.dealsDamage.attack) - minion.mitigatesDamage.plating) *
         (1 - minion.mitigatesDamage.damageReduction) *
         Math.max(0, damageMultiplier),
     ),
@@ -1957,7 +1962,7 @@ export function runMonsterAttackOnMinion(
   minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - damage);
   pushDamageEvent(world, minion, damage, { sourceId: monster.isMonster.id });
   monster.performsAttack.lastAttackAt = now;
-  monster.performsAttack.lastAttackEmpowered = damageMultiplier > 1;
+  monster.performsAttack.lastAttackEmpowered = damageMultiplier > 1 || rawDamage !== undefined;
   // Death is observed by the summoner tick on its next pass — it will detach
   // the minion entity and start a respawn timer.
 }

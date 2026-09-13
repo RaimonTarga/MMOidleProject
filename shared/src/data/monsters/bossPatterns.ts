@@ -101,6 +101,10 @@ export type BossPatternStep =
       anchor: PatternAnchor;
       radius: number;
       damageMult: number;
+      /** Fixed incoming damage before defenses, instead of scaled basic attack. */
+      rawDamage?: number;
+      /** A committed uninterruptible finisher still resolves while its caster is stunned. */
+      interruptible?: boolean;
       telegraphMs: number;
       stunMs?: number;
       /**
@@ -207,6 +211,9 @@ export type BossPatternStep =
        * is what makes the long tell worth reading. Single-target payoffs only.
        */
       healsSelfPct?: number;
+      /** Edge-to-edge reach for a single-target bite. */
+      reach?: number;
+      onHitPoison?: { stacks: number; damagePerStack: number; durationMs: number; tickIntervalMs: number };
       interruptible?: boolean;
       guardable?: boolean;
       fx?: string;
@@ -355,6 +362,7 @@ export type BossPatternStep =
        */
       maxInstinctStacks: number;
       instinctCastReductionPct: number;
+      instinctSpeedPct?: number;
       /**
        * BOLT FOR COVER. While the guard is up the boss RUNS for the far edge of its
        * leash at `speed` px/s instead of standing behind its plate.
@@ -414,6 +422,8 @@ export interface BossPattern {
   steps: BossPatternStep[];
   /** Base damage multiplier every damaging step scales from. */
   damageMultiplier: number;
+  /** Each charge banks a stack; a landed charge clears them. */
+  chargeInstinct?: { maxStacks: number; speedPct: number; castReductionPct: number };
   cooldownMs: number;
   /** Cooldown for the first run of a combat session. Defaults to `cooldownMs`. */
   initialCooldownMs?: number;

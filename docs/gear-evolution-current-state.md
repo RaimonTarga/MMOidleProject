@@ -38,8 +38,8 @@ still recipe id; `itemUpgrades` is still per-id.
 Pure, mirrors `checkUpgrade`. Used by server (apply) + client (button gating):
 - `EVOLUTION_REQUIRED_PLUS = 3`; `EvolveMode = 'evolve' | 'reconstruct'`.
 - `isEvolvedRecipe(recipe)` = `!!recipe.evolvesFrom`.
-- `checkEvolve({ recipe, inventory, itemUpgrades, essences, catalysts, isTestRoom })` — predecessor in
-  bag at ≥+3, evolve cost (`cost`/`catalystCost`) affordable.
+- `checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, catalysts, isTestRoom })` — predecessor in
+  bag or equipped in its slot at ≥+3, evolve cost (`cost`/`catalystCost`) affordable.
 - `checkReconstruct({ recipe, essences, catalysts, isTestRoom })` — `reconstructCost` present + affordable.
 
 ## Server — `economy/itemEvolution.ts` (new)
@@ -47,9 +47,10 @@ Pure, mirrors `checkUpgrade`. Used by server (apply) + client (button gating):
 `evolveItem(world, entity, recipeId, mode)`:
 - recipe exists + is evolved; unlocked (`unlockedRecipes`) unless test room (test room tops up essence
   + both catalyst axes).
-- `evolve`: `checkEvolve` → splice one predecessor copy from the bag → spend `cost`/`catalystCost`.
+- `evolve`: `checkEvolve` → consume the equipped predecessor when present, otherwise one bag copy → spend `cost`/`catalystCost`.
 - `reconstruct`: `checkReconstruct` → spend `reconstructCost`/`reconstructCatalystCost` (no predecessor).
-- push evolved id into the bag at +0. Reuses `CraftResult`.
+- An equipped predecessor becomes the evolved item in the same slot; stats and archetype slices rebuild immediately. Spare bag copies remain. Bag evolution and reconstruction put the result in the bag.
+- Per-id upgrade levels remain unchanged; predecessor upgrades do not transfer to the evolved definition. Reuses `CraftResult`.
 
 **Loophole closed:** `craftRecipe` now rejects evolved recipes (`recipe.evolvesFrom` set) so they can't
 be plain-crafted for the cheaper `cost` without consuming the predecessor.

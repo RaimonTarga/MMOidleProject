@@ -5,7 +5,12 @@ import {
   abilityRankAt,
   abilityRankNumber,
   abilityRankNumeral,
-  resolveAbilityEffect,
+  resolveAbilityEffectWithPassives,
+  abilityCooldownReduction,
+  abilityHasTag,
+  abilityTags,
+  ABILITY_TAG_INFO,
+  type AbilityTag,
   TECHNIQUE_POWER_FIELDS,
   type AbilityDef,
   type AbilityEffectSpec,
@@ -28,16 +33,9 @@ import {
  * rank IV of Sweep is 100% splash on a 5 s cooldown because that is what rank IV
  * says, not because rank I was multiplied by anything.
  *
- * The magnitude layer goes through `resolveAbilityEffect`, the same shared seam
- * the server uses. The fire-time Guard layers are reproduced here because the
- * server applies them at fire time rather than in the shared resolver; the caps
- * below mirror `abilityFiring.ts` and must move together with it.
+ * Equipment modifiers use the same shared resolver as authoritative firing.
  */
 
-/** Mirrors GUARD_DR_CAP in server/src/systems/player/abilities. */
-const GUARD_DR_CAP = 0.9;
-/** Mirrors CD_REDUCTION_CAP (technique) and the guard cap in abilityCooldowns.ts. */
-const CD_REDUCTION_CAP = 0.9;
 /** Mirrors CAST_SPEED_CAP in abilityCasting.ts. */
 const CAST_SPEED_CAP = 0.6;
 
@@ -70,6 +68,7 @@ export interface AbilityDescription {
   trigger: string;
   /** How the server runs it, in a sentence. */
   shape: string;
+  tags: { id: AbilityTag; label: string; help: string }[];
   lines: AbilityLine[];
 }
 
@@ -173,42 +172,6 @@ function formatField(
 
 // ── Guard fire-time layers ────────────────────────────────────────────────────
 
-/**
- * The Guard buff scaling the server applies when the ability fires, on top of the
- * shared resolver. Only the damage-reduction buff is affected — Recovery skills
- * take `recovery-skill-potency` instead, and cleanse/break-free are DISCRETE and
- * must never be scaled by a percentage stat.
- */
-function applyGuardLayers(
-  effect: AbilityEffectSpec,
-  passives: Record<string, number>,
-): AbilityEffectSpec {
-  if (effect.kind !== 'damage-reduction') return effect;
-  const potency = Math.max(0, passives['guard.potency-pct'] ?? 0);
-  const durationBonus = Math.max(0, passives['guard.duration-pct'] ?? 0);
-  if (potency === 0 && durationBonus === 0) return effect;
-  return {
-    ...effect,
-    drPct: Math.min(GUARD_DR_CAP, effect.drPct * (1 + potency)),
-    durationMs: Math.round(effect.durationMs * (1 + durationBonus)),
-    ...(effect.knockbackResistPct !== undefined
-      ? { knockbackResistPct: Math.min(GUARD_DR_CAP, effect.knockbackResistPct * (1 + potency)) }
-      : {}),
-  };
-}
-
-/** Recovery skills take their own potency stat, and only when tagged `recovery`. */
-function applyRecoveryLayer(
-  ability: AbilityDef,
-  effect: AbilityEffectSpec,
-  passives: Record<string, number>,
-): AbilityEffectSpec {
-  if (effect.kind !== 'heal' || !ability.tags.includes('recovery')) return effect;
-  const potency = Math.max(0, passives['defense.recovery-skill-potency'] ?? 0);
-  if (potency === 0) return effect;
-  return { ...effect, recoveryPct: effect.recoveryPct * (1 + potency) };
-}
-
 /** Which fire-time multiplier, if any, a field picked up. */
 function fireTimeLayerFor(
   ability: AbilityDef,
@@ -216,10 +179,10 @@ function fireTimeLayerFor(
   field: string,
   passives: Record<string, number>,
 ): { label: string; mult: number } | null {
-  if (effect.kind === 'damage-reduction') {
+  if (abilityHasTag(ability, 'guard') && abilityHasTag(ability, 'mitigation')) {
     const potency = Math.max(0, passives['guard.potency-pct'] ?? 0);
     const durationBonus = Math.max(0, passives['guard.duration-pct'] ?? 0);
-    if ((field === 'drPct' || field === 'knockbackResistPct') && potency > 0) {
+    if ((field === 'drPct' || field === 'knockbackResistPct' || field === 'platingBonus' || field === 'reflectFlat') && potency > 0) {
       return { label: 'Guard potency', mult: 1 + potency };
     }
     if (field === 'durationMs' && durationBonus > 0) {
@@ -227,7 +190,7 @@ function fireTimeLayerFor(
     }
     return null;
   }
-  if (effect.kind === 'heal' && field === 'recoveryPct' && ability.tags.includes('recovery')) {
+  if (effect.kind === 'heal' && field === 'recoveryPct' && abilityHasTag(ability, 'recovery')) {
     const potency = Math.max(0, passives['defense.recovery-skill-potency'] ?? 0);
     if (potency > 0) return { label: 'Recovery skill potency', mult: 1 + potency };
   }
@@ -270,19 +233,12 @@ export function describeAbility(
   ability: AbilityDef,
   context: AbilityContext,
 ): AbilityDescription {
-  const techniquePowerPct = Math.max(0, context.passives['technique.power-pct'] ?? 0);
+  const techniquePowerPct = abilityHasTag(ability, 'technique') ? Math.max(0, context.passives['technique.power-pct'] ?? 0) : 0;
   const rank = abilityRankAt(ability, context.playerTier);
   const authored = rank.effect;
   const powerFields = TECHNIQUE_POWER_FIELDS[authored.kind] ?? [];
 
-  const resolved = applyRecoveryLayer(
-    ability,
-    applyGuardLayers(
-      resolveAbilityEffect(ability, { playerTier: context.playerTier, techniquePowerPct }),
-      context.passives,
-    ),
-    context.passives,
-  );
+  const resolved = resolveAbilityEffectWithPassives(ability, context.playerTier, context.passives);
 
   const lines: AbilityLine[] = [];
   for (const field of EFFECT_FIELD_ORDER[authored.kind]) {
@@ -317,6 +273,7 @@ export function describeAbility(
     rankLabel: `Rank ${abilityRankNumeral(rankNumber)}`,
     trigger: triggerSentence(ability.trigger),
     shape: SHAPE_SENTENCES[ability.shape],
+    tags: abilityTags(ability).map(id => ({ id, ...ABILITY_TAG_INFO[id] })),
     lines,
   };
 }
@@ -345,15 +302,7 @@ function reachLines(ability: AbilityDef, context: AbilityContext): AbilityLine[]
 /** Cooldown and cast time, after the passives that shorten them. */
 function timingLines(ability: AbilityDef, context: AbilityContext): AbilityLine[] {
   const lines: AbilityLine[] = [];
-  const isTechnique = ability.slot === 'technique';
-  const reductionKey = isTechnique
-    ? 'technique.cooldown-reduction-pct'
-    : 'guard.cooldown-reduction-pct';
-  let reduction = Math.max(0, context.passives[reductionKey] ?? 0);
-  if (isTechnique && ability.tags.includes('mobility')) {
-    reduction += Math.max(0, context.passives['core.mobility-cooldown-reduction-pct'] ?? 0);
-  }
-  reduction = Math.min(CD_REDUCTION_CAP, reduction);
+  const reduction = abilityCooldownReduction(ability, context.passives);
 
   const authoredCd = abilityCooldownMs(ability, context.playerTier);
   lines.push({
@@ -366,10 +315,8 @@ function timingLines(ability: AbilityDef, context: AbilityContext): AbilityLine[
   });
 
   const authoredCast = abilityCastMs(ability, context.playerTier);
-  // Both wind-up shapes go through `beginAbilityCast` server-side, so both pay the
-  // wind-up and both benefit from cast speed — a charge must not advertise a
-  // wind-up in its shape sentence and then hide the number.
-  const windsUp = ability.shape === 'cast' || ability.shape === 'charge';
+  // All wind-up shapes use beginAbilityCast, including self-casts.
+  const windsUp = ability.shape === 'cast' || ability.shape === 'charge' || ability.shape === 'self-cast';
   if (windsUp && authoredCast > 0) {
     const castReduction = Math.min(
       CAST_SPEED_CAP,

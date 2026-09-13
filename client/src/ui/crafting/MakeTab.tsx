@@ -19,6 +19,7 @@ import {
   catalystsAtom,
   essencesAtom,
   inventoryAtom,
+  equipmentAtom,
   itemUpgradesAtom,
   playerIdAtom,
   playerNodeIdAtom,
@@ -657,6 +658,7 @@ function MakeDetail({
   result,
   onAttempt,
 }: MakeDetailProps) {
+  const equipment = useAtomValue(equipmentAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
@@ -665,7 +667,7 @@ function MakeDetail({
   const recipe = entry.gear;
   const evolved = recipe ? isEvolvedRecipe(recipe) : false;
   const evolveCheck = recipe && evolved
-    ? checkEvolve({ recipe, inventory, itemUpgrades, essences, catalysts, isTestRoom })
+    ? checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, catalysts, isTestRoom })
     : null;
   const reconstructCheck = recipe && evolved && recipe.reconstructCost
     ? checkReconstruct({ recipe, essences, catalysts, isTestRoom })
@@ -763,6 +765,7 @@ function MakeDetail({
       {evolved && predecessor && recipe && (
         <div className="craft-recipe__effect-line">
           Evolves from {predecessor.name} +{requiredPlusFor(recipe)} (consumed)
+          {equipment[recipe.slot] === predecessor.id && <div>The evolved item stays equipped.</div>}
         </div>
       )}
 

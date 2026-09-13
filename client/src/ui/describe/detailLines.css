@@ -85,3 +85,6 @@
 }
 
 .detail-line--behavior .detail-line__value { flex:1 1 100%; min-width:0; overflow-wrap:anywhere; font-weight:normal; }
+
+.ability-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+.ability-tag { padding: 2px 6px; border: 1px solid var(--border-color, #555); border-radius: 4px; font-size: 11px; cursor: help; }

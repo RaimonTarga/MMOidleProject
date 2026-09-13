@@ -56,6 +56,8 @@ const BOSS_META: Record<string, StatusMeta> = {
   // The punish window at the end of an authored boss sequence. Yellow because it is
   // the one boss effect that is GOOD for the player — every other entry here is a
   // thing being done TO them.
+  'charge-instinct': { label: 'Instinct', color: '#ffbb66' },
+  'escape-instinct': { label: 'Escape Instinct', color: '#aadd77' },
   'boss-stunned': { label: 'Stunned', color: '#ffdd44' },
 };
 

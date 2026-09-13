@@ -1,0 +1,475 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-12T21-23-29-443Z-39ea6cbe",
+    "startedAt": 1789248209443,
+    "endedAt": 1789252419169,
+    "durationMs": 4209726,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "socket disconnected",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-12T21-23-29-443Z-39ea6cbe",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 25,
+      "end": 100,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 25
+        },
+        {
+          "atMs": 3032645,
+          "multiplier": 100
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 2,
+    "finalGlobalMastery": 72,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 12,
+      "forest": 12,
+      "mountain": 12,
+      "swamp": 12,
+      "cave": 12,
+      "jungle": 6,
+      "desert": 6
+    }
+  },
+  "combat": {
+    "totalKills": 638,
+    "killsByMonster": {
+      "Tiny Wisp": 13,
+      "Field Hare": 51,
+      "Boar": 20,
+      "Young Wolf": 5,
+      "Wolf": 2,
+      "Moss Rat": 2,
+      "Cliff Hopper": 4,
+      "Ridge Ambusher": 1,
+      "Mud Toad": 4,
+      "Mire Ooze": 2,
+      "Cave Lurker": 6,
+      "Cave Brute": 2,
+      "Prairie Defender": 3,
+      "Tusked Razorback": 1,
+      "Mire Keeper": 1,
+      "Stone Warden": 1,
+      "Crag Behemoth": 1,
+      "Giant Spider": 1,
+      "Savanna Hawk": 61,
+      "Prairie Yearling": 201,
+      "Prairie Wolf": 66,
+      "Stampede Bull": 62,
+      "Dire Whelp": 53,
+      "Dire Wolf": 18,
+      "Ironclaw Badger": 13,
+      "Thorn Spitter": 13,
+      "Bog Witch": 2,
+      "Moss-Shell Snapper": 2,
+      "Mire Stalker": 1,
+      "Stone Eagle": 2,
+      "Boulder Thrower": 2,
+      "Cave Troll": 1,
+      "Jungle Ape": 2,
+      "Jungle Snake": 2,
+      "Vine Chameleon": 1,
+      "Sand Scorpion": 6,
+      "Sun Scarab": 7,
+      "Stone Basilisk": 3
+    },
+    "totalDamageTaken": 7682.347249999999,
+    "playerDamageDealt": 178964,
+    "totalHealed": 6584,
+    "deaths": 9,
+    "abilityActivations": {
+      "sweep": 468,
+      "second-wind": 53,
+      "expose-weakness": 29,
+      "cleanse": 8
+    }
+  },
+  "positioning": {
+    "samples": 7847,
+    "movementFraction": 0.7472919587103352,
+    "stationaryCombatFraction": 0.19829234102204665,
+    "nearBoundaryFraction": 0.05823881738243915,
+    "boss": {
+      "movementFraction": 0.8078470824949698,
+      "nearBoundaryFraction": 0.026156941649899398,
+      "range": {
+        "samples": 994,
+        "mean": 105.44298772754595,
+        "min": 27.498577266272388,
+        "max": 203.4980926478626,
+        "p50": 95.95797824045026,
+        "p90": 153.01746863704844
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8894117647058823,
+      "combatDurationMs": 5413,
+      "playerDamage": 193,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6405882352941177,
+      "combatDurationMs": 14253,
+      "playerDamage": 579,
+      "incomingDamage": 35.324
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4747058823529412,
+      "combatDurationMs": 8219,
+      "playerDamage": 334,
+      "incomingDamage": 39.56375
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.39176470588235296,
+      "combatDurationMs": 3608,
+      "playerDamage": 141,
+      "incomingDamage": 50
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.36411764705882355,
+      "combatDurationMs": 802,
+      "playerDamage": 0,
+      "incomingDamage": 40
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.36411764705882355,
+      "combatDurationMs": 503,
+      "playerDamage": 347,
+      "incomingDamage": 4
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3305882352941176,
+      "combatDurationMs": 1203,
+      "playerDamage": 0,
+      "incomingDamage": 23
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7511764705882353,
+      "combatDurationMs": 10131,
+      "playerDamage": 432,
+      "incomingDamage": 28.91425
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7511764705882353,
+      "combatDurationMs": 702,
+      "playerDamage": 47,
+      "incomingDamage": 23
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7235294117647059,
+      "combatDurationMs": 500,
+      "playerDamage": 47,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6958823529411765,
+      "combatDurationMs": 701,
+      "playerDamage": 0,
+      "incomingDamage": 23
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5852941176470589,
+      "combatDurationMs": 5713,
+      "playerDamage": 235,
+      "incomingDamage": 54
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5576470588235294,
+      "combatDurationMs": 600,
+      "playerDamage": 47,
+      "incomingDamage": 27
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4747058823529412,
+      "combatDurationMs": 3710,
+      "playerDamage": 146,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.38588235294117645,
+      "combatDurationMs": 5225,
+      "playerDamage": 317,
+      "incomingDamage": 55.05675
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3305882352941176,
+      "combatDurationMs": 3519,
+      "playerDamage": 94,
+      "incomingDamage": 50
+    },
+    {
+      "bossName": "Tusked Razorback",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 14367,
+      "playerDamage": 693,
+      "incomingDamage": 113.925
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4595238095238095,
+      "combatDurationMs": 25266,
+      "playerDamage": 1079,
+      "incomingDamage": 102
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.27904761904761904,
+      "combatDurationMs": 7911,
+      "playerDamage": 379,
+      "incomingDamage": 25
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.10904761904761905,
+      "combatDurationMs": 8236,
+      "playerDamage": 357,
+      "incomingDamage": 55
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.03190476190476191,
+      "combatDurationMs": 3907,
+      "playerDamage": 162,
+      "incomingDamage": 32
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8395238095238096,
+      "combatDurationMs": 6205,
+      "playerDamage": 281,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6195238095238095,
+      "combatDurationMs": 10436,
+      "playerDamage": 462,
+      "incomingDamage": 17
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.42952380952380953,
+      "combatDurationMs": 10202,
+      "playerDamage": 399,
+      "incomingDamage": 115
+    },
+    {
+      "bossName": "Grave Toadeater",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.30238095238095236,
+      "combatDurationMs": 6233,
+      "playerDamage": 211,
+      "incomingDamage": 76
+    },
+    {
+      "bossName": "Gnarled Greatbear",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5511111111111111,
+      "combatDurationMs": 17203,
+      "playerDamage": 808,
+      "incomingDamage": 123.925
+    },
+    {
+      "bossName": "Gnarled Greatbear",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.43555555555555553,
+      "combatDurationMs": 4515,
+      "playerDamage": 208,
+      "incomingDamage": 64.61425
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8857142857142857,
+      "combatDurationMs": 5213,
+      "playerDamage": 240,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8857142857142857,
+      "combatDurationMs": 1108,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6971428571428572,
+      "combatDurationMs": 8023,
+      "playerDamage": 344,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5447619047619048,
+      "combatDurationMs": 6443,
+      "playerDamage": 268,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5161904761904762,
+      "combatDurationMs": 1106,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3352380952380952,
+      "combatDurationMs": 8114,
+      "playerDamage": 380,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.21142857142857144,
+      "combatDurationMs": 6119,
+      "playerDamage": 260,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.06857142857142857,
+      "combatDurationMs": 5719,
+      "playerDamage": 240,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag Behemoth",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 2716,
+      "playerDamage": 104,
+      "incomingDamage": 0
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "gale-needle",
+      "armor": "plains-vest-t2",
+      "recovery": "plains-charm-t2",
+      "mobility": "desert-boots-t2",
+      "core": "core-tempered",
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 5,
+      "plains-charm-t1": 5,
+      "plains-vest-t1": 4,
+      "flash-rapier": 4,
+      "mountain-charm-t1": 5,
+      "cave-vest-t1": 5,
+      "chaotic-axe": 5,
+      "forest-boots-t1": 5,
+      "plains-vest-t2": 4,
+      "gale-needle": 4,
+      "plains-charm-t2": 4,
+      "desert-boots-t2": 5
+    },
+    "classRoot": "energy-root",
+    "frame": "heavy",
+    "range": null,
+    "techniques": [
+      "sweep"
+    ],
+    "guards": [
+      "second-wind"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stats": {
+      "attack": 34,
+      "attackRange": 142,
+      "attackCooldown": 583,
+      "maxHp": 209,
+      "plating": 22,
+      "damageReduction": 0.02
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

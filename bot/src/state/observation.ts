@@ -171,6 +171,7 @@ export class Observation {
     return checkEvolve({
       recipe,
       inventory: self.inventory,
+      equipment: self.equipment,
       itemUpgrades: self.itemUpgrades,
       essences: self.essences,
       catalysts: self.catalysts,

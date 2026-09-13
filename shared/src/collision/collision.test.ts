@@ -596,15 +596,18 @@ for (const { id: nodeId } of WORLD_NODE_LIST.filter(node => node.biomeGroup === 
   assert(layout !== null, `${nodeId} has a generated ledge layout`);
   const isDungeon = NODE_BIOMES[nodeId]?.isDungeon === true;
   assert(
-    layout?.kind === (isDungeon ? 'circle' : 'rings'),
+    layout?.kind === (isDungeon ? 'square' : 'rings'),
     `${nodeId} takes the ${isDungeon ? 'arena ring' : 'guarded ascent'} layout`,
   );
   if (layout?.kind === 'rings') {
     assert(layout.outer.length >= 1, `${nodeId} outer ring keeps a way in`);
     assert(layout.inner.length >= 1, `${nodeId} inner ring keeps a way up`);
-  } else if (layout?.kind === 'circle') {
+  } else if (layout?.kind === 'square') {
     assert(layout.gaps.length >= 1, `${nodeId} arena ring keeps a way in`);
     assert(layout.gaps.length <= 2, `${nodeId} arena ring has at most two ways in`);
+    const walls = (RESOLVED_NODE_FEATURES[nodeId] ?? []).filter(f => f.id.startsWith('mountain_'));
+    assert(walls.length <= 6, `${nodeId} uses at most six long wall hitboxes`);
+    assert(walls.every(f => !f.id.includes('_circle_')), `${nodeId} uses the shared square ledge renderer`);
   }
   assert(
     walkableComponentCount(buildNavGrid(nodeId, 'player', { x: 32, y: 32 })) === 1,

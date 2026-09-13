@@ -4,15 +4,11 @@ import { pointInNodeFeatureShape, type Vec2 } from "../systems/spatial";
 import { WORLD_NODE_LIST } from "./map/registry";
 import {
   getMountainLedgeLayout,
-  mountainArcIsGap,
   mountainGapPoint,
   mountainRingBounds,
-  mountainRingPoint,
-  MOUNTAIN_DUNGEON_SEGMENT_STEP,
   MOUNTAIN_INNER_INSET,
   MOUNTAIN_LEDGE_THICKNESS,
   MOUNTAIN_OUTER_INSET,
-  type MountainCircleLayout,
   type MountainGap,
   type MountainLedgeLayout,
 } from "./mountainPasses";
@@ -305,15 +301,9 @@ const MOUNTAIN_CHOKE_INSET = 138;
 
 function mountainChokepointsForLayout(layout: MountainLedgeLayout): Vec2[] {
   const out: Vec2[] = [];
-  if (layout.kind === "circle") {
-    // One post per entrance, set just inside the wall — a doorkeeper, not a wanderer.
-    for (const gap of layout.gaps) {
-      out.push(mountainRingPoint(layout, gap.centre, -MOUNTAIN_CHOKE_INSET));
-    }
-    return out;
-  }
-  for (const ring of ["outer", "inner"] as const) {
-    for (const gap of ring === "outer" ? layout.outer : layout.inner) {
+  const rings = layout.kind === "square" ? ["outer"] as const : ["outer", "inner"] as const;
+  for (const ring of rings) {
+    for (const gap of layout.kind === "square" ? layout.gaps : ring === "outer" ? layout.outer : layout.inner) {
       const p = mountainGapPoint(ring, gap);
       // Inward is toward the node centre for both rings.
       const dx = GAME_CONFIG.NODE_WIDTH / 2 - p.x;
@@ -336,46 +326,23 @@ export function mountainChokepointsForNode(nodeId: string): Vec2[] {
 export function mountainLedgeHoldPointsForNode(nodeId: string): Vec2[] {
   const layout = getMountainLedgeLayout(nodeId);
   if (!layout) return [];
-  if (layout.kind === "circle") {
-    // Ledge-vaulting monsters hold ON the wall, so their posts follow it. Points that fall
-    // in an entrance are dropped: that opening already has a chokepoint holder, and a
-    // vaulter standing in the doorway would double-guard it.
-    const out: Vec2[] = [];
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2;
-      if (mountainArcIsGap(layout, angle)) continue;
-      out.push(mountainRingPoint(layout, angle, -MOUNTAIN_LEDGE_HOLD_OFFSET));
-    }
-    return out;
-  }
   const off = MOUNTAIN_LEDGE_HOLD_OFFSET;
   return [
     { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_OUTER_TOP + off },
     { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_OUTER_BOTTOM - off },
     { x: MOUNTAIN_OUTER_LEFT + off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
     { x: MOUNTAIN_OUTER_RIGHT - off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_INNER_TOP - off },
-    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_INNER_BOTTOM + off },
-    { x: MOUNTAIN_INNER_LEFT - off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-    { x: MOUNTAIN_INNER_RIGHT + off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+    ...(layout.kind === "square" ? [] : [
+      { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_INNER_TOP - off },
+      { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_INNER_BOTTOM + off },
+      { x: MOUNTAIN_INNER_LEFT - off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+      { x: MOUNTAIN_INNER_RIGHT + off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+    ]),
   ];
 }
 
 export function mountainLedgePatrolForPost(post: Vec2): Vec2[] {
   const off = MOUNTAIN_LEDGE_HOLD_OFFSET;
-  // A post on a dungeon ring patrols ALONG the circle, so the two ends are found by
-  // rotating about the node centre rather than by stepping on an axis.
-  const cx = GAME_CONFIG.NODE_WIDTH / 2;
-  const cy = GAME_CONFIG.NODE_HEIGHT / 2;
-  const radius = Math.hypot(post.x - cx, post.y - cy);
-  if (radius > MOUNTAIN_INNER_INSET * 0.55 && radius < MOUNTAIN_OUTER_INSET * 2.2) {
-    const angle = Math.atan2(post.y - cy, post.x - cx);
-    const sweep = 285 / radius;
-    return [
-      { x: cx + Math.cos(angle - sweep) * radius, y: cy + Math.sin(angle - sweep) * radius },
-      { x: cx + Math.cos(angle + sweep) * radius, y: cy + Math.sin(angle + sweep) * radius },
-    ];
-  }
   const nearHorizontal =
     Math.abs(post.y - (MOUNTAIN_OUTER_TOP + off)) < 4 ||
     Math.abs(post.y - (MOUNTAIN_OUTER_BOTTOM - off)) < 4 ||
@@ -405,41 +372,11 @@ export function mountainLedgeFeatureIdsForNode(nodeId: string): Set<string> {
 function mountainLedgeRings(prefix: string, nodeId: string): NodeFeatureSpec[] {
   const layout = getMountainLedgeLayout(nodeId);
   if (!layout) return [];
-  if (layout.kind === "circle") return mountainCircleSegments(prefix, layout);
+  if (layout.kind === "square") return mountainRingSegments(prefix, "outer", layout.gaps, layout.wobble);
   return [
     ...mountainRingSegments(prefix, "outer", layout.outer, layout.wobble),
     ...mountainRingSegments(prefix, "inner", layout.inner, layout.wobble),
   ];
-}
-
-/**
- * A dungeon's circular wall, as a run of small squares stepped along the arc.
- *
- * Feature shapes are axis-aligned rects with no rotation, so a curve has to be
- * approximated. Squares (rather than long rects) are what let the same shape follow the
- * ring at any angle, and the pitch is kept below the 96px thickness so consecutive squares
- * always overlap — at the cardinal points, where the step is most nearly along one axis,
- * a pitch equal to the thickness would leave them merely touching.
- */
-function mountainCircleSegments(
-  prefix: string,
-  layout: MountainCircleLayout,
-): NodeFeatureSpec[] {
-  const t = MOUNTAIN_LEDGE_THICKNESS;
-  const steps = Math.max(
-    24,
-    Math.round((2 * Math.PI * layout.radius) / MOUNTAIN_DUNGEON_SEGMENT_STEP),
-  );
-  const out: NodeFeatureSpec[] = [];
-  for (let i = 0; i < steps; i++) {
-    const angle = (i / steps) * Math.PI * 2;
-    if (mountainArcIsGap(layout, angle)) continue;
-    // A touch of radial jitter keeps the wall from reading as a drawn circle.
-    const jitter = (((i + layout.wobble) % 3) - 1) * 6;
-    const p = mountainRingPoint(layout, angle, jitter);
-    out.push(rockLedge(`${prefix}_circle_${i}`, p.x, p.y, t / 2, t / 2));
-  }
-  return out;
 }
 
 /**

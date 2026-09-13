@@ -116,3 +116,6 @@ export * from './systems/equipmentPreview';
 export * from './systems/classSecondaryDamage';
 
 export * from './systems/finalDamage';
+
+export * from './data/abilityTags';
+export * from './systems/abilityModifiers';

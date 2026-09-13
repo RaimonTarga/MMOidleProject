@@ -1,5 +1,6 @@
 import {
   ABILITY_DATABASE,
+  abilityHasTag,
   abilityCooldownMs,
   getCounter,
   getCooldown,
@@ -93,11 +94,10 @@ function registerMobilityRefundOnKill(): void {
     if (pct <= 0) return;
 
     // Inert unless the build actually carries a mobility ability — the magnifier
-    // rule. Today only Charge is tagged `mobility`, so this is a narrow but
-    // deliberate dependency, and it widens for free as more are authored.
-    for (const abilityId of player.tracksProgression.attunedAbilities.techniques) {
+    // rule. Shared tags keep this aligned with cooldown bonuses and ability details.
+    for (const abilityId of [...player.tracksProgression.attunedAbilities.techniques, ...player.tracksProgression.attunedAbilities.guards]) {
       const ability = ABILITY_DATABASE.get(abilityId);
-      if (!ability?.tags?.includes("mobility")) continue;
+      if (!ability || !abilityHasTag(ability, "mobility")) continue;
 
       const key = abilityCooldownKey(abilityId);
       const remaining = getCooldown(player.tracksCombat, key);

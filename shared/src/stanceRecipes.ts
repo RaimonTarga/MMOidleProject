@@ -26,30 +26,20 @@ export interface StanceRecipe {
  *     NATIVE_MODIFIER when it fits; this redistribution uses only live families
  *     and keeps role-appropriate exceptions explicit.
  *
- * The 2026-09-04 redistribution places the Tier-2 Stances in their locked biome
- * sequence and uses local essence plus role-appropriate live catalyst families.
- *
- * The locked Tier-3 redistribution places the four conditional/specialized
- * Stances in their T3 homes. The follow-on Tier-4 redistribution moves the
- * three advanced stateful Stances into T4, moves Recuperating to Graveyard,
- * and places the already-implemented Powering Up in Trench.
- *
- * Stance mechanics and recipe IDs remain unchanged. The three newly placed
- * postures use stable recipe IDs matching their existing stance IDs.
+ * The 2026-09-13 playtest distribution keeps only the three basic stances in T2.
+ * Six specialized stances unlock in T3 and six advanced stances in T4.
+ * Recipe IDs and stance mechanics are unchanged; already learned stances remain known.
  */
 const recipes: StanceRecipe[] = [
   // Introductory/basic stances: deliberately cheap and available at the start of
   // the returning-biome T2 continuation band.
   { id: "stance-recipe-offensive", name: "Offensive Stance", description: "Trade defense for damage and tempo.", stanceId: "offensive-stance", tier: 2, recipeGroup: "plains", requiredBiomeLevel: 7, cost: { yellow: 60 }, catalystCost: { alacrity: 1 } },
   { id: "stance-recipe-defensive", name: "Defensive Stance", description: "Trade offense for dependable protection.", stanceId: "defensive-stance", tier: 2, recipeGroup: "plains", requiredBiomeLevel: 7, cost: { yellow: 60 }, catalystCost: { fortified: 1 } },
-  { id: "stance-recipe-tanking", name: "Tanking Stance", description: "Become dramatically safer and dramatically slower.", stanceId: "tanking-stance", tier: 2, recipeGroup: "mountain", requiredBiomeLevel: 8, cost: { blue: 100 }, catalystCost: { heavy: 1 } },
-  { id: "stance-recipe-enraged", name: "Enraged Stance", description: "Answer danger with finishing pressure.", stanceId: "enraged-stance", tier: 2, recipeGroup: "cave", requiredBiomeLevel: 8, cost: { red: 110 }, catalystCost: { dominion: 1 } },
-  { id: "stance-recipe-perfection", name: "Perfection Stance", description: "Reward near-perfect control.", stanceId: "perfection-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 8, cost: { green: 110 }, catalystCost: { alacrity: 1 } },
-  // Specialized T2 stances stay early in their returning-biome band, but carry
-  // the full 90-120 essence price rather than the Plains introduction price.
+  // Fleeting completes the three introductory T2 stances.
   { id: "stance-recipe-fleeting", name: "Fleeting Stance", description: "Abandon pressure to reposition and escape.", stanceId: "fleeting-stance", tier: 2, recipeGroup: "swamp", requiredBiomeLevel: 8, cost: { purple: 110 }, catalystCost: { alacrity: 1 } },
-  // T3 conditional/specialized Stances: early in each biome's own T3 band, with
-  // local essence and exactly two live catalysts.
+  // T3 stances use each biome's own mastery band, local essence, and two catalysts.
+  { id: "stance-recipe-tanking", name: "Tanking Stance", description: "Become dramatically safer and dramatically slower.", stanceId: "tanking-stance", tier: 3, recipeGroup: "mountain", requiredBiomeLevel: 13, cost: { blue: 220 }, catalystCost: { heavy: 2 } },
+  { id: "stance-recipe-enraged", name: "Enraged Stance", description: "Answer danger with finishing pressure.", stanceId: "enraged-stance", tier: 3, recipeGroup: "cave", requiredBiomeLevel: 14, cost: { red: 230 }, catalystCost: { dominion: 2 } },
   // Cave T3 L13 — high output paid for with the stance's existing self-bleed.
   { id: "stance-recipe-berserker", name: "Berserker Stance", description: "Gain tempo while bleeding your own life away.", stanceId: "berserker-stance", tier: 3, recipeGroup: "cave", requiredBiomeLevel: 13, cost: { red: 230 }, catalystCost: { dominion: 2 } },
   // Swamp T3 L13 — endure layered harmful statuses rather than cleanse them.
@@ -58,8 +48,8 @@ const recipes: StanceRecipe[] = [
   { id: "stance-recipe-predator", name: "Predator Stance", description: "Stalk enemies and empower the opening strike.", stanceId: "predator-stance", tier: 3, recipeGroup: "tundra", requiredBiomeLevel: 2, cost: { blue: 210 }, catalystCost: { dominion: 2 } },
   // Desert T3 L7 — precision finishing pressure in the local yellow essence band.
   { id: "stance-recipe-execute", name: "Execute Stance", description: "Finish wounded prey at the cost of neutral pressure.", stanceId: "execute-stance", tier: 3, recipeGroup: "desert", requiredBiomeLevel: 7, cost: { yellow: 230 }, catalystCost: { dominion: 2 } },
-  // T4 advanced/stateful Stances: 3-4 live catalysts and a moderate local
-  // essence bill, ordered before their biome's Core/Relic where applicable.
+  // T4 stances use 3-4 live catalysts and a moderate local essence cost.
+  { id: "stance-recipe-perfection", name: "Perfection Stance", description: "Reward near-perfect control.", stanceId: "perfection-stance", tier: 4, recipeGroup: "jungle", requiredBiomeLevel: 14, cost: { green: 450 }, catalystCost: { alacrity: 3 } },
   // Mountain T4 L20 — deliberate slow/heavy preparation for an empowered hit.
   { id: "stance-recipe-time-to-strike", name: "Time to Strike", description: "Commit to one empowered hit at the cost of ordinary tempo.", stanceId: "time-to-strike-stance", tier: 4, recipeGroup: "mountain", requiredBiomeLevel: 20, cost: { blue: 450 }, catalystCost: { heavy: 3 } },
   // Jungle T4 L14 — crowd mitigation where multiple attackers are common.

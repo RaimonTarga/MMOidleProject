@@ -588,11 +588,11 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('guard.cooldown-reduction-pct');
   }
   if (has('guard.potency-pct')) {
-    lines.push(`+${pctK('guard.potency-pct')} Guard ability effect`);
+    lines.push(`+${pctK('guard.potency-pct')} Mitigation Guard potency`);
     mark('guard.potency-pct');
   }
   if (has('guard.duration-pct')) {
-    lines.push(`+${pctK('guard.duration-pct')} Guard ability duration`);
+    lines.push(`+${pctK('guard.duration-pct')} Mitigation Guard duration`);
     mark('guard.duration-pct');
   }
   if (has('guard.recovery-on-fire-pct')) {

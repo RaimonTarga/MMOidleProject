@@ -26,20 +26,24 @@ export type AbilityFamily = "technique" | "guard";
 export const ABILITY_FAMILIES: readonly AbilityFamily[] = ["technique", "guard"];
 
 /**
- * Behavioral tags. Tags exist because SYSTEMS need them, not for taxonomy.
+ * Ability tags are queried through abilityHasTag / abilityTags. Technique, Guard,
+ * and Armed derive from family/shape; the remaining roles are authored below.
  *
- * - `mobility` — the Scout core's mobility cooldown reduction and refund apply.
+ * - `mobility` — Scout cooldown reduction and Bruiser kill refunds apply.
  * - `recovery` — a Recovery SKILL: it activates a fraction of the player's
  *   Recovery rate, and is the only thing `defense.recovery-skill-potency`
  *   amplifies. Passive Recovery access is deliberately NOT tagged.
  * - `mitigation` — a continuous defensive magnitude that `guard.potency-pct`
  *   may amplify.
- * - `control` — applies slow/root/stun to a target.
+ * - `control` — applies or counters crowd control.
  * - `cleanse` — removes something rather than adding it; discrete, so generic
  *   potency must never touch it.
  * - `offensive-buff` — a self-facing offensive window.
  */
 export type AbilityTag =
+  | "technique"
+  | "guard"
+  | "armed"
   | "mobility"
   | "recovery"
   | "mitigation"
@@ -1041,7 +1045,7 @@ export function resolveAbilityEffect(
   opts: { playerTier: number; techniquePowerPct?: number },
 ): AbilityEffectSpec {
   const effect = abilityEffectAt(ability, opts.playerTier);
-  const powerMult = 1 + Math.max(0, opts.techniquePowerPct ?? 0);
+  const powerMult = ability.slot === "technique" ? 1 + Math.max(0, opts.techniquePowerPct ?? 0) : 1;
   const powerFields = TECHNIQUE_POWER_FIELDS[effect.kind] ?? [];
   if (powerMult === 1 || powerFields.length === 0) return effect;
 

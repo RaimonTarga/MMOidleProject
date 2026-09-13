@@ -211,54 +211,30 @@ Recipes live in `shared/src/stanceRecipes.ts`. Three placement rules hold, all e
 2. `requiredBiomeLevel` must be within `biomeLevelCap(tier, group)`;
 3. `catalystCost` must name a live node-modifier family the biome is allowed to roll.
 
-The 2026-08-22 pass fixed all three. Historically, Fleeting moved off a Tundra that does
-not exist at T2, Brawler moved off a Plains retired by T3, and Recuperating moved off a
-Forest gone by T4. The locked 2026-09-04 redistribution now places Fleeting in Swamp T2,
-Time to Strike in Mountain T4, Brawler in Jungle T4, Reaper in Volcanic T4, Recuperating
-in Graveyard T4, and Powering Up in Trench T4, while retaining Warding/Berserker/Predator/
-Execute as the four T3 rewards. Enraged, Berserker and Predator had gates above their own tier's level cap; and eight
-recipes still charged the retired blight / volatility / predation / brutality catalyst
-families, which no player can hold, so those stances were uncraftable outside the test room.
-The 2026-09-04 locked redistribution then moved the six Tier-2 Stances into
-their intended reward sequence and re-authored each cost against the receiving
-biome's local essence and a live, role-appropriate catalyst family. IDs and
-stance mechanics remain unchanged:
+The 2026-09-13 playtest correction leaves **only Offensive, Defensive, and Fleeting
+in Tier 2**. Tanking and Enraged move to Tier 3; Perfection moves to Tier 4 Jungle
+(Forest no longer has nodes there). Recipe IDs and already learned stances are preserved.
+All gates use a living biome, reachable mastery band, local essence, and live catalysts.
 
-| Stance | Biome / gate | Essence | Catalyst |
-|---|---|---:|---|
-| Offensive | Plains L7 | 60 yellow | 1 alacrity |
-| Defensive | Plains L7 | 60 yellow | 1 fortified |
-| Perfection | Forest L8 | 110 green | 1 alacrity |
-| Fleeting | Swamp L8 | 110 purple | 1 alacrity |
-| Tanking | Mountain L8 | 100 blue | 1 heavy |
-| Enraged | Cave L8 | 110 red | 1 dominion |
+| Tier | Stance | Biome / gate | Essence | Catalyst |
+|---|---|---|---:|---|
+| 2 | Offensive | Plains L7 | 60 yellow | 1 alacrity |
+| 2 | Defensive | Plains L7 | 60 yellow | 1 fortified |
+| 2 | Fleeting | Swamp L8 | 110 purple | 1 alacrity |
+| 3 | Tanking | Mountain L13 | 220 blue | 2 heavy |
+| 3 | Enraged | Cave L14 | 230 red | 2 dominion |
+| 3 | Warding | Swamp L13 | 220 purple | 2 fortified |
+| 3 | Berserker | Cave L13 | 230 red | 2 dominion |
+| 3 | Predator | Tundra L2 | 210 blue | 2 dominion |
+| 3 | Execute | Desert L7 | 230 yellow | 2 dominion |
+| 4 | Perfection | Jungle L14 | 450 green | 3 alacrity |
+| 4 | Time to Strike | Mountain L20 | 450 blue | 3 heavy |
+| 4 | Brawler | Jungle L14 | 500 green | 3 swarming |
+| 4 | Reaper | Volcanic L8 | 500 red | 3 swarming |
+| 4 | Recuperating | Graveyard L2 | 450 purple | 3 fortified |
+| 4 | Powering Up | Trench L2 | 550 green | 4 dominion |
 
-The locked Tier-3 redistribution retains four conditional/specialized Stances. They
-unlock early in their biome band and use local essence plus two obtainable catalysts:
-
-| Stance | Biome / gate | Essence | Catalyst |
-|---|---|---:|---|
-| Warding | Swamp L13 | 220 purple | 2 fortified |
-| Berserker | Cave L13 | 230 red | 2 dominion |
-| Predator | Tundra L2 | 210 blue | 2 dominion |
-| Execute | Desert L7 | 230 yellow | 2 dominion |
-
-No T3 Stance has a boss-clear requirement. The six T3 Cores remain in their
-final biome homes and are separately priced as late-band premium rewards.
-
-The locked Tier-4 redistribution places the advanced/stateful Stances in later
-biome bands:
-
-| Stance | Biome / gate | Essence | Catalyst |
-|---|---|---:|---|
-| Time to Strike | Mountain L20 | 450 blue | 3 heavy |
-| Brawler | Jungle L14 | 500 green | 3 swarming |
-| Reaper | Volcanic L8 | 500 red | 3 swarming |
-| Recuperating | Graveyard L2 | 450 purple | 3 fortified |
-| Powering Up | Trench L2 | 550 green | 4 dominion |
-
-No T4 Stance has a boss-clear requirement. The four T3 and five T4 rosters are
-exactly pinned by the progression economy tests.
+No stance has a boss-clear requirement. Progression tests pin the 3 / 6 / 6 tier rosters.
 
 New stances currently reuse the closest existing stance crests until dedicated concept art is authored.
 
@@ -270,7 +246,7 @@ New stances currently reuse the closest existing stance crests until dedicated c
 
 `shared/src/data/recipeGates.test.ts` covers recipe reachability for stances, rites, runes, abilities and items.
 
-`server/test/t2ProgressionEconomy.test.ts` locks the six current T2 stance homes,
+`server/test/t2ProgressionEconomy.test.ts` locks the three current T2 stance homes,
 gates, exact essence/catalyst costs, and the introductory versus specialized
 economy bands.
 

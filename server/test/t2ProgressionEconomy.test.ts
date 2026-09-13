@@ -191,10 +191,7 @@ type T2RewardSpec = {
 const T2_STANCE_REWARDS: T2RewardSpec[] = [
   { id: "stance-recipe-offensive", group: "plains", level: 7, cost: { yellow: 60 }, catalystCost: { alacrity: 1 }, essenceBand: [50, 70] },
   { id: "stance-recipe-defensive", group: "plains", level: 7, cost: { yellow: 60 }, catalystCost: { fortified: 1 }, essenceBand: [50, 70] },
-  { id: "stance-recipe-perfection", group: "forest", level: 8, cost: { green: 110 }, catalystCost: { alacrity: 1 }, essenceBand: [90, 120] },
   { id: "stance-recipe-fleeting", group: "swamp", level: 8, cost: { purple: 110 }, catalystCost: { alacrity: 1 }, essenceBand: [90, 120] },
-  { id: "stance-recipe-tanking", group: "mountain", level: 8, cost: { blue: 100 }, catalystCost: { heavy: 1 }, essenceBand: [90, 120] },
-  { id: "stance-recipe-enraged", group: "cave", level: 8, cost: { red: 110 }, catalystCost: { dominion: 1 }, essenceBand: [90, 120] },
 ];
 
 const T2_CORE_REWARDS: T2RewardSpec[] = [

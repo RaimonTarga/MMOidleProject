@@ -1,4 +1,4 @@
-import type { EssenceType } from '../items';
+import type { EssenceType, EquipmentMap } from '../items';
 import { ESSENCE_LABELS } from '../items';
 import type { Recipe } from '../data/recipes/types';
 
@@ -83,8 +83,9 @@ function affordCatalysts(
 /** Whether the player can EVOLVE into `recipe` (consume the +3 predecessor). */
 export function checkEvolve(params: {
   recipe: Recipe;
-  /** Bag contents (item ids). The predecessor copy that gets consumed must be here. */
+  /** Bag contents (item ids). Equipped predecessors are also eligible. */
   inventory: readonly string[];
+  equipment?: Readonly<EquipmentMap>;
   /** Per-item-id upgrade levels. */
   itemUpgrades: Record<string, number>;
   essences: Record<EssenceType, number>;
@@ -92,13 +93,13 @@ export function checkEvolve(params: {
   /** Test room skips ownership + cost gates. */
   isTestRoom?: boolean;
 }): EvolveCheck {
-  const { recipe, inventory, itemUpgrades, essences, catalysts, isTestRoom } = params;
+  const { recipe, inventory, equipment, itemUpgrades, essences, catalysts, isTestRoom } = params;
   if (!recipe.evolvesFrom) return { ok: false, reason: 'This recipe is not an evolution.' };
   if (isTestRoom) return { ok: true };
 
   const predId = recipe.evolvesFrom;
-  if (!inventory.includes(predId)) {
-    return { ok: false, reason: 'Predecessor item must be in your bag to evolve.' };
+  if (!inventory.includes(predId) && equipment?.[recipe.slot] !== predId) {
+    return { ok: false, reason: 'You must own the predecessor item, equipped or in your bag.' };
   }
   const reqPlus = requiredPlusFor(recipe);
   if ((itemUpgrades[predId] ?? 0) < reqPlus) {

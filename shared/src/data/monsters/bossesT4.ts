@@ -84,6 +84,7 @@ export const bossMonsterEntriesT4 = [
     // independent every-4th heavy hit competing with the sequence for the player's
     // attention is precisely the accumulation this rework exists to undo.
     bossPattern: {
+      chargeInstinct: { maxStacks: 4, speedPct: 0.16, castReductionPct: 0.10 },
       id: 'titan-earthshatter', name: 'Titan Earthshatter',
       damageMultiplier: 2.2, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
@@ -252,15 +253,13 @@ export const bossMonsterEntriesT4 = [
         { kind: 'escape-guard', name: 'Flee', castMs: 2600, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.06,
           onBreak: { staggerMs: 2400, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15,
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15, instinctSpeedPct: 0.15,
           flee: { speed: 280 } },
-        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1500,
-          relocate: 'near-target', emergeGap: 40, travelSpeed: 720 },
-        { kind: 'payoff', name: 'Ambush', castMs: 750, fx: 'savage-maul',
-          damageMult: 1.0 },
-        { kind: 'apply-status', name: 'Venom Burst', castMs: 500, fx: 'savage-maul',
-          effectId: 'verdant-crown-venom', stacks: 4, durationMs: 8000,
-          data: { damagePerStack: 16, tickIntervalMs: 1000, isDot: 1 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
+          relocate: 'near-target', emergeGap: 40, travelSpeed: 270, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Venomous Bite', castMs: 750, fx: 'savage-maul',
+          damageMult: 1.0, reach: 90,
+          onHitPoison: { stacks: 4, damagePerStack: 16, durationMs: 8000, tickIntervalMs: 1000 } },
         // NO RECOVERY AFTER A LANDED AMBUSH — the window belongs to the break. T2.
       ],
     },
@@ -415,7 +414,7 @@ export const bossMonsterEntriesT4 = [
     },
     bossPattern: {
       id: 'cataclysm', name: 'Cataclysm',
-      damageMultiplier: 3.0, cooldownMs: 60000, initialCooldownMs: 0,
+      damageMultiplier: 1.0, cooldownMs: 60000, initialCooldownMs: 0,
       armBelowHpPct: 0.25,
       oncePerLife: true,
       steps: [
@@ -423,7 +422,7 @@ export const bossMonsterEntriesT4 = [
         // not a stun. Marked guardable so Guard is still a legitimate way to eat it.
         { kind: 'cast', name: 'Cataclysm', castMs: 8000, fx: 'cataclysm-cast', interruptible: false },
         { kind: 'impact', name: 'Cataclysm', anchor: 'self', radius: 2000,
-          damageMult: 1.0, telegraphMs: 400, fx: 'cataclysm-impact' },
+          damageMult: 1.0, rawDamage: 1000, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
         { kind: 'recovery', label: 'Spent', durationMs: 3000 },
       ],
     },

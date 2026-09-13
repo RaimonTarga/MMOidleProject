@@ -329,6 +329,8 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   'stat-buff-plating': 'defense-hardening',
   'stat-buff-damageReduction': 'defense-sustained-dr',
   'stat-buff-evasion': 'mob-sprint',
+  'charge-instinct': 'mob-haste',
+  'escape-instinct': 'mob-haste',
   'boss-stunned': 'debuff-stunned',
 };
 

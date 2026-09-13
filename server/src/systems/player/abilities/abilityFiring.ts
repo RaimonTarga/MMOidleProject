@@ -32,6 +32,7 @@ import {
   removeStatusEffect,
   removeStatusEffectStacks,
   resolveAbilityEffect,
+  resolveAbilityEffectWithPassives,
   setCooldown,
   type AbilityDef,
   type AbilityTrigger,
@@ -54,9 +55,6 @@ import { armTechnique } from "./abilityArming";
 import { actorFromPlayer } from "../../../world/worldLogActors";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
-
-/** Hard cap on amplified Guard damage reduction (mirrors abilityEffects' GUARD_DR_CAP). */
-const GUARD_DR_CAP = 0.9;
 
 /** Hard cap on Break Free's control resistance — never total immunity. */
 const CONTROL_RESIST_CAP = 0.9;
@@ -592,16 +590,13 @@ function applyGuardEffect(
   // Guards resolve their magnitudes through the shared seam so the authored rank
   // applies. Technique Power deliberately does NOT — guard potency is the
   // defensive stat family and the budgets must not cross.
-  const effect = resolveAbilityEffect(ability, {
-    playerTier: player.tracksProgression.playerTier,
-  });
+  const effect = resolveAbilityEffectWithPassives(ability, player.tracksProgression.playerTier, passives);
   if (effect.kind === "damage-reduction") {
     applyGuardDrBuff(
       player,
       ability.id,
       effect.drPct,
       effect.durationMs,
-      passives,
       effect.knockbackResistPct,
     );
   } else if (effect.kind === "cleanse") {
@@ -609,7 +604,7 @@ function applyGuardEffect(
   } else if (effect.kind === "break-free") {
     applyBreakFree(world, player, effect.controlResistPct, effect.controlResistMs);
   } else if (effect.kind === "heal") {
-    applyGuardHeal(player, ability, effect.recoveryPct, effect.durationMs, passives);
+    applyGuardHeal(player, ability, effect.recoveryPct, effect.durationMs);
   } else if (effect.kind === "bramble") {
     applyBrambleGuard(player, effect.platingBonus, effect.reflectFlat, effect.durationMs);
   }
@@ -732,14 +727,9 @@ function applyGuardHeal(
   ability: AbilityDef,
   recoveryPct: number,
   durationMs: number,
-  passives: Record<string, number>,
 ): void {
   const ms = durationMs > 0 ? durationMs : GAME_CONFIG.RECOVERY_SKILL_MS;
-  const potency = ability.tags.includes("recovery")
-    ? Math.max(0, passives["defense.recovery-skill-potency"] ?? 0)
-    : 0;
-  const fraction = recoveryPct * (1 + potency);
-  activateRecovery(player.tracksCombat, ability.id === "recuperate" ? "skill-2" : "skill", fraction, ms);
+  activateRecovery(player.tracksCombat, ability.id === "recuperate" ? "skill-2" : "skill", recoveryPct, ms);
   applyStatusEffect(player.tracksCombat, {
     id: recoveryEffectIdForAbility(ability.id)!,
     remainingMs: ms,
@@ -747,7 +737,7 @@ function applyGuardHeal(
     sourceId: player.isPlayer.id,
     data: {
       totalMs: ms,
-      recoveryPct: fraction,
+      recoveryPct,
     },
   });
 }
@@ -765,19 +755,10 @@ function applyGuardHeal(
 function applyGuardDrBuff(
   player: PlayerEntity,
   abilityId: string,
-  baseDrPct: number,
-  baseDurationMs: number,
-  passives: Record<string, number>,
-  baseKnockbackResistPct?: number,
+  drPct: number,
+  durationMs: number,
+  knockbackResistPct?: number,
 ): void {
-  const potency = passives["guard.potency-pct"] ?? 0;
-  const durationBonus = passives["guard.duration-pct"] ?? 0;
-  const drPct = Math.min(GUARD_DR_CAP, baseDrPct * (1 + Math.max(0, potency)));
-  const knockbackResistPct =
-    baseKnockbackResistPct !== undefined
-      ? Math.min(GUARD_DR_CAP, baseKnockbackResistPct * (1 + Math.max(0, potency)))
-      : undefined;
-  const durationMs = Math.round(baseDurationMs * (1 + Math.max(0, durationBonus)));
   applyStatusEffect(player.tracksCombat, {
     id: guardEffectIdForAbility(abilityId)!,
     remainingMs: durationMs,

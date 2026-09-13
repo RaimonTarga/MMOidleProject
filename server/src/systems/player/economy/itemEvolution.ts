@@ -8,6 +8,8 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
+import { recalculateAfterEquipmentChange } from "./inventory";
+import { syncArchetypeSlices } from "../../../ecs/archetypeSliceSync";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
@@ -20,7 +22,7 @@ export interface CraftResult {
 /**
  * Evolve or reconstruct an item (system rework Step 6). `evolve` consumes the +3
  * predecessor + pays the recipe's `cost`; `reconstruct` skips the predecessor and
- * pays the higher `reconstructCost`. Both grant the evolved item at +0.
+ * pays the higher `reconstructCost`. Per-definition upgrade levels remain unchanged.
  */
 export function evolveItem(
   world: World,
@@ -56,6 +58,7 @@ export function evolveItem(
     const check = checkEvolve({
       recipe,
       inventory: inv.inventory,
+      equipment: inv.equipment,
       itemUpgrades: inv.itemUpgrades,
       essences: prog.essences,
       catalysts: prog.catalysts,
@@ -72,10 +75,11 @@ export function evolveItem(
     if (!check.ok) return { success: false, reason: check.reason };
   }
 
-  // Consume the predecessor (one bag copy) on the evolve path.
-  if (mode === "evolve" && !isTestRoom) {
+  // Prefer the equipped predecessor: the resulting item stays in that same slot.
+  const equippedPredecessor = mode === "evolve" && inv.equipment[recipe.slot] === recipe.evolvesFrom;
+  if (mode === "evolve" && !equippedPredecessor && !isTestRoom) {
     const idx = inv.inventory.indexOf(recipe.evolvesFrom);
-    if (idx === -1) return { success: false, reason: "Predecessor item must be in your bag to evolve." };
+    if (idx === -1) return { success: false, reason: "Predecessor item is no longer owned." };
     inv.inventory = [...inv.inventory.slice(0, idx), ...inv.inventory.slice(idx + 1)];
   }
 
@@ -90,8 +94,14 @@ export function evolveItem(
     markSliceDirty(world, entity, "tracksProgression");
   }
 
-  // Grant the evolved item at +0 (per-id upgrade level left untouched).
-  inv.inventory = [...inv.inventory, recipe.id];
+  // Grant the evolved definition without transferring predecessor upgrades.
+  if (equippedPredecessor) {
+    inv.equipment[recipe.slot] = recipe.id;
+    recalculateAfterEquipmentChange(world, entity, recipe.slot);
+    syncArchetypeSlices(world, entity);
+  } else {
+    inv.inventory = [...inv.inventory, recipe.id];
+  }
   markSliceDirty(world, entity, "holdsInventory");
   return { success: true };
 }

@@ -30,11 +30,13 @@ import type { RuntimeSlamTelegraph } from '../../world/groundZones';
 export function initBossPatternCombat(): void {
   setPatternCombatHooks({
     hitPlayer(world, monster, player, now, multiplier) {
-      const outcome = runMonsterAttack(world, monster, player, now, multiplier);
+      const metadata: Record<string, unknown> = {};
+      const outcome = runMonsterAttack(world, monster, player, now, multiplier, metadata);
       if (outcome === 'hit') {
         const refreshed = world.getPlayerEntity(player.isPlayer.id);
         if (refreshed) markEngaged(world, refreshed, now);
       }
+      return outcome === 'hit' && metadata.evadeBlocksDebuffs !== true;
     },
     hitMinion(world, monster, minion, now) {
       runMonsterAttackOnMinion(world, monster, minion, now);
@@ -42,8 +44,8 @@ export function initBossPatternCombat(): void {
     pullPlayer(world, player, anchor, distance) {
       pullPlayer(world, player, anchor, distance);
     },
-    resolveCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx) {
-      resolvePatternCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx);
+    resolveCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx, rawDamage, uninterruptible) {
+      resolvePatternCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx, rawDamage, uninterruptible);
     },
   });
 }
@@ -64,6 +66,8 @@ function resolvePatternCircle(
   stunMs: number | undefined,
   now: number,
   impactFx?: string,
+  rawDamage?: number,
+  uninterruptible = false,
 ): void {
   const nodeId = monster.hasPosition.nodeId;
   const telegraph = (world.groundZones.get(nodeId) ?? []).find(
@@ -88,7 +92,7 @@ function resolvePatternCircle(
   for (const victim of victims) {
     // Re-checked for liveness: an earlier victim's death can drain the node.
     if (!world.getPlayerEntity(victim.isPlayer.id)) continue;
-    const outcome = runMonsterAttack(world, monster, victim, now, multiplier);
+    const outcome = runMonsterAttack(world, monster, victim, now, multiplier, undefined, rawDamage, uninterruptible);
     if (capture) recordTelegraphResolutionVictim(world, capture, victim.isPlayer.id);
     if (outcome === 'hit') {
       if (stunMs && canApplyPlayerDebuff(victim)) {
@@ -118,7 +122,7 @@ function resolvePatternCircle(
     if (!geometryContains(geometry, minion.hasPosition.current)) continue;
     minions.push(minion);
   }
-  for (const minion of minions) runMonsterAttackOnMinion(world, monster, minion, now);
+  for (const minion of minions) runMonsterAttackOnMinion(world, monster, minion, now, 1, rawDamage);
 
   // The circle ALWAYS erupts, hit or miss: a telegraph that resolves silently on
   // empty ground reads as a bug, and the eruption is what teaches that moving was

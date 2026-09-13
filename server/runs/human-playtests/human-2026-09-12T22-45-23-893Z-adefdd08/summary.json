@@ -1,0 +1,1067 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-12T22-45-23-893Z-adefdd08",
+    "startedAt": 1789253123893,
+    "endedAt": 1789255940415,
+    "durationMs": 2816522,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "socket disconnected",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-12T22-45-23-893Z-adefdd08",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 100,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        },
+        {
+          "atMs": 652,
+          "multiplier": 100
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 5,
+    "finalGlobalMastery": 156,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 12,
+      "forest": 12,
+      "mountain": 24,
+      "swamp": 18,
+      "cave": 18,
+      "jungle": 18,
+      "desert": 18,
+      "volcanic": 12,
+      "tundra": 12,
+      "graveyard": 6,
+      "trench": 6
+    }
+  },
+  "combat": {
+    "totalKills": 194,
+    "killsByMonster": {
+      "Stoneplate Juggernaut": 1,
+      "Prairie Yearling": 1,
+      "Field Hare": 23,
+      "Boar": 3,
+      "Gorging Razortusk": 1,
+      "Dune Keeper": 2,
+      "Chitinous Dreadbore": 1,
+      "Plague-Shell Snapper": 1,
+      "Mire Hexer": 1,
+      "Dune Stalker": 1,
+      "Deep Spider": 1,
+      "Cavern Troll": 2,
+      "Avalanche Ram": 17,
+      "Crag Mortar": 13,
+      "Ember Scuttler": 1,
+      "Silverback": 1,
+      "Canopy Chameleon": 2,
+      "Frost Lurker": 1,
+      "Mountain Colossus": 12,
+      "Stone Warden": 5,
+      "Crag-Gorged Horn-Behemoth": 1,
+      "Jungle Warden": 1,
+      "Jungle Stalker": 2,
+      "Apex Bramble-Slasher": 1,
+      "Cinder-Shell Magma-Salamander": 1,
+      "Frost-Plated Rime-Mammoth": 1,
+      "Sand Viper": 5,
+      "Sunshield Scarab": 6,
+      "Dune Basilisk": 1,
+      "Thornback Chameleon": 5,
+      "Hunting Panther": 7,
+      "Apex Silverback": 8,
+      "Emerald Constrictor": 6,
+      "Granite Mammoth": 3,
+      "Avalanche Tyrant": 2,
+      "Cliffside Roc": 3,
+      "Cragback Rhino": 1,
+      "Rime-Tusk Mastodon": 4,
+      "Glacial Dire-Bear": 2,
+      "Permafrost Behemoth": 2,
+      "Hoarfrost Yeti": 2,
+      "Bone Rat": 3,
+      "Carrion Vulture": 8,
+      "Bone Crawler": 11,
+      "Plague Hound": 5,
+      "Ember Skink": 2,
+      "Hadal Stalker": 1,
+      "Elder Leviathan": 2,
+      "Verdant-Crown Predator": 1,
+      "Iron-Crest Titan": 1,
+      "Caldera Sovereign": 1,
+      "Risen Bone Crawler": 1,
+      "Charnel-Crown Sovereign": 1,
+      "Dune-Throne Sovereign": 1,
+      "Glacial Patriarch": 1,
+      "Elder Trench Serpent": 1
+    },
+    "totalDamageTaken": 6532.37525,
+    "playerDamageDealt": 450386,
+    "totalHealed": 5193,
+    "deaths": 5,
+    "abilityActivations": {
+      "sweep": 36,
+      "second-wind": 27,
+      "expose-weakness": 109,
+      "cleanse": 72,
+      "frenzy": 39
+    }
+  },
+  "positioning": {
+    "samples": 6053,
+    "movementFraction": 0.3005121427391376,
+    "stationaryCombatFraction": 0.571452172476458,
+    "nearBoundaryFraction": 0.1528167850652569,
+    "boss": {
+      "movementFraction": 0.20173310225303293,
+      "nearBoundaryFraction": 0.14072790294627383,
+      "range": {
+        "samples": 2885,
+        "mean": 147.46712468857987,
+        "min": 34.92421339003515,
+        "max": 209.11757714894708,
+        "p50": 152.73608801992634,
+        "p90": 178.94073384097942
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9216,
+      "combatDurationMs": 6323,
+      "playerDamage": 364,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9216,
+      "combatDurationMs": 1105,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.832,
+      "combatDurationMs": 9537,
+      "playerDamage": 420,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.748,
+      "combatDurationMs": 6932,
+      "playerDamage": 392,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.748,
+      "combatDurationMs": 1103,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6584,
+      "combatDurationMs": 8076,
+      "playerDamage": 420,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6584,
+      "combatDurationMs": 1103,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5744,
+      "combatDurationMs": 7849,
+      "playerDamage": 392,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5744,
+      "combatDurationMs": 911,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4848,
+      "combatDurationMs": 8589,
+      "playerDamage": 420,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4848,
+      "combatDurationMs": 908,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4232,
+      "combatDurationMs": 5328,
+      "playerDamage": 280,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4232,
+      "combatDurationMs": 1107,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.356,
+      "combatDurationMs": 7649,
+      "playerDamage": 308,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2888,
+      "combatDurationMs": 5121,
+      "playerDamage": 308,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2888,
+      "combatDurationMs": 1104,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2216,
+      "combatDurationMs": 5011,
+      "playerDamage": 308,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2216,
+      "combatDurationMs": 1004,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1488,
+      "combatDurationMs": 6316,
+      "playerDamage": 336,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1488,
+      "combatDurationMs": 903,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.0816,
+      "combatDurationMs": 4506,
+      "playerDamage": 308,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 6020,
+      "playerDamage": 420,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.71425,
+      "combatDurationMs": 14288,
+      "playerDamage": 992,
+      "incomingDamage": 122.88625
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.594,
+      "combatDurationMs": 6451,
+      "playerDamage": 536,
+      "incomingDamage": 113.52250000000001
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.491,
+      "combatDurationMs": 5632,
+      "playerDamage": 483,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4105,
+      "combatDurationMs": 3917,
+      "playerDamage": 403,
+      "incomingDamage": 6
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3505,
+      "combatDurationMs": 4221,
+      "playerDamage": 210,
+      "incomingDamage": 144
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.23175,
+      "combatDurationMs": 6632,
+      "playerDamage": 727,
+      "incomingDamage": 126.73375
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.22425,
+      "combatDurationMs": 502,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.20925,
+      "combatDurationMs": 1205,
+      "playerDamage": 70,
+      "incomingDamage": 17.603750000000005
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.20925,
+      "combatDurationMs": 702,
+      "playerDamage": 40,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.20925,
+      "combatDurationMs": 502,
+      "playerDamage": 40,
+      "incomingDamage": 3
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.0965,
+      "combatDurationMs": 6343,
+      "playerDamage": 310,
+      "incomingDamage": 121.81
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 5925,
+      "playerDamage": 475,
+      "incomingDamage": 31.837500000000006
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8344,
+      "combatDurationMs": 7839,
+      "playerDamage": 592,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7016,
+      "combatDurationMs": 7725,
+      "playerDamage": 473,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5856,
+      "combatDurationMs": 7523,
+      "playerDamage": 410,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.464,
+      "combatDurationMs": 7936,
+      "playerDamage": 427,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3312,
+      "combatDurationMs": 7939,
+      "playerDamage": 469,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.23306666666666667,
+      "combatDurationMs": 5626,
+      "playerDamage": 343,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8730666666666667,
+      "combatDurationMs": 8119,
+      "playerDamage": 447,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7402666666666666,
+      "combatDurationMs": 8123,
+      "playerDamage": 473,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6242666666666666,
+      "combatDurationMs": 7432,
+      "playerDamage": 410,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5037333333333334,
+      "combatDurationMs": 8019,
+      "playerDamage": 423,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.37093333333333334,
+      "combatDurationMs": 8028,
+      "playerDamage": 469,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Stalker Emperor",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.30373333333333336,
+      "combatDurationMs": 3108,
+      "playerDamage": 227,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9236571428571428,
+      "combatDurationMs": 4404,
+      "playerDamage": 306,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8292571428571428,
+      "combatDurationMs": 7625,
+      "playerDamage": 389,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7293714285714286,
+      "combatDurationMs": 7741,
+      "playerDamage": 409,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6201142857142857,
+      "combatDurationMs": 7729,
+      "playerDamage": 450,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5156571428571428,
+      "combatDurationMs": 7718,
+      "playerDamage": 433,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.42125714285714283,
+      "combatDurationMs": 7622,
+      "playerDamage": 555,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.28891428571428573,
+      "combatDurationMs": 7618,
+      "playerDamage": 409,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.17897142857142856,
+      "combatDurationMs": 7734,
+      "playerDamage": 429,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.06971428571428571,
+      "combatDurationMs": 7716,
+      "playerDamage": 454,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Chitinous Dreadbore",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 4208,
+      "playerDamage": 285,
+      "incomingDamage": 116
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8792881301336769,
+      "combatDurationMs": 4715,
+      "playerDamage": 805,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.8715574166532453,
+      "combatDurationMs": 903,
+      "playerDamage": 96,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7415847962634885,
+      "combatDurationMs": 5310,
+      "playerDamage": 1422,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7323240457400547,
+      "combatDurationMs": 901,
+      "playerDamage": 96,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6162022870027379,
+      "combatDurationMs": 4604,
+      "playerDamage": 768,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5976807859558705,
+      "combatDurationMs": 1001,
+      "playerDamage": 115,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.46762763730069257,
+      "combatDurationMs": 5208,
+      "playerDamage": 921,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4133515864068288,
+      "combatDurationMs": 1000,
+      "playerDamage": 578,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3238041552584957,
+      "combatDurationMs": 5311,
+      "playerDamage": 997,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2772588178450636,
+      "combatDurationMs": 901,
+      "playerDamage": 96,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.19383153486873891,
+      "combatDurationMs": 4804,
+      "playerDamage": 844,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1472861974553068,
+      "combatDurationMs": 903,
+      "playerDamage": 96,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.10863263005314866,
+      "combatDurationMs": 2203,
+      "playerDamage": 288,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.10090191657271702,
+      "combatDurationMs": 901,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.007972298276695119,
+      "combatDurationMs": 2603,
+      "playerDamage": 1039,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Crag-Gorged Horn-Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.00024158479626348848,
+      "combatDurationMs": 701,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4656012306640458,
+      "combatDurationMs": 22028,
+      "playerDamage": 6119,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.32800615332022903,
+      "combatDurationMs": 6306,
+      "playerDamage": 1476,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2227160071788736,
+      "combatDurationMs": 6004,
+      "playerDamage": 1120,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.11178531749423126,
+      "combatDurationMs": 5902,
+      "playerDamage": 1164,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Apex Bramble-Slasher",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.002734808990684557,
+      "combatDurationMs": 5910,
+      "playerDamage": 1164,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Cinder-Shell Magma-Salamander",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 33348,
+      "playerDamage": 10750,
+      "incomingDamage": 120
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9010469174098488,
+      "combatDurationMs": 4502,
+      "playerDamage": 1186,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7825513765025204,
+      "combatDurationMs": 7610,
+      "playerDamage": 1546,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6487010469174098,
+      "combatDurationMs": 7612,
+      "playerDamage": 1600,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4855370298565335,
+      "combatDurationMs": 9124,
+      "playerDamage": 1924,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.36006203955021326,
+      "combatDurationMs": 7618,
+      "playerDamage": 1636,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.24715005816207833,
+      "combatDurationMs": 7314,
+      "playerDamage": 810,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1733229934082978,
+      "combatDurationMs": 7610,
+      "playerDamage": 952,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.09810003877471889,
+      "combatDurationMs": 7616,
+      "playerDamage": 970,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.03544009305932532,
+      "combatDurationMs": 7521,
+      "playerDamage": 808,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.014501744862349748,
+      "combatDurationMs": 7511,
+      "playerDamage": 270,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Frost-Plated Rime-Mammoth",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 6727,
+      "playerDamage": 216,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Verdant-Crown Predator",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5029424585876199,
+      "combatDurationMs": 9212,
+      "playerDamage": 8970,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Verdant-Crown Predator",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 6605,
+      "playerDamage": 9179,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Iron-Crest Titan",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7159854351505205,
+      "combatDurationMs": 5006,
+      "playerDamage": 5401,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Iron-Crest Titan",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7019334324837171,
+      "combatDurationMs": 1001,
+      "playerDamage": 137,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Iron-Crest Titan",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.26037232678598904,
+      "combatDurationMs": 5707,
+      "playerDamage": 8473,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Iron-Crest Titan",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2463203241191856,
+      "combatDurationMs": 903,
+      "playerDamage": 137,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Iron-Crest Titan",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 3210,
+      "playerDamage": 4713,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Caldera Sovereign",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.01903516419645452,
+      "combatDurationMs": 17229,
+      "playerDamage": 20104,
+      "incomingDamage": 90
+    },
+    {
+      "bossName": "Caldera Sovereign",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 1101,
+      "playerDamage": 245,
+      "incomingDamage": 18
+    },
+    {
+      "bossName": "Charnel-Crown Sovereign",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 17241,
+      "playerDamage": 19393,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Throne Sovereign",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.46951321745934166,
+      "combatDurationMs": 8218,
+      "playerDamage": 9353,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Dune-Throne Sovereign",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 6412,
+      "playerDamage": 8419,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Glacial Patriarch",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7906277244986922,
+      "combatDurationMs": 4709,
+      "playerDamage": 4684,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Glacial Patriarch",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.41338273757628596,
+      "combatDurationMs": 8218,
+      "playerDamage": 8535,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Glacial Patriarch",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.16251089799476895,
+      "combatDurationMs": 8316,
+      "playerDamage": 5636,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Glacial Patriarch",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 1808,
+      "playerDamage": 3688,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Elder Trench Serpent",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 20233,
+      "playerDamage": 21729,
+      "incomingDamage": 0
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "volcanic-eruption-lash",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "desert-boots-t4",
+      "core": "core-accelerant",
+      "relic": "relic-colossus-heart"
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 5,
+      "plains-charm-t1": 5,
+      "plains-vest-t1": 4,
+      "flash-rapier": 4,
+      "mountain-charm-t1": 5,
+      "cave-vest-t1": 5,
+      "chaotic-axe": 5,
+      "forest-boots-t1": 5,
+      "plains-vest-t2": 5,
+      "gale-needle": 5,
+      "plains-charm-t2": 5,
+      "desert-boots-t2": 5,
+      "desert-boots-t3": 5,
+      "volcanic-cinderlash": 5,
+      "mountain-vest-t3": 5,
+      "mountain-charm-t3": 5,
+      "volcanic-eruption-lash": 5,
+      "mountain-charm-t4": 5,
+      "mountain-vest-t4": 4,
+      "desert-boots-t4": 4
+    },
+    "classRoot": "energy-root",
+    "frame": "heavy",
+    "range": "energy-range-mid",
+    "techniques": [
+      "frenzy"
+    ],
+    "guards": [
+      "second-wind",
+      "cleanse"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stats": {
+      "attack": 168,
+      "attackRange": 142,
+      "attackCooldown": 258,
+      "maxHp": 451,
+      "plating": 49,
+      "damageReduction": 0.02
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

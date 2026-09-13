@@ -459,7 +459,7 @@ for (const recipe of T3_GEAR) {
 }
 
 {
-  // Locked 2026-09-04 map: T3 keeps the four conditional/specialized Stances.
+  // Playtest correction: T3 has six specialized stances, including Tanking and Enraged.
   // They sit early in their own T3 bands and use local essence plus two live
   // catalysts; no Stance recipe has a boss-clear gate.
   const STANCES: Array<{
@@ -469,12 +469,14 @@ for (const recipe of T3_GEAR) {
     family: string;
     cost: Partial<Record<EssenceType, number>>;
   }> = [
+    { id: "stance-recipe-tanking", group: "mountain", level: 13, family: "heavy", cost: { blue: 220 } },
+    { id: "stance-recipe-enraged", group: "cave", level: 14, family: "dominion", cost: { red: 230 } },
     { id: "stance-recipe-warding", group: "swamp", level: 13, family: "fortified", cost: { purple: 220 } },
     { id: "stance-recipe-berserker", group: "cave", level: 13, family: "dominion", cost: { red: 230 } },
     { id: "stance-recipe-predator", group: "tundra", level: 2, family: "dominion", cost: { blue: 210 } },
     { id: "stance-recipe-execute", group: "desert", level: 7, family: "dominion", cost: { yellow: 230 } },
   ];
-  assert(STANCES.length === 4, "T3 must have exactly four placed Stances");
+  assert(STANCES.length === 6, "T3 must have exactly six placed Stances");
   for (const spec of STANCES) {
     const recipe = STANCE_RECIPE_DATABASE.get(spec.id);
     assert(!!recipe, `${spec.id}: recipe must exist`);
@@ -495,7 +497,7 @@ for (const recipe of T3_GEAR) {
     .sort();
   assert(
     JSON.stringify(t3StanceIds) === JSON.stringify(STANCES.map((spec) => spec.id).sort()),
-    `T3 stance roster must be exactly the locked four (got ${t3StanceIds.join(", ")})`,
+    `T3 stance roster must be exactly the six (got ${t3StanceIds.join(", ")})`,
   );
   assert(
     ![...STANCE_RECIPE_DATABASE.values()].some((recipe) => recipe.tier === 3 && recipe.stanceId === "powering-up-stance"),

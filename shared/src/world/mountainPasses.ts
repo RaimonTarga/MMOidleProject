@@ -48,14 +48,6 @@ export interface MountainGap {
   span: number;
 }
 
-/** A break in the dungeon ring, as angles in radians. */
-export interface MountainArc {
-  /** Gap centre angle. */
-  centre: number;
-  /** Gap width in radians. */
-  span: number;
-}
-
 /**
  * A normal node: two concentric broken squares, the guarded ascent.
  */
@@ -67,21 +59,13 @@ export interface MountainRingsLayout {
   wobble: number;
 }
 
-/**
- * A dungeon: ONE circular wall around the arena, with one or two ways in.
- *
- * Deliberately unlike a normal node. Two nested squares read as terrain you work your way
- * through; a boss node should read as a single enclosure you commit to entering, so the
- * layout says "arena" the moment it is on screen rather than "more mountain".
- */
-export interface MountainCircleLayout {
-  kind: "circle";
-  radius: number;
-  gaps: MountainArc[];
+/** A dungeon uses one square enclosure, with long wall segments and broad entrances. */
+export interface MountainSquareLayout {
+  kind: "square";
+  gaps: MountainGap[];
   wobble: number;
 }
-
-export type MountainLedgeLayout = MountainRingsLayout | MountainCircleLayout;
+export type MountainLedgeLayout = MountainRingsLayout | MountainSquareLayout;
 
 export interface MountainPassDisc {
   x: number;
@@ -144,28 +128,6 @@ const MAX_SIDE_OPEN = 0.5;
 
 /** Gap centres stay this far from a side's ends so a gap never lands on a ring corner. */
 const GAP_EDGE_MARGIN = 0.1;
-
-/**
- * Dungeon ring radius. Sized so the arena inside comfortably seats the altar and its
- * painted court (radius ~552) with room to fight around them, while leaving roughly a
- * thousand pixels of approach outside the wall on every side.
- */
-const DUNGEON_RING_MIN_RADIUS = 1180;
-const DUNGEON_RING_MAX_RADIUS = 1330;
-
-/** One or two ways in, as the biome's dungeons are meant to be committed to. */
-const DUNGEON_MIN_GAPS = 1;
-const DUNGEON_MAX_GAPS = 2;
-
-/** Opening width along the wall, in pixels of arc, converted to an angle per node. */
-const DUNGEON_GAP_MIN_ARC = 540;
-const DUNGEON_GAP_MAX_ARC = 780;
-
-/** Two entrances must sit well apart, or they read as one ragged hole. */
-const DUNGEON_MIN_GAP_SEPARATION = Math.PI * 0.55;
-
-/** Segment pitch along the ring. Below the 96px thickness, so squares always overlap. */
-const DUNGEON_SEGMENT_STEP = 82;
 
 /** Pass half-width. Wide enough to read as a route inside the narrowest legal gap. */
 const PASS_RADIUS = GAME_CONFIG.NODE_WIDTH * 0.028;
@@ -261,39 +223,19 @@ function rollRingGaps(
   return gaps;
 }
 
-/** The single broken circle a dungeon gets instead of two squares. */
-function rollDungeonRing(rng: () => number): MountainCircleLayout {
-  const radius = range(rng, DUNGEON_RING_MIN_RADIUS, DUNGEON_RING_MAX_RADIUS);
-  const want = DUNGEON_MIN_GAPS + Math.floor(rng() * (DUNGEON_MAX_GAPS - DUNGEON_MIN_GAPS + 1));
-  const gaps: MountainArc[] = [];
-  for (let attempt = 0; attempt < 60 && gaps.length < want; attempt++) {
-    const centre = rng() * Math.PI * 2;
-    const span = range(rng, DUNGEON_GAP_MIN_ARC, DUNGEON_GAP_MAX_ARC) / radius;
-    const clashes = gaps.some((g) => {
-      const d = Math.abs(
-        ((centre - g.centre + Math.PI * 3) % (Math.PI * 2)) - Math.PI,
-      );
-      return d < (g.span + span) / 2 + DUNGEON_MIN_GAP_SEPARATION;
-    });
-    if (clashes) continue;
-    gaps.push({ centre, span });
-  }
-  // The arena must never seal, however the rolls fell.
-  if (gaps.length === 0) {
-    gaps.push({ centre: rng() * Math.PI * 2, span: DUNGEON_GAP_MIN_ARC / radius });
-  }
-  return { kind: "circle", radius, gaps, wobble: Math.floor(rng() * 6) };
-}
-
 function buildLedgeLayout(nodeId: string): MountainLedgeLayout | null {
   if (!hasMountainLedges(nodeId)) return null;
-  // Dungeons draw from their OWN seed rather than sharing the normal-node stream. Two
-  // reasons: the arena rolls different quantities entirely, and with only four dungeon
-  // nodes in the world a 50/50 entrance count is a hand-countable sample — the shared
-  // stream happened to give all four a single entrance, so the "one or two" the layout is
-  // supposed to show never appeared. This seed spreads them 2/2/1/2.
+  // Dungeons use one enclosure with one or two opposite entrances.
   if (NODE_BIOMES[nodeId]?.isDungeon) {
-    return rollDungeonRing(mulberry32(hashString(`${nodeId}:mountain-arena:v1`)));
+    const rng = mulberry32(hashString(`${nodeId}:mountain-arena:v2`));
+    const side = Math.floor(rng() * 4);
+    const count = rng() < 0.5 ? 1 : 2;
+    return {
+      kind: "square", wobble: 0,
+      gaps: Array.from({ length: count }, (_, i) => ({
+        side: SIDES[(side + i * 2) % 4], centre: 0.5, span: 0.25,
+      })),
+    };
   }
   const rng = mulberry32(hashString(`${nodeId}:mountain-ledges:v1`));
   // Rings roll INDEPENDENTLY. The old table drove both from one entrance list, so the
@@ -314,31 +256,6 @@ export function getMountainLedgeLayout(nodeId: string): MountainLedgeLayout | nu
   layoutCache.set(nodeId, layout);
   return layout;
 }
-
-/** Whether an angle falls inside one of the dungeon ring's entrances. */
-export function mountainArcIsGap(layout: MountainCircleLayout, angle: number): boolean {
-  for (const g of layout.gaps) {
-    const d = Math.abs(((angle - g.centre + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
-    if (d < g.span / 2) return true;
-  }
-  return false;
-}
-
-/** World-space point on the dungeon ring at `angle`, offset radially by `dr`. */
-export function mountainRingPoint(
-  layout: MountainCircleLayout,
-  angle: number,
-  dr = 0,
-): { x: number; y: number } {
-  const r = layout.radius + dr;
-  return {
-    x: GAME_CONFIG.NODE_WIDTH / 2 + Math.cos(angle) * r,
-    y: GAME_CONFIG.NODE_HEIGHT / 2 + Math.sin(angle) * r,
-  };
-}
-
-/** Segment pitch along the dungeon ring, exported so the collision and art agree. */
-export const MOUNTAIN_DUNGEON_SEGMENT_STEP = DUNGEON_SEGMENT_STEP;
 
 /** World-space point at a fraction along one side of a ring. */
 function pointOnSide(

@@ -231,8 +231,8 @@ export const STAT_HELP: Record<string, string> = {
   'technique.cast-speed-pct':
     'Shortens a casted Technique’s wind-up. Capped at 60% — the telegraph is the cost that makes casting a fair trade.',
   'guard.cooldown-reduction-pct': 'Shortens your Guard’s cooldown, so it fires more often. Capped at 90%.',
-  'guard.potency-pct': 'Scales your Guard’s magnitude, e.g. the damage reduction its buff grants.',
-  'guard.duration-pct': 'Extends how long your Guard’s buff lasts.',
+  'guard.potency-pct': 'Scales Mitigation Guards: damage reduction, knockback resistance, Bramble plating and reflection. Recovery skills use Recovery skill potency.',
+  'guard.duration-pct': 'Extends Mitigation Guard buffs, including Bramble Guard. Does not extend Recovery or Cleanse.',
   'guard.recovery-on-fire-pct': 'Firing your Guard also switches on this share of your Recovery rate for a few seconds.',
 
   // ── Core amplifiers ────────────────────────────────────────────────────────

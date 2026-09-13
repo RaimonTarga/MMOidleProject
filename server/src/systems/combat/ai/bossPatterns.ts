@@ -65,6 +65,7 @@ import {
 } from '../engine/sourceBarriers';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
 import { isMonsterStunned } from '../status/stun';
+import { applyMonsterDotToPlayer } from '../status/monsterDot';
 
 const PATTERN_SESSION_KEY = 'bossPatternSession';
 const PATTERN_USED_KEY = 'bossPatternUsed';
@@ -98,12 +99,26 @@ const ARRIVAL_EPSILON_PX = 60;
 export function bossPatternFor(monster: MonsterEntity): BossPattern | undefined {
   const pattern = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.bossPattern;
   const scale = monster.scriptsBoss?.chargedOverride;
-  if (!pattern || !scale) return pattern;
-  return {
+  if (!pattern) return pattern;
+  const stacks = chargeInstinct(monster);
+  const instinct = pattern.chargeInstinct;
+  const adapted = instinct && stacks > 0 ? {
     ...pattern,
+    steps: pattern.steps.map((step): BossPatternStep => {
+      if (step.kind === 'cast' && step.lane) {
+        const reduction = Math.min(0.6, stacks * instinct.castReductionPct);
+        return { ...step, castMs: Math.max(700, Math.round(step.castMs * (1 - reduction))) };
+      }
+      if (step.kind === 'charge') return { ...step, speed: step.speed * (1 + stacks * instinct.speedPct) };
+      return step;
+    }),
+  } : pattern;
+  if (!scale) return adapted;
+  return {
+    ...adapted,
     damageMultiplier: pattern.damageMultiplier * scale.multiplierMult,
     cooldownMs: Math.max(1_000, Math.round(pattern.cooldownMs * scale.cooldownMult)),
-    steps: pattern.steps.map((step): BossPatternStep => {
+    steps: adapted.steps.map((step): BossPatternStep => {
       switch (step.kind) {
         case 'cast':
           return { ...step, castMs: Math.max(200, Math.round(step.castMs * scale.castMsMult)) };
@@ -158,9 +173,33 @@ function armPatternCooldown(monster: MonsterEntity, pattern: BossPattern, now: n
   setCounter(monster.tracksCombat, PATTERN_CD_NEXT_KEY, now + pattern.cooldownMs);
 }
 
-// ── Escape Instinct ──────────────────────────────────────────────────────────
+// ── Encounter Instinct ──────────────────────────────────────────────────────────
 
 const ESCAPE_INSTINCT_KEY = 'bossEscapeInstinct';
+const CHARGE_INSTINCT_KEY = 'bossChargeInstinct';
+export function chargeInstinct(monster: MonsterEntity): number {
+  return Math.max(0, getCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY));
+}
+
+function publishInstinct(world: World, monster: MonsterEntity): void {
+  if (!monster.isMonster.isBoss) return;
+  for (const [id, stacks] of [
+    ['charge-instinct', chargeInstinct(monster)],
+    ['escape-instinct', escapeInstinct(monster)],
+  ] as const) {
+    const effects = monster.hasStatus.bossEffects ?? [];
+    const previous = monster.hasStatus.bossEffectStacks?.[id] ?? 0;
+    if (previous === stacks && effects.includes(id) === (stacks > 0)) continue;
+    monster.hasStatus.bossEffects = effects.filter(effect => effect !== id);
+    if (stacks > 0) {
+      monster.hasStatus.bossEffects.push(id);
+      (monster.hasStatus.bossEffectStacks ??= {})[id] = stacks;
+    } else {
+      delete monster.hasStatus.bossEffectStacks?.[id];
+    }
+    markSliceDirty(world, monster, 'hasStatus');
+  }
+}
 
 /**
  * Capped Escape Instinct. Stored on the monster's combat state rather than the
@@ -302,6 +341,9 @@ function publishRecoveryStatus(
 export function clearBossPatternState(world: World, monster: MonsterEntity): void {
   endPattern(world, monster, 'reset', Date.now());
   endRecovery(world, monster);
+  resetEscapeInstinct(monster);
+  setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY, 0);
+  publishInstinct(world, monster);
   // Belt and braces: `endPattern` no-ops when no pattern is attached, but a boss
   // can only be concealed BY a pattern, so a stray marker here would be a leak.
   detachComponent(world, monster, 'isConcealed');
@@ -408,13 +450,14 @@ function standable(world: World, monster: MonsterEntity, at: Vec2): boolean {
  * decide whether ordinary attacks may run.
  */
 export interface PatternCombatHooks {
+  /** True when the attack lands and evasion does not suppress its on-hit effects. */
   hitPlayer: (
     world: World,
     monster: MonsterEntity,
     player: PlayerEntity,
     now: number,
     multiplier: number,
-  ) => void;
+  ) => boolean;
   hitMinion: (
     world: World,
     monster: MonsterEntity,
@@ -445,6 +488,8 @@ export interface PatternCombatHooks {
     stunMs: number | undefined,
     now: number,
     impactFx?: string,
+    rawDamage?: number,
+    uninterruptible?: boolean,
   ) => void;
 }
 
@@ -536,6 +581,7 @@ export function updateBossPatterns(world: World, dt: number, now = Date.now()): 
  */
 function publishConcealment(world: World): void {
   for (const monster of world.monsterEntities) {
+    publishInstinct(world, monster);
     const marker = monster.isConcealed?.marker;
     if (monster.hasStatus.concealed === marker) continue;
     monster.hasStatus.concealed = marker;
@@ -669,6 +715,10 @@ function beginStep(
       state.capturedEndpoint = { ...lane.end };
       state.chargeHalfWidth = lane.halfWidth;
       state.chargeHitIds = [];
+      if (pattern.chargeInstinct) {
+        setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY,
+          Math.min(pattern.chargeInstinct.maxStacks, chargeInstinct(monster) + 1));
+      }
       state.stepEndsAtMs = now + step.maxTravelMs;
       // KEEP THE LANE ON THE GROUND FOR THE RUN. Its countdown was the wind-up, and
       // the sweeper retires a telegraph shortly after that elapses — so without this
@@ -929,7 +979,7 @@ function beginStep(
           state.capturedEndpoint = { ...away };
           if (state.ownsRoot) setRooted(world, monster, false);
           state.savedSpeed = monster.hasPosition.speed;
-          monster.hasPosition.speed = step.flee.speed;
+          monster.hasPosition.speed = step.flee.speed * (1 + escapeInstinct(monster) * (step.instinctSpeedPct ?? 0));
           markSliceDirty(world, monster, 'hasPosition');
           setEntityMotion(world, monster, away);
         }
@@ -1013,6 +1063,8 @@ function tickStep(
         step.stunMs,
         now,
         step.fx,
+        step.rawDamage,
+        step.interruptible === false,
       );
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
       return 'done';
@@ -1113,6 +1165,16 @@ function tickStep(
       return 'done';
     }
     case 'escape-guard': {
+      // BROKEN IN TIME: the retreat fails. The boss stumbles, and banks one capped
+      // stack of Instinct so its next attempt is quicker.
+      if (sourceBarrierRemaining(monster, step.sourceId) <= 0) {
+        gainEscapeInstinct(monster, step.maxInstinctStacks);
+        state.staggered = true;
+        state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== step.sourceId);
+        endPattern(world, monster, 'staggered', now);
+        beginRecovery(world, monster, step.onBreak.label, step.onBreak.staggerMs, true, now);
+        return 'ended';
+      }
       // HARD CONTROL CANCELS THE ESCAPE. Without this the guard's timer ran
       // straight through a stun: the boss "got away" while it was standing there
       // stunned, then vanished and ambushed on the far side of the control the
@@ -1124,16 +1186,6 @@ function tickStep(
           isMonsterFrozen(world, monster.isMonster.id))
       ) {
         endPattern(world, monster, 'interrupted', now);
-        return 'ended';
-      }
-      // BROKEN IN TIME: the retreat fails. The boss stumbles, and banks one capped
-      // stack of Instinct so its next attempt is quicker.
-      if (sourceBarrierRemaining(monster, step.sourceId) <= 0) {
-        gainEscapeInstinct(monster, step.maxInstinctStacks);
-        state.staggered = true;
-        state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== step.sourceId);
-        endPattern(world, monster, 'staggered', now);
-        beginRecovery(world, monster, step.onBreak.label, step.onBreak.staggerMs, true, now);
         return 'ended';
       }
       if (now < state.stepEndsAtMs) return 'running';
@@ -1333,7 +1385,8 @@ function resolveTravelContacts(
       // The connection is what the rest of the sequence hangs off: it stops the
       // travel, and it gates every `requiresChargeHit` step after it.
       state.chargeConnected = true;
-      hooks.hitPlayer(world, monster, player, now, multiplier);
+      const landed = hooks.hitPlayer(world, monster, player, now, multiplier);
+      if (landed && pattern.chargeInstinct) setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY, 0);
       if (!world.hasMonster(monster.isMonster.id)) return;
     }
     for (const minion of world.collision.bodiesInCircle(
@@ -1676,9 +1729,17 @@ function resolvePayoff(
       hooks.hitPlayer(world, monster, victim, now, payoffMultiplier(pattern, step, victim));
       if (!world.hasMonster(monster.isMonster.id)) return;
     }
-  } else if (target) {
+  } else if (target && (step.reach === undefined || world.collision.canReach(monster, target, step.reach))) {
     const before = target.hasHealth.hp;
-    hooks.hitPlayer(world, monster, target, now, payoffMultiplier(pattern, step, target));
+    const landed = hooks.hitPlayer(world, monster, target, now, payoffMultiplier(pattern, step, target));
+    if (landed && step.onHitPoison && canApplyPlayerDebuff(target) && !target.isDead) {
+      const poison = step.onHitPoison;
+      for (let i = 0; i < poison.stacks; i++) {
+        applyMonsterDotToPlayer(world, monster, target, {
+          ...poison, maxStacks: poison.stacks, element: 'poison',
+        });
+      }
+    }
     // DEVOUR feeds the caster — but only on a LANDED hit. Dodging it, guarding it
     // into nothing, or killing the wind-up all deny the heal, which is precisely
     // what makes the long tell worth reading.

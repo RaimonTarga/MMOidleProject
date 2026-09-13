@@ -177,6 +177,7 @@ export const bossMonsterEntriesT2 = [
     // beat), Stoneplate Lock, and the repeating flat-DR shield — a timed damage
     // reduction taught nothing and was not the same thing as an absorb barrier.
     bossPattern: {
+      chargeInstinct: { maxStacks: 3, speedPct: 0.12, castReductionPct: 0.10 },
       id: 'stoneplate-charge', name: 'Stoneplate Charge',
       damageMultiplier: 2.0, cooldownMs: 11000, initialCooldownMs: 5000,
       steps: [
@@ -499,7 +500,7 @@ export const bossMonsterEntriesT2 = [
         { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2600, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15,
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15, instinctSpeedPct: 0.15,
           flee: { speed: 220 } },
         // THE STALK, not a relocation. It goes invisible only once the escape has
         // actually succeeded, then closes on you while unseen — `near-target` with

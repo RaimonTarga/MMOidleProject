@@ -175,6 +175,7 @@ export const bossMonsterEntriesT1 = [
     // Every later Mountain tier deepens this same spine rather than adding a
     // separate mechanic on top.
     bossPattern: {
+      chargeInstinct: { maxStacks: 3, speedPct: 0.1, castReductionPct: 0.10 },
       id: 'crag-charge', name: 'Crag Charge',
       damageMultiplier: 1.9, cooldownMs: 10000, initialCooldownMs: 4500,
       steps: [

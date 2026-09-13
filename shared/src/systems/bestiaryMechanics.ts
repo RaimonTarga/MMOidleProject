@@ -286,9 +286,10 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
     case 'charge':
       return `Charges at ${fmtNumber(step.speed)}px/s for up to ${fmtMs(step.maxTravelMs)}` +
         (step.stopsOnContact === false ? ', passing through players' : ', stopping on player contact') +
-        ` for ${fmtMult(pattern.damageMultiplier * (step.damageMult ?? 1))} damage`;
+        ` for ${fmtMult(pattern.damageMultiplier * (step.damageMult ?? 1))} damage` +
+        (pattern.chargeInstinct ? `; each charge builds Instinct up to ${pattern.chargeInstinct.maxStacks} stacks (+${fmtPct(pattern.chargeInstinct.speedPct)} speed and -${fmtPct(pattern.chargeInstinct.castReductionPct)} wind-up per stack); a landed charge clears all stacks` : '');
     case 'impact':
-      return `${step.name}: ${fmtMult(pattern.damageMultiplier * step.damageMult)} damage in a ${step.radius}px circle` +
+      return `${step.name}: ${step.rawDamage !== undefined ? `${step.rawDamage} raw` : fmtMult(pattern.damageMultiplier * step.damageMult)} damage in a ${step.radius}px circle` +
         ` after a ${fmtMs(step.telegraphMs)} telegraph` +
         (step.stunMs ? `, stunning for ${fmtMs(step.stunMs)}` : '') +
         (step.requiresChargeHit ? '; only if the charge connected' : '');
@@ -317,6 +318,8 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (amplified !== undefined && step.consumes
           ? `, amplified to ${fmtMult(amplified)} while ${statusLabel(step.consumes.effectId)} is present` : '') +
         (step.consumes ? `; consumes ${statusLabel(step.consumes.effectId)}` : '') +
+        (step.reach !== undefined ? `; must be within ${step.reach}px reach` : '') +
+        (step.onHitPoison ? `; a landed hit inflicts ${step.onHitPoison.stacks} Poison stacks (${step.onHitPoison.damagePerStack} damage each every ${fmtMs(step.onHitPoison.tickIntervalMs)} for ${fmtMs(step.onHitPoison.durationMs)})` : '') +
         (step.healsSelfPct ? `; restores ${fmtPct(step.healsSelfPct)} max HP on hit` : '') +
         (step.interruptible === false ? '; cannot be interrupted' : '');
     }
@@ -334,7 +337,8 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (step.flee ? `, fleeing at ${fmtNumber(step.flee.speed)}px/s` : '') +
         `; breaking it causes ${step.onBreak.label} for ${fmtMs(step.onBreak.staggerMs)}` +
         ` and builds up to ${step.maxInstinctStacks} Escape Instinct stacks` +
-        ` (each shortens the next cast by ${fmtPct(step.instinctCastReductionPct)})`;
+        ` (each shortens the next cast by ${fmtPct(step.instinctCastReductionPct)}` +
+        (step.instinctSpeedPct ? ` and increases flee speed by ${fmtPct(step.instinctSpeedPct)}` : '') + '); a successful escape clears the stacks';
     case 'pull':
       return `Casts ${step.name} for ${fmtMs(step.castMs)} and pulls the target ${step.distance}px` +
         (step.interruptible === false ? '; cannot be interrupted' : '');

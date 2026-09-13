@@ -61,6 +61,7 @@ export const bossMonsterEntriesT3 = [
     // `engageSequence` charge-lock opener (the pattern IS the charge now, so the
     // opener was a second, worse copy of it), plus the standalone circular slam.
     bossPattern: {
+      chargeInstinct: { maxStacks: 4, speedPct: 0.14, castReductionPct: 0.10 },
       id: 'cragbreaker', name: 'Cragbreaker',
       damageMultiplier: 2.0, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
@@ -356,21 +357,17 @@ export const bossMonsterEntriesT3 = [
         // radius, and therefore no range check) firing from across the arena.
         //
         // Deepened rather than copied: it flees faster than T2 and stalks back
-        // faster still, so the same loop is harder to break and harder to survive.
+        // at a readable stalking pace before a range-checked venomous bite.
         { kind: 'escape-guard', name: 'Flee', castMs: 2800, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2500, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15,
+          maxInstinctStacks: 3, instinctCastReductionPct: 0.15, instinctSpeedPct: 0.15,
           flee: { speed: 250 } },
-        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1600,
-          relocate: 'near-target', emergeGap: 40, travelSpeed: 660 },
-        { kind: 'payoff', name: 'Ambush', castMs: 800, fx: 'savage-maul',
-          damageMult: 1.0 },
-        // Venom follows a SUCCESSFUL ambush only — break the guard and none of this
-        // happens, which is what makes breaking it worth doing.
-        { kind: 'apply-status', name: 'Venom Burst', castMs: 500, fx: 'savage-maul',
-          effectId: 'apex-bramble-venom', stacks: 3, durationMs: 8000,
-          data: { damagePerStack: 14, tickIntervalMs: 1000, isDot: 1 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
+          relocate: 'near-target', emergeGap: 40, travelSpeed: 240, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Venomous Bite', castMs: 800, fx: 'savage-maul',
+          damageMult: 1.0, reach: 90,
+          onHitPoison: { stacks: 3, damagePerStack: 14, durationMs: 8000, tickIntervalMs: 1000 } },
         // NO RECOVERY AFTER A LANDED AMBUSH. The punish window is what BREAKING the
         // plate buys, and nothing else — a predator that just bit you does not stun
         // itself. Same call as T2.
@@ -401,7 +398,7 @@ export const bossMonsterEntriesT3 = [
   //
   // Counterplay is authored, not incidental: DoTs tick through a shell at full
   // strength, the boss cannot hurt you while shelled, and the cycle is on a clock.
-  // Volcano's Heat identity is carried by the T4 Caldera Sovereign; T3 stays focused.
+  // At low health it races the player with one final eruption.
   // ══════════════════════════════════════════════════════════════════════
   ['cinder-shell-magma-salamander', {
     id: 'cinder-shell-magma-salamander', name: 'Cinder-Shell Magma-Salamander', color: 0xee4400,
@@ -441,6 +438,17 @@ export const bossMonsterEntriesT3 = [
         radius: 190, durationMs: 8000, damagePerTick: 12, tickIntervalMs: 1000,
         flavor: 'magma-vent', rampAccelMult: 3,
       },
+    },
+    bossPattern: {
+      id: 'final-eruption', name: 'Final Eruption',
+      damageMultiplier: 1, cooldownMs: 60000, initialCooldownMs: 0,
+      armBelowHpPct: 0.25, oncePerLife: true,
+      steps: [
+        { kind: 'cast', name: 'Final Eruption', castMs: 8000, fx: 'cataclysm-cast', interruptible: false },
+        { kind: 'impact', name: 'Final Eruption', anchor: 'self', radius: 2000,
+          damageMult: 1, rawDamage: 650, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
+        { kind: 'recovery', label: 'Spent', durationMs: 3000 },
+      ],
     },
     bossScript: {
       phases: [

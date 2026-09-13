@@ -50,6 +50,9 @@ function AbilityNumber({ line, rank }: { line: AbilityLine; rank: string }) {
 
 export function AbilityDetails({ description }: { description: AbilityDescription }) {
   return <div className="ability-numbers">
+    <div className="ability-tags" aria-label="Ability tags">
+      {description.tags.map(tag => <span className="ability-tag" key={tag.id} title={tag.help}>{tag.label}</span>)}
+    </div>
     {description.lines.map(line => <AbilityNumber key={line.key} line={line} rank={description.rank} />)}
   </div>;
 }

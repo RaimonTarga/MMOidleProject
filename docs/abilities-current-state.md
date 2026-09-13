@@ -207,7 +207,7 @@ The offensive sibling of `GUARD_KEYS`, riding the existing equipment
 - `technique.cooldown-reduction-pct` (capped 0.9)
 - `technique.cast-speed-pct` (capped 0.6)
 
-Carried by **weapons**; Guard potency stays on the recovery/charm slot. The budgets are
+Carried by **weapons**; Guard potency comes from Mountain armor. The budgets are
 deliberately not interchangeable.
 
 ## Scaling / potency rules
@@ -215,7 +215,7 @@ deliberately not interchangeable.
 | Stat | Touches | Never touches |
 |---|---|---|
 | Technique Power | Sweep splash, Power Strike / Snipe / Stunning Strike damage, Hamstring & Binding Strike hit riders, Charge's strike rider, Quick Strike | movement distance, slow/root/stun durations, Snipe's reach, Frenzy's duration, Expose Weakness's vulnerability |
-| `guard.potency-pct` / `guard.duration-pct` | Brace and Endure DR + duration | Cleanse counts, Break Free's discrete removal, Recovery skills |
+| `guard.potency-pct` / `guard.duration-pct` | Mitigation Guards: Brace/Endure DR and resistance, Bramble plating/reflect, plus buff duration | Cleanse counts, Break Free's discrete removal, Recovery skills |
 | `defense.recovery-skill-potency` | Second Wind, Recuperate (the `recovery` tag) | passive Recovery access, Barrier, Absorb, Cleanse, mitigation Guards |
 
 ---
@@ -511,3 +511,26 @@ authored rank itself.
   `target-beyond-reach` already is) or gating it on incoming pressure; both are design calls, so the
   authored seed was left as written.
 - All numbers are first-pass seeds.
+
+## Ability tags and equipment modifiers (2026-09-13)
+
+`abilityTags` / `abilityHasTag` in shared `data/abilityTags.ts` combine authored role tags
+with Technique/Guard derived from family and Armed derived from execution shape.
+Ability details in the loadout, HUD and Forge display the same labels and help.
+Tags include Recovery, Mobility, Mitigation, Control, Cleanse and Offensive Buff.
+
+`systems/abilityModifiers.ts` owns equipment cooldown and Guard/Recovery magnitude
+formulas for both authoritative firing and client previews. Bramble now receives
+Guard potency on both plating and reflection, with integer rounding, and Guard duration.
+Recovery potency affects only the Recovery-tagged heal effect's activated Recovery fraction.
+Cleanse removal counts and control durations remain discrete/authored. Guard duration is
+supported but has no current item source.
+
+Scout cooldown reduction and Bruiser kill refunds use the Mobility tag. Bruiser refunds
+an authored full-cooldown fraction, clamped at zero remaining time, and ignores unrelated
+abilities. Core range eligibility still applies. Armed describes delivery; it does not
+imply a new equipment bonus where no such bonus is authored.
+
+Regression coverage: `server/test/equippedEvolutionAbilityTags.test.ts` exercises actual
+equipment passives, fired Bramble and Recovery, mobility cooldown/refund routing, UI tag
+agreement, and equipped evolution costs, slot retention and failure atomicity.

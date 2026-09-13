@@ -174,6 +174,7 @@ export function abilityLines(
       value: described.rank,
       help: described.rankLabel,
     },
+    { key: "ability:tags", label: "Tags", value: described.tags.map(tag => tag.label).join(" · "), help: described.tags.map(tag => `${tag.label}: ${tag.help}`).join(" ") },
     { key: "ability:default-trigger", label: "Default behavior", value: described.trigger },
     ...described.lines.map((line) => ({
       key: `ability:${line.key}`,

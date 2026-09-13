@@ -339,13 +339,14 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
     catalysts: number;
     cost: Record<string, number>;
   }> = [
+    { id: "stance-recipe-perfection", group: "jungle", level: 14, family: "alacrity", catalysts: 3, cost: { green: 450 } },
     { id: "stance-recipe-time-to-strike", group: "mountain", level: 20, family: "heavy", catalysts: 3, cost: { blue: 450 } },
     { id: "stance-recipe-brawler", group: "jungle", level: 14, family: "swarming", catalysts: 3, cost: { green: 500 } },
     { id: "stance-recipe-reaper", group: "volcanic", level: 8, family: "swarming", catalysts: 3, cost: { red: 500 } },
     { id: "stance-recipe-recuperating", group: "graveyard", level: 2, family: "fortified", catalysts: 3, cost: { purple: 450 } },
     { id: "stance-recipe-powering-up", group: "trench", level: 2, family: "dominion", catalysts: 4, cost: { green: 550 } },
   ];
-  assert(STANCES.length === 5, "T4 must have exactly five placed Stances");
+  assert(STANCES.length === 6, "T4 must have exactly six placed Stances");
   for (const spec of STANCES) {
     const stance = STANCE_RECIPE_DATABASE.get(spec.id);
     assert(!!stance, `${spec.id}: stance recipe must exist`);
@@ -367,7 +368,7 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
     .sort();
   assert(
     JSON.stringify(t4StanceIds) === JSON.stringify(STANCES.map((spec) => spec.id).sort()),
-    `T4 Stance roster must be exactly the locked five (got ${t4StanceIds.join(", ")})`,
+    `T4 Stance roster must be exactly the six (got ${t4StanceIds.join(", ")})`,
   );
 }
 
