@@ -591,6 +591,7 @@ if (mountainCornerPath) {
 // structurally; this asserts the consequence on the real nav grid, for EVERY node
 // rather than a sampled few — a single hard-coded node is exactly how the old
 // approach-goal wedge stayed hidden.
+const mountainDungeonEntranceCounts = new Map<number, number>();
 for (const { id: nodeId } of WORLD_NODE_LIST.filter(node => node.biomeGroup === 'mountain')) {
   const layout = getMountainLedgeLayout(nodeId);
   assert(layout !== null, `${nodeId} has a generated ledge layout`);
@@ -604,9 +605,20 @@ for (const { id: nodeId } of WORLD_NODE_LIST.filter(node => node.biomeGroup === 
     assert(layout.inner.length >= 1, `${nodeId} inner ring keeps a way up`);
   } else if (layout?.kind === 'square') {
     assert(layout.gaps.length >= 1, `${nodeId} arena ring keeps a way in`);
-    assert(layout.gaps.length <= 2, `${nodeId} arena ring has at most two ways in`);
+    assert(layout.gaps.length <= 4, `${nodeId} arena ring has at most four ways in`);
+    const tier = NODE_BIOMES[nodeId]?.biomeTier ?? 1;
+    const expectedEntrances = 1 + ((Math.max(1, tier) - 1) % 4);
+    assert(
+      layout.gaps.length === expectedEntrances,
+      `${nodeId} cycles its arena entrance count by tier`,
+    );
+    assert(
+      new Set(layout.gaps.map(gap => gap.side)).size === layout.gaps.length,
+      `${nodeId} places each arena entrance on a different wall`,
+    );
+    mountainDungeonEntranceCounts.set(tier, layout.gaps.length);
     const walls = (RESOLVED_NODE_FEATURES[nodeId] ?? []).filter(f => f.id.startsWith('mountain_'));
-    assert(walls.length <= 6, `${nodeId} uses at most six long wall hitboxes`);
+    assert(walls.length <= 8, `${nodeId} uses at most eight long wall hitboxes`);
     assert(walls.every(f => !f.id.includes('_circle_')), `${nodeId} uses the shared square ledge renderer`);
   }
   assert(
@@ -625,5 +637,9 @@ for (const { id: nodeId } of WORLD_NODE_LIST.filter(node => node.biomeGroup === 
     }
   }
 }
+assert(
+  [1, 2, 3, 4].every(tier => mountainDungeonEntranceCounts.get(tier) === tier),
+  'the current Mountain dungeons use distinct one-, two-, three-, and four-entrance arenas',
+);
 
 console.log('collision tests ok');

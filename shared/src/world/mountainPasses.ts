@@ -225,15 +225,20 @@ function rollRingGaps(
 
 function buildLedgeLayout(nodeId: string): MountainLedgeLayout | null {
   if (!hasMountainLedges(nodeId)) return null;
-  // Dungeons use one enclosure with one or two opposite entrances.
+  // Dungeons use one enclosure. Cycle the entrance count by tier so the current
+  // four Mountain dungeons are visibly different instead of trusting a random
+  // roll that can give every arena the same count. The seeded start side still
+  // rotates each layout, and later tiers repeat the small 1-4 entrance vocabulary.
   if (NODE_BIOMES[nodeId]?.isDungeon) {
     const rng = mulberry32(hashString(`${nodeId}:mountain-arena:v2`));
-    const side = Math.floor(rng() * 4);
-    const count = rng() < 0.5 ? 1 : 2;
+    const dungeonSides: readonly MountainSide[] = ["north", "east", "south", "west"];
+    const startSide = Math.floor(rng() * dungeonSides.length);
+    const biomeTier = NODE_BIOMES[nodeId]?.biomeTier ?? 1;
+    const count = 1 + ((Math.max(1, biomeTier) - 1) % dungeonSides.length);
     return {
       kind: "square", wobble: 0,
       gaps: Array.from({ length: count }, (_, i) => ({
-        side: SIDES[(side + i * 2) % 4], centre: 0.5, span: 0.25,
+        side: dungeonSides[(startSide + i) % dungeonSides.length], centre: 0.5, span: 0.25,
       })),
     };
   }
