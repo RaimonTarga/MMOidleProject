@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "question": "Can prepared Bulwark Squire clear T2 Plains with Quake Hammer, kill recovery and dual Guards, and how do Mountain and Plains armor packages behave?",
+  "factor": "route",
+  "arms": [
+    { "id": "mountain", "route": "squire-plains-mountain-armor-t2-night2", "policy": "intended" },
+    { "id": "plains", "route": "squire-plains-plains-armor-t2-night2", "policy": "intended" }
+  ]
+}

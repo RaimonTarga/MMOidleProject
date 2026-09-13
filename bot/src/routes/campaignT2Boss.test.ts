@@ -8,6 +8,17 @@ import { CAMPAIGN_T2_V1K_ROUTES } from "./campaignT2V1k";
 import { CAMPAIGN_NIGHT2_ROUTES } from "./campaignNight2";
 import { CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE, NIGHT2_TRAVEL_BUILD } from "./campaignNight2Bridge";
 import { evaluate } from "../route/conditions";
+import { CAMPAIGN_NIGHT2_SQUIRE_ROUTES } from "./campaignNight2Squire";
+
+assert.deepEqual(CAMPAIGN_NIGHT2_SQUIRE_ROUTES[0].steps.slice(0, -12), CAMPAIGN_NIGHT2_SQUIRE_ROUTES[1].steps.slice(0, -12), "Squire armor arms share all acquisition and transit");
+for (const route of CAMPAIGN_NIGHT2_SQUIRE_ROUTES) {
+  assert(route.stopOnFirstDeath && route.resumePreparedT2);
+  const finalBuild = route.steps.filter(s => s.type === "configureBuild").at(-1)!;
+  assert.equal(buildRP(finalBuild.build).total, 25);
+  assert.equal(route.steps.filter(s => s.type === "attemptBoss").length, 1);
+  assert(route.steps.findIndex(s => s.type === "learnAbility" && s.abilityId === "brace") < route.steps.findIndex(s => s.type === "configureBuild" && s.build.abilities.guards.includes("brace")));
+  assert.equal(route.steps.filter(s => s.type === "upgrade").length, 5, "both armors upgraded identically before selection");
+}
 
 for (const [i, route] of CAMPAIGN_NIGHT2_ROUTES.entries()) {
   const final = route.steps.filter(s => s.type === "configureBuild").at(-1)!;

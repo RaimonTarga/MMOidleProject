@@ -2,7 +2,7 @@
 
 Activated 2026-09-13 21:04:42 UTC on explicit user approval. Deadline 2026-09-14 05:04:42 UTC; reserve final30 minutes. Ceilings: eight hours,20 gameplay cases,four frozen packets,one Luna operator and one active manifest. No gameplay balance edits. Astra prepares/interprets; Luna operates.
 
-Status: A and B terminal; C travel preparation underway. A frozen revision `14bda8be14f067654f305e8a10a7179ccf4eab22`, tree `81f7064241dc7797fe550ec569b7897e04133d57`. Cave manifest `20260913t211850z-spirit-cave-control-t2-night2`; Jungle manifest `20260913t214400z-spirit-jungle-hamstring-t2-nig`. Luna's initial read-only audit passed: all24 V1k summary/events/deaths hashes, three manifests/cohort summaries/receipts match; all three supervisors completed and released networks absent. Docker services healthy; host drive about27 GB free at setup. Retain volumes/artifacts. Initial source `dc41eb93f3c920aad1c5681c0b52c87b873a5417`.
+Status: A/B/C terminal; D Squire fallback prepared. A frozen revision `14bda8be14f067654f305e8a10a7179ccf4eab22`, tree `81f7064241dc7797fe550ec569b7897e04133d57`. Cave manifest `20260913t211850z-spirit-cave-control-t2-night2`; Jungle manifest `20260913t214400z-spirit-jungle-hamstring-t2-nig`. Luna's initial read-only audit passed: all24 V1k summary/events/deaths hashes, three manifests/cohort summaries/receipts match; all three supervisors completed and released networks absent. Docker services healthy; host drive about27 GB free at setup. Retain volumes/artifacts. Initial source `dc41eb93f3c920aad1c5681c0b52c87b873a5417`.
 
 ## Source and evidence audit
 
@@ -22,7 +22,8 @@ Jungle: escape barrier7% of3625HP =253.75,3s flee,210 base speed,0.30 speed per 
 |---|---:|---:|---:|---|
 | A Cave timing + Jungle | 6 | 6 | 6 | Completed; all boss wins and safe tails, both networks released |
 | B continuous bridge | 1 | 1 | 1 | Three seals earned; first death in Volcano transit; released |
-| C travel bridge | 1 | 0 | 0 | Preparing ordinary travel combat package |
+| C travel bridge | 1 | 1 | 1 | Earned T3; environmental transit death; released |
+| D Squire armor screen | 4 | 0 | 0 | Final packet prepared: Mountain/Plains/Plains/Mountain |
 
 Bridge preparation source `8ebfbbada901b65bde5e65834c7a7961c4cc1d4f`, tree `e19354beaeb761591748c37166bd4b8b067b5222`: ordinary full-HP/no-DoT recovery, first-death stop before respawn, cumulative failed-seal prerequisites, strict T3 import preserving the earned unspent branch point. Shared converter/validator changes are dev harness support, not gameplay balance. Full typecheck, bot preflight, focused T3 server bootstrap and final bot typecheck passed. Packet B remains conditional on review; no independent T2 snapshots are merged.
 
@@ -51,3 +52,11 @@ case,45minute cap, first-death stop. No mutation or revival of B. If a recovered
 T3 snapshot succeeds, the fourth and final packet can screen T3 reference then
 Volcano/Tundra from that same earned input. Otherwise park T3 and hand off
 the blocker with evidence. Ceilings are not quotas; no balance changes.
+
+## C review / final D decision
+
+C frozen ac14e270/treebf8c31c6; manifest20260913t225153z-spirit-travel-t2-bridge-night2. All8 report hashes verified and transcription errors corrected. Allthree seals earned again; travel abilities fire, one Scuttler killed; environmental death after52.287seconds in Volcano05. Tiny Wisp is a logger fallback, not a real attacker. Static lava damage and recovery/escape coverage need a focused diagnosis; no shared gameplay fix or numerical nerf applied. Both B and C lack a final safe T3 snapshot, so T3 farming/boss probes remain gated.
+
+Use the approved healthy-T2/blocked-T3 fallback for D: one contrasting class, Bulwark Squire, its own unchanged V1i snapshot f7f6a884f4f03798ee5c1019a3f49a6e18ecd4fb82f6bc357d00642f9b44d344. Strict actual-input converter/profile validation passes146 checks,0errors/0warnings. Fulltypecheck and botpreflight pass; initial static catalog lacked the learned stance, resolved with an idempotent ordinary stance-craft step rather than weakening validation.
+
+D tests Mountain vs Plains armor with identical +5 acquisition of both armors, Quake Hammer, Plains charm/boots,25RP Sweep/SW/Brace, defensive stance and melee-chase rules. Four cases ABBA,25minute caps, firstdeath percase,150minute packet deadline; no fifth packet regardless of result. This is a specific armor comparison and class feasibility screen, not a class ranking. Counters at freeze:3 packets/8 cases completed;4th packet/4cases prepared,12 total allocated.

@@ -37,6 +37,26 @@ package, keeping previous acquisition and bosses unchanged. The hit window
 starts full HP and collapses in about4.8seconds; it is a density/burst warning,
 not yet proof that optimized T3 entry is impossible.
 
+Night2-C result: both Guards and Sweep do fire during travel; one Scuttler
+dies. The character still dies after52.287seconds in Volcano, with repeated
+environmental14HP ticks and zero attackers in the last samples. `Tiny Wisp`
+is the node-feature death logger's fallback name. Separate positional lava
+burn from ambient Heat. Static lava is absent from the runtime-ground-pool
+escape helper; Recover First holds a hurt character's travel, while damaging
+terrain suppresses out-of-combat regeneration. This is a source-supported
+behavior-gap hypothesis, not an exact trajectory reconstruction or a mob
+attack balance verdict. Static contact includes a40px edge band. A diagnostic
+must include that band, active Rune intent, position and damage-effect ID.
+
+Night2-D candidate: transfer the kill-chain principle to Bulwark Squire, not
+Spirit's weapon. Quake Hammer supports Squire's8s empowered cadence; the
+class's slow swings make reliable Sweep/add delivery worth testing. Hold
+Plains charm/boots and Sweep/SW/Brace fixed, compare Mountain armor's HP/Guard
+potency with Plains armor's flat plating under defensive stance. Buy both
+armors identically first. Extra plating helps repeated small hits; Guard
+potency needs actual Guard windows. Neither armor grants T3 Mountain hit caps.
+Leave outcome and passive attribution open until measured.
+
 Evidence labels used below:
 
 - **Observed:** present in a recording or completed report, with that run's limitations.
