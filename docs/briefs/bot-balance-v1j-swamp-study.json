@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "question": "For prepared Heavy Spirit facing T2 Swamp, does Bog Eye periodic Recovery improve survival relative to Mountain Charm barrier under identical Expose, Second Wind, Cleanse and movement rules?",
+  "factor": "route",
+  "arms": [
+    { "id": "barrier", "route": "spirit-campaign-swamp-mountain-charm-t2-v1j", "policy": "intended" },
+    { "id": "recovery", "route": "spirit-campaign-swamp-swamp-charm-t2-v1j", "policy": "intended" }
+  ]
+}

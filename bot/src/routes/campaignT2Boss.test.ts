@@ -3,8 +3,9 @@ import { BIOME_PRIMARY_ESSENCE, NODE_BIOMES, NODE_MODIFIERS, RECIPE_DATABASE, ru
 import { RouteExecutor } from "../route/executor";
 import { buildRP } from "../loadout/loadout";
 import { CAMPAIGN_T2_BOSS_ROUTES } from "./campaignT2Boss";
+import { CAMPAIGN_T2_EXPANSION_ROUTES } from "./campaignT2Expansion";
 
-for (const route of CAMPAIGN_T2_BOSS_ROUTES) {
+for (const route of [...CAMPAIGN_T2_BOSS_ROUTES, ...CAMPAIGN_T2_EXPANSION_ROUTES]) {
   assert(route.resumePreparedT2 && route.startsFromTierEntry === 2);
   assert.equal(route.steps.filter(s => s.type === "attemptBoss").length, 1);
   const last = route.steps.at(-1);
@@ -14,6 +15,23 @@ for (const route of CAMPAIGN_T2_BOSS_ROUTES) {
     if (step.type === "upgrade") assert(step.farmForMissingResources && step.toPlus === 5);
   }
 }
+
+for (const route of CAMPAIGN_T2_EXPANSION_ROUTES) {
+  const finalBuild = route.steps.filter(s => s.type === "configureBuild").at(-1)!;
+  assert(finalBuild.type === "configureBuild");
+  const swamp = route.id.includes("swamp-");
+  assert.equal(buildRP(finalBuild.build).total, swamp ? 26 : 28);
+  assert.equal(route.steps.filter(s => s.type === "milestone").length, 1);
+  const target = route.steps.at(-1);
+  assert(target?.type === "attemptBoss");
+  assert(route.steps.some(s => s.type === "assert" && s.condition.type === "not" &&
+    s.condition.of.type === "bossCleared" && s.condition.of.biomeGroup === target.biomeGroup));
+}
+const swampArms = CAMPAIGN_T2_EXPANSION_ROUTES.filter(r => r.id.includes("-swamp-"));
+// Acquisition must match: no charm-dependent extra farm/upgrade exposure.
+const acquisition = (route: typeof swampArms[number]) => route.steps.slice(0, -6).map(({ label, ...step }) => step);
+assert.deepEqual(acquisition(swampArms[0]), acquisition(swampArms[1]));
+assert.equal(CAMPAIGN_T2_BOSS_ROUTES.length, 3, "V1i arms remain unchanged");
 
 // Exercise the real upgrade loop, including a resource change while blocked.
 async function resourceRegression() {
