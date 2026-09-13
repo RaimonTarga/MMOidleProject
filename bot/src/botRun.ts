@@ -398,6 +398,10 @@ export async function runBot(
     if (!result.success) {
       throw new Error(`tier-entry profile ${tierEntryProfile.id} rejected: ${result.reason ?? "unknown"}`);
     }
+    if (result.profileId !== tierEntryProfile.id || result.targetTier !== tierEntryProfile.targetTier ||
+      !result.spawnView || result.spawnView.id !== conn.id) {
+      throw new Error("tier-entry acknowledgement missing matching authoritative spawn view");
+    }
     await waitFor(
       () => {
         const self = obs.self;
@@ -426,7 +430,9 @@ export async function runBot(
     // the run refuses to start rather than quietly producing hours of evidence
     // about an impossible build.
     const profileReport = validateProfile(tierEntryProfile);
-    const spawnReport = validateSpawn(tierEntryProfile, obs.requireSelf());
+    // Strictly validate the server's immutable reset-time view. The live mirror
+    // continues to carry subsequent damage/buffs; no healing or retry is applied.
+    const spawnReport = validateSpawn(tierEntryProfile, result.spawnView);
     templateValidation = {
       profileId: tierEntryProfile.id,
       profilePass: profileReport.pass,

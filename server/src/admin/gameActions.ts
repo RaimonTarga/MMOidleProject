@@ -1,5 +1,6 @@
 import {
   DEFAULT_RUNE_LOADOUT,
+  composePlayerView,
   ABILITY_DATABASE,
   emptyEquipment,
   emptyAttunedAbilities,
@@ -469,7 +470,11 @@ export function applyTierEntryProfile(
   markSliceDirty(world, player, 'usesAutocombat');
   markSliceDirty(world, player, 'hasHealth');
   markSliceDirty(world, player, 'hasStatus');
-  return { success: true, profileId: profile.id, targetTier: profile.targetTier };
+  // The next simulation tick may damage a player in Clearing before its 5 Hz
+  // broadcast. Validate the reset at its actual boundary, not a later tick.
+  // Clone because view composers may retain arrays/maps from the live entity.
+  return { success: true, profileId: profile.id, targetTier: profile.targetTier,
+    spawnView: structuredClone(composePlayerView(player)) };
 }
 
 export function equipPhaseTester(world: World, player: PlayerEntity): GameActionResult {

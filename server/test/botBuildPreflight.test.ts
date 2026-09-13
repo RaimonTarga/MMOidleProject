@@ -125,7 +125,13 @@ async function main() {
     assert.equal(obs.requireSelf().playerTier, 0);
     // Every T2 template crosses the actual dev intent, normal encoder and bot mirror.
     for (const profile of TIER_ENTRY_PROFILES.values()) {
-      assert.equal((await intents.applyTierEntryProfile(profile)).success, true, profile.id);
+      // No periodic publication: the acknowledgement itself must contain the
+      // exact authoritative reset view, through the real socket serialization.
+      publish = false;
+      const entry = await intents.applyTierEntryProfile(profile);
+      assert.equal(entry.success, true, profile.id);
+      assert(entry.spawnView && validateSpawn(profile, entry.spawnView).pass, profile.id + " atomic spawn view");
+      publish = true;
       await wait(() => validateSpawn(profile, obs.requireSelf()).pass, profile.id);
       const route = [...ROUTES.values()].find(r => r.classRoot === profile.classRoot && r.startsFromTierEntry === 2 && r.id.endsWith("-t2-mid"));
       assert(route, "T2 route exists for each template class");

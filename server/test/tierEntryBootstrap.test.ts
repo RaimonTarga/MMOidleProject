@@ -12,6 +12,7 @@ import {
   type TierEntryProfile,
 } from "@mmo-idle/shared";
 import { readFileSync } from "node:fs";
+import { validateSpawn } from "../../bot/src/tierEntry/validate";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { applyTierEntryProfile } from "../src/admin/gameActions";
 import { World } from "../src/world/World";
@@ -229,3 +230,14 @@ assert(player.hasHealth.maxHp === 164, "actual prepared defensive stats reconstr
 assert(JSON.stringify(player.holdsInventory.equipment) === JSON.stringify(earnedProfile.equipment), "earned equipment survives import");
 assert(JSON.stringify(player.tracksProgression.runesEquipped) === JSON.stringify(earnedProfile.runesEquipped), "earned ordered rules survive import");
 assert(JSON.stringify(player.tracksProgression.essences) === JSON.stringify(earnedProfile.wallet.essences), "earned wallet survives import");
+assert(earnedResult.spawnView && validateSpawn(earnedProfile, earnedResult.spawnView).pass, "reset-time view passes strict validation");
+// Night 1 failed after a later tick had dealt 0.0406 damage and added a buff.
+// Later mutation must not change the evidence attached to the reset response.
+player.hasHealth.hp -= 0.0406;
+player.hasStatus.activeBuffs.push({ id: "entry-race", name: "Entry race", remainingMs: 1000 } as any);
+assert(earnedResult.spawnView.hp === 164 && earnedResult.spawnView.activeBuffs.length === 0, "spawn evidence is deeply detached from later combat");
+const invalidView = structuredClone(earnedResult.spawnView);
+invalidView.hp -= 0.0406;
+invalidView.activeBuffs.push({ id: "invalid-entry" } as any);
+const invalidReport = validateSpawn(earnedProfile, invalidView);
+assert(!invalidReport.pass && invalidReport.findings.some(f => f.check === "live-full-hp") && invalidReport.findings.some(f => f.check === "live-no-buffs"), "actual contaminated reset still fails both strict checks");

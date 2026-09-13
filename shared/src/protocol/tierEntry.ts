@@ -3,6 +3,7 @@ import type { EquipmentMap, EssenceType } from "../items";
 import type { EquippedRule } from "../runeDatabase";
 import type { EquippedRites } from "../rites";
 import type { EquippedStances } from "../stances";
+import type { PlayerView } from "./views";
 
 /**
  * Explicit, inspectable state used by the development bot harness to enter a
@@ -101,5 +102,7 @@ export interface TierEntryApplyResult {
   success: boolean;
   profileId: string;
   targetTier?: number;
+  /** Immutable ordinary player view captured in the same transaction as bootstrap. */
+  spawnView?: PlayerView;
   reason?: string;
 }
