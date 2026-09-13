@@ -26,9 +26,11 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Pending standalone Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
 | [briefs/bot-balance-v1j-assessment.md](briefs/bot-balance-v1j-assessment.md) | Mountain feasibility, fragile Swamp outcomes and damage-type mitigation hypotheses. |
 | [briefs/bot-balance-v1k-operator-packet.md](briefs/bot-balance-v1k-operator-packet.md) | Eight runs: Swamp armor comparison, Cave/Desert coverage and bounded post-clear observation. |
 | [briefs/bot-balance-v1k-swamp-study.json](briefs/bot-balance-v1k-swamp-study.json) | Cave armor versus Bog Wrappings under fixed Bog Eye and ability rules. |
+| [briefs/bot-balance-v1k-report.md](briefs/bot-balance-v1k-report.md) | V1k execution ledger: Swamp armor comparison, Cave loss coverage, Desert wins and preserved post-clear evidence. |
 | [briefs/bot-experiment-resource-lifecycle.md](briefs/bot-experiment-resource-lifecycle.md) | Automatic terminal network release, retained data, manual recovery command and V1j capacity incident. |
 | [briefs/bot-balance-theorycrafting-reference.md](briefs/bot-balance-theorycrafting-reference.md) | Source-grounded encounter/build reasoning, corrected human Plains evidence, legal T2 RP alternatives and prioritized future comparisons. |
 | [briefs/bot-balance-v1i-assessment.md](briefs/bot-balance-v1i-assessment.md) | Accepted preparation and Spirit T2 results, inference limits and next encounter hypotheses. |

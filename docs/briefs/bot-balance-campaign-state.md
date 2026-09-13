@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: V1j complete: Spirit Mountain2/2; Swamp each charm1/2 with post-kill survival concerns. Earlier Plains Axe2/2 and Forest2/2 remain supported candidates. V1k prepared: Swamp armor comparison, Cave/Desert coverage and post-clear observation, eight runs.
+Status: V1k report received: Swamp boss defeats4/4, safe tails Bog Wrappings2/2 versus Cave Vest1/2; Cave losses0/2 wins; Desert2/2 with safe tails. Next: proposed standalone overnight plan, not started.
 V1j's original capacity stop is historical; both rerun manifests completed and released their networks automatically. [Lifecycle](bot-experiment-resource-lifecycle.md).
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
@@ -32,7 +32,7 @@ execution instructions. Current source and explicit user direction take preceden
 
 ### Next operating mode: autonomous Astra–Luna overnight loop (pending start)
 
-Recorded at the user's request on 2026-09-13. This is the next planned workflow, **not authorization to start now**. The user reports the current experiment is still running. Leave it under its existing operator/packet, review its completed results, and wait for the user's explicit overnight start instruction. Do not spawn an operator, schedule a wake-up or launch another experiment merely because this plan exists.
+Recorded at the user's request on 2026-09-13. This is the next planned workflow, **not authorization to start now**. V1k has now finished; the [standalone overnight plan](bot-balance-autonomous-night-plan.md) proposes an eight-hour,20-case,four-packet ceiling and conditional experiment sequence. Wait for the user's explicit overnight start instruction. Do not spawn an operator, create a task, schedule a wake-up or launch another experiment merely because this plan exists.
 
 Once activated, the purpose is to remove the user's messenger role while keeping expensive Astra work focused on decisions:
 
@@ -46,6 +46,8 @@ The overnight work continues **validation, analysis and experimentation** toward
 **Balance proposals are allowed; balance changes are not.** Astra may record what it would rebalance, the evidence, proposed direction/values, expected tradeoffs, confidence and the test that would validate the proposal. Do not implement those changes, even in a new experimental image, without separate user approval. Distinguish weak bot preparation, behavior defects, instrumentation gaps and actual balance pressure. Scoped bot/harness fixes remain within preparation authority; a proposed gameplay-mechanics change needing user judgment must be surfaced rather than disguised as a bot fix.
 
 At activation, record a finite session deadline and scope in the first packet. No token budget or exact overnight duration has been specified yet. Retain one active operator/manifest unless separately authorized. Use normal terminal network release and preserve artifacts/volumes; do not revive or alter old runs to create new evidence.
+
+Latest T3 steering: the user identifies **Volcano and Tundra as highest risk for excessive mob damage**, possibly badly unbalanced. Treat this as an explicit investigation priority, not a confirmed result. Establish another source-audited T3 reference before separate bounded probes; avoid uncontrolled death loops. Keep incoming-damage risk distinct from the existing T3/T4 low enemy-eHP concern. No balance changes without approval.
 
 If progress is blocked, evidence is insufficient for a responsible next step, the session deadline is reached, or a decision requires the user, stop safely and leave a concise handoff. The user explicitly accepts waiting until they return, including an overnight stall; there is no requirement to keep producing runs or spend tokens repeatedly checking an unresolved blocker. Preserve the current facts, failed/unstarted slots, candidate balance proposals and the exact input needed to continue. Do not automatically schedule reminders or restart after a stop.
 
