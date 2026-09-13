@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "question": "Can replacing Expose Weakness with Cleanse alongside Second Wind improve Cave survival against plating corrosion with the same earned Striker kit?",
+  "factor": "route",
+  "arms": [
+    { "id": "expose-wind", "route": "striker-campaign-night-cave-t1", "policy": "intended" },
+    { "id": "dual-guard", "route": "striker-campaign-cave-dual-guard-t1", "policy": "intended" }
+  ]
+}

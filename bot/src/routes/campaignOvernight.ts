@@ -62,3 +62,17 @@ export const CAMPAIGN_NIGHT_SWAMP_DUAL_GUARD: Route = {
     return copy;
   }),
 };
+
+/** Cave hypothesis: cleansing corrosion may preserve defense at a DPS cost. */
+export const CAMPAIGN_CAVE_DUAL_GUARD: Route = {
+  ...structuredClone(CAMPAIGN_NIGHT_BOSSES.find(route => route.id === "striker-campaign-night-cave-t1")!),
+  id: "striker-campaign-cave-dual-guard-t1",
+  description: "Cave comparison: replace Expose with Cleanse alongside Second Wind; unchanged earned kit and Rune rules.",
+  steps: CAMPAIGN_NIGHT_BOSSES.find(route => route.id === "striker-campaign-night-cave-t1")!.steps.map(step => {
+    const copy = structuredClone(step);
+    if (copy.type === "configureBuild") copy.build.abilities = { techniques: [], guards: ["second-wind", "cleanse"] };
+    if (copy.label) copy.label = copy.label.replace("night:cave:", "v1g:cave-dual:");
+    if (copy.type === "milestone") copy.id = copy.id.replace("night:cave:", "v1g:cave-dual:");
+    return copy;
+  }),
+};
