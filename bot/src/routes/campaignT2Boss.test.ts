@@ -6,7 +6,7 @@ import { CAMPAIGN_T2_BOSS_ROUTES } from "./campaignT2Boss";
 import { CAMPAIGN_T2_EXPANSION_ROUTES } from "./campaignT2Expansion";
 import { CAMPAIGN_T2_V1K_ROUTES } from "./campaignT2V1k";
 import { CAMPAIGN_NIGHT2_ROUTES } from "./campaignNight2";
-import { CAMPAIGN_NIGHT2_BRIDGE } from "./campaignNight2Bridge";
+import { CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE, NIGHT2_TRAVEL_BUILD } from "./campaignNight2Bridge";
 import { evaluate } from "../route/conditions";
 
 for (const [i, route] of CAMPAIGN_NIGHT2_ROUTES.entries()) {
@@ -97,7 +97,18 @@ async function postClearRegression() {
 }
 
 async function bridgeRegression() {
-  const route = CAMPAIGN_NIGHT2_BRIDGE;
+  assert.equal(buildRP(NIGHT2_TRAVEL_BUILD).total, 28);
+  assert.deepEqual(CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.slice(0, -6), CAMPAIGN_NIGHT2_BRIDGE.steps.slice(0, -3), "all acquisition and boss treatments unchanged before earned T3");
+  assert.equal(CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.at(-5)?.type, "farm", "recover before crossing");
+  for (const traveling of [false, true]) {
+    const derived = deriveAutoConfigFromRunes(NIGHT2_TRAVEL_BUILD.runeRules, {
+      hpPct: 1, inCombat: true, inParty: false, aggroCount: 5, traveling,
+    });
+    assert.equal(derived.avoidEnemies, traveling);
+    assert.equal(derived.fightBackWhileTraveling, traveling);
+  }
+  for (const route of [CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE]) {
+  assert(route.stopOnFirstDeath && route.suppressTransitCombat);
   assert.deepEqual(route.steps.filter(s => s.type === "attemptBoss").map(s => [s.biomeGroup, s.maxAttempts]),
     [["plains", 1], ["forest", 1], ["desert", 1]]);
   for (const step of route.steps) if (step.type === "configureBuild") assert(buildRP(step.build).total <= 30);
@@ -109,6 +120,7 @@ async function bridgeRegression() {
     runStep: async (step: { type: string }) => { executed.push(step.type); } });
   await executor.run();
   assert.deepEqual(executed, [], "a lost first seal skips all later fights and T3 travel");
+  }
   for (const [hp, incomingDot, isDead, expected] of [[100, 0, false, true], [99, 0, false, false], [100, 2, false, false], [100, 0, true, false]] as const) {
     assert.equal(evaluate({ type: "fullyRecovered" }, { elapsedMs: 0, obs: { self: { hp, maxHp: 100, incomingDot, isDead } } } as never), expected);
   }

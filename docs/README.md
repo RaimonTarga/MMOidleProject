@@ -30,7 +30,9 @@ top-level doc.
 | [briefs/bot-balance-night2-ledger.md](briefs/bot-balance-night2-ledger.md) | Active overnight deadline, packet accounting, source audit and strategy evidence. |
 | [briefs/bot-balance-night2-a-operator-packet.md](briefs/bot-balance-night2-a-operator-packet.md) | Night 2 packet A: Cave Brace timing and Jungle Hamstring feasibility. |
 | [briefs/bot-balance-night2-a-report.md](briefs/bot-balance-night2-a-report.md) | Night 2 packet A execution: four Cave timing cases and two Jungle Hamstring cases, with terminal evidence and release hashes. |
+| [briefs/bot-balance-night2-b-report.md](briefs/bot-balance-night2-b-report.md) | Night 2 packet B bridge result: three T2 seals and earned T3, then declared first-death stop during T3 Sanctuary travel. |
 | [briefs/bot-balance-night2-b-operator-packet.md](briefs/bot-balance-night2-b-operator-packet.md) | Night 2 conditional continuous three-seal bridge and strict earned T3 handoff. |
+| [briefs/bot-balance-night2-c-operator-packet.md](briefs/bot-balance-night2-c-operator-packet.md) | Night 2 ordinary travel-rune and dual-Guard bridge package after the first transit failure. |
 | [briefs/bot-balance-v1j-assessment.md](briefs/bot-balance-v1j-assessment.md) | Mountain feasibility, fragile Swamp outcomes and damage-type mitigation hypotheses. |
 | [briefs/bot-balance-v1k-operator-packet.md](briefs/bot-balance-v1k-operator-packet.md) | Eight runs: Swamp armor comparison, Cave/Desert coverage and bounded post-clear observation. |
 | [briefs/bot-balance-v1k-swamp-study.json](briefs/bot-balance-v1k-swamp-study.json) | Cave armor versus Bog Wrappings under fixed Bog Eye and ability rules. |

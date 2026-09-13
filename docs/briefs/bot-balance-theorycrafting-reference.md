@@ -25,6 +25,18 @@ Build around the encounter's damage distribution, target behavior and recovery o
 
 The campaign asks whether an expert-prepared character can succeed using ordinary player tools. It does not require every class to beat every boss, predict average-player preparation, or establish a global optimum. User strategy documents are pointers; current code and observed behavior take precedence.
 
+Night2-B travel lesson: the continuous three-seal sequence succeeded, but the
+unbranched T3 character died in Volcano transit with five attackers and no
+ability activation. Navigation has Auto off; without the ordinary Fight Back
+travel Rune, merely equipping Guards does not make them run. Audit the control
+mode as well as the loadout. Shipped Fight Back attaches fightsWhileTraveling,
+enabling normal targeting/ability firing; Recover First can hold that pause
+until healed. Avoid Enemies reduces avoidable local contact but cannot promise
+an empty path. C tests these rules with Sweep and dual Guards as a whole transit
+package, keeping previous acquisition and bosses unchanged. The hit window
+starts full HP and collapses in about4.8seconds; it is a density/burst warning,
+not yet proof that optimized T3 entry is impossible.
+
 Evidence labels used below:
 
 - **Observed:** present in a recording or completed report, with that run's limitations.
