@@ -333,11 +333,11 @@ export type BossPatternStep =
     }
   /**
    * ESCAPE GUARD — a barrier the boss retreats behind, which the player answers by
-   * BREAKING it rather than by catching the boss.
+   * breaking it or staying close enough to prevent the getaway.
    *
    * Breaking it fails the retreat: the boss stumbles into a stagger and gains one
-   * capped stack of Escape Instinct, making its NEXT attempt quicker. Letting it
-   * finish means it escapes, resets Instinct, and comes back with an ambush.
+   * stack of Escape Instinct, making its NEXT attempt quicker. Letting it
+   * reach its escape distance means it resets Instinct and comes back with an ambush.
    *
    * Damage — not physical contact — is the test, which is what keeps ranged builds
    * valid answers to a boss whose whole idea is running away from you.
@@ -355,29 +355,16 @@ export type BossPatternStep =
        * the cursor is detached every time a pattern ends, and the whole point of
        * Instinct is that it survives from one failed attempt to the next.
        *
-       * Stacks are CAPPED, and a successful escape resets them to zero.
-       * Each stack shortens the next retreat wind-up by `instinctCastReductionPct`,
-       * so repeated failures speed the boss up to a ceiling and no further — the
-       * plan's "speed increases only to cap".
+       * Shield breaks and timed-out attempts grant stacks without a limit,
+       * and a successful escape resets them to zero.
+       * Each stack increases fleeing speed by `instinctSpeedPct`,
+       * so repeated failures keep accelerating the next retreat until it escapes.
        */
-      maxInstinctStacks: number;
-      instinctCastReductionPct: number;
       instinctSpeedPct?: number;
-      /**
-       * BOLT FOR COVER. While the guard is up the boss RUNS for the far edge of its
-       * leash at `speed` px/s instead of standing behind its plate.
-       *
-       * The escape has to be a thing the player WATCHES happen, or the barrier is
-       * just a shield with a story attached: without it the boss stood still for the
-       * whole cast and then relocated instantly the moment it succeeded, which read
-       * as a teleport and gave the pursuit no visible middle. Fleeing is also what
-       * makes the distance the sequence later has to close REAL — and it inherits
-       * Escape Instinct for free, because a rushed cast covers less ground.
-       *
-       * Travel goes through the movement system (like `charge`), so it paths, it
-       * clamps to the leash, and it stops the moment the guard resolves either way.
+      /** Flee under the shield until this distance from the target is reached.
+       * castMs is the maximum attempt duration; expiry fails rather than conceals.
        */
-      flee?: { speed: number };
+      flee?: { speed: number; escapeDistance: number };
       /**
        * Hard control (stun/freeze) cancels the escape outright, defaulting to true.
        * Breaking the plate is the answer that BANKS Instinct; stunning the boss is
@@ -422,8 +409,8 @@ export interface BossPattern {
   steps: BossPatternStep[];
   /** Base damage multiplier every damaging step scales from. */
   damageMultiplier: number;
-  /** Each charge banks a stack; a landed charge clears them. */
-  chargeInstinct?: { maxStacks: number; speedPct: number; castReductionPct: number };
+  /** Uncapped stacks: additive base speed, multiplicative wind-up reduction down to minCastMs. A landed charge clears them. */
+  chargeInstinct?: { speedPct: number; castReductionPct: number; minCastMs: number; cooldownReductionPct?: number };
   cooldownMs: number;
   /** Cooldown for the first run of a combat session. Defaults to `cooldownMs`. */
   initialCooldownMs?: number;
@@ -501,6 +488,9 @@ export interface RunsBossPattern {
   feintPoint?: Vec2;
   /** Wall-clock the outbound leg gives up at, so an unreachable point cannot stall the burrow. */
   feintEndsAtMs?: number;
+  fleeStart?: Vec2;
+  lastFleeSteerMs?: number;
+  fleeTargetPosition?: Vec2;
   /** Set true when a barrier break staggered the pattern. */
   staggered: boolean;
   /**

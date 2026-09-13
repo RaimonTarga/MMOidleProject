@@ -1,4 +1,9 @@
-import { GAME_CONFIG, MONSTER_DATABASE, STARTER_RUNE_IDS, emptyEquipment, STANCE_RECIPE_DATABASE } from '@mmo-idle/shared';
+import { fleeDestination } from '../src/systems/combat/ai/bossFlee';
+import { inflateShape, segmentEntryT } from '@mmo-idle/shared';
+import { navigationPadForEntity } from '../src/systems/world/movement';
+import { updateMovement } from '../src/systems/world/movement';
+import { setMovePath } from '../src/systems/world/pathMotion';
+import { getCounter, GAME_CONFIG, MONSTER_DATABASE, STARTER_RUNE_IDS, emptyEquipment, STANCE_RECIPE_DATABASE } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -53,7 +58,7 @@ function setup(id: string) {
 
 // Breaks which also stun used to take the generic interrupt exit and lose Instinct.
 for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-predator']) {
-  const { world, boss, pattern, now } = setup(id);
+  const { world, player, boss, pattern, now } = setup(id);
   updateBossPatterns(world, 100, now);
   updateBossPatterns(world, 100, now + 100);
   const guard = pattern.steps.find(s => s.kind === 'escape-guard')!;
@@ -76,11 +81,124 @@ for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-
   updateBossPatterns(world, 100, next);
   updateBossPatterns(world, 100, next + 100);
   assert(boss.hasPosition.speed > initialSpeed, `${id}: next flee moves faster`);
-  assert(boss.runsBossPattern!.stepEndsAtMs - (next + 100) < guard.castMs, `${id}: next flee casts faster`);
+  assert(boss.runsBossPattern!.stepEndsAtMs - (next + 100) === guard.castMs, `${id}: Instinct never shortens the fleeing deadline`);
+  boss.hasPosition.current = { x: player.hasPosition.current.x + guard.flee.escapeDistance + 10, y: player.hasPosition.current.y };
   updateBossPatterns(world, 100, boss.runsBossPattern!.stepEndsAtMs);
   assert(escapeInstinct(boss) === 0, `${id}: successful escape clears stacks`);
   clearBossPatternState(world, boss);
   assert(!boss.isConcealed && !boss.isMoving, `${id}: reset cleans motion and concealment`);
+}
+
+// A fleeing boss must spend its whole movement budget across short path segments.
+{
+  const { world, boss, now } = setup('apex-bramble-slasher');
+  updateBossPatterns(world, 100, now);
+  updateBossPatterns(world, 100, now + 100);
+  const start = { ...boss.hasPosition.current };
+  const goal = { x: start.x + 200, y: start.y };
+  setMovePath(world, boss, goal, [10, 20, 200].map(dx => ({ x: start.x + dx, y: start.y })), 'monster');
+  for (let tick = 1; tick <= 4; tick++) {
+    updateMovement(world, 100, now + 100 + tick * 100);
+    assert(Math.abs(boss.hasPosition.current.x - start.x - boss.hasPosition.speed * 0.1 * tick) < 0.01,
+      'fleeing carries unused movement across waypoints instead of pausing at each one');
+  }
+}
+
+// Fleeing preserves a working route, but turns away when the pursuer changes sides.
+{
+  const { world, player, boss, now } = setup('apex-bramble-slasher');
+  player.hasPosition.current.y += 40;
+  updateBossPatterns(world, 100, now);
+  updateBossPatterns(world, 100, now + 100);
+  const endpoint = boss.runsBossPattern!.capturedEndpoint!;
+  assert(!boss.hasMovePath && boss.isMoving, 'flee uses a direct outward line');
+  for (let tick = 1; tick <= 8; tick++) {
+    world.tick(100, now + 100 + tick * 100);
+    assert(!boss.hasMovePath && boss.isMoving, 'flee never detours through a path around the player');
+    assert(boss.runsBossPattern!.capturedEndpoint === endpoint, 'escape destination stays fixed while the player stays put');
+  }
+  player.hasPosition.current = { x: boss.hasPosition.current.x + 150, y: boss.hasPosition.current.y };
+  updateBossPatterns(world, 100, now + 1400);
+  const redirected = boss.runsBossPattern!.capturedEndpoint!;
+  assert(redirected.x < boss.hasPosition.current.x && boss.isMoving, 'crossing ahead redirects the fleeing boss away without stopping it');
+}
+
+// Being across the player from the spawn must not turn fleeing into circling them.
+{
+  const { world, player, boss } = setup('apex-bramble-slasher');
+  boss.hasPosition.current = { x: 2600, y: 2400 };
+  player.hasPosition.current = { x: 2500, y: 2400 };
+  const straight = fleeDestination(world, boss, player)!;
+  assert(straight && straight.x > boss.hasPosition.current.x && Math.abs(straight.y - 2400) < 0.01,
+    'retreat follows the boss-to-player axis, regardless of spawn position');
+  const blockShapes = world.collision.blockShapes.bind(world.collision);
+  const wall = { kind: 'rect' as const, x: 2700, y: 2400, halfW: 10, halfH: 80 };
+  world.collision.blockShapes = () => [wall];
+  const detour = fleeDestination(world, boss, player)!;
+  assert(detour && detour.x > boss.hasPosition.current.x && Math.abs(detour.y - 2400) > 1,
+    'a blocked retreat takes an outward detour, not a route through the player');
+  assert(segmentEntryT(boss.hasPosition.current, detour, inflateShape(wall, navigationPadForEntity(boss))) === null,
+    'detour segment is clear for the whole boss body');
+  world.collision.blockShapes = blockShapes;
+  boss.hasPosition.current.x = boss.controlsMonster.spawn.x + boss.controlsMonster.leashRange - 2;
+  player.hasPosition.current = { x: boss.hasPosition.current.x - 100, y: boss.hasPosition.current.y };
+  assert(fleeDestination(world, boss, player) === null, 'at the leash edge, do not reverse through the player');
+}
+
+// Distance, not a timer, gates escape. Exercise stationary, pursued and clean retreats.
+for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-predator']) {
+  for (const mode of ['stationary', 'pursued', 'escaped', 'break-at-distance']) {
+    const { world, player, boss, pattern, now } = setup(id);
+    updateBossPatterns(world, 100, now);
+    updateBossPatterns(world, 100, now + 100);
+    const guard = pattern.steps.find(s => s.kind === 'escape-guard')!;
+    assert(guard.kind === 'escape-guard' && guard.flee, 'distance escape authored');
+    assert(boss.isMoving && !boss.isRooted, `${id}: flee starts visible movement immediately`);
+    const deadline = boss.runsBossPattern!.stepEndsAtMs;
+    if (mode === 'stationary') {
+      // Even the player running away cannot turn a stationary boss's cast into escape.
+      player.hasPosition.current.x -= 600;
+    } else {
+      boss.hasPosition.current.x += guard.flee.escapeDistance;
+      if (mode === 'pursued') player.hasPosition.current.x = boss.hasPosition.current.x - 40;
+      if (mode === 'break-at-distance') applyEnemyShield(boss, MONSTER_DATABASE.get(id), sourceBarrierRemaining(boss, guard.sourceId), 0);
+    }
+    updateBossPatterns(world, 100, mode === 'escaped' || mode === 'break-at-distance' ? now + 200 : deadline + 1);
+    if (mode === 'escaped') {
+      assert(boss.isConcealed, `${id}: real distance succeeds before the deadline`);
+      assert(sourceBarrierRemaining(boss, guard.sourceId) === 0, `${id}: successful escape clears shield`);
+    } else {
+      assert(!boss.isConcealed && !boss.runsBossPattern, `${id}/${mode}: failed escape never enters stealth`);
+      assert(!boss.isMoving && boss.hasPosition.speed === MONSTER_DATABASE.get(id)!.stats.speed, `${id}/${mode}: failure restores movement`);
+      assert(sourceBarrierRemaining(boss, guard.sourceId) === 0, `${id}/${mode}: no stranded shield`);
+      if (mode === 'break-at-distance') assert(boss.recoversFromPattern?.fromStagger && escapeInstinct(boss) === 1, `${id}: shield break wins over distance success`);
+      else assert(escapeInstinct(boss) === 1, `${id}/${mode}: failed distance escape banks Instinct, including T2`);
+    }
+  }
+}
+
+// T2 failed pursuits accumulate visibly without a cap, then reset after actual escape.
+{
+  const { world, player, boss, pattern, now } = setup('jungle-dread-gorger');
+  const guard = pattern.steps.find(s => s.kind === 'escape-guard')!;
+  assert(guard.kind === 'escape-guard' && guard.flee, 'T2 fleeing config');
+  let clock = now;
+  for (let attempt = 1; attempt <= 12; attempt++) {
+    updateBossPatterns(world, 100, clock);
+    updateBossPatterns(world, 100, clock + 100);
+    assert(Math.abs(boss.hasPosition.speed - guard.flee.speed * (1 + (attempt - 1) * guard.instinctSpeedPct!)) < 1e-6,
+      'T2 Instinct accelerates the next retreat');
+    updateBossPatterns(world, 100, clock + 100 + guard.castMs);
+    updateBossPatterns(world, 100, clock + 200 + guard.castMs);
+    assert(boss.hasStatus.bossEffectStacks?.['escape-instinct'] === attempt,
+      'T2 timeout stacks are visible beyond the old cap');
+    clock += pattern.cooldownMs + 1000;
+  }
+  updateBossPatterns(world, 100, clock);
+  updateBossPatterns(world, 100, clock + 100);
+  boss.hasPosition.current = { x: player.hasPosition.current.x + guard.flee.escapeDistance + 10, y: player.hasPosition.current.y };
+  updateBossPatterns(world, 100, clock + 200);
+  assert(boss.isConcealed && escapeInstinct(boss) === 0, 'T2 actual escape clears all timeout-earned stacks');
 }
 
 // A real chase must move gradually, surface near the player, and bite with all venom stacks.
@@ -93,6 +211,11 @@ for (const [id, stacks] of [['apex-bramble-slasher', 3], ['verdant-crown-predato
     const wasHidden = !!boss.isConcealed;
     world.tick(100, t);
     if (boss.isConcealed) {
+      if (!wasHidden) {
+        const flee = MONSTER_DATABASE.get(id)!.bossPattern!.steps.find(s => s.kind === 'escape-guard')!;
+        assert(flee.kind === 'escape-guard' && flee.flee, 'flee config');
+        assert(Math.hypot(before.x - player.hasPosition.current.x, before.y - player.hasPosition.current.y) >= flee.flee.escapeDistance, `${id}: live movement earned the escape gap`);
+      }
       concealed = true;
       assert(boss.hasPosition.speed <= 300, `${id}: prowl speed stays readable`);
     }
@@ -127,6 +250,8 @@ for (const mode of ['out-of-range', 'evaded'] as const) {
 
 for (const id of ['crag-behemoth', 'stoneplate-juggernaut', 'crag-gorged-horn-behemoth', 'iron-crest-titan']) {
   const { world, player, boss, pattern, now } = setup(id);
+  const laterTier = id === 'crag-gorged-horn-behemoth' || id === 'iron-crest-titan';
+  assert(Boolean(pattern.chargeInstinct!.cooldownReductionPct) === laterTier, `${id}: cooldown ramp exists only at T3/T4`);
   const chargeIndex = pattern.steps.findIndex(s => s.kind === 'charge');
   const cast = pattern.steps[chargeIndex - 1];
   assert(cast.kind === 'cast' && cast.lane, `${id}: charge has a tell`);
@@ -153,13 +278,18 @@ for (const id of ['crag-behemoth', 'stoneplate-juggernaut', 'crag-gorged-horn-be
   player.hasPosition.current = { ...boss.hasPosition.current };
   updateBossPatterns(world, 100, now + pattern.cooldownMs + 5100 + nextCast.castMs);
   assert(chargeInstinct(boss) === 0, `${id}: a landed charge clears the ramp`);
+  if (pattern.chargeInstinct!.cooldownReductionPct) {
+    assert(getCounter(boss.tracksCombat, 'bossPatternCdNextAt') === now + pattern.cooldownMs + 5100 + nextCast.castMs + pattern.cooldownMs,
+      `${id}: landed hit replaces the accelerated cooldown with the normal one`);
+  }
   clearBossPatternState(world, boss);
   let clock = now + pattern.cooldownMs * 3;
-  const cap = pattern.chargeInstinct!.maxStacks;
-  for (let attempt = 1; attempt <= cap + 2; attempt++) {
+  for (let attempt = 1; attempt <= 30; attempt++) {
     clock += pattern.cooldownMs + 5000;
     player.hasPosition.current = { x: 2700, y: 2400 };
     updateBossPatterns(world, 100, clock);
+    const expectedCooldown = bossPatternFor(boss)!.cooldownMs;
+    assert(getCounter(boss.tracksCombat, 'bossPatternCdNextAt') === clock + expectedCooldown, `${id}: live scheduler uses ramped cooldown`);
     boss.runsBossPattern!.stepIndex = chargeIndex - 1;
     const windup = bossPatternFor(boss)!.steps[chargeIndex - 1];
     assert(windup.kind === 'cast', 'charge wind-up remains authored');
@@ -167,9 +297,28 @@ for (const id of ['crag-behemoth', 'stoneplate-juggernaut', 'crag-gorged-horn-be
     player.hasPosition.current = { x: 2400, y: 2700 };
     clock += 100 + windup.castMs;
     updateBossPatterns(world, 100, clock);
-    assert(chargeInstinct(boss) === Math.min(cap, attempt), `${id}: repeated dodges respect the cap`);
+    assert(chargeInstinct(boss) === attempt, `${id}: repeated dodges accumulate without a cap`);
+    const ramped = bossPatternFor(boss)!;
+    const rampedCast = ramped.steps[chargeIndex - 1];
+    const rampedCharge = ramped.steps[chargeIndex];
+    assert(rampedCast.kind === 'cast' && rampedCast.castMs === Math.max(pattern.chargeInstinct!.minCastMs, cast.castMs * (1 - pattern.chargeInstinct!.castReductionPct) ** attempt), `${id}: wind-up shrinks to its readable minimum`);
+    assert(rampedCharge.kind === 'charge' && originalCharge.kind === 'charge' &&
+      Math.abs(rampedCharge.speed - originalCharge.speed * (1 + attempt * pattern.chargeInstinct!.speedPct)) < 1e-6, `${id}: speed keeps growing`);
+    const cdReduction = pattern.chargeInstinct!.cooldownReductionPct ?? 0;
+    assert(ramped.cooldownMs === (cdReduction ? Math.max(1000, pattern.cooldownMs * (1 - cdReduction) ** attempt) : pattern.cooldownMs), `${id}: only later tiers ramp cooldown`);
+    for (let i = 0; i < pattern.steps.length; i++) {
+      const original = pattern.steps[i];
+      if (original.kind !== 'charge' && !(original.kind === 'cast' && original.lane)) {
+        assert(JSON.stringify(ramped.steps[i]) === JSON.stringify(original), `${id}: other steps unchanged`);
+      }
+    }
     endPattern(world, boss, 'completed', clock);
   }
+  boss.hasHealth.hp = boss.hasHealth.maxHp * 0.24;
+  updateBossScripts(world, 100);
+  const phaseCast = bossPatternFor(boss)!.steps[chargeIndex - 1];
+  assert(phaseCast.kind === 'cast' && phaseCast.castMs >= pattern.chargeInstinct!.minCastMs,
+    `${id}: phase empowerment also respects the minimum wind-up`);
   clearBossPatternState(world, boss);
   assert(chargeInstinct(boss) === 0 && !boss.hasStatus.bossEffects?.includes('charge-instinct'), `${id}: reset clears visible Instinct`);
 }

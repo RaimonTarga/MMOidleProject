@@ -287,7 +287,7 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
       return `Charges at ${fmtNumber(step.speed)}px/s for up to ${fmtMs(step.maxTravelMs)}` +
         (step.stopsOnContact === false ? ', passing through players' : ', stopping on player contact') +
         ` for ${fmtMult(pattern.damageMultiplier * (step.damageMult ?? 1))} damage` +
-        (pattern.chargeInstinct ? `; each charge builds Instinct up to ${pattern.chargeInstinct.maxStacks} stacks (+${fmtPct(pattern.chargeInstinct.speedPct)} speed and -${fmtPct(pattern.chargeInstinct.castReductionPct)} wind-up per stack); a landed charge clears all stacks` : '');
+        (pattern.chargeInstinct ? `; each charge builds uncapped Instinct (+${fmtPct(pattern.chargeInstinct.speedPct)} speed and -${fmtPct(pattern.chargeInstinct.castReductionPct)} remaining wind-up per stack, minimum ${fmtMs(pattern.chargeInstinct.minCastMs)}; ${pattern.chargeInstinct.cooldownReductionPct ? `-${fmtPct(pattern.chargeInstinct.cooldownReductionPct)} remaining cooldown per stack, minimum 1s` : 'cooldown unchanged'}); a landed charge clears all stacks` : '');
     case 'impact':
       return `${step.name}: ${step.rawDamage !== undefined ? `${step.rawDamage} raw` : fmtMult(pattern.damageMultiplier * step.damageMult)} damage in a ${step.radius}px circle` +
         ` after a ${fmtMs(step.telegraphMs)} telegraph` +
@@ -333,12 +333,11 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (step.contactSlow ? ` and slows contact to ${fmtPct(step.contactSlow.speedMult)} for ${fmtMs(step.contactSlow.durationMs)}` : '') +
         (step.interruptible === false ? '; cannot be interrupted' : '');
     case 'escape-guard':
-      return `Casts ${step.name} for ${fmtMs(step.castMs)} behind a ${fmtPct(step.shieldPct)} barrier` +
-        (step.flee ? `, fleeing at ${fmtNumber(step.flee.speed)}px/s` : '') +
+      return `Attempts ${step.name} for up to ${fmtMs(step.castMs)} behind a ${fmtPct(step.shieldPct)} barrier` +
+        (step.flee ? `, fleeing at ${fmtNumber(step.flee.speed)}px/s until ${step.flee.escapeDistance}px from its target (at least 100px of actual retreat); timing out fails` : '') +
         `; breaking it causes ${step.onBreak.label} for ${fmtMs(step.onBreak.staggerMs)}` +
-        ` and builds up to ${step.maxInstinctStacks} Escape Instinct stacks` +
-        ` (each shortens the next cast by ${fmtPct(step.instinctCastReductionPct)}` +
-        (step.instinctSpeedPct ? ` and increases flee speed by ${fmtPct(step.instinctSpeedPct)}` : '') + '); a successful escape clears the stacks';
+        `; shield breaks and timed-out attempts build uncapped Escape Instinct stacks` +
+        (step.instinctSpeedPct ? ` (each increases flee speed by ${fmtPct(step.instinctSpeedPct)})` : '') + '; a successful escape clears the stacks';
     case 'pull':
       return `Casts ${step.name} for ${fmtMs(step.castMs)} and pulls the target ${step.distance}px` +
         (step.interruptible === false ? '; cannot be interrupted' : '');

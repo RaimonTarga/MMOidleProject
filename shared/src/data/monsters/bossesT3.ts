@@ -61,7 +61,7 @@ export const bossMonsterEntriesT3 = [
     // `engageSequence` charge-lock opener (the pattern IS the charge now, so the
     // opener was a second, worse copy of it), plus the standalone circular slam.
     bossPattern: {
-      chargeInstinct: { maxStacks: 4, speedPct: 0.14, castReductionPct: 0.10 },
+      chargeInstinct: { speedPct: 0.40, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.15 },
       id: 'cragbreaker', name: 'Cragbreaker',
       damageMultiplier: 2.0, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
@@ -327,7 +327,7 @@ export const bossMonsterEntriesT3 = [
     //
     //   Escape Guard appears and the boss bolts for the far edge of its leash.
     //     BREAK the guard  -> the retreat fails, it stumbles, and it banks one
-    //                         capped stack of Escape Instinct so the NEXT attempt
+    //                         stack of Escape Instinct so the NEXT attempt
     //                         is quicker.
     //     LET IT FINISH    -> it vanishes into cover, resets Instinct, picks a
     //                         valid re-entry point, and comes back with an ambush.
@@ -335,8 +335,8 @@ export const bossMonsterEntriesT3 = [
     // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
     // load-bearing: a boss whose whole idea is running away from you would otherwise
     // be answerable only by melee, and ranged builds would have no counterplay at
-    // all. Instinct is capped, so repeated failures speed it up to a ceiling and no
-    // further; a successful escape wipes it, because it records failure, not progress.
+    // all. Instinct has no cap: failed retreats keep accelerating it until a successful
+    // escape wipes the stacks.
     //
     // T3 adds the AFTERMATH: a successful ambush lands venom on top of the hit, so
     // letting it get away costs you for the next several seconds rather than only
@@ -361,11 +361,11 @@ export const bossMonsterEntriesT3 = [
         { kind: 'escape-guard', name: 'Flee', castMs: 2800, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2500, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15, instinctSpeedPct: 0.15,
-          flee: { speed: 250 } },
+          instinctSpeedPct: 0.30,
+          flee: { speed: 240, escapeDistance: 450 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
-          relocate: 'near-target', emergeGap: 40, travelSpeed: 240, surfacesOnContact: true },
-        { kind: 'payoff', name: 'Venomous Bite', castMs: 800, fx: 'savage-maul',
+          relocate: 'near-target', emergeGap: 30, travelSpeed: 240, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Venomous Bite', castMs: 300, fx: 'savage-maul',
           damageMult: 1.0, reach: 90,
           onHitPoison: { stacks: 3, damagePerStack: 14, durationMs: 8000, tickIntervalMs: 1000 } },
         // NO RECOVERY AFTER A LANDED AMBUSH. The punish window is what BREAKING the

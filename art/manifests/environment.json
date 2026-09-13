@@ -2286,6 +2286,19 @@
       "notes": "Built-in ChatGPT image generation using basalt-lava Wang ground and volcanic dungeon altar as palette/rendering references; green chroma key removed locally, alpha bounds normalized to a circular 1024px gameplay footprint. Preloaded resource only; no volcano boss functionality added."
     },
     {
+      "id": "hazard-pool-steam-vent",
+      "out": "files/environment/hazards/steam-vent.png",
+      "size": {
+        "w": 1024,
+        "h": 1024
+      },
+      "prompt": "one static volcano boss heat vent, broad low-profile irregular ring of fractured dark basalt plates around a narrow deep central fissure with a small fixed amber-orange glow inside, porous charcoal stone, scorched mineral edges, painterly top-down pixel art matching the volcanic ground palette, isolated on transparent background, no moving visual elements",
+      "negative": "steam, vapor, smoke, fog, haze, flames, fire, sparks, particles, explosion, lava lake, molten lava surface, magma pool, water pool, swamp, poison, slime, glowing liquid, tall chimney, standing rock pillar, mountain, terrain tile, ground rectangle, pedestal, cast shadow, character, monster, text, border, watermark, neon",
+      "status": "accepted",
+      "candidates": 1,
+      "notes": "Codex built-in image generation; generated as a static transparent 1024px hazard decal with a fixed heat fissure. Used for the existing magma-vent flavor, whose gameplay semantics accelerate shared volcanic Heat; the older magma-pool asset is retained as an unused art variant."
+    },
+    {
       "id": "ruins-t5-paving-rubble-soil-wang",
       "out": "files/environment/ruins/t5-paving-rubble-soil-wang.png",
       "size": {

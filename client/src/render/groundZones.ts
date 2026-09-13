@@ -38,6 +38,8 @@ export interface GroundZoneSprite {
   /** Textured pool decal; telegraphs continue using `graphic` only. */
   image?: Phaser.GameObjects.Image;
   kind: GroundZoneKind;
+  /** Persistent-hazard flavor used only to choose the matching presentation. */
+  flavor?: GroundZoneView["flavor"];
   /** Client timestamp the current `remainingMs` was received at. */
   syncedAtMs: number;
   remainingMs: number;
@@ -78,17 +80,21 @@ export function syncGroundZones(
   for (const zone of list) {
     let sprite = scene.groundZones.get(zone.id);
     if (!sprite) {
+      const poolArt = zone.flavor === "magma-vent"
+        ? HAZARD_POOL_ART.steamVent
+        : HAZARD_POOL_ART.poison;
       sprite = {
         graphic: scene.add.graphics().setDepth(DEPTH.BG_DECOR + 0.3),
         image:
           zone.kind === "toxic-pool" &&
-          scene.textures.exists(HAZARD_POOL_ART.poison.key)
+          scene.textures.exists(poolArt.key)
             ? scene.add
-                .image(zone.x, zone.y, HAZARD_POOL_ART.poison.key)
+                .image(zone.x, zone.y, poolArt.key)
                 .setDepth(DEPTH.BG_DECOR + 0.3)
                 .setDisplaySize(zone.radius * 2.1, zone.radius * 2.1)
             : undefined,
         kind: zone.kind,
+        flavor: zone.flavor,
         syncedAtMs: now,
         remainingMs: zone.remainingMs,
         durationMs: zone.durationMs,
@@ -106,6 +112,7 @@ export function syncGroundZones(
     // Re-anchor to the authoritative remainder on every packet.
     sprite.syncedAtMs = now;
     sprite.kind = zone.kind;
+    sprite.flavor = zone.flavor;
     sprite.remainingMs = zone.remainingMs;
     sprite.durationMs = zone.durationMs;
     sprite.radius = zone.radius;
@@ -302,17 +309,23 @@ function drawZone(sprite: GroundZoneSprite, progress: number): void {
   if (sprite.kind === 'toxic-pool') {
     const remainingAlpha = Math.min(1, Math.max(0, (1 - progress) * 4));
     if (sprite.image) {
-      const pulse = 0.94 + Math.sin(performance.now() / 260) * 0.06;
+      // Steam vents are deliberately static: only the normal end-of-life fade is
+      // allowed to change their appearance. Swamp pools keep their subtle pulse.
+      const pulse = sprite.flavor === "magma-vent"
+        ? 1
+        : 0.94 + Math.sin(performance.now() / 260) * 0.06;
       sprite.image.setAlpha(remainingAlpha * pulse);
       return;
     }
 
     // Texture loading failure fallback: keep the hazard readable.
-    graphic.fillStyle(TOXIC_FILL, 0.3 * remainingAlpha);
+    const fill = sprite.flavor === "magma-vent" ? 0x6b3d29 : TOXIC_FILL;
+    const line = sprite.flavor === "magma-vent" ? 0xffa044 : TOXIC_LINE;
+    graphic.fillStyle(fill, 0.3 * remainingAlpha);
     graphic.fillCircle(x, y, radius);
-    graphic.lineStyle(3, TOXIC_LINE, 0.8 * remainingAlpha);
+    graphic.lineStyle(3, line, 0.8 * remainingAlpha);
     graphic.strokeCircle(x, y, radius);
-    graphic.lineStyle(2, TOXIC_LINE, 0.25 * remainingAlpha);
+    graphic.lineStyle(2, line, 0.25 * remainingAlpha);
     graphic.strokeCircle(x, y, radius * 0.68);
     return;
   }

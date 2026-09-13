@@ -51,14 +51,14 @@ interface StuckState {
 
 const stuckByEntity = new Map<string, StuckState>();
 
-interface PlayerPathStuckState {
+interface PathStuckState {
   blockedMs: number;
   replanned: boolean;
 }
 
 // Entity identity keeps recovery state isolated between Worlds even when two
 // test worlds reuse the same socket/entity id.
-const playerPathStuckByEntity = new WeakMap<ServerEntity, PlayerPathStuckState>();
+const pathStuckByEntity = new WeakMap<ServerEntity, PathStuckState>();
 
 type MovableEntity = ServerEntity & {
   hasPosition: NonNullable<ServerEntity['hasPosition']>;
@@ -120,7 +120,7 @@ export function stopEntity(world: World, entity: ServerEntity): void {
   clearMovePath(world, entity);
   detachComponent(world, entity, 'isMoving');
   detachComponent(world, entity, 'hasManualMoveIntent');
-  playerPathStuckByEntity.delete(entity);
+  pathStuckByEntity.delete(entity);
   stuckByEntity.delete(entity.entityId);
 }
 
@@ -197,11 +197,12 @@ function processManualDirectStep(
   }
 }
 
-function processPlayerPathStep(
+function processPlannedPathStep(
   world: World,
   entity: MovableEntity,
   dt: number,
   speedMult: number,
+  mover: FeatureTarget,
   now: number,
 ): void {
   const path = entity.hasMovePath;
@@ -217,7 +218,7 @@ function processPlayerPathStep(
     from,
     path.waypoints,
     budget,
-    blockShapesFor(world, entity, 'player'),
+    blockShapesFor(world, entity, mover),
     navigationPadForEntity(entity),
   );
   const afterRemaining = pathRemainingDistance(result.position, result.waypoints);
@@ -232,16 +233,16 @@ function processPlayerPathStep(
   }
   refreshMovePathMotion(world, entity);
 
-  const state = playerPathStuckByEntity.get(entity) ?? { blockedMs: 0, replanned: false };
+  const state = pathStuckByEntity.get(entity) ?? { blockedMs: 0, replanned: false };
   if (forwardProgress > PROGRESS_EPS_SQ || !result.blocked) {
-    playerPathStuckByEntity.delete(entity);
+    pathStuckByEntity.delete(entity);
     return;
   }
 
   state.blockedMs += dt;
   if (!state.replanned && state.blockedMs >= STUCK_REPLAN_MS) {
     state.replanned = true;
-    playerPathStuckByEntity.set(entity, state);
+    pathStuckByEntity.set(entity, state);
     replanIfBlocked(world, entity, navigationPadForEntity(entity), now, true);
     refreshMovePathMotion(world, entity);
     if (!entity.hasMovePath || !entity.isMoving) stopEntity(world, entity);
@@ -251,7 +252,7 @@ function processPlayerPathStep(
     stopEntity(world, entity);
     return;
   }
-  playerPathStuckByEntity.set(entity, state);
+  pathStuckByEntity.set(entity, state);
 }
 
 function depenetrateIfWedged(
@@ -374,10 +375,16 @@ function processMoverStep(
 ): void {
   if (entity.isPlayer && (entity.hasManualMoveIntent || entity.hasMovePath)) {
     if (entity.hasMovePath) {
-      processPlayerPathStep(world, entity, dt, speedMult, now);
+      processPlannedPathStep(world, entity, dt, speedMult, mover, now);
     } else {
       processManualDirectStep(world, entity, dt, speedMult);
     }
+    return;
+  }
+
+  // Boss travel must retain unused distance at corners, just like player paths.
+  if (entity.runsBossPattern && entity.hasMovePath) {
+    processPlannedPathStep(world, entity, dt, speedMult, mover, now);
     return;
   }
 

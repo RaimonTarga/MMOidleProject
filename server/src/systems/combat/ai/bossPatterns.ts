@@ -45,6 +45,7 @@ import {
 } from '../../world/groundZones';
 import { navigationPadForEntity, setEntityMotion, stopEntity } from '../../world/movement';
 import { setAggroTarget, setAttackTarget } from './targeting';
+import { fleeDestination } from './bossFlee';
 import { distanceSq } from '@mmo-idle/shared';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { setRooted } from '../../world/rooted';
@@ -104,10 +105,13 @@ export function bossPatternFor(monster: MonsterEntity): BossPattern | undefined 
   const instinct = pattern.chargeInstinct;
   const adapted = instinct && stacks > 0 ? {
     ...pattern,
+    cooldownMs: instinct.cooldownReductionPct
+      ? Math.max(1000, pattern.cooldownMs * (1 - instinct.cooldownReductionPct) ** stacks)
+      : pattern.cooldownMs,
     steps: pattern.steps.map((step): BossPatternStep => {
       if (step.kind === 'cast' && step.lane) {
-        const reduction = Math.min(0.6, stacks * instinct.castReductionPct);
-        return { ...step, castMs: Math.max(700, Math.round(step.castMs * (1 - reduction))) };
+        // Compound wind-up reduction, retaining the minimum readable tell.
+        return { ...step, castMs: Math.max(instinct.minCastMs, step.castMs * (1 - instinct.castReductionPct) ** stacks) };
       }
       if (step.kind === 'charge') return { ...step, speed: step.speed * (1 + stacks * instinct.speedPct) };
       return step;
@@ -117,11 +121,13 @@ export function bossPatternFor(monster: MonsterEntity): BossPattern | undefined 
   return {
     ...adapted,
     damageMultiplier: pattern.damageMultiplier * scale.multiplierMult,
-    cooldownMs: Math.max(1_000, Math.round(pattern.cooldownMs * scale.cooldownMult)),
+    cooldownMs: Math.max(1_000, Math.round(adapted.cooldownMs * scale.cooldownMult)),
     steps: adapted.steps.map((step): BossPatternStep => {
       switch (step.kind) {
         case 'cast':
-          return { ...step, castMs: Math.max(200, Math.round(step.castMs * scale.castMsMult)) };
+          return { ...step, castMs: instinct && step.lane
+            ? Math.max(instinct.minCastMs, step.castMs * scale.castMsMult)
+            : Math.max(200, Math.round(step.castMs * scale.castMsMult)) };
         case 'impact':
           return { ...step, radius: Math.round(step.radius * scale.radiusMult) };
         case 'fault-lines':
@@ -202,7 +208,7 @@ function publishInstinct(world: World, monster: MonsterEntity): void {
 }
 
 /**
- * Capped Escape Instinct. Stored on the monster's combat state rather than the
+ * Uncapped Escape Instinct. Stored on the monster's combat state rather than the
  * pattern cursor, because the cursor is destroyed every time a pattern ends and the
  * whole mechanic is that a FAILED retreat makes the NEXT one faster.
  */
@@ -210,11 +216,11 @@ export function escapeInstinct(monster: MonsterEntity): number {
   return Math.max(0, getCounter(monster.tracksCombat, ESCAPE_INSTINCT_KEY));
 }
 
-function gainEscapeInstinct(monster: MonsterEntity, cap: number): void {
+function gainEscapeInstinct(monster: MonsterEntity): void {
   setCounter(
     monster.tracksCombat,
     ESCAPE_INSTINCT_KEY,
-    Math.min(cap, escapeInstinct(monster) + 1),
+    escapeInstinct(monster) + 1,
   );
 }
 
@@ -717,7 +723,7 @@ function beginStep(
       state.chargeHitIds = [];
       if (pattern.chargeInstinct) {
         setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY,
-          Math.min(pattern.chargeInstinct.maxStacks, chargeInstinct(monster) + 1));
+          chargeInstinct(monster) + 1);
       }
       state.stepEndsAtMs = now + step.maxTravelMs;
       // KEEP THE LANE ON THE GROUND FOR THE RUN. Its countdown was the wind-up, and
@@ -944,14 +950,12 @@ function beginStep(
       return true;
     }
     case 'escape-guard': {
-      // Instinct earned from PREVIOUS failed attempts shortens this wind-up, up to
-      // the authored cap. Applied here, at the head of the step, so the shortened
-      // cast is what the player actually sees on the bar.
-      const reduction = Math.min(
-        0.9,
-        escapeInstinct(monster) * Math.max(0, step.instinctCastReductionPct),
-      );
-      const castMs = Math.max(200, Math.round(step.castMs * (1 - reduction)));
+      // This is a fleeing deadline, not a stationary cast or a success timer.
+      const castMs = step.castMs;
+      state.fleeStart = { ...monster.hasPosition.current };
+      state.lastFleeSteerMs = now;
+      const fleeTarget = patternTarget(world, monster);
+      state.fleeTargetPosition = fleeTarget ? { ...fleeTarget.hasPosition.current } : undefined;
       state.stepEndsAtMs = now + castMs;
       const raised = raiseSourceBarrier(
         monster,
@@ -968,20 +972,14 @@ function beginStep(
       // destination to the movement system so the client has something to
       // interpolate toward. `stopFleeing` puts all three back on either exit.
       if (step.flee) {
-        const away = relocationPoint(
-          world,
-          monster,
-          'leash-edge',
-          patternTarget(world, monster),
-          0,
-        );
+        const away = fleeTarget ? fleeDestination(world, monster, fleeTarget) : null;
+        if (state.ownsRoot) setRooted(world, monster, false);
+        state.savedSpeed = monster.hasPosition.speed;
+        monster.hasPosition.speed = step.flee.speed * (1 + escapeInstinct(monster) * (step.instinctSpeedPct ?? 0));
+        markSliceDirty(world, monster, 'hasPosition');
         if (away) {
           state.capturedEndpoint = { ...away };
-          if (state.ownsRoot) setRooted(world, monster, false);
-          state.savedSpeed = monster.hasPosition.speed;
-          monster.hasPosition.speed = step.flee.speed * (1 + escapeInstinct(monster) * (step.instinctSpeedPct ?? 0));
-          markSliceDirty(world, monster, 'hasPosition');
-          setEntityMotion(world, monster, away);
+          setEntityMotion(world, monster, away, { mode: 'direct' });
         }
       }
       world.pushEvent(monster.hasPosition.nodeId, {
@@ -1165,10 +1163,10 @@ function tickStep(
       return 'done';
     }
     case 'escape-guard': {
-      // BROKEN IN TIME: the retreat fails. The boss stumbles, and banks one capped
+      // BROKEN IN TIME: the retreat fails. The boss stumbles, and banks one
       // stack of Instinct so its next attempt is quicker.
       if (sourceBarrierRemaining(monster, step.sourceId) <= 0) {
-        gainEscapeInstinct(monster, step.maxInstinctStacks);
+        gainEscapeInstinct(monster);
         state.staggered = true;
         state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== step.sourceId);
         endPattern(world, monster, 'staggered', now);
@@ -1188,8 +1186,43 @@ function tickStep(
         endPattern(world, monster, 'interrupted', now);
         return 'ended';
       }
-      if (now < state.stepEndsAtMs) return 'running';
-      // SURVIVED: the escape succeeds. Instinct is a record of failure, so a
+      const target = patternTarget(world, monster);
+      const escaped = step.flee && target && state.fleeStart &&
+        distanceSq(monster.hasPosition.current, state.fleeStart) >= 100 ** 2 &&
+        distanceSq(monster.hasPosition.current, target.hasPosition.current) >= step.flee.escapeDistance ** 2;
+      if (!escaped) {
+        if (now >= state.stepEndsAtMs) {
+          // Keeping up with the retreat is also a failed escape, on every Jungle tier.
+          gainEscapeInstinct(monster);
+          endPattern(world, monster, 'interrupted', now);
+          return 'ended';
+        }
+        // Keep a working route intact. Movement along it is continuous; only a
+        // meaningful target move or stalled navigation needs a fresh destination.
+        const targetMoved = target && (!state.fleeTargetPosition ||
+          distanceSq(target.hasPosition.current, state.fleeTargetPosition) >= 64 ** 2);
+        const stalled = !monster.isMoving;
+        const direction = monster.isMoving?.motion.direction;
+        const towardPlayer = target && direction &&
+          direction.x * (monster.hasPosition.current.x - target.hasPosition.current.x) +
+          direction.y * (monster.hasPosition.current.y - target.hasPosition.current.y) <= 0;
+        if (step.flee && target && (towardPlayer || ((targetMoved || stalled) && now - (state.lastFleeSteerMs ?? 0) >= 300))) {
+          state.lastFleeSteerMs = now;
+          const away = fleeDestination(world, monster, target);
+          if (away) {
+            state.fleeTargetPosition = { ...target.hasPosition.current };
+            if (towardPlayer || stalled || !state.capturedEndpoint || distanceSq(away, state.capturedEndpoint) >= 64 ** 2) {
+              state.capturedEndpoint = { ...away };
+              setEntityMotion(world, monster, away, { mode: 'direct' });
+            }
+          } else if (towardPlayer || stalled) {
+            // Cornered: stay in the open, never route through the pursuer.
+            stopEntity(world, monster);
+          }
+        }
+        return 'running';
+      }
+      // DISTANCE WON: the escape succeeds. Instinct is a record of failure, so a
       // successful getaway wipes it.
       // Whatever ground the bolt covered is the ground it got. Hand the body back
       // rooted and at its own speed before the next step takes it. (The BROKEN path
@@ -1386,7 +1419,13 @@ function resolveTravelContacts(
       // travel, and it gates every `requiresChargeHit` step after it.
       state.chargeConnected = true;
       const landed = hooks.hitPlayer(world, monster, player, now, multiplier);
-      if (landed && pattern.chargeInstinct) setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY, 0);
+      if (landed && pattern.chargeInstinct) {
+        setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY, 0);
+        // Discard the shortened timer armed at pattern start after a successful hit.
+        if (pattern.chargeInstinct.cooldownReductionPct) {
+          armPatternCooldown(monster, bossPatternFor(monster)!, now);
+        }
+      }
       if (!world.hasMonster(monster.isMonster.id)) return;
     }
     for (const minion of world.collision.bodiesInCircle(
@@ -1670,10 +1709,10 @@ function relocationPoint(
   // target. Running away is only meaningful if it actually opens distance, and
   // clamping to the leash is what stops a retreat becoming a despawn.
   const ai = monster.controlsMonster;
-  const away = Math.atan2(
-    monster.hasPosition.current.y - anchorPos.y,
-    monster.hasPosition.current.x - anchorPos.x,
-  );
+  // The point opposite the player on the leash circle is farthest from them.
+  // Using the moving boss as the origin made this destination drift every update.
+  const origin = distanceSq(ai.spawn, anchorPos) > 1 ? ai.spawn : monster.hasPosition.current;
+  const away = Math.atan2(origin.y - anchorPos.y, origin.x - anchorPos.x);
   for (let spread = 0; spread <= Math.PI; spread += Math.PI / 8) {
     for (const sign of spread === 0 ? [1] : [1, -1]) {
       const angle = away + spread * sign;

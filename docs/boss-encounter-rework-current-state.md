@@ -14,15 +14,27 @@ If this doc and the code disagree, the code wins.
 These changes supersede the older tuning below:
 
 - Mountain T1–T4 charges bank visible **Instinct** on execution. Existing stacks
-  shorten the next charge wind-up by 10% each and increase charge speed by
-  10% / 12% / 14% / 16% per stack across the four tiers. Caps are 3 / 3 / 4 / 4.
+  multiply the next charge wind-up by 0.7 per stack and increase base charge speed by
+  30% / 35% / 40% / 45% per stack across the four tiers. Stacks and speed are uncapped; wind-up stops shrinking at 400 ms.
+  T1/T2 cooldowns stay unchanged. T3/T4 remaining cooldown multiplies by 0.85/0.80
+  per stack, with a 1-second minimum; landed charges restart the normal phase-adjusted
+  cooldown. Recovery, shield casts and impact tells stay unchanged.
   A landed charge clears all stacks; the first charge uses baseline speed and timing.
-- Jungle T2–T4 shield breaks bank visible **Escape Instinct**, even if the breaking
+- Jungle T2–T4 shield breaks and timed-out retreats bank visible **Escape Instinct**.
+  Flee speeds are 210 / 240 / 270 px/s before stacks. Shield breaks still count if the breaking
   hit also stuns. Breaking stops the flight and starts the authored Cornered recovery.
-  Each stack shortens the next escape by 15% and raises fleeing speed by 15%, capped
-  at three. A successful escape clears the ramp. Ordinary stun alone still cancels
+  Each stack adds 30% of base fleeing speed, without a stack limit. Success requires at least 100px of actual retreat and a 400/450/500px gap
+  from the current target at T2/T3/T4. The existing 3/2.8/2.6-second timer is a deadline:
+  expiry without that gap fails in the open. Fleeing follows a straight collision-clear line away from the player, within the
+  leash. Obstacles allow outward turns up to 75 degrees, never a path around or through
+  the pursuer. Meaningful target movement or blocked travel updates the line. Pattern travel carries unused
+  movement across waypoints to prevent stop-start steps. Shield
+  breaks win even if the distance threshold is reached on the same tick. Instinct no
+  longer shortens the deadline. A successful escape clears the ramp. Ordinary stun alone still cancels
   without awarding a stack.
-- Jungle T3/T4 prowl at 240 / 270 px/s for at most six seconds, surfacing on contact.
+- Jungle T2/T3/T4 prowl at 220 / 240 / 270 px/s for at most six seconds, surfacing on contact.
+  Ambush wind-ups are 350 / 300 / 250 ms, with 90px reach. T2 also surfaces on contact
+  rather than waiting out a fixed stealth timer.
   **Venomous Bite** has a 90px edge-to-edge reach and applies 3 / 4 poison stacks only
   on a landed, non-evaded hit. Poison uses the normal monster DoT path, including
   Warding/tenacity, shields, ticking, cleansing, and HUD status. Each stack deals
@@ -436,16 +448,15 @@ vanishing on plain hits with no cast bar — plus the per-hit slow, `openingStri
 **Rebuilt as ordered patterns, 2026-09-04.** One loop, run by all three tiers:
 
 > Escape Guard appears and the boss bolts for the far edge of its leash.
-> **Break the guard** → the retreat fails, it stumbles, and it banks one capped stack
+> **Break the guard** → the retreat fails, it stumbles, and it banks one stack
 > of **Escape Instinct** so the next attempt is quicker.
 > **Let it finish** → it vanishes into cover, resets Instinct, picks a valid re-entry
 > point, and comes back with an ambush.
 
 **Barrier damage — not physical contact — is the test.** That is load-bearing: a boss
 whose whole idea is running away from you would otherwise be answerable only by melee,
-and ranged builds would have no counterplay at all. Instinct is capped, so repeated
-failures speed it to a ceiling and no further; a successful escape wipes it, because
-it records failure rather than progress.
+and ranged builds would have no counterplay at all. Instinct has no cap: failed retreats keep
+accelerating it until a successful escape clears every stack.
 
 - **T2** `jungle-dread-gorger`: the plain cycle.
 - **T3** `apex-bramble-slasher`: a successful ambush adds a **venom burst** — letting

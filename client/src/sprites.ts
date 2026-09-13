@@ -1761,17 +1761,17 @@ export interface HazardPoolArt {
   file: string;
 }
 
-/** Runtime ground-effect art. Magma is preloaded for a future volcano boss pass. */
+/** Runtime ground-effect art. Volcanic vents use a static heat-crack decal. */
 export const HAZARD_POOL_ART: Readonly<
-  Record<"poison" | "magma", HazardPoolArt>
+  Record<"poison" | "steamVent", HazardPoolArt>
 > = {
   poison: {
     key: "hazard_pool_poison",
     file: "/assets/environment/hazards/poison-pool.png",
   },
-  magma: {
-    key: "hazard_pool_magma",
-    file: "/assets/environment/hazards/magma-pool.png",
+  steamVent: {
+    key: "hazard_pool_steam_vent",
+    file: "/assets/environment/hazards/steam-vent.png",
   },
 };
 

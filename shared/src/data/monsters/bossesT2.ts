@@ -177,7 +177,7 @@ export const bossMonsterEntriesT2 = [
     // beat), Stoneplate Lock, and the repeating flat-DR shield — a timed damage
     // reduction taught nothing and was not the same thing as an absorb barrier.
     bossPattern: {
-      chargeInstinct: { maxStacks: 3, speedPct: 0.12, castReductionPct: 0.10 },
+      chargeInstinct: { speedPct: 0.35, castReductionPct: 0.30, minCastMs: 400 },
       id: 'stoneplate-charge', name: 'Stoneplate Charge',
       damageMultiplier: 2.0, cooldownMs: 11000, initialCooldownMs: 5000,
       steps: [
@@ -440,7 +440,7 @@ export const bossMonsterEntriesT2 = [
     //
     //   FLEE: the boss bolts for the far edge of its leash behind a plate.
     //     BREAK the plate  -> the retreat fails, it stumbles, and it banks one
-    //                         capped stack of Escape Instinct so the NEXT attempt
+    //                         stack of Escape Instinct so the NEXT attempt
     //                         is quicker.
     //     STUN IT          -> the attempt simply stops. No stumble and no Instinct
     //                         — a plainer answer than the plate, and it has to be
@@ -461,8 +461,8 @@ export const bossMonsterEntriesT2 = [
     // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
     // load-bearing: a boss whose whole idea is running away from you would otherwise
     // be answerable only by melee, and ranged builds would have no counterplay at
-    // all. Instinct is capped, so repeated failures speed it up to a ceiling and no
-    // further; a successful escape wipes it, because it records failure, not progress.
+    // all. Instinct has no cap: failed retreats keep accelerating it until a successful
+    // escape wipes the stacks.
     //
     // T2 teaches the PLAIN cycle: no venom, no frenzy, just escape and ambush.
     //
@@ -500,23 +500,20 @@ export const bossMonsterEntriesT2 = [
         { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2600, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15, instinctSpeedPct: 0.15,
-          flee: { speed: 220 } },
+          instinctSpeedPct: 0.30,
+          flee: { speed: 210, escapeDistance: 400 } },
         // THE STALK, not a relocation. It goes invisible only once the escape has
         // actually succeeded, then closes on you while unseen — `near-target` with
         // real travel, exactly like the Cave burrow, so the marker is a tell the
         // player tracks rather than a body that blinks across the map.
-        // 1600ms at 620 is ~992px of travel, ~800 of it net against a player
-        // sprinting away: enough to take back the ~660px flee and then some.
-        // emergeGap 40 lands it BESIDE you rather than inside your sprite: monsters
-        // and players do not push each other apart, so 0 puts two bodies on the
-        // same pixel. 40 is well inside a body width — this is still contact.
-        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 1600,
-          relocate: 'near-target', emergeGap: 40, travelSpeed: 620 },
+        // A visible-rate stalk with a time limit: surface in bite range immediately
+        // on contact instead of sprinting back and waiting under the player.
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
+          relocate: 'near-target', emergeGap: 30, travelSpeed: 220, surfacesOnContact: true },
         // Which makes the Ambush a CONTACT bite: it lands because the thing that
         // vanished is now standing on top of you, and the 800ms is the tell.
-        { kind: 'payoff', name: 'Ambush', castMs: 800, fx: 'savage-maul',
-          damageMult: 1.0 },
+        { kind: 'payoff', name: 'Ambush', castMs: 350, fx: 'savage-maul',
+          damageMult: 1.0, reach: 90 },
         // NO RECOVERY AFTER A SUCCESSFUL AMBUSH (2026-09-06). It used to end on a
         // 1600ms `Winded` window, which meant both branches of the loop finished
         // with the boss lying down — and since the recovery's networked id is

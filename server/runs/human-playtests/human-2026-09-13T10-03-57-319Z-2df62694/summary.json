@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-13T10-03-57-319Z-2df62694",
+    "startedAt": 1789293837319,
+    "endedAt": 1789293910215,
+    "durationMs": 72896,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-13T10-03-57-319Z-2df62694",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 1,
+    "finalGlobalMastery": 30,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 6,
+      "forest": 6,
+      "mountain": 6,
+      "swamp": 6,
+      "cave": 6
+    }
+  },
+  "combat": {
+    "totalKills": 1,
+    "killsByMonster": {
+      "Obsidian Broodmother": 1
+    },
+    "totalDamageTaken": 465,
+    "playerDamageDealt": 1804,
+    "totalHealed": 277,
+    "deaths": 0,
+    "abilityActivations": {
+      "brace": 5,
+      "cleanse": 5,
+      "second-wind": 4
+    }
+  },
+  "positioning": {
+    "samples": 258,
+    "movementFraction": 0.06976744186046512,
+    "stationaryCombatFraction": 0.8953488372093024,
+    "nearBoundaryFraction": 0,
+    "boss": {
+      "movementFraction": 0.0043859649122807015,
+      "nearBoundaryFraction": 0,
+      "range": {
+        "samples": 228,
+        "mean": 44.92244711412423,
+        "min": 44.92244711412428,
+        "max": 44.92244711412428,
+        "p50": 44.92244711412428,
+        "p90": 44.92244711412428
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Obsidian Broodmother",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 46115,
+      "playerDamage": 1763,
+      "incomingDamage": 436
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "chaotic-axe",
+      "armor": "mountain-vest-t1",
+      "recovery": "cave-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-charm-t1": 3,
+      "plains-vest-t1": 3,
+      "plains-boots-t1": 5,
+      "flash-rapier": 4,
+      "chaotic-axe": 5,
+      "mountain-vest-t1": 5,
+      "cave-charm-t1": 5
+    },
+    "classRoot": "cadence-root",
+    "frame": null,
+    "range": null,
+    "techniques": [],
+    "guards": [
+      "second-wind",
+      "brace",
+      "cleanse"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "while-traveling",
+        "actionId": "fight-back"
+      }
+    ],
+    "stats": {
+      "attack": 51,
+      "attackRange": 12,
+      "attackCooldown": 858,
+      "maxHp": 179,
+      "plating": 10,
+      "damageReduction": 0.02
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

@@ -29,6 +29,7 @@ import {
 } from '../src/systems/combat/engine/monsterMechanics';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { STUN_EFFECT } from '../src/systems/combat/status/stun';
+import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
 import { buildKillerFromMonster } from '../src/systems/world/deathCause';
 import { setEntityMotion } from '../src/systems/world/movement';
 import {
@@ -280,7 +281,7 @@ for (const id of mountainIds.slice(2)) {
 // still run their planted slams until the Phase 4 burrow conversion.
 for (const id of ['obsidian-broodmother', 'chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   const cave = def(id);
-  assert(!!cave.appliesPlatingShred, `${id} should corrode plating`);
+  assert(!!(cave.appliesPlatingShred ?? cave.castsPlatingShred), `${id} should corrode plating`);
   const breach = cave.monsterAbilities?.some((ability) =>
     ability.actions.some((action) => action.type === 'plating-shred'),
   );
@@ -597,8 +598,10 @@ initCombatSystems();
   const boss = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 });
   assert(!!boss, 'Caverns boss should spawn');
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  const broodmother = MONSTER_DATABASE.get('obsidian-broodmother')!;
   runMonsterAttack(world, boss, player, 10_000);
-  runMonsterAttack(world, boss, player, 20_000);
+  assert(!getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID), 'ordinary Broodmother attacks do not corrode plating');
+  applyPlatingShredStacks(world, boss, player, broodmother, 2);
   const corrosion = getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID);
   assert(corrosion?.stacks === 2 && corrosion.remainingMs === -1, 'corrosion should stack permanently in combat');
   assert(platingAfterShred(10, player.tracksCombat) === 8, 'two T1 stacks should remove two plating');

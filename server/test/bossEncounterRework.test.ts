@@ -25,6 +25,7 @@ import { bossPatternFor } from '../src/systems/combat/ai/bossPatterns';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { selectMonsterAggroCandidate } from '../src/systems/combat/ai/monsterTargeting';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
+import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { recordCorpse } from '../src/systems/world/corpses';
 import { updateNodeFeatures } from '../src/systems/world/nodeFeatures';
@@ -226,8 +227,8 @@ for (const id of JUNGLE_IDS) {
   const guard = steps.find(step => step.kind === 'escape-guard');
   assert(!!guard, `${id} should run the escape cycle`);
   assert(
-    guard.kind === 'escape-guard' && guard.maxInstinctStacks > 0,
-    `${id} escape should bank capped Instinct when broken`,
+    guard.kind === 'escape-guard' && (guard.instinctSpeedPct ?? 0) > 0,
+    `${id} escape should bank Instinct when broken`,
   );
   // "Gets away" is the claim; `relocate: 'leash-edge'` was only ever one way to
   // spell it, and spelling it that way with no `travelSpeed` IS the teleport this
@@ -473,9 +474,10 @@ initCombatSystems();
   assert(!!boss, 'Cave boss should spawn');
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
 
-  const authored = def('obsidian-broodmother').appliesPlatingShred!;
+  const broodmother = def('obsidian-broodmother');
+  const authored = broodmother.castsPlatingShred!;
   for (let i = 0; i < authored.maxStacks + 2; i++) {
-    runMonsterAttack(world, boss, player, 10_000 + i * 1_000);
+    applyPlatingShredStacks(world, boss, player, broodmother, 1);
   }
   const capped = getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID)!;
   assert(capped.stacks === authored.maxStacks, 'corrosion should cap at the authored ceiling');
@@ -483,7 +485,7 @@ initCombatSystems();
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
   updateBossScripts(world, 100);
   assert(!!boss.scriptsBoss?.shredOverride, '50% should deepen the shred');
-  runMonsterAttack(world, boss, player, 40_000);
+  applyPlatingShredStacks(world, boss, player, broodmother, 1);
   const deepened = getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID)!;
   assert(
     deepened.stacks === authored.maxStacks + 1,

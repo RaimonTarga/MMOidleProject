@@ -84,7 +84,7 @@ export const bossMonsterEntriesT4 = [
     // independent every-4th heavy hit competing with the sequence for the player's
     // attention is precisely the accumulation this rework exists to undo.
     bossPattern: {
-      chargeInstinct: { maxStacks: 4, speedPct: 0.16, castReductionPct: 0.10 },
+      chargeInstinct: { speedPct: 0.45, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.20 },
       id: 'titan-earthshatter', name: 'Titan Earthshatter',
       damageMultiplier: 2.2, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
@@ -253,11 +253,11 @@ export const bossMonsterEntriesT4 = [
         { kind: 'escape-guard', name: 'Flee', castMs: 2600, fx: 'predator-flee',
           sourceId: 'jungle-escape', shieldPct: 0.06,
           onBreak: { staggerMs: 2400, label: 'Cornered' },
-          maxInstinctStacks: 3, instinctCastReductionPct: 0.15, instinctSpeedPct: 0.15,
-          flee: { speed: 280 } },
+          instinctSpeedPct: 0.30,
+          flee: { speed: 270, escapeDistance: 500 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
-          relocate: 'near-target', emergeGap: 40, travelSpeed: 270, surfacesOnContact: true },
-        { kind: 'payoff', name: 'Venomous Bite', castMs: 750, fx: 'savage-maul',
+          relocate: 'near-target', emergeGap: 30, travelSpeed: 270, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Venomous Bite', castMs: 250, fx: 'savage-maul',
           damageMult: 1.0, reach: 90,
           onHitPoison: { stacks: 4, damagePerStack: 16, durationMs: 8000, tickIntervalMs: 1000 } },
         // NO RECOVERY AFTER A LANDED AMBUSH — the window belongs to the break. T2.

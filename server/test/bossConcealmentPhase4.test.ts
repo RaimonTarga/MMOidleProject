@@ -255,10 +255,9 @@ for (const id of JUNGLE_IDS) {
   const guard = steps.find(step => step.kind === 'escape-guard');
   assert(guard?.kind === 'escape-guard', `${id} should raise an Escape Guard`);
   assert(guard.shieldPct > 0, `${id} guard should be a real absorb pool`);
-  assert(guard.maxInstinctStacks > 0, `${id} Instinct should be capped, not unbounded`);
   assert(
-    guard.instinctCastReductionPct > 0 && guard.instinctCastReductionPct < 1,
-    `${id} Instinct should shorten the next attempt without eliminating it`,
+    guard.flee !== undefined && guard.flee.escapeDistance > 0 && (guard.instinctSpeedPct ?? 0) > 0,
+    `${id} Instinct should accelerate a distance-gated retreat`,
   );
 }
 
@@ -359,22 +358,21 @@ for (const stage of ['flee', 'stalk'] as const) {
   }
 }
 
-// Instinct is CAPPED, and a SUCCESSFUL escape resets it. It records failure, not
-// progress — an uncapped or un-reset counter would make the boss permanently faster.
+// Instinct keeps growing through failed escapes; success resets the entire ramp.
 {
   const id = 'jungle-dread-gorger';
   const def = MONSTER_DATABASE.get(id)!;
   const guard = def.bossPattern!.steps.find(step => step.kind === 'escape-guard')!;
   assert(guard.kind === 'escape-guard', 'setup');
-  const cap = guard.maxInstinctStacks;
+  const attempts = 12;
 
   const world = new World();
   world.attachPlayerEntity(playerSlices('escape-cap'), 'escape-cap');
   const { monster, armedAt } = armJungle(world, id, 'escape-cap');
   let now = armedAt;
 
-  // Fail the retreat more times than the cap allows.
-  for (let attempt = 0; attempt < cap + 2; attempt++) {
+  // Fail the retreat repeatedly beyond the old three-stack limit.
+  for (let attempt = 0; attempt < attempts; attempt++) {
     now = advanceUntil(
       world, now, () => sourceBarrierRemaining(monster, 'jungle-escape') > 0, 400,
     );
@@ -388,12 +386,15 @@ for (const stage of ['flee', 'stalk'] as const) {
       updateBossPatterns(world, 100, now);
     }
   }
-  assert(escapeInstinct(monster) === cap, `Instinct should cap at ${cap}`);
+  assert(escapeInstinct(monster) === attempts, `Instinct should reach ${attempts} stacks`);
 
   // Now let one escape SUCCEED and watch Instinct reset.
   now = advanceUntil(
     world, now, () => sourceBarrierRemaining(monster, 'jungle-escape') > 0, 400,
   );
+  const target = world.getPlayerEntity('escape-cap')!;
+  assert(guard.flee, 'escape distance');
+  monster.hasPosition.current = { x: target.hasPosition.current.x + guard.flee.escapeDistance + 100, y: target.hasPosition.current.y };
   advanceUntil(world, now, () => escapeInstinct(monster) === 0, 400);
   assert(escapeInstinct(monster) === 0, 'a successful escape resets Instinct');
 }
@@ -467,12 +468,12 @@ for (const stage of ['flee', 'stalk'] as const) {
   );
   // ...and it has to LAST. The first pass was a 1500ms guard at 420px/s, which the
   // player read as "cast, blink, gone": the run was over before it registered and
-  // the break window with it. The escape is timed, so this is the guarantee that
+  // the break window with it. The distance threshold should still ensure that
   // the chase is something you get to watch and answer, not a state change.
-  // (Escape Instinct can shorten it, but only to 55% of the authored window.)
+  // Escape Instinct shortens the travel through speed, not through a success timer.
   const fleeMs = concealedAt! - armedAt;
   assert(
-    fleeMs >= 2_500,
+    fleeMs >= 1_000,
     `the flee should be long enough to read and answer (lasted ${fleeMs}ms)`,
   );
   // Slower than the player cannot get away; far faster than the player cannot be
@@ -519,7 +520,9 @@ for (const stage of ['flee', 'stalk'] as const) {
   assert(concealedAt !== null && now > concealedAt, 'setup: time should have passed');
 
   // Targetability is proven at the seam concealment actually changed — the player
-  // attack-target scan — rather than through the acquisition policy.
+  // attack-target scan — rather than through the acquisition policy. Put the
+  // player in melee reach: flee-speed changes shift the final sampled stalk gap.
+  player.hasPosition.current = { x: monster.hasPosition.current.x - 20, y: monster.hasPosition.current.y };
   updateCombat(world, 100, now);
   assert(
     player.hasAttackTarget?.targetId === monster.isMonster.id,
