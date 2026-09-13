@@ -37,6 +37,10 @@ top-level doc.
 | [briefs/bot-balance-night1-report.md](briefs/bot-balance-night1-report.md) | Durable execution ledger and morning handoff for the Night 1 T1/T2 isolated experiment program. |
 | [briefs/bot-balance-night1-assessment.md](briefs/bot-balance-night1-assessment.md) | Swamp results, entry-observation repair, evidence counts and updated T3/T4 balance issue. |
 | [briefs/bot-balance-v1f-operator-packet.md](briefs/bot-balance-v1f-operator-packet.md) | Atomic entry qualification followed by Swamp comparison and four T1 boss probes with the integrated mechanic repairs. |
+| [briefs/bot-balance-v1f-report.md](briefs/bot-balance-v1f-report.md) | V1f execution ledger for atomic entry validation, the Swamp comparison, and remaining T1 coverage. |
+| [briefs/bot-balance-v1f-assessment.md](briefs/bot-balance-v1f-assessment.md) | Accepted T1 results, premature-stop and guardian/boss corrections, Cave hypothesis and T2 next steps. |
+| [briefs/bot-balance-v1g-operator-packet.md](briefs/bot-balance-v1g-operator-packet.md) | Plains coverage, Cave corrosion comparison and six-class T2 progression screen with explicit outcome classification. |
+| [briefs/bot-balance-v1g-cave-study.json](briefs/bot-balance-v1g-cave-study.json) | Frozen Cave Expose/Second Wind versus Second Wind/Cleanse comparison arms. |
 | [briefs/bot-balance-night1-swamp-study.json](briefs/bot-balance-night1-swamp-study.json) | Frozen Swamp comparison arms for the overnight operator packet. |
 | [briefs/bot-balance-v1d-operator-packet.md](briefs/bot-balance-v1d-operator-packet.md) | One preparation-only validation of repaired transit recovery. |
 | [briefs/bot-balance-v1d-report.md](briefs/bot-balance-v1d-report.md) | V1d execution result; one natural transit death recovered to the Plains supplier and the full GM30/+5 preparation completed. |

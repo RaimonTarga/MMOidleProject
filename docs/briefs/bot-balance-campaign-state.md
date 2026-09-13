@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: Prepared Striker has Plains and dual-Guard Swamp successes. Night 1 stopped on an entry-observation failure after one valid Swamp case per arm; C/D never started. V1f repairs that boundary and resumes bounded T1 diagnostics.
+Status: V1f qualified atomic entry, produced 3/3 dual-Guard Swamp victories versus 0/3 Expose/Cleanse, and cleared Forest/Mountain. Cave lost validly; an unnecessary operator stop interrupted Plains. V1g restores Plains coverage, tests Cave corrosion counterplay and screens T2 progression.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 
@@ -30,14 +30,14 @@ execution instructions. Current source and explicit user direction take preceden
 | Q0, prepared | Qualify existing templates and their first build transitions; prepare exact local readiness routes | Six source-derived profile records, legal acquisition/build sequences, concrete runtime packet |
 | Q1, complete | Can each selected profile acquire and reconcile its build? | Six configuration successes; combat under the post-prep builds was untested |
 | Q2, initial slice complete | Do the two configured builds actually fight and activate abilities? | Six profiles, twelve completed T2 Plains windows on `755b2a36`; broader conditions/routes remain untested |
-| V1, in progress | Can prepared builds farm and solve bosses? | Plains and Swamp candidate successes; V1f verifies entry repair, repeats Swamp comparison and probes the other T1 bosses |
+| V1, in progress | Can prepared builds farm and solve bosses? | Four of five T1 bosses have Striker candidate successes across the campaign; Cave open, Plains current-source confirmation pending; V1g adds T2 progression screening |
 | V2 | What resolves a particular failing matchup? | Small local alternatives selected from failure diagnosis, initially 2–3 replicates |
 | E1 | Is shipped progression pacing appropriate? | One-tier 1× economy studies using current credible carryover, after functional routes/builds |
 | A1 | Does the assembled progression work? | Late broader acceptance runs only |
 
 Q0 is specified in [the qualification packet](bot-balance-q0-template-qualification.md).
 Q1 is specified in [the operator packet](bot-balance-q1-operator-packet.md); no large matrix or automatic downstream queue.
-T3/T4 remain outside V1f. Update from the user on September 13: formerly nonfunctional boss mechanics are repaired; do not keep that as an active known defect. Low TTK / insufficient ordinary-mob eHP remains an open T3/T4 balance issue for a later pass. V1f qualifies the integrated mechanic source committed as `3426063e`.
+T3/T4 remain outside V1g. Update from the user on September 13: formerly nonfunctional boss mechanics are repaired; do not keep that as an active known defect. Low TTK / insufficient ordinary-mob eHP remains an open T3/T4 balance issue for a later pass. V1f used integrated mechanic source `3426063e`; V1g retains that gameplay.
 
 ## Template shortlist and current RP audit
 
@@ -150,7 +150,8 @@ Source/report links: [build audit](../bot-harness-capability-audit.md),
 - Latest result: V1d completed 105/105 steps in 18m42s with one natural transit death recovered. [Assessment and inherited-lessons review](bot-balance-v1d-assessment.md).
 - Latest result: V1e completed in 213.919 seconds with one authoritative Plains clear, zero deaths and 46.548 seconds of boss combat. This demonstrates prepared Striker possibility, not reliability, other-class viability or canonical pacing. [Assessment](bot-balance-v1e-assessment.md).
 - Latest result: [Night 1](bot-balance-night1-report.md) earned Mountain armor +5, then produced one valid Swamp Expose/Cleanse loss and one dual-Guard victory. Third entry failed HP/buff checks; fourth case interrupted, all remaining slots unstarted. [Assessment and count clarification](bot-balance-night1-assessment.md). No new T2 results.
-- Next action: Luna executes [V1f](bot-balance-v1f-operator-packet.md) on `3426063e55954c162c92aaa499903c356fa3b96d`: three entry repetitions, six Swamp comparisons, four T1 coverage probes; 13 runs, one worker, 3h30 total cap. Reuse Night 1's earned kit. This integrated source includes the other agent's committed mechanic fixes and atomic reset-view validation. Prepared, not launched; Docker and capacity are runtime prerequisites.
+- Latest result: [V1f assessment](bot-balance-v1f-assessment.md): atomic entry qualified; dual Guard is the preferred prepared Striker Swamp candidate (3/3 versus 0/3). Gnarled Greatbear and Crag Behemoth killed; Cave retained 30.63% HP after a valid death. Cave's `bot_partial` did not justify stopping Plains. Guardian/boss identity and range-metric corrections are recorded in the assessment. No T2 execution evidence added.
+- Next action: Luna executes [V1g](bot-balance-v1g-operator-packet.md) on `d836321279ef3fa4927f293326a5483928f54378`: one Plains probe, six Cave comparisons, six independent T2 progression screens; 13 runs, one worker, 5h30 total cap. Reuse the earned T1 kit for A/B; synthetic clean T2 entry for C. No repeated preparation cohort or gameplay tuning. Prepared, not launched.
 - Historical Q2d Spirit, Apprentice and Squire passed. Apprentice died once and returned; Spirit's Q2c pre-worker failure remains separate. [Overall readiness state](bot-balance-q2d-assessment.md).
 - Historical Q2c Conduit/Slinger passed and Spirit stopped before startup due to Docker address exhaustion. [Assessment and infrastructure repair](bot-balance-q2c-assessment.md).
 - Historical Q2b `20260912t170727z-striker-campaign-local-behavio`: Striker completed, no deaths or unwanted transit; Sweep 8 kills/8 activations, Expose 5 kills/6 activations. Readiness only.
