@@ -150,6 +150,9 @@ export interface TargetStatusView {
 
 /** Client-facing status overlay and buff slice. */
 export interface HasStatus {
+  /** Monster control multipliers, applied after authored AI/script stats. */
+  monsterMoveSpeedMult?: number;
+  monsterAttackCooldownMult?: number;
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   /** Players only — populated by `syncPlayerBuffs` each tick. */

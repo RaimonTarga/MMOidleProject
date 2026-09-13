@@ -16,7 +16,7 @@ import {
   type RuntimeCorpse,
 } from '../../world/corpses';
 import { setAggroTarget, setAttackTarget } from './targeting';
-import { setRooted } from '../../world/rooted';
+import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import { isMonsterStunned } from '../status/stun';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
 import { chargedCastEndsAt } from '../engine/monsterMechanics';
@@ -75,7 +75,7 @@ function beginRaiseCast(
   count = 1,
 ): void {
   reserveCorpses(world, raiser, spec.corpseRange, count);
-  const ownsRoot = !raiser.isRooted;
+  const ownsRoot = !hasIndependentRoot(raiser);
   const ownsAttackLock = !raiser.cannotAttack;
   if (ownsRoot) setRooted(world, raiser, true);
   if (ownsAttackLock) attachComponent(world, raiser, 'cannotAttack', {});

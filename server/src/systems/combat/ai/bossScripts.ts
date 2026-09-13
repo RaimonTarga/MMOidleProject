@@ -52,7 +52,7 @@ import { abortMonsterCast } from '../engine/combat';
 import { publishToxicPool } from '../../world/groundZones';
 import { stokeAmbientRamp } from '../../world/nodeFeatures';
 import { raiseCorpsesBurst } from './raiseDead';
-import { setRooted } from '../../world/rooted';
+import { hasIndependentRoot, setRooted } from '../../world/rooted';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss } from '@mmo-idle/shared';
@@ -183,7 +183,7 @@ function beginScriptedCast(
   // never share the screen. (No-op when nothing is casting.)
   abortMonsterCast(world, monster);
 
-  const ownsRoot = !monster.isRooted;
+  const ownsRoot = !hasIndependentRoot(monster);
   const ownsCannotAttack = !monster.cannotAttack;
   if (ownsRoot) setRooted(world, monster, true);
   if (ownsCannotAttack) attachComponent(world, monster, 'cannotAttack', {});

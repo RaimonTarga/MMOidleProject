@@ -1,8 +1,15 @@
+import { ABILITY_ROOT_EFFECT_ID, getFlag, getStatusEffect, setFlag } from '@mmo-idle/shared';
 import type { World } from "../../world/World";
 import type { ServerEntity } from "../../ecs/entity";
 import { isMonsterEntity } from "../../ecs/entity";
 import { attachComponent, detachComponent } from "../../ecs/markerHelpers";
 import { stopEntity } from "./movement";
+
+/** A scripted owner can take over an ability-only root without stealing it. */
+export function hasIndependentRoot(entity: ServerEntity): boolean {
+  return !!entity.isRooted && !(isMonsterEntity(entity) &&
+    getFlag(entity.tracksCombat, 'abilityOwnsRoot'));
+}
 
 export function setRooted(
   world: World,
@@ -10,6 +17,7 @@ export function setRooted(
   rooted: boolean,
 ): void {
   if (rooted) {
+    if (isMonsterEntity(entity)) setFlag(entity.tracksCombat, 'abilityOwnsRoot', false);
     attachComponent(world, entity, "isRooted", {});
     stopEntity(world, entity);
     if (isMonsterEntity(entity)) {
@@ -20,5 +28,11 @@ export function setRooted(
     return;
   }
 
+  if (isMonsterEntity(entity) &&
+      (getStatusEffect(entity.tracksCombat, ABILITY_ROOT_EFFECT_ID)?.remainingMs ?? 0) > 0) {
+    // The scripted hold ended, but Binding Strike still owns its remaining time.
+    setFlag(entity.tracksCombat, 'abilityOwnsRoot', true);
+    return;
+  }
   detachComponent(world, entity, "isRooted");
 }

@@ -48,7 +48,7 @@ import { setAggroTarget, setAttackTarget } from './targeting';
 import { fleeDestination } from './bossFlee';
 import { distanceSq } from '@mmo-idle/shared';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
-import { setRooted } from '../../world/rooted';
+import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import {
   applyStatusEffect,
   getCounter,
@@ -283,7 +283,7 @@ function beginRecovery(
   fromStagger: boolean,
   now: number,
 ): void {
-  const ownsRoot = !monster.isRooted;
+  const ownsRoot = !hasIndependentRoot(monster);
   const ownsCannotAttack = !monster.cannotAttack;
   if (ownsRoot) setRooted(world, monster, true);
   if (ownsCannotAttack) attachComponent(world, monster, 'cannotAttack', {});
@@ -552,7 +552,7 @@ export function updateBossPatterns(world: World, dt: number, now = Date.now()): 
 
     // The pattern holds movement and swings for its whole run — but only claims
     // the locks that were not already held by something else.
-    const ownsRoot = !monster.isRooted;
+    const ownsRoot = !hasIndependentRoot(monster);
     const ownsCannotAttack = !monster.cannotAttack;
     attachComponent(
       world,

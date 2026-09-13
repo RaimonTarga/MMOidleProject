@@ -447,9 +447,8 @@ export class World {
     updateWards(this, dt);
     updateRuneDerivedConfig(this, now);
     tickAllMechanics(this, dt, now);
-    // Single writer for monster slowed speed / root: chill, freeze and ability
-    // slows all overwrite the same fields, so they are reconciled in one place
-    // after their mechanic ticks and before anything moves.
+    // Reconcile final monster slow multipliers and roots after status ticks,
+    // before movement consumes them. Authored AI/script stats remain untouched.
     updateMonsterSlows(this);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);

@@ -10,19 +10,13 @@
  *   Binding Strike  movement stopped  actions allowed   (this file, root)
  *   Stunning Strike movement stopped  actions stopped   (`stun.ts`)
  *
- * ONE WRITER FOR SPEED. Chill, Freeze and an ability slow all want to reduce
- * `hasPosition.speed` and lengthen `performsAttack.attackCooldown`, and each
- * writes an ABSOLUTE value derived from `MONSTER_DATABASE` so repeated
- * application can't compound. Two independent writers doing that would ratchet
- * against each other every tick — each one reading the other's output as the
- * "clean base". So every source registers here and {@link updateMonsterSlows}
- * applies the STRONGEST of each axis once per tick, restoring the database
- * values when no source remains.
+ * Slows are a final multiplier, never a rewrite of authored speed or cadence.
+ * This preserves AI charges, spawn scaling and scripted stat changes, and keeps
+ * the movement executor and network view in agreement. Strongest source wins.
  */
 import {
   ABILITY_ROOT_EFFECT_ID,
   ABILITY_SLOW_EFFECT_ID,
-  MONSTER_DATABASE,
   applyStatusEffect,
   getFlag,
   getStatusEffect,
@@ -37,24 +31,12 @@ import { isMonsterStunned } from "./stun";
 import { CHILL_EFFECT, FROZEN_EFFECT } from "../../classes/archetypes/dot/t3/core/constants";
 import {
   CHILL_ATK_MULT,
-  CHILL_FLAG,
   CHILL_SPEED_MULT,
   FREEZE_ATK_MULT,
   FREEZE_SPEED_MULT,
 } from "../../classes/archetypes/dot/t3/paths/_constants";
 
-/**
- * Flag marking "this monster's speed/attack cooldown are currently overwritten".
- * Kept under the original chill key so a monster mid-chill across a deploy is
- * still restored by the reconciler that now owns it.
- */
-const SLOWED_FLAG = CHILL_FLAG;
-
-/** Root ownership: only clear `isRooted` if WE set it (a boss script may own it). */
 const OWNS_ROOT_FLAG = "abilityOwnsRoot";
-
-/** Floor on a slowed monster's speed, so a slow can never become a silent root. */
-const MIN_SLOWED_SPEED = 10;
 
 /**
  * Apply a SLOW to a monster: a fraction of its movement speed and a matching
@@ -121,11 +103,11 @@ interface SlowTotals {
 }
 
 /**
- * Reconcile every monster speed/root modifier for the tick.
+ * Reconcile monster slow multipliers and root ownership for the tick.
  *
  * Runs after mechanic ticks (which decrement status durations and clean up their
- * own markers) and before movement/AI, so the value written here is the one the
- * monster actually moves at this tick.
+ * own markers) and before movement/AI. Consumers apply these multipliers to
+ * the current authored stats instead of allowing AI and control to overwrite them.
  */
 export function updateMonsterSlows(world: World): void {
   const totals = new Map<string, SlowTotals>();
@@ -178,15 +160,11 @@ export function updateMonsterSlows(world: World): void {
   }
 
   for (const { entity, move, attack } of totals.values()) {
-    writeSlowedStats(entity, move, attack);
+    writeSlowMultipliers(world, entity, move, attack);
   }
 
-  // Anything the flag says we modified, that no live source still claims, goes
-  // back to its database values. Iterating the flag rather than the markers is
-  // what makes an expiring effect restore even on the tick its marker is dropped.
   for (const entity of world.monsterEntities) {
-    if (totals.has(entity.isMonster.id)) continue;
-    restoreMonsterStats(entity);
+    if (!totals.has(entity.isMonster.id)) writeSlowMultipliers(world, entity, 0, 0);
   }
 
   updateMonsterRoots(world);
@@ -214,34 +192,21 @@ function publishHardControl(world: World): void {
   }
 }
 
-function writeSlowedStats(
+function writeSlowMultipliers(
+  world: World,
   entity: MonsterEntity,
   moveSlow: number,
   attackSlow: number,
 ): void {
-  const def = MONSTER_DATABASE.get(entity.isMonster.monsterTypeId);
-  if (!def) return;
-  entity.hasPosition.speed = Math.max(
-    MIN_SLOWED_SPEED,
-    Math.round(def.stats.speed * (1 - Math.min(0.95, moveSlow))),
-  );
-  entity.performsAttack.attackCooldown = Math.round(
-    def.stats.attackCooldown * (1 + attackSlow),
-  );
-  if (!getFlag(entity.tracksCombat, SLOWED_FLAG)) {
-    setFlag(entity.tracksCombat, SLOWED_FLAG, true);
-  }
-}
-
-/** Restore base speed + attack cooldown once no slow source remains. */
-export function restoreMonsterStats(entity: MonsterEntity): void {
-  if (!getFlag(entity.tracksCombat, SLOWED_FLAG)) return;
-  const def = MONSTER_DATABASE.get(entity.isMonster.monsterTypeId);
-  if (def) {
-    entity.hasPosition.speed = def.stats.speed;
-    entity.performsAttack.attackCooldown = def.stats.attackCooldown;
-  }
-  setFlag(entity.tracksCombat, SLOWED_FLAG, false);
+  const move = 1 - Math.min(0.95, moveSlow);
+  const attack = 1 + attackSlow;
+  if ((entity.hasStatus.monsterMoveSpeedMult ?? 1) === move &&
+      (entity.hasStatus.monsterAttackCooldownMult ?? 1) === attack) return;
+  if (move === 1) delete entity.hasStatus.monsterMoveSpeedMult;
+  else entity.hasStatus.monsterMoveSpeedMult = move;
+  if (attack === 1) delete entity.hasStatus.monsterAttackCooldownMult;
+  else entity.hasStatus.monsterAttackCooldownMult = attack;
+  markSliceDirty(world, entity, 'hasStatus');
 }
 
 /**

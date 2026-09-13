@@ -480,7 +480,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
                 monsterDef.engageSequence.followWithChargedAttack === true,
             );
             e.hasPosition.speed = ai.baseSpeed;
-            e.performsAttack.lastAttackAt = now - e.performsAttack.attackCooldown;
+            e.performsAttack.lastAttackAt = now - monsterAttackCooldown(e);
             e.hasAwareness.state = 'attacking';
             setAttackTarget(world, e, target.entity.isPlayer.id);
             stopMonster(world, e);
@@ -556,7 +556,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
           e.hasAwareness.state === "wandering" ||
           e.hasAwareness.state === "returning"
         ) {
-          e.performsAttack.lastAttackAt = now - e.performsAttack.attackCooldown;
+          e.performsAttack.lastAttackAt = now - monsterAttackCooldown(e);
         }
         ai.kiteTimer = Math.max(0, ai.kiteTimer - dt * KITE_DECAY_RATE);
         e.hasPosition.speed = ai.baseSpeed;

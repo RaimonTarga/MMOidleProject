@@ -57,7 +57,6 @@ export const CHILL_MAX        = 9;     // 9 chill stacks → freeze (longer ramp
 export const CHILL_SPEED_MULT = 0.05;  // 5% speed reduction per chill stack (45% at max)
 export const CHILL_ATK_MULT   = 0.05;  // 5% attackCooldown increase per chill stack (+45% at max)
 export const CHILL_MS         = 6_000;
-export const CHILL_FLAG       = 'dot-chill-applied';
 // Frozen is a SEVERE slow, not full CC (design): the monster still moves and
 // attacks, just very slowly. Applied as a strong speed cut + long attack cooldown.
 export const FREEZE_SPEED_MULT = 0.80;  // -80% movement speed while frozen

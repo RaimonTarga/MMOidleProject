@@ -21,6 +21,7 @@ import {
   type FeatureTarget,
   type Vec2,
 } from '@mmo-idle/shared';
+import { isMonsterStunned } from '../combat/status/stun';
 import type { World } from '../../world/World';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
 import type { PlayerEntity, ServerEntity } from '../../ecs/entity';
@@ -521,12 +522,12 @@ export function updateMovement(world: World, dt: number, now: number) {
   }
 
   for (const e of world.movingMonsters) {
-    if (e.isRooted) {
+    if (e.isRooted || isMonsterStunned(world, e.isMonster.id)) {
       stopEntity(world, e);
       continue;
     }
 
-    processMoverStep(world, e, dt, 1, 'monster', now);
+    processMoverStep(world, e, dt, e.hasStatus.monsterMoveSpeedMult ?? 1, 'monster', now);
 
     const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
     if (node) {

@@ -6,13 +6,8 @@ import { CHILL_EFFECT, FROZEN_EFFECT, SMOLDER_EFFECT } from '../core/constants';
 /**
  * Chill / freeze MARKER lifecycle.
  *
- * The speed and attack-cadence writes these effects imply are NOT applied here:
- * they live in `combat/status/monsterControl.ts`, which is the single writer for
- * a monster's slowed stats. Chill, freeze and a Hamstring slow all overwrite the
- * same two fields with absolute values read back from MONSTER_DATABASE, so two
- * independent writers would ratchet against each other — each treating the
- * other's output as the clean base. This tick's only job is keeping the markers
- * honest so that reconciler knows who to look at.
+ * `combat/status/monsterControl.ts` reconciles the strongest slow into final
+ * movement/cadence multipliers. This pass only maintains source markers.
  */
 export function updateChillAndFreeze(world: World): void {
   for (const entity of world.frozenMonsters) {

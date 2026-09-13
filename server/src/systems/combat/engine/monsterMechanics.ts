@@ -34,7 +34,7 @@ export function monsterAttackCooldown(monster: MonsterEntity): number {
   );
   return Math.max(
     100,
-    Math.round(monster.performsAttack.attackCooldown / (1 + rampPct + roarPct + castedBuffPct)),
+    Math.round(monster.performsAttack.attackCooldown * (monster.hasStatus.monsterAttackCooldownMult ?? 1) / (1 + rampPct + roarPct + castedBuffPct)),
   );
 }
 
