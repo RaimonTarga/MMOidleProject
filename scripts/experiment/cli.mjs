@@ -13,6 +13,7 @@ import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { releaseInfrastructure } from "./release.mjs";
 import {
   buildRunPlan,
   copySnapshotInput,
@@ -58,7 +59,8 @@ Commands:
   pnpm experiment:status --id=<id|latest>
   pnpm experiment:stop --id=<id>
   pnpm experiment:report --id=<id>
-  pnpm experiment:clean --id=<id>
+  pnpm experiment:release --id=<id>  stop terminal services; keep data
+  pnpm experiment:clean --id=<id>    delete runtime and database volume
 
 Cross-cohort queue (shared worker budget across multiple manifests):
   pnpm experiment:queue-add --id=<id> [--id=<id> ...] | --ids=<id,id,...>
@@ -97,7 +99,7 @@ function processAlive(pid) {
 }
 
 function toolingFiles() {
-  return ["lib.mjs", "study.mjs", "supervisor.mjs", "worker.mjs", "Dockerfile"]
+  return ["lib.mjs", "study.mjs", "release.mjs", "supervisor.mjs", "worker.mjs", "Dockerfile"]
     .map((name) => join(scriptDirectory, name));
 }
 
@@ -492,6 +494,10 @@ try {
   else if (command === "status") statusExperiment();
   else if (command === "stop") await stopExperiment();
   else if (command === "report") reportExperiment();
+  else if (command === "release") {
+    const experiment = requireExperiment();
+    console.log(releaseInfrastructure(experiment.manifest, readJson(join(experiment.dir, "state.json")), experiment.dir));
+  }
   else if (command === "clean") cleanExperiment();
   else if (command === "queue-add") await queueAddCommand();
   else if (command === "queue-run") await queueRunCommand();

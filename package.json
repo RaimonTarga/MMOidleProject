@@ -36,6 +36,7 @@
     "experiment:stop": "node scripts/experiment/cli.mjs stop",
     "experiment:report": "node scripts/experiment/cli.mjs report",
     "experiment:clean": "node scripts/experiment/cli.mjs clean",
+    "experiment:release": "node scripts/experiment/cli.mjs release",
     "experiment:queue-add": "node scripts/experiment/cli.mjs queue-add",
     "experiment:queue-run": "node scripts/experiment/cli.mjs queue-run",
     "experiment:queue-status": "node scripts/experiment/cli.mjs queue-status",

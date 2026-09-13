@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import "./release.test.mjs";
 import { mkdtempSync, readFileSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

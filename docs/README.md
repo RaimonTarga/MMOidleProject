@@ -26,10 +26,12 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-experiment-resource-lifecycle.md](briefs/bot-experiment-resource-lifecycle.md) | Automatic terminal network release, retained data, manual recovery command and V1j capacity incident. |
 | [briefs/bot-balance-theorycrafting-reference.md](briefs/bot-balance-theorycrafting-reference.md) | Source-grounded encounter/build reasoning, corrected human Plains evidence, legal T2 RP alternatives and prioritized future comparisons. |
 | [briefs/bot-balance-v1i-assessment.md](briefs/bot-balance-v1i-assessment.md) | Accepted preparation and Spirit T2 results, inference limits and next encounter hypotheses. |
 | [briefs/bot-balance-v1j-operator-packet.md](briefs/bot-balance-v1j-operator-packet.md) | Six bounded Spirit runs: Mountain coverage and Swamp barrier versus periodic Recovery. |
 | [briefs/bot-balance-v1j-swamp-study.json](briefs/bot-balance-v1j-swamp-study.json) | Frozen Swamp charm comparison with identical preparation and abilities. |
+| [briefs/bot-balance-v1j-report.md](briefs/bot-balance-v1j-report.md) | V1j capacity-gate result; execution stopped before manifest creation because Docker bridge-network pools were exhausted. |
 | [briefs/bot-balance-v1a-assessment.md](briefs/bot-balance-v1a-assessment.md) | Preparation timeout, supervisor rename failure and scoped preparation/infrastructure repairs. |
 | [briefs/bot-balance-v1b-assessment.md](briefs/bot-balance-v1b-assessment.md) | Valid finalization, acquisition timeout and decision to separate preparation. |
 | [briefs/bot-balance-v1c-assessment.md](briefs/bot-balance-v1c-assessment.md) | Post-death travel stall diagnosis and scoped executor recovery repair. |

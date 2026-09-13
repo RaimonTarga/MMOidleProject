@@ -4,6 +4,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { join, resolve } from "node:path";
+import { releaseInfrastructure } from "./release.mjs";
 import {
   activeRuns,
   adoptRunningWorker,
@@ -124,6 +125,13 @@ async function main() {
       state.supervisor = { ...state.supervisor, status: "completed", endedAt: new Date().toISOString() };
       saveState(state);
       event("supervisor-completed");
+      try {
+        event("infrastructure-release", releaseInfrastructure(manifest, state, experimentDirectory));
+      } catch (error) {
+        // Gameplay finalization stays terminal even if Docker cleanup needs help.
+        event("infrastructure-release-failed", { error: String(error) });
+        console.error(`[experiment] runtime release failed: ${error}`);
+      }
       return;
     }
     await sleep(2_000);

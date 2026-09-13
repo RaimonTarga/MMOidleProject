@@ -2,6 +2,7 @@
 
 Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
 Status: V1i complete: Striker/Squire resource blocks resolved; Spirit T2 Plains Axe2/2, Needle0/2, Forest Axe2/2. V1j prepared: Mountain coverage and Swamp barrier-versus-Recovery comparison, six runs.
+V1j's first session stopped before create due to Docker subnet exhaustion. Capacity is now recovered; six slots remain unstarted. [Lifecycle fix](bot-experiment-resource-lifecycle.md): terminal supervisors release networks while retaining evidence and volumes. Restart with a fresh clock and updated host tooling per the packet.
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
 

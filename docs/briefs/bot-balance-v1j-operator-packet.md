@@ -7,6 +7,8 @@ Frozen revision: `6365651b5fcbcd0b32284343df29d01121ceb5d3`.
 Frozen tree: `11a5298b9a2ce6a32c374979108f1fa6ddd10841`.
 Includes the committed monster-control correction `bab111f9`; do not reuse the V1i image.
 
+Capacity recovery update (2026-09-13): the first operator session stopped before creation. Ten completed experiment networks have since been released, and two simultaneous empty-bridge probes passed and were removed. All six V1j slots remain unstarted. Begin a fresh session clock; retain the blocked report as history. Run create/launch from the current project checkout with the new host `release.mjs` tooling, while keeping the gameplay revision above frozen. Inspect its copied runtime/tooling hashes. The updated supervisor releases terminal infrastructure automatically; check `network-release.json` / supervisor events after each phase. If release failed, use `pnpm experiment:release --id=<exact-terminal-id>` from the current checkout. Never use `experiment:clean` as the routine finish step: it deletes the database volume.
+
 ## Contract
 
 Six runs in two sequential manifests, one worker and one active manifest. A: two Mountain cases capped at 20 minutes each. B: four Swamp cases capped at 25 minutes each. Total worker ceilings 140 minutes; hard session deadline 3h30m after the timestamp recorded before setup. Do not begin phase B with less than 30 minutes left. Stop naturally when finished; no filling spare time, retries, extensions, automatic follow-on, source edits, balance edits, T3/T4 or fast boss retry. Astra has not created or launched a manifest.
