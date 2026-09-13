@@ -106,6 +106,16 @@ The next diagnostic should reproduce static-lava escape with Recover First,
 then compare an ordinary travel build without that recovery hold. A shared
 player-movement fix requires a separately reviewed scope; none was applied.
 
+Read-only reproduction after the frozen run:
+`pnpm --filter @mmo-idle/server exec tsx --conditions=development scripts/botStaticLavaDiagnostic.ts`
+uses an in-memory World and the real Volcano05 lava geometry, a hurt player,
+retained navigation and a post-combat Fight Back state. With Recover First,
+hazard contact=true,escape destination=null,travel paused=true,moving=false.
+Without Recover First, contact=true,escape destination=null,paused=false,
+moving=true. Both have a valid navigation path and zero runtime ground zones.
+This reproduces the control interaction without a live run or balance change;
+it is not a legal progression fixture or a reconstruction of C's exact position.
+
 Artifact root:
 `C:\Users\osaif\AppData\Local\mmo-idle\experiments\20260913t225153z-spirit-travel-t2-bridge-night2`
 

@@ -48,6 +48,14 @@ behavior-gap hypothesis, not an exact trajectory reconstruction or a mob
 attack balance verdict. Static contact includes a40px edge band. A diagnostic
 must include that band, active Rune intent, position and damage-effect ID.
 
+The isolated `server/scripts/botStaticLavaDiagnostic.ts` now reproduces the
+interaction with real static lava geometry: Recover First leaves a hurt
+post-combat traveler paused/motionless; omitting it resumes navigation.
+Both variants report actual damaging contact and no dynamic escape destination.
+Do not interpret that as proof the alternative survives the crossing. The
+general lesson is to verify that a recovery policy can leave the condition
+which suppresses recovery; defensive abilities alone cannot repair that loop.
+
 Night2-D candidate: transfer the kill-chain principle to Bulwark Squire, not
 Spirit's weapon. Quake Hammer supports Squire's8s empowered cadence; the
 class's slow swings make reliable Sweep/add delivery worth testing. Hold
