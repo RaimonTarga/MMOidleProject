@@ -25,7 +25,7 @@ export type TierEntryEconomyPolicy =
   | "authoritative-economy-continuation";
 
 /** Named intermediate states used by the controlled T2 replication lab. */
-export type TierCheckpointKind = "j0" | "j3" | "d0";
+export type TierCheckpointKind = "j0" | "j3" | "d0" | "prepared-t2";
 
 export interface TierEntryProfile {
   id: string;

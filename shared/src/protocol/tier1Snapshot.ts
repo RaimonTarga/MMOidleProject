@@ -3,6 +3,7 @@ import type { TierCheckpointKind, TierEntryProfile } from "./tierEntry";
 import type { T1EconomyArm } from "../systems/t1EconomyExperiment";
 import { STARTER_RUNE_IDS } from "../runeDatabase";
 import { runeIdsFromCraftedRecipes } from "../runeRecipes";
+import { globalMastery, maxGlobalMasteryAtTier } from "../config/gameConfig";
 
 /** Versioned JSON contract written by a canonical T1 route at A/B boundaries. */
 export const T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION = 1 as const;
@@ -192,6 +193,7 @@ export function tierEntryProfileFromT1Snapshot(
   snapshot: T1CharacterSnapshot,
   spawnNodeId = "node-t2-sanctuary",
   entryTier: 1 | 2 = 2,
+  resumePreparedT2 = false,
 ): TierEntryProfile {
   if (snapshot.schemaVersion !== T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION) {
     throw new Error(`unsupported T1 snapshot schema ${String(snapshot.schemaVersion)}`);
@@ -204,6 +206,11 @@ export function tierEntryProfileFromT1Snapshot(
   }
 
   const state = snapshot.state;
+  if (resumePreparedT2 && (entryTier !== 2 || snapshot.snapshotKind !== "tier2-handoff" ||
+      state.playerTier !== 2 || globalMastery(state.biomeLevel) !== maxGlobalMasteryAtTier(2) ||
+      state.bossesCleared.some(key => Number(key.split(":")[1]) >= 2))) {
+    throw new Error("Prepared T2 resume requires a full-mastery T2 Snapshot B with no T2 boss clears");
+  }
   const classRoot = state.classRoot ?? snapshot.classRoot;
   const frameId = state.frameId ?? snapshot.frameId;
   const rootOnly = entryTier === 1;
@@ -274,12 +281,12 @@ export function tierEntryProfileFromT1Snapshot(
     frameId,
     spawnNodeId,
     economyPolicy:
-      snapshot.snapshotKind === "experiment-checkpoint"
+      resumePreparedT2 || snapshot.snapshotKind === "experiment-checkpoint"
         ? "synthetic-combat-progression"
         : "authoritative-economy-continuation",
-    ...(snapshot.snapshotKind === "experiment-checkpoint"
+    ...(resumePreparedT2 || snapshot.snapshotKind === "experiment-checkpoint"
       ? {
-          checkpointKind: snapshot.checkpointKind,
+          checkpointKind: resumePreparedT2 ? "prepared-t2" as const : snapshot.checkpointKind,
           checkpointSourceNodeId: snapshot.checkpointSourceNodeId ?? state.runtime.nodeId,
         }
       : {}),

@@ -102,6 +102,8 @@ export type StepBody =
       toPlus: number;
       farmAt?: NodeRef;
       opportunistic?: boolean;
+      /** Treat farmAt as a preference; follow the actual missing essence/catalyst. */
+      farmForMissingResources?: boolean;
     }
   | { type: "configureRunes"; rules: EquippedRule[] }
   | { type: "configureBuild"; build: DesiredBuild }
@@ -204,6 +206,8 @@ export interface Route {
   checkpointKind?: TierCheckpointKind;
   /** Expected checkpoint kind when this route consumes a sealed experiment state. */
   entryCheckpointKind?: TierCheckpointKind;
+  /** Explicitly resume an unchanged full-mastery, pre-boss T2 Snapshot B. */
+  resumePreparedT2?: boolean;
   /** Keep transit through future biomes movement-only for a pre-progression checkpoint. */
   suppressTransitCombat?: boolean;
   captureTier2Handoff?: boolean;

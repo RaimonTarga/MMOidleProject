@@ -7,6 +7,7 @@ import {
   isRiteRecipeUnlocked,
   isAbilityRecipeUnlocked,
   BIOME_START_TIER_BY_GROUP,
+  BIOME_PRIMARY_ESSENCE,
   RUNE_RECIPE_DATABASE,
   STANCE_RECIPE_DATABASE,
   isStanceRecipeUnlocked,
@@ -1134,7 +1135,8 @@ export class RouteExecutor {
         await this.farmBlocked(
           farmNode,
           `upgrade:${step.definitionId}+${nextPlus}`,
-          () => obs.canUpgrade(step.definitionId).ok,
+          () => obs.canUpgrade(step.definitionId).ok || (step.farmForMissingResources === true &&
+            this.upgradeFarmNode(step, recipe, nextPlus) !== farmNode),
           // Every failing predicate by name -- essence colour/current/required,
           // catalyst family/current/required, GM, biome level. The old
           // `{blocked:1}` is exactly what made the 2026-08-31 deep-dive infer
@@ -2227,6 +2229,28 @@ export class RouteExecutor {
       ? explicitPreferred
       : (recipe ? this.defaultFarmNodeFor(recipe.recipeGroup) : null);
     if (!recipe) return preferred;
+
+    // Opt-in preparation policy: the authored node is a preference, not a
+    // command to grind the wrong currency. Re-evaluated between resource spans.
+    if (step.farmForMissingResources) {
+      const item = ITEM_DATABASE.get(step.definitionId);
+      const essenceCost = item ? upgradeCostFor(item, nextPlus, this.deps.obs.economyConfig?.t1Plus5EssenceCostMultiplier) ?? {} : {};
+      const essence = Object.entries(essenceCost).find(([type, amount]) =>
+        this.deps.obs.essence(type as EssenceType) < (amount ?? 0))?.[0];
+      const catalystCost = item ? upgradeCatalystCostFor(item, nextPlus) ?? {} : {};
+      const family = Object.entries(catalystCost).find(([type, amount]) =>
+        this.deps.obs.catalyst(type) < (amount ?? 0))?.[0];
+      if (!essence && !family) return preferred;
+      const tier = preferred ? NODE_BIOMES[preferred]?.biomeTier : recipe.tier;
+      const groups = [recipe.recipeGroup, ...Object.keys(BIOME_PRIMARY_ESSENCE)]
+        .filter((group, index, all) => all.indexOf(group) === index &&
+          (!essence || BIOME_PRIMARY_ESSENCE[group] === essence));
+      const candidates = groups.flatMap(group => normalNodesFor(group, tier ?? recipe.tier));
+      const matchingFamily = family ? candidates.filter(id => NODE_MODIFIERS[id]?.modifier === family) : candidates;
+      // If no node produces both, earn essence first, then reselect for catalysts.
+      const eligible = matchingFamily.length > 0 ? matchingFamily : essence ? candidates : [];
+      return preferred && eligible.includes(preferred) ? preferred : eligible[0] ?? null;
+    }
 
     // An explicit modifier is a hard authoring request. Farming an unrelated
     // family forever would make the route look alive while never satisfying its

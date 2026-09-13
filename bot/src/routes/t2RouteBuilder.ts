@@ -170,6 +170,7 @@ function opportunisticUpgrades(worn: readonly string[], group: T2BiomeGroup): Ro
       toPlus: 5,
       farmAt: t2FarmFor(group, family),
       opportunistic: true,
+      farmForMissingResources: true,
       label: `upgrade ${definitionId} as far as Global Mastery allows`,
     };
   });

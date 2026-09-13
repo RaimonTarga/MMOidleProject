@@ -198,6 +198,20 @@ try {
   const validation = validateProfile(profile);
   assert(validation.pass, `reconstructed profile must validate: ${validation.findings.map((f) => f.message).join("; ")}`);
 
+  const prepared = structuredClone(loaded);
+  prepared.state.biomeLevel = { plains: 12, forest: 12, swamp: 12, mountain: 12, cave: 12, jungle: 6, desert: 6, clearing: 4 };
+  prepared.state.globalMastery = 72;
+  const unchanged = JSON.stringify(prepared);
+  assert(!validateProfile(tierEntryProfileFromT1Snapshot(prepared)).pass, "ordinary entry must still reject same-tier mastery");
+  const resumed = tierEntryProfileFromT1Snapshot(prepared, "node-t2-sanctuary", 2, true);
+  assert(resumed.checkpointKind === "prepared-t2" && validateProfile(resumed).pass, "explicit prepared resume validates current-tier state");
+  assert(JSON.stringify(prepared) === unchanged, "resume never rewrites the source snapshot");
+  for (const invalid of [loaded, { ...prepared, state: { ...prepared.state, bossesCleared: [...prepared.state.bossesCleared, "plains:2"] } }]) {
+    let rejected = false;
+    try { tierEntryProfileFromT1Snapshot(invalid, "node-t2-sanctuary", 2, true); } catch { rejected = true; }
+    assert(rejected, "prepared resume rejects incomplete mastery or existing current-tier boss clears");
+  }
+
   const withHistoricalUpgrade = {
     ...loaded,
     state: {

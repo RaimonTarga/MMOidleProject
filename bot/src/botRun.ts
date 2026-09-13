@@ -180,8 +180,9 @@ export async function runBot(
       (authoredRoute.startsFromTierEntry
         ? t2EntryProfileId(authoredRoute.classRoot, config.entryEconomy)
         : undefined);
+  if (authoredRoute.resumePreparedT2 && !sourceSnapshot) throw new Error("Prepared T2 route requires its source snapshot");
   const resolvedTierEntryProfile = sourceSnapshot
-    ? tierEntryProfileFromT1Snapshot(sourceSnapshot, authoredRoute.startsFromTierEntry === 1 ? "node-clearing" : "node-t2-sanctuary", authoredRoute.startsFromTierEntry === 1 ? 1 : 2)
+    ? tierEntryProfileFromT1Snapshot(sourceSnapshot, authoredRoute.startsFromTierEntry === 1 ? "node-clearing" : "node-t2-sanctuary", authoredRoute.startsFromTierEntry === 1 ? 1 : 2, authoredRoute.resumePreparedT2)
     : resolvedTierEntryId
       ? requireTierEntryProfile(resolvedTierEntryId)
       : undefined;

@@ -551,7 +551,9 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
         if ("at" in step && step.at) checkRef(step.at, step.type);
         if ("to" in step && step.to) checkRef(step.to, step.type);
         if ("farmAt" in step && step.farmAt) checkRef(step.farmAt, `${step.type}.farmAt`);
-        if (step.type === "farm") {
+        if (step.type === "assert") {
+          recordBiomeLevelCondition(step.condition);
+        } else if (step.type === "farm") {
           recordBiomeLevelCondition(step.until);
         } else if (step.type === "craftRune") {
           const recipe = RUNE_RECIPE_DATABASE.get(step.recipeId);

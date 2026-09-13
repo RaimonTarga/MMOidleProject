@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "question": "Can prepared Spirit clear T2 Plains, and does Gale Needle's faster cadence improve the result compared with Ruinous Axe under the same ability and defense package?",
+  "factor": "route",
+  "arms": [
+    { "id": "axe", "route": "spirit-campaign-plains-ruinous-axe-t2", "policy": "intended" },
+    { "id": "needle", "route": "spirit-campaign-plains-gale-needle-t2", "policy": "intended" }
+  ]
+}
