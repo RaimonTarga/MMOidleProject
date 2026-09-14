@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-v1s-operator-packet.md](briefs/bot-balance-v1s-operator-packet.md) | Prepared six checkpoint runs testing repeatable five-minute Volcano farming and recovered returns with unchanged control/pursuit builds. |
 | [briefs/bot-balance-v1r-operator-packet.md](briefs/bot-balance-v1r-operator-packet.md) | Prepared three short named-checkpoint Volcano screens: control, focused targeting, and paid pursuit counterplay; no further balance edits. |
 | [named-progression-checkpoints.md](named-progression-checkpoints.md) | Named safe/rested capture and independent short continuations: authoring, normalization, provenance and exact runner commands. |
 | [briefs/named-checkpoint-acceptance.md](briefs/named-checkpoint-acceptance.md) | Implementation checks and bounded real-server capture/restore acceptance evidence; proposed short Volcano use. |
