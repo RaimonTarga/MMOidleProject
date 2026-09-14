@@ -2,6 +2,7 @@ import { applyBuild } from "../loadout/apply";
 import { ObservationWindow } from "./observationWindow";
 import { BuildError, buildKey, buildRP, validateBuild, observedBuild, type DesiredBuild } from "../loadout/loadout";
 import {
+  GAME_CONFIG,
   ABILITY_RECIPE_DATABASE,
   RITE_RECIPE_DATABASE,
   isRiteRecipeUnlocked,
@@ -343,6 +344,8 @@ export class RouteExecutor {
       case "chooseClass":
       case "unlockSkill":
         return this.doUnlockSkill(step.skillId);
+      case "moveWithinNode":
+        return this.doMoveWithinNode(step);
       case "travel":
         return this.doTravel(step.to);
       case "farm":
@@ -454,6 +457,23 @@ export class RouteExecutor {
       system: "skills",
       detail: { skillId, selectedClass: this.deps.obs.self?.selectedClass ?? null },
     });
+  }
+
+  private async doMoveWithinNode(step: Extract<RouteStep, { type: 'moveWithinNode' }>): Promise<void> {
+    const { obs, intents } = this.deps;
+    if (obs.nodeId !== step.nodeId) throw new InvalidTreatmentError('Local movement requires the declared starting node');
+    if (!Number.isFinite(step.position.x) || !Number.isFinite(step.position.y) || step.position.x <= 0 || step.position.x >= GAME_CONFIG.NODE_WIDTH || step.position.y <= 0 || step.position.y >= GAME_CONFIG.NODE_HEIGHT) throw new InvalidTreatmentError('Invalid local movement destination');
+    intents.setAuto(false);
+    intents.setAutoTraverse(false);
+    const arrived = (): boolean => {
+      const self = obs.self;
+      if (!self || self.isDead || obs.nodeId !== step.nodeId) throw new InvalidTreatmentError('Local movement interrupted before its boundary');
+      return !self.auto && !self.autoTraverse &&
+        Math.hypot(self.pos.x - step.position.x, self.pos.y - step.position.y) <= 1 &&
+        Math.hypot(self.target.x - self.pos.x, self.target.y - self.pos.y) <= 1;
+    };
+    await this.emitUntil(() => intents.moveTo(step.position), arrived,
+      { timeoutMs: step.stepTimeoutMs ?? 60_000, what: `reach local boundary in ${step.nodeId}` });
   }
 
   private async doTravel(ref: NodeRef): Promise<void> {
@@ -2436,6 +2456,7 @@ function definedNumbers(record: Partial<Record<string, number>>): Record<string,
 
 function defaultLabel(step: RouteStep): string {
   switch (step.type) {
+    case "moveWithinNode": return `move:${step.nodeId}:${step.position.x},${step.position.y}`;
     case "captureCheckpoint": return `checkpoint:${step.boundaryId}`;
     case "milestone":
       return `milestone:${step.id}`;

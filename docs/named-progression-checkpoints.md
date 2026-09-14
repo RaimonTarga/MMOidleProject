@@ -4,6 +4,8 @@ Development-only infrastructure for a captured progression boundary and a separa
 
 ## Author a boundary
 
+If the preceding travel ends at a gate, author `{ type: 'moveWithinNode', nodeId: 'node-t3-sanctuary', position: { x: 2400, y: 2400 } }` first. This uses ordinary movement and requires the authoritative view to confirm stationary arrival; it is not relocation during capture.
+
 Insert `{ type: 'captureCheckpoint', boundaryId: 'pre-volcano-rested' }` after ordinary travel and recovery. Identifiers contain lowercase letters, digits and hyphens (maximum 80 characters). Each identifier can be captured once per run. Multiple names write independent `checkpoint-<name>.json` files and entries in `snapshot-index.json`. Reusing a name or artifact directory fails instead of overwriting evidence.
 
 The step disables auto and traversal, then requests a synchronous authoritative server capture after 600ms. It does not teleport or heal the character. Capture fails unless alive, stationary, full HP, out of combat, without incoming DoT, temporary buffs, casts or environmental effects. A route must explicitly wait for those conditions; a failure is not retried automatically.
@@ -49,7 +51,7 @@ Treatment comes after the common restore receipt. Equipping owned items uses ord
 
 These are infrastructure demonstration routes, not new Volcano balance experiments:
 
-1. `checkpoint-pre-volcano-capture`: imports the actual V1m Snapshot B via the existing earned-T3 path, observes two seconds of safe recovery, captures `pre-volcano-rested` and `pre-volcano-rested-second`.
+1. `checkpoint-pre-volcano-capture`: imports the actual V1m Snapshot B via the existing earned-T3 path, walks through the ordinary movement intent from the legacy gate spawn to the Sanctuary center, observes two seconds of safe recovery, captures `pre-volcano-rested` and `pre-volcano-rested-second`.
 2. `checkpoint-pre-volcano-baseline`: restores the first artifact and observes three seconds at the preserved safe boundary.
 3. `checkpoint-pre-volcano-desert-boots`: restores that identical artifact, asserts ordinary affordability, crafts and equips T2 Desert Boots at **+0**, then observes the same three seconds. It does not inherit or grant +5 Boots.
 

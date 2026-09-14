@@ -48,6 +48,8 @@ export type StepBody =
   | { type: "chooseClass"; skillId: string }
   | { type: "unlockSkill"; skillId: string }
   | { type: "travel"; to: NodeRef }
+  /** Ordinary local movement, confirmed before a safe capture or other boundary. */
+  | { type: "moveWithinNode"; nodeId: string; position: { x: number; y: number } }
   /** Auto-combat in place until `until` holds. The workhorse step. */
   | { type: "farm"; at: NodeRef; until: Condition;
       /** Additionally observe this much alive, auto-enabled time in the target area. */

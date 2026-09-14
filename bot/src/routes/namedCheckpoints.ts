@@ -1,9 +1,11 @@
+import { GAME_CONFIG } from '@mmo-idle/shared';
 import { type Route } from '../route/types';
 const safe={kind:'node' as const,nodeId:'node-t3-sanctuary'};
 const recovered={type:'fullyRecovered' as const};
-const common={version:'1.0.0',classRoot:'energy-root',frameId:'energy-heavy',stopOnFirstDeath:true,description:'Bounded named-checkpoint infrastructure demonstration, not a Volcano balance result.',completion:recovered,milestones:[]};
+const common={version:'1.0.1',classRoot:'energy-root',frameId:'energy-heavy',stopOnFirstDeath:true,description:'Bounded named-checkpoint infrastructure demonstration, not a Volcano balance result.',completion:recovered,milestones:[]};
 export const NAMED_CHECKPOINT_ROUTES: Route[]=[
   {...common,id:'checkpoint-pre-volcano-capture',startsFromTierEntry:3,steps:[
+    {type:'moveWithinNode',nodeId:safe.nodeId,position:{x:GAME_CONFIG.NODE_WIDTH/2,y:GAME_CONFIG.NODE_HEIGHT/2},stepTimeoutMs:45000},
     {type:'farm',at:safe,until:recovered,observeForMs:2000,stepTimeoutMs:60000},
     {type:'captureCheckpoint',boundaryId:'pre-volcano-rested'},
     {type:'captureCheckpoint',boundaryId:'pre-volcano-rested-second'},
