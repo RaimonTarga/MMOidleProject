@@ -29,6 +29,7 @@ top-level doc.
 | [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Activated Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
 | [briefs/bot-balance-night2-ledger.md](briefs/bot-balance-night2-ledger.md) | Closed overnight packet accounting, source audit and strategy evidence. |
 | [briefs/bot-balance-night2-handoff.md](briefs/bot-balance-night2-handoff.md) | Completed autonomous night: T2 class evidence, earned T3 transit blocker, verified lava diagnostic and next decisions. |
+| [briefs/bot-balance-v1l-operator-packet.md](briefs/bot-balance-v1l-operator-packet.md) | User-launched Luna: one unchanged Spirit bridge on the static-hazard fix, retaining Avoid Hazards and Recover First. |
 | [briefs/bot-balance-night2-a-operator-packet.md](briefs/bot-balance-night2-a-operator-packet.md) | Night 2 packet A: Cave Brace timing and Jungle Hamstring feasibility. |
 | [briefs/bot-balance-night2-a-report.md](briefs/bot-balance-night2-a-report.md) | Night 2 packet A execution: four Cave timing cases and two Jungle Hamstring cases, with terminal evidence and release hashes. |
 | [briefs/bot-balance-night2-b-report.md](briefs/bot-balance-night2-b-report.md) | Night 2 packet B bridge result: three T2 seals and earned T3, then declared first-death stop during T3 Sanctuary travel. |

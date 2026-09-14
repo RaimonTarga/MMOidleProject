@@ -30,7 +30,28 @@ execution instructions. Current source and explicit user direction take preceden
 
 ## Sequential plan
 
-### Active operating mode: autonomous Astra–Luna overnight loop
+### Active operating mode: user-launched Luna, Astra preparation and review
+
+September14 user direction supersedes autonomous dispatch: Astra prepares the
+next experiment, the user launches a Luna operator and returns the report.
+Do not spawn/continue an operator or schedule execution unless requested anew.
+Prefer bounded packets and concise analysis to conserve tokens. Ask the user
+for strategy advice or a short manual playtest when behavior remains unclear
+or progress is blocked; avoid repeated runs on the same unresolved mechanism.
+
+[V1l packet](bot-balance-v1l-operator-packet.md) is prepared, not launched.
+One unchanged Night2-C Spirit bridge on static-hazard fix6e1f1ee1, keeping
+Avoid Hazards and Recover First. The user reproduced the original lava bug
+and had another agent fix it; no post-fix human confirmation yet. Focused
+hazard tests pass and the old diagnostic now initiates escape with Recover
+First enabled. Success still requires an actual safe T3 checkpoint. No T3
+downstream probe or build/gear change in this packet.
+
+User strategy note: Cave slow can be cleansed to enable leaving the AoE;
+carry this into later Cave movement/timing hypotheses. Squire Plains thorns/
+Bramble Guard remains a separate candidate, not part of the lava-fix test.
+
+### Historical operating mode: completed autonomous Astra–Luna overnight loop
 
 Activated by the user's explicit start instruction on 2026-09-13 at21:04:42 UTC. The [overnight plan](bot-balance-autonomous-night-plan.md) has an eight-hour,20-case,four-packet ceiling and conditional experiment sequence. Deadline2026-09-14 05:04:42 UTC. Follow the active ledger for packet state; this authorization does not include gameplay balance edits.
 

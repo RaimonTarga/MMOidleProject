@@ -6,6 +6,21 @@ Source anchor: `99391c589fe7828e90de780ec95be6d1beb70100`. Concurrent uncommitte
 
 ## Decision and evidence boundaries
 
+September14 update: user manually confirmed the lava bug and had it fixed in
+`6e1f1ee11cb9c8732468b68c97ddffddd2226b41`. Static damaging features/contact
+bands now join escape planning before recovery. Focused hazard tests pass;
+the old isolated diagnostic now moves toward a safe destination with Recover
+First enabled. Live transit remains unvalidated. V1l holds Night2-C's build
+fixed, including Recover First, to test the fix. Historical lava-gap notes
+below describe the old revision, not the current implementation.
+
+Cave counterplay reminder from the user: Cleanse can remove the slow, allowing
+Step Back/movement to clear the AoE. Treat mobility restoration as a separate
+benefit from removing corrosion stacks. Check actual removed effects and
+activation timing; a Cleanse activation alone does not establish a safe exit,
+especially if another debuff is selected or the slow is reapplied. Prior
+V1k records already include a slow removal. No new Cave arm is needed for V1l.
+
 Night 2 source follow-up (`14bda8be`, then harness-only bridge `8ebfbbad`): [ledger](bot-balance-night2-ledger.md) reconstructs the two Cave losses and freezes a timing comparison. These are new hypotheses, not observed improvements. The operator has the immutable packet; no gameplay balance changed.
 
 Night2-A observed update: Cave control2/2, timed Brace2/2 and Jungle Hamstring2/2, all safe tails. Timed Brace precedes three of six slams per case by about600ms, but all boss slams still hit. It works as a timing instruction, not a dodge, and neither arm wins more often in this small sample. Jungle activates Hamstring5 times per boss; shield/slow contact is not recorded. Historical Cave losses plus contemporary control wins mean feasibility is established while consistency remains uncertain. The next test combines three known candidate wins into one actual progression history.
