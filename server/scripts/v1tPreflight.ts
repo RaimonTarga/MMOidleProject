@@ -2,12 +2,11 @@
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { emptyEquipment, emptyAttunedAbilities, emptyEquippedStances, DUNGEON_DEFS, type T1CharacterSnapshot } from '@mmo-idle/shared';
+import { emptyEquipment, emptyAttunedAbilities, emptyEquippedStances, DUNGEON_DEFS, registerDevItems, ITEM_DATABASE, type T1CharacterSnapshot } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { restoreProgressionCheckpoint, checkpointGameplayState } from '../src/admin/progressionCheckpoint';
 import { validateBuild, buildRP } from '../../bot/src/loadout/loadout';
-import { requireRoute } from '../../bot/src/routes';
 import { CAMPAIGN_T3_V1T as route } from '../../bot/src/routes/campaignT3V1t';
 import { dungeonNodeFor } from '../../bot/src/state/observation';
 const [input, output] = process.argv.slice(2);
@@ -15,6 +14,8 @@ assert(input && output && !existsSync(output), 'Exact checkpoint and NEW output 
 const bytes = readFileSync(input), sha256 = createHash('sha256').update(bytes).digest('hex');
 assert.equal(sha256, 'db973d37bd7371212665e03d06adbb7e977fb9fa964acbd347ee49aa0944ec79');
 const source = (JSON.parse(bytes.toString()) as T1CharacterSnapshot).progressionCheckpoint!;
+// Match the development server's item registry; these items are not granted.
+registerDevItems(ITEM_DATABASE);
 const blank: PersistedPlayerSlices = {
   isPlayer: { id: 'v1t', name: 'v1t' }, hasPosition: { current: { x: 300, y: 300 }, nodeId: 'node-t3-sanctuary', speed: 120 }, hasHealth: { hp: 100, maxHp: 100, recovery: 10 },
   tracksProgression: { level: 0, skillPoints: 0, playerTier: 0, currentSkillTier: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }, catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {}, bossesCleared: [], clearedNodes: [], visitedNodes: [], runesOwned: [], runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [], attunedAbilities: emptyAttunedAbilities(), knownStances: [], equippedStances: emptyEquippedStances(), activeStance: null, knownRites: [], equippedRites: [] },
@@ -24,7 +25,7 @@ const blank: PersistedPlayerSlices = {
 const world = new World(), player = world.attachPlayerEntity(blank, 'v1t');
 const restored = restoreProgressionCheckpoint(world, player, { capture: source, boundaryId: route.progressionEntry!.boundaryId, revisionPolicy: 'explicit-current-revision' });
 assert.deepEqual(checkpointGameplayState(restored.persistent), checkpointGameplayState(source.persistent));
-assert.equal(requireRoute(route.id), route);
+assert.equal(restored.definitionsHash, source.definitionsHash, 'Unexpected gameplay definition drift');
 assert.equal(restored.view.selectedRange, 'energy-range-far');
 assert.equal(restored.view.equipment.mobility, 'desert-boots-t2');
 assert.equal(restored.view.itemUpgrades['desert-boots-t2'], 5);
