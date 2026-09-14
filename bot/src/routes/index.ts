@@ -1,3 +1,4 @@
+import { CAMPAIGN_T3_V1U2_ROUTES } from './campaignT3V1u2';
 import { NAMED_CHECKPOINT_ROUTES } from './namedCheckpoints';
 import { CAMPAIGN_T3_V1R_ROUTES } from './campaignT3V1r';
 import { CAMPAIGN_T3_V1S_ROUTES } from './campaignT3V1s';
@@ -101,6 +102,7 @@ export const ROUTES = new Map<string, Route>(
     ...CAMPAIGN_T3_V1S_ROUTES,
     CAMPAIGN_T3_V1T,
     ...CAMPAIGN_T3_V1U_ROUTES,
+    ...CAMPAIGN_T3_V1U2_ROUTES,
     ...CAMPAIGN_T3_V1N_ROUTES,
     CAMPAIGN_T3_V1P_TUNDRA,
     STRIKER_T1,
