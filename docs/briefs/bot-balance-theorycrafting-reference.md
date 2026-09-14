@@ -343,3 +343,30 @@ For each future comparison retain:
 - Actual slow/movement behavior on the frozen revision, especially after the concurrent control fixes.
 
 Before authoring any template, write one sentence per slot or rule explaining its job, its cost and what observation would justify replacing it. Carry successful interactions forward into the next proposal, while retaining their encounter/class limitations. No additional user information is required to start those controlled comparisons; the missing historical rule target simply remains unknown.
+
+
+## September 14 - Heavy Spirit tempo, barrier and preparation boundary
+
+User reports a Volcano boss win with fully upgraded T3 fast Volcano weapon,
+Mountain armor/charm, Accelerant, aggressive stance and Frenzy/defenses. Current
+source maps these to Cinderlash, Summit Aegis, Bastion Heart and Offensive Stance.
+This is human-reported viability, not a reproduced bot result. V1t instead used
+GM78/T2 gear and a defensive farming kit; both guardian clears succeeded, both
+boss fights failed. Do not call that an optimal-build balance test.
+
+Transferable reasoning: attack frequency feeds per-hit class resources, but
+compare damage per attack and core penalties too. Accelerant trades 18% damage
+for cadence. HP improves a percentage barrier's capacity; Mountain armor also
+amplifies Guards and reduces the excess of large hits. T3 armor does not have
+the T4 barrier-refill rider. Offensive stance creates a survivability tradeoff,
+so evaluate the offense and defense package together before isolating effects.
+Sweep has value during guardian packs even when a single-target technique would
+be preferable against the boss. Hamstring buys uptime/spacing. Cleanse is useful
+against Swamp afflictions and Cave slow, but cannot remove environmental Heat.
+
+Match preparation boundaries before drawing conclusions. GM114 unlocks T3 +5;
+the V1s source was GM78. V1u earns the missing mastery and purchases through
+ordinary play, saving the state once, then runs independent boss replicas.
+The final build costs 37/38 RP; Expose Weakness needs a substitution. Desert Boots
+T2 +5 and earned Wisp remain deliberate differences from the unspecified human
+boots/range. No claim of globally optimal gear or canonical economy follows.

@@ -2,28 +2,31 @@
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1s
+## Current decision after V1t
 
-[V1s](bot-balance-v1s-report.md) meets the sampled sustained-farming and safe-return
-validation gates for the Wisp pursuit kit: 3/3 five-minute windows, 31–36 target
-kills per run, and 3/3 recovered returns, against 0/3 control completions. Source
-manifest hash, all six identical authoritative restores and release were verified.
-Hamstring plus Desert Boots is an accepted **viable validation package**, not a
-claim that either component alone is necessary or globally optimal.
+[V1t](bot-balance-v1t-report.md) cleared all 12 Volcano guardians and reached the
+boss in 2/2 runs, then died in the boss phase in both. Remaining boss HP and the
+identity of the second run's 550-damage terminal attack are unconfirmed. V1s's
+3/3 sustained farming and recovered returns remain valid. No new nerf is justified
+from this entry-kit result alone.
 
-Advance to [V1t](bot-balance-v1t-operator-packet.md): two independent Volcano
-dungeon/guardian/boss attempts using the first V1s pursuit **prepared** checkpoint,
-captured before farming. No new purchases or balance edits. User launches Luna;
-preparation is not execution. Broad ecology, more classes/ranges, and separating
-boots from Hamstring are deferred until the validation pass advances.
+The user reports a successful **fully upgraded T3** Heavy Spirit build: fast
+Volcano weapon, Mountain armor/charm, Accelerant, aggressive stance, Frenzy and
+defensive abilities. V1t used T2 +5 gear at GM78, Tempered/Defensive and farming
+abilities. This preparation gap is the next actionable issue.
 
-Volcano is not fully validated: dungeon/boss success remains open. No further
-Scuttler/Hound/Heat adjustment is currently justified for the viability objective.
-Later balance backlog: control fragility, Salamander damage spikes (including
-93-damage recorded hits), pack pressure and dependence on movement tools; actual
-environmental Heat/cooling telemetry before choosing a decay change. T3/T4 low
-TTK, provisional T4 fodder tuning, and other T3 boss coverage remain open.
-The inherited synthetic/25x ancestry rules out canonical economy conclusions.
+[V1u](bot-balance-v1u-operator-packet.md) is prepared, not launched: one bounded
+25x preparation run earns GM114 and the main T3 items +5, with safe checkpoints;
+then two independent 1x Volcano boss attempts reuse that earned state. Retain Wisp
+and Desert Boots T2 +5; use Cinderlash, Summit Aegis, Bastion Heart, Accelerant,
+Offensive stance, Frenzy/Sweep/Hamstring/Second Wind/Brace (37/38 RP). Preparation
+failures stop before boss testing. Astra does not dispatch Luna; user launches it.
+
+This tests package viability, not a controlled attribution to one item. Broader
+balance, Heat/cooling, T3/T4 low TTK, other class/boss coverage and canonical 1x
+economy remain open. No gameplay balance changed. Actual-input setup qualification
+and targeted TypeScript pass; the broader static bot harness stops on older V1r
+checkpoint assumptions and is not green. Full suite/live V1u have not run.
 
 ## Historical status notes through V1p/V1q
 
@@ -86,9 +89,9 @@ Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 
-Current next packet: [V1t](bot-balance-v1t-operator-packet.md), two independent
-Volcano dungeon attempts from the paid V1s preparation checkpoint. No balance
-changes, farming reruns, adaptive retries, Tundra/T4 cases or automatic follow-on.
+Current next packet: [V1u](bot-balance-v1u-operator-packet.md), earned full-T3
+preparation followed conditionally by two boss replicas; one worker, no adaptive
+retries or balance edits. Save mastery-leg checkpoints without auto-resuming failures.
 
 Historical V1p plan: [V1p](bot-balance-v1p-operator-packet.md), source `7340037d`.
 User-launched Luna runs four local Volcano diagnostics, then one isolated natural
