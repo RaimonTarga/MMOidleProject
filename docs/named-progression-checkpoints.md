@@ -82,10 +82,23 @@ pnpm experiment:release --id=<returned-restore-id>
 
 One worker, three short runs total. Any setup incompatibility stops that case; preserve artifacts rather than fixing or retrying a frozen packet. Compare both `checkpoint-restore.json` receipts before treatment, excluding fresh identity and capture timestamps, and verify treatment purchase debits/equipped state and no prefix steps. Keep input hashes and source artifacts. Release terminal services, retain volumes/artifacts under existing campaign policy.
 
-## Checks and remaining acceptance
+## First captured campaign checkpoint
+
+Captured live at Sanctuary center `(2400, 2400)` on revision `e4ee4cb9b5ad800320fd61b30975c5a06c2dafc4`. The source retains the V1m synthetic/accelerated lineage described above.
+
+```powershell
+$checkpointRevision = 'e4ee4cb9b5ad800320fd61b30975c5a06c2dafc4'
+$checkpointInput = 'C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260914t112129z-checkpoint-pre-volcano-capture/runs/001-checkpoint-pre-volcano-capture-intended-r01/artifacts/checkpoint-pre-volcano-capture-intended-2026-09-14T11-23-17-505Z-78b380cf/checkpoint-pre-volcano-rested.json'
+Get-FileHash -Algorithm SHA256 -LiteralPath $checkpointInput
+```
+
+Expected SHA256: `015a40785122af6b2a684827e344f0d2465d1b4462d6866801fbc4d9dad5cf55`.
+Use these variables with the continuation create command above. Pin this revision for the existing `same-revision` demonstration routes; a new gameplay test revision must explicitly declare current-revision reuse. Keep the original artifact and its inherited provenance with future sealed copies.
+
+## Checks and acceptance
 
 Executed focused tests: named server capture/readback, T4 specialization/unspent points, ordered Rune/Rite build, summoner slots/runtime reset, two independent worlds, immutable artifacts, unsafe/corrupt/wrong-boundary/current-definition rejection, production guard, failed-stage atomicity, and actual continuation executor behavior. Existing tier-entry bootstrap and Snapshot A/B tests remain covered.
 
-Live runner/server demonstration is deliberately delegated to command-center acceptance after integration; unit tests do not substitute for it. Its results belong in `docs/briefs/named-checkpoint-acceptance.md`. No live experiment was launched by the implementation worker.
+Command-center live acceptance passed: one corrected capture run saved two names, then two independent real-server runs restored the same file with exactly equal persistent state before treatment. One arm legally bought/equipped Desert Boots for 58 yellow essence. An initial gate-position rejection was retained and corrected through ordinary walking. Timings, hashes, evidence paths, normalization and released resources are recorded in [the acceptance report](briefs/named-checkpoint-acceptance.md). Unit tests are listed separately from this live demonstration; the complete test suite was not run.
 
 After infrastructure acceptance, propose a separately approved short Volcano route: same rested checkpoint, ordinary swarm build preparation, explicit safe-hub approach, `measurement-start` on target arrival, up to 60 seconds of natural farming, first-death stop and bounded recovery if alive. Compare the common start before treatments. The current frozen V1q experiment is untouched, and this feature changes no gameplay values.

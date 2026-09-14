@@ -26,6 +26,8 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [named-progression-checkpoints.md](named-progression-checkpoints.md) | Named safe/rested capture and independent short continuations: authoring, normalization, provenance and exact runner commands. |
+| [briefs/named-checkpoint-acceptance.md](briefs/named-checkpoint-acceptance.md) | Implementation checks and bounded real-server capture/restore acceptance evidence; proposed short Volcano use. |
 | [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Activated Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
 | [briefs/bot-balance-night2-ledger.md](briefs/bot-balance-night2-ledger.md) | Closed overnight packet accounting, source audit and strategy evidence. |
 | [briefs/bot-balance-night2-handoff.md](briefs/bot-balance-night2-handoff.md) | Completed autonomous night: T2 class evidence, earned T3 transit blocker, verified lava diagnostic and next decisions. |
