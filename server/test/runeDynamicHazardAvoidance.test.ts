@@ -2,6 +2,7 @@ import {
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
+  RESOLVED_NODE_FEATURES,
   emptyEquipment,
   getFlag,
 } from '@mmo-idle/shared';
@@ -30,6 +31,9 @@ import {
   publishToxicPool,
   updateGroundZones,
 } from '../src/systems/world/groundZones';
+import { isPlayerInHazardousNodeFeature, updateNodeFeatures } from '../src/systems/world/nodeFeatures';
+import { updateAutoIntent } from '../src/systems/world/autoIntent';
+import { runRecovery } from '../src/systems/defense/regen/recovery';
 import { updateMovement } from '../src/systems/world/movement';
 import { takeWorldLogEvents } from '../src/world/worldLog';
 import { World } from '../src/world/World';
@@ -289,6 +293,45 @@ for (const [name, movementRule] of [['chase', CHASE], ['orbit', ORBIT]] as const
       death.cause.killer.monsterName.includes('Bile Pool'),
     'hazard death should retain Bile Pool attribution',
   );
+}
+
+// Static terrain must release Recover First only after an authoritative safe exit.
+for (const nodeId of ['node-t2-swamp-01', 'node-t3-volcanic-01']) {
+  for (const avoid of [true, false]) {
+    const now = Date.now();
+    const world = new World();
+    const feature = RESOLVED_NODE_FEATURES[nodeId]?.find(f => f.damage?.targets.includes('player') && !f.blocksMovement?.includes('player'));
+    assert(feature, `${nodeId}: requires a walkable damage feature`);
+    const rules = [{ conditionId: 'always', actionId: 'wait-for-regen' }, ...(avoid ? [AVOID] : [])];
+    const slices = playerSlices(`static-${nodeId}-${avoid}`, { x: feature.shape.x, y: feature.shape.y }, rules);
+    slices.hasPosition.nodeId = nodeId;
+    const player = world.attachPlayerEntity(slices, slices.isPlayer.id);
+    Object.assign(player.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, { auto: true });
+    player.hasHealth.maxHp = 10000;
+    player.hasHealth.hp = 5000;
+    player.hasHealth.recovery = 10;
+    assert(isPlayerInHazardousNodeFeature(world, player), `${nodeId}: starts inside damage terrain`);
+    updateRuneDerivedConfig(world, now);
+    updateAutoTargets(world, now);
+    assert(!!player.isMoving === avoid, `${nodeId}: only Avoid Hazards overrides recovery`);
+    if (!avoid) continue;
+    updateAutoIntent(world);
+    assert(player.hasAutoIntent?.activeRune?.actionId === 'avoid-hazards', `${nodeId}: behavior display must show hazard escape over recovery`);
+    for (let i = 0; i < 300; i++) {
+      const tickNow = now + i * 100;
+      updateNodeFeatures(world, 100);
+      updateRuneDerivedConfig(world, tickNow);
+      updateAutoTargets(world, tickNow);
+      updateMovement(world, 100, tickNow);
+      if (!getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG)) break;
+    }
+    assert(!isPlayerInHazardousNodeFeature(world, player), `${nodeId}: must leave static terrain`);
+    assert(!getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG), `${nodeId}: must release escape ownership`);
+    assert(!player.isMoving, `${nodeId}: Recover First resumes on safe ground`);
+    const before = player.hasHealth.hp;
+    runRecovery(world, player, 1000, false, isPlayerInHazardousNodeFeature(world, player));
+    assert(player.hasHealth.hp > before, `${nodeId}: can recover after escaping`);
+  }
 }
 
 console.log('runeDynamicHazardAvoidance.test.ts: ok');

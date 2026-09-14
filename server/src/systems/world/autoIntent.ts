@@ -15,6 +15,7 @@ import {
 } from "../player/party/partySystem";
 import { isFleeing } from "../combat/ai/flee";
 import { getAutoTargetId } from "../combat/ai/targetPriority";
+import { DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG } from "../combat/ai/dynamicHazardAvoidance";
 import {
   RUNE_FOCUS_ELITES_FLAG,
   RUNE_FOLLOW_LEADER_FLAG,
@@ -23,6 +24,7 @@ import {
   RUNE_TACTICAL_RELOAD_FLAG,
   RUNE_EVADE_TELEGRAPH_FLAG,
   RUNE_KEEP_DISTANCE_FLAG,
+  RUNE_AVOID_NODE_HAZARDS_FLAG,
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
   getRuneDecisions,
@@ -92,6 +94,19 @@ function resolveIntent(
       source: ruleLabel(player, "step-back"),
       activeRune: runeTrace(player, "step-back"),
       ...(overridden ? { overriddenRune: overridden } : {}),
+      travelPaused: player.fightsWhileTraveling !== undefined,
+    };
+  }
+
+  if (
+    getFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG) &&
+    getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG)
+  ) {
+    return {
+      kind: "idle",
+      reason: "Moving out of a hazard",
+      source: ruleLabel(player, "avoid-hazards"),
+      activeRune: runeTrace(player, "avoid-hazards"),
       travelPaused: player.fightsWhileTraveling !== undefined,
     };
   }

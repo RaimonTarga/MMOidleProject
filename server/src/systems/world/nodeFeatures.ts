@@ -355,7 +355,7 @@ function isFeatureDamageActive(
   return true;
 }
 
-function playerInFeatureContact(
+export function playerInFeatureContact(
   pos: Vec2,
   feature: ResolvedNodeFeature,
 ): boolean {
@@ -383,16 +383,15 @@ export function isPlayerInHazardousNodeFeature(
   world: World,
   player: PlayerEntity,
 ): boolean {
-  const nodeId = player.hasPosition.nodeId;
-  const features = RESOLVED_NODE_FEATURES[nodeId];
-  if (!features || features.length === 0) return false;
-  const pos = player.hasPosition.current;
-  for (const feature of features) {
-    if (!feature.damage?.targets.includes('player')) continue;
-    if (!isFeatureDamageActive(world, nodeId, feature)) continue;
-    if (playerInFeatureContact(pos, feature)) return true;
-  }
-  return false;
+  return activePlayerDamageFeatures(world, player.hasPosition.nodeId)
+    .some(feature => playerInFeatureContact(player.hasPosition.current, feature));
+}
+
+/** Shared by recovery suppression and automatic hazard escape. */
+export function activePlayerDamageFeatures(world: World, nodeId: string): ResolvedNodeFeature[] {
+  return (RESOLVED_NODE_FEATURES[nodeId] ?? []).filter(feature =>
+    feature.damage?.targets.includes('player') && isFeatureDamageActive(world, nodeId, feature),
+  );
 }
 
 function applyAndTickPlayerNodeFeatures(

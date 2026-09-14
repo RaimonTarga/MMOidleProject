@@ -1,10 +1,11 @@
 import {
-  distanceSq,
   geometryContains,
   getCounter,
   getFlag,
   getString,
   moverOverlapsBlockShapes,
+  pointInNodeFeatureShape,
+  pointNearNodeFeatureShapeEdge,
   setCounter,
   setFlag,
   setString,
@@ -17,11 +18,10 @@ import { actorFromPlayer } from '../../../world/worldLogActors';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import {
   activeAvoidablePersistentGroundZones,
-  pointInsideGroundZone,
   type RuntimeToxicPool,
 } from '../../world/groundZones';
 import { navigationPadForEntity, setEntityMotion, stopEntity } from '../../world/movement';
-import { resolveObstaclesForNode } from '../../world/nodeFeatures';
+import { activePlayerDamageFeatures, playerInFeatureContact, resolveObstaclesForNode } from '../../world/nodeFeatures';
 import { suppressedFeatureIdsForEntity } from '../../world/pathMotion';
 
 export const DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG = 'rune.dynamicHazardEscapeActive';
@@ -35,6 +35,36 @@ const ESCAPE_SAMPLE_ANGLES = 64;
 // the runtime blocker it just escaped.
 const ESCAPE_CLEARANCE = 28;
 const NODE_MARGIN = 40;
+
+interface EscapeHazard {
+  id: string;
+  sourceId: string;
+  pos: Vec2;
+  radius: number;
+  contains: (pos: Vec2, clearance: number) => boolean;
+}
+
+function persistentHazards(world: World, nodeId: string, now: number): EscapeHazard[] {
+  return [
+    ...activeAvoidablePersistentGroundZones(world, nodeId, now).map(zone => ({
+      ...zone,
+      contains: (pos: Vec2, clearance: number) => geometryContains(zone.geometry, pos, clearance),
+    })),
+    ...activePlayerDamageFeatures(world, nodeId).map(feature => {
+      const shape = feature.shape;
+      const band = feature.damage?.contactBandPx ?? 0;
+      return {
+        id: `node-feature:${feature.id}`,
+        sourceId: feature.damage!.effectId,
+        pos: { x: shape.x, y: shape.y },
+        radius: (shape.kind === 'circle' ? shape.radius : Math.hypot(shape.halfW, shape.halfH)) + band,
+        contains: (pos: Vec2, clearance: number) => clearance === 0
+          ? playerInFeatureContact(pos, feature)
+          : pointInNodeFeatureShape(pos, shape) || pointNearNodeFeatureShapeEdge(pos, shape, band + clearance),
+      };
+    }),
+  ];
+}
 
 function zoneIds(player: PlayerEntity): Set<string> {
   const stored = getString(player.tracksCombat, ESCAPE_ZONE_IDS_KEY);
@@ -55,7 +85,7 @@ function clearEscapeState(player: PlayerEntity): void {
 function recordEscape(
   world: World,
   player: PlayerEntity,
-  hazards: readonly RuntimeToxicPool[],
+  hazards: readonly Pick<EscapeHazard, 'id' | 'sourceId'>[],
   phase: 'attempt' | 'result',
   outcome?: 'success' | 'failed' | 'expired' | 'interrupted',
   reason?: string,
@@ -95,13 +125,13 @@ function standable(world: World, player: PlayerEntity, pos: Vec2): boolean {
 
 function safeFromAllPersistentHazards(
   pos: Vec2,
-  hazards: readonly RuntimeToxicPool[],
+  hazards: readonly EscapeHazard[],
 ): boolean {
-  return hazards.every((hazard) => !geometryContains(hazard.geometry, pos, ESCAPE_CLEARANCE));
+  return hazards.every((hazard) => !hazard.contains(pos, ESCAPE_CLEARANCE));
 }
 
-function insideAvoidanceEnvelope(pos: Vec2, hazard: RuntimeToxicPool): boolean {
-  return geometryContains(hazard.geometry, pos, ESCAPE_CLEARANCE);
+function insideAvoidanceEnvelope(pos: Vec2, hazard: EscapeHazard): boolean {
+  return hazard.contains(pos, ESCAPE_CLEARANCE);
 }
 
 function storedDestination(player: PlayerEntity): Vec2 | null {
@@ -116,8 +146,8 @@ export function findPersistentHazardEscapeDestination(
   player: PlayerEntity,
   now: number,
 ): Vec2 | null {
-  const hazards = activeAvoidablePersistentGroundZones(world, player.hasPosition.nodeId, now);
-  const threats = hazards.filter((hazard) => pointInsideGroundZone(hazard, player.hasPosition.current));
+  const hazards = persistentHazards(world, player.hasPosition.nodeId, now);
+  const threats = hazards.filter((hazard) => hazard.contains(player.hasPosition.current, 0));
   if (threats.length === 0) return null;
 
   const from = player.hasPosition.current;
@@ -163,7 +193,7 @@ export function findPersistentHazardEscapeDestination(
 }
 
 /**
- * Claim movement while inside a hostile persistent runtime hazard. Returns true
+ * Claim movement while inside a persistent damage hazard. Returns true
  * exactly while this temporary response owns the ordinary auto-movement channel.
  */
 export function steerOutOfPersistentHazards(
@@ -171,22 +201,24 @@ export function steerOutOfPersistentHazards(
   player: PlayerEntity,
   now: number,
 ): boolean {
-  const hazards = activeAvoidablePersistentGroundZones(world, player.hasPosition.nodeId, now);
+  const hazards = persistentHazards(world, player.hasPosition.nodeId, now);
   const active = getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG);
   const threats = hazards.filter((hazard) =>
     active
       ? insideAvoidanceEnvelope(player.hasPosition.current, hazard)
-      : pointInsideGroundZone(hazard, player.hasPosition.current),
+      : hazard.contains(player.hasPosition.current, 0),
   );
   const trackedIds = zoneIds(player);
 
   if (threats.length === 0) {
     if (active) {
-      const trackedHazards = (world.groundZones.get(player.hasPosition.nodeId) ?? [])
-        .filter((zone): zone is RuntimeToxicPool =>
-          zone.kind === 'toxic-pool' && trackedIds.has(zone.id),
-        );
-      const stillLive = trackedHazards.some((zone) => now < zone.expiresAtMs);
+      const trackedHazards = [
+        ...hazards.filter(hazard => trackedIds.has(hazard.id)),
+        ...(world.groundZones.get(player.hasPosition.nodeId) ?? []).filter((zone): zone is RuntimeToxicPool =>
+          zone.kind === 'toxic-pool' && trackedIds.has(zone.id) && !hazards.some(hazard => hazard.id === zone.id),
+        ),
+      ];
+      const stillLive = hazards.some(hazard => trackedIds.has(hazard.id));
       recordEscape(
         world,
         player,
@@ -239,7 +271,7 @@ export function steerOutOfPersistentHazards(
   );
   // The starting point is deliberately inside the hazard, so this one escape
   // request plans only against real collision. Once safe, ordinary paths include
-  // dynamic hazards again and cannot immediately route back through the pool.
+  // persistent hazards again and cannot immediately route back through the pool.
   setEntityMotion(world, player, destination, {
     mode: resolved === destination ? 'direct' : 'path',
     avoidHazards: false,
