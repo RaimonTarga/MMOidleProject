@@ -87,8 +87,7 @@ export async function writeHitboxArtifact(outPath = artifactPath()): Promise<str
   return outPath;
 }
 
-export function hydrateHitboxCacheFromArtifact(): number {
-  const filePath = artifactPath();
+export function hydrateHitboxCacheFromArtifact(filePath = artifactPath()): number {
   if (!existsSync(filePath)) return 0;
   const artifact = JSON.parse(readFileSync(filePath, 'utf8')) as HitboxArtifact;
   cache = rowsToCache(artifact.rows);
