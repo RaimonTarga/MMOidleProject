@@ -23,6 +23,8 @@ import { readFileSync } from "node:fs";
 const earnedT1State = JSON.parse(readFileSync(path.resolve(__dirname, "../../server/test/fixtures/v1d-earned-t1-state.json"), "utf8")).state;
 const earnedT1Profile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1, snapshotKind: "tier2-handoff",
   snapshotId: "v1d-regression", frameId: null, state: earnedT1State } as T1CharacterSnapshot, "node-clearing", 1);
+const earnedT3Profile = tierEntryProfileFromT1Snapshot(JSON.parse(readFileSync(
+  path.resolve(__dirname, "../../server/test/fixtures/v1m-earned-t3-snapshot.json"), "utf8")), "node-t3-sanctuary", 3);
 import { evaluate, resolveNearCandidates, resolveNode, resolveNodeCandidates } from "./route/conditions";
 import { POLICIES, requirePolicy } from "./policy/profiles";
 import { TIER_ENTRY_PROFILES } from "./tierEntry/profiles";
@@ -492,7 +494,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     // Tier-2 route as a fresh character equipping runes it never crafted and a
     // Global Mastery of zero -- both false, and both would block correct routes.
     const entryProfile = route.startsFromTierEntry
-      ? [earnedT1Profile, ...TIER_ENTRY_PROFILES.values()].find(
+      ? [earnedT1Profile, earnedT3Profile, ...TIER_ENTRY_PROFILES.values()].find(
           (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
         )
       : undefined;
@@ -713,7 +715,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     // ("equipped only after crafting", "slotted only after learning") mean the
     // same thing for a Tier-2 route as they do for a Tier-1 one.
     const entry = route.startsFromTierEntry
-      ? [earnedT1Profile, ...TIER_ENTRY_PROFILES.values()].find(
+      ? [earnedT1Profile, earnedT3Profile, ...TIER_ENTRY_PROFILES.values()].find(
           (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
         )
       : undefined;

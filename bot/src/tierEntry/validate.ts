@@ -117,13 +117,17 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
   );
   c.ok(
     "no-unearned-skill-points",
-    profile.skillPoints === (profile.targetTier === 3 ? 1 : 0),
-    `${profile.skillPoints} unspent skill point(s): expected one for an unbranched T3 handoff, zero for earlier entries`,
+    profile.skillPoints === (profile.targetTier === 3 && !profile.selectedRange ? 1 : 0),
+    `${profile.skillPoints} unspent skill point(s): expected one for unbranched T3, zero after branch purchase or at earlier tiers`,
   );
 
   if (profile.targetTier === 3) c.ok("earned-t3-entry",
     sealsHeldAtTier(profile.bossesCleared, 2) >= sealsRequiredForTier(2),
-    "T3 entry requires the observed T2 seals; the single branch point remains unspent");
+    "T3 entry requires the observed T2 seals");
+  const range = profile.selectedRange ? SKILL_TREE.get(profile.selectedRange) : undefined;
+  c.ok("earned-range", !profile.selectedRange || Boolean(profile.targetTier === 3 && range &&
+    range.tier === 2 && range.classId === profile.classRoot && range.id.includes("-range-")),
+    "Range must be a same-class T3 earned branch");
 
   // Spawn.
   const spawn = NODE_BIOMES[profile.spawnNodeId];
@@ -295,9 +299,9 @@ export function validateSpawn(profile: TierEntryProfile, self: PlayerView): Vali
     `frame ${profile.frameId} not in unlockedSkills [${self.unlockedSkills.join(", ")}]`,
   );
   c.ok(
-    "live-no-branch",
-    self.selectedRange === null,
-    `selectedRange is "${self.selectedRange}" -- a tier-entry character has no range node yet`,
+    "live-preserved-branch",
+    self.selectedRange === (profile.selectedRange ?? null) && (!profile.selectedRange || self.unlockedSkills.includes(profile.selectedRange)),
+    `selectedRange is "${self.selectedRange}"; expected "${profile.selectedRange ?? null}" with its unlock preserved`,
   );
   c.ok("live-tier", self.playerTier === profile.targetTier, `playerTier is ${self.playerTier}`);
   c.ok("live-level", self.level === profile.level, `level is ${self.level}, expected ${profile.level}`);

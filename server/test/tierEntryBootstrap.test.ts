@@ -12,7 +12,7 @@ import {
   type TierEntryProfile,
 } from "@mmo-idle/shared";
 import { readFileSync } from "node:fs";
-import { validateSpawn } from "../../bot/src/tierEntry/validate";
+import { validateProfile, validateSpawn } from "../../bot/src/tierEntry/validate";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { applyTierEntryProfile } from "../src/admin/gameActions";
 import { World } from "../src/world/World";
@@ -251,3 +251,27 @@ assert(t3Result.success && t3Result.spawnView, t3Result.reason ?? "T3 entry appl
 assert(t3Result.spawnView.playerTier === 3 && t3Result.spawnView.skillPoints === 1, "T3 tier and point retained");
 assert(t3Result.spawnView.selectedRange === null && t3Result.spawnView.unlockedSkills.length === 2, "no branch granted");
 assert(validateSpawn(t3Profile, t3Result.spawnView).pass, "T3 handoff strict live comparison passes");
+const branchedProfile = { ...t3Profile, selectedRange: "cadence-range-far", skillPoints: 0 };
+const branchedResult = applyTierEntryProfile(world, player, branchedProfile);
+assert(branchedResult.success && branchedResult.spawnView, branchedResult.reason ?? "earned branch imports");
+assert(validateSpawn(branchedProfile, branchedResult.spawnView).pass, "branched live entry validates");
+assert(branchedResult.spawnView.unlockedSkills.includes("cadence-range-far") && branchedResult.spawnView.attackRange > t3Result.spawnView.attackRange, "branch persists and authoritative stats rebuild");
+for (const patch of [{ selectedRange: "energy-range-far" }, { skillPoints: 1 }, { targetTier: 2 }, { bossesCleared: [] }]) {
+  assert(!applyTierEntryProfile(world, player, { ...branchedProfile, ...patch }).success, "reject wrong class, free point, early branch or missing seals");
+}
+
+// Read-only qualification of the actual earned checkpoint in this in-memory world.
+{
+  const checkpointPath = process.argv[2] ?? new URL("./fixtures/v1m-earned-t3-snapshot.json", import.meta.url);
+  const raw = readFileSync(checkpointPath, "utf8");
+  const snapshot = JSON.parse(raw) as T1CharacterSnapshot;
+  const actual = tierEntryProfileFromT1Snapshot(snapshot, "node-t3-sanctuary", 3);
+  const staticReport = validateProfile(actual);
+  assert(staticReport.pass, JSON.stringify(staticReport.findings));
+  const applied = applyTierEntryProfile(world, player, actual);
+  assert(applied.success && applied.spawnView, applied.reason ?? "actual checkpoint applies");
+  const liveReport = validateSpawn(actual, applied.spawnView);
+  assert(liveReport.pass, JSON.stringify(liveReport));
+  assert(readFileSync(checkpointPath, "utf8") === raw, "actual snapshot unchanged");
+  console.log("Actual earned T3 checkpoint: static and authoritative spawn qualification PASS");
+}

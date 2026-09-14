@@ -16,6 +16,7 @@ import {
   RESOLVED_NODE_FEATURES,
   RUNE_ALTAR_FEATURE_ID,
   SKILL_TREE,
+  sealsHeldAtTier, sealsRequiredForTier,
   TEST_ROOM_NODE_ID,
   runeIdsFromCraftedRecipes,
   normalizeAttunedAbilities,
@@ -316,6 +317,11 @@ export function applyTierEntryProfile(
   const root = SKILL_TREE.get(profile.classRoot);
   const rootOnly = profile.targetTier === 1;
   const frame = profile.frameId ? SKILL_TREE.get(profile.frameId) : undefined;
+  const range = profile.selectedRange ? SKILL_TREE.get(profile.selectedRange) : undefined;
+  if (profile.selectedRange && (profile.targetTier !== 3 || !range || range.tier !== 2 ||
+      range.classId !== profile.classRoot || !range.id.includes('-range-') ||
+      profile.skillPoints !== 0 || profile.currentSkillTier !== 3 ||
+      sealsHeldAtTier(profile.bossesCleared, 2) < sealsRequiredForTier(2))) return fail('Invalid earned range branch.');
   if (!root || root.tier !== 0 || root.classId !== profile.classRoot) {
     return fail('Profile class root is invalid.');
   }
@@ -446,10 +452,11 @@ export function applyTierEntryProfile(
   player.holdsInventory.equipment = equipment;
   player.holdsInventory.itemUpgrades = itemUpgrades;
   player.usesSkills.unlockedSkills = frame ? [root.id, frame.id] : [root.id];
+  if (range) player.usesSkills.unlockedSkills.push(range.id);
   player.usesSkills.passives = {};
   player.usesSkills.selectedClass = root.id;
   player.usesSkills.selectedSubVariant = frame?.subVariantId ?? null;
-  player.usesSkills.selectedRange = null;
+  player.usesSkills.selectedRange = range?.id ?? null;
   player.usesSkills.combatArchetype = archetype;
   player.usesAutocombat.auto = false;
   player.usesAutocombat.autoTraverse = false;

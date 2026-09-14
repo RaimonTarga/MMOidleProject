@@ -5,6 +5,7 @@ import { STARTER_RUNE_IDS } from "../runeDatabase";
 import { runeIdsFromCraftedRecipes } from "../runeRecipes";
 import { globalMastery, maxGlobalMasteryAtTier } from "../config/gameConfig";
 import { sealsHeldAtTier, sealsRequiredForTier } from "../systems/tierAdvancement";
+import { SKILL_TREE } from "../skillTree";
 
 /** Versioned JSON contract written by a canonical T1 route at A/B boundaries. */
 export const T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION = 1 as const;
@@ -208,9 +209,9 @@ export function tierEntryProfileFromT1Snapshot(
 
   const state = snapshot.state;
   if (state.playerTier !== entryTier) throw new Error("Snapshot player tier does not match the requested entry tier");
-  if (entryTier === 3 && (snapshot.snapshotKind !== "tier2-handoff" || state.selectedRange !== null ||
+  if (entryTier === 3 && (snapshot.snapshotKind !== "tier2-handoff" ||
       sealsHeldAtTier(state.bossesCleared, 2) < sealsRequiredForTier(2))) {
-    throw new Error("T3 entry requires an earned T2 seal handoff with its range branch unspent");
+    throw new Error("T3 entry requires an earned T2 seal handoff");
   }
   if (resumePreparedT2 && (entryTier !== 2 || snapshot.snapshotKind !== "tier2-handoff" ||
       state.playerTier !== 2 || globalMastery(state.biomeLevel) !== maxGlobalMasteryAtTier(2) ||
@@ -227,13 +228,20 @@ export function tierEntryProfileFromT1Snapshot(
   if ((!rootOnly && state.playerTier < 2) || state.currentSkillTier !== state.playerTier) {
     throw new Error("T1 handoff snapshot is not at a valid T2 skill tier");
   }
-  if (state.skillPoints !== (entryTier === 3 ? 1 : 0)) {
-    throw new Error("Snapshot skill points do not match the requested unbranched tier entry");
+  const range = state.selectedRange ? SKILL_TREE.get(state.selectedRange) : undefined;
+  if (state.selectedRange !== null && (entryTier !== 3 || !range || range.tier !== 2 ||
+      range.classId !== classRoot || !range.id.includes("-range-") ||
+      state.selectedSubVariant !== SKILL_TREE.get(frameId ?? "")?.subVariantId)) {
+    throw new Error("Snapshot has an unsupported range branch");
+  }
+  if (state.skillPoints !== (entryTier === 3 && !range ? 1 : 0)) {
+    throw new Error("Snapshot skill points do not match its tier and preserved branch");
   }
   // Passive nodes are derived from persistent skill, stance, equipment, and
   // item-upgrade state. Keep them in the snapshot for auditability, but let the
   // authoritative tier-entry path rebuild them from that persistent state.
   const expectedSkills = rootOnly ? [classRoot] : [classRoot, frameId];
+  if (range) expectedSkills.push(range.id);
   if (JSON.stringify(state.unlockedSkills) !== JSON.stringify(expectedSkills)) {
     throw new Error("T1 handoff snapshot has an unsupported skill-tree unlock set");
   }
@@ -285,14 +293,15 @@ export function tierEntryProfileFromT1Snapshot(
     targetTier: state.playerTier,
     classRoot,
     frameId,
+    selectedRange: state.selectedRange,
     spawnNodeId,
     economyPolicy:
       resumePreparedT2 || snapshot.snapshotKind === "experiment-checkpoint" || (entryTier === 3 && !snapshot.canonicalAtCapture)
         ? "synthetic-combat-progression"
         : "authoritative-economy-continuation",
-    ...(resumePreparedT2 || snapshot.snapshotKind === "experiment-checkpoint"
+    ...(resumePreparedT2 || snapshot.snapshotKind === "experiment-checkpoint" || entryTier === 3
       ? {
-          checkpointKind: resumePreparedT2 ? "prepared-t2" as const : snapshot.checkpointKind,
+          checkpointKind: entryTier === 3 ? "earned-t3" as const : resumePreparedT2 ? "prepared-t2" as const : snapshot.checkpointKind,
           checkpointSourceNodeId: snapshot.checkpointSourceNodeId ?? state.runtime.nodeId,
         }
       : {}),

@@ -225,6 +225,14 @@ try {
   assert(validateProfile(t3Profile).pass, "earned T3 point and previous-tier mastery validate");
   assert(t3Profile.skillPoints === 1 && t3Profile.economyPolicy === "synthetic-combat-progression", "T3 import preserves point and synthetic provenance");
   assert(JSON.stringify(t3) === t3Before, "T3 import never rewrites the source");
+  const branched = structuredClone(t3);
+  branched.state.selectedRange = `${branched.state.classRoot}-range-far`.replace("-root-range", "-range");
+  branched.state.unlockedSkills.push(branched.state.selectedRange);
+  branched.state.skillPoints = 0;
+  const branchedBefore = JSON.stringify(branched);
+  const branchProfile = tierEntryProfileFromT1Snapshot(branched, "node-t3-sanctuary", 3);
+  assert(validateProfile(branchProfile).pass && branchProfile.selectedRange === branched.state.selectedRange, "strict T3 conversion preserves earned branch");
+  assert(JSON.stringify(branched) === branchedBefore, "branched snapshot remains unchanged");
   for (const patch of [{ skillPoints: 0 }, { skillPoints: 2 }, { playerTier: 2 }, { selectedRange: "ranged" },
     { bossesCleared: [...prepared.state.bossesCleared, "plains:2", "forest:2"] }]) {
     const bad = { ...t3, state: { ...t3.state, ...patch } };

@@ -25,7 +25,7 @@ export type TierEntryEconomyPolicy =
   | "authoritative-economy-continuation";
 
 /** Named intermediate states used by the controlled T2 replication lab. */
-export type TierCheckpointKind = "j0" | "j3" | "d0" | "prepared-t2";
+export type TierCheckpointKind = "j0" | "j3" | "d0" | "prepared-t2" | "earned-t3";
 
 export interface TierEntryProfile {
   id: string;
@@ -33,6 +33,8 @@ export interface TierEntryProfile {
   classRoot: string;
   /** Null for root-only T1 encounter entry; otherwise the selected tier-1 frame. */
   frameId: string | null;
+  /** Preserved earned range branch for T3 handoffs; omitted for earlier entries. */
+  selectedRange?: string | null;
   /** T2 profiles spawn at the T2 Sanctuary; later tiers may use their own hub. */
   spawnNodeId: string;
   economyPolicy: TierEntryEconomyPolicy;
