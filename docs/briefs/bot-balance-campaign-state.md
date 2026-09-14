@@ -1,6 +1,33 @@
 # Bot balance campaign state
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
+
+## Current decision after V1s
+
+[V1s](bot-balance-v1s-report.md) meets the sampled sustained-farming and safe-return
+validation gates for the Wisp pursuit kit: 3/3 five-minute windows, 31–36 target
+kills per run, and 3/3 recovered returns, against 0/3 control completions. Source
+manifest hash, all six identical authoritative restores and release were verified.
+Hamstring plus Desert Boots is an accepted **viable validation package**, not a
+claim that either component alone is necessary or globally optimal.
+
+Advance to [V1t](bot-balance-v1t-operator-packet.md): two independent Volcano
+dungeon/guardian/boss attempts using the first V1s pursuit **prepared** checkpoint,
+captured before farming. No new purchases or balance edits. User launches Luna;
+preparation is not execution. Broad ecology, more classes/ranges, and separating
+boots from Hamstring are deferred until the validation pass advances.
+
+Volcano is not fully validated: dungeon/boss success remains open. No further
+Scuttler/Hound/Heat adjustment is currently justified for the viability objective.
+Later balance backlog: control fragility, Salamander damage spikes (including
+93-damage recorded hits), pack pressure and dependence on movement tools; actual
+environmental Heat/cooling telemetry before choosing a decay change. T3/T4 low
+TTK, provisional T4 fodder tuning, and other T3 boss coverage remain open.
+The inherited synthetic/25x ancestry rules out canonical economy conclusions.
+
+## Historical status notes through V1p/V1q
+
+The following older status text is retained as history; the current decision above supersedes it.
 Current: [V1p](bot-balance-v1p-report.md) closed: all four Volcano kits died
 before a kill; Tundra completed its farming window but died returning, so safe
 transit remains open. User approved fodder correction: T3 Scuttler650HP/45attack,
@@ -59,9 +86,9 @@ Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 
-Current next packet: [V1q](bot-balance-v1q-operator-packet.md), source `e9577ec4`.
-Four local Volcano cases only; reuse the V1p runner at the new revision. No live
-Tundra rerun, Docker, T4 case or automatic follow-on. Setup and focused checks pass.
+Current next packet: [V1t](bot-balance-v1t-operator-packet.md), two independent
+Volcano dungeon attempts from the paid V1s preparation checkpoint. No balance
+changes, farming reruns, adaptive retries, Tundra/T4 cases or automatic follow-on.
 
 Historical V1p plan: [V1p](bot-balance-v1p-operator-packet.md), source `7340037d`.
 User-launched Luna runs four local Volcano diagnostics, then one isolated natural

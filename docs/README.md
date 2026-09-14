@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-v1t-operator-packet.md](briefs/bot-balance-v1t-operator-packet.md) | Prepared Volcano dungeon/boss validation: two independent attempts from the paid V1s pursuit checkpoint; no new balance changes. |
 | [briefs/bot-balance-v1s-operator-packet.md](briefs/bot-balance-v1s-operator-packet.md) | Prepared six checkpoint runs testing repeatable five-minute Volcano farming and recovered returns with unchanged control/pursuit builds. |
 | [briefs/bot-balance-v1r-operator-packet.md](briefs/bot-balance-v1r-operator-packet.md) | Prepared three short named-checkpoint Volcano screens: control, focused targeting, and paid pursuit counterplay; no further balance edits. |
 | [named-progression-checkpoints.md](named-progression-checkpoints.md) | Named safe/rested capture and independent short continuations: authoring, normalization, provenance and exact runner commands. |
