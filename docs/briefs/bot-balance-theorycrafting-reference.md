@@ -6,6 +6,20 @@ Source anchor: `99391c589fe7828e90de780ec95be6d1beb70100`. Concurrent uncommitte
 
 ## Decision and evidence boundaries
 
+September14 pursuit correction (V1o source `91690dd4`): never compare player
+speed only to a pursuing monster's base stat. Global anti-kiting grants a150
+speed floor after500ms chase and an uncapped1.5/sec multiplier ramp. Time decays
+at2x in attack reach, rather than resetting immediately on a landed hit. Chill
+reduces escape speed and slows player attack cadence, compounding exposure.
+Hamstring applies a movement multiplier after the ramp; Desert Boots' kite
+bonus requires actually moving away from an engaged target. Evaluate slow
+uptime, armed-technique competition, conditional boot activation and contacts,
+not just theoretical speed. These controls may buy time without preventing
+all hits. V1o tests both independently and together under Heavy/Chill. Ask the
+user when intended mechanics are unclear; their anti-kiting reminder corrected
+the initial V1n audit. Future validation uses melee branches for melee classes
+and medium range for ranged classes; Wisp is retained here only for diagnosis.
+
 September14 update: user manually confirmed the lava bug and had it fixed in
 `6e1f1ee11cb9c8732468b68c97ddffddd2226b41`. Static damaging features/contact
 bands now join escape planning before recovery. Focused hazard tests pass;

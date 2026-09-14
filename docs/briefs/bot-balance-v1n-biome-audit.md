@@ -111,12 +111,16 @@ Chill authors one stack immediately, then every4s to6: up to30% movement loss
 and24% added attack cooldown (about19.4% fewer attacks per second, not24%).
 Glacier Bear has no ambient-damage scaling; Chill can prolong contact/kill time,
 but does not directly explain its163 hit. At full authored Chill the entry's
-187 speed would still be130.9 before other movement effects, versus the bear's
-22. Wisp's222 reach also substantially exceeds the bear's15. Those facts make
-three melee contacts worth diagnosing rather than declaring Chill sufficient
-explanation. Geometry, path choices, targeting, actual movement ownership and
-intermittent stops are unobserved. Sweep is armed, not a ranged cast that by
-itself roots the player for a wind-up.
+187 speed would still be130.9 before other movement effects. However, the
+initial audit incorrectly compared that against the bear's base22 speed without
+the global anti-kiting ramp. Following the user's correction, source inspection
+confirms a500ms chase grace, then a150 minimum speed and uncapped ramp at1.5
+multiplier per second of excess chase. The timer decays at2x while in attack
+reach; it does not immediately reset on a landed hit. Repeated contact is thus
+plausible without a bot defect. Historical ramp values, geometry and motion are
+unobserved. Hamstring slows movement after the ramp; Desert Boots add conditional
+speed while moving away from the engaged target. Neither guarantees permanent
+separation. Sweep is armed, not a ranged cast that itself roots the player.
 
 Both Heat and Chill are classified as harmful ambient statuses and are eligible
 for Cleanse. That does not make Cleanse a proven solution: rank, stacks removed,
@@ -139,14 +143,18 @@ discrete monster slows, or claim it was required here without a test.
   No live lava-fix verdict, equal-mastery biome ranking or ordinary economy
   conclusion follows. Synthetic entry/reward25 taints remain.
 
-## Proposed next work, not an execution packet
+## Next work — superseded by the prepared V1o packet
+
+[V1o operator packet](bot-balance-v1o-operator-packet.md) is authoritative for
+the prepared diagnostic scope. No combat cases have been run in preparation.
 
 First instrument a short ordinary-mob diagnostic to retain positions, hitbox gap,
 target/aggro IDs, actual move destination and motion, winning Rune/movement
 owner, ambient stack/payload, ability rank/timers, HP/barrier/wards and complete
 damage events through death. Use authoritative normal combat and movement.
-Reset each diagnostic to identical full-health/full-barrier state and fixed
-progression; no accelerated acquisition. These are diagnostic fixtures, not
+Reset each diagnostic to identical full-health/full-barrier starting progression;
+ordinary1x rewards remain inside the encounter and progression changes are logged.
+These are diagnostic fixtures, not
 legitimate progression checkpoints or canonical economy runs.
 
 Keep Wisp for the initial reconstruction so branch changes do not hide the
@@ -159,12 +167,14 @@ Bound the first diagnostic matrix to eight60-second encounters, no retries:
 1. Volcano: one Scuttler, Heat off/on; fixed Hound+two-Scuttler pack, Heat off/on.
    Keep Alacrity, build, placement and seeds paired. This isolates body count
    and ambient contribution while logging contact and time-to-first-kill.
-2. Tundra: one Glacier Bear, neutral/Heavy × Chill off/on. Keep build, placement
-   and seeds paired. Inspect kiting and guard coverage, not only win/loss.
+2. Tundra: one Heavy Glacier Bear with Chill active: control, Hamstring,
+   T2 Desert Boots+5, both. Anti-kiting remains unchanged in all eight arms.
+   This replaces neutral/Heavy × Chill off/on after the user's mechanics reminder.
 
-If clean open-ground kiting fails, classify/fix the reproduced behavior defect
-before interpreting balance. If that works, test the actual node's relevant
-geometry next; an open-ground success does not vindicate natural farming.
+Use real target-node geometry, fixed simultaneous engagement and no lava or
+repopulation. Failure to maintain separation alone is not a behavior defect:
+first inspect pursuit speed, slow uptime, boot activation and movement decisions.
+These fixtures do not establish natural pack recruitment or farming viability.
 If multi-attacker pressure remains excessive with functional movement, propose
 Volcano filler-HP/pack-pressure changes before compensating with exotic builds.
 If ordinary Heavy bear hits still dominate with functional movement, propose
@@ -189,5 +199,6 @@ calling Volcano/Tundra validated or silently bypassing their bosses.
   `shared/src/systems/finalDamage.ts`, `shared/src/stances.ts`.
 - Guards and cleanse: `shared/src/abilities.ts`, `shared/src/systems/monsterDebuffs.ts`.
 - Kiting/recovery: `server/src/systems/combat/ai/autoTarget.ts`,
-  `server/src/systems/combat/ai/runeConfig.ts`.
+  `server/src/systems/combat/ai/runeConfig.ts`, `server/src/systems/combat/ai/ai.ts`,
+  `server/src/systems/world/movement.ts`, `server/src/systems/world/mobility/mobilityBoots.ts`.
 - Telemetry limitations: `bot/src/telemetry/recorder.ts` and `summary.ts`.
