@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
-Status: Autonomous Night2 closed:4 packets/12 cases,15 boss victories,1 boss loss,2 post-T3 transit deaths. Spirit has candidate wins on all seven T2 bosses and twice earned three seals continuously. Squire Plains: Mountain armor2/2, Plains1/2, all victories with safe tails. T3 remains gated by unsafe transit; isolated static-lava/Recover First behavior reproduced. No gameplay balance changes. [Morning handoff](bot-balance-night2-handoff.md).
+Status: V1l reviewed; V1m prepared, not launched. Spirit has candidate wins on all seven T2 bosses and has earned three seals continuously three times. T3 remains gated by unsafe transit: V1l died to ranged monster damage without observed lava contact. V1m spends the earned point on Wisp before travel. Squire Plains: Mountain armor2/2, Plains1/2, all victories with safe tails. No gameplay balance changes in this preparation. [Morning handoff](bot-balance-night2-handoff.md).
 V1j's original capacity stop is historical; both rerun manifests completed and released their networks automatically. [Lifecycle](bot-experiment-resource-lifecycle.md).
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
@@ -43,8 +43,18 @@ or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 T3 earned; Ash Salamander ranged93 caused the transit death with one attacker.
 Avoid Enemies was verified equipped and is starter-owned (1RP); its current
 behavior chooses a safer exit target, not a guaranteed enemy-free path.
-No lava contact/escape or DoT was recorded. Review ranged delivery and spending
-the earned range point before the next preparation; no next run dispatched.
+No lava contact/escape or DoT was recorded.
+
+[V1m packet](bot-balance-v1m-operator-packet.md) is prepared on `38116567`:
+one original-input Spirit bridge with ordinary Wisp unlock after the third seal,
+before the unchanged 28RP travel package. Wisp tests increased reach/movement
+plus its small stat bonuses as a package. First-death stop, 45-minute run cap,
+90-minute whole packet; no manifest or operator dispatched. Bot preflight and
+typechecking pass. A successful branched snapshot must be preserved unchanged;
+strict T3 import currently requires an unbranched state and needs separate
+qualification before downstream probes. Do not sacrifice earned preparation
+merely to fit the old importer. T3/T4 low mob eHP remains flagged; Volcano and
+Tundra damage remain high-risk exploration targets, not settled balance verdicts.
 
 The packet used one unchanged Night2-C Spirit bridge on static-hazard fix6e1f1ee1, keeping
 Avoid Hazards and Recover First. The user reproduced the original lava bug

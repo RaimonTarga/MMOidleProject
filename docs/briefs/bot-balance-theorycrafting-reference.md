@@ -235,6 +235,24 @@ Use a small fixed replication count and explicit stop rules in the eventual pack
 
 V1h provides a useful warning: all eight Cave cases succeeded, while low-HP margins differed and the sample was only two per arm. Expose/SW was fast there, but that does not make it the right Plains build. See [V1h assessment](bot-balance-v1h-assessment.md).
 
+## V1m: earned progression is part of preparation
+
+V1l repeated three T2 seals but died to Ash Salamander ranged damage while its
+earned range point was unspent. Avoid Enemies was already equipped; exit-target
+avoidance does not prevent all route contacts or engaged attacks. The next
+candidate spends the point ordinarily on Wisp before travel, keeping gear,
+guards, stance and movement rules fixed. Authored Wisp effects: +80 range,
++12% movement, +3% attack/HP and +2% attack speed. Greater reach and mobility
+may reduce incoming contacts and support barrier recovery; actual spacing and
+recovery uptime must be observed, not inferred from the branch description.
+
+[V1m](bot-balance-v1m-operator-packet.md) tests this whole branch package once,
+not pure range or a proven winner. Death before unlock gives no Wisp travel
+evidence. A success requires separate strict branched-snapshot import
+qualification before reuse; never remove an earned advantage merely because
+an older importer assumes it is unspent. Retain this general rule when later
+tiers offer new branches, runes and gear. No balance values change here.
+
 ## Evidence needed for reliable reuse
 
 The [human recorder](../../server/src/playtest/humanPlaytestRecorder.ts) omits named rule targets from its build snapshot. Future instrumentation should preserve `targetAbilityId`, `targetStanceId`, stance, RP breakdown and runtime revision. This pass documents the gap; it does not change telemetry or running sessions.
