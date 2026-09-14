@@ -1,5 +1,10 @@
 # V1o — Pursuit counterplay and biome pressure diagnostics
 
+Post-run erratum, V1p preparation: shared accounting gives27RP control and31RP
+with Hamstring after removing travel rules, not the26/30 prose below. Both ran
+legally within31RP. Historical execution scope/source remain unchanged; do not
+rerun this closed packet. See [report](bot-balance-v1o-report.md).
+
 Prepared 2026-09-14. User launches Luna; Astra prepares and reviews. No combat
 cases executed during preparation. Read CLAUDE.md and operate only this packet.
 No balance changes, adaptive builds, retries, extra cases or subagent dispatch.

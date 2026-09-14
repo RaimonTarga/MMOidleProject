@@ -1,13 +1,15 @@
 # Bot balance campaign state
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
-Latest: V1n closed with two farming deaths, valid profile/build entry and no
-infrastructure failure. [Read-only biome audit](bot-balance-v1n-biome-audit.md)
-reconstructs Volcano pack/Heat pressure and Heavy Glacier Bear ordinary hits.
-The user's anti-kiting reminder corrected the audit's base-speed comparison.
-V1o is prepared: eight short instrumented diagnostics, Tundra Hamstring/Desert
-Boots comparisons and Volcano roster/Heat comparisons, with pursuit unchanged.
-No combat cases launched or balance changes made. Earlier V1n-prepared text below
+Latest: [V1o](bot-balance-v1o-report.md) completed: Tundra control died, all three
+counterplay arms cleared; Volcano single mobs cleared and both three-body packs
+died. All11 execution hashes verified at review. Single-seed diagnostic evidence,
+not natural farming validation. [V1p](bot-balance-v1p-operator-packet.md) prepared:
+four Volcano swarm-kit comparisons with unchanged Heat and30-second post-clear
+tails, followed by natural Tundra farming with Hamstring/Desert Boots. Setup,
+ordinary purchase checks and bot preflight pass; no V1p combat launched.
+Heat tuning is deferred until first-pack viability and between-pack recovery are
+measured. No gameplay balance changes authorized. Earlier prepared text below
 is historical. Validation baseline preference: melee branches for melee classes,
 medium range for ranged classes; retain Wisp separately for failure reconstruction.
 Status: V1m succeeded with zero deaths and a recovered T3 Sanctuary checkpoint. Spirit has candidate wins on all seven T2 bosses and has earned three seals continuously four times. The earned Wisp checkpoint now passes strict import and authoritative spawn qualification. V1n is prepared, not launched: independent Volcano/Tundra farming screens. Squire Plains: Mountain armor2/2, Plains1/2, all victories with safe tails. No gameplay balance changes in this preparation. [V1m assessment](bot-balance-v1m-assessment.md).
@@ -48,9 +50,9 @@ Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 
-Current next packet: [V1o](bot-balance-v1o-operator-packet.md), source `91690dd4`.
-User-launched Luna operates a bounded local in-memory diagnostic, no Docker/live
-server. Setup-only validation passes all eight arms; no combat outcomes yet.
+Current next packet: [V1p](bot-balance-v1p-operator-packet.md), source `7340037d`.
+User-launched Luna runs four local Volcano diagnostics, then one isolated natural
+Tundra route if the infrastructure/setup gates pass. No automatic downstream work.
 Ask about unclear mechanics/intent; do not treat anti-kiting contact as proof
 of broken movement. Future ranged validation defaults to medium range; this
 diagnostic preserves earned Wisp to isolate the historical failure.

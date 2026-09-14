@@ -6,6 +6,28 @@ Source anchor: `99391c589fe7828e90de780ec95be6d1beb70100`. Concurrent uncommitte
 
 ## Decision and evidence boundaries
 
+V1o reviewed / V1p prepared: Hamstring and Desert Boots each turned the fixed
+Heavy/Chill bear loss into a clear; together delayed first incoming contact from
+5.9s to12s, with no Guard use. Candidate counterplay, not general farming proof.
+Swamp slow resistance is wired into ambient Chill's movement multiplier in
+`movement.ts`; it does not remove the attack-cooldown penalty. Binding Strike
+is movement denial, not attack denial when the target is already in reach.
+
+Volcano: Heat-off three-body pack still killed Wisp with no kill; Heat-on died
+sooner. Heat also grants outgoing damage and could help finish remaining bodies.
+User direction: first test swarm armor/Sweep/Bramble/on-kill recovery, then natural
+packs and chain-pulling. Leave Heat ramp-up and benefit unchanged. Swift Repose
+halves post-combat delay (2RP), but does not change the3000ms-per-stack decay;
+faster decay, if justified by measured downtime, should be a separate control
+from slower ramp-up. The user has observed cooling that feels too slow; retain
+that playtest evidence without treating a particular adjustment as approved.
+
+V1p uses Plains armor, then Bramble replacing Brace, then Plains on-kill charm.
+The armor/Guard aim to reach the first kill; on-kill recovery cannot rescue a
+kit that never kills. Track Sweep secondary-target delivery and damage spread.
+RP must come from shared accounting: V1o control27 and Hamstring31 after removing
+travel rules, not26/30. Rule count is not RP cost because fragments can be shared.
+
 September14 pursuit correction (V1o source `91690dd4`): never compare player
 speed only to a pursuing monster's base stat. Global anti-kiting grants a150
 speed floor after500ms chase and an uncapped1.5/sec multiplier ramp. Time decays
