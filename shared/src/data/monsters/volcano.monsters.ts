@@ -90,7 +90,9 @@ export const volcanoMonsterEntries = [
     // in the T3 ordinary-damage pass: a death-trace found the old value hitting
     // for 110-122 (up to 42% of a T3 arrival player's maxHP) as an ordinary hit —
     // directly contradicting its own "weak... filler" identity above.
-    stats: { hp: 1220, attack: 55, plating: 2, damageReduction: 0, speed: 64, attackRange: 12, attackCooldown: 1600, pullRange: 210 },
+    // V1q: pack fodder must die early enough to relieve pressure. V1p's four
+    // prepared kits died before a kill; approved HP 1220 -> 650, attack 55 -> 45.
+    stats: { hp: 650, attack: 45, plating: 2, damageReduction: 0, speed: 64, attackRange: 12, attackCooldown: 1600, pullRange: 210 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 25, essenceType: 'red', level: 2, biomeXp: 150 },
     // Loose cohesion/separation so the high-density biome READS as a swarm.
@@ -191,7 +193,9 @@ export const volcanoMonsterEntries = [
   ['ember-skink', {
     id: 'ember-skink', name: 'Ember Skink', color: 0xff6622,
     // Evolved swarm filler: the T3 Scuttler plus a light Burn on hit. No ramp.
-    stats: { hp: 1350, attack: 90, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
+    // Apply the same approximate fodder correction to T4 (1350 -> 720 HP,
+    // 90 -> 75 attack). T4 combat validation remains pending; authored Burn is unchanged.
+    stats: { hp: 720, attack: 75, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 47, essenceType: 'red', level: 3, biomeXp: 280 },
     // Loose cohesion/separation so the high-density biome READS as a swarm.
