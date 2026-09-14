@@ -27,15 +27,19 @@ top-level doc.
 | Doc | Why |
 |---|---|
 | [briefs/bot-balance-v1u-operator-packet.md](briefs/bot-balance-v1u-operator-packet.md) | Earn full T3 tempo/barrier preparation, then two gated Volcano boss attempts. |
+| [briefs/bot-balance-v1t-report.md](briefs/bot-balance-v1t-report.md) | V1t result: both independent Volcano runs cleared all 12 guardians and reached the named boss, then died before boss kill/progression or safe return; sealed non-canonical evidence with hashes retained and no balance edit. |
 | [briefs/bot-balance-v1t-operator-packet.md](briefs/bot-balance-v1t-operator-packet.md) | Prepared Volcano dungeon/boss validation: two independent attempts from the paid V1s pursuit checkpoint; no new balance changes. |
 | [briefs/bot-balance-v1s-operator-packet.md](briefs/bot-balance-v1s-operator-packet.md) | Prepared six checkpoint runs testing repeatable five-minute Volcano farming and recovered returns with unchanged control/pursuit builds. |
+| [briefs/bot-balance-v1s-report.md](briefs/bot-balance-v1s-report.md) | V1s result: control died in all three natural five-minute screens; pursuit completed and recovered in all three; sealed non-canonical evidence with hashes retained and no balance edit. |
 | [briefs/bot-balance-v1r-operator-packet.md](briefs/bot-balance-v1r-operator-packet.md) | Prepared three short named-checkpoint Volcano screens: control, focused targeting, and paid pursuit counterplay; no further balance edits. |
+| [briefs/bot-balance-v1r-report.md](briefs/bot-balance-v1r-report.md) | V1r result: control and pursuit completed natural Volcano observation and recovered return; focus died before the full window; one-pass, non-canonical evidence with hashes retained and no balance edit. |
 | [named-progression-checkpoints.md](named-progression-checkpoints.md) | Named safe/rested capture and independent short continuations: authoring, normalization, provenance and exact runner commands. |
 | [briefs/named-checkpoint-acceptance.md](briefs/named-checkpoint-acceptance.md) | Implementation checks and bounded real-server capture/restore acceptance evidence; proposed short Volcano use. |
 | [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Activated Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
 | [briefs/bot-balance-night2-ledger.md](briefs/bot-balance-night2-ledger.md) | Closed overnight packet accounting, source audit and strategy evidence. |
 | [briefs/bot-balance-night2-handoff.md](briefs/bot-balance-night2-handoff.md) | Completed autonomous night: T2 class evidence, earned T3 transit blocker, verified lava diagnostic and next decisions. |
 | [briefs/bot-balance-v1q-operator-packet.md](briefs/bot-balance-v1q-operator-packet.md) | Prepared four-case validation of approved Volcano fodder HP/attack reductions against retained V1p evidence; T4 adjustment remains provisional. |
+| [briefs/bot-balance-v1q-report.md](briefs/bot-balance-v1q-report.md) | V1q result: every fixed Volcano arm killed one reduced Scuttler but died before a roster clear; no post-clear tail, T4 case, live route, or balance change. |
 | [briefs/bot-balance-v1p-operator-packet.md](briefs/bot-balance-v1p-operator-packet.md) | Closed Volcano swarm-kit diagnostics and natural Tundra counterplay farming packet. |
 | [briefs/bot-balance-v1p-report.md](briefs/bot-balance-v1p-report.md) | V1p result: all four fixed Volcano swarm-kit fixtures died before a kill; one natural Tundra route farmed 300 seconds and 22 kills, then died on return transit; sealed, non-canonical evidence with hashes retained. |
 | [briefs/bot-balance-v1o-operator-packet.md](briefs/bot-balance-v1o-operator-packet.md) | Closed eight-case Tundra pursuit/Volcano pressure diagnostic packet; includes post-run RP prose correction. |
