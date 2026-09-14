@@ -65,6 +65,15 @@ armors identically first. Extra plating helps repeated small hits; Guard
 potency needs actual Guard windows. Neither armor grants T3 Mountain hit caps.
 Leave outcome and passive attribution open until measured.
 
+Night2-D measured update: Mountain armor2/2 safe victories; Plains1/2, with
+the other case dying to a47HP boss melee amid11 attackers. Observed Mountain
+317HP/30plating versus Plains281HP/40plating. This supports prepared Squire
+Plains feasibility and retaining both as candidates; it does not establish
+armor superiority. Boss-only Sweep/SW/Brace counts and complete HP/DoT tails
+are in the D report. Guard potency, kill recovery and Execution contributions
+are not separately attributed. For another boss, revisit the charm: the
+Plains kill-chain benefit need not transfer to encounters without adds.
+
 Evidence labels used below:
 
 - **Observed:** present in a recording or completed report, with that run's limitations.

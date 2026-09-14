@@ -1,6 +1,8 @@
-# Proposed autonomous overnight session
+# Autonomous overnight session plan
 
 Prepared 2026-09-13; **activated by the user's explicit green light** at 2026-09-13 21:04:42 UTC. Hard deadline 2026-09-14 05:04:42 UTC; finalization begins no later than 04:34:42 UTC. Luna operator `/root/luna_operator` spawned. See [Night 2 ledger](bot-balance-night2-ledger.md). V1k has finished.
+
+**Night 2 is now closed** after four packets and12 terminal cases; see [handoff](bot-balance-night2-handoff.md). This plan describes the completed activation, not an ongoing authorization to launch more cases.
 
 ## Objective and proposed limits
 

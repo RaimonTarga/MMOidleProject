@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
-Updated: 2026-09-13. Owner: Astra (planning and interpretation); operators: Luna.
-Status: Night2-A closed narrow Spirit candidate coverage of all seven T2 bosses; B/C each earned Plains/Forest/Desert seals and T3 continuously, but both died before Sanctuary. C restored travel ability firing and exposed environmental lava/recovery behavior. T3 probes parked; final packet D tests Squire Plains armor alternatives from its own verified checkpoint. No gameplay balance changes. See [active ledger](bot-balance-night2-ledger.md).
+Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
+Status: Autonomous Night2 closed:4 packets/12 cases,15 boss victories,1 boss loss,2 post-T3 transit deaths. Spirit has candidate wins on all seven T2 bosses and twice earned three seals continuously. Squire Plains: Mountain armor2/2, Plains1/2, all victories with safe tails. T3 remains gated by unsafe transit; isolated static-lava/Recover First behavior reproduced. No gameplay balance changes. [Morning handoff](bot-balance-night2-handoff.md).
 V1j's original capacity stop is historical; both rerun manifests completed and released their networks automatically. [Lifecycle](bot-experiment-resource-lifecycle.md).
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
