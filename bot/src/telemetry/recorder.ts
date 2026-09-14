@@ -328,6 +328,11 @@ export class Recorder {
     this.lastTickAt = startedAt;
   }
 
+  /** Prevent inherited checkpoint balances from appearing as newly minted rewards. */
+  seedProgression(self: import('@mmo-idle/shared').PlayerView): void {
+    this.lastCatalysts = { ...self.catalysts };
+    this.lastBiomeLevels = { ...self.biomeLevel };
+  }
   now(): number {
     return Date.now() - this.startedAt;
   }

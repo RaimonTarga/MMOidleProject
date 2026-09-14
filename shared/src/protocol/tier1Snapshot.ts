@@ -149,6 +149,11 @@ export interface T1SnapshotState {
 }
 
 export interface T1CharacterSnapshot {
+  /** Named boundaries extend the existing artifact; legacy readers remain strict. */
+  progressionCheckpoint?: import('./progressionCheckpoint').ProgressionCheckpointCapture;
+  inheritedProvenance?: unknown;
+  resolvedChoices?: Record<string, string>;
+  sourceTaints?: string[];
   schemaVersion: typeof T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION;
   snapshotKind: T1CharacterSnapshotKind;
   snapshotId: string;

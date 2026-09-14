@@ -537,7 +537,7 @@ export function buildSummary(params: {
       concurrencyCohortEligible:
         params.completion !== "aborted" && isolationGrade !== "harness-invalid",
       combatEvidenceEligible: isolationGrade !== "harness-invalid" && header.taints.every(
-        (taint) => taint === "SYNTHETIC_TIER_ENTRY",
+        (taint) => taint === "SYNTHETIC_TIER_ENTRY" || taint === "RESTORED_PROGRESSION_CHECKPOINT",
       ) && params.completion !== "partial",
       economyEvidenceEligible:
         params.completion === "completed" &&

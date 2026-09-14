@@ -6,6 +6,8 @@ import type {
   EvolveMode,
   FastBossRetryResult,
   StanceSlot,
+  ProgressionCheckpointResult,
+  ProgressionCheckpointRestore,
   TierEntryApplyResult,
   TierEntryProfile,
   T1EconomyArm,
@@ -153,6 +155,12 @@ export class Intents {
   }
 
   /** Dev-only bootstrap; the server remains authoritative over the applied state. */
+  captureCheckpoint(boundaryId: string): Promise<ProgressionCheckpointResult> {
+    return this.conn.request('debug:checkpointResult', () => this.conn.raw.emit('debug:captureCheckpoint', boundaryId));
+  }
+  restoreCheckpoint(request: ProgressionCheckpointRestore): Promise<ProgressionCheckpointResult> {
+    return this.conn.request('debug:checkpointResult', () => this.conn.raw.emit('debug:restoreCheckpoint', request));
+  }
   applyTierEntryProfile(profile: TierEntryProfile): Promise<TierEntryApplyResult> {
     return this.conn.request<TierEntryApplyResult>("debug:tierEntryResult", () =>
       this.conn.raw.emit("debug:applyTierEntryProfile", profile),

@@ -1,3 +1,6 @@
+import { writeFileSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { createHash } from 'node:crypto';
 import { BuildError } from "./loadout/loadout";
 import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
@@ -169,11 +172,13 @@ export async function runBot(
         `${sourceSnapshot.snapshotId} is not eligible`,
     );
   }
-  if (sourceSnapshot && !authoredRoute.startsFromTierEntry) {
+  if (sourceSnapshot && !authoredRoute.startsFromTierEntry && !authoredRoute.progressionEntry) {
     throw new Error(
       `route ${authoredRoute.id} does not declare a tier-entry start for --tierEntrySnapshot`,
     );
   }
+  if (sourceSnapshot?.progressionCheckpoint && !authoredRoute.progressionEntry) throw new Error("Named checkpoint requires an explicit continuation entry contract");
+  if (authoredRoute.progressionEntry && (!sourceSnapshot?.progressionCheckpoint || config.tierEntryProfileId || config.tierEntrySnapshotDir)) throw new Error("Named continuation requires one explicit named checkpoint file; no fallback");
   const resolvedTierEntryId = sourceSnapshot
     ? undefined
     : config.tierEntryProfileId ??
@@ -182,7 +187,7 @@ export async function runBot(
         : undefined);
   if (authoredRoute.resumePreparedT2 && !sourceSnapshot) throw new Error("Prepared T2 route requires its source snapshot");
   if (authoredRoute.startsFromTierEntry === 3 && !sourceSnapshot) throw new Error("T3 route requires an earned source snapshot");
-  const resolvedTierEntryProfile = sourceSnapshot
+  const resolvedTierEntryProfile = authoredRoute.progressionEntry ? undefined : sourceSnapshot
     ? tierEntryProfileFromT1Snapshot(sourceSnapshot,
       authoredRoute.startsFromTierEntry === 1 ? "node-clearing" : authoredRoute.startsFromTierEntry === 3 ? "node-t3-sanctuary" : "node-t2-sanctuary",
       authoredRoute.startsFromTierEntry === 1 ? 1 : authoredRoute.startsFromTierEntry === 3 ? 3 : 2, authoredRoute.resumePreparedT2)
@@ -282,6 +287,17 @@ export async function runBot(
    * never cleared.
    */
   const taints: RunTaint[] = initialRunTaints(config);
+  if (authoredRoute.progressionEntry || authoredRoute.steps.some(step=>step.type==='captureCheckpoint')) {
+    if (authoredRoute.progressionEntry) taints.push('RESTORED_PROGRESSION_CHECKPOINT');
+    let ancestor: unknown = sourceSnapshot;
+    while (ancestor && typeof ancestor === 'object') {
+      const saved = ancestor as { canonicalAtCapture?:boolean; progressionCheckpoint?:unknown; economy?:{rewardMultiplier?:number}; sourceTaints?:RunTaint[]; taints?:RunTaint[]; inheritedProvenance?:unknown };
+      for (const taint of [...(saved.sourceTaints??[]),...(saved.taints??[])]) if(!taints.includes(taint)) taints.push(taint);
+      if (saved.canonicalAtCapture === false && !saved.progressionCheckpoint && !taints.includes('SYNTHETIC_TIER_ENTRY')) taints.push('SYNTHETIC_TIER_ENTRY');
+      if (saved.economy?.rewardMultiplier !== undefined && saved.economy.rewardMultiplier !== 1 && !taints.includes('NON_CANONICAL_REWARD_MULTIPLIER')) taints.push('NON_CANONICAL_REWARD_MULTIPLIER');
+      ancestor = saved.inheritedProvenance;
+    }
+  }
   const noteRewardMultiplier = (multiplier: number): void => {
     rewardMultiplier = multiplier;
     if (multiplier !== 1 && !taints.includes("NON_CANONICAL_REWARD_MULTIPLIER")) {
@@ -396,6 +412,7 @@ export async function runBot(
     },
   });
 
+  let restoredCheckpointView: PlayerView | undefined;
   let templateValidation: TemplateValidationSummary | undefined;
   const characterId = await prepareFreshCharacter(conn, config);
   await conn.selectCharacter(characterId);
@@ -403,6 +420,23 @@ export async function runBot(
   // The world admits us asynchronously; the first snapshot names our entity.
   await waitFor(() => obs.self !== null, 60_000, "own player to appear in the world", runAbort.signal);
 
+  if (authoredRoute.progressionEntry) {
+    const entry = authoredRoute.progressionEntry;
+    const source = sourceSnapshot!.progressionCheckpoint!;
+    if (source.boundaryId !== entry.boundaryId || source.persistent.hasPosition.nodeId !== entry.nodeId || source.persistent.tracksProgression.playerTier !== entry.tier || source.persistent.usesSkills.selectedClass !== authoredRoute.classRoot) throw new Error('Wrong named checkpoint entry contract');
+    const restoreStartedAt = Date.now();
+    const result = await intents.restoreCheckpoint({ capture: source, boundaryId: entry.boundaryId, revisionPolicy: entry.revisionPolicy });
+    writeFileSync(join(sink.dir, 'checkpoint-restore.json'), JSON.stringify({
+      checkpointId: sourceSnapshot!.snapshotId, checkpointHash: createHash('sha256').update(readFileSync(resolvedSnapshotPath!)).digest('hex'),
+      source, result, changedDefinitionSections: Object.keys(source.definitionSections).filter(key=>source.definitionSections[key]!==result.capture?.definitionSections[key]), sourceRoute: {routeId:sourceSnapshot!.routeId,routeVersion:sourceSnapshot!.routeVersion,policyId:sourceSnapshot!.policyId,resolvedChoices:sourceSnapshot!.resolvedChoices}, continuation: { routeId: route.id, version: route.version, policyId: policy.id, selectedChoices, entry },
+      setupMs: restoreStartedAt-startedAt, restoreMs: Date.now()-restoreStartedAt,
+      normalized: true, skippedPreparation: 'inherited; not earned or timed in this run', inheritedProvenance: sourceSnapshot,
+    }, null, 2));
+    if (!result.success || !result.capture || result.capture.boundaryId !== entry.boundaryId || result.capture.view.id !== conn.id) throw new Error(`Checkpoint restore rejected: ${result.reason ?? 'invalid authoritative readback'}`);
+    restoredCheckpointView = result.capture.view;
+    await waitFor(() => obs.self?.nodeId === entry.nodeId && obs.self?.selectedClass === authoredRoute.classRoot, 15000, 'restored checkpoint sync', runAbort.signal);
+    for (const condition of entry.prerequisites) if (!evaluate(condition, {obs, elapsedMs:0})) throw new Error('Checkpoint continuation prerequisite failed: '+JSON.stringify(condition));
+  }
   if (tierEntryProfile) {
     const result = await intents.applyTierEntryProfile(tierEntryProfile);
     if (!result.success) {
@@ -527,9 +561,10 @@ export async function runBot(
     }
   }
 
-  const initialSelf = obs.self;
+  const initialSelf = restoredCheckpointView ?? obs.self;
   if (!initialSelf) throw new Error("own player disappeared before run-start telemetry");
 
+  if (authoredRoute.progressionEntry || authoredRoute.steps.some(step=>step.type==='captureCheckpoint')) recorder.seedProgression(initialSelf);
   const liveFrameId = initialSelf.unlockedSkills.find((id) => {
     const node = SKILL_TREE.get(id);
     return node?.tier === 1 && node.parent === initialSelf.selectedClass;
@@ -562,6 +597,9 @@ export async function runBot(
       "biomeLevel", "biomeXP", "bossesCleared", "inventory", "equipment", "itemUpgrades", "essences", "catalysts", "catalystProgress",
       "knownAbilities", "attunedAbilities", "knownStances", "attunedStances", "equippedStances", "knownRites", "equippedRites", "runesEquipped",
     ].map(key => [key, structuredClone(initialSelf[key as keyof typeof initialSelf])])),
+    checkpoint: sourceSnapshot?.progressionCheckpoint ? { snapshotId:sourceSnapshot.snapshotId,
+      sourceRevision:sourceSnapshot.progressionCheckpoint.sourceRevision,boundaryId:sourceSnapshot.progressionCheckpoint.boundaryId,
+      inheritedProvenance:sourceSnapshot.inheritedProvenance,skippedPreparation:'inherited, not measured in this continuation' } : undefined,
     initialEssences: { ...initialSelf.essences },
     initialCatalysts: { ...initialSelf.catalysts },
     tierEntry: tierEntryProfile
@@ -655,6 +693,20 @@ export async function runBot(
     fastBossRetry: config.fastBossRetry,
     fastBossRetryIncludeGuardians: config.fastBossRetryIncludeGuardians,
     leaseSession,
+    captureCheckpoint: async (boundaryId) => {
+      const result = await intents.captureCheckpoint(boundaryId);
+      if (!result.success || !result.capture || result.capture.boundaryId !== boundaryId) throw new Error(`Checkpoint capture rejected: ${result.reason ?? 'invalid response'}`);
+      const capture = result.capture;
+      const frameId = capture.view.unlockedSkills.find(id => SKILL_TREE.get(id)?.tier === 1) ?? null;
+      const snapshot = buildT1CharacterSnapshot({ kind: 'experiment-checkpoint', header, self: capture.view, frameId,
+        elapsedMs: Date.now()-startedAt, capturedAtMs:capture.capturedAtMs, rewardMultiplier:capture.rewardMultiplier, canonicalAtCapture:false });
+      snapshot.snapshotId = `${runId}-${boundaryId}`;
+      snapshot.progressionCheckpoint = capture;
+      snapshot.inheritedProvenance = sourceSnapshot ?? { source:'fresh-route', taints, skippedPrefix:false };
+      snapshot.resolvedChoices = selectedChoices;
+      snapshot.sourceTaints = [...taints];
+      snapshotStore.capture(snapshot);
+    },
     onMilestone: (id) => {
       if (id === "all-biomes-maxed") captureSnapshot("mastery-completion");
       if (route.checkpointKind && id === `checkpoint:${route.checkpointKind}`) {

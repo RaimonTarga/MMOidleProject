@@ -152,7 +152,8 @@ export type StepBody =
   | { type: "ifPossible"; when: Condition; steps: RouteStep[] }
   | { type: "assert"; condition: Condition; code?: "INVALID_TREATMENT"; message?: string }
   /** Pure telemetry marker — records that the run reached a named point. */
-  | { type: "milestone"; id: string };
+  | { type: "milestone"; id: string }
+  | { type: "captureCheckpoint"; boundaryId: string };
 
 export type RouteStep = StepBody & {
   /** Explicit authored alternatives; resolved once before the run. */
@@ -198,6 +199,9 @@ export interface Route {
    * banks zero XP (`biomeLevelCap(0, <T2 biome>) === 0`) and would farm forever.
    */
   startsFromTierEntry?: number;
+  /** Restores the sealed --tierEntrySnapshot, never a generic profile. */
+  progressionEntry?: { boundaryId: string; nodeId: string; tier: number; revisionPolicy: 'same-revision' | 'explicit-current-revision'; prerequisites: Condition[] };
+
   description: string;
   steps: RouteStep[];
   /** Run is complete when this holds. */

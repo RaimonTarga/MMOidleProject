@@ -11,6 +11,7 @@ export type RunTaint =
   | "NON_CANONICAL_FAST_BOSS_RETRY"
   | "NON_CANONICAL_SHARED_WORLD"
   | "NON_CANONICAL_EARLY_STOP"
+  | "RESTORED_PROGRESSION_CHECKPOINT"
   /** Synthetic entry state is auditable but does not invalidate combat evidence. */
   | "SYNTHETIC_TIER_ENTRY"
   | "CONTAMINATED_CONTROLLED_OVERLAP";
@@ -63,6 +64,7 @@ export interface RunHeader {
   routeVersion: string;
   policyId: string;
   startState?: Record<string, unknown>;
+  checkpoint?: { snapshotId: string; sourceRevision: string; boundaryId: string; inheritedProvenance: unknown; skippedPreparation: string };
   behavior?: { reachedChoices?: Record<string, string>; choices: Record<string, string>; upgrades: string; description: string };
   classRoot: string;
   /** Frame observed in the live PlayerView at run start. */

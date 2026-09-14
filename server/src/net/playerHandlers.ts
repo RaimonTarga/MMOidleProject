@@ -1,3 +1,4 @@
+import { captureProgressionCheckpoint, restoreProgressionCheckpoint } from '../admin/progressionCheckpoint';
 import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
@@ -689,6 +690,19 @@ export function registerPlayerHandlers(
       resetPlayerProgress(world, p);
       adminControls.emitPlayerSummaries();
     });
+
+    if (process.env.NODE_ENV !== 'production') {
+      socket.on('debug:captureCheckpoint', (boundaryId) => {
+        try { const p = liveSelf(); if (!p) throw new Error(NOT_LIVE_REASON);
+          socket.emit('debug:checkpointResult', { success: true, capture: captureProgressionCheckpoint(world, p, boundaryId) });
+        } catch (error) { socket.emit('debug:checkpointResult', { success: false, reason: String(error) }); }
+      });
+      socket.on('debug:restoreCheckpoint', (request) => {
+        try { const p = liveSelf(); if (!p) throw new Error(NOT_LIVE_REASON);
+          socket.emit('debug:checkpointResult', { success: true, capture: restoreProgressionCheckpoint(world, p, request) });
+        } catch (error) { socket.emit('debug:checkpointResult', { success: false, reason: String(error) }); }
+      });
+    }
 
     socket.on("debug:applyTierEntryProfile", (profile) => {
       const p = liveSelf();

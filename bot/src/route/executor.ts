@@ -148,6 +148,7 @@ export interface ExecutorDeps {
   leaseSession?: RouteLeaseSession;
   /** Boundary hook for exports that must be taken at a named route milestone. */
   onMilestone?: (id: string) => void;
+  captureCheckpoint?: (boundaryId: string) => Promise<void>;
 }
 
 export class RouteExecutor {
@@ -317,7 +318,7 @@ export class RouteExecutor {
 
   private hasPendingAssertions(steps: readonly RouteStep[]): boolean {
     return steps.some((step) => {
-      if (step.type === "assert") return true;
+      if (step.type === "assert" || step.type === "captureCheckpoint") return true;
       if (step.type === "ifPossible" || step.type === "repeatUntil") {
         return this.hasPendingAssertions(step.steps);
       }
@@ -327,6 +328,12 @@ export class RouteExecutor {
 
   private async runStep(step: RouteStep): Promise<void> {
     switch (step.type) {
+      case "captureCheckpoint":
+        if (!this.deps.captureCheckpoint) throw new Error('Checkpoint capture is not configured');
+        this.deps.intents.setAuto(false); this.deps.intents.setAutoTraverse(false);
+        await sleep(600);
+        await this.deps.captureCheckpoint(step.boundaryId);
+        return;
       case "milestone":
         if (this.deps.route.checkpointKind && step.id === `checkpoint:${this.deps.route.checkpointKind}`) {
           this.checkpointBoundaryReached = true;
@@ -2429,6 +2436,7 @@ function definedNumbers(record: Partial<Record<string, number>>): Record<string,
 
 function defaultLabel(step: RouteStep): string {
   switch (step.type) {
+    case "captureCheckpoint": return `checkpoint:${step.boundaryId}`;
     case "milestone":
       return `milestone:${step.id}`;
     case "chooseClass":

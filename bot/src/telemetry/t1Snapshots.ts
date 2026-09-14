@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION,
@@ -28,6 +28,7 @@ export interface T1SnapshotManifest {
   snapshotA: T1SnapshotArtifactRef | null;
   snapshotB: T1SnapshotArtifactRef | null;
   checkpoint?: T1SnapshotArtifactRef | null;
+  namedCheckpoints?: Record<string, T1SnapshotArtifactRef>;
 }
 
 export interface BuildT1SnapshotParams {
@@ -220,6 +221,7 @@ function refFor(snapshot: T1CharacterSnapshot, file: string): T1SnapshotArtifact
 
 /** Synchronously writes A/B files so the boundary state cannot be lost on exit. */
 export class T1SnapshotStore {
+  private readonly namedCheckpoints: Record<string, T1SnapshotArtifactRef> = {};
   private readonly refs: {
     a: T1SnapshotArtifactRef | null;
     b: T1SnapshotArtifactRef | null;
@@ -231,10 +233,19 @@ export class T1SnapshotStore {
   };
 
   constructor(private readonly dir: string) {
+    if (existsSync(join(dir, "snapshot-index.json"))) throw new Error("Snapshot artifact directory already has an index; use a fresh run directory");
     this.writeManifest();
   }
 
   capture(snapshot: T1CharacterSnapshot): T1SnapshotArtifactRef {
+    if (snapshot.progressionCheckpoint) {
+      const name = snapshot.progressionCheckpoint.boundaryId;
+      if (!/^[a-z0-9][a-z0-9-]{0,79}$/.test(name)) throw new Error('Invalid named checkpoint');
+      if (this.namedCheckpoints[name]) throw new Error(`Checkpoint ${name} already captured`);
+      const file = `checkpoint-${name}.json`;
+      writeFileSync(join(this.dir, file), `${JSON.stringify(snapshot, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+      const ref = refFor(snapshot, file); this.namedCheckpoints[name] = ref; this.writeManifest(); return ref;
+    }
     const isA = snapshot.snapshotKind === "mastery-completion";
     const isB = snapshot.snapshotKind === "tier2-handoff";
     const isCheckpoint = snapshot.snapshotKind === "experiment-checkpoint";
@@ -263,6 +274,7 @@ export class T1SnapshotStore {
       snapshotA: this.refs.a,
       snapshotB: this.refs.b,
       checkpoint: this.refs.checkpoint,
+      namedCheckpoints: this.namedCheckpoints,
     };
   }
 

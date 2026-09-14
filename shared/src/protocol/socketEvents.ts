@@ -12,6 +12,7 @@ import type { WorldLogEvent } from "./worldLogEvents";
 import type { Vec2 } from "../systems/spatial";
 import type { AccountCharactersPayload } from "./characters";
 import type { TierEntryApplyResult, TierEntryProfile } from "./tierEntry";
+import type { ProgressionCheckpointResult, ProgressionCheckpointRestore } from './progressionCheckpoint';
 import type {
   T1EconomyArm,
   T1EconomyExperimentConfig,
@@ -175,6 +176,7 @@ export interface ServerToClientEvents {
   "debug:playtestStatus": (status: HumanPlaytestStatus) => void;
   /** Dev-only acknowledgement for an explicit synthetic tier-entry profile. */
   "debug:tierEntryResult": (result: TierEntryApplyResult) => void;
+  'debug:checkpointResult': (result: ProgressionCheckpointResult) => void;
   /** Dev/harness-only acknowledgement for a per-player T1 economy arm. */
   "debug:economyExperimentResult": (result: {
     success: boolean;
@@ -314,6 +316,8 @@ export interface ClientToServerEvents {
   "debug:stopPlaytestLogging": () => void;
   /** Dev/harness only: apply a validated tier-entry profile to the live player. */
   "debug:applyTierEntryProfile": (profile: TierEntryProfile) => void;
+  'debug:captureCheckpoint': (boundaryId: string) => void;
+  'debug:restoreCheckpoint': (request: ProgressionCheckpointRestore) => void;
   /** Dev/harness only: apply one fixed T1 factorial arm to this player session. */
   "debug:applyEconomyExperiment": (arm: T1EconomyArm) => void;
 }
