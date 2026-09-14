@@ -2,7 +2,29 @@
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1u2
+## Current decision after V1v
+
+Tundra passed2/2: guardians, named kills, tundra:3 and safe recovered returns.
+Boss combat83.069/75.560 seconds; actual Cleanse and Break Free activations support
+counterplay effectiveness. Volcano also passed2/2. Five T3 bosses remain open;
+strong results do not yet establish complete T3 coverage or all-class balance.
+
+[V1w](bot-balance-v1w-operator-packet.md) is prepared, not launched: one independent
+screen each for Mountain, Cave, Swamp, Desert and Jungle, from first chronological
+Tundra return. Keep current +5 gear and tailor abilities for guardian groups and
+boss mechanics. Every success earns the third seal/T4; leave the skill point
+unspent and return to T3 Sanctuary. No combining independent clear states.
+
+User recommends Voidwalker for T4, again maximizing attack frequency. Source node
+energy-heavy-t3-a is a legal planned Heavy Spirit specialization after the earned
+point. Save that choice for the T4 preparation pass after this sweep is reviewed;
+no unlock or T4 execution now. Prefer Mountain's returned checkpoint if successful.
+Full T4 travel/farming/gear qualification remains ahead of boss screens.
+
+Actual-input/build/path qualification, TypeScript and tierSeals test pass. No
+balance changes, full-suite run or live V1w execution. User launches Luna.
+
+## Previous decision after V1u2
 
 Volcano package viability is accepted: two verified guardian clears, boss kills,
 authoritative volcanic:3 clears and recovered returns, with boss combat26.530/
@@ -125,9 +147,9 @@ Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 
-Current next packet: [V1v](bot-balance-v1v-operator-packet.md): two Tundra boss
-replicas from first Volcano returned checkpoint, one worker, no adaptive retries
-or balance changes.
+Current next packet: [V1w](bot-balance-v1w-operator-packet.md): five remaining T3
+boss screens, one worker, no adaptive retries or balance changes; Voidwalker T4
+preparation is the recorded next direction after review.
 
 Historical V1p plan: [V1p](bot-balance-v1p-operator-packet.md), source `7340037d`.
 User-launched Luna runs four local Volcano diagnostics, then one isolated natural

@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-v1w-operator-packet.md](briefs/bot-balance-v1w-operator-packet.md) | Five remaining T3 boss screens, earned T4 handoff and saved Voidwalker direction. |
 | [briefs/bot-balance-v1v-operator-packet.md](briefs/bot-balance-v1v-operator-packet.md) | Two Tundra boss replicas with Cleanse/Break Free and audited travel from the earned Volcano return. |
 | [briefs/bot-balance-v1u2-operator-packet.md](briefs/bot-balance-v1u2-operator-packet.md) | Resume GM96 preparation with audited waypoints and staged upgrades before gated boss replicas. |
 | [briefs/bot-balance-v1u-operator-packet.md](briefs/bot-balance-v1u-operator-packet.md) | Earn full T3 tempo/barrier preparation, then two gated Volcano boss attempts. |
