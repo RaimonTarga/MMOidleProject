@@ -272,6 +272,14 @@ single death, and accelerated mastery changes must remain visible in analysis.
 
 ## Evidence needed for reliable reuse
 
+V1n audit update: Heat and Chill are both cleansable ambient statuses, not only
+discrete slow candidates. Heavy Glacier Bear hits totaled163 before absorption;
+default low-HP Brace activated after hit two and expired before hit three.
+Neither fact proves a winning replacement: inspect contact and guard timing
+first. Volcano's pack durability and time-to-first-kill matter alongside its
+per-hit damage. Do not interpret telemetry `totalHealed` as HP restoration; it
+also counts ward gain and absorption. [Detailed audit](bot-balance-v1n-biome-audit.md).
+
 The [human recorder](../../server/src/playtest/humanPlaytestRecorder.ts) omits named rule targets from its build snapshot. Future instrumentation should preserve `targetAbilityId`, `targetStanceId`, stance, RP breakdown and runtime revision. This pass documents the gap; it does not change telemetry or running sessions.
 
 For each future comparison retain:

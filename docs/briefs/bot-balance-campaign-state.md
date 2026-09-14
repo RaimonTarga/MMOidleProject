@@ -1,6 +1,14 @@
 # Bot balance campaign state
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
+Latest: V1n closed with two farming deaths, valid profile/build entry and no
+infrastructure failure. [Read-only biome audit](bot-balance-v1n-biome-audit.md)
+reconstructs Volcano pack/Heat pressure and Heavy Glacier Bear ordinary hits.
+Movement execution remains unobserved; next recommendation is eight short
+instrumented diagnostics before proposing numerical tuning. No new packet,
+run or balance change authorized by this audit. Earlier V1n-prepared text below
+is historical. Validation baseline preference: melee branches for melee classes,
+medium range for ranged classes; retain Wisp separately for failure reconstruction.
 Status: V1m succeeded with zero deaths and a recovered T3 Sanctuary checkpoint. Spirit has candidate wins on all seven T2 bosses and has earned three seals continuously four times. The earned Wisp checkpoint now passes strict import and authoritative spawn qualification. V1n is prepared, not launched: independent Volcano/Tundra farming screens. Squire Plains: Mountain armor2/2, Plains1/2, all victories with safe tails. No gameplay balance changes in this preparation. [V1m assessment](bot-balance-v1m-assessment.md).
 V1j's original capacity stop is historical; both rerun manifests completed and released their networks automatically. [Lifecycle](bot-experiment-resource-lifecycle.md).
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.

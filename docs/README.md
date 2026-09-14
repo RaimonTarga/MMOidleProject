@@ -29,7 +29,9 @@ top-level doc.
 | [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Activated Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
 | [briefs/bot-balance-night2-ledger.md](briefs/bot-balance-night2-ledger.md) | Closed overnight packet accounting, source audit and strategy evidence. |
 | [briefs/bot-balance-night2-handoff.md](briefs/bot-balance-night2-handoff.md) | Completed autonomous night: T2 class evidence, earned T3 transit blocker, verified lava diagnostic and next decisions. |
+| [briefs/bot-balance-v1n-biome-audit.md](briefs/bot-balance-v1n-biome-audit.md) | Volcano pack/Heat pressure and Heavy bear damage reconstruction; guard timing, movement uncertainty, telemetry corrections and proposed diagnostics. |
 | [briefs/bot-balance-v1n-operator-packet.md](briefs/bot-balance-v1n-operator-packet.md) | Two independent earned-Wisp T3 pressure screens: Volcano and Tundra, bounded farming and recovered return. |
+| [briefs/bot-balance-v1n-report.md](briefs/bot-balance-v1n-report.md) | V1n execution result: both independent T3 pressure screens reached their resolved target node, then stopped on first gameplay death before farm completion or safe return; release and evidence hashes retained. |
 | [briefs/bot-balance-v1m-assessment.md](briefs/bot-balance-v1m-assessment.md) | Verified safe T3 checkpoint, strict branched import qualification and transition to targeted T3 exploration. |
 | [briefs/bot-balance-v1m-operator-packet.md](briefs/bot-balance-v1m-operator-packet.md) | User-launched Luna: earn Wisp before Spirit T3 travel; one fixed bridge, first-death stop, no downstream execution. |
 | [briefs/bot-balance-v1m-report.md](briefs/bot-balance-v1m-report.md) | V1m execution result: Wisp unlocked after three T2 seals; 28RP travel build reached recovered T3 Sanctuary with zero deaths; non-canonical single-case evidence only. |
