@@ -7,6 +7,7 @@ import { CAMPAIGN_NIGHT2_ROUTES } from "./campaignNight2";
 import { CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE, CAMPAIGN_WISP_TRAVEL_BRIDGE } from "./campaignNight2Bridge";
 import { CAMPAIGN_NIGHT2_SQUIRE_ROUTES } from "./campaignNight2Squire";
 import { CAMPAIGN_T3_V1N_ROUTES } from "./campaignT3V1n";
+import { CAMPAIGN_T3_V1P_TUNDRA } from "./campaignT3V1p";
 import { STRIKER_CAMPAIGN_PLAINS_BOSS_T1, STRIKER_CAMPAIGN_PLAINS_BOSS_V1B, STRIKER_CAMPAIGN_PREPARATION_T1, STRIKER_CAMPAIGN_PLAINS_ENTRY_T1 } from "./campaignBoss";
 import { CAMPAIGN_READINESS_ROUTES } from "./campaignReadiness";
 import { CAMPAIGN_BEHAVIOR_ROUTES, CAMPAIGN_LOCAL_BEHAVIOR_ROUTES } from "./campaignBehavior";
@@ -91,6 +92,7 @@ export const T1_CONTROLLED_ROUTE_IDS = [
 export const ROUTES = new Map<string, Route>(
   [
     ...CAMPAIGN_T3_V1N_ROUTES,
+    CAMPAIGN_T3_V1P_TUNDRA,
     STRIKER_T1,
     STRIKER_DECISIONS_T1,
     SQUIRE_T1,
