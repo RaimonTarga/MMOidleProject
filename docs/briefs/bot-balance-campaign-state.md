@@ -2,27 +2,40 @@
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1v
+## Current decision after V1w
 
-Tundra passed2/2: guardians, named kills, tundra:3 and safe recovered returns.
-Boss combat83.069/75.560 seconds; actual Cleanse and Break Free activations support
-counterplay effectiveness. Volcano also passed2/2. Five T3 bosses remain open;
-strong results do not yet establish complete T3 coverage or all-class balance.
+Six of seven T3 bosses have candidate-build diagnostic wins: Volcano/Tundra2/2,
+Mountain/Cave/Desert/Jungle1/1. Swamp cleared six guardians then died to late
+pool/DoT pressure; not yet validated. Desert's sampled HP minimum16.4% is a
+robustness flag. These restored smoke results are not canonical combat/economy
+certification or all-class balance evidence.
 
-[V1w](bot-balance-v1w-operator-packet.md) is prepared, not launched: one independent
-screen each for Mountain, Cave, Swamp, Desert and Jungle, from first chronological
-Tundra return. Keep current +5 gear and tailor abilities for guardian groups and
-boss mechanics. Every success earns the third seal/T4; leave the skill point
-unspent and return to T3 Sanctuary. No combining independent clear states.
+Correction: V1w incorrectly expected T4 after THREE T3 seals. Shared progression
+requires FOUR. All four winners correctly stayed T3 and then hit the authored
+bad assertion before return. No returned handoff exists; independent seals must
+not be combined. The prior V1w packet is retained with a correction notice.
 
-User recommends Voidwalker for T4, again maximizing attack frequency. Source node
-energy-heavy-t3-a is a legal planned Heavy Spirit specialization after the earned
-point. Save that choice for the T4 preparation pass after this sweep is reviewed;
-no unlock or T4 execution now. Prefer Mountain's returned checkpoint if successful.
-Full T4 travel/farming/gear qualification remains ahead of boss screens.
+[V1x](bot-balance-v1x-operator-packet.md) is prepared, not launched. One character
+from the exact two-seal V1v Tundra return earns Mountain then Cave with the clean
+V1w winning build. Capture the three-seal recovered return, then actual four-seal
+T4 unlock at T3 Sanctuary, leaving the skill point unspent. No purchases or
+balance changes. Qualification now tests this precise progression sequence and
+T4 safe capture, in addition to input, builds and bidirectional paths.
 
-Actual-input/build/path qualification, TypeScript and tierSeals test pass. No
-balance changes, full-suite run or live V1w execution. User launches Luna.
+User has not tried T3 Swamp yet and permits moving forward pending later human
+playtest. Keep it open; do not require it for the four-seal T4 handoff or claim
+complete T3 coverage. Future counterplay hypotheses include DoT resistance and
+late-pool escape/re-entry; none is a tested fix yet.
+
+Next: normal Voidwalker unlock (energy-heavy-t3-a), ranged Wisp/attack-speed
+strategy, T4 travel/farming/gear qualification, then boss screens. Preserve the
+mobs -> items -> classes -> canonical1x economy sequence after validation.
+
+Docker was restarted by the user after observing about12GB. Post-restart normal
+containers total59-65MiB; Windows vmmemWSL snapshot about1764MiB. V1w cgroup
+samples153-171MiB per worker cannot explain total prior Docker/WSL memory. V1x
+records both scopes before/after, verifies terminal release and preserves normal
+services. No leak conclusion or resource-setting change. User launches Luna.
 
 ## Previous decision after V1u2
 

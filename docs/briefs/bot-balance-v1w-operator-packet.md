@@ -1,5 +1,10 @@
 # V1w - Remaining T3 boss coverage; prepare the T4 handoff
 
+> Superseded after V1w: this frozen packet incorrectly assumed three T3 seals
+> unlock T4; the authoritative requirement is FOUR. Four boss wins stand, but
+> the assertion prevented every return. Do not execute this packet again.
+> See [V1x](bot-balance-v1x-operator-packet.md) for the corrected sequential handoff.
+
 Prepared 2026-09-14; **not launched**. User launches Luna. Read CLAUDE.md.
 Five sequential fresh cases, one per remaining boss, one worker. No adaptive
 retries, balance changes, extra cases or automatic T4 execution.
