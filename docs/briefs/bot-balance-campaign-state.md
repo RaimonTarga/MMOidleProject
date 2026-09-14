@@ -1,6 +1,15 @@
 # Bot balance campaign state
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
+Current: [V1p](bot-balance-v1p-report.md) closed: all four Volcano kits died
+before a kill; Tundra completed its farming window but died returning, so safe
+transit remains open. User approved fodder correction: T3 Scuttler650HP/45attack,
+T4 Skink720HP/75attack. Heat/leaders/pack composition/rewards unchanged. T4 is
+provisional, not combat-validated. [V1q](bot-balance-v1q-operator-packet.md), source
+`e9577ec4`, is prepared to repeat the four Volcano diagnostics and compare with
+retained V1p. Checks pass; no experiment launched. The V1o/V1p planning text below
+is historical. Next after a clear: natural packs and chain-pulling, then assess
+cooling separately. No further tuning or downstream execution preauthorized.
 Latest: [V1o](bot-balance-v1o-report.md) completed: Tundra control died, all three
 counterplay arms cleared; Volcano single mobs cleared and both three-body packs
 died. All11 execution hashes verified at review. Single-seed diagnostic evidence,
@@ -50,7 +59,11 @@ Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 
-Current next packet: [V1p](bot-balance-v1p-operator-packet.md), source `7340037d`.
+Current next packet: [V1q](bot-balance-v1q-operator-packet.md), source `e9577ec4`.
+Four local Volcano cases only; reuse the V1p runner at the new revision. No live
+Tundra rerun, Docker, T4 case or automatic follow-on. Setup and focused checks pass.
+
+Historical V1p plan: [V1p](bot-balance-v1p-operator-packet.md), source `7340037d`.
 User-launched Luna runs four local Volcano diagnostics, then one isolated natural
 Tundra route if the infrastructure/setup gates pass. No automatic downstream work.
 Ask about unclear mechanics/intent; do not treat anti-kiting contact as proof

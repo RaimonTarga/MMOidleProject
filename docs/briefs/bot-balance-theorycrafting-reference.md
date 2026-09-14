@@ -6,6 +6,22 @@ Source anchor: `99391c589fe7828e90de780ec95be6d1beb70100`. Concurrent uncommitte
 
 ## Decision and evidence boundaries
 
+V1p follow-up: Plains armor increased plating but lost HP/barrier and Cave DR;
+the first three kits all died at9.5s. Bramble fired immediately on three aggro,
+expired at5.1s and delivered only10 thorns in the Mountain-charm arm. Plains
+on-kill charm never activated its intended recovery because no enemy died;
+it also reduced initial barrier and the arm died at8.3s. Do not label these
+items intrinsically weak: activation timing, lost defenses and first-kill
+access matter. Sweep only hit one secondary target at each observed activation;
+target churn/damage distribution remain material limits.
+
+User-approved V1q: T3 Scuttler1220->650HP,55->45attack; analogous T4 Skink
+1350->720HP,90->75attack. Role intent is individually weak fodder threatening
+through numbers. Leave Heat benefit/ramp/decay, leaders, cadence, Burn and rewards
+unchanged. Repeat the same four builds first; T4 remains provisional. Longer
+TTK for solo/small-group signature enemies is a separate future role audit,
+not a reason to inflate swarm-body HP across the tier.
+
 V1o reviewed / V1p prepared: Hamstring and Desert Boots each turned the fixed
 Heavy/Chill bear loss into a clear; together delayed first incoming contact from
 5.9s to12s, with no Guard use. Candidate counterplay, not general farming proof.
