@@ -253,6 +253,23 @@ qualification before reuse; never remove an earned advantage merely because
 an older importer assumes it is unspent. Retain this general rule when later
 tiers offer new branches, runes and gear. No balance values change here.
 
+### V1m outcome and V1n selection
+
+V1m completed all three seals and recovered at T3 Sanctuary with zero deaths.
+This supports Wisp as a viable prepared travel candidate under the observed
+conditions; independent enemy encounters prevent attributing the improvement
+to Wisp alone. It does not validate live lava escape. Its earned Volcano mastery6
+and Wisp branch are preserved by the qualified T3 importer, not reset.
+
+V1n uses that checkpoint for separate Volcano/Tundra entry-kit screens with
+Sweep/SW/Brace and the established movement rules. Measure transit, sustained
+combat and return separately. In Tundra distinguish ambient Chill from roots
+before choosing Cleanse; in Volcano distinguish ranged/charge hits from lava.
+First inspect whether damage arrives before guards, recovery or useful attacks,
+then select a focused gear/ability/rule change. Both low mob TTK and excessive
+incoming burst remain possible simultaneously. No balance edits follow from a
+single death, and accelerated mastery changes must remain visible in analysis.
+
 ## Evidence needed for reliable reuse
 
 The [human recorder](../../server/src/playtest/humanPlaytestRecorder.ts) omits named rule targets from its build snapshot. Future instrumentation should preserve `targetAbilityId`, `targetStanceId`, stance, RP breakdown and runtime revision. This pass documents the gap; it does not change telemetry or running sessions.

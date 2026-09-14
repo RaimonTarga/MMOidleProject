@@ -1,7 +1,7 @@
 # Bot balance campaign state
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
-Status: V1l reviewed; V1m prepared, not launched. Spirit has candidate wins on all seven T2 bosses and has earned three seals continuously three times. T3 remains gated by unsafe transit: V1l died to ranged monster damage without observed lava contact. V1m spends the earned point on Wisp before travel. Squire Plains: Mountain armor2/2, Plains1/2, all victories with safe tails. No gameplay balance changes in this preparation. [Morning handoff](bot-balance-night2-handoff.md).
+Status: V1m succeeded with zero deaths and a recovered T3 Sanctuary checkpoint. Spirit has candidate wins on all seven T2 bosses and has earned three seals continuously four times. The earned Wisp checkpoint now passes strict import and authoritative spawn qualification. V1n is prepared, not launched: independent Volcano/Tundra farming screens. Squire Plains: Mountain armor2/2, Plains1/2, all victories with safe tails. No gameplay balance changes in this preparation. [V1m assessment](bot-balance-v1m-assessment.md).
 V1j's original capacity stop is historical; both rerun manifests completed and released their networks automatically. [Lifecycle](bot-experiment-resource-lifecycle.md).
 Audited gameplay revision: `353d5eceeea31bd14de9eb38dbeb70dca85abc95`.
 This is an audit anchor, not a frozen execution manifest. Recheck source before execution.
@@ -38,6 +38,16 @@ Do not spawn/continue an operator or schedule execution unless requested anew.
 Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
+
+Current next packet: [V1n](bot-balance-v1n-operator-packet.md), source `1cb668fd`.
+Reuse V1m's unchanged safe checkpoint independently for Volcano and Tundra;
+five-minute farming windows, recovered return, first-death stops, 15-minute
+run caps and 90-minute packet ceiling. User launches Luna. Bot preflight,
+typecheck and actual snapshot spawn qualification pass; optional full-suite
+sweep was stopped before completion. No manifest created. This begins targeted
+T3 exploration while broader T2 class coverage remains open. Earlier importer
+limitations described below are historical: earned branch and transit mastery
+now survive explicit `earned-t3` import. Runtime live validation still applies.
 
 [V1l packet](bot-balance-v1l-operator-packet.md) has finished: [report](bot-balance-v1l-report.md). Three T2 seals and
 T3 earned; Ash Salamander ranged93 caused the transit death with one attacker.
