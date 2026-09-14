@@ -2,7 +2,23 @@
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1t
+## Current decision after V1u
+
+V1u's first death occurred during travel to Jungle, before any kit purchases or
+boss attempt. Authored `pick:first` selected distant Jungle-01 through Tundra,
+although Jungle-05 is adjacent to Sanctuary. This was an avoidable route-authoring
+error; path and reverse-path qualification were missing from V1u preflight.
+
+[V1u2](bot-balance-v1u2-operator-packet.md) is prepared, not launched. Restore
+V1u's verified safe GM96 Mountain checkpoint (also Swamp/Cave18), use adjacent
+Jungle and explicit Desert waypoints avoiding Tundra; buy +3 kit after Jungle,
++4 after Desert, then enter Tundra intentionally for its mastery and finish +5.
+The actual retained wallet covers purchases. Two 1x boss replicas remain gated
+on completed preparation. No repeat of already earned mastery or balance change.
+Astra qualifies both directions of all new preparation paths, legal travel/builds
+and ordinary purchases; user launches Luna. Live path/farming survival remains open.
+
+## Previous decision after V1t
 
 [V1t](bot-balance-v1t-report.md) cleared all 12 Volcano guardians and reached the
 boss in 2/2 runs, then died in the boss phase in both. Remaining boss HP and the
@@ -89,7 +105,7 @@ Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 
-Current next packet: [V1u](bot-balance-v1u-operator-packet.md), earned full-T3
+Current next packet: [V1u2](bot-balance-v1u2-operator-packet.md), earned full-T3
 preparation followed conditionally by two boss replicas; one worker, no adaptive
 retries or balance edits. Save mastery-leg checkpoints without auto-resuming failures.
 
