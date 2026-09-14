@@ -175,6 +175,11 @@ coverage rather than a separate live balance-revision run.
 
 ### Proposed next campaign experiment — not launched
 
+Superseded after full V1q review by [V1r](bot-balance-v1r-operator-packet.md):
+focused targeting and pursuit counterplay address the observed target churn and
+Hound damage more directly than another armor-only comparison. The original
+proposal below records the acceptance-stage idea, not the current operator task.
+
 Use this checkpoint for two short natural Volcano continuations on the selected
 current balance revision. First compare the existing Cave Vest T2 +5 build to
 the **already-owned Plains Vest T2 +4** as one explicit practical armor treatment;
