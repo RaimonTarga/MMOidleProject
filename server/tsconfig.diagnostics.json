@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": { "noEmit": true, "rootDir": ".." },
-  "include": ["scripts/v1oDiagnostics.ts", "scripts/v1pDiagnostics.ts", "scripts/v1rPreflight.ts"]
+  "include": ["scripts/v1oDiagnostics.ts", "scripts/v1pDiagnostics.ts", "scripts/v1rPreflight.ts", "scripts/v1tPreflight.ts"]
 }
