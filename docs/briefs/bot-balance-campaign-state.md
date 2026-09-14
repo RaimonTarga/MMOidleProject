@@ -2,7 +2,28 @@
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1x
+## Current decision after V1y
+
+V1y passed51/51 in10m04s: Voidwalker, T4 entry, Mountain24/GM124, +1 armor/charm,
+five-minute farming and recovered return. Mountain74 kills across the run, zero
+recorded Mountain damage; observation mostly single attackers. Missing per-target
+TTK/discharge telemetry prevents mechanic-exposure conclusions. Setup HP minima
+are not combat minima. Final checkpoint SHA f15a9997537cfabef079ab66f30ac51637ad08fe95a410f89b31f8ee37a2bf83.
+
+[V1z](bot-balance-v1z-operator-packet.md) prepared, not launched: one sequential
+Jungle then Desert farming continuation, mastery18 and five-minute observation
+for each, safe returns and final +2 defense purchases. Actual current caps are18
+for both groups; GM124->130->132. +2 unlocks only after the second leg. Keep
+Cinderlash/Accelerant/Wisp; Jungle adds Sweep and Desert retains control guards.
+Both screens use+1 gear; final+2 is preparation, not tested combat evidence.
+Actual-input/path/build/cap/purchase preflight and focused checks passed.
+
+Next after successful breadth: assess first T4 boss readiness alongside remaining
+Tundra/Volcano/Graveyard/Trench farming, without requiring every mastery cap before
+a boss. Swamp T3 remains open; six T3 boss diagnostic wins stand. No balance edits.
+User launches Luna. Preserve resource release and separate worker/WSL measurements.
+
+## Previous decision after V1x
 
 V1x completed both sequential boss wins, safe returns and the actual four-seal
 T4 unlock with one unspent point. 14m08s bot runtime, zero HP loss. The checkpoint
