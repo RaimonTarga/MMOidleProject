@@ -2,7 +2,27 @@
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1u
+## Current decision after V1u2
+
+Volcano package viability is accepted: two verified guardian clears, boss kills,
+authoritative volcanic:3 clears and recovered returns, with boss combat26.530/
+26.517 seconds. Preparation and audited V1u2 paths completed with zero deaths.
+This closes Volcano for the current Heavy Spirit/Wisp validation build, not all
+classes or balance. No further Volcano nerf is needed for this beatability gate.
+
+[V1v](bot-balance-v1v-operator-packet.md) is prepared, not launched: two fresh1x
+Tundra dungeon attempts from first chronological Volcano returned checkpoint,
+retaining GM114/+5 tempo-barrier equipment. Buy Break Free for190 blue; replace
+Sweep with Cleanse/Break Free in boss build37/38RP. Travel38/38RP follows audited
+waypoints avoiding ordinary Tundra and Volcano, with explicit reverse return.
+Actual-input/purchase/path preflight, TypeScript and Chill/control tests pass.
+No gameplay balance changes; user launches Luna. No live V1v or full suite run.
+
+Next after Tundra: remaining T3 bosses, then T4; encounter-specific builds and
+clear/progression/return evidence remain mandatory. Broad mobs -> items -> classes
+balance and eventual canonical1x economy follow validation, not this isolated run.
+
+## Previous decision after V1u
 
 V1u's first death occurred during travel to Jungle, before any kit purchases or
 boss attempt. Authored `pick:first` selected distant Jungle-01 through Tundra,
@@ -105,9 +125,9 @@ Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 
-Current next packet: [V1u2](bot-balance-v1u2-operator-packet.md), earned full-T3
-preparation followed conditionally by two boss replicas; one worker, no adaptive
-retries or balance edits. Save mastery-leg checkpoints without auto-resuming failures.
+Current next packet: [V1v](bot-balance-v1v-operator-packet.md): two Tundra boss
+replicas from first Volcano returned checkpoint, one worker, no adaptive retries
+or balance changes.
 
 Historical V1p plan: [V1p](bot-balance-v1p-operator-packet.md), source `7340037d`.
 User-launched Luna runs four local Volcano diagnostics, then one isolated natural

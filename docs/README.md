@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-v1v-operator-packet.md](briefs/bot-balance-v1v-operator-packet.md) | Two Tundra boss replicas with Cleanse/Break Free and audited travel from the earned Volcano return. |
 | [briefs/bot-balance-v1u2-operator-packet.md](briefs/bot-balance-v1u2-operator-packet.md) | Resume GM96 preparation with audited waypoints and staged upgrades before gated boss replicas. |
 | [briefs/bot-balance-v1u-operator-packet.md](briefs/bot-balance-v1u-operator-packet.md) | Earn full T3 tempo/barrier preparation, then two gated Volcano boss attempts. |
 | [briefs/bot-balance-v1t-report.md](briefs/bot-balance-v1t-report.md) | V1t result: both independent Volcano runs cleared all 12 guardians and reached the named boss, then died before boss kill/progression or safe return; sealed non-canonical evidence with hashes retained and no balance edit. |
