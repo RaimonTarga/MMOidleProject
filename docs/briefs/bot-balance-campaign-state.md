@@ -2,7 +2,35 @@
 
 Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1w
+## Current decision after V1x
+
+V1x completed both sequential boss wins, safe returns and the actual four-seal
+T4 unlock with one unspent point. 14m08s bot runtime, zero HP loss. The checkpoint
+restores as GM120/Mountain22/Desert14, correcting the report's blanket GM114
+summary (114 was initial). No earlier checkpoint or invented progression needed.
+
+[V1y](bot-balance-v1y-operator-packet.md) is prepared, not launched. One normal
+Voidwalker unlock preserves ranged Wisp; affordable Mountain T4 armor/charm base
+purchases before explicit entry via Desert avoiding Trench/Volcano/Tundra/Graveyard.
+Farm adjacent heavy Mountain05 to24, return and buy+1 at GM122, then five minutes
+of sustained observation and recovered return. Keep Cinderlash+5/Accelerant/
+Desert Boots+5 and the qualified Frenzy/Hamstring farming build. Zero boss attempts.
+The initial wallet covers all665 blue/135 red; no new currency is assumed.
+
+Actual-input unlock/purchase/path qualification, TypeScript, observation/transit
+and map tests pass. Future Mountain24 is modeled only for setup arithmetic and
+must be earned live; no live V1y yet. User launches Luna, no automatic next run.
+
+T3 six-of-seven diagnostic coverage stands, Swamp remains open for human playtest;
+Desert robustness remains a flag. Next after qualified T4 entry: wider T4 farming,
+mastery and equipment gates, then bosses. No balance changes. Long-term order is
+mobs -> items -> classes -> canonical1x economy after validation.
+
+V1x cleanup succeeded; worker max198.5MiB and WSL1726.1->3354.5MiB are different
+scopes. Keep before/after measurements and terminal resource release. No leak
+conclusion or RAM-setting change.
+
+## Previous decision after V1w
 
 Six of seven T3 bosses have candidate-build diagnostic wins: Volcano/Tundra2/2,
 Mountain/Cave/Desert/Jungle1/1. Swamp cleared six guardians then died to late

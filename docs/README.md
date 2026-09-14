@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-v1y-operator-packet.md](briefs/bot-balance-v1y-operator-packet.md) | Voidwalker T4 entry, affordable Mountain defenses, mastery and sustained farming qualification. |
 | [briefs/bot-balance-v1x-operator-packet.md](briefs/bot-balance-v1x-operator-packet.md) | Sequential Mountain/Cave four-seal T4 handoff; corrected progression, safe captures and Docker resource observations. |
 | [briefs/bot-balance-v1w-operator-packet.md](briefs/bot-balance-v1w-operator-packet.md) | Five remaining T3 boss screens, earned T4 handoff and saved Voidwalker direction. |
 | [briefs/bot-balance-v1v-operator-packet.md](briefs/bot-balance-v1v-operator-packet.md) | Two Tundra boss replicas with Cleanse/Break Free and audited travel from the earned Volcano return. |
