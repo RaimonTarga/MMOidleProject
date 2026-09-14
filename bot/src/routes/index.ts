@@ -1,4 +1,5 @@
 import { NAMED_CHECKPOINT_ROUTES } from './namedCheckpoints';
+import { CAMPAIGN_T3_V1R_ROUTES } from './campaignT3V1r';
 import { CAMPAIGN_NIGHT_KIT, CAMPAIGN_NIGHT_BOSSES, CAMPAIGN_NIGHT_SWAMP_DUAL_GUARD, CAMPAIGN_CAVE_DUAL_GUARD, CAMPAIGN_CAVE_RECOVERY_ROUTES } from "./campaignOvernight";
 import { STRIKER_DECISIONS_T1 } from "./strikerDecisionsT1";
 import { CAMPAIGN_T2_BOSS_ROUTES } from "./campaignT2Boss";
@@ -93,6 +94,7 @@ export const T1_CONTROLLED_ROUTE_IDS = [
 export const ROUTES = new Map<string, Route>(
   [
     ...NAMED_CHECKPOINT_ROUTES,
+    ...CAMPAIGN_T3_V1R_ROUTES,
     ...CAMPAIGN_T3_V1N_ROUTES,
     CAMPAIGN_T3_V1P_TUNDRA,
     STRIKER_T1,
