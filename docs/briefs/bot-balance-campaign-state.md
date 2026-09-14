@@ -39,8 +39,14 @@ Prefer bounded packets and concise analysis to conserve tokens. Ask the user
 for strategy advice or a short manual playtest when behavior remains unclear
 or progress is blocked; avoid repeated runs on the same unresolved mechanism.
 
-[V1l packet](bot-balance-v1l-operator-packet.md) is prepared, not launched.
-One unchanged Night2-C Spirit bridge on static-hazard fix6e1f1ee1, keeping
+[V1l packet](bot-balance-v1l-operator-packet.md) has finished: [report](bot-balance-v1l-report.md). Three T2 seals and
+T3 earned; Ash Salamander ranged93 caused the transit death with one attacker.
+Avoid Enemies was verified equipped and is starter-owned (1RP); its current
+behavior chooses a safer exit target, not a guaranteed enemy-free path.
+No lava contact/escape or DoT was recorded. Review ranged delivery and spending
+the earned range point before the next preparation; no next run dispatched.
+
+The packet used one unchanged Night2-C Spirit bridge on static-hazard fix6e1f1ee1, keeping
 Avoid Hazards and Recover First. The user reproduced the original lava bug
 and had another agent fix it; no post-fix human confirmation yet. Focused
 hazard tests pass and the old diagnostic now initiates escape with Recover
