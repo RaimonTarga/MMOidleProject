@@ -1,8 +1,33 @@
 # Bot balance campaign state
 
-Updated: 2026-09-14. Owner: Astra (planning and interpretation); operators: Luna.
+Updated: 2026-09-15. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1y
+## Current decision after V1z - Night3 prepared
+
+V1z passed36/36 in13m40s. Jungle/Desert observation kills43/61; Jungle sampled
+HP1.0, Desert minimum0.802. Both safely returned; +2 defenses purchased at GM132.
+These establish two more farming candidates alongside Mountain, not all-T4 balance.
+
+User requests a fixed overnight batch operated entirely by Luna, no subagents,
+and explicitly confirms Colossus Heart for Voidwalker. [Night3](bot-balance-night3-operator-packet.md)
+is prepared, not launched:12 independent cases from the same V1z +2 return.
+Mountain boss two replicas per arm, plus15-minute Tundra/Trench/Graveyard/Volcano
+farming once per arm. Compare empty relic against ordinary Colossus Heart.
+Qualified maxEnergy200->280, base gain20->14, full discharge6x->8x. Keep Cinderlash,
+Accelerant, ranged Wisp and fixed+2 defenses; no adaptive upgrades as mastery grows.
+
+One worker,30-minute per-case caps,6h total case budgets,8h overall ceiling.
+Gameplay death/timeout ends only that case; infrastructure/invalid treatment
+stops the batch when detected. Luna reports/releases; no new experiments, balance
+changes or Astra supervision. User launches Luna. Actual-input, paid relic,
+all12 build/path checks and relic integration tests pass; no live Night3 yet.
+
+Swamp T3 remains open. After the batch, review first T4 boss viability and broader
+farming results before selecting earned captures and next bosses. Broad balance
+mobs -> items -> classes and canonical1x economy remain downstream. Missing TTK/
+discharge telemetry limits mechanics conclusions; preserve honest phase attribution.
+
+## Previous decision after V1y
 
 V1y passed51/51 in10m04s: Voidwalker, T4 entry, Mountain24/GM124, +1 armor/charm,
 five-minute farming and recovered return. Mountain74 kills across the run, zero

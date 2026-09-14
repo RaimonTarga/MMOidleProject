@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [briefs/bot-balance-night3-operator-packet.md](briefs/bot-balance-night3-operator-packet.md) | Fixed12-case overnight T4 Colossus Heart comparison: Mountain boss and four farming biomes; Luna-only operation. |
 | [briefs/bot-balance-v1z-operator-packet.md](briefs/bot-balance-v1z-operator-packet.md) | T4 Jungle/Desert farming coverage, actual mastery caps and +2 defense preparation. |
 | [briefs/bot-balance-v1y-operator-packet.md](briefs/bot-balance-v1y-operator-packet.md) | Voidwalker T4 entry, affordable Mountain defenses, mastery and sustained farming qualification. |
 | [briefs/bot-balance-v1x-operator-packet.md](briefs/bot-balance-v1x-operator-packet.md) | Sequential Mountain/Cave four-seal T4 handoff; corrected progression, safe captures and Docker resource observations. |
