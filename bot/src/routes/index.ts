@@ -1,3 +1,4 @@
+import { CAMPAIGN_T4_V1Z } from './campaignT4V1z';
 import { CAMPAIGN_T4_V1Y } from './campaignT4V1y';
 import { CAMPAIGN_T3_V1X } from './campaignT3V1x';
 import { CAMPAIGN_T3_V1W_ROUTES } from './campaignT3V1w';
@@ -110,6 +111,7 @@ export const ROUTES = new Map<string, Route>(
     CAMPAIGN_T3_V1V,
     CAMPAIGN_T3_V1X,
     CAMPAIGN_T4_V1Y,
+    CAMPAIGN_T4_V1Z,
     ...CAMPAIGN_T3_V1W_ROUTES,
     ...CAMPAIGN_T3_V1N_ROUTES,
     CAMPAIGN_T3_V1P_TUNDRA,
