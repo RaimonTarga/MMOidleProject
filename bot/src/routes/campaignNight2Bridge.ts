@@ -64,3 +64,16 @@ export const CAMPAIGN_NIGHT2_TRAVEL_BRIDGE: Route = {
     ...steps.slice(-3),
   ],
 };
+
+/** V1m spends the naturally earned point before travel; all other treatments match V1l. */
+export const CAMPAIGN_WISP_TRAVEL_BRIDGE: Route = {
+  ...CAMPAIGN_NIGHT2_TRAVEL_BRIDGE,
+  id: "spirit-wisp-travel-t2-bridge-v1m", version: "1.0.0",
+  description: "Earn three T2 seals, choose Wisp ordinarily, then repeat the prepared travel package to T3 Sanctuary.",
+  steps: [
+    ...CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.slice(0, -6),
+    { type: "unlockSkill", skillId: "energy-range-far", requires: earned, label: "v1m:wisp:unlock" },
+    { type: "milestone", id: "v1m:wisp:applied", requires: earned },
+    ...CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.slice(-6),
+  ],
+};

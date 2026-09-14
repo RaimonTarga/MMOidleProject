@@ -6,7 +6,7 @@ import { CAMPAIGN_T2_BOSS_ROUTES } from "./campaignT2Boss";
 import { CAMPAIGN_T2_EXPANSION_ROUTES } from "./campaignT2Expansion";
 import { CAMPAIGN_T2_V1K_ROUTES } from "./campaignT2V1k";
 import { CAMPAIGN_NIGHT2_ROUTES } from "./campaignNight2";
-import { CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE, NIGHT2_TRAVEL_BUILD } from "./campaignNight2Bridge";
+import { CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE, CAMPAIGN_WISP_TRAVEL_BRIDGE, NIGHT2_TRAVEL_BUILD } from "./campaignNight2Bridge";
 import { evaluate } from "../route/conditions";
 import { CAMPAIGN_NIGHT2_SQUIRE_ROUTES } from "./campaignNight2Squire";
 
@@ -108,6 +108,12 @@ async function postClearRegression() {
 }
 
 async function bridgeRegression() {
+  const wisp = CAMPAIGN_WISP_TRAVEL_BRIDGE;
+  assert.deepEqual(wisp.steps.slice(0, -8), CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.slice(0, -6));
+  assert.deepEqual(wisp.steps.slice(-6), CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.slice(-6));
+  assert.equal(wisp.steps.at(-8)?.type, "unlockSkill");
+  assert.equal(wisp.steps.filter(s => s.type === "unlockSkill").length, 1);
+  assert.deepEqual(wisp.steps.at(-8)?.requires, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.at(-6)?.requires, "branch requires all three actual seals");
   assert.equal(buildRP(NIGHT2_TRAVEL_BUILD).total, 28);
   assert.deepEqual(CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.slice(0, -6), CAMPAIGN_NIGHT2_BRIDGE.steps.slice(0, -3), "all acquisition and boss treatments unchanged before earned T3");
   assert.equal(CAMPAIGN_NIGHT2_TRAVEL_BRIDGE.steps.at(-5)?.type, "farm", "recover before crossing");
@@ -118,7 +124,7 @@ async function bridgeRegression() {
     assert.equal(derived.avoidEnemies, traveling);
     assert.equal(derived.fightBackWhileTraveling, traveling);
   }
-  for (const route of [CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE]) {
+  for (const route of [CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE, CAMPAIGN_WISP_TRAVEL_BRIDGE]) {
   assert(route.stopOnFirstDeath && route.suppressTransitCombat);
   assert.deepEqual(route.steps.filter(s => s.type === "attemptBoss").map(s => [s.biomeGroup, s.maxAttempts]),
     [["plains", 1], ["forest", 1], ["desert", 1]]);
