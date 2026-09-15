@@ -88,7 +88,7 @@ export const mountainMonsterEntries = [
     // flyers'. It gets the reusable Cave/Cavern GROUND SLAM instead (behavior pass).
     // A modest engagement charge may remain against trivial kiting.
     // HP-led durability; Granite Barrier continues to scale with maximum HP.
-    stats: { hp: 1656, attack: 105, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    stats: { hp: 1656, attack: 84, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },

@@ -15,6 +15,9 @@ for (const cell of DURABILITY5_CELLS) {
 // Test that contract against its fixture, not against later live balance patches.
 const savedHp = new Map(['cave-troll', 'cavern-troll', 'granite-titan', 'mountain-colossus']
   .map(id => [id, MONSTER_DATABASE.get(id)!.stats.hp]));
+const historicalTitan = MONSTER_DATABASE.get('granite-titan')!;
+const savedAttack = historicalTitan.stats.attack;
+historicalTitan.stats.attack = 105;
 try {
 for (const [id, hp] of [['cave-troll', 1320], ['cavern-troll', 3780], ['granite-titan', 1380], ['mountain-colossus', 4250]] as const) {
   MONSTER_DATABASE.get(id)!.stats.hp = hp;
@@ -30,4 +33,4 @@ try {
 } finally { troll.stats.hp = hp; }
 assertDurability5Definitions();
 console.log('durability5: ok');
-} finally { for (const [id, hp] of savedHp) MONSTER_DATABASE.get(id)!.stats.hp = hp; }
+} finally { historicalTitan.stats.attack = savedAttack; for (const [id, hp] of savedHp) MONSTER_DATABASE.get(id)!.stats.hp = hp; }

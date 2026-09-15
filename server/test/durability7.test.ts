@@ -5,6 +5,11 @@ import { DURABILITY7_CELLS, DURABILITY7_SEEDS, installDurability7Treatment } fro
 assert.equal(DURABILITY7_CELLS.length, 24);
 assert.equal(new Set(DURABILITY7_CELLS.map(c => c.id)).size, 24);
 assert.equal(DURABILITY7_SEEDS.length, 5);
+// Frozen Durability7 contract retains its original control attack.
+const titan = MONSTER_DATABASE.get('granite-titan')!;
+const liveAttack = titan.stats.attack;
+try {
+titan.stats.attack = 105;
 const original = JSON.stringify([...MONSTER_DATABASE]);
 for (let i = 0; i < DURABILITY7_CELLS.length; i += 3) {
   assert.deepEqual(DURABILITY7_CELLS[i].build, DURABILITY7_CELLS[i + 1].build);
@@ -20,3 +25,5 @@ for (const cell of DURABILITY7_CELLS) {
   assert.equal(JSON.stringify([...MONSTER_DATABASE]), original, 'Restore before next World');
 }
 console.log('durability7: ok');
+
+} finally { titan.stats.attack = liveAttack; }
