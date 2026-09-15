@@ -3,7 +3,7 @@ import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/
 import type { World } from '../../../../world/World';
 import { runPlayerAttack, type PlayerAttackOutcome } from '../../../combat/engine/combat';
 import type { CombatContext, FormationAttackContribution } from '../../../combat/engine/combatPipeline';
-import { summonerProfileFor } from './profile';
+import { formationTempoWeight, summonerProfileFor } from './profile';
 import {
   commitSpecializationAttack,
   prepareSpecializationAttack,
@@ -93,6 +93,7 @@ export function runFormationAttack(
       slot.procWeight * profile.secondaryEffectMult * profile.relicPotencyMult,
     secondaryEffectMult: profile.secondaryEffectMult,
     procWeight: slot.procWeight * profile.secondaryEffectMult,
+    tempoWeight: formationTempoWeight(profile, slot.procWeight),
     targetId: target.isMonster.id,
     cycleSerial: cycle.serial,
     cycleCompleted: cycle.completed,

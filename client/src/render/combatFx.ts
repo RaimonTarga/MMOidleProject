@@ -4,6 +4,7 @@ import {
   ABILITY_HAMSTRING_FX,
   ABILITY_IMBUE_FX,
   ABILITY_QUICK_STRIKE_FX,
+  ABILITY_DATABASE,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
   abilityDef,
@@ -723,6 +724,15 @@ const CAST_FX_BY_ABILITY: Record<
   (scene: GameScene, from: Vec2, to: Vec2) => void
 > = {
   "power-strike": (scene, _from, to) => fxPowerStrike(scene, to.x, to.y),
+  // Slam reuses the boss ground-slam: it is already the game's "an area just got
+  // hit" vocabulary (cracks, expanding shock rings, debris), it takes the kill
+  // radius as an argument so the FX lands exactly on the circle the server
+  // damaged, and reusing it means a player reads a Slam the same way they have
+  // been reading telegraphed AoE since Mountain. Radius comes from the authored
+  // rank rather than a client constant, so the ring can never drift from the
+  // damage. The stone `impact` palette keeps it distinct from Power Strike's
+  // single-target flash.
+  slam: (scene, _from, to) => fxSlam(scene, to.x, to.y, slamRadius(), "impact"),
   "stunning-strike": (scene, _from, to) => fxStunningStrike(scene, to.x, to.y),
   // Snipe is the one cast whose FX needs BOTH points: the distance crossed is
   // the ability, and an impact alone would not show it.
@@ -730,6 +740,12 @@ const CAST_FX_BY_ABILITY: Record<
   // A self-cast resolves on the caster, so both endpoints are the player.
   "imbue-lightning": (scene, from) => fxImbueCast(scene, from.x, from.y),
 };
+
+/** Slam's authored impact radius — the same number the server damages with. */
+function slamRadius(): number {
+  const effect = ABILITY_DATABASE.get("slam")?.ranks[0]?.effect;
+  return effect?.kind === "cast-strike" ? (effect.radius ?? 150) : 150;
+}
 
 /** Reposition FX, keyed by ability id. Both endpoints come from the event. */
 const REPOSITION_FX_BY_ABILITY: Record<

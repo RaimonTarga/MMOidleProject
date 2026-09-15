@@ -13,6 +13,7 @@
  */
 import {
   ABILITY_DATABASE,
+  TECHNIQUE_TEMPO_MIN_CYCLE_MS,
   abilityCastMs,
   abilityCooldownMs,
   abilityMaxRank,
@@ -20,6 +21,7 @@ import {
   abilityRankAt,
   abilityRankNumber,
   abilityRankNumeral,
+  abilityTempoRefundMs,
   resolveAbilityEffect,
   validateAbilities,
   validateAbilityRecipes,
@@ -61,9 +63,29 @@ const splashAt = (tier: number): number => {
 };
 assert(splashAt(1) < splashAt(3), "splash should deepen across early ranks");
 assert(splashAt(3) === splashAt(4), "splash stops at its ceiling instead of inflating");
+
+// Frequency is the second axis, but it is bought as TEMPO, not as a shorter
+// authored cooldown. A flat cut pays every build the same; Tempo pays per
+// landed attack, which is what makes Sweep a real answer for the slow, heavy
+// builds that struggle most against a pack. Rank I stays deliberately free of
+// it so the first rank teaches only "arm, then hit".
 assert(
-  abilityCooldownMs(sweep, 4) < abilityCooldownMs(sweep, 3),
-  "once splash caps, the next rank must buy frequency instead",
+  abilityTempoRefundMs(sweep, 1) === 0,
+  "Sweep I must own no Tempo mechanic",
+);
+for (const tier of [2, 3, 4]) {
+  assert(
+    abilityTempoRefundMs(sweep, tier) > 0,
+    `Sweep at player tier ${tier} must buy frequency through Tempo`,
+  );
+}
+assert(
+  abilityCooldownMs(sweep, 2) > abilityCooldownMs(sweep, 1),
+  "the Tempo ranks pay for the mechanic with a longer base cooldown",
+);
+assert(
+  abilityCooldownMs(sweep, 2) > TECHNIQUE_TEMPO_MIN_CYCLE_MS,
+  "a Tempo cooldown must sit above the minimum cycle, or Tempo does nothing",
 );
 
 const powerStrike = ABILITY_DATABASE.get("power-strike")!;

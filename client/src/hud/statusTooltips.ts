@@ -13,6 +13,7 @@
 // here parses `logDetail`, and nothing here re-implements a combat formula.
 
 import {
+  abilityBlurbAt,
   abilityCooldownMs,
   abilityRankNumber,
   abilityRankNumeral,
@@ -201,7 +202,7 @@ export function abilityTooltipContent(
   return {
     title: `${ability.name} ${rank}`,
     kicker: `${SLOT_LABEL[ability.slot]} · ${described.rankLabel}`,
-    body: ability.blurb,
+    body: abilityBlurbAt(ability, context.playerTier),
     rows,
     rowsTitle: 'At this rank',
     current,

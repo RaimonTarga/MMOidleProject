@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { LoadoutFeedback } from "./LoadoutFeedback";
 import { useAtomValue } from "jotai";
-import { ABILITY_DATABASE, abilityDisplayName, attunedAbilityIds, attunedForFamily, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
+import { ABILITY_DATABASE, abilityBlurbAt, abilityDisplayName, attunedAbilityIds, attunedForFamily, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
 import { attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom } from "../hud/atoms";
 import { abilityTiming } from "./describe/abilityTiming";
@@ -56,7 +56,7 @@ export function AbilitiesPanelContent() {
               <span className="ability-entry__icon"><GameIcon source={abilityIconSource(ability)} size={40} decorative /></span>
               <span className="ability-entry__copy">
                 <span className="ability-entry__name">{name}</span>
-                <span className="ability-entry__blurb">{ability.blurb}</span>
+                <span className="ability-entry__blurb">{abilityBlurbAt(ability, tier)}</span>
               </span>
               <span className="ability-entry__disclosure">{selected ? "Less" : "Details"} <span aria-hidden="true">{selected ? "−" : "+"}</span></span>
             </button>

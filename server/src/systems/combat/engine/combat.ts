@@ -23,6 +23,7 @@ import type {
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent, type FormationAttackContribution } from "./combatPipeline";
+import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
 import {
   monsterEmpoweredMultiplier,
   applyEnemySoftCap,
@@ -293,6 +294,12 @@ export function runPlayerAttack(
     procWeight:
       battleBondProfile.battleBondConduitOffenseWeight
       * battleBondProfile.secondaryEffectMult,
+    // The bonded Conduit is one more body in the formation for cadence purposes,
+    // so its own swings buy Tempo on the same normalized scale its summon does.
+    tempoWeight: formationTempoWeight(
+      battleBondProfile,
+      battleBondProfile.battleBondConduitOffenseWeight,
+    ),
     targetId: target.isMonster.id,
     cycleSerial: 0,
     cycleCompleted: false,

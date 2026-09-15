@@ -210,6 +210,32 @@ const recipes: AbilityRecipe[] = [
     cost: { purple: 90 },
   },
 
+  {
+    id: "ability-recipe-slam",
+    name: "Slam",
+    description:
+      "Learn Slam: wind up and drive the blow into the ground, striking everything around the impact.",
+    abilityId: "slam",
+    tier: 2,
+    // MOUNTAIN, the same deliberate deviation Contagion makes in the swamp: every
+    // other T2 ability lives in jungle or desert, but Slam is homed by THEME.
+    // Mountain is the game's wind-up biome — Brace (L3) teaches you to READ a
+    // telegraph, Power Strike (L5) teaches you to PERFORM one — so the tier that
+    // widens that blow into an area belongs there and nowhere else. Mountain has
+    // nodes at T1-T4, so nothing is re-homed and no band is reshuffled to fit it.
+    //
+    // Mountain's T2 band is biome levels 7-12, so the band's own level 3 is 9 —
+    // exactly the placement rule every other ability follows, and the same level
+    // Contagion sits at in the swamp's T2 band.
+    recipeGroup: "mountain",
+    requiredBiomeLevel: 9,
+    // Top of the T2 ability band (70-90). Slam is an optional power tool rather
+    // than required counterplay — a single-target build loses nothing by
+    // skipping it — so it is priced with Bramble Guard / Endure / Contagion and
+    // not with the mandatory 70s.
+    cost: { blue: 90 },
+  },
+
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
   {
     id: "ability-recipe-binding-strike",

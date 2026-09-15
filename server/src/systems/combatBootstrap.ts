@@ -12,6 +12,7 @@ import { initMobilityBoots } from "./world/mobility/mobilityBoots";
 import { initRuneTauntSystem } from "./combat/ai/taunt";
 import { initDungeonCombatHooks } from "./world/dungeons/dungeon";
 import { initAbilitySystems } from "./player/abilities/abilityEffects";
+import { initAttackTempoSystem } from "./player/abilities/attackTempo";
 import { initRiteListeners } from "./player/rites/riteOoc";
 import { initCoreCombatEffects } from "./combat/cores";
 import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
@@ -76,6 +77,9 @@ export function initCombatSystems(): void {
   initMonsterDeathEffects();
   // Abilities (Step 7): Technique rider applied on hit (consumes hasArmedAbility).
   initAbilitySystems();
+  // Attack-equivalents: landed basic attacks hasten Tempo-bearing Techniques
+  // (Sweep II+). Registered on afterHit, so it runs after the rider above.
+  initAttackTempoSystem();
   // Rites (Step 11): Hunter's Instinct onKill movement-haste buff.
   initRiteListeners();
   // Cores: Duelist same-target Focus (onHit) + Bruiser mobility refund (onKill).

@@ -112,6 +112,12 @@ export type AbilityTrigger =
  * What an ability does when it fires.
  *
  * - `cleave`: Technique rider — the armed next attack splashes to nearby enemies.
+ *   `tempoRefundMs`, when authored, switches on TEMPO: every accumulated
+ *   attack-equivalent of ordinary basic-attack delivery takes that many ms off
+ *   the ability's REMAINING cooldown (never below
+ *   {@link TECHNIQUE_TEMPO_MIN_CYCLE_MS} after its last activation). Absent =
+ *   no Tempo, which is how Sweep I stays the simple teaching rank; a `0` would
+ *   be encoding absence as a number and is rejected by `validateAbilities`.
  * - `empower`: Technique rider — the armed next attack hits for `damageMult`×
  *   damage (single-target; no splash).
  * - `cast-strike`: casted Technique payload. Unlike `empower` — which rides the
@@ -160,7 +166,7 @@ export type AbilityTrigger =
  *   makes it a deliberate pre-load rather than a race against a timer.
  */
 export type AbilityEffectSpec =
-  | { kind: "cleave"; splashPct: number; radius: number }
+  | { kind: "cleave"; splashPct: number; radius: number; tempoRefundMs?: number }
   | { kind: "empower"; damageMult: number }
   | { kind: "cast-strike"; damageMult: number; radius?: number; stunMs?: number }
   | { kind: "expose-weakness"; damageTakenPct: number; durationMs: number }
@@ -188,6 +194,15 @@ export type AbilityEffectSpec =
  */
 export interface AbilityRank {
   effect: AbilityEffectSpec;
+  /**
+   * Rank-specific replacement for {@link AbilityDef.blurb}.
+   *
+   * Exists because a rank may add a MECHANIC, not just a number: Sweep II turns
+   * on Tempo, and the T1 sentence stops being true. Authored here so every
+   * surface (attunement list, HUD tooltip) reads one shared string rather than
+   * each re-deriving "does this rank have Tempo?" in presentation code.
+   */
+  blurb?: string;
   /** Min ms between fires (per-ability cooldown, tracked on TracksCombat). */
   cooldownMs: number;
   /** Wind-up duration. REQUIRED for `shape: "cast"` / `shape: "charge"`. */
@@ -371,6 +386,44 @@ export function abilityCooldownMs(ability: AbilityDef, playerTier: number): numb
   return abilityRankAt(ability, playerTier).cooldownMs;
 }
 
+/**
+ * Floor on a Tempo-bearing ability's whole cycle: it can never become ready
+ * sooner than this many ms after its previous ACTIVATION, no matter how many
+ * attacks land in between.
+ *
+ * 3000 ms, against Sweep's 7000 ms base: an extremely fast build can more than
+ * halve the cycle and then stops. Without it, attack-speed stacking would drive
+ * Sweep toward a permanent cleave aura and quietly delete the decision the
+ * ability exists to pose. Applied to the LIVE remaining cooldown, and clamped
+ * so it can never LENGTHEN a cooldown that equipment already shortened below it.
+ */
+export const TECHNIQUE_TEMPO_MIN_CYCLE_MS = 3000;
+
+/**
+ * Ms of remaining cooldown one accumulated attack-equivalent refunds at this
+ * player's rank, or 0 when this rank owns no Tempo mechanic.
+ *
+ * The single seam every Tempo consumer reads — presence of the authored field
+ * is what gates the whole mechanic, so a rank that simply omits it (Sweep I) is
+ * inert without any rank-number test anywhere in the server.
+ */
+export function abilityTempoRefundMs(ability: AbilityDef, playerTier: number): number {
+  const effect = abilityEffectAt(ability, playerTier);
+  return effect.kind === "cleave" ? Math.max(0, effect.tempoRefundMs ?? 0) : 0;
+}
+
+/**
+ * The blurb for this player's rank — the authored rank override when there is
+ * one, otherwise the ability's own.
+ *
+ * A rank that adds a MECHANIC needs a different sentence, and the description
+ * must only promise what the CURRENT rank actually does (Sweep I must not
+ * advertise Tempo).
+ */
+export function abilityBlurbAt(ability: AbilityDef, playerTier: number): string {
+  return abilityRankAt(ability, playerTier).blurb ?? ability.blurb;
+}
+
 /** Authored wind-up at this player's rank, BEFORE cast speed. 0 when no wind-up applies. */
 export function abilityCastMs(ability: AbilityDef, playerTier: number): number {
   return abilityRankAt(ability, playerTier).castMs ?? 0;
@@ -493,13 +546,37 @@ const abilities: AbilityDef[] = [
     trigger: { kind: "in-combat" },
     icon: "sweep",
     // Splash has an intuitive ceiling: 100% means a secondary target receives a
-    // full-strength copy of the payload. Once T3 reaches it, T4 buys frequency
-    // instead of inventing 120% splash.
+    // full-strength copy of the payload. Once T3 reaches it there is nowhere
+    // left to go on that axis, so the later ranks deepen FREQUENCY instead.
+    //
+    // Frequency is bought as TEMPO rather than as a shorter authored cooldown.
+    // A flat cut pays every build the same, which is exactly backwards for a
+    // swarm answer: the builds that most need Sweep are the slow, heavy ones
+    // that land few attacks between activations. Tempo pays per landed basic
+    // attack, so a 2 s-swing bruiser roughly preserves the old ~6 s cadence
+    // (7000 − ~3 attacks × 1000) while a fast build genuinely earns more
+    // activations — and the earning is capped by TECHNIQUE_TEMPO_MIN_CYCLE_MS
+    // so no attack rate turns Sweep into a permanent cleave aura.
+    //
+    // Rank I deliberately has NO Tempo: it is the rank that teaches "arm, then
+    // hit", and a second mechanic on top of that would blur the lesson.
     ranks: [
       { effect: { kind: "cleave", splashPct: 0.6, radius: 90 }, cooldownMs: 6000 },
-      { effect: { kind: "cleave", splashPct: 0.8, radius: 90 }, cooldownMs: 6000 },
-      { effect: { kind: "cleave", splashPct: 1.0, radius: 90 }, cooldownMs: 6000 },
-      { effect: { kind: "cleave", splashPct: 1.0, radius: 90 }, cooldownMs: 5000 },
+      {
+        effect: { kind: "cleave", splashPct: 0.8, radius: 90, tempoRefundMs: 1000 },
+        cooldownMs: 7000,
+        blurb: "Arms your next attack to cleave nearby enemies. Your attacks hasten its return.",
+      },
+      {
+        effect: { kind: "cleave", splashPct: 1.0, radius: 90, tempoRefundMs: 1000 },
+        cooldownMs: 7000,
+        blurb: "Arms your next attack to cleave nearby enemies. Your attacks hasten its return.",
+      },
+      {
+        effect: { kind: "cleave", splashPct: 1.0, radius: 90, tempoRefundMs: 1000 },
+        cooldownMs: 7000,
+        blurb: "Arms your next attack to cleave nearby enemies. Your attacks hasten its return.",
+      },
     ],
   },
   {
@@ -758,6 +835,48 @@ const abilities: AbilityDef[] = [
       { effect: { kind: "spread-dots", radius: 120, maxTargets: 2 }, cooldownMs: 14000, castMs: 1000 },
       { effect: { kind: "spread-dots", radius: 150, maxTargets: 3 }, cooldownMs: 12000, castMs: 1000 },
       { effect: { kind: "spread-dots", radius: 180, maxTargets: 5 }, cooldownMs: 9000, castMs: 1000 },
+    ],
+  },
+
+  {
+    id: "slam",
+    attunementCost: 6,
+    name: "Slam",
+    slot: "technique",
+    shape: "cast",
+    tags: [],
+    blurb:
+      "Wind up and drive the blow into the ground, striking everything around the impact. You stop attacking while it charges — and hard control breaks it.",
+    tier: 2,
+    lineageId: "slam",
+    trigger: { kind: "in-combat" },
+    // POWER STRIKE'S AoE COUNTERPART, NOT ITS REPLACEMENT. Both stay learnable,
+    // attunable and useful at the same time; the RP budget is the only thing
+    // that makes them compete.
+    //
+    // The relationship is arithmetic and deliberate: Slam deals exactly HALF
+    // Power Strike's multiplier per target at the same tier (T2 1.75 vs 3.5,
+    // T3 2.0 vs 4.0, T4 2.25 vs 4.5). One target is a clear loss, two targets
+    // is a wash on raw Attack multiple, three or more is a clear win. That
+    // crossover is the whole decision, so it must survive every later tier.
+    //
+    // It favours heavy, slow builds WITHOUT ever asking about attack speed:
+    // it scales from Attack, its wind-up ignores attack cadence, and casting
+    // stops ordinary attacking — so the faster the build, the more real damage
+    // the 1.6 s commitment costs it. No inverse-speed multiplier, no weapon
+    // tags, no cadence query. Cast speed still shortens the wind-up through the
+    // ordinary `technique.cast-speed-pct` seam, which is a separate, intended
+    // synergy.
+    //
+    // The radius is authored and NEVER scales: `TECHNIQUE_POWER_FIELDS` lists
+    // only `damageMult` for `cast-strike`, so a damage stat can never buy reach
+    // — the same rule that keeps Technique Power off Snipe's range. Held flat
+    // across ranks for the first implementation; breadth is the identity, and
+    // widening it is a balance decision to make against measured data.
+    ranks: [
+      { effect: { kind: "cast-strike", damageMult: 1.75, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      { effect: { kind: "cast-strike", damageMult: 2.0, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      { effect: { kind: "cast-strike", damageMult: 2.25, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
     ],
   },
 
@@ -1129,6 +1248,16 @@ export function validateAbilities(): string[] {
         errors.push(`${label} changes effect kind ${kind} -> ${rank.effect.kind}.`);
       }
       if (rank.cooldownMs <= 0) errors.push(`${label} has a non-positive cooldown.`);
+      // Absence gates Tempo; an authored 0 would be encoding "no Tempo" as a
+      // number, which is exactly the shape the component rules forbid.
+      if (rank.effect.kind === "cleave" && rank.effect.tempoRefundMs !== undefined) {
+        if (rank.effect.tempoRefundMs <= 0) {
+          errors.push(`${label} authors a non-positive tempoRefundMs — omit the field instead.`);
+        }
+        if (rank.cooldownMs <= TECHNIQUE_TEMPO_MIN_CYCLE_MS) {
+          errors.push(`${label} authors Tempo on a cooldown at/below the ${TECHNIQUE_TEMPO_MIN_CYCLE_MS}ms minimum cycle, so Tempo can never do anything.`);
+        }
+      }
       // Every wind-up shape REQUIRES castMs; every other shape must not author
       // it. `charge` is a wind-up followed by a rush and `self-cast` a wind-up
       // that lands on the player, so both are bound by the same rule as `cast` —

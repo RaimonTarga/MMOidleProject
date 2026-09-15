@@ -1,6 +1,8 @@
 import {
+  TECHNIQUE_TEMPO_MIN_CYCLE_MS,
   abilityCastMs,
   abilityCooldownMs,
+  abilityTempoRefundMs,
   abilityRangeBonus,
   abilityRankAt,
   abilityRankNumber,
@@ -99,6 +101,11 @@ const damageFromAttack = (mult: number, context: AbilityContext): string | null 
 const EFFECT_FIELDS: Record<string, EffectFieldMeta> = {
   splashPct: { label: 'Splash damage', format: 'pct' },
   radius: { label: 'Splash radius', format: 'px' },
+  // Player-facing wording deliberately avoids the internal "attack-equivalent"
+  // term: what a player can act on is "each attack you land", and the
+  // normalization that makes a Slinger clip or a Conduit formation add up to
+  // one attack is an implementation promise, not a number to read in a tooltip.
+  tempoRefundMs: { label: 'Cooldown per attack landed', format: 'ms' },
   damageMult: { label: 'Damage', format: 'mult', absolute: damageFromAttack },
   damageTakenPct: { label: 'Damage taken by target', format: 'pct' },
   durationMs: { label: 'Duration', format: 'ms' },
@@ -130,7 +137,7 @@ const EFFECT_FIELDS: Record<string, EffectFieldMeta> = {
 
 /** Field order per effect kind — magnitude first, then the shape of the effect. */
 const EFFECT_FIELD_ORDER: Record<AbilityEffectSpec['kind'], string[]> = {
-  cleave: ['splashPct', 'radius'],
+  cleave: ['splashPct', 'radius', 'tempoRefundMs'],
   empower: ['damageMult'],
   'cast-strike': ['damageMult', 'stunMs', 'radius'],
   'expose-weakness': ['damageTakenPct', 'durationMs'],
@@ -313,6 +320,23 @@ function timingLines(ability: AbilityDef, context: AbilityContext): AbilityLine[
       ? `Authored ${seconds(authoredCd)} · −${pct(reduction)} cooldown reduction`
       : undefined,
   });
+
+  // The Tempo floor. Shown only for a rank that actually has Tempo, and only as
+  // the FASTEST the ability can come back — a player needs to know where the
+  // reward for attacking stops, or they will keep buying attack speed for it.
+  const tempoRefundMs = abilityTempoRefundMs(ability, context.playerTier);
+  if (tempoRefundMs > 0) {
+    const fastest = Math.min(
+      TECHNIQUE_TEMPO_MIN_CYCLE_MS,
+      authoredCd * (1 - reduction),
+    );
+    lines.push({
+      key: 'tempo-min-cycle',
+      label: 'Fastest possible cycle',
+      value: seconds(fastest),
+      breakdown: `Attacks cannot bring it back sooner than ${seconds(fastest)} after it last fired`,
+    });
+  }
 
   const authoredCast = abilityCastMs(ability, context.playerTier);
   // All wind-up shapes use beginAbilityCast, including self-casts.

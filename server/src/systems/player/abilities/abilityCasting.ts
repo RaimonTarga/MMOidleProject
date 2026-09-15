@@ -27,7 +27,6 @@ import {
   abilityRankAt,
   abilityRangeBonus,
   resolveAbilityEffect,
-  setCooldown,
   type AbilityDef,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
@@ -35,7 +34,7 @@ import type { PlayerEntity } from "../../../ecs/entity";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { isHardControlled } from "../../combat/status/playerHardControl";
 import { setEntityMotion, stopEntity } from "../../world/movement";
-import { abilityCooldownKey, techniqueCooldownMs } from "./abilityCooldowns";
+import { startTechniqueCooldown } from "./abilityCooldowns";
 import { resolveCastPayload, resolveSelfCastPayload } from "./abilityEffects";
 import { afflictionTechniqueHasWork } from "./abilityAffliction";
 import { abilityEngagementRange, abilityTarget } from "./abilityTargeting";
@@ -180,11 +179,7 @@ export function updateAbilityCasts(world: World, now: number): void {
       if (now < casting.endsAt) continue;
       detachComponent(world, player, "isCastingAbility");
       resolveSelfCastPayload(world, player, ability);
-      setCooldown(
-        player.tracksCombat,
-        abilityCooldownKey(ability.id),
-        techniqueCooldownMs(player, ability),
-      );
+      startTechniqueCooldown(player, ability);
       world.pushEvent(player.hasPosition.nodeId, {
         kind: "player-cast-end",
         playerId: player.isPlayer.id,
@@ -224,11 +219,7 @@ export function updateAbilityCasts(world: World, now: number): void {
     } else {
       resolveCastPayload(world, player, ability, target);
     }
-    setCooldown(
-      player.tracksCombat,
-      abilityCooldownKey(ability.id),
-      techniqueCooldownMs(player, ability),
-    );
+    startTechniqueCooldown(player, ability);
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-cast-end",
       playerId: player.isPlayer.id,

@@ -5,11 +5,12 @@ Living truth for the active **Ability** system (Technique / Guard). Design autho
 `docs/archive/abilities-plan.md`, `docs/archive/abilities-evolution-implementation-plan.md`
 and `design_docs/archive/abilities-evolution-plan-updated.md`.
 
-**Shipped:** the full **T1–T4 roster of 21 abilities** on authored per-tier ranks, the
+**Shipped:** the full **T1–T4 roster of 22 abilities** on authored per-tier ranks, the
 control ladder (slow / root / stun), ability **engagement range**, the **affliction
 toolkit** (Contagion / Detonate, reading the shared DoT inventory), the **charge-based
-window** (Imbue Lightning, on the new `self-cast` shape), and bespoke in-world FX for
-every ability.
+window** (Imbue Lightning, on the new `self-cast` shape), **Sweep Tempo** (T2+, on the
+shared attack-equivalent seam), **Slam** (the T2 area counterpart to Power Strike), and
+bespoke in-world FX for every ability.
 
 > **Name collision (kept distinct).** The passive talent tree (`UsesSkills`, `skillTree/`) is
 > class progression and is **untouched**. "Abilities" is the active system (Technique / Guard).
@@ -37,9 +38,10 @@ rank = clamp(playerTier - homeTier + 1, 1, ranks.length)
 A rank authors the whole picture — `effect`, `cooldownMs`, `castMs`, `rangeBonus` — so a rank
 may deepen a completely different axis from the one before it. That is the point: **once a
 mechanic reaches its natural ceiling, the next rank deepens something else.** Sweep reaches
-100% splash at rank III and rank IV buys frequency instead of inventing 120% splash; Brace's
-DR stops at 45% and rank IV buys duration; Cleanse's stack/affliction counts are discrete and
-never run through a percentage multiplier.
+100% splash at rank III and buys **frequency** from rank II onward instead of inventing 120%
+splash — as Tempo rather than as a shorter authored cooldown, see below; Brace's DR stops at
+45% and rank IV buys duration; Cleanse's stack/affliction counts are discrete and never run
+through a percentage multiplier.
 
 It is the **same learned ability** throughout — one id, one lineage, one loadout entry. The
 UI shows the rank numeral (`Sweep III`) so a player who just tiered up sees the acknowledgement.
@@ -129,7 +131,7 @@ the one trigger that must work while the player cannot act) · **`target-beyond-
 | Shape | Mechanism | Worked by |
 |---|---|---|
 | `armed` | attaches `hasArmedAbility`; rider lands in `abilityEffects.ts` on the next hit | Sweep, Expose Weakness, Hamstring, Binding Strike, Quick Strike |
-| `cast` | attaches `isCastingAbility`; see below | Power Strike, Snipe, Stunning Strike |
+| `cast` | attaches `isCastingAbility`; see below | Power Strike, Slam, Snipe, Stunning Strike |
 | `charge` | winds up as a `cast`, then attaches `isChargingAbility` and **rushes** the target at `chargeSpeedMult` until contact, interruption or `chargeMaxMs`; hands the armed-hit rider back to the pipeline on arrival | Charge |
 | `reposition` | resolves immediately by moving the player; optionally also arms | Disengage |
 | `self-cast` | winds up like a `cast` but resolves on the PLAYER — no target to acquire and none to lose | Imbue Lightning |
@@ -214,7 +216,7 @@ deliberately not interchangeable.
 
 | Stat | Touches | Never touches |
 |---|---|---|
-| Technique Power | Sweep splash, Power Strike / Snipe / Stunning Strike damage, Hamstring & Binding Strike hit riders, Charge's strike rider, Quick Strike | movement distance, slow/root/stun durations, Snipe's reach, Frenzy's duration, Expose Weakness's vulnerability |
+| Technique Power | Sweep splash, Power Strike / Slam / Snipe / Stunning Strike damage, Hamstring & Binding Strike hit riders, Charge's strike rider, Quick Strike | movement distance, slow/root/stun durations, Snipe's reach, Frenzy's duration, Expose Weakness's vulnerability |
 | `guard.potency-pct` / `guard.duration-pct` | Mitigation Guards: Brace/Endure DR and resistance, Bramble plating/reflect, plus buff duration | Cleanse counts, Break Free's discrete removal, Recovery skills |
 | `defense.recovery-skill-potency` | Second Wind, Recuperate (the `recovery` tag) | passive Recovery access, Barrier, Absorb, Cleanse, mitigation Guards |
 
@@ -233,7 +235,7 @@ forgets to set it cannot silently skip target validation.
 
 ---
 
-## Roster — 21 abilities, 14 Techniques + 7 Guards
+## Roster — 22 abilities, 15 Techniques + 7 Guards
 
 The roster offers different offensive, positional, control and defensive roles. RP prices express opportunity cost.
 
@@ -247,7 +249,7 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 
 | Ability | Slot / shape | Biome (level) | Job |
 |---|---|---|---|
-| **Sweep** | Technique / armed | Plains (3) | Next attack cleaves — the density answer |
+| **Sweep** | Technique / armed | Plains (2) | Next attack cleaves — the density answer (Tempo from rank II) |
 | **Expose Weakness** | Technique / armed | Cave (3) | Elite damage amplification |
 | **Power Strike** | Technique / **cast** | Mountain (5) | The reference all-damage cast |
 | **Second Wind** | Guard / instant | Forest (3) | Strong/short Recovery access |
@@ -261,6 +263,7 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 | **Hamstring** | Technique / armed | Jungle (3) | Slow — rung one of the ladder |
 | **Charge** | Technique / charge | Desert (3) | Gap-closer with real extended reach |
 | **Contagion** | Technique / **cast** | Swamp (9) | Copy afflictions outward — the DoT breadth answer |
+| **Slam** | Technique / **cast** | Mountain (9) | Power Strike's area counterpart — half the multiple, to everything nearby |
 | **Bramble Guard** | Guard / instant | Jungle (5) | Temporary plating + flat thorns |
 | **Endure** | Guard / instant | Desert (5) | Sustained mitigation (Brace's opposite) |
 
@@ -285,6 +288,117 @@ Only rank I is authored: these debut at the end of the supplied biome map.
 | **Imbue Lightning** | Technique / **self-cast** | Jungle (15) | A window spent in HITS, not seconds |
 | **Recuperate** | Guard / instant | Trench (5) | Weak/long Recovery access |
 
+### Sweep Tempo, and the attack-equivalent seam (2026-09-15)
+
+From **rank II** (player tier 2) Sweep's authored cleave carries `tempoRefundMs: 1000`, and
+its base cooldown moves from 6 s to **7 s**. Every accumulated **attack-equivalent** of
+ordinary basic-attack delivery takes 1000 ms off Sweep's *remaining* cooldown. Rank I is
+deliberately untouched — 60 % splash, 90 px, 6 s, no Tempo — because rank I is the rank that
+teaches "arm, then hit", and a second mechanic on top would blur the lesson.
+
+**Why Tempo and not a shorter cooldown.** A flat cut pays every build the same, which is
+backwards for a swarm answer: the builds that most need Sweep are the slow, heavy ones that
+land the fewest attacks between activations. Tempo pays per landed attack, so a 2 s-swing
+bruiser roughly keeps the old ~6 s cadence while a fast build genuinely earns more
+activations.
+
+**The minimum cycle.** `TECHNIQUE_TEMPO_MIN_CYCLE_MS = 3000` (shared). Sweep can never
+become ready sooner than 3 s after its previous *activation*, no matter how many attacks
+land. Implemented as a second, ordinary cooldown key (`ability.tempo.floor.<id>`) that ticks
+down with real time and that Tempo never touches — so it is an honest record of time since
+the activation rather than a wall-clock timestamp. It is capped to the already-reduced
+cooldown, so it can never *lengthen* a cooldown that equipment shortened past it. Ordinary
+`technique.cooldown-reduction-pct` applies first, as always; Tempo then works on what is
+left.
+
+**Attack-equivalents** (`server/src/systems/player/abilities/attackTempo.ts`) are the shared
+normalization seam, deliberately generic rather than Sweep's: any ability authoring
+`tempoRefundMs` picks it up with no server change. One qualifying landed basic attack is
+worth exactly **1.0**, and every multi-body, multi-projectile or continuous delivery is
+normalized back down to its share of one:
+
+| Delivery | Contribution | Why |
+|---|---|---|
+| Ordinary player attack | 1.0 | The reference |
+| Empowered attack | 1.0 | A multiplier changes how hard you hit, not how often you swung |
+| Slinger ammo-backed shot | `1 / ammoMax` | One **nominal** magazine is one attack |
+| Blunderbuss volley pellet | `1 / ammoMax` each | A full-clip volley is still one clip |
+| Conduit formation body | slot `procWeight` over the **authored** formation total | One complete formation cycle is one attack |
+| Bonded Conduit's own swing | same scale | Battle Bond's conduit is one more body |
+| Laser / channelled-beam tick | its authored damage-per-tick fraction | A channel is not a discrete attack cycle |
+| Chaotic dead swing | 0 | Delivers nothing — same rule that stops it spending ammo |
+
+Most of the exclusion list is **free rather than filtered**: DoT ticks, Sweep's own splash,
+Slam's and Power Strike's cast payloads, thorns/retaliation and secondary proc damage all
+apply damage *without emitting an attack event at all* (they go through `applyPlayerAoe`,
+the DoT tick systems, or direct HP writes), so none can reach the seam even in principle. A
+single attack that splashes five monsters is still ONE event, so breadth never multiplies
+Tempo either.
+
+Two deliberate normalization calls:
+
+- **Slinger uses `ammoMax`, never live ammo.** A tactical reload that dumps two rounds
+  contributes 2/`ammoMax`, so firing deliberately tiny clips can never promote each bullet
+  to a larger share of an attack. The fractional remainder carries across clips and across
+  activations, so a part-finished magazine is never silently discarded.
+- **Conduit normalizes over the AUTHORED formation, not the living one.** More bodies means
+  more events each worth proportionally less, so a relic-expanded army earns exactly the
+  same Tempo per cycle as a 2-body Colossus formation. A formation fighting bodies down
+  simply never delivers the missing shares — the survivors are *not* scaled up to cover for
+  the dead. This is why Tempo reads raw `slot.procWeight` through `formationTempoWeight()`
+  rather than `FormationAttackContribution.procWeight`: that number carries the formation's
+  damage/secondary-effect coefficients, and Tempo equalizes logical **cadence**, not damage.
+
+Registered on **`afterHit`** from `initCombatSystems()`: it runs only for attacks that
+actually landed, and after the armed-Technique rider has resolved. The attack that
+*delivers* Sweep counts toward the next Sweep for free — the cooldown it feeds started when
+Sweep **armed**, so it is already running when the delivering blow connects.
+
+**Known presentation gap.** The HUD cooldown ring is a client-side prediction from the arm
+event times the *authored* cooldown (`AbilityBar.computeStatus`); it does not model Tempo.
+Under auto-combat Sweep re-arms the tick it is ready, which restamps the ring, so it reads
+as "came back early" rather than as a stall — but a manual player can see a still-sweeping
+ring on a Sweep that is actually ready. Making it exact needs live remaining-ms on the wire.
+
+### Slam — the area counterpart to Power Strike (2026-09-15)
+
+A new T2 `cast` Technique, 6 RP, reusing the existing `cast-strike` effect and its
+AoE-radius support. Ranks: **1.75x / 2.0x / 2.25x** Attack at 150 px, 10 s cooldown,
+1.6 s wind-up, at player tiers 2 / 3 / 4.
+
+The relationship with Power Strike is arithmetic and load-bearing: **Slam deals exactly half
+Power Strike's multiplier per target at the same tier** (T2 1.75 vs 3.5, T3 2.0 vs 4.0, T4
+2.25 vs 4.5). One target clearly favours Power Strike, two targets tie on raw Attack
+multiple, three or more clearly favour Slam. That crossover must survive every later tier.
+
+It favours heavy, slow builds **without ever asking about attack speed** — no inverse-speed
+multiplier, no weapon tags, no cadence query. It scales from Attack, its wind-up ignores
+attack cadence, and casting stops ordinary attacking, so the faster the build the more real
+damage the 1.6 s commitment costs it. `technique.cast-speed-pct` still shortens the wind-up
+through the ordinary seam; that is a separate, intended synergy.
+
+Slam **does not** replace, consume, evolve or disable Power Strike — both stay learnable and
+attunable at once, and only the RP budget makes them compete. Technique Power scales
+`damageMult` and never `radius` (the same rule that keeps it off Snipe's reach), so the
+radius is authored flat across all three ranks for this first pass.
+
+**Acquisition: Mountain, biome level 9** — its T2 band's own level 3, the same placement rule
+every other ability follows and the same level Contagion sits at in the swamp's T2 band. It
+is a *theme* deviation of exactly the kind Contagion already makes: every other T2 ability
+lives in jungle or desert, but Mountain is the game's wind-up biome — Brace (L3) teaches you
+to READ a telegraph, Power Strike (L5) teaches you to PERFORM one — so the tier that widens
+that blow into an area belongs there. Mountain has nodes at T1-T4, so nothing was re-homed
+and no band was reshuffled. Cost 90 blue: the top of the T2 ability band (70-90), priced as
+an optional power tool rather than as required counterplay.
+
+**Presentation:** reuses `fxSlam` (the boss ground-slam) with the stone `impact` palette,
+driven off `player-cast-end` like every other cast. It already speaks the game's "an area
+just got hit" vocabulary — cracks, expanding shock rings, debris — and takes the kill radius
+as an argument, so the ring lands exactly on the circle the server damaged (read from the
+authored rank, never a client constant). **No icon art**: Slam is not in the concept-icon
+set or the approved atlas allowlist, so it renders the placeholder glyph until art is
+generated and accepted.
+
 ### Where the affliction pair lives — and why it breaks the biome pattern
 
 Every other ability sits in a biome its OWN tier introduces (T2 abilities in jungle/desert,
@@ -293,7 +407,9 @@ deliberate exceptions, homed in the swamp by THEME**: the swamp is the game's
 attrition-by-damage-over-time biome and where the brand weapons live, so it is the one
 place a player has both the afflictions to manipulate and a reason to want them
 manipulated. Homing them in the tier's "correct" biome would be arbitrary. Imbue Lightning
-(T4, jungle) is the same kind of deliberate exception. **Designer's call.**
+(T4, jungle) and **Slam (T2, mountain)** are the same kind of deliberate exception — each
+homed by theme in a biome that owns the idea rather than in the biome its tier introduces.
+**Designer's call.**
 
 The pair is split across TIERS rather than staggered inside one band: Contagion at swamp
 level 9 (its T2 band), Detonate at level 17 (its T3 band). That is load-bearing — T2 grants
@@ -501,7 +617,21 @@ authored rank itself.
   generated and accepted in the gallery. Power Strike temporarily borrows the Charged Strike
   art through `ABILITY_ICON_ALIASES` (same ability, re-homed a tier earlier).
 - Ability **evolution presentation** (`lineageId` grouping in the panel) is not built — the
-  field exists and Sweep carries `lineageId: "sweep"`, but nothing consumes it yet.
+  field exists and Sweep and Slam each carry their own self-named lineage, but nothing
+  consumes it yet. Slam deliberately does NOT share Power Strike's grouping: nothing in the
+  code treats a lineage as exclusive today, but filing them together would read as an
+  evolution, and Slam replaces nothing.
+- **Slam has no icon art.** It is in neither the concept-icon set
+  (`client/public/assets/concept-icons/abilities/`) nor the approved atlas allowlist in
+  `abilityIcons.ts`, so it renders the placeholder glyph. Deliberately not aliased to Power
+  Strike's borrowed Charged Strike art — two abilities that must read as different choices
+  must not share a tile. Needs an `art/manifests/ability-icons.json` draft entry.
+- **The Slinger's Tempo is quantized to whole clips.** One nominal magazine is one
+  attack-equivalent, so the refund only lands when a clip completes. In the synthetic run a
+  6-round and a 10-round Slinger both settled at a ~5.9 s Sweep cycle because exactly one
+  clip completed per cycle in each case; firing faster only helps when it changes the
+  *integer* number of clips per cycle. Correct by construction, but it makes the Slinger
+  markedly Tempo-poorer than a 1 s-swing melee build — a tuning call for the eHP pass.
 - **T5+ ranks are not authored.** Every ability clamps at its last rank; the design rule is
   one bespoke authored upgrade per tier, never a resumption of percentage growth.
 - **Disengage's trigger needs a balance call.** `enemy-within: 90px` is an ABSOLUTE gap, so for a

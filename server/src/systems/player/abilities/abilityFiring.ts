@@ -47,7 +47,7 @@ import {
 import { syncPlayerControlLockout } from "../../combat/status/playerControlLockout";
 import { activateRecovery } from "../../defense/regen/recovery";
 import { repositionPlayer } from "../../combat/damage/knockback";
-import { abilityCooldownKey, guardCooldownMs, techniqueCooldownMs } from "./abilityCooldowns";
+import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
 import { applyBrambleGuard } from "./abilityBramble";
 import { abilityTarget, gapToTarget, nearestMonsterGap } from "./abilityTargeting";
@@ -372,7 +372,7 @@ function maybeFireTechnique(
     if (!options.manual && !shouldFire(world, player, ability, fctx)) return DECLINED_TECHNIQUE;
     applyInstantTechnique(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
-    setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
+    startTechniqueCooldown(player, ability);
     // Carry the window length so the client can sustain an in-world cue for the
     // ability's REAL duration. Resolved here rather than looked up client-side
     // because the authored rank is the server's to interpret.
@@ -446,7 +446,7 @@ function maybeFireTechnique(
     ) {
       return DECLINED_TECHNIQUE;
     }
-    setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
+    startTechniqueCooldown(player, ability);
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-reposition",
       playerId: player.isPlayer.id,
@@ -462,7 +462,7 @@ function maybeFireTechnique(
   }
 
   armTechnique(world, player, abilityId);
-  setCooldown(player.tracksCombat, cdKey, techniqueCooldownMs(player, ability));
+  startTechniqueCooldown(player, ability);
 
   // Cosmetic: tell the node the Technique armed so the client telegraphs it
   // (skill-name callout + red cooldown bar until the charge is consumed).

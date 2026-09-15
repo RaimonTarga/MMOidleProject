@@ -66,6 +66,22 @@ export interface FormationAttackContribution {
   /** Formation-wide multiplier for secondary weapon effects; never direct Attack. */
   secondaryEffectMult: number;
   procWeight: number;
+  /**
+   * This body's share of ONE logical formation attack, normalized over the FULL
+   * authored formation — see `basicAttackTempoContribution`.
+   *
+   * Deliberately NOT `procWeight`. That number carries the formation's damage /
+   * secondary-effect coefficients (`secondaryEffectMult`, relic potency), which
+   * is right for "how much on-hit magnitude does this body deliver" and wrong
+   * for "how much of an attack did the formation just take". Tempo equalizes
+   * logical CADENCE, so it reads the raw slot weights and nothing else.
+   *
+   * Normalized over every AUTHORED slot rather than over the living ones, so a
+   * formation fighting three bodies down pays three bodies less Tempo. A dead
+   * summon's share is simply never delivered; the survivors are never scaled up
+   * to cover it.
+   */
+  tempoWeight: number;
   targetId: string;
   cycleSerial: number;
   cycleCompleted: boolean;
