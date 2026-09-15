@@ -88,7 +88,7 @@ export const mountainMonsterEntries = [
     // flyers'. It gets the reusable Cave/Cavern GROUND SLAM instead (behavior pass).
     // A modest engagement charge may remain against trivial kiting.
     // HP-led durability; Granite Barrier continues to scale with maximum HP.
-    stats: { hp: 1380, attack: 105, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    stats: { hp: 1656, attack: 105, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
@@ -152,7 +152,7 @@ export const mountainMonsterEntries = [
     // GROUND BRUISER T3. Same Slam family as the Titan, with a larger/more
     // threatening footprint and durability. Still deliberate and readable.
     // HP-led durability retains weapon access and the existing ward mechanic.
-    stats: { hp: 4250, attack: 130, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    stats: { hp: 4675, attack: 130, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 440 },
     ai: { wanderRadius: 90, leashRange: 420, idleMinMs: 4000, idleMaxMs: 10500 },
