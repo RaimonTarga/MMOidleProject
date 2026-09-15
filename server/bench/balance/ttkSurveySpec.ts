@@ -1,0 +1,87 @@
+import assert from 'node:assert/strict';
+import { requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery, globalMastery, ITEM_DATABASE, RECIPE_DATABASE, NODE_BIOMES, RUNE_RECIPE_DATABASE,
+  isRuneRecipeUnlocked, composePlayerView } from '@mmo-idle/shared';
+import { materializeBot, BENCH_BOT_ID } from './botFactory';
+import { validateBuild } from '../../../bot/src/loadout/loadout';
+import { recalculatePlayerEntityStats } from '../../src/ecs/playerEntityFormulas';
+import { syncArchetypeSlices } from '../../src/ecs/archetypeSliceSync';
+import { refillBarrier } from '../../src/systems/defense/barrier/barrier';
+import { setAbilityLoadout } from '../../src/systems/player/economy/abilityCrafting';
+import type { World } from '../../src/world/World';
+import type { BuildSpec } from './types';
+
+export const SURVEY_CLASSES = [
+  { name: 'striker', prefix: 'cadence', melee: true, weapons: ['flash-rapier','gale-needle','volcanic-cinderlash'] },
+  { name: 'squire', prefix: 'cooldown', melee: true, weapons: ['heavy-hammer','quake-hammer','mountain-avalanche-maul'] },
+  { name: 'apprentice', prefix: 'dot', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
+  { name: 'slinger', prefix: 'reload', melee: false, weapons: ['ashbrand-blade','jungle-stinger-rapier','jungle-venomthorn-rapier'] },
+  { name: 'conduit', prefix: 'summoner', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
+  { name: 'spirit', prefix: 'energy', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
+] as const;
+export const SURVEY_SEEDS = [173, 947, 2027] as const;
+export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; }
+export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
+  ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
+    const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
+    const nodeId = `node-t${tier}-${group}-${role === 'solo' ? '02' : role === 'small-group' ? '04' : '03'}`;
+    return (tier >= 2 && ['conduit','slinger'].includes(c.name) ? [false,true] : [false]).map(alternate => {
+      const weapon = alternate ? c.name === 'conduit' ? ['jungle-stinger-rapier','jungle-venomthorn-rapier'][tier-2]
+        : ['swamp-mirebrand','swamp-blightbrand'][tier-2] : c.weapons[tier-1];
+      const id = `ttk-t${tier}-${c.name}-${role}-${alternate ? 'weapon-alt' : 'baseline'}`;
+      return { id, tier, role, nodeId, className: c.name, alternate, build: {
+        id, classRoot: `${c.prefix}-root`, contentTier: tier, playerTier: tier, gearTier: tier,
+        skillPath: [`${c.prefix}-root`, ...(tier >= 2 ? [`${c.prefix}-balanced`] : []),
+          ...(tier >= 3 ? [`${c.prefix}-range-${c.melee ? 'close' : 'mid'}`] : [])],
+        gearItemIds: { weapon, armor: `${group}-vest-t${tier}`, recovery: `${group}-charm-t${tier}`,
+          mobility: `mountain-boots-t${tier}`, ...(tier >= 2 ? { core: 'core-tempered' } : {}) },
+      } };
+    });
+  })));
+
+export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;y:number}) {
+  assert(NODE_BIOMES[cell.nodeId]?.biomeTier === cell.tier);
+  for (const id of Object.values(cell.build.gearItemIds)) {
+    const recipe = RECIPE_DATABASE.get(id!);
+    assert(recipe && ITEM_DATABASE.has(id!), `Missing recipe/item ${id}`);
+    assert(recipe.tier <= cell.tier, `Future item ${id}`);
+  }
+  const bot = materializeBot(world, cell.build, {nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false}, pos, BENCH_BOT_ID, 5);
+  const p = bot.tracksProgression;
+  for(const id of Object.values(cell.build.gearItemIds)) {
+    const recipe=RECIPE_DATABASE.get(id!)!;
+    assert((p.biomeLevel[recipe.recipeGroup]??0)>=recipe.requiredBiomeLevel, `Unreachable gear ${id}`);
+    const plus=bot.holdsInventory.itemUpgrades[id!]??0;
+    assert(plus<=upgradeCeilingFromGlobalMastery(globalMastery(p.biomeLevel),recipe.tier), `Global upgrade gate ${id}`);
+    assert((p.biomeLevel[recipe.recipeGroup]??0)>=requiredBiomeLevelForUpgrade(ITEM_DATABASE.get(id!)!,plus), `Biome upgrade gate ${id}`);
+  }
+  p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
+  p.equippedRites = [];
+  p.attunedAbilities = { techniques: [], guards: [] };
+  const stance = cell.tier >= 2 ? 'offensive-stance' : null;
+  p.attunedStances = stance ? [stance] : [];
+  p.equippedStances = { default: stance };
+  p.activeStance = stance;
+  const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
+  const rules = [
+    { conditionId:'always', actionId:'auto-path-enemy' },
+    { conditionId:'inside-telegraph', actionId:'step-back' },
+    ...(!c.melee ? [{ conditionId:'in-combat', actionId:'orbit' }] : []),
+    { conditionId:'always', actionId:'avoid-hazards' },
+    { conditionId:'always', actionId:'wait-for-regen' },
+  ];
+  for (const r of RUNE_RECIPE_DATABASE.values()) if (r.runeId && rules.some(rule=>rule.actionId===r.runeId)) {
+    assert(isRuneRecipeUnlocked(r,p), `Unreachable rune ${r.id}`);
+    if(!p.runesOwned.includes(r.runeId)) p.runesOwned.push(r.runeId);
+  }
+  p.runesEquipped = rules;
+  const techniques = [...(cell.tier === 3 ? ['frenzy'] : []), 'sweep'];
+  const abilities = { techniques, guards: cell.tier===1 ? ['second-wind'] : ['second-wind','cleanse'] };
+  assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);
+  recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
+  bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
+  const view = composePlayerView(bot)!;
+  assert.deepEqual(validateBuild({abilities, runeRules:rules, stances:{attuned:stance?[stance]:[],default:stance},rites:[]},view), [], cell.id);
+  assert.equal(view.selectedSubVariant, cell.tier >= 2 ? 'balanced' : null);
+  assert.equal(view.selectedRange,cell.tier>=3?`${c.prefix}-range-${c.melee?'close':'mid'}`:null);
+  return {bot, view};
+}

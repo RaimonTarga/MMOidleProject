@@ -1,0 +1,96 @@
+import assert from 'node:assert/strict';
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
+import { resolve,join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { NODE_BIOMES, MONSTER_DATABASE, composePlayerView, buildNavGrid, moverOverlapsBlockShapes, navigationBodyHalfExtents } from '@mmo-idle/shared';
+import { createFarmWorld } from '../bench/balance/worldFactory';
+import { setupArena, teardownArena } from '../bench/balance/arena';
+import { SURVEY_CELLS,SURVEY_SEEDS,prepareSurveyBot,type SurveyCell } from '../bench/balance/ttkSurveySpec';
+import { SurveyMetrics } from '../bench/balance/ttkSurveyMetrics';
+import { hydrateHitboxCacheFromArtifact } from '../src/hitbox/cache';
+import { checkpointDefinitionsHash } from '../src/admin/progressionCheckpoint';
+
+const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
+const mode=args.mode??'qualify'; assert(['qualify','pilot','run'].includes(mode));
+const out=resolve(args.out??'');assert(args.out&&!existsSync(out),'NEW output directory required');
+assert(args.hitboxes && hydrateHitboxCacheFromArtifact(args.hitboxes)>0,'Frozen hitbox artifact required; no square-hitbox fallback');
+const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
+const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+if(args.revision) assert.equal(revision,args.revision,'Wrong frozen checkout');
+mkdirSync(out,{recursive:true});
+const manifest={schema:1,mode,revision,definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
+  synthetic:true,economyEligible:false,dtMs:100,durationMs:mode==='pilot'?30000:300000,seeds:SURVEY_SEEDS,cells:SURVEY_CELLS};
+writeFileSync(join(out,'manifest.json'),JSON.stringify(manifest,null,2));
+const realNow=Date.now,realRandom=Math.random;
+function safeSpawn(node:string) {
+  const half=navigationBodyHalfExtents('player'),shapes=buildNavGrid(node,'player',half).shapes;
+  for(let r=0;r<1800;r+=100) for(const [dx,dy] of [[0,r],[r,0],[0,-r],[-r,0]]) {
+    const p={x:2400+dx,y:2400+dy};if(!moverOverlapsBlockShapes(p,shapes,half)) return p;
+  }
+  throw Error('No safe spawn '+node);
+}
+function run(cell:SurveyCell,seed:number) {
+  let randomState=seed,now=1800000000000;
+  Math.random=()=>{randomState=(Math.imul(randomState,1664525)+1013904223)>>>0;return randomState/4294967296;};
+  Date.now=()=>now;
+  const world=createFarmWorld();
+  try {
+    const target={nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false};
+    setupArena(world,target);
+    const {bot,view}=prepareSurveyBot(world,cell,safeSpawn(cell.nodeId));
+    const roster=()=>[...world.monsterEntitiesInNode(cell.nodeId)].map(m=>({id:m.entityId,type:m.isMonster.monsterTypeId,hp:m.hasHealth.hp,maxHp:m.hasHealth.maxHp,pos:{...m.hasPosition.current}}));
+    const initial=roster(); assert(initial.length>0,'Empty initial population');
+    const ready={cell:cell.id,seed,synthetic:true,view,initialRoster:initial,initialRosterHash:sha(JSON.stringify(initial))};
+    if(mode==='qualify') return ready;
+    const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
+    writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
+    const metrics=new SurveyMetrics(bot.isPlayer.id);
+    const register=()=>{for(const m of world.monsterEntitiesInNode(cell.nodeId)) metrics.register(m.entityId,m.isMonster.monsterTypeId,MONSTER_DATABASE.get(m.isMonster.monsterTypeId)?.name??m.isMonster.monsterTypeId,m.hasHealth.maxHp);};
+    register(); const log:unknown[]=[],samples:unknown[]=[];const lastHp=new Map<string,number>();
+    let elapsed=0,outcome='window-ended',minHp=1,attackBeats=0,lastAttack=0;
+    const wallStart=realNow();
+    world.worldLogJournal=[];world.worldLogByPlayer.clear();world.takeNodeEvents(cell.nodeId);
+    for(;elapsed<manifest.durationMs;elapsed+=100) {
+      if(realNow()-wallStart>120000) {outcome='wall-ceiling';break;}
+      now=1800000000000+elapsed; register();
+      world.tick(100,now);
+      for(const m of world.monsterEntitiesInNode(cell.nodeId)) {
+        const previous=lastHp.get(m.entityId);
+        if(previous!==undefined && m.hasHealth.hp>previous+0.001) {const t=metrics.targets.get(m.entityId);if(t&&t.firstDamageMs!==null)t.hpRegainObserved=true;}
+        lastHp.set(m.entityId,m.hasHealth.hp);
+        if(m.hasAttackTarget?.targetId===bot.isPlayer.id) metrics.touch(m.entityId,elapsed);
+      }
+      for(const e of world.worldLogJournal) {metrics.ingest(e,elapsed);log.push({atMs:elapsed,event:e});}
+      world.worldLogJournal=[];world.worldLogByPlayer.clear();
+      for(const e of world.takeNodeEvents(cell.nodeId)) if(e.kind==='monster-cast-start'||e.kind==='monster-cast-end') {
+        const t=metrics.targets.get(e.monsterId);if(t) {if(e.kind==='monster-cast-start')t.castsStarted++;else if(e.fired)t.castsFired++;}
+        log.push({atMs:elapsed,event:e});
+      }
+      const v=composePlayerView(bot)!;minHp=Math.min(minHp,v.hp/v.maxHp);
+      if(v.lastAttackAt!==lastAttack) {attackBeats++;lastAttack=v.lastAttackAt;}
+      metrics.closeIfCleared(elapsed);
+      metrics.sampleRecovery(elapsed,v.hp>=v.maxHp&&v.barrier>=v.barrierMax&&v.incomingDot===0);
+      if(elapsed%1000===0) samples.push({atMs:elapsed,hp:v.hp,barrier:v.barrier,incomingDot:v.incomingDot,target:v.attackTargetId,lastAttackAt:v.lastAttackAt,autoIntent:v.autoIntent,pos:v.pos,monsters:roster().map(m=>({id:m.id,type:m.type,hp:m.hp}))});
+      if(bot.isDead || bot.hasHealth.hp<=0) {outcome='player-died';break;}
+      world.pendingDeaths=[];
+    }
+    metrics.close(elapsed,outcome);
+    const result={cell:cell.id,seed,outcome,elapsedMs:elapsed,minHpFraction:minHp,attackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
+    writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');
+    writeFileSync(join(dir,'samples.jsonl'),samples.map(e=>JSON.stringify(e)).join('\n')+'\n');
+    writeFileSync(join(dir,'summary.json'),JSON.stringify(result,null,2));return result;
+  } finally {teardownArena(world);Date.now=realNow;Math.random=realRandom;}
+}
+const results:unknown[]=[];
+const batchWallStart=realNow();
+try {
+  const cells=mode==='pilot' ? SURVEY_CELLS.filter(c=>(c.tier===1&&c.className==='striker'&&c.role==='solo')||(c.tier===3&&c.className==='conduit'&&c.role==='swarm'&&!c.alternate)||(c.tier===2&&c.className==='slinger'&&c.role==='small-group'&&!c.alternate)) : SURVEY_CELLS;
+  for(const cell of cells) for(const seed of mode==='qualify'||mode==='pilot'?[SURVEY_SEEDS[0]]:SURVEY_SEEDS) {
+    assert(realNow()-batchWallStart < 4*60*60*1000,'Four-hour batch ceiling; partial artifacts retained');
+    results.push(run(cell,seed));writeFileSync(join(out,'index.json'),JSON.stringify(results,null,2));
+    console.log(cell.id,seed,'complete');
+    assert(process.memoryUsage().rss<2*1024**3,'RSS safety ceiling; partial artifacts retained');
+  }
+  writeFileSync(join(out,'complete.json'),JSON.stringify({cells:cells.length,runs:results.length,mode}));
+} catch(error) {writeFileSync(join(out,'failed.json'),JSON.stringify({error:String(error),completed:results.length}));throw error;}

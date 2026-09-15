@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import type { WorldLogEvent } from '@mmo-idle/shared';
+import { SurveyMetrics } from './ttkSurveyMetrics';
+const m=new SurveyMetrics('p');
+for(const id of ['a','b','c'])m.register(id,'wolf','Wolf',100);
+const hit=(id:string,at:number,minion=false)=>m.ingest({kind:'damage',source:{id:minion?'minion':'p',actorType:minion?'minion':'player',name:'source',...(minion?{ownerPlayerId:'p'}:{})},target:{id,actorType:'monster',name:'Wolf'},hpDamage:10,absorbed:0} as WorldLogEvent,at);
+const kill=(id:string,at:number)=>m.ingest({kind:'kill',victim:{id,actorType:'monster',name:'Wolf'},killer:{id:'p',name:'P',actorType:'player'}} as WorldLogEvent,at);
+hit('a',100);hit('b',100,true);hit('a',500);kill('a',1000);m.closeIfCleared(1000);assert(m.active,'partially cleared pack stays open');
+kill('b',1500);m.closeIfCleared(1500);assert.equal(m.episodes[0].members.length,2);assert.equal(m.episodes[0].durationMs,1400);
+m.sampleRecovery(2000,true);assert.equal(m.recovery[0].recoveredAtMs,2000);
+hit('c',3000);m.targets.get('c')!.hpRegainObserved=true;m.close(4000,'window-ended');
+const result=m.result();assert.equal(result.counts.censored,1);assert.equal(result.counts.killed,2);assert.equal(result.cleanTtkMs.median,1150);
+assert.equal(result.targets[0].maxDamageGapMs,400);assert.equal(result.targets[1].ttkMs,1400,'owned summon starts TTK');
+assert.equal(result.episodes[1].outcome,'window-ended');
+console.log('TTK survey metrics: ok');
