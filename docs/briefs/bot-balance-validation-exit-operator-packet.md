@@ -7,6 +7,11 @@ It does not authorize source edits, balance changes, adaptive tactics, retries,
 or follow-on experiments. The two stages use different declared inputs and
 must remain separate.
 
+**Operator action: execute the two stages below, then report and stop.** The
+earlier `bot-balance-validation-exit-plan.md` was the preparation roadmap;
+this document is the executable handoff. Preparation is already implemented.
+Do not repeat it or create another packet before running these cases.
+
 ## Operating boundary
 
 Run Stage 1 first when investigating the Night3 Volcano control gap. Stage 2 is
@@ -139,8 +144,10 @@ Colossus throughput from this diagnostic.
 
 ### Stage 1 launch
 
-Run from the repository at the frozen revision. The command creates a manifest
-only; inspect it before launch.
+Run from the existing repository directory. The explicit `--revision` archives
+the frozen commit into an isolated build directory; do not check out or reset
+the shared working tree. The command prepares the experiment without launching
+its workers; inspect the manifest before launch.
 
 ```powershell
 $exitRevision = '862448b6d8a6f298ead258447a0c5fa5aaeb9584'
@@ -177,10 +184,10 @@ and Trench, and the V1W Jungle 35RP build (Frenzy/Sweep/Hamstring; Second Wind,
 Cleanse) for Jungle, Graveyard and Volcanic. Empty relic is the provisional
 reference; no Colossus arm is included.
 
-The route captures `<route-id>-ready`, marks approach and dungeon arrival,
+The route captures `t4-exit-<group>-ready`, marks approach and dungeon arrival,
 configures the encounter build, performs one `attemptBoss` with `maxAttempts=1`
 and a `720000 ms` step bound, asserts the named boss victory, then returns by
-the exact reverse path, rests and captures `<route-id>-returned`. `stopOnFirstDeath`
+the exact reverse path, rests and captures `t4-exit-<group>-returned`. `stopOnFirstDeath`
 and `suppressTransitCombat` are fixed. Do not require another Mountain run,
 all remaining mastery caps, T5 or a continuous from-zero campaign.
 
@@ -275,6 +282,19 @@ measurement surface; they cannot certify canonical economy/pacing or universal
 class/relic balance. Keep Swamp T3 open. Begin scoped mob measurements only for
 clean, viable encounters with reliable engagement/downtime evidence. Current
 Night3 data alone still justifies no buff or nerf.
+
+## Report destination
+
+Write the combined operator report to
+`docs/briefs/bot-balance-validation-exit-report.md` and index it in
+`docs/README.md`. Include both experiment IDs and artifact locations. Keep the
+two stages separate in the results. If Stage 1 is gameplay-inconclusive,
+continue Stage 2 unless a shared infrastructure or setup defect invalidates it.
+Do not turn this packet into another planning task.
+
+Planner review: route and productive-activity tests and bot typecheck passed
+on 2026-09-15; the frozen source tree and setup-preflight artifact hash match
+this packet. These are preparation checks, not new combat results.
 
 ## Handoff
 
