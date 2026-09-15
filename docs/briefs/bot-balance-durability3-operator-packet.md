@@ -154,6 +154,12 @@ HP, attack, plating and DR; initialStats verifies actual spawned values.
   strengths are allowed; flag repeated roughly4x speed advantages against the
   median other baseline class TTK AND list pairwise ratios/counts. A single
   sparse or dying comparator does not justify DoT resistance.
+- User highlighted Stone Eagle's opening dive. Source: Skyfall Rend has1000ms
+  cast, damageMultiplier1.75 and a cast-charge-strike engage sequence. Separate
+  its opening strike from ordinary Eagle attacks using cast/charge chronology;
+  do not assume every Eagle hit is a dive. Base-attack reductions affect both.
+  If dive spikes dominate, recommend a later multiplier-only comparison that
+  preserves ordinary attack. Do not implement that change during this batch.
 - For pressure arms show pre-death10s and30s damage by attacker/type, absorbed
   damage where available, peak hit/1s, HP minima, recovery and death attribution.
   Include nearby enemy counts and root/slam/cast chronology for relevant Cave
