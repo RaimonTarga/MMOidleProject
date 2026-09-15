@@ -2,7 +2,32 @@
 
 Updated: 2026-09-15. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after V1z - Night3 prepared
+## Current decision after Night3 - validation exit
+
+Night3 completed12/12 routes without deaths. Mountain T4 passed4/4; all seven T4
+biomes now have farming candidates across recent packets. Six T4 bosses and
+Swamp T3 remain open. We are finishing selected reference-strategy validation,
+not all-class balance or a proven continuous from-zero campaign.
+
+Raw-log correction: Volcano control spent the last roughly9.5 minutes idle,
+full sampled HP/zero attackers with monsters present, after lava escape. Root
+cause is not established. Do not call221 vs91 kills a relic advantage or that
+control window sustained productive farming. Flag activity qualification before
+another comparison. Graveyard Colossus minimumHP9.9% is a robustness warning;
+Mountain empty relic averaged44.0s versus49.5s Colossus, both viable.
+
+[Validation exit plan](bot-balance-validation-exit-plan.md) defines the next stage:
+focused Volcano diagnostic, six-boss T4 breadth screen, targeted exception work
+including Swamp, then mobs -> items -> classes -> canonical1x economy. No more
+routine Mountain replicas or full preparation replay. Reliable clean encounters
+can enter scoped mob measurement while isolated controller exceptions remain open.
+
+The Night3 preflight typing issue was our final-edit defect, not a pre-existing
+external bug. Fix numeric narrowing in current source and check diagnostics before
+freezing another packet. Historical run data remains intact. No balance changes,
+subagents or new experiments launched; the stage plan is not an executable packet.
+
+## Previous decision after V1z - Night3 prepared
 
 V1z passed36/36 in13m40s. Jungle/Desert observation kills43/61; Jungle sampled
 HP1.0, Desert minimum0.802. Both safely returned; +2 defenses purchased at GM132.
