@@ -87,7 +87,8 @@ export const mountainMonsterEntries = [
     // WARNING: NO ledge vaulting (locked) — that identity is the caprines' and the
     // flyers'. It gets the reusable Cave/Cavern GROUND SLAM instead (behavior pass).
     // A modest engagement charge may remain against trivial kiting.
-    stats: { hp: 460, attack: 105, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    // HP-led durability; Granite Barrier continues to scale with maximum HP.
+    stats: { hp: 1380, attack: 105, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
@@ -123,7 +124,7 @@ export const mountainMonsterEntries = [
     flies: true,
     engageSequence: {
       kind: 'cast-charge-strike', name: 'Skyfall Rend', castMs: 1000,
-      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 1.75, fx: 'dive-bomb',
+      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 1.25, fx: 'dive-bomb',
     },
   }],
 
@@ -150,7 +151,8 @@ export const mountainMonsterEntries = [
     id: 'mountain-colossus', name: 'Mountain Colossus', color: 0x8899aa,
     // GROUND BRUISER T3. Same Slam family as the Titan, with a larger/more
     // threatening footprint and durability. Still deliberate and readable.
-    stats: { hp: 850, attack: 130, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    // HP-led durability retains weapon access and the existing ward mechanic.
+    stats: { hp: 4250, attack: 130, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 440 },
     ai: { wanderRadius: 90, leashRange: 420, idleMinMs: 4000, idleMaxMs: 10500 },

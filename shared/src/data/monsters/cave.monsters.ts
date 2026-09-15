@@ -98,7 +98,9 @@ export const caveMonsterEntries = [
     // The elite where slow/piercing weapons pay off.
     // pullRange bumped 150→240 (placeholder): cave elites notice you from afar —
     // the "high detection / overpull risk" Cave identity (countered by stealth boots).
-    stats: { hp: 550, attack: 115, plating: 1, damageReduction: 0.08, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
+    // Durability trials: extend elite pacing with HP/DR, retaining low plating.
+    // Lower attack offsets the added exposure to the rush/slam sequence.
+    stats: { hp: 1320, attack: 86, plating: 1, damageReduction: 0.264, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
     behavior: 'melee', attackStyle: 'troll-fist', biome: 'cave', elite: true,
     rewards: { essence: 23, essenceType: 'red', level: 1, biomeXp: 145 },
     ai: { wanderRadius: 130, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -166,7 +168,8 @@ export const caveMonsterEntries = [
     // The elite ceiling: armored cap-tripping bruiser, charges to connect. Heavy
     // DR + plating means slow/piercing weapons earn their keep. Anti-Far.
     // pullRange 150→240 (placeholder): high-detection elite — overpull risk.
-    stats: { hp: 945, attack: 124, plating: 2, damageReduction: 0.10, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
+    // HP/DR candidate preserves direct-hit pacing without a high-plating floor.
+    stats: { hp: 3780, attack: 124, plating: 2, damageReduction: 0.28, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 240 },
     behavior: 'melee', attackStyle: 'troll-fist', biome: 'cave', elite: true,
     rewards: { essence: 83, essenceType: 'red', level: 3, biomeXp: 500 },
     ai: { wanderRadius: 120, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8500 },
