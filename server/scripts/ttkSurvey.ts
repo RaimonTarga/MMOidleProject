@@ -10,9 +10,13 @@ import { SURVEY_CELLS,SURVEY_SEEDS,prepareSurveyBot,type SurveyCell } from '../b
 import { SurveyMetrics } from '../bench/balance/ttkSurveyMetrics';
 import { hydrateHitboxCacheFromArtifact } from '../src/hitbox/cache';
 import { checkpointDefinitionsHash } from '../src/admin/progressionCheckpoint';
+import { DURABILITY_CELLS, installDurabilityTreatment, type DurabilityCell } from '../bench/balance/durabilityTrialSpec';
+import { activePlayerDamageFeatures, playerInFeatureContact } from '../src/systems/world/nodeFeatures';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
 const mode=args.mode??'qualify'; assert(['qualify','pilot','run'].includes(mode));
+assert(!args.trial || args.trial === 'durability');
+const trialCells = args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
 const out=resolve(args.out??'');assert(args.out&&!existsSync(out),'NEW output directory required');
 assert(args.hitboxes && hydrateHitboxCacheFromArtifact(args.hitboxes)>0,'Frozen hitbox artifact required; no square-hitbox fallback');
 const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
@@ -20,7 +24,7 @@ const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim()
 if(args.revision) assert.equal(revision,args.revision,'Wrong frozen checkout');
 mkdirSync(out,{recursive:true});
 const manifest={schema:1,mode,revision,definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
-  synthetic:true,economyEligible:false,dtMs:100,durationMs:mode==='pilot'?30000:300000,seeds:SURVEY_SEEDS,cells:SURVEY_CELLS};
+  trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:mode==='pilot'?30000:300000,seeds:SURVEY_SEEDS,cells:trialCells};
 writeFileSync(join(out,'manifest.json'),JSON.stringify(manifest,null,2));
 const realNow=Date.now,realRandom=Math.random;
 function safeSpawn(node:string) {
@@ -35,13 +39,16 @@ function run(cell:SurveyCell,seed:number) {
   Math.random=()=>{randomState=(Math.imul(randomState,1664525)+1013904223)>>>0;return randomState/4294967296;};
   Date.now=()=>now;
   const world=createFarmWorld();
+  const overlay = args.trial === 'durability' ? installDurabilityTreatment(cell as DurabilityCell) : null;
   try {
     const target={nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false};
     setupArena(world,target);
     const {bot,view}=prepareSurveyBot(world,cell,safeSpawn(cell.nodeId));
     const roster=()=>[...world.monsterEntitiesInNode(cell.nodeId)].map(m=>({id:m.entityId,type:m.isMonster.monsterTypeId,hp:m.hasHealth.hp,maxHp:m.hasHealth.maxHp,pos:{...m.hasPosition.current}}));
     const initial=roster(); assert(initial.length>0,'Empty initial population');
-    const ready={cell:cell.id,seed,synthetic:true,view,initialRoster:initial,initialRosterHash:sha(JSON.stringify(initial))};
+    const ready={cell:cell.id,seed,synthetic:true,view,initialRoster:initial,initialRosterHash:sha(JSON.stringify(initial)),
+      geometryRosterHash:sha(JSON.stringify(initial.map(({hp,maxHp,...r})=>r))),
+      hpTreatment:overlay?.changes.filter(c=>initial.some(m=>m.type===c.type))??[]};
     if(mode==='qualify') return ready;
     const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
     writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
@@ -71,7 +78,9 @@ function run(cell:SurveyCell,seed:number) {
       if(v.lastAttackAt!==lastAttack) {attackBeats++;lastAttack=v.lastAttackAt;}
       metrics.closeIfCleared(elapsed);
       metrics.sampleRecovery(elapsed,v.hp>=v.maxHp&&v.barrier>=v.barrierMax&&v.incomingDot===0);
-      if(elapsed%1000===0) samples.push({atMs:elapsed,hp:v.hp,barrier:v.barrier,incomingDot:v.incomingDot,target:v.attackTargetId,lastAttackAt:v.lastAttackAt,autoIntent:v.autoIntent,pos:v.pos,monsters:roster().map(m=>({id:m.id,type:m.type,hp:m.hp}))});
+      if(elapsed%1000===0) samples.push({atMs:elapsed,hp:v.hp,barrier:v.barrier,incomingDot:v.incomingDot,target:v.attackTargetId,lastAttackAt:v.lastAttackAt,autoIntent:v.autoIntent,pos:v.pos,
+        staticDamageContacts:activePlayerDamageFeatures(world,cell.nodeId).filter(f=>playerInFeatureContact(bot.hasPosition.current,f)).map(f=>({id:f.id,effect:f.damage?.effectId})),
+        movement:bot.hasMovePath ? structuredClone(bot.hasMovePath) : null, monsters:roster().map(m=>({id:m.id,type:m.type,hp:m.hp}))});
       if(bot.isDead || bot.hasHealth.hp<=0) {outcome='player-died';break;}
       world.pendingDeaths=[];
     }
@@ -80,12 +89,12 @@ function run(cell:SurveyCell,seed:number) {
     writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');
     writeFileSync(join(dir,'samples.jsonl'),samples.map(e=>JSON.stringify(e)).join('\n')+'\n');
     writeFileSync(join(dir,'summary.json'),JSON.stringify(result,null,2));return result;
-  } finally {teardownArena(world);Date.now=realNow;Math.random=realRandom;}
+  } finally {try {teardownArena(world);} finally {overlay?.restore();Date.now=realNow;Math.random=realRandom;}}
 }
 const results:unknown[]=[];
 const batchWallStart=realNow();
 try {
-  const cells=mode==='pilot' ? SURVEY_CELLS.filter(c=>(c.tier===1&&c.className==='striker'&&c.role==='solo')||(c.tier===3&&c.className==='conduit'&&c.role==='swarm'&&!c.alternate)||(c.tier===2&&c.className==='slinger'&&c.role==='small-group'&&!c.alternate)) : SURVEY_CELLS;
+  const cells=mode==='pilot' ? (args.trial === 'durability' ? trialCells.filter(c=>c.id === 'dur-t3-desert-squire-baseline-hp-high' || c.id === 'dur-t3-volcanic-striker-baseline-control' || c.id === 'dur-t3-jungle-conduit-weapon-alt-hp-low') : SURVEY_CELLS.filter(c=>(c.tier===1&&c.className==='striker'&&c.role==='solo')||(c.tier===3&&c.className==='conduit'&&c.role==='swarm'&&!c.alternate)||(c.tier===2&&c.className==='slinger'&&c.role==='small-group'&&!c.alternate))) : trialCells;
   for(const cell of cells) for(const seed of mode==='qualify'||mode==='pilot'?[SURVEY_SEEDS[0]]:SURVEY_SEEDS) {
     assert(realNow()-batchWallStart < 4*60*60*1000,'Four-hour batch ceiling; partial artifacts retained');
     results.push(run(cell,seed));writeFileSync(join(out,'index.json'),JSON.stringify(results,null,2));
