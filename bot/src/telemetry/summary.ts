@@ -3,7 +3,12 @@ import { join } from "node:path";
 import type { PlayerView } from "@mmo-idle/shared";
 import type { CompletionMode } from "../config";
 import type { Route } from "../route/types";
-import type { CompletionState, RunHeader, TreatmentValidity } from "./events";
+import type {
+  CompletionState,
+  ProductiveActivityWindowSummary,
+  RunHeader,
+  TreatmentValidity,
+} from "./events";
 import type { LeaseSessionEvidence } from "../concurrency/routeLeaseSession";
 import type { Recorder } from "./recorder";
 import type { T1SnapshotManifest } from "./t1Snapshots";
@@ -49,6 +54,14 @@ export interface RunSummary {
     milestonesReached: string[];
     routeStepsCompleted: number;
     routeStepsTotal: number;
+  };
+  productiveActivity: {
+    /** A review flag, not a universal kill-rate or uptime gate. */
+    thresholdMs: number;
+    flaggedWindows: number;
+    totalFlaggedMs: number;
+    maxFlaggedMs: number;
+    windows: ProductiveActivityWindowSummary[];
   };
   biomes: Array<{
     biomeGroup: string;
@@ -555,6 +568,19 @@ export function buildSummary(params: {
       milestonesReached: params.milestonesReached,
       routeStepsCompleted: params.routeStepsCompleted,
       routeStepsTotal: route.steps.length,
+    },
+    productiveActivity: {
+      thresholdMs: recorder.productiveActivity.thresholdMs,
+      flaggedWindows: recorder.productiveActivity.windows.length,
+      totalFlaggedMs: recorder.productiveActivity.windows.reduce(
+        (total, window) => total + window.durationMs,
+        0,
+      ),
+      maxFlaggedMs: recorder.productiveActivity.windows.reduce(
+        (maximum, window) => Math.max(maximum, window.durationMs),
+        0,
+      ),
+      windows: recorder.productiveActivity.windows.map((window) => ({ ...window })),
     },
     biomes,
     combat: {

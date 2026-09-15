@@ -1,4 +1,4 @@
-import type { CombatEvent, EssenceType, WorldLogEvent } from "@mmo-idle/shared";
+import type { CombatEvent, EssenceType, PlayerView, WorldLogEvent } from "@mmo-idle/shared";
 import { NODE_BIOMES } from "@mmo-idle/shared";
 import type { Observation } from "../state/observation";
 import type {
@@ -6,6 +6,9 @@ import type {
   DeathRecord,
   DeathTraceFrame,
   EconomyContext,
+  ProductiveActivityQualification,
+  ProductiveActivityTermination,
+  ProductiveActivityWindowSummary,
   WalletSnapshotReason,
 } from "./events";
 import type { TelemetrySink } from "./sink";
@@ -15,6 +18,22 @@ export type Activity = "travel" | "farm" | "craft" | "boss" | "blocked" | "lease
 
 const DEATH_WINDOW_MS = 15_000;
 const CONCURRENCY_SAMPLE_MS = 2_000;
+export const PRODUCTIVE_ACTIVITY_IDLE_THRESHOLD_MS = 60_000;
+export const PRODUCTIVE_ACTIVITY_SAMPLE_INTERVAL_MS = 30_000;
+export const PRODUCTIVE_ACTIVITY_MAX_RECORDS = 12;
+
+interface OpenProductiveActivityWindow {
+  nodeId: string;
+  windowStartedAtMs: number;
+  firstRecordedAtMs: number | null;
+  lastRecordedAtMs: number;
+  diagnosticRecords: number;
+  startedKills: number;
+  startedDamageIn: number;
+  startedDamageOut: number;
+  maxMonstersInNode: number;
+  maxAttackers: number;
+}
 
 export interface BiomeStats {
   biomeGroup: string;
@@ -59,6 +78,12 @@ export interface EconomyTimeline {
  */
 function describeEvent(event: BotEvent): string | null {
   switch (event.kind) {
+    case "activity-diagnostic":
+      return event.phase === "start"
+        ? `productive-activity review: ${event.nodeId} idle ${event.durationMs}ms`
+        : event.phase === "end"
+          ? `productive-activity ended: ${event.nodeId} ${event.termination ?? "unknown"}`
+          : null;
     case "route-step-start":
       return `[${event.index}] ${event.label}`;
     case "route-step-end":
@@ -318,6 +343,21 @@ export class Recorder {
   private lastConcurrencySampleAt = 0;
   private lastBiomeLevels: Record<string, number> = {};
   private lastCatalysts: Record<string, number> = {};
+  private productiveActivityWindow: OpenProductiveActivityWindow | null = null;
+  private totalKillCount = 0;
+  private lastKillAtMs: number | null = null;
+  private lastIncomingDamageAtMs: number | null = null;
+  private lastOutgoingDamageAtMs: number | null = null;
+  private lastHealAtMs: number | null = null;
+  private lastAbilityAtMs: number | null = null;
+  private lastTargetSwitchAtMs: number | null = null;
+  private lastHazardEventAtMs: number | null = null;
+
+  readonly productiveActivity: ProductiveActivityQualification = {
+    thresholdMs: PRODUCTIVE_ACTIVITY_IDLE_THRESHOLD_MS,
+    sampleIntervalMs: PRODUCTIVE_ACTIVITY_SAMPLE_INTERVAL_MS,
+    windows: [],
+  };
 
   constructor(
     private readonly sink: TelemetrySink,
@@ -501,6 +541,7 @@ export class Recorder {
 
     // Target switching — the Apprentice question, made directly observable.
     if (self.attackTargetId !== this.lastTargetId) {
+      this.lastTargetSwitchAtMs = this.now();
       if (self.attackTargetId !== null && this.lastTargetId !== null) {
         this.targetSwitches += 1;
         this.emit({
@@ -531,6 +572,7 @@ export class Recorder {
     this.trackProgressionDeltas(obs, nodeId);
     this.trackContention(obs, nodeId);
     this.sampleBossDiagnostics(obs);
+    this.trackProductiveActivity(obs, nodeId, attackers, dead);
 
     if (Date.now() - this.lastConcurrencySampleAt >= CONCURRENCY_SAMPLE_MS) {
       this.lastConcurrencySampleAt = Date.now();
@@ -544,6 +586,254 @@ export class Recorder {
         hpFraction: self.maxHp > 0 ? self.hp / self.maxHp : 0,
       });
     }
+  }
+
+  /**
+   * Flag a long farm window that is auto-enabled but has no current engagement.
+   * This is deliberately event-triggered: one start, sparse samples and one end
+   * are enough to explain a gap without turning every recorder tick into a raw
+   * state dump.
+   */
+  private trackProductiveActivity(
+    obs: Observation,
+    nodeId: string,
+    attackers: number,
+    dead: boolean,
+  ): void {
+    const self = obs.self;
+    const eligible = Boolean(
+      self &&
+      this.activity === "farm" &&
+      !dead &&
+      self.auto &&
+      attackers === 0 &&
+      self.attackTargetId === null,
+    );
+
+    if (!eligible) {
+      if (this.productiveActivityWindow) {
+        const termination: ProductiveActivityTermination =
+          this.activity === "farm" && !dead && self &&
+          (attackers > 0 || self.attackTargetId !== null)
+            ? "engagement-resumed"
+            : "activity-ended";
+        this.closeProductiveActivity(obs, termination);
+      }
+      return;
+    }
+
+    const atMs = this.now();
+    const monsters = obs.monsters();
+    const open = this.productiveActivityWindow ?? (this.productiveActivityWindow = {
+      nodeId,
+      windowStartedAtMs: atMs,
+      firstRecordedAtMs: null,
+      lastRecordedAtMs: atMs,
+      diagnosticRecords: 0,
+      startedKills: this.totalKillCount,
+      startedDamageIn: this.totalDamageTaken,
+      startedDamageOut: this.totalDamageDealtByPlayer + this.totalDamageDealtBySummons,
+      maxMonstersInNode: 0,
+      maxAttackers: 0,
+    });
+
+    if (open.nodeId !== nodeId) {
+      this.closeProductiveActivity(obs, "node-changed");
+      return;
+    }
+
+    open.maxMonstersInNode = Math.max(open.maxMonstersInNode, monsters.length);
+    open.maxAttackers = Math.max(open.maxAttackers, attackers);
+    const durationMs = Math.max(0, atMs - open.windowStartedAtMs);
+    if (durationMs < PRODUCTIVE_ACTIVITY_IDLE_THRESHOLD_MS) return;
+
+    if (open.firstRecordedAtMs === null) {
+      open.firstRecordedAtMs = atMs;
+      open.lastRecordedAtMs = atMs;
+      open.diagnosticRecords += 1;
+      this.emitActivityDiagnostic(obs, monsters, open, "start", atMs);
+      return;
+    }
+
+    if (
+      open.diagnosticRecords < PRODUCTIVE_ACTIVITY_MAX_RECORDS - 1 &&
+      atMs - open.lastRecordedAtMs >= PRODUCTIVE_ACTIVITY_SAMPLE_INTERVAL_MS
+    ) {
+      open.lastRecordedAtMs = atMs;
+      open.diagnosticRecords += 1;
+      this.emitActivityDiagnostic(obs, monsters, open, "sample", atMs);
+    }
+  }
+
+  /** Close the open diagnostic span and retain a compact qualification record. */
+  private closeProductiveActivity(
+    obs: Observation,
+    termination: ProductiveActivityTermination,
+  ): void {
+    const open = this.productiveActivityWindow;
+    if (!open) return;
+
+    const atMs = this.now();
+    const durationMs = Math.max(0, atMs - open.windowStartedAtMs);
+    if (open.firstRecordedAtMs !== null) {
+      const self = obs.self;
+      if (self) {
+        const monsters = obs.monsters();
+        open.maxMonstersInNode = Math.max(open.maxMonstersInNode, monsters.length);
+        open.maxAttackers = Math.max(open.maxAttackers, obs.attackersOnSelf().length);
+        open.diagnosticRecords += 1;
+        this.emitActivityDiagnostic(obs, monsters, open, "end", atMs, termination);
+      }
+      const summary: ProductiveActivityWindowSummary = {
+        nodeId: open.nodeId,
+        windowStartedAtMs: open.windowStartedAtMs,
+        firstRecordedAtMs: open.firstRecordedAtMs,
+        endedAtMs: atMs,
+        durationMs,
+        thresholdMs: PRODUCTIVE_ACTIVITY_IDLE_THRESHOLD_MS,
+        diagnosticRecords: open.diagnosticRecords,
+        termination,
+        maxMonstersInNode: open.maxMonstersInNode,
+        maxAttackers: open.maxAttackers,
+        killsDuringWindow: Math.max(0, this.totalKillCount - open.startedKills),
+        damageInDuringWindow: Math.max(0, this.totalDamageTaken - open.startedDamageIn),
+        damageOutDuringWindow: Math.max(
+          0,
+          this.totalDamageDealtByPlayer + this.totalDamageDealtBySummons - open.startedDamageOut,
+        ),
+      };
+      this.productiveActivity.windows.push(summary);
+    }
+    this.productiveActivityWindow = null;
+  }
+
+  /** Finish a diagnostic span before the run-end event is written. */
+  finalizeProductiveActivity(obs: Observation): void {
+    this.closeProductiveActivity(obs, "run-ended");
+  }
+
+  private emitActivityDiagnostic(
+    obs: Observation,
+    monsters: ReturnType<Observation["monsters"]>,
+    open: OpenProductiveActivityWindow,
+    phase: "start" | "sample" | "end",
+    atMs: number,
+    termination?: ProductiveActivityTermination,
+  ): void {
+    const self = obs.self;
+    if (!self) return;
+
+    const position = self.pos ?? { x: 0, y: 0 };
+    const movementTarget = self.target ?? position;
+    const intent = self.autoIntent ? structuredClone(self.autoIntent) : null;
+    const target = self.attackTargetId
+      ? monsters.find((monster) => monster.id === self.attackTargetId)
+      : undefined;
+    const monsterTypeCounts: Record<string, number> = {};
+    for (const monster of monsters) {
+      monsterTypeCounts[monster.monsterTypeId] =
+        (monsterTypeCounts[monster.monsterTypeId] ?? 0) + 1;
+    }
+
+    this.emit({
+      kind: "activity-diagnostic",
+      atMs,
+      phase,
+      windowStartedAtMs: open.windowStartedAtMs,
+      durationMs: Math.max(0, atMs - open.windowStartedAtMs),
+      thresholdMs: PRODUCTIVE_ACTIVITY_IDLE_THRESHOLD_MS,
+      activity: "farm",
+      termination,
+      nodeId: open.nodeId,
+      activityReason: intent?.reason ?? "No networked auto intent",
+      autoEnabled: self.auto,
+      autoTraverse: self.autoTraverse,
+      autoIntent: intent,
+      path: {
+        nodeId: open.nodeId,
+        autoTraverse: self.autoTraverse,
+        movementTarget: { ...movementTarget },
+        distanceToMovementTarget: Math.hypot(
+          movementTarget.x - position.x,
+          movementTarget.y - position.y,
+        ),
+        intentKind: intent?.kind ?? null,
+        targetMonsterTypeId: intent?.targetMonsterTypeId,
+        leaderId: intent?.leaderId,
+        destinationBiomeGroup: intent?.destBiomeGroup,
+        travelPaused: intent?.travelPaused,
+      },
+      player: {
+        hp: self.hp,
+        maxHp: self.maxHp,
+        hpFraction: self.maxHp > 0 ? self.hp / self.maxHp : 0,
+        pos: { ...position },
+        target: { ...movementTarget },
+        barrier: self.barrier,
+        barrierMax: self.barrierMax,
+        barrierRecharging: self.barrierRecharging,
+        wards: structuredClone(self.wards ?? []),
+        incomingDot: self.incomingDot,
+        pendingHeal: self.pendingHeal,
+        targetDotStacks: self.targetDotStacks,
+        targetChillStacks: self.targetChillStacks,
+        activeEffects: self.activeEffects ? { ...self.activeEffects } : null,
+        activeBuffs: (self.activeBuffs ?? []).map((buff) => ({
+          id: buff.id,
+          stacks: buff.stacks,
+          durationPct: buff.durationPct,
+          remainingMs: buff.remainingMs,
+          speedMult: buff.speedMult,
+        })),
+      },
+      target: target
+        ? {
+            id: target.id,
+            monsterTypeId: target.monsterTypeId,
+            name: target.name,
+            hp: target.hp,
+            maxHp: target.maxHp,
+            isBoss: target.isBoss,
+            pos: { ...target.pos },
+            target: { ...target.target },
+            state: target.state,
+            attackTargetId: target.attackTargetId,
+            activeEffects: target.activeEffects ? { ...target.activeEffects } : null,
+            targetStatus: structuredClone(target.targetStatus ?? []),
+            enemyBarrier: target.enemyBarrier ? structuredClone(target.enemyBarrier) : undefined,
+          }
+        : null,
+      population: {
+        attackers: obs.attackersOnSelf().length,
+        monstersInNode: monsters.length,
+        otherPlayersInNode: obs.otherPlayers().length,
+        monsterTypeCounts,
+      },
+      hazards: {
+        activeContacts: [...this.openHazardContacts.entries()].map(([hazardId, contact]) => ({
+          hazardId,
+          sourceId: contact.sourceId,
+          enteredAtMs: contact.enteredAtMs,
+          durationMs: Math.max(0, atMs - contact.enteredAtMs),
+        })),
+        escape: { ...this.hazardEscape },
+      },
+      recentProgress: {
+        lastKillAtMs: this.lastKillAtMs,
+        lastIncomingDamageAtMs: this.lastIncomingDamageAtMs,
+        lastOutgoingDamageAtMs: this.lastOutgoingDamageAtMs,
+        lastHealAtMs: this.lastHealAtMs,
+        lastAbilityAtMs: this.lastAbilityAtMs,
+        lastTargetSwitchAtMs: this.lastTargetSwitchAtMs,
+        lastHazardEventAtMs: this.lastHazardEventAtMs,
+        killsSinceWindowStart: Math.max(0, this.totalKillCount - open.startedKills),
+        damageInSinceWindowStart: Math.max(0, this.totalDamageTaken - open.startedDamageIn),
+        damageOutSinceWindowStart: Math.max(
+          0,
+          this.totalDamageDealtByPlayer + this.totalDamageDealtBySummons - open.startedDamageOut,
+        ),
+      },
+    });
   }
 
   /**
@@ -665,6 +955,7 @@ export class Recorder {
             (event.source.actorType === "minion" && event.source.ownerPlayerId === ownId);
 
           if (incoming) {
+            this.lastIncomingDamageAtMs = this.now();
             this.totalDamageTaken += event.hpDamage;
             this.totalAbsorbed += event.absorbed;
             this.damageInBySource[event.source.name] =
@@ -703,6 +994,7 @@ export class Recorder {
               targetId: event.target.id,
             });
           } else if (mine) {
+            this.lastOutgoingDamageAtMs = this.now();
             if (event.source.actorType === "minion") {
               this.totalDamageDealtBySummons += event.hpDamage;
             } else {
@@ -742,6 +1034,8 @@ export class Recorder {
             (stats.killsByMonster[event.victim.name] ?? 0) + 1;
           this.killsByMonster[event.victim.name] =
             (this.killsByMonster[event.victim.name] ?? 0) + 1;
+          this.totalKillCount += 1;
+          this.lastKillAtMs = this.now();
           if (event.essenceType && event.essenceGained) {
             stats.essenceGained[event.essenceType] =
               (stats.essenceGained[event.essenceType] ?? 0) + event.essenceGained;
@@ -766,6 +1060,7 @@ export class Recorder {
         case "ward-gain":
         case "absorb": {
           if (event.target.id !== ownId) break;
+          this.lastHealAtMs = this.now();
           this.totalHealed += event.amount;
           this.pushDeathFrame({
             atMs: this.now(),
@@ -800,6 +1095,7 @@ export class Recorder {
 
         case "ability-activation": {
           if (event.player.id !== ownId) break;
+          this.lastAbilityAtMs = this.now();
           this.abilityActivations[event.abilityId] =
             (this.abilityActivations[event.abilityId] ?? 0) + 1;
           for (const removed of event.removedEffects ?? []) {
@@ -818,6 +1114,7 @@ export class Recorder {
 
         case "hazard-contact": {
           if (event.player.id !== ownId) break;
+          this.lastHazardEventAtMs = this.now();
           const stats = this.hazardStats[event.sourceId] ?? {
             contacts: 0,
             durationMs: 0,
@@ -859,6 +1156,7 @@ export class Recorder {
 
         case "hazard-escape": {
           if (event.player.id !== ownId) break;
+          this.lastHazardEventAtMs = this.now();
           if (event.phase === "attempt") this.hazardEscape.attempts += 1;
           else if (event.outcome === "success") this.hazardEscape.successes += 1;
           else if (event.outcome === "expired") this.hazardEscape.expired += 1;

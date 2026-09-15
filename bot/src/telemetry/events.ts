@@ -1,8 +1,17 @@
-import type { DeathCause, EssenceType, EquipmentMap } from "@mmo-idle/shared";
+import type {
+  DeathCause,
+  EssenceType,
+  EquipmentMap,
+  HasAutoIntent,
+  MonsterView,
+  PlayerBuff,
+  PlayerView,
+  Vec2,
+} from "@mmo-idle/shared";
 import type { T1EconomyArm, TierEntryInitialState } from "@mmo-idle/shared";
 
 /** Bump when an event shape changes incompatibly. Mirrors the bench convention. */
-export const BOT_JSONL_SCHEMA_VERSION = 5;
+export const BOT_JSONL_SCHEMA_VERSION = 6;
 
 /** Tags that mark a run as unfit for canonical balance conclusions. */
 export type RunTaint =
@@ -198,8 +207,128 @@ export type BlockReason =
   | { kind: "recipeLocked"; recipeId: string }
   | { kind: "prerequisite"; detail: string };
 
+export type ProductiveActivityTermination =
+  | "engagement-resumed"
+  | "activity-ended"
+  | "node-changed"
+  | "run-ended";
+
+export interface ProductiveActivityWindowSummary {
+  nodeId: string;
+  windowStartedAtMs: number;
+  firstRecordedAtMs: number;
+  endedAtMs: number;
+  durationMs: number;
+  thresholdMs: number;
+  diagnosticRecords: number;
+  termination: ProductiveActivityTermination;
+  maxMonstersInNode: number;
+  maxAttackers: number;
+  killsDuringWindow: number;
+  damageInDuringWindow: number;
+  damageOutDuringWindow: number;
+}
+
+export interface ProductiveActivityQualification {
+  thresholdMs: number;
+  sampleIntervalMs: number;
+  windows: ProductiveActivityWindowSummary[];
+}
+
+export interface ActivityDiagnosticProgress {
+  lastKillAtMs: number | null;
+  lastIncomingDamageAtMs: number | null;
+  lastOutgoingDamageAtMs: number | null;
+  lastHealAtMs: number | null;
+  lastAbilityAtMs: number | null;
+  lastTargetSwitchAtMs: number | null;
+  lastHazardEventAtMs: number | null;
+  killsSinceWindowStart: number;
+  damageInSinceWindowStart: number;
+  damageOutSinceWindowStart: number;
+}
+
+export interface ActivityDiagnosticTarget {
+  id: string;
+  monsterTypeId: string;
+  name: string;
+  hp: number;
+  maxHp: number;
+  isBoss: boolean;
+  pos: Vec2;
+  target: Vec2;
+  state: MonsterView["state"];
+  attackTargetId: string | null;
+  activeEffects: Record<string, number> | null;
+  targetStatus: NonNullable<MonsterView["targetStatus"]>;
+  enemyBarrier: MonsterView["enemyBarrier"];
+}
+
+export interface ActivityDiagnosticEvent {
+  kind: "activity-diagnostic";
+  atMs: number;
+  phase: "start" | "sample" | "end";
+  windowStartedAtMs: number;
+  durationMs: number;
+  thresholdMs: number;
+  activity: "farm";
+  termination?: ProductiveActivityTermination;
+  nodeId: string;
+  activityReason: string;
+  autoEnabled: boolean;
+  autoTraverse: boolean;
+  autoIntent: HasAutoIntent | null;
+  path: {
+    nodeId: string;
+    autoTraverse: boolean;
+    movementTarget: Vec2;
+    distanceToMovementTarget: number;
+    intentKind: HasAutoIntent["kind"] | null;
+    targetMonsterTypeId?: string;
+    leaderId?: string;
+    destinationBiomeGroup?: string;
+    travelPaused?: boolean;
+  };
+  player: {
+    hp: number;
+    maxHp: number;
+    hpFraction: number;
+    pos: Vec2;
+    target: Vec2;
+    barrier: number;
+    barrierMax: number;
+    barrierRecharging: boolean;
+    wards: PlayerView["wards"];
+    incomingDot: number;
+    pendingHeal: number;
+    targetDotStacks: number;
+    targetChillStacks: number;
+    activeEffects: Record<string, number> | null;
+    activeBuffs: Array<Pick<PlayerBuff, "id" | "stacks" | "durationPct" | "remainingMs" | "speedMult">>;
+  };
+  target: ActivityDiagnosticTarget | null;
+  population: {
+    attackers: number;
+    monstersInNode: number;
+    otherPlayersInNode: number;
+    monsterTypeCounts: Record<string, number>;
+  };
+  hazards: {
+    activeContacts: Array<{ hazardId: string; sourceId: string; enteredAtMs: number; durationMs: number }>;
+    escape: {
+      attempts: number;
+      successes: number;
+      failures: number;
+      expired: number;
+      interrupted: number;
+    };
+  };
+  recentProgress: ActivityDiagnosticProgress;
+}
+
 export type BotEvent =
   | { kind: "experience-sample"; atMs: number; durationMs: number; nodeId: string; purpose: string; activity: "unavailable" | "dead" | "combat" | "travel" | "waiting" | "idle" }
+  | ActivityDiagnosticEvent
   | { kind: "run-start"; atMs: number; header: RunHeader }
   | {
       kind: "run-end";

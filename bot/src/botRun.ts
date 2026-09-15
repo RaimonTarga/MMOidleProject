@@ -951,6 +951,7 @@ export async function runBot(
   }
 
   const endedAt = Date.now();
+  recorder.finalizeProductiveActivity(obs);
   // The T1-completion wallet: what the tier actually left in the player's hands.
   recorder.walletSnapshot(obs, "run-end", completion);
   recorder.emit({

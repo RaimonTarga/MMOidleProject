@@ -52,7 +52,9 @@ assert.equal(before.essences.blue-after.essences.blue,3300);
 assert.equal((before.catalysts.heavy??0)-(after.catalysts.heavy??0),10);
 const gainPerHit = model.usesSkills.passives['energy.per-hit'];
 const dischargeMultiplier = model.usesSkills.passives['energy.empowered-mult'];
-assert(typeof gainPerHit === 'number' && typeof dischargeMultiplier === 'number', 'Missing qualified energy passives');
+if (typeof gainPerHit !== 'number' || typeof dischargeMultiplier !== 'number') {
+  throw new Error('Missing qualified energy passives');
+}
 assert.equal(gainPerHit,20);
 assert.equal(dischargeMultiplier,6);
 const profile=resolveEnergyRelicProfile(gainPerHit,200,dischargeMultiplier,relicRatingsFromPassives(model.usesSkills.passives));
