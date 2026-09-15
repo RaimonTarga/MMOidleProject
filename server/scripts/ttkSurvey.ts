@@ -14,11 +14,13 @@ import { DURABILITY_CELLS, installDurabilityTreatment, type DurabilityCell } fro
 import { activePlayerDamageFeatures, playerInFeatureContact } from '../src/systems/world/nodeFeatures';
 import { DURABILITY2_CELLS, installDurability2Treatment, type Durability2Cell } from '../bench/balance/durability2Spec';
 import { DURABILITY3_CELLS, installDurability3Treatment, type Durability3Cell } from '../bench/balance/durability3Spec';
+import { DURABILITY4_CELLS, DURABILITY4_SEEDS, installDurability4Treatment, type Durability4Cell } from '../bench/balance/durability4Spec';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
 const mode=args.mode??'qualify'; assert(['qualify','pilot','run'].includes(mode));
-assert(!args.trial || ['durability','durability2','durability3'].includes(args.trial));
-const trialCells = args.trial === 'durability3' ? DURABILITY3_CELLS : args.trial === 'durability2' ? DURABILITY2_CELLS : args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
+assert(!args.trial || ['durability','durability2','durability3','durability4'].includes(args.trial));
+const trialCells = args.trial === 'durability4' ? DURABILITY4_CELLS : args.trial === 'durability3' ? DURABILITY3_CELLS : args.trial === 'durability2' ? DURABILITY2_CELLS : args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
+const trialSeeds=args.trial==='durability4'?DURABILITY4_SEEDS:SURVEY_SEEDS;
 const out=resolve(args.out??'');assert(args.out&&!existsSync(out),'NEW output directory required');
 assert(args.hitboxes && hydrateHitboxCacheFromArtifact(args.hitboxes)>0,'Frozen hitbox artifact required; no square-hitbox fallback');
 const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
@@ -26,7 +28,7 @@ const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim()
 if(args.revision) assert.equal(revision,args.revision,'Wrong frozen checkout');
 mkdirSync(out,{recursive:true});
 const manifest={schema:1,mode,revision,definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
-  trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:mode==='pilot'?30000:300000,seeds:SURVEY_SEEDS,cells:trialCells};
+  trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:mode==='pilot'?30000:300000,seeds:trialSeeds,cells:trialCells};
 writeFileSync(join(out,'manifest.json'),JSON.stringify(manifest,null,2));
 const realNow=Date.now,realRandom=Math.random;
 function safeSpawn(node:string) {
@@ -41,7 +43,7 @@ function run(cell:SurveyCell,seed:number) {
   Math.random=()=>{randomState=(Math.imul(randomState,1664525)+1013904223)>>>0;return randomState/4294967296;};
   Date.now=()=>now;
   const world=createFarmWorld();
-  const overlay = args.trial === 'durability3' ? installDurability3Treatment(cell as Durability3Cell) : args.trial === 'durability2' ? installDurability2Treatment(cell as Durability2Cell) : args.trial === 'durability' ? installDurabilityTreatment(cell as DurabilityCell) : null;
+  const overlay = args.trial === 'durability4' ? installDurability4Treatment(cell as Durability4Cell) : args.trial === 'durability3' ? installDurability3Treatment(cell as Durability3Cell) : args.trial === 'durability2' ? installDurability2Treatment(cell as Durability2Cell) : args.trial === 'durability' ? installDurabilityTreatment(cell as DurabilityCell) : null;
   try {
     const target={nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false};
     setupArena(world,target);
@@ -52,7 +54,7 @@ function run(cell:SurveyCell,seed:number) {
       geometryRosterHash:sha(JSON.stringify(initial.map(({hp,maxHp,...r})=>r))),
       hpTreatment:overlay?.changes.filter(c=>initial.some(m=>m.type===c.type))??[],
       initialStats:[...world.monsterEntitiesInNode(cell.nodeId)].map(m=>({id:m.entityId,type:m.isMonster.monsterTypeId,attack:m.dealsDamage.attack,plating:m.mitigatesDamage.plating,dr:m.mitigatesDamage.damageReduction}))};
-    if(args.trial==='durability2'||args.trial==='durability3') assert(initial.some(m=>m.type===(cell as Durability2Cell).eliteType),'Missing target elite');
+    if(['durability2','durability3','durability4'].includes(args.trial)) assert(initial.some(m=>m.type===(cell as Durability2Cell).eliteType),'Missing target elite');
     if(mode==='qualify') return ready;
     const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
     writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
@@ -99,12 +101,13 @@ const results:unknown[]=[];
 const batchWallStart=realNow();
 try {
   const pilotIds:Record<string,string[]>={
+    durability4:['dur4-t2-solo-conduit-heavy-plate8','dur4-t3-small-group-conduit-heavy-plate16','dur4-eagle-spirit-baseline-dive1.25'],
     durability3:['dur3-ttk-t2-conduit-small-group-baseline-both-soft','dur3-ttk-t3-apprentice-solo-baseline-dr','dur3-ttk-t2-slinger-solo-weapon-alt-plating'],
     durability2:['dur2-ttk-t2-slinger-solo-baseline-hp-high-soft','dur2-ttk-t3-conduit-small-group-weapon-alt-hp-high','dur2-ttk-t3-squire-solo-baseline-control'],
     durability:['dur-t3-desert-squire-baseline-hp-high','dur-t3-volcanic-striker-baseline-control','dur-t3-jungle-conduit-weapon-alt-hp-low'],
   };
   const cells=mode==='pilot' ? (args.trial ? trialCells.filter(c=>pilotIds[args.trial].includes(c.id)) : SURVEY_CELLS.filter(c=>(c.tier===1&&c.className==='striker'&&c.role==='solo')||(c.tier===3&&c.className==='conduit'&&c.role==='swarm'&&!c.alternate)||(c.tier===2&&c.className==='slinger'&&c.role==='small-group'&&!c.alternate))) : trialCells;
-  for(const cell of cells) for(const seed of mode==='qualify'||mode==='pilot'?[SURVEY_SEEDS[0]]:SURVEY_SEEDS) {
+  for(const cell of cells) for(const seed of mode==='qualify'||mode==='pilot'?[trialSeeds[0]]:trialSeeds) {
     assert(realNow()-batchWallStart < 4*60*60*1000,'Four-hour batch ceiling; partial artifacts retained');
     results.push(run(cell,seed));writeFileSync(join(out,'index.json'),JSON.stringify(results,null,2));
     console.log(cell.id,seed,'complete');
