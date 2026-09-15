@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [T1–T3 TTK survey operator packet](briefs/bot-balance-ttk-survey-operator-packet.md) | Execute the six-class duration baseline and targeted weapon comparisons; synthetic server benchmark, no balance edits. |
 | [Volcano finishing operator packet](briefs/bot-balance-volcano-finish-operator-packet.md) | Executable four-case T4 Expose Weakness / Colossus screen and sampled final-phase evidence. |
 | [briefs/bot-balance-validation-exit-plan.md](briefs/bot-balance-validation-exit-plan.md) | Remaining validation gates, Volcano inactivity diagnosis and transition to mobs/items/classes/economy balance passes. |
 | [briefs/bot-balance-night3-operator-packet.md](briefs/bot-balance-night3-operator-packet.md) | Fixed12-case overnight T4 Colossus Heart comparison: Mountain boss and four farming biomes; Luna-only operation. |
