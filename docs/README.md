@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [Volcano finishing operator packet](briefs/bot-balance-volcano-finish-operator-packet.md) | Executable four-case T4 Expose Weakness / Colossus screen and sampled final-phase evidence. |
 | [briefs/bot-balance-validation-exit-plan.md](briefs/bot-balance-validation-exit-plan.md) | Remaining validation gates, Volcano inactivity diagnosis and transition to mobs/items/classes/economy balance passes. |
 | [briefs/bot-balance-night3-operator-packet.md](briefs/bot-balance-night3-operator-packet.md) | Fixed12-case overnight T4 Colossus Heart comparison: Mountain boss and four farming biomes; Luna-only operation. |
 | [briefs/bot-balance-v1z-operator-packet.md](briefs/bot-balance-v1z-operator-packet.md) | T4 Jungle/Desert farming coverage, actual mastery caps and +2 defense preparation. |
