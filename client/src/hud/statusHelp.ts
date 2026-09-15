@@ -139,6 +139,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
 
   // -- Weapons ---------------------------------------------------------------
   flurry: b('Flurry', 'A weapon proc raising your attack speed while its stacks hold.'),
+  sunlight: b('Sunlight', 'The Desert Falchion’s alpha window: opening on a fresh enemy raises ALL the damage you deal — attacks, on-hit, Techniques, damage-over-time and summons — for a few seconds. Opening on another fresh enemy does not extend it; spend the window, then earn a new one.'),
 
   // -- Mobility boots --------------------------------------------------------
   'mob-sprint': b('Sprint', 'Forest boots: extra movement speed while you are out of combat, for crossing a node rather than winning a fight.'),

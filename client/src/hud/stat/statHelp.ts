@@ -96,6 +96,10 @@ export const STAT_HELP: Record<string, string> = {
     'Multiplies the WHOLE empowered multiplier, so every spec gains the same percentage rather than a flat amount.',
   'weapon.first-strike-mult':
     'The very first hit ever landed on a fresh enemy deals this multiple. Rewards opening on new targets rather than finishing wounded ones.',
+  'weapon.first-strike-buff-damage-pct':
+    'The opening strike also grants Sunlight, a short window that multiplies ALL the damage you deal — attacks, on-hit, Techniques, damage-over-time and your summons. It never stacks, and opening on another fresh target does not extend a window that is already running.',
+  'weapon.first-strike-buff-duration-ms':
+    'How long Sunlight lasts. It runs from the opening strike and is never refreshed or extended — spend the window, then earn a new one.',
   'weapon.dead-swing-interval':
     'Every Nth swing deals no damage at all — but still fires every on-hit effect. Chaotic weapons trade raw damage for proc density.',
   'weapon.execute-threshold-pct':

@@ -46,6 +46,8 @@ export const BUFF_IDS = [
   'reload-momentum',
   'reload-cannon',
   'flurry',
+  // Desert Falchion's alpha window (shared/src/systems/alphaWindow.ts).
+  'sunlight',
   'debuff-slow',
   'debuff-root',
   'debuff-frost-ramp',

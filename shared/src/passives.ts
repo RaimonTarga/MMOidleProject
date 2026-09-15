@@ -424,6 +424,14 @@ export const SHARED_KEYS = [
   'shared.status-potency-resist',
   // Damage multiplier applied on the very first hit ever landed on a fresh monster entity.
   'weapon.first-strike-mult',
+  // Alpha window (Desert Falchion): the same opener also grants the wielder
+  // `Sunlight`, a final damage-dealt window. -pct is the fraction added
+  // (0.15 = +15%), -ms its duration. The window NEVER refreshes or extends while
+  // it is already running, so opening on a fresh target mid-window still pays that
+  // target its opener multiplier but does not reset the clock. See
+  // shared/src/systems/alphaWindow.ts.
+  'weapon.first-strike-buff-damage-pct',
+  'weapon.first-strike-buff-duration-ms',
   // Chaotic ("dead swing") cadence: every Nth player hit deals 0 damage but still
   // applies on-hit effects. Authored per-weapon on the recipe; read in runPlayerAttack.
   'weapon.dead-swing-interval',

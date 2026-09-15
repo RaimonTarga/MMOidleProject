@@ -45,6 +45,7 @@ export * from './systems/summonerHud';
 export * from './systems/summonerProfile';
 export * from './data/summoner';
 export * from './systems/weaponFamilies';
+export * from './systems/alphaWindow';
 export * from './systems/monsterDebuffs';
 export * from './systems/statusPolicy';
 export * from './systems/playerAmplifiers';

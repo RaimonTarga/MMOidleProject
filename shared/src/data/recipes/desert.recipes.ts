@@ -12,18 +12,26 @@ export const desertRecipeEntries = [
   ['desert-sunsteel-cross', {
     id: 'desert-sunsteel-cross', name: 'Sunsteel Falchion',
     recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { yellow: 70 }, stats: { attack: 24 }, attacksPerSecond: 0.80, tier: 2, // family-tag: first-strike ambush weapon → Dominion
-    // Technique Power (abilities evolution §6.2) on Desert's opener weapon — it
-    // pairs with Charge, whose whole point is converting a gap-close into one
-    // big opening blow. Scales opted-in offensive payloads ONLY (never stun
-    // duration or dash distance). PLACEHOLDER magnitude.
+    cost: { yellow: 70 }, stats: { attack: 24 }, attacksPerSecond: 0.80, tier: 2, // family-tag: alpha-window ambush weapon → Dominion
+    // ALPHA WINDOW (2026-09-15): the lineage's old 2.0x/2.5x/3.0x pure alpha strike
+    // is replaced by a modest opener PLUS `Sunlight`, a short outgoing-damage
+    // window. Same fantasy ("strongest right after you engage"), spread over a few
+    // seconds instead of decided in one instant. The window never refreshes or
+    // extends while it runs - see shared/src/systems/alphaWindow.ts. PROTOTYPE numbers.
+    //
+    // The old `technique.power-pct: 0.20` (abilities evolution §6.2) was REMOVED by
+    // the same pass. It only ever existed on T2 and vanished on evolution, and the
+    // alpha window already gives Techniques their reason to be spent early: Sunlight
+    // is a final damage-dealt layer, so it scales Technique payloads along with
+    // everything else. One offensive rider is the whole lineage identity.
     mechanicEffects: {
-      'weapon.first-strike-mult': 2.0,
-      'technique.power-pct': 0.20,
+      'weapon.first-strike-mult': 1.4,
+      'weapon.first-strike-buff-damage-pct': 0.15,
+      'weapon.first-strike-buff-duration-ms': 4000,
     },
     icon: 'items/weapons/sunsteel-falchion.png',
     element: 'fire',   // cosmetic attack tint only
-    description: 'Sun-forged and ward-etched, it strikes the first blow as if it waited years for it.',
+    description: 'Sun-forged and ward-etched: the opening blow breaks, and for a few breaths after it the light does not let go.',
     upgrades: [
       { stats: { attack: 9 }, cost: { yellow: 48 }, requiredBiomeLevel: 2 },
       { stats: { attack: 9 }, cost: { yellow: 120 }, requiredBiomeLevel: 3 },
@@ -92,10 +100,16 @@ export const desertRecipeEntries = [
     evolvesFrom: 'desert-sunsteel-cross',
     cost: { yellow: 116 }, stats: { attack: 42 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Dominion
     reconstructCost: { yellow: 406 }, reconstructCatalystCost: { dominion: 3 },
-    mechanicEffects: { 'weapon.first-strike-mult': 2.5 },
+    // Alpha window (2026-09-15): opener + a longer, stronger Sunlight. The lineage
+    // carries NO Technique Power at any tier - see Sunsteel Falchion.
+    mechanicEffects: {
+      'weapon.first-strike-mult': 1.5,
+      'weapon.first-strike-buff-damage-pct': 0.20,
+      'weapon.first-strike-buff-duration-ms': 5000,
+    },
     icon: 'items/weapons/solar-falchion.png',
     element: 'fire',   // cosmetic attack tint only
-    description: 'It saves its fury for the opening blow, and spends it all at once.',
+    description: 'It spends its fury on the opening blow, then burns on a while in the wound it made.',
     upgrades: [
       { stats: { attack: 12 }, cost: { yellow: 97 },  requiredBiomeLevel: 8 },
       { stats: { attack: 12 }, cost: { yellow: 242 }, requiredBiomeLevel: 9 },
@@ -175,11 +189,17 @@ export const desertRecipeEntries = [
     evolvesFrom: 'desert-solar-cross',
     cost: { yellow: 255 }, stats: { attack: 110 }, attacksPerSecond: 0.80, tier: 4,
     reconstructCost: { yellow: 893 }, reconstructCatalystCost: { dominion: 4 },
-    // first-strike-mult progressed: T2 2.0 → T3 2.5 → T4 3.0 (doc said 2.5, = T3)
-    mechanicEffects: { 'weapon.first-strike-mult': 3.0 },
+    // Alpha window (2026-09-15). Opener 1.4 / 1.5 / 1.6; Sunlight 15%/4s, 20%/5s,
+    // 25%/6s. The tier deepening is the WINDOW, not the opener - that is the whole
+    // point of the rework (the old line was 2.0 / 2.5 / 3.0 on one hit).
+    mechanicEffects: {
+      'weapon.first-strike-mult': 1.6,
+      'weapon.first-strike-buff-damage-pct': 0.25,
+      'weapon.first-strike-buff-duration-ms': 6000,
+    },
     icon: 'items/weapons/zenith-falchion.png',
     element: 'fire',   // cosmetic attack tint only
-    description: 'At the sun\'s height it draws all that light into a single, opening cut.',
+    description: 'At the sun\'s height the opening cut lets in the whole day, and it takes its time going out.',
     upgrades: [
       { stats: { attack: 20 }, cost: { yellow: 193 }, requiredBiomeLevel: 14 },
       { stats: { attack: 20 }, cost: { yellow: 483 }, requiredBiomeLevel: 15 },

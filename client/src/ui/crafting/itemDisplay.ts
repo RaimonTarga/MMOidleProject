@@ -433,6 +433,15 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('weapon.first-strike-mult');
   }
 
+  if (has('weapon.first-strike-buff-damage-pct') && has('weapon.first-strike-buff-duration-ms')) {
+    lines.push(
+      `That strike grants Sunlight: +${pctK('weapon.first-strike-buff-damage-pct')} damage dealt for ` +
+      `${secK('weapon.first-strike-buff-duration-ms')}`,
+    );
+    lines.push('Opening on another fresh target does not extend an active Sunlight');
+    mark('weapon.first-strike-buff-damage-pct', 'weapon.first-strike-buff-duration-ms');
+  }
+
   if (has('weapon.dead-swing-interval')) {
     const n = Math.round(fx['weapon.dead-swing-interval'] ?? 0);
     lines.push(`Every ${n}${ordinal(n)} hit is a dead swing: no damage, but on-hit effects still fire`);

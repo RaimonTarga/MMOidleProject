@@ -15,6 +15,8 @@ import {
   BRITTLE_DURATION_MS,
   DR_SHATTER_EFFECT_ID,
   weaponDotBasisFromResolvedDirectDamage,
+  SUNLIGHT_EFFECT_ID,
+  FINAL_DAMAGE_DEALT_PCT_KEY,
   type DamageElement,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
@@ -43,10 +45,17 @@ import { consumeWeightedProc } from '../../classes/archetypes/summoner/formation
 
 const HITS_RECEIVED_KEY = "hitsReceived";
 const FIRST_STRIKE_EFFECT = "first-strike";
+/** ctx.metadata flag: this hit WAS the opener. Handed from onHit to afterHit. */
+const FIRST_STRIKE_OPENER_META = "firstStrikeOpener";
 
 const BURN_EFFECT_IDS = BURN_FAMILY.map((b) => b.effectId);
 const BURN_ELEMENT_BY_EFFECT_ID: Record<string, DamageElement> =
   Object.fromEntries(BURN_FAMILY.map((b) => [b.effectId, b.element]));
+
+// ── Sunlight: the Desert Falchion's alpha window (weapon.first-strike-buff-*) ──
+// A final damage-dealt window opened by the same hit that pays the opener
+// multiplier. Read in `resolveFinalDamageMultipliers`, so it reaches every
+// player-owned channel that routes through `outgoingFinalDamage`.
 
 // ── Flurry: stacking attack-speed buff (weapon.flurry-* passives) ─────────────
 const FLURRY_EFFECT_ID = "flurry";
@@ -56,7 +65,7 @@ const FLURRY_BASE_CD = "flurryBaseCd"; // tracksCombat string: cached pre-flurry
 // ── Init — registers combat pipeline listeners ────────────────────────────────
 
 export function initWeaponEffects(): void {
-  // ── First strike: 2× (or custom) damage on the very first hit on a fresh monster ─
+  // ── First strike: the opener multiplier on the very first hit on a fresh monster ─
   // hitsReceived is incremented unconditionally for every player → monster onHit,
   // so the bonus fires only when this player is genuinely the first to connect.
   // Fully-evaded hits (evadeMult >= 1) never reach onHit and don't consume the charge.
@@ -68,7 +77,8 @@ export function initWeaponEffects(): void {
     addCounter(monsterState, HITS_RECEIVED_KEY, 1);
     const hitsReceived = getCounter(monsterState, HITS_RECEIVED_KEY);
 
-    const mult = ctx.attacker.usesSkills.passives["weapon.first-strike-mult"] ?? 0;
+    const p = ctx.attacker.usesSkills.passives;
+    const mult = p["weapon.first-strike-mult"] ?? 0;
     if (mult <= 0 || hitsReceived !== 1) return;
 
     ctx.damage = Math.round(ctx.damage * mult);
@@ -76,6 +86,48 @@ export function initWeaponEffects(): void {
     ctx.metadata["clientEffects"] = Array.isArray(existing)
       ? [...existing, FIRST_STRIKE_EFFECT]
       : [FIRST_STRIKE_EFFECT];
+
+    ctx.metadata[FIRST_STRIKE_OPENER_META] = true;
+  });
+
+  // ── Alpha window: the opener opens `Sunlight` on the WIELDER ────────────────
+  // Registered on afterHit, NOT onHit, and that ordering is load-bearing: the
+  // direct hit is finalized through `outgoingFinalDamage` immediately after onHit,
+  // so opening the window there would light the opener with its own buff and the
+  // authored 1.4x would measure as 1.61x. afterHit runs once the hit is resolved,
+  // so the opener pays exactly its authored multiplier and the window covers what
+  // comes after it.
+  //
+  // Deliberately NOT refreshable and NOT stacking. Hitting a second fresh target
+  // mid-window still pays that target its own opener multiplier, but the running
+  // window keeps its original expiry — otherwise a swarm node turns a 4-second
+  // window into permanent uptime by target-swapping.
+  registerCombatListener("afterHit", (ctx, _world) => {
+    if (!ctx.metadata[FIRST_STRIKE_OPENER_META]) return;
+    if (ctx.attackerType !== "player") return;
+
+    const p = ctx.attacker.usesSkills.passives;
+    const buffPct = p["weapon.first-strike-buff-damage-pct"] ?? 0;
+    const buffMs = p["weapon.first-strike-buff-duration-ms"] ?? 0;
+    if (buffPct <= 0 || buffMs <= 0) return;
+
+    const wielderState = ctx.attacker.tracksCombat;
+    const active = getStatusEffect(wielderState, SUNLIGHT_EFFECT_ID);
+    if (active) {
+      // `tickStatusEffectDurations` prunes at 0, so a live entry means a live
+      // window. A 0/-1 leftover would never expire on its own — drop it and re-open.
+      if (active.remainingMs > 0) return;
+      removeStatusEffect(wielderState, SUNLIGHT_EFFECT_ID);
+    }
+    applyStatusEffect(wielderState, {
+      id: SUNLIGHT_EFFECT_ID,
+      maxStacks: 1,
+      instanced: false,
+      refreshable: false,
+      remainingMs: buffMs,
+      sourceId: ctx.attacker.isPlayer.id,
+      data: { [FINAL_DAMAGE_DEALT_PCT_KEY]: buffPct, totalMs: buffMs },
+    });
   });
 
   // ── Brittle: stacking −plating / −DR debuff on the target (Tundra weapon) ────
@@ -257,7 +309,22 @@ export function initWeaponEffects(): void {
 
 export function updateWeaponEffects(world: World, dt: number): void {
   updateFlurryBuff(world);
+  updateSunlightBuff(world);
   updateBurnEffects(world, dt);
+}
+
+// ── Sunlight: drop a window left over from a weapon that is no longer held ────
+// Same convention as Flurry, the file's other weapon-granted player buff: a
+// weapon buff belongs to the weapon. Nothing else is needed — the window has no
+// side effect on a networked slice to unwind, and `resetTracksCombat` (death,
+// node teardown) already clears it outright.
+function updateSunlightBuff(world: World): void {
+  for (const player of world.livePlayers) {
+    if ((player.usesSkills.passives["weapon.first-strike-buff-damage-pct"] ?? 0) > 0) continue;
+    if (getStatusEffect(player.tracksCombat, SUNLIGHT_EFFECT_ID)) {
+      removeStatusEffect(player.tracksCombat, SUNLIGHT_EFFECT_ID);
+    }
+  }
 }
 
 // ── Flurry buff: recompute attackCooldown from current stacks each tick ────────
@@ -370,6 +437,28 @@ function updateBurnEffects(world: World, dt: number): void {
 // ── Buff descriptors ──────────────────────────────────────────────────────────
 
 export const WEAPON_BUFFS = [
+  defineBuff(
+    "sunlight",
+    ({ player }) => {
+      const effect = getStatusEffect(player.tracksCombat, SUNLIGHT_EFFECT_ID);
+      if (!effect || effect.remainingMs <= 0) return null;
+      const pct = effect.data[FINAL_DAMAGE_DEALT_PCT_KEY] ?? 0;
+      if (pct <= 0) return null;
+      const totalMs = effect.data["totalMs"] ?? effect.remainingMs;
+      const label = `+${Math.round(pct * 100)}% damage dealt`;
+      return {
+        id: "sunlight",
+        label: "Sunlight",
+        stacks: 1,
+        durationPct: totalMs > 0 ? (effect.remainingMs / totalMs) * 100 : -1,
+        color: "#ffcc44",
+        logDetail: label,
+        remainingMs: effect.remainingMs,
+        values: [{ label: "Damage dealt", value: `+${Math.round(pct * 100)}%`, good: true }],
+      };
+    },
+    { label: "Sunlight", color: "#ffcc44", category: "weapon", shape: "circle" },
+  ),
   defineBuff(
     "flurry",
     ({ player }) => {

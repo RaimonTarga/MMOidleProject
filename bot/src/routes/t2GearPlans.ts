@@ -23,7 +23,7 @@ import type { T2BiomeGroup, T2MovementProfile } from "./t2Common";
  *   quake-hammer             47   0.55        25.9   empowered mult +26%, cast speed +15%
  *   ruinous-axe              43   1.20        51.6   dead swing every 4th
  *   jungle-stinger-rapier 10 + 8o 1.55        27.9   on-hit damage
- *   desert-sunsteel-cross    24   0.80        19.2   first strike x2, technique power +20%
+ *   desert-sunsteel-cross    24   0.80        19.2   first strike x1.4 + Sunlight (+15%/4s)
  *
  * `ruinous-axe` is roughly twice the naive DPS of anything else in the tier even
  * after its dead swing (51.6 x 0.75 = 38.7). That is recorded here as a
@@ -132,7 +132,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       },
       desert: {
         skip: {
-          "desert-sunsteel-cross": "first-strike x2 pays a fight-opening class, not a sustained-rhythm one",
+          "desert-sunsteel-cross": "a fight-opening weapon on a sustained-rhythm class (rationale predates the 2026-09-15 alpha-window rework - revisit)",
           "desert-vest-t2": "arrives last and is not an upgrade on cave-vest-t2",
         },
       },
@@ -224,7 +224,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       },
       desert: {
         skip: {
-          "desert-sunsteel-cross": "an alpha-strike weapon on the slowest-killing class in the tier",
+          "desert-sunsteel-cross": "an opening-burst weapon on the slowest-killing class in the tier (rationale predates the 2026-09-15 alpha-window rework - revisit)",
           "desert-vest-t2": "arrives too late to change the Jungle/Desert wall",
         },
       },
@@ -272,7 +272,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       },
       desert: {
         adopt: ["desert-boots-t2"],
-        skip: { "desert-sunsteel-cross": "first-strike x2 once per fight loses to sustained shot count" },
+        skip: { "desert-sunsteel-cross": "one opener loses to sustained shot count (rationale predates the 2026-09-15 alpha-window rework, which pays fast attackers too - revisit)" },
       },
     },
   },
@@ -310,7 +310,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       },
       desert: {
         skip: {
-          "desert-sunsteel-cross": "a discharge class wants fill rate, not one doubled opener",
+          "desert-sunsteel-cross": "a discharge class wants fill rate, not one doubled opener (rationale predates the 2026-09-15 alpha-window rework - revisit)",
           "desert-vest-t2": "arrives after the build is settled",
         },
       },
@@ -346,7 +346,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       jungle: { skip: { "jungle-stinger-rapier": "held for the paired fast-weapon probe instead" } },
       desert: {
         adopt: ["desert-boots-t2"],
-        skip: { "desert-sunsteel-cross": "a formation class has no single opening strike to double" },
+        skip: { "desert-sunsteel-cross": "a formation class has no single opening strike to double (rationale predates the 2026-09-15 alpha-window rework - revisit)" },
       },
     },
   },

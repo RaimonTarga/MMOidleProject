@@ -559,6 +559,7 @@ function applyEncounterAverages(
   damagePerHit: number,
   passives: PassiveMap,
   target: TargetDummy,
+  hitsPerSecond = 0,
 ): { directPerHit: number; weaponProcPerHit: number; notes: string[] } {
   let directPerHit = damagePerHit;
   let weaponProcPerHit = 0;
@@ -572,10 +573,29 @@ function applyEncounterAverages(
     notes.push(`execute averaged over final ${Math.round(executeThreshold * 100)}% HP`);
   }
 
+  // Alpha window (Desert Falchion). The encounter is modelled as "hits to kill the
+  // tier dummy": the opener is one hit's worth of bonus spread over that many hits,
+  // and Sunlight is a +damage-dealt window covering the FIRST `duration x rate` of
+  // them. Both therefore decay as the fight gets longer, which is the whole point
+  // of the mechanic — a 3-second kill sees nearly all of it, a 30-second one barely
+  // notices. Modelled as a proc rather than folded into directPerHit so the report's
+  // weapon/proc column still shows what the lineage is actually contributing.
+  const hitsToKill = Math.max(1, target.hp / Math.max(1, directPerHit));
   const firstStrike = passives['weapon.first-strike-mult'] ?? 0;
   if (firstStrike > 1) {
-    weaponProcPerHit += (directPerHit * (firstStrike - 1)) / Math.max(1, target.hp / Math.max(1, directPerHit));
+    weaponProcPerHit += (directPerHit * (firstStrike - 1)) / hitsToKill;
     notes.push('first strike amortized over tier dummy HP');
+  }
+
+  const windowPct = passives['weapon.first-strike-buff-damage-pct'] ?? 0;
+  const windowMs = passives['weapon.first-strike-buff-duration-ms'] ?? 0;
+  if (windowPct > 0 && windowMs > 0 && hitsPerSecond > 0) {
+    const hitsInWindow = Math.min(hitsToKill, (windowMs / 1000) * hitsPerSecond);
+    weaponProcPerHit += directPerHit * windowPct * (hitsInWindow / hitsToKill);
+    notes.push(
+      `Sunlight +${Math.round(windowPct * 100)}% over ${(windowMs / 1000).toFixed(1)}s ` +
+      `(~${hitsInWindow.toFixed(1)} of ${hitsToKill.toFixed(1)} hits)`,
+    );
   }
 
   const deadSwingEvery = Math.round(passives['weapon.dead-swing-interval'] ?? 0);
@@ -1216,7 +1236,7 @@ function estimateClassDamage(
     notes.push(`${profile.slots.length} ${profile.frame} ${profile.range} summons at ${slotAps.toFixed(2)} APS; formation budget normalized`);
   }
 
-  const encounter = applyEncounterAverages(directPerHit, p, targetWithDebuffs);
+  const encounter = applyEncounterAverages(directPerHit, p, targetWithDebuffs, effectiveHitRate);
   notes.push(...encounter.notes);
   directPerHit = encounter.directPerHit;
   weaponProcPerSec += encounter.weaponProcPerHit * effectiveHitRate;

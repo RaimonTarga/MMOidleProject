@@ -274,7 +274,16 @@ catalyst-neutral exception at 4x instead.
 | Canopy Heart | Jungle L3 | Recovery that ramps over 10 s of sustained combat |
 | Venom Knife | Swamp L7 | 50% attack -> poison DoT, x1.5 multiplier |
 | Quake Hammer | Mountain L7 | 47 attack at 0.55 aps; carries cast speed |
-| Sunsteel Falchion | Desert L1 | 24 attack at 0.80 aps; carries Technique Power |
+| Sunsteel Falchion | Desert L1 | 24 attack at 0.80 aps; first strike x1.4, then Sunlight (+15% damage dealt, 4 s) |
+
+**Amended 2026-09-15 — Sunsteel Falchion.** As surveyed, this row read "carries
+Technique Power" and the lineage was a pure alpha strike (first strike x2.0/x2.5/x3.0
+across T2-T4). The Falchion was reworked into an alpha WINDOW on 2026-09-15: a modest
+opener plus `Sunlight`, a short final damage-dealt window, and `technique.power-pct` was
+removed from all three tiers. Sunlight scales Technique payloads as a final layer, so the
+"spend a Technique early" incentive survives without a separate stat. Nothing else in
+this survey was re-derived against the new numbers — any conclusion below that leans on
+the old x2 opener is stale. See `shared/src/systems/alphaWindow.ts`.
 
 ### 3.4 Cores — a three-way choice, all unrestricted — [C]
 

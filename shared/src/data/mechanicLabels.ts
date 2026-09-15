@@ -115,6 +115,8 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'shared.applies-through-evade':         { label: 'Effects pierce evasion' },
   'weapon.empowered-mult-bonus':          { label: 'Empowered bonus' },
   'weapon.first-strike-mult':             { label: 'First strike' },
+  'weapon.first-strike-buff-damage-pct':  { label: 'Sunlight damage' },
+  'weapon.first-strike-buff-duration-ms': { label: 'Sunlight duration', companion: true },
   'weapon.dead-swing-interval':           { label: 'Dead swing' },
   'weapon.dead-swing-vuln-pct':           { label: 'Dead-swing vulnerability' },
   'weapon.dead-swing-vuln-ms':            { label: 'Vulnerability time', companion: true },
