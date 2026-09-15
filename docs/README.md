@@ -1,7 +1,7 @@
 # Documentation Index
 
 Map of every living doc, what it is for, and where history goes.
-Last sorted: 2026-09-14.
+Last sorted: 2026-09-15.
 
 **If code and any doc disagree, the code wins — fix the doc.**
 
@@ -28,15 +28,25 @@ top-level doc.
 |---|---|
 | [T1–T3 TTK survey operator packet](briefs/bot-balance-ttk-survey-operator-packet.md) | Execute the six-class duration baseline and targeted weapon comparisons; synthetic server benchmark, no balance edits. |
 | [Volcano finishing operator packet](briefs/bot-balance-volcano-finish-operator-packet.md) | Executable four-case T4 Expose Weakness / Colossus screen and sampled final-phase evidence. |
+| [briefs/bot-balance-volcano-finish-report.md](briefs/bot-balance-volcano-finish-report.md) | Volcano finishing result: both Empty-relic cells died before victory; both Colossus cells won/returned; no global relic or balance conclusion. |
 | [briefs/bot-balance-validation-exit-plan.md](briefs/bot-balance-validation-exit-plan.md) | Remaining validation gates, Volcano inactivity diagnosis and transition to mobs/items/classes/economy balance passes. |
+| [briefs/bot-balance-validation-exit-operator-packet.md](briefs/bot-balance-validation-exit-operator-packet.md) | Launch-ready, user-operated qualified Volcano diagnostic and six remaining T4 boss screens from verified returns; no balance edits. |
+| [briefs/bot-balance-validation-exit-report.md](briefs/bot-balance-validation-exit-report.md) | Validation-exit execution: five clean T4 boss wins/returns, one Volcanic first-death exception, and one unresolved productive-inactivity window. |
 | [briefs/bot-balance-night3-operator-packet.md](briefs/bot-balance-night3-operator-packet.md) | Fixed12-case overnight T4 Colossus Heart comparison: Mountain boss and four farming biomes; Luna-only operation. |
 | [briefs/bot-balance-v1z-operator-packet.md](briefs/bot-balance-v1z-operator-packet.md) | T4 Jungle/Desert farming coverage, actual mastery caps and +2 defense preparation. |
+| [briefs/bot-balance-v1z-report.md](briefs/bot-balance-v1z-report.md) | V1z result: Voidwalker reached Jungle18/Desert18, completed both five-minute observations and recovered returns, bought the prescribed +2 defenses, and retained sealed non-canonical evidence with no balance edit. |
 | [briefs/bot-balance-v1y-operator-packet.md](briefs/bot-balance-v1y-operator-packet.md) | Voidwalker T4 entry, affordable Mountain defenses, mastery and sustained farming qualification. |
+| [briefs/bot-balance-v1y-report.md](briefs/bot-balance-v1y-report.md) | V1y result: Voidwalker entered T4, reached Mountain24/GM124, bought the prescribed +1 defenses, completed the 5-minute Mountain observation, and returned rested; sealed non-canonical evidence retained with no balance edit. |
 | [briefs/bot-balance-v1x-operator-packet.md](briefs/bot-balance-v1x-operator-packet.md) | Sequential Mountain/Cave four-seal T4 handoff; corrected progression, safe captures and Docker resource observations. |
+| [briefs/bot-balance-v1x-report.md](briefs/bot-balance-v1x-report.md) | V1x result: one character cleared Mountain and Cave, returned after each, unlocked T4 with one unspent point, and retained exact non-canonical evidence with no balance edit. |
 | [briefs/bot-balance-v1w-operator-packet.md](briefs/bot-balance-v1w-operator-packet.md) | Five remaining T3 boss screens, earned T4 handoff and saved Voidwalker direction. |
+| [briefs/bot-balance-v1w-report.md](briefs/bot-balance-v1w-report.md) | V1w result: Mountain, Cave, Desert, and Jungle recorded named T3 boss wins but failed the T4 handoff assertion; Swamp died to a scripted pool DoT; sealed non-canonical evidence retained with no balance edit. |
 | [briefs/bot-balance-v1v-operator-packet.md](briefs/bot-balance-v1v-operator-packet.md) | Two Tundra boss replicas with Cleanse/Break Free and audited travel from the earned Volcano return. |
+| [briefs/bot-balance-v1v-report.md](briefs/bot-balance-v1v-report.md) | V1v result: both Tundra replicas cleared the guardians, killed the named Rime-Mammoth, won the boss attempt, returned safely, and retained sealed non-canonical diagnostic evidence with no balance edit. |
 | [briefs/bot-balance-v1u2-operator-packet.md](briefs/bot-balance-v1u2-operator-packet.md) | Resume GM96 preparation with audited waypoints and staged upgrades before gated boss replicas. |
+| [briefs/bot-balance-v1u2-report.md](briefs/bot-balance-v1u2-report.md) | V1u2 result: audited GM114 preparation passed, then both fresh tempo/barrier Volcano replicas cleared and safely returned; sealed non-canonical diagnostic evidence with hashes retained and no balance edit. |
 | [briefs/bot-balance-v1u-operator-packet.md](briefs/bot-balance-v1u-operator-packet.md) | Earn full T3 tempo/barrier preparation, then two gated Volcano boss attempts. |
+| [briefs/bot-balance-v1u-report.md](briefs/bot-balance-v1u-report.md) | V1u result: preparation passed the Mountain gate, then died during Jungle travel before the earned T3 kit or boss attempts; sealed non-canonical evidence with hashes retained and no balance edit. |
 | [briefs/bot-balance-v1t-report.md](briefs/bot-balance-v1t-report.md) | V1t result: both independent Volcano runs cleared all 12 guardians and reached the named boss, then died before boss kill/progression or safe return; sealed non-canonical evidence with hashes retained and no balance edit. |
 | [briefs/bot-balance-v1t-operator-packet.md](briefs/bot-balance-v1t-operator-packet.md) | Prepared Volcano dungeon/boss validation: two independent attempts from the paid V1s pursuit checkpoint; no new balance changes. |
 | [briefs/bot-balance-v1s-operator-packet.md](briefs/bot-balance-v1s-operator-packet.md) | Prepared six checkpoint runs testing repeatable five-minute Volcano farming and recovered returns with unchanged control/pursuit builds. |

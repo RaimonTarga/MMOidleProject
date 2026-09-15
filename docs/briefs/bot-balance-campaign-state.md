@@ -2,30 +2,43 @@
 
 Updated: 2026-09-15. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after Night3 - validation exit
+## Current decision after Volcano finishing comparison
 
-Night3 completed12/12 routes without deaths. Mountain T4 passed4/4; all seven T4
-biomes now have farming candidates across recent packets. Six T4 bosses and
-Swamp T3 remain open. We are finishing selected reference-strategy validation,
-not all-class balance or a proven continuous from-zero campaign.
+The frozen four-cell Volcano finishing comparison executed once on 2026-09-15
+with no retries, adaptation, source changes or balance edits. Both Empty-relic
+cells cleared the nine guardians but stopped at first death before a named
+Caldera Sovereign victory. Both Colossus Heart cells cleared the guardians,
+killed the Caldera Sovereign, reached Volcano 4 and returned. Expose Weakness
+was not required for the Colossus wins, and Expose alone did not rescue either
+Empty-relic run.
 
-Raw-log correction: Volcano control spent the last roughly9.5 minutes idle,
-full sampled HP/zero attackers with monsters present, after lava escape. Root
-cause is not established. Do not call221 vs91 kills a relic advantage or that
-control window sustained productive farming. Flag activity qualification before
-another comparison. Graveyard Colossus minimumHP9.9% is a robustness warning;
-Mountain empty relic averaged44.0s versus49.5s Colossus, both viable.
+This closes the sampled Volcano viability gap for the prepared Colossus
+reference, not universal relic balance, causal attribution or canonical
+economy. Use Colossus preparation when Volcano enters the next scoped
+measurement; retain Empty as a robustness exception. The prior validation-exit
+productive-inactivity window remains unresolved, farming inactivity remains a
+separate qualification question, and Swamp T3 remains open.
 
-[Validation exit plan](bot-balance-validation-exit-plan.md) defines the next stage:
-focused Volcano diagnostic, six-boss T4 breadth screen, targeted exception work
-including Swamp, then mobs -> items -> classes -> canonical1x economy. No more
-routine Mountain replicas or full preparation replay. Reliable clean encounters
-can enter scoped mob measurement while isolated controller exceptions remain open.
+The [Volcano finishing report](bot-balance-volcano-finish-report.md) records the
+four outcomes, final-phase samples, death/source boundary, occupancy check,
+taints and hashes. The [Volcano finishing operator packet](bot-balance-volcano-finish-operator-packet.md)
+was executed at source revision `67a7722559c4e7b4063032bda179ed1e8796aa4d`,
+source tree `67798156542c8ddf0a795a03138d126907398f3a`, with input checkpoint
+SHA256 `866db03766d0e7cd4ceeeea48506bd9c11c2a9eaf0f72037e49a0cc20c052f98`.
+Experiment `20260915t074612z-t4-volcano-finish-reference-em` was reported and
+released with scoped resources cleaned up.
 
-The Night3 preflight typing issue was our final-edit defect, not a pre-existing
-external bug. Fix numeric narrowing in current source and check diagnostics before
-freezing another packet. Historical run data remains intact. No balance changes,
-subagents or new experiments launched; the stage plan is not an executable packet.
+The raw-log correction from the prior stage still stands: the earlier Volcano
+control spent roughly 9.5 minutes idle with full sampled HP, zero attackers,
+and monsters present after lava escape. Root cause is not established; do not
+call the 221-versus-91 kill count a relic advantage or productive farming
+proof. The Graveyard Colossus 9.9% minimum-HP result remains a robustness
+warning, while the earlier Mountain Empty and Colossus runs were both viable.
+
+[Validation exit plan](bot-balance-validation-exit-plan.md) remains the ordering
+authority: targeted exception review, then mobs -> items -> classes -> canonical
+1x economy. No further routine Volcano or Mountain replica is required for this
+question. No balance changes or subagents were used.
 
 ## Previous decision after V1z - Night3 prepared
 
