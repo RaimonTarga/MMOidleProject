@@ -19,7 +19,7 @@ export const SURVEY_CLASSES = [
   { name: 'spirit', prefix: 'energy', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
 ] as const;
 export const SURVEY_SEEDS = [173, 947, 2027] as const;
-export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; }
+export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam'; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
   ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
     const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
@@ -74,7 +74,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     if(!p.runesOwned.includes(r.runeId)) p.runesOwned.push(r.runeId);
   }
   p.runesEquipped = rules;
-  const techniques = [...(cell.tier === 3 ? ['frenzy'] : []), 'sweep'];
+  const techniques = [...(cell.tier === 3 ? ['frenzy'] : []), cell.technique ?? 'sweep'];
   const abilities = { techniques, guards: cell.tier===1 ? ['second-wind'] : ['second-wind','cleanse'] };
   assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
