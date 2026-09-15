@@ -588,6 +588,11 @@ export type BotEvent =
     }
   | {
       kind: "concurrency-sample";
+      /** Optional read-only boss timeline; two-second samples, not exact hit/cast events. */
+      bossState?: {
+        player: Pick<PlayerView, 'hp' | 'barrier' | 'pos' | 'target' | 'attackTargetId' | 'lastAttackAt' | 'autoIntent'>;
+        bosses: Array<Pick<MonsterView, 'id' | 'monsterTypeId' | 'hp' | 'maxHp' | 'pos' | 'state' | 'ultimateStatus' | 'bossEffects' | 'targetStatus'>>;
+      };
       atMs: number;
       nodeId: string;
       attackers: number;

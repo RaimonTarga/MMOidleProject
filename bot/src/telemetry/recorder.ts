@@ -578,6 +578,18 @@ export class Recorder {
       this.lastConcurrencySampleAt = Date.now();
       this.emit({
         kind: "concurrency-sample",
+        ...(this.activity === "boss" ? { bossState: {
+          player: { hp: self.hp, barrier: self.barrier, pos: { ...self.pos }, target: { ...self.target },
+            attackTargetId: self.attackTargetId, lastAttackAt: self.lastAttackAt,
+            autoIntent: self.autoIntent ? structuredClone(self.autoIntent) : null },
+          bosses: obs.monsters().filter(m => m.isBoss).map(m => ({
+            id: m.id, monsterTypeId: m.monsterTypeId, hp: m.hp, maxHp: m.maxHp,
+            pos: { ...m.pos }, state: m.state,
+            ultimateStatus: m.ultimateStatus ? structuredClone(m.ultimateStatus) : undefined,
+            bossEffects: m.bossEffects ? [...m.bossEffects] : undefined,
+            targetStatus: m.targetStatus ? structuredClone(m.targetStatus) : undefined,
+          })),
+        } } : {}),
         atMs: this.now(),
         nodeId,
         attackers,

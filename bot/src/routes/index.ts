@@ -1,3 +1,4 @@
+import { CAMPAIGN_T4_VOLCANO_FINISH_ROUTES } from './campaignT4VolcanoFinish';
 import { CAMPAIGN_T4_NIGHT3_ROUTES } from './campaignT4Night3';
 import { CAMPAIGN_T4_BOSS_COVERAGE_ROUTES, CAMPAIGN_T4_VOLCANO_DIAGNOSTIC } from './campaignT4ValidationExit';
 import { CAMPAIGN_T4_V1Z } from './campaignT4V1z';
@@ -116,6 +117,7 @@ export const ROUTES = new Map<string, Route>(
     CAMPAIGN_T4_V1Z,
     ...CAMPAIGN_T4_NIGHT3_ROUTES,
     ...CAMPAIGN_T4_BOSS_COVERAGE_ROUTES,
+    ...CAMPAIGN_T4_VOLCANO_FINISH_ROUTES,
     CAMPAIGN_T4_VOLCANO_DIAGNOSTIC,
     ...CAMPAIGN_T3_V1W_ROUTES,
     ...CAMPAIGN_T3_V1N_ROUTES,
