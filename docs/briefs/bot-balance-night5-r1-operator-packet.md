@@ -1,10 +1,26 @@
-> Superseded after a zero-observation Windows launcher failure. Use the [Night5-R1 packet](bot-balance-night5-r1-operator-packet.md). Original packet retained below for provenance.
-
-# Night5 — Mountain pull control, T4 roster and sustained farming
+# Night5-R1 — Mountain pull control, T4 roster and sustained farming
 
 Prepared 2026-09-17. NOT LAUNCHED. Manual Luna operator, one sequential batch.
 Read this packet, then execute its launcher once. No subagents, source edits,
 production balance patches, adaptive builds, retries or replacement seeds.
+
+## Launcher repair / separately prepared run
+
+The original Night5 failed before observation1; preserve its source and artifacts.
+This R1 packet supersedes the failed launch, retaining ALL cells, seeds, builds,
+ceilings and gameplay definitions. Only launcher import-path handling changes:
+Windows absolute loader paths are converted with pathToFileURL().href. A shared
+argument builder now drives both the launcher and its regression test.
+
+The previous relative-path pilot did not exercise the failing absolute-path form.
+The corrected exact child invocation completed four Mountain30s pilots and their
+audit. Censored-verifier regression also passed. Validation output:
+`C:/Users/osaif/AppData/Local/mmo-idle/validation/night5/windows-loader-pilot`.
+Original524 setup/158 pilot evidence remains applicable because no templates or
+runtime changed. These repair pilots are not extra experiment observations.
+The full overnight batch has NOT been launched by the planner. Run R1 once using
+the NEW root below; do not retry or mutate the old root. Write the R1 report to its
+separate filename so the original failure report remains intact.
 
 ## Purpose and decisions
 
@@ -32,9 +48,9 @@ when needed for valid evidence, but don't tune class numbers in this batch.
 
 ## Frozen source
 
-- Revision: `7f9ab446dc9ef25bd25b37c9475848185bcc0e6a`
-- Branch: `codex/night5-frozen`
-- Tree: `d6169eb7728f81c7f5194d836db073f88af6e8bc`
+- Revision: `d0492235ce8a8a9582825f3088ec88db10a4486b`
+- Branch: `codex/night5-r1-frozen`
+- Tree: `a7c3de8246f254c895a8c3f09ebf1492afb4ddbe`
 - Definitions: `a30458ee24ad7054c5389b1ed16d47f3435456c18feb34f72ded75c84b0828c0`
 - Hitboxes: `08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83`
 
@@ -130,9 +146,9 @@ The launcher records identity, times and outcomes. It runs and audits every bloc
 Luna should wait for completion, not repeatedly inspect every individual fight.
 
 ```powershell
-$night5Revision = '7f9ab446dc9ef25bd25b37c9475848185bcc0e6a'
-$night5Tree = 'd6169eb7728f81c7f5194d836db073f88af6e8bc'
-$night5Root = 'C:/Users/osaif/AppData/Local/mmo-idle/experiments/night5-20260917'
+$night5Revision = 'd0492235ce8a8a9582825f3088ec88db10a4486b'
+$night5Tree = 'a7c3de8246f254c895a8c3f09ebf1492afb4ddbe'
+$night5Root = 'C:/Users/osaif/AppData/Local/mmo-idle/experiments/night5-r1-20260917'
 $night5Source = "$night5Root/source"
 $night5Hitboxes = 'C:/Users/osaif/AppData/Local/mmo-idle/validation/ttk-survey/hitboxes.json'
 if(Test-Path -LiteralPath $night5Root){throw 'Root exists; inspect/report, no retry'}
@@ -154,7 +170,7 @@ Report failures and unstarted blocks, even if the batch never reaches its end fi
 
 ## Required report and interpretation
 
-Write `docs/briefs/bot-balance-night5-report.md` and index it in docs/README.md.
+Write `docs/briefs/bot-balance-night5-r1-report.md` and index it in docs/README.md.
 Use `night5-audit.json` species medians: eligible per-seed clean medians then outer
 median, excluding wall-censored/long-quiet runs from the primary duration estimate.
 Retain their raw data and failure counts. Fewer than two eligible seeds means
