@@ -19,7 +19,7 @@ export const SURVEY_CLASSES = [
   { name: 'spirit', prefix: 'energy', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
 ] as const;
 export const SURVEY_SEEDS = [173, 947, 2027] as const;
-export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam'; }
+export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam'; stance?: string; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
   ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
     const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
@@ -57,7 +57,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
   p.equippedRites = [];
   p.attunedAbilities = { techniques: [], guards: [] };
-  const stance = cell.tier >= 2 ? 'offensive-stance' : null;
+  const stance = cell.tier >= 2 ? cell.stance ?? 'offensive-stance' : null;
   p.attunedStances = stance ? [stance] : [];
   p.equippedStances = { default: stance };
   p.activeStance = stance;

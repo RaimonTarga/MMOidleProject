@@ -27,10 +27,12 @@ import { NIGHT4_SURVEY, NIGHT4_AOE, NIGHT4_FOLLOWUP, installNight4Treatment, typ
 
 import { DURABILITY9_ROSTER, DURABILITY9_BEAR, installDurability9Treatment, assertDurability9Definitions, type Durability9Cell } from '../bench/balance/durability9Spec';
 
+import { DURABILITY10_SWAMP, DURABILITY10_JUNGLE, installDurability10Treatment, type Durability10Cell } from '../bench/balance/durability10Spec';
+
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
 const mode=args.mode??'qualify'; assert(['qualify','pilot','run'].includes(mode));
-assert(!args.trial || ['durability9roster','durability9bear','durability','durability2','durability3','durability4','durability5','durability6','durability7','durability8','night4survey','night4followup','night4aoe'].includes(args.trial));
-const trialCells = args.trial === 'durability9roster' ? DURABILITY9_ROSTER : args.trial === 'durability9bear' ? DURABILITY9_BEAR : args.trial === 'night4survey' ? NIGHT4_SURVEY : args.trial === 'night4followup' ? NIGHT4_FOLLOWUP : args.trial === 'night4aoe' ? NIGHT4_AOE : args.trial === 'durability8' ? DURABILITY8_CELLS : args.trial === 'durability7' ? DURABILITY7_CELLS : args.trial === 'durability6' ? DURABILITY6_CELLS : args.trial === 'durability5' ? DURABILITY5_CELLS : args.trial === 'durability4' ? DURABILITY4_CELLS : args.trial === 'durability3' ? DURABILITY3_CELLS : args.trial === 'durability2' ? DURABILITY2_CELLS : args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
+assert(!args.trial || ['durability10swamp','durability10jungle','durability9roster','durability9bear','durability','durability2','durability3','durability4','durability5','durability6','durability7','durability8','night4survey','night4followup','night4aoe'].includes(args.trial));
+const trialCells = args.trial === 'durability10swamp' ? DURABILITY10_SWAMP : args.trial === 'durability10jungle' ? DURABILITY10_JUNGLE : args.trial === 'durability9roster' ? DURABILITY9_ROSTER : args.trial === 'durability9bear' ? DURABILITY9_BEAR : args.trial === 'night4survey' ? NIGHT4_SURVEY : args.trial === 'night4followup' ? NIGHT4_FOLLOWUP : args.trial === 'night4aoe' ? NIGHT4_AOE : args.trial === 'durability8' ? DURABILITY8_CELLS : args.trial === 'durability7' ? DURABILITY7_CELLS : args.trial === 'durability6' ? DURABILITY6_CELLS : args.trial === 'durability5' ? DURABILITY5_CELLS : args.trial === 'durability4' ? DURABILITY4_CELLS : args.trial === 'durability3' ? DURABILITY3_CELLS : args.trial === 'durability2' ? DURABILITY2_CELLS : args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
 const trialSeeds=args.trial==='durability7'?DURABILITY7_SEEDS:args.trial==='durability5'?DURABILITY5_SEEDS:args.trial==='durability4'?DURABILITY4_SEEDS:SURVEY_SEEDS;
 if(args.trial==='durability5') assertDurability5Definitions();
 if(args.trial==='durability6') assertDurability6Definitions();
@@ -58,7 +60,7 @@ function run(cell:SurveyCell,seed:number) {
   Math.random=()=>{randomState=(Math.imul(randomState,1664525)+1013904223)>>>0;return randomState/4294967296;};
   Date.now=()=>now;
   const world=createFarmWorld();
-  const overlay = args.trial?.startsWith('durability9') ? installDurability9Treatment(cell as Durability9Cell) : args.trial === 'night4followup' ? installNight4Treatment(cell as Night4Followup) : args.trial === 'durability8' ? installDurability8Treatment(cell as Durability8Cell) : args.trial === 'durability7' ? installDurability7Treatment(cell as Durability7Cell) : args.trial === 'durability6' ? installDurability6Treatment(cell as Durability6Cell) : args.trial === 'durability4' ? installDurability4Treatment(cell as Durability4Cell) : args.trial === 'durability3' ? installDurability3Treatment(cell as Durability3Cell) : args.trial === 'durability2' ? installDurability2Treatment(cell as Durability2Cell) : args.trial === 'durability' ? installDurabilityTreatment(cell as DurabilityCell) : null;
+  const overlay = args.trial?.startsWith('durability10') ? installDurability10Treatment(cell as Durability10Cell) : args.trial?.startsWith('durability9') ? installDurability9Treatment(cell as Durability9Cell) : args.trial === 'night4followup' ? installNight4Treatment(cell as Night4Followup) : args.trial === 'durability8' ? installDurability8Treatment(cell as Durability8Cell) : args.trial === 'durability7' ? installDurability7Treatment(cell as Durability7Cell) : args.trial === 'durability6' ? installDurability6Treatment(cell as Durability6Cell) : args.trial === 'durability4' ? installDurability4Treatment(cell as Durability4Cell) : args.trial === 'durability3' ? installDurability3Treatment(cell as Durability3Cell) : args.trial === 'durability2' ? installDurability2Treatment(cell as Durability2Cell) : args.trial === 'durability' ? installDurabilityTreatment(cell as DurabilityCell) : null;
   try {
     const target={nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false};
     setupArena(world,target);
@@ -73,6 +75,7 @@ function run(cell:SurveyCell,seed:number) {
     if(['durability2','durability3','durability4','durability5','durability6','durability7'].includes(args.trial)) assert(initial.some(m=>m.type===(cell as Durability2Cell).eliteType),'Missing target elite');
     if(args.trial==='durability8'||args.trial==='night4followup') for(const type of (cell as Durability8Cell).targetTypes) assert(initial.some(m=>m.type===type), 'Missing target '+type);
     if(args.trial?.startsWith('durability9')) for(const type of (cell as Durability9Cell).targetTypes) assert(initial.some(m=>m.type===type), 'Missing target '+type);
+    if(args.trial?.startsWith('durability10')) for(const type of (cell as Durability10Cell).targetTypes) assert(initial.some(m=>m.type===type),'Missing target '+type);
     if(mode==='qualify') return ready;
     const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
     writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
@@ -110,6 +113,7 @@ function run(cell:SurveyCell,seed:number) {
       metrics.closeIfCleared(elapsed);
       metrics.sampleRecovery(elapsed,v.hp>=v.maxHp&&v.barrier>=v.barrierMax&&v.incomingDot===0);
       if(elapsed%1000===0) samples.push({atMs:elapsed,hp:v.hp,barrier:v.barrier,incomingDot:v.incomingDot,target:v.attackTargetId,lastAttackAt:v.lastAttackAt,autoIntent:v.autoIntent,pos:v.pos,
+        summonSlots:v.summonSlots, minions:[...world.minionEntities].filter(m=>m.isMinion.ownerPlayerId===bot.isPlayer.id).map(m=>({id:m.entityId,hp:m.hasHealth.hp,maxHp:m.hasHealth.maxHp,pos:{...m.hasPosition.current},target:m.controlsMinion.currentTargetId,lastAttackAt:m.performsAttack.lastAttackAt})),
         staticDamageContacts:activePlayerDamageFeatures(world,cell.nodeId).filter(f=>playerInFeatureContact(bot.hasPosition.current,f)).map(f=>({id:f.id,effect:f.damage?.effectId})),
         movement:bot.hasMovePath ? structuredClone(bot.hasMovePath) : null, monsters:roster().map(m=>({id:m.id,type:m.type,hp:m.hp}))});
       if(bot.isDead || bot.hasHealth.hp<=0) {outcome='player-died';break;}
@@ -126,6 +130,8 @@ const results:unknown[]=[];
 const batchWallStart=realNow();
 try {
   const pilotIds:Record<string,string[]>={
+    durability10swamp:[DURABILITY10_SWAMP.find(c=>c.className==='apprentice'&&c.treatment==='hp2')!.id],
+    durability10jungle:[DURABILITY10_JUNGLE.find(c=>c.className==='conduit'&&c.treatment==='defensive')!.id,DURABILITY10_JUNGLE.find(c=>c.className==='conduit'&&c.treatment==='ramp25')!.id],
     durability9roster:[DURABILITY9_ROSTER.find(c=>c.role==='swamp'&&c.tier===3&&c.className==='conduit'&&c.treatment==='selected')!.id,DURABILITY9_ROSTER.find(c=>c.role==='desert'&&c.tier===2&&c.className==='striker'&&c.treatment==='previous')!.id],
     durability9bear:[DURABILITY9_BEAR.find(c=>c.className==='conduit'&&c.treatment==='bear-soft')!.id,DURABILITY9_BEAR.find(c=>c.className==='apprentice'&&c.treatment==='bear-full')!.id],
     night4survey:[NIGHT4_SURVEY[0].id,NIGHT4_SURVEY[NIGHT4_SURVEY.length-1].id],
