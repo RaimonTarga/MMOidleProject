@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {verifySurvey} from './ttk-survey-verify.mjs';
+import {night5ChildArgs} from './night5-child-args.mjs';
 const args=Object.fromEntries(process.argv.slice(2).map(s=>{const i=s.indexOf('=');return [s.slice(2,i),s.slice(i+1)];}));
 const source=resolve(fileURLToPath(new URL('..',import.meta.url)));
 assert(args.out&&args.revision&&args.tree&&args.definitions&&args.hitboxes&&args['hitbox-hash'],'All identity inputs required');
@@ -18,7 +19,7 @@ mkdirSync(root,{recursive:true});
 const started=Date.now(),blocks=['mountain','t4a','weapons','t4b','sustain','t4c'];
 writeFileSync(join(root,'batch-manifest.json'),JSON.stringify({source,...args,blocks,started:new Date().toISOString(),ceilingHours:8},null,2));
 const run=(script,argv,log,limitMs)=>new Promise((resolveRun,reject)=>{
- const stream=createWriteStream(log);const child=spawn(process.execPath,script.endsWith('.ts')?['--import',resolve(source,'server/node_modules/tsx/dist/loader.mjs'),'--conditions=development',script,...argv]:[script,...argv],{cwd:source,stdio:['ignore','pipe','pipe'],windowsHide:true});
+ const stream=createWriteStream(log);const child=spawn(process.execPath,night5ChildArgs(source,script,argv),{cwd:source,stdio:['ignore','pipe','pipe'],windowsHide:true});
  child.stdout.pipe(stream);child.stderr.pipe(stream);let timedOut=false;
  const timer=setTimeout(()=>{timedOut=true;child.kill();},limitMs);child.on('error',reject);
  child.on('close',code=>{clearTimeout(timer);stream.end(()=>resolveRun({code,timedOut}));});
