@@ -26,11 +26,16 @@ const cases=[
  {id:'dur12-movement-node-t3-jungle-05-squire',seed:3911},
  {id:'dur12-swarm-node-t3-volcanic-05-squire-sweep',seed:6151},
  {id:'dur12-movement-node-t3-swamp-05-striker',seed:6151},
+ {id:'dur12-swarm-node-t3-volcanic-03-slinger-sweep',seed:3911},
+ {id:'dur12-swarm-node-t3-volcanic-05-slinger-slam',seed:3911},
+ {id:'dur12-swarm-node-t3-volcanic-05-conduit-slam',seed:6151},
+ {id:'dur12-swarm-node-t3-volcanic-05-striker-slam',seed:6151},
 ];
 const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 writeFileSync(join(args.out,'manifest.json'),JSON.stringify({revision,cases,synthetic:true,diagnostic:true},null,2));
 for(const entry of cases){
  if(args.case&&entry.id+'-s'+entry.seed!==args.case) continue;
+ if(args.group==='dur14-residual'&&!cases.slice(-4).includes(entry)) continue;
  const cell=[...DURABILITY12_MOVEMENT,...DURABILITY12_SWARM].find(c=>c.id===entry.id)!;assert(cell);
  const oldNow=Date.now,oldRandom=Math.random;let now=1800000000000,rng=entry.seed;
  Math.random=()=>{rng=(Math.imul(rng,1664525)+1013904223)>>>0;return rng/4294967296};Date.now=()=>now;
@@ -52,15 +57,17 @@ for(const entry of cases){
   world.tick(100,now);
   for(const e of world.worldLogJournal)metrics.ingest(e,elapsed);
   world.worldLogJournal=[];world.worldLogByPlayer.clear();world.takeNodeEvents(cell.nodeId);
-  if(elapsed%1000===0||(elapsed>=215000&&elapsed<240000)){
+  if(elapsed%1000===0||(elapsed>=290000&&elapsed<292000)){
    const target=world.getMonsterEntity(getAutoTargetId(bot)??'');
    samples.push(structuredClone({atMs:elapsed,pos:bot.hasPosition.current,hp:bot.hasHealth.hp,
     lastDamageMs:Math.max(0,...[...metrics.targets.values()].map(t=>t.lastDamageMs??0)),
     combatTarget:bot.hasAttackTarget,move:bot.isMoving,path:bot.hasMovePath,blocked:getString(bot.tracksCombat,'autoApproachBlocked'),
+    casting:bot.isCastingAbility,armed:bot.hasArmedAbility,
     goalHazards:bot.hasMovePath&&(RESOLVED_NODE_FEATURES[cell.nodeId]??[]).filter(f=>moverOverlapsBlockShapes(bot.hasMovePath!.goal,[f.shape],pad)),
-    flags:{escape:getFlag(bot.tracksCombat,'rune.dynamicHazardEscapeActive'),avoid:getFlag(bot.tracksCombat,'rune.avoidNodeHazards')},
+    flags:{escape:getFlag(bot.tracksCombat,'rune.dynamicHazardEscapeActive'),avoid:getFlag(bot.tracksCombat,'rune.avoidNodeHazards'),recovery:getFlag(bot.tracksCombat,'rune.waitForRegen')},
     target:target&&{id:target.entityId,type:target.isMonster.monsterTypeId,pos:target.hasPosition.current,
      hp:target.hasHealth.hp,aggro:target.hasAggroTarget,awareness:target.hasAwareness,controls:target.controlsMonster,
+     pack:target.inPack,packMembers:target.inPack&&[...world.monsterEntitiesInNode(cell.nodeId)].filter(m=>m.inPack?.packId===target.inPack?.packId).map(m=>({id:m.entityId,pos:m.hasPosition.current,aggro:m.hasAggroTarget,awareness:m.hasAwareness})),
      gap:hitboxGap(posHitboxFromEntity(bot),posHitboxFromEntity(target)),playerRange:bot.performsAttack.attackRange,
      monsterRange:target.performsAttack.attackRange,playerCanReach:world.collision.canReach(bot,target,bot.performsAttack.attackRange),
      monsterCanReach:world.collision.canReach(target,bot,target.performsAttack.attackRange),
