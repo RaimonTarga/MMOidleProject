@@ -74,6 +74,52 @@ export function elementColor(element: DamageElement): number {
 }
 
 /**
+ * One element's colour at three lightnesses.
+ *
+ * A single flat hue is a surprisingly weak colour cue: a translucent wash of one
+ * value over busy terrain averages toward the terrain, which is exactly why
+ * Detonate's element tint was hard to see even though it was always there. Three
+ * values of the SAME hue read as colour far more strongly than one does, because
+ * the contrast between the layers survives whatever is underneath them.
+ * `fxPoisonExplosion` already hand-authored deep/mid/bright greens for this
+ * reason; this derives the same structure for every element instead.
+ *
+ * Lightness is moved in OkLCh, not by scaling RGB channels. Scaling RGB drags
+ * saturation along with it (halving `#5fd35f` gives a muddy olive, not a deep
+ * green), whereas moving `l` alone keeps the hue and chroma the element is
+ * recognised by — the same reason {@link blendTints} works in this space.
+ */
+export interface ElementShades {
+  /** Underlay: the widest, dimmest body. */
+  deep: number;
+  /** The element's own authored colour — the one damage numbers use. */
+  mid: number;
+  /** Cores, sparks and leading edges. */
+  bright: number;
+}
+
+const SHADE_STEP = 0.16;
+const shadeCache = new Map<DamageElement, ElementShades>();
+
+function shiftLightness(rgb: number, delta: number): number {
+  const lch = rgbToLch(rgb);
+  return lchToRgb({ ...lch, l: Math.max(0, Math.min(1, lch.l + delta)) });
+}
+
+export function elementShades(element: DamageElement): ElementShades {
+  const cached = shadeCache.get(element);
+  if (cached) return cached;
+  const mid = ELEMENT_COLOR[element];
+  const shades: ElementShades = {
+    deep: shiftLightness(mid, -SHADE_STEP),
+    mid,
+    bright: shiftLightness(mid, SHADE_STEP),
+  };
+  shadeCache.set(element, shades);
+  return shades;
+}
+
+/**
  * Relative pull of the two SECONDARY contributors when they have to share the
  * particle layer. The transient effect is heavier because it is the thing that
  * just happened; the weapon is a constant the player already knows about.

@@ -30,9 +30,12 @@ import {
 } from "../src/systems/combat/damage/dotInventory";
 import {
   afflictionTechniqueHasWork,
+  detonateWindupElement,
   resolveContagion,
   resolveDetonate,
 } from "../src/systems/player/abilities/abilityAffliction";
+import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { applyImbueWindow } from "../src/systems/player/abilities/abilityImbue";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
@@ -414,6 +417,97 @@ console.log("affliction: a Contagion copy never reduces an existing affliction")
   );
 }
 console.log("affliction: Detonate consumes every owned DoT and pays out what was owed");
+
+// ── 5b. Detonate's PRESENTATION cues reach the client ───────────────────────
+//
+// Wiring only: the client cannot work any of this out for itself. The element
+// lives in server-only status effects, and Detonate resolves through the AoE
+// seam — which has no `player-hit` event — so without these fields the biggest
+// number the ability produces renders as a plain white number with no element
+// and no crit styling, which is exactly what it used to do.
+
+{
+  const { world, player } = setup(["detonate"]);
+  const detonate = ABILITY_DATABASE.get("detonate")!;
+  const target = spawn(world, 405, 400);
+  target.mitigatesDamage.plating = 0;
+
+  paintClassDot(target, "afflictor", 6, { maxStacks: 6, damagePerStack: 20 });
+  world.takeNodeEvents(NODE); // drop spawn noise
+
+  resolveDetonate(world, player, detonate, target);
+  const events = world.takeNodeEvents(NODE);
+
+  const burst = events.find((e) => e.kind === "dot-detonate");
+  assert(burst !== undefined, "Detonate must queue a dot-detonate FX event");
+  assert(
+    burst!.kind === "dot-detonate" && burst!.element !== undefined,
+    "the FX event must name the element it detonated",
+  );
+
+  const number = events.find((e) => e.kind === "damage");
+  assert(number !== undefined, "Detonate must queue a damage event for its number");
+  assert(
+    number!.kind === "damage" && number!.element !== undefined,
+    "Detonate's damage number must carry the element (it renders white otherwise)",
+  );
+  assert(
+    number!.kind === "damage" && number!.empowered === true,
+    "Detonate's damage number must carry the cosmetic crit flag",
+  );
+  assert(
+    burst!.kind === "dot-detonate" &&
+      number!.kind === "damage" &&
+      burst!.element === number!.element,
+    "the FX and the number must agree on the element, or the two cues fight",
+  );
+}
+console.log("affliction: Detonate ships element + crit styling to the client");
+
+// ── 5c. The wind-up can be drawn on the right monster, in the right colour ──
+//
+// Detonate is a two-second cast. `player-cast-start` has to name the TARGET
+// (the FX is drawn on it, and it moves during those two seconds) and the
+// element, neither of which the client can derive.
+
+{
+  const { world, player } = setup(["detonate"]);
+  const detonate = ABILITY_DATABASE.get("detonate")!;
+  const target = spawn(world, 405, 400);
+  paintClassDot(target, "afflictor", 4, { maxStacks: 6, damagePerStack: 20 });
+  world.takeNodeEvents(NODE);
+
+  assert(
+    detonateWindupElement(world, player, detonate, target) !== null,
+    "a target carrying afflictions must resolve a wind-up colour",
+  );
+
+  setAttackTarget(world, player, target.isMonster.id);
+  player.usesAutocombat.auto = true;
+  updateAbilityFiring(world, 2_000_000);
+
+  const start = world
+    .takeNodeEvents(NODE)
+    .find((e) => e.kind === "player-cast-start");
+  assert(start !== undefined, "beginning Detonate must queue a player-cast-start");
+  assert(
+    start!.kind === "player-cast-start" && start!.targetId === target.isMonster.id,
+    "the wind-up must name the monster it is drawn on",
+  );
+  assert(
+    start!.kind === "player-cast-start" && start!.element !== undefined,
+    "the wind-up must carry a colour when the target has afflictions to lose",
+  );
+
+  // A clean target has no colour to give, so the field is omitted rather than
+  // defaulted — the client keeps the bare cast bar instead of drawing a lie.
+  const clean = spawn(world, 800, 800);
+  assert(
+    detonateWindupElement(world, player, detonate, clean) === null,
+    "a target carrying nothing must resolve no wind-up colour",
+  );
+}
+console.log("affliction: Detonate's wind-up names its target and its colour");
 
 // ── 6. Both decline when there is nothing to act on ─────────────────────────
 

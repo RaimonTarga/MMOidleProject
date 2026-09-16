@@ -36,7 +36,10 @@ import { isHardControlled } from "../../combat/status/playerHardControl";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { startTechniqueCooldown } from "./abilityCooldowns";
 import { resolveCastPayload, resolveSelfCastPayload } from "./abilityEffects";
-import { afflictionTechniqueHasWork } from "./abilityAffliction";
+import {
+  afflictionTechniqueHasWork,
+  detonateWindupElement,
+} from "./abilityAffliction";
 import { abilityEngagementRange, abilityTarget } from "./abilityTargeting";
 import { armTechnique } from "./abilityArming";
 
@@ -84,11 +87,17 @@ export function beginAbilityCast(
     targetId: target.isMonster.id,
   });
 
+  // The wind-up FX tracks the TARGET, not the caster — an affliction being drawn
+  // taut belongs on the thing carrying it — so the target's id rides along.
+  // A colour rides along only when the ability has one to give.
+  const windupElement = detonateWindupElement(world, player, ability, target);
   world.pushEvent(player.hasPosition.nodeId, {
     kind: "player-cast-start",
     playerId: player.isPlayer.id,
     ability: ability.id,
     castMs: effectiveMs,
+    targetId: target.isMonster.id,
+    ...(windupElement ? { element: windupElement } : {}),
   });
   return true;
 }

@@ -1,5 +1,6 @@
 import type Phaser from "phaser";
 import { CombatPlaybackClock } from './combatPlaybackClock';
+import type { DetonateWindupState } from '../fx/detonateWindup';
 import type { CombatPlaybackItem } from './combatPlayback';
 import type {
   NetworkedEntity,
@@ -69,6 +70,9 @@ export interface RenderState {
    *  cooldown bar, tinted red) + the cast timing, keyed by monster id. */
   castLabel: Map<NetworkId, Phaser.GameObjects.Text>;
   castState: Map<NetworkId, { startedAt: number; castMs: number; label: string }>;
+  /** Detonate's wind-up, keyed by the TARGET monster's id (not the caster's):
+   *  the FX belongs on the thing carrying the afflictions. See detonateWindup.ts. */
+  detonateWindup: Map<NetworkId, DetonateWindupState>;
   /** Player skill-name callout (Technique armed / Guard fired), keyed by player id.
    *  Pops in, lingers, then drifts up + fades (see skillCallouts.ts). */
   skillCallout: Map<
@@ -237,6 +241,7 @@ export function createRenderState(): RenderState {
     cdBar: new Map(),
     castLabel: new Map(),
     castState: new Map(),
+    detonateWindup: new Map(),
     skillCallout: new Map(),
     techniqueArmed: new Map(),
     reloadTiming: new Map(),

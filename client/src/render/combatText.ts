@@ -32,8 +32,11 @@ export function prepareCombatText(
       if (Math.round(ev.amount) > 0) batch.entries.push({
         targetId: ev.targetId, targetKind: ev.targetKind, targetPos: ev.targetPos,
         amount: Math.round(ev.amount),
+        // `empowered` is crit styling only. Payloads that resolve through the
+        // AoE seam (Detonate) have no `player-hit` of their own, so this event
+        // is where they carry it.
         hint: { hasDirectHit: ev.category === 'direct', isDot: ev.category === 'dot',
-          empowered: false, execution: false, dotElement: ev.element },
+          empowered: !!ev.empowered, execution: false, dotElement: ev.element },
       });
       continue;
     }

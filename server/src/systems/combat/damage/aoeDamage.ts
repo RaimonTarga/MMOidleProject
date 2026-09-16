@@ -1,6 +1,6 @@
 import { outgoingFinalDamage, incomingFinalDamage } from './finalDamage';
 import { pushDamageEvent } from './damageEvent';
-import { platingAfterShred, type Vec2 } from "@mmo-idle/shared";
+import { platingAfterShred, type DamageElement, type Vec2 } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { grantMonsterRewards } from "../../player/progression/rewards";
@@ -42,6 +42,20 @@ export function playerAoeTargets(
 }
 
 /**
+ * Presentation-only flavour for an AoE payload's damage numbers.
+ *
+ * Both fields are cosmetic and neither touches the damage: `element` tints the
+ * number with the shared element palette, `empowered` gives it the crit styling
+ * (yellow, enlarged, '!') that `player-hit` already uses aesthetically in
+ * several places. They live here because a payload resolved through this seam
+ * has no `player-hit` event of its own to carry them.
+ */
+export interface PlayerAoeFlavor {
+  element?: DamageElement;
+  empowered?: boolean;
+}
+
+/**
  * Apply splash AoE damage from a player to all monsters within radius of a
  * center point, skipping any excluded monster (the primary target).
  */
@@ -53,6 +67,7 @@ export function applyPlayerAoe(
   baseDamage: number,
   excludeId?: string,
   physicalSource: "player" | "summon" = "player",
+  flavor: PlayerAoeFlavor = {},
 ): void {
   const toKill: Array<{ monster: MonsterEntity; damage: number }> = [];
   const attackerNodeId = attacker.hasPosition.nodeId;
@@ -82,7 +97,11 @@ export function applyPlayerAoe(
     );
 
     monster.hasHealth.hp -= effectiveDmg;
-    pushDamageEvent(world, monster, effectiveDmg, { sourceId: attackerId });
+    pushDamageEvent(world, monster, effectiveDmg, {
+      sourceId: attackerId,
+      ...(flavor.element ? { element: flavor.element } : {}),
+      ...(flavor.empowered ? { empowered: true } : {}),
+    });
 
     if (monster.hasHealth.hp <= 0) toKill.push({ monster, damage: effectiveDmg });
   }

@@ -147,6 +147,10 @@ import { fxBramble } from "../fx/bramble";
 import { fxFrenzy } from "../fx/frenzy";
 import { fxContagion } from "../fx/contagion";
 import { fxDetonate } from "../fx/detonate";
+import {
+  endDetonateWindup,
+  startDetonateWindup,
+} from "../fx/detonateWindup";
 import { fxImbueCast, fxImbueCrackle } from "../fx/imbueLightning";
 import { fxHamstring } from "../fx/hamstring";
 import { fxBindingStrike } from "../fx/bindingStrike";
@@ -1294,6 +1298,19 @@ export function dispatchCombatEvent(
       ev.castMs,
       abilityDef(ev.ability)?.name ?? ev.ability,
     );
+    // An ability that shipped a target AND a colour gets a wind-up drawn on that
+    // target for the whole cast. Both fields are optional on the event, so an
+    // ability with nothing to say simply keeps the bare cast bar.
+    if (shouldRunClientFx() && ev.targetId && ev.element) {
+      startDetonateWindup(
+        state,
+        scene,
+        ev.playerId,
+        ev.targetId,
+        ev.castMs,
+        ev.element,
+      );
+    }
     if (ev.playerId === scene.myId) {
       notifyAbilityCastStarted(ev.ability, ev.castMs);
     }
@@ -1315,13 +1332,26 @@ export function dispatchCombatEvent(
     // was owed the most damage, so the explosion is coloured by what actually
     // did the work rather than by whatever landed first.
     if (shouldRunClientFx()) {
+      // Belt and braces: the release re-anchors the FX on the burst's own
+      // position, so any wind-up still tracking a target that has since moved
+      // (or died to the burst) stops here rather than on the next frame.
+      endDetonateWindup(state, ev.playerId);
       fxDetonate(scene, ev.pos.x, ev.pos.y, ev.element);
+      // Detonate always reads as a crit — it is the payoff of the whole
+      // affliction pair. The audio half of the same tell the server flags on
+      // the damage number, kept to the acting player so a node full of casters
+      // cannot stack the cue.
+      if (ev.playerId === scene.myId) playSfx("empowered");
     }
     return;
   }
 
   if (ev.kind === "player-cast-end") {
     endCastBar(state, ev.playerId);
+    // Runs for BOTH outcomes: an interrupted cast must stop drawing its wind-up
+    // just as surely as a resolved one, and this is the only event that fires
+    // for both.
+    endDetonateWindup(state, ev.playerId);
     // A cast resolves on its own target rather than riding an attack, so its
     // impact FX hangs off this event and its carried impact point — there is no
     // `player-hit` for it. Node-wide, so allies see each other's casts land.

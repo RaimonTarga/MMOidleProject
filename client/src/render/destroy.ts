@@ -10,6 +10,7 @@ import { destroySkillCallout } from './skillCallouts';
 import { destroyEffectOverlays } from './effectOverlays';
 import { destroyThoughtBubble } from './thoughtBubbles';
 import { clearMovementEffectsForEntity } from './movementEffects';
+import { endDetonateWindup } from '../fx/detonateWindup';
 
 export function destroyEntity(
   state: RenderState,
@@ -28,6 +29,11 @@ export function destroyEntity(
   destroyHpBar(state, id);
   destroyCdBar(state, id);
   destroyCastBar(state, id);
+  // Keyed by the CASTER, so a caster that leaves the node mid-cast takes its
+  // wind-up with it. A destroyed TARGET needs no entry here: the draw pass
+  // already stops drawing once the sprite is gone, and losing its target is
+  // exactly what makes the server end the cast.
+  endDetonateWindup(state, id);
   destroySkillCallout(state, id);
   destroyEffectOverlays(state, id);
   destroyThoughtBubble(state, id);

@@ -502,10 +502,39 @@ differently at a glance:
   `ELEMENT_STYLE` palette — spread a burn and a poison and you see an orange line and a
   green line reach each new host. Curved, not straight: a straight line reads as a
   projectile (something fired), a wavering one reads as something spreading.
-- **Detonate** is the loud sibling — white core flash, element-tinted body, shock ring and
-  radial shards, with no lingering field, because the afflictions are GONE and the visual
-  has to say so. Its tint is the element that was owed the most damage, resolved
-  server-side, so it tells the player which DoT source actually mattered.
+- **Detonate** is the loud sibling, and it is shaped as a **sublimation**, not an
+  explosion: the afflictions are pulled IN (converging element-coloured motes, ~160 ms),
+  released as an element-coloured flash, thrown off as tapered shards, and what remains
+  rises off the target as vapour. The mechanic is "the poison/burn/frost inside it left
+  all at once", and that reading is the one shape that holds for all six elements — which
+  is why there is no per-element silhouette (flames, icicles, sparks) anywhere in it.
+  Its hue is the element that was owed the most damage, resolved server-side, so it tells
+  the player which DoT source actually mattered.
+
+  **The element tint was always sent but was not legible**, and the fix is worth recording
+  because it generalises. Four things were eating it: a white core flash outranked every
+  tinted layer; one flat hue at 0.7 alpha on a normal blend averages toward the terrain
+  behind it; nothing moved, and hue reads far better on a travelling object than on a
+  static wash; and every layer fired at t=0, so no phase was ever the colour's alone. So:
+  **no white fill anywhere** (white survives only as thin line-work), every coloured layer
+  draws three values of one hue via `elementShades` (OkLCh lightness shifts, not RGB
+  scaling, which would desaturate), the first beat moves, and the beats are staged.
+
+  Detonate **always reads as a crit**, unconditionally — it is the payoff of the whole
+  affliction pair. That tell is the existing `empowered` vocabulary and is kept strictly
+  off the element: a gold ring at `EMPOWERED_AOE_RADIUS` drawn OUTSIDE every element layer,
+  the gold `!` damage number, and the shared `empowered` sfx. Because colour can only say
+  one thing at a time, the number keeps both reads by moving the element to its glyph
+  (`4820!☠`) while gold keeps the colour.
+- **Detonate's wind-up** is drawn on the **target**, not the caster, for the whole 2 s
+  cast: a tightening dashed ring plus inward-spiralling shards in the element's colour.
+  The cast bar says "a player is doing something"; what matters is "that monster is about
+  to lose everything on it". It TRACKS the target rather than being pinned to a point,
+  because two seconds outlives any position snapshot — same state-keyed-by-id, redrawn
+  per frame pattern the cast bar itself uses. Its element is resolved at cast START, so a
+  DoT expiring mid-cast can make the release open in a different hue than it closed in;
+  that is accepted, because a wind-up that is usually right reads far better than a grey
+  one that is never wrong.
 - **Imbue Lightning** has two separate cues, because it has two moments: a loud arrival on
   the cast, and a much quieter per-hit crackle on the ATTACKER as each charge is spent (up
   to five in quick succession — at cast volume it would bury everything else). There is
@@ -518,6 +547,20 @@ point + dominant element). Both are needed because the copies and the consumed e
 **status effects — server-only state that is never networked**, so the client cannot
 reconstruct any of it from the delta. `player-technique-armed` also gained an optional
 `durationMs`, carried only by a window-opening instant Technique (Frenzy).
+
+### Presentation fields the AoE seam needed
+Detonate resolves through `applyPlayerAoe`, which emits a plain `damage` event — there is
+no `player-hit` for it to hang presentation on, so its biggest number used to render as a
+white number with no element and no crit styling. Three additive fields fix that, and any
+future payload resolving through the same seam gets them free:
+
+- `damage.empowered?` — crit STYLING only, never a damage layer. The same aesthetic-only
+  use `fire.ts`, `snipeDamage.ts`, `cannon.ts` and `channeledBeam.ts` already make of it.
+- `applyPlayerAoe(..., flavor)` — an optional `{ element, empowered }` bag forwarded to
+  `pushDamageEvent`. Purely cosmetic; existing callers pass nothing and are unchanged.
+- `player-cast-start.targetId?` / `.element?` — what a per-ability wind-up FX needs and
+  cannot derive. Both optional, so an ability with nothing to say keeps the bare cast bar
+  rather than being given a default that would be a lie.
 
 ---
 

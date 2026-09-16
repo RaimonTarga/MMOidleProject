@@ -8,7 +8,13 @@ export function pushDamageEvent(
   world: World,
   target: ServerEntity,
   amount: number,
-  options: { category?: 'direct' | 'dot'; element?: DamageElement; sourceId?: string } = {},
+  options: {
+    category?: 'direct' | 'dot';
+    element?: DamageElement;
+    sourceId?: string;
+    /** Crit STYLING only (yellow, enlarged, '!'). Never a damage layer. */
+    empowered?: boolean;
+  } = {},
 ): void {
   const targetId = entityNetworkId(target);
   const targetKind = entityNetworkKind(target);
@@ -18,5 +24,6 @@ export function pushDamageEvent(
     amount, category: options.category ?? 'direct',
     ...(options.element ? { element: options.element } : {}),
     ...(options.sourceId ? { sourceId: options.sourceId } : {}),
+    ...(options.empowered ? { empowered: true } : {}),
   });
 }

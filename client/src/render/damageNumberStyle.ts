@@ -65,7 +65,17 @@ export function resolveMonsterDamageStyle(
   if (hint?.empowered || hint?.execution) {
     return {
       color: EMPOWERED_DAMAGE_COLOR,
-      style: { sizePx: EMPOWERED_DAMAGE_SIZE_PX, suffix: '!' },
+      style: {
+        sizePx: EMPOWERED_DAMAGE_SIZE_PX,
+        suffix: '!',
+        // A crit that is ALSO elemental keeps both reads: the gold says "crit",
+        // the glyph says "of what". Color can only carry one of the two, and
+        // crit is the one the player already reads as gold everywhere else — so
+        // the element moves to the glyph rather than losing its cue entirely.
+        // Only Detonate currently produces this pair (an empowered `damage`
+        // event); a `player-hit` never carries `dotElement`.
+        ...(hint.dotElement ? { symbol: ELEMENT_STYLE[hint.dotElement].symbol } : {}),
+      },
     };
   }
   // An explicit DoT entry carries its own hint, so adjacent direct hits cannot

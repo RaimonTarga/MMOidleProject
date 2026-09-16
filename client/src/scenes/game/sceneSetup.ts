@@ -98,6 +98,7 @@ import { drawThoughtBubbles } from "../../render/thoughtBubbles";
 import { drawHealthBars } from "../../render/healthBars";
 import { drawCooldownBars } from "../../render/cooldownBars";
 import { drawCastBars } from "../../render/castBars";
+import { drawDetonateWindups } from "../../fx/detonateWindup";
 import { drawSkillCallouts } from "../../render/skillCallouts";
 import { updateEffectOverlays } from "../../render/effectOverlays";
 import { updateMovementEffects } from "../../render/movementEffects";
@@ -676,6 +677,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     drawTargetIndicator(scene.state, scene);
     drawCooldownBars(scene.state);
     drawCastBars(scene.state, scene);
+    drawDetonateWindups(scene.state);
     drawGroundZones(scene);
     drawCorpses(scene);
     drawTombstones(scene);

@@ -24,7 +24,11 @@ export type CombatEvent = CombatEventTiming & CombatEventPayload;
 type CombatEventPayload =
   // Damage-only presentation for paths without an attack/tick animation event.
   // Amount is finalized HP damage (including overkill), never a health authority.
-  | { kind: 'damage'; targetId: string; targetKind: 'player' | 'monster' | 'minion'; targetPos: Vec2; amount: number; category: 'direct' | 'dot'; element?: DamageElement; sourceId?: string }
+  // `empowered` is crit STYLING only (yellow, enlarged, '!'), never a damage
+  // layer — the same cosmetic use `player-hit` already makes of it. It exists
+  // here because payloads that resolve through the AoE seam (Detonate) have no
+  // `player-hit` to carry the flag on.
+  | { kind: 'damage'; targetId: string; targetKind: 'player' | 'monster' | 'minion'; targetPos: Vec2; amount: number; category: 'direct' | 'dot'; element?: DamageElement; sourceId?: string; empowered?: boolean }
   // `absorbed`/`evadedPartial`/`capped` are per-hit mitigation hints the
   // client uses to style the damage number: shield-absorbed amount renders a
   // separate blue shielded number (even when no HP was lost), a partial evade /
@@ -153,7 +157,16 @@ type CombatEventPayload =
   | { kind: 'player-reposition'; playerId: string; ability: string; from: Vec2; to: Vec2 }
   // A casted Technique began its wind-up. Mirrors `monster-cast-start`: the client
   // shows a cast bar over the player for `castMs` plus a skill-name callout.
-  | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number }
+  //
+  // `targetId` names the monster the wind-up is aimed at, so a per-ability
+  // wind-up FX can TRACK it for the whole cast rather than being pinned to a
+  // stale point — a two-second wind-up outlives any position snapshot. Absent on
+  // a self-cast, which has no target. `element` is the wind-up's cosmetic colour,
+  // supplied only by abilities that have one to give (Detonate resolves it from
+  // the afflictions it is about to consume). When either field is absent the
+  // client draws no wind-up at all and keeps the bare cast bar, rather than
+  // inventing a default colour that would be a lie about what is on the target.
+  | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number; targetId?: string; element?: DamageElement }
   // The wind-up ended. `fired: false` means it was interrupted by hard CC or lost
   // its target, so the client clears the bar without playing the resolve FX.
   // `targetPos` is present only when it fired, and is where the payload landed —

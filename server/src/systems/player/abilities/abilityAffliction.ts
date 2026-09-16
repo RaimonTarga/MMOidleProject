@@ -311,7 +311,15 @@ export function resolveDetonate(
   }
 
   const damage = Math.max(1, Math.round(owed * effect.detonateMult));
-  applyPlayerAoe(world, player, target.hasPosition.current, 1, damage);
+  // The element and the crit styling are the two things the damage number
+  // cannot work out for itself: the AoE seam has no `player-hit` to hang them
+  // on, so without them Detonate's biggest number renders plain white. Both are
+  // cosmetic — `empowered` here buys no damage and no splash, the same
+  // aesthetic-only use the DoT paths already make of it.
+  applyPlayerAoe(world, player, target.hasPosition.current, 1, damage, undefined, "player", {
+    element,
+    empowered: true,
+  });
 
   recordWorldLogEvent(
     world,
@@ -353,6 +361,30 @@ export function dominantElement(entries: readonly DotInventoryEntry[]): DotInven
     }
   }
   return best;
+}
+
+/**
+ * The colour Detonate's wind-up should be tinted with, resolved at CAST START.
+ *
+ * Deliberately the same `dominantElement` rule the release FX uses, so the
+ * two-second wind-up and the burst that follows it are the same hue. It is only
+ * an estimate at this point — a DoT can expire or a new one land mid-cast, and
+ * the release re-resolves from whatever is actually there — but a wind-up that
+ * occasionally shifts hue on release is a far better read than a grey one.
+ *
+ * Returns null for anything that is not Detonate, and for a target carrying
+ * nothing detonatable: the caller omits the field rather than sending a
+ * misleading default.
+ */
+export function detonateWindupElement(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+  target: MonsterEntity,
+): DotInventoryEntry["element"] | null {
+  if (afflictionEffect(player, ability).kind !== "detonate-dots") return null;
+  const entries = afflictionEntriesFor(world, player, ability, target);
+  return entries.length === 0 ? null : dominantElement(entries);
 }
 
 /** Re-exported for the FX layer, which needs the same entry list the payload used. */
