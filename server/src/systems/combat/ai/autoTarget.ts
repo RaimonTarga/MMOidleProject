@@ -47,7 +47,7 @@ import { steerOutOfTelegraphs } from "./telegraphEvasion";
 import { steerOutOfPersistentHazards } from "./dynamicHazardAvoidance";
 import { activeAvoidablePersistentGroundZones } from "../../world/groundZones";
 import { isPlayerInCombat } from "./engagement";
-import { clearApproachAttempt, hazardApproachExpired } from "./blockedApproach";
+import { clearApproachAttempt, hasApproachAttempt, hazardApproachExpired } from "./blockedApproach";
 import { holdsPositionWhileCasting } from "../../player/abilities/abilityCasting";
 
 const NODE_MARGIN = 40;
@@ -120,7 +120,7 @@ const HAZARD_PULL_RANGE_CLEARANCE = 200;
 // Finish a skirt leg before deriving another pull point. Recomputing the pull
 // every tick flips direction at the arrival boundary and can oscillate forever.
 const hazardSkirts = new WeakMap<PlayerEntity, { targetId: string; key: string; destination: Vec2 }>();
-const hazardPulls = new WeakMap<PlayerEntity, { targetId: string; key: string; destination: Vec2 }>();
+const hazardPulls = new WeakMap<PlayerEntity, { targetId: string; key: string; destination: Vec2; hazard: NodeFeatureShape }>();
 
 // ─── Keep-distance standoff ring ──────────────────────────────────────────────
 //
@@ -789,7 +789,21 @@ export function steerTowardTarget(
   const inCombat = isPlayerInCombat(player, now);
 
   if (avoidHazards) {
-    const targetHazard = playerHazardContainingPoint(
+    const canAttack = world.collision.canReach(player, target, attackRange);
+    if (canAttack || !hasApproachAttempt(player, target)) clearApproachAttempt(player);
+    else if (hazardApproachExpired(player, target, now)) {
+      hazardPulls.delete(player);
+      hazardSkirts.delete(player);
+      stopEntity(world, player);
+      return;
+    }
+    const retainedPull = hazardPulls.get(player);
+    // A target briefly leaving the clearance envelope is not a completed pull.
+    // Finish the safe retreat leg so a backpedalling caster cannot reverse our
+    // movement at the same boundary forever. Actual attack contact still wins.
+    const finishingPull = retainedPull?.targetId === target.entityId && targetIsAggroed &&
+      distanceSq(playerPos, retainedPull.destination) > 16 * 16;
+    const targetHazard = finishingPull ? retainedPull.hazard : playerHazardContainingPoint(
       world,
       player.hasPosition.nodeId,
       targetPos,
@@ -819,7 +833,7 @@ export function steerTowardTarget(
           playerHazardContainingPoint(world, player.hasPosition.nodeId, pull.destination, now, 40)) {
           const destination = reachablePullPoint(world, player, targetHazard, pullPoint, now);
           if (!destination) { stopEntity(world, player); return; }
-          pull = { targetId: target.entityId, key, destination };
+          pull = { targetId: target.entityId, key, destination, hazard: targetHazard };
           hazardPulls.set(player, pull);
         }
         if (distanceSq(playerPos, pull.destination) <= 16 * 16) stopEntity(world, player);
@@ -864,7 +878,9 @@ export function steerTowardTarget(
   hazardSkirts.delete(player);
   hazardPulls.delete(player);
 
-  clearApproachAttempt(player);
+  // Normal chase between hazard pulls is still the same unsuccessful approach.
+  // Only contact, damage, a new target or disabling avoidance resets its budget.
+  if (!avoidHazards) clearApproachAttempt(player);
 
   // The mob can hit us at or below its own reach (same edge-to-edge gap combat
   // uses). Keep-distance exists to stand beyond it whenever we can still fire.

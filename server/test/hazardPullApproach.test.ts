@@ -72,4 +72,30 @@ for (const scenario of [
     assert.equal(nearestEngageableMonster(world,bot,1000),target,'without avoidance physical reachability is unchanged');
   } finally {teardownArena(world);}
 }
+{
+  // Swamp6151: a Hexer crosses the64px envelope while the player is still
+  // retreating, then backs into it again when chased. Neither the pull goal nor
+  // its failure budget may reset just because the target crossed that boundary.
+  const world=createFarmWorld();
+  const cell=DURABILITY11_CELLS.find(c=>c.tier===3&&c.role==='swamp'&&c.className==='striker'&&c.nodeId.endsWith('05'))!;
+  setupArena(world,{nodeId:cell.nodeId,biomeGroup:'swamp',contentTier:3,isDungeon:false});
+  try {
+    const {bot}=prepareSurveyBot(world,cell,{x:1279.0697,y:3540.7193});
+    const target=[...world.monsterEntitiesInNode(cell.nodeId)].find(m=>m.isMonster.monsterTypeId==='mire-hex-spitter')!;
+    target.hasPosition.current={x:1142.7243,y:3578.8792};
+    setAggroTarget(world,target,{id:bot.isPlayer.id,kind:'player'},1000);
+    setFlag(bot.tracksCombat,'rune.avoidNodeHazards',true);
+    steerTowardTarget(world,bot,target,1000);
+    const goal=structuredClone(bot.hasMovePath?.goal);
+    assert(goal);
+    target.hasPosition.current={x:1163.9891,y:3575.1174};
+    steerTowardTarget(world,bot,target,1100);
+    assert.deepEqual(bot.hasMovePath?.goal,goal,'clearance crossing must not reverse an unfinished retreat');
+    bot.hasPosition.current={...goal};
+    steerTowardTarget(world,bot,target,3000);
+    assert(!approachDeferred(bot,target,3000));
+    steerTowardTarget(world,bot,target,17000);
+    assert(approachDeferred(bot,target,17000),'normal chase must not erase the hazard-approach deadline');
+  } finally {teardownArena(world);}
+}
 console.log('hazardPullApproach: ok');

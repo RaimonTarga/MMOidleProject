@@ -15,6 +15,10 @@ export function clearApproachAttempt(player: PlayerEntity): void {
   attempts.delete(player);
 }
 
+export function hasApproachAttempt(player: PlayerEntity, target: MonsterEntity): boolean {
+  return attempts.get(player)?.id === target.entityId;
+}
+
 /** Bound a hazard pull that produces neither contact nor damage, even if moving. */
 export function hazardApproachExpired(player: PlayerEntity, target: MonsterEntity, now: number): boolean {
   let attempt = attempts.get(player);
