@@ -94,7 +94,7 @@ export const plainsMonsterEntries = [
   ['stampede-bull', {
     id: 'stampede-bull', name: 'Stampede Bull', color: 0xdd5500,
     // Swarm-catcher charger; thick hide gives a little DR but hits stay modest.
-    stats: { hp: 330, attack: 24, plating: 0, damageReduction: 0.05, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 235 },
+    stats: { hp: 495, attack: 24, plating: 0, damageReduction: 0.05, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 235 },
     behavior: 'melee', attackStyle: 'gore', biome: 'plains',
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3000 },

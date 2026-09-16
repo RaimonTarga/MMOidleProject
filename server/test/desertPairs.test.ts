@@ -343,8 +343,9 @@ initCombatSystems();
     assert(dealer!.pack?.role === 'follower', `${dealerId} should be a pack follower`);
     assert(dealer!.behavior === 'kiter', `${dealerId} should kite — that is the pair's threat`);
     assert(
-      controller!.stats.hp > dealer!.stats.hp && controller!.stats.attack < dealer!.stats.attack,
-      `${controllerId} should out-HP and under-damage its dealer`,
+      controller!.stats.hp > dealer!.stats.hp &&
+        controller!.stats.attack / controller!.stats.attackCooldown < dealer!.stats.attack / dealer!.stats.attackCooldown,
+      `${controllerId} should out-HP its dealer and have lower nominal basic-attack DPS`,
     );
   }
 

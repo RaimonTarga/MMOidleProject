@@ -58,7 +58,7 @@ export const jungleMonsterEntries = [
     // to hasten nearby monsters and call a small number of unengaged creatures
     // onto its target. The old invisible attack ramp is removed; the casted
     // window gives the player a clear moment to interrupt or focus the Ape.
-    stats: { hp: 600, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
+    stats: { hp: 1200, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
     behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
@@ -108,7 +108,7 @@ export const jungleMonsterEntries = [
     id: 'silverback', name: 'Silverback', color: 0xaa6633,
     // Evolved Ape: charge + a STRONGER combat ramp. Unrelated pack/evasion/opening
     // clutter removed (locked).
-    stats: { hp: 1045, attack: 83, plating: 0, damageReduction: 0, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
+    stats: { hp: 2090, attack: 83, plating: 0, damageReduction: 0, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 35, essenceType: 'green', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },

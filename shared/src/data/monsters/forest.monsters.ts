@@ -68,7 +68,7 @@ export const forestMonsterEntries = [
   ['ancient-wolf', {
     id: 'ancient-wolf', name: 'Dire Wolf', color: 0x8888ff,
     // Explosive fast charger; closes instantly then bites in a blur.
-    stats: { hp: 350, attack: 34, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 196 },
+    stats: { hp: 525, attack: 34, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 196 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },

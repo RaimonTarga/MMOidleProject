@@ -79,7 +79,7 @@ export const swampMonsterEntries = [
     // Signature SHELL UP (behavior pass): at a single authored HP threshold (~50%) it
     // retracts — it cannot meaningfully attack or move, and becomes extremely
     // resistant to DIRECT damage. DoTs keep ticking while shelled, which is the out.
-    stats: { hp: 340, attack: 24, plating: 6, damageReduction: 0, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    stats: { hp: 680, attack: 24, plating: 6, damageReduction: 0, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -137,7 +137,7 @@ export const swampMonsterEntries = [
     // CONTAMINATES the surrounding area with a poison cloud/pool.
     // Progression: earlier Snapper shell = defense; later Snapper shell = defense +
     // space denial. Generic DR removed so HP + plating + shell carry the defense.
-    stats: { hp: 580, attack: 37, plating: 4, damageReduction: 0, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    stats: { hp: 1160, attack: 37, plating: 4, damageReduction: 0, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },

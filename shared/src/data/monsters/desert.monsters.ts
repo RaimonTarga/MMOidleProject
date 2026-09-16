@@ -141,7 +141,7 @@ export const desertMonsterEntries = [
     // equal the whole health pool inside 2 seconds — before any recovery/barrier
     // charm can matter. This is the same "plain ordinary hit, no counterplay gate"
     // pattern as the T3 Glacier Bear fix, not a telegraphed/CC-gated spike.
-    stats: { hp: 390, attack: 60, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1900, pullRange: 230 },
+    stats: { hp: 390, attack: 48, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1900, pullRange: 230 },
     behavior: 'kiter', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 220, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -157,7 +157,7 @@ export const desertMonsterEntries = [
     // SOFT CONTROLLER T3. Its stronger Numbing Sting is telegraphed like the Sand
     // Scorpion's rather than hiding Cripple on every ordinary hit. Durable, slow,
     // low direct offense. Paired 1:1 with the Gilded Scarab.
-    stats: { hp: 1350, attack: 67, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
+    stats: { hp: 4050, attack: 67, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
     rewards: { essence: 30, essenceType: 'yellow', level: 2, biomeXp: 180 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -178,7 +178,7 @@ export const desertMonsterEntries = [
     // NONSTACKING Sunder/Expose raising damage taken (~10-15%). The clean read is
     // "a successful Gaze roots you and leaves you Exposed for a few seconds".
     // Its own damage stays negligible: the threat is what it does to someone else's.
-    stats: { hp: 1350, attack: 80, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
+    stats: { hp: 4050, attack: 80, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
     behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert',
     rewards: { essence: 45, essenceType: 'yellow', level: 2, biomeXp: 270 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -197,7 +197,7 @@ export const desertMonsterEntries = [
     // DEALER T3. Squishy high-damage kiter, plus an occasional charged/high-damage
     // ranged shot. Readable combo: Controller roots/exposes -> Scarab winds up the
     // dangerous shot. NO slow on a dealer (locked).
-    stats: { hp: 510, attack: 120, plating: 0, damageReduction: 0, speed: 52, attackRange: 220, attackCooldown: 1900, pullRange: 250 },
+    stats: { hp: 510, attack: 96, plating: 0, damageReduction: 0, speed: 52, attackRange: 220, attackCooldown: 1900, pullRange: 250 },
     behavior: 'kiter', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 47, essenceType: 'yellow', level: 2, biomeXp: 285 },
     ai: { wanderRadius: 220, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
