@@ -6,11 +6,10 @@ import {
   getCounter,
   getFlag,
   hitboxGap,
+  hazardAvoidanceShapesForMover,
   MELEE_CONTACT_MARGIN,
   moverOverlapsBlockShapes,
-  pointInNodeFeatureShape,
   posHitboxFromEntity,
-  RESOLVED_NODE_FEATURES,
   RUNE_CAREFUL_PULLING_MAX_THREAT_RADIUS,
   RUNE_CAREFUL_PULLING_MIN_THREAT_RADIUS,
   RUNE_CAREFUL_PULLING_SIDE_STEP,
@@ -112,6 +111,14 @@ const CAREFUL_PULLING_SIDE_STEP = RUNE_CAREFUL_PULLING_SIDE_STEP;
 const HAZARD_PULL_EDGE_BUFFER = 72;
 const HAZARD_PULL_ARRIVE_SQ = 42 * 42;
 const HAZARD_SKIRT_ANGLE = 0.65;
+const HAZARD_TARGET_CLEARANCE = 64;
+// Leave room for both hitboxes, the target-clearance envelope and arrival
+// tolerance beyond the enemy's range. A 72px rim alone lets casters stay inside.
+const HAZARD_PULL_RANGE_CLEARANCE = 200;
+// Finish a skirt leg before deriving another pull point. Recomputing the pull
+// every tick flips direction at the arrival boundary and can oscillate forever.
+const hazardSkirts = new WeakMap<PlayerEntity, { targetId: string; key: string; destination: Vec2 }>();
+const hazardPulls = new WeakMap<PlayerEntity, { targetId: string; key: string; destination: Vec2 }>();
 
 // ─── Keep-distance standoff ring ──────────────────────────────────────────────
 //
@@ -479,10 +486,10 @@ function playerHazardContainingPoint(
   nodeId: string,
   pos: Vec2,
   now: number,
+  clearance = 0,
 ): NodeFeatureShape | null {
-  for (const feature of RESOLVED_NODE_FEATURES[nodeId] ?? []) {
-    if (!feature.damage?.targets.includes("player")) continue;
-    if (pointInNodeFeatureShape(pos, feature.shape)) return feature.shape;
+  for (const shape of hazardAvoidanceShapesForMover(nodeId, 'player')) {
+    if (moverOverlapsBlockShapes(pos, [shape], { x: clearance, y: clearance })) return shape;
   }
   for (const zone of activeAvoidablePersistentGroundZones(world, nodeId, now)) {
     const shape: NodeFeatureShape = {
@@ -491,7 +498,7 @@ function playerHazardContainingPoint(
       y: zone.pos.y,
       radius: zone.radius,
     };
-    if (pointInNodeFeatureShape(pos, shape)) return shape;
+    if (moverOverlapsBlockShapes(pos, [shape], { x: clearance, y: clearance })) return shape;
   }
   return null;
 }
@@ -500,6 +507,7 @@ function hazardPullPoint(
   hazard: NodeFeatureShape,
   playerPos: Vec2,
   targetPos: Vec2,
+  clearance = HAZARD_PULL_EDGE_BUFFER,
 ): Vec2 | null {
   if (hazard.kind !== "circle") return null;
   let dx = targetPos.x - hazard.x;
@@ -511,7 +519,7 @@ function hazardPullPoint(
     dist = Math.hypot(dx, dy);
   }
   if (dist === 0) return null;
-  const radius = hazard.radius + HAZARD_PULL_EDGE_BUFFER;
+  const radius = hazard.radius + clearance;
   return {
     x: hazard.x + (dx / dist) * radius,
     y: hazard.y + (dy / dist) * radius,
@@ -526,7 +534,7 @@ function hazardSkirtPoint(
   if (hazard.kind !== "circle") return null;
   const base = hazardPullPoint(hazard, playerPos, targetPos);
   if (!base) return null;
-  const angle = Math.atan2(base.y - hazard.y, base.x - hazard.x) + HAZARD_SKIRT_ANGLE;
+  const angle = Math.atan2(playerPos.y - hazard.y, playerPos.x - hazard.x) + HAZARD_SKIRT_ANGLE;
   const radius = hazard.radius + HAZARD_PULL_EDGE_BUFFER;
   return {
     x: hazard.x + Math.cos(angle) * radius,
@@ -764,6 +772,7 @@ export function steerTowardTarget(
       player.hasPosition.nodeId,
       targetPos,
       now,
+      HAZARD_TARGET_CLEARANCE,
     );
     const playerHazard = playerHazardContainingPoint(
       world,
@@ -772,23 +781,43 @@ export function steerTowardTarget(
       now,
     );
     const pullPoint = targetHazard
-      ? hazardPullPoint(targetHazard, playerPos, targetPos)
+      ? hazardPullPoint(targetHazard, playerPos, targetPos,
+        targetIsAggroed ? target.performsAttack.attackRange + HAZARD_PULL_RANGE_CLEARANCE : HAZARD_PULL_EDGE_BUFFER)
       : null;
     if (targetHazard && pullPoint && !playerHazard) {
+      const key = `${player.hasPosition.nodeId}:${JSON.stringify(targetHazard)}`;
+      if (targetIsAggroed && !world.collision.canReach(player, target, attackRange)) {
+        setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+        let pull = hazardPulls.get(player);
+        if (pull?.targetId !== target.entityId || pull.key !== key) {
+          pull = { targetId: target.entityId, key, destination: clampToNode(world, player.hasPosition.nodeId, pullPoint) };
+          hazardPulls.set(player, pull);
+        }
+        if (distanceSq(playerPos, pull.destination) <= 16 * 16) stopEntity(world, player);
+        else setEntityMotion(world, player, pull.destination, { avoidHazards: true });
+        return;
+      }
+      hazardPulls.delete(player);
+      let skirt = hazardSkirts.get(player);
+      if (skirt?.targetId !== target.entityId || skirt.key !== key) skirt = undefined;
       const clamped = clampToNode(world, player.hasPosition.nodeId, pullPoint);
       const inRange = world.collision.canReach(player, target, attackRange);
       const arrivedAtPull = distanceSq(playerPos, clamped) <= HAZARD_PULL_ARRIVE_SQ;
       if (inRange) {
+        hazardSkirts.delete(player);
         setFlag(player.tracksCombat, AUTO_FIRING_FLAG, inRange);
         stopEntity(world, player);
-      } else if (arrivedAtPull) {
-        const skirtPoint = hazardSkirtPoint(targetHazard, playerPos, targetPos);
+      } else if (arrivedAtPull || skirt) {
+        const skirtPoint = skirt && distanceSq(playerPos, skirt.destination) > HAZARD_PULL_ARRIVE_SQ
+          ? skirt.destination : hazardSkirtPoint(targetHazard, playerPos, targetPos);
         if (skirtPoint) {
+          const destination = clampToNode(world, player.hasPosition.nodeId, skirtPoint);
+          hazardSkirts.set(player, { targetId: target.entityId, key, destination });
           setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
           setEntityMotion(
             world,
             player,
-            clampToNode(world, player.hasPosition.nodeId, skirtPoint),
+            destination,
             { avoidHazards: true },
           );
         } else {
@@ -801,6 +830,8 @@ export function steerTowardTarget(
       return;
     }
   }
+  hazardSkirts.delete(player);
+  hazardPulls.delete(player);
 
   // The mob can hit us at or below its own reach (same edge-to-edge gap combat
   // uses). Keep-distance exists to stand beyond it whenever we can still fire.
