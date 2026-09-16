@@ -118,7 +118,9 @@ export const tundraMonsterEntries = [
     // elites (Petrifying Gaze's root, Cave Troll's lockdown), this monster's danger
     // comes from its defensive window rather than a plain, untelegraphed ordinary
     // hit. The lower ordinary swing leaves Ice Armor + Shatter as the real lesson.
-    stats: { hp: 1500, attack: 185, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    // Durability10: longer body lifetime with 20% ordinary attack relief;
+    // preserve the original 300-HP authored shell rather than scaling it with HP.
+    stats: { hp: 3750, attack: 148, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'claws-frost', biome: 'tundra',
     rewards: { essence: 65, essenceType: 'blue', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 140, leashRange: 500, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -126,7 +128,7 @@ export const tundraMonsterEntries = [
     // pops it and SHATTERS (bonus self-dmg + a freezing shockwave that briefly stuns
     // nearby enemies). The signature Tundra "shatter window": time your burst.
     enemyShield: {
-      shieldPct: 0.20, intervalMs: 11000, durationMs: 6000,
+      shieldPct: 0.08, intervalMs: 11000, durationMs: 6000,
       // SHATTER PAYOFF: breaking the shell cracks it for bonus self-damage AND opens
       // a VULNERABILITY WINDOW. The old "freezes nearby enemies" rider is gone
       // (locked): a crowd-control upside paid out most in exactly the crowded fights

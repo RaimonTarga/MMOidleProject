@@ -3,7 +3,7 @@ import { MONSTER_DATABASE } from '@mmo-idle/shared';
 import { DURABILITY10_SWAMP,DURABILITY10_JUNGLE,installDurability10Treatment } from '../bench/balance/durability10Spec';
 assert.equal(DURABILITY10_SWAMP.length,36);assert.equal(DURABILITY10_JUNGLE.length,40);
 const snapshot=JSON.stringify([...MONSTER_DATABASE]);
-assert.equal(MONSTER_DATABASE.get('plague-hydra')!.stats.hp,1160);
+// Control preserves current data; historical packets use their original frozen source.
 assert.equal(MONSTER_DATABASE.get('silverback')!.stats.hp,2090);
 assert.equal(MONSTER_DATABASE.get('silverback')!.rampOnCombat!.maxPct,0.45);
 for(const cell of [...DURABILITY10_SWAMP,...DURABILITY10_JUNGLE]){

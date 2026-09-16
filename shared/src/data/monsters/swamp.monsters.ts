@@ -137,7 +137,7 @@ export const swampMonsterEntries = [
     // CONTAMINATES the surrounding area with a poison cloud/pool.
     // Progression: earlier Snapper shell = defense; later Snapper shell = defense +
     // space denial. Generic DR removed so HP + plating + shell carry the defense.
-    stats: { hp: 1160, attack: 37, plating: 4, damageReduction: 0, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    stats: { hp: 2320, attack: 37, plating: 4, damageReduction: 0, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },

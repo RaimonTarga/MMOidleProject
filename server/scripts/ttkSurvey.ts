@@ -29,15 +29,18 @@ import { DURABILITY9_ROSTER, DURABILITY9_BEAR, installDurability9Treatment, asse
 
 import { DURABILITY10_SWAMP, DURABILITY10_JUNGLE, installDurability10Treatment, type Durability10Cell } from '../bench/balance/durability10Spec';
 
+import { DURABILITY11_CELLS, DURABILITY11_SEEDS, assertDurability11Definitions } from '../bench/balance/durability11Spec';
+
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
 const mode=args.mode??'qualify'; assert(['qualify','pilot','run'].includes(mode));
-assert(!args.trial || ['durability10swamp','durability10jungle','durability9roster','durability9bear','durability','durability2','durability3','durability4','durability5','durability6','durability7','durability8','night4survey','night4followup','night4aoe'].includes(args.trial));
-const trialCells = args.trial === 'durability10swamp' ? DURABILITY10_SWAMP : args.trial === 'durability10jungle' ? DURABILITY10_JUNGLE : args.trial === 'durability9roster' ? DURABILITY9_ROSTER : args.trial === 'durability9bear' ? DURABILITY9_BEAR : args.trial === 'night4survey' ? NIGHT4_SURVEY : args.trial === 'night4followup' ? NIGHT4_FOLLOWUP : args.trial === 'night4aoe' ? NIGHT4_AOE : args.trial === 'durability8' ? DURABILITY8_CELLS : args.trial === 'durability7' ? DURABILITY7_CELLS : args.trial === 'durability6' ? DURABILITY6_CELLS : args.trial === 'durability5' ? DURABILITY5_CELLS : args.trial === 'durability4' ? DURABILITY4_CELLS : args.trial === 'durability3' ? DURABILITY3_CELLS : args.trial === 'durability2' ? DURABILITY2_CELLS : args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
-const trialSeeds=args.trial==='durability7'?DURABILITY7_SEEDS:args.trial==='durability5'?DURABILITY5_SEEDS:args.trial==='durability4'?DURABILITY4_SEEDS:SURVEY_SEEDS;
+assert(!args.trial || ['durability11','durability10swamp','durability10jungle','durability9roster','durability9bear','durability','durability2','durability3','durability4','durability5','durability6','durability7','durability8','night4survey','night4followup','night4aoe'].includes(args.trial));
+const trialCells = args.trial === 'durability11' ? DURABILITY11_CELLS : args.trial === 'durability10swamp' ? DURABILITY10_SWAMP : args.trial === 'durability10jungle' ? DURABILITY10_JUNGLE : args.trial === 'durability9roster' ? DURABILITY9_ROSTER : args.trial === 'durability9bear' ? DURABILITY9_BEAR : args.trial === 'night4survey' ? NIGHT4_SURVEY : args.trial === 'night4followup' ? NIGHT4_FOLLOWUP : args.trial === 'night4aoe' ? NIGHT4_AOE : args.trial === 'durability8' ? DURABILITY8_CELLS : args.trial === 'durability7' ? DURABILITY7_CELLS : args.trial === 'durability6' ? DURABILITY6_CELLS : args.trial === 'durability5' ? DURABILITY5_CELLS : args.trial === 'durability4' ? DURABILITY4_CELLS : args.trial === 'durability3' ? DURABILITY3_CELLS : args.trial === 'durability2' ? DURABILITY2_CELLS : args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
+const trialSeeds=args.trial==='durability11'?DURABILITY11_SEEDS:args.trial==='durability7'?DURABILITY7_SEEDS:args.trial==='durability5'?DURABILITY5_SEEDS:args.trial==='durability4'?DURABILITY4_SEEDS:SURVEY_SEEDS;
 if(args.trial==='durability5') assertDurability5Definitions();
 if(args.trial==='durability6') assertDurability6Definitions();
 if(args.trial==='durability7') assertDurability7Definitions();
 if(args.trial?.startsWith('durability9')) assertDurability9Definitions();
+if(args.trial==='durability11') assertDurability11Definitions();
 const out=resolve(args.out??'');assert(args.out&&!existsSync(out),'NEW output directory required');
 assert(args.hitboxes && hydrateHitboxCacheFromArtifact(args.hitboxes)>0,'Frozen hitbox artifact required; no square-hitbox fallback');
 const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
@@ -76,6 +79,7 @@ function run(cell:SurveyCell,seed:number) {
     if(args.trial==='durability8'||args.trial==='night4followup') for(const type of (cell as Durability8Cell).targetTypes) assert(initial.some(m=>m.type===type), 'Missing target '+type);
     if(args.trial?.startsWith('durability9')) for(const type of (cell as Durability9Cell).targetTypes) assert(initial.some(m=>m.type===type), 'Missing target '+type);
     if(args.trial?.startsWith('durability10')) for(const type of (cell as Durability10Cell).targetTypes) assert(initial.some(m=>m.type===type),'Missing target '+type);
+    if(args.trial==='durability11') for(const type of (cell as typeof DURABILITY11_CELLS[number]).targetTypes) assert(initial.some(m=>m.type===type),'Missing target '+type);
     if(mode==='qualify') return ready;
     const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
     writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
@@ -130,6 +134,7 @@ const results:unknown[]=[];
 const batchWallStart=realNow();
 try {
   const pilotIds:Record<string,string[]>={
+    durability11:[DURABILITY11_CELLS.find(c=>c.role==='tundra'&&c.className==='apprentice')!.id,DURABILITY11_CELLS.find(c=>c.role==='swamp'&&c.className==='striker')!.id,DURABILITY11_CELLS.find(c=>c.role==='jungle'&&c.className==='conduit')!.id],
     durability10swamp:[DURABILITY10_SWAMP.find(c=>c.className==='apprentice'&&c.treatment==='hp2')!.id],
     durability10jungle:[DURABILITY10_JUNGLE.find(c=>c.className==='conduit'&&c.treatment==='defensive')!.id,DURABILITY10_JUNGLE.find(c=>c.className==='conduit'&&c.treatment==='ramp25')!.id],
     durability9roster:[DURABILITY9_ROSTER.find(c=>c.role==='swamp'&&c.tier===3&&c.className==='conduit'&&c.treatment==='selected')!.id,DURABILITY9_ROSTER.find(c=>c.role==='desert'&&c.tier===2&&c.className==='striker'&&c.treatment==='previous')!.id],
