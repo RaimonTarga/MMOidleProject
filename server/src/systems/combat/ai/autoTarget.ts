@@ -2,6 +2,7 @@ import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
   MONSTER_DATABASE,
+  findPathForMover,
   distanceSq,
   getCounter,
   getFlag,
@@ -46,6 +47,7 @@ import { steerOutOfTelegraphs } from "./telegraphEvasion";
 import { steerOutOfPersistentHazards } from "./dynamicHazardAvoidance";
 import { activeAvoidablePersistentGroundZones } from "../../world/groundZones";
 import { isPlayerInCombat } from "./engagement";
+import { clearApproachAttempt, hazardApproachExpired } from "./blockedApproach";
 import { holdsPositionWhileCasting } from "../../player/abilities/abilityCasting";
 
 const NODE_MARGIN = 40;
@@ -526,6 +528,26 @@ function hazardPullPoint(
   };
 }
 
+function reachablePullPoint(world: World, player: PlayerEntity, hazard: NodeFeatureShape, preferred: Vec2, now: number): Vec2 | null {
+  if (hazard.kind !== 'circle') return null;
+  const radius = Math.hypot(preferred.x - hazard.x, preferred.y - hazard.y);
+  const angle = Math.atan2(preferred.y - hazard.y, preferred.x - hazard.x);
+  const pad = navigationPadForEntity(player);
+  const candidates = Array.from({length: 16}, (_, i) => {
+    const a = angle + i * Math.PI / 8;
+    return {x: hazard.x + Math.cos(a) * radius, y: hazard.y + Math.sin(a) * radius};
+  }).sort((a,b) => distanceSq(a, preferred) - distanceSq(b, preferred));
+  for (const point of candidates) {
+    if (!isInsideNode(world, player.hasPosition.nodeId, point) || !isStandablePoint(world, player, point)) continue;
+    if (playerHazardContainingPoint(world, player.hasPosition.nodeId, point, now, Math.max(pad.x,pad.y) + 40)) continue;
+    const path = findPathForMover(player.hasPosition.nodeId, 'player', pad, player.hasPosition.current, point,
+      suppressedFeatureIdsForEntity(world, player), true);
+    const end = path?.at(-1);
+    if (end && distanceSq(end,point) <= 16 * 16) return point;
+  }
+  return null;
+}
+
 function hazardSkirtPoint(
   hazard: NodeFeatureShape,
   playerPos: Vec2,
@@ -697,7 +719,7 @@ export function updateAutoTargets(world: World, now: number) {
       // still only when the node is empty; leaving the node/biome stays owned
       // by updateAutoTraverse when the explore rune is equipped.
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
-      const mob = nearestEngageableMonster(world, player);
+      const mob = nearestEngageableMonster(world, player, now);
       if (mob) {
         steerTowardTarget(world, player, mob, now);
       } else {
@@ -785,12 +807,19 @@ export function steerTowardTarget(
         targetIsAggroed ? target.performsAttack.attackRange + HAZARD_PULL_RANGE_CLEARANCE : HAZARD_PULL_EDGE_BUFFER)
       : null;
     if (targetHazard && pullPoint && !playerHazard) {
+      if (world.collision.canReach(player, target, attackRange)) clearApproachAttempt(player);
+      if (!world.collision.canReach(player, target, attackRange) && hazardApproachExpired(player, target, now)) {
+        hazardPulls.delete(player); hazardSkirts.delete(player); stopEntity(world, player); return;
+      }
       const key = `${player.hasPosition.nodeId}:${JSON.stringify(targetHazard)}`;
       if (targetIsAggroed && !world.collision.canReach(player, target, attackRange)) {
         setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
         let pull = hazardPulls.get(player);
-        if (pull?.targetId !== target.entityId || pull.key !== key) {
-          pull = { targetId: target.entityId, key, destination: clampToNode(world, player.hasPosition.nodeId, pullPoint) };
+        if (pull?.targetId !== target.entityId || pull.key !== key ||
+          playerHazardContainingPoint(world, player.hasPosition.nodeId, pull.destination, now, 40)) {
+          const destination = reachablePullPoint(world, player, targetHazard, pullPoint, now);
+          if (!destination) { stopEntity(world, player); return; }
+          pull = { targetId: target.entityId, key, destination };
           hazardPulls.set(player, pull);
         }
         if (distanceSq(playerPos, pull.destination) <= 16 * 16) stopEntity(world, player);
@@ -800,7 +829,8 @@ export function steerTowardTarget(
       hazardPulls.delete(player);
       let skirt = hazardSkirts.get(player);
       if (skirt?.targetId !== target.entityId || skirt.key !== key) skirt = undefined;
-      const clamped = clampToNode(world, player.hasPosition.nodeId, pullPoint);
+      const clamped = reachablePullPoint(world, player, targetHazard, pullPoint, now);
+      if (!clamped) { stopEntity(world, player); return; }
       const inRange = world.collision.canReach(player, target, attackRange);
       const arrivedAtPull = distanceSq(playerPos, clamped) <= HAZARD_PULL_ARRIVE_SQ;
       if (inRange) {
@@ -811,7 +841,8 @@ export function steerTowardTarget(
         const skirtPoint = skirt && distanceSq(playerPos, skirt.destination) > HAZARD_PULL_ARRIVE_SQ
           ? skirt.destination : hazardSkirtPoint(targetHazard, playerPos, targetPos);
         if (skirtPoint) {
-          const destination = clampToNode(world, player.hasPosition.nodeId, skirtPoint);
+          const destination = reachablePullPoint(world, player, targetHazard, skirtPoint, now);
+          if (!destination) { stopEntity(world, player); return; }
           hazardSkirts.set(player, { targetId: target.entityId, key, destination });
           setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
           setEntityMotion(
@@ -832,6 +863,8 @@ export function steerTowardTarget(
   }
   hazardSkirts.delete(player);
   hazardPulls.delete(player);
+
+  clearApproachAttempt(player);
 
   // The mob can hit us at or below its own reach (same edge-to-edge gap combat
   // uses). Keep-distance exists to stand beyond it whenever we can still fire.

@@ -35,6 +35,8 @@ import {
 } from "./runeConfig";
 import { MONSTER_DATABASE } from "@mmo-idle/shared";
 import { effectivePartyLeaderId } from "../../player/party/partySystem";
+import { playerDetectionMult } from '../../world/mobility/mobilityBoots';
+import { approachDeferred } from './blockedApproach';
 
 export type AutoCombatAction =
   | { kind: "attack"; target: MonsterEntity }
@@ -149,6 +151,7 @@ export function selectAutoCombatAction(
   now: number,
   options?: { aggressorsOnly?: boolean },
 ): AutoCombatAction {
+  setString(player.tracksCombat, 'autoApproachBlocked', '');
   if (getFlag(player.tracksCombat, RUNE_FLEE_FLAG)) {
     clearAutoTarget(player);
     return { kind: "flee" };
@@ -290,6 +293,7 @@ export function selectAutoCombatAction(
   }
 
   setString(player.tracksCombat, AUTO_TARGET_ID, chosen.monster.isMonster.id);
+  setString(player.tracksCombat, 'autoApproachBlocked', '');
   return { kind: "attack", target: chosen.monster };
 }
 
@@ -314,6 +318,10 @@ function passesGates(
   ctx: CandidateContext,
 ): boolean {
   if (ctx.skipBosses && monster.isMonster.isBoss) return false;
+  if (approachDeferred(player, monster, ctx.now)) {
+    setString(player.tracksCombat, 'autoApproachBlocked', 'hazard-approach-timeout');
+    return false;
+  }
 
   // Mid-encounter invulnerability and dormant encounter shields are hard skips:
   // a cancelled swing is not "low damage"; it is no target at all.
@@ -377,6 +385,7 @@ function monsterHasPath(
   }
   const pad = navigationPadForEntity(player);
   const goal = attackPathGoal(player, monster);
+  const avoidHazards = getFlag(player.tracksCombat, 'rune.avoidNodeHazards');
   const path = findPathForMover(
     player.hasPosition.nodeId,
     "player",
@@ -384,8 +393,19 @@ function monsterHasPath(
     player.hasPosition.current,
     goal,
     suppressedFeatureIdsForNode(world, player.hasPosition.nodeId),
+    avoidHazards,
   );
-  return pathEndsInAttackRange(player, monster, path);
+  if (pathEndsInAttackRange(player, monster, path)) return true;
+  // An already engaged enemy can follow a safe retreat; an idle one must be
+  // within detection range of the reachable perimeter before a pull is possible.
+  if (avoidHazards && path?.length) {
+    if (isAggroedOnPlayer(monster, player)) return true;
+    const end = path[path.length - 1];
+    const pull = monster.hasAwareness.pullRange * playerDetectionMult(player);
+    if (distanceSq(end, monster.hasPosition.current) < pull * pull) return true;
+    setString(player.tracksCombat, 'autoApproachBlocked', 'no-safe-contact-or-pull');
+  }
+  return false;
 }
 
 /**
@@ -565,11 +585,10 @@ function shouldSkipBosses(player: PlayerEntity): boolean {
 export function nearestEngageableMonster(
   world: World,
   player: PlayerEntity,
+  now = Date.now(),
 ): MonsterEntity | null {
   const skipBosses = shouldSkipBosses(player);
   const nodeId = player.hasPosition.nodeId;
-  const pad = navigationPadForEntity(player);
-  const suppressed = suppressedFeatureIdsForNode(world, nodeId);
   const from = player.hasPosition.current;
 
   const candidates: Array<{ monster: MonsterEntity; distSq: number }> = [];
@@ -588,6 +607,7 @@ export function nearestEngageableMonster(
     // just produces the same chase/abandon oscillation. Skip it while idle.
     if (monster.hasAwareness?.state === "returning") continue;
     if (isPastLeashAnchor(monster)) continue;
+    if (approachDeferred(player, monster, now)) continue;
 
     candidates.push({
       monster,
@@ -598,18 +618,7 @@ export function nearestEngageableMonster(
   candidates.sort((a, b) => a.distSq - b.distSq);
 
   for (const { monster } of candidates) {
-    if (world.collision.canReach(player, monster, player.performsAttack.attackRange)) {
-      return monster;
-    }
-    const path = findPathForMover(
-      nodeId,
-      "player",
-      pad,
-      from,
-      attackPathGoal(player, monster),
-      suppressed,
-    );
-    if (pathEndsInAttackRange(player, monster, path)) return monster;
+    if (monsterHasPath(world, player, monster)) return monster;
   }
 
   return null;

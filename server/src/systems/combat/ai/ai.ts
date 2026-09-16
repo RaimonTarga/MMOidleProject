@@ -287,7 +287,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // This preserves retaliation aggro set by the combat system when a
     // player attacks from outside pull range.
     if (!e.hasAggroTarget) {
-      if (!isBossSpawnedAdd) {
+      if (!isBossSpawnedAdd && e.hasAwareness.state !== "returning") {
         // Future taunt override should run before normal policy acquisition here.
         const pulled = selectMonsterAggroCandidate(world, e);
         if (pulled) {
