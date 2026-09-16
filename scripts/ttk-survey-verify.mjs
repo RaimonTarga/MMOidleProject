@@ -28,13 +28,13 @@ export function verifySurvey(dir, expected) {
     check(`${key} declared cell`,ids.has(row.cell),true);
     check(`${key} declared seed`,expected.seeds.includes(row.seed),true);
     check(`${key} duplicate`,seen.has(key),false); seen.add(key);
-    check(`${key} outcome`,['window-ended','player-died'].includes(row.outcome),true);
+    check(`${key} outcome`,['window-ended','player-died', ...(expected.allowCensored ? ['wall-ceiling'] : [])].includes(row.outcome),true);
     for(const file of ['ready.json','summary.json','events.jsonl','samples.jsonl'])
       check(`${key}/${file} exists`,existsSync(join(dir,key,file)),true);
   }
   for(const id of ids) for(const seed of expected.seeds) check(`${id}-s${seed} present`,seen.has(`${id}-s${seed}`),true);
   if(failures.length) throw Error('Survey verification failed:\n'+failures.join('\n'));
-  return { trial: manifest.trial, cells: complete.cells, runs: index.length, verified: true };
+  return { trial: manifest.trial, cells: complete.cells, runs: index.length, verified: true, censored: index.filter(r=>r.outcome==='wall-ceiling').length, completeWindows: index.filter(r=>r.outcome==='window-ended').length };
 }
 
 if(process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
@@ -43,7 +43,7 @@ if(process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])
     console.log(JSON.stringify(verifySurvey(args.out,{
       trial:args.trial,revision:args.revision,definitionsHash:args.definitions,
       hitboxesSha256:args.hitboxes,mode:'run',cells:Number(args.cells),runs:Number(args.runs),
-      seeds:args.seeds.split(',').map(Number),
+      seeds:args.seeds.split(',').map(Number), allowCensored:args['allow-censored']==='true',
     })));
   } catch(error) { console.error(String(error)); process.exitCode=1; }
 }
