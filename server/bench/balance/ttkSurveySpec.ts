@@ -19,7 +19,7 @@ export const SURVEY_CLASSES = [
   { name: 'spirit', prefix: 'energy', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
 ] as const;
 export const SURVEY_SEEDS = [173, 947, 2027] as const;
-export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam'; stance?: string; orbit?: boolean; }
+export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam'; stance?: string; orbit?: boolean; focusElites?: boolean; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
   ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
     const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
@@ -63,6 +63,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   p.activeStance = stance;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = [
+    ...(cell.focusElites ? [{conditionId:'always',actionId:'focus-elites'}] : []),
     { conditionId:'always', actionId:'auto-path-enemy' },
     { conditionId:'inside-telegraph', actionId:'step-back' },
     ...((cell.orbit ?? !c.melee) ? [{ conditionId:'in-combat', actionId:'orbit' }] : []),
