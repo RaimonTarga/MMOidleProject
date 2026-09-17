@@ -1,3 +1,4 @@
+import {profileNavigationObservation,recordNavigationTick} from '../bench/balance/navigationObservation';
 import {DURABILITY30_BLOCKS,DURABILITY30_SEEDS,DURABILITY30_JUNGLE_SEEDS,installDurability30Treatment} from '../bench/balance/durability30Spec';
 import {DURABILITY29_BLOCKS,DURABILITY29_SEEDS,installDurability29Treatment} from '../bench/balance/durability29Spec';
 import {DURABILITY28_BLOCKS,DURABILITY28_SEEDS,installDurability28Treatment} from '../bench/balance/durability28Spec';
@@ -76,7 +77,7 @@ const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
 const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 if(args.revision) assert.equal(revision,args.revision,'Wrong frozen checkout');
 mkdirSync(out,{recursive:true});
-const manifest={schema:1,mode,revision,definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
+const manifest={schema:1,mode,revision,navigationDiagnostics:args['navigation-diagnostics']==='true',definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
   sampleEveryMs:args.trial==='durability12movement'||args.trial==='durability13movement'?100:1000,block:args.block,trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:mode==='pilot'?30000:night5?.durationMs??300000,seeds:trialSeeds,cells:trialCells};
 writeFileSync(join(out,'manifest.json'),JSON.stringify(manifest,null,2));
 const realNow=Date.now,realRandom=Math.random;
@@ -128,7 +129,7 @@ function run(cell:SurveyCell,seed:number) {
     for(;elapsed<manifest.durationMs;elapsed+=100) {
       if(realNow()-wallStart>120000) {outcome='wall-ceiling';break;}
       now=1800000000000+elapsed; register();
-      const tickWallStart=realNow();world.tick(100,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);
+      const tickWallStart=realNow();world.tick(100,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
       for(const m of world.monsterEntitiesInNode(cell.nodeId)) {
         const previous=lastHp.get(m.entityId);
         if(previous!==undefined && m.hasHealth.hp>previous+0.001) {const t=metrics.targets.get(m.entityId);if(t&&t.firstDamageMs!==null)t.hpRegainObserved=true;}
@@ -165,6 +166,7 @@ function run(cell:SurveyCell,seed:number) {
     writeFileSync(join(dir,'summary.json'),JSON.stringify(result,null,2));return result;
   } finally {try {teardownArena(world);} finally {overlay?.restore();Date.now=realNow;Math.random=realRandom;}}
 }
+async function main() {
 const results:unknown[]=[];
 const batchWallStart=realNow();
 try {
@@ -205,9 +207,12 @@ try {
   observations: for(const cell of cells) for(const seed of mode==='qualify'||mode==='pilot'?[trialSeeds[0]]:trialSeeds) {
     if(night5&&mode==='run'&&realNow()-batchWallStart>=(['durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30'].includes(args.trial)?30:75)*60*1000){budgetStopped=true;break observations;}
     assert(realNow()-batchWallStart < 4*60*60*1000,'Four-hour batch ceiling; partial artifacts retained');
-    results.push(run(cell,seed));writeFileSync(join(out,'index.json'),JSON.stringify(results,null,2));
+    results.push(args['navigation-diagnostics']==='true'&&mode!=='qualify' ? await profileNavigationObservation(out,cell.id,seed,()=>run(cell,seed)) : run(cell,seed));writeFileSync(join(out,'index.json'),JSON.stringify(results,null,2));
     console.log(cell.id,seed,'complete');
     assert(process.memoryUsage().rss<2*1024**3,'RSS safety ceiling; partial artifacts retained');
   }
   writeFileSync(join(out,budgetStopped?'budget-exhausted.json':'complete.json'),JSON.stringify({cells:cells.length,runs:results.length,mode}));
 } catch(error) {writeFileSync(join(out,'failed.json'),JSON.stringify({error:String(error),completed:results.length}));throw error;}
+
+}
+void main().catch(error=>{console.error(error);process.exitCode=1;});

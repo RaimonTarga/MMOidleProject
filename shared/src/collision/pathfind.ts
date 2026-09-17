@@ -1,3 +1,4 @@
+import { pathDiagnostics } from './pathDiagnostics';
 import {
   distanceSq,
   moverOverlapsBlockShapes,
@@ -49,11 +50,15 @@ function reconstructPath(
 }
 
 function isPaddedSegmentClear(grid: NavGrid, from: Vec2, to: Vec2): boolean {
+  if (pathDiagnostics) { pathDiagnostics.paddedChecks++; pathDiagnostics.overlapQueries++; }
   if (moverOverlapsBlockShapes(from, grid.shapes, grid.pad)) return false;
   if (resolveMoveAgainstBlocks(from, to, grid.shapes, grid.pad) !== to) return false;
 
   const dist = Math.hypot(to.x - from.x, to.y - from.y);
-  if (dist < 1e-6) return !moverOverlapsBlockShapes(to, grid.shapes, grid.pad);
+  if (dist < 1e-6) {
+    if (pathDiagnostics) pathDiagnostics.overlapQueries++;
+    return !moverOverlapsBlockShapes(to, grid.shapes, grid.pad);
+  }
 
   const steps = Math.max(2, Math.ceil(dist / 8));
   for (let i = 1; i < steps; i++) {
@@ -62,6 +67,7 @@ function isPaddedSegmentClear(grid: NavGrid, from: Vec2, to: Vec2): boolean {
       x: from.x + (to.x - from.x) * t,
       y: from.y + (to.y - from.y) * t,
     };
+    if (pathDiagnostics) { pathDiagnostics.segmentSamples++; pathDiagnostics.overlapQueries++; }
     if (moverOverlapsBlockShapes(p, grid.shapes, grid.pad)) return false;
   }
   return true;
@@ -160,6 +166,7 @@ export function findPathOnGrid(grid: NavGrid, from: Vec2, to: Vec2): Vec2[] | nu
       return trimmed;
     }
 
+    if (pathDiagnostics) pathDiagnostics.expandedCells++;
     open.delete(current);
     closed.add(current);
 
@@ -249,8 +256,24 @@ export function findPathForMover(
   suppressedFeatureIds: ReadonlySet<string> = new Set(),
   avoidHazards = false,
 ): Vec2[] | null {
+  const diagnostic = pathDiagnostics;
+  const start = diagnostic?.now() ?? 0;
   const grid = buildNavGrid(nodeId, mover, pad, suppressedFeatureIds, avoidHazards);
-  return findPathOnGrid(grid, from, to);
+  const result = findPathOnGrid(grid, from, to);
+  if (diagnostic) {
+    const ms = diagnostic.now() - start;
+    diagnostic.paths++; diagnostic.pathMs += ms;
+    if (!result) diagnostic.nullPaths++;
+    // Exact coordinates, padding and suppression distinguish repeated requests.
+    const key = JSON.stringify([nodeId,mover,pad,from,to,avoidHazards,[...suppressedFeatureIds].sort()]);
+    let row = diagnostic.requests.get(key);
+    if (!row && diagnostic.requests.size < 1000) {
+      row={calls:0,nulls:0,ms:0,maxMs:0}; diagnostic.requests.set(key,row);
+    }
+    if (row) { row.calls++; row.nulls+=result?0:1; row.ms+=ms; row.maxMs=Math.max(row.maxMs,ms); }
+    else diagnostic.droppedKeys++;
+  }
+  return result;
 }
 
 export function goalsNearEnough(a: Vec2, b: Vec2): boolean {
