@@ -63,7 +63,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   p.activeStance = stance;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = [
-    ...(cell.focusElites ? [{conditionId:'always',actionId:'focus-elites'}] : []),
+    ...(cell.focusElites ? [{conditionId:'in-combat',actionId:'focus-elites'}] : []),
     { conditionId:'always', actionId:'auto-path-enemy' },
     { conditionId:'inside-telegraph', actionId:'step-back' },
     ...((cell.orbit ?? !c.melee) ? [{ conditionId:'in-combat', actionId:'orbit' }] : []),
