@@ -30,6 +30,24 @@
  * collapsed into one apparently valid `n/a` group. An unknown arm now FAILS
  * LOUDLY. Pairing keys on (class, node, seed), so it does not depend on naming.
  *
+ * Schema 4 (2026-09-18) fixes an ORIENTATION DEFECT introduced by schema 3. It
+ * sorted arm names alphabetically and formed armB/armA, so for
+ * ['candidate','control'] the ratio came out control/candidate and 1 - median
+ * then reported the wrong sign AND the wrong denominator: a 65 -> 50 change
+ * printed ratio 1.300 and "30% reduction" when the reduction from the baseline
+ * is 1 - 50/65 = 23.08%. Baseline and comparison arms are now declared (or
+ * resolved from a conventional-name list), never alphabetical, and the reduction
+ * is computed PER HIT as (baseline - comparison)/baseline before being
+ * summarised - a nonlinear transform of an even-sample median is not the median
+ * of the transformed samples.
+ *
+ * Schema 4 also separates the counting units. matchedHits counts HITS,
+ * matchedRunPairs counts RUN PAIRS, and one run pair can contribute several
+ * hits, so those do not sum with pairsWithNoComparableHit. Matching on ordinal
+ * and timestamp shows TIMING alignment only: it does not establish equal source
+ * identity, HP-dependent mitigation, barrier or guard state, so the contrast is
+ * labelled timing-matched rather than state-matched.
+ *
  * Usage: node scripts/charged-cast-audit.mjs --block=<dir> --out=<dir> [--window=200] [--name=x]
  */
 import {readFileSync, existsSync, mkdirSync, writeFileSync} from 'node:fs';
@@ -41,6 +59,8 @@ const args = Object.fromEntries(process.argv.slice(2).map(s => {
 }));
 if (!args.block || !args.out) throw new Error('--block and --out are required');
 const WINDOW = Number(args.window ?? 200);
+/** Conventional baseline names, used only when --baseline is not given. */
+const BASELINE_NAMES = ['control', 'reference', 'baseline'];
 const block = args.block, out = args.out, name = args.name ?? basename(block);
 mkdirSync(out, {recursive: true});
 const rd = p => JSON.parse(readFileSync(p, 'utf8'));
@@ -209,11 +229,32 @@ for (const r of rows) if (r.finalBlow) {
  * Stops at the first ordinal whose resolve times differ, because after that the
  * runs have diverged and are no longer comparable states.
  */
+/**
+ * Which arm is the baseline (denominator) and which is the comparison.
+ * Explicit flags win; otherwise a conventional baseline name is required.
+ * Alphabetical order is never a baseline.
+ */
+function resolveArmRoles() {
+  if (args.baseline || args.comparison) {
+    const baseline = args.baseline ?? arms.find(a => a !== args.comparison);
+    const comparison = args.comparison ?? arms.find(a => a !== baseline);
+    if (!arms.includes(baseline) || !arms.includes(comparison) || baseline === comparison) {
+      throw new Error(`${name}: --baseline/--comparison must name two distinct declared arms (${arms.join(', ')})`);
+    }
+    return {baseline, comparison};
+  }
+  const baseline = arms.find(a => BASELINE_NAMES.includes(a));
+  if (!baseline) {
+    throw new Error(`${name}: cannot tell which of [${arms.join(', ')}] is the baseline. Pass --baseline=<arm> --comparison=<arm>; alphabetical order is NOT a baseline.`);
+  }
+  return {baseline, comparison: arms.find(a => a !== baseline)};
+}
+
 function pairedSameState(label) {
   if (arms.length !== 2) {
-    return {label, n: 0, arms, skipped: `a paired contrast needs exactly two declared arms, found ${arms.length}`};
+    return {label, matchedHits: 0, arms, skipped: `a paired contrast needs exactly two declared arms, found ${arms.length}`};
   }
-  const [armA, armB] = arms;
+  const {baseline: armA, comparison: armB} = resolveArmRoles();
   const byKey = new Map();
   for (const r of rows) {
     const k = pairKeyOf(r.cell, r.seed);
@@ -221,6 +262,7 @@ function pairedSameState(label) {
     byKey.get(k)[armOf(r.cell)] = r;
   }
   const paired = [];
+  const matchedPairKeys = new Set();
   let divergedBefore = 0;
   for (const [k, p] of byKey) {
     if (!p[armA] || !p[armB]) continue;
@@ -233,20 +275,40 @@ function pairedSameState(label) {
       const av = a[i].hits[0].hpDamage, bv = b[i].hits[0].hpDamage;
       if (av == null || bv == null || av === 0) continue;
       matched++;
-      paired.push({key: k, ordinal: i, endMs: a[i].endMs, [armA]: av, [armB]: bv,
-        ratio: Number((bv / av).toFixed(5)), root: rootOf(p[armA].cell)});
+      matchedPairKeys.add(k);
+      paired.push({
+        key: k, ordinal: i, endMs: a[i].endMs,
+        baselineArm: armA, comparisonArm: armB, baseline: av, comparison: bv,
+        comparisonOverBaseline: Number((bv / av).toFixed(5)),
+        reductionPct: Number((((av - bv) / av) * 100).toFixed(4)),
+        root: rootOf(p[armA].cell),
+      });
     }
     if (matched === 0) divergedBefore++;
   }
-  const ratios = paired.map(x => x.ratio);
+  const ratios = paired.map(x => x.comparisonOverBaseline);
+  const reductions = paired.map(x => x.reductionPct);
   const byRoot = {};
-  for (const x of paired) (byRoot[x.root] ??= []).push(x.ratio);
+  for (const x of paired) (byRoot[x.root] ??= []).push(x.reductionPct);
   return {
-    label, arms: {numerator: armB, denominator: armA}, n: paired.length,
+    label,
+    arms: {baseline: armA, comparison: armB},
+    matchedHits: paired.length,
+    matchedRunPairs: matchedPairKeys.size,
     pairsWithNoComparableHit: divergedBefore,
-    ratio: {median: median(ratios), min: ratios.length ? Math.min(...ratios) : null, max: ratios.length ? Math.max(...ratios) : null},
-    medianHpReductionPct: ratios.length ? Number(((1 - median(ratios)) * 100).toFixed(2)) : null,
-    byRootMedianRatio: Object.fromEntries(Object.entries(byRoot).map(([r, v]) => [r, median(v)])),
+    comparisonOverBaseline: {
+      median: median(ratios),
+      min: ratios.length ? Math.min(...ratios) : null,
+      max: ratios.length ? Math.max(...ratios) : null,
+    },
+    reductionFromBaselinePct: {
+      median: reductions.length ? Number(median(reductions).toFixed(2)) : null,
+      min: reductions.length ? Number(Math.min(...reductions).toFixed(2)) : null,
+      max: reductions.length ? Number(Math.max(...reductions).toFixed(2)) : null,
+    },
+    byRootMedianReductionPct: Object.fromEntries(
+      Object.entries(byRoot).map(([r, v]) => [r, Number(median(v).toFixed(2))]),
+    ),
     hits: paired,
   };
 }
@@ -254,9 +316,10 @@ function pairedSameState(label) {
 const labels = [...new Set(rows.flatMap(r => r.casts.map(c => c.label)))];
 
 const report = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   window: WINDOW,
   declaredArms: arms,
+  armRoles: arms.length === 2 ? resolveArmRoles() : null,
   conventions: {
     median: 'mean of the two middle values for even N',
     landed: 'exactly one candidate damage event from the casting monster within the window',
@@ -265,7 +328,10 @@ const report = {
     hpBefore: 'latest sample at or before the cast end; approximate whenever hpBeforeSampleAgeMs > 0',
     finalBlowAttribution: 'a damage event carries no ability id, so an unmatched final blow is unattributed rather than "basic"',
     grossDamage: 'base component only. For a charged attack the multiplier is applied OUTSIDE the mitigation record, so hpDamage may exceed grossDamage and a coefficient treatment is NOT readable here',
-    pairedSameState: 'second-arm/first-arm hpDamage ratio for hits at the same cast ordinal AND the same resolve time, so both runs were still in the same state. Arms come from the manifest. pairsWithNoComparableHit records pairs whose trajectories diverged before any matchable cast, which is an honest zero rather than a hidden one',
+    pairedSameState: 'TIMING-matched hits: same cast ordinal and same resolve time. This shows timing alignment ONLY - it does not establish equal source identity, HP-dependent mitigation, barrier or guard state, so do not call it state-matched',
+    armRoles: 'baseline is the denominator, comparison the numerator; declared via --baseline/--comparison or resolved from a conventional baseline name. NEVER alphabetical order',
+    reductionFromBaselinePct: 'computed PER HIT as (baseline - comparison)/baseline, then summarised',
+    countingUnits: 'matchedHits counts HITS; matchedRunPairs and pairsWithNoComparableHit count RUN PAIRS. One run pair can contribute several hits, so these do not sum',
     arms: 'read from the block manifest; an observation whose cell is undeclared or carries no treatment fails the audit rather than being pooled',
   },
   pairedSameState: Object.fromEntries(labels.map(l => [l, pairedSameState(l)])),
@@ -276,9 +342,12 @@ const report = {
 };
 writeFileSync(join(out, `${name}-casts.json`), JSON.stringify(report, null, 2));
 writeFileSync(join(out, `${name}-casts-summary.json`), JSON.stringify(
-  {schemaVersion: 3, window: WINDOW, declaredArms: arms, conventions: report.conventions,
+  {schemaVersion: 4, window: WINDOW, declaredArms: arms, armRoles: report.armRoles, conventions: report.conventions,
    pairedSameState: Object.fromEntries(Object.entries(report.pairedSameState).map(([k, v]) => [k, {...v, hits: undefined}])),
    byLabelArm: report.byLabelArm, byLabelArmRoot: report.byLabelArmRoot, finalBlows}, null, 2));
-console.log(JSON.stringify({schemaVersion: 3, declaredArms: arms,
-  pairedSameState: Object.fromEntries(Object.entries(report.pairedSameState).map(([k, v]) => [k, {n: v.n, ratio: v.ratio, medianHpReductionPct: v.medianHpReductionPct, byRootMedianRatio: v.byRootMedianRatio}])),
+console.log(JSON.stringify({schemaVersion: 4, declaredArms: arms, armRoles: report.armRoles,
+  pairedSameState: Object.fromEntries(Object.entries(report.pairedSameState).map(([k, v]) => [k, {
+    matchedHits: v.matchedHits, matchedRunPairs: v.matchedRunPairs, pairsWithNoComparableHit: v.pairsWithNoComparableHit,
+    comparisonOverBaseline: v.comparisonOverBaseline, reductionFromBaselinePct: v.reductionFromBaselinePct,
+    byRootMedianReductionPct: v.byRootMedianReductionPct}])),
   finalBlows}, null, 1));

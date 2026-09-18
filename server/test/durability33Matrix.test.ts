@@ -99,7 +99,8 @@ assertDurability33Definitions();
     const overlay = installDurability33Treatment(cell);
     const expected = treatment === 'candidate' ? RIDGE_ARCHER_POWER_SHOT_CANDIDATE : RIDGE_ARCHER_POWER_SHOT_CONTROL;
     assert(archer.chargedAttack!.multiplier === expected, `${treatment}: multiplier must be ${expected}`);
-    assert(archer.stats.hp === 240 && archer.stats.attack === 50, `${treatment}: only the multiplier may move`);
+    // Rebased 2026-09-18: the adopted T1 Mountain package authors attack 40.
+    assert(archer.stats.hp === 240 && archer.stats.attack === 40, `${treatment}: only the multiplier may move`);
     overlay.restore();
     assert(JSON.stringify(archer) === baseline, `${treatment}: restore must return the authored species`);
   }

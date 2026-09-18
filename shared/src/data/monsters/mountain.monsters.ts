@@ -46,7 +46,11 @@ export const mountainMonsterEntries = [
     // CAPRINE T1. Identity: it VAULTS mountain ledges, and its Strong Kick knocks
     // you back — which matters most around ledges and drop-offs. Mobile roaming, not
     // a guarded post.
-    stats: { hp: 190, attack: 50, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
+    // Attack 50 -> 40, adopted 2026-09-18 from Durability35 (frozen f123d46b).
+    // The other half of the T1 Mountain pressure package; see ridge-archer.
+    // Strong Kick's multiplier is unchanged at 1.9 and derives from this attack,
+    // so its damage moves with the base cut. That is intended.
+    stats: { hp: 190, attack: 40, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 6, essenceType: 'blue', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -66,7 +70,12 @@ export const mountainMonsterEntries = [
     id: 'ridge-archer', name: 'Ridge Ambusher', color: 0x778899,
     // ARTILLERY T1 — already good, no additional mechanic needed. Holds chokepoints,
     // heavy slow ranged attacks, and a telegraphed Power Shot.
-    stats: { hp: 240, attack: 50, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3100, pullRange: 350 },
+    // Attack 50 -> 40, adopted 2026-09-18 from Durability35 (frozen f123d46b).
+    // The T1 Mountain entry was failing on the combined ordinary + charged
+    // pressure of the archer/hopper pair, not on a guard choice: survival across
+    // both nodes went 7/36 -> 28/36 with no adverse terminal flip in 36 pairs.
+    // Cut as a two-species package with cliff-hopper; Power Shot stays 2.2.
+    stats: { hp: 240, attack: 40, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3100, pullRange: 350 },
     behavior: 'ranged', attackStyle: 'arrow', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 8, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },

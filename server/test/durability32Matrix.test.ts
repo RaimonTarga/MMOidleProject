@@ -134,7 +134,8 @@ assertDurability32Definitions();
       archer.chargedAttack!.multiplier === expected,
       `${treatment}: expected multiplier ${expected}, got ${archer.chargedAttack!.multiplier}`,
     );
-    assert(archer.stats.hp === 240 && archer.stats.attack === 50, `${treatment}: only the multiplier may move`);
+    // Rebased 2026-09-18: the adopted T1 Mountain package authors attack 40.
+    assert(archer.stats.hp === 240 && archer.stats.attack === 40, `${treatment}: only the multiplier may move`);
     assert(
       overlay.changes.length === 1 && overlay.changes[0].afterAttack === expected,
       `${treatment}: the change record must carry the multiplier`,

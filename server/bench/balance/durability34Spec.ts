@@ -133,7 +133,8 @@ export function assertDurability34Definitions(): void {
  const archer=MONSTER_DATABASE.get('ridge-archer');
  assert(archer,'ridge-archer must exist');
  assert.equal(archer.chargedAttack?.multiplier,2.2,'Power Shot must stay at 2.2 in BOTH arms of Block M');
- assert.equal(archer.stats.attack,50,'ridge-archer attack drift');
- assert.equal(MONSTER_DATABASE.get('cliff-hopper')?.stats.attack,50,'cliff-hopper attack drift');
+ // Rebased 2026-09-18: the adopted T1 Mountain package authors 40.
+ assert.equal(archer.stats.attack,40,'ridge-archer attack drift');
+ assert.equal(MONSTER_DATABASE.get('cliff-hopper')?.stats.attack,40,'cliff-hopper attack drift');
  assert.equal(MONSTER_DATABASE.get('cliff-hopper')?.stats.hp,190,'cliff-hopper HP drift');
 }

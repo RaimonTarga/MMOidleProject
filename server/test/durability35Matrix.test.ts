@@ -1,5 +1,6 @@
 import { MONSTER_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
 import {
+  DURABILITY35_ADOPTED_FROM,
   DURABILITY35_ATTACK,
   DURABILITY35_BLOCKS,
   DURABILITY35_NODES,
@@ -72,10 +73,14 @@ assertDurability35Definitions();
 
   const candidate = installDurability35Treatment(block.cells.find((c) => c.treatment === 'candidate')!);
   assert(candidate.changes.length === 2, 'exactly the two species move');
+  // RETIRED: the package is adopted, so the overlay is a no-op on current source
+  // and the cut can never be applied twice.
   for (const [type, [before, after]] of Object.entries(DURABILITY35_ATTACK)) {
     const d = MONSTER_DATABASE.get(type)!;
-    assert(d.stats.attack === after, `${type}: attack must be ${after}`);
-    assert(after === Math.round(before * 0.8), `${type}: the package is a 20% cut`);
+    assert(before === after, `${type}: a retired treatment must be a no-op`);
+    assert(d.stats.attack === after, `${type}: attack must stay ${after}`);
+    assert(after === Math.round(DURABILITY35_ADOPTED_FROM[type] * 0.8),
+      `${type}: the adopted value is the 20% cut of the historical baseline`);
   }
   // Attack-only: HP, cadence and the charged multipliers must not move. The
   // charged attacks change because their damage DERIVES from attack, which is
@@ -85,7 +90,7 @@ assertDurability35Definitions();
   assert(MONSTER_DATABASE.get('ridge-archer')!.chargedAttack!.multiplier === 2.2, 'Power Shot stays 2.2 in both arms');
   assert(MONSTER_DATABASE.get('cliff-hopper')!.chargedAttack!.multiplier === 1.9, 'Strong Kick multiplier fixed');
   assert(candidate.changes.every((c) => c.before === c.after), 'HP columns stay equal: this package is attack-only');
-  assert(candidate.changes.every((c) => c.afterAttack < c.beforeAttack), 'the attack columns carry the treatment');
+  assert(candidate.changes.every((c) => c.afterAttack === c.beforeAttack), 'retired: the attack columns no longer move');
   candidate.restore();
   assert(snapshot() === baseline, 'candidate restore');
 

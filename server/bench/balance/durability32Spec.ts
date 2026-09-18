@@ -116,7 +116,8 @@ export function assertDurability32Definitions(): void {
  assert(archer,'ridge-archer must exist');
  assert.equal(archer.name,'Ridge Ambusher','Ridge Ambusher identity drift');
  assert.equal(archer.stats.hp,240,'ridge-archer HP drift');
- assert.equal(archer.stats.attack,50,'ridge-archer attack drift');
+ // Rebased 2026-09-18: the adopted T1 Mountain package authors 40.
+ assert.equal(archer.stats.attack,40,'ridge-archer attack drift');
  assert.equal(archer.stats.attackCooldown,3100,'ridge-archer cadence drift');
  assert.equal(archer.stats.attackRange,210,'ridge-archer range drift');
  assert.equal(archer.chargedAttack?.name,'Power Shot','Power Shot identity drift');

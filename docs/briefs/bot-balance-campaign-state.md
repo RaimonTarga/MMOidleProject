@@ -2,7 +2,87 @@
 
 Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## Current decision: Durability34 executed and corrected; Jungle package retained; Durability35 prepared, not launched
+## Current decision: T1 Mountain package ADOPTED; Durability35 corrected; Durability36 prepared, not launched
+
+Durability35 ran once at `f123d46b`: 72 observations, 35 full windows, 37 deaths, zero cutoffs.
+The survival result stands and was verified against raw; four numerical/label findings are
+corrected WITHOUT rerunning it. See
+[the corrected review](bot-balance-durability35-review-and-next-steps.md) and the dated banner on
+[the report](bot-balance-durability35-report.md).
+
+RESULT: survival 7/36 -> 28/36 (node-01 heavy 3->12, node-02 swarming 4->16), 21 pairs improved,
+**zero adverse flips**. Three seeds, descriptive, not a population guarantee.
+
+**ADOPTED AND IMPLEMENTED:** `ridge-archer` and `cliff-hopper` base attack 50 -> 40, written as
+absolute authored values. Power Shot stays 2.2, Strong Kick 1.9, and HP, cadence, range,
+movement, modifiers, ecology, rewards, abilities and RP are untouched. Guarded by
+`t1MountainPressureAdoption.test.ts`; the Durability35 overlay is RETIRED to `[40,40]` so the cut
+can never be applied twice; Durability32/33/34 drift asserts rebased 50 -> 40. Historical
+experiments stay reproducible at their own revisions.
+
+FOUR CORRECTIONS. (1) The reductions are **23.08%** and **23.44%**, not 30.0%/30.6%: the audit
+sorted arms alphabetically and formed control/candidate, giving the wrong sign AND denominator.
+Schema 4 takes a DECLARED baseline/comparison and computes the reduction per hit. This was a
+schema-3 regression; D33's -18.71% used the correct orientation and stands. (2) 33 and 8 are
+different units - 33 matched HITS across **28 matched RUN PAIRS**, plus 8 pairs with no
+comparable hit, and 28+8=36. The dataset was fine; the labels were not. (3) `minHP` is the
+lowest observed value, not terminal HP: only 4 of 35 survivors dipped below 8% and one with
+minHP 0.169 ended at 0.925. (4) Per-node runtime attacks are **55 -> 44 on heavy** and 50 -> 40
+on swarming; a pooled median does not describe a node.
+
+TWO FRAMINGS WITHDRAWN. Conduit: `CannotAttack` describes the OWNER'S outgoing attacks only - it
+never invalidated the build's survival, and the "missing-owner-exposure by design" blanket
+exclusion is removed. Conduit stays in six-root viability tables with owner exposure and minion
+damage reported separately. And my "no T3 TTK anywhere in this campaign" was too broad: scoped
+correctly, there is no compatible JUNGLE LINEAGE T3 timing evidence; other biomes measured T3.
+
+Swarming's 16/18 vs heavy's 12/18 is a difference in observed outcomes, NOT evidence that
+swarming is disproportionately easy. It still contains deaths and low-HP survivors, and it is not
+a reason to raise its damage or undo the package.
+
+T2 MOUNTAIN STRIKER DISPOSITIONED BY EXTRACTION, no new grid. From the existing Durability29
+`mountain2` artifacts: control 6/6 deaths at 98.9-456.1 s, candidate 3/6 at 101.9-569.7 s plus
+three full 600 s windows. Killing blows were Granite Titan x4 and Boulder Thrower x4, with
+**seven of eight unmatched to any cast** - ordinary attacks at 65/70 - and only 1-2 distinct
+recent damage sources. So it is **sustained two-species attrition**, not a terminal mechanic and
+not concurrency. The relief roughly doubled time-to-death and halved deaths. Whether the halved
+rate is acceptable for a first pass is a command-center call, not a measurement gap.
+
+[Durability36 packet](bot-balance-durability36-operator-packet.md): PREPARED, NOT LAUNCHED. **72
+observations**, two INDEPENDENT blocks. M) local armor adaptation at the adopted enemy baseline,
+18: three residual contexts (Slinger/heavy, Apprentice/heavy, Apprentice/swarming) x
+reference/local-armor x D35's seeds, swapping ONLY `swamp-vest-t1` for `mountain-vest-t1`. The
+plate is maxHp 32 / plating 5 / `guard.potency-pct` 0.15 against the wrapping's 30 / 4 /
+`defense.dot-resistance` 0.2, and is NOT a damage-cap item; Mountain has no DoT, so the swamp
+mechanic is inert there. ACQUISITION BOUNDARY: the plate needs Mountain level 2 and +3 needs
+level 4, so this is a post-acquisition FARMING ADAPTATION and success must not be read as fixing
+first entry. J) the actual Jungle T2/T3/T4 role-duration ladder, 54: six roots x three tiers x
+three fresh seeds, one configuration per tier. All three node03 Jungle nodes carry the
+**dominion** modifier - verified, not assumed - so modifier roles are comparable. T4 installs the
+retained D34 package and restores it, and the installer refuses to guess at a half-integrated
+state.
+
+### Named gate ECON-1 — reward efficiency across tiers
+
+> At later player tiers, lower-tier nodes in a recurring biome may yield better usable essence
+> and biome XP per elapsed minute than current-tier nodes, because combat duration has increased
+> without a sufficient reward premium.
+
+**Recorded, not established.** Compare the SAME higher-tier character at x1 in current-tier and
+accessible lower-tier versions of a recurring biome, on credited biome XP, usable essence and
+catalyst progress per ELAPSED GAMEPLAY TIME, with caps, recovery/death costs and travel explicit.
+Longer fights may alter payout rates; that is a hypothesis, not a result from synthetic capped
+combat starts. Do not change rewards in a durability trial, do not equate kills with reward
+value, and do not reverse the longer-combat design to restore an old kill rate.
+
+### Boss pass — reuse the user's manual coverage
+
+The user has already playtested and iterated boss MECHANICS manually. The boss pass reuses that
+coverage and addresses numerical pacing and pressure. Do not restart functional discovery, and do
+not claim its logs were inspected when they were not.
+
+## Previous decision: Durability34 executed and corrected; Jungle package retained; Durability35 prepared, not launched
+
 
 Durability34 ran once at `4c926e0e`: 108/108 observations in about seven minutes, both blocks
 verified. Execution stands; the findings were corrected from the sealed artifacts **without
@@ -43,7 +123,7 @@ NOT EVERY ROOT DIRECTLY ATTACKS. Conduit logged 0 owner attack beats in all six 
 design (`CannotAttack`) while dealing 272-482 minion beats, and died once. Summon-only offense is
 intended, not an exposure artifact.
 
-[Durability35 packet](bot-balance-durability35-operator-packet.md): PREPARED, NOT LAUNCHED.
+[Durability35 packet](bot-balance-durability35-operator-packet.md): (superseded - it has since RUN, been corrected, and its package adopted; see the current decision.) PREPARED, NOT LAUNCHED.
 **72 observations**, one block: six roots x two T1 Mountain nodes x control/candidate x three
 seeds. Candidate is base attack 50 -> 40 on BOTH `ridge-archer` and `cliff-hopper` - a
 two-species package, not an attempt to isolate either. Power Shot stays 2.2 in both arms; 1.8

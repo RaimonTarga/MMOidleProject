@@ -5,9 +5,30 @@ diffing, not by reading report prose. Companion to
 [the adoption review](bot-balance-mob-adoption-review.md), which carries the provenance and
 rationale; this file carries the numbers a patch would actually write.
 
-**Status of every row below: `selected` — retained by the campaign, verified against current
-source, NOT applied.** Production adoption needs explicit approval. Nothing here is authorized
-by this document.
+## Status vocabulary
+
+Statuses are per package. Accepting one package does not promote any other row.
+
+| Status | Meaning |
+|---|---|
+| `selected` | retained by the campaign, verified against source, NOT applied |
+| `approved-for-integration` | accepted by the command center, not yet written to source |
+| `implemented` | written to authored source |
+| `runtime-checked` | implemented AND covered by a current-source regression |
+| `open-exception` | explicitly unresolved; must not be silently counted as passed |
+
+**Every row in the 30-species table below is `selected`** unless its own line says otherwise.
+Production adoption needs explicit approval; nothing in that table is authorized by this
+document.
+
+Tracked separately from that table:
+
+| Package | Status | Note |
+|---|---|---|
+| T1 Mountain pressure (`ridge-archer`, `cliff-hopper` attack 50 → 40) | **`runtime-checked`** | Adopted 2026-09-18 from Durability35. Written as absolute authored values; guarded by `server/test/t1MountainPressureAdoption.test.ts`; the D35 overlay is retired to `[40, 40]` so it cannot double-apply. |
+| Jungle T4 (`apex-silverback` 2900, `emerald-constrictor` 3400) | **`approved-for-integration`** | Accepted from Durability34; apply with the consolidated patch. Cross-tier pacing is measured by Durability36 Block J and is not a precondition for integration. |
+| T2 Mountain attack relief | **`open-exception`** | Dispositioned as sustained attrition, not a terminal mechanic; see the Durability35 review §4. |
+| Power Shot 1.8 | **parked** | Not combined with the adopted package and not disproven. |
 
 ## How to read this
 

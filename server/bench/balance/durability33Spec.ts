@@ -100,7 +100,8 @@ export function assertDurability33Definitions(): void {
  assert(archer,'ridge-archer must exist');
  assert.equal(archer.name,'Ridge Ambusher','Ridge Ambusher identity drift');
  assert.equal(archer.stats.hp,240,'ridge-archer HP drift');
- assert.equal(archer.stats.attack,50,'ridge-archer attack drift');
+ // Rebased 2026-09-18: the adopted T1 Mountain package authors 40.
+ assert.equal(archer.stats.attack,40,'ridge-archer attack drift');
  assert.equal(archer.chargedAttack?.multiplier,RIDGE_ARCHER_POWER_SHOT_CONTROL,'Power Shot multiplier drift');
  assert.equal(archer.chargedAttack?.aoe,undefined,'Power Shot must remain an unplanted, tracking cast');
  // Cliff Hopper landed 29 of Durability32's 41 killing blows and is deliberately
@@ -108,7 +109,7 @@ export function assertDurability33Definitions(): void {
  const hopper=MONSTER_DATABASE.get('cliff-hopper');
  assert(hopper,'cliff-hopper must exist');
  assert.equal(hopper.stats.hp,190,'cliff-hopper HP drift');
- assert.equal(hopper.stats.attack,50,'cliff-hopper attack drift');
+ assert.equal(hopper.stats.attack,40,'cliff-hopper attack drift');
  // The affordability constraint the Mountain block reports on. If Brace ever
  // becomes attunable alongside Second Wind at T1, this block's framing changes.
  const levels:Record<string,number>={};

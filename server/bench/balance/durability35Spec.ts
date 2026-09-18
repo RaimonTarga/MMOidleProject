@@ -24,10 +24,18 @@ export const DURABILITY35_SEEDS=[75011,77003,79001] as const;
  * rounding - Strong Kick and Power Shot derive from attack, so they move too,
  * and that is intended and must be verified rather than assumed.
  */
+/**
+ * RETIRED 2026-09-18: this package was accepted and is now the AUTHORED value.
+ * `before` is kept as history; `after` equals the live value, so installing the
+ * treatment is a no-op on current source and the cut can never be applied twice.
+ * The historical experiment stays reproducible at its own frozen revision.
+ */
 export const DURABILITY35_ATTACK: Record<string,[number,number]>={
- 'ridge-archer':[50,40],
- 'cliff-hopper':[50,40],
+ 'ridge-archer':[40,40],
+ 'cliff-hopper':[40,40],
 };
+/** What the accepted package moved, for the record. */
+export const DURABILITY35_ADOPTED_FROM: Record<string,number>={'ridge-archer':50,'cliff-hopper':50};
 
 /**
  * The problematic entry node, plus one existing node with a different
