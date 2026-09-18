@@ -40,6 +40,20 @@ round-robin ability set with **zero** rune rules, and runs `offensive-stance` wh
 runs `defensive-stance` with Second Wind and Brace. See
 [the T2 boss benchmark gap brief](bot-balance-t2-boss-benchmark-gap-2026-09-18.md). Superseded text:
 
+[Boss reference packet](bot-balance-boss-reference-operator-packet.md): **FROZEN 2026-09-19, NOT
+LAUNCHED.** Two cases, one boss (`apex-timberclaw`), one skill path (the recovered V1i Spirit
+`energy-heavy` frame), one declared seed, 300 s cap: **2 fights**. Case A is the complete historical
+successful package, Case B the complete legacy benchmark package for that same path. The four
+component-removal arms were deliberately NOT built -- rules, abilities and stance share one RP
+budget, and the ability-swap hybrid costs **39 RP against a 30 budget**, asserted illegal by
+`bossReferenceMatrix`. Qualification records every starting package and spends ZERO fights. Recorded
+setup: A = 231 maxHp / 100 attack / 18 plating / 0.19 DR / 0.9 taken / 129 barrier at 28 RP; B = 230
+/ 36 / 10 / 0.02 / 1.1 / 69 at 30 RP; both meet the same 3750/44 boss with no other bodies present.
+A's 231 pool matches the V1i report exactly. Interpretation is bounded in advance: a Case A win is a
+usable reference FOR THIS BOSS AND BUILD, not harness correctness and not a balance result.
+
+**Main milestone: resume the earlier/later boss numerical screen.** The mob campaign stays closed.
+
 **BOSS SCREEN BLOCKED: the difficulty curve is inverted.** Measured today — **every T2 boss is
 0 wins / 126 attempts**, with `apex-timberclaw` among the *cheapest* of the seven; T3 is ragged
 (0/54 swamp to 37/54 jungle); and **T4 `charnel-crown-sovereign` wins 12/12** with qualified
