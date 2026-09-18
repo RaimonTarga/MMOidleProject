@@ -1,8 +1,62 @@
 # Bot balance campaign state
 
-Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna.
+Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## Current decision: Durability31 reviewed; one navigation repair is the next step
+## Current decision: Jungle navigation REPAIRED; Durability32 prepared, not launched
+
+The Durability31 repair is implemented at `7247b6e2`. `activePlayerAvoidedFeatures` now
+classifies damaging AND status-only player node features, one identity per feature, and the
+dynamic hazard escape owner reads it, so a player stopped inside a player-targeted
+statusWhileInside slow bush escapes on a short standable leg instead of having every
+hazard-aware path rejected at the initial padded-segment check. All five Durability31
+invariants are covered by regression, mutation-checked to fail without the repair.
+`activePlayerDamageFeatures` is deliberately untouched so out-of-combat Recovery suppression
+keeps its narrower "real hazard" meaning. This is unit/regression evidence at the frozen
+revision, NOT live-play or in-browser validation.
+
+[Durability32 packet](bot-balance-durability32-operator-packet.md) is PREPARED and NOT
+LAUNCHED: 120 observations in three separately reported blocks. A) the four unchanged
+Durability30/31 Jungle setups on repaired source, 12 obs, with frozen pass/fail predicates
+that separate a navigation recurrence from a legitimate death and record whether a bush was
+exercised at all. B) T1 Mountain Power Shot, 72 obs, six roots x two preparation contexts x
+control 2.2 vs candidate 1.8. C) Jungle breadth, 36 obs, gated on A. Frozen `7247b6e2`;
+definitions and hitbox hashes are unchanged from Durability31, so progression definitions and
+collision geometry did not drift under the repair. Qualify and 30 s pilots passed for all
+three blocks; pilots are smoke checks and must never enter the operator dataset.
+
+NEW EXCEPTION from the user: T1 Mountain archers and Power Shot may be excessively punishing.
+Block B screens exactly that and nothing else. T1 is not otherwise reopened. The counterplay
+was traced rather than assumed: Power Shot authors no `aoe`, so no slam-telegraph zone is
+published and Step Back never sees it; `hasMobileMonsterCast` is true so the archer tracks
+through the wind-up and neither Orbit nor leaving range denies it. Mitigation or a stun/freeze
+interrupt is what remains. 2.2 is the executable value; the data file's "2x" and "3 -> 1.8"
+comments were stale and were corrected without changing the number.
+
+[Adoption review](bot-balance-mob-adoption-review.md) headline: **no retained mob candidate
+is live.** All 23 checked species are authored at pre-candidate values; every retained
+package exists only as a bench overlay. The candidates are also STACKED — D26/D27/D29/D30
+each install an earlier packet's overlay first and then modify it — so `granite-titan`'s
+retained attack 54 is two compounded 0.8 steps, and `granite-mammoth`'s retained 13800 HP
+requires writing `wardPct` 0.0208, not 0.25, to preserve the absolute ward of 287.5.
+
+T2 Mountain Striker is dispositioned as **unresolved evidence**: the relief cut T2 deaths
+10/36 -> 5/36 while Striker stayed 3/6, stance is ruled out by Durability28's 3/12 in both
+stances, and the candidate's own deaths make its timing sparse. The smallest follow-up
+question is proposed in the review as a SEPARATE 18-observation packet, deliberately not
+appended to Durability32.
+
+Roadmap order agreed with the command center: ordinary mobs -> bosses -> coordinated items
+and abilities -> class tuning -> integrated regression and basic x1 checks -> invited
+playtest. See [the assignment brief](bot-balance-next-steps-2026-09-18.md). Preserve the
+expedited-playtest principle; make exceptions explicit at each phase exit.
+
+Two incidental repairs found while qualifying: `pnpm typecheck` was red on develop because
+`shared/` has no `@types/node` and one test imported `node:assert`; and `prepareSurveyBot`
+rejected +0 gear as illegal because it passed a HELD upgrade level into a helper that expects
+a TARGET of 1 or more. Both fixed; cells may now declare an explicit `upgradeLevel`.
+
+## Previous decision: Durability31 reviewed; one navigation repair is the next step
+
 
 [Durability31](bot-balance-durability31-report.md) executed once on 2026-09-17 at
 frozen d6643bde and completed all12 Jungle observations. READY files are
