@@ -31,6 +31,15 @@ checked clean.
 **The single T2 Forest death is a known nonblocking attrition matchup** — largest hit 26.1 against
 a 240 pool, death at 224.5 s after 28 kills and 18 late joiners. It blocks nothing.
 
+**BOSS SCREEN BLOCKED — CORRECTED 2026-09-18.** The "inverted difficulty curve" reading below is
+**WITHDRAWN**: the T2 and T4 figures came from two different instruments and are not comparable, and
+**Apex Timberclaw was in fact beaten 2/2 on 2026-09-13** (`61080e54`, HP never below 41.9%). 0/126
+describes ONE `bossExam.ts` configuration, not boss balance. The benchmark picks `gale-needle` — the
+weapon the campaign's own V1i study measured at 0/2 — spends its entire 30-point RP budget on a
+round-robin ability set with **zero** rune rules, and runs `offensive-stance` where the winning build
+runs `defensive-stance` with Second Wind and Brace. See
+[the T2 boss benchmark gap brief](bot-balance-t2-boss-benchmark-gap-2026-09-18.md). Superseded text:
+
 **BOSS SCREEN BLOCKED: the difficulty curve is inverted.** Measured today — **every T2 boss is
 0 wins / 126 attempts**, with `apex-timberclaw` among the *cheapest* of the seven; T3 is ragged
 (0/54 swamp to 37/54 jungle); and **T4 `charnel-crown-sovereign` wins 12/12** with qualified

@@ -153,6 +153,16 @@ does not warrant a biome nerf from one seed, and — importantly for §5 — **i
 
 ## 5. The boss screen blocker — early-tier bosses are unwinnable, T4 is not
 
+> **CORRECTED 2026-09-18 — this section's conclusion is WITHDRAWN.**
+> The claim that the T4 wins show the harness is sound, that T1/T2 reference setups are therefore
+> the broken part, and that "the difficulty curve is inverted", is withdrawn. The T2 and T4 figures
+> were produced by **two different instruments** (see the correction brief) and are not comparable.
+> **Apex Timberclaw was in fact beaten 2/2 on 2026-09-13** at revision `61080e54` with HP never
+> below 41.9%. The 0/126 below describes only the outcome of one specific `bossExam.ts`
+> configuration and is not a measurement of boss balance. The "12/12" count was also wrong: it was
+> 24 fights across 12 distinct configurations.
+> See [the T2 boss benchmark gap brief](bot-balance-t2-boss-benchmark-gap-2026-09-18.md).
+
 The starter packet proposes `apex-timberclaw` (T2 forest) as the earlier-tier slot and
 `charnel-crown-sovereign` (T4 graveyard) as the later. Both identities, and every stat the packet
 quotes, are verified from source. The three Sovereign escorts are confirmed at exactly the adopted
@@ -173,7 +183,7 @@ Combined with the already-documented **0/30 on unchanged T1 bosses** (`docs/tier
 difficulty curve is **inverted**: T1 and T2 bosses are unbeatable by the reference player at every
 root, T3 is ragged, and the final-tier boss in the packet is comfortable.
 
-### This is not (only) a harness artifact, and that is new
+### This is not (only) a harness artifact, and that is new — **WITHDRAWN, see the banner above**
 
 The campaign has correctly warned since 2026-08-23 that `bossExam` "cannot be trusted" and that a
 0/N is a bot-fidelity artifact. Two controls sharpen that:

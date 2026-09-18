@@ -11,6 +11,16 @@ Your endpoint is the factual report. No production tuning, commits, pushes or ex
 
 ## 1. Why this screen is one boss, not two
 
+> **CORRECTED 2026-09-18.** The reasoning below is **partly withdrawn**. `apex-timberclaw` is NOT
+> established as unbeatable: it was beaten **2/2 on 2026-09-13** (`61080e54`) by the V1i Spirit
+> route, HP never below 41.9%. The 0/126 is the outcome of one `bossExam.ts` configuration whose
+> build selection, RP allocation, stance and automation all differ from that winning run. The
+> earlier-tier slot therefore stays out of THIS packet because its benchmark setup is unexplained,
+> **not** because T2 bosses are overtuned — and no boss number should move on it. The T4/T2
+> comparison below is not valid evidence about T1/T2 reference setups. See
+> [the T2 boss benchmark gap brief](bot-balance-t2-boss-benchmark-gap-2026-09-18.md).
+> The T4 count "12/12" was also misstated: 24 fights across 12 distinct configurations.
+
 The [starter packet](bot-balance-boss-numerical-starter-packet.md) proposed an earlier/later-tier
 pair: `apex-timberclaw` (T2 forest) and `charnel-crown-sovereign` (T4 graveyard). The earlier slot
 was **withdrawn on evidence**, not preference.
