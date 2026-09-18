@@ -67,6 +67,10 @@ import {
   BOSSREF_SEEDS,
   assertBossReferenceDefinitions,
 } from '../bench/balance/bossReferenceSpec';
+import {
+  classifyBossTick, countsTowardAdds, isVictory, resolveTerminalBossHp,
+  type BossTerminal,
+} from '../bench/balance/bossTerminal';
 import type { Night5Cell } from '../bench/balance/night5Spec';
 import type { World } from '../src/world/World';
 
@@ -210,6 +214,8 @@ function run(cell: Night5Cell, seed: number) {
     world.tick(100, now);
     const boss = findBoss(world, cell.nodeId);
     assert(boss, `${cell.id}: boss never woke — the encounter was not exercised`);
+    /** Pinned at wake so kill evidence can be matched to THIS boss entity. */
+    const bossEntityId = boss.entityId;
 
     const roster = () => [...world.monsterEntitiesInNode(cell.nodeId)].map((m) => ({
       id: m.entityId,
@@ -355,7 +361,18 @@ function run(cell: Night5Cell, seed: number) {
     let minionAttackBeats = 0; const minionLastAttack = new Map<string, number>();
     let hpLost = 0, lastBotHp = bot.hasHealth.hp, peakWindow = 0;
     const burstWindow: number[] = []; let burstSum = 0;
-    let bossHp = bossMaxHp, bossSeen = true, killedAtMs: number | null = null;
+    let bossSeen = true, killedAtMs: number | null = null;
+    /**
+     * Last boss HP read while the boss was genuinely PRESENT. Terminal HP is taken
+     * from this rather than fabricated, so a disappearance never reports a zero it
+     * cannot support.
+     */
+    let lastSupportedBossHp: number | null = bossMaxHp;
+    /** Authoritative, boss-specific: a kill event naming the boss as victim. */
+    let bossKillEvidence: { atMs: number; victimId: string; killerId: string | null } | null = null;
+    let playerDeathEvidence: { atMs: number; cause: unknown } | null = null;
+    let resetEvidence: { atMs: number; message: string } | null = null;
+    let terminal: BossTerminal = null;
     /** Add pressure, attributed to the adds rather than folded into the boss. */
     const addDamage = new Map<string, number>();
     let bossDamage = 0;
@@ -384,6 +401,26 @@ function run(cell: Night5Cell, seed: number) {
       for (const e of world.worldLogJournal) {
         metrics.ingest(e, elapsed);
         const ev = e as { kind?: string; target?: { id?: string }; source?: { id?: string; name?: string }; hpDamage?: number };
+        // Authoritative boss-specific kill evidence. The victim must BE the boss:
+        // a kill anywhere else in the node says nothing about this encounter.
+        if (ev.kind === 'kill') {
+          const k = e as { victim?: { id?: string; name?: string }; killer?: { id?: string } };
+          const victimId = k.victim?.id ?? '';
+          const victimType = typeById.get(victimId)
+            ?? (k.victim?.name ? TYPE_BY_NAME.get(k.victim.name) : undefined);
+          if (victimId === bossEntityId || victimType === spec.bossId) {
+            bossKillEvidence ??= { atMs: elapsed, victimId, killerId: k.killer?.id ?? null };
+          }
+        }
+        if (ev.kind === 'player-death') {
+          playerDeathEvidence ??= { atMs: elapsed, cause: (e as { cause?: unknown }).cause ?? null };
+        }
+        // `resetDungeon` announces itself. "The guard reforms." is the wipe path that
+        // removes the boss and respawns the guard in the same tick.
+        if (ev.kind === 'dungeon-message') {
+          const msg = (e as { message?: string }).message ?? '';
+          if (/reforms/i.test(msg)) resetEvidence ??= { atMs: elapsed, message: msg };
+        }
         if (ev.kind === 'damage' && ev.target?.id === bot.isPlayer.id) {
           const srcId = ev.source?.id ?? '';
           const amount = ev.hpDamage ?? 0;
@@ -409,17 +446,29 @@ function run(cell: Night5Cell, seed: number) {
       }
 
       const live = findBoss(world, cell.nodeId);
+      if (live) {
+        lastSupportedBossHp = live.hasHealth.hp;
+        if (crossedHalfAtMs === null && lastSupportedBossHp <= bossMaxHp * 0.5) crossedHalfAtMs = elapsed;
+      }
+
+      // Classify BEFORE anything is attributed to this tick. A wipe removes the boss
+      // and respawns the guard in the same tick, so a tick that terminated must not
+      // also donate its bodies to add statistics.
+      terminal = classifyBossTick({
+        bossKillEvent: bossKillEvidence?.atMs === elapsed,
+        // `isDead` is a presence-gated COMPONENT, not a boolean flag.
+        playerDead: playerDeathEvidence?.atMs === elapsed || !!bot.isDead || bot.hasHealth.hp <= 0,
+        bossPresent: live !== null,
+        dungeonReset: resetEvidence?.atMs === elapsed,
+        bossSeen,
+      });
+
       let addsAlive = 0;
       for (const m of world.monsterEntitiesInNode(cell.nodeId)) {
         if (m.isMonster.monsterTypeId !== spec.bossId) addsAlive++;
       }
-      maxAddsAlive = Math.max(maxAddsAlive, addsAlive);
-      if (live) {
-        bossHp = live.hasHealth.hp;
-        if (crossedHalfAtMs === null && bossHp <= bossMaxHp * 0.5) crossedHalfAtMs = elapsed;
-      } else if (bossSeen) {
-        bossHp = 0; killedAtMs = elapsed; outcome = 'boss-killed';
-      }
+      if (countsTowardAdds(terminal)) maxAddsAlive = Math.max(maxAddsAlive, addsAlive);
+      if (terminal === 'boss-killed' || terminal === 'simultaneous-terminal') killedAtMs = elapsed;
 
       const v = composePlayerView(bot)!;
       minHp = Math.min(minHp, v.hp / v.maxHp);
@@ -434,26 +483,36 @@ function run(cell: Night5Cell, seed: number) {
       metrics.sampleRecovery(elapsed, v.hp >= v.maxHp && v.barrier >= v.barrierMax && v.incomingDot === 0);
       if (elapsed % manifest.sampleEveryMs === 0) {
         samples.push({ atMs: elapsed, hp: v.hp, maxHp: v.maxHp, barrier: v.barrier,
-          incomingDot: v.incomingDot, bossHp, bossMaxHp, addsAlive, pos: v.pos });
+          incomingDot: v.incomingDot, bossHp: lastSupportedBossHp, bossMaxHp, addsAlive, pos: v.pos });
       }
-      if (outcome === 'boss-killed') break;
-      if (bot.isDead || bot.hasHealth.hp <= 0) { outcome = 'bot-died'; break; }
+      if (terminal !== null) { outcome = terminal; break; }
       world.pendingDeaths = [];
     }
     metrics.close(elapsed, outcome);
 
+    const terminalHp = resolveTerminalBossHp(terminal, lastSupportedBossHp);
     const result = {
       cell: cell.id, seed, outcome, elapsedMs: elapsed, windowMs,
       /** Terminal outcome FIRST; every number below is read in its light. */
-      bossKilled: outcome === 'boss-killed',
+      bossKilled: isVictory(terminal),
+      /**
+       * The authoritative evidence, carried so a victory can never rest on the
+       * boss merely being absent. `null` here with `bossKilled` true is a defect.
+       */
+      bossKillEvidence,
+      playerDeathEvidence,
+      encounterResetEvidence: resetEvidence,
       killedAtMs,
       bossMaxHp,
-      bossHpRemaining: bossHp,
-      bossHpFractionRemoved: 1 - bossHp / bossMaxHp,
+      /** Last SUPPORTED reading. Null means no reading could be supported. */
+      bossHpRemaining: terminalHp.hp,
+      terminalBossHpSupported: terminalHp.supported,
+      bossHpFractionRemoved: terminalHp.hp === null ? null : 1 - terminalHp.hp / bossMaxHp,
       /** Phase evidence. Absent casts are not proof of absent mechanics. */
       crossedHalfAtMs,
       castsStarted: casts.length,
       castLabels: [...new Set(casts.map((c) => c.label))],
+      /** Post-terminal replacement guardians are excluded; see `countsTowardAdds`. */
       maxAddsAlive,
       /** Add pressure attributed to the adds, never folded into the boss's own output. */
       damageFromBoss: bossDamage,

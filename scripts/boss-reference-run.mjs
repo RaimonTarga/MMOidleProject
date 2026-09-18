@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {night5ChildArgs} from './night5-child-args.mjs';
+import {assertBossRecordsConsistent} from './boss-verify.mjs';
 const args=Object.fromEntries(process.argv.slice(2).map(s=>{const i=s.indexOf('=');return [s.slice(2,i),s.slice(i+1)];}));
 const source=resolve(fileURLToPath(new URL('..',import.meta.url)));
 assert(args.out&&args.revision&&args.tree&&args.definitions&&args.hitboxes&&args['hitbox-hash'],'All identity inputs required');
@@ -73,13 +74,22 @@ else if(existsSync(join(out,'index.json'))){
   assert.deepEqual(readys[0].declaredPackage.skillPath,readys[1].declaredPackage.skillPath,
    'cases ran different skill paths');
 
+  // Cross-field verification. A record that contradicts itself must NOT receive an
+  // unqualified pass: that is exactly how a wipe was once recorded as a 100%-removed
+  // victory with twelve adds on a boss that summons nothing.
+  assertBossRecordsConsistent(index,{bossSummonsNothing:true,expectedBossMaxHp:3750});
+
   const row=id=>index.find(r=>r.cell===id);
   const summary={verified:true,observations:index.length,
    a:{outcome:row(CASES[0]).outcome,killed:row(CASES[0]).bossKilled,
-      elapsedMs:row(CASES[0]).elapsedMs,removed:row(CASES[0]).bossHpFractionRemoved,
+      killEvidence:row(CASES[0]).bossKillEvidence!==null,
+      elapsedMs:row(CASES[0]).elapsedMs,bossHpRemaining:row(CASES[0]).bossHpRemaining,
+      removed:row(CASES[0]).bossHpFractionRemoved,maxAddsAlive:row(CASES[0]).maxAddsAlive,
       minHpFraction:row(CASES[0]).minHpFraction},
    b:{outcome:row(CASES[1]).outcome,killed:row(CASES[1]).bossKilled,
-      elapsedMs:row(CASES[1]).elapsedMs,removed:row(CASES[1]).bossHpFractionRemoved,
+      killEvidence:row(CASES[1]).bossKillEvidence!==null,
+      elapsedMs:row(CASES[1]).elapsedMs,bossHpRemaining:row(CASES[1]).bossHpRemaining,
+      removed:row(CASES[1]).bossHpFractionRemoved,maxAddsAlive:row(CASES[1]).maxAddsAlive,
       minHpFraction:row(CASES[1]).minHpFraction}};
   writeFileSync(join(out,'verification.json'),JSON.stringify(summary,null,2));
   state.artifactVerified=true;

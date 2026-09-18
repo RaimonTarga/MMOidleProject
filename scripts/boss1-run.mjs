@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {night5ChildArgs} from './night5-child-args.mjs';
+import {assertBossRecordsConsistent} from './boss-verify.mjs';
 const args=Object.fromEntries(process.argv.slice(2).map(s=>{const i=s.indexOf('=');return [s.slice(2,i),s.slice(i+1)];}));
 const source=resolve(fileURLToPath(new URL('..',import.meta.url)));
 assert(args.out&&args.revision&&args.tree&&args.definitions&&args.hitboxes&&args['hitbox-hash'],'All identity inputs required');
@@ -66,10 +67,17 @@ else if(existsSync(join(out,'index.json'))){
    }
    assert(r.bossMaxHp>0,`${r.cell}: no boss was met`);
   }
+  // Cross-field verification: outcome, kill evidence, terminal HP and add counts
+  // must agree, or the batch fails rather than passing with a contradiction in it.
+  assertBossRecordsConsistent(index,{bossSummonsNothing:false,expectedBossMaxHp:19499});
+
   const wins=index.filter(r=>r.bossKilled).length;
   const summary={verified:true,observations:index.length,
    wins,deaths:index.filter(r=>r.outcome==='bot-died').length,
    capped:index.filter(r=>r.outcome==='capped').length,
+   reset:index.filter(r=>r.outcome==='encounter-reset').length,
+   vanished:index.filter(r=>r.outcome==='boss-vanished-no-kill').length,
+   ambiguous:index.filter(r=>r.outcome==='simultaneous-terminal').length,
    invalid:index.filter(r=>r.outcome==='wall-ceiling').length};
   writeFileSync(join(out,'verification.json'),JSON.stringify(summary,null,2));
   state.artifactVerified=true;
