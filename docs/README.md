@@ -337,9 +337,7 @@ Generated balance packets (`reports/dps-*`, `ehp-*`, `mob-*`,
 - [Durability28 report](briefs/bot-balance-durability28-report.md) — completed the verified synthetic stance screen with READY/geometry, per-seed body medians, episode/death/ward audits, and no production adoption.
 - [Durability29 operator packet](briefs/bot-balance-durability29-operator-packet.md) — executed once; paired Mountain T2/T4 attack-relief comparison, 48 cells / 144 observations.
 - [Durability29 report](briefs/bot-balance-durability29-report.md) — completed the verified Mountain attack-only screen with READY parity, per-seed body medians, ward/death/wall audit, and no production adoption.
-`briefs/bot-balance-durability29-operator-packet.md` — T2/T4 Mountain attack-only pressure comparison on retained durability (executed once; audited synthetic evidence in the Durability29 report).
 - [Durability30 operator packet](briefs/bot-balance-durability30-operator-packet.md) — executed once; 72 paired Trench Stalker HP observations and 12 unchanged Jungle CPU-profiled diagnostic replays.
 - [Durability30 report](briefs/bot-balance-durability30-report.md) — completed the verified Trench pacing/attrition audit and Durability23 Jungle CPU comparison; Stalker scalar rejected for universal adoption, synthetic evidence only.
-
 - [Durability31 operator packet](briefs/bot-balance-durability31-operator-packet.md) — executed once; 12 unchanged Jungle replays with observation-scoped CPU profiles and navigation counters.
 - [Durability31 report](briefs/bot-balance-durability31-report.md) — completed the verified navigation diagnosis; repeated null paths originate inside status-only Jungle slow bushes, synthetic diagnostic evidence only, no repair implemented or adopted.

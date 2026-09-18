@@ -1,8 +1,56 @@
 # Bot balance campaign state
 
-Updated: 2026-09-17. Owner: Astra (planning and interpretation); operators: Luna.
+Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision: Durability30 reviewed; Durability31 Jungle diagnosis prepared
+## Current decision: Durability31 reviewed; one navigation repair is the next step
+
+[Durability31](bot-balance-durability31-report.md) executed once on 2026-09-17 at
+frozen d6643bde and completed all12 Jungle observations. READY files are
+byte-identical to their Durability30 counterparts and the event/sample streams are
+exact prefixes, so the diagnostic wrapper changed no gameplay. Six observations
+reached the120s window and six hit the process wall ceiling. Zero player deaths.
+
+The six wall cutoffs are a navigation runtime artifact, NOT Jungle balance
+evidence. A player standing inside a status-only Jungle slow bush
+(player-targeted `statusWhileInside`) has every hazard-aware request rejected at
+the initial padded-segment check, because hazardAvoidanceShapesForMover includes
+status shapes as avoidance geometry while the bush is not a block shape.
+Auto-target then repeats that rejection across candidates through both its primary
+and fallback reachability branches:94.1-99.6% null paths on cutoff rows, up to
+17417 path calls, fixed position, no selected target/motion/path. A read-only
+frozen probe returned null with avoidHazards=true and a direct one-point path with
+avoidHazards=false for the same exact keys. Ruled against: broken collider or
+generally unreachable destination, costly successful routes (normal rows show
+0.15-4.6 path ms per simulated second and zero nulls), target churn, and GC (~7.89%
+of sampled time). Do not read the six cutoffs as Jungle survival or pacing data.
+
+Next step is exactly one targeted repair, not another diagnostic grid: extend the
+existing dynamic hazard escape owner (`server/src/systems/combat/ai/dynamicHazardAvoidance.ts`)
+to also claim escape for a live player-targeted statusWhileInside feature, using a
+short physically standable escape leg at avoidHazards=false before ordinary
+hazard-aware targeting resumes. The five regression invariants in the Durability31
+report are binding, including the new inside-a-slow-bush regression case. No cache
+or debounce workaround. The repair is NOT implemented and no Durability32 packet is
+frozen.
+
+After the repair lands and its regression is green: consolidated current-source
+reconciliation and adoption review of the retained packages (T4 Mountain candidate,
+Desert controller HP with situational Defensive Striker, Stalker16800 alongside
+Leviathan17640/Serpent16800), then the bounded shallow all-mob playtest gate. T2
+Mountain Striker pressure and Jungle durability stay explicit open exceptions, not
+silently counted as passed. Boss/progression/x1 economy readiness and broad
+class/ability polish remain separate.
+
+Campaign docs are no longer uncommitted: Durability8-31 and Night4/Night5 reports,
+plus the combat and death-attribution fixes those runs surfaced, are on `develop`
+as `54a54a82`. Durability31 evidence is synthetic (economyEligible=false); it is
+diagnostic evidence about the frozen simulation, not live-play or economy
+certification.
+
+## Previous decision: Durability30 reviewed; Durability31 Jungle diagnosis prepared
+
+Superseded in part: this section was written before Durability31 ran. Its "NOT
+launched" status no longer holds; see the current decision above.
 
 Durability30: Trench72/72 complete600s windows,zero deaths; Jungle6/12 complete
 and6/12 wall cutoffs. Hold Stalker16800 rather than adopt21000: the candidate
