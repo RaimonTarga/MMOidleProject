@@ -9,6 +9,7 @@ import { refillBarrier } from '../../src/systems/defense/barrier/barrier';
 import { setAbilityLoadout } from '../../src/systems/player/economy/abilityCrafting';
 import type { World } from '../../src/world/World';
 import type { BuildSpec } from './types';
+import type { AttunedAbilities } from '@mmo-idle/shared';
 
 export const SURVEY_CLASSES = [
   { name: 'striker', prefix: 'cadence', melee: true, weapons: ['flash-rapier','gale-needle','volcanic-cinderlash'] },
@@ -42,7 +43,26 @@ export interface SurveyCell { id: string; className: string; tier: number; role:
    * `ensureDungeon` state reachable, and fighting a dungeon node as though it
    * were open is precisely how `--mode boss` ended up measuring only guards.
    */
-  isDungeon?: boolean; }
+  isDungeon?: boolean;
+  /**
+   * Explicit ability loadout, replacing the derived technique/guard defaults.
+   *
+   * The defaults express ONE technique plus a fixed guard pair, which cannot state
+   * a historical package that ran a different technique and a different guard pair.
+   * When set, it is used verbatim and still passes through `setAbilityLoadout` and
+   * `validateBuild`, so an illegal RP total fails exactly as before.
+   */
+  abilities?: AttunedAbilities;
+  /**
+   * Explicit rune rules, replacing the derived five-rule policy. An EMPTY array is
+   * meaningful and is honoured: it means the package runs no behaviour rules at all,
+   * which is what the legacy bench bot actually does. `undefined` keeps the default.
+   *
+   * Rules cost RP alongside abilities and the stance, so a cell that sets this must
+   * set `abilities` to a package the combined budget actually admits -- do not pair
+   * explicit rules with a 30-RP ability set and expect it to pass.
+   */
+  runeRules?: { conditionId: string; actionId: string }[]; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
   ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
     const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
@@ -88,7 +108,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   p.equippedStances = { default: stance };
   p.activeStance = stance;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
-  const rules = [
+  const rules = cell.runeRules ?? [
     ...(cell.focusElites ? [{conditionId:'in-combat',actionId:'focus-elites'}] : []),
     { conditionId:'always', actionId:'auto-path-enemy' },
     { conditionId:'inside-telegraph', actionId:'step-back' },
@@ -102,13 +122,20 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   }
   p.runesEquipped = rules;
   const techniques = [...(cell.tier >= 3 ? ['frenzy'] : []), cell.technique ?? 'sweep'];
-  const abilities = { techniques, guards: cell.guards ?? (cell.tier===1 ? ['second-wind'] : ['second-wind','cleanse']) };
+  const abilities = cell.abilities ?? { techniques, guards: cell.guards ?? (cell.tier===1 ? ['second-wind'] : ['second-wind','cleanse']) };
   assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
   const view = composePlayerView(bot)!;
   assert.deepEqual(validateBuild({abilities, runeRules:rules, stances:{attuned:stance?[stance]:[],default:stance},rites:[]},view), [], cell.id);
-  assert.equal(view.selectedSubVariant, cell.tier >= 2 ? 'balanced' : null);
+  // Derived from the cell's OWN skill path rather than hardcoded to 'balanced'.
+  // The assertion's intent is "the build that was declared is the build that
+  // materialised"; every existing cell declares `-balanced`, so this is identical
+  // for them, while a historical package on `-heavy` can now be stated at all.
+  // The T3 suffix nodes (`...-t3-a`) and range nodes (`-range-mid`) do not match.
+  const declaredVariant = cell.build.skillPath
+    .find(id => /-(light|balanced|heavy)$/.test(id))?.split('-').pop() ?? null;
+  assert.equal(view.selectedSubVariant, cell.tier >= 2 ? declaredVariant : null);
   assert.equal(view.selectedRange,cell.tier>=3?`${c.prefix}-range-${c.melee?'close':'mid'}`:null);
   return {bot, view};
 }

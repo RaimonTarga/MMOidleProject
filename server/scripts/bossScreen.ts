@@ -41,7 +41,10 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { MONSTER_DATABASE, NODE_BIOMES, composePlayerView } from '@mmo-idle/shared';
+import {
+  MONSTER_DATABASE, NODE_BIOMES, composePlayerView,
+  runicPointLoadoutCost, runeBudgetForGlobalMastery,
+} from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
 import { prepareSurveyBot } from '../bench/balance/ttkSurveySpec';
@@ -57,6 +60,13 @@ import {
   BOSS1_SEEDS,
   assertBoss1Definitions,
 } from '../bench/balance/boss1Spec';
+import {
+  BOSSREF_BLOCKS,
+  BOSSREF_BOSS_ID,
+  BOSSREF_CAP_MS,
+  BOSSREF_SEEDS,
+  assertBossReferenceDefinitions,
+} from '../bench/balance/bossReferenceSpec';
 import type { Night5Cell } from '../bench/balance/night5Spec';
 import type { World } from '../src/world/World';
 
@@ -72,16 +82,46 @@ const trial = args.trial ?? 'boss1';
 const mode = (args.mode ?? 'run') as 'qualify' | 'pilot' | 'run';
 const out = resolve(args.out!);
 assert(args.out && args.hitboxes, '--out and --hitboxes are required');
-assert(trial === 'boss1', `unknown trial ${trial}`);
 
-assertBoss1Definitions();
+/**
+ * One entry per frozen trial. Each owns its boss, blocks, seeds and cap, so adding
+ * a trial never reinterprets an existing one -- `boss1` behaves exactly as it did
+ * when its packet was frozen.
+ *
+ * `escorts` is the adoption-changed species a boss summons. Apex Timberclaw summons
+ * nothing, so its entry is empty and the escort receipt rule simply does not apply
+ * to it; that is recorded rather than faked.
+ */
+const TRIALS: Record<string, {
+  bossId: string; defaultBlock: string; capMs: number; seeds: readonly number[];
+  blocks: Record<string, { cells: Night5Cell[]; durationMs: number; pilotIds: string[] }>;
+  escorts: Record<string, { hp: number; attack: number }>;
+  assertDefinitions: () => void;
+}> = {
+  boss1: {
+    bossId: BOSS1_BOSS_ID, defaultBlock: 'sovereign', capMs: BOSS1_CAP_MS,
+    seeds: BOSS1_SEEDS, blocks: BOSS1_BLOCKS, escorts: BOSS1_ESCORTS,
+    assertDefinitions: assertBoss1Definitions,
+  },
+  bossref: {
+    bossId: BOSSREF_BOSS_ID, defaultBlock: 'reference', capMs: BOSSREF_CAP_MS,
+    seeds: BOSSREF_SEEDS, blocks: BOSSREF_BLOCKS, escorts: {},
+    assertDefinitions: assertBossReferenceDefinitions,
+  },
+};
 
-const block = BOSS1_BLOCKS[args.block ?? 'sovereign'];
-assert(block, `unknown block ${args.block}`);
+const spec = TRIALS[trial];
+assert(spec, `unknown trial ${trial}`);
+spec.assertDefinitions();
+
+const blockName = args.block ?? spec.defaultBlock;
+const block = spec.blocks[blockName];
+assert(block, `unknown block ${blockName}`);
 const cells: Night5Cell[] = mode === 'pilot'
   ? block.cells.filter((c) => block.pilotIds.includes(c.id))
   : block.cells;
-const seeds = mode === 'run' ? [...BOSS1_SEEDS] : [BOSS1_SEEDS[0]];
+assert(cells.length > 0, `${trial}/${blockName}: mode ${mode} selected no cells`);
+const seeds = mode === 'run' ? [...spec.seeds] : [spec.seeds[0]!];
 
 hydrateHitboxCacheFromArtifact(JSON.parse(readFileSync(args.hitboxes, 'utf8')));
 
@@ -92,7 +132,7 @@ const manifest = {
   schema: 1,
   mode,
   trial,
-  block: args.block ?? 'sovereign',
+  block: blockName,
   revision,
   definitionsHash: checkpointDefinitionsHash(),
   hitboxesSha256: sha(readFileSync(args.hitboxes)),
@@ -100,9 +140,9 @@ const manifest = {
   economyEligible: false,
   dtMs: 100,
   // A pilot is a short proof the encounter runs; it is never a measurement.
-  durationMs: mode === 'pilot' ? 60000 : BOSS1_CAP_MS,
+  durationMs: mode === 'pilot' ? 60000 : spec.capMs,
   sampleEveryMs: 1000,
-  bossId: BOSS1_BOSS_ID,
+  bossId: spec.bossId,
   /** The guard is stripped by design; access is a separate question this screen does not answer. */
   guardianAccess: 'not-measured-guard-stripped',
   seeds,
@@ -142,7 +182,7 @@ const TYPE_BY_NAME = new Map<string, string>(
 
 const findBoss = (world: World, nodeId: string) => {
   for (const m of world.monsterEntitiesInNode(nodeId)) {
-    if (m.isMonster.monsterTypeId === BOSS1_BOSS_ID) return m;
+    if (m.isMonster.monsterTypeId === spec.bossId) return m;
   }
   return null;
 };
@@ -186,9 +226,79 @@ function run(cell: Night5Cell, seed: number) {
       cell: cell.id,
       seed,
       synthetic: true,
-      bossId: BOSS1_BOSS_ID,
+      bossId: spec.bossId,
       guardianAccess: 'not-measured-guard-stripped',
       view,
+      /**
+       * The package as DECLARED, recorded before the fight so a case can never be
+       * read as something it was not run as. `runeRules: []` is a real statement
+       * (the legacy package equips none), not a missing field.
+       */
+      declaredPackage: {
+        treatment: cell.treatment,
+        classRoot: cell.build.classRoot,
+        skillPath: [...cell.build.skillPath],
+        gearItemIds: { ...cell.build.gearItemIds },
+        upgradeLevel: cell.upgradeLevel ?? 5,
+        stance: cell.stance ?? null,
+        abilities: cell.abilities ?? null,
+        runeRules: cell.runeRules ?? null,
+      },
+      /**
+       * The package as it actually MATERIALISED on the bot, read back from the
+       * entity. A divergence between this and `declaredPackage` is the run being
+       * something other than what the packet says.
+       */
+      appliedPackage: {
+        selectedSubVariant: view.selectedSubVariant,
+        selectedRange: view.selectedRange,
+        activeStance: view.activeStance,
+        attunedStances: [...view.attunedStances ?? []],
+        attunedAbilities: structuredClone(view.attunedAbilities),
+        runesEquipped: structuredClone(view.runesEquipped),
+        equipment: { ...view.equipment },
+        itemUpgrades: { ...view.itemUpgrades },
+        globalMastery: view.globalMastery,
+        biomeLevel: { ...view.biomeLevel },
+      },
+      /** RP is the budget all three of stance, abilities and rules draw on. */
+      runicPoints: {
+        budget: runeBudgetForGlobalMastery(view.globalMastery),
+        cost: runicPointLoadoutCost({
+          rules: (cell.runeRules ?? view.runesEquipped) as never,
+          abilities: cell.abilities ?? structuredClone(view.attunedAbilities),
+          stances: view.activeStance ? [view.activeStance] : [],
+          rites: [...view.equippedRites ?? []],
+        }),
+      },
+      /** Effective stats at the starting bell, after every layer has resolved. */
+      effectiveStats: {
+        maxHp: view.maxHp, attack: view.attack, plating: view.plating,
+        damageReduction: view.damageReduction, dodgeRate: view.dodgeRate,
+        evadeMitigation: view.evadeMitigation, recovery: view.recovery,
+        speed: view.speed, attackRange: view.attackRange,
+        attackCooldown: view.attackCooldown,
+        finalDamageDealtMult: view.finalDamageDealtMult,
+        finalDamageTakenMult: view.finalDamageTakenMult,
+        barrier: view.barrier, barrierMax: view.barrierMax,
+      },
+      /** Archetype and wallet resources at the starting bell. */
+      resources: {
+        energyCount: view.energyCount, energyMax: view.energyMax,
+        ammoCount: view.ammoCount, ammoMax: view.ammoMax,
+        cadenceCount: view.cadenceCount, cadenceThreshold: view.cadenceThreshold,
+        essences: { ...view.essences }, catalysts: { ...view.catalysts },
+      },
+      /** How the encounter was initialized, stated rather than assumed. */
+      encounterSetup: {
+        nodeId: cell.nodeId,
+        isDungeon: true,
+        guardHandling: 'stripped-before-spawn',
+        bossWake: 'forced-immediate',
+        capMs: manifest.durationMs,
+        seed,
+        nonBossBodiesAtStart: initial.filter((m) => m.type !== spec.bossId).length,
+      },
       /** The boss as it actually stands at wake-up, after any node modifier. */
       bossRuntime: {
         maxHp: boss.hasHealth.maxHp,
@@ -196,19 +306,19 @@ function run(cell: Night5Cell, seed: number) {
         plating: boss.mitigatesDamage.plating,
         dr: boss.mitigatesDamage.damageReduction,
       },
-      bossAuthored: MONSTER_DATABASE.get(BOSS1_BOSS_ID)!.stats,
+      bossAuthored: MONSTER_DATABASE.get(spec.bossId)!.stats,
       /**
        * The receipt this screen exists for: the three adoption-changed escorts at
        * their AUTHORED values, so a boss row can be checked against the ordinary
        * Graveyard T4 family it shares them with.
        */
       escortsAuthored: Object.fromEntries(
-        Object.keys(BOSS1_ESCORTS).map((id) => [id, { ...MONSTER_DATABASE.get(id)!.stats }]),
+        Object.keys(spec.escorts).map((id) => [id, { ...MONSTER_DATABASE.get(id)!.stats }]),
       ),
-      escortsDeclared: BOSS1_ESCORTS,
+      escortsDeclared: spec.escorts,
       initialRoster: initial,
       initialRosterHash: sha(JSON.stringify(initial)),
-      /** Boss1 installs nothing; a non-empty treatment would mean an overlay came back. */
+      /** Both trials install nothing; a non-empty treatment would mean an overlay came back. */
       hpTreatment: [] as unknown[],
     };
     if (mode === 'qualify') return ready;
@@ -281,7 +391,7 @@ function run(cell: Night5Cell, seed: number) {
           const type = typeById.get(srcId)
             ?? world.getMonsterEntity(srcId)?.isMonster.monsterTypeId
             ?? (name ? TYPE_BY_NAME.get(name) ?? name : 'unknown');
-          if (type === BOSS1_BOSS_ID) bossDamage += amount;
+          if (type === spec.bossId) bossDamage += amount;
           else addDamage.set(type, (addDamage.get(type) ?? 0) + amount);
         }
         log.push({ atMs: elapsed, event: e });
@@ -301,7 +411,7 @@ function run(cell: Night5Cell, seed: number) {
       const live = findBoss(world, cell.nodeId);
       let addsAlive = 0;
       for (const m of world.monsterEntitiesInNode(cell.nodeId)) {
-        if (m.isMonster.monsterTypeId !== BOSS1_BOSS_ID) addsAlive++;
+        if (m.isMonster.monsterTypeId !== spec.bossId) addsAlive++;
       }
       maxAddsAlive = Math.max(maxAddsAlive, addsAlive);
       if (live) {
