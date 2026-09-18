@@ -44,6 +44,28 @@ receipts (so the mandatory escort-identity rule cannot be met), and the forbidde
 cross-product. See
 [the D37 decision note](bot-balance-d37-decision-and-boss-screen-blocker-2026-09-18.md).
 
+[Boss1 operator packet](bot-balance-boss1-operator-packet.md): **FROZEN, NOT LAUNCHED.** ONE boss,
+six tier-legal roots, two declared seeds = **12 attempts**, and it INSTALLS NOTHING. The earlier
+slot is withdrawn on the evidence above, not deferred by preference. Definitions `17aa46cb...` and
+hitbox `08bcc556...` are frozen and machine-checked; revision and tree are resolved mechanically
+from the tip, so there are NO launch-time placeholders. The screen runs on a new
+`server/scripts/bossScreen.ts`, because `bossExam.ts` consumes no seed, emits no per-observation
+receipt (so the escort rule is unsatisfiable on it) and builds its bot without runes. Preflight is
+green: the pilot killed the Sovereign in 37.6 s, crossed 50% at 24.2 s and fired Mass Resurrection,
+with add pressure attributed per species.
+
+**NEXT MAIN WORKSTREAM: the early-tier boss wall.** T1 0/30 (documented 2026-08-23), T2 0/126
+(measured 2026-09-18), T3 ragged, T4 comfortable. The documented top blocker in
+`docs/tier-balance-current-state.md` §8 -- the reference player broken by the five 2026-08-22
+affinity / Barrier / Recovery / item / ability commits -- is still unresolved, and is now BOUNDED:
+the T4 positive control shows the harness wins boss fights when the player is strong enough, so
+0/N at T1-T2 measures the reference player at those tiers rather than a useless harness. Note that
+the Barrier/Ward and Recovery reworks both shipped SYSTEMS ONLY with item data deliberately
+untouched; that rebalance was already named as the next task and has not happened.
+
+The adoption's red test is repaired forward in `dd8cae23` (`t4ProgressionEconomy`); D37 was NOT
+rerun, and the definitions hash is unchanged by that commit.
+
 ## Superseded decision: the mob pass is INTEGRATED into source; Durability37 regression prepared; the first boss packet drafted
 
 Durability36 ran once at `0e28217b`: 72/72 observations in 4m50s, both blocks verified, navigation
