@@ -41,7 +41,7 @@ test asserts no T3 content and no Jungle node can enter either slot.
 
 | Item | Value |
 |---|---|
-| Harness commit | `5bbed9d248b390e52566d63adb518b1a65c2a1ce` |
+| Harness commit | `b5d92c93` (repair `e9dbdf56`, restoration `5bbed9d2`) |
 | **Definitions hash** | **`17aa46cb9002677f634a5933e0f83850761c9e8a2c842a5f7033202b8f629d8f`** |
 | **Hitbox hash** | **`08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83`** |
 | Hitbox artifact | `C:/Users/osaif/AppData/Local/mmo-idle/validation/ttk-survey/hitboxes.json` |

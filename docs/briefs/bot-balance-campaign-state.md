@@ -54,6 +54,35 @@ usable reference FOR THIS BOSS AND BUILD, not harness correctness and not a bala
 
 **Main milestone: resume the earlier/later boss numerical screen.** The mob campaign stays closed.
 
+**RESULT 2026-09-19 — the reference question is ANSWERED, and it exposed a runner defect.**
+Case A (the historical V1i Spirit package) killed Apex Timberclaw at **30,300 ms** with
+authoritative kill evidence and 24.9% HP to spare. Case B (the legacy benchmark package, same skill
+path) **died at 12,900 ms** with the boss still on 2,521 of 3,750 HP. **Case A is retained as the
+current Spirit/Timberclaw reference** — for this boss and this build, not harness correctness and
+not a balance result. A won and B lost, so the explanation stops at PACKAGE level; no
+component-removal experiments were run and none are proposed.
+
+**RUNNER DEFECT, FOUND AND FIXED.** `bossScreen.ts` read the boss's ABSENCE as a kill, forced
+terminal HP to zero, and tested that BEFORE player death. `resetDungeon(..., "node_wipe")` removes
+the boss and respawns the guard in the same tick, so B was first recorded as a 100%-removed victory
+with twelve phantom adds on a boss that summons nothing. The raw log always said otherwise: zero
+kill events, a `player-death` at 12,900 ms by melee from `apex-timberclaw`, and the message "The
+guard reforms." A victory now requires boss-specific authoritative kill evidence; player death is
+evaluated alongside, not after; disappearance, reset and simultaneous terminals are distinct
+outcomes; terminal HP is the last SUPPORTED reading; and post-terminal replacement guardians are
+excluded from add statistics. Verification now fails a self-contradictory record instead of passing
+it, and re-checking the ORIGINAL records surfaces all four contradictions.
+[Repair record](bot-balance-boss-runner-repair-2026-09-19.md). The originals were NOT overwritten;
+a separate corrected re-read sits beside them, and the end-to-end rerun was limited to the same two
+cases and is repair evidence, not balance evidence.
+
+**Boss1 FINALIZED 2026-09-19 as the earlier/later screen.** `apex-timberclaw` is RESTORED as the
+earlier slot on **explicit legal reference builds** (the corroborated shape: defensive stance,
+Expose Weakness, Second Wind + Brace, five ordered rules; only the Spirit cell is historically
+corroborated, the other five are constructions). The Sovereign preparation is PRESERVED untouched.
+6 + 12 = **18 fights**, both blocks verified independently. The **T3 Jungle exception stays
+separate** and is asserted out of both slots.
+
 **BOSS SCREEN BLOCKED: the difficulty curve is inverted.** Measured today — **every T2 boss is
 0 wins / 126 attempts**, with `apex-timberclaw` among the *cheapest* of the seven; T3 is ragged
 (0/54 swamp to 37/54 jungle); and **T4 `charnel-crown-sovereign` wins 12/12** with qualified
