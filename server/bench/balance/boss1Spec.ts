@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
-import { DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
+import {
+  DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
+  runicPointLoadoutCost, runeBudgetForGlobalMastery,
+} from '@mmo-idle/shared';
 import { NIGHT5_BLOCKS, type Night5Cell } from './night5Spec';
+import { SURVEY_CLASSES } from './ttkSurveySpec';
 
 /**
  * Boss1 — the first boss numerical screen.
@@ -96,7 +100,80 @@ export const BOSS1_CELLS: Night5Cell[] = (NIGHT5_BLOCKS.t4a!.cells as Night5Cell
     };
   });
 
+// ── Earlier-tier slot: Apex Timberclaw, RESTORED on an explicit reference build.
+//
+// It was withdrawn while its benchmark setup was unexplained. That is now closed:
+// the two-case reference check established that the failure belonged to the legacy
+// PACKAGE, not the boss. Case A -- the historical V1i Spirit package -- killed it at
+// 30,300 ms with authoritative kill evidence and 24.9% HP to spare, while Case B,
+// the legacy package on the same skill path, died at 12,900 ms with 32.8% of the
+// boss removed.
+//
+// So this slot uses EXPLICIT legal reference builds rather than the scorer defaults
+// that produced Case B. The package SHAPE is the corroborated one: defensive stance,
+// Expose Weakness, Second Wind + Brace, and the five ordered behaviour rules, at
+// 28 of 30 RP.
+//
+// ONLY the Spirit cell is historically corroborated. The other five roots are the
+// same shape carried onto each root's tier-legal weapon; they are a reference
+// CONSTRUCTION, not evidence, and the report must say so.
+
+/** T2 weapons per root, from the survey ladder. Spirit's is the historical axe. */
+const TIMBERCLAW_WEAPON: Record<string, string> = {
+  striker: 'gale-needle', squire: 'quake-hammer', apprentice: 'ruinous-axe',
+  slinger: 'jungle-stinger-rapier', conduit: 'ruinous-axe', spirit: 'ruinous-axe',
+};
+/** Melee roots chase; ranged roots orbit. Step Back precedes either, as in the route. */
+const TIMBERCLAW_MELEE = new Set(['striker', 'squire']);
+/** The corroborated kit. Deliberately mixed-biome -- it is what was actually worn. */
+export const BOSS1_TIMBERCLAW_KIT = {
+  armor: 'cave-vest-t2', recovery: 'mountain-charm-t2',
+  mobility: 'plains-boots-t2', core: 'core-tempered',
+} as const;
+export const BOSS1_TIMBERCLAW_BOSS_ID = 'apex-timberclaw';
+export const BOSS1_TIMBERCLAW_NODE_ID = 'node-t2-forest-dungeon';
+/** Seeds are inert for this boss: no adds, fixed spawn, deterministic evasion. */
+export const BOSS1_TIMBERCLAW_SEEDS = [96011] as const;
+export const BOSS1_TIMBERCLAW_CAP_MS = 300000;
+
+const timberclawCells: Night5Cell[] = SURVEY_CLASSES.map((c) => {
+  const id = `boss1-timberclaw-${c.name}`;
+  return {
+    id,
+    nodeId: BOSS1_TIMBERCLAW_NODE_ID,
+    tier: 2,
+    role: 'forest',
+    className: c.name,
+    alternate: false,
+    isDungeon: true,
+    treatment: c.name === 'spirit' ? 'reference-corroborated' : 'reference-constructed',
+    targetTypes: [BOSS1_TIMBERCLAW_BOSS_ID],
+    stance: 'defensive-stance',
+    abilities: { techniques: ['expose-weakness'], guards: ['second-wind', 'brace'] },
+    runeRules: [
+      { conditionId: 'always', actionId: 'auto-path-enemy' },
+      { conditionId: 'inside-telegraph', actionId: 'step-back' },
+      { conditionId: 'in-combat', actionId: TIMBERCLAW_MELEE.has(c.name) ? 'chase-enemy' : 'orbit' },
+      { conditionId: 'always', actionId: 'avoid-hazards' },
+      { conditionId: 'always', actionId: 'wait-for-regen' },
+    ],
+    upgradeLevel: 5,
+    build: {
+      id, classRoot: `${c.prefix}-root`, contentTier: 2, playerTier: 2, gearTier: 2,
+      skillPath: [`${c.prefix}-root`, `${c.prefix}-heavy`],
+      gearItemIds: { weapon: TIMBERCLAW_WEAPON[c.name]!, ...BOSS1_TIMBERCLAW_KIT },
+    },
+  };
+});
+
 export const BOSS1_BLOCKS: Record<string, { cells: Night5Cell[]; durationMs: number; pilotIds: string[] }> = {
+  timberclaw: {
+    cells: timberclawCells,
+    durationMs: BOSS1_TIMBERCLAW_CAP_MS,
+    // No pilot fight: the reference check already proved this encounter runs, and a
+    // pilot would be an undeclared seventh observation of the same boss.
+    pilotIds: [],
+  },
   sovereign: {
     cells: BOSS1_CELLS,
     durationMs: BOSS1_CAP_MS,
@@ -152,6 +229,38 @@ export function assertBoss1Definitions(): void {
   }
   assert.deepEqual([...summoned].sort(), Object.keys(BOSS1_ESCORTS).sort(),
     'the script\'s spawn-adds species must be exactly the declared escorts');
+
+  // ── Earlier slot: Apex Timberclaw, on explicit reference builds.
+  const tc = MONSTER_DATABASE.get(BOSS1_TIMBERCLAW_BOSS_ID);
+  assert(tc?.isBoss, `${BOSS1_TIMBERCLAW_BOSS_ID} missing or not a boss`);
+  assert.equal(tc.stats.hp, 3750, 'timberclaw hp drift');
+  assert.equal(tc.stats.attack, 44, 'timberclaw attack drift');
+  const tcDef = [...DUNGEON_DEFS.values()].find((d) => d.nodeId === BOSS1_TIMBERCLAW_NODE_ID);
+  assert(tcDef && tcDef.boss.bossId === BOSS1_TIMBERCLAW_BOSS_ID, 'timberclaw dungeon drift');
+  const tcCells = BOSS1_BLOCKS['timberclaw']!.cells;
+  assert.equal(tcCells.length, 6, `timberclaw: six roots, got ${tcCells.length}`);
+  assert.equal(new Set(tcCells.map((c) => c.className)).size, 6, 'timberclaw roots must be distinct');
+  const corroborated = tcCells.filter((c) => c.treatment === 'reference-corroborated');
+  assert.equal(corroborated.length, 1, 'exactly one cell is historically corroborated');
+  assert.equal(corroborated[0]!.className, 'spirit', 'the corroborated cell is the Spirit reference');
+  for (const c of tcCells) {
+    assert.equal(c.isDungeon, true, `${c.id}: must target the dungeon encounter`);
+    assert.equal(c.stance, 'defensive-stance', `${c.id}: reference shape is the defensive stance`);
+    assert.deepEqual(c.abilities, { techniques: ['expose-weakness'], guards: ['second-wind', 'brace'] },
+      `${c.id}: reference ability shape drift`);
+    assert.equal(c.runeRules?.length, 5, `${c.id}: reference carries five behaviour rules`);
+    assert.equal(c.upgradeLevel, 5, `${c.id}: upgrade level drift`);
+    const cost = runicPointLoadoutCost({
+      rules: (c.runeRules ?? []) as never, abilities: c.abilities!,
+      stances: c.stance ? [c.stance] : [], rites: [],
+    });
+    assert(cost <= runeBudgetForGlobalMastery(72),
+      `${c.id}: reference package costs ${cost} RP against a 30 budget`);
+  }
+  // The Spirit cell must still BE the corroborated historical package.
+  const spiritCell = corroborated[0]!;
+  assert.equal(spiritCell.build.gearItemIds.weapon, 'ruinous-axe', 'the corroborated weapon is the axe');
+  assert.equal(spiritCell.build.gearItemIds.armor, 'cave-vest-t2', 'corroborated kit drift');
 
   assert.equal(BOSS1_CELLS.length, 6, `expected six roots, got ${BOSS1_CELLS.length}`);
   assert.equal(new Set(BOSS1_CELLS.map((c) => c.className)).size, 6, 'roots must be distinct');

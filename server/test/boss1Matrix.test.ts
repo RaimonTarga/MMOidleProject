@@ -9,6 +9,9 @@ import {
   BOSS1_NODE_ID,
   BOSS1_SEEDS,
   BOSS1_TIER,
+  BOSS1_TIMBERCLAW_BOSS_ID,
+  BOSS1_TIMBERCLAW_NODE_ID,
+  BOSS1_TIMBERCLAW_SEEDS,
   assertBoss1Definitions,
   installBoss1Treatment,
 } from '../bench/balance/boss1Spec';
@@ -139,6 +142,61 @@ assertBoss1Definitions();
   assert(boss.stats.attack === BOSS1_BOSS_STATS.attack, 'boss attack drift');
   // 600 s against a 19,499 pool that measured 36-104 s full kills in preparation.
   assert(BOSS1_CAP_MS >= 600000, 'the cap must comfortably exceed the full phase cycle');
+}
+
+// ── The restored earlier slot: Apex Timberclaw on explicit reference builds.
+//
+// It is back because the two-case reference check established that the earlier
+// failure belonged to the legacy PACKAGE, not the boss: the historical package
+// killed it with authoritative evidence while the legacy package died with a third
+// of the boss removed. So this slot must never fall back on scorer defaults.
+{
+  const tc = BOSS1_BLOCKS['timberclaw']!;
+  assert(tc.cells.length === 6, `timberclaw: expected 6 roots, got ${tc.cells.length}`);
+  assert(tc.durationMs === 300000, 'timberclaw cap must be 300 s');
+  assert(tc.pilotIds.length === 0, 'a pilot fight here would be an undeclared observation');
+  assert(BOSS1_TIMBERCLAW_SEEDS.length === 1,
+    'seeds are inert for a no-add boss; one is declared');
+  assert(tc.cells.length * BOSS1_TIMBERCLAW_SEEDS.length === 6, 'the slot plans 6 fights');
+
+  const corroborated = tc.cells.filter((c) => c.treatment === 'reference-corroborated');
+  const constructed = tc.cells.filter((c) => c.treatment === 'reference-constructed');
+  assert(corroborated.length === 1 && constructed.length === 5,
+    'exactly one cell is historically corroborated; the rest are constructions');
+  assert(corroborated[0]!.className === 'spirit', 'the corroborated root is Spirit');
+
+  for (const c of tc.cells) {
+    assert(c.nodeId === BOSS1_TIMBERCLAW_NODE_ID, `${c.id}: node drift`);
+    assert(c.isDungeon === true, `${c.id}: must target the dungeon encounter`);
+    assert(c.targetTypes.includes(BOSS1_TIMBERCLAW_BOSS_ID), `${c.id}: must name the boss`);
+    // Explicit, never scorer-picked. This is the whole point of the restoration.
+    assert(c.abilities !== undefined, `${c.id}: abilities must be explicit`);
+    assert(c.runeRules !== undefined && c.runeRules.length === 5,
+      `${c.id}: behaviour rules must be explicit`);
+    assert(c.stance === 'defensive-stance', `${c.id}: reference stance drift`);
+    // Step Back must precede the movement rule, as in the historical route.
+    const stepBack = c.runeRules!.findIndex((r) => r.actionId === 'step-back');
+    const move = c.runeRules!.findIndex((r) => r.actionId === 'orbit' || r.actionId === 'chase-enemy');
+    assert(stepBack >= 0 && move > stepBack, `${c.id}: Step Back must precede the movement rule`);
+    for (const itemId of Object.values(c.build.gearItemIds)) {
+      if (!itemId) continue;
+      const recipe = RECIPE_DATABASE.get(itemId);
+      assert(!!recipe && recipe.tier <= 2, `${c.id}: future item ${itemId}`);
+    }
+  }
+}
+
+// ── The two slots are genuinely earlier AND later, and stay separate.
+{
+  const tc = BOSS1_BLOCKS['timberclaw']!, sv = BOSS1_BLOCKS['sovereign']!;
+  assert(tc.cells[0]!.tier === 2 && sv.cells[0]!.tier === 4,
+    'the screen must contrast an earlier and a later tier');
+  assert(tc.cells[0]!.nodeId !== sv.cells[0]!.nodeId, 'the slots must be different encounters');
+  // The T3 Jungle exception is a separate matter and must not appear here.
+  for (const c of [...tc.cells, ...sv.cells]) {
+    assert(!c.nodeId.includes('jungle'), `${c.id}: the T3 Jungle exception stays out of this screen`);
+    assert(c.tier !== 3, `${c.id}: no T3 content in the earlier/later screen`);
+  }
 }
 
 console.log('boss1Matrix: ok');

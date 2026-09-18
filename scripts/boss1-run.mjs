@@ -18,14 +18,22 @@ assert.equal(execFileSync('git',['rev-parse','HEAD^{tree}'],{cwd:source,encoding
 mkdirSync(root,{recursive:true});
 const started=Date.now();
 
-// Boss1 is a SCREEN, not a search: one block, one boss, six tier-legal roots, two
-// declared seeds. It installs nothing, so there is no overlay to restore and no
-// control arm. Twenty-four attempts would already be too many; twelve is the whole
+// Boss1 is a SCREEN, not a search: an EARLIER and a LATER boss, six explicit legal
+// reference builds each, and it installs nothing. Eighteen fights is the whole
 // screen and the runner refuses to grow it.
-const BLOCK={name:'sovereign',cells:6,seeds:[94011,94019],limitMs:60*60000};
-const BOSS_ID='charnel-crown-sovereign';
+//
+// The two blocks are INDEPENDENT: a local problem in one never consumes the other's
+// allocation. Timberclaw declares ONE seed because seeds are inert for a boss with
+// no adds, a fixed spawn and deterministic evasion; the Sovereign's raise-dead and
+// spawn-adds offsets do consume randomness, so it keeps two.
+const BLOCKS=[
+ {name:'timberclaw',cells:6,seeds:[96011],bossId:'apex-timberclaw',bossMaxHp:3750,
+  summonsNothing:true,limitMs:40*60000},
+ {name:'sovereign',cells:6,seeds:[94011,94019],bossId:'charnel-crown-sovereign',bossMaxHp:19499,
+  summonsNothing:false,limitMs:60*60000},
+];
 
-writeFileSync(join(root,'batch-manifest.json'),JSON.stringify({source,...args,block:BLOCK.name,bossId:BOSS_ID,started:new Date().toISOString(),ceilingHours:2},null,2));
+writeFileSync(join(root,'batch-manifest.json'),JSON.stringify({source,...args,blocks:BLOCKS.map(b=>b.name),bosses:BLOCKS.map(b=>b.bossId),started:new Date().toISOString(),ceilingHours:3},null,2));
 const note=entry=>appendFileSync(join(root,'operator-ledger.jsonl'),JSON.stringify(entry)+'\n');
 const run=(script,argv,log,limitMs)=>new Promise((resolveRun,reject)=>{
  const stream=createWriteStream(log);const child=spawn(process.execPath,night5ChildArgs(source,script,argv),{cwd:source,stdio:['ignore','pipe','pipe'],windowsHide:true});
@@ -34,14 +42,17 @@ const run=(script,argv,log,limitMs)=>new Promise((resolveRun,reject)=>{
  child.on('close',code=>{clearTimeout(timer);stream.end(()=>resolveRun({code,timedOut}));});
 });
 
-const out=join(root,BLOCK.name),start=new Date().toISOString();
-const state={artifactVerified:false};
-const result=await run('server/scripts/bossScreen.ts',['--trial=boss1',`--block=${BLOCK.name}`,'--mode=run',`--out=${out}`,`--revision=${args.revision}`,`--hitboxes=${args.hitboxes}`],join(root,`${BLOCK.name}.log`),BLOCK.limitMs);
-note({block:BLOCK.name,start,end:new Date().toISOString(),...result});
+const state={};
+for(const BLOCK of BLOCKS){
+ const out=join(root,BLOCK.name),start=new Date().toISOString();
+ state[BLOCK.name]={artifactVerified:false};
+ const result=await run('server/scripts/bossScreen.ts',['--trial=boss1',`--block=${BLOCK.name}`,'--mode=run',`--out=${out}`,`--revision=${args.revision}`,`--hitboxes=${args.hitboxes}`],join(root,`${BLOCK.name}.log`),BLOCK.limitMs);
+ note({block:BLOCK.name,start,end:new Date().toISOString(),...result});
 
-if(result.timedOut) writeFileSync(join(root,'stopped.json'),JSON.stringify({reason:'watchdog',block:BLOCK.name}));
-else if(result.code!==0) note({block:BLOCK.name,status:'runner-failed-no-retry'});
-else if(existsSync(join(out,'index.json'))){
+ if(result.timedOut){writeFileSync(join(root,`stopped-${BLOCK.name}.json`),JSON.stringify({reason:'watchdog',block:BLOCK.name}));continue;}
+ if(result.code!==0){note({block:BLOCK.name,status:'runner-failed-no-retry'});continue;}
+ if(!existsSync(join(out,'index.json'))) continue;
+
  // Verification is deliberately local rather than borrowed from `verifySurvey`:
  // that checker is built for the mob survey's schema, and quietly reinterpreting a
  // boss artifact through it is how a boss ends up read as an ordinary mob.
@@ -51,14 +62,24 @@ else if(existsSync(join(out,'index.json'))){
   assert.equal(manifest.revision,args.revision,'revision drift');
   assert.equal(manifest.definitionsHash,args.definitions,'definitions drift');
   assert.equal(manifest.hitboxesSha256,args['hitbox-hash'].toLowerCase(),'hitbox drift');
-  assert.equal(manifest.bossId,BOSS_ID,'boss identity drift');
+  assert.equal(manifest.bossId,BLOCK.bossId,`${BLOCK.name}: boss identity drift`);
   assert.deepEqual(manifest.seeds,BLOCK.seeds,'seed drift');
   assert.equal(manifest.cells.length,BLOCK.cells,'cell count drift');
-  assert.equal(complete.observations,BLOCK.cells*BLOCK.seeds.length,'observation count drift');
-  assert.equal(index.length,BLOCK.cells*BLOCK.seeds.length,'index count drift');
+  const expected=BLOCK.cells*BLOCK.seeds.length;
+  assert.equal(complete.observations,expected,'observation count drift');
+  assert.equal(index.length,expected,'index count drift');
+
   for(const r of index){
    const ready=JSON.parse(readFileSync(join(out,`${r.cell}-s${r.seed}/ready.json`),'utf8'));
    assert.deepEqual(ready.hpTreatment,[],`${r.cell}: Boss1 installs nothing`);
+   // Explicit legal reference builds: the applied package must BE the declared one,
+   // and it must fit the budget. A scorer default must never slip back in.
+   assert(ready.runicPoints.cost<=ready.runicPoints.budget,
+    `${r.cell}: package costs ${ready.runicPoints.cost} RP against ${ready.runicPoints.budget}`);
+   assert.equal(ready.appliedPackage.activeStance,ready.declaredPackage.stance,
+    `${r.cell}: applied stance != declared`);
+   assert.equal(ready.appliedPackage.runesEquipped.length,(ready.declaredPackage.runeRules??[]).length,
+    `${r.cell}: applied rule count != declared`);
    // The escort receipt rule: a disagreement INVALIDATES the run rather than being
    // reinterpreted, so it is asserted here and not left to the report writer.
    for(const [id,want] of Object.entries(ready.escortsDeclared)){
@@ -67,20 +88,21 @@ else if(existsSync(join(out,'index.json'))){
    }
    assert(r.bossMaxHp>0,`${r.cell}: no boss was met`);
   }
-  // Cross-field verification: outcome, kill evidence, terminal HP and add counts
-  // must agree, or the batch fails rather than passing with a contradiction in it.
-  assertBossRecordsConsistent(index,{bossSummonsNothing:false,expectedBossMaxHp:19499});
 
-  const wins=index.filter(r=>r.bossKilled).length;
-  const summary={verified:true,observations:index.length,
-   wins,deaths:index.filter(r=>r.outcome==='bot-died').length,
+  // Cross-field verification: outcome, kill evidence, terminal HP and add counts
+  // must agree, or the block fails rather than passing with a contradiction in it.
+  assertBossRecordsConsistent(index,{bossSummonsNothing:BLOCK.summonsNothing,expectedBossMaxHp:BLOCK.bossMaxHp});
+
+  const summary={verified:true,boss:BLOCK.bossId,observations:index.length,
+   wins:index.filter(r=>r.bossKilled).length,
+   deaths:index.filter(r=>r.outcome==='bot-died').length,
    capped:index.filter(r=>r.outcome==='capped').length,
    reset:index.filter(r=>r.outcome==='encounter-reset').length,
    vanished:index.filter(r=>r.outcome==='boss-vanished-no-kill').length,
    ambiguous:index.filter(r=>r.outcome==='simultaneous-terminal').length,
    invalid:index.filter(r=>r.outcome==='wall-ceiling').length};
   writeFileSync(join(out,'verification.json'),JSON.stringify(summary,null,2));
-  state.artifactVerified=true;
+  state[BLOCK.name].artifactVerified=true;
   console.log(BLOCK.name,JSON.stringify(summary));
  }catch(error){
   const detail=String(error?.message??error);

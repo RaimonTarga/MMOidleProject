@@ -58,6 +58,9 @@ import {
   BOSS1_CAP_MS,
   BOSS1_ESCORTS,
   BOSS1_SEEDS,
+  BOSS1_TIMBERCLAW_BOSS_ID,
+  BOSS1_TIMBERCLAW_CAP_MS,
+  BOSS1_TIMBERCLAW_SEEDS,
   assertBoss1Definitions,
 } from '../bench/balance/boss1Spec';
 import {
@@ -96,31 +99,44 @@ assert(args.out && args.hitboxes, '--out and --hitboxes are required');
  * nothing, so its entry is empty and the escort receipt rule simply does not apply
  * to it; that is recorded rather than faked.
  */
-const TRIALS: Record<string, {
-  bossId: string; defaultBlock: string; capMs: number; seeds: readonly number[];
-  blocks: Record<string, { cells: Night5Cell[]; durationMs: number; pilotIds: string[] }>;
+interface BlockSpec {
+  bossId: string; capMs: number; seeds: readonly number[];
   escorts: Record<string, { hp: number; attack: number }>;
+}
+const TRIALS: Record<string, {
+  defaultBlock: string;
+  blocks: Record<string, { cells: Night5Cell[]; durationMs: number; pilotIds: string[] }>;
+  /** Boss identity is per BLOCK: an earlier/later screen fights two different bosses. */
+  perBlock: Record<string, BlockSpec>;
   assertDefinitions: () => void;
 }> = {
   boss1: {
-    bossId: BOSS1_BOSS_ID, defaultBlock: 'sovereign', capMs: BOSS1_CAP_MS,
-    seeds: BOSS1_SEEDS, blocks: BOSS1_BLOCKS, escorts: BOSS1_ESCORTS,
+    defaultBlock: 'sovereign', blocks: BOSS1_BLOCKS,
+    perBlock: {
+      sovereign: { bossId: BOSS1_BOSS_ID, capMs: BOSS1_CAP_MS, seeds: BOSS1_SEEDS, escorts: BOSS1_ESCORTS },
+      timberclaw: { bossId: BOSS1_TIMBERCLAW_BOSS_ID, capMs: BOSS1_TIMBERCLAW_CAP_MS,
+        seeds: BOSS1_TIMBERCLAW_SEEDS, escorts: {} },
+    },
     assertDefinitions: assertBoss1Definitions,
   },
   bossref: {
-    bossId: BOSSREF_BOSS_ID, defaultBlock: 'reference', capMs: BOSSREF_CAP_MS,
-    seeds: BOSSREF_SEEDS, blocks: BOSSREF_BLOCKS, escorts: {},
+    defaultBlock: 'reference', blocks: BOSSREF_BLOCKS,
+    perBlock: {
+      reference: { bossId: BOSSREF_BOSS_ID, capMs: BOSSREF_CAP_MS, seeds: BOSSREF_SEEDS, escorts: {} },
+    },
     assertDefinitions: assertBossReferenceDefinitions,
   },
 };
 
-const spec = TRIALS[trial];
-assert(spec, `unknown trial ${trial}`);
-spec.assertDefinitions();
+const trialSpec = TRIALS[trial];
+assert(trialSpec, `unknown trial ${trial}`);
+trialSpec.assertDefinitions();
 
-const blockName = args.block ?? spec.defaultBlock;
-const block = spec.blocks[blockName];
+const blockName = args.block ?? trialSpec.defaultBlock;
+const block = trialSpec.blocks[blockName];
 assert(block, `unknown block ${blockName}`);
+const spec = trialSpec.perBlock[blockName];
+assert(spec, `block ${blockName} declares no boss`);
 const cells: Night5Cell[] = mode === 'pilot'
   ? block.cells.filter((c) => block.pilotIds.includes(c.id))
   : block.cells;
@@ -369,7 +385,7 @@ function run(cell: Night5Cell, seed: number) {
      */
     let lastSupportedBossHp: number | null = bossMaxHp;
     /** Authoritative, boss-specific: a kill event naming the boss as victim. */
-    let bossKillEvidence: { atMs: number; victimId: string; killerId: string | null } | null = null;
+    let bossKillEvidence: { atMs: number; victimId: string; victimName: string | null; killerId: string | null } | null = null;
     let playerDeathEvidence: { atMs: number; cause: unknown } | null = null;
     let resetEvidence: { atMs: number; message: string } | null = null;
     let terminal: BossTerminal = null;
@@ -409,7 +425,8 @@ function run(cell: Night5Cell, seed: number) {
           const victimType = typeById.get(victimId)
             ?? (k.victim?.name ? TYPE_BY_NAME.get(k.victim.name) : undefined);
           if (victimId === bossEntityId || victimType === spec.bossId) {
-            bossKillEvidence ??= { atMs: elapsed, victimId, killerId: k.killer?.id ?? null };
+            bossKillEvidence ??= { atMs: elapsed, victimId,
+              victimName: k.victim?.name ?? null, killerId: k.killer?.id ?? null };
           }
         }
         if (ev.kind === 'player-death') {
