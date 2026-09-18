@@ -1,8 +1,830 @@
 # Bot balance campaign state
 
-Updated: 2026-09-15. Owner: Astra (planning and interpretation); operators: Luna.
+Updated: 2026-09-17. Owner: Astra (planning and interpretation); operators: Luna.
 
-## Current decision after Volcano finishing comparison
+## Current decision: Durability30 reviewed; Durability31 Jungle diagnosis prepared
+
+Durability30: Trench72/72 complete600s windows,zero deaths; Jungle6/12 complete
+and6/12 wall cutoffs. Hold Stalker16800 rather than adopt21000: the candidate
+helps some fast roots but stretches already-long Squire/Conduit fights. Keep
+Leviathan17640/Serpent16800 context; no further Trench scalar grid. Class/build
+spread remains a later-layer issue, not uniformly solved Trench pacing. Zero deaths
+IS bounded survival evidence; report wording suggesting attrition was untested is
+too strong. Pressure differs by root, and unlimited safety is not established.
+
+[Durability31 packet](bot-balance-durability31-operator-packet.md) prepares12
+unchanged Jungle observations with one CPU profile per observation, cumulative
+per-tick navigation counters and bounded exact repeated-request aggregates.
+Frozen d6643bde; reuses Dur30 Jungle matrix/IDs intentionally. Four qualifications,
+two pilots and focused checks passed; pilot READY/events/samples match the original
+uninstrumented pilots. NOT launched. No gameplay/stat changes; opt-in diagnostics.
+The baseline navigation files match current main, but unrelated dirty gameplay
+changes are excluded. This is controlled diagnosis, not current-source certification.
+
+Use the results to choose one targeted repair/regression, not another diagnostic
+grid. Then consolidate retained mob packages on current source; keep T2 Mountain
+Striker pressure and Jungle durability explicit. Preserve shallow playtest roadmap;
+boss/progression/x1 economy and broad class/ability polish are separate.
+
+## Previous decision: Durability29 reviewed; Durability30 Trench/Jungle prepared
+
+Durability29 completed144 observations (120 windows,20 deaths,4 wall cutoffs).
+Retain T4 Mountain candidate for consolidated adoption review: deaths4/36->1/36,
+longer body timing retained; minHP median42.63->60.21. One Maestro death and sparse
+Slinger timing remain, not universal safety. T2 deaths10/36->5/36 but Striker3/6
+candidate deaths: Titan54 remains provisional. Boulder terminal blows do not prove
+sole cause. Hold the specific T2 build/pressure question; stop broad Mountain grids.
+
+[Durability30 packet](bot-balance-durability30-operator-packet.md):84 observations.
+Trench72 compares selected Stalker16800 vs21000 HP, all six roots/two nodes/fresh
+paired seeds; Leviathan17640 and Serpent16800 fixed, absolute shield preserved.
+Target remains40–60s representative mini-boss fights for all three species, not
+every class. Jungle12 replays four unchanged Dur23 setups with CPU profiling to
+diagnose the six prior cutoffs before any Jungle durability patch. Profiling wall
+times are not directly equivalent balance benchmarks. No assumed movement cause.
+Frozen e151f061;28 qualified setups/14 pilots, focused test/typecheck and Windows
+profile smoke passed. Full experiment NOT launched. No production balance edits.
+
+After these gaps: consolidated current-source reconciliation/adoption review and
+bounded regression for the shallow all-mob playtest gate. T2 Mountain remains an
+explicit exception requiring a targeted decision, not silently counted as passed.
+Boss/progression/x1 economy readiness and broad class/ability polishing remain
+separate. Preserve the faster-playtest roadmap rather than demand perfect parity.
+
+## Previous decision: Durability28 reviewed; Durability29 Mountain attack comparison prepared
+
+Durability28 verified: T2 Mountain3/12 deaths both stances; Desert6/12 Offensive
+vs0/12 Defensive; T4 Mountain2 Offensive/3 Defensive deaths, one cutoff each.
+Retain Desert controller HP candidate with situational Defensive Striker template
+for adoption review; clear survival/throughput tradeoff, not universal stance winner.
+Do not keep re-running Desert. Mountain mitigation insufficient; T4 deaths all
+Maestro. Report reference to five-root interpretation is inapplicable to this
+TWO-class sample. Do not promote sparse/cutoff timings to success.
+
+[Durability29 packet](bot-balance-durability29-operator-packet.md):144 observations,
+all six roots/two nodes/fresh paired seeds, Offensive fixed both arms. T2 selected
+Titan attack67->54 while Eagle60/Boulder72 fixed; T4 selected four-mob roster attack
+80% while HP/absolute ward fixed. Retained HP package includes Mammoth13800.
+Test pressure relief and all-root over-relief risk, not another HP/stance grid.
+Frozen699122f6;48 setups/24 pilots plus focused checks passed. NOT launched.
+No production balance edits. Whole database restoration includes attack explicitly.
+
+After this Mountain decision prioritize pending Jungle performance/durability and
+Trench Stalker timing, rather than indefinite intermediate scalars. Selected values
+still require consolidated current-source reconciliation/regression; no full mob
+or invited-playtest certification. Desert's ordinary defensive solution is sampled
+preparation evidence, not proof of live feel or economy pacing.
+
+## Previous decision: Durability27 reviewed; Durability28 melee stance interaction prepared
+
+Durability27: Mountain18->6 deaths/36 plus one candidate cutoff; Desert0->6/36.
+Mountain pressure reduction works for much of the roster but Striker4/6 candidate
+deaths remains. Desert controller center~15.2s among five eligible roots, while
+Striker6/6 candidate deaths makes its timing sparse. Retain numerical directions
+provisionally; test normal player defensive preparation before further HP rollback
+or blanket attack changes. Conduit T2 Basilisk27.6s is below its own T3~44.15s;
+comparing only to the all-root T3 center does not establish a class-specific reversal.
+
+[Durability28 packet](bot-balance-durability28-operator-packet.md):72 observations,
+Striker/Squire, Offensive vs Defensive stance on fixed candidate packages across
+T2 Mountain/T2 Desert/T4 Mountain. Each class has a paired same-seed control;
+Squire is a melee comparator. T4 profiles are Maestro/Reverb. Mob values, gear,
+runes and abilities held fixed. Frozen40eba357;24 setups/12 pilots plus focused
+technical checks passed. NOT launched, no production edits. If successful assess
+TTK/throughput cost; if not isolate pressure rather than repeating a broad HP grid.
+
+Still pending: current-source reconciliation, Jungle performance/durability,
+Trench Stalker pacing, and consolidated adoption/regression. This narrow build
+interaction does not certify six-class balance or invited-playtest readiness.
+
+## Previous decision: Durability26 retained provisionally; Durability27 T2 gaps prepared
+
+Durability26 completed144 observations/no wall cutoffs. Mammoth candidate center
+32.79s vs15.88s; Basilisk23.50s vs13s. Retain Mammoth13800/Basilisk9006 with fixed
+absolute ward for consolidated review instead of automatically reducing HP to
+accommodate slow class tails. Those tails stay explicit for class/build work.
+IMPORTANT: all Mountain deaths were Maestro3/6 candidate vs0/6 control; unresolved
+pressure regression, not3/36 generic rare variance. Desert had no deaths. Neither
+package is production-adopted or universally validated. Report adjust-both is an
+operator recommendation; planner retains provisionally with these boundaries.
+
+[Durability27 packet](bot-balance-durability27-operator-packet.md) prepared, NOT launched:
+144 observations, T2 Mountain attack80% on Titan/Eagle/Boulder Thrower, and Desert
+Scorpion/Basilisk HP1.75x with Scarab unchanged; independent control/candidate blocks.
+Same six Durability25 T2 builds/two nodes/three fresh seeds. Attack-derived casts
+scale naturally in Mountain; no multiplier/cadence/mechanic edit. Frozen5925ee93,
+48 setup checks/24 pilots and focused technical checks passed. No production edits.
+
+This addresses known T2 gaps rather than repeating the T4 grid. Remaining: T4
+Maestro pressure, Jungle performance/durability, Trench Stalker timing, then source
+reconciliation/consolidated adoption and focused regressions. Initial mob pass is
+not complete. Deep class/item/ability balance remains later; no perfect-equality
+or zero-death requirement. Preserve user-defined role differences and tier ladder.
+
+## Previous decision: Durability25 reviewed; Durability26 targeted anchor trial prepared
+
+Durability25 completed216 observations,194 windows/22 deaths/no wall cutoffs.
+Primary root-weighted Mountain TTK19.28/25.27/14.50s and Desert8.80/22.10/14.61s
+for T2/T3/T4 establish a T4 reversal in this baseline. This is a gap against intent,
+not grounds to reject rising tier pacing. Report's no-numeric-adjustment language
+is too restrictive for planning a local candidate trial, though global adoption
+would be premature. Spirit's +0.4/-0.65s split belongs to Desert, not Mountain.
+
+[Durability26 packet](bot-balance-durability26-operator-packet.md):144 observations,
+paired selected T4 control vs doubling ONLY Mammoth6900->13800 and Basilisk4503->9006.
+Mammoth absolute ward preserved, all other selected values unchanged. Six branch-A
+builds/two nodes/three fresh seeds; monitor attrition and slow tails. Frozen9c333816;
+48 setups/24 pilots passed. NOT launched. No production balance changes.
+
+T2 Mountain14/36 deaths is an actionable pressure concern, not occasional noise.
+Operator packet includes a bounded read-only review of existing death windows and
+comparable survivors, without extra runs or attributing everything to killing blow.
+T2 Desert primary center8.80s is also below the intended tough-controller guide;
+keep it explicit rather than calling all T2 complete.
+
+Remaining mob gates: T4 anchor pacing, T2 Mountain pressure/T2 Desert controller
+pacing, Jungle performance/durability, Trench Stalker pacing, consolidated source
+reconciliation and targeted regression. Route validation is past; first-pass mob
+calibration is still ongoing. Keep selected Graveyard and other candidates, but
+selection is not production adoption or full tier-pacing certification. Bosses,
+progression/basic x1 and operations remain before invited playtest. Deep class,
+item and ability balance stays later. Do not promise a date or arbitrary percentage.
+
+## Previous decision: Durability24 retained; Durability25 tier ladder prepared
+
+Durability24 verified arm deaths: control-normal 5/42, control-focus 20/42,
+redistributed-normal 0/42, redistributed-focus 12/42. Retain the exact five-species
+Graveyard HP redistribution under normal targeting for consolidated adoption review.
+Do not re-run universal Focus Elites. No production adoption yet.
+
+Planner correction: the report assigns a 40–60s goal to Gravewright, but that goal
+was specified for the three Trench species. Gravewright's ~15.925s root center is
+not automatically a failure against an invented target. Its role and pack duration
+need their own interpretation. Report pack columns described as all-target body
+medians are not actual episode-clear durations.
+
+[Durability25 packet](bot-balance-durability25-operator-packet.md): 72 cells / 216
+observations, Mountain and Desert, T2/T3/T4, six roots, nodes03/05, three fresh seeds.
+One frozen runtime, selected T4 durability22 overlays and existing T2/T3 definitions.
+Conduit uses tier-appropriate rapier and Spirit fast weapons throughout the ladder
+rather than historical lower-tier axes; this is a fresh experienced-pacing screen,
+not a pure specialization-DPS isolation. Branch A names must be shown in reports.
+72 setups and 36 pilots passed; frozen 03a3bf24; NOT launched. No production edits.
+
+Use root-weighted role-matched body timing plus real episode durations, explicit
+fast/slow/missing/death tails. Compare Titan/Colossus/Mammoth and Basilisk roles,
+not pooled all-mob kill medians. Retain 16 earlier species candidates and Graveyard's
+five-species package. Pending Jungle performance/durability, Trench Stalker pacing,
+and current-source regression remain open; this limited ladder is not full mob
+certification or playtest readiness.
+
+## Previous decision: Durability24 prepared; tier pacing is an explicit remaining gate
+
+[Durability24 operator packet](bot-balance-durability24-operator-packet.md) is
+prepared, NOT launched: 56 cells / 168 observations, six A-root builds plus
+Blunderbuss, two nodes, three seeds, four HP/targeting combinations. Candidate
+Gravewright HP doubles and escort HP falls 40%; ordinary and Focus Elites policies
+are tested under both HP distributions. Frozen d00215b4; 56 setup checks and
+28 short pilots passed. No production balance edits. Jungle source/performance
+investigation remains a separate pending task.
+
+USER REAFFIRMATION: TTK must rise across tiers, more sharply for low-density elites;
+all Trench species should represent 40–60s mini-bosses. Do not equate survival or
+improvement over old T4 values with meeting this ladder. Stalker ~35s remains below
+target; Volcano anchors ~10–14s do not establish T4 > T3. Before declaring the mob
+pass complete, run a focused role-matched tier-ladder regression on a consistent
+source with equivalent build philosophies and tier-appropriate preparation.
+
+Use equal-weight six-root/profile medians by encounter role, plus explicit fast/slow
+and specialization tails. No single T4 class is a universal average-DPS reference;
+kill-pooled medians over-weight fast builds. Trench node03 Leviathan candidate
+medians include Apprentice 22.3s, Striker 40.4s, Slinger 47.4s, Spirit 66.5s and
+Squire 128.6s; Conduit's 306s has only one eligible seed and is not a reliable timing
+benchmark. These are encounter/build observations, not universal class rankings.
+Retain the 16 selected candidates pending adoption review, with pacing gaps explicit.
+
+## Previous decision: Durability23 reviewed; Graveyard durability distribution clarified
+
+Durability23 retained 192 observations: Volcano 71 windows/one candidate death,
+Graveyard 64 windows/20 deaths, Jungle 30 windows/six wall ceilings. Volcano's
+Tortoise and Salamander HP candidates remain recommended for consolidated adoption
+review (eligible representative body medians 9.88s and 13.90s). No production adoption.
+
+USER DESIGN CLARIFICATION: Gravewrights should carry high HP, with lower-HP
+accompanying creatures. This supersedes the earlier squishy-necromancer assumption
+in the packet/source comments. Preserve role differences among escorts; this is
+not a request to make every follower identical or to add a general damage nerf.
+
+Planner correction to the report: Focus Elites demonstrably changes selection,
+but is NOT a generally validated template improvement. Deaths were 17/42 with
+Focus versus 3/42 without; all Conduit and Spirit focused runs died. Keep this
+as a conditional tactic, not a default. Aggregate DoT/cast totals have unequal
+survival exposure and do not isolate the cause. Pursuit/positioning and live pack
+pressure remain hypotheses requiring event-level checks.
+
+Recommended next test: bounded Graveyard HP redistribution, comparing current
+and candidate HP under both normal and elite-priority targeting. Lower escort
+HP alongside raising Gravewright HP; do not just extend the leader fight. Check
+pack clear time, deaths, resurrection/risen pressure and specialization tails.
+Exact candidate numbers and executable packet remain to be prepared. Jungle
+needs a separate bounded performance investigation of the six named cutoff rows;
+short normal windows show low durability but do not certify the biome. Carry
+forward the 14 Durability22 and two Volcano candidates without repeating them.
+No new experiment or balance change executed during this review.
+
+## Previous decision: Durability22 reviewed; remaining T4 role screen prepared
+
+Durability22 completed288 observations,283 windows/five deaths/no timeouts.
+Retain all14 candidate HP packages for consolidated adoption review, preserving
+absolute shields/wards/self-shatter. No production adoption yet. Mountain03's
+three candidate deaths and slow Conduit tails remain watch items, not automatic
+reasons to repeat the full matrix or require zero deaths. Excluding inconclusive
+cells gives Trench57.75/48.7/34.95s representative Leviathan/Serpent/Stalker medians;
+near enough for the initial pass rather than further fine tuning now.
+
+[Durability23 packet](bot-balance-durability23-operator-packet.md):192 observations,
+Volcano two-anchor HP comparison, Graveyard Focus Elites comparison including
+Blunderbuss, and separate short Jungle exposure/runtime block. Frozenb12bb917,
+no production edits, NOT launched. Gravewright is intended to die quickly when
+prioritized; test its counterplay before increasing its HP or nerfing DoT. Finish
+remaining biome decisions then consolidate mob changes and run focused regression.
+
+## Previous decision: Durability21 reviewed; Durability22 durability candidates prepared
+
+Durability21 completed108 observations in5m19s:107 windows, one Volcano Conduit
+accumulated-DoT death, no timeouts. No broad damage nerf from that single death.
+Tundra's2–5s species medians warrant durability changes despite zero deaths;
+T4 Mountain's own ~2s species evidence supports its candidate independently of
+T2 Striker deaths. Corrected24 raw low-sampleHP values mislabeled as percentages
+in report21; normalized minHP stays unchanged.
+
+USER DESIGN CLARIFICATION: ALL THREE Trench species should feel like40–60s
+mini-boss encounters. This supersedes the prior suggestion to leave Trench HP
+unchanged or target only its apex. Respect full class spread/slow Conduit tails;
+this is representative encounter pacing, not enforced equality for every class.
+
+[Durability22 packet](bot-balance-durability22-operator-packet.md):96 cells/288
+observations, four independently budgeted paired control/candidate blocks:
+Trench, Mountain, Tundra, Desert.14 species HP candidates, fixed absolute
+wards/shells/self-shatter; attacks/DR/plating unchanged. Frozen ffd6f1ec, no
+production patch and no full run launched. Review for consolidated mob adoption
+rather than more broad screening; rare deaths remain contextual, not automatic
+failure. Other biomes and current-source reconciliation remain in mob worklist.
+
+## Previous decision: Durability21 prepared; occasional deaths are not automatic failure
+
+[Durability21 packet](bot-balance-durability21-operator-packet.md):108 observations,
+T4 Tundra/Volcano/Trench, six medium/native-range roots with Night5A specializations,
+two nodes, three fresh seeds, five-minute windows and separate biome budgets.
+Frozen bcd0b0a3; no new mob stats. Includes a bounded read-only review of24 existing
+Night5 Mountain Striker/Desert Equinox/Graveyard Blunderbuss rows. NOT launched.
+
+User accepts occasional deaths and biome variability. Expert preparation does
+not make a fixed bot policy perfect. Interpret failure frequency, exposure time,
+preventability, pull/pressure sequence and eventual recovery cost; zero deaths
+in every build is not the playtest gate. Do not automatically nerf Mountain from
+Striker losses or pool short deaths with full windows as equivalent exposure.
+
+## Previous decision: Night5-R1 reviewed; invited-playtest roadmap
+
+User approved a shallow initial mob balance pass through ALL tiers1–4, focused
+regression, basic x1 pacing and operational checks, then a small invited playtest.
+Full item/class/ability parity and comprehensive economy work move to subsequent
+polishing with player feedback. See [Night5-R1 review and active roadmap](bot-balance-night5-r1-review.md).
+
+Night5-R1 completed its6h43m queue but only1222/1572 observations. T4 Tundra and
+Volcano remain untested; Trench sparse. Prioritize their breadth with one credible
+specialization per root and independent biome budgets; no repeat of all18 builds.
+Separate Jungle performance from mob balance. T4 Mountain species die in roughly
+1–3s; strong durability review candidate. Cave boots support ranged Mountain
+orbit templates, not disabling kiting globally; T2 Striker remains problematic
+with both boots. Forest/Volcano selected overlays still need explicit production
+adoption. Preserve branch/weapon findings for later, without blocking the mob gate.
+No new experiment launched or balance patch applied during this review.
+
+## Historical decision: Durability19 reviewed; broad Durability20 closure survey ready
+
+Both selected packages had zero deaths in36 observations each. Forest had one
+9.9% Apprentice survivor dominated by Spitter pressure; Volcano none below20%.
+Recommend retaining both for adoption consideration, with explicit exceptions.
+Conduit Volcano05 remains exposure-limited, not a universal mob-TTK veto. Report19
+sign/species/geography/checkpoint wording corrected against raw data. No production
+mob files changed in this preparation.
+
+[Durability20 packet](bot-balance-durability20-operator-packet.md) surveys all14
+T2/T3 biome-tier combinations, nodes03/05, six roots, three fresh seeds:504 runs.
+One selected arm; Forest/Volcano packages carried as local overlays, other mobs
+unchanged. Preserve Jungle defensive stance exceptions. Snapshot14fce3ed uses the
+same current runtime as19.168 setups, four pilots, overlay test and bench typecheck
+passed. Manual Luna, NOT launched; estimate35–60min. Deliver a14-row coverage map
+and at most three remaining mob interventions, with class/tooling exceptions apart.
+Do not launch another blanket candidate-selection loop. T4/boss/class/ability and
+economy work remain later; Conduit baseline remains explicitly unsettled.
+
+## Previous decision: Durability19 current-runtime candidate confirmation prepared
+
+Durability18 resolved Striker's observed death/low-HP tail with either Wolf22 or
+defensive stance. Wolf22 retained20s Wolf median; defensive stance took30.6s.
+Carry Wolf1575HP/22attack and Badger945HP/25attack, with offensive baseline.
+Raw READY corrected in report: scaled Wolf32/26, Badger30; table error only.
+[Durability19 packet](bot-balance-durability19-operator-packet.md) confirms Forest
+and parked Volcano (Tortoise3000HP/116attack, Salamander84attack) against current
+unmodified mob stats on a frozen current server/shared snapshot. Six roots,
+two nodes per biome, two arms, three fresh seeds:144 runs. Ready, NOT launched.
+48 setups/four pilot observations and focused tests passed. Frozen6ac0a4b7 includes
+Heat/chill cleanup and attribution/status updates; concurrent originals preserved.
+No production mob patch. If results hold, review concrete adoption per biome rather
+than repeat candidate selection. Conduit class weakness remains later-pass evidence;
+actual exposure failures remain separate. Next class/ability and T4 work stays later.
+
+## Previous decision: Durability18 focused Forest pressure/build trial ready
+
+Durability17: eight deaths (seven Striker, one Apprentice), all Forest03; only
+two long-quiet rows. Adult duration improved, but pressure80 still leaves a
+Striker death and deep-low survivors. User approved a focused comparison.
+[Durability18 packet](bot-balance-durability18-operator-packet.md) applies local
+candidate adjustments: Wolf attack27 versus22 crossed with offensive/defensive
+stance, fixed Wolf1575HP and Badger945HP/25attack. Striker/Apprentice Forest03,
+three historical seeds:24 observations. No production adoption yet.8 setups and
+four-arm pilot passed; overlay test and bench typecheck passed. Frozen e8d4a6bd.
+Ready for manual Luna, NOT launched. Conduit's unsettled class/build baseline is
+for the later class pass; do not use its long TTK as a universal mob durability
+ceiling. Separate actual movement defects. Source reconciliation/fresh confirmation
+remain before production adoption; no Slam/class buffs in this pass.
+
+## Previous decision: Durability16 reviewed; Forest Durability17 prepared
+
+Durability16 completed72 observations in7m28s: one reference death, no treatment
+deaths, seven exposure flags,15/18 retained matched sets,36/36 historical bookend
+matches. Both80 remains the leading Volcano candidate, not production adoption.
+Conduit03 has two matched seeds but excludes the lethal8089 comparison; Conduit05
+still has no clean Tortoise median. Keep these as targeted unresolved cases.
+Do not repeat the whole old matrix. Reconcile newer combat and confirm candidates
+on fresh seeds before adoption.
+
+[Durability17 packet](bot-balance-durability17-operator-packet.md) returns to T2
+Forest: six roots, nodes03/05, three fresh seeds, four adult HP/pressure arms,
+144 observations. Wolf/Badger HP1x/2x/3x and3x with attack80%; Whelps/Spitters stay
+unchanged.48 setups and four-arm pilot passed, along with bench typecheck and
+overlay restoration tests. Ready for manual Luna, NOT launched. Frozen413a43e5;
+no production/ability changes. Then review remaining T2/T3 role coverage and
+candidate reconciliation; item/class/ability, boss TTK and T4 remain later.
+
+## Previous decision: Durability15 reviewed; Durability16 species pressure trial ready
+
+Durability15 completed144 runs in22m44s. Deaths by arm: control2, pressure80 zero,
+anchor150 one, combined zero. Eight long-quiet rows remove five complete matched
+sets; Conduit03 has no clean four-arm set. Attack relief is promising, HP alone
+is insufficient, and neither result authorizes blanket production adoption.
+[Durability16 packet](bot-balance-durability16-operator-packet.md) isolates Tortoise
+versus Salamander attack relief at fixed Tortoise HP3000: three sensitive classes,
+two nodes, four arms, three historical seeds =72 runs. Prepared, NOT launched.
+Local24-case qualify/four-arm pilot, overlay tests and bench typecheck passed.
+Frozen1b0188d8 retains the Durability15 combat runtime; newer concurrent changes
+are excluded. No movement prerequisite or production/ability patch. Exposure
+limits remain explicit. If Conduit remains inconclusive, isolate its diagnostic
+work rather than repeat whole matrices; then resume remaining T2/T3 roster roles,
+including Forest, with candidate reconciliation/fresh confirmation before adoption.
+
+## Previous decision: Durability15 selective Volcano balance trial prepared
+
+Durability14 completed72 runs: two deaths and four terminal inactivity cases.
+Local diagnostics reproduced all four; pack-assist reacquisition and vent-edge
+approach are candidates, not resolved causes. Keep them isolated in interpretation.
+[Durability15 packet](bot-balance-durability15-operator-packet.md) prepares144 runs:
+six classes, two nodes, three paired seeds, four arms (control, attack80%, Tortoise
+HP150%, combined). Sweep fixed; no production balance/movement/ability edits.
+All48 setups and a four-arm30s pilot passed, as did frozen typecheck and overlay
+restoration tests. Full experiment is NOT launched. Manual Luna executes once.
+Audit internal and terminal inactivity; preserve all deaths and compare matched
+four-arm sets for exposure sensitivity. Then resume T2/T3 roster/role balance;
+Slam/ability tuning and T4 remain later. Concurrent combat edits remain excluded.
+
+## Previous decision: Swamp handoff repaired; Durability14 Volcano continuation prepared
+
+Durability13 stopped correctly at14/15 movement passes; the72 Volcano comparison
+runs were never launched. Swamp6151 was a hazard-clearance handoff loop: normal
+chase cancelled an unfinished retreat and reset its timeout. Repair6be18a7b
+finishes the retreat leg and keeps the failure budget across mode changes.
+No numeric balance change. Frozen local qualification now passes15/15 full300s
+windows with zero deaths and maximum quiet gaps6.3–16.4s. Swamp6151's gap is11.7s,
+and the previously stalled Hexer is actually killed at176.0s.
+
+[Durability14 operator packet](bot-balance-durability14-operator-packet.md) is ready
+for manual Luna, not launched: only the pending72-run Volcano Sweep/Slam matrix
+on frozen6be18a7b. It checks the completed movement receipt rather than rerunning
+it. Keep exposure audit and blocked/quiet cases separate from balance conclusions.
+Next remains remaining T2/T3 roster/role gaps, then item/class/ability work, boss
+TTK and later T4. Concurrent Detonate/combat/presentation changes are excluded
+from this frozen comparison and preserved in the shared checkout.
+
+## Previous decision: movement repair applied; Durability 13 prepared
+
+User approved the repair. Runtime8cf9cb73 validates hazard pull endpoints against
+all nearby terrain, defers failed hazard approaches, checks safe target reach/pull
+feasibility, and prevents proximity reacquisition during leash return. No balance
+values changed. Six full300s diagnostic cases retained combat through298.2–299.9s;
+largest sampled quiet intervals5.7–12.6s. This is local qualification, not a broad
+balance result or proof every target is accessible.
+
+[Durability13 operator packet](bot-balance-durability13-operator-packet.md) is ready
+for manual Luna, not launched.15 full-window movement observations gate72 Volcano
+Sweep/Slam observations across six classes and three seeds. Stop expansion on a
+death or30s outgoing-damage gap in the first block; classify rather than retry.
+Preserve blocked encounters and compare exposure before interpreting technique
+strength. Plains and the broader roster are not repeated. Concurrent combat/HUD
+edits are preserved outside the frozen revision. Next remains T2/T3 roster gaps,
+item/class/ability work, boss TTK and later T4; economy follows combat balance.
+
+## Previous decision: Durability 12 investigated; repair engagement before balance comparison
+
+[Durability12 review and investigation](bot-balance-durability12-report.md) found
+29 Volcano windows with at least30s terminal quiet time. Four frozen diagnostic
+cases reproduce exact roster/kill/last-damage signatures. Jungle173's retreat
+goal lies inside a second bush, leaving an aggroed Chameleon at ranged standoff;
+Volcano03 Spirit6151 selects idle targets deep inside lava; Volcano05 Squire
+Slam6151 encounters a100ms leash/reacquisition loop. Swamp173 continues fighting.
+
+Hold mob numbers. Next work is all-hazard/reachable pull-goal validation,
+hazard-aware engagement feasibility and bounded target release, and coherent
+leash return. Qualify the four reproduced cases plus Jungle3911 and paired
+Volcano05 Squire Sweep6151 for full300s windows before rerunning affected technique
+pairs. Reporting an unreachable encounter is not certifying that it was solved.
+Investigation only: no gameplay patch or new operator packet yet. Preserve
+concurrent heat/chill/death/HUD work outside the original frozen evidence.
+
+## Previous decision: Durability 11 reviewed; Durability 12 prepared
+
+Durability11 completed126 observations: retain adopted Bear/Snapper values and
+selective Jungle defensive stances. Two deaths are pressure tails to track;
+Jungle Conduit remains a slow/censored tail. No blanket HP increase is approved.
+
+[Durability12](bot-balance-durability12-operator-packet.md) is prepared for manual
+Luna, not launched: four movement observations then144 paired Sweep/Slam runs
+across six classes in T2 Plains and T3 Volcano03/05. Confirm hazard approach fixes
+before using the wider swarm screen. Current mob numbers remain fixed.
+Swamp's apparent stationary sample was a100ms oscillation; Jungle approach did
+not recognize slowing terrain blocked by navigation. Short debugging replays now
+reach the named elites; full windows remain pending. Runtime7b37b393 contains the
+fix and diagnostic sampling. Concurrent heat/chill/death-label/HUD work is
+preserved outside this frozen revision.
+
+Next: remaining T2/T3 roster/role gaps, item and class/ability work (including
+Detonate), boss TTK and eventually T4 with wider branch coverage. T4 balance is
+still pending and must not inherit flat tier multipliers. x1 economy comes later.
+
+## Previous decision: Durability 10 selections and Durability 11 preparation
+
+Durability10 completed324 observations with valid artifacts. User approved Bear
+HP3750/attack148/shield0.08 and T3 SnapperHP2320; applied in9f58ee46. Bear attack
+relief removed baseline deaths2->0, though the DoT Slinger alternative remains
+weak. Snapper HP2320 produced12–13s centers without an attrition wall. This does
+not meet the toughest-body25–35s target or close all durability work.
+
+Confirmed templates: defensive stance for T2 Jungle Squire and T3 Jungle Conduit
+only. Offensive remains for other baselines, including Apprentice/Spirit;
+Silverback HP2090/ramp45% unchanged. No global stance/ramp change.
+
+[Durability11](bot-balance-durability11-operator-packet.md):42cells/126 observations,
+fresh seeds3911/6151/8089, T3 Tundra/Swamp/Jungle03/05 and T2 Jungle Squire03/05;
+Tundra retains Slinger/Conduit alternatives. Single selected build per class,
+no overlays. New confirmation, not another deterministic replay of selection seeds.
+Manual Luna, no full run launched by planner. Frozen qualification receipt in packet.
+
+Separate movement issue: Swamp05 Striker/s173 stalled identically in all three
+Durability10 arms, last outgoing damage12s to Hexer, unchanged position/path for
+most of300s. No Snapper contact. Cause unproven; preserved artifact path/signature
+in packet. Fresh seeds do not fix it. Report any such runs as engagement limits,
+never as successful Snapper survivability. Movement fix is separate work.
+
+## Previous decision: Durability 9 retained; Durability 10 continuation prepared
+
+Durability9 roster completed600 observations (10 previous versus3 selected deaths).
+Retain the applied patch. The post-block guard stopped before the Bear block;
+all persisted identity predicates and the new artifact validator pass. Original
+stop cause remains unproven. Do not rerun the completed roster block.
+
+[Durability10](bot-balance-durability10-operator-packet.md) runs missing Bear96 on
+original02758290 runtime first, then Swamp108 and Jungle120 on new6d8f97fc runtime.
+324 observations total. T3 Snapper HP1160/1740/2320; Jungle current versus defensive
+stance versus Silverback ramp cap45%->25% (T3), plus T2 Squire stance-only check.
+No new production stat changes. Hold Jungle HP while distinguishing adaptation
+from enemy pressure. Added minion snapshots to new trials and named-error artifact
+verification. Manual Luna execution, no retry/adaptation or full run by planner.
+Qualification receipt is in packet. Typecheck, focused overlay tests and verifier
+fixtures passed; no full suite/live playtest. Expected25–50min, not a guarantee.
+
+Conduit minions were still damaging targets in its Jungle death window; missing
+minion-kill events do not establish absence of summon losses. The longer fight
+may expose Silverback's45% attack ramp; test that separately from stance. T2
+Squire's failure was dominated by Chameleon/Snake rather than Ape damage.
+For reporting preserve seed medians -> class medians -> six-class center order;
+do not substitute mixed-species node medians or transpose seed/class aggregation.
+
+## Previous decision: role patch applied; Durability 9
+
+User approved applying the Night4 recommendations and preparing the next run.
+Applied HP: Dire Wolf350->525, Stampede Bull330->495, Jungle Ape600->1200,
+Silverback1045->2090, Moss-Shell Snapper340->680, Plague-Shell Snapper580->1160.
+Desert: Sun Scarab attack60->48; T3 Dune/Basilisk HP1350->4050 and Gilded Scarab
+attack120->96. Cave/Mountain, small swarm bodies, DR/plating and T1/T4 unchanged.
+No live Bear change: pressure relief remains experimental before selection.
+
+[Durability9](bot-balance-durability9-operator-packet.md) compares absolute old/new
+patch values on the same code across16 nodes, plus a separate two-node Bear
+HP3750/shield0.08 attack185-vs148 comparison. Six baselines, relevant Slinger/
+Conduit alternatives, three seeds;232cells/696observations total. Manual Luna,
+two sequential blocks, no retries or adaptation. Runtime02758290bc40042d0f65618e465ecb5e0b78d09d.
+All232 configurations qualified, four30s pilots/report generation passed,
+paired builds/geometry/isolation checked. Conduit minion counters now work.
+Typecheck and five focused tests passed; full suite/live playtest not run.
+Planner has NOT launched the full batch. Estimated45–90min, finish when done.
+Interpret by enemy role and pressure, not a universal elite-TTK floor. No new
+Sweep/Slam comparison until a later ability pass with suitable measurements.
+
+## Previous decision: Night 4 reviewed; role-based propagation recommended
+
+[Night4 review](bot-balance-night4-review.md) verifies936 completed observations
+in approximately63 wall minutes. Retain Cave/Mountain elite HP anchors. T2 Desert
+needs pressure relief (Striker6/6 deaths); T3 dealer80% materially improves survival
+at fixed controller HP. HP3x/dealer80% is a candidate, not a live selection.
+Bear fixed shell avoids the earlier Conduit wall, but more HP starts killing
+Apprentice and alternate Slinger before meeting the duration band. Test output
+relief before further HP escalation. Sweep/Slam results are class/encounter-specific.
+
+Correct the report's inactivity interpretation: all zero attackBeats runs are
+Conduit; the counter reads player cooldown rather than minion attacks. Volcano
+contact/episode anomalies still need diagnosis, but zeros do not establish a lava
+loop. Body TTK excludes pre-hit Slam charge; secondary-hit telemetry differs by
+class. Preserve valid results and improve only the needed measurements.
+
+Next proposed stage: broad role-based HP screen on remaining durable bodies,
+separate Desert/Bear pressure arms, targeted measurement cleanup. No new live
+patch, frozen experiment implementation or launch authorized/performed this review.
+
+## Previous decision: Night 4 broad overnight batch prepared
+
+Durability8 completed144 observations. Baseline-capacity Bear shield relieved
+Conduit's approximately142s scaled-shell outlier to16s. Desert HP3x killed
+Striker3/3; HP2x survived with only0.8–3% minimum HP. No live Desert/Bear patch.
+
+[Night4](bot-balance-night4-operator-packet.md) broadens to28 T2/T3 nodes and six
+baseline classes, plus targeted Desert pressure/Bear fixed-shell HP brackets
+and paired Sweep/Slam swarm tests. Three sequential blocks,312cells/936runs,
+three seeds. Runtime115297985869598fe49b215a2c40e19b331b998f. All312 configurations
+qualified; six30s tooling pilots and report generation passed. Typecheck and
+focused matrix/treatment tests passed; full suite/human playtest not run.
+Manual Luna execution only; full batch not launched by planner. No overnight
+source/balance edits, adaptation or retries. Report partial and stop on tooling
+failure. Use breadth to recommend changes by encounter role, then revisit only
+exceptions; do not repeat a long tuning ladder for every species. Elite timing
+bands do not apply to swarm bodies. Ability comparison is a separate screen,
+not a selected ability rebalance. Approximate2–4 wall hours; finish when complete.
+
+## Previous decision: Titan reduction applied; Durability 8
+
+User approved Titan attack105->84 after Durability7. Applied live authored
+definition; HP1656 and Eagle75/dive1.25 unchanged. Both treatments reduced
+all-build deaths8->4; Titan favored broader heavy-hit relief, not a definitive
+survival winner. Eagle overlap deaths remain a watchlist item.
+
+[Durability8](bot-balance-durability8-operator-packet.md) moves to T3 Desert03
+and Tundra03. Six baselines plus Slinger/Conduit alternatives, three seeds,
+48cells/144observations. Desert controllers HP1x/2x/3x; dealer unchanged.
+Glacier Bear control versus HP1.5x with scaled or baseline-capacity shield;
+other Tundra enemies unchanged. No new live biome changes; no weapon swaps/Slam.
+Current Sweep fixed. The approved separate Falchion rework is committed in the
+frozen source but is not equipped. Source04e80e9ae38183c194f4cacc4b5fa171a3de8873.
+All48 configurations qualified, three30s tooling pilots/report generation and
+typecheck/focused tests passed. Luna executes manually once; full run not launched.
+
+## Previous decision: Durability 7
+
+Durability6 completed192 observations. Retain the four selected HP values:
+baseline centers18.2s/17.2s T2 Cave/Mountain and24.8s/25.75s T3. Selected arm
+had5 deaths versus7 controls; not proof that higher HP improves survival.
+T2 Mountain remains the pressure question; T3 Cave slow builds38-40s are tracked
+for later class/item work. No further durability increase selected.
+
+[Durability7](bot-balance-durability7-operator-packet.md) tests T2 Mountain04:
+control, Eagle attack75->60, Titan attack105->84, separately. Eight builds,
+five seeds,24cells/120observations. Titan HP1656 and Eagle dive1.25 stay fixed.
+Base-attack changes also affect attack-derived specials. Current Sweep stays;
+no Slam, other biomes or Desert rework. These are process-local treatments;
+live attack definitions remain unchanged until choosing from the results.
+Frozen source e538db33bcc8b5df9c828af53daaa2ab8c02325f excludes concurrent dirty
+Desert/weapon work. Luna executes manually once; full experiment not launched.
+After results choose a local pressure adjustment if supported, then other biomes.
+
+## Previous decision: Durability 6
+
+Durability5 completed160 observations with8 deaths (1 T2 Cave,7 T2 Mountain,
+0 T3), credible elite pacing and no Conduit summon floor. User approved typical
+toughest-enemy duration15-25s T2 /25-35s T3, allowing favorable matchups below
+the bands. Assess the median of SIX baseline class medians; alternatives and
+fast/slow tails remain separate. This supersedes older10-20s/20-30s targets.
+
+Applied HP: Cave Troll1320->1584, Granite Titan1380->1656, Cavern Troll3780->4725,
+Mountain Colossus4250->4675. Attack/DR/plating unchanged; Eagle75/dive1.25 remains.
+[Durability6](bot-balance-durability6-operator-packet.md) compares previous/new
+absolute HP on identical current code: eight builds, four nodes, three seeds,
+64 cells/192 observations. Current Sweep Tempo in both arms; no Slam equipped.
+Both abilities still need separate balance evaluation. Desert weapon changes
+are excluded by frozen source/builds. Source7398e25bce92e1c2efac4bc1bda8c715ef542ef7.
+All64 configurations qualified; three30s pilots and report generation passed.
+Luna runs manually once; no full experiment launched here.
+Next retain/adjust locally, especially T2 Mountain pressure, then other biomes.
+
+## Previous decision: Durability 5
+
+[Durability5](bot-balance-durability5-operator-packet.md) freezes the selected
+patch at `3a0220aed0c6765e72ecbfae9cdc2de224b38a30`. Four T2/T3 Cave/Mountain
+nodes, six baselines plus Slinger DoT/Conduit on-hit: 32 cells, five seeds,
+160 observations. No overlays or equipment adaptation. All builds qualified;
+three short instrumentation pilots and report generation passed. Luna executes
+manually once; no subagents or full experiment launched during preparation.
+Read the packet for exact hashes, commands, outputs and report requirements.
+Next decision is retain versus locally adjust this combined package, then broaden
+to other biomes; this does not finish T2/T3 or authorize further live tuning.
+
+## Previous decision: selected durability patch applied
+
+Durability4 completed all 60 cells / 300 observations. The axe remained faster
+than the heavy weapon at every highest-plating target; both killed the T3 elites
+across all five seeds. Heavy rescued the stalled on-hit case but did not justify
+high ordinary plating. The report's claims that heavy was best/the only repeatable
+T3 Mountain option are contradicted by its raw results. Keep Conduit's axe baseline;
+no class compensation, penetration or DoT resistance is selected.
+
+User approved the candidate balance package on 2026-09-15. Applied to shared
+monster definitions (authored values before node modifiers):
+
+| Monster | HP before -> after | DR before -> after | Attack before -> after |
+| --- | --- | --- | --- |
+| T2 Cave Troll | 550 -> 1320 | 8% -> 26.4% | 115 -> 86 |
+| T3 Cavern Troll | 945 -> 3780 | 10% -> 28% | 124 unchanged |
+| T2 Granite Titan | 460 -> 1380 | 0% unchanged | 105 unchanged |
+| T3 Mountain Colossus | 850 -> 4250 | 0% unchanged | 130 unchanged |
+
+Plating is unchanged. Cave uses the Durability3 HP/DR arm; Mountain uses the
+Durability2/3 HP-high reference, including its max-HP-scaled Granite Barrier.
+Stone Eagle Skyfall Rend is 1.75 -> 1.25, with ordinary attack 75 unchanged.
+Durability4 opening hits fell about 17-30%; deaths 8/40 -> 7/40 do not establish
+that companion attrition is solved. Mechanics, rewards and other monsters remain
+unchanged. This is a selected candidate, not completed T2/T3 balance validation.
+
+Next: prepare a combined confirmation using the six medium-frame, normal-range
+baselines across T2/T3 Cave and Mountain, retaining Slinger DoT and Conduit on-hit
+alternatives for matchup visibility. Measure named-elite TTK, unfinished targets,
+survival/minimum HP, companion pressure and mechanic/ward activity. Use current
+definitions without old multiplicative durability treatments: replaying the old
+arms on this revision would double-apply the buffs and invalidate comparison.
+Freeze a new revision before Luna execution; no experiment launched by this patch.
+Human playtesting remains needed. Then broaden role-specific tuning to remaining
+biomes, followed by boss TTK and later item/class/economy passes. T2 remains open;
+provisional toughest-enemy TTK bands remain 10-20s T2 and 20-30s T3.
+
+Patch verification: workspace + bench typecheck, shared build, Cave engage
+sequence, Mountain T2 charged defenses, Eagle dive behavior and Durability4
+overlay restoration checks passed. The existing Eagle authoring assertion was
+updated for 1.25x. Full suite was started then stopped after its opening tests;
+no full-suite pass is claimed. No human or integrated balance run was performed.
+
+## Previous decision: Durability 4 prepared
+
+Durability3 completed456 observations. DR preserved reference pacing; high
+plating drove Conduit summon hits to1damage in verified raw T3 Mountain traces.
+User confirms this weakness is known. Before considering compensation or a new
+penetration stat, test the legal Mountain heavy-weapon equipment counter.
+Keep ordinary plating below invalidating thresholds; no DoT resistance.
+
+[Durability4](bot-balance-durability4-operator-packet.md) runs Conduit axe/on-hit/
+heavy at low/intermediate/high plating in T2/T3 Cave/Mountain, plus separate
+T2 Mountain Eagle dive1.75/1.5/1.25 with ordinary attack unchanged. Five seeds,
+60cells/300observations. Qualified, not executed. Source
+ac4595442d93e81f5e3eebc72e5ce4538ff6c94f; Luna manual operation, no subagents.
+No live patches or compensation. Larger defense profiles and boss/swarm/economy
+passes remain subsequent work after these concrete equipment/pressure decisions.
+
+## Previous decision: Durability 3
+
+[Durability3](bot-balance-durability3-operator-packet.md) exchanges20% of the
+experimental elite HP for plating or DR, with both HP-only references retained.
+Separate T2 Mountain Eagle/Thrower/both attack reductions test companion pressure.
+152cells/456observations, manual Luna execution, source
+5d64868501ebb3f3c877e1980ffbe0e0e269ec28. Qualification and short pilots passed.
+No live balance, root/slam, ability or DoT-resistance changes.
+
+User accepts Apprentice armor advantage; repeated roughly4x TTK advantage is
+a review trigger, not an automatic nerf. Source confirms ordinary class DoT
+bypasses monster plating/DR while weapon reservoirs are funded post-mitigation.
+Troll rush fantasy can remain; shorter root/more post-root escape time is a
+future option. T2 remains unfinished; T2/T3 toughest targets10–20s/20–30s.
+Boss TTK and future Slam/Sweep swarm comparisons remain subsequent scopes.
+
+Durability2 report's named table was corrected from raw IDs: all32 baseline/alt
+node/build combinations now present, spurious T3 Spirit death removed. Raw
+results unchanged. T3 high actual baseline ranges Cave16.05–29.70s,
+Mountain19.40–28.40s. Companion preceding-damage audit supports testing Eagles
+separately from Throwers; a final hit alone was not adequate attribution.
+
+## Previous decision: Durability 2 executed
+
+Durability1 finished all576 observations in44m41s with13 deaths; manifest/index
+hashes verified. T3 Cave/Mountain +50% HP remained roughly4–11s for the target
+bruisers, below the desired elite band. Tundra Glacier Bear's recurring shell
+scales with maxHP and high-treatment Conduit fights exceeded140s; this requires
+its own defensive-mechanic audit, not blanket HP scaling. Jungle/Volcano/Swamp
+movement inactivity and Desert controller/dealer interaction remain separate.
+
+User clarified: T2 is unfinished and needs adjustment, not a balanced benchmark.
+Provisional toughest ordinary-enemy targets: T2 10–20s, T3 20–30s, with lower
+monster output considered to manage attrition. Boss TTK is a later explicit
+pass. Targets refer to first-damage-to-kill under the six prepared baselines;
+they are not a required duration for swarm bodies or every build.
+
+[Durability2](bot-balance-durability2-operator-packet.md) executed once at
+source9fc34ff94b0d6a82490bcc32c8036f25105ccc84: all160cells/480observations,
+with no runner failure or retry. It covered Cave Troll and Granite Titan T2,
+Cavern Troll and Mountain Colossus T3, using T2 HP x2/x3 and T3 x3/x5 at
+current attack and x0.75 attack, plus controls. Only named elites changed;
+companions and builds stayed fixed. HP-high is the broadest candidate for the
+provisional duration bands; x0.75 attack is a pressure candidate, not a live
+edit. The [Durability2 report](bot-balance-durability2-report.md) records
+named-elite TTK, pressure/survival, Granite Barrier, death attribution and
+outgoing-damage-gap evidence. Luna operates manually.
+
+Do not wait for the proposed Ground Slam or T2+ attack-driven Sweep cooldown
+reduction: their implementation and a scoped old/new swarm comparison come later.
+Current class/swarm evidence remains conditional on current abilities. The next
+comparison, if approved, is selected plating/DR/DoT-resistance profiles against
+the T2/T3 HP-high references, retaining the x0.75 attack arms when pressure
+attribution matters; present concrete tradeoffs for a user decision.
+No live balance changes or ability implementation authorized by this packet.
+
+## Previous decision: Durability 1 executed
+
+The frozen [Durability 1 packet](bot-balance-durability1-operator-packet.md)
+executed once at source
+`bc559b0228ed4a2d08b1f0f721d99ed873d6056a`: all seven T3 combat biomes, six
+baseline classes plus Conduit/Slinger weapon alternatives, control/low/high HP,
+and unchanged T1/T2 Cave/Mountain references. All 192 cells and 576
+observations completed with no runner failure or retry. Jungle/Volcano
+increases were 10/20%; other biomes 25/50%, Desert controllers only. HP
+overlays were process-local; no live balance data changed. The
+[Durability 1 report](bot-balance-durability1-report.md) records the generated
+HP/TTK, pressure, weapon, engagement and inactivity evidence.
+
+Review the HP candidates by enemy role before the defense stage. Cave,
+Mountain and much of the controller response is clean, but Tundra high had
+three deaths and long Glacier Bear outliers; Desert and Volcano had sparse
+non-clear swarms; and Jungle/Volcano had inactivity signals. Sandweaver stayed
+unchanged. No live balance edit or defense treatment was selected. Luna
+executed the packet manually; no agent was spawned.
+
+Defense profiles follow review and source verification of plating/DR/DoT
+mitigation. The slam remains deferred. Volcano inactivity is unclassified:
+new samples capture actual static damage contact and movement paths, complementing
+hazard-escape logs. Do not treat full-health idle time as survival evidence.
+Longer-lived Desert controllers and swarms may require later damage tuning.
+
+## Previous decision after TTK survey execution
+
+The frozen T1–T3 TTK survey completed once on 2026-09-15: all 66 cells and
+198 predeclared seed observations completed with no runner failure or retry.
+The survey is synthetic in-process combat evidence only; it does not certify
+earned progression, normal economy, network/client fidelity, or average-player
+readiness.
+
+Cave and Mountain baseline individual TTK falls from T1 to T3 for all six
+classes when comparing endpoints, but Squire and Slinger rise from T2 to T3 in
+both nodes. T3 Volcano changes biome/ecology as well as tier: most individual
+TTKs remain short while full swarm clears become sparse or censored. Baseline
+Slinger cleared only2/5 observed Volcano swarm episodes; baseline and alternate
+Conduit cleared0/3 each.
+
+The Slinger DoT alternatives emitted the expected `weapon-dot` events and were
+slower/more censored than the on-hit-rapier baselines in every paired T2/T3
+role. Conduit alternatives were mixed: faster in all T2 roles, near-neutral in
+T3 Cave/Mountain, and slower in the T3 Volcano swarm. These are descriptive
+screen results, not global weapon rankings or a target-duration decision.
+
+The [TTK survey report](bot-balance-ttk-survey-report.md) records generated
+analysis first, all baseline/alternate seed medians with censor/death markers,
+enemy HP/TTK, observed engagement mix, recovery/pressure, raw outlier links,
+roster-hash verification and artifact hashes. Source revision was
+`60817047ffec3065cfd9807dd09868aa08f9b2b4`, source tree
+`297553dc950d20b791c79cca9161a306bc29e471`, with no source or balance change.
+The prior [Volcano finishing result](bot-balance-volcano-finish-report.md)
+remains the current T4 preparation reference; Swamp T3 and Volcano farming
+inactivity remain separate open questions.
+
+No target TTK, monster edit, ground-slam/AoE design, or follow-on experiment is
+selected automatically. Continue discussion using the survey as a descriptive
+qualification input, then retain the broad order mobs -> items -> classes ->
+canonical 1x economy.
+
+## Previous decision after Volcano finishing comparison
 
 The frozen four-cell Volcano finishing comparison executed once on 2026-09-15
 with no retries, adaptation, source changes or balance edits. Both Empty-relic
@@ -497,3 +1319,36 @@ See [V1g assessment](bot-balance-v1g-assessment.md) and [V1h operator packet](bo
 ## V1j reviewed / V1k prepared
 
 [Assessment](bot-balance-v1j-assessment.md), [V1k packet](bot-balance-v1k-operator-packet.md). Frozen source `a419a7ff`. Swamp losses identify poison as the lethal pressure; test Bog Wrappings against Cave armor with recovery/abilities fixed. Add Cave triple-Guard and Desert Cleanse candidates. A boss kill and surviving its remaining effects are now separate reported outcomes. Eight independent cases reuse original Spirit input; no manifest launched. Jungle remains after this coverage pass, then one continuous three-seal/ascent route can open limited T3 exploration without requiring every class/boss combination. T3/T4 low mob eHP remains deferred.
+
+
+## 2026-09-17 — Night5 prepared; playtest gate clarified
+
+User requires an initial mob balance pass through ALL tiers1–4 before the human
+player playtest. One successful route is insufficient. T4 mob durability is still
+unadjusted; item/class/ability perfection is not the gate. Earlier provisional
+calendar estimates must be revised against T4 findings rather than promised.
+
+Durability20:470 full windows,14 deaths (11 Mountain),20 Jungle wall ceilings.
+The outcome verifier mismatch is tooling; older hazard/approach repairs changed
+real behavior. Mountain human evidence: longer fights plus kiting around ledges
+can attract additional dangerous mobs. Test orbit/boots before attack reductions.
+Cave boots' detection reduction is implemented, but equipment trades speed and
+defenses too. User offers T4 specialization advice; request it before interpreting
+a weak standardized build as a mob problem.
+
+[Night5 packet](bot-balance-night5-operator-packet.md):524 cells/1572 maximum
+observations, six independent sequential blocks, eight-hour simulation ceiling.
+Frozen7f9ab446; no experiment launched. Medium native-range T4 branchesA/B/C are
+first-screen references, not optimal builds or a substitute for Voidwalker.
+No new production stat changes. Keep finite mob worklist and class/tooling
+exceptions separate; proceed mobs -> items -> classes (abilities/stances/rune
+choices alongside class builds) -> full economy, with mechanics validity throughout.
+
+## 2026-09-17 — Night5 launcher repaired; R1 prepared
+
+Night5 failed before any observation because Node --import rejected a Windows
+absolute drive path. Corrected to a file URL; the exact shared launcher argument
+builder passed four Mountain pilots plus audit. Frozen revision d0492235,
+[replacement packet](bot-balance-night5-r1-operator-packet.md), new root
+night5-r1-20260917. Same524 cells/1572 observations, seeds, gameplay and limits.
+Original failure artifacts remain intact; full R1 batch not launched by planner.

@@ -146,6 +146,7 @@ export function applyMonsterAoe(
   radius: number,
   baseDamage: number,
   excludeId?: string,
+  abilityName?: string,
 ): void {
   const attackerNodeId = attacker.hasPosition.nodeId;
   const source = actorFromMonster(attacker);
@@ -189,6 +190,7 @@ export function applyMonsterAoe(
       world.killPlayer(player.isPlayer.id, {
         kind: "aoe",
         killer: buildKillerFromMonster(attacker),
+        abilityName,
         damage: effectiveDmg,
       });
     } else {

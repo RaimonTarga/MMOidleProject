@@ -42,7 +42,7 @@ export const COOLDOWN_T3_BUFFS = [
     const exePct = Math.round(ramp * patienceExecutionMax(player) * 100);
     return {
       id: 'cooldown-patience',
-      label: 'Patnce',
+      label: 'Patience',
       stacks: 1,
       durationPct: Math.round(ramp * 100),
       color: '#c8d8f0',

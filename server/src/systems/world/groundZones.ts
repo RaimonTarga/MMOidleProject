@@ -124,6 +124,7 @@ export interface RuntimeChargeCorridor extends RuntimeGroundZoneBase {
 }
 
 export interface RuntimeFaultLineBurst extends RuntimeGroundZoneBase {
+  sourceLabel?: string;
   kind: 'fault-line-telegraph';
   ownerId: string;
   resolvesAtMs: number;
@@ -570,7 +571,8 @@ function tickToxicPool(
       closeHazardContact(world, nodeId, pool, player.isPlayer.id, now, 'death');
       world.killPlayer(player.isPlayer.id, {
         kind: 'dot',
-        killer: { ...pool.killer, monsterName: `${pool.killer.monsterName} — ${pool.sourceLabel}` },
+        killer: pool.killer,
+        effectName: pool.sourceLabel,
         damage,
         stacks: 1,
       });

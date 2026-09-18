@@ -56,6 +56,8 @@ export function applyStatusEffect(
         existing.remainingMs = remainingMs;
       }
       existing.sourceId = config.sourceId; // latest attacker gets kill credit
+      if (config.damageSource) existing.damageSource = structuredClone(config.damageSource);
+      else delete existing.damageSource;
       return existing;
     }
   }
@@ -68,6 +70,7 @@ export function applyStatusEffect(
     refreshable,
     instanced,
     sourceId:     config.sourceId,
+    ...(config.damageSource ? { damageSource: structuredClone(config.damageSource) } : {}),
     data:         { ...(config.data ?? {}) },
   };
   state.statusEffects.push(effect);

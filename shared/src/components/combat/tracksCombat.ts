@@ -8,6 +8,7 @@ export interface StatusEffectConfig {
   refreshable?: boolean; // default: false
   instanced?: boolean;   // default: false
   sourceId: string;
+  damageSource?: StatusEffect['damageSource'];
   data?: Record<string, number>;
 }
 

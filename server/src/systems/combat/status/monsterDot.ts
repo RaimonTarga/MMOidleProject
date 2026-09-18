@@ -8,6 +8,7 @@ import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import { attachMarker } from '../../../ecs/markerHelpers';
 import type { World } from '../../../world/World';
 import { harmfulStatusDurationMult, harmfulStatusPotencyMult } from './harmfulStatus';
+import { buildKillerFromMonster } from '../../world/deathCause';
 
 /** Apply one definition-shaped monster DoT stack through the canonical status path. */
 export function applyMonsterDotToPlayer(
@@ -15,6 +16,7 @@ export function applyMonsterDotToPlayer(
   monster: MonsterEntity,
   player: PlayerEntity,
   dotEffect: NonNullable<MonsterDefinition['dotEffect']>,
+  abilityName?: string,
 ): void {
   const monsterDef = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
   // Status resistance (mobility tenacity + the Warding posture) lands HERE, at the
@@ -34,6 +36,7 @@ export function applyMonsterDotToPlayer(
     maxStacks: dotEffect.maxStacks,
     instanced: false,
     sourceId: monster.isMonster.id,
+    damageSource: { killer: buildKillerFromMonster(monster), abilityName, effectName: debuff.label, effectColor: debuff.color },
     remainingMs: durationMs,
     refreshable: true,
     data: {

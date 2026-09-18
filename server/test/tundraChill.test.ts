@@ -25,6 +25,8 @@ import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 import { updateNodeFeatures } from '../src/systems/world/nodeFeatures';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { World } from '../src/world/World';
+import { attackCadenceMult } from '../src/systems/combat/engine/attackCadence';
+import { mirrorHpForecast } from '../src/systems/defense/core/hpForecast';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -166,6 +168,11 @@ initCombatSystems();
   );
 
   chillToFull(world, player);
+  const expectedCadence = 1 + MAX_STACKS * (CHILL!.payload.attackSlowPct ?? 0);
+  assert(expectedCadence > 1, 'chill authors an attack cooldown penalty');
+  assert(Math.abs(attackCadenceMult(cs) - expectedCadence) < 1e-9, 'attack gate uses the chill penalty');
+  mirrorHpForecast(world);
+  assert(player.hasStatus.attackCadenceMult === attackCadenceMult(cs), 'HUD matches the attack gate');
   assert(
     playerIncomingDamageMult(cs) === 1 && playerOutgoingDamageMult(cs) === 1,
     'the chill must not touch either damage amplifier — the volcano is the greed ramp, not this',
@@ -194,6 +201,11 @@ initCombatSystems();
     getStatusEffect(cs, TUNDRA_CHILL_EFFECT_ID)!.stacks === MAX_STACKS - 2,
     'disengaging sheds the chill gradually, not in one cliff',
   );
+  tickFeatures(world, player, RAMP_MS * MAX_STACKS, false);
+  syncPlayerBuffs(world, Date.now());
+  assert(!getStatusEffect(cs, TUNDRA_CHILL_EFFECT_ID), 'chill fully decays out of combat');
+  assert(attackCadenceMult(cs) === 1, 'attack cadence recovers after decay');
+  assert(!player.hasStatus.activeBuffs.some(b => b.id === 'debuff-tundra-chill'), 'decay removes the icon');
 }
 
 // ── The slow reaches real movement, and meets the shared floor ────────────────

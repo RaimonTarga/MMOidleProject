@@ -463,6 +463,7 @@ export interface PatternCombatHooks {
     player: PlayerEntity,
     now: number,
     multiplier: number,
+    abilityName?: string,
   ) => boolean;
   hitMinion: (
     world: World,
@@ -496,6 +497,7 @@ export interface PatternCombatHooks {
     impactFx?: string,
     rawDamage?: number,
     uninterruptible?: boolean,
+    abilityName?: string,
   ) => void;
 }
 
@@ -1063,6 +1065,7 @@ function tickStep(
         step.fx,
         step.rawDamage,
         step.interruptible === false,
+        step.name,
       );
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
       return 'done';
@@ -1418,7 +1421,7 @@ function resolveTravelContacts(
       // The connection is what the rest of the sequence hangs off: it stops the
       // travel, and it gates every `requiresChargeHit` step after it.
       state.chargeConnected = true;
-      const landed = hooks.hitPlayer(world, monster, player, now, multiplier);
+      const landed = hooks.hitPlayer(world, monster, player, now, multiplier, pattern.name);
       if (landed && pattern.chargeInstinct) {
         setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY, 0);
         // Discard the shortened timer armed at pattern start after a successful hit.
@@ -1765,18 +1768,18 @@ function resolvePayoff(
     // set this up. `resolveCircle` cannot express that, so the area payoff resolves
     // its own victims here.
     for (const victim of victimsInCircle(world, monster, at, step.radius)) {
-      hooks.hitPlayer(world, monster, victim, now, payoffMultiplier(pattern, step, victim));
+      hooks.hitPlayer(world, monster, victim, now, payoffMultiplier(pattern, step, victim), step.name);
       if (!world.hasMonster(monster.isMonster.id)) return;
     }
   } else if (target && (step.reach === undefined || world.collision.canReach(monster, target, step.reach))) {
     const before = target.hasHealth.hp;
-    const landed = hooks.hitPlayer(world, monster, target, now, payoffMultiplier(pattern, step, target));
+    const landed = hooks.hitPlayer(world, monster, target, now, payoffMultiplier(pattern, step, target), step.name);
     if (landed && step.onHitPoison && canApplyPlayerDebuff(target) && !target.isDead) {
       const poison = step.onHitPoison;
       for (let i = 0; i < poison.stacks; i++) {
         applyMonsterDotToPlayer(world, monster, target, {
           ...poison, maxStacks: poison.stacks, element: 'poison',
-        });
+        }, step.name);
       }
     }
     // DEVOUR feeds the caster — but only on a LANDED hit. Dodging it, guarding it
@@ -1919,6 +1922,7 @@ function publishFaultLines(
   }
   publishFaultLineBurst(world, monster.hasPosition.nodeId, {
     kind: 'fault-line-telegraph',
+    sourceLabel: pattern.name,
     pos: { ...at },
     radius: step.lineRadius,
     startedAtMs: now,

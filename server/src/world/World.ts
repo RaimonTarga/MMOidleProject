@@ -45,7 +45,7 @@ import { updateExpiredEmotes } from "../systems/player/emotes";
 import { updatePartyFollow } from "../systems/world/partyFollow";
 import { updateMovement } from "../systems/world/movement";
 import { updateMobilityState } from "../systems/world/mobility/mobilityBoots";
-import { updateNodeFeatures } from "../systems/world/nodeFeatures";
+import { clearInvalidAmbientRamp, updateNodeFeatures } from "../systems/world/nodeFeatures";
 import {
   updateGroundZones,
   type RuntimeGroundZone,
@@ -813,6 +813,8 @@ export class World {
   }
 
   movePlayerNode(fromNodeId: string, toNodeId: string, playerId?: string): void {
+    const player = playerId ? this.getPlayerEntity(playerId) : undefined;
+    if (player) clearInvalidAmbientRamp(this, player, toNodeId);
     const fromBefore = this.countPlayersInNode(fromNodeId);
     this.decrementPlayersInNode(fromNodeId);
     if (fromBefore === 1) freezeNode(this, fromNodeId);

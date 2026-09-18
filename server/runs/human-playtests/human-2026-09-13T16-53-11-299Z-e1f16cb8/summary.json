@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-13T16-53-11-299Z-e1f16cb8",
+    "startedAt": 1789318391299,
+    "endedAt": 1789318703224,
+    "durationMs": 311925,
+    "completion": "completed",
+    "interrupted": false,
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-13T16-53-11-299Z-e1f16cb8",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 100,
+      "end": 100,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 100
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 2,
+    "finalGlobalMastery": 72,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 12,
+      "swamp": 12,
+      "forest": 12,
+      "mountain": 12,
+      "cave": 12,
+      "jungle": 6,
+      "desert": 6
+    }
+  },
+  "combat": {
+    "totalKills": 23,
+    "killsByMonster": {
+      "Field Hare": 19,
+      "Boar": 3,
+      "Gorging Razortusk": 1
+    },
+    "totalDamageTaken": 564.7887499999999,
+    "playerDamageDealt": 10279,
+    "totalHealed": 555,
+    "deaths": 0,
+    "abilityActivations": {
+      "sweep": 6,
+      "second-wind": 3,
+      "brace": 1
+    }
+  },
+  "positioning": {
+    "samples": 472,
+    "movementFraction": 0.336864406779661,
+    "stationaryCombatFraction": 0.15889830508474576,
+    "nearBoundaryFraction": 0.057203389830508475,
+    "boss": {
+      "movementFraction": 0.6203208556149733,
+      "nearBoundaryFraction": 0.13368983957219252,
+      "range": {
+        "samples": 187,
+        "mean": 111.500603392957,
+        "min": 53.96044106245699,
+        "max": 181.8622154051548,
+        "p50": 101.64721540514769,
+        "p90": 158.44667416418093
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.689,
+      "combatDurationMs": 11318,
+      "playerDamage": 1161,
+      "incomingDamage": 149
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.66825,
+      "combatDurationMs": 2213,
+      "playerDamage": 83,
+      "incomingDamage": 59
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.461,
+      "combatDurationMs": 6820,
+      "playerDamage": 1623,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.39875,
+      "combatDurationMs": 4308,
+      "playerDamage": 249,
+      "incomingDamage": 12.217500000000001
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.31575,
+      "combatDurationMs": 5106,
+      "playerDamage": 427,
+      "incomingDamage": 120
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.295,
+      "combatDurationMs": 2013,
+      "playerDamage": 178,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.12925,
+      "combatDurationMs": 2506,
+      "playerDamage": 166,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.067,
+      "combatDurationMs": 3302,
+      "playerDamage": 249,
+      "incomingDamage": 91.57125
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.00475,
+      "combatDurationMs": 4013,
+      "playerDamage": 344,
+      "incomingDamage": 120
+    },
+    {
+      "bossName": "Gorging Razortusk",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 1702,
+      "playerDamage": 83,
+      "incomingDamage": 0
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "ruinous-axe",
+      "armor": "plains-vest-t2",
+      "recovery": "plains-charm-t2",
+      "mobility": "plains-boots-t2",
+      "core": "core-tempered",
+      "relic": null
+    },
+    "itemUpgrades": {
+      "plains-boots-t1": 5,
+      "iron-broadsword": 1,
+      "plains-charm-t1": 5,
+      "plains-vest-t1": 5,
+      "flash-rapier": 5,
+      "chaotic-axe": 5,
+      "mountain-charm-t1": 5,
+      "cave-charm-t1": 5,
+      "plains-vest-t2": 5,
+      "plains-boots-t2": 5,
+      "ruinous-axe": 5,
+      "plains-charm-t2": 5
+    },
+    "classRoot": "energy-root",
+    "frame": "heavy",
+    "range": null,
+    "techniques": [
+      "sweep"
+    ],
+    "guards": [
+      "second-wind",
+      "brace"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "before-empowered",
+        "actionId": "use-ability"
+      }
+    ],
+    "stats": {
+      "attack": 100,
+      "attackRange": 142,
+      "attackCooldown": 817,
+      "maxHp": 216,
+      "plating": 29,
+      "damageReduction": 0.02
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

@@ -1,6 +1,8 @@
 # V1g — Plains coverage, Cave corrosion comparison, T2 progression
 
-Status: in progress. This is the durable operator ledger for
+Status: complete. The supervisor completed 2026-09-13T12:37:18.812Z
+(14:37:18.812+02:00), and the durable cohort report was generated at
+2026-09-13T12:38:00.314Z. This is the durable operator ledger for
 `bot-balance-v1g-operator-packet.md`. Gameplay and balance remain frozen; this
 report is evidence-only and no result is a 1x economy conclusion.
 
@@ -47,9 +49,9 @@ historical networks and storage were untouched.
 
 | Phase | Planned runs | Entry/source rule | Manifest | Disposition |
 |---|---:|---|---|---|
-| A — restore Plains question | 1 | Original kit snapshot; strict Plains Charm/Sweep/Second Wind entry | `20260913t085528z-striker-campaign-night-plains` — created, pre-launch validation passed | ready |
-| B — Cave corrosion comparison | 6 | Original kit snapshot; sealed expose-wind/dual-guard order | `20260913t090242z-striker-campaign-night-cave-t1` — created, pre-launch validation passed | ready |
-| C — six-class T2 screen | 6 | Synthetic clean T2 entry; no snapshot argument | `20260913t093354z-striker-t2-progression-squire` — created, pre-launch validation passed | ready |
+| A — restore Plains question | 1 | Original kit snapshot; strict Plains Charm/Sweep/Second Wind entry | `20260913t085528z-striker-campaign-night-plains` — created, pre-launch validation passed | complete |
+| B — Cave corrosion comparison | 6 | Original kit snapshot; sealed expose-wind/dual-guard order | `20260913t090242z-striker-campaign-night-cave-t1` — created, pre-launch validation passed | complete |
+| C — six-class T2 screen | 6 | Synthetic clean T2 entry; no snapshot argument | `20260913t093354z-striker-t2-progression-squire` — created, pre-launch validation passed | complete |
 
 One worker and one active manifest are allowed. There is no global queue,
 automatic retry, fast boss retry, manifest rewrite, state rewrite, edit,
@@ -187,6 +189,93 @@ are part of the sealed configuration.
 | Isolation/policy | `smoke-isolated`, one worker, `intended`, `fastBossRetry=false`, automatic retries `0` |
 | Run cap | 6 queued runs, `maxRunMs=1800000`, reward multiplier `25`, full gauntlet |
 | Sealed route order | Striker, Squire, Apprentice, Slinger, Spirit, Conduit T2 progression routes |
+
+## Phase C terminal screens
+
+The supervisor completed all six declared slots in the sealed order. Every
+run ended with the exact prescribed `run exceeded maxRunMs (1800000ms)`
+terminal reason after about 30 minutes; no run was retried or extended.
+Each bot log recorded a passing profile and spawn template gate with zero
+errors and zero warnings. The summary objects leave `templateValidation`
+null for these synthetic screens, so the validation counts below are taken
+from the durable bot logs rather than being presented as summary fields.
+
+All six summaries are `isolationGrade=isolated`,
+`treatmentValidity=not-asserted`, `soloBaselineEligible=false`,
+`combatEvidenceEligible=false`, and `economyEvidenceEligible=false`; they
+retain `concurrencyCohortEligible=true` only for the pipeline/cohort record.
+Every run is tainted `SYNTHETIC_TIER_ENTRY` and
+`NON_CANONICAL_REWARD_MULTIPLIER`. The carried `bossesCleared` values are
+entry state from the synthetic screen, not new boss-combat evidence.
+
+Biome shorthand in the table is `P/F/S/M/C/Cl/J` for Plains, Forest, Swamp,
+Mountain, Cave, Clearing, and Jungle. Loadout order is weapon / armor /
+recovery / mobility / core / relic; `—` means absent.
+
+| Order / class | Entry validation | Terminal and progress | Final levels / GM | Final loadout; T2 upgrades | Deaths / recovery | Resource block |
+|---|---|---|---|---|---|---:|
+| 001 Striker | `striker-t1-t2-entry-clean`; profile `120`, spawn `104`, both PASS | Capped; `75/129`; last `gm-60` | `P12 F12 S12 M12 C12 Cl4`; GM `60` | `gale-needle / plains-vest-t2 / plains-charm-t2 / plains-boots-t2 / — / —`; Plains Vest/Charm/Boots and Gale Needle `+2` | `11` Cave deaths: Cave Troll `8`, Giant Spider `3`; all at `craft core-tempered` | `1,140,286 ms` |
+| 002 Squire | `squire-t1-t2-entry-clean`; profile `120`, spawn `104`, both PASS | Capped; `94/129`; last `cave-t2-leg-complete` | `P12 F12 S12 M12 C12 Cl4 J2`; GM `62` | `quake-hammer / mountain-vest-t2 / swamp-charm-t2 / plains-boots-t2 / core-tempered / —`; Plains Vest/Charm/Boots, Swamp Charm, Quake Hammer, Mountain Vest `+3` | `0` deaths | `811,194 ms` |
+| 003 Apprentice | `apprentice-t1-t2-entry-clean`; profile `128`, spawn `105`, both PASS | Capped; `61/125`; last `mountain-t2-entered` | `P12 F12 S12 M11 C6 Cl4`; GM `53` | `swamp-mirebrand / swamp-vest-t2 / plains-charm-t2 / plains-boots-t2 / — / —`; Plains Vest/Charm/Boots, Swamp Mirebrand, Swamp Vest `+2` | `6`: Plains `1`, Swamp `1`, Mountain `4`; reconstruction/farm loops for Swamp Mirebrand and Quake Hammer | `829,152 ms` |
+| 004 Slinger | `slinger-t1-t2-entry-clean`; profile `128`, spawn `105`, both PASS | Capped; `67/133`; last `skip:mountain-vest-t2` | `P12 F12 S12 M11 C6 Cl4`; GM `53` | `gale-needle / forest-vest-t2 / plains-charm-t2 / plains-boots-t2 / — / —`; Plains Vest/Charm/Boots, Gale Needle, Forest Vest `+2` | `4`: Plains `2`, Mountain `2`; reconstruction of Plains Vest and Mountain farming | `1,117,160 ms` |
+| 005 Spirit | `spirit-t1-t2-entry-clean`; profile `121`, spawn `104`, both PASS | Capped; `59/133`; last `mountain-t2-entered` | `P12 F12 S12 M12 C6 Cl4`; GM `54` | `gale-needle / plains-vest-t2 / plains-charm-t2 / plains-boots-t2 / — / —`; Plains Vest/Charm/Boots and Gale Needle `+2` | `6` Mountain deaths: Stone Eagle `3`, Boulder Thrower `3`; all at Mountain Charm T2 reconstruction | `1,285,240 ms` |
+| 006 Conduit | `conduit-t1-t2-entry-clean`; profile `121`, spawn `104`, both PASS | Capped; `55/120`; last `mountain-t2-entered` | `P12 F12 S12 M9 C6 Cl4`; GM `51` | `chaotic-axe / plains-vest-t2 / plains-charm-t2 / plains-boots-t2 / — / —`; Plains Vest/Charm/Boots `+2` | `4`: Plains `1`, Mountain `3`; one `learn defensive-stance`, three Quake Hammer reconstruction deaths | `831,107 ms` |
+
+The transition traces were consistent with the last-progress fields: Striker
+reached Cave entry and GM60; Squire reached Cave max/leg complete; Apprentice,
+Slinger, Spirit, and Conduit reached Mountain entry, with the latter three
+stopping before their next Mountain acquisition gates. The repeated recovery
+loops are recorded as behavior evidence, not as balance verdicts:
+
+| Class | Key acquisition/skip trace and last blocking step |
+|---|---|
+| Striker | T2 entry → Plains/Forest/Swamp/Mountain max and leg complete → Cave entry → GM60; skipped Knight Steelsword, Forest Vest, Thorn Needle, Swamp Mirebrand, Swamp Vest, and Quake Hammer; blocked at `craft core-tempered`. |
+| Squire | T2 entry → Plains/Forest/Swamp/Mountain max and leg complete → Cave max and leg complete; skipped Knight Steelsword, Gale Needle, Forest Vest, Swamp Mirebrand, and Cave Vest; no death recovery loop. |
+| Apprentice | T2 entry → Plains/Forest/Swamp max and leg complete → Mountain entry; acquired Swamp Mirebrand, then repeated Quake Hammer reconstruction below the +3 gate. |
+| Slinger | T2 entry → Plains/Forest/Swamp max and leg complete → Mountain entry; skipped Knight Steelsword, Thorn Needle, Swamp Vest, Quake Hammer, and Mountain Vest; spent three deaths farming Mountain T2 to level 12. |
+| Spirit | T2 entry → Plains/Forest/Swamp max and leg complete → Mountain entry; skipped Knight Steelsword and Swamp Mirebrand; all six deaths were Mountain Charm T2 reconstruction attempts. |
+| Conduit | T2 entry → Plains/Forest/Swamp max and leg complete → Mountain entry; skipped Knight Steelsword, Forest Vest, and Swamp Mirebrand; one death at Defensive Stance and three at Quake Hammer reconstruction. |
+
+Ability and class-mechanic telemetry is retained for implementation follow-up
+only. Ability columns are Expose Weakness / Second Wind / Sweep / Cleanse.
+
+| Class | Ability activations | Actual Cleanse removals | Class-specific telemetry |
+|---|---|---|---|
+| Striker | `64 / 33 / 50 / 4` | `antiheal 1`; `stalker-venom 6` | Step Back `13` activations: `4` success / `9` failure; damage received `1,148` |
+| Squire | `83 / 23 / 49 / 5` | `hydra-venom 7` | Step Back `19`: `14` success / `5` failure; damage received `925` |
+| Apprentice | `68 / 14 / 56 / 17` | `hydra-venom 3`; `stalker-venom 8`; `swamp-rot 6`; `antiheal 5` | Apprentice Sweep `27` secondary targets and `27` stacks; Step Back `3/3` success |
+| Slinger | `46 / 15 / 39 / 4` | `stalker-venom 2`; `antiheal 1`; `hydra-venom 2` | Slinger Sweep: `39` clips, `755` shots, `593` splash hits, `612` splash damage |
+| Spirit | `45 / 11 / 72 / 3` | `hydra-venom 1`; `antiheal 2` | Step Back `1` activation, discarded `1` |
+| Conduit | `62 / 22 / 40 / 3` | `swamp-rot 2`; `stalker-venom 2` | Formation: `102` arms, mean eligible summons `3.15`, `303` deliveries, `18` shares lost, secondary damage `1,554`; Step Back `4/4` success |
+
+The post-run cohort report recorded the same six cap reasons and no supervisor
+or worker health failure. Its resource envelope was Striker `194.8 MiB /
+51% CPU / 44.2 ms event-loop P99`, Squire `194.2 / 52.2 / 244.6`, Apprentice
+`195.6 / 72.9 / 403.7`, Slinger `194.0 / 41.9 / 41.4`, Spirit `192.5 /
+59.0 / 293.1`, and Conduit `201.4 / 63.5 / 274.7`.
+
+### Durable C artifacts
+
+The generated cohort report is:
+`C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260913t093354z-striker-t2-progression-squire/cohort-summary.json`.
+The manifest state is:
+`C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260913t093354z-striker-t2-progression-squire/state.json`.
+The per-run summaries are:
+
+| Class | Durable summary |
+|---|---|
+| Striker | `C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260913t093354z-striker-t2-progression-squire/runs/001-striker-t2-progression-intended-r01/artifacts/striker-t2-progression-intended-2026-09-13T09-35-22-097Z-436a90af/summary.json` |
+| Squire | `C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260913t093354z-striker-t2-progression-squire/runs/002-squire-t2-progression-intended-r01/artifacts/squire-t2-progression-intended-2026-09-13T10-05-44-055Z-35fea5b9/summary.json` |
+| Apprentice | `C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260913t093354z-striker-t2-progression-squire/runs/003-apprentice-t2-progression-intended-r01/artifacts/apprentice-t2-progression-intended-2026-09-13T10-36-04-342Z-c1ce1f16/summary.json` |
+| Slinger | `C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260913t093354z-striker-t2-progression-squire/runs/004-slinger-t2-progression-intended-r01/artifacts/slinger-t2-progression-intended-2026-09-13T11-06-24-286Z-6385cc72/summary.json` |
+| Spirit | `C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260913t093354z-striker-t2-progression-squire/runs/005-spirit-t2-progression-intended-r01/artifacts/spirit-t2-progression-intended-2026-09-13T11-36-45-904Z-4c8d7df1/summary.json` |
+| Conduit | `C:/Users/osaif/AppData/Local/mmo-idle/experiments/20260913t093354z-striker-t2-progression-squire/runs/006-conduit-t2-progression-intended-r01/artifacts/conduit-t2-progression-intended-2026-09-13T12-07-06-400Z-98f526d8/summary.json` |
+
+C is therefore closed as six isolated progression screens finalized at the fixed
+cap, with no ranking, tuning, canonical economy, solo-baseline, or new boss
+conclusion authorized by this packet.
+
+
 
 ## Mandatory outcome classification
 

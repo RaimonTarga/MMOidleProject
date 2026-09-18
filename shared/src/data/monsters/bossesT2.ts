@@ -413,7 +413,7 @@ export const bossMonsterEntriesT2 = [
       phases: [
         { hpPct: 0.5, actions: [
           // The setup tightens: it closes faster and the cash-out comes around sooner.
-          { type: 'stat-buff', stat: 'speed', mult: 1.3 },
+          { type: 'stat-buff', stat: 'speed', mult: 1.3, label: 'relentless-pursuit' },
           { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.75 },
         ] },
       ],

@@ -1,4 +1,4 @@
-import { incomingFinalDamage } from '../combat/damage/finalDamage';
+import { incomingFinalDamage, playerFinalDamageMultipliers } from '../combat/damage/finalDamage';
 import { pushDamageEvent } from '../combat/damage/damageEvent';
 import {
   applyStatusEffect,
@@ -15,6 +15,7 @@ import {
   RESOLVED_NODE_FEATURES,
   ambientRampData,
   ambientRampStatus,
+  AMBIENT_RAMP_KEY,
   type DeathKiller,
   type FeatureTarget,
   type NodeFeatureShape,
@@ -30,6 +31,7 @@ import { buildSimpleBreakdown, recordPlayerDamaged } from '../../world/worldLogC
 import { isInvulnerableMonster, isInvulnerablePlayer } from '../combat/invulnerability';
 import { isPlayerInCombat } from '../combat/ai/engagement';
 import { pushPlayerDotTickEvent } from '../combat/damage/dotTickEvent';
+import { attackCadenceMult } from '../combat/engine/attackCadence';
 
 /** Distinct from boss environmental-dot (`isEnvironmental === 1`). */
 const NODE_FEATURE_FLAG = 2;
@@ -190,12 +192,32 @@ export function updateNodeFeatures(world: World, dt: number): void {
   cleanupExpiredNodeFeatureMarkers(world);
 }
 
+/** Keep only the destination biome's ramp; undefined means clear on death. */
+export function clearInvalidAmbientRamp(
+  world: World,
+  player: PlayerEntity,
+  nodeId: string | undefined,
+): void {
+  const effectId = nodeId === undefined ? undefined
+    : RESOLVED_NODE_FEATURES[nodeId]?.find(f => f.ambientRamp)?.ambientRamp?.effectId;
+  for (const effect of [...player.tracksCombat.statusEffects]) {
+    if (!effect.data[AMBIENT_RAMP_KEY] || effect.id === effectId) continue;
+    removeStatusEffect(player.tracksCombat, effect.id);
+    // Transitions can publish a sync before the next buff projection pass.
+    player.hasStatus.activeBuffs = (player.hasStatus.activeBuffs ?? []).filter(b => b.id !== `debuff-${effect.id}`);
+    player.hasStatus.attackCadenceMult = attackCadenceMult(player.tracksCombat);
+    const damageMults = playerFinalDamageMultipliers(player, world);
+    player.hasStatus.finalDamageDealtMult = damageMults.dealt;
+    player.hasStatus.finalDamageTakenMult = damageMults.taken;
+    markSliceDirty(world, player, 'hasStatus');
+  }
+}
+
 /**
  * P4 — the ambient node ramp. For every live player: if their node authors an
  * `ambientRamp` feature AND they are in combat, the ramp status gains a stack every
- * `rampMs` up to `maxStacks`. Out of combat — or once they leave the node — it sheds
- * a stack at the same cadence and clears at zero (locked decision 1: gradual decay,
- * not a cliff).
+ * `rampMs` up to `maxStacks`. Out of combat it sheds a stack at the same cadence
+ * and clears at zero. Leaving the owning biome or dying clears it immediately.
  *
  * The pass owns the COUNTER only. What a stack does is the authored payload, read
  * wherever it is relevant by systems that key off status `data` rather than status
@@ -211,8 +233,8 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
     const features = RESOLVED_NODE_FEATURES[nodeId];
     const base = features?.find((f) => f.ambientRamp)?.ambientRamp;
     const cs = player.tracksCombat;
-    // Found by the generic marker, not by id: a player who walked out of the
-    // caldera still has to shed the heat they are carrying.
+    // Also reconcile here for position changes outside the normal transition path.
+    clearInvalidAmbientRamp(world, player, nodeId);
     const effect = ambientRampStatus(cs);
     // A boss can bend its own room's ramp — faster, deeper, and with a floor it can
     // no longer cool below. The floor follows the player out of combat but not out

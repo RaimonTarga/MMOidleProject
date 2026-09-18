@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-16T10-03-13-867Z-337bd54d",
+    "startedAt": 1789552993867,
+    "endedAt": 1789553276277,
+    "durationMs": 282410,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "socket disconnected",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-16T10-03-13-867Z-337bd54d",
+    "canonical": false,
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER"
+    ],
+    "rewardMultiplier": {
+      "start": 25,
+      "end": 25,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 25
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 3,
+    "finalGlobalMastery": 72,
+    "biomeLevels": {
+      "clearing": 4,
+      "plains": 12,
+      "forest": 12,
+      "swamp": 12,
+      "mountain": 12,
+      "cave": 12,
+      "jungle": 6,
+      "desert": 6
+    }
+  },
+  "combat": {
+    "totalKills": 5,
+    "killsByMonster": {
+      "Apex Timberclaw": 1,
+      "Stone Warden": 1,
+      "Stoneplate Juggernaut": 1,
+      "Bog Witch": 1,
+      "Mire-Gorged Behemoth": 1
+    },
+    "totalDamageTaken": 1755.0199999999998,
+    "playerDamageDealt": 14967,
+    "totalHealed": 1853,
+    "deaths": 0,
+    "abilityActivations": {
+      "hamstring": 24,
+      "second-wind": 5,
+      "brace": 3,
+      "contagion": 1,
+      "expose-weakness": 3,
+      "cleanse": 3
+    }
+  },
+  "positioning": {
+    "samples": 784,
+    "movementFraction": 0.36862244897959184,
+    "stationaryCombatFraction": 0.5803571428571429,
+    "nearBoundaryFraction": 0.15433673469387754,
+    "boss": {
+      "movementFraction": 0.29831144465290804,
+      "nearBoundaryFraction": 0.18574108818011256,
+      "range": {
+        "samples": 533,
+        "mean": 99.3060470413708,
+        "min": 24.843730852430895,
+        "max": 139.75437225881342,
+        "p50": 101.52341024182518,
+        "p90": 120.97601024182612
+      }
+    }
+  },
+  "bosses": [
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.9626666666666667,
+      "combatDurationMs": 4309,
+      "playerDamage": 226,
+      "incomingDamage": 21.32
+    },
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6581333333333333,
+      "combatDurationMs": 12119,
+      "playerDamage": 999,
+      "incomingDamage": 57.76
+    },
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4226666666666667,
+      "combatDurationMs": 10935,
+      "playerDamage": 996,
+      "incomingDamage": 101.75999999999999
+    },
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.11093333333333333,
+      "combatDurationMs": 12424,
+      "playerDamage": 1026,
+      "incomingDamage": 80.16
+    },
+    {
+      "bossName": "Apex Timberclaw",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 4607,
+      "playerDamage": 483,
+      "incomingDamage": 4
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.7818,
+      "combatDurationMs": 16336,
+      "playerDamage": 1207,
+      "incomingDamage": 254.88000000000002
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5902,
+      "combatDurationMs": 6514,
+      "playerDamage": 502,
+      "incomingDamage": 83.9
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.5616,
+      "combatDurationMs": 701,
+      "playerDamage": 143,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4998,
+      "combatDurationMs": 1200,
+      "playerDamage": 0,
+      "incomingDamage": 79.9
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4712,
+      "combatDurationMs": 700,
+      "playerDamage": 143,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.4666,
+      "combatDurationMs": 703,
+      "playerDamage": 0,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2812,
+      "combatDurationMs": 4509,
+      "playerDamage": 332,
+      "incomingDamage": 4
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.248,
+      "combatDurationMs": 700,
+      "playerDamage": 143,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2148,
+      "combatDurationMs": 902,
+      "playerDamage": 166,
+      "incomingDamage": 0
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1816,
+      "combatDurationMs": 1605,
+      "playerDamage": 166,
+      "incomingDamage": 1
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.1244,
+      "combatDurationMs": 902,
+      "playerDamage": 0,
+      "incomingDamage": 181.94
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.0912,
+      "combatDurationMs": 700,
+      "playerDamage": 0,
+      "incomingDamage": 2
+    },
+    {
+      "bossName": "Stoneplate Juggernaut",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.0294,
+      "combatDurationMs": 500,
+      "playerDamage": 0,
+      "incomingDamage": 2
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.6118518518518519,
+      "combatDurationMs": 18449,
+      "playerDamage": 1426,
+      "incomingDamage": 52.24
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.3979259259259259,
+      "combatDurationMs": 6910,
+      "playerDamage": 552,
+      "incomingDamage": 72.9
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.34874074074074074,
+      "combatDurationMs": 1504,
+      "playerDamage": 166,
+      "incomingDamage": 10
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2995555555555556,
+      "combatDurationMs": 1502,
+      "playerDamage": 23,
+      "incomingDamage": 4
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.25037037037037035,
+      "combatDurationMs": 1208,
+      "playerDamage": 166,
+      "incomingDamage": 18.3
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.2011851851851852,
+      "combatDurationMs": 2604,
+      "playerDamage": 166,
+      "incomingDamage": 38.3
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "disengaged",
+      "bossHpFraction": 0.09303703703703704,
+      "combatDurationMs": 3205,
+      "playerDamage": 222,
+      "incomingDamage": 51.3
+    },
+    {
+      "bossName": "Mire-Gorged Behemoth",
+      "outcome": "victory",
+      "bossHpFraction": 0,
+      "combatDurationMs": 1905,
+      "playerDamage": 166,
+      "incomingDamage": 38.3
+    }
+  ],
+  "build": {
+    "equipment": {
+      "weapon": "quake-hammer",
+      "armor": "swamp-vest-t2",
+      "recovery": "swamp-charm-t2",
+      "mobility": "desert-boots-t2",
+      "core": "core-tempered",
+      "relic": null
+    },
+    "itemUpgrades": {
+      "mountain-vest-t1": 5,
+      "plains-boots-t1": 5,
+      "heavy-hammer": 5,
+      "swamp-charm-t1": 5,
+      "mountain-vest-t2": 2,
+      "quake-hammer": 4,
+      "swamp-vest-t2": 5,
+      "swamp-charm-t2": 5,
+      "desert-boots-t2": 5
+    },
+    "classRoot": "dot-root",
+    "frame": "heavy",
+    "range": "dot-range-mid",
+    "techniques": [
+      "hamstring",
+      "expose-weakness"
+    ],
+    "guards": [
+      "second-wind",
+      "brace",
+      "cleanse"
+    ],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "while-traveling",
+        "actionId": "fight-back"
+      }
+    ],
+    "stats": {
+      "attack": 99,
+      "attackRange": 72,
+      "attackCooldown": 1894,
+      "maxHp": 280,
+      "plating": 20,
+      "damageReduction": 0.03
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}

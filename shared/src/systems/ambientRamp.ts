@@ -9,7 +9,7 @@ import { DAMAGE_DEALT_PCT_KEY, DAMAGE_TAKEN_PCT_KEY } from './playerAmplifiers';
  * the more the ROOM presses on you. It is the generalization of the old volcanic
  * `ambientHeat` (which only knew how to burn) — one stacking status per player,
  * ramping one stack per `rampMs` up to `maxStacks` and shedding one per `rampMs`
- * once you disengage or leave, with a data-authored payload saying what a stack
+ * once you disengage, clearing immediately on biome exit or death, with a data-authored payload saying what a stack
  * actually does.
  *
  * The payload deliberately reuses primitives that already exist rather than
@@ -45,7 +45,7 @@ export interface AmbientRampPayload {
 
 /**
  * Status `data` marker: this effect is the node's ambient ramp. Present so the ramp
- * pass can find (and decay) a player's ramp after they have LEFT the node that
+ * pass can find and clear a player's ramp after they have LEFT the biome that
  * authored it, without hard-coding every biome's effect id — the same generic-marker
  * trick `isDot` / `isNodeFeature` already use.
  */

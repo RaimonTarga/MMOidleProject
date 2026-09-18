@@ -1,3 +1,5 @@
+import type { DeathKiller } from '../../protocol/death';
+
 /**
  * Server-side runtime shape for a named buff/debuff on an entity.
  *
@@ -35,6 +37,13 @@ export interface StatusEffect {
   instanced: boolean;
   /** Entity that applied this effect — used for kill-credit attribution. */
   sourceId: string;
+  /** Application-time attribution; survives removal of the source entity. */
+  damageSource?: {
+    killer: DeathKiller;
+    abilityName?: string;
+    effectName: string;
+    effectColor?: string;
+  };
   /**
    * Effect-specific numeric payload. No enforced schema per-type.
    * Tick-based effects should store:

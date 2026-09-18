@@ -29,9 +29,9 @@ import type { RuntimeSlamTelegraph } from '../../world/groundZones';
 
 export function initBossPatternCombat(): void {
   setPatternCombatHooks({
-    hitPlayer(world, monster, player, now, multiplier) {
+    hitPlayer(world, monster, player, now, multiplier, abilityName) {
       const metadata: Record<string, unknown> = {};
-      const outcome = runMonsterAttack(world, monster, player, now, multiplier, metadata);
+      const outcome = runMonsterAttack(world, monster, player, now, multiplier, metadata, undefined, false, abilityName);
       if (outcome === 'hit') {
         const refreshed = world.getPlayerEntity(player.isPlayer.id);
         if (refreshed) markEngaged(world, refreshed, now);
@@ -44,8 +44,8 @@ export function initBossPatternCombat(): void {
     pullPlayer(world, player, anchor, distance) {
       pullPlayer(world, player, anchor, distance);
     },
-    resolveCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx, rawDamage, uninterruptible) {
-      resolvePatternCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx, rawDamage, uninterruptible);
+    resolveCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx, rawDamage, uninterruptible, abilityName) {
+      resolvePatternCircle(world, monster, at, radius, multiplier, stunMs, now, impactFx, rawDamage, uninterruptible, abilityName);
     },
   });
 }
@@ -68,6 +68,7 @@ function resolvePatternCircle(
   impactFx?: string,
   rawDamage?: number,
   uninterruptible = false,
+  abilityName?: string,
 ): void {
   const nodeId = monster.hasPosition.nodeId;
   const telegraph = (world.groundZones.get(nodeId) ?? []).find(
@@ -92,7 +93,7 @@ function resolvePatternCircle(
   for (const victim of victims) {
     // Re-checked for liveness: an earlier victim's death can drain the node.
     if (!world.getPlayerEntity(victim.isPlayer.id)) continue;
-    const outcome = runMonsterAttack(world, monster, victim, now, multiplier, undefined, rawDamage, uninterruptible);
+    const outcome = runMonsterAttack(world, monster, victim, now, multiplier, undefined, rawDamage, uninterruptible, abilityName);
     if (capture) recordTelegraphResolutionVictim(world, capture, victim.isPlayer.id);
     if (outcome === 'hit') {
       if (stunMs && canApplyPlayerDebuff(victim)) {

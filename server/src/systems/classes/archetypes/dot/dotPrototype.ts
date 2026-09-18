@@ -307,7 +307,7 @@ export function updateDotArchetype(world: World, dt: number): void {
       absorbed = ward.absorbed + pool.absorbed;
     }
 
-    const killer = buildKillerFromSourceId(
+    const killer = effect.damageSource?.killer ?? buildKillerFromSourceId(
       world,
       effect.sourceId,
       entity.hasPosition.nodeId,
@@ -316,7 +316,7 @@ export function updateDotArchetype(world: World, dt: number): void {
       world,
       entity,
       {
-        id: killer.monsterTypeId,
+        id: killer.monsterEntityId ?? effect.sourceId,
         name: killer.monsterName,
         actorType: 'monster',
       },
@@ -327,7 +327,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     );
 
     entity.hasHealth.hp -= hpDamage;
-    pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId, effect), hpDamage, { sourceType: "monster", absorbed });
+    pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId, effect), hpDamage, { sourceType: "monster", sourceId: effect.sourceId, absorbed });
 
     if (entity.hasHealth.hp <= 0) {
       if (tryCheatDeath(world, entity)) {
@@ -343,11 +343,9 @@ export function updateDotArchetype(world: World, dt: number): void {
           playerId,
           cause: {
             kind: "dot",
-            killer: buildKillerFromSourceId(
-              world,
-              effect.sourceId,
-              entity.hasPosition.nodeId,
-            ),
+            killer,
+            abilityName: effect.damageSource?.abilityName,
+            effectName: effect.damageSource?.effectName,
             damage: hpDamage,
             stacks: effect.stacks,
           },
@@ -451,7 +449,8 @@ export function initDotArchetype(): void {
     // that actually LANDS, so an evaded opener (returned above) does not burn it.
     const stacks = monsterDotStacksForHit(ctx.attacker, dotEffect, Date.now());
     for (let i = 0; i < stacks; i++) {
-      applyMonsterDotToPlayer(world, ctx.attacker, player, dotEffect);
+      applyMonsterDotToPlayer(world, ctx.attacker, player, dotEffect,
+        typeof ctx.metadata["abilityName"] === "string" ? ctx.metadata["abilityName"] : undefined);
     }
   });
 }

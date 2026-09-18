@@ -17,13 +17,13 @@ export interface DeathKiller {
   nodeId: string;
 }
 
-export type DeathCause =
+export type DeathCause = { abilityName?: string } & (
   | { kind: "melee"; killer: DeathKiller; damage: number }
   | { kind: "ranged"; killer: DeathKiller; damage: number }
-  | { kind: "dot"; killer: DeathKiller; damage: number; stacks: number }
+  | { kind: "dot"; killer: DeathKiller; damage: number; stacks: number; effectName?: string }
   | { kind: "aoe"; killer: DeathKiller; damage: number }
   | { kind: "debt"; damage: number; nodeId: string; killer?: DeathKiller }
-  | { kind: "stance"; damage: number; stanceName: string };
+  | { kind: "stance"; damage: number; stanceName: string });
 
 export interface PlayerDeathPayload {
   cause: DeathCause;
@@ -33,13 +33,16 @@ export interface PlayerDeathPayload {
 }
 
 export function formatDeathCauseLabel(cause: DeathCause): string {
+  if (cause.kind === "dot") {
+    const effect = cause.effectName ?? "Damage over time";
+    return cause.abilityName ? `${cause.abilityName} (${effect})` : effect;
+  }
+  if (cause.abilityName) return cause.abilityName;
   switch (cause.kind) {
     case "melee":
       return "Melee attack";
     case "ranged":
       return "Ranged attack";
-    case "dot":
-      return "Poison DoT";
     case "aoe":
       return "Area damage";
     case "debt":

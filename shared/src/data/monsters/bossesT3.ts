@@ -88,7 +88,7 @@ export const bossMonsterEntriesT3 = [
         // Then it comes for you faster and swings sooner. Same one idea, tightened.
         { hpPct: 0.25, actions: [
           { type: 'empower-charged', cooldownMult: 0.70 },
-          { type: 'stat-buff', stat: 'speed', mult: 1.25 },
+          { type: 'stat-buff', stat: 'speed', mult: 1.25, label: 'crag-rush' },
         ] },
       ],
     },
@@ -454,7 +454,7 @@ export const bossMonsterEntriesT3 = [
       phases: [
         // Each cycle is worth more to it: the shell holds longer and the vent that
         // comes with it burns hotter. One idea, tightened.
-        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15 }] },
+        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15, label: 'cinder-fury' }] },
       ],
     },
   }],

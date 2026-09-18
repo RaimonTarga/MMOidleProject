@@ -56,10 +56,8 @@ export function buildPlayerDeathPayload(
   cause: DeathCause,
   graveFrame: number,
 ): PlayerDeathPayload {
-  const diedAtNodeId =
-    cause.kind === "debt"
-      ? cause.nodeId
-      : (cause.kind === "stance" ? player.hasPosition.nodeId : cause.killer.nodeId);
+  // A lingering DoT can outlive its source and follow the player to another node.
+  const diedAtNodeId = player.hasPosition.nodeId;
   return {
     cause,
     diedAtNodeId,

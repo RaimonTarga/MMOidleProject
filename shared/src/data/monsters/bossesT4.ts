@@ -127,7 +127,7 @@ export const bossMonsterEntriesT4 = [
         // Then the whole sequence comes at you sooner. Same idea, no new keywords.
         { hpPct: 0.25, actions: [
           { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.10 },
-          { type: 'stat-buff', stat: 'speed', mult: 1.35 },
+          { type: 'stat-buff', stat: 'speed', mult: 1.35, label: 'earthshaker-rush' },
         ] },
       ],
     },
@@ -196,7 +196,7 @@ export const bossMonsterEntriesT4 = [
         { hpPct: 0.25, actions: [
           // ACT III — it drops the kite and commits.
           { type: 'morph', isRanged: false, attackRange: 20, kite: false },
-          { type: 'stat-buff', stat: 'speed', mult: 1.35 },
+          { type: 'stat-buff', stat: 'speed', mult: 1.35, label: 'sandsurge' },
           { type: 'empower-charged', cooldownMult: 0.70 },
         ] },
       ],
@@ -268,8 +268,8 @@ export const bossMonsterEntriesT4 = [
         { hpPct: 0.5, actions: [
           // FRENZY. Cornered: it stops trying to escape (the pattern's health gate
           // closes here) and commits everything to the duel.
-          { type: 'stat-buff', stat: 'attack', mult: 1.40 },
-          { type: 'stat-buff', stat: 'speed', mult: 1.25 },
+          { type: 'stat-buff', stat: 'attack', mult: 1.40, label: 'bestial-frenzy' },
+          { type: 'stat-buff', stat: 'speed', mult: 1.25, label: 'bestial-frenzy' },
         ] },
         // The frenzy peaks. Cadence only — the shape does not change again.
         { hpPct: 0.25, actions: [{ type: 'enrage', atkMult: 1.0, cdMult: 0.75 }] },
@@ -430,7 +430,7 @@ export const bossMonsterEntriesT4 = [
       phases: [
         // The cycle tightens. No ramp stoking: the room's Heat is the player's own
         // to manage, and a boss shoving a floor under it removes the choice.
-        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15 }] },
+        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15, label: 'caldera-fury' }] },
       ],
     },
   }],

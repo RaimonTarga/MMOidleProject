@@ -95,6 +95,15 @@ function statusValues(fx: StatusEffect, weaponReservoir: boolean): StatusValue[]
     values.push({ label: 'Damage taken', value: `+${Math.round(total * 100)}%`, good: true });
   }
 
+  const damagePct = fx.data.damagePct;
+  if (damagePct !== undefined && damagePct > 0) {
+    values.push({
+      label: 'Damage dealt',
+      value: `+${Math.round(damagePct * Math.max(1, fx.stacks) * 100)}%`,
+      good: false,
+    });
+  }
+
   const speedMult = fx.data.speedMult;
   if (speedMult !== undefined && speedMult < 1) {
     values.push({ label: 'Movement speed', value: `${Math.round(speedMult * 100)}%`, good: true });

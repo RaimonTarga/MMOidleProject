@@ -34,6 +34,7 @@ export function applyPlatingShredStacks(
   target: PlayerEntity,
   def: MonsterDefinition | undefined,
   stacks: number,
+  abilityName?: string,
 ): void {
   const platingShred = def?.castsPlatingShred ?? def?.appliesPlatingShred;
   if (!platingShred) return;
@@ -68,7 +69,7 @@ export function applyPlatingShredStacks(
       (poison.atStacks.includes(corrosion.stacks) ||
         deepen?.extraThresholds.includes(corrosion.stacks))
     ) {
-      applyMonsterDotToPlayer(world, monster, target, poison);
+      applyMonsterDotToPlayer(world, monster, target, poison, abilityName);
     }
     // A threshold poison can kill; stop feeding a corpse more corrosion.
     if (target.hasHealth.hp <= 0) return;

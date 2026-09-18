@@ -8,6 +8,8 @@ import {
   RESOLVED_NODE_FEATURES,
   STARTER_RUNE_IDS,
   VOLCANIC_HEAT_EFFECT_ID,
+  TUNDRA_CHILL_EFFECT_ID,
+  ambientRampStatus,
   applyStatusEffect,
   distanceSq,
   emptyEquipment,
@@ -24,6 +26,8 @@ import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
 import { updateNodeFeatures } from '../src/systems/world/nodeFeatures';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { World } from '../src/world/World';
+import { teleportPlayerToNode } from '../src/admin/gameActions';
+import { respawnPlayer } from '../src/systems/world/spawning';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -239,7 +243,7 @@ initCombatSystems();
   assert(playerIncomingDamageMult(cs) === 1, 'and the amplifiers return to baseline');
 }
 
-// ── A ramp carried OUT of its node still sheds, even while in combat ──────────
+// ── A position change outside normal transitions still clears stale ramps ────
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices('carry', HEAT_NODE), 'carry');
@@ -251,11 +255,63 @@ initCombatSystems();
 
   // A node transition, reduced to what the ramp pass actually reads.
   player.hasPosition.nodeId = COLD_NODE;
-  tickFeatures(world, player, RAMP_MS, true);
+  tickFeatures(world, player, 100, true);
   assert(
-    getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID)!.stacks === carried - 1,
-    'leaving the node sheds the ramp even mid-fight — the pass finds it by marker, not by node',
+    getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID) === undefined,
+    'leaving the biome clears the ramp on the next pass, even mid-fight',
   );
+}
+
+// Admin teleport and normal node accounting share immediate cleanup in both directions.
+for (const [source, destination] of [
+  ['node-t4-tundra-01', HEAT_NODE],
+  [HEAT_NODE, 'node-t4-tundra-01'],
+] as const) {
+  const world = new World();
+  const player = world.attachPlayerEntity(makePlayerSlices('teleport', source), 'teleport');
+  tickFeatures(world, player, 20_000, true);
+  syncPlayerBuffs(world, Date.now());
+  const oldId = ambientRampStatus(player.tracksCombat)!.id;
+  assert(player.hasStatus.activeBuffs.some(b => b.id === `debuff-${oldId}`), 'source ramp is visible');
+  assert(teleportPlayerToNode(world, player, destination).ok, 'admin teleport succeeds');
+  assert(!ambientRampStatus(player.tracksCombat), 'teleport immediately clears old ramp before a tick');
+  assert(player.hasStatus.attackCadenceMult === 1, 'teleport clears the displayed attack slow');
+  assert(player.hasStatus.finalDamageDealtMult === 1 && player.hasStatus.finalDamageTakenMult === 1, 'teleport clears displayed heat amplifiers');
+  assert(!player.hasStatus.activeBuffs.some(b => b.id === `debuff-${oldId}`), 'teleport immediately clears old icon');
+  player.hasPosition.current = { ...CLEAR_SPOT };
+  tickFeatures(world, player, 100, true);
+  const next = ambientRampStatus(player.tracksCombat)!;
+  assert(next.id !== oldId && next.stacks === 1, 'destination starts its own ramp at one stack');
+  assert(next.id === (destination === HEAT_NODE ? VOLCANIC_HEAT_EFFECT_ID : TUNDRA_CHILL_EFFECT_ID), 'destination gets correct effect');
+
+  // Ordinary transitions use the same World hook, without waiting for a feature tick.
+  player.hasPosition.nodeId = COLD_NODE;
+  world.movePlayerNode(destination, COLD_NODE, player.isPlayer.id);
+  assert(!ambientRampStatus(player.tracksCombat), 'ordinary biome exit clears immediately');
+}
+
+for (const nodeId of [HEAT_NODE, 'node-t4-tundra-01']) {
+  const world = new World();
+  const player = world.attachPlayerEntity(makePlayerSlices('dies', nodeId), 'dies');
+  tickFeatures(world, player, 20_000, true);
+  syncPlayerBuffs(world, Date.now());
+  const id = ambientRampStatus(player.tracksCombat)!.id;
+  const sameBiomeNode = Object.entries(RESOLVED_NODE_FEATURES).find(([candidate, features]) =>
+    candidate !== nodeId && features.some(f => f.ambientRamp?.effectId === id),
+  )![0];
+  const stacks = ambientRampStatus(player.tracksCombat)!.stacks;
+  player.hasPosition.nodeId = sameBiomeNode;
+  world.movePlayerNode(nodeId, sameBiomeNode, player.isPlayer.id);
+  assert(ambientRampStatus(player.tracksCombat)?.stacks === stacks, 'same-biome travel preserves stacks');
+  world.killPlayer(player.isPlayer.id, { kind: 'stance', damage: 100_000, stanceName: 'Test' });
+  assert(!ambientRampStatus(player.tracksCombat), 'death clears ramp status');
+  assert(player.hasStatus.attackCadenceMult === 1, 'death clears displayed chill penalty');
+  assert(player.hasStatus.finalDamageDealtMult === 1 && player.hasStatus.finalDamageTakenMult === 1, 'death clears displayed heat amplifiers');
+  assert(!player.hasStatus.activeBuffs.some(b => b.id === `debuff-${id}`), 'death clears ramp icon immediately');
+  tickFeatures(world, player, 100, true);
+  assert(!ambientRampStatus(player.tracksCombat), 'dead players cannot regain stacks');
+  respawnPlayer(world, player.isPlayer.id);
+  assert(!ambientRampStatus(player.tracksCombat), 'respawn does not restore ramp');
 }
 
 // ── The cleanse authority covers ramps generically, so Session 6 needs no edit ─

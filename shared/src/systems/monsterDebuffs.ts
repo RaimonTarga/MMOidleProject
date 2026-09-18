@@ -27,7 +27,7 @@ export const SUN_MARK_EFFECT_ID = 'sun-mark';
 
 /**
  * Volcanic ambient heat — the volcano's `ambientRamp` (P4) effect id. Stacks grow
- * with combat dwell time in a volcanic node and shed out of combat / on leaving.
+ * with combat dwell time in a volcanic node, shed out of combat, and clear on biome exit/death.
  * Self-managed by the server ambient-ramp pass (NOT a node-feature damage status).
  *
  * NET HARMFUL despite paying out `damageDealtPct`: the taken side climbs faster.
@@ -38,7 +38,7 @@ export const VOLCANIC_HEAT_EFFECT_ID = 'volcanic-heat';
 /**
  * Tundra ambient chill — the tundra's `ambientRamp` (P4) effect id. Same counter as
  * the volcanic heat, opposite payload: pure move slow, no upside at all. Stacks grow
- * with combat dwell time in a tundra node and shed out of combat / on leaving.
+ * with combat dwell time in a tundra node, shed out of combat, and clear on biome exit/death.
  *
  * It is also what `scalesWithAmbientRamp` reads: the Tundra capstone hits harder the
  * colder the room has made its target, so cleansing the chill is worth more against

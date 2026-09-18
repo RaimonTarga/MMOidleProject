@@ -7,6 +7,7 @@ import type { World } from "../../world/World";
 import { attachComponent, detachComponent } from "../../ecs/markerHelpers";
 import { mutateSlice } from "../../ecs/dirtyHelpers";
 import { stopEntity } from "./movement";
+import { clearInvalidAmbientRamp } from "./nodeFeatures";
 import { clearAutoTraversePath } from "./autoTraverse";
 import { setAggroTarget, setAttackTarget } from "../combat/ai/targeting";
 import { clearEngagement } from "../combat/ai/engagement";
@@ -65,6 +66,7 @@ export function killPlayer(
   });
   despawnMinionsForOwner(world, entity);
   clearEngagement(world, entity);
+  clearInvalidAmbientRamp(world, entity, undefined);
   resetTracksCombat(entity.tracksCombat);
 
   detachComponent(world, entity, "hasAutoIntent");

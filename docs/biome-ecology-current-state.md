@@ -419,8 +419,9 @@ P4, the last shared primitive, plus its first consumer and a standing hazard cle
 generalization of the old volcano-only `ambientHeat` (which only knew how to burn). One
 per node, non-positional (its shape is a formality). `updateAmbientRamp` in
 `server/src/systems/world/nodeFeatures.ts` owns the COUNTER only: a stack every `rampMs`
-while the player is in the node AND in combat, one shed per `rampMs` out of combat or
-after leaving, cleared at zero. Locked decision 1's gradual decay, not a cliff.
+while the player is in the node AND in combat, one shed per `rampMs` out of combat,
+cleared at zero. Biome exit (including admin teleport) and death clear the effect and
+its buff icon immediately. Moving within the same biome preserves its ramp.
 
 What a stack DOES is entirely the authored payload (`AmbientRampPayload` in
 `shared/src/systems/ambientRamp.ts`), read by systems that key off status `data` rather
@@ -431,11 +432,16 @@ than status ids:
 | `incomingDamagePct` | P3 `playerIncomingDamageMult` |
 | `outgoingDamagePct` | P3 `playerOutgoingDamageMult` |
 | `moveSlowPct` | `playerMoveSpeedMult`, via `ambientRampMoveMult` |
+| `attackSlowPct` | `attackCadenceMult`, via `ambientRampAttackSlowPct` |
+
+The movement stat panel includes the same temporary buff speed multipliers and slow
+floor as client movement. Base position speed remains unchanged. Transition/death
+cleanup also refreshes the displayed attack cadence and damage multipliers immediately.
 
 **Adding a biome ramp is therefore pure data.** Tundra's chill (Session 6) needs a
 `payload: { moveSlowPct }` and a `canonicalFeaturesForNode` branch — no server code. The
 status carries a generic `isAmbientRamp` marker in its `data`, which is how the pass finds
-a ramp to shed on a player who has already left the node, and how
+a stale ramp to clear when the destination does not author the same effect, and how
 `isHarmfulPlayerStatusEffect` counts any future ramp as cleansable without an edit.
 
 **Volcano is now a GREED ramp, not a burn.** `{ outgoingDamagePct: 0.05,
@@ -483,7 +489,7 @@ into a death, while the +30% dealt side converts into kills every fight. `outgoi
 in `volcanicHeat()` is the one knob if that lift is too generous.
 
 Pinned by `server/test/ambientRamp.test.ts` (ramp cadence, cap, both amplifiers, taken >
-dealt, no burn damage, gradual decay, shedding after leaving the node, the buff tile, the
+dealt, no burn damage, gradual decay, biome-exit/death cleanup, cross-biome teleport, the buff tile, the
 clamp helper, and the clamp's wiring into real movement).
 
 ---

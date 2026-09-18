@@ -4,6 +4,7 @@ import {
   STARTER_RUNE_IDS,
   RESOLVED_NODE_FEATURES,
   emptyEquipment,
+  formatDeathCauseLabel,
   getFlag,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -290,7 +291,7 @@ for (const [name, movementRule] of [['chase', CHASE], ['orbit', ORBIT]] as const
   assert(
     death?.kind === 'player-death' &&
       death.cause.kind === 'dot' &&
-      death.cause.killer.monsterName.includes('Bile Pool'),
+      formatDeathCauseLabel(death.cause).includes('Bile Pool'),
     'hazard death should retain Bile Pool attribution',
   );
 }

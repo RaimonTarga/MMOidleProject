@@ -122,8 +122,9 @@ type CombatEventPayload =
   // `shield` a barrier coming up; `morph` a shape/range flip. The damage/spawn/
   // shield are all server-authoritative — this only drives the animation.
   // `stagger` is the authored recovery cue: the boss is visibly out of it and open
-  // to punishment. It is a distinct FX from the others because the player has to be
-  // able to tell "it is winding up again" from "hit it NOW".
+  // to punishment. Its client presentation reuses the player's hard-stun cue so
+  // the same concussion-and-stars language means "this target cannot act" everywhere;
+  // the event remains distinct because it is the boss's recovery state, not a hit.
   | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph' | 'roar' | 'frenzy' | 'stagger'; radius?: number; element?: string }
   // A self-facing Guard ability fired (Brace / Cleanse / Second Wind). Drives the
   // in-world Guard FX on the player's sprite, shown to the whole node so allies see

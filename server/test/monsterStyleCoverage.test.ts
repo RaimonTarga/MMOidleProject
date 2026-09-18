@@ -26,6 +26,8 @@ function assert(condition: unknown, message: string): asserts condition {
 
 const CLIENT_FX = join(__dirname, '../../client/src/render/combatFx.ts');
 const source = readFileSync(CLIENT_FX, 'utf8');
+const STAGGER_FX = join(__dirname, '../../client/src/fx/stagger.ts');
+const staggerSource = readFileSync(STAGGER_FX, 'utf8');
 
 // ─── 1. Every authored `attackStyle` is registered in ATTACK_FX_BY_STYLE ─────
 const styleTable = source.slice(
@@ -150,6 +152,11 @@ assert(
   source.includes('ev.fx === "stagger"'),
   'the `boss-fx` chain must still handle `stagger` — without it, breaking a boss ' +
     'plate or escape-guard draws nothing at all',
+);
+assert(
+  /from ['"]\.\/stunningStrike['"]/.test(staggerSource) &&
+    staggerSource.includes('fxStunningStrike(scene, x, y)'),
+  'boss recovery/stagger must reuse the player Stunning Strike animation',
 );
 assert(
   source.includes('ev.fx === "huge-boulder"'),

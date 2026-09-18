@@ -727,9 +727,11 @@ export function runMonsterAttack(
   resultMetadata?: Record<string, unknown>,
   rawDamage?: number,
   uninterruptible = false,
+  abilityName?: string,
 ): MonsterAttackOutcome {
   const baseAttack = rawDamage ?? monster.dealsDamage.attack;
   const ctx = makeCombatContext(monster, "monster", target, "player");
+  if (abilityName) ctx.metadata["abilityName"] = abilityName;
 
   if (!uninterruptible && isMonsterStunned(world, monster.isMonster.id)) {
     ctx.cancelled = true;
@@ -1038,7 +1040,7 @@ export function runMonsterAttack(
   // bolting on a second mechanic. An ordinary hit erodes by ONE stack; the
   // cast-only corrosion is configured separately and never enters this rider.
   if (def?.appliesPlatingShred && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
-    applyPlatingShredStacks(world, monster, target, def, 1);
+    applyPlatingShredStacks(world, monster, target, def, 1, abilityName);
   }
 
   const rampDebuff = def?.rampDebuff;
@@ -1076,6 +1078,7 @@ export function runMonsterAttack(
       // archer's kill reads "Ranged attack" and a brawler's reads "Melee attack".
       kind: monster.isMonster.isRanged ? "ranged" : "melee",
       killer: buildKillerFromMonster(monster),
+      abilityName,
       damage: ctx.damage,
     });
     return "killed";
@@ -1331,9 +1334,10 @@ function resolveMonsterAbilityHit(
   target: PlayerEntity,
   action: MonsterAbilityHitAction,
   now: number,
+  abilityName: string,
 ): void {
   const result: Record<string, unknown> = {};
-  const outcome = runMonsterAttack(world, monster, target, now, action.multiplier, result);
+  const outcome = runMonsterAttack(world, monster, target, now, action.multiplier, result, undefined, false, abilityName);
   if (outcome !== 'hit' || result.evadeBlocksDebuffs === true) return;
   if (action.effect) applyMonsterAbilityPlayerEffect(monster, target, action.effect);
   if (action.knockback) {
@@ -1349,6 +1353,7 @@ function resolveMonsterAbilityArea(
   action: MonsterAbilityAreaAction,
   impact: Vec2,
   now: number,
+  abilityName: string,
 ): void {
   const nodeId = monster.hasPosition.nodeId;
   const victims = world.collision.bodiesInCircle(
@@ -1360,7 +1365,7 @@ function resolveMonsterAbilityArea(
     const target = world.getPlayerEntity(victim.isPlayer.id);
     if (!target) continue;
     const result: Record<string, unknown> = {};
-    const outcome = runMonsterAttack(world, monster, target, now, action.multiplier, result);
+    const outcome = runMonsterAttack(world, monster, target, now, action.multiplier, result, undefined, false, abilityName);
     if (outcome === 'hit' && result.evadeBlocksDebuffs !== true) {
       if (action.effect) applyMonsterAbilityPlayerEffect(monster, target, action.effect);
       if (action.stunMs && canApplyPlayerDebuff(target)) {
@@ -1402,7 +1407,7 @@ function resolveMonsterAbility(
 ): void {
   for (const action of ability.actions) {
     if (action.type === 'hit') {
-      if (target) resolveMonsterAbilityHit(world, monster, target, action, now);
+      if (target) resolveMonsterAbilityHit(world, monster, target, action, now, ability.name);
     } else if (action.type === 'area-hit') {
       resolveMonsterAbilityArea(
         world,
@@ -1410,6 +1415,7 @@ function resolveMonsterAbility(
         action,
         impact ?? monster.hasPosition.current,
         now,
+        ability.name,
       );
     } else if (action.type === 'plating-shred') {
       // BREACH — a larger dose of the caster's own corrosion, through the same
@@ -1422,6 +1428,7 @@ function resolveMonsterAbility(
           target,
           MONSTER_DATABASE.get(monster.isMonster.monsterTypeId),
           action.stacks,
+          ability.name,
         );
       }
     } else {
@@ -1984,6 +1991,7 @@ function applyMonsterAttackSplash(
   monster: MonsterEntity,
   center: Vec2,
   primaryId: string,
+  abilityName?: string,
 ): void {
   const aoe = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.aoeAttack;
   if (!aoe) return;
@@ -1994,6 +2002,7 @@ function applyMonsterAttackSplash(
     aoe.radius,
     monster.dealsDamage.attack * (aoe.damageMult ?? 1),
     primaryId,
+    abilityName,
   );
 }
 
@@ -2042,7 +2051,7 @@ function resolveChargedSlam(
     // Each victim re-checked for liveness: an earlier victim's death can drain
     // the node (party wipe) and invalidate the rest of the list.
     if (!world.getPlayerEntity(victim.isPlayer.id)) continue;
-    const outcome = runMonsterAttack(world, monster, victim, now, slamMult);
+    const outcome = runMonsterAttack(world, monster, victim, now, slamMult, undefined, undefined, false, charged.name);
     if (telemetryCapture) {
       recordTelegraphResolutionVictim(world, telemetryCapture, victim.isPlayer.id);
     }
@@ -2219,7 +2228,7 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
 
     for (const player of players.values()) {
       if (!world.getPlayerEntity(player.isPlayer.id)) continue;
-      runMonsterAttack(world, monster, player, now, multiplier);
+      runMonsterAttack(world, monster, player, now, multiplier, undefined, undefined, false, impact.sourceLabel);
       if (telemetryCapture) {
         recordTelegraphResolutionVictim(world, telemetryCapture, player.isPlayer.id);
       }
@@ -2479,7 +2488,7 @@ export function updateCombat(world: World, dt: number, now: number) {
           // chasing, so it happens here — after the tell has run its full length and
           // immediately before the bite is rolled from contact.
           if (lungeSpec) performAmbushLunge(world, e, target);
-          const outcome = runMonsterAttack(world, e, target, now, charged.multiplier);
+          const outcome = runMonsterAttack(world, e, target, now, charged.multiplier, undefined, undefined, false, charged.name);
           if (outcome === "hit" || outcome === "killed") {
             // DEVOUR — landing the bite feeds the caster. Deliberately gated on a
             // landed hit only: dodging it, killing the wind-up, or walking out of
@@ -2518,6 +2527,7 @@ export function updateCombat(world: World, dt: number, now: number) {
               e,
               target.hasPosition.current,
               target.isPlayer.id,
+              charged.name,
             );
           }
           if (outcome === "hit") {

@@ -1,7 +1,7 @@
 # Documentation Index
 
 Map of every living doc, what it is for, and where history goes.
-Last sorted: 2026-09-15.
+Last sorted: 2026-09-17.
 
 **If code and any doc disagree, the code wins — fix the doc.**
 
@@ -26,7 +26,57 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [Durability 24 operator packet](briefs/bot-balance-durability24-operator-packet.md) | Executed once: four-arm Graveyard leader/escort HP redistribution and Focus Elites targeting comparison, with T4B Blunderbuss stress and pacing guardrails; 56 cells / 168 observations, no production edits. |
+| [Durability 24 report](briefs/bot-balance-durability24-report.md) | Completed the 56-cell / 168-observation Graveyard screen with geometry parity, targeting samples, Risen/DoT/death audit, normal-targeting HP candidate disposition, synthetic evidence only, and no production adoption. |
+| [Durability 23 operator packet](briefs/bot-balance-durability23-operator-packet.md) | Executed once: Volcano anchor HP-only comparison, Graveyard Focus Elites counterplay, and bounded Jungle exposure; 64 cells / 192 observations, no production edits. |
+| [Durability 23 report](briefs/bot-balance-durability23-report.md) | Completed all 64 cells / 192 observations with verified blocks; one Volcano death, 20 Graveyard deaths, six Jungle wall ceilings, geometry parity, synthetic evidence only, no production adoption. |
+| [Durability 22 operator packet](briefs/bot-balance-durability22-operator-packet.md) | Executed once: four-block T4 control/candidate HP overlay and Trench mini-boss pacing survey; 96 cells / 288 observations, no production edits. |
+| [Durability 22 report](briefs/bot-balance-durability22-report.md) | Completed 96-cell / 288-observation Trench, Mountain, Tundra, and Desert overlay screen; five player deaths, no wall ceilings, geometry parity verified, synthetic evidence only, no production balance adoption. |
+| [Durability 20 operator packet](briefs/bot-balance-durability20-operator-packet.md) | Prepared 504-run T2/T3 roster coverage survey with selected Forest/Volcano packages, finite remaining-work map; not launched. |
+| [Durability 20 report](briefs/bot-balance-durability20-report.md) | Completed the 504-run T2/T3 roster coverage matrix; runner complete but frozen verifier stopped on 20 wall-ceiling outcome labels before official exposure audit, synthetic evidence only, no balance edits. |
+| [Durability 19 operator packet](briefs/bot-balance-durability19-operator-packet.md) | Prepared 144-run fresh-seed Forest/Volcano candidate confirmation on current combat snapshot; no production patch or launch. |
+| [Durability 19 report](briefs/bot-balance-durability19-report.md) | Completed 48-cell / 144-observation current-runtime Forest/Volcano adult durability confirmation; one death, five long-quiet arm-runs across four excluded pairs, 68 eligible pairs, synthetic evidence only, no balance edits. |
+| [Durability 18 operator packet](briefs/bot-balance-durability18-operator-packet.md) | Executed once: 24-run Forest03 Wolf attack versus defensive stance comparison for Striker/Apprentice; synthetic evidence retained, no balance edits. |
+| [Durability 18 report](briefs/bot-balance-durability18-report.md) | Completed 8-cell / 24-observation Forest03 Wolf attack and stance comparison; one death, two additional sub-20% survivors, six matched sets, synthetic evidence only, no balance edits. |
+| [Durability 17 operator packet](briefs/bot-balance-durability17-operator-packet.md) | Prepared 144-run T2 Forest adult durability/pressure trial across six roots, retaining fragile whelps; no production patch or launch. |
+| [Durability 17 report](briefs/bot-balance-durability17-report.md) | Completed 48-cell / 144-observation T2 Forest adult durability/pressure trial; eight deaths, eight additional sub-20% survivors, two long-quiet exclusions, matched sensitivity retained, synthetic evidence only, no balance edits. |
+| [Durability 16 operator packet](briefs/bot-balance-durability16-operator-packet.md) | Prepared 72-run species-specific Volcano attack comparison at fixed candidate anchor HP; no production patch or launch. |
+| [Durability 16 report](briefs/bot-balance-durability16-report.md) | Completed 24-cell / 72-observation Volcano attack-relief comparison; one death, one additional sub-20% survivor, seven long-quiet flags, 15/18 matched sets, exact Durability15 bookends, synthetic evidence only, no balance edits. |
+| [Durability 15 operator packet](briefs/bot-balance-durability15-operator-packet.md) | Prepared 144-run paired Volcano anchor HP/attack trial across six classes; exposure exclusions retained, no production patch or launch. |
+| [Durability 15 report](briefs/bot-balance-durability15-report.md) | Completed 48-cell / 144-observation Volcano anchor HP/attack trial; three deaths, two additional sub-20% survivors, eight long-quiet flags, matched sensitivity retained, synthetic evidence only, no balance edits. |
+| [Durability 14 report](briefs/bot-balance-durability14-report.md) | Completed 24-cell / 72-observation repaired-runtime Volcano Sweep/Slam comparison; four terminal exposure gaps, two deaths, one sub-20% survivor, synthetic evidence only, no balance edits. |
+| [Durability 13 report](briefs/bot-balance-durability13-report.md) | Gate-stopped after 15 sustained-engagement observations: one Swamp Striker/6151 83.2s quiet interval; conditional 72-run Volcano Sweep/Slam block not launched, no balance edits. |
+| [Durability 14 operator packet](briefs/bot-balance-durability14-operator-packet.md) | Swamp boundary-handoff repair passes 15 local checks; manual Luna resumes only the pending 72 Volcano comparisons, no balance changes. |
+| [Durability 13 operator packet](briefs/bot-balance-durability13-operator-packet.md) | Frozen movement repair; 15 sustained-engagement checks gate 72 Volcano Sweep/Slam observations, manual Luna, no balance changes. |
+| [Durability 12 report](briefs/bot-balance-durability12-report.md) | Completed 148-observation screen and direct frozen replay investigation: overlapping-bush retreat failure, deep-lava target feasibility and leash oscillation; follow-up repair and qualification in Durability13. |
+| [Durability 12 operator packet](briefs/bot-balance-durability12-operator-packet.md) | Hazard approach verification followed by six-class T2 Plains/T3 Volcano Sweep versus Slam comparison; 148 observations, no new balance overlays. |
+| [Durability 11 report](briefs/bot-balance-durability11-report.md) | Completed 42-cell/126-observation fresh-seed confirmation of adopted Bear/Snapper stats and targeted Jungle stances; two deaths and one no-contact engagement limitation; synthetic evidence only, no live edits. |
+| [Durability 11 operator packet](briefs/bot-balance-durability11-operator-packet.md) | Fresh-seed confirmation of adopted Bear/Snapper stats and targeted Jungle stances; 42 cells/126 observations; known Swamp movement stall tracked separately. |
+| [Durability 10 operator packet](briefs/bot-balance-durability10-operator-packet.md) | Missing Bear continuation first, then T3 Snapper HP bracket and separate Jungle stance/ramp trials; 324 observations, explicit artifact validation, no new live stats. |
+| [Durability 10 report](briefs/bot-balance-durability10-report.md) | Completed 108 configurations / 324 observations across Bear, T3 Snapper HP, and Jungle stance/ramp; verifier-backed synthetic evidence only, no live edits. |
+| [Durability 9 operator packet](briefs/bot-balance-durability9-operator-packet.md) | Ready: approved role HP/Desert pressure patch old/new comparison plus experimental Bear attack relief; 232 cells/696 observations, manual Luna execution. |
+| [Durability 9 report](briefs/bot-balance-durability9-report.md) | Block A completed 200 cells/600 observations, then stopped on the prescribed post-block identity guard; Block B not launched, synthetic evidence only. |
+| [Night 4 planner review](briefs/bot-balance-night4-review.md) | Verified overnight results, Conduit/TTK/secondary-hit interpretation corrections, and recommended role-based durability plus local pressure follow-up; no new live changes. |
+| [Night 4 operator packet](briefs/bot-balance-night4-operator-packet.md) | Ready for manual Luna: three fixed overnight blocks, 28 T2/T3 nodes, six-class breadth, Desert/Bear treatments and Sweep/Slam pairs; 312 cells/936 observations, no live edits. |
+| [Night 4 report](briefs/bot-balance-night4-report.md) | Completed 312-cell/936-observation broad encounter, Desert/Bear, and Sweep/Slam screen; synthetic evidence only, outer-median and inactivity audit retained, no live edits. |
 | [T1–T3 TTK survey operator packet](briefs/bot-balance-ttk-survey-operator-packet.md) | Execute the six-class duration baseline and targeted weapon comparisons; synthetic server benchmark, no balance edits. |
+| [Durability 1 operator packet](briefs/bot-balance-durability1-operator-packet.md) | Completed once: seven-biome T3 HP-only trial, six baselines plus weapon alternatives, T1/T2 controls and Volcano contact telemetry; 192 cells/576 observations. |
+| [Durability 2 operator packet](briefs/bot-balance-durability2-operator-packet.md) | Completed once: T2/T3 named-elite HP and attack calibration toward provisional duration bands; 160 cells/480 observations. |
+| [Durability 3 operator packet](briefs/bot-balance-durability3-operator-packet.md) | Completed: HP/defense exchange and separate T2 Eagle/Thrower pressure arms; 152 cells/456 observations, no DoT resistance or live edits. |
+| [Durability 8 operator packet](briefs/bot-balance-durability8-operator-packet.md) | Completed once: T3 Desert controller HP and Glacier Bear shield-scaling probe; 48 cells/144 observations. |
+| [Durability 8 report](briefs/bot-balance-durability8-report.md) | Completed 48-cell/144-observation Desert controller and Tundra Bear shield screen; synthetic evidence only, fixed-shell Bear candidate and 2x–3x Desert bracket returned, no live edits. |
+| [Durability 7 operator packet](briefs/bot-balance-durability7-operator-packet.md) | Completed T2 Mountain pressure comparison; Titan attack84 selected after review. |
+| [Durability 7 report](briefs/bot-balance-durability7-report.md) | Completed 24-cell/120-observation T2 Mountain pressure attribution; synthetic evidence only, Titan-reduction candidate, no balance edits. |
+| [Durability 6 operator packet](briefs/bot-balance-durability6-operator-packet.md) | Completed paired previous/new HP confirmation on current Sweep code; 64 cells/192 observations; typical-duration targets15-25s T2 /25-35s T3. |
+| [Durability 6 report](briefs/bot-balance-durability6-report.md) | Completed 64-cell/192-observation typical-duration HP adjustment screen; synthetic evidence only, no balance edits. |
+| [Durability 5 operator packet](briefs/bot-balance-durability5-operator-packet.md) | Completed once: combined authored Cave/Mountain durability and Eagle patch confirmation; six baselines plus two weapon alternatives, 32 cells/160 observations. |
+| [Durability 5 report](briefs/bot-balance-durability5-report.md) | Completed 32-cell/160-observation combined Cave/Mountain durability and Stone Eagle confirmation; synthetic only, no balance edits. |
+| [Durability 4 operator packet](briefs/bot-balance-durability4-operator-packet.md) | Completed: Conduit axe/on-hit/heavy versus plating and Eagle dive-only multipliers; 60 cells/300 observations, five seeds. |
+| [Durability 4 report](briefs/bot-balance-durability4-report.md) | Completed 60-cell/300-observation Conduit equipment-counter and Stone Eagle dive-isolation experiment; synthetic only, no live or balance edits. |
+| [Durability 1 report](briefs/bot-balance-durability1-report.md) | Completed 192-cell/576-observation T3 HP-only response trial with enemy-type HP/TTK, class treatment pairs, pressure, weapon comparisons, engagement/inactivity audit, and synthetic evidence boundaries. |
+| [Durability 2 report](briefs/bot-balance-durability2-report.md) | Completed named-elite TTK calibration with HP/attack treatment pairs, pressure/survival, Granite Barrier traces, death attribution, and outgoing-damage-gap audit; synthetic only. |
+| [Durability 3 report](briefs/bot-balance-durability3-report.md) | Completed 152-cell/456-observation defense-identity and T2 companion-pressure trial with named-elite TTK, plating/DR comparison, Eagle dive chronology, Cave root/Slam traces, pressure/death attribution, and inactivity diagnostics; synthetic only. |
+| [T1–T3 TTK survey report](briefs/bot-balance-ttk-survey-report.md) | Completed 66-cell/198-observation duration survey with seed-level censor/death context, enemy TTK/HP, swarm pressure, and Conduit/Slinger comparisons. |
 | [Volcano finishing operator packet](briefs/bot-balance-volcano-finish-operator-packet.md) | Executable four-case T4 Expose Weakness / Colossus screen and sampled final-phase evidence. |
 | [briefs/bot-balance-volcano-finish-report.md](briefs/bot-balance-volcano-finish-report.md) | Volcano finishing result: both Empty-relic cells died before victory; both Colossus cells won/returned; no global relic or balance conclusion. |
 | [briefs/bot-balance-validation-exit-plan.md](briefs/bot-balance-validation-exit-plan.md) | Remaining validation gates, Volcano inactivity diagnosis and transition to mobs/items/classes/economy balance passes. |
@@ -260,3 +310,36 @@ holds the art bibles, the overhaul roadmap, and the icon-generation workflows.
 Generated balance packets (`reports/dps-*`, `ehp-*`, `mob-*`,
 `*-mechanics-packet.md`) are build output of `pnpm dps:report` / `ehp:report` /
 `mob:report`, not authored docs — regenerate rather than edit.
+
+- [Night5 overnight operator packet](briefs/bot-balance-night5-operator-packet.md) — frozen Mountain pull-control, T4 specialization roster, weapons and sustained farming; prepared, not launched.
+- [Night5 report](briefs/bot-balance-night5-report.md) — exact one-shot launcher stopped before the first observation on a Windows `--import` path error; zero observations and no balance evidence.
+
+- [Night5-R1 repaired operator packet](briefs/bot-balance-night5-r1-operator-packet.md) — Windows loader fix tested; same overnight matrix, executed once at the fresh output root; see the report for sealed partial-block outcomes.
+- [Night5-R1 report](briefs/bot-balance-night5-r1-report.md) — exact sequential batch completed with four budget-partial blocks, two completed blocks, and no production-balance conclusion.
+
+- [Night5-R1 planner review and invited-playtest roadmap](briefs/bot-balance-night5-r1-review.md) — raw-result interpretation, missing T4 coverage, minimum release gates and deferred polishing work.
+
+- [Durability21 operator packet](briefs/bot-balance-durability21-operator-packet.md) — prepared108-observation T4 missing-biome screen plus bounded read-only death-case review; not launched.
+- [Durability21 report](briefs/bot-balance-durability21-report.md) — completed the 108-run T4 Tundra/Volcanic/Trench screen and read-only Night5-R1 death-case review; one player death, synthetic evidence only, no balance edits.
+
+- [Durability22 operator packet](briefs/bot-balance-durability22-operator-packet.md) — provisional T4 role HP treatments, all-species Trench40–60s goal, paired controls; executed once; see the Durability22 report for the retained synthetic evidence.
+
+- [Durability23 operator packet](briefs/bot-balance-durability23-operator-packet.md) — executed once; Volcano anchor durability, Graveyard Focus Elites and bounded Jungle coverage; see the report for retained evidence.
+- [Durability24 operator packet](briefs/bot-balance-durability24-operator-packet.md) — executed once; four-arm Graveyard leader/escort HP redistribution, Focus Elites interaction, and T4B Blunderbuss stress; see the report for retained evidence.
+- [Durability24 report](briefs/bot-balance-durability24-report.md) — completed 56 cells / 168 observations with verified geometry, targeting and death-event audit, synthetic evidence only, and no production adoption.
+- [Durability25 operator packet](briefs/bot-balance-durability25-operator-packet.md) — executed once; frozen Mountain/Desert T2–T4 matched tier-pacing screen, 72 cells / 216 observations.
+- [Durability25 report](briefs/bot-balance-durability25-report.md) — completed the 216-observation Mountain/Desert pacing screen with READY/geometry, body-TTK, actual pack-duration, survival, and death-event audits; synthetic evidence only, no numeric or production adoption.
+- [Durability26 operator packet](briefs/bot-balance-durability26-operator-packet.md) — executed once; selected T4 Mountain/Desert anchor HP trial with bounded Durability25 Mountain T2 pressure review, 48 cells / 144 observations.
+- [Durability26 report](briefs/bot-balance-durability26-report.md) — completed the verified synthetic T4 anchor trial and read-only T2 death audit; candidate values require adjustment and no production adoption follows.
+- [Durability27 operator packet](briefs/bot-balance-durability27-operator-packet.md) — executed once; T2 Mountain attack pressure and Desert controller durability comparison, 48 cells / 144 observations.
+- [Durability27 report](briefs/bot-balance-durability27-report.md) — completed the verified synthetic Mountain/Desert screen with READY/geometry, body-TTK, survival, raw pressure, terminal-death, and actual two-enemy encounter audits; adjust/hold candidates, no production adoption.
+- [Durability28 operator packet](briefs/bot-balance-durability28-operator-packet.md) — executed once; paired melee stance screen on retained T2/T4 mob packages, 24 cells / 72 observations.
+- [Durability28 report](briefs/bot-balance-durability28-report.md) — completed the verified synthetic stance screen with READY/geometry, per-seed body medians, episode/death/ward audits, and no production adoption.
+- [Durability29 operator packet](briefs/bot-balance-durability29-operator-packet.md) — executed once; paired Mountain T2/T4 attack-relief comparison, 48 cells / 144 observations.
+- [Durability29 report](briefs/bot-balance-durability29-report.md) — completed the verified Mountain attack-only screen with READY parity, per-seed body medians, ward/death/wall audit, and no production adoption.
+`briefs/bot-balance-durability29-operator-packet.md` — T2/T4 Mountain attack-only pressure comparison on retained durability (executed once; audited synthetic evidence in the Durability29 report).
+- [Durability30 operator packet](briefs/bot-balance-durability30-operator-packet.md) — executed once; 72 paired Trench Stalker HP observations and 12 unchanged Jungle CPU-profiled diagnostic replays.
+- [Durability30 report](briefs/bot-balance-durability30-report.md) — completed the verified Trench pacing/attrition audit and Durability23 Jungle CPU comparison; Stalker scalar rejected for universal adoption, synthetic evidence only.
+
+- [Durability31 operator packet](briefs/bot-balance-durability31-operator-packet.md) — executed once; 12 unchanged Jungle replays with observation-scoped CPU profiles and navigation counters.
+- [Durability31 report](briefs/bot-balance-durability31-report.md) — completed the verified navigation diagnosis; repeated null paths originate inside status-only Jungle slow bushes, synthetic diagnostic evidence only, no repair implemented or adopted.

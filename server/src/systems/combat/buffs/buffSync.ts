@@ -501,7 +501,11 @@ function monsterDotBuff(effect: StatusEffect, world: World): PlayerBuff {
   const sourceDef = source
     ? MONSTER_DATABASE.get(source.isMonster.monsterTypeId)
     : undefined;
-  const debuff = sourceDef
+  const snapshot = effect.damageSource;
+  const flavor = monsterDotFlavorByCode(effect.data["flavorCode"]);
+  const debuff = snapshot
+    ? { ...flavor, label: snapshot.effectName, color: snapshot.effectColor ?? flavor.color }
+    : sourceDef
     ? resolveMonsterDotDebuff({
         monster: sourceDef,
         dotEffect: source ? effectiveMonsterDot(source, sourceDef) : sourceDef.dotEffect,
@@ -526,7 +530,7 @@ function monsterDotBuff(effect: StatusEffect, world: World): PlayerBuff {
     iconKey: debuff.id === "poison" ? "debuff-poison" : effect.id,
     instanceKey: effect.id,
     shape: "diamond",
-    logSourceName: source?.isMonster.name ?? "Monster debuff",
+    logSourceName: snapshot?.killer.monsterName ?? source?.isMonster.name ?? "Monster debuff",
     logSourceSide: "enemy",
     logDetail: `${debuff.label}: ${perStack} dmg/stack per tick`,
     remainingMs: effect.remainingMs,
