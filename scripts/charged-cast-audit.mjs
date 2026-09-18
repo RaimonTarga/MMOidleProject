@@ -24,6 +24,12 @@
  *  - `recentDamageSources3s` counts DISTINCT RECENT SOURCES, not simultaneous
  *    attackers, and is named accordingly.
  *
+ * Schema 3 (2026-09-18): arm and pairing metadata are read from the block
+ * MANIFEST, never guessed from an id suffix. Schema 2 recognised only
+ * `control`/`candidate`, so Durability34's `reference`/`substitution` arms all
+ * collapsed into one apparently valid `n/a` group. An unknown arm now FAILS
+ * LOUDLY. Pairing keys on (class, node, seed), so it does not depend on naming.
+ *
  * Usage: node scripts/charged-cast-audit.mjs --block=<dir> --out=<dir> [--window=200] [--name=x]
  */
 import {readFileSync, existsSync, mkdirSync, writeFileSync} from 'node:fs';
@@ -39,7 +45,24 @@ const block = args.block, out = args.out, name = args.name ?? basename(block);
 mkdirSync(out, {recursive: true});
 const rd = p => JSON.parse(readFileSync(p, 'utf8'));
 const index = rd(join(block, 'index.json'));
+const manifest = rd(join(block, 'manifest.json'));
 const PLAYER = 'bench-bot-0';
+
+/** Authoritative per-cell metadata. Arms are declared, not inferred. */
+const cellMeta = new Map(manifest.cells.map(c => [c.id, c]));
+const arms = [...new Set(manifest.cells.map(c => c.treatment))].filter(Boolean).sort();
+if (arms.length === 0) throw new Error(`${name}: manifest declares no treatment on any cell`);
+function metaOf(cellId) {
+  const m = cellMeta.get(cellId);
+  if (!m) throw new Error(`${name}: observation cell "${cellId}" is not declared in the manifest`);
+  if (!m.treatment) throw new Error(`${name}: cell "${cellId}" declares no treatment; refusing to pool it`);
+  return m;
+}
+/** Everything that must match for two observations to be a comparable pair. */
+const pairKeyOf = (cellId, seed) => {
+  const m = metaOf(cellId);
+  return `${m.className}|${m.nodeId}|${seed}`;
+};
 
 /** Standard median: mean of the two middle values for even N. */
 function median(values) {
@@ -145,8 +168,8 @@ for (const row of index) {
   });
 }
 
-const armOf = c => c.endsWith('-candidate') ? 'candidate' : c.endsWith('-control') ? 'control' : 'n/a';
-const rootOf = c => (/-(striker|squire|apprentice|slinger|conduit|spirit)-/.exec(c) ?? [, 'n/a'])[1];
+const armOf = c => metaOf(c).treatment;
+const rootOf = c => metaOf(c).className;
 
 function summarize(pick) {
   const acc = {};
@@ -187,32 +210,40 @@ for (const r of rows) if (r.finalBlow) {
  * runs have diverged and are no longer comparable states.
  */
 function pairedSameState(label) {
+  if (arms.length !== 2) {
+    return {label, n: 0, arms, skipped: `a paired contrast needs exactly two declared arms, found ${arms.length}`};
+  }
+  const [armA, armB] = arms;
   const byKey = new Map();
   for (const r of rows) {
-    const a = armOf(r.cell);
-    if (a === 'n/a') continue;
-    const k = `${r.cell.replace(/-(control|candidate)$/, '')}|${r.seed}`;
+    const k = pairKeyOf(r.cell, r.seed);
     if (!byKey.has(k)) byKey.set(k, {});
-    byKey.get(k)[a] = r;
+    byKey.get(k)[armOf(r.cell)] = r;
   }
   const paired = [];
+  let divergedBefore = 0;
   for (const [k, p] of byKey) {
-    if (!p.control || !p.candidate) continue;
+    if (!p[armA] || !p[armB]) continue;
     const pick = r => r.casts.filter(c => c.label === label && c.resolution === 'landed');
-    const c = pick(p.control), d = pick(p.candidate);
-    for (let i = 0; i < Math.min(c.length, d.length); i++) {
-      if (c[i].endMs !== d[i].endMs) break;
-      const cv = c[i].hits[0].hpDamage, dv = d[i].hits[0].hpDamage;
-      if (cv == null || dv == null || cv === 0) continue;
-      paired.push({key: k, ordinal: i, endMs: c[i].endMs, control: cv, candidate: dv,
-        ratio: Number((dv / cv).toFixed(5)), root: rootOf(p.control.cell)});
+    const a = pick(p[armA]), b = pick(p[armB]);
+    if (Math.min(a.length, b.length) === 0) { divergedBefore++; continue; }
+    let matched = 0;
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+      if (a[i].endMs !== b[i].endMs) break;
+      const av = a[i].hits[0].hpDamage, bv = b[i].hits[0].hpDamage;
+      if (av == null || bv == null || av === 0) continue;
+      matched++;
+      paired.push({key: k, ordinal: i, endMs: a[i].endMs, [armA]: av, [armB]: bv,
+        ratio: Number((bv / av).toFixed(5)), root: rootOf(p[armA].cell)});
     }
+    if (matched === 0) divergedBefore++;
   }
   const ratios = paired.map(x => x.ratio);
   const byRoot = {};
   for (const x of paired) (byRoot[x.root] ??= []).push(x.ratio);
   return {
-    label, n: paired.length,
+    label, arms: {numerator: armB, denominator: armA}, n: paired.length,
+    pairsWithNoComparableHit: divergedBefore,
     ratio: {median: median(ratios), min: ratios.length ? Math.min(...ratios) : null, max: ratios.length ? Math.max(...ratios) : null},
     medianHpReductionPct: ratios.length ? Number(((1 - median(ratios)) * 100).toFixed(2)) : null,
     byRootMedianRatio: Object.fromEntries(Object.entries(byRoot).map(([r, v]) => [r, median(v)])),
@@ -223,8 +254,9 @@ function pairedSameState(label) {
 const labels = [...new Set(rows.flatMap(r => r.casts.map(c => c.label)))];
 
 const report = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   window: WINDOW,
+  declaredArms: arms,
   conventions: {
     median: 'mean of the two middle values for even N',
     landed: 'exactly one candidate damage event from the casting monster within the window',
@@ -233,7 +265,8 @@ const report = {
     hpBefore: 'latest sample at or before the cast end; approximate whenever hpBeforeSampleAgeMs > 0',
     finalBlowAttribution: 'a damage event carries no ability id, so an unmatched final blow is unattributed rather than "basic"',
     grossDamage: 'base component only. For a charged attack the multiplier is applied OUTSIDE the mitigation record, so hpDamage may exceed grossDamage and a coefficient treatment is NOT readable here',
-    pairedSameState: 'candidate/control hpDamage ratio for hits at the same cast ordinal AND the same resolve time, so both runs were still in the same state; the only comparison that isolates the treatment',
+    pairedSameState: 'second-arm/first-arm hpDamage ratio for hits at the same cast ordinal AND the same resolve time, so both runs were still in the same state. Arms come from the manifest. pairsWithNoComparableHit records pairs whose trajectories diverged before any matchable cast, which is an honest zero rather than a hidden one',
+    arms: 'read from the block manifest; an observation whose cell is undeclared or carries no treatment fails the audit rather than being pooled',
   },
   pairedSameState: Object.fromEntries(labels.map(l => [l, pairedSameState(l)])),
   byLabelArm: summarize((r, c) => `${c.label} | ${armOf(r.cell)}`),
@@ -243,9 +276,9 @@ const report = {
 };
 writeFileSync(join(out, `${name}-casts.json`), JSON.stringify(report, null, 2));
 writeFileSync(join(out, `${name}-casts-summary.json`), JSON.stringify(
-  {schemaVersion: 2, window: WINDOW, conventions: report.conventions,
+  {schemaVersion: 3, window: WINDOW, declaredArms: arms, conventions: report.conventions,
    pairedSameState: Object.fromEntries(Object.entries(report.pairedSameState).map(([k, v]) => [k, {...v, hits: undefined}])),
    byLabelArm: report.byLabelArm, byLabelArmRoot: report.byLabelArmRoot, finalBlows}, null, 2));
-console.log(JSON.stringify({schemaVersion: 2,
+console.log(JSON.stringify({schemaVersion: 3, declaredArms: arms,
   pairedSameState: Object.fromEntries(Object.entries(report.pairedSameState).map(([k, v]) => [k, {n: v.n, ratio: v.ratio, medianHpReductionPct: v.medianHpReductionPct, byRootMedianRatio: v.byRootMedianRatio}])),
   finalBlows}, null, 1));

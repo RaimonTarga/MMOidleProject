@@ -24,7 +24,7 @@ they disagree about `dune-basilisk`:
 A naive last-writer-wins pass over the installers silently produces 4503 and drops the later
 Desert decision. **The retained value is 9006.** The table below states it correctly.
 
-## Manifest — 30 species
+## Manifest — 32 species
 
 | Species | Tier / biome | Provenance | HP now | HP final | Attack now | Attack final | Coupled defence field |
 |---|---|---|---:|---:|---:|---:|---|
@@ -58,6 +58,8 @@ Desert decision. **The retained value is 9006.** The table below states it corre
 | `sand-viper` | T4 desert | D22 | 1343 | **4029** | 78 | 78 | — |
 | `dune-basilisk` | T4 desert | D22+**D26** | 1501 | **9006** | 90 | 90 | — see the composition trap above |
 | `dune-tyrant` | T4 desert | D22 | 1738 | **6952** | 140 | 140 | — |
+| `apex-silverback` | T4 jungle | **D34** | 1450 | **2900** | 77 | 77 | — HP-only |
+| `emerald-constrictor` | T4 jungle | **D34** | 1700 | **3400** | 66 | 66 | — HP-only |
 
 ## Defence coupling — exact, not rounded
 
@@ -91,13 +93,34 @@ One commit, in this order, so no layer is applied twice:
 5. Re-run the focused benches that reference these species; do not re-run resolved grids
    (Trench 16800 vs 21000, universal Focus Elites, Forest/Volcano ladders).
 
+## Jungle, added 2026-09-18 after Durability34
+
+Durability34 tested the HP-only package across 72 observations, six roots, two nodes, both arms
+full-window with zero deaths. Measured clean body TTK moved as intended and the fast bodies did
+not:
+
+| Species | Clean TTK control → candidate | Fast bodies |
+|---|---|---|
+| `emerald-constrictor` | 3.27 s → 6.50 s | `thornback-lizard` 1.90 → 1.90 s |
+| `apex-silverback` | 2.85 s → 5.95 s | `hunting-panther` 1.85 → 1.80 s |
+
+Apex ramp exposure rose with the longer body (ramped share 81.9% → 91.7%, p90 gross 124 → 137),
+measured from existing damage evidence rather than asserted.
+
+**Explicitly unverified: the cross-tier ladder.** There is no measured T3 TTK anywhere in this
+campaign — the "2.90 s T3 anchor" in the D34 report was the T4 apex baseline, and the real T3
+citation was authored HP 2090. Authored HP ordering is **not** the acceptance test for a
+duration ladder. Before Jungle pacing is called complete, compare compatible existing T2/T3
+role-timing evidence against T4 and, where it is absent, fold one limited check into the
+consolidated regression. If the actual duration ladder is still reversed, make one deliberate
+revision rather than re-deriving from authored HP.
+
 ## What this manifest does not cover
 
-- **Jungle.** Durability33 measured T4 Jungle bodies at 1.77–3.55 s and an authored ladder that
-  runs backwards (T3 `silverback` 2090 HP above every T4 species). That candidate is
-  Durability34 Block J and is **not** in this manifest — it has not been tested yet.
-- **T1 Mountain.** The 1.8 Power Shot candidate remains unadopted and uncrossed; Durability34
-  Block M holds Power Shot at 2.2 in both arms.
+- **T1 Mountain.** The 1.8 Power Shot candidate remains unadopted and uncrossed. Durability34
+  Block M and Durability35 both hold Power Shot at 2.2 in every arm. The entry problem is being
+  addressed instead by a local enemy-pressure package (`ridge-archer` and `cliff-hopper` base
+  attack 50 → 40), which is **under test in Durability35 and is not in this manifest**.
 - **T2 Mountain Striker.** Dispositioned in the adoption review as unresolved evidence
   (corrected: control 6/6 → candidate 3/6, halved not resolved). Extraction from existing
   Durability27–29 artifacts comes before any new run; the smallest discriminating matrix is

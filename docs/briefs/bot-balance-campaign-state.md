@@ -2,7 +2,81 @@
 
 Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## Current decision: Durability33 executed and corrected; navigation CLOSED; Durability34 prepared, not launched
+## Current decision: Durability34 executed and corrected; Jungle package retained; Durability35 prepared, not launched
+
+Durability34 ran once at `4c926e0e`: 108/108 observations in about seven minutes, both blocks
+verified. Execution stands; the findings were corrected from the sealed artifacts **without
+rerunning D34**. See [the corrected review](bot-balance-durability34-review-and-next-steps.md)
+and the dated banner on [the report](bot-balance-durability34-report.md). Audits:
+`AppData/Local/mmo-idle/audits/durability34-20260918`.
+
+JUNGLE PACKAGE RETAINED. `apex-silverback` 1450 -> 2900 and `emerald-constrictor` 1700 -> 3400,
+added to the [adoption manifest](bot-balance-mob-adoption-manifest.md) (now 32 species).
+Measured clean TTK 2.85 -> 5.95 s and 3.27 -> 6.50 s, fast bodies unmoved (1.90 -> 1.90,
+1.85 -> 1.80), both arms full-window with zero deaths. Do not rerun the doubling comparison.
+**Cross-tier pacing is NOT closed**: there is no measured T3 TTK anywhere in this campaign - the
+report's "2.90 s T3 anchor" was the T4 apex baseline, and the real T3 citation was authored HP
+2090. Authored HP ordering is not the acceptance test for a duration ladder.
+
+T1 MOUNTAIN MOVES TO ENEMY PRESSURE. The Brace substitution is rejected as a general solution
+and Second Wind stays the reference guard. The guard-window audit explains why without blaming
+the guard: matched hits inside a Brace window take 0.648x - its authored 35% reduction, measured
+- but Brace covers only 5.07% of alive time and 14 of 147 hits. Four paired joint outcomes over
+18 pairs: 3 both survived, 11 both died, 1 reference-died/substitution-survived, 3
+reference-survived/substitution-died, with unequal exposure (2461 vs 1999 alive seconds). The
+pressure fails, not the guard choice.
+
+TOOLING BUG, MINE, FIXED. The audits inferred arms from id suffixes and knew only
+`control`/`candidate`, so D34's `reference`/`substitution` collapsed into one `n/a` group and the
+species table pooled treatments. Both now read arm and pairing metadata from the block MANIFEST,
+pair on (class, node, seed), and FAIL LOUDLY on an undeclared arm. The arm split also exposed
+that runtime `maxHp` was being overwritten by the last observation read; it has two values per
+species because node modifiers scale it, and authored versus post-modifier HP are now distinct.
+`durability35-preflight` checks derived reports semantically, not just exit codes.
+
+RAMP CONFIRMED WITHOUT NEW INSTRUMENTATION. `rampOnCombat` mutates `dealsDamage.attack` directly
+and emits NO buff event, so absent buff events never established a broken ramp. Read from
+existing damage evidence, the Apex ramp climbs its authored 3%/s ladder and develops further in
+the longer body: ramped share 81.9% -> 91.7%, p90 gross 124 -> 137, median unchanged at 108.
+
+NOT EVERY ROOT DIRECTLY ATTACKS. Conduit logged 0 owner attack beats in all six Block M runs by
+design (`CannotAttack`) while dealing 272-482 minion beats, and died once. Summon-only offense is
+intended, not an exposure artifact.
+
+[Durability35 packet](bot-balance-durability35-operator-packet.md): PREPARED, NOT LAUNCHED.
+**72 observations**, one block: six roots x two T1 Mountain nodes x control/candidate x three
+seeds. Candidate is base attack 50 -> 40 on BOTH `ridge-archer` and `cliff-hopper` - a
+two-species package, not an attempt to isolate either. Power Shot stays 2.2 in both arms; 1.8
+remains parked. Contexts are node-01 (heavy, the problematic entry) and node-02 (swarming), so a
+nerf that makes another context trivially easy is visible. Attack-derived special damage was
+verified through the real pipeline: Strong Kick hp 65 -> 55, Power Shot hp 69 -> 57.5, both
+falling by less than 20% - an authored 20% cut is not a promise of 20% less final damage.
+
+### Named gate ECON-1 — reward efficiency across tiers
+
+> At later player tiers, lower-tier nodes in a recurring biome may yield better usable essence
+> and biome XP per elapsed minute than current-tier nodes, because combat duration has increased
+> without a sufficient reward premium.
+
+**Recorded, not established.** D34's Jungle kills fell 2084 -> 1597 at equal exposure (-23.37%),
+which is KILL THROUGHPUT, not credited XP, essence or catalyst throughput. It motivates the gate
+and does not settle it. When it runs: the SAME higher-tier character at x1 in current-tier and
+accessible lower-tier locations; elapsed gameplay time as the denominator, never accelerated
+wall time; like-for-like essence and catalyst families; credited versus nominal XP against caps;
+recovery and death costs included; travel and setup reported apart from steady state. A useful
+safe fallback route is not the failure - systematic dominance of current-tier progression is. No
+reward retuning inside a durability trial, no reward multiplier automatically matching an HP
+multiplier, and no rollback of longer combat merely to preserve kills per minute.
+
+### Boss pass — reuse the user's manual coverage
+
+The user has already playtested and iterated boss MECHANICS manually, more than ordinary mobs.
+The boss pass reuses that coverage, locates existing logs where available, and addresses
+numerical pacing and pressure. Do not restart boss functional discovery, and do not claim
+artifact-backed certification for tests whose logs were never inspected.
+
+## Previous decision: Durability33 executed and corrected; navigation CLOSED; Durability34 prepared, not launched
+
 
 Durability33 ran once at `e4e39bc5`: 84/84 observations in 4m56s. Execution stands; five
 conclusions were corrected from the sealed raw artifacts. See
@@ -38,7 +112,7 @@ SUBSTITUTING Brace for Second Wind is cheaper than the reference (melee 17 vs 18
 heals, Brace at 50% gives 35% DR for 3 s — so neither reacts to a cast, and this is a
 sustain-versus-mitigation opportunity cost, not Power Shot counterplay.
 
-[Durability34 packet](bot-balance-durability34-operator-packet.md): PREPARED, NOT LAUNCHED.
+[Durability34 packet](bot-balance-durability34-operator-packet.md): (superseded - it has since RUN and been corrected; see the current decision.) PREPARED, NOT LAUNCHED.
 108 observations, two INDEPENDENT blocks. J) Jungle HP-only candidate, 72: `apex-silverback`
 1450 -> 2900 and `emerald-constrictor` 1700 -> 3400, both clearing the T3 anchor; fast bodies
 untouched. M) T1 Mountain guard substitution, 36, Power Shot held at 2.2 in BOTH arms;
