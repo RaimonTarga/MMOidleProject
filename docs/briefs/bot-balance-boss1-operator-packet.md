@@ -202,7 +202,8 @@ node scripts/boss1-run.mjs \
 
 ### Smoke-test receipts from preparation
 
-Run at `dd8cae23`, preflight green:
+Preflight green at `305f39eedd6855d07259af6fb6497b85a709df56` — the commit that introduces this
+packet — with the manifest's definitions hash reading back the frozen `17aa46cb…`:
 
 - `sovereign qualify ok` — 6 ready receipts, all six roots legally prepared, boss awake in each,
   `hpTreatment` empty, all three escorts at adopted values.
