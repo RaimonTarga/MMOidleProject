@@ -721,6 +721,7 @@ function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean
       x.instanceKey !== y.instanceKey ||
       x.stacks !== y.stacks ||
       x.durationPct !== y.durationPct ||
+      x.speedMult !== y.speedMult ||
       x.label !== y.label
     ) {
       return false;

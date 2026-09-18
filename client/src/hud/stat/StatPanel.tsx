@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { estimatePlayerDps, resolveEmpoweredMultiplier, resolveOnHitDamage, riteDef } from '@mmo-idle/shared';
+import { estimatePlayerDps, playerMoveSpeedMult, resolveEmpoweredMultiplier, resolveOnHitDamage, riteDef } from '@mmo-idle/shared';
 import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
@@ -43,6 +43,7 @@ import {
   summonActiveCountAtom,
   unlockedSkillsAtom,
   speedAtom,
+  activeBuffsAtom,
   statusAtom,
 } from '../atoms';
 
@@ -100,7 +101,9 @@ export function StatPanel() {
   const finalDamageDealtMult = useAtomValue(finalDamageDealtMultAtom);
   const finalDamageTakenMult = useAtomValue(finalDamageTakenMultAtom);
   const attackRange = useAtomValue(attackRangeAtom);
-  const speed = useAtomValue(speedAtom);
+  const baseSpeed = useAtomValue(speedAtom);
+  const activeBuffs = useAtomValue(activeBuffsAtom);
+  const speed = Math.round(baseSpeed * playerMoveSpeedMult(activeBuffs.map(buff => buff.speedMult ?? 1)));
   const recovery = useAtomValue(recoveryAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const passives = useAtomValue(passivesAtom);

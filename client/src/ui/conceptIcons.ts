@@ -132,6 +132,7 @@ const BUFF_IDS = new Set([
   'cooldown-channel',
   'cooldown-eternal-charge',
   'cooldown-overdrive',
+  'cooldown-patience',
   'cooldown-reverb',
   'cooldown-rupture',
   'cooldown-temporal-ext',
@@ -179,6 +180,7 @@ const BUFF_IDS = new Set([
   'reload-hair-trigger',
   'reload-momentum',
   'reload-snipe-ready',
+  'sunlight',
   'summoner-battle-bond',
   'summoner-colossus',
   'summoner-coordinated-hunt',
@@ -208,6 +210,28 @@ const DEBUFF_IDS = new Set([
   'debuff-sundered',
   'debuff-tundra-chill',
   'debuff-volcanic-heat',
+]);
+
+// Monster-only target buffs are not PlayerBuff ids, so they stay out of the
+// player registry above. They still use the same authored status-icon directory
+// and need to resolve directly when the target frame receives their raw effect id.
+const TARGET_BUFF_ICON_IDS = new Set([
+  'monster-howl-haste',
+  'monster-ape-chestbeat',
+  'carrion-screech-haste',
+  'thorn-spitter-barrage',
+  'granite-barrier',
+  'shelled',
+  'abyssal-carapace',
+  'molten-guard',
+  'obsidian-shell',
+  'necrotic-surge',
+]);
+
+// A target-only debuff whose raw server id is not part of the player's BuffId
+// registry. Its icon is still authored in the normal status-debuff directory.
+const TARGET_DEBUFF_ICON_IDS = new Set([
+  'shatter-vulnerable',
 ]);
 
 function source(directory: string, id: string, revision?: string): AssetIconSource {
@@ -283,6 +307,12 @@ export function statusIconSource(id: string): AssetIconSource | null {
   if (DEBUFF_IDS.has(id)) {
     return source('statuses/debuffs', id, id === 'debuff-root' ? 'snare-root-v2' : undefined);
   }
+  if (TARGET_BUFF_ICON_IDS.has(id)) {
+    return source('statuses/buffs', id);
+  }
+  if (TARGET_DEBUFF_ICON_IDS.has(id)) {
+    return source('statuses/debuffs', id);
+  }
   if (id === 'second-wind') return source('abilities', id);
   return null;
 }
@@ -296,6 +326,18 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   slow: 'debuff-slow',
   root: 'debuff-root',
   'plating-shred': 'debuff-plating-shred',
+  'reload-suppress-shred': 'debuff-plating-shred',
+  'ability-slowed': 'hamstring',
+  'ability-rooted': 'binding-strike',
+  stunned: 'debuff-stunned',
+  'stun-immune': 'break-free',
+  'canopy-chameleon-barrage': 'thorn-spitter-barrage',
+  'thornback-chameleon-barrage': 'thorn-spitter-barrage',
+  'boss-roar-haste': 'monster-howl-haste',
+  'monster-death-empower': 'necrotic-surge',
+  'elder-carapace-renewal': 'abyssal-carapace',
+  'magma-molten-guard': 'molten-guard',
+  'magma-obsidian-shell': 'obsidian-shell',
   'cadence-hemorrhage': 'debuff-dot',
   'energy-storm': 'energy-storm',
   brittle: 'dot-frostbite',
@@ -329,6 +371,13 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   'stat-buff-plating': 'defense-hardening',
   'stat-buff-damageReduction': 'defense-sustained-dr',
   'stat-buff-evasion': 'mob-sprint',
+  'relentless-pursuit': 'mob-haste',
+  'crag-rush': 'mob-haste',
+  'cinder-fury': 'cadence-rampage',
+  'earthshaker-rush': 'mob-haste',
+  sandsurge: 'mob-haste',
+  'caldera-fury': 'cadence-rampage',
+  'blood-in-the-water': 'mob-haste',
   'charge-instinct': 'mob-haste',
   'escape-instinct': 'mob-haste',
   'boss-stunned': 'debuff-stunned',
@@ -340,6 +389,9 @@ function aliasedStatusIconSource(alias: string | undefined): AssetIconSource | n
 }
 
 export function targetStatusIconSource(id: string): AssetIconSource | null {
+  // Boss patterns use source-owned ids (`barrier:<sourceId>`) so several
+  // independent wards can coexist. They share one target-facing barrier icon.
+  if (id.startsWith('barrier:')) return statusIconSource('granite-barrier');
   return statusIconSource(id) ?? aliasedStatusIconSource(TARGET_STATUS_ALIASES[id]);
 }
 

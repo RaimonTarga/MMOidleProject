@@ -34,10 +34,12 @@ import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
 import {
   authoredStatusIds,
+  bossEffectHelp,
   buffHelp,
   prettifyStatusId,
   targetStatusHelp,
 } from "../../client/src/hud/statusHelp";
+import { bossEffectIconSource, statusIconSource, targetStatusIconSource } from "../../client/src/ui/conceptIcons";
 import {
   abilityAccessibleLabel,
   abilityTooltipContent,
@@ -125,6 +127,51 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   assert(
     targetStatusHelp("debuff-sundered") !== undefined,
     "target lookup should fall back to the player-side entry for a shared id",
+  );
+
+  const targetLabels: Record<string, string> = {
+    "ability-slowed": "Hamstrung",
+    "ability-rooted": "Bound",
+    stunned: "Stunned",
+    "stun-immune": "Stun ward",
+    "canopy-chameleon-barrage": "Barrage",
+    "thornback-chameleon-barrage": "Barrage",
+    "boss-roar-haste": "Rallying Cry",
+    "monster-death-empower": "Necrotic Surge",
+    "elder-carapace-renewal": "Abyssal Carapace",
+    "magma-molten-guard": "Molten Guard",
+    "magma-obsidian-shell": "Obsidian Shell",
+    "shatter-vulnerable": "Shatter Window",
+  };
+  for (const [id, title] of Object.entries(targetLabels)) {
+    assert(targetStatusHelp(id)?.title === title, `${id} needs its authored target title`);
+    assert(targetStatusIconSource(id) !== null, `${id} needs a target-frame icon resolver`);
+  }
+  assert(targetStatusHelp("barrier:boss-pattern")?.title === "Barrier", "source-owned barriers need authored target copy");
+  assert(targetStatusIconSource("barrier:boss-pattern") !== null, "source-owned barriers need a target-frame icon resolver");
+
+  const namedBosses = [
+    "relentless-pursuit",
+    "crag-rush",
+    "cinder-fury",
+    "earthshaker-rush",
+    "sandsurge",
+    "bestial-frenzy",
+    "caldera-fury",
+    "blood-in-the-water",
+  ];
+  for (const id of namedBosses) {
+    assert(bossEffectHelp(id)?.title !== undefined, `${id} needs authored boss-effect copy`);
+    assert(bossEffectIconSource(id) !== null, `${id} needs a boss-effect icon resolver`);
+  }
+
+  for (const id of ["cooldown-patience", "sunlight"]) {
+    assert(statusIconSource(id) !== null, `${id} needs a player status icon resolver`);
+  }
+  const missingPlayerIcons = BUFF_IDS.filter((id) => statusIconSource(id) === null);
+  assert(
+    missingPlayerIcons.length === 0,
+    `every wire-visible BuffId needs an icon resolver — missing: ${missingPlayerIcons.join(", ")}`,
   );
 }
 

@@ -15,6 +15,19 @@ const STATUS_META: Record<string, StatusMeta> = {
   'dot-conf':      { label: 'Conflag', color: '#ff5a2c' },
   slow:            { label: 'Slow',    color: '#88aaff' },
   root:            { label: 'Root',    color: '#aa77ee' },
+  'ability-slowed': { label: 'Hamstrung', color: '#88aaff' },
+  'ability-rooted': { label: 'Bound', color: '#aa77ee' },
+  stunned:         { label: 'Stunned', color: '#ffdd44' },
+  'stun-immune':   { label: 'Stun ward', color: '#c6a8ff' },
+  'enemy-barrier': { label: 'Barrier', color: '#5599ff' },
+  'canopy-chameleon-barrage': { label: 'Barrage', color: '#89dd59' },
+  'thornback-chameleon-barrage': { label: 'Barrage', color: '#89dd59' },
+  'boss-roar-haste': { label: 'Rallying Cry', color: '#b18cff' },
+  'monster-death-empower': { label: 'Necrotic Surge', color: '#c678e8' },
+  'elder-carapace-renewal': { label: 'Abyssal Carapace', color: '#5ccdd0' },
+  'magma-molten-guard': { label: 'Molten Guard', color: '#ff7a3c' },
+  'magma-obsidian-shell': { label: 'Obsidian Shell', color: '#df6248' },
+  'shatter-vulnerable': { label: 'Shatter Window', color: '#78cfff' },
   'plating-shred': { label: 'Shred',   color: '#d8b24a' },
   'reload-suppress-shred': { label: 'Suppressed', color: '#d8b24a' },
   'cadence-hemorrhage': { label: 'Bleed', color: '#c41e1e' },
@@ -50,7 +63,20 @@ const BOSS_META: Record<string, StatusMeta> = {
   shield:      { label: 'Shield',    color: '#5599ff' },
   summon:      { label: 'Summon',    color: '#cc88ff' },
   'stat-buff': { label: 'Empowered', color: '#ffaa33' },
+  'stat-buff-attack': { label: 'Enraged', color: '#ff5544' },
+  'stat-buff-speed': { label: 'Frenzied', color: '#ff8844' },
+  'stat-buff-attackSpeed': { label: 'Frenzied', color: '#ff8844' },
+  'stat-buff-plating': { label: 'Hardened', color: '#9fb7c9' },
+  'stat-buff-damageReduction': { label: 'Fortified', color: '#5599ff' },
+  'stat-buff-evasion': { label: 'Elusive', color: '#b18cff' },
+  'relentless-pursuit': { label: 'Relentless Pursuit', color: '#f08a45' },
+  'crag-rush': { label: 'Crag Rush', color: '#c58b5a' },
+  'cinder-fury': { label: 'Cinder Fury', color: '#ff6b38' },
+  'earthshaker-rush': { label: 'Earthshaker Rush', color: '#d6a25e' },
+  sandsurge: { label: 'Sandsurge', color: '#e4b84f' },
   'bestial-frenzy': { label: 'Bestial Frenzy', color: '#e85d45' },
+  'caldera-fury': { label: 'Caldera Fury', color: '#ff6b38' },
+  'blood-in-the-water': { label: 'Blood in the Water', color: '#e05252' },
   morph:       { label: 'Morph',     color: '#dd66cc' },
   slam:        { label: 'Slam',      color: '#ff7744' },
   // The punish window at the end of an authored boss sequence. Yellow because it is
@@ -69,6 +95,7 @@ function prettify(id: string): string {
 }
 
 export function statusMeta(id: string): StatusMeta {
+  if (id.startsWith('barrier:')) return STATUS_META['enemy-barrier'];
   return STATUS_META[id] ?? { label: prettify(id), color: '#b0a8d0' };
 }
 

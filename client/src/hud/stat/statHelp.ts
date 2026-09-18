@@ -26,7 +26,7 @@ export const STAT_HELP: Record<string, string> = {
     'Percentage of damage removed, applied AFTER plating. Full value against direct hits, but only HALF value against damage-over-time (which also ignores plating entirely).',
   attackRange:
     'How far you can attack from. Sets melee vs ranged positioning and where auto-combat stops approaching.',
-  speed: 'Movement speed (pixels/second). Affects chasing, kiting, and escaping.',
+  speed: 'Current movement speed (pixels/second), including temporary slows and haste. Affects chasing, kiting, and escaping.',
   classAffinity:
     'A class affinity: a percentage of the stat you already have, rather than a flat number. Every affinity your class tree grants for a stat is added together, then applied once to your gear-built total — root +30%, frame +22% and range +10% Max HP is +62%, not three separate multiplications. Because it scales with your equipment, your class keeps the same shape at every tier instead of being drowned out by better gear.',
   recovery:
