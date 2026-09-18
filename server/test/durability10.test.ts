@@ -4,7 +4,11 @@ import { DURABILITY10_SWAMP,DURABILITY10_JUNGLE,installDurability10Treatment } f
 assert.equal(DURABILITY10_SWAMP.length,36);assert.equal(DURABILITY10_JUNGLE.length,40);
 const snapshot=JSON.stringify([...MONSTER_DATABASE]);
 // Control preserves current data; historical packets use their original frozen source.
-assert.equal(MONSTER_DATABASE.get('silverback')!.stats.hp,2090);
+// REBASED 2026-09-18: the adopted Jungle ladder moves silverback 2090 -> 3200.
+// Durability10's own 1740/2320 overlay writes ABSOLUTE values, so it cannot
+// double-apply -- but it now sits BELOW the adopted baseline and is a historical
+// candidate, not a live one. Do not re-read it as a proposal.
+assert.equal(MONSTER_DATABASE.get('silverback')!.stats.hp,3200);
 assert.equal(MONSTER_DATABASE.get('silverback')!.rampOnCombat!.maxPct,0.45);
 for(const cell of [...DURABILITY10_SWAMP,...DURABILITY10_JUNGLE]){
   const expected=new Map<string,any>(JSON.parse(snapshot)),target=expected.get(cell.targetTypes[0]);

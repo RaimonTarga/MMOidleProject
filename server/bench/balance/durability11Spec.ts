@@ -21,6 +21,7 @@ export function assertDurability11Definitions() {
   const bear=MONSTER_DATABASE.get('glacier-bear')!;
   assert.equal(bear.stats.hp,3750);assert.equal(bear.stats.attack,148);assert.equal(bear.enemyShield!.shieldPct,0.08);
   assert.equal(MONSTER_DATABASE.get('plague-hydra')!.stats.hp,2320);
-  assert.equal(MONSTER_DATABASE.get('silverback')!.stats.hp,2090);
+  // REBASED 2026-09-18: the adopted Jungle ladder moves silverback 2090 -> 3200.
+  assert.equal(MONSTER_DATABASE.get('silverback')!.stats.hp,3200);
   assert.equal(MONSTER_DATABASE.get('silverback')!.rampOnCombat!.maxPct,0.45);
 }

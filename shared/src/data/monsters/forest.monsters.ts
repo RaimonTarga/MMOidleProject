@@ -68,7 +68,7 @@ export const forestMonsterEntries = [
   ['ancient-wolf', {
     id: 'ancient-wolf', name: 'Dire Wolf', color: 0x8888ff,
     // Explosive fast charger; closes instantly then bites in a blur.
-    stats: { hp: 525, attack: 34, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 196 },
+    stats: { hp: 1575, attack: 22, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 196 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
@@ -112,7 +112,7 @@ export const forestMonsterEntries = [
     // SHAPE CHANGED: no longer a DR tank (off-identity for forest). Now a slow-
     // moving but VERY fast-ATTACKING territorial beast — frequency is the threat
     // evasion answers; squishy (no DR) so it still dies to burst.
-    stats: { hp: 315, attack: 31, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
+    stats: { hp: 945, attack: 25, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
     behavior: 'melee', attackStyle: 'claws-light', biome: 'forest',
     rewards: { essence: 10, essenceType: 'green', level: 1, biomeXp: 58 },
     ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 2500, idleMaxMs: 7000 },

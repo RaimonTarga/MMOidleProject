@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import {MONSTER_DATABASE} from '@mmo-idle/shared';
 import {NIGHT5_BLOCKS,type Night5Cell} from './night5Spec';
 export const DURABILITY24_SEEDS=[50021,52009,54001] as const;
+// RETIRED 2026-09-18: the graveyard redistribution is authored source now, so the
+// table is rebased to [adopted, adopted] and the overlay writes what is live.
 export const DURABILITY24_HP=[
- ['gravewright',2851,5702],['bone-crawler',2059,1235],
- ['plague-hound',3168,1901],['carrion-vulture',2693,1616],['plague-rat',1584,950],
+ ['gravewright',5702,5702],['bone-crawler',1235,1235],
+ ['plague-hound',1901,1901],['carrion-vulture',1616,1616],['plague-rat',950,950],
 ] as const;
 const bases=[...NIGHT5_BLOCKS.t4a.cells.filter(c=>c.role==='graveyard'),
  ...NIGHT5_BLOCKS.t4b.cells.filter(c=>c.role==='graveyard'&&c.className==='slinger')];

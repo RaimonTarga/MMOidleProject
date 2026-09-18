@@ -123,7 +123,12 @@ assertDurability36Definitions();
     assert(MONSTER_DATABASE.get(type)!.stats.hp === after, `${type}: the retained value must be active at tier 4`);
   }
   assert(t4.changes.every((c) => c.beforeAttack === c.afterAttack), 'the Jungle package is HP-only');
-  assert(MONSTER_DATABASE.get('hunting-panther')!.stats.hp === 950, 'fast bodies untouched');
+  // REBASED 2026-09-18. Durability36's own T4 overlay is retired: the adopted Jungle
+  // ladder SUPERSEDED the 2900/3400 this block ran, so the installer now takes its
+  // already-integrated path and this block's cells fight authored source. The fast
+  // bodies are no longer untouched either — the adopted ladder raises them too, far
+  // less than the durable roles. The frozen D36 run stays valid at its own revision.
+  assert(MONSTER_DATABASE.get('hunting-panther')!.stats.hp === 2400, 'fast bodies move far less than durable roles');
   t4.restore();
   assert(snapshot() === baseline, 'tier 4 restore');
 

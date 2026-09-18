@@ -27,6 +27,32 @@ import type { MonsterDefinition } from './types';
 // Advanced biomes (jungle/tundra/desert/volcanic) are DEFERRED below, untouched.
 // ─────────────────────────────────────────────────────────────────────────
 
+// ── JUNGLE DURATION LADDER (adopted 2026-09-18 from Durability36 Block J) ────────
+// D36 measured the primary lineage's equal-weight clean body TTK FALLING across
+// tiers with tier-legal builds: 10.95 s (T2 Jungle Ape) -> 9.95 s (T3 Silverback)
+// -> 6.55 s (T4 Apex Silverback, on the retained 2900 overlay). The intended
+// direction is the opposite, and more strongly for durable roles than fast bodies.
+//
+// This is ONE coarse, ROLE-BASED correction, HP only. T2 is deliberately untouched
+// (it already sits at the intended ~11 s and is the ladder's anchor). Attack,
+// defense, ramp/finisher parameters, cadence, movement, ecology, density and
+// rewards are all unchanged: more HP simply exposes the existing ramp and crowd
+// pressure for longer.
+//
+// Working intent, primary lineage ~11 -> 15 -> 23 s; fast lineages ~4 -> 5 -> 6 s.
+// Projections assume roughly unchanged effective player output and are NOT
+// measured results -- Durability37 Block J is what checks them.
+//
+//   T3  silverback          2090 -> 3200     jungle-stalker   790 -> 1250
+//       canopy-harrier       720 -> 1150
+//   T4  apex-silverback     1450 -> 10000    emerald-constrictor 1700 -> 12000
+//       hunting-panther      950 -> 2400     thornback-lizard   1000 -> 2500
+//
+// The T4 elites' pre-adoption source values were 1450/1700, NOT the 2900/3400
+// overlay D36 ran; the numbers above are absolute finals, not a factor on 2900.
+// Emerald Constrictor stays the separate, tougher T4 control-predator role.
+// ────────────────────────────────────────────────────────────────────────────────
+
 export const jungleMonsterEntries = [
 
     // ══ JUNGLE — TERRAIN CREATES THE SWARM ══
@@ -97,7 +123,7 @@ export const jungleMonsterEntries = [
     // EVOLVED AMBUSHER: very fast, moves through/around foliage effectively, opens
     // with a pounce. Poison is DE-EMPHASIZED here (removed, locked) — venom is the
     // Snake's early-tier note, speed is this one's.
-    stats: { hp: 790, attack: 55, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
+    stats: { hp: 1250, attack: 55, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
@@ -108,7 +134,7 @@ export const jungleMonsterEntries = [
     id: 'silverback', name: 'Silverback', color: 0xaa6633,
     // Evolved Ape: charge + a STRONGER combat ramp. Unrelated pack/evasion/opening
     // clutter removed (locked).
-    stats: { hp: 2090, attack: 83, plating: 0, damageReduction: 0, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
+    stats: { hp: 3200, attack: 83, plating: 0, damageReduction: 0, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 35, essenceType: 'green', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
@@ -121,7 +147,7 @@ export const jungleMonsterEntries = [
     // EVOLVED CONCEALED RANGED THREAT. Its signature is a readable, recurring
     // Barrage cast: reveal from camouflage, prime two fast attacks, then return
     // to ordinary ranged combat. No poison necessary.
-    stats: { hp: 720, attack: 45, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1400, pullRange: 250 },
+    stats: { hp: 1150, attack: 45, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1400, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'arrow', biome: 'jungle',
     rewards: { essence: 27, essenceType: 'green', level: 2, biomeXp: 165 },
     concealedWhileIdle: true,
@@ -139,7 +165,7 @@ export const jungleMonsterEntries = [
     id: 'hunting-panther', name: 'Hunting Panther', color: 0x33cc44,
     // APEX AMBUSHER: the strongest fast foliage predator. Pounce / engagement
     // burst. No generic evasion gimmick.
-    stats: { hp: 950, attack: 52, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
+    stats: { hp: 2400, attack: 52, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 45, essenceType: 'green', level: 3, biomeXp: 270 },
     ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 600, idleMaxMs: 2400 },
@@ -151,7 +177,7 @@ export const jungleMonsterEntries = [
     // APEX APE: charge + the STRONGEST combat ramp, and nothing else. Evasion,
     // the separate opening strike and the DR layering are all REMOVED (locked).
     // A visual Rage state at high ramp is optional presentation, not a mechanic.
-    stats: { hp: 1450, attack: 77, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1800, pullRange: 250 },
+    stats: { hp: 10000, attack: 77, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1800, pullRange: 250 },
     behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 88, essenceType: 'green', level: 4, biomeXp: 528 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3600 },
@@ -167,7 +193,7 @@ export const jungleMonsterEntries = [
     // then a STRONGER recurring Barrage cast (~3 rapid attacks), then ordinary
     // ranged combat. Its stacking venom is REMOVED (locked) — late tier is not a
     // reason to add another invisible damage layer.
-    stats: { hp: 1000, attack: 52, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },
+    stats: { hp: 2500, attack: 52, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },
     behavior: 'ranged', attackStyle: 'arrow', biome: 'jungle',
     rewards: { essence: 50, essenceType: 'green', level: 3, biomeXp: 300 },
     concealedWhileIdle: true,
@@ -187,7 +213,7 @@ export const jungleMonsterEntries = [
     // dangerous Jungle pull.
     // REMOVED (locked): evasion, combat ramp, and the extra defensive layers. Light
     // venom stays for snake flavor.
-    stats: { hp: 1700, attack: 66, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1600, pullRange: 280 },
+    stats: { hp: 12000, attack: 66, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1600, pullRange: 280 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle', elite: true,
     rewards: { essence: 130, essenceType: 'green', level: 4, biomeXp: 780 },
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 800, idleMaxMs: 3000 },

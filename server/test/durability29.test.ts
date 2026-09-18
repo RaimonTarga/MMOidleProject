@@ -9,10 +9,18 @@ for(const b of Object.values(DURABILITY29_BLOCKS)){
   const selected=new Map([...MONSTER_DATABASE].map(([k,d])=>[k,structuredClone(d)]));o.restore();assert.equal(snap(),before);
   const p=installDurability29Treatment({...c,treatment:'candidate'});
   const affected=c.tier===2?['granite-titan']:['granite-mammoth','cragback-rhino','cliffside-roc','avalanche-tyrant'];
+  // REBASED 2026-09-18: this second 0.8 cut is authored source now (granite-titan
+  // carries BOTH cuts at 54; granite-mammoth 147, cragback-rhino 90, cliffside-roc
+  // 143, avalanche-tyrant 116), so the overlay is retired to reporting only.
+  // Re-applying it would reach 43/118/72/114/93. Control and candidate therefore
+  // describe the SAME database, which is exactly what this test now asserts.
   for(const [type,d] of MONSTER_DATABASE){
-   const expected=selected.get(type)!;
-   if(affected.includes(type))expected.stats.attack=Math.round(expected.stats.attack*0.8);
-   assert.deepEqual(d,expected,type);
+   assert.deepEqual(d,selected.get(type)!,type);
+  }
+  for(const type of affected){
+   assert.equal(MONSTER_DATABASE.get(type)!.stats.attack,
+    ({'granite-titan':54,'granite-mammoth':147,'cragback-rhino':90,'cliffside-roc':143,'avalanche-tyrant':116} as Record<string,number>)[type],
+    type+': the adopted attack must be live and uncut by the retired overlay');
   }
   p.restore();assert.equal(snap(),before);
  }

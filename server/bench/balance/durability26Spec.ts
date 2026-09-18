@@ -12,13 +12,11 @@ export const DURABILITY26_BLOCKS=Object.fromEntries(['mountain','desert'].map(ro
 }));
 export function installDurability26Treatment(cell:Night5Cell){
  const overlay=installDurability22Treatment({...cell,treatment:'candidate'});
- if(cell.treatment==='candidate'){
-  const type=cell.role==='mountain'?'granite-mammoth':'dune-basilisk';
-  const d=MONSTER_DATABASE.get(type)!;
-  d.stats.hp*=2;
-  if(d.lowHealthWard)d.lowHealthWard.wardPct/=2;
-  const change=overlay.changes.find(c=>c.type===type)!;
-  change.after=d.stats.hp;
- }
+ // RETIRED 2026-09-18: the second doubling (granite-mammoth -> 13800,
+ // dune-basilisk -> 9006) and the paired ward halving are authored source now and
+ // are already carried by the rebased Durability22 table. Doing them again here
+ // would reach 27600 / 18012 and halve the ward a third time. Deliberate no-op;
+ // the historical experiment stays reproducible at its own frozen revision.
+ void cell;
  return overlay;
 }

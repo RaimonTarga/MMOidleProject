@@ -82,7 +82,7 @@ export const desertMonsterEntries = [
     // player's maxHP) landing back-to-back with its called Sun Scarab follower,
     // killing the bot inside ~4-6s every respawn regardless of charm/recovery —
     // see the Sun Scarab and Stone Basilisk fixes in this same pass.
-    stats: { hp: 780, attack: 65, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
+    stats: { hp: 1365, attack: 65, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -112,7 +112,7 @@ export const desertMonsterEntries = [
     // player's maxHP) as an ordinary hit, no less dangerous than the intended
     // Petrifying Gaze payload. 55 actually reads as a weak poke, letting the Gaze
     // stay "the entire weapon" as written.
-    stats: { hp: 780, attack: 55, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
+    stats: { hp: 1365, attack: 55, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
     behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 46 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -217,7 +217,7 @@ export const desertMonsterEntries = [
     // SOFT CONTROLLER T4 — the mature soft controller: severe, high-uptime
     // Numbing Sting on a CONTROLLER stat shape rather than an invisible slow on
     // the old fast-DPS profile. Paired 1:1 with the Sunshield Scarab.
-    stats: { hp: 1343, attack: 78, plating: 0, damageReduction: 0.08, speed: 28, attackRange: 12, attackCooldown: 2400, pullRange: 230 },
+    stats: { hp: 4029, attack: 78, plating: 0, damageReduction: 0.08, speed: 28, attackRange: 12, attackCooldown: 2400, pullRange: 230 },
     behavior: 'melee', attackStyle: 'bite-venom', biome: 'desert',
     rewards: { essence: 55, essenceType: 'yellow', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -237,7 +237,7 @@ export const desertMonsterEntries = [
     // HARD CONTROLLER T4. Root plus a stronger/longer NONSTACKING Sunder
     // (conceptual ceiling ~15-20% before balance). NO large stacking vulnerability
     // (locked). Its own damage stays negligible.
-    stats: { hp: 1501, attack: 90, plating: 10, damageReduction: 0.14, speed: 26, attackRange: 15, attackCooldown: 3000, pullRange: 190 },
+    stats: { hp: 9006, attack: 90, plating: 10, damageReduction: 0.14, speed: 26, attackRange: 15, attackCooldown: 3000, pullRange: 190 },
     behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert',
     rewards: { essence: 100, essenceType: 'yellow', level: 4, biomeXp: 600 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -279,7 +279,7 @@ export const desertMonsterEntries = [
     // strong slow or brief root) and one telegraphed heavy PINCER SMASH.
     // The stacked vulnerability is REMOVED — no huge slow + vulnerability + multiple
     // dealers + unrelated gimmicks all at once.
-    stats: { hp: 1738, attack: 140, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
+    stats: { hp: 6952, attack: 140, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
     behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert', elite: true,
     rewards: { essence: 170, essenceType: 'yellow', level: 4, biomeXp: 1020 },
     ai: { wanderRadius: 100, leashRange: 450, idleMinMs: 4500, idleMaxMs: 12000 },

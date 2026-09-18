@@ -100,7 +100,7 @@ export const mountainMonsterEntries = [
     // flyers'. It gets the reusable Cave/Cavern GROUND SLAM instead (behavior pass).
     // A modest engagement charge may remain against trivial kiting.
     // HP-led durability; Granite Barrier continues to scale with maximum HP.
-    stats: { hp: 1656, attack: 84, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    stats: { hp: 1656, attack: 54, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
@@ -127,7 +127,7 @@ export const mountainMonsterEntries = [
     // FLYER T1 — a fast, erratic aerial hunter. It crosses ledges because it
     // FLIES, then opens with a high-damage Skyfall Rend before ordinary combat.
     // WARNING: no repeated hit-and-run loop (locked).
-    stats: { hp: 340, attack: 75, plating: 0, damageReduction: 0, speed: 105, attackRange: 12, attackCooldown: 2800, pullRange: 410 },
+    stats: { hp: 340, attack: 60, plating: 0, damageReduction: 0, speed: 105, attackRange: 12, attackCooldown: 2800, pullRange: 410 },
     behavior: 'melee', attackStyle: 'talons', biome: 'mountain',
     rewards: { essence: 12, essenceType: 'blue', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 430, leashRange: 1200, idleMinMs: 180, idleMaxMs: 720 },
@@ -144,7 +144,7 @@ export const mountainMonsterEntries = [
     id: 'peak-archer', name: 'Boulder Thrower', color: 0xaabbcc,
     // ARTILLERY T2 — evolved. Still a chokepoint/position-holding ranged threat,
     // now with a huge planted boulder that makes the player leave its impact zone.
-    stats: { hp: 385, attack: 90, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
+    stats: { hp: 385, attack: 72, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
     behavior: 'ranged', attackStyle: 'boulder', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 13, essenceType: 'blue', level: 1, biomeXp: 75 },
     // HUGE BOULDER — a full three-second wind-up that starts three seconds into
@@ -231,7 +231,7 @@ export const mountainMonsterEntries = [
     // GROUND BRUISER T4 — evolved Slam expressed as a predictable CADENCE finisher:
     // large normal attacks, and every 4th is the major Slam. The Mountain teaching
     // unit: its NORMAL hit is scary, its finisher is lethal without the damage cap.
-    stats: { hp: 1150, attack: 184, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
+    stats: { hp: 13800, attack: 147, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'gore', biome: 'mountain',
     rewards: { essence: 95, essenceType: 'blue', level: 4, biomeXp: 570 },
     ai: { wanderRadius: 90, leashRange: 430, idleMinMs: 4000, idleMaxMs: 11000 },
@@ -239,9 +239,12 @@ export const mountainMonsterEntries = [
     cadenceFinisher: { everyNAttacks: 4, multiplier: 1.6 },   // ~294 — deep cap trip
     // Keep the cadence finisher as the apex's damage evolution, but retain the
     // Titan line's visible low-health Granite Barrier.
+    // Coupled to the HP adoption (1150 -> 13800): wardPct x maxHp, so the ward is
+    // held at its pre-adoption ABSOLUTE budget of 0.25 x 1150 = 287.5. Written as
+    // an expression because 1/48 does not round cleanly (0.0208 is short by 0.46).
     lowHealthWard: {
       name: 'Granite Barrier', thresholdPct: 0.25, castMs: 1000,
-      wardPct: 0.25, durationMs: 8000, effectId: 'granite-barrier', fx: 'shield',
+      wardPct: 0.25 * 1150 / 13800, durationMs: 8000, effectId: 'granite-barrier', fx: 'shield',
     },
   }],
 
@@ -249,7 +252,7 @@ export const mountainMonsterEntries = [
     id: 'avalanche-tyrant', name: 'Avalanche Tyrant', color: 0x99aabb,
     // CAPRINE T4 — apex. Ledge traversal, extreme mobility/charge, and a brutal
     // knockback ram.
-    stats: { hp: 800, attack: 145, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
+    stats: { hp: 1600, attack: 116, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
     behavior: 'melee', attackStyle: 'gore', biome: 'mountain',
     rewards: { essence: 68, essenceType: 'blue', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2500 },
@@ -266,7 +269,7 @@ export const mountainMonsterEntries = [
     id: 'cliffside-roc', name: 'Cliffside Roc', color: 0x778899,
     // FLYER T4 — the Stone Eagle's apex. It keeps the close-range talon rake and
     // telegraphed Skyfall opener instead of becoming a generic ranged artillery mob.
-    stats: { hp: 850, attack: 179, plating: 0, damageReduction: 0, speed: 105, attackRange: 12, attackCooldown: 3500, pullRange: 410 },
+    stats: { hp: 1700, attack: 143, plating: 0, damageReduction: 0, speed: 105, attackRange: 12, attackCooldown: 3500, pullRange: 410 },
     behavior: 'melee', attackStyle: 'talons', biome: 'mountain',
     flies: true,
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 450 },
@@ -282,12 +285,17 @@ export const mountainMonsterEntries = [
     // STANDALONE LATE ELITE — the weapon-matchup exam:
     // heavy plating, some DR, the enemy soft-cap, and one large periodic empowered
     // hit. Do NOT add another mechanic (locked).
-    stats: { hp: 1100, attack: 113, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
+    stats: { hp: 6600, attack: 90, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
     behavior: 'melee', attackStyle: 'gore', biome: 'mountain', elite: true,
     rewards: { essence: 185, essenceType: 'blue', level: 4, biomeXp: 1110 },
     ai: { wanderRadius: 80, leashRange: 400, idleMinMs: 5000, idleMaxMs: 13000 },
     chargeOnAggro: { speedMult: 2.2, durationMs: 1300 },
     empoweredCooldown: { cooldownMs: 10000, multiplier: 2.5 },  // ~283
+    // NOT rescaled by the HP adoption (1100 -> 6600), deliberately. capPct is a
+    // fraction of this monster's OWN pool, so it is self-relative by design; the
+    // retained Durability22 installer never touched it either, and this reproduces
+    // the configuration that was actually measured. Absolute clip threshold
+    // therefore moves 275 -> 1650: the soft cap clips far less often now.
     enemySoftCap: { capPct: 0.25, capMult: 0.5 },
   }],
 

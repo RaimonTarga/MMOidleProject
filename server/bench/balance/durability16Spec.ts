@@ -21,11 +21,14 @@ export const DURABILITY16_CELLS: Durability16Cell[] = DURABILITY13_SWARM
 export function assertDurability16Definitions(): void {
   const tortoise = MONSTER_DATABASE.get('magma-brute')!;
   const salamander = MONSTER_DATABASE.get('ash-slinger')!;
-  assert.equal(tortoise.stats.hp, 2000);
-  assert.equal(tortoise.stats.attack, 145);
+  // REBASED 2026-09-18: magma-brute 2000/145 -> 3000/116 and ash-slinger 105 -> 84
+  // are authored source now, so every overlay below writes the live value and is
+  // inert. The historical experiment stays reproducible at its own frozen revision.
+  assert.equal(tortoise.stats.hp, 3000);
+  assert.equal(tortoise.stats.attack, 116);
   assert.equal(tortoise.stats.plating, 4);
   assert.equal(salamander.stats.hp, 1330);
-  assert.equal(salamander.stats.attack, 105);
+  assert.equal(salamander.stats.attack, 84);
   assert.equal(salamander.stats.plating, 2);
 }
 

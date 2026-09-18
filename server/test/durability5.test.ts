@@ -18,6 +18,11 @@ const savedHp = new Map(['cave-troll', 'cavern-troll', 'granite-titan', 'mountai
 const historicalTitan = MONSTER_DATABASE.get('granite-titan')!;
 const savedAttack = historicalTitan.stats.attack;
 historicalTitan.stats.attack = 105;
+// stone-eagle joined the fixture 2026-09-18: the T2 Mountain adoption moved its
+// attack 75 -> 60, and this preflight is pinned to Durability5's own values.
+const historicalEagle = MONSTER_DATABASE.get('stone-eagle')!;
+const savedEagleAttack = historicalEagle.stats.attack;
+historicalEagle.stats.attack = 75;
 try {
 for (const [id, hp] of [['cave-troll', 1320], ['cavern-troll', 3780], ['granite-titan', 1380], ['mountain-colossus', 4250]] as const) {
   MONSTER_DATABASE.get(id)!.stats.hp = hp;
@@ -33,4 +38,4 @@ try {
 } finally { troll.stats.hp = hp; }
 assertDurability5Definitions();
 console.log('durability5: ok');
-} finally { historicalTitan.stats.attack = savedAttack; for (const [id, hp] of savedHp) MONSTER_DATABASE.get(id)!.stats.hp = hp; }
+} finally { historicalTitan.stats.attack = savedAttack; historicalEagle.stats.attack = savedEagleAttack; for (const [id, hp] of savedHp) MONSTER_DATABASE.get(id)!.stats.hp = hp; }

@@ -167,5 +167,6 @@ export function assertDurability36Definitions(): void {
   const d=MONSTER_DATABASE.get(type);
   assert(d,`missing lineage member ${type} for tier ${tier}`);
  }
- assert.equal(MONSTER_DATABASE.get('silverback')?.stats.hp,2090,'T3 lineage anchor drift');
+ // REBASED 2026-09-18: the adopted Jungle ladder moves the T3 anchor 2090 -> 3200.
+ assert.equal(MONSTER_DATABASE.get('silverback')?.stats.hp,3200,'T3 lineage anchor drift');
 }

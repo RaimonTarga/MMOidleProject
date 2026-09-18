@@ -175,7 +175,7 @@ export const tundraMonsterEntries = [
     //   • bigger  — the impact is a planted CIRCLE, not a shot that follows you
     //   • harder  — it shoves you out of it (a ram should displace)
     //   • tighter — the answer is leaving ground, on a clock the room can shorten
-    stats: { hp: 1100, attack: 230, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
+    stats: { hp: 3300, attack: 230, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 110, essenceType: 'blue', level: 4, biomeXp: 660 },
     ai: { wanderRadius: 140, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9500 },
@@ -214,17 +214,20 @@ export const tundraMonsterEntries = [
     id: 'glacial-direbear', name: 'Glacial Dire-Bear', color: 0x5599cc,
     // Evolved defensive-window elite: bigger Ice Armor, bigger Shatter payoff.
     // No ramping per-hit slows (removed, locked).
-    stats: { hp: 1221, attack: 220, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    stats: { hp: 4884, attack: 220, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'claws-frost', biome: 'tundra',
     rewards: { essence: 150, essenceType: 'blue', level: 4, biomeXp: 900 },
     ai: { wanderRadius: 130, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9000 },
     // ECOLOGY: ICE ARMOR + SHATTER (T4 successor of glacier-bear). Bigger shell, bigger
     // crack + wider freezing shockwave. Burst the shell to shatter it.
     enemyShield: {
-      shieldPct: 0.22, intervalMs: 12000, durationMs: 6000,
+      // Coupled to the HP adoption (1221 -> 4884): both percentages are taken of
+      // maxHp, so each holds its pre-adoption ABSOLUTE budget -- barrier
+      // 0.22 x 1221 = 268.62, self-shatter 0.14 x 1221 = 170.94. Both divide exactly.
+      shieldPct: 0.055, intervalMs: 12000, durationMs: 6000,
       // Bigger shell, STRONGER shatter reward and a longer window than the Glacier
       // Bear - the T4 escalation is the payoff, not another debuff.
-      shatter: { selfDamagePct: 0.14, vulnerability: { damageTakenPct: 0.35, durationMs: 5000 } },
+      shatter: { selfDamagePct: 0.035, vulnerability: { damageTakenPct: 0.35, durationMs: 5000 } },
     },
   }],
 
@@ -233,7 +236,7 @@ export const tundraMonsterEntries = [
     // Evolved ranged Chill-control caster: the Rime Caster's Frostbind grown into a
     // stronger/longer Deep Freeze at high Chill. NO generic slow stacks on every
     // projectile (removed, locked).
-    stats: { hp: 900, attack: 190, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
+    stats: { hp: 1800, attack: 190, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
     behavior: 'ranged', attackStyle: 'frost-bolt', biome: 'tundra',
     staticSentry: true,
     rewards: { essence: 62, essenceType: 'blue', level: 3, biomeXp: 370 },
@@ -278,7 +281,7 @@ export const tundraMonsterEntries = [
     // second weapon-matchup layer on the apex was the kitchen sink.
     // Base 220 keeps ordinary hits meaningful while the reduced slam leaves room
     // to react between telegraphed impacts.
-    stats: { hp: 1914, attack: 220, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
+    stats: { hp: 7656, attack: 220, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra', elite: true,
     rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 70, leashRange: 380, idleMinMs: 6000, idleMaxMs: 15000 },

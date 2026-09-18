@@ -8,8 +8,13 @@ assert.equal(DURABILITY7_SEEDS.length, 5);
 // Frozen Durability7 contract retains its original control attack.
 const titan = MONSTER_DATABASE.get('granite-titan')!;
 const liveAttack = titan.stats.attack;
+// stone-eagle joined the fixture 2026-09-18: the T2 Mountain adoption moved its
+// attack 75 -> 60, and this frozen contract is pinned to Durability7's own values.
+const eagle = MONSTER_DATABASE.get('stone-eagle')!;
+const liveEagleAttack = eagle.stats.attack;
 try {
 titan.stats.attack = 105;
+eagle.stats.attack = 75;
 const original = JSON.stringify([...MONSTER_DATABASE]);
 for (let i = 0; i < DURABILITY7_CELLS.length; i += 3) {
   assert.deepEqual(DURABILITY7_CELLS[i].build, DURABILITY7_CELLS[i + 1].build);
@@ -26,4 +31,4 @@ for (const cell of DURABILITY7_CELLS) {
 }
 console.log('durability7: ok');
 
-} finally { titan.stats.attack = liveAttack; }
+} finally { titan.stats.attack = liveAttack; eagle.stats.attack = liveEagleAttack; }

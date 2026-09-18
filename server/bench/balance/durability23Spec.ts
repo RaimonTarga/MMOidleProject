@@ -11,7 +11,12 @@ export const DURABILITY23_BLOCKS=Object.fromEntries(['volcanic','graveyard','jun
  return [role,{cells,durationMs:role==='jungle'?120000:role==='graveyard'?900000:300000,pilotIds:cells.filter(c=>c.nodeId.endsWith('03')).map(c=>c.id)}];
 }));
 export function installDurability23Treatment(cell:Night5Cell){
- const saved=[['obsidian-tortoise',2244,4488],['magma-salamander',2904,5808]].map(([type,before,after])=>{
+ // RETIRED 2026-09-18: both HP values are authored source now, so the table is
+ // rebased to [adopted, adopted] and the overlay writes what is already live.
+ // NOTE the adoption ALSO coupled magma-salamander's nested Obsidian Shell
+ // (0.28 -> 0.14) to hold its absolute budget; this installer never scaled it, so
+ // the adopted definition is deliberately not identical to what D23 measured.
+ const saved=[['obsidian-tortoise',4488,4488],['magma-salamander',5808,5808]].map(([type,before,after])=>{
   const d=MONSTER_DATABASE.get(type as string)!;assert.equal(d.stats.hp,before,'Definition drift');
   return {type:type as string,before:before as number,after:after as number,beforeAttack:d.stats.attack,afterAttack:d.stats.attack};
  });

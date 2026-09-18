@@ -64,8 +64,12 @@ const ADOPTED_ATTACK = 40;
 
 // ── No other Mountain species was swept along.
 {
+  // REBASED 2026-09-18: these three moved under the SEPARATE T2 Mountain package
+  // (Durability27 + Durability29), not this one. Pinning them to their adopted T2
+  // values keeps the original intent -- catching this T1 package leaking outward --
+  // while no longer asserting a pre-T2-adoption world.
   const untouched: Record<string, number> = {
-    'granite-titan': 84, 'stone-eagle': 75, 'peak-archer': 90,
+    'granite-titan': 54, 'stone-eagle': 60, 'peak-archer': 72,
   };
   for (const [id, attack] of Object.entries(untouched)) {
     const d = MONSTER_DATABASE.get(id);

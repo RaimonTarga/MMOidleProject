@@ -31,9 +31,15 @@ export const DURABILITY34_MOUNTAIN_SEEDS=[69001,71003,73009] as const;
  * It does give the authored `rampOnCombat` (apex) and `cadenceFinisher`
  * (constrictor) time to develop, which a 3 s body cannot.
  */
+// RETIRED 2026-09-18. D34's 2900/3400 was SUPERSEDED before it ever reached
+// source: Durability36 Block J measured the primary lineage's duration FALLING
+// across tiers (10.95 -> 9.95 -> 6.55 s), and the adopted correction is the
+// coarser role-based ladder (apex-silverback 10000, emerald-constrictor 12000).
+// The table is rebased to [adopted, adopted] so this overlay -- and the
+// Durability36 installer that reads it -- is inert against current source.
 export const DURABILITY34_JUNGLE_HP: Record<string,[number,number]>={
- 'apex-silverback':[1450,2900],
- 'emerald-constrictor':[1700,3400],
+ 'apex-silverback':[10000,10000],
+ 'emerald-constrictor':[12000,12000],
 };
 /** Deliberately untouched, so role separation is preserved. */
 export const DURABILITY34_JUNGLE_UNCHANGED=['hunting-panther','thornback-lizard'] as const;
@@ -126,9 +132,12 @@ export function assertDurability34Definitions(): void {
   assert.equal(d.stats.hp,before,`${type} HP drift`);
   assert.equal(d.chargedAttack,undefined,`${type} gained a charged attack; the candidate's reasoning assumed none`);
  }
- assert.equal(MONSTER_DATABASE.get('hunting-panther')?.stats.hp,950,'hunting-panther must stay a fast body');
- assert.equal(MONSTER_DATABASE.get('thornback-lizard')?.stats.hp,1000,'thornback-lizard must stay a fast body');
- assert.equal(MONSTER_DATABASE.get('silverback')?.stats.hp,2090,'T3 Jungle anchor drift invalidates the ladder argument');
+ // REBASED 2026-09-18 to the adopted Jungle ladder. The fast bodies are no longer
+ // "untouched" -- the adopted correction raises them too, just far less than the
+ // durable roles (950 -> 2400 and 1000 -> 2500 against 1450 -> 10000).
+ assert.equal(MONSTER_DATABASE.get('hunting-panther')?.stats.hp,2400,'hunting-panther must stay the FAST body of its pair');
+ assert.equal(MONSTER_DATABASE.get('thornback-lizard')?.stats.hp,2500,'thornback-lizard must stay the FAST body of its pair');
+ assert.equal(MONSTER_DATABASE.get('silverback')?.stats.hp,3200,'T3 Jungle anchor drift invalidates the ladder argument');
  // Mountain: Block M holds every monster fixed; only the guard loadout moves.
  const archer=MONSTER_DATABASE.get('ridge-archer');
  assert(archer,'ridge-archer must exist');

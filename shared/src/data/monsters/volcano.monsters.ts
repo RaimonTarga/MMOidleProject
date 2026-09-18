@@ -145,7 +145,7 @@ export const volcanoMonsterEntries = [
     // one-shotting a T3 arrival player (320-342 raw damage against ~291 maxHP) as a
     // PLAIN ordinary hit. 145 keeps it the tier's heaviest sustained hitter while
     // Heat remains the reason a long fight becomes dangerous.
-    stats: { hp: 2000, attack: 145, plating: 4, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
+    stats: { hp: 3000, attack: 116, plating: 4, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -167,7 +167,9 @@ export const volcanoMonsterEntries = [
       id: 'molten-guard', name: 'Molten Guard', castMs: 1000,
       cooldownMs: 14000, initialCooldownMs: 6000, target: 'self', fx: 'volcanic-guard',
       actions: [{
-        type: 'shield', effectId: 'magma-molten-guard', shieldPct: 0.14, durationMs: 4500,
+        // Coupled to the HP adoption: shieldPct x maxHp, so the barrier is held at its
+        // pre-adoption ABSOLUTE budget of 0.14 x 2000 = 280, not re-inflated by the new pool.
+        type: 'shield', effectId: 'magma-molten-guard', shieldPct: 0.14 * 2000 / 3000, durationMs: 4500,
       }],
     }],
   }],
@@ -176,7 +178,7 @@ export const volcanoMonsterEntries = [
     id: 'ash-slinger', name: 'Ash Salamander', color: 0xff4422,
     // Salamander line T3: STATIONARY ranged pressure that fires from the background
     // while the swarm closes. Does not kite. No personal ramp.
-    stats: { hp: 1330, attack: 105, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
+    stats: { hp: 1330, attack: 84, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
     behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
     // Fires from the background and does NOT kite (locked).
@@ -240,7 +242,7 @@ export const volcanoMonsterEntries = [
     // territory (105% of a T4 arrival player's maxHP per the analytical Walk
     // table) and the cadence-finisher comment below ("// 220") only makes sense
     // at attack=100 (100*2.2=220) -- restoring the documented value.
-    stats: { hp: 2244, attack: 100, plating: 8, damageReduction: 0, speed: 20, attackRange: 15, attackCooldown: 3000, pullRange: 155 },
+    stats: { hp: 4488, attack: 100, plating: 8, damageReduction: 0, speed: 20, attackRange: 15, attackCooldown: 3000, pullRange: 155 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 140, essenceType: 'red', level: 4, biomeXp: 840 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9500 },
@@ -283,7 +285,7 @@ export const volcanoMonsterEntries = [
     // rewarding BURST over DoT/chip. The exam is to break through its shell windows
     // BEFORE the node's global Heat turns dangerous — the shell is what makes the
     // fight run long, Heat is the cost.
-    stats: { hp: 2904, attack: 150, plating: 6, damageReduction: 0.06, speed: 22, attackRange: 15, attackCooldown: 2600, pullRange: 160 },
+    stats: { hp: 5808, attack: 150, plating: 6, damageReduction: 0.06, speed: 22, attackRange: 15, attackCooldown: 2600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic', elite: true,
     rewards: { essence: 190, essenceType: 'red', level: 4, biomeXp: 1140 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 4000, idleMaxMs: 11000 },
@@ -305,7 +307,8 @@ export const volcanoMonsterEntries = [
       id: 'obsidian-shell', name: 'Obsidian Shell', castMs: 1200,
       cooldownMs: 14000, initialCooldownMs: 6000, target: 'self', fx: 'volcanic-shell',
       actions: [{
-        type: 'shield', effectId: 'magma-obsidian-shell', shieldPct: 0.28, durationMs: 5000,
+        // Coupled to the HP adoption: absolute budget held at 0.28 x 2904 = 813.12.
+        type: 'shield', effectId: 'magma-obsidian-shell', shieldPct: 0.14, durationMs: 5000,
       }],
     }],
   }],

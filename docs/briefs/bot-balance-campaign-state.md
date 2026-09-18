@@ -2,7 +2,80 @@
 
 Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## Current decision: T1 Mountain package ADOPTED; Durability35 corrected; Durability36 prepared, not launched
+## Current decision: the mob pass is INTEGRATED into source; Durability37 regression prepared; the first boss packet drafted
+
+Durability36 ran once at `0e28217b`: 72/72 observations in 4m50s, both blocks verified, navigation
+watch pass, zero deaths in Block J. The execution stands; five prose/interpretation findings are
+corrected WITHOUT rerunning it (dated banner on [the report](bot-balance-durability36-report.md)).
+
+**MOUNTAIN: the dedicated tuning sequence ENDS.** Block M's armor swap is 5 favourable flips, 1
+adverse, 2 both-survived, 1 both-died over 9 pairs (reference 6/9 deaths, local-armor 2/9; alive
+time 2233.9 vs 2393.2 s) on RE-USED D35 seeds. So Fallen Knight Plate is a credible
+**post-acquisition** option for heavy-node cases, NOT a universal default and NOT proof first
+entry is fixed - the recipe needs Mountain level 2 and +3 needs level 4. Apprentice/swarming stays
+a named residual farming exception. This does not justify another item/rune/guard search or a
+second enemy nerf. The already-implemented base attack of 40 stays; do not multiply by 0.8 again.
+
+**JUNGLE: the tested ladder FAILED the intended direction, so one coarse role-based correction was
+made.** Block J measured T3 directly for the first time: primary-lineage equal-weight clean body
+TTK 10.95 s (T2 Ape) -> 9.95 s (T3 Silverback) -> 6.55 s (T4 Apex, on the retained 2900 overlay).
+It FALLS. The fast lineages shorten too but far less steeply (4.15 -> 3.10 -> 2.475), so a
+universal elite-duration floor was the wrong shape.
+
+**ADOPTED AND IMPLEMENTED: 37 species, one commit.** The retained Forest/Volcano, Graveyard,
+Desert, Mountain, Tundra and Trench packages, written as absolute authored values with every
+overlay layer flattened - plus a NEW Jungle ladder that SUPERSEDES Durability34's 2900/3400 before
+it ever reached source (`silverback` 3200, `jungle-stalker` 1250, `canopy-harrier` 1150,
+`apex-silverback` 10000, `emerald-constrictor` 12000, `hunting-panther` 2400, `thornback-lizard`
+2500; T2 deliberately untouched as the anchor). Those seven are a COMMAND-CENTER PROPOSAL derived
+from D36, not measured successful values - Durability37 Block J is what checks them. Guarded by
+`server/test/mobAdoptionIntegration.test.ts`. `dune-basilisk` carries the later Desert 9006, not
+the other branch's 4503; Power Shot 1.8 and Hadal Stalker 21000 were never written.
+
+**FIVE COUPLED DEFENCE FIELDS, one deliberate divergence, one deliberate non-change.** Every field
+taken as a percentage of `maxHp` holds its PRE-ADOPTION ABSOLUTE budget: `granite-mammoth` ward
+287.5 (authored as an expression - 1/48 does not round cleanly), `glacial-direbear` barrier 268.62
+AND self-shatter 170.94, and three NESTED `monsterAbilities` shield actions - `elder-leviathan`
+1058.4, `magma-brute` 280, `magma-salamander` 813.12. The last two DIVERGE from their own
+experiments: D15 and D23 never scaled those shells, so both species are now weaker than in the
+runs that selected their HP. Recorded, not hidden; D37 Block I families 2 and 3 observe it.
+`granite-titan` keeps `wardPct` 0.25 because only its attack moved. `cragback-rhino`'s
+`enemySoftCap.capPct` is deliberately NOT rescaled - it is self-relative and the retained
+installer never touched it - so its clip threshold moves 275 -> 1650.
+
+**FOUR TIER LABELS IN THE MANIFEST HAD DRIFTED**, resolved from `monsterPoolByTier`:
+`obsidian-tortoise` and `magma-salamander` are T4 Volcano (not T3), `sand-scorpion` and
+`stone-basilisk` are T2 Desert (not T4). The manifest is corrected and D37's family list uses the
+resolved tiers.
+
+**TEN INSTALLERS AND ELEVEN TESTS REBASED OR RETIRED.** `installNight5Treatment` reaches D20 ->
+D19 -> D17/D15, so the multiplicative overlays were a LIVE double-application hazard, not
+bookkeeping: D17/D22/D23/D24/D26/D27/D29/D34 are retired to no-ops, D15/D16 merely rebased
+(they already write the adopted value), and D5/D7 gained `stone-eagle` in their own frozen test
+fixtures. Historical experiments stay reproducible at their own revisions; no frozen artifact was
+edited.
+
+[Durability37 packet](bot-balance-durability37-operator-packet.md): PREPARED, NOT LAUNCHED. **74
+observations**, two INDEPENDENT blocks, and it INSTALLS NOTHING - both blocks fight authored
+source, so `hpTreatment` must be empty in all 74 and the preflight fails on a non-empty one.
+J) the Jungle ladder re-measured, 54: D36's cells re-identified, seeds REUSED deliberately so the
+only thing that moved is authored HP. Working intent ~11 -> 15 -> 23 s primary and ~4 -> 5 -> 6 s
+fast; a miss is a measurement, not something to correct mid-run. I) one representative node per
+OTHER changed family, 20: ten families x sensitive/comparator roots x one seed, all six roots
+across the collection, Trench keeping 600 s and Graveyard 900 s. One seed is a spot check, never
+certification. T2 Mountain family 7 sits on the named open exception - a Striker death there is
+expected and dispositioned, not a new finding.
+
+[Boss starter packet](bot-balance-boss-numerical-starter-packet.md): DRAFTED, NOT FROZEN. Two
+bosses resolved from source, 6 roots, 2 seeds = 24 attempts. `apex-timberclaw` (T2 forest, no
+summons, clean single-target) and `charnel-crown-sovereign` (T4 graveyard) - the latter chosen
+because it summons `bone-crawler`, `plague-hound` and `carrion-vulture`, three species the adoption
+changed, so it is exactly the "boss reuses changed ordinary mobs" case and its starting receipts
+must name them. Reuse `bench/bossExam.ts`, NOT `--mode boss`, which has only ever measured the
+dungeon guard. Four prerequisites remain before it can be frozen; a Jungle-only problem does not
+block it, but a Forest or Graveyard problem in D37 Block I does.
+
+## Superseded decision: T1 Mountain package ADOPTED; Durability35 corrected; Durability36 prepared, not launched
 
 Durability35 ran once at `f123d46b`: 72 observations, 35 full windows, 37 deaths, zero cutoffs.
 The survival result stands and was verified against raw; four numerical/label findings are

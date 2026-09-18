@@ -10,7 +10,9 @@ export const DURABILITY17_CELLS = NIGHT4_SURVEY.filter(c=>c.tier===2&&c.role==='
     targetTypes:['ancient-wolf','ironwood-golem']})));
 export type Durability17Cell = typeof DURABILITY17_CELLS[number];
 export function assertDurability17Definitions() {
-  for(const [type,hp,attack] of [['ancient-wolf',525,34],['ironwood-golem',315,31],['dire-whelp',155,14],['canopy-sprite',300,31]] as const) {
+    // REBASED 2026-09-18: ancient-wolf 525/34 -> 1575/22 (the /22/ is Durability19's
+  // pressure value) and ironwood-golem 315/31 -> 945/25 are now authored source.
+  for(const [type,hp,attack] of [['ancient-wolf',1575,22],['ironwood-golem',945,25],['dire-whelp',155,14],['canopy-sprite',300,31]] as const) {
     const s=MONSTER_DATABASE.get(type)!.stats;
     assert.equal(s.hp,hp);assert.equal(s.attack,attack);assert.equal(s.plating,0);assert.equal(s.damageReduction,0);
   }
@@ -18,11 +20,11 @@ export function assertDurability17Definitions() {
 export function installDurability17Treatment(cell:Durability17Cell) {
   assertDurability17Definitions();
   const saved=cell.targetTypes.map(type=>({type,stats:{...MONSTER_DATABASE.get(type)!.stats}}));
-  for(const {type,stats} of saved) {
-    const s=MONSTER_DATABASE.get(type)!.stats;
-    s.hp=stats.hp*(cell.treatment==='control'?1:cell.treatment==='adults2'?2:3);
-    if(cell.treatment==='adults3-pressure80') s.attack=Math.round(stats.attack*0.8);
-  }
+  // RETIRED 2026-09-18: the adults2/adults3 HP multipliers and the 0.8 pressure cut
+  // are authored source now, so re-applying them here would MULTIPLY the adopted
+  // values (x3 on top of 1575, 0.8 on top of 22). The overlay is a deliberate no-op;
+  // the historical experiment stays reproducible at its own frozen revision.
+  void cell;
   return {changes:saved.map(({type,stats})=>({type,before:stats.hp,after:MONSTER_DATABASE.get(type)!.stats.hp,
     beforeAttack:stats.attack,afterAttack:MONSTER_DATABASE.get(type)!.stats.attack})),
     restore(){for(const {type,stats} of saved) Object.assign(MONSTER_DATABASE.get(type)!.stats,stats);}};

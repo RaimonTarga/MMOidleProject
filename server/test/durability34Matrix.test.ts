@@ -50,12 +50,17 @@ assertDurability34Definitions();
   const nodes = [...new Set(block.cells.map((c) => c.nodeId))].sort();
   assert(nodes.join(',') === 'node-t4-jungle-03,node-t4-jungle-05', `node drift: ${nodes.join(',')}`);
 
-  // The candidate restores the ladder rather than inventing a duration band.
-  assert(MONSTER_DATABASE.get('silverback')!.stats.hp === 2090, 'T3 anchor');
+  // REBASED 2026-09-18. Durability34's 2900/3400 candidate was SUPERSEDED before it
+  // ever reached source: Durability36 Block J measured the primary lineage's
+  // duration FALLING across tiers, and the adopted correction is the coarser
+  // role-based ladder (silverback 3200, apex-silverback 10000, constrictor 12000).
+  // The overlay is retired to [adopted, adopted], so what this block now checks is
+  // that it is inert and that the adopted ladder is live.
+  assert(MONSTER_DATABASE.get('silverback')!.stats.hp === 3200, 'T3 anchor');
   for (const [type, [before, after]] of Object.entries(DURABILITY34_JUNGLE_HP)) {
-    assert(MONSTER_DATABASE.get(type)!.stats.hp === before, `${type} live value`);
-    assert(after > 2090, `${type}: the candidate must clear the T3 anchor it currently sits below`);
-    assert(before < 2090, `${type}: the inversion this fixes must still exist`);
+    assert(before === after, `${type}: the retired overlay must no longer move anything`);
+    assert(MONSTER_DATABASE.get(type)!.stats.hp === after, `${type} live value`);
+    assert(after > 3200, `${type}: the durable T4 roles must clear the T3 anchor`);
   }
 }
 
@@ -118,11 +123,14 @@ assertDurability34Definitions();
   assert(snapshot() === baseline, 'control restore');
 
   const candidate = installDurability34Treatment(block.cells.find((c) => c.treatment === 'candidate')!);
-  assert(candidate.changes.length === 2, 'exactly the two durable roles move');
-  assert(MONSTER_DATABASE.get('apex-silverback')!.stats.hp === 2900, 'apex HP applied');
-  assert(MONSTER_DATABASE.get('emerald-constrictor')!.stats.hp === 3400, 'constrictor HP applied');
-  assert(MONSTER_DATABASE.get('hunting-panther')!.stats.hp === 950, 'fast bodies untouched');
-  assert(MONSTER_DATABASE.get('thornback-lizard')!.stats.hp === 1000, 'fast bodies untouched');
+  assert(candidate.changes.length === 2, 'exactly the two durable roles are reported');
+  // The adopted ladder, not the superseded candidate.
+  assert(MONSTER_DATABASE.get('apex-silverback')!.stats.hp === 10_000, 'apex carries the adopted HP');
+  assert(MONSTER_DATABASE.get('emerald-constrictor')!.stats.hp === 12_000, 'constrictor carries the adopted HP');
+  // The fast bodies are no longer untouched -- the adopted ladder raises them too,
+  // far less than the durable roles, which is the point of a role-based correction.
+  assert(MONSTER_DATABASE.get('hunting-panther')!.stats.hp === 2400, 'fast body raised far less');
+  assert(MONSTER_DATABASE.get('thornback-lizard')!.stats.hp === 2500, 'fast body raised far less');
   assert(candidate.changes.every((c) => c.beforeAttack === c.afterAttack), 'HP-only: no attack may move');
   candidate.restore();
   assert(snapshot() === baseline, 'candidate restore');

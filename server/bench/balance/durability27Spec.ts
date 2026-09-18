@@ -13,10 +13,14 @@ export const DURABILITY27_BLOCKS=Object.fromEntries(['mountain','desert'].map(ro
 export function installDurability27Treatment(cell:Night5Cell){
  const ids=cell.role==='mountain'?['granite-titan','stone-eagle','peak-archer']:['sand-scorpion','stone-basilisk'];
  const saved=ids.map(type=>{const d=MONSTER_DATABASE.get(type);assert(d,`Missing ${type}`);return {type,stats:{...d.stats}};});
+ // RETIRED 2026-09-18: both treatments are authored source now -- T2 Mountain
+ // attack (granite-titan 84 -> 54 across D27+D29, stone-eagle 75 -> 60, peak-archer
+ // 90 -> 72) and T2 Desert HP (sand-scorpion and stone-basilisk 780 -> 1365).
+ // Re-applying x0.8 / x1.75 would compound onto the adopted values. The overlay
+ // now only REPORTS them; the historical experiment stays reproducible at its own
+ // frozen revision.
  const changes=cell.treatment==='candidate'?saved.map(({type,stats})=>{
   const d=MONSTER_DATABASE.get(type)!;
-  if(cell.role==='mountain')d.stats.attack=Math.round(stats.attack*0.8);
-  else d.stats.hp=Math.round(stats.hp*1.75);
   return {type,before:stats.hp,after:d.stats.hp,beforeAttack:stats.attack,afterAttack:d.stats.attack};
  }):[];
  return {changes,restore(){for(const {type,stats} of saved)Object.assign(MONSTER_DATABASE.get(type)!.stats,stats);}};
