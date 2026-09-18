@@ -20,6 +20,49 @@ const BOSS_ID='charnel-crown-sovereign';
 const BOSS={hp:19499,attack:115,plating:14,damageReduction:0.08};
 const ESCORTS={'bone-crawler':{hp:1235,attack:85},'plague-hound':{hp:1901,attack:105},'carrion-vulture':{hp:1616,attack:95}};
 
+// The EARLIER slot qualifies only. It declares no pilot, because the two-case
+// reference check already proved that encounter runs and a pilot here would be an
+// undeclared seventh observation of the same boss.
+{
+ const out=join(root,'timberclaw-qualify');
+ const result=spawnSync(process.execPath,night5ChildArgs(source,'server/scripts/bossScreen.ts',['--trial=boss1','--block=timberclaw','--mode=qualify',`--out=${out}`,`--hitboxes=${hitboxes}`]),{cwd:source,encoding:'utf8',timeout:1800000,windowsHide:true});
+ writeFileSync(join(root,'timberclaw-qualify.log'),result.stdout+'\n'+result.stderr);
+ assert.equal(result.status,0,result.stderr);
+ const read=n=>JSON.parse(readFileSync(join(out,n),'utf8'));
+ const manifest=read('manifest.json'),index=read('index.json');
+ assert.equal(manifest.bossId,'apex-timberclaw','earlier slot boss drift');
+ assert.equal(manifest.durationMs,300000,'earlier slot cap drift');
+ assert.deepEqual(manifest.seeds,[96011],'earlier slot seed drift');
+ assert.equal(manifest.cells.length,6,'earlier slot needs six roots');
+ assert.equal(index.length,6,'one ready receipt per root');
+ let corroborated=0;
+ for(const ready of index){
+  assert.deepEqual(ready.hpTreatment,[],`${ready.cell}: installs nothing`);
+  assert(ready.bossRuntime.maxHp>0,`${ready.cell}: boss never woke`);
+  assert.equal(ready.bossAuthored.hp,3750,`${ready.cell}: timberclaw hp drift`);
+  // Explicit legal reference builds: applied must BE declared, and within budget.
+  const d=ready.declaredPackage,a=ready.appliedPackage;
+  assert.equal(d.stance,'defensive-stance',`${ready.cell}: reference stance drift`);
+  assert.equal(a.activeStance,d.stance,`${ready.cell}: applied stance != declared`);
+  assert.equal(d.runeRules.length,5,`${ready.cell}: reference carries five rules`);
+  assert.equal(a.runesEquipped.length,5,`${ready.cell}: applied rules != declared`);
+  assert.deepEqual(d.abilities.techniques,['expose-weakness'],`${ready.cell}: technique drift`);
+  assert.deepEqual(d.abilities.guards,['second-wind','brace'],`${ready.cell}: guard drift`);
+  assert(ready.runicPoints.cost<=ready.runicPoints.budget,
+   `${ready.cell}: ${ready.runicPoints.cost} RP against ${ready.runicPoints.budget}`);
+  assert.deepEqual(ready.escortsDeclared,{},`${ready.cell}: this boss has no escorts`);
+  if(d.treatment==='reference-corroborated'){
+   corroborated++;
+   // The corroborated cell must still reproduce the historical package exactly.
+   assert.equal(d.gearItemIds.weapon,'ruinous-axe','corroborated weapon drift');
+   assert.equal(ready.effectiveStats.maxHp,231,'corroborated pool drift');
+   assert.equal(ready.effectiveStats.attack,100,'corroborated attack drift');
+  }
+ }
+ assert.equal(corroborated,1,'exactly one cell is historically corroborated');
+ console.log('timberclaw qualify ok — 6 roots, 1 corroborated, zero fights spent');
+}
+
 for(const mode of ['qualify','pilot']){
  const out=join(root,`${BLOCK}-${mode}`);
  const result=spawnSync(process.execPath,night5ChildArgs(source,'server/scripts/bossScreen.ts',['--trial=boss1',`--block=${BLOCK}`,`--mode=${mode}`,`--out=${out}`,`--hitboxes=${hitboxes}`]),{cwd:source,encoding:'utf8',timeout:1800000,windowsHide:true});
@@ -91,4 +134,4 @@ for(const mode of ['qualify','pilot']){
  }
  console.log(BLOCK,mode,'ok');
 }
-console.log('boss1 preflight: ok — pilot evidence at',join(root,'pilot-evidence.json'));
+console.log('boss1 preflight: ok — both slots qualified; pilot evidence at',join(root,'pilot-evidence.json'));

@@ -1,48 +1,39 @@
-# Boss1 operator packet — the first boss numerical screen
+# Boss1 operator packet — the earlier/later boss numerical screen
 
-Prepared 2026-09-18. **FROZEN.** One boss, six tier-legal roots, two declared seeds:
-**12 attempts**. It installs nothing.
+Prepared 2026-09-18, **finalized and re-frozen 2026-09-19.** Two bosses, six explicit legal
+reference builds each: **18 fights**. It installs nothing and changes no balance value.
 
-Operator: run the specified committed source and stop on drift. Do not choose staged content,
-do not commit adoption changes, do not invent a revision, do not treat silence as permission.
-Your endpoint is the factual report. No production tuning, commits, pushes or extra experiments.
+Operator: run the specified committed source and stop on drift. Do not choose staged content, do
+not commit changes, do not invent a revision, do not treat silence as permission. Your endpoint is
+the factual report. No production tuning, commits, pushes or extra experiments.
 
 ---
 
-## 1. Why this screen is one boss, not two
+## 1. Both slots, and why the earlier one is back
 
-> **CORRECTED 2026-09-18.** The reasoning below is **partly withdrawn**. `apex-timberclaw` is NOT
-> established as unbeatable: it was beaten **2/2 on 2026-09-13** (`61080e54`) by the V1i Spirit
-> route, HP never below 41.9%. The 0/126 is the outcome of one `bossExam.ts` configuration whose
-> build selection, RP allocation, stance and automation all differ from that winning run. The
-> earlier-tier slot therefore stays out of THIS packet because its benchmark setup is unexplained,
-> **not** because T2 bosses are overtuned — and no boss number should move on it. The T4/T2
-> comparison below is not valid evidence about T1/T2 reference setups. See
-> [the T2 boss benchmark gap brief](bot-balance-t2-boss-benchmark-gap-2026-09-18.md).
-> The T4 count "12/12" was also misstated: 24 fights across 12 distinct configurations.
+`apex-timberclaw` was withdrawn from an earlier draft of this packet while its benchmark setup was
+unexplained. **That is now closed.** The two-case reference check established that the failure
+belonged to the legacy **package**, not the boss:
 
-The [starter packet](bot-balance-boss-numerical-starter-packet.md) proposed an earlier/later-tier
-pair: `apex-timberclaw` (T2 forest) and `charnel-crown-sovereign` (T4 graveyard). The earlier slot
-was **withdrawn on evidence**, not preference.
+| Case | Package | Outcome |
+|---|---|---|
+| A | the historical V1i Spirit package | **boss-killed at 30,300 ms**, authoritative kill evidence, 24.9% HP to spare |
+| B | the legacy benchmark package, same skill path | **bot-died at 12,900 ms**, 32.8% of the boss removed |
 
-Measured at `bdee5dca` on 2026-09-18:
+Case A is retained as the current **Spirit/Timberclaw reference** — for this boss and this build,
+not as harness correctness and not as a balance result.
 
-| Scope | Result |
-|---|---|
-| All 7 T2 bosses, 6 roots × 3 builds, 300 s cap | **0 wins / 126** |
-| `apex-timberclaw` among them | Among the **cheapest** — 5.17 cost bars, 48.4 s ttk, 2nd easiest of 7 |
-| All 7 T3 bosses | Ragged: 0/54 (swamp, 99% attrition) to 37/54 (jungle) |
-| T4 Sovereign, tier-legal builds + full rune loadout | **12 wins / 12**, 36–104 s |
+That check also surfaced and fixed a shared-runner defect that had recorded B as a false victory.
+See [the runner repair record](bot-balance-boss-runner-repair-2026-09-19.md). **This packet runs on
+the corrected runner**, which requires boss-specific authoritative kill evidence for any victory.
 
-With T1 already on record at 0/30, early-tier bosses are unbeatable by the reference player while
-the final-tier boss is comfortable. An earlier-tier slot would therefore re-measure a known wall —
-precisely the stale-band error the starter packet warns against. **That wall is now its own main
-workstream and is NOT this screen's question.** Full evidence:
-[the D37 decision note](bot-balance-d37-decision-and-boss-screen-blocker-2026-09-18.md) §5.
+| Slot | Boss | Tier / biome | Shape | Builds |
+|---|---|---|---|---|
+| **Earlier** | `apex-timberclaw` | T2 forest | no summons — clean single-target pressure | explicit reference builds (§4a) |
+| **Later** | `charnel-crown-sovereign` | T4 graveyard | summons three adoption-changed escorts | the preserved qualified T4 preparation (§4b) |
 
-The Sovereign is retained because it is the case the screen exists to test: it summons three
-ordinary species the mob adoption changed, so it is exactly the "boss reuses changed ordinary
-mobs" receipt question.
+The **T3 Jungle exception is deliberately not in this screen** and is not reopened by it. The matrix
+test asserts no T3 content and no Jungle node can enter either slot.
 
 ---
 
@@ -50,15 +41,14 @@ mobs" receipt question.
 
 | Item | Value |
 |---|---|
-| Harness commit | `dd8cae23e47a047b45a148b5bdc8dabf32fce21f` (tree `8589bd2543ff6a678435e25a9c7d7d96d15eb521`) |
+| Harness commit | `5bbed9d248b390e52566d63adb518b1a65c2a1ce` |
 | **Definitions hash** | **`17aa46cb9002677f634a5933e0f83850761c9e8a2c842a5f7033202b8f629d8f`** |
 | **Hitbox hash** | **`08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83`** |
 | Hitbox artifact | `C:/Users/osaif/AppData/Local/mmo-idle/validation/ttk-survey/hitboxes.json` |
-| Trial / block | `boss1` / `sovereign` |
-| Boss | `charnel-crown-sovereign` — Charnel-Crown Sovereign, T4 graveyard |
-| Node | `node-t4-graveyard-dungeon` (Crownbone Sepulcher) |
-| Seeds | `94011`, `94019` |
-| Per-fight cap | 600,000 ms |
+| Trial | `boss1` |
+| Earlier block | `timberclaw` — `apex-timberclaw`, `node-t2-forest-dungeon`, seed `96011`, cap 300,000 ms |
+| Later block | `sovereign` — `charnel-crown-sovereign`, `node-t4-graveyard-dungeon`, seeds `94011`/`94019`, cap 600,000 ms |
+| Total | 6 + 12 = **18 fights** |
 | Output root | `C:/Users/osaif/AppData/Local/mmo-idle/validation/ttk-survey/boss1` |
 | Preflight root | `C:/Users/osaif/AppData/Local/mmo-idle/validation/ttk-survey/boss1-preflight` |
 
@@ -109,7 +99,39 @@ randomness, and the two seeds moved elapsed time and damage taken in preparation
 
 ---
 
-## 4. The cohort — 6 cells × 2 seeds
+## 4a. Earlier slot — Apex Timberclaw, explicit reference builds
+
+Six roots, one cell each, **one seed** (`96011`). Seeds are inert for this boss: no adds, a fixed
+spawn, and evasion is deterministic here — two seeds were measured producing byte-identical
+outcomes.
+
+These are **explicit** builds, never scorer defaults. The scorer default is exactly the package that
+lost. The shape is the corroborated one: **defensive stance**, **Expose Weakness**, **Second Wind +
+Brace**, and five ordered behaviour rules (`auto-path-enemy`, `inside-telegraph→step-back`,
+movement, `avoid-hazards`, `wait-for-regen`) — Step Back ahead of the movement rule, because
+movement-channel arbitration is top-to-bottom. Melee roots chase; ranged roots orbit. Kit is the
+corroborated mixed set: `cave-vest-t2`, `mountain-charm-t2`, `plains-boots-t2`, `core-tempered`,
+all +5, with each root's tier-legal weapon.
+
+Recorded at qualification (zero fights spent):
+
+| Root | Treatment | Weapon | RP | maxHp | attack | plating | DR | barrier |
+|---|---|---|---:|---:|---:|---:|---:|---:|
+| striker | constructed | `gale-needle` | 26/30 | 268 | 33 | 22 | 0.21 | 70 |
+| squire | constructed | `quake-hammer` | 26/30 | 300 | 109 | 24 | 0.24 | 78 |
+| apprentice | constructed | `ruinous-axe` | 28/30 | 256 | 94 | 20 | 0.20 | 67 |
+| slinger | constructed | `jungle-stinger-rapier` | 28/30 | 239 | 38 | 18 | 0.17 | 62 |
+| conduit | constructed | `ruinous-axe` | 28/30 | 244 | 86 | 18 | 0.18 | 63 |
+| **spirit** | **corroborated** | `ruinous-axe` | 28/30 | **231** | **100** | **18** | **0.19** | **129** |
+
+**Only the Spirit cell is historically corroborated** — it reproduces the V1i package exactly, and
+its qualification figures match the historical record. The other five are the same shape carried
+onto their own tier-legal weapons: a reference **construction**, not evidence. The report must say
+so and must not present them as historical results.
+
+---
+
+## 4b. Later slot — the preserved Sovereign preparation
 
 Six roots, one cell each, reusing the **qualified** Durability37 T4 graveyard builds verbatim
 (`NIGHT5_BLOCKS.t4a`, the `-03` set) and re-pointing them at the dungeon node. Reuse is the point:
@@ -210,10 +232,17 @@ node scripts/boss1-run.mjs \
   --hitbox-hash="08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83"
 ```
 
+The preflight qualifies **both** slots and the run script drives both blocks in sequence,
+verifying each independently: a local problem in one never consumes the other's allocation.
+
 ### Smoke-test receipts from preparation
 
-Preflight green at `305f39eedd6855d07259af6fb6497b85a709df56` — the commit that introduces this
-packet — with the manifest's definitions hash reading back the frozen `17aa46cb…`:
+Preflight green, with the manifest's definitions hash reading back the frozen `17aa46cb…`:
+
+- `timberclaw qualify ok` — 6 roots, **1 corroborated**, zero fights spent. Every cell's applied
+  package equals its declared package, all within the 30 RP budget, boss awake in each, and the
+  corroborated Spirit cell reproduces the historical 231 maxHp / 100 attack exactly.
+
 
 - `sovereign qualify ok` — 6 ready receipts, all six roots legally prepared, boss awake in each,
   `hpTreatment` empty, all three escorts at adopted values.
@@ -240,6 +269,14 @@ measurement. Preparation figures are not results.
    finishers, openings and venom emit no cast events, so an absent cast counter is inapplicable
    evidence, not a demonstrated failure.
 
+7. **Reference construction vs corroboration.** Only the Timberclaw **Spirit** cell reproduces a
+   historically observed package. The other five are the same shape on their own weapons and must
+   be reported as constructions, never as historical results.
+8. **Terminal evidence.** Every victory carries `bossKillEvidence` naming the boss as victim. A
+   record with `outcome: boss-killed` and no evidence is a defect, not a result — and the run
+   script now fails on it. `encounter-reset`, `boss-vanished-no-kill` and `simultaneous-terminal`
+   are real outcomes and are never rounded to a win or a loss.
+
 Two measurement properties to carry, not restate as findings:
 
 - **HP lost is sampled as per-tick HP decreases**, not the pipeline's `damageTaken`. Monster DoT,
@@ -258,4 +295,7 @@ Two measurement properties to carry, not restate as findings:
 - No mob TTK bands and no Trench mini-boss guide applied to a boss. A boss is a different
   encounter shape.
 - No exhaustive equipment/stance cross-product, no full cohort, no automatic retry or adaptation.
-- **It does not answer the early-tier boss wall**, and nothing here should be read as bearing on it.
+- **It does not answer any "early-tier boss wall" question.** That framing was withdrawn; a
+  `bossExam.ts` 0/N described one benchmark configuration, not boss balance.
+- **It does not touch the T3 Jungle exception**, which stays separate and is not reopened here. The
+  matrix test asserts no T3 content and no Jungle node can enter either slot.
