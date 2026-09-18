@@ -416,6 +416,44 @@ export function activePlayerDamageFeatures(world: World, nodeId: string): Resolv
   );
 }
 
+export interface PlayerAvoidedFeature {
+  feature: ResolvedNodeFeature;
+  /**
+   * Contact-band damage is live right now. A status-only feature (or one whose
+   * damage is currently suppressed) is escaped on shape entry alone, because
+   * that is exactly the geometry the status application uses.
+   */
+  damageActive: boolean;
+}
+
+/**
+ * Features a player-side hazard-aware path refuses to plan out of: the damaging
+ * ones, PLUS purely status-applying ones such as the Jungle slow bushes.
+ *
+ * This deliberately mirrors `hazardAvoidanceShapesForMover(nodeId, 'player')`,
+ * which bakes both kinds into the nav grid. Durability31 measured what happens
+ * when escape ownership covers only the damaging half: a player stopped inside
+ * a status-only bush has every candidate path rejected at the first padded
+ * segment, and auto-target rescans that rejection across the whole roster
+ * (94-99.6% null paths) until the observation hits its wall ceiling.
+ *
+ * One entry per feature, so a feature that both damages and slows cannot
+ * produce two competing escape identities. Kept separate from
+ * `activePlayerDamageFeatures`, whose narrower "real hazard" meaning is what
+ * out-of-combat Recovery suppression needs — resting in a harmless bush must
+ * still regenerate.
+ */
+export function activePlayerAvoidedFeatures(world: World, nodeId: string): PlayerAvoidedFeature[] {
+  const avoided: PlayerAvoidedFeature[] = [];
+  for (const feature of RESOLVED_NODE_FEATURES[nodeId] ?? []) {
+    const damageActive = !!feature.damage?.targets.includes('player') &&
+      isFeatureDamageActive(world, nodeId, feature);
+    const statusApplies = feature.statusWhileInside?.targets.includes('player') ?? false;
+    if (damageActive || statusApplies) avoided.push({ feature, damageActive });
+  }
+  return avoided;
+}
+
 function applyAndTickPlayerNodeFeatures(
   world: World,
   player: PlayerEntity,

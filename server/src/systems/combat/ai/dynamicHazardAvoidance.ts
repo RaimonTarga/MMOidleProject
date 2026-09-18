@@ -21,7 +21,7 @@ import {
   type RuntimeToxicPool,
 } from '../../world/groundZones';
 import { navigationPadForEntity, setEntityMotion, stopEntity } from '../../world/movement';
-import { activePlayerDamageFeatures, playerInFeatureContact, resolveObstaclesForNode } from '../../world/nodeFeatures';
+import { activePlayerAvoidedFeatures, playerInFeatureContact, resolveObstaclesForNode } from '../../world/nodeFeatures';
 import { suppressedFeatureIdsForEntity } from '../../world/pathMotion';
 
 export const DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG = 'rune.dynamicHazardEscapeActive';
@@ -50,16 +50,18 @@ function persistentHazards(world: World, nodeId: string, now: number): EscapeHaz
       ...zone,
       contains: (pos: Vec2, clearance: number) => geometryContains(zone.geometry, pos, clearance),
     })),
-    ...activePlayerDamageFeatures(world, nodeId).map(feature => {
+    ...activePlayerAvoidedFeatures(world, nodeId).map(({ feature, damageActive }) => {
       const shape = feature.shape;
-      const band = feature.damage?.contactBandPx ?? 0;
+      // A status-only feature has no contact band: its status lands on shape
+      // entry, and the nav grid avoids the bare shape too.
+      const band = damageActive ? feature.damage?.contactBandPx ?? 0 : 0;
       return {
         id: `node-feature:${feature.id}`,
-        sourceId: feature.damage!.effectId,
+        sourceId: feature.damage?.effectId ?? feature.statusWhileInside?.effectId ?? feature.id,
         pos: { x: shape.x, y: shape.y },
         radius: (shape.kind === 'circle' ? shape.radius : Math.hypot(shape.halfW, shape.halfH)) + band,
         contains: (pos: Vec2, clearance: number) => clearance === 0
-          ? playerInFeatureContact(pos, feature)
+          ? (damageActive ? playerInFeatureContact(pos, feature) : pointInNodeFeatureShape(pos, shape))
           : pointInNodeFeatureShape(pos, shape) || pointNearNodeFeatureShapeEdge(pos, shape, band + clearance),
       };
     }),
@@ -193,8 +195,10 @@ export function findPersistentHazardEscapeDestination(
 }
 
 /**
- * Claim movement while inside a persistent damage hazard. Returns true
- * exactly while this temporary response owns the ordinary auto-movement channel.
+ * Claim movement while inside a persistent hazard the player-side nav grid
+ * avoids — a damaging zone/feature, or a status-only feature such as a Jungle
+ * slow bush. Returns true exactly while this temporary response owns the
+ * ordinary auto-movement channel.
  */
 export function steerOutOfPersistentHazards(
   world: World,

@@ -19,7 +19,14 @@ export const SURVEY_CLASSES = [
   { name: 'spirit', prefix: 'energy', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
 ] as const;
 export const SURVEY_SEEDS = [173, 947, 2027] as const;
-export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam'; stance?: string; orbit?: boolean; focusElites?: boolean; }
+export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam'; stance?: string; orbit?: boolean; focusElites?: boolean;
+  /**
+   * Item upgrade level to equip at. Omitted keeps the long-standing +5 bench
+   * default. Durability32's T1 Mountain block uses +0 for its first-arrival
+   * preparation context, because the durability factory's +5 kit is not what a
+   * character actually owns when it first walks into Mountain.
+   */
+  upgradeLevel?: number; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
   ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
     const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
@@ -45,14 +52,17 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     assert(recipe && ITEM_DATABASE.has(id!), `Missing recipe/item ${id}`);
     assert(recipe.tier <= cell.tier, `Future item ${id}`);
   }
-  const bot = materializeBot(world, cell.build, {nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false}, pos, BENCH_BOT_ID, 5);
+  const bot = materializeBot(world, cell.build, {nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false}, pos, BENCH_BOT_ID, cell.upgradeLevel ?? 5);
   const p = bot.tracksProgression;
   for(const id of Object.values(cell.build.gearItemIds)) {
     const recipe=RECIPE_DATABASE.get(id!)!;
     assert((p.biomeLevel[recipe.recipeGroup]??0)>=recipe.requiredBiomeLevel, `Unreachable gear ${id}`);
     const plus=bot.holdsInventory.itemUpgrades[id!]??0;
     assert(plus<=upgradeCeilingFromGlobalMastery(globalMastery(p.biomeLevel),recipe.tier), `Global upgrade gate ${id}`);
-    assert((p.biomeLevel[recipe.recipeGroup]??0)>=requiredBiomeLevelForUpgrade(ITEM_DATABASE.get(id!)!,plus), `Biome upgrade gate ${id}`);
+    // requiredBiomeLevelForUpgrade expects a TARGET plus of 1 or more (it indexes
+    // upgrades[target-1] and returns a 999 sentinel otherwise). Holding an item at
+    // +0 is free, so only an actual upgrade is gated.
+    assert(plus===0||(p.biomeLevel[recipe.recipeGroup]??0)>=requiredBiomeLevelForUpgrade(ITEM_DATABASE.get(id!)!,plus), `Biome upgrade gate ${id}`);
   }
   p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
   p.equippedRites = [];

@@ -70,13 +70,16 @@ export const mountainMonsterEntries = [
     behavior: 'ranged', attackStyle: 'arrow', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 8, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
-    // POWER SHOT — a telegraphed 2× boulder. 2 s wind-up; armed ~3.5 s into the fight
-    // (≈ the 2nd shot), then every 8 s. Mitigate it (Brace / damage-cap) or interrupt
-    // the wind-up with a stun/freeze. Placeholder numbers — user balance pass.
-    // Multiplier cut 3 -> 1.8 for the same reason as the Hopper's kick: with the base
-    // bolt raised to the tier's damage target, a 3x power shot lands well past a T1
-    // player's whole health bar. 1.8 keeps it the scariest single hit in T1 without
-    // making the wind-up unsurvivable rather than merely urgent.
+    // POWER SHOT — the scariest single hit in T1. 2 s wind-up; armed ~3.5 s into the
+    // fight (≈ the 2nd shot), then every 8 s. Placeholder numbers — user balance pass.
+    // COUNTERPLAY (audited 2026-09-18 against the live pipeline, not inferred):
+    // it carries no `aoe`, so no slam-telegraph ground zone is published and the
+    // Step Back rune never sees it; `hasMobileMonsterCast` is therefore true, so the
+    // archer keeps tracking through the wind-up and neither Orbit nor walking out of
+    // range denies it. What remains is mitigation (barrier / damage cap / DR) or a
+    // stun/freeze landing during the cast, which aborts it.
+    // The multiplier below is the executable value. Earlier comments here described
+    // a "2x" shot and a 3 -> 1.8 cut; both were stale and neither is gameplay truth.
     chargedAttack: { name: 'Power Shot', castMs: 2000, cooldownMs: 8000, initialCooldownMs: 3500, multiplier: 2.2, fx: 'power-shot' },
   }],
 

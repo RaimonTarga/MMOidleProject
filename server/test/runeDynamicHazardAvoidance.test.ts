@@ -4,8 +4,11 @@ import {
   STARTER_RUNE_IDS,
   RESOLVED_NODE_FEATURES,
   emptyEquipment,
+  findPathForMover,
   formatDeathCauseLabel,
   getFlag,
+  moverOverlapsBlockShapes,
+  pointInNodeFeatureShape,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import {
@@ -32,7 +35,7 @@ import {
   publishToxicPool,
   updateGroundZones,
 } from '../src/systems/world/groundZones';
-import { isPlayerInHazardousNodeFeature, updateNodeFeatures } from '../src/systems/world/nodeFeatures';
+import { activePlayerAvoidedFeatures, isPlayerInHazardousNodeFeature, updateNodeFeatures } from '../src/systems/world/nodeFeatures';
 import { updateAutoIntent } from '../src/systems/world/autoIntent';
 import { runRecovery } from '../src/systems/defense/regen/recovery';
 import { updateMovement } from '../src/systems/world/movement';
@@ -333,6 +336,151 @@ for (const nodeId of ['node-t2-swamp-01', 'node-t3-volcanic-01']) {
     runRecovery(world, player, 1000, false, isPlayerInHazardousNodeFeature(world, player));
     assert(player.hasHealth.hp > before, `${nodeId}: can recover after escaping`);
   }
+}
+
+// --- Durability31: status-only node features are escapable hazards too. ---
+// A player stopped inside a player-targeted `statusWhileInside` bush had every
+// hazard-aware path rejected at the first padded segment while auto-target
+// rescanned that rejection across the roster, burning the observation's wall
+// budget with 94-99.6% null paths. The escape owner now covers those features.
+
+const JUNGLE = 'node-t4-jungle-03';
+const JUNGLE_PAD = { x: 22, y: 22 };
+
+function jungleBush(id: string) {
+  const bush = RESOLVED_NODE_FEATURES[JUNGLE]?.find((f) => f.id === id);
+  assert(!!bush, `${JUNGLE}: ${id} must exist`);
+  assert(!bush.damage, `${id} must stay status-only for this regression`);
+  assert(!!bush.statusWhileInside?.targets.includes('player'), `${id} must slow players`);
+  assert(!bush.blocksMovement?.includes('player'), `${id} must not physically block players`);
+  return bush;
+}
+
+function junglePlayer(world: World, name: string, pos: { x: number; y: number }, rules = [CHASE, AVOID]) {
+  const slices = playerSlices(name, pos, rules);
+  slices.hasPosition.nodeId = JUNGLE;
+  const player = world.attachPlayerEntity(slices, name);
+  Object.assign(player.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, { auto: true });
+  return player;
+}
+
+// The classifier sees status-only features without touching absent damage metadata.
+{
+  const world = new World();
+  const avoided = activePlayerAvoidedFeatures(world, JUNGLE);
+  assert(avoided.length === 5, `expected the five Jungle bushes, got ${avoided.length}`);
+  assert(avoided.every((entry) => entry.damageActive === false), 'status-only bushes are not damage-active');
+  assert(
+    new Set(avoided.map((entry) => entry.feature.id)).size === avoided.length,
+    'each feature must yield exactly one escape identity',
+  );
+  // Swamp rot pools both damage and slow: one identity, still damage-active.
+  const swamp = activePlayerAvoidedFeatures(world, 'node-t2-swamp-01');
+  assert(
+    new Set(swamp.map((entry) => entry.feature.id)).size === swamp.length,
+    'a feature that both damages and slows must not produce two hazards',
+  );
+  assert(swamp.some((entry) => entry.damageActive), 'damaging swamp terrain must stay damage-active');
+}
+
+// The trap is real: hazard-aware planning refuses to leave the bush, and the
+// same start/goal succeeds once hazard geometry is dropped.
+{
+  const bush = jungleBush('jungle_bush_3');
+  const trapped = { x: bush.shape.x, y: bush.shape.y };
+  const goal = { x: 3909, y: 3211 };
+  assert(
+    findPathForMover(JUNGLE, 'player', JUNGLE_PAD, trapped, goal, new Set(), true) === null,
+    'the diagnosed trap requires hazard-aware planning to fail from inside the bush',
+  );
+  assert(
+    findPathForMover(JUNGLE, 'player', JUNGLE_PAD, trapped, goal, new Set(), false) !== null,
+    'the bush is not a physical blocker; only hazard geometry rejects the path',
+  );
+}
+
+// Invariant 5: escape the bush envelope, then acquire and approach a target.
+{
+  const now = Date.now();
+  const world = new World();
+  const bush = jungleBush('jungle_bush_3');
+  const player = junglePlayer(world, 'jungle-slow-escape', { x: bush.shape.x, y: bush.shape.y });
+  const inBush = (pos: { x: number; y: number }) => pointInNodeFeatureShape(pos, bush.shape);
+  assert(inBush(player.hasPosition.current), 'regression must start inside the slow bush');
+
+  updateRuneDerivedConfig(world, now);
+  updateAutoTargets(world, now);
+  assert(getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG), 'a status-only bush must claim escape ownership');
+  assert(player.hasMovePath?.avoidHazards === false || !!player.isMoving, 'the escape leg must plan against real collision only');
+
+  for (let i = 0; i < 400; i++) {
+    const tickNow = now + i * 100;
+    updateNodeFeatures(world, 100);
+    updateRuneDerivedConfig(world, tickNow);
+    updateAutoTargets(world, tickNow);
+    updateMovement(world, 100, tickNow);
+    if (i > 0 && !getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG)) break;
+  }
+  assert(!getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG), 'escape must release once clear');
+  assert(!inBush(player.hasPosition.current), 'the player must end outside the slow bush');
+  assert(
+    !activePlayerAvoidedFeatures(world, JUNGLE)
+      .some((entry) => pointInNodeFeatureShape(player.hasPosition.current, entry.feature.shape)),
+    'the exit must not land inside another avoided feature',
+  );
+  assert(
+    !moverOverlapsBlockShapes(player.hasPosition.current, world.collision.blockShapes(JUNGLE, 'player'), JUNGLE_PAD),
+    'the exit must be physically standable',
+  );
+
+  // Ordinary hazard-aware target acquisition works again from the safe position.
+  const target = world.createMonster(JUNGLE, 'plains-slime', {
+    x: player.hasPosition.current.x + 420,
+    y: player.hasPosition.current.y,
+  });
+  assert(!!target, 'regression target should spawn');
+  setAttackTarget(world, player, target.isMonster.id);
+  const before = Math.hypot(
+    player.hasPosition.current.x - target.hasPosition.current.x,
+    player.hasPosition.current.y - target.hasPosition.current.y,
+  );
+  for (let i = 0; i < 20; i++) {
+    const tickNow = now + 40_100 + i * 100;
+    updateRuneDerivedConfig(world, tickNow);
+    updateAutoTargets(world, tickNow);
+    updateMovement(world, 100, tickNow);
+  }
+  const after = Math.hypot(
+    player.hasPosition.current.x - target.hasPosition.current.x,
+    player.hasPosition.current.y - target.hasPosition.current.y,
+  );
+  assert(after < before, `approach must resume after the escape (${before} -> ${after})`);
+}
+
+// Invariant 1: a feature that does not apply to the player claims nothing.
+{
+  const now = Date.now();
+  const world = new World();
+  const bush = jungleBush('jungle_bush_3');
+  const status = bush.statusWhileInside!;
+  const original = status.targets;
+  (status as { targets: string[] }).targets = ['monster'];
+  try {
+    assert(
+      activePlayerAvoidedFeatures(world, JUNGLE).length === 4,
+      'a monster-only status feature must drop out of the player escape set',
+    );
+    const player = junglePlayer(world, 'jungle-monster-only', { x: bush.shape.x, y: bush.shape.y });
+    updateRuneDerivedConfig(world, now);
+    updateAutoTargets(world, now);
+    assert(
+      !getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG),
+      'a feature that cannot affect the player must not claim movement',
+    );
+  } finally {
+    (status as { targets: string[] }).targets = original as string[];
+  }
+  assert(activePlayerAvoidedFeatures(world, JUNGLE).length === 5, 'targets must be restored');
 }
 
 console.log('runeDynamicHazardAvoidance.test.ts: ok');
