@@ -8,6 +8,7 @@ import {
   formatDeathCauseLabel,
   getFlag,
   moverOverlapsBlockShapes,
+  navigationBodyHalfExtents,
   pointInNodeFeatureShape,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -481,6 +482,107 @@ function junglePlayer(world: World, name: string, pos: { x: number; y: number },
     (status as { targets: string[] }).targets = original as string[];
   }
   assert(activePlayerAvoidedFeatures(world, JUNGLE).length === 5, 'targets must be restored');
+}
+
+// --- Durability32: the trap is the NAVIGATION FOOTPRINT, not the centre point. ---
+// 19 of 48 Jungle observations ended stationary and idle with the player centre
+// 1.6-21.9 px OUTSIDE a slow bush while its padded footprint still overlapped.
+// None ended with the centre inside: a walking player stops exactly where the
+// planner first refuses a cell, which is precisely the band the old centre-point
+// admission could not see. These are the measured final positions.
+const D32_TRAPS: { label: string; nodeId: string; pos: { x: number; y: number } }[] = [
+  { label: '03-apprentice/46021', nodeId: 'node-t4-jungle-03', pos: { x: 4120.507920801226, y: 2334.382102106796 } },
+  { label: '03-slinger/48017', nodeId: 'node-t4-jungle-03', pos: { x: 1623, y: 1104 } },
+  { label: '05-apprentice/44017', nodeId: 'node-t4-jungle-05', pos: { x: 1566, y: 2269 } },
+];
+
+for (const trap of D32_TRAPS) {
+  const now = Date.now();
+  const world = new World();
+  const pad = navigationBodyHalfExtents('player');
+  const shapes = (RESOLVED_NODE_FEATURES[trap.nodeId] ?? []).map((f) => f.shape);
+
+  // The defining property of the fixture: outside every raw shape, footprint obstructed.
+  assert(
+    !shapes.some((shape) => pointInNodeFeatureShape(trap.pos, shape)),
+    `${trap.label}: fixture must start OUTSIDE every bush shape`,
+  );
+  assert(
+    moverOverlapsBlockShapes(trap.pos, shapes, pad),
+    `${trap.label}: fixture must have an obstructed navigation footprint`,
+  );
+  // And the consequence that produced the idle stall.
+  assert(
+    findPathForMover(trap.nodeId, 'player', pad, trap.pos, { x: 2400, y: 2400 }, new Set(), true) === null,
+    `${trap.label}: hazard-aware planning must be dead from the trapped point`,
+  );
+  assert(
+    findPathForMover(trap.nodeId, 'player', pad, trap.pos, { x: 2400, y: 2400 }, new Set(), false) !== null,
+    `${trap.label}: the point is physically fine; only hazard geometry blocks it`,
+  );
+
+  const slices = playerSlices(`d32-${trap.label}`, trap.pos, [CHASE, AVOID]);
+  slices.hasPosition.nodeId = trap.nodeId;
+  const player = world.attachPlayerEntity(slices, slices.isPlayer.id);
+  Object.assign(player.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, { auto: true });
+
+  updateRuneDerivedConfig(world, now);
+  updateAutoTargets(world, now);
+  assert(
+    getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG),
+    `${trap.label}: an obstructed footprint must claim escape ownership`,
+  );
+
+  for (let i = 0; i < 600; i++) {
+    const tickNow = now + i * 100;
+    updateNodeFeatures(world, 100);
+    updateRuneDerivedConfig(world, tickNow);
+    updateAutoTargets(world, tickNow);
+    updateMovement(world, 100, tickNow);
+    if (i > 0 && !getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG)) break;
+  }
+
+  assert(
+    !getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG),
+    `${trap.label}: escape must release once the footprint is clear`,
+  );
+  const exit = player.hasPosition.current;
+  assert(
+    !moverOverlapsBlockShapes(exit, shapes, pad),
+    `${trap.label}: the exit must leave the padded avoidance envelope`,
+  );
+  assert(
+    !moverOverlapsBlockShapes(exit, world.collision.blockShapes(trap.nodeId, 'player'), pad),
+    `${trap.label}: the exit must be physically standable`,
+  );
+  // The whole point: ordinary hazard-aware planning works again.
+  assert(
+    findPathForMover(trap.nodeId, 'player', pad, exit, { x: 2400, y: 2400 }, new Set(), true) !== null,
+    `${trap.label}: hazard-aware planning must succeed from the exit`,
+  );
+}
+
+// Near but outside the effective envelope: no spurious escape, no ownership churn.
+{
+  const now = Date.now();
+  const world = new World();
+  const pad = navigationBodyHalfExtents('player');
+  const bush = jungleBush('jungle_bush_3');
+  const shapes = (RESOLVED_NODE_FEATURES[JUNGLE] ?? []).map((f) => f.shape);
+  // Just beyond the padded envelope, on the +x axis from the bush centre.
+  const near = { x: bush.shape.x + bush.shape.radius + pad.x + 12, y: bush.shape.y };
+  assert(!moverOverlapsBlockShapes(near, shapes, pad), 'fixture must sit outside the padded envelope');
+  const player = junglePlayer(world, 'jungle-near-miss', near);
+  updateRuneDerivedConfig(world, now);
+  updateAutoTargets(world, now);
+  assert(
+    !getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG),
+    'a clear footprint just outside the envelope must not claim movement',
+  );
+  assert(
+    findPathForMover(JUNGLE, 'player', pad, near, { x: 2400, y: 2400 }, new Set(), true) !== null,
+    'planning must already work there, so there is nothing to escape',
+  );
 }
 
 console.log('runeDynamicHazardAvoidance.test.ts: ok');

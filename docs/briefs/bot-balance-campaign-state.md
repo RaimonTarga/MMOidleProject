@@ -2,7 +2,73 @@
 
 Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## Current decision: Jungle navigation REPAIRED; Durability32 prepared, not launched
+## Current decision: Durability32 executed and CORRECTED; the Jungle defect is located and fixed; Durability33 prepared, not launched
+
+Durability32 ran once at `7247b6e2` and completed 120/120 observations. Its execution record
+stands; four of its conclusions did not survive recomputation from the sealed raw artifacts,
+which the command center could not open but this session could. Corrections are recorded in
+[the corrected review](bot-balance-durability32-review-and-next-steps.md) and as a dated
+banner on [the report](bot-balance-durability32-report.md). Raw artifacts were read, never
+modified; audits live under `AppData/Local/mmo-idle/audits/durability32-20260918`.
+
+THE JUNGLE DEFECT IS LOCATED. All 18 wall-ceiling rows plus one window-ended row end with the
+player centre 1.6-21.9 px OUTSIDE a slow bush and its navigation footprint overlapping; none
+end with the centre inside. The escape predicate tested the centre point, so it could never
+fire in the band where hazard-aware planning had already died — at those exact coordinates
+`findPathForMover` returns null with avoidHazards and a real path without it, which is why
+auto-target reports "No worthy target nearby" beside 34-40 live monsters. The status-only
+repair from the previous cycle was correct but insufficient: admission now uses
+`moverOverlapsBlockShapes` with the mover's pad, the same primitive the nav grid blocks cells
+with, for ground zones and node features alike. Fixtures use the measured coordinates and are
+mutation-checked. Recovery suppression keeps its narrower real-damage meaning.
+
+Report exposure claims were wrong in a specific, instructive way: "no hazard-escape event"
+was read as "never touched a bush", but a repair that fails to fire emits no event either.
+Measured from geometry, 8 of 12 Block A rows entered the envelope, not 1.
+
+THE DEPENDENCY GATE WAS SEMANTICALLY WRONG and is fixed. Durability32 gated its breadth block
+on `verifySurvey` alone, which only certifies artifact shape, so five correctly recorded wall
+cutoffs still opened it. That was a tooling defect, not operator disobedience. The new
+`navigationGate.ts` derives `scenarioExposure`, `navigationGate` and `balanceExposure` from
+geometry and samples, `block-gate.mjs` holds the pure decision, and fixtures pin the
+scheduling behaviour. Run retroactively, the gate FAILS both Durability32 Jungle blocks.
+
+BLOCK B: the multiplier is not the lever, and the context was wrong. Attributed Power Shot
+damage moves 68.2 -> 55.04 median (-19.3%), so the report's "-9%" was a metric error that
+compared the control's Power Shot with the candidate's unchanged Strong Kick. Yet all 41
+deaths had a Power Shot land within 10 s, 29 of 41 fatal blows overkill the HP they hit, and
+10 of 12 first-arrival pairs die at the IDENTICAL millisecond. Deaths are an accumulated
+deficit finished by an overkilling blow, so removing ~13 damage changes nothing. Prepared
+-farming flips are symmetric (4 each way, 6/18 deaths in both arms). Conduit's 0/6 is a
+missing-exposure artifact: 0 owner attack beats in all 12 of its runs. And the `first-arrival`
+preset was not a credible first arrival - the shipped T1 route reaches Mountain with +3 gear,
+a Swamp vest and charm, and Second Wind/Cleanse/Brace learned. Retain 1.8 as a candidate; do
+NOT nerf Strong Kick from terminal-blow counts.
+
+DESIGN QUESTION FOR THE COMMAND CENTER, found in source rather than a run: the T1 Runic Point
+budget is 22, and Sweep(6) + Second Wind(6) + Brace(5) plus rune logic does not fit. Power
+Shot publishes no telegraph and tracks the player, so Brace is its only mitigation counterplay
+- and it is not affordable beside the standard sustain guard at T1.
+
+[Durability33 packet](bot-balance-durability33-operator-packet.md): PREPARED, NOT LAUNCHED.
+84 observations. A) the four historical Jungle setups on repaired source, 12. B) T1 Mountain
+at the route's actual earned entry kit, control 2.2 vs candidate 1.8, 36. C) Jungle breadth,
+36, GATED ON A'S BEHAVIOUR rather than its artifacts. No new Jungle HP treatment until C
+yields role-specific timing.
+
+The [adoption review](bot-balance-mob-adoption-review.md) is corrected: 30 unique species (not
+23), Forest/Volcano resolved from the installers, the later Desert selection carried
+(`dune-basilisk` 9006, not the intermediate 4503), the Mammoth ward stated as the exact 1/48
+rather than a rounded 0.0208 that loses 0.46 of its absolute budget, and T2 Striker restated
+as 6/6 -> 3/6 (halved, not "no help"). Still none of it is live. The T2 Striker follow-up is
+6 observations, not 18, and extraction from existing artifacts comes before any new run.
+
+## Previous decision: Jungle navigation REPAIRED; Durability32 prepared, not launched
+
+Superseded in part: Durability32 has since RUN and been corrected. The "PREPARED and NOT
+LAUNCHED" status below was true when written and no longer holds; see the current decision
+above and the report's correction record.
+
 
 The Durability31 repair is implemented at `7247b6e2`. `activePlayerAvoidedFeatures` now
 classifies damaging AND status-only player node features, one identity per feature, and the

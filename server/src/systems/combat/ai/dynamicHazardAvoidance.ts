@@ -1,14 +1,12 @@
 import {
-  geometryContains,
   getCounter,
   getFlag,
   getString,
   moverOverlapsBlockShapes,
-  pointInNodeFeatureShape,
-  pointNearNodeFeatureShapeEdge,
   setCounter,
   setFlag,
   setString,
+  type NodeFeatureShape,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
@@ -30,9 +28,9 @@ const ESCAPE_X_KEY = 'rune.dynamicHazardEscapeX';
 const ESCAPE_Y_KEY = 'rune.dynamicHazardEscapeY';
 const ESCAPE_SAMPLE_STEP = 8;
 const ESCAPE_SAMPLE_ANGLES = 64;
-// Clear the pool by more than the player's 22px navigation half-width so the
-// first ordinary hazard-aware path starts on a walkable cell instead of inside
-// the runtime blocker it just escaped.
+// Extra margin BEYOND the mover's own navigation footprint, so the first
+// ordinary hazard-aware path after an escape starts on a cell the planner still
+// considers walkable rather than one pixel inside the blocker it just left.
 const ESCAPE_CLEARANCE = 28;
 const NODE_MARGIN = 40;
 
@@ -44,25 +42,57 @@ interface EscapeHazard {
   contains: (pos: Vec2, clearance: number) => boolean;
 }
 
-function persistentHazards(world: World, nodeId: string, now: number): EscapeHazard[] {
+/**
+ * Whether the mover's navigation footprint overlaps this avoidance shape, using
+ * the SAME primitive the nav grid blocks cells with. Durability32 measured why
+ * this has to be the admission test rather than a centre-point check: across 48
+ * Jungle observations, 19 ended stationary with the player centre 1.6-21.9 px
+ * OUTSIDE a slow bush and its footprint still overlapping. None ended with the
+ * centre inside. A walking player stops exactly where the padded footprint first
+ * blocks, so a centre-in-shape predicate is a false negative precisely in the
+ * band where hazard-aware pathing has already started failing.
+ */
+function footprintObstructed(pos: Vec2, shape: NodeFeatureShape, pad: Vec2, clearance = 0): boolean {
+  return moverOverlapsBlockShapes(pos, [shape], {
+    x: pad.x + clearance,
+    y: pad.y + clearance,
+  });
+}
+
+function persistentHazards(world: World, player: PlayerEntity, now: number): EscapeHazard[] {
+  const nodeId = player.hasPosition.nodeId;
+  // The planner pads every hazard shape by this before blocking cells, so escape
+  // admission, continuation and safe-exit all measure against the same envelope.
+  const pad = navigationPadForEntity(player);
   return [
-    ...activeAvoidablePersistentGroundZones(world, nodeId, now).map(zone => ({
-      ...zone,
-      contains: (pos: Vec2, clearance: number) => geometryContains(zone.geometry, pos, clearance),
-    })),
+    ...activeAvoidablePersistentGroundZones(world, nodeId, now).map(zone => {
+      // dynamicHazardShapes feeds the planner this exact circle.
+      const shape: NodeFeatureShape = {
+        kind: 'circle', x: zone.pos.x, y: zone.pos.y, radius: zone.radius,
+      };
+      return {
+        ...zone,
+        radius: zone.radius + Math.max(pad.x, pad.y),
+        contains: (pos: Vec2, clearance: number) => footprintObstructed(pos, shape, pad, clearance),
+      };
+    }),
     ...activePlayerAvoidedFeatures(world, nodeId).map(({ feature, damageActive }) => {
       const shape = feature.shape;
       // A status-only feature has no contact band: its status lands on shape
       // entry, and the nav grid avoids the bare shape too.
       const band = damageActive ? feature.damage?.contactBandPx ?? 0 : 0;
+      const extent = Math.max(pad.x, pad.y);
       return {
         id: `node-feature:${feature.id}`,
         sourceId: feature.damage?.effectId ?? feature.statusWhileInside?.effectId ?? feature.id,
         pos: { x: shape.x, y: shape.y },
-        radius: (shape.kind === 'circle' ? shape.radius : Math.hypot(shape.halfW, shape.halfH)) + band,
-        contains: (pos: Vec2, clearance: number) => clearance === 0
-          ? (damageActive ? playerInFeatureContact(pos, feature) : pointInNodeFeatureShape(pos, shape))
-          : pointInNodeFeatureShape(pos, shape) || pointNearNodeFeatureShapeEdge(pos, shape, band + clearance),
+        radius: (shape.kind === 'circle' ? shape.radius : Math.hypot(shape.halfW, shape.halfH)) + band + extent,
+        contains: (pos: Vec2, clearance: number) =>
+          // Either the damage actually reaches the player, or the planner already
+          // refuses to route out of here. Both are escape-worthy; only the second
+          // is what traps a player standing on a bush edge.
+          (damageActive && clearance === 0 && playerInFeatureContact(pos, feature)) ||
+          footprintObstructed(pos, shape, pad, band + clearance),
       };
     }),
   ];
@@ -148,7 +178,7 @@ export function findPersistentHazardEscapeDestination(
   player: PlayerEntity,
   now: number,
 ): Vec2 | null {
-  const hazards = persistentHazards(world, player.hasPosition.nodeId, now);
+  const hazards = persistentHazards(world, player, now);
   const threats = hazards.filter((hazard) => hazard.contains(player.hasPosition.current, 0));
   if (threats.length === 0) return null;
 
@@ -205,7 +235,7 @@ export function steerOutOfPersistentHazards(
   player: PlayerEntity,
   now: number,
 ): boolean {
-  const hazards = persistentHazards(world, player.hasPosition.nodeId, now);
+  const hazards = persistentHazards(world, player, now);
   const active = getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG);
   const threats = hazards.filter((hazard) =>
     active

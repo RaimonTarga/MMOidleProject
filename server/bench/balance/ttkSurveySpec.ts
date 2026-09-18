@@ -26,7 +26,15 @@ export interface SurveyCell { id: string; className: string; tier: number; role:
    * preparation context, because the durability factory's +5 kit is not what a
    * character actually owns when it first walks into Mountain.
    */
-  upgradeLevel?: number; }
+  upgradeLevel?: number;
+  /**
+   * Guard abilities to attune instead of the tier default. Durability33's
+   * Mountain-entry context uses this: the shipped T1 route has learned Second
+   * Wind, Cleanse and Brace by the time it first travels to Mountain, and Brace
+   * is the mitigation that Power Shot's counterplay actually depends on.
+   * Legality is still enforced by setAbilityLoadout and validateBuild.
+   */
+  guards?: string[]; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
   ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
     const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
@@ -86,7 +94,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   }
   p.runesEquipped = rules;
   const techniques = [...(cell.tier >= 3 ? ['frenzy'] : []), cell.technique ?? 'sweep'];
-  const abilities = { techniques, guards: cell.tier===1 ? ['second-wind'] : ['second-wind','cleanse'] };
+  const abilities = { techniques, guards: cell.guards ?? (cell.tier===1 ? ['second-wind'] : ['second-wind','cleanse']) };
   assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
