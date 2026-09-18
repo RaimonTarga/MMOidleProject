@@ -376,10 +376,16 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
 // 11. Trench essence correction: 3 monsters + boss are green; warden untouched
 // ═══════════════════════════════════════════════════════════════════════════
 
+// REBASED 2026-09-18. The subject of this block is the essence CORRECTION -- type,
+// quantity and biome XP -- and all of that is still unchanged. The `hp` entries were
+// only ever a "nothing else moved" guard, and the Durability22 Trench durability
+// package moved them deliberately (2800/4200/5880 -> 16800/16800/17640; the 21000
+// hadal-stalker candidate was REJECTED). Rewards are untouched by that adoption,
+// which is exactly what the three assertions above this one still prove.
 const TRENCH_MONSTER_SNAPSHOT: Record<string, { essence: number; biomeXp: number; hp: number }> = {
-  "hadal-stalker": { essence: 210, biomeXp: 1260, hp: 2800 },
-  "abyssal-serpent": { essence: 260, biomeXp: 1560, hp: 4200 },
-  "elder-leviathan": { essence: 400, biomeXp: 2400, hp: 5880 },
+  "hadal-stalker": { essence: 210, biomeXp: 1260, hp: 16800 },
+  "abyssal-serpent": { essence: 260, biomeXp: 1560, hp: 16800 },
+  "elder-leviathan": { essence: 400, biomeXp: 2400, hp: 17640 },
 };
 for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
   const mon = MONSTER_DATABASE.get(id);

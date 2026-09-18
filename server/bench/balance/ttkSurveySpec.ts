@@ -34,7 +34,15 @@ export interface SurveyCell { id: string; className: string; tier: number; role:
    * is the mitigation that Power Shot's counterplay actually depends on.
    * Legality is still enforced by setAbilityLoadout and validateBuild.
    */
-  guards?: string[]; }
+  guards?: string[];
+  /**
+   * Target a DUNGEON node. Ordinary survey cells fight an open node, so this
+   * defaults to false and every existing cell keeps its exact contract. The boss
+   * screen sets it: a dungeon target is what makes `activateDungeonAltar` /
+   * `ensureDungeon` state reachable, and fighting a dungeon node as though it
+   * were open is precisely how `--mode boss` ended up measuring only guards.
+   */
+  isDungeon?: boolean; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
   ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
     const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
@@ -60,7 +68,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     assert(recipe && ITEM_DATABASE.has(id!), `Missing recipe/item ${id}`);
     assert(recipe.tier <= cell.tier, `Future item ${id}`);
   }
-  const bot = materializeBot(world, cell.build, {nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false}, pos, BENCH_BOT_ID, cell.upgradeLevel ?? 5);
+  const bot = materializeBot(world, cell.build, {nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:cell.isDungeon ?? false}, pos, BENCH_BOT_ID, cell.upgradeLevel ?? 5);
   const p = bot.tracksProgression;
   for(const id of Object.values(cell.build.gearItemIds)) {
     const recipe=RECIPE_DATABASE.get(id!)!;

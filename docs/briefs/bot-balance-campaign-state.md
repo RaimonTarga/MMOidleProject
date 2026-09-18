@@ -2,7 +2,49 @@
 
 Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## Current decision: the mob pass is INTEGRATED into source; Durability37 regression prepared; the first boss packet drafted
+## Current decision: D37 EXECUTED and its receipts verified; the boss screen is BLOCKED at early tiers
+
+Durability37 ran once at `bdee5dca`, 74/74 observations in 5m58.6s, both blocks verified,
+navigation watch pass. **Receipts independently checked** — revision, tree and hitbox hashes match,
+the definitions hash `17aa46cb…` was *recomputed* from source and is identical, and all 74
+`ready.json` files were parsed mechanically: `hpTreatment` empty in every one. The runner
+hard-asserts HEAD, a clean tree and both hashes before it writes anything, so execution on the
+committed tree is enforced rather than claimed. **The Jungle ladder direction is confirmed**:
+primary-lineage equal-weight body TTK now RISES 10.95 → 14.84 → 23.85 s.
+
+**One defect in the adoption commit:** `server/test/t4ProgressionEconomy.test.ts` FAILS at
+`bdee5dca` — its Trench snapshot still guards pre-adoption HP (2800/4200/5880 vs the adopted
+16800/16800/17640). The repair was written during the run and left uncommitted. D37's measurements
+are unaffected (test-only; the definitions hash is unchanged), but **no revision can be frozen
+until it lands**, because the runner requires a clean tree. Qualification named four tests and
+none of them guarded that HP.
+
+**T3 Jungle pressure is open, and its mechanism is identified.** Five deaths, all T3, all with the
+Silverback as dominant killer and the killing blow. The adoption changed **HP only**, so incoming
+DPS is unchanged and exposure per body rose ~55%. The structural reading is a pool-to-burst ratio
+(player `maxHp` ÷ worst observed second): T2 4.6–17.1, **T3 2.2–4.1**, T4 4.1–9.9 — T3 is a
+defensive trough and every death sits at its floor. **Do not roll back the T3 HP adoption**; that
+would re-break the ladder D37 just confirmed. The correction belongs on the T3 defensive margin,
+and 9 observations would verify it. Conduit's summons, navigation (66/66) and mechanic firing all
+checked clean.
+
+**The single T2 Forest death is a known nonblocking attrition matchup** — largest hit 26.1 against
+a 240 pool, death at 224.5 s after 28 kills and 18 late joiners. It blocks nothing.
+
+**BOSS SCREEN BLOCKED: the difficulty curve is inverted.** Measured today — **every T2 boss is
+0 wins / 126 attempts**, with `apex-timberclaw` among the *cheapest* of the seven; T3 is ragged
+(0/54 swamp to 37/54 jungle); and **T4 `charnel-crown-sovereign` wins 12/12** with qualified
+tier-legal builds. With T1's documented 0/30, early-tier bosses are unbeatable by the reference
+player while the final-tier boss is comfortable. The T4 result is a **positive control the
+campaign did not previously have**: the same code path and rune loadout *can* win boss fights, so
+0/N at T1–T2 measures the reference player at those tiers, not a useless harness. Freezing the
+packet as proposed would re-measure a known wall. Three `bossExam` gaps also block a freeze: no
+seeds (inert for a no-add boss — two seeds gave byte-identical results), no per-observation
+receipts (so the mandatory escort-identity rule cannot be met), and the forbidden full build
+cross-product. See
+[the D37 decision note](bot-balance-d37-decision-and-boss-screen-blocker-2026-09-18.md).
+
+## Superseded decision: the mob pass is INTEGRATED into source; Durability37 regression prepared; the first boss packet drafted
 
 Durability36 ran once at `0e28217b`: 72/72 observations in 4m50s, both blocks verified, navigation
 watch pass, zero deaths in Block J. The execution stands; five prose/interpretation findings are

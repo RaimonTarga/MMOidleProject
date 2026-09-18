@@ -9,5 +9,10 @@
     "noEmit": true,
     "rootDir": ".."
   },
-  "include": ["src", "bench"]
+  // `scripts/` as a whole is NOT included: it carries 5 pre-existing strictness
+  // errors (netcode-baseline, t4ValidationExitPreflight, ttkSurvey) that are their
+  // own cleanup. `bossScreen.ts` is listed individually because it is new, it is
+  // clean, and an unchecked experiment runner is how a rename bug reaches a frozen
+  // packet unnoticed.
+  "include": ["src", "bench", "scripts/bossScreen.ts"]
 }
