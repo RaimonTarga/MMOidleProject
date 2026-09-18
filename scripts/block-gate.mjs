@@ -8,7 +8,7 @@
  * behavioral success are independent, so both must be supplied here.
  */
 
-/** @typedef {'pass'|'fail'|'inconclusive'} GateStatus */
+/** @typedef {'pass'|'fail'|'inconclusive'|'not-applicable'} GateStatus */
 
 /**
  * @param {{artifactVerified: boolean, navigationGate?: {status: GateStatus, reasons?: string[]}}} input
@@ -25,6 +25,11 @@ export function shouldRunDependentBlock(input) {
     // Never-exercised is not success. A dependent breadth block would inherit an
     // unmeasured runtime, so it waits rather than quietly proceeding.
     return { run: false, reason: `prerequisite-behavior-inconclusive: ${(navigationGate.reasons ?? []).join('; ')}` };
+  }
+  if (navigationGate.status === 'not-applicable') {
+    // The prerequisite block has no avoided feature to exercise, so it cannot
+    // answer the navigation question a dependent Jungle block rests on.
+    return { run: false, reason: 'prerequisite-behavior-not-applicable-to-this-gate' };
   }
   if (navigationGate.status !== 'pass') return { run: false, reason: 'prerequisite-behavior-unknown-status' };
   return { run: true, reason: 'prerequisite-verified-and-behavior-passed' };

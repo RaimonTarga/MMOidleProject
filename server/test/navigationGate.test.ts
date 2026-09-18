@@ -34,7 +34,10 @@ function sample(atMs: number, pos: { x: number; y: number }, idle: boolean) {
 }
 
 /** Build a sealed-block-shaped fixture on disk and run the real gate script over it. */
-function runGate(label: string, obs: { cell: string; outcome: string; path: 'trapped' | 'clear' | 'visits-then-leaves' }[]) {
+function runGate(label: string, obs: {
+  cell: string; outcome: string; path: 'trapped' | 'clear' | 'visits-then-leaves';
+  escapes?: number; escapeOutcome?: string; nodeId?: string;
+}[]) {
   const dir = mkdtempSync(join(tmpdir(), 'navgate-'));
   try {
     const rows: Row[] = [];
@@ -54,10 +57,20 @@ function runGate(label: string, obs: { cell: string; outcome: string; path: 'tra
         for (let t = 0; t <= 41; t++) lines.push(sample(t * 1000, CLEAR, false));
       }
       writeFileSync(join(runDir, 'samples.jsonl'), lines.join('\n') + '\n');
+      const events: string[] = [];
+      for (let i = 0; i < (o.escapes ?? 0); i++) {
+        events.push(JSON.stringify({ atMs: 1000 + i, event: { kind: 'hazard-escape', phase: 'attempt' } }));
+        events.push(JSON.stringify({
+          atMs: 1100 + i,
+          event: { kind: 'hazard-escape', phase: 'result', outcome: o.escapeOutcome ?? 'success' },
+        }));
+      }
+      writeFileSync(join(runDir, 'events.jsonl'), events.length ? events.join('\n') + '\n' : '');
     }
     writeFileSync(join(dir, 'index.json'), JSON.stringify(rows));
+    const nodeFor = new Map(obs.map((o) => [o.cell, o.nodeId ?? NODE]));
     writeFileSync(join(dir, 'manifest.json'), JSON.stringify({
-      cells: [...new Set(obs.map((o) => o.cell))].map((id) => ({ id, nodeId: NODE })),
+      cells: [...new Set(obs.map((o) => o.cell))].map((id) => ({ id, nodeId: nodeFor.get(id) ?? NODE })),
     }));
     const outDir = join(dir, 'out');
     execFileSync(process.execPath, [
@@ -129,6 +142,34 @@ function runGate(label: string, obs: { cell: string; outcome: string; path: 'tra
   assert(r.navigationGate.status === 'pass', 'a death after real exposure is a gameplay result, not a nav failure');
   assert(r.balanceExposure.died === 1, 'the death is still recorded as an outcome');
   assert(r.balanceExposure.usable === 0, 'and it is not counted as usable window evidence');
+}
+
+// Escape events count as exposure even when 1 Hz sampling misses the contact.
+// Durability33 measured 82 escape events where sampled geometry found only 4.
+{
+  const r = runGate('events-only', [{ cell: 'fix-clear', outcome: 'window-ended', path: 'clear', escapes: 2 }]);
+  assert(r.scenarioExposure.exercised === 1, 'an escape event proves the owner engaged');
+  assert(r.scenarioExposure.escapeAttempts === 2 && r.scenarioExposure.escapeSuccesses === 2, 'escape activity is reported');
+  assert(r.navigationGate.status === 'pass', 'exercised via events and clean must pass');
+}
+
+// A failed escape is a behavioral failure, not a pass.
+{
+  const r = runGate('escape-failed', [{ cell: 'fix-clear', outcome: 'window-ended', path: 'clear', escapes: 1, escapeOutcome: 'expired' }]);
+  assert(r.scenarioExposure.escapeFailures === 1, 'the failure is counted');
+  assert(r.navigationGate.status === 'fail', 'an escape that never reached safety fails the gate');
+  assert(!shouldRunDependentBlock({ artifactVerified: true, navigationGate: r.navigationGate }).run,
+    'a failed escape must not authorize dependent breadth');
+}
+
+// A node with no avoided feature is not-applicable, never a silent pass or fail.
+{
+  const r = runGate('no-features', [{ cell: 'fix-clear', outcome: 'player-died', path: 'clear', nodeId: 'node-t1-mountain-01' }]);
+  assert(r.navigationGate.status === 'not-applicable', `expected not-applicable, got ${r.navigationGate.status}`);
+  assert(r.scenarioExposure.notApplicable === 1, 'and the row is labelled not-applicable');
+  const gate = shouldRunDependentBlock({ artifactVerified: true, navigationGate: r.navigationGate });
+  assert(!gate.run && gate.reason === 'prerequisite-behavior-not-applicable-to-this-gate',
+    'a block that cannot answer the navigation question cannot be its prerequisite');
 }
 
 // Identity failures are global; block-local failures are not.

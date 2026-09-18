@@ -2,7 +2,77 @@
 
 Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## Current decision: Durability32 executed and CORRECTED; the Jungle defect is located and fixed; Durability33 prepared, not launched
+## Current decision: Durability33 executed and corrected; navigation CLOSED; Durability34 prepared, not launched
+
+Durability33 ran once at `e4e39bc5`: 84/84 observations in 4m56s. Execution stands; five
+conclusions were corrected from the sealed raw artifacts. See
+[the corrected review](bot-balance-durability33-review-and-next-steps.md) and the dated banner
+on [the report](bot-balance-durability33-report.md). Audits:
+`AppData/Local/mmo-idle/audits/durability33-20260918`.
+
+NAVIGATION IS CLOSED. Block A 12/12 full windows, Block C 36/36 full windows, zero deaths,
+zero cutoffs, zero trapped rows. **58 escape attempts, 58 successes, zero failures.** The gate
+opened Block C only after Block A was artifact-verified AND behaviour-passed. No further
+random-seed navigation grid; the measured-coordinate fixtures plus this cohort answer it. The
+geometry gate continues as a regression WATCH on Jungle blocks, not a scheduling dependency.
+
+FIVE CORRECTIONS. (1) The Durability32 stall was diagnosed and targeted, not a separate
+undiagnosed bug. (2) Exposure was undercounted: 1 Hz sampling misses contacts resolved between
+samples, so the gate now uses escape EVENTS plus sampled geometry, and Block A is 8/12
+exercised, matching Durability32's corrected 8/12. (3) Mountain Striker control is 2/3, not
+3/3; arm totals are control 15/18, candidate 14/18, with three flips. (4) **Conduit's zero
+owner attack beats is BY DESIGN** — the summoner carries `CannotAttack` and Champion is the
+only specialization that restores a direct attack. Conduit took 1-2 landed Power Shots on the
+owner in every run and died once. The earlier "missing exposure" framing was a shortcut this
+chain introduced and is retracted in both reviews. (5) Power Shot is **-18.71% matched**, not
+-22.1% pooled; Strong Kick is ratio exactly 1.000 over 21 matched pairs.
+
+JUNGLE MEASURED AT LAST. 2,134 engagements: `emerald-constrictor` 1700 HP -> 3.55 s,
+`apex-silverback` 1450 -> 2.90 s, `thornback-lizard` 1000 -> 1.77 s, `hunting-panther` 950 ->
+1.90 s. **The authored ladder runs backwards**: the T3 anchor `silverback` is 2090 HP / 83
+attack and every T4 Jungle species sits below it. Zero deaths is NOT a durability pass.
+
+BRACE CORRECTION: the earlier "Brace is unaffordable at T1" claim was about ADDING it.
+SUBSTITUTING Brace for Second Wind is cheaper than the reference (melee 17 vs 18, ranged 20 vs
+21, budget 22) and legal for all six roots. Both are `hp-below` instants — Second Wind at 60%
+heals, Brace at 50% gives 35% DR for 3 s — so neither reacts to a cast, and this is a
+sustain-versus-mitigation opportunity cost, not Power Shot counterplay.
+
+[Durability34 packet](bot-balance-durability34-operator-packet.md): PREPARED, NOT LAUNCHED.
+108 observations, two INDEPENDENT blocks. J) Jungle HP-only candidate, 72: `apex-silverback`
+1450 -> 2900 and `emerald-constrictor` 1700 -> 3400, both clearing the T3 anchor; fast bodies
+untouched. M) T1 Mountain guard substitution, 36, Power Shot held at 2.2 in BOTH arms;
+verified functionally that each arm activates its own guard.
+
+[Adoption manifest](bot-balance-mob-adoption-manifest.md) is now resolved: 30 species, final
+authored values with layers flattened, exact defence coupling, and a proposed patch shape.
+Still `selected`, not applied. Records the composition trap that silently turns `dune-basilisk`
+9006 back into 4503.
+
+### Named gate ECON-1 — reward efficiency across tiers
+
+> At later player tiers, lower-tier nodes in a recurring biome may yield better usable essence
+> and biome XP per elapsed minute than current-tier nodes, because combat duration has
+> increased without a sufficient reward premium.
+
+**Recorded, not established.** All durability evidence is `economyEligible=false`. No reward
+value changes in any combat packet. The screen belongs after the consolidated combat baseline.
+Design constraints when it runs: the SAME later-tier character in both routes; **elapsed
+gameplay time** as the denominator, never accelerated wall time; like-for-like essence and
+catalyst families; credited versus nominal XP against caps; travel and setup reported apart
+from steady state; and a useful fallback route is not the failure — systematic domination of
+current-tier progression is. Block J lengthens T4 Jungle fights without touching rewards, which
+moves this question rather than answering it.
+
+### Boss pass — reuse the user's manual coverage
+
+The user has already playtested and iterated boss MECHANICS manually, more than ordinary mobs.
+The later boss pass reuses that coverage, locates existing logs where available, and addresses
+numerical pacing and pressure. Do not restart boss functional discovery, and do not claim
+artifact-backed certification for tests whose logs were never inspected.
+
+## Previous decision: Durability32 executed and CORRECTED; the Jungle defect is located and fixed; Durability33 prepared, not launched
+
 
 Durability32 ran once at `7247b6e2` and completed 120/120 observations. Its execution record
 stands; four of its conclusions did not survive recomputation from the sealed raw artifacts,
@@ -50,7 +120,7 @@ budget is 22, and Sweep(6) + Second Wind(6) + Brace(5) plus rune logic does not 
 Shot publishes no telegraph and tracks the player, so Brace is its only mitigation counterplay
 - and it is not affordable beside the standard sustain guard at T1.
 
-[Durability33 packet](bot-balance-durability33-operator-packet.md): PREPARED, NOT LAUNCHED.
+[Durability33 packet](bot-balance-durability33-operator-packet.md): (superseded - it has since RUN and been corrected; see the current decision.) PREPARED, NOT LAUNCHED.
 84 observations. A) the four historical Jungle setups on repaired source, 12. B) T1 Mountain
 at the route's actual earned entry kit, control 2.2 vs candidate 1.8, 36. C) Jungle breadth,
 36, GATED ON A'S BEHAVIOUR rather than its artifacts. No new Jungle HP treatment until C

@@ -136,8 +136,10 @@ same monster onto the player. Nothing is inferred from timestamps alone.
 
 So the report's "67 → 61, −9%" was a **metric error**, exactly as the prior review suspected:
 67 is the control's largest hit (a Power Shot) and 61 is the candidate's largest hit (an
-*unchanged Strong Kick*). The attributed Power Shot moves 68.2 → 55.04, a **−19.3% median**,
-against a −18.2% coefficient change. Strong Kick is identical in both arms, which is the
+*unchanged Strong Kick*). The attributed Power Shot moves 68.2 → 55.04, a **−19.3% pooled
+median**, against a −18.2% coefficient change. (A stricter same-state paired method, adopted
+for Durability33, is the better measure; pooled medians compare unequal hit counts drawn from
+diverging sequences. On Durability33 that method gives −18.71%.) Strong Kick is identical in both arms, which is the
 control the overlay needed. At T1 mitigation is small enough that the coefficient passes
 through nearly proportionally — the packet's caution about mitigation was correct in
 principle and close to non-binding here.
@@ -156,12 +158,20 @@ window of every single death. But the deaths are an accumulated deficit finished
 that overkills, so removing ~13 damage from one hit does not move the outcome. That is the
 mechanism, and it is why the arms die at the same millisecond.
 
-### The Conduit result is missing exposure, not class durability
+### The Conduit result — **RETRACTED 2026-09-18**
 
-Conduit records **0 owner attack beats** in all 12 of its runs; 360–502 minion beats do the
-work while the owner stays out of archer range. It takes 0–2 Power Shots against roughly one
-per 15 s for the melee roots. Its 0/6 first-arrival deaths are the packet's own
-"archers never meaningfully attack" case and must not be read as a class advantage.
+This section originally read "missing exposure, not class durability". That was wrong and it
+propagated into the Durability33 packet and report. Verified in source afterwards: the
+summoner archetype returns `cannotAttack: true` and the server attaches the `CannotAttack`
+marker, so **zero owner attack beats is the designed behavior of a T1 Conduit**, not missing
+combat. Champion (`battle-bond`) is the one specialization that restores a direct attack and
+it is not available at T1.
+
+What the data actually supports: Conduit deals its damage through 360–502 minion beats, and
+its *owner* takes 0–2 landed Power Shots per run. Low owner exposure limits the narrow
+question "how hard does Power Shot hit this owner"; it does not invalidate the build's
+survival. In Durability33 the Conduit owner took 1–2 landed Power Shots in every run and died
+once. See [the Durability33 review](bot-balance-durability33-review-and-next-steps.md) §2.4.
 
 ### The `first-arrival` preset was not a credible first arrival
 
@@ -174,12 +184,13 @@ That preset is materially weaker than the game's own progression, which explains
 in 13–26 s and makes the first-arrival block a poor place to judge Power Shot. It is a
 preparation artifact, not a Mountain balance finding.
 
-**A design constraint found while resolving this, from source rather than a run:** the T1
-Runic Point budget is 22. Sweep (6) + Second Wind (6) + Brace (5) plus the shared rune logic
-does not fit (23 for a melee root, more for a ranged root that also pays for Orbit). Since
-Power Shot publishes no telegraph and tracks the player, Brace is its only mitigation
-counterplay — and it is **not affordable alongside the standard sustain guard at T1**. That is
-a command-center design question, not something another grid can answer.
+**A design constraint found while resolving this — later CORRECTED:** the T1 Runic Point
+budget is 22, and Sweep (6) + Second Wind (6) + Brace (5) does not fit. The original wording
+concluded Brace was "not affordable at T1". That was about *adding* Brace. **Substituting** it
+for Second Wind is cheaper than the reference (melee 17 vs 18, ranged 20 vs 21) and is legal
+for all six roots. Brace is also an `hp-below` 50% guard, not a response to an incoming cast,
+so it was never reactive counterplay to Power Shot. Durability34 Block M tests the
+substitution; see [the Durability33 review](bot-balance-durability33-review-and-next-steps.md) §4.
 
 ### Disposition
 
