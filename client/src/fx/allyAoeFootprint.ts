@@ -12,6 +12,12 @@ import { nodeToSceneX, nodeToSceneY } from '../render/sceneCoords';
  * decision is already made. An AoE whose area you only learn about once it has
  * resolved is an AoE you cannot position for, which is the entire skill of it.
  *
+ * The same is true of Contagion, which spends 1 s deciding which enemies around
+ * the afflicted target inherit its afflictions. Nothing here knows either ability
+ * by name: it draws whatever area a `player-cast-start` declares, so a friendly
+ * cast that grows a footprint later joins by shipping `aoeRadius` and nothing
+ * else.
+ *
  * ── Why it is drawn like an enemy telegraph, but not AS one ────────────────
  * It borrows the ground-zone grammar (`render/groundZones.ts`): a low-alpha
  * footprint that answers "where" on the first frame, a rim at the true radius,
@@ -38,10 +44,16 @@ import { nodeToSceneX, nodeToSceneY } from '../render/sceneCoords';
  * against the target each frame, self-expiring if the end event never lands.
  *
  * ── Why the radius comes over the wire ─────────────────────────────────────
- * `player-cast-start.aoeRadius` is the number the server damages with, resolved
+ * `player-cast-start.aoeRadius` is the number the server resolves the area with
+ * — damages with for Slam, selects spread victims with for Contagion — taken
  * from the caster's rank. Nothing here may invent, round or scale it: this is a
- * promise about what is about to be hit, and the only honest way to keep it is
- * to draw the authoritative value verbatim.
+ * promise about what is about to be caught, and the only honest way to keep it
+ * is to draw the authoritative value verbatim.
+ *
+ * Colour is deliberately NOT varied by what the cast carries. Contagion can be
+ * spreading a burn, a poison and a frost at once, so there is no one honest
+ * element colour for it; mixed-element presentation is a separate problem, and
+ * until it is solved a single friendly green is the truthful answer.
  *
  * Nothing here is authoritative. It draws; the server decides.
  */
@@ -56,12 +68,27 @@ const RIM_DASH_DUTY = 0.55;
 /** Keep drawing this long past the expected end, in case the end event is late. */
 const EXPIRY_GRACE_MS = 400;
 
+/** Total life of a LANDED-area pulse: grow, then gone. */
+const PULSE_MS = 240;
+/** The pulse reaches the true radius in this long — a snap, not a wind-up. */
+const PULSE_GROW_MS = 110;
+/** Where the pulse starts, as a fraction of the true radius. */
+const PULSE_START_SCALE = 0.55;
+/**
+ * Two pulses closer together than this, from one player, are the same beat: a
+ * blunderbuss volley resolves its whole clip in a single tick, and ten identical
+ * circles stacked in one frame is a bright blob, not a reading of the area.
+ */
+const PULSE_COALESCE_MS = PULSE_MS;
+/** ...but only when they land on the same spot. A different target is news. */
+const PULSE_COALESCE_PX = 8;
+
 export interface AllyAoeFootprintState {
   /** Entity the footprint is centred on; the map itself is keyed by the caster. */
   targetId: string;
   startedAt: number;
   castMs: number;
-  /** Authoritative damage radius, in world units. Drawn verbatim. */
+  /** Authoritative area radius, in world units. Drawn verbatim. */
   radius: number;
   graphics: Phaser.GameObjects.Graphics;
 }
@@ -131,8 +158,8 @@ export function drawAllyAoeFootprints(state: RenderState): void {
     g.fillStyle(FOOTPRINT_FILL, 0.1);
     g.fillCircle(x, y, footprint.radius);
 
-    // 2. RIM. Dashed, at the exact damage radius — anything inside this line is
-    // inside the blow.
+    // 2. RIM. Dashed, at the exact authoritative radius — anything inside this
+    // line is inside the blow (or, for a spread, inside the contagion).
     g.lineStyle(2, FOOTPRINT_LINE, 0.55);
     for (let i = 0; i < RIM_DASHES; i++) {
       const from = (Math.PI * 2 * i) / RIM_DASHES;
@@ -146,4 +173,81 @@ export function drawAllyAoeFootprints(state: RenderState): void {
     g.lineStyle(1.5, FOOTPRINT_LINE, 0.3 + 0.35 * t);
     g.strokeCircle(x, y, footprint.radius * t);
   }
+}
+
+/**
+ * The area a player's payload JUST covered, shown for a moment after the fact.
+ *
+ * ── Why this is not the wind-up indicator ──────────────────────────────────
+ * Sweep is an ARMED attack, not a cast. There is no wind-up to stand in, no
+ * moment where drawing the circle early would let anyone reposition — by the
+ * time the rider resolves, the swing has landed and the splash is already
+ * applied. So this deliberately does NOT reuse the tracking footprint above:
+ * a circle that appears before the blow reads as "danger incoming", which is
+ * the enemy-telegraph grammar and a lie about who is in control here.
+ *
+ * What it answers instead is the question Sweep left unanswered — "did that
+ * catch the pack, or just the one I hit?" — and it answers it about the past
+ * tense, which is why it snaps out to the rim and is gone inside a quarter
+ * second. The slash FX still plays over it; this is a readability layer under
+ * the bodies, not a replacement for the ability's own animation.
+ *
+ * Same friendly green, same dashless ground band as the cast footprint, so the
+ * two read as one vocabulary: green circle = an ally's area.
+ *
+ * `radius` is the server's resolved value, drawn verbatim. Nothing here scales,
+ * rounds or pads it — the whole point is that the ring is where the splash
+ * actually stopped.
+ */
+export function fxAllyAoeFootprint(
+  state: RenderState,
+  scene: GameScene,
+  casterId: string,
+  x: number,
+  y: number,
+  radius: number,
+): void {
+  if (!(radius > 0)) return;
+
+  // Coalesce a same-tick burst (see PULSE_COALESCE_MS). Keyed by caster and
+  // position so two shots that really did hit different places still both draw.
+  const now = Date.now();
+  const last = state.allyAoeFootprintPulse.get(casterId);
+  if (
+    last
+    && now - last.at < PULSE_COALESCE_MS
+    && Math.abs(last.x - x) <= PULSE_COALESCE_PX
+    && Math.abs(last.y - y) <= PULSE_COALESCE_PX
+  ) {
+    return;
+  }
+  state.allyAoeFootprintPulse.set(casterId, { at: now, x, y });
+
+  // Ground band, under the bodies standing in it — the same place the cast
+  // footprint draws, for the same reason: a circle over the monsters hides the
+  // very thing it exists to let the player count.
+  const g = scene.add.graphics({ x, y }).setDepth(DEPTH.BG_DECOR + 0.35);
+  g.fillStyle(FOOTPRINT_FILL, 0.12);
+  g.fillCircle(0, 0, radius);
+  g.lineStyle(2, FOOTPRINT_LINE, 0.5);
+  g.strokeCircle(0, 0, radius);
+  g.setScale(PULSE_START_SCALE);
+
+  // Grow and fade run as separate tweens on purpose: the circle must REACH the
+  // true radius well before it disappears, or the last thing the eye sees is a
+  // ring smaller than the area that was actually hit.
+  scene.tweens.add({
+    targets: g,
+    scaleX: 1,
+    scaleY: 1,
+    duration: PULSE_GROW_MS,
+    ease: 'Cubic.easeOut',
+  });
+  scene.tweens.add({
+    targets: g,
+    alpha: 0,
+    duration: PULSE_MS,
+    ease: 'Quad.easeIn',
+    onComplete: () => g.destroy(),
+  });
 }

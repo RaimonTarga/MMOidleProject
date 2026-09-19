@@ -66,7 +66,7 @@ export function afflictionTechniqueHasWork(
   if (effect.kind === "spread-dots") {
     if (spreadableDots(world, player, target).length === 0) return false;
     // Nothing to spread TO is just as dead as nothing to spread.
-    return contagionVictims(world, player, target, effect.radius, effect.maxTargets).length > 0;
+    return contagionVictims(world, player, target, effect).length > 0;
   }
   if (effect.kind === "detonate-dots") {
     const entries = playerDotsOnMonster(world, player, target).filter((e) => e.detonatable);
@@ -83,6 +83,34 @@ function spreadableDots(
   return playerDotsOnMonster(world, player, target).filter((e) => e.spreadable);
 }
 
+type SpreadDotsEffect = Extract<AbilityEffectSpec, { kind: "spread-dots" }>;
+
+/**
+ * The ground circle a Contagion cast will spread across, or `undefined` when the
+ * payload is not a spread at all.
+ *
+ * THE one definition of Contagion's reach. {@link contagionVictims} selects with
+ * it and `beginAbilityCast` broadcasts it (through `castFootprintRadius`) so the
+ * client can draw the area for the whole wind-up — the circle on the ground and
+ * the circle the spread queries therefore cannot drift apart, because there is no
+ * second copy of the number to fall out of step. Resolved off the rank at the
+ * caster's tier, so the authored widening across ranks widens the indicator with
+ * it, for free.
+ *
+ * Reach is NOT a Technique Power field — `TECHNIQUE_POWER_FIELDS` omits
+ * `spread-dots` entirely — so the effective radius is exactly the authored one,
+ * and the indicator needs no scaling layer of its own.
+ *
+ * Returns `undefined` rather than 0 for "no area": absence is the signal the
+ * caller branches on, not a magic zero.
+ */
+export function contagionFootprintRadius(
+  effect: AbilityEffectSpec,
+): number | undefined {
+  if (effect.kind !== "spread-dots") return undefined;
+  return effect.radius > 0 ? effect.radius : undefined;
+}
+
 /**
  * The enemies a Contagion cast would infect: everything in radius except the
  * source, NEAREST FIRST, capped at `maxTargets`.
@@ -96,18 +124,23 @@ function contagionVictims(
   world: World,
   player: PlayerEntity,
   target: MonsterEntity,
-  radius: number,
-  maxTargets: number,
+  effect: SpreadDotsEffect,
 ): MonsterEntity[] {
-  if (maxTargets <= 0) return [];
+  if (effect.maxTargets <= 0) return [];
   const origin = target.hasPosition.current;
-  return playerAoeTargets(world, player, origin, radius, target.isMonster.id)
+  return playerAoeTargets(
+    world,
+    player,
+    origin,
+    contagionFootprintRadius(effect) ?? 0,
+    target.isMonster.id,
+  )
     .filter((monster) => monster.hasHealth.hp > 0)
     .sort(
       (a, b) =>
         squaredGap(a, origin) - squaredGap(b, origin),
     )
-    .slice(0, maxTargets);
+    .slice(0, effect.maxTargets);
 }
 
 function squaredGap(monster: MonsterEntity, origin: { x: number; y: number }): number {
@@ -138,7 +171,7 @@ export function resolveContagion(
   const entries = spreadableDots(world, player, target);
   if (entries.length === 0) return;
 
-  const victims = contagionVictims(world, player, target, effect.radius, effect.maxTargets);
+  const victims = contagionVictims(world, player, target, effect);
   if (victims.length === 0) return;
 
   // One link per (victim × distinct element): a target carrying a burn and a

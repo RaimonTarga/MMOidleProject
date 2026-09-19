@@ -25,9 +25,14 @@ import {
   resolveSummonerProfile,
   type AbilityDef,
   type AbilityEffectSpec,
+  type Vec2,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
-import { resolveContagion, resolveDetonate } from "./abilityAffliction";
+import {
+  contagionFootprintRadius,
+  resolveContagion,
+  resolveDetonate,
+} from "./abilityAffliction";
 import { applyImbueWindow, initImbueSystem } from "./abilityImbue";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { applyPlayerDebuff } from "../../classes/shared/applyPlayerDebuff";
@@ -232,12 +237,57 @@ function castStrikeFootprintRadius(effect: AbilityEffectSpec): number | undefine
   return effect.radius && effect.radius > 0 ? effect.radius : undefined;
 }
 
-/** {@link castStrikeFootprintRadius} for a caster's live rank of `ability`. */
+/**
+ * The ground footprint a caster's live rank of `ability` will act on, for the
+ * client's wind-up indicator — `undefined` when the cast has no area at all.
+ *
+ * Dispatches per payload rather than reading `radius` off whatever effect it is
+ * handed, because each payload OWNS its own area: the strike damages its circle
+ * ({@link castStrikeFootprintRadius}), Contagion spreads across its own
+ * ({@link contagionFootprintRadius}, which is also what selects the victims). The
+ * indicator therefore asks the same function the gameplay asks, per ability, and
+ * a payload that grows an area later has to opt in here deliberately instead of
+ * silently inheriting a circle it does not use.
+ */
 export function castFootprintRadius(
   player: PlayerEntity,
   ability: AbilityDef,
 ): number | undefined {
-  return castStrikeFootprintRadius(techniqueEffect(player, ability));
+  const effect = techniqueEffect(player, ability);
+  if (effect.kind === "spread-dots") return contagionFootprintRadius(effect);
+  return castStrikeFootprintRadius(effect);
+}
+
+/**
+ * Announce that a player payload's AREA just resolved, so the client can draw the
+ * ground it actually covered.
+ *
+ * Called with the SAME centre and radius handed to the resolution itself
+ * (`applyPlayerAoe` / `playerAoeTargets`), from immediately beside that call, so
+ * the drawn circle and the tested circle cannot drift apart — there is no second
+ * copy of either number, and a rank that re-authors the radius moves both at once.
+ *
+ * Deliberately emitted at DELIVERY rather than at arm time. An armed Technique is
+ * spent the instant an attack lands; a circle drawn any earlier would be a
+ * telegraph for a decision the player has already committed to, which is the
+ * enemy-AoE grammar and the wrong read for your own blow. Node-wide, like every
+ * other combat FX event: standing inside an ally's cleave is worth seeing too.
+ *
+ * Purely cosmetic. The damage, the victims and the stacks are all applied by the
+ * resolution next to it; this only reports where that happened.
+ */
+function pushAoeFootprint(
+  world: World,
+  player: PlayerEntity,
+  center: Vec2,
+  radius: number,
+): void {
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: "player-aoe-footprint",
+    playerId: player.isPlayer.id,
+    pos: { x: center.x, y: center.y },
+    radius,
+  });
 }
 
 /** Append a client-effect tag to the hit that combat.ts is about to broadcast. */
@@ -345,6 +395,14 @@ function applyTechniqueRider(
     // same root DoT seam, with no fake direct cleave or shortcut to full stacks.
     if (ctx.attacker.appliesDots) {
       tagClientEffect(ctx, ABILITY_SWEEP_FX);
+      // The spread IS this adapter's area resolution, so the footprint is
+      // announced with the same centre and radius the victim query below uses.
+      pushAoeFootprint(
+        world,
+        ctx.attacker,
+        ctx.defender.hasPosition.current,
+        effect.radius,
+      );
       for (const target of playerAoeTargets(
         world,
         ctx.attacker,
@@ -406,6 +464,15 @@ function applyTechniqueRider(
         splashDamage: splash,
       });
     }
+    // Past the splash guard, so the footprint marks an area that really was hit.
+    // A Conduit delivery arrives here too, and `ctx.defender` is the monster the
+    // delivering summon body struck — the real delivery point, not the player's.
+    pushAoeFootprint(
+      world,
+      ctx.attacker,
+      ctx.defender.hasPosition.current,
+      effect.radius,
+    );
     applyPlayerAoe(
       world,
       ctx.attacker,
@@ -528,6 +595,16 @@ function applySlingerSweepShot(
     splashDamage: splash,
     clipSize: sweep.clipSize,
   });
+  // Every ammo-backed shot resolves its OWN circle, so every shot reports one.
+  // A blunderbuss volley fires its whole clip in a single tick and so lands a
+  // stack of identical circles; the client coalesces those rather than the
+  // server withholding a resolution that genuinely happened.
+  pushAoeFootprint(
+    world,
+    ctx.attacker,
+    ctx.defender.hasPosition.current,
+    sweep.radius,
+  );
   applyPlayerAoe(
     world,
     ctx.attacker,

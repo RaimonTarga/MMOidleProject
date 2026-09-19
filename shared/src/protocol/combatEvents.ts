@@ -168,13 +168,19 @@ type CombatEventPayload =
   // client draws no wind-up at all and keeps the bare cast bar, rather than
   // inventing a default colour that would be a lie about what is on the target.
   //
-  // `aoeRadius` is the ground footprint the payload will damage, in world units,
-  // sent ONLY by a cast that actually has one (Slam). It is the same number the
-  // server resolves the AoE with, carried over the wire rather than re-derived
-  // client-side: the radius comes from the rank at the caster's tier, which the
-  // client does not reliably know for another player, and a UI copy of it could
-  // drift from the damage the moment a rank is re-authored. Absent means the cast
-  // has no area — the client then draws no footprint rather than guessing one.
+  // `aoeRadius` is the ground footprint the payload will act on, in world units,
+  // sent ONLY by a cast that actually has one: the circle Slam damages, or the
+  // circle Contagion spreads the target's afflictions across. It is the same
+  // number the server resolves that area with, carried over the wire rather than
+  // re-derived client-side: the radius comes from the rank at the caster's tier,
+  // which the client does not reliably know for another player, and a UI copy of
+  // it could drift from the gameplay the moment a rank is re-authored. Absent
+  // means the cast has no area — the client then draws no footprint rather than
+  // guessing one.
+  //
+  // The footprint is always centred on `targetId`, which is also where the
+  // payload resolves: Slam's impact point, and the afflicted monster Contagion
+  // spreads outward from.
   | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number; targetId?: string; element?: DamageElement; aoeRadius?: number }
   // The wind-up ended. `fired: false` means it was interrupted by hard CC or lost
   // its target, so the client clears the bar without playing the resolve FX.
@@ -182,6 +188,24 @@ type CombatEventPayload =
   // a cast resolves on its own target rather than riding an attack, so there is
   // no `player-hit` to hang its FX on.
   | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean; targetPos?: Vec2 }
+  // A player payload's AREA actually resolved. Sent once per real AoE resolution,
+  // carrying the exact centre and radius the server tested with — today, Sweep's
+  // cleave splashing around the primary monster the armed attack landed on.
+  //
+  // This is the ARMED-attack counterpart to `player-cast-start.aoeRadius`, and it
+  // is deliberately the opposite shape. A cast declares its circle BEFORE it lands
+  // because the player can still reposition during the wind-up; an armed attack
+  // has no wind-up to watch, so declaring its area early would telegraph a
+  // decision that has already been made. This fires on DELIVERY, and the client
+  // draws a brief "this was the affected area" footprint: readability after the
+  // fact, never a threat indicator.
+  //
+  // `radius` is the live resolved effect's radius — the same value the AoE query
+  // selected victims with, Technique Power and all. Carried over the wire for the
+  // same reason the cast telegraph carries it: the client cannot know another
+  // player's rank, and a UI copy of the number would drift from gameplay the
+  // moment a rank is re-authored. No event ⇒ nothing resolved ⇒ nothing drawn.
+  | { kind: 'player-aoe-footprint'; playerId: string; pos: Vec2; radius: number }
   // Contagion copied afflictions outward. Carries the SOURCE point and one link
   // per (victim × distinct element), so a target carrying both a burn and a
   // poison draws two differently-coloured tendrils to each new host rather than

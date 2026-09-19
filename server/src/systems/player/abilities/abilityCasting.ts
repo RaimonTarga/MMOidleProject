@@ -95,11 +95,15 @@ export function beginAbilityCast(
   // taut belongs on the thing carrying it — so the target's id rides along.
   // A colour rides along only when the ability has one to give.
   const windupElement = detonateWindupElement(world, player, ability, target);
-  // An AREA cast also ships the footprint it is about to damage, so the client can
-  // show the player exactly what the blow will cover while it winds up. Sourced
-  // from `castFootprintRadius` — the same call `resolveCastPayload` resolves the
-  // damage circle from — and omitted entirely by a cast with no area, which is
-  // what keeps single-target casts free of a phantom circle.
+  // An AREA cast also ships the footprint it is about to act on, so the client can
+  // show the player exactly what it will cover while it winds up — the circle Slam
+  // damages, or the circle Contagion spreads its afflictions across. Sourced from
+  // `castFootprintRadius`, which dispatches to the same per-payload definition the
+  // resolution uses, and omitted entirely by a cast with no area, which is what
+  // keeps single-target casts free of a phantom circle.
+  //
+  // It is centred on `targetId` below, which for Contagion is the afflicted source
+  // the spread radiates FROM — the same origin `resolveContagion` queries around.
   const footprintRadius = castFootprintRadius(player, ability);
   world.pushEvent(player.hasPosition.nodeId, {
     kind: "player-cast-start",

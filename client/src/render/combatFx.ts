@@ -153,6 +153,7 @@ import {
 } from "../fx/detonateWindup";
 import {
   endAllyAoeFootprint,
+  fxAllyAoeFootprint,
   startAllyAoeFootprint,
 } from "../fx/allyAoeFootprint";
 import { fxImbueCast, fxImbueCrackle } from "../fx/imbueLightning";
@@ -1320,9 +1321,11 @@ export function dispatchCombatEvent(
       );
     }
     // An AREA cast shows the ground it is about to cover for the whole wind-up,
-    // in the friendly palette. Gated on the server having sent a radius, so a
-    // single-target cast draws nothing — and node-wide, because standing inside
-    // an ally's Slam is not information you should have to guess at either.
+    // in the friendly palette — Slam's blow, Contagion's spread. Gated on the
+    // server having sent a radius rather than on the ability's name, so any cast
+    // that declares an area is drawn and a single-target cast draws nothing. Node-
+    // wide, because standing inside an ally's Slam is not information you should
+    // have to guess at either.
     if (shouldRunClientFx() && ev.targetId && ev.aoeRadius) {
       startAllyAoeFootprint(
         state,
@@ -1335,6 +1338,24 @@ export function dispatchCombatEvent(
     }
     if (ev.playerId === scene.myId) {
       notifyAbilityCastStarted(ev.ability, ev.castMs);
+    }
+    return;
+  }
+
+  if (ev.kind === "player-aoe-footprint") {
+    // An armed attack's area, drawn only once it has ACTUALLY resolved — Sweep's
+    // cleave around the monster the swing landed on. The same friendly green as
+    // the cast footprint, but a quick after-the-fact pulse rather than a tracking
+    // wind-up: there is nothing left to reposition for, so this reports what was
+    // caught instead of warning about what is coming. The slash FX rides the
+    // primary `player-hit` and is untouched by this.
+    //
+    // Radius and centre are used verbatim — they are the numbers the server
+    // selected victims with, so the ring is exactly where the splash stopped.
+    // Node-wide, like the cast footprint: an ally's cleave is worth seeing.
+    if (shouldRunClientFx()) {
+      const at = nodeToScene(ev.pos.x, ev.pos.y);
+      fxAllyAoeFootprint(state, scene, ev.playerId, at.x, at.y, ev.radius);
     }
     return;
   }
