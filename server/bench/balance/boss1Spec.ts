@@ -130,6 +130,12 @@ export const BOSS1_TIMBERCLAW_KIT = {
   armor: 'cave-vest-t2', recovery: 'mountain-charm-t2',
   mobility: 'plains-boots-t2', core: 'core-tempered',
 } as const;
+/**
+ * The reference shape's ordered Guard list: a Recovery Guard, then a burst-mitigation
+ * Guard. Named so a screen that substitutes one of them states what it departed from
+ * rather than re-spelling the baseline.
+ */
+export const REFERENCE_GUARDS = ['second-wind', 'brace'] as const;
 export const BOSS1_TIMBERCLAW_BOSS_ID = 'apex-timberclaw';
 export const BOSS1_TIMBERCLAW_NODE_ID = 'node-t2-forest-dungeon';
 /** Seeds are inert for this boss: no adds, fixed spawn, deterministic evasion. */
@@ -151,7 +157,20 @@ export const BOSS1_TIMBERCLAW_CAP_MS = 300000;
 export function referencePackageCells(opts: {
   nodeId: string; role: string; bossId: string; idPrefix: string;
   treatmentFor: (className: string) => string;
+  /**
+   * The ordered Guard list, for a screen that varies ONE component of this package
+   * and nothing else.
+   *
+   * Omitting it yields the reference shape Boss1 and Boss2 froze, byte for byte --
+   * which is the point: Boss3 substitutes `brace` for `cleanse` at index 1 by
+   * passing this, and a second literal copy of the whole construction (the thing
+   * this function exists to prevent) is never created. ORDER is load-bearing and is
+   * preserved as given: guards are walked top-to-bottom and the first eligible one
+   * claims the one-activation-per-window gate.
+   */
+  guards?: readonly string[];
 }): Night5Cell[] {
+  const guards = opts.guards ?? REFERENCE_GUARDS;
   return SURVEY_CLASSES.map((c) => {
     const id = `${opts.idPrefix}-${c.name}`;
     return {
@@ -165,7 +184,7 @@ export function referencePackageCells(opts: {
       treatment: opts.treatmentFor(c.name),
       targetTypes: [opts.bossId],
       stance: 'defensive-stance',
-      abilities: { techniques: ['expose-weakness'], guards: ['second-wind', 'brace'] },
+      abilities: { techniques: ['expose-weakness'], guards: [...guards] },
       runeRules: [
         { conditionId: 'always', actionId: 'auto-path-enemy' },
         { conditionId: 'inside-telegraph', actionId: 'step-back' },

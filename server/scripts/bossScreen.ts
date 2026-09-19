@@ -71,6 +71,12 @@ import {
   assertBoss2Definitions,
 } from '../bench/balance/boss2Spec';
 import {
+  BOSS3_BLOCKS,
+  BOSS3_BLOCKS_DEF,
+  BOSS3_CAP_MS,
+  assertBoss3Definitions,
+} from '../bench/balance/boss3Spec';
+import {
   BOSSREF_BLOCKS,
   BOSSREF_BOSS_ID,
   BOSSREF_CAP_MS,
@@ -138,6 +144,22 @@ const TRIALS: Record<string, {
       bossId: b.bossId, capMs: BOSS2_CAP_MS, seeds: [BOSS2_SEED], escorts: b.escorts,
     }])),
     assertDefinitions: assertBoss2Definitions,
+  },
+  /**
+   * Boss3 -- the Brace-to-Cleanse substitution, two blocks of twelve.
+   *
+   * Unlike Boss2, a block here holds BOTH ARMS of one boss: the baseline and the
+   * substitution run back to back on the same revision and the same reused seed, so
+   * the pair is never split across two runs that could diverge in anything else.
+   * Neither boss summons, so the escort receipt rule has no teeth on either -- which
+   * is recorded rather than faked.
+   */
+  boss3: {
+    defaultBlock: BOSS3_BLOCKS_DEF[0]!.name, blocks: BOSS3_BLOCKS,
+    perBlock: Object.fromEntries(BOSS3_BLOCKS_DEF.map((b) => [b.name, {
+      bossId: b.bossId, capMs: BOSS3_CAP_MS, seeds: [b.seed], escorts: {},
+    }])),
+    assertDefinitions: assertBoss3Definitions,
   },
   bossref: {
     defaultBlock: 'reference', blocks: BOSSREF_BLOCKS,
