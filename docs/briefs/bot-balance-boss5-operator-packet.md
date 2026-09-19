@@ -1,7 +1,10 @@
 # Boss5 operator packet — roster breadth, plus one bounded Cave refinement
 
-**Status: FROZEN, NOT LAUNCHED.** This packet authorizes preparation only. Sonnet executes it
-once, under this packet. Opus is **not** authorized to launch it.
+**Status: EXECUTED 2026-09-19.** Sonnet ran it once, under this packet, at
+`e1a6f321bc17ea2d3d051e33c24ca250ae52fec2`. See
+[the execution report](bot-balance-boss5-report.md) for results — 15 of 19 blocks verified
+cleanly; 4 preserved as identity failures, not retried. This packet's own scope and stop rules
+below are the historical record of what was authorized; they are not re-opened by the report.
 
 ## 1. The question
 

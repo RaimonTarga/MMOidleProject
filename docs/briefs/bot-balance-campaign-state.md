@@ -2,7 +2,57 @@
 
 Updated: 2026-09-19. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## CURRENT PHASE (2026-09-19): Boss4 dispositioned and INTEGRATED; Boss5 frozen, NOT launched
+## CURRENT PHASE (2026-09-19): Boss5 executed — roster breadth screened, 4 identity failures found
+
+**Boss5 executed.** 120/120 planned observations, 19 child processes, all `code:0`/`timedOut:false`,
+188,972 ms total wall time. Full record: [the Boss5 report](bot-balance-boss5-report.md). The
+run loop did not stop on any block, per stop rules.
+
+**15 of 19 blocks verified cleanly; 4 preserved as identity failures, not retried.** All 4 ran
+their 6 cells to a terminal outcome; all 4 then failed their own `assertDeclarationsApplied` check
+with "Contradictory boss records." Two distinct, unrelated causes, established from the raw
+per-cell data rather than assumed:
+
+- **`t1-plains` (`tusked-razorback`)** — genuine wandering fauna. `maxAddsAlive` reads 5-6 in
+  every cell; `damageFromAdds` names ordinary Plains ambient mobs (`plains-slime`, `boar`), not a
+  boss script. The boss's own "summons nothing" declaration was correct; the roster derivation
+  just never modeled ambient node wildlife wandering into an unguarded arena.
+- **`t3-swamp`, `t3-volcanic`, `t4-volcanic`** — a boss's own hazard object, not a creature.
+  `maxAddsAlive` reads **0 in all 18 of these cells**, yet `damageFromAdds` carries nonzero entries
+  keyed like `"Cinder-Shell Magma-Salamander — Magma Vent"` and `"Rot-Spore Croc-Behemoth — Spore
+  Pool"` — the boss's own charged-ability hazard object, routed through the add-damage attribution
+  channel. Neither boss secretly summons anything.
+
+**The treatment record is clean across all 120 receipts regardless of the 4 failures above**: all
+108 breadth receipts install nothing (`live == base`), all 12 Cave-refinement receipts install
+exactly one change (`live != base`), and zero Cave receipts read the authored 139. The identity
+failures are about add-damage attribution, not about an unwanted install.
+
+**Terminal outcomes, not pooled**: 62 `boss-killed`, 56 `bot-died`, 2 `capped` (both Conduit, at
+their tier's own cap — `t3-tundra` 600 s, `t4-tundra` 900 s), 0 of any other kind. **14 of 18
+Block B bosses now have a clean first-contact reference observation**; the report's per-boss,
+per-root table is the read, not a win-rate summary.
+
+**Block C (`chitinous-dreadbore`, 104 vs 85, both arms treated)**: 85 strictly dominates 104 —
+4 roots flip `bot-died` -> `boss-killed`, 0 roots flip the other way, squire wins at both, conduit
+loses at both but removes more boss HP at 85 (36.1% vs 31.7%). Per the packet's own §12 framing
+("prefer 85 if it gives credible broader clears with meaningful mechanics"), this result is
+consistent with preferring 85 — reported as a reference finding, not an adoption; no value was
+written to source.
+
+**Next authorized task.** Per the packet's §12: the missing-tier boss readiness map (roster-level
+retain/change/open, at most three gross interventions at a time) — plus, as a narrower
+prerequisite the run itself surfaced, a decision on whether the roster's "summons nothing"
+derivation needs a fix (ambient-wildlife leak-in at `t1-plains`; hazard-object attribution at the
+two volcanic bosses and `t3-swamp`) before those 4 bosses can be re-screened cleanly. No further
+Boss5 fights, permutation grid, or roster-tuning discussion is proposed.
+
+See: [Boss5 report](bot-balance-boss5-report.md) ·
+[Boss5 packet](bot-balance-boss5-operator-packet.md).
+
+---
+
+## PREVIOUS PHASE (2026-09-19): Boss4 dispositioned and INTEGRATED; Boss5 executed
 
 **Boss4 executed and reviewed.** 24 fights, both blocks verified, 24/24, 0 capped / reset /
 vanished / ambiguous / invalid. All 12 control rows reproduce their correct Boss3 arm exactly — a
@@ -44,7 +94,8 @@ integrated source hashes to exactly the treated state the screen measured.
 - The Conduit `hpLost`/`damageFromBoss` gap stays **UNKNOWN**. Its recurrence is a deterministic
   REPLAY, not independent replication.
 
-**Next authorized task.** Sonnet executes [the Boss5 operator packet](bot-balance-boss5-operator-packet.md):
+**Next authorized task (HISTORICAL — Boss5 has since been executed; see the CURRENT PHASE
+above).** Sonnet executes [the Boss5 operator packet](bot-balance-boss5-operator-packet.md):
 **roster breadth**, plus one bounded Cave refinement.
 
 - **Block group B** — every in-scope active solo boss with no usable current evidence: **N = 18**
