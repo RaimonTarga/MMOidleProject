@@ -1,6 +1,62 @@
 # Bot balance campaign state
 
-Updated: 2026-09-18. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
+Updated: 2026-09-19. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
+
+## CURRENT PHASE (2026-09-19): Boss1 reviewed and retained; Boss2 frozen, NOT launched
+
+**Phase.** T2 boss coverage. The mob campaign is closed for this purpose and is not reopened;
+the named T3 Jungle pressure and the earlier Mountain limitations stay visible but nothing
+below depends on them. ECON-1 is preserved and untouched.
+
+**Boss1 — reviewed evidence.** 18 fights at `66d33d57` (tree `bad68e01`).
+- *Timberclaw, 6 fights, verified as recorded.* Spirit (the corroborated V1i package) killed it
+  at 30.3 s; five constructed references died after removing 51.1–94.3%. All five kept. Slinger's
+  212 HP remaining is a near-clear and is not equivalent to Striker's 1,835.
+- *Sovereign, 12 fights.* **Completed; original frozen verification failed on stance declaration;
+  retrospectively reviewed and confirmed.** Not certified, and `artifactVerified: false` stands.
+  The declaration gap was a receipt-SERIALIZATION defect (`bossScreen.ts` recorded the cell's raw
+  optional fields instead of the package preparation resolves), covering `stance`, `runeRules`
+  and `abilities` — not stance alone, as the run's first assert suggested. Offensive was
+  unambiguously intended, provable from the pre-execution packet §4b, from the deterministic
+  `prepareSurveyBot` default, and from D37's own graveyard T4 receipts. **No rerun is authorized.**
+- Raw-event agreement was extended from the report's 3-fight spot-check to **all 18**, with zero
+  disagreements.
+- Guardian/access was stripped in both blocks and remains unmeasured. Do not compare the two
+  slots' success rates as a tier-difficulty estimate; they differ in tier, package origin, gear
+  biome and seed count at once.
+
+**Named local exceptions.**
+- Packet §4b said "the five-rune survey loadout"; the two **melee** Sovereign roots actually ran
+  **four** rules (the survey default adds `orbit` for ranged only). Prose inaccuracy, not a build
+  defect — the resolved declaration now records the real per-root count.
+- `gorging-razortusk` is the ONLY summoning T2 boss, and its spawns are nested inside a `cast`
+  plus a `repeating` cadence. A census that walks only `phases[].actions` reports it as a
+  non-summoner.
+- Boss mechanics live in **two** fields: `bossScript` *and* `bossPattern`. `jungle-dread-gorger`
+  has no `bossScript` at all and reads as a bare statline unless the pattern is read too.
+- Seed honesty: only razortusk has a declared randomness consumer among the six. The other five
+  are *unmeasured*, not proven inert — do not present one seed as seed coverage.
+
+**Fix shipped.** `resolveSurveyPackage` is now the single source of the preparation defaults;
+`prepareSurveyBot` and the receipt both read it, so a declaration is computable from the cell
+before the fight and never copied back off the bot. Provenance (`explicit` /
+`preparation-default` / `tier-none`) keeps an omitted field, a deliberate choice and a tier that
+admits no stance apart, and an intentional neutral stance is now expressible. The check is
+**stricter** (ordered rules, abilities, equipment, upgrades, RP) and now runs at **zero-fight
+qualification** as well as verification — Boss1 ran it on its earlier slot only, which is why the
+later slot's gap surfaced after twelve fights. Proven declaration-only: both Boss1 blocks
+re-qualify to **byte-identical** effective stats and roster hashes, at an unchanged definitions
+hash `17aa46cb…`.
+
+**Next authorized task.** Sonnet executes [the Boss2 operator packet](bot-balance-boss2-operator-packet.md):
+six remaining T2 bosses x six portable reference packages x one declared seed `98011`, 300 s cap
+= **36 formal fights**. The six Timberclaw rows are carried forward from Boss1, tagged as reused,
+for a seven-boss combined map. Opus is NOT authorized to launch it.
+
+See: [Boss1 review](bot-balance-boss1-review.md) ·
+[declaration audit](bot-balance-boss1-stance-declaration-audit.md).
+
+---
 
 ## Current decision: D37 EXECUTED and its receipts verified; the boss screen is BLOCKED at early tiers
 

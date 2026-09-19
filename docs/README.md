@@ -26,6 +26,10 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [Boss2 operator packet](briefs/bot-balance-boss2-operator-packet.md) | **FROZEN 2026-09-19, NOT LAUNCHED.** The six remaining T2 bosses x six portable reference packages x one declared seed `98011`, 300 s cap: 36 fights. Carries the six Boss1 Timberclaw rows forward (tagged as reused) for a seven-boss coverage map. |
+| [Boss1 review](briefs/bot-balance-boss1-review.md) | What Boss1's 18 fights do and do not establish: Timberclaw 1/6 with all five losses kept, Sovereign 12/12 reviewed-not-certified, guardian access unmeasured, no cross-slot tier comparison. |
+| [Boss1 declaration audit](briefs/bot-balance-boss1-stance-declaration-audit.md) | Retrospective resolution of the Sovereign block's failed stance-declaration verification, without new combat. Preserves the original failure; establishes intent from pre-execution sources and checks all 18 fights against their raw event logs. |
+| [Boss1 report](briefs/bot-balance-boss1-report.md) | Execution record for the 18-fight Boss1 screen at `66d33d57`. Read alongside the review and audit above, which correct and extend it. |
 | [Durability 32 operator packet](briefs/bot-balance-durability32-operator-packet.md) | Executed once: post-repair Jungle regression screen, T1 Mountain Power Shot 2.2/1.8 comparison, and Jungle T4 breadth after the repair gate; 40 cells / 120 observations, no production edits. |
 | [Durability 32 report](briefs/bot-balance-durability32-report.md) | Completed all 120 observations. Bush-trap repair passed its one exercised case (11/12 not exercised); found a distinct, still-open idle/freeze signature in 5/12 Jungle-repair and 13/36 Jungle-breadth observations unrelated to the bush trap; Power Shot 1.8 candidate shrinks hit size 9-20% but shows no clean survival-rate effect at T1; synthetic evidence only, no production adoption. |
 | [Durability 24 operator packet](briefs/bot-balance-durability24-operator-packet.md) | Executed once: four-arm Graveyard leader/escort HP redistribution and Focus Elites targeting comparison, with T4B Blunderbuss stress and pacing guardrails; 56 cells / 168 observations, no production edits. |
