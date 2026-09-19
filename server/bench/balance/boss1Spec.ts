@@ -136,34 +136,57 @@ export const BOSS1_TIMBERCLAW_NODE_ID = 'node-t2-forest-dungeon';
 export const BOSS1_TIMBERCLAW_SEEDS = [96011] as const;
 export const BOSS1_TIMBERCLAW_CAP_MS = 300000;
 
-const timberclawCells: Night5Cell[] = SURVEY_CLASSES.map((c) => {
-  const id = `boss1-timberclaw-${c.name}`;
-  return {
-    id,
-    nodeId: BOSS1_TIMBERCLAW_NODE_ID,
-    tier: 2,
-    role: 'forest',
-    className: c.name,
-    alternate: false,
-    isDungeon: true,
-    treatment: c.name === 'spirit' ? 'reference-corroborated' : 'reference-constructed',
-    targetTypes: [BOSS1_TIMBERCLAW_BOSS_ID],
-    stance: 'defensive-stance',
-    abilities: { techniques: ['expose-weakness'], guards: ['second-wind', 'brace'] },
-    runeRules: [
-      { conditionId: 'always', actionId: 'auto-path-enemy' },
-      { conditionId: 'inside-telegraph', actionId: 'step-back' },
-      { conditionId: 'in-combat', actionId: TIMBERCLAW_MELEE.has(c.name) ? 'chase-enemy' : 'orbit' },
-      { conditionId: 'always', actionId: 'avoid-hazards' },
-      { conditionId: 'always', actionId: 'wait-for-regen' },
-    ],
-    upgradeLevel: 5,
-    build: {
-      id, classRoot: `${c.prefix}-root`, contentTier: 2, playerTier: 2, gearTier: 2,
-      skillPath: [`${c.prefix}-root`, `${c.prefix}-heavy`],
-      gearItemIds: { weapon: TIMBERCLAW_WEAPON[c.name]!, ...BOSS1_TIMBERCLAW_KIT },
-    },
-  };
+/**
+ * The six explicit reference packages, built once and reusable against any T2 boss.
+ *
+ * Boss2 carries these exact packages onto the six remaining T2 bosses, so the
+ * construction is exported rather than copied: a second literal would let the two
+ * screens drift apart silently, and "the same build on a different boss" is the
+ * only claim that makes the two readable together at all.
+ *
+ * Everything that defines the package -- skill path, weapon, kit, upgrade level,
+ * stance, abilities and the five ORDERED rules -- comes from here. Only the node,
+ * the boss it targets, the cell id and the treatment label vary.
+ */
+export function referencePackageCells(opts: {
+  nodeId: string; role: string; bossId: string; idPrefix: string;
+  treatmentFor: (className: string) => string;
+}): Night5Cell[] {
+  return SURVEY_CLASSES.map((c) => {
+    const id = `${opts.idPrefix}-${c.name}`;
+    return {
+      id,
+      nodeId: opts.nodeId,
+      tier: 2,
+      role: opts.role,
+      className: c.name,
+      alternate: false,
+      isDungeon: true,
+      treatment: opts.treatmentFor(c.name),
+      targetTypes: [opts.bossId],
+      stance: 'defensive-stance',
+      abilities: { techniques: ['expose-weakness'], guards: ['second-wind', 'brace'] },
+      runeRules: [
+        { conditionId: 'always', actionId: 'auto-path-enemy' },
+        { conditionId: 'inside-telegraph', actionId: 'step-back' },
+        { conditionId: 'in-combat', actionId: TIMBERCLAW_MELEE.has(c.name) ? 'chase-enemy' : 'orbit' },
+        { conditionId: 'always', actionId: 'avoid-hazards' },
+        { conditionId: 'always', actionId: 'wait-for-regen' },
+      ],
+      upgradeLevel: 5,
+      build: {
+        id, classRoot: `${c.prefix}-root`, contentTier: 2, playerTier: 2, gearTier: 2,
+        skillPath: [`${c.prefix}-root`, `${c.prefix}-heavy`],
+        gearItemIds: { weapon: TIMBERCLAW_WEAPON[c.name]!, ...BOSS1_TIMBERCLAW_KIT },
+      },
+    };
+  });
+}
+
+const timberclawCells: Night5Cell[] = referencePackageCells({
+  nodeId: BOSS1_TIMBERCLAW_NODE_ID, role: 'forest', bossId: BOSS1_TIMBERCLAW_BOSS_ID,
+  idPrefix: 'boss1-timberclaw',
+  treatmentFor: (name) => (name === 'spirit' ? 'reference-corroborated' : 'reference-constructed'),
 });
 
 export const BOSS1_BLOCKS: Record<string, { cells: Night5Cell[]; durationMs: number; pilotIds: string[] }> = {

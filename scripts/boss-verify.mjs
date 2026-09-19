@@ -104,3 +104,89 @@ export function assertBossRecordsConsistent(records, opts = {}) {
     throw new Error(`Contradictory boss records:\n  - ${bad.join('\n  - ')}`);
   }
 }
+
+/**
+ * Declaration versus application, for ONE `ready.json`.
+ *
+ * Boss1's Sovereign block completed twelve clean fights and was then refused
+ * certification on `applied stance != declared`: every receipt recorded
+ * `declaredPackage.stance: null` against a correctly applied `offensive-stance`.
+ * The bot was right and the packet was right; the receipt was serializing the
+ * cell's RAW optional fields instead of the package preparation would resolve.
+ * `resolveSurveyPackage` now supplies both sides' inputs, so this comparison is
+ * between a declaration computed from the cell BEFORE the fight and the package
+ * read back off the entity -- never the applied value compared with itself.
+ *
+ * It is deliberately stricter than the check it replaces, which compared only the
+ * COUNT of rune rules. Ordering is load-bearing: movement-channel arbitration is
+ * top-to-bottom, so a package whose Step Back has moved below its movement rule is
+ * a different package at the same length.
+ *
+ * Returns a list of divergence strings; empty means the fight ran the package it
+ * says it ran.
+ */
+export function verifyDeclaredApplied(ready) {
+  const bad = [];
+  const at = `${ready.cell}-s${ready.seed}`;
+  const d = ready.declaredPackage, a = ready.appliedPackage;
+  if (!d || !a) { bad.push(`${at}: receipt carries no declared/applied package pair`); return bad; }
+
+  // A declaration that was never resolved is the Boss1 defect itself. An OMITTED
+  // field is legitimate; a field left raw is not, so provenance must be present.
+  if (!d.sources) bad.push(`${at}: declaration carries no field provenance — it was serialized raw, not resolved`);
+
+  if (a.activeStance !== d.stance) {
+    bad.push(`${at}: applied stance ${JSON.stringify(a.activeStance)} != declared ${JSON.stringify(d.stance)}`);
+  }
+  const attuned = a.attunedStances ?? [];
+  const wantAttuned = d.stance ? [d.stance] : [];
+  if (JSON.stringify(attuned) !== JSON.stringify(wantAttuned)) {
+    bad.push(`${at}: attuned stances ${JSON.stringify(attuned)} != declared ${JSON.stringify(wantAttuned)}`);
+  }
+
+  // Ordered rule comparison. `[]` is a real declaration and is compared as one.
+  const want = d.runeRules ?? [], got = a.runesEquipped ?? [];
+  if (want.length !== got.length) {
+    bad.push(`${at}: applied ${got.length} rune rules != declared ${want.length}`);
+  } else {
+    for (let i = 0; i < want.length; i++) {
+      if (want[i].conditionId !== got[i].conditionId || want[i].actionId !== got[i].actionId) {
+        bad.push(`${at}: rule ${i} is ${got[i].conditionId}:${got[i].actionId}, declared ${want[i].conditionId}:${want[i].actionId}`);
+      }
+    }
+  }
+
+  const norm = (x) => JSON.stringify({ techniques: [...(x?.techniques ?? [])].sort(), guards: [...(x?.guards ?? [])].sort() });
+  if (d.abilities && norm(d.abilities) !== norm(a.attunedAbilities)) {
+    bad.push(`${at}: applied abilities ${norm(a.attunedAbilities)} != declared ${norm(d.abilities)}`);
+  }
+
+  // Equipment is exact. Upgrades are checked on the four upgradable slots only --
+  // a core and a relic legitimately sit at +0 while the kit sits at the declared level.
+  for (const [slot, id] of Object.entries(d.gearItemIds ?? {})) {
+    if (a.equipment?.[slot] !== id) bad.push(`${at}: ${slot} is ${a.equipment?.[slot]}, declared ${id}`);
+    if (['weapon', 'armor', 'recovery', 'mobility'].includes(slot)) {
+      const plus = a.itemUpgrades?.[id] ?? 0;
+      if (plus !== d.upgradeLevel) bad.push(`${at}: ${slot} ${id} is +${plus}, declared +${d.upgradeLevel}`);
+    }
+  }
+
+  if (ready.runicPoints && ready.runicPoints.cost > ready.runicPoints.budget) {
+    bad.push(`${at}: package costs ${ready.runicPoints.cost} RP against a budget of ${ready.runicPoints.budget}`);
+  }
+  return bad;
+}
+
+/**
+ * Throw unless every receipt ran the package it declared.
+ *
+ * Called at zero-fight QUALIFICATION as well as at formal verification, so a
+ * discrepancy that is already visible in a READY receipt is caught before any
+ * combat is spent rather than after eighteen fights have been run.
+ */
+export function assertDeclarationsApplied(readies) {
+  const bad = readies.flatMap((r) => verifyDeclaredApplied(r));
+  if (bad.length > 0) {
+    throw new Error(`Declared package != applied package:\n  - ${bad.join('\n  - ')}`);
+  }
+}

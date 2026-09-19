@@ -20,7 +20,14 @@ export const SURVEY_CLASSES = [
   { name: 'spirit', prefix: 'energy', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
 ] as const;
 export const SURVEY_SEEDS = [173, 947, 2027] as const;
-export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam'; stance?: string; orbit?: boolean; focusElites?: boolean;
+export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam';
+  /**
+   * Stance to attune. OMITTED inherits the preparation default (Offensive from
+   * tier 2). Explicit `null` is a different statement -- it means the package
+   * runs NO stance on purpose -- and is honoured rather than defaulted, so a
+   * neutral package cannot be silently read as an Offensive one.
+   */
+  stance?: string | null; orbit?: boolean; focusElites?: boolean;
   /**
    * Item upgrade level to equip at. Omitted keeps the long-standing +5 bench
    * default. Durability32's T1 Mountain block uses +0 for its first-arrival
@@ -81,6 +88,66 @@ export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
     });
   })));
 
+/**
+ * How a cell's OPTIONAL fields become the package preparation will actually apply.
+ *
+ * This exists because Boss1's Sovereign block failed its own declared-versus-applied
+ * check on twelve completed fights. The receipt serialized the cell's RAW optional
+ * fields -- `stance: null`, `runeRules: null`, `abilities: null` -- while
+ * `prepareSurveyBot` resolved and applied Offensive, the five-rule survey policy and
+ * the tier ability set. Nothing was wrong with the bot; the declaration simply was
+ * not the thing being declared.
+ *
+ * So the defaults live HERE, once, and both preparation and the receipt read them.
+ * A declaration is then computable from the cell ALONE, before any fight -- it is
+ * never copied back from the observed bot, which would make the check vacuous. A
+ * genuine mismatch (a stance that failed to attune, a rule dropped by legality, an
+ * ability budget that did not take) still shows up as a divergence.
+ *
+ * `sources` keeps the three cases apart, because they are different statements:
+ *   - `explicit`             the cell said so, including an empty rule array
+ *   - `preparation-default`  the cell omitted it and inherited this resolution
+ *   - `tier-none`            the tier admits no stance at all (tier 1)
+ */
+export type PackageFieldSource = 'explicit' | 'preparation-default' | 'tier-none';
+export interface ResolvedSurveyPackage {
+  stance: string | null;
+  abilities: AttunedAbilities;
+  runeRules: { conditionId: string; actionId: string }[];
+  upgradeLevel: number;
+  sources: { stance: PackageFieldSource; abilities: PackageFieldSource; runeRules: PackageFieldSource; upgradeLevel: PackageFieldSource };
+}
+export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
+  const c = SURVEY_CLASSES.find((x) => x.name === cell.className);
+  assert(c, `${cell.id}: unknown class ${cell.className}`);
+  // `??` cannot express an intentional neutral stance, because it swallows null
+  // alongside undefined. Only an OMITTED field may inherit the default.
+  const stance = cell.tier >= 2 ? (cell.stance !== undefined ? cell.stance : 'offensive-stance') : null;
+  // An EMPTY rule array is a real package (the legacy bench bot equips none) and is
+  // honoured; only an omitted field falls through to the five-rule policy.
+  const runeRules = cell.runeRules ?? [
+    ...(cell.focusElites ? [{conditionId:'in-combat',actionId:'focus-elites'}] : []),
+    { conditionId:'always', actionId:'auto-path-enemy' },
+    { conditionId:'inside-telegraph', actionId:'step-back' },
+    ...((cell.orbit ?? !c.melee) ? [{ conditionId:'in-combat', actionId:'orbit' }] : []),
+    { conditionId:'always', actionId:'avoid-hazards' },
+    { conditionId:'always', actionId:'wait-for-regen' },
+  ];
+  const abilities = cell.abilities ?? {
+    techniques: [...(cell.tier >= 3 ? ['frenzy'] : []), cell.technique ?? 'sweep'],
+    guards: cell.guards ?? (cell.tier === 1 ? ['second-wind'] : ['second-wind','cleanse']),
+  };
+  return {
+    stance, abilities, runeRules, upgradeLevel: cell.upgradeLevel ?? 5,
+    sources: {
+      stance: cell.tier < 2 ? 'tier-none' : cell.stance !== undefined ? 'explicit' : 'preparation-default',
+      abilities: cell.abilities !== undefined ? 'explicit' : 'preparation-default',
+      runeRules: cell.runeRules !== undefined ? 'explicit' : 'preparation-default',
+      upgradeLevel: cell.upgradeLevel !== undefined ? 'explicit' : 'preparation-default',
+    },
+  };
+}
+
 export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;y:number}) {
   assert(NODE_BIOMES[cell.nodeId]?.biomeTier === cell.tier);
   for (const id of Object.values(cell.build.gearItemIds)) {
@@ -88,7 +155,10 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     assert(recipe && ITEM_DATABASE.has(id!), `Missing recipe/item ${id}`);
     assert(recipe.tier <= cell.tier, `Future item ${id}`);
   }
-  const bot = materializeBot(world, cell.build, {nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:cell.isDungeon ?? false}, pos, BENCH_BOT_ID, cell.upgradeLevel ?? 5);
+  // ONE resolution, shared with the receipt: the bot is prepared from exactly the
+  // package a declaration can be computed from before the fight.
+  const declared = resolveSurveyPackage(cell);
+  const bot = materializeBot(world, cell.build, {nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:cell.isDungeon ?? false}, pos, BENCH_BOT_ID, declared.upgradeLevel);
   const p = bot.tracksProgression;
   for(const id of Object.values(cell.build.gearItemIds)) {
     const recipe=RECIPE_DATABASE.get(id!)!;
@@ -103,26 +173,18 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
   p.equippedRites = [];
   p.attunedAbilities = { techniques: [], guards: [] };
-  const stance = cell.tier >= 2 ? cell.stance ?? 'offensive-stance' : null;
+  const stance = declared.stance;
   p.attunedStances = stance ? [stance] : [];
   p.equippedStances = { default: stance };
   p.activeStance = stance;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
-  const rules = cell.runeRules ?? [
-    ...(cell.focusElites ? [{conditionId:'in-combat',actionId:'focus-elites'}] : []),
-    { conditionId:'always', actionId:'auto-path-enemy' },
-    { conditionId:'inside-telegraph', actionId:'step-back' },
-    ...((cell.orbit ?? !c.melee) ? [{ conditionId:'in-combat', actionId:'orbit' }] : []),
-    { conditionId:'always', actionId:'avoid-hazards' },
-    { conditionId:'always', actionId:'wait-for-regen' },
-  ];
+  const rules = declared.runeRules;
   for (const r of RUNE_RECIPE_DATABASE.values()) if (r.runeId && rules.some(rule=>rule.actionId===r.runeId)) {
     assert(isRuneRecipeUnlocked(r,p), `Unreachable rune ${r.id}`);
     if(!p.runesOwned.includes(r.runeId)) p.runesOwned.push(r.runeId);
   }
   p.runesEquipped = rules;
-  const techniques = [...(cell.tier >= 3 ? ['frenzy'] : []), cell.technique ?? 'sweep'];
-  const abilities = cell.abilities ?? { techniques, guards: cell.guards ?? (cell.tier===1 ? ['second-wind'] : ['second-wind','cleanse']) };
+  const abilities = declared.abilities;
   assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);

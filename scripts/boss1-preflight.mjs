@@ -105,7 +105,16 @@ for(const mode of ['qualify','pilot']){
     assert.equal(ready.escortsAuthored[id].hp,want.hp,`${ready.cell}: ${id} hp is not the adopted value`);
     assert.equal(ready.escortsAuthored[id].attack,want.attack,`${ready.cell}: ${id} attack drift`);
    }
+   // The packet prescribes Offensive for this block. The cell INHERITS it from the
+   // preparation default rather than stating it, which is legitimate -- but the
+   // declaration must then say so, and say which.
+   assert.equal(ready.declaredPackage.stance,'offensive-stance',`${ready.cell}: declared stance drift`);
+   assert.equal(ready.declaredPackage.sources.stance,'preparation-default',
+    `${ready.cell}: this block inherits its stance; an explicit one would be a different package`);
   }
+  // THE check Boss1 lacked here. It ran only on the earlier slot, so this block's
+  // declaration gap first surfaced after twelve fights had already been spent.
+  assertDeclarationsApplied(index);
  } else {
   assert.equal(manifest.cells.length,1,'the pilot is one cell');
   const index=read('index.json');

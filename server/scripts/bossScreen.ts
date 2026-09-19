@@ -47,7 +47,7 @@ import {
 } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
-import { prepareSurveyBot } from '../bench/balance/ttkSurveySpec';
+import { prepareSurveyBot, resolveSurveyPackage } from '../bench/balance/ttkSurveySpec';
 import { SurveyMetrics } from '../bench/balance/ttkSurveyMetrics';
 import { hydrateHitboxCacheFromArtifact } from '../src/hitbox/cache';
 import { checkpointDefinitionsHash } from '../src/admin/progressionCheckpoint';
@@ -63,6 +63,13 @@ import {
   BOSS1_TIMBERCLAW_SEEDS,
   assertBoss1Definitions,
 } from '../bench/balance/boss1Spec';
+import {
+  BOSS2_BLOCKS,
+  BOSS2_BOSSES,
+  BOSS2_CAP_MS,
+  BOSS2_SEED,
+  assertBoss2Definitions,
+} from '../bench/balance/boss2Spec';
 import {
   BOSSREF_BLOCKS,
   BOSSREF_BOSS_ID,
@@ -118,6 +125,19 @@ const TRIALS: Record<string, {
         seeds: BOSS1_TIMBERCLAW_SEEDS, escorts: {} },
     },
     assertDefinitions: assertBoss1Definitions,
+  },
+  /**
+   * Boss2 -- one BLOCK PER BOSS, six in all. The blocks are independent by
+   * construction, so a local problem on one boss never consumes another's
+   * allocation, and `escorts` is per boss rather than per screen: only the
+   * Razortusk summons anything, and only its receipt rule has teeth.
+   */
+  boss2: {
+    defaultBlock: BOSS2_BOSSES[0]!.name, blocks: BOSS2_BLOCKS,
+    perBlock: Object.fromEntries(BOSS2_BOSSES.map((b) => [b.name, {
+      bossId: b.bossId, capMs: BOSS2_CAP_MS, seeds: [BOSS2_SEED], escorts: b.escorts,
+    }])),
+    assertDefinitions: assertBoss2Definitions,
   },
   bossref: {
     defaultBlock: 'reference', blocks: BOSSREF_BLOCKS,
@@ -223,6 +243,8 @@ function run(cell: Night5Cell, seed: number) {
       isDungeon: true,
     });
     forceBossPhase(world, cell.nodeId);
+    /** Resolved from the cell before preparation, so the declaration is never read back off the bot. */
+    const declared = resolveSurveyPackage(cell);
     const { bot, view } = prepareSurveyBot(world, cell, BOT_SPAWN);
 
     // Tick once so the boss actually spawns before the receipt is written; a
@@ -253,18 +275,29 @@ function run(cell: Night5Cell, seed: number) {
       view,
       /**
        * The package as DECLARED, recorded before the fight so a case can never be
-       * read as something it was not run as. `runeRules: []` is a real statement
-       * (the legacy package equips none), not a missing field.
+       * read as something it was not run as.
+       *
+       * This is the RESOLVED declaration -- what `resolveSurveyPackage` says
+       * preparation will apply -- not the cell's raw optional fields. Recording the
+       * raw fields is what failed Boss1's Sovereign block: twelve clean fights
+       * declared `stance: null` against a correctly applied Offensive, because a
+       * cell that INHERITS the preparation default carries no stance of its own.
+       *
+       * It is still computed from the cell ALONE, before the fight, so the check
+       * against `appliedPackage` stays a real one. `sources` keeps an omitted field,
+       * an explicit choice and a tier that admits no stance apart; `runeRules: []`
+       * remains a real statement (the legacy package equips none), not a gap.
        */
       declaredPackage: {
         treatment: cell.treatment,
         classRoot: cell.build.classRoot,
         skillPath: [...cell.build.skillPath],
         gearItemIds: { ...cell.build.gearItemIds },
-        upgradeLevel: cell.upgradeLevel ?? 5,
-        stance: cell.stance ?? null,
-        abilities: cell.abilities ?? null,
-        runeRules: cell.runeRules ?? null,
+        upgradeLevel: declared.upgradeLevel,
+        stance: declared.stance,
+        abilities: declared.abilities,
+        runeRules: declared.runeRules,
+        sources: declared.sources,
       },
       /**
        * The package as it actually MATERIALISED on the bot, read back from the
@@ -287,9 +320,9 @@ function run(cell: Night5Cell, seed: number) {
       runicPoints: {
         budget: runeBudgetForGlobalMastery(view.globalMastery),
         cost: runicPointLoadoutCost({
-          rules: (cell.runeRules ?? view.runesEquipped) as never,
-          abilities: cell.abilities ?? structuredClone(view.attunedAbilities),
-          stances: view.activeStance ? [view.activeStance] : [],
+          rules: declared.runeRules as never,
+          abilities: declared.abilities,
+          stances: declared.stance ? [declared.stance] : [],
           rites: [...view.equippedRites ?? []],
         }),
       },

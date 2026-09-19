@@ -18,22 +18,29 @@ assert.equal(execFileSync('git',['rev-parse','HEAD^{tree}'],{cwd:source,encoding
 mkdirSync(root,{recursive:true});
 const started=Date.now();
 
-// Boss1 is a SCREEN, not a search: an EARLIER and a LATER boss, six explicit legal
-// reference builds each, and it installs nothing. Eighteen fights is the whole
-// screen and the runner refuses to grow it.
+// Boss2 is a COVERAGE MAP, not a search: the six remaining T2 bosses, each against
+// the same six explicit reference packages Boss1 carried onto Apex Timberclaw, one
+// declared seed. Thirty-six fights is the whole screen and the runner refuses to
+// grow it.
 //
-// The two blocks are INDEPENDENT: a local problem in one never consumes the other's
-// allocation. Timberclaw declares ONE seed because seeds are inert for a boss with
-// no adds, a fixed spawn and deterministic evasion; the Sovereign's raise-dead and
-// spawn-adds offsets do consume randomness, so it keeps two.
+// The six blocks are INDEPENDENT: a local problem on one boss never consumes
+// another's allocation, and each is verified on its own.
+//
+// `summonsNothing` is per BOSS. Only the Razortusk summons (plains-slime and boar,
+// from spawns nested inside its Rallying Cry cast and its 10 s repeating cadence),
+// so it is the only block where add pressure is legitimate. On the other five, an
+// add is the signal that post-terminal replacement guardians leaked into the count
+// -- the defect that once reported twelve adds on a boss that summons nothing.
 const BLOCKS=[
- {name:'timberclaw',cells:6,seeds:[96011],bossId:'apex-timberclaw',bossMaxHp:3750,
-  summonsNothing:true,limitMs:40*60000},
- {name:'sovereign',cells:6,seeds:[94011,94019],bossId:'charnel-crown-sovereign',bossMaxHp:19499,
-  summonsNothing:false,limitMs:60*60000},
+ {name:'razortusk',cells:6,seeds:[98011],bossId:'gorging-razortusk',bossMaxHp:4000,summonsNothing:false,limitMs:40*60000},
+ {name:'juggernaut',cells:6,seeds:[98011],bossId:'stoneplate-juggernaut',bossMaxHp:5000,summonsNothing:true,limitMs:40*60000},
+ {name:'behemoth',cells:6,seeds:[98011],bossId:'mire-gorged-behemoth',bossMaxHp:3375,summonsNothing:true,limitMs:40*60000},
+ {name:'dreadbore',cells:6,seeds:[98011],bossId:'chitinous-dreadbore',bossMaxHp:4375,summonsNothing:true,limitMs:40*60000},
+ {name:'emperor',cells:6,seeds:[98011],bossId:'dune-stalker-emperor',bossMaxHp:3750,summonsNothing:true,limitMs:40*60000},
+ {name:'gorger',cells:6,seeds:[98011],bossId:'jungle-dread-gorger',bossMaxHp:3625,summonsNothing:true,limitMs:40*60000},
 ];
 
-writeFileSync(join(root,'batch-manifest.json'),JSON.stringify({source,...args,blocks:BLOCKS.map(b=>b.name),bosses:BLOCKS.map(b=>b.bossId),started:new Date().toISOString(),ceilingHours:3},null,2));
+writeFileSync(join(root,'batch-manifest.json'),JSON.stringify({source,...args,blocks:BLOCKS.map(b=>b.name),bosses:BLOCKS.map(b=>b.bossId),started:new Date().toISOString(),ceilingHours:4},null,2));
 const note=entry=>appendFileSync(join(root,'operator-ledger.jsonl'),JSON.stringify(entry)+'\n');
 const run=(script,argv,log,limitMs)=>new Promise((resolveRun,reject)=>{
  const stream=createWriteStream(log);const child=spawn(process.execPath,night5ChildArgs(source,script,argv),{cwd:source,stdio:['ignore','pipe','pipe'],windowsHide:true});
@@ -46,7 +53,7 @@ const state={};
 for(const BLOCK of BLOCKS){
  const out=join(root,BLOCK.name),start=new Date().toISOString();
  state[BLOCK.name]={artifactVerified:false};
- const result=await run('server/scripts/bossScreen.ts',['--trial=boss1',`--block=${BLOCK.name}`,'--mode=run',`--out=${out}`,`--revision=${args.revision}`,`--hitboxes=${args.hitboxes}`],join(root,`${BLOCK.name}.log`),BLOCK.limitMs);
+ const result=await run('server/scripts/bossScreen.ts',['--trial=boss2',`--block=${BLOCK.name}`,'--mode=run',`--out=${out}`,`--revision=${args.revision}`,`--hitboxes=${args.hitboxes}`],join(root,`${BLOCK.name}.log`),BLOCK.limitMs);
  note({block:BLOCK.name,start,end:new Date().toISOString(),...result});
 
  if(result.timedOut){writeFileSync(join(root,`stopped-${BLOCK.name}.json`),JSON.stringify({reason:'watchdog',block:BLOCK.name}));continue;}
@@ -73,19 +80,21 @@ for(const BLOCK of BLOCKS){
   for(const r of index){
    const ready=JSON.parse(readFileSync(join(out,`${r.cell}-s${r.seed}/ready.json`),'utf8'));
    readies.push(ready);
-   assert.deepEqual(ready.hpTreatment,[],`${r.cell}: Boss1 installs nothing`);
-   // The escort receipt rule: a disagreement INVALIDATES the run rather than being
-   // reinterpreted, so it is asserted here and not left to the report writer.
+   assert.deepEqual(ready.hpTreatment,[],`${r.cell}: Boss2 installs nothing`);
+   assert.equal(ready.declaredPackage.treatment,'reference-portable',
+    `${r.cell}: every Boss2 cell is a portable reference, never a corroborated one`);
+   // The escort receipt rule: a disagreement INVALIDATES the block rather than
+   // being reinterpreted, so it is asserted here and not left to the report writer.
    for(const [id,want] of Object.entries(ready.escortsDeclared)){
-    assert.equal(ready.escortsAuthored[id].hp,want.hp,`${r.cell}: ${id} hp is not the declared adoption value`);
+    assert.equal(ready.escortsAuthored[id].hp,want.hp,`${r.cell}: ${id} hp is not the declared value`);
     assert.equal(ready.escortsAuthored[id].attack,want.attack,`${r.cell}: ${id} attack drift`);
    }
    assert(r.bossMaxHp>0,`${r.cell}: no boss was met`);
   }
-  // Explicit legal reference builds: the applied package must BE the declared one,
-  // in order, and must fit the budget. A scorer default must never slip back in.
-  // This is the SAME checker the preflight runs at zero-fight qualification, so a
-  // divergence visible in READY has already stopped the run before combat.
+  // Explicit legal reference packages: the applied package must BE the declared one,
+  // in order, and must fit the budget. This is the SAME checker the preflight runs at
+  // zero-fight qualification, so a divergence visible in READY has already stopped
+  // the screen before any combat was spent.
   assertDeclarationsApplied(readies);
 
   // Cross-field verification: outcome, kill evidence, terminal HP and add counts
