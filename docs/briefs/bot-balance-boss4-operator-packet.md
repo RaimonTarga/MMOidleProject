@@ -58,6 +58,7 @@ separate work. Ongoing item/class/stance side reviews are read-only proposals an
 |---|---|
 | Boss3 execution revision | `aedef12270214c4172c107b9596d76d29370c262` (tree `c08f1a8270b9eece69fb28c4662f111c97af6c56`) |
 | Revision / tree to run | resolved **mechanically** from the branch tip; see below |
+| Frozen at | `a10ed1531d30ff5fd27c369ea326ebebb22cc6a0` (tree `a873f7061715abc9e0b2704f755cdb990e59b933`), clean — the base definitions hash was re-read from this committed tip and is the `17aa46cb…` below |
 | **Base definitions hash** | **`17aa46cb9002677f634a5933e0f83850761c9e8a2c842a5f7033202b8f629d8f`** |
 | **Hitbox hash** | **`08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83`** |
 | Hitbox artifact | `C:/Users/osaif/AppData/Local/mmo-idle/validation/ttk-survey/hitboxes.json` |
