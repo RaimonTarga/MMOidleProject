@@ -254,7 +254,7 @@ export const bossMonsterEntriesT4 = [
           sourceId: 'jungle-escape', shieldPct: 0.06,
           onBreak: { staggerMs: 2400, label: 'Cornered' },
           instinctSpeedPct: 0.30,
-          flee: { speed: 270, escapeDistance: 500 } },
+          flee: { speed: 360, escapeDistance: 500 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 270, surfacesOnContact: true },
         { kind: 'payoff', name: 'Venomous Bite', castMs: 250, fx: 'savage-maul',

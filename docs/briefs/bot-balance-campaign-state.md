@@ -40,6 +40,23 @@ loses at both but removes more boss HP at 85 (36.1% vs 31.7%). Per the packet's 
 consistent with preferring 85 — reported as a reference finding, not an adoption; no value was
 written to source.
 
+**Closeout update (2026-09-19): Chitinous Dreadbore attack 85 ADOPTED into source.** Per the
+[closeout backlog](balance-campaign-closeout-and-priority-backlog-2026-09-19.md) §4, the absolute
+value 85 is now written to `bossesT2.ts` (`stats.attack: 139 -> 85`), with every other Dreadbore
+field — HP, plating, damage reduction, attack cadence, the 1.6x pattern multiplier, Burrow/Eruption,
+telegraphs, recovery windows, plating shred, phase changes, and rewards — unchanged. This
+supersedes the "reference finding, not an adoption" line above; that line is left standing as the
+literal Boss5 report state at execution time, not corrected in place.
+
+**Both Cave experimental overrides are now RETIRED, not re-runnable.** Boss4's `cave-pressure`
+block (139 -> 104, never itself adopted) and Boss5's `cave-refinement` Block C (104 vs 85, both
+arms restoring to 139) each assert the live `chitinous-dreadbore` attack equals their own frozen
+139 baseline before installing anything (`installBoss4Treatment` / `installBoss5Treatment`). With
+source now at 85, that self-check fails loudly on any further attempt to run either block instead
+of silently overwriting the adopted value — the same fail-loud seam that already governs a source
+drift for every other block. No further Cave attack experiment is authorized; a new one would need
+to be re-declared against the 85 baseline, not resume 139's arms.
+
 **Next authorized task.** Per the packet's §12: the missing-tier boss readiness map (roster-level
 retain/change/open, at most three gross interventions at a time) — plus, as a narrower
 prerequisite the run itself surfaced, a decision on whether the roster's "summons nothing"

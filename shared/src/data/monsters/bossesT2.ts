@@ -250,7 +250,7 @@ export const bossMonsterEntriesT2 = [
   ['chitinous-dreadbore', {
     id: 'chitinous-dreadbore', name: 'Chitinous Dreadbore', color: 0x442244,
     isBoss: true,
-    stats: { hp: 4375, attack: 139, plating: 12, damageReduction: 0.12, speed: 20, attackRange: 72, attackCooldown: 3600, pullRange: 280 },
+    stats: { hp: 4375, attack: 85, plating: 12, damageReduction: 0.12, speed: 20, attackRange: 72, attackCooldown: 3600, pullRange: 280 },
     behavior: 'melee', attackStyle: 'quake', biome: 'cave',
     rewards: { essence: 160, essenceType: 'red', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
@@ -506,7 +506,7 @@ export const bossMonsterEntriesT2 = [
           sourceId: 'jungle-escape', shieldPct: 0.07,
           onBreak: { staggerMs: 2600, label: 'Cornered' },
           instinctSpeedPct: 0.30,
-          flee: { speed: 210, escapeDistance: 400 } },
+          flee: { speed: 280, escapeDistance: 400 } },
         // THE STALK, not a relocation. It goes invisible only once the escape has
         // actually succeeded, then closes on you while unseen — `near-target` with
         // real travel, exactly like the Cave burrow, so the marker is a tell the
