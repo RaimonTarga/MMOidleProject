@@ -426,8 +426,9 @@ function beginContagion(
 
   // THE EDGE TEST. A monster exactly on the drawn rim inherits the afflictions;
   // one pixel further out does not. This is the whole promise the indicator
-  // makes, and the cap (3 at this rank) is wide enough that what is being
-  // measured here is the RADIUS and not the target limit.
+  // makes. Only two candidates are placed, which is comfortably under the cap at
+  // any rank, so what is being measured here is the RADIUS and not the target
+  // limit - the two must stay independently testable.
   const radius = contagionRadius(player.tracksProgression.playerTier);
   const onRim = spawn(world, 405 + radius, 400);
   const pastRim = spawn(world, 405 + radius + 1, 400);
