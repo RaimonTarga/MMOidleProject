@@ -52,6 +52,7 @@ import { SurveyMetrics } from '../bench/balance/ttkSurveyMetrics';
 import { hydrateHitboxCacheFromArtifact } from '../src/hitbox/cache';
 import { checkpointDefinitionsHash } from '../src/admin/progressionCheckpoint';
 import { ensureDungeon } from '../src/systems/world/dungeons/dungeon';
+import { effectiveMonsterDot } from '../src/systems/combat/engine/monsterMechanics';
 import {
   BOSS1_BLOCKS,
   BOSS1_BOSS_ID,
@@ -76,6 +77,13 @@ import {
   BOSS3_CAP_MS,
   assertBoss3Definitions,
 } from '../bench/balance/boss3Spec';
+import {
+  BOSS4_BLOCKS,
+  BOSS4_BLOCKS_DEF,
+  BOSS4_CAP_MS,
+  assertBoss4Definitions,
+  installBoss4Treatment,
+} from '../bench/balance/boss4Spec';
 import {
   BOSSREF_BLOCKS,
   BOSSREF_BOSS_ID,
@@ -122,6 +130,20 @@ const TRIALS: Record<string, {
   /** Boss identity is per BLOCK: an earlier/later screen fights two different bosses. */
   perBlock: Record<string, BlockSpec>;
   assertDefinitions: () => void;
+  /**
+   * The per-trial treatment seam.
+   *
+   * Boss1-Boss3 install nothing and omit this, so their observations are byte-for-byte
+   * what they were when their packets were frozen. Boss4 is the first boss screen with
+   * a treatment, and it is a DAMAGE treatment rather than the mob survey's HP overlay
+   * -- so it gets its own receipt field (`damageTreatment`) and never borrows
+   * `hpTreatment`, which stays an accurate empty list on every boss screen.
+   *
+   * The contract is the survey's: install before the world exists, hand back the
+   * inverse, and the caller restores in a `finally` so an exception cannot leave a
+   * candidate standing for the next cell.
+   */
+  installTreatment?: (cell: Night5Cell) => { changes: unknown[]; restore: () => void } | null;
 }> = {
   boss1: {
     defaultBlock: 'sovereign', blocks: BOSS1_BLOCKS,
@@ -160,6 +182,22 @@ const TRIALS: Record<string, {
       bossId: b.bossId, capMs: BOSS3_CAP_MS, seeds: [b.seed], escorts: {},
     }])),
     assertDefinitions: assertBoss3Definitions,
+  },
+  /**
+   * Boss4 -- one local enemy-pressure candidate per boss, two blocks of twelve.
+   *
+   * The player package is frozen and IDENTICAL in both arms of a block (it is carried
+   * from the Boss3 arm that is the sensible reference for that matchup); the only
+   * difference between the arms is the single authored boss field the candidate
+   * installs. That inverts Boss3, where the boss was fixed and the package moved.
+   */
+  boss4: {
+    defaultBlock: BOSS4_BLOCKS_DEF[0]!.name, blocks: BOSS4_BLOCKS,
+    perBlock: Object.fromEntries(BOSS4_BLOCKS_DEF.map((b) => [b.name, {
+      bossId: b.bossId, capMs: BOSS4_CAP_MS, seeds: [b.seed], escorts: {},
+    }])),
+    assertDefinitions: assertBoss4Definitions,
+    installTreatment: installBoss4Treatment,
   },
   bossref: {
     defaultBlock: 'reference', blocks: BOSSREF_BLOCKS,
@@ -256,6 +294,21 @@ function run(cell: Night5Cell, seed: number) {
     return randomState / 4294967296;
   };
   Date.now = () => now;
+  /**
+   * The treatment is installed BEFORE the world exists, because a monster's attack,
+   * HP, plating and DR are baked onto the body at spawn: a write that lands after the
+   * boss has woken would change a displayed definition and nothing the fight reads.
+   * The DoT payload is read live at application time instead, so it is covered either
+   * way -- but installing once, up front, keeps both candidates on one rule.
+   */
+  let treatment: { changes: unknown[]; restore: () => void } | null = null;
+  const restoreClocks = (): void => { Date.now = realNow; Math.random = realRandom; };
+  try {
+    treatment = trialSpec.installTreatment?.(cell) ?? null;
+  } catch (error) {
+    restoreClocks();
+    throw error;
+  }
   const world = createBalanceWorld();
   try {
     setupArena(world, {
@@ -376,12 +429,20 @@ function run(cell: Night5Cell, seed: number) {
         seed,
         nonBossBodiesAtStart: initial.filter((m) => m.type !== spec.bossId).length,
       },
-      /** The boss as it actually stands at wake-up, after any node modifier. */
+      /**
+       * The boss as it actually stands at wake-up, after any node modifier -- and,
+       * on a treated arm, the proof that the candidate reached the RUNTIME rather
+       * than merely a definition. `attack` is read off the spawned body;
+       * `dotDamagePerStack` is read through `effectiveMonsterDot`, the same function
+       * the on-hit listener calls, against this same entity.
+       */
       bossRuntime: {
         maxHp: boss.hasHealth.maxHp,
         attack: boss.dealsDamage.attack,
         plating: boss.mitigatesDamage.plating,
         dr: boss.mitigatesDamage.damageReduction,
+        dotDamagePerStack:
+          effectiveMonsterDot(boss, MONSTER_DATABASE.get(spec.bossId))?.damagePerStack ?? null,
       },
       bossAuthored: MONSTER_DATABASE.get(spec.bossId)!.stats,
       /**
@@ -395,8 +456,32 @@ function run(cell: Night5Cell, seed: number) {
       escortsDeclared: spec.escorts,
       initialRoster: initial,
       initialRosterHash: sha(JSON.stringify(initial)),
-      /** Both trials install nothing; a non-empty treatment would mean an overlay came back. */
+      /**
+       * No boss screen installs the mob survey's HP overlay, so this stays an
+       * accurate empty list on every trial -- and it is deliberately NOT reused to
+       * record a damage treatment. An empty `hpTreatment` must never be readable as
+       * "this fight installed nothing".
+       */
       hpTreatment: [] as unknown[],
+      /**
+       * The damage treatment this observation actually ran under: empty on a control,
+       * one explicit before/after change on a treated arm. This is the record a
+       * treated run is read by; the manifest's `definitionsHash` cannot serve, because
+       * it is computed once at load, before any install.
+       */
+      damageTreatment: (treatment?.changes ?? []) as unknown[],
+      /**
+       * Base versus live definitions identity, hashed with the same function the
+       * manifest uses. `base` pins the untreated source; `live` is re-hashed with the
+       * treatment standing, so a control must match `base` exactly and a treated arm
+       * must differ from it. That is what turns "the candidate reached the simulated
+       * payload" from an assumption into a machine check.
+       */
+      definitionsIdentity: {
+        base: manifest.definitionsHash,
+        live: checkpointDefinitionsHash(),
+        treated: (treatment?.changes ?? []).length > 0,
+      },
     };
     if (mode === 'qualify') return ready;
 
@@ -604,7 +689,11 @@ function run(cell: Night5Cell, seed: number) {
     writeFileSync(join(dir, 'summary.json'), JSON.stringify(result, null, 2));
     return result;
   } finally {
-    try { teardownArena(world); } finally { Date.now = realNow; Math.random = realRandom; }
+    // Restoration is unconditional and runs on the exception path too: a treated
+    // observation that threw must not leave a candidate standing for the next cell.
+    try { teardownArena(world); } finally {
+      try { treatment?.restore(); } finally { restoreClocks(); }
+    }
   }
 }
 

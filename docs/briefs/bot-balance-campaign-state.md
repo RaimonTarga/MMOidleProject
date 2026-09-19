@@ -2,7 +2,61 @@
 
 Updated: 2026-09-19. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## CURRENT PHASE (2026-09-19): T2 boss coverage COMPLETE; Boss3 frozen, NOT launched
+## CURRENT PHASE (2026-09-19): Boss3 executed and reviewed; Boss4 frozen, NOT launched
+
+**Boss3 executed.** 24 fights at `aedef122` (tree `c08f1a82`), both blocks verified, 0 capped /
+reset / vanished / ambiguous / invalid. All 12 control rows reproduce Boss2's elapsed time and
+boss HP remaining exactly — a reproducibility check, never pooled as new coverage.
+
+| Boss | Brace reference | Cleanse substitution | Reading |
+|---|---:|---:|---|
+| Mire-Gorged Behemoth | 0/6 | **2/6** | Cleanse is useful here; the four remaining deaths all lasted longer and removed more boss HP |
+| Chitinous Dreadbore | 0/6 | 0/6 | small mixed shifts in BOTH directions, no victory in either arm |
+
+**The guard/equipment permutation sequence stops here.** Swamp retains Cleanse as its practical
+reference; Cave retains the original Brace reference, where the replacement did not solve the
+failure.
+
+**Corrections to the Boss3 report** — prose only, in [its §11](bot-balance-boss3-report.md).
+No fight was re-run and no artifact altered. The report said "24 substitution fights" (it is 12
+and 12); its executive "nothing got worse" is too broad (Cave conduit 37.9→37.8 s, spirit
+38.2→37.9 s); and `minHpFraction` is the minimum of the **100 ms tick** observations, not a
+continuous terminal value — the 1000 ms `samples.jsonl` series and the terminal reading are two
+further, distinct things. The one-example claim that coarse samples proxy DoT deaths well is
+withdrawn. The per-root first-Cleanse divergence stays a recorded observation with no isolated
+cause, and the Conduit/Dreadbore accounting gap stays **unknown**.
+
+**Next authorized task.** Sonnet executes [the Boss4 operator packet](bot-balance-boss4-operator-packet.md):
+**one local enemy-pressure candidate per boss**, in two independent blocks, at the Boss3 reference
+that is sensible for each matchup.
+
+- `swamp-pressure` — `mire-gorged-behemoth` venom `damagePerStack` **9 → 6**, on the Boss3
+  **cleanse-substitution** package in BOTH arms.
+- `cave-pressure` — `chitinous-dreadbore` `stats.attack` **139 → 104** (`round(139 x 0.75)`), on
+  the Boss3 **portable-reference** package, Brace included, in BOTH arms.
+
+2 blocks x 6 roots x 2 arms x the carried seed `98011`, 300 s cap = **24 fights**. The candidate
+is installed process-locally and restored after every observation; **nothing is adopted into
+source**. A control may only be compared to its OWN historical arm — Swamp current ↔ Boss3
+Cleanse, Cave current ↔ Boss3 portable reference. Comparing Swamp's candidate to the old Brace
+result would fold the guard substitution into the boss-stat effect.
+
+Qualification ran during preparation and passed: typecheck (bench included), the eight named
+tests, a functional fixture measuring both damage paths, and a zero-fight preflight. Two results
+worth carrying: **the base definitions hash does not prove a fight ran untreated** (it is hashed
+before any install, so each receipt carries its own `damageTreatment`, runtime readback and LIVE
+hash), and **the 25.2% authored attack cut is not the effect size** — post-mitigation damage
+falls 28.9–30.4% because plating subtracts before the scaling, and landed damage falls by a
+different, non-uniform 21.3–29.5%.
+
+Opus is NOT authorized to launch it. Boss4 is a decision checkpoint, not permission for endless
+Swamp/Cave tests; after review the main coverage work moves toward the missing boss tiers.
+
+See: [Boss3 report](bot-balance-boss3-report.md) · [Boss4 packet](bot-balance-boss4-operator-packet.md).
+
+---
+
+## PREVIOUS PHASE (2026-09-19): T2 boss coverage COMPLETE; Boss3 frozen, then executed
 
 **Boss2 executed and reviewed.** 36 fights at `96cf77d4` (tree `2bf3a8c4`), all six blocks
 verified, plus the six reused Timberclaw rows: **42 observations, 17 boss-killed / 25 bot-died**,
