@@ -50,6 +50,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'debuff-sundered': d('Sundered', 'Your defenses are split open: every source hits you harder for as long as it lasts. It stacks, so a fight you cannot end quickly gets worse on a curve.'),
   'debuff-plating-shred': d('Corroded plating', 'This encounter is stripping flat plating from every incoming hit. The corrosion stacks until the source is defeated or the encounter ends.'),
   'debuff-antiheal': d('Antiheal', 'Healing you receive is suppressed. Out-sustaining the fight stops being an option — burst it down or break away until this expires.'),
+  'debuff-frozen': d('Frozen', 'You are frozen solid: you cannot move and you cannot attack. Hard control, so break-free effects and control resistance are the answer — an ordinary Cleanse does not reach it. Tundra bosses can only apply it while your Chill is high, so keeping Chill down is what prevents it.'),
   'debuff-stunned': d('Stunned', 'You cannot act. Hard control: control resistance and break-free effects shorten it; slow resistance does nothing.'),
 
   // -- Abilities -------------------------------------------------------------

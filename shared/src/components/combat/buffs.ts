@@ -59,6 +59,11 @@ export const BUFF_IDS = [
   'debuff-sundered',
   'debuff-plating-shred',
   'debuff-antiheal',
+  // Tundra's Deep Freeze on YOU. Deliberately separate from `dot-frozen`, which is
+  // the DoT archetype reporting that its TARGET is frozen: the two are the same
+  // mechanic seen from opposite sides, and one tile cannot describe both without
+  // telling one of the two players the wrong thing about who is locked.
+  'debuff-frozen',
   'defense-ward',             // temporary absorb pools
   'defense-absorb',
   'defense-recovery',

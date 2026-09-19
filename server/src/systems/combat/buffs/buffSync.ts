@@ -12,6 +12,7 @@ import {
   VOLCANIC_HEAT_EFFECT_ID,
   TUNDRA_CHILL_EFFECT_ID,
   CAVE_LOCKDOWN_EFFECT_ID,
+  FROZEN_STATUS_ID,
   SUNDERED_EFFECT_ID,
   PLATING_SHRED_EFFECT_ID,
   DAMAGE_DEALT_PCT_KEY,
@@ -120,6 +121,36 @@ const DEBUFF_BUFFS = [
       };
     },
     { category: "neutral", shape: "diamond", color: "#aa66ff", label: "Root" },
+  ),
+  defineBuff(
+    "debuff-frozen",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      const frozen = getStatusEffect(playerCs, FROZEN_STATUS_ID);
+      if (!frozen || frozen.remainingMs <= 0) return null;
+      const totalMs = frozen.data["totalMs"] ?? frozen.remainingMs;
+      const source = world.getMonsterEntity(frozen.sourceId);
+      return {
+        id: "debuff-frozen",
+        label: "Frozen",
+        stacks: 1,
+        durationPct: totalMs > 0 ? (frozen.remainingMs / totalMs) * 100 : -1,
+        // Same reason `debuff-root` publishes it: the own-player prediction in
+        // client/src/render/players.ts stops on a zero multiplier. Without it the
+        // sprite keeps walking through a freeze and snaps back on the next sync.
+        speedMult: 0,
+        color: "#cfefff",
+        logSourceName: source?.isMonster.name ?? "Deep Freeze",
+        logSourceSide: "enemy",
+        logDetail: "movement and attacks disabled",
+        remainingMs: frozen.remainingMs,
+        values: [
+          { label: "Movement and attacks", value: "disabled", good: false },
+          { label: "Duration", value: `${(frozen.remainingMs / 1000).toFixed(1)}s`, good: false },
+        ],
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#cfefff", label: "Frozen" },
   ),
   defineBuff(
     "debuff-frost-ramp",
@@ -775,6 +806,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "target chill stacks";
     case "dot-frozen":
       return "target frozen";
+    case "debuff-frozen":
+      return "frozen solid; movement and attacks disabled";
     case "dot-frostbite":
       return "+DoT damage taken";
     case "reload-snipe-ready":

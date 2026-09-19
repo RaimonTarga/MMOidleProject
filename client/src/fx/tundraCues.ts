@@ -52,6 +52,64 @@ function shards(
 }
 
 /**
+ * DEEP FREEZE WIND-UP — the caster gathering the cold, drawn on the cast START.
+ *
+ * Deliberately NOT a second fxDeepFreeze. The release is the victim's cue and closes
+ * inward on them; this is the caster's tell and stays small, local and cheap, because
+ * the only thing it has to say is "the freeze is coming and it is coming from there".
+ * `monster-cast-start` carries no target, so caster-anchored is also all it can be.
+ *
+ * Sized to be readable during a 1.4-1.5s cast without competing with the cast bar
+ * above it or the Shatter telegraph that follows.
+ */
+export function fxFrostWindUp(scene: GameScene, x: number, y: number): void {
+  // A cold ring tightening onto the caster: the mirror of the release, one beat early.
+  const ring = scene.add.graphics({ x, y }).setDepth(DEPTH.FX);
+  ring.lineStyle(3, ICE_MID, 0.7);
+  ring.strokeCircle(0, 0, 34);
+  ring.setScale(1.5);
+  scene.tweens.add({
+    targets: ring,
+    scaleX: 0.55,
+    scaleY: 0.55,
+    alpha: 0,
+    duration: 620,
+    ease: 'Quad.easeIn',
+    onComplete: () => ring.destroy(),
+  });
+
+  // Three short shards drifting in — a hint of the cage, not the cage itself.
+  for (let i = 0; i < 3; i++) {
+    const a = (i / 3) * Math.PI * 2 + Math.random() * 0.6;
+    const shard = scene.add
+      .graphics({ x: x + Math.cos(a) * 40, y: y + Math.sin(a) * 40 })
+      .setDepth(DEPTH.FX);
+    shard.fillStyle(ICE_CORE, 0.75);
+    shard.fillTriangle(0, -4, 13, 0, 0, 4);
+    shard.setRotation(a + Math.PI);
+    scene.tweens.add({
+      targets: shard,
+      x: x + Math.cos(a) * 12,
+      y: y + Math.sin(a) * 12,
+      alpha: 0,
+      duration: 560,
+      delay: i * 90,
+      ease: 'Cubic.easeIn',
+      onComplete: () => shard.destroy(),
+    });
+  }
+
+  burstFx(scene, 'ptx-dot', x, y, 8, 700, {
+    tint: ICE_MID,
+    speed: { min: 8, max: 26 },
+    angle: { min: 0, max: 360 },
+    scale: { start: 0.45, end: 0 },
+    alpha: { start: 0.7, end: 0 },
+    gravityY: -30,
+  });
+}
+
+/**
  * FROSTBIND / DEEP FREEZE — the chill-gated root (Rime Caster, Hoarfrost Yeti, and
  * the opening step of both Tundra bosses' patterns).
  *

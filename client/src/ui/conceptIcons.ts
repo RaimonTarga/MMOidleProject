@@ -201,6 +201,7 @@ const DEBUFF_IDS = new Set([
   'debuff-dot',
   'debuff-poison',
   'debuff-frost-ramp',
+  'debuff-frozen',
   'debuff-plating-shred',
   'debuff-root',
   'debuff-slow',
@@ -294,6 +295,16 @@ const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {
   'ability-second-wind-2': 'second-wind',
 };
 
+/**
+ * Debuff ids whose authored art lives under `statuses/buffs`. Player-Frozen and the
+ * DoT archetype's target-Frozen tile are one mechanic seen from opposite sides, so
+ * they deliberately share the single authored icon rather than duplicating the PNG
+ * into both directories and leaving two files to keep in step.
+ */
+const DEBUFF_BUFF_DIR_ICON_ALIASES: Record<string, string> = {
+  'debuff-frozen': 'dot-frozen',
+};
+
 export function statusIconSource(id: string): AssetIconSource | null {
   if (BUFF_IDS.has(id)) {
     const abilityIconId = BUFF_ABILITY_ICON_ALIASES[id];
@@ -305,6 +316,8 @@ export function statusIconSource(id: string): AssetIconSource | null {
     return source('statuses/buffs', iconId, iconId === 'defense-burst' ? 'green-regen-v2' : undefined);
   }
   if (DEBUFF_IDS.has(id)) {
+    const buffDirIconId = DEBUFF_BUFF_DIR_ICON_ALIASES[id];
+    if (buffDirIconId) return source('statuses/buffs', buffDirIconId);
     return source('statuses/debuffs', id, id === 'debuff-root' ? 'snare-root-v2' : undefined);
   }
   if (TARGET_BUFF_ICON_IDS.has(id)) {

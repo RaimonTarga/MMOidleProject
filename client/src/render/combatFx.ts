@@ -131,7 +131,7 @@ import {
   fxDragWake,
   fxDragDestination,
 } from "../fx/swampCues";
-import { fxDeepFreeze, fxShatter, fxGlacialSlam } from "../fx/tundraCues";
+import { fxDeepFreeze, fxFrostWindUp, fxShatter, fxGlacialSlam } from "../fx/tundraCues";
 import { fxStalactiteShot, fxBurrow, fxEmerge } from "../fx/caveCues";
 import { fxGroundSlam, fxChargeLane, fxBombardment } from "../fx/mountainCues";
 import { fxPredatorFlee, fxPressureLance } from "../fx/predatorCues";
@@ -984,6 +984,10 @@ export function dispatchCombatEvent(
         // whole ability is solvable from, so it has to be drawn on the wind-up and
         // not only on what lands.
         else if (ev.fx === "deathroll") fxDeathrollCoil(scene, caster.x, caster.y);
+        // Deep Freeze's wind-up. The RELEASE is already drawn on `monster-cast-end`
+        // below (`frostbind` -> fxDeepFreeze, anchored on the victim), so this adds
+        // only the caster-side tell and must not repeat the lock animation.
+        else if (ev.fx === "frostbind") fxFrostWindUp(scene, caster.x, caster.y);
       }
     }
     return;
