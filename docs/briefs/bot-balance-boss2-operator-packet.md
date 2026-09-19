@@ -251,6 +251,10 @@ gorger     qualify ok — 6 portable references, boss awake, declarations applie
 boss2 preflight: ok — 6 blocks, 36 planned observations, ZERO fights spent
 ```
 
+Verified at this exact tip (`3eed309e`, clean tree) during preparation. Those artifacts are
+kept at `.../ttk-survey/boss2-preflight-opus-verify` so the documented preflight root above is
+**free** — the runner requires a NEW root and will refuse an existing one.
+
 **Portability is measured, not asserted.** Each root's effective stats are byte-identical
 across all six blocks *and* identical to its Boss1 Timberclaw cell — nothing about the player
 depends on which boss is standing there, which is precisely the claim that makes the combined
