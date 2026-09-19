@@ -262,13 +262,16 @@ console.log("affliction: target-max-stacks counts stacking DoTs and ignores rese
   const { world, player } = setup(["contagion"]);
   const contagion = ABILITY_DATABASE.get("contagion")!;
   const primary = spawn(world, 400, 400);
-  // Five candidates inside rank I's 140px radius; the cap is 3.
+  // Eight candidates inside rank II's 150px radius; the cap is 6.
   const victims = [
     spawn(world, 420, 400),
     spawn(world, 440, 400),
     spawn(world, 400, 425),
     spawn(world, 400, 450),
     spawn(world, 460, 400),
+    spawn(world, 480, 400),
+    spawn(world, 500, 400),
+    spawn(world, 520, 400),
   ];
   // Far outside the radius — must never be infected.
   const bystander = spawn(world, 400, 900);
@@ -279,13 +282,13 @@ console.log("affliction: target-max-stacks counts stacking DoTs and ignores rese
   resolveContagion(world, player, contagion, primary);
 
   // The fixture player is T3 and Contagion is homed at T2, so this is rank II —
-  // radius 150, cap 3. The cap, not the radius, is what bounds the spread.
+  // radius 150, cap 6. The cap, not the radius, is what bounds the spread.
   const infected = victims.filter(
     (v) => getStatusEffect(v.tracksCombat, "dot") !== undefined,
   );
   assert(
-    infected.length === 3,
-    `rank II must cap at 3 infected targets, got ${infected.length}`,
+    infected.length === 6,
+    `rank II must cap at 6 infected targets, got ${infected.length}`,
   );
   assert(
     getStatusEffect(bystander.tracksCombat, "dot") === undefined,
@@ -332,7 +335,7 @@ console.log("affliction: Contagion copies at full strength, capped, original ret
 
 {
   const { world, player } = setup(["contagion"]);
-  // Contagion's home tier. A T2 player reads rank I: cap 2, not 3.
+  // Contagion's home tier. A T2 player reads rank I: cap 5, not 6.
   player.tracksProgression.playerTier = 2;
   const contagion = ABILITY_DATABASE.get("contagion")!;
   const primary = spawn(world, 400, 400);
@@ -341,6 +344,9 @@ console.log("affliction: Contagion copies at full strength, capped, original ret
     spawn(world, 430, 400),
     spawn(world, 445, 400),
     spawn(world, 400, 460),
+    spawn(world, 475, 400),
+    spawn(world, 490, 400),
+    spawn(world, 505, 400),
   ];
   paintClassDot(primary, "afflictor", 4, { maxStacks: 6 });
 
@@ -350,15 +356,22 @@ console.log("affliction: Contagion copies at full strength, capped, original ret
     (v) => getStatusEffect(v.tracksCombat, "dot") !== undefined,
   );
   assert(
-    infected.length === 2,
-    `rank I must cap at 2 infected targets, got ${infected.length}`,
+    infected.length === 5,
+    `rank I must cap at 5 infected targets, got ${infected.length}`,
   );
-  // Nearest-first, so the cap takes the two closest rather than an arbitrary two.
-  assert(
-    getStatusEffect(victims[0]!.tracksCombat, "dot") !== undefined &&
-      getStatusEffect(victims[1]!.tracksCombat, "dot") !== undefined,
-    "the cap must select the NEAREST candidates, so the cast is aimable by positioning",
-  );
+  // Nearest-first, so the cap takes the five closest rather than an arbitrary five.
+  for (let i = 0; i < 5; i++) {
+    assert(
+      getStatusEffect(victims[i]!.tracksCombat, "dot") !== undefined,
+      `the cap must select the NEAREST candidates, so the cast is aimable by positioning (victim ${i} missed)`,
+    );
+  }
+  for (let i = 5; i < victims.length; i++) {
+    assert(
+      getStatusEffect(victims[i]!.tracksCombat, "dot") === undefined,
+      `the two farthest candidates must be excluded by the cap (victim ${i} was infected)`,
+    );
+  }
 }
 console.log("affliction: Contagion's target cap follows the authored rank");
 

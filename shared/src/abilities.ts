@@ -832,9 +832,9 @@ const abilities: AbilityDef[] = [
     // Learn to spread first, learn to cash in second. Each tool then competes
     // with the rest of the attuned build for RP.
     ranks: [
-      { effect: { kind: "spread-dots", radius: 120, maxTargets: 2 }, cooldownMs: 14000, castMs: 1000 },
-      { effect: { kind: "spread-dots", radius: 150, maxTargets: 3 }, cooldownMs: 12000, castMs: 1000 },
-      { effect: { kind: "spread-dots", radius: 180, maxTargets: 5 }, cooldownMs: 9000, castMs: 1000 },
+      { effect: { kind: "spread-dots", radius: 120, maxTargets: 5 }, cooldownMs: 14000, castMs: 1000 },
+      { effect: { kind: "spread-dots", radius: 150, maxTargets: 6 }, cooldownMs: 12000, castMs: 1000 },
+      { effect: { kind: "spread-dots", radius: 180, maxTargets: 7 }, cooldownMs: 9000, castMs: 1000 },
     ],
   },
 
