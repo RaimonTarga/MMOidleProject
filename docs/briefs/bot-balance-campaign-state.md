@@ -2,7 +2,55 @@
 
 Updated: 2026-09-19. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## CURRENT PHASE (2026-09-19): Boss1 reviewed and retained; Boss2 frozen, NOT launched
+## CURRENT PHASE (2026-09-19): T2 boss coverage COMPLETE; Boss3 frozen, NOT launched
+
+**Boss2 executed and reviewed.** 36 fights at `96cf77d4` (tree `2bf3a8c4`), all six blocks
+verified, plus the six reused Timberclaw rows: **42 observations, 17 boss-killed / 25 bot-died**,
+0 capped / reset / vanished / ambiguous / invalid. That completes T2 boss **COVERAGE** — 7 bosses
+x 6 roots. It is coverage, **not T2 balance completion**, and says nothing about T1/T3/T4 boss
+readiness or guardian access.
+
+Per-boss victories: Juggernaut 5/6, Gorger 5/6, Emperor 4/6, Razortusk 2/6, Timberclaw 1/6
+(reused), **Behemoth 0/6, Dreadbore 0/6**. Per-root: Spirit 5/7, Slinger 4/7, Striker 3/7,
+Squire 3/7, Apprentice 1/7, Conduit 1/7.
+
+**Corrections to the Boss2 report, from the artifacts** — full detail in
+[the Boss2 review](bot-balance-boss2-review.md) §2. Do not re-run Boss2 to repair prose.
+- Conduit has **ONE** victory (Juggernaut), not the two §4 claims. The tables were right.
+- The Behemoth attribution claim is **WITHDRAWN**. The Corrosive Pool does not bypass
+  `damageFromBoss`; that counter fully accounts for what the player took, and `hpLost` is *lower*
+  in every fight because barrier and healing sit between them. Behemoth is **87-92% DoT**
+  (`monster-dot:mire-gorged-venom`), `largestHit` is **30** in all six, and all six deaths record
+  a DoT cause at 4 stacks. There is no burst in that encounter.
+- Dreadbore is **burst, not attrition**: zero DoT in all six, lethal blows 92-149 against 231-300
+  max HP. Four of its six deaths occurred **before** 50% HP, so `empower-shred` cannot explain them.
+- Positional counterplay DID act on both: 12-20 `telegraph-dodge` per fight, 4 `hazard-escape` on
+  Behemoth. Neither wipe is explained by the references standing still.
+- No functional defect found in the four named recordings. No stat compensation is proposed.
+
+**Retained limitations.** Timberclaw and Razortusk remain difficult portable matchups. Apprentice
+and Conduit remain **reference-fit** questions — Conduit's has a stated design explanation
+(`CannotAttack`, zero owner `attackBeats` by design), Apprentice's does not. **No global class
+verdict** follows from either. Guardian/access stays unmeasured and is never pooled in. Boss1's
+Sovereign block keeps its **separate retrospective-verification** status; Boss2's passing tests do
+**not** retroactively certify it. T1/T3/T4 boss coverage is still pending.
+
+**Next authorized task.** Sonnet executes [the Boss3 operator packet](bot-balance-boss3-operator-packet.md):
+**one** defensive substitution (Brace -> Cleanse at index 1 of the ordered Guard list) against the
+two total-wipe bosses. 2 blocks x 6 roots x 2 arms x the reused Boss2 seed `98011`, 300 s cap =
+**24 fights**, at the Boss2 revision itself. Arm neutrality is measured: every root's effective
+stats are byte-identical across both arms on both bosses, and the substitution frees exactly 2 RP,
+left unspent. Swamp is the plausible block (Cleanse's only target is the channel doing 87-92% of
+the damage); **Cave is the one that may get worse** (plating restoration against 92-149 point
+hits, in place of a 40% DR window). Opus is NOT authorized to launch it. This is ONE screen, not
+permission to optimize builds until they win, and **Boss4 is not automatically created**.
+
+See: [Boss2 review](bot-balance-boss2-review.md) ·
+[Boss3 packet](bot-balance-boss3-operator-packet.md).
+
+---
+
+## PREVIOUS PHASE (2026-09-19): Boss1 reviewed and retained; Boss2 frozen, NOT launched
 
 **Phase.** T2 boss coverage. The mob campaign is closed for this purpose and is not reopened;
 the named T3 Jungle pressure and the earlier Mountain limitations stay visible but nothing
@@ -48,10 +96,9 @@ later slot's gap surfaced after twelve fights. Proven declaration-only: both Bos
 re-qualify to **byte-identical** effective stats and roster hashes, at an unchanged definitions
 hash `17aa46cb…`.
 
-**Next authorized task.** Sonnet executes [the Boss2 operator packet](bot-balance-boss2-operator-packet.md):
-six remaining T2 bosses x six portable reference packages x one declared seed `98011`, 300 s cap
-= **36 formal fights**. The six Timberclaw rows are carried forward from Boss1, tagged as reused,
-for a seven-boss combined map. Opus is NOT authorized to launch it.
+**Boss2 was then executed** (see the current phase above): 36 fights, all six blocks verified,
+seven-boss combined map complete. This section is retained for the Boss1 record and the fix it
+shipped.
 
 See: [Boss1 review](bot-balance-boss1-review.md) ·
 [declaration audit](bot-balance-boss1-stance-declaration-audit.md).

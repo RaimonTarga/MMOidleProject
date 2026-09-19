@@ -26,7 +26,10 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
-| [Boss2 operator packet](briefs/bot-balance-boss2-operator-packet.md) | **FROZEN 2026-09-19, NOT LAUNCHED.** The six remaining T2 bosses x six portable reference packages x one declared seed `98011`, 300 s cap: 36 fights. Carries the six Boss1 Timberclaw rows forward (tagged as reused) for a seven-boss coverage map. |
+| [Boss3 operator packet](briefs/bot-balance-boss3-operator-packet.md) | **FROZEN 2026-09-19, NOT LAUNCHED.** One defensive substitution — Brace -> Cleanse at index 1 of the ordered Guard list — against the two T2 bosses that beat every portable reference; 2 blocks x 6 roots x 2 arms on the reused Boss2 seed, 300 s cap: 24 fights. No balance value changes. |
+| [Boss2 review](briefs/bot-balance-boss2-review.md) | Corrections to the Boss2 report from its own artifacts (Conduit has one victory, not two; the Corrosive-Pool attribution claim is withdrawn; Dreadbore is burst, not attrition) plus the verified Cleanse eligibility, costs and selection facts the Boss3 packet rests on. |
+| [Boss2 report](briefs/bot-balance-boss2-report.md) | Execution record for the 36-fight Boss2 screen at `96cf77d4`, completing T2 boss coverage at 42 observations. Read alongside the review above, which corrects it. |
+| [Boss2 operator packet](briefs/bot-balance-boss2-operator-packet.md) | **Executed 2026-09-19.** The six remaining T2 bosses x six portable reference packages x one declared seed `98011`, 300 s cap: 36 fights. Carries the six Boss1 Timberclaw rows forward (tagged as reused) for a seven-boss coverage map. |
 | [Boss1 review](briefs/bot-balance-boss1-review.md) | What Boss1's 18 fights do and do not establish: Timberclaw 1/6 with all five losses kept, Sovereign 12/12 reviewed-not-certified, guardian access unmeasured, no cross-slot tier comparison. |
 | [Boss1 declaration audit](briefs/bot-balance-boss1-stance-declaration-audit.md) | Retrospective resolution of the Sovereign block's failed stance-declaration verification, without new combat. Preserves the original failure; establishes intent from pre-execution sources and checks all 18 fights against their raw event logs. |
 | [Boss1 report](briefs/bot-balance-boss1-report.md) | Execution record for the 18-fight Boss1 screen at `66d33d57`. Read alongside the review and audit above, which correct and extend it. |
