@@ -85,6 +85,12 @@ import {
   installBoss4Treatment,
 } from '../bench/balance/boss4Spec';
 import {
+  BOSS5_BLOCKS,
+  BOSS5_BLOCKS_DEF,
+  assertBoss5Definitions,
+  installBoss5Treatment,
+} from '../bench/balance/boss5Spec';
+import {
   BOSSREF_BLOCKS,
   BOSSREF_BOSS_ID,
   BOSSREF_CAP_MS,
@@ -198,6 +204,29 @@ const TRIALS: Record<string, {
     }])),
     assertDefinitions: assertBoss4Definitions,
     installTreatment: installBoss4Treatment,
+  },
+  /**
+   * Boss5 -- roster BREADTH, plus one bounded Cave refinement.
+   *
+   * One block PER BOSS, as in Boss2, so a troublesome encounter cannot consume
+   * another boss's allocation. The breadth blocks install NOTHING: they fight
+   * authored source on six tier-legal reference packages, and their per-tier caps
+   * come from each tier's own pools rather than being inherited from T2.
+   *
+   * `cave-refinement` is the one treated block, and it differs from every earlier
+   * screen in a way the verification has to know about: BOTH of its arms are
+   * treated. 104 is the Boss4 candidate, not authored source (which is still 139),
+   * so an untreated "control" would re-measure the Boss4 baseline instead of asking
+   * this block's question. Every one of its twelve receipts therefore carries a
+   * damage treatment and a live definitions hash that differs from the base.
+   */
+  boss5: {
+    defaultBlock: BOSS5_BLOCKS_DEF[0]!.name, blocks: BOSS5_BLOCKS,
+    perBlock: Object.fromEntries(BOSS5_BLOCKS_DEF.map((b) => [b.name, {
+      bossId: b.bossId, capMs: b.capMs, seeds: [b.seed], escorts: {},
+    }])),
+    assertDefinitions: assertBoss5Definitions,
+    installTreatment: installBoss5Treatment,
   },
   bossref: {
     defaultBlock: 'reference', blocks: BOSSREF_BLOCKS,

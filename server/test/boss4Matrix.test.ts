@@ -20,7 +20,8 @@ import {
 } from '@mmo-idle/shared';
 import {
   BOSS4_BLOCKS, BOSS4_BLOCKS_DEF, BOSS4_CAP_MS, BOSS4_SEED, BOSS4_TIER,
-  assertBoss4Definitions, boss4ArmCells, boss4CellFingerprint, installBoss4Treatment,
+  assertBoss4Definitions, boss4ArmCells, boss4CellFingerprint, boss4ExpectedLive,
+  installBoss4Treatment,
 } from '../bench/balance/boss4Spec';
 import { BOSS3_BLOCKS_DEF, boss3ArmCells } from '../bench/balance/boss3Spec';
 import { BOSS2_SEED } from '../bench/balance/boss2Spec';
@@ -140,15 +141,23 @@ assertBoss4Definitions();
     assert(c.after < c.before, `${b.name}: the candidate must reduce pressure`);
     assert(c.after >= 1, `${b.name}: the candidate must not delete the mechanic`);
     assert(c.field.includes(b.bossId), `${b.name}: the declared field does not name this boss`);
+    // WHICH value must be authored right now depends on the block's state. A live
+    // block's field still reads the frozen `before`; an ADOPTED block's reads the
+    // `after` that was written into source. Asserting the `before` unconditionally is
+    // precisely the confusion that lets a value be applied twice.
+    const expectedLive = boss4ExpectedLive(b);
     if (c.kind === 'attack') {
-      assert(m.stats.attack === c.before, `${b.name}: authored attack is not the frozen ${c.before}`);
+      assert(m.stats.attack === expectedLive,
+        `${b.name}: authored attack is not the ${b.adopted ? 'adopted' : 'frozen'} ${expectedLive}`);
       assert(c.after === Math.round(c.before * 0.75),
         `${b.name}: the candidate is round(attack x 0.75), got ${c.after}`);
     } else {
-      assert(m.dotEffect?.damagePerStack === c.before,
-        `${b.name}: authored damagePerStack is not the frozen ${c.before}`);
+      assert(m.dotEffect?.damagePerStack === expectedLive,
+        `${b.name}: authored damagePerStack is not the ${b.adopted ? 'adopted' : 'frozen'} ${expectedLive}`);
       // Stated as the packet states it: the RAW four-stack coefficient, before any
-      // defense or multiplier. Never as measured HP damage.
+      // defense or multiplier. Never as measured HP damage. Both sides of the
+      // screen's arithmetic are still checked after adoption — what changed is which
+      // of them is now the authored one.
       assert(c.before * m.dotEffect!.maxStacks === 36 && c.after * m.dotEffect!.maxStacks === 24,
         `${b.name}: the packet's raw four-stack coefficients (36 -> 24) no longer follow from the authored shape`);
     }
@@ -193,6 +202,30 @@ assertBoss4Definitions();
 // exactly one named change, and both leave the authored value standing afterwards.
 {
   for (const b of BOSS4_BLOCKS_DEF) {
+    // ── AN ADOPTED BLOCK IS REFUSED, on BOTH arms, and that refusal is the check.
+    //
+    //    Once the candidate is authored source, installing it again would write a
+    //    value that is already standing and record it as a treatment, while the
+    //    control arm would claim to measure a `before` that no longer exists. The
+    //    seam refuses both, and a refusal that silently stopped happening is exactly
+    //    the regression this asserts against.
+    if (b.adopted) {
+      for (const arm of b.arms) {
+        const cell = boss4ArmCells(b.name, arm.name)[0]!;
+        let refused = false;
+        try {
+          installBoss4Treatment(cell);
+        } catch {
+          refused = true;
+        }
+        assert(refused,
+          `${b.name}/${arm.name}: the installer accepted an ADOPTED block — the change can be applied twice`);
+      }
+      // The authored value is the adopted one, and nothing above disturbed it.
+      assert(boss4ExpectedLive(b) === b.candidate.after,
+        `${b.name}: an adopted block's expected live value must be its candidate's after`);
+      continue;
+    }
     for (const arm of b.arms) {
       const cell = boss4ArmCells(b.name, arm.name)[0]!;
       const installed = installBoss4Treatment(cell);

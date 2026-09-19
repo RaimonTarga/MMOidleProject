@@ -11,9 +11,11 @@
  *
  * What it must establish, per the handoff:
  *
- *   1. SWAMP — the treated `dotEffect.damagePerStack` reaches the applied status
- *      payload AND a real tick of the real DoT system, and the venom's stack cap,
- *      cadence and duration do not move with it.
+ *   1. SWAMP — RETIRED. The candidate was adopted into source on 2026-09-19, so
+ *      there is no live `before` left to compare against and installing the `after`
+ *      would apply it twice. What is checked here now is that the install seam
+ *      REFUSES the block on both arms; the adopted coefficient's own functional
+ *      regression lives in `server/test/behemothVenom.test.ts`.
  *   2. CAVE — the treated `stats.attack` reaches the spawned body, the ordinary hit
  *      AND the attack-derived pattern hit; and the fall in landed damage is MEASURED
  *      rather than assumed to equal the 25.2% authored cut. It does not: plating
@@ -27,7 +29,9 @@
  * cheap wrong implementation: a control arm must resolve the AUTHORED damage (so an
  * install that leaked, or a restore that never ran, fails here rather than in the
  * cohort), and the treated damage must differ from it (so an install that wrote a
- * definition the fight never reads fails here too).
+ * definition the fight never reads fails here too). The retired Swamp section keeps
+ * that discipline in its own form: an installer that quietly stopped refusing an
+ * adopted block fails it.
  *
  * Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/boss4Pressure.test.ts
  */
@@ -43,7 +47,8 @@ import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 import { applyMonsterDotToPlayer } from '../src/systems/combat/status/monsterDot';
 import { effectiveMonsterDot } from '../src/systems/combat/engine/monsterMechanics';
 import {
-  BOSS4_BLOCKS_DEF, assertBoss4Definitions, boss4ArmCells, installBoss4Treatment,
+  BOSS4_BLOCKS_DEF, assertBoss4Definitions, boss4ArmCells, boss4ExpectedLive,
+  installBoss4Treatment,
 } from '../bench/balance/boss4Spec';
 import type { Night5Cell } from '../bench/balance/night5Spec';
 
@@ -80,100 +85,45 @@ function underArm<T>(block: typeof SWAMP, armName: string, root: string, body: (
   }
 }
 
-// ═══ 1. SWAMP — the venom payload, and a real tick of it ═══════════════════════════
+// === 1. SWAMP - RETIRED: the candidate is authored source now ======================
 
 /**
- * Apply the Behemoth's venom to a real reference bot through the real on-hit helper,
- * then advance the real world one full tick interval and measure what the DoT system
- * actually resolved.
+ * The swamp candidate was ADOPTED on 2026-09-19, so the comparison this section used
+ * to make no longer exists: there is no live `before` to measure a control against,
+ * and installing the `after` would write a value that is already standing.
  *
- * `effectiveMonsterDot` is the function the on-hit listener calls, and for a boss it
- * returns the LIVE authored object — so its payload has to be read while the candidate
- * is standing. That is a property worth knowing: a readback taken after restore would
- * report the authored value on a treated fight and look like a failed install.
+ * What replaces it is the guard that makes double application impossible, checked
+ * rather than claimed. The venom's own functional regression - that the adopted
+ * coefficient reaches the applied payload and a real tick of the real DoT system -
+ * moved to `server/test/behemothVenom.test.ts` and is NOT duplicated here.
  */
-function venomProbe(armName: string, root: string, stacks: number) {
-  return underArm(SWAMP, armName, root, (cell) => {
-    let now = 1800000000000;
-    const realNow = Date.now;
-    Date.now = () => now;
-    try {
-      const world = createBalanceWorld();
-      setupArena(world, { nodeId: cell.nodeId, biomeGroup: SWAMP.role, contentTier: 2, isDungeon: true });
-      const { bot } = prepareSurveyBot(world, cell, BOT_SPAWN);
-      // Spawned far away: this probe measures the DoT channel, not the boss's swings.
-      const boss = createMonster(world, cell.nodeId, SWAMP.bossId, { x: BOT_SPAWN.x + 3000, y: BOT_SPAWN.y + 3000 })!;
-      const def = MONSTER_DATABASE.get(SWAMP.bossId)!;
-      const live = effectiveMonsterDot(boss, def)!;
-      const livePerStack = live.damagePerStack;
-      for (let i = 0; i < stacks; i++) applyMonsterDotToPlayer(world, boss, bot, live, 'boss4-probe');
-      const effectId = resolveMonsterDotDebuff({ monster: def }).statusEffectId;
-      const painted = getStatusEffect(bot.tracksCombat, effectId)!;
-      const applied = {
-        perStack: painted.data.damagePerStack, stacks: painted.stacks,
-        maxStacks: painted.maxStacks, tickIntervalMs: painted.data.tickIntervalMs,
-        totalMs: painted.data.totalMs,
-      };
-      // One full tick interval of the REAL world, so what is measured is what the DoT
-      // system resolved rather than what the payload says it should.
-      let tickDamage = 0;
-      for (let t = 0; t < live.tickIntervalMs; t += 100) {
-        now += 100;
-        world.tick(100, now);
-        for (const e of world.worldLogJournal as { kind?: string; target?: { id?: string }; damageType?: string; hpDamage?: number; absorbed?: number }[]) {
-          if (e.kind !== 'damage' || e.target?.id !== bot.isPlayer.id) continue;
-          if (e.damageType !== 'dot') continue;
-          tickDamage += (e.hpDamage ?? 0) + (e.absorbed ?? 0);
-        }
-        world.worldLogJournal = [];
-      }
-      return { livePerStack, applied, tickDamage, effectId };
-    } finally {
-      Date.now = realNow;
-    }
-  });
-}
-
 {
-  const [control, treated] = SWAMP.arms;
-  const a = venomProbe(control!.name, 'striker', 4);
-  const b = venomProbe(treated!.name, 'striker', 4);
+  assert(!!SWAMP.adopted,
+    'the swamp block is no longer marked adopted, but its candidate is authored source');
+  assert(boss4ExpectedLive(SWAMP) === SWAMP.candidate.after,
+    `swamp: an adopted block must expect its candidate's after (${SWAMP.candidate.after}) to be live`);
+  assert(MONSTER_DATABASE.get(SWAMP.bossId)!.dotEffect!.damagePerStack === SWAMP.candidate.after,
+    'swamp: the authored venom coefficient is not the adopted value');
 
-  // The candidate reaches the function the on-hit listener actually calls...
-  assert(a.livePerStack === SWAMP.candidate.before,
-    `swamp control: the live venom payload is ${a.livePerStack}, expected the authored ${SWAMP.candidate.before}`);
-  assert(b.livePerStack === SWAMP.candidate.after,
-    `swamp candidate: the live venom payload is ${b.livePerStack}, expected the installed ${SWAMP.candidate.after}`);
-  // ...and the status it paints on the player.
-  assert(a.applied.perStack === SWAMP.candidate.before,
-    `swamp control: the applied stack carries ${a.applied.perStack}, expected ${SWAMP.candidate.before}`);
-  assert(b.applied.perStack === SWAMP.candidate.after,
-    `swamp candidate: the applied stack carries ${b.applied.perStack}, expected ${SWAMP.candidate.after}`);
-  assert(a.effectId === b.effectId && a.effectId === 'monster-dot:mire-gorged-venom',
-    `swamp: the venom identity moved (${a.effectId} / ${b.effectId})`);
-
-  // The CONTROL FIELDS the packet promises to hold: cap, cadence and duration are
-  // identical across arms, so what moved is the coefficient and nothing else.
-  assert(a.applied.maxStacks === b.applied.maxStacks && a.applied.maxStacks === 4,
-    `swamp: the venom stack cap moved (${a.applied.maxStacks} / ${b.applied.maxStacks})`);
-  assert(a.applied.tickIntervalMs === b.applied.tickIntervalMs && a.applied.tickIntervalMs === 1000,
-    `swamp: the venom tick interval moved (${a.applied.tickIntervalMs} / ${b.applied.tickIntervalMs})`);
-  assert(a.applied.totalMs === b.applied.totalMs && a.applied.totalMs === 8000,
-    `swamp: the venom duration moved (${a.applied.totalMs} / ${b.applied.totalMs})`);
-  assert(a.applied.stacks === b.applied.stacks,
-    `swamp: the arms painted different stack counts (${a.applied.stacks} / ${b.applied.stacks}) — the probe is not comparing like with like`);
-
-  // And a REAL tick of the real system resolves strictly less. This is the mutation
-  // check that a payload-only assertion cannot make: an install that changed a
-  // definition the DoT system never reads would pass everything above and fail here.
-  assert(a.tickDamage > 0, 'swamp control: the probe resolved no DoT damage at all — the fixture is not measuring the channel');
-  assert(b.tickDamage < a.tickDamage,
-    `swamp: the candidate resolved ${b.tickDamage} against the control's ${a.tickDamage} — the treated payload did not reach the tick`);
+  // BOTH arms are refused. A control arm is not "harmless" here: it would assert the
+  // authored value equals a `before` that no longer exists, and a run that somehow
+  // got past that would be measuring the adopted boss while labelling it a baseline.
+  for (const arm of SWAMP.arms) {
+    let refused = false;
+    try {
+      installBoss4Treatment(cellFor(SWAMP, arm.name, 'striker'));
+    } catch {
+      refused = true;
+    }
+    assert(refused,
+      `swamp/${arm.name}: the installer accepted an ADOPTED block - the change can be applied twice`);
+  }
   console.log(
-    `  swamp: venom ${a.livePerStack} -> ${b.livePerStack}/stack; one 1000ms tick at ${a.applied.stacks} stacks `
-    + `resolved ${a.tickDamage} -> ${b.tickDamage} damage (cap ${a.applied.maxStacks}, cadence ${a.applied.tickIntervalMs}ms, ${a.applied.totalMs}ms — unchanged)`,
+    `  swamp: RETIRED - venom ${SWAMP.candidate.before} -> ${SWAMP.candidate.after}/stack is authored `
+    + 'source; both arms refused by the install seam (regression: behemothVenom.test.ts)',
   );
 }
+
 
 // ═══ 2. CAVE — the ordinary hit and the attack-derived pattern hit ═════════════════
 
@@ -276,12 +226,23 @@ function caveHit(armName: string, root: string, multiplier: number) {
     attack: MONSTER_DATABASE.get(CAVE.bossId)!.stats.attack,
   });
   const start = authored();
-  assert(start.venom === SWAMP.candidate.before && start.attack === CAVE.candidate.before,
+  assert(start.venom === boss4ExpectedLive(SWAMP) && start.attack === boss4ExpectedLive(CAVE),
     `the fixtures above did not restore: ${JSON.stringify(start)}`);
+
+  /**
+   * The blocks a treatment can still be installed for.
+   *
+   * An adopted block is excluded rather than special-cased inside each loop: its
+   * installer refuses by design (checked in section 1), so driving it through the
+   * restore contract would only be testing the refusal a second time. Written as a
+   * filter so a future adoption drops out of these loops automatically.
+   */
+  const installable = [SWAMP, CAVE].filter((b) => !b.adopted);
+  assert(installable.length > 0, 'every Boss4 block is adopted; this file has nothing left to install');
 
   // A candidate install that THREW must still restore — the contract `bossScreen.ts`
   // relies on, since a treated observation that failed must not poison the next cell.
-  for (const block of [SWAMP, CAVE]) {
+  for (const block of installable) {
     const treatedArm = block.arms.find((a) => a.treated)!;
     const installed = installBoss4Treatment(cellFor(block, treatedArm.name, 'striker'));
     try {
@@ -299,7 +260,7 @@ function caveHit(armName: string, root: string, multiplier: number) {
   // install seam re-reads the live value and refuses a drifted one, so a missed
   // restore fails LOUDLY on the next control rather than being recorded as a clean
   // baseline. That refusal is the check; running the sequence is how it is exercised.
-  for (const block of [SWAMP, CAVE]) {
+  for (const block of installable) {
     const [control, treated] = block.arms;
     for (const armName of [control!.name, treated!.name, control!.name]) {
       const installed = installBoss4Treatment(cellFor(block, armName, 'squire'));
@@ -319,14 +280,18 @@ function caveHit(armName: string, root: string, multiplier: number) {
   // can never bite in the cohort — but a shared-process fixture or a future reuse of
   // the seam would, and a candidate that reached the other boss would be a silent
   // second change.
-  for (const [block, other] of [[SWAMP, CAVE], [CAVE, SWAMP]] as const) {
+  for (const [block, other] of ([[SWAMP, CAVE], [CAVE, SWAMP]] as const)
+    .filter(([block]) => !block.adopted)) {
     const treatedArm = block.arms.find((a) => a.treated)!;
     const installed = installBoss4Treatment(cellFor(block, treatedArm.name, 'spirit'));
     try {
       const otherDef = MONSTER_DATABASE.get(other.bossId)!;
       const otherLive = other.candidate.kind === 'attack'
         ? otherDef.stats.attack : otherDef.dotEffect!.damagePerStack;
-      assert(otherLive === other.candidate.before,
+      // Compared against the OTHER block's own expected live value, which is its
+      // adopted number if it has one. Comparing against `before` unconditionally
+      // would report a clean isolation check as a leak.
+      assert(otherLive === boss4ExpectedLive(other),
         `${block.name}: installing this candidate moved ${other.bossId}'s ${other.candidate.kind} to ${otherLive}`);
       // And the treated boss's OWN other fields stay put.
       const def = MONSTER_DATABASE.get(block.bossId)!;

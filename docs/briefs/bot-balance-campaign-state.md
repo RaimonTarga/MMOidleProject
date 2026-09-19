@@ -2,7 +2,92 @@
 
 Updated: 2026-09-19. Owner: Astra (planning and interpretation); operators: Luna, Sonnet.
 
-## CURRENT PHASE (2026-09-19): Boss3 executed and reviewed; Boss4 frozen, NOT launched
+## CURRENT PHASE (2026-09-19): Boss4 dispositioned and INTEGRATED; Boss5 frozen, NOT launched
+
+**Boss4 executed and reviewed.** 24 fights, both blocks verified, 24/24, 0 capped / reset /
+vanished / ambiguous / invalid. All 12 control rows reproduce their correct Boss3 arm exactly — a
+reproducibility check, never pooled as new coverage.
+
+| Boss | Treatment | Result | Decision |
+|---|---|---|---|
+| Mire-Gorged Behemoth | venom `damagePerStack` 9 -> 6 | 2/6 -> **4/6**, no previously-won root lost | **ADOPTED into source.** The Swamp sequence STOPS. |
+| Chitinous Dreadbore | attack 139 -> 104 | 0/6 -> **1/6**, every remaining loss longer and deeper | **Fallback, NOT adopted.** Cave stays open; ONE further comparison authorized. |
+
+The two bosses are **not pooled** into a combined T2 rate, and Conduit is **not excluded** for
+delivering damage through summons.
+
+**The venom value is now AUTHORED SOURCE** (`bossesT2.ts`, `damagePerStack: 6`), with every other
+field unchanged and pinned by a new narrow regression, `server/test/behemothVenom.test.ts`
+(mutation-checked: the paired comparison catches a revert on its own, because an absolute bound
+would not have — four stacks of the old payload land 14 against a raw-coefficient ceiling of 24).
+
+**It cannot be applied twice.** The `swamp-pressure` block is marked `adopted` and RETIRED:
+`installBoss4Treatment` refuses it on **both** arms, `assertBoss4Definitions` now pins the adopted
+value as the live one, and `scripts/boss4-arms.mjs` refuses to start a Boss4 run. `boss4Matrix`
+and `boss4Pressure` assert the refusal. Frozen studies and raw artifacts are preserved untouched.
+
+**An unplanned confirmation.** The adopted source's base definitions hash is **`cd8077b4…`** —
+byte-identical to the `live` hash all six Boss4 swamp **candidate** receipts recorded. The
+integrated source hashes to exactly the treated state the screen measured.
+
+**Five corrections to the Boss4 report** — prose only, in
+[the Boss4 addendum](bot-balance-boss4-addendum.md). No fight re-run, no artifact altered.
+- §12 contradicts its own table: Cave **apprentice DID cross 50%** at 26,500 ms under the
+  candidate. **Conduit is the only Cave root that never crosses.** The table was right.
+- The Eruption-multiplier inference is **WITHDRAWN**. `grossDamage` records the body's BASE
+  attack on both the ordinary and the 1.6x path, so 139/104 is consistent with either and proves
+  nothing about which fired. The frozen `boss4Pressure.test.ts` asserts exactly that.
+- `hpDamage` variance is **not** explained by plating shred alone — barrier and active defenses
+  sit in the same path, and a 0 is far better explained by absorption.
+- Boss3 and Boss4 each ran **12** Cave observations: the combined raw total is **24, not 18** —
+  and still not poolable, since they span three different treatments.
+- The Conduit `hpLost`/`damageFromBoss` gap stays **UNKNOWN**. Its recurrence is a deterministic
+  REPLAY, not independent replication.
+
+**Next authorized task.** Sonnet executes [the Boss5 operator packet](bot-balance-boss5-operator-packet.md):
+**roster breadth**, plus one bounded Cave refinement.
+
+- **Block group B** — every in-scope active solo boss with no usable current evidence: **N = 18**
+  (T1 five, T3 seven, T4 six), one block per boss, six tier-legal reference packages, one
+  predeclared seed, installs **nothing**.
+- **Block C** — `chitinous-dreadbore` attack **104 vs 85**, exact Boss4 Brace references, six
+  roots, carried seed `98011`, 300 s cap. **BOTH arms are treated**: 104 is the Boss4 candidate,
+  authored source is still 139, which is **not repeated**.
+
+**6 x 18 + 12 = 120 fights.** N is DERIVED from `DUNGEON_DEFS` minus eight explicitly covered
+bosses with named provenance, and stated three independent ways (spec, `boss5Matrix`, the scripts
+mirror) that must agree or the run refuses to start. The Void Overlord falls out structurally —
+it is not a dungeon boss. The Sovereign is reused as retrospectively reviewed evidence and
+**keeps its original failed artifact-verification status**; it is not re-run for that label.
+
+**Three findings from preparation, all measured, all carried into the packet:**
+- **The T2 reference shape is ILLEGAL at T1.** `setAbilityLoadout` refuses
+  `second-wind + brace + ANY technique` on all six roots at the 22 RP budget, and T1 admits no
+  stance. T1 therefore keeps the ordered Guard pair and **drops the technique** — a DECLARED
+  departure, not a silent one.
+- **A per-biome kit makes every block a different player.** Written that way first; the preflight
+  caught it (T1 Forest 0.22 dodge / 0.02 DR vs T1 Cave 0 dodge / 0.13 DR). The kit is now fixed
+  within a tier — **Mountain**, the only family authored at every tier — and is therefore **NOT**
+  the Boss1-Boss4 kit. The report must not present these rows as a continuation of the T2 rows.
+- **0 of the 18 breadth bosses can move with the seed.** None has adds or `raisesDead`; the
+  Sovereign is the roster's only such boss and it is in the covered set. Each breadth row is one
+  **deterministic case, not a sample**, and the report must say so.
+
+Qualification ran during preparation and passed: typecheck (bench included), the twelve named
+tests, a zero-fight functional fixture, and a **19-block preflight at ZERO fights spent** in which
+every boss woke and stood alone at the bell. The measured Cave effect size is carried too: the
+18.3% authored step produces a **22.1-23.7%** post-mitigation and **21.7-25.5%** landed fall,
+non-uniform per root — the authored cut is **not** the effect size.
+
+Opus is NOT authorized to launch it. Boss5 is a decision checkpoint; the next main artifact after
+execution is the **missing-tier boss readiness map**, not another two-boss discussion.
+
+See: [Boss4 addendum](bot-balance-boss4-addendum.md) ·
+[Boss5 packet](bot-balance-boss5-operator-packet.md).
+
+---
+
+## PREVIOUS PHASE (2026-09-19): Boss3 executed and reviewed; Boss4 frozen, then executed
 
 **Boss3 executed.** 24 fights at `aedef122` (tree `c08f1a82`), both blocks verified, 0 capped /
 reset / vanished / ambiguous / invalid. All 12 control rows reproduce Boss2's elapsed time and
@@ -26,7 +111,8 @@ further, distinct things. The one-example claim that coarse samples proxy DoT de
 withdrawn. The per-root first-Cleanse divergence stays a recorded observation with no isolated
 cause, and the Conduit/Dreadbore accounting gap stays **unknown**.
 
-**Next authorized task.** Sonnet executes [the Boss4 operator packet](bot-balance-boss4-operator-packet.md):
+**Next authorized task (HISTORICAL — Boss4 has since been executed and dispositioned).** Sonnet
+executes [the Boss4 operator packet](bot-balance-boss4-operator-packet.md):
 **one local enemy-pressure candidate per boss**, in two independent blocks, at the Boss3 reference
 that is sensible for each matchup.
 
@@ -159,7 +245,9 @@ See: [Boss1 review](bot-balance-boss1-review.md) ·
 
 ---
 
-## Current decision: D37 EXECUTED and its receipts verified; the boss screen is BLOCKED at early tiers
+## Superseded decision (HISTORICAL): D37 EXECUTED and its receipts verified; the boss screen is BLOCKED at early tiers
+
+> **HISTORICAL.** Every instruction in this section is past. The early-tier block it describes is > what the Boss5 breadth screen now addresses, and its `17aa46cb…` definitions hash is > pre-adoption. Read the CURRENT PHASE at the top of this file for what is authorized.
 
 Durability37 ran once at `bdee5dca`, 74/74 observations in 5m58.6s, both blocks verified,
 navigation watch pass. **Receipts independently checked** — revision, tree and hitbox hashes match,

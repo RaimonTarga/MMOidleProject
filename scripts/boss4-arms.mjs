@@ -32,7 +32,11 @@ export const BOSS4_CAP_MS=300000;
  * `effectiveMonsterDot`'s live `dotDamagePerStack` for Swamp.
  */
 export const BOSS4_BLOCKS=[
+ // ADOPTED 2026-09-19: `damagePerStack: 6` is authored source now. The block is kept
+ // here as the historical declaration the executed receipts were verified against,
+ // and `assertBoss4Arms` refuses to start a run while it is marked adopted.
  {name:'swamp-pressure',bossId:'mire-gorged-behemoth',hp:3375,attack:38,bossMaxHp:3375,
+  adopted:'2026-09-19',
   seed:BOSS4_SEED,summonsNothing:true,cells:12,limitMs:40*60000,
   originArm:'cleanse-substitution',guards:['second-wind','cleanse'],
   candidate:{kind:'dot-damage-per-stack',field:"MONSTER_DATABASE['mire-gorged-behemoth'].dotEffect.damagePerStack",before:9,after:6},
@@ -158,6 +162,14 @@ export function rootOf(cellId){
 
 /** Fail loudly if the mirrored declaration has drifted out of shape. */
 export function assertBoss4Arms(){
+ // A RUN is refused once any block has been adopted into source. Boss4's swamp
+ // candidate is authored now, so re-running the batch would install a value that is
+ // already standing and compare it against a `before` that no longer exists. The
+ // executed artifacts stay valid; only a new run is refused.
+ const adopted=BOSS4_BLOCKS.filter(b=>b.adopted);
+ assert(adopted.length===0,
+  `Boss4 cannot be re-run: ${adopted.map(b=>`${b.name} was ADOPTED into source on ${b.adopted}`).join('; ')}. `
+  +'Its executed artifacts remain valid; a new observation would apply the change twice.');
  assert.equal(BOSS4_BLOCKS.length,2,'exactly two blocks');
  assert.equal(new Set(BOSS4_BLOCKS.map(b=>b.bossId)).size,2,'the two blocks must fight different bosses');
  const total=BOSS4_BLOCKS.reduce((n,b)=>n+b.cells,0);

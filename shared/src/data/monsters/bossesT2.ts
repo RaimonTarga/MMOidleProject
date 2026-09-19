@@ -216,7 +216,12 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 155, essenceType: 'purple', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
     targeting: { prefersPlayers: true },
-    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 9, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
+    // Venom coefficient ADOPTED at 6 on 2026-09-19, from the Boss4 swamp-pressure
+    // screen (9 -> 6, one field, every other venom field held fixed). It is the
+    // boss-side pressure value, not a rebalance of the encounter: cap, cadence,
+    // duration, the ordinary attack, the Corrosive Pool and the 50% phase are all
+    // unchanged, and `server/test/behemothVenom.test.ts` pins that.
+    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
     chargedAttack: {
       name: 'Corrosive Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
       multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115, impactFx: 'pool-spawn' },

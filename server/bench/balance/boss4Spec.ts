@@ -97,6 +97,18 @@ function writeCandidate(bossId: string, kind: Boss4CandidateKind, value: number)
   def.stats.attack = value;
 }
 
+/**
+ * The value this block's field must read in SOURCE right now.
+ *
+ * A live block is untreated, so its authored value is the candidate's `before`. An
+ * ADOPTED block's authored value is the candidate's `after`, because that number was
+ * written into source. One function answers it for every caller, so the installer,
+ * the definitions check and the tests cannot disagree about which state a block is in.
+ */
+export function boss4ExpectedLive(block: Boss4Block): number {
+  return block.adopted ? block.candidate.after : block.candidate.before;
+}
+
 export interface Boss4Arm {
   name: string;
   treatment: string;
@@ -120,6 +132,24 @@ export interface Boss4Block {
   originArm: 'portable-reference' | 'cleanse-substitution';
   arms: readonly Boss4Arm[];
   candidate: Boss4Candidate;
+  /**
+   * Set once this block's candidate has been WRITTEN INTO SOURCE.
+   *
+   * A screen's candidate and an adopted value are the same number in two completely
+   * different states, and conflating them is how a value gets applied twice: the
+   * installer would write 6 over an authored 6 and report a treatment that changed
+   * nothing, while the control arm would claim to measure the authored 9 that no
+   * longer exists. So adoption RETIRES the block instead:
+   *
+   *   - `assertBoss4Definitions` pins the ADOPTED value as the live one, which makes
+   *     this spec a standing regression against a revert or a further drift;
+   *   - `installBoss4Treatment` REFUSES the block outright, so no runner, preflight
+   *     or fixture can install it a second time.
+   *
+   * The block's cells, arms and pinned control fields stay exactly as they were, so
+   * the frozen study remains readable and its held-fixed list keeps its teeth.
+   */
+  adopted?: { date: string; commit: string; note: string };
   /** Pinned authored values that this screen must NOT move. */
   bossStats: { hp: number; attack: number; plating: number; damageReduction: number };
   summonsNothing: boolean;
@@ -149,6 +179,15 @@ export const BOSS4_BLOCKS_DEF: Boss4Block[] = [
         + 'this separately authored poison coefficient, so lowering it would not target the channel '
         + 'the recordings name. A one-third cut of the coefficient is a deliberate trial value, not a '
         + 'measured optimum and not a claim that poison is the only contributor.',
+    },
+    adopted: {
+      date: '2026-09-19',
+      commit: '9040902d2af27e5e8a8a36795e649c2119220d4a',
+      note:
+        'The Boss4 swamp-pressure screen ran 12/12 verified at this revision: 2/6 -> 4/6 '
+        + 'victories, no previously-won root lost, and both roots that stayed losses '
+        + 'survived longer and removed more boss HP. `damagePerStack: 6` is now the '
+        + 'AUTHORED value in bossesT2.ts. This block is retired, not re-runnable.',
     },
     bossStats: { hp: 3375, attack: 38, plating: 6, damageReduction: 0.08 },
     summonsNothing: true, patternId: null,
@@ -244,9 +283,21 @@ export function installBoss4Treatment(cell: Night5Cell): { changes: Boss4Change[
   const arm = block.arms.find((a) => a.treatment === cell.treatment)!;
   const c = block.candidate;
 
+  // ADOPTED BLOCKS ARE REFUSED, on BOTH arms. The candidate is authored source now,
+  // so a "candidate" arm would install a value that is already standing (a treatment
+  // that changed nothing, recorded as though it had) and a "control" arm would claim
+  // to measure a `before` that no longer exists anywhere. Neither is recoverable by
+  // reading the receipt afterwards, so the refusal is here, at the seam, rather than
+  // left to a reviewer.
+  assert(!block.adopted,
+    `Boss4/${block.name}: this block was ADOPTED into source on ${block.adopted?.date} `
+    + `(${c.field} = ${c.after}); it cannot be installed again. Re-running it would apply the `
+    + 'change twice and report a control arm against a value that is no longer authored.');
+
+  const expected = boss4ExpectedLive(block);
   const live = readCandidate(block.bossId, c.kind);
-  assert.equal(live, c.before,
-    `Boss4/${block.name}: ${c.field} reads ${live} but the packet froze ${c.before} — either the source `
+  assert.equal(live, expected,
+    `Boss4/${block.name}: ${c.field} reads ${live} but the packet froze ${expected} — either the source `
     + 'moved or a previous observation did not restore; this run is not what the packet describes');
 
   if (!arm.treated) return { changes: [], restore() { /* a control installs nothing */ } };
@@ -317,8 +368,14 @@ export function assertBoss4Definitions(): void {
     assert.equal(pattern?.id ?? null, b.patternId, `${b.name}: boss pattern drift`);
 
     // The candidate's own field, read live through the same accessor the install uses.
-    assert.equal(readCandidate(b.bossId, b.candidate.kind), b.candidate.before,
-      `${b.name}: ${b.candidate.field} is not the frozen ${b.candidate.before}`);
+    //
+    // For a LIVE block this pins the frozen `before`. For an ADOPTED one it pins the
+    // `after` that was written into source — which turns this spec into the standing
+    // regression on the adopted value: a revert to the old number, or any further
+    // drift of it, fails here and in every test and preflight that calls this.
+    const expectedLive = boss4ExpectedLive(b);
+    assert.equal(readCandidate(b.bossId, b.candidate.kind), expectedLive,
+      `${b.name}: ${b.candidate.field} is not the ${b.adopted ? 'ADOPTED' : 'frozen'} ${expectedLive}`);
     assert(b.candidate.after < b.candidate.before,
       `${b.name}: the candidate must REDUCE pressure, got ${b.candidate.before} -> ${b.candidate.after}`);
     assert(b.candidate.after >= 1,
