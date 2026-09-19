@@ -11,7 +11,9 @@
  *   5. cast speed shortens its wind-up, attack speed does not, and hard control
  *      breaks it exactly like every other cast;
  *   6. the Power Strike / Slam crossover holds at every tier;
- *   7. Power Strike itself is untouched.
+ *   7. Power Strike itself is untouched;
+ *   8. the wind-up broadcasts the AREA it is about to damage, so the client can
+ *      draw a footprint that cannot drift from the damage.
  *
  * Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/abilitySlam.test.ts
  */
@@ -62,8 +64,9 @@ function castMult(ability: typeof SLAM, tier: number): number {
 
 function slices(
   id: string,
-  options: { tier?: number; archetype?: "dot" | null } = {},
+  options: { tier?: number; archetype?: "dot" | null; abilities?: string[] } = {},
 ): PersistedPlayerSlices {
+  const abilities = options.abilities ?? ["slam"];
   return {
     isPlayer: { id, name: id },
     hasPosition: {
@@ -93,8 +96,8 @@ function slices(
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
       runesEquipped: [],
-      knownAbilities: ["slam"],
-      attunedAbilities: { techniques: ["slam"], guards: [] },
+      knownAbilities: [...abilities],
+      attunedAbilities: { techniques: [...abilities], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -113,7 +116,10 @@ function slices(
   };
 }
 
-function spawn(id: string, options: { tier?: number; archetype?: "dot" | null } = {}) {
+function spawn(
+  id: string,
+  options: { tier?: number; archetype?: "dot" | null; abilities?: string[] } = {},
+) {
   const world = new World();
   const player = world.attachPlayerEntity(slices(id, options), id);
   player.usesAutocombat.auto = true;
@@ -395,6 +401,171 @@ initCombatSystems();
   assert(
     getCooldown(player.tracksCombat, abilityCooldownKey("power-strike")) === 0,
     "the Technique that did not fire is merely waiting — never consumed or disabled",
+  );
+}
+
+// ── 8. The wind-up broadcasts its footprint ──────────────────────────────────
+//
+// The client draws a friendly ground circle for the duration of the cast. It is
+// only honest if the circle it draws is the circle the server damages, so the
+// radius travels on the event rather than being re-derived in the UI — and these
+// assertions are what stop the two from ever parting company.
+function castStarts(world: World) {
+  return world
+    .takeNodeEvents("node-5-5")
+    .flatMap((event) => (event.kind === "player-cast-start" ? [event] : []));
+}
+
+function castEnds(world: World) {
+  return world
+    .takeNodeEvents("node-5-5")
+    .flatMap((event) => (event.kind === "player-cast-end" ? [event] : []));
+}
+
+{
+  const { world, player } = spawn("slam-footprint");
+  const target = monsterAt(world, 430);
+  setAttackTarget(world, player, target.isMonster.id);
+  updateAbilityFiring(world, 1_000);
+
+  const starts = castStarts(world);
+  assert(starts.length === 1, `one wind-up should announce itself, got ${starts.length}`);
+  const start = starts[0]!;
+  assert(
+    start.aoeRadius === slamEffect(2).radius,
+    `the wind-up must carry Slam's authored radius (${slamEffect(2).radius}), got ${String(start.aoeRadius)}`,
+  );
+  // The indicator is anchored on the TARGET, because that is where the payload
+  // resolves — so the event has to name it.
+  assert(
+    start.targetId === target.isMonster.id,
+    "the wind-up must name the monster the footprint is centred on",
+  );
+  assert(
+    start.castMs === player.isCastingAbility!.castMs,
+    "the footprint's countdown must run on the same clock as the cast",
+  );
+
+  // THE EDGE TEST. A monster exactly on the drawn rim is inside the blow; one
+  // pixel further out is not. This is the whole promise the indicator makes.
+  const onRim = monsterAt(world, 430 + start.aoeRadius!);
+  const pastRim = monsterAt(world, 430 + start.aoeRadius! + 1);
+  const rimBefore = onRim.hasHealth.hp;
+  const pastBefore = pastRim.hasHealth.hp;
+  updateAbilityCasts(world, 1_000 + player.isCastingAbility!.castMs);
+  assert(
+    onRim.hasHealth.hp < rimBefore,
+    "a monster standing exactly on the drawn rim must actually be hit",
+  );
+  assert(
+    pastRim.hasHealth.hp === pastBefore,
+    "a monster outside the drawn rim must take nothing",
+  );
+
+  const ends = castEnds(world);
+  assert(
+    ends.length === 1 && ends[0]!.fired,
+    "a resolved cast must emit the end event the client clears the footprint on",
+  );
+  assert(
+    ends[0]!.targetPos?.x === target.hasPosition.current.x &&
+      ends[0]!.targetPos?.y === target.hasPosition.current.y,
+    "the impact point must be the same centre the damage circle used",
+  );
+}
+
+// An INTERRUPTED wind-up must clear the footprint just as surely as a resolved
+// one — a stale circle on the ground would be a promise of damage that is never
+// coming.
+{
+  const { world, player } = spawn("slam-footprint-interrupt");
+  const target = monsterAt(world, 430);
+  setAttackTarget(world, player, target.isMonster.id);
+  updateAbilityFiring(world, 1_000);
+  assert(castStarts(world).length === 1, "the wind-up should have announced itself");
+
+  applyStatusEffect(player.tracksCombat, {
+    id: STUN_EFFECT,
+    maxStacks: 1,
+    remainingMs: 2_000,
+    refreshable: true,
+    sourceId: target.isMonster.id,
+    data: { totalMs: 2_000 },
+  });
+  updateAbilityCasts(world, 1_010);
+  const ends = castEnds(world);
+  assert(
+    ends.length === 1 && ends[0]!.fired === false,
+    "an interrupted wind-up must still emit the end event that clears the footprint",
+  );
+}
+
+// Losing the target clears it too — the same event, the same single seam.
+{
+  const { world, player } = spawn("slam-footprint-target-lost");
+  const target = monsterAt(world, 430);
+  setAttackTarget(world, player, target.isMonster.id);
+  updateAbilityFiring(world, 1_000);
+  assert(castStarts(world).length === 1, "the wind-up should have announced itself");
+
+  world.removeMonsterEntity(target.isMonster.id);
+  updateAbilityCasts(world, 1_010);
+  const ends = castEnds(world);
+  assert(
+    ends.length === 1 && ends[0]!.fired === false,
+    "losing the target mid-wind-up must clear the footprint",
+  );
+}
+
+// Dying mid-wind-up clears it as well. The cast loop only walks LIVE players, so
+// without an explicit cancel the footprint would be left drawing over a corpse.
+{
+  const { world, player } = spawn("slam-footprint-death");
+  const target = monsterAt(world, 430);
+  setAttackTarget(world, player, target.isMonster.id);
+  updateAbilityFiring(world, 1_000);
+  assert(castStarts(world).length === 1, "the wind-up should have announced itself");
+
+  world.killPlayer(player.isPlayer.id, {
+    kind: "melee",
+    damage: 1,
+    killer: {
+      monsterTypeId: target.isMonster.typeId,
+      monsterName: "Slam Target",
+      isBoss: false,
+      nodeId: "node-5-5",
+    },
+  });
+  assert(
+    player.isCastingAbility === undefined,
+    "death must drop the wind-up rather than leaving it attached across the respawn",
+  );
+  const ends = castEnds(world);
+  assert(
+    ends.length === 1 && ends[0]!.fired === false,
+    "dying mid-wind-up must emit the end event that clears the footprint",
+  );
+  assert(
+    target.hasHealth.hp === target.hasHealth.maxHp,
+    "a cast the caster did not live to finish lands no payload",
+  );
+}
+
+// A cast with no area announces no area. Power Strike must not sprout a circle.
+{
+  const { world, player } = spawn("power-strike-footprint", { abilities: ["power-strike"] });
+  const target = monsterAt(world, 430);
+  setAttackTarget(world, player, target.isMonster.id);
+  updateAbilityFiring(world, 1_000);
+  assert(
+    player.isCastingAbility?.abilityId === "power-strike",
+    "the Power Strike fixture should be casting Power Strike",
+  );
+  const starts = castStarts(world);
+  assert(starts.length === 1, "Power Strike still announces its wind-up");
+  assert(
+    starts[0]!.aoeRadius === undefined,
+    "a single-target cast must carry no radius — absence is what keeps it circle-free",
   );
 }
 

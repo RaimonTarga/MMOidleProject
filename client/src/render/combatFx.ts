@@ -151,6 +151,10 @@ import {
   endDetonateWindup,
   startDetonateWindup,
 } from "../fx/detonateWindup";
+import {
+  endAllyAoeFootprint,
+  startAllyAoeFootprint,
+} from "../fx/allyAoeFootprint";
 import { fxImbueCast, fxImbueCrackle } from "../fx/imbueLightning";
 import { fxHamstring } from "../fx/hamstring";
 import { fxBindingStrike } from "../fx/bindingStrike";
@@ -1315,6 +1319,20 @@ export function dispatchCombatEvent(
         ev.element,
       );
     }
+    // An AREA cast shows the ground it is about to cover for the whole wind-up,
+    // in the friendly palette. Gated on the server having sent a radius, so a
+    // single-target cast draws nothing — and node-wide, because standing inside
+    // an ally's Slam is not information you should have to guess at either.
+    if (shouldRunClientFx() && ev.targetId && ev.aoeRadius) {
+      startAllyAoeFootprint(
+        state,
+        scene,
+        ev.playerId,
+        ev.targetId,
+        ev.castMs,
+        ev.aoeRadius,
+      );
+    }
     if (ev.playerId === scene.myId) {
       notifyAbilityCastStarted(ev.ability, ev.castMs);
     }
@@ -1356,6 +1374,7 @@ export function dispatchCombatEvent(
     // just as surely as a resolved one, and this is the only event that fires
     // for both.
     endDetonateWindup(state, ev.playerId);
+    endAllyAoeFootprint(state, ev.playerId);
     // A cast resolves on its own target rather than riding an attack, so its
     // impact FX hangs off this event and its carried impact point — there is no
     // `player-hit` for it. Node-wide, so allies see each other's casts land.

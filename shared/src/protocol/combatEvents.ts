@@ -167,7 +167,15 @@ type CombatEventPayload =
   // the afflictions it is about to consume). When either field is absent the
   // client draws no wind-up at all and keeps the bare cast bar, rather than
   // inventing a default colour that would be a lie about what is on the target.
-  | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number; targetId?: string; element?: DamageElement }
+  //
+  // `aoeRadius` is the ground footprint the payload will damage, in world units,
+  // sent ONLY by a cast that actually has one (Slam). It is the same number the
+  // server resolves the AoE with, carried over the wire rather than re-derived
+  // client-side: the radius comes from the rank at the caster's tier, which the
+  // client does not reliably know for another player, and a UI copy of it could
+  // drift from the damage the moment a rank is re-authored. Absent means the cast
+  // has no area — the client then draws no footprint rather than guessing one.
+  | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number; targetId?: string; element?: DamageElement; aoeRadius?: number }
   // The wind-up ended. `fired: false` means it was interrupted by hard CC or lost
   // its target, so the client clears the bar without playing the resolve FX.
   // `targetPos` is present only when it fired, and is where the payload landed —

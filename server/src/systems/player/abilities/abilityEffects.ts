@@ -213,6 +213,33 @@ function techniqueEffect(
   });
 }
 
+/**
+ * The ground footprint a `cast-strike` payload will damage, or `undefined` when
+ * the payload has no area at all (a single-target cast like Power Strike).
+ *
+ * THE one definition of Slam's area. `resolveCastPayload` damages with it and
+ * `beginAbilityCast` broadcasts it to the client for the wind-up indicator, so
+ * the drawn circle and the damaged circle cannot drift apart — there is no second
+ * copy of the number to fall out of step. Reads the rank at the caster's tier via
+ * {@link techniqueEffect}, so a rank that widens the radius later widens the
+ * indicator with it, for free.
+ *
+ * Returns `undefined` rather than 0 for "no area": absence is the signal the
+ * caller branches on, not a magic zero.
+ */
+function castStrikeFootprintRadius(effect: AbilityEffectSpec): number | undefined {
+  if (effect.kind !== "cast-strike") return undefined;
+  return effect.radius && effect.radius > 0 ? effect.radius : undefined;
+}
+
+/** {@link castStrikeFootprintRadius} for a caster's live rank of `ability`. */
+export function castFootprintRadius(
+  player: PlayerEntity,
+  ability: AbilityDef,
+): number | undefined {
+  return castStrikeFootprintRadius(techniqueEffect(player, ability));
+}
+
 /** Append a client-effect tag to the hit that combat.ts is about to broadcast. */
 function tagClientEffect(ctx: CombatContext, tag: string): void {
   const existing = ctx.metadata["clientEffects"];
@@ -260,7 +287,7 @@ export function resolveCastPayload(
   // rather than radius 0: the query is a BODY-overlap test, and a zero-radius
   // circle on a monster whose origin has drifted from its body centre would miss.
   const damage = Math.max(1, Math.round(player.dealsDamage.attack * effect.damageMult));
-  const radius = effect.radius && effect.radius > 0 ? effect.radius : 1;
+  const radius = castStrikeFootprintRadius(effect) ?? 1;
   applyPlayerAoe(world, player, target.hasPosition.current, radius, damage);
 
   // Stunning Strike: the control lands with the blow. Applied after the damage so

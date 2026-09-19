@@ -11,6 +11,7 @@ import { destroyEffectOverlays } from './effectOverlays';
 import { destroyThoughtBubble } from './thoughtBubbles';
 import { clearMovementEffectsForEntity } from './movementEffects';
 import { endDetonateWindup } from '../fx/detonateWindup';
+import { endAllyAoeFootprint } from '../fx/allyAoeFootprint';
 
 export function destroyEntity(
   state: RenderState,
@@ -34,6 +35,9 @@ export function destroyEntity(
   // already stops drawing once the sprite is gone, and losing its target is
   // exactly what makes the server end the cast.
   endDetonateWindup(state, id);
+  // Same rule for the friendly AoE footprint: keyed by the caster, so a caster
+  // that dies or leaves the node mid-wind-up takes its circle with it.
+  endAllyAoeFootprint(state, id);
   destroySkillCallout(state, id);
   destroyEffectOverlays(state, id);
   destroyThoughtBubble(state, id);

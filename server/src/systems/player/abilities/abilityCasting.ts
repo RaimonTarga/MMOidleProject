@@ -35,7 +35,11 @@ import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { isHardControlled } from "../../combat/status/playerHardControl";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { startTechniqueCooldown } from "./abilityCooldowns";
-import { resolveCastPayload, resolveSelfCastPayload } from "./abilityEffects";
+import {
+  castFootprintRadius,
+  resolveCastPayload,
+  resolveSelfCastPayload,
+} from "./abilityEffects";
 import {
   afflictionTechniqueHasWork,
   detonateWindupElement,
@@ -91,6 +95,12 @@ export function beginAbilityCast(
   // taut belongs on the thing carrying it — so the target's id rides along.
   // A colour rides along only when the ability has one to give.
   const windupElement = detonateWindupElement(world, player, ability, target);
+  // An AREA cast also ships the footprint it is about to damage, so the client can
+  // show the player exactly what the blow will cover while it winds up. Sourced
+  // from `castFootprintRadius` — the same call `resolveCastPayload` resolves the
+  // damage circle from — and omitted entirely by a cast with no area, which is
+  // what keeps single-target casts free of a phantom circle.
+  const footprintRadius = castFootprintRadius(player, ability);
   world.pushEvent(player.hasPosition.nodeId, {
     kind: "player-cast-start",
     playerId: player.isPlayer.id,
@@ -98,6 +108,7 @@ export function beginAbilityCast(
     castMs: effectiveMs,
     targetId: target.isMonster.id,
     ...(windupElement ? { element: windupElement } : {}),
+    ...(footprintRadius ? { aoeRadius: footprintRadius } : {}),
   });
   return true;
 }
@@ -366,4 +377,25 @@ function abortCast(world: World, player: PlayerEntity, abilityId: string): void 
     ability: abilityId,
     fired: false,
   });
+}
+
+/**
+ * Drop a wind-up from OUTSIDE the cast loop, for a player the loop will never
+ * visit again — death being the only such case today.
+ *
+ * `updateAbilityCasts` walks `livePlayers`, so a player who dies mid-wind-up is
+ * simply never advanced: the component stayed attached until the next tick after
+ * respawn, and nothing ever announced the end. Client-side that means every
+ * wind-up telegraph the cast owns (the cast bar, the affliction wind-up, the
+ * area footprint) keeps drawing over a corpse, because `player-cast-end` is the
+ * one event they all clear on and it was never sent.
+ *
+ * Routed through the same `abortCast` as every other failure, so a cast that
+ * ends this way is indistinguishable from one broken by hard control — no
+ * payload, no cooldown, one end event.
+ */
+export function cancelAbilityCast(world: World, player: PlayerEntity): void {
+  const casting = player.isCastingAbility;
+  if (!casting) return;
+  abortCast(world, player, casting.abilityId);
 }

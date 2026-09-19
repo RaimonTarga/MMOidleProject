@@ -12,6 +12,7 @@ import { clearAutoTraversePath } from "./autoTraverse";
 import { setAggroTarget, setAttackTarget } from "../combat/ai/targeting";
 import { clearEngagement } from "../combat/ai/engagement";
 import { despawnMinionsForOwner } from "../classes/archetypes/summoner";
+import { cancelAbilityCast } from "../player/abilities/abilityCasting";
 import {
   buildPlayerDeathPayload,
 } from "./deathCause";
@@ -65,6 +66,11 @@ export function killPlayer(
     s.autoTraverse = false;
   });
   despawnMinionsForOwner(world, entity);
+  // A wind-up in flight ends HERE, because the cast loop only walks live players
+  // and would otherwise never touch this one again. Without it the cast component
+  // survives the respawn and every wind-up telegraph the client is drawing â€” cast
+  // bar, affliction wind-up, area footprint â€” keeps running over the corpse.
+  cancelAbilityCast(world, entity);
   clearEngagement(world, entity);
   clearInvalidAmbientRamp(world, entity, undefined);
   resetTracksCombat(entity.tracksCombat);
