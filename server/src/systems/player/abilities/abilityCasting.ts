@@ -203,7 +203,7 @@ export function updateAbilityCasts(world: World, now: number): void {
       if (now < casting.endsAt) continue;
       detachComponent(world, player, "isCastingAbility");
       resolveSelfCastPayload(world, player, ability);
-      startTechniqueCooldown(player, ability);
+      startTechniqueCooldown(world, player, ability);
       world.pushEvent(player.hasPosition.nodeId, {
         kind: "player-cast-end",
         playerId: player.isPlayer.id,
@@ -243,7 +243,7 @@ export function updateAbilityCasts(world: World, now: number): void {
     } else {
       resolveCastPayload(world, player, ability, target);
     }
-    startTechniqueCooldown(player, ability);
+    startTechniqueCooldown(world, player, ability);
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-cast-end",
       playerId: player.isPlayer.id,

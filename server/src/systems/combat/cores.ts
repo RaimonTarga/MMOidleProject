@@ -2,6 +2,7 @@ import {
   ABILITY_DATABASE,
   abilityHasTag,
   abilityCooldownMs,
+  modifiedAbilityCooldownMs,
   getCounter,
   getCooldown,
   getString,
@@ -11,7 +12,10 @@ import {
   setString,
 } from "@mmo-idle/shared";
 import { registerCombatListener, type CombatContext } from "./engine/combatPipeline";
-import { abilityCooldownKey } from "../player/abilities/abilityCooldowns";
+import {
+  abilityCooldownKey,
+  publishAbilityCooldown,
+} from "../player/abilities/abilityCooldowns";
 import type { PlayerEntity } from "../../ecs/entity";
 
 const DUELIST_TARGET_KEY = "core.duelist-target-id";
@@ -85,7 +89,7 @@ function registerDuelistFocus(): void {
 // ── Bruiser: kills refund part of the mobility ability's cooldown ────────────
 
 function registerMobilityRefundOnKill(): void {
-  registerCombatListener("onKill", (ctx, _world) => {
+  registerCombatListener("onKill", (ctx, world) => {
     if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
     if (!isDirectPlayerEvent(ctx)) return;
 
@@ -107,7 +111,17 @@ function registerMobilityRefundOnKill(): void {
       // subtraction. Refund a fraction of the ability's FULL cooldown rather than
       // of what is left, so the reward for a kill does not shrink as the cooldown
       // runs out (which would make chained kills feel worse, not better).
-      setCooldown(player.tracksCombat, key, Math.max(0, remaining - abilityCooldownMs(ability, player.tracksProgression.playerTier) * pct));
+      const total = modifiedAbilityCooldownMs(
+        ability,
+        player.tracksProgression.playerTier,
+        player.usesSkills.passives,
+      );
+      const next = Math.max(0, remaining - abilityCooldownMs(ability, player.tracksProgression.playerTier) * pct);
+      setCooldown(player.tracksCombat, key, next);
+      // Same rule as Sweep's Tempo: a cooldown the server shortened for a reason
+      // the client could not predict has to be sampled to the HUD, or the tile
+      // keeps sweeping over an ability that is already back.
+      publishAbilityCooldown(world, player, abilityId, next, total);
     }
   });
 }

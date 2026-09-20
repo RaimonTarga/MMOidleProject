@@ -1,10 +1,17 @@
-import { isHarmfulPlayerStatusEffect } from "@mmo-idle/shared";
+import {
+  ABILITY_DATABASE,
+  isHarmfulPlayerStatusEffect,
+  modifiedAbilityCooldownMs,
+} from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { applyHealToPlayer } from "../../defense/regen/healing";
-import { abilityCooldownKey } from "../abilities/abilityCooldowns";
+import {
+  abilityCooldownKey,
+  publishAbilityCooldown,
+} from "../abilities/abilityCooldowns";
 
 const MECHANIC_RENEWAL_FRACTION = 0.3;
 const ABILITY_REPRIEVE_FRACTION = 0.3;
@@ -82,12 +89,28 @@ function renewClassMechanic(world: World, player: PlayerEntity): void {
   }
 }
 
-function reprieveAbilities(player: PlayerEntity): void {
+function reprieveAbilities(world: World, player: PlayerEntity): void {
   const equipped = player.tracksProgression.attunedAbilities;
   for (const abilityId of [...(equipped?.techniques ?? []), ...(equipped?.guards ?? [])]) {
     const key = abilityCooldownKey(abilityId);
     if ((player.tracksCombat.cooldowns[key] ?? 0) > 0) {
       player.tracksCombat.cooldowns[key] *= 1 - ABILITY_REPRIEVE_FRACTION;
+      // Sampled to the HUD for the same reason Tempo is: the bar cannot see a
+      // cooldown that moved for any reason other than time passing.
+      const ability = ABILITY_DATABASE.get(abilityId);
+      if (ability) {
+        publishAbilityCooldown(
+          world,
+          player,
+          abilityId,
+          player.tracksCombat.cooldowns[key]!,
+          modifiedAbilityCooldownMs(
+            ability,
+            player.tracksProgression.playerTier,
+            player.usesSkills.passives,
+          ),
+        );
+      }
     }
   }
 }
@@ -96,7 +119,7 @@ function reprieveAbilities(player: PlayerEntity): void {
 export function applyCombatEndRites(world: World, player: PlayerEntity): void {
   if (hasRite(player, "purification")) purify(player);
   if (hasRite(player, "mechanic-renewal")) renewClassMechanic(world, player);
-  if (hasRite(player, "ability-reprieve")) reprieveAbilities(player);
+  if (hasRite(player, "ability-reprieve")) reprieveAbilities(world, player);
 }
 
 export function initRiteListeners(): void {

@@ -131,6 +131,40 @@ type CombatEventPayload =
   // each other react. `ability` is the ability id; the client picks the FX by id.
   // Purely cosmetic — the buff/heal/cleanse is server-authoritative.
   | { kind: 'player-guard'; playerId: string; ability: string }
+  // The AUTHORITATIVE remaining cooldown on one of a player's abilities.
+  //
+  // The HUD used to run the cooldown sweep entirely on its own clock: stamp the
+  // time an arm/fire event arrived, assume the AUTHORED duration, count down.
+  // That is a guess, and two things make it wrong. Sweep's Tempo mechanic
+  // shortens the live cooldown every time an attack lands, and equipment
+  // cooldown reduction shortens the duration itself — neither of which a
+  // client-side countdown from an authored constant can see. The ability came
+  // back early and the tile still said "wait".
+  //
+  // Cooldowns live in `TracksCombat`, which is server-only scratch state and is
+  // deliberately not networked: it is a large bag of counters that changes every
+  // tick, and putting it in a 5 Hz slice would be both chatty and a licence to
+  // leak server internals. So the server SAMPLES instead — it emits this
+  // whenever the remaining time changes for a reason the client could not have
+  // predicted:
+  //   - the cooldown starts (carrying the real, reduction-adjusted `totalMs`);
+  //   - Tempo refunds part of it.
+  // Plain time decay emits nothing at all; the client extrapolates between
+  // samples, exactly like the reload bar does with its own authoritative
+  // samples. No event ⇒ nothing changed ⇒ keep counting down.
+  //
+  // `remainingMs` is what is left at the instant of emission and `totalMs` the
+  // full cycle it is a fraction of, so the sweep has both numbers it needs from
+  // one authoritative source and the client never multiplies an authored
+  // constant back in. Node-wide like every other combat event; the HUD keeps
+  // only its own player's samples.
+  | {
+      kind: 'player-ability-cooldown';
+      playerId: string;
+      ability: string;
+      remainingMs: number;
+      totalMs: number;
+    }
   // A Slinger entered the authoritative reload lifecycle. Drives the same
   // node-wide overhead callout used by player abilities; reload timing itself
   // remains authoritative state and is rendered separately on the overhead bar.

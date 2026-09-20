@@ -14,7 +14,6 @@
 
 import {
   abilityBlurbAt,
-  abilityCooldownMs,
   abilityRankNumber,
   abilityRankNumeral,
   type AbilityDef,
@@ -226,11 +225,3 @@ export function abilityAccessibleLabel(
   return `${SLOT_LABEL[ability.slot]}: ${ability.name} ${rank} — ${state}`;
 }
 
-/** Cooldown left, from the fraction the HUD already tracks. */
-export function cooldownRemainingMs(
-  ability: AbilityDef,
-  playerTier: number,
-  remainingFrac: number,
-): number {
-  return Math.max(0, remainingFrac * abilityCooldownMs(ability, playerTier));
-}

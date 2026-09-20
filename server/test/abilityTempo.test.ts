@@ -40,6 +40,7 @@ import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffec
 import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
 import { World } from "../src/world/World";
 import type { PlayerEntity } from "../src/ecs/entity";
+import type { CombatEvent } from "@mmo-idle/shared";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -130,6 +131,23 @@ function durableMonster(world: World, x: number) {
 
 const sweepCooldown = (player: PlayerEntity): number =>
   getCooldown(player.tracksCombat, abilityCooldownKey("sweep"));
+
+/**
+ * Drain the node's cooldown SAMPLES. This is the only channel the HUD has: the
+ * cooldown itself lives in `TracksCombat`, which is never networked, so an
+ * ability whose remaining time moves without emitting one of these is an
+ * ability whose tile is lying to the player.
+ */
+function cooldownSamples(
+  world: World,
+): Array<Extract<CombatEvent, { kind: "player-ability-cooldown" }>> {
+  return world
+    .takeNodeEvents("node-5-5")
+    .filter(
+      (event): event is Extract<CombatEvent, { kind: "player-ability-cooldown" }> =>
+        event.kind === "player-ability-cooldown",
+    );
+}
 
 /** Arm Sweep through the real firing driver, so the cooldown starts the real way. */
 function armSweep(world: World, player: PlayerEntity, targetId: string, now = 1_000): void {
@@ -447,6 +465,120 @@ for (const [subVariant, count] of [[null, 4], ["light", 6], ["heavy", 2]] as con
   assert(
     before - sweepCooldown(player) === 1000,
     "six deliveries from three bodies is 1.5 attacks, so exactly one refund",
+  );
+}
+
+// ── 5. Every change the client cannot predict is SAMPLED to it ──────────────
+//
+// The bug this guards: Tempo shortened the live cooldown server-side and the
+// ability bar, counting down its own authored guess, went on sweeping for
+// seconds after Sweep was ready.
+
+// 5a. Arming publishes the real cycle; each refund republishes what is left.
+{
+  const { world, player } = spawn("tempo-sample");
+  const target = durableMonster(world, 430);
+  world.takeNodeEvents("node-5-5");
+
+  armSweep(world, player, target.isMonster.id);
+  const onArm = cooldownSamples(world);
+  assert(
+    onArm.length === 1 && onArm[0]!.ability === "sweep",
+    `arming Sweep should publish exactly one cooldown sample, got ${onArm.length}`,
+  );
+  assert(
+    onArm[0]!.remainingMs === 7000 && onArm[0]!.totalMs === 7000,
+    `the arm sample should carry the full 7s cycle, got ${onArm[0]!.remainingMs}/${onArm[0]!.totalMs}`,
+  );
+  assert(
+    onArm[0]!.playerId === player.isPlayer.id,
+    "the sample should name the player whose cooldown it is",
+  );
+
+  attack(world, player, target, 1_100);
+  const onRefund = cooldownSamples(world);
+  assert(
+    onRefund.length === 1,
+    `one refunding attack should publish one cooldown sample, got ${onRefund.length}`,
+  );
+  assert(
+    onRefund[0]!.remainingMs === sweepCooldown(player),
+    `the sample must equal the server's live remaining cooldown (${sweepCooldown(player)}), got ${onRefund[0]!.remainingMs}`,
+  );
+  assert(
+    onRefund[0]!.totalMs === 7000,
+    "the refund sample must carry the full cycle so the HUD has a denominator",
+  );
+}
+
+// 5b. The sampled total is the REDUCED cycle, not the authored one. Without
+// this the tile would divide a real remaining time by a cooldown the player
+// does not actually have.
+{
+  const { world, player } = spawn("tempo-sample-cdr", {
+    passives: { "technique.cooldown-reduction-pct": 0.2 },
+  });
+  const target = durableMonster(world, 430);
+  world.takeNodeEvents("node-5-5");
+
+  armSweep(world, player, target.isMonster.id);
+  const onArm = cooldownSamples(world);
+  assert(
+    Math.round(onArm[0]!.totalMs) === 5600 && Math.round(onArm[0]!.remainingMs) === 5600,
+    `cooldown reduction should reach the HUD as a 5600ms cycle, got ${onArm[0]!.totalMs}`,
+  );
+
+  attack(world, player, target, 1_100);
+  const onRefund = cooldownSamples(world);
+  assert(
+    Math.round(onRefund[0]!.remainingMs) === 4600
+      && Math.round(onRefund[0]!.totalMs) === 5600,
+    "a refund on a reduced cooldown should sample both reduced numbers",
+  );
+}
+
+// 5c. T1 Sweep owns no Tempo, so attacking it publishes nothing beyond the arm.
+// A sample per swing that changed nothing would be pure noise on the wire.
+{
+  const { world, player } = spawn("tempo-sample-t1", { tier: 1 });
+  const target = durableMonster(world, 430);
+  world.takeNodeEvents("node-5-5");
+
+  armSweep(world, player, target.isMonster.id);
+  assert(cooldownSamples(world).length === 1, "arming should still publish one sample");
+  for (let i = 0; i < 5; i++) attack(world, player, target, 1_100 + i);
+  assert(
+    cooldownSamples(world).length === 0,
+    "attacks that refund nothing must publish no cooldown samples",
+  );
+}
+
+// 5d. A refund entirely absorbed by the minimum-cycle floor moved nothing, so it
+// publishes nothing — and a ready ability banks no credit and stays silent.
+{
+  const { world, player } = spawn("tempo-sample-floor");
+  const target = durableMonster(world, 430);
+  armSweep(world, player, target.isMonster.id);
+  for (let i = 0; i < 20; i++) attack(world, player, target, 1_100 + i);
+  assert(
+    sweepCooldown(player) === TECHNIQUE_TEMPO_MIN_CYCLE_MS,
+    "fixture should be pinned at the minimum cycle",
+  );
+  world.takeNodeEvents("node-5-5");
+
+  for (let i = 0; i < 5; i++) attack(world, player, target, 1_200 + i);
+  assert(
+    cooldownSamples(world).length === 0,
+    "attacks blocked by the minimum-cycle floor must publish no samples",
+  );
+
+  tickCooldowns(player.tracksCombat, TECHNIQUE_TEMPO_MIN_CYCLE_MS);
+  assert(sweepCooldown(player) === 0, "the cooldown should have ticked away");
+  world.takeNodeEvents("node-5-5");
+  for (let i = 0; i < 5; i++) attack(world, player, target, 1_300 + i);
+  assert(
+    cooldownSamples(world).length === 0,
+    "a ready ability banks no credit and must publish no samples",
   );
 }
 

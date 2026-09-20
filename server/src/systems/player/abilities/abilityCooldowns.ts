@@ -12,6 +12,7 @@ import {
   type AbilityDef,
 } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
+import type { World } from "../../../world/World";
 
 /**
  * Cooldowns are keyed PER ABILITY, not per slot: with two Technique slots a
@@ -57,6 +58,38 @@ export function guardCooldownMs(player: PlayerEntity, ability: AbilityDef): numb
 }
 
 /**
+ * Publish the authoritative remaining cooldown for one ability.
+ *
+ * The client cannot derive this. Cooldowns live in `TracksCombat`, which is not
+ * networked, and the two things that move them — equipment cooldown reduction
+ * and Sweep's Tempo refunds — are both invisible to a countdown started from an
+ * authored constant. So every change the client could NOT have predicted is
+ * sampled to it here, and ordinary time decay is left to the client's own clock.
+ *
+ * `totalMs` rides along so the HUD's sweep has a denominator from the same
+ * authoritative source as its numerator. Without it the bar would divide a real
+ * remaining time by an authored total and draw a fraction that belongs to
+ * neither.
+ *
+ * Purely presentational: the cooldown itself was already set by the caller.
+ */
+export function publishAbilityCooldown(
+  world: World,
+  player: PlayerEntity,
+  abilityId: string,
+  remainingMs: number,
+  totalMs: number,
+): void {
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: "player-ability-cooldown",
+    playerId: player.isPlayer.id,
+    ability: abilityId,
+    remainingMs,
+    totalMs,
+  });
+}
+
+/**
  * THE single place a Technique's cooldown starts.
  *
  * Every activation path (armed, cast, charge, self-cast, reposition, instant)
@@ -69,9 +102,17 @@ export function guardCooldownMs(player: PlayerEntity, ability: AbilityDef): numb
  * reduction therefore always helps, Tempo then works on what is left, and the
  * floor never lengthens a cooldown that equipment already shortened past it.
  */
-export function startTechniqueCooldown(player: PlayerEntity, ability: AbilityDef): void {
+export function startTechniqueCooldown(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+): void {
   const cooldownMs = techniqueCooldownMs(player, ability);
   setCooldown(player.tracksCombat, abilityCooldownKey(ability.id), cooldownMs);
+  // Sampled from here rather than from each activation path for the same reason
+  // the Tempo floor is set here: this is the one place every shape passes
+  // through, so no shape can start a cooldown the HUD never hears about.
+  publishAbilityCooldown(world, player, ability.id, cooldownMs, cooldownMs);
 
   const refundMs = abilityTempoRefundMs(ability, player.tracksProgression.playerTier);
   setCooldown(

@@ -175,6 +175,7 @@ import { spawnSkillCallout } from "./skillCallouts";
 import {
   notifyAbilityCastEnded,
   notifyAbilityCastStarted,
+  notifyAbilityCooldownSample,
   notifyAbilityCooldownStarted,
   notifyAbilityFired,
   notifyStanceCooldownStarted,
@@ -1338,6 +1339,18 @@ export function dispatchCombatEvent(
     }
     if (ev.playerId === scene.myId) {
       notifyAbilityCastStarted(ev.ability, ev.castMs);
+    }
+    return;
+  }
+
+  if (ev.kind === "player-ability-cooldown") {
+    // The authoritative remaining cooldown. Own player only: this drives the
+    // local ability bar, and another player's Tempo is not information this HUD
+    // has anywhere to put. Not gated on `shouldRunClientFx` — a cooldown readout
+    // is HUD state, not an in-world effect, and must stay correct even when
+    // in-world FX are suppressed.
+    if (ev.playerId === scene.myId) {
+      notifyAbilityCooldownSample(ev.ability, ev.remainingMs, ev.totalMs);
     }
     return;
   }

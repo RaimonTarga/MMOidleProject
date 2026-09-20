@@ -49,9 +49,12 @@ import {
   abilityCooldownKey,
   abilityTempoFloorKey,
   abilityTempoProgressKey,
+  publishAbilityCooldown,
+  techniqueCooldownMs,
 } from "./abilityCooldowns";
 import type { CombatContext } from "../../combat/engine/combatPipeline";
 import type { PlayerEntity } from "../../../ecs/entity";
+import type { World } from "../../../world/World";
 
 /**
  * Fallback fraction for a continuous channel whose authored damage-per-tick is
@@ -123,7 +126,11 @@ function channelTickFraction(ctx: CombatContext): number | null {
  * Generic over the roster on purpose: Sweep is the only ability authoring
  * `tempoRefundMs` today, and a second one should need no server change.
  */
-export function applyAttackTempo(player: PlayerEntity, contribution: number): void {
+export function applyAttackTempo(
+  world: World,
+  player: PlayerEntity,
+  contribution: number,
+): void {
   if (contribution <= 0) return;
   const attuned = player.tracksProgression.attunedAbilities;
   if (!attuned) return;
@@ -155,7 +162,23 @@ export function applyAttackTempo(player: PlayerEntity, contribution: number): vo
     // exactly "never ready sooner than TECHNIQUE_TEMPO_MIN_CYCLE_MS after the
     // last one". Clamped against `remaining` so Tempo can only ever shorten.
     const floor = Math.min(remaining, getCooldown(combat, abilityTempoFloorKey(abilityId)));
-    setCooldown(combat, cooldownKey, Math.max(floor, remaining - whole * refundMs));
+    const next = Math.max(floor, remaining - whole * refundMs);
+    setCooldown(combat, cooldownKey, next);
+
+    // Tell the HUD, or the tile keeps counting down its own authored guess while
+    // the ability quietly comes back early — the whole point of the mechanic is
+    // invisible otherwise. Only on a real change: a refund absorbed entirely by
+    // the minimum-cycle floor moved nothing, and re-sending an unchanged number
+    // every swing would be pure noise.
+    if (next !== remaining) {
+      publishAbilityCooldown(
+        world,
+        player,
+        abilityId,
+        next,
+        techniqueCooldownMs(player, ability),
+      );
+    }
   }
 }
 
@@ -174,8 +197,8 @@ export function applyAttackTempo(player: PlayerEntity, contribution: number): vo
  * balance bench stay identical.
  */
 export function initAttackTempoSystem(): void {
-  registerCombatListener("afterHit", (ctx) => {
+  registerCombatListener("afterHit", (ctx, world) => {
     if (ctx.attackerType !== "player") return;
-    applyAttackTempo(ctx.attacker, basicAttackTempoContribution(ctx));
+    applyAttackTempo(world, ctx.attacker, basicAttackTempoContribution(ctx));
   });
 }

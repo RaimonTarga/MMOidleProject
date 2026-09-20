@@ -18,6 +18,7 @@ import {
 import {
   abilityCastAtom,
   abilityFiredAtAtom,
+  abilityCooldownSampleAtom,
   abilityCooldownStartedAtAtom,
   activeBuffsAtom,
   activeStanceAtom,
@@ -31,6 +32,7 @@ import {
   runesEquippedAtom,
   stanceCooldownStartedAtAtom,
 } from "./atoms";
+import type { AbilityCooldownSample } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
 import { abilityIconSource } from "../ui/abilityIcons";
 import { useIsMobile } from "./useIsMobile";
@@ -39,7 +41,6 @@ import { useAbilityContext } from "../ui/describe/useAbilityContext";
 import {
   abilityAccessibleLabel,
   abilityTooltipContent,
-  cooldownRemainingMs,
   type AbilityRuntime,
 } from "./statusTooltips";
 import "./hud.css";
@@ -71,6 +72,11 @@ const SLOT_ORDER: AbilityFamily[] = ["technique", "guard"];
 interface SlotStatus {
   /** Fraction of the cooldown still REMAINING (0 = ready), drives the dark sweep. */
   remainingFrac: number;
+  /** Cooldown left in ms — the number itself, not re-derived from the fraction.
+   *  Carried rather than recomputed because the fraction's denominator is now
+   *  whatever the SERVER said the cycle was, and multiplying the authored
+   *  constant back in would undo exactly the correction the sample provides. */
+  cooldownLeftMs: number;
   /** Brief flash right after the ability fires. */
   justFired: boolean;
   /** Guard boon is currently active (its buff is up), or a cast is winding up. */
@@ -81,20 +87,48 @@ interface SlotStatus {
 
 type DesktopAbilityState = "cooling" | "active" | "triggered" | "ready";
 
+/**
+ * The cooldown sweep, from the server's own numbers where it has given us any.
+ *
+ * `sample` is the authoritative remaining time at the moment it arrived, so what
+ * is left NOW is that minus however long ago that was. It supersedes the local
+ * estimate completely: the estimate assumes the authored duration counting down
+ * undisturbed, which is wrong for a Tempo ability (every landed attack shortens
+ * the live cooldown) and wrong under equipment cooldown reduction (the duration
+ * itself is shorter). Both look identical from here — the tile is simply told
+ * the truth instead of guessing it.
+ *
+ * The estimate remains for abilities the server does not sample, and is exactly
+ * what it always was.
+ */
 function computeStatus(
   cooldownStartedAt: number,
   firedAt: number,
   cooldownMs: number,
   now: number,
   active: boolean,
+  sample: AbilityCooldownSample | undefined,
 ): SlotStatus {
   let remainingFrac = 0;
-  if (!active && cooldownStartedAt > 0 && cooldownMs > 0) {
-    const elapsed = now - cooldownStartedAt;
-    if (elapsed < cooldownMs) remainingFrac = 1 - elapsed / cooldownMs;
+  let cooldownLeftMs = 0;
+  // An active Guard boon owns the tile, and its sweep stays suppressed so the
+  // two states can never read as one — unchanged from before.
+  if (!active) {
+    if (sample) {
+      cooldownLeftMs = Math.max(0, sample.remainingMs - (now - sample.observedAt));
+      remainingFrac = sample.totalMs > 0
+        ? Math.min(1, cooldownLeftMs / sample.totalMs)
+        : 0;
+    } else if (cooldownStartedAt > 0 && cooldownMs > 0) {
+      const elapsed = now - cooldownStartedAt;
+      if (elapsed < cooldownMs) {
+        remainingFrac = 1 - elapsed / cooldownMs;
+        cooldownLeftMs = cooldownMs - elapsed;
+      }
+    }
   }
   const justFired = firedAt > 0 && now - firedAt < PULSE_MS;
-  return { remainingFrac, justFired, active };
+  return { remainingFrac, cooldownLeftMs, justFired, active };
 }
 
 /**
@@ -108,6 +142,7 @@ function castStatus(startedAt: number, castMs: number, now: number): SlotStatus 
   const progress = castMs > 0 ? Math.min(1, elapsed / castMs) : 1;
   return {
     remainingFrac: 1 - progress,
+    cooldownLeftMs: 0,
     justFired: false,
     active: true,
     castRemainingMs: Math.max(0, castMs - elapsed),
@@ -131,7 +166,7 @@ function AbilityIcon({
   const timing = abilityTiming(ability, useAtomValue(attunedAbilitiesAtom), useAtomValue(runesEquippedAtom));
   const runtime: AbilityRuntime = {
     state: status.castRemainingMs !== undefined ? 'casting' : status.active ? 'active' : status.remainingFrac > 0 ? 'cooling' : 'ready',
-    cooldownRemainingMs: cooldownRemainingMs(ability, context.playerTier, status.remainingFrac),
+    cooldownRemainingMs: status.cooldownLeftMs,
     castRemainingMs: status.castRemainingMs,
     runeTiming: timing.overrideText,
   };
@@ -261,9 +296,7 @@ function DesktopAbilityFamily({
   const playerTier = useAtomValue(playerTierAtom);
   const rank = abilityRankNumeral(abilityRankNumber(ability, playerTier));
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
-  const remainingSeconds = Math.ceil(
-    (status.remainingFrac * abilityCooldownMs(ability, playerTier)) / 1000,
-  );
+  const remainingSeconds = Math.ceil(status.cooldownLeftMs / 1000);
   const cooling = remainingPct > 0;
   const state: DesktopAbilityState = status.justFired
     ? "triggered"
@@ -284,7 +317,7 @@ function DesktopAbilityFamily({
         : cooling
           ? "cooling"
           : "ready",
-    cooldownRemainingMs: cooldownRemainingMs(ability, playerTier, status.remainingFrac),
+    cooldownRemainingMs: status.cooldownLeftMs,
     castRemainingMs: status.castRemainingMs,
   };
   const abilityContext = useAbilityContext();
@@ -427,6 +460,7 @@ export function AbilityBar() {
   const equipped = useAtomValue(attunedAbilitiesAtom);
   const firedAt = useAtomValue(abilityFiredAtAtom);
   const cooldownStartedAt = useAtomValue(abilityCooldownStartedAtAtom);
+  const cooldownSamples = useAtomValue(abilityCooldownSampleAtom);
   const buffs = useAtomValue(activeBuffsAtom);
   const cast = useAtomValue(abilityCastAtom);
   const playerTier = useAtomValue(playerTierAtom);
@@ -484,6 +518,7 @@ export function AbilityBar() {
           abilityCooldownMs(ability, playerTier),
           now,
           active,
+          cooldownSamples[ability.id],
         ),
       };
     },

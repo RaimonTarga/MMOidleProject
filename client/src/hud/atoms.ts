@@ -254,6 +254,48 @@ export function notifyAbilityCooldownStarted(abilityId: string): void {
   store.set(abilityCooldownStartedAtAtom, { ...prev, [abilityId]: Date.now() });
 }
 
+/**
+ * Authoritative ability-cooldown samples from the server, keyed by ability id,
+ * each stamped with the client time it arrived.
+ *
+ * The `abilityCooldownStartedAtAtom` model above cannot tell the truth on its
+ * own: it assumes the AUTHORED duration and a countdown nothing interferes with.
+ * Sweep's Tempo mechanic shortens the live cooldown on every landed attack, and
+ * equipment cooldown reduction shortens the duration itself, so the tile went on
+ * sweeping long after the ability was ready.
+ *
+ * So the server samples the real remaining time whenever it changes for a reason
+ * the client could not have predicted, and the HUD extrapolates between samples
+ * off its own clock — the same authoritative-sample-plus-local-extrapolation
+ * shape the reload bar uses. `observedAt` is the RECEIPT time, not a server
+ * timestamp: the two clocks are unrelated, and what the sweep needs is elapsed
+ * time since the sample, which only the local clock can give honestly.
+ *
+ * A sample supersedes the started-at estimate for that ability entirely. It can
+ * never go stale across activations, because every activation ships a fresh
+ * sample from the same server seam that starts the cooldown.
+ */
+export interface AbilityCooldownSample {
+  remainingMs: number;
+  totalMs: number;
+  observedAt: number;
+}
+export const abilityCooldownSampleAtom = atom<Record<string, AbilityCooldownSample>>({});
+
+/** Record the server's authoritative remaining cooldown for one ability. */
+export function notifyAbilityCooldownSample(
+  abilityId: string,
+  remainingMs: number,
+  totalMs: number,
+): void {
+  const store = getDefaultStore();
+  const prev = store.get(abilityCooldownSampleAtom);
+  store.set(abilityCooldownSampleAtom, {
+    ...prev,
+    [abilityId]: { remainingMs, totalMs, observedAt: Date.now() },
+  });
+}
+
 /** Client receipt time for the authoritative shared stance-switch cooldown. */
 export const stanceCooldownStartedAtAtom = atom<number>(0);
 
