@@ -78,6 +78,10 @@ export interface RenderState {
    *  flight per player, and the end event names the caster). See
    *  allyAoeFootprint.ts. */
   allyAoeFootprint: Map<NetworkId, AllyAoeFootprintState>;
+  /** Last landed-area pulse per caster, so a blunderbuss volley's worth of
+   *  identical circles in one tick draws as one beat. Plain data, no game
+   *  objects — the pulses themselves self-destroy. See allyAoeFootprint.ts. */
+  allyAoeFootprintPulse: Map<NetworkId, { at: number; x: number; y: number }>;
   /** Player skill-name callout (Technique armed / Guard fired), keyed by player id.
    *  Pops in, lingers, then drifts up + fades (see skillCallouts.ts). */
   skillCallout: Map<
@@ -248,6 +252,7 @@ export function createRenderState(): RenderState {
     castState: new Map(),
     detonateWindup: new Map(),
     allyAoeFootprint: new Map(),
+    allyAoeFootprintPulse: new Map(),
     skillCallout: new Map(),
     techniqueArmed: new Map(),
     reloadTiming: new Map(),

@@ -1,11 +1,14 @@
 /** Focused wiring coverage for the Apprentice and Slinger Sweep adapters. */
 import {
+  ABILITY_DATABASE,
   ABILITY_SWEEP_FX,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   emptyEquipment,
   getStatusEffect,
+  resolveAbilityEffect,
 } from "@mmo-idle/shared";
+import type { CombatEvent } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { syncArchetypeSlices } from "../src/ecs/archetypeSliceSync";
 import { updateReloadArchetype } from "../src/systems/classes/archetypes/reload/reloadPrototype";
@@ -21,6 +24,60 @@ import { World } from "../src/world/World";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
+}
+
+/**
+ * Sweep's radius as the SERVER resolves it, asked for the same way the adapters
+ * ask: through the live effect seam at the fixture's tier, not by reading an
+ * authored constant. If Technique Power or a rank ever moves this number, the
+ * footprint assertions below move with it instead of going quietly stale.
+ */
+function sweepRadius(playerTier: number): number {
+  const ability = ABILITY_DATABASE.get("sweep");
+  if (!ability) throw new Error("missing Sweep definition");
+  const effect = resolveAbilityEffect(ability, {
+    playerTier,
+    techniquePowerPct: 0,
+  });
+  if (effect.kind !== "cleave") throw new Error("Sweep must resolve as a cleave");
+  return effect.radius;
+}
+
+function footprintsIn(
+  events: CombatEvent[],
+): Array<Extract<CombatEvent, { kind: "player-aoe-footprint" }>> {
+  return events.filter(
+    (event): event is Extract<CombatEvent, { kind: "player-aoe-footprint" }> =>
+      event.kind === "player-aoe-footprint",
+  );
+}
+
+/**
+ * The landed-area footprint must describe the circle that was actually tested:
+ * the server's own resolved radius, centred on the PRIMARY monster the swing hit
+ * (never the player). A client that drew either differently would be promising a
+ * different fight than the one the server ran.
+ */
+function assertSweepFootprint(
+  footprint: Extract<CombatEvent, { kind: "player-aoe-footprint" }> | undefined,
+  playerId: string,
+  primary: { hasPosition: { current: { x: number; y: number } } },
+  label: string,
+): void {
+  assert(!!footprint, `${label} should publish a landed-area footprint`);
+  assert(
+    footprint!.playerId === playerId,
+    `${label} footprint should be attributed to the acting player`,
+  );
+  assert(
+    footprint!.radius === sweepRadius(1),
+    `${label} footprint should carry Sweep's resolved radius (${sweepRadius(1)}), got ${footprint!.radius}`,
+  );
+  assert(
+    footprint!.pos.x === primary.hasPosition.current.x
+      && footprint!.pos.y === primary.hasPosition.current.y,
+    `${label} footprint should be centred on the primary target, not the player`,
+  );
 }
 
 type SweepArchetype = "dot" | "reload" | null;
@@ -151,6 +208,18 @@ initCombatSystems();
     "targets outside Sweep radius should receive no DoT stack",
   );
 
+  const apprenticeFootprints = footprintsIn(world.takeNodeEvents("node-5-5"));
+  assert(
+    apprenticeFootprints.length === 1,
+    `Apprentice Sweep should publish exactly one landed-area footprint, got ${apprenticeFootprints.length}`,
+  );
+  assertSweepFootprint(
+    apprenticeFootprints[0],
+    player.isPlayer.id,
+    primary,
+    "Apprentice Sweep",
+  );
+
   const adapterEvents = takeWorldLogEvents(world, player.isPlayer.id).filter(
     (event) => event.kind === "technique-adapter",
   );
@@ -186,6 +255,44 @@ initCombatSystems();
     secondaryHpBefore - secondary.hasHealth.hp === 60,
     "non-adapted classes should retain Sweep I's 60% direct cleave",
   );
+
+  const genericFootprints = footprintsIn(world.takeNodeEvents("node-5-5"));
+  assert(
+    genericFootprints.length === 1,
+    `the generic cleave should publish exactly one landed-area footprint, got ${genericFootprints.length}`,
+  );
+  assertSweepFootprint(
+    genericFootprints[0],
+    player.isPlayer.id,
+    primary,
+    "Generic Sweep",
+  );
+}
+
+// An unarmed attack resolves no area, so it must publish no footprint: the cue
+// exists to say "this landed", and one drawn on a plain swing would say nothing.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(
+    makePlayerSlices("unarmed-sweep", null),
+    "unarmed-sweep",
+  );
+  syncArchetypeSlices(world, player);
+  player.dealsDamage.attack = 100;
+
+  const primary = createDurableMonster(world, 430);
+  createDurableMonster(world, 470);
+
+  player.usesAutocombat.auto = true;
+  setAttackTarget(world, player, primary.isMonster.id);
+  runPlayerAttack(world, player, primary, 1_100, {
+    attackOrigin: player.hasPosition.current,
+    aggroSource: { id: player.isPlayer.id, kind: "player" },
+  });
+  assert(
+    footprintsIn(world.takeNodeEvents("node-5-5")).length === 0,
+    "an attack with no Technique armed should publish no landed-area footprint",
+  );
 }
 
 function runSlingerClip(ammoMax: number): number {
@@ -206,23 +313,34 @@ function runSlingerClip(ammoMax: number): number {
   const secondaryHpBefore = secondary.hasHealth.hp;
 
   armSweep(world, player.isPlayer.id, primary.isMonster.id);
+  const footprints: Array<Extract<CombatEvent, { kind: "player-aoe-footprint" }>> = [];
   for (let shot = 0; shot < ammoMax; shot++) {
     const outcome = runPlayerAttack(world, player, primary, 1_100 + shot, {
       attackOrigin: player.hasPosition.current,
       aggroSource: { id: player.isPlayer.id, kind: "player" },
     });
     assert(outcome === "hit", `Slinger Sweep shot ${shot + 1} should land`);
+    // Drained every shot: each ammo-backed shot resolves its own splash circle,
+    // so each one must report its own footprint.
+    const events = world.takeNodeEvents("node-5-5");
+    footprints.push(...footprintsIn(events));
     if (shot === 0) {
       assert(player.hasArmedAbility === undefined, "Slinger Sweep charge should consume on the first shot");
       assert(!!player.hasSweepClip, "the first shot should activate the Sweep clip state");
-      const hit = world
-        .takeNodeEvents("node-5-5")
-        .find((event) => event.kind === "player-hit");
+      const hit = events.find((event) => event.kind === "player-hit");
       assert(
         !!hit && hit.kind === "player-hit" && hit.effects?.includes(ABILITY_SWEEP_FX),
         "a Sweep clip shot should carry the normal Sweep hit FX",
       );
     }
+  }
+
+  assert(
+    footprints.length === ammoMax,
+    `every Slinger Sweep shot should publish its own footprint, got ${footprints.length} of ${ammoMax}`,
+  );
+  for (const footprint of footprints) {
+    assertSweepFootprint(footprint, player.isPlayer.id, primary, "Slinger Sweep");
   }
 
   assert(player.usesReload.ammo === 0, "the Sweep clip should consume the full magazine");

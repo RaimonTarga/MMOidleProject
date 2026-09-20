@@ -52,6 +52,7 @@ export function destroyEntity(
   state.debugRanges.delete(id);
   state.ledgeHopNextAt.delete(id);
   state.techniqueArmed.delete(id);
+  state.allyAoeFootprintPulse.delete(id);
   state.reloadTiming.delete(id);
   clearMovementEffectsForEntity(state, id);
 }
