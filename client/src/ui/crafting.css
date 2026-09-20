@@ -2172,6 +2172,352 @@
   font-size: 10px;
 }
 
+/* ── Evolution preview ──────────────────────────────────────────────────────
+   An evolved recipe is a transformation, not a purchase, and the panel has to
+   read that way before a word of it is parsed: what is spent on the left, what
+   arrives on the right, the conduit between them. The two cards are deliberately
+   the same size — the result is not "the good one", it is the other end of a
+   trade the player is being asked to judge. */
+.evo-preview {
+  margin: 12px 0 0;
+}
+
+.evo-preview__label,
+.evo-changes__label {
+  margin: 0 0 6px;
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.evo-preview__flow {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.evo-card {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 8px 7px;
+  border: 1px solid var(--hud-edge-light);
+  border-radius: 2px;
+  background: rgba(14, 12, 9, 0.70);
+  text-align: center;
+}
+
+/* The source is the side being given up: slightly recessed, so the eye lands on
+   the result without either card being hidden. */
+.evo-card--source {
+  background: linear-gradient(rgba(8, 7, 6, 0.85), rgba(14, 12, 9, 0.62));
+}
+
+/* The result is where the eye should land, so it gets the panel's own accent
+   rather than its tier colour — a Tier-1 predecessor outlined in tier red read
+   as an error state, which is the one thing the card does not mean. */
+.evo-card--result {
+  border-color: rgba(200, 168, 96, 0.35);
+  background: linear-gradient(rgba(24, 20, 12, 0.72), rgba(14, 12, 9, 0.70));
+  box-shadow: inset 0 0 14px rgba(200, 168, 96, 0.06);
+}
+
+.evo-card__role {
+  color: var(--hud-text-dim);
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.evo-card__name {
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.evo-card__level {
+  color: var(--hud-text-muted);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Restrained on purpose: consumption is a fact about the recipe, not a warning
+   about the action. It states itself once and stops asking for attention. */
+.evo-card__tag {
+  padding: 1px 6px;
+  border: 1px solid var(--hud-edge-light);
+  border-radius: 2px;
+  font-size: 8px;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+
+.evo-card__tag--consumed {
+  border-color: rgba(138, 128, 108, 0.40);
+  color: var(--hud-text-muted);
+}
+
+.evo-card__tag--result {
+  border-color: rgba(200, 168, 96, 0.35);
+  background: rgba(200, 168, 96, 0.08);
+  color: var(--hud-primary);
+}
+
+.evo-card__own {
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+/* Requirement states carry the only judgement in the whole preview, because
+   whether you HAVE the thing is not a matter of taste. */
+.evo-card__own--ready   { color: var(--hud-success); }
+.evo-card__own--short   { color: var(--hud-warning); }
+.evo-card__own--missing { color: var(--hud-text-dim); }
+
+.evo-card--short   { border-color: rgba(204, 153, 51, 0.45); }
+.evo-card--missing { opacity: 0.82; }
+
+.evo-preview__conduit {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 26px;
+}
+
+.evo-preview__rail {
+  flex: 1 1 auto;
+  width: 1px;
+  min-height: 6px;
+  background: linear-gradient(var(--hud-edge-light), rgba(200, 168, 96, 0.45));
+}
+
+.evo-preview__rail:last-child {
+  background: linear-gradient(rgba(200, 168, 96, 0.45), var(--hud-edge-light));
+}
+
+.evo-preview__arrow {
+  color: var(--hud-primary);
+  font-size: 14px;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(200, 168, 96, 0.35);
+}
+
+.evo-preview__notes {
+  margin: 7px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--hud-text-muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.evo-preview__notes li + li {
+  margin-top: 2px;
+}
+
+.evo-changes {
+  margin-top: 10px;
+  padding: 6px 8px 7px;
+  border-top: 1px solid var(--bevel-dark);
+  border-left: 1px solid var(--bevel-dark);
+  border-right: 1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+  border-radius: 2px;
+  background: rgba(14, 12, 9, 0.70);
+}
+
+.evo-changes__label {
+  margin-bottom: 2px;
+}
+
+.evo-changes__basis {
+  margin-bottom: 5px;
+  color: var(--hud-text-dim);
+  font-size: 9px;
+}
+
+.evo-changes__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.evo-change {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.evo-change__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Neither side is green. A lineage branch trades cadence for on-hit damage, and
+   painting the new number as an improvement would be the panel lying about a
+   choice it is not qualified to make. Emphasis marks WHICH is the new value,
+   nothing more. */
+.evo-change__from {
+  color: var(--hud-text-muted);
+  font-size: 11px;
+}
+
+.evo-change__arrow {
+  color: var(--hud-text-dim);
+  font-size: 10px;
+}
+
+.evo-change__to {
+  color: var(--hud-text);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.evo-change__delta {
+  min-width: 38px;
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  text-align: right;
+}
+
+.evo-changes__effects {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.evo-effect {
+  display: flex;
+  gap: 5px;
+  color: var(--hud-text-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.evo-effect + .evo-effect {
+  margin-top: 3px;
+}
+
+.evo-effect__mark {
+  flex: 0 0 auto;
+  width: 9px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.evo-effect__what em {
+  color: var(--hud-text);
+  font-style: normal;
+  font-weight: bold;
+}
+
+.evo-effect--gain .evo-effect__mark { color: var(--hud-primary); }
+.evo-effect--loss .evo-effect__mark { color: var(--hud-warning); }
+
+/* ── Reconstruction ─────────────────────────────────────────────────────────
+   The expensive route for a lineage never started. Folded away by default so it
+   cannot be mistaken for the evolution it is an alternative to. */
+.evo-reconstruct {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hud-edge-divider);
+}
+
+.evo-reconstruct__summary {
+  color: var(--hud-text-muted);
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  list-style: none;
+}
+
+.evo-reconstruct__summary::-webkit-details-marker { display: none; }
+
+.evo-reconstruct__summary::before {
+  content: "\25B8 ";
+  color: var(--hud-text-dim);
+}
+
+.evo-reconstruct[open] .evo-reconstruct__summary::before {
+  content: "\25BE ";
+}
+
+.evo-reconstruct__summary:hover {
+  color: var(--hud-text);
+}
+
+.evo-reconstruct__note {
+  margin: 6px 0;
+  color: var(--hud-text-dim);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.evo-reconstruct__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* Secondary weight: same control, none of the pull. */
+.craft-recipe__btn--ghost {
+  padding: 5px 14px;
+  border-width: 1px;
+  color: var(--hud-text-muted);
+  font-size: 10px;
+}
+
+.craft-recipe__btn--ghost:hover:not(:disabled) {
+  color: var(--hud-text);
+}
+
+/* Phone widths: the transformation reads top-to-bottom rather than forcing a
+   sideways scroll to find out what the thing becomes. */
+@media (max-width: 560px) {
+  .evo-preview__flow {
+    flex-direction: column;
+  }
+
+  .evo-preview__conduit {
+    flex-direction: row;
+    width: auto;
+    height: 18px;
+  }
+
+  .evo-preview__rail {
+    width: auto;
+    height: 1px;
+    min-width: 12px;
+    background: linear-gradient(90deg, var(--hud-edge-light), rgba(200, 168, 96, 0.45));
+  }
+
+  .evo-preview__rail:last-child {
+    background: linear-gradient(90deg, rgba(200, 168, 96, 0.45), var(--hud-edge-light));
+  }
+
+  .evo-preview__arrow {
+    transform: rotate(90deg);
+  }
+}
+
 /* Mobile: the Make browser owns its own scrolling inside the sheet/dialog, and
    the negative margin that lets it bleed to the dialog edges must match the
    smaller mobile padding. */

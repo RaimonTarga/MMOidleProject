@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useAtomValue } from 'jotai';
 import type { EssenceType } from '@mmo-idle/shared';
 import {
-  RECIPE_DATABASE,
   TEST_ROOM_NODE_ID,
   abilityDef,
   checkEvolve,
@@ -11,7 +10,6 @@ import {
   isEvolvedRecipe,
   isRestrictedCore,
   relicRatingsFromPassives, relicRatingsFromEffects,
-  requiredPlusFor,
   resolveRelicComparison,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -38,6 +36,8 @@ import {
   type MakeEntry,
   type MakeKind,
 } from './makeEntries';
+import { EvolutionPreview, ReconstructOption } from './EvolutionPreview';
+import { evolutionPlan } from './evolutionPlan';
 import { useNewEntries } from './useNewEntries';
 import { eligibleMakeKeys, useMakeEntries } from './useMakeEntries';
 import { GameIcon } from '../GameIcon';
@@ -672,7 +672,9 @@ function MakeDetail({
   const reconstructCheck = recipe && evolved && recipe.reconstructCost
     ? checkReconstruct({ recipe, essences, catalysts, isTestRoom })
     : null;
-  const predecessor = recipe?.evolvesFrom ? RECIPE_DATABASE.get(recipe.evolvesFrom) : undefined;
+  const plan = recipe && evolved
+    ? evolutionPlan({ recipe, inventory, equipment, itemUpgrades })
+    : null;
 
   const statList = recipe
     ? statEntries(recipe.stats, recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined)
@@ -712,6 +714,13 @@ function MakeDetail({
     : !affordable && !isTestRoom
       ? 'Not enough materials'
       : '';
+
+  // Evolution has its own gates, and the server checks the recipe unlock on BOTH
+  // paths — so the concrete reason is the unlock hint first, then whatever the
+  // authoritative check names. "Insufficient" was hiding "you need 60 more green".
+  const lockReason = !entry.unlocked ? (entry.unlockHint || 'Not unlocked yet') : '';
+  const evolveBlocked = lockReason || (evolveCheck?.ok ? '' : evolveCheck?.reason ?? '');
+  const reconstructBlocked = lockReason || (reconstructCheck?.ok ? '' : reconstructCheck?.reason ?? '');
 
   return (
     <div className="make-detail">
@@ -754,32 +763,17 @@ function MakeDetail({
         lines={madeThingLines(entry, abilityContext)}
       />
 
-      <div className="make-detail__cost-label">Cost</div>
+      {/* What this recipe actually is, for an evolved one: a transformation of
+          something the player already owns, not a fresh craft. */}
+      {plan && <EvolutionPreview plan={plan} />}
+
+      <div className="make-detail__cost-label">{plan ? 'Evolution cost' : 'Cost'}</div>
       <CostDisplay
         cost={entry.cost}
         essences={essences}
         catalystCost={entry.catalystCost}
         catalysts={catalysts}
       />
-
-      {evolved && predecessor && recipe && (
-        <div className="craft-recipe__effect-line">
-          Evolves from {predecessor.name} +{requiredPlusFor(recipe)} (consumed)
-          {equipment[recipe.slot] === predecessor.id && <div>The evolved item stays equipped.</div>}
-        </div>
-      )}
-
-      {evolved && recipe?.reconstructCost && (
-        <>
-          <div className="make-detail__cost-label">Reconstruct (no predecessor)</div>
-          <CostDisplay
-            cost={recipe.reconstructCost}
-            essences={essences}
-            catalystCost={recipe.reconstructCatalystCost}
-            catalysts={catalysts}
-          />
-        </>
-      )}
 
       {result && !result.success && (
         <div className="craft-card-result craft-card-result--err">
@@ -796,40 +790,44 @@ function MakeDetail({
             <button
               type="button"
               className="craft-recipe__btn"
-              disabled={!evolveCheck?.ok}
-              title={evolveCheck?.reason}
+              disabled={evolveBlocked !== ''}
+              title={evolveBlocked}
               onClick={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'evolve'))}
             >
-              {evolveCheck?.ok ? 'Evolve' : `Need +${requiredPlusFor(recipe)}`}
+              Evolve
             </button>
-            {recipe.reconstructCost && (
-              <button
-                type="button"
-                className="craft-recipe__btn"
-                disabled={!reconstructCheck?.ok}
-                title={reconstructCheck?.reason}
-                onClick={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'reconstruct'))}
-              >
-                {reconstructCheck?.ok ? 'Reconstruct' : 'Insufficient'}
-              </button>
-            )}
+            {evolveBlocked && <span className="make-detail__blocked">{evolveBlocked}</span>}
           </>
         ) : (
-          <button
-            type="button"
-            className="craft-recipe__btn"
-            disabled={blocked !== ''}
-            title={blocked}
-            onClick={() => onAttempt(() => {
-              if (recipe) hudBus.requestCraftRecipe(recipe.id);
-              else learnIntent();
-            })}
-          >
-            {recipe ? 'Craft' : 'Learn'}
-          </button>
+          <>
+            <button
+              type="button"
+              className="craft-recipe__btn"
+              disabled={blocked !== ''}
+              title={blocked}
+              onClick={() => onAttempt(() => {
+                if (recipe) hudBus.requestCraftRecipe(recipe.id);
+                else learnIntent();
+              })}
+            >
+              {recipe ? 'Craft' : 'Learn'}
+            </button>
+            {blocked && <span className="make-detail__blocked">{blocked}</span>}
+          </>
         )}
-        {blocked && <span className="make-detail__blocked">{blocked}</span>}
       </div>
+
+      {/* The escape hatch for a lineage the player never started, deliberately
+          below the action it is an alternative to. */}
+      {evolved && recipe && (
+        <ReconstructOption
+          recipe={recipe}
+          essences={essences}
+          catalysts={catalysts}
+          blocked={reconstructBlocked}
+          onReconstruct={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'reconstruct'))}
+        />
+      )}
     </div>
   );
 }
