@@ -6,7 +6,8 @@
 // fails this test instead of quietly making the panel lie.
 import assert from "node:assert/strict";
 import {
-  GAME_CONFIG, RECIPE_DATABASE, STARTER_RUNE_IDS, emptyEquipment, requiredPlusFor,
+  GAME_CONFIG, RECIPE_DATABASE, STARTER_RUNE_IDS, emptyEquipment, previewEquipmentStats,
+  requiredPlusFor,
 } from "@mmo-idle/shared";
 import type { EssenceType, Recipe } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -207,6 +208,75 @@ for (const recipe of RECIPE_DATABASE.values()) {
   for (const line of [...gains, ...losses]) {
     assert(!line.includes('«'), `${recipe.id} describes effects in prose, not raw keys: ${line}`);
   }
+}
+
+// ── The DPS row ──────────────────────────────────────────────────────────────
+// It is the only row that answers "is this better for MY character", so it must
+// be the inventory stat sheet's number and not a second estimate. Both sides are
+// hypothetical: the slot may hold something else entirely.
+{
+  const build = {
+    usesSkills: {
+      unlockedSkills: [], passives: {}, selectedClass: "cadence-root",
+      selectedSubVariant: null, selectedRange: "cadence-range-close", combatArchetype: "cadence",
+    },
+    playerTier: 2, activeStance: null, equippedRites: [], hpFraction: 1,
+  } as const;
+
+  const weapon = RECIPE_DATABASE.get("gale-needle")!;
+  const pred = weapon.evolvesFrom!;
+  const required = requiredPlusFor(weapon);
+  const args = {
+    recipe: weapon, inventory: [pred], equipment: emptyEquipment(),
+    itemUpgrades: { [pred]: required },
+  };
+
+  const withBuild = evolutionPlan({ ...args, build })!;
+  const dps = withBuild.diff!.rows.find(r => r.key === "dps");
+  assert(dps, "a weapon evolution offers a DPS row when the build is known");
+  assert.equal(withBuild.diff!.rows[0].key, "dps", "DPS leads the comparison");
+
+  // The same call the stat sheet makes, with the same equipment and levels.
+  const dpsAt = (itemId: string, plus: number) => previewEquipmentStats({
+    ...build,
+    equipment: { ...emptyEquipment(), weapon: itemId },
+    itemUpgrades: { [pred]: required, [weapon.id]: 0, [itemId]: plus },
+  }).stats.dps;
+  const round = (v: number) => String(Math.round(v * 100) / 100);
+  assert.equal(dps.from, round(dpsAt(pred, required)), "before side is the stat sheet's number");
+  assert.equal(dps.to, round(dpsAt(weapon.id, 0)), "after side is the stat sheet's number");
+
+  // No build, no row — an unresolvable number is not worth inventing.
+  const without = evolutionPlan(args)!;
+  assert(!without.diff!.rows.some(r => r.key === "dps"), "no DPS row without a build");
+
+  // Levels must be PINNED to the state evolution consumes, not read raw off the
+  // account. Under-levelled is the case that proves it: the player holds the
+  // predecessor at +1, but the comparison is owed the +3 it will be spent at, so
+  // a row built from the raw map would understate the item being given up.
+  {
+    const upgrades = { [pred]: 1 };
+    const short = evolutionPlan({ ...args, itemUpgrades: upgrades, build })!;
+    const row = short.diff!.rows.find(r => r.key === "dps")!;
+    assert(row, "an under-levelled predecessor still produces a DPS row");
+    assert.equal(short.consumedPlus, required, "compared at the level it must reach");
+    assert.equal(row.from, round(previewEquipmentStats({
+      ...build,
+      equipment: { ...emptyEquipment(), weapon: pred },
+      itemUpgrades: { ...upgrades, [pred]: required },
+    }).stats.dps), "before side is drawn at the level actually consumed");
+    assert.notEqual(row.from, round(previewEquipmentStats({
+      ...build, equipment: { ...emptyEquipment(), weapon: pred }, itemUpgrades: upgrades,
+    }).stats.dps), "and NOT at the +1 the account happens to hold");
+  }
+
+  // A lineage that cannot move DPS must not manufacture a row for it.
+  const armor = RECIPE_DATABASE.get("forest-vest-t2")!;
+  const armorPlan = evolutionPlan({
+    recipe: armor, inventory: [armor.evolvesFrom!], equipment: emptyEquipment(),
+    itemUpgrades: { [armor.evolvesFrom!]: requiredPlusFor(armor) }, build,
+  })!;
+  assert(!armorPlan.diff!.rows.some(r => r.key === "dps"), "armor offers no DPS row");
 }
 
 console.log("evolutionPreview: ok");

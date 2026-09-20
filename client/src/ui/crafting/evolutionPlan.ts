@@ -1,5 +1,5 @@
-import type { EquipmentMap, Recipe } from '@mmo-idle/shared';
-import { RECIPE_DATABASE, requiredPlusFor } from '@mmo-idle/shared';
+import type { EquipmentMap, EquipmentPreviewInput, Recipe } from '@mmo-idle/shared';
+import { RECIPE_DATABASE, previewEquipmentStats, requiredPlusFor } from '@mmo-idle/shared';
 import { computeEvolutionDiff, type EvolutionDiff } from './itemDisplay';
 
 /**
@@ -33,13 +33,22 @@ export interface EvolutionPlan {
   diff: EvolutionDiff | null;
 }
 
+/**
+ * The rest of the character, needed only for the build-level rows (DPS), which
+ * cannot be read off the item: the same weapon is worth a different amount to a
+ * Striker and a Conduit. Omit it and those rows are simply absent — an
+ * unresolvable number is not worth inventing.
+ */
+export type EvolutionBuildContext = Omit<EquipmentPreviewInput, 'equipment' | 'itemUpgrades'>;
+
 export function evolutionPlan(params: {
   recipe: Recipe;
   inventory: readonly string[];
   equipment: Readonly<EquipmentMap>;
   itemUpgrades: Record<string, number>;
+  build?: EvolutionBuildContext;
 }): EvolutionPlan | null {
-  const { recipe, inventory, equipment, itemUpgrades } = params;
+  const { recipe, inventory, equipment, itemUpgrades, build } = params;
   if (!recipe.evolvesFrom) return null;
   const predecessor = RECIPE_DATABASE.get(recipe.evolvesFrom);
   if (!predecessor) return null;
@@ -53,6 +62,14 @@ export function evolutionPlan(params: {
   const consumedPlus = Math.max(requiredPlus, ownedPlus ?? 0);
   const resultPlus = itemUpgrades[recipe.id] ?? 0;
 
+  const diff = computeEvolutionDiff(predecessor.id, consumedPlus, recipe.id, resultPlus);
+  if (diff && build) {
+    const row = buildDpsRow(build, equipment, itemUpgrades, predecessor, consumedPlus, recipe, resultPlus);
+    // DPS leads: it is the one row that answers "is this weapon better for ME",
+    // and on a lineage branch it is the only row that resolves the trade.
+    if (row) diff.rows.unshift(row);
+  }
+
   return {
     recipe,
     predecessor,
@@ -62,6 +79,48 @@ export function evolutionPlan(params: {
     consumedPlus,
     resultPlus,
     meetsPlus: ownedPlus !== null && ownedPlus >= requiredPlus,
-    diff: computeEvolutionDiff(predecessor.id, consumedPlus, recipe.id, resultPlus),
+    diff,
+  };
+}
+
+const roundDps = (v: number): number => Math.round(v * 100) / 100;
+
+/**
+ * Sustained DPS for this character wearing each side of the evolution, through
+ * the same `previewEquipmentStats` the inventory stat sheet uses — so the two
+ * panels can never disagree about what a weapon is worth.
+ *
+ * BOTH sides are hypothetical on purpose. The slot may currently hold something
+ * else entirely, and the question the preview answers is what the predecessor
+ * becomes, not what the player happens to be wearing right now.
+ */
+function buildDpsRow(
+  build: EvolutionBuildContext,
+  equipment: Readonly<EquipmentMap>,
+  itemUpgrades: Record<string, number>,
+  predecessor: Recipe,
+  consumedPlus: number,
+  recipe: Recipe,
+  resultPlus: number,
+) {
+  // Upgrade levels are per definition, so the consumed/arriving levels are
+  // pinned here rather than trusting whatever the account happens to hold.
+  const levels = { ...itemUpgrades, [predecessor.id]: consumedPlus, [recipe.id]: resultPlus };
+  const at = (itemId: string) => previewEquipmentStats({
+    ...build,
+    equipment: { ...equipment, [recipe.slot]: itemId },
+    itemUpgrades: levels,
+  }).stats.dps;
+
+  const from = roundDps(at(predecessor.id));
+  const to = roundDps(at(recipe.id));
+  if (from === to) return null;
+  const delta = roundDps(to - from);
+  return {
+    key: 'dps',
+    label: 'DPS',
+    from: String(from),
+    to: String(to),
+    delta: `${delta >= 0 ? '+' : ''}${delta}`,
   };
 }

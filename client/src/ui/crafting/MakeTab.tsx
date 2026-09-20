@@ -22,6 +22,7 @@ import {
   playerIdAtom,
   playerNodeIdAtom,
   combatArchetypeAtom,
+  passivesAtom, playerTierAtom, activeStanceAtom, equippedRitesAtom, hpAtom, maxHpAtom,
   selectedSubVariantAtom, selectedRangeAtom, unlockedSkillsAtom,
 } from '../../hud/atoms';
 import { BrowserPane } from '../../hud/primitives';
@@ -663,6 +664,12 @@ function MakeDetail({
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
+  const passives = useAtomValue(passivesAtom);
+  const playerTier = useAtomValue(playerTierAtom);
+  const activeStance = useAtomValue(activeStanceAtom);
+  const equippedRites = useAtomValue(equippedRitesAtom);
+  const hp = useAtomValue(hpAtom);
+  const maxHp = useAtomValue(maxHpAtom);
   const affordable = entryAffordable(entry, essences, catalysts);
   const recipe = entry.gear;
   const evolved = recipe ? isEvolvedRecipe(recipe) : false;
@@ -672,9 +679,32 @@ function MakeDetail({
   const reconstructCheck = recipe && evolved && recipe.reconstructCost
     ? checkReconstruct({ recipe, essences, catalysts, isTestRoom })
     : null;
-  const plan = recipe && evolved
-    ? evolutionPlan({ recipe, inventory, equipment, itemUpgrades })
-    : null;
+  // The DPS row runs two full stat rebuilds, so the plan is only recomputed when
+  // something it reads actually moves.
+  const plan = useMemo(
+    () => (recipe && evolved
+      ? evolutionPlan({
+        recipe,
+        inventory,
+        equipment,
+        itemUpgrades,
+        // What a weapon is worth depends on the whole character, so the build
+        // goes in exactly as the inventory stat sheet assembles it.
+        build: {
+          usesSkills: {
+            unlockedSkills, passives,
+            selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
+            selectedSubVariant, selectedRange, combatArchetype,
+          },
+          playerTier, activeStance, equippedRites,
+          hpFraction: maxHp > 0 ? hp / maxHp : 1,
+        },
+      })
+      : null),
+    [recipe, evolved, inventory, equipment, itemUpgrades, unlockedSkills, passives,
+      combatArchetype, selectedSubVariant, selectedRange, playerTier, activeStance,
+      equippedRites, hp, maxHp],
+  );
 
   const statList = recipe
     ? statEntries(recipe.stats, recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined)

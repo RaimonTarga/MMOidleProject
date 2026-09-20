@@ -11,7 +11,7 @@ const plusLabel = (plus: number): string => `+${plus}`;
  * Presentational only — every gate is still decided by `checkEvolve`.
  */
 export function EvolutionPreview({ plan }: { plan: EvolutionPlan }) {
-  const { recipe, predecessor, requiredPlus, ownedPlus, equipped, consumedPlus, resultPlus } = plan;
+  const { recipe, predecessor, requiredPlus, ownedPlus, equipped } = plan;
   const slotLabel = (SLOT_LABELS[recipe.slot] ?? recipe.slot).toLowerCase();
 
   const ownership = ownedPlus === null
@@ -51,43 +51,14 @@ export function EvolutionPreview({ plan }: { plan: EvolutionPlan }) {
           <span className="evo-card__level" style={{ color: tierColor(recipe.tier) }}>
             T{recipe.tier}
           </span>
-          <span className="evo-card__tag evo-card__tag--result">
-            Arrives at {plusLabel(resultPlus)}
-          </span>
-          <span className="evo-card__own">
-            {equipped ? `Replaces it in your ${slotLabel} slot` : 'Goes to your bag'}
-          </span>
+          {/* Only the equipped case says anything here. Evolving from the bag
+              leaves the result in the bag, which is the unremarkable default and
+              not worth a line of its own. */}
+          {equipped && (
+            <span className="evo-card__own">Replaces it in your {slotLabel} slot</span>
+          )}
         </article>
       </div>
-
-      <ul className="evo-preview__notes">
-        {/* The single most surprising rule of the system, stated once, plainly. */}
-        <li>
-          {consumedPlus > 0
-            ? `The predecessor's ${plusLabel(consumedPlus)} upgrades do not carry over.`
-            : 'Upgrades do not carry over.'}
-          {resultPlus > 0
-            ? ` You already hold this item type at ${plusLabel(resultPlus)}, so it arrives there.`
-            : ' The evolved item starts at +0.'}
-        </li>
-        {equipped && (
-          <li>Your {predecessor.name} is equipped — it is swapped in place, so there is nothing to unequip.</li>
-        )}
-        {/* Without the predecessor the whole left card is hypothetical, so the
-            note says what to do about it rather than restating the gap. */}
-        {ownedPlus === null && (
-          <li>
-            You have no {predecessor.name}: make one and take it to {plusLabel(requiredPlus)},
-            or reconstruct {recipe.name} outright below.
-          </li>
-        )}
-        {ownedPlus !== null && !plan.meetsPlus && (
-          <li>
-            {predecessor.name} needs {requiredPlus - ownedPlus} more upgrade
-            {requiredPlus - ownedPlus === 1 ? '' : 's'} on the Upgrade tab before it can evolve.
-          </li>
-        )}
-      </ul>
 
       <EvolutionChanges plan={plan} />
     </section>
@@ -108,7 +79,6 @@ function EvolutionChanges({ plan }: { plan: EvolutionPlan }) {
 
   return (
     <div className="evo-changes">
-      <div className="evo-changes__label">What changes</div>
       <div className="evo-changes__basis">
         {predecessor.name} {plusLabel(consumedPlus)} → {recipe.name} {plusLabel(resultPlus)}
       </div>
@@ -148,11 +118,14 @@ function EvolutionChanges({ plan }: { plan: EvolutionPlan }) {
 }
 
 /**
- * The alternate route, kept deliberately quiet. Reconstruction skips the
- * lineage entirely: it pays `reconstructCost` instead of `cost`, requires no
- * predecessor and consumes none, and — because the equip-in-place branch of
- * `evolveItem` is evolve-only — always delivers to the bag. It is the expensive
- * answer to "I never made the predecessor", not a second main action.
+ * The other way to get the item. Reconstruction skips the lineage entirely: it
+ * pays `reconstructCost` instead of `cost`, requires no predecessor and consumes
+ * none, and — because the equip-in-place branch of `evolveItem` is evolve-only —
+ * always delivers to the bag.
+ *
+ * It was folded away behind a disclosure, which buried the only route open to a
+ * player who never made the predecessor. It now states itself in full; it stays
+ * BELOW the Evolve action, which is the ordering that keeps evolution primary.
  */
 export function ReconstructOption({
   recipe,
@@ -171,11 +144,12 @@ export function ReconstructOption({
   if (!recipe.reconstructCost) return null;
 
   return (
-    <details className="evo-reconstruct">
-      <summary className="evo-reconstruct__summary">No predecessor? Reconstruct</summary>
+    <section className="evo-reconstruct">
+      <div className="evo-reconstruct__label">Reconstruct</div>
       <p className="evo-reconstruct__note">
-        Builds {recipe.name} from raw materials at a higher price. Nothing is consumed — any
-        predecessor you own stays exactly as it is — and the new item goes to your bag.
+        Builds {recipe.name} from raw materials at a higher price, with no predecessor.
+        Nothing is consumed — anything you already own stays exactly as it is — and the
+        new item goes to your bag.
       </p>
       <CostDisplay
         cost={recipe.reconstructCost}
@@ -186,7 +160,7 @@ export function ReconstructOption({
       <div className="evo-reconstruct__actions">
         <button
           type="button"
-          className="craft-recipe__btn craft-recipe__btn--ghost"
+          className="craft-recipe__btn"
           disabled={blocked !== ''}
           title={blocked}
           onClick={onReconstruct}
@@ -195,6 +169,6 @@ export function ReconstructOption({
         </button>
         {blocked && <span className="make-detail__blocked">{blocked}</span>}
       </div>
-    </details>
+    </section>
   );
 }
