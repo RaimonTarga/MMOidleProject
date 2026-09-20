@@ -221,5 +221,34 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
     eq(profile.maxStacks.after, Math.round(cap * 1.4), 'special DoT cap after relic');
   }
 }
+// A secondary line must say which rating produced it; "Overdrive attack-speed bonus"
+// reads exactly like a Frequency/Potency line otherwise.
+{
+  const buffOnly = { ...ZERO_RELIC_RATINGS, buffEffect: 0.25 };
+  const echo = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.momentum-echo': 1 }, buffOnly));
+  assert(echo.includes('Buff effect · Echo bonus damage: 50% → 62.5%'), 'buff effect is attributed with real values');
+  assert(!echo.some(line => line.startsWith('Debuff effect')), 'a buff-only relic claims no debuff');
+
+  const debuffOnly = { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 };
+  const chill = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.freezing-cold': 1 }, debuffOnly));
+  assert(chill.includes('Debuff effect · Chill movement slow per stack: 5% → 6.25%'), 'debuff effect is attributed');
+  assert(chill.filter(line => line.startsWith('Debuff effect')).length === 3, 'every eligible debuff is listed');
+  assert(!chill.some(line => line.startsWith('Buff effect')), 'a debuff-only relic claims no buff');
+
+  // Haunted Prism rates both halves, so an eligible build shows both categories.
+  const prism = relicRatingsFromEffects(ITEM_DATABASE.get('relic-haunted-prism')?.mechanicEffects ?? {});
+  const both = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.frenzy': 1, 'dot.freezing-cold': 1 }, prism, { playerTier: 4 }));
+  assert(both.some(line => line.startsWith('Buff effect')) && both.some(line => line.startsWith('Debuff effect')), 'Haunted Prism shows both categories');
+
+  // A rated relic whose build registers nothing says so per category instead of going quiet.
+  const inert = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.empowered-threshold': 5 }, prism));
+  assert(inert.includes('Buff effect · No eligible mechanic buff in this build'), 'inert buff rating is explicit');
+  assert(inert.includes('Debuff effect · No eligible mechanic debuff in this build'), 'inert debuff rating is explicit');
+
+  // An unrated relic earns no secondary headings even where effects are registered.
+  const unrated = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.momentum-echo': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 0.2 }));
+  assert(!unrated.some(line => /^(Buff|Debuff) effect/.test(line)), 'no secondary rating, no secondary lines');
+  assert(!unrated.some(line => line.includes('relic.mechanic')), 'raw relic keys stay hidden');
+}
 console.log('coreRelicIntegration: ok');
 

@@ -1,4 +1,4 @@
-import { relicEffectPreview } from './relicEffectPreview';
+import { relicEffectPreview, type RelicEffectNote } from './relicEffectPreview';
 import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../data/skillTree';
 import { resolveDotClassProfile, resolveDotStackCap } from './dotClassProfile';
@@ -83,9 +83,9 @@ export function resolveRelicPreview(
 ): ResolvedRelicProfile | null {
   const profile = resolvePrimaryRelicPreview(archetype, passives, ratings, options);
   const secondaryEffects = relicEffectPreview(archetype, passives, ratings, options.playerTier);
-  const secondaryNotes: string[] = [];
-  if (ratings.buffEffect !== 0 && !secondaryEffects.some(effect => effect.kind === 'buff')) secondaryNotes.push('No eligible mechanic buff in this build');
-  if (ratings.debuffEffect !== 0 && !secondaryEffects.some(effect => effect.kind === 'debuff')) secondaryNotes.push('No eligible mechanic debuff in this build');
+  const secondaryNotes: RelicEffectNote[] = [];
+  if (ratings.buffEffect !== 0 && !secondaryEffects.some(effect => effect.kind === 'buff')) secondaryNotes.push({ kind: 'buff', message: 'No eligible mechanic buff in this build' });
+  if (ratings.debuffEffect !== 0 && !secondaryEffects.some(effect => effect.kind === 'debuff')) secondaryNotes.push({ kind: 'debuff', message: 'No eligible mechanic debuff in this build' });
   return profile ? { ...profile, secondaryEffects, secondaryNotes } : null;
 }
 

@@ -322,4 +322,4 @@ export type ResolvedRelicProfile = (
   | ReloadRelicProfile
   | DotRelicProfile
   | EnergyRelicProfile
-  | SummonerRelicProfile) & { secondaryEffects?: import('./relicEffectPreview').RelicEffectPreview[]; secondaryNotes?: string[] };
+  | SummonerRelicProfile) & { secondaryEffects?: import('./relicEffectPreview').RelicEffectPreview[]; secondaryNotes?: import('./relicEffectPreview').RelicEffectNote[] };

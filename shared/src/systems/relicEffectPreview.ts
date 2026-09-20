@@ -2,8 +2,17 @@ import type { PassiveMap } from '../passives';
 import { resolveRelicMagnitudeMultiplier, type RelicRatings } from './relics';
 import { SCALABLE_MECHANIC_BUFFS, SCALABLE_MECHANIC_DEBUFFS, scaleMechanicMagnitude } from './mechanicEffectScaling';
 
+/** Which secondary relic rating produced a line; never inferred from its label. */
+export type RelicSecondaryKind = 'buff' | 'debuff';
+
+/** A secondary rating that scaled nothing, so the preview can say so out loud. */
+export interface RelicEffectNote {
+  kind: RelicSecondaryKind;
+  message: string;
+}
+
 export interface RelicEffectPreview {
-  kind: 'buff' | 'debuff';
+  kind: RelicSecondaryKind;
   label: string;
   before: number;
   after: number;

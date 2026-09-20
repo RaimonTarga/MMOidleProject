@@ -702,10 +702,17 @@ export function formatResolvedRelicProfile(profile: ResolvedRelicProfile | null)
       else pair('Maximum summons', profile.summonCount);
       break;
   }
-  lines.push(...(profile.secondaryNotes ?? []));
-  for (const effect of profile.secondaryEffects ?? []) {
-    if (effect.before === effect.after) continue;
-    pair(effect.label, effect, effect.unit === 'percent' ? n => `${precise(n * 100)}%` : effect.unit === 'multiplier' ? mult : precise);
+  // Secondary lines name the rating that produced them: "Overdrive attack-speed
+  // bonus" is otherwise indistinguishable from the relic's Frequency/Potency lines.
+  for (const kind of ['buff', 'debuff'] as const) {
+    const prefix = kind === 'buff' ? 'Buff effect' : 'Debuff effect';
+    for (const effect of profile.secondaryEffects ?? []) {
+      if (effect.kind !== kind || effect.before === effect.after) continue;
+      pair(`${prefix} · ${effect.label}`, effect, effect.unit === 'percent' ? n => `${precise(n * 100)}%` : effect.unit === 'multiplier' ? mult : precise);
+    }
+    for (const note of profile.secondaryNotes ?? []) {
+      if (note.kind === kind) lines.push(`${prefix} · ${note.message}`);
+    }
   }
   return lines;
 }

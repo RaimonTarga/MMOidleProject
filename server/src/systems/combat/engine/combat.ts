@@ -305,6 +305,16 @@ export function runPlayerAttack(
     cycleCompleted: false,
     side: 'conduit',
   } : undefined);
+  // Summoner/Conduit formation packets split one offense budget across several
+  // physical bodies, so each packet would otherwise pay the target's full flat
+  // Plating on its own share of the damage. Reload halves plating for the same
+  // shape of problem (many partial-damage hits vs one full hit) — mirror that
+  // compensation here so every formation contributor gets it uniformly, rather
+  // than patching each Summoner specialization separately. Deliberately not
+  // scaled by summon count: swarms still pay more total Plating tax per cycle.
+  if (ctx.formation) {
+    ctx.platingMult = 0.5;
+  }
   ctx.metadata.aggroSource = opts.aggroSource;
   if (opts.metadata) {
     Object.assign(ctx.metadata, opts.metadata);
