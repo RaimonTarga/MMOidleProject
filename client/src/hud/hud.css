@@ -738,25 +738,47 @@
 }
 
 @media (min-width: 1101px) {
+  /* Row width is the narrower of: a safe-lane boundary clear of the
+     centered Auto Combat / dungeon altar controls, and exactly five 68px
+     tiles. Below that ceiling, however many full tiles fit make up a row;
+     a sixth (or whichever tile stops fitting) wraps to a new row above
+     instead of scrolling, via flex-wrap: wrap-reverse. This keeps ability
+     order intact — item 6 is simply the first item of the next line — and
+     clears both centered controls at every width the geometry allows.
+     The dungeon altar (min(360px, 100vw - 32px) wide, centered) is the
+     wider of the two and so the binding constraint whenever it's on
+     screen; 201px is `(altar half-width + this dock's own left inset +
+     an 8px buffer) / the 1.2 default UI scale`, measured against the
+     rendered geometry, not a guess — the old `50% - 28px` bound this
+     replaces was never actually tuned against these controls and only
+     avoided visible overlap because horizontal scroll/clip hid whatever
+     crossed it. Below ~1101-1280px even a single column can graze the
+     altar; that's a pre-existing space shortage from the two 260px
+     sidebars, not something a row-width formula can resolve without
+     moving the altar or shrinking tiles. */
   .desktop-combat-abilities {
+    /* +17px covers this dock's own horizontal padding (7px + 7px) and
+       border (2px + 1px) — .desktop-hud.hud-dock in primitives.css — since
+       max-width below is the OUTER (border-box) size, but five tiles need
+       that much room in the INNER content box. +2px is rounding slack so
+       five full-size tiles never wrap prematurely from subpixel layout. */
+    --ability-five-col-width: calc((68px * 5) + (var(--hud-space-2) * 4) + 17px + 2px);
     position: absolute;
     bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     left: 14px;
     z-index: 12;
     width: max-content;
-    max-width: calc(50% - 28px);
+    max-width: min(calc(50% - 201px), var(--ability-five-col-width));
     box-sizing: border-box;
-    overflow-x: auto;
-    overflow-y: hidden;
     pointer-events: none;
   }
 
   .desktop-combat-abilities__layout {
     display: flex;
-    width: max-content;
-    flex-wrap: nowrap;
+    flex-wrap: wrap-reverse;
     gap: var(--hud-space-2);
     align-items: flex-start;
+    align-content: flex-start;
   }
 
   .combat-ability-slot {
@@ -824,18 +846,6 @@
     line-height: 12px;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .desktop-combat-abilities::-webkit-scrollbar {
-    height: 3px;
-  }
-
-  .desktop-combat-abilities::-webkit-scrollbar-track {
-    background: #17130f;
-  }
-
-  .desktop-combat-abilities::-webkit-scrollbar-thumb {
-    background: #665940;
   }
 
   .combat-ability-slot__cooldown-sweep {
