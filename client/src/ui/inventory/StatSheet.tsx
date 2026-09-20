@@ -149,7 +149,6 @@ export function StatSheet({ focused, onFocus }: Props) {
 
 
       {info?.itemDef.description && <p className="inv-stat-sheet__flavor">{info.itemDef.description}</p>}
-      <p className="inv-stat-sheet__hint">Equipment build values in your current stance. Temporary combat buffs are excluded; DPS assumes a full summon formation.</p>
       <div className="inv-stat-sheet__footer">
         {!info && <span className="inv-stat-sheet__hint">Hover an item to compare</span>}
         {info && <button type="button" className={`inv-stat-sheet__btn${info.isEquipped ? ' inv-stat-sheet__btn--unequip' : ''}`} onClick={handleAction}>{info.actionLabel}</button>}
