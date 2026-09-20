@@ -60,6 +60,10 @@ W2's discoverability surfaces have focused harnesses too:
 - `system-nav.html` mirrors the expanded desktop Loadout navigation and the
   standalone Runes, Crafting, and Upgrade destinations.
 - `crown.html` covers the desktop active-stance chip alongside health layers.
+- `crafting-dialog.html` mirrors the Crafting and Upgrade destinations in their
+  shared `GameDialog` shell. `?tab=`, `?rows=`, `?filters=few`, and `?maxed=1`
+  vary the content volume, because the thing worth measuring there is that the
+  *outer panel* does not move when the recipe or item list does.
 - `mobile-status.html` pushes the active-stance/status strip through narrow phone
   widths.
 

@@ -78,6 +78,21 @@
   flex-direction: column;
 }
 
+/* Stable desktop footprint.
+   Make and Upgrade share this shell and both swap their contents constantly:
+   a filter chip, a recipe that disappears once crafted, an item that leaves
+   the list at max upgrade. With only the generic wide dialog's max-height the
+   panel sized itself to whatever happened to be listed, so the window jumped
+   on every one of those. Author the height instead and let the content absorb
+   the change by scrolling. The generic `max-height` still wins on short
+   viewports, so this is a ceiling-respecting height, not an override.
+   Phones and tablets keep the viewport-driven sizing from dialogs.css. */
+@media (min-width: 1101px) {
+  .crafting-dialog {
+    height: 720px;
+  }
+}
+
 /* Shared dialog-shell rollout. Crafting keeps its existing tab content and
    recipe hierarchy while the shell owns focus, backdrop, and scrolling. */
 .crafting-dialog__content {
@@ -908,6 +923,32 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* Scroll ownership for the Upgrade tab.
+   Upgrade is one page, so the dialog content is its only scroller. The card
+   list used to cap itself at a fixed height and scroll too, which put a second
+   scrollbar inside the first and — now that the shell has an authored height —
+   would leave the list stranded mid-dialog with empty space beneath it. One
+   scroller, the whole page. */
+.crafting-dialog__content--upgrade .craft-list {
+  max-height: none;
+  overflow: visible;
+}
+
+/* An authored shell height means an empty Upgrade is a tall blank box with one
+   line pinned to the top of it, which reads as a rendering failure rather than
+   as "nothing here". Center the notice in the space the wallet leaves instead.
+   Desktop only: on touch the dialog still sizes to its content, so there is no
+   space to center in. */
+@media (min-width: 1101px) {
+  .crafting-dialog__content--upgrade .craft-body {
+    min-height: 100%;
+  }
+
+  .crafting-dialog__content--upgrade .craft-empty {
+    margin-block: auto;
+  }
 }
 
 .craft-body--make {

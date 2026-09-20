@@ -1,0 +1,211 @@
+<!doctype html>
+<!-- Crafting / Upgrade dialog harness. Both destinations share one GameDialog
+     shell, and the thing this exists to measure is the *shell*: the outer panel
+     used to resize itself to whatever the current recipe/item list happened to
+     contain. Query parameters push the content volume past what any one save
+     holds, so the panel's box can be compared across states.
+
+       ?tab=make|upgrade   which destination (default make)
+       ?rows=N             recipes / upgradeable items (default 24, 0 = empty)
+       ?filters=few        drop the biome and tier filter rows
+       ?maxed=1            Upgrade: every card is MAX (short cards, no cost)
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Crafting dialog harness</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/dialogs.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/browserPane.css" />
+  <link rel="stylesheet" href="../../../client/src/ui/materialChip.css" />
+  <link rel="stylesheet" href="../../../client/src/ui/crafting.css" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #14120e; }
+    /* Stands in for GameIcon/ItemIcon, which need the packed atlas. */
+    .harness-icon {
+      display: inline-grid; place-items: center; flex: 0 0 auto;
+      background: rgba(120, 100, 60, 0.18);
+      border: 1px solid var(--hud-edge-dark);
+      color: var(--hud-primary); font: bold 8px/1 monospace;
+    }
+  </style>
+</head>
+<body>
+<script>
+const q = new URLSearchParams(location.search);
+const tab = q.get('tab') === 'upgrade' ? 'upgrade' : 'make';
+const rows = q.has('rows') ? Number(q.get('rows')) : 24;
+const fewFilters = q.get('filters') === 'few';
+const maxed = q.get('maxed') === '1';
+
+const KINDS = ['Weapon', 'Armor', 'Recovery', 'Mobility', 'Ability', 'Stance', 'Rite'];
+const BIOMES = ['Plains', 'Forest', 'Cave', 'Mountain', 'Swamp'];
+const NAMES = [
+  'Ironbark Cleaver', 'Hollow Ridge Plate', 'Emberglass Focus', 'Mire Walker Greaves',
+  'Warden Sigil', 'Thornwood Bulwark', 'Ashfall Censer', 'Gale Needle',
+  'Sunken Coil Charm', 'Cragbound Helm', 'Riverstone Ward', 'Bristleback Mail',
+];
+
+function icon(size) {
+  return '<span class="harness-icon" style="width:' + size + 'px;height:' + size + 'px" aria-hidden="true">IC</span>';
+}
+
+function chip(label, held, required) {
+  const isCost = required !== undefined;
+  return [
+    '<span class="material-chip' + (isCost ? ' material-chip--cost material-chip--ok' : '') + '">',
+    '<span class="material-chip__icon">' + icon(14) + '</span>',
+    '<span class="material-chip__label">' + label + '</span>',
+    '<span class="material-chip__amount">' + (isCost ? required : held) + '</span>',
+    isCost ? '<span class="material-chip__held">(' + held + ')</span>' : '',
+    '</span>',
+  ].join('');
+}
+
+const wallet = '<div class="craft-wallet material-chip-strip">'
+  + ['Beast', 'Verdant', 'Mineral', 'Fetid', 'Ember', 'Frost']
+      .map((e, i) => chip(e, 120 + i * 37)).join('')
+  + '<span class="craft-wallet__split" aria-hidden="true"></span>'
+  + chip('Alacrity', 9) + chip('Fortified', 4)
+  + '</div>';
+
+function filterRow(label, chips) {
+  return '<div class="craft-filter-row">'
+    + (label ? '<span class="craft-filter-label">' + label + '</span>' : '')
+    + chips.map((c, i) =>
+        '<button type="button" class="craft-filter-chip'
+        + (i === 0 ? ' craft-filter-chip--active' : '') + '">' + c + '</button>').join('')
+    + '</div>';
+}
+
+/* --- Make ------------------------------------------------------------- */
+function makeToolbar() {
+  return '<input class="make-search" type="search" placeholder="Search recipes..." aria-label="Search recipes" />'
+    + '<button type="button" class="craft-filter-chip">Affordable</button>'
+    + '<button type="button" class="craft-filter-chip">Show locked</button>'
+    + '<div class="craft-filter-row craft-filter-row--sort">'
+    + '<span class="craft-filter-label">Sort</span>'
+    + ['Tier', 'Name', 'Newest'].map((s, i) =>
+        '<button type="button" class="craft-filter-chip'
+        + (i === 0 ? ' craft-filter-chip--active' : '') + '">' + s + '</button>').join('')
+    + '</div>'
+    + filterRow('', ['All'].concat(KINDS))
+    + (fewFilters ? '' : filterRow('', ['All Biomes'].concat(BIOMES, ['T1', 'T2', 'T3'])));
+}
+
+function makeRow(i) {
+  return '<div class="browser-row' + (i === 0 ? ' browser-row--selected' : '') + '" role="option" aria-selected="' + (i === 0) + '">'
+    + '<span class="make-row">'
+    + icon(28)
+    + '<span class="make-row__main">'
+    + '<span class="make-row__name">' + NAMES[i % NAMES.length] + '</span>'
+    + '<span class="make-row__meta">' + icon(10) + ' ' + KINDS[i % KINDS.length]
+    + ' &middot; T' + ((i % 3) + 1) + ' &middot; ' + BIOMES[i % BIOMES.length] + '</span>'
+    + '</span>'
+    + (i % 7 === 3 ? '<span class="make-row__new">NEW</span>' : '')
+    + '</span></div>';
+}
+
+function makeDetail() {
+  return '<div class="make-detail">'
+    + '<div class="make-detail__head">' + icon(40)
+    + '<div class="make-detail__title">'
+    + '<div class="make-detail__name">' + NAMES[0] + '</div>'
+    + '<div class="make-detail__meta">Weapon &middot; T2 &middot; Forest</div>'
+    + '</div></div>'
+    + '<p class="make-detail__blurb">A split-haft cleaver grown rather than forged; the bark keeps closing over the notches.</p>'
+    + '<div class="craft-recipe__stats">'
+    + [['+24', 'Attack'], ['+6%', 'Attack Speed'], ['+11', 'Plating']].map(p =>
+        '<span class="craft-stat-pill"><span class="craft-stat-pill__value">' + p[0]
+        + '</span><span class="craft-stat-pill__label">' + p[1] + '</span></span>').join('')
+    + '</div>'
+    + '<ul class="craft-recipe__effects">'
+    + '<li class="craft-recipe__effect-line">Hits apply 1 stack of Bleed.</li>'
+    + '<li class="craft-recipe__effect-line">+8% damage against rooted targets.</li>'
+    + '</ul>'
+    + '<div class="make-detail__cost-label">Cost</div>'
+    + '<div class="craft-cost material-chip-strip">' + chip('Verdant', 210, 140) + chip('Beast', 120, 60) + '</div>'
+    + '<div class="make-detail__actions"><button class="craft-recipe__btn">Craft</button></div>'
+    + '</div>';
+}
+
+function makeBody() {
+  const list = rows > 0
+    ? Array.from({ length: rows }, (_, i) => makeRow(i)).join('')
+    : '<div class="browser-pane__empty">No recipes match the current filter.</div>';
+  const detail = rows > 0
+    ? makeDetail()
+    : '<div class="browser-pane__empty">Select a recipe to see what it makes.</div>';
+  return '<div class="craft-body craft-body--make">' + wallet
+    + '<div class="browser-pane make-browser">'
+    + '<div class="browser-pane__toolbar">' + makeToolbar() + '</div>'
+    + '<div class="browser-pane__body">'
+    + '<div class="browser-pane__list" role="listbox" aria-label="Recipes">' + list + '</div>'
+    + '<div class="browser-pane__detail">' + detail + '</div>'
+    + '</div></div></div>';
+}
+
+/* --- Upgrade ---------------------------------------------------------- */
+function upgradeCard(i) {
+  const body = maxed
+    ? '<div class="craft-upgrade__diff craft-upgrade__diff--maxed"><span class="craft-upgrade__max">MAX +10</span></div>'
+    : '<div class="craft-upgrade__diff">'
+      + '<span class="craft-upgrade__diff-title">+' + ((i % 9) + 1) + '</span>'
+      + [['Attack', 24, 27], ['Plating', 11, 12]].map(r =>
+          '<div class="craft-upgrade__diff-row craft-upgrade__diff-row--up">'
+          + '<span class="craft-upgrade__diff-label">' + r[0] + '</span>'
+          + '<span class="craft-upgrade__diff-from">' + r[1] + '</span>'
+          + '<span class="craft-upgrade__diff-arrow">&rarr;</span>'
+          + '<span class="craft-upgrade__diff-to">' + r[2] + '</span>'
+          + '<span class="craft-upgrade__diff-delta">+' + (r[2] - r[1]) + '</span>'
+          + '</div>').join('')
+      + '</div>'
+      + '<div class="craft-cost material-chip-strip">' + chip('Verdant', 210, 90) + chip('Alacrity', 9, 2) + '</div>'
+      + '<div class="craft-recipe__footer">'
+      + '<span class="craft-upgrade__req craft-upgrade__req--ok">Forest Lv ' + ((i % 20) + 4) + '</span>'
+      + '<span class="craft-upgrade__req craft-upgrade__req--ok">GM ' + ((i % 12) + 2) + '</span>'
+      + '<button class="craft-recipe__btn">Upgrade +' + ((i % 9) + 1) + '</button>'
+      + '</div>';
+  return '<div class="craft-recipe craft-upgrade' + (maxed ? ' craft-upgrade--maxed' : '')
+    + (i === 0 ? ' craft-upgrade--equipped' : '') + '">'
+    + '<div class="craft-recipe__icon" data-slot="weapon">' + icon(36) + '</div>'
+    + '<div class="craft-recipe__content">'
+    + '<div class="craft-recipe__header">'
+    + '<span class="craft-recipe__name">' + NAMES[i % NAMES.length] + '</span>'
+    + '<span class="craft-upgrade__level">+' + (i % 9) + '</span>'
+    + '<span class="craft-recipe__slot-badge" data-slot="weapon">Weapon</span>'
+    + '<span class="craft-recipe__tier-badge">T' + ((i % 3) + 1) + '</span>'
+    + (i === 0 ? '<span class="craft-recipe__equipped-badge"><span class="craft-recipe__equipped-dot" aria-hidden="true"></span>EQUIPPED</span>' : '')
+    + '</div>' + body + '</div></div>';
+}
+
+function upgradeBody() {
+  if (rows === 0) {
+    return '<div class="craft-body">' + wallet
+      + '<div class="craft-empty">No upgradeable items. Craft or equip gear first.</div></div>';
+  }
+  const filters = '<div class="craft-filters">'
+    + filterRow('', ['All'].concat(BIOMES))
+    + filterRow('', ['All Slots', 'Weapon', 'Armor', 'Recovery', 'Mobility'])
+    + (fewFilters ? '' : filterRow('', ['All Tiers', 'T1', 'T2', 'T3']))
+    + '</div>';
+  return '<div class="craft-body">' + wallet + filters
+    + '<div class="craft-list">'
+    + Array.from({ length: rows }, (_, i) => upgradeCard(i)).join('')
+    + '</div></div>';
+}
+
+const title = tab === 'make' ? 'Crafting' : 'Upgrade';
+document.body.innerHTML = '<div class="game-dialog__backdrop">'
+  + '<div class="game-dialog__panel game-dialog__panel--wide crafting-dialog" role="dialog" aria-modal="true" aria-label="' + title + '" tabindex="-1">'
+  + '<header class="dialog-header">'
+  + '<span class="dialog-header__icon" aria-hidden="true">' + icon(22) + '</span>'
+  + '<h2 class="dialog-header__title">' + title + '</h2>'
+  + '<button type="button" class="dialog-header__close" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+  + '</header>'
+  + '<div id="craft-panel-' + tab + '" class="crafting-dialog__content crafting-dialog__content--' + tab + '">'
+  + (tab === 'make' ? makeBody() : upgradeBody())
+  + '</div></div></div>';
+</script>
+</body>
+</html>
