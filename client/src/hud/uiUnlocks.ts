@@ -23,7 +23,6 @@ import {
   questProgressAtom,
   runeRecipesCraftedAtom,
   runesOwnedAtom,
-  visitedNodesAtom,
 } from './atoms';
 import {
   resolveSystemVisibility,
@@ -104,7 +103,6 @@ export function installUiUnlockSync(): () => void {
       catalystProgress: store.get(catalystProgressAtom),
       unlockedRecipes: store.get(unlockedRecipesAtom),
       runeRecipesCrafted: store.get(runeRecipesCraftedAtom),
-      visitedNodes: store.get(visitedNodesAtom),
       skillPoints: store.get(skillPointsAtom),
       passives: store.get(passivesAtom),
       biomeXP: store.get(biomeXPAtom),
@@ -219,7 +217,6 @@ export function installUiUnlockSync(): () => void {
     catalystProgressAtom,
     unlockedRecipesAtom,
     runeRecipesCraftedAtom,
-    visitedNodesAtom,
     skillPointsAtom,
     passivesAtom,
     biomeXPAtom,

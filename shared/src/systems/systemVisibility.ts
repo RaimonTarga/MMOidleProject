@@ -21,8 +21,6 @@ export interface SystemVisibilityInput {
   catalystProgress?: Record<string, number>;
   unlockedRecipes?: readonly string[];
   runeRecipesCrafted?: readonly string[];
-  /** Nodes entered through a world transition; Map unlocks on first travel. */
-  visitedNodes?: readonly string[];
   skillPoints?: number;
   passives?: Record<string, number>;
   biomeXP?: Record<string, number>;
@@ -53,7 +51,7 @@ export interface SystemVisibility {
   inventory: boolean;
   /** Crafting reveals at the minimum payable essence balance: four of one type. */
   crafting: boolean;
-  /** Map reveals after the first world-gate crossing. */
+  /** Map is a baseline UI feature, present from the beginning like Progression and Party. */
   map: boolean;
   /** Loadout reveals when there is something to arrange. */
   loadout: boolean;
@@ -73,8 +71,8 @@ export function masteryIsVisible(globalMastery: number): boolean {
 
 /**
  * Ownership fallbacks keep an already-used destination from disappearing.
- * Explicit milestones (Map, Crafting, Mastery, Abilities) do not use the old
- * player-tier master override.
+ * Explicit milestones (Crafting, Mastery, Abilities) do not use the old
+ * player-tier master override. Map is a baseline feature, not a milestone.
  */
 export function resolveSystemVisibility(
   input: SystemVisibilityInput,
@@ -117,7 +115,7 @@ export function resolveSystemVisibility(
       input.hasEquipment === true ||
       input.playerTier >= 1,
     crafting: hasCraftingEssence || hasCraftedSomething,
-    map: (input.visitedNodes?.length ?? 0) > 0,
+    map: true,
     loadout:
       abilities ||
       (input.runesOwned?.length ?? 0) > 0 ||

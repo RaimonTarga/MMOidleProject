@@ -18,18 +18,19 @@ const FRESH: SystemVisibilityInput = {
   knownRites: [],
   equippedRites: [],
   essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-  visitedNodes: [],
   // Fresh characters own starter rune fragments, so Loadout is intentionally
   // present from boot under the existing ownership rule.
   runesOwned: ["starter-condition", "starter-action"],
 };
 
+const BASELINE_SYSTEMS = ["progression", "party", "loadout", "map"] as const;
+
 const fresh = resolveSystemVisibility(FRESH);
-for (const system of ["progression", "party", "loadout"] as const) {
+for (const system of BASELINE_SYSTEMS) {
   assert(fresh[system], `a new character should see '${system}' immediately`);
 }
 for (const [system, visible] of Object.entries(fresh)) {
-  if (system === "progression" || system === "party" || system === "loadout") continue;
+  if ((BASELINE_SYSTEMS as readonly string[]).includes(system)) continue;
   assert(!visible, `a new character should not see '${system}' yet`);
 }
 
@@ -43,7 +44,7 @@ assert(afterFirstKill.combatLog, "first blood should reveal the combat log");
 assert(afterFirstKill.bestiary, "first blood should reveal the bestiary");
 assert(afterFirstKill.materials, "the first essence should reveal materials");
 assert(!afterFirstKill.crafting, "one essence should not reveal crafting");
-assert(!afterFirstKill.map, "combat in the clearing should not reveal the map");
+assert(afterFirstKill.map, "the map stays visible regardless of combat state");
 
 const almostCrafting = resolveSystemVisibility({ ...FRESH, essences: { green: 3 } });
 assert(!almostCrafting.crafting, "three essence is below the crafting threshold");
@@ -68,12 +69,6 @@ const afterCraft = resolveSystemVisibility({
 assert(afterCraft.inventory, "the first crafted item should reveal inventory");
 assert(afterCraft.crafting, "crafting should stay visible after spending the threshold");
 
-const afterTravel = resolveSystemVisibility({
-  ...FRESH,
-  visitedNodes: ["node-5-4"],
-});
-assert(afterTravel.map, "entering another node should reveal the map");
-
 const experienceWithoutTravel = resolveSystemVisibility({
   ...FRESH,
   playerTier: 2,
@@ -81,8 +76,8 @@ const experienceWithoutTravel = resolveSystemVisibility({
   biomeLevel: { clearing: 4 },
 });
 assert(
-  !experienceWithoutTravel.map,
-  "XP, biome levels, and player tiers should not replace the travel milestone",
+  experienceWithoutTravel.map,
+  "the map is a baseline feature, unaffected by XP, biome levels, or player tier",
 );
 
 const masteryZero = resolveSystemVisibility({ ...FRESH, playerTier: 3 });
@@ -110,10 +105,11 @@ for (const system of [
   "materials",
   "passiveTree",
   "party",
+  "map",
 ] as const) {
   assert(tierOne[system], `tier 1 should retain the existing '${system}' fallback`);
 }
-for (const system of ["crafting", "map", "mastery", "abilities", "abilityDock"] as const) {
+for (const system of ["crafting", "mastery", "abilities", "abilityDock"] as const) {
   assert(!tierOne[system], `tier 1 should not bypass the '${system}' milestone`);
 }
 

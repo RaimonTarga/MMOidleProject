@@ -22,7 +22,6 @@ import {
   runesOwnedAtom,
   skillPointsAtom,
   unlockedRecipesAtom,
-  visitedNodesAtom,
 } from './atoms';
 import { resolveSystemVisibility, type SystemVisibility } from './systemVisibility';
 
@@ -50,7 +49,6 @@ export function useSystemVisibility(): SystemVisibility {
     catalystProgress: useAtomValue(catalystProgressAtom),
     unlockedRecipes: useAtomValue(unlockedRecipesAtom),
     runeRecipesCrafted: useAtomValue(runeRecipesCraftedAtom),
-    visitedNodes: useAtomValue(visitedNodesAtom),
     skillPoints: useAtomValue(skillPointsAtom),
     passives: useAtomValue(passivesAtom),
     biomeXP: useAtomValue(biomeXPAtom),
