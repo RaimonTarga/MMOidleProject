@@ -223,7 +223,13 @@ export const bossMonsterEntriesT4 = [
     id: 'verdant-crown-predator', name: 'Verdant-Crown Predator', color: 0x115522,
     isBoss: true,
     stats: { hp: 18352, attack: 117, plating: 0, damageReduction: 0.04, speed: 76, attackRange: 20, attackCooldown: 1400, pullRange: 400 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
+    // A clawing predator, not a swordsman: the basic swing takes the light rake
+    // (`claws-light`) rather than the generic blade arc. Deliberately NOT the
+    // full-weight Forest `bear-claws` — this cat is fast and lean, and the heavy
+    // paw belongs to the greatbear lineage. Its Ambush payoff keeps `savage-maul`
+    // (crimson lunge streak + three gashes + shove ring), which stays distinct
+    // from the gold four-claw rake exactly as it does on the Forest alpha.
+    behavior: 'melee', attackStyle: 'claws-light', biome: 'jungle',
     rewards: { essence: 605, essenceType: 'green', level: 5, biomeXp: 908 },
     ai: { wanderRadius: 150, leashRange: 960, idleMinMs: 2000, idleMaxMs: 6000 },
     targeting: { prefersPlayers: true },
