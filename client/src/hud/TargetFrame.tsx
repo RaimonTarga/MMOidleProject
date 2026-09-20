@@ -128,6 +128,20 @@ export function TargetFrame() {
   const hpColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   const stale = !live; // lingering after death/clear
 
+  // Active absorb only: amount 0 is a broken barrier reforming, and the Reforming
+  // tile already owns that clock — the bar must never show absorb that isn't there.
+  const shieldAmount = Math.max(0, shown.enemyBarrier?.amount ?? 0);
+  // Sized against max HP so the band answers "how much of this enemy's health
+  // pool is shielded", the same question the HP fill answers. A tiny shell still
+  // gets a visible sliver rather than rounding away to nothing.
+  const shieldPct = shieldAmount > 0 && shown.maxHp > 0
+    ? Math.max(4, Math.min(100, (shieldAmount / shown.maxHp) * 100))
+    : 0;
+  // The shell starts where health ends — it is the layer damage chews through
+  // first — and slides back inside the bar when it would run off the end, so a
+  // shielded enemy at full HP still shows its shell instead of nothing.
+  const shieldLeft = Math.max(0, Math.min(hpPct, 100 - shieldPct));
+
   // Local player's DoT element drives the base 'dot' tile color.
   const dotColor = combatArchetype === 'dot'
     ? DOT_ELEMENT_COLOR[dotElementForPlayer(passives, subVariant)]
@@ -191,6 +205,17 @@ export function TargetFrame() {
 
       <div className="target-frame__track">
         <div className="target-frame__fill" style={{ width: `${hpPct}%`, background: hpColor }} />
+        {shieldPct > 0 && (
+          <>
+            <div
+              className="target-frame__shield"
+              style={{ left: `${shieldLeft}%`, width: `${shieldPct}%` }}
+              role="img"
+              aria-label={`Barrier absorbing ${Math.round(shieldAmount)}`}
+            />
+            <span className="target-frame__shield-amount">{Math.round(shieldAmount)}</span>
+          </>
+        )}
         <span className="target-frame__hp-text">{Math.ceil(shown.hp)} / {shown.maxHp}</span>
       </div>
 

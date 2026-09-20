@@ -80,6 +80,44 @@
   text-shadow: 1px 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
 }
 
+/* Enemy absorb — an overlay inside the HP track, in the cyan the overhead bars
+   already use for absorb. It is laid OVER the health fill rather than blended
+   with it: a translucent cyan on green muds to a teal that reads as a third
+   health colour. The hatch and the bright leading edge are what keep a shell
+   from ever being mistaken for health. Only drawn while absorb is actually up. */
+.target-frame__shield {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  border-left: 2px solid rgba(232, 251, 255, 0.95);
+  background:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.26) 0 3px, transparent 3px 7px),
+    linear-gradient(180deg, #7fe6ff, #2ba8ca);
+  box-shadow: 0 0 7px rgba(85, 217, 242, 0.6), inset 0 0 0 1px rgba(10, 40, 50, 0.35);
+  transition: left 0.18s linear, width 0.18s linear;
+}
+
+/* Absorb readout sits at the right end of the track — a fixed home clear of the
+   centred current/max text, whatever width the shell happens to be. */
+.target-frame__shield-amount {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  padding: 1px 3px;
+  border-radius: 2px;
+  /* Rides its own dark pill: the readout's home is fixed at the right end, so it
+     lands on the cyan hatch or on the empty trough depending on the shell's
+     width, and cyan-on-cyan is unreadable without it. */
+  background: rgba(6, 20, 26, 0.82);
+  font-size: 9px;
+  font-weight: bold;
+  line-height: 1;
+  color: #9fe9ff;
+  pointer-events: none;
+}
+
 .target-frame__stats {
   display: flex;
   justify-content: center;
@@ -185,6 +223,9 @@
   /* Thinner HP bar */
   .target-frame__track { height: 13px; }
   .target-frame__hp-text { font-size: 10px; }
+
+  /* Absorb readout shrinks with the bar it rides on */
+  .target-frame__shield-amount { font-size: 8px; right: 3px; padding: 1px 2px; }
 
   /* Enemy atk/plating isn't actionable mid-combat — drop it on phones */
   .target-frame__stats { display: none; }

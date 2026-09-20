@@ -63,6 +63,13 @@ W2's discoverability surfaces have focused harnesses too:
 - `mobile-status.html` pushes the active-stance/status strip through narrow phone
   widths.
 
+`target-frame.html` walks the target frame through every enemy-absorb state — no
+barrier, a shell sized from a sliver to larger than the health pool, mid-drain,
+and broken/reforming — because the interesting cases are exactly the ones that
+are awkward to find on a live mob. It duplicates TargetFrame's two shield
+formulas (width, and the left offset that slides the shell back inside the bar),
+so keep them in sync.
+
 Two things a harness cannot tell you: whether the React state that produces the
 DOM is correct, and how it behaves with real fonts under `zoom`. For those, point
 `--url` at the running app.

@@ -1,0 +1,91 @@
+<!doctype html>
+<!-- Target-frame absorb harness. Mirrors TargetFrame's real DOM and drives the
+     same shield formula over the states a barrier passes through, so the absorb
+     band can be checked without a server, a login, or a shielded mob on screen.
+     Keep the SHIELD_PCT formula below in sync with TargetFrame.tsx. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Target frame harness</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/targetFrame.css" />
+  <style>
+    html, body { margin: 0; background: #0b0a08; font-family: monospace; }
+    .grid { display: flex; flex-wrap: wrap; gap: 26px; padding: 18px; }
+    .case { width: 340px; }
+    .case h2 {
+      font-size: 11px; color: #c9b98f; margin: 0 0 6px;
+      font-weight: normal; letter-spacing: 0.05em;
+    }
+    /* The frame is position:absolute in the real HUD; anchor each case instead. */
+    .case .target-frame { position: relative; top: 0; left: 0; transform: none; }
+    @media (max-width: 1100px) { .case { width: 240px; } }
+  </style>
+</head>
+<body>
+  <div class="grid" id="grid"></div>
+  <script>
+    // Same formulas as TargetFrame.tsx.
+    const shieldPct = (amount, maxHp) =>
+      amount > 0 && maxHp > 0 ? Math.max(4, Math.min(100, (amount / maxHp) * 100)) : 0;
+    const shieldLeft = (hpPct, pct) => Math.max(0, Math.min(hpPct, 100 - pct));
+
+    const CASES = [
+      { t: 'No barrier (baseline)',      name: 'Field Hare',        hp: 260, maxHp: 400, barrier: null },
+      { t: 'Small shell (10% of maxHP)', name: 'Warded Husk',       hp: 400, maxHp: 400, barrier: { amount: 40 } },
+      { t: 'Large shell (75%)',          name: 'Aegis Sentinel',    hp: 310, maxHp: 400, barrier: { amount: 300 } },
+      { t: 'Shell over maxHP (clamped)', name: 'Bulwark Colossus',  hp: 400, maxHp: 400, barrier: { amount: 600 } },
+      { t: 'Depleting (mid-drain)',      name: 'Warded Husk',       hp: 190, maxHp: 400, barrier: { amount: 118 } },
+      { t: 'Low HP, shell fits (no lap)', name: 'Warded Husk',      hp: 120, maxHp: 400, barrier: { amount: 80 } },
+      { t: 'Nearly broken (floor)',      name: 'Warded Husk',       hp: 120, maxHp: 400, barrier: { amount: 3 } },
+      { t: 'Broken / Reforming (0)',     name: 'Warded Husk',       hp: 88,  maxHp: 400, barrier: { amount: 0 }, reforming: true },
+      { t: 'Boss, shell up',             name: 'Apex Timberclaw',   hp: 5200, maxHp: 9000, boss: true, barrier: { amount: 2700 } },
+      { t: 'Boss, no shell',             name: 'Gnarled Greatbear', hp: 5200, maxHp: 9000, boss: true, barrier: null },
+      { t: 'Late-tier, 6-digit absorb',  name: 'Void Overlord',     hp: 402000, maxHp: 900000, boss: true, barrier: { amount: 248000 } },
+    ];
+
+    const tile = (label, color) => `
+      <div class="tf-tile-wrap" role="img" aria-label="${label}">
+        <div class="tf-tile" style="background-color:${color};box-shadow:0 0 8px ${color}66"></div>
+        <span class="tf-tile__label" style="color:${color}">${label}</span>
+      </div>`;
+
+    document.getElementById('grid').innerHTML = CASES.map((c) => {
+      const hpPct = Math.max(0, Math.min(100, (c.hp / c.maxHp) * 100));
+      const hpColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
+      const amount = Math.max(0, c.barrier ? c.barrier.amount : 0);
+      const pct = shieldPct(amount, c.maxHp);
+
+      const shieldOverlay = pct > 0 ? `
+        <div class="target-frame__shield" role="img" aria-label="Barrier absorbing ${Math.round(amount)}"
+             style="left:${shieldLeft(hpPct, pct)}%;width:${pct}%"></div>
+        <span class="target-frame__shield-amount">${Math.round(amount)}</span>` : '';
+
+      const tiles = [
+        tile('Slow', '#6fd0ff'),
+        ...(c.barrier ? [tile(c.reforming ? 'Reforming' : 'Barrier', '#55d9f2')] : []),
+      ].join('');
+
+      return `
+      <div class="case">
+        <h2>${c.t}</h2>
+        <div class="target-frame${c.boss ? ' target-frame--boss' : ''}">
+          <div class="target-frame__name-row">
+            <span class="target-frame__name">${c.name}</span>
+            ${c.boss ? '<span class="target-frame__boss-tag">BOSS</span>' : ''}
+          </div>
+          <div class="target-frame__track">
+            <div class="target-frame__fill" style="width:${hpPct}%;background:${hpColor}"></div>
+            ${shieldOverlay}
+            <span class="target-frame__hp-text">${Math.ceil(c.hp)} / ${c.maxHp}</span>
+          </div>
+          <div class="target-frame__stats">
+            <span>ATK <b>42</b></span><span>DR <b>12%</b></span><span>PLT <b>8</b></span>
+          </div>
+          <div class="target-frame__tiles">${tiles}</div>
+        </div>
+      </div>`;
+    }).join('');
+  </script>
+</body>
+</html>
