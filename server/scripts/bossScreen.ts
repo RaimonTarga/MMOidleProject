@@ -1,3 +1,5 @@
+import { BREADTH_BLOCKS, assertBreadthDefinitions, type BreadthCell } from '../bench/balance/playerBreadthSpec';
+import { prepareConduitRecorder } from '../bench/balance/conduitRecorder';
 import { FAST_PASS_BLOCKS, FAST_PASS_BOSSES, FAST_PASS_CAP_MS, FAST_PASS_SEED, assertFastPassDefinitions, fastPassReadback, assertFastPassHitboxes } from '../bench/balance/playerFastPassSpec';
 import { PACKAGE_FIT_BLOCKS, assertPackageFitDefinitions } from '../bench/balance/playerPackageFitSpec';
 import { guardableThreatsAgainstPlayer } from '../src/systems/combat/ai/guardableThreats';
@@ -155,6 +157,12 @@ const TRIALS: Record<string, {
    */
   installTreatment?: (cell: Night5Cell) => { changes: unknown[]; restore: () => void } | null;
 }> = {
+  'player-breadth': {
+    defaultBlock: 'breadth-t2-striker-light-boss',
+    blocks: Object.fromEntries(Object.entries(BREADTH_BLOCKS).filter(([,b]) => b.cells[0].role === 'boss')),
+    perBlock: Object.fromEntries(Object.entries(BREADTH_BLOCKS).filter(([,b]) => b.cells[0].role === 'boss').map(([id,b]) => [id, {bossId:b.cells[0].targetTypes[0],capMs:FAST_PASS_CAP_MS,seeds:[FAST_PASS_SEED],escorts:{}}])),
+    assertDefinitions: assertBreadthDefinitions,
+  },
   'player-package-fit': {
     defaultBlock: 't2-boss',
     blocks: Object.fromEntries(Object.entries(PACKAGE_FIT_BLOCKS).filter(([name]) => name.endsWith('-boss'))),
@@ -367,10 +375,13 @@ function run(cell: Night5Cell, seed: number) {
     const declared = resolveSurveyPackage(cell);
     const { bot, view } = prepareSurveyBot(world, cell, BOT_SPAWN);
 
-    const packageReadback = ['player-fast-pass', 'player-package-fit'].includes(trial) ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
+    const conduit = trial === 'player-breadth' ? prepareConduitRecorder(world,bot,cell as BreadthCell) : null;
+    const packageReadback = ['player-fast-pass', 'player-package-fit', 'player-breadth'].includes(trial) ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
     // Tick once so the boss actually spawns before the receipt is written; a
     // receipt taken before the wake-up records an empty arena.
+    if (conduit) conduit.atMs = -100; // Wake/initialization precedes the measured clock.
     world.tick(100, now);
+    conduit?.afterTick();
     const boss = findBoss(world, cell.nodeId);
     assert(boss, `${cell.id}: boss never woke — the encounter was not exercised`);
     /** Pinned at wake so kill evidence can be matched to THIS boss entity. */
@@ -386,12 +397,13 @@ function run(cell: Night5Cell, seed: number) {
       dr: m.mitigatesDamage.damageReduction,
     }));
 
-    if(['player-fast-pass', 'player-package-fit'].includes(trial)) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
+    if(['player-fast-pass', 'player-package-fit', 'player-breadth'].includes(trial)) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
     const initial = roster();
     const ready = {
       cell: cell.id,
       seed,
       synthetic: true,
+      ...(trial === 'player-breadth' ? {playerTreatment:(cell as BreadthCell).playerTreatment,controlCaseId:(cell as BreadthCell).controlCaseId,conduitProfile:conduit?.profileReceipt() ?? null} : {}),
       ...(packageReadback ? { packageReadback } : {}),
       bossId: spec.bossId,
       guardianAccess: 'not-measured-guard-stripped',
@@ -600,7 +612,9 @@ function run(cell: Night5Cell, seed: number) {
         guardWindowMs: getCooldown(bot.tracksCombat, 'ability.guard.window'),
         statusEffects: structuredClone(bot.tracksCombat.statusEffects),
       }});
+      conduit?.beforeTick(elapsed,100,now);
       world.tick(100, now);
+      conduit?.afterTick();
       if (trial === 'player-package-fit') log.push({ atMs: elapsed, event: {
         kind: 'package-fit-guard-boundary', phase: 'after-tick',
         braceCooldownMs: getCooldown(bot.tracksCombat, 'ability.cd.brace'),
@@ -659,7 +673,7 @@ function run(cell: Night5Cell, seed: number) {
             casts.push({ atMs: elapsed, label: (e as { label?: string }).label ?? 'unlabelled' });
           }
           log.push({ atMs: elapsed, event: e });
-        } else if (trial === 'player-package-fit') log.push({ atMs: elapsed, event: e });
+        } else if (trial === 'player-package-fit' || trial === 'player-breadth') log.push({ atMs: elapsed, event: e });
       }
 
       const live = findBoss(world, cell.nodeId);
@@ -710,6 +724,7 @@ function run(cell: Night5Cell, seed: number) {
     const terminalHp = resolveTerminalBossHp(terminal, lastSupportedBossHp);
     const result = {
       cell: cell.id, seed, outcome, elapsedMs: elapsed, windowMs,
+      ...(trial === 'player-breadth' ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier}} : {}),
       /** Terminal outcome FIRST; every number below is read in its light. */
       bossKilled: isVictory(terminal),
       /**
@@ -746,6 +761,7 @@ function run(cell: Night5Cell, seed: number) {
     };
     writeFileSync(join(dir, 'events.jsonl'), log.map((e) => JSON.stringify(e)).join('\n') + '\n');
     writeFileSync(join(dir, 'samples.jsonl'), samples.map((e) => JSON.stringify(e)).join('\n') + '\n');
+    if(conduit) writeFileSync(join(dir,'conduit.json'),JSON.stringify(conduit.finish(outcome),null,2));
     writeFileSync(join(dir, 'summary.json'), JSON.stringify(result, null, 2));
     return result;
   } finally {

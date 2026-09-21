@@ -1,3 +1,5 @@
+import { BREADTH_BLOCKS, assertBreadthDefinitions, type BreadthCell } from '../bench/balance/playerBreadthSpec';
+import { prepareConduitRecorder } from '../bench/balance/conduitRecorder';
 import { FAST_PASS_BLOCKS, FAST_PASS_SEED, fastPassReadback, assertFastPassDefinitions, assertFastPassHitboxes } from '../bench/balance/playerFastPassSpec';
 import { PACKAGE_FIT_BLOCKS, assertPackageFitDefinitions } from '../bench/balance/playerPackageFitSpec';
 import {profileNavigationObservation,recordNavigationTick} from '../bench/balance/navigationObservation';
@@ -62,11 +64,13 @@ import { DURABILITY20_CELLS, DURABILITY20_SEEDS, installDurability20Treatment, a
 import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
+const breadth = args.trial === 'player-breadth';
+if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
-const fastPass = args.trial === 'player-fast-pass' || packageFit;
+const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
-if (fastPass) { assert(fastBlock && args.block.endsWith('-farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
+const fastBlock = fastPass ? (breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
 const mode=args.mode??'qualify'; assert(['qualify','pilot','run'].includes(mode));
@@ -117,10 +121,12 @@ function run(cell:SurveyCell,seed:number) {
     const target={nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false};
     setupArena(world,target);
     const {bot,view}=prepareSurveyBot(world,cell,safeSpawn(cell.nodeId));
+    const conduit = breadth ? prepareConduitRecorder(world,bot,cell as BreadthCell) : null;
     const roster=()=>[...world.monsterEntitiesInNode(cell.nodeId)].map(m=>({id:m.entityId,type:m.isMonster.monsterTypeId,hp:m.hasHealth.hp,maxHp:m.hasHealth.maxHp,pos:{...m.hasPosition.current}}));
     if(fastPass) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
     const initial=roster(); assert(initial.length>0,'Empty initial population');
     const ready={cell:cell.id,seed,synthetic:true,view,
+      ...(breadth ? {playerTreatment:(cell as BreadthCell).playerTreatment,controlCaseId:(cell as BreadthCell).controlCaseId,conduitProfile:conduit?.profileReceipt() ?? null} : {}),
       ...(fastPass ? {packageReadback:fastPassReadback(cell,bot,view.globalMastery), definitionsIdentity:{base:manifest.definitionsHash,live:checkpointDefinitionsHash(),treated:false}} : {}),initialRoster:initial,initialRosterHash:sha(JSON.stringify(initial)),
       geometryRosterHash:sha(JSON.stringify(initial.map(({hp,maxHp,...r})=>r))),
       hpTreatment:overlay?.changes.filter(c=>initial.some(m=>m.type===c.type))??[],
@@ -154,7 +160,8 @@ function run(cell:SurveyCell,seed:number) {
     for(;elapsed<windowMs;elapsed+=100) {
       if(realNow()-wallStart>120000) {outcome='wall-ceiling';break;}
       now=1800000000000+elapsed; register();
-      const tickWallStart=realNow();world.tick(100,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
+      conduit?.beforeTick(elapsed,100,now);
+      const tickWallStart=realNow();world.tick(100,now);conduit?.afterTick();maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
       for(const m of world.monsterEntitiesInNode(cell.nodeId)) {
         const previous=lastHp.get(m.entityId);
         if(previous!==undefined && m.hasHealth.hp>previous+0.001) {const t=metrics.targets.get(m.entityId);if(t&&t.firstDamageMs!==null)t.hpRegainObserved=true;}
@@ -167,7 +174,7 @@ function run(cell:SurveyCell,seed:number) {
         if(e.kind==='monster-cast-start'||e.kind==='monster-cast-end') {
           const t=metrics.targets.get(e.monsterId);if(t) {if(e.kind==='monster-cast-start')t.castsStarted++;else if(e.fired)t.castsFired++;}
           log.push({atMs:elapsed,event:e});
-        } else if(packageFit) log.push({atMs:elapsed,event:e});
+        } else if(packageFit || breadth) log.push({atMs:elapsed,event:e});
       }
       const v=composePlayerView(bot)!;minHp=Math.min(minHp,v.hp/v.maxHp);
       if(v.lastAttackAt!==lastAttack) {attackBeats++;lastAttack=v.lastAttackAt;}
@@ -187,9 +194,11 @@ function run(cell:SurveyCell,seed:number) {
       world.pendingDeaths=[];
     }
     metrics.close(elapsed,outcome);
-    const result={cell:cell.id,seed,outcome,elapsedMs:elapsed,windowMs,minHpFraction:minHp,attackBeats,minionAttackBeats,wallElapsedMs:realNow()-wallStart,maxTickWallMs,totalAttackBeats:attackBeats+minionAttackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
+    const result={cell:cell.id,seed,outcome,elapsedMs:elapsed,windowMs,
+      ...(breadth ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier},playerDeathEvidence:log.filter((x:any)=>x.event?.kind==='player-death')} : {}),minHpFraction:minHp,attackBeats,minionAttackBeats,wallElapsedMs:realNow()-wallStart,maxTickWallMs,totalAttackBeats:attackBeats+minionAttackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
     writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');
     writeFileSync(join(dir,'samples.jsonl'),samples.map(e=>JSON.stringify(e)).join('\n')+'\n');
+    if(conduit) writeFileSync(join(dir,'conduit.json'),JSON.stringify(conduit.finish(outcome),null,2));
     writeFileSync(join(dir,'summary.json'),JSON.stringify(result,null,2));return result;
   } finally {try {teardownArena(world);} finally {overlay?.restore();Date.now=realNow;Math.random=realRandom;}}
 }
@@ -198,6 +207,7 @@ const results:unknown[]=[];
 const batchWallStart=realNow();
 try {
   const pilotIds:Record<string,string[]>={
+    'player-breadth':fastBlock?.pilotIds??[],
     'player-fast-pass':fastBlock?.pilotIds??[],
     'player-package-fit':fastBlock?.pilotIds??[],
     night5:night5?.pilotIds??[],

@@ -198,6 +198,6 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   const declaredVariant = cell.build.skillPath
     .find(id => /-(light|balanced|heavy)$/.test(id))?.split('-').pop() ?? null;
   assert.equal(view.selectedSubVariant, cell.tier >= 2 ? declaredVariant : null);
-  assert.equal(view.selectedRange,cell.tier>=3?`${c.prefix}-range-${c.melee?'close':'mid'}`:null);
+  assert.equal(view.selectedRange, cell.build.skillPath.find(id => id.includes('-range-')) ?? null);
   return {bot, view};
 }

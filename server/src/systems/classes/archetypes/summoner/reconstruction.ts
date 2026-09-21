@@ -6,6 +6,7 @@ import { applyHealToPlayer } from '../../../defense/regen/healing';
 import { computeMinionMaxHp, spawnMinionForOwner } from './spawn';
 import { summonerProfileFor } from './profile';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
+import { emitSummonObservation } from './observation';
 
 type SummonerOwner = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -63,7 +64,9 @@ function applyQueueScopedCombatRecovery(
   if (regenPctPerSecond <= 0) return;
   const recoveryRatio = summonerProfileFor(owner).reconstructionCombatRegenPct;
   const amount = owner.hasHealth.maxHp * (regenPctPerSecond / 100) * (dt / 1_000) * recoveryRatio;
+  const before = owner.hasHealth.hp;
   applyHealToPlayer(owner, owner.tracksCombat, amount, world);
+  emitSummonObservation(owner, { kind: 'queue-heal', hp: owner.hasHealth.hp - before });
 }
 
 /** Advance exactly one reconstruction and pay only when the safety floor remains. */
@@ -96,11 +99,14 @@ export function tickSummonReconstruction(
     computeMinionMaxHp(owner, index) * profile.reconstructionHpCostRatio,
   ));
   const floor = owner.hasHealth.maxHp * profile.reconstructionSafetyFloorPct;
+  emitSummonObservation(owner, { kind: 'replacement-attempt', slotId: active.slotId,
+    blocked: owner.hasHealth.hp - cost < floor, costHp: cost, floorHp: floor, dtMs: dt });
   if (owner.hasHealth.hp - cost < floor) return;
 
   const minion = spawnMinionForOwner(world, owner, index);
   if (!minion) return;
   owner.hasHealth.hp = Math.max(floor, owner.hasHealth.hp - cost);
+  emitSummonObservation(owner, { kind: 'replacement-paid', id: minion.entityId, hp: cost });
   pushDamageEvent(world, owner, cost);
   if (owner.controlsSummons) {
     owner.controlsSummons.pendingDeadSlotIds = owner.controlsSummons.pendingDeadSlotIds

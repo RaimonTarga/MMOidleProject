@@ -26,6 +26,7 @@ import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers'
 import { setAttackTarget } from '../../../combat/ai/targeting';
 import { stopEntity } from '../../../world/movement';
 import { summonerProfileFor } from './profile';
+import { emitSummonObservation } from './observation';
 
 const MINION_BASE_HP_MIN = 10;
 const FOLLOW_RADIUS = 44;
@@ -230,6 +231,8 @@ export function spawnMinionForOwner(
 
   owner.summonsMinions.minionIds[slot] = id;
   owner.summonsMinions.respawnTimers[slot] = 0;
+  emitSummonObservation(owner, { kind: 'spawn', id, slot, maxHp: entity.hasHealth.maxHp,
+    replacement: owner.summonsMinions.activeReconstruction?.slotId === owner.summonsMinions.slotIds[slot] });
   return entity;
 }
 

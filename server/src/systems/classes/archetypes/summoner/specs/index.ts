@@ -305,6 +305,7 @@ function tickVolatile(world: World, owner: SummonerOwner, now: number): void {
       : target.hasPosition.current;
     detonate(world, owner, minion, tuning.explosionDamageMult, center);
     pushDamageEvent(world, minion, minion.hasHealth.hp);
+    emitSummonObservation(owner, { kind: 'sacrifice', id: minion.entityId });
     minion.hasHealth.hp = 0;
     markSliceDirty(world, minion, 'hasHealth');
   }
@@ -460,3 +461,4 @@ export function registerSummonerSpecializationHooks(): void {
     markSliceDirty(world, owner, 'summonsMinions');
   });
 }
+import { emitSummonObservation } from '../observation';

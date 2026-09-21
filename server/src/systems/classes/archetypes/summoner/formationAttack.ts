@@ -100,6 +100,7 @@ export function runFormationAttack(
     side: 'summon',
   };
   const resultMetadata: Record<string, unknown> = {};
+  const hpBefore = target.hasHealth.hp;
   const outcome = runPlayerAttack(world, owner, target, now, {
     attackOrigin: minion.hasPosition.current,
     aggroSource: { id: minion.isMinion.id, kind: 'minion' },
@@ -107,6 +108,9 @@ export function runFormationAttack(
     resultMetadata,
     formation,
   });
+  emitSummonObservation(owner, { kind: 'attack', id: minion.entityId, targetId: target.entityId,
+    targetType: target.isMonster.monsterTypeId, targetHpFractionBefore: hpBefore / target.hasHealth.maxHp,
+    primaryHpDecrease: Math.max(0, hpBefore - Math.max(0, target.hasHealth.hp)), outcome });
   if (outcome !== 'cancelled' && outcome !== 'dodged') {
     commitCycle(owner, target.isMonster.id, cycle);
     if (owner.summonsMinions && owner.controlsSummons) {
@@ -152,3 +156,4 @@ export function consumeWeightedProc(
   controls.procProgress[progressKey] = next - triggers;
   return triggers;
 }
+import { emitSummonObservation } from './observation';

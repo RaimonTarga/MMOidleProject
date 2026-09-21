@@ -19,6 +19,8 @@ import {
 } from '../data/summoner';
 
 export interface SummonerProfileInput {
+  /** Explicit isolated bench opt-in; never inferred from saved player state. */
+  reconstructionExperiment?: 'reconstruction-r1';
   selectedSubVariant: SubVariant | null;
   selectedRange: string | null;
   unlockedSkills: readonly string[];
@@ -36,6 +38,7 @@ export interface SummonerSlotProfile {
 }
 
 export interface SummonerProfile {
+  reconstructionFactors: { baseMs: number; frame: number; specialization: number; passive: number; range: number; preRelicMs: number; postRelicMs: number; floorMs: number; floorBinds: boolean };
   frame: SummonerFrame;
   range: SummonerRange;
   specialization: SummonerSpecialization | null;
@@ -164,11 +167,16 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
   const colossusReconstructionMult = specialization === 'colossus'
     ? SUMMONER_SPECIALIZATION_TUNING.colossus.reconstructionIntervalMult
     : 1;
+  const experiment = input.reconstructionExperiment === 'reconstruction-r1';
+  const frameMult = experiment && frame === 'light' ? 2500 / 3500
+    : experiment && frame === 'balanced' ? 3000 / 3500 : frameTuning.reconstructionIntervalMult;
+  const rangeMult = experiment && selectedRange === 'far' ? 0.85 : 1;
+  const specMult = colossusReconstructionMult * (experiment && specialization === 'endless-swarm' ? 0.80 : 1);
+  const passiveMult = Math.max(0.1, passives['summoner.reconstruction-interval-mult'] ?? 1);
+  const floorMs = experiment && (frame === 'light' || frame === 'balanced') ? 2000 : SUMMONER_CORE_TUNING.minimumReconstructionIntervalMs;
   const reconstructionBaseMs = Math.round(
     SUMMONER_CORE_TUNING.reconstructionIntervalMs
-      * frameTuning.reconstructionIntervalMult
-      * colossusReconstructionMult
-      * Math.max(0.1, passives['summoner.reconstruction-interval-mult'] ?? 1),
+      * frameMult * specMult * passiveMult * rangeMult,
   );
   const relicReconstructionMs = resolveSummonerRelicProfile(
     reconstructionBaseMs,
@@ -177,6 +185,9 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
   ).respawnMs.after;
 
   return {
+    reconstructionFactors: { baseMs: SUMMONER_CORE_TUNING.reconstructionIntervalMs, frame: frameMult,
+      specialization: specMult, passive: passiveMult, range: rangeMult, preRelicMs: reconstructionBaseMs,
+      postRelicMs: relicReconstructionMs, floorMs, floorBinds: relicReconstructionMs < floorMs },
     frame,
     range,
     specialization,
@@ -200,7 +211,7 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
     redirectionPct: rangeTuning.redirectionPct,
     leashRadius: SUMMONER_CORE_TUNING.leashRadius,
     reconstructionIntervalMs: Math.max(
-      SUMMONER_CORE_TUNING.minimumReconstructionIntervalMs,
+      floorMs,
       relicReconstructionMs,
     ),
     reconstructionHpCostRatio: SUMMONER_CORE_TUNING.reconstructionHpCostRatio,
