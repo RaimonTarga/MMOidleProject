@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "qualificationPacket": "C:/Users/osaif/AppData/Local/mmo-idle/validation/player-fast-pass/package-fit-r1-preparation",
+  "qualificationHead": "153153d366d704236959454b977e476ac106b378",
+  "qualificationTree": "0224efd61d82665194358fa2d468d25a2f0c6c33",
+  "executionHead": "291702d5397aa5c24d2c77ac2557e3122a815a37",
+  "executionTree": "825e1861c400ad193da132ec4d32bf950c2d57ff",
+  "sourceSha256": "85f094d76638aae31d2685d7e039aba8eec6f2448fad94e00bbf048954b601dd",
+  "sourceBytesEqual": true,
+  "qualificationReceiptsPreserved": true,
+  "mainExecuted": 0
+}

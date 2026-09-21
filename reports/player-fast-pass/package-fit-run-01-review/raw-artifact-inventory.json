@@ -1,0 +1,1425 @@
+{
+  "schemaVersion": 1,
+  "rawRunRoot": "C:/Users/osaif/AppData/Local/mmo-idle/validation/player-fast-pass/package-fit-run-01",
+  "fileCount": 177,
+  "totalBytes": 73911400,
+  "note": "events.jsonl and samples.jsonl remain local raw streams; published metadata and compact excerpts are separately hashed below.",
+  "files": [
+    {
+      "rawRunRelativePath": "complete.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\complete.json",
+      "bytes": 62,
+      "sha256": "9f058789bdd236dbd8a5720a035fface1d9f5cb87327f57a7a9ce6321e06ce40",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/launcher-complete.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "identity.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\identity.json",
+      "bytes": 97632,
+      "sha256": "6de409c54f860cd738c17bd3869567f3f8eb1b05305d3759b8ade55b58a6f995",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/execution-identity.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "report.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\report.json",
+      "bytes": 752017,
+      "sha256": "9ecf80c2669d488c57975463404da7685576c0d79def0c385f123d4c6e47794e",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/launcher-report.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/complete.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\complete.json",
+      "bytes": 112,
+      "sha256": "72fa8f3cec9e278f936847aa0fa8e56c7f71ad62484d2169dc830faeff712eb3",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t2-boss/complete.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/index.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\index.json",
+      "bytes": 13920,
+      "sha256": "f60cd8297a1ef49ad4dad93f10ebd1ac57c5d608109433b47b8bb074ce305d97",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t2-boss/index.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/manifest.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\manifest.json",
+      "bytes": 10473,
+      "sha256": "f1903f1249be7bd8e2b9db540e94ad8cf7a7f9af539d77cb74de285c54f466e5",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/manifests/t2-boss.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-apprentice-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-apprentice-boss-s101003\\events.jsonl",
+      "bytes": 316763,
+      "sha256": "10f2ef23adb74890e6883d6f3f680fdd04601c46dea64661c32c0cc5ee2bce10",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-apprentice-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-apprentice-boss-s101003\\ready.json",
+      "bytes": 13548,
+      "sha256": "989843b177627d2d5bb652b4d4fd8370a2c162bcc65f751305d260688aaedb1b",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-apprentice-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-apprentice-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-apprentice-boss-s101003\\samples.jsonl",
+      "bytes": 7294,
+      "sha256": "d93e1cf52771f0ae39eefe7a82292c07922042f5ebba3058d96c3e799d92ecfd",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-apprentice-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-apprentice-boss-s101003\\summary.json",
+      "bytes": 2134,
+      "sha256": "2dca6583d6e1a82819062ef98ac7e3c3c5f4756317c99e6edac9daeb8e56ee3a",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-apprentice-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-conduit-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-conduit-boss-s101003\\events.jsonl",
+      "bytes": 1331837,
+      "sha256": "99b2fc39a3d609eec204a4a846c9b825141f45b7e519cf45f2a09fb607178116",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-conduit-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-conduit-boss-s101003\\ready.json",
+      "bytes": 14389,
+      "sha256": "ec09f541dfc1a1e8259f91a8cef539891cd1c40813ecb0b801ca932bea73c668",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-conduit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-conduit-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-conduit-boss-s101003\\samples.jsonl",
+      "bytes": 25650,
+      "sha256": "06f67e9dbd453aab190bf8378035e276b9fb7c72814803eeb26ad3cab53ee4da",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-conduit-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-conduit-boss-s101003\\summary.json",
+      "bytes": 2147,
+      "sha256": "9be2a69fb4d0d60efe522eea083386314f9dda11556bf2eb3989d8ce1e56ecd2",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-conduit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-slinger-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-slinger-boss-s101003\\events.jsonl",
+      "bytes": 317137,
+      "sha256": "4a0ed66d80d4a6d33ef2c277bca286216f75672909e6e7b5ad6186743f565b4a",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-slinger-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-slinger-boss-s101003\\ready.json",
+      "bytes": 13629,
+      "sha256": "fb40a75b118dc510a1d452b70c7b53f8e0ce024bae7f2207dfb7dc22a573d094",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-slinger-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-slinger-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-slinger-boss-s101003\\samples.jsonl",
+      "bytes": 8160,
+      "sha256": "b3161d89e03ab9df99eae54935e22a105a533b78bcca824f0cd01caf29c2bde7",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-slinger-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-slinger-boss-s101003\\summary.json",
+      "bytes": 2082,
+      "sha256": "8977e3a0b496df2497d2d8e6eada591c4553b8e0a8620783e7baad031803ddba",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-slinger-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-spirit-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-spirit-boss-s101003\\events.jsonl",
+      "bytes": 280226,
+      "sha256": "cdef0e7f3c8472c2b2bffffd4b8b20d229cece051f062f4c0d9d819abf7de629",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-spirit-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-spirit-boss-s101003\\ready.json",
+      "bytes": 13403,
+      "sha256": "68809306ec653a9f08089280c3222fe67f6d341110b27079ef20a996807e02ad",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-spirit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-spirit-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-spirit-boss-s101003\\samples.jsonl",
+      "bytes": 7821,
+      "sha256": "7a43176060e165260a9b192eea07e3fce3b381732ec490396575a20e18403bff",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-spirit-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-spirit-boss-s101003\\summary.json",
+      "bytes": 2081,
+      "sha256": "c9750e8f7d5c1504310adb50721e4326221723c48cdff1eedf62258d351361ba",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-spirit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-squire-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-squire-boss-s101003\\events.jsonl",
+      "bytes": 530671,
+      "sha256": "4296b835e761825ac9420703ec7c6f916adf1bf2373456d9e46ef1bee65189ea",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-squire-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-squire-boss-s101003\\ready.json",
+      "bytes": 13238,
+      "sha256": "ad7397a06ce115fde0cd33537ecb295cf1752bdcc9734330b6b50e98850ecc9c",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-squire-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-squire-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-squire-boss-s101003\\samples.jsonl",
+      "bytes": 14375,
+      "sha256": "db9e1dfbc5693f69e0a3accc42c30249e3e2eeab813c2d40878f00da85f328fe",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-squire-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-squire-boss-s101003\\summary.json",
+      "bytes": 2158,
+      "sha256": "98277a05466ce76157e55af81d09da5bf6fdb0a0ee1755d89726ca42ef7df10f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-squire-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-striker-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-striker-boss-s101003\\events.jsonl",
+      "bytes": 1027962,
+      "sha256": "d3bc7f970cbb46d531e607a5cf751d10894bd3bff10298920090af5e33da9af9",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-striker-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-striker-boss-s101003\\ready.json",
+      "bytes": 13300,
+      "sha256": "4d7ba32ab1d6b14ac8beda91b9b946c239e3a3ec786705546114d3816815b56c",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-striker-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-striker-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-striker-boss-s101003\\samples.jsonl",
+      "bytes": 22415,
+      "sha256": "56fbcd096f226485c49c90add12626e2fb7433255113c6ededd3e2e45b9721b7",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/pfit-r1-t2-striker-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\pfit-r1-t2-striker-boss-s101003\\summary.json",
+      "bytes": 2188,
+      "sha256": "3cda90bcff5c67f9fad1af658a389fd99eec67d49bdd8b5b56476efd082d09f0",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-striker-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/process.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\process.json",
+      "bytes": 36,
+      "sha256": "607c925d360ab5a65cd74620a4335c2ad35a9fcf3d430caac4d11a77f131f54f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t2-boss/process.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-boss/process.log",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-boss\\process.log",
+      "bytes": 288,
+      "sha256": "b737872a01da75cd86752f90e0418bc375123752593e9687b391facc0d122ee6",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t2-boss/process.log",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/complete.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\complete.json",
+      "bytes": 33,
+      "sha256": "877e8e845333530870e88c40478d424ec98619ac5b8cc5ff5867eb6210935dcd",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t2-farm/complete.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/index.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\index.json",
+      "bytes": 319774,
+      "sha256": "bb3e6a079fb1d7abfef701f69f1563302b2bf4cbf9ef919b33eceb856332ab9e",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t2-farm/index.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/manifest.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\manifest.json",
+      "bytes": 9271,
+      "sha256": "93cce60f7088a7b90ee7f59928c6cf91e096a3324702f4ecf92965001dc757e7",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/manifests/t2-farm.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-apprentice-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-apprentice-farm-s101003\\events.jsonl",
+      "bytes": 522788,
+      "sha256": "f17b3fc966f87007cde35d37ee31446e61fe115be501cd6763bfc9722a926b10",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-apprentice-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-apprentice-farm-s101003\\ready.json",
+      "bytes": 28061,
+      "sha256": "07261eef02808aaa3c59ea6470b53bccf982630fb2e3b31ed3b870fde4814a45",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-apprentice-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-apprentice-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-apprentice-farm-s101003\\samples.jsonl",
+      "bytes": 3374362,
+      "sha256": "b50696a183cc0b134e3c80b1ba7cea6a0c08012a9d4844e7a054e2bc976b0c56",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-apprentice-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-apprentice-farm-s101003\\summary.json",
+      "bytes": 48019,
+      "sha256": "adb1456bece28a85615d1a26d634eeef78138e4de936dbb0823c1441538f906e",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-apprentice-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-conduit-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-conduit-farm-s101003\\events.jsonl",
+      "bytes": 1266896,
+      "sha256": "a075e7f5e226073da6781e81996144ef056e637f64b81c0a6e9578e2c01b53b8",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-conduit-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-conduit-farm-s101003\\ready.json",
+      "bytes": 28857,
+      "sha256": "f99dc8c613b6cf6ef8492c15f6fc9746379e356e20e13e677bcfc21fa88554b8",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-conduit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-conduit-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-conduit-farm-s101003\\samples.jsonl",
+      "bytes": 3748731,
+      "sha256": "7d72acd86adce495d45d790758da21e8f75654f186c92fdd8e17af3f86d8841d",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-conduit-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-conduit-farm-s101003\\summary.json",
+      "bytes": 38226,
+      "sha256": "d135f483f3d96900da4724eaa94f1372cddcdf1d894e85ebfabe05f2946ad5d2",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-conduit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-slinger-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-slinger-farm-s101003\\events.jsonl",
+      "bytes": 960161,
+      "sha256": "d425dd32e54674e49d585fae92e7677a7f21c557b1540e217348dbf1ad277237",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-slinger-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-slinger-farm-s101003\\ready.json",
+      "bytes": 28090,
+      "sha256": "d15bc70e444274ecb5ad09e85d4272bf561d54ad5174213906e6cfa69799e116",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-slinger-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-slinger-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-slinger-farm-s101003\\samples.jsonl",
+      "bytes": 3365788,
+      "sha256": "d58a917678668fb7e733e74e67a0791716e12eec8cf548f1dfacf120927f79b9",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-slinger-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-slinger-farm-s101003\\summary.json",
+      "bytes": 57060,
+      "sha256": "2aa5be76f5d50c6a6f5a57db28902e20096fbf4fe02b11bcfd3faa9ead367d93",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-slinger-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-spirit-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-spirit-farm-s101003\\events.jsonl",
+      "bytes": 573303,
+      "sha256": "cd9ab0da2ee59ade5ff69b2fbb65bccc93e54d9e40a41c8899bc543157dbd5f5",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-spirit-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-spirit-farm-s101003\\ready.json",
+      "bytes": 27906,
+      "sha256": "73a8fa33f9ce5fc6015984ea6ab65acb30aa1ea69b3512af7b77c8c00353e1dd",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-spirit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-spirit-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-spirit-farm-s101003\\samples.jsonl",
+      "bytes": 3353236,
+      "sha256": "cafbf3f7ec1cfd05742a5ab16640fb99750cb4190de80ca2224713c3650a296c",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-spirit-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-spirit-farm-s101003\\summary.json",
+      "bytes": 56481,
+      "sha256": "b4afa57805a596946fea7d8717c875de7aa06af56c4515fd553b4acbac883276",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-spirit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-squire-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-squire-farm-s101003\\events.jsonl",
+      "bytes": 355281,
+      "sha256": "9e86bcf2beb765f2755652138a16e572cb9da6b7d112a5e910fe5dff2edf0416",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-squire-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-squire-farm-s101003\\ready.json",
+      "bytes": 27877,
+      "sha256": "27a64204b9d06518de4e5c6588c58233dcd0a5b7255e137a31685b5f0bd0c79b",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-squire-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-squire-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-squire-farm-s101003\\samples.jsonl",
+      "bytes": 3332447,
+      "sha256": "1b9875991849f27a517a77a12c1218268dbc942f5432a2975cf0648b7335872e",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-squire-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-squire-farm-s101003\\summary.json",
+      "bytes": 46475,
+      "sha256": "cce01d59cc9f8e7e56d336f6fd8ce970d4fa0e3c3e43900d86a00a0b294d643e",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-squire-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-striker-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-striker-farm-s101003\\events.jsonl",
+      "bytes": 934822,
+      "sha256": "4db3a1fc1f55060ea2864fb9c705a3c4ce4d0109e99433cfb5a4bd4f38f3c223",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-striker-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-striker-farm-s101003\\ready.json",
+      "bytes": 27949,
+      "sha256": "5a8ba04032195bcffe1f7a937f459aebffe7004aaaf562dd9c3a064186aa880e",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t2-striker-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-striker-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-striker-farm-s101003\\samples.jsonl",
+      "bytes": 3333397,
+      "sha256": "8d1ef2f7255903de5cd70acd7cb4d4d6a029edbfd1a6fab5b1cf96e872c047fb",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/pfit-r1-t2-striker-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\pfit-r1-t2-striker-farm-s101003\\summary.json",
+      "bytes": 49689,
+      "sha256": "510da4bc88a45f626d9c7e6df6e4590d5e6c4058fd61f46169cd235a3c056a19",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t2-striker-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/process.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\process.json",
+      "bytes": 36,
+      "sha256": "607c925d360ab5a65cd74620a4335c2ad35a9fcf3d430caac4d11a77f131f54f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t2-farm/process.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t2-farm/process.log",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t2-farm\\process.log",
+      "bytes": 241,
+      "sha256": "1b851f4cb0337a52e63a1cd15cd6d5b7ff6e134223e06b828cce06b1f4521de1",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t2-farm/process.log",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/complete.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\complete.json",
+      "bytes": 112,
+      "sha256": "8da6f6de64ebbaa165cd951e32fba4bc805247654f1bd42fbe50b7c319f5fb43",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t3-boss/complete.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/index.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\index.json",
+      "bytes": 14783,
+      "sha256": "87154bcd3bda1e0ba2b885db424b1c5c677e13497276f5b8099d21212deab893",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t3-boss/index.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/manifest.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\manifest.json",
+      "bytes": 10904,
+      "sha256": "5355ae35a23a1b731982f06cf3876d4938ab2c66327b26065875daa3f5253968",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/manifests/t3-boss.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-apprentice-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-apprentice-boss-s101003\\events.jsonl",
+      "bytes": 256939,
+      "sha256": "f9f4e9ad1502bfee80cdc468fcfcf89647fa98e79a70b61eb214bf7fd8bc06f7",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-apprentice-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-apprentice-boss-s101003\\ready.json",
+      "bytes": 14454,
+      "sha256": "b4e2e81d4101f3ac7e45e2824e2939823ae9b6c98ac63c1a43fe8fae9df7c826",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-apprentice-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-apprentice-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-apprentice-boss-s101003\\samples.jsonl",
+      "bytes": 5994,
+      "sha256": "b3f2693d0395ea7d6001f793d484260271a741742ed81d07e2d8c530c365d3ee",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-apprentice-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-apprentice-boss-s101003\\summary.json",
+      "bytes": 2354,
+      "sha256": "e24c21f2ece50d2578e66fc2c596f68e9c92ca38dbffc45d74bfb191f3819cc0",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-apprentice-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-conduit-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-conduit-boss-s101003\\events.jsonl",
+      "bytes": 1760301,
+      "sha256": "8935e7e28ddee803ca137b8f93a6cf8da23b05ef53b209a9c1f2fd98066b73d4",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-conduit-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-conduit-boss-s101003\\ready.json",
+      "bytes": 15332,
+      "sha256": "30978b84ae4505a4e866b63748fade01bc13385aa5073010919f44e28c12cc64",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-conduit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-conduit-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-conduit-boss-s101003\\samples.jsonl",
+      "bytes": 31565,
+      "sha256": "08f8b4c9ae9f37742264a8312de78e10e3b30a3358685ddb8049092589408d93",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-conduit-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-conduit-boss-s101003\\summary.json",
+      "bytes": 2341,
+      "sha256": "b0811f65050f997c9f3daee3a56e17ef984b7ecb47c6f95a4d0bcfce11cff0ec",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-conduit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-slinger-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-slinger-boss-s101003\\events.jsonl",
+      "bytes": 544554,
+      "sha256": "d241784cca189b4ce96434e9276aee9149b8761533248144df945c4d2b63d7eb",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-slinger-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-slinger-boss-s101003\\ready.json",
+      "bytes": 14492,
+      "sha256": "c5a079192e81ffe7b4dd26bcd0d06f0dca807842a7795024a83b081aa3318f88",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-slinger-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-slinger-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-slinger-boss-s101003\\samples.jsonl",
+      "bytes": 13158,
+      "sha256": "6e4f1b5308af90be7c74f88a64bd0833b614b686a188a4410be24818a913d415",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-slinger-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-slinger-boss-s101003\\summary.json",
+      "bytes": 2121,
+      "sha256": "96400047f1cb41a936c90e9ac77a4240b65785a8abd5d919ff7f81966ec4a12b",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-slinger-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-spirit-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-spirit-boss-s101003\\events.jsonl",
+      "bytes": 413755,
+      "sha256": "92ad0036255a317b00ef1d36f12b0bcfbb350715c17cd7c3adf8c7fe185b5344",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-spirit-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-spirit-boss-s101003\\ready.json",
+      "bytes": 14334,
+      "sha256": "adcde2cb58bb41e38158d1fc7b13db9d821fa8f97a6f13a2766b1cbf8158ab97",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-spirit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-spirit-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-spirit-boss-s101003\\samples.jsonl",
+      "bytes": 10757,
+      "sha256": "7b13e38b481d8eb9b6d6db81e14ef753fd7e70a55a544385405267bd41e72229",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-spirit-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-spirit-boss-s101003\\summary.json",
+      "bytes": 2095,
+      "sha256": "f755b0905be66fe3b3cc00a9d7e5f174fc3113bd636f82a9bf11f64156728b45",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-spirit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-squire-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-squire-boss-s101003\\events.jsonl",
+      "bytes": 268907,
+      "sha256": "c301cdbc3cedea81d41adc1ca5bb62d4250e65568e3ca9b9c4dcd60cd6a0b05b",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-squire-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-squire-boss-s101003\\ready.json",
+      "bytes": 14318,
+      "sha256": "c3012748723569022a75c86f5afb58e3b92ed9820eb9e781cfb94772fca4ac5f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-squire-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-squire-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-squire-boss-s101003\\samples.jsonl",
+      "bytes": 6007,
+      "sha256": "951746898128f4d9783496544116ec1ba5db2d01b932cec037cec2c3a4cfc3f2",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-squire-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-squire-boss-s101003\\summary.json",
+      "bytes": 2355,
+      "sha256": "5411c65a1f0d388deb1d27623fc48f7838add9898e0f42b4d40568753536d3bd",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-squire-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-striker-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-striker-boss-s101003\\events.jsonl",
+      "bytes": 920203,
+      "sha256": "cf6324e716df34074a7f0dd010cf5e957a838c59edd62a7e28b181a6eb8763e2",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-striker-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-striker-boss-s101003\\ready.json",
+      "bytes": 14390,
+      "sha256": "c41fb7a4ac0f2d8553eecc3fcff74558b7d3904d9c88e144d68127d92b6a41f3",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-striker-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-striker-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-striker-boss-s101003\\samples.jsonl",
+      "bytes": 13167,
+      "sha256": "8453d3237f18a5c476fc8fb28a1bf96679ee6a3191c4d0254a0d86723b58e4cd",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/pfit-r1-t3-striker-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\pfit-r1-t3-striker-boss-s101003\\summary.json",
+      "bytes": 2339,
+      "sha256": "fca1cc4240d5578a61b8f70d0b4cb1f4b6256fec9c2b470a469d075e0ace887c",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-striker-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/process.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\process.json",
+      "bytes": 36,
+      "sha256": "607c925d360ab5a65cd74620a4335c2ad35a9fcf3d430caac4d11a77f131f54f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t3-boss/process.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-boss/process.log",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-boss\\process.log",
+      "bytes": 288,
+      "sha256": "29faff623b5b59aeb340b0d406758d328abd56edf1af7636c625090865fe41a7",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t3-boss/process.log",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/complete.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\complete.json",
+      "bytes": 33,
+      "sha256": "877e8e845333530870e88c40478d424ec98619ac5b8cc5ff5867eb6210935dcd",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t3-farm/complete.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/index.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\index.json",
+      "bytes": 113126,
+      "sha256": "2df6e21dab0c372cb02aedac30246f263ecf408e6b12589c9e341ca5dbb5e33f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t3-farm/index.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/manifest.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\manifest.json",
+      "bytes": 9665,
+      "sha256": "2231659875f6c804a8648b85371777826e1b6addea826b3b09d665b0fa5df911",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/manifests/t3-farm.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-apprentice-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-apprentice-farm-s101003\\events.jsonl",
+      "bytes": 309824,
+      "sha256": "a05ec010abead0c21a441b707c8ef0fc29bfacc4e28b2985fd428df20d0d2547",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-apprentice-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-apprentice-farm-s101003\\ready.json",
+      "bytes": 23964,
+      "sha256": "4cb9a2f0b11d6c92b177ef6e69f58462c277c177202daa27be8d6397b57c5890",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-apprentice-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-apprentice-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-apprentice-farm-s101003\\samples.jsonl",
+      "bytes": 1039494,
+      "sha256": "13a0f82a014a9b8206059cdd7440d5a398af339b7a3bd31c7c9c9d0143ffd122",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-apprentice-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-apprentice-farm-s101003\\summary.json",
+      "bytes": 15281,
+      "sha256": "e6343a0071b1799ff4d7c5b7835532a3c35f03af3eecdfec15c3f3826d62b9a3",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-apprentice-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-conduit-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-conduit-farm-s101003\\events.jsonl",
+      "bytes": 430822,
+      "sha256": "14dac8b760800e8d3095d3415c9bf138a465befa89351fce24a8936b0ac920be",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-conduit-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-conduit-farm-s101003\\ready.json",
+      "bytes": 24629,
+      "sha256": "98f089070908a5907f64ff1bfac7f22fc261c3c72a05e5125597e86ba01d0a11",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-conduit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-conduit-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-conduit-farm-s101003\\samples.jsonl",
+      "bytes": 976358,
+      "sha256": "399976979a141d9d4013635c3e3fa7a213c8c5773f77304019e0dff37925b08e",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-conduit-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-conduit-farm-s101003\\summary.json",
+      "bytes": 5867,
+      "sha256": "c2be6b25274b2b1ed39e0ccbfb3f8756c21963e6f1dd2d8fc14c7e8b43018c77",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-conduit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-slinger-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-slinger-farm-s101003\\events.jsonl",
+      "bytes": 1366776,
+      "sha256": "591e7a239073770b72ced0278e3075924a858ed4f91aff35b9a40656b6ee0036",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-slinger-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-slinger-farm-s101003\\ready.json",
+      "bytes": 23971,
+      "sha256": "efcd4e605714f4cf504b58922dab873ae95661ac8bdbaa53b8354fd7c03bdd1f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-slinger-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-slinger-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-slinger-farm-s101003\\samples.jsonl",
+      "bytes": 2653163,
+      "sha256": "b7093c2dc0894e0b22da3f04474da8b1ad3752157d51e205e8b87dd3815b72a3",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-slinger-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-slinger-farm-s101003\\summary.json",
+      "bytes": 29543,
+      "sha256": "0a35565fc24904ece4e3daa6d7ae22399a2093105d23ce2b7f254aaa6e70ab24",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-slinger-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-spirit-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-spirit-farm-s101003\\events.jsonl",
+      "bytes": 689991,
+      "sha256": "8c21c1648ab1d37b6b7cffbd97a715f2e786afd2c4c9293d5d969a5f17bcba27",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-spirit-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-spirit-farm-s101003\\ready.json",
+      "bytes": 23830,
+      "sha256": "1bf2fb3992988736008a5c4053686a1799840bb4d39a516761229eff42342124",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-spirit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-spirit-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-spirit-farm-s101003\\samples.jsonl",
+      "bytes": 2662496,
+      "sha256": "819021ebceeddd261ea926c55488dbdf002a2b9025625dca41bfe7f2ae8d84f0",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-spirit-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-spirit-farm-s101003\\summary.json",
+      "bytes": 40632,
+      "sha256": "b43c6be9d13aa80b238ff8e266e08d203ea9d8d1ead23f9b97f023f36eba5d24",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-spirit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-squire-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-squire-farm-s101003\\events.jsonl",
+      "bytes": 106699,
+      "sha256": "725319014cf0ab731abd7b3cd85e3f0b736bdd64091796c716b7125708cb972d",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-squire-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-squire-farm-s101003\\ready.json",
+      "bytes": 23881,
+      "sha256": "273cae194573daf8d9584417a8e652b83f35f9127a378388f677b5dd0bb4fdc2",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-squire-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-squire-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-squire-farm-s101003\\samples.jsonl",
+      "bytes": 268476,
+      "sha256": "6bbcf01601042162383b6ca63d49bd044cad92739e9d80cb4b59892bc6cbb6dc",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-squire-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-squire-farm-s101003\\summary.json",
+      "bytes": 6043,
+      "sha256": "a39985c8f192a79e1fd7733b963a96cc8c2d5a7f7395dc543d5e006fdf8f8365",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-squire-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-striker-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-striker-farm-s101003\\events.jsonl",
+      "bytes": 225944,
+      "sha256": "137c006269d4c2be94833438d19d48d1844c980f9cef886fb683d52d4964ede6",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-striker-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-striker-farm-s101003\\ready.json",
+      "bytes": 23974,
+      "sha256": "e06e8c54792266b3c8b3ef7f157f63a3a04e3a5f8bf8de9335ac85d29d3f6a8b",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t3-striker-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-striker-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-striker-farm-s101003\\samples.jsonl",
+      "bytes": 476787,
+      "sha256": "ceeef6a58211fcc9b49dbd37ba54a66a7d152b0cebf3f5b324541bb4742f2d37",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/pfit-r1-t3-striker-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\pfit-r1-t3-striker-farm-s101003\\summary.json",
+      "bytes": 7416,
+      "sha256": "d6eeea1e26145f70df6ef80c9630fcebb9a19ae772be665eef091ef4da92f326",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t3-striker-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/process.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\process.json",
+      "bytes": 36,
+      "sha256": "607c925d360ab5a65cd74620a4335c2ad35a9fcf3d430caac4d11a77f131f54f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t3-farm/process.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t3-farm/process.log",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t3-farm\\process.log",
+      "bytes": 241,
+      "sha256": "8e09181bd69374d4390ac5d67d3fcca8df12ec6c743add983c31f57e06bfb9e8",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t3-farm/process.log",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/complete.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\complete.json",
+      "bytes": 112,
+      "sha256": "760d6c8ba9b68924633556f462acf811cd46d9a7a696b60c2e6c353f2bcb3f99",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t4-boss/complete.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/index.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\index.json",
+      "bytes": 13632,
+      "sha256": "1eb3ee2f46765ba0962653d6e0178e71b5036951b99b5da704075e9d9ec771fb",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t4-boss/index.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/manifest.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\manifest.json",
+      "bytes": 11499,
+      "sha256": "98c2ab2e5ae07e5009c6061095a1f619da69330bef185d553162e7898e50734a",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/manifests/t4-boss.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-apprentice-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-apprentice-boss-s101003\\events.jsonl",
+      "bytes": 372188,
+      "sha256": "01b7445103f184ae107982dc40124e58da7a163f342f60f3bca53f86c881182b",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-apprentice-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-apprentice-boss-s101003\\ready.json",
+      "bytes": 15720,
+      "sha256": "a004643c5db13407dd75f2909bd39d2e1af707bfc994c1a5b6912a1584fd5a2a",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-apprentice-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-apprentice-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-apprentice-boss-s101003\\samples.jsonl",
+      "bytes": 7013,
+      "sha256": "b81e31869ec29d9ff7f3318660f113f2396f9540d0e0ff0f21c8c45c0bd44cb3",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-apprentice-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-apprentice-boss-s101003\\summary.json",
+      "bytes": 2045,
+      "sha256": "85c92e1322e4fa2412134f23df04fdf342d375c9580f89a00d89c86f5a36b8b2",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-apprentice-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-conduit-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-conduit-boss-s101003\\events.jsonl",
+      "bytes": 2909997,
+      "sha256": "61ae566e9d74d52e3f8ab1a2904be88560fdcc775934f6ea013eec79c6a36abd",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-conduit-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-conduit-boss-s101003\\ready.json",
+      "bytes": 16360,
+      "sha256": "5566021abcbea076f21efc8027cc3aa3c1e4e9a4e1ff7949abeb0c822c5770b2",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-conduit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-conduit-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-conduit-boss-s101003\\samples.jsonl",
+      "bytes": 49007,
+      "sha256": "717aba9c007da198e7deb8c88b7274b79c2bf22ee6d918c724045895d34628d0",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-conduit-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-conduit-boss-s101003\\summary.json",
+      "bytes": 2123,
+      "sha256": "9c5c11b736c2664f99793ef2488eabcc0db82a7ba93ab0b698a1d2361cb95768",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-conduit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-slinger-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-slinger-boss-s101003\\events.jsonl",
+      "bytes": 497607,
+      "sha256": "1e732583f0393b92f50cdf2f4e18a0fc5fe5ff698f117d9a21e90395350e4ea0",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-slinger-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-slinger-boss-s101003\\ready.json",
+      "bytes": 15577,
+      "sha256": "63e3cc6bb62545eccba4e59fbbcb6edcfd92fc5b5afb86640735d943ce42e727",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-slinger-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-slinger-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-slinger-boss-s101003\\samples.jsonl",
+      "bytes": 7333,
+      "sha256": "46e55cbd235a5532f36fac4b2d18a03868dd45970efcad487ab7646191ae7149",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-slinger-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-slinger-boss-s101003\\summary.json",
+      "bytes": 2042,
+      "sha256": "152b86d231726f1bf5d407b573ea407511569e8eca13f0c99dc3b5559767b1f6",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-slinger-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-spirit-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-spirit-boss-s101003\\events.jsonl",
+      "bytes": 700698,
+      "sha256": "6989c043810c333275ce225aa6313019a712ab1585d0d713deb303bf7a63e3dd",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-spirit-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-spirit-boss-s101003\\ready.json",
+      "bytes": 15856,
+      "sha256": "b56a794504ca356ae4bfed2c80069d656d4def21f57e91186e9150f308b28bce",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-spirit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-spirit-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-spirit-boss-s101003\\samples.jsonl",
+      "bytes": 9310,
+      "sha256": "90e959479c180ae353e9c1b2f36868c1312f7d5e36370cc07fc05712d6e701d9",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-spirit-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-spirit-boss-s101003\\summary.json",
+      "bytes": 2043,
+      "sha256": "c3d00ede822f99880562ac1bc875e0fd8a3236bf56d92e434bde1483e906b974",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-spirit-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-squire-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-squire-boss-s101003\\events.jsonl",
+      "bytes": 987260,
+      "sha256": "41de4b426a6404d03f0a73279b504ab1671ae02253f977ede7255b8f2804c2ac",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-squire-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-squire-boss-s101003\\ready.json",
+      "bytes": 15321,
+      "sha256": "fcc7a37d231865c26fe34f59e025009bb477b2f970e60f8045110d5c9340cbdd",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-squire-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-squire-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-squire-boss-s101003\\samples.jsonl",
+      "bytes": 20492,
+      "sha256": "8c6dc256739e6ff8313ac78c411b97aa1a44b7d3003eedb0f4ee5c1cfc1f4d72",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-squire-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-squire-boss-s101003\\summary.json",
+      "bytes": 2143,
+      "sha256": "d146a98fee9e945bd5c6240a7b02996c68182b743c224da75fafe975cf22a257",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-squire-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-striker-boss-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-striker-boss-s101003\\events.jsonl",
+      "bytes": 665239,
+      "sha256": "cf0af004b0bcfa8e5b7f122a3aa80bf5e1599d73ef6a7828f9c9a3f5232ebdba",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-striker-boss-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-striker-boss-s101003\\ready.json",
+      "bytes": 15444,
+      "sha256": "71874f7e8a3b9239453be5e2c55bb8438c642d1038179d55b9ac836d21afddc2",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-striker-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-striker-boss-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-striker-boss-s101003\\samples.jsonl",
+      "bytes": 8761,
+      "sha256": "eed1cb90650e9ef638537e8fbf4720f073e65bda3630b1cdf8ef41c97b91f179",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/pfit-r1-t4-striker-boss-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\pfit-r1-t4-striker-boss-s101003\\summary.json",
+      "bytes": 2112,
+      "sha256": "be936a5e0121c8477ffe494e6851919b10d66fe505f7a5f84242851d546bc9aa",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-striker-boss-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/process.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\process.json",
+      "bytes": 36,
+      "sha256": "607c925d360ab5a65cd74620a4335c2ad35a9fcf3d430caac4d11a77f131f54f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t4-boss/process.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-boss/process.log",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-boss\\process.log",
+      "bytes": 288,
+      "sha256": "f016674779b4cdbb0972c8821fd779d436086b2e46d744e577ea52da0ba2b5a1",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t4-boss/process.log",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/complete.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\complete.json",
+      "bytes": 33,
+      "sha256": "877e8e845333530870e88c40478d424ec98619ac5b8cc5ff5867eb6210935dcd",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t4-farm/complete.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/index.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\index.json",
+      "bytes": 223839,
+      "sha256": "910200eb5d20380d11ad6a3fe297af0f012f283c12783938347a31eea28d898f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t4-farm/index.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/manifest.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\manifest.json",
+      "bytes": 10398,
+      "sha256": "4fe10d4436a20d7a10ebfddcd574830d911cc8b3d385ee78391391d68d35f3e1",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/manifests/t4-farm.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-apprentice-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-apprentice-farm-s101003\\events.jsonl",
+      "bytes": 638761,
+      "sha256": "c1708a643254ab53292e8fd1229bb8854a0f62731f4a21628c2f58d178dade45",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-apprentice-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-apprentice-farm-s101003\\ready.json",
+      "bytes": 22069,
+      "sha256": "9a8461a5b0e43ff62e02f39c4965a3adf4c1685c27b7f49b482b79457f5789b5",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-apprentice-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-apprentice-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-apprentice-farm-s101003\\samples.jsonl",
+      "bytes": 2243830,
+      "sha256": "bd33bb54df5016cd41feafcd9d224b52262c43db78ab71e3f94534c8ddba4da2",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-apprentice-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-apprentice-farm-s101003\\summary.json",
+      "bytes": 35824,
+      "sha256": "9c31ca25b7b3c780d70aab2c04f5dc25f1718ff9a9c904a673ac2e4486c089fc",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-apprentice-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-conduit-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-conduit-farm-s101003\\events.jsonl",
+      "bytes": 1835286,
+      "sha256": "4f37d3532bc73fef783e4643d2b9a4c5a5d8e3b4e98c380d4f4c11c1c175e92d",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-conduit-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-conduit-farm-s101003\\ready.json",
+      "bytes": 22669,
+      "sha256": "d65fb219d4d1671c3d128b6af395dfe1928d161dfd1d38a0b38440a72699a36b",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-conduit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-conduit-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-conduit-farm-s101003\\samples.jsonl",
+      "bytes": 2766904,
+      "sha256": "eb267c284a9cbddaa2872c6a5a910e972cf968522d4dc8c7b9e6ab2c8efbf6f3",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-conduit-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-conduit-farm-s101003\\summary.json",
+      "bytes": 24247,
+      "sha256": "5b8cfbc1ee95a85eabb4763336c20e293aa37d3b2e2fe9aa80dfa920178acfad",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-conduit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-slinger-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-slinger-farm-s101003\\events.jsonl",
+      "bytes": 1568003,
+      "sha256": "49df50863cd3760731756920317fb063dbc62fcf7afe97e17746592550ade971",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-slinger-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-slinger-farm-s101003\\ready.json",
+      "bytes": 21886,
+      "sha256": "ff34b4b58642ff5347715810efcc759ed8f5ba4dc0ae963d372dfb2b67c14e5a",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-slinger-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-slinger-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-slinger-farm-s101003\\samples.jsonl",
+      "bytes": 2257458,
+      "sha256": "5be88ae1d90da2a5fb4ab03b7b5fd3632841471f75858b1c6b3a6e25465adec7",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-slinger-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-slinger-farm-s101003\\summary.json",
+      "bytes": 39520,
+      "sha256": "b2a6fb3c88e4ab25a04a4949d820d2dc2e5b2423779f9ab0a5effc675e36058d",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-slinger-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-spirit-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-spirit-farm-s101003\\events.jsonl",
+      "bytes": 871469,
+      "sha256": "354857aad0090f5bf4124f23215bfd35cdc7580163b91e3e927f87d3dfbc6245",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-spirit-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-spirit-farm-s101003\\ready.json",
+      "bytes": 22182,
+      "sha256": "84ea2062742c53dab27280a2e766f8533e15dd1cc6304860c06141fc3d50018d",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-spirit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-spirit-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-spirit-farm-s101003\\samples.jsonl",
+      "bytes": 2238949,
+      "sha256": "76d77e086c0c47086cef8083837a73a03101e256198ead65cfb8a07ce946f11a",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-spirit-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-spirit-farm-s101003\\summary.json",
+      "bytes": 39189,
+      "sha256": "a222858ff197f3d61cb34c0be390031ad3e88f358e361c63552fda817039012d",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-spirit-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-squire-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-squire-farm-s101003\\events.jsonl",
+      "bytes": 644788,
+      "sha256": "54fabfaa9ab2f8aa25aa9f1b38fdc0a1a99004a10ce8bfdede04031c1897b274",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-squire-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-squire-farm-s101003\\ready.json",
+      "bytes": 21804,
+      "sha256": "ff293e6740cf55d57eeb03ff49fa35504b3244cb3c5088196560614f663da6d1",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-squire-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-squire-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-squire-farm-s101003\\samples.jsonl",
+      "bytes": 1613189,
+      "sha256": "90990469c043980d08a17fd2e8224f9cefaf72ef05555314db53b986c637cf3c",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-squire-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-squire-farm-s101003\\summary.json",
+      "bytes": 24968,
+      "sha256": "f81d2c5ee46990d1472eb862fe19e0cff1971eb26a3ef582dc3f7c87036c1de3",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-squire-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-striker-farm-s101003/events.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-striker-farm-s101003\\events.jsonl",
+      "bytes": 1344663,
+      "sha256": "78a3fe9f79d0f8800de21436918d27e317c04d63eeded6da904b1b8c5105ccab",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-striker-farm-s101003/ready.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-striker-farm-s101003\\ready.json",
+      "bytes": 21918,
+      "sha256": "0b0e57c20ee267eff40c1318fbca000a3dbca0fdef45386335a91b42245d8729",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/ready/pfit-r1-t4-striker-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-striker-farm-s101003/samples.jsonl",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-striker-farm-s101003\\samples.jsonl",
+      "bytes": 2220596,
+      "sha256": "c02366c9f514acd21d0955bd39db7f4bcf1307ae99ca1c020d780f9fb2e76c88",
+      "publishedPath": null,
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/pfit-r1-t4-striker-farm-s101003/summary.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\pfit-r1-t4-striker-farm-s101003\\summary.json",
+      "bytes": 43701,
+      "sha256": "66f9de6cc88347ade6ed46bb6faf9a19f52ad2bda8cdba654fdc741395d64818",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/summaries/pfit-r1-t4-striker-farm-s101003.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/process.json",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\process.json",
+      "bytes": 36,
+      "sha256": "607c925d360ab5a65cd74620a4335c2ad35a9fcf3d430caac4d11a77f131f54f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t4-farm/process.json",
+      "retainedLocally": true
+    },
+    {
+      "rawRunRelativePath": "t4-farm/process.log",
+      "rawLocalPath": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\package-fit-run-01\\t4-farm\\process.log",
+      "bytes": 241,
+      "sha256": "f9c764c1c04212a8d959b96cb120284fddba0e3fe813d9dfb062ccc31f5dc69f",
+      "publishedPath": "reports/player-fast-pass/package-fit-run-01-review/terminal/blocks/t4-farm/process.log",
+      "retainedLocally": true
+    }
+  ]
+}

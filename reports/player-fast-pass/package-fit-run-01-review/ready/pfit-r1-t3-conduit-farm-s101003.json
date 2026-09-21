@@ -1,0 +1,1170 @@
+{
+  "cell": "pfit-r1-t3-conduit-farm",
+  "seed": 101003,
+  "synthetic": true,
+  "view": {
+    "id": "bench-bot-0",
+    "name": "pfit-r1-t3-conduit-farm",
+    "pos": {
+      "x": 2400,
+      "y": 2400
+    },
+    "target": {
+      "x": 2400,
+      "y": 2400
+    },
+    "hp": 362,
+    "maxHp": 362,
+    "attack": 62,
+    "onHitDamage": 38,
+    "plating": 29,
+    "damageReduction": 0,
+    "dodgeRate": 0,
+    "evadeMitigation": 0,
+    "evadeCharge": 0,
+    "barrier": 123,
+    "barrierMax": 123,
+    "barrierRecharging": false,
+    "wards": [],
+    "incomingDot": 0,
+    "pendingHeal": 0,
+    "attackCadenceMult": 1,
+    "finalDamageDealtMult": 1.288,
+    "finalDamageTakenMult": 1.1,
+    "onHitDamageBonus": 0,
+    "attackRange": 162,
+    "attackCooldown": 532,
+    "lastAttackAt": 0,
+    "attackTargetId": null,
+    "auto": true,
+    "autoTraverse": false,
+    "autoIntent": null,
+    "emote": null,
+    "partyLeaderId": null,
+    "partyMembers": [],
+    "nodeId": "node-t3-volcanic-03",
+    "essences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "level": 0,
+    "skillPoints": 0,
+    "unlockedSkills": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid"
+    ],
+    "passives": {
+      "guard.potency-pct": 0.51,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.barrier-pct": 0.34,
+      "mobility.approach-speed-pct": 1.2,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12
+    },
+    "cadenceSpeedStacks": 0,
+    "selectedClass": "summoner-root",
+    "selectedSubVariant": "balanced",
+    "selectedRange": "summoner-range-mid",
+    "currentSkillTier": 3,
+    "recovery": 15,
+    "speed": 203,
+    "attackStyle": "slash",
+    "inventory": [],
+    "equipment": {
+      "weapon": "jungle-venomthorn-rapier",
+      "armor": "mountain-vest-t3",
+      "recovery": "mountain-charm-t3",
+      "mobility": "mountain-boots-t3",
+      "core": "core-tempered",
+      "relic": null
+    },
+    "itemUpgrades": {
+      "jungle-venomthorn-rapier": 5,
+      "mountain-vest-t3": 5,
+      "mountain-charm-t3": 5,
+      "mountain-boots-t3": 5,
+      "core-tempered": 0
+    },
+    "biomeXP": {},
+    "biomeLevel": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 18,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 12,
+      "jungle": 12,
+      "tundra": 6,
+      "volcanic": 6
+    },
+    "globalMastery": 114,
+    "unlockedRecipes": [],
+    "combatArchetype": "summoner",
+    "cadenceCount": 0,
+    "cadenceThreshold": 0,
+    "cadenceEmpoweredArmed": false,
+    "ammoCount": 0,
+    "ammoMax": 0,
+    "reloadRemainingMs": 0,
+    "reloadDurationMs": 0,
+    "heatPct": 0,
+    "laserOverheated": false,
+    "executionReady": false,
+    "executionCooldownPct": 0,
+    "energyCount": 0,
+    "energyMax": 100,
+    "flashShiftPct": 0,
+    "flashDamageShiftPct": 0,
+    "flashSpeedBonusPct": 0,
+    "flashEvasionBonusPct": 0,
+    "empoweredReady": false,
+    "targetDotStacks": 0,
+    "targetDotTickPct": 0,
+    "targetChillStacks": 0,
+    "isChanneling": false,
+    "channelingPct": 0,
+    "cannonChargePct": 0,
+    "aura": null,
+    "activeBuffs": [],
+    "questProgress": {},
+    "playerTier": 3,
+    "bossesCleared": [],
+    "clearedNodes": [],
+    "visitedNodes": [],
+    "runesOwned": [
+      "always",
+      "in-combat",
+      "when-idle",
+      "hp-below-25",
+      "hp-above-90",
+      "target-hp-below-25",
+      "has-debuff",
+      "in-party",
+      "n-aggro-3",
+      "inside-telegraph",
+      "target-casting",
+      "stance-charged",
+      "before-empowered",
+      "target-elite",
+      "target-max-stacks",
+      "while-traveling",
+      "auto-path-enemy",
+      "chase-enemy",
+      "wait-for-regen",
+      "flee",
+      "fight-back",
+      "lead-the-way",
+      "follow-and-assist",
+      "taunt-current-target",
+      "focus-closest",
+      "use-ability",
+      "switch-stance",
+      "avoid-enemies",
+      "avoid-hazards",
+      "step-back"
+    ],
+    "runeRecipesCrafted": [],
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "knownAbilities": [
+      "binding-strike",
+      "detonate",
+      "frenzy",
+      "quick-strike",
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "break-free",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "attunedAbilities": {
+      "techniques": [
+        "frenzy",
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "knownStances": [
+      "berserker-stance",
+      "defensive-stance",
+      "enraged-stance",
+      "execute-stance",
+      "fleeting-stance",
+      "offensive-stance",
+      "predator-stance",
+      "tanking-stance",
+      "warding-stance"
+    ],
+    "attunedStances": [
+      "offensive-stance"
+    ],
+    "equippedStances": {
+      "default": "offensive-stance"
+    },
+    "activeStance": "offensive-stance",
+    "manualStanceOverride": null,
+    "queuedAbilityIds": [],
+    "knownRites": [
+      "ability-reprieve",
+      "blood-offering",
+      "lingering-battle",
+      "mechanic-renewal",
+      "purification",
+      "swift-repose"
+    ],
+    "equippedRites": [],
+    "riteSlots": 6,
+    "hitboxRects": [
+      {
+        "offsetX": 1.5,
+        "offsetY": 0,
+        "halfW": 9.5,
+        "halfH": 20
+      },
+      {
+        "offsetX": -12,
+        "offsetY": 6.5,
+        "halfW": 4,
+        "halfH": 9.5
+      },
+      {
+        "offsetX": 14.5,
+        "offsetY": 8.5,
+        "halfW": 3.5,
+        "halfH": 7.5
+      },
+      {
+        "offsetX": 1.5,
+        "offsetY": -23.5,
+        "halfW": 6.5,
+        "halfH": 3.5
+      },
+      {
+        "offsetX": -5,
+        "offsetY": 24.5,
+        "halfW": 3,
+        "halfH": 4.5
+      },
+      {
+        "offsetX": -17.5,
+        "offsetY": 14.5,
+        "halfW": 1.5,
+        "halfH": 7.5
+      }
+    ],
+    "summonsMinions": 4,
+    "summonActiveCount": 0,
+    "summonRespawnMaxMs": 5000,
+    "summonSlots": [
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:0",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:1",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:2",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:3",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      }
+    ],
+    "isDead": false,
+    "graveFrame": null
+  },
+  "packageReadback": {
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "upgradeLevel": 5,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "skillPath": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid"
+    ],
+    "equipment": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "mountain-vest-t3",
+        "recovery": "mountain-charm-t3",
+        "mobility": "mountain-boots-t3",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "jungle-venomthorn-rapier": 5,
+        "mountain-vest-t3": 5,
+        "mountain-charm-t3": 5,
+        "mountain-boots-t3": 5,
+        "core-tempered": 0
+      }
+    },
+    "mastery": {
+      "biomeLevel": {
+        "cave": 18,
+        "forest": 12,
+        "mountain": 18,
+        "plains": 12,
+        "swamp": 18,
+        "desert": 12,
+        "jungle": 12,
+        "tundra": 6,
+        "volcanic": 6
+      },
+      "globalMastery": 114
+    },
+    "runicPoints": {
+      "budget": 38,
+      "cost": 33,
+      "unused": 5,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+    "skillPoints": 0,
+    "knownAbilities": [
+      "binding-strike",
+      "detonate",
+      "frenzy",
+      "quick-strike",
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "break-free",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "rites": []
+  },
+  "definitionsIdentity": {
+    "base": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+    "live": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+    "treated": false
+  },
+  "initialRoster": [
+    {
+      "id": "node-t3-volcanic-03_monster-42",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 142.99999999999997,
+        "y": 4627
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-41",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 48,
+        "y": 4731
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-40",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 143,
+        "y": 4752
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-39",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 247,
+        "y": 4731
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-38",
+      "type": "cinder-hound",
+      "hp": 1440,
+      "maxHp": 1440,
+      "pos": {
+        "x": 143,
+        "y": 4731
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-37",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 695,
+        "y": 3523.2538660821074
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-36",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 695,
+        "y": 3668.7461339178926
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-35",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 821,
+        "y": 3596
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-34",
+      "type": "cinder-hound",
+      "hp": 1440,
+      "maxHp": 1440,
+      "pos": {
+        "x": 737,
+        "y": 3596
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-33",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3965.3181073024934,
+        "y": 48
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-32",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 3826.6818926975066,
+        "y": 76.11462871573335
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-31",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3826.6818926975066,
+        "y": 221.88537128426668
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-30",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3965.3181073024934,
+        "y": 266.93100802059905
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-29",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 4051,
+        "y": 149
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-28",
+      "type": "magma-brute",
+      "hp": 3000,
+      "maxHp": 3000,
+      "pos": {
+        "x": 3927,
+        "y": 149
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-27",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3186,
+        "y": 768
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-26",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3082,
+        "y": 872
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-25",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3186,
+        "y": 976
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-24",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3290,
+        "y": 872
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-23",
+      "type": "cinder-hound",
+      "hp": 1440,
+      "maxHp": 1440,
+      "pos": {
+        "x": 3186,
+        "y": 872
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-22",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 1059,
+        "y": 4443
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-21",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 2595.4695459748036,
+        "y": 4432.363958127573
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-20",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 555,
+        "y": 2773
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-19",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 1512,
+        "y": 1320
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-18",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 3599,
+        "y": 1344
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-17",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 1615,
+        "y": 1913
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-16",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 168.31810730249344,
+        "y": 1798.0689919794008
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-15",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 48,
+        "y": 1843.1146287157333
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-14",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 48,
+        "y": 1988.8853712842667
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-13",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 168.3181073024935,
+        "y": 2033.931008020599
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-12",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 254,
+        "y": 1916
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-11",
+      "type": "magma-brute",
+      "hp": 3000,
+      "maxHp": 3000,
+      "pos": {
+        "x": 130,
+        "y": 1916
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-10",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 2688.8459619146342,
+        "y": 4230.430768943097
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-9",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3092.2659104085255,
+        "y": 4314.6305982167405
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-8",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 2856.31381336657,
+        "y": 4134.921195018522
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-7",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 2920,
+        "y": 4369
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-6",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 210,
+        "y": 716
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-5",
+      "type": "ash-slinger",
+      "hp": 1330,
+      "maxHp": 1330,
+      "pos": {
+        "x": 2429,
+        "y": 245
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-4",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 2969,
+        "y": 1902.2538660821072
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-3",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 2969,
+        "y": 2047.7461339178928
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-2",
+      "type": "ember-scuttler",
+      "hp": 650,
+      "maxHp": 650,
+      "pos": {
+        "x": 3095,
+        "y": 1975
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-1",
+      "type": "cinder-hound",
+      "hp": 1440,
+      "maxHp": 1440,
+      "pos": {
+        "x": 3011,
+        "y": 1975
+      }
+    }
+  ],
+  "initialRosterHash": "a747e276f40b20e3d57ca51b3688d58542d5858ecf8320bb95a0c671df119187",
+  "geometryRosterHash": "2cb64e266800fefafe8deb24881da28151681e932ecfcc0bf981698667c758a4",
+  "hpTreatment": [],
+  "initialStats": [
+    {
+      "id": "node-t3-volcanic-03_monster-42",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-41",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-40",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-39",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-38",
+      "type": "cinder-hound",
+      "attack": 80,
+      "plating": 3,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-37",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-36",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-35",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-34",
+      "type": "cinder-hound",
+      "attack": 80,
+      "plating": 3,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-33",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-32",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-31",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-30",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-29",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-28",
+      "type": "magma-brute",
+      "attack": 116,
+      "plating": 4,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-27",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-26",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-25",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-24",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-23",
+      "type": "cinder-hound",
+      "attack": 80,
+      "plating": 3,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-22",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-21",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-20",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-19",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-18",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-17",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-16",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-15",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-14",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-13",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-12",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-11",
+      "type": "magma-brute",
+      "attack": 116,
+      "plating": 4,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-10",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-9",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-8",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-7",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-6",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-5",
+      "type": "ash-slinger",
+      "attack": 84,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-4",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-3",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-2",
+      "type": "ember-scuttler",
+      "attack": 45,
+      "plating": 2,
+      "dr": 0
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-1",
+      "type": "cinder-hound",
+      "attack": 80,
+      "plating": 3,
+      "dr": 0
+    }
+  ]
+}

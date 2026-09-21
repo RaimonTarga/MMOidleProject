@@ -1,0 +1,92 @@
+{
+  "cell": "pfit-r1-t4-apprentice-boss",
+  "seed": 101003,
+  "outcome": "boss-killed",
+  "elapsedMs": 42300,
+  "windowMs": 300000,
+  "bossKilled": true,
+  "bossKillEvidence": {
+    "atMs": 42300,
+    "victimId": "node-t4-mountain-dungeon_monster-5",
+    "victimName": "Iron-Crest Titan",
+    "killerId": "bench-bot-0"
+  },
+  "playerDeathEvidence": null,
+  "encounterResetEvidence": null,
+  "killedAtMs": 42300,
+  "bossMaxHp": 19499,
+  "bossHpRemaining": 0,
+  "terminalBossHpSupported": true,
+  "bossHpFractionRemoved": 1,
+  "crossedHalfAtMs": 25400,
+  "castsStarted": 7,
+  "castLabels": [
+    "Titan Charge"
+  ],
+  "maxAddsAlive": 0,
+  "damageFromBoss": 0,
+  "damageFromAdds": {},
+  "attackBeats": 34,
+  "minionAttackBeats": 0,
+  "totalAttackBeats": 34,
+  "hpLost": 0,
+  "peakBurst1s": 0,
+  "minHpFraction": 1,
+  "wallElapsedMs": 327,
+  "initialRosterHash": "2c4bbb0f02e416562b40d7127d9f1839f3d0973da73dd0db96492a0e08f35774",
+  "targets": [
+    {
+      "id": "node-t4-mountain-dungeon_monster-5",
+      "type": "iron-crest-titan",
+      "name": "Iron-Crest Titan",
+      "maxHp": 19499,
+      "firstDamageMs": 900,
+      "lastDamageMs": 42300,
+      "killedAtMs": 42300,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 3200,
+      "damageEvents": 37,
+      "castsStarted": 7,
+      "castsFired": 0,
+      "ttkMs": 41400,
+      "clean": true
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 900,
+      "endMs": 42300,
+      "durationMs": 41400,
+      "members": [
+        "node-t4-mountain-dungeon_monster-5"
+      ],
+      "initialMembers": [
+        "node-t4-mountain-dungeon_monster-5"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    }
+  ],
+  "recovery": [
+    {
+      "afterClearMs": 42300,
+      "recoveredAtMs": 42300,
+      "interruptedByNextPull": false
+    }
+  ],
+  "incomingDamage": 0,
+  "largestHit": 0,
+  "maxDamageIn1s": 0,
+  "counts": {
+    "damaged": 1,
+    "killed": 1,
+    "censored": 0,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 1,
+    "p10": 41400,
+    "median": 41400,
+    "p90": 41400
+  }
+}

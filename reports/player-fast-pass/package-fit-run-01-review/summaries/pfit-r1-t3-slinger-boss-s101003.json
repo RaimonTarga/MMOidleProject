@@ -1,0 +1,93 @@
+{
+  "cell": "pfit-r1-t3-slinger-boss",
+  "seed": 101003,
+  "outcome": "boss-killed",
+  "elapsedMs": 79800,
+  "windowMs": 300000,
+  "bossKilled": true,
+  "bossKillEvidence": {
+    "atMs": 79800,
+    "victimId": "node-t3-mountain-dungeon_monster-5",
+    "victimName": "Crag-Gorged Horn-Behemoth",
+    "killerId": "bench-bot-0"
+  },
+  "playerDeathEvidence": null,
+  "encounterResetEvidence": null,
+  "killedAtMs": 79800,
+  "bossMaxHp": 12418,
+  "bossHpRemaining": 0,
+  "terminalBossHpSupported": true,
+  "bossHpFractionRemoved": 1,
+  "crossedHalfAtMs": 38400,
+  "castsStarted": 15,
+  "castLabels": [
+    "Cragbreaker Charge",
+    "Cragbreaker"
+  ],
+  "maxAddsAlive": 0,
+  "damageFromBoss": 35,
+  "damageFromAdds": {},
+  "attackBeats": 117,
+  "minionAttackBeats": 0,
+  "totalAttackBeats": 117,
+  "hpLost": 35,
+  "peakBurst1s": 35,
+  "minHpFraction": 0.9059139784946236,
+  "wallElapsedMs": 515,
+  "initialRosterHash": "5c3e73bb0e37111169d475adc695307ec3840c3ac2083b4acf8bb8ab90e33877",
+  "targets": [
+    {
+      "id": "node-t3-mountain-dungeon_monster-5",
+      "type": "crag-gorged-horn-behemoth",
+      "name": "Crag-Gorged Horn-Behemoth",
+      "maxHp": 12418,
+      "firstDamageMs": 800,
+      "lastDamageMs": 79800,
+      "killedAtMs": 79800,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 4000,
+      "damageEvents": 117,
+      "castsStarted": 15,
+      "castsFired": 1,
+      "ttkMs": 79000,
+      "clean": true
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 800,
+      "endMs": 79800,
+      "durationMs": 79000,
+      "members": [
+        "node-t3-mountain-dungeon_monster-5"
+      ],
+      "initialMembers": [
+        "node-t3-mountain-dungeon_monster-5"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    }
+  ],
+  "recovery": [
+    {
+      "afterClearMs": 79800,
+      "recoveredAtMs": null,
+      "interruptedByNextPull": false
+    }
+  ],
+  "incomingDamage": 35,
+  "largestHit": 35,
+  "maxDamageIn1s": 35,
+  "counts": {
+    "damaged": 1,
+    "killed": 1,
+    "censored": 0,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 1,
+    "p10": 79000,
+    "median": 79000,
+    "p90": 79000
+  }
+}

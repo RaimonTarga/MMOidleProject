@@ -1,0 +1,7 @@
+{
+  "trial": "player-package-fit",
+  "block": "t2-boss",
+  "mode": "run",
+  "observations": 6,
+  "expected": 6
+}

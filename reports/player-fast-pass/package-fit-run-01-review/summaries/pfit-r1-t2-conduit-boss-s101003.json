@@ -1,0 +1,93 @@
+{
+  "cell": "pfit-r1-t2-conduit-boss",
+  "seed": 101003,
+  "outcome": "boss-killed",
+  "elapsedMs": 147700,
+  "windowMs": 300000,
+  "bossKilled": true,
+  "bossKillEvidence": {
+    "atMs": 147700,
+    "victimId": "node-t2-mountain-dungeon_monster-5",
+    "victimName": "Stoneplate Juggernaut",
+    "killerId": "bench-bot-0"
+  },
+  "playerDeathEvidence": null,
+  "encounterResetEvidence": null,
+  "killedAtMs": 147700,
+  "bossMaxHp": 5000,
+  "bossHpRemaining": 0,
+  "terminalBossHpSupported": true,
+  "bossHpFractionRemoved": 1,
+  "crossedHalfAtMs": 61500,
+  "castsStarted": 30,
+  "castLabels": [
+    "Stoneplate",
+    "Stoneplate Charge"
+  ],
+  "maxAddsAlive": 0,
+  "damageFromBoss": 340,
+  "damageFromAdds": {},
+  "attackBeats": 0,
+  "minionAttackBeats": 292,
+  "totalAttackBeats": 292,
+  "hpLost": 862.0904000000004,
+  "peakBurst1s": 215.4832,
+  "minHpFraction": 0.0907223140495866,
+  "wallElapsedMs": 1090,
+  "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+  "targets": [
+    {
+      "id": "node-t2-mountain-dungeon_monster-5",
+      "type": "stoneplate-juggernaut",
+      "name": "Stoneplate Juggernaut",
+      "maxHp": 5000,
+      "firstDamageMs": 1700,
+      "lastDamageMs": 147700,
+      "killedAtMs": 147700,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 4300,
+      "damageEvents": 305,
+      "castsStarted": 30,
+      "castsFired": 0,
+      "ttkMs": 146000,
+      "clean": true
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 1700,
+      "endMs": 147700,
+      "durationMs": 146000,
+      "members": [
+        "node-t2-mountain-dungeon_monster-5"
+      ],
+      "initialMembers": [
+        "node-t2-mountain-dungeon_monster-5"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    }
+  ],
+  "recovery": [
+    {
+      "afterClearMs": 147700,
+      "recoveredAtMs": 147700,
+      "interruptedByNextPull": false
+    }
+  ],
+  "incomingDamage": 340,
+  "largestHit": 218,
+  "maxDamageIn1s": 218,
+  "counts": {
+    "damaged": 1,
+    "killed": 1,
+    "censored": 0,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 1,
+    "p10": 146000,
+    "median": 146000,
+    "p90": 146000
+  }
+}

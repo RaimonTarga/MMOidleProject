@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared-not-executed",
+  "main": {
+    "planned": 36,
+    "executed": 0,
+    "controlReplays": 0,
+    "optionalComparisons": 0
+  },
+  "legalPreparations": 36,
+  "openingExecutionReceiptsCompared": 36,
+  "namedBraceDestinationsVerified": 18,
+  "combatSmokes": [
+    {
+      "id": "pfit-r1-t2-apprentice-farm",
+      "durationMs": 30000,
+      "outcome": "window-ended",
+      "completedKills": 10,
+      "slamStarts": 3,
+      "slamResolutions": 3,
+      "slamAborts": 0,
+      "damageTargetsAtResolution": [
+        {
+          "atMs": 4700,
+          "count": 4
+        },
+        {
+          "atMs": 16300,
+          "count": 2
+        },
+        {
+          "atMs": 27900,
+          "count": 3
+        }
+      ],
+      "evidence": "reports/player-fast-pass/package-fit-r1-preparation/smoke/t2-farm/pfit-r1-t2-apprentice-farm-s101003/events.jsonl",
+      "sha256": "3c32ce459cac7152cbf17c70ad96d4c21e6324ed4d3b2d2cb1da8989c9583f80"
+    },
+    {
+      "id": "pfit-r1-t2-squire-boss",
+      "durationMs": 60000,
+      "outcome": "capped",
+      "alive": true,
+      "braceActivationMs": [
+        6100,
+        17100,
+        28100,
+        39100,
+        50100
+      ],
+      "hitOverlap": {
+        "atMs": 39800,
+        "abilityStatus": "ability-guard",
+        "beforeRemainingMs": 2400,
+        "afterRemainingMs": 2300,
+        "drPct": 0.5519999999999999,
+        "empoweredHitDamage": 98
+      },
+      "nextChargeBeforeCooldown": {
+        "atMs": 58800
+      },
+      "evidence": "reports/player-fast-pass/package-fit-r1-preparation/smoke/t2-boss/pfit-r1-t2-squire-boss-s101003/events.jsonl",
+      "sha256": "6c0f65f1c5045482372c92533f8f6c85d4829375710855fb8ef08e76ad191ced"
+    }
+  ],
+  "checks": {
+    "typecheck": "pass",
+    "abilitySlam": "pass",
+    "abilityMultiSlot": "pass",
+    "abilityTechniqueRune": "pass",
+    "balanceInstruments": "pass",
+    "bossTerminal": "pass",
+    "fullSuite": "not-run",
+    "livePlaytest": "not-run"
+  },
+  "sourceDiffFromOpening": "diff --git a/server/src/systems/classes/archetypes/cadence/t3/core/buffs.ts b/server/src/systems/classes/archetypes/cadence/t3/core/buffs.ts\nindex 4abaf509..8f4ae4d2 100644\n--- a/server/src/systems/classes/archetypes/cadence/t3/core/buffs.ts\n+++ b/server/src/systems/classes/archetypes/cadence/t3/core/buffs.ts\n@@ -46,7 +46,7 @@ export const CADENCE_T3_BUFFS = [\n             stacks: echo,\n             durationPct: -1,\n             color: '#4488ff',\n-            logDetail: `next ${echo} hits echo +${Math.round(echoBonus * 100)}% damage`,\n+            logDetail: `next ${echo} hits +${Math.round(echoBonus * 100)}% damage`,\n             values: [\n               { label: 'Echoing hits left', value: String(echo), good: true },\n               { label: 'Echo damage', value: `+${Math.round(echoBonus * 100)}%`, good: true },\n@@ -88,9 +88,9 @@ export const CADENCE_T3_BUFFS = [\n             stacks: charges,\n             durationPct: -1,\n             color: '#bb66ff',\n-            logDetail: `next ${charges} attacks fire on-hit twice`,\n+            logDetail: `next ${charges} attacks deal on-hit damage twice`,\n             values: [\n-              { label: 'Doubled attacks left', value: String(charges), good: true },\n+              { label: 'Attacks with doubled on-hit damage left', value: String(charges), good: true },\n             ],\n           }\n         : null;\ndiff --git a/server/src/systems/classes/archetypes/cooldown/t3/core/buffs.ts b/server/src/systems/classes/archetypes/cooldown/t3/core/buffs.ts\nindex 4baf9dca..08fddcc7 100644\n--- a/server/src/systems/classes/archetypes/cooldown/t3/core/buffs.ts\n+++ b/server/src/systems/classes/archetypes/cooldown/t3/core/buffs.ts\n@@ -68,8 +68,9 @@ export const COOLDOWN_T3_BUFFS = [\n   defineBuff('cooldown-eternal-charge', ({ player, playerCs }) => {\n     if (!playerCs) return null;\n     const stacks = getEternalChargeStacks(playerCs);\n+    const bonus = stacks * eternalCycleFlatPerStack(player);\n     return stacks > 0\n-      ? { id: 'cooldown-eternal-charge', label: 'Chrge', stacks, durationPct: -1, color: '#ffaa00', logDetail: `+${stacks * eternalCycleFlatPerStack(player)} execution damage banked`, values: [{ label: 'Execution damage banked', value: `+${stacks * eternalCycleFlatPerStack(player)}`, good: true }] }\n+      ? { id: 'cooldown-eternal-charge', label: 'Chrge', stacks, durationPct: -1, color: '#ffaa00', logDetail: `+${bonus} damage on regular attacks, +${bonus} again on next execution`, values: [{ label: 'Regular attack damage now', value: `+${bonus}`, good: true }, { label: 'Next execution bonus', value: `+${bonus}`, good: true }] }\n       : null;\n   }, COOLDOWN_OPTS),\n   defineBuff('cooldown-temporal-ext', ({ playerCs }) => {\ndiff --git a/server/src/systems/combat/buffs/buffSync.ts b/server/src/systems/combat/buffs/buffSync.ts\nindex 0221a5fb..8cecef58 100644\n--- a/server/src/systems/combat/buffs/buffSync.ts\n+++ b/server/src/systems/combat/buffs/buffSync.ts\n@@ -763,17 +763,17 @@ function buffEffectText(buff: PlayerBuff): string {\n     case \"cadence-verdict\":\n       return \"banked execution power\";\n     case \"cadence-aftershock\":\n-      return \"next attacks fire on-hit twice\";\n+      return \"next attacks deal on-hit damage twice\";\n     case \"cadence-metronome\":\n       return \"+flat damage to subsequent hits\";\n     case \"cadence-rampage\":\n-      return \"+attack speed and finisher damage\";\n+      return \"+attack speed, weaker regular hits, stronger finishers\";\n     case \"cadence-crescendo\":\n       return \"+finisher damage (ramps in combat)\";\n     case \"cooldown-overdrive\":\n       return \"+attack speed\";\n     case \"cooldown-eternal-charge\":\n-      return \"+execution charge\";\n+      return \"+attack damage now and next-execution damage\";\n     case \"cooldown-temporal-ext\":\n       return \"+on-hit damage\";\n     case \"cooldown-battery\":\ndiff --git a/shared/src/abilities.ts b/shared/src/abilities.ts\nindex dc977e1a..98366fce 100644\n--- a/shared/src/abilities.ts\n+++ b/shared/src/abilities.ts\n@@ -852,6 +852,7 @@ const abilities: AbilityDef[] = [\n     tier: 2,\n     lineageId: \"slam\",\n     trigger: { kind: \"in-combat\" },\n+    icon: \"slam\",\n     // POWER STRIKE'S AoE COUNTERPART, NOT ITS REPLACEMENT. Both stay learnable,\n     // attunable and useful at the same time; the RP budget is the only thing\n     // that makes them compete.\n",
+  "limitations": [
+    "Qualification outcomes do not replace main observations.",
+    "Smoke overlap demonstrates one threatening hit, not universal charge coverage.",
+    "Node-event damage and world-log damage must not be counted twice; use authoritative actor-shaped world-log records for damage totals."
+  ]
+}
