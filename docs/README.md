@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [Player package-fit r1 packet](briefs/player-package-fit-operator-packet.md) | Prepared revised AoE/reactive-Brace packages, 36-row ceiling, machine-readable Luna report contract and scoped commit/push requirement; main run not launched. |
 | [Player balance fast-pass packet](briefs/player-balance-fast-pass-operator-packet.md) | Prepared 36-observation T2-T4 player-package screen, frozen source identity, exact commands, qualification, and decision ledger; main batch not launched. |
 | [Gameplay telemetry](gameplay-telemetry-current-state.md) | Railway storage/configuration, gameplay-only field boundary, encounter/decision semantics, admin access, retention and reliability limits. |
 | [Boss5 report](briefs/bot-balance-boss5-report.md) | Execution record for the 120-fight Boss5 breadth screen at `e1a6f321`: 14/18 Block B bosses verified cleanly, **4 preserved as identity failures** (`t1-plains` real wandering fauna; `t3-swamp`/`t3-volcanic`/`t4-volcanic` a boss hazard object mislabeled as add damage — two different causes, neither a summoned creature). Block C: 85 strictly dominates 104 on every root that differs (4 flips, 0 reversals). No fight pooled across bosses, tiers, or arms. |

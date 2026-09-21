@@ -1,0 +1,2535 @@
+[
+  {
+    "schema": 1,
+    "mode": "qualify",
+    "revision": "153153d366d704236959454b977e476ac106b378",
+    "navigationDiagnostics": false,
+    "definitionsHash": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+    "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+    "sampleEveryMs": 1000,
+    "block": "t2-farm",
+    "trial": "player-package-fit",
+    "synthetic": true,
+    "economyEligible": false,
+    "dtMs": 100,
+    "durationMs": 300000,
+    "seeds": [
+      101003
+    ],
+    "cells": [
+      {
+        "id": "pfit-r1-t2-striker-farm",
+        "className": "striker",
+        "tier": 2,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t2-plains-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-striker-farm",
+          "classRoot": "cadence-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cadence-root",
+            "cadence-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "gale-needle",
+            "armor": "mountain-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-squire-farm",
+        "className": "squire",
+        "tier": 2,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t2-plains-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-squire-farm",
+          "classRoot": "cooldown-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "quake-hammer",
+            "armor": "mountain-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-apprentice-farm",
+        "className": "apprentice",
+        "tier": 2,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t2-plains-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-apprentice-farm",
+          "classRoot": "dot-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "dot-root",
+            "dot-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "ruinous-axe",
+            "armor": "jungle-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-slinger-farm",
+        "className": "slinger",
+        "tier": 2,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t2-plains-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-slinger-farm",
+          "classRoot": "reload-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "reload-root",
+            "reload-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-stinger-rapier",
+            "armor": "jungle-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-conduit-farm",
+        "className": "conduit",
+        "tier": 2,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t2-plains-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-conduit-farm",
+          "classRoot": "summoner-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-stinger-rapier",
+            "armor": "mountain-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-spirit-farm",
+        "className": "spirit",
+        "tier": 2,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t2-plains-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-spirit-farm",
+          "classRoot": "energy-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "energy-root",
+            "energy-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "ruinous-axe",
+            "armor": "jungle-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": 1,
+    "mode": "qualify",
+    "trial": "player-package-fit",
+    "block": "t2-boss",
+    "revision": "153153d366d704236959454b977e476ac106b378",
+    "definitionsHash": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+    "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+    "synthetic": true,
+    "economyEligible": false,
+    "dtMs": 100,
+    "durationMs": 300000,
+    "sampleEveryMs": 1000,
+    "bossId": "stoneplate-juggernaut",
+    "guardianAccess": "not-measured-guard-stripped",
+    "seeds": [
+      101003
+    ],
+    "cells": [
+      {
+        "id": "pfit-r1-t2-striker-boss",
+        "className": "striker",
+        "tier": 2,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t2-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "stoneplate-juggernaut"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-striker-boss",
+          "classRoot": "cadence-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cadence-root",
+            "cadence-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "gale-needle",
+            "armor": "mountain-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-squire-boss",
+        "className": "squire",
+        "tier": 2,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t2-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "stoneplate-juggernaut"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-squire-boss",
+          "classRoot": "cooldown-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "quake-hammer",
+            "armor": "mountain-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-apprentice-boss",
+        "className": "apprentice",
+        "tier": 2,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t2-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "stoneplate-juggernaut"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-apprentice-boss",
+          "classRoot": "dot-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "dot-root",
+            "dot-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "ruinous-axe",
+            "armor": "jungle-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-slinger-boss",
+        "className": "slinger",
+        "tier": 2,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t2-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "stoneplate-juggernaut"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-slinger-boss",
+          "classRoot": "reload-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "reload-root",
+            "reload-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-stinger-rapier",
+            "armor": "jungle-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-conduit-boss",
+        "className": "conduit",
+        "tier": 2,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t2-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "stoneplate-juggernaut"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-conduit-boss",
+          "classRoot": "summoner-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-stinger-rapier",
+            "armor": "mountain-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t2-spirit-boss",
+        "className": "spirit",
+        "tier": 2,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t2-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "stoneplate-juggernaut"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t2-spirit-boss",
+          "classRoot": "energy-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "energy-root",
+            "energy-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "ruinous-axe",
+            "armor": "jungle-vest-t2",
+            "recovery": "mountain-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": 1,
+    "mode": "qualify",
+    "revision": "153153d366d704236959454b977e476ac106b378",
+    "navigationDiagnostics": false,
+    "definitionsHash": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+    "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+    "sampleEveryMs": 1000,
+    "block": "t3-farm",
+    "trial": "player-package-fit",
+    "synthetic": true,
+    "economyEligible": false,
+    "dtMs": 100,
+    "durationMs": 300000,
+    "seeds": [
+      101003
+    ],
+    "cells": [
+      {
+        "id": "pfit-r1-t3-striker-farm",
+        "className": "striker",
+        "tier": 3,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t3-volcanic-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-striker-farm",
+          "classRoot": "cadence-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cadence-root",
+            "cadence-balanced",
+            "cadence-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "volcanic-cinderlash",
+            "armor": "mountain-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-squire-farm",
+        "className": "squire",
+        "tier": 3,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t3-volcanic-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-squire-farm",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "mountain-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-apprentice-farm",
+        "className": "apprentice",
+        "tier": 3,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t3-volcanic-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-apprentice-farm",
+          "classRoot": "dot-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "dot-root",
+            "dot-balanced",
+            "dot-range-mid"
+          ],
+          "gearItemIds": {
+            "weapon": "cave-cataclysm-axe",
+            "armor": "jungle-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-slinger-farm",
+        "className": "slinger",
+        "tier": 3,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t3-volcanic-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-slinger-farm",
+          "classRoot": "reload-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "reload-root",
+            "reload-balanced",
+            "reload-range-mid"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-venomthorn-rapier",
+            "armor": "jungle-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-conduit-farm",
+        "className": "conduit",
+        "tier": 3,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t3-volcanic-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-conduit-farm",
+          "classRoot": "summoner-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced",
+            "summoner-range-mid"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-venomthorn-rapier",
+            "armor": "mountain-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-spirit-farm",
+        "className": "spirit",
+        "tier": 3,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t3-volcanic-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-spirit-farm",
+          "classRoot": "energy-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "energy-root",
+            "energy-balanced",
+            "energy-range-mid"
+          ],
+          "gearItemIds": {
+            "weapon": "cave-cataclysm-axe",
+            "armor": "jungle-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": 1,
+    "mode": "qualify",
+    "trial": "player-package-fit",
+    "block": "t3-boss",
+    "revision": "153153d366d704236959454b977e476ac106b378",
+    "definitionsHash": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+    "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+    "synthetic": true,
+    "economyEligible": false,
+    "dtMs": 100,
+    "durationMs": 300000,
+    "sampleEveryMs": 1000,
+    "bossId": "crag-gorged-horn-behemoth",
+    "guardianAccess": "not-measured-guard-stripped",
+    "seeds": [
+      101003
+    ],
+    "cells": [
+      {
+        "id": "pfit-r1-t3-striker-boss",
+        "className": "striker",
+        "tier": 3,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t3-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "crag-gorged-horn-behemoth"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-striker-boss",
+          "classRoot": "cadence-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cadence-root",
+            "cadence-balanced",
+            "cadence-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "volcanic-cinderlash",
+            "armor": "mountain-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-squire-boss",
+        "className": "squire",
+        "tier": 3,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t3-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "crag-gorged-horn-behemoth"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-squire-boss",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "mountain-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-apprentice-boss",
+        "className": "apprentice",
+        "tier": 3,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t3-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "crag-gorged-horn-behemoth"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-apprentice-boss",
+          "classRoot": "dot-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "dot-root",
+            "dot-balanced",
+            "dot-range-mid"
+          ],
+          "gearItemIds": {
+            "weapon": "cave-cataclysm-axe",
+            "armor": "jungle-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-slinger-boss",
+        "className": "slinger",
+        "tier": 3,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t3-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "crag-gorged-horn-behemoth"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-slinger-boss",
+          "classRoot": "reload-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "reload-root",
+            "reload-balanced",
+            "reload-range-mid"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-venomthorn-rapier",
+            "armor": "jungle-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-conduit-boss",
+        "className": "conduit",
+        "tier": 3,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t3-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "crag-gorged-horn-behemoth"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-conduit-boss",
+          "classRoot": "summoner-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced",
+            "summoner-range-mid"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-venomthorn-rapier",
+            "armor": "mountain-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t3-spirit-boss",
+        "className": "spirit",
+        "tier": 3,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t3-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "crag-gorged-horn-behemoth"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t3-spirit-boss",
+          "classRoot": "energy-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "energy-root",
+            "energy-balanced",
+            "energy-range-mid"
+          ],
+          "gearItemIds": {
+            "weapon": "cave-cataclysm-axe",
+            "armor": "jungle-vest-t3",
+            "recovery": "mountain-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": 1,
+    "mode": "qualify",
+    "revision": "153153d366d704236959454b977e476ac106b378",
+    "navigationDiagnostics": false,
+    "definitionsHash": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+    "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+    "sampleEveryMs": 1000,
+    "block": "t4-farm",
+    "trial": "player-package-fit",
+    "synthetic": true,
+    "economyEligible": false,
+    "dtMs": 100,
+    "durationMs": 300000,
+    "seeds": [
+      101003
+    ],
+    "cells": [
+      {
+        "id": "pfit-r1-t4-striker-farm",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-graveyard-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-striker-farm",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-balanced",
+            "cadence-range-close",
+            "cadence-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "volcanic-eruption-lash",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-squire-farm",
+        "className": "squire",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-graveyard-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "slam",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-squire-farm",
+          "classRoot": "cooldown-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced",
+            "cooldown-range-close",
+            "cooldown-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-apprentice-farm",
+        "className": "apprentice",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-graveyard-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "slam",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-apprentice-farm",
+          "classRoot": "dot-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "dot-root",
+            "dot-balanced",
+            "dot-range-mid",
+            "dot-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "graveyard-plague-axe",
+            "armor": "jungle-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-slinger-farm",
+        "className": "slinger",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-graveyard-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-slinger-farm",
+          "classRoot": "reload-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "reload-root",
+            "reload-balanced",
+            "reload-range-mid",
+            "reload-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "jungle-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-conduit-farm",
+        "className": "conduit",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-graveyard-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-conduit-farm",
+          "classRoot": "summoner-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced",
+            "summoner-range-mid",
+            "summoner-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-spirit-farm",
+        "className": "spirit",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-graveyard-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-spirit-farm",
+          "classRoot": "energy-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "energy-root",
+            "energy-balanced",
+            "energy-range-mid",
+            "energy-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "volcanic-eruption-lash",
+            "armor": "jungle-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": 1,
+    "mode": "qualify",
+    "trial": "player-package-fit",
+    "block": "t4-boss",
+    "revision": "153153d366d704236959454b977e476ac106b378",
+    "definitionsHash": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+    "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+    "synthetic": true,
+    "economyEligible": false,
+    "dtMs": 100,
+    "durationMs": 300000,
+    "sampleEveryMs": 1000,
+    "bossId": "iron-crest-titan",
+    "guardianAccess": "not-measured-guard-stripped",
+    "seeds": [
+      101003
+    ],
+    "cells": [
+      {
+        "id": "pfit-r1-t4-striker-boss",
+        "className": "striker",
+        "tier": 4,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t4-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "iron-crest-titan"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-striker-boss",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-balanced",
+            "cadence-range-close",
+            "cadence-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "volcanic-eruption-lash",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-squire-boss",
+        "className": "squire",
+        "tier": 4,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t4-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "iron-crest-titan"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-squire-boss",
+          "classRoot": "cooldown-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced",
+            "cooldown-range-close",
+            "cooldown-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-apprentice-boss",
+        "className": "apprentice",
+        "tier": 4,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t4-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "iron-crest-titan"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-apprentice-boss",
+          "classRoot": "dot-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "dot-root",
+            "dot-balanced",
+            "dot-range-mid",
+            "dot-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "graveyard-plague-axe",
+            "armor": "jungle-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-slinger-boss",
+        "className": "slinger",
+        "tier": 4,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t4-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "iron-crest-titan"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-slinger-boss",
+          "classRoot": "reload-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "reload-root",
+            "reload-balanced",
+            "reload-range-mid",
+            "reload-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "jungle-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-conduit-boss",
+        "className": "conduit",
+        "tier": 4,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t4-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "iron-crest-titan"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-conduit-boss",
+          "classRoot": "summoner-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced",
+            "summoner-range-mid",
+            "summoner-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      },
+      {
+        "id": "pfit-r1-t4-spirit-boss",
+        "className": "spirit",
+        "tier": 4,
+        "role": "boss",
+        "alternate": false,
+        "nodeId": "node-t4-mountain-dungeon",
+        "isDungeon": true,
+        "treatment": "authored-source",
+        "targetTypes": [
+          "iron-crest-titan"
+        ],
+        "upgradeLevel": 5,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "build": {
+          "id": "pfit-r1-t4-spirit-boss",
+          "classRoot": "energy-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "energy-root",
+            "energy-balanced",
+            "energy-range-mid",
+            "energy-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "volcanic-eruption-lash",
+            "armor": "jungle-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-tempered",
+            "relic": "relic-colossus-heart"
+          }
+        }
+      }
+    ]
+  }
+]

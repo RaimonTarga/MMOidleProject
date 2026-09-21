@@ -1,4 +1,5 @@
 import { FAST_PASS_BLOCKS, FAST_PASS_SEED, fastPassReadback, assertFastPassDefinitions, assertFastPassHitboxes } from '../bench/balance/playerFastPassSpec';
+import { PACKAGE_FIT_BLOCKS, assertPackageFitDefinitions } from '../bench/balance/playerPackageFitSpec';
 import {profileNavigationObservation,recordNavigationTick} from '../bench/balance/navigationObservation';
 import {DURABILITY37_BLOCKS,DURABILITY37_INTEGRATION_SEEDS,DURABILITY37_LADDER_SEEDS,installDurability37Treatment,assertDurability37Definitions,durability37WindowMs} from '../bench/balance/durability37Spec';
 import {DURABILITY36_BLOCKS,DURABILITY36_ARMOR_SEEDS,DURABILITY36_LADDER_SEEDS,installDurability36Treatment,assertDurability36Definitions} from '../bench/balance/durability36Spec';
@@ -61,8 +62,10 @@ import { DURABILITY20_CELLS, DURABILITY20_SEEDS, installDurability20Treatment, a
 import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
-const fastPass = args.trial === 'player-fast-pass';
-const fastBlock = fastPass ? FAST_PASS_BLOCKS[args.block] : undefined;
+const packageFit = args.trial === 'player-package-fit';
+const fastPass = args.trial === 'player-fast-pass' || packageFit;
+if (packageFit) assertPackageFitDefinitions();
+const fastBlock = fastPass ? (packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && args.block.endsWith('-farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
@@ -160,9 +163,11 @@ function run(cell:SurveyCell,seed:number) {
       }
       for(const e of world.worldLogJournal) {metrics.ingest(e,elapsed);log.push({atMs:elapsed,event:e});}
       world.worldLogJournal=[];world.worldLogByPlayer.clear();
-      for(const e of world.takeNodeEvents(cell.nodeId)) if(e.kind==='monster-cast-start'||e.kind==='monster-cast-end') {
-        const t=metrics.targets.get(e.monsterId);if(t) {if(e.kind==='monster-cast-start')t.castsStarted++;else if(e.fired)t.castsFired++;}
-        log.push({atMs:elapsed,event:e});
+      for(const e of world.takeNodeEvents(cell.nodeId)) {
+        if(e.kind==='monster-cast-start'||e.kind==='monster-cast-end') {
+          const t=metrics.targets.get(e.monsterId);if(t) {if(e.kind==='monster-cast-start')t.castsStarted++;else if(e.fired)t.castsFired++;}
+          log.push({atMs:elapsed,event:e});
+        } else if(packageFit) log.push({atMs:elapsed,event:e});
       }
       const v=composePlayerView(bot)!;minHp=Math.min(minHp,v.hp/v.maxHp);
       if(v.lastAttackAt!==lastAttack) {attackBeats++;lastAttack=v.lastAttackAt;}
@@ -194,6 +199,7 @@ const batchWallStart=realNow();
 try {
   const pilotIds:Record<string,string[]>={
     'player-fast-pass':fastBlock?.pilotIds??[],
+    'player-package-fit':fastBlock?.pilotIds??[],
     night5:night5?.pilotIds??[],
     durability21:night5?.pilotIds??[],
     durability22:night5?.pilotIds??[],

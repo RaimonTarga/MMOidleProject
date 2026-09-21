@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "package-fit-run-01",
+  "format": "JSON object; alternatively exactly one JSON object fenced in Markdown",
+  "requiredTopLevel": ["schemaVersion", "experimentId", "status", "planned", "completedValid", "invalid", "notExecuted", "executionIdentity", "qualificationReferences", "rows", "findings", "publication"],
+  "statusEnum": ["complete", "partial", "blocked"],
+  "planned": 36,
+  "rowKey": "candidateId + seed",
+  "rowRequired": {
+    "candidateId": "pfit-r1-t{2|3|4}-{root}-{farm|boss}",
+    "originalCellId": "pfp-t{tier}-{root}-{setting}",
+    "seed": 101003,
+    "tier": "integer",
+    "root": "string",
+    "setting": "farm|boss",
+    "nodeId": "string",
+    "validity": "valid|invalid|not-executed",
+    "outcome": "verbatim runner outcome or null",
+    "elapsedMs": "number or null",
+    "capMs": 300000,
+    "terminalEvidence": "repository-relative evidence path plus event id/time, or null with reason",
+    "exposure": {
+      "damagedBodies": "integer or null",
+      "completedKills": "integer or null",
+      "unfinishedBodies": "integer or null",
+      "hpRegainBodies": "integer or null",
+      "recoveryMs": "observed value or null; define derivation",
+      "inactivityMs": "observed value or null; define derivation",
+      "observedContact": "sampling interval, target types, simultaneous-contact support and gaps; episode membership alone is insufficient"
+    },
+    "farm": {
+      "aoeAbility": "string or null for boss",
+      "castsStarted": "integer or null for on-hit ability/not observed",
+      "castsResolved": "integer or null",
+      "castsAborted": "integer or null",
+      "castTimeMs": "observed cast commitments; interrupted attempts included",
+      "deliveryEvents": "counts by event kind/adapter; an activation is not delivery",
+      "secondaryTargets": "observed count/distribution with attribution confidence or null",
+      "killsPerElapsedMinute": "kills * 60000 / elapsedMs; descriptive only",
+      "sustainEligible": "false for deaths, invalid or incomplete windows; full windows still do not establish long-run sustain"
+    },
+    "boss": {
+      "bossKilled": "boolean or null",
+      "bossHpRemaining": "number or null",
+      "bossHpFractionRemoved": "number or null",
+      "minPlayerHpFraction": "number or null; excludes barrier",
+      "chargeWindups": "integer or null",
+      "braceActivations": "integer or null",
+      "chargeHitOverlap": "array of {atMs, hitEvidence, chargeEvidence, braceActive: true|false|null, beforeRemainingMs, afterRemainingMs, reason}",
+      "cooldownMisses": "observed count plus evidence; not inferred from cast counts",
+      "windowExpiredBeforeHit": "observed count plus evidence",
+      "unattributedHits": "retain all hits that cannot be assigned to a charge",
+      "noHitChargeWindows": "avoidance/cancellation/unfinished/unknown; do not assume every absent hit was dodged"
+    },
+    "conduit": {
+      "applicability": "T3 farming detailed; T4 boss progress contrasted separately; null for other roots",
+      "ownerMovement": "sampled distance and intent distribution, explicitly sampled",
+      "targetPersistence": "target switches, sustained damage gaps, HP regain and evidence",
+      "formation": "active-body distribution, empty samples, distinct spawned IDs and rebuilding evidence",
+      "techniqueDelivery": "arm/delivery/share-lost events, incomplete shares and evidence"
+    },
+    "comparison": "opening outcome and exposure, complete package delta, source-compatible label; no isolated-component claim",
+    "unknowns": "array of field/reason pairs; missing is never zero",
+    "evidence": "repository-relative artifacts with SHA-256 and event/time locators"
+  },
+  "interpretationRules": [
+    "Report all 36 planned IDs even when not executed. Reconcile counts without treating unused allocation as authorization to retry.",
+    "Separate observed facts, hypotheses and proposed next decisions.",
+    "Do not rank death-truncated kill rates as sustainable farming.",
+    "Boss alive at cap is unfinished, not a kill at cap. Victory requires authoritative kill evidence.",
+    "One reused seed is matched screening, not an independent repeat or win probability.",
+    "Brace is ability-guard. Stable positive pre/post tick status supports overlap. A boundary transition requires in-tick evidence or null, not interpolation.",
+    "Node-event sequence and world-log event id are separate ordering domains; do not order them by array position across streams.",
+    "Base mitigation.drBlocked excludes later onDamageTaken modifiers; do not infer exact Brace savings from it.",
+    "Keep incomplete casts, missed deliveries, failed processes and unknown attribution.",
+    "No more than six actionable findings; no automatically scheduled follow-up, tuning or integration."
+  ],
+  "publication": {
+    "directory": "reports/player-fast-pass/package-fit-run-01-review",
+    "required": ["results.json or results.md", "execution identity", "original launcher report", "manifests", "ready receipts", "terminal/process records", "diagnostic excerpts", "raw artifact SHA-256 inventory"],
+    "commitAndPush": true,
+    "reportBack": ["branch", "full publication commit", "repository-relative summary entrypoint", "push status"],
+    "failurePolicy": "Retain scoped commit and report push failure explicitly; do not imply repository availability."
+  }
+}

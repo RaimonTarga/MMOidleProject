@@ -9,7 +9,7 @@ import { refillBarrier } from '../../src/systems/defense/barrier/barrier';
 import { setAbilityLoadout } from '../../src/systems/player/economy/abilityCrafting';
 import type { World } from '../../src/world/World';
 import type { BuildSpec } from './types';
-import type { AttunedAbilities } from '@mmo-idle/shared';
+import type { AttunedAbilities, EquippedRule } from '@mmo-idle/shared';
 
 export const SURVEY_CLASSES = [
   { name: 'striker', prefix: 'cadence', melee: true, weapons: ['flash-rapier','gale-needle','volcanic-cinderlash'] },
@@ -69,7 +69,7 @@ export interface SurveyCell { id: string; className: string; tier: number; role:
    * set `abilities` to a package the combined budget actually admits -- do not pair
    * explicit rules with a 30-RP ability set and expect it to pass.
    */
-  runeRules?: { conditionId: string; actionId: string }[]; }
+  runeRules?: EquippedRule[]; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
   ['solo','small-group','swarm'].flatMap(role => SURVEY_CLASSES.flatMap(c => {
     const group = role === 'solo' ? 'cave' : role === 'small-group' ? 'mountain' : tier === 3 ? 'volcanic' : 'plains';
@@ -113,7 +113,7 @@ export type PackageFieldSource = 'explicit' | 'preparation-default' | 'tier-none
 export interface ResolvedSurveyPackage {
   stance: string | null;
   abilities: AttunedAbilities;
-  runeRules: { conditionId: string; actionId: string }[];
+  runeRules: EquippedRule[];
   upgradeLevel: number;
   sources: { stance: PackageFieldSource; abilities: PackageFieldSource; runeRules: PackageFieldSource; upgradeLevel: PackageFieldSource };
 }

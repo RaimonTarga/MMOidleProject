@@ -1,0 +1,6540 @@
+[
+  {
+    "originalId": "pfp-t2-striker-farm",
+    "candidateId": "pfit-r1-t2-striker-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "gale-needle": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 25,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "gale-needle": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 24,
+        "unused": 6,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-squire-farm",
+    "candidateId": "pfit-r1-t2-squire-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "quake-hammer",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "quake-hammer": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 25,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "quake-hammer",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "quake-hammer": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 24,
+        "unused": 6,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-apprentice-farm",
+    "candidateId": "pfit-r1-t2-apprentice-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "ruinous-axe",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "ruinous-axe": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "ruinous-axe",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "ruinous-axe": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 27,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-slinger-farm",
+    "candidateId": "pfit-r1-t2-slinger-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-stinger-rapier": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-stinger-rapier": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 27,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-conduit-farm",
+    "candidateId": "pfit-r1-t2-conduit-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-stinger-rapier": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-stinger-rapier": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 27,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-spirit-farm",
+    "candidateId": "pfit-r1-t2-spirit-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "ruinous-axe",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "ruinous-axe": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "ruinous-axe",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "ruinous-axe": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 27,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-striker-boss",
+    "candidateId": "pfit-r1-t2-striker-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "gale-needle": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 25,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "gale-needle": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-squire-boss",
+    "candidateId": "pfit-r1-t2-squire-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "quake-hammer",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "quake-hammer": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 25,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "quake-hammer",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "quake-hammer": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-apprentice-boss",
+    "candidateId": "pfit-r1-t2-apprentice-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "ruinous-axe",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "ruinous-axe": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "ruinous-axe",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "ruinous-axe": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-slinger-boss",
+    "candidateId": "pfit-r1-t2-slinger-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-stinger-rapier": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-stinger-rapier": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-conduit-boss",
+    "candidateId": "pfit-r1-t2-conduit-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-stinger-rapier": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-stinger-rapier": 5,
+          "mountain-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t2-spirit-boss",
+    "candidateId": "pfit-r1-t2-spirit-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "ruinous-axe",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "ruinous-axe": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 28,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "ruinous-axe",
+          "armor": "jungle-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "ruinous-axe": 5,
+          "jungle-vest-t2": 5,
+          "mountain-charm-t2": 5,
+          "mountain-boots-t2": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 12,
+          "forest": 12,
+          "mountain": 12,
+          "plains": 12,
+          "swamp": 12,
+          "desert": 6,
+          "jungle": 6
+        },
+        "globalMastery": 72
+      },
+      "rp": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-striker-farm",
+    "candidateId": "pfit-r1-t3-striker-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "volcanic-cinderlash": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 34,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "volcanic-cinderlash": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-squire-farm",
+    "candidateId": "pfit-r1-t3-squire-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "mountain-avalanche-maul": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 34,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "mountain-avalanche-maul": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-apprentice-farm",
+    "candidateId": "pfit-r1-t3-apprentice-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 36,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-slinger-farm",
+    "candidateId": "pfit-r1-t3-slinger-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced",
+        "reload-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced",
+        "reload-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 36,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-conduit-farm",
+    "candidateId": "pfit-r1-t3-conduit-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-spirit-farm",
+    "candidateId": "pfit-r1-t3-spirit-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced",
+        "energy-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced",
+        "energy-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 36,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-striker-boss",
+    "candidateId": "pfit-r1-t3-striker-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "volcanic-cinderlash": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 34,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "volcanic-cinderlash": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-squire-boss",
+    "candidateId": "pfit-r1-t3-squire-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "mountain-avalanche-maul": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 34,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "mountain-avalanche-maul": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-apprentice-boss",
+    "candidateId": "pfit-r1-t3-apprentice-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 34,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-slinger-boss",
+    "candidateId": "pfit-r1-t3-slinger-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced",
+        "reload-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced",
+        "reload-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 34,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-conduit-boss",
+    "candidateId": "pfit-r1-t3-conduit-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "mountain-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 34,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t3-spirit-boss",
+    "candidateId": "pfit-r1-t3-spirit-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced",
+        "energy-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 37,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced",
+        "energy-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "rp": {
+        "budget": 38,
+        "cost": 34,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-striker-farm",
+    "candidateId": "pfit-r1-t4-striker-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-squire-farm",
+    "candidateId": "pfit-r1-t4-squire-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close",
+        "cooldown-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "mountain-warmaul": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "slam",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close",
+        "cooldown-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "mountain-warmaul": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-apprentice-farm",
+    "candidateId": "pfit-r1-t4-apprentice-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "graveyard-plague-axe": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "slam",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "graveyard-plague-axe": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-slinger-farm",
+    "candidateId": "pfit-r1-t4-slinger-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced",
+        "reload-range-mid",
+        "reload-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced",
+        "reload-range-mid",
+        "reload-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-conduit-farm",
+    "candidateId": "pfit-r1-t4-conduit-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-spirit-farm",
+    "candidateId": "pfit-r1-t4-spirit-farm",
+    "role": "farming AoE",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced",
+        "energy-range-mid",
+        "energy-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "sweep",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced",
+        "energy-range-mid",
+        "energy-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-striker-boss",
+    "candidateId": "pfit-r1-t4-striker-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-squire-boss",
+    "candidateId": "pfit-r1-t4-squire-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close",
+        "cooldown-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "mountain-warmaul": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close",
+        "cooldown-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "mountain-warmaul": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-apprentice-boss",
+    "candidateId": "pfit-r1-t4-apprentice-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "graveyard-plague-axe": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "graveyard-plague-axe": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 46,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-slinger-boss",
+    "candidateId": "pfit-r1-t4-slinger-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced",
+        "reload-range-mid",
+        "reload-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "reload-root",
+        "reload-balanced",
+        "reload-range-mid",
+        "reload-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 46,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-conduit-boss",
+    "candidateId": "pfit-r1-t4-conduit-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 46,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  },
+  {
+    "originalId": "pfp-t4-spirit-boss",
+    "candidateId": "pfit-r1-t4-spirit-boss",
+    "role": "Mountain reactive Brace",
+    "original": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced",
+        "energy-range-mid",
+        "energy-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 43,
+        "unused": 4,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "revised": {
+      "package": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "frenzy",
+            "expose-weakness",
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skills": [
+        "energy-root",
+        "energy-balanced",
+        "energy-range-mid",
+        "energy-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 5,
+          "jungle-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-tempered": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "rp": {
+        "budget": 47,
+        "cost": 46,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    "historicalReference": "opening-run-01 exact package; Boss1/Boss2 defensive kit contextual only"
+  }
+]

@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "mode": "pilot",
+  "trial": "player-package-fit",
+  "block": "t2-boss",
+  "revision": "153153d366d704236959454b977e476ac106b378",
+  "definitionsHash": "85c4d6638017f0ddb0e229d31f6aa90d98e86ca61f78433cf20af19b0f7e19dd",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 60000,
+  "sampleEveryMs": 1000,
+  "bossId": "stoneplate-juggernaut",
+  "guardianAccess": "not-measured-guard-stripped",
+  "seeds": [
+    101003
+  ],
+  "cells": [
+    {
+      "id": "pfit-r1-t2-squire-boss",
+      "className": "squire",
+      "tier": 2,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "stoneplate-juggernaut"
+      ],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "build": {
+        "id": "pfit-r1-t2-squire-boss",
+        "classRoot": "cooldown-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "quake-hammer",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      }
+    }
+  ]
+}

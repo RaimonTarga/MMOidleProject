@@ -1,0 +1,9 @@
+{
+  "status": "prepared-not-executed",
+  "planned": 36,
+  "qualification": "18 zero-tick ordinary; 18 boss preparations with one 100 ms wake tick",
+  "smoke": "1 Apprentice Slam ordinary <=30s, 1 Squire reactive Brace boss <=60s; not main observations",
+  "identitySha256": "4971db395d0a597c542d33c2a7b55745d3b84a199ca75e34844ac7bec4dceb34",
+  "manifestSha256": "e7141ec2d6161b582820c9385a59dcbd938daf93728593b46c44fc1d7b1c2c2b",
+  "readbacksSha256": "3aa15d479037e5be4d6562b3457baa63961949d6823903ee85fc62f69841d92d"
+}

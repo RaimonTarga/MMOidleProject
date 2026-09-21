@@ -13,6 +13,8 @@ const args = Object.fromEntries(process.argv.slice(2).map(a => {
 }));
 assert(['prepare', 'verify', 'run'].includes(args.mode), '--mode=prepare|verify|run required');
 assert(args.packet, '--packet=<directory> required');
+assert(!args.variant || args.variant === 'package-fit', '--variant=package-fit or omit for opening');
+const trial = args.variant === 'package-fit' ? 'player-package-fit' : 'player-fast-pass';
 const packet = resolve(args.packet), blocks = [2, 3, 4].flatMap(t => [`t${t}-farm`, `t${t}-boss`]);
 const sha = data => createHash('sha256').update(data).digest('hex');
 const json = path => JSON.parse(readFileSync(path, 'utf8'));
@@ -39,7 +41,7 @@ function child(block, mode, out, frozen) {
   assert(!existsSync(out), `Output already exists: ${out}; retain evidence, no automatic retry`);
   const script = block.endsWith('-farm') ? 'ttkSurvey.ts' : 'bossScreen.ts';
   const result = spawnSync(process.execPath, ['--conditions=development', require.resolve('tsx/cli'),
-    `scripts/${script}`, '--trial=player-fast-pass', `--block=${block}`, `--mode=${mode}`,
+    `scripts/${script}`, `--trial=${trial}`, `--block=${block}`, `--mode=${mode}`,
     `--hitboxes=${frozen.hitboxes}`, `--revision=${frozen.head}`, `--out=${out}`],
   { cwd: join(root, 'server'), encoding: 'utf8', timeout: 15 * 60 * 1000, maxBuffer: 8 * 1024 * 1024 });
   mkdirSync(out, { recursive: true });
@@ -88,13 +90,16 @@ if (args.mode === 'prepare') {
     assertIdentity(frozen);
     write(join(packet, 'ready.json'), { status: 'prepared-not-executed', planned: 36,
       qualification: '18 zero-tick ordinary; 18 boss preparations with one 100 ms wake tick',
-      smoke: '1 Conduit ordinary <=30s, 1 Squire boss <=60s; not main observations',
+      smoke: args.variant === 'package-fit'
+        ? '1 Apprentice Slam ordinary <=30s, 1 Squire reactive Brace boss <=60s; not main observations'
+        : '1 Conduit ordinary <=30s, 1 Squire boss <=60s; not main observations',
       identitySha256: sha(readFileSync(join(packet, 'identity.json'))),
       manifestSha256: sha(readFileSync(join(packet, 'manifest.json'))),
       readbacksSha256: sha(readFileSync(join(packet, 'resolved-builds.json'))) });
   } catch (error) { write(join(packet, 'failed.json'), { error: String(error) }); throw error; }
 } else {
   const ready = json(join(packet, 'ready.json')), frozen = json(join(packet, 'identity.json'));
+  assert(json(join(packet, 'manifest.json')).every(m => m.trial === trial), 'Packet variant mismatch');
   assert.equal(sha(readFileSync(join(packet, 'identity.json'))), ready.identitySha256);
   assert.equal(sha(readFileSync(join(packet, 'manifest.json'))), ready.manifestSha256);
   assert.equal(sha(readFileSync(join(packet, 'resolved-builds.json'))), ready.readbacksSha256);

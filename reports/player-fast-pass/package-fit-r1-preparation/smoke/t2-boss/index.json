@@ -1,0 +1,84 @@
+[
+  {
+    "cell": "pfit-r1-t2-squire-boss",
+    "seed": 101003,
+    "outcome": "capped",
+    "elapsedMs": 60000,
+    "windowMs": 60000,
+    "bossKilled": false,
+    "bossKillEvidence": null,
+    "playerDeathEvidence": null,
+    "encounterResetEvidence": null,
+    "killedAtMs": null,
+    "bossMaxHp": 5000,
+    "bossHpRemaining": 1388,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 0.7223999999999999,
+    "crossedHalfAtMs": 43200,
+    "castsStarted": 12,
+    "castLabels": [
+      "Stoneplate",
+      "Stoneplate Charge"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 567.6750000000001,
+    "damageFromAdds": {},
+    "attackBeats": 22,
+    "minionAttackBeats": 0,
+    "totalAttackBeats": 22,
+    "hpLost": 561.903,
+    "peakBurst1s": 102.8402,
+    "minHpFraction": 0.020311486486485605,
+    "wallElapsedMs": 492,
+    "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+    "targets": [
+      {
+        "id": "node-t2-mountain-dungeon_monster-5",
+        "type": "stoneplate-juggernaut",
+        "name": "Stoneplate Juggernaut",
+        "maxHp": 5000,
+        "firstDamageMs": 1500,
+        "lastDamageMs": 59100,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 8000,
+        "damageEvents": 22,
+        "castsStarted": 12,
+        "castsFired": 0,
+        "ttkMs": null,
+        "clean": false
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 1200,
+        "endMs": 60000,
+        "durationMs": 58800,
+        "members": [
+          "node-t2-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t2-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "capped"
+      }
+    ],
+    "recovery": [],
+    "incomingDamage": 567.6750000000001,
+    "largestHit": 103.225,
+    "maxDamageIn1s": 103.225,
+    "counts": {
+      "damaged": 1,
+      "killed": 0,
+      "censored": 1,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 0,
+      "p10": null,
+      "median": null,
+      "p90": null
+    }
+  }
+]

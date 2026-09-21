@@ -1,4 +1,7 @@
 import { FAST_PASS_BLOCKS, FAST_PASS_BOSSES, FAST_PASS_CAP_MS, FAST_PASS_SEED, assertFastPassDefinitions, fastPassReadback, assertFastPassHitboxes } from '../bench/balance/playerFastPassSpec';
+import { PACKAGE_FIT_BLOCKS, assertPackageFitDefinitions } from '../bench/balance/playerPackageFitSpec';
+import { guardableThreatsAgainstPlayer } from '../src/systems/combat/ai/guardableThreats';
+import { getCooldown } from '@mmo-idle/shared';
 /**
  * Boss screen runner — a seeded, receipt-emitting boss fight.
  *
@@ -152,6 +155,12 @@ const TRIALS: Record<string, {
    */
   installTreatment?: (cell: Night5Cell) => { changes: unknown[]; restore: () => void } | null;
 }> = {
+  'player-package-fit': {
+    defaultBlock: 't2-boss',
+    blocks: Object.fromEntries(Object.entries(PACKAGE_FIT_BLOCKS).filter(([name]) => name.endsWith('-boss'))),
+    perBlock: Object.fromEntries(FAST_PASS_BOSSES.map(b => [`t${b.tier}-boss`, { bossId:b.boss, capMs:FAST_PASS_CAP_MS, seeds:[FAST_PASS_SEED], escorts:{} }])),
+    assertDefinitions: assertPackageFitDefinitions,
+  },
   'player-fast-pass': {
     defaultBlock: 't2-boss',
     blocks: Object.fromEntries(Object.entries(FAST_PASS_BLOCKS).filter(([name]) => name.endsWith('-boss'))),
@@ -358,7 +367,7 @@ function run(cell: Night5Cell, seed: number) {
     const declared = resolveSurveyPackage(cell);
     const { bot, view } = prepareSurveyBot(world, cell, BOT_SPAWN);
 
-    const packageReadback = trial === 'player-fast-pass' ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
+    const packageReadback = ['player-fast-pass', 'player-package-fit'].includes(trial) ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
     // Tick once so the boss actually spawns before the receipt is written; a
     // receipt taken before the wake-up records an empty arena.
     world.tick(100, now);
@@ -377,7 +386,7 @@ function run(cell: Night5Cell, seed: number) {
       dr: m.mitigatesDamage.damageReduction,
     }));
 
-    if(trial === 'player-fast-pass') assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
+    if(['player-fast-pass', 'player-package-fit'].includes(trial)) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
     const initial = roster();
     const ready = {
       cell: cell.id,
@@ -584,7 +593,19 @@ function run(cell: Night5Cell, seed: number) {
       if (realNow() - wallStart > 300000) { outcome = 'wall-ceiling'; break; }
       now = 1800000000000 + elapsed;
       register();
+      if (trial === 'player-package-fit') log.push({ atMs: elapsed, event: {
+        kind: 'package-fit-guard-boundary', phase: 'before-tick',
+        threats: guardableThreatsAgainstPlayer(world, bot.isPlayer.id, now),
+        braceCooldownMs: getCooldown(bot.tracksCombat, 'ability.cd.brace'),
+        guardWindowMs: getCooldown(bot.tracksCombat, 'ability.guard.window'),
+        statusEffects: structuredClone(bot.tracksCombat.statusEffects),
+      }});
       world.tick(100, now);
+      if (trial === 'player-package-fit') log.push({ atMs: elapsed, event: {
+        kind: 'package-fit-guard-boundary', phase: 'after-tick',
+        braceCooldownMs: getCooldown(bot.tracksCombat, 'ability.cd.brace'),
+        statusEffects: structuredClone(bot.tracksCombat.statusEffects),
+      }});
 
       const hp = bot.hasHealth.hp;
       const tickLoss = hp < lastBotHp ? lastBotHp - hp : 0;
@@ -638,7 +659,7 @@ function run(cell: Night5Cell, seed: number) {
             casts.push({ atMs: elapsed, label: (e as { label?: string }).label ?? 'unlabelled' });
           }
           log.push({ atMs: elapsed, event: e });
-        }
+        } else if (trial === 'player-package-fit') log.push({ atMs: elapsed, event: e });
       }
 
       const live = findBoss(world, cell.nodeId);
