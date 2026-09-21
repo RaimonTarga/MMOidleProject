@@ -1,0 +1,98 @@
+{
+  "profiles": 768,
+  "rootUnchanged": 48,
+  "applied": [
+    {
+      "caseId": "breadth-t2-conduit-balanced-farm-reconstruction-r1",
+      "intervalMs": 3000,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t2-conduit-balanced-boss-reconstruction-r1",
+      "intervalMs": 3000,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t2-conduit-light-farm-reconstruction-r1",
+      "intervalMs": 2500,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t2-conduit-light-boss-reconstruction-r1",
+      "intervalMs": 2500,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-farm-reconstruction-r1",
+      "intervalMs": 3000,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-boss-reconstruction-r1",
+      "intervalMs": 3000,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-far-farm-reconstruction-r1",
+      "intervalMs": 2550,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-far-boss-reconstruction-r1",
+      "intervalMs": 2550,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-heavy-far-farm-reconstruction-r1",
+      "intervalMs": 3332,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-heavy-far-boss-reconstruction-r1",
+      "intervalMs": 3332,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-light-far-farm-reconstruction-r1",
+      "intervalMs": 2125,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-light-far-boss-reconstruction-r1",
+      "intervalMs": 2125,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-c-farm-reconstruction-r1",
+      "intervalMs": 2727,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-c-boss-reconstruction-r1",
+      "intervalMs": 2727,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-b-farm-reconstruction-r1",
+      "intervalMs": 2000,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-b-boss-reconstruction-r1",
+      "intervalMs": 2000,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-farm-reconstruction-r1",
+      "intervalMs": 2273,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-boss-reconstruction-r1",
+      "intervalMs": 2273,
+      "match": true
+    }
+  ],
+  "worldTicks": 0,
+  "passed": true
+}

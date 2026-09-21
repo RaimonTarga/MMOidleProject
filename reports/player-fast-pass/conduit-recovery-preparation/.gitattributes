@@ -1,0 +1,4 @@
+# Preserve raw-byte packet seals across Windows checkouts.
+* text eol=lf
+# Unified diffs contain meaningful space-only context lines.
+*.patch -whitespace

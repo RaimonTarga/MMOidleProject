@@ -1,0 +1,20 @@
+node:internal/modules/cjs/loader:1437
+  const err = new Error(`Cannot find module '${request}'`);
+              ^
+
+Error: Cannot find module 'C:\Users\osaif\AppData\Local\mmo-idle\cr2-0921\server\node_modules\@mmo-idle\shared\dist\index.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at node:internal/modules/cjs/loader:1387:27
+    at nextResolveSimple (C:\Users\osaif\AppData\Local\mmo-idle\cr2-0921\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:1017)
+    at C:\Users\osaif\AppData\Local\mmo-idle\cr2-0921\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:4388
+    at C:\Users\osaif\AppData\Local\mmo-idle\cr2-0921\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:3818
+    at resolveTsPaths (C:\Users\osaif\AppData\Local\mmo-idle\cr2-0921\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:770)
+    at C:\Users\osaif\AppData\Local\mmo-idle\cr2-0921\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:1155 {
+  code: 'MODULE_NOT_FOUND',
+  path: 'C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\cr2-0921\\server\\node_modules\\@mmo-idle\\shared'
+}
+
+Node.js v22.16.0

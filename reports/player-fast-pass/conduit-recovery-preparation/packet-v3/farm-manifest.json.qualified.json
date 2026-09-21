@@ -1,0 +1,9 @@
+{
+  "sourceCommit": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+  "recoverySha256": "6c939a04375cc5629e26de234801eadbc5f409097a12861471dfb0c4fcdca9ef",
+  "caseId": "breadth-t2-striker-balanced-farm",
+  "mode": "qualify",
+  "combatObservations": 0,
+  "out": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\conduit-recovery-20260921\\farm-child-qualification-v2",
+  "reuseNote": "Exact same farm manifest and historical source; reuses successful v2 child qualification, no additional observation."
+}

@@ -1,0 +1,35 @@
+{
+  "adoptionRevision": "02488129d9c5720a062e69b2e018b96398489f52",
+  "productionBase": "5419ae6992ffae07fe19c8c8caac3564ba9bc252",
+  "checks": {
+    "typecheck": "passed including bench",
+    "sharedBuild": "passed",
+    "serverTypeScriptBuild": "passed",
+    "focusedTests": [
+      "playerBreadth",
+      "summonerOverhaul",
+      "summonerSpecializations",
+      "summonerProfile",
+      "relics",
+      "relicEquipment"
+    ],
+    "diffCheck": "passed",
+    "fullSuite": "not run - bounded qualification",
+    "browserPlaytest": "not run",
+    "combatCampaigns": "not run"
+  },
+  "fixesDuringQualification": [
+    "Updated obsolete fixed 5000ms Colossus test to shared-profile equality and specialization extension",
+    "Restored original mixed-newline source bytes against existing seal",
+    "Passed development condition through tsx CLI",
+    "Ensured R2 overlays the same shared tuning instance used by runtime; added active treatment and floor assertions"
+  ],
+  "deployment": "not performed",
+  "remotePublication": "not performed",
+  "farmChildQualification": "passed exact HEAD and applied package; no farming window",
+  "r2Qualification": {
+    "passed": 24,
+    "worldTicks": 0,
+    "sourceRevision": "59c895b3979dbe5867e21c9b81bdffdfb17d7c9c"
+  }
+}

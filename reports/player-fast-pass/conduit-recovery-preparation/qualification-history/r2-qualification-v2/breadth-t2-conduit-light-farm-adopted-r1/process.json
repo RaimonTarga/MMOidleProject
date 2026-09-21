@@ -1,0 +1,17 @@
+{
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "argv": [
+    "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\cr2-0921\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\cli.mjs",
+    "--conditions=development",
+    "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\cr2-0921\\scripts\\conduit-r2-child.mjs",
+    "--trial=player-breadth",
+    "--block=breadth-t2-conduit-light-farm",
+    "--arm=adopted-r1",
+    "--mode=qualify",
+    "--revision=6bccdfbd35c0c74fd9caef76f027c7bd54878b0f",
+    "--hitboxes=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\ttk-survey\\hitboxes.json",
+    "--out=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\conduit-recovery-20260921\\r2-qualification-v2\\breadth-t2-conduit-light-farm-adopted-r1"
+  ]
+}
