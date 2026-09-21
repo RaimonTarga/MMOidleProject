@@ -1,0 +1,36 @@
+{
+  "sourceCommit": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+  "sourceSha256": "6f49c74da2c23037d06b1185ba4ba1682a8b9160552475e8deb517889ebddd3b",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "qualification": {
+    "out": "D:\\mmo-idle\\overnight-endurance-01\\qualification",
+    "completed": 336,
+    "combatObservations": 0,
+    "manifestSha256": "bfec17c558301886a80a98d2ba136573e2f6bd92350e5be0bf6bbcb28eb0eb7c",
+    "receiptsSha256": "bdb0f3dd1e5605a774ab3b0a0f6a0d8fb6a40973454b49d7d02b26e453796375"
+  },
+  "mainCombatObservations": 0,
+  "mainRunExists": false,
+  "uniqueIdentities": 72,
+  "uniquePackages": 84,
+  "matchedPairs": 48,
+  "seedFixturePackageComparisons": 168,
+  "identicalInitialRosterAcrossSeeds": 0,
+  "checks": {
+    "overnightEnduranceTest": "passed; zero combat",
+    "farmingSustainTest": "passed; zero combat",
+    "farmingStanceTest": "passed; zero combat",
+    "playerBreadthTest": "passed",
+    "pnpmTypecheck": "passed including bench",
+    "sharedBuild": "passed",
+    "serverBuild": "passed",
+    "gitDiffCheck": "passed",
+    "fullSuite": "not run",
+    "livePlaytest": "not run",
+    "longCombatQualification": "not run; brief forbids extra qualification combat"
+  },
+  "dependencyInstall": "Frozen lockfile install in detached D checkout; initial offline install lacked pnpm 8.15.1 store entry, normal frozen-lockfile install succeeded without lockfile edits.",
+  "finalVerify": "passed from fixed D checkout; source hash, all 336 cases and sealed inputs match",
+  "publicationCheckoutVerify": "An accidental verify from the normal publication checkout was rejected for source byte differences. No combat, output or launch marker was created. Packet was not resealed; fixed checkout subsequently verified successfully.",
+  "sourceGitDiff": "No Git content changes from d056896d to e26fdccd under shared/src, server/src or bot/src; byte seals are specific to the D checkout including Windows line endings."
+}

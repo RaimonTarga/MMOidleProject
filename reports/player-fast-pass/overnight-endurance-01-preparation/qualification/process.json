@@ -1,0 +1,18 @@
+{
+  "pid": 30992,
+  "argv": [
+    "--import",
+    "file:///D:/mmo-idle/overnight-endurance-01/source/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs",
+    "--conditions=development",
+    "scripts/ttkSurvey.ts",
+    "--trial=overnight-endurance-01",
+    "--block=qualification",
+    "--mode=qualify",
+    "--revision=e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "--source-contract=D:\\mmo-idle\\overnight-endurance-01\\packet\\identity.json",
+    "--hitboxes=D:\\mmo-idle\\overnight-endurance-01\\hitboxes.json",
+    "--out=D:\\mmo-idle\\overnight-endurance-01\\qualification\\zero-tick\\artifacts"
+  ],
+  "status": 0,
+  "reason": null
+}

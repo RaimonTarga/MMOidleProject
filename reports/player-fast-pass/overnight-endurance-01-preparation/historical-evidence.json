@@ -1,0 +1,428 @@
+{
+  "priorSource": "d056896dffd62dc24f0d13ead7b887e61d357006",
+  "baselineHead": "48d03ce94df6913521d631946d1418bce26b5247",
+  "interveningSourceDiff": "",
+  "sustainReport": {
+    "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\REPORT.md",
+    "sha256": "ca855ba16c0b4e9813f640a745b81e25829de0ba82936dc7e6ebe4e3776a409d"
+  },
+  "sustainReceipts": {
+    "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\resolved-builds.json",
+    "sha256": "b864ceff1a979de2b1d96617e6efb30605ddcb8ce0f76dc54f8b3e31b480d8c2"
+  },
+  "resolvedMappings": [
+    {
+      "identity": "breadth-t4-conduit-heavy-a",
+      "receipt": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static",
+      "skillPath": [
+        "summoner-root",
+        "summoner-heavy",
+        "summoner-range-mid",
+        "summoner-heavy-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-survivalist": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 36,
+        "unused": 11,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    },
+    {
+      "identity": "breadth-t4-squire-heavy-a",
+      "receipt": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static",
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-heavy",
+        "cooldown-range-close",
+        "cooldown-heavy-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "mountain-warmaul": 5,
+          "mountain-vest-t4": 5,
+          "mountain-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-arcanist": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      }
+    }
+  ],
+  "verifiedRawFiles": [
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\summary.json",
+      "sha256": "6da1890d69e835884ac81a1a6586c66c272a98f350cf4a88a13347a07e1c62d5",
+      "name": "summary.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\conduit.json",
+      "sha256": "905146d033e0911dc3a558ce24d4094d29a6d472808e6f9c635dc50f06eb61ee",
+      "name": "conduit.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\events.jsonl",
+      "sha256": "dbd58c645c382c4219551cc64e3be7718d081f0aad4baad20abef54c6f2edb33",
+      "name": "events.jsonl"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\samples.jsonl",
+      "sha256": "add3bae9bccca31d6f14181de6b8d8325ba0e990d933b0d34da53ddb03b1669f",
+      "name": "samples.jsonl"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\ready.json",
+      "sha256": "9bcc7d1fd6389234326e8ba3ade031436d2928d3979b52bcbc6cd9a917a2a93e",
+      "name": "ready.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\summary.json",
+      "sha256": "96337bdb84aa2d2fe12fa9ab2830ba7c97cf191636fcd02884b1395a2c1722a9",
+      "name": "summary.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\conduit.json",
+      "sha256": "594b9280eca0a1208042c62e39be465913afe6f9dcee511596c13f2dffeec20a",
+      "name": "conduit.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\events.jsonl",
+      "sha256": "98209d14d2ac729ae4a77e6daaa42cb3726db300a67ef664c2fb718c35eff9c6",
+      "name": "events.jsonl"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\samples.jsonl",
+      "sha256": "e3c7b827785cae17964769b9b7196478eeef17b9640edf1edb4f6e1ba763bfdd",
+      "name": "samples.jsonl"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\ready.json",
+      "sha256": "f45225e92467f2b942a93a60560f7468928b8b16a66c42553523ce4cd0281aad",
+      "name": "ready.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\summary.json",
+      "sha256": "9ae7ede7d182cb6aa873e9fff268c00e3e93bf131217c7d5694a875f859b1c0a",
+      "name": "summary.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\conduit.json",
+      "sha256": "4cdd5c107bf50abac5e74bb37b1c4629742e356b4d39efbe2a86303fcf27bac2",
+      "name": "conduit.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\events.jsonl",
+      "sha256": "82eba46cba2d076b44b37b4d70a7dd965d123a3a14ecf07f44cf6ea34d9fd962",
+      "name": "events.jsonl"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\samples.jsonl",
+      "sha256": "9ac1a22b2aec8eacb2b1a55626c1fae71d18378d36792a79038df47dc0a3ce7e",
+      "name": "samples.jsonl"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\ready.json",
+      "sha256": "4e2d986ec219a436cde8ab22c387fd1e1274646ed3aaacd59e7148f6ebcba399",
+      "name": "ready.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\summary.json",
+      "sha256": "a298f7a55a9b47ea5bb74698ba579b5a815e7f80cab172ee2dea5ea042849407",
+      "name": "summary.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\conduit.json",
+      "sha256": "4562155b3316ce843aa5c81d1d78035d0269d7d1f5d4b404a9fb4cff344ea53d",
+      "name": "conduit.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\events.jsonl",
+      "sha256": "6e18c5a5d8269704a26b8301d250293c139be852b65c5ac63991bdc23084a4df",
+      "name": "events.jsonl"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\samples.jsonl",
+      "sha256": "854270c1899560c1668daee744d5c0a060137fbdc1bc3589d37b5f2e06772ca6",
+      "name": "samples.jsonl"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\ready.json",
+      "sha256": "67ec5e88c2873c117d2ca4a7eab9e64e45a52d00f649e1edc9d83f85dd8db03a",
+      "name": "ready.json"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static-s101003\\events.jsonl",
+      "sha256": "1131f592f668d7d3fb33cd26e2b4a32dbf92ce1c3fcfe930926769dd95c982a6"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static-s101003\\samples.jsonl",
+      "sha256": "4b0438644e9f38b60221758083d4e9e4803e137777762c8351c30d95ce8379bb"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static-s101003\\sustain-transitions.json",
+      "sha256": "1843eeebdcacc0d6b20a4cd0de30420c1abd814593787822f05ae5454d373240"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static-s101003\\events.jsonl",
+      "sha256": "e072ec0cd4028600e634beef99c024b6109bd6035648b48771372b30da13fc88"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static-s101003\\samples.jsonl",
+      "sha256": "5fea192bff106b9e94402c48512110dff93088a3a1cae6b7fc288902edf86b66"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static-s101003\\sustain-transitions.json",
+      "sha256": "cc7e134511ee569e5c24dc56b56c9f0e1b65432caaf9824453f959f90d68ac97"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static-s101003\\events.jsonl",
+      "sha256": "a642a6272d08e7d1116800714fe50e768f7c60a1a695da57e751b29c86426822"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static-s101003\\samples.jsonl",
+      "sha256": "02780bacd5e1fa3ca86ea0b6fb73e1a4c5876563f8bb30f0328c6762de49d6b7"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static-s101003\\sustain-transitions.json",
+      "sha256": "4a79b9e7635178ce999bd37ad57d35748c277f592542130935c5c41b4da11e8e"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static-s101003\\events.jsonl",
+      "sha256": "a772bd1adcc4ee4a94d7091398133b91b6aa686b7e0e6847d51d8de34f1378cf"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static-s101003\\samples.jsonl",
+      "sha256": "7b403cc483ad460ef73d4a50147fd648928fda69a0960800d7e2a634bbfdc0f6"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static-s101003\\sustain-transitions.json",
+      "sha256": "05099acd980287be83012bf8d3276e532efbb2ce72fff8cf6eac120271e5375f"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static-s101003\\events.jsonl",
+      "sha256": "74ca7ca681dc5c6b5f9aff5c2e6524dd5958fa273400c728808358175ef0d9ca"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static-s101003\\samples.jsonl",
+      "sha256": "016a43fee0e7ffa31bb16bffd13fb9bac25051d63b8b968fee81d6967f1ee12f"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static-s101003\\sustain-transitions.json",
+      "sha256": "b1de260a02df2c56ee34da2355244ddf95acd89e96b6a22d7964a605c3761ab1"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static-s101003\\events.jsonl",
+      "sha256": "25fc9b5b809b170c519425b19524a3d811e8c0f9988e6f89b138619615c44a60"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static-s101003\\samples.jsonl",
+      "sha256": "40d0373c40234dcb7e4f20c64971fcbe606a0ccdde748934b97dd04096f6f1ba"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static-s101003\\sustain-transitions.json",
+      "sha256": "76d04c6481e4cb2ced1c63c711ae9c1af3ba845852d9c39a956389e45bc75db4"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static-s101003\\events.jsonl",
+      "sha256": "c01c4150b48f08c2c3f6f5ad667022b1f3970e322137fdc6bc075e3128bfb913"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static-s101003\\samples.jsonl",
+      "sha256": "5171ed199d31bcd1d72b431c41c62ada1f0df23167559b24b081b2141bd162d7"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static-s101003\\sustain-transitions.json",
+      "sha256": "a0e0b5a77bf7343a4e4eaf72f0373d9f2ed80f892cea4bb4b31f0d2f45df111f"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static-s101003\\events.jsonl",
+      "sha256": "e439d621b6a4a404c0ddb91e07c06bf466a3c1311a45ac3a234ac28ab8df39ea"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static-s101003\\samples.jsonl",
+      "sha256": "1c88e7855abca15ac2016732a0b39d8f6b2f4d490825c8b152274bd6db96a8bd"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static-s101003\\sustain-transitions.json",
+      "sha256": "6e211ab4f7d5a7dcd97fb0d2d3065cfacc44a3f436dc24d84089f585d56bf79a"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static-s101003\\events.jsonl",
+      "sha256": "d7b8af3a37b01b0a658f1e1916ec08f27621f3ea0273fe29bf65cf389656ff15"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static-s101003\\samples.jsonl",
+      "sha256": "b0f0de88635c1482586316585cd86dcdd7ef5669a2bf23e251303b28a4f92dfe"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static-s101003\\sustain-transitions.json",
+      "sha256": "b1bc49f70271f04f960b801d9b29305b2fcae2f8f6083b4f62bd4d183648176c"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static-s101003\\events.jsonl",
+      "sha256": "c0b87b780a9545998d39b7c15624ec07a05378311bb1974fef08e3e6da48e4d3"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static-s101003\\samples.jsonl",
+      "sha256": "3a425c29efbec09b42d193c43086eed510eada01432d8e1e862014a116f457e2"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static-s101003\\sustain-transitions.json",
+      "sha256": "1da4804b658dd954775bbbbf4f8a5e06d94a07cf544616170a72834fec4f497a"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static-s101003\\events.jsonl",
+      "sha256": "55f1b5744ca38b8f3af77f16224447b16317b8a61943b007912acb8eb8447b61"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static-s101003\\samples.jsonl",
+      "sha256": "7223233d2c7ca05355be058d42b3e806444557d74a1db625955eecc2937c4746"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static-s101003\\sustain-transitions.json",
+      "sha256": "7a40a26c7788123d61b374e25bcd81c87592d688d0ecf33dcb168c8fc9962144"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static-s101003\\events.jsonl",
+      "sha256": "21b75d986520f1a667fe5aa25fe83d54e4d376543c7160fbdec97a03b821d411"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static-s101003\\samples.jsonl",
+      "sha256": "d7a417d86020d72e94c5e1b79bea16cd5c75661a21323accdcc1311b690aafec"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static\\sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static-s101003\\sustain-transitions.json",
+      "sha256": "05612ea73cdf51368e0af30e17b963730e3092437207a5258f7aee4d16cc0aab"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static-s101003\\events.jsonl",
+      "sha256": "2f2e021ac3942efffaf031148db01610bb3bb80043c6d5c4ce39b75591433fc9"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static-s101003\\samples.jsonl",
+      "sha256": "1fd9fc0b52cfe905f8a6c410702e59ad8e7d9cf8baf879d64f7a627e291bdb8d"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static-s101003\\sustain-transitions.json",
+      "sha256": "bcf07119fed5f2933f142fe047702f5154281dc68236cebd9a08e2d34c76c272"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003\\events.jsonl",
+      "sha256": "8a03c6ce4d86f9313d910d02f4f2b7ce5456f05df6bf53bb22154cd1bd61afe4"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003\\samples.jsonl",
+      "sha256": "1fd9fc0b52cfe905f8a6c410702e59ad8e7d9cf8baf879d64f7a627e291bdb8d"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003\\sustain-transitions.json",
+      "sha256": "bcf07119fed5f2933f142fe047702f5154281dc68236cebd9a08e2d34c76c272"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static-s101003\\events.jsonl",
+      "sha256": "56d119bb5e22ba5344d14a33634fd5ccf53f01129235a924e321b0cd26d1a4bd"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static-s101003\\samples.jsonl",
+      "sha256": "81b83e599132c01e767138f327903f24157c6b82bccd69db60d5ae80dbab5ff0"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static-s101003\\sustain-transitions.json",
+      "sha256": "253880f1bbb7774d1ec5c63e7b83c054b832cd489c76909417d39d7c0daa5a07"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003\\events.jsonl",
+      "sha256": "8118d837ed00d616908871da40840dd5a0405f9d9b7198ef92cd05cdb6e2da6b"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003\\samples.jsonl",
+      "sha256": "81b83e599132c01e767138f327903f24157c6b82bccd69db60d5ae80dbab5ff0"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating\\sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003\\sustain-transitions.json",
+      "sha256": "253880f1bbb7774d1ec5c63e7b83c054b832cd489c76909417d39d7c0daa5a07"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static-s101003\\events.jsonl",
+      "sha256": "8c4f89f3d1e6a87ab9f17ebf04baa30d0613bcd426f7a2ad9ecd605295d32dcc"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static-s101003\\samples.jsonl",
+      "sha256": "6fd95859b2390e5dd564867ad13bb89db377162f1b32ace1c8d151903f6c3cfd"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static-s101003\\sustain-transitions.json",
+      "sha256": "bb2823dd777576ebbcdda4485c03d244cf9932ff096ecea37608d684edddc83e"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003\\events.jsonl",
+      "sha256": "2fe9e3368fc46fbb2a2e8fc2d61c0a6c38b2f3f22fbe46bb8b921bdb8b0bde6b"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003\\samples.jsonl",
+      "sha256": "052d3a046985e2f4cad746c83d964338017f83351098743f142bac4099cc382a"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003\\sustain-transitions.json",
+      "sha256": "7ff7cf1dafab43c1ccfedeb528df192200415d219f4781a9a89af862b7ebccde"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static-s101003\\events.jsonl",
+      "sha256": "7ea8e216f7158e08824d504fbd1fd109afcb59435c529687dad34141c6adcc8d"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static-s101003\\samples.jsonl",
+      "sha256": "73b9a65024266e37442f7378683c80a54e92e5b2ab4bff1b3c3f43fc33bc2a89"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static-s101003\\sustain-transitions.json",
+      "sha256": "62c493e9b53d203817ecb239c43ab79cfd5bc38f83be3d04ddfeb046ce703b8c"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003\\events.jsonl",
+      "sha256": "aa83e2f7118d041813d076de06cd82625e5a08a77797fccb55164d8901d80345"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003\\samples.jsonl",
+      "sha256": "73b9a65024266e37442f7378683c80a54e92e5b2ab4bff1b3c3f43fc33bc2a89"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\run-01\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating\\sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003\\sustain-transitions.json",
+      "sha256": "62c493e9b53d203817ecb239c43ab79cfd5bc38f83be3d04ddfeb046ce703b8c"
+    }
+  ],
+  "newCombatObservations": 0
+}

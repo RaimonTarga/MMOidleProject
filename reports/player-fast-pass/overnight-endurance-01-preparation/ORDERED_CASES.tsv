@@ -1,0 +1,337 @@
+order	block	identity	path	range	fixture	seed	arm	used_rp	free_rp	observation_id
+1	A	breadth-t3-striker-light	Flurry	close	node-t3-volcanic-03	101009	mountain-static	33	5	endurance-01-breadth-t3-striker-light-node-t3-volcanic-03-s101009-mountain
+2	A	breadth-t3-squire-light	Warrior	close	node-t3-volcanic-03	101009	volcanic-static	33	5	endurance-01-breadth-t3-squire-light-node-t3-volcanic-03-s101009-volcanic
+3	B	breadth-t3-squire-light	Warrior	close	node-t3-volcanic-03	101009	mountain-static	33	5	endurance-01-breadth-t3-squire-light-node-t3-volcanic-03-s101009-mountain
+4	A	breadth-t3-apprentice-light	Venom vessel	mid	node-t3-volcanic-03	101009	volcanic-static	36	2	endurance-01-breadth-t3-apprentice-light-node-t3-volcanic-03-s101009-volcanic
+5	B	breadth-t3-apprentice-light	Venom vessel	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-apprentice-light-node-t3-volcanic-03-s101009-mountain
+6	A	breadth-t3-conduit-light	Splinter	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-conduit-light-node-t3-volcanic-03-s101009-mountain
+7	A	breadth-t3-slinger-light	Scout	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-slinger-light-node-t3-volcanic-03-s101009-mountain
+8	A	breadth-t3-spirit-light	Spark	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-spirit-light-node-t3-volcanic-03-s101009-mountain
+9	A	breadth-t4-striker-light-a	Shockblade	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-light-a-node-t4-graveyard-03-s101009-mountain
+10	A	breadth-t4-squire-light-a	Assassin	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-light-a-node-t4-graveyard-03-s101009-mountain
+11	A	breadth-t4-apprentice-light-a	Venomslinger	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-a-node-t4-graveyard-03-s101009-mountain
+12	A	breadth-t4-conduit-light-a	Inquisitor	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-a-node-t4-graveyard-03-s101009-mountain
+13	A	breadth-t4-slinger-light-a	Duelist	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-a-node-t4-graveyard-03-s101009-mountain
+14	A	breadth-t4-spirit-light-a	Stormdancer	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-a-node-t4-graveyard-03-s101009-mountain
+15	A	breadth-t4-striker-light-b	Scrapper	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-light-b-node-t4-graveyard-03-s101009-mountain
+16	A	breadth-t4-squire-light-b	Transcendant	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-light-b-node-t4-graveyard-03-s101009-mountain
+17	A	breadth-t4-apprentice-light-b	Cultist	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-b-node-t4-graveyard-03-s101009-mountain
+18	A	breadth-t4-conduit-light-b	Kilnmaster	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-b-node-t4-graveyard-03-s101009-mountain
+19	A	breadth-t4-slinger-light-b	Desperado	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-b-node-t4-graveyard-03-s101009-mountain
+20	A	breadth-t4-spirit-light-b	Surge	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-b-node-t4-graveyard-03-s101009-mountain
+21	A	breadth-t4-striker-light-c	Swiftblade	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-light-c-node-t4-graveyard-03-s101009-mountain
+22	A	breadth-t4-squire-light-c	Sunderer	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-light-c-node-t4-graveyard-03-s101009-mountain
+23	A	breadth-t4-apprentice-light-c	Zealot	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-c-node-t4-graveyard-03-s101009-mountain
+24	A	breadth-t4-conduit-light-c	Iconoclast	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-c-node-t4-graveyard-03-s101009-mountain
+25	A	breadth-t4-slinger-light-c	Sniper	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-c-node-t4-graveyard-03-s101009-mountain
+26	A	breadth-t4-spirit-light-c	Channeler	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-c-node-t4-graveyard-03-s101009-mountain
+27	A	breadth-t3-striker-balanced	Skirmisher	close	node-t3-volcanic-03	101009	volcanic-static	33	5	endurance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-s101009-volcanic
+28	B	breadth-t3-striker-balanced	Skirmisher	close	node-t3-volcanic-03	101009	mountain-static	33	5	endurance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-s101009-mountain
+29	A	breadth-t3-squire-balanced	Knight	close	node-t3-volcanic-03	101009	volcanic-static	33	5	endurance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-s101009-volcanic
+30	B	breadth-t3-squire-balanced	Knight	close	node-t3-volcanic-03	101009	mountain-static	33	5	endurance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-s101009-mountain
+31	A	breadth-t3-apprentice-balanced	Ember mage	mid	node-t3-volcanic-03	101009	volcanic-static	36	2	endurance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-s101009-volcanic
+32	B	breadth-t3-apprentice-balanced	Ember mage	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-s101009-mountain
+33	A	breadth-t3-conduit-balanced	Consort	mid	node-t3-volcanic-03	101009	mountain-static	33	5	endurance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-s101009-mountain
+34	A	breadth-t3-slinger-balanced	Marksman	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-slinger-balanced-node-t3-volcanic-03-s101009-mountain
+35	A	breadth-t3-spirit-balanced	Wraith	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-spirit-balanced-node-t3-volcanic-03-s101009-mountain
+36	A	breadth-t4-striker-balanced-a	Maestro	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-a-node-t4-graveyard-03-s101009-mountain
+37	A	breadth-t4-squire-balanced-a	Reverb	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-a-node-t4-graveyard-03-s101009-mountain
+38	A	breadth-t4-apprentice-balanced-a	Pyromancer	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-a-node-t4-graveyard-03-s101009-mountain
+39	A	breadth-t4-conduit-balanced-a	Marshal	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-a-node-t4-graveyard-03-s101009-mountain
+40	A	breadth-t4-slinger-balanced-a	Bounty hunter	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-balanced-a-node-t4-graveyard-03-s101009-mountain
+41	A	breadth-t4-spirit-balanced-a	Equinox	mid	node-t4-graveyard-03	101009	volcanic-static	43	4	endurance-01-breadth-t4-spirit-balanced-a-node-t4-graveyard-03-s101009-volcanic
+42	B	breadth-t4-spirit-balanced-a	Equinox	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-a-node-t4-graveyard-03-s101009-mountain
+43	A	breadth-t4-striker-balanced-b	Wavecrest	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-b-node-t4-graveyard-03-s101009-mountain
+44	A	breadth-t4-squire-balanced-b	Dynamo	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-b-node-t4-graveyard-03-s101009-mountain
+45	A	breadth-t4-apprentice-balanced-b	Firebrand	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-b-node-t4-graveyard-03-s101009-mountain
+46	A	breadth-t4-conduit-balanced-b	Chorister	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-b-node-t4-graveyard-03-s101009-mountain
+47	A	breadth-t4-slinger-balanced-b	Blunderbuss	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-slinger-balanced-b-node-t4-graveyard-03-s101009-mountain
+48	A	breadth-t4-spirit-balanced-b	Stormbringer	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-b-node-t4-graveyard-03-s101009-mountain
+49	A	breadth-t4-striker-balanced-c	Justicar	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-c-node-t4-graveyard-03-s101009-mountain
+50	A	breadth-t4-squire-balanced-c	Stalwart	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-c-node-t4-graveyard-03-s101009-mountain
+51	A	breadth-t4-apprentice-balanced-c	Cinder Lord	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-c-node-t4-graveyard-03-s101009-mountain
+52	A	breadth-t4-conduit-balanced-c	Ritualist	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-c-node-t4-graveyard-03-s101009-mountain
+53	A	breadth-t4-slinger-balanced-c	Dualslinger	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-balanced-c-node-t4-graveyard-03-s101009-mountain
+54	A	breadth-t4-spirit-balanced-c	Aetherist	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-c-node-t4-graveyard-03-s101009-mountain
+55	A	breadth-t3-striker-heavy	Breaker	close	node-t3-volcanic-03	101009	volcanic-static	33	5	endurance-01-breadth-t3-striker-heavy-node-t3-volcanic-03-s101009-volcanic
+56	B	breadth-t3-striker-heavy	Breaker	close	node-t3-volcanic-03	101009	mountain-static	33	5	endurance-01-breadth-t3-striker-heavy-node-t3-volcanic-03-s101009-mountain
+57	A	breadth-t3-squire-heavy	Bulwark	close	node-t3-volcanic-03	101009	mountain-static	33	5	endurance-01-breadth-t3-squire-heavy-node-t3-volcanic-03-s101009-mountain
+58	A	breadth-t3-apprentice-heavy	Rime-Bound	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-apprentice-heavy-node-t3-volcanic-03-s101009-mountain
+59	A	breadth-t3-conduit-heavy	Effigy	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-s101009-mountain
+60	A	breadth-t3-slinger-heavy	Artillerist	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-slinger-heavy-node-t3-volcanic-03-s101009-mountain
+61	A	breadth-t3-spirit-heavy	Phantasm	mid	node-t3-volcanic-03	101009	mountain-static	36	2	endurance-01-breadth-t3-spirit-heavy-node-t3-volcanic-03-s101009-mountain
+62	A	breadth-t4-striker-heavy-a	Berserker	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-mountain
+63	A	breadth-t4-squire-heavy-a	Avenger	close	node-t4-graveyard-03	101009	volcanic-static	40	7	endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101009-volcanic
+64	B	breadth-t4-squire-heavy-a	Avenger	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101009-mountain
+65	A	breadth-t4-apprentice-heavy-a	Icebreaker	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-a-node-t4-graveyard-03-s101009-mountain
+66	A	breadth-t4-conduit-heavy-a	Covenanter	mid	node-t4-graveyard-03	101009	volcanic-static	36	11	endurance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-s101009-volcanic
+67	B	breadth-t4-conduit-heavy-a	Covenanter	mid	node-t4-graveyard-03	101009	mountain-static	36	11	endurance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-s101009-mountain
+68	A	breadth-t4-slinger-heavy-a	Melter	mid	node-t4-graveyard-03	101009	volcanic-static	40	7	endurance-01-breadth-t4-slinger-heavy-a-node-t4-graveyard-03-s101009-volcanic
+69	B	breadth-t4-slinger-heavy-a	Melter	mid	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-slinger-heavy-a-node-t4-graveyard-03-s101009-mountain
+70	A	breadth-t4-spirit-heavy-a	Voidwalker	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-a-node-t4-graveyard-03-s101009-mountain
+71	A	breadth-t4-striker-heavy-b	Hemomancer	close	node-t4-graveyard-03	101009	volcanic-static	40	7	endurance-01-breadth-t4-striker-heavy-b-node-t4-graveyard-03-s101009-volcanic
+72	B	breadth-t4-striker-heavy-b	Hemomancer	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-b-node-t4-graveyard-03-s101009-mountain
+73	A	breadth-t4-squire-heavy-b	Destroyer	close	node-t4-graveyard-03	101009	volcanic-static	40	7	endurance-01-breadth-t4-squire-heavy-b-node-t4-graveyard-03-s101009-volcanic
+74	B	breadth-t4-squire-heavy-b	Destroyer	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-b-node-t4-graveyard-03-s101009-mountain
+75	A	breadth-t4-apprentice-heavy-b	Winter Warden	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-b-node-t4-graveyard-03-s101009-mountain
+76	A	breadth-t4-conduit-heavy-b	Champion	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain
+77	A	breadth-t4-slinger-heavy-b	Warmonger	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-heavy-b-node-t4-graveyard-03-s101009-mountain
+78	A	breadth-t4-spirit-heavy-b	Invoker	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-b-node-t4-graveyard-03-s101009-mountain
+79	A	breadth-t4-striker-heavy-c	Juggernaut	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-mountain
+80	A	breadth-t4-squire-heavy-c	Devout Priest	close	node-t4-graveyard-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-c-node-t4-graveyard-03-s101009-mountain
+81	A	breadth-t4-apprentice-heavy-c	Wind Spirit	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-c-node-t4-graveyard-03-s101009-mountain
+82	A	breadth-t4-conduit-heavy-c	Idolwright	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-heavy-c-node-t4-graveyard-03-s101009-mountain
+83	A	breadth-t4-slinger-heavy-c	Cannoneer	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-heavy-c-node-t4-graveyard-03-s101009-mountain
+84	A	breadth-t4-spirit-heavy-c	Tempest	mid	node-t4-graveyard-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-c-node-t4-graveyard-03-s101009-mountain
+85	A	breadth-t3-striker-light	Flurry	close	node-t3-tundra-03	101009	mountain-static	33	5	endurance-01-breadth-t3-striker-light-node-t3-tundra-03-s101009-mountain
+86	A	breadth-t3-squire-light	Warrior	close	node-t3-tundra-03	101009	volcanic-static	33	5	endurance-01-breadth-t3-squire-light-node-t3-tundra-03-s101009-volcanic
+87	B	breadth-t3-squire-light	Warrior	close	node-t3-tundra-03	101009	mountain-static	33	5	endurance-01-breadth-t3-squire-light-node-t3-tundra-03-s101009-mountain
+88	A	breadth-t3-apprentice-light	Venom vessel	mid	node-t3-tundra-03	101009	volcanic-static	36	2	endurance-01-breadth-t3-apprentice-light-node-t3-tundra-03-s101009-volcanic
+89	B	breadth-t3-apprentice-light	Venom vessel	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-apprentice-light-node-t3-tundra-03-s101009-mountain
+90	A	breadth-t3-conduit-light	Splinter	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-conduit-light-node-t3-tundra-03-s101009-mountain
+91	A	breadth-t3-slinger-light	Scout	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-slinger-light-node-t3-tundra-03-s101009-mountain
+92	A	breadth-t3-spirit-light	Spark	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-spirit-light-node-t3-tundra-03-s101009-mountain
+93	A	breadth-t4-striker-light-a	Shockblade	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-light-a-node-t4-desert-03-s101009-mountain
+94	A	breadth-t4-squire-light-a	Assassin	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-light-a-node-t4-desert-03-s101009-mountain
+95	A	breadth-t4-apprentice-light-a	Venomslinger	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-a-node-t4-desert-03-s101009-mountain
+96	A	breadth-t4-conduit-light-a	Inquisitor	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-a-node-t4-desert-03-s101009-mountain
+97	A	breadth-t4-slinger-light-a	Duelist	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-a-node-t4-desert-03-s101009-mountain
+98	A	breadth-t4-spirit-light-a	Stormdancer	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-a-node-t4-desert-03-s101009-mountain
+99	A	breadth-t4-striker-light-b	Scrapper	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-light-b-node-t4-desert-03-s101009-mountain
+100	A	breadth-t4-squire-light-b	Transcendant	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-light-b-node-t4-desert-03-s101009-mountain
+101	A	breadth-t4-apprentice-light-b	Cultist	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-b-node-t4-desert-03-s101009-mountain
+102	A	breadth-t4-conduit-light-b	Kilnmaster	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-b-node-t4-desert-03-s101009-mountain
+103	A	breadth-t4-slinger-light-b	Desperado	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-b-node-t4-desert-03-s101009-mountain
+104	A	breadth-t4-spirit-light-b	Surge	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-b-node-t4-desert-03-s101009-mountain
+105	A	breadth-t4-striker-light-c	Swiftblade	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-light-c-node-t4-desert-03-s101009-mountain
+106	A	breadth-t4-squire-light-c	Sunderer	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-light-c-node-t4-desert-03-s101009-mountain
+107	A	breadth-t4-apprentice-light-c	Zealot	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-c-node-t4-desert-03-s101009-mountain
+108	A	breadth-t4-conduit-light-c	Iconoclast	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-c-node-t4-desert-03-s101009-mountain
+109	A	breadth-t4-slinger-light-c	Sniper	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-c-node-t4-desert-03-s101009-mountain
+110	A	breadth-t4-spirit-light-c	Channeler	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-c-node-t4-desert-03-s101009-mountain
+111	A	breadth-t3-striker-balanced	Skirmisher	close	node-t3-tundra-03	101009	volcanic-static	33	5	endurance-01-breadth-t3-striker-balanced-node-t3-tundra-03-s101009-volcanic
+112	B	breadth-t3-striker-balanced	Skirmisher	close	node-t3-tundra-03	101009	mountain-static	33	5	endurance-01-breadth-t3-striker-balanced-node-t3-tundra-03-s101009-mountain
+113	A	breadth-t3-squire-balanced	Knight	close	node-t3-tundra-03	101009	volcanic-static	33	5	endurance-01-breadth-t3-squire-balanced-node-t3-tundra-03-s101009-volcanic
+114	B	breadth-t3-squire-balanced	Knight	close	node-t3-tundra-03	101009	mountain-static	33	5	endurance-01-breadth-t3-squire-balanced-node-t3-tundra-03-s101009-mountain
+115	A	breadth-t3-apprentice-balanced	Ember mage	mid	node-t3-tundra-03	101009	volcanic-static	36	2	endurance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-s101009-volcanic
+116	B	breadth-t3-apprentice-balanced	Ember mage	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-s101009-mountain
+117	A	breadth-t3-conduit-balanced	Consort	mid	node-t3-tundra-03	101009	mountain-static	33	5	endurance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-s101009-mountain
+118	A	breadth-t3-slinger-balanced	Marksman	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-slinger-balanced-node-t3-tundra-03-s101009-mountain
+119	A	breadth-t3-spirit-balanced	Wraith	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-spirit-balanced-node-t3-tundra-03-s101009-mountain
+120	A	breadth-t4-striker-balanced-a	Maestro	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-a-node-t4-desert-03-s101009-mountain
+121	A	breadth-t4-squire-balanced-a	Reverb	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-a-node-t4-desert-03-s101009-mountain
+122	A	breadth-t4-apprentice-balanced-a	Pyromancer	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-a-node-t4-desert-03-s101009-mountain
+123	A	breadth-t4-conduit-balanced-a	Marshal	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-a-node-t4-desert-03-s101009-mountain
+124	A	breadth-t4-slinger-balanced-a	Bounty hunter	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-balanced-a-node-t4-desert-03-s101009-mountain
+125	A	breadth-t4-spirit-balanced-a	Equinox	mid	node-t4-desert-03	101009	volcanic-static	43	4	endurance-01-breadth-t4-spirit-balanced-a-node-t4-desert-03-s101009-volcanic
+126	B	breadth-t4-spirit-balanced-a	Equinox	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-a-node-t4-desert-03-s101009-mountain
+127	A	breadth-t4-striker-balanced-b	Wavecrest	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-b-node-t4-desert-03-s101009-mountain
+128	A	breadth-t4-squire-balanced-b	Dynamo	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-b-node-t4-desert-03-s101009-mountain
+129	A	breadth-t4-apprentice-balanced-b	Firebrand	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-b-node-t4-desert-03-s101009-mountain
+130	A	breadth-t4-conduit-balanced-b	Chorister	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-b-node-t4-desert-03-s101009-mountain
+131	A	breadth-t4-slinger-balanced-b	Blunderbuss	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-slinger-balanced-b-node-t4-desert-03-s101009-mountain
+132	A	breadth-t4-spirit-balanced-b	Stormbringer	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-b-node-t4-desert-03-s101009-mountain
+133	A	breadth-t4-striker-balanced-c	Justicar	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-c-node-t4-desert-03-s101009-mountain
+134	A	breadth-t4-squire-balanced-c	Stalwart	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-c-node-t4-desert-03-s101009-mountain
+135	A	breadth-t4-apprentice-balanced-c	Cinder Lord	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-c-node-t4-desert-03-s101009-mountain
+136	A	breadth-t4-conduit-balanced-c	Ritualist	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-c-node-t4-desert-03-s101009-mountain
+137	A	breadth-t4-slinger-balanced-c	Dualslinger	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-balanced-c-node-t4-desert-03-s101009-mountain
+138	A	breadth-t4-spirit-balanced-c	Aetherist	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-c-node-t4-desert-03-s101009-mountain
+139	A	breadth-t3-striker-heavy	Breaker	close	node-t3-tundra-03	101009	volcanic-static	33	5	endurance-01-breadth-t3-striker-heavy-node-t3-tundra-03-s101009-volcanic
+140	B	breadth-t3-striker-heavy	Breaker	close	node-t3-tundra-03	101009	mountain-static	33	5	endurance-01-breadth-t3-striker-heavy-node-t3-tundra-03-s101009-mountain
+141	A	breadth-t3-squire-heavy	Bulwark	close	node-t3-tundra-03	101009	mountain-static	33	5	endurance-01-breadth-t3-squire-heavy-node-t3-tundra-03-s101009-mountain
+142	A	breadth-t3-apprentice-heavy	Rime-Bound	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-apprentice-heavy-node-t3-tundra-03-s101009-mountain
+143	A	breadth-t3-conduit-heavy	Effigy	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-s101009-mountain
+144	A	breadth-t3-slinger-heavy	Artillerist	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-slinger-heavy-node-t3-tundra-03-s101009-mountain
+145	A	breadth-t3-spirit-heavy	Phantasm	mid	node-t3-tundra-03	101009	mountain-static	36	2	endurance-01-breadth-t3-spirit-heavy-node-t3-tundra-03-s101009-mountain
+146	A	breadth-t4-striker-heavy-a	Berserker	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-mountain
+147	A	breadth-t4-squire-heavy-a	Avenger	close	node-t4-desert-03	101009	volcanic-static	40	7	endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-volcanic
+148	B	breadth-t4-squire-heavy-a	Avenger	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-mountain
+149	A	breadth-t4-apprentice-heavy-a	Icebreaker	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-a-node-t4-desert-03-s101009-mountain
+150	A	breadth-t4-conduit-heavy-a	Covenanter	mid	node-t4-desert-03	101009	volcanic-static	36	11	endurance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-s101009-volcanic
+151	B	breadth-t4-conduit-heavy-a	Covenanter	mid	node-t4-desert-03	101009	mountain-static	36	11	endurance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-s101009-mountain
+152	A	breadth-t4-slinger-heavy-a	Melter	mid	node-t4-desert-03	101009	volcanic-static	40	7	endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101009-volcanic
+153	B	breadth-t4-slinger-heavy-a	Melter	mid	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101009-mountain
+154	A	breadth-t4-spirit-heavy-a	Voidwalker	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-a-node-t4-desert-03-s101009-mountain
+155	A	breadth-t4-striker-heavy-b	Hemomancer	close	node-t4-desert-03	101009	volcanic-static	40	7	endurance-01-breadth-t4-striker-heavy-b-node-t4-desert-03-s101009-volcanic
+156	B	breadth-t4-striker-heavy-b	Hemomancer	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-b-node-t4-desert-03-s101009-mountain
+157	A	breadth-t4-squire-heavy-b	Destroyer	close	node-t4-desert-03	101009	volcanic-static	40	7	endurance-01-breadth-t4-squire-heavy-b-node-t4-desert-03-s101009-volcanic
+158	B	breadth-t4-squire-heavy-b	Destroyer	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-b-node-t4-desert-03-s101009-mountain
+159	A	breadth-t4-apprentice-heavy-b	Winter Warden	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-b-node-t4-desert-03-s101009-mountain
+160	A	breadth-t4-conduit-heavy-b	Champion	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain
+161	A	breadth-t4-slinger-heavy-b	Warmonger	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-heavy-b-node-t4-desert-03-s101009-mountain
+162	A	breadth-t4-spirit-heavy-b	Invoker	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-b-node-t4-desert-03-s101009-mountain
+163	A	breadth-t4-striker-heavy-c	Juggernaut	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-mountain
+164	A	breadth-t4-squire-heavy-c	Devout Priest	close	node-t4-desert-03	101009	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-c-node-t4-desert-03-s101009-mountain
+165	A	breadth-t4-apprentice-heavy-c	Wind Spirit	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-c-node-t4-desert-03-s101009-mountain
+166	A	breadth-t4-conduit-heavy-c	Idolwright	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-conduit-heavy-c-node-t4-desert-03-s101009-mountain
+167	A	breadth-t4-slinger-heavy-c	Cannoneer	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-slinger-heavy-c-node-t4-desert-03-s101009-mountain
+168	A	breadth-t4-spirit-heavy-c	Tempest	mid	node-t4-desert-03	101009	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-c-node-t4-desert-03-s101009-mountain
+169	A	breadth-t3-striker-light	Flurry	close	node-t3-volcanic-03	101021	mountain-static	33	5	endurance-01-breadth-t3-striker-light-node-t3-volcanic-03-s101021-mountain
+170	B	breadth-t3-squire-light	Warrior	close	node-t3-volcanic-03	101021	mountain-static	33	5	endurance-01-breadth-t3-squire-light-node-t3-volcanic-03-s101021-mountain
+171	A	breadth-t3-squire-light	Warrior	close	node-t3-volcanic-03	101021	volcanic-static	33	5	endurance-01-breadth-t3-squire-light-node-t3-volcanic-03-s101021-volcanic
+172	B	breadth-t3-apprentice-light	Venom vessel	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-apprentice-light-node-t3-volcanic-03-s101021-mountain
+173	A	breadth-t3-apprentice-light	Venom vessel	mid	node-t3-volcanic-03	101021	volcanic-static	36	2	endurance-01-breadth-t3-apprentice-light-node-t3-volcanic-03-s101021-volcanic
+174	A	breadth-t3-conduit-light	Splinter	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-conduit-light-node-t3-volcanic-03-s101021-mountain
+175	A	breadth-t3-slinger-light	Scout	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-slinger-light-node-t3-volcanic-03-s101021-mountain
+176	A	breadth-t3-spirit-light	Spark	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-spirit-light-node-t3-volcanic-03-s101021-mountain
+177	A	breadth-t4-striker-light-a	Shockblade	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-light-a-node-t4-graveyard-03-s101021-mountain
+178	A	breadth-t4-squire-light-a	Assassin	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-light-a-node-t4-graveyard-03-s101021-mountain
+179	A	breadth-t4-apprentice-light-a	Venomslinger	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-a-node-t4-graveyard-03-s101021-mountain
+180	A	breadth-t4-conduit-light-a	Inquisitor	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-a-node-t4-graveyard-03-s101021-mountain
+181	A	breadth-t4-slinger-light-a	Duelist	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-a-node-t4-graveyard-03-s101021-mountain
+182	A	breadth-t4-spirit-light-a	Stormdancer	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-a-node-t4-graveyard-03-s101021-mountain
+183	A	breadth-t4-striker-light-b	Scrapper	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-light-b-node-t4-graveyard-03-s101021-mountain
+184	A	breadth-t4-squire-light-b	Transcendant	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-light-b-node-t4-graveyard-03-s101021-mountain
+185	A	breadth-t4-apprentice-light-b	Cultist	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-b-node-t4-graveyard-03-s101021-mountain
+186	A	breadth-t4-conduit-light-b	Kilnmaster	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-b-node-t4-graveyard-03-s101021-mountain
+187	A	breadth-t4-slinger-light-b	Desperado	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-b-node-t4-graveyard-03-s101021-mountain
+188	A	breadth-t4-spirit-light-b	Surge	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-b-node-t4-graveyard-03-s101021-mountain
+189	A	breadth-t4-striker-light-c	Swiftblade	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-light-c-node-t4-graveyard-03-s101021-mountain
+190	A	breadth-t4-squire-light-c	Sunderer	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-light-c-node-t4-graveyard-03-s101021-mountain
+191	A	breadth-t4-apprentice-light-c	Zealot	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-c-node-t4-graveyard-03-s101021-mountain
+192	A	breadth-t4-conduit-light-c	Iconoclast	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-c-node-t4-graveyard-03-s101021-mountain
+193	A	breadth-t4-slinger-light-c	Sniper	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-c-node-t4-graveyard-03-s101021-mountain
+194	A	breadth-t4-spirit-light-c	Channeler	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-c-node-t4-graveyard-03-s101021-mountain
+195	B	breadth-t3-striker-balanced	Skirmisher	close	node-t3-volcanic-03	101021	mountain-static	33	5	endurance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-s101021-mountain
+196	A	breadth-t3-striker-balanced	Skirmisher	close	node-t3-volcanic-03	101021	volcanic-static	33	5	endurance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-s101021-volcanic
+197	B	breadth-t3-squire-balanced	Knight	close	node-t3-volcanic-03	101021	mountain-static	33	5	endurance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-s101021-mountain
+198	A	breadth-t3-squire-balanced	Knight	close	node-t3-volcanic-03	101021	volcanic-static	33	5	endurance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-s101021-volcanic
+199	B	breadth-t3-apprentice-balanced	Ember mage	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-s101021-mountain
+200	A	breadth-t3-apprentice-balanced	Ember mage	mid	node-t3-volcanic-03	101021	volcanic-static	36	2	endurance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-s101021-volcanic
+201	A	breadth-t3-conduit-balanced	Consort	mid	node-t3-volcanic-03	101021	mountain-static	33	5	endurance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-s101021-mountain
+202	A	breadth-t3-slinger-balanced	Marksman	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-slinger-balanced-node-t3-volcanic-03-s101021-mountain
+203	A	breadth-t3-spirit-balanced	Wraith	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-spirit-balanced-node-t3-volcanic-03-s101021-mountain
+204	A	breadth-t4-striker-balanced-a	Maestro	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-a-node-t4-graveyard-03-s101021-mountain
+205	A	breadth-t4-squire-balanced-a	Reverb	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-a-node-t4-graveyard-03-s101021-mountain
+206	A	breadth-t4-apprentice-balanced-a	Pyromancer	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-a-node-t4-graveyard-03-s101021-mountain
+207	A	breadth-t4-conduit-balanced-a	Marshal	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-a-node-t4-graveyard-03-s101021-mountain
+208	A	breadth-t4-slinger-balanced-a	Bounty hunter	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-balanced-a-node-t4-graveyard-03-s101021-mountain
+209	B	breadth-t4-spirit-balanced-a	Equinox	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-a-node-t4-graveyard-03-s101021-mountain
+210	A	breadth-t4-spirit-balanced-a	Equinox	mid	node-t4-graveyard-03	101021	volcanic-static	43	4	endurance-01-breadth-t4-spirit-balanced-a-node-t4-graveyard-03-s101021-volcanic
+211	A	breadth-t4-striker-balanced-b	Wavecrest	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-b-node-t4-graveyard-03-s101021-mountain
+212	A	breadth-t4-squire-balanced-b	Dynamo	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-b-node-t4-graveyard-03-s101021-mountain
+213	A	breadth-t4-apprentice-balanced-b	Firebrand	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-b-node-t4-graveyard-03-s101021-mountain
+214	A	breadth-t4-conduit-balanced-b	Chorister	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-b-node-t4-graveyard-03-s101021-mountain
+215	A	breadth-t4-slinger-balanced-b	Blunderbuss	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-slinger-balanced-b-node-t4-graveyard-03-s101021-mountain
+216	A	breadth-t4-spirit-balanced-b	Stormbringer	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-b-node-t4-graveyard-03-s101021-mountain
+217	A	breadth-t4-striker-balanced-c	Justicar	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-c-node-t4-graveyard-03-s101021-mountain
+218	A	breadth-t4-squire-balanced-c	Stalwart	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-c-node-t4-graveyard-03-s101021-mountain
+219	A	breadth-t4-apprentice-balanced-c	Cinder Lord	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-c-node-t4-graveyard-03-s101021-mountain
+220	A	breadth-t4-conduit-balanced-c	Ritualist	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-c-node-t4-graveyard-03-s101021-mountain
+221	A	breadth-t4-slinger-balanced-c	Dualslinger	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-balanced-c-node-t4-graveyard-03-s101021-mountain
+222	A	breadth-t4-spirit-balanced-c	Aetherist	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-c-node-t4-graveyard-03-s101021-mountain
+223	B	breadth-t3-striker-heavy	Breaker	close	node-t3-volcanic-03	101021	mountain-static	33	5	endurance-01-breadth-t3-striker-heavy-node-t3-volcanic-03-s101021-mountain
+224	A	breadth-t3-striker-heavy	Breaker	close	node-t3-volcanic-03	101021	volcanic-static	33	5	endurance-01-breadth-t3-striker-heavy-node-t3-volcanic-03-s101021-volcanic
+225	A	breadth-t3-squire-heavy	Bulwark	close	node-t3-volcanic-03	101021	mountain-static	33	5	endurance-01-breadth-t3-squire-heavy-node-t3-volcanic-03-s101021-mountain
+226	A	breadth-t3-apprentice-heavy	Rime-Bound	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-apprentice-heavy-node-t3-volcanic-03-s101021-mountain
+227	A	breadth-t3-conduit-heavy	Effigy	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-s101021-mountain
+228	A	breadth-t3-slinger-heavy	Artillerist	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-slinger-heavy-node-t3-volcanic-03-s101021-mountain
+229	A	breadth-t3-spirit-heavy	Phantasm	mid	node-t3-volcanic-03	101021	mountain-static	36	2	endurance-01-breadth-t3-spirit-heavy-node-t3-volcanic-03-s101021-mountain
+230	A	breadth-t4-striker-heavy-a	Berserker	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-mountain
+231	B	breadth-t4-squire-heavy-a	Avenger	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101021-mountain
+232	A	breadth-t4-squire-heavy-a	Avenger	close	node-t4-graveyard-03	101021	volcanic-static	40	7	endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101021-volcanic
+233	A	breadth-t4-apprentice-heavy-a	Icebreaker	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-a-node-t4-graveyard-03-s101021-mountain
+234	B	breadth-t4-conduit-heavy-a	Covenanter	mid	node-t4-graveyard-03	101021	mountain-static	36	11	endurance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-s101021-mountain
+235	A	breadth-t4-conduit-heavy-a	Covenanter	mid	node-t4-graveyard-03	101021	volcanic-static	36	11	endurance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-s101021-volcanic
+236	B	breadth-t4-slinger-heavy-a	Melter	mid	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-slinger-heavy-a-node-t4-graveyard-03-s101021-mountain
+237	A	breadth-t4-slinger-heavy-a	Melter	mid	node-t4-graveyard-03	101021	volcanic-static	40	7	endurance-01-breadth-t4-slinger-heavy-a-node-t4-graveyard-03-s101021-volcanic
+238	A	breadth-t4-spirit-heavy-a	Voidwalker	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-a-node-t4-graveyard-03-s101021-mountain
+239	B	breadth-t4-striker-heavy-b	Hemomancer	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-b-node-t4-graveyard-03-s101021-mountain
+240	A	breadth-t4-striker-heavy-b	Hemomancer	close	node-t4-graveyard-03	101021	volcanic-static	40	7	endurance-01-breadth-t4-striker-heavy-b-node-t4-graveyard-03-s101021-volcanic
+241	B	breadth-t4-squire-heavy-b	Destroyer	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-b-node-t4-graveyard-03-s101021-mountain
+242	A	breadth-t4-squire-heavy-b	Destroyer	close	node-t4-graveyard-03	101021	volcanic-static	40	7	endurance-01-breadth-t4-squire-heavy-b-node-t4-graveyard-03-s101021-volcanic
+243	A	breadth-t4-apprentice-heavy-b	Winter Warden	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-b-node-t4-graveyard-03-s101021-mountain
+244	A	breadth-t4-conduit-heavy-b	Champion	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain
+245	A	breadth-t4-slinger-heavy-b	Warmonger	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-heavy-b-node-t4-graveyard-03-s101021-mountain
+246	A	breadth-t4-spirit-heavy-b	Invoker	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-b-node-t4-graveyard-03-s101021-mountain
+247	A	breadth-t4-striker-heavy-c	Juggernaut	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-mountain
+248	A	breadth-t4-squire-heavy-c	Devout Priest	close	node-t4-graveyard-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-c-node-t4-graveyard-03-s101021-mountain
+249	A	breadth-t4-apprentice-heavy-c	Wind Spirit	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-c-node-t4-graveyard-03-s101021-mountain
+250	A	breadth-t4-conduit-heavy-c	Idolwright	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-heavy-c-node-t4-graveyard-03-s101021-mountain
+251	A	breadth-t4-slinger-heavy-c	Cannoneer	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-heavy-c-node-t4-graveyard-03-s101021-mountain
+252	A	breadth-t4-spirit-heavy-c	Tempest	mid	node-t4-graveyard-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-c-node-t4-graveyard-03-s101021-mountain
+253	A	breadth-t3-striker-light	Flurry	close	node-t3-tundra-03	101021	mountain-static	33	5	endurance-01-breadth-t3-striker-light-node-t3-tundra-03-s101021-mountain
+254	B	breadth-t3-squire-light	Warrior	close	node-t3-tundra-03	101021	mountain-static	33	5	endurance-01-breadth-t3-squire-light-node-t3-tundra-03-s101021-mountain
+255	A	breadth-t3-squire-light	Warrior	close	node-t3-tundra-03	101021	volcanic-static	33	5	endurance-01-breadth-t3-squire-light-node-t3-tundra-03-s101021-volcanic
+256	B	breadth-t3-apprentice-light	Venom vessel	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-apprentice-light-node-t3-tundra-03-s101021-mountain
+257	A	breadth-t3-apprentice-light	Venom vessel	mid	node-t3-tundra-03	101021	volcanic-static	36	2	endurance-01-breadth-t3-apprentice-light-node-t3-tundra-03-s101021-volcanic
+258	A	breadth-t3-conduit-light	Splinter	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-conduit-light-node-t3-tundra-03-s101021-mountain
+259	A	breadth-t3-slinger-light	Scout	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-slinger-light-node-t3-tundra-03-s101021-mountain
+260	A	breadth-t3-spirit-light	Spark	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-spirit-light-node-t3-tundra-03-s101021-mountain
+261	A	breadth-t4-striker-light-a	Shockblade	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-light-a-node-t4-desert-03-s101021-mountain
+262	A	breadth-t4-squire-light-a	Assassin	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-light-a-node-t4-desert-03-s101021-mountain
+263	A	breadth-t4-apprentice-light-a	Venomslinger	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-a-node-t4-desert-03-s101021-mountain
+264	A	breadth-t4-conduit-light-a	Inquisitor	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-a-node-t4-desert-03-s101021-mountain
+265	A	breadth-t4-slinger-light-a	Duelist	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-a-node-t4-desert-03-s101021-mountain
+266	A	breadth-t4-spirit-light-a	Stormdancer	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-a-node-t4-desert-03-s101021-mountain
+267	A	breadth-t4-striker-light-b	Scrapper	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-light-b-node-t4-desert-03-s101021-mountain
+268	A	breadth-t4-squire-light-b	Transcendant	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-light-b-node-t4-desert-03-s101021-mountain
+269	A	breadth-t4-apprentice-light-b	Cultist	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-b-node-t4-desert-03-s101021-mountain
+270	A	breadth-t4-conduit-light-b	Kilnmaster	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-b-node-t4-desert-03-s101021-mountain
+271	A	breadth-t4-slinger-light-b	Desperado	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-b-node-t4-desert-03-s101021-mountain
+272	A	breadth-t4-spirit-light-b	Surge	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-b-node-t4-desert-03-s101021-mountain
+273	A	breadth-t4-striker-light-c	Swiftblade	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-light-c-node-t4-desert-03-s101021-mountain
+274	A	breadth-t4-squire-light-c	Sunderer	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-light-c-node-t4-desert-03-s101021-mountain
+275	A	breadth-t4-apprentice-light-c	Zealot	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-light-c-node-t4-desert-03-s101021-mountain
+276	A	breadth-t4-conduit-light-c	Iconoclast	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-light-c-node-t4-desert-03-s101021-mountain
+277	A	breadth-t4-slinger-light-c	Sniper	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-light-c-node-t4-desert-03-s101021-mountain
+278	A	breadth-t4-spirit-light-c	Channeler	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-light-c-node-t4-desert-03-s101021-mountain
+279	B	breadth-t3-striker-balanced	Skirmisher	close	node-t3-tundra-03	101021	mountain-static	33	5	endurance-01-breadth-t3-striker-balanced-node-t3-tundra-03-s101021-mountain
+280	A	breadth-t3-striker-balanced	Skirmisher	close	node-t3-tundra-03	101021	volcanic-static	33	5	endurance-01-breadth-t3-striker-balanced-node-t3-tundra-03-s101021-volcanic
+281	B	breadth-t3-squire-balanced	Knight	close	node-t3-tundra-03	101021	mountain-static	33	5	endurance-01-breadth-t3-squire-balanced-node-t3-tundra-03-s101021-mountain
+282	A	breadth-t3-squire-balanced	Knight	close	node-t3-tundra-03	101021	volcanic-static	33	5	endurance-01-breadth-t3-squire-balanced-node-t3-tundra-03-s101021-volcanic
+283	B	breadth-t3-apprentice-balanced	Ember mage	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-s101021-mountain
+284	A	breadth-t3-apprentice-balanced	Ember mage	mid	node-t3-tundra-03	101021	volcanic-static	36	2	endurance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-s101021-volcanic
+285	A	breadth-t3-conduit-balanced	Consort	mid	node-t3-tundra-03	101021	mountain-static	33	5	endurance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-s101021-mountain
+286	A	breadth-t3-slinger-balanced	Marksman	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-slinger-balanced-node-t3-tundra-03-s101021-mountain
+287	A	breadth-t3-spirit-balanced	Wraith	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-spirit-balanced-node-t3-tundra-03-s101021-mountain
+288	A	breadth-t4-striker-balanced-a	Maestro	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-a-node-t4-desert-03-s101021-mountain
+289	A	breadth-t4-squire-balanced-a	Reverb	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-a-node-t4-desert-03-s101021-mountain
+290	A	breadth-t4-apprentice-balanced-a	Pyromancer	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-a-node-t4-desert-03-s101021-mountain
+291	A	breadth-t4-conduit-balanced-a	Marshal	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-a-node-t4-desert-03-s101021-mountain
+292	A	breadth-t4-slinger-balanced-a	Bounty hunter	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-balanced-a-node-t4-desert-03-s101021-mountain
+293	B	breadth-t4-spirit-balanced-a	Equinox	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-a-node-t4-desert-03-s101021-mountain
+294	A	breadth-t4-spirit-balanced-a	Equinox	mid	node-t4-desert-03	101021	volcanic-static	43	4	endurance-01-breadth-t4-spirit-balanced-a-node-t4-desert-03-s101021-volcanic
+295	A	breadth-t4-striker-balanced-b	Wavecrest	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-b-node-t4-desert-03-s101021-mountain
+296	A	breadth-t4-squire-balanced-b	Dynamo	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-b-node-t4-desert-03-s101021-mountain
+297	A	breadth-t4-apprentice-balanced-b	Firebrand	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-b-node-t4-desert-03-s101021-mountain
+298	A	breadth-t4-conduit-balanced-b	Chorister	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-b-node-t4-desert-03-s101021-mountain
+299	A	breadth-t4-slinger-balanced-b	Blunderbuss	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-slinger-balanced-b-node-t4-desert-03-s101021-mountain
+300	A	breadth-t4-spirit-balanced-b	Stormbringer	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-b-node-t4-desert-03-s101021-mountain
+301	A	breadth-t4-striker-balanced-c	Justicar	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-balanced-c-node-t4-desert-03-s101021-mountain
+302	A	breadth-t4-squire-balanced-c	Stalwart	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-balanced-c-node-t4-desert-03-s101021-mountain
+303	A	breadth-t4-apprentice-balanced-c	Cinder Lord	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-balanced-c-node-t4-desert-03-s101021-mountain
+304	A	breadth-t4-conduit-balanced-c	Ritualist	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-balanced-c-node-t4-desert-03-s101021-mountain
+305	A	breadth-t4-slinger-balanced-c	Dualslinger	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-balanced-c-node-t4-desert-03-s101021-mountain
+306	A	breadth-t4-spirit-balanced-c	Aetherist	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-balanced-c-node-t4-desert-03-s101021-mountain
+307	B	breadth-t3-striker-heavy	Breaker	close	node-t3-tundra-03	101021	mountain-static	33	5	endurance-01-breadth-t3-striker-heavy-node-t3-tundra-03-s101021-mountain
+308	A	breadth-t3-striker-heavy	Breaker	close	node-t3-tundra-03	101021	volcanic-static	33	5	endurance-01-breadth-t3-striker-heavy-node-t3-tundra-03-s101021-volcanic
+309	A	breadth-t3-squire-heavy	Bulwark	close	node-t3-tundra-03	101021	mountain-static	33	5	endurance-01-breadth-t3-squire-heavy-node-t3-tundra-03-s101021-mountain
+310	A	breadth-t3-apprentice-heavy	Rime-Bound	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-apprentice-heavy-node-t3-tundra-03-s101021-mountain
+311	A	breadth-t3-conduit-heavy	Effigy	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-s101021-mountain
+312	A	breadth-t3-slinger-heavy	Artillerist	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-slinger-heavy-node-t3-tundra-03-s101021-mountain
+313	A	breadth-t3-spirit-heavy	Phantasm	mid	node-t3-tundra-03	101021	mountain-static	36	2	endurance-01-breadth-t3-spirit-heavy-node-t3-tundra-03-s101021-mountain
+314	A	breadth-t4-striker-heavy-a	Berserker	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-mountain
+315	B	breadth-t4-squire-heavy-a	Avenger	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101021-mountain
+316	A	breadth-t4-squire-heavy-a	Avenger	close	node-t4-desert-03	101021	volcanic-static	40	7	endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101021-volcanic
+317	A	breadth-t4-apprentice-heavy-a	Icebreaker	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-a-node-t4-desert-03-s101021-mountain
+318	B	breadth-t4-conduit-heavy-a	Covenanter	mid	node-t4-desert-03	101021	mountain-static	36	11	endurance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-s101021-mountain
+319	A	breadth-t4-conduit-heavy-a	Covenanter	mid	node-t4-desert-03	101021	volcanic-static	36	11	endurance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-s101021-volcanic
+320	B	breadth-t4-slinger-heavy-a	Melter	mid	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101021-mountain
+321	A	breadth-t4-slinger-heavy-a	Melter	mid	node-t4-desert-03	101021	volcanic-static	40	7	endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101021-volcanic
+322	A	breadth-t4-spirit-heavy-a	Voidwalker	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-a-node-t4-desert-03-s101021-mountain
+323	B	breadth-t4-striker-heavy-b	Hemomancer	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-b-node-t4-desert-03-s101021-mountain
+324	A	breadth-t4-striker-heavy-b	Hemomancer	close	node-t4-desert-03	101021	volcanic-static	40	7	endurance-01-breadth-t4-striker-heavy-b-node-t4-desert-03-s101021-volcanic
+325	B	breadth-t4-squire-heavy-b	Destroyer	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-b-node-t4-desert-03-s101021-mountain
+326	A	breadth-t4-squire-heavy-b	Destroyer	close	node-t4-desert-03	101021	volcanic-static	40	7	endurance-01-breadth-t4-squire-heavy-b-node-t4-desert-03-s101021-volcanic
+327	A	breadth-t4-apprentice-heavy-b	Winter Warden	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-b-node-t4-desert-03-s101021-mountain
+328	A	breadth-t4-conduit-heavy-b	Champion	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain
+329	A	breadth-t4-slinger-heavy-b	Warmonger	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-heavy-b-node-t4-desert-03-s101021-mountain
+330	A	breadth-t4-spirit-heavy-b	Invoker	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-b-node-t4-desert-03-s101021-mountain
+331	A	breadth-t4-striker-heavy-c	Juggernaut	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-mountain
+332	A	breadth-t4-squire-heavy-c	Devout Priest	close	node-t4-desert-03	101021	mountain-static	40	7	endurance-01-breadth-t4-squire-heavy-c-node-t4-desert-03-s101021-mountain
+333	A	breadth-t4-apprentice-heavy-c	Wind Spirit	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-apprentice-heavy-c-node-t4-desert-03-s101021-mountain
+334	A	breadth-t4-conduit-heavy-c	Idolwright	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-conduit-heavy-c-node-t4-desert-03-s101021-mountain
+335	A	breadth-t4-slinger-heavy-c	Cannoneer	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-slinger-heavy-c-node-t4-desert-03-s101021-mountain
+336	A	breadth-t4-spirit-heavy-c	Tempest	mid	node-t4-desert-03	101021	mountain-static	43	4	endurance-01-breadth-t4-spirit-heavy-c-node-t4-desert-03-s101021-mountain

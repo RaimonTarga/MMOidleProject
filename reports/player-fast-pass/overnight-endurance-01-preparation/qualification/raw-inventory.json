@@ -1,0 +1,27 @@
+[
+  {
+    "path": "D:\\mmo-idle\\overnight-endurance-01\\qualification\\zero-tick\\artifacts\\complete.json",
+    "bytes": 41,
+    "sha256": "d13a4eb19a6683582fc6137c12d4b966fa1f7928b3e07fc262c3080db1f6c0aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-endurance-01\\qualification\\zero-tick\\artifacts\\index.json",
+    "bytes": 8076406,
+    "sha256": "ef1e45d4f21cdded486352d148e054c2621143f15a99576a2f70cfefb54e066d"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-endurance-01\\qualification\\zero-tick\\artifacts\\manifest.json",
+    "bytes": 1127904,
+    "sha256": "77cfb0ac01f4736adbc4c3fab895080f19387d667ddadbc11d972eb9d1750f70"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-endurance-01\\qualification\\zero-tick\\process.json",
+    "bytes": 654,
+    "sha256": "e44e192555db8ccb93d3eac1ad38879b51f726bd843703cc78645f29a1e93a5e"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-endurance-01\\qualification\\zero-tick\\process.log",
+    "bytes": 31228,
+    "sha256": "33e369d8faf118342a577f53ca3ecb2b075191dd8ffc29be1cc3d728940b978f"
+  }
+]

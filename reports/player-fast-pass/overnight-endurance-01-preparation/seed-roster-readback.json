@@ -1,0 +1,1682 @@
+[
+  {
+    "identity": "breadth-t3-apprentice-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-heavy",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-heavy",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-light",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-light",
+    "fixture": "node-t3-tundra-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-light",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-apprentice-light",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-conduit-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-conduit-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-conduit-heavy",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-conduit-heavy",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-conduit-light",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-conduit-light",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-slinger-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-slinger-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-slinger-heavy",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-slinger-heavy",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-slinger-light",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-slinger-light",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-spirit-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-spirit-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-spirit-heavy",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-spirit-heavy",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-spirit-light",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-spirit-light",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-heavy",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-heavy",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-light",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-light",
+    "fixture": "node-t3-tundra-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-light",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-squire-light",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-balanced",
+    "fixture": "node-t3-tundra-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-balanced",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-heavy",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-heavy",
+    "fixture": "node-t3-tundra-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-heavy",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-heavy",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-light",
+    "fixture": "node-t3-tundra-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "d517048abb76048893b63d36050070e621d7093d8e9f8fe3a316f91b39d290d1",
+      "101021": "154226f28e367f98062f28e5293f5f39217587c2825cede6c0614cb6cb698d92"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t3-striker-light",
+    "fixture": "node-t3-volcanic-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "29d06783784eac7d76ba419314cf39ffc34e636047d0fafea08b8b84375ddeaf",
+      "101021": "934587698f85751e8c4f30e1d663ffc74176989b471b161b33af95699c1c3b84"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-balanced-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-balanced-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-balanced-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-balanced-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-balanced-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-balanced-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-heavy-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-heavy-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-light-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-light-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-light-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-light-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-light-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-apprentice-light-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-balanced-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-balanced-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-balanced-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-balanced-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-balanced-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-balanced-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-heavy-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-heavy-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-light-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-light-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-light-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-light-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-light-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-conduit-light-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-balanced-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-balanced-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-balanced-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-balanced-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-balanced-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-balanced-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-heavy-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-heavy-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-light-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-light-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-light-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-light-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-light-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-slinger-light-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-balanced-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-balanced-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-balanced-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-balanced-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-balanced-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-balanced-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-balanced-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-balanced-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-heavy-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-heavy-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-light-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-light-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-light-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-light-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-light-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-spirit-light-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-balanced-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-balanced-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-balanced-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-balanced-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-balanced-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-balanced-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-heavy-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-light-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-light-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-light-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-light-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-light-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-squire-light-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-balanced-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-balanced-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-balanced-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-balanced-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-balanced-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-balanced-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "volcanic-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-heavy-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-heavy-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-light-a",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-light-a",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-light-b",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-light-b",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-light-c",
+    "fixture": "node-t4-desert-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "7027df6bade2a97e19f1fb0f87587a8e565b57cd3e88656cac05861ca4b687fc",
+      "101021": "f2d1f04b37cb6e14ec37d437f5a0906bcaa077bcf94f0d295e9441a455ef23ec"
+    },
+    "identicalInitialRoster": false
+  },
+  {
+    "identity": "breadth-t4-striker-light-c",
+    "fixture": "node-t4-graveyard-03",
+    "arm": "mountain-static",
+    "rosters": {
+      "101009": "6bfd10deb6a5e9e16ef48a3ee19a0d7a093d1bc1f31177944cf1f87602dd0b22",
+      "101021": "cc3f07de1a56c02a278fa2de0b53f8744436638245d8715f4e8815c5ed4c527e"
+    },
+    "identicalInitialRoster": false
+  }
+]
