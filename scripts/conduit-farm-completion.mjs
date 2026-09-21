@@ -32,7 +32,7 @@ function verifySource(frozen) {
 }
 function child(script,argv,out) {
   assert(!existsSync(out),`Fresh output required: ${out}`);
-  const r=spawnSync(process.execPath,['--conditions=development',require.resolve('tsx/cli'),`scripts/${script}`,...argv,`--out=${out}`],
+  const r=spawnSync(process.execPath,[require.resolve('tsx/cli'),'--conditions=development',`scripts/${script}`,...argv,`--out=${out}`],
     {cwd:join(root,'server'),encoding:'utf8',timeout:15*60*1000,maxBuffer:16*1024*1024});
   mkdirSync(out,{recursive:true});
   writeFileSync(join(out,'process.log'),(r.stdout??'')+(r.stderr??''));

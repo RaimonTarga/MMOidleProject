@@ -67,7 +67,7 @@ const rows=[],blocked=new Set();
 for(const c of manifest.cases) {
   if(blocked.has(c.setting)) {rows.push({...c,status:'not-run-family-blocked'});continue;}
   verify();const dest=join(out,c.observationId);
-  const argv=['--conditions=development',require.resolve('tsx/cli'),join(root,'scripts/conduit-r2-child.mjs'),
+  const argv=[require.resolve('tsx/cli'),'--conditions=development',join(root,'scripts/conduit-r2-child.mjs'),
     '--trial=player-breadth',`--block=${c.caseId}`,`--arm=${c.arm}`,`--mode=${args.mode}`,`--revision=${frozen.revision}`,`--hitboxes=${frozen.hitboxes}`,`--out=${dest}`];
   const r=spawnSync(process.execPath,argv,{cwd:join(root,'server'),encoding:'utf8',timeout:15*60*1000,maxBuffer:16*1024*1024});
   mkdirSync(dest,{recursive:true});writeFileSync(join(dest,'process.log'),(r.stdout??'')+(r.stderr??''));
