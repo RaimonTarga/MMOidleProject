@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { SUMMONER_FRAME_TUNING } from '../shared/src/data/summoner.ts';
+import { createRequire } from 'node:module';
+const require=createRequire(new URL('../server/package.json',import.meta.url));
+const { SUMMONER_FRAME_TUNING }=require('@mmo-idle/shared');
 import { BREADTH_CELLS } from '../server/bench/balance/playerBreadthSpec.ts';
 import { createBalanceWorld } from '../server/bench/balance/worldFactory.ts';
 import { prepareSurveyBot } from '../server/bench/balance/ttkSurveySpec.ts';
@@ -35,6 +37,10 @@ try {
     SUMMONER_FRAME_TUNING.balanced.minimumReconstructionIntervalMs=1500;
   }
   const applied=recorder.profileReceipt();
+  if(args.arm==='candidate-r2') {
+    assert(applied.profile.reconstructionIntervalMs < baseline.profile.reconstructionIntervalMs,'R2 must change the runtime profile');
+    assert.equal(applied.profile.reconstructionFactors.floorMs,1500,'R2 floor must be visible');
+  }
   const strip=({reconstructionFactors,reconstructionIntervalMs,...rest})=>rest;
   assert.deepEqual(strip(applied.profile),strip(baseline.profile),'Only timing may differ');
   assert.deepEqual(applied.slots,baseline.slots,'HP budgets/payment must remain fixed');
