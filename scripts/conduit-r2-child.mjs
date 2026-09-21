@@ -42,8 +42,8 @@ try {
     transportLabel:'untreated means no historical opt-in; arm is identified here, not by the legacy transport label'};
   recorder.finish('zero-tick-arm-readback');
 } finally {teardownArena(world);}
-mkdirSync(args.out,{recursive:true});
-writeFileSync(join(args.out,'arm.json'),JSON.stringify(receipt,null,2)+'\n');
+if(args.mode==='qualify') mkdirSync(args.out,{recursive:true});
+writeFileSync(args.mode==='run'?args.out+'.arm.json':join(args.out,'arm.json'),JSON.stringify(receipt,null,2)+'\n');
 if(args.mode==='run') {
   // Existing exact-head guard, seed/window, package preparation and recording stay authoritative.
   process.argv=process.argv.filter(a=>!a.startsWith('--arm='));

@@ -74,7 +74,7 @@ for(const c of manifest.cases) {
   write(join(dest,'process.json'),{status:r.status,signal:r.signal,error:r.error?.message??null,argv});
   try {
     assert.equal(r.status,0);verify();
-    const arm=json(join(dest,'arm.json'));assert.equal(arm.arm,c.arm);assert.equal(arm.revision,frozen.revision);
+    const arm=json(args.mode==='run'?dest+'.arm.json':join(dest,'arm.json'));assert.equal(arm.arm,c.arm);assert.equal(arm.revision,frozen.revision);
     if(args.mode==='run') {
       assert(existsSync(join(dest,'complete.json')));
       const m=json(join(dest,'manifest.json')),ready=json(join(dest,`${c.caseId}-s101003/ready.json`));
