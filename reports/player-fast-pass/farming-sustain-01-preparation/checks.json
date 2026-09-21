@@ -1,0 +1,41 @@
+{
+  "executionSource": "d056896dffd62dc24f0d13ead7b887e61d357006",
+  "sourceSha256": "75dc1afaaed8a676568d1efedf4895540ebd1fadff56c9e8e6f063c6eb59ed77",
+  "baseline": "c9e65b81b2b87bd8ecc342dc0f3d36db1f5efdfa",
+  "priorExecutionSource": "f9dcde59217770390752f3ce0f089e323b0a6f37",
+  "productionSourceIdenticalToPrior": true,
+  "focusedTests": {
+    "farmingSustain.test.ts": "passed: 20 legal loadouts, native threshold/cooldown/default return; no World ticks",
+    "farmingStance.test.ts": "passed: 24 existing packages unchanged",
+    "recovery.test.ts": "passed",
+    "stances.test.ts": "passed",
+    "runeMaintenance.test.ts": "passed"
+  },
+  "typecheck": "passed including bench; corrected optional recipeGroup narrowing before sealing",
+  "sharedBuild": "passed",
+  "serverTscBuild": "passed",
+  "fullSuite": "not run",
+  "browserPlaytest": "not run",
+  "generalBotPreflight": "not run; this uses synthetic production World benchmark qualification",
+  "matrixCheck": "20 unique cells, exact prior T3 nodes, within-pair support invariants",
+  "actualChildDriftCheck": "rejected invalid source hash before arena/output creation",
+  "mainCombatObservations": 0,
+  "productionSmokeWindows": 0,
+  "optionalCObservations": 0,
+  "qualification": {
+    "planned": 20,
+    "qualified": 20,
+    "failed": 0,
+    "combatWorldTicks": 0,
+    "externalRoot": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\qualification"
+  },
+  "reference": {
+    "path": "C:\\Users\\osaif\\Downloads\\FARMING_SUSTAIN_AND_CONDUIT_NEXT_EXPERIMENT_ASTRA(1).md",
+    "sha256": "5d673f64953fa4909f4374512941dbd3bac5fd0304a425ff7f1a3feb4827844a",
+    "role": "reference proposal; user authorized preparation only"
+  },
+  "recorderModuleCheck": "passed; read-only snapshot preserved; zero World ticks",
+  "packetNotLaunched": true,
+  "externalMainOutputAbsent": true,
+  "qualificationReceiptSha256": "b864ceff1a979de2b1d96617e6efb30605ddcb8ce0f76dc54f8b3e31b480d8c2"
+}

@@ -1,0 +1,17 @@
+{
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "argv": [
+    "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-0921\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\cli.mjs",
+    "--conditions=development",
+    "scripts/ttkSurvey.ts",
+    "--trial=farming-sustain-01",
+    "--block=sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static",
+    "--mode=qualify",
+    "--revision=d056896dffd62dc24f0d13ead7b887e61d357006",
+    "--source-contract=C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\player-fast-pass\\farming-sustain-01-preparation\\packet\\identity.json",
+    "--hitboxes=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\ttk-survey\\hitboxes.json",
+    "--out=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fu01-data\\qualification\\sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static"
+  ]
+}

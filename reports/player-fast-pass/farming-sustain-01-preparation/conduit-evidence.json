@@ -1,0 +1,2016 @@
+{
+  "rawRoot": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01",
+  "newCombatObservations": 0,
+  "candidate": null,
+  "optionalCasesUsed": 0,
+  "rows": [
+    {
+      "id": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive",
+      "source": "f9dcde59217770390752f3ce0f089e323b0a6f37",
+      "files": {
+        "summary.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\summary.json",
+          "sha256": "6da1890d69e835884ac81a1a6586c66c272a98f350cf4a88a13347a07e1c62d5"
+        },
+        "conduit.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\conduit.json",
+          "sha256": "905146d033e0911dc3a558ce24d4094d29a6d472808e6f9c635dc50f06eb61ee"
+        },
+        "events.jsonl": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\events.jsonl",
+          "sha256": "dbd58c645c382c4219551cc64e3be7718d081f0aad4baad20abef54c6f2edb33"
+        },
+        "samples.jsonl": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\samples.jsonl",
+          "sha256": "add3bae9bccca31d6f14181de6b8d8325ba0e990d933b0d34da53ddb03b1669f"
+        },
+        "ready.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003\\ready.json",
+          "sha256": "9bcc7d1fd6389234326e8ba3ade031436d2928d3979b52bcbc6cd9a917a2a93e"
+        }
+      },
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "counts": {
+        "damaged": 1,
+        "killed": 0,
+        "censored": 1,
+        "hpRegain": 0
+      },
+      "ownerIncomingRecordedHp": 0,
+      "ownerRecordedHealHp": 1380,
+      "outgoingRecordedHp": 0,
+      "outgoingAbsorbedHp": 30114,
+      "availability": 0.8454151383794598,
+      "zeroBodyMs": 0,
+      "readyBlockedMs": 0,
+      "paidHp": 2024,
+      "queueHealingHp": 2023.9999999999427,
+      "meanQueueDepth": 0.7416666666666667,
+      "lifeEndCauses": {
+        "right-censored-at-terminal": 4,
+        "combat-death": 93
+      },
+      "replacementFirstAttackDelayMs": {
+        "n": 92,
+        "min": 0,
+        "max": 100
+      },
+      "delivery": {
+        "exposureMs": {
+          "intact": 296800,
+          "depleted": 0
+        },
+        "byTargetPhase": [
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-1",
+            "targetType": "glacier-bear",
+            "phase": "above-half-hp",
+            "attempts": 2151,
+            "primaryHpDecrease": 0,
+            "exposureMs": 296800
+          }
+        ],
+        "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+        "delayedAndSecondaryDamage": null,
+        "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+      },
+      "terminalOwner": {
+        "hp": 371,
+        "maxHp": 371,
+        "barrier": 126
+      },
+      "death": [],
+      "preDeathEvents": [],
+      "stall": {
+        "targetId": "node-t3-tundra-03_monster-1",
+        "sampledHpValues": [
+          4313
+        ],
+        "distinctAggroSessionStarts": 94,
+        "damageEvents": 2151,
+        "damageGapMaxMs": 300,
+        "firstDamageEventMs": 3100,
+        "lastDamageEventMs": 299800,
+        "firstSamples": [
+          {
+            "atMs": 0,
+            "hp": 4313,
+            "aggro": null
+          },
+          {
+            "atMs": 1000,
+            "hp": 4313,
+            "aggro": null
+          },
+          {
+            "atMs": 2000,
+            "hp": 4313,
+            "aggro": null
+          },
+          {
+            "atMs": 3000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-4",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000002800,
+              "sinceMs": 1800000002800
+            }
+          },
+          {
+            "atMs": 4000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-3",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000003800,
+              "sinceMs": 1800000003800
+            }
+          },
+          {
+            "atMs": 5000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-3",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000003800,
+              "sinceMs": 1800000003800
+            }
+          },
+          {
+            "atMs": 6000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-3",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000003800,
+              "sinceMs": 1800000003800
+            }
+          },
+          {
+            "atMs": 7000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-2",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000007000,
+              "sinceMs": 1800000007000
+            }
+          },
+          {
+            "atMs": 8000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-2",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000007000,
+              "sinceMs": 1800000007000
+            }
+          },
+          {
+            "atMs": 9000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-2",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000007000,
+              "sinceMs": 1800000007000
+            }
+          },
+          {
+            "atMs": 10000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-2",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000007000,
+              "sinceMs": 1800000007000
+            }
+          },
+          {
+            "atMs": 11000,
+            "hp": 4313,
+            "aggro": {
+              "targetId": "minion_bench-bot-0-5",
+              "targetKind": "minion",
+              "lastAggroAt": 1800000010200,
+              "sinceMs": 1800000010200
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive",
+      "source": "f9dcde59217770390752f3ce0f089e323b0a6f37",
+      "files": {
+        "summary.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\summary.json",
+          "sha256": "96337bdb84aa2d2fe12fa9ab2830ba7c97cf191636fcd02884b1395a2c1722a9"
+        },
+        "conduit.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\conduit.json",
+          "sha256": "594b9280eca0a1208042c62e39be465913afe6f9dcee511596c13f2dffeec20a"
+        },
+        "events.jsonl": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\events.jsonl",
+          "sha256": "98209d14d2ac729ae4a77e6daaa42cb3726db300a67ef664c2fb718c35eff9c6"
+        },
+        "samples.jsonl": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\samples.jsonl",
+          "sha256": "e3c7b827785cae17964769b9b7196478eeef17b9640edf1edb4f6e1ba763bfdd"
+        },
+        "ready.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive\\stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003\\ready.json",
+          "sha256": "f45225e92467f2b942a93a60560f7468928b8b16a66c42553523ce4cd0281aad"
+        }
+      },
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "counts": {
+        "damaged": 17,
+        "killed": 17,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "ownerIncomingRecordedHp": 0,
+      "ownerRecordedHealHp": 1056,
+      "outgoingRecordedHp": 17830,
+      "outgoingAbsorbedHp": 7587,
+      "availability": 0.8866955651883961,
+      "zeroBodyMs": 0,
+      "readyBlockedMs": 0,
+      "paidHp": 1430,
+      "queueHealingHp": 1055.9999999999827,
+      "meanQueueDepth": 0.5446666666666666,
+      "lifeEndCauses": {
+        "combat-death": 65,
+        "right-censored-at-terminal": 5
+      },
+      "replacementFirstAttackDelayMs": {
+        "n": 61,
+        "min": 0,
+        "max": 10800
+      },
+      "delivery": {
+        "exposureMs": {
+          "intact": 225600,
+          "depleted": 6900
+        },
+        "byTargetPhase": [
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-1",
+            "targetType": "glacier-bear",
+            "phase": "above-half-hp",
+            "attempts": 92,
+            "primaryHpDecrease": 2547,
+            "exposureMs": 12300
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-1",
+            "targetType": "glacier-bear",
+            "phase": "at-or-below-half-hp",
+            "attempts": 70,
+            "primaryHpDecrease": 1766,
+            "exposureMs": 9800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-12",
+            "targetType": "frost-lurker",
+            "phase": "above-half-hp",
+            "attempts": 28,
+            "primaryHpDecrease": 560,
+            "exposureMs": 3700
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-12",
+            "targetType": "frost-lurker",
+            "phase": "at-or-below-half-hp",
+            "attempts": 27,
+            "primaryHpDecrease": 533,
+            "exposureMs": 3800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-11",
+            "targetType": "glacier-bear",
+            "phase": "above-half-hp",
+            "attempts": 91,
+            "primaryHpDecrease": 2547,
+            "exposureMs": 12300
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-11",
+            "targetType": "glacier-bear",
+            "phase": "at-or-below-half-hp",
+            "attempts": 70,
+            "primaryHpDecrease": 1766,
+            "exposureMs": 9800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-7",
+            "targetType": "frost-lurker",
+            "phase": "above-half-hp",
+            "attempts": 28,
+            "primaryHpDecrease": 560,
+            "exposureMs": 3700
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-7",
+            "targetType": "frost-lurker",
+            "phase": "at-or-below-half-hp",
+            "attempts": 27,
+            "primaryHpDecrease": 533,
+            "exposureMs": 3800
+          },
+          {
+            "state": "depleted",
+            "targetId": "node-t3-tundra-03_monster-9",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 18,
+            "primaryHpDecrease": 360,
+            "exposureMs": 3800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-9",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 8,
+            "primaryHpDecrease": 160,
+            "exposureMs": 800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-9",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 11,
+            "primaryHpDecrease": 220,
+            "exposureMs": 1600
+          },
+          {
+            "state": "depleted",
+            "targetId": "node-t3-tundra-03_monster-9",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 14,
+            "primaryHpDecrease": 272,
+            "exposureMs": 2900
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-13",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 26,
+            "primaryHpDecrease": 520,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-13",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 25,
+            "primaryHpDecrease": 492,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-6",
+            "targetType": "frost-lurker",
+            "phase": "above-half-hp",
+            "attempts": 28,
+            "primaryHpDecrease": 560,
+            "exposureMs": 3700
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-6",
+            "targetType": "frost-lurker",
+            "phase": "at-or-below-half-hp",
+            "attempts": 27,
+            "primaryHpDecrease": 533,
+            "exposureMs": 3800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-19",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 26,
+            "primaryHpDecrease": 520,
+            "exposureMs": 3800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-19",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 25,
+            "primaryHpDecrease": 492,
+            "exposureMs": 3500
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-14",
+            "targetType": "glacier-bear",
+            "phase": "above-half-hp",
+            "attempts": 91,
+            "primaryHpDecrease": 2547,
+            "exposureMs": 12300
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-14",
+            "targetType": "glacier-bear",
+            "phase": "at-or-below-half-hp",
+            "attempts": 70,
+            "primaryHpDecrease": 1766,
+            "exposureMs": 9800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-5",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 26,
+            "primaryHpDecrease": 520,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-5",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 25,
+            "primaryHpDecrease": 492,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-21",
+            "targetType": "frost-lurker",
+            "phase": "above-half-hp",
+            "attempts": 28,
+            "primaryHpDecrease": 560,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-21",
+            "targetType": "frost-lurker",
+            "phase": "at-or-below-half-hp",
+            "attempts": 27,
+            "primaryHpDecrease": 533,
+            "exposureMs": 3800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-24",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 26,
+            "primaryHpDecrease": 520,
+            "exposureMs": 3700
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-24",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 25,
+            "primaryHpDecrease": 492,
+            "exposureMs": 3500
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-18",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 26,
+            "primaryHpDecrease": 520,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-18",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 25,
+            "primaryHpDecrease": 492,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-8",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 26,
+            "primaryHpDecrease": 520,
+            "exposureMs": 3700
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-8",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 25,
+            "primaryHpDecrease": 492,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-10",
+            "targetType": "frost-lurker",
+            "phase": "above-half-hp",
+            "attempts": 28,
+            "primaryHpDecrease": 560,
+            "exposureMs": 3700
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-10",
+            "targetType": "frost-lurker",
+            "phase": "at-or-below-half-hp",
+            "attempts": 27,
+            "primaryHpDecrease": 533,
+            "exposureMs": 3800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-20",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 26,
+            "primaryHpDecrease": 520,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-20",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 25,
+            "primaryHpDecrease": 492,
+            "exposureMs": 3600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-16",
+            "targetType": "rime-caster",
+            "phase": "above-half-hp",
+            "attempts": 26,
+            "primaryHpDecrease": 520,
+            "exposureMs": 3800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-tundra-03_monster-16",
+            "targetType": "rime-caster",
+            "phase": "at-or-below-half-hp",
+            "attempts": 25,
+            "primaryHpDecrease": 492,
+            "exposureMs": 3500
+          }
+        ],
+        "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+        "delayedAndSecondaryDamage": null,
+        "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+      },
+      "terminalOwner": {
+        "hp": 349,
+        "maxHp": 371,
+        "barrier": 126
+      },
+      "death": [],
+      "preDeathEvents": []
+    },
+    {
+      "id": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+      "source": "f9dcde59217770390752f3ce0f089e323b0a6f37",
+      "files": {
+        "summary.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\summary.json",
+          "sha256": "9ae7ede7d182cb6aa873e9fff268c00e3e93bf131217c7d5694a875f859b1c0a"
+        },
+        "conduit.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\conduit.json",
+          "sha256": "4cdd5c107bf50abac5e74bb37b1c4629742e356b4d39efbe2a86303fcf27bac2"
+        },
+        "events.jsonl": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\events.jsonl",
+          "sha256": "82eba46cba2d076b44b37b4d70a7dd965d123a3a14ecf07f44cf6ea34d9fd962"
+        },
+        "samples.jsonl": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\samples.jsonl",
+          "sha256": "9ac1a22b2aec8eacb2b1a55626c1fae71d18378d36792a79038df47dc0a3ce7e"
+        },
+        "ready.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive\\stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003\\ready.json",
+          "sha256": "4e2d986ec219a436cde8ab22c387fd1e1274646ed3aaacd59e7148f6ebcba399"
+        }
+      },
+      "outcome": "player-died",
+      "elapsedMs": 177600,
+      "counts": {
+        "damaged": 17,
+        "killed": 10,
+        "censored": 7,
+        "hpRegain": 4
+      },
+      "ownerIncomingRecordedHp": 3096.4000000000005,
+      "ownerRecordedHealHp": 3306,
+      "outgoingRecordedHp": 11372,
+      "outgoingAbsorbedHp": 421,
+      "availability": 0.9507319819819819,
+      "zeroBodyMs": 1300,
+      "readyBlockedMs": 200,
+      "paidHp": 332,
+      "queueHealingHp": 255.31199999999953,
+      "meanQueueDepth": 0.09622960045019696,
+      "lifeEndCauses": {
+        "combat-death": 4,
+        "unknown-removal": 2
+      },
+      "replacementFirstAttackDelayMs": {
+        "n": 4,
+        "min": 0,
+        "max": 100
+      },
+      "delivery": {
+        "exposureMs": {
+          "intact": 154400,
+          "depleted": 16200
+        },
+        "byTargetPhase": [
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-1",
+            "targetType": "cinder-hound",
+            "phase": "above-half-hp",
+            "attempts": 15,
+            "primaryHpDecrease": 672,
+            "exposureMs": 3900
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-4",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 3,
+            "primaryHpDecrease": 136,
+            "exposureMs": 600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-2",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 190,
+            "exposureMs": 400
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-1",
+            "targetType": "cinder-hound",
+            "phase": "at-or-below-half-hp",
+            "attempts": 13,
+            "primaryHpDecrease": 603,
+            "exposureMs": 2800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-22",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 7,
+            "primaryHpDecrease": 336,
+            "exposureMs": 2300
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-2",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 192,
+            "exposureMs": 1200
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-4",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 171,
+            "exposureMs": 1100
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-3",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 5,
+            "primaryHpDecrease": 209,
+            "exposureMs": 1000
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-20",
+            "targetType": "ash-slinger",
+            "phase": "above-half-hp",
+            "attempts": 14,
+            "primaryHpDecrease": 672,
+            "exposureMs": 4700
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-20",
+            "targetType": "ash-slinger",
+            "phase": "at-or-below-half-hp",
+            "attempts": 9,
+            "primaryHpDecrease": 418,
+            "exposureMs": 2900
+          },
+          {
+            "state": "depleted",
+            "targetId": "node-t3-volcanic-03_monster-20",
+            "targetType": "ash-slinger",
+            "phase": "at-or-below-half-hp",
+            "attempts": 5,
+            "primaryHpDecrease": 240,
+            "exposureMs": 4000
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-13",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 283,
+            "exposureMs": 1700
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-12",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 192,
+            "exposureMs": 1300
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-13",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 7,
+            "primaryHpDecrease": 318,
+            "exposureMs": 1200
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-14",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 2,
+            "primaryHpDecrease": 96,
+            "exposureMs": 600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-16",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 3,
+            "primaryHpDecrease": 144,
+            "exposureMs": 600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-16",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 163,
+            "exposureMs": 400
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-11",
+            "targetType": "magma-brute",
+            "phase": "above-half-hp",
+            "attempts": 24,
+            "primaryHpDecrease": 707,
+            "exposureMs": 5600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-14",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 5,
+            "primaryHpDecrease": 240,
+            "exposureMs": 1000
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-12",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 5,
+            "primaryHpDecrease": 213,
+            "exposureMs": 1000
+          },
+          {
+            "state": "depleted",
+            "targetId": "node-t3-volcanic-03_monster-11",
+            "targetType": "magma-brute",
+            "phase": "above-half-hp",
+            "attempts": 8,
+            "primaryHpDecrease": 376,
+            "exposureMs": 4800
+          },
+          {
+            "state": "depleted",
+            "targetId": "node-t3-volcanic-03_monster-22",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 2,
+            "primaryHpDecrease": 96,
+            "exposureMs": 1300
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-22",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 7,
+            "primaryHpDecrease": 314,
+            "exposureMs": 2400
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-37",
+            "targetType": "ash-slinger",
+            "phase": "above-half-hp",
+            "attempts": 1,
+            "primaryHpDecrease": 48,
+            "exposureMs": 200
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-34",
+            "targetType": "cinder-hound",
+            "phase": "above-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 288,
+            "exposureMs": 1800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-36",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 288,
+            "exposureMs": 1500
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-35",
+            "targetType": "ember-scuttler",
+            "phase": "above-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 288,
+            "exposureMs": 400
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-36",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 3,
+            "primaryHpDecrease": 144,
+            "exposureMs": 400
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t3-volcanic-03_monster-35",
+            "targetType": "ember-scuttler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 288,
+            "exposureMs": 500
+          }
+        ],
+        "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+        "delayedAndSecondaryDamage": null,
+        "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+      },
+      "terminalOwner": {
+        "hp": 0,
+        "maxHp": 394,
+        "barrier": 0
+      },
+      "death": [
+        {
+          "atMs": 177600,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t3-volcanic-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "melee",
+              "killer": {
+                "monsterEntityId": "node-t3-volcanic-03_monster-34",
+                "monsterTypeId": "cinder-hound",
+                "monsterName": "Cinder Hound",
+                "isBoss": false,
+                "nodeId": "node-t3-volcanic-03"
+              },
+              "damage": 41
+            },
+            "id": 1645,
+            "tick": 1777,
+            "serverTime": 1800000177600
+          }
+        }
+      ],
+      "preDeathEvents": [
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "technique-adapter",
+            "nodeId": "node-t3-volcanic-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+              "actorType": "player"
+            },
+            "adapter": "conduit-formation",
+            "event": "conduit-delivery",
+            "id": 1639,
+            "tick": 1773,
+            "serverTime": 1800000177200
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "technique-adapter",
+            "nodeId": "node-t3-volcanic-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+              "actorType": "player"
+            },
+            "adapter": "conduit-formation",
+            "event": "conduit-secondary-damage",
+            "target": {
+              "id": "node-t3-volcanic-03_monster-35",
+              "name": "Ember Scuttler",
+              "actorType": "monster"
+            },
+            "splashDamage": 31,
+            "id": 1640,
+            "tick": 1773,
+            "serverTime": 1800000177200
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "damage",
+            "nodeId": "node-t3-volcanic-03",
+            "source": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+              "actorType": "player"
+            },
+            "target": {
+              "id": "node-t3-volcanic-03_monster-36",
+              "name": "Ember Scuttler",
+              "actorType": "monster"
+            },
+            "hpDamage": 25,
+            "absorbed": 0,
+            "damageType": "aoe",
+            "mitigation": {
+              "grossDamage": 31,
+              "platingBlocked": 2,
+              "drBlocked": 0,
+              "mitigatedTotal": 2,
+              "hpDamage": 25,
+              "glancing": false
+            },
+            "glancing": false,
+            "id": 1641,
+            "tick": 1773,
+            "serverTime": 1800000177200
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "damage",
+            "nodeId": "node-t3-volcanic-03",
+            "source": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+              "actorType": "player"
+            },
+            "target": {
+              "id": "node-t3-volcanic-03_monster-34",
+              "name": "Cinder Hound",
+              "actorType": "monster"
+            },
+            "hpDamage": 24,
+            "absorbed": 0,
+            "damageType": "aoe",
+            "mitigation": {
+              "grossDamage": 31,
+              "platingBlocked": 3,
+              "drBlocked": 0,
+              "mitigatedTotal": 3,
+              "hpDamage": 24,
+              "glancing": false
+            },
+            "glancing": false,
+            "id": 1642,
+            "tick": 1773,
+            "serverTime": 1800000177200
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "damage",
+            "nodeId": "node-t3-volcanic-03",
+            "source": {
+              "id": "minion_bench-bot-0-6",
+              "name": "Effigy",
+              "actorType": "minion",
+              "ownerPlayerId": "bench-bot-0"
+            },
+            "target": {
+              "id": "node-t3-volcanic-03_monster-35",
+              "name": "Ember Scuttler",
+              "actorType": "monster"
+            },
+            "hpDamage": 48,
+            "absorbed": 0,
+            "damageType": "direct",
+            "mitigation": {
+              "grossDamage": 49,
+              "platingBlocked": 1,
+              "drBlocked": 0,
+              "mitigatedTotal": 1,
+              "hpDamage": 48,
+              "glancing": false
+            },
+            "tags": [],
+            "id": 1643,
+            "tick": 1773,
+            "serverTime": 1800000177200
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "player-aoe-footprint",
+            "playerId": "bench-bot-0",
+            "pos": {
+              "x": 328.88996750080594,
+              "y": 3822.3979675534574
+            },
+            "radius": 90,
+            "at": 1800000177200,
+            "seq": 1082
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "damage",
+            "targetId": "node-t3-volcanic-03_monster-36",
+            "targetKind": "monster",
+            "targetPos": {
+              "x": 326.28005593092007,
+              "y": 3825.7790561902893
+            },
+            "amount": 24,
+            "category": "direct",
+            "sourceId": "bench-bot-0",
+            "at": 1800000177200,
+            "seq": 1083
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "damage",
+            "targetId": "node-t3-volcanic-03_monster-34",
+            "targetKind": "monster",
+            "targetPos": {
+              "x": 319.95527737496957,
+              "y": 3833.9723659968768
+            },
+            "amount": 23,
+            "category": "direct",
+            "sourceId": "bench-bot-0",
+            "at": 1800000177200,
+            "seq": 1084
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "player-hit",
+            "playerId": "bench-bot-0",
+            "targetId": "node-t3-volcanic-03_monster-35",
+            "targetName": "Ember Scuttler",
+            "damage": 48,
+            "empowered": false,
+            "execution": false,
+            "effects": [
+              "ability-sweep"
+            ],
+            "playerPos": {
+              "x": 252.71073703977024,
+              "y": 3933.1590935675854
+            },
+            "targetPos": {
+              "x": 328.88996750080594,
+              "y": 3822.3979675534574
+            },
+            "at": 1800000177200,
+            "seq": 1085
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "player-aoe-footprint",
+            "playerId": "bench-bot-0",
+            "pos": {
+              "x": 328.88996750080594,
+              "y": 3822.3979675534574
+            },
+            "radius": 90,
+            "at": 1800000177200,
+            "seq": 1086
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "damage",
+            "targetId": "node-t3-volcanic-03_monster-36",
+            "targetKind": "monster",
+            "targetPos": {
+              "x": 326.28005593092007,
+              "y": 3825.7790561902893
+            },
+            "amount": 25,
+            "category": "direct",
+            "sourceId": "bench-bot-0",
+            "at": 1800000177200,
+            "seq": 1087
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "damage",
+            "targetId": "node-t3-volcanic-03_monster-34",
+            "targetKind": "monster",
+            "targetPos": {
+              "x": 319.95527737496957,
+              "y": 3833.9723659968768
+            },
+            "amount": 24,
+            "category": "direct",
+            "sourceId": "bench-bot-0",
+            "at": 1800000177200,
+            "seq": 1088
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "player-hit",
+            "playerId": "bench-bot-0",
+            "targetId": "node-t3-volcanic-03_monster-35",
+            "targetName": "Ember Scuttler",
+            "damage": 48,
+            "empowered": false,
+            "execution": false,
+            "effects": [
+              "ability-sweep"
+            ],
+            "playerPos": {
+              "x": 252.72389577214864,
+              "y": 3933.162695901141
+            },
+            "targetPos": {
+              "x": 328.88996750080594,
+              "y": 3822.3979675534574
+            },
+            "at": 1800000177200,
+            "seq": 1089
+          }
+        },
+        {
+          "atMs": 177200,
+          "event": {
+            "kind": "player-ability-cooldown",
+            "playerId": "bench-bot-0",
+            "ability": "sweep",
+            "remainingMs": 4500,
+            "totalMs": 7000,
+            "at": 1800000177200,
+            "seq": 1090
+          }
+        },
+        {
+          "atMs": 177600,
+          "event": {
+            "kind": "damage",
+            "nodeId": "node-t3-volcanic-03",
+            "source": {
+              "id": "node-t3-volcanic-03_monster-34",
+              "name": "Cinder Hound",
+              "actorType": "monster"
+            },
+            "target": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+              "actorType": "player"
+            },
+            "hpDamage": 41,
+            "absorbed": 0,
+            "damageType": "direct",
+            "mitigation": {
+              "grossDamage": 80,
+              "platingBlocked": 37,
+              "drBlocked": 0.4299999999999997,
+              "mitigatedTotal": 37.43,
+              "hpDamage": 41,
+              "glancing": false
+            },
+            "id": 1644,
+            "tick": 1777,
+            "serverTime": 1800000177600
+          }
+        },
+        {
+          "atMs": 177600,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t3-volcanic-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "melee",
+              "killer": {
+                "monsterEntityId": "node-t3-volcanic-03_monster-34",
+                "monsterTypeId": "cinder-hound",
+                "monsterName": "Cinder Hound",
+                "isBoss": false,
+                "nodeId": "node-t3-volcanic-03"
+              },
+              "damage": 41
+            },
+            "id": 1645,
+            "tick": 1777,
+            "serverTime": 1800000177600
+          }
+        },
+        {
+          "atMs": 177600,
+          "event": {
+            "kind": "damage",
+            "targetId": "minion_bench-bot-0-6",
+            "targetKind": "minion",
+            "targetPos": {
+              "x": 295.9923215980347,
+              "y": 3871.6612634155467
+            },
+            "amount": 17,
+            "category": "direct",
+            "at": 1800000177600,
+            "seq": 1091
+          }
+        },
+        {
+          "atMs": 177600,
+          "event": {
+            "kind": "monster-hit",
+            "targetPos": {
+              "x": 436.2108085128595,
+              "y": 3683.376093767096
+            },
+            "targetId": "bench-bot-0",
+            "damage": 41,
+            "at": 1800000177600,
+            "seq": 1092
+          }
+        }
+      ]
+    },
+    {
+      "id": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+      "source": "f9dcde59217770390752f3ce0f089e323b0a6f37",
+      "files": {
+        "summary.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\summary.json",
+          "sha256": "a298f7a55a9b47ea5bb74698ba579b5a815e7f80cab172ee2dea5ea042849407"
+        },
+        "conduit.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\conduit.json",
+          "sha256": "4562155b3316ce843aa5c81d1d78035d0269d7d1f5d4b404a9fb4cff344ea53d"
+        },
+        "events.jsonl": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\events.jsonl",
+          "sha256": "6e18c5a5d8269704a26b8301d250293c139be852b65c5ac63991bdc23084a4df"
+        },
+        "samples.jsonl": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\samples.jsonl",
+          "sha256": "854270c1899560c1668daee744d5c0a060137fbdc1bc3589d37b5f2e06772ca6"
+        },
+        "ready.json": {
+          "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\run-01\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive\\stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003\\ready.json",
+          "sha256": "67ec5e88c2873c117d2ca4a7eab9e64e45a52d00f649e1edc9d83f85dd8db03a"
+        }
+      },
+      "outcome": "player-died",
+      "elapsedMs": 71700,
+      "counts": {
+        "damaged": 11,
+        "killed": 10,
+        "censored": 1,
+        "hpRegain": 0
+      },
+      "ownerIncomingRecordedHp": 1237.3,
+      "ownerRecordedHealHp": 627,
+      "outgoingRecordedHp": 15829,
+      "outgoingAbsorbedHp": 0,
+      "availability": 1,
+      "zeroBodyMs": 0,
+      "readyBlockedMs": 0,
+      "paidHp": 0,
+      "queueHealingHp": 0,
+      "meanQueueDepth": 0,
+      "lifeEndCauses": {
+        "unknown-removal": 2
+      },
+      "replacementFirstAttackDelayMs": {
+        "n": 0,
+        "min": null,
+        "max": null
+      },
+      "delivery": {
+        "exposureMs": {
+          "intact": 68200,
+          "depleted": 0
+        },
+        "byTargetPhase": [
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-32",
+            "targetType": "plague-rat",
+            "phase": "above-half-hp",
+            "attempts": 3,
+            "primaryHpDecrease": 491,
+            "exposureMs": 600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-32",
+            "targetType": "plague-rat",
+            "phase": "at-or-below-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 459,
+            "exposureMs": 1200
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-12",
+            "targetType": "plague-hound",
+            "phase": "above-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 955,
+            "exposureMs": 1400
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-12",
+            "targetType": "plague-hound",
+            "phase": "at-or-below-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 946,
+            "exposureMs": 900
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-10",
+            "targetType": "plague-rat",
+            "phase": "above-half-hp",
+            "attempts": 3,
+            "primaryHpDecrease": 491,
+            "exposureMs": 600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-10",
+            "targetType": "plague-rat",
+            "phase": "at-or-below-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 459,
+            "exposureMs": 1200
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-31",
+            "targetType": "plague-rat",
+            "phase": "above-half-hp",
+            "attempts": 3,
+            "primaryHpDecrease": 533,
+            "exposureMs": 600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-31",
+            "targetType": "plague-rat",
+            "phase": "at-or-below-half-hp",
+            "attempts": 3,
+            "primaryHpDecrease": 417,
+            "exposureMs": 800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-16",
+            "targetType": "plague-hound",
+            "phase": "above-half-hp",
+            "attempts": 7,
+            "primaryHpDecrease": 1053,
+            "exposureMs": 1900
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-16",
+            "targetType": "plague-hound",
+            "phase": "at-or-below-half-hp",
+            "attempts": 7,
+            "primaryHpDecrease": 848,
+            "exposureMs": 1600
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-1",
+            "targetType": "plague-hound",
+            "phase": "above-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 955,
+            "exposureMs": 1200
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-1",
+            "targetType": "plague-hound",
+            "phase": "at-or-below-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 946,
+            "exposureMs": 1100
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-30",
+            "targetType": "plague-hound",
+            "phase": "above-half-hp",
+            "attempts": 7,
+            "primaryHpDecrease": 1053,
+            "exposureMs": 1900
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-30",
+            "targetType": "plague-hound",
+            "phase": "at-or-below-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 848,
+            "exposureMs": 1400
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-43",
+            "targetType": "bone-crawler",
+            "phase": "above-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 674,
+            "exposureMs": 900
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-43",
+            "targetType": "bone-crawler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 4,
+            "primaryHpDecrease": 561,
+            "exposureMs": 800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-42",
+            "targetType": "bone-crawler",
+            "phase": "above-half-hp",
+            "attempts": 2,
+            "primaryHpDecrease": 281,
+            "exposureMs": 500
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-44",
+            "targetType": "plague-hound",
+            "phase": "above-half-hp",
+            "attempts": 5,
+            "primaryHpDecrease": 870,
+            "exposureMs": 800
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-44",
+            "targetType": "plague-hound",
+            "phase": "at-or-below-half-hp",
+            "attempts": 6,
+            "primaryHpDecrease": 736,
+            "exposureMs": 1000
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-42",
+            "targetType": "bone-crawler",
+            "phase": "at-or-below-half-hp",
+            "attempts": 5,
+            "primaryHpDecrease": 490,
+            "exposureMs": 1000
+          },
+          {
+            "state": "intact",
+            "targetId": "node-t4-graveyard-03_monster-41",
+            "targetType": "gravewright",
+            "phase": "above-half-hp",
+            "attempts": 1,
+            "primaryHpDecrease": 85,
+            "exposureMs": 400
+          }
+        ],
+        "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+        "delayedAndSecondaryDamage": null,
+        "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+      },
+      "terminalOwner": {
+        "hp": 0,
+        "maxHp": 585,
+        "barrier": 0
+      },
+      "death": [
+        {
+          "atMs": 71700,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t4-graveyard-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "ranged",
+              "killer": {
+                "monsterEntityId": "node-t4-graveyard-03_monster-41",
+                "monsterTypeId": "gravewright",
+                "monsterName": "Gravewright",
+                "isBoss": false,
+                "nodeId": "node-t4-graveyard-03"
+              },
+              "damage": 28
+            },
+            "id": 447,
+            "tick": 718,
+            "serverTime": 1800000071700
+          }
+        }
+      ],
+      "preDeathEvents": [
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "damage",
+            "nodeId": "node-t4-graveyard-03",
+            "source": {
+              "id": "minion_bench-bot-0-1",
+              "name": "Covenanter Offense",
+              "actorType": "minion",
+              "ownerPlayerId": "bench-bot-0"
+            },
+            "target": {
+              "id": "node-t4-graveyard-03_monster-42",
+              "name": "Bone Crawler",
+              "actorType": "monster"
+            },
+            "hpDamage": 252,
+            "absorbed": 0,
+            "damageType": "direct",
+            "mitigation": {
+              "grossDamage": 183,
+              "platingBlocked": 0,
+              "drBlocked": 0,
+              "mitigatedTotal": 0,
+              "hpDamage": 252,
+              "glancing": false
+            },
+            "tags": [],
+            "id": 437,
+            "tick": 714,
+            "serverTime": 1800000071300
+          }
+        },
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "kill",
+            "nodeId": "node-t4-graveyard-03",
+            "killer": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "victim": {
+              "id": "node-t4-graveyard-03_monster-42",
+              "name": "Bone Crawler",
+              "actorType": "monster"
+            },
+            "damage": 252,
+            "essenceGained": 17,
+            "essenceType": "purple",
+            "biomeXpGained": 0,
+            "id": 438,
+            "tick": 714,
+            "serverTime": 1800000071300
+          }
+        },
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "technique-adapter",
+            "nodeId": "node-t4-graveyard-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "adapter": "conduit-formation",
+            "event": "conduit-delivery",
+            "id": 439,
+            "tick": 714,
+            "serverTime": 1800000071300
+          }
+        },
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "damage",
+            "nodeId": "node-t4-graveyard-03",
+            "source": {
+              "id": "minion_bench-bot-0-2",
+              "name": "Covenanter Defense",
+              "actorType": "minion",
+              "ownerPlayerId": "bench-bot-0"
+            },
+            "target": {
+              "id": "node-t4-graveyard-03_monster-41",
+              "name": "Gravewright",
+              "actorType": "monster"
+            },
+            "hpDamage": 85,
+            "absorbed": 0,
+            "damageType": "direct",
+            "mitigation": {
+              "grossDamage": 62,
+              "platingBlocked": 0,
+              "drBlocked": 0,
+              "mitigatedTotal": 0,
+              "hpDamage": 85,
+              "glancing": false
+            },
+            "tags": [],
+            "id": 440,
+            "tick": 714,
+            "serverTime": 1800000071300
+          }
+        },
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "heal",
+            "nodeId": "node-t4-graveyard-03",
+            "target": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "amount": 10,
+            "id": 441,
+            "tick": 714,
+            "serverTime": 1800000071300
+          }
+        },
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "player-hit",
+            "playerId": "bench-bot-0",
+            "targetId": "node-t4-graveyard-03_monster-42",
+            "targetName": "Bone Crawler",
+            "damage": 252,
+            "empowered": false,
+            "execution": false,
+            "effects": [
+              "ability-expose-weakness"
+            ],
+            "playerPos": {
+              "x": 2801.000887892043,
+              "y": 3172.602984132008
+            },
+            "targetPos": {
+              "x": 2825.062339468428,
+              "y": 3051.634097790722
+            },
+            "at": 1800000071300,
+            "seq": 337
+          }
+        },
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "player-ability-cooldown",
+            "playerId": "bench-bot-0",
+            "ability": "sweep",
+            "remainingMs": 700,
+            "totalMs": 7000,
+            "at": 1800000071300,
+            "seq": 338
+          }
+        },
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "player-kill",
+            "playerId": "bench-bot-0",
+            "targetId": "node-t4-graveyard-03_monster-42",
+            "targetName": "Bone Crawler",
+            "damage": 252,
+            "biomeXpGained": 0,
+            "essenceGained": 17,
+            "essenceType": "purple",
+            "empowered": false,
+            "execution": false,
+            "at": 1800000071300,
+            "seq": 339
+          }
+        },
+        {
+          "atMs": 71300,
+          "event": {
+            "kind": "player-hit",
+            "playerId": "bench-bot-0",
+            "targetId": "node-t4-graveyard-03_monster-41",
+            "targetName": "Gravewright",
+            "damage": 85,
+            "empowered": false,
+            "execution": false,
+            "effects": [
+              "ability-expose-weakness"
+            ],
+            "playerPos": {
+              "x": 2799.1814778217135,
+              "y": 3181.6304044133867
+            },
+            "targetPos": {
+              "x": 2776.618077738832,
+              "y": 3289.2953384395464
+            },
+            "at": 1800000071300,
+            "seq": 340
+          }
+        },
+        {
+          "atMs": 71400,
+          "event": {
+            "kind": "heal",
+            "nodeId": "node-t4-graveyard-03",
+            "target": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "amount": 10,
+            "id": 442,
+            "tick": 715,
+            "serverTime": 1800000071400
+          }
+        },
+        {
+          "atMs": 71500,
+          "event": {
+            "kind": "heal",
+            "nodeId": "node-t4-graveyard-03",
+            "target": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "amount": 10,
+            "id": 443,
+            "tick": 716,
+            "serverTime": 1800000071500
+          }
+        },
+        {
+          "atMs": 71600,
+          "event": {
+            "kind": "damage",
+            "nodeId": "node-t4-graveyard-03",
+            "source": {
+              "id": "node-t4-graveyard-03_monster-44",
+              "name": "Plague Hound",
+              "actorType": "monster"
+            },
+            "target": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "hpDamage": 106,
+            "absorbed": 0,
+            "damageType": "dot",
+            "mitigation": {
+              "grossDamage": 96,
+              "platingBlocked": 0,
+              "drBlocked": 0,
+              "mitigatedTotal": 0,
+              "hpDamage": 106,
+              "glancing": false
+            },
+            "glancing": false,
+            "id": 444,
+            "tick": 717,
+            "serverTime": 1800000071600
+          }
+        },
+        {
+          "atMs": 71600,
+          "event": {
+            "kind": "heal",
+            "nodeId": "node-t4-graveyard-03",
+            "target": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "amount": 10,
+            "id": 445,
+            "tick": 717,
+            "serverTime": 1800000071600
+          }
+        },
+        {
+          "atMs": 71600,
+          "event": {
+            "kind": "dot-tick",
+            "targetId": "bench-bot-0",
+            "targetPos": {
+              "x": 2766.681832260629,
+              "y": 2992
+            },
+            "amount": 106,
+            "element": "doom",
+            "sourceType": "monster",
+            "sourceId": "node-t4-graveyard-03_monster-44",
+            "at": 1800000071600,
+            "seq": 341
+          }
+        },
+        {
+          "atMs": 71700,
+          "event": {
+            "kind": "damage",
+            "nodeId": "node-t4-graveyard-03",
+            "source": {
+              "id": "node-t4-graveyard-03_monster-41",
+              "name": "Gravewright",
+              "actorType": "monster"
+            },
+            "target": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "hpDamage": 28,
+            "absorbed": 0,
+            "damageType": "direct",
+            "mitigation": {
+              "grossDamage": 90,
+              "platingBlocked": 54,
+              "drBlocked": 0.35999999999999943,
+              "mitigatedTotal": 54.36,
+              "hpDamage": 28,
+              "glancing": false
+            },
+            "id": 446,
+            "tick": 718,
+            "serverTime": 1800000071700
+          }
+        },
+        {
+          "atMs": 71700,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t4-graveyard-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "ranged",
+              "killer": {
+                "monsterEntityId": "node-t4-graveyard-03_monster-41",
+                "monsterTypeId": "gravewright",
+                "monsterName": "Gravewright",
+                "isBoss": false,
+                "nodeId": "node-t4-graveyard-03"
+              },
+              "damage": 28
+            },
+            "id": 447,
+            "tick": 718,
+            "serverTime": 1800000071700
+          }
+        },
+        {
+          "atMs": 71700,
+          "event": {
+            "kind": "damage",
+            "targetId": "minion_bench-bot-0-2",
+            "targetKind": "minion",
+            "targetPos": {
+              "x": 2799.1814778217135,
+              "y": 3181.6304044133867
+            },
+            "amount": 12,
+            "category": "direct",
+            "at": 1800000071700,
+            "seq": 342
+          }
+        },
+        {
+          "atMs": 71700,
+          "event": {
+            "kind": "monster-hit",
+            "targetPos": {
+              "x": 2723.6127847975276,
+              "y": 3004.3872152024724
+            },
+            "targetId": "bench-bot-0",
+            "damage": 28,
+            "at": 1800000071700,
+            "seq": 343
+          }
+        }
+      ]
+    }
+  ]
+}

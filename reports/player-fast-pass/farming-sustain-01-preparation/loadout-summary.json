@@ -1,0 +1,712 @@
+{
+  "units": {
+    "health": "HP",
+    "recovery": "percent maxHP per second at full access",
+    "time": "ms",
+    "RP": "Runic Points"
+  },
+  "rows": [
+    {
+      "observationId": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static",
+      "identityId": "breadth-t3-striker-balanced",
+      "displayName": "Skirmisher",
+      "arm": "mountain-static",
+      "fixture": "node-t3-volcanic-03",
+      "itemId": "mountain-charm-t3",
+      "plus": 5,
+      "initialHp": 430,
+      "initialBarrier": 146,
+      "recoveryStat": 15,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-pulse-interval-ms": 6000,
+        "defense.recovery-pulse-duration-ms": 4000,
+        "defense.recovery-pulse-pct": 0.30000000000000004
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 33,
+      "freeRP": 5,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 33
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static",
+      "identityId": "breadth-t3-striker-balanced",
+      "displayName": "Skirmisher",
+      "arm": "volcanic-static",
+      "fixture": "node-t3-volcanic-03",
+      "itemId": "volcanic-charm-t3",
+      "plus": 5,
+      "initialHp": 430,
+      "initialBarrier": 0,
+      "recoveryStat": 21,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.16,
+        "defense.recovery-on-kill-pct": 0.14,
+        "defense.recovery-pulse-interval-ms": 6000,
+        "defense.recovery-pulse-duration-ms": 4000,
+        "defense.recovery-pulse-pct": 0.30000000000000004
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 33,
+      "freeRP": 5,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 33
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static",
+      "identityId": "breadth-t3-striker-balanced",
+      "displayName": "Skirmisher",
+      "arm": "mountain-static",
+      "fixture": "node-t3-tundra-03",
+      "itemId": "mountain-charm-t3",
+      "plus": 5,
+      "initialHp": 430,
+      "initialBarrier": 146,
+      "recoveryStat": 15,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-pulse-interval-ms": 6000,
+        "defense.recovery-pulse-duration-ms": 4000,
+        "defense.recovery-pulse-pct": 0.30000000000000004
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 33,
+      "freeRP": 5,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 33
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static",
+      "identityId": "breadth-t3-striker-balanced",
+      "displayName": "Skirmisher",
+      "arm": "volcanic-static",
+      "fixture": "node-t3-tundra-03",
+      "itemId": "volcanic-charm-t3",
+      "plus": 5,
+      "initialHp": 430,
+      "initialBarrier": 0,
+      "recoveryStat": 21,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.16,
+        "defense.recovery-on-kill-pct": 0.14,
+        "defense.recovery-pulse-interval-ms": 6000,
+        "defense.recovery-pulse-duration-ms": 4000,
+        "defense.recovery-pulse-pct": 0.30000000000000004
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 33,
+      "freeRP": 5,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 33
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static",
+      "identityId": "breadth-t3-squire-balanced",
+      "displayName": "Knight",
+      "arm": "mountain-static",
+      "fixture": "node-t3-volcanic-03",
+      "itemId": "mountain-charm-t3",
+      "plus": 5,
+      "initialHp": 389,
+      "initialBarrier": 132,
+      "recoveryStat": 15,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.30000000000000004
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 33,
+      "freeRP": 5,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 33
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static",
+      "identityId": "breadth-t3-squire-balanced",
+      "displayName": "Knight",
+      "arm": "volcanic-static",
+      "fixture": "node-t3-volcanic-03",
+      "itemId": "volcanic-charm-t3",
+      "plus": 5,
+      "initialHp": 389,
+      "initialBarrier": 0,
+      "recoveryStat": 21,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.4600000000000001,
+        "defense.recovery-on-kill-pct": 0.14
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 33,
+      "freeRP": 5,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 33
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static",
+      "identityId": "breadth-t3-squire-balanced",
+      "displayName": "Knight",
+      "arm": "mountain-static",
+      "fixture": "node-t3-tundra-03",
+      "itemId": "mountain-charm-t3",
+      "plus": 5,
+      "initialHp": 389,
+      "initialBarrier": 132,
+      "recoveryStat": 15,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.30000000000000004
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 33,
+      "freeRP": 5,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 33
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static",
+      "identityId": "breadth-t3-squire-balanced",
+      "displayName": "Knight",
+      "arm": "volcanic-static",
+      "fixture": "node-t3-tundra-03",
+      "itemId": "volcanic-charm-t3",
+      "plus": 5,
+      "initialHp": 389,
+      "initialBarrier": 0,
+      "recoveryStat": 21,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.4600000000000001,
+        "defense.recovery-on-kill-pct": 0.14
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 33,
+      "freeRP": 5,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 33
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static",
+      "identityId": "breadth-t3-apprentice-balanced",
+      "displayName": "Ember mage",
+      "arm": "mountain-static",
+      "fixture": "node-t3-volcanic-03",
+      "itemId": "mountain-charm-t3",
+      "plus": 5,
+      "initialHp": 393,
+      "initialBarrier": 134,
+      "recoveryStat": 15,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {},
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 36,
+      "freeRP": 2,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 9,
+        "rites": 0,
+        "total": 36
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static",
+      "identityId": "breadth-t3-apprentice-balanced",
+      "displayName": "Ember mage",
+      "arm": "volcanic-static",
+      "fixture": "node-t3-volcanic-03",
+      "itemId": "volcanic-charm-t3",
+      "plus": 5,
+      "initialHp": 393,
+      "initialBarrier": 0,
+      "recoveryStat": 21,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.16,
+        "defense.recovery-on-kill-pct": 0.14
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 36,
+      "freeRP": 2,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 9,
+        "rites": 0,
+        "total": 36
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static",
+      "identityId": "breadth-t3-apprentice-balanced",
+      "displayName": "Ember mage",
+      "arm": "mountain-static",
+      "fixture": "node-t3-tundra-03",
+      "itemId": "mountain-charm-t3",
+      "plus": 5,
+      "initialHp": 393,
+      "initialBarrier": 134,
+      "recoveryStat": 15,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {},
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 36,
+      "freeRP": 2,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 9,
+        "rites": 0,
+        "total": 36
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static",
+      "identityId": "breadth-t3-apprentice-balanced",
+      "displayName": "Ember mage",
+      "arm": "volcanic-static",
+      "fixture": "node-t3-tundra-03",
+      "itemId": "volcanic-charm-t3",
+      "plus": 5,
+      "initialHp": 393,
+      "initialBarrier": 0,
+      "recoveryStat": 21,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.16,
+        "defense.recovery-on-kill-pct": 0.14
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 36,
+      "freeRP": 2,
+      "budgetRP": 38,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 9,
+        "rites": 0,
+        "total": 36
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static",
+      "identityId": "breadth-t4-conduit-heavy-a",
+      "displayName": "Covenanter",
+      "arm": "mountain-static",
+      "fixture": "node-t4-graveyard-03",
+      "itemId": "mountain-charm-t4",
+      "plus": 5,
+      "initialHp": 585,
+      "initialBarrier": 246,
+      "recoveryStat": 25,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "core.recovery-mult": 0.3
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 36,
+      "freeRP": 11,
+      "budgetRP": 47,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 9,
+        "rites": 0,
+        "total": 36
+      },
+      "displacedAbility": "expose-weakness",
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating",
+      "identityId": "breadth-t4-conduit-heavy-a",
+      "displayName": "Covenanter",
+      "arm": "mountain-recuperating",
+      "fixture": "node-t4-graveyard-03",
+      "itemId": "mountain-charm-t4",
+      "plus": 5,
+      "initialHp": 585,
+      "initialBarrier": 246,
+      "recoveryStat": 25,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "core.recovery-mult": 0.3
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance",
+        "recuperating-stance"
+      ],
+      "usedReservedRP": 41,
+      "freeRP": 6,
+      "budgetRP": 47,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 5,
+        "logic": 10,
+        "rites": 0,
+        "total": 41
+      },
+      "displacedAbility": "expose-weakness",
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating"
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static",
+      "identityId": "breadth-t4-conduit-heavy-a",
+      "displayName": "Covenanter",
+      "arm": "volcanic-static",
+      "fixture": "node-t4-graveyard-03",
+      "itemId": "volcanic-charm-t4",
+      "plus": 5,
+      "initialHp": 585,
+      "initialBarrier": 0,
+      "recoveryStat": 34,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.16,
+        "defense.recovery-on-kill-pct": 0.14,
+        "core.recovery-mult": 0.3
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 36,
+      "freeRP": 11,
+      "budgetRP": 47,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 1,
+        "logic": 9,
+        "rites": 0,
+        "total": 36
+      },
+      "displacedAbility": "expose-weakness",
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating",
+      "identityId": "breadth-t4-conduit-heavy-a",
+      "displayName": "Covenanter",
+      "arm": "volcanic-recuperating",
+      "fixture": "node-t4-graveyard-03",
+      "itemId": "volcanic-charm-t4",
+      "plus": 5,
+      "initialHp": 585,
+      "initialBarrier": 0,
+      "recoveryStat": 34,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.16,
+        "defense.recovery-on-kill-pct": 0.14,
+        "core.recovery-mult": 0.3
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance",
+        "recuperating-stance"
+      ],
+      "usedReservedRP": 41,
+      "freeRP": 6,
+      "budgetRP": 47,
+      "rpBreakdown": {
+        "abilities": 26,
+        "stances": 5,
+        "logic": 10,
+        "rites": 0,
+        "total": 41
+      },
+      "displacedAbility": "expose-weakness",
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating"
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static",
+      "identityId": "breadth-t4-squire-heavy-a",
+      "displayName": "Avenger",
+      "arm": "mountain-static",
+      "fixture": "node-t4-graveyard-03",
+      "itemId": "mountain-charm-t4",
+      "plus": 5,
+      "initialHp": 616,
+      "initialBarrier": 259,
+      "recoveryStat": 19,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.30000000000000004
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 40,
+      "freeRP": 7,
+      "budgetRP": 47,
+      "rpBreakdown": {
+        "abilities": 33,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 40
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating",
+      "identityId": "breadth-t4-squire-heavy-a",
+      "displayName": "Avenger",
+      "arm": "mountain-recuperating",
+      "fixture": "node-t4-graveyard-03",
+      "itemId": "mountain-charm-t4",
+      "plus": 5,
+      "initialHp": 616,
+      "initialBarrier": 259,
+      "recoveryStat": 19,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.30000000000000004
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance",
+        "recuperating-stance"
+      ],
+      "usedReservedRP": 45,
+      "freeRP": 2,
+      "budgetRP": 47,
+      "rpBreakdown": {
+        "abilities": 33,
+        "stances": 5,
+        "logic": 7,
+        "rites": 0,
+        "total": 45
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating"
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static",
+      "identityId": "breadth-t4-squire-heavy-a",
+      "displayName": "Avenger",
+      "arm": "volcanic-static",
+      "fixture": "node-t4-graveyard-03",
+      "itemId": "volcanic-charm-t4",
+      "plus": 5,
+      "initialHp": 616,
+      "initialBarrier": 0,
+      "recoveryStat": 26,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.4600000000000001,
+        "defense.recovery-on-kill-pct": 0.14
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "usedReservedRP": 40,
+      "freeRP": 7,
+      "budgetRP": 47,
+      "rpBreakdown": {
+        "abilities": 33,
+        "stances": 1,
+        "logic": 6,
+        "rites": 0,
+        "total": 40
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static"
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating",
+      "identityId": "breadth-t4-squire-heavy-a",
+      "displayName": "Avenger",
+      "arm": "volcanic-recuperating",
+      "fixture": "node-t4-graveyard-03",
+      "itemId": "volcanic-charm-t4",
+      "plus": 5,
+      "initialHp": 616,
+      "initialBarrier": 0,
+      "recoveryStat": 26,
+      "initialPhase": "OUT_OF_COMBAT",
+      "initialActiveFraction": 1,
+      "recoveryPassives": {
+        "defense.recovery-active-pct": 0.4600000000000001,
+        "defense.recovery-on-kill-pct": 0.14
+      },
+      "killWindowDurationMs": 4000,
+      "defaultStance": "offensive-stance",
+      "attunedStances": [
+        "offensive-stance",
+        "recuperating-stance"
+      ],
+      "usedReservedRP": 45,
+      "freeRP": 2,
+      "budgetRP": 47,
+      "rpBreakdown": {
+        "abilities": 33,
+        "stances": 5,
+        "logic": 7,
+        "rites": 0,
+        "total": 45
+      },
+      "displacedAbility": null,
+      "receipt": "qualification/resolved-builds.json#sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating"
+    }
+  ]
+}
