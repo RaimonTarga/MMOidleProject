@@ -1,0 +1,87 @@
+{
+  "cell": "breadth-t4-conduit-light-c-boss-reconstruction-r1",
+  "seed": 101003,
+  "outcome": "capped",
+  "elapsedMs": 60000,
+  "windowMs": 60000,
+  "terminalOwner": {
+    "hp": 461.3423999999999,
+    "maxHp": 464,
+    "barrier": 195
+  },
+  "bossKilled": false,
+  "bossKillEvidence": null,
+  "playerDeathEvidence": null,
+  "encounterResetEvidence": null,
+  "killedAtMs": null,
+  "bossMaxHp": 19499,
+  "bossHpRemaining": 13069,
+  "terminalBossHpSupported": true,
+  "bossHpFractionRemoved": 0.32976050053848915,
+  "crossedHalfAtMs": null,
+  "castsStarted": 10,
+  "castLabels": [
+    "Titan Charge",
+    "Earthshatter"
+  ],
+  "maxAddsAlive": 0,
+  "damageFromBoss": 0,
+  "damageFromAdds": {},
+  "attackBeats": 0,
+  "minionAttackBeats": 201,
+  "totalAttackBeats": 201,
+  "hpLost": 300,
+  "peakBurst1s": 15,
+  "minHpFraction": 0.9676724137931034,
+  "wallElapsedMs": 723,
+  "initialRosterHash": "2c4bbb0f02e416562b40d7127d9f1839f3d0973da73dd0db96492a0e08f35774",
+  "targets": [
+    {
+      "id": "node-t4-mountain-dungeon_monster-5",
+      "type": "iron-crest-titan",
+      "name": "Iron-Crest Titan",
+      "maxHp": 19499,
+      "firstDamageMs": 1400,
+      "lastDamageMs": 59900,
+      "killedAtMs": null,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 3400,
+      "damageEvents": 213,
+      "castsStarted": 10,
+      "castsFired": 1,
+      "ttkMs": null,
+      "clean": false
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 1400,
+      "endMs": 60000,
+      "durationMs": 58600,
+      "members": [
+        "node-t4-mountain-dungeon_monster-5"
+      ],
+      "initialMembers": [
+        "node-t4-mountain-dungeon_monster-5"
+      ],
+      "lateJoiners": 0,
+      "outcome": "capped"
+    }
+  ],
+  "recovery": [],
+  "incomingDamage": 0,
+  "largestHit": 0,
+  "maxDamageIn1s": 0,
+  "counts": {
+    "damaged": 1,
+    "killed": 0,
+    "censored": 1,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 0,
+    "p10": null,
+    "median": null,
+    "p90": null
+  }
+}

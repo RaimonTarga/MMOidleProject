@@ -1,0 +1,69 @@
+diff --git a/server/src/systems/classes/archetypes/summoner/observation.ts b/server/src/systems/classes/archetypes/summoner/observation.ts
+new file mode 100644
+index 00000000..e0793f4a
+--- /dev/null
++++ b/server/src/systems/classes/archetypes/summoner/observation.ts
+@@ -0,0 +1,26 @@
++import type { PlayerEntity } from '../../../../ecs/entity';
++
++/** Opt-in bench observation. No persisted state, global tuning mutation or live installer. */
++export type SummonObservation =
++  | { kind: 'attack'; id: string; targetId: string; targetType: string; targetHpFractionBefore: number; primaryHpDecrease: number; outcome: string }
++  | { kind: 'spawn'; id: string; slot: number; replacement: boolean; maxHp: number }
++  | { kind: 'sacrifice'; id: string }
++  | { kind: 'replacement-attempt'; slotId: string; blocked: boolean; costHp: number; floorHp: number; dtMs: number }
++  | { kind: 'replacement-paid'; id: string; hp: number }
++  | { kind: 'queue-heal'; hp: number };
++const observers = new WeakMap<PlayerEntity, (event: SummonObservation) => void>();
++const candidates = new WeakSet<PlayerEntity>();
++export function observeSummoner(owner: PlayerEntity, observer: (event: SummonObservation) => void) {
++  observers.set(owner, observer);
++  return () => { observers.delete(owner); candidates.delete(owner); };
++}
++export function enableReconstructionExperiment(owner: PlayerEntity): void {
++  if (!owner.summonsMinions || !observers.has(owner)) throw Error('Experiment requires an observed Conduit');
++  candidates.add(owner);
++}
++export function reconstructionExperimentFor(owner: PlayerEntity) {
++  return candidates.has(owner) ? 'reconstruction-r1' as const : undefined;
++}
++export function emitSummonObservation(owner: PlayerEntity, event: SummonObservation): void {
++  observers.get(owner)?.(event);
++}
+diff --git a/server/src/systems/classes/archetypes/summoner/profile.ts b/server/src/systems/classes/archetypes/summoner/profile.ts
+index 7308764b..e68305b9 100644
+--- a/server/src/systems/classes/archetypes/summoner/profile.ts
++++ b/server/src/systems/classes/archetypes/summoner/profile.ts
+@@ -6,0 +7 @@ import type { PlayerEntity } from '../../../../ecs/entity';
++import { reconstructionExperimentFor } from './observation';
+@@ -9,0 +11 @@ export function summonerProfileFor(owner: PlayerEntity): SummonerProfile {
++    reconstructionExperiment: reconstructionExperimentFor(owner),
+diff --git a/shared/src/systems/summonerProfile.ts b/shared/src/systems/summonerProfile.ts
+index 7a8ffefd..e56b9a93 100644
+--- a/shared/src/systems/summonerProfile.ts
++++ b/shared/src/systems/summonerProfile.ts
+@@ -21,0 +22,2 @@ export interface SummonerProfileInput {
++  /** Explicit isolated bench opt-in; never inferred from saved player state. */
++  reconstructionExperiment?: 'reconstruction-r1';
+@@ -38,0 +41 @@ export interface SummonerProfile {
++  reconstructionFactors: { baseMs: number; frame: number; specialization: number; passive: number; range: number; preRelicMs: number; postRelicMs: number; floorMs: number; floorBinds: boolean };
+@@ -166,0 +170,7 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
++  const experiment = input.reconstructionExperiment === 'reconstruction-r1';
++  const frameMult = experiment && frame === 'light' ? 2500 / 3500
++    : experiment && frame === 'balanced' ? 3000 / 3500 : frameTuning.reconstructionIntervalMult;
++  const rangeMult = experiment && selectedRange === 'far' ? 0.85 : 1;
++  const specMult = colossusReconstructionMult * (experiment && specialization === 'endless-swarm' ? 0.80 : 1);
++  const passiveMult = Math.max(0.1, passives['summoner.reconstruction-interval-mult'] ?? 1);
++  const floorMs = experiment && (frame === 'light' || frame === 'balanced') ? 2000 : SUMMONER_CORE_TUNING.minimumReconstructionIntervalMs;
+@@ -169,3 +179 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
+-      * frameTuning.reconstructionIntervalMult
+-      * colossusReconstructionMult
+-      * Math.max(0.1, passives['summoner.reconstruction-interval-mult'] ?? 1),
++      * frameMult * specMult * passiveMult * rangeMult,
+@@ -179,0 +188,3 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
++    reconstructionFactors: { baseMs: SUMMONER_CORE_TUNING.reconstructionIntervalMs, frame: frameMult,
++      specialization: specMult, passive: passiveMult, range: rangeMult, preRelicMs: reconstructionBaseMs,
++      postRelicMs: relicReconstructionMs, floorMs, floorBinds: relicReconstructionMs < floorMs },
+@@ -203 +214 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
+-      SUMMONER_CORE_TUNING.minimumReconstructionIntervalMs,
++      floorMs,

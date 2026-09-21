@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "planned": 2,
+  "smoke": true,
+  "rows": [
+    {
+      "caseId": "breadth-t3-conduit-light-far-farm-reconstruction-r1",
+      "controlCaseId": "breadth-t3-conduit-light-far-farm",
+      "playerTreatment": "reconstruction-r1",
+      "fixture": "node-t3-volcanic-03",
+      "seed": 101003,
+      "sourceCommit": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+      "sourceSha256": "47770ddababff0a26e03497effbd6cebbbbc543359f0e8c47fb440a4c059fed2",
+      "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 30000,
+      "windowMs": 30000,
+      "bossKilled": null,
+      "bossHpFractionRemoved": null,
+      "completedKills": 4,
+      "damagedTargets": 7,
+      "minHpFraction": 0.9765013054830287,
+      "partialTargets": 3,
+      "terminalOwner": {
+        "hp": 383,
+        "maxHp": 383,
+        "barrier": 130
+      },
+      "liveBodyFraction": 0.9236343366778145,
+      "liveAuthoredOffenseFraction": 0.9236343366778145,
+      "readyHpBlockedMs": 0,
+      "hypothesisExercised": true,
+      "unavailableReason": null,
+      "details": "breadth-t3-conduit-light-far-farm-reconstruction-r1/breadth-t3-conduit-light-far-farm-reconstruction-r1-s101003"
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-boss-reconstruction-r1",
+      "controlCaseId": "breadth-t4-conduit-light-c-boss",
+      "playerTreatment": "reconstruction-r1",
+      "fixture": "node-t4-mountain-dungeon",
+      "seed": 101003,
+      "sourceCommit": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+      "sourceSha256": "47770ddababff0a26e03497effbd6cebbbbc543359f0e8c47fb440a4c059fed2",
+      "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+      "status": "complete",
+      "outcome": "capped",
+      "elapsedMs": 60000,
+      "windowMs": 60000,
+      "bossKilled": false,
+      "bossHpFractionRemoved": 0.32976050053848915,
+      "completedKills": 0,
+      "damagedTargets": 1,
+      "minHpFraction": 0.9676724137931034,
+      "partialTargets": 1,
+      "terminalOwner": {
+        "hp": 461.3423999999999,
+        "maxHp": 464,
+        "barrier": 195
+      },
+      "liveBodyFraction": 0.3688095238095203,
+      "liveAuthoredOffenseFraction": 0.3688095238095203,
+      "readyHpBlockedMs": 0,
+      "hypothesisExercised": true,
+      "unavailableReason": null,
+      "details": "breadth-t4-conduit-light-c-boss-reconstruction-r1/breadth-t4-conduit-light-c-boss-reconstruction-r1-s101003"
+    }
+  ],
+  "failures": []
+}

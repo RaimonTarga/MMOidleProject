@@ -1,0 +1,224 @@
+[
+  {
+    "root": "execution-packet",
+    "path": "identity.json",
+    "bytes": 122644,
+    "sha256": "debfee0cac46e9dfe23192ba78a80d8ae9a768fdf4fe8a27dfccd6f0686eba1e"
+  },
+  {
+    "root": "execution-packet",
+    "path": "manifest.json",
+    "bytes": 61444,
+    "sha256": "53ca22dd1e5c367743fab421d7789138dc24769fede020f6e7a04e8e0fe6181f"
+  },
+  {
+    "root": "execution-packet",
+    "path": "qualification/cases.json",
+    "bytes": 555506,
+    "sha256": "de87a0771f661a0e1ee3f25d2e3db478beafebf2e47690d9c5f50ba98ac75b70"
+  },
+  {
+    "root": "execution-packet",
+    "path": "qualification/catalogue.json",
+    "bytes": 684229,
+    "sha256": "9c47a602c85286793a725be9d1d90eca61e86e35f071c6afd59d81010588e7b5"
+  },
+  {
+    "root": "execution-packet",
+    "path": "qualification/catalogue.md",
+    "bytes": 15928,
+    "sha256": "0dda7953fbba52a61a4dae733e15696f42ff8c65890dfd8b6d144fe5cf632618"
+  },
+  {
+    "root": "execution-packet",
+    "path": "qualification/effective-profiles.json",
+    "bytes": 202045,
+    "sha256": "1f93447425a0062806c1058f5cfb843cd161562382557b996dfcf8bbcfbce8bd"
+  },
+  {
+    "root": "execution-packet",
+    "path": "qualification/legality.json",
+    "bytes": 165,
+    "sha256": "c96bfe157646547d3b7d60f3015646472aa94e4e2bd078de087b3cdf869296f6"
+  },
+  {
+    "root": "execution-packet",
+    "path": "qualification/process.json",
+    "bytes": 53,
+    "sha256": "5be607aa6069756a424013851e837a1d6719ca60a53323cc1dcdd74f0dd1cb8a"
+  },
+  {
+    "root": "execution-packet",
+    "path": "qualification/process.log",
+    "bytes": 46,
+    "sha256": "d3349c36277c265b02e434edea4cb6cacd04b434d6808f8c9d17d78f70b89678"
+  },
+  {
+    "root": "execution-packet",
+    "path": "qualification/resolved-builds.json",
+    "bytes": 2541019,
+    "sha256": "435366a0ce3edacee7fb76a2f10f52d85a3abd3c5b0a89be18b127c43cb773f6"
+  },
+  {
+    "root": "execution-packet",
+    "path": "seal.json",
+    "bytes": 855,
+    "sha256": "6eeaa8782a86c2351309a92b49716d9eeb32c4cb0bcaadd20629d092139045d9"
+  },
+  {
+    "root": "execution-packet",
+    "path": "smoke-launched.json",
+    "bytes": 173,
+    "sha256": "c25621e0182843dbda24c438c77f9d7ab920f8e631f93d9040975d8264a3da0b"
+  },
+  {
+    "root": "execution-packet",
+    "path": "smoke-qualified.json",
+    "bytes": 217,
+    "sha256": "60fb9240d45d814ab12921c99a80fa0a71aa3c8abad83d30c747ddc3c85dae74"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/breadth-t3-conduit-light-far-farm-reconstruction-r1-s101003/conduit.json",
+    "bytes": 118418,
+    "sha256": "fb4f061fc095d9fe06bcff657beb293dfff29ae18b71beb47c782be1cb238476"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/breadth-t3-conduit-light-far-farm-reconstruction-r1-s101003/events.jsonl",
+    "bytes": 178103,
+    "sha256": "d93700d528822e293b3886d9d47f6a4b2897b8abc381162cb668361ea398fa23"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/breadth-t3-conduit-light-far-farm-reconstruction-r1-s101003/ready.json",
+    "bytes": 29447,
+    "sha256": "8dfd737a2c83b74d44516b13a413a4eef6ae25f00b6e8b3a6df322cde47680d5"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/breadth-t3-conduit-light-far-farm-reconstruction-r1-s101003/samples.jsonl",
+    "bytes": 309973,
+    "sha256": "1260b95451efb0ea2c076cbc4a9b45334fd3c5c00b815e9468017b06b747ad73"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/breadth-t3-conduit-light-far-farm-reconstruction-r1-s101003/summary.json",
+    "bytes": 4530,
+    "sha256": "5c0f66b33fb79f618a1be6a98947b7701d13ee15cd11325487b042763abb16e9"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/complete.json",
+    "bytes": 35,
+    "sha256": "fe2459c3280dac5ad0a0d7bff87cf2ed30b3e99b8c3a53e9312d3c7b63a22a35"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/index.json",
+    "bytes": 4912,
+    "sha256": "886f7d3421c1854e6a9e3ec30f3028be47d7590eaa19ad53e573a945d144cc4b"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/manifest.json",
+    "bytes": 3645,
+    "sha256": "259e653cf18436d6b591ea2600d7ebeecbea17e7f4bd2c09f5c6e5d967bc92f2"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/process.json",
+    "bytes": 53,
+    "sha256": "5be607aa6069756a424013851e837a1d6719ca60a53323cc1dcdd74f0dd1cb8a"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t3-conduit-light-far-farm-reconstruction-r1/process.log",
+    "bytes": 68,
+    "sha256": "5b08ba5ed2e7e31e574a6004435fe233aa4201c0aee895bad15ac92ab1c6b339"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/breadth-t4-conduit-light-c-boss-reconstruction-r1-s101003/conduit.json",
+    "bytes": 164326,
+    "sha256": "4081bb361af6db18d62a65db5d51b99532ab4fc2d52c9ae8ba95cab566ebcb99"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/breadth-t4-conduit-light-c-boss-reconstruction-r1-s101003/events.jsonl",
+    "bytes": 375790,
+    "sha256": "7d8e282e14dd1becea50e258bc2a48e70a18b74bcf76426db77d3e27f3629a07"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/breadth-t4-conduit-light-c-boss-reconstruction-r1-s101003/ready.json",
+    "bytes": 21739,
+    "sha256": "12673e2165780edce7f23ced061be24ce757ef00f2be0ca514c72f251ddac2e1"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/breadth-t4-conduit-light-c-boss-reconstruction-r1-s101003/samples.jsonl",
+    "bytes": 9966,
+    "sha256": "6ec7872f5259237aa1425189eb86ac3132f2c477d596b42b3297ae51592ded96"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/breadth-t4-conduit-light-c-boss-reconstruction-r1-s101003/summary.json",
+    "bytes": 1964,
+    "sha256": "4d68554a4427ee1c164fe4e0ee47f77c12a23b17101b3ade21048d1154215359"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/complete.json",
+    "bytes": 152,
+    "sha256": "b0b6281d4537710d64d92e921857b28dc9d701aef0bda9dcd509445a123d9dfa"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/index.json",
+    "bytes": 2142,
+    "sha256": "8447980f00b9af61ee982a5177705d0a5e07dae53132426355a36a4258517af8"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/manifest.json",
+    "bytes": 3953,
+    "sha256": "777d4b6886d88be95d3a1f317f8efe254571c01a2ea1a1c95ad8fdd233a7b402"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/process.json",
+    "bytes": 53,
+    "sha256": "5be607aa6069756a424013851e837a1d6719ca60a53323cc1dcdd74f0dd1cb8a"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "breadth-t4-conduit-light-c-boss-reconstruction-r1/process.log",
+    "bytes": 153,
+    "sha256": "01d724278b5f8abeec1836b2f7f7565c9a3a0d974673708fc8204f3ee85776b2"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "complete.json",
+    "bytes": 70,
+    "sha256": "5cb830377091b47f59039f15e21e3795a9de433c3a596adb8eeee3f08b1dad06"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "identity.json",
+    "bytes": 122644,
+    "sha256": "debfee0cac46e9dfe23192ba78a80d8ae9a768fdf4fe8a27dfccd6f0686eba1e"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "manifest.json",
+    "bytes": 61444,
+    "sha256": "53ca22dd1e5c367743fab421d7789138dc24769fede020f6e7a04e8e0fe6181f"
+  },
+  {
+    "root": "qualification-smokes",
+    "path": "results.json",
+    "bytes": 2562,
+    "sha256": "cd345e99470e5172540a229c546b1695e3c29e8e1192bcae79fa456a5e168942"
+  }
+]

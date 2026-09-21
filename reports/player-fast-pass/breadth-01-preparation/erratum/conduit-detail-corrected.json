@@ -1,0 +1,108 @@
+[
+  {
+    "candidateId": "pfit-r1-t3-conduit-farm",
+    "seed": 101003,
+    "rawSamplesPath": "t3-farm/pfit-r1-t3-conduit-farm-s101003/samples.jsonl",
+    "rawEventsPath": "t3-farm/pfit-r1-t3-conduit-farm-s101003/events.jsonl",
+    "conduit": {
+      "applicability": "T3 farming detailed",
+      "ownerMovement": {
+        "sampledDistanceLowerBoundPx": 4851.389081434881,
+        "sampleCount": 97,
+        "sampledEveryMs": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        },
+        "intentDistribution": {
+          "attack": 65,
+          "idle": 32
+        },
+        "derivation": "polyline over sampled owner positions; lower bound, not exact path length"
+      },
+      "targetPersistence": {
+        "targetSwitches": 11,
+        "emptyTargetSamples": 0,
+        "sustainedDamageGapMs": 3500,
+        "hpRegainBodies": 3,
+        "evidence": "reports/player-fast-pass/package-fit-run-01-review/diagnostics/conduit-detail.json"
+      },
+      "formation": {
+        "activeBodyDistribution": {
+          "0": 8,
+          "1": 23,
+          "2": 25,
+          "3": 22,
+          "4": 10,
+          "5": 9
+        },
+        "emptySamples": 8,
+        "distinctSpawnedIds": 28,
+        "rebuildingEvidence": {
+          "armEvents": 7,
+          "shareLostEvents": 0
+        }
+      },
+      "techniqueDelivery": {
+        "eventCounts": {
+          "conduit-formation:conduit-arm": 7,
+          "conduit-formation:conduit-delivery": 15,
+          "conduit-formation:conduit-secondary-damage": 15
+        },
+        "incompleteShares": 0,
+        "evidence": "reports/player-fast-pass/package-fit-run-01-review/diagnostics/conduit-detail.json"
+      },
+      "bossProgress": null
+    }
+  },
+  {
+    "candidateId": "pfit-r1-t4-conduit-boss",
+    "seed": 101003,
+    "rawSamplesPath": "t4-boss/pfit-r1-t4-conduit-boss-s101003/samples.jsonl",
+    "rawEventsPath": "t4-boss/pfit-r1-t4-conduit-boss-s101003/events.jsonl",
+    "conduit": {
+      "applicability": "T4 boss progress contrasted separately",
+      "ownerMovement": {
+        "sampledDistanceLowerBoundPx": 25204.59548444131,
+        "sampleCount": 289,
+        "sampledEveryMs": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        },
+        "intentDistribution": null,
+        "derivation": "polyline over sampled owner positions; lower bound, not exact path length",
+        "intentUnavailableReason": "Historical boss schema does not record autoIntent."
+      },
+      "targetPersistence": {
+        "targetSwitches": null,
+        "emptyTargetSamples": null,
+        "sustainedDamageGapMs": 8400,
+        "hpRegainBodies": 0,
+        "evidence": "reports/player-fast-pass/package-fit-run-01-review/diagnostics/conduit-detail.json",
+        "unavailableReason": "Historical boss schema does not record owner target IDs."
+      },
+      "formation": {
+        "activeBodyDistribution": null,
+        "emptySamples": null,
+        "distinctSpawnedIds": null,
+        "rebuildingEvidence": {
+          "armEvents": 73,
+          "shareLostEvents": 3
+        },
+        "unavailableReason": "Historical boss sample schema does not record minions or summon targets."
+      },
+      "techniqueDelivery": {
+        "eventCounts": {
+          "conduit-formation:conduit-arm": 73,
+          "conduit-formation:conduit-delivery": 133,
+          "conduit-formation:conduit-secondary-damage": 92,
+          "conduit-formation:conduit-share-lost": 3
+        },
+        "incompleteShares": 3,
+        "evidence": "reports/player-fast-pass/package-fit-run-01-review/diagnostics/conduit-detail.json"
+      },
+      "bossProgress": null
+    }
+  }
+]

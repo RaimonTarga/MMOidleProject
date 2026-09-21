@@ -1,0 +1,25 @@
+{
+  "caseId": "pfit-r1-t4-conduit-boss",
+  "measuredCommit": "291702d5397aa5c24d2c77ac2557e3122a815a37",
+  "originalPath": "reports/player-fast-pass/package-fit-run-01-review/diagnostics/conduit-detail.json",
+  "originalSha256": "98c974a2f0720d1a01d986e6ced40f5736cc7cf4efd4eda88defad380477c7d4",
+  "rawSamplesSha256": "717aba9c007da198e7deb8c88b7274b79c2bf22ee6d918c724045895d34628d0",
+  "sampleCount": 289,
+  "sampleFields": [
+    "atMs",
+    "hp",
+    "maxHp",
+    "barrier",
+    "incomingDot",
+    "bossHp",
+    "bossMaxHp",
+    "addsAlive",
+    "pos"
+  ],
+  "availability": {
+    "livingBodyCounts": null,
+    "targetIds": null,
+    "unavailableReason": "Historical boss sample schema does not record minions or summon targets."
+  },
+  "reason": "Absent schema fields were incorrectly defaulted to zero/empty. Original evidence retained. No combat replay; kill time and supported damage events are unchanged."
+}

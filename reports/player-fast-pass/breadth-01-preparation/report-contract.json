@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "entrypoint": "results.json",
+  "oneRowPerScheduledCase": true,
+  "maxMainRows": 204,
+  "controlReplays": 0,
+  "units": {
+    "elapsedMs": "ms",
+    "readyHpBlockedMs": "ms",
+    "liveBodyFraction": "fraction",
+    "liveAuthoredOffenseFraction": "fraction",
+    "completedKills": "count",
+    "primaryHpDecrease": "HP"
+  },
+  "requiredIdentity": [
+    "caseId",
+    "controlCaseId",
+    "playerTreatment",
+    "fixture",
+    "seed",
+    "sourceCommit",
+    "sourceSha256",
+    "hitboxesSha256"
+  ],
+  "requiredEvidence": [
+    "manifest.json",
+    "identity.json",
+    "ready.json",
+    "summary.json",
+    "process.json",
+    "complete.json or preserved partial failure"
+  ],
+  "conduitDetail": "conduit.json",
+  "unsupportedFields": "null plus field availability reason; never fill absent schema with zero",
+  "firstPostSpawnAttack": "Use earliest conduit event kind=attack for each life with outcome other than cancelled. firstAttackAtMs in the recorder is the first engine invocation; inspect its outcome before describing a successful delivery. A miss/dodge is an attempted attack, not damage. Both qualification smokes contain only hit/killed outcomes.",
+  "terminalRules": [
+    "Boss kill requires authoritative matching victim evidence",
+    "Player death requires death event or authoritative isDead/HP evidence retained in summary/events",
+    "300s cap is censored, not a kill",
+    "Partial target counts accompany kills and duration",
+    "Report low/zero damage exposure as diagnostic, not automatic class failure"
+  ],
+  "interpretation": [
+    "No-loss cases do not test reconstruction",
+    "No candidate benefit inference from unpaired preparation smokes",
+    "Separate timers, ready-HP-blocking, engagement, and intact-formation damage",
+    "Compare target/HP-phase denominators before deriving rates"
+  ],
+  "publication": "reports/player-fast-pass/breadth-run-01-review/",
+  "findingsMaximum": 5,
+  "noFollowupPacket": true
+}
