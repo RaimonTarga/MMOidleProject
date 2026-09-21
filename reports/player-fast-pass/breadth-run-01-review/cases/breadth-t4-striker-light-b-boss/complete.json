@@ -1,0 +1,7 @@
+{
+  "trial": "player-breadth",
+  "block": "breadth-t4-striker-light-b-boss",
+  "mode": "run",
+  "observations": 1,
+  "expected": 1
+}

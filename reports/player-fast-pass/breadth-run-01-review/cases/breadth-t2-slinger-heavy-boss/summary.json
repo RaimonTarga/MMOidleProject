@@ -1,0 +1,98 @@
+{
+  "cell": "breadth-t2-slinger-heavy-boss",
+  "seed": 101003,
+  "outcome": "boss-killed",
+  "elapsedMs": 44100,
+  "windowMs": 300000,
+  "terminalOwner": {
+    "hp": 277,
+    "maxHp": 277,
+    "barrier": 72
+  },
+  "bossKilled": true,
+  "bossKillEvidence": {
+    "atMs": 44100,
+    "victimId": "node-t2-mountain-dungeon_monster-5",
+    "victimName": "Stoneplate Juggernaut",
+    "killerId": "bench-bot-0"
+  },
+  "playerDeathEvidence": null,
+  "encounterResetEvidence": null,
+  "killedAtMs": 44100,
+  "bossMaxHp": 5000,
+  "bossHpRemaining": 0,
+  "terminalBossHpSupported": true,
+  "bossHpFractionRemoved": 1,
+  "crossedHalfAtMs": 23400,
+  "castsStarted": 8,
+  "castLabels": [
+    "Stoneplate",
+    "Stoneplate Charge"
+  ],
+  "maxAddsAlive": 0,
+  "damageFromBoss": 0,
+  "damageFromAdds": {},
+  "attackBeats": 144,
+  "minionAttackBeats": 0,
+  "totalAttackBeats": 144,
+  "hpLost": 0,
+  "peakBurst1s": 0,
+  "minHpFraction": 1,
+  "wallElapsedMs": 431,
+  "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+  "targets": [
+    {
+      "id": "node-t2-mountain-dungeon_monster-5",
+      "type": "stoneplate-juggernaut",
+      "name": "Stoneplate Juggernaut",
+      "maxHp": 5000,
+      "firstDamageMs": 900,
+      "lastDamageMs": 44100,
+      "killedAtMs": 44100,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 4400,
+      "damageEvents": 84,
+      "castsStarted": 8,
+      "castsFired": 0,
+      "ttkMs": 43200,
+      "clean": true
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 900,
+      "endMs": 44100,
+      "durationMs": 43200,
+      "members": [
+        "node-t2-mountain-dungeon_monster-5"
+      ],
+      "initialMembers": [
+        "node-t2-mountain-dungeon_monster-5"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    }
+  ],
+  "recovery": [
+    {
+      "afterClearMs": 44100,
+      "recoveredAtMs": 44100,
+      "interruptedByNextPull": false
+    }
+  ],
+  "incomingDamage": 0,
+  "largestHit": 0,
+  "maxDamageIn1s": 0,
+  "counts": {
+    "damaged": 1,
+    "killed": 1,
+    "censored": 0,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 1,
+    "p10": 43200,
+    "median": 43200,
+    "p90": 43200
+  }
+}

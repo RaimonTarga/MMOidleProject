@@ -1,0 +1,106 @@
+[
+  {
+    "cell": "breadth-t3-striker-heavy-boss",
+    "seed": 101003,
+    "outcome": "bot-died",
+    "elapsedMs": 35000,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 0,
+      "maxHp": 417,
+      "barrier": 0
+    },
+    "bossKilled": false,
+    "bossKillEvidence": null,
+    "playerDeathEvidence": {
+      "atMs": 35000,
+      "cause": {
+        "kind": "melee",
+        "killer": {
+          "monsterEntityId": "node-t3-mountain-dungeon_monster-5",
+          "monsterTypeId": "crag-gorged-horn-behemoth",
+          "monsterName": "Crag-Gorged Horn-Behemoth",
+          "isBoss": true,
+          "nodeId": "node-t3-mountain-dungeon"
+        },
+        "abilityName": "Cragbreaker",
+        "damage": 256
+      }
+    },
+    "encounterResetEvidence": {
+      "atMs": 35000,
+      "message": "The guard reforms."
+    },
+    "killedAtMs": null,
+    "bossMaxHp": 12418,
+    "bossHpRemaining": 9550,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 0.230955065227895,
+    "crossedHalfAtMs": null,
+    "castsStarted": 6,
+    "castLabels": [
+      "Cragbreaker Charge",
+      "Cragbreaker"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 473.8500000000001,
+    "damageFromAdds": {},
+    "attackBeats": 9,
+    "minionAttackBeats": 0,
+    "totalAttackBeats": 9,
+    "hpLost": 465.0180000000003,
+    "peakBurst1s": 387.9210000000003,
+    "minHpFraction": 0,
+    "wallElapsedMs": 330,
+    "initialRosterHash": "5c3e73bb0e37111169d475adc695307ec3840c3ac2083b4acf8bb8ab90e33877",
+    "targets": [
+      {
+        "id": "node-t3-mountain-dungeon_monster-5",
+        "type": "crag-gorged-horn-behemoth",
+        "name": "Crag-Gorged Horn-Behemoth",
+        "maxHp": 12418,
+        "firstDamageMs": 1400,
+        "lastDamageMs": 32900,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 7100,
+        "damageEvents": 9,
+        "castsStarted": 6,
+        "castsFired": 0,
+        "ttkMs": null,
+        "clean": false
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 1000,
+        "endMs": 35000,
+        "durationMs": 34000,
+        "members": [
+          "node-t3-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t3-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "bot-died"
+      }
+    ],
+    "recovery": [],
+    "incomingDamage": 473.8500000000001,
+    "largestHit": 256,
+    "maxDamageIn1s": 393,
+    "counts": {
+      "damaged": 1,
+      "killed": 0,
+      "censored": 1,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 0,
+      "p10": null,
+      "median": null,
+      "p90": null
+    }
+  }
+]

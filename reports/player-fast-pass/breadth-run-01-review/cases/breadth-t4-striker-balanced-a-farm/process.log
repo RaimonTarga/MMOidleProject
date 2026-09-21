@@ -1,0 +1,28 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Wrong frozen checkout
++ actual - expected
+
++ 'c157f5ed2b1d865d65177cbf611f872151e81213'
+- '5024be692d8a1854b7f61e007d371f2ee9aab46b'
+
+    at assert (C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\scripts\ttkSurvey.ts:101:26)
+    at Object.<anonymous> (C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\scripts\ttkSurvey.ts:257:68)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object.transformer (C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:3176)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at cjsLoader (node:internal/modules/esm/translators:266:5)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:200:7) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'c157f5ed2b1d865d65177cbf611f872151e81213',
+  expected: '5024be692d8a1854b7f61e007d371f2ee9aab46b',
+  operator: 'strictEqual'
+}
+
+Node.js v22.16.0

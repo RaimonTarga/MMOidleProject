@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "planned": 204,
+  "launcherRows": 204,
+  "statusCounts": {
+    "local-failure": 102,
+    "complete": 102
+  },
+  "completeOutcomeCounts": {
+    "boss-killed": 83,
+    "bot-died": 10,
+    "capped": 9
+  },
+  "bySetting": {
+    "farm": {
+      "planned": 102,
+      "complete": 0,
+      "localFailure": 102
+    },
+    "boss": {
+      "planned": 102,
+      "complete": 102,
+      "localFailure": 0,
+      "outcomeCounts": {
+        "boss-killed": 83,
+        "bot-died": 10,
+        "capped": 9
+      }
+    }
+  },
+  "byTier": {
+    "2": {
+      "planned": 40,
+      "complete": 20,
+      "localFailure": 20,
+      "outcomes": {
+        "boss-killed": 17,
+        "bot-died": 3
+      }
+    },
+    "3": {
+      "planned": 50,
+      "complete": 25,
+      "localFailure": 25,
+      "outcomes": {
+        "bot-died": 7,
+        "boss-killed": 13,
+        "capped": 5
+      }
+    },
+    "4": {
+      "planned": 114,
+      "complete": 57,
+      "localFailure": 57,
+      "outcomes": {
+        "boss-killed": 53,
+        "capped": 4
+      }
+    }
+  },
+  "reconstructionBossScreen": {
+    "candidateRows": 9,
+    "candidateKills": 8,
+    "controlKills": 3,
+    "candidateBossOutcomes": {
+      "boss-killed": 8,
+      "capped": 1
+    },
+    "controlBossOutcomes": {
+      "boss-killed": 3,
+      "capped": 6
+    }
+  },
+  "evidence": [
+    "reports/player-fast-pass/breadth-run-01-review/launcher-results.json",
+    "reports/player-fast-pass/breadth-run-01-review/diagnostics/pair-comparison.json"
+  ]
+}

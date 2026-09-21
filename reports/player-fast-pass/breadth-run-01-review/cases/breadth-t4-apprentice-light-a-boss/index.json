@@ -1,0 +1,100 @@
+[
+  {
+    "cell": "breadth-t4-apprentice-light-a-boss",
+    "seed": 101003,
+    "outcome": "boss-killed",
+    "elapsedMs": 79600,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 521,
+      "maxHp": 521,
+      "barrier": 219
+    },
+    "bossKilled": true,
+    "bossKillEvidence": {
+      "atMs": 79600,
+      "victimId": "node-t4-mountain-dungeon_monster-5",
+      "victimName": "Iron-Crest Titan",
+      "killerId": "bench-bot-0"
+    },
+    "playerDeathEvidence": null,
+    "encounterResetEvidence": null,
+    "killedAtMs": 79600,
+    "bossMaxHp": 19499,
+    "bossHpRemaining": 0,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 1,
+    "crossedHalfAtMs": 40600,
+    "castsStarted": 14,
+    "castLabels": [
+      "Titan Charge",
+      "Earthshatter"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 0,
+    "damageFromAdds": {},
+    "attackBeats": 119,
+    "minionAttackBeats": 0,
+    "totalAttackBeats": 119,
+    "hpLost": 0,
+    "peakBurst1s": 0,
+    "minHpFraction": 1,
+    "wallElapsedMs": 779,
+    "initialRosterHash": "2c4bbb0f02e416562b40d7127d9f1839f3d0973da73dd0db96492a0e08f35774",
+    "targets": [
+      {
+        "id": "node-t4-mountain-dungeon_monster-5",
+        "type": "iron-crest-titan",
+        "name": "Iron-Crest Titan",
+        "maxHp": 19499,
+        "firstDamageMs": 800,
+        "lastDamageMs": 79600,
+        "killedAtMs": 79600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3300,
+        "damageEvents": 200,
+        "castsStarted": 14,
+        "castsFired": 1,
+        "ttkMs": 78800,
+        "clean": true
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 800,
+        "endMs": 79600,
+        "durationMs": 78800,
+        "members": [
+          "node-t4-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t4-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      }
+    ],
+    "recovery": [
+      {
+        "afterClearMs": 79600,
+        "recoveredAtMs": 79600,
+        "interruptedByNextPull": false
+      }
+    ],
+    "incomingDamage": 0,
+    "largestHit": 0,
+    "maxDamageIn1s": 0,
+    "counts": {
+      "damaged": 1,
+      "killed": 1,
+      "censored": 0,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 1,
+      "p10": 78800,
+      "median": 78800,
+      "p90": 78800
+    }
+  }
+]

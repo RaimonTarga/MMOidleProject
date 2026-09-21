@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "seed": 101003,
+  "rows": [
+    {
+      "controlCaseId": "breadth-t2-conduit-balanced-boss",
+      "candidateCaseId": "breadth-t2-conduit-balanced-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 169200,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.13520000000000001
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 157000,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.09511612903225798
+      },
+      "observedOutcomeChanged": false,
+      "observedElapsedDeltaMs": -12200,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-balanced-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-balanced-boss-reconstruction-r1/index.json"
+      ]
+    },
+    {
+      "controlCaseId": "breadth-t2-conduit-light-boss",
+      "candidateCaseId": "breadth-t2-conduit-light-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 170000,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.36063012552301293
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 147600,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.0813297071129707
+      },
+      "observedOutcomeChanged": false,
+      "observedElapsedDeltaMs": -22400,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-light-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-light-boss-reconstruction-r1/index.json"
+      ]
+    },
+    {
+      "controlCaseId": "breadth-t3-conduit-balanced-boss",
+      "candidateCaseId": "breadth-t3-conduit-balanced-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "capped",
+        "elapsedMs": 300000,
+        "bossKilled": false,
+        "bossHpFractionRemoved": 0.8424867128362055,
+        "minHpFraction": 0.18381132075471698
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "capped",
+        "elapsedMs": 300000,
+        "bossKilled": false,
+        "bossHpFractionRemoved": 0.9056208729263971,
+        "minHpFraction": 0.18381132075471698
+      },
+      "observedOutcomeChanged": false,
+      "observedElapsedDeltaMs": 0,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-balanced-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-balanced-boss-reconstruction-r1/index.json"
+      ]
+    },
+    {
+      "controlCaseId": "breadth-t3-conduit-balanced-far-boss",
+      "candidateCaseId": "breadth-t3-conduit-balanced-far-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "capped",
+        "elapsedMs": 300000,
+        "bossKilled": false,
+        "bossHpFractionRemoved": 0.9513609276856176,
+        "minHpFraction": 0.9568527918781726
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 285400,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.7197360406091371
+      },
+      "observedOutcomeChanged": true,
+      "observedElapsedDeltaMs": -14600,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-balanced-far-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-balanced-far-boss-reconstruction-r1/index.json"
+      ]
+    },
+    {
+      "controlCaseId": "breadth-t3-conduit-heavy-far-boss",
+      "candidateCaseId": "breadth-t3-conduit-heavy-far-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 198800,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.061756563245818755
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 191400,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.2775704057279233
+      },
+      "observedOutcomeChanged": false,
+      "observedElapsedDeltaMs": -7400,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-heavy-far-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-heavy-far-boss-reconstruction-r1/index.json"
+      ]
+    },
+    {
+      "controlCaseId": "breadth-t3-conduit-light-far-boss",
+      "candidateCaseId": "breadth-t3-conduit-light-far-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "capped",
+        "elapsedMs": 300000,
+        "bossKilled": false,
+        "bossHpFractionRemoved": 0.8714768883878241,
+        "minHpFraction": 0.22809921671018277
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 280400,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.2712637075718015
+      },
+      "observedOutcomeChanged": true,
+      "observedElapsedDeltaMs": -19600,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-light-far-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-light-far-boss-reconstruction-r1/index.json"
+      ]
+    },
+    {
+      "controlCaseId": "breadth-t4-conduit-balanced-c-boss",
+      "candidateCaseId": "breadth-t4-conduit-balanced-c-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "capped",
+        "elapsedMs": 300000,
+        "bossKilled": false,
+        "bossHpFractionRemoved": 0.9577414226370583,
+        "minHpFraction": 0.6738384754990925
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 236500,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.9401088929219601
+      },
+      "observedOutcomeChanged": true,
+      "observedElapsedDeltaMs": -63500,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-balanced-c-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-balanced-c-boss-reconstruction-r1/index.json"
+      ]
+    },
+    {
+      "controlCaseId": "breadth-t4-conduit-light-b-boss",
+      "candidateCaseId": "breadth-t4-conduit-light-b-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "capped",
+        "elapsedMs": 300000,
+        "bossKilled": false,
+        "bossHpFractionRemoved": 0.8658392738089133,
+        "minHpFraction": 0.9762931034482759
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 266100,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.8987068965517241
+      },
+      "observedOutcomeChanged": true,
+      "observedElapsedDeltaMs": -33900,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-b-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-b-boss-reconstruction-r1/index.json"
+      ]
+    },
+    {
+      "controlCaseId": "breadth-t4-conduit-light-c-boss",
+      "candidateCaseId": "breadth-t4-conduit-light-c-boss-reconstruction-r1",
+      "control": {
+        "status": "complete",
+        "outcome": "capped",
+        "elapsedMs": 300000,
+        "bossKilled": false,
+        "bossHpFractionRemoved": 0.8138878916867531,
+        "minHpFraction": 0.9676724137931034
+      },
+      "candidate": {
+        "status": "complete",
+        "outcome": "boss-killed",
+        "elapsedMs": 278300,
+        "bossKilled": true,
+        "bossHpFractionRemoved": 1,
+        "minHpFraction": 0.9676724137931034
+      },
+      "observedOutcomeChanged": true,
+      "observedElapsedDeltaMs": -21700,
+      "evidence": [
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-c-boss/index.json",
+        "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-c-boss-reconstruction-r1/index.json"
+      ]
+    }
+  ]
+}

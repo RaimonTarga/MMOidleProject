@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "mode": "run",
+  "trial": "player-breadth",
+  "block": "breadth-t2-conduit-light-boss-reconstruction-r1",
+  "revision": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+  "definitionsHash": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 300000,
+  "sampleEveryMs": 1000,
+  "bossId": "stoneplate-juggernaut",
+  "guardianAccess": "not-measured-guard-stripped",
+  "seeds": [
+    101003
+  ],
+  "cells": [
+    {
+      "id": "breadth-t2-conduit-light-boss-reconstruction-r1",
+      "className": "conduit",
+      "tier": 2,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "stoneplate-juggernaut"
+      ],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "breadth-t2-conduit-light-boss-reconstruction-r1",
+        "classRoot": "summoner-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "summoner-root",
+          "summoner-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t2-conduit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Splinter",
+      "playerTreatment": "reconstruction-r1",
+      "controlCaseId": "breadth-t2-conduit-light-boss",
+      "preparationNotes": [
+        "Your presence splinters across six small, fast summons. They divide the formation budget rather than multiplying it, but the whole formation carries 20% stronger on-hit and secondary weapon effects. Each loss costs little offense and reconstruction HP; plating and area damage punish the swarm.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "Offensive stance is always active; no stance switching.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2065 @@
+{
+  "schemaVersion": 1,
+  "rows": [
+    {
+      "caseId": "breadth-t2-conduit-balanced-boss",
+      "rawPath": "breadth-t2-conduit-balanced-boss/breadth-t2-conduit-balanced-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-balanced-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 169300,
+        "initializedExposureMs": 169300,
+        "liveBodyFraction": 0.28966331955109276,
+        "liveAuthoredOffenseFraction": 0.28966331955109276,
+        "liveAuthoredProcFraction": 0.28966331955109276,
+        "zeroSummonsMs": 36300,
+        "atOrBelowHalfOffenseMs": 146700,
+        "combatExposureMs": 166600,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 45,
+        "successfulReplacements": 45,
+        "totalHpPaid": 675,
+        "queueScopedHealingHp": 893.2160000000202,
+        "meanQueueDepth": 3.522740696987596,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 6600,
+            "depleted": 160000
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 53,
+              "primaryHpDecrease": 350,
+              "exposureMs": 6100
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 117,
+              "primaryHpDecrease": 920,
+              "exposureMs": 28600
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "at-or-below-half-hp",
+              "attempts": 174,
+              "primaryHpDecrease": 1150,
+              "exposureMs": 49000
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 50,
+        "lifeCauses": {
+          "combat-death": 49,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 170
+      }
+    },
+    {
+      "caseId": "breadth-t2-conduit-balanced-boss-reconstruction-r1",
+      "rawPath": "breadth-t2-conduit-balanced-boss-reconstruction-r1/breadth-t2-conduit-balanced-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-balanced-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 157100,
+        "initializedExposureMs": 157100,
+        "liveBodyFraction": 0.33736473583704646,
+        "liveAuthoredOffenseFraction": 0.33736473583704646,
+        "liveAuthoredProcFraction": 0.33736473583704646,
+        "zeroSummonsMs": 28800,
+        "atOrBelowHalfOffenseMs": 121900,
+        "combatExposureMs": 155100,
+        "readyHpBlockedMs": 600,
+        "replacementAttemptTicks": 55,
+        "successfulReplacements": 49,
+        "totalHpPaid": 735,
+        "queueScopedHealingHp": 895.06240000002,
+        "meanQueueDepth": 3.2800763844684915,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 11400,
+            "depleted": 143700
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 64,
+              "primaryHpDecrease": 390,
+              "exposureMs": 7900
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 121,
+              "primaryHpDecrease": 1050,
+              "exposureMs": 29500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "at-or-below-half-hp",
+              "attempts": 167,
+              "primaryHpDecrease": 1219,
+              "exposureMs": 47500
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "at-or-below-half-hp",
+              "attempts": 20,
+              "primaryHpDecrease": 40,
+              "exposureMs": 3000
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 54,
+        "lifeCauses": {
+          "combat-death": 52,
+          "right-censored-at-terminal": 2
+        },
+        "snapshotCount": 158
+      }
+    },
+    {
+      "caseId": "breadth-t2-conduit-heavy-boss",
+      "rawPath": "breadth-t2-conduit-heavy-boss/breadth-t2-conduit-heavy-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-heavy-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 97000,
+        "initializedExposureMs": 97000,
+        "liveBodyFraction": 0.7515463917525773,
+        "liveAuthoredOffenseFraction": 0.7515463917525773,
+        "liveAuthoredProcFraction": 0.7515463917525773,
+        "zeroSummonsMs": 16100,
+        "atOrBelowHalfOffenseMs": 32100,
+        "combatExposureMs": 89800,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 8,
+        "successfulReplacements": 8,
+        "totalHpPaid": 448,
+        "queueScopedHealingHp": 205.15320000000185,
+        "meanQueueDepth": 0.4865979381443299,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 61800,
+            "depleted": 28000
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 66,
+              "primaryHpDecrease": 1419,
+              "exposureMs": 16200
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 6,
+              "primaryHpDecrease": 198,
+              "exposureMs": 2100
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "at-or-below-half-hp",
+              "attempts": 60,
+              "primaryHpDecrease": 1452,
+              "exposureMs": 16400
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "at-or-below-half-hp",
+              "attempts": 11,
+              "primaryHpDecrease": 264,
+              "exposureMs": 5500
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 10,
+        "lifeCauses": {
+          "combat-death": 10
+        },
+        "snapshotCount": 97
+      }
+    },
+    {
+      "caseId": "breadth-t2-conduit-light-boss",
+      "rawPath": "breadth-t2-conduit-light-boss/breadth-t2-conduit-light-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-light-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 170100,
+        "initializedExposureMs": 170100,
+        "liveBodyFraction": 0.24681559866745142,
+        "liveAuthoredOffenseFraction": 0.24681559866745142,
+        "liveAuthoredProcFraction": 0.24681559866745142,
+        "zeroSummonsMs": 35800,
+        "atOrBelowHalfOffenseMs": 148200,
+        "combatExposureMs": 168000,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 49,
+        "successfulReplacements": 49,
+        "totalHpPaid": 392,
+        "queueScopedHealingHp": 657.920799999987,
+        "meanQueueDepth": 4.488536155202822,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 6600,
+            "depleted": 161400
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 66,
+              "primaryHpDecrease": 378,
+              "exposureMs": 6500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 129,
+              "primaryHpDecrease": 936,
+              "exposureMs": 37200
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "at-or-below-half-hp",
+              "attempts": 165,
+              "primaryHpDecrease": 1089,
+              "exposureMs": 52600
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 55,
+        "lifeCauses": {
+          "combat-death": 52,
+          "right-censored-at-terminal": 3
+        },
+        "snapshotCount": 171
+      }
+    },
+    {
+      "caseId": "breadth-t2-conduit-light-boss-reconstruction-r1",
+      "rawPath": "breadth-t2-conduit-light-boss-reconstruction-r1/breadth-t2-conduit-light-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t2-conduit-light-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 147700,
+        "initializedExposureMs": 147700,
+        "liveBodyFraction": 0.3476641841570748,
+        "liveAuthoredOffenseFraction": 0.3476641841570748,
+        "liveAuthoredProcFraction": 0.3476641841570748,
+        "zeroSummonsMs": 18000,
+        "atOrBelowHalfOffenseMs": 96600,
+        "combatExposureMs": 145900,
+        "readyHpBlockedMs": 800,
+        "replacementAttemptTicks": 63,
+        "successfulReplacements": 55,
+        "totalHpPaid": 440,
+        "queueScopedHealingHp": 705.2759999999848,
+        "meanQueueDepth": 3.8740690589031823,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 7200,
+            "depleted": 138700
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 71,
+              "primaryHpDecrease": 387,
+              "exposureMs": 7100
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "above-half-hp",
+              "attempts": 150,
+              "primaryHpDecrease": 1125,
+              "exposureMs": 32700
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t2-mountain-dungeon_monster-5",
+              "targetType": "stoneplate-juggernaut",
+              "phase": "at-or-below-half-hp",
+              "attempts": 215,
+              "primaryHpDecrease": 1314,
+              "exposureMs": 52900
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 61,
+        "lifeCauses": {
+          "combat-death": 59,
+          "right-censored-at-terminal": 2
+        },
+        "snapshotCount": 148
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-boss",
+      "rawPath": "breadth-t3-conduit-balanced-boss/breadth-t3-conduit-balanced-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-balanced-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.4432,
+        "liveAuthoredOffenseFraction": 0.4432,
+        "liveAuthoredProcFraction": 0.4432,
+        "zeroSummonsMs": 56500,
+        "atOrBelowHalfOffenseMs": 178900,
+        "combatExposureMs": 298100,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 72,
+        "successfulReplacements": 72,
+        "totalHpPaid": 1584,
+        "queueScopedHealingHp": 2196.6599999999335,
+        "meanQueueDepth": 2.759,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 75700,
+            "depleted": 222400
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 235,
+              "primaryHpDecrease": 3062,
+              "exposureMs": 28900
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 247,
+              "primaryHpDecrease": 3148,
+              "exposureMs": 70700
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 180,
+              "primaryHpDecrease": 2344,
+              "exposureMs": 23800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 149,
+              "primaryHpDecrease": 1908,
+              "exposureMs": 46600
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 77,
+        "lifeCauses": {
+          "combat-death": 75,
+          "right-censored-at-terminal": 2
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-boss-reconstruction-r1",
+      "rawPath": "breadth-t3-conduit-balanced-boss-reconstruction-r1/breadth-t3-conduit-balanced-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-balanced-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.4881333333333333,
+        "liveAuthoredOffenseFraction": 0.4881333333333333,
+        "liveAuthoredProcFraction": 0.4881333333333333,
+        "zeroSummonsMs": 42800,
+        "atOrBelowHalfOffenseMs": 166700,
+        "combatExposureMs": 298300,
+        "readyHpBlockedMs": 200,
+        "replacementAttemptTicks": 80,
+        "successfulReplacements": 78,
+        "totalHpPaid": 1716,
+        "queueScopedHealingHp": 2403.327999999926,
+        "meanQueueDepth": 2.5316666666666667,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 94300,
+            "depleted": 204000
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 344,
+              "primaryHpDecrease": 4418,
+              "exposureMs": 42000
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 141,
+              "primaryHpDecrease": 1796,
+              "exposureMs": 38400
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 185,
+              "primaryHpDecrease": 2410,
+              "exposureMs": 23200
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 208,
+              "primaryHpDecrease": 2622,
+              "exposureMs": 67100
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 83,
+        "lifeCauses": {
+          "combat-death": 83
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-far-boss",
+      "rawPath": "breadth-t3-conduit-balanced-far-boss/breadth-t3-conduit-balanced-far-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-balanced-far-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.43146666666666667,
+        "liveAuthoredOffenseFraction": 0.43146666666666667,
+        "liveAuthoredProcFraction": 0.43146666666666667,
+        "zeroSummonsMs": 37200,
+        "atOrBelowHalfOffenseMs": 178600,
+        "combatExposureMs": 298600,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 79,
+        "successfulReplacements": 79,
+        "totalHpPaid": 1343,
+        "queueScopedHealingHp": 1343,
+        "meanQueueDepth": 2.815,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 53700,
+            "depleted": 244900
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 244,
+              "primaryHpDecrease": 3166,
+              "exposureMs": 30800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 240,
+              "primaryHpDecrease": 3046,
+              "exposureMs": 68800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 297,
+              "primaryHpDecrease": 3794,
+              "exposureMs": 88500
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 139,
+              "primaryHpDecrease": 1808,
+              "exposureMs": 18100
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 84,
+        "lifeCauses": {
+          "combat-death": 83,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-far-boss-reconstruction-r1",
+      "rawPath": "breadth-t3-conduit-balanced-far-boss-reconstruction-r1/breadth-t3-conduit-balanced-far-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-balanced-far-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 285500,
+        "initializedExposureMs": 285500,
+        "liveBodyFraction": 0.47285464098073554,
+        "liveAuthoredOffenseFraction": 0.47285464098073554,
+        "liveAuthoredProcFraction": 0.47285464098073554,
+        "zeroSummonsMs": 40200,
+        "atOrBelowHalfOffenseMs": 155600,
+        "combatExposureMs": 284100,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 94,
+        "successfulReplacements": 94,
+        "totalHpPaid": 1598,
+        "queueScopedHealingHp": 1676,
+        "meanQueueDepth": 2.602802101576182,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 78300,
+            "depleted": 205800
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 309,
+              "primaryHpDecrease": 3972,
+              "exposureMs": 39100
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 177,
+              "primaryHpDecrease": 2246,
+              "exposureMs": 51500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 261,
+              "primaryHpDecrease": 3390,
+              "exposureMs": 73100
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 222,
+              "primaryHpDecrease": 2810,
+              "exposureMs": 27600
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 99,
+        "lifeCauses": {
+          "combat-death": 94,
+          "right-censored-at-terminal": 5
+        },
+        "snapshotCount": 286
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-heavy-boss",
+      "rawPath": "breadth-t3-conduit-heavy-boss/breadth-t3-conduit-heavy-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-heavy-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 231900,
+        "initializedExposureMs": 231900,
+        "liveBodyFraction": 0.7731780940060371,
+        "liveAuthoredOffenseFraction": 0.7731780940060371,
+        "liveAuthoredProcFraction": 0.7731780940060371,
+        "zeroSummonsMs": 21200,
+        "atOrBelowHalfOffenseMs": 84000,
+        "combatExposureMs": 224700,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 21,
+        "successfulReplacements": 21,
+        "totalHpPaid": 1743,
+        "queueScopedHealingHp": 1048.0320000000124,
+        "meanQueueDepth": 0.44458818456231136,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 142000,
+            "depleted": 82700
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 147,
+              "primaryHpDecrease": 5607,
+              "exposureMs": 47500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 16,
+              "primaryHpDecrease": 623,
+              "exposureMs": 7800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 41,
+              "primaryHpDecrease": 1589,
+              "exposureMs": 24400
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 120,
+              "primaryHpDecrease": 4599,
+              "exposureMs": 39100
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 23,
+        "lifeCauses": {
+          "combat-death": 21,
+          "right-censored-at-terminal": 2
+        },
+        "snapshotCount": 232
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-heavy-far-boss",
+      "rawPath": "breadth-t3-conduit-heavy-far-boss/breadth-t3-conduit-heavy-far-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-heavy-far-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 198900,
+        "initializedExposureMs": 198900,
+        "liveBodyFraction": 0.7174459527400704,
+        "liveAuthoredOffenseFraction": 0.7174459527400704,
+        "liveAuthoredProcFraction": 0.7174459527400704,
+        "zeroSummonsMs": 20700,
+        "atOrBelowHalfOffenseMs": 91700,
+        "combatExposureMs": 196800,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 22,
+        "successfulReplacements": 22,
+        "totalHpPaid": 1364,
+        "queueScopedHealingHp": 1333.9999999999661,
+        "meanQueueDepth": 0.5535444947209653,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 105900,
+            "depleted": 90900
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 128,
+              "primaryHpDecrease": 4851,
+              "exposureMs": 43800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 36,
+              "primaryHpDecrease": 1379,
+              "exposureMs": 20000
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 119,
+              "primaryHpDecrease": 4431,
+              "exposureMs": 39600
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 45,
+              "primaryHpDecrease": 1757,
+              "exposureMs": 29000
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 24,
+        "lifeCauses": {
+          "combat-death": 23,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 199
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-heavy-far-boss-reconstruction-r1",
+      "rawPath": "breadth-t3-conduit-heavy-far-boss-reconstruction-r1/breadth-t3-conduit-heavy-far-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-heavy-far-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 191500,
+        "initializedExposureMs": 191500,
+        "liveBodyFraction": 0.764490861618799,
+        "liveAuthoredOffenseFraction": 0.764490861618799,
+        "liveAuthoredProcFraction": 0.764490861618799,
+        "zeroSummonsMs": 22200,
+        "atOrBelowHalfOffenseMs": 68000,
+        "combatExposureMs": 190200,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 20,
+        "successfulReplacements": 20,
+        "totalHpPaid": 1240,
+        "queueScopedHealingHp": 1042.639999999976,
+        "meanQueueDepth": 0.4605744125326371,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 122200,
+            "depleted": 68000
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 144,
+              "primaryHpDecrease": 5495,
+              "exposureMs": 47000
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 19,
+              "primaryHpDecrease": 728,
+              "exposureMs": 11500
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 141,
+              "primaryHpDecrease": 5264,
+              "exposureMs": 46900
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 24,
+              "primaryHpDecrease": 931,
+              "exposureMs": 16500
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 22,
+        "lifeCauses": {
+          "combat-death": 20,
+          "right-censored-at-terminal": 2
+        },
+        "snapshotCount": 192
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-light-boss",
+      "rawPath": "breadth-t3-conduit-light-boss/breadth-t3-conduit-light-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-light-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.4068888888888922,
+        "liveAuthoredOffenseFraction": 0.4068888888888922,
+        "liveAuthoredProcFraction": 0.4068888888888922,
+        "zeroSummonsMs": 50600,
+        "atOrBelowHalfOffenseMs": 180700,
+        "combatExposureMs": 298300,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 76,
+        "successfulReplacements": 76,
+        "totalHpPaid": 912,
+        "queueScopedHealingHp": 1532.7779999999605,
+        "meanQueueDepth": 3.532,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 59400,
+            "depleted": 238900
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 339,
+              "primaryHpDecrease": 3764,
+              "exposureMs": 33500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 228,
+              "primaryHpDecrease": 2452,
+              "exposureMs": 52500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 317,
+              "primaryHpDecrease": 3404,
+              "exposureMs": 93200
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 50,
+              "primaryHpDecrease": 530,
+              "exposureMs": 5100
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 82,
+        "lifeCauses": {
+          "combat-death": 80,
+          "right-censored-at-terminal": 2
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-light-far-boss",
+      "rawPath": "breadth-t3-conduit-light-far-boss/breadth-t3-conduit-light-far-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-light-far-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.3872222222222213,
+        "liveAuthoredOffenseFraction": 0.3872222222222213,
+        "liveAuthoredProcFraction": 0.3872222222222213,
+        "zeroSummonsMs": 30700,
+        "atOrBelowHalfOffenseMs": 184300,
+        "combatExposureMs": 298700,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 84,
+        "successfulReplacements": 84,
+        "totalHpPaid": 756,
+        "queueScopedHealingHp": 1064.269999999986,
+        "meanQueueDepth": 3.647,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 33500,
+            "depleted": 265200
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 302,
+              "primaryHpDecrease": 3282,
+              "exposureMs": 31800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 272,
+              "primaryHpDecrease": 2928,
+              "exposureMs": 74000
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 419,
+              "primaryHpDecrease": 4540,
+              "exposureMs": 103900
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 6,
+              "primaryHpDecrease": 72,
+              "exposureMs": 700
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 90,
+        "lifeCauses": {
+          "combat-death": 89,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t3-conduit-light-far-boss-reconstruction-r1",
+      "rawPath": "breadth-t3-conduit-light-far-boss-reconstruction-r1/breadth-t3-conduit-light-far-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t3-conduit-light-far-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 280500,
+        "initializedExposureMs": 280500,
+        "liveBodyFraction": 0.46060606060606407,
+        "liveAuthoredOffenseFraction": 0.46060606060606407,
+        "liveAuthoredProcFraction": 0.46060606060606407,
+        "zeroSummonsMs": 30900,
+        "atOrBelowHalfOffenseMs": 135500,
+        "combatExposureMs": 279200,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 113,
+        "successfulReplacements": 113,
+        "totalHpPaid": 1017,
+        "queueScopedHealingHp": 1483.6839999999704,
+        "meanQueueDepth": 3.1950089126559713,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 53600,
+            "depleted": 225600
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 360,
+              "primaryHpDecrease": 3942,
+              "exposureMs": 36200
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "above-half-hp",
+              "attempts": 215,
+              "primaryHpDecrease": 2272,
+              "exposureMs": 44000
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 445,
+              "primaryHpDecrease": 4836,
+              "exposureMs": 105700
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t3-mountain-dungeon_monster-5",
+              "targetType": "crag-gorged-horn-behemoth",
+              "phase": "at-or-below-half-hp",
+              "attempts": 125,
+              "primaryHpDecrease": 1368,
+              "exposureMs": 12700
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 119,
+        "lifeCauses": {
+          "combat-death": 116,
+          "right-censored-at-terminal": 3
+        },
+        "snapshotCount": 281
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-a-boss",
+      "rawPath": "breadth-t4-conduit-balanced-a-boss/breadth-t4-conduit-balanced-a-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-balanced-a-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.2624444444444447,
+        "liveAuthoredOffenseFraction": 0.2624444444444447,
+        "liveAuthoredProcFraction": 0.2624444444444447,
+        "zeroSummonsMs": 79900,
+        "atOrBelowHalfOffenseMs": 236000,
+        "combatExposureMs": 295400,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 87,
+        "successfulReplacements": 87,
+        "totalHpPaid": 2871,
+        "queueScopedHealingHp": 2838.000000000075,
+        "meanQueueDepth": 4.394666666666667,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 25300,
+            "depleted": 270100
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 175,
+              "primaryHpDecrease": 5256,
+              "exposureMs": 17800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 158,
+              "primaryHpDecrease": 4514,
+              "exposureMs": 44100
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 296,
+              "primaryHpDecrease": 8211,
+              "exposureMs": 101500
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 16,
+              "primaryHpDecrease": 529,
+              "exposureMs": 1900
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 93,
+        "lifeCauses": {
+          "combat-death": 92,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-b-boss",
+      "rawPath": "breadth-t4-conduit-balanced-b-boss/breadth-t4-conduit-balanced-b-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-balanced-b-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 230900,
+        "initializedExposureMs": 230900,
+        "liveBodyFraction": 0.27789807997689925,
+        "liveAuthoredOffenseFraction": 0.27789807997689925,
+        "liveAuthoredProcFraction": 0.27789807997689925,
+        "zeroSummonsMs": 53200,
+        "atOrBelowHalfOffenseMs": 180900,
+        "combatExposureMs": 229400,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 67,
+        "successfulReplacements": 67,
+        "totalHpPaid": 2211,
+        "queueScopedHealingHp": 2245.5100000000502,
+        "meanQueueDepth": 4.3022953659592895,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 19500,
+            "depleted": 209900
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 153,
+              "primaryHpDecrease": 4134,
+              "exposureMs": 15400
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 124,
+              "primaryHpDecrease": 3052,
+              "exposureMs": 39400
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 233,
+              "primaryHpDecrease": 5937,
+              "exposureMs": 71000
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 7,
+              "primaryHpDecrease": 191,
+              "exposureMs": 900
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 73,
+        "lifeCauses": {
+          "combat-death": 70,
+          "right-censored-at-terminal": 3
+        },
+        "snapshotCount": 231
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-c-boss",
+      "rawPath": "breadth-t4-conduit-balanced-c-boss/breadth-t4-conduit-balanced-c-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-balanced-c-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.27394444444444915,
+        "liveAuthoredOffenseFraction": 0.27394444444444915,
+        "liveAuthoredProcFraction": 0.27394444444444915,
+        "zeroSummonsMs": 73500,
+        "atOrBelowHalfOffenseMs": 228800,
+        "combatExposureMs": 297700,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 88,
+        "successfulReplacements": 88,
+        "totalHpPaid": 2904,
+        "queueScopedHealingHp": 3037.000000000083,
+        "meanQueueDepth": 4.325333333333333,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 21400,
+            "depleted": 276300
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 140,
+              "primaryHpDecrease": 3965,
+              "exposureMs": 13800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 222,
+              "primaryHpDecrease": 5805,
+              "exposureMs": 64500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 298,
+              "primaryHpDecrease": 7866,
+              "exposureMs": 94200
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 38,
+              "primaryHpDecrease": 1039,
+              "exposureMs": 4200
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 94,
+        "lifeCauses": {
+          "combat-death": 93,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-c-boss-reconstruction-r1",
+      "rawPath": "breadth-t4-conduit-balanced-c-boss-reconstruction-r1/breadth-t4-conduit-balanced-c-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-balanced-c-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 236600,
+        "initializedExposureMs": 236600,
+        "liveBodyFraction": 0.3829952099182879,
+        "liveAuthoredOffenseFraction": 0.3829952099182879,
+        "liveAuthoredProcFraction": 0.3829952099182879,
+        "zeroSummonsMs": 41100,
+        "atOrBelowHalfOffenseMs": 155800,
+        "combatExposureMs": 234900,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 70,
+        "successfulReplacements": 70,
+        "totalHpPaid": 2310,
+        "queueScopedHealingHp": 2310.000000000053,
+        "meanQueueDepth": 3.6707523245984786,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 47800,
+            "depleted": 187100
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 212,
+              "primaryHpDecrease": 5859,
+              "exposureMs": 21500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 147,
+              "primaryHpDecrease": 3906,
+              "exposureMs": 40800
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 142,
+              "primaryHpDecrease": 3850,
+              "exposureMs": 14400
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 221,
+              "primaryHpDecrease": 5884,
+              "exposureMs": 64300
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 76,
+        "lifeCauses": {
+          "combat-death": 74,
+          "right-censored-at-terminal": 2
+        },
+        "snapshotCount": 237
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-heavy-a-boss",
+      "rawPath": "breadth-t4-conduit-heavy-a-boss/breadth-t4-conduit-heavy-a-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-heavy-a-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 123200,
+        "initializedExposureMs": 123200,
+        "liveBodyFraction": 0.783685064935065,
+        "liveAuthoredOffenseFraction": 0.7437094155844156,
+        "liveAuthoredProcFraction": 0.7437094155844156,
+        "zeroSummonsMs": 3800,
+        "atOrBelowHalfOffenseMs": 36500,
+        "combatExposureMs": 121700,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 8,
+        "successfulReplacements": 8,
+        "totalHpPaid": 1238,
+        "queueScopedHealingHp": 672.9499999999985,
+        "meanQueueDepth": 0.4253246753246753,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 72200,
+            "depleted": 49500
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 85,
+              "primaryHpDecrease": 8720,
+              "exposureMs": 23700
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 16,
+              "primaryHpDecrease": 1172,
+              "exposureMs": 9300
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 69,
+              "primaryHpDecrease": 7257,
+              "exposureMs": 19200
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 32,
+              "primaryHpDecrease": 2350,
+              "exposureMs": 17900
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 10,
+        "lifeCauses": {
+          "combat-death": 9,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 124
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-heavy-b-boss",
+      "rawPath": "breadth-t4-conduit-heavy-b-boss/breadth-t4-conduit-heavy-b-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-heavy-b-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 90400,
+        "initializedExposureMs": 90400,
+        "liveBodyFraction": 0.8761061946902655,
+        "liveAuthoredOffenseFraction": 0.9318584070796461,
+        "liveAuthoredProcFraction": 0.9318584070796461,
+        "zeroSummonsMs": 11200,
+        "atOrBelowHalfOffenseMs": 11200,
+        "combatExposureMs": 90300,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 2,
+        "successfulReplacements": 2,
+        "totalHpPaid": 836,
+        "queueScopedHealingHp": 20.399999999999864,
+        "meanQueueDepth": 0.12168141592920353,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 79100,
+            "depleted": 11200
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 35,
+              "primaryHpDecrease": 4230,
+              "exposureMs": 17900
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 34,
+              "primaryHpDecrease": 4085,
+              "exposureMs": 18900
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 3,
+        "lifeCauses": {
+          "combat-death": 2,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 91
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-heavy-c-boss",
+      "rawPath": "breadth-t4-conduit-heavy-c-boss/breadth-t4-conduit-heavy-c-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-heavy-c-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 110700,
+        "initializedExposureMs": 110700,
+        "liveBodyFraction": 0.8626919602529358,
+        "liveAuthoredOffenseFraction": 0.8626919602529358,
+        "liveAuthoredProcFraction": 0.8626919602529358,
+        "zeroSummonsMs": 15200,
+        "atOrBelowHalfOffenseMs": 15200,
+        "combatExposureMs": 100500,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 2,
+        "successfulReplacements": 2,
+        "totalHpPaid": 688,
+        "queueScopedHealingHp": 0,
+        "meanQueueDepth": 0.13550135501355012,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 93000,
+            "depleted": 7500
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 47,
+              "primaryHpDecrease": 9880,
+              "exposureMs": 25100
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 46,
+              "primaryHpDecrease": 9619,
+              "exposureMs": 25000
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 3,
+        "lifeCauses": {
+          "combat-death": 2,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 111
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-a-boss",
+      "rawPath": "breadth-t4-conduit-light-a-boss/breadth-t4-conduit-light-a-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-a-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 281000,
+        "initializedExposureMs": 281000,
+        "liveBodyFraction": 0.2047788510421997,
+        "liveAuthoredOffenseFraction": 0.2047788510421997,
+        "liveAuthoredProcFraction": 0.2047788510421997,
+        "zeroSummonsMs": 69200,
+        "atOrBelowHalfOffenseMs": 261000,
+        "combatExposureMs": 279500,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 91,
+        "successfulReplacements": 91,
+        "totalHpPaid": 1365,
+        "queueScopedHealingHp": 1380.843199999978,
+        "meanQueueDepth": 5.532028469750889,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 5800,
+            "depleted": 273700
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 70,
+              "primaryHpDecrease": 2595,
+              "exposureMs": 5800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 223,
+              "primaryHpDecrease": 7158,
+              "exposureMs": 64700
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 301,
+              "primaryHpDecrease": 9746,
+              "exposureMs": 89600
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 98,
+        "lifeCauses": {
+          "combat-death": 97,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 281
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-b-boss",
+      "rawPath": "breadth-t4-conduit-light-b-boss/breadth-t4-conduit-light-b-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-b-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.19029629629628883,
+        "liveAuthoredOffenseFraction": 0.19029629629628883,
+        "liveAuthoredProcFraction": 0.19029629629628883,
+        "zeroSummonsMs": 72000,
+        "atOrBelowHalfOffenseMs": 281000,
+        "combatExposureMs": 298500,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 96,
+        "successfulReplacements": 96,
+        "totalHpPaid": 1056,
+        "queueScopedHealingHp": 1055.9999999999984,
+        "meanQueueDepth": 7.2523333333333335,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 11100,
+            "depleted": 287400
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 166,
+              "primaryHpDecrease": 3982,
+              "exposureMs": 11400
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 257,
+              "primaryHpDecrease": 5773,
+              "exposureMs": 85600
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 308,
+              "primaryHpDecrease": 7128,
+              "exposureMs": 105500
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 105,
+        "lifeCauses": {
+          "combat-death": 105
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-b-boss-reconstruction-r1",
+      "rawPath": "breadth-t4-conduit-light-b-boss-reconstruction-r1/breadth-t4-conduit-light-b-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-b-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 266200,
+        "initializedExposureMs": 266200,
+        "liveBodyFraction": 0.24772518574170638,
+        "liveAuthoredOffenseFraction": 0.24772518574170638,
+        "liveAuthoredProcFraction": 0.24772518574170638,
+        "zeroSummonsMs": 46600,
+        "atOrBelowHalfOffenseMs": 231100,
+        "combatExposureMs": 264700,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 127,
+        "successfulReplacements": 127,
+        "totalHpPaid": 1397,
+        "queueScopedHealingHp": 1443.5791999999806,
+        "meanQueueDepth": 6.720510894064613,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 12700,
+            "depleted": 252000
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 169,
+              "primaryHpDecrease": 4049,
+              "exposureMs": 11800
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 254,
+              "primaryHpDecrease": 5706,
+              "exposureMs": 61500
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 416,
+              "primaryHpDecrease": 9513,
+              "exposureMs": 114900
+            },
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 11,
+              "primaryHpDecrease": 231,
+              "exposureMs": 600
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 136,
+        "lifeCauses": {
+          "combat-death": 133,
+          "right-censored-at-terminal": 3
+        },
+        "snapshotCount": 267
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-boss",
+      "rawPath": "breadth-t4-conduit-light-c-boss/breadth-t4-conduit-light-c-boss-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-c-boss/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 300000,
+        "initializedExposureMs": 300000,
+        "liveBodyFraction": 0.16904761904762358,
+        "liveAuthoredOffenseFraction": 0.16904761904762358,
+        "liveAuthoredProcFraction": 0.16904761904762358,
+        "zeroSummonsMs": 103500,
+        "atOrBelowHalfOffenseMs": 283900,
+        "combatExposureMs": 294000,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 95,
+        "successfulReplacements": 95,
+        "totalHpPaid": 1425,
+        "queueScopedHealingHp": 1409.9999999999768,
+        "meanQueueDepth": 5.794333333333333,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 14100,
+            "depleted": 279900
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 129,
+              "primaryHpDecrease": 4194,
+              "exposureMs": 11100
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 179,
+              "primaryHpDecrease": 5432,
+              "exposureMs": 57900
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 193,
+              "primaryHpDecrease": 5956,
+              "exposureMs": 72800
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 102,
+        "lifeCauses": {
+          "deliberate-sacrifice": 34,
+          "combat-death": 67,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 300
+      }
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-boss-reconstruction-r1",
+      "rawPath": "breadth-t4-conduit-light-c-boss-reconstruction-r1/breadth-t4-conduit-light-c-boss-reconstruction-r1-s101003/conduit.json",
+      "publishedPath": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-light-c-boss-reconstruction-r1/conduit.json",
+      "conduit": {
+        "units": {
+          "time": "ms",
+          "damage": "HP",
+          "availability": "fraction of authored profile"
+        },
+        "measuredMs": 278400,
+        "initializedExposureMs": 278400,
+        "liveBodyFraction": 0.22362479474548944,
+        "liveAuthoredOffenseFraction": 0.22362479474548944,
+        "liveAuthoredProcFraction": 0.22362479474548944,
+        "zeroSummonsMs": 68600,
+        "atOrBelowHalfOffenseMs": 254500,
+        "combatExposureMs": 276900,
+        "readyHpBlockedMs": 0,
+        "replacementAttemptTicks": 115,
+        "successfulReplacements": 115,
+        "totalHpPaid": 1725,
+        "queueScopedHealingHp": 1720.5791999999578,
+        "meanQueueDepth": 5.402658045977011,
+        "damageDelivery": {
+          "exposureMs": {
+            "intact": 14100,
+            "depleted": 262800
+          },
+          "byTargetPhase": [
+            {
+              "state": "intact",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 130,
+              "primaryHpDecrease": 4222,
+              "exposureMs": 11100
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "above-half-hp",
+              "attempts": 180,
+              "primaryHpDecrease": 5412,
+              "exposureMs": 52000
+            },
+            {
+              "state": "depleted",
+              "targetId": "node-t4-mountain-dungeon_monster-5",
+              "targetType": "iron-crest-titan",
+              "phase": "at-or-below-half-hp",
+              "attempts": 313,
+              "primaryHpDecrease": 9584,
+              "exposureMs": 90100
+            }
+          ],
+          "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+          "delayedAndSecondaryDamage": null,
+          "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+        },
+        "hypothesisExercised": true,
+        "lifeCount": 122,
+        "lifeCauses": {
+          "deliberate-sacrifice": 32,
+          "combat-death": 89,
+          "right-censored-at-terminal": 1
+        },
+        "snapshotCount": 279
+      }
+    }
+  ]
+}

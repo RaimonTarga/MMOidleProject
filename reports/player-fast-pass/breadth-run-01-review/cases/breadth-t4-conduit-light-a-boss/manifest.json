@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "mode": "run",
+  "trial": "player-breadth",
+  "block": "breadth-t4-conduit-light-a-boss",
+  "revision": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+  "definitionsHash": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 300000,
+  "sampleEveryMs": 1000,
+  "bossId": "iron-crest-titan",
+  "guardianAccess": "not-measured-guard-stripped",
+  "seeds": [
+    101003
+  ],
+  "cells": [
+    {
+      "id": "breadth-t4-conduit-light-a-boss",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "expose-weakness",
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "breadth-t4-conduit-light-a-boss",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-light",
+          "summoner-range-mid",
+          "summoner-light-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-light-a",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Inquisitor",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each unique living summon can name the focused enemy once. A complete formation sustains the strongest accusation, rewarding deterministic focus fire and formation uptime.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "Defensive stance is always active to complement, not guarantee, Brace coverage through cooldown/travel gaps. No stance switching.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    }
+  ]
+}

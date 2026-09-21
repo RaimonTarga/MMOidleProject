@@ -1,0 +1,50 @@
+{
+  "status": "prepared-main-not-executed",
+  "sourceCommit": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+  "sourceSha256": "47770ddababff0a26e03497effbd6cebbbbc543359f0e8c47fb440a4c059fed2",
+  "mainObservationsExecuted": 0,
+  "plannedObservations": 204,
+  "legalLoadouts": 204,
+  "legalityWorldTicks": 0,
+  "combatSmokes": 2,
+  "smokeResults": "qualification-smokes/results.json",
+  "checks": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/server exec tsc --noEmit -p tsconfig.bench.json",
+      "status": "passed"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/shared build",
+      "status": "passed"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/server exec tsc",
+      "status": "passed"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/playerBreadth.test.ts",
+      "status": "passed"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/summonerOverhaul.test.ts",
+      "status": "passed"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/relics.test.ts",
+      "status": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    }
+  ],
+  "fullSuite": "not run",
+  "humanPlaytest": "not run",
+  "adoption": "not authorized or performed",
+  "numericalSearch": "none",
+  "blockingBuildChoices": []
+}

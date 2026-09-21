@@ -1,0 +1,100 @@
+[
+  {
+    "cell": "breadth-t3-squire-heavy-boss",
+    "seed": 101003,
+    "outcome": "boss-killed",
+    "elapsedMs": 100000,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 287.40500000000003,
+      "maxHp": 457,
+      "barrier": 0
+    },
+    "bossKilled": true,
+    "bossKillEvidence": {
+      "atMs": 100000,
+      "victimId": "node-t3-mountain-dungeon_monster-5",
+      "victimName": "Crag-Gorged Horn-Behemoth",
+      "killerId": "bench-bot-0"
+    },
+    "playerDeathEvidence": null,
+    "encounterResetEvidence": null,
+    "killedAtMs": 100000,
+    "bossMaxHp": 12418,
+    "bossHpRemaining": 0,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 1,
+    "crossedHalfAtMs": 50800,
+    "castsStarted": 17,
+    "castLabels": [
+      "Cragbreaker Charge",
+      "Cragbreaker"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 942.5,
+    "damageFromAdds": {},
+    "attackBeats": 20,
+    "minionAttackBeats": 0,
+    "totalAttackBeats": 20,
+    "hpLost": 918.5074999999998,
+    "peakBurst1s": 352.83849999999995,
+    "minHpFraction": 0.2639245076586439,
+    "wallElapsedMs": 733,
+    "initialRosterHash": "5c3e73bb0e37111169d475adc695307ec3840c3ac2083b4acf8bb8ab90e33877",
+    "targets": [
+      {
+        "id": "node-t3-mountain-dungeon_monster-5",
+        "type": "crag-gorged-horn-behemoth",
+        "name": "Crag-Gorged Horn-Behemoth",
+        "maxHp": 12418,
+        "firstDamageMs": 1500,
+        "lastDamageMs": 100000,
+        "killedAtMs": 100000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 22800,
+        "damageEvents": 20,
+        "castsStarted": 17,
+        "castsFired": 3,
+        "ttkMs": 98500,
+        "clean": true
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 1100,
+        "endMs": 100000,
+        "durationMs": 98900,
+        "members": [
+          "node-t3-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t3-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      }
+    ],
+    "recovery": [
+      {
+        "afterClearMs": 100000,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": false
+      }
+    ],
+    "incomingDamage": 942.5,
+    "largestHit": 245,
+    "maxDamageIn1s": 361.75,
+    "counts": {
+      "damaged": 1,
+      "killed": 1,
+      "censored": 0,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 1,
+      "p10": 98500,
+      "median": 98500,
+      "p90": 98500
+    }
+  }
+]

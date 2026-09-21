@@ -1,0 +1,106 @@
+[
+  {
+    "cell": "breadth-t2-apprentice-light-boss",
+    "seed": 101003,
+    "outcome": "bot-died",
+    "elapsedMs": 48500,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 0,
+      "maxHp": 265,
+      "barrier": 0
+    },
+    "bossKilled": false,
+    "bossKillEvidence": null,
+    "playerDeathEvidence": {
+      "atMs": 48500,
+      "cause": {
+        "kind": "melee",
+        "killer": {
+          "monsterEntityId": "node-t2-mountain-dungeon_monster-5",
+          "monsterTypeId": "stoneplate-juggernaut",
+          "monsterName": "Stoneplate Juggernaut",
+          "isBoss": true,
+          "nodeId": "node-t2-mountain-dungeon"
+        },
+        "abilityName": "Stoneplate Charge",
+        "damage": 225.1125
+      }
+    },
+    "encounterResetEvidence": {
+      "atMs": 48500,
+      "message": "The guard reforms."
+    },
+    "killedAtMs": null,
+    "bossMaxHp": 5000,
+    "bossHpRemaining": 981,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 0.8038,
+    "crossedHalfAtMs": 32700,
+    "castsStarted": 10,
+    "castLabels": [
+      "Stoneplate",
+      "Stoneplate Charge"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 638.635,
+    "damageFromAdds": {},
+    "attackBeats": 113,
+    "minionAttackBeats": 0,
+    "totalAttackBeats": 113,
+    "hpLost": 422.36000000000047,
+    "peakBurst1s": 97.2425,
+    "minHpFraction": 0,
+    "wallElapsedMs": 430,
+    "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+    "targets": [
+      {
+        "id": "node-t2-mountain-dungeon_monster-5",
+        "type": "stoneplate-juggernaut",
+        "name": "Stoneplate Juggernaut",
+        "maxHp": 5000,
+        "firstDamageMs": 1100,
+        "lastDamageMs": 48100,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1000,
+        "damageEvents": 92,
+        "castsStarted": 10,
+        "castsFired": 0,
+        "ttkMs": null,
+        "clean": false
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 1100,
+        "endMs": 48500,
+        "durationMs": 47400,
+        "members": [
+          "node-t2-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t2-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "bot-died"
+      }
+    ],
+    "recovery": [],
+    "incomingDamage": 638.635,
+    "largestHit": 225.1125,
+    "maxDamageIn1s": 226.1125,
+    "counts": {
+      "damaged": 1,
+      "killed": 0,
+      "censored": 1,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 0,
+      "p10": null,
+      "median": null,
+      "p90": null
+    }
+  }
+]

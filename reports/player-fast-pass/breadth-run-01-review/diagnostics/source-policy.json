@@ -1,0 +1,15 @@
+{
+  "packetSourceCommit": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+  "packetSourceSha256": "47770ddababff0a26e03497effbd6cebbbbc543359f0e8c47fb440a4c059fed2",
+  "executionCheckoutHead": "c157f5ed2b1d865d65177cbf611f872151e81213",
+  "executionCheckoutTree": "64465160fa97cbf626388c825846a701056ab0ca",
+  "publicationDescendantAllowedByVerify": true,
+  "sourceBytesAndRuntimeHitboxesVerified": true,
+  "farmFailureObservedAssertion": "Wrong frozen checkout: child ttkSurvey.ts compared current HEAD c157f5ed2b1d865d65177cbf611f872151e81213 with expected packet source 5024be692d8a1854b7f61e007d371f2ee9aab46b.",
+  "interpretation": "The launcher verify accepted the publication-only descendant and sealed bytes; farm child execution rejected the descendant at its exact revision assertion. This is preserved as a local process failure, not converted into farm gameplay evidence.",
+  "evidence": [
+    "reports/player-fast-pass/breadth-run-01-review/diagnostics/farm-failure-excerpts.jsonl",
+    "reports/player-fast-pass/breadth-run-01-review/packet/identity.json",
+    "reports/player-fast-pass/breadth-run-01-review/execution-identity.json"
+  ]
+}

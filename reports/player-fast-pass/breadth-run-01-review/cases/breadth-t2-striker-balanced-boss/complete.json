@@ -1,0 +1,7 @@
+{
+  "trial": "player-breadth",
+  "block": "breadth-t2-striker-balanced-boss",
+  "mode": "run",
+  "observations": 1,
+  "expected": 1
+}

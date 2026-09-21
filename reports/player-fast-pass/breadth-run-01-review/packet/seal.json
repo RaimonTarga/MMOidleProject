@@ -1,0 +1,13 @@
+{
+  "status": "prepared",
+  "sha256": {
+    "identity.json": "debfee0cac46e9dfe23192ba78a80d8ae9a768fdf4fe8a27dfccd6f0686eba1e",
+    "manifest.json": "53ca22dd1e5c367743fab421d7789138dc24769fede020f6e7a04e8e0fe6181f",
+    "qualification/catalogue.json": "9c47a602c85286793a725be9d1d90eca61e86e35f071c6afd59d81010588e7b5",
+    "qualification/catalogue.md": "0dda7953fbba52a61a4dae733e15696f42ff8c65890dfd8b6d144fe5cf632618",
+    "qualification/cases.json": "de87a0771f661a0e1ee3f25d2e3db478beafebf2e47690d9c5f50ba98ac75b70",
+    "qualification/resolved-builds.json": "435366a0ce3edacee7fb76a2f10f52d85a3abd3c5b0a89be18b127c43cb773f6",
+    "qualification/legality.json": "c96bfe157646547d3b7d60f3015646472aa94e4e2bd078de087b3cdf869296f6",
+    "qualification/effective-profiles.json": "1f93447425a0062806c1058f5cfb843cd161562382557b996dfcf8bbcfbce8bd"
+  }
+}

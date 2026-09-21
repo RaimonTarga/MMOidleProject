@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "mode": "run",
+  "trial": "player-breadth",
+  "block": "breadth-t3-spirit-heavy-boss",
+  "revision": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+  "definitionsHash": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 300000,
+  "sampleEveryMs": 1000,
+  "bossId": "crag-gorged-horn-behemoth",
+  "guardianAccess": "not-measured-guard-stripped",
+  "seeds": [
+    101003
+  ],
+  "cells": [
+    {
+      "id": "breadth-t3-spirit-heavy-boss",
+      "className": "spirit",
+      "tier": 3,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t3-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "crag-gorged-horn-behemoth"
+      ],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "build": {
+        "id": "breadth-t3-spirit-heavy-boss",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-spirit-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Phantasm",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Measured power. A light class wearing heavier armor — durability and a sliver of damage reduction, traded against attack pace. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Defensive stance is always active to complement, not guarantee, Brace coverage through cooldown/travel gaps. No stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    }
+  ]
+}

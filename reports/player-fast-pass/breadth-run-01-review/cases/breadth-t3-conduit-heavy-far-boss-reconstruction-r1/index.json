@@ -1,0 +1,100 @@
+[
+  {
+    "cell": "breadth-t3-conduit-heavy-far-boss-reconstruction-r1",
+    "seed": 101003,
+    "outcome": "boss-killed",
+    "elapsedMs": 191400,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 286.63799999999986,
+      "maxHp": 419,
+      "barrier": 0
+    },
+    "bossKilled": true,
+    "bossKillEvidence": {
+      "atMs": 191400,
+      "victimId": "node-t3-mountain-dungeon_monster-5",
+      "victimName": "Crag-Gorged Horn-Behemoth",
+      "killerId": "bench-bot-0"
+    },
+    "playerDeathEvidence": null,
+    "encounterResetEvidence": null,
+    "killedAtMs": 191400,
+    "bossMaxHp": 12418,
+    "bossHpRemaining": 0,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 1,
+    "crossedHalfAtMs": 88800,
+    "castsStarted": 34,
+    "castLabels": [
+      "Cragbreaker Charge",
+      "Cragbreaker"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 767.5500000000001,
+    "damageFromAdds": {},
+    "attackBeats": 0,
+    "minionAttackBeats": 328,
+    "totalAttackBeats": 328,
+    "hpLost": 1938.6659999999997,
+    "peakBurst1s": 265,
+    "minHpFraction": 0.2775704057279233,
+    "wallElapsedMs": 1770,
+    "initialRosterHash": "5c3e73bb0e37111169d475adc695307ec3840c3ac2083b4acf8bb8ab90e33877",
+    "targets": [
+      {
+        "id": "node-t3-mountain-dungeon_monster-5",
+        "type": "crag-gorged-horn-behemoth",
+        "name": "Crag-Gorged Horn-Behemoth",
+        "maxHp": 12418,
+        "firstDamageMs": 1200,
+        "lastDamageMs": 191400,
+        "killedAtMs": 191400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3800,
+        "damageEvents": 328,
+        "castsStarted": 34,
+        "castsFired": 5,
+        "ttkMs": 190200,
+        "clean": true
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 1200,
+        "endMs": 191400,
+        "durationMs": 190200,
+        "members": [
+          "node-t3-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t3-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      }
+    ],
+    "recovery": [
+      {
+        "afterClearMs": 191400,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": false
+      }
+    ],
+    "incomingDamage": 767.5500000000001,
+    "largestHit": 265,
+    "maxDamageIn1s": 265,
+    "counts": {
+      "damaged": 1,
+      "killed": 1,
+      "censored": 0,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 1,
+      "p10": 190200,
+      "median": 190200,
+      "p90": 190200
+    }
+  }
+]

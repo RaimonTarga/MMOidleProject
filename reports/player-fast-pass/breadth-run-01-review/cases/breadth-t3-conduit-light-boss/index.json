@@ -1,0 +1,89 @@
+[
+  {
+    "cell": "breadth-t3-conduit-light-boss",
+    "seed": 101003,
+    "outcome": "capped",
+    "elapsedMs": 300000,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 295.0779999999985,
+      "maxHp": 359,
+      "barrier": 0
+    },
+    "bossKilled": false,
+    "bossKillEvidence": null,
+    "playerDeathEvidence": null,
+    "encounterResetEvidence": null,
+    "killedAtMs": null,
+    "bossMaxHp": 12418,
+    "bossHpRemaining": 2268,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 0.8173618940248026,
+    "crossedHalfAtMs": 137200,
+    "castsStarted": 52,
+    "castLabels": [
+      "Cragbreaker Charge",
+      "Cragbreaker"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 684.7,
+    "damageFromAdds": {},
+    "attackBeats": 0,
+    "minionAttackBeats": 934,
+    "totalAttackBeats": 934,
+    "hpLost": 1565.1080000000013,
+    "peakBurst1s": 110.56400000000002,
+    "minHpFraction": 0.612668523676878,
+    "wallElapsedMs": 2815,
+    "initialRosterHash": "5c3e73bb0e37111169d475adc695307ec3840c3ac2083b4acf8bb8ab90e33877",
+    "targets": [
+      {
+        "id": "node-t3-mountain-dungeon_monster-5",
+        "type": "crag-gorged-horn-behemoth",
+        "name": "Crag-Gorged Horn-Behemoth",
+        "maxHp": 12418,
+        "firstDamageMs": 1500,
+        "lastDamageMs": 299900,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 4000,
+        "damageEvents": 934,
+        "castsStarted": 52,
+        "castsFired": 7,
+        "ttkMs": null,
+        "clean": false
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 1500,
+        "endMs": 300000,
+        "durationMs": 298500,
+        "members": [
+          "node-t3-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t3-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "capped"
+      }
+    ],
+    "recovery": [],
+    "incomingDamage": 684.7,
+    "largestHit": 100,
+    "maxDamageIn1s": 100,
+    "counts": {
+      "damaged": 1,
+      "killed": 0,
+      "censored": 1,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 0,
+      "p10": null,
+      "median": null,
+      "p90": null
+    }
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "trial": "player-breadth",
+  "block": "breadth-t3-conduit-balanced-far-boss",
+  "mode": "run",
+  "observations": 1,
+  "expected": 1
+}

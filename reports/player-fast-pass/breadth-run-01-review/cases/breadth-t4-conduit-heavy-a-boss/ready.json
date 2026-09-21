@@ -1,0 +1,806 @@
+{
+  "cell": "breadth-t4-conduit-heavy-a-boss",
+  "seed": 101003,
+  "synthetic": true,
+  "playerTreatment": "untreated",
+  "controlCaseId": null,
+  "conduitProfile": {
+    "treatment": "untreated",
+    "profile": {
+      "reconstructionFactors": {
+        "baseMs": 3500,
+        "frame": 1.12,
+        "specialization": 1,
+        "passive": 1,
+        "range": 1,
+        "preRelicMs": 3920,
+        "postRelicMs": 5600,
+        "floorMs": 2500,
+        "floorBinds": false
+      },
+      "frame": "heavy",
+      "range": "mid",
+      "specialization": "twin-covenant",
+      "slots": [
+        {
+          "slotId": "offense:0",
+          "role": "offense-twin",
+          "offenseWeight": 0.75,
+          "defenseWeight": 0.3,
+          "procWeight": 0.75,
+          "sizeMult": 2.0125
+        },
+        {
+          "slotId": "defense:0",
+          "role": "defense-twin",
+          "offenseWeight": 0.25,
+          "defenseWeight": 0.7,
+          "procWeight": 0.25,
+          "sizeMult": 2.3625000000000003
+        }
+      ],
+      "relicPotencyMult": 1.4,
+      "formationOffenseMult": 1.3719999999999999,
+      "secondaryEffectMult": 1,
+      "totalSummonHpPct": 1.9599999999999997,
+      "summonMoveSpeedMult": 0.78,
+      "summonAttackCooldownMult": 1,
+      "attackMode": "reach",
+      "formationPolicy": "escort",
+      "attackRange": 96,
+      "preferredDistance": 72,
+      "conduitDefenseShare": 0.5,
+      "redirectionPct": 0.3,
+      "leashRadius": 320,
+      "reconstructionIntervalMs": 5600,
+      "reconstructionHpCostRatio": 0.3,
+      "reconstructionSafetyFloorPct": 0.2,
+      "reconstructionCombatRegenPct": 0.2,
+      "battleBondConduitOffenseWeight": 0
+    },
+    "relicRatings": {
+      "frequency": -0.3,
+      "potency": 0.4,
+      "buffEffect": 0,
+      "debuffEffect": 0
+    },
+    "tickQuantizedIntervalMs": 5600,
+    "ownerSafetyThresholdHp": 117,
+    "slots": [
+      {
+        "slotId": "offense:0",
+        "role": "offense-twin",
+        "offenseWeight": 0.75,
+        "defenseWeight": 0.3,
+        "procWeight": 0.75,
+        "sizeMult": 2.0125,
+        "maxHp": 344,
+        "costHp": 103
+      },
+      {
+        "slotId": "defense:0",
+        "role": "defense-twin",
+        "offenseWeight": 0.25,
+        "defenseWeight": 0.7,
+        "procWeight": 0.25,
+        "sizeMult": 2.3625000000000003,
+        "maxHp": 803,
+        "costHp": 241
+      }
+    ]
+  },
+  "packageReadback": {
+    "declared": {
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "expose-weakness",
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "upgradeLevel": 5,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "skillPath": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-a"
+    ],
+    "equipment": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-colossus-heart"
+      },
+      "itemUpgrades": {
+        "jungle-deathfang-rapier": 5,
+        "mountain-vest-t4": 5,
+        "mountain-charm-t4": 5,
+        "mountain-boots-t4": 5,
+        "core-survivalist": 0,
+        "relic-colossus-heart": 0
+      }
+    },
+    "mastery": {
+      "biomeLevel": {
+        "cave": 18,
+        "forest": 12,
+        "mountain": 24,
+        "plains": 12,
+        "swamp": 18,
+        "desert": 18,
+        "jungle": 18,
+        "tundra": 12,
+        "volcanic": 12,
+        "graveyard": 6,
+        "trench": 6
+      },
+      "globalMastery": 156
+    },
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+    "skillPoints": 0,
+    "knownAbilities": [
+      "disengage",
+      "imbue-lightning",
+      "snipe",
+      "stunning-strike",
+      "binding-strike",
+      "detonate",
+      "frenzy",
+      "quick-strike",
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "recuperate",
+      "break-free",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "rites": []
+  },
+  "bossId": "iron-crest-titan",
+  "guardianAccess": "not-measured-guard-stripped",
+  "view": {
+    "id": "bench-bot-0",
+    "name": "breadth-t4-conduit-heavy-a-boss",
+    "pos": {
+      "x": 2400,
+      "y": 2800
+    },
+    "target": {
+      "x": 2400,
+      "y": 2800
+    },
+    "hp": 585,
+    "maxHp": 585,
+    "attack": 107,
+    "onHitDamage": 70,
+    "plating": 65,
+    "damageReduction": 0.01,
+    "dodgeRate": 0,
+    "evadeMitigation": 0,
+    "evadeCharge": 0,
+    "barrier": 246,
+    "barrierMax": 246,
+    "barrierRecharging": false,
+    "wards": [],
+    "incomingDot": 0,
+    "pendingHeal": 0,
+    "attackCadenceMult": 1,
+    "finalDamageDealtMult": 0.85,
+    "finalDamageTakenMult": 0.9,
+    "onHitDamageBonus": 0,
+    "attackRange": 162,
+    "attackCooldown": 583,
+    "lastAttackAt": 0,
+    "attackTargetId": null,
+    "auto": true,
+    "autoTraverse": false,
+    "autoIntent": null,
+    "emote": null,
+    "partyLeaderId": null,
+    "partyMembers": [],
+    "nodeId": "node-t4-mountain-dungeon",
+    "essences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "level": 0,
+    "skillPoints": 0,
+    "unlockedSkills": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-a"
+    ],
+    "passives": {
+      "guard.potency-pct": 0.64,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.42,
+      "mobility.approach-speed-pct": 1.5,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": -0.3,
+      "relic.mechanic-potency": 0.4
+    },
+    "cadenceSpeedStacks": 0,
+    "selectedClass": "summoner-root",
+    "selectedSubVariant": "heavy",
+    "selectedRange": "summoner-range-mid",
+    "currentSkillTier": 4,
+    "recovery": 25,
+    "speed": 241,
+    "attackStyle": "slash",
+    "inventory": [],
+    "equipment": {
+      "weapon": "jungle-deathfang-rapier",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "mountain-boots-t4",
+      "core": "core-survivalist",
+      "relic": "relic-colossus-heart"
+    },
+    "itemUpgrades": {
+      "jungle-deathfang-rapier": 5,
+      "mountain-vest-t4": 5,
+      "mountain-charm-t4": 5,
+      "mountain-boots-t4": 5,
+      "core-survivalist": 0,
+      "relic-colossus-heart": 0
+    },
+    "biomeXP": {},
+    "biomeLevel": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 24,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 18,
+      "jungle": 18,
+      "tundra": 12,
+      "volcanic": 12,
+      "graveyard": 6,
+      "trench": 6
+    },
+    "globalMastery": 156,
+    "unlockedRecipes": [],
+    "combatArchetype": "summoner",
+    "cadenceCount": 0,
+    "cadenceThreshold": 0,
+    "cadenceEmpoweredArmed": false,
+    "ammoCount": 0,
+    "ammoMax": 0,
+    "reloadRemainingMs": 0,
+    "reloadDurationMs": 0,
+    "heatPct": 0,
+    "laserOverheated": false,
+    "executionReady": false,
+    "executionCooldownPct": 0,
+    "energyCount": 0,
+    "energyMax": 100,
+    "flashShiftPct": 0,
+    "flashDamageShiftPct": 0,
+    "flashSpeedBonusPct": 0,
+    "flashEvasionBonusPct": 0,
+    "empoweredReady": false,
+    "targetDotStacks": 0,
+    "targetDotTickPct": 0,
+    "targetChillStacks": 0,
+    "isChanneling": false,
+    "channelingPct": 0,
+    "cannonChargePct": 0,
+    "aura": null,
+    "activeBuffs": [],
+    "questProgress": {},
+    "playerTier": 4,
+    "bossesCleared": [],
+    "clearedNodes": [],
+    "visitedNodes": [],
+    "runesOwned": [
+      "always",
+      "in-combat",
+      "when-idle",
+      "hp-below-25",
+      "hp-above-90",
+      "target-hp-below-25",
+      "has-debuff",
+      "in-party",
+      "n-aggro-3",
+      "inside-telegraph",
+      "target-casting",
+      "stance-charged",
+      "before-empowered",
+      "target-elite",
+      "target-max-stacks",
+      "while-traveling",
+      "auto-path-enemy",
+      "chase-enemy",
+      "wait-for-regen",
+      "flee",
+      "fight-back",
+      "lead-the-way",
+      "follow-and-assist",
+      "taunt-current-target",
+      "focus-closest",
+      "use-ability",
+      "switch-stance",
+      "avoid-enemies",
+      "avoid-hazards",
+      "step-back",
+      "orbit"
+    ],
+    "runeRecipesCrafted": [],
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "knownAbilities": [
+      "disengage",
+      "imbue-lightning",
+      "snipe",
+      "stunning-strike",
+      "binding-strike",
+      "detonate",
+      "frenzy",
+      "quick-strike",
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "recuperate",
+      "break-free",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "attunedAbilities": {
+      "techniques": [
+        "frenzy",
+        "expose-weakness",
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "knownStances": [
+      "berserker-stance",
+      "brawler-stance",
+      "defensive-stance",
+      "enraged-stance",
+      "execute-stance",
+      "fleeting-stance",
+      "offensive-stance",
+      "perfection-stance",
+      "powering-up-stance",
+      "predator-stance",
+      "reaper-stance",
+      "recuperating-stance",
+      "tanking-stance",
+      "time-to-strike-stance",
+      "warding-stance"
+    ],
+    "attunedStances": [
+      "defensive-stance"
+    ],
+    "equippedStances": {
+      "default": "defensive-stance"
+    },
+    "activeStance": "defensive-stance",
+    "manualStanceOverride": null,
+    "queuedAbilityIds": [],
+    "knownRites": [
+      "ability-reprieve",
+      "blood-offering",
+      "lingering-battle",
+      "mechanic-renewal",
+      "purification",
+      "swift-repose"
+    ],
+    "equippedRites": [],
+    "riteSlots": 6,
+    "hitboxRects": [
+      {
+        "offsetX": -0.5,
+        "offsetY": 0.5,
+        "halfW": 10.5,
+        "halfH": 21.5
+      },
+      {
+        "offsetX": -14,
+        "offsetY": 0.5,
+        "halfW": 3,
+        "halfH": 12.5
+      },
+      {
+        "offsetX": 13,
+        "offsetY": 1,
+        "halfW": 3,
+        "halfH": 11
+      },
+      {
+        "offsetX": -1,
+        "offsetY": -24.5,
+        "halfW": 7,
+        "halfH": 3.5
+      },
+      {
+        "offsetX": -9.5,
+        "offsetY": 25.5,
+        "halfW": 3.5,
+        "halfH": 3.5
+      },
+      {
+        "offsetX": 5.5,
+        "offsetY": 23.5,
+        "halfW": 6.5,
+        "halfH": 1.5
+      }
+    ],
+    "summonsMinions": 4,
+    "summonActiveCount": 0,
+    "summonRespawnMaxMs": 7143,
+    "summonSlots": [
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:0",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:1",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:2",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:3",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      }
+    ],
+    "isDead": false,
+    "graveFrame": null
+  },
+  "declaredPackage": {
+    "treatment": "authored-source",
+    "classRoot": "summoner-root",
+    "skillPath": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-a"
+    ],
+    "gearItemIds": {
+      "weapon": "jungle-deathfang-rapier",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "mountain-boots-t4",
+      "core": "core-survivalist",
+      "relic": "relic-colossus-heart"
+    },
+    "upgradeLevel": 5,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "frenzy",
+        "expose-weakness",
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "sources": {
+      "stance": "explicit",
+      "abilities": "explicit",
+      "runeRules": "explicit",
+      "upgradeLevel": "explicit"
+    }
+  },
+  "appliedPackage": {
+    "selectedSubVariant": "heavy",
+    "selectedRange": "summoner-range-mid",
+    "activeStance": "defensive-stance",
+    "attunedStances": [
+      "defensive-stance"
+    ],
+    "attunedAbilities": {
+      "techniques": [
+        "frenzy",
+        "expose-weakness",
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "equipment": {
+      "weapon": "jungle-deathfang-rapier",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "mountain-boots-t4",
+      "core": "core-survivalist",
+      "relic": "relic-colossus-heart"
+    },
+    "itemUpgrades": {
+      "jungle-deathfang-rapier": 5,
+      "mountain-vest-t4": 5,
+      "mountain-charm-t4": 5,
+      "mountain-boots-t4": 5,
+      "core-survivalist": 0,
+      "relic-colossus-heart": 0
+    },
+    "globalMastery": 156,
+    "biomeLevel": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 24,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 18,
+      "jungle": 18,
+      "tundra": 12,
+      "volcanic": 12,
+      "graveyard": 6,
+      "trench": 6
+    }
+  },
+  "runicPoints": {
+    "budget": 47,
+    "cost": 46
+  },
+  "effectiveStats": {
+    "maxHp": 585,
+    "attack": 107,
+    "plating": 65,
+    "damageReduction": 0.01,
+    "dodgeRate": 0,
+    "evadeMitigation": 0,
+    "recovery": 25,
+    "speed": 241,
+    "attackRange": 162,
+    "attackCooldown": 583,
+    "finalDamageDealtMult": 0.85,
+    "finalDamageTakenMult": 0.9,
+    "barrier": 246,
+    "barrierMax": 246
+  },
+  "resources": {
+    "energyCount": 0,
+    "energyMax": 100,
+    "ammoCount": 0,
+    "ammoMax": 0,
+    "cadenceCount": 0,
+    "cadenceThreshold": 0,
+    "essences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {}
+  },
+  "encounterSetup": {
+    "nodeId": "node-t4-mountain-dungeon",
+    "isDungeon": true,
+    "guardHandling": "stripped-before-spawn",
+    "bossWake": "forced-immediate",
+    "capMs": 300000,
+    "seed": 101003,
+    "nonBossBodiesAtStart": 0
+  },
+  "bossRuntime": {
+    "maxHp": 19499,
+    "attack": 228,
+    "plating": 14,
+    "dr": 0.06,
+    "dotDamagePerStack": null
+  },
+  "bossAuthored": {
+    "hp": 19499,
+    "attack": 228,
+    "plating": 14,
+    "damageReduction": 0.06,
+    "speed": 16,
+    "attackRange": 20,
+    "attackCooldown": 4200,
+    "pullRange": 420
+  },
+  "escortsAuthored": {},
+  "escortsDeclared": {},
+  "initialRoster": [
+    {
+      "id": "node-t4-mountain-dungeon_monster-5",
+      "type": "iron-crest-titan",
+      "hp": 19499,
+      "maxHp": 19499,
+      "attack": 228,
+      "plating": 14,
+      "dr": 0.06
+    }
+  ],
+  "initialRosterHash": "2c4bbb0f02e416562b40d7127d9f1839f3d0973da73dd0db96492a0e08f35774",
+  "hpTreatment": [],
+  "damageTreatment": [],
+  "definitionsIdentity": {
+    "base": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+    "live": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+    "treated": false
+  }
+}

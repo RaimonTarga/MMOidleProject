@@ -1,0 +1,89 @@
+[
+  {
+    "cell": "breadth-t4-conduit-balanced-c-boss",
+    "seed": 101003,
+    "outcome": "capped",
+    "elapsedMs": 300000,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 551,
+      "maxHp": 551,
+      "barrier": 87
+    },
+    "bossKilled": false,
+    "bossKillEvidence": null,
+    "playerDeathEvidence": null,
+    "encounterResetEvidence": null,
+    "killedAtMs": null,
+    "bossMaxHp": 19499,
+    "bossHpRemaining": 824,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 0.9577414226370583,
+    "crossedHalfAtMs": 134500,
+    "castsStarted": 56,
+    "castLabels": [
+      "Titan Charge",
+      "Earthshatter"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 166,
+    "damageFromAdds": {},
+    "attackBeats": 0,
+    "minionAttackBeats": 698,
+    "totalAttackBeats": 698,
+    "hpLost": 3047.9599999999996,
+    "peakBurst1s": 196.245,
+    "minHpFraction": 0.6738384754990925,
+    "wallElapsedMs": 2680,
+    "initialRosterHash": "2c4bbb0f02e416562b40d7127d9f1839f3d0973da73dd0db96492a0e08f35774",
+    "targets": [
+      {
+        "id": "node-t4-mountain-dungeon_monster-5",
+        "type": "iron-crest-titan",
+        "name": "Iron-Crest Titan",
+        "maxHp": 19499,
+        "firstDamageMs": 1500,
+        "lastDamageMs": 299600,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 4900,
+        "damageEvents": 698,
+        "castsStarted": 56,
+        "castsFired": 7,
+        "ttkMs": null,
+        "clean": false
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 1500,
+        "endMs": 300000,
+        "durationMs": 298500,
+        "members": [
+          "node-t4-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t4-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "capped"
+      }
+    ],
+    "recovery": [],
+    "incomingDamage": 166,
+    "largestHit": 166,
+    "maxDamageIn1s": 166,
+    "counts": {
+      "damaged": 1,
+      "killed": 0,
+      "censored": 1,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 0,
+      "p10": null,
+      "median": null,
+      "p90": null
+    }
+  }
+]

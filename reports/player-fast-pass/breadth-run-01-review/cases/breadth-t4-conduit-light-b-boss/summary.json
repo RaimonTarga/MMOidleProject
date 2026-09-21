@@ -1,0 +1,87 @@
+{
+  "cell": "breadth-t4-conduit-light-b-boss",
+  "seed": 101003,
+  "outcome": "capped",
+  "elapsedMs": 300000,
+  "windowMs": 300000,
+  "terminalOwner": {
+    "hp": 464,
+    "maxHp": 464,
+    "barrier": 195
+  },
+  "bossKilled": false,
+  "bossKillEvidence": null,
+  "playerDeathEvidence": null,
+  "encounterResetEvidence": null,
+  "killedAtMs": null,
+  "bossMaxHp": 19499,
+  "bossHpRemaining": 2616,
+  "terminalBossHpSupported": true,
+  "bossHpFractionRemoved": 0.8658392738089133,
+  "crossedHalfAtMs": 141800,
+  "castsStarted": 53,
+  "castLabels": [
+    "Titan Charge",
+    "Earthshatter"
+  ],
+  "maxAddsAlive": 0,
+  "damageFromBoss": 0,
+  "damageFromAdds": {},
+  "attackBeats": 0,
+  "minionAttackBeats": 731,
+  "totalAttackBeats": 731,
+  "hpLost": 1056,
+  "peakBurst1s": 11,
+  "minHpFraction": 0.9762931034482759,
+  "wallElapsedMs": 2695,
+  "initialRosterHash": "2c4bbb0f02e416562b40d7127d9f1839f3d0973da73dd0db96492a0e08f35774",
+  "targets": [
+    {
+      "id": "node-t4-mountain-dungeon_monster-5",
+      "type": "iron-crest-titan",
+      "name": "Iron-Crest Titan",
+      "maxHp": 19499,
+      "firstDamageMs": 1400,
+      "lastDamageMs": 297700,
+      "killedAtMs": null,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 4400,
+      "damageEvents": 731,
+      "castsStarted": 53,
+      "castsFired": 6,
+      "ttkMs": null,
+      "clean": false
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 1400,
+      "endMs": 300000,
+      "durationMs": 298600,
+      "members": [
+        "node-t4-mountain-dungeon_monster-5"
+      ],
+      "initialMembers": [
+        "node-t4-mountain-dungeon_monster-5"
+      ],
+      "lateJoiners": 0,
+      "outcome": "capped"
+    }
+  ],
+  "recovery": [],
+  "incomingDamage": 0,
+  "largestHit": 0,
+  "maxDamageIn1s": 0,
+  "counts": {
+    "damaged": 1,
+    "killed": 0,
+    "censored": 1,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 0,
+    "p10": null,
+    "median": null,
+    "p90": null
+  }
+}

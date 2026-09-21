@@ -1,0 +1,593 @@
+{
+  "cell": "breadth-t2-striker-light-boss",
+  "seed": 101003,
+  "synthetic": true,
+  "playerTreatment": "untreated",
+  "controlCaseId": null,
+  "conduitProfile": null,
+  "packageReadback": {
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "upgradeLevel": 5,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "skillPath": [
+      "cadence-root",
+      "cadence-light"
+    ],
+    "equipment": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-stinger-rapier",
+        "armor": "mountain-vest-t2",
+        "recovery": "mountain-charm-t2",
+        "mobility": "mountain-boots-t2",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "jungle-stinger-rapier": 5,
+        "mountain-vest-t2": 5,
+        "mountain-charm-t2": 5,
+        "mountain-boots-t2": 5,
+        "core-tempered": 0
+      }
+    },
+    "mastery": {
+      "biomeLevel": {
+        "cave": 12,
+        "forest": 12,
+        "mountain": 12,
+        "plains": 12,
+        "swamp": 12,
+        "desert": 6,
+        "jungle": 6
+      },
+      "globalMastery": 72
+    },
+    "runicPoints": {
+      "budget": 30,
+      "cost": 28,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+    "skillPoints": 0,
+    "knownAbilities": [
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "rites": []
+  },
+  "bossId": "stoneplate-juggernaut",
+  "guardianAccess": "not-measured-guard-stripped",
+  "view": {
+    "id": "bench-bot-0",
+    "name": "breadth-t2-striker-light-boss",
+    "pos": {
+      "x": 2400,
+      "y": 2800
+    },
+    "target": {
+      "x": 2400,
+      "y": 2800
+    },
+    "hp": 254,
+    "maxHp": 254,
+    "attack": 51,
+    "onHitDamage": 23,
+    "plating": 18,
+    "damageReduction": 0.02,
+    "dodgeRate": 0,
+    "evadeMitigation": 0,
+    "evadeCharge": 0,
+    "barrier": 66,
+    "barrierMax": 66,
+    "barrierRecharging": false,
+    "wards": [],
+    "incomingDot": 0,
+    "pendingHeal": 0,
+    "attackCadenceMult": 1,
+    "finalDamageDealtMult": 1.288,
+    "finalDamageTakenMult": 1.1,
+    "onHitDamageBonus": 0,
+    "attackRange": 12,
+    "attackCooldown": 504,
+    "lastAttackAt": 0,
+    "attackTargetId": null,
+    "auto": true,
+    "autoTraverse": false,
+    "autoIntent": null,
+    "emote": null,
+    "partyLeaderId": null,
+    "partyMembers": [],
+    "nodeId": "node-t2-mountain-dungeon",
+    "essences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "level": 0,
+    "skillPoints": 0,
+    "unlockedSkills": [
+      "cadence-root",
+      "cadence-light"
+    ],
+    "passives": {
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "cadence.empowered-threshold": 4,
+      "cadence.empowered-mult": 1.5,
+      "guard.potency-pct": 0.38,
+      "defense.barrier-pct": 0.26,
+      "mobility.approach-speed-pct": 0.9,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 6000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.2
+    },
+    "cadenceSpeedStacks": 0,
+    "selectedClass": "cadence-root",
+    "selectedSubVariant": "light",
+    "selectedRange": null,
+    "currentSkillTier": 2,
+    "recovery": 13,
+    "speed": 179,
+    "attackStyle": "slash",
+    "inventory": [],
+    "equipment": {
+      "weapon": "jungle-stinger-rapier",
+      "armor": "mountain-vest-t2",
+      "recovery": "mountain-charm-t2",
+      "mobility": "mountain-boots-t2",
+      "core": "core-tempered",
+      "relic": null
+    },
+    "itemUpgrades": {
+      "jungle-stinger-rapier": 5,
+      "mountain-vest-t2": 5,
+      "mountain-charm-t2": 5,
+      "mountain-boots-t2": 5,
+      "core-tempered": 0
+    },
+    "biomeXP": {},
+    "biomeLevel": {
+      "cave": 12,
+      "forest": 12,
+      "mountain": 12,
+      "plains": 12,
+      "swamp": 12,
+      "desert": 6,
+      "jungle": 6
+    },
+    "globalMastery": 72,
+    "unlockedRecipes": [],
+    "combatArchetype": "cadence",
+    "cadenceCount": 0,
+    "cadenceThreshold": 4,
+    "cadenceEmpoweredArmed": false,
+    "ammoCount": 0,
+    "ammoMax": 0,
+    "reloadRemainingMs": 0,
+    "reloadDurationMs": 0,
+    "heatPct": 0,
+    "laserOverheated": false,
+    "executionReady": false,
+    "executionCooldownPct": 0,
+    "energyCount": 0,
+    "energyMax": 100,
+    "flashShiftPct": 0,
+    "flashDamageShiftPct": 0,
+    "flashSpeedBonusPct": 0,
+    "flashEvasionBonusPct": 0,
+    "empoweredReady": false,
+    "targetDotStacks": 0,
+    "targetDotTickPct": 0,
+    "targetChillStacks": 0,
+    "isChanneling": false,
+    "channelingPct": 0,
+    "cannonChargePct": 0,
+    "aura": null,
+    "activeBuffs": [],
+    "questProgress": {},
+    "playerTier": 2,
+    "bossesCleared": [],
+    "clearedNodes": [],
+    "visitedNodes": [],
+    "runesOwned": [
+      "always",
+      "in-combat",
+      "when-idle",
+      "hp-below-25",
+      "hp-above-90",
+      "target-hp-below-25",
+      "has-debuff",
+      "in-party",
+      "n-aggro-3",
+      "inside-telegraph",
+      "target-casting",
+      "stance-charged",
+      "before-empowered",
+      "target-elite",
+      "target-max-stacks",
+      "while-traveling",
+      "auto-path-enemy",
+      "chase-enemy",
+      "wait-for-regen",
+      "flee",
+      "fight-back",
+      "lead-the-way",
+      "follow-and-assist",
+      "taunt-current-target",
+      "focus-closest",
+      "use-ability",
+      "switch-stance",
+      "avoid-enemies",
+      "avoid-hazards",
+      "step-back"
+    ],
+    "runeRecipesCrafted": [],
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "knownAbilities": [
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "attunedAbilities": {
+      "techniques": [
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "knownStances": [
+      "defensive-stance",
+      "fleeting-stance",
+      "offensive-stance"
+    ],
+    "attunedStances": [
+      "offensive-stance"
+    ],
+    "equippedStances": {
+      "default": "offensive-stance"
+    },
+    "activeStance": "offensive-stance",
+    "manualStanceOverride": null,
+    "queuedAbilityIds": [],
+    "knownRites": [],
+    "equippedRites": [],
+    "riteSlots": 0,
+    "hitboxRects": [
+      {
+        "offsetX": -1,
+        "offsetY": 3.5,
+        "halfW": 11,
+        "halfH": 16.5
+      },
+      {
+        "offsetX": 0.5,
+        "offsetY": -20,
+        "halfW": 6.5,
+        "halfH": 7
+      },
+      {
+        "offsetX": -15,
+        "offsetY": 9.5,
+        "halfW": 3,
+        "halfH": 10.5
+      },
+      {
+        "offsetX": -8,
+        "offsetY": 24.5,
+        "halfW": 3,
+        "halfH": 4.5
+      },
+      {
+        "offsetX": 11.5,
+        "offsetY": -1,
+        "halfW": 1.5,
+        "halfH": 8
+      },
+      {
+        "offsetX": 6,
+        "offsetY": 23.5,
+        "halfW": 3,
+        "halfH": 3.5
+      }
+    ],
+    "summonsMinions": 0,
+    "summonActiveCount": 0,
+    "summonRespawnMaxMs": 0,
+    "summonSlots": [],
+    "isDead": false,
+    "graveFrame": null
+  },
+  "declaredPackage": {
+    "treatment": "authored-source",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root",
+      "cadence-light"
+    ],
+    "gearItemIds": {
+      "weapon": "jungle-stinger-rapier",
+      "armor": "mountain-vest-t2",
+      "recovery": "mountain-charm-t2",
+      "mobility": "mountain-boots-t2",
+      "core": "core-tempered"
+    },
+    "upgradeLevel": 5,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "sources": {
+      "stance": "explicit",
+      "abilities": "explicit",
+      "runeRules": "explicit",
+      "upgradeLevel": "explicit"
+    }
+  },
+  "appliedPackage": {
+    "selectedSubVariant": "light",
+    "selectedRange": null,
+    "activeStance": "offensive-stance",
+    "attunedStances": [
+      "offensive-stance"
+    ],
+    "attunedAbilities": {
+      "techniques": [
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "equipment": {
+      "weapon": "jungle-stinger-rapier",
+      "armor": "mountain-vest-t2",
+      "recovery": "mountain-charm-t2",
+      "mobility": "mountain-boots-t2",
+      "core": "core-tempered",
+      "relic": null
+    },
+    "itemUpgrades": {
+      "jungle-stinger-rapier": 5,
+      "mountain-vest-t2": 5,
+      "mountain-charm-t2": 5,
+      "mountain-boots-t2": 5,
+      "core-tempered": 0
+    },
+    "globalMastery": 72,
+    "biomeLevel": {
+      "cave": 12,
+      "forest": 12,
+      "mountain": 12,
+      "plains": 12,
+      "swamp": 12,
+      "desert": 6,
+      "jungle": 6
+    }
+  },
+  "runicPoints": {
+    "budget": 30,
+    "cost": 28
+  },
+  "effectiveStats": {
+    "maxHp": 254,
+    "attack": 51,
+    "plating": 18,
+    "damageReduction": 0.02,
+    "dodgeRate": 0,
+    "evadeMitigation": 0,
+    "recovery": 13,
+    "speed": 179,
+    "attackRange": 12,
+    "attackCooldown": 504,
+    "finalDamageDealtMult": 1.288,
+    "finalDamageTakenMult": 1.1,
+    "barrier": 66,
+    "barrierMax": 66
+  },
+  "resources": {
+    "energyCount": 0,
+    "energyMax": 100,
+    "ammoCount": 0,
+    "ammoMax": 0,
+    "cadenceCount": 0,
+    "cadenceThreshold": 4,
+    "essences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {}
+  },
+  "encounterSetup": {
+    "nodeId": "node-t2-mountain-dungeon",
+    "isDungeon": true,
+    "guardHandling": "stripped-before-spawn",
+    "bossWake": "forced-immediate",
+    "capMs": 300000,
+    "seed": 101003,
+    "nonBossBodiesAtStart": 0
+  },
+  "bossRuntime": {
+    "maxHp": 5000,
+    "attack": 128,
+    "plating": 10,
+    "dr": 0.05,
+    "dotDamagePerStack": null
+  },
+  "bossAuthored": {
+    "hp": 5000,
+    "attack": 128,
+    "plating": 10,
+    "damageReduction": 0.05,
+    "speed": 20,
+    "attackRange": 72,
+    "attackCooldown": 4200,
+    "pullRange": 320
+  },
+  "escortsAuthored": {},
+  "escortsDeclared": {},
+  "initialRoster": [
+    {
+      "id": "node-t2-mountain-dungeon_monster-5",
+      "type": "stoneplate-juggernaut",
+      "hp": 5000,
+      "maxHp": 5000,
+      "attack": 128,
+      "plating": 10,
+      "dr": 0.05
+    }
+  ],
+  "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+  "hpTreatment": [],
+  "damageTreatment": [],
+  "definitionsIdentity": {
+    "base": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+    "live": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+    "treated": false
+  }
+}

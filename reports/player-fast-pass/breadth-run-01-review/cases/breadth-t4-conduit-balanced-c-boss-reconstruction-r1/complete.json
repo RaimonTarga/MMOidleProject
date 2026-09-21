@@ -1,0 +1,7 @@
+{
+  "trial": "player-breadth",
+  "block": "breadth-t4-conduit-balanced-c-boss-reconstruction-r1",
+  "mode": "run",
+  "observations": 1,
+  "expected": 1
+}

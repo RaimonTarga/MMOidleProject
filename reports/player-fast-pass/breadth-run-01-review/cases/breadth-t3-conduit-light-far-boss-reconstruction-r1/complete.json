@@ -1,0 +1,7 @@
+{
+  "trial": "player-breadth",
+  "block": "breadth-t3-conduit-light-far-boss-reconstruction-r1",
+  "mode": "run",
+  "observations": 1,
+  "expected": 1
+}

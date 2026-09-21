@@ -1,0 +1,4847 @@
+{
+  "schema": 1,
+  "units": {
+    "time": "ms",
+    "damage": "HP",
+    "availability": "fraction of authored profile"
+  },
+  "measuredMs": 97000,
+  "initializationMs": 0,
+  "initializedExposureMs": 97000,
+  "availabilityReason": null,
+  "terminalOwner": {
+    "hp": 0,
+    "maxHp": 266,
+    "barrier": 0
+  },
+  "liveBodyFraction": 0.7515463917525773,
+  "liveAuthoredOffenseFraction": 0.7515463917525773,
+  "liveAuthoredProcFraction": 0.7515463917525773,
+  "zeroSummonsMs": 16100,
+  "atOrBelowHalfOffenseMs": 32100,
+  "combatExposureMs": 89800,
+  "readyHpBlockedMs": 0,
+  "replacementAttemptTicks": 8,
+  "successfulReplacements": 8,
+  "totalHpPaid": 448,
+  "queueScopedHealingHp": 205.15320000000185,
+  "meanQueueDepth": 0.4865979381443299,
+  "damageDelivery": {
+    "exposureMs": {
+      "intact": 61800,
+      "depleted": 28000
+    },
+    "byTargetPhase": [
+      {
+        "state": "intact",
+        "targetId": "node-t2-mountain-dungeon_monster-5",
+        "targetType": "stoneplate-juggernaut",
+        "phase": "above-half-hp",
+        "attempts": 66,
+        "primaryHpDecrease": 1419,
+        "exposureMs": 16200
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t2-mountain-dungeon_monster-5",
+        "targetType": "stoneplate-juggernaut",
+        "phase": "above-half-hp",
+        "attempts": 6,
+        "primaryHpDecrease": 198,
+        "exposureMs": 2100
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t2-mountain-dungeon_monster-5",
+        "targetType": "stoneplate-juggernaut",
+        "phase": "at-or-below-half-hp",
+        "attempts": 60,
+        "primaryHpDecrease": 1452,
+        "exposureMs": 16400
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t2-mountain-dungeon_monster-5",
+        "targetType": "stoneplate-juggernaut",
+        "phase": "at-or-below-half-hp",
+        "attempts": 11,
+        "primaryHpDecrease": 264,
+        "exposureMs": 5500
+      }
+    ],
+    "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+    "delayedAndSecondaryDamage": null,
+    "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+  },
+  "hypothesisExercised": true,
+  "lives": [
+    {
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": -100,
+      "replacement": false,
+      "firstAttackAtMs": 2100,
+      "endAtMs": 18700,
+      "cause": "combat-death",
+      "lifetimeMs": 18800,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": -100,
+      "replacement": false,
+      "firstAttackAtMs": 1800,
+      "endAtMs": 18700,
+      "cause": "combat-death",
+      "lifetimeMs": 18800,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-3",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 22700,
+      "replacement": true,
+      "firstAttackAtMs": 23400,
+      "endAtMs": 39800,
+      "cause": "combat-death",
+      "lifetimeMs": 17100,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-4",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 26700,
+      "replacement": true,
+      "firstAttackAtMs": 26900,
+      "endAtMs": 39800,
+      "cause": "combat-death",
+      "lifetimeMs": 13100,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-5",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 43800,
+      "replacement": true,
+      "firstAttackAtMs": 44600,
+      "endAtMs": 63300,
+      "cause": "combat-death",
+      "lifetimeMs": 19500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-6",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 47800,
+      "replacement": true,
+      "firstAttackAtMs": 48000,
+      "endAtMs": 63300,
+      "cause": "combat-death",
+      "lifetimeMs": 15500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-7",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 67300,
+      "replacement": true,
+      "firstAttackAtMs": 68000,
+      "endAtMs": 79800,
+      "cause": "combat-death",
+      "lifetimeMs": 12500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-8",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 71300,
+      "replacement": true,
+      "firstAttackAtMs": 71600,
+      "endAtMs": 79800,
+      "cause": "combat-death",
+      "lifetimeMs": 8500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-9",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 83800,
+      "replacement": true,
+      "firstAttackAtMs": 84300,
+      "endAtMs": 96800,
+      "cause": "combat-death",
+      "lifetimeMs": 13000,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-10",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 87800,
+      "replacement": true,
+      "firstAttackAtMs": 88300,
+      "endAtMs": 96800,
+      "cause": "combat-death",
+      "lifetimeMs": 9000,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    }
+  ],
+  "episodes": [
+    {
+      "startAtMs": 18700,
+      "aboveHalfAtMs": 26700,
+      "fullAtMs": 26700,
+      "censored": false,
+      "terminal": null,
+      "timeToAboveHalfMs": 8000,
+      "timeToFullMs": 8000,
+      "unavailableReason": null
+    },
+    {
+      "startAtMs": 39800,
+      "aboveHalfAtMs": 47800,
+      "fullAtMs": 47800,
+      "censored": false,
+      "terminal": null,
+      "timeToAboveHalfMs": 8000,
+      "timeToFullMs": 8000,
+      "unavailableReason": null
+    },
+    {
+      "startAtMs": 63300,
+      "aboveHalfAtMs": 71300,
+      "fullAtMs": 71300,
+      "censored": false,
+      "terminal": null,
+      "timeToAboveHalfMs": 8000,
+      "timeToFullMs": 8000,
+      "unavailableReason": null
+    },
+    {
+      "startAtMs": 79800,
+      "aboveHalfAtMs": 87800,
+      "fullAtMs": 87800,
+      "censored": false,
+      "terminal": null,
+      "timeToAboveHalfMs": 8000,
+      "timeToFullMs": 8000,
+      "unavailableReason": null
+    },
+    {
+      "startAtMs": 96800,
+      "aboveHalfAtMs": null,
+      "fullAtMs": null,
+      "censored": true,
+      "terminal": "bot-died",
+      "timeToAboveHalfMs": null,
+      "timeToFullMs": null,
+      "unavailableReason": "Recovery not observed before terminal/cap; censored."
+    }
+  ],
+  "events": [
+    {
+      "atMs": -100,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "maxHp": 186,
+      "replacement": false
+    },
+    {
+      "atMs": -100,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "maxHp": 186,
+      "replacement": false
+    },
+    {
+      "atMs": -100,
+      "kind": "queue-change",
+      "queue": [],
+      "active": null
+    },
+    {
+      "atMs": 1800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.9934,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.9868,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.9802,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 3400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.9736,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 4200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.9316,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 5100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.925,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 5100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.9184,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 5700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.9118,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 5700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.9052,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 6300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 6300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 6900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 6900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 7500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 7500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 8100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 8100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 12800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8986,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 13000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.892,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 13400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8854,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 13600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8788,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 14500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8722,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 14900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8656,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 16100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8236,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 16100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.817,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 16700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8104,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 16700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.8038,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 17300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7972,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 17300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7972,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 17900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7972,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 17900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7972,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 18500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7972,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 18500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7972,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 18700,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": -100,
+      "replacement": false,
+      "firstAttackAtMs": 2100,
+      "endAtMs": 18700,
+      "cause": "combat-death",
+      "lifetimeMs": 18800
+    },
+    {
+      "atMs": 18700,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": -100,
+      "replacement": false,
+      "firstAttackAtMs": 1800,
+      "endAtMs": 18700,
+      "cause": "combat-death",
+      "lifetimeMs": 18800
+    },
+    {
+      "atMs": 18800,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 100,
+        "durationMs": 3920
+      }
+    },
+    {
+      "atMs": 22700,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-3",
+      "slot": 0,
+      "maxHp": 186,
+      "replacement": true
+    },
+    {
+      "atMs": 22700,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-3",
+      "hp": 56
+    },
+    {
+      "atMs": 22700,
+      "kind": "queue-change",
+      "queue": [],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 0,
+        "durationMs": 3920
+      }
+    },
+    {
+      "atMs": 23400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7972,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 24000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7906,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 25700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.784,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 26700,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-4",
+      "slot": 1,
+      "maxHp": 186,
+      "replacement": true
+    },
+    {
+      "atMs": 26700,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-4",
+      "hp": 56
+    },
+    {
+      "atMs": 26700,
+      "kind": "queue-change",
+      "queue": [],
+      "active": null
+    },
+    {
+      "atMs": 26900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.742,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 27100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7354,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 27500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7288,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 27700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7222,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 28100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7156,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 28300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7156,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 28700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7156,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 28900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7156,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 29300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7156,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 33500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7156,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 33500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.709,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 34100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.7024,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 34100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.6958,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 35000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.6892,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 35000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.6826,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 36600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.676,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 36600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.6694,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 38100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.6628,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 38100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.6562,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 38700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.6142,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 38700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.6076,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 39300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.601,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 39300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.601,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 39800,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-3",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 22700,
+      "replacement": true,
+      "firstAttackAtMs": 23400,
+      "endAtMs": 39800,
+      "cause": "combat-death",
+      "lifetimeMs": 17100
+    },
+    {
+      "atMs": 39800,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-4",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 26700,
+      "replacement": true,
+      "firstAttackAtMs": 26900,
+      "endAtMs": 39800,
+      "cause": "combat-death",
+      "lifetimeMs": 13100
+    },
+    {
+      "atMs": 39900,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 100,
+        "durationMs": 3920
+      }
+    },
+    {
+      "atMs": 43800,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-5",
+      "slot": 0,
+      "maxHp": 186,
+      "replacement": true
+    },
+    {
+      "atMs": 43800,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-5",
+      "hp": 56
+    },
+    {
+      "atMs": 43800,
+      "kind": "queue-change",
+      "queue": [],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 0,
+        "durationMs": 3920
+      }
+    },
+    {
+      "atMs": 44600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.601,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 45200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5944,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 46700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5878,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 47800,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-6",
+      "slot": 1,
+      "maxHp": 186,
+      "replacement": true
+    },
+    {
+      "atMs": 47800,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-6",
+      "hp": 56
+    },
+    {
+      "atMs": 47800,
+      "kind": "queue-change",
+      "queue": [],
+      "active": null
+    },
+    {
+      "atMs": 48000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5812,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 48600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5746,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 49100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.568,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 49200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5614,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 49700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5548,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 49800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5482,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 50300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5062,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 50400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5062,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 51400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.5062,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 51500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4996,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 52000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.493,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 52100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4864,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 52600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4798,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 52700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4732,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 53200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4666,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 53300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.46,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 53800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4534,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 53900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4468,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 54500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4402,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 55200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4336,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 56000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.427,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 56800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4204,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 57000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4138,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 57500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4072,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 57800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.4006,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 58100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.394,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 58400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.3874,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 58700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.3808,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 59100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.3742,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 59300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.3676,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 59700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.361,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 59900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.3544,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 60300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.3478,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 60500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.3412,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 60900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.3346,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 61100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.328,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 61500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.328,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 61700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2926,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 62100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2926,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 62300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2926,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 62700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2926,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 62900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2926,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 63300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2926,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 63300,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-5",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 43800,
+      "replacement": true,
+      "firstAttackAtMs": 44600,
+      "endAtMs": 63300,
+      "cause": "combat-death",
+      "lifetimeMs": 19500
+    },
+    {
+      "atMs": 63300,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-6",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 47800,
+      "replacement": true,
+      "firstAttackAtMs": 48000,
+      "endAtMs": 63300,
+      "cause": "combat-death",
+      "lifetimeMs": 15500
+    },
+    {
+      "atMs": 63400,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 100,
+        "durationMs": 3920
+      }
+    },
+    {
+      "atMs": 67300,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-7",
+      "slot": 0,
+      "maxHp": 186,
+      "replacement": true
+    },
+    {
+      "atMs": 67300,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-7",
+      "hp": 56
+    },
+    {
+      "atMs": 67300,
+      "kind": "queue-change",
+      "queue": [],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 0,
+        "durationMs": 3920
+      }
+    },
+    {
+      "atMs": 68000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2926,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 68600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.286,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 69200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2794,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 69800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2728,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 70400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2662,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 71000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2662,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 71300,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-8",
+      "slot": 1,
+      "maxHp": 186,
+      "replacement": true
+    },
+    {
+      "atMs": 71300,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-8",
+      "hp": 56
+    },
+    {
+      "atMs": 71300,
+      "kind": "queue-change",
+      "queue": [],
+      "active": null
+    },
+    {
+      "atMs": 71600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-8",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2662,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 75600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-8",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2662,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 76000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2596,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 76200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-8",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.253,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 76600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.211,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 77700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.2044,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 77700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-8",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1978,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 78300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1912,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 78300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-8",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1846,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 78900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.178,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 78900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-8",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.178,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 79500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.178,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 79500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-8",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.178,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 79800,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-7",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 67300,
+      "replacement": true,
+      "firstAttackAtMs": 68000,
+      "endAtMs": 79800,
+      "cause": "combat-death",
+      "lifetimeMs": 12500
+    },
+    {
+      "atMs": 79800,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-8",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 71300,
+      "replacement": true,
+      "firstAttackAtMs": 71600,
+      "endAtMs": 79800,
+      "cause": "combat-death",
+      "lifetimeMs": 8500
+    },
+    {
+      "atMs": 79900,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 100,
+        "durationMs": 3920
+      }
+    },
+    {
+      "atMs": 83800,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-9",
+      "slot": 0,
+      "maxHp": 186,
+      "replacement": true
+    },
+    {
+      "atMs": 83800,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-9",
+      "hp": 56
+    },
+    {
+      "atMs": 83800,
+      "kind": "queue-change",
+      "queue": [],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 0,
+        "durationMs": 3920
+      }
+    },
+    {
+      "atMs": 84300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.178,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 84900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1714,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 86500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1648,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 87100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1582,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 87700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1516,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 0.5
+    },
+    {
+      "atMs": 87800,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-10",
+      "slot": 1,
+      "maxHp": 186,
+      "replacement": true
+    },
+    {
+      "atMs": 87800,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-10",
+      "hp": 56
+    },
+    {
+      "atMs": 87800,
+      "kind": "queue-change",
+      "queue": [],
+      "active": null
+    },
+    {
+      "atMs": 88300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1162,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 92200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1162,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 92500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.1096,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 92800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.103,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 93100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.0964,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 94200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.0898,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 94700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.0832,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 95300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.0766,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 95300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.07,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 95900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.0634,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 95900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.0568,
+      "primaryHpDecrease": 33,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 96500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.0502,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 96500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "targetType": "stoneplate-juggernaut",
+      "targetHpFractionBefore": 0.0502,
+      "primaryHpDecrease": 0,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 96800,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-9",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 83800,
+      "replacement": true,
+      "firstAttackAtMs": 84300,
+      "endAtMs": 96800,
+      "cause": "combat-death",
+      "lifetimeMs": 13000
+    },
+    {
+      "atMs": 96800,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-10",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 87800,
+      "replacement": true,
+      "firstAttackAtMs": 88300,
+      "endAtMs": 96800,
+      "cause": "combat-death",
+      "lifetimeMs": 9000
+    },
+    {
+      "atMs": 96900,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 100,
+        "durationMs": 3920
+      }
+    }
+  ],
+  "snapshots": [
+    {
+      "atMs": 0,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 1000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 2000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 3000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 4000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 5000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 6000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 7000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 8000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 9000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 10000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 11000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 12000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 13000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 83.29600000000003,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 80.13400000000003,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 14000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 83.29600000000003,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 80.13400000000003,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 15000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 83.29600000000003,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 80.13400000000003,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 16000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 83.29600000000003,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 80.13400000000003,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 17000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 83.29600000000003,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 80.13400000000003,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 18000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 83.29600000000003,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 80.13400000000003,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 19000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 300,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 20000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 1300,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 21000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 2300,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 22000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 3300,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 23000,
+      "initialized": true,
+      "hp": 228.08799999999997,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 300,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 24000,
+      "initialized": true,
+      "hp": 247.0804,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1300,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 25000,
+      "initialized": true,
+      "hp": 256.1244000000001,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 2300,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 26000,
+      "initialized": true,
+      "hp": 265.1684000000002,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 3300,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 27000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 28000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 29000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 30000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 31000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 32000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 33000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 34000,
+      "initialized": true,
+      "hp": 219.04399999999998,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 67.486,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 64.324,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 35000,
+      "initialized": true,
+      "hp": 219.04399999999998,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 67.486,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 64.324,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 36000,
+      "initialized": true,
+      "hp": 219.04399999999998,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 67.486,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 64.324,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 37000,
+      "initialized": true,
+      "hp": 219.04399999999998,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 67.486,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 64.324,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 38000,
+      "initialized": true,
+      "hp": 219.04399999999998,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 67.486,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 64.324,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 39000,
+      "initialized": true,
+      "hp": 219.04399999999998,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 67.486,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 64.324,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 40000,
+      "initialized": true,
+      "hp": 220.8528,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 200,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 41000,
+      "initialized": true,
+      "hp": 229.8968000000001,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 1200,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 42000,
+      "initialized": true,
+      "hp": 238.9408000000002,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 2200,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 43000,
+      "initialized": true,
+      "hp": 247.9848000000003,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 3200,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 44000,
+      "initialized": true,
+      "hp": 223.56599999999997,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 200,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 45000,
+      "initialized": true,
+      "hp": 249.79359999999997,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1200,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 46000,
+      "initialized": true,
+      "hp": 258.83760000000007,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 2200,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 47000,
+      "initialized": true,
+      "hp": 266,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 3200,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 48000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 49000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 50000,
+      "initialized": true,
+      "hp": 210,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 51000,
+      "initialized": true,
+      "hp": 166.8528,
+      "maxHp": 266,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 52000,
+      "initialized": true,
+      "hp": 193.9848,
+      "maxHp": 266,
+      "barrier": 0,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 53000,
+      "initialized": true,
+      "hp": 221.1168,
+      "maxHp": 266,
+      "barrier": 0,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 54000,
+      "initialized": true,
+      "hp": 248.24880000000002,
+      "maxHp": 266,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 55000,
+      "initialized": true,
+      "hp": 264.52800000000013,
+      "maxHp": 266,
+      "barrier": 8.625,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 56000,
+      "initialized": true,
+      "hp": 264.52800000000013,
+      "maxHp": 266,
+      "barrier": 25.875000000000007,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 57000,
+      "initialized": true,
+      "hp": 207.47800000000015,
+      "maxHp": 266,
+      "barrier": 0,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 33,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 58000,
+      "initialized": true,
+      "hp": 207.47800000000015,
+      "maxHp": 266,
+      "barrier": 0,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 33,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 59000,
+      "initialized": true,
+      "hp": 207.47800000000015,
+      "maxHp": 266,
+      "barrier": 0,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 33,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 60000,
+      "initialized": true,
+      "hp": 207.47800000000015,
+      "maxHp": 266,
+      "barrier": 0,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 33,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 61000,
+      "initialized": true,
+      "hp": 207.47800000000015,
+      "maxHp": 266,
+      "barrier": 6.9,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 33,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 62000,
+      "initialized": true,
+      "hp": 207.47800000000015,
+      "maxHp": 266,
+      "barrier": 24.150000000000006,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 33,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 63000,
+      "initialized": true,
+      "hp": 207.47800000000015,
+      "maxHp": 266,
+      "barrier": 41.40000000000002,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 35,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 33,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 64000,
+      "initialized": true,
+      "hp": 213.80880000000022,
+      "maxHp": 266,
+      "barrier": 58.650000000000034,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 700,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 65000,
+      "initialized": true,
+      "hp": 222.85280000000031,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 1700,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 66000,
+      "initialized": true,
+      "hp": 231.8968000000004,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 2700,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 67000,
+      "initialized": true,
+      "hp": 240.9408000000005,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 3700,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 68000,
+      "initialized": true,
+      "hp": 218.40360000000047,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 700,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 69000,
+      "initialized": true,
+      "hp": 227.44760000000056,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1700,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 70000,
+      "initialized": true,
+      "hp": 236.49160000000066,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 2700,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 71000,
+      "initialized": true,
+      "hp": 245.53560000000076,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 3700,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 72000,
+      "initialized": true,
+      "hp": 192.24880000000078,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 73000,
+      "initialized": true,
+      "hp": 192.24880000000078,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 74000,
+      "initialized": true,
+      "hp": 192.24880000000078,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 75000,
+      "initialized": true,
+      "hp": 192.24880000000078,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 76000,
+      "initialized": true,
+      "hp": 192.24880000000078,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 61.162,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 61.162,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 77000,
+      "initialized": true,
+      "hp": 192.24880000000078,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 61.162,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 61.162,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 78000,
+      "initialized": true,
+      "hp": 192.24880000000078,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 61.162,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 61.162,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 79000,
+      "initialized": true,
+      "hp": 192.24880000000078,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 61.162,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 61.162,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 80000,
+      "initialized": true,
+      "hp": 194.0576000000008,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 200,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 81000,
+      "initialized": true,
+      "hp": 203.1016000000009,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 1200,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 82000,
+      "initialized": true,
+      "hp": 212.145600000001,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 2200,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 83000,
+      "initialized": true,
+      "hp": 221.1896000000011,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 3200,
+        "durationMs": 3920
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 84000,
+      "initialized": true,
+      "hp": 195.93920000000108,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 200,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 85000,
+      "initialized": true,
+      "hp": 211.31400000000113,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1200,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 86000,
+      "initialized": true,
+      "hp": 220.35800000000123,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 2200,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 87000,
+      "initialized": true,
+      "hp": 229.40200000000132,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5,
+      "liveAuthoredProcFraction": 0.5,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 3200,
+        "durationMs": 3920
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 88000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 186,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 186,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 89000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 90000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 91000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 92000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 93000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    },
+    {
+      "atMs": 94000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 95000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 96000,
+      "initialized": true,
+      "hp": 180.6372000000014,
+      "maxHp": 266,
+      "barrier": 69,
+      "targetId": "node-t2-mountain-dungeon_monster-5",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 58,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 58,
+          "targetId": "node-t2-mountain-dungeon_monster-5"
+        }
+      ]
+    }
+  ]
+}

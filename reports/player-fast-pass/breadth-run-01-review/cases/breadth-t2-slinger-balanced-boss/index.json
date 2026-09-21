@@ -1,0 +1,100 @@
+[
+  {
+    "cell": "breadth-t2-slinger-balanced-boss",
+    "seed": 101003,
+    "outcome": "boss-killed",
+    "elapsedMs": 50800,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 263,
+      "maxHp": 263,
+      "barrier": 68
+    },
+    "bossKilled": true,
+    "bossKillEvidence": {
+      "atMs": 50800,
+      "victimId": "node-t2-mountain-dungeon_monster-5",
+      "victimName": "Stoneplate Juggernaut",
+      "killerId": "bench-bot-0"
+    },
+    "playerDeathEvidence": null,
+    "encounterResetEvidence": null,
+    "killedAtMs": 50800,
+    "bossMaxHp": 5000,
+    "bossHpRemaining": 0,
+    "terminalBossHpSupported": true,
+    "bossHpFractionRemoved": 1,
+    "crossedHalfAtMs": 26600,
+    "castsStarted": 10,
+    "castLabels": [
+      "Stoneplate",
+      "Stoneplate Charge"
+    ],
+    "maxAddsAlive": 0,
+    "damageFromBoss": 0,
+    "damageFromAdds": {},
+    "attackBeats": 156,
+    "minionAttackBeats": 0,
+    "totalAttackBeats": 156,
+    "hpLost": 0,
+    "peakBurst1s": 0,
+    "minHpFraction": 1,
+    "wallElapsedMs": 482,
+    "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+    "targets": [
+      {
+        "id": "node-t2-mountain-dungeon_monster-5",
+        "type": "stoneplate-juggernaut",
+        "name": "Stoneplate Juggernaut",
+        "maxHp": 5000,
+        "firstDamageMs": 900,
+        "lastDamageMs": 50800,
+        "killedAtMs": 50800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3100,
+        "damageEvents": 81,
+        "castsStarted": 10,
+        "castsFired": 0,
+        "ttkMs": 49900,
+        "clean": true
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 900,
+        "endMs": 50800,
+        "durationMs": 49900,
+        "members": [
+          "node-t2-mountain-dungeon_monster-5"
+        ],
+        "initialMembers": [
+          "node-t2-mountain-dungeon_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      }
+    ],
+    "recovery": [
+      {
+        "afterClearMs": 50800,
+        "recoveredAtMs": 50800,
+        "interruptedByNextPull": false
+      }
+    ],
+    "incomingDamage": 0,
+    "largestHit": 0,
+    "maxDamageIn1s": 0,
+    "counts": {
+      "damaged": 1,
+      "killed": 1,
+      "censored": 0,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 1,
+      "p10": 49900,
+      "median": 49900,
+      "p90": 49900
+    }
+  }
+]

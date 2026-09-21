@@ -1,0 +1,415 @@
+{
+  "planned": 204,
+  "completed": 102,
+  "failures": [
+    {
+      "caseId": "breadth-t2-striker-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-striker-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-striker-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-striker-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-striker-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-striker-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-squire-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-squire-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-squire-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-squire-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-squire-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-squire-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-apprentice-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-apprentice-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-apprentice-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-apprentice-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-apprentice-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-apprentice-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-slinger-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-slinger-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-slinger-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-slinger-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-slinger-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-slinger-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-conduit-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-conduit-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-conduit-balanced-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-conduit-balanced-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-conduit-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-conduit-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-conduit-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-conduit-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-conduit-light-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-conduit-light-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-spirit-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-spirit-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-spirit-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-spirit-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t2-spirit-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t2-spirit-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-striker-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-striker-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-striker-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-striker-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-striker-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-striker-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-squire-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-squire-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-squire-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-squire-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-squire-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-squire-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-apprentice-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-apprentice-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-apprentice-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-apprentice-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-apprentice-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-apprentice-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-slinger-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-slinger-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-slinger-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-slinger-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-slinger-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-slinger-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-balanced-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-far-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-balanced-far-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-far-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-balanced-far-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-heavy-far-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-heavy-far-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-heavy-far-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-heavy-far-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-light-far-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-light-far-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-conduit-light-far-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-conduit-light-far-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-spirit-balanced-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-spirit-balanced-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-spirit-heavy-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-spirit-heavy-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t3-spirit-light-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t3-spirit-light-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-balanced-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-balanced-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-balanced-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-balanced-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-balanced-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-balanced-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-heavy-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-heavy-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-heavy-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-heavy-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-heavy-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-heavy-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-light-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-light-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-light-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-light-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-striker-light-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-striker-light-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-balanced-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-balanced-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-balanced-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-balanced-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-balanced-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-balanced-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-heavy-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-heavy-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-heavy-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-heavy-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-heavy-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-heavy-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-light-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-light-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-light-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-light-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-squire-light-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-squire-light-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-balanced-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-balanced-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-balanced-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-balanced-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-balanced-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-balanced-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-heavy-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-heavy-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-heavy-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-heavy-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-heavy-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-heavy-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-light-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-light-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-light-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-light-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-apprentice-light-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-apprentice-light-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-balanced-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-balanced-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-balanced-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-balanced-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-balanced-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-balanced-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-heavy-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-heavy-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-heavy-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-heavy-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-heavy-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-heavy-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-light-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-light-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-light-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-light-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-slinger-light-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-slinger-light-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-balanced-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-balanced-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-balanced-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-c-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-balanced-c-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-heavy-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-heavy-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-heavy-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-heavy-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-heavy-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-heavy-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-light-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-light-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-b-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-light-b-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-light-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-farm-reconstruction-r1",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-conduit-light-c-farm-reconstruction-r1/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-balanced-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-balanced-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-balanced-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-balanced-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-balanced-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-balanced-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-heavy-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-heavy-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-heavy-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-heavy-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-heavy-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-heavy-c-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-light-a-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-light-a-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-light-b-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-light-b-farm/process.log\n\n1 !== 0\n"
+    },
+    {
+      "caseId": "breadth-t4-spirit-light-c-farm",
+      "error": "AssertionError [ERR_ASSERTION]: Child failed: C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-breadth-01\\breadth-run-01\\breadth-t4-spirit-light-c-farm/process.log\n\n1 !== 0\n"
+    }
+  ],
+  "unrun": []
+}
