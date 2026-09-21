@@ -852,6 +852,7 @@ const abilities: AbilityDef[] = [
     tier: 2,
     lineageId: "slam",
     trigger: { kind: "in-combat" },
+    icon: "slam",
     // POWER STRIKE'S AoE COUNTERPART, NOT ITS REPLACEMENT. Both stay learnable,
     // attunable and useful at the same time; the RP budget is the only thing
     // that makes them compete.

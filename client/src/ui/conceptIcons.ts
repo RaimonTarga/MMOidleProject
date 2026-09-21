@@ -22,6 +22,7 @@ const ABILITY_IDS = new Set([
   'quick-strike',
   'recuperate',
   'second-wind',
+  'slam',
   'snipe',
   'sweep',
   'stunning-strike',
