@@ -117,8 +117,10 @@ Each summoner tick:
 6. `driveMinion` per live minion.
 7. `tickSummonerSpecializations`.
 
-Reconstruction (`SUMMONER_CORE_TUNING`): base 5000 ms, floor 2500 ms, HP cost
-ratio 0.5, safety floor 20% of max HP, in-combat regen 20%. Leash radius 320.
+Reconstruction (`SUMMONER_CORE_TUNING`): base 3500 ms, Root/Heavy floor 2500 ms,
+Light/Balanced floor 1500 ms, HP cost ratio 0.3, safety floor 20% of max HP,
+in-combat regen 20%. Frame intervals and modifier order are listed in the R2
+adoption section below. Leash radius 320.
 Hard entity cap 9.
 
 ## 6. Summon Visuals

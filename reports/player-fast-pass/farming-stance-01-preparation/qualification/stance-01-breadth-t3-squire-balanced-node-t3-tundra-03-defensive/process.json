@@ -1,0 +1,17 @@
+{
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "argv": [
+    "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-0921\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\cli.mjs",
+    "--conditions=development",
+    "scripts/ttkSurvey.ts",
+    "--trial=farming-stance-01",
+    "--block=stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-defensive",
+    "--mode=qualify",
+    "--revision=f9dcde59217770390752f3ce0f089e323b0a6f37",
+    "--source-contract=C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\player-fast-pass\\farming-stance-01-preparation\\packet\\identity.json",
+    "--hitboxes=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\ttk-survey\\hitboxes.json",
+    "--out=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\fs01-data\\qualification\\stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-defensive"
+  ]
+}

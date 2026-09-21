@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "mode": "qualify",
+  "revision": "f9dcde59217770390752f3ce0f089e323b0a6f37",
+  "navigationDiagnostics": false,
+  "definitionsHash": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "sampleEveryMs": 1000,
+  "block": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive",
+  "trial": "farming-stance-01",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 300000,
+  "seeds": [
+    101003
+  ],
+  "cells": [
+    {
+      "id": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-volcanic-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Consort",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation.",
+        "defensive stance is attuned and active throughout; no stance switching."
+      ],
+      "arm": "defensive",
+      "comparisonId": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03",
+      "originalCaseId": "breadth-t3-conduit-balanced-farm",
+      "reconstructionPolicy": "production-r2"
+    }
+  ]
+}

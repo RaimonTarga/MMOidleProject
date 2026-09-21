@@ -1,0 +1,628 @@
+{
+  "status": "historical-read-only-review",
+  "newCombatObservations": 0,
+  "rows": [
+    {
+      "id": "breadth-t3-conduit-balanced-farm-candidate-r2",
+      "summary": "../conduit-recovery-preparation/r2-run-01/breadth-t3-conduit-balanced-farm-candidate-r2/breadth-t3-conduit-balanced-farm-s101003/summary.json",
+      "summarySha256": "32703dc7fecf1089341451c0005bb313b472e2a541739b4cf8d7da9344d39110",
+      "conduit": "../conduit-recovery-preparation/r2-run-01/breadth-t3-conduit-balanced-farm-candidate-r2/breadth-t3-conduit-balanced-farm-s101003/conduit.json",
+      "rawSamples": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\conduit-recovery-20260921\\r2-run-01\\breadth-t3-conduit-balanced-farm-candidate-r2\\breadth-t3-conduit-balanced-farm-s101003\\samples.jsonl",
+      "rawSamplesSha256": "e2d51c21773e553a7d70e8802659e50236fb3f4554bb084a47b6b5c30f9a92f5",
+      "outcome": "player-died",
+      "elapsedMs": 115000,
+      "counts": {
+        "damaged": 13,
+        "killed": 3,
+        "censored": 10,
+        "hpRegain": 6
+      },
+      "incomingDamage": 1022,
+      "largestHit": 63,
+      "interruptedRecoveries": 0,
+      "meanLiveAuthoredOffense": 0.49530434782608695,
+      "zeroBodyMs": 12400,
+      "readyHpBlockedMs": 0,
+      "totalHpPaid": 814,
+      "queueScopedHealingHp": 799.1279999999919,
+      "hypothesisExercised": true,
+      "terminal": {
+        "hp": 0,
+        "maxHp": 371,
+        "barrier": 0
+      },
+      "lastSamples": [
+        {
+          "atMs": 114000,
+          "hp": 79.21999999999974,
+          "target": "node-t3-volcanic-03_monster-35",
+          "lastOutgoingDamageMs": 113500,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-42",
+              "hp": 49,
+              "maxHp": 74,
+              "pos": {
+                "x": 584.2699352774207,
+                "y": 3518.9578274896076
+              },
+              "target": "node-t3-volcanic-03_monster-35",
+              "lastAttackAt": 1800000113500
+            }
+          ],
+          "blockedApproach": ""
+        },
+        {
+          "atMs": 115000,
+          "hp": 0,
+          "target": "node-t3-volcanic-03_monster-35",
+          "lastOutgoingDamageMs": 114700,
+          "contacts": [],
+          "minions": [],
+          "blockedApproach": null
+        }
+      ]
+    },
+    {
+      "id": "breadth-t4-conduit-balanced-a-farm-adopted-r1",
+      "summary": "../conduit-recovery-preparation/r2-run-01/breadth-t4-conduit-balanced-a-farm-adopted-r1/breadth-t4-conduit-balanced-a-farm-s101003/summary.json",
+      "summarySha256": "0a286a9c2f27eed08bc870dbe2198b40ac4a2cae3279c2d82e6252b49a9fc695",
+      "conduit": "../conduit-recovery-preparation/r2-run-01/breadth-t4-conduit-balanced-a-farm-adopted-r1/breadth-t4-conduit-balanced-a-farm-s101003/conduit.json",
+      "rawSamples": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\conduit-recovery-20260921\\r2-run-01\\breadth-t4-conduit-balanced-a-farm-adopted-r1\\breadth-t4-conduit-balanced-a-farm-s101003\\samples.jsonl",
+      "rawSamplesSha256": "3b91505d16a27828f391dd884f593e7d2094ab1d45c0e056512bba6ca515c8ec",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "counts": {
+        "damaged": 35,
+        "killed": 35,
+        "censored": 0,
+        "hpRegain": 4
+      },
+      "incomingDamage": 1823,
+      "largestHit": 29,
+      "interruptedRecoveries": 0,
+      "meanLiveAuthoredOffense": 0.6904523730132263,
+      "zeroBodyMs": 15600,
+      "readyHpBlockedMs": 0,
+      "totalHpPaid": 1980,
+      "queueScopedHealingHp": 1905.3500000000354,
+      "hypothesisExercised": true,
+      "terminal": {
+        "hp": 551,
+        "maxHp": 551,
+        "barrier": 231
+      },
+      "lastSamples": [
+        {
+          "atMs": 298000,
+          "hp": 551,
+          "target": null,
+          "lastOutgoingDamageMs": 291800,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-66",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1655.1692765444914,
+                "y": 3376.8447454980965
+              },
+              "target": null,
+              "lastAttackAt": 0
+            },
+            {
+              "id": "minion_bench-bot-0-64",
+              "hp": 68.25,
+              "maxHp": 110,
+              "pos": {
+                "x": 1617.1692765444914,
+                "y": 3398.8447454980965
+              },
+              "target": null,
+              "lastAttackAt": 1800000291700
+            },
+            {
+              "id": "minion_bench-bot-0-63",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1693.1692765444914,
+                "y": 3398.8447454980965
+              },
+              "target": null,
+              "lastAttackAt": 1800000291700
+            },
+            {
+              "id": "minion_bench-bot-0-62",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1617.1692765444914,
+                "y": 3442.8447454980965
+              },
+              "target": null,
+              "lastAttackAt": 1800000291800
+            },
+            {
+              "id": "minion_bench-bot-0-61",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1693.1692765444914,
+                "y": 3442.8447454980965
+              },
+              "target": null,
+              "lastAttackAt": 1800000291800
+            },
+            {
+              "id": "minion_bench-bot-0-60",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1655.1692765444914,
+                "y": 3464.8447454980965
+              },
+              "target": null,
+              "lastAttackAt": 1800000291800
+            }
+          ],
+          "blockedApproach": ""
+        },
+        {
+          "atMs": 299000,
+          "hp": 551,
+          "target": null,
+          "lastOutgoingDamageMs": 291800,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-66",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1876.6108619211223,
+                "y": 3238.8133868321906
+              },
+              "target": null,
+              "lastAttackAt": 0
+            },
+            {
+              "id": "minion_bench-bot-0-64",
+              "hp": 95.75,
+              "maxHp": 110,
+              "pos": {
+                "x": 1838.6108619211223,
+                "y": 3260.8133868321906
+              },
+              "target": null,
+              "lastAttackAt": 1800000291700
+            },
+            {
+              "id": "minion_bench-bot-0-63",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1914.6108619211223,
+                "y": 3260.8133868321906
+              },
+              "target": null,
+              "lastAttackAt": 1800000291700
+            },
+            {
+              "id": "minion_bench-bot-0-62",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1838.6108619211223,
+                "y": 3304.8133868321906
+              },
+              "target": null,
+              "lastAttackAt": 1800000291800
+            },
+            {
+              "id": "minion_bench-bot-0-61",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1914.6108619211223,
+                "y": 3304.8133868321906
+              },
+              "target": null,
+              "lastAttackAt": 1800000291800
+            },
+            {
+              "id": "minion_bench-bot-0-60",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 1876.6108619211223,
+                "y": 3326.8133868321906
+              },
+              "target": null,
+              "lastAttackAt": 1800000291800
+            }
+          ],
+          "blockedApproach": ""
+        }
+      ]
+    },
+    {
+      "id": "breadth-t4-conduit-balanced-a-farm-candidate-r2",
+      "summary": "../conduit-recovery-preparation/r2-run-01/breadth-t4-conduit-balanced-a-farm-candidate-r2/breadth-t4-conduit-balanced-a-farm-s101003/summary.json",
+      "summarySha256": "397590c59dd3a22cef59999227491f390fe3028df457d095b2f7204bda418c42",
+      "conduit": "../conduit-recovery-preparation/r2-run-01/breadth-t4-conduit-balanced-a-farm-candidate-r2/breadth-t4-conduit-balanced-a-farm-s101003/conduit.json",
+      "rawSamples": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\conduit-recovery-20260921\\r2-run-01\\breadth-t4-conduit-balanced-a-farm-candidate-r2\\breadth-t4-conduit-balanced-a-farm-s101003\\samples.jsonl",
+      "rawSamplesSha256": "9946847ef384ce9f504d652d68c0ec2a438c82159b1af327b938c6e9f20a137f",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "counts": {
+        "damaged": 43,
+        "killed": 32,
+        "censored": 11,
+        "hpRegain": 17
+      },
+      "incomingDamage": 1652,
+      "largestHit": 79,
+      "interruptedRecoveries": 1,
+      "meanLiveAuthoredOffense": 0.7516950094475944,
+      "zeroBodyMs": 13100,
+      "readyHpBlockedMs": 0,
+      "totalHpPaid": 2244,
+      "queueScopedHealingHp": 1903.480000000036,
+      "hypothesisExercised": true,
+      "terminal": {
+        "hp": 551,
+        "maxHp": 551,
+        "barrier": 231
+      },
+      "lastSamples": [
+        {
+          "atMs": 298000,
+          "hp": 551,
+          "target": null,
+          "lastOutgoingDamageMs": 293200,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-74",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 3860.7217090123772,
+                "y": 4325.097958959458
+              },
+              "target": null,
+              "lastAttackAt": 0
+            },
+            {
+              "id": "minion_bench-bot-0-70",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 3822.7217090123772,
+                "y": 4259.097958959458
+              },
+              "target": null,
+              "lastAttackAt": 1800000293100
+            },
+            {
+              "id": "minion_bench-bot-0-71",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 3898.7217090123772,
+                "y": 4303.097958959458
+              },
+              "target": null,
+              "lastAttackAt": 1800000293100
+            },
+            {
+              "id": "minion_bench-bot-0-67",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 3860.7217090123772,
+                "y": 4237.097958959458
+              },
+              "target": null,
+              "lastAttackAt": 1800000293200
+            },
+            {
+              "id": "minion_bench-bot-0-72",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 3898.7217090123772,
+                "y": 4259.097958959458
+              },
+              "target": null,
+              "lastAttackAt": 1800000293200
+            },
+            {
+              "id": "minion_bench-bot-0-73",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 3822.7217090123772,
+                "y": 4303.097958959458
+              },
+              "target": null,
+              "lastAttackAt": 1800000293200
+            }
+          ],
+          "blockedApproach": ""
+        },
+        {
+          "atMs": 299000,
+          "hp": 551,
+          "target": null,
+          "lastOutgoingDamageMs": 293200,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-74",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 4109.1182252296585,
+                "y": 4405.223926854502
+              },
+              "target": null,
+              "lastAttackAt": 0
+            },
+            {
+              "id": "minion_bench-bot-0-70",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 4071.1182252296585,
+                "y": 4339.223926854502
+              },
+              "target": null,
+              "lastAttackAt": 1800000293100
+            },
+            {
+              "id": "minion_bench-bot-0-71",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 4147.1182252296585,
+                "y": 4383.223926854502
+              },
+              "target": null,
+              "lastAttackAt": 1800000293100
+            },
+            {
+              "id": "minion_bench-bot-0-67",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 4109.1182252296585,
+                "y": 4317.223926854502
+              },
+              "target": null,
+              "lastAttackAt": 1800000293200
+            },
+            {
+              "id": "minion_bench-bot-0-72",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 4147.1182252296585,
+                "y": 4339.223926854502
+              },
+              "target": null,
+              "lastAttackAt": 1800000293200
+            },
+            {
+              "id": "minion_bench-bot-0-73",
+              "hp": 110,
+              "maxHp": 110,
+              "pos": {
+                "x": 4071.1182252296585,
+                "y": 4383.223926854502
+              },
+              "target": null,
+              "lastAttackAt": 1800000293200
+            }
+          ],
+          "blockedApproach": ""
+        }
+      ]
+    },
+    {
+      "id": "breadth-t3-conduit-heavy-farm",
+      "summary": "../conduit-recovery-preparation/farm-completion-run-01/breadth-t3-conduit-heavy-farm/breadth-t3-conduit-heavy-farm-s101003/summary.json",
+      "summarySha256": "0ba8d71adbdfdfab188724e61df447e67fc6eb24f5fe485df5840233a76ac88b",
+      "conduit": "../conduit-recovery-preparation/farm-completion-run-01/breadth-t3-conduit-heavy-farm/breadth-t3-conduit-heavy-farm-s101003/conduit.json",
+      "rawSamples": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\conduit-recovery-20260921\\farm-completion-run-01\\breadth-t3-conduit-heavy-farm\\breadth-t3-conduit-heavy-farm-s101003\\samples.jsonl",
+      "rawSamplesSha256": "0cd6d7a24ba6d7a588ca883d94459fea01706a6e37eb994aad2ded4bb951f9a5",
+      "outcome": "player-died",
+      "elapsedMs": 66200,
+      "counts": {
+        "damaged": 9,
+        "killed": 3,
+        "censored": 6,
+        "hpRegain": 4
+      },
+      "incomingDamage": 958,
+      "largestHit": 59,
+      "interruptedRecoveries": 0,
+      "meanLiveAuthoredOffense": 0.9123867069486404,
+      "zeroBodyMs": 3600,
+      "readyHpBlockedMs": 0,
+      "totalHpPaid": 166,
+      "queueScopedHealingHp": 67.76800000000094,
+      "hypothesisExercised": true,
+      "terminal": {
+        "hp": 0,
+        "maxHp": 394,
+        "barrier": 0
+      },
+      "lastSamples": [
+        {
+          "atMs": 65000,
+          "hp": 62.639999999999645,
+          "target": "node-t3-volcanic-03_monster-34",
+          "lastOutgoingDamageMs": 64800,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-4",
+              "hp": 168,
+              "maxHp": 276,
+              "pos": {
+                "x": 813.9460425795189,
+                "y": 4658.260880345547
+              },
+              "target": "node-t3-volcanic-03_monster-34",
+              "lastAttackAt": 1800000064800
+            },
+            {
+              "id": "minion_bench-bot-0-3",
+              "hp": 145,
+              "maxHp": 276,
+              "pos": {
+                "x": 801.6692683356836,
+                "y": 4655.922205869228
+              },
+              "target": null,
+              "lastAttackAt": 1800000064800
+            }
+          ],
+          "blockedApproach": ""
+        },
+        {
+          "atMs": 66000,
+          "hp": 6.639999999999645,
+          "target": "node-t3-volcanic-03_monster-34",
+          "lastOutgoingDamageMs": 66000,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-4",
+              "hp": 168,
+              "maxHp": 276,
+              "pos": {
+                "x": 660.9288354783677,
+                "y": 4591.026834425702
+              },
+              "target": null,
+              "lastAttackAt": 1800000065900
+            },
+            {
+              "id": "minion_bench-bot-0-3",
+              "hp": 121,
+              "maxHp": 276,
+              "pos": {
+                "x": 667.1782467522121,
+                "y": 4597.014064747147
+              },
+              "target": "node-t3-volcanic-03_monster-34",
+              "lastAttackAt": 1800000066000
+            }
+          ],
+          "blockedApproach": ""
+        }
+      ]
+    },
+    {
+      "id": "breadth-t4-conduit-heavy-a-farm",
+      "summary": "../conduit-recovery-preparation/farm-completion-run-01/breadth-t4-conduit-heavy-a-farm/breadth-t4-conduit-heavy-a-farm-s101003/summary.json",
+      "summarySha256": "a1e279ea5accd73a7529880345a635ba3355214e3202ef5921fec0edfdd112b1",
+      "conduit": "../conduit-recovery-preparation/farm-completion-run-01/breadth-t4-conduit-heavy-a-farm/breadth-t4-conduit-heavy-a-farm-s101003/conduit.json",
+      "rawSamples": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\conduit-recovery-20260921\\farm-completion-run-01\\breadth-t4-conduit-heavy-a-farm\\breadth-t4-conduit-heavy-a-farm-s101003\\samples.jsonl",
+      "rawSamplesSha256": "854270c1899560c1668daee744d5c0a060137fbdc1bc3589d37b5f2e06772ca6",
+      "outcome": "player-died",
+      "elapsedMs": 71700,
+      "counts": {
+        "damaged": 11,
+        "killed": 10,
+        "censored": 1,
+        "hpRegain": 0
+      },
+      "incomingDamage": 1237.3,
+      "largestHit": 106,
+      "interruptedRecoveries": 6,
+      "meanLiveAuthoredOffense": 1,
+      "zeroBodyMs": 0,
+      "readyHpBlockedMs": 0,
+      "totalHpPaid": 0,
+      "queueScopedHealingHp": 0,
+      "hypothesisExercised": false,
+      "terminal": {
+        "hp": 0,
+        "maxHp": 585,
+        "barrier": 0
+      },
+      "lastSamples": [
+        {
+          "atMs": 70000,
+          "hp": 121.19999999999982,
+          "target": null,
+          "lastOutgoingDamageMs": 65300,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-2",
+              "hp": 573,
+              "maxHp": 803,
+              "pos": {
+                "x": 2761.506917218204,
+                "y": 3370.700513121351
+              },
+              "target": null,
+              "lastAttackAt": 1800000065200
+            },
+            {
+              "id": "minion_bench-bot-0-1",
+              "hp": 344,
+              "maxHp": 344,
+              "pos": {
+                "x": 2767.8313289147504,
+                "y": 3337.995647988206
+              },
+              "target": null,
+              "lastAttackAt": 1800000065300
+            }
+          ],
+          "blockedApproach": ""
+        },
+        {
+          "atMs": 71000,
+          "hp": 56.38749999999982,
+          "target": "node-t4-graveyard-03_monster-42",
+          "lastOutgoingDamageMs": 70700,
+          "contacts": [],
+          "minions": [
+            {
+              "id": "minion_bench-bot-0-2",
+              "hp": 569,
+              "maxHp": 803,
+              "pos": {
+                "x": 2794.2400597694555,
+                "y": 3205.218375662157
+              },
+              "target": "node-t4-graveyard-03_monster-42",
+              "lastAttackAt": 1800000070700
+            },
+            {
+              "id": "minion_bench-bot-0-1",
+              "hp": 344,
+              "maxHp": 344,
+              "pos": {
+                "x": 2796.0441917605835,
+                "y": 3196.18774962714
+              },
+              "target": "node-t4-graveyard-03_monster-42",
+              "lastAttackAt": 1800000070600
+            }
+          ],
+          "blockedApproach": ""
+        }
+      ]
+    }
+  ]
+}

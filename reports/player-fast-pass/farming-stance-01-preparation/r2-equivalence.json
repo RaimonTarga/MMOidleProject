@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "historicalSource": "59c895b3979dbe5867e21c9b81bdffdfb17d7c9c",
+  "profiles": 768,
+  "unchangedRootHeavy": 384,
+  "applied": [
+    {
+      "caseId": "breadth-t2-conduit-balanced-farm",
+      "intervalMs": 2500,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t2-conduit-balanced-boss",
+      "intervalMs": 2500,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t2-conduit-light-farm",
+      "intervalMs": 2000,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t2-conduit-light-boss",
+      "intervalMs": 2000,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-farm",
+      "intervalMs": 2500,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t3-conduit-balanced-boss",
+      "intervalMs": 2500,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-a-farm",
+      "intervalMs": 2273,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-balanced-a-boss",
+      "intervalMs": 2273,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-b-farm",
+      "intervalMs": 1500,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-b-boss",
+      "intervalMs": 1500,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-farm",
+      "intervalMs": 1818,
+      "match": true
+    },
+    {
+      "caseId": "breadth-t4-conduit-light-c-boss",
+      "intervalMs": 1818,
+      "match": true
+    }
+  ],
+  "runtimeModuleIdentity": true,
+  "worldTicks": 0
+}

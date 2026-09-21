@@ -1,0 +1,3 @@
+# Preserve sealed JSON and qualification receipt bytes across Windows checkouts.
+*.json -text whitespace=cr-at-eol
+*.log -text whitespace=cr-at-eol

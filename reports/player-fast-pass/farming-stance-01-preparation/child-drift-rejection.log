@@ -1,0 +1,33 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Child source drift: shared/src/data/summoner.ts
++ actual - expected
+
++ 'd0e06223a814c94f818430c0be5a8530b3c1495e56ef647e8e38613320e3c532'
+- 'deliberately-invalid-test-hash'
+
+    at assert (C:\Users\osaif\AppData\Local\mmo-idle\fs01-0921\server\scripts\ttkSurvey.ts:112:12)
+    at Object.<anonymous> (C:\Users\osaif\AppData\Local\mmo-idle\fs01-0921\server\scripts\ttkSurvey.ts:269:68)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object.transformer (C:\Users\osaif\AppData\Local\mmo-idle\fs01-0921\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:3176)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at cjsLoader (node:internal/modules/esm/translators:266:5)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:200:7) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'd0e06223a814c94f818430c0be5a8530b3c1495e56ef647e8e38613320e3c532',
+  expected: 'deliberately-invalid-test-hash',
+  operator: 'strictEqual'
+}
+
+Node.js v22.16.0
+undefined
+C:\Users\osaif\AppData\Local\mmo-idle\fs01-0921\server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "tsx" not found
+
+Did you mean "pnpm exec tsc"?

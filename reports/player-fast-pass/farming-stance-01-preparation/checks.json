@@ -1,0 +1,46 @@
+{
+  "status": "prepared-qualified-not-launched",
+  "sourceCommit": "f9dcde59217770390752f3ce0f089e323b0a6f37",
+  "sourceSha256": "11336e6885a6af9bfa4e88b09c8d01c8c11420d5186e8ecbd2e7a4c4d79a945c",
+  "plannedCombatObservations": 24,
+  "completedCombatObservations": 0,
+  "qualification": {
+    "actualFarmChildrenPassed": 24,
+    "failed": 0,
+    "worldTicks": 0,
+    "pairedAppliedBuildsIdenticalExceptStance": true,
+    "pairedConduitProfilesIdentical": true,
+    "pairedInitialRosterHashesIdentical": true,
+    "actualChildRejectedSourceByteDriftBeforeArenaCreation": true,
+    "driftTestLog": "child-drift-rejection.log",
+    "manifest": "packet/manifest.json",
+    "sourceContract": "packet/identity.json",
+    "seal": "packet/seal.json",
+    "receipt": "packet/qualified.json",
+    "appliedBuilds": "qualification/resolved-builds.json"
+  },
+  "checks": {
+    "r2HistoricalEquivalence": "passed: 768 profiles, 384 unchanged Root/Heavy combinations, 12 measured R2 applied receipts, actual runtime shared-module identity",
+    "focusedTestsPassed": [
+      "server/test/playerBreadth.test.ts",
+      "server/test/farmingStance.test.ts",
+      "server/test/summonerOverhaul.test.ts",
+      "server/test/summonerSpecializations.test.ts",
+      "shared/src/systems/summonerProfile.test.ts",
+      "shared/src/systems/relics.test.ts",
+      "shared/src/systems/relicEquipment.test.ts"
+    ],
+    "typecheck": "passed, including bench",
+    "sharedBuild": "passed",
+    "serverTypeScriptBuild": "passed",
+    "diffCheck": "passed",
+    "fullSuite": "not run - bounded qualification",
+    "livePlaytest": "not run",
+    "correctedValidationInvocation": "Initial relicEquipment test used nonexistent server/test path; rerun at shared/src/systems/relicEquipment.test.ts passed. This was not an experiment child or combat failure."
+  },
+  "deployment": "not performed",
+  "remotePublication": "not performed",
+  "historicalReruns": 0,
+  "historicalReview": "historical-evidence.json",
+  "r2Equivalence": "r2-equivalence.json"
+}

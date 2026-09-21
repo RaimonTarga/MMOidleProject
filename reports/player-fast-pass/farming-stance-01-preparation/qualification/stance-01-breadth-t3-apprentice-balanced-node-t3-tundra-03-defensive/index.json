@@ -1,0 +1,672 @@
+[
+  {
+    "cell": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive",
+    "seed": 101003,
+    "synthetic": true,
+    "view": {
+      "id": "bench-bot-0",
+      "name": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive",
+      "pos": {
+        "x": 2400,
+        "y": 2400
+      },
+      "target": {
+        "x": 2400,
+        "y": 2400
+      },
+      "hp": 393,
+      "maxHp": 393,
+      "attack": 162,
+      "onHitDamage": 0,
+      "plating": 44,
+      "damageReduction": 0,
+      "dodgeRate": 0.5807692307692307,
+      "evadeMitigation": 0.5,
+      "evadeCharge": 0,
+      "barrier": 134,
+      "barrierMax": 134,
+      "barrierRecharging": false,
+      "wards": [],
+      "incomingDot": 0,
+      "pendingHeal": 0,
+      "attackCadenceMult": 1,
+      "finalDamageDealtMult": 0.9520000000000001,
+      "finalDamageTakenMult": 0.9,
+      "onHitDamageBonus": 0,
+      "attackRange": 72,
+      "attackCooldown": 764,
+      "lastAttackAt": 0,
+      "attackTargetId": null,
+      "auto": true,
+      "autoTraverse": false,
+      "autoIntent": null,
+      "emote": null,
+      "partyLeaderId": null,
+      "partyMembers": [],
+      "nodeId": "node-t3-tundra-03",
+      "essences": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {},
+      "level": 0,
+      "skillPoints": 0,
+      "unlockedSkills": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid"
+      ],
+      "passives": {
+        "defense.dot-resistance": 0.18,
+        "defense.hit-to-dot-pct": 0.1,
+        "dot.max-stacks": 6,
+        "dot.conversion-pct": 0.5,
+        "dot.tick-interval-ms": 1500,
+        "dot.duration-ms": 5500,
+        "dot.mechanic-mult": 1.2,
+        "weapon.dead-swing-interval": 5,
+        "defense.barrier-pct": 0.34,
+        "mobility.approach-speed-pct": 1.2,
+        "core.damage-dealt-pct": 0.12,
+        "core.maxhp-mult": 0.12
+      },
+      "cadenceSpeedStacks": 0,
+      "selectedClass": "dot-root",
+      "selectedSubVariant": "balanced",
+      "selectedRange": "dot-range-mid",
+      "currentSkillTier": 3,
+      "recovery": 15,
+      "speed": 195,
+      "attackStyle": "slash",
+      "inventory": [],
+      "equipment": {
+        "weapon": "cave-cataclysm-axe",
+        "armor": "jungle-vest-t3",
+        "recovery": "mountain-charm-t3",
+        "mobility": "mountain-boots-t3",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "cave-cataclysm-axe": 5,
+        "jungle-vest-t3": 5,
+        "mountain-charm-t3": 5,
+        "mountain-boots-t3": 5,
+        "core-tempered": 0
+      },
+      "biomeXP": {},
+      "biomeLevel": {
+        "cave": 18,
+        "forest": 12,
+        "mountain": 18,
+        "plains": 12,
+        "swamp": 18,
+        "desert": 12,
+        "jungle": 12,
+        "tundra": 6,
+        "volcanic": 6
+      },
+      "globalMastery": 114,
+      "unlockedRecipes": [],
+      "combatArchetype": "dot",
+      "cadenceCount": 0,
+      "cadenceThreshold": 0,
+      "cadenceEmpoweredArmed": false,
+      "ammoCount": 0,
+      "ammoMax": 0,
+      "reloadRemainingMs": 0,
+      "reloadDurationMs": 0,
+      "heatPct": 0,
+      "laserOverheated": false,
+      "executionReady": false,
+      "executionCooldownPct": 0,
+      "energyCount": 0,
+      "energyMax": 100,
+      "flashShiftPct": 0,
+      "flashDamageShiftPct": 0,
+      "flashSpeedBonusPct": 0,
+      "flashEvasionBonusPct": 0,
+      "empoweredReady": false,
+      "targetDotStacks": 0,
+      "targetDotTickPct": 0,
+      "targetChillStacks": 0,
+      "isChanneling": false,
+      "channelingPct": 0,
+      "cannonChargePct": 0,
+      "aura": null,
+      "activeBuffs": [],
+      "questProgress": {},
+      "playerTier": 3,
+      "bossesCleared": [],
+      "clearedNodes": [],
+      "visitedNodes": [],
+      "runesOwned": [
+        "always",
+        "in-combat",
+        "when-idle",
+        "hp-below-25",
+        "hp-above-90",
+        "target-hp-below-25",
+        "has-debuff",
+        "in-party",
+        "n-aggro-3",
+        "inside-telegraph",
+        "target-casting",
+        "stance-charged",
+        "before-empowered",
+        "target-elite",
+        "target-max-stacks",
+        "while-traveling",
+        "auto-path-enemy",
+        "chase-enemy",
+        "wait-for-regen",
+        "flee",
+        "fight-back",
+        "lead-the-way",
+        "follow-and-assist",
+        "taunt-current-target",
+        "focus-closest",
+        "use-ability",
+        "switch-stance",
+        "avoid-enemies",
+        "avoid-hazards",
+        "step-back",
+        "orbit"
+      ],
+      "runeRecipesCrafted": [],
+      "runesEquipped": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "knownAbilities": [
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "attunedAbilities": {
+        "techniques": [
+          "slam",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "knownStances": [
+        "berserker-stance",
+        "defensive-stance",
+        "enraged-stance",
+        "execute-stance",
+        "fleeting-stance",
+        "offensive-stance",
+        "predator-stance",
+        "tanking-stance",
+        "warding-stance"
+      ],
+      "attunedStances": [
+        "defensive-stance"
+      ],
+      "equippedStances": {
+        "default": "defensive-stance"
+      },
+      "activeStance": "defensive-stance",
+      "manualStanceOverride": null,
+      "queuedAbilityIds": [],
+      "knownRites": [
+        "ability-reprieve",
+        "blood-offering",
+        "lingering-battle",
+        "mechanic-renewal",
+        "purification",
+        "swift-repose"
+      ],
+      "equippedRites": [],
+      "riteSlots": 6,
+      "hitboxRects": [
+        {
+          "offsetX": 0.5,
+          "offsetY": -1.5,
+          "halfW": 9.5,
+          "halfH": 20.5
+        },
+        {
+          "offsetX": -13,
+          "offsetY": 11,
+          "halfW": 4,
+          "halfH": 10
+        },
+        {
+          "offsetX": 13,
+          "offsetY": 9,
+          "halfW": 3,
+          "halfH": 10
+        },
+        {
+          "offsetX": -5,
+          "offsetY": 23,
+          "halfW": 4,
+          "halfH": 4
+        },
+        {
+          "offsetX": 0.5,
+          "offsetY": -24.5,
+          "halfW": 5.5,
+          "halfH": 2.5
+        },
+        {
+          "offsetX": 7.5,
+          "offsetY": 22.5,
+          "halfW": 3.5,
+          "halfH": 3.5
+        }
+      ],
+      "summonsMinions": 0,
+      "summonActiveCount": 0,
+      "summonRespawnMaxMs": 0,
+      "summonSlots": [],
+      "isDead": false,
+      "graveFrame": null
+    },
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "conduitProfile": null,
+    "packageReadback": {
+      "declared": {
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam",
+            "frenzy"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "cave-cataclysm-axe": 5,
+          "jungle-vest-t3": 5,
+          "mountain-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 36,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "rites": []
+    },
+    "definitionsIdentity": {
+      "base": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+      "live": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+      "treated": false
+    },
+    "initialRoster": [
+      {
+        "id": "node-t3-tundra-03_monster-14",
+        "type": "glacier-bear",
+        "hp": 4313,
+        "maxHp": 4313,
+        "pos": {
+          "x": 73,
+          "y": 2708
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-13",
+        "type": "rime-caster",
+        "hp": 1012,
+        "maxHp": 1012,
+        "pos": {
+          "x": 1711,
+          "y": 3186
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-12",
+        "type": "frost-lurker",
+        "hp": 1093,
+        "maxHp": 1093,
+        "pos": {
+          "x": 3024,
+          "y": 3066
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-11",
+        "type": "glacier-bear",
+        "hp": 4313,
+        "maxHp": 4313,
+        "pos": {
+          "x": 2937,
+          "y": 3657
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-10",
+        "type": "frost-lurker",
+        "hp": 1093,
+        "maxHp": 1093,
+        "pos": {
+          "x": 4534,
+          "y": 3656
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-9",
+        "type": "rime-caster",
+        "hp": 1012,
+        "maxHp": 1012,
+        "pos": {
+          "x": 2494,
+          "y": 4301
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-8",
+        "type": "rime-caster",
+        "hp": 1012,
+        "maxHp": 1012,
+        "pos": {
+          "x": 3828,
+          "y": 2766
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-7",
+        "type": "frost-lurker",
+        "hp": 1093,
+        "maxHp": 1093,
+        "pos": {
+          "x": 2186,
+          "y": 3588
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-6",
+        "type": "frost-lurker",
+        "hp": 1093,
+        "maxHp": 1093,
+        "pos": {
+          "x": 1123,
+          "y": 3430
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-5",
+        "type": "rime-caster",
+        "hp": 1012,
+        "maxHp": 1012,
+        "pos": {
+          "x": 462,
+          "y": 4128
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-4",
+        "type": "frost-lurker",
+        "hp": 1093,
+        "maxHp": 1093,
+        "pos": {
+          "x": 2118,
+          "y": 808
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-3",
+        "type": "rime-caster",
+        "hp": 1012,
+        "maxHp": 1012,
+        "pos": {
+          "x": 284,
+          "y": 775
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-2",
+        "type": "glacier-bear",
+        "hp": 4313,
+        "maxHp": 4313,
+        "pos": {
+          "x": 1396,
+          "y": 804
+        }
+      },
+      {
+        "id": "node-t3-tundra-03_monster-1",
+        "type": "glacier-bear",
+        "hp": 4313,
+        "maxHp": 4313,
+        "pos": {
+          "x": 3011,
+          "y": 1975
+        }
+      }
+    ],
+    "initialRosterHash": "ceda903b2b78f638e6d57a8f5171b4d2b7cad59b75262e147ef0699acd1d79f4",
+    "geometryRosterHash": "e2bb1ec4267cd2baabc78d3bd21a0c50ab5ebee71a65d92370d50fa617b5ced4",
+    "hpTreatment": [],
+    "initialStats": [
+      {
+        "id": "node-t3-tundra-03_monster-14",
+        "type": "glacier-bear",
+        "attack": 192,
+        "plating": 0,
+        "dr": 0.20450000000000002
+      },
+      {
+        "id": "node-t3-tundra-03_monster-13",
+        "type": "rime-caster",
+        "attack": 221,
+        "plating": 0,
+        "dr": 0.1489999999999999
+      },
+      {
+        "id": "node-t3-tundra-03_monster-12",
+        "type": "frost-lurker",
+        "attack": 208,
+        "plating": 0,
+        "dr": 0.16749999999999998
+      },
+      {
+        "id": "node-t3-tundra-03_monster-11",
+        "type": "glacier-bear",
+        "attack": 192,
+        "plating": 0,
+        "dr": 0.20450000000000002
+      },
+      {
+        "id": "node-t3-tundra-03_monster-10",
+        "type": "frost-lurker",
+        "attack": 208,
+        "plating": 0,
+        "dr": 0.16749999999999998
+      },
+      {
+        "id": "node-t3-tundra-03_monster-9",
+        "type": "rime-caster",
+        "attack": 221,
+        "plating": 0,
+        "dr": 0.1489999999999999
+      },
+      {
+        "id": "node-t3-tundra-03_monster-8",
+        "type": "rime-caster",
+        "attack": 221,
+        "plating": 0,
+        "dr": 0.1489999999999999
+      },
+      {
+        "id": "node-t3-tundra-03_monster-7",
+        "type": "frost-lurker",
+        "attack": 208,
+        "plating": 0,
+        "dr": 0.16749999999999998
+      },
+      {
+        "id": "node-t3-tundra-03_monster-6",
+        "type": "frost-lurker",
+        "attack": 208,
+        "plating": 0,
+        "dr": 0.16749999999999998
+      },
+      {
+        "id": "node-t3-tundra-03_monster-5",
+        "type": "rime-caster",
+        "attack": 221,
+        "plating": 0,
+        "dr": 0.1489999999999999
+      },
+      {
+        "id": "node-t3-tundra-03_monster-4",
+        "type": "frost-lurker",
+        "attack": 208,
+        "plating": 0,
+        "dr": 0.16749999999999998
+      },
+      {
+        "id": "node-t3-tundra-03_monster-3",
+        "type": "rime-caster",
+        "attack": 221,
+        "plating": 0,
+        "dr": 0.1489999999999999
+      },
+      {
+        "id": "node-t3-tundra-03_monster-2",
+        "type": "glacier-bear",
+        "attack": 192,
+        "plating": 0,
+        "dr": 0.20450000000000002
+      },
+      {
+        "id": "node-t3-tundra-03_monster-1",
+        "type": "glacier-bear",
+        "attack": 192,
+        "plating": 0,
+        "dr": 0.20450000000000002
+      }
+    ]
+  }
+]
