@@ -1,0 +1,2424 @@
+[
+  {
+    "cell": "breadth-t2-slinger-light-farm",
+    "seed": 101003,
+    "outcome": "window-ended",
+    "elapsedMs": 300000,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 253,
+      "maxHp": 253,
+      "barrier": 52
+    },
+    "playerDeathEvidence": [],
+    "minHpFraction": 1,
+    "attackBeats": 340,
+    "minionAttackBeats": 0,
+    "wallElapsedMs": 14009,
+    "maxTickWallMs": 96,
+    "totalAttackBeats": 340,
+    "initialRosterHash": "0121f3e6eb0ee8aa7d6613de718d23a322cb6149aac046a600bd649f8cd76c47",
+    "targets": [
+      {
+        "id": "node-t2-plains-03_monster-56",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 260900,
+        "lastDamageMs": 261200,
+        "killedAtMs": 261200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-55",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 262700,
+        "lastDamageMs": 263000,
+        "killedAtMs": 263000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-54",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 262400,
+        "lastDamageMs": 263300,
+        "killedAtMs": 263300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 900,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-53",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 263600,
+        "lastDamageMs": 265400,
+        "killedAtMs": 265400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-48",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 13400,
+        "lastDamageMs": 17600,
+        "killedAtMs": 17600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 9,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-47",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 111000,
+        "lastDamageMs": 112800,
+        "killedAtMs": 112800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1800,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-46",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 110400,
+        "lastDamageMs": 110700,
+        "killedAtMs": 110700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-45",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 112200,
+        "lastDamageMs": 113400,
+        "killedAtMs": 113400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-44",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 112500,
+        "lastDamageMs": 114900,
+        "killedAtMs": 114900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2400,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-43",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 233200,
+        "lastDamageMs": 235000,
+        "killedAtMs": 235000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-42",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 18200,
+        "lastDamageMs": 20900,
+        "killedAtMs": 20900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2100,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-41",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 10400,
+        "lastDamageMs": 13100,
+        "killedAtMs": 13100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-39",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 15500,
+        "lastDamageMs": 21200,
+        "killedAtMs": 21200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 12,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 5700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-38",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 299600,
+        "lastDamageMs": 299900,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": null,
+        "clean": false
+      },
+      {
+        "id": "node-t2-plains-03_monster-36",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 70100,
+        "lastDamageMs": 71900,
+        "killedAtMs": 71900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-35",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 69200,
+        "lastDamageMs": 69500,
+        "killedAtMs": 69500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-34",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 69800,
+        "lastDamageMs": 70100,
+        "killedAtMs": 70100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-33",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 71300,
+        "lastDamageMs": 73700,
+        "killedAtMs": 73700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2400,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-32",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 63400,
+        "lastDamageMs": 65200,
+        "killedAtMs": 65200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-30",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 53800,
+        "lastDamageMs": 58900,
+        "killedAtMs": 58900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 12,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 5100,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-29",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 225400,
+        "lastDamageMs": 225700,
+        "killedAtMs": 225700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-28",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 223900,
+        "lastDamageMs": 225100,
+        "killedAtMs": 225100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-27",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 226000,
+        "lastDamageMs": 226300,
+        "killedAtMs": 226300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-26",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 227500,
+        "lastDamageMs": 228400,
+        "killedAtMs": 228400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-21",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 25300,
+        "lastDamageMs": 25600,
+        "killedAtMs": 25600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-20",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 26500,
+        "lastDamageMs": 28600,
+        "killedAtMs": 28600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1800,
+        "damageEvents": 3,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2100,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-19",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 27700,
+        "lastDamageMs": 28000,
+        "killedAtMs": 28000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-18",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 25900,
+        "lastDamageMs": 28900,
+        "killedAtMs": 28900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2400,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3000,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-17",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 78200,
+        "lastDamageMs": 79100,
+        "killedAtMs": 79100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-16",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 176800,
+        "lastDamageMs": 182200,
+        "killedAtMs": 182200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 11,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 5400,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-9",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 176500,
+        "lastDamageMs": 181300,
+        "killedAtMs": 181300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 8,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-8",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 206900,
+        "lastDamageMs": 209900,
+        "killedAtMs": 209900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2100,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3000,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-7",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 206900,
+        "lastDamageMs": 209600,
+        "killedAtMs": 209600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1800,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-6",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 207800,
+        "lastDamageMs": 209300,
+        "killedAtMs": 209300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 3,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1500,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-5",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 205400,
+        "lastDamageMs": 207800,
+        "killedAtMs": 207800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2400,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-4",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 3000,
+        "lastDamageMs": 5100,
+        "killedAtMs": 5100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2100,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-3",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 2400,
+        "lastDamageMs": 2700,
+        "killedAtMs": 2700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-2",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 3000,
+        "lastDamageMs": 5400,
+        "killedAtMs": 5400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2400,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-1",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 3000,
+        "lastDamageMs": 6000,
+        "killedAtMs": 6000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2100,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3000,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-58",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 42800,
+        "lastDamageMs": 43700,
+        "killedAtMs": 43700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-57",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 52300,
+        "lastDamageMs": 55000,
+        "killedAtMs": 55000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-63",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 33200,
+        "lastDamageMs": 33500,
+        "killedAtMs": 33500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-62",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 34100,
+        "lastDamageMs": 35900,
+        "killedAtMs": 35900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-61",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 33800,
+        "lastDamageMs": 34100,
+        "killedAtMs": 34100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-60",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 33800,
+        "lastDamageMs": 36800,
+        "killedAtMs": 36800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1800,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3000,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-71",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 45900,
+        "lastDamageMs": 47100,
+        "killedAtMs": 47100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-70",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 47700,
+        "lastDamageMs": 49500,
+        "killedAtMs": 49500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-69",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 47700,
+        "lastDamageMs": 48000,
+        "killedAtMs": 48000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-68",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 45900,
+        "lastDamageMs": 50100,
+        "killedAtMs": 50100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-72",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 195400,
+        "lastDamageMs": 200200,
+        "killedAtMs": 200200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3000,
+        "damageEvents": 5,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 4800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-76",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 197200,
+        "lastDamageMs": 198100,
+        "killedAtMs": 198100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-77",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 107400,
+        "lastDamageMs": 110100,
+        "killedAtMs": 110100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-81",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 92800,
+        "lastDamageMs": 95800,
+        "killedAtMs": 95800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1800,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3000,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-80",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 91600,
+        "lastDamageMs": 94000,
+        "killedAtMs": 94000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2400,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-79",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 93700,
+        "lastDamageMs": 95500,
+        "killedAtMs": 95500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-78",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 91600,
+        "lastDamageMs": 94000,
+        "killedAtMs": 94000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2400,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-83",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 84600,
+        "lastDamageMs": 85500,
+        "killedAtMs": 85500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-84",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 199300,
+        "lastDamageMs": 200200,
+        "killedAtMs": 200200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-86",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 239500,
+        "lastDamageMs": 241300,
+        "killedAtMs": 241300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-85",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 103500,
+        "lastDamageMs": 106200,
+        "killedAtMs": 106200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-91",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 131400,
+        "lastDamageMs": 132300,
+        "killedAtMs": 132300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 900,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-90",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 129900,
+        "lastDamageMs": 133500,
+        "killedAtMs": 133500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2400,
+        "damageEvents": 3,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3600,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-89",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 129300,
+        "lastDamageMs": 129600,
+        "killedAtMs": 129600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-88",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 129300,
+        "lastDamageMs": 133800,
+        "killedAtMs": 133800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1800,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4500,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-87",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 243900,
+        "lastDamageMs": 245700,
+        "killedAtMs": 245700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-95",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 121500,
+        "lastDamageMs": 121800,
+        "killedAtMs": 121800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-94",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 119100,
+        "lastDamageMs": 119400,
+        "killedAtMs": 119400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-93",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 119700,
+        "lastDamageMs": 120900,
+        "killedAtMs": 120900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-92",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 119700,
+        "lastDamageMs": 123600,
+        "killedAtMs": 123600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-99",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 136700,
+        "lastDamageMs": 138200,
+        "killedAtMs": 138200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1500,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-98",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 136100,
+        "lastDamageMs": 136400,
+        "killedAtMs": 136400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-97",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 137900,
+        "lastDamageMs": 138500,
+        "killedAtMs": 138500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 600,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-96",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 138800,
+        "lastDamageMs": 140600,
+        "killedAtMs": 140600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-103",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 141900,
+        "lastDamageMs": 146400,
+        "killedAtMs": 146400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2100,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4500,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-102",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 141900,
+        "lastDamageMs": 144300,
+        "killedAtMs": 144300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2400,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-101",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 144900,
+        "lastDamageMs": 146100,
+        "killedAtMs": 146100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-100",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 141900,
+        "lastDamageMs": 144000,
+        "killedAtMs": 144000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2100,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-107",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 156800,
+        "lastDamageMs": 158900,
+        "killedAtMs": 158900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2100,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2100,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-106",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 157400,
+        "lastDamageMs": 157700,
+        "killedAtMs": 157700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-105",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 155300,
+        "lastDamageMs": 157100,
+        "killedAtMs": 157100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 3,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-104",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 154700,
+        "lastDamageMs": 159200,
+        "killedAtMs": 159200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3900,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4500,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-108",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 250500,
+        "lastDamageMs": 253200,
+        "killedAtMs": 253200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-109",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 172600,
+        "lastDamageMs": 175300,
+        "killedAtMs": 175300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-116",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 190100,
+        "lastDamageMs": 190400,
+        "killedAtMs": 190400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-115",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 191600,
+        "lastDamageMs": 192500,
+        "killedAtMs": 192500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 900,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-114",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 194300,
+        "lastDamageMs": 194600,
+        "killedAtMs": 194600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-113",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 190100,
+        "lastDamageMs": 194000,
+        "killedAtMs": 194000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-112",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 162300,
+        "lastDamageMs": 164100,
+        "killedAtMs": 164100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-111",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 167300,
+        "lastDamageMs": 170000,
+        "killedAtMs": 170000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-117",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 183600,
+        "lastDamageMs": 185400,
+        "killedAtMs": 185400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-132",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 213000,
+        "lastDamageMs": 214200,
+        "killedAtMs": 214200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-131",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 215100,
+        "lastDamageMs": 215400,
+        "killedAtMs": 215400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-130",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 214500,
+        "lastDamageMs": 214800,
+        "killedAtMs": 214800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-129",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 216600,
+        "lastDamageMs": 217500,
+        "killedAtMs": 217500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 900,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-143",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 285900,
+        "lastDamageMs": 286200,
+        "killedAtMs": 286200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 300,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 300,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-142",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 286500,
+        "lastDamageMs": 288000,
+        "killedAtMs": 288000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1500,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-141",
+        "type": "prairie-yearling",
+        "name": "Prairie Yearling",
+        "maxHp": 130,
+        "firstDamageMs": 284400,
+        "lastDamageMs": 285600,
+        "killedAtMs": 285600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1200,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-140",
+        "type": "prairie-wolf",
+        "name": "Prairie Wolf",
+        "maxHp": 260,
+        "firstDamageMs": 286800,
+        "lastDamageMs": 288900,
+        "killedAtMs": 288900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2100,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-145",
+        "type": "savanna-hawk",
+        "name": "Savanna Hawk",
+        "maxHp": 250,
+        "firstDamageMs": 268700,
+        "lastDamageMs": 270500,
+        "killedAtMs": 270500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 4,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-147",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 274000,
+        "lastDamageMs": 276700,
+        "killedAtMs": 276700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-148",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 296600,
+        "lastDamageMs": 299300,
+        "killedAtMs": 299300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2700,
+        "clean": true
+      },
+      {
+        "id": "node-t2-plains-03_monster-149",
+        "type": "stampede-bull",
+        "name": "Stampede Bull",
+        "maxHp": 495,
+        "firstDamageMs": 292700,
+        "lastDamageMs": 296300,
+        "killedAtMs": 296300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1200,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3600,
+        "clean": true
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 2000,
+        "endMs": 6000,
+        "durationMs": 4000,
+        "members": [
+          "node-t2-plains-03_monster-4",
+          "node-t2-plains-03_monster-3",
+          "node-t2-plains-03_monster-2",
+          "node-t2-plains-03_monster-1"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-4",
+          "node-t2-plains-03_monster-3",
+          "node-t2-plains-03_monster-2",
+          "node-t2-plains-03_monster-1"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 10200,
+        "endMs": 21200,
+        "durationMs": 11000,
+        "members": [
+          "node-t2-plains-03_monster-48",
+          "node-t2-plains-03_monster-41",
+          "node-t2-plains-03_monster-39",
+          "node-t2-plains-03_monster-42"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-48",
+          "node-t2-plains-03_monster-41",
+          "node-t2-plains-03_monster-39"
+        ],
+        "lateJoiners": 1,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 24900,
+        "endMs": 28900,
+        "durationMs": 4000,
+        "members": [
+          "node-t2-plains-03_monster-21",
+          "node-t2-plains-03_monster-20",
+          "node-t2-plains-03_monster-19",
+          "node-t2-plains-03_monster-18"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-21",
+          "node-t2-plains-03_monster-20",
+          "node-t2-plains-03_monster-19",
+          "node-t2-plains-03_monster-18"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 32800,
+        "endMs": 36800,
+        "durationMs": 4000,
+        "members": [
+          "node-t2-plains-03_monster-63",
+          "node-t2-plains-03_monster-62",
+          "node-t2-plains-03_monster-61",
+          "node-t2-plains-03_monster-60"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-63",
+          "node-t2-plains-03_monster-62",
+          "node-t2-plains-03_monster-61",
+          "node-t2-plains-03_monster-60"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 41600,
+        "endMs": 43700,
+        "durationMs": 2100,
+        "members": [
+          "node-t2-plains-03_monster-58"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-58"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 45600,
+        "endMs": 50100,
+        "durationMs": 4500,
+        "members": [
+          "node-t2-plains-03_monster-68",
+          "node-t2-plains-03_monster-69",
+          "node-t2-plains-03_monster-71",
+          "node-t2-plains-03_monster-70"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-68",
+          "node-t2-plains-03_monster-69",
+          "node-t2-plains-03_monster-71",
+          "node-t2-plains-03_monster-70"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 52100,
+        "endMs": 58900,
+        "durationMs": 6800,
+        "members": [
+          "node-t2-plains-03_monster-30",
+          "node-t2-plains-03_monster-57"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-30",
+          "node-t2-plains-03_monster-57"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 62200,
+        "endMs": 65200,
+        "durationMs": 3000,
+        "members": [
+          "node-t2-plains-03_monster-32"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-32"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 68800,
+        "endMs": 73700,
+        "durationMs": 4900,
+        "members": [
+          "node-t2-plains-03_monster-36",
+          "node-t2-plains-03_monster-35",
+          "node-t2-plains-03_monster-34",
+          "node-t2-plains-03_monster-33"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-36",
+          "node-t2-plains-03_monster-35",
+          "node-t2-plains-03_monster-34",
+          "node-t2-plains-03_monster-33"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 77000,
+        "endMs": 79100,
+        "durationMs": 2100,
+        "members": [
+          "node-t2-plains-03_monster-17"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-17"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 83400,
+        "endMs": 85500,
+        "durationMs": 2100,
+        "members": [
+          "node-t2-plains-03_monster-83"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-83"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 91200,
+        "endMs": 95800,
+        "durationMs": 4600,
+        "members": [
+          "node-t2-plains-03_monster-78",
+          "node-t2-plains-03_monster-80",
+          "node-t2-plains-03_monster-81",
+          "node-t2-plains-03_monster-79"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-78",
+          "node-t2-plains-03_monster-80",
+          "node-t2-plains-03_monster-81",
+          "node-t2-plains-03_monster-79"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 103300,
+        "endMs": 114900,
+        "durationMs": 11600,
+        "members": [
+          "node-t2-plains-03_monster-85",
+          "node-t2-plains-03_monster-77",
+          "node-t2-plains-03_monster-47",
+          "node-t2-plains-03_monster-46",
+          "node-t2-plains-03_monster-45",
+          "node-t2-plains-03_monster-44"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-85",
+          "node-t2-plains-03_monster-77"
+        ],
+        "lateJoiners": 4,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 118800,
+        "endMs": 123600,
+        "durationMs": 4800,
+        "members": [
+          "node-t2-plains-03_monster-95",
+          "node-t2-plains-03_monster-94",
+          "node-t2-plains-03_monster-93",
+          "node-t2-plains-03_monster-92"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-95",
+          "node-t2-plains-03_monster-94",
+          "node-t2-plains-03_monster-93",
+          "node-t2-plains-03_monster-92"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 128900,
+        "endMs": 133800,
+        "durationMs": 4900,
+        "members": [
+          "node-t2-plains-03_monster-88",
+          "node-t2-plains-03_monster-89",
+          "node-t2-plains-03_monster-91",
+          "node-t2-plains-03_monster-90"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-88",
+          "node-t2-plains-03_monster-89",
+          "node-t2-plains-03_monster-91",
+          "node-t2-plains-03_monster-90"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 135700,
+        "endMs": 140600,
+        "durationMs": 4900,
+        "members": [
+          "node-t2-plains-03_monster-96",
+          "node-t2-plains-03_monster-99",
+          "node-t2-plains-03_monster-98",
+          "node-t2-plains-03_monster-97"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-96",
+          "node-t2-plains-03_monster-99",
+          "node-t2-plains-03_monster-98",
+          "node-t2-plains-03_monster-97"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 141400,
+        "endMs": 146400,
+        "durationMs": 5000,
+        "members": [
+          "node-t2-plains-03_monster-100",
+          "node-t2-plains-03_monster-102",
+          "node-t2-plains-03_monster-103",
+          "node-t2-plains-03_monster-101"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-100",
+          "node-t2-plains-03_monster-102",
+          "node-t2-plains-03_monster-103",
+          "node-t2-plains-03_monster-101"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 154200,
+        "endMs": 159200,
+        "durationMs": 5000,
+        "members": [
+          "node-t2-plains-03_monster-106",
+          "node-t2-plains-03_monster-107",
+          "node-t2-plains-03_monster-105",
+          "node-t2-plains-03_monster-104"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-106",
+          "node-t2-plains-03_monster-107",
+          "node-t2-plains-03_monster-105",
+          "node-t2-plains-03_monster-104"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 161100,
+        "endMs": 164100,
+        "durationMs": 3000,
+        "members": [
+          "node-t2-plains-03_monster-112"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-112"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 167100,
+        "endMs": 170000,
+        "durationMs": 2900,
+        "members": [
+          "node-t2-plains-03_monster-111"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-111"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 172400,
+        "endMs": 182200,
+        "durationMs": 9800,
+        "members": [
+          "node-t2-plains-03_monster-109",
+          "node-t2-plains-03_monster-16",
+          "node-t2-plains-03_monster-9"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-109",
+          "node-t2-plains-03_monster-16",
+          "node-t2-plains-03_monster-9"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 182400,
+        "endMs": 185400,
+        "durationMs": 3000,
+        "members": [
+          "node-t2-plains-03_monster-117"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-117"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 189700,
+        "endMs": 200200,
+        "durationMs": 10500,
+        "members": [
+          "node-t2-plains-03_monster-116",
+          "node-t2-plains-03_monster-115",
+          "node-t2-plains-03_monster-114",
+          "node-t2-plains-03_monster-113",
+          "node-t2-plains-03_monster-72",
+          "node-t2-plains-03_monster-76",
+          "node-t2-plains-03_monster-84"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-116",
+          "node-t2-plains-03_monster-115",
+          "node-t2-plains-03_monster-114",
+          "node-t2-plains-03_monster-113"
+        ],
+        "lateJoiners": 3,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 205000,
+        "endMs": 209900,
+        "durationMs": 4900,
+        "members": [
+          "node-t2-plains-03_monster-8",
+          "node-t2-plains-03_monster-7",
+          "node-t2-plains-03_monster-6",
+          "node-t2-plains-03_monster-5"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-8",
+          "node-t2-plains-03_monster-7",
+          "node-t2-plains-03_monster-6",
+          "node-t2-plains-03_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 212700,
+        "endMs": 217500,
+        "durationMs": 4800,
+        "members": [
+          "node-t2-plains-03_monster-132",
+          "node-t2-plains-03_monster-131",
+          "node-t2-plains-03_monster-130",
+          "node-t2-plains-03_monster-129"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-132",
+          "node-t2-plains-03_monster-131",
+          "node-t2-plains-03_monster-130",
+          "node-t2-plains-03_monster-129"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 223500,
+        "endMs": 228400,
+        "durationMs": 4900,
+        "members": [
+          "node-t2-plains-03_monster-29",
+          "node-t2-plains-03_monster-28",
+          "node-t2-plains-03_monster-27",
+          "node-t2-plains-03_monster-26"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-29",
+          "node-t2-plains-03_monster-28",
+          "node-t2-plains-03_monster-27",
+          "node-t2-plains-03_monster-26"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 232000,
+        "endMs": 235000,
+        "durationMs": 3000,
+        "members": [
+          "node-t2-plains-03_monster-43"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-43"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 238300,
+        "endMs": 241300,
+        "durationMs": 3000,
+        "members": [
+          "node-t2-plains-03_monster-86"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-86"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 242700,
+        "endMs": 245700,
+        "durationMs": 3000,
+        "members": [
+          "node-t2-plains-03_monster-87"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-87"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 250300,
+        "endMs": 253200,
+        "durationMs": 2900,
+        "members": [
+          "node-t2-plains-03_monster-108"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-108"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 260600,
+        "endMs": 265400,
+        "durationMs": 4800,
+        "members": [
+          "node-t2-plains-03_monster-55",
+          "node-t2-plains-03_monster-56",
+          "node-t2-plains-03_monster-54",
+          "node-t2-plains-03_monster-53"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-55",
+          "node-t2-plains-03_monster-56",
+          "node-t2-plains-03_monster-54",
+          "node-t2-plains-03_monster-53"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 267500,
+        "endMs": 270500,
+        "durationMs": 3000,
+        "members": [
+          "node-t2-plains-03_monster-145"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-145"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 273800,
+        "endMs": 276700,
+        "durationMs": 2900,
+        "members": [
+          "node-t2-plains-03_monster-147"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-147"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 284100,
+        "endMs": 288900,
+        "durationMs": 4800,
+        "members": [
+          "node-t2-plains-03_monster-142",
+          "node-t2-plains-03_monster-143",
+          "node-t2-plains-03_monster-141",
+          "node-t2-plains-03_monster-140"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-142",
+          "node-t2-plains-03_monster-143",
+          "node-t2-plains-03_monster-141",
+          "node-t2-plains-03_monster-140"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 292500,
+        "endMs": 300000,
+        "durationMs": 7500,
+        "members": [
+          "node-t2-plains-03_monster-149",
+          "node-t2-plains-03_monster-148",
+          "node-t2-plains-03_monster-38"
+        ],
+        "initialMembers": [
+          "node-t2-plains-03_monster-149"
+        ],
+        "lateJoiners": 2,
+        "outcome": "window-ended"
+      }
+    ],
+    "recovery": [
+      {
+        "afterClearMs": 6000,
+        "recoveredAtMs": 8100,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 21200,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 28900,
+        "recoveredAtMs": 31300,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 36800,
+        "recoveredAtMs": 38700,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 43700,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 50100,
+        "recoveredAtMs": 51800,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 58900,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 65200,
+        "recoveredAtMs": 68400,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 73700,
+        "recoveredAtMs": 76600,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 79100,
+        "recoveredAtMs": 82600,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 85500,
+        "recoveredAtMs": 89600,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 95800,
+        "recoveredAtMs": 99400,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 114900,
+        "recoveredAtMs": 118100,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 123600,
+        "recoveredAtMs": 125000,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 133800,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 140600,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 146400,
+        "recoveredAtMs": 149500,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 159200,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 164100,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 170000,
+        "recoveredAtMs": 170000,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 182200,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 185400,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 200200,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 209900,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 217500,
+        "recoveredAtMs": 219100,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 228400,
+        "recoveredAtMs": 231700,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 235000,
+        "recoveredAtMs": 237900,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 241300,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 245700,
+        "recoveredAtMs": 248700,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 253200,
+        "recoveredAtMs": 253200,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 265400,
+        "recoveredAtMs": 266800,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 270500,
+        "recoveredAtMs": 273200,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 276700,
+        "recoveredAtMs": 276700,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 288900,
+        "recoveredAtMs": 291500,
+        "interruptedByNextPull": false
+      }
+    ],
+    "incomingDamage": 0,
+    "largestHit": 0,
+    "maxDamageIn1s": 0,
+    "counts": {
+      "damaged": 102,
+      "killed": 101,
+      "censored": 1,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 101,
+      "p10": 300,
+      "median": 1800,
+      "p90": 3900
+    }
+  }
+]

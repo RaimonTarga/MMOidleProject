@@ -1,7 +1,8 @@
 # Conduit R1 adoption and breadth recovery — preparation
 
 The user requested preparation and the adjustments described in the supplied brief.
-**No farming or R2 combat window has been run. No deployment or remote push occurred.**
+The sealed `packet-v3` primary farm completion and optional R2 comparison have now
+run locally. **No deployment or remote push occurred.**
 Use **packet-v3**. `packet` and `packet-v2` are superseded preparation attempts,
 retained with qualification history; do not launch them.
 
@@ -127,9 +128,30 @@ recommendation to the designer; do not automatically adopt R2.
 ## Preparation history
 
 Initial child qualification found missing shared dist resolution; development
-conditions were moved to the tsx child CLI. No combat ran. A second R2 preparation
+conditions were moved to the tsx child CLI. No combat ran during that preparation.
+A second R2 preparation
 revealed separate ESM/CommonJS tuning instances; its nine partial qualification
 rows are superseded and not valid treatment evidence. The wrapper now uses the
 runtime shared instance and explicitly asserts both a reduced interval and the
 1,500 ms floor. Earlier outputs and process logs are retained in
 [qualification-history](qualification-history), not relabeled as successful combat.
+
+## Execution receipt — 2026-09-21
+
+The primary historical completion used the sealed source commit
+`5024be692d8a1854b7f61e007d371f2ee9aab46b` and completed `102/102` farm cases
+with zero launcher failures or unrun rows. Measured outcomes were 27
+`player-died` and 75 `window-ended`; deaths and caps remain observations, not
+successful kills.
+
+The optional R2 comparison used fixed revision
+`59c895b3979dbe5867e21c9b81bdffdfb17d7c9c` and completed `24/24` observations
+(12 adopted-R1 and 12 candidate-R2). Both arms killed 5/6 bosses; adopted-R1
+had 3 player deaths and candidate-R2 had 1. Candidate-R2 was not automatically
+adopted.
+
+Committed result receipts are in [farm-completion-run-01](farm-completion-run-01)
+and [r2-run-01](r2-run-01). The archival package contains JSON manifests,
+summaries, Conduit recorder data, arm readbacks and process logs. High-volume
+`events.jsonl` and `samples.jsonl` streams remain only in the external validation
+directories under `C:/Users/osaif/AppData/Local/mmo-idle/validation/`.

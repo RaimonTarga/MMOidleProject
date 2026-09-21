@@ -1,0 +1,1469 @@
+{
+  "cell": "breadth-t2-conduit-heavy-farm",
+  "seed": 101003,
+  "synthetic": true,
+  "view": {
+    "id": "bench-bot-0",
+    "name": "breadth-t2-conduit-heavy-farm",
+    "pos": {
+      "x": 2400,
+      "y": 2400
+    },
+    "target": {
+      "x": 2400,
+      "y": 2400
+    },
+    "hp": 266,
+    "maxHp": 266,
+    "attack": 49,
+    "onHitDamage": 23,
+    "plating": 18,
+    "damageReduction": 0.01,
+    "dodgeRate": 0,
+    "evadeMitigation": 0,
+    "evadeCharge": 0,
+    "barrier": 69,
+    "barrierMax": 69,
+    "barrierRecharging": false,
+    "wards": [],
+    "incomingDot": 0,
+    "pendingHeal": 0,
+    "attackCadenceMult": 1,
+    "finalDamageDealtMult": 1.15,
+    "finalDamageTakenMult": 1.1,
+    "onHitDamageBonus": 0,
+    "attackRange": 162,
+    "attackCooldown": 597,
+    "lastAttackAt": 0,
+    "attackTargetId": null,
+    "auto": true,
+    "autoTraverse": false,
+    "autoIntent": null,
+    "emote": null,
+    "partyLeaderId": null,
+    "partyMembers": [],
+    "nodeId": "node-t2-plains-03",
+    "essences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "level": 0,
+    "skillPoints": 0,
+    "unlockedSkills": [
+      "summoner-root",
+      "summoner-heavy"
+    ],
+    "passives": {
+      "guard.potency-pct": 0.38,
+      "defense.barrier-pct": 0.26,
+      "mobility.approach-speed-pct": 0.9,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15
+    },
+    "cadenceSpeedStacks": 0,
+    "selectedClass": "summoner-root",
+    "selectedSubVariant": "heavy",
+    "selectedRange": null,
+    "currentSkillTier": 2,
+    "recovery": 17,
+    "speed": 155,
+    "attackStyle": "slash",
+    "inventory": [],
+    "equipment": {
+      "weapon": "jungle-stinger-rapier",
+      "armor": "mountain-vest-t2",
+      "recovery": "mountain-charm-t2",
+      "mobility": "mountain-boots-t2",
+      "core": "core-survivalist",
+      "relic": null
+    },
+    "itemUpgrades": {
+      "jungle-stinger-rapier": 5,
+      "mountain-vest-t2": 5,
+      "mountain-charm-t2": 5,
+      "mountain-boots-t2": 5,
+      "core-survivalist": 0
+    },
+    "biomeXP": {},
+    "biomeLevel": {
+      "cave": 12,
+      "forest": 12,
+      "mountain": 12,
+      "plains": 12,
+      "swamp": 12,
+      "desert": 6,
+      "jungle": 6
+    },
+    "globalMastery": 72,
+    "unlockedRecipes": [],
+    "combatArchetype": "summoner",
+    "cadenceCount": 0,
+    "cadenceThreshold": 0,
+    "cadenceEmpoweredArmed": false,
+    "ammoCount": 0,
+    "ammoMax": 0,
+    "reloadRemainingMs": 0,
+    "reloadDurationMs": 0,
+    "heatPct": 0,
+    "laserOverheated": false,
+    "executionReady": false,
+    "executionCooldownPct": 0,
+    "energyCount": 0,
+    "energyMax": 100,
+    "flashShiftPct": 0,
+    "flashDamageShiftPct": 0,
+    "flashSpeedBonusPct": 0,
+    "flashEvasionBonusPct": 0,
+    "empoweredReady": false,
+    "targetDotStacks": 0,
+    "targetDotTickPct": 0,
+    "targetChillStacks": 0,
+    "isChanneling": false,
+    "channelingPct": 0,
+    "cannonChargePct": 0,
+    "aura": null,
+    "activeBuffs": [],
+    "questProgress": {},
+    "playerTier": 2,
+    "bossesCleared": [],
+    "clearedNodes": [],
+    "visitedNodes": [],
+    "runesOwned": [
+      "always",
+      "in-combat",
+      "when-idle",
+      "hp-below-25",
+      "hp-above-90",
+      "target-hp-below-25",
+      "has-debuff",
+      "in-party",
+      "n-aggro-3",
+      "inside-telegraph",
+      "target-casting",
+      "stance-charged",
+      "before-empowered",
+      "target-elite",
+      "target-max-stacks",
+      "while-traveling",
+      "auto-path-enemy",
+      "chase-enemy",
+      "wait-for-regen",
+      "flee",
+      "fight-back",
+      "lead-the-way",
+      "follow-and-assist",
+      "taunt-current-target",
+      "focus-closest",
+      "use-ability",
+      "switch-stance",
+      "avoid-enemies",
+      "avoid-hazards",
+      "step-back",
+      "orbit"
+    ],
+    "runeRecipesCrafted": [],
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "knownAbilities": [
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "attunedAbilities": {
+      "techniques": [
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "knownStances": [
+      "defensive-stance",
+      "fleeting-stance",
+      "offensive-stance"
+    ],
+    "attunedStances": [
+      "offensive-stance"
+    ],
+    "equippedStances": {
+      "default": "offensive-stance"
+    },
+    "activeStance": "offensive-stance",
+    "manualStanceOverride": null,
+    "queuedAbilityIds": [],
+    "knownRites": [],
+    "equippedRites": [],
+    "riteSlots": 0,
+    "hitboxRects": [
+      {
+        "offsetX": -0.5,
+        "offsetY": -0.5,
+        "halfW": 10.5,
+        "halfH": 21.5
+      },
+      {
+        "offsetX": -13,
+        "offsetY": 7,
+        "halfW": 2,
+        "halfH": 16
+      },
+      {
+        "offsetX": 13,
+        "offsetY": 11,
+        "halfW": 3,
+        "halfH": 10
+      },
+      {
+        "offsetX": -0.5,
+        "offsetY": -24.5,
+        "halfW": 8.5,
+        "halfH": 2.5
+      },
+      {
+        "offsetX": -7.5,
+        "offsetY": 24.5,
+        "halfW": 3.5,
+        "halfH": 3.5
+      },
+      {
+        "offsetX": -17,
+        "offsetY": 17,
+        "halfW": 2,
+        "halfH": 6
+      }
+    ],
+    "summonsMinions": 4,
+    "summonActiveCount": 0,
+    "summonRespawnMaxMs": 5000,
+    "summonSlots": [
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:0",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:1",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:2",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:3",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      }
+    ],
+    "isDead": false,
+    "graveFrame": null
+  },
+  "playerTreatment": "untreated",
+  "controlCaseId": null,
+  "conduitProfile": {
+    "treatment": "untreated",
+    "profile": {
+      "reconstructionFactors": {
+        "baseMs": 3500,
+        "frame": 1.12,
+        "specialization": 1,
+        "passive": 1,
+        "range": 1,
+        "preRelicMs": 3920,
+        "postRelicMs": 3920,
+        "floorMs": 2500,
+        "floorBinds": false
+      },
+      "frame": "heavy",
+      "range": "mid",
+      "specialization": null,
+      "slots": [
+        {
+          "slotId": "normal:0",
+          "role": "normal",
+          "offenseWeight": 0.5,
+          "defenseWeight": 0.5,
+          "procWeight": 0.5,
+          "sizeMult": 2.1875
+        },
+        {
+          "slotId": "normal:1",
+          "role": "normal",
+          "offenseWeight": 0.5,
+          "defenseWeight": 0.5,
+          "procWeight": 0.5,
+          "sizeMult": 2.1875
+        }
+      ],
+      "relicPotencyMult": 1,
+      "formationOffenseMult": 0.98,
+      "secondaryEffectMult": 1,
+      "totalSummonHpPct": 1.4,
+      "summonMoveSpeedMult": 0.78,
+      "summonAttackCooldownMult": 1,
+      "attackMode": "melee",
+      "formationPolicy": "escort",
+      "attackRange": 24,
+      "preferredDistance": 72,
+      "conduitDefenseShare": 0.5,
+      "redirectionPct": 0.3,
+      "leashRadius": 320,
+      "reconstructionIntervalMs": 3920,
+      "reconstructionHpCostRatio": 0.3,
+      "reconstructionSafetyFloorPct": 0.2,
+      "reconstructionCombatRegenPct": 0.2,
+      "battleBondConduitOffenseWeight": 0
+    },
+    "relicRatings": {
+      "frequency": 0,
+      "potency": 0,
+      "buffEffect": 0,
+      "debuffEffect": 0
+    },
+    "tickQuantizedIntervalMs": 4000,
+    "ownerSafetyThresholdHp": 53.2,
+    "slots": [
+      {
+        "slotId": "normal:0",
+        "role": "normal",
+        "offenseWeight": 0.5,
+        "defenseWeight": 0.5,
+        "procWeight": 0.5,
+        "sizeMult": 2.1875,
+        "maxHp": 186,
+        "costHp": 56
+      },
+      {
+        "slotId": "normal:1",
+        "role": "normal",
+        "offenseWeight": 0.5,
+        "defenseWeight": 0.5,
+        "procWeight": 0.5,
+        "sizeMult": 2.1875,
+        "maxHp": 186,
+        "costHp": 56
+      }
+    ]
+  },
+  "packageReadback": {
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "upgradeLevel": 5,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "skillPath": [
+      "summoner-root",
+      "summoner-heavy"
+    ],
+    "equipment": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-stinger-rapier",
+        "armor": "mountain-vest-t2",
+        "recovery": "mountain-charm-t2",
+        "mobility": "mountain-boots-t2",
+        "core": "core-survivalist",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "jungle-stinger-rapier": 5,
+        "mountain-vest-t2": 5,
+        "mountain-charm-t2": 5,
+        "mountain-boots-t2": 5,
+        "core-survivalist": 0
+      }
+    },
+    "mastery": {
+      "biomeLevel": {
+        "cave": 12,
+        "forest": 12,
+        "mountain": 12,
+        "plains": 12,
+        "swamp": 12,
+        "desert": 6,
+        "jungle": 6
+      },
+      "globalMastery": 72
+    },
+    "runicPoints": {
+      "budget": 30,
+      "cost": 27,
+      "unused": 3,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+    "skillPoints": 0,
+    "knownAbilities": [
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "rites": []
+  },
+  "definitionsIdentity": {
+    "base": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+    "live": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+    "treated": false
+  },
+  "initialRoster": [
+    {
+      "id": "node-t2-plains-03_monster-56",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 4686,
+        "y": 1639.2538660821072
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-55",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 4686,
+        "y": 1784.7461339178928
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-54",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 4752,
+        "y": 1712
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-53",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 4728,
+        "y": 1712
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-52",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 1969,
+        "y": 524.2538660821072
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-51",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 1969,
+        "y": 669.7461339178928
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-50",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 2095,
+        "y": 597
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-49",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 2011,
+        "y": 597
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-48",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 1897.684912404678,
+        "y": 1926.5641692150682
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-47",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3283,
+        "y": 4315.253866082107
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-46",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3283,
+        "y": 4460.746133917893
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-45",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3409,
+        "y": 4388
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-44",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 3325,
+        "y": 4388
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-43",
+      "type": "savanna-hawk",
+      "hp": 250,
+      "maxHp": 250,
+      "pos": {
+        "x": 3166,
+        "y": 817
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-42",
+      "type": "savanna-hawk",
+      "hp": 250,
+      "maxHp": 250,
+      "pos": {
+        "x": 2191,
+        "y": 3645
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-41",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 1696.9163203224564,
+        "y": 2030.988447909992
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-40",
+      "type": "savanna-hawk",
+      "hp": 250,
+      "maxHp": 250,
+      "pos": {
+        "x": 1606,
+        "y": 143
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-39",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 1492.866748098604,
+        "y": 1928.6475141982992
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-38",
+      "type": "savanna-hawk",
+      "hp": 250,
+      "maxHp": 250,
+      "pos": {
+        "x": 4559,
+        "y": 2457
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-37",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 1285.0543506408662,
+        "y": 1999.8257198690221
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-36",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 290.99999999999994,
+        "y": 2948.2538660821074
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-35",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 291,
+        "y": 3093.7461339178926
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-34",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 417,
+        "y": 3021
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-33",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 333,
+        "y": 3021
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-32",
+      "type": "savanna-hawk",
+      "hp": 250,
+      "maxHp": 250,
+      "pos": {
+        "x": 785,
+        "y": 3977
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-31",
+      "type": "savanna-hawk",
+      "hp": 250,
+      "maxHp": 250,
+      "pos": {
+        "x": 128,
+        "y": 840
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-30",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 1276.4014873131086,
+        "y": 2223.70972872154
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-29",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3615,
+        "y": 1348.2538660821072
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-28",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3615,
+        "y": 1493.7461339178928
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-27",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3741,
+        "y": 1421
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-26",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 3657,
+        "y": 1421
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-25",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 1691,
+        "y": 1301.2538660821072
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-24",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 1691,
+        "y": 1446.7461339178928
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-23",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 1817,
+        "y": 1374
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-22",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 1733,
+        "y": 1374
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-21",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3483,
+        "y": 3234.2538660821074
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-20",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3483,
+        "y": 3379.7461339178926
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-19",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3609,
+        "y": 3307
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-18",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 3525,
+        "y": 3307
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-17",
+      "type": "savanna-hawk",
+      "hp": 250,
+      "maxHp": 250,
+      "pos": {
+        "x": 224,
+        "y": 4683
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-16",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 799.9115097505726,
+        "y": 2305.2921706132697
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-15",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 676.8715322959308,
+        "y": 2135.588850454628
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-14",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 228.99999999999997,
+        "y": 48
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-13",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 229.00000000000003,
+        "y": 181.74613391789285
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-12",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 355,
+        "y": 109
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-11",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 271,
+        "y": 109
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-10",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 1090.7000417665895,
+        "y": 2240.691136228593
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-9",
+      "type": "stampede-bull",
+      "hp": 495,
+      "maxHp": 495,
+      "pos": {
+        "x": 884,
+        "y": 2118
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-8",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3797,
+        "y": 2356.2538660821074
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-7",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3797,
+        "y": 2501.7461339178926
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-6",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3923,
+        "y": 2429
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-5",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 3839,
+        "y": 2429
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-4",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 2969,
+        "y": 1902.2538660821072
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-3",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 2969,
+        "y": 2047.7461339178928
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-2",
+      "type": "prairie-yearling",
+      "hp": 130,
+      "maxHp": 130,
+      "pos": {
+        "x": 3095,
+        "y": 1975
+      }
+    },
+    {
+      "id": "node-t2-plains-03_monster-1",
+      "type": "prairie-wolf",
+      "hp": 260,
+      "maxHp": 260,
+      "pos": {
+        "x": 3011,
+        "y": 1975
+      }
+    }
+  ],
+  "initialRosterHash": "0121f3e6eb0ee8aa7d6613de718d23a322cb6149aac046a600bd649f8cd76c47",
+  "geometryRosterHash": "ac0d2ebbe609ac0621a4ba48c7fa2d79c714d2ba9fcc62669bfa06cc4e82058d",
+  "hpTreatment": [],
+  "initialStats": [
+    {
+      "id": "node-t2-plains-03_monster-56",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-55",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-54",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-53",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-52",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-51",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-50",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-49",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-48",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-47",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-46",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-45",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-44",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-43",
+      "type": "savanna-hawk",
+      "attack": 29,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-42",
+      "type": "savanna-hawk",
+      "attack": 29,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-41",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-40",
+      "type": "savanna-hawk",
+      "attack": 29,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-39",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-38",
+      "type": "savanna-hawk",
+      "attack": 29,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-37",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-36",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-35",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-34",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-33",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-32",
+      "type": "savanna-hawk",
+      "attack": 29,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-31",
+      "type": "savanna-hawk",
+      "attack": 29,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-30",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-29",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-28",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-27",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-26",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-25",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-24",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-23",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-22",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-21",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-20",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-19",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-18",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-17",
+      "type": "savanna-hawk",
+      "attack": 29,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-16",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-15",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-14",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-13",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-12",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-11",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-10",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-9",
+      "type": "stampede-bull",
+      "attack": 24,
+      "plating": 0,
+      "dr": 0.050000000000000044
+    },
+    {
+      "id": "node-t2-plains-03_monster-8",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-7",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-6",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-5",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-4",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-3",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-2",
+      "type": "prairie-yearling",
+      "attack": 11,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t2-plains-03_monster-1",
+      "type": "prairie-wolf",
+      "attack": 19,
+      "plating": 0,
+      "dr": 0
+    }
+  ]
+}

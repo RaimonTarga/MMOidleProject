@@ -1,0 +1,3488 @@
+{
+  "schema": 1,
+  "units": {
+    "time": "ms",
+    "damage": "HP",
+    "availability": "fraction of authored profile"
+  },
+  "measuredMs": 71800,
+  "initializationMs": 100,
+  "initializedExposureMs": 71700,
+  "availabilityReason": null,
+  "terminalOwner": {
+    "hp": 0,
+    "maxHp": 585,
+    "barrier": 0
+  },
+  "liveBodyFraction": 1,
+  "liveAuthoredOffenseFraction": 1,
+  "liveAuthoredProcFraction": 1,
+  "zeroSummonsMs": 0,
+  "atOrBelowHalfOffenseMs": 0,
+  "combatExposureMs": 68200,
+  "readyHpBlockedMs": 0,
+  "replacementAttemptTicks": 0,
+  "successfulReplacements": 0,
+  "totalHpPaid": 0,
+  "queueScopedHealingHp": 0,
+  "meanQueueDepth": 0,
+  "damageDelivery": {
+    "exposureMs": {
+      "intact": 68200,
+      "depleted": 0
+    },
+    "byTargetPhase": [
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-32",
+        "targetType": "plague-rat",
+        "phase": "above-half-hp",
+        "attempts": 3,
+        "primaryHpDecrease": 491,
+        "exposureMs": 600
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-32",
+        "targetType": "plague-rat",
+        "phase": "at-or-below-half-hp",
+        "attempts": 4,
+        "primaryHpDecrease": 459,
+        "exposureMs": 1200
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-12",
+        "targetType": "plague-hound",
+        "phase": "above-half-hp",
+        "attempts": 6,
+        "primaryHpDecrease": 955,
+        "exposureMs": 1400
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-12",
+        "targetType": "plague-hound",
+        "phase": "at-or-below-half-hp",
+        "attempts": 6,
+        "primaryHpDecrease": 946,
+        "exposureMs": 900
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-10",
+        "targetType": "plague-rat",
+        "phase": "above-half-hp",
+        "attempts": 3,
+        "primaryHpDecrease": 491,
+        "exposureMs": 600
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-10",
+        "targetType": "plague-rat",
+        "phase": "at-or-below-half-hp",
+        "attempts": 4,
+        "primaryHpDecrease": 459,
+        "exposureMs": 1200
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-31",
+        "targetType": "plague-rat",
+        "phase": "above-half-hp",
+        "attempts": 3,
+        "primaryHpDecrease": 533,
+        "exposureMs": 600
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-31",
+        "targetType": "plague-rat",
+        "phase": "at-or-below-half-hp",
+        "attempts": 3,
+        "primaryHpDecrease": 417,
+        "exposureMs": 800
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-16",
+        "targetType": "plague-hound",
+        "phase": "above-half-hp",
+        "attempts": 7,
+        "primaryHpDecrease": 1053,
+        "exposureMs": 1900
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-16",
+        "targetType": "plague-hound",
+        "phase": "at-or-below-half-hp",
+        "attempts": 7,
+        "primaryHpDecrease": 848,
+        "exposureMs": 1600
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-1",
+        "targetType": "plague-hound",
+        "phase": "above-half-hp",
+        "attempts": 6,
+        "primaryHpDecrease": 955,
+        "exposureMs": 1200
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-1",
+        "targetType": "plague-hound",
+        "phase": "at-or-below-half-hp",
+        "attempts": 6,
+        "primaryHpDecrease": 946,
+        "exposureMs": 1100
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-30",
+        "targetType": "plague-hound",
+        "phase": "above-half-hp",
+        "attempts": 7,
+        "primaryHpDecrease": 1053,
+        "exposureMs": 1900
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-30",
+        "targetType": "plague-hound",
+        "phase": "at-or-below-half-hp",
+        "attempts": 6,
+        "primaryHpDecrease": 848,
+        "exposureMs": 1400
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-43",
+        "targetType": "bone-crawler",
+        "phase": "above-half-hp",
+        "attempts": 4,
+        "primaryHpDecrease": 674,
+        "exposureMs": 900
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-43",
+        "targetType": "bone-crawler",
+        "phase": "at-or-below-half-hp",
+        "attempts": 4,
+        "primaryHpDecrease": 561,
+        "exposureMs": 800
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-42",
+        "targetType": "bone-crawler",
+        "phase": "above-half-hp",
+        "attempts": 2,
+        "primaryHpDecrease": 281,
+        "exposureMs": 500
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-44",
+        "targetType": "plague-hound",
+        "phase": "above-half-hp",
+        "attempts": 5,
+        "primaryHpDecrease": 870,
+        "exposureMs": 800
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-44",
+        "targetType": "plague-hound",
+        "phase": "at-or-below-half-hp",
+        "attempts": 6,
+        "primaryHpDecrease": 736,
+        "exposureMs": 1000
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-42",
+        "targetType": "bone-crawler",
+        "phase": "at-or-below-half-hp",
+        "attempts": 5,
+        "primaryHpDecrease": 490,
+        "exposureMs": 1000
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t4-graveyard-03_monster-41",
+        "targetType": "gravewright",
+        "phase": "above-half-hp",
+        "attempts": 1,
+        "primaryHpDecrease": 85,
+        "exposureMs": 400
+      }
+    ],
+    "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+    "delayedAndSecondaryDamage": null,
+    "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+  },
+  "hypothesisExercised": false,
+  "lives": [
+    {
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "role": "offense-twin",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 0,
+      "endAtMs": 71700,
+      "cause": "unknown-removal",
+      "lifetimeMs": 71700,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "role": "defense-twin",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 100,
+      "endAtMs": 71700,
+      "cause": "unknown-removal",
+      "lifetimeMs": 71700,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    }
+  ],
+  "episodes": [
+    {
+      "startAtMs": 71700,
+      "aboveHalfAtMs": null,
+      "fullAtMs": null,
+      "censored": true,
+      "terminal": "player-died",
+      "timeToAboveHalfMs": null,
+      "timeToFullMs": null,
+      "unavailableReason": "Recovery not observed before terminal/cap; censored."
+    }
+  ],
+  "events": [
+    {
+      "atMs": 0,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "maxHp": 344,
+      "replacement": false
+    },
+    {
+      "atMs": 0,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "maxHp": 803,
+      "replacement": false
+    },
+    {
+      "atMs": 0,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 0,
+      "kind": "queue-change",
+      "queue": [],
+      "active": null
+    },
+    {
+      "atMs": 100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.7789473684210526,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.7042105263157895,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.4831578947368421,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 1200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.40842105263157896,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 1300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.18736842105263157,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 1800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.11263157894736842,
+      "primaryHpDecrease": 107,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 4000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 4200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.9626512361914782,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 4600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.8521830615465544,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 4800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.8074697527617044,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 5200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.6749079431877959,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 5400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.6301946344029458,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 5800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.49763282482903737,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 6000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.4529195160441873,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 7600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.3203577064702788,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 7600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.18779589689637033,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 9100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.14308258811152025,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 9100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.010520778537611783,
+      "primaryHpDecrease": 20,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 10200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-10",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 10200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-10",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.7789473684210526,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 10800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-10",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.7042105263157895,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 10800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-10",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.4831578947368421,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 11400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-10",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.40842105263157896,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 11400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-10",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.18736842105263157,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 12000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-10",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.11263157894736842,
+      "primaryHpDecrease": 107,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 16300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-31",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 16500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-31",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.7789473684210526,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 16900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-31",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.7042105263157895,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 17100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-31",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.43894736842105264,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 17500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-31",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.3494736842105263,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 17700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-31",
+      "targetType": "plague-rat",
+      "targetHpFractionBefore": 0.08421052631578947,
+      "primaryHpDecrease": 80,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 20800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 21000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.8895318253550762,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 21400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.8521830615465544,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 21600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.7417148869016307,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 22000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.7043661230931089,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 22200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.5938979484481852,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 22700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.5565491846396633,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 22800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.4460810099947396,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 26200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.4087322461862178,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 26200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.29826407154129403,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 26800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.2609153077327722,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 26800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.1504471330878485,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 27400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.11309836927932668,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 27400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.0026301946344029457,
+      "primaryHpDecrease": 5,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 30600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 30600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.8895318253550762,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 31200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.8521830615465544,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 31200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.7196212519726459,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 31800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.6749079431877959,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 31800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.5423461336138874,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 32400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.49763282482903737,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 32400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.36507101525512886,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 33800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.3203577064702788,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 34000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.18779589689637033,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 35500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.14308258811152025,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 35700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.010520778537611783,
+      "primaryHpDecrease": 20,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 38300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 38400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.8895318253550762,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 38900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.8521830615465544,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 39000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.7417148869016307,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 39500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.7043661230931089,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 39600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.5938979484481852,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 40400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.5565491846396633,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 41000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.4460810099947396,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 41100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.4087322461862178,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 41600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.29826407154129403,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 41700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.2609153077327722,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 42300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.1504471330878485,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 43800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.11309836927932668,
+      "primaryHpDecrease": 215,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 49600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 49900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.9311740890688259,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 50200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.7271255060728745,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 50500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.6582995951417004,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 50800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.454251012145749,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 51100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.3854251012145749,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 51900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.1813765182186235,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 52100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.1125506072874494,
+      "primaryHpDecrease": 139,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 57300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.9337190952130457,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 57300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.823250920568122,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 57900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.7859021567596002,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 58000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.6533403471856918,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 58500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.6086270384008416,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 58600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.4760652288269332,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 60700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-42",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.7263157894736842,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 62500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.4313519200420831,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 62600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.38663861125723303,
+      "primaryHpDecrease": 252,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 63100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-42",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.5562753036437247,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 63500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-42",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.4987854251012146,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 63700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-42",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.3287449392712551,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 64400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-42",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.27125506072874495,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 65200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.165176223040505,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 65300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.12782745923198316,
+      "primaryHpDecrease": 210,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 70600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "targetType": "plague-hound",
+      "targetHpFractionBefore": 0.017359284587059442,
+      "primaryHpDecrease": 33,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 70700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-42",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.11174089068825911,
+      "primaryHpDecrease": 71,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 71300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t4-graveyard-03_monster-42",
+      "targetType": "bone-crawler",
+      "targetHpFractionBefore": 0.05425101214574899,
+      "primaryHpDecrease": 67,
+      "outcome": "killed",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 71300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t4-graveyard-03_monster-41",
+      "targetType": "gravewright",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 85,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 71700,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "role": "offense-twin",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 0,
+      "endAtMs": 71700,
+      "cause": "unknown-removal",
+      "lifetimeMs": 71700
+    },
+    {
+      "atMs": 71700,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "role": "defense-twin",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 100,
+      "endAtMs": 71700,
+      "cause": "unknown-removal",
+      "lifetimeMs": 71700
+    }
+  ],
+  "snapshots": [
+    {
+      "atMs": 0,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": "node-t4-graveyard-03_monster-32"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 1000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-32",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 279,
+          "targetId": "node-t4-graveyard-03_monster-32"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-32"
+        }
+      ]
+    },
+    {
+      "atMs": 2000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 3000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 4000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-12"
+        }
+      ]
+    },
+    {
+      "atMs": 5000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": "node-t4-graveyard-03_monster-12"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-12"
+        }
+      ]
+    },
+    {
+      "atMs": 6000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-12",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": "node-t4-graveyard-03_monster-12"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 7000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 8000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 191,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 9000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 136,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 10000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 110,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 11000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 72,
+      "targetId": "node-t4-graveyard-03_monster-10",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": "node-t4-graveyard-03_monster-10"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-10"
+        }
+      ]
+    },
+    {
+      "atMs": 12000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 72,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": "node-t4-graveyard-03_monster-10"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 13000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 72,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 14000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 72,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 15000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 84.30000000000001,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 214,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 16000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 145.80000000000007,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 274.20000000000005,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 17000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 207.30000000000013,
+      "targetId": "node-t4-graveyard-03_monster-31",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-31"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-31"
+        }
+      ]
+    },
+    {
+      "atMs": 18000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 19000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 20000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 21000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-16"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-16"
+        }
+      ]
+    },
+    {
+      "atMs": 22000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-16"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-16"
+        }
+      ]
+    },
+    {
+      "atMs": 23000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-16"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 24000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 25000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 191,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 26000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 191,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 300.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 27000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 191,
+      "targetId": "node-t4-graveyard-03_monster-16",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-16"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-16"
+        }
+      ]
+    },
+    {
+      "atMs": 28000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 191,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 29000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 30000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 31000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-1"
+        }
+      ]
+    },
+    {
+      "atMs": 32000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-1"
+        }
+      ]
+    },
+    {
+      "atMs": 33000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 246,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 34000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 191,
+      "targetId": "node-t4-graveyard-03_monster-1",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-1"
+        }
+      ]
+    },
+    {
+      "atMs": 35000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 136,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 36000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 136,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 37000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 110,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 38000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 84,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 39000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 84,
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-30"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-30"
+        }
+      ]
+    },
+    {
+      "atMs": 40000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 84,
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": "node-t4-graveyard-03_monster-30"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-30"
+        }
+      ]
+    },
+    {
+      "atMs": 41000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 29,
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-30"
+        }
+      ]
+    },
+    {
+      "atMs": 42000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 3,
+      "targetId": "node-t4-graveyard-03_monster-30",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-30"
+        }
+      ]
+    },
+    {
+      "atMs": 43000,
+      "initialized": true,
+      "hp": 562,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 44000,
+      "initialized": true,
+      "hp": 524,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 786,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 45000,
+      "initialized": true,
+      "hp": 471,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 786,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 46000,
+      "initialized": true,
+      "hp": 471,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 786,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 47000,
+      "initialized": true,
+      "hp": 471,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 195.0000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 786,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 48000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 6.15,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 272.4000000000001,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 49000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 67.64999999999999,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 50000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 70.70000000000003,
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": "node-t4-graveyard-03_monster-43"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-43"
+        }
+      ]
+    },
+    {
+      "atMs": 51000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 70.70000000000003,
+      "targetId": "node-t4-graveyard-03_monster-43",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": "node-t4-graveyard-03_monster-43"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": "node-t4-graveyard-03_monster-43"
+        }
+      ]
+    },
+    {
+      "atMs": 52000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 36.70000000000003,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 53000,
+      "initialized": true,
+      "hp": 585,
+      "maxHp": 585,
+      "barrier": 2.7000000000000313,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 803,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 54000,
+      "initialized": true,
+      "hp": 524.7,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 777,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 55000,
+      "initialized": true,
+      "hp": 524.7,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 777,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 56000,
+      "initialized": true,
+      "hp": 462.70000000000005,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 750,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 57000,
+      "initialized": true,
+      "hp": 384.70000000000005,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 728,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 58000,
+      "initialized": true,
+      "hp": 358.70000000000005,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 728,
+          "targetId": "node-t4-graveyard-03_monster-44"
+        }
+      ]
+    },
+    {
+      "atMs": 59000,
+      "initialized": true,
+      "hp": 358.70000000000005,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": "node-t4-graveyard-03_monster-44",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 728,
+          "targetId": "node-t4-graveyard-03_monster-44"
+        }
+      ]
+    },
+    {
+      "atMs": 60000,
+      "initialized": true,
+      "hp": 334.70000000000005,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 718,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 61000,
+      "initialized": true,
+      "hp": 437.07500000000016,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 718,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 62000,
+      "initialized": true,
+      "hp": 477.4500000000003,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 691,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 63000,
+      "initialized": true,
+      "hp": 525.8250000000002,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 679,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 64000,
+      "initialized": true,
+      "hp": 513.1999999999998,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 652,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 65000,
+      "initialized": true,
+      "hp": 423.1999999999998,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 613,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 66000,
+      "initialized": true,
+      "hp": 423.1999999999998,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 613,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 67000,
+      "initialized": true,
+      "hp": 335.1999999999998,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 586,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 68000,
+      "initialized": true,
+      "hp": 276.1999999999998,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 583,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 69000,
+      "initialized": true,
+      "hp": 213.19999999999982,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 579,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 70000,
+      "initialized": true,
+      "hp": 121.19999999999982,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 573,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 71000,
+      "initialized": true,
+      "hp": 56.38749999999982,
+      "maxHp": 585,
+      "barrier": 0,
+      "targetId": "node-t4-graveyard-03_monster-42",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "offense:0",
+          "role": "offense-twin",
+          "hp": 344,
+          "targetId": "node-t4-graveyard-03_monster-42"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "defense:0",
+          "role": "defense-twin",
+          "hp": 569,
+          "targetId": "node-t4-graveyard-03_monster-42"
+        }
+      ]
+    }
+  ]
+}

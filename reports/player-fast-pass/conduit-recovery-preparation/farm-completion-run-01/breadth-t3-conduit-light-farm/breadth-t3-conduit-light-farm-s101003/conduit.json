@@ -1,0 +1,6464 @@
+{
+  "schema": 1,
+  "units": {
+    "time": "ms",
+    "damage": "HP",
+    "availability": "fraction of authored profile"
+  },
+  "measuredMs": 72300,
+  "initializationMs": 100,
+  "initializedExposureMs": 72200,
+  "availabilityReason": null,
+  "terminalOwner": {
+    "hp": 0,
+    "maxHp": 359,
+    "barrier": 0
+  },
+  "liveBodyFraction": 0.37396121883656724,
+  "liveAuthoredOffenseFraction": 0.37396121883656724,
+  "liveAuthoredProcFraction": 0.37396121883656724,
+  "zeroSummonsMs": 15300,
+  "atOrBelowHalfOffenseMs": 40100,
+  "combatExposureMs": 62200,
+  "readyHpBlockedMs": 700,
+  "replacementAttemptTicks": 27,
+  "successfulReplacements": 20,
+  "totalHpPaid": 240,
+  "queueScopedHealingHp": 484.74399999999883,
+  "meanQueueDepth": 3.715076071922545,
+  "damageDelivery": {
+    "exposureMs": {
+      "intact": 2700,
+      "depleted": 59500
+    },
+    "byTargetPhase": [
+      {
+        "state": "intact",
+        "targetId": "node-t3-volcanic-03_monster-1",
+        "targetType": "cinder-hound",
+        "phase": "above-half-hp",
+        "attempts": 16,
+        "primaryHpDecrease": 320,
+        "exposureMs": 1600
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-1",
+        "targetType": "cinder-hound",
+        "phase": "above-half-hp",
+        "attempts": 13,
+        "primaryHpDecrease": 280,
+        "exposureMs": 3100
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-3",
+        "targetType": "ember-scuttler",
+        "phase": "above-half-hp",
+        "attempts": 13,
+        "primaryHpDecrease": 304,
+        "exposureMs": 4300
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-17",
+        "targetType": "ash-slinger",
+        "phase": "above-half-hp",
+        "attempts": 29,
+        "primaryHpDecrease": 673,
+        "exposureMs": 9000
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-17",
+        "targetType": "ash-slinger",
+        "phase": "at-or-below-half-hp",
+        "attempts": 28,
+        "primaryHpDecrease": 657,
+        "exposureMs": 6300
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-19",
+        "targetType": "ash-slinger",
+        "phase": "above-half-hp",
+        "attempts": 22,
+        "primaryHpDecrease": 528,
+        "exposureMs": 3200
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t3-volcanic-03_monster-19",
+        "targetType": "ash-slinger",
+        "phase": "above-half-hp",
+        "attempts": 6,
+        "primaryHpDecrease": 144,
+        "exposureMs": 700
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-19",
+        "targetType": "ash-slinger",
+        "phase": "at-or-below-half-hp",
+        "attempts": 28,
+        "primaryHpDecrease": 658,
+        "exposureMs": 5000
+      },
+      {
+        "state": "intact",
+        "targetId": "node-t3-volcanic-03_monster-4",
+        "targetType": "ember-scuttler",
+        "phase": "above-half-hp",
+        "attempts": 5,
+        "primaryHpDecrease": 120,
+        "exposureMs": 400
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-4",
+        "targetType": "ember-scuttler",
+        "phase": "above-half-hp",
+        "attempts": 9,
+        "primaryHpDecrease": 216,
+        "exposureMs": 2200
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-2",
+        "targetType": "ember-scuttler",
+        "phase": "above-half-hp",
+        "attempts": 0,
+        "primaryHpDecrease": 0,
+        "exposureMs": 500
+      },
+      {
+        "state": "depleted",
+        "targetId": "node-t3-volcanic-03_monster-4",
+        "targetType": "ember-scuttler",
+        "phase": "at-or-below-half-hp",
+        "attempts": 4,
+        "primaryHpDecrease": 96,
+        "exposureMs": 2100
+      }
+    ],
+    "definition": "Observed primary-target HP decrease during each synchronous summon attack, including its direct procs; not predicted DPS. Intact >=80% authored offense. Phase is target HP band, not boss-script phase. Target exposure counts each 100ms left-boundary tick with at least one living summon selecting that target; zero exposure with a within-tick attack has no supported rate.",
+    "delayedAndSecondaryDamage": null,
+    "unavailableReason": "Not uniquely attributable to the originating summon attack by existing delayed-effect schema."
+  },
+  "hypothesisExercised": true,
+  "lives": [
+    {
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2200,
+      "endAtMs": 5500,
+      "cause": "combat-death",
+      "lifetimeMs": 5500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2200,
+      "endAtMs": 6400,
+      "cause": "combat-death",
+      "lifetimeMs": 6400,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-3",
+      "slot": 2,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2100,
+      "endAtMs": 4200,
+      "cause": "combat-death",
+      "lifetimeMs": 4200,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-4",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2000,
+      "endAtMs": 3600,
+      "cause": "combat-death",
+      "lifetimeMs": 3600,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-5",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2000,
+      "endAtMs": 2300,
+      "cause": "combat-death",
+      "lifetimeMs": 2300,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-6",
+      "slot": 5,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2100,
+      "endAtMs": 4500,
+      "cause": "combat-death",
+      "lifetimeMs": 4500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-7",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 5600,
+      "replacement": true,
+      "firstAttackAtMs": 5700,
+      "endAtMs": 6100,
+      "cause": "combat-death",
+      "lifetimeMs": 500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-8",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 8900,
+      "replacement": true,
+      "firstAttackAtMs": null,
+      "endAtMs": 11400,
+      "cause": "combat-death",
+      "lifetimeMs": 2500,
+      "firstAttackUnavailableReason": "No actual attack observed before removal or observation end.",
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-9",
+      "slot": 2,
+      "role": "normal",
+      "spawnAtMs": 12200,
+      "replacement": true,
+      "firstAttackAtMs": 13100,
+      "endAtMs": 23400,
+      "cause": "combat-death",
+      "lifetimeMs": 11200,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-10",
+      "slot": 5,
+      "role": "normal",
+      "spawnAtMs": 15500,
+      "replacement": true,
+      "firstAttackAtMs": 15800,
+      "endAtMs": 19400,
+      "cause": "combat-death",
+      "lifetimeMs": 3900,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-11",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 18800,
+      "replacement": true,
+      "firstAttackAtMs": 18900,
+      "endAtMs": 38000,
+      "cause": "combat-death",
+      "lifetimeMs": 19200,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-12",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 22100,
+      "replacement": true,
+      "firstAttackAtMs": 22400,
+      "endAtMs": 40000,
+      "cause": "combat-death",
+      "lifetimeMs": 17900,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-13",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 25400,
+      "replacement": true,
+      "firstAttackAtMs": 25500,
+      "endAtMs": 34000,
+      "cause": "combat-death",
+      "lifetimeMs": 8600,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-14",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 28700,
+      "replacement": true,
+      "firstAttackAtMs": 34300,
+      "endAtMs": 36000,
+      "cause": "combat-death",
+      "lifetimeMs": 7300,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-15",
+      "slot": 5,
+      "role": "normal",
+      "spawnAtMs": 32000,
+      "replacement": true,
+      "firstAttackAtMs": 34600,
+      "endAtMs": 42000,
+      "cause": "combat-death",
+      "lifetimeMs": 10000,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-16",
+      "slot": 2,
+      "role": "normal",
+      "spawnAtMs": 35300,
+      "replacement": true,
+      "firstAttackAtMs": 35400,
+      "endAtMs": 52100,
+      "cause": "combat-death",
+      "lifetimeMs": 16800,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-17",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 38600,
+      "replacement": true,
+      "firstAttackAtMs": 38800,
+      "endAtMs": 51100,
+      "cause": "combat-death",
+      "lifetimeMs": 12500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-18",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 41900,
+      "replacement": true,
+      "firstAttackAtMs": 42100,
+      "endAtMs": 51500,
+      "cause": "combat-death",
+      "lifetimeMs": 9600,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-19",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 45200,
+      "replacement": true,
+      "firstAttackAtMs": 49600,
+      "endAtMs": 50800,
+      "cause": "combat-death",
+      "lifetimeMs": 5600,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-20",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 48500,
+      "replacement": true,
+      "firstAttackAtMs": 49600,
+      "endAtMs": 50000,
+      "cause": "combat-death",
+      "lifetimeMs": 1500,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-21",
+      "slot": 5,
+      "role": "normal",
+      "spawnAtMs": 51800,
+      "replacement": true,
+      "firstAttackAtMs": 51800,
+      "endAtMs": 52900,
+      "cause": "combat-death",
+      "lifetimeMs": 1100,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-22",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 55100,
+      "replacement": true,
+      "firstAttackAtMs": 55100,
+      "endAtMs": 55700,
+      "cause": "combat-death",
+      "lifetimeMs": 600,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-23",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 58400,
+      "replacement": true,
+      "firstAttackAtMs": 58900,
+      "endAtMs": 59600,
+      "cause": "combat-death",
+      "lifetimeMs": 1200,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-24",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 61700,
+      "replacement": true,
+      "firstAttackAtMs": 62000,
+      "endAtMs": 64500,
+      "cause": "combat-death",
+      "lifetimeMs": 2800,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-25",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 65000,
+      "replacement": true,
+      "firstAttackAtMs": 65000,
+      "endAtMs": 66400,
+      "cause": "combat-death",
+      "lifetimeMs": 1400,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    },
+    {
+      "id": "minion_bench-bot-0-26",
+      "slot": 2,
+      "role": "normal",
+      "spawnAtMs": 68300,
+      "replacement": true,
+      "firstAttackAtMs": 68300,
+      "endAtMs": 69600,
+      "cause": "combat-death",
+      "lifetimeMs": 1300,
+      "firstAttackUnavailableReason": null,
+      "lifetimeUnavailableReason": null
+    }
+  ],
+  "episodes": [
+    {
+      "startAtMs": 4500,
+      "aboveHalfAtMs": 18800,
+      "fullAtMs": null,
+      "censored": true,
+      "terminal": "player-died",
+      "timeToAboveHalfMs": 14300,
+      "timeToFullMs": null,
+      "unavailableReason": "Recovery not observed before terminal/cap; censored."
+    }
+  ],
+  "events": [
+    {
+      "atMs": 0,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "maxHp": 39,
+      "replacement": false
+    },
+    {
+      "atMs": 0,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "maxHp": 39,
+      "replacement": false
+    },
+    {
+      "atMs": 0,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-3",
+      "slot": 2,
+      "maxHp": 39,
+      "replacement": false
+    },
+    {
+      "atMs": 0,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-4",
+      "slot": 3,
+      "maxHp": 39,
+      "replacement": false
+    },
+    {
+      "atMs": 0,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-5",
+      "slot": 4,
+      "maxHp": 39,
+      "replacement": false
+    },
+    {
+      "atMs": 0,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-6",
+      "slot": 5,
+      "maxHp": 39,
+      "replacement": false
+    },
+    {
+      "atMs": 0,
+      "kind": "queue-change",
+      "queue": [],
+      "active": null
+    },
+    {
+      "atMs": 2000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-5",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9861111111111112,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9722222222222222,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9583333333333334,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9444444444444444,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9305555555555556,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 1
+    },
+    {
+      "atMs": 2300,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-5",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2000,
+      "endAtMs": 2300,
+      "cause": "combat-death",
+      "lifetimeMs": 2300
+    },
+    {
+      "atMs": 2400,
+      "kind": "queue-change",
+      "queue": [],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 100,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 2600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9166666666666666,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 2700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9027777777777778,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 2700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.8888888888888888,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 2800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.875,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 2800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.8611111111111112,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 3200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-4",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.8472222222222222,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 3300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.8333333333333334,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 3300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.8194444444444444,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 3400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.8055555555555556,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 3400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.7916666666666666,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 3600,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-4",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2000,
+      "endAtMs": 3600,
+      "cause": "combat-death",
+      "lifetimeMs": 3600
+    },
+    {
+      "atMs": 3700,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 1400,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 3900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-3",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 22,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 3900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.9661538461538461,
+      "primaryHpDecrease": 22,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 4000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.9323076923076923,
+      "primaryHpDecrease": 22,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 4000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.8984615384615384,
+      "primaryHpDecrease": 22,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 4200,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-3",
+      "slot": 2,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2100,
+      "endAtMs": 4200,
+      "cause": "combat-death",
+      "lifetimeMs": 4200
+    },
+    {
+      "atMs": 4300,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3",
+        "normal:2"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 2000,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 4500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-6",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.7777777777777778,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 4500,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-6",
+      "slot": 5,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2100,
+      "endAtMs": 4500,
+      "cause": "combat-death",
+      "lifetimeMs": 4500
+    },
+    {
+      "atMs": 4600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.7638888888888888,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 4600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.75,
+      "primaryHpDecrease": 20,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 4600,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3",
+        "normal:2",
+        "normal:5"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 2300,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 5200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-1",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.7361111111111112,
+      "primaryHpDecrease": 21,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 5200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.7215277777777778,
+      "primaryHpDecrease": 21,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 5500,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-1",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2200,
+      "endAtMs": 5500,
+      "cause": "combat-death",
+      "lifetimeMs": 5500
+    },
+    {
+      "atMs": 5600,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-7",
+      "slot": 4,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 5600,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-7",
+      "hp": 12
+    },
+    {
+      "atMs": 5600,
+      "kind": "queue-change",
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:0"
+      ],
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 5700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-7",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.7069444444444445,
+      "primaryHpDecrease": 21,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 5800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.6923611111111111,
+      "primaryHpDecrease": 21,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 6100,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-7",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 5600,
+      "replacement": true,
+      "firstAttackAtMs": 5700,
+      "endAtMs": 6100,
+      "cause": "combat-death",
+      "lifetimeMs": 500
+    },
+    {
+      "atMs": 6200,
+      "kind": "queue-change",
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:0",
+        "normal:4"
+      ],
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 600,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 6400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-2",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.6777777777777778,
+      "primaryHpDecrease": 21,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 6400,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-2",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 0,
+      "replacement": false,
+      "firstAttackAtMs": 2200,
+      "endAtMs": 6400,
+      "cause": "combat-death",
+      "lifetimeMs": 6400
+    },
+    {
+      "atMs": 6500,
+      "kind": "queue-change",
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 900,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 8900,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-8",
+      "slot": 3,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 8900,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-8",
+      "hp": 12
+    },
+    {
+      "atMs": 8900,
+      "kind": "queue-change",
+      "queue": [
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 11400,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-8",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 8900,
+      "replacement": true,
+      "firstAttackAtMs": null,
+      "endAtMs": 11400,
+      "cause": "combat-death",
+      "lifetimeMs": 2500
+    },
+    {
+      "atMs": 11500,
+      "kind": "queue-change",
+      "queue": [
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 2600,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 12200,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-9",
+      "slot": 2,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 12200,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-9",
+      "hp": 12
+    },
+    {
+      "atMs": 12200,
+      "kind": "queue-change",
+      "queue": [
+        "normal:0",
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 13100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 22,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 13700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9834586466165414,
+      "primaryHpDecrease": 22,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 14300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9669172932330827,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 14900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9496240601503759,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 15500,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-10",
+      "slot": 5,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 15500,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-10",
+      "hp": 12
+    },
+    {
+      "atMs": 15500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9323308270676691,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 15500,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 15800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9150375939849624,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 16100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8977443609022556,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 16400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8804511278195488,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 16700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8631578947368421,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 17000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8458646616541353,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 17300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8285714285714286,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 17600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8112781954887218,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 17900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.793984962406015,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 18200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7766917293233083,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 18500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7593984962406015,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 18800,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-11",
+      "slot": 0,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 18800,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-11",
+      "hp": 12
+    },
+    {
+      "atMs": 18800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7421052631578947,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 18800,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1",
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 18900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.724812030075188,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 19100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7075187969924812,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 19400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-10",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6902255639097744,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 19400,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-10",
+      "slot": 5,
+      "role": "normal",
+      "spawnAtMs": 15500,
+      "replacement": true,
+      "firstAttackAtMs": 15800,
+      "endAtMs": 19400,
+      "cause": "combat-death",
+      "lifetimeMs": 3900
+    },
+    {
+      "atMs": 19500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6729323308270677,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 19500,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:5"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 700,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 19700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6556390977443609,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 20100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6383458646616541,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 20300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6203007518796992,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 20700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6022556390977444,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 20900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.5842105263157895,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 21300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.5661654135338345,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 21500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.5481203007518797,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 21900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.5300751879699248,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 22100,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-12",
+      "slot": 4,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 22100,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-12",
+      "hp": 12
+    },
+    {
+      "atMs": 22100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.51203007518797,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 22100,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3",
+        "normal:5"
+      ],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 22400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.493984962406015,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 22500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.47593984962406016,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 22700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.45789473684210524,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 23000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.4398496240601504,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 23100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.4218045112781955,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 23300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-9",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.4037593984962406,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 23400,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-9",
+      "slot": 2,
+      "role": "normal",
+      "spawnAtMs": 12200,
+      "replacement": true,
+      "firstAttackAtMs": 13100,
+      "endAtMs": 23400,
+      "cause": "combat-death",
+      "lifetimeMs": 11200
+    },
+    {
+      "atMs": 23500,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3",
+        "normal:5",
+        "normal:2"
+      ],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1400,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 23600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.38571428571428573,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 23700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.3676691729323308,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 24200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.34962406015037595,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 24300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.33157894736842103,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 24800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.31353383458646616,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 24900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.2954887218045113,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 25400,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-13",
+      "slot": 1,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 25400,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-13",
+      "hp": 12
+    },
+    {
+      "atMs": 25400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.2774436090225564,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 25400,
+      "kind": "queue-change",
+      "queue": [
+        "normal:5",
+        "normal:2"
+      ],
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 25500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.2593984962406015,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 25500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-13",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.24135338345864663,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 26000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.22330827067669173,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 26100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.20526315789473684,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 26100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-13",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.18721804511278195,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 26600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.16917293233082706,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 26700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.1511278195488722,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 26700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-13",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.1330827067669173,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 27200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.11503759398496241,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 27300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.09699248120300752,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 27300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-13",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.07894736842105263,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 27800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.06090225563909774,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 27900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.04285714285714286,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 27900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-13",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.02481203007518797,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 28400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.006766917293233083,
+      "primaryHpDecrease": 9,
+      "outcome": "killed",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 28700,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-14",
+      "slot": 3,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 28700,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-14",
+      "hp": 12
+    },
+    {
+      "atMs": 28700,
+      "kind": "queue-change",
+      "queue": [
+        "normal:2"
+      ],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 32000,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-15",
+      "slot": 5,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 32000,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-15",
+      "hp": 12
+    },
+    {
+      "atMs": 32000,
+      "kind": "queue-change",
+      "queue": [],
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 34000,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-13",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 25400,
+      "replacement": true,
+      "firstAttackAtMs": 25500,
+      "endAtMs": 34000,
+      "cause": "combat-death",
+      "lifetimeMs": 8600
+    },
+    {
+      "atMs": 34100,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 2100,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 34300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-14",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 34500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9819548872180451,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 34500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9639097744360903,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 34600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9458646616541353,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 34900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-14",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9278195488721804,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 35100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.9097744360902256,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 35100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8917293233082707,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 35200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8736842105263158,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 35300,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-16",
+      "slot": 2,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 35300,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-16",
+      "hp": 12
+    },
+    {
+      "atMs": 35300,
+      "kind": "queue-change",
+      "queue": [],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 35400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8556390977443609,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 35500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-14",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.837593984962406,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 35700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8195488721804511,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 35700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.8015037593984963,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 35800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7834586466165413,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 36000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7654135338345864,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 36000,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-14",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 28700,
+      "replacement": true,
+      "firstAttackAtMs": 34300,
+      "endAtMs": 36000,
+      "cause": "combat-death",
+      "lifetimeMs": 7300
+    },
+    {
+      "atMs": 36100,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 800,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 36300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7473684210526316,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 36300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7293233082706767,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 36400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.7112781954887218,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 36600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6932330827067669,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 36900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.675187969924812,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 36900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6571428571428571,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 37000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6390977443609023,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 37200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6210526315789474,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 37500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-11",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.6030075187969924,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 37500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.5849624060150376,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 37600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.5669172932330827,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 37800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.5488721804511278,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 38000,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-11",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 18800,
+      "replacement": true,
+      "firstAttackAtMs": 18900,
+      "endAtMs": 38000,
+      "cause": "combat-death",
+      "lifetimeMs": 19200
+    },
+    {
+      "atMs": 38100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.530827067669173,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 38100,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3",
+        "normal:0"
+      ],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 2800,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 38200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.512781954887218,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 38400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.49473684210526314,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 38600,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-17",
+      "slot": 1,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 38600,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-17",
+      "hp": 12
+    },
+    {
+      "atMs": 38600,
+      "kind": "queue-change",
+      "queue": [
+        "normal:0"
+      ],
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 38700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.4766917293233083,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 38800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.45864661654135336,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 38800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.4406015037593985,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 39000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.42255639097744363,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 39300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.4045112781954887,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 39400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.38646616541353385,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 39400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.3684210526315789,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 39600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.35037593984962406,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 39900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-12",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.3323308270676692,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 40000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.3142857142857143,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 40000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.2962406015037594,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 40000,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-12",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 22100,
+      "replacement": true,
+      "firstAttackAtMs": 22400,
+      "endAtMs": 40000,
+      "cause": "combat-death",
+      "lifetimeMs": 17900
+    },
+    {
+      "atMs": 40100,
+      "kind": "queue-change",
+      "queue": [
+        "normal:0",
+        "normal:4"
+      ],
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 1500,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 40200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.2781954887218045,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 40600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.26015037593984963,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 40600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.24210526315789474,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 40800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.22406015037593985,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 41200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.20601503759398496,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 41200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.18796992481203006,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 41400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.1699248120300752,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 41800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.1518796992481203,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 41800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-15",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.13383458646616542,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 41900,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-18",
+      "slot": 3,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 41900,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-18",
+      "hp": 12
+    },
+    {
+      "atMs": 41900,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 42000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.11578947368421053,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 42000,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-15",
+      "slot": 5,
+      "role": "normal",
+      "spawnAtMs": 32000,
+      "replacement": true,
+      "firstAttackAtMs": 34600,
+      "endAtMs": 42000,
+      "cause": "combat-death",
+      "lifetimeMs": 10000
+    },
+    {
+      "atMs": 42100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-18",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.09774436090225563,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 42100,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4",
+        "normal:5"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 200,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 42400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.07969924812030076,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 42600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.061654135338345864,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 42700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-18",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.04360902255639098,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 43000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.02556390977443609,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 43200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "targetType": "ash-slinger",
+      "targetHpFractionBefore": 0.007518796992481203,
+      "primaryHpDecrease": 10,
+      "outcome": "killed",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 45200,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-19",
+      "slot": 0,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 45200,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-19",
+      "hp": 12
+    },
+    {
+      "atMs": 45200,
+      "kind": "queue-change",
+      "queue": [
+        "normal:5"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 48500,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-20",
+      "slot": 4,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 48500,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-20",
+      "hp": 12
+    },
+    {
+      "atMs": 48500,
+      "kind": "queue-change",
+      "queue": [],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 49600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-19",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 49600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-20",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.963076923076923,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 49700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.9261538461538461,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 49700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-18",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.8892307692307693,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 49800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.8523076923076923,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.8333333333333334
+    },
+    {
+      "atMs": 50000,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-20",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 48500,
+      "replacement": true,
+      "firstAttackAtMs": 49600,
+      "endAtMs": 50000,
+      "cause": "combat-death",
+      "lifetimeMs": 1500
+    },
+    {
+      "atMs": 50100,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4"
+      ],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 1600,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 50200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-19",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.8153846153846154,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 50300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.7784615384615384,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 50300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-18",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.7415384615384616,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 50400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.7046153846153846,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 50800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-19",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.6676923076923077,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.6666666666666667
+    },
+    {
+      "atMs": 50800,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-19",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 45200,
+      "replacement": true,
+      "firstAttackAtMs": 49600,
+      "endAtMs": 50800,
+      "cause": "combat-death",
+      "lifetimeMs": 5600
+    },
+    {
+      "atMs": 50900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-17",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 50900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-18",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9840277777777777,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 50900,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4",
+        "normal:0"
+      ],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 2400,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 51000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9680555555555556,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.5000000000000001
+    },
+    {
+      "atMs": 51100,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-17",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 38600,
+      "replacement": true,
+      "firstAttackAtMs": 38800,
+      "endAtMs": 51100,
+      "cause": "combat-death",
+      "lifetimeMs": 12500
+    },
+    {
+      "atMs": 51200,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4",
+        "normal:0",
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 2700,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 51500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-18",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 1,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 51500,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-18",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 41900,
+      "replacement": true,
+      "firstAttackAtMs": 42100,
+      "endAtMs": 51500,
+      "cause": "combat-death",
+      "lifetimeMs": 9600
+    },
+    {
+      "atMs": 51600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-16",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.963076923076923,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 51600,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 3100,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 51800,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-21",
+      "slot": 5,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 51800,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-21",
+      "hp": 12
+    },
+    {
+      "atMs": 51800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-21",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.9261538461538461,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.33333333333333337
+    },
+    {
+      "atMs": 51800,
+      "kind": "queue-change",
+      "queue": [
+        "normal:0",
+        "normal:1",
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 52100,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-16",
+      "slot": 2,
+      "role": "normal",
+      "spawnAtMs": 35300,
+      "replacement": true,
+      "firstAttackAtMs": 35400,
+      "endAtMs": 52100,
+      "cause": "combat-death",
+      "lifetimeMs": 16800
+    },
+    {
+      "atMs": 52200,
+      "kind": "queue-change",
+      "queue": [
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 400,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 52400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-21",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.8892307692307693,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 52900,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-21",
+      "slot": 5,
+      "role": "normal",
+      "spawnAtMs": 51800,
+      "replacement": true,
+      "firstAttackAtMs": 51800,
+      "endAtMs": 52900,
+      "cause": "combat-death",
+      "lifetimeMs": 1100
+    },
+    {
+      "atMs": 53000,
+      "kind": "queue-change",
+      "queue": [
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5"
+      ],
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 1200,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 55100,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-22",
+      "slot": 4,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 55100,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-22",
+      "hp": 12
+    },
+    {
+      "atMs": 55100,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-22",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.8523076923076923,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 55100,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 55700,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-22",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9520833333333333,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 55700,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-22",
+      "slot": 4,
+      "role": "normal",
+      "spawnAtMs": 55100,
+      "replacement": true,
+      "firstAttackAtMs": 55100,
+      "endAtMs": 55700,
+      "cause": "combat-death",
+      "lifetimeMs": 600
+    },
+    {
+      "atMs": 55800,
+      "kind": "queue-change",
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4"
+      ],
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 700,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 58400,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-23",
+      "slot": 0,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 58400,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-23",
+      "hp": 12
+    },
+    {
+      "atMs": 58400,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4"
+      ],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 58900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-23",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.8153846153846154,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 59500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-23",
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "targetType": "cinder-hound",
+      "targetHpFractionBefore": 0.9361111111111111,
+      "primaryHpDecrease": 23,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 59600,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-23",
+      "slot": 0,
+      "role": "normal",
+      "spawnAtMs": 58400,
+      "replacement": true,
+      "firstAttackAtMs": 58900,
+      "endAtMs": 59600,
+      "cause": "combat-death",
+      "lifetimeMs": 1200
+    },
+    {
+      "atMs": 59700,
+      "kind": "queue-change",
+      "queue": [
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4",
+        "normal:0"
+      ],
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1300,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 61700,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-24",
+      "slot": 1,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 61700,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-24",
+      "hp": 12
+    },
+    {
+      "atMs": 61700,
+      "kind": "queue-change",
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:4",
+        "normal:0"
+      ],
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 62000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-24",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.7784615384615384,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 62600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-24",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.7415384615384616,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 63200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-24",
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.7046153846153846,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 63800,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-24",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.6307692307692307,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 64400,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-24",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.5938461538461538,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 64500,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-24",
+      "slot": 1,
+      "role": "normal",
+      "spawnAtMs": 61700,
+      "replacement": true,
+      "firstAttackAtMs": 62000,
+      "endAtMs": 64500,
+      "cause": "combat-death",
+      "lifetimeMs": 2800
+    },
+    {
+      "atMs": 64600,
+      "kind": "queue-change",
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:4",
+        "normal:0",
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 2900,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 65000,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-25",
+      "slot": 3,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 65000,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-25",
+      "hp": 12
+    },
+    {
+      "atMs": 65000,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-25",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.556923076923077,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 65000,
+      "kind": "queue-change",
+      "queue": [
+        "normal:5",
+        "normal:4",
+        "normal:0",
+        "normal:1"
+      ],
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 65600,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-25",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.52,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 66200,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-25",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.48307692307692307,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 66400,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-25",
+      "slot": 3,
+      "role": "normal",
+      "spawnAtMs": 65000,
+      "replacement": true,
+      "firstAttackAtMs": 65000,
+      "endAtMs": 66400,
+      "cause": "combat-death",
+      "lifetimeMs": 1400
+    },
+    {
+      "atMs": 66500,
+      "kind": "queue-change",
+      "queue": [
+        "normal:5",
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 1500,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 68300,
+      "kind": "spawn",
+      "id": "minion_bench-bot-0-26",
+      "slot": 2,
+      "maxHp": 39,
+      "replacement": true
+    },
+    {
+      "atMs": 68300,
+      "kind": "replacement-paid",
+      "id": "minion_bench-bot-0-26",
+      "hp": 12
+    },
+    {
+      "atMs": 68300,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-26",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.4461538461538462,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 68300,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3"
+      ],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      }
+    },
+    {
+      "atMs": 68900,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-26",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.40923076923076923,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 69500,
+      "kind": "attack",
+      "id": "minion_bench-bot-0-26",
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "targetType": "ember-scuttler",
+      "targetHpFractionBefore": 0.3723076923076923,
+      "primaryHpDecrease": 24,
+      "outcome": "hit",
+      "authoredAvailability": 0.16666666666666669
+    },
+    {
+      "atMs": 69600,
+      "kind": "death-or-removal",
+      "id": "minion_bench-bot-0-26",
+      "slot": 2,
+      "role": "normal",
+      "spawnAtMs": 68300,
+      "replacement": true,
+      "firstAttackAtMs": 68300,
+      "endAtMs": 69600,
+      "cause": "combat-death",
+      "lifetimeMs": 1300
+    },
+    {
+      "atMs": 69700,
+      "kind": "queue-change",
+      "queue": [
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2"
+      ],
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 1400,
+        "durationMs": 3220
+      }
+    }
+  ],
+  "snapshots": [
+    {
+      "atMs": 0,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 1000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 2000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "liveBodyFraction": 1,
+      "liveAuthoredOffenseFraction": 1,
+      "liveAuthoredProcFraction": 1,
+      "active": null,
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-5",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 3000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "liveBodyFraction": 0.8333333333333334,
+      "liveAuthoredOffenseFraction": 0.8333333333333334,
+      "liveAuthoredProcFraction": 0.8333333333333334,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 700,
+        "durationMs": 3220
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-4",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        }
+      ]
+    },
+    {
+      "atMs": 4000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 1700,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        },
+        {
+          "id": "minion_bench-bot-0-3",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        },
+        {
+          "id": "minion_bench-bot-0-6",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        }
+      ]
+    },
+    {
+      "atMs": 5000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 2700,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3",
+        "normal:2",
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-1",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        }
+      ]
+    },
+    {
+      "atMs": 6000,
+      "initialized": true,
+      "hp": 352.7439999999999,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 400,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:0"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-2",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-7",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        }
+      ]
+    },
+    {
+      "atMs": 7000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 1400,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 8000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 2400,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 9000,
+      "initialized": true,
+      "hp": 348.436,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 100,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 10000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 1100,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 11000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 2100,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-8",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 12000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 3100,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:0",
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 13000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 800,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0",
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 14000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 50,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 1800,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0",
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 15000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 50,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 2800,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0",
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 16000,
+      "initialized": true,
+      "hp": 336.6159999999999,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 500,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 31,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 17000,
+      "initialized": true,
+      "hp": 350.97599999999966,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 1500,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 31,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 18000,
+      "initialized": true,
+      "hp": 308.33599999999944,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 2500,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 31,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 14,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 19000,
+      "initialized": true,
+      "hp": 310.69599999999923,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 200,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 31,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-10",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 14,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 20000,
+      "initialized": true,
+      "hp": 268.055999999999,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 1200,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 31,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 21000,
+      "initialized": true,
+      "hp": 282.4159999999988,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 2200,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 31,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 22000,
+      "initialized": true,
+      "hp": 235.77599999999876,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 3200,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 5,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 23000,
+      "initialized": true,
+      "hp": 238.13599999999883,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 900,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3",
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-9",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 5,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 24000,
+      "initialized": true,
+      "hp": 218.65199999999896,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1900,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3",
+        "normal:5",
+        "normal:2"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 25000,
+      "initialized": true,
+      "hp": 283.271999999999,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 2900,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3",
+        "normal:5",
+        "normal:2"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 26000,
+      "initialized": true,
+      "hp": 271.89199999999903,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 600,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:2"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-13",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 12,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 27000,
+      "initialized": true,
+      "hp": 336.5119999999989,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 1600,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:2"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-13",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 12,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 28000,
+      "initialized": true,
+      "hp": 306.97599999999875,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-17",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 2600,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:2"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 12,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-13",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 12,
+          "targetId": "node-t3-volcanic-03_monster-17"
+        }
+      ]
+    },
+    {
+      "atMs": 29000,
+      "initialized": true,
+      "hp": 309.33599999999853,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 300,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 12,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-13",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-14",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 12,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 30000,
+      "initialized": true,
+      "hp": 323.6959999999983,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 1300,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 12,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-13",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-14",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 12,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 31000,
+      "initialized": true,
+      "hp": 338.0559999999981,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 2300,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 12,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-13",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-14",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 12,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 32000,
+      "initialized": true,
+      "hp": 351.90399999999795,
+      "maxHp": 359,
+      "barrier": 24.400000000000002,
+      "targetId": null,
+      "liveBodyFraction": 0.8333333333333334,
+      "liveAuthoredOffenseFraction": 0.8333333333333334,
+      "liveAuthoredProcFraction": 0.8333333333333334,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 13.559999999999999,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-13",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-14",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 13.559999999999999,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 33000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 54.899999999999984,
+      "targetId": null,
+      "liveBodyFraction": 0.8333333333333334,
+      "liveAuthoredOffenseFraction": 0.8333333333333334,
+      "liveAuthoredProcFraction": 0.8333333333333334,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 1000,
+        "durationMs": 3220
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 21.360000000000003,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-13",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-14",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 21.360000000000003,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 34000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 85.39999999999996,
+      "targetId": null,
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 2000,
+        "durationMs": 3220
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 29.160000000000014,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-14",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 29.160000000000014,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 35000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 115.89999999999993,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 3000,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:1"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 31.500000000000018,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-14",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 30.720000000000017,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        }
+      ]
+    },
+    {
+      "atMs": 36000,
+      "initialized": true,
+      "hp": 357.05199999999985,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 700,
+        "durationMs": 3220
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 31.500000000000018,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 30.720000000000017,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        }
+      ]
+    },
+    {
+      "atMs": 37000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1700,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-11",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 31.500000000000018,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 30.720000000000017,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        }
+      ]
+    },
+    {
+      "atMs": 38000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 2700,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 30.720000000000017,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        }
+      ]
+    },
+    {
+      "atMs": 39000,
+      "initialized": true,
+      "hp": 352.7439999999999,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 400,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-12",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 30.720000000000017,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        }
+      ]
+    },
+    {
+      "atMs": 40000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 1400,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        }
+      ]
+    },
+    {
+      "atMs": 41000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 2400,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0",
+        "normal:4"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-15",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        }
+      ]
+    },
+    {
+      "atMs": 42000,
+      "initialized": true,
+      "hp": 348.436,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 100,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 43000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-19",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 1100,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-19"
+        }
+      ]
+    },
+    {
+      "atMs": 44000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 2100,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 45000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 3100,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 46000,
+      "initialized": true,
+      "hp": 358.48799999999983,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 800,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-19",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 47000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 1800,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-19",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 48000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 2800,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-19",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 49000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0.8333333333333334,
+      "liveAuthoredOffenseFraction": 0.8333333333333334,
+      "liveAuthoredProcFraction": 0.8333333333333334,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 500,
+        "durationMs": 3220
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-19",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        },
+        {
+          "id": "minion_bench-bot-0-20",
+          "slot": "normal:4",
+          "role": "normal",
+          "hp": 39,
+          "targetId": null
+        }
+      ]
+    },
+    {
+      "atMs": 50000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "liveBodyFraction": 0.6666666666666666,
+      "liveAuthoredOffenseFraction": 0.6666666666666667,
+      "liveAuthoredProcFraction": 0.6666666666666667,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 1500,
+        "durationMs": 3220
+      },
+      "queue": [],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-19",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-4"
+        },
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-4"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-4"
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-4"
+        }
+      ]
+    },
+    {
+      "atMs": 51000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-1",
+      "liveBodyFraction": 0.5,
+      "liveAuthoredOffenseFraction": 0.5000000000000001,
+      "liveAuthoredProcFraction": 0.5000000000000001,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 2500,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:0"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-17",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        },
+        {
+          "id": "minion_bench-bot-0-18",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-1"
+        }
+      ]
+    },
+    {
+      "atMs": 52000,
+      "initialized": true,
+      "hp": 349.87199999999996,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "liveBodyFraction": 0.3333333333333333,
+      "liveAuthoredOffenseFraction": 0.33333333333333337,
+      "liveAuthoredProcFraction": 0.33333333333333337,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 200,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-16",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        },
+        {
+          "id": "minion_bench-bot-0-21",
+          "slot": "normal:5",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        }
+      ]
+    },
+    {
+      "atMs": 53000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 1200,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 54000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 2200,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 55000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:4",
+        "elapsedMs": 3200,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 56000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 900,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 57000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 1900,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 58000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:0",
+        "elapsedMs": 2900,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:1",
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 59000,
+      "initialized": true,
+      "hp": 355.6159999999999,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 600,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-23",
+          "slot": "normal:0",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        }
+      ]
+    },
+    {
+      "atMs": 60000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 1600,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4",
+        "normal:0"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 61000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:1",
+        "elapsedMs": 2600,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:3",
+        "normal:2",
+        "normal:5",
+        "normal:4",
+        "normal:0"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 62000,
+      "initialized": true,
+      "hp": 351.30799999999994,
+      "maxHp": 359,
+      "barrier": 122,
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 300,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:4",
+        "normal:0"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-24",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        }
+      ]
+    },
+    {
+      "atMs": 63000,
+      "initialized": true,
+      "hp": 359,
+      "maxHp": 359,
+      "barrier": 94,
+      "targetId": "node-t3-volcanic-03_monster-3",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 1300,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:4",
+        "normal:0"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-24",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-3"
+        }
+      ]
+    },
+    {
+      "atMs": 64000,
+      "initialized": true,
+      "hp": 337.48799999999983,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:3",
+        "elapsedMs": 2300,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:2",
+        "normal:5",
+        "normal:4",
+        "normal:0"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-24",
+          "slot": "normal:1",
+          "role": "normal",
+          "hp": 26,
+          "targetId": "node-t3-volcanic-03_monster-4"
+        }
+      ]
+    },
+    {
+      "atMs": 65000,
+      "initialized": true,
+      "hp": 232.84799999999967,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 0,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:4",
+        "normal:0",
+        "normal:1"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-25",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 39,
+          "targetId": "node-t3-volcanic-03_monster-4"
+        }
+      ]
+    },
+    {
+      "atMs": 66000,
+      "initialized": true,
+      "hp": 183.28599999999977,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 1000,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:4",
+        "normal:0",
+        "normal:1"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-25",
+          "slot": "normal:3",
+          "role": "normal",
+          "hp": 6,
+          "targetId": "node-t3-volcanic-03_monster-4"
+        }
+      ]
+    },
+    {
+      "atMs": 67000,
+      "initialized": true,
+      "hp": 199.90599999999995,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 2000,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 68000,
+      "initialized": true,
+      "hp": 246.52600000000012,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:2",
+        "elapsedMs": 3000,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:5",
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 69000,
+      "initialized": true,
+      "hp": 274.1460000000002,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": "node-t3-volcanic-03_monster-4",
+      "liveBodyFraction": 0.16666666666666666,
+      "liveAuthoredOffenseFraction": 0.16666666666666669,
+      "liveAuthoredProcFraction": 0.16666666666666669,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 700,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3"
+      ],
+      "minions": [
+        {
+          "id": "minion_bench-bot-0-26",
+          "slot": "normal:2",
+          "role": "normal",
+          "hp": 28,
+          "targetId": "node-t3-volcanic-03_monster-4"
+        }
+      ]
+    },
+    {
+      "atMs": 70000,
+      "initialized": true,
+      "hp": 224.68800000000016,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 1700,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 71000,
+      "initialized": true,
+      "hp": 99.04800000000023,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 2700,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2"
+      ],
+      "minions": []
+    },
+    {
+      "atMs": 72000,
+      "initialized": true,
+      "hp": 57.40800000000028,
+      "maxHp": 359,
+      "barrier": 0,
+      "targetId": null,
+      "liveBodyFraction": 0,
+      "liveAuthoredOffenseFraction": 0,
+      "liveAuthoredProcFraction": 0,
+      "active": {
+        "slotId": "normal:5",
+        "elapsedMs": 3220,
+        "durationMs": 3220
+      },
+      "queue": [
+        "normal:4",
+        "normal:0",
+        "normal:1",
+        "normal:3",
+        "normal:2"
+      ],
+      "minions": []
+    }
+  ]
+}

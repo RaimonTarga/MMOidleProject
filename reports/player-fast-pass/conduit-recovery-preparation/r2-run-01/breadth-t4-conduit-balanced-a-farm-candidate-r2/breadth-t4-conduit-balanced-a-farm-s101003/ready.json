@@ -1,0 +1,1231 @@
+{
+  "cell": "breadth-t4-conduit-balanced-a-farm",
+  "seed": 101003,
+  "synthetic": true,
+  "view": {
+    "id": "bench-bot-0",
+    "name": "breadth-t4-conduit-balanced-a-farm",
+    "pos": {
+      "x": 2400,
+      "y": 2400
+    },
+    "target": {
+      "x": 2400,
+      "y": 2400
+    },
+    "hp": 551,
+    "maxHp": 551,
+    "attack": 107,
+    "onHitDamage": 70,
+    "plating": 52,
+    "damageReduction": 0,
+    "dodgeRate": 0,
+    "evadeMitigation": 0,
+    "evadeCharge": 0,
+    "barrier": 231,
+    "barrierMax": 231,
+    "barrierRecharging": false,
+    "wards": [],
+    "incomingDot": 0,
+    "pendingHeal": 0,
+    "attackCadenceMult": 1,
+    "finalDamageDealtMult": 1.15,
+    "finalDamageTakenMult": 1.1,
+    "onHitDamageBonus": 0,
+    "attackRange": 162,
+    "attackCooldown": 501,
+    "lastAttackAt": 0,
+    "attackTargetId": null,
+    "auto": true,
+    "autoTraverse": false,
+    "autoIntent": null,
+    "emote": null,
+    "partyLeaderId": null,
+    "partyMembers": [],
+    "nodeId": "node-t4-graveyard-03",
+    "essences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "level": 0,
+    "skillPoints": 0,
+    "unlockedSkills": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid",
+      "summoner-balanced-t3-a"
+    ],
+    "passives": {
+      "guard.potency-pct": 0.64,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.42,
+      "mobility.approach-speed-pct": 1.5,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    },
+    "cadenceSpeedStacks": 0,
+    "selectedClass": "summoner-root",
+    "selectedSubVariant": "balanced",
+    "selectedRange": "summoner-range-mid",
+    "currentSkillTier": 4,
+    "recovery": 25,
+    "speed": 261,
+    "attackStyle": "slash",
+    "inventory": [],
+    "equipment": {
+      "weapon": "jungle-deathfang-rapier",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "mountain-boots-t4",
+      "core": "core-survivalist",
+      "relic": "relic-equilibrium-shard"
+    },
+    "itemUpgrades": {
+      "jungle-deathfang-rapier": 5,
+      "mountain-vest-t4": 5,
+      "mountain-charm-t4": 5,
+      "mountain-boots-t4": 5,
+      "core-survivalist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "biomeXP": {},
+    "biomeLevel": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 24,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 18,
+      "jungle": 18,
+      "tundra": 12,
+      "volcanic": 12,
+      "graveyard": 6,
+      "trench": 6
+    },
+    "globalMastery": 156,
+    "unlockedRecipes": [],
+    "combatArchetype": "summoner",
+    "cadenceCount": 0,
+    "cadenceThreshold": 0,
+    "cadenceEmpoweredArmed": false,
+    "ammoCount": 0,
+    "ammoMax": 0,
+    "reloadRemainingMs": 0,
+    "reloadDurationMs": 0,
+    "heatPct": 0,
+    "laserOverheated": false,
+    "executionReady": false,
+    "executionCooldownPct": 0,
+    "energyCount": 0,
+    "energyMax": 100,
+    "flashShiftPct": 0,
+    "flashDamageShiftPct": 0,
+    "flashSpeedBonusPct": 0,
+    "flashEvasionBonusPct": 0,
+    "empoweredReady": false,
+    "targetDotStacks": 0,
+    "targetDotTickPct": 0,
+    "targetChillStacks": 0,
+    "isChanneling": false,
+    "channelingPct": 0,
+    "cannonChargePct": 0,
+    "aura": null,
+    "activeBuffs": [],
+    "questProgress": {},
+    "playerTier": 4,
+    "bossesCleared": [],
+    "clearedNodes": [],
+    "visitedNodes": [],
+    "runesOwned": [
+      "always",
+      "in-combat",
+      "when-idle",
+      "hp-below-25",
+      "hp-above-90",
+      "target-hp-below-25",
+      "has-debuff",
+      "in-party",
+      "n-aggro-3",
+      "inside-telegraph",
+      "target-casting",
+      "stance-charged",
+      "before-empowered",
+      "target-elite",
+      "target-max-stacks",
+      "while-traveling",
+      "auto-path-enemy",
+      "chase-enemy",
+      "wait-for-regen",
+      "flee",
+      "fight-back",
+      "lead-the-way",
+      "follow-and-assist",
+      "taunt-current-target",
+      "focus-closest",
+      "use-ability",
+      "switch-stance",
+      "avoid-enemies",
+      "avoid-hazards",
+      "step-back",
+      "orbit"
+    ],
+    "runeRecipesCrafted": [],
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "knownAbilities": [
+      "disengage",
+      "imbue-lightning",
+      "snipe",
+      "stunning-strike",
+      "binding-strike",
+      "detonate",
+      "frenzy",
+      "quick-strike",
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "recuperate",
+      "break-free",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "attunedAbilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "knownStances": [
+      "berserker-stance",
+      "brawler-stance",
+      "defensive-stance",
+      "enraged-stance",
+      "execute-stance",
+      "fleeting-stance",
+      "offensive-stance",
+      "perfection-stance",
+      "powering-up-stance",
+      "predator-stance",
+      "reaper-stance",
+      "recuperating-stance",
+      "tanking-stance",
+      "time-to-strike-stance",
+      "warding-stance"
+    ],
+    "attunedStances": [
+      "offensive-stance"
+    ],
+    "equippedStances": {
+      "default": "offensive-stance"
+    },
+    "activeStance": "offensive-stance",
+    "manualStanceOverride": null,
+    "queuedAbilityIds": [],
+    "knownRites": [
+      "ability-reprieve",
+      "blood-offering",
+      "lingering-battle",
+      "mechanic-renewal",
+      "purification",
+      "swift-repose"
+    ],
+    "equippedRites": [],
+    "riteSlots": 6,
+    "hitboxRects": [
+      {
+        "offsetX": 3.5,
+        "offsetY": 2.5,
+        "halfW": 8.5,
+        "halfH": 17.5
+      },
+      {
+        "offsetX": -16.5,
+        "offsetY": -23,
+        "halfW": 5.5,
+        "halfH": 5
+      },
+      {
+        "offsetX": -9.5,
+        "offsetY": -1.5,
+        "halfW": 4.5,
+        "halfH": 5.5
+      },
+      {
+        "offsetX": 4,
+        "offsetY": -19,
+        "halfW": 5,
+        "halfH": 4
+      },
+      {
+        "offsetX": 15,
+        "offsetY": 0.5,
+        "halfW": 3,
+        "halfH": 6.5
+      },
+      {
+        "offsetX": -14.5,
+        "offsetY": 9,
+        "halfW": 3.5,
+        "halfH": 5
+      }
+    ],
+    "summonsMinions": 4,
+    "summonActiveCount": 0,
+    "summonRespawnMaxMs": 4545,
+    "summonSlots": [
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:0",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:1",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:2",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      },
+      {
+        "active": false,
+        "respawnPct": 0,
+        "respawnRemainingMs": 0,
+        "slotId": "normal:3",
+        "role": "normal",
+        "queuePosition": -1,
+        "marked": false,
+        "ritualCharges": 0
+      }
+    ],
+    "isDead": false,
+    "graveFrame": null
+  },
+  "playerTreatment": "untreated",
+  "controlCaseId": null,
+  "conduitProfile": {
+    "treatment": "untreated",
+    "profile": {
+      "reconstructionFactors": {
+        "baseMs": 3500,
+        "frame": 0.7142857142857143,
+        "specialization": 1,
+        "passive": 1,
+        "range": 1,
+        "preRelicMs": 2500,
+        "postRelicMs": 2273,
+        "floorMs": 1500,
+        "floorBinds": false
+      },
+      "frame": "balanced",
+      "range": "mid",
+      "specialization": "coordinated-hunt",
+      "slots": [
+        {
+          "slotId": "normal:0",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:1",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:2",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:3",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:4",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:5",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        }
+      ],
+      "relicPotencyMult": 1,
+      "formationOffenseMult": 1,
+      "secondaryEffectMult": 1,
+      "totalSummonHpPct": 1,
+      "summonMoveSpeedMult": 1,
+      "summonAttackCooldownMult": 1,
+      "attackMode": "reach",
+      "formationPolicy": "escort",
+      "attackRange": 96,
+      "preferredDistance": 72,
+      "conduitDefenseShare": 0.5,
+      "redirectionPct": 0.3,
+      "leashRadius": 320,
+      "reconstructionIntervalMs": 2273,
+      "reconstructionHpCostRatio": 0.3,
+      "reconstructionSafetyFloorPct": 0.2,
+      "reconstructionCombatRegenPct": 0.2,
+      "battleBondConduitOffenseWeight": 0
+    },
+    "relicRatings": {
+      "frequency": 0.1,
+      "potency": 0.1,
+      "buffEffect": 0,
+      "debuffEffect": 0
+    },
+    "tickQuantizedIntervalMs": 2300,
+    "ownerSafetyThresholdHp": 110.2,
+    "slots": [
+      {
+        "slotId": "normal:0",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 110,
+        "costHp": 33
+      },
+      {
+        "slotId": "normal:1",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 110,
+        "costHp": 33
+      },
+      {
+        "slotId": "normal:2",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 110,
+        "costHp": 33
+      },
+      {
+        "slotId": "normal:3",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 110,
+        "costHp": 33
+      },
+      {
+        "slotId": "normal:4",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 110,
+        "costHp": 33
+      },
+      {
+        "slotId": "normal:5",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 110,
+        "costHp": 33
+      }
+    ]
+  },
+  "packageReadback": {
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "upgradeLevel": 5,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "skillPath": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid",
+      "summoner-balanced-t3-a"
+    ],
+    "equipment": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "jungle-deathfang-rapier": 5,
+        "mountain-vest-t4": 5,
+        "mountain-charm-t4": 5,
+        "mountain-boots-t4": 5,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "mastery": {
+      "biomeLevel": {
+        "cave": 18,
+        "forest": 12,
+        "mountain": 24,
+        "plains": 12,
+        "swamp": 18,
+        "desert": 18,
+        "jungle": 18,
+        "tundra": 12,
+        "volcanic": 12,
+        "graveyard": 6,
+        "trench": 6
+      },
+      "globalMastery": 156
+    },
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+    "skillPoints": 0,
+    "knownAbilities": [
+      "disengage",
+      "imbue-lightning",
+      "snipe",
+      "stunning-strike",
+      "binding-strike",
+      "detonate",
+      "frenzy",
+      "quick-strike",
+      "charge",
+      "contagion",
+      "hamstring",
+      "slam",
+      "expose-weakness",
+      "power-strike",
+      "sweep",
+      "recuperate",
+      "break-free",
+      "bramble-guard",
+      "endure",
+      "brace",
+      "cleanse",
+      "second-wind"
+    ],
+    "rites": []
+  },
+  "definitionsIdentity": {
+    "base": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+    "live": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+    "treated": false
+  },
+  "initialRoster": [
+    {
+      "id": "node-t4-graveyard-03_monster-34",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 3316,
+        "y": 678
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-33",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 3669,
+        "y": 4343
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-32",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 2501,
+        "y": 2459
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-31",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 1457,
+        "y": 2607
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-30",
+      "type": "plague-hound",
+      "hp": 1901,
+      "maxHp": 1901,
+      "pos": {
+        "x": 2479,
+        "y": 3743
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-29",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 640,
+        "y": 185
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-28",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 1745,
+        "y": 3706
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-27",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 1641,
+        "y": 3810
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-26",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 1745,
+        "y": 3914
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-25",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 1849,
+        "y": 3810
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-24",
+      "type": "gravewright",
+      "hp": 5702,
+      "maxHp": 5702,
+      "pos": {
+        "x": 1745,
+        "y": 3810
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-23",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 4190,
+        "y": 1424
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-22",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 3933,
+        "y": 2727
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-21",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 3829,
+        "y": 2831
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-20",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 3933,
+        "y": 2935
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-19",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 4037,
+        "y": 2831
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-18",
+      "type": "gravewright",
+      "hp": 5702,
+      "maxHp": 5702,
+      "pos": {
+        "x": 3933,
+        "y": 2831
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-17",
+      "type": "plague-hound",
+      "hp": 1901,
+      "maxHp": 1901,
+      "pos": {
+        "x": 4607,
+        "y": 92
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-16",
+      "type": "plague-hound",
+      "hp": 1901,
+      "maxHp": 1901,
+      "pos": {
+        "x": 1670,
+        "y": 3480
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-15",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 725,
+        "y": 3856
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-14",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 4242,
+        "y": 2312
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-13",
+      "type": "carrion-vulture",
+      "hp": 1616,
+      "maxHp": 1616,
+      "pos": {
+        "x": 4653,
+        "y": 4732
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-12",
+      "type": "plague-hound",
+      "hp": 1901,
+      "maxHp": 1901,
+      "pos": {
+        "x": 2422,
+        "y": 1733
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-11",
+      "type": "plague-hound",
+      "hp": 1901,
+      "maxHp": 1901,
+      "pos": {
+        "x": 3599,
+        "y": 1344
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-10",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 2265,
+        "y": 3080
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-9",
+      "type": "plague-rat",
+      "hp": 950,
+      "maxHp": 950,
+      "pos": {
+        "x": 619,
+        "y": 1589
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-8",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 245,
+        "y": 3370
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-7",
+      "type": "plague-hound",
+      "hp": 1901,
+      "maxHp": 1901,
+      "pos": {
+        "x": 2920,
+        "y": 4369
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-6",
+      "type": "plague-hound",
+      "hp": 1901,
+      "maxHp": 1901,
+      "pos": {
+        "x": 241.99999999999997,
+        "y": 702.2538660821072
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-5",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 242.00000000000003,
+        "y": 847.7461339178928
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-4",
+      "type": "bone-crawler",
+      "hp": 1235,
+      "maxHp": 1235,
+      "pos": {
+        "x": 368,
+        "y": 775
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-3",
+      "type": "gravewright",
+      "hp": 5702,
+      "maxHp": 5702,
+      "pos": {
+        "x": 284,
+        "y": 775
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-2",
+      "type": "carrion-vulture",
+      "hp": 1616,
+      "maxHp": 1616,
+      "pos": {
+        "x": 1396,
+        "y": 804
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-1",
+      "type": "plague-hound",
+      "hp": 1901,
+      "maxHp": 1901,
+      "pos": {
+        "x": 3011,
+        "y": 1975
+      }
+    }
+  ],
+  "initialRosterHash": "43d2e27f8895fe766f370b3103a507c78c3199be32396633d6a2a658d34ad41c",
+  "geometryRosterHash": "a3498b5cffe632da150496eac2462028b65503382647ad756682d3ac64a597ec",
+  "hpTreatment": [],
+  "initialStats": [
+    {
+      "id": "node-t4-graveyard-03_monster-34",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-33",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-32",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-31",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-30",
+      "type": "plague-hound",
+      "attack": 105,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-29",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-28",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-27",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-26",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-25",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-24",
+      "type": "gravewright",
+      "attack": 90,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-23",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-22",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-21",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-20",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-19",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-18",
+      "type": "gravewright",
+      "attack": 90,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-17",
+      "type": "plague-hound",
+      "attack": 105,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-16",
+      "type": "plague-hound",
+      "attack": 105,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-15",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-14",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-13",
+      "type": "carrion-vulture",
+      "attack": 95,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-12",
+      "type": "plague-hound",
+      "attack": 105,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-11",
+      "type": "plague-hound",
+      "attack": 105,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-10",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-9",
+      "type": "plague-rat",
+      "attack": 65,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-8",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-7",
+      "type": "plague-hound",
+      "attack": 105,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-6",
+      "type": "plague-hound",
+      "attack": 105,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-5",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-4",
+      "type": "bone-crawler",
+      "attack": 85,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-3",
+      "type": "gravewright",
+      "attack": 90,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-2",
+      "type": "carrion-vulture",
+      "attack": 95,
+      "plating": 0,
+      "dr": 0
+    },
+    {
+      "id": "node-t4-graveyard-03_monster-1",
+      "type": "plague-hound",
+      "attack": 105,
+      "plating": 0,
+      "dr": 0
+    }
+  ]
+}

@@ -1,0 +1,515 @@
+{
+  "arm": "adopted-r1",
+  "revision": "59c895b3979dbe5867e21c9b81bdffdfb17d7c9c",
+  "caseId": "breadth-t4-conduit-light-b-farm",
+  "cell": {
+    "id": "breadth-t4-conduit-light-b-farm",
+    "className": "conduit",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-graveyard-03",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 5,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "build": {
+      "id": "breadth-t4-conduit-light-b-farm",
+      "classRoot": "summoner-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "summoner-root",
+        "summoner-light",
+        "summoner-range-mid",
+        "summoner-light-t3-b"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-conduit-light-b",
+    "frame": "light",
+    "range": "mid",
+    "pathName": "Kilnmaster",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fire the formation in one larger batch: eight smaller summons. They still divide one direct-offense budget, while the whole formation carries 30% stronger on-hit and secondary weapon effects. Coverage rises, as does vulnerability to plating and area damage.",
+      "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+      "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+      "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+      "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+      "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+      "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+      "Offensive stance is always active; no stance switching.",
+      "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+      "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+    ]
+  },
+  "worldTicks": 0,
+  "baseline": {
+    "treatment": "untreated",
+    "profile": {
+      "reconstructionFactors": {
+        "baseMs": 3500,
+        "frame": 0.7142857142857143,
+        "specialization": 0.8,
+        "passive": 1,
+        "range": 1,
+        "preRelicMs": 2000,
+        "postRelicMs": 1818,
+        "floorMs": 2000,
+        "floorBinds": true
+      },
+      "frame": "light",
+      "range": "mid",
+      "specialization": "endless-swarm",
+      "slots": [
+        {
+          "slotId": "normal:0",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:1",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:2",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:3",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:4",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:5",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:6",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:7",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:8",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        }
+      ],
+      "relicPotencyMult": 1,
+      "formationOffenseMult": 1.05,
+      "secondaryEffectMult": 1.3,
+      "totalSummonHpPct": 0.66,
+      "summonMoveSpeedMult": 1.18,
+      "summonAttackCooldownMult": 1,
+      "attackMode": "reach",
+      "formationPolicy": "escort",
+      "attackRange": 96,
+      "preferredDistance": 72,
+      "conduitDefenseShare": 0.5,
+      "redirectionPct": 0.3,
+      "leashRadius": 320,
+      "reconstructionIntervalMs": 2000,
+      "reconstructionHpCostRatio": 0.3,
+      "reconstructionSafetyFloorPct": 0.2,
+      "reconstructionCombatRegenPct": 0.2,
+      "battleBondConduitOffenseWeight": 0
+    },
+    "relicRatings": {
+      "frequency": 0.1,
+      "potency": 0.1,
+      "buffEffect": 0,
+      "debuffEffect": 0
+    },
+    "tickQuantizedIntervalMs": 2000,
+    "ownerSafetyThresholdHp": 92.80000000000001,
+    "slots": [
+      {
+        "slotId": "normal:0",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:1",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:2",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:3",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:4",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:5",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:6",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:7",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:8",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      }
+    ]
+  },
+  "applied": {
+    "treatment": "untreated",
+    "profile": {
+      "reconstructionFactors": {
+        "baseMs": 3500,
+        "frame": 0.7142857142857143,
+        "specialization": 0.8,
+        "passive": 1,
+        "range": 1,
+        "preRelicMs": 2000,
+        "postRelicMs": 1818,
+        "floorMs": 2000,
+        "floorBinds": true
+      },
+      "frame": "light",
+      "range": "mid",
+      "specialization": "endless-swarm",
+      "slots": [
+        {
+          "slotId": "normal:0",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:1",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:2",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:3",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:4",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:5",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:6",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:7",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        },
+        {
+          "slotId": "normal:8",
+          "role": "normal",
+          "offenseWeight": 0.125,
+          "defenseWeight": 0.125,
+          "procWeight": 0.125,
+          "sizeMult": 0.6479999999999999
+        }
+      ],
+      "relicPotencyMult": 1,
+      "formationOffenseMult": 1.05,
+      "secondaryEffectMult": 1.3,
+      "totalSummonHpPct": 0.66,
+      "summonMoveSpeedMult": 1.18,
+      "summonAttackCooldownMult": 1,
+      "attackMode": "reach",
+      "formationPolicy": "escort",
+      "attackRange": 96,
+      "preferredDistance": 72,
+      "conduitDefenseShare": 0.5,
+      "redirectionPct": 0.3,
+      "leashRadius": 320,
+      "reconstructionIntervalMs": 2000,
+      "reconstructionHpCostRatio": 0.3,
+      "reconstructionSafetyFloorPct": 0.2,
+      "reconstructionCombatRegenPct": 0.2,
+      "battleBondConduitOffenseWeight": 0
+    },
+    "relicRatings": {
+      "frequency": 0.1,
+      "potency": 0.1,
+      "buffEffect": 0,
+      "debuffEffect": 0
+    },
+    "tickQuantizedIntervalMs": 2000,
+    "ownerSafetyThresholdHp": 92.80000000000001,
+    "slots": [
+      {
+        "slotId": "normal:0",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:1",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:2",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:3",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:4",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:5",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:6",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:7",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      },
+      {
+        "slotId": "normal:8",
+        "role": "normal",
+        "offenseWeight": 0.125,
+        "defenseWeight": 0.125,
+        "procWeight": 0.125,
+        "sizeMult": 0.6479999999999999,
+        "maxHp": 38,
+        "costHp": 11
+      }
+    ]
+  },
+  "transportLabel": "untreated means no historical opt-in; arm is identified here, not by the legacy transport label"
+}

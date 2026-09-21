@@ -1,0 +1,236 @@
+{
+  "cell": "breadth-t3-conduit-heavy-farm",
+  "seed": 101003,
+  "outcome": "player-died",
+  "elapsedMs": 66200,
+  "windowMs": 300000,
+  "terminalOwner": {
+    "hp": 0,
+    "maxHp": 394,
+    "barrier": 0
+  },
+  "playerDeathEvidence": [
+    {
+      "atMs": 66200,
+      "event": {
+        "kind": "player-death",
+        "nodeId": "node-t3-volcanic-03",
+        "player": {
+          "id": "bench-bot-0",
+          "name": "breadth-t3-conduit-heavy-farm",
+          "actorType": "player"
+        },
+        "cause": {
+          "kind": "melee",
+          "killer": {
+            "monsterEntityId": "node-t3-volcanic-03_monster-36",
+            "monsterTypeId": "ember-scuttler",
+            "monsterName": "Ember Scuttler",
+            "isBoss": false,
+            "nodeId": "node-t3-volcanic-03"
+          },
+          "damage": 15
+        },
+        "id": 428,
+        "tick": 663,
+        "serverTime": 1800000066200
+      }
+    }
+  ],
+  "minHpFraction": 0,
+  "attackBeats": 0,
+  "minionAttackBeats": 60,
+  "wallElapsedMs": 2322,
+  "maxTickWallMs": 88,
+  "totalAttackBeats": 60,
+  "initialRosterHash": "a747e276f40b20e3d57ca51b3688d58542d5858ecf8320bb95a0c671df119187",
+  "targets": [
+    {
+      "id": "node-t3-volcanic-03_monster-36",
+      "type": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "maxHp": 650,
+      "firstDamageMs": 56700,
+      "lastDamageMs": 65900,
+      "killedAtMs": null,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 3800,
+      "damageEvents": 10,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": null,
+      "clean": false
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-35",
+      "type": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "maxHp": 650,
+      "firstDamageMs": 53400,
+      "lastDamageMs": 60800,
+      "killedAtMs": 60800,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 2500,
+      "damageEvents": 11,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 7400,
+      "clean": true
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-34",
+      "type": "cinder-hound",
+      "name": "Cinder Hound",
+      "maxHp": 1440,
+      "firstDamageMs": 53400,
+      "lastDamageMs": 66000,
+      "killedAtMs": null,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 4000,
+      "damageEvents": 11,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": null,
+      "clean": false
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-22",
+      "type": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "maxHp": 650,
+      "firstDamageMs": 25700,
+      "lastDamageMs": 33700,
+      "killedAtMs": 33700,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 2600,
+      "damageEvents": 11,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 8000,
+      "clean": true
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-10",
+      "type": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "maxHp": 650,
+      "firstDamageMs": 41800,
+      "lastDamageMs": 47700,
+      "killedAtMs": 47700,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 3300,
+      "damageEvents": 11,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 5900,
+      "clean": true
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-4",
+      "type": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "maxHp": 650,
+      "firstDamageMs": 9700,
+      "lastDamageMs": 11700,
+      "killedAtMs": null,
+      "hpRegainObserved": true,
+      "maxDamageGapMs": 1700,
+      "damageEvents": 4,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": null,
+      "clean": false
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-3",
+      "type": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "maxHp": 650,
+      "firstDamageMs": 9700,
+      "lastDamageMs": 17600,
+      "killedAtMs": null,
+      "hpRegainObserved": true,
+      "maxDamageGapMs": 5300,
+      "damageEvents": 8,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": null,
+      "clean": false
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-2",
+      "type": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "maxHp": 650,
+      "firstDamageMs": 9700,
+      "lastDamageMs": 11700,
+      "killedAtMs": null,
+      "hpRegainObserved": true,
+      "maxDamageGapMs": 1700,
+      "damageEvents": 4,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": null,
+      "clean": false
+    },
+    {
+      "id": "node-t3-volcanic-03_monster-1",
+      "type": "cinder-hound",
+      "name": "Cinder Hound",
+      "maxHp": 1440,
+      "firstDamageMs": 2500,
+      "lastDamageMs": 18200,
+      "killedAtMs": null,
+      "hpRegainObserved": true,
+      "maxDamageGapMs": 6500,
+      "damageEvents": 14,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": null,
+      "clean": false
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 1900,
+      "endMs": 66200,
+      "durationMs": 64300,
+      "members": [
+        "node-t3-volcanic-03_monster-4",
+        "node-t3-volcanic-03_monster-3",
+        "node-t3-volcanic-03_monster-2",
+        "node-t3-volcanic-03_monster-1",
+        "node-t3-volcanic-03_monster-22",
+        "node-t3-volcanic-03_monster-10",
+        "node-t3-volcanic-03_monster-37",
+        "node-t3-volcanic-03_monster-36",
+        "node-t3-volcanic-03_monster-35",
+        "node-t3-volcanic-03_monster-34"
+      ],
+      "initialMembers": [
+        "node-t3-volcanic-03_monster-4",
+        "node-t3-volcanic-03_monster-3",
+        "node-t3-volcanic-03_monster-2",
+        "node-t3-volcanic-03_monster-1"
+      ],
+      "lateJoiners": 6,
+      "outcome": "player-died"
+    }
+  ],
+  "recovery": [],
+  "incomingDamage": 958,
+  "largestHit": 59,
+  "maxDamageIn1s": 145,
+  "counts": {
+    "damaged": 9,
+    "killed": 3,
+    "censored": 6,
+    "hpRegain": 4
+  },
+  "cleanTtkMs": {
+    "n": 3,
+    "p10": 6200,
+    "median": 7400,
+    "p90": 7880
+  }
+}

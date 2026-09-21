@@ -1,0 +1,428 @@
+[
+  {
+    "cell": "breadth-t4-conduit-heavy-a-farm",
+    "seed": 101003,
+    "outcome": "player-died",
+    "elapsedMs": 71700,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 0,
+      "maxHp": 585,
+      "barrier": 0
+    },
+    "playerDeathEvidence": [
+      {
+        "atMs": 71700,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t4-graveyard-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "breadth-t4-conduit-heavy-a-farm",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "ranged",
+            "killer": {
+              "monsterEntityId": "node-t4-graveyard-03_monster-41",
+              "monsterTypeId": "gravewright",
+              "monsterName": "Gravewright",
+              "isBoss": false,
+              "nodeId": "node-t4-graveyard-03"
+            },
+            "damage": 28
+          },
+          "id": 447,
+          "tick": 718,
+          "serverTime": 1800000071700
+        }
+      }
+    ],
+    "minHpFraction": 0,
+    "attackBeats": 0,
+    "minionAttackBeats": 98,
+    "wallElapsedMs": 2248,
+    "maxTickWallMs": 87,
+    "totalAttackBeats": 98,
+    "initialRosterHash": "43d2e27f8895fe766f370b3103a507c78c3199be32396633d6a2a658d34ad41c",
+    "targets": [
+      {
+        "id": "node-t4-graveyard-03_monster-32",
+        "type": "plague-rat",
+        "name": "Bone Rat",
+        "maxHp": 950,
+        "firstDamageMs": 0,
+        "lastDamageMs": 1800,
+        "killedAtMs": 1800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 500,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-31",
+        "type": "plague-rat",
+        "name": "Bone Rat",
+        "maxHp": 950,
+        "firstDamageMs": 16300,
+        "lastDamageMs": 17700,
+        "killedAtMs": 17700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 400,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1400,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-30",
+        "type": "plague-hound",
+        "name": "Plague Hound",
+        "maxHp": 1901,
+        "firstDamageMs": 38300,
+        "lastDamageMs": 43800,
+        "killedAtMs": 43800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 13,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 5500,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-16",
+        "type": "plague-hound",
+        "name": "Plague Hound",
+        "maxHp": 1901,
+        "firstDamageMs": 20800,
+        "lastDamageMs": 27400,
+        "killedAtMs": 27400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3400,
+        "damageEvents": 14,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 6600,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-12",
+        "type": "plague-hound",
+        "name": "Plague Hound",
+        "maxHp": 1901,
+        "firstDamageMs": 4000,
+        "lastDamageMs": 9100,
+        "killedAtMs": 9100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1600,
+        "damageEvents": 12,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 5100,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-10",
+        "type": "plague-rat",
+        "name": "Bone Rat",
+        "maxHp": 950,
+        "firstDamageMs": 10200,
+        "lastDamageMs": 12000,
+        "killedAtMs": 12000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1800,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-1",
+        "type": "plague-hound",
+        "name": "Plague Hound",
+        "maxHp": 1901,
+        "firstDamageMs": 30600,
+        "lastDamageMs": 35700,
+        "killedAtMs": 35700,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 12,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 5100,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-44",
+        "type": "plague-hound",
+        "name": "Plague Hound",
+        "maxHp": 1901,
+        "firstDamageMs": 49900,
+        "lastDamageMs": 70600,
+        "killedAtMs": 70600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 7400,
+        "damageEvents": 14,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 20700,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-43",
+        "type": "bone-crawler",
+        "name": "Bone Crawler",
+        "maxHp": 1235,
+        "firstDamageMs": 49600,
+        "lastDamageMs": 52100,
+        "killedAtMs": 52100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 800,
+        "damageEvents": 8,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2500,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-42",
+        "type": "bone-crawler",
+        "name": "Bone Crawler",
+        "maxHp": 1235,
+        "firstDamageMs": 57300,
+        "lastDamageMs": 71300,
+        "killedAtMs": 71300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 6200,
+        "damageEvents": 12,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 14000,
+        "clean": true
+      },
+      {
+        "id": "node-t4-graveyard-03_monster-41",
+        "type": "gravewright",
+        "name": "Gravewright",
+        "maxHp": 5702,
+        "firstDamageMs": 71300,
+        "lastDamageMs": 71300,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 0,
+        "damageEvents": 1,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": null,
+        "clean": false
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 0,
+        "endMs": 1800,
+        "durationMs": 1800,
+        "members": [
+          "node-t4-graveyard-03_monster-32"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-32"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 3400,
+        "endMs": 12000,
+        "durationMs": 8600,
+        "members": [
+          "node-t4-graveyard-03_monster-12",
+          "node-t4-graveyard-03_monster-10"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-12"
+        ],
+        "lateJoiners": 1,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 15600,
+        "endMs": 17700,
+        "durationMs": 2100,
+        "members": [
+          "node-t4-graveyard-03_monster-31"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-31"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 20400,
+        "endMs": 27400,
+        "durationMs": 7000,
+        "members": [
+          "node-t4-graveyard-03_monster-16"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-16"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 29600,
+        "endMs": 35700,
+        "durationMs": 6100,
+        "members": [
+          "node-t4-graveyard-03_monster-1"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-1"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 36100,
+        "endMs": 36100,
+        "durationMs": 0,
+        "members": [
+          "node-t4-graveyard-03_monster-1"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-1"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 37200,
+        "endMs": 37200,
+        "durationMs": 0,
+        "members": [
+          "node-t4-graveyard-03_monster-1"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-1"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 37400,
+        "endMs": 43800,
+        "durationMs": 6400,
+        "members": [
+          "node-t4-graveyard-03_monster-30"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-30"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 44100,
+        "endMs": 44100,
+        "durationMs": 0,
+        "members": [
+          "node-t4-graveyard-03_monster-30"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-30"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 49000,
+        "endMs": 71700,
+        "durationMs": 22700,
+        "members": [
+          "node-t4-graveyard-03_monster-44",
+          "node-t4-graveyard-03_monster-43",
+          "node-t4-graveyard-03_monster-42",
+          "node-t4-graveyard-03_monster-41"
+        ],
+        "initialMembers": [
+          "node-t4-graveyard-03_monster-44",
+          "node-t4-graveyard-03_monster-43",
+          "node-t4-graveyard-03_monster-42",
+          "node-t4-graveyard-03_monster-41"
+        ],
+        "lateJoiners": 0,
+        "outcome": "player-died"
+      }
+    ],
+    "recovery": [
+      {
+        "afterClearMs": 1800,
+        "recoveredAtMs": 1800,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 12000,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 17700,
+        "recoveredAtMs": 17700,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 27400,
+        "recoveredAtMs": 29000,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 35700,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 36100,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 37200,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 43800,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 44100,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      }
+    ],
+    "incomingDamage": 1237.3,
+    "largestHit": 106,
+    "maxDamageIn1s": 143,
+    "counts": {
+      "damaged": 11,
+      "killed": 10,
+      "censored": 1,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 10,
+      "p10": 1760,
+      "median": 5100,
+      "p90": 14669.999999999998
+    }
+  }
+]

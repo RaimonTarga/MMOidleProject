@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "mode": "run",
+  "revision": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+  "navigationDiagnostics": false,
+  "definitionsHash": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "sampleEveryMs": 1000,
+  "block": "breadth-t4-apprentice-heavy-b-farm",
+  "trial": "player-breadth",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 300000,
+  "seeds": [
+    101003
+  ],
+  "cells": [
+    {
+      "id": "breadth-t4-apprentice-heavy-b-farm",
+      "className": "apprentice",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-graveyard-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "breadth-t4-apprentice-heavy-b-farm",
+        "classRoot": "dot-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "dot-root",
+          "dot-heavy",
+          "dot-range-mid",
+          "dot-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-apprentice-heavy-b",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Winter Warden",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each hit also applies a Chill stack (up to 9), each reducing the target's movement and attack speed by 5%. At 9 Chill stacks the target is Frozen for 2 seconds — a severe slow (not full CC) that also makes it take 35% bonus damage from all sources — then the chill resets.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    }
+  ]
+}

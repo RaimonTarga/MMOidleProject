@@ -1,0 +1,17 @@
+{
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "argv": [
+    "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\cr2-0921\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\cli.mjs",
+    "--conditions=development",
+    "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\cr2-0921\\scripts\\conduit-r2-child.mjs",
+    "--trial=player-breadth",
+    "--block=breadth-t4-conduit-balanced-a-boss",
+    "--arm=adopted-r1",
+    "--mode=run",
+    "--revision=59c895b3979dbe5867e21c9b81bdffdfb17d7c9c",
+    "--hitboxes=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\ttk-survey\\hitboxes.json",
+    "--out=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\conduit-recovery-20260921\\r2-run-01\\breadth-t4-conduit-balanced-a-boss-adopted-r1"
+  ]
+}

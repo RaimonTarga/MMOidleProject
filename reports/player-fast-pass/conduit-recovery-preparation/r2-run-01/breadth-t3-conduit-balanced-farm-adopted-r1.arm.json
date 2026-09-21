@@ -1,0 +1,363 @@
+{
+  "arm": "adopted-r1",
+  "revision": "59c895b3979dbe5867e21c9b81bdffdfb17d7c9c",
+  "caseId": "breadth-t3-conduit-balanced-farm",
+  "cell": {
+    "id": "breadth-t3-conduit-balanced-farm",
+    "className": "conduit",
+    "tier": 3,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t3-volcanic-03",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 5,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "build": {
+      "id": "breadth-t3-conduit-balanced-farm",
+      "classRoot": "summoner-root",
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "skillPath": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "mountain-vest-t3",
+        "recovery": "mountain-charm-t3",
+        "mobility": "mountain-boots-t3",
+        "core": "core-survivalist"
+      }
+    },
+    "identityId": "breadth-t3-conduit-balanced",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Consort",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.",
+      "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+      "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+      "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+      "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+      "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+      "Offensive stance is always active; no stance switching.",
+      "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+      "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+    ]
+  },
+  "worldTicks": 0,
+  "baseline": {
+    "treatment": "untreated",
+    "profile": {
+      "reconstructionFactors": {
+        "baseMs": 3500,
+        "frame": 0.8571428571428571,
+        "specialization": 1,
+        "passive": 1,
+        "range": 1,
+        "preRelicMs": 3000,
+        "postRelicMs": 3000,
+        "floorMs": 2000,
+        "floorBinds": false
+      },
+      "frame": "balanced",
+      "range": "mid",
+      "specialization": null,
+      "slots": [
+        {
+          "slotId": "normal:0",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:1",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:2",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:3",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:4",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        }
+      ],
+      "relicPotencyMult": 1,
+      "formationOffenseMult": 1,
+      "secondaryEffectMult": 1,
+      "totalSummonHpPct": 1,
+      "summonMoveSpeedMult": 1,
+      "summonAttackCooldownMult": 1,
+      "attackMode": "reach",
+      "formationPolicy": "escort",
+      "attackRange": 96,
+      "preferredDistance": 72,
+      "conduitDefenseShare": 0.5,
+      "redirectionPct": 0.3,
+      "leashRadius": 320,
+      "reconstructionIntervalMs": 3000,
+      "reconstructionHpCostRatio": 0.3,
+      "reconstructionSafetyFloorPct": 0.2,
+      "reconstructionCombatRegenPct": 0.2,
+      "battleBondConduitOffenseWeight": 0
+    },
+    "relicRatings": {
+      "frequency": 0,
+      "potency": 0,
+      "buffEffect": 0,
+      "debuffEffect": 0
+    },
+    "tickQuantizedIntervalMs": 3000,
+    "ownerSafetyThresholdHp": 74.2,
+    "slots": [
+      {
+        "slotId": "normal:0",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      },
+      {
+        "slotId": "normal:1",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      },
+      {
+        "slotId": "normal:2",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      },
+      {
+        "slotId": "normal:3",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      },
+      {
+        "slotId": "normal:4",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      }
+    ]
+  },
+  "applied": {
+    "treatment": "untreated",
+    "profile": {
+      "reconstructionFactors": {
+        "baseMs": 3500,
+        "frame": 0.8571428571428571,
+        "specialization": 1,
+        "passive": 1,
+        "range": 1,
+        "preRelicMs": 3000,
+        "postRelicMs": 3000,
+        "floorMs": 2000,
+        "floorBinds": false
+      },
+      "frame": "balanced",
+      "range": "mid",
+      "specialization": null,
+      "slots": [
+        {
+          "slotId": "normal:0",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:1",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:2",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:3",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        },
+        {
+          "slotId": "normal:4",
+          "role": "normal",
+          "offenseWeight": 0.2,
+          "defenseWeight": 0.2,
+          "procWeight": 0.2,
+          "sizeMult": 1.25
+        }
+      ],
+      "relicPotencyMult": 1,
+      "formationOffenseMult": 1,
+      "secondaryEffectMult": 1,
+      "totalSummonHpPct": 1,
+      "summonMoveSpeedMult": 1,
+      "summonAttackCooldownMult": 1,
+      "attackMode": "reach",
+      "formationPolicy": "escort",
+      "attackRange": 96,
+      "preferredDistance": 72,
+      "conduitDefenseShare": 0.5,
+      "redirectionPct": 0.3,
+      "leashRadius": 320,
+      "reconstructionIntervalMs": 3000,
+      "reconstructionHpCostRatio": 0.3,
+      "reconstructionSafetyFloorPct": 0.2,
+      "reconstructionCombatRegenPct": 0.2,
+      "battleBondConduitOffenseWeight": 0
+    },
+    "relicRatings": {
+      "frequency": 0,
+      "potency": 0,
+      "buffEffect": 0,
+      "debuffEffect": 0
+    },
+    "tickQuantizedIntervalMs": 3000,
+    "ownerSafetyThresholdHp": 74.2,
+    "slots": [
+      {
+        "slotId": "normal:0",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      },
+      {
+        "slotId": "normal:1",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      },
+      {
+        "slotId": "normal:2",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      },
+      {
+        "slotId": "normal:3",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      },
+      {
+        "slotId": "normal:4",
+        "role": "normal",
+        "offenseWeight": 0.2,
+        "defenseWeight": 0.2,
+        "procWeight": 0.2,
+        "sizeMult": 1.25,
+        "maxHp": 74,
+        "costHp": 22
+      }
+    ]
+  },
+  "transportLabel": "untreated means no historical opt-in; arm is identified here, not by the legacy transport label"
+}

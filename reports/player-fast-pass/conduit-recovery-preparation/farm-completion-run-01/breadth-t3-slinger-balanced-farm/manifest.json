@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "mode": "run",
+  "revision": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+  "navigationDiagnostics": false,
+  "definitionsHash": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "sampleEveryMs": 1000,
+  "block": "breadth-t3-slinger-balanced-farm",
+  "trial": "player-breadth",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 300000,
+  "seeds": [
+    101003
+  ],
+  "cells": [
+    {
+      "id": "breadth-t3-slinger-balanced-farm",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-volcanic-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "breadth-t3-slinger-balanced-farm",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Marksman",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    }
+  ]
+}

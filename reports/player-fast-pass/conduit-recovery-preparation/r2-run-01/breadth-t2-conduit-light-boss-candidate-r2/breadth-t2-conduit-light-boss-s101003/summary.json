@@ -1,0 +1,98 @@
+{
+  "cell": "breadth-t2-conduit-light-boss",
+  "seed": 101003,
+  "outcome": "boss-killed",
+  "elapsedMs": 130900,
+  "windowMs": 300000,
+  "terminalOwner": {
+    "hp": 233.4378,
+    "maxHp": 239,
+    "barrier": 62
+  },
+  "bossKilled": true,
+  "bossKillEvidence": {
+    "atMs": 130900,
+    "victimId": "node-t2-mountain-dungeon_monster-5",
+    "victimName": "Stoneplate Juggernaut",
+    "killerId": "bench-bot-0"
+  },
+  "playerDeathEvidence": null,
+  "encounterResetEvidence": null,
+  "killedAtMs": 130900,
+  "bossMaxHp": 5000,
+  "bossHpRemaining": 0,
+  "terminalBossHpSupported": true,
+  "bossHpFractionRemoved": 1,
+  "crossedHalfAtMs": 59000,
+  "castsStarted": 27,
+  "castLabels": [
+    "Stoneplate",
+    "Stoneplate Charge"
+  ],
+  "maxAddsAlive": 0,
+  "damageFromBoss": 274.05,
+  "damageFromAdds": {},
+  "attackBeats": 0,
+  "minionAttackBeats": 472,
+  "totalAttackBeats": 472,
+  "hpLost": 735.8900000000007,
+  "peakBurst1s": 103.74959999999999,
+  "minHpFraction": 0.5931012552301257,
+  "wallElapsedMs": 2318,
+  "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+  "targets": [
+    {
+      "id": "node-t2-mountain-dungeon_monster-5",
+      "type": "stoneplate-juggernaut",
+      "name": "Stoneplate Juggernaut",
+      "maxHp": 5000,
+      "firstDamageMs": 1700,
+      "lastDamageMs": 130900,
+      "killedAtMs": 130900,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 3900,
+      "damageEvents": 483,
+      "castsStarted": 27,
+      "castsFired": 0,
+      "ttkMs": 129200,
+      "clean": true
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 1700,
+      "endMs": 130900,
+      "durationMs": 129200,
+      "members": [
+        "node-t2-mountain-dungeon_monster-5"
+      ],
+      "initialMembers": [
+        "node-t2-mountain-dungeon_monster-5"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    }
+  ],
+  "recovery": [
+    {
+      "afterClearMs": 130900,
+      "recoveredAtMs": null,
+      "interruptedByNextPull": false
+    }
+  ],
+  "incomingDamage": 274.05,
+  "largestHit": 99,
+  "maxDamageIn1s": 99,
+  "counts": {
+    "damaged": 1,
+    "killed": 1,
+    "censored": 0,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 1,
+    "p10": 129200,
+    "median": 129200,
+    "p90": 129200
+  }
+}
