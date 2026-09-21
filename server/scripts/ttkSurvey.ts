@@ -1,4 +1,5 @@
 import { BREADTH_BLOCKS, assertBreadthDefinitions, type BreadthCell } from '../bench/balance/playerBreadthSpec';
+import { FARMING_STANCE_BLOCKS } from '../bench/balance/farmingStanceSpec';
 import { prepareConduitRecorder } from '../bench/balance/conduitRecorder';
 import { FAST_PASS_BLOCKS, FAST_PASS_SEED, fastPassReadback, assertFastPassDefinitions, assertFastPassHitboxes } from '../bench/balance/playerFastPassSpec';
 import { PACKAGE_FIT_BLOCKS, assertPackageFitDefinitions } from '../bench/balance/playerPackageFitSpec';
@@ -64,12 +65,13 @@ import { DURABILITY20_CELLS, DURABILITY20_SEEDS, installDurability20Treatment, a
 import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
-const breadth = args.trial === 'player-breadth';
+const farmingStance = args.trial === 'farming-stance-01';
+const breadth = args.trial === 'player-breadth' || farmingStance;
 if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
 const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+const fastBlock = fastPass ? (farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
@@ -99,6 +101,16 @@ assert(args.hitboxes && hydrateHitboxCacheFromArtifact(args.hitboxes)>0,'Frozen 
 const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
 const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 if(args.revision) assert.equal(revision,args.revision,'Wrong frozen checkout');
+if (farmingStance) {
+  assert(args['source-contract'] && args.revision, 'Frozen stance source contract required in actual child');
+  assert(mode !== 'pilot', 'Stance packet has no extra pilot observations');
+  const contract = JSON.parse(readFileSync(args['source-contract'], 'utf8'));
+  assert.equal(contract.sourceCommit, revision);
+  assert.equal(contract.node, process.version);
+  assert.equal(sha(readFileSync(args.hitboxes)), contract.hitboxesSha256);
+  for (const [path, hash] of Object.entries(contract.files))
+    assert.equal(sha(readFileSync(resolve(__dirname, '../..', path))), hash, `Child source drift: ${path}`);
+}
 mkdirSync(out,{recursive:true});
 const manifest={schema:1,mode,revision,navigationDiagnostics:args['navigation-diagnostics']==='true',definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
   sampleEveryMs:args.trial==='durability12movement'||args.trial==='durability13movement'?100:1000,block:args.block,trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:mode==='pilot'?30000:night5?.durationMs??300000,seeds:trialSeeds,cells:trialCells};

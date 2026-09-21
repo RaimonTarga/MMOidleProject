@@ -308,14 +308,16 @@ merged into the head's width. Re-run it after adding any body with a raised prop
   push on Conduit variety has to come from a channel the invariants leave free —
   the accent slots (see `player-sprites-current-state.md`) are the obvious one.
 
-## Reconstruction R1 adoption (2026-09-21)
+## Reconstruction R2 adoption (2026-09-21)
 
-Normal shared profiles and server runtime now use the measured R1 intervals without
-an observation hook: Light 2,500 ms, Balanced 3,000 ms, Heavy 3,920 ms, Root 3,500 ms
+Normal shared profiles and server runtime now use the measured R2 intervals without
+an observation hook: Light 2,000 ms, Balanced 2,500 ms, Heavy 3,920 ms, Root 3,500 ms
 before modifiers. Selected far range multiplies by 0.85; Endless Swarm/Kilnmaster
 adds 0.80. Existing Colossus and passive multipliers remain. Relic frequency applies
-after these multipliers, before the final floor (Light/Balanced 2,000 ms;
+after these multipliers, before the final floor (Light/Balanced 1,500 ms;
 Root/Heavy 2,500 ms). HP payment, safety threshold, queue healing, FIFO and damage
 budgets are unchanged. The payment threshold is not a general owner-health floor.
-Historical breadth R1 labels require their sealed pre-adoption checkout. R2 is an
-unadopted bench-only comparison; no live deployment is implied by this source change.
+Historical breadth R1 labels and the measured R1/R2 comparison require their sealed
+historical checkouts. R2 changes only the two nominal intervals and two floors;
+R1 range/specialization modifiers are not applied again. No live deployment is
+implied by this source change.

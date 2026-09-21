@@ -100,8 +100,8 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
     totalSummonHpPct: 0.66,
     moveSpeedMult: 1.18,
     sizeMult: 0.72,
-    reconstructionIntervalMult: 2500 / 3500,
-    minimumReconstructionIntervalMs: 2000,
+    reconstructionIntervalMult: 2000 / 3500,
+    minimumReconstructionIntervalMs: 1500,
   },
   balanced: {
     count: 5,
@@ -110,8 +110,8 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
     totalSummonHpPct: 1,
     moveSpeedMult: 1,
     sizeMult: 1,
-    reconstructionIntervalMult: 3000 / 3500,
-    minimumReconstructionIntervalMs: 2000,
+    reconstructionIntervalMult: 2500 / 3500,
+    minimumReconstructionIntervalMs: 1500,
   },
   heavy: {
     count: 2,
