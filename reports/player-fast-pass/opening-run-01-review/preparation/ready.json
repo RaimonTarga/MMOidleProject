@@ -1,0 +1,10 @@
+{
+  "status": "prepared-not-executed",
+  "planned": 36,
+  "qualification": "18 zero-tick ordinary; 18 boss preparations with one 100 ms wake tick",
+  "smoke": "1 Conduit ordinary <=30s, 1 Squire boss <=60s; not main observations",
+  "identitySha256": "bdadc8de83f03db707026c2b396b4a128e32826e39780f2910bf6070e36537f5",
+  "manifestSha256": "58121f3179809fd93eae321331aa1cff85c1b22a53978366754fe7374fd24e4a",
+  "readbacksSha256": "9ae480ba24a83c0eb6d465725cbd0c7962b5659bb9fac3f810a99dd1b4582460",
+  "qualificationProvenance": "Original receipts retain precommit HEAD. Every measured source file is byte-identical to the committed checkout. No simulation replay or outcome relabeling."
+}
