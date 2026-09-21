@@ -19,8 +19,6 @@ import {
 } from '../data/summoner';
 
 export interface SummonerProfileInput {
-  /** Explicit isolated bench opt-in; never inferred from saved player state. */
-  reconstructionExperiment?: 'reconstruction-r1';
   selectedSubVariant: SubVariant | null;
   selectedRange: string | null;
   unlockedSkills: readonly string[];
@@ -167,13 +165,12 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
   const colossusReconstructionMult = specialization === 'colossus'
     ? SUMMONER_SPECIALIZATION_TUNING.colossus.reconstructionIntervalMult
     : 1;
-  const experiment = input.reconstructionExperiment === 'reconstruction-r1';
-  const frameMult = experiment && frame === 'light' ? 2500 / 3500
-    : experiment && frame === 'balanced' ? 3000 / 3500 : frameTuning.reconstructionIntervalMult;
-  const rangeMult = experiment && selectedRange === 'far' ? 0.85 : 1;
-  const specMult = colossusReconstructionMult * (experiment && specialization === 'endless-swarm' ? 0.80 : 1);
+  const frameMult = frameTuning.reconstructionIntervalMult;
+  const rangeMult = selectedRange ? rangeTuning.reconstructionIntervalMult : 1;
+  const specMult = colossusReconstructionMult * (specialization === 'endless-swarm'
+    ? SUMMONER_SPECIALIZATION_TUNING.endlessSwarm.reconstructionIntervalMult : 1);
   const passiveMult = Math.max(0.1, passives['summoner.reconstruction-interval-mult'] ?? 1);
-  const floorMs = experiment && (frame === 'light' || frame === 'balanced') ? 2000 : SUMMONER_CORE_TUNING.minimumReconstructionIntervalMs;
+  const floorMs = frameTuning.minimumReconstructionIntervalMs;
   const reconstructionBaseMs = Math.round(
     SUMMONER_CORE_TUNING.reconstructionIntervalMs
       * frameMult * specMult * passiveMult * rangeMult,

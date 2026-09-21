@@ -4,11 +4,9 @@ import {
   type SummonerProfile,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../ecs/entity';
-import { reconstructionExperimentFor } from './observation';
 
 export function summonerProfileFor(owner: PlayerEntity): SummonerProfile {
   return resolveSummonerProfile({
-    reconstructionExperiment: reconstructionExperimentFor(owner),
     selectedSubVariant: owner.usesSkills.selectedSubVariant,
     selectedRange: owner.usesSkills.selectedRange,
     unlockedSkills: owner.usesSkills.unlockedSkills,

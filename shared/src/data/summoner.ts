@@ -31,9 +31,11 @@ export interface SummonerFrameTuning {
   moveSpeedMult: number;
   sizeMult: number;
   reconstructionIntervalMult: number;
+  minimumReconstructionIntervalMs: number;
 }
 
 export interface SummonerRangeTuning {
+  reconstructionIntervalMult: number;
   attackMode: SummonerAttackMode;
   policy: SummonerFormationPolicy;
   /**
@@ -89,6 +91,7 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
     moveSpeedMult: 1,
     sizeMult: 1,
     reconstructionIntervalMult: 1,
+    minimumReconstructionIntervalMs: 2500,
   },
   light: {
     count: 6,
@@ -97,7 +100,8 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
     totalSummonHpPct: 0.66,
     moveSpeedMult: 1.18,
     sizeMult: 0.72,
-    reconstructionIntervalMult: 0.92,
+    reconstructionIntervalMult: 2500 / 3500,
+    minimumReconstructionIntervalMs: 2000,
   },
   balanced: {
     count: 5,
@@ -106,7 +110,8 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
     totalSummonHpPct: 1,
     moveSpeedMult: 1,
     sizeMult: 1,
-    reconstructionIntervalMult: 1,
+    reconstructionIntervalMult: 3000 / 3500,
+    minimumReconstructionIntervalMs: 2000,
   },
   heavy: {
     count: 2,
@@ -116,11 +121,13 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
     moveSpeedMult: 0.78,
     sizeMult: 1.75,
     reconstructionIntervalMult: 1.12,
+    minimumReconstructionIntervalMs: 2500,
   },
 };
 
 export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> = {
   close: {
+    reconstructionIntervalMult: 1,
     attackMode: 'melee',
     policy: 'guardian',
     sizeMult: 1.5,
@@ -132,6 +139,7 @@ export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> =
     moveSpeedMult: 1,
   },
   mid: {
+    reconstructionIntervalMult: 1,
     attackMode: 'reach',
     policy: 'escort',
     sizeMult: 1.25,
@@ -143,6 +151,7 @@ export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> =
     moveSpeedMult: 1,
   },
   far: {
+    reconstructionIntervalMult: 0.85,
     attackMode: 'ranged',
     policy: 'harrier',
     sizeMult: 1.0,
@@ -247,7 +256,8 @@ export const SUMMONER_SPECIALIZATION_TUNING = {
     naturalDeathExplosionMult: 0.45,
     explosionRadius: 78,
   },
-  endlessSwarm: { count: 8, secondaryEffectMult: 1.3 },
+  endlessSwarm: {
+    reconstructionIntervalMult: 0.80, count: 8, secondaryEffectMult: 1.3 },
   harrierBrood: { damageTakenPctPerSlot: 0.035, durationMs: 5_000 },
   coordinatedHunt: {
     openingDamageMult: 1.45,

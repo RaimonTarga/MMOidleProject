@@ -3,7 +3,7 @@ import type { PlayerEntity } from '../../src/ecs/entity';
 import type { World } from '../../src/world/World';
 import { summonerProfileFor } from '../../src/systems/classes/archetypes/summoner/profile';
 import { computeMinionMaxHp } from '../../src/systems/classes/archetypes/summoner/spawn';
-import { observeSummoner, enableReconstructionExperiment, type SummonObservation } from '../../src/systems/classes/archetypes/summoner/observation';
+import { observeSummoner, type SummonObservation } from '../../src/systems/classes/archetypes/summoner/observation';
 import { isPlayerInCombat } from '../../src/systems/combat/ai/engagement';
 import type { BreadthCell } from './playerBreadthSpec';
 
@@ -44,8 +44,8 @@ export class ConduitRecorder {
   private delivery = new Map<string, { state: string; targetId: string; targetType: string; phase: string; attempts: number; primaryHpDecrease: number; exposureMs: number }>();
 
   constructor(private world: World, private owner: PlayerEntity, readonly treatment: BreadthCell['playerTreatment']) {
+    if (treatment === 'reconstruction-r1') throw new Error('Historical reconstruction-r1 requires its pinned pre-adoption checkout');
     this.dispose = observeSummoner(owner, e => this.record(e));
-    if (treatment === 'reconstruction-r1') enableReconstructionExperiment(owner);
   }
   private availability() {
     const profile = summonerProfileFor(this.owner), totals = summonerProfileWeightTotals(profile);

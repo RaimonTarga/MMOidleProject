@@ -356,7 +356,8 @@ function minions(world: World, player: ReturnType<typeof attach>) {
     'Colossus must own the full transformed formation budgets');
   colossus.hasHealth.hp = 0;
   updateSummonerArchetype(world, 0, 2_000);
-  assert(player.summonsMinions!.activeReconstruction!.durationMs > 5_000,
+  assert(player.summonsMinions!.activeReconstruction!.durationMs === profile.reconstructionIntervalMs
+    && profile.reconstructionIntervalMs > heavyBaseline.reconstructionIntervalMs,
     'catastrophic Colossus loss must use its longer specialization reconstruction');
 }
 
