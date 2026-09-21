@@ -11,6 +11,8 @@ export function gameVersion(): string {
 function resolveGameVersion(): string {
   const configured = process.env.GAME_VERSION?.trim();
   if (configured) return configured;
+  const commit = process.env.RAILWAY_GIT_COMMIT_SHA?.trim();
+  if (commit) return commit;
 
   for (const candidate of packageJsonCandidates()) {
     try {

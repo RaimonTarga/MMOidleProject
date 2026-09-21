@@ -3,6 +3,8 @@ import { ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, getSta
   ITEM_DATABASE, RECIPE_DATABASE, requiredPlusFor, abilityTags, abilityHasTag, abilityRankAt,
   abilityCooldownMs, modifiedAbilityCooldownMs, resolveAbilityEffectWithPassives,
   getCooldown, setCooldown } from "@mmo-idle/shared";
+import { applyStatusEffect, guardEffectIdForAbility, recoveryEffectIdForAbility, itemMechanicEffectsAt, equipmentAbilityTags } from '@mmo-idle/shared';
+import { applyStun, STUN_EFFECT } from '../src/systems/combat/status/stun';
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { evolveItem } from "../src/systems/player/economy/itemEvolution";
@@ -216,4 +218,65 @@ const victim = world.createMonster(bruiser.hasPosition.nodeId, 'plains-slime', {
 emitCombatEvent('onKill', makeCombatContext(bruiser, 'player', victim, 'monster'), world);
 for (const a of mobility) assert.equal(getCooldown(bruiser.tracksCombat, abilityCooldownKey(a.id)), Math.max(0, 5000 - abilityCooldownMs(a, 4) * bruiser.usesSkills.passives['core.mobility-refund-on-kill-pct']));
 assert.equal(getCooldown(bruiser.tracksCombat, abilityCooldownKey(ordinary.id)), 5000);
+// Exact gear-to-ability pairs: equip upgraded items, fire real Guards and compare
+// live payloads with authored values and the shared tooltip resolver.
+for (const id of ['brace', 'endure', 'second-wind', 'recuperate']) {
+  const p = player();
+  const defensive = id === 'brace' || id === 'endure';
+  const itemId = defensive ? 'mountain-vest-t1' : 'forest-charm-t1';
+  p.holdsInventory.inventory.push(itemId);
+  p.holdsInventory.itemUpgrades[itemId] = 3;
+  assert(equipItem(world, p, itemId));
+  p.tracksProgression.knownAbilities = [id];
+  p.tracksProgression.attunedAbilities = { techniques: [], guards: [id] };
+  p.hasHealth.hp = 1;
+  p.usesAutocombat.auto = true;
+  const ability = ABILITY_DATABASE.get(id)!;
+  const base = abilityRankAt(ability, 4).effect;
+  const resolved = resolveAbilityEffectWithPassives(ability, 4, p.usesSkills.passives);
+  updateAbilityFiring(world, Date.now());
+  const live = getStatusEffect(p.tracksCombat, (defensive ? guardEffectIdForAbility(id) : recoveryEffectIdForAbility(id))!);
+  assert(live, `${itemId} -> ${id} must fire`);
+  if (resolved.kind === 'damage-reduction' && base.kind === 'damage-reduction') {
+    assert.equal(resolved.drPct, base.drPct * (1 + 0.15 + 0.02 * 3));
+    assert.equal(live.data.drPct, resolved.drPct);
+    assert.equal(live.data.knockbackResistPct, resolved.knockbackResistPct);
+    assert.equal(live.remainingMs, base.durationMs);
+  } else {
+    assert(resolved.kind === 'heal' && base.kind === 'heal');
+    assert(Math.abs(resolved.recoveryPct - base.recoveryPct * 1.13) < 1e-9);
+    assert.equal(live.data.recoveryPct, resolved.recoveryPct);
+    assert.equal(live.remainingMs, base.durationMs);
+  }
+  assert.equal(getCooldown(p.tracksCombat, abilityCooldownKey(id)), abilityCooldownMs(ability, 4));
+}
+
+for (const tier of [2, 3, 4]) {
+  const item = ITEM_DATABASE.get(`desert-charm-t${tier}`)!;
+  const effects = itemMechanicEffectsAt(item, 5);
+  assert.deepEqual(equipmentAbilityTags(effects), ['cleanse']);
+  assert(!Object.keys(effects).some(k => k.startsWith('defense.cleanse-')), 'charm no longer owns an automatic cleanse or heal');
+  assert.equal(ITEM_DATABASE.get(`desert-vest-t${tier}`)!.mechanicEffects?.['defense.cleanse-interval-ms'], 8000, 'armor keeps its independent cleanse');
+  for (const id of ['cleanse', 'break-free']) {
+    const p = player();
+    p.holdsInventory.inventory.push(item.id);
+    p.holdsInventory.itemUpgrades[item.id] = 5;
+    assert(equipItem(world, p, item.id));
+    p.tracksProgression.knownAbilities = [id];
+    p.tracksProgression.attunedAbilities = { techniques: [], guards: [id] };
+    p.usesAutocombat.auto = true;
+    if (id === 'break-free') applyStun(p.tracksCombat, 4000, 'tester');
+    else applyStatusEffect(p.tracksCombat, { id: 'antiheal', maxStacks: 1, remainingMs: 6000, refreshable: true, sourceId: 'tester', data: {} });
+    updateAbilityFiring(world, Date.now());
+    assert(!getStatusEffect(p.tracksCombat, id === 'break-free' ? STUN_EFFECT : 'antiheal'));
+    const ability = ABILITY_DATABASE.get(id)!;
+    const expected = abilityCooldownMs(ability, 4) * (1 - effects['cleanse.cooldown-reduction-pct']);
+    assert(Math.abs(getCooldown(p.tracksCombat, abilityCooldownKey(id)) - expected) < 1e-8, `${item.id} must shorten ${id}'s live cooldown`);
+    const desc = describeAbility(ability, { playerTier: 4, passives: p.usesSkills.passives,
+      equipmentSources: [{ id: item.id, name: item.name, effects }] });
+    assert.equal(desc.equipmentModifiers[0].label, 'Cleanse cooldown reduction');
+    assert.equal(modifiedAbilityCooldownMs(brace, 4, p.usesSkills.passives), abilityCooldownMs(brace, 4));
+    assert.equal(modifiedAbilityCooldownMs(ability, 4, { ...p.usesSkills.passives, 'guard.cooldown-reduction-pct': 1 }), abilityCooldownMs(ability, 4) * (1 - 0.9));
+  }
+}
 console.log('equippedEvolutionAbilityTags.test.ts: ok');

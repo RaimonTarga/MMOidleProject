@@ -24,6 +24,7 @@ import {
   guardianTotalFor,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
+import { updatePacks } from "../src/systems/combat/ai/packs";
 import {
   activateDungeonAltar,
   ensureDungeon,
@@ -194,7 +195,7 @@ function distance(a: { x: number; y: number }, b: { x: number; y: number }): num
     followers.every((m) => m.isMonster.name !== "Forest Sentinel"),
     "followers keep their own names — only leaders are named guardians",
   );
-  // Each station is one pack, so call-allies and alpha-scatter stay group-local.
+  // Each station is one pack, so engagement and return stay group-local.
   const packIds = new Set(guardians.map((m) => m.inPack!.packId));
   assert(packIds.size === def.guard.groups.length, "each station is its own pack");
 
@@ -422,6 +423,18 @@ function distance(a: { x: number; y: number }, b: { x: number; y: number }): num
 }
 
 // ── 7. Node wipe and freeze/thaw both reset the dungeon ──────────────────────
+{
+  const { world, playerId } = setup(PACK_NODE);
+  const player = world.getPlayerEntity(playerId)!;
+  const guardians = world.dungeons.get(PACK_NODE)!.guardianIds.map(id => world.getMonsterEntity(id)!);
+  for (const m of guardians) m.inPack!.coordination!.returning = { sinceMs: 1000 };
+  assert(activateDungeonAltar(world, player), "altar activation interrupts coordinated guardian returns");
+  updatePacks(world, 1100);
+  assert(guardians.every(m => m.hasAggroTarget?.targetId === playerId), "all pack guardians engage after activation");
+  assert(guardians.every(m => !m.inPack!.coordination!.returning && m.inPack!.coordination!.leashRange > 3000),
+    "altar activation expands shared territory and releases the return state");
+}
+
 {
   const { world, playerId } = setup(POST_HOLD_NODE);
   const player = world.getPlayerEntity(playerId)!;

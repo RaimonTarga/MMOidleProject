@@ -18,6 +18,7 @@ import { recordWorldLogEvent } from "../../../world/worldLog";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { setAggroTarget, setAttackTarget } from "../../combat/ai/targeting";
+import { createPackCoordination } from "../../combat/ai/packs";
 import { clearGroundZonesForNode } from "../groundZones";
 import { clearCorpsesForNode } from "../corpses";
 import {
@@ -338,10 +339,9 @@ function spawnGuardGroup(
   const followers = group.followers ?? [];
   if (followers.length === 0) return;
 
-  // Members of a pack station share an `inPack` link, so the shipped call-allies
-  // and alpha-scatter ecology applies to guardians exactly as it does in the open
-  // world: pull one and the station answers, kill the leader and the rest break.
-  world.ecs.addComponent(leader, "inPack", { packId, role: "alpha" });
+  // A station shares engagement and return decisions; survivors retain the group.
+  const coordination = createPackCoordination(leader);
+  world.ecs.addComponent(leader, "inPack", { packId, role: "alpha", coordination });
   const total = followers.reduce((sum, f) => sum + f.count, 0);
   let index = 0;
   for (const follower of followers) {
@@ -350,7 +350,7 @@ function spawnGuardGroup(
       index++;
       const monster = spawnGuardian(world, def, group, follower.monsterId, point);
       if (!monster) continue;
-      world.ecs.addComponent(monster, "inPack", { packId, role: "follower" });
+      world.ecs.addComponent(monster, "inPack", { packId, role: "follower", coordination });
       markGuardianSlicesDirty(world, monster);
       state.guardianIds.push(monster.isMonster.id);
     }
@@ -478,6 +478,10 @@ function engageGuardians(
     if (monster.tracksDungeon) monster.tracksDungeon.leashRadius = ENGAGED_LEASH_RADIUS;
     monster.controlsMonster.leashRange = ENGAGED_LEASH_RADIUS;
     monster.hasAwareness.leashRange = ENGAGED_LEASH_RADIUS;
+    if (monster.inPack?.coordination) {
+      monster.inPack.coordination.leashRange = ENGAGED_LEASH_RADIUS;
+      delete monster.inPack.coordination.returning;
+    }
     // The station is abandoned once the altar is live: stop returning to it.
     monster.controlsMonster.holdPost = undefined;
     monster.controlsMonster.holdPatrol = undefined;

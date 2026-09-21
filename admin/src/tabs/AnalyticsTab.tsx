@@ -68,7 +68,8 @@ export function AnalyticsTab() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold">Analytics</h2>
+          <h2 className="text-xl font-semibold">Legacy development analytics</h2>
+          <p className="text-sm text-red-100/55">Production balance data is in Gameplay. Session endings here do not imply frustration or abandonment.</p>
           <p className="text-sm text-red-100/55">
             Rolling {analytics.summary.windowDays} day window · generated {new Date(analytics.generatedAt).toLocaleTimeString()}
           </p>

@@ -9,6 +9,7 @@ import type {
   AdminAnalyticsQuery,
   AdminLogQuery,
   AdminWorldLogQuery,
+  GameplayQuery,
 } from '@mmo-idle/shared';
 import { buildBalanceLabSnapshot } from '@mmo-idle/shared';
 import type { DB } from '../db/playerRepo';
@@ -21,6 +22,8 @@ import { runAdminAction } from './actions';
 import { buildPlayerSummaries } from './playerSummaries';
 import { listCharacters } from '../db/playerRepo';
 import type { PlayerSocketSession } from '../net/socketSession';
+import { adminAuthorized } from './auth';
+import { queryGameplay } from '../logdb/gameplayRepo';
 
 export interface AdminNamespaceControls {
   emitPlayerSummaries: () => void;
@@ -44,7 +47,9 @@ export function registerAdminNamespace(
   // refreshing the Lab can never spend hundreds of milliseconds on the tick.
   const balanceLabSnapshot = buildBalanceLabSnapshot();
 
-  // TODO: re-add admin authentication before exposing this beyond trusted dev use.
+  admin.use((socket, next) => {
+    next(adminAuthorized(socket.handshake.auth?.token) ? undefined : new Error('Admin access requires a valid access token.'));
+  });
 
   const emitPlayerSummaries = () => {
     admin.emit(
@@ -63,6 +68,22 @@ export function registerAdminNamespace(
   });
 
   admin.on('connection', (socket) => {
+    let queryingGameplay = false;
+    let nextGameplayQuery: GameplayQuery | null = null;
+    const loadGameplay = (query: GameplayQuery) => {
+      if (queryingGameplay) { nextGameplayQuery = query ?? {}; return; }
+      queryingGameplay = true;
+      void queryGameplay(query, world.gameplayWriter?.status() ?? { queued: 0, inserted: 0, failedBatches: 0, dropped: 0, lastSuccessAt: null })
+        .then(snapshot => socket.emit('admin:gameplay', snapshot))
+        .catch(() => socket.emit('admin:error', { message: 'Gameplay analytics query failed.' }))
+        .finally(() => {
+          queryingGameplay = false;
+          const next = nextGameplayQuery;
+          nextGameplayQuery = null;
+          if (next && socket.connected) loadGameplay(next);
+        });
+    };
+    socket.on('admin:requestGameplay', loadGameplay);
     log.info({ adminSocketId: socket.id }, 'admin dashboard connected');
     socket.emit(
       'admin:players',

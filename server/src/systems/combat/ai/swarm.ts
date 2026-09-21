@@ -32,7 +32,9 @@ export function updateSwarm(world: World): void {
     const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
     if (!def?.swarm) continue;
     const packKey = e.inPack ? `pack:${e.inPack.packId}` : "loose";
-    const key = `${e.hasPosition.nodeId}:${def.biome}:${e.hasAwareness.state}:${packKey}`;
+    const targetKey = e.hasAggroTarget
+      ? `${e.hasAggroTarget.targetKind}:${e.hasAggroTarget.targetId}` : "idle";
+    const key = `${e.hasPosition.nodeId}:${def.biome}:${e.hasAwareness.state}:${packKey}:${targetKey}`;
     const arr = byGroup.get(key);
     if (arr) arr.push(e);
     else byGroup.set(key, [e]);

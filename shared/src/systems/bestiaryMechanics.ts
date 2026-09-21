@@ -849,9 +849,7 @@ function describePack(def: MonsterDefinition): MechanicLine | null {
 
   const count = low === high ? `${high}` : `${low}\u2013${high}`;
   const noun = high === 1 ? 'companion' : 'companions';
-  const alerted = (pack.callRange ?? 0) > 0
-    ? ` It calls them onto whatever it engages from up to ${pack.callRange}px.`
-    : '';
+  const alerted = ' Attack any member to engage the pack. Continued attacks keep the whole pack pursuing you, even away from home. They return together when you escape without attacking; survivors keep fighting if the leader dies.';
 
   return {
     id: 'pack-alpha',
@@ -1005,7 +1003,7 @@ export function describeMonsterMechanics(
       ? `primes its next ${Math.max(1, Math.round(buff.attacks))} attacks at +${fmtPct(buff.attackSpeedPct)} attack speed`
       : `hastens ${target} by +${fmtPct(buff.attackSpeedPct)}${buff.durationMs ? ` for ${fmtMs(buff.durationMs)}` : ''}`;
     const rally = buff.rallyNearby
-      ? `, rallying up to ${Math.max(0, Math.round(buff.rallyNearby.maxTargets))} unengaged nearby monsters`
+      ? `, rallying up to ${Math.max(0, Math.round(buff.rallyNearby.maxTargets))} unengaged nearby monsters to pursue and disengage together`
       : '';
     lines.push({
       id: 'casted-haste',
@@ -1130,6 +1128,12 @@ export function describeMonsterMechanics(
   // per spawn, so a promised exact number would be wrong most of the time.
   const packLine = describePack(def);
   if (packLine) lines.push(packLine);
+  if (def.swarm?.recruitRange) {
+    lines.push({
+      id: 'local-swarm', icon: '\u2691', label: 'Local swarm', category: 'ability',
+      detail: `When engaged alone, gathers up to ${(def.swarm.maxMembers ?? 4) - 1} nearby swarm creatures within ${def.swarm.recruitRange}px. Recruits cannot call another wave. The group fights and returns together.`,
+    });
+  }
 
   if (def.onDeath?.spawnHazard) {
     const hazard = def.onDeath.spawnHazard;

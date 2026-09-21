@@ -401,10 +401,14 @@ Four of these (Abilities, Stances, Rites, Cores) are **loadout layers**: player-
 
 ### Biome ecology AI primitives (packs, patrol, swarm, telegraphs)
 
-- **State:** coordination state lives on the existing server-only `ControlsMonster` (patrol index/direction/override, per-mob scratch) plus a new server-only, non-networked, non-persisted `InPack { packId, role }` component. Nothing here is persisted — monsters are always ephemeral (world axiom).
-- **Owner:** three new tick calls bracket the existing `updateMonsters` executor rather than replacing it: `updatePacks` (propagates an aggroed pack member's target onto un-aggroed packmates, scatters survivors via `onPackAlphaDead`) runs *before* `updateMonsters`; `updateSwarm` (boids separation/cohesion bending the tick's motion vector) runs *after* it. Patrol is a data-driven replacement for random wander on `ControlsMonster`, read inside `updateMonsters` itself. Telegraphs are one-shot `world.pushEvent(nodeId, { kind: 'ecology-pulse', ... })` animation events — no networked per-tick booleans, matching the existing anti-pattern rule against flag-based animation state.
+- **State:** coordination state lives on the existing server-only `ControlsMonster` (patrol index/direction/override, per-mob scratch) plus a new server-only, non-networked, non-persisted `InPack { packId, role, coordination }` component. Nothing here is persisted — monsters are always ephemeral (world axiom).
+- **Owner:** three new tick calls bracket the existing `updateMonsters` executor rather than replacing it: `updatePacks` (coordinates shared pursuit and return, preserves survivors after leader death, and forms bounded local swarm encounters) runs *before* `updateMonsters`; `updateSwarm` (boids separation/cohesion bending the tick's motion vector) runs *after* it. Patrol is a data-driven replacement for random wander on `ControlsMonster`, read inside `updateMonsters` itself. Telegraphs are one-shot `world.pushEvent(nodeId, { kind: 'ecology-pulse', ... })` animation events — no networked per-tick booleans, matching the existing anti-pattern rule against flag-based animation state.
 - **Extension point:** retrofitting a new biome is adding optional `pack` / `swarm` / `patrol` / `chargeOnAggro` fields to that biome's monster defs (`shared/src/data/monsters/`) — no server code changes for the primitive itself, only for a genuinely new primitive shape.
 - **Composition:** this is the rare case of three genuinely new coordination systems (no existing system iterated multiple monsters together), justified because no existing tick or combat-pipeline event could express cross-entity coordination. Terrain, hazards, DoTs, and boss scripting were all pre-existing and are reused as-is.
+
+Chestbeat cast completion also creates temporary `InPack` groups through
+`coordinateRally`. The `temporaryEncounter` marker makes both rallies and local
+Plains swarms dissolve after coordinated return; persistent spawned packs remain.
 
 ### Elite-tag targeting
 

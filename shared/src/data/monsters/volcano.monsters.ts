@@ -98,10 +98,10 @@ export const volcanoMonsterEntries = [
     // Loose cohesion/separation so the high-density biome READS as a swarm.
     swarm: { cohesion: 0.1, separation: 44 },
     // THE PACK BODY. Rolls loose from the pool too, so a node is packs PLUS
-    // scattered scuttlers rather than only formations. `callRange` only matters
+    // scattered scuttlers rather than only formations. The pack link only matters
     // while it is actually in a pack — a loose scuttler has no `inPack` link and
     // is never alerted by one.
-    pack: { role: 'follower', callRange: 260 },
+    pack: { role: 'follower' },
     ai: { wanderRadius: 230, leashRange: 620, idleMinMs: 1000, idleMaxMs: 3600 },
   }],
 
@@ -124,7 +124,7 @@ export const volcanoMonsterEntries = [
     // is the light half of the biome's mixed-pack read; the tortoise herd below is
     // the heavy half.
     pack: {
-      role: 'alpha', callRange: 320,
+      role: 'alpha', followRadius: 140,
       followers: [{ typeId: 'ember-scuttler', count: 2 }],
       followerVariants: [
         [{ typeId: 'ember-scuttler', count: 2 }],   // 5: a straight rush
@@ -155,7 +155,7 @@ export const volcanoMonsterEntries = [
     // create. No `swarm` on the tortoise itself (locked): the anchor holds ground,
     // the fodder flocks.
     pack: {
-      role: 'alpha', callRange: 300,
+      role: 'alpha', followRadius: 140,
       followers: [{ typeId: 'ember-scuttler', count: 3 }],
       followerVariants: [
         [{ typeId: 'ember-scuttler', count: 2 }],                                   // 6: pure swarm
@@ -186,7 +186,7 @@ export const volcanoMonsterEntries = [
     // THE PACK GUNNER. As a follower it plants on the pack's ring and shoots past
     // the bodies — which is exactly what `staticSentry` already does, so the pack
     // gets a backline for free. Still rolls loose from the pool as a lone sentry.
-    pack: { role: 'follower', callRange: 280 },
+    pack: { role: 'follower' },
     ai: { wanderRadius: 220, leashRange: 600, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
 
@@ -204,7 +204,7 @@ export const volcanoMonsterEntries = [
     swarm: { cohesion: 0.1, separation: 44 },
     // THE T4 PACK BODY (successor to ember-scuttler's role). Still deliberately
     // ability-free apart from its light Burn: the fodder must stay visually quiet.
-    pack: { role: 'follower', callRange: 280 },
+    pack: { role: 'follower' },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 13, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
   }],
@@ -221,7 +221,7 @@ export const volcanoMonsterEntries = [
     // PACK ALPHA — the evolved catcher pack. Same shape as the Cinder Hound's,
     // one tier up; the deepening is the tier, not a bigger formation.
     pack: {
-      role: 'alpha', callRange: 340,
+      role: 'alpha', followRadius: 140,
       followers: [{ typeId: 'ember-skink', count: 2 }],
       followerVariants: [
         [{ typeId: 'ember-skink', count: 2 }],
@@ -249,7 +249,7 @@ export const volcanoMonsterEntries = [
     // PACK ALPHA — the evolved anchor herd. Its Molten Eruption stays the one
     // telegraphed beat inside a pack of otherwise-quiet bodies.
     pack: {
-      role: 'alpha', callRange: 300,
+      role: 'alpha', followRadius: 140,
       followers: [{ typeId: 'ember-skink', count: 3 }],
       followerVariants: [
         [{ typeId: 'ember-skink', count: 2 }],
@@ -274,7 +274,7 @@ export const volcanoMonsterEntries = [
     // Fires from the background and does NOT kite (locked).
     staticSentry: true,
     // THE T4 PACK GUNNER. Same role as the Ash Salamander a tier below.
-    pack: { role: 'follower', callRange: 300 },
+    pack: { role: 'follower' },
     ai: { wanderRadius: 230, leashRange: 630, idleMinMs: 1200, idleMaxMs: 4000 },
     dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 16, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
   }],
@@ -296,7 +296,7 @@ export const volcanoMonsterEntries = [
     // so the yellow outline reads as "that one, in the middle of those" rather
     // than as a lone statue in an otherwise packed node.
     pack: {
-      role: 'alpha', callRange: 300,
+      role: 'alpha', followRadius: 140,
       followers: [{ typeId: 'ember-skink', count: 2 }],
       followerVariants: [
         [{ typeId: 'ember-skink', count: 1 }],

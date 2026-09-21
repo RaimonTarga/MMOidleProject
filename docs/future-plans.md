@@ -206,3 +206,26 @@ existed to remove.
 Open question: whether the return trip should stop one node short of the death
 node, or at the biome hub, so a player who died to a spike is not fed straight
 back into it.
+
+## Jungle group encounter follow-up (2026-09-21)
+
+Investigate encounter frequency before adding passive packs. Current source:
+Jungle bushes amplify player detection through `playerDetectionMult`; this makes
+nearby monsters independently acquire the player, rather than creating a shared
+encounter. Bushes no longer spawn ambush groups, and hazard-avoidance routing can
+keep automatic traversal outside their detection trigger. `jungle-snake` idles around bushes, while later stalkers have no equivalent
+idle anchor. The gorilla lineage's visible Chestbeat rallies at most two idle
+nearby monsters once per combat, with relay suppression. The missing Silverback
+and Apex Silverback casts were restored on 2026-09-21, replacing their old ramps.
+`jungleCastedAbilities.test.ts` covers all three tiers' cast, cap and no-relay behavior;
+`jungleBushes.test.ts` covers generated terrain, not observed group-fight frequency.
+
+Chestbeat now forms a temporary group with its two recruits, sharing pursuit/return
+without recursive recruitment. Its radius is 480px across all gorilla tiers.
+Remaining direction: evaluate bush encounter frequency before adding coordination
+to bush pulls themselves. Consider ambusher placement
+around bushes only after measuring current encounters with Chestbeat at every tier.
+Compare fights started, simultaneous attackers, occupied thickets and rally yield
+across tiers, both through natural auto-traversal and a player-directed bush approach.
+No Jungle density, roster or placement changes shipped; Chestbeat propagation is
+joined by the wider rally radius and temporary encounter coordination.

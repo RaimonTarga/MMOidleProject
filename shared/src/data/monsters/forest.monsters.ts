@@ -49,7 +49,7 @@ export const forestMonsterEntries = [
     ai: { wanderRadius: 290, leashRange: 1360, idleMinMs: 700, idleMaxMs: 2800 },
     // Forest predator-pack ALPHA: a roaming adult wolf spawns with two young wolves
     // and calls them onto anything it engages.
-    pack: { role: 'alpha', callRange: 320, followers: [{ typeId: 'young-wolf', count: 2 }] },
+    pack: { role: 'alpha', followRadius: 90, followers: [{ typeId: 'young-wolf', count: 2 }] },
   }],
 
   ['young-wolf', {
@@ -60,7 +60,7 @@ export const forestMonsterEntries = [
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 2, essenceType: 'green', level: 1, biomeXp: 12 },
     ai: { wanderRadius: 260, leashRange: 1240, idleMinMs: 700, idleMaxMs: 2800 },
-    pack: { role: 'follower', callRange: 300 },
+    pack: { role: 'follower' },
   }],
 
 
@@ -84,8 +84,7 @@ export const forestMonsterEntries = [
     // predator pack read as neither. Baseline 3; 4 is acceptable later if the
     // balance pass supports it.
     pack: {
-      role: 'alpha',
-      callRange: 320,
+      role: 'alpha', followRadius: 90,
       followers: [
         { typeId: 'dire-whelp', count: 3 },
       ],
@@ -104,7 +103,7 @@ export const forestMonsterEntries = [
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 3, essenceType: 'green', level: 1, biomeXp: 20 },
     ai: { wanderRadius: 260, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
-    pack: { role: 'follower', callRange: 300 },
+    pack: { role: 'follower' },
   }],
 
   ['ironwood-golem', {

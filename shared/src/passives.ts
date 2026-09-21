@@ -539,6 +539,8 @@ export const TECHNIQUE_KEYS = [
 export const GUARD_KEYS = [
   // Shorten the Guard ability's cooldown by this fraction (fire it more often).
   'guard.cooldown-reduction-pct',
+  // Applies to Cleanse-tagged abilities, additive with family CDR under its cap.
+  'cleanse.cooldown-reduction-pct',
   // Scale the Guard effect magnitude (e.g. damage-reduction drPct) by (1 + X).
   'guard.potency-pct',
   // Extend the Guard buff duration by (1 + X).

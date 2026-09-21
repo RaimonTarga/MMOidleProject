@@ -4,7 +4,7 @@ import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { grantMonsterRewards } from '../../player/progression/rewards';
 import { isInvulnerableMonster } from '../invulnerability';
-import { setAggroTarget } from '../ai/targeting';
+import { renewPackPursuit, setAggroTarget } from '../ai/targeting';
 import { markEngaged } from '../ai/engagement';
 import { markUltimateContributor } from '../ai/ultimateContributors';
 import { recordWorldLogEvent } from '../../../world/worldLog';
@@ -64,6 +64,7 @@ export function applyPlayerProcDamage(
   );
 
   target.hasHealth.hp -= hpDamage;
+  renewPackPursuit(world, target, { id: playerId, kind: 'player' });
   markUltimateContributor(world, target, playerId);
 
   if (

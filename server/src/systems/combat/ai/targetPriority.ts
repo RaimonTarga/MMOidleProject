@@ -344,10 +344,7 @@ function passesGates(
   // aggroed on the player are always engaged (retaliation). When nothing
   // qualifies, `selectAutoCombatAction` returns idle and the player holds.
   if (!isAggroedOnPlayer(monster, player)) {
-    // A monster sprinting home after a leash break (RETURN_SPEED_MULT) outruns
-    // the player and can never be caught. Committing to one causes the
-    // chase -> it flees -> pick another -> repeat oscillation. Skip it; if it
-    // were aggroed on us it would turn and fight (handled by the branch above).
+    // Let returning encounters finish their reset instead of chasing them home.
     if (monster.hasAwareness?.state === "returning") return false;
     if (isPastLeashAnchor(monster)) return false;
     if (
@@ -674,10 +671,11 @@ function isAggroedOnPlayer(monster: MonsterEntity, player: PlayerEntity): boolea
 }
 
 function isPastLeashAnchor(monster: MonsterEntity): boolean {
+  const territory = monster.inPack?.coordination;
   return !isWithinRange(
     monster.hasPosition.current,
-    monster.controlsMonster.spawn,
-    monster.controlsMonster.leashRange,
+    territory?.pursuitAnchor ?? monster.controlsMonster.spawn,
+    territory?.leashRange ?? monster.controlsMonster.leashRange,
   );
 }
 

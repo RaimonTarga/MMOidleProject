@@ -109,6 +109,13 @@ export function upgradeStatBonusTotal(item: ItemDefinition, plus: number): Recor
   return { [UPGRADE_STAT_BY_SLOT[slot]]: BONUS_PER_LEVEL[slot] * item.tier * plus };
 }
 
+/** Authored mechanics plus all earned upgrade steps, for equipment feedback. */
+export function itemMechanicEffectsAt(item: ItemDefinition, plus: number): Record<string, number> {
+  const effects: Record<string, number> = { ...item.mechanicEffects };
+  for (const [key, value] of Object.entries(upgradeMechanicEffectsTotal(item, plus))) effects[key] = (effects[key] ?? 0) + value;
+  return effects;
+}
+
 /**
  * Cumulative mechanic effect bonuses for an item at `plus`.
  * Only applies to items with explicit upgrade definitions.

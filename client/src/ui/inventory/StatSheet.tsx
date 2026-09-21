@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
+import { EquipmentAbilityTags } from '../AbilityTags';
 import { useAtomValue } from 'jotai';
 import {
-  compareEquipmentStats, ITEM_DATABASE, RECIPE_DATABASE, resolveRelicComparison,
+  compareEquipmentStats, ITEM_DATABASE, RECIPE_DATABASE, resolveRelicComparison, itemMechanicEffectsAt,
   relicRatingsFromPassives, coreEligibilityLabel, coreIsActive, isRestrictedCore,
   type EquipmentSlot, type EquipmentPreviewStat,
 } from '@mmo-idle/shared';
@@ -122,7 +123,7 @@ export function StatSheet({ focused, onFocus }: Props) {
       {(() => {
         if (!info) return null;
         const lines = [
-          ...formatMechanicEffects(info.itemDef.mechanicEffects),
+          ...formatMechanicEffects(itemMechanicEffectsAt(info.itemDef, info.plus)),
           ...(info.itemDef.slot === 'relic'
             ? formatResolvedRelicProfile(resolveRelicComparison(
                 combatArchetype,
@@ -138,6 +139,7 @@ export function StatSheet({ focused, onFocus }: Props) {
         return (
           <div className="inv-stat-sheet__effects">
             <div className="inv-stat-sheet__effects-label">EFFECTS</div>
+            <EquipmentAbilityTags item={info.itemDef} plus={info.plus} />
             <ul className="inv-stat-sheet__effects-list">
               {lines.map((line, i) => (
                 <li key={i} className="inv-stat-sheet__effects-line">{line}</li>

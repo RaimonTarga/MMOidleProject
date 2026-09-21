@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
+import { EquipmentAbilityTags } from '../AbilityTags';
 import type { EssenceType } from '@mmo-idle/shared';
 import {
   TEST_ROOM_NODE_ID,
+  ITEM_DATABASE,
   abilityDef,
   checkEvolve,
   checkReconstruct,
@@ -766,6 +768,7 @@ function MakeDetail({
       </div>
 
       {entry.blurb && <p className="make-detail__blurb">{entry.blurb}</p>}
+      {recipe && ITEM_DATABASE.has(recipe.id) && <EquipmentAbilityTags item={ITEM_DATABASE.get(recipe.id)!} />}
 
       {statList.length > 0 && (
         <div className="craft-recipe__stats">

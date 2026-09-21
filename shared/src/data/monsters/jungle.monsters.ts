@@ -1,5 +1,13 @@
 import type { MonsterDefinition } from './types';
 
+// Shared across the gorilla lineage so later tiers retain the same readable rally.
+const GORILLA_CHESTBEAT = {
+  name: 'Chestbeat', castMs: 1300, cooldownMs: 12000, initialCooldownMs: 1800,
+  effectId: 'monster-ape-chestbeat', attackSpeedPct: 0.3, durationMs: 4500,
+  target: 'nearby-monsters', radius: 480, castWhileOutOfRange: true,
+  rallyNearby: { maxTargets: 2, oncePerCombat: true }, fx: 'chest-beat',
+} satisfies NonNullable<MonsterDefinition['castedAttackSpeedBuff']>;
+
 // ─────────────────────────────────────────────────────────────────────────
 // MONSTER REFACTOR — starter biomes (Plains/Forest/Mountain/Swamp/Cave), T1+T2.
 //
@@ -89,12 +97,7 @@ export const jungleMonsterEntries = [
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
-    castedAttackSpeedBuff: {
-      name: 'Chestbeat', castMs: 1300, cooldownMs: 12000, initialCooldownMs: 1800,
-      effectId: 'monster-ape-chestbeat', attackSpeedPct: 0.3, durationMs: 4500,
-      target: 'nearby-monsters', radius: 320, castWhileOutOfRange: true,
-      rallyNearby: { maxTargets: 2, oncePerCombat: true }, fx: 'chest-beat',
-    },
+    castedAttackSpeedBuff: GORILLA_CHESTBEAT,
   }],
  
   ['jungle-blowdarter', {
@@ -113,9 +116,9 @@ export const jungleMonsterEntries = [
 
   // ══════════════════ JUNGLE — fast aggressive evasive swarm (Forest successor) ══════════════════
   // NO PASSIVE PACK MECHANICS anywhere in this biome (user call): no alphas, no followers,
-  // no call-allies. Jungle groups fights through TERRAIN — a thicket multiplies every
-  // monster's detection radius while the player stands in it — not through monster
-  // coordination. Do not reintroduce `pack` here without revisiting that.
+  // no passive call-allies. Thickets amplify detection and the gorilla lineage's
+  // visible Chestbeat adds a bounded rally. Do not reintroduce `pack` here without
+  // revisiting that.
   // 2nd tier. Fast, frequent, low-per-hit, high density; raw speed catches kiters
   // (anti-Far). Answer: evasion + raw-regen. Frequency is the threat evasion eats.
   ['jungle-stalker', {
@@ -132,14 +135,13 @@ export const jungleMonsterEntries = [
 
   ['silverback', {
     id: 'silverback', name: 'Silverback', color: 0xaa6633,
-    // Evolved Ape: charge + a STRONGER combat ramp. Unrelated pack/evasion/opening
-    // clutter removed (locked).
+    // Evolved Ape: charge + Chestbeat, preserving the lineage's readable rally.
     stats: { hp: 3200, attack: 83, plating: 0, damageReduction: 0, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 35, essenceType: 'green', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1100 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
+    castedAttackSpeedBuff: GORILLA_CHESTBEAT,
   }],
 
   ['canopy-harrier', {
@@ -174,15 +176,14 @@ export const jungleMonsterEntries = [
 
   ['apex-silverback', {
     id: 'apex-silverback', name: 'Apex Silverback', color: 0xaa6633,
-    // APEX APE: charge + the STRONGEST combat ramp, and nothing else. Evasion,
-    // the separate opening strike and the DR layering are all REMOVED (locked).
-    // A visual Rage state at high ramp is optional presentation, not a mechanic.
+    // APEX APE: charge + Chestbeat. The old invisible ramp is replaced by the
+    // same interruptible rally used throughout the gorilla lineage.
     stats: { hp: 10000, attack: 77, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1800, pullRange: 250 },
     behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 88, essenceType: 'green', level: 4, biomeXp: 528 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3600 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
-    rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
+    castedAttackSpeedBuff: GORILLA_CHESTBEAT,
   }],
 
   ['thornback-lizard', {

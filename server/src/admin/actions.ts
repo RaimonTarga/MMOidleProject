@@ -17,6 +17,8 @@ export function runAdminAction(
   requestId: string,
   action: AdminAction,
 ): AdminActionResult {
+  // Mark before mutation: kill/reset may synchronously emit gameplay evidence.
+  world.markGameplayTest?.('targetPlayerId' in action ? action.targetPlayerId : undefined);
   const result = runAction(world, action);
   log.info(
     {

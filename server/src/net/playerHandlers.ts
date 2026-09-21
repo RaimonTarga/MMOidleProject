@@ -265,7 +265,10 @@ export function registerPlayerHandlers(
   socket.on("player:setAuto", (enabled) => {
     const p = liveSelf();
     if (!p) return;
+    if (typeof enabled !== "boolean") return;
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     p.usesAutocombat.auto = enabled;
+    world.gameplay?.decision(p, "auto", enabled ? 'on' : 'off', telemetryBefore);
     if (!enabled) {
       detachComponent(world, p, "isFleeing");
       return;
@@ -290,9 +293,11 @@ export function registerPlayerHandlers(
   socket.on("player:setAutoTraverse", (enabled) => {
     const p = liveSelf();
     if (!p) return;
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     mutateSlice(world, p, "usesAutocombat", (s) => {
       s.autoTraverse = !!enabled;
     });
+    world.gameplay?.decision(p, "auto-traverse", p.usesAutocombat.autoTraverse ? 'on' : 'off', telemetryBefore);
     if (!enabled) clearAutoTraversePath(world, p);
   });
 
@@ -300,9 +305,11 @@ export function registerPlayerHandlers(
     const p = liveSelf();
     if (!p) return;
     const sanitized = sanitizeAutocombatConfig(config);
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     mutateSlice(world, p, "usesAutocombat", (s) => {
       Object.assign(s, sanitized);
     });
+    world.gameplay?.decision(p, "targeting", null, telemetryBefore);
   });
 
   socket.on("player:navigateTo", (nodeId) => {
@@ -311,7 +318,9 @@ export function registerPlayerHandlers(
     if (p.isChanneling) return;
     if (typeof nodeId !== "string") return;
     clearSummonerCommand(world, p);
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     startManualNavigation(world, p, nodeId);
+    if (p.hasAutoTraversePath?.targetNodeId === nodeId) world.gameplay?.decision(p, "navigate", nodeId, telemetryBefore, true);
   });
 
   socket.on("player:moveToNeighbor", (nodeId, pos, ack) => {
@@ -320,7 +329,9 @@ export function registerPlayerHandlers(
       if (typeof ack === 'function') ack({ accepted: false, nodeId: '', goal: { x: 0, y: 0 } });
       return;
     }
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = startNeighborNavigation(world, p, nodeId, pos);
+    world.gameplay?.decision(p, "navigate-neighbor", nodeId, telemetryBefore, result.accepted);
     if (result.accepted) clearSummonerCommand(world, p);
     if (typeof ack === 'function') ack(result);
   });
@@ -354,7 +365,9 @@ export function registerPlayerHandlers(
   socket.on("player:unlockSkill", (skillId) => {
     const p = liveSelf();
     if (!p) return;
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const succeeded = unlockSkill(world, p, skillId);
+    world.gameplay?.decision(p, "skill", skillId, telemetryBefore, succeeded);
     if (succeeded) {
       markSliceDirty(world, p, "tracksProgression");
       markSliceDirty(world, p, "usesSkills");
@@ -364,7 +377,9 @@ export function registerPlayerHandlers(
   socket.on("player:resetClass", () => {
     const p = liveSelf();
     if (!p) return;
-    resetPlayerClass(world, p, { requireAltar: true });
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
+    const result = resetPlayerClass(world, p, { requireAltar: true });
+    world.gameplay?.decision(p, "reset-class", null, telemetryBefore, result.ok);
     adminControls.emitPlayerSummaries();
   });
 
@@ -394,7 +409,9 @@ export function registerPlayerHandlers(
       socket.emit("build:loadoutResult", { system: "runes", success: false, reason: `This build costs ${total} RP, but only ${budget} RP is available.` });
       return;
     }
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     p.tracksProgression.runesEquipped = valid;
+    world.gameplay?.decision(p, "runes", null, telemetryBefore);
     markSliceDirty(world, p, "tracksProgression");
     socket.emit("build:loadoutResult", { system: "runes", success: true });
   });
@@ -402,13 +419,17 @@ export function registerPlayerHandlers(
   socket.on("inventory:equipItem", (definitionId) => {
     const p = liveSelf();
     if (!p) return;
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     equipItem(world, p, definitionId);
+    world.gameplay?.decision(p, "equip", definitionId, telemetryBefore);
   });
 
   socket.on("inventory:unequip", (slot: EquipmentSlot) => {
     const p = liveSelf();
     if (!p) return;
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     unequipItem(world, p, slot);
+    world.gameplay?.decision(p, "unequip", slot, telemetryBefore);
   });
 
   socket.on("crafting:craftRecipe", (recipeId: string) => {
@@ -417,7 +438,9 @@ export function registerPlayerHandlers(
       socket.emit("crafting:result", { success: false, reason: NOT_LIVE_REASON });
       return;
     }
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = craftRecipe(world, p, recipeId);
+    world.gameplay?.decision(p, "craft", recipeId, telemetryBefore, result.success);
     socket.emit("crafting:result", result);
   });
 
@@ -429,7 +452,9 @@ export function registerPlayerHandlers(
       return;
     }
     if (payload.mode !== "evolve" && payload.mode !== "reconstruct") return;
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = evolveItem(world, p, payload.recipeId, payload.mode);
+    world.gameplay?.decision(p, payload.mode, payload.recipeId, telemetryBefore, result.success);
     socket.emit("crafting:result", result);
   });
 
@@ -440,7 +465,9 @@ export function registerPlayerHandlers(
       socket.emit("rune:craftResult", { recipeId, success: false, reason: NOT_LIVE_REASON });
       return;
     }
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = craftRuneRecipe(world, p, recipeId);
+    world.gameplay?.decision(p, "craft-rune", recipeId, telemetryBefore, result.success);
     socket.emit("rune:craftResult", result);
   });
 
@@ -451,7 +478,9 @@ export function registerPlayerHandlers(
       socket.emit("ability:craftResult", { recipeId, success: false, reason: NOT_LIVE_REASON });
       return;
     }
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = craftAbilityRecipe(world, p, recipeId);
+    world.gameplay?.decision(p, "craft-ability", recipeId, telemetryBefore, result.success);
     socket.emit("ability:craftResult", result);
   });
 
@@ -461,7 +490,9 @@ export function registerPlayerHandlers(
     if (!p) return reject(NOT_LIVE_REASON);
     const equipped = payload?.equipped;
     if (!equipped || !Array.isArray(equipped.techniques) || !Array.isArray(equipped.guards) || [...equipped.techniques, ...equipped.guards].some(id => typeof id !== "string")) return reject("Malformed ability loadout.");
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = setAbilityLoadout(world, p, equipped);
+    world.gameplay?.decision(p, "abilities", null, telemetryBefore, result.success);
     socket.emit("build:loadoutResult", { system: "abilities", ...result });
   });
 
@@ -481,7 +512,9 @@ export function registerPlayerHandlers(
       socket.emit("stance:craftResult", { recipeId, success: false, reason: !p ? NOT_LIVE_REASON : "Malformed recipe id." });
       return;
     }
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = craftStanceRecipe(world, p, recipeId);
+    world.gameplay?.decision(p, "craft-stance", recipeId, telemetryBefore, result.success);
     socket.emit("stance:craftResult", result);
   });
 
@@ -494,7 +527,9 @@ export function registerPlayerHandlers(
     if (payload.attunedStances !== undefined && (!Array.isArray(payload.attunedStances) || payload.attunedStances.some(id => typeof id !== "string"))) return reject("Malformed stance attunement.");
     if (payload.stanceId !== null && typeof payload.stanceId !== "string") return reject("Malformed default stance.");
     const stanceId = payload.stanceId;
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = setStanceLoadout(world, p, payload.slot, stanceId, payload.attunedStances);
+    world.gameplay?.decision(p, "stances", null, telemetryBefore, result.success);
     socket.emit("build:loadoutResult", { system: "stances", ...result });
   });
 
@@ -514,7 +549,9 @@ export function registerPlayerHandlers(
       socket.emit("rite:craftResult", { recipeId, success: false, reason: !p ? NOT_LIVE_REASON : "Malformed recipe id." });
       return;
     }
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = craftRiteRecipe(world, p, recipeId);
+    world.gameplay?.decision(p, "craft-rite", recipeId, telemetryBefore, result.success);
     socket.emit("rite:craftResult", result);
   });
 
@@ -524,7 +561,9 @@ export function registerPlayerHandlers(
     if (!p) return reject(NOT_LIVE_REASON);
     if (!payload || !Array.isArray(payload.riteIds) || payload.riteIds.some(id => typeof id !== "string")) return reject("Malformed Rite loadout.");
     const riteIds = payload.riteIds;
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = setRiteLoadout(world, p, riteIds);
+    world.gameplay?.decision(p, "rites", null, telemetryBefore, result.success);
     socket.emit("build:loadoutResult", { system: "rites", ...result });
   });
 
@@ -539,7 +578,9 @@ export function registerPlayerHandlers(
       });
       return;
     }
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = upgradeItem(world, p, itemId);
+    world.gameplay?.decision(p, "upgrade", itemId, telemetryBefore, result.success);
     socket.emit("inventory:upgradeResult", result);
   });
 

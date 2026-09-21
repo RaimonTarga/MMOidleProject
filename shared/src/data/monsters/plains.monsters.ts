@@ -39,10 +39,10 @@ export const plainsMonsterEntries = [
     // Plains swarm: while chasing, slimes converge as a group (gentle cohesion) and
     // fan out rather than stacking on one pixel (separation). Many-body pressure.
     // Placeholder tuning — user balance pass.
-    swarm: { cohesion: 0.1, separation: 40 },
+    swarm: { recruitRange: 260, maxMembers: 4, cohesion: 0.1, separation: 40 },
     // Also the swarm body a Prairie Wolf "caller" rallies: as a pack follower it
     // joins the call-allies net (roams + swarms solo when not in a caller's pack).
-    pack: { role: 'follower', callRange: 280 },
+    pack: { role: 'follower' },
   }],
 
   ['boar', {
@@ -54,7 +54,7 @@ export const plainsMonsterEntries = [
     ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     // Boars charge in as a converging herd, not single-file (swarm-catcher pressure).
-    swarm: { cohesion: 0.08, separation: 56 },
+    swarm: { recruitRange: 260, maxMembers: 4, cohesion: 0.08, separation: 56 },
   }],
 
 
@@ -71,9 +71,9 @@ export const plainsMonsterEntries = [
     behavior: 'melee', attackStyle: 'bite', biome: 'plains',
     rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
-    pack: { role: 'follower', callRange: 300 },
+    pack: { role: 'follower' },
     // Runs with the herd its alpha gathers, rather than pathing on its own.
-    swarm: { cohesion: 0.12, separation: 48 },
+    swarm: { recruitRange: 260, maxMembers: 4, cohesion: 0.12, separation: 48 },
   }],
 
   ['prairie-wolf', {
@@ -86,9 +86,9 @@ export const plainsMonsterEntries = [
     // Plains CALLER (the brainstorm's "callers / small swarm group"): the fast runner
     // rallies its own yearlings — spawns with 3 Prairie Yearlings and pulls them onto its
     // target via call-allies when it engages. Placeholder counts/range — user pass.
-    pack: { role: 'alpha', callRange: 300, followers: [{ typeId: 'prairie-yearling', count: 3 }] },
+    pack: { role: 'alpha', followRadius: 180, followers: [{ typeId: 'prairie-yearling', count: 3 }] },
     // The alpha should wander with the herd it spawns, not path independently of it.
-    swarm: { cohesion: 0.12, separation: 52 },
+    swarm: { recruitRange: 260, maxMembers: 4, cohesion: 0.12, separation: 52 },
   }],
 
   ['stampede-bull', {
@@ -100,7 +100,7 @@ export const plainsMonsterEntries = [
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     // A stampede is a herd: bulls converge as a group as they charge in.
-    swarm: { cohesion: 0.08, separation: 64 },
+    swarm: { recruitRange: 260, maxMembers: 4, cohesion: 0.08, separation: 64 },
   }],
 
   ['savanna-hawk', {

@@ -6,6 +6,7 @@ import { setEntityMotion, updateMovement } from "../src/systems/world/movement";
 import { spawnPack } from "../src/systems/world/spawning";
 import { World } from "../src/world/World";
 import { MONSTER_DATABASE } from "@mmo-idle/shared";
+import { packTestPlayerSlices } from "./fixtures/packTestPlayer";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -42,6 +43,7 @@ assert(
   "followers should share the alpha's packId",
 );
 
+world.attachPlayerEntity(packTestPlayerSlices("fake-player", FOREST_NODE, 650, 600), "fake-player");
 setAggroTarget(world, alpha, { id: "fake-player", kind: "player" }, 1_000);
 updatePacks(world, 1_000);
 assert(

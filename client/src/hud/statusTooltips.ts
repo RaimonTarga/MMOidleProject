@@ -200,6 +200,8 @@ export function abilityTooltipContent(
 
   return {
     title: `${ability.name} ${rank}`,
+    tags: described.tags.map(tag => tag.id),
+    equipment: described.equipmentModifiers.map(line => ({ key: line.key, label: `${line.source} · ${line.label}`, value: line.value })),
     kicker: `${SLOT_LABEL[ability.slot]} · ${described.rankLabel}`,
     body: abilityBlurbAt(ability, context.playerTier),
     rows,
@@ -224,4 +226,3 @@ export function abilityAccessibleLabel(
       : ABILITY_STATE_LABEL[runtime.state].toLowerCase();
   return `${SLOT_LABEL[ability.slot]}: ${ability.name} ${rank} — ${state}`;
 }
-

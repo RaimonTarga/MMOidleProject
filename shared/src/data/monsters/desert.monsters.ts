@@ -89,7 +89,7 @@ export const desertMonsterEntries = [
     // Paired 1:1 with its tier's scarab, exactly like the basilisk family. The
     // pack fields are spawn + shared-aggro plumbing only - there is no alpha
     // fantasy here, and no scatter when either half dies.
-    pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'dust-djinn', count: 1 }] },
+    pack: { role: 'alpha', followers: [{ typeId: 'dust-djinn', count: 1 }] },
     // NUMBING STING — telegraphed soft control instead of an invisible slow on
     // every basic hit. Its short cast is frequent, but the longer slow gives the
     // paired Sun Scarab time to create a real kiting window.
@@ -124,7 +124,7 @@ export const desertMonsterEntries = [
       name: 'Petrifying Gaze', castMs: 1300, cooldownMs: 7000, initialCooldownMs: 500,
       multiplier: 1.0, fx: 'petrifying-gaze', rootMs: 1400,
     },
-    pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'dust-djinn', count: 1 }] },
+    pack: { role: 'alpha', followers: [{ typeId: 'dust-djinn', count: 1 }] },
   }],
 
   ['dust-djinn', {
@@ -137,7 +137,7 @@ export const desertMonsterEntries = [
     // that four rounds of charm buffs failed to touch — a plain, untelegraphed
     // ordinary hit (no chargedAttack) reading 165 raw damage (63.7% of a T2 arrival
     // player's maxHP), fired every 1.9s, and pulled in together with Sand Scorpion
-    // (`pack.callRange`) so the pair's opening two hits alone (~165+93) nearly
+    // (`pack`) so the pair's opening two hits alone (~165+93) nearly
     // equal the whole health pool inside 2 seconds — before any recovery/barrier
     // charm can matter. This is the same "plain ordinary hit, no counterplay gate"
     // pattern as the T3 Glacier Bear fix, not a telegraphed/CC-gated spike.
@@ -145,7 +145,7 @@ export const desertMonsterEntries = [
     behavior: 'kiter', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 220, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
-    pack: { role: 'follower', callRange: 320 },
+    pack: { role: 'follower' },
   }],
 
   // ══ DESERT T3 — the same pair, now with SUNDERING on the controller ══
@@ -164,7 +164,7 @@ export const desertMonsterEntries = [
     // Paired 1:1 with its tier's scarab, exactly like the basilisk family. The
     // pack fields are spawn + shared-aggro plumbing only - there is no alpha
     // fantasy here, and no scatter when either half dies.
-    pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandweaver', count: 1 }] },
+    pack: { role: 'alpha', followers: [{ typeId: 'sandweaver', count: 1 }] },
     chargedAttack: {
       name: 'Numbing Sting', castMs: 500, cooldownMs: 3500, initialCooldownMs: 500,
       multiplier: 1.0, fx: 'numbing-sting',
@@ -189,7 +189,7 @@ export const desertMonsterEntries = [
       multiplier: 1.0, fx: 'petrifying-gaze', rootMs: 1600,
     },
     appliesVulnerability: { damageTakenPct: 0.12, maxStacks: 1, durationMs: 4000 },
-    pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandweaver', count: 1 }] },
+    pack: { role: 'alpha', followers: [{ typeId: 'sandweaver', count: 1 }] },
   }],
 
   ['sandweaver', {
@@ -207,7 +207,7 @@ export const desertMonsterEntries = [
       name: 'Sunbeam', castMs: 1400, cooldownMs: 9000, initialCooldownMs: 4500,
       multiplier: 1.6, fx: 'sunbeam',
     },
-    pack: { role: 'follower', callRange: 320 },
+    pack: { role: 'follower' },
   }],
 
   // ══ DESERT T4 — two controllers: the sundering specialist and the apex ══
@@ -224,7 +224,7 @@ export const desertMonsterEntries = [
     // Paired 1:1 with its tier's scarab, exactly like the basilisk family. The
     // pack fields are spawn + shared-aggro plumbing only - there is no alpha
     // fantasy here, and no scatter when either half dies.
-    pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
+    pack: { role: 'alpha', followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
     chargedAttack: {
       name: 'Numbing Sting', castMs: 500, cooldownMs: 3000, initialCooldownMs: 500,
       multiplier: 1.0, fx: 'numbing-sting',
@@ -246,7 +246,7 @@ export const desertMonsterEntries = [
       multiplier: 1.0, fx: 'petrifying-gaze', rootMs: 1800,
     },
     appliesVulnerability: { damageTakenPct: 0.18, maxStacks: 1, durationMs: 4500 },
-    pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
+    pack: { role: 'alpha', followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
   }],
 
   ['sandspitter-cobra', {
@@ -268,7 +268,7 @@ export const desertMonsterEntries = [
     // it for a few seconds and the shield is back. Hard to kill WITHOUT being
     // generically tanky, which is the distinction the locked design wants.
     enemyShield: { shieldPct: 0.22, intervalMs: 12000, durationMs: 6000, rechargeAfterCleanMs: 4000 },
-    pack: { role: 'follower', callRange: 320 },
+    pack: { role: 'follower' },
   }],
 
   ['dune-tyrant', {
@@ -292,7 +292,7 @@ export const desertMonsterEntries = [
       multiplier: 2.2, fx: 'strong-kick',
     },
     slowEffect: { speedMult: 0.4, durationMs: 4000 },
-    pack: { role: 'alpha', callRange: 340, followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
+    pack: { role: 'alpha', followers: [{ typeId: 'sandspitter-cobra', count: 1 }] },
   }],
 
 

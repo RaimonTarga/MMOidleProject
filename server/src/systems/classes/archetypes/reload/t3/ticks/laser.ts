@@ -9,7 +9,7 @@ import {
   emitCombatEvent,
   makeCombatContext,
 } from '../../../../../combat/engine/combatPipeline';
-import { setAggroTarget, setAttackTarget } from '../../../../../combat/ai/targeting';
+import { renewPackPursuit, setAggroTarget, setAttackTarget } from '../../../../../combat/ai/targeting';
 import { markEngaged } from '../../../../../combat/ai/engagement';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
 import {
@@ -145,6 +145,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   );
 
   target.hasHealth.hp -= ctx.damage;
+  renewPackPursuit(world, target, { id: player.isPlayer.id, kind: 'player' }, now);
   player.performsAttack.lastAttackAt = now;
 
   if (target.isMonster.isBoss && target.hasPosition.nodeId === TEST_ROOM_NODE_ID) {

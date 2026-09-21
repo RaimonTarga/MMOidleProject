@@ -45,6 +45,8 @@ export function killPlayer(
   const entity = world.getPlayerEntity(playerId);
   if (!entity || entity.isDead) return;
 
+  world.gameplay?.death(world, entity, cause);
+
   const graveFrame = Math.floor(Math.random() * GRAVE_FRAME_COUNT);
   const payload = buildPlayerDeathPayload(entity, cause, graveFrame);
 

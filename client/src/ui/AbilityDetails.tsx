@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { AbilityTags } from './AbilityTags';
 import { useHoverTooltip } from "../hud/primitives";
 import type { AbilityDescription, AbilityLine } from "./describe/abilityText";
 import "./describe/detailLines.css";
@@ -50,9 +51,15 @@ function AbilityNumber({ line, rank }: { line: AbilityLine; rank: string }) {
 
 export function AbilityDetails({ description }: { description: AbilityDescription }) {
   return <div className="ability-numbers">
-    <div className="ability-tags" aria-label="Ability tags">
-      {description.tags.map(tag => <span className="ability-tag" key={tag.id} title={tag.help}>{tag.label}</span>)}
-    </div>
+    <AbilityTags tags={description.tags.map(tag => tag.id)} />
     {description.lines.map(line => <AbilityNumber key={line.key} line={line} rank={description.rank} />)}
+    {description.equipmentModifiers.length > 0 && <div className="ability-equipment">
+      <div className="detail-lines__title">Equipment bonuses</div>
+      {description.equipmentModifiers.map(line => <div className="detail-line" key={line.key}>
+        <span className="detail-line__label">{line.source} · {line.label}</span>
+        <span className="detail-line__value">{line.value}</span>
+      </div>)}
+      <div className="detail-lines__empty">Shown values include bonuses and caps. Kill refunds apply when triggered.</div>
+    </div>}
   </div>;
 }

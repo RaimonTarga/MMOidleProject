@@ -8,11 +8,14 @@ import {
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/targeting';
-import { updateCombat } from '../src/systems/combat/engine/combat';
+import { updateCombat, runPlayerAttack } from '../src/systems/combat/engine/combat';
+import { updatePacks } from '../src/systems/combat/ai/packs';
+import { updateMonsters } from '../src/systems/combat/ai/ai';
 import { monsterAttackCooldown } from '../src/systems/combat/engine/monsterMechanics';
 import { mirrorTargetStatus } from '../src/systems/combat/targetStatus';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { World } from '../src/world/World';
+import { spawnPack } from '../src/systems/world/spawning';
 
 function assert(condition: boolean, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -56,15 +59,22 @@ initCombatSystems();
 
 // Chestbeat is a local, casted rally: haste reaches the whole authored radius,
 // but only two idle non-boss monsters are pulled onto the Ape's live target.
-{
+for (const monsterTypeId of ['jungle-ape', 'silverback', 'apex-silverback']) {
+  assert(!MONSTER_DATABASE.get(monsterTypeId)?.rampOnCombat, `${monsterTypeId} should replace the old invisible ramp with Chestbeat`);
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('chestbeat-target'), 'chestbeat-target');
-  const ape = world.createMonster(NODE, 'jungle-ape', { x: 400, y: 400 });
-  const nearest = world.createMonster(NODE, 'jungle-snake', { x: 500, y: 400 });
-  const second = world.createMonster(NODE, 'jungle-blowdarter', { x: 600, y: 400 });
-  const capped = world.createMonster(NODE, 'jungle-snake', { x: 700, y: 400 });
-  const distant = world.createMonster(NODE, 'jungle-snake', { x: 760, y: 400 });
+  // Isolate rally acquisition from the player's automatic attack targeting.
+  player.performsAttack.lastAttackAt = 1_000_000;
+  const ape = world.createMonster(NODE, monsterTypeId, { x: 400, y: 400 });
+  const nearest = world.createMonster(NODE, monsterTypeId, { x: 500, y: 400 });
+  const second = world.createMonster(NODE, 'jungle-blowdarter', { x: 850, y: 400 });
+  const capped = world.createMonster(NODE, 'jungle-snake', { x: 870, y: 400 });
+  const distant = world.createMonster(NODE, 'jungle-snake', { x: 900, y: 400 });
   assert(ape && nearest && second && capped && distant, 'Chestbeat test monsters should spawn');
+  const existingPack = spawnPack(world, NODE, 'wolf', { x: 420, y: 400 })!;
+  const existingPackId = existingPack[0]!.inPack!.packId;
+  const returning = world.createMonster(NODE, 'jungle-snake', { x: 430, y: 400 })!;
+  returning.hasAwareness.state = 'returning';
 
   setAggroTarget(world, ape, { id: player.isPlayer.id, kind: 'player' }, 1_000);
   ape.hasAwareness.state = 'attacking';
@@ -92,6 +102,8 @@ initCombatSystems();
   assert(second.hasAggroTarget?.targetId === player.isPlayer.id, 'Chestbeat should pull its second idle ally onto the Ape target');
   assert(!capped.hasAggroTarget, 'Chestbeat should cap its rally at two monsters');
   assert(!distant.hasAggroTarget, 'Chestbeat should not pull a monster outside its radius');
+  assert(existingPack.every(m => m.inPack?.packId === existingPackId && !m.hasAggroTarget), 'Rally must not steal members or activate an existing pack');
+  assert(!returning.inPack && !returning.hasAggroTarget, 'Rally must not interrupt a solo monster returning home');
 
   setAttackTarget(world, player, ape.isMonster.id);
   mirrorTargetStatus(world);
@@ -103,9 +115,39 @@ initCombatSystems();
   // discover and pull a new wave of monsters.
   const late = world.createMonster(NODE, 'jungle-snake', { x: 650, y: 400 });
   assert(late, 'late Chestbeat candidate should spawn');
+  nearest.hasAwareness.state = 'attacking';
+  world.takeNodeEvents(NODE);
   updateCombat(world, 0, 18_300);
   updateCombat(world, 0, 19_600);
+  assert(world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-end' && event.monsterId === nearest.isMonster.id && event.fired), `${monsterTypeId} recruited by Chestbeat should still cast its own buff`);
+  assert(!capped.hasAggroTarget, 'A recruited gorilla must not relay its rally into another wave');
   assert(!late.hasAggroTarget, 'Chestbeat should rally only once per Ape combat session');
+
+  const members = [ape, nearest, second];
+  const state = ape.inPack?.coordination;
+  assert(!!state?.temporaryEncounter && members.every(m => m.inPack?.coordination === state), 'Completed rally should create one temporary encounter');
+  assert(!capped.inPack && !distant.inPack && !late.inPack, 'Haste recipients and later arrivals must not join the encounter');
+  world.removeMonsterEntity(ape.isMonster.id);
+  nearest.hasHealth.hp = nearest.hasHealth.maxHp = 100_000;
+  nearest.hasPosition.current = { x: 1800, y: 400 };
+  player.hasPosition.current = { x: 1805, y: 400 };
+  runPlayerAttack(world, player, nearest, 20_000, {
+    attackOrigin: player.hasPosition.current, aggroSource: { id: player.isPlayer.id, kind: 'player' },
+  });
+  updatePacks(world, 20_000);
+  updateMonsters(world, 100, 20_000);
+  assert([nearest, second].every(m => m.hasAggroTarget?.targetId === player.isPlayer.id && m.hasAwareness.state !== 'returning'), 'Kiting one recruit keeps surviving allies engaged after caller death');
+  player.hasPosition.current = { x: 3000, y: 400 };
+  updatePacks(world, 24_999);
+  assert(!state.returning, 'Brief attack gaps must not split a Jungle rally');
+  updatePacks(world, 25_000);
+  updateMonsters(world, 100, 25_000);
+  assert([nearest, second].every(m => !m.hasAggroTarget && m.hasAwareness.state === 'returning'), 'Rallied allies reset together after escaping without attacks');
+  for (const m of [nearest, second]) m.hasPosition.current = { ...m.controlsMonster.spawn };
+  updatePacks(world, 25_100);
+  assert([nearest, second].every(m => !m.inPack && m.hasAwareness.leashRange === m.controlsMonster.leashRange), 'Returned Jungle groups dissolve and restore independent leashes');
+  world.tick(100, 25_200);
+  assert(!nearest.inPack && !second.inPack, 'Normal world ticks must not recreate dissolved Jungle groups passively');
 }
 
 function testChameleonBurst(

@@ -654,19 +654,14 @@ export interface MonsterDefinition {
   /**
    * Pack behavior. Presence opts the mob into coordinated grouped AI (handled by
    * the server pack system, which only sets aggro INTENT — `updateMonsters` stays
-   * the executor). An aggroed pack member pulls un-aggroed mates that are within
-   * `callRange` of an already-aggroed member onto the shared target (assist /
-   * call-allies). Spawning: when the population top-up rolls an `alpha` type, the
+   * the executor). Members share a target, territory and coordinated return.
+   * Spawning: when the population top-up rolls an `alpha` type, the
    * whole pack (alpha + `followers`) spawns clustered around one anchor.
    */
   pack?: {
     role: 'alpha' | 'follower';
-    /**
-     * Max distance from an already-aggroed pack-mate at which this un-aggroed mob
-     * is alerted onto the shared target. Omit/0 = never alerted (still spawns with
-     * the pack and assists once it aggros on its own).
-     */
-    callRange?: number;
+    /** Idle formation radius around the living leader; defaults to 120px. */
+    followRadius?: number;
     /**
      * ALPHA ONLY: follower groups spawned alongside this alpha as one pack. An
      * array so a pack can mix types (e.g. melee wolves + a ranged support).
@@ -694,12 +689,16 @@ export interface MonsterDefinition {
   };
   /**
    * Swarm flocking. Presence makes the mob steer as part of a group while chasing a
-   * shared target: a light boids cohesion+separation offset is added to its chase
-   * destination (handled by the server swarm system, which runs AFTER `updateMonsters`
-   * and only nudges the destination — never speed or leash). Turns "many mobs each
+   * shared target: a light boids cohesion+separation steer bends its movement
+   * direction (handled by the server swarm system, which runs AFTER `updateMonsters`
+   * and never changes speed or leash). Turns "many mobs each
    * peel off solo" into "many mobs converge as pressure". Position-derived, no RNG.
    */
   swarm?: {
+    /** Opt into bounded local encounter recruitment (no recruitment by recruits). */
+    recruitRange?: number;
+    /** Total encounter size including the caller; defaults to four. */
+    maxMembers?: number;
     /** Pull toward the group centroid, 0..1 (gentle — ~0.1). 0 = separation only. */
     cohesion: number;
     /** Mobs closer than this (px) push apart so they fan out instead of stacking. */
@@ -1112,9 +1111,9 @@ export interface MonsterDefinition {
     castWhileOutOfRange?: boolean;
     /**
      * Optional capped rally performed by the same cast. Unaggroed, non-boss
-     * monsters in `radius` receive the caster's current target. This is an
-     * explicit alternative to passive pack membership, so it remains readable
-     * and cannot recursively pull an unlimited group by default.
+     * monsters in `radius` receive the caster's target and share a temporary
+     * pursuit/return group. Existing packs, bosses, boss adds, dungeon guardians
+     * and returning monsters cannot be recruited. Groups never merge or relay.
      */
     rallyNearby?: {
       maxTargets: number;

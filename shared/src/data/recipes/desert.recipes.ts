@@ -1,8 +1,8 @@
 import type { Recipe } from './types';
 
 // DESERT (debuts T2). Identity: last-stand + cleanse armor / ambush weapon /
-// cleanse-or-burst charm. Charm rework: upgrades ramp the empty-heal, recovery flat
-// (cleanse stacks/interval stay flat — too chunky to ramp). See mountain.recipes.ts.
+// Cleanse-ability charm. Upgrades shorten Cleanse-tagged ability cooldowns.
+// No automatic charm cleanse or fallback heal; armor keeps its own cleanse.
 
 export const desertRecipeEntries = [
   // ── T2 ──
@@ -58,21 +58,21 @@ export const desertRecipeEntries = [
     ],
   }],
 
-  // Charm: recovery flat; upgrades ramp cleanse empty-heal 0.03 -> 0.06 (stacks/interval flat).
+  // Charm: 15% Cleanse cooldown reduction; each upgrade adds 1 percentage point.
   ['desert-charm-t2', {
     id: 'desert-charm-t2', name: 'Mirage Talisman',
     recipeGroup: 'desert', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { yellow: 50, purple: 25 }, stats: { recovery: 6 }, // family-tag: cleanse/last-stand recovery → Dominion
-    mechanicEffects: { 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 6000, 'defense.cleanse-empty-heal-pct': 0.03 },
+    mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.15 },
     tier: 2,
     icon: 'items/charms/mirage-talisman.png',
     description: 'A shard of cooled glass that shows you water which is not there, and mends what is.',
     upgrades: [
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 15, purple: 8 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 39, purple: 19 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 62, purple: 31 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 101, purple: 50 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 171, purple: 84 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 15, purple: 8 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 39, purple: 19 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 62, purple: 31 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 101, purple: 50 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 171, purple: 84 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -138,23 +138,23 @@ export const desertRecipeEntries = [
     ],
   }],
 
-  // Charm: recovery flat; upgrades ramp cleanse empty-heal 0.05 -> 0.08.
+  // Charm: 20% Cleanse cooldown reduction; each upgrade adds 1 percentage point.
   ['desert-charm-t3', {
     id: 'desert-charm-t3', name: 'Oasis Heart',
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'desert-charm-t2',
     cost: { yellow: 100, purple: 25 }, stats: { recovery: 11 }, // family-tag: cleanse recovery → Dominion
     reconstructCost: { yellow: 350, purple: 88 }, reconstructCatalystCost: { dominion: 3 },
-    mechanicEffects: { 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 6000, 'defense.cleanse-empty-heal-pct': 0.05 },
+    mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.20 },
     tier: 3,
     icon: 'items/charms/oasis-heart.png',
-    description: 'It strips the curse from your blood, or — finding none — gives you a swallow of water instead.',
+    description: 'A patient spring that helps you find the strength to purge curses and break your bonds again sooner.',
     upgrades: [
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 38, purple: 9 },  requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 95, purple: 24 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 152, purple: 38 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 246, purple: 62 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 417, purple: 104 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 38, purple: 9 },  requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 95, purple: 24 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 152, purple: 38 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 246, purple: 62 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 417, purple: 104 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -239,20 +239,19 @@ export const desertRecipeEntries = [
     evolvesFrom: 'desert-charm-t3',
     cost: { yellow: 200, purple: 50 }, stats: { recovery: 16 },
     reconstructCost: { yellow: 700, purple: 175 }, reconstructCatalystCost: { dominion: 4 },
-    // † cleanse-per-stack-heal-pct: heal 2% maxHP per debuff stack actually cleansed.
+    // 25% Cleanse cooldown reduction; each upgrade adds 1.5 percentage points.
     mechanicEffects: {
-      'defense.cleanse-stacks': 2, 'defense.cleanse-interval-ms': 6000,
-      'defense.cleanse-empty-heal-pct': 0.07, 'defense.cleanse-per-stack-heal-pct': 0.02,
+      'cleanse.cooldown-reduction-pct': 0.25,
     },
     tier: 4,
     icon: 'items/charms/last-oasis.png',
-    description: 'It draws the poison out and, finding the wound clean, leaves a swallow of cool water in its place.',
+    description: 'The last spring never runs dry; each purge and broken bond brings the next within reach.',
     upgrades: [
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 76, purple: 19 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 493, purple: 123 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 834, purple: 209 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 76, purple: 19 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 493, purple: 123 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 834, purple: 209 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 

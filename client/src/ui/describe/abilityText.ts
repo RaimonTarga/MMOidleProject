@@ -12,6 +12,8 @@ import {
   abilityHasTag,
   abilityTags,
   ABILITY_TAG_INFO,
+  ABILITY_MODIFIER_INFO,
+  abilityModifierApplies,
   type AbilityTag,
   TECHNIQUE_POWER_FIELDS,
   type AbilityDef,
@@ -42,6 +44,7 @@ import {
 const CAST_SPEED_CAP = 0.6;
 
 export interface AbilityContext {
+  equipmentSources?: { id: string; name: string; effects: Record<string, number>; inactiveReason?: string }[];
   playerTier: number;
   passives: Record<string, number>;
   /** Current attack power, for turning a damage multiplier into real damage. */
@@ -62,6 +65,7 @@ export interface AbilityLine {
 }
 
 export interface AbilityDescription {
+  equipmentModifiers: { key: string; source: string; label: string; value: string }[];
   /** Rank numeral for this character, e.g. "III". */
   rank: string;
   /** Current authored rank, without implying a final progression ceiling. */
@@ -276,6 +280,12 @@ export function describeAbility(
 
   const rankNumber = abilityRankNumber(ability, context.playerTier);
   return {
+    equipmentModifiers: (context.equipmentSources ?? []).flatMap(source => ABILITY_MODIFIER_INFO
+      .filter(info => (source.effects[info.key] ?? 0) > 0 && abilityModifierApplies(info.key, ability, context.playerTier)
+        && (info.key !== 'guard.recovery-on-fire-ms' || (context.passives['guard.recovery-on-fire-pct'] ?? 0) > 0))
+      .map(info => ({ key: `${source.id}:${info.key}`, source: source.name, label: info.label,
+        value: source.inactiveReason ? `Inactive · ${source.inactiveReason}`
+          : info.unit === 'ms' ? seconds(source.effects[info.key]) : pct(source.effects[info.key]) }))),
     rank: abilityRankNumeral(rankNumber),
     rankLabel: `Rank ${abilityRankNumeral(rankNumber)}`,
     trigger: triggerSentence(ability.trigger),

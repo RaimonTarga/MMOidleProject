@@ -604,6 +604,10 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     lines.push(`+${pctK('guard.potency-pct')} Mitigation Guard potency`);
     mark('guard.potency-pct');
   }
+  if (has('cleanse.cooldown-reduction-pct')) {
+    lines.push(`${pctK('cleanse.cooldown-reduction-pct')} shorter Cleanse-tagged ability cooldowns (Cleanse and Break Free)`);
+    mark('cleanse.cooldown-reduction-pct');
+  }
   if (has('guard.duration-pct')) {
     lines.push(`+${pctK('guard.duration-pct')} Mitigation Guard duration`);
     mark('guard.duration-pct');

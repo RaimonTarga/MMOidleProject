@@ -44,6 +44,8 @@ export type AbilityTag =
   | "technique"
   | "guard"
   | "armed"
+  | "cast"
+  | "aoe"
   | "mobility"
   | "recovery"
   | "mitigation"

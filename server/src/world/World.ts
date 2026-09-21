@@ -1,4 +1,6 @@
 import { CollisionIndex } from "./collision/CollisionIndex";
+import type { GameplayRecorder } from '../analytics/gameplayRecorder';
+import type { GameplayWriter } from '../analytics/gameplayWriter';
 import type {
   NodeDefinition,
   CombatEvent,
@@ -366,6 +368,9 @@ export class World {
   nextWorldLogId = 1;
   /** Dev-only, filesystem-backed manual-playtest evidence recorder. */
   humanPlaytests?: HumanPlaytestRecorderManager;
+  gameplay?: GameplayRecorder;
+  gameplayWriter?: GameplayWriter;
+  markGameplayTest?: (playerId?: string) => void;
   /**
    * ID of the test-room boss that has been attacked by a player.
    * While set (and the boss still exists), the boss-rotation loop is paused so
@@ -496,6 +501,7 @@ export class World {
     updateDeadPlayersInWorld(this, now);
     tickDungeons(this, now);
     this.humanPlaytests?.sample(this, now);
+    this.gameplay?.sample(this, now);
 
     if (IS_DEV) {
       ensureCurrentTestRoomBoss(this);

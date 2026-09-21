@@ -31,6 +31,7 @@ function parsePoolMax(value: string | undefined, fallback: number): number {
 
 export const logPool = new Pool({
   connectionString,
+  connectionTimeoutMillis: 5_000,
   max: parsePoolMax(process.env.LOG_PG_POOL_MAX, 2),
   ssl: wantsSsl ? { rejectUnauthorized: false } : false,
 });

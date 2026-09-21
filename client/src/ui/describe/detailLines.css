@@ -87,4 +87,11 @@
 .detail-line--behavior .detail-line__value { flex:1 1 100%; min-width:0; overflow-wrap:anywhere; font-weight:normal; }
 
 .ability-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
-.ability-tag { padding: 2px 6px; border: 1px solid var(--border-color, #555); border-radius: 4px; font-size: 11px; cursor: help; }
+.ability-tag { --tag-color: #bac2ce; padding: 2px 7px; border: 1px solid color-mix(in srgb, var(--tag-color) 45%, transparent); background: color-mix(in srgb, var(--tag-color) 10%, transparent); color: var(--tag-color); border-radius: 999px; font-size: 10px; line-height: 1.4; cursor: help; }
+.ability-tag--technique, .ability-tag--offensive-buff { --tag-color: #f3b68a; }
+.ability-tag--guard, .ability-tag--mitigation { --tag-color: #9bc9f5; }
+.ability-tag--recovery, .ability-tag--cleanse { --tag-color: #9cdbb5; }
+.ability-tag--mobility { --tag-color: #86d8d8; }
+.ability-tag--aoe, .ability-tag--control { --tag-color: #cfb0ee; }
+.ability-tag--armed, .ability-tag--cast { --tag-color: #e4d094; }
+.ability-equipment { border-top: 1px solid #ffffff20; margin-top: 8px; padding-top: 8px; }

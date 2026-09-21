@@ -5,7 +5,7 @@ import type { World } from '../../../../../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../../../../../ecs/entity';
 import { hitboxGap, inAttackRange, posHitboxFromEntity } from '@mmo-idle/shared';
 import { emitCombatEvent, makeCombatContext } from '../../../../../../combat/engine/combatPipeline';
-import { setAttackTarget, setAggroTarget } from '../../../../../../combat/ai/targeting';
+import { renewPackPursuit, setAttackTarget, setAggroTarget } from '../../../../../../combat/ai/targeting';
 import { markEngaged } from '../../../../../../combat/ai/engagement';
 import { grantMonsterRewards } from '../../../../../../player/progression/rewards';
 import { endChannel } from '../../core/helpers';
@@ -123,6 +123,7 @@ function applyBeamTick(world: World, player: PlayerEntity, target: MonsterEntity
   );
 
   target.hasHealth.hp -= ctx.damage;
+  renewPackPursuit(world, target, { id: player.isPlayer.id, kind: 'player' }, now);
   player.performsAttack.lastAttackAt = now;
 
   const procEffects = Array.isArray(ctx.metadata['clientEffects'])

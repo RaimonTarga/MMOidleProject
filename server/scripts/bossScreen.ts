@@ -1,3 +1,4 @@
+import { FAST_PASS_BLOCKS, FAST_PASS_BOSSES, FAST_PASS_CAP_MS, FAST_PASS_SEED, assertFastPassDefinitions, fastPassReadback, assertFastPassHitboxes } from '../bench/balance/playerFastPassSpec';
 /**
  * Boss screen runner — a seeded, receipt-emitting boss fight.
  *
@@ -151,6 +152,12 @@ const TRIALS: Record<string, {
    */
   installTreatment?: (cell: Night5Cell) => { changes: unknown[]; restore: () => void } | null;
 }> = {
+  'player-fast-pass': {
+    defaultBlock: 't2-boss',
+    blocks: Object.fromEntries(Object.entries(FAST_PASS_BLOCKS).filter(([name]) => name.endsWith('-boss'))),
+    perBlock: Object.fromEntries(FAST_PASS_BOSSES.map(b => [`t${b.tier}-boss`, { bossId:b.boss, capMs:FAST_PASS_CAP_MS, seeds:[FAST_PASS_SEED], escorts:{} }])),
+    assertDefinitions: assertFastPassDefinitions,
+  },
   boss1: {
     defaultBlock: 'sovereign', blocks: BOSS1_BLOCKS,
     perBlock: {
@@ -252,7 +259,7 @@ const cells: Night5Cell[] = mode === 'pilot'
 assert(cells.length > 0, `${trial}/${blockName}: mode ${mode} selected no cells`);
 const seeds = mode === 'run' ? [...spec.seeds] : [spec.seeds[0]!];
 
-hydrateHitboxCacheFromArtifact(JSON.parse(readFileSync(args.hitboxes, 'utf8')));
+assert(hydrateHitboxCacheFromArtifact(args.hitboxes) > 0, 'Valid baked hitbox artifact required');
 
 const revision = args.revision
   ?? execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -351,6 +358,7 @@ function run(cell: Night5Cell, seed: number) {
     const declared = resolveSurveyPackage(cell);
     const { bot, view } = prepareSurveyBot(world, cell, BOT_SPAWN);
 
+    const packageReadback = trial === 'player-fast-pass' ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
     // Tick once so the boss actually spawns before the receipt is written; a
     // receipt taken before the wake-up records an empty arena.
     world.tick(100, now);
@@ -369,11 +377,13 @@ function run(cell: Night5Cell, seed: number) {
       dr: m.mitigatesDamage.damageReduction,
     }));
 
+    if(trial === 'player-fast-pass') assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
     const initial = roster();
     const ready = {
       cell: cell.id,
       seed,
       synthetic: true,
+      ...(packageReadback ? { packageReadback } : {}),
       bossId: spec.bossId,
       guardianAccess: 'not-measured-guard-stripped',
       view,

@@ -70,6 +70,10 @@
   white-space: nowrap;
 }
 
+.tip-card__section--equipment .tip-row { flex-wrap: wrap; gap: 2px 8px; }
+.tip-card__section--equipment .tip-row__label { white-space: normal; min-width: 0; overflow-wrap: anywhere; flex: 1 1 170px; }
+.tip-card__section--equipment .tip-row__value { overflow-wrap: anywhere; }
+
 .tip-row__value {
   font-family: monospace;
   font-weight: bold;

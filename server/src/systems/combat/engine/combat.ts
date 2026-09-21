@@ -1,5 +1,6 @@
 import { mitigateOnHitDamage } from '@mmo-idle/shared';
 import { outgoingFinalDamage } from '../damage/finalDamage';
+import { coordinateRally } from '../ai/packs';
 import { playerOnHitDamage } from './onHitDamage';
 import { pushDamageEvent } from '../damage/damageEvent';
 import type { World } from "../../../world/World";
@@ -106,7 +107,7 @@ import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { applyPlatingShredStacks } from '../status/platingShred';
 import { shellDamageMult } from '../ai/shellUp';
-import { setAggroTarget, setAttackTarget } from "../ai/targeting";
+import { renewPackPursuit, setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
 import {
   abortEngageSequence,
@@ -594,7 +595,10 @@ export function runPlayerAttack(
   if (enemyShieldResult.broke) {
     applyIceShatter(world, target, monsterDef, now, enemyShieldResult.shatter);
   }
-  target.controlsMonster.spawn = { ...target.hasPosition.current };
+  // Solos retain their existing damage anchor behavior. Packs move one shared
+  // pursuit anchor while preserving each member's eventual return position.
+  if (!target.inPack) target.controlsMonster.spawn = { ...target.hasPosition.current };
+  renewPackPursuit(world, target, opts.aggroSource, now);
 
   if (
     target.isMonster.isBoss &&
@@ -702,10 +706,11 @@ export function runPlayerAttack(
   // spawn — outside that, the monster ignores the attacker to prevent
   // safe static-range whittling.
   const ai = target.controlsMonster;
+  const territory = target.inPack?.coordination;
   if (!target.hasAggroTarget) {
     if (
-      distanceSq(opts.attackOrigin, ai.spawn) <=
-      ai.leashRange * ai.leashRange
+      distanceSq(opts.attackOrigin, territory?.pursuitAnchor ?? ai.spawn) <=
+      (territory?.leashRange ?? ai.leashRange) ** 2
     ) {
       setAggroTarget(world, target, opts.aggroSource, now);
       if (opts.aggroSource.kind === "player") {
@@ -1128,9 +1133,8 @@ const CASTED_BUFF_RALLY_RECEIVED_SESSION_KEY = 'castedBuffRallyReceivedSession';
 
 /**
  * Pull a capped number of unengaged nearby monsters onto the caster's current
- * target. This is intentionally a cast completion effect rather than pack
- * membership: it has a visible tell, does not call bosses, and a rallied monster
- * cannot relay the same call into a second wave.
+ * target and a temporary coordinated encounter. Recruitment requires a completed
+ * cast; existing groups cannot merge or relay the call into a second wave.
  */
 function rallyNearbyMonsters(
   world: World,
@@ -1140,7 +1144,8 @@ function rallyNearbyMonsters(
 ): void {
   const rally = buff.rallyNearby;
   const aggro = monster.hasAggroTarget;
-  if (!rally || !aggro) return;
+  if (!rally || !aggro || monster.inPack || monster.isMonster.isBoss ||
+      monster.controlsMonster.bossSpawnerId || monster.tracksDungeon) return;
 
   const sessionToken = aggro.sinceMs + 1;
   if (
@@ -1175,6 +1180,8 @@ function rallyNearbyMonsters(
       ally.hasHealth.hp > 0 &&
       !ally.isMonster.isBoss &&
       !ally.hasAggroTarget &&
+      !ally.inPack && !ally.controlsMonster.bossSpawnerId && !ally.tracksDungeon &&
+      ally.hasAwareness.state !== 'returning' &&
       distanceSq(ally.hasPosition.current, monster.hasPosition.current) <= radiusSq &&
       distanceSq(ally.hasPosition.current, ally.controlsMonster.spawn) <= ally.controlsMonster.leashRange ** 2,
     )
@@ -1195,6 +1202,7 @@ function rallyNearbyMonsters(
     const alliedSession = ally.hasAggroTarget?.sinceMs ?? now;
     setCounter(ally.tracksCombat, CASTED_BUFF_RALLY_RECEIVED_SESSION_KEY, alliedSession + 1);
   }
+  coordinateRally(world, monster, candidates.map(({ ally }) => ally), now);
   if (rally.oncePerCombat !== false) {
     setCounter(monster.tracksCombat, CASTED_BUFF_RALLY_SESSION_KEY, sessionToken);
   }

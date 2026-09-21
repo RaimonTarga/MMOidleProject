@@ -1,4 +1,9 @@
 import express from "express";
+import { GameplayRecorder } from './analytics/gameplayRecorder';
+import { GameplayWriter } from './analytics/gameplayWriter';
+import { gameVersion } from './analytics/version';
+import { insertGameplayEvents, pruneGameplayEvents } from './logdb/gameplayRepo';
+import { telemetryIdentity, markTelemetryTest } from './db/telemetryIdentity';
 import { createServer } from "http";
 import { Server, type Socket } from "socket.io";
 import cors from "cors";
@@ -229,12 +234,14 @@ async function boot(): Promise<void> {
   await pruneExpiredLogs();
   await pruneExpiredWorldLogEntries();
   await pruneExpiredAnalyticsEvents();
+  await pruneGameplayEvents();
   const pruneTimer = setInterval(() => {
     void Promise.all([
       pruneExpiredSessions(db),
       pruneExpiredLogs(),
       pruneExpiredWorldLogEntries(),
       pruneExpiredAnalyticsEvents(),
+      pruneGameplayEvents(),
     ]).catch((err) => log.warn({ err }, "log retention prune failed"));
   }, 60 * 60 * 1000);
   pruneTimer.unref?.();
@@ -271,6 +278,18 @@ async function boot(): Promise<void> {
 
   const world = new World();
   if (IS_DEV) world.humanPlaytests = new HumanPlaytestRecorderManager();
+  if (process.env.GAMEPLAY_TELEMETRY_ENABLED !== '0') {
+    world.gameplayWriter = new GameplayWriter(insertGameplayEvents);
+    world.gameplay = new GameplayRecorder(event => world.gameplayWriter!.enqueue(event), gameVersion());
+    world.markGameplayTest = (playerId) => {
+      world.gameplay?.markTest(playerId);
+      for (const [id, session] of sessionsBySocket) {
+        if ((!playerId || id === playerId) && session.characterId) {
+          void markTelemetryTest(db, session.characterId).catch(() => log.warn('Failed to persist telemetry test exclusion'));
+        }
+      }
+    };
+  }
   const spectatorManager = new SpectatorManager(world, {
     isPlayerConnected: (playerId) => io.sockets.sockets.has(playerId),
     isPlayerInactive: (playerId) => inactiveSockets.has(playerId),
@@ -364,7 +383,8 @@ async function boot(): Promise<void> {
   const queuedAnalyticsEvents: AnalyticsEventInput[] = [];
 
   function queueAnalyticsEvent(entry: AnalyticsEventInput): void {
-    queuedAnalyticsEvents.push(entry);
+    // Legacy account-linked analytics remain a development diagnostic only.
+    if (process.env.NODE_ENV !== 'production') queuedAnalyticsEvents.push(entry);
   }
 
   function playerAccountId(playerId: string): string | undefined {
@@ -383,6 +403,7 @@ async function boot(): Promise<void> {
   }
 
   function recordSessionEnd(socketId: string, accId: string, p: PlayerEntity): void {
+    world.gameplay?.stop(socketId, 'disconnect', p);
     const startedAt = sessionStartedAtBySocket.get(socketId);
     if (!startedAt) return;
     sessionStartedAtBySocket.delete(socketId);
@@ -404,6 +425,7 @@ async function boot(): Promise<void> {
   }
 
   world.analyticsNodeTransition = (playerId, fromNodeId, toNodeId) => {
+    world.gameplay?.transition(playerId, toNodeId);
     const info = NODE_BIOMES[toNodeId];
     queuePlayerAnalyticsEvent(playerId, {
       kind: "node-enter",
@@ -461,7 +483,17 @@ async function boot(): Promise<void> {
   }, 1_000);
   worldLogFlushTimer.unref?.();
 
+  let reportedGameplayFailures = 0;
+  let reportedGameplayDrops = 0;
   const analyticsFlushTimer = setInterval(() => {
+    void world.gameplayWriter?.drain().then(() => {
+      const health = world.gameplayWriter!.status();
+      if (health.failedBatches !== reportedGameplayFailures || health.dropped !== reportedGameplayDrops) {
+        log.warn({ queued: health.queued, failedBatches: health.failedBatches, dropped: health.dropped }, 'Gameplay telemetry delivery degraded');
+        reportedGameplayFailures = health.failedBatches;
+        reportedGameplayDrops = health.dropped;
+      }
+    });
     if (queuedAnalyticsEvents.length === 0) return;
     const batch = queuedAnalyticsEvents.splice(0, queuedAnalyticsEvents.length);
     void insertAnalyticsEvents(batch).catch((err) =>
@@ -543,7 +575,7 @@ async function boot(): Promise<void> {
       if (logEvents.length > 0) {
         const viewerAccountId = accountIdForSocket(player.isPlayer.id);
         const viewerCharacterId = sessionsBySocket.get(player.isPlayer.id)?.characterId ?? undefined;
-        for (const event of logEvents) {
+        for (const event of process.env.NODE_ENV !== 'production' ? logEvents : []) {
           queuedWorldLogEntries.push({
             viewerId: player.isPlayer.id,
             viewerAccountId,
@@ -745,6 +777,12 @@ async function boot(): Promise<void> {
           return false;
         }
 
+        // Analytics availability must never prevent a player from entering.
+        const identity = world.gameplay ? await telemetryIdentity(db, characterId).catch(() => {
+          log.warn('Gameplay telemetry identity unavailable; session will not be recorded');
+          return null;
+        }) : null;
+
         // A duplicate login can disconnect this socket while the DB load is pending.
         if (!socket.connected || socketByAccount.get(accId) !== socket.id) return false;
 
@@ -763,6 +801,8 @@ async function boot(): Promise<void> {
         syncArchetypeSlices(world, entity);
         entity.hasHealth.hp = entity.hasHealth.maxHp;
         sessionStartedAtBySocket.set(socket.id, Date.now());
+        if (identity) world.gameplay?.start(entity, identity.id,
+          IS_DEV || process.env.GAMEPLAY_TELEMETRY_COHORT === 'test' ? 'test' : identity.cohort);
         queueAnalyticsEvent({
           kind: "session-start",
           accountId: accId,
@@ -1004,10 +1044,14 @@ async function boot(): Promise<void> {
 
   const shutdown = (signal: string) => {
     log.info({ signal }, "shutting down");
+    world.gameplay?.shutdown();
+    clearInterval(analyticsFlushTimer);
+    // Bound shutdown even when the database/network never answers.
+    setTimeout(() => process.exit(1), 10_000).unref();
     const flushPlaytests = world.humanPlaytests
       ? world.humanPlaytests.interruptAll(world, `server shutdown (${signal})`)
       : Promise.resolve();
-    void flushPlaytests.finally(() => {
+    void Promise.all([flushPlaytests, world.gameplayWriter?.drain().then(() => world.gameplayWriter?.drain(true))]).finally(() => {
       spectatorManager.shutdown();
       io.close();
       httpServer.closeAllConnections?.();

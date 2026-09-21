@@ -7,6 +7,7 @@ import type {
   AdminLogQuery,
   AdminServerToClientEvents,
   AdminWorldLogQuery,
+  GameplayQuery,
 } from '@mmo-idle/shared';
 import {
   actionResultsAtom,
@@ -19,6 +20,7 @@ import {
   telemetryAtom,
   worldLogAtom,
   balanceLabAtom,
+  gameplayAtom,
 } from './state';
 
 type AdminSocket = Socket<AdminServerToClientEvents, AdminClientToServerEvents>;
@@ -27,13 +29,14 @@ const SERVER_URL = import.meta.env.DEV ? 'http://localhost:4000/admin' : '/admin
 const MAX_LIVE_LOGS = 2_000;
 let socket: AdminSocket | null = null;
 
-export function connectAdminSocket(): void {
+export function connectAdminSocket(token?: string): void {
   disconnectAdminSocket();
   const store = getDefaultStore();
   store.set(connectionErrorAtom, null);
 
   socket = io(SERVER_URL, {
     transports: ['websocket', 'polling'],
+    auth: { token },
   }) as AdminSocket;
 
   socket.on('connect', () => {
@@ -52,6 +55,7 @@ export function connectAdminSocket(): void {
   socket.on('admin:logs', (logs) => store.set(logsAtom, logs));
   socket.on('admin:worldLog', (entries) => store.set(worldLogAtom, entries));
   socket.on('admin:analytics', (snapshot) => store.set(analyticsAtom, snapshot));
+  socket.on('admin:gameplay', (snapshot) => store.set(gameplayAtom, snapshot));
   socket.on('admin:log', (entry) => {
     store.set(logsAtom, (prev) => [...prev, entry].slice(-MAX_LIVE_LOGS));
   });
@@ -92,6 +96,8 @@ export function requestWorldLog(query: AdminWorldLogQuery): void {
 export function requestAnalytics(query: AdminAnalyticsQuery): void {
   socket?.emit('admin:requestAnalytics', query);
 }
+
+export function requestGameplay(query: GameplayQuery): void { socket?.emit('admin:requestGameplay', query); }
 
 export function sendAdminAction(action: AdminAction): void {
   socket?.emit('admin:action', crypto.randomUUID(), action);

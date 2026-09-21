@@ -136,8 +136,8 @@ should use that explicit bypass instead of Discord login.
   rewards, AI, spawning, transitions, admin actions, telemetry, and logging.
 - `client/` renders authoritative deltas and sends intent events only.
 - `admin/` observes logs/telemetry/analytics and sends admin actions through the
-  `/admin` Socket.IO namespace. Admin auth is currently a TODO; keep it trusted-dev
-  only until fixed.
+  `/admin` Socket.IO namespace. Production requires `ADMIN_TOKEN` (32+ characters);
+  the dashboard accepts it at runtime and does not persist it in browser storage.
 
 Feature flow: shared contract/data -> server authority -> client/admin presentation.
 
@@ -223,8 +223,10 @@ Important formula conventions:
 - Structured logs use `server/src/log.ts` and persist/query via `server/src/logdb/`.
 - Telemetry is published through `server/src/broker/` using Redis and consumed by
   clients/admin as `world:telemetry` / `admin:telemetry`.
-- Discord player authentication does not cover `/admin` or the `/admin` Socket.IO
-  namespace. Keep them behind trusted access until separate admin auth exists.
+- The `/admin` Socket.IO namespace uses a separate `ADMIN_TOKEN`; production fails
+  closed when it is missing/short. Static dashboard assets contain no secrets.
+- Gameplay telemetry uses dedicated gameplay tables in logdb, random character IDs,
+  and 90-day detail / 365-day daily retention. See `docs/gameplay-telemetry-current-state.md`.
 
 ## Socket Surface
 
@@ -287,6 +289,6 @@ Player client-to-server highlights:
 
 Keep this short; check source/issues before acting.
 - Finish/verify Railway-style deployment with game DB, log DB, and Redis.
-- Admin auth is not implemented; do not expose admin beyond trusted dev use.
+- Configure `ADMIN_TOKEN` and logdb backups before production use.
 - Continue balance/playtest passes.
 - Some late-tier mechanics and T3+ monster balance may still be placeholders.

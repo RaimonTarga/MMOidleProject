@@ -40,6 +40,8 @@ import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { setAggroTarget, setAttackTarget } from "./targeting";
+import { packFollowDestination } from "./packs";
+import { abortMonsterCast } from "../engine/combat";
 import { clearBossPatternState, patternOwnsMonster } from "./bossPatterns";
 import {
   selectMonsterAggroCandidate,
@@ -57,7 +59,6 @@ const KITE_GRACE_MS = 500; // ms chasing before speed ramp begins
 const KITE_RAMP_RATE = 1.5; // speed multiplier gain per second past grace (no cap — ramps forever)
 const KITE_MIN_SPEED = 150; // absolute floor once ramp is active (beats base player speed of 120)
 const KITE_DECAY_RATE = 2.0; // drains 2× faster than it builds while monster is in attack range
-const RETURN_SPEED_MULT = 1.6; // how fast monsters snap back to spawn
 
 // Kiter (isRanged + kite:true) standoff band, as fractions of the kiter's own
 // attackRange (center-to-center). Back away once the player presses inside
@@ -148,7 +149,8 @@ function maintainKiteStandoff(
 
   // Leash clamp: retreat only if the destination stays inside the leash circle.
   // Otherwise the kiter is cornered against its territory edge — hold and fire.
-  if (distanceSq(dest, ai.spawn) <= ai.leashRange * ai.leashRange) {
+  const territory = monster.inPack?.coordination;
+  if (distanceSq(dest, territory?.pursuitAnchor ?? ai.spawn) <= (territory?.leashRange ?? ai.leashRange) ** 2) {
     setEntityMotion(world, monster, dest);
   } else {
     stopEntity(world, monster);
@@ -246,6 +248,14 @@ export function updateMonsters(world: World, dt: number, now: number) {
     const id = e.isMonster.id;
     const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
     const isBossSpawnedAdd = syncBossSpawnedAddTarget(world, e, now);
+    if (e.inPack?.coordination?.returning) {
+      abortMonsterCast(world, e);
+      abortEngageSequence(world, e);
+      clearBossPatternState(world, e);
+      resetCombatRamp(e);
+      ai.kiteTimer = 0;
+      ai.chargeRemainingMs = 0;
+    }
 
     // Stun is full CC (movement halt). Frozen is only a severe slow (handled via
     // reduced speed/attack-cooldown in updateChillAndFreeze), so frozen monsters
@@ -287,7 +297,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // This preserves retaliation aggro set by the combat system when a
     // player attacks from outside pull range.
     if (!e.hasAggroTarget) {
-      if (!isBossSpawnedAdd && e.hasAwareness.state !== "returning") {
+      if (!isBossSpawnedAdd && !e.inPack?.coordination && e.hasAwareness.state !== "returning") {
         // Future taunt override should run before normal policy acquisition here.
         const pulled = selectMonsterAggroCandidate(world, e);
         if (pulled) {
@@ -327,6 +337,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
       // Leash check: if too far from spawn, give up and return.
       if (
+        !e.inPack?.coordination &&
         distanceSq(e.hasPosition.current, ai.spawn) >
         ai.leashRange * ai.leashRange
       ) {
@@ -600,12 +611,30 @@ export function updateMonsters(world: World, dt: number, now: number) {
       ai.kiteTimer = 0;
       ai.chargeRemainingMs = 0;
       resetCombatRamp(e);
-      // Run at boosted speed while returning so the re-engage window is small.
-      e.hasPosition.speed =
-        e.hasAwareness.state === "returning"
-          ? Math.round(ai.baseSpeed * RETURN_SPEED_MULT)
-          : ai.baseSpeed;
+      // Returning is ordinary movement, never a flee-speed boost.
+      e.hasPosition.speed = ai.baseSpeed;
       setAttackTarget(world, e, null);
+
+      // All members finish the return before anyone can resume roaming/acquisition.
+      if (e.inPack?.coordination?.returning) {
+        const home = ai.holdPost ?? ai.spawn;
+        e.hasAwareness.state = "returning";
+        if (distanceSq(e.hasPosition.current, home) <= HOLD_POST_ARRIVE_SQ) stopMonster(world, e);
+        else setMonsterTarget(world, e, home);
+        continue;
+      }
+      const formation = packFollowDestination(world, e);
+      if (formation) {
+        const radius = e.inPack!.coordination!.followRadius;
+        if (distanceSq(e.hasPosition.current, formation) > radius * radius) {
+          e.hasAwareness.state = "wandering";
+          setMonsterTarget(world, e, formation);
+        } else {
+          e.hasAwareness.state = "idle";
+          stopMonster(world, e);
+        }
+        continue;
+      }
 
       // Fixed patrol route (if any) replaces random wander while un-aggroed.
       const patrol = ai.patrolOverride ?? monsterDef?.patrol;

@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import type { AbilityTag } from '@mmo-idle/shared';
+import { AbilityTags } from '../../ui/AbilityTags';
 import './tooltipCard.css';
 
 /**
@@ -29,6 +31,8 @@ export interface TooltipRow {
 }
 
 export interface TooltipCardContent {
+  tags?: AbilityTag[];
+  equipment?: TooltipRow[];
   /** The thing's name, e.g. "Sweep III" or "Frost". */
   title: string;
   /** What kind of thing it is, e.g. "Technique", "Debuff · Monster". */
@@ -70,6 +74,7 @@ export function TooltipCard({ content }: { content: TooltipCardContent }): React
     <div className="tip-card">
       <div className="tip-card__title">{title}</div>
       {kicker && <div className="tip-card__kicker">{kicker}</div>}
+      {content.tags && <AbilityTags tags={content.tags} />}
       {body && <p className="tip-card__body">{body}</p>}
       {rows && rows.length > 0 && (
         <div className="tip-card__section">
@@ -83,6 +88,11 @@ export function TooltipCard({ content }: { content: TooltipCardContent }): React
           <Rows rows={current} live />
         </div>
       )}
+      {!!content.equipment?.length && <div className="tip-card__section tip-card__section--equipment">
+        <div className="tip-card__heading">Equipment bonuses</div>
+        <Rows rows={content.equipment} live={false} />
+        <p className="tip-card__footnote">Shown values include bonuses and caps. Kill refunds apply when triggered.</p>
+      </div>}
       {footnote && <p className="tip-card__footnote">{footnote}</p>}
     </div>
   );

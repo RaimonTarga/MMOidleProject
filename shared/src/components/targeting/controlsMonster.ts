@@ -54,12 +54,29 @@ export interface ControlsMonster {
 }
 
 /**
- * Pack membership — SERVER-ONLY runtime link minted at spawn for monsters spawned
- * as a coordinated pack. Never networked, never persisted (monsters are ephemeral).
- * The pack system groups members by `packId` each tick to propagate shared aggro.
+ * Pack membership — SERVER-ONLY runtime link minted at spawn or encounter recruitment.
+ * Never networked, never persisted (monsters are ephemeral).
+ * The pack system groups members by `packId` each tick to coordinate one encounter.
  */
 export interface InPack {
-  /** Shared id for all members of one spawned pack. */
+  /** Shared id for all members of one coordinated group. */
   packId: string;
   role: 'alpha' | 'follower';
+  /** Shared by reference by living members; survives the leader's death. */
+  coordination?: {
+    home: Vec2;
+    /** Moves with attacks on ANY member; home remains the eventual return point. */
+    pursuitAnchor: Vec2;
+    lastAttackedAt?: number;
+    /** Damage helpers without a tick clock stamp their renewal next AI tick. */
+    pendingAttack?: {};
+    leashRange: number;
+    followRadius: number;
+    leaderId: string;
+    target?: { id: string; kind: 'player' | 'minion' };
+    /** Ordinary alerts wait for home; an incoming attack renews the whole group. */
+    returning?: { sinceMs: number };
+    /** Present on recruited swarms and cast rallies; dissolves after returning. */
+    temporaryEncounter?: {};
+  };
 }

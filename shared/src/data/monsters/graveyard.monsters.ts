@@ -55,7 +55,7 @@ export const graveyardMonsterEntries = [
     rewards: { essence: 30, essenceType: 'purple', level: 3, biomeXp: 180 },
     // THE GRAVEWRIGHT'S CORE ESCORT — and, once you kill it, the corpse the
     // Gravewright reaches for. Still rolls loose from the pool on its own.
-    pack: { role: 'follower', callRange: 300 },
+    pack: { role: 'follower' },
     ai: { wanderRadius: 330, leashRange: 820, idleMinMs: 600, idleMaxMs: 2500 },
   }],
 
@@ -71,7 +71,7 @@ export const graveyardMonsterEntries = [
     // Occasionally runs with a Gravewright. It is the entourage member you most
     // want dead early (plague + a death pool) and therefore the corpse you are
     // most likely to hand over — the target-priority tension in one creature.
-    pack: { role: 'follower', callRange: 300 },
+    pack: { role: 'follower' },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
     dotEffect: { debuffId: 'hound-plague', label: 'Hound Plague', damagePerStack: 24, maxStacks: 5, tickIntervalMs: 1100, durationMs: 2500 },
     // Its ruptured carcass leaves a short-lived toxic denial circle. Placeholder
@@ -106,7 +106,7 @@ export const graveyardMonsterEntries = [
     // The support half of a Gravewright escort: one screeches the escort faster
     // while the other stands it back up. Both are "leave the elite alone at your
     // peril" creatures, which is why they read well in the same pack.
-    pack: { role: 'follower', callRange: 300 },
+    pack: { role: 'follower' },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
 
@@ -173,7 +173,7 @@ export const graveyardMonsterEntries = [
     // ⚠ maxAlive stays 4 and risen mobs are reward-free and leave no corpse, so a
     // full escort cannot spiral: the pack is a one-time meal, not a generator.
     pack: {
-      role: 'alpha', callRange: 320,
+      role: 'alpha',
       followers: [{ typeId: 'bone-crawler', count: 2 }],
       followerVariants: [
         [{ typeId: 'plague-rat', count: 2 }],
@@ -193,7 +193,7 @@ export const graveyardMonsterEntries = [
     rewards: { essence: 22, essenceType: 'purple', level: 3, biomeXp: 130 },
     // The cheapest corpse in the biome. A rat-heavy escort dies fast and feeds the
     // raiser fast, which is the entourage variant that teaches the loop quickest.
-    pack: { role: 'follower', callRange: 300 },
+    pack: { role: 'follower' },
     ai: { wanderRadius: 360, leashRange: 860, idleMinMs: 400, idleMaxMs: 2000 },
   }],
 

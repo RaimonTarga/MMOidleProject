@@ -5,6 +5,7 @@ import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { markEngaged } from "../ai/engagement";
+import { renewPackPursuit } from "../ai/targeting";
 import { buildKillerFromMonster } from "../../world/deathCause";
 import {
   actorFromMonster,
@@ -97,6 +98,7 @@ export function applyPlayerAoe(
     );
 
     monster.hasHealth.hp -= effectiveDmg;
+    if (effectiveDmg > 0) renewPackPursuit(world, monster, { id: attackerId, kind: 'player' });
     pushDamageEvent(world, monster, effectiveDmg, {
       sourceId: attackerId,
       ...(flavor.element ? { element: flavor.element } : {}),

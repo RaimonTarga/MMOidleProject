@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type * as React from 'react';
 import { useAtomValue } from 'jotai';
 import { Activity, Database, FlaskConical, Shield, Users } from 'lucide-react';
@@ -10,6 +10,7 @@ import {
 } from './state';
 import { connectAdminSocket, disconnectAdminSocket } from './socket';
 import { AnalyticsTab } from './tabs/AnalyticsTab';
+import { GameplayTab } from './tabs/GameplayTab';
 import { CharactersTab } from './tabs/CharactersTab';
 import { DebugTab } from './tabs/DebugTab';
 import { LogsTab } from './tabs/LogsTab';
@@ -22,6 +23,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export function App() {
+  const [token, setToken] = useState('');
   const connected = useAtomValue(connectedAtom);
   const error = useAtomValue(connectionErrorAtom);
   const players = useAtomValue(playersAtom);
@@ -44,9 +46,14 @@ export function App() {
           <p className="mt-1 text-sm text-red-100/55">Live operations, logs, telemetry, and player recovery tools.</p>
         </div>
         <div className="text-right text-xs uppercase tracking-[0.3em] text-red-200/35">
-          Unauthenticated
+          {connected ? 'Authorized connection' : 'Access required'}
         </div>
       </header>
+
+      {!connected && <form className="mb-4 flex gap-2" onSubmit={event => { event.preventDefault(); connectAdminSocket(token); setToken(''); }}>
+        <input className="rounded border bg-black p-2" type="password" autoComplete="off" aria-label="Admin access token" placeholder="Admin access token" value={token} onChange={event => setToken(event.target.value)} />
+        <button type="submit" className="rounded border p-2">Connect</button>
+      </form>}
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">
@@ -61,10 +68,11 @@ export function App() {
         <StatCard icon={<Activity className="h-5 w-5" />} label="Event Loop P99" value={`${telemetry?.process.eventLoopP99Ms.toFixed(2) ?? '0.00'} ms`} />
       </div>
 
-      <Tabs defaultValue="logs">
+      {connected && <Tabs defaultValue="gameplay">
         <TabsList>
+          <TabsTrigger value="gameplay">Gameplay</TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="analytics">Legacy analytics</TabsTrigger>
           <TabsTrigger value="balance"><FlaskConical className="mr-1 h-4 w-4" />Balance Lab</TabsTrigger>
           <TabsTrigger value="world-log">World Log</TabsTrigger>
           <TabsTrigger value="ops">Ops Map</TabsTrigger>
@@ -74,13 +82,14 @@ export function App() {
         </TabsList>
         <TabsContent value="logs"><LogsTab /></TabsContent>
         <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
+        <TabsContent value="gameplay"><GameplayTab /></TabsContent>
         <TabsContent value="balance"><BalanceLabTab /></TabsContent>
         <TabsContent value="world-log"><WorldLogTab /></TabsContent>
         <TabsContent value="ops"><OpsMapTab /></TabsContent>
         <TabsContent value="players"><PlayersTab /></TabsContent>
         <TabsContent value="characters"><CharactersTab /></TabsContent>
         <TabsContent value="debug"><DebugTab /></TabsContent>
-      </Tabs>
+      </Tabs>}
     </div>
   );
 }

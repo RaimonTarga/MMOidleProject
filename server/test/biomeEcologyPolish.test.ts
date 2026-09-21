@@ -319,15 +319,17 @@ for (const [id, d] of MONSTER_DATABASE) {
     "the gunner should still be a static sentry while in a pack",
   );
 
-  setAggroTarget(world, members![0], { id: "fake-player", kind: "player" }, 1_000);
+  const packTarget = makePlayer(world, members![0].hasPosition.nodeId,
+    members![0].hasPosition.current.x + 100, members![0].hasPosition.current.y);
+  setAggroTarget(world, members![0], { id: packTarget.isPlayer.id, kind: "player" }, 1_000);
   updatePacks(world, 1_000);
-  const alerted = members!.filter((e) => e.hasAggroTarget?.targetId === "fake-player");
+  const alerted = members!.filter((e) => e.hasAggroTarget?.targetId === packTarget.isPlayer.id);
   assert(
     alerted.length === members!.length,
     `the whole pack should engage together (${alerted.length}/${members!.length})`,
   );
   assert(
-    gunner.hasAggroTarget?.targetId === "fake-player",
+    gunner.hasAggroTarget?.targetId === packTarget.isPlayer.id,
     "the planted gunner must join the call rather than watch",
   );
   assert(

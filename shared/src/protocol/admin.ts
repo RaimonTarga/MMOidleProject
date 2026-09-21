@@ -1,4 +1,5 @@
 import type { NodeTelemetrySnapshot } from './nodeTelemetry';
+import type { GameplayQuery, GameplaySnapshot } from './gameplayTelemetry';
 import type { WorldLogEvent } from './worldLogEvents';
 import type { EssenceType } from '../items';
 import type { AttunedAbilities } from '../abilities';
@@ -222,6 +223,7 @@ export interface AdminAnalyticsSnapshot {
 }
 
 export interface AdminServerToClientEvents {
+  'admin:gameplay': (snapshot: GameplaySnapshot) => void;
   'admin:balanceLab': (snapshot: BalanceLabSnapshot) => void;
   'admin:players': (players: AdminPlayerSummary[]) => void;
   'admin:characters': (characters: AdminCharacterRecord[]) => void;
@@ -235,6 +237,7 @@ export interface AdminServerToClientEvents {
 }
 
 export interface AdminClientToServerEvents {
+  'admin:requestGameplay': (query: GameplayQuery) => void;
   'admin:requestBalanceLab': () => void;
   'admin:requestPlayers': () => void;
   'admin:requestCharacters': () => void;

@@ -24,7 +24,7 @@ Read source when it disagrees with this doc.
 ## 1. Monster AI loop
 
 `server/src/systems/combat/ai/ai.ts` → `updateMonsters(world, dt, now)` is a single flat
-per-monster loop over `world.monsterEntities`. There is **no inter-monster coordination**.
+per-monster loop over `world.monsterEntities`. `updatePacks` coordinates group encounters before it; see section 22 for the current pursuit and return rules.
 
 Per monster, each tick:
 
@@ -32,7 +32,7 @@ Per monster, each tick:
 2. **Aggro acquisition** — only when `!hasAggroTarget`: `selectMonsterAggroCandidate` scans
    pull-range candidates. Retaliation aggro (set by the combat system) is preserved.
 3. **Target resolve/validate** — `resolveAggroTarget`; drops on node-leave / death / disconnect.
-4. **Leash** — past `leashRange` from `spawn` → drop aggro, `state="returning"`, head home.
+4. **Leash** — solos use their personal leash; groups share the pursuit anchor and attack-grace check described in section 22.
 5. **Engaged** — in-reach + line-of-sight → `attacking` (kiters call `maintainKiteStandoff`);
    else `chasing` (charge burst / kite-ramp speed handling).
 6. **Disengaged** — state machine `chasing/attacking → returning → idle → wandering → idle`.
@@ -57,9 +57,7 @@ or are folded into it.
   `minionEntitiesInNode` within `hasAwareness.pullRange` (× `playerDetectionMult(player)` from
   mobility boots — stealth already reduces effective pull). `bestCandidate` picks by
   `targeting.mode` (`closest` | `lowest-hp`).
-- **Call-allies SHIPPED** (`ai/packs.ts`): `updatePacks` propagates a pack alpha's aggro target
-  onto nearby un-aggroed followers and emits an `ecology-pulse` (`pulse: 'pack-call'`) telegraph.
-  Monsters outside a pack still aggro independently.
+- **Shared encounters** (`ai/packs.ts`): `updatePacks` coordinates targets, pursuit and return for pack members and bounded local swarms. New alerts emit an `ecology-pulse` (`pulse: 'pack-call'`) telegraph; see section 22.
 - `targeting.ignoresTaunts` exists as a hook; taunt system partial.
 
 `setAggroTarget` / `setAttackTarget` (`ai/targeting.ts`) are the only sanctioned mutators.
@@ -149,8 +147,8 @@ Advanced biomes exist as data sets: Jungle, Desert, Volcano, Tundra, Graveyard, 
 
 The coordinated multi-monster AI and its telegraphs all landed:
 
-1. **Packs + call-allies** — `inPack` component, `spawnPack`, `updatePacks`, `onPackAlphaDead`.
-   Alpha aggro propagates to followers; survivors scatter on alpha death.
+1. **Packs + shared encounters** — `inPack`, `spawnPack`, `updatePacks`.
+   Members pursue and return together; surviving companions remain after leader death (section 22).
 2. **Fixed patrol routes** — `patrol` on the monster def; a deterministic route replaces random
    wander while un-aggroed.
 3. **Swarm convergence** — `ai/swarm.ts`.
@@ -706,3 +704,68 @@ circle and **does not** root a player who stepped out).
 
 `server/test/monsterMobileCast.test.ts` moved its mobile-cast exemplar from the Rime-Tusk
 Mastodon to the Obsidian Tortoise — the Mastodon is now the committed half of that contract.
+
+## 22. Shared group encounters (2026-09-21)
+
+This section supersedes the earlier independent-leash/call-range descriptions.
+`inPack` now references one ephemeral coordination state shared by the living
+members, initialized when a pack or dungeon station spawns. It retains the initial
+home, a moving pursuit anchor, one target, and the group return state. Leader death
+chooses a surviving leader without moving either anchor or removing followers.
+
+- Proximity acquisition or an attack on any member engages the group. Members do
+  not individually drop aggro because their personal leash or alert radius differs.
+- Player and summon attacks move the **shared pursuit anchor** to the struck member.
+  Kiting remains effective: sustained attacks keep every companion engaged beyond
+  the original spawn territory. Direct attacks, beam/laser attacks, AoE and proc
+  damage renew pursuit; passive residual DoT ticks alone do not renew the attack window.
+- A living target must be outside the current shared pursuit leash AND the group
+  must have gone five seconds without an incoming attack before it returns. Target
+  death, disconnect or node departure also ends the encounter. The five-second
+  attack gap is `PACK_ATTACK_GRACE_MS`, not a combat timeout while inside the leash.
+- A hit during return immediately renews pursuit for the entire group. Ordinary
+  proximity alerts cannot interrupt one member's return. Otherwise early arrivals
+  wait for all survivors, then restore the initial pursuit anchor and resume roaming.
+- Return movement uses base speed: the old 1.6x return boost is removed for all
+  ordinary monsters. Casts and combat ramps are cleaned up on coordinated return.
+- Original return positions remain separate from the moving pursuit anchor.
+  Dungeon altar activation still expands the group's leash and overrides return.
+
+Authored differences use monster data rather than biome branches in the executor:
+
+| Group | Current behavior |
+| --- | --- |
+| Forest wolves | Persistent packs, tight 90px idle-follow radius; followers track the living leader instead of independently wandering. |
+| Plains callers | Persistent packs with a looser 180px idle-follow radius. |
+| Loose Plains swarm creatures | On engagement recruit at most three nearby eligible creatures within 260px; membership stays fixed for the encounter, recruits cannot recruit again, and the group dissolves after returning. Independent nearby pulls remain possible. |
+| Volcano mixed packs | Persistent groups with a 140px idle-follow radius; melee pursuit, planted casts and ranged attacks retain their existing member-specific behavior. Loose Volcano mobs do not recruit new packs. |
+| Other existing packs / dungeon stations | Share the same encounter lifecycle. Default idle-follow radius is 120px; authored posts and patrols take precedence. |
+
+Movement flocking now separates different combat targets. Pack membership does not
+force identical attack positions or erase ranged/caster roles. `pack.callRange` was
+removed: it no longer determines whether a known companion participates. The
+bestiary describes shared pursuit and bounded local swarm recruitment.
+
+Jungle remains terrain/cast driven in this pass. Bush detection amplification and
+Chestbeat's two-ally, one-hop rally remain. Chestbeat now also replaces the obsolete
+attack ramps on Silverback and Apex Silverback, sharing the early Ape's 1.3-second
+cast, expanded 480px radius, 30% haste for 4.5 seconds and one rally per combat. Tests exercise
+all three gorillas, including suppression of rallies from recruited gorillas.
+Successful rallies now create temporary coordinated groups: the caller plus at most
+two idle recruits share pursuit, attack renewal and return, then dissolve after all
+survivors reach home. Caller death preserves surviving allies. Existing packs,
+bosses/adds, dungeon guardians and returning mobs are excluded from recruitment;
+haste alone does not grant membership. Bush pulls still acquire independently.
+No density or placement changes were made; see the Jungle ecology follow-up in
+`future-plans.md`. Regression coverage is in `packCoordination.test.ts`, with
+existing ecology, dungeon and Jungle wiring coverage. Automated checks do not
+establish live pacing or visual acceptance.
+
+Validation (2026-09-21): workspace typecheck and shared/client/server builds passed;
+focused pack, mixed-ecology, Desert, dungeon and Jungle checks passed. The full
+workspace suite finished **252/263 passing**. Failures outside the pack regressions:
+`biomeEcology` (unchanged Snapper balance assertion); `boss2Matrix`, `boss3Cleanse`,
+`boss3Matrix`, `boss4Matrix`, `boss4Pressure`, `boss5Matrix`, `boss5Pressure` (frozen
+boss attack expectations); `durability8` (floating-point equality); `tier1Snapshot`
+(unsupported range branch); and the bot `harness` (invalid legacy build). Frozen
+balance expectations were not rewritten. No live browser playtest was performed.

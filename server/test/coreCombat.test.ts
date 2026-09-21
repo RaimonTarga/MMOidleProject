@@ -7,6 +7,7 @@
 import {
   ABILITY_DATABASE,
   abilityCooldownMs,
+  modifiedAbilityCooldownMs,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   applyStatusEffect,
@@ -309,6 +310,32 @@ const PLAIN_CD = abilityCooldownMs(plainAbility!, FIXTURE_TIER);
     getCooldown(player.tracksCombat, mobKey) === MOB_CD,
     "a summon kill must not trigger the owner's Bruiser cooldown refund",
   );
+}
+
+// Every mobility technique must refund and publish the authoritative remaining
+// time, including with cooldown reduction and when the refund finishes a cycle.
+for (const ability of [...ABILITY_DATABASE.values()].filter(a => a.tags.includes('mobility'))) {
+  const player = world.attachPlayerEntity(makePlayerSlices(`refund-${ability.id}`), `refund-${ability.id}`);
+  player.holdsInventory.inventory.push('core-bruiser');
+  player.usesSkills.selectedRange = 'cadence-range-close';
+  assert(equipItem(world, player, 'core-bruiser'), 'Bruiser should equip');
+  assert(player.usesSkills.passives['core.mobility-refund-on-kill-pct'] === 0.5, 'equipped Bruiser must contribute its passive');
+  player.usesSkills.passives['technique.cooldown-reduction-pct'] = 0.2;
+  player.tracksProgression.attunedAbilities.techniques = [ability.id];
+  const key = abilityCooldownKey(ability.id);
+  const total = modifiedAbilityCooldownMs(ability, FIXTURE_TIER, player.usesSkills.passives);
+  const victim = world.createMonster('node-5-5', 'plains-slime', { x: 700, y: 400 })!;
+  for (const remaining of [total, 1]) {
+    setCooldown(player.tracksCombat, key, remaining);
+    world.takeNodeEvents(player.hasPosition.nodeId);
+    emitCombatEvent('onKill', { attacker: player, attackerType: 'player', defender: victim,
+      defenderType: 'monster', damage: 999, platingMult: 1, drPierce: 0, cancelled: false, metadata: {} } as CombatContext, world);
+    const expected = Math.max(0, remaining - abilityCooldownMs(ability, FIXTURE_TIER) * 0.5);
+    assert(getCooldown(player.tracksCombat, key) === expected, `${ability.id} refund must use base cooldown`);
+    const samples = world.takeNodeEvents(player.hasPosition.nodeId).filter(e => e.kind === 'player-ability-cooldown');
+    assert(samples.length === 1 && samples[0].remainingMs === expected && samples[0].totalMs === total,
+      `${ability.id} must publish its reduced cycle and remaining time`);
+  }
 }
 
 console.log("coreCombat: ok");

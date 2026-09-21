@@ -22,6 +22,8 @@ export function recordWorldLogEvent(
     serverTime: Date.now(),
   } as WorldLogEvent;
 
+  world.gameplay?.worldEvent(world, event);
+
   world.worldLogJournal.push(event);
   const maxLen = world.worldLogJournalMax ?? WORLD_LOG_JOURNAL_MAX;
   if (world.worldLogJournal.length > maxLen) {

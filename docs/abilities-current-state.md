@@ -689,8 +689,34 @@ authored rank itself.
 
 `abilityTags` / `abilityHasTag` in shared `data/abilityTags.ts` combine authored role tags
 with Technique/Guard derived from family and Armed derived from execution shape.
+Cast derives from wind-up execution shapes; AoE derives from area-bearing rank payloads.
 Ability details in the loadout, HUD and Forge display the same labels and help.
 Tags include Recovery, Mobility, Mitigation, Control, Cleanse and Offensive Buff.
+
+As of 2026-09-21, these labels are compact colored pills, shared with equipment
+details in Inventory and Forge. `data/abilityModifierInfo.ts` maps existing equipment
+passives to their matching tags and checks the rank payload before advertising a
+bonus. Ability details and hotbar tooltips list equipped item names, upgraded modifier
+amounts, and inactive core range requirements. Amounts are contributions before caps;
+the ability numbers still use the shared authoritative formulas. Inventory effect
+descriptions also include earned upgrade steps through `itemMechanicEffectsAt`.
+AoE and Armed remain descriptive tags without dedicated gear bonuses.
+
+Desert charm now supplies `cleanse.cooldown-reduction-pct`: 15% / 20% / 25% at
+T2 / T3 / T4, with each upgrade adding 1 / 1 / 1.5 percentage points respectively.
+It shortens both Cleanse and Break Free (both already carry the Cleanse tag), adds
+to family cooldown reduction under the existing 90% cap, and leaves removal counts
+and Break Free's resistance window unchanged. The charm no longer supplies periodic
+cleanse, empty-cleanse healing, or per-stack healing. Desert armor retains its
+independent periodic cleanse. Recipe costs and flat Recovery are unchanged.
+
+The equipment wiring regression fires Brace and Endure with upgraded Mountain armor,
+and Second Wind and Recuperate with upgraded Forest charm. Mountain Guard potency
+multiplies damage reduction and Brace's knockback resistance, capped at 90% per
+magnitude; it does not alter durations. Forest Recovery skill potency multiplies the
+activated Recovery fraction, not max HP or duration. Both share their live resolver
+with ability tooltips. Desert tests equip every charm tier at +5, fire both cleansing
+abilities, and check removal, shortened cooldowns, source feedback, exclusions and caps.
 
 `systems/abilityModifiers.ts` owns equipment cooldown and Guard/Recovery magnitude
 formulas for both authoritative firing and client previews. Bramble now receives
@@ -703,6 +729,10 @@ Scout cooldown reduction and Bruiser kill refunds use the Mobility tag. Bruiser 
 an authored full-cooldown fraction, clamped at zero remaining time, and ignores unrelated
 abilities. Core range eligibility still applies. Armed describes delivery; it does not
 imply a new equipment bonus where no such bonus is authored.
+`coreCombat.test.ts` additionally equips Bruiser and verifies Charge and Step Back
+refunds with cooldown reduction, zero clamping, and published HUD cooldown samples.
+`abilityEquipmentFeedback.test.ts` checks source attribution, inactive core feedback,
+AoE classification, and exclusions for unsupported potency/cast modifiers.
 
 Regression coverage: `server/test/equippedEvolutionAbilityTags.test.ts` exercises actual
 equipment passives, fired Bramble and Recovery, mobility cooldown/refund routing, UI tag

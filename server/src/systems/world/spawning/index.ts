@@ -41,6 +41,7 @@ import { detachComponent } from "../../../ecs/markerHelpers";
 import { stopEntity } from "../movement";
 import { clearAutoTraversePath } from "../autoTraverse";
 import { setAggroTarget, setAttackTarget } from "../../combat/ai/targeting";
+import { createPackCoordination } from "../../combat/ai/packs";
 import { resolveMonsterHitbox } from "../../../hitbox/resolve";
 import { thawNode } from "../../../world/nodeLifecycle";
 import { despawnMinionsForOwner } from "../../classes/archetypes/summoner";
@@ -904,7 +905,8 @@ export function spawnPack(
   const packId = `${nodeId}:pack:${packSeq++}`;
   const alpha = createMonster(world, nodeId, alphaTypeId, anchor);
   if (!alpha) return null;
-  world.ecs.addComponent(alpha, "inPack", { packId, role: "alpha" });
+  const coordination = createPackCoordination(alpha);
+  world.ecs.addComponent(alpha, "inPack", { packId, role: "alpha", coordination });
   const members: MonsterEntity[] = [alpha];
 
   const groups = packFollowerGroups(packDef);
@@ -917,7 +919,7 @@ export function spawnPack(
         const pos = followerSpawnPos(anchor, idx, total, node);
         const f = createMonster(world, nodeId, group.typeId, pos);
         if (f) {
-          world.ecs.addComponent(f, "inPack", { packId, role: "follower" });
+          world.ecs.addComponent(f, "inPack", { packId, role: "follower", coordination });
           members.push(f);
         }
         idx++;
