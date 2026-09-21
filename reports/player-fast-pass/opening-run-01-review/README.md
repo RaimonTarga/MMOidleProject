@@ -20,6 +20,9 @@ qualification revision `148cccd62a33b77446436834648a64f6fe54a97e` and the measur
 execution revision above. The later commit that publishes this review directory is
 not substituted into any measured record.
 
+The bundle-local `.gitattributes` marks these records as `-text` so Git preserves
+their original LF/CRLF bytes across publication and checkout.
+
 ## Preparation evidence
 
 These are byte-for-byte copies from:
