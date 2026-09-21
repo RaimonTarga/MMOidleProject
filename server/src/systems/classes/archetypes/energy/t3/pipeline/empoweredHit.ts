@@ -3,6 +3,7 @@ import { isEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks
 import {
   applyStatusEffect, removeStatusEffect, getTotalStacks,
 } from '@mmo-idle/shared';
+import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
 import { hasPassive } from '../core/helpers';
 import {
   PD_DISCHARGE_MULT, PD_OVERCHARGE_COUNT, PD_OVERCHARGE_MS, PD_OVERCHARGE_FX,
@@ -129,11 +130,11 @@ export function registerEmpoweredHit(): void {
       const damagePerTick = Math.max(1, Math.round(
         player.dealsDamage.attack * totalMult * tickMs / durationMs,
       ));
-      applyStatusEffect(ctx.defender.tracksCombat, {
+      applyPlayerDebuff(player, ctx.defender.tracksCombat, {
         id: STORM_FX, instanced: false, maxStacks: 1, refreshable: true,
         remainingMs: durationMs, sourceId: player.isPlayer.id,
         data: { damagePerTick, nextTickIn: tickMs, tickIntervalMs: tickMs, totalMs: maxMs },
-      });
+      }, { origin: 'mechanic' });
       return; // discharge itself keeps its normal (suppressed) damage
     }
 

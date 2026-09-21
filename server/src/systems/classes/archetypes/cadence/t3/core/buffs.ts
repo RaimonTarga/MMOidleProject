@@ -122,7 +122,12 @@ export const CADENCE_T3_BUFFS = [
       const stacks = player.usesCadence?.rampageStacks ?? 0;
       if (stacks <= 0) return null;
       const maxStacks  = player.usesSkills.passives['cadence.rampage-max-stacks'] ?? RAMPAGE_MAX_STACKS;
-      const multPerStk = player.usesSkills.passives['cadence.rampage-mult-per-stack'] ?? RAMPAGE_MULT_PER_STACK;
+      const multPerStk = playerMechanicBuffMagnitude(
+        player,
+        'cadence-rampage',
+        'multPerStack',
+        player.usesSkills.passives['cadence.rampage-mult-per-stack'] ?? RAMPAGE_MULT_PER_STACK,
+      );
       const atCap = stacks >= maxStacks;
       return {
         id: 'cadence-rampage',

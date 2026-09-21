@@ -175,7 +175,7 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
       const sid = chillEffect?.sourceId ?? player.isPlayer.id;
       removeStatusEffect(monsterState, CHILL_EFFECT);
       detachMarker(world, monster, 'hasChill');
-      applyStatusEffect(monsterState, {
+      applyPlayerDebuff(player, monsterState, {
         id: FROZEN_EFFECT, instanced: false, maxStacks: 1,
         remainingMs: freezeMs, sourceId: sid,
         data: {
@@ -184,7 +184,7 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
           attackSlowPct: freezeAttackSlow,
           totalMs: freezeMs,
         },
-      });
+      }, { origin: 'mechanic' });
       attachMarker(world, monster, 'hasFrozen');
       // Something CLOSING on the target — shards INWARD, the inverse of
       // rimeshatter above. Both fire on this class; they must not look alike.

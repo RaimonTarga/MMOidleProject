@@ -12,6 +12,8 @@ import { markSliceDirty } from '../../../../../ecs/dirtyHelpers';
 import { applyPlayerAoe } from '../../../../combat/damage/aoeDamage';
 import { applyPlayerProcDamage } from '../../../../combat/damage/procDamage';
 import { registerCombatListener } from '../../../../combat/engine/combatPipeline';
+import { playerMechanicBuffMagnitude } from '../../../shared/applyPlayerMechanicBuff';
+import { playerMechanicDebuffMagnitude } from '../../../shared/applyPlayerDebuff';
 import { summonerProfileFor } from '../profile';
 
 type SummonerOwner = PlayerEntity & {
@@ -103,8 +105,13 @@ export function prepareSpecializationAttack(
   if (profile.specialization === 'harrier-brood') {
     const state = owner.controlsSummons.harrierMarksByTarget[target.isMonster.id];
     if (state && state.expiresAt > now) {
-      damageMult *= 1 + state.slotIds.length
-        * SUMMONER_SPECIALIZATION_TUNING.harrierBrood.damageTakenPctPerSlot;
+      const damageTakenPctPerSlot = playerMechanicDebuffMagnitude(
+        owner,
+        'summoner-harrier-brood',
+        'damageTakenPctPerSlot',
+        SUMMONER_SPECIALIZATION_TUNING.harrierBrood.damageTakenPctPerSlot,
+      );
+      damageMult *= 1 + state.slotIds.length * damageTakenPctPerSlot;
     }
   }
   if (profile.specialization === 'coordinated-hunt') {
@@ -128,7 +135,12 @@ export function prepareSpecializationAttack(
   if (profile.specialization === 'grand-ritual') {
     const charges = owner.summonsMinions.ritualCharges?.[minion.isMinion.slot] ?? 0;
     if (charges > 0) {
-      damageMult *= SUMMONER_SPECIALIZATION_TUNING.grandRitual.damageMult;
+      damageMult *= playerMechanicBuffMagnitude(
+        owner,
+        'summoner-grand-ritual',
+        'damageMult',
+        SUMMONER_SPECIALIZATION_TUNING.grandRitual.damageMult,
+      );
       consumeRitualCharge = true;
     }
   }
@@ -372,11 +384,17 @@ function tickChorus(world: World, owner: SummonerOwner, now: number): void {
     );
     if (now < state.nextTickAt) continue;
     state.nextTickAt += tuning.tickMs;
+    const damagePctPerSlot = playerMechanicDebuffMagnitude(
+      owner,
+      'summoner-withering-chorus',
+      'damagePctPerSlot',
+      tuning.damagePctPerSlot,
+    );
     applyPlayerProcDamage(
       world,
       owner,
       target,
-      Math.max(1, Math.round(owner.dealsDamage.attack * tuning.damagePctPerSlot * state.slotIds.length)),
+      Math.max(1, Math.round(owner.dealsDamage.attack * damagePctPerSlot * state.slotIds.length)),
       { tags: ['summoner', 'withering-chorus'], physicalSource: 'summon' },
     );
   }

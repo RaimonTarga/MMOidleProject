@@ -1,6 +1,7 @@
 import { removeStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 import { attachMarker } from '../../../../../../ecs/markerHelpers';
 import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
@@ -75,7 +76,12 @@ export function registerCadenceEmpoweredHit(): void {
       }
       recomputeRampageStats(player);
       if (cadence.rampageStacks > 0) {
-        const multPerStack = passives['cadence.rampage-mult-per-stack'] ?? RAMPAGE_MULT_PER_STACK;
+        const multPerStack = playerMechanicBuffMagnitude(
+          player,
+          'cadence-rampage',
+          'multPerStack',
+          passives['cadence.rampage-mult-per-stack'] ?? RAMPAGE_MULT_PER_STACK,
+        );
         ctx.damage = Math.round(ctx.damage * (1 + cadence.rampageStacks * multPerStack));
       }
     }

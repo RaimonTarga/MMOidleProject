@@ -1,6 +1,7 @@
 import type { PlayerEntity } from '../../../../../../ecs/entity';
 import { RAMPAGE_THRESHOLD_FLOOR, RAMPAGE_APS_PER_STACK_MS } from './constants';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from '@mmo-idle/shared';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 const CADENCE_THRESHOLD_DEFAULT = 5;
 const ATTACK_COOLDOWN_FLOOR_MS = 200;
@@ -21,7 +22,12 @@ export function recomputeRampageStats(player: PlayerEntity): void {
   const passives = player.usesSkills.passives;
 
   const thresholdFloor = Math.max(1, Math.round(passives['cadence.rampage-threshold-floor'] ?? RAMPAGE_THRESHOLD_FLOOR));
-  const apsPerStackMs  = passives['cadence.rampage-aps-per-stack-ms'] ?? RAMPAGE_APS_PER_STACK_MS;
+  const apsPerStackMs  = playerMechanicBuffMagnitude(
+    player,
+    'cadence-rampage',
+    'apsPerStackMs',
+    passives['cadence.rampage-aps-per-stack-ms'] ?? RAMPAGE_APS_PER_STACK_MS,
+  );
 
   const preRelicThreshold = Math.max(
     thresholdFloor,

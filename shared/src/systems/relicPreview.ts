@@ -82,7 +82,11 @@ export function resolveRelicPreview(
   options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null; rampageStacks?: number; momentumStacks?: number } = {},
 ): ResolvedRelicProfile | null {
   const profile = resolvePrimaryRelicPreview(archetype, passives, ratings, options);
-  const secondaryEffects = relicEffectPreview(archetype, passives, ratings, options.playerTier);
+  const secondaryEffects = relicEffectPreview(archetype, passives, ratings, {
+    tier: options.playerTier,
+    subVariant: options.subVariant,
+    unlockedSkills: options.unlockedSkills,
+  });
   const secondaryNotes: RelicEffectNote[] = [];
   if (ratings.buffEffect !== 0 && !secondaryEffects.some(effect => effect.kind === 'buff')) secondaryNotes.push({ kind: 'buff', message: 'No eligible mechanic buff in this build' });
   if (ratings.debuffEffect !== 0 && !secondaryEffects.some(effect => effect.kind === 'debuff')) secondaryNotes.push({ kind: 'debuff', message: 'No eligible mechanic debuff in this build' });

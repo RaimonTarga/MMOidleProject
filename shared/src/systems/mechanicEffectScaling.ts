@@ -21,6 +21,14 @@ export const SCALABLE_MECHANIC_BUFFS: Readonly<Record<string, ScalableMechanicEf
   'reload-hair-trigger': { fields: { attackSpeedPctPerShot: 'fraction' } },
   'dot-frenzy': { fields: { attackSpeedPct: 'fraction', onHitPerTier: 'flat' } },
   'energy-overdrive': { fields: { attackDamagePct: 'fraction' } },
+  // Grand Ritual's empowered-attack multiplier. 1.6 means the bonus is the
+  // 0.6 above ×1, so the field kind is 'multiplier', not 'flat'.
+  'summoner-grand-ritual': { fields: { damageMult: 'multiplier' } },
+  // Berserker Rampage's two beneficial per-stack magnitudes only. The regular-
+  // attack penalty (an authored downside) and the Cadence threshold reduction
+  // (delivery frequency, which overlaps Relic Mechanic Frequency) are both
+  // deliberately absent.
+  'cadence-rampage': { fields: { multPerStack: 'fraction', apsPerStackMs: 'flat' } },
 } as const;
 
 /** Explicit opt-in registry for harmful class-mechanic effects. */
@@ -33,6 +41,16 @@ export const SCALABLE_MECHANIC_DEBUFFS: Readonly<Record<string, ScalableMechanic
   'dot-chill': { fields: { moveSlowPerStack: 'fraction', attackSlowPerStack: 'fraction' } },
   'dot-frostbite': { fields: { dotTakenPerStack: 'fraction' } },
   'reload-suppress-shred': { fields: { platingReduction: 'fraction' } },
+  // Harrier Brood's per-mark damage-taken magnitude, read from specialization
+  // tuning rather than status-effect data.
+  'summoner-harrier-brood': { fields: { damageTakenPctPerSlot: 'fraction' } },
+  // Withering Chorus's per-voice proc-damage magnitude.
+  'summoner-withering-chorus': { fields: { damagePctPerSlot: 'fraction' } },
+  // Endless Storm (Tempest) tick damage, captured at cast time in status data.
+  'energy-storm': { fields: { damagePerTick: 'flat' } },
+  // Winter Warden's Frozen payoff: only the damage-taken magnitude, not the
+  // freeze trigger, duration, or Chill threshold that produces it.
+  'dot-frozen': { fields: { damageTakenPct: 'fraction' } },
 } as const;
 
 export function scaleMechanicEffectConfig(

@@ -232,7 +232,8 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
   const debuffOnly = { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 };
   const chill = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.freezing-cold': 1 }, debuffOnly));
   assert(chill.includes('Debuff effect · Chill movement slow per stack: 5% → 6.25%'), 'debuff effect is attributed');
-  assert(chill.filter(line => line.startsWith('Debuff effect')).length === 3, 'every eligible debuff is listed');
+  assert(chill.includes('Debuff effect · Frozen damage taken: 35% → 43.75%'), 'Frozen damage taken is attributed');
+  assert(chill.filter(line => line.startsWith('Debuff effect')).length === 4, 'every eligible debuff is listed');
   assert(!chill.some(line => line.startsWith('Buff effect')), 'a debuff-only relic claims no buff');
 
   // Haunted Prism rates both halves, so an eligible build shows both categories.

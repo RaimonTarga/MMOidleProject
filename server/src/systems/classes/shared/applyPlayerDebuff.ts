@@ -4,12 +4,32 @@ import {
   relicRatingsFromPassives,
   resolveRelicMagnitudeMultiplier,
   scaleMechanicEffectConfig,
+  scaleMechanicMagnitude,
   scaleDebuffConfig,
   type StatusEffect,
   type StatusEffectConfig,
   type TracksCombat,
 } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
+
+/**
+ * Resolve an approved harmful magnitude held directly on class state — the
+ * debuff-side counterpart to `playerMechanicBuffMagnitude`. Used by mechanics
+ * like Harrier Brood / Withering Chorus, which read their real multiplier
+ * from specialization tuning rather than from an applied status effect's
+ * `data`, so `scaleMechanicEffectConfig` has nothing to scale.
+ */
+export function playerMechanicDebuffMagnitude(
+  player: PlayerEntity,
+  effectId: string,
+  field: string,
+  value: number,
+): number {
+  const mult = resolveRelicMagnitudeMultiplier(
+    relicRatingsFromPassives(player.usesSkills.passives).debuffEffect,
+  );
+  return scaleMechanicMagnitude(effectId, field, value, mult, SCALABLE_MECHANIC_DEBUFFS);
+}
 
 /**
  * Apply a debuff FROM a player TO a monster, scaled by the Controller core.
