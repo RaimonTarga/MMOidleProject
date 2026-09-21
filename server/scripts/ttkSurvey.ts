@@ -1,3 +1,5 @@
+import { ENDURANCE_BLOCKS, ENDURANCE_CAP_MS, ENDURANCE_ENDPOINTS, type EnduranceCell } from '../bench/balance/overnightEnduranceSpec';
+import { EnduranceProgress, endpointIntervals } from '../bench/balance/enduranceProgress';
 import { FarmingSustainRecorder, sustainState } from '../bench/balance/farmingSustainRecorder';
 import { FARMING_SUSTAIN_BLOCKS, sustainGates, type FarmingSustainCell } from '../bench/balance/farmingSustainSpec';
 import { BREADTH_BLOCKS, assertBreadthDefinitions, type BreadthCell } from '../bench/balance/playerBreadthSpec';
@@ -24,7 +26,7 @@ import {DURABILITY22_BLOCKS,DURABILITY22_SEEDS,installDurability22Treatment} fro
 import {DURABILITY21_BLOCKS,DURABILITY21_SEEDS} from '../bench/balance/durability21Spec';
 import { NIGHT5_BLOCKS,NIGHT5_SEEDS,installNight5Treatment,type Night5Cell } from '../bench/balance/night5Spec';
 import assert from 'node:assert/strict';
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync, appendFileSync, realpathSync, statfsSync } from 'node:fs';
 import { resolve,join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -67,21 +69,23 @@ import { DURABILITY20_CELLS, DURABILITY20_SEEDS, installDurability20Treatment, a
 import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
-const farmingSustain = args.trial === 'farming-sustain-01';
+const endurance = args.trial === 'overnight-endurance-01';
+const farmingSustain = args.trial === 'farming-sustain-01' || endurance;
 const farmingStance = args.trial === 'farming-stance-01';
 const breadth = args.trial === 'player-breadth' || farmingStance || farmingSustain;
 if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
 const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+const fastBlock = fastPass ? (endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
-const mode=args.mode??'qualify'; assert(['qualify','pilot','run'].includes(mode));
+const mode=args.mode??'qualify';
+if(endurance) assert(mode==='qualify' || (mode==='run' && args.block!=='qualification'), 'No extra endurance pilots or aggregate combat block'); assert(['qualify','pilot','run'].includes(mode));
 assert(!args.trial || fastPass || ['durability37','durability36','durability35','durability34','durability33','durability32','durability30','durability29','durability28','durability27','durability26','durability25','durability24','durability23','durability22','durability21','night5','durability20','durability19','durability18','durability17','durability16','durability15','durability13movement','durability13swarm','durability12movement','durability12swarm','durability11','durability10swamp','durability10jungle','durability9roster','durability9bear','durability','durability2','durability3','durability4','durability5','durability6','durability7','durability8','night4survey','night4followup','night4aoe'].includes(args.trial));
 const trialCells = fastBlock ? fastBlock.cells : night5 ? night5.cells : args.trial === 'durability20' ? DURABILITY20_CELLS : args.trial === 'durability19' ? DURABILITY19_CELLS : args.trial === 'durability18' ? DURABILITY18_CELLS : args.trial === 'durability17' ? DURABILITY17_CELLS : args.trial === 'durability16' ? DURABILITY16_CELLS : args.trial === 'durability15' ? DURABILITY15_CELLS : args.trial === 'durability13movement' ? DURABILITY13_MOVEMENT : args.trial === 'durability13swarm' ? DURABILITY13_SWARM : args.trial === 'durability12movement' ? DURABILITY12_MOVEMENT : args.trial === 'durability12swarm' ? DURABILITY12_SWARM : args.trial === 'durability11' ? DURABILITY11_CELLS : args.trial === 'durability10swamp' ? DURABILITY10_SWAMP : args.trial === 'durability10jungle' ? DURABILITY10_JUNGLE : args.trial === 'durability9roster' ? DURABILITY9_ROSTER : args.trial === 'durability9bear' ? DURABILITY9_BEAR : args.trial === 'night4survey' ? NIGHT4_SURVEY : args.trial === 'night4followup' ? NIGHT4_FOLLOWUP : args.trial === 'night4aoe' ? NIGHT4_AOE : args.trial === 'durability8' ? DURABILITY8_CELLS : args.trial === 'durability7' ? DURABILITY7_CELLS : args.trial === 'durability6' ? DURABILITY6_CELLS : args.trial === 'durability5' ? DURABILITY5_CELLS : args.trial === 'durability4' ? DURABILITY4_CELLS : args.trial === 'durability3' ? DURABILITY3_CELLS : args.trial === 'durability2' ? DURABILITY2_CELLS : args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
-const trialSeeds=fastPass?[FAST_PASS_SEED]:args.trial==='durability37'?(args.block==='mob-integration'?DURABILITY37_INTEGRATION_SEEDS:DURABILITY37_LADDER_SEEDS):args.trial==='durability36'?(args.block==='mountain-armor'?DURABILITY36_ARMOR_SEEDS:DURABILITY36_LADDER_SEEDS):args.trial==='durability35'?DURABILITY35_SEEDS:args.trial==='durability34'?(args.block==='mountain-guard'?DURABILITY34_MOUNTAIN_SEEDS:DURABILITY34_JUNGLE_SEEDS):args.trial==='durability33'?(args.block==='jungle-repair'?DURABILITY33_REPAIR_SEEDS:args.block==='mountain-entry'?DURABILITY33_ENTRY_SEEDS:DURABILITY33_BREADTH_SEEDS):args.trial==='durability32'?(args.block==='jungle-repair'?DURABILITY32_REPAIR_SEEDS:DURABILITY32_SEEDS):args.trial==='durability30'?(args.block==='jungle'?DURABILITY30_JUNGLE_SEEDS:DURABILITY30_SEEDS):args.trial==='durability29'?DURABILITY29_SEEDS:args.trial==='durability28'?DURABILITY28_SEEDS:args.trial==='durability27'?DURABILITY27_SEEDS:args.trial==='durability26'?DURABILITY26_SEEDS:args.trial==='durability25'?DURABILITY25_SEEDS:args.trial==='durability24'?DURABILITY24_SEEDS:args.trial==='durability23'?DURABILITY23_SEEDS:args.trial==='durability22'?DURABILITY22_SEEDS:args.trial==='durability21'?DURABILITY21_SEEDS:night5?NIGHT5_SEEDS:args.trial==='durability20'?DURABILITY20_SEEDS:args.trial==='durability19'?DURABILITY19_SEEDS:args.trial==='durability18'?DURABILITY18_SEEDS:args.trial==='durability17'?DURABILITY17_SEEDS:args.trial==='durability16'?DURABILITY16_SEEDS:args.trial==='durability15'?DURABILITY15_SEEDS:args.trial==='durability13movement'?DURABILITY13_MOVEMENT_SEEDS:args.trial==='durability13swarm'?DURABILITY13_SWARM_SEEDS:args.trial==='durability12movement'?DURABILITY12_MOVEMENT_SEEDS:args.trial==='durability12swarm'?DURABILITY12_SEEDS:args.trial==='durability11'?DURABILITY11_SEEDS:args.trial==='durability7'?DURABILITY7_SEEDS:args.trial==='durability5'?DURABILITY5_SEEDS:args.trial==='durability4'?DURABILITY4_SEEDS:SURVEY_SEEDS;
+const trialSeeds=endurance?[...(new Set((trialCells as EnduranceCell[]).map(c=>c.seed)))]:fastPass?[FAST_PASS_SEED]:args.trial==='durability37'?(args.block==='mob-integration'?DURABILITY37_INTEGRATION_SEEDS:DURABILITY37_LADDER_SEEDS):args.trial==='durability36'?(args.block==='mountain-armor'?DURABILITY36_ARMOR_SEEDS:DURABILITY36_LADDER_SEEDS):args.trial==='durability35'?DURABILITY35_SEEDS:args.trial==='durability34'?(args.block==='mountain-guard'?DURABILITY34_MOUNTAIN_SEEDS:DURABILITY34_JUNGLE_SEEDS):args.trial==='durability33'?(args.block==='jungle-repair'?DURABILITY33_REPAIR_SEEDS:args.block==='mountain-entry'?DURABILITY33_ENTRY_SEEDS:DURABILITY33_BREADTH_SEEDS):args.trial==='durability32'?(args.block==='jungle-repair'?DURABILITY32_REPAIR_SEEDS:DURABILITY32_SEEDS):args.trial==='durability30'?(args.block==='jungle'?DURABILITY30_JUNGLE_SEEDS:DURABILITY30_SEEDS):args.trial==='durability29'?DURABILITY29_SEEDS:args.trial==='durability28'?DURABILITY28_SEEDS:args.trial==='durability27'?DURABILITY27_SEEDS:args.trial==='durability26'?DURABILITY26_SEEDS:args.trial==='durability25'?DURABILITY25_SEEDS:args.trial==='durability24'?DURABILITY24_SEEDS:args.trial==='durability23'?DURABILITY23_SEEDS:args.trial==='durability22'?DURABILITY22_SEEDS:args.trial==='durability21'?DURABILITY21_SEEDS:night5?NIGHT5_SEEDS:args.trial==='durability20'?DURABILITY20_SEEDS:args.trial==='durability19'?DURABILITY19_SEEDS:args.trial==='durability18'?DURABILITY18_SEEDS:args.trial==='durability17'?DURABILITY17_SEEDS:args.trial==='durability16'?DURABILITY16_SEEDS:args.trial==='durability15'?DURABILITY15_SEEDS:args.trial==='durability13movement'?DURABILITY13_MOVEMENT_SEEDS:args.trial==='durability13swarm'?DURABILITY13_SWARM_SEEDS:args.trial==='durability12movement'?DURABILITY12_MOVEMENT_SEEDS:args.trial==='durability12swarm'?DURABILITY12_SEEDS:args.trial==='durability11'?DURABILITY11_SEEDS:args.trial==='durability7'?DURABILITY7_SEEDS:args.trial==='durability5'?DURABILITY5_SEEDS:args.trial==='durability4'?DURABILITY4_SEEDS:SURVEY_SEEDS;
 if(args.trial==='durability37') assertDurability37Definitions();
 if(args.trial==='durability36') assertDurability36Definitions();
 if(args.trial==='durability35') assertDurability35Definitions();
@@ -116,7 +120,7 @@ if (farmingStance || farmingSustain) {
 }
 mkdirSync(out,{recursive:true});
 const manifest={schema:1,mode,revision,navigationDiagnostics:args['navigation-diagnostics']==='true',definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
-  sampleEveryMs:args.trial==='durability12movement'||args.trial==='durability13movement'?100:1000,block:args.block,trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:mode==='pilot'?30000:night5?.durationMs??300000,seeds:trialSeeds,cells:trialCells};
+  sampleEveryMs:args.trial==='durability12movement'||args.trial==='durability13movement'?100:1000,block:args.block,trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:endurance?ENDURANCE_CAP_MS:mode==='pilot'?30000:night5?.durationMs??300000,seeds:trialSeeds,cells:trialCells};
 writeFileSync(join(out,'manifest.json'),JSON.stringify(manifest,null,2));
 const realNow=Date.now,realRandom=Math.random;
 function safeSpawn(node:string) {
@@ -140,7 +144,10 @@ function run(cell:SurveyCell,seed:number) {
     const roster=()=>[...world.monsterEntitiesInNode(cell.nodeId)].map(m=>({id:m.entityId,type:m.isMonster.monsterTypeId,hp:m.hasHealth.hp,maxHp:m.hasHealth.maxHp,pos:{...m.hasPosition.current}}));
     if(fastPass) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
     const initial=roster(); assert(initial.length>0,'Empty initial population');
+    const sharedEntry=realpathSync(require.resolve('@mmo-idle/shared'));
+    if(endurance) assert(sharedEntry.startsWith(realpathSync(resolve(__dirname,'../../shared'))), 'Shared module escaped frozen checkout');
     const ready={cell:cell.id,seed,synthetic:true,view,
+      ...(endurance ? {runtime:{sharedEntry,sharedEntrySha256:sha(readFileSync(sharedEntry)),revision,seed,durationMs:manifest.durationMs,dtMs:manifest.dtMs,arm:(cell as EnduranceCell).arm}} : {}),
       ...(farmingSustain ? {sustainReadback:{...sustainState(world,bot,1800000000000),gates:sustainGates(cell as FarmingSustainCell,bot)}} : {}),
       ...(breadth ? {playerTreatment:(cell as BreadthCell).playerTreatment,controlCaseId:(cell as BreadthCell).controlCaseId,conduitProfile:conduit?.profileReceipt() ?? null} : {}),
       ...(fastPass ? {packageReadback:fastPassReadback(cell,bot,view.globalMastery), definitionsIdentity:{base:manifest.definitionsHash,live:checkpointDefinitionsHash(),treated:false}} : {}),initialRoster:initial,initialRosterHash:sha(JSON.stringify(initial)),
@@ -165,7 +172,14 @@ function run(cell:SurveyCell,seed:number) {
     const sustain = farmingSustain ? new FarmingSustainRecorder(world,bot,1800000000000) : null;
     const metrics=new SurveyMetrics(bot.isPlayer.id);
     const register=()=>{for(const m of world.monsterEntitiesInNode(cell.nodeId)) metrics.register(m.entityId,m.isMonster.monsterTypeId,MONSTER_DATABASE.get(m.isMonster.monsterTypeId)?.name??m.isMonster.monsterTypeId,m.hasHealth.maxHp);};
-    register(); const log:unknown[]=[],samples:unknown[]=[];const lastHp=new Map<string,number>();
+    register(); const log:unknown[]=[],samples:unknown[]=[];
+    const deathEvents:unknown[]=[];
+    const progress=endurance?new EnduranceProgress(bot.isPlayer.id):null;
+    const endpoints: {atMs:number;work:ReturnType<EnduranceProgress['snapshot']>;owner:unknown;sustain:unknown}[]=[];
+    const stream=(name:string,items:unknown[])=>{if(items.length) appendFileSync(join(dir,name),items.map(e=>JSON.stringify(e)).join('\n')+'\n');};
+    if(endurance) for(const name of ['events.jsonl','samples.jsonl','conduit-events.jsonl','conduit-snapshots.jsonl','sustain-transitions.jsonl']) writeFileSync(join(dir,name),'');
+    let heartbeatAt=0;
+    const lastHp=new Map<string,number>();
     const minionLastAttack = new Map<string,number>(); let minionAttackBeats=0;
     // Durability37's integration block mixes families with different windows, so the
     // window is resolved PER CELL there and falls back to the block duration elsewhere.
@@ -175,7 +189,7 @@ function run(cell:SurveyCell,seed:number) {
     const wallStart=realNow();
     world.worldLogJournal=[];world.worldLogByPlayer.clear();world.takeNodeEvents(cell.nodeId);
     for(;elapsed<windowMs;elapsed+=100) {
-      if(realNow()-wallStart>120000) {outcome='wall-ceiling';break;}
+      if(!endurance && realNow()-wallStart>120000) {outcome='wall-ceiling';break;}
       now=1800000000000+elapsed; register();
       conduit?.beforeTick(elapsed,100,now);
       const tickWallStart=realNow();world.tick(100,now);conduit?.afterTick();sustain?.afterTick(elapsed,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
@@ -185,7 +199,7 @@ function run(cell:SurveyCell,seed:number) {
         lastHp.set(m.entityId,m.hasHealth.hp);
         if(m.hasAttackTarget?.targetId===bot.isPlayer.id) metrics.touch(m.entityId,elapsed);
       }
-      for(const e of world.worldLogJournal) {metrics.ingest(e,elapsed);log.push({atMs:elapsed,event:e});}
+      for(const e of world.worldLogJournal) {metrics.ingest(e,elapsed);progress?.ingest(e,elapsed);if(e.kind==='player-death')deathEvents.push({atMs:elapsed,event:e});log.push({atMs:elapsed,event:e});}
       world.worldLogJournal=[];world.worldLogByPlayer.clear();
       for(const e of world.takeNodeEvents(cell.nodeId)) {
         if(e.kind==='monster-cast-start'||e.kind==='monster-cast-end') {
@@ -207,16 +221,35 @@ function run(cell:SurveyCell,seed:number) {
         summonSlots:v.summonSlots, minions:[...world.minionEntities].filter(m=>m.isMinion.ownerPlayerId===bot.isPlayer.id).map(m=>({id:m.entityId,hp:m.hasHealth.hp,maxHp:m.hasHealth.maxHp,pos:{...m.hasPosition.current},target:m.controlsMinion.currentTargetId,lastAttackAt:m.performsAttack.lastAttackAt})),
         staticDamageContacts:activePlayerDamageFeatures(world,cell.nodeId).filter(f=>playerInFeatureContact(bot.hasPosition.current,f)).map(f=>({id:f.id,effect:f.damage?.effectId})),
         lastOutgoingDamageMs:Math.max(0,...[...metrics.targets.values()].map(t=>t.lastDamageMs??0)), blockedApproach:getString(bot.tracksCombat,'autoApproachBlocked'), selectedTargetId:getAutoTargetId(bot), motion:bot.isMoving?.motion??null, movement:bot.hasMovePath ? structuredClone(bot.hasMovePath) : null, monsters:roster().map(m=>({id:m.id,type:m.type,hp:m.hp,pos:m.pos,aggro:structuredClone(world.getMonsterEntity(m.id)?.hasAggroTarget),awareness:structuredClone(world.getMonsterEntity(m.id)?.hasAwareness)}))});
+      if(endurance) {
+        stream('events.jsonl',log.splice(0));stream('samples.jsonl',samples.splice(0));
+        stream('conduit-events.jsonl',conduit?.events.splice(0)??[]);
+        stream('conduit-snapshots.jsonl',conduit?.snapshots.splice(0)??[]);
+        stream('sustain-transitions.jsonl',sustain?.transitions.splice(0)??[]);
+        const measuredMs=elapsed+100;
+        if(ENDURANCE_ENDPOINTS.includes(measuredMs) && !bot.isDead && bot.hasHealth.hp>0) {
+          endpoints.push({atMs:measuredMs,work:progress!.snapshot(measuredMs),owner:{hp:v.hp,maxHp:v.maxHp,barrier:v.barrier,minHpFraction:minHp},sustain:sustain?.finish()});
+          writeFileSync(join(dir,'endpoints.json'),JSON.stringify(endpoints,null,2));
+        }
+        if(realNow()-heartbeatAt>=5000 || ENDURANCE_ENDPOINTS.includes(measuredMs)) {
+          const disk=statfsSync(out),rss=process.memoryUsage().rss;
+          writeFileSync(join(out,'heartbeat.json'),JSON.stringify({at:new Date(realNow()).toISOString(),elapsedMs:measuredMs,rss,cell:cell.id}));
+          heartbeatAt=realNow();
+          assert(disk.bavail*disk.bsize>=5*1024**3,'Storage watchdog: less than 5 GiB free');
+          assert(rss<=2*1024**3,'Memory watchdog: child RSS exceeds 2 GiB');
+        }
+      }
       if(bot.isDead || bot.hasHealth.hp<=0) {outcome='player-died';break;}
       world.pendingDeaths=[];
     }
     metrics.close(elapsed,outcome);
     const result={cell:cell.id,seed,outcome,elapsedMs:elapsed,windowMs,
       ...(sustain ? {sustain:sustain.finish()} : {}),
-      ...(breadth ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier},playerDeathEvidence:log.filter((x:any)=>x.event?.kind==='player-death')} : {}),minHpFraction:minHp,attackBeats,minionAttackBeats,wallElapsedMs:realNow()-wallStart,maxTickWallMs,totalAttackBeats:attackBeats+minionAttackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
-    writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');
-    writeFileSync(join(dir,'samples.jsonl'),samples.map(e=>JSON.stringify(e)).join('\n')+'\n');
-    if(sustain) writeFileSync(join(dir,'sustain-transitions.json'),JSON.stringify(sustain.transitions,null,2));
+      ...(endurance ? {endpoints,intervals:endpointIntervals(endpoints),work:progress!.snapshot(elapsed),terminalTargets:roster(),streamedHistories:true,timing:'Legacy event times label tick starts; endpoint states follow completed 100ms steps; no post-death endpoints.'} : {}),
+      ...(breadth ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier},playerDeathEvidence:endurance?deathEvents:log.filter((x:any)=>x.event?.kind==='player-death')} : {}),minHpFraction:minHp,attackBeats,minionAttackBeats,wallElapsedMs:realNow()-wallStart,maxTickWallMs,totalAttackBeats:attackBeats+minionAttackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
+    if(!endurance) writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');
+    if(!endurance) writeFileSync(join(dir,'samples.jsonl'),samples.map(e=>JSON.stringify(e)).join('\n')+'\n');
+    if(sustain && !endurance) writeFileSync(join(dir,'sustain-transitions.json'),JSON.stringify(sustain.transitions,null,2));
     if(conduit) writeFileSync(join(dir,'conduit.json'),JSON.stringify(conduit.finish(outcome),null,2));
     writeFileSync(join(dir,'summary.json'),JSON.stringify(result,null,2));return result;
   } finally {try {teardownArena(world);} finally {overlay?.restore();Date.now=realNow;Math.random=realRandom;}}
@@ -262,7 +295,7 @@ try {
   };
   const cells=mode==='pilot' ? (args.trial ? trialCells.filter(c=>pilotIds[args.trial].includes(c.id)) : SURVEY_CELLS.filter(c=>(c.tier===1&&c.className==='striker'&&c.role==='solo')||(c.tier===3&&c.className==='conduit'&&c.role==='swarm'&&!c.alternate)||(c.tier===2&&c.className==='slinger'&&c.role==='small-group'&&!c.alternate))) : trialCells;
   let budgetStopped=false;
-  observations: for(const cell of cells) for(const seed of mode==='qualify'||mode==='pilot'?[trialSeeds[0]]:trialSeeds) {
+  observations: for(const cell of cells) for(const seed of endurance?[(cell as EnduranceCell).seed]:mode==='qualify'||mode==='pilot'?[trialSeeds[0]]:trialSeeds) {
     if(night5&&mode==='run'&&realNow()-batchWallStart>=(['durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)?30:75)*60*1000){budgetStopped=true;break observations;}
     assert(realNow()-batchWallStart < 4*60*60*1000,'Four-hour batch ceiling; partial artifacts retained');
     results.push(args['navigation-diagnostics']==='true'&&mode!=='qualify' ? await profileNavigationObservation(out,cell.id,seed,()=>run(cell,seed)) : run(cell,seed));writeFileSync(join(out,'index.json'),JSON.stringify(results,null,2));
