@@ -93,6 +93,29 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   const live = new Set<string>(BUFF_IDS);
   const stale = authoredStatusIds().player.filter((id) => !live.has(id));
   assert(stale.length === 0, `statusHelp has copy for dead buff ids: ${stale.join(", ")}`);
+
+  const rampage = buffHelp("cadence-rampage");
+  assert(rampage?.help.includes("finisher"), "Rampage copy should describe finisher-earned stacks");
+  assert(rampage?.help.includes("regular attacks"), "Rampage copy should describe its regular-attack tradeoff");
+  assert(!rampage?.help.includes("Kills feed"), "Rampage copy must not claim kills build the effect");
+
+  const descriptionChecks: Array<[string, string[], string[]]> = [
+    ["debuff-slow", ["magnitude"], ["shortens"]],
+    ["defense-hardening", ["builds while you stay engaged"], ["gained from being hit"]],
+    ["defense-stationary-dr", ["gradually fades"], ["Moving gives it up"]],
+    ["cadence-aftershock", ["on-hit damage"], ["on-hit effects"]],
+    ["cooldown-eternal-charge", ["regular attack", "next execution"], []],
+    ["reload-momentum", ["completed reload", "shortens reload time"], ["hit streak"]],
+    ["cadence-crescendo", ["continuous fight", "resets"], ["rhythm you have built"]],
+  ];
+  for (const [id, required, forbidden] of descriptionChecks) {
+    const help = buffHelp(id)?.help ?? "";
+    for (const phrase of required) assert(help.includes(phrase), `${id} copy should include ${JSON.stringify(phrase)}`);
+    for (const phrase of forbidden) assert(!help.includes(phrase), `${id} copy must not include ${JSON.stringify(phrase)}`);
+  }
+
+  const brittle = targetStatusHelp("brittle")?.help ?? "";
+  assert(brittle.includes("plating") && brittle.includes("damage reduction"), "Brittle copy should describe both mitigation reductions");
 }
 
 // ── Fallback: an unauthored status is still legible ──────────────────────────

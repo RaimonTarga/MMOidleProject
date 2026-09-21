@@ -68,8 +68,9 @@ export const COOLDOWN_T3_BUFFS = [
   defineBuff('cooldown-eternal-charge', ({ player, playerCs }) => {
     if (!playerCs) return null;
     const stacks = getEternalChargeStacks(playerCs);
+    const bonus = stacks * eternalCycleFlatPerStack(player);
     return stacks > 0
-      ? { id: 'cooldown-eternal-charge', label: 'Chrge', stacks, durationPct: -1, color: '#ffaa00', logDetail: `+${stacks * eternalCycleFlatPerStack(player)} execution damage banked`, values: [{ label: 'Execution damage banked', value: `+${stacks * eternalCycleFlatPerStack(player)}`, good: true }] }
+      ? { id: 'cooldown-eternal-charge', label: 'Chrge', stacks, durationPct: -1, color: '#ffaa00', logDetail: `+${bonus} damage on regular attacks, +${bonus} again on next execution`, values: [{ label: 'Regular attack damage now', value: `+${bonus}`, good: true }, { label: 'Next execution bonus', value: `+${bonus}`, good: true }] }
       : null;
   }, COOLDOWN_OPTS),
   defineBuff('cooldown-temporal-ext', ({ playerCs }) => {

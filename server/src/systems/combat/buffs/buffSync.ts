@@ -763,17 +763,17 @@ function buffEffectText(buff: PlayerBuff): string {
     case "cadence-verdict":
       return "banked execution power";
     case "cadence-aftershock":
-      return "next attacks fire on-hit twice";
+      return "next attacks deal on-hit damage twice";
     case "cadence-metronome":
       return "+flat damage to subsequent hits";
     case "cadence-rampage":
-      return "+attack speed and finisher damage";
+      return "+attack speed, weaker regular hits, stronger finishers";
     case "cadence-crescendo":
       return "+finisher damage (ramps in combat)";
     case "cooldown-overdrive":
       return "+attack speed";
     case "cooldown-eternal-charge":
-      return "+execution charge";
+      return "+attack damage now and next-execution damage";
     case "cooldown-temporal-ext":
       return "+on-hit damage";
     case "cooldown-battery":

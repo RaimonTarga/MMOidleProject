@@ -46,7 +46,7 @@ export const CADENCE_T3_BUFFS = [
             stacks: echo,
             durationPct: -1,
             color: '#4488ff',
-            logDetail: `next ${echo} hits echo +${Math.round(echoBonus * 100)}% damage`,
+            logDetail: `next ${echo} hits +${Math.round(echoBonus * 100)}% damage`,
             values: [
               { label: 'Echoing hits left', value: String(echo), good: true },
               { label: 'Echo damage', value: `+${Math.round(echoBonus * 100)}%`, good: true },
@@ -88,9 +88,9 @@ export const CADENCE_T3_BUFFS = [
             stacks: charges,
             durationPct: -1,
             color: '#bb66ff',
-            logDetail: `next ${charges} attacks fire on-hit twice`,
+            logDetail: `next ${charges} attacks deal on-hit damage twice`,
             values: [
-              { label: 'Doubled attacks left', value: String(charges), good: true },
+              { label: 'Attacks with doubled on-hit damage left', value: String(charges), good: true },
             ],
           }
         : null;
