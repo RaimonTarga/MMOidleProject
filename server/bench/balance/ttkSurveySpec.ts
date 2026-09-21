@@ -27,7 +27,9 @@ export interface SurveyCell { id: string; className: string; tier: number; role:
    * runs NO stance on purpose -- and is honoured rather than defaulted, so a
    * neutral package cannot be silently read as an Offensive one.
    */
-  stance?: string | null; orbit?: boolean; focusElites?: boolean;
+  stance?: string | null;
+  /** Additional legally learned postures reserved for native Rune switching. */
+  additionalStances?: string[]; orbit?: boolean; focusElites?: boolean;
   /**
    * Item upgrade level to equip at. Omitted keeps the long-standing +5 bench
    * default. Durability32's T1 Mountain block uses +0 for its first-arrival
@@ -174,7 +176,8 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   p.equippedRites = [];
   p.attunedAbilities = { techniques: [], guards: [] };
   const stance = declared.stance;
-  p.attunedStances = stance ? [stance] : [];
+  p.attunedStances = [...(stance ? [stance] : []), ...(cell.additionalStances ?? [])];
+  for (const id of p.attunedStances) assert(p.knownStances.includes(id), `Unlearned stance ${id}`);
   p.equippedStances = { default: stance };
   p.activeStance = stance;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
@@ -189,7 +192,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
   const view = composePlayerView(bot)!;
-  assert.deepEqual(validateBuild({abilities, runeRules:rules, stances:{attuned:stance?[stance]:[],default:stance},rites:[]},view), [], cell.id);
+  assert.deepEqual(validateBuild({abilities, runeRules:rules, stances:{attuned:p.attunedStances,default:stance},rites:[]},view), [], cell.id);
   // Derived from the cell's OWN skill path rather than hardcoded to 'balanced'.
   // The assertion's intent is "the build that was declared is the build that
   // materialised"; every existing cell declares `-balanced`, so this is identical

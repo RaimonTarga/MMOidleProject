@@ -1,3 +1,5 @@
+import { FarmingSustainRecorder, sustainState } from '../bench/balance/farmingSustainRecorder';
+import { FARMING_SUSTAIN_BLOCKS, sustainGates, type FarmingSustainCell } from '../bench/balance/farmingSustainSpec';
 import { BREADTH_BLOCKS, assertBreadthDefinitions, type BreadthCell } from '../bench/balance/playerBreadthSpec';
 import { FARMING_STANCE_BLOCKS } from '../bench/balance/farmingStanceSpec';
 import { prepareConduitRecorder } from '../bench/balance/conduitRecorder';
@@ -65,13 +67,14 @@ import { DURABILITY20_CELLS, DURABILITY20_SEEDS, installDurability20Treatment, a
 import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
+const farmingSustain = args.trial === 'farming-sustain-01';
 const farmingStance = args.trial === 'farming-stance-01';
-const breadth = args.trial === 'player-breadth' || farmingStance;
+const breadth = args.trial === 'player-breadth' || farmingStance || farmingSustain;
 if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
 const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+const fastBlock = fastPass ? (farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
@@ -101,7 +104,7 @@ assert(args.hitboxes && hydrateHitboxCacheFromArtifact(args.hitboxes)>0,'Frozen 
 const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
 const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 if(args.revision) assert.equal(revision,args.revision,'Wrong frozen checkout');
-if (farmingStance) {
+if (farmingStance || farmingSustain) {
   assert(args['source-contract'] && args.revision, 'Frozen stance source contract required in actual child');
   assert(mode !== 'pilot', 'Stance packet has no extra pilot observations');
   const contract = JSON.parse(readFileSync(args['source-contract'], 'utf8'));
@@ -138,6 +141,7 @@ function run(cell:SurveyCell,seed:number) {
     if(fastPass) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
     const initial=roster(); assert(initial.length>0,'Empty initial population');
     const ready={cell:cell.id,seed,synthetic:true,view,
+      ...(farmingSustain ? {sustainReadback:{...sustainState(world,bot,1800000000000),gates:sustainGates(cell as FarmingSustainCell,bot)}} : {}),
       ...(breadth ? {playerTreatment:(cell as BreadthCell).playerTreatment,controlCaseId:(cell as BreadthCell).controlCaseId,conduitProfile:conduit?.profileReceipt() ?? null} : {}),
       ...(fastPass ? {packageReadback:fastPassReadback(cell,bot,view.globalMastery), definitionsIdentity:{base:manifest.definitionsHash,live:checkpointDefinitionsHash(),treated:false}} : {}),initialRoster:initial,initialRosterHash:sha(JSON.stringify(initial)),
       geometryRosterHash:sha(JSON.stringify(initial.map(({hp,maxHp,...r})=>r))),
@@ -158,6 +162,7 @@ function run(cell:SurveyCell,seed:number) {
     if(mode==='qualify') return ready;
     const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
     writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
+    const sustain = farmingSustain ? new FarmingSustainRecorder(world,bot,1800000000000) : null;
     const metrics=new SurveyMetrics(bot.isPlayer.id);
     const register=()=>{for(const m of world.monsterEntitiesInNode(cell.nodeId)) metrics.register(m.entityId,m.isMonster.monsterTypeId,MONSTER_DATABASE.get(m.isMonster.monsterTypeId)?.name??m.isMonster.monsterTypeId,m.hasHealth.maxHp);};
     register(); const log:unknown[]=[],samples:unknown[]=[];const lastHp=new Map<string,number>();
@@ -173,7 +178,7 @@ function run(cell:SurveyCell,seed:number) {
       if(realNow()-wallStart>120000) {outcome='wall-ceiling';break;}
       now=1800000000000+elapsed; register();
       conduit?.beforeTick(elapsed,100,now);
-      const tickWallStart=realNow();world.tick(100,now);conduit?.afterTick();maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
+      const tickWallStart=realNow();world.tick(100,now);conduit?.afterTick();sustain?.afterTick(elapsed,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
       for(const m of world.monsterEntitiesInNode(cell.nodeId)) {
         const previous=lastHp.get(m.entityId);
         if(previous!==undefined && m.hasHealth.hp>previous+0.001) {const t=metrics.targets.get(m.entityId);if(t&&t.firstDamageMs!==null)t.hpRegainObserved=true;}
@@ -198,7 +203,7 @@ function run(cell:SurveyCell,seed:number) {
       }
       metrics.closeIfCleared(elapsed);
       metrics.sampleRecovery(elapsed,v.hp>=v.maxHp&&v.barrier>=v.barrierMax&&v.incomingDot===0);
-      if(elapsed%manifest.sampleEveryMs===0) samples.push({atMs:elapsed,hp:v.hp,barrier:v.barrier,incomingDot:v.incomingDot,target:v.attackTargetId,lastAttackAt:v.lastAttackAt,autoIntent:v.autoIntent,pos:v.pos,
+      if(elapsed%manifest.sampleEveryMs===0) samples.push({...(farmingSustain?{sustain:sustainState(world,bot,now)}:{}),atMs:elapsed,hp:v.hp,barrier:v.barrier,incomingDot:v.incomingDot,target:v.attackTargetId,lastAttackAt:v.lastAttackAt,autoIntent:v.autoIntent,pos:v.pos,
         summonSlots:v.summonSlots, minions:[...world.minionEntities].filter(m=>m.isMinion.ownerPlayerId===bot.isPlayer.id).map(m=>({id:m.entityId,hp:m.hasHealth.hp,maxHp:m.hasHealth.maxHp,pos:{...m.hasPosition.current},target:m.controlsMinion.currentTargetId,lastAttackAt:m.performsAttack.lastAttackAt})),
         staticDamageContacts:activePlayerDamageFeatures(world,cell.nodeId).filter(f=>playerInFeatureContact(bot.hasPosition.current,f)).map(f=>({id:f.id,effect:f.damage?.effectId})),
         lastOutgoingDamageMs:Math.max(0,...[...metrics.targets.values()].map(t=>t.lastDamageMs??0)), blockedApproach:getString(bot.tracksCombat,'autoApproachBlocked'), selectedTargetId:getAutoTargetId(bot), motion:bot.isMoving?.motion??null, movement:bot.hasMovePath ? structuredClone(bot.hasMovePath) : null, monsters:roster().map(m=>({id:m.id,type:m.type,hp:m.hp,pos:m.pos,aggro:structuredClone(world.getMonsterEntity(m.id)?.hasAggroTarget),awareness:structuredClone(world.getMonsterEntity(m.id)?.hasAwareness)}))});
@@ -207,9 +212,11 @@ function run(cell:SurveyCell,seed:number) {
     }
     metrics.close(elapsed,outcome);
     const result={cell:cell.id,seed,outcome,elapsedMs:elapsed,windowMs,
+      ...(sustain ? {sustain:sustain.finish()} : {}),
       ...(breadth ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier},playerDeathEvidence:log.filter((x:any)=>x.event?.kind==='player-death')} : {}),minHpFraction:minHp,attackBeats,minionAttackBeats,wallElapsedMs:realNow()-wallStart,maxTickWallMs,totalAttackBeats:attackBeats+minionAttackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
     writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');
     writeFileSync(join(dir,'samples.jsonl'),samples.map(e=>JSON.stringify(e)).join('\n')+'\n');
+    if(sustain) writeFileSync(join(dir,'sustain-transitions.json'),JSON.stringify(sustain.transitions,null,2));
     if(conduit) writeFileSync(join(dir,'conduit.json'),JSON.stringify(conduit.finish(outcome),null,2));
     writeFileSync(join(dir,'summary.json'),JSON.stringify(result,null,2));return result;
   } finally {try {teardownArena(world);} finally {overlay?.restore();Date.now=realNow;Math.random=realRandom;}}
