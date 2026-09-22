@@ -39,8 +39,8 @@ import {
 const OWNS_ROOT_FLAG = "abilityOwnsRoot";
 
 /**
- * Apply a SLOW to a monster: a fraction of its movement speed and a matching
- * lengthening of its attack cadence, for `durationMs`.
+ * Apply a SLOW to a monster: a fraction of its movement speed for
+ * `durationMs`. Ability slows do not alter the target's attack cadence.
  *
  * Slow is deliberately NOT a soft root: the target still attacks, still casts,
  * and still closes — just more slowly. It exists for kiting, for maintaining
@@ -61,7 +61,7 @@ export function applyMonsterSlow(
     refreshable: true,
     sourceId,
     // `totalMs` is required for the buff-bar clock on every timed effect.
-    data: { totalMs: durationMs, moveSlowPct: slowPct, attackSlowPct: slowPct },
+    data: { totalMs: durationMs, moveSlowPct: slowPct },
   });
   attachMarker(world, monster, "hasAbilitySlow");
 }

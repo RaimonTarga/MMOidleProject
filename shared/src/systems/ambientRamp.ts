@@ -72,7 +72,7 @@ export function ambientRampStatus(cs: TracksCombat): StatusEffect | undefined {
 /** Status `data` for a ramp, built from its authored payload. */
 export function ambientRampData(
   payload: AmbientRampPayload,
-  ramp: { maxStacks: number; rampMs: number; coolingScaleStacks?: number },
+  ramp: { maxStacks: number; rampMs: number; coolingScaleStacks?: number; coolingRateMult?: number },
 ): Record<string, number> {
   const data: Record<string, number> = {
     [AMBIENT_RAMP_KEY]: 1,
@@ -85,6 +85,7 @@ export function ambientRampData(
   if (payload.damageSoftcapStacks) data.damageSoftcapStacks = payload.damageSoftcapStacks;
   if (payload.damageSoftcapScale) data.damageSoftcapScale = payload.damageSoftcapScale;
   if (ramp.coolingScaleStacks) data.coolingScaleStacks = ramp.coolingScaleStacks;
+  if (ramp.coolingRateMult) data.coolingRateMult = ramp.coolingRateMult;
   if (payload.incomingDamagePct) {
     data[DAMAGE_TAKEN_PCT_KEY] = payload.incomingDamagePct;
   }

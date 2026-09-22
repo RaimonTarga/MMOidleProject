@@ -41,6 +41,7 @@ const CLEAR_SPOT = { x: 150, y: 150 };
 const HEAT = RESOLVED_NODE_FEATURES[HEAT_NODE].find((f) => f.ambientRamp)?.ambientRamp;
 assert(HEAT !== undefined, `${HEAT_NODE} must author an ambientRamp feature`);
 const RAMP_MS = HEAT!.rampMs;
+const COOL_MS = RAMP_MS / (HEAT!.coolingRateMult ?? 1);
 const BREAKPOINT = HEAT!.payload.damageSoftcapStacks!;
 const TAKEN_PER_STACK = HEAT!.payload.incomingDamagePct ?? 0;
 const DEALT_PER_STACK = HEAT!.payload.outgoingDamagePct ?? 0;
@@ -97,7 +98,7 @@ function tickFeatures(
   const dt = 100;
   for (let elapsed = 0; elapsed < ms; elapsed += dt) {
     player.tracksEngagement = inCombat ? Date.now() : undefined;
-    updateNodeFeatures(world, dt);
+    updateNodeFeatures(world, Math.min(dt, ms - elapsed));
   }
 }
 
@@ -232,12 +233,12 @@ initCombatSystems();
   assert(tile!.speedMult === 1, 'volcano payload carries no move slow');
 
   // Disengaging sheds the ramp one stack at a time, and clears it.
-  tickFeatures(world, player, RAMP_MS * 2, false);
+  tickFeatures(world, player, COOL_MS * 2, false);
   assert(
     getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID)!.stacks === BREAKPOINT - 2,
     'the ramp decays gradually out of combat, not in one cliff',
   );
-  tickFeatures(world, player, RAMP_MS * BREAKPOINT, false);
+  tickFeatures(world, player, COOL_MS * BREAKPOINT, false);
   assert(
     getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID) === undefined,
     'a fully shed ramp removes its status',
@@ -292,9 +293,9 @@ initCombatSystems();
 
   // Cooling consumes elapsed time at the interval for EACH stack, slowing as Heat falls.
   heat.stacks = 100;
-  tickFeatures(world, player, 300, false);
-  assert(heat.stacks === 99, '100 Heat loses its first stack in 0.3 seconds');
-  tickFeatures(world, player, 300, false);
+  tickFeatures(world, player, 150, false);
+  assert(heat.stacks === 99, '100 Heat loses its first stack in 0.15 seconds');
+  tickFeatures(world, player, 150, false);
   assert(heat.stacks === 99, '99 Heat needs slightly longer for its next stack');
   tickFeatures(world, player, 100, false);
   assert(heat.stacks === 98, 'cooling carries fractional elapsed time');
@@ -303,11 +304,11 @@ initCombatSystems();
   tickFeatures(world, player, 100, true);
   assert(heat.stacks === 98, 'resuming combat does not convert cooling into growth');
   heat.stacks = 10;
-  tickFeatures(world, player, 2900, false);
-  assert(heat.stacks === 10, 'low Heat needs a fresh three seconds to cool');
+  tickFeatures(world, player, 1400, false);
+  assert(heat.stacks === 10, 'low Heat needs a fresh 1.5 seconds to cool');
   tickFeatures(world, player, 100, false);
   assert(heat.stacks === 9, 'cooling returns to baseline at ten stacks');
-  tickFeatures(world, player, 27_000, false);
+  tickFeatures(world, player, 13_500, false);
   assert(!ambientRampStatus(player.tracksCombat), 'cooling clears the final stack');
 }
 
