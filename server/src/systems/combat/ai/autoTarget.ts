@@ -42,6 +42,7 @@ import {
   RUNE_TACTICAL_RELOAD_FLAG,
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
+  RUNE_WAIT_IT_OUT_FLAG,
 } from "./runeConfig";
 import { steerOutOfTelegraphs } from "./telegraphEvasion";
 import { steerOutOfPersistentHazards } from "./dynamicHazardAvoidance";
@@ -646,6 +647,15 @@ export function updateAutoTargets(world: World, now: number) {
       getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
       player.hasAttackTarget === undefined &&
       player.hasHealth.hp < player.hasHealth.maxHp
+    ) {
+      setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+      stopEntity(world, player);
+      continue;
+    }
+
+    if (
+      getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG) &&
+      player.hasAttackTarget === undefined
     ) {
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       stopEntity(world, player);

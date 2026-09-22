@@ -4,7 +4,8 @@
  * A rune is a player-authored rule: `<condition> -> <action>`. Rules are
  * evaluated from top to bottom every tick. The first active rule in each channel
  * claims that channel; later active rules in the same channel are ignored for
- * that pass.
+ * that pass. OOC maintenance is the narrow exception: distinct maintenance
+ * predicates compose, while priority still chooses the first rule for each action.
  */
 import type { AutocombatConfig } from "./components/core/networkedSlices";
 import type { CombatArchetype } from "./types/combat";
@@ -92,6 +93,7 @@ export type RuneActionId =
   | "tactical-reload"
   | "wait-for-execution"
   | "wait-for-regen"
+  | "wait-it-out"
   | "auto-path-enemy"
   | "avoid-hazards"
   | "careful-pulling"
@@ -175,6 +177,12 @@ const RECOVERY_CONDITIONS: readonly RuneConditionId[] = [
 const RECOVER_FIRST_CONDITIONS: readonly RuneConditionId[] = [
   "always",
   ...RECOVERY_CONDITIONS,
+];
+
+/** Status maintenance mirrors Recover First's idle/immediate-disengage modes. */
+const WAIT_IT_OUT_CONDITIONS: readonly RuneConditionId[] = [
+  "always",
+  "when-idle",
 ];
 
 const STRATEGY_CONDITIONS: readonly RuneConditionId[] = [
@@ -584,6 +592,19 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     },
   ],
   [
+    "wait-it-out",
+    {
+      id: "wait-it-out",
+      name: "Wait It Out",
+      blurb:
+        "Hold position until temporary harmful effects fade. With Always, it holds as soon as nothing is attacking you, without waiting for combat to time out.",
+      cost: 1,
+      tier: 1,
+      channel: "OOC_MAINTENANCE",
+      allowedConditionIds: WAIT_IT_OUT_CONDITIONS,
+    },
+  ],
+  [
     "auto-path-enemy",
     {
       id: "auto-path-enemy",
@@ -737,6 +758,7 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // stability, but hidden from every player-facing surface and rejected by
     // `craftRuneRecipe` before any essence is spent.
     "wait-for-regen",
+    "wait-it-out",
     "flee",
     "while-traveling",
     "fight-back",
@@ -939,6 +961,19 @@ function runeConditionsCanOverlap(leftId: string, rightId: string): boolean {
   );
 }
 
+/** Distinct recovery predicates are cumulative rather than mutually exclusive. */
+function runeActionsCompose(
+  left: ActionDef | undefined,
+  right: ActionDef | undefined,
+): boolean {
+  if (!left || !right) return false;
+  return (
+    left.channel === "OOC_MAINTENANCE" &&
+    right.channel === "OOC_MAINTENANCE" &&
+    left.id !== right.id
+  );
+}
+
 /**
  * Explain same-lane Rune interactions for the loadout board. A later rule is
  * only marked suppressed when it can never claim its lane; ordinary overlapping
@@ -960,6 +995,8 @@ export function analyzeRuneLoadoutConflicts(
       if (earlier.conditionId === rule.conditionId && earlier.actionId === rule.actionId) {
         conflicts.push({ ruleIndex: index, earlierRuleIndex: earlierIndex, channel: action.channel, kind: "redundant" });
         break;
+      } else if (runeActionsCompose(earlierAction, action)) {
+        continue;
       } else if (runeConditionContains(earlier.conditionId, rule.conditionId)) {
         conflicts.push({ ruleIndex: index, earlierRuleIndex: earlierIndex, channel: action.channel, kind: "suppressed" });
         break;
@@ -981,7 +1018,10 @@ export function addRuneRuleWithReplacement(
   if (!action) return [...rules, added];
   const replacementIndex = rules.findIndex((rule) => {
     const existing = ACTION_DATABASE.get(rule.actionId);
-    return existing?.channel === action.channel && rule.conditionId === added.conditionId && (added.actionId !== "use-ability" || rule.targetAbilityId === added.targetAbilityId);
+    return existing?.channel === action.channel &&
+      !runeActionsCompose(existing, action) &&
+      rule.conditionId === added.conditionId &&
+      (added.actionId !== "use-ability" || rule.targetAbilityId === added.targetAbilityId);
   });
   if (replacementIndex < 0) return [...rules, added];
   const next = [...rules];
@@ -1127,6 +1167,21 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     },
   ],
   [
+    ruleKey("when-idle", "wait-it-out"),
+    {
+      name: "Wait It Out",
+      blurb: "After combat, wait for temporary harmful effects to fade before moving on.",
+    },
+  ],
+  [
+    ruleKey("always", "wait-it-out"),
+    {
+      name: "Patient Recovery",
+      blurb:
+        "Whenever nothing is attacking you, wait for temporary harmful effects to fade before looking for the next enemy.",
+    },
+  ],
+  [
     ruleKey("when-idle", "wait-for-execution"),
     {
       name: "Patient Strike",
@@ -1239,6 +1294,8 @@ export interface DerivedRuneConfig {
   abilityRules: EquippedRule[];
   config: AutocombatConfig;
   claimed: ClaimedRuneChannels;
+  /** Every active OOC predicate; unlike exclusive channels these compose by action. */
+  oocMaintenanceClaims: ClaimedRuneAction[];
   movementAction: RuneActionId | null;
   targetingAction: RuneActionId | null;
   oocMaintenanceAction: RuneActionId | null;
@@ -1260,6 +1317,7 @@ export interface DerivedRuneConfig {
   avoidEnemies: boolean;
   fightBackWhileTraveling: boolean;
   waitForRegen: boolean;
+  waitItOut: boolean;
   tacticalReload: boolean;
   waitForExecution: boolean;
   followLeader: boolean;
@@ -1339,6 +1397,7 @@ export function deriveAutoConfigFromRunes(
     abilityRules: [],
     config: { ...BASELINE_RUNE_CONFIG },
     claimed,
+    oocMaintenanceClaims: [],
     movementAction: null,
     targetingAction: null,
     oocMaintenanceAction: null,
@@ -1360,6 +1419,7 @@ export function deriveAutoConfigFromRunes(
     avoidEnemies: false,
     fightBackWhileTraveling: false,
     waitForRegen: false,
+    waitItOut: false,
     tacticalReload: false,
     waitForExecution: false,
     followLeader: false,
@@ -1378,12 +1438,11 @@ export function deriveAutoConfigFromRunes(
     const action = ACTION_DATABASE.get(raw.actionId);
     if (!condition || !action) continue;
     if (!isRuneRuleCompatibleForArchetype(raw, ctx.combatArchetype)) continue;
-    // "Always -> Recover First" is the one maintenance rule allowed to claim its
-    // channel while the combat timer is still running. It self-gates on actual
-    // engagement instead, so it stops the player from seeking the next enemy the
-    // moment nothing is attacking them.
+    // "Always" recovery predicates may activate while the combat timer is still
+    // running. They self-gate on actual engagement, so they stop the player from
+    // seeking the next enemy only after nothing is attacking them.
     const holdsWhileDisengaged =
-      action.id === "wait-for-regen" && condition.id === "always" && !engaged;
+      action.channel === "OOC_MAINTENANCE" && condition.id === "always" && !engaged;
     if (
       (action.channel === "OOC_MAINTENANCE" ||
         action.channel === "RESOURCE_MAINTENANCE") &&
@@ -1404,7 +1463,6 @@ export function deriveAutoConfigFromRunes(
       if (raw.targetAbilityId && ABILITY_DATABASE.has(raw.targetAbilityId) && isConditionActive(condition.id, ctx) && !derived.abilityTargets.includes(raw.targetAbilityId)) { derived.abilityTargets.push(raw.targetAbilityId); derived.abilityRules.push(raw); }
       continue;
     }
-    if (claimed[action.channel]) continue;
     if (!isConditionActive(condition.id, ctx)) continue;
 
     const rule: EquippedRule = {
@@ -1413,12 +1471,26 @@ export function deriveAutoConfigFromRunes(
       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
       ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     };
-    claimed[action.channel] = { rule, action, condition };
+    const claim = { rule, action, condition };
+    if (action.channel === "OOC_MAINTENANCE") {
+      // Each distinct maintenance action is a predicate that can hold movement.
+      // Preserve priority within one action, but let Recover First, Wait It Out,
+      // and Ready Execution all contribute independently.
+      if (derived.oocMaintenanceClaims.some((entry) => entry.action.id === action.id)) continue;
+      derived.oocMaintenanceClaims.push(claim);
+      claimed.OOC_MAINTENANCE ??= claim;
+      continue;
+    }
+    if (claimed[action.channel]) continue;
+    claimed[action.channel] = claim;
   }
 
   derived.movementAction = claimed.MOVEMENT?.action.id ?? null;
   derived.targetingAction = claimed.TARGETING?.action.id ?? null;
   derived.oocMaintenanceAction = claimed.OOC_MAINTENANCE?.action.id ?? null;
+  const oocMaintenanceActions = new Set(
+    derived.oocMaintenanceClaims.map((claim) => claim.action.id),
+  );
   derived.resourceMaintenanceAction =
     claimed.RESOURCE_MAINTENANCE?.action.id ?? null;
   derived.globalStrategyAction = claimed.GLOBAL_STRATEGY?.action.id ?? null;
@@ -1475,13 +1547,16 @@ export function deriveAutoConfigFromRunes(
       break;
   }
 
-  if (derived.oocMaintenanceAction === "wait-for-regen") {
+  if (oocMaintenanceActions.has("wait-for-regen")) {
     derived.waitForRegen = true;
+  }
+  if (oocMaintenanceActions.has("wait-it-out")) {
+    derived.waitItOut = true;
   }
   if (derived.resourceMaintenanceAction === "tactical-reload") {
     derived.tacticalReload = true;
   }
-  if (derived.oocMaintenanceAction === "wait-for-execution") {
+  if (oocMaintenanceActions.has("wait-for-execution")) {
     derived.waitForExecution = true;
   }
   if (
@@ -1519,8 +1594,15 @@ export function deriveAutoConfigFromRunes(
 
 /** Preserve priority when editing; same-condition/channel collisions replace explicitly. */
 export function composeRuneEdit(rules: readonly EquippedRule[], rule: EquippedRule, index: number | null): EquippedRule[] {
-  const channel = ACTION_DATABASE.get(rule.actionId)?.channel;
-  const collision = rules.findIndex((r, i) => i !== index && (rule.actionId !== "use-ability" || r.targetAbilityId === rule.targetAbilityId) && r.conditionId === rule.conditionId && ACTION_DATABASE.get(r.actionId)?.channel === channel);
+  const action = ACTION_DATABASE.get(rule.actionId);
+  const channel = action?.channel;
+  const collision = rules.findIndex((r, i) => {
+    if (i === index || (rule.actionId === "use-ability" && r.targetAbilityId !== rule.targetAbilityId)) return false;
+    const existing = ACTION_DATABASE.get(r.actionId);
+    return existing?.channel === channel &&
+      (!action || !runeActionsCompose(existing, action)) &&
+      r.conditionId === rule.conditionId;
+  });
   const anchor = collision >= 0 ? collision : index ?? rules.length;
   const result: EquippedRule[] = [];
   rules.forEach((r, i) => { if (i === anchor) result.push(rule); if (i !== index && i !== collision) result.push(r); });

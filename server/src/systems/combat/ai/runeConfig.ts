@@ -1,7 +1,9 @@
 import {
   deriveAutoConfigFromRunes,
   getFlag,
+  isWaitOutCandidate,
   isHarmfulPlayerStatusEffect,
+  AMBIENT_RAMP_KEY,
   MONSTER_DATABASE,
   RUNE_NODE_ACQUIRE_RADIUS,
   setFlag,
@@ -25,6 +27,7 @@ import { POWERING_UP_ID, poweringUpFullyCharged } from "../../player/stances/sta
 export const RUNE_FLEE_FLAG = "rune.flee";
 export const RUNE_KEEP_DISTANCE_FLAG = "rune.keepDistance";
 export const RUNE_WAIT_FOR_REGEN_FLAG = "rune.waitForRegen";
+export const RUNE_WAIT_IT_OUT_FLAG = "rune.waitItOut";
 export const RUNE_WAIT_FOR_EXECUTION_FLAG = "rune.waitForExecution";
 export const RUNE_TACTICAL_RELOAD_FLAG = "rune.tacticalReload";
 export const RUNE_FOLLOW_LEADER_FLAG = "rune.followLeader";
@@ -51,6 +54,23 @@ export function getAbilityRuneTargets(player: PlayerEntity): readonly string[] {
 const runeDecisions = new WeakMap<PlayerEntity, RuneTraceRule[]>();
 export function getRuneDecisions(player: PlayerEntity): RuneTraceRule[] {
   return runeDecisions.get(player) ?? [];
+}
+
+/** Harmful effects that will actually make progress while the player waits. */
+export function playerHasWaitOutStatus(world: World, player: PlayerEntity): boolean {
+  return player.tracksCombat.statusEffects.some((effect) => {
+    if (!isWaitOutCandidate(effect)) return false;
+    if ((effect.data[AMBIENT_RAMP_KEY] ?? 0) === 0) return true;
+
+    // Ambient ramps are normally permanent-duration statuses whose generic owner
+    // decays them out of combat. A live encounter override can impose a floor;
+    // wait only down to that floor so the rune can never softlock there.
+    const floor = Math.max(
+      0,
+      world.ambientRampOverrides.get(player.hasPosition.nodeId)?.minStacks ?? 0,
+    );
+    return effect.stacks > floor;
+  });
 }
 
 /**
@@ -153,7 +173,13 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
     );
 
     const ac = player.usesAutocombat;
-    runeDecisions.set(player, [...Object.values(d.claimed).flatMap(claim => claim ? [{ ...claim.rule }] : []), ...d.abilityRules]);
+    runeDecisions.set(player, [
+      ...Object.entries(d.claimed).flatMap(([channel, claim]) =>
+        channel !== "OOC_MAINTENANCE" && claim ? [{ ...claim.rule }] : []
+      ),
+      ...d.oocMaintenanceClaims.map((claim) => ({ ...claim.rule })),
+      ...d.abilityRules,
+    ]);
     const acquireRadius = d.autoPathEnemy
       ? RUNE_NODE_ACQUIRE_RADIUS
       : d.config.acquireRadius;
@@ -201,6 +227,11 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       player.tracksCombat,
       RUNE_WAIT_FOR_REGEN_FLAG,
       (d.waitForRegen || recoveringLatched) && belowFullHp,
+    );
+    setFlag(
+      player.tracksCombat,
+      RUNE_WAIT_IT_OUT_FLAG,
+      d.waitItOut && playerHasWaitOutStatus(world, player),
     );
     setFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG, d.waitForExecution);
     setFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG, d.tacticalReload);

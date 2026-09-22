@@ -27,6 +27,7 @@ import {
   RUNE_AVOID_NODE_HAZARDS_FLAG,
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
+  RUNE_WAIT_IT_OUT_FLAG,
   getRuneDecisions,
 } from "../combat/ai/runeConfig";
 
@@ -224,6 +225,17 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
       reason: "Waiting to recover to full health",
       source: ruleLabel(player, "wait-for-regen"),
       activeRune: runeTrace(player, "wait-for-regen"),
+    };
+  }
+  if (
+    getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG) &&
+    player.hasAttackTarget === undefined
+  ) {
+    return {
+      kind: "idle",
+      reason: "Waiting for harmful effects to fade",
+      source: ruleLabel(player, "wait-it-out"),
+      activeRune: runeTrace(player, "wait-it-out"),
     };
   }
   if (

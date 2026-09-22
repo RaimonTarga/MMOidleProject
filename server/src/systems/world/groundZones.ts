@@ -506,6 +506,7 @@ function tickToxicPool(
         data: {
           speedMult: pool.slowSpeedMult,
           totalMs: HAZARD_SLOW_REFRESH_MS,
+          isGroundZone: 1,
         },
       });
     }
@@ -521,6 +522,7 @@ function tickToxicPool(
         data: {
           [DAMAGE_TAKEN_PCT_KEY]: pool.vulnerability.damageTakenPct,
           totalMs: pool.vulnerability.durationMs,
+          isGroundZone: 1,
         },
       });
     }

@@ -27,6 +27,7 @@
  */
 
 import { AMBIENT_RAMP_KEY } from './ambientRamp';
+import type { StatusEffect } from '../components/combat/effects';
 import {
   CAVE_LOCKDOWN_EFFECT_ID,
   isHarmfulPlayerStatusEffect,
@@ -101,12 +102,39 @@ export function statusPolicyFor(id: string, data: Record<string, number>): Statu
       hardControl: explicit.hardControl ?? false,
     };
   }
+  // Player roots share the ordinary `slow` payload with soft slows; zero movement
+  // is the generic authored distinction between the two.
+  const hardControl = data.speedMult !== undefined && data.speedMult <= 0;
   // An unlisted ambient ramp is environmental by construction, and partially
   // cleanseable for the same reason Chill is: the room keeps re-applying it.
   if ((data[AMBIENT_RAMP_KEY] ?? 0) !== 0) {
-    return { harmful, cleanse: 'partial', environmental: true, hardControl: false };
+    return { harmful, cleanse: 'partial', environmental: true, hardControl };
   }
-  return { harmful, cleanse: 'full', environmental: false, hardControl: false };
+  // Positional node effects refresh for as long as the entity remains inside
+  // their source. Mark the generic source payload rather than enumerating
+  // individual pools, bushes, or biomes.
+  if ((data.isNodeFeature ?? 0) !== 0 || (data.isGroundZone ?? 0) !== 0) {
+    return { harmful, cleanse: 'full', environmental: true, hardControl };
+  }
+  return { harmful, cleanse: 'full', environmental: false, hardControl };
+}
+
+/**
+ * Whether a harmful status is a sensible candidate for the Wait It Out rune.
+ *
+ * Ordinary timed effects expire through the shared duration tick. Ambient ramps
+ * are the one permanent-duration exception: their generic ramp owner sheds stacks
+ * while disengaged. Other environmental effects can be refreshed forever by the
+ * room, permanent effects do not decay, and hard control belongs to Break Free.
+ */
+export function isWaitOutCandidate(
+  effect: Pick<StatusEffect, 'id' | 'stacks' | 'remainingMs' | 'data'>,
+): boolean {
+  if (effect.stacks <= 0) return false;
+  const policy = statusPolicyFor(effect.id, effect.data);
+  if (!policy.harmful || policy.hardControl) return false;
+  if ((effect.data[AMBIENT_RAMP_KEY] ?? 0) !== 0) return true;
+  return !policy.environmental && effect.remainingMs > 0;
 }
 
 /** Whether Cleanse may touch this effect at all. */
