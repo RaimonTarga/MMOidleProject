@@ -2,13 +2,14 @@
  * Minion AI driver — runs once per minion per tick.
  *
  * Each slime:
- *   1. Picks an attack target (closest monster within the player's leash).
+ *   1. Follows an active owner targeting Rune, otherwise its formation policy.
  *   2. Moves toward that target up to the leash boundary.
  *   3. If no target is in leash range, returns toward its follow offset.
  *   4. If in attack range and cooldown ready, drives `runPlayerAttack` with
  *      the slime's position as the FX origin (player retains all modifiers).
  */
 import {
+  ACTION_DATABASE,
   distanceSq,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -28,6 +29,8 @@ import {
   resolveCommandedMoveDestination,
 } from './command';
 import { summonerProfileFor } from './profile';
+import { getRuneDecisions } from '../../../combat/ai/runeConfig';
+import { getAutoTargetId } from '../../../combat/ai/targetPriority';
 
 // Pixels — how close to the follow offset is "close enough" to idle.
 const FOLLOW_HOVER_TOL = 10;
@@ -40,6 +43,21 @@ const LEASH_MARGIN = 4;
  */
 export function computeLeashRadius(owner: PlayerEntity): number {
   return summonerProfileFor(owner).leashRadius;
+}
+
+/** Consume the owner's native selection, including channel arbitration and gates.
+ * Undefined means no active targeting rule; null means the rule currently has no
+ * valid in-leash target. Do not silently replace that preference with nearest.
+ */
+function inheritedRuneTarget(world: World, owner: PlayerEntity, leashRadius: number): MonsterEntity | null | undefined {
+  if (!owner.usesAutocombat.auto || !getRuneDecisions(owner).some(rule =>
+    ACTION_DATABASE.get(rule.actionId)?.channel === 'TARGETING')) return undefined;
+  const id = getAutoTargetId(owner);
+  const target = id ? world.getMonsterEntity(id) : undefined;
+  if (!target || target.hasHealth.hp <= 0 || target.isInvulnerable || target.isConcealed
+    || target.hasPosition.nodeId !== owner.hasPosition.nodeId
+    || distanceSq(target.hasPosition.current, owner.hasPosition.current) > leashRadius * leashRadius) return null;
+  return target;
 }
 
 /** Pick the closest in-leash monster. Returns null if none in range. */
@@ -176,10 +194,11 @@ export function driveMinion(
     return;
   }
 
-  const target = focusOverride ?? (isSwarm
+  const inherited = inheritedRuneTarget(world, owner, leashRadius);
+  const target = focusOverride ?? (inherited !== undefined ? inherited : isSwarm
     ? findSwarmMinionTarget(world, owner, minion, leashRadius)
     : findMinionTarget(world, owner, leashRadius));
-  const stickyTarget = isSwarm || !!focusOverride;
+  const stickyTarget = isSwarm || !!focusOverride || !!inherited;
 
   if (target) {
     if (stickyTarget) {

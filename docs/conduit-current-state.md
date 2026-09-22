@@ -184,10 +184,18 @@ unrelated ground bake-off in development.
 
 - Leash radius is a flat `SUMMONER_CORE_TUNING.leashRadius` (320) from the
   profile, no longer derived from owner attack range.
-- Normal minions pick the closest in-leash monster, move to the leash boundary,
+- An active owner TARGETING Rune makes the formation consume the owner's native
+  auto-selected target (same comparator, engagement gates and channel priority).
+  The target must be alive, visible, in the same node and inside the owner leash;
+  otherwise the formation holds rather than substituting nearest. This applies
+  to swarm formations too. Explicit focus/move commands retain precedence.
+  Summons run before auto-selection in the world tick, so the selection is the
+  most recently completed owner decision, normally consumed on the next tick.
+- With no active owner targeting Rune (or owner auto disabled), normal minions
+  pick the closest in-leash monster, move to the leash boundary,
   and attack when collision range permits. Harrier-policy formations retreat
   when a target closes inside 65% of `preferredDistance`.
-- Kilnmaster (`endless-swarm`) uses spread targeting: fewest already-assigned
+- Without an active owner targeting Rune, Kilnmaster (`endless-swarm`) uses spread targeting: fewest already-assigned
   minions, ties broken by distance, sticky while valid.
 - `player:commandSummons` carries focus (click a monster) and move (click
   ground) commands. Move commands clamp to leash and clear when every live
