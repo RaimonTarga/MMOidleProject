@@ -1,0 +1,18 @@
+{
+  "pid": 11548,
+  "argv": [
+    "--import",
+    "file:///D:/mmo-idle/desert-strategy-01-r1/source/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs",
+    "--conditions=development",
+    "scripts/ttkSurvey.ts",
+    "--trial=desert-strategy-01",
+    "--block=qualification",
+    "--mode=qualify",
+    "--revision=0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+    "--source-contract=D:\\mmo-idle\\desert-strategy-01-r1\\packet\\identity.json",
+    "--hitboxes=D:\\mmo-idle\\overnight-endurance-01\\hitboxes.json",
+    "--out=D:\\mmo-idle\\desert-strategy-01-r1\\qualification\\zero-tick\\artifacts"
+  ],
+  "status": 0,
+  "reason": null
+}

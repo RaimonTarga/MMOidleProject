@@ -1,0 +1,114 @@
+[
+  {
+    "test": "biomeEcology",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "Error: Moss-Shell Snapper should have a deeper health pool, telegraph Shell Up, and maintain its venom long enough to matter",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-biomeEcology.log",
+    "sha256": "261126f26b3a608dfd428ef0e2ab9281cb1d262545337c34dc862b919dd591db"
+  },
+  {
+    "test": "boss2Matrix",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "AssertionError [ERR_ASSERTION]: dreadbore: boss attack drift",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-boss2Matrix.log",
+    "sha256": "70f3390d5d66753848ec4f1daa6cd58a6f971a92121869c44e9c41b36edfe195"
+  },
+  {
+    "test": "boss3Cleanse",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "AssertionError [ERR_ASSERTION]: cave-response: boss attack drift",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-boss3Cleanse.log",
+    "sha256": "f9f1bde96f6647cad79185b9d965fe286965247738b69e01e9ce000278c9e7be"
+  },
+  {
+    "test": "boss3Matrix",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "AssertionError [ERR_ASSERTION]: cave-response: boss attack drift",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-boss3Matrix.log",
+    "sha256": "53e599763cec7103611aa9452911223dc8afe6a56e7c45116a7d9c3d65cd723f"
+  },
+  {
+    "test": "boss4Matrix",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "AssertionError [ERR_ASSERTION]: cave-pressure: MONSTER_DATABASE['chitinous-dreadbore'].stats.attack is not the frozen 139",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-boss4Matrix.log",
+    "sha256": "da078204367657bdf2d028e289a0856724f57369727c291a94601cc472fd2d75"
+  },
+  {
+    "test": "boss4Pressure",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "AssertionError [ERR_ASSERTION]: cave-pressure: MONSTER_DATABASE['chitinous-dreadbore'].stats.attack is not the frozen 139",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-boss4Pressure.log",
+    "sha256": "02270fadb4659e6d9e6ed02344004d29a53b06ec139b08085ac868c89d842095"
+  },
+  {
+    "test": "boss5Matrix",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "AssertionError [ERR_ASSERTION]: cave-refinement: the authored attack is 85, not the frozen 139",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-boss5Matrix.log",
+    "sha256": "276ebd7337befe26b36db85e607e8358c40e8add63165d8a947c4f027e7b3a75"
+  },
+  {
+    "test": "boss5Pressure",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "AssertionError [ERR_ASSERTION]: cave-refinement: the authored attack is 85, not the frozen 139",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-boss5Pressure.log",
+    "sha256": "4a7e303f2a256dbdeee1697fdbaa7a2f6cc0f55d4cdc211804c28068b6ebda39"
+  },
+  {
+    "test": "botHarness",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "Error: assertion failed: spirit-volcano-control-t3-v1r: invalid build: [{\"code\":\"MISSING_UNLOCK\",\"reason\":\"Rune rule 1 uses an unowned fragment\"},{\"code\":\"MALFORMED_BUILD\",\"reason\":\"Rune rule 1 has invalid compatibility, target or obsolete schema\"},{\"code\":\"MISSING_UNLOCK\",\"reason\":\"Rune rule 2 uses an unowned fragment\"},{\"code\":\"MALFORMED_BUILD\",\"reason\":\"Rune rule 2 has invalid compatibility, target or obsolete schema\"},{\"code\":\"MISSING_UNLOCK\",\"reason\":\"Rune rule 3 uses an unowned fragment\"},{\"code\":\"MALFORMED_BUILD\",\"reason\":\"Rune rule 3 has invalid compatibility, target or obsolete schema\"},{\"code\":\"INSUFFICIENT_RP\",\"reason\":\"Build costs 28 RP; budget is 16\"}]",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-botHarness.log",
+    "sha256": "88bdce4cdf3c669494669695fcd3670043f945acc1575103d25015ae1ea849ad"
+  },
+  {
+    "test": "durability10",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "TypeError: Cannot read properties of undefined (reading 'maxPct')",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-durability10.log",
+    "sha256": "4fe4ced9c57fa1e7ca767bfde4aadbbff52eb91284837e09e51e7bc2f82ef125"
+  },
+  {
+    "test": "durability11",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "TypeError: Cannot read properties of undefined (reading 'maxPct')",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-durability11.log",
+    "sha256": "c213769648463169a18de4c2e50412bb682fb8657c42809c6f1eebdcd606f5f1"
+  },
+  {
+    "test": "durability8",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "AssertionError [ERR_ASSERTION]: No dealer, companion, attack or other mechanic changes",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-durability8.log",
+    "sha256": "379827748a2f4784a37b9bb9e550688e91ffa60f8870cb99802439366e339f56"
+  },
+  {
+    "test": "mobAdoptionIntegration",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "Error: the Jungle ladder is HP-only; the Apex ramp must be untouched",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-mobAdoptionIntegration.log",
+    "sha256": "cdde2684df7a0dfbd6a4ee2fb03f21e33f9dae743a8db8fc25cbbe428463ade6"
+  },
+  {
+    "test": "tier1Snapshot",
+    "source": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "exitCode": 1,
+    "firstError": "Error: Snapshot has an unsupported range branch",
+    "externalLog": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\baseline-tier1Snapshot.log",
+    "sha256": "d2ea25b776ca7ee540bb9d5b010a44784574038a0ebc3494ae343d3866691594"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "status": "approved-and-integrated",
+  "decision": "fix-formation-rule-inheritance-and-make-canonical-for-all-24-cases",
+  "userInstruction": "Make the summon formation inherit the summoner's targetting rules, if possible",
+  "executionSource": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+  "integrationSource": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+  "supersedes": "Earlier approval to treat Champion as indirect-only; original packet remains unrun at D:/mmo-idle/desert-strategy-01",
+  "canonicalBehavior": "Active TARGETING Rune: formation consumes latest native owner selection within leash; no nearest fallback on invalid/out-of-leash selection. Explicit commands retain precedence. Inactive rule retains native formation policy. No privileged role selector or comparator rewrite.",
+  "interpretation": "All 24 cases use the same fixed source. Champion low-HP arm now inherits owner native preference, but eligibility, reach, persistence, cadence and leash can still limit realized dealer-first kills. Record owner and formation selections and actual kills/damage; this packet is not an old-vs-new code efficacy comparison.",
+  "deployment": "not performed"
+}

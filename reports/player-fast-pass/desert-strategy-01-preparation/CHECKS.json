@@ -1,0 +1,89 @@
+{
+  "executionSource": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+  "integrationCommit": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+  "gameplayDeltaFromGuardBaseline": [
+    "server/src/systems/classes/archetypes/summoner/ai.ts"
+  ],
+  "qualification": {
+    "planned": 24,
+    "completed": 24,
+    "combatObservations": 0,
+    "exactChildEntrypoint": "server/scripts/ttkSurvey.ts",
+    "exactChildRevisionVerified": true,
+    "sourceRuntimeSharedAndHitboxVerified": true,
+    "matchingPairedInitialRosters": 12,
+    "historicalBasePackageEquality": 6,
+    "appliedArmReadbacks": 12
+  },
+  "checks": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "scope": "all packages and bench, after targeting fix"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "scope": "full build before targeting fix; only server implementation changed subsequently; client/admin chunk-size warnings"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/server build",
+      "status": "passed",
+      "scope": "after targeting fix"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    }
+  ],
+  "focusedTestsPassed": [
+    "desertStrategyPacket",
+    "guardCoveragePacket",
+    "guardCoverageRecorder",
+    "summonerRuneTargeting",
+    "summonerOverhaul",
+    "summonerSpecializations",
+    "runeTargetingPreference",
+    "targetPriority"
+  ],
+  "fullSuite": {
+    "command": "pnpm test",
+    "status": "failed-pre-existing-failures",
+    "exitCode": 1,
+    "passed": 261,
+    "total": 275,
+    "failed": 14,
+    "failures": [
+      "server/test/biomeEcology.test.ts",
+      "server/test/boss2Matrix.test.ts",
+      "server/test/boss3Cleanse.test.ts",
+      "server/test/boss3Matrix.test.ts",
+      "server/test/boss4Matrix.test.ts",
+      "server/test/boss4Pressure.test.ts",
+      "server/test/boss5Matrix.test.ts",
+      "server/test/boss5Pressure.test.ts",
+      "server/test/durability10.test.ts",
+      "server/test/durability11.test.ts",
+      "server/test/durability8.test.ts",
+      "server/test/mobAdoptionIntegration.test.ts",
+      "shared/src/protocol/tier1Snapshot.test.ts",
+      "bot/src/harness.test.ts"
+    ],
+    "allFailuresReproducedOnPreFixSource": true,
+    "preFixSource": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+    "baselineFailureEvidence": "BASELINE_FAILURES.json",
+    "externalSummary": "D:\\mmo-idle\\desert-strategy-01-r1\\checks\\FULL_SUITE_SUMMARY.txt",
+    "summarySha256": "3f7780160e6a1d8c92a6436780283bfa74fad156fe61d986e33cc1ff45842010",
+    "selfSkipped": [
+      "server/test/gameplayPersistence.test.ts: TEST_GAMEPLAY_DATABASE_URL not configured; exits successfully"
+    ]
+  },
+  "mainExperiment": {
+    "launched": false,
+    "combatObservations": 0,
+    "retries": 0
+  },
+  "supersededPacket": "SUPERSEDED.json",
+  "livePlaytest": "not performed",
+  "deployment": "not performed"
+}

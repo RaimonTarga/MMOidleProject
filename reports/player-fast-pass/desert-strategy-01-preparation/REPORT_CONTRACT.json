@@ -1,0 +1,75 @@
+{
+  "experimentId": "desert-strategy-01",
+  "status": "qualified-unrun",
+  "planned": 24,
+  "pairs": 12,
+  "maximumFindings": 5,
+  "maximumDecisions": 3,
+  "requiredPublicationFiles": [
+    "REPORT.md",
+    "results-summary.json",
+    "resolved-builds.json",
+    "identity.json",
+    "manifest.json",
+    "seal.json",
+    "complete.json or partial.json",
+    "raw-inventory.json",
+    "DESIGNER_DECISION.json"
+  ],
+  "publicationDirectory": "reports/player-fast-pass/desert-strategy-01/run-01",
+  "rawRoot": "D:/mmo-idle/desert-strategy-01-r1/run-01",
+  "noRawHistoriesInGit": true,
+  "commitAndPush": true,
+  "verifyRemoteReportAccessible": true,
+  "requiredReturnFields": [
+    "branch",
+    "publicationSha",
+    "measuredExecutionSha",
+    "reportPath",
+    "newCompleted",
+    "failed",
+    "omitted",
+    "notRun"
+  ],
+  "pairedResults": [
+    "survival/death and elapsed time",
+    "lifetime completedKills",
+    "completed bonded pairs with membership and kill order",
+    "first both-engaged to dealer-removal time or null",
+    "owner HP damage, absorption and sampled control during pressure interval",
+    "work.kills at 300000 and 600000; absent post-death endpoints rendered null",
+    "0-5 and 5-10 minute work deltas",
+    "unfinished/ambiguous/no-exposure pairs and progress gaps",
+    "owner selected target, formation targets and damage delivery",
+    "Cleanse actual activation/control removal/movement evidence",
+    "RP cost/free and death context; Conduit payments separate"
+  ],
+  "championInterpretation": "All 24 cases use the same fixed source. Champion low-HP arm now inherits owner native preference, but eligibility, reach, persistence, cadence and leash can still limit realized dealer-first kills. Record owner and formation selections and actual kills/damage; this packet is not an old-vs-new code efficacy comparison.",
+  "requiredChampionRowMetadata": {
+    "strategyInterpretation": "native-owner-target-inheritance",
+    "canonicalIntegrationSource": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+    "limitationReference": "DESIGNER_DECISION.json"
+  },
+  "summaryExtensions": {
+    "pairedComparisons": "12 objects keyed by comparisonId with observed results and unavailable reasons",
+    "classAssessment": "six roots; tier/frame/path, evidence, strategy coverage, RP/equipment, disposition",
+    "findings": "at most five",
+    "decisionsOrQuestions": "at most three",
+    "states": "distinguish proposed, measured, accepted-as-reference, integrated, deployed"
+  },
+  "classAssessmentSeed": "reports/player-fast-pass/desert-strategy-01-preparation/CLASS_EVIDENCE.md",
+  "limits": [
+    "synthetic; economyEligible=false",
+    "No eligible-dealer exact-path signal: null with recorded reason, not fabricated zeros",
+    "No exposure is uninformative",
+    "No universal class/tier/boss conclusions",
+    "No population survival probability from two seeds",
+    "No replay, adaptation, extra pilot, new package, Endure add-back or deployment",
+    "Operational failure stops common-source family; gameplay death continues",
+    "Publication failure never authorizes rerunning combat"
+  ],
+  "rowFieldSemantics": {
+    "arm": "Policy arm; use this and comparisonId for matched analysis",
+    "block": "Inherited legacy reference family; not the A/B targeting policy"
+  }
+}

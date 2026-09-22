@@ -1,0 +1,147 @@
+[
+  {
+    "path": ".gitattributes",
+    "bytes": 9,
+    "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+  },
+  {
+    "path": "APPLIED_ARMS.json",
+    "bytes": 256897,
+    "sha256": "c28fbbdb030739497da28e272180620028e154253707b03ea3b6b0ae3147e92e"
+  },
+  {
+    "path": "BASE_PACKAGES.json",
+    "bytes": 35861,
+    "sha256": "6c6151fd99bc50406cdec6375dce2f82bdd89b083092ca6ba44a37d7292d497c"
+  },
+  {
+    "path": "BASELINE_FAILURES.json",
+    "bytes": 6271,
+    "sha256": "296d375a551f189f38624b197979ec587bbe6db9bbd1412df9ce46c09e7c410b"
+  },
+  {
+    "path": "CHECKS.json",
+    "bytes": 2979,
+    "sha256": "89a8fa9a0dcf921048e037c48bb6dc33e39c0f1e6fde35f298c830dc342fa99c"
+  },
+  {
+    "path": "CLASS_EVIDENCE.md",
+    "bytes": 6878,
+    "sha256": "ced8cd49c405b64b7cf8dc2b6a4ba86e61511f65a7cfd161da0c0d91057888dd"
+  },
+  {
+    "path": "DESIGNER_DECISION.json",
+    "bytes": 1186,
+    "sha256": "1baba7ca0cd83235c9b4fc6a561919746c5143feba4afde8f9e5d3882a56f92a"
+  },
+  {
+    "path": "HISTORICAL_EVIDENCE.json",
+    "bytes": 45349,
+    "sha256": "86d071b40e55c439898b06611c4bd8e035dddf87d7a7299a0d1944174941e0d2"
+  },
+  {
+    "path": "INTEGRATION.patch",
+    "bytes": 3089,
+    "sha256": "d6960ea072c759a05b53063fbba5f2aef04b3ff6654e2202161a159d5cdb12d0"
+  },
+  {
+    "path": "LUNA_RUN.md",
+    "bytes": 7804,
+    "sha256": "bea6f051d4eed48f53e6a7f30496b0843fd39939cc78eb43590d3a5849f52f14"
+  },
+  {
+    "path": "NATIVE_POLICY.md",
+    "bytes": 7225,
+    "sha256": "229034ad2702da176863bd1db98b514a81477789e1e0bdfeab5288f5b6c84a94"
+  },
+  {
+    "path": "ORDERED_CASES.json",
+    "bytes": 82653,
+    "sha256": "120bde75b965a8b11cbb014f01d0848dcc954ef91a0ef8f5374cef4a86f930bd"
+  },
+  {
+    "path": "ORDERED_CASES.tsv",
+    "bytes": 3077,
+    "sha256": "746716c3e94dc75fe721919271e827900e7c57705598a91d5e9a11714c7a685d"
+  },
+  {
+    "path": "PACKAGE_EQUIVALENCE.json",
+    "bytes": 1306,
+    "sha256": "427d0f2b642e804c96c8e9d44577e842b97354b2a7b653268bfd760b40e0fb7d"
+  },
+  {
+    "path": "packet/identity.json",
+    "bytes": 146289,
+    "sha256": "7d35980c92eb38f53b895cc9822eae58c446a78b43376e99789ba218798c9ec6"
+  },
+  {
+    "path": "packet/manifest.json",
+    "bytes": 85725,
+    "sha256": "923d7f1b122e3070f7cf36b93052312eb09940639e08957401a9a9079ea9ff7e"
+  },
+  {
+    "path": "packet/qualified.json",
+    "bytes": 288,
+    "sha256": "d521fcfb530d0e31f8774c92f798a1761303312fbf07aa16e3c29ad98d4b28de"
+  },
+  {
+    "path": "packet/seal.json",
+    "bytes": 177,
+    "sha256": "0640dab5d979452f6940ded66421ab08cadbf15d7e04212128c6d87f1f9a38ee"
+  },
+  {
+    "path": "PREPARATION_STATE.json",
+    "bytes": 737,
+    "sha256": "ddd43f932ae8e2b9e2c3a5baa8b03c33bede151ac7cc4d72bb7c242769afcb6f"
+  },
+  {
+    "path": "qualification/child-manifest.json",
+    "bytes": 85419,
+    "sha256": "9b695736ea7c028bb145c404192ac99d6b08a114eb7eb5aff72b2a5b4fbaecb1"
+  },
+  {
+    "path": "qualification/complete.json",
+    "bytes": 100,
+    "sha256": "7e9b0d6a6f0292a33b3ecb93567d5824cb7f80c120a805644e8221e263b0a473"
+  },
+  {
+    "path": "qualification/process.json",
+    "bytes": 647,
+    "sha256": "9df7c44fcbec3d597d4b83337b891d41334037a6298cc2f4252968b265a239e1"
+  },
+  {
+    "path": "qualification/process.log",
+    "bytes": 2104,
+    "sha256": "3ca848e05a2dd91aeb866a1359bec4b9282563bd356edbb49d4fe0cfc9966bb1"
+  },
+  {
+    "path": "qualification/raw-inventory.json",
+    "bytes": 1035,
+    "sha256": "55cfd2dbe5c13062c8a932be59e63a9265d2b76045dff25b9dd3d0ef8156564d"
+  },
+  {
+    "path": "qualification/resolved-builds.json",
+    "bytes": 494143,
+    "sha256": "ff890ce9ab560c602467a6c5675c6bbe7d43b117ff8a94662e956f8b10f7b0ad"
+  },
+  {
+    "path": "README.md",
+    "bytes": 2589,
+    "sha256": "671902b5c9310e6ba707c1d1c0f03b0aab49ee8bb7393db19ee9ad6c866cdbab"
+  },
+  {
+    "path": "REPORT_CONTRACT.json",
+    "bytes": 3383,
+    "sha256": "651cf3ba0c34c5285f6ea7ad71fa07e18ed93246f5f611b621249b3306561e3f"
+  },
+  {
+    "path": "SOURCE_BRIEF.md",
+    "bytes": 20738,
+    "sha256": "50c248a16c00e2ee3f2c5eb8713d562b5c1c540b1cf087f2a659eac113724a3b"
+  },
+  {
+    "path": "SUPERSEDED.json",
+    "bytes": 685,
+    "sha256": "d99e3bf4475b036d6a9a4220c070714a991b33660ee11828d64172f6bdbb6166"
+  }
+]

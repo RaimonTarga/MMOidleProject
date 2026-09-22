@@ -1,0 +1,18 @@
+{
+  "status": "superseded-unrun",
+  "reason": "User authorized production formation Rune inheritance after initial qualification; no combat in either packet.",
+  "oldSource": "4719b54bb937b6e194d2146b53a8022bdae01b6f",
+  "oldRoot": "D:\\mmo-idle\\desert-strategy-01",
+  "oldPacketSeal": {
+    "manifest.json": "923d7f1b122e3070f7cf36b93052312eb09940639e08957401a9a9079ea9ff7e",
+    "identity.json": "d0749e2ff82c22038101887a01e3aaef1b424a863c4d1a4d1993d2e1bece9b3e"
+  },
+  "oldQualification": {
+    "planned": 24,
+    "completed": 24,
+    "combatObservations": 0,
+    "reused": 0,
+    "failure": null
+  },
+  "replacementRoot": "D:\\mmo-idle\\desert-strategy-01-r1"
+}

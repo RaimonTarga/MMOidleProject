@@ -1,0 +1,1192 @@
+[
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-mountain",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 601500,
+    "completedKills": 113,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101009-volcanic",
+    "identityId": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "volcanic-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 310,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101009-mountain",
+    "identityId": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 404400,
+    "completedKills": 63,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-apprentice-heavy-a-node-t4-graveyard-03-s101009-mountain",
+    "identityId": "breadth-t4-apprentice-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 374,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-graveyard-03-s101009-volcanic",
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "volcanic-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 681,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-graveyard-03-s101009-mountain",
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 663,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-spirit-heavy-a-node-t4-graveyard-03-s101009-mountain",
+    "identityId": "breadth-t4-spirit-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 534,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 177700,
+    "completedKills": 33,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": false
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-mountain",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 55800,
+    "completedKills": 2,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-volcanic",
+    "identityId": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "volcanic-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 156,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-mountain",
+    "identityId": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 144,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-apprentice-heavy-a-node-t4-desert-03-s101009-mountain",
+    "identityId": "breadth-t4-apprentice-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 164,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101009-volcanic",
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "volcanic-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 254,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101009-mountain",
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 230,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-spirit-heavy-a-node-t4-desert-03-s101009-mountain",
+    "identityId": "breadth-t4-spirit-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 219,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 715200,
+    "completedKills": 53,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": false
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-mountain",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 96400,
+    "completedKills": 14,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101021-mountain",
+    "identityId": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 106300,
+    "completedKills": 11,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101021-volcanic",
+    "identityId": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "volcanic-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 296,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-apprentice-heavy-a-node-t4-graveyard-03-s101021-mountain",
+    "identityId": "breadth-t4-apprentice-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 369,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-graveyard-03-s101021-mountain",
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 668,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-graveyard-03-s101021-volcanic",
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "volcanic-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 687,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-spirit-heavy-a-node-t4-graveyard-03-s101021-mountain",
+    "identityId": "breadth-t4-spirit-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 531,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 28400,
+    "completedKills": 5,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": false
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-mountain",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 24700,
+    "completedKills": 0,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101021-mountain",
+    "identityId": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 146,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101021-volcanic",
+    "identityId": "breadth-t4-squire-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "volcanic-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 149,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-apprentice-heavy-a-node-t4-desert-03-s101021-mountain",
+    "identityId": "breadth-t4-apprentice-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 163,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101021-mountain",
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 224,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101021-volcanic",
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "volcanic-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 242,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-spirit-heavy-a-node-t4-desert-03-s101021-mountain",
+    "identityId": "breadth-t4-spirit-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 212,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 43,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/overnight-endurance-01/run-01/results-summary.json",
+    "executionSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observationId": "endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 88000,
+    "completedKills": 4,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": false
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "inferno-static",
+    "outcome": "player-died",
+    "elapsedMs": 1548400,
+    "completedKills": 136,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "inferno-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 154,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "inferno-static",
+    "outcome": "player-died",
+    "elapsedMs": 213800,
+    "completedKills": 18,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "inferno-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 160,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "inferno-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 373,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "inferno-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 373,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "inferno-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 373,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure",
+    "identityId": "breadth-t4-striker-heavy-a",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "inferno-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 364,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 715200,
+    "completedKills": 53,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "mountain-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 135,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "inferno-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 130,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101009,
+    "arm": "inferno-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 142,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 88000,
+    "completedKills": 4,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "mountain-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 130,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "inferno-static",
+    "outcome": "player-died",
+    "elapsedMs": 42900,
+    "completedKills": 2,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-desert-03",
+    "seed": 101021,
+    "arm": "inferno-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 138,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 177700,
+    "completedKills": 33,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "mountain-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 377,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "inferno-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 438,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101009,
+    "arm": "inferno-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 428,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "mountain-static",
+    "outcome": "player-died",
+    "elapsedMs": 28400,
+    "completedKills": 5,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "mountain-endure",
+    "outcome": "player-died",
+    "elapsedMs": 29500,
+    "completedKills": 6,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "inferno-static",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 431,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/results-summary.json",
+    "executionSource": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure",
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "fixture": "node-t4-graveyard-03",
+    "seed": 101021,
+    "arm": "inferno-endure",
+    "outcome": "window-ended",
+    "elapsedMs": 1800000,
+    "completedKills": 431,
+    "runicPoints": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "currentConduitEvidence": true
+  },
+  {
+    "source": "reports/player-fast-pass/breadth-run-01-review/results.json",
+    "executionSource": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+    "setting": "boss",
+    "currentConduitEvidence": null,
+    "caseId": "breadth-t4-striker-heavy-a-boss",
+    "root": "striker",
+    "tier": 4,
+    "fixture": "node-t4-mountain-dungeon",
+    "seed": 101003,
+    "status": "complete",
+    "outcome": "boss-killed",
+    "elapsedMs": 95200,
+    "terminal": {
+      "authoritative": true,
+      "kind": "boss-killed",
+      "proof": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-striker-heavy-a-boss/index.json",
+      "bossKillEvidence": "See index.json and summary.json authoritative kill evidence.",
+      "capIsCensored": false
+    }
+  },
+  {
+    "source": "reports/player-fast-pass/breadth-run-01-review/results.json",
+    "executionSource": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+    "setting": "boss",
+    "currentConduitEvidence": null,
+    "caseId": "breadth-t4-squire-heavy-a-boss",
+    "root": "squire",
+    "tier": 4,
+    "fixture": "node-t4-mountain-dungeon",
+    "seed": 101003,
+    "status": "complete",
+    "outcome": "boss-killed",
+    "elapsedMs": 68400,
+    "terminal": {
+      "authoritative": true,
+      "kind": "boss-killed",
+      "proof": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-squire-heavy-a-boss/index.json",
+      "bossKillEvidence": "See index.json and summary.json authoritative kill evidence.",
+      "capIsCensored": false
+    }
+  },
+  {
+    "source": "reports/player-fast-pass/breadth-run-01-review/results.json",
+    "executionSource": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+    "setting": "boss",
+    "currentConduitEvidence": null,
+    "caseId": "breadth-t4-apprentice-heavy-a-boss",
+    "root": "apprentice",
+    "tier": 4,
+    "fixture": "node-t4-mountain-dungeon",
+    "seed": 101003,
+    "status": "complete",
+    "outcome": "boss-killed",
+    "elapsedMs": 41500,
+    "terminal": {
+      "authoritative": true,
+      "kind": "boss-killed",
+      "proof": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-apprentice-heavy-a-boss/index.json",
+      "bossKillEvidence": "See index.json and summary.json authoritative kill evidence.",
+      "capIsCensored": false
+    }
+  },
+  {
+    "source": "reports/player-fast-pass/breadth-run-01-review/results.json",
+    "executionSource": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+    "setting": "boss",
+    "currentConduitEvidence": null,
+    "caseId": "breadth-t4-slinger-heavy-a-boss",
+    "root": "slinger",
+    "tier": 4,
+    "fixture": "node-t4-mountain-dungeon",
+    "seed": 101003,
+    "status": "complete",
+    "outcome": "boss-killed",
+    "elapsedMs": 27100,
+    "terminal": {
+      "authoritative": true,
+      "kind": "boss-killed",
+      "proof": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-slinger-heavy-a-boss/index.json",
+      "bossKillEvidence": "See index.json and summary.json authoritative kill evidence.",
+      "capIsCensored": false
+    }
+  },
+  {
+    "source": "reports/player-fast-pass/breadth-run-01-review/results.json",
+    "executionSource": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+    "setting": "boss",
+    "currentConduitEvidence": false,
+    "caseId": "breadth-t4-conduit-heavy-b-boss",
+    "root": "conduit",
+    "tier": 4,
+    "fixture": "node-t4-mountain-dungeon",
+    "seed": 101003,
+    "status": "complete",
+    "outcome": "boss-killed",
+    "elapsedMs": 90300,
+    "terminal": {
+      "authoritative": true,
+      "kind": "boss-killed",
+      "proof": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-conduit-heavy-b-boss/index.json",
+      "bossKillEvidence": "See index.json and summary.json authoritative kill evidence.",
+      "capIsCensored": false
+    }
+  },
+  {
+    "source": "reports/player-fast-pass/breadth-run-01-review/results.json",
+    "executionSource": "5024be692d8a1854b7f61e007d371f2ee9aab46b",
+    "setting": "boss",
+    "currentConduitEvidence": null,
+    "caseId": "breadth-t4-spirit-heavy-a-boss",
+    "root": "spirit",
+    "tier": 4,
+    "fixture": "node-t4-mountain-dungeon",
+    "seed": 101003,
+    "status": "complete",
+    "outcome": "boss-killed",
+    "elapsedMs": 46900,
+    "terminal": {
+      "authoritative": true,
+      "kind": "boss-killed",
+      "proof": "reports/player-fast-pass/breadth-run-01-review/cases/breadth-t4-spirit-heavy-a-boss/index.json",
+      "bossKillEvidence": "See index.json and summary.json authoritative kill evidence.",
+      "capIsCensored": false
+    }
+  }
+]

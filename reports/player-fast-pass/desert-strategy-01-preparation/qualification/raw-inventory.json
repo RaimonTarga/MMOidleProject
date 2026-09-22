@@ -1,0 +1,27 @@
+[
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\qualification\\zero-tick\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "814e0602bf71e9b898e5a4d349da1308385ecf06be2a04d734b6b4847870be81"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\qualification\\zero-tick\\artifacts\\index.json",
+    "bytes": 553654,
+    "sha256": "69651a3144c11e8d43e6c7f18c90af3428fe874d9a5526b56a290dd5c0343b11"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\qualification\\zero-tick\\artifacts\\manifest.json",
+    "bytes": 85419,
+    "sha256": "9b695736ea7c028bb145c404192ac99d6b08a114eb7eb5aff72b2a5b4fbaecb1"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\qualification\\zero-tick\\process.json",
+    "bytes": 647,
+    "sha256": "9df7c44fcbec3d597d4b83337b891d41334037a6298cc2f4252968b265a239e1"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\qualification\\zero-tick\\process.log",
+    "bytes": 2104,
+    "sha256": "3ca848e05a2dd91aeb866a1359bec4b9282563bd356edbb49d4fe0cfc9966bb1"
+  }
+]

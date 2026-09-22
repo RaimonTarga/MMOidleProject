@@ -1,0 +1,18 @@
+{
+  "status": "qualified-unrun",
+  "plannedMainObservations": 24,
+  "combatObservations": 0,
+  "newCompleted": 0,
+  "failed": 0,
+  "omitted": 0,
+  "notRun": 24,
+  "qualified": 24,
+  "gameplayBaseline": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+  "executionSource": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+  "baselineGameplayDiff": "INTEGRATION.patch: only server/src/systems/classes/archetypes/summoner/ai.ts",
+  "mainRunPathExists": false,
+  "runLaunchMarkerExists": false,
+  "canonicalTargetingFix": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+  "championDecision": "superseded indirect approval; canonical inheritance fix now approved and integrated",
+  "externalRoot": "D:\\mmo-idle\\desert-strategy-01-r1"
+}

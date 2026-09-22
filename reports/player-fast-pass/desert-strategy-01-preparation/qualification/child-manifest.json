@@ -1,0 +1,2289 @@
+{
+  "schema": 1,
+  "mode": "qualify",
+  "revision": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+  "navigationDiagnostics": false,
+  "definitionsHash": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "sampleEveryMs": 1000,
+  "block": "qualification",
+  "trial": "desert-strategy-01",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 600000,
+  "seeds": [
+    101009,
+    101021
+  ],
+  "cells": [
+    {
+      "id": "desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting",
+      "className": "striker",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-striker-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Berserker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each finisher grants a Rampage stack (up to 10): −1 combo threshold (floor 2), faster attacks, weaker regular hits, and a stronger finisher multiplier. At 10 stacks the next finisher overloads and resets Rampage to 0. Stacks decay slowly out of combat.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-striker-heavy-a-s101009",
+      "seed": 101009,
+      "block": "B",
+      "arm": "baseline-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static",
+      "originalCaseId": "breadth-t4-striker-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "sourceObservationId": null
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting",
+      "className": "striker",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-striker-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Berserker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each finisher grants a Rampage stack (up to 10): −1 combo threshold (floor 2), faster attacks, weaker regular hits, and a stronger finisher multiplier. At 10 stacks the next finisher overloads and resets Rampage to 0. Stacks decay slowly out of combat.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-striker-heavy-a-s101009",
+      "seed": 101009,
+      "block": "B",
+      "arm": "lowhp-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static",
+      "originalCaseId": "breadth-t4-striker-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "sourceObservationId": null
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting",
+      "className": "squire",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting",
+        "classRoot": "cooldown-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close",
+          "cooldown-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-squire-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Avenger",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation.",
+        "Offensive default; only declared native low-HP Rune may switch posture. No combat treatment."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-squire-heavy-a-s101009",
+      "originalCaseId": "breadth-t4-squire-heavy-a-farm",
+      "arm": "baseline-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "seed": 101009,
+      "block": "A",
+      "referenceCaseId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-volcanic"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting",
+      "className": "squire",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting",
+        "classRoot": "cooldown-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close",
+          "cooldown-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-squire-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Avenger",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation.",
+        "Offensive default; only declared native low-HP Rune may switch posture. No combat treatment."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-squire-heavy-a-s101009",
+      "originalCaseId": "breadth-t4-squire-heavy-a-farm",
+      "arm": "lowhp-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "seed": 101009,
+      "block": "A",
+      "referenceCaseId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-volcanic"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting",
+      "className": "apprentice",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting",
+        "classRoot": "dot-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "dot-root",
+          "dot-heavy",
+          "dot-range-mid",
+          "dot-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-apprentice-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Icebreaker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes an 5% damage-reduction debuff, so the full-power hits land even harder.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009",
+      "seed": 101009,
+      "block": "A",
+      "arm": "baseline-targeting",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-apprentice-heavy-a-node-t4-desert-03-s101009-mountain",
+      "originalCaseId": "breadth-t4-apprentice-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting",
+      "className": "apprentice",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting",
+        "classRoot": "dot-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "dot-root",
+          "dot-heavy",
+          "dot-range-mid",
+          "dot-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-apprentice-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Icebreaker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes an 5% damage-reduction debuff, so the full-power hits land even harder.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009",
+      "seed": 101009,
+      "block": "A",
+      "arm": "lowhp-targeting",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-apprentice-heavy-a-node-t4-desert-03-s101009-mountain",
+      "originalCaseId": "breadth-t4-apprentice-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-heavy",
+          "reload-range-mid",
+          "reload-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Melter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Replaces your magazine with a continuous laser. It fires continuously while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Authored flat/on-hit or channel delivery: Deathfang supplies actual on-hit magnitude; Catalyst amplifies it.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Channel package omits Orbit to avoid unnecessary movement; telegraph escape remains.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101009",
+      "seed": 101009,
+      "block": "A",
+      "arm": "baseline-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101009-volcanic",
+      "originalCaseId": "breadth-t4-slinger-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-heavy",
+          "reload-range-mid",
+          "reload-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Melter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Replaces your magazine with a continuous laser. It fires continuously while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Authored flat/on-hit or channel delivery: Deathfang supplies actual on-hit magnitude; Catalyst amplifies it.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Channel package omits Orbit to avoid unnecessary movement; telegraph escape remains.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101009",
+      "seed": 101009,
+      "block": "A",
+      "arm": "lowhp-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101009-volcanic",
+      "originalCaseId": "breadth-t4-slinger-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Champion",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Declared close-range exception supports point-blank volley or Champion owner contribution; Orbit omitted.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101009",
+      "seed": 101009,
+      "block": "B",
+      "arm": "baseline-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static",
+      "originalCaseId": "breadth-t4-conduit-heavy-b-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "production-r2",
+      "sourceObservationId": null
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Champion",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Declared close-range exception supports point-blank volley or Champion owner contribution; Orbit omitted.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101009",
+      "seed": 101009,
+      "block": "B",
+      "arm": "lowhp-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static",
+      "originalCaseId": "breadth-t4-conduit-heavy-b-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "production-r2",
+      "sourceObservationId": null
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting",
+      "className": "spirit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting",
+        "classRoot": "energy-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid",
+          "energy-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-spirit-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Voidwalker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). Energy generation accelerates the fuller the pool. If a basic hit would kill via the discharge's projected damage, it triggers an immediate early discharge, spending the stored energy.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101009",
+      "seed": 101009,
+      "block": "A",
+      "arm": "baseline-targeting",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-spirit-heavy-a-node-t4-desert-03-s101009-mountain",
+      "originalCaseId": "breadth-t4-spirit-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting",
+      "className": "spirit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting",
+        "classRoot": "energy-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid",
+          "energy-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-spirit-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Voidwalker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). Energy generation accelerates the fuller the pool. If a basic hit would kill via the discharge's projected damage, it triggers an immediate early discharge, spending the stored energy.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101009",
+      "seed": 101009,
+      "block": "A",
+      "arm": "lowhp-targeting",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-spirit-heavy-a-node-t4-desert-03-s101009-mountain",
+      "originalCaseId": "breadth-t4-spirit-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting",
+      "className": "striker",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-striker-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Berserker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each finisher grants a Rampage stack (up to 10): −1 combo threshold (floor 2), faster attacks, weaker regular hits, and a stronger finisher multiplier. At 10 stacks the next finisher overloads and resets Rampage to 0. Stacks decay slowly out of combat.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-striker-heavy-a-s101021",
+      "seed": 101021,
+      "block": "B",
+      "arm": "lowhp-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static",
+      "originalCaseId": "breadth-t4-striker-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "sourceObservationId": null
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting",
+      "className": "striker",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-striker-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Berserker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each finisher grants a Rampage stack (up to 10): −1 combo threshold (floor 2), faster attacks, weaker regular hits, and a stronger finisher multiplier. At 10 stacks the next finisher overloads and resets Rampage to 0. Stacks decay slowly out of combat.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-striker-heavy-a-s101021",
+      "seed": 101021,
+      "block": "B",
+      "arm": "baseline-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static",
+      "originalCaseId": "breadth-t4-striker-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "sourceObservationId": null
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting",
+      "className": "squire",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting",
+        "classRoot": "cooldown-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close",
+          "cooldown-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-squire-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Avenger",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation.",
+        "Offensive default; only declared native low-HP Rune may switch posture. No combat treatment."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-squire-heavy-a-s101021",
+      "originalCaseId": "breadth-t4-squire-heavy-a-farm",
+      "arm": "lowhp-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "seed": 101021,
+      "block": "A",
+      "referenceCaseId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-volcanic"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting",
+      "className": "squire",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting",
+        "classRoot": "cooldown-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close",
+          "cooldown-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-squire-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Avenger",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation.",
+        "Offensive default; only declared native low-HP Rune may switch posture. No combat treatment."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-squire-heavy-a-s101021",
+      "originalCaseId": "breadth-t4-squire-heavy-a-farm",
+      "arm": "baseline-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "seed": 101021,
+      "block": "A",
+      "referenceCaseId": "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-volcanic"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting",
+      "className": "apprentice",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting",
+        "classRoot": "dot-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "dot-root",
+          "dot-heavy",
+          "dot-range-mid",
+          "dot-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-apprentice-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Icebreaker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes an 5% damage-reduction debuff, so the full-power hits land even harder.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021",
+      "seed": 101021,
+      "block": "A",
+      "arm": "lowhp-targeting",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-apprentice-heavy-a-node-t4-desert-03-s101009-mountain",
+      "originalCaseId": "breadth-t4-apprentice-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting",
+      "className": "apprentice",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting",
+        "classRoot": "dot-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "dot-root",
+          "dot-heavy",
+          "dot-range-mid",
+          "dot-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-apprentice-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Icebreaker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes an 5% damage-reduction debuff, so the full-power hits land even harder.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "slam has first offensive priority; high Attack supports direct AoE burst.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021",
+      "seed": 101021,
+      "block": "A",
+      "arm": "baseline-targeting",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-apprentice-heavy-a-node-t4-desert-03-s101009-mountain",
+      "originalCaseId": "breadth-t4-apprentice-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-heavy",
+          "reload-range-mid",
+          "reload-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Melter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Replaces your magazine with a continuous laser. It fires continuously while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Authored flat/on-hit or channel delivery: Deathfang supplies actual on-hit magnitude; Catalyst amplifies it.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Channel package omits Orbit to avoid unnecessary movement; telegraph escape remains.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101021",
+      "seed": 101021,
+      "block": "A",
+      "arm": "lowhp-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101009-volcanic",
+      "originalCaseId": "breadth-t4-slinger-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-heavy",
+          "reload-range-mid",
+          "reload-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Melter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Replaces your magazine with a continuous laser. It fires continuously while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Authored flat/on-hit or channel delivery: Deathfang supplies actual on-hit magnitude; Catalyst amplifies it.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Channel package omits Orbit to avoid unnecessary movement; telegraph escape remains.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-slinger-heavy-a-s101021",
+      "seed": 101021,
+      "block": "A",
+      "arm": "baseline-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-slinger-heavy-a-node-t4-desert-03-s101009-volcanic",
+      "originalCaseId": "breadth-t4-slinger-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Champion",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Declared close-range exception supports point-blank volley or Champion owner contribution; Orbit omitted.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101021",
+      "seed": 101021,
+      "block": "B",
+      "arm": "lowhp-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static",
+      "originalCaseId": "breadth-t4-conduit-heavy-b-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "production-r2",
+      "sourceObservationId": null
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Champion",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Declared close-range exception supports point-blank volley or Champion owner contribution; Orbit omitted.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-conduit-heavy-b-s101021",
+      "seed": 101021,
+      "block": "B",
+      "arm": "baseline-targeting",
+      "charm": "volcanic",
+      "policy": "static",
+      "referenceCaseId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static",
+      "originalCaseId": "breadth-t4-conduit-heavy-b-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "production-r2",
+      "sourceObservationId": null
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting",
+      "className": "spirit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting",
+        "classRoot": "energy-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid",
+          "energy-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-spirit-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Voidwalker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). Energy generation accelerates the fuller the pool. If a basic hit would kill via the discharge's projected damage, it triggers an immediate early discharge, spending the stored energy.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101021",
+      "seed": 101021,
+      "block": "A",
+      "arm": "lowhp-targeting",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-spirit-heavy-a-node-t4-desert-03-s101009-mountain",
+      "originalCaseId": "breadth-t4-spirit-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    },
+    {
+      "id": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting",
+      "className": "spirit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting",
+        "classRoot": "energy-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid",
+          "energy-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-spirit-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Voidwalker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). Energy generation accelerates the fuller the pool. If a basic hit would kill via the discharge's projected damage, it triggers an immediate early discharge, spending the stored energy.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "desert-strategy-01-breadth-t4-spirit-heavy-a-s101021",
+      "seed": 101021,
+      "block": "A",
+      "arm": "baseline-targeting",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t4-spirit-heavy-a-node-t4-desert-03-s101009-mountain",
+      "originalCaseId": "breadth-t4-spirit-heavy-a-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable"
+    }
+  ]
+}

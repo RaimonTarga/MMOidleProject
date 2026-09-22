@@ -1,0 +1,32 @@
+[
+  {
+    "identityId": "breadth-t4-striker-heavy-a",
+    "referencePackageEqualsAppliedBaseline": true,
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/resolved-builds.json"
+  },
+  {
+    "identityId": "breadth-t4-squire-heavy-a",
+    "referencePackageEqualsAppliedBaseline": true,
+    "source": "reports/player-fast-pass/overnight-endurance-01-preparation/qualification/build-references.json"
+  },
+  {
+    "identityId": "breadth-t4-apprentice-heavy-a",
+    "referencePackageEqualsAppliedBaseline": true,
+    "source": "reports/player-fast-pass/overnight-endurance-01-preparation/qualification/build-references.json"
+  },
+  {
+    "identityId": "breadth-t4-slinger-heavy-a",
+    "referencePackageEqualsAppliedBaseline": true,
+    "source": "reports/player-fast-pass/overnight-endurance-01-preparation/qualification/build-references.json"
+  },
+  {
+    "identityId": "breadth-t4-conduit-heavy-b",
+    "referencePackageEqualsAppliedBaseline": true,
+    "source": "reports/player-fast-pass/guard-coverage-01/run-01/resolved-builds.json"
+  },
+  {
+    "identityId": "breadth-t4-spirit-heavy-a",
+    "referencePackageEqualsAppliedBaseline": true,
+    "source": "reports/player-fast-pass/overnight-endurance-01-preparation/qualification/build-references.json"
+  }
+]
