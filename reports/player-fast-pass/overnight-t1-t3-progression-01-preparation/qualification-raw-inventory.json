@@ -1,0 +1,352 @@
+[
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-farm\\artifacts\\complete.json",
+    "bytes": 41,
+    "sha256": "483867e0367a261d668fb41a2f482e90508f62f3cf7657204496b8460d2eaef6"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-farm\\artifacts\\index.json",
+    "bytes": 8753135,
+    "sha256": "80cf1a1a9df19e6bc88a4bfe51d7b988b2f73ef6e12c9f5a03363c0706fcc509"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-farm\\artifacts\\manifest.json",
+    "bytes": 664099,
+    "sha256": "70c238afdb0e9402c38773518a18a7b8d06699acc0705b45bd13d4886847b690"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-farm\\process.json",
+    "bytes": 722,
+    "sha256": "3bd31dcf0add8c7904ab639d876e8de605229d62a44960a7b0ba71fb96d523d4"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-farm\\process.log",
+    "bytes": 18269,
+    "sha256": "1d21f4ddd6ce24a9ded64e1e67f6fb3838af4fc1fa51c3796ece68129e2ae206"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-tusked-razorback\\artifacts\\complete.json",
+    "bytes": 158,
+    "sha256": "0e89f9a8c186d94185526200d51626026b29a13f2b076738ed59b8b28173e2ec"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-tusked-razorback\\artifacts\\index.json",
+    "bytes": 121990,
+    "sha256": "de885bcf4eef5e2badca2dcabf79c48d78b42638e92fb119f534d86e7ec09da1"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-tusked-razorback\\artifacts\\manifest.json",
+    "bytes": 13898,
+    "sha256": "42a47defb1298b56bbd3b7cea8988035a10435812ca1480093b3b1acd67c4e2b"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-tusked-razorback\\process.json",
+    "bytes": 747,
+    "sha256": "cac23b04ad393475b396214bd60cc0b12471a071d0ece724f27e982404d035cc"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-tusked-razorback\\process.log",
+    "bytes": 394,
+    "sha256": "275b9af157ffde03c1b9465405cd51a0f54364173fff0c5f1c47356c9616ad75"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-gorging-razortusk\\artifacts\\complete.json",
+    "bytes": 161,
+    "sha256": "09ddf2f9f6daf45e33758eb69839f0a12506a41f5bb754dee68a8a891ca258ce"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-gorging-razortusk\\artifacts\\index.json",
+    "bytes": 425563,
+    "sha256": "51d02f9227cb55198334087ef5228678f2f1a91f93256192ba852aece9aba4d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-gorging-razortusk\\artifacts\\manifest.json",
+    "bytes": 43728,
+    "sha256": "9361cf9c872eac69c0c7c3d2c73f712d0c51cd450ba4614739ad4b7586400651"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-gorging-razortusk\\process.json",
+    "bytes": 749,
+    "sha256": "c6bb7c34230454906cc45100ee925c8c1f0d0cb7bddc02aecced6982569964f6"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-gorging-razortusk\\process.log",
+    "bytes": 1124,
+    "sha256": "aabc023e3ef6f78f781a9cc9c7d65c431688566639e055b097ad3966cff571a1"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-gorged-horn-behemoth\\artifacts\\complete.json",
+    "bytes": 169,
+    "sha256": "ff278273aac1c2887e9b3590754059cf4c845b384984aed5c73378efa4d0df7a"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-gorged-horn-behemoth\\artifacts\\index.json",
+    "bytes": 472259,
+    "sha256": "1b8d83afe867713010308e5e86b7a7a6bf1ee0535a4451184142805048588864"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-gorged-horn-behemoth\\artifacts\\manifest.json",
+    "bytes": 48609,
+    "sha256": "49a4ddb981c2de294bc0c61504defcd35ed471a0a486a02cdc20fc9806e72a42"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-gorged-horn-behemoth\\process.json",
+    "bytes": 765,
+    "sha256": "c462a189dd23a73c14a25107d045ac8dbf87f68d7d57c4a41d83c5fcdd65c6a4"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-gorged-horn-behemoth\\process.log",
+    "bytes": 1168,
+    "sha256": "29fcf9e13981d858b151f38323a3b76cbe72b4aa44db5021b84aaaa7e7165cf0"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-behemoth\\artifacts\\complete.json",
+    "bytes": 155,
+    "sha256": "3c0da0ba56808c68a9374575c0c80955045b07fd48ba238190868c734f1e8c9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-behemoth\\artifacts\\index.json",
+    "bytes": 122020,
+    "sha256": "90721b2017f97c387535350a1b05a6f2f8a46ab182a221727f1100d78105653d"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-behemoth\\artifacts\\manifest.json",
+    "bytes": 13859,
+    "sha256": "1e69a41d882aba64142395560d9233cc3f38234c3213ed304088a5b6b06f1c44"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-behemoth\\process.json",
+    "bytes": 741,
+    "sha256": "d773d08f197d44ecb7958cf661134600e01440e42e7f66d027db2a6c80042590"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-crag-behemoth\\process.log",
+    "bytes": 403,
+    "sha256": "c662e623ab7dad58afe9798487156eff316a48b5f6655fdffa74179e328618f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-mire-gorged-behemoth\\artifacts\\complete.json",
+    "bytes": 164,
+    "sha256": "34e571cb80c6e8e0b519d6aae52f5ca74870706e33a507d57e0819a664777035"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-mire-gorged-behemoth\\artifacts\\index.json",
+    "bytes": 448269,
+    "sha256": "48aebe5e3b2e6163ccabe31844e709c332e8f5de5fee553574fb8a9ae4d7abd3"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-mire-gorged-behemoth\\artifacts\\manifest.json",
+    "bytes": 45937,
+    "sha256": "71c465cc0b3fb1c924a2775e94ba8cdb6733fb2bfe0ce8c6a7869260e7e565f3"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-mire-gorged-behemoth\\process.json",
+    "bytes": 755,
+    "sha256": "0e0a64f78a4f37f2838ed3d029a62109b78356de1608d6b266b32f2cd9778ddc"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-mire-gorged-behemoth\\process.log",
+    "bytes": 1109,
+    "sha256": "aff9e3b1ff3318d7eded94285d9e2fea32eba59e96211f29176476de2e6af80e"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-cinder-shell-magma-salamander\\artifacts\\complete.json",
+    "bytes": 173,
+    "sha256": "ed243d1ede8b1db2d6d8980d6aee08bcbfaa0df35c4f3fb9c4efae7250cced0b"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-cinder-shell-magma-salamander\\artifacts\\index.json",
+    "bytes": 490827,
+    "sha256": "55cdd915df2f2086d28d363a632847b963fa7faa5fddddfc699fe12eb00dea4a"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-cinder-shell-magma-salamander\\artifacts\\manifest.json",
+    "bytes": 50707,
+    "sha256": "278f5654614e2eae633d6e7721a7ef80024d655692f6e4fd6fb7a776dfc7b75e"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-cinder-shell-magma-salamander\\process.json",
+    "bytes": 773,
+    "sha256": "6ae7a31c0a6d379eeae7ae9ca27d654193cc3ea529ecc244bca8e630f2688bea"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101009-cinder-shell-magma-salamander\\process.log",
+    "bytes": 1172,
+    "sha256": "95561628b63fec4c503db682b8e3cb0fdf0bd122c67231495dae22b3f9f8f9c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-farm\\artifacts\\complete.json",
+    "bytes": 41,
+    "sha256": "483867e0367a261d668fb41a2f482e90508f62f3cf7657204496b8460d2eaef6"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-farm\\artifacts\\index.json",
+    "bytes": 8768150,
+    "sha256": "a00437cdefed36ce3f84b519277392db6fc17f3795f71599f85a8f61bb886e8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-farm\\artifacts\\manifest.json",
+    "bytes": 664099,
+    "sha256": "76101f5cf75e3a19a0872020d46ee9ef25599d1ed21cb0d817de66c5c694ea4f"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-farm\\process.json",
+    "bytes": 722,
+    "sha256": "c0a8bc16fdd387bfe12dc0507b8cbd1111e5284b8170fb33bd9c1863d445bae3"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-farm\\process.log",
+    "bytes": 18269,
+    "sha256": "1b894f50be2391b934cbae2267628deb8ff2f85fe1affa7a0a9172a228e9c400"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-tusked-razorback\\artifacts\\complete.json",
+    "bytes": 158,
+    "sha256": "8a222e2f6136a431badf9d1cced07445c533766254167d4b70d9011c80c203e6"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-tusked-razorback\\artifacts\\index.json",
+    "bytes": 121990,
+    "sha256": "d11d01ad10033a5b1ee3695906502fd31e72ae73d8fa0fc853e8d27d926a580c"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-tusked-razorback\\artifacts\\manifest.json",
+    "bytes": 13898,
+    "sha256": "54e95afc4678de34cdce1943c3519eb1bce0eeb3bb0e8cfc56b81fab72075ec2"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-tusked-razorback\\process.json",
+    "bytes": 747,
+    "sha256": "82f39008b903e2b5b94d2e61d45fab92f195c117f7b12bbbcbf5c7bf75176328"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-tusked-razorback\\process.log",
+    "bytes": 394,
+    "sha256": "a17b35604bd41d9512048e7b8f5d68c5a6e7a39ecac5968c620044abf7b1a2a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-gorging-razortusk\\artifacts\\complete.json",
+    "bytes": 161,
+    "sha256": "b96a2b6be352a7f90a1bd710a61f139f12fc0a70d3d6f65e62e65c9b274efff2"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-gorging-razortusk\\artifacts\\index.json",
+    "bytes": 425563,
+    "sha256": "07e676b3d264326d7d42ab223601a6f1331c284823e0ed6d6373e7c81e46c6c1"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-gorging-razortusk\\artifacts\\manifest.json",
+    "bytes": 43728,
+    "sha256": "325fd1a6213e4d093c4ac37dfdc153355bed08969431a0dbaf62ead8e2d314b4"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-gorging-razortusk\\process.json",
+    "bytes": 749,
+    "sha256": "dea7062fbd0357f6423d82892e7109ff879289092a8e447c6a820f986697ace5"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-gorging-razortusk\\process.log",
+    "bytes": 1124,
+    "sha256": "f1cd4c7d7c2c0b594b0cdb0462192dc3decd59bcf4566d0e33f6886a491076bf"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-gorged-horn-behemoth\\artifacts\\complete.json",
+    "bytes": 169,
+    "sha256": "30624a1c3384982c62ae013205131c7c4cba06981810c77b5671d2c039785fb7"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-gorged-horn-behemoth\\artifacts\\index.json",
+    "bytes": 472259,
+    "sha256": "660b8eaa6b401422abf4e69d29743d289da51a43d4e2a992c8597f6258b63803"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-gorged-horn-behemoth\\artifacts\\manifest.json",
+    "bytes": 48609,
+    "sha256": "7f633d3d25a44471787e4d6a8661de0ce7941586a38ea308d28db4d15bd23529"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-gorged-horn-behemoth\\process.json",
+    "bytes": 764,
+    "sha256": "162cb7bd3e9a2d83db5d86d91423e6f12d8bb15587aace0012248dced5052f93"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-gorged-horn-behemoth\\process.log",
+    "bytes": 1168,
+    "sha256": "2f50a62d1f2e9515c26fb5e6a766c357c7e98433e24b51f4c0538eddec05e256"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-behemoth\\artifacts\\complete.json",
+    "bytes": 155,
+    "sha256": "f99dde17b69368a9c6e64053b6d5bd3b7359fd6f718d1238f919865b19f81e88"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-behemoth\\artifacts\\index.json",
+    "bytes": 122020,
+    "sha256": "cffa05beb2bf4e6967cb2f6c61cd6d8c893fe92b3148e27337b50b3745d2a25d"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-behemoth\\artifacts\\manifest.json",
+    "bytes": 13859,
+    "sha256": "c2c642005d6d3fbb3f5081d6efdab1c41a7173955b4aa9d5f4d4a2a9f6db210c"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-behemoth\\process.json",
+    "bytes": 741,
+    "sha256": "da601f6e919749083d4d15d0bcad85927987170ad6a6c65bd27f5dc7d39b5680"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-crag-behemoth\\process.log",
+    "bytes": 403,
+    "sha256": "01959c06e7ca542c4f45be567c2c108b23cff3c8ffdf3b8481dd12d4d967b6ba"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-mire-gorged-behemoth\\artifacts\\complete.json",
+    "bytes": 164,
+    "sha256": "11cfa50f373e2f551b57d96196ddacc03d8c0c02c3ecb339fee9230ee8a19b8a"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-mire-gorged-behemoth\\artifacts\\index.json",
+    "bytes": 448269,
+    "sha256": "20fdd2cd34b5bfed485776de1f98c60a4a8084b23b7f50b842d881af744b7c25"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-mire-gorged-behemoth\\artifacts\\manifest.json",
+    "bytes": 45937,
+    "sha256": "8c9d249338932493c786466b5c9b7c8ecb89d75d76ac87c41702031689e3a2c1"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-mire-gorged-behemoth\\process.json",
+    "bytes": 755,
+    "sha256": "8f3bf94a207545ebe5a3e299794d9da0955a4e6b31a21c13c569cedafd3c23fd"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-mire-gorged-behemoth\\process.log",
+    "bytes": 1109,
+    "sha256": "dc62a3b532ca55d90237f96ac77f27ff4ada1d8c7704e021347554ac7aebf3c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-cinder-shell-magma-salamander\\artifacts\\complete.json",
+    "bytes": 173,
+    "sha256": "c4778a2c8f489f33f310160cac411b425d6f862101f1014731b1b46bf4a7dc47"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-cinder-shell-magma-salamander\\artifacts\\index.json",
+    "bytes": 490827,
+    "sha256": "43e8fd25ab472d729392bd9464dbdf115401f6aa370adebed6831a7cca28949f"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-cinder-shell-magma-salamander\\artifacts\\manifest.json",
+    "bytes": 50707,
+    "sha256": "20233934b83ec434b7de25687195f5a8f8aac8c57e460d26387dbf648d141788"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-cinder-shell-magma-salamander\\process.json",
+    "bytes": 773,
+    "sha256": "b46c678be90a67067ba349b7aacc06118db66f912430200314a2e234224886bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\qualification\\qualification-101033-cinder-shell-magma-salamander\\process.log",
+    "bytes": 1172,
+    "sha256": "3fc3ab0e9eb2c6e13ab57ebb511fa0c6e2a917f6a1202cc3640b9324fcfd39d9"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6",
+  "qualification": {
+    "completed": 720,
+    "combatObservations": 0,
+    "failed": 0
+  },
+  "focusedTests": [
+    "abilityControl: passed",
+    "ambientRamp: passed",
+    "overnightProgression: 720 zero-tick preparations and fixed pairs passed"
+  ],
+  "typecheck": "passed including bench",
+  "serverBuild": "passed; generated shadow file restored; exact hitbox rows matched",
+  "fullSuite": "Not run: brief excludes full-suite repair assignment",
+  "combat": {
+    "planned": 720,
+    "new": 720,
+    "completed": 0,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 720
+  }
+}

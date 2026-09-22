@@ -1,0 +1,254 @@
+[
+  {
+    "comparisonId": "op-t1-striker-plains-t1-developed-s101009",
+    "primary": "op-t1-striker-plains-t1-developed-s101009",
+    "alternative": "op-t1-striker-plains-t1-developed-s101009-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t1-slinger-plains-t1-developed-s101009",
+    "primary": "op-t1-slinger-plains-t1-developed-s101009",
+    "alternative": "op-t1-slinger-plains-t1-developed-s101009-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t1-spirit-plains-t1-developed-s101009",
+    "primary": "op-t1-spirit-plains-t1-developed-s101009",
+    "alternative": "op-t1-spirit-plains-t1-developed-s101009-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-light-desert-t2-desert-arrival-s101009",
+    "primary": "op-t2-striker-light-desert-t2-desert-arrival-s101009",
+    "alternative": "op-t2-striker-light-desert-t2-desert-arrival-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-balanced-desert-t2-desert-arrival-s101009",
+    "primary": "op-t2-striker-balanced-desert-t2-desert-arrival-s101009",
+    "alternative": "op-t2-striker-balanced-desert-t2-desert-arrival-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+    "primary": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+    "alternative": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-light-desert-t2-desert-arrival-s101009",
+    "primary": "op-t2-squire-light-desert-t2-desert-arrival-s101009",
+    "alternative": "op-t2-squire-light-desert-t2-desert-arrival-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-balanced-desert-t2-desert-arrival-s101009",
+    "primary": "op-t2-squire-balanced-desert-t2-desert-arrival-s101009",
+    "alternative": "op-t2-squire-balanced-desert-t2-desert-arrival-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-heavy-desert-t2-desert-arrival-s101009",
+    "primary": "op-t2-squire-heavy-desert-t2-desert-arrival-s101009",
+    "alternative": "op-t2-squire-heavy-desert-t2-desert-arrival-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-light-desert-t2-desert-established-s101009",
+    "primary": "op-t2-striker-light-desert-t2-desert-established-s101009",
+    "alternative": "op-t2-striker-light-desert-t2-desert-established-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t1-striker-mountain-t1-developed-s101009",
+    "primary": "op-t1-striker-mountain-t1-developed-s101009",
+    "alternative": "op-t1-striker-mountain-t1-developed-s101009-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-balanced-desert-t2-desert-established-s101009",
+    "primary": "op-t2-striker-balanced-desert-t2-desert-established-s101009",
+    "alternative": "op-t2-striker-balanced-desert-t2-desert-established-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-heavy-desert-t2-desert-established-s101009",
+    "primary": "op-t2-striker-heavy-desert-t2-desert-established-s101009",
+    "alternative": "op-t2-striker-heavy-desert-t2-desert-established-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-light-desert-t2-desert-established-s101009",
+    "primary": "op-t2-squire-light-desert-t2-desert-established-s101009",
+    "alternative": "op-t2-squire-light-desert-t2-desert-established-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-balanced-desert-t2-desert-established-s101009",
+    "primary": "op-t2-squire-balanced-desert-t2-desert-established-s101009",
+    "alternative": "op-t2-squire-balanced-desert-t2-desert-established-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-heavy-desert-t2-desert-established-s101009",
+    "primary": "op-t2-squire-heavy-desert-t2-desert-established-s101009",
+    "alternative": "op-t2-squire-heavy-desert-t2-desert-established-s101009-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t1-slinger-mountain-t1-developed-s101009",
+    "primary": "op-t1-slinger-mountain-t1-developed-s101009",
+    "alternative": "op-t1-slinger-mountain-t1-developed-s101009-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t1-spirit-mountain-t1-developed-s101009",
+    "primary": "op-t1-spirit-mountain-t1-developed-s101009",
+    "alternative": "op-t1-spirit-mountain-t1-developed-s101009-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "primary-first"
+  },
+  {
+    "comparisonId": "op-t1-striker-plains-t1-developed-s101033",
+    "primary": "op-t1-striker-plains-t1-developed-s101033",
+    "alternative": "op-t1-striker-plains-t1-developed-s101033-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t1-slinger-plains-t1-developed-s101033",
+    "primary": "op-t1-slinger-plains-t1-developed-s101033",
+    "alternative": "op-t1-slinger-plains-t1-developed-s101033-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t1-spirit-plains-t1-developed-s101033",
+    "primary": "op-t1-spirit-plains-t1-developed-s101033",
+    "alternative": "op-t1-spirit-plains-t1-developed-s101033-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-light-desert-t2-desert-arrival-s101033",
+    "primary": "op-t2-striker-light-desert-t2-desert-arrival-s101033",
+    "alternative": "op-t2-striker-light-desert-t2-desert-arrival-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-balanced-desert-t2-desert-arrival-s101033",
+    "primary": "op-t2-striker-balanced-desert-t2-desert-arrival-s101033",
+    "alternative": "op-t2-striker-balanced-desert-t2-desert-arrival-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+    "primary": "op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+    "alternative": "op-t2-striker-heavy-desert-t2-desert-arrival-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-light-desert-t2-desert-arrival-s101033",
+    "primary": "op-t2-squire-light-desert-t2-desert-arrival-s101033",
+    "alternative": "op-t2-squire-light-desert-t2-desert-arrival-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-balanced-desert-t2-desert-arrival-s101033",
+    "primary": "op-t2-squire-balanced-desert-t2-desert-arrival-s101033",
+    "alternative": "op-t2-squire-balanced-desert-t2-desert-arrival-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-heavy-desert-t2-desert-arrival-s101033",
+    "primary": "op-t2-squire-heavy-desert-t2-desert-arrival-s101033",
+    "alternative": "op-t2-squire-heavy-desert-t2-desert-arrival-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-light-desert-t2-desert-established-s101033",
+    "primary": "op-t2-striker-light-desert-t2-desert-established-s101033",
+    "alternative": "op-t2-striker-light-desert-t2-desert-established-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t1-striker-mountain-t1-developed-s101033",
+    "primary": "op-t1-striker-mountain-t1-developed-s101033",
+    "alternative": "op-t1-striker-mountain-t1-developed-s101033-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-balanced-desert-t2-desert-established-s101033",
+    "primary": "op-t2-striker-balanced-desert-t2-desert-established-s101033",
+    "alternative": "op-t2-striker-balanced-desert-t2-desert-established-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-striker-heavy-desert-t2-desert-established-s101033",
+    "primary": "op-t2-striker-heavy-desert-t2-desert-established-s101033",
+    "alternative": "op-t2-striker-heavy-desert-t2-desert-established-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-light-desert-t2-desert-established-s101033",
+    "primary": "op-t2-squire-light-desert-t2-desert-established-s101033",
+    "alternative": "op-t2-squire-light-desert-t2-desert-established-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-balanced-desert-t2-desert-established-s101033",
+    "primary": "op-t2-squire-balanced-desert-t2-desert-established-s101033",
+    "alternative": "op-t2-squire-balanced-desert-t2-desert-established-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t2-squire-heavy-desert-t2-desert-established-s101033",
+    "primary": "op-t2-squire-heavy-desert-t2-desert-established-s101033",
+    "alternative": "op-t2-squire-heavy-desert-t2-desert-established-s101033-cave",
+    "onlyChangedSlot": "recovery",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t1-slinger-mountain-t1-developed-s101033",
+    "primary": "op-t1-slinger-mountain-t1-developed-s101033",
+    "alternative": "op-t1-slinger-mountain-t1-developed-s101033-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "alternative-first"
+  },
+  {
+    "comparisonId": "op-t1-spirit-mountain-t1-developed-s101033",
+    "primary": "op-t1-spirit-mountain-t1-developed-s101033",
+    "alternative": "op-t1-spirit-mountain-t1-developed-s101033-flash",
+    "onlyChangedSlot": "weapon",
+    "order": "alternative-first"
+  }
+]

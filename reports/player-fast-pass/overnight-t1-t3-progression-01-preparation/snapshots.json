@@ -1,0 +1,130 @@
+{
+  "t1-developed": {
+    "id": "t1-developed",
+    "tier": 1,
+    "mastery": {
+      "plains": 4,
+      "forest": 4,
+      "swamp": 4,
+      "mountain": 5,
+      "cave": 5
+    },
+    "gm": 22,
+    "rp": 20,
+    "plus": 3
+  },
+  "t1-complete": {
+    "id": "t1-complete",
+    "tier": 1,
+    "mastery": {
+      "plains": 6,
+      "forest": 6,
+      "swamp": 6,
+      "mountain": 6,
+      "cave": 6
+    },
+    "gm": 30,
+    "rp": 22,
+    "plus": 5
+  },
+  "t2-jungle-arrival": {
+    "id": "t2-jungle-arrival",
+    "tier": 2,
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 12,
+      "mountain": 12,
+      "cave": 12,
+      "jungle": 0,
+      "desert": 0
+    },
+    "gm": 60,
+    "rp": 28,
+    "plus": 3
+  },
+  "t2-jungle-established": {
+    "id": "t2-jungle-established",
+    "tier": 2,
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 12,
+      "mountain": 12,
+      "cave": 12,
+      "jungle": 4,
+      "desert": 0
+    },
+    "gm": 64,
+    "rp": 28,
+    "plus": 4
+  },
+  "t2-desert-arrival": {
+    "id": "t2-desert-arrival",
+    "tier": 2,
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 12,
+      "mountain": 12,
+      "cave": 12,
+      "jungle": 6,
+      "desert": 0
+    },
+    "gm": 66,
+    "rp": 29,
+    "plus": 4
+  },
+  "t2-desert-established": {
+    "id": "t2-desert-established",
+    "tier": 2,
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 12,
+      "mountain": 12,
+      "cave": 12,
+      "jungle": 6,
+      "desert": 4
+    },
+    "gm": 70,
+    "rp": 30,
+    "plus": 4
+  },
+  "t3-developed": {
+    "id": "t3-developed",
+    "tier": 3,
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "mountain": 18,
+      "cave": 18,
+      "jungle": 12,
+      "desert": 12,
+      "volcanic": 0,
+      "tundra": 0
+    },
+    "gm": 102,
+    "rp": 36,
+    "plus": 3
+  },
+  "t3-tundra-arrival": {
+    "id": "t3-tundra-arrival",
+    "tier": 3,
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "mountain": 18,
+      "cave": 18,
+      "jungle": 12,
+      "desert": 12,
+      "volcanic": 6,
+      "tundra": 0
+    },
+    "gm": 108,
+    "rp": 37,
+    "plus": 4
+  }
+}

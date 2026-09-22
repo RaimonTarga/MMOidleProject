@@ -1,0 +1,159 @@
+{
+  "searchedManifestCount": 333,
+  "scope": "Retained invoking-source player-fast-pass manifests and D:/mmo-idle immediate packet roots; not a universal archive search",
+  "found": [
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\t3-tundra-class-frame-01-preparation\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\t3-tundra-class-frame-01-preparation\\qualification\\child-manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\t3-tundra-class-frame-01\\run-01\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\t3-tundra-class-frame-01\\run-02\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\overnight-endurance-01-preparation\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\overnight-endurance-01\\run-01\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\guard-coverage-01-preparation\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\guard-coverage-01\\run-01\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\desert-strategy-01-preparation\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\desert-strategy-01-preparation\\qualification\\child-manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\desert-strategy-01\\run-01\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\day2-bounded-01-preparation\\packet\\A-candidate\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\day2-bounded-01-preparation\\packet\\A-control\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\source\\reports\\player-fast-pass\\day2-bounded-01-preparation\\packet\\B\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\day2-bounded-01\\packet-A-candidate\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\day2-bounded-01\\packet-A-control\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\day2-bounded-01\\packet-B\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\desert-strategy-01\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\desert-strategy-01-r1\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\guard-coverage-01\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\overnight-endurance-01\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\t2-multi-biome-class-01\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    },
+    {
+      "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\packet\\manifest.json",
+      "seeds": [
+        101009
+      ]
+    }
+  ],
+  "additionalSeedPreviouslyFound": false,
+  "newCombatObservations": 720,
+  "historicalReuse": 0
+}

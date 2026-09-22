@@ -1,0 +1,7 @@
+{
+  "frozenSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "briefReferenceSha256": "6a75e0e8417e0936bdaffe389f1d5b73b06a78b49d163961e02cf18ecca166bf",
+  "freshBakeSha256": "eaaa77ad226d224536dde86adf93b2062ffd8bc916b86f878953e8ab579bcd21",
+  "identicalHitboxRows": 406,
+  "explanation": "All geometry rows match exactly; wrapper source/atlasHash/bakedAt metadata differs. Frozen execution retains the recorded hash."
+}
